@@ -1,0 +1,80 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\Scope1Form.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -714,24 +714,56 @@
+           return;
+         }
+       } else if (processType === "unloading") {
+-        const hasDepth = formData.unload_depth;
+-        const hasDiam = formData.unload_diam || formData.unload_diameter;
+-        const hasPress = formData.unload_press || formData.unload_pressure;
+-        const hasEvents =
+-          formData.unload_freq || formData.unload_events || formData.amount;
+-        if (!hasDepth || !hasDiam || !hasPress || !hasEvents) {
+-          toast.warning(
+-            "Well unloading parameters (depth, diameter, pressure, events) are required",
+-          );
+-          return;
+-        }
+-        if (
+-          formData.ch4_content === undefined ||
+-          formData.ch4_content === null ||
+-          formData.ch4_content === ""
+-        ) {
+-          toast.warning("Gas CH4 content (%) is required for well unloading");
+-          return;
++        const tier = String(formData.tier || (sourceType === "specific" ? "tier3" : sourceType === "custom" ? "tier2" : "tier1")).toLowerCase();
++        if (tier === "tier1" || sourceType === "default") {
++          const wells = parseFloat(formData.well_count || formData.wells || formData.amount || 0);
++          if (wells <= 0) {
++            toast.warning("Number of wells must be greater than zero for Tier 1 liquids unloading");
++            return;
++          }
++        } else if (tier === "tier2" || sourceType === "custom") {
++          const events = parseFloat(formData.events || formData.unload_events || formData.unload_freq || formData.amount || 0);
++          if (events < 0 || isNaN(events)) {
++            toast.warning("Number of unloading events is required for Tier 2 liquids unloading");
++            return;
++          }
++        } else {
++          // Tier 3 Engineering
++          const method = String(formData.calc_method || formData.method || "api_equation_6_10").toLowerCase();
++          if (method === "api_equation_6_11") {
++            if (!formData.p_shut || !formData.p_line || !formData.p_sep || !formData.sfr_p || !formData.t_p) {
++              toast.warning("All automated plunger parameters (Pshut, Pline, Psep, SFRp, Tp) are required for API Eq. 6-11");
++              return;
++            }
++          } else if (method === "api_equation_6_10") {
++            const hasDepth = formData.unload_depth || formData.well_depth;
++            const hasDiam = formData.unload_diam || formData.diameter;
++            const hasPress = formData.unload_press || formData.pressure;
++            const hasEvents = formData.unload_events || formData.unload_freq || formData.events || formData.amount;
++            const hasSfr = formData.sfr !== undefined && formData.sfr !== null && formData.sfr !== "";
++            const hasHours = formData.hours_open !== undefined && formData.hours_open !== null && formData.hours_open !== "";
++            if (!hasDepth || !hasDiam || !hasPress || !hasEvents || !hasSfr || !hasHours) {
++              toast.warning("All Equation 6-10 parameters (depth, diameter, pressure, events, SFR, venting hours) are required");
++              return;
++            }
++          } else {
++            const hasDepth = formData.unload_depth || formData.well_depth;
++            const hasDiam = formData.unload_diam || formData.diameter;
++            const hasPress = formData.unload_press || formData.pressure;
++            const hasEvents = formData.unload_freq || formData.unload_events || formData.events || formData.amount;
++            if (!hasDepth || !hasDiam || !hasPress || !hasEvents) {
++              toast.warning("Well unloading parameters (depth, diameter, pressure, events) are required");
++              return;
++            }
++          }
++          if (
++            formData.ch4_content === undefined ||
++            formData.ch4_content === null ||
++            formData.ch4_content === ""
++          ) {
++            toast.warning("Gas CH4 content (%) is required for well unloading");
++            return;
++          }
+         }
+       } else if (processType === "completions") {
+         const hasRateDur = formData.comp_duration && formData.comp_rate;
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

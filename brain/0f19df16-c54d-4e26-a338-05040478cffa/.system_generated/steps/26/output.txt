@@ -1,0 +1,58 @@
+
+The command exited with code 0.
+Output:
+new/client/e2e/test_qfull_e2e_ui.spec.js:      name: 'Mud Degassing - Water-based 200 m³',
+new/client/e2e/test_qfull_e2e_ui.spec.js:      name: 'Mud Degassing - Oil-based 100 m³',
+new/client/e2e/test_scope1_extended_scenarios.spec.js: *    - Drilling / Mud Degassing (Water-Based Mud in South)
+new/client/e2e/test_scope1_extended_scenarios.spec.js: *    - Drilling / Mud Degassing (Oil-Based Mud in South)
+new/client/e2e/test_scope1_extended_scenarios.spec.js:        name: 'Drilling Mud Degassing - Water Based Mud',
+new/client/e2e/test_scope1_extended_scenarios.spec.js:        name: 'Drilling Mud Degassing - Oil Based Mud (High Degassing Factor)',
+new/client/package-lock.json:      "integrity": "sha512-n8GuYSrI9bF7FFZ/SjhwevlHc8xaVlb/7HmHelnc/PZXBD2ZR49NnN9sMMuDdEGPeeRQ5d0hqlSlEpgCX3Wl0Q==",
+new/client/src/components/BulkImportModal.jsx:      { id: "mud_type", label: "Mud Type", required: false },
+new/client/src/components/BulkImportModal.jsx:      { id: "mud_unit", label: "Mud Unit", required: false },
+new/client/src/components/BulkImportModal.jsx:          drilling: ["mud_type", "mud_unit"],
+new/client/src/components/ColumnMappingWizard.jsx:    { id: "mud_type", label: "Mud Type", required: false },
+new/client/src/components/ColumnMappingWizard.jsx:    { id: "mud_unit", label: "Mud Unit", required: false },
+new/client/src/components/ColumnMappingWizard.jsx:          drilling: ["mud_type", "mud_unit"],
+new/client/src/components/Scope1Form.jsx:    // 2. Drilling (Mud Degassing) - implicit factor based on mud type
+new/client/src/components/Scope1Form.jsx:      const mudType = formData.mud_type || "water";
+new/client/src/components/Scope1Form.jsx:      const mudKey =
+new/client/src/components/Scope1Form.jsx:        mudType === "oil"
+new/client/src/components/Scope1Form.jsx:          ? "Drilling - Mud Degassing (Oil Based)"
+new/client/src/components/Scope1Form.jsx:          : "Drilling - Mud Degassing (Water Based)";
+new/client/src/components/Scope1Form.jsx:      if (API_FACTORS[mudKey]) {
+new/client/src/components/Scope1Form.jsx:        factorToUse = API_FACTORS[mudKey];
+new/client/src/components/Scope1Form.jsx:  }, [sourceType, formData.fuel, processType, formData.mud_type]);
+new/client/src/components/Scope1Form.jsx:      // 1. Drilling Mud
+new/client/src/components/Scope1Form.jsx:      // Tier 3 (specific): convert mud_vol to m3 for engineering calculator
+new/client/src/components/Scope1Form.jsx:      if (processType === "drilling" && formData.mud_vol) {
+new/client/src/components/Scope1Form.jsx:        const vol = parseFloat(formData.mud_vol);
+new/client/src/components/Scope1Form.jsx:        const unit = formData.mud_unit || "bbl";
+new/client/src/components/Scope1Form.jsx:          processInputs.mud_volume =
+new/client/src/components/Scope1Form.jsx:          finalAmount = processInputs.mud_volume;
+new/client/src/components/Scope1Form.jsx:          processInputs.mud_volume =
+new/client/src/components/Scope1Form.jsx:          finalAmount = processInputs.mud_volume;
+new/client/src/components/Scope1Form.jsx:        // Tier 1 without mud_vol: use amount field in bbl
+new/client/src/components/scope1/DrillingForm.jsx:        <label>Mud Volume</label>
+new/client/src/components/scope1/DrillingForm.jsx:            value={data.mud_vol || ""}
+new/client/src/components/scope1/DrillingForm.jsx:            onChange={(e) => onChange("mud_vol", e.target.value)}
+new/client/src/components/scope1/DrillingForm.jsx:            value={data.mud_unit || "bbl"}
+new/client/src/components/scope1/DrillingForm.jsx:            onChange={(val) => onChange("mud_unit", val)}
+new/client/src/components/scope1/DrillingForm.jsx:        <label>Mud Type</label>
+new/client/src/components/scope1/DrillingForm.jsx:          value={data.mud_type || "water"}
+new/client/src/components/scope1/DrillingForm.jsx:          onChange={(val) => onChange("mud_type", val)}
+new/client/src/pages/ReferenceData.jsx:          name: "Drilling - Mud Degassing",
+new/client/src/pages/ReferenceData.jsx:          desc: "CH₄ emissions from drilling mud degassing",
+new/client/src/utils/EmissionFactors.js:  "Drilling - Mud Degassing (Water Based)": {
+new/client/src/utils/EmissionFactors.js:    code: "MudWater",
+new/client/src/utils/EmissionFactors.js:    unit: "kg CH4/m³ mud",
+new/client/src/utils/EmissionFactors.js:    description: "API Section 6.2 - Water Based Mud Degassing",
+new/client/src/utils/EmissionFactors.js:  "Drilling - Mud Degassing (Oil Based)": {
+new/client/src/utils/EmissionFactors.js:    code: "MudOil",
+new/client/src/utils/EmissionFactors.js:    unit: "kg CH4/m³ mud",
+new/client/src/utils/EmissionFactors.js:    description: "API Section 6.2 - Oil Based Mud Degassing",
+new/client/src/utils/EmissionFactors.js:  "Drilling - Mud Degassing (Synthetic)": {
+new/client/src/utils/EmissionFactors.js:    code: "MudSynth",
+new/client/src/utils/EmissionFactors.js:    unit: "kg CH4/m³ mud",
+new/client/src/utils/EmissionFactors.js:    description: "API Section 6.2 - Synthetic Mud Degassing",
+

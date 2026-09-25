@@ -1,0 +1,22 @@
+The search for ""API Compendium" "Section 2.4" OR "2.4 Uncertainty"" returned the following summary:
+The **API Compendium of Greenhouse Gas Emissions Estimation Methodologies for the Oil and Natural Gas Industry** (often referred to as the "API Compendium") is a primary industry reference for quantifying GHG emissions[1][2][3].
+
+Based on your query regarding "Section 2.4" and "Uncertainty," here is the relevant context:
+
+*   **Section 2.4:** In the API Compendium, Section 2.4 is frequently cited in regulatory and technical documents as the section addressing **Flares**[4][5][6]. This section provides methodologies, equations, and emission factors for estimating emissions from flaring activities in oil and gas operations[1][7][8].
+*   **Uncertainty:** While "Uncertainty" is a critical topic in emissions reporting, it is often discussed in the context of broader GHG accounting protocols (such as the IPCC Good Practice and Uncertainty Management Guidance or specific regulatory reporting requirements) rather than being the title of Section 2.4 in the API Compendium[6]. If you are looking for information on uncertainty, it is typically addressed in the introductory or methodology-specific chapters of the Compendium where they discuss the limitations of emission factors and estimation methods[1][3].
+
+### Summary of References
+*   **Section 2.4 (Flares):** Various documents reference "Section 2.4" of the API Compendium specifically when discussing default emission factors for flaring, flare efficiency, and the non-combusted fraction of flared gas[4][5][6].
+*   **Protocol Alignment:** The API Compendium is widely used by industry and regulators to ensure consistency in emissions reporting[3]. If your work requires addressing uncertainty, you may need to cross-reference the Compendium's estimation methodologies with the specific uncertainty quantification protocols required by your reporting jurisdiction (e.g., EPA Subpart W or other local regulatory guidelines)[1][9][6].
+
+Sources:
+[1] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHpXibHZfwS6JJgJ_-xtjyVPcGJJ3CcTl93eQQvzCBrmqai99caKXEOyO5xQ-Ef_d5mSeZEWxM3sZlt8oubVr0H6HT9mAaHhnmneYmbG_R0wevyes_er4bpV22lNVmarVRtzrqlhPCSSXyM4L3FtbRdDooIzG5nJaRBaFg62EVwA6c3MUbmnIkizg==)
+[2] [sciencebasedtargets.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFVr1ioj1OZE3Rny_FixL4Hybj82TjDjqDIyIKZESG6vfgIsGtv6JVqs8Zn2lMZrOHK-PM5kA9GpAgsp2ek1i2UZc_DIm7ssQDycAqyTqUwdBlnl2tt9HSvIZGOmg4aL35TXtJWSUp6NudM45PjBmOuCT_m5YD6d97Mz0X40tSN_VBQd0E=)
+[3] [scribd.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGoenxKpDBOAIxbIh-jxIgLe4V4LosIVCzA27M9xEpGcyu6nPi4qeWqchA4LrIdQc4KCjoryDydplvLteArU6NxzhXBvaUhFTCqedOHSimMEcixXby7jFMrrEAcH_5dAltwHlU=)
+[4] [nea.gov.sg](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFcZPf0pi8xSrMDHQb_2b2inTgAbOBuI0Sgz3J5iC5UJYQ1DzNDyQSMTw45wPE9UAoRb0ItvUtp5Hud11qETm305-xU2C1jLlVnUo4e3biqZ7gyWg5KjpsCZqXKzQcoG5noo_c6zRAdvQSLb-pOgRkrynuELyEBJSKUitz8TFlb_2KcRW7_drWHe5GbvVGiYr_DOv8Zona4GzBIh2dmWSaSWaUh0lGVhmmt6YReqA==)
+[5] [smu.edu.sg](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHclBVQiV5aES-u6sGQqf-atTddnxgAfwZD_T-ke4glA7o-Ge2duf6ilZYU3PN6XiSEQ972ICvlq7WmEKeNNmwcXMPTFN2v0ZyrY-GCcdrj7vRgDwvdkcbw7CJ9rbLTXIPUkAaWGF95ZZdzlD0KKptgpuL8_HrZPF_PVA4u6Op6eaJ92u7QMO5-)
+[6] [climateactionreserve.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQH7gFCWUz-exK_y4AMpJqtjB4AFQ8UeOgRsw7JvuhDUTHWRjitJeCe7FK8Ukv0qvcdZCYk5l-33U5uE-FHtJlFylk-CTL-xV9jJm15_MRl9SuAIonlYNRUjZhYp7ewKtPMz3fxgoK3uDFIetsUyQLE23zznhfjXXiH3OALG_Axld6atdIryZBUzLu037ffJEQZF9DPQKINaQcy9Ft7277-mlK0AGg==)
+[7] [ca.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGyySDaYwBBtwBtQJW6R-aFfP3kTTrAHM6dlOH9gya09FZoqJOoHlZIRzFz29nq3_sRkihxwYQ9DHpdtKY1gycTe0QaKDDYNY2mhBnGCZ9caUDErrP-p43rkg3KP6Mqzvquwr9uOHI1QVyonOGQk83m-rgY2EXidA==)
+[8] [ca.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEjU5jIJYlyt6WkOxT1OonOoAPNsAYDGE5BQJZ2e7m4-hFwCTjPJFoDH0wKvmME0VOENnQbSC9osNlkmwzHeoA41UdLj9hwzuVZzfu561-9QWgaOxD6H9GnF88991FtTTfciPvgmj6scIbuOlwusLBLqr7pt3NoyU_B0orw8XQLk3FJyX4=)
+[9] [onefuture.us](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGO0VYAoeDg2P7LLSggCmsaM5izaHVsIHCI6Mb0r0gSgzBgyMTrJdfFk4UEYhe48a8ipOyR59N8JDKmSP3AX8YB092WbwxNn_YUW1-KLcISIHniu7M1MSRFt_MdDXfsevC27MZ4wsEJmtPSw2cA7UnUkYCogHsjDrAdVxG4z5Oi14az)

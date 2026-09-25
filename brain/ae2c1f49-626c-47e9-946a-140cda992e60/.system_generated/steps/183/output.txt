@@ -1,0 +1,22 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\process_categories.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -88,6 +88,16 @@
+         "description": "Emissions from mobile sources (vehicles, equipment)",
+     },
+     # ========== UPSTREAM PROCESSES ==========
++    "associated_gas_venting": {
++        "display_name": "Associated Gas Venting",
++        "segments": ["upstream"],
++        "category": "vented",
++        "calculation_method": "associated_gas_venting",
++        "api_section": "Section 6.3.1",
++        "required_inputs": ["oil_production"],
++        "equations": ["API_6_8", "API_6_9", "API_Table_6_8"],
++        "description": "Venting of natural gas produced with crude oil (Table 6-8 default factors, GOR mass balance, or direct measurement)",
++    },
+     "drilling": {
+         "display_name": "Drilling - Mud Degassing",
+         "segments": ["upstream"],
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

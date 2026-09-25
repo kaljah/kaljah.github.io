@@ -1,0 +1,10 @@
+The search for ""Well Unloading Vented Emission Factors" "Table 6-10"" returned the following summary:
+"Table 6-10. Well Unloading Vented Emission Factors for Wells" is a table found in the **"Compendium of Greenhouse Gas Emissions Methodologies for the Oil and Natural Gas Industry,"** published by the **American Petroleum Institute (API)**[1][2][3].
+
+This document serves as a standard industry resource for estimating greenhouse gas (GHG) emissions across the oil and natural gas value chain[4][3]. Please note that because many technical reports and government inventories use similar numbering for their tables, this specific title is unique to the API Compendium[1][3].
+
+Sources:
+[1] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGV9kviedWqsYuSM0DGwWPnxEyESmC-s4YSbuX0Vbn1w287Lx_QnzfgykY-5nznjl-DTVLusRMoOg0sNnGL7nLV1XRzOJAP8ol3uOdRSFz31iZndQqs4g04u2QyFukXp9c2ld1JvKiQf-3hpuRmRdqIKeOZghQnhldlQnlamu1Ot2b9Qzc4NNi3aQ==)
+[2] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGV9kviedWqsYuSM0DGwWPnxEyESmC-s4YSbuX0Vbn1w287Lx_QnzfgykY-5nznjl-DTVLusRMoOg0sNnGL7nLV1XRzOJAP8ol3uOdRSFz31iZndQqs4g04u2QyFukXp9c2ld1JvKiQf-3hpuRmRdqIKeOZghQnhldlQnlamu1Ot2b9Qzc4NNi3aQ==)
+[3] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGV9kviedWqsYuSM0DGwWPnxEyESmC-s4YSbuX0Vbn1w287Lx_QnzfgykY-5nznjl-DTVLusRMoOg0sNnGL7nLV1XRzOJAP8ol3uOdRSFz31iZndQqs4g04u2QyFukXp9c2ld1JvKiQf-3hpuRmRdqIKeOZghQnhldlQnlamu1Ot2b9Qzc4NNi3aQ==)
+[4] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGV9kviedWqsYuSM0DGwWPnxEyESmC-s4YSbuX0Vbn1w287Lx_QnzfgykY-5nznjl-DTVLusRMoOg0sNnGL7nLV1XRzOJAP8ol3uOdRSFz31iZndQqs4g04u2QyFukXp9c2ld1JvKiQf-3hpuRmRdqIKeOZghQnhldlQnlamu1Ot2b9Qzc4NNi3aQ==)

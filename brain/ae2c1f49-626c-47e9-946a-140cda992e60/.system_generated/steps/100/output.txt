@@ -1,0 +1,82 @@
+
+The command exited with code 0.
+Output:
+
+  new\server\routes\dashboard.py:502:            "combustion": 0,
+  new\server\routes\dashboard.py:503:            "flaring": 0,
+> new\server\routes\dashboard.py:504:            "venting": 0,
+  new\server\routes\dashboard.py:505:            "other": 0,
+  new\server\routes\dashboard.py:506:        }
+  new\server\routes\dashboard.py:507:    for row in scope2_data:
+  new\server\routes\dashboard.py:508:        yr = int(row.year)
+  new\server\routes\dashboard.py:509:        fid = getattr(row, "facility_id", "total")
+  new\server\routes\dashboard.py:521:                "combustion": 0,
+  new\server\routes\dashboard.py:522:                "flaring": 0,
+> new\server\routes\dashboard.py:523:                "venting": 0,
+  new\server\routes\dashboard.py:524:                "other": 0,
+  new\server\routes\dashboard.py:525:            }
+  new\server\routes\dashboard.py:526:        yearly_data[key]["scope2_total"] = float(row.scope2_total or 0)
+  new\server\routes\dashboard.py:527:        yearly_data[key]["scope2_energy"] = float(row.scope2_energy or 0)
+  new\server\routes\dashboard.py:528:
+  new\server\routes\dashboard.py:562:        "flaring": "flaring",
+  new\server\routes\dashboard.py:563:        "flare": "flaring",
+> new\server\routes\dashboard.py:564:        "venting": "venting",
+> new\server\routes\dashboard.py:565:        "vent": "venting",
+> new\server\routes\dashboard.py:566:        "fugitive": "venting",
+> new\server\routes\dashboard.py:567:        "fugitives": "venting",
+  new\server\routes\dashboard.py:568:    }
+  new\server\routes\dashboard.py:569:    for row in activity_data:
+  new\server\routes\dashboard.py:570:        yr = int(row.year)
+  new\server\routes\dashboard.py:571:        fid = getattr(row, "facility_id", "total")
+  new\server\routes\dashboard.py:572:        key = (yr, fid)
+  new\server\routes\dashboard.py:1792:                "total_flaring": 0,
+  new\server\routes\dashboard.py:1793:                "total_flaring_vol": 0,
+> new\server\routes\dashboard.py:1794:                "ch4_venting": 0,
+  new\server\routes\dashboard.py:1795:                "ch4_fugitive": 0,
+  new\server\routes\dashboard.py:1796:                "ch4_flaring": 0,
+  new\server\routes\dashboard.py:1797:                "ch4_combustion": 0,
+  new\server\routes\dashboard.py:1798:                "l3_emissions": 0,
+  new\server\routes\dashboard.py:1799:                "l4_emissions": 0,
+  new\server\routes\dashboard.py:1815:        ptype = (rec.process_type or "").lower().strip()
+  new\server\routes\dashboard.py:1816:        if "vent" in ptype:
+> new\server\routes\dashboard.py:1817:            em_map[fid]["ch4_venting"] += ch4
+  new\server\routes\dashboard.py:1818:        elif "fugitive" in ptype or "leak" in ptype:
+  new\server\routes\dashboard.py:1819:            em_map[fid]["ch4_fugitive"] += ch4
+  new\server\routes\dashboard.py:1820:        elif "flare" in ptype:
+  new\server\routes\dashboard.py:1821:            em_map[fid]["ch4_flaring"] += ch4
+  new\server\routes\dashboard.py:1822:        else:
+  new\server\routes\dashboard.py:1871:                "total_flaring": 0,
+  new\server\routes\dashboard.py:1872:                "total_flaring_vol": 0,
+> new\server\routes\dashboard.py:1873:                "ch4_venting": 0,
+  new\server\routes\dashboard.py:1874:                "ch4_fugitive": 0,
+  new\server\routes\dashboard.py:1875:                "ch4_flaring": 0,
+  new\server\routes\dashboard.py:1876:                "ch4_combustion": 0,
+  new\server\routes\dashboard.py:1877:                "l3_emissions": 0,
+  new\server\routes\dashboard.py:1878:                "l4_emissions": 0,
+  new\server\routes\dashboard.py:1929:                "total_flaring": 0,
+  new\server\routes\dashboard.py:1930:                "total_flaring_vol": 0,
+> new\server\routes\dashboard.py:1931:                "ch4_venting": 0,
+  new\server\routes\dashboard.py:1932:                "ch4_fugitive": 0,
+  new\server\routes\dashboard.py:1933:                "ch4_flaring": 0,
+  new\server\routes\dashboard.py:1934:                "ch4_combustion": 0,
+  new\server\routes\dashboard.py:1935:                "l3_emissions": 0,
+  new\server\routes\dashboard.py:1936:                "l4_emissions": 0,
+  new\server\routes\dashboard.py:1997:                "total_flaring": 0,
+  new\server\routes\dashboard.py:1998:                "total_flaring_vol": 0,
+> new\server\routes\dashboard.py:1999:                "ch4_venting": 0,
+  new\server\routes\dashboard.py:2000:                "ch4_fugitive": 0,
+  new\server\routes\dashboard.py:2001:                "ch4_flaring": 0,
+  new\server\routes\dashboard.py:2002:                "ch4_combustion": 0,
+  new\server\routes\dashboard.py:2003:                "l3_emissions": 0,
+  new\server\routes\dashboard.py:2004:                "l4_emissions": 0,
+  new\server\routes\dashboard.py:2229:                "top_down_tch4": top_down_tch4,
+  new\server\routes\dashboard.py:2230:                "reconciliation_ratio": reconciliation_ratio,
+> new\server\routes\dashboard.py:2231:                "ch4_venting": ed["ch4_venting"],
+  new\server\routes\dashboard.py:2232:                "ch4_fugitive": ed["ch4_fugitive"],
+  new\server\routes\dashboard.py:2233:                "ch4_flaring": ed["ch4_flaring"],
+  new\server\routes\dashboard.py:2234:                "ch4_combustion": ed["ch4_combustion"],
+  new\server\routes\dashboard.py:2235:                # Production
+  new\server\routes\dashboard.py:2236:                "total_boe": boe,
+
+
+

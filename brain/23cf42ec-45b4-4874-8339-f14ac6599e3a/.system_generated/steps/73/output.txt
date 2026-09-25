@@ -1,0 +1,21 @@
+The search for ""Table 6-5" "Well Completions with Hydraulic Fracturing" "scf" OR "tonnes" OR "kg" OR "Mscf"" returned the following summary:
+The information you are looking for is found in the **American Petroleum Institute's (API) *Compendium of Greenhouse Gas Emissions Methodologies for the Oil and Natural Gas Industry***[1][2].
+
+Specifically, **Table 6-5** is titled **"Well Completions with Hydraulic Fracturing Methane Emission Factors for Oil and Gas Exploration"**[1][2]. 
+
+This table provides emission factors used for estimating methane emissions from well completions, which are often expressed in units such as **standard cubic feet (scf)** or **mass-based units** (e.g., tonnes or kg) per completion[3][4][5].
+
+### Context and Usage:
+*   **Purpose:** The table is a standard reference for industry operators to quantify methane emissions during the completion phase of hydraulically fractured oil and gas wells[4][2].
+*   **Emission Factors:** It typically includes factors for both "uncontrolled" completions and those using Reduced Emission Completions (RECs)[4].
+*   **Units:** Data in these methodologies are frequently presented in both volume (e.g., **scf/completion**) and mass (e.g., **tonnes CH4/completion**) to accommodate different regulatory and reporting requirements[3][4].
+
+If you are consulting a specific version of the *Compendium* (such as the 2021 edition), you can find these values listed under the section dedicated to onshore oil and gas exploration and production[1][6].
+
+Sources:
+[1] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHQuZq0oBA3M6ev0EfzARRxRpsRr43dT7H45YpnlfXC8zr2KU2P7N8qDlUOJYs5ja3kOLnK2Uxqqff683_334UyG6rbLJcdy2_cj7N9k6kk-amno08NnpogsT9-A7POEgtElkVTasf4_30VbxU7uvhhpM52Z9QsC400kZXXFXpYKIvCo7v1-iii)
+[2] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHQuZq0oBA3M6ev0EfzARRxRpsRr43dT7H45YpnlfXC8zr2KU2P7N8qDlUOJYs5ja3kOLnK2Uxqqff683_334UyG6rbLJcdy2_cj7N9k6kk-amno08NnpogsT9-A7POEgtElkVTasf4_30VbxU7uvhhpM52Z9QsC400kZXXFXpYKIvCo7v1-iii)
+[3] [ogmpartnership.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHkQAqPVyFKNWz5dXGreRRdEmFeg0lPY-_esZGqGC_U2RdhMQTK9vIBm-M6XgOwQ1rjnhnB-4947deIVgx_QAkoHelNbLm5aY7qjjhNVKjF_-Bq1tTxMbfd3OA08t1nvgQU_aqlmzi2kNU1ibKB0O_iBgbEuVRH3oTxXcPUSwm7sDqiRv1oEFg=)
+[4] [scribd.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQE8qf_b9imzOo02oOyXOOLC3pfmTvm1cCDDAeNeqIZmtJ2A3Nlydd3jB3CrzQrD25aEapTHI0Bf3r6uAVVOr42a4vINeh1hmbpgMQ-hF7zmttg_ZrTzptkBA5sgPFVzFPC1RGBbV4-AnaM0xalHiyXoY7HSo0UzI8_JoZFjqvXtj9eDQCVpw5ar)
+[5] [ogmpartnership.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHkQAqPVyFKNWz5dXGreRRdEmFeg0lPY-_esZGqGC_U2RdhMQTK9vIBm-M6XgOwQ1rjnhnB-4947deIVgx_QAkoHelNbLm5aY7qjjhNVKjF_-Bq1tTxMbfd3OA08t1nvgQU_aqlmzi2kNU1ibKB0O_iBgbEuVRH3oTxXcPUSwm7sDqiRv1oEFg=)
+[6] [scribd.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQE8qf_b9imzOo02oOyXOOLC3pfmTvm1cCDDAeNeqIZmtJ2A3Nlydd3jB3CrzQrD25aEapTHI0Bf3r6uAVVOr42a4vINeh1hmbpgMQ-hF7zmttg_ZrTzptkBA5sgPFVzFPC1RGBbV4-AnaM0xalHiyXoY7HSo0UzI8_JoZFjqvXtj9eDQCVpw5ar)

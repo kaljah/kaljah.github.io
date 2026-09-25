@@ -1,0 +1,9 @@
+The search for "site:api.org "Table 6-5" "Well Completions with Hydraulic Fracturing"" returned the following summary:
+The reference to "Table 6-5: Well Completions with Hydraulic Fracturing Methane Emission Factors for Oil and Gas Exploration" is found in the **"Compendium of Greenhouse Gas Emissions Methodologies for the Natural Gas and Oil Industry"** published by the American Petroleum Institute (API)[1].
+
+This table is located within Section 6 of the Compendium, which covers "Process and Vented Emissions Estimation Methods"[1][2]. The document provides methodologies for the industry to consistently estimate direct greenhouse gas (GHG) emissions across the entire value chain[3].
+
+Sources:
+[1] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEuIeL7qGO5y-xY2lEiO_ODNgqHd3ricMmQgHwa7JyutVhH9ToXmOisj9hfbjjJVEteY2bH6wQ38F7ltisbcfwoO7TCBNNnJ2oiyUJ2spQSOeYXG112GoNvBAVgLpx_b8cPrdkBlPV1s66A0demkpykD6uNIo_75PhgRfuxV4wrAdQko42BLekqyA==)
+[2] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEuIeL7qGO5y-xY2lEiO_ODNgqHd3ricMmQgHwa7JyutVhH9ToXmOisj9hfbjjJVEteY2bH6wQ38F7ltisbcfwoO7TCBNNnJ2oiyUJ2spQSOeYXG112GoNvBAVgLpx_b8cPrdkBlPV1s66A0demkpykD6uNIo_75PhgRfuxV4wrAdQko42BLekqyA==)
+[3] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEuIeL7qGO5y-xY2lEiO_ODNgqHd3ricMmQgHwa7JyutVhH9ToXmOisj9hfbjjJVEteY2bH6wQ38F7ltisbcfwoO7TCBNNnJ2oiyUJ2spQSOeYXG112GoNvBAVgLpx_b8cPrdkBlPV1s66A0demkpykD6uNIo_75PhgRfuxV4wrAdQko42BLekqyA==)

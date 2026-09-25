@@ -1,0 +1,24 @@
+The search for ""Mud Degassing" "Table 6-2" "Water-based" "Oil-based" "drilling day"" returned the following summary:
+The information you are looking for comes from the **"Compendium of Greenhouse Gas Emissions Methodologies for the Oil and Natural Gas Industry"** (often published by the American Petroleum Institute, API)[1][2].
+
+**Table 6-2** in this document provides **Mud Degassing Vented Methane Emission Factors** for offshore well drilling[1][2]. The factors are typically categorized by the type of drilling mud used and are expressed in units per "drilling day"[1][3].
+
+### Emission Factors (Reference Data)
+According to the compendium, the default methane emission factors for mud degassing are[1][3]:
+
+| Drilling Mud Type | Tonnes CH₄ / Drilling Day | scf Gas / Drilling Day |
+| :--- | :--- | :--- |
+| **Water-based Mud** | 0.2605 | 16,223 |
+| **Oil-based Mud** | 0.0586 | 3,650 |
+| **Synthetic Mud** | 0.0586 | 3,650 |
+
+### Key Context
+*   **Purpose:** These factors are used to estimate methane emissions released during the drilling process when entrained gas is extracted from the drilling mud (mud degassing)[3][4].
+*   **Usage:** To calculate total emissions, these factors are multiplied by the number of drilling days[3]. Some methodologies allow for the adjustment of these defaults based on local gas composition or specific mud usage fractions within a basin[3].
+*   **Note on Variations:** While these are provided as national or industry defaults, technical documents emphasize that actual emissions can vary based on well type (oil vs. gas), geological conditions, and the specific composition of the vented gas[3].
+
+Sources:
+[1] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQH6l_RND1CILPu_cF40gEXKSsZE_kNDtddC7_zJtrWlJerYh6SPTF3_7zY3I4ZfUgDXvKkfZ4FmQ38f2XJHvIqQoh9p6WkABt0e6dtg4YzKYbfD1A4KQP8eWg3fc528s9Mh2wNPAmWc_jgwBBkPvVrloyjLkbj3m2MMf2MPN5ExoXysaGHox6_8tg==)
+[2] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQH6l_RND1CILPu_cF40gEXKSsZE_kNDtddC7_zJtrWlJerYh6SPTF3_7zY3I4ZfUgDXvKkfZ4FmQ38f2XJHvIqQoh9p6WkABt0e6dtg4YzKYbfD1A4KQP8eWg3fc528s9Mh2wNPAmWc_jgwBBkPvVrloyjLkbj3m2MMf2MPN5ExoXysaGHox6_8tg==)
+[3] [ca.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFedLUgC7yBggr8sWR4ZaBxRJWyEk7sjQxr2Xxebxris9otgfUr68yS_-hqQ0-CjSaJHpTt7kJVaKHpRnoln-mcWUEJ5VN42tdzuuq0wIwslDBx8gYsJTyJDMrniIxk6o8sawUj5BBFnwreI1wQB28AiNU=)
+[4] [ca.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFedLUgC7yBggr8sWR4ZaBxRJWyEk7sjQxr2Xxebxris9otgfUr68yS_-hqQ0-CjSaJHpTt7kJVaKHpRnoln-mcWUEJ5VN42tdzuuq0wIwslDBx8gYsJTyJDMrniIxk6o8sawUj5BBFnwreI1wQB28AiNU=)

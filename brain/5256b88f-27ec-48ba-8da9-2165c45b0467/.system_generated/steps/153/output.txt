@@ -1,0 +1,46 @@
+
+The command exited with code 0.
+Output:
+
+  new\server\emission_factors_api2021.py:418:# 
+=============================================================================
+  new\server\emission_factors_api2021.py:419:
+> new\server\emission_factors_api2021.py:420:VENTED_FACTORS = {
+  new\server\emission_factors_api2021.py:421:    "Natural Gas (Venting/Blowdown)": {
+  new\server\emission_factors_api2021.py:422:        "code": "NG_Vent",
+  new\server\emission_factors_api2021.py:423:        "co2": 0.054,  # kg CO�/m�
+  new\server\emission_factors_api2021.py:424:        "ch4": 0.67,  # kg CH4/m�
+  new\server\emission_factors_api2021.py:425:        "n2o": 0,
+  new\server\emission_factors_api2021.py:426:        "uncertainty": {"co2": 0.05, "ch4": 0.30, "n2o": 0.50},
+  new\server\emission_factors_api2021.py:427:        "unit": "kg/m�",
+  new\server\emission_factors_api2021.py:428:        "usage": ["venting"],
+  new\server\emission_factors_api2021.py:429:        "segment": "Upstream",
+  new\server\emission_factors_api2021.py:430:        "process_category": "venting",
+  new\server\emission_factors_api2021.py:431:        "type": "gases",
+  new\server\emission_factors_api2021.py:432:        "source": "API Compendium 2021 Section 6",
+  new\server\emission_factors_api2021.py:433:    },
+  new\server\emission_factors_api2021.py:434:    "Asphalt": {
+  new\server\emission_factors_api2021.py:435:        "code": "Asphalt",
+  new\server\emission_factors_api2021.py:590:    **COMBUSTION_FACTORS,
+  new\server\emission_factors_api2021.py:591:    **FLARING_FACTORS,
+> new\server\emission_factors_api2021.py:592:    **VENTED_FACTORS,
+  new\server\emission_factors_api2021.py:593:    **CHEMICAL_PRODUCTION_FACTORS,
+  new\server\emission_factors_api2021.py:594:    **N2O_PRODUCTION_FACTORS,
+  new\server\emission_factors_api2021.py:595:}
+  new\server\emission_factors_api2021.py:596:
+  new\server\emission_factors_api2021.py:597:# 
+=============================================================================
+  new\server\emission_factors_api2021.py:598:# SECTION 7: FUGITIVE & EQUIPMENT EMISSION FACTORS
+  new\server\emission_factors_api2021.py:599:# 
+=============================================================================
+  new\server\emission_factors_api2021.py:600:
+  new\server\emission_factors_api2021.py:601:EQUIPMENT_FACTORS = {
+  new\server\emission_factors_api2021.py:602:    # ========== PNEUMATIC DEVICES ==========
+  new\server\emission_factors_api2021.py:603:    "Pneumatic Controller - High Bleed (>6 scfh)": {
+  new\server\emission_factors_api2021.py:604:        "code": "HighBleed",
+  new\server\emission_factors_api2021.py:605:        "type": "pneumatic",
+  new\server\emission_factors_api2021.py:606:        "ch4": 8.304,  # tonnes CH4/controller/yr
+  new\server\emission_factors_api2021.py:607:        "co2": 0,
+
+
+

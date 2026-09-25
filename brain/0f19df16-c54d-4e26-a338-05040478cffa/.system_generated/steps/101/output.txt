@@ -1,0 +1,33 @@
+The search for ""Table 6-2" "API Compendium" "onshore" "water" "oil"" returned the following summary:
+The **API Compendium of Greenhouse Gas Emissions Estimation Methodologies for the Oil and Natural Gas Industry** (often referred to as the "API Compendium") is a widely used technical reference for estimating greenhouse gas (GHG) emissions across the industry's operations[1][2].
+
+Because there have been multiple versions of this document (e.g., 2009, 2021)[1][3][4], the contents of "Table 6-2" can vary depending on which edition you are referencing:
+
+*   **2009 Edition:** In several versions of the 2009 API Compendium, **Table 6-2** is titled **"Facility-Level Average Fugitive Emission Factors"**[5][6].
+*   **Other Contexts:**
+    *   Some documents referencing the API Compendium may use "Table 6-2" to refer to their own project-specific data (such as environmental assessments or GHG management plans) while citing the API Compendium elsewhere in the text[7][8][9].
+    *   In specific technical contexts related to mud degassing or other emissions, "Table 6-2" may refer to **"Mud Degassing Vented Methane Emission Factors for Oil and Natural Gas Exploration"** in certain versions[10].
+
+### Key Concepts Related to Your Query
+If you are researching **onshore oil** and **produced water** emissions, the API Compendium generally addresses these through:
+*   **Fugitive Emissions:** Estimation methods for leaks from valves, connectors, and other equipment at onshore production facilities[5][11].
+*   **Oil-Water Separators:** The Compendium provides guidance on estimating emissions from equipment like oil-water separators, where methane and other VOCs may be released during the treatment of produced fluids[12][11].
+*   **Produced Water:** Emissions from produced water handling (often involving storage tanks) are a common topic in the Compendium's sections regarding storage and processing[13][14].
+
+**Recommendation:** To ensure you are looking at the correct data, please verify the **publication year** of the API Compendium you are using. You can typically find the most recent version or technical corrections on the official American Petroleum Institute (API) website[1][3].
+
+Sources:
+[1] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFw2xQYMSybBoLOKRf_3O6j_nKaL80VP50R_P1_eJ6NAneAoF6dAW6BLUDOyC8-pTvOLEINsSSEsV4X9pmiEjq9m8iIImtN3-G8Za7bfnbPM750URpI901j-nYwMJutjO8Gtf3oT2d2JaLRs2pvhEnyYXLVK7LcGJ_TdUgtjjN6VmitNQ_EG1OBlQ==)
+[2] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHt2aKgGc2LNg4S1U6wKxllVGRpxl_BsKSsiSjgV13wu_khkeEdn2WjZb8UvVtI_gUfHs9JW3rkrFlKYWtWMAG5KNKtJR3LgfmEZNUdWnHbmy69_MyL2xB8NHbX9xxkn0qjA6-eqTFe0Lo7IwuG4d2EhXGUtDXM0thXz13Vitmc4FkSNKntKXkP16W2meMDZrzliBIsWCcz)
+[3] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQF5RlyqpgCUcLZ_Er1iMp7z7Vd4WCXDkOPgD-a7iTeU_qFpIZtyn6ziPnQOXmXDOHH38VIq4LHNmudypRyoKdHzD7UNvAies0HFInR_6cjDKNfoLxSZYxjYE0ns4dn-kTnAlMneocj6GzlK_Ti5XxjZAHGe8WBnDcHZ3wHbnsp9RPj6WIIAEEEzzW6EDrqgvnw=)
+[4] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHt2aKgGc2LNg4S1U6wKxllVGRpxl_BsKSsiSjgV13wu_khkeEdn2WjZb8UvVtI_gUfHs9JW3rkrFlKYWtWMAG5KNKtJR3LgfmEZNUdWnHbmy69_MyL2xB8NHbX9xxkn0qjA6-eqTFe0Lo7IwuG4d2EhXGUtDXM0thXz13Vitmc4FkSNKntKXkP16W2meMDZrzliBIsWCcz)
+[5] [ca.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEb1Uwp37VTmwKFc0A57tLgcl_NM9OfNthhYQlK1IsKk5hNx26bVtPzZ_h-sWjcGEf3EGnanOQatboXolY8Rr2vo5ImEiUJ3Hr4vxMuR3978FuenE7kOwJ7zjwcohO2Sldjoy5v6vuSu4MdV_OHhxwoMUJEtDhMlI9gQzOhdtWFtkvPWAE=)
+[6] [ca.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGP41kxX361arNXbiJa8lOI0JimHvsIMCYfAsrKTJZYFASWFokC78psviXWOuODxwsPtQEwkWacjThsyOEoTmZU34bDQxoVax8N7niElkiNJEmxfgp-g4wZ8q8aek8o3BL8nx1hXuct5r3W4jLTzF5HPxRwgAXNpQ==)
+[7] [narrabrigasproject.com.au](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFyNCPgIyqe9umL_p3YthJKyCBjzhI89ISA96P7B1DUVaao-Eo8cPQvXKCZWp3FbZSGuKHTJXgoYzoT9_WgkEhlYJUj6dxqTi2ATJr9HuRtpe3W4OJQcOWFywNmn3bP6OoC2HY7ScTIXX6_WtkKAmkZFJvat2rrXu-FEUzGCYG7p0I=)
+[8] [totalenergies.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGz0SxG47Ccr98YDK6pB4TWQ5zjgGtiSxrNZdT2g68O7nAmyuM8lfL3ECJJWuN71kEAjhFftjqqE1qBJlROSf3-ieZCmd0LDT0e6mlDLfK2WjiI9WHwI99eUX-EmQH5qeJWVNJ0YwPqQSZ-O2KuEjlbHQMaUYXZQXEZUpOSYe8KETX6J6-3rluThWr3zvVN6sB6pS494xMZ0Gz2bkYbsQ==)
+[9] [arrowenergy.com.au](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHrExGYVFVMaKoBoyiyAbcOiBJWvXOsvIhCVLgBQtuFuH5dHUAj_BrmLFQBqmvKig5zcURbMepSYytvppgSoob3vnjxgOT3mdQdTi8i7KgowVK3Ye1RSiIS3-Wz-Ahz4p7u5Qo4_6MoQ47uNeoTgxcqPEogG1bOFKxFJiz3iHvRrtx8-rCZl9iTEfGvXQwnPesLS1ogcLgNtzgg2z1YaRN0yOMCPuoLsZOWWcVQgUWSfMZIuq_RdWN7VRj2N3JCPQ==)
+[10] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFw2xQYMSybBoLOKRf_3O6j_nKaL80VP50R_P1_eJ6NAneAoF6dAW6BLUDOyC8-pTvOLEINsSSEsV4X9pmiEjq9m8iIImtN3-G8Za7bfnbPM750URpI901j-nYwMJutjO8Gtf3oT2d2JaLRs2pvhEnyYXLVK7LcGJ_TdUgtjjN6VmitNQ_EG1OBlQ==)
+[11] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHucSjf22yZRoXGQxTdaU3RQAA97j0WPKZVnN5u8e8wgAXIVX-EpaI8hiM9cRyd0B4Hu6RVZ8hvqD3JO6uW4YwRWYBY_aMFQ5h84XUtkFutkobs45UE7RkMjEmSDx9e1Jep0umJj6WO7s-AK7Xw5oYlC6G0Tmu7aTycHHntFvy-Z6h3V_85xrgz-fTMcHK7kA==)
+[12] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHucSjf22yZRoXGQxTdaU3RQAA97j0WPKZVnN5u8e8wgAXIVX-EpaI8hiM9cRyd0B4Hu6RVZ8hvqD3JO6uW4YwRWYBY_aMFQ5h84XUtkFutkobs45UE7RkMjEmSDx9e1Jep0umJj6WO7s-AK7Xw5oYlC6G0Tmu7aTycHHntFvy-Z6h3V_85xrgz-fTMcHK7kA==)
+[13] [ca.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEb1Uwp37VTmwKFc0A57tLgcl_NM9OfNthhYQlK1IsKk5hNx26bVtPzZ_h-sWjcGEf3EGnanOQatboXolY8Rr2vo5ImEiUJ3Hr4vxMuR3978FuenE7kOwJ7zjwcohO2Sldjoy5v6vuSu4MdV_OHhxwoMUJEtDhMlI9gQzOhdtWFtkvPWAE=)
+[14] [ca.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGP41kxX361arNXbiJa8lOI0JimHvsIMCYfAsrKTJZYFASWFokC78psviXWOuODxwsPtQEwkWacjThsyOEoTmZU34bDQxoVax8N7niElkiNJEmxfgp-g4wZ8q8aek8o3BL8nx1hXuct5r3W4jLTzF5HPxRwgAXNpQ==)

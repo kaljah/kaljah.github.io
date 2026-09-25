@@ -1,0 +1,33 @@
+The search for ""API Compendium" "uncertainty" "Table 6-2" OR "mud degassing" OR "drilling"" returned the following summary:
+The **API Compendium of Greenhouse Gas Emissions Estimation Methodologies for the Oil and Natural Gas Industry** (often referred to as the **API Compendium**) provides standardized methodologies and emission factors for various industry activities[1][2].
+
+### Mud Degassing and Drilling
+In the context of drilling, **mud degassing** is a recognized source of vented methane emissions[3][4][5].
+*   **Methodology:** The API Compendium includes specific procedures for estimating these emissions, typically found in sections discussing venting and exploration activities[2][6][4].
+*   **Emission Factors:** The Compendium provides default emission factors for mud degassing[7]. Notably, the 2021 edition adjusted earlier values to better reflect modern onshore drilling practices, such as borehole size and porosity[5].
+*   **Table References:** **Table 6-2** in several versions of the API Compendium is specifically titled or noted to contain **"Mud Degassing Vented Methane Emission Factors for Oil and Natural Gas Exploration"**[8][2][9].
+
+### Uncertainty
+The API Compendium emphasizes the importance of understanding data quality and uncertainty in emission inventories[1][10]:
+*   **Uncertainty Guidance:** The document generally provides uncertainty values for emission factors where they are available[11][12].
+*   **Supplementary Resources:** API, in collaboration with IPIECA, has developed separate **uncertainty guidelines** that provide detailed methods for calculating the uncertainty of various emission sources within the oil and gas sector[11][12].
+*   **Data Quality:** Users are encouraged to select methodologies based on data availability and the significance of the emission source, with the Compendium providing decision trees to assist in this selection[10].
+
+***
+
+*Disclaimer: Because there are multiple versions of the API Compendium (e.g., 2009, 2021), specific table numbers or section references may vary slightly between editions[13][5]. Always verify the version of the Compendium you are referencing against your specific reporting requirements.*
+
+Sources:
+[1] [ca.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEbPdg5GhF1Cuez2-3JGC57OXY6G-Fcx2vhMV4qNEtpkGWNNUrRtufaaNSKShhF00Uph4g_dKSWlK8QeI8HxzYD5LKaeekTjPPNDUPLpy3biaUCz9q9SWPnvonV1oZLVyum46xVOTHLRMSg3ODxW1mEQIlrtRUlzQ==)
+[2] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEvaU7hEnkCQLjX84SIj3R6eN2JXjrQs3CNf7hpO0td5qiZaMS-9uhtVBnhdxvYm_pf0a7a7dt_PD7dR1IkQw2WRo_HTLkPgQv75Gd2CBber0cOoy8BLWwd4zqmreVUSHikoubYz4_WO6XAEk3xBEXQeblKsr6d8XCyegYUr4Ew-zQpGaUkJDZdRQ==)
+[3] [kemdiktisaintek.go.id](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHaca_EbqJ2bfK_CPN-g2PwTztbAvD5pa1bxwMjIFiXDStU7NYY9OMZR7mkdIn4YcVxqQnuj2yRKsF1Cz-pA5Ks-GnIqU3za-8emuMCgulsYHYH7z6G0daQbqBZVVVdlxJSviHN4zWcT3zwZeiQOTk8f8BU)
+[4] [ogmpartnership.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFDdZou5l21kZ3LRt1UKIJvDyaklN1w28OuznomHBDyGT_Yz_uh3gS2Cf3eSIpeRoTDqziD_ihA-bhiV6-7Yu6nKK_HeYLTm2uqiUV8eiti3kak9YyvV-ek0u-Le2upmOss0ruXSdeylVfME5bBmgpKrq1JvdRvYqxWJSk_J8kqqxqTSptaBbVgRu5YkSzk8gnq6LHa)
+[5] [regulations.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQE3vA7l94yvanwaE8x3gOfc8NpvVBtLQLmtyvyoFViCFpodmTlQN_BSjjIt3WcfMq_cDRiaC9EALvOmdtC39ajWsZRss-qrkLazu07XCQkxpXEn_LKBP175uDdkqZZwIEl0LeMJWGH1wcxJc4_6Gu_HkT-SGg==)
+[6] [ca.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEVXbyW4Mgt9D53rVtZsFNbcaPCs_fHs8Dj1gC8lAzdGx2wg2q2TkQXPs9xdvsYDLDGU6uXjU0seEuPH_vuZi55AwDUb7jOM-o8mFOOZcEQIQ4EqNsPb_dwXLYPhXyMSNxwrxaZslzmn6a5C4zdeGTEYl9dlHKzngHd4u7m5L1FQbLYJTY=)
+[7] [epa.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGmMKKYx1bDzKDw6t5U42z0Qz5sC3DccvkIIeL3_D6n3hNF5Sbw_o3RS3VDcwp48znlHJyShIM8sZ3qMeuaBkf_XJOeFqiEGMmQe_TcS66Cv6WTrGG8ew7Y_AyW-9suKDTFi2Oa0GAwccU-kK2Zo_s7m_JzHE3lZxscXDKYMgqywIZ6cEpfP_R0p5k2-7hfdunoX61PTdLb)
+[8] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEvaU7hEnkCQLjX84SIj3R6eN2JXjrQs3CNf7hpO0td5qiZaMS-9uhtVBnhdxvYm_pf0a7a7dt_PD7dR1IkQw2WRo_HTLkPgQv75Gd2CBber0cOoy8BLWwd4zqmreVUSHikoubYz4_WO6XAEk3xBEXQeblKsr6d8XCyegYUr4Ew-zQpGaUkJDZdRQ==)
+[9] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEvaU7hEnkCQLjX84SIj3R6eN2JXjrQs3CNf7hpO0td5qiZaMS-9uhtVBnhdxvYm_pf0a7a7dt_PD7dR1IkQw2WRo_HTLkPgQv75Gd2CBber0cOoy8BLWwd4zqmreVUSHikoubYz4_WO6XAEk3xBEXQeblKsr6d8XCyegYUr4Ew-zQpGaUkJDZdRQ==)
+[10] [chevron.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGP9P0Qp8Y7UtCdaowMSpcE7SCQFw5B-dzQ6lE7zsx8BFDu9_yKufuYVEGWtNHPR4jqslJnaw-tGY2_SFtxm3oQqUCfry41_Aqu3EOM7nAzZZA0KOd1O4DHZpWwStFeqUVBFDbEQ59CN-hXp4KfSOR5Lhv8R2Onk-ml5_v-V02YO3qIxl2oxPStL3WqnkstDuII52tZb5_g6Hbpd8Da)
+[11] [nea.gov.sg](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEMTAYG4RcpkdVELdsx95uVkjWymRS8MbUvDvRIn_UkFASkBs3_OhRkU_JswTonvDbLwTSEint19qQetsqhzIRfksByI03PG5FRUPd31saLNMTpSNtvc-2zSnAELksgJFExPBh5957moE5Q82oQBgjN6WTCXpAhmRMsxk9NAcYwNJLC8dm7iGRI1Uyqi6UTbzkXXaL3FrNrO6juXfLYofae-qPFzExOYqNPsTN6BuXE6ClMNEq9U7QS8Ps4g9sR)
+[12] [smu.edu.sg](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQH2e_Yts0huxrBN5UUHIJ8uOsl3PMyN0_1Lglvs8R5SQD7Y2oCF6PELoc0agOqHaomlZIfDf3qMQttjtbJ7MgwVUNsCX9cs172049dJC6w4I0US3sejCYWKxXq-9jbhpMrIq-06hds-pBT2ztpK2yhVv5vtLmR4KUUj--07NolYfB1iGykkBCtY)
+[13] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQElD4kvP3TuCTVJj4DHnuVjbkAaQq16ou2qngWrQrrFlBGVH4tBsn7pT8CMpR4n75OwP-J7grG_mFMem4oZGFC9Ewup_YOEGHBf855ft5lbLQNAWHIIayK-PSZzKR-1bDh2NZW3kl3Oo7ZvOgWYgLSzp8K3dOYGOy9p8LDKzlumaOzeRfZjW01tNIT6AmjjSfPudIWOL5hW)

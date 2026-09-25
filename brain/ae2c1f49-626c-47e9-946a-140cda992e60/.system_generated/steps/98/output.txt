@@ -1,0 +1,47 @@
+
+The command exited with code 0.
+Output:
+
+  new\client\src\pages\DashboardEnhanced.jsx:95:    flaring: 0,
+> new\client\src\pages\DashboardEnhanced.jsx:96:    venting: 0,
+  new\client\src\pages\DashboardEnhanced.jsx:97:    other: 0,
+  new\client\src\pages\DashboardEnhanced.jsx:98:  });
+  new\client\src\pages\DashboardEnhanced.jsx:276:        flaring: 0,
+> new\client\src\pages\DashboardEnhanced.jsx:277:        venting: 0,
+  new\client\src\pages\DashboardEnhanced.jsx:278:        other: 0,
+  new\client\src\pages\DashboardEnhanced.jsx:279:        totalProductionBoe: 0,
+  new\client\src\pages\DashboardEnhanced.jsx:305:          totals.flaring += row.flaring || 0;
+> new\client\src\pages\DashboardEnhanced.jsx:306:          totals.venting += row.venting || 0;
+  new\client\src\pages\DashboardEnhanced.jsx:307:          totals.other += row.other || 0;
+  new\client\src\pages\DashboardEnhanced.jsx:308:          totals.methaneEmissions += row.ch4_total || 0;
+  new\client\src\pages\DashboardEnhanced.jsx:600:        {
+> new\client\src\pages\DashboardEnhanced.jsx:601:          name: "Venting",
+> new\client\src\pages\DashboardEnhanced.jsx:602:          value: Number((stats.venting ?? 0).toFixed(2)),
+  new\client\src\pages\DashboardEnhanced.jsx:603:          color: "#f59e0b",
+  new\client\src\pages\DashboardEnhanced.jsx:604:        },
+  new\client\src\pages\DashboardEnhanced.jsx:1591:                      <tr className="detail-row">
+> new\client\src\pages\DashboardEnhanced.jsx:1592:                        <td className="indent">Venting</td>
+  new\client\src\pages\DashboardEnhanced.jsx:1593:                        <td className="text-right">
+> new\client\src\pages\DashboardEnhanced.jsx:1594:                          {formatCompactNumber(stats.venting)}
+  new\client\src\pages\DashboardEnhanced.jsx:1595:                        </td>
+  new\client\src\pages\DashboardEnhanced.jsx:1596:                      </tr>
+  new\client\src\pages\MethaneExplorer.jsx:643:        ratio,
+> new\client\src\pages\MethaneExplorer.jsx:644:        deltaText: `Satellite top-down flux is +${pctExcess}% above 
+reported inventory. Possible fugitive venting or flare malfunction.`,
+  new\client\src\pages\MethaneExplorer.jsx:645:        color: "#f59e0b",
+  new\client\src\pages\MethaneExplorer.jsx:646:      };
+  new\client\src\pages\ReferenceData.jsx:238:          sec: "Section 6.4",
+> new\client\src\pages\ReferenceData.jsx:239:          desc: "Gas venting during liquids unloading operations",
+  new\client\src\pages\ReferenceData.jsx:240:        },
+  new\client\src\pages\ReferenceData.jsx:241:        {
+  new\client\src\pages\ReferenceData.jsx:256:          sec: "Section 6.12",
+> new\client\src\pages\ReferenceData.jsx:257:          desc: "CO� venting from AGR units",
+  new\client\src\pages\ReferenceData.jsx:258:        },
+  new\client\src\pages\ReferenceData.jsx:259:        {
+  new\client\src\pages\Reports.jsx:880:                    <option value="flaring">Flaring</option>
+> new\client\src\pages\Reports.jsx:881:                    <option value="venting">Venting</option>
+  new\client\src\pages\Reports.jsx:882:                    <option value="fugitive">Fugitive Emissions</option>
+  new\client\src\pages\Reports.jsx:883:                    <option value="pneumatic">Pneumatic Devices</option>
+
+
+

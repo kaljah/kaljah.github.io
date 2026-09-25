@@ -1,0 +1,16 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\ReferenceData.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -223,8 +223,8 @@
+         {
+           name: "Drilling - Mud Degassing",
+           cat: "Vented",
+-          sec: "Section 6.2",
+-          desc: "CH₄ emissions from drilling mud degassing",
++          sec: "Section 6.2 & 6.3",
++          desc: "CH₄ emissions from well drilling (Table 6-3) and mud degassing (Table 6-2)",
+         },
+         {
+           name: "Well Completions & Workovers",
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

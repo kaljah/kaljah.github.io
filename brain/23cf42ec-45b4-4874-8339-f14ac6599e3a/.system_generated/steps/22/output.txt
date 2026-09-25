@@ -1,0 +1,73 @@
+
+The command exited with code 0.
+Output:
+
+  new\server\calculations\dispatcher.py:41:            "non_routine_flaring": FlaringCalculator(),
+  new\server\calculations\dispatcher.py:42:            "safety_flaring": FlaringCalculator(),
+  new\server\calculations\dispatcher.py:43:            "flare": FlaringCalculator(),
+  new\server\calculations\dispatcher.py:44:            "drilling": MudDegassingCalculator(),
+  new\server\calculations\dispatcher.py:45:            "mud_degassing": MudDegassingCalculator(),
+> new\server\calculations\dispatcher.py:46:            "completions": CompletionFlowbackCalculator(),
+  new\server\calculations\dispatcher.py:47:            "completion_flowback": CompletionFlowbackCalculator(),
+  new\server\calculations\dispatcher.py:48:            "liquids_unloading": LiquidsUnloadingCalculator(),
+  new\server\calculations\dispatcher.py:49:            "unloading": LiquidsUnloadingCalculator(),
+  new\server\calculations\dispatcher.py:50:            "tank": TankFlashingCalculator(),
+  new\server\calculations\dispatcher.py:51:            "tank_flashing": TankFlashingCalculator(),
+  new\server\calculations\dispatcher.py:52:            "tank_working": TankFlashingCalculator(),
+  new\server\calculations\dispatcher.py:53:            "tank_breathing": TankFlashingCalculator(),
+  new\server\calculations\dispatcher.py:54:            "storage_tanks": TankFlashingCalculator(),
+  new\server\calculations\dispatcher.py:55:            "pneumatic_devices": PneumaticDeviceCalculator(),
+  new\server\calculations\dispatcher.py:56:            "pneumatic_device": PneumaticDeviceCalculator(),
+  new\server\calculations\dispatcher.py:57:            "pneumatics": PneumaticDeviceCalculator(),
+  new\server\calculations\dispatcher.py:58:            "pneumatic": PneumaticDeviceCalculator(),
+  new\server\calculations\dispatcher.py:59:            "fugitive_component": ComponentFugitiveCalculator(),
+  new\server\calculations\dispatcher.py:60:            "component_fugitive": ComponentFugitiveCalculator(),
+  new\server\calculations\dispatcher.py:61:            "equipment_fugitive": EquipmentFugitiveCalculator(),
+  new\server\calculations\dispatcher.py:62:            "wellhead_fugitive": EquipmentFugitiveCalculator(),
+  new\server\calculations\dispatcher.py:63:            "separator_fugitive": EquipmentFugitiveCalculator(),
+  new\server\calculations\dispatcher.py:64:            "gathering_boosting": EquipmentFugitiveCalculator(),
+  new\server\calculations\dispatcher.py:65:            "gas_processing": EquipmentFugitiveCalculator(),
+  new\server\calculations\dispatcher.py:66:            "transmission_storage": EquipmentFugitiveCalculator(),
+  new\server\calculations\dispatcher.py:67:            "refinery_fugitive": EquipmentFugitiveCalculator(),
+  new\server\calculations\dispatcher.py:68:            "distribution_fugitive": EquipmentFugitiveCalculator(),
+  new\server\calculations\dispatcher.py:69:            "lng_operations": EquipmentFugitiveCalculator(),
+  new\server\calculations\dispatcher.py:70:            "compressor_fugitive": CompressorSealCalculator(),
+  new\server\calculations\dispatcher.py:71:            "compressor_seal": CompressorSealCalculator(),
+  new\server\calculations\dispatcher.py:600:                        uncertainties=uncertainties,
+  new\server\calculations\dispatcher.py:601:                        ef_ch4=emission_factors.get("ch4", 0),
+  new\server\calculations\dispatcher.py:602:                        gwp_dict=gwp_dict,
+  new\server\calculations\dispatcher.py:603:                    )
+  new\server\calculations\dispatcher.py:604:
+> new\server\calculations\dispatcher.py:605:            elif process_type == "completions":
+  new\server\calculations\dispatcher.py:606:                comp_method = (
+  new\server\calculations\dispatcher.py:607:                    flat_inputs.get("comp_method")
+  new\server\calculations\dispatcher.py:608:                    or flat_inputs.get("calc_method")
+  new\server\calculations\dispatcher.py:609:                    or flat_inputs.get("calculation_method", 
+"metered_volume")
+  new\server\calculations\dispatcher.py:610:                )
+  new\server\calculations\dispatcher.py:611:                events_val = float(
+  new\server\calculations\dispatcher.py:612:                    flat_inputs.get("events")
+  new\server\calculations\dispatcher.py:613:                    or flat_inputs.get("num_events")
+  new\server\calculations\dispatcher.py:614:                    or (flat_inputs.get("amount") if str(unit).lower() in 
+["count", "event", "events"] else 1.0)
+  new\server\calculations\dispatcher.py:615:                    or 1.0
+  new\server\calculations\dispatcher.py:616:                )
+  new\server\calculations\dispatcher.py:617:                gas_sales_mcf = 
+float(flat_inputs.get("comp_gas_produced_mcf") or 0.0)
+  new\server\calculations\dispatcher.py:618:                gas_sales_scf = gas_sales_mcf * 1000.0
+  new\server\calculations\dispatcher.py:619:
+  new\server\calculations\dispatcher.py:620:                vol_m3 = 0.0
+  new\server\calculations\dispatcher.py:621:                if comp_method == "metered_volume" or (
+  new\server\calculations\dispatcher.py:622:                    not flat_inputs.get("comp_rate")
+  new\server\calculations\dispatcher.py:623:                    and not flat_inputs.get("comp_liquid_bbl")
+  new\server\calculations\dispatcher.py:624:                ):
+  new\server\calculations\dispatcher.py:625:                    vol_raw = self._require_float(
+  new\server\calculations\dispatcher.py:626:                        flat_inputs,
+  new\server\calculations\dispatcher.py:627:                        ["amount", "quantity", "flowback_volume", 
+"comp_volume"],
+  new\server\calculations\dispatcher.py:628:                        "flowback volume",
+  new\server\calculations\dispatcher.py:629:                    )
+  new\server\calculations\dispatcher.py:630:                    vol_m3 = self._normalize_volume(vol_raw, unit, "m3")
+
+
+

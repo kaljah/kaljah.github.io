@@ -1,0 +1,46 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\emission_factors.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -191,12 +191,15 @@
+     "Liquids Unloading - Plunger Lift": {
+         "code": "UnloadPlunger",
+         "type": "unloading",
+-        "ch4": 0.1,
+-        "factor": 0.1,
+-        "unit": "tonnes/event",
+-        "usage": ["unloading"],
+-        "description": "Average per event",
+-        "uncertainty": {"co2": 0.0, "ch4": 0.25, "n2o": 0.0},
++        "ch4": 1.774,
++        "factor": 1.774,
++        "whole_gas_ef": 113466.0,
++        "ch4_mol_pct": 81.6,
++        "unit": "tonnes CH4/well-year",
++        "baseUnit": "wells",
++        "usage": ["unloading", "liquids_unloading", "vented"],
++        "description": "API Table 6-11: Liquid Unloading Vented Emission Factor, plunger lift (1,774 kg CH4/well-year)",
++        "uncertainty": {"co2": 0.50, "ch4": 0.50, "n2o": 0.50},
+     },
+     "Liquids Unloading - Non-Plunger": {
+         "code": "UnloadNonPlunger",
+@@ -203,9 +203,12 @@
+-        "ch4": 0.2,
+-        "factor": 0.2,
+-        "unit": "tonnes/event",
+-        "usage": ["unloading"],
+-        "description": "Average per event",
+-        "uncertainty": {"co2": 0.0, "ch4": 0.25, "n2o": 0.0},
++        "ch4": 2.792,
++        "factor": 2.792,
++        "whole_gas_ef": 178531.0,
++        "ch4_mol_pct": 81.6,
++        "unit": "tonnes CH4/well-year",
++        "baseUnit": "wells",
++        "usage": ["unloading", "liquids_unloading", "vented"],
++        "description": "API Table 6-11: Liquid Unloading Vented Emission Factor, non-plunger (2,792 kg CH4/well-year)",
++        "uncertainty": {"co2": 0.50, "ch4": 0.50, "n2o": 0.50},
+     },
+     "Propane (Liquid)": {
+         "code": "LPG_Liq",
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

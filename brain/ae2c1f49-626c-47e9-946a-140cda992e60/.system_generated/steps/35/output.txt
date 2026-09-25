@@ -1,0 +1,37 @@
+
+The command exited with code 0.
+Output:
+Total pages: 898
+Page 7: Associated Gas match: iii November 2021
+4.9 References ............................................................................................. 4-64
+5.0 WASTE GAS DI...
+Page 15: Table 6-8 found!
+Page 15: Associated Gas match: iii November 2021
+Table 5-4. Flaring Emission Factors for Natural Gas Systems by Segment and 
+Source...................................................
+Page 238: Associated Gas match: Section 6. Process and Vented Emission Estimation Methods 
+6-ii November 2021
+TABLE OF CONTENTS
+6.0 PROCESS AND VENTED EMISSIONS ESTIMATION METHODS...
+Page 240: Table 6-8 found!
+Page 240: Associated Gas match: Section 6. Process and Vented Emission Estimation Methods 
+6-iv November 2021
+List of Tables
+Table 6-1. Emission Estimation Approaches � GHG and So...
+Page 259: Associated Gas match: Section 6. Process and Vented Emission Estimation Methods 
+6-17 November 2021
+4
+4
+6 44
+CH
+4
+CH 4
+lbmole gas 0.887 lbmole CH 16 lb CH tonne E 1...
+Page 261: Associated Gas match: Section 6. Process and Vented Emission Estimation Methods 
+6-19 November 2021
+EXHIBIT 6-5: Sample Calculation for Non-Continuous Associated Gas Vent...
+Page 262: Table 6-8 found!
+Page 262: Associated Gas match: Section 6. Process and Vented Emission Estimation Methods 
+6-20 November 2021
+EXHIBIT 6-6: Sample Calculation for Continuous Associated Gas Venting...
+

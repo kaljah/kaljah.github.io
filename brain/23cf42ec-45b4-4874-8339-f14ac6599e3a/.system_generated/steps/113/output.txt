@@ -1,0 +1,47 @@
+
+The command exited with code 0.
+Output:
+
+  validation\reference_model\vented_processes.py:198:            ch4=ch4_t, co2=co2_t, standard=gwp_standard, 
+horizon=gwp_horizon
+  validation\reference_model\vented_processes.py:199:        )
+  validation\reference_model\vented_processes.py:200:        return {"ch4": ch4_t, "co2": co2_t, "n2o": 0.0, "co2e": 
+co2e, **inputs_meta}
+  validation\reference_model\vented_processes.py:201:
+  validation\reference_model\vented_processes.py:202:
+> validation\reference_model\vented_processes.py:203:class IndependentCompletions:
+  validation\reference_model\vented_processes.py:204:    @staticmethod
+  validation\reference_model\vented_processes.py:205:    def calculate(
+  validation\reference_model\vented_processes.py:206:        method="metered_volume",
+  validation\reference_model\vented_processes.py:207:        flowback_volume=None,
+  validation\reference_model\vented_processes.py:208:        volume_unit="m3",
+  validation\reference_model\vented_processes.py:209:        flowback_rate=None,
+  validation\reference_model\vented_processes.py:210:        duration_hours=None,
+  validation\reference_model\vented_processes.py:211:        liquid_bbl=None,
+  validation\reference_model\vented_processes.py:212:        gor=None,
+  validation\reference_model\vented_processes.py:213:        ch4_content=0.85,
+  validation\reference_model\vented_processes.py:214:        co2_content=0.0,
+  validation\reference_model\vented_processes.py:215:        control_efficiency=0.0,
+  validation\reference_model\vented_processes.py:216:        hhv=1020.0,
+  validation\reference_model\vented_processes.py:217:        ef_n2o=0.0001,
+  validation\reference_model\vented_processes.py:218:        gwp_standard="AR5",
+  validation\reference_model\vented_processes.py:219:        gwp_horizon="100",
+  validation\reference_model\vented_processes.py:220:    ):
+  validation\reference_model\vented_processes.py:221:        m = str(method or "metered_volume").lower().strip()
+  validation\reference_model\vented_processes.py:222:        if m == "rate_duration" and flowback_rate and 
+duration_hours:
+  validation\reference_model\vented_processes.py:223:            rate_scf_hr = (float(flowback_rate) * 1000.0) / 24.0
+  validation\reference_model\vented_processes.py:224:            scf = rate_scf_hr * float(duration_hours)
+  validation\reference_model\vented_processes.py:225:            total_gas_m3 = scf * 0.028316846592
+  validation\reference_model\vented_processes.py:226:        elif m == "gor_liquid" and liquid_bbl and gor:
+  validation\reference_model\vented_processes.py:227:            scf = float(liquid_bbl) * float(gor)
+  validation\reference_model\vented_processes.py:228:            total_gas_m3 = scf * 0.028316846592
+  validation\reference_model\vented_processes.py:229:        else:
+  validation\reference_model\vented_processes.py:230:            total_gas_m3 = 
+IndependentUnitConverter.convert(flowback_volume, volume_unit, "m3")
+  validation\reference_model\vented_processes.py:231:
+  validation\reference_model\vented_processes.py:232:        c1 = float(ch4_content or 0.85)
+  validation\reference_model\vented_processes.py:233:        if c1 > 1.0:
+
+
+

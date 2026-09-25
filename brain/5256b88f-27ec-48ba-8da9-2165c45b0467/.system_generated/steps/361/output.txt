@@ -1,0 +1,8 @@
+
+The command exited with code 0.
+Output:
+dashboard.py:556: SOURCE_MAP = {
+dashboard.py:581: for pattern, category in SOURCE_MAP.items():
+reports.py:1011: OGMP_SOURCE_MAP = {
+reports.py:1063: ogmp_cat = OGMP_SOURCE_MAP.get((em.process_type or "").lower(), "Other")
+

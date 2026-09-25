@@ -1,0 +1,17 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\components\Scope1Form.jsx:1286:          desc: `Calculated direct chemical emission masses using 
+${fSource} methodology:`,
+new\client\src\components\Scope1Form.jsx:1954:                            {/* Live Calculation Preview & Data Quality 
+Badge */}
+new\client\src\components\Scope1Form.jsx:1955:                            <div className="tier2-preview-badge">
+new\client\src\components\Scope1Form.jsx:2098:                          Calculate from Analysis
+new\client\src\components\Scope1Form.jsx:2629:            {submitting ? "Processing..." : "+ Calculate & Submit for 
+Review"}
+new\client\src\components\Scope1Form.jsx:2639:            toast.success("Records imported and calculated 
+successfully!");
+
+
+

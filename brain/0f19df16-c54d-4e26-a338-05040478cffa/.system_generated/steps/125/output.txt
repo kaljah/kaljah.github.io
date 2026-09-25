@@ -1,0 +1,24 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\uncertainty.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -504,7 +504,17 @@
+         "t3",
+     ]:
+         return Tier.T3
+-    if fs in ["custom", "regional", "tier2", "tier_2", "t2"]:
++    if fs in [
++        "custom",
++        "regional",
++        "tier2",
++        "tier_2",
++        "t2",
++        "tier2_plus",
++        "tier_2_plus",
++        "tier2+",
++        "tier_2+",
++    ]:
+         return Tier.T2
+     return Tier.T1  # 'default' or unknown → Tier 1
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

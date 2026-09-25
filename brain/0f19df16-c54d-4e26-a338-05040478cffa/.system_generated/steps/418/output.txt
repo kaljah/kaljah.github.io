@@ -1,0 +1,23 @@
+The search for ""Table 6-2" "API Compendium" "onshore" "offshore" "water" "oil" "drilling"" returned the following summary:
+In the **API *Compendium of Greenhouse Gas Emissions Methodologies for the Oil and Natural Gas Industry***, **Table 6-2** is frequently referenced in the context of emissions factors for oil and natural gas operations[1][2].
+
+Specifically, in versions of the *Compendium*, **Table 6-2** has been titled **"Mud Degassing Vented Methane Emission Factors for Oil and Natural Gas Exploration"**[1].
+
+### Context and Usage
+*   **Purpose:** The *API Compendium* provides internationally accepted methodologies for estimating greenhouse gas (GHG) emissions across all sectors of the oil and natural gas industry, from exploration and production to refining and distribution[3][4].
+*   **Drilling/Exploration:** Table 6-2 specifically addresses methane emissions that occur during the "mud degassing" process, which is a standard procedure in drilling operations to remove entrained gases from drilling fluids[1].
+*   **Variations:** Please note that table numbering and titles can occasionally vary between different editions (e.g., the 2009 edition vs. the 2021 edition)[5][6]. In some earlier or alternative contexts within the *Compendium*, Table 6-2 has also been associated with "Facility-Level Average Fugitive Emission Factors"[7][8]. 
+
+If you are looking for specific data points regarding **onshore** vs. **offshore** emissions, these are typically categorized within the drilling and production sections of the *Compendium*, where emission factors are often disaggregated based on the type of facility, operational phase, or equipment involved[3][9][10].
+
+Sources:
+[1] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEzyJVjpfGAxCBKMWZ0AlQQD2qbfYEMEa8IZXyVxCCJJELb2u0geK_f4EbBcQ9qADKLzImS_ny3bo2i7mVDOjT7S-dykgm0BRpsobl0EqLVN1uqkV7O2vAYZalQAxt5wSHvkuEFOZ5V5m3r1qeBk2P4R3wj0_Nacx2dNAFwGKqOMNBivZn9AQ90)
+[2] [smu.edu.sg](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGJNEl-VqP5cx7ycaJeiN1tgSpfhcSWYZ_vlJMUoeH7pIYDMRmI1cjJ16ig3Dh7xqA8qC0wwYr4bwpPgtZHITlFnNzV_MjC9Dyf7ySh5L2wKjnvteHrakUH1AU89PpZ48Y1A6IXsO_NxeK754V53B-LMcMOg7xCycREupfBxvUgWNklBPhRRpY=)
+[3] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQG2OIIa9AG2x9Bkq0HwPEAKRPvkC9oJcTM0OAvKpukBURcfVcuOLgzAEnHalR6Mgu8eoaoZMM7dTjxveo4RkCFhIlvyYaRORYdgawwoFmamcO4QO5RxQtnD71IKlqMrbTHiFw3S5cjVCEca17ZW1_iHiTPHOouzfBRt2-Dsnh9M9uipyfCWdfKpDo98p11hGVtmSSTrBW0=)
+[4] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQG2OIIa9AG2x9Bkq0HwPEAKRPvkC9oJcTM0OAvKpukBURcfVcuOLgzAEnHalR6Mgu8eoaoZMM7dTjxveo4RkCFhIlvyYaRORYdgawwoFmamcO4QO5RxQtnD71IKlqMrbTHiFw3S5cjVCEca17ZW1_iHiTPHOouzfBRt2-Dsnh9M9uipyfCWdfKpDo98p11hGVtmSSTrBW0=)
+[5] [ca.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQF-WPA7dZqmk8SRYJsF07guOSXOh3atu7sjytefrhWUMitHTCz4c-gx3mYxAElIuvWrcBDVNApILxSEnDgEIauYDfl8OckwBQ-C-5E_U45LVngJjAHjPQmUadX0BdFcM9vMoc_vSuP5Ukgm1nhBMIC3F7D9utXg)
+[6] [listcorp.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGUuA4e5JrdfX0T601NBQOUXuHpk5vPLXnedzADBkdCR7-_KQT3embrSICHxkS8_Ii7EGYI5u-ADlbZf_o-cgiE67vO-1YSbIGbt8hSohgv_fUEImHj96ktJzQmxzzm_uxVDi8ufSXbfcRJLMJ64pACJWK3WjWhUAaIq2zlGrfcUDKNjsm1xz5MD6nwXfbCSAEFegQWzoLL4ihHTINrUKfmCbbccws=)
+[7] [ca.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFEcILdNcpCrGV5C4rwYOdSe6MGW_BimGlUS1vG7pRkWwlxVp4scMaP9mMKXXb_XuIHTUSVkZiNBgTnFwEC2AkUCBSoW86txBuo0cWtIZbJlihBnIJ5wezLFwCPBkhOp62wGPIjeICJYlYf5efjclgT8zoOG9JepGlHC4bN7d-hcQRGtg==)
+[8] [ca.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQF-WPA7dZqmk8SRYJsF07guOSXOh3atu7sjytefrhWUMitHTCz4c-gx3mYxAElIuvWrcBDVNApILxSEnDgEIauYDfl8OckwBQ-C-5E_U45LVngJjAHjPQmUadX0BdFcM9vMoc_vSuP5Ukgm1nhBMIC3F7D9utXg)
+[9] [totalenergies.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGuPnbUVzp-QpKhOctOYaxb31giTB1K_HNYKyvj-04JAYH7zaKKEAyuhYzEOY38lXXGrFmaQD6_OqEAP0HXfaf9IZJnuGPzmf7prrbssk4dqvAqkFKg0MxcjY0G5B9p1X3RVAKcQhhCWHm55LhpH2p5vk0rjE1fxFhngYhxy1DtPFY5u0QsOpMBQk5zijpJrjD-xWathzWwa5ECEEiQ)
+[10] [totalenergies.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGuPnbUVzp-QpKhOctOYaxb31giTB1K_HNYKyvj-04JAYH7zaKKEAyuhYzEOY38lXXGrFmaQD6_OqEAP0HXfaf9IZJnuGPzmf7prrbssk4dqvAqkFKg0MxcjY0G5B9p1X3RVAKcQhhCWHm55LhpH2p5vk0rjE1fxFhngYhxy1DtPFY5u0QsOpMBQk5zijpJrjD-xWathzWwa5ECEEiQ)

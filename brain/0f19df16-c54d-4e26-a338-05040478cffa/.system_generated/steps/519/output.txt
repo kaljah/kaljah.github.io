@@ -1,0 +1,36 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\validation\reference_model\vented_processes.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -68,9 +68,9 @@
+ class IndependentMudDegassing:
+     TIER1_WELL_EF = 0.0524  # Table 6-3: tonnes CH4 / well
+     TABLE_6_2_ONSHORE = {
+-        "water_based": 0.2605,
+-        "oil_based": 0.0586,
+-        "synthetic": 0.0586,
++        "water_based": 0.0458,
++        "oil_based": 0.0103,
++        "synthetic": 0.0103,
+     }
+     DEFAULT_CH4_CONCENTRATION = 0.8385
+ 
+@@ -137,7 +137,7 @@
+             ef = float(
+                 custom_ef
+                 if custom_ef is not None and float(custom_ef) > 0
+-                else IndependentMudDegassing.TABLE_6_2_ONSHORE.get(norm_type, 0.2605)
++                else IndependentMudDegassing.TABLE_6_2_ONSHORE.get(norm_type, 0.0458)
+             )
+             ch4_t = dd * ef
+             co2_t = 0.0
+@@ -161,7 +161,7 @@
+             ef = float(
+                 custom_ef
+                 if custom_ef is not None and float(custom_ef) > 0
+-                else IndependentMudDegassing.TABLE_6_2_ONSHORE.get(norm_type, 0.2605)
++                else IndependentMudDegassing.TABLE_6_2_ONSHORE.get(norm_type, 0.0458)
+             )
+             x_ch4 = float(
+                 ch4_concentration
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

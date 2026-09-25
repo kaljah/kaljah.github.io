@@ -1,0 +1,75 @@
+
+The command exited with code 0.
+Output:
+
+  new\server\calculations\vented.py:1:"""
+  new\server\calculations\vented.py:2:API Compendium 2021 - Section 6: Vented and Process Emissions
+> new\server\calculations\vented.py:3:Implementation of equations for mud degassing, completions, liquids unloading, 
+  new\server\calculations\vented.py:4:blowdowns (with thermodynamic T & P corrections), tanks, and pneumatics.
+  new\server\calculations\vented.py:5:"""
+  new\server\calculations\vented.py:6:
+  new\server\calculations\vented.py:7:from .base import BaseCalculator
+  new\server\calculations\vented.py:8:from .units import (
+  new\server\calculations\vented.py:9:    CONVERSIONS,
+  new\server\calculations\vented.py:10:    calculate_co2e,
+  new\server\calculations\vented.py:11:    convert,
+  new\server\calculations\vented.py:12:    to_psia,
+  new\server\calculations\vented.py:13:    to_kelvin,
+  new\server\calculations\vented.py:14:    STD_TEMP_K,
+  new\server\calculations\vented.py:15:    STD_PRESSURE_PSIA,
+  new\server\calculations\vented.py:16:    normalize_efficiency,
+  new\server\calculations\vented.py:17:)
+  new\server\calculations\vented.py:18:from .uncertainty import (
+  new\server\calculations\vented.py:342:            total_co2e=total_co2e,
+  new\server\calculations\vented.py:343:            inputs=inputs_used,
+  new\server\calculations\vented.py:344:        )
+  new\server\calculations\vented.py:345:
+  new\server\calculations\vented.py:346:
+> new\server\calculations\vented.py:347:class CompletionFlowbackCalculator(BaseCalculator):
+  new\server\calculations\vented.py:348:    def __init__(self):
+> new\server\calculations\vented.py:349:        super().__init__("Well Completion Flowback", "Section 6.3")
+  new\server\calculations\vented.py:350:
+  new\server\calculations\vented.py:351:    def calculate(
+  new\server\calculations\vented.py:352:        self,
+  new\server\calculations\vented.py:353:        flowback_volume=None,
+  new\server\calculations\vented.py:354:        ch4_content=0.85,
+  new\server\calculations\vented.py:355:        control_efficiency=0.0,
+  new\server\calculations\vented.py:356:        uncertainties=None,
+  new\server\calculations\vented.py:357:        co2_content=0.0,
+  new\server\calculations\vented.py:358:        ef_co2=None,
+  new\server\calculations\vented.py:359:        ef_ch4=None,
+  new\server\calculations\vented.py:360:        ef_n2o=None,
+  new\server\calculations\vented.py:361:        calculation_method="metered_volume",
+  new\server\calculations\vented.py:362:        flowback_rate=None,
+  new\server\calculations\vented.py:363:        flowback_duration_hours=None,
+  new\server\calculations\vented.py:364:        liquid_flowback_bbl=None,
+  new\server\calculations\vented.py:370:        events=1.0,
+  new\server\calculations\vented.py:371:        gas_produced_sales_scf=0.0,
+  new\server\calculations\vented.py:372:        rate_unit="mscf/day",
+  new\server\calculations\vented.py:373:    ):
+  new\server\calculations\vented.py:374:        """
+> new\server\calculations\vented.py:375:        API Compendium 2021 �6.3 & EPA Subpart W �98.233(c) Completions & 
+Workovers Flowback:
+  new\server\calculations\vented.py:376:        Supports 3 rigorous calculation methodologies:
+  new\server\calculations\vented.py:377:        1. 'metered_volume': Direct standard gas volume measurement (scf or 
+m3).
+  new\server\calculations\vented.py:378:        2. 'rate_duration': Flowback rate (Mcf/day or Mcf/hr) * duration 
+(hours) * events.
+  new\server\calculations\vented.py:379:        3. 'gor' / 'gor_liquid': Liquid flowback volume (bbl) * GOR (scf/bbl) 
+* events - sales gas.
+  new\server\calculations\vented.py:380:        """
+  new\server\calculations\vented.py:381:        uncertainties = uncertainties or {}
+  new\server\calculations\vented.py:382:
+  new\server\calculations\vented.py:383:        # Determine standard gas volume (in m3) based on selected method
+  new\server\calculations\vented.py:384:        method = str(calculation_method).lower()
+  new\server\calculations\vented.py:385:        total_gas_scf = 0.0
+  new\server\calculations\vented.py:386:        num_events = float(events if events is not None else 1.0)
+  new\server\calculations\vented.py:387:
+  new\server\calculations\vented.py:388:        if method == "rate_duration" and flowback_rate and 
+flowback_duration_hours:
+  new\server\calculations\vented.py:389:            rate_unit_norm = str(rate_unit or "mscf/day").lower().strip()
+  new\server\calculations\vented.py:390:            multiplier = 1000.0 if ("mscf" in rate_unit_norm or "mcf" in 
+rate_unit_norm) else (1_000_000.0 if "mmscf" in rate_unit_norm else 1.0)
+
+
+

@@ -1,0 +1,47 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\vented.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -142,7 +142,12 @@
+ 
+     def calculate(
+         self,
+-        tier="tier1",
++        wells_or_tier=None,
++        mud_type_or_wells=None,
++        uncertainties=None,
++        ef_ch4=None,
++        gwp_dict=None,
++        tier=None,
+         wells=None,
+         drilling_days=None,
+         mud_type="water_based",
+@@ -149,7 +149,4 @@
+         co2_concentration=None,
+-        uncertainties=None,
+-        ef_ch4=None,
+-        gwp_dict=None,
+         mud_volume=None,
+     ):
+         """
+@@ -157,6 +157,19 @@
+         - Tier 2 (Table 6-2): Mud-specific onshore EF: drilling days × mud EF (water: 0.2605, oil: 0.0586 t CH4/day)
+         - Tier 2+ (Table 6-2 + Gas Composition): DD × EF × (X_CH4,site / 83.85%) [+ CO2 if X_CO2,site provided]
+         """
++        # Flexible argument unpacking to support legacy positional calls:
++        if isinstance(wells_or_tier, (int, float)) and not isinstance(wells_or_tier, bool):
++            if wells is None and drilling_days is None and mud_volume is None:
++                wells = float(wells_or_tier)
++        elif isinstance(wells_or_tier, str):
++            if tier is None:
++                tier = wells_or_tier
++
++        if isinstance(mud_type_or_wells, str):
++            mud_type = mud_type_or_wells
++        elif isinstance(mud_type_or_wells, dict) and uncertainties is None:
++            uncertainties = mud_type_or_wells
++
+         uncertainties = uncertainties or {}
+ 
+         # Determine calculation tier mode
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

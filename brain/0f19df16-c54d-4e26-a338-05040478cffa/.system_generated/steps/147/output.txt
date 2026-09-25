@@ -1,0 +1,152 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\validation\reference_model\vented_processes.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -66,14 +66,138 @@
+ 
+ 
+ class IndependentMudDegassing:
+-    @staticmethod
+-    def calculate(mud_volume, mud_unit="m3", mud_type="water_based", custom_ef=None, gwp_standard="AR5", gwp_horizon="100"):
+-        vol_m3 = IndependentUnitConverter.convert(mud_volume, mud_unit, "m3")
+-        factors = {"water_based": 0.15, "oil_based": 0.35, "synthetic": 0.25}
+-        ef = float(custom_ef if custom_ef is not None and float(custom_ef) > 0 else factors.get(mud_type, 0.25))
+-        ch4_t = (vol_m3 * ef) / 1000.0
+-        co2e = IndependentGWPModel.calculate_co2e(ch4=ch4_t, standard=gwp_standard, horizon=gwp_horizon)
+-        return {"ch4": ch4_t, "co2": 0.0, "n2o": 0.0, "co2e": co2e, "mud_volume_m3": vol_m3, "ef_used": ef}
++    TIER1_WELL_EF = 0.0524  # Table 6-3: tonnes CH4 / well
++    TABLE_6_2_ONSHORE = {
++        "water_based": 0.2605,
++        "oil_based": 0.0586,
++        "synthetic": 0.0586,
++    }
++    DEFAULT_CH4_CONCENTRATION = 0.8385
++
++    @staticmethod
++    def calculate(
++        tier="tier1",
++        wells=None,
++        drilling_days=None,
++        mud_type="water_based",
++        ch4_concentration=None,
++        co2_concentration=None,
++        custom_ef=None,
++        gwp_standard="AR5",
++        gwp_horizon="100",
++        mud_volume=None,
++        mud_unit="m3",
++    ):
++        raw_tier = str(tier or "tier1").lower().strip()
++        if (
++            raw_tier in ["tier2_plus", "tier_2_plus", "tier2+", "tier_2+"]
++            or (
++                ch4_concentration is not None
++                and (
++                    float(ch4_concentration)
++                    != IndependentMudDegassing.DEFAULT_CH4_CONCENTRATION
++                    or (co2_concentration is not None and float(co2_concentration) > 0)
++                )
++            )
++        ):
++            tier_mode = "tier2_plus"
++        elif (
++            raw_tier in ["tier2", "tier_2", "custom", "t2"]
++            or (drilling_days is not None and wells is None)
++        ):
++            tier_mode = "tier2"
++        else:
++            tier_mode = "tier1"
++
++        if tier_mode == "tier1":
++            w = float(
++                wells
++                if wells is not None
++                else (drilling_days if drilling_days is not None else (mud_volume or 1.0))
++            )
++            ef = float(
++                custom_ef
++                if custom_ef is not None and float(custom_ef) > 0
++                else IndependentMudDegassing.TIER1_WELL_EF
++            )
++            ch4_t = w * ef
++            co2_t = 0.0
++            inputs_meta = {"tier": "Tier 1", "wells": w, "ef_used": ef}
++        elif tier_mode == "tier2":
++            dd = float(
++                drilling_days
++                if drilling_days is not None
++                else (mud_volume or (wells or 0.0))
++            )
++            raw_type = str(mud_type or "water_based").lower().strip()
++            norm_type = (
++                "oil_based"
++                if ("oil" in raw_type or "synth" in raw_type)
++                else "water_based"
++            )
++            ef = float(
++                custom_ef
++                if custom_ef is not None and float(custom_ef) > 0
++                else IndependentMudDegassing.TABLE_6_2_ONSHORE.get(norm_type, 0.2605)
++            )
++            ch4_t = dd * ef
++            co2_t = 0.0
++            inputs_meta = {
++                "tier": "Tier 2",
++                "drilling_days": dd,
++                "mud_type": norm_type,
++                "ef_used": ef,
++            }
++        else:
++            dd = float(
++                drilling_days
++                if drilling_days is not None
++                else (mud_volume or (wells or 0.0))
++            )
++            raw_type = str(mud_type or "water_based").lower().strip()
++            norm_type = (
++                "oil_based"
++                if ("oil" in raw_type or "synth" in raw_type)
++                else "water_based"
++            )
++            ef = float(
++                custom_ef
++                if custom_ef is not None and float(custom_ef) > 0
++                else IndependentMudDegassing.TABLE_6_2_ONSHORE.get(norm_type, 0.2605)
++            )
++            x_ch4 = float(
++                ch4_concentration
++                if ch4_concentration is not None
++                else IndependentMudDegassing.DEFAULT_CH4_CONCENTRATION
++            )
++            if x_ch4 > 1.0:
++                x_ch4 /= 100.0
++            x_co2 = float(co2_concentration if co2_concentration is not None else 0.0)
++            if x_co2 > 1.0:
++                x_co2 /= 100.0
++            ch4_t = dd * ef * (x_ch4 / IndependentMudDegassing.DEFAULT_CH4_CONCENTRATION)
++            if x_co2 > 0:
++                co2_t = (
++                    dd
++                    * ef
++                    * (x_co2 / IndependentMudDegassing.DEFAULT_CH4_CONCENTRATION)
++                    * (44.01 / 16.04)
++                )
++            else:
++                co2_t = 0.0
++            inputs_meta = {
++                "tier": "Tier 2+",
++                "drilling_days": dd,
++                "mud_type": norm_type,
++                "ef_used": ef,
++                "ch4_fraction": x_ch4,
++                "co2_fraction": x_co2,
++            }
++
++        co2e = IndependentGWPModel.calculate_co2e(
++            ch4=ch4_t, co2=co2_t, standard=gwp_standard, horizon=gwp_horizon
++        )
++        return {"ch4": ch4_t, "co2": co2_t, "n2o": 0.0, "co2e": co2e, **inputs_meta}
+ 
+ 
+ class IndependentCompletions:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

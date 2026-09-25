@@ -1,0 +1,105 @@
+
+The command exited with code 0.
+Output:
+<truncated 1 lines>
+> new\client\src\components\Scope1Form.jsx:1601:                            className={`tier-selector-btn ${isActive ? 
+"active" : ""}`}
+  new\client\src\components\Scope1Form.jsx:1602:                            onClick={() => {
+  new\client\src\components\Scope1Form.jsx:1603:                              setSourceType(type);
+  new\client\src\components\Scope1Form.jsx:1612:                              ) {
+  new\client\src\components\Scope1Form.jsx:1613:                                toast.warning(
+> new\client\src\components\Scope1Form.jsx:1614:                                  "Tier 1 calculations are not 
+recommended for this process (OGMP 2.0).",
+  new\client\src\components\Scope1Form.jsx:1615:                                  { duration: 8000 },
+  new\client\src\components\Scope1Form.jsx:1616:                                );
+  new\client\src\components\Scope1Form.jsx:1618:                            }}
+  new\client\src\components\Scope1Form.jsx:1619:                          >
+> new\client\src\components\Scope1Form.jsx:1620:                            <span 
+className="tier-tag">{item.tier}</span>
+> new\client\src\components\Scope1Form.jsx:1621:                            <span 
+className="tier-label">{item.label}</span>
+  new\client\src\components\Scope1Form.jsx:1622:                          </button>
+  new\client\src\components\Scope1Form.jsx:1623:                        );
+  new\client\src\components\Scope1Form.jsx:1657:                    </svg>
+  new\client\src\components\Scope1Form.jsx:1658:                    <span>
+> new\client\src\components\Scope1Form.jsx:1659:                      <strong>OGMP 2.0 Level 4/5:</strong> Engineering 
+model (Tier 3) required. No static Tier 1 factors exist for this process.
+  new\client\src\components\Scope1Form.jsx:1660:                    </span>
+  new\client\src\components\Scope1Form.jsx:1661:                  </div>
+  new\client\src\components\Scope1Form.jsx:1662:                )}
+  new\client\src\components\Scope1Form.jsx:1663:
+> new\client\src\components\Scope1Form.jsx:1664:                {/* TIER 1: Standard API Tabulated Factors */}
+  new\client\src\components\Scope1Form.jsx:1665:                {sourceType === "default" && (
+  new\client\src\components\Scope1Form.jsx:1666:                  <CustomDropdown
+  new\client\src\components\Scope1Form.jsx:1673:                )}
+  new\client\src\components\Scope1Form.jsx:1674:
+> new\client\src\components\Scope1Form.jsx:1675:                {/* TIER 2: Regional / Measured / Supplier Factors */}
+  new\client\src\components\Scope1Form.jsx:1676:                {sourceType === "custom" && (
+> new\client\src\components\Scope1Form.jsx:1677:                  <div className="tier2-mode-container">
+  new\client\src\components\Scope1Form.jsx:1678:                    {[
+  new\client\src\components\Scope1Form.jsx:1679:                      "combustion",
+  new\client\src\components\Scope1Form.jsx:1685:                    ].includes(processType) ? (
+  new\client\src\components\Scope1Form.jsx:1686:                      <>
+> new\client\src\components\Scope1Form.jsx:1687:                        <div className="tier2-mode-tabs">
+  new\client\src\components\Scope1Form.jsx:1688:                          <button
+  new\client\src\components\Scope1Form.jsx:1689:                            type="button"
+> new\client\src\components\Scope1Form.jsx:1690:                            className={`tier2-mode-btn ${tier2Mode === 
+"override" ? "active" : ""}`}
+> new\client\src\components\Scope1Form.jsx:1691:                            onClick={() => setTier2Mode("override")}
+  new\client\src\components\Scope1Form.jsx:1692:                          >
+  new\client\src\components\Scope1Form.jsx:1693:                            <Sliders size={14} />
+  new\client\src\components\Scope1Form.jsx:1696:                          <button
+  new\client\src\components\Scope1Form.jsx:1697:                            type="button"
+> new\client\src\components\Scope1Form.jsx:1698:                            className={`tier2-mode-btn ${tier2Mode === 
+"custom_factor" ? "active" : ""}`}
+> new\client\src\components\Scope1Form.jsx:1699:                            onClick={() => 
+setTier2Mode("custom_factor")}
+  new\client\src\components\Scope1Form.jsx:1700:                          >
+  new\client\src\components\Scope1Form.jsx:1701:                            <Layers size={14} />
+  new\client\src\components\Scope1Form.jsx:1704:                        </div>
+  new\client\src\components\Scope1Form.jsx:1705:
+> new\client\src\components\Scope1Form.jsx:1706:                        {tier2Mode === "override" && (
+> new\client\src\components\Scope1Form.jsx:1707:                          <div className="tier2-override-card">
+  new\client\src\components\Scope1Form.jsx:1708:                            {/* Base Fuel Dropdown */}
+  new\client\src\components\Scope1Form.jsx:1709:                            <div>
+  new\client\src\components\Scope1Form.jsx:1750:
+  new\client\src\components\Scope1Form.jsx:1751:                            {/* Measured Properties Grid */}
+> new\client\src\components\Scope1Form.jsx:1752:                            <div className="tier2-inputs-grid">
+  new\client\src\components\Scope1Form.jsx:1753:                              <div>
+  new\client\src\components\Scope1Form.jsx:1754:                                <label style={{ display: "block", 
+fontSize: "0.75rem", fontWeight: 600, color: "#374151", marginBottom: "4px" }}>
+  new\client\src\components\Scope1Form.jsx:1819:
+  new\client\src\components\Scope1Form.jsx:1820:                            {/* Live Calculation Preview & Data 
+Quality Badge */}
+> new\client\src\components\Scope1Form.jsx:1821:                            <div className="tier2-preview-badge">
+  new\client\src\components\Scope1Form.jsx:1822:                              <div style={{ display: "flex", 
+alignItems: "center", gap: "6px" }}>
+  new\client\src\components\Scope1Form.jsx:1823:                                <Sparkles size={15} style={{ color: 
+"var(--accent-color, #ff6600)" }} />
+  new\client\src\components\Scope1Form.jsx:1824:                                <span style={{ fontWeight: 600, 
+fontSize: "0.75rem", color: "#1f2937" }}>
+> new\client\src\components\Scope1Form.jsx:1825:                                  Tier 2 Data Reliability Rating
+  new\client\src\components\Scope1Form.jsx:1826:                                </span>
+  new\client\src\components\Scope1Form.jsx:1827:                              </div>
+  new\client\src\components\Scope1Form.jsx:1828:                              <div style={{ fontSize: "0.75rem", 
+color: "#065f46" }}>
+> new\client\src\components\Scope1Form.jsx:1829:                                IPCC Activity Data Uncertainty: 
+<strong>�7.0%</strong> (vs �10.0% Tier 1 Default) | Method: Measured Fuel Properties
+  new\client\src\components\Scope1Form.jsx:1830:                              </div>
+  new\client\src\components\Scope1Form.jsx:1831:                            </div>
+  new\client\src\components\Scope1Form.jsx:1833:                        )}
+  new\client\src\components\Scope1Form.jsx:1834:
+> new\client\src\components\Scope1Form.jsx:1835:                        {tier2Mode === "custom_factor" && (
+  new\client\src\components\Scope1Form.jsx:1836:                          <div>
+  new\client\src\components\Scope1Form.jsx:1837:                            <div style={{ display: "flex", gap: "8px", 
+alignItems: "center" }}>
+  new\client\src\components\Scope1Form.jsx:2421:            <div style={{ display: "flex", alignItems: "center", gap: 
+"8px" }}>
+  new\client\src\components\Scope1Form.jsx:2422:              <span style={{ fontSize: "0.82rem", fontWeight: 700, 
+color: "var(--accent-color, #ff6600)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+> new\client\src\components\Scope1Form.jsx:2423:                ?? Live Equation Inspector (Tier 2/3 GHG Protocol)
+  new\client\src\components\Scope1Form.jsx:2424:              </span>
+  new\client\src\components\Scope1Form.jsx:2425:            </div>
+
+
+

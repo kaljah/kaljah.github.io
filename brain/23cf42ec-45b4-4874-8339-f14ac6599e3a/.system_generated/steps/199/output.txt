@@ -1,0 +1,141 @@
+
+The command exited with code 1.
+Output:
+<truncated 6540 lines>
+            f_v = self._normalize_fraction(frac_vented, "Vented fraction", default=0.0)
+            f_f = self._normalize_fraction(frac_flared, "Flared fraction", default=0.0)
+            f_r = self._normalize_fraction(frac_recovered, "Recovered fraction", default=0.0)
+            split_sum = f_v + f_f + f_r
+            if abs(split_sum - 1.0) > 0.01:
+                raise ValueError(
+                    f"Disposition fractions (vented={f_v*100:.1f}%, flared={f_f*100:.1f}%, recovered={f_r*100:.1f}%) must sum to 100% (sum is {split_sum*100:.1f}%)"
+                )
+            f_vented = f_v
+            f_flared = f_f
+            f_rec = f_r
+        else:
+            f_vented = 1.0
+            f_flared = 0.0
+            f_rec = 0.0
+    
+        # Initial flowback is 100% vented to atmosphere (API Compendium �6.2.3.1)
+        vented_scf = initial_scf + (total_net_scf * f_vented)
+        flared_scf = total_net_scf * f_flared
+        recovered_scf = total_net_scf * f_rec
+    
+        # Conversions to m3 at standard conditions
+        vented_m3 = convert(vented_scf, "scf", "m3")
+        flared_m3 = convert(flared_scf, "scf", "m3")
+        net_m3 = convert(total_net_scf, "scf", "m3")
+        initial_m3 = convert(initial_scf, "scf", "m3")
+    
+        # 1. Vented Stream Emissions
+        vented_ch4_tonnes = (vented_m3 * actual_ch4_mol * CONVERSIONS["density_ch4"]) / 1000.0
+        vented_co2_tonnes = (vented_m3 * actual_co2_mol * CONVERSIONS["density_co2"]) / 1000.0
+    
+        # Initial breakdown
+        init_vented_ch4_tonnes = (initial_m3 * actual_ch4_mol * CONVERSIONS["density_ch4"]) / 1000.0
+    
+        # 2. Flared Stream Emissions (Stoichiometric Combustion per API Section 5 & Exhibit 6-3)
+        flared_gross_ch4_tonnes = (flared_m3 * actual_ch4_mol * CONVERSIONS["density_ch4"]) / 1000.0
+        flared_native_co2_tonnes = (flared_m3 * actual_co2_mol * CONVERSIONS["density_co2"]) / 1000.0
+    
+        flared_unburnt_ch4 = flared_gross_ch4_tonnes * (1.0 - flare_eff)
+        flared_combustion_co2 = flared_gross_ch4_tonnes * flare_eff * (44.01 / 16.04)
+        flared_total_co2 = flared_native_co2_tonnes + flared_combustion_co2
+    
+        flared_mmbtu = (flared_scf * hhv_val) / 1_000_000.0
+        flared_n2o = (flared_mmbtu * n2o_ef_val) / 1000.0 if flared_scf > 0 else 0.0
+    
+        # 3. Aggregated Totals
+        total_ch4 = vented_ch4_tonnes + flared_unburnt_ch4
+        total_co2 = vented_co2_tonnes + flared_total_co2
+        total_n2o = flared_n2o
+    
+        resolved_tier_enum = Tier.T3 if resolved_tier == "tier3" else (Tier.T2 if resolved_tier == "tier2" else Tier.T1)
+>       ch4_res, co2_res, n2o_res = _propagate_vented_results(
+            total_ch4=total_ch4,
+            total_co2=total_co2,
+            flared_n2o=total_n2o,
+            uncertainties=uncertainties,
+            factor_source="site_specific" if resolved_tier in ["tier2", "tier3"] else "default",
+            process_category="completions",
+            tier=resolved_tier_enum,
+        )
+E       TypeError: _propagate_vented_results() got an unexpected keyword argument 'tier'
+
+calculations\vented.py:820: TypeError
+______ TestOnshoreCompletionsEndToEndPipeline.test_dispatcher_tier1_flow ______
+
+self = <test_onshore_well_completions_audit.TestOnshoreCompletionsEndToEndPipeline object at 0x00000135D4DC4080>
+
+    def test_dispatcher_tier1_flow(self):
+        """Verifies dispatcher handles Tier 1 factor selection correctly."""
+        payload = {
+            "tier": "tier1",
+            "well_type": "gas",
+            "fracturing": True,
+            "control_type": "uncontrolled",
+            "amount": 2.0,
+            "unit": "events",
+        }
+        res = dispatcher.dispatch("completions", payload, {}, {}, gwp_dict=GWP_AR5)
+        assert res is not None
+>       assert pytest.approx(res["results"]["ch4"]["value"], rel=1e-4) == 28.8 * 2.0
+E       assert 0.0 � 1.0e-12 == 57.6
+E         
+E         comparison failed
+E         Obtained: 57.6
+E         Expected: 0.0 � 1.0e-12
+
+tests\test_onshore_well_completions_audit.py:426: AssertionError
+__ TestOnshoreCompletionsEndToEndPipeline.test_compute_emissions_end_to_end ___
+
+self = <test_onshore_well_completions_audit.TestOnshoreCompletionsEndToEndPipeline object at 0x00000135D4DC5640>
+
+    def test_compute_emissions_end_to_end(self):
+        """Verifies compute_emissions pipeline returns rich result and correct method."""
+        payload = {
+            "process_type": "completions",
+            "tier": "tier3",
+            "amount": 5000.0,
+            "unit": "m3",
+            "ch4_content": 85.0,
+            "disposition": "flared",
+            "control_efficiency": 98.0,
+        }
+        res, method = compute_emissions(payload, {}, gwp_dict=GWP_AR5)
+>       assert res["ch4"] > 0
+E       assert 0.0 > 0
+
+tests\test_onshore_well_completions_audit.py:441: AssertionError
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier1::test_table_6_5_gas_well_uncontrolled
+FAILED tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier1::test_table_6_5_gas_well_rec
+FAILED tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier1::test_table_6_5_oil_well_uncontrolled
+FAILED tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier1::test_table_6_5_oil_well_rec
+FAILED tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier1::test_table_6_6_gas_well_vented
+FAILED tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier1::test_table_6_6_oil_well_vented
+FAILED tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier1::test_tier1_multi_event_scaling
+FAILED tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier1::test_table_6_5_footnote_c_ch4_adjustment
+FAILED tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier1::test_table_6_5_footnote_c_co2_adjustment
+FAILED tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier2::test_api_eq_6_7_production_rate_duration
+FAILED tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier2::test_liquid_flowback_gor_with_sales_deduction
+FAILED tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier2::test_flowback_rate_duration_mcf_hr_correctness
+FAILED tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier3::test_api_eq_6_4_injected_n2_deduction
+FAILED tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier3::test_injected_co2_not_deducted
+FAILED tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier3::test_api_exhibit_6_3_exact_benchmark
+FAILED tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier3::test_gas_fate_partitioning_rec_zero_emissions
+FAILED tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier3::test_gas_fate_custom_split
+FAILED tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsValidation::test_rejects_invalid_ch4_content
+FAILED tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsValidation::test_zero_volume_clean_zero_emissions
+FAILED tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsEndToEndPipeline::test_dispatcher_tier1_flow
+FAILED tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsEndToEndPipeline::test_compute_emissions_end_to_end
+=================== 21 failed, 5 passed, 1 warning in 4.04s ===================
+

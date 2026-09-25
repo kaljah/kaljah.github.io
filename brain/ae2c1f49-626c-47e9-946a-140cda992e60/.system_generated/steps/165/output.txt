@@ -1,0 +1,28 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\units.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -179,6 +179,12 @@
+ VOLUME_UNITS_TO_M3 = {
+     "m3": 1.0,
+     "m³": 1.0,
++    "sm3": 1.0,
++    "sm³": 1.0,
++    "nm3": 1.0,
++    "nm³": 1.0,
++    "ksm3": 1000.0,
++    "mmsm3": 1_000_000.0,
+     "cubic_meter": 1.0,
+     "cubic_meters": 1.0,
+     "scf": 0.028316846592,
+@@ -189,6 +189,9 @@
+     "bbl": 0.158987295,
+     "barrel": 0.158987295,
+     "barrels": 0.158987295,
++    "kbbl": 158.987295,
++    "mbbl": 158.987295,
++    "mmbbl": 158987.295,
+     "gal": 0.003785411784,
+     "gallon": 0.003785411784,
+     "gallons": 0.003785411784,
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

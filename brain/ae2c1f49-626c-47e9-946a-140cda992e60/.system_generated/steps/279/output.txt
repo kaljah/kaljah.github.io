@@ -1,0 +1,18 @@
+
+The command exited with code 0.
+Output:
+
+new\server\calculations\dispatcher.py:34:    def __init__(self):
+new\server\calculations\dispatcher.py:93:    def _require(self, key, inputs, description):
+new\server\calculations\dispatcher.py:109:    def _normalize_volume(self, value, unit, target_unit="m3"):
+new\server\calculations\dispatcher.py:140:    def _require_float(self, flat_inputs, keys, desc):
+new\server\calculations\dispatcher.py:155:    def _parse_fraction_value(self, val, key_name="", is_percent=False):
+new\server\calculations\dispatcher.py:175:    def _require_fraction(self, flat_inputs, keys, desc, is_percent=False):
+new\server\calculations\dispatcher.py:190:    def _optional_fraction(self, flat_inputs, keys, default=0.0, 
+is_percent=False):
+new\server\calculations\dispatcher.py:566:                def _get_eff(keys):
+new\server\calculations\dispatcher.py:1260:                    def _wrap_unc(val, gas):
+new\server\calculations\dispatcher.py:1699:    def _generic_calculation(
+
+
+

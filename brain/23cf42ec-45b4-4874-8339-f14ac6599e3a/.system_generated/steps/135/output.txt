@@ -1,0 +1,121 @@
+
+The command exited with code 0.
+Output:
+<truncated 242 lines>
+  new\server\routes\emissions.py:1813:            group="Well HMD-56 Workover",
+  new\server\routes\emissions.py:1814:            equipment="EQ-031",
+  new\server\routes\emissions.py:1815:            comp_method="rate_duration",
+  new\server\routes\emissions.py:1816:            comp_rate="50",
+  new\server\routes\emissions.py:1817:            comp_duration="72",
+  new\server\routes\emissions.py:1818:            ch4_content="84",
+  new\server\routes\emissions.py:1819:            co2_content="2",
+  new\server\routes\emissions.py:1820:            comp_flare_eff="85",
+  new\server\routes\emissions.py:1821:        ),
+  new\server\routes\emissions.py:1822:        # 9. Tier 3 - Liquids Unloading
+  new\server\routes\emissions.py:1823:        _row(
+  new\server\routes\emissions.py:1824:            date="2024-01",
+  new\server\routes\emissions.py:1825:            facility_name="Hassi Messaoud Gas Plant",
+  new\server\routes\emissions.py:1826:            process_type="unloading",
+  new\server\routes\emissions.py:1827:            fuel="Natural Gas",
+  new\server\routes\emissions.py:1828:            quantity="12",
+  new\server\routes\emissions.py:2421:
+  new\server\routes\emissions.py:2422:    # Data Validations
+  new\server\routes\emissions.py:2423:
+  new\server\routes\emissions.py:2424:    dv_process = DataValidation(
+  new\server\routes\emissions.py:2425:        type="list",
+> new\server\routes\emissions.py:2426:        formula1='"Combustion,Flaring,Fugitive Emissions,Venting,Well 
+Completions & Workovers,Liquids Unloading,Dehydrator,Pneumatic Device,Storage Tank - Flashing,Storage Tank - Working 
+Losses,Storage Tank - Breathing,Drilling Operations,Acid Gas Removal (AGR),Mobile Combustion,Loading Losses,Wastewater 
+/ Separation"',
+  new\server\routes\emissions.py:2427:        allow_blank=True,
+  new\server\routes\emissions.py:2428:        showInputMessage=True,
+  new\server\routes\emissions.py:2429:        promptTitle="Process Type",
+  new\server\routes\emissions.py:2430:        prompt="Select the emission process type.",
+  new\server\routes\emissions.py:2431:        showErrorMessage=True,
+  new\server\routes\emissions.py:2432:        errorTitle="Invalid Value",
+  new\server\routes\emissions.py:2433:        error="Please select a value from the dropdown list.",
+  new\server\routes\emissions.py:2434:    )
+  new\server\routes\emissions.py:2435:    ws_data.add_data_validation(dv_process)
+  new\server\routes\emissions.py:2436:    dv_process.sqref = "I3:I1048576"
+  new\server\routes\emissions.py:2437:
+  new\server\routes\emissions.py:2438:    dv_factor = DataValidation(
+  new\server\routes\emissions.py:2439:        type="list",
+  new\server\routes\emissions.py:2440:        formula1='"default,custom"',
+  new\server\routes\emissions.py:2441:        allow_blank=True,
+  new\server\routes\emissions.py:2442:        showInputMessage=True,
+  new\server\routes\emissions.py:2443:        promptTitle="Factor Type",
+  new\server\routes\emissions.py:2444:        prompt="'default' = API Compendium 2021 standard factor.\n'custom' = 
+factor saved in your GHG Platform account.",
+  new\server\routes\emissions.py:2445:        showErrorMessage=True,
+  new\server\routes\emissions.py:2446:        errorTitle="Invalid Value",
+  new\server\routes\emissions.py:2619:
+  new\server\routes\emissions.py:2620:    # �
+  new\server\routes\emissions.py:2621:    # SHEET 4+: TIER 3 ENGINEERING SHEETS (one per process)
+  new\server\routes\emissions.py:2622:    # �
+  new\server\routes\emissions.py:2623:    if tier != "1":
+> new\server\routes\emissions.py:2624:        p_comp = ["all", "combustion", "flaring", "completions", "blowdown", 
+"agr"]
+  new\server\routes\emissions.py:2625:        p_flare = [
+  new\server\routes\emissions.py:2626:            "all",
+  new\server\routes\emissions.py:2627:            "flaring",
+> new\server\routes\emissions.py:2628:            "completions",
+  new\server\routes\emissions.py:2629:            "unloading",
+  new\server\routes\emissions.py:2630:            "blowdown",
+  new\server\routes\emissions.py:2631:            "tank_flashing",
+  new\server\routes\emissions.py:2632:            "tank_working",
+  new\server\routes\emissions.py:2633:            "tank_breathing",
+  new\server\routes\emissions.py:2634:        ]
+> new\server\routes\emissions.py:2635:        p_completion = ["all", "completions", "unloading"]
+  new\server\routes\emissions.py:2636:        p_bdn = ["all", "venting", "blowdown"]
+  new\server\routes\emissions.py:2637:        p_tank = ["all", "tank_flashing", "tank_working", "tank_breathing"]
+  new\server\routes\emissions.py:2638:        p_pneu = ["all", "pneumatic"]
+  new\server\routes\emissions.py:2639:        p_agr = ["all", "agr"]
+  new\server\routes\emissions.py:2640:        p_dehy = ["all", "dehydrator"]
+  new\server\routes\emissions.py:2641:        p_fug = ["all", "fugitive"]
+  new\server\routes\emissions.py:2642:
+  new\server\routes\emissions.py:2643:        base_cols = [
+  new\server\routes\emissions.py:2644:            ("Equipment ID", 18, "Link to Equipment ID in Data Entry sheet"),
+  new\server\routes\emissions.py:2645:            ("Date (YYYY-MM)", 14, "Must match the date in Data Entry sheet"),
+  new\server\routes\emissions.py:2646:            ("Process Type", 18, "Optional Reference"),
+  new\server\routes\emissions.py:2647:            ("User Uncertainty CO2 (%)", 22, "Optional: Override CO2 
+Uncertainty"),
+  new\server\routes\emissions.py:2648:            ("User Uncertainty CH4 (%)", 22, "Optional: Override CH4 
+Uncertainty"),
+  new\server\routes\emissions.py:2649:            ("User Uncertainty N2O (%)", 22, "Optional: Override N2O 
+Uncertainty"),
+  new\server\routes\emissions.py:2650:        ]
+  new\server\routes\emissions.py:2651:
+  new\server\routes\emissions.py:2652:        t3_params = [
+  new\server\routes\emissions.py:2653:            ("C1 (mol %)", 14, "Methane (CH4) fraction", p_comp),
+  new\server\routes\emissions.py:2654:            ("C2 (mol %)", 14, "Ethane fraction", p_comp),
+  new\server\routes\emissions.py:2655:            ("C3 (mol %)", 14, "Propane fraction", p_comp),
+  new\server\routes\emissions.py:2743:                    },
+  new\server\routes\emissions.py:2744:                ),
+  new\server\routes\emissions.py:2745:                (
+  new\server\routes\emissions.py:2746:                    "EQ-030",
+  new\server\routes\emissions.py:2747:                    "2024-01",
+> new\server\routes\emissions.py:2748:                    "Well Completions & Workovers",
+> new\server\routes\emissions.py:2749:                    "completions",
+  new\server\routes\emissions.py:2750:                    {"Well Depth (ft)": "8500", "Events": "1"},
+  new\server\routes\emissions.py:2751:                ),
+  new\server\routes\emissions.py:2752:                (
+  new\server\routes\emissions.py:2753:                    "EQ-040",
+  new\server\routes\emissions.py:2754:                    "2024-01",
+  new\server\routes\emissions.py:2755:                    "Liquids Unloading",
+  new\server\routes\emissions.py:2756:                    "unloading",
+  new\server\routes\emissions.py:2757:                    {
+  new\server\routes\emissions.py:2758:                        "Well Depth (ft)": "8500",
+  new\server\routes\emissions.py:2759:                        "Diameter (in)": "4.5",
+  new\server\routes\emissions.py:2760:                        "Pressure (psi)": "800",
+  new\server\routes\emissions.py:2761:                        "Events": "12",
+  new\server\routes\emissions.py:2762:                    },
+  new\server\routes\emissions.py:2763:                ),
+  new\server\routes\emissions.py:2764:                (
+  new\server\routes\emissions.py:2765:                    "EQ-050",
+  new\server\routes\emissions.py:2766:                    "2024-01",
+  new\server\routes\emissions.py:2767:                    "Venting",
+  new\server\routes\emissions.py:2768:                    "venting",
+  new\server\routes\emissions.py:2769:                    {"Blowdown Volume (Mscf)": "200"},
+
+
+

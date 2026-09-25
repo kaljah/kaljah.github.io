@@ -1,0 +1,26 @@
+The search for ""0.0458" "0.0103" "API Compendium" "mud degassing"" returned the following summary:
+The values **0.0458** and **0.0103** refer to methane (**CH₄**) emission factors for **onshore well mud degassing**, measured in **tonnes per drilling day**[1][2][3].
+
+These figures are published in the **API Compendium of Greenhouse Gas Emissions Estimation Methodologies for the Oil and Natural Gas Industry** (specifically the 2021 edition)[4][2][5].
+
+### Context of the Emission Factors:
+*   **0.0458 tonnes CH₄/drilling day**: The emission factor applied for **water-based mud**[1][2][3].
+*   **0.0103 tonnes CH₄/drilling day**: The emission factor applied for **oil-based and synthetic muds**[1][2][3].
+
+### Background and Usage:
+*   **API Compendium**: This document serves as a primary industry resource for estimating greenhouse gas (GHG) emissions across the oil and gas value chain[4][6][7]. It provides standardized methodologies that are frequently cited by regulators and companies for transparent emissions reporting[8][9][10].
+*   **Mud Degassing**: During drilling operations, gas from the formation can enter the drilling mud. "Mud degassing" is the process of removing this gas from the mud at the surface. Because this gas is often vented, it is a recognized source of methane emissions[2][11][9].
+*   **Adjustment**: These onshore factors were derived by adjusting older offshore emission values (based on 1977 EPA data) to account for differences in borehole size and porosity typically found in onshore versus offshore drilling environments[1][2].
+
+Sources:
+[1] [federalregister.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQH3DHCzZK3U0-3nyfTwSNYn0d3WM6B1Z2jjqCuP798QH3wAVnmHraxdK91XqeaZjoG8OEpVctSDIXDihT9jhOhHfGDjffA-535Gs0AsWRD3SCEHQVESPAVhxGW1je-uU7t9ugUBcDBv5Z3eWUo7lOgO80PKy2fGp0R1aepxpxbRVUhTWyT8Tf3AsCqUl-KjXsR9jcoIJ4VLeqCryRoOMJvQqrDbNdZOmhxpU4VnJqpTuLREiMZLh_b_It9SWXpdiyfmtGxDnQfIX89Noby1sDH9Zg5znOHwb-mQQjQ=)
+[2] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFaVHPVZXxxyj-7E5TDRL1ciLJggPWqolEzjZFxwaQXCncxXJ3tCCeZqWsNJbsXFpSA7W2oaZUIgzj91yclL4n8BTh33Lq9KowM1feggbiuwCIgKPxgRu9eEpyPXRHvyyZ9a2VAyLXUv-JFkmGmzQyAk-fcX9G1IfXrTjtYajnEe4QM5PKr53cH0g==)
+[3] [federalregister.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQH3DHCzZK3U0-3nyfTwSNYn0d3WM6B1Z2jjqCuP798QH3wAVnmHraxdK91XqeaZjoG8OEpVctSDIXDihT9jhOhHfGDjffA-535Gs0AsWRD3SCEHQVESPAVhxGW1je-uU7t9ugUBcDBv5Z3eWUo7lOgO80PKy2fGp0R1aepxpxbRVUhTWyT8Tf3AsCqUl-KjXsR9jcoIJ4VLeqCryRoOMJvQqrDbNdZOmhxpU4VnJqpTuLREiMZLh_b_It9SWXpdiyfmtGxDnQfIX89Noby1sDH9Zg5znOHwb-mQQjQ=)
+[4] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFaVHPVZXxxyj-7E5TDRL1ciLJggPWqolEzjZFxwaQXCncxXJ3tCCeZqWsNJbsXFpSA7W2oaZUIgzj91yclL4n8BTh33Lq9KowM1feggbiuwCIgKPxgRu9eEpyPXRHvyyZ9a2VAyLXUv-JFkmGmzQyAk-fcX9G1IfXrTjtYajnEe4QM5PKr53cH0g==)
+[5] [miq.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEaBM_b6ASzUTxH3dALjcxHUYVs1O8Mo4nb7mMgeF5fvh5jPKoyVfNqYDlN1qNYmWJ3OulocRq14_FkLZFWJ7ScvXyxF-QeJ6VlTL-EpIBV4AXyTk5cBcrlg44rPPisDfZC6Lad68SZBYSswxayGTWPhIPz0P7U)
+[6] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFaVHPVZXxxyj-7E5TDRL1ciLJggPWqolEzjZFxwaQXCncxXJ3tCCeZqWsNJbsXFpSA7W2oaZUIgzj91yclL4n8BTh33Lq9KowM1feggbiuwCIgKPxgRu9eEpyPXRHvyyZ9a2VAyLXUv-JFkmGmzQyAk-fcX9G1IfXrTjtYajnEe4QM5PKr53cH0g==)
+[7] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFaVHPVZXxxyj-7E5TDRL1ciLJggPWqolEzjZFxwaQXCncxXJ3tCCeZqWsNJbsXFpSA7W2oaZUIgzj91yclL4n8BTh33Lq9KowM1feggbiuwCIgKPxgRu9eEpyPXRHvyyZ9a2VAyLXUv-JFkmGmzQyAk-fcX9G1IfXrTjtYajnEe4QM5PKr53cH0g==)
+[8] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFaVHPVZXxxyj-7E5TDRL1ciLJggPWqolEzjZFxwaQXCncxXJ3tCCeZqWsNJbsXFpSA7W2oaZUIgzj91yclL4n8BTh33Lq9KowM1feggbiuwCIgKPxgRu9eEpyPXRHvyyZ9a2VAyLXUv-JFkmGmzQyAk-fcX9G1IfXrTjtYajnEe4QM5PKr53cH0g==)
+[9] [kemdiktisaintek.go.id](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGqTLG7Sp22cNh_sP4jTFlWnmju7bJaUt5rPz-MbwPcZCFcfcaoIy7kGNdsRPufBlas2UQ41j6dKXVThi5ZhZ679IoItn6qvEqeKHhYpjEbMaNAkSZNFwKKwhdiImspks63fk_XShhR79RRhJRxes1q5Fbi)
+[10] [googleapis.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEKHiFs8QQ12VEfRgdFxTIssxl9KUEfb87b-KIVGtDtTYqWN8wcWSY3GTpdc9sMoN5tE-pNqsHdBUAaudrbWsFZKB9l8Uy4peZbI0yWDgmDvbvJ9yWCFCesklGQ31eX7fDy58TrkJ8N1sx05uLr6a_NFafenXNXNT5GZuuFw3CykKMBMHRoBBK6QVBOqaQTRdHx_S8Xy_jUVRb3TU8BmJ5mjviMT8WAi-CxVvqzH03h1huY-npiJNmmgwUA99wHizvx2A==)
+[11] [epa.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEw8yljOgBeiN_BfLhy6xcoXdclIgyqxOhzjM5FAbIw98R62R-4_4LaeyJBZEglMtAcj4nl1kc2FFmh25JIWl5cfmMM0sB89EnseJ1wzzkGz4hjal-53XDxB09Bojb7z-4ym0bR4-LUUXZ9beLPM68qj5DjnvABJK0GWPLjrhnJK8q5u4VnS23kzYRy-JlsDRVZCYJxI0xy)

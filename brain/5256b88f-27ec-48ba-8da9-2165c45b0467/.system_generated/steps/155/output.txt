@@ -1,0 +1,57 @@
+
+The command exited with code 0.
+Output:
+
+  new\server\routes\emissions.py:15:from extensions import db, limiter
+  new\server\routes\emissions.py:16:from utils import log_activity_and_notify
+  new\server\routes\emissions.py:17:from calculations import (
+> new\server\routes\emissions.py:18:    compute_emissions,
+  new\server\routes\emissions.py:19:    calculate_co2e,
+  new\server\routes\emissions.py:20:)
+  new\server\routes\emissions.py:21:from emission_factors import API_FACTORS, ALL_EMISSION_FACTORS
+  new\server\routes\emissions.py:22:from routes.auth import login_required
+  new\server\routes\emissions.py:23:import datetime
+  new\server\routes\emissions.py:812:        gwp_dict = resolve_gwp_dict(user)
+  new\server\routes\emissions.py:813:        gwp_std = resolve_gwp_standard(user)
+  new\server\routes\emissions.py:814:        try:
+> new\server\routes\emissions.py:815:            em_result, method = compute_emissions(
+  new\server\routes\emissions.py:816:                calc_data, factor_data, gwp_dict=gwp_dict
+  new\server\routes\emissions.py:817:            )
+  new\server\routes\emissions.py:818:        except Exception as e:
+  new\server\routes\emissions.py:819:            errors.append(
+  new\server\routes\emissions.py:820:                {
+  new\server\routes\emissions.py:3106:                if "uncertainty" in parent_factor:
+  new\server\routes\emissions.py:3107:                    factor_data["uncertainty"] = parent_factor["uncertainty"]
+  new\server\routes\emissions.py:3108:
+> new\server\routes\emissions.py:3109:    # Call compute_emissions to calculate the actual emissions
+  new\server\routes\emissions.py:3110:    gwp_dict = resolve_gwp_dict(user)
+  new\server\routes\emissions.py:3111:    gwp_std = resolve_gwp_standard(user)
+  new\server\routes\emissions.py:3112:    try:
+> new\server\routes\emissions.py:3113:        em_result, method = compute_emissions(data, factor_data, 
+gwp_dict=gwp_dict)
+  new\server\routes\emissions.py:3114:    except ValueError as e:
+  new\server\routes\emissions.py:3115:        # Extract missing field name from error message
+  new\server\routes\emissions.py:3116:        import re
+  new\server\routes\emissions.py:3117:
+  new\server\routes\emissions.py:3118:        match = re.search(r"Missing required field: (\w+)", str(e))
+  new\server\routes\emissions.py:3556:        calc_payload.update(data)
+  new\server\routes\emissions.py:3557:
+  new\server\routes\emissions.py:3558:        try:
+> new\server\routes\emissions.py:3559:            calculated_em, method = compute_emissions(
+  new\server\routes\emissions.py:3560:                calc_payload, factor_data, gwp_dict=gwp_dict
+  new\server\routes\emissions.py:3561:            )
+  new\server\routes\emissions.py:3562:            record.co2_emissions = calculated_em["co2"]
+  new\server\routes\emissions.py:3563:            record.ch4_emissions = calculated_em["ch4"]
+  new\server\routes\emissions.py:3564:            record.n2o_emissions = calculated_em["n2o"]
+  new\server\routes\emissions.py:3897:            # 3. Compute emissions
+  new\server\routes\emissions.py:3898:            gwp_dict = resolve_gwp_dict(user)
+  new\server\routes\emissions.py:3899:            gwp_std = resolve_gwp_standard(user)
+> new\server\routes\emissions.py:3900:            em_result, method = compute_emissions(
+  new\server\routes\emissions.py:3901:                rec_data, factor_data, gwp_dict=gwp_dict
+  new\server\routes\emissions.py:3902:            )
+  new\server\routes\emissions.py:3903:
+  new\server\routes\emissions.py:3904:            # Fallback for totalCo2e
+  new\server\routes\emissions.py:3905:            if not em_result.get("totalCo2e") or em_result.get("totalCo2e") == 0:
+
+
+

@@ -1,0 +1,117 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -830,6 +830,111 @@
+                     gwp_dict=gwp_dict,
+                 )
+ 
++            elif process_type in ["associated_gas_venting", "associated_venting", "associated_gas"]:
++                tier_val = flat_inputs.get("tier") or flat_inputs.get("tier_level")
++                factor_src = flat_inputs.get("factor_source")
++
++                # Activity Data (oil production, vent rate, or vent volume)
++                raw_oil = self._optional_float(
++                    flat_inputs,
++                    ["oil_production", "oil_amount", "amount", "quantity", "oil_rate"],
++                    None,
++                )
++                oil_unit = flat_inputs.get("oil_unit") or flat_inputs.get("unit") or "bbl"
++
++                # Basin / regional factor
++                basin = (
++                    flat_inputs.get("basin")
++                    or flat_inputs.get("region")
++                    or flat_inputs.get("fuel")
++                    or flat_inputs.get("fuel_type")
++                    or emission_factors.get("name")
++                    or "US Average"
++                )
++
++                # Tier 2 parameters: GOR, venting duration, mass balance
++                gor = self._optional_float(
++                    flat_inputs,
++                    ["gor", "gas_oil_ratio", "gas_to_oil_ratio"],
++                    None,
++                )
++                gor_unit = flat_inputs.get("gor_unit") or "scf/bbl"
++
++                venting_duration = self._optional_float(
++                    flat_inputs,
++                    ["venting_duration", "duration", "hours", "days", "vent_duration"],
++                    None,
++                )
++                duration_unit = flat_inputs.get("duration_unit") or "days"
++                period_duration = self._optional_float(
++                    flat_inputs,
++                    ["period_duration", "total_period", "period_days", "operating_days"],
++                    None,
++                )
++
++                rec_gas = self._optional_float(
++                    flat_inputs,
++                    ["recovered_gas_volume", "recovered_gas", "gas_recovered"],
++                    0.0,
++                )
++                flared_gas = self._optional_float(
++                    flat_inputs,
++                    ["flared_gas_volume", "flared_gas", "gas_flared"],
++                    0.0,
++                )
++                gas_vol_unit = flat_inputs.get("gas_volume_unit") or flat_inputs.get("gas_unit") or "scf"
++
++                # Tier 3 parameters: direct measurement
++                vent_rate = self._optional_float(
++                    flat_inputs,
++                    ["vent_rate", "measured_vent_rate", "flow_rate"],
++                    None,
++                )
++                vent_rate_unit = flat_inputs.get("vent_rate_unit") or "scfh"
++                vent_volume = self._optional_float(
++                    flat_inputs,
++                    ["vent_volume", "measured_vent_volume"],
++                    None,
++                )
++                vent_volume_unit = flat_inputs.get("vent_volume_unit") or "scf"
++
++                # Gas composition
++                ch4_content = self._optional_fraction(
++                    flat_inputs, ["ch4_content", "c1", "ch4_mol_pct", "ch4"], None
++                )
++                co2_content = self._optional_fraction(
++                    flat_inputs, ["co2_content", "co2_mol", "co2_mol_pct", "co2"], None
++                )
++
++                ef_co2 = emission_factors.get("co2")
++                ef_ch4 = emission_factors.get("ch4")
++
++                return calculator.calculate(
++                    tier=tier_val,
++                    factor_source=factor_src,
++                    oil_production=raw_oil,
++                    oil_unit=oil_unit,
++                    basin=basin,
++                    gor=gor,
++                    gor_unit=gor_unit,
++                    venting_duration=venting_duration,
++                    duration_unit=duration_unit,
++                    period_duration=period_duration,
++                    recovered_gas_volume=rec_gas,
++                    flared_gas_volume=flared_gas,
++                    gas_volume_unit=gas_vol_unit,
++                    vent_rate=vent_rate,
++                    vent_rate_unit=vent_rate_unit,
++                    vent_volume=vent_volume,
++                    vent_volume_unit=vent_volume_unit,
++                    ch4_content=ch4_content,
++                    co2_content=co2_content,
++                    ef_ch4=ef_ch4,
++                    ef_co2=ef_co2,
++                    uncertainties=uncertainties,
++                    gwp_dict=gwp_dict,
++                )
++
+             elif process_type in [
+                 "tank",
+                 "tank_flashing",
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

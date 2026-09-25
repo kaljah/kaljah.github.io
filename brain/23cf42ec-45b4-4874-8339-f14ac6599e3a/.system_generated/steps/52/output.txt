@@ -1,0 +1,17 @@
+The search for ""API" "Compendium" "6.2.3" "Well Completions" "Table 6-5" "Table 6-6"" returned the following summary:
+The references you are looking for appear in the **API Compendium of Greenhouse Gas Emissions Methodologies for the Oil and Natural Gas Industry**[1][2].
+
+Specifically, in the context of the *Compendium*, **Section 6.2.3** covers **Well Completions**[1][3]. The tables you referenced provide methane emission factors for these operations[2][4]:
+
+*   **Table 6-5:** Typically presents **Well Completions with Hydraulic Fracturing** Methane Emission Factors for oil and gas exploration[2].
+*   **Table 6-6:** Typically presents **Onshore Well Completions without Hydraulic Fracturing** Methane Emission Factors for oil and gas exploration[2][4].
+
+These tables are standard resources used to estimate greenhouse gas emissions from well completion activities, which involve the period after drilling when a well is prepared for production (including activities like cleaning out the wellbore, perforating, and hydraulic fracturing)[2][5][6].
+
+Sources:
+[1] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQE5LRP2_Q0VmiaHN_iO5WEWKUuVG2dF7W2lP3i85efHg_LFYPbKdcO8cPGjrNlFhs2BRg_CLrMkRqnoOFiSwCh-Kt8kq56KNnfQJwTqdBAUKGvPXlhNfgROF4U2dLAOh8p9EtD2EBTSJBbWHmh2ihJGcHkfFu4fIm1bNBDOB9Kjg0FrXQYe8brGKQ==)
+[2] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQE5LRP2_Q0VmiaHN_iO5WEWKUuVG2dF7W2lP3i85efHg_LFYPbKdcO8cPGjrNlFhs2BRg_CLrMkRqnoOFiSwCh-Kt8kq56KNnfQJwTqdBAUKGvPXlhNfgROF4U2dLAOh8p9EtD2EBTSJBbWHmh2ihJGcHkfFu4fIm1bNBDOB9Kjg0FrXQYe8brGKQ==)
+[3] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQE5LRP2_Q0VmiaHN_iO5WEWKUuVG2dF7W2lP3i85efHg_LFYPbKdcO8cPGjrNlFhs2BRg_CLrMkRqnoOFiSwCh-Kt8kq56KNnfQJwTqdBAUKGvPXlhNfgROF4U2dLAOh8p9EtD2EBTSJBbWHmh2ihJGcHkfFu4fIm1bNBDOB9Kjg0FrXQYe8brGKQ==)
+[4] [ogmpartnership.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFY8aYvI1Mws1lg8PL_2IMlYQ1fPzv-65boQGTwYMYV3W-xssArZOD4WKXJvy0XpANJ5l26OH-uYGTreOJfOV47CZQxyjLNYZAcWv_ED_gedb8hKnHi4wzhBTY4eaaTAD0fWrnH-nd3dq-o8ZxvC-o0N-eCDUbsqlBQudaR6ndLqEB2oymtZEVp)
+[5] [ogmpartnership.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFY8aYvI1Mws1lg8PL_2IMlYQ1fPzv-65boQGTwYMYV3W-xssArZOD4WKXJvy0XpANJ5l26OH-uYGTreOJfOV47CZQxyjLNYZAcWv_ED_gedb8hKnHi4wzhBTY4eaaTAD0fWrnH-nd3dq-o8ZxvC-o0N-eCDUbsqlBQudaR6ndLqEB2oymtZEVp)
+[6] [ogmpartnership.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFY8aYvI1Mws1lg8PL_2IMlYQ1fPzv-65boQGTwYMYV3W-xssArZOD4WKXJvy0XpANJ5l26OH-uYGTreOJfOV47CZQxyjLNYZAcWv_ED_gedb8hKnHi4wzhBTY4eaaTAD0fWrnH-nd3dq-o8ZxvC-o0N-eCDUbsqlBQudaR6ndLqEB2oymtZEVp)

@@ -1,0 +1,95 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -315,6 +315,89 @@
+         if factor_source in ["default", "custom"] and process_type not in [
+             "drilling", "mud_degassing", "completions", "completion_flowback"
+         ]:
++            if process_type in ["liquids_unloading", "unloading"]:
++                raw_tier = str(
++                    flat_inputs.get("tier")
++                    or flat_inputs.get("tier_mode")
++                    or flat_inputs.get("source_type")
++                    or flat_inputs.get("calculation_level")
++                    or ""
++                ).lower().strip()
++                calc_m = str(
++                    flat_inputs.get("calc_method")
++                    or flat_inputs.get("calculation_method")
++                    or flat_inputs.get("method")
++                    or flat_inputs.get("unloading_method")
++                    or ""
++                ).lower().strip()
++                u_type = flat_inputs.get("unloading_type") or flat_inputs.get("unload_type") or "plunger"
++
++                is_tier2 = (
++                    raw_tier in ["tier2", "tier_2", "t2", "2"]
++                    or calc_m in ["api_table_6_10", "table_6_10", "event_based"]
++                    or str(unit).lower() in ["events", "event", "count"]
++                    or flat_inputs.get("events") is not None
++                    or flat_inputs.get("unload_events") is not None
++                    or flat_inputs.get("unload_freq") is not None
++                    or flat_inputs.get("frequency_category") is not None
++                    or flat_inputs.get("region") is not None
++                )
++                is_tier1 = (
++                    not is_tier2
++                    and (
++                        raw_tier in ["tier1", "tier_1", "t1", "1"]
++                        or calc_m in ["api_table_6_11", "table_6_11", "per_well"]
++                        or str(unit).lower() in ["wells", "well", "well-yr", "wells/year"]
++                        or flat_inputs.get("well_count") is not None
++                        or flat_inputs.get("wells") is not None
++                        or flat_inputs.get("unloading_type") is not None
++                    )
++                )
++
++                if is_tier2:
++                    ev = (
++                        flat_inputs.get("events")
++                        or flat_inputs.get("unload_events")
++                        or flat_inputs.get("unload_freq")
++                        or quantity
++                    )
++                    wc = float(flat_inputs.get("well_count") or flat_inputs.get("wells") or 1)
++                    ch4_c = self._optional_fraction(flat_inputs, ["ch4_content", "c1", "unload_ch4_content"], None)
++                    co2_c = self._optional_fraction(flat_inputs, ["co2_content", "co2_mol"], 0.0)
++                    flare_e = self._optional_fraction(flat_inputs, ["unload_flare_eff", "control_efficiency"], 0.0)
++                    return calculator.calculate_tier2(
++                        events=ev,
++                        unloading_type=u_type,
++                        well_count=wc,
++                        frequency_category=flat_inputs.get("frequency_category") or flat_inputs.get("freq_category"),
++                        region=flat_inputs.get("region"),
++                        ch4_content=ch4_c,
++                        co2_content=co2_c,
++                        control_efficiency=flare_e,
++                        uncertainties=uncertainties,
++                        hhv=float(flat_inputs.get("hhv") or emission_factors.get("hhv") or 1020.0),
++                        gwp_dict=gwp_dict,
++                    )
++                elif is_tier1 and str(unit).lower() not in ["m3", "scf", "mmscf"]:
++                    wc = (
++                        flat_inputs.get("well_count")
++                        or flat_inputs.get("wells")
++                        or quantity
++                    )
++                    ch4_c = self._optional_fraction(flat_inputs, ["ch4_content", "c1", "unload_ch4_content"], None)
++                    co2_c = self._optional_fraction(flat_inputs, ["co2_content", "co2_mol"], 0.0)
++                    flare_e = self._optional_fraction(flat_inputs, ["unload_flare_eff", "control_efficiency"], 0.0)
++                    return calculator.calculate_tier1(
++                        well_count=wc,
++                        unloading_type=u_type,
++                        ch4_content=ch4_c,
++                        co2_content=co2_c,
++                        control_efficiency=flare_e,
++                        uncertainties=uncertainties,
++                        hhv=float(flat_inputs.get("hhv") or emission_factors.get("hhv") or 1020.0),
++                        gwp_dict=gwp_dict,
++                    )
++
+             if process_type in [
+                 "stationary_combustion",
+                 "combustion",
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

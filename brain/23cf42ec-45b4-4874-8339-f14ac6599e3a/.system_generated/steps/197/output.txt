@@ -1,0 +1,161 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -603,70 +603,101 @@
+                     )
+ 
+             elif process_type == "completions":
++                comp_tier = (
++                    flat_inputs.get("tier")
++                    or flat_inputs.get("comp_tier")
++                    or ("tier1" if emission_factors.get("code") in [
++                        "CompGasHF_Uncontrolled", "CompGasHF_REC",
++                        "CompOilHF_Uncontrolled", "CompOilHF_REC",
++                        "CompGasNoHF_Vented", "CompOilNoHF_Vented",
++                        "CompGasNoFlare", "WorkoverGasNoFlare"
++                    ] else None)
++                )
+                 comp_method = (
+                     flat_inputs.get("comp_method")
+                     or flat_inputs.get("calc_method")
+-                    or flat_inputs.get("calculation_method", "metered_volume")
+-                )
++                    or flat_inputs.get("calculation_method")
++                )
++
++                # Events determination
+                 events_val = float(
+                     flat_inputs.get("events")
+                     or flat_inputs.get("num_events")
+-                    or (flat_inputs.get("amount") if str(unit).lower() in ["count", "event", "events"] else 1.0)
++                    or (flat_inputs.get("amount") if str(unit).lower() in ["count", "event", "events", "completions", "wells"] else (
++                        flat_inputs.get("amount") if comp_tier == "tier1" else 1.0
++                    ))
+                     or 1.0
+                 )
+-                gas_sales_mcf = float(flat_inputs.get("comp_gas_produced_mcf") or 0.0)
+-                gas_sales_scf = gas_sales_mcf * 1000.0
+-
+-                vol_m3 = 0.0
+-                if comp_method == "metered_volume" or (
+-                    not flat_inputs.get("comp_rate")
+-                    and not flat_inputs.get("comp_liquid_bbl")
+-                ):
+-                    vol_raw = self._require_float(
+-                        flat_inputs,
+-                        ["amount", "quantity", "flowback_volume", "comp_volume"],
+-                        "flowback volume",
+-                    )
+-                    vol_m3 = self._normalize_volume(vol_raw, unit, "m3")
+-
+-                ch4_content = self._require_fraction(
+-                    flat_inputs,
+-                    ["ch4_content", "c1", "comp_ch4_content"],
+-                    "gas CH4 content %",
+-                )
+-                co2_content = self._optional_fraction(
+-                    flat_inputs, ["co2_content", "co2_mol"], 0.0
+-                )
+-                flare_eff = self._optional_fraction(
+-                    flat_inputs, ["comp_flare_eff", "control_efficiency"], 0.0
+-                )
+-
+-                ef_co2 = emission_factors.get("co2")
+-                ef_ch4 = emission_factors.get("ch4")
+-                ef_n2o = emission_factors.get("n2o")
+-
+-                return calculator.calculate(
+-                    flowback_volume=vol_m3,
+-                    ch4_content=ch4_content,
+-                    control_efficiency=flare_eff,
+-                    uncertainties=uncertainties,
+-                    co2_content=co2_content,
+-                    ef_co2=ef_co2,
+-                    ef_ch4=ef_ch4,
+-                    ef_n2o=ef_n2o,
++
++                gas_sales_mcf = float(flat_inputs.get("comp_gas_produced_mcf") or flat_inputs.get("gas_produced_sales_mcf") or 0.0)
++                gas_sales_scf = gas_sales_mcf * 1000.0 if gas_sales_mcf else float(flat_inputs.get("gas_produced_sales_scf") or 0.0)
++
++                # Flowback volume for Tier 3
++                vol_val = None
++                vol_unit_val = str(unit or "m3").lower().strip()
++                if comp_tier in ["tier3", "3"] or (not comp_tier and not flat_inputs.get("comp_rate") and not flat_inputs.get("comp_liquid_bbl") and not flat_inputs.get("daily_production_rate")):
++                    raw_vol = flat_inputs.get("flowback_volume") or flat_inputs.get("comp_volume") or (
++                        flat_inputs.get("amount") if vol_unit_val not in ["count", "event", "events", "completions"] else None
++                    ) or flat_inputs.get("quantity")
++                    if raw_vol is not None:
++                        vol_val = float(raw_vol)
++                        if vol_unit_val in ["scf", "m3", "sm3", "mcf", "mscf", "mmscf"]:
++                            pass
++                        else:
++                            vol_unit_val = "m3"
++
++                ch4_content = self._optional_fraction(
++                    flat_inputs, ["ch4_content", "c1", "comp_ch4_content"], None
++                )
++                co2_content = self._optional_fraction(
++                    flat_inputs, ["co2_content", "co2_mol", "comp_co2_content"], 0.0
++                )
++                flare_eff = self._optional_fraction(
++                    flat_inputs, ["comp_flare_eff", "control_efficiency", "flare_efficiency"], 0.98
++                )
++
++                # Rate unit: UI default is Mcf/hr
++                rate_u = flat_inputs.get("comp_rate_unit") or flat_inputs.get("rate_unit")
++                if not rate_u:
++                    rate_u = "mcf/hr" if flat_inputs.get("comp_rate") else "mscf/day"
++
++                return calculator.calculate(
++                    flowback_volume=vol_val,
++                    volume_unit=vol_unit_val,
++                    ch4_content=ch4_content,
++                    co2_content=co2_content,
++                    control_efficiency=flare_eff,
++                    uncertainties=uncertainties,
++                    ef_co2=emission_factors.get("co2"),
++                    ef_ch4=emission_factors.get("ch4"),
++                    ef_n2o=emission_factors.get("n2o"),
+                     calculation_method=comp_method,
+-                    flowback_rate=flat_inputs.get("comp_rate"),
+-                    flowback_duration_hours=flat_inputs.get("comp_duration"),
+-                    liquid_flowback_bbl=flat_inputs.get("comp_liquid_bbl")
+-                    or flat_inputs.get("liquid_flowback_bbl"),
+-                    gas_oil_ratio=flat_inputs.get("comp_gor")
+-                    or flat_inputs.get("gas_oil_ratio"),
+-                    choke_size_in=flat_inputs.get("comp_choke_size"),
+-                    well_head_pressure=flat_inputs.get("comp_whp"),
+-                    hhv=float(flat_inputs.get("hhv") or emission_factors.get("hhv") or 1020.0),
+-                    gwp_dict=gwp_dict,
+-                    events=events_val,
++                    tier=comp_tier,
++                    well_type=flat_inputs.get("well_type") or emission_factors.get("well_type", "gas"),
++                    fracturing=flat_inputs.get("fracturing") if flat_inputs.get("fracturing") is not None else emission_factors.get("fracturing"),
++                    control_type=flat_inputs.get("control_type") or emission_factors.get("control_type"),
++                    flowback_rate=flat_inputs.get("comp_rate") or flat_inputs.get("flowback_rate"),
++                    rate_unit=rate_u,
++                    flowback_duration_hours=flat_inputs.get("comp_duration") or flat_inputs.get("flowback_duration_hours"),
++                    daily_production_rate=flat_inputs.get("daily_production_rate") or flat_inputs.get("comp_daily_prod_rate"),
++                    prod_rate_unit=flat_inputs.get("prod_rate_unit") or flat_inputs.get("comp_prod_rate_unit", "mcf/day"),
++                    vent_duration_hours=flat_inputs.get("vent_duration_hours"),
++                    vent_duration_days=flat_inputs.get("vent_duration_days"),
++                    liquid_flowback_bbl=flat_inputs.get("comp_liquid_bbl") or flat_inputs.get("liquid_flowback_bbl"),
++                    gas_oil_ratio=flat_inputs.get("comp_gor") or flat_inputs.get("gas_oil_ratio"),
+                     gas_produced_sales_scf=gas_sales_scf,
++                    injected_n2_volume=flat_inputs.get("comp_injected_n2") or flat_inputs.get("injected_n2_volume") or 0.0,
++                    injected_n2_unit=flat_inputs.get("comp_injected_n2_unit") or flat_inputs.get("injected_n2_unit", "scf"),
++                    injected_gas_type=flat_inputs.get("comp_injected_gas_type") or flat_inputs.get("injected_gas_type", "n2"),
++                    initial_flowback_hours=flat_inputs.get("comp_initial_flowback_hours") or flat_inputs.get("initial_flowback_hours"),
++                    disposition=flat_inputs.get("comp_disposition") or flat_inputs.get("disposition"),
++                    frac_vented=flat_inputs.get("frac_vented") or flat_inputs.get("comp_frac_vented"),
++                    frac_flared=flat_inputs.get("frac_flared") or flat_inputs.get("comp_frac_flared"),
++                    frac_recovered=flat_inputs.get("frac_recovered") or flat_inputs.get("comp_frac_recovered"),
++                    hhv=float(flat_inputs.get("hhv") or emission_factors.get("hhv") or 1020.0),
++                    gwp_dict=gwp_dict,
++                    events=events_val,
++                    factor_code=emission_factors.get("code"),
+                 )
+ 
+             elif process_type in ["liquids_unloading", "unloading"]:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

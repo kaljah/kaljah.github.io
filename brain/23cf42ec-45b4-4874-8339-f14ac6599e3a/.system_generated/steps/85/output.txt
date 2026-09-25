@@ -1,0 +1,16 @@
+The search for ""6.2.3 Well Completions" "Table 6-5" OR "Table 6-6" OR "Equation"" returned the following summary:
+The information you are looking for is located in the **"Compendium of Greenhouse Gas Emissions Methodologies for the Natural Gas and Oil Industry"** published by the American Petroleum Institute (API)[1][2].
+
+In this document, section **6.2.3 Well Completions** (which begins on page 6-8) contains the following relevant tables[1][3][4]:
+
+*   **Table 6-5:** "Well Completions with Hydraulic Fracturing Methane Emission Factors for Oil and Gas Exploration"[1]
+*   **Table 6-6:** "Onshore Well Completions without Hydraulic Fracturing Methane Emission Factors for Oil and Gas Exploration"[1][3]
+
+This section also includes methodologies and "Equation Approaches" for estimating methane emissions from these activities[5].
+
+Sources:
+[1] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGGM5r7NbU1QtSgyB_JzP6e8E4cLuUpWC-hCDGf9TbXAbEIq5EveXJ0AjF1Mtiz_jGGXTQ-J6LAn3z8By9b9uN0byG3JiSG9cltiCZNKQwqJOKRsFs7D2jezaF6erkduz8Q2pszMDh5n0PMQ-LW6eoUcK80Z6KCLQQZcEKhKg9KAIbtudblN8CLTg==)
+[2] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGGM5r7NbU1QtSgyB_JzP6e8E4cLuUpWC-hCDGf9TbXAbEIq5EveXJ0AjF1Mtiz_jGGXTQ-J6LAn3z8By9b9uN0byG3JiSG9cltiCZNKQwqJOKRsFs7D2jezaF6erkduz8Q2pszMDh5n0PMQ-LW6eoUcK80Z6KCLQQZcEKhKg9KAIbtudblN8CLTg==)
+[3] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGGM5r7NbU1QtSgyB_JzP6e8E4cLuUpWC-hCDGf9TbXAbEIq5EveXJ0AjF1Mtiz_jGGXTQ-J6LAn3z8By9b9uN0byG3JiSG9cltiCZNKQwqJOKRsFs7D2jezaF6erkduz8Q2pszMDh5n0PMQ-LW6eoUcK80Z6KCLQQZcEKhKg9KAIbtudblN8CLTg==)
+[4] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGGM5r7NbU1QtSgyB_JzP6e8E4cLuUpWC-hCDGf9TbXAbEIq5EveXJ0AjF1Mtiz_jGGXTQ-J6LAn3z8By9b9uN0byG3JiSG9cltiCZNKQwqJOKRsFs7D2jezaF6erkduz8Q2pszMDh5n0PMQ-LW6eoUcK80Z6KCLQQZcEKhKg9KAIbtudblN8CLTg==)
+[5] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGGM5r7NbU1QtSgyB_JzP6e8E4cLuUpWC-hCDGf9TbXAbEIq5EveXJ0AjF1Mtiz_jGGXTQ-J6LAn3z8By9b9uN0byG3JiSG9cltiCZNKQwqJOKRsFs7D2jezaF6erkduz8Q2pszMDh5n0PMQ-LW6eoUcK80Z6KCLQQZcEKhKg9KAIbtudblN8CLTg==)

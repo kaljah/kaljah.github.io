@@ -1,0 +1,123 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -512,30 +512,94 @@
+                 )
+ 
+             elif process_type in ["drilling", "mud_degassing"]:
+-                mud_vol = self._require_float(
+-                    flat_inputs,
+-                    ["mud_vol", "mud_volume", "amount", "quantity"],
+-                    "drilling mud volume",
+-                )
+-                vol_m3 = self._normalize_volume(
+-                    mud_vol, flat_inputs.get("mud_unit") or unit, "m3"
+-                )
++                raw_tier = str(
++                    flat_inputs.get("tier")
++                    or flat_inputs.get("tier_mode")
++                    or flat_inputs.get("source_type")
++                    or uncertainties.get("_factor_source")
++                    or "tier1"
++                ).lower().strip()
++
++                # Mud type parsing
+                 raw_mud_type = str(flat_inputs.get("mud_type") or "water_based").lower()
+-                if "oil" in raw_mud_type:
+-                    mud_type = "oil_based"
+-                elif "water" in raw_mud_type:
+-                    mud_type = "water_based"
+-                elif "synth" in raw_mud_type:
+-                    mud_type = "synthetic"
+-                else:
+-                    mud_type = raw_mud_type
+-                return calculator.calculate(
+-                    mud_volume=vol_m3,
+-                    mud_type=mud_type,
+-                    uncertainties=uncertainties,
+-                    ef_ch4=emission_factors.get("ch4", 0),
+-                    gwp_dict=gwp_dict,
+-                )
++                mud_type = "oil_based" if ("oil" in raw_mud_type or "synth" in raw_mud_type) else "water_based"
++
++                # Check gas concentrations for Tier 2+
++                ch4_conc = (
++                    flat_inputs.get("ch4_fraction")
++                    if flat_inputs.get("ch4_fraction") is not None
++                    else flat_inputs.get("ch4_concentration")
++                )
++                if ch4_conc is None and flat_inputs.get("ch4_pct") is not None:
++                    ch4_conc = float(flat_inputs.get("ch4_pct")) / 100.0
++
++                co2_conc = (
++                    flat_inputs.get("co2_fraction")
++                    if flat_inputs.get("co2_fraction") is not None
++                    else flat_inputs.get("co2_concentration")
++                )
++                if co2_conc is None and flat_inputs.get("co2_pct") is not None:
++                    co2_conc = float(flat_inputs.get("co2_pct")) / 100.0
++
++                unit_str = str(flat_inputs.get("unit") or unit or "").lower().strip()
++
++                # Determine whether Tier 1, Tier 2, or Tier 2+
++                is_tier2_plus = (
++                    raw_tier in ["tier2_plus", "tier_2_plus", "tier2+", "tier_2+"]
++                    or (ch4_conc is not None and float(ch4_conc) != 0.8385)
++                    or (co2_conc is not None and float(co2_conc) > 0)
++                )
++                is_tier2 = (
++                    is_tier2_plus
++                    or raw_tier in ["tier2", "tier_2", "custom", "t2"]
++                    or unit_str in ["days", "day", "d"]
++                    or flat_inputs.get("drilling_days") is not None
++                )
++
++                if is_tier2_plus:
++                    drilling_days = self._require_float(
++                        flat_inputs,
++                        ["drilling_days", "days", "amount", "quantity", "mud_vol", "mud_volume"],
++                        "drilling days",
++                    )
++                    return calculator.calculate(
++                        tier="tier2_plus",
++                        drilling_days=drilling_days,
++                        mud_type=mud_type,
++                        ch4_concentration=ch4_conc,
++                        co2_concentration=co2_conc,
++                        uncertainties=uncertainties,
++                        ef_ch4=emission_factors.get("ch4", 0),
++                        gwp_dict=gwp_dict,
++                    )
++                elif is_tier2:
++                    drilling_days = self._require_float(
++                        flat_inputs,
++                        ["drilling_days", "days", "amount", "quantity", "mud_vol", "mud_volume"],
++                        "drilling days",
++                    )
++                    return calculator.calculate(
++                        tier="tier2",
++                        drilling_days=drilling_days,
++                        mud_type=mud_type,
++                        uncertainties=uncertainties,
++                        ef_ch4=emission_factors.get("ch4", 0),
++                        gwp_dict=gwp_dict,
++                    )
++                else:
++                    # Tier 1 (wells default)
++                    wells = self._require_float(
++                        flat_inputs,
++                        ["wells", "well_count", "amount", "quantity", "mud_vol", "mud_volume"],
++                        "well count",
++                    )
++                    return calculator.calculate(
++                        tier="tier1",
++                        wells=wells,
++                        uncertainties=uncertainties,
++                        ef_ch4=emission_factors.get("ch4", 0),
++                        gwp_dict=gwp_dict,
++                    )
+ 
+             elif process_type == "completions":
+                 comp_method = (
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

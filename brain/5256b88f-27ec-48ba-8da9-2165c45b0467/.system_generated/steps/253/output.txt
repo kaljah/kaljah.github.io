@@ -1,0 +1,1114 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\vented.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -471,28 +471,746 @@
+ 
+ 
+ class LiquidsUnloadingCalculator(BaseCalculator):
+-    def __init__(self):
+-        super().__init__("Liquids Unloading (Volume-Based)", "Section 6.4")
+-
+-    def calculate(
+-        self,
+-        well_depth,
+-        diameter,
+-        pressure,
+-        ch4_content,
+-        events,
+-        uncertainties,
+-        co2_content=0.0,
+-        control_efficiency=0.0,
+-        ef_co2=None,
+-        ef_ch4=None,
+-        ef_n2o=None,
+-        operating_temperature=60.0,
+-        temp_unit="F",
+-        depth_unit="ft",
+-        diameter_unit="in",
+-        press_unit="psig",
+-        z_factor=1.0,
++    """
++    API Compendium 2021 - Section 6.3.4: Well Venting from Liquids Unloading.
++    Supports complete tier hierarchy:
++      - Tier 1: API Table 6-11 per-well default factors (plunger and non-plunger)
++      - Tier 2: API Table 6-10 event-based factors (average and regional)
++      - Tier 3: Engineering and measured data:
++          * API Eq. 6-10 (EPA Subpart W integrated W-8/W-9)
++          * API Eq. 6-11 (Automated plunger lift vent rate)
++          * API Eq. 6-3 (Volume-based wellbore decompression geometry)
++    """
++
++    # --- API TABLE 6-11: TIER 1 PER-WELL VENTED EMISSION FACTORS ---
++    TABLE_6_11 = {
++        "plunger": {
++            "ch4_kg_per_well_yr": 1774.0,
++            "ch4_tonnes_per_well_yr": 1.774,
++            "whole_gas_scf_per_well_yr": 113466.0,
++            "default_ch4_mol_pct": 81.6,
++            "uncertainty": {"ch4": 0.50, "co2": 0.50},
++        },
++        "non_plunger": {
++            "ch4_kg_per_well_yr": 2792.0,
++            "ch4_tonnes_per_well_yr": 2.792,
++            "whole_gas_scf_per_well_yr": 178531.0,
++            "default_ch4_mol_pct": 81.6,
++            "uncertainty": {"ch4": 0.50, "co2": 0.50},
++        },
++    }
++
++    # --- API TABLE 6-10: TIER 2 EVENT-BASED EMISSION FACTORS (AVERAGE) ---
++    TABLE_6_10_AVERAGE = {
++        "plunger_le100": {
++            "scf_ch4_event": 9650.0,
++            "tonnes_ch4_event": 0.185,
++            "scf_gas_event": 11308.0,
++            "ch4_mol_pct": 85.3,
++            "uncertainty": {"ch4": 0.285},
++        },
++        "plunger_gt100": {
++            "scf_ch4_event": 1260.0,
++            "tonnes_ch4_event": 0.024,
++            "scf_gas_event": 1503.0,
++            "ch4_mol_pct": 83.9,
++            "uncertainty": {"ch4": 0.667},
++        },
++        "non_plunger_le10": {
++            "scf_ch4_event": 21500.0,
++            "tonnes_ch4_event": 0.412,
++            "scf_gas_event": 24109.0,
++            "ch4_mol_pct": 89.2,
++            "uncertainty": {"ch4": 0.758},
++        },
++        "non_plunger_10_to_50": {
++            "scf_ch4_event": 24100.0,
++            "tonnes_ch4_event": 0.462,
++            "scf_gas_event": 25690.0,
++            "ch4_mol_pct": 93.8,
++            "uncertainty": {"ch4": 1.09},
++        },
++        "non_plunger_gt50": {
++            "scf_ch4_event": 35000.0,
++            "tonnes_ch4_event": 0.670,
++            "scf_gas_event": 36512.0,
++            "ch4_mol_pct": 95.9,
++            "uncertainty": {"ch4": 0.514},
++        },
++    }
++
++    # --- API TABLE 6-10: TIER 2 REGIONAL EMISSION FACTORS ---
++    TABLE_6_10_REGIONAL = {
++        "appalachia": {
++            "plunger_le100": {"scf_ch4": 5100.0, "tonnes_ch4": 0.098, "scf_gas": 5172.0, "ch4_mol_pct": 98.6, "uncertainty": {"ch4": 0.470}},
++            "plunger_gt100": {"scf_ch4": 1260.0, "tonnes_ch4": 0.024, "scf_gas": 1278.0, "ch4_mol_pct": 98.6, "uncertainty": {"ch4": 0.667}},
++            "non_plunger": {"scf_ch4": 4550.0, "tonnes_ch4": 0.087, "scf_gas": 4615.0, "ch4_mol_pct": 98.6, "uncertainty": {"ch4": 0.912}},
++        },
++        "gulf_coast": {
++            "plunger_le100": {"scf_ch4": 9650.0, "tonnes_ch4": 0.185, "scf_gas": 9807.0, "ch4_mol_pct": 98.4, "uncertainty": {"ch4": 0.285}},
++            "plunger_gt100": {"scf_ch4": 1260.0, "tonnes_ch4": 0.024, "scf_gas": 1280.0, "ch4_mol_pct": 98.4, "uncertainty": {"ch4": 0.667}},
++            "non_plunger": {"scf_ch4": 13300.0, "tonnes_ch4": 0.255, "scf_gas": 13516.0, "ch4_mol_pct": 98.4, "uncertainty": {"ch4": 0.271}},
++        },
++        "midcontinent": {
++            "plunger_le100": {"scf_ch4": 6400.0, "tonnes_ch4": 0.123, "scf_gas": 6544.0, "ch4_mol_pct": 97.8, "uncertainty": {"ch4": 0.563}},
++            "plunger_gt100": {"scf_ch4": 300.0, "tonnes_ch4": 0.006, "scf_gas": 307.0, "ch4_mol_pct": 97.8, "uncertainty": {"ch4": 0.550}},
++            "non_plunger": {"scf_ch4": 47800.0, "tonnes_ch4": 0.916, "scf_gas": 48875.0, "ch4_mol_pct": 97.8, "uncertainty": {"ch4": 0.504}},
++        },
++        "rocky_mountain": {
++            "plunger_le100": {"scf_ch4": 12600.0, "tonnes_ch4": 0.241, "scf_gas": 14433.0, "ch4_mol_pct": 87.3, "uncertainty": {"ch4": 0.381}},
++            "plunger_gt100": {"scf_ch4": 1400.0, "tonnes_ch4": 0.027, "scf_gas": 1604.0, "ch4_mol_pct": 87.3, "uncertainty": {"ch4": 0.857}},
++            "non_plunger": {"scf_ch4": 15200.0, "tonnes_ch4": 0.291, "scf_gas": 17411.0, "ch4_mol_pct": 87.3, "uncertainty": {"ch4": 0.382}},
++        },
++    }
++
++    # API Standard Molar Conversion Factors (at 60°F, 14.696 psia: 379.3 scf/lbmol, 2204.6226 lb/tonne)
++    # Mass (tonnes) = scf * MW / (379.3 * 2204.6226218)
++    SCF_TO_TONNES_CH4 = 16.04 / (379.3 * 2204.6226218)  # ≈ 1.9184852e-5
++    SCF_TO_TONNES_CO2 = 44.01 / (379.3 * 2204.6226218)  # ≈ 5.263158e-5
++
++    def __init__(self):
++        super().__init__("Liquids Unloading", "Section 6.3.4")
++
++    def _normalize_unloading_type(self, raw_type: str) -> str:
++        s = str(raw_type or "").lower().strip().replace(" ", "_").replace("-", "_")
++        if "non" in s or "without" in s:
++            return "non_plunger"
++        if "plunger" in s:
++            return "plunger"
++        return "plunger"
++
++    def _validate_fraction(self, val, default=0.0, name="fraction"):
++        if val is None or val == "" or val == "-":
++            return default
++        try:
++            f = float(val)
++        except (ValueError, TypeError):
++            raise ValueError(f"Invalid numeric value for {name}: {val}")
++        if f < 0.0:
++            raise ValueError(f"{name} cannot be negative: {f}")
++        if f > 1.0:
++            if f <= 100.0:
++                f /= 100.0
++            else:
++                raise ValueError(f"{name} cannot exceed 100%: {val}")
++        return max(0.0, min(1.0, f))
++
++    def calculate_tier1(
++        self,
++        well_count,
++        unloading_type="plunger",
++        ch4_content=None,
++        co2_content=0.0,
++        control_efficiency=0.0,
++        factor_key=None,
++        uncertainties=None,
++        hhv=1020.0,
++        ef_n2o=None,
++        gwp_dict=None,
++    ):
++        """
++        API Compendium 2021 Section 6.3.4 / Table 6-11:
++        Tier 1: Per-well default vented emission factors.
++        Used when the number of unloading events is not available.
++        """
++        if well_count is None or str(well_count).strip() == "":
++            raise ValueError("Number of wells is required for Tier 1 calculation.")
++        try:
++            wells = float(well_count)
++        except (ValueError, TypeError):
++            raise ValueError(f"Invalid well count: {well_count}")
++        if wells <= 0:
++            raise ValueError("Number of wells must be greater than zero.")
++        if wells > 100000:
++            raise ValueError(f"Unrealistic number of wells: {wells}")
++
++        u_type = self._normalize_unloading_type(unloading_type)
++        t1_data = self.TABLE_6_11[u_type]
++
++        c_ch4 = self._validate_fraction(ch4_content, default=t1_data["default_ch4_mol_pct"] / 100.0, name="Gas CH4 content")
++        c_co2 = self._validate_fraction(co2_content, default=0.0, name="Gas CO2 content")
++        if c_ch4 + c_co2 > 1.0001:
++            raise ValueError(f"Combined CH4 ({c_ch4*100:.1f}%) and CO2 ({c_co2*100:.1f}%) content cannot exceed 100%.")
++
++        total_gas_scf = wells * t1_data["whole_gas_scf_per_well_yr"]
++        total_gas_m3 = total_gas_scf * CONVERSIONS["scf_to_m3"]
++
++        # Footnote b: adjust based on site-specific CH4/CO2 content
++        default_basis = t1_data["default_ch4_mol_pct"] / 100.0
++        if ch4_content is not None and abs(c_ch4 - default_basis) > 1e-4:
++            ch4_tonnes = total_gas_scf * c_ch4 * self.SCF_TO_TONNES_CH4
++        else:
++            ch4_tonnes = wells * t1_data["ch4_tonnes_per_well_yr"]
++
++        co2_tonnes = total_gas_scf * c_co2 * self.SCF_TO_TONNES_CO2
++
++        ctrl_eff = normalize_efficiency(control_efficiency, default=0.0)
++        split = _split_vented_and_flared(
++            total_gas_m3=total_gas_m3,
++            ch4_tonnes=ch4_tonnes,
++            co2_tonnes=co2_tonnes,
++            ctrl_eff=ctrl_eff,
++            hhv=hhv,
++            ef_n2o=ef_n2o,
++        )
++
++        unc = dict(uncertainties or {})
++        unc.setdefault("ch4", t1_data["uncertainty"]["ch4"])
++        unc.setdefault("co2", t1_data["uncertainty"]["co2"])
++        unc["_factor_source"] = "default"
++
++        ch4_res, co2_res, n2o_res = _propagate_vented_results(
++            total_ch4=split["total_ch4"],
++            total_co2=split["total_co2"],
++            flared_n2o=split["flared_n2o"],
++            uncertainties=unc,
++            factor_source="default",
++            process_category="vented",
++        )
++
++        total_co2e = calculate_co2e(
++            ch4=split["total_ch4"],
++            co2=split["total_co2"],
++            n2o=split["flared_n2o"],
++            gwp_dict=gwp_dict,
++        )
++
++        return self.format_result(
++            ch4=ch4_res,
++            co2=co2_res,
++            n2o=n2o_res,
++            total_co2e=total_co2e,
++            inputs={
++                "tier": "Tier 1",
++                "method": "api_table_6_11",
++                "calculation_level": "Tier 1 (API Table 6-11)",
++                "unloading_type": u_type,
++                "well_count": wells,
++                "amount": wells,
++                "unit": "wells",
++                "whole_gas_scf": total_gas_scf,
++                "whole_gas_m3": total_gas_m3,
++                "ch4_content": c_ch4,
++                "co2_content": c_co2,
++                "control_efficiency": ctrl_eff,
++                "api_reference": "API Compendium 2021 Section 6.3.4, Table 6-11",
++            },
++        )
++
++    def calculate_tier2(
++        self,
++        events,
++        unloading_type="plunger",
++        well_count=1,
++        frequency_category=None,
++        region=None,
++        ch4_content=None,
++        co2_content=0.0,
++        control_efficiency=0.0,
++        factor_key=None,
++        uncertainties=None,
++        hhv=1020.0,
++        ef_n2o=None,
++        gwp_dict=None,
++    ):
++        """
++        API Compendium 2021 Section 6.3.4 / Table 6-10:
++        Tier 2: Event-based vented emission factors for wells.
++        """
++        if events is None or str(events).strip() == "":
++            raise ValueError("Number of unloading events is required for Tier 2 calculation.")
++        try:
++            ev = float(events)
++        except (ValueError, TypeError):
++            raise ValueError(f"Invalid unloading events: {events}")
++        if ev < 0:
++            raise ValueError("Number of unloading events cannot be negative.")
++
++        wc = float(well_count or 1)
++        if wc <= 0:
++            raise ValueError("Number of wells must be greater than zero.")
++
++        u_type = self._normalize_unloading_type(unloading_type)
++
++        # Invariant: zero events results in zero emissions
++        if ev == 0:
++            return self.format_result(
++                ch4={"value": 0.0, "uncertainty": 0.0},
++                co2={"value": 0.0, "uncertainty": 0.0},
++                n2o={"value": 0.0, "uncertainty": 0.0},
++                total_co2e=0.0,
++                inputs={
++                    "tier": "Tier 2",
++                    "method": "api_table_6_10",
++                    "unloading_type": u_type,
++                    "events": 0,
++                    "well_count": wc,
++                },
++            )
++
++        total_events = ev * wc
++        ev_per_well = ev  # per well-year basis for threshold
++
++        # Resolve Table 6-10 factor
++        reg_key = str(region or "").lower().strip().replace(" ", "_").replace("-", "_")
++        selected_factor = None
++        unc_val = 0.50
++
++        if reg_key in self.TABLE_6_10_REGIONAL:
++            reg_dict = self.TABLE_6_10_REGIONAL[reg_key]
++            if u_type == "plunger":
++                sub_key = "plunger_le100" if ev_per_well <= 100 else "plunger_gt100"
++                selected_factor = reg_dict[sub_key]
++            else:
++                selected_factor = reg_dict["non_plunger"]
++        else:
++            # Average factors
++            if u_type == "plunger":
++                cat = frequency_category or ("plunger_le100" if ev_per_well <= 100 else "plunger_gt100")
++                selected_factor = self.TABLE_6_10_AVERAGE.get(cat, self.TABLE_6_10_AVERAGE["plunger_le100"])
++            else:
++                if frequency_category:
++                    cat = frequency_category
++                elif ev_per_well <= 10:
++                    cat = "non_plunger_le10"
++                elif ev_per_well <= 50:
++                    cat = "non_plunger_10_to_50"
++                else:
++                    cat = "non_plunger_gt50"
++                selected_factor = self.TABLE_6_10_AVERAGE.get(cat, self.TABLE_6_10_AVERAGE["non_plunger_le10"])
++
++        unc_val = selected_factor.get("uncertainty", {}).get("ch4", 0.50)
++        wgf = selected_factor.get("scf_gas_event") or selected_factor.get("scf_gas")
++        ef_tonnes = selected_factor.get("tonnes_ch4_event") or selected_factor.get("tonnes_ch4")
++        base_mol_pct = selected_factor.get("ch4_mol_pct", 85.0)
++
++        c_ch4 = self._validate_fraction(ch4_content, default=base_mol_pct / 100.0, name="Gas CH4 content")
++        c_co2 = self._validate_fraction(co2_content, default=0.0, name="Gas CO2 content")
++        if c_ch4 + c_co2 > 1.0001:
++            raise ValueError(f"Combined CH4 ({c_ch4*100:.1f}%) and CO2 ({c_co2*100:.1f}%) content cannot exceed 100%.")
++
++        total_gas_scf = total_events * wgf
++        total_gas_m3 = total_gas_scf * CONVERSIONS["scf_to_m3"]
++
++        # If site-specific CH4 fraction is provided, convert whole gas; otherwise use catalog tonnes EF
++        if ch4_content is not None and abs(c_ch4 - (base_mol_pct / 100.0)) > 1e-4:
++            ch4_tonnes = total_gas_scf * c_ch4 * self.SCF_TO_TONNES_CH4
++        else:
++            ch4_tonnes = total_events * ef_tonnes
++
++        co2_tonnes = total_gas_scf * c_co2 * self.SCF_TO_TONNES_CO2
++
++        ctrl_eff = normalize_efficiency(control_efficiency, default=0.0)
++        split = _split_vented_and_flared(
++            total_gas_m3=total_gas_m3,
++            ch4_tonnes=ch4_tonnes,
++            co2_tonnes=co2_tonnes,
++            ctrl_eff=ctrl_eff,
++            hhv=hhv,
++            ef_n2o=ef_n2o,
++        )
++
++        unc = dict(uncertainties or {})
++        unc.setdefault("ch4", unc_val)
++        unc.setdefault("co2", unc_val)
++        unc["_factor_source"] = "custom"
++
++        ch4_res, co2_res, n2o_res = _propagate_vented_results(
++            total_ch4=split["total_ch4"],
++            total_co2=split["total_co2"],
++            flared_n2o=split["flared_n2o"],
++            uncertainties=unc,
++            factor_source="custom",
++            process_category="vented",
++        )
++
++        total_co2e = calculate_co2e(
++            ch4=split["total_ch4"],
++            co2=split["total_co2"],
++            n2o=split["flared_n2o"],
++            gwp_dict=gwp_dict,
++        )
++
++        return self.format_result(
++            ch4=ch4_res,
++            co2=co2_res,
++            n2o=n2o_res,
++            total_co2e=total_co2e,
++            inputs={
++                "tier": "Tier 2",
++                "method": "api_table_6_10",
++                "calculation_level": "Tier 2 (API Table 6-10)",
++                "unloading_type": u_type,
++                "events": ev,
++                "well_count": wc,
++                "total_events": total_events,
++                "region": region or "Average",
++                "whole_gas_scf": total_gas_scf,
++                "whole_gas_m3": total_gas_m3,
++                "ch4_content": c_ch4,
++                "co2_content": c_co2,
++                "control_efficiency": ctrl_eff,
++                "api_reference": "API Compendium 2021 Section 6.3.4, Table 6-10",
++            },
++        )
++
++    def calculate_tier3_equation_6_10(
++        self,
++        events,
++        well_depth,
++        diameter,
++        pressure,
++        sfr=0.0,
++        hours_open=0.0,
++        unloading_type="non_plunger",
++        well_count=1,
++        ch4_content=0.85,
++        co2_content=0.0,
++        control_efficiency=0.0,
++        depth_unit="ft",
++        diameter_unit="in",
++        press_unit="psig",
++        sfr_unit="scf/hr",
++        uncertainties=None,
++        hhv=1020.0,
++        ef_n2o=None,
++        gwp_dict=None,
++    ):
++        """
++        API Compendium 2021 Section 6.3.4 / Equation 6-10 (EPA GHGRP Subpart W W-8 / W-9):
++        VR = (# events / well-year * 0.37e-3 * D^2 * Depth * P) + (SFR * (HR - X) * Z)
++        """
++        # Validate inputs
++        if well_depth is None or float(well_depth) <= 0:
++            raise ValueError("Well depth must be greater than zero for Equation 6-10.")
++        if diameter is None or float(diameter) <= 0:
++            raise ValueError("Tubing/casing diameter must be greater than zero for Equation 6-10.")
++        if pressure is None:
++            raise ValueError("Flow-line pressure is required for Equation 6-10.")
++        if events is None or float(events) < 0:
++            raise ValueError("Number of unloading events cannot be negative.")
++
++        ev = float(events)
++        wc = float(well_count or 1)
++        if wc <= 0:
++            raise ValueError("Number of wells must be greater than zero.")
++
++        u_type = self._normalize_unloading_type(unloading_type)
++
++        # Invariant: zero events and zero flow-line time results in zero emissions
++        sfr_val = max(0.0, float(sfr or 0.0))
++        hr_val = max(0.0, float(hours_open or 0.0))
++        if ev == 0 and (sfr_val == 0 or hr_val == 0):
++            return self.format_result(
++                ch4={"value": 0.0, "uncertainty": 0.0},
++                co2={"value": 0.0, "uncertainty": 0.0},
++                n2o={"value": 0.0, "uncertainty": 0.0},
++                total_co2e=0.0,
++                inputs={"tier": "Tier 3", "method": "api_equation_6_10", "events": 0},
++            )
++
++        # Diameter conversion to inches (D)
++        d_val = float(diameter)
++        du = str(diameter_unit or "in").lower().strip()
++        if du in ["mm", "millimeter", "millimeters"]:
++            d_in = d_val / 25.4
++        elif du in ["cm", "centimeter", "centimeters"]:
++            d_in = d_val / 2.54
++        elif du in ["m", "meter", "meters"]:
++            d_in = d_val / 0.0254
++        elif du in ["ft", "feet"]:
++            d_in = d_val * 12.0
++        else:  # 'in', 'inch', 'inches'
++            d_in = d_val
++        if d_in <= 0 or d_in > 60:
++            raise ValueError(f"Unrealistic well diameter: {d_in:.2f} inches.")
++
++        # Depth conversion to feet (Depth)
++        dep_val = float(well_depth)
++        dep_u = str(depth_unit or "ft").lower().strip()
++        if dep_u in ["m", "meter", "meters"]:
++            depth_ft = dep_val / 0.3048
++        elif dep_u in ["km", "kilometer"]:
++            depth_ft = (dep_val * 1000.0) / 0.3048
++        else:  # 'ft', 'feet'
++            depth_ft = dep_val
++        if depth_ft <= 0 or depth_ft > 50000:
++            raise ValueError(f"Unrealistic well depth: {depth_ft:.1f} feet.")
++
++        # Pressure conversion to psig (P)
++        p_val = float(pressure)
++        pu = str(press_unit or "psig").lower().strip()
++        p_abs = to_psia(p_val, pu)
++        p_psig = max(0.0, p_abs - STD_PRESSURE_PSIA)
++
++        # SFR conversion to scf/hr
++        sfru = str(sfr_unit or "scf/hr").lower().strip()
++        if "day" in sfru:
++            if "m3" in sfru:
++                sfr_scf_hr = (sfr_val * CONVERSIONS["m3_to_scf"]) / 24.0
++            else:
++                sfr_scf_hr = sfr_val / 24.0
++        elif "m3" in sfru:
++            sfr_scf_hr = sfr_val * CONVERSIONS["m3_to_scf"]
++        elif "mcf" in sfru or "mscf" in sfru:
++            sfr_scf_hr = sfr_val * 1000.0
++        else:
++            sfr_scf_hr = sfr_val
++
++        # Equation 6-10 parameters:
++        # X: 0.5 for plunger lift, 1.0 for non-plunger
++        x_param = 0.5 if u_type == "plunger" else 1.0
++        # Z: If HR < 1.0, Z is 0; if HR >= 1.0, Z is 1
++        z_param = 1.0 if hr_val >= 1.0 else 0.0
++
++        wellbore_vol_scf = ev * (0.37e-3) * (d_in ** 2) * depth_ft * p_psig
++        flowline_vol_scf = sfr_scf_hr * max(0.0, hr_val - x_param) * z_param
++        vr_per_well_scf = wellbore_vol_scf + flowline_vol_scf
++
++        total_gas_scf = wc * vr_per_well_scf
++        total_gas_m3 = total_gas_scf * CONVERSIONS["scf_to_m3"]
++
++        c_ch4 = self._validate_fraction(ch4_content, default=0.85, name="Gas CH4 content")
++        c_co2 = self._validate_fraction(co2_content, default=0.0, name="Gas CO2 content")
++        if c_ch4 + c_co2 > 1.0001:
++            raise ValueError(f"Combined CH4 ({c_ch4*100:.1f}%) and CO2 ({c_co2*100:.1f}%) content cannot exceed 100%.")
++
++        ch4_tonnes = total_gas_scf * c_ch4 * self.SCF_TO_TONNES_CH4
++        co2_tonnes = total_gas_scf * c_co2 * self.SCF_TO_TONNES_CO2
++
++        ctrl_eff = normalize_efficiency(control_efficiency, default=0.0)
++        split = _split_vented_and_flared(
++            total_gas_m3=total_gas_m3,
++            ch4_tonnes=ch4_tonnes,
++            co2_tonnes=co2_tonnes,
++            ctrl_eff=ctrl_eff,
++            hhv=hhv,
++            ef_n2o=ef_n2o,
++        )
++
++        unc = dict(uncertainties or {})
++        unc.setdefault("ch4", 0.15)
++        unc.setdefault("co2", 0.15)
++        unc["_factor_source"] = "specific"
++
++        ch4_res, co2_res, n2o_res = _propagate_vented_results(
++            total_ch4=split["total_ch4"],
++            total_co2=split["total_co2"],
++            flared_n2o=split["flared_n2o"],
++            uncertainties=unc,
++            factor_source="specific",
++            process_category="vented",
++        )
++
++        total_co2e = calculate_co2e(
++            ch4=split["total_ch4"],
++            co2=split["total_co2"],
++            n2o=split["flared_n2o"],
++            gwp_dict=gwp_dict,
++        )
++
++        return self.format_result(
++            ch4=ch4_res,
++            co2=co2_res,
++            n2o=n2o_res,
++            total_co2e=total_co2e,
++            inputs={
++                "tier": "Tier 3",
++                "method": "api_equation_6_10",
++                "calculation_level": "Tier 3 Engineering (API Eq. 6-10)",
++                "unloading_type": u_type,
++                "events": ev,
++                "well_count": wc,
++                "diameter_in": d_in,
++                "depth_ft": depth_ft,
++                "pressure_psig": p_psig,
++                "sfr_scf_hr": sfr_scf_hr,
++                "hours_open": hr_val,
++                "x_param": x_param,
++                "z_param": z_param,
++                "vr_per_well_scf": vr_per_well_scf,
++                "whole_gas_scf": total_gas_scf,
++                "whole_gas_m3": total_gas_m3,
++                "ch4_content": c_ch4,
++                "co2_content": c_co2,
++                "control_efficiency": ctrl_eff,
++                "api_reference": "API Compendium 2021 Section 6.3.4, Equation 6-10",
++            },
++        )
++
++    def calculate_tier3_equation_6_11(
++        self,
++        p_shut,
++        p_line,
++        p_sep,
++        sfr_p,
++        t_p,
++        events=1,
++        well_count=1,
++        p_atm=14.696,
++        ch4_content=0.85,
++        co2_content=0.0,
++        control_efficiency=0.0,
++        press_unit="psia",
++        sfr_unit="scf/hr",
++        uncertainties=None,
++        hhv=1020.0,
++        ef_n2o=None,
++        gwp_dict=None,
++    ):
++        """
++        API Compendium 2021 Section 6.3.4 / Equation 6-11:
++        VR = sqrt(Pshut - Patm) / sqrt(Pline - Psep) * SFRp * Tp
++        Vented emissions from automated plunger lift well unloading.
++        """
++        if p_shut is None or p_line is None or p_sep is None:
++            raise ValueError("Pressures (Pshut, Pline, Psep) are required for Equation 6-11.")
++        if sfr_p is None:
++            raise ValueError("Production rate SFRp is required for Equation 6-11.")
++        if t_p is None:
++            raise ValueError("Venting time Tp is required for Equation 6-11.")
++
++        ev = float(events if events is not None else 1)
++        wc = float(well_count or 1)
++        if ev < 0:
++            raise ValueError("Number of unloading events cannot be negative.")
++        if wc <= 0:
++            raise ValueError("Number of wells must be greater than zero.")
++
++        # Normalize pressures to psia
++        p_shut_abs = to_psia(p_shut, press_unit)
++        p_line_abs = to_psia(p_line, press_unit)
++        p_sep_abs = to_psia(p_sep, press_unit)
++        p_atm_abs = to_psia(p_atm, "psia")
++
++        if p_shut_abs < p_atm_abs:
++            raise ValueError(f"Shut-in pressure ({p_shut_abs:.2f} psia) must be greater than or equal to atmospheric pressure ({p_atm_abs:.2f} psia).")
++        if p_line_abs <= p_sep_abs:
++            raise ValueError(f"Line pressure ({p_line_abs:.2f} psia) must be strictly greater than separator pressure ({p_sep_abs:.2f} psia) for Equation 6-11.")
++
++        sfr_val = max(0.0, float(sfr_p))
++        tp_val = max(0.0, float(t_p))
++
++        # Invariant: 0 events or 0 time/rate yields 0 emissions
++        if ev == 0 or sfr_val == 0 or tp_val == 0:
++            return self.format_result(
++                ch4={"value": 0.0, "uncertainty": 0.0},
++                co2={"value": 0.0, "uncertainty": 0.0},
++                n2o={"value": 0.0, "uncertainty": 0.0},
++                total_co2e=0.0,
++                inputs={"tier": "Tier 3", "method": "api_equation_6_11", "events": 0},
++            )
++
++        # Normalize SFRp to scf/hr
++        sfru = str(sfr_unit or "scf/hr").lower().strip()
++        if "day" in sfru:
++            if "m3" in sfru:
++                sfr_rate = (sfr_val * CONVERSIONS["m3_to_scf"]) / 24.0
++            else:
++                sfr_rate = sfr_val / 24.0
++        elif "m3" in sfru:
++            sfr_rate = sfr_val * CONVERSIONS["m3_to_scf"]
++        elif "mcf" in sfru or "mscf" in sfru:
++            sfr_rate = sfr_val * 1000.0
++        else:
++            sfr_rate = sfr_val
++
++        # Equation 6-11: VR = sqrt(Pshut - Patm) / sqrt(Pline - Psep) * SFRp * Tp
++        press_ratio = math.sqrt(p_shut_abs - p_atm_abs) / math.sqrt(p_line_abs - p_sep_abs)
++        vr_scf = press_ratio * sfr_rate * tp_val
++
++        total_gas_scf = vr_scf * ev * wc
++        total_gas_m3 = total_gas_scf * CONVERSIONS["scf_to_m3"]
++
++        c_ch4 = self._validate_fraction(ch4_content, default=0.85, name="Gas CH4 content")
++        c_co2 = self._validate_fraction(co2_content, default=0.0, name="Gas CO2 content")
++        if c_ch4 + c_co2 > 1.0001:
++            raise ValueError(f"Combined CH4 ({c_ch4*100:.1f}%) and CO2 ({c_co2*100:.1f}%) content cannot exceed 100%.")
++
++        ch4_tonnes = total_gas_scf * c_ch4 * self.SCF_TO_TONNES_CH4
++        co2_tonnes = total_gas_scf * c_co2 * self.SCF_TO_TONNES_CO2
++
++        ctrl_eff = normalize_efficiency(control_efficiency, default=0.0)
++        split = _split_vented_and_flared(
++            total_gas_m3=total_gas_m3,
++            ch4_tonnes=ch4_tonnes,
++            co2_tonnes=co2_tonnes,
++            ctrl_eff=ctrl_eff,
++            hhv=hhv,
++            ef_n2o=ef_n2o,
++        )
++
++        unc = dict(uncertainties or {})
++        unc.setdefault("ch4", 0.15)
++        unc.setdefault("co2", 0.15)
++        unc["_factor_source"] = "specific"
++
++        ch4_res, co2_res, n2o_res = _propagate_vented_results(
++            total_ch4=split["total_ch4"],
++            total_co2=split["total_co2"],
++            flared_n2o=split["flared_n2o"],
++            uncertainties=unc,
++            factor_source="specific",
++            process_category="vented",
++        )
++
++        total_co2e = calculate_co2e(
++            ch4=split["total_ch4"],
++            co2=split["total_co2"],
++            n2o=split["flared_n2o"],
++            gwp_dict=gwp_dict,
++        )
++
++        return self.format_result(
++            ch4=ch4_res,
++            co2=co2_res,
++            n2o=n2o_res,
++            total_co2e=total_co2e,
++            inputs={
++                "tier": "Tier 3",
++                "method": "api_equation_6_11",
++                "calculation_level": "Tier 3 Engineering (API Eq. 6-11)",
++                "unloading_type": "plunger",
++                "events": ev,
++                "well_count": wc,
++                "p_shut_psia": p_shut_abs,
++                "p_line_psia": p_line_abs,
++                "p_sep_psia": p_sep_abs,
++                "p_atm_psia": p_atm_abs,
++                "press_ratio": press_ratio,
++                "sfr_scf_hr": sfr_rate,
++                "t_p_hr": tp_val,
++                "vr_per_event_scf": vr_scf,
++                "whole_gas_scf": total_gas_scf,
++                "whole_gas_m3": total_gas_m3,
++                "ch4_content": c_ch4,
++                "co2_content": c_co2,
++                "control_efficiency": ctrl_eff,
++                "api_reference": "API Compendium 2021 Section 6.3.4, Equation 6-11",
++            },
++        )
++
++    def calculate_volume_based(
++        self,
++        well_depth,
++        diameter,
++        pressure,
++        ch4_content,
++        events,
++        uncertainties=None,
++        co2_content=0.0,
++        control_efficiency=0.0,
++        ef_co2=None,
++        ef_ch4=None,
++        ef_n2o=None,
++        operating_temperature=60.0,
++        temp_unit="F",
++        depth_unit="ft",
++        diameter_unit="in",
++        press_unit="psig",
++        z_factor=1.0,
++        well_count=1,
++        unloading_type="plunger",
+         hhv=1020.0,
+         gwp_dict=None,
+     ):
+@@ -499,5 +499,6 @@
+         API Equation 6-3 - Volume per unloading event with temperature and compressibility correction:
+         V_std = (pi/4) * D^2 * Depth * (P_tubing_abs / P_std) * (T_std / T_well_abs) * (1 / Z)
++        Preserved with backwards compatibility for existing differential and unit tests.
+         """
+         self.validate_inputs(
+             {
+@@ -508,8 +508,9 @@
+             ["depth", "diameter", "pressure", "events"],
+         )
+ 
+-        # Diameter conversion to meters
+-        d_val = float(diameter)
++        d_val = float(diameter)
++        if d_val <= 0:
++            raise ValueError(f"Casing/tubing diameter must be greater than zero: {d_val}")
+         du = str(diameter_unit or "in").lower().strip()
+         if du in ["in", "inch", "inches"]:
+             d_m = d_val * 0.0254
+@@ -523,8 +523,9 @@
+         else:
+             d_m = d_val * 0.0254
+ 
+-        # Depth conversion to meters
+         depth_val = float(well_depth)
++        if depth_val <= 0:
++            raise ValueError(f"Well depth must be greater than zero: {depth_val}")
+         dep_u = str(depth_unit or "ft").lower().strip()
+         if dep_u in ["m", "meter", "meters"]:
+             depth_m = depth_val
+@@ -533,7 +533,7 @@
+             depth_m = depth_val * 0.3048
+ 
+         # Volume at tubing conditions (m3)
+-        v_tubing = (math.pi / 4.0) * (d_m**2) * depth_m
++        v_tubing = (math.pi / 4.0) * (d_m ** 2) * depth_m
+ 
+         # Pressure, temperature, and compressibility correction (API Eq. 6-3 & §4.2.1)
+         p_abs = to_psia(pressure, press_unit)
+@@ -543,69 +543,241 @@
+ 
+         z = float(z_factor) if z_factor and float(z_factor) > 0 else 1.0
+ 
++        ev = float(events)
++        if ev < 0:
++            raise ValueError("Number of unloading events cannot be negative.")
++        wc = float(well_count or 1)
++        if wc <= 0:
++            raise ValueError("Number of wells must be greater than zero.")
++
+         v_std = v_tubing * p_factor * t_factor * (1.0 / z)
+-        total_v_std = v_std * float(events)
+-
+-        c_ch4 = float(ch4_content if ch4_content is not None else 0.85)
+-        if c_ch4 > 1.0:
+-            c_ch4 /= 100.0
+-        c_ch4 = max(0.0, min(1.0, c_ch4))
+-
+-        c_co2 = float(co2_content or 0.0)
+-        if c_co2 > 1.0:
+-            c_co2 /= 100.0
+-        c_co2 = max(0.0, min(1.0, c_co2))
+-
+-        ch4_vol = total_v_std * c_ch4
+-        ch4_mass_kg = ch4_vol * CONVERSIONS["density_ch4"]
+-        ch4_tonnes = ch4_mass_kg / 1000.0
+-
+-        co2_vol = total_v_std * c_co2
+-        co2_mass_kg = co2_vol * CONVERSIONS["density_co2"]
+-        co2_tonnes = co2_mass_kg / 1000.0
+-
+-        ctrl_eff = float(control_efficiency or 0.0)
+-        split = _split_vented_and_flared(
+-            total_gas_m3=total_v_std,
+-            ch4_tonnes=ch4_tonnes,
+-            co2_tonnes=co2_tonnes,
+-            ctrl_eff=ctrl_eff,
+-            hhv=hhv,
+-            ef_n2o=ef_n2o,
+-        )
+-        total_ch4 = split["total_ch4"]
+-        total_co2 = split["total_co2"]
+-        flared_n2o_tonnes = split["flared_n2o"]
+-
+-        ch4_res, co2_res, n2o_res = _propagate_vented_results(
+-            total_ch4=total_ch4,
+-            total_co2=total_co2,
+-            flared_n2o=flared_n2o_tonnes,
+-            uncertainties=uncertainties,
+-            factor_source=uncertainties.get("_factor_source", "default"),
+-            process_category="vented",
+-        )
+-
+-        total_co2e = calculate_co2e(
+-            ch4=total_ch4, co2=total_co2, n2o=flared_n2o_tonnes, gwp_dict=gwp_dict
+-        )
+-
+-        return self.format_result(
+-            ch4=ch4_res,
+-            co2=co2_res,
+-            n2o=n2o_res,
+-            total_co2e=total_co2e,
+-            inputs={
++        total_v_std = v_std * ev * wc
++
++        c_ch4 = self._validate_fraction(ch4_content, default=0.85, name="Gas CH4 content")
++        c_co2 = self._validate_fraction(co2_content, default=0.0, name="Gas CO2 content")
++        if c_ch4 + c_co2 > 1.0001:
++            raise ValueError(f"Combined CH4 ({c_ch4*100:.1f}%) and CO2 ({c_co2*100:.1f}%) content cannot exceed 100%.")
++
++        ch4_vol = total_v_std * c_ch4
++        ch4_mass_kg = ch4_vol * CONVERSIONS["density_ch4"]
++        ch4_tonnes = ch4_mass_kg / 1000.0
++
++        co2_vol = total_v_std * c_co2
++        co2_mass_kg = co2_vol * CONVERSIONS["density_co2"]
++        co2_tonnes = co2_mass_kg / 1000.0
++
++        ctrl_eff = float(control_efficiency or 0.0)
++        split = _split_vented_and_flared(
++            total_gas_m3=total_v_std,
++            ch4_tonnes=ch4_tonnes,
++            co2_tonnes=co2_tonnes,
++            ctrl_eff=ctrl_eff,
++            hhv=hhv,
++            ef_n2o=ef_n2o,
++        )
++        total_ch4 = split["total_ch4"]
++        total_co2 = split["total_co2"]
++        flared_n2o_tonnes = split["flared_n2o"]
++
++        unc = dict(uncertainties or {})
++        unc.setdefault("ch4", 0.15)
++        unc.setdefault("co2", 0.15)
++        unc["_factor_source"] = unc.get("_factor_source", "specific")
++
++        ch4_res, co2_res, n2o_res = _propagate_vented_results(
++            total_ch4=total_ch4,
++            total_co2=total_co2,
++            flared_n2o=flared_n2o_tonnes,
++            uncertainties=unc,
++            factor_source=unc.get("_factor_source", "specific"),
++            process_category="vented",
++        )
++
++        total_co2e = calculate_co2e(
++            ch4=total_ch4, co2=total_co2, n2o=flared_n2o_tonnes, gwp_dict=gwp_dict
++        )
++
++        return self.format_result(
++            ch4=ch4_res,
++            co2=co2_res,
++            n2o=n2o_res,
++            total_co2e=total_co2e,
++            inputs={
++                "tier": "Tier 3",
++                "method": "api_equation_6_3",
++                "calculation_level": "Tier 3 Engineering (API Eq. 6-3)",
+                 "well_depth": well_depth,
+                 "diameter": diameter,
+                 "pressure": pressure,
+-                "events": events,
+-                "ch4_content": ch4_content,
+-                "co2_content": co2_content,
+-                "control_efficiency": control_efficiency,
+-                "operating_temperature": operating_temperature,
+-            },
+-        )
++                "events": ev,
++                "well_count": wc,
++                "ch4_content": c_ch4,
++                "co2_content": c_co2,
++                "control_efficiency": control_efficiency,
++                "operating_temperature": operating_temperature,
++                "api_reference": "API Compendium 2021 Section 6.3.4, Equation 6-3",
++            },
++        )
++
++    def calculate(
++        self,
++        well_depth=None,
++        diameter=None,
++        pressure=None,
++        ch4_content=None,
++        events=None,
++        uncertainties=None,
++        co2_content=0.0,
++        control_efficiency=0.0,
++        ef_co2=None,
++        ef_ch4=None,
++        ef_n2o=None,
++        operating_temperature=60.0,
++        temp_unit="F",
++        depth_unit="ft",
++        diameter_unit="in",
++        press_unit="psig",
++        z_factor=1.0,
++        well_count=None,
++        unloading_type=None,
++        tier=None,
++        method=None,
++        calc_method=None,
++        sfr=None,
++        hours_open=None,
++        p_shut=None,
++        p_line=None,
++        p_sep=None,
++        sfr_p=None,
++        t_p=None,
++        region=None,
++        frequency_category=None,
++        hhv=1020.0,
++        gwp_dict=None,
++        **kwargs,
++    ):
++        """
++        Unified calculate entry point that routes to Tier 1, Tier 2, or Tier 3 calculations.
++        """
++        m = str(method or calc_method or kwargs.get("unloading_method") or "").lower().strip()
++        t = str(tier or kwargs.get("calculation_level") or "").lower().strip()
++        factor_src = str((uncertainties or {}).get("_factor_source") or kwargs.get("factor_source") or "").lower().strip()
++
++        # Check for Equation 6-11
++        if m in ["api_equation_6_11", "equation_6_11", "eq_6_11"] or (p_shut is not None and p_sep is not None):
++            return self.calculate_tier3_equation_6_11(
++                p_shut=p_shut,
++                p_line=p_line,
++                p_sep=p_sep,
++                sfr_p=sfr_p or sfr,
++                t_p=t_p or hours_open,
++                events=events or 1,
++                well_count=well_count or 1,
++                p_atm=kwargs.get("p_atm", 14.696),
++                ch4_content=ch4_content,
++                co2_content=co2_content,
++                control_efficiency=control_efficiency,
++                press_unit=press_unit,
++                uncertainties=uncertainties,
++                hhv=hhv,
++                ef_n2o=ef_n2o,
++                gwp_dict=gwp_dict,
++            )
++
++        # Check for Equation 6-10
++        if m in ["api_equation_6_10", "equation_6_10", "eq_6_10"] or (sfr is not None and hours_open is not None):
++            return self.calculate_tier3_equation_6_10(
++                events=events or kwargs.get("unload_events") or kwargs.get("unload_freq") or 1,
++                well_depth=well_depth or kwargs.get("unload_depth"),
++                diameter=diameter or kwargs.get("unload_diam"),
++                pressure=pressure or kwargs.get("unload_press"),
++                sfr=sfr,
++                hours_open=hours_open,
++                unloading_type=unloading_type or kwargs.get("unload_type", "non_plunger"),
++                well_count=well_count or kwargs.get("wells", 1),
++                ch4_content=ch4_content,
++                co2_content=co2_content,
++                control_efficiency=control_efficiency,
++                depth_unit=depth_unit,
++                diameter_unit=diameter_unit,
++                press_unit=press_unit,
++                sfr_unit=kwargs.get("sfr_unit", "scf/hr"),
++                uncertainties=uncertainties,
++                hhv=hhv,
++                ef_n2o=ef_n2o,
++                gwp_dict=gwp_dict,
++            )
++
++        # Check for Tier 1: Per-well Table 6-11
++        is_tier1 = (
++            t in ["1", "tier1", "tier_1"]
++            or m in ["api_table_6_11", "table_6_11", "tier1", "per_well"]
++            or (factor_src == "default" and well_count is not None and well_depth is None)
++        )
++        if is_tier1:
++            wc = well_count or kwargs.get("wells") or kwargs.get("amount") or kwargs.get("quantity") or 1
++            return self.calculate_tier1(
++                well_count=wc,
++                unloading_type=unloading_type or kwargs.get("unload_type", "plunger"),
++                ch4_content=ch4_content,
++                co2_content=co2_content,
++                control_efficiency=control_efficiency,
++                factor_key=kwargs.get("fuel") or kwargs.get("factor_key"),
++                uncertainties=uncertainties,
++                hhv=hhv,
++                ef_n2o=ef_n2o,
++                gwp_dict=gwp_dict,
++            )
++
++        # Check for Tier 2: Event-based Table 6-10
++        is_tier2 = (
++            t in ["2", "tier2", "tier_2"]
++            or m in ["api_table_6_10", "table_6_10", "tier2", "event_based"]
++            or (factor_src == "custom" and well_depth is None and (events is not None or kwargs.get("amount") is not None))
++        )
++        if is_tier2:
++            ev = events or kwargs.get("unload_events") or kwargs.get("unload_freq") or kwargs.get("amount") or kwargs.get("quantity")
++            return self.calculate_tier2(
++                events=ev,
++                unloading_type=unloading_type or kwargs.get("unload_type", "plunger"),
++                well_count=well_count or kwargs.get("wells", 1),
++                frequency_category=frequency_category or kwargs.get("freq_category"),
++                region=region,
++                ch4_content=ch4_content,
++                co2_content=co2_content,
++                control_efficiency=control_efficiency,
++                factor_key=kwargs.get("fuel") or kwargs.get("factor_key"),
++                uncertainties=uncertainties,
++                hhv=hhv,
++                ef_n2o=ef_n2o,
++                gwp_dict=gwp_dict,
++            )
++
++        # Default to Volume-based wellbore decompression (API Eq. 6-3)
++        return self.calculate_volume_based(
++            well_depth=well_depth or kwargs.get("unload_depth"),
++            diameter=diameter or kwargs.get("unload_diam"),
++            pressure=pressure or kwargs.get("unload_press"),
++            ch4_content=ch4_content,
++            events=events or kwargs.get("unload_events") or kwargs.get("unload_freq"),
++            uncertainties=uncertainties,
++            co2_content=co2_content,
++            control_efficiency=control_efficiency,
++            ef_co2=ef_co2,
++            ef_ch4=ef_ch4,
++            ef_n2o=ef_n2o,
++            operating_temperature=operating_temperature or kwargs.get("unload_temp", 60.0),
++            temp_unit=temp_unit,
++            depth_unit=depth_unit,
++            diameter_unit=diameter_unit,
++            press_unit=press_unit,
++            z_factor=z_factor,
++            well_count=well_count or 1,
++            unloading_type=unloading_type or "plunger",
++            hhv=hhv,
++            gwp_dict=gwp_dict,
++        )
++
+ 
+ 
+ class BlowdownCalculator(BaseCalculator):
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

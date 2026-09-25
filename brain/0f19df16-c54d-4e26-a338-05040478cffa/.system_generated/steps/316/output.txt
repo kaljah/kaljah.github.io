@@ -1,0 +1,20 @@
+Task: 0f19df16-c54d-4e26-a338-05040478cffa/task-314
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\0f19df16-c54d-4e26-a338-05040478cffa\.system_generated\tasks\task-314.log
+Log output:
+<truncated 51 lines>
+_sensitivity_pressure PASSED [ 91%]
+new\server\tests\test_qfull_validation.py::TestGasByGasValidation::test_co2_only PASSED [ 93%]
+new\server\tests\test_qfull_validation.py::TestGasByGasValidation::test_ch4_only PASSED [ 95%]
+new\server\tests\test_qfull_validation.py::TestBoundaryZero::test_zero_emissions PASSED [ 97%]
+new\server\tests\test_qfull_validation.py::TestNegativeRejected::test_negative_quantity_raises_value_error PASSED [100%]
+
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================== 45 passed, 1 warning in 0.98s ========================
+
+Last progress: 2s ago

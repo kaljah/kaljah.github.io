@@ -1,0 +1,14 @@
+
+The command exited with code 0.
+Output:
+new/client/src/utils/EmissionFactors.js:351:    // stream: "Downstream" - Removed to make available to Upstream Drilling
+new/client/src/utils/EmissionFactors.js:913:  "Drilling - Gas Well Drilling (Simplified Default)": {
+new/client/src/utils/EmissionFactors.js:921:    usage: ["drilling"],
+new/client/src/utils/EmissionFactors.js:922:    description: "API Table 6-3 - Gas Well Drilling Simplified Default",
+new/client/src/utils/EmissionFactors.js:924:  "Drilling - Mud Degassing (Water Based)": {
+new/client/src/utils/EmissionFactors.js:932:    usage: ["drilling"],
+new/client/src/utils/EmissionFactors.js:935:  "Drilling - Mud Degassing (Oil Based)": {
+new/client/src/utils/EmissionFactors.js:943:    usage: ["drilling"],
+new/client/src/utils/EmissionFactors.js:1345:  drilling: "Drilling Operations",
+new/client/src/utils/EmissionFactors.js:1367:      "drilling",
+

@@ -1,0 +1,1 @@
+A1: Enter as a decimal fraction between 0.0 and 1.0 (e.g., 0.85 for 85%), defaulting to 0.8385, and calculated as (drilling_days × EF × (ch4_fraction / 0.8385)).

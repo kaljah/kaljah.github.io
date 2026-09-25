@@ -1,0 +1,19 @@
+The search for ""Mud Degassing Vented Methane Emission Factors" "Table 6-2"" returned the following summary:
+The reference **"Table 6-2. Mud Degassing Vented Methane Emission Factors for Oil and Natural Gas Exploration"** is found in the **API Compendium of Greenhouse Gas Emissions Methodologies for the Natural Gas and Oil Industry**[1][2].
+
+This publication, developed by the American Petroleum Institute (API), provides standardized methodologies for estimating greenhouse gas emissions across the oil and natural gas value chain[3][4]. 
+
+### Key Context regarding this Table:
+*   **Source:** The table is located within Section 6 of the API Compendium, which focuses on "Process and Vented Emissions Estimation Methods"[1][5].
+*   **Purpose:** It provides specific emission factors intended to help operators calculate methane emissions resulting from mud degassing operations during exploration[2].
+*   **Limitations & Usage:** Industry discussions (including comments submitted to the EPA) have noted that these emission factors often rely on older data—sometimes dating back to a 1977 EPA publication—and may be based on parameters (such as the use of water-based mud) that might not be representative of modern onshore drilling practices[6].
+*   **Recommendations:** The API and other stakeholders have suggested that when using these factors, it may be appropriate to consider basin-specific data or local gas composition variables to improve the accuracy of the emission estimates[7][6].
+
+Sources:
+[1] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHOlx6ztlFVw9IeTwgZHnOersCzru5isSdhWoKGCX7weNgSYimQMhXtnexQdFk0AqzcwBGY-2nDcJvwW2SDaEjHDsklFwaP9ZKympOmIpFO1eig2eQS47SY1HGCaaF4gTL9fK1TQ-ivc4rTVOTRcmYFXYY5WUbdsNN8ie7AREzDYhpIIAFk7Zd62g==)
+[2] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHOlx6ztlFVw9IeTwgZHnOersCzru5isSdhWoKGCX7weNgSYimQMhXtnexQdFk0AqzcwBGY-2nDcJvwW2SDaEjHDsklFwaP9ZKympOmIpFO1eig2eQS47SY1HGCaaF4gTL9fK1TQ-ivc4rTVOTRcmYFXYY5WUbdsNN8ie7AREzDYhpIIAFk7Zd62g==)
+[3] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHOlx6ztlFVw9IeTwgZHnOersCzru5isSdhWoKGCX7weNgSYimQMhXtnexQdFk0AqzcwBGY-2nDcJvwW2SDaEjHDsklFwaP9ZKympOmIpFO1eig2eQS47SY1HGCaaF4gTL9fK1TQ-ivc4rTVOTRcmYFXYY5WUbdsNN8ie7AREzDYhpIIAFk7Zd62g==)
+[4] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHOlx6ztlFVw9IeTwgZHnOersCzru5isSdhWoKGCX7weNgSYimQMhXtnexQdFk0AqzcwBGY-2nDcJvwW2SDaEjHDsklFwaP9ZKympOmIpFO1eig2eQS47SY1HGCaaF4gTL9fK1TQ-ivc4rTVOTRcmYFXYY5WUbdsNN8ie7AREzDYhpIIAFk7Zd62g==)
+[5] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHOlx6ztlFVw9IeTwgZHnOersCzru5isSdhWoKGCX7weNgSYimQMhXtnexQdFk0AqzcwBGY-2nDcJvwW2SDaEjHDsklFwaP9ZKympOmIpFO1eig2eQS47SY1HGCaaF4gTL9fK1TQ-ivc4rTVOTRcmYFXYY5WUbdsNN8ie7AREzDYhpIIAFk7Zd62g==)
+[6] [epa.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHPrFLReZD31LII8Ea5ivmluOPkU2G_KWwVi-ZVuWEJS_CaY70TuwIvn76bbBxBs50DpvNiXbHhrH-Mn8HeXH7GIVgP_YPxUzJ1FJmjFWPWqr1RcFTtuHkjU2vEESDUrDOSEfY6dUuUgEHk5pTarl2yibscRpahzWffGDgrYQO4JLgvTg9V7JX1VPthBHkli4_SiSzSH-3n)
+[7] [ca.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEQEvQSYpVJDmpkmjszK-eI7xd3qHoslBjW3onUOjnaKpcN_5CTzypEId0MiiN1InsRb7kuyVM6f7GutngcT5mURaMPnP9xbrUrk2YRb3sdvk9S1NX3Sg9zcZxzfEaelgyF2ftEbjz8VWvWRje8ubD9taQ=)

@@ -1,0 +1,23 @@
+
+The command exited with code 0.
+Output:
+22: import UnloadingForm from "./scope1/UnloadingForm";
+448: // Fallback: Try matching by 'code' property for custom forms (Completions/Unloading)
+680: "unloading",
+716: } else if (processType === "unloading") {
+717: const hasDepth = formData.unload_depth;
+718: const hasDiam = formData.unload_diam || formData.unload_diameter;
+719: const hasPress = formData.unload_press || formData.unload_pressure;
+721: formData.unload_freq || formData.unload_events || formData.amount;
+724: "Well unloading parameters (depth, diameter, pressure, events) are required",
+733: toast.warning("Gas CH4 content (%) is required for well unloading");
+997: // 5. Unloading
+998: if (processType === "unloading" && sourceType === "specific") {
+999: finalAmount = parseFloat(formData.unload_events || 1);
+1340: "unloading",
+1364: case "unloading":
+1365: return <UnloadingForm {...props} />;
+1449: "unloading",
+1743: "unloading",
+2051: "unloading",
+

@@ -1,0 +1,16 @@
+The search for ""Table 6-10" "Table 6-11" "Liquid Unloading" "Compendium"" returned the following summary:
+The references to **Table 6-10** and **Table 6-11** regarding **liquid unloading** are found in the **"Compendium of Greenhouse Gas Emissions Methodologies for the Natural Gas and Oil Industry"** published by the American Petroleum Institute (API), specifically the November 2021 edition[1][2].
+
+In this document, these tables provide specific vented emission factors related to well operations[1][3]:
+
+*   **Table 6-10:** Well Unloading Vented Emission Factors for Wells[1][3].
+*   **Table 6-11:** Liquid Unloading Vented Emission Factors by Well[1][2].
+
+This Compendium serves as a comprehensive resource for the oil and natural gas industry to estimate and report greenhouse gas (GHG) emissions consistently across the value chain[4][5].
+
+Sources:
+[1] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFvv25lRiidLFhmBKVQpqIp5oZHgHHa5nEOeMJEJmlMtVkX0HxvoGoYm0JuD5dqQwYpl6AeE3jLC2llXVNVVOjCqaYr-sig7fZi0oOsp83zOB2aJ2OF2q-i-xXqQ_F32MSzMbMpe91BxTj1FvZ1LdTG-iQ6WKPE4uj826wmRIYAOoqp6hNpqPhQrw==)
+[2] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFvv25lRiidLFhmBKVQpqIp5oZHgHHa5nEOeMJEJmlMtVkX0HxvoGoYm0JuD5dqQwYpl6AeE3jLC2llXVNVVOjCqaYr-sig7fZi0oOsp83zOB2aJ2OF2q-i-xXqQ_F32MSzMbMpe91BxTj1FvZ1LdTG-iQ6WKPE4uj826wmRIYAOoqp6hNpqPhQrw==)
+[3] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFvv25lRiidLFhmBKVQpqIp5oZHgHHa5nEOeMJEJmlMtVkX0HxvoGoYm0JuD5dqQwYpl6AeE3jLC2llXVNVVOjCqaYr-sig7fZi0oOsp83zOB2aJ2OF2q-i-xXqQ_F32MSzMbMpe91BxTj1FvZ1LdTG-iQ6WKPE4uj826wmRIYAOoqp6hNpqPhQrw==)
+[4] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFvv25lRiidLFhmBKVQpqIp5oZHgHHa5nEOeMJEJmlMtVkX0HxvoGoYm0JuD5dqQwYpl6AeE3jLC2llXVNVVOjCqaYr-sig7fZi0oOsp83zOB2aJ2OF2q-i-xXqQ_F32MSzMbMpe91BxTj1FvZ1LdTG-iQ6WKPE4uj826wmRIYAOoqp6hNpqPhQrw==)
+[5] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFvv25lRiidLFhmBKVQpqIp5oZHgHHa5nEOeMJEJmlMtVkX0HxvoGoYm0JuD5dqQwYpl6AeE3jLC2llXVNVVOjCqaYr-sig7fZi0oOsp83zOB2aJ2OF2q-i-xXqQ_F32MSzMbMpe91BxTj1FvZ1LdTG-iQ6WKPE4uj826wmRIYAOoqp6hNpqPhQrw==)

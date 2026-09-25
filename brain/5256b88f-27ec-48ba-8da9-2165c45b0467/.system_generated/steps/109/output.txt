@@ -1,0 +1,114 @@
+
+The command exited with code 0.
+Output:
+<truncated 1 lines>
+  new\client\src\components\Scope1Form.jsx:21:import CompletionsForm from "./scope1/CompletionsForm";
+> new\client\src\components\Scope1Form.jsx:22:import UnloadingForm from "./scope1/UnloadingForm";
+  new\client\src\components\Scope1Form.jsx:23:import BlowdownForm from "./scope1/BlowdownForm";
+  new\client\src\components\Scope1Form.jsx:24:import AGRForm from "./scope1/AGRForm";
+  new\client\src\components\Scope1Form.jsx:446:          factorToUse = API_FACTORS[formData.fuel];
+  new\client\src\components\Scope1Form.jsx:447:        }
+> new\client\src\components\Scope1Form.jsx:448:        // Fallback: Try matching by 'code' property for custom forms 
+(Completions/Unloading)
+  new\client\src\components\Scope1Form.jsx:449:        else {
+  new\client\src\components\Scope1Form.jsx:450:          const found = Object.values(API_FACTORS).find(
+  new\client\src\components\Scope1Form.jsx:678:      [
+  new\client\src\components\Scope1Form.jsx:679:        "completions",
+> new\client\src\components\Scope1Form.jsx:680:        "unloading",
+  new\client\src\components\Scope1Form.jsx:681:        "agr",
+  new\client\src\components\Scope1Form.jsx:682:        "dehydrator",
+  new\client\src\components\Scope1Form.jsx:714:          return;
+  new\client\src\components\Scope1Form.jsx:715:        }
+> new\client\src\components\Scope1Form.jsx:716:      } else if (processType === "unloading") {
+  new\client\src\components\Scope1Form.jsx:717:        const hasDepth = formData.unload_depth;
+  new\client\src\components\Scope1Form.jsx:718:        const hasDiam = formData.unload_diam || 
+formData.unload_diameter;
+  new\client\src\components\Scope1Form.jsx:722:        if (!hasDepth || !hasDiam || !hasPress || !hasEvents) {
+  new\client\src\components\Scope1Form.jsx:723:          toast.warning(
+> new\client\src\components\Scope1Form.jsx:724:            "Well unloading parameters (depth, diameter, pressure, 
+events) are required",
+  new\client\src\components\Scope1Form.jsx:725:          );
+  new\client\src\components\Scope1Form.jsx:726:          return;
+  new\client\src\components\Scope1Form.jsx:731:          formData.ch4_content === ""
+  new\client\src\components\Scope1Form.jsx:732:        ) {
+> new\client\src\components\Scope1Form.jsx:733:          toast.warning("Gas CH4 content (%) is required for well 
+unloading");
+  new\client\src\components\Scope1Form.jsx:734:          return;
+  new\client\src\components\Scope1Form.jsx:735:        }
+  new\client\src\components\Scope1Form.jsx:995:      }
+  new\client\src\components\Scope1Form.jsx:996:
+> new\client\src\components\Scope1Form.jsx:997:      // 5. Unloading
+> new\client\src\components\Scope1Form.jsx:998:      if (processType === "unloading" && sourceType === "specific") {
+  new\client\src\components\Scope1Form.jsx:999:        finalAmount = parseFloat(formData.unload_events || 1);
+  new\client\src\components\Scope1Form.jsx:1000:        finalUnit = "events";
+  new\client\src\components\Scope1Form.jsx:1338:      [
+  new\client\src\components\Scope1Form.jsx:1339:        "completions",
+> new\client\src\components\Scope1Form.jsx:1340:        "unloading",
+  new\client\src\components\Scope1Form.jsx:1341:        "blowdown",
+  new\client\src\components\Scope1Form.jsx:1342:      ].includes(processType)
+  new\client\src\components\Scope1Form.jsx:1362:      case "completions":
+  new\client\src\components\Scope1Form.jsx:1363:        return <CompletionsForm {...props} />;
+> new\client\src\components\Scope1Form.jsx:1364:      case "unloading":
+> new\client\src\components\Scope1Form.jsx:1365:        return <UnloadingForm {...props} />;
+  new\client\src\components\Scope1Form.jsx:1366:      case "blowdown":
+  new\client\src\components\Scope1Form.jsx:1367:        return <BlowdownForm {...props} />;
+  new\client\src\components\Scope1Form.jsx:1447:        [
+  new\client\src\components\Scope1Form.jsx:1448:          "completions",
+> new\client\src\components\Scope1Form.jsx:1449:          "unloading",
+  new\client\src\components\Scope1Form.jsx:1450:          "blowdown",
+  new\client\src\components\Scope1Form.jsx:1451:          "agr",
+  new\client\src\components\Scope1Form.jsx:1741:                                [
+  new\client\src\components\Scope1Form.jsx:1742:                                  "completions",
+> new\client\src\components\Scope1Form.jsx:1743:                                  "unloading",
+  new\client\src\components\Scope1Form.jsx:1744:                                  "blowdown",
+  new\client\src\components\Scope1Form.jsx:1745:                                ].includes(processType)
+  new\client\src\components\Scope1Form.jsx:2049:                    "drilling",
+  new\client\src\components\Scope1Form.jsx:2050:                    "completions",
+> new\client\src\components\Scope1Form.jsx:2051:                    "unloading",
+  new\client\src\components\Scope1Form.jsx:2052:                    "blowdown",
+  new\client\src\components\Scope1Form.jsx:2053:                  ].includes(processType) && (
+  new\client\src\pages\ReferenceData.jsx:234:        },
+  new\client\src\pages\ReferenceData.jsx:235:        {
+> new\client\src\pages\ReferenceData.jsx:236:          name: "Liquids Unloading",
+  new\client\src\pages\ReferenceData.jsx:237:          cat: "Vented",
+  new\client\src\pages\ReferenceData.jsx:238:          sec: "Section 6.4",
+> new\client\src\pages\ReferenceData.jsx:239:          desc: "Gas venting during liquids unloading operations",
+  new\client\src\pages\ReferenceData.jsx:240:        },
+  new\client\src\pages\ReferenceData.jsx:241:        {
+  new\client\src\utils\EmissionFactors.js:870:    uncertainty: { ch4: 0.4 },
+  new\client\src\utils\EmissionFactors.js:871:  },
+> new\client\src\utils\EmissionFactors.js:872:  // --- COMPLETIONS / UNLOADING (Tier 1 Defaults) ---
+  new\client\src\utils\EmissionFactors.js:873:  "Completion - Gas Well (No Flaring)": {
+  new\client\src\utils\EmissionFactors.js:874:    code: "CompGasNoFlare",
+  new\client\src\utils\EmissionFactors.js:891:    uncertainty: { ch4: 0.3 },
+  new\client\src\utils\EmissionFactors.js:892:  },
+> new\client\src\utils\EmissionFactors.js:893:  "Liquids Unloading - Plunger Lift": {
+  new\client\src\utils\EmissionFactors.js:894:    code: "UnloadPlunger",
+  new\client\src\utils\EmissionFactors.js:895:    ch4: 0.1, // Placeholder average
+  new\client\src\utils\EmissionFactors.js:897:    n2o: 0,
+  new\client\src\utils\EmissionFactors.js:898:    unit: "tonnes/event",
+> new\client\src\utils\EmissionFactors.js:899:    usage: ["unloading"],
+  new\client\src\utils\EmissionFactors.js:900:    description: "Average per event",
+  new\client\src\utils\EmissionFactors.js:901:    uncertainty: { ch4: 0.25 },
+  new\client\src\utils\EmissionFactors.js:902:  },
+> new\client\src\utils\EmissionFactors.js:903:  "Liquids Unloading - Non-Plunger": {
+  new\client\src\utils\EmissionFactors.js:904:    code: "UnloadNonPlunger",
+  new\client\src\utils\EmissionFactors.js:905:    ch4: 0.2, // Placeholder average
+  new\client\src\utils\EmissionFactors.js:907:    n2o: 0,
+  new\client\src\utils\EmissionFactors.js:908:    unit: "tonnes/event",
+> new\client\src\utils\EmissionFactors.js:909:    usage: ["unloading"],
+  new\client\src\utils\EmissionFactors.js:910:    description: "Average per event",
+  new\client\src\utils\EmissionFactors.js:911:    uncertainty: { ch4: 0.25 },
+  new\client\src\utils\EmissionFactors.js:1345:  drilling: "Drilling Operations",
+  new\client\src\utils\EmissionFactors.js:1346:  completions: "Well Completions & Workovers",
+> new\client\src\utils\EmissionFactors.js:1347:  unloading: "Liquids Unloading",
+  new\client\src\utils\EmissionFactors.js:1348:  agr: "Acid Gas Removal (AGR)",
+  new\client\src\utils\EmissionFactors.js:1349:  dehydrator: "Dehydrator",
+  new\client\src\utils\EmissionFactors.js:1367:      "drilling",
+  new\client\src\utils\EmissionFactors.js:1368:      "completions",
+> new\client\src\utils\EmissionFactors.js:1369:      "unloading",
+  new\client\src\utils\EmissionFactors.js:1370:      "combustion",
+  new\client\src\utils\EmissionFactors.js:1371:      "flaring",
+
+
+

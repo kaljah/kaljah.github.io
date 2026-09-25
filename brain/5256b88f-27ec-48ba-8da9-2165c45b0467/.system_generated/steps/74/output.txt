@@ -1,0 +1,45 @@
+
+The command exited with code 0.
+Output:
+Total pages: 898
+Page 7:
+   6.3.4 Well Venting from Liquids Unloading............................................... 6-23
+   6.4 Oil and Gas Gathering and Boosting ....................................................... 6-82
+   6.4.1 Gas-Driven Pneumatic Controllers .................................................. 6-82
+   6.4.2 Gas-Driven Pneumatic Pumps........................................................ 6-85
+   6.4.3 Compressor Venting....................................................................... 6-86
+Page 15:
+   Table 6-10. Well Unloading Vented Emission Factors for Wells ............................. 27
+   Table 6-11. Liquid Unloading Vented Emission Factors by Well.......................... 6-28
+Page 188:
+   e Bureau of Transportation Stattistics, Table 6-10 Energy Intensities of Domestic Freight Transportation Modes: 2007-2013, January 5, 2016.
+Page 200:
+   Bureau of Transportation Statistics, Table 6-10 Energy Intensities of Domestic Freight
+Page 238:
+   6.3.4 Well Venting from Liquids Unloading ..................................................... 6-23
+   6.4 Oil and Gas Gathering and Boosting ................................................................... 6-82
+   6.4.1 Gas-Driven Pneumatic Controllers ........................................................ 6-82
+   6.4.2 Gas-Driven Pneumatic Pumps............................................................... 6-85
+   6.4.3 Compressor Venting............................................................................... 6-86
+Page 240:
+   Table 6-10. Well Unloading Vented Emission Factors for Wells ................................................ 27
+   Table 6-11. Liquid Unloading Vented Emission Factors by Well............................................. 6-28
+Page 265:
+   6.3.4 Well Venting from Liquids Unloading
+Page 268:
+   When wellbore information is not available, the simplified emission factors in Table 6-10 can be
+   Table 6-10 below include the volumetric emissions in scf gas per well unloading event, and
+   average emission factors from Table 6-10 can be applied.
+Page 269:
+   Table 6-10. Well Unloading Vented Emission Factors for Wells
+   the United States: Liquid Unloadings. Environmental Science and Technology 49, 1, 641-648. http://dx.doi.org/10.1021/es504016r
+Page 270:
+   Emission factors in Table 6-10 above are based on methane emitted per well unloading event.
+   Table 6-11. Liquid Unloading Vented Emission Factors by Well
+Page 411:
+   Production Sites in the United States: Liquid Unloadings. Environmental Science and
+Page 416:
+   Automated Plunger Lift Liquid Unloadings.
+Page 795:
+   The leak basis plastic pipeline emission factors presented in Table 6-11 were developed using data
+

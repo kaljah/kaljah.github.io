@@ -1,0 +1,13 @@
+
+The command exited with code 0.
+Output:
+new/server/calculations/dispatcher.py:45:            "mud_degassing": MudDegassingCalculator(),
+new/server/calculations/dispatcher.py:514:            elif process_type in ["drilling", "mud_degassing"]:
+new/server/calculations/uncertainty.py:120:    "mud_degassing": "vented",
+new/server/process_categories.py:95:        "calculation_method": "mud_degassing",
+new/server/process_categories.py:391:    "drilling", "mud_degassing", "completions", "well_completions", "completion_flowback",
+new/server/tests/test_all_process_types_matrix.py:127:    def test_drilling_mud_degassing_tier3(self, dispatcher):
+new/server/tests/test_battery_concurrency_stress_invariants.py:40:            ptype = ["stationary_combustion", "flaring", "mud_degassing", "blowdown", "fugitive_equipment"][i % 5]
+new/server/tests/test_battery_concurrency_stress_invariants.py:47:            elif ptype == "mud_degassing":
+new/server/tests/test_qfull_boundary_sensitivity.py:91:    def test_zero_quantity_mud_degassing_yields_zero(self):
+

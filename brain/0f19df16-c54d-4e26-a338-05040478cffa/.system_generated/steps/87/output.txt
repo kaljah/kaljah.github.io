@@ -1,0 +1,1 @@
+A1: Provide only Water-Based (0.2605 t CH₄/day) and Oil-Based (0.0586 t CH₄/day) as fixed presets without custom overrides.

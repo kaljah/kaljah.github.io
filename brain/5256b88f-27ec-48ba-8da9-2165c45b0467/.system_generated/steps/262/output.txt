@@ -1,0 +1,58 @@
+
+The command exited with code 0.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+testpaths: tests, .
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collected 1137 items / 1121 deselected / 16 selected
+
+<Dir server>
+  <Module test_emission_calculations.py>
+    <UnitTestCase TestTier3LiquidsUnloading>
+      <TestCaseFunction test_unloading_ch4>
+      <TestCaseFunction test_unloading_co2e>
+  <Dir tests>
+    <Module test_all_process_types_matrix.py>
+      <Class TestAllProcessTypesTier1>
+        <Function test_tier1_every_canonical_process_type[liquids_unloading]>
+      <Class TestAllProcessTypesTier3>
+        <Function test_liquids_unloading_tier3>
+      <Class TestComputeEmissionsIntegration>
+        <Function test_compute_emissions_for_all_processes[liquids_unloading]>
+      <Class TestPhysicalConservationAcrossAllProcesses>
+        <Function test_zero_activity_produces_zero_emissions[liquids_unloading]>
+        <Function test_strictly_positive_monotonicity[liquids_unloading]>
+    <Module test_battery_midstream_process_equipment.py>
+      <Class TestLiquidsUnloadingBattery>
+        <Function test_liquids_unloading_imperial_units>
+        <Function test_liquids_unloading_metric_units>
+    <Module test_csv_engine_matrix.py>
+      <Class TestMetrologyAndEngineeringPrecision>
+        <Function test_liquids_unloading_absolute_zero_temperature_defense>
+    <Module test_dispatcher.py>
+      <Function test_tier3_strict_validation_unloading_missing_fields>
+    <Module test_independent_differential.py>
+      <Class TestDifferentialScope1>
+        <Function test_diff_liquids_unloading>
+    <Module test_qfull_api_pipeline.py>
+      <Class TestLiquidsUnloadingPipeline>
+        <Function test_standard_well_unloading>
+    <Module test_qfull_validation.py>
+      <Class TestLiquidsUnloading>
+        <Function test_liquids_unloading_standard>
+        <Function test_liquids_unloading_single_event>
+    <Module test_vented.py>
+      <Function test_liquids_unloading_units>
+
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+============= 16/1137 tests collected (1121 deselected) in 2.97s ==============
+

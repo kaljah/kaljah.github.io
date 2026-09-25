@@ -1,0 +1,66 @@
+
+The command exited with code 0.
+Output:
+
+  new\server\emission_factors.py:140:        "description": "Flanges in Gas Service",
+  new\server\emission_factors.py:141:        "uncertainty": {"co2": 0.3, "ch4": 0.3, "n2o": 0.3},
+  new\server\emission_factors.py:142:    },
+> new\server\emission_factors.py:143:    # Liquids Unloading Tier 1 - API Compendium 2021 Table 6-7
+  new\server\emission_factors.py:144:    "UnloadPlunger": {
+  new\server\emission_factors.py:145:        "code": "UnloadPlunger",
+> new\server\emission_factors.py:146:        "type": "unloading",
+  new\server\emission_factors.py:147:        "ch4": 0.0016,  # tonnes CH4 per event (Plunger Lift)
+  new\server\emission_factors.py:148:        "factor": 0.0016,
+  new\server\emission_factors.py:149:        "unit": "tonnes CH4/event",
+> new\server\emission_factors.py:150:        "description": "Liquids Unloading - Plunger Lift (API Table 6-7)",
+  new\server\emission_factors.py:151:        "uncertainty": {"co2": 0.0, "ch4": 0.50, "n2o": 0.0},
+  new\server\emission_factors.py:152:    },
+  new\server\emission_factors.py:153:    "UnloadNonPlunger": {
+  new\server\emission_factors.py:154:        "code": "UnloadNonPlunger",
+> new\server\emission_factors.py:155:        "type": "unloading",
+  new\server\emission_factors.py:156:        "ch4": 0.0341,  # tonnes CH4 per event (Non-Plunger Lift)
+  new\server\emission_factors.py:157:        "factor": 0.0341,
+  new\server\emission_factors.py:158:        "unit": "tonnes CH4/event",
+> new\server\emission_factors.py:159:        "description": "Liquids Unloading - Non-Plunger Lift (API Table 6-7)",
+  new\server\emission_factors.py:160:        "uncertainty": {"co2": 0.0, "ch4": 0.50, "n2o": 0.0},
+  new\server\emission_factors.py:161:    },
+  new\server\emission_factors.py:162:    "Natural Gas - 4-Stroke Lean Burn Engine": {
+  new\server\emission_factors.py:163:        "code": "NG_4SLB",
+  new\server\emission_factors.py:164:        "hhv": 1020,
+  new\server\emission_factors.py:182:        "uncertainty": {"co2": 0.05, "ch4": 0.3, "n2o": 0.3},
+  new\server\emission_factors.py:183:        "baseUnit": "scf",
+  new\server\emission_factors.py:184:    },
+> new\server\emission_factors.py:185:    "Liquids Unloading - Plunger Lift": {
+  new\server\emission_factors.py:186:        "code": "UnloadPlunger",
+> new\server\emission_factors.py:187:        "type": "unloading",
+  new\server\emission_factors.py:188:        "ch4": 0.1,
+  new\server\emission_factors.py:189:        "factor": 0.1,
+  new\server\emission_factors.py:190:        "unit": "tonnes/event",
+> new\server\emission_factors.py:191:        "usage": ["unloading"],
+  new\server\emission_factors.py:192:        "description": "Average per event",
+  new\server\emission_factors.py:193:        "uncertainty": {"co2": 0.0, "ch4": 0.25, "n2o": 0.0},
+  new\server\emission_factors.py:194:    },
+> new\server\emission_factors.py:195:    "Liquids Unloading - Non-Plunger": {
+  new\server\emission_factors.py:196:        "code": "UnloadNonPlunger",
+> new\server\emission_factors.py:197:        "type": "unloading",
+  new\server\emission_factors.py:198:        "ch4": 0.2,
+  new\server\emission_factors.py:199:        "factor": 0.2,
+  new\server\emission_factors.py:200:        "unit": "tonnes/event",
+> new\server\emission_factors.py:201:        "usage": ["unloading"],
+  new\server\emission_factors.py:202:        "description": "Average per event",
+  new\server\emission_factors.py:203:        "uncertainty": {"co2": 0.0, "ch4": 0.25, "n2o": 0.0},
+  new\server\emission_factors.py:204:    },
+  new\server\emission_factors.py:205:    "Propane (Liquid)": {
+  new\server\emission_factors.py:206:        "code": "LPG_Liq",
+  new\server\emission_factors.py:372:    "tank": "Storage Tank",
+  new\server\emission_factors.py:373:    "drilling": "Drilling Operations",
+  new\server\emission_factors.py:374:    "completions": "Well Completions & Workovers",
+> new\server\emission_factors.py:375:    "unloading": "Liquids Unloading",
+  new\server\emission_factors.py:376:    "agr": "Acid Gas Removal (AGR)",
+  new\server\emission_factors.py:377:    "dehydrator": "Dehydrator",
+  new\server\emission_factors.py:378:    "mobile": "Mobile Combustion",
+  new\server\emission_factors.py:379:    "fugitive": "Fugitive Emissions",
+  new\server\emission_factors.py:380:}
+
+
+

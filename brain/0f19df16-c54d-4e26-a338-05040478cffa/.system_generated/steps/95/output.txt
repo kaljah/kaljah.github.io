@@ -1,0 +1,1 @@
+A1: (Recommended) Use molar mass conversion: DD × EF × (X_CO2 / 0.8385) × (44.01 / 16.04), where X_CO2 is a decimal fraction (e.g. 0.02 for 2%).

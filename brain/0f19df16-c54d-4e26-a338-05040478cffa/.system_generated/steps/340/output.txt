@@ -1,0 +1,156 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_qfull_unit_conversions.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -47,102 +47,58 @@
+ 
+ 
+ # =====================================================================
+-# TEST CLASS: Mud Degassing Volume Units
+-# The dispatcher normalizes all volumes to m3 via _normalize_volume()
+-# before multiplying by the EF in kg/m3.
++# =====================================================================
++# TEST CLASS: Drilling Units (Tier 1 wells, Tier 2 days)
+ # =====================================================================
+ class TestMudVolumeUnits:
+     """
+-    Verify that mud degassing gives same CH4 regardless of volume unit.
+-    Reference formula: ch4_kg = mud_vol_m3 * EF; tonnes = /1000
+-    For water_based: EF = 0.15 kg CH4/m3
+-
+-    200 m3 = 1258.128... bbl = 52834.4... gal = 200,000 L
+-    Expected CH4 = 200 * 0.15 / 1000 = 0.030 tonnes
+-    """
+-
+-    BASE_VOL_M3 = 200.0
+-    EXPECTED_CH4 = BASE_VOL_M3 * 0.15 / 1000.0  # 0.030 tonnes
+-
+-    def _run(self, qty, unit):
+-        payload = {
+-            "process_type": "drilling",
+-            "quantity": qty,
+-            "unit": unit,
+-            "factor_source": "specific",
++    Verify drilling mud degassing units:
++    - Tier 1: wells (t CH4 / well)
++    - Tier 2 / Tier 2+: days (t CH4 / day)
++    """
++
++    def test_tier1_well_reference(self):
++        """Reference: 10 wells = 10 * 0.0524 = 0.524 t CH4."""
++        wells = 10.0
++        expected = wells * 0.0524
++        em, _ = compute_emissions({
++            "process_type": "drilling",
++            "quantity": wells,
++            "unit": "well",
++            "tier": "tier1",
++            "factor_source": "default",
++        }, {})
++        assert em["ch4"] == pytest.approx(expected, rel=1e-4)
++
++    def test_tier2_days_water_based(self):
++        """Reference: 20 drilling days water-based = 20 * 0.2605 = 5.210 t CH4."""
++        days = 20.0
++        expected = days * 0.2605
++        em, _ = compute_emissions({
++            "process_type": "drilling",
++            "quantity": days,
++            "drilling_days": days,
++            "unit": "days",
++            "tier": "tier2",
++            "factor_source": "custom",
+             "mud_type": "water_based",
+-        }
+-        em, _ = compute_emissions(payload, {})
+-        return em
+-
+-    def test_mud_m3_reference(self):
+-        """Reference: 200 m3 water_based mud = 0.030 t CH4."""
+-        em = self._run(self.BASE_VOL_M3, "m3")
+-        assert em["ch4"] == pytest.approx(self.EXPECTED_CH4, rel=1e-4), (
+-            f"m3 reference: expected {self.EXPECTED_CH4:.6f}, got {em['ch4']:.6f}"
+-        )
+-
+-    def test_mud_bbl_equivalent_to_m3(self):
+-        """
+-        1 m3 = 1/0.158987295 bbl = 6.28981 bbl
+-        200 m3 = 1258.128... bbl → same CH4.
+-        """
+-        qty_bbl = self.BASE_VOL_M3 / BBL_TO_M3
+-        em_m3 = self._run(self.BASE_VOL_M3, "m3")
+-        em_bbl = self._run(qty_bbl, "bbl")
+-
+-        assert em_bbl["ch4"] == pytest.approx(em_m3["ch4"], rel=1e-3), (
+-            f"bbl vs m3: m3_result={em_m3['ch4']:.6f}, bbl_result={em_bbl['ch4']:.6f}\n"
+-            f"  (200 m3 = {qty_bbl:.4f} bbl)"
+-        )
+-        # Also verify against expected
+-        assert em_bbl["ch4"] == pytest.approx(self.EXPECTED_CH4, rel=1e-3)
+-
+-    def test_mud_gal_equivalent_to_m3(self):
+-        """
+-        1 m3 = 264.172 gal
+-        200 m3 = 52834.4... gal → same CH4.
+-        """
+-        qty_gal = self.BASE_VOL_M3 / GAL_TO_M3
+-        em_m3 = self._run(self.BASE_VOL_M3, "m3")
+-        em_gal = self._run(qty_gal, "gal")
+-
+-        assert em_gal["ch4"] == pytest.approx(em_m3["ch4"], rel=1e-3), (
+-            f"gal vs m3: m3={em_m3['ch4']:.6f}, gal={em_gal['ch4']:.6f}\n"
+-            f"  (200 m3 = {qty_gal:.2f} gal)"
+-        )
+-
+-    def test_mud_liter_equivalent_to_m3(self):
+-        """
+-        1 m3 = 1000 L
+-        200 m3 = 200,000 L → same CH4.
+-        """
+-        qty_l = self.BASE_VOL_M3 / LITER_TO_M3
+-        em_m3 = self._run(self.BASE_VOL_M3, "m3")
+-        em_liter = self._run(qty_l, "liter")
+-
+-        assert em_liter["ch4"] == pytest.approx(em_m3["ch4"], rel=1e-3), (
+-            f"liter vs m3: m3={em_m3['ch4']:.6f}, liter={em_liter['ch4']:.6f}"
+-        )
+-
+-    def test_mud_oil_based_bbl_vs_m3(self):
+-        """
+-        Oil-based mud (EF=0.35 kg/m3): 100 m3 vs equivalent bbl.
+-        Expected: 100 * 0.35 / 1000 = 0.035 t CH4
+-        """
+-        qty_m3 = 100.0
+-        qty_bbl = qty_m3 / BBL_TO_M3
+-
+-        def run_oil(qty, unit):
+-            return compute_emissions({
+-                "process_type": "drilling", "quantity": qty, "unit": unit,
+-                "factor_source": "specific", "mud_type": "oil_based"
+-            }, {})[0]
+-
+-        em_m3 = run_oil(qty_m3, "m3")
+-        em_bbl = run_oil(qty_bbl, "bbl")
+-
+-        expected = qty_m3 * 0.35 / 1000.0
++        }, {})
++        assert em["ch4"] == pytest.approx(expected, rel=1e-4)
++
++    def test_tier2_days_oil_based(self):
++        """Reference: 20 drilling days oil-based = 20 * 0.0586 = 1.172 t CH4."""
++        days = 20.0
++        expected = days * 0.0586
++        em, _ = compute_emissions({
++            "process_type": "drilling",
++            "quantity": days,
++            "drilling_days": days,
++            "unit": "days",
++            "tier": "tier2",
++            "factor_source": "custom",
++            "mud_type": "oil_based",
++        }, {})
++        assert em["ch4"] == pytest.approx(expected, rel=1e-4)
+         assert em_m3["ch4"] == pytest.approx(expected, rel=1e-4)
+         assert em_bbl["ch4"] == pytest.approx(expected, rel=1e-3)
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

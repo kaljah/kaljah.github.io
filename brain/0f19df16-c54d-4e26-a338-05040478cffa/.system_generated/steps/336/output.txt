@@ -1,0 +1,15 @@
+
+The command exited with code 0.
+Output:
+new/server/tests/test_qfull_unit_conversions.py:56:    Verify that mud degassing gives same CH4 regardless of volume unit.
+new/server/tests/test_qfull_unit_conversions.py:57:    Reference formula: ch4_kg = mud_vol_m3 * EF; tonnes = /1000
+new/server/tests/test_qfull_unit_conversions.py:73:            "mud_type": "water_based",
+new/server/tests/test_qfull_unit_conversions.py:78:    def test_mud_m3_reference(self):
+new/server/tests/test_qfull_unit_conversions.py:79:        """Reference: 200 m3 water_based mud = 0.030 t CH4."""
+new/server/tests/test_qfull_unit_conversions.py:85:    def test_mud_bbl_equivalent_to_m3(self):
+new/server/tests/test_qfull_unit_conversions.py:101:    def test_mud_gal_equivalent_to_m3(self):
+new/server/tests/test_qfull_unit_conversions.py:115:    def test_mud_liter_equivalent_to_m3(self):
+new/server/tests/test_qfull_unit_conversions.py:128:    def test_mud_oil_based_bbl_vs_m3(self):
+new/server/tests/test_qfull_unit_conversions.py:130:        Oil-based mud (EF=0.35 kg/m3): 100 m3 vs equivalent bbl.
+new/server/tests/test_qfull_unit_conversions.py:139:                "factor_source": "specific", "mud_type": "oil_based"
+

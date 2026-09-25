@@ -1,0 +1,111 @@
+
+The command exited with code 0.
+Output:
+<truncated 1 lines>
+  new\client\src\components\Scope1Form.jsx:1329:      onChange: handleFormChange,
+  new\client\src\components\Scope1Form.jsx:1330:      // Pass down hoisted props for forms that might need them 
+(though we are moving logic up)
+> new\client\src\components\Scope1Form.jsx:1331:      sourceType,
+> new\client\src\components\Scope1Form.jsx:1332:      setSourceType,
+  new\client\src\components\Scope1Form.jsx:1333:    };
+  new\client\src\components\Scope1Form.jsx:1334:
+  new\client\src\components\Scope1Form.jsx:1335:    // Fallback to generic form for Tier 1 / Custom on upstream 
+processes
+  new\client\src\components\Scope1Form.jsx:1336:    if (
+> new\client\src\components\Scope1Form.jsx:1337:      sourceType !== "specific" &&
+  new\client\src\components\Scope1Form.jsx:1338:      [
+  new\client\src\components\Scope1Form.jsx:1339:        "completions",
+  new\client\src\components\Scope1Form.jsx:1340:        "unloading",
+  new\client\src\components\Scope1Form.jsx:1353:        return <CombustionForm {...props} />;
+  new\client\src\components\Scope1Form.jsx:1354:      case "venting":
+> new\client\src\components\Scope1Form.jsx:1355:        return sourceType === "specific" ? (
+  new\client\src\components\Scope1Form.jsx:1356:          <BlowdownForm {...props} />
+  new\client\src\components\Scope1Form.jsx:1357:        ) : (
+  new\client\src\components\Scope1Form.jsx:1358:          <CombustionForm {...props} />
+  new\client\src\components\Scope1Form.jsx:1442:      }
+  new\client\src\components\Scope1Form.jsx:1443:      if (process === "drilling") {
+> new\client\src\components\Scope1Form.jsx:1444:        setSourceType("default");
+  new\client\src\components\Scope1Form.jsx:1445:        handleFormChange("unit", "well");
+  new\client\src\components\Scope1Form.jsx:1446:      } else if (
+  new\client\src\components\Scope1Form.jsx:1447:        [
+  new\client\src\components\Scope1Form.jsx:1457:        ].includes(process)
+  new\client\src\components\Scope1Form.jsx:1458:      ) {
+> new\client\src\components\Scope1Form.jsx:1459:        setSourceType("specific");
+  new\client\src\components\Scope1Form.jsx:1460:      } else if (
+  new\client\src\components\Scope1Form.jsx:1461:        [
+  new\client\src\components\Scope1Form.jsx:1462:          "mobile",
+  new\client\src\components\Scope1Form.jsx:1470:        ].includes(process)
+  new\client\src\components\Scope1Form.jsx:1471:      ) {
+> new\client\src\components\Scope1Form.jsx:1472:        setSourceType("default");
+  new\client\src\components\Scope1Form.jsx:1473:      }
+  new\client\src\components\Scope1Form.jsx:1474:    }
+  new\client\src\components\Scope1Form.jsx:1475:  };
+  new\client\src\components\Scope1Form.jsx:1723:                      .map((item) => {
+  new\client\src\components\Scope1Form.jsx:1724:                        const type = item.key;
+> new\client\src\components\Scope1Form.jsx:1725:                        const isActive = sourceType === type;
+  new\client\src\components\Scope1Form.jsx:1726:                        return (
+  new\client\src\components\Scope1Form.jsx:1727:                          <button
+  new\client\src\components\Scope1Form.jsx:1728:                            key={type}
+  new\client\src\components\Scope1Form.jsx:1730:                            className={`tier-selector-btn ${isActive ? 
+"active" : ""}`}
+  new\client\src\components\Scope1Form.jsx:1731:                            onClick={() => {
+> new\client\src\components\Scope1Form.jsx:1732:                              setSourceType(type);
+  new\client\src\components\Scope1Form.jsx:1733:                              if (processType === "drilling") {
+  new\client\src\components\Scope1Form.jsx:1734:                                if (type === "default") {
+  new\client\src\components\Scope1Form.jsx:1735:                                  handleFormChange("unit", "well");
+  new\client\src\components\Scope1Form.jsx:1797:
+  new\client\src\components\Scope1Form.jsx:1798:                {/* TIER 1: Standard API Tabulated Factors */}
+> new\client\src\components\Scope1Form.jsx:1799:                {sourceType === "default" && (
+  new\client\src\components\Scope1Form.jsx:1800:                  <CustomDropdown
+  new\client\src\components\Scope1Form.jsx:1801:                    options={fuelOptions}
+  new\client\src\components\Scope1Form.jsx:1802:                    value={formData.fuel || ""}
+  new\client\src\components\Scope1Form.jsx:1808:
+  new\client\src\components\Scope1Form.jsx:1809:                {/* TIER 2: Regional / Measured / Supplier Factors */}
+> new\client\src\components\Scope1Form.jsx:1810:                {sourceType === "custom" && (
+  new\client\src\components\Scope1Form.jsx:1811:                  <div className="tier2-mode-container">
+  new\client\src\components\Scope1Form.jsx:1812:                    {[
+  new\client\src\components\Scope1Form.jsx:1813:                      "combustion",
+  new\client\src\components\Scope1Form.jsx:2035:                  </div>
+  new\client\src\components\Scope1Form.jsx:2036:                )}
+> new\client\src\components\Scope1Form.jsx:2037:                {sourceType === "specific" &&
+  new\client\src\components\Scope1Form.jsx:2038:                  ![
+  new\client\src\components\Scope1Form.jsx:2039:                    "tank",
+  new\client\src\components\Scope1Form.jsx:2040:                    "tank_flashing",
+  new\client\src\components\Scope1Form.jsx:2173:          <h4 className="section-title">4. COMPLIANCE & 
+UNCERTAINTY</h4>
+  new\client\src\components\Scope1Form.jsx:2174:          <div className="form-grid-3">
+> new\client\src\components\Scope1Form.jsx:2175:            {sourceType === "specific" && (
+  new\client\src\components\Scope1Form.jsx:2176:              <div
+  new\client\src\components\Scope1Form.jsx:2177:                className="input-group"
+  new\client\src\components\Scope1Form.jsx:2178:                style={{ gridColumn: "span 3", marginBottom: "8px" }}
+  new\client\src\components\Scope1Form.jsx:2322:                    CO�
+  new\client\src\components\Scope1Form.jsx:2323:                  </span>
+> new\client\src\components\Scope1Form.jsx:2324:                  {sourceType === "specific" ? (
+  new\client\src\components\Scope1Form.jsx:2325:                    <div style={{ display: "flex", alignItems: 
+"center" }}>
+  new\client\src\components\Scope1Form.jsx:2326:                      <span
+  new\client\src\components\Scope1Form.jsx:2327:                        style={{
+  new\client\src\components\Scope1Form.jsx:2396:                    CH4
+  new\client\src\components\Scope1Form.jsx:2397:                  </span>
+> new\client\src\components\Scope1Form.jsx:2398:                  {sourceType === "specific" ? (
+  new\client\src\components\Scope1Form.jsx:2399:                    <div style={{ display: "flex", alignItems: 
+"center" }}>
+  new\client\src\components\Scope1Form.jsx:2400:                      <span
+  new\client\src\components\Scope1Form.jsx:2401:                        style={{
+  new\client\src\components\Scope1Form.jsx:2470:                    N�O
+  new\client\src\components\Scope1Form.jsx:2471:                  </span>
+> new\client\src\components\Scope1Form.jsx:2472:                  {sourceType === "specific" ? (
+  new\client\src\components\Scope1Form.jsx:2473:                    <div style={{ display: "flex", alignItems: 
+"center" }}>
+  new\client\src\components\Scope1Form.jsx:2474:                      <span
+  new\client\src\components\Scope1Form.jsx:2475:                        style={{
+  new\client\src\components\Scope1Form.jsx:2531:                }}
+  new\client\src\components\Scope1Form.jsx:2532:              >
+> new\client\src\components\Scope1Form.jsx:2533:                {sourceType === "default"
+  new\client\src\components\Scope1Form.jsx:2534:                  ? "Automatically populated from EPA/IPCC catalogs"
+  new\client\src\components\Scope1Form.jsx:2535:                  : "Enter specific uncertainties if known, otherwise 
+leave blank to omit (-)"}
+  new\client\src\components\Scope1Form.jsx:2536:              </span>
+
+
+

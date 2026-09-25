@@ -1,0 +1,16 @@
+The search for ""API Compendium" "6.2.3" "Well Completions" "Exhibit 6-3"" returned the following summary:
+The **"API Compendium"** refers to the *Compendium of Greenhouse Gas Emissions Methodologies for the Oil and Natural Gas Industry*, a foundational resource published by the American Petroleum Institute (API) to provide consistent methodologies and emission factors for estimating greenhouse gas (GHG) emissions across the industry value chain[1][2].
+
+Regarding your specific query:
+*   **Section 6.2.3 ("Well Completions"):** This section is located within the "Production" or equivalent operational segment of the Compendium[1][3]. It details the procedures and methodologies for estimating GHG emissions—such as vented methane—that occur during the completion phase of a well, which follows drilling and precedes production[4].
+*   **Exhibit 6-3:** In the context of the API Compendium, exhibits (such as tables or figures) are used to present specific emission factors, activity data, or calculation summaries. While the exact content of "Exhibit 6-3" can vary slightly between the 2009 edition and the 2021 update, it is typically associated with the data or calculations relevant to the surrounding section on well completions or similar production-related emission sources[5][6].
+
+If you are looking for the specific values or text from that exhibit, it is recommended to consult the full version of the document. The latest edition was released in **November 2021** and represents a significant update to the methodologies used for industry reporting[5][2].
+
+Sources:
+[1] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHJuIT6Ufn027Besx7rGKkFmj5Wtvl-N5cZhbzvOVt7MvtqO2xhTcraoBX_eBYZ2HGYfPcmybErY1bFjZvD2dwqL7XF16qft-Cnbt_ey59rz7ncRiaZNELQP1gHpuLcIP2PqfCyS8jEi7om4Dsg165F5HgoWABVyDyf1bgVJRlPK0-bmpiKaKrdKw==)
+[2] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGMbwr2tc8ju0370tfhs1d32oF9xXHL5GWwtJ3KigRhB0895yGdf0YTVNCHdI8zXhcumOSJh95RtK1DYB9qFl2ZWOXsUPy1jUHyTaHw2zAOXUBzu_vp9RFfsRmTtWkIi0rKZRXUVeWeXvBjgRLuUEb3tH3SqY1TT23MUn85MSEBY3bo51vkplE0pLdG)
+[3] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHJuIT6Ufn027Besx7rGKkFmj5Wtvl-N5cZhbzvOVt7MvtqO2xhTcraoBX_eBYZ2HGYfPcmybErY1bFjZvD2dwqL7XF16qft-Cnbt_ey59rz7ncRiaZNELQP1gHpuLcIP2PqfCyS8jEi7om4Dsg165F5HgoWABVyDyf1bgVJRlPK0-bmpiKaKrdKw==)
+[4] [doe.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHPIXSzoXyQKESrmmciyPv6hPNtOS5JkZNomUfxsw8uqk4N0Bo-Hohg5OHNJehkA7-cvShDDudUMHB8Ddb7UQ-FLyQZweA8sDEJdTskUwXnBm1Vca3UML5Y6dT4LBQpYA5K-RRbZXzs370zMnHthJ9NONtIZiWd4NdheWoWahUDXMNU8v3P7wjLKLx5KxFMrq29LtfeTY15dqtElkhn2IeAuO7VJ88J-8uvygu1gDAo0_sJ_k2ULfAb8w==)
+[5] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHJuIT6Ufn027Besx7rGKkFmj5Wtvl-N5cZhbzvOVt7MvtqO2xhTcraoBX_eBYZ2HGYfPcmybErY1bFjZvD2dwqL7XF16qft-Cnbt_ey59rz7ncRiaZNELQP1gHpuLcIP2PqfCyS8jEi7om4Dsg165F5HgoWABVyDyf1bgVJRlPK0-bmpiKaKrdKw==)
+[6] [scribd.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEC4U5RJZ7PiSyHm9BHWdy7D0Gewifd40l4n24nPTZZDj-K_9osjh3pRMKNp6cKraUZbAa5w2gtZdUtFJX7gqWC_vNCy75D-kFMGc1VyFBEr8Y6QQCHIQDSUjehy0u-UB5bRQtDmS0iWhZG44V5ya_jm2M=)

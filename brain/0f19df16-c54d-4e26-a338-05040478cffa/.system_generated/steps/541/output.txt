@@ -1,0 +1,54 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\Scope1Form.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -197,10 +197,20 @@
+   useEffect(() => {
+     if (!processType) return;
+ 
++    const isCombustion = [
++      "combustion",
++      "stationary_combustion",
++      "mobile_combustion",
++      "mobile",
++      "flaring",
++      "flare",
++    ].includes(processType);
++
+     if (
+       sourceType === "default" ||
++      (sourceType === "tier2_plus" && processType === "drilling") ||
+       sourceType === "specific" ||
+-      (sourceType === "custom" && tier2Mode === "override")
++      (sourceType === "custom" && isCombustion && tier2Mode === "override")
+     ) {
+       const options = Object.keys(API_FACTORS)
+         .filter((key) => {
+@@ -232,9 +232,23 @@
+     } else {
+       const options = customFactors
+         .filter(
+-          (f) => !f.usage || f.usage.includes(processType) || f.usage === "All",
+-        )
+-        .map((f) => ({ value: f.id.toString(), label: f.factor_name }));
++          (f) =>
++            !f.usage ||
++            f.usage === "Custom" ||
++            f.usage === "All" ||
++            f.usage.includes(processType) ||
++            f.usage.toLowerCase().includes(processType.toLowerCase()) ||
++            (processType === "drilling" &&
++              (String(f.usage || "").toLowerCase().includes("drill") ||
++                String(f.usage || "").toLowerCase().includes("mud") ||
++                String(f.factor_name || f.name || "").toLowerCase().includes("drill") ||
++                String(f.factor_name || f.name || "").toLowerCase().includes("mud"))),
++        )
++        .map((f) => ({
++          value: f.id.toString(),
++          label: f.factor_name || f.name || `Custom Factor #${f.id}`,
++          factor: f,
++        }));
+       setFuelOptions(options);
+     }
+   }, [
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

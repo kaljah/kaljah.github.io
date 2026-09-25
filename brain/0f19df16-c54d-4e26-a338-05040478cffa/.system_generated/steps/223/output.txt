@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+new/server/calculations/legacy_engine.py:384:        process = "drilling"
+new/server/calculations/legacy_engine.py:899:    elif process in ["drilling"]:
+

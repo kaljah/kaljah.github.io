@@ -1,0 +1,151 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+hypothesis profile 'default'
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 29 items / 25 deselected / 4 selected
+
+new\server\tests\test_qfull_api_pipeline.py::TestMudDegassingPipeline::test_tier1_well_default FAILED [ 25%]
+new\server\tests\test_qfull_api_pipeline.py::TestMudDegassingPipeline::test_tier2_water_based_mud FAILED [ 50%]
+new\server\tests\test_qfull_api_pipeline.py::TestMudDegassingPipeline::test_tier2_oil_based_mud FAILED [ 75%]
+new\server\tests\test_qfull_api_pipeline.py::TestMudDegassingPipeline::test_tier2_plus_site_gas_composition PASSED [100%]
+
+================================== FAILURES ===================================
+______________ TestMudDegassingPipeline.test_tier1_well_default _______________
+
+self = <test_qfull_api_pipeline.TestMudDegassingPipeline object at 0x0000027A05FA07D0>
+auth_client = <FlaskClient <Flask 'app'>>, facility_id = 1
+
+    def test_tier1_well_default(self, auth_client, facility_id):
+        """
+        TIER 1 (API Table 6-3): Simplified default based on well count.
+        10 wells \u2192 ch4 = 10 * 0.0524 = 0.524 tonnes CH4
+        """
+        from calculations.legacy_engine import compute_emissions
+    
+        wells = 10.0
+        expected_ch4 = wells * 0.0524
+        expected_co2e = ref_co2e(ch4=expected_ch4)
+    
+        payload = {
+            "process_type": "drilling",
+            "quantity": wells,
+            "unit": "well",
+            "tier": "tier1",
+            "factor_source": "default",
+        }
+        em, method = compute_emissions(payload, {})
+    
+        assert em["co2"] == 0.0 or em["co2"] is None or em["co2"] == pytest.approx(0, abs=1e-9)
+>       assert em["ch4"] == pytest.approx(expected_ch4, rel=1e-4)
+E       assert 0.0 == 0.524 � 5.2e-05
+E         
+E         comparison failed
+E         Obtained: 0.0
+E         Expected: 0.524 � 5.2e-05
+
+new\server\tests\test_qfull_api_pipeline.py:530: AssertionError
+---------------------------- Captured stderr setup ----------------------------
+[2026-09-25 22:09:44,794] INFO in app: POST /api/auth/login 200 [0.113s] [ReqID: 4644cc4d-fc72-4cc5-a257-f2c30c1887d9]
+----------------------------- Captured log setup ------------------------------
+INFO     app:app.py:184 POST /api/auth/login 200 [0.113s] [ReqID: 4644cc4d-fc72-4cc5-a257-f2c30c1887d9]
+_____________ TestMudDegassingPipeline.test_tier2_water_based_mud _____________
+
+self = <test_qfull_api_pipeline.TestMudDegassingPipeline object at 0x0000027A05FA0F50>
+auth_client = <FlaskClient <Flask 'app'>>, facility_id = 1
+
+    def test_tier2_water_based_mud(self, auth_client, facility_id):
+        """
+        TIER 2 (API Table 6-2 Onshore): Water-based mud EF = 0.2605 t CH4/day.
+        20 drilling days \u2192 ch4 = 20 * 0.2605 = 5.210 tonnes CH4
+        """
+        from calculations.legacy_engine import compute_emissions
+    
+        drilling_days = 20.0
+        ef = 0.2605
+        expected_ch4 = drilling_days * ef
+        expected_co2e = ref_co2e(ch4=expected_ch4)
+    
+        payload = {
+            "process_type": "drilling",
+            "drilling_days": drilling_days,
+            "quantity": drilling_days,
+            "unit": "days",
+            "tier": "tier2",
+            "factor_source": "custom",
+            "mud_type": "water_based",
+        }
+        em, method = compute_emissions(payload, {})
+    
+        assert em["co2"] == 0.0 or em["co2"] is None or em["co2"] == pytest.approx(0, abs=1e-9)
+>       assert em["ch4"] == pytest.approx(expected_ch4, rel=1e-4)
+E       assert 0.0 == 5.21 � 5.2e-04
+E         
+E         comparison failed
+E         Obtained: 0.0
+E         Expected: 5.21 � 5.2e-04
+
+new\server\tests\test_qfull_api_pipeline.py:557: AssertionError
+---------------------------- Captured stderr setup ----------------------------
+[2026-09-25 22:09:45,278] INFO in app: POST /api/auth/login 200 [0.089s] [ReqID: 866f2b39-1ca7-45ba-8700-4ea0c6cfd55b]
+----------------------------- Captured log setup ------------------------------
+INFO     app:app.py:184 POST /api/auth/login 200 [0.089s] [ReqID: 866f2b39-1ca7-45ba-8700-4ea0c6cfd55b]
+______________ TestMudDegassingPipeline.test_tier2_oil_based_mud ______________
+
+self = <test_qfull_api_pipeline.TestMudDegassingPipeline object at 0x0000027A05FA1820>
+auth_client = <FlaskClient <Flask 'app'>>, facility_id = 1
+
+    def test_tier2_oil_based_mud(self, auth_client, facility_id):
+        """
+        TIER 2 (API Table 6-2 Onshore): Oil-based mud EF = 0.0586 t CH4/day.
+        20 drilling days \u2192 ch4 = 20 * 0.0586 = 1.172 tonnes CH4
+        """
+        from calculations.legacy_engine import compute_emissions
+    
+        drilling_days = 20.0
+        ef = 0.0586
+        expected_ch4 = drilling_days * ef
+        expected_co2e = ref_co2e(ch4=expected_ch4)
+    
+        payload = {
+            "process_type": "drilling",
+            "drilling_days": drilling_days,
+            "quantity": drilling_days,
+            "unit": "days",
+            "tier": "tier2",
+            "factor_source": "custom",
+            "mud_type": "oil_based",
+        }
+        em, method = compute_emissions(payload, {})
+    
+        assert em["co2"] == 0.0 or em["co2"] is None or em["co2"] == pytest.approx(0, abs=1e-9)
+>       assert em["ch4"] == pytest.approx(expected_ch4, rel=1e-4)
+E       assert 0.0 == 1.172 � 1.2e-04
+E         
+E         comparison failed
+E         Obtained: 0.0
+E         Expected: 1.172 � 1.2e-04
+
+new\server\tests\test_qfull_api_pipeline.py:584: AssertionError
+---------------------------- Captured stderr setup ----------------------------
+[2026-09-25 22:09:45,421] INFO in app: POST /api/auth/login 200 [0.107s] [ReqID: 09da3220-0fb5-48b8-8255-3b9ff9ec30e9]
+----------------------------- Captured log setup ------------------------------
+INFO     app:app.py:184 POST /api/auth/login 200 [0.107s] [ReqID: 09da3220-0fb5-48b8-8255-3b9ff9ec30e9]
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_qfull_api_pipeline.py::TestMudDegassingPipeline::test_tier1_well_default
+FAILED new\server\tests\test_qfull_api_pipeline.py::TestMudDegassingPipeline::test_tier2_water_based_mud
+FAILED new\server\tests\test_qfull_api_pipeline.py::TestMudDegassingPipeline::test_tier2_oil_based_mud
+============ 3 failed, 1 passed, 25 deselected, 1 warning in 1.80s ============
+

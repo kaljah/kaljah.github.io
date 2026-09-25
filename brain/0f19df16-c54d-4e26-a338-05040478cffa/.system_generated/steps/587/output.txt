@@ -1,0 +1,31 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_qfull_unit_conversions.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -71,9 +71,9 @@
+         assert em["ch4"] == pytest.approx(expected, rel=1e-4)
+ 
+     def test_tier2_days_water_based(self):
+-        """Reference: 20 drilling days water-based = 20 * 0.2605 = 5.210 t CH4."""
+-        days = 20.0
+-        expected = days * 0.2605
++        """Reference: 20 drilling days water-based = 20 * 0.0458 = 0.916 t CH4."""
++        days = 20.0
++        expected = days * 0.0458
+         em, _ = compute_emissions({
+             "process_type": "drilling",
+             "quantity": days,
+@@ -85,9 +85,9 @@
+         assert em["ch4"] == pytest.approx(expected, rel=1e-4)
+ 
+     def test_tier2_days_oil_based(self):
+-        """Reference: 20 drilling days oil-based = 20 * 0.0586 = 1.172 t CH4."""
+-        days = 20.0
+-        expected = days * 0.0586
++        """Reference: 20 drilling days oil-based = 20 * 0.0103 = 0.206 t CH4."""
++        days = 20.0
++        expected = days * 0.0103
+         em, _ = compute_emissions({
+             "process_type": "drilling",
+             "quantity": days,
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

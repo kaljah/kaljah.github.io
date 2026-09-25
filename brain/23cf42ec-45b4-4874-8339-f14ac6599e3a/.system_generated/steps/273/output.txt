@@ -1,0 +1,48 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\Desktop\H2\new\server\calculations\vented.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -744,8 +744,9 @@
+         # =====================================================================
+         # Disposition options: 'vented', 'flared', 'rec' / 'recovered', 'split'
+         disp = str(disposition or "").lower().strip()
++        combustion_eff = 0.98
+         if not disp:
+-            # Fallback to control_efficiency if disposition unstated
++            # Fallback to control_efficiency if disposition unstated (treated as flared routing fraction per D-01)
+             if control_efficiency is not None and float(control_efficiency) > 0:
+                 f_flared = flare_eff
+                 f_vented = 1.0 - f_flared
+@@ -752,3 +752,4 @@
++                combustion_eff = 0.98
+             else:
+                 f_vented = 1.0
+                 f_flared = 0.0
+@@ -760,6 +760,7 @@
+             f_vented = 0.0
+             f_flared = 1.0
+             f_rec = 0.0
++            combustion_eff = flare_eff if control_efficiency is not None else 0.98
+         elif disp in ["vented", "vent"]:
+             f_vented = 1.0
+             f_flared = 0.0
+@@ -775,6 +775,7 @@
+             f_vented = f_v
+             f_flared = f_f
+             f_rec = f_r
++            combustion_eff = flare_eff if control_efficiency is not None else 0.98
+         else:
+             f_vented = 1.0
+             f_flared = 0.0
+@@ -801,8 +801,8 @@
+         flared_gross_ch4_tonnes = (flared_m3 * actual_ch4_mol * CONVERSIONS["density_ch4"]) / 1000.0
+         flared_native_co2_tonnes = (flared_m3 * actual_co2_mol * CONVERSIONS["density_co2"]) / 1000.0
+ 
+-        flared_unburnt_ch4 = flared_gross_ch4_tonnes * (1.0 - flare_eff)
+-        flared_combustion_co2 = flared_gross_ch4_tonnes * flare_eff * (44.01 / 16.04)
++        flared_unburnt_ch4 = flared_gross_ch4_tonnes * (1.0 - combustion_eff)
++        flared_combustion_co2 = flared_gross_ch4_tonnes * combustion_eff * (44.01 / 16.04)
+         flared_total_co2 = flared_native_co2_tonnes + flared_combustion_co2
+ 
+         flared_mmbtu = (flared_scf * hhv_val) / 1_000_000.0
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

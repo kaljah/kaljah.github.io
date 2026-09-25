@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+new/client/src/pages/ReferenceData.jsx:224:          name: "Drilling - Mud Degassing",
+new/client/src/pages/ReferenceData.jsx:227:          desc: "CH₄ emissions from well drilling (Table 6-3) and mud degassing (Table 6-2)",
+

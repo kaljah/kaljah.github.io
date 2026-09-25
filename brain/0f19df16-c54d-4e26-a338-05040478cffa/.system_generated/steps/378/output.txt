@@ -1,0 +1,38 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -554,6 +554,7 @@
+                     or raw_tier in ["tier2", "tier_2", "custom", "t2"]
+                     or unit_str in ["days", "day", "d"]
+                     or flat_inputs.get("drilling_days") is not None
++                    or (flat_inputs.get("mud_type") is not None and raw_tier not in ["tier1", "tier_1", "t1"])
+                 )
+ 
+                 if is_tier2_plus:
+@@ -560,5 +560,5 @@
+                         flat_inputs,
+-                        ["drilling_days", "days", "amount", "quantity", "mud_vol", "mud_volume"],
++                        ["drilling_days", "days", "amount", "quantity", "mud_vol", "mud_volume", "volume", "activity_data"],
+                         "drilling days",
+                     )
+                     return calculator.calculate(
+@@ -573,7 +573,7 @@
+                 elif is_tier2:
+                     drilling_days = self._require_float(
+                         flat_inputs,
+-                        ["drilling_days", "days", "amount", "quantity", "mud_vol", "mud_volume"],
++                        ["drilling_days", "days", "amount", "quantity", "mud_vol", "mud_volume", "volume", "activity_data"],
+                         "drilling days",
+                     )
+                     return calculator.calculate(
+@@ -587,7 +587,7 @@
+                     # Tier 1 (wells default)
+                     wells = self._require_float(
+                         flat_inputs,
+-                        ["wells", "well_count", "amount", "quantity", "mud_vol", "mud_volume"],
++                        ["wells", "well_count", "amount", "quantity", "mud_vol", "mud_volume", "volume", "drilling_wells", "activity_data"],
+                         "well count",
+                     )
+                     return calculator.calculate(
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

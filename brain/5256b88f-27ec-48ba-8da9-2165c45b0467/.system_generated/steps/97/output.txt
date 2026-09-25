@@ -1,0 +1,55 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\server
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         8/16/2026  12:04 AM            839 add_columns.py                                                       
+-a----         8/11/2026  12:55 PM           1610 add_indexes.py                                                       
+-a----         9/24/2026  11:13 PM          17649 app.py                                                               
+-a----         9/23/2026   5:04 PM          73214 background_processor.py                                              
+-a----         8/11/2026   2:01 PM           1353 benchmark_db.py                                                      
+-a----         8/16/2026  12:02 AM            728 check_anomalies.py                                                   
+-a----         9/23/2026   4:15 PM           4770 config.py                                                            
+-a----         8/16/2026  12:04 AM           1260 create_anomalies.py                                                  
+-a----         9/12/2026   4:33 PM           1646 electricity_factors.py                                               
+-a----         9/24/2026   4:55 PM          13680 emission_factors.py                                                  
+-a----         9/22/2026  10:01 PM          49231 emission_factors_api2021.py                                          
+-a----         9/23/2026   4:19 PM           1403 extensions.py                                                        
+-a----         8/15/2026   6:26 PM            317 fix_dashboard.py                                                     
+-a----         8/11/2026  12:55 PM           4402 generate_10k_csv.py                                                  
+-a----         8/14/2026   6:26 PM           1753 generate_10k_scope2.py                                               
+-a----         8/14/2026   6:26 PM           1618 generate_10k_scope3.py                                               
+-a----         8/15/2026   4:36 AM          16673 generate_1k_comprehensive.py                                         
+-a----         8/14/2026   7:33 PM           4183 generate_1k_csv.py                                                   
+-a----         8/14/2026   7:26 PM           7726 generate_1m_csv.py                                                   
+-a----         8/11/2026  12:56 PM           6696 generate_1m_excel.py                                                 
+-a----         9/24/2026   8:20 PM          84719 generate_berkine_master_report.py                                    
+-a----         9/22/2026  10:14 AM          13156 generate_bulk_test_csvs.py                                           
+-a----         9/24/2026   8:45 PM          41754 generate_elm_master_report.py                                        
+-a----         8/11/2026  12:55 PM          17274 generate_scenarios.py                                                
+-a----         8/15/2026   5:06 AM           1988 generate_test_csvs.py                                                
+-a----         8/11/2026  12:56 PM            742 list_all_factors.py                                                  
+-a----         8/11/2026   1:58 PM           1014 locustfile.py                                                        
+-a----         8/11/2026  12:56 PM           6633 migrate_ogmp.py                                                      
+-a----         9/24/2026   4:51 PM          31752 models.py                                                            
+-a----         8/15/2026   6:43 PM           2753 patch_bg.py                                                          
+-a----         9/24/2026   4:55 PM          16313 process_categories.py                                                
+-a----         9/20/2026   6:52 PM          18233 restore_full_data.py                                                 
+-a----         9/20/2026   6:50 PM           4704 seed_admin.py                                                        
+-a----         9/24/2026   5:11 PM          22731 seed_berkine_data.py                                                 
+-a----         9/24/2026   8:18 PM          24866 seed_berkine_full_exact.py                                           
+-a----         9/12/2026  11:49 PM            872 status.py                                                            
+-a----          9/5/2026   6:02 PM           8705 test_csv_uploader.py                                                 
+-a----         9/25/2026  10:27 PM          47662 test_emission_calculations.py                                        
+-a----         8/11/2026   2:00 PM            657 test_performance.py                                                  
+-a----         8/15/2026   4:49 AM           5234 test_runner.py                                                       
+-a----         8/15/2026   5:06 AM           2595 upload_test_s2_s3.py                                                 
+-a----         9/24/2026  11:14 PM           4775 utils.py                                                             
+
+
+

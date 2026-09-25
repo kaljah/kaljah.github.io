@@ -1,0 +1,27 @@
+
+The command exited with code 0.
+Output:
+
+  new\server\calculations\dispatcher.py:200:        return default
+  new\server\calculations\dispatcher.py:201:
+> new\server\calculations\dispatcher.py:202:    def dispatch(
+  new\server\calculations\dispatcher.py:203:        self,
+  new\server\calculations\dispatcher.py:204:        process_type,
+  new\server\calculations\dispatcher.py:205:        inputs,
+  new\server\calculations\dispatcher.py:206:        emission_factors,
+  new\server\calculations\dispatcher.py:207:        uncertainties,
+  new\server\calculations\dispatcher.py:208:        gwp_dict=None,
+  new\server\calculations\dispatcher.py:209:        gwp_standard=None,
+  new\server\calculations\dispatcher.py:210:    ):
+  new\server\calculations\dispatcher.py:211:        """
+  new\server\calculations\dispatcher.py:212:        Executes the calculation for the given process type.
+  new\server\calculations\dispatcher.py:213:        - Tier 1 (default / custom): Requires only activity data (quantity 
+& unit) and uses catalog emission factors.
+  new\server\calculations\dispatcher.py:214:        - Tier 3 (specific): Requires all physical engineering parameters 
+with zero silent defaults.
+  new\server\calculations\dispatcher.py:215:        """
+  new\server\calculations\dispatcher.py:216:        from .constants import get_active_gwp
+  new\server\calculations\dispatcher.py:217:
+
+
+

@@ -1,0 +1,8 @@
+The search for ""Table 6-2" "API Compendium" "0.2605" OR "0.0586" OR "drilling mud"" returned the following summary:
+In the **API Compendium of Greenhouse Gas Emissions Estimation Methodologies for the Oil and Natural Gas Industry**, **Table 6-2** is titled **"Mud Degassing Vented Methane Emission Factors for Oil and Natural Gas Exploration"**[1][2].
+
+This table provides specific emission factors used to estimate methane emissions associated with the degassing of drilling mud during exploration activities[1][2]. The values you mentioned, **0.2605** and **0.0586**, are likely specific emission factors (typically expressed in units such as tonnes of methane per event or per volume of mud) found within this table for different types of drilling mud operations or regions.
+
+Sources:
+[1] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGbvTzntcz0JKOL8SLXQFCgiE_PDlOgKfvI5Ymg5N93xosJDkJRThXxwRKXLtBu-8_DYMCnUJcHiZBbgjyvYCZXzSumlG-MtoxAQyHqdVprX4fDGpmdrKpEN_XL0avwB5qTokY8_zzOFBJg3npPwb7F996B0xh5srSYg71FgMDOzRFFfKT3HWZ67A==)
+[2] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGbvTzntcz0JKOL8SLXQFCgiE_PDlOgKfvI5Ymg5N93xosJDkJRThXxwRKXLtBu-8_DYMCnUJcHiZBbgjyvYCZXzSumlG-MtoxAQyHqdVprX4fDGpmdrKpEN_XL0avwB5qTokY8_zzOFBJg3npPwb7F996B0xh5srSYg71FgMDOzRFFfKT3HWZ67A==)

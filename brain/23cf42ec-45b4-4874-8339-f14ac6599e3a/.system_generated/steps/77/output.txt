@@ -1,0 +1,27 @@
+The search for ""Table 6-5" "Table 6-6" "52,175.97" OR "1,842,577" OR "Well Completions without Hydraulic Fracturing"" returned the following summary:
+The provided text fragments originate from technical documents related to greenhouse gas emissions methodologies, specifically the **American Petroleum Institute (API) Compendium of Greenhouse Gas Emissions Methodologies**[1] and similar technical guidance documents[2][3].
+
+### Context of the Tables and Figures
+*   **Table 6-5 and Table 6-6:** These tables typically provide **Methane Emission Factors** for various oil and gas well completion activities[1][4].
+    *   **Table 6-5** is frequently cited in relation to "Well Completions with Hydraulic Fracturing"[1][4].
+    *   **Table 6-6** is specifically identified as covering "Onshore Well Completions without Hydraulic Fracturing"[1][4].
+*   **Numerical Data (e.g., 1,842,577):** The number `1,842,577` appears in data tables within these documents, often representing calculated emission values (e.g., in standard cubic feet or mass units) associated with specific well completion scenarios, such as gas well completions involving hydraulic fracturing with reduced emissions completions (REC) and venting[2][1].
+
+### Summary of Subject Matter
+These documents outline how to quantify methane emissions from oil and gas exploration and production[2][4]. They distinguish between:
+*   **Well completions with hydraulic fracturing:** A process involving high-pressure fluid injection where flowback fluids (gas, liquid, sand) are often diverted to pits or tanks, leading to significant methane venting or flaring[5][6][7][8].
+*   **Well completions without hydraulic fracturing:** These typically have shorter flowback periods (well cleanup) and generally result in lower methane releases compared to hydraulically fractured wells[9][10].
+
+If you are looking for specific values from these tables, they are part of the detailed emission factor datasets used to estimate the environmental impact of industry operations[1].
+
+Sources:
+[1] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGXbzWH3kOrD2qGlJkZxVqW4a4qS7Vwf44tGZ6BKXUQ-ODj7GVgmT-Zd9Wlm9tHmw80PEKkCVwGM512eVvFgXpPU_bAlu7g7MXlZQbXl__eXqgCyQdoQpzKm2VVyQ3LYBxdd9R56TbaR6KdSG64290M0ptfANq6d0O6KumNjiv9RtTzqBXf3u2u8Q==)
+[2] [ogmpartnership.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHqf-UHQ9kZpjEhk4Dit5wp36aLYWNuJRgaSqgmhPX55IDZM3t9xxziCuR2b30ZFRtrKBm9nTBvMyPMmLB1fiyl1YxcK3nUv-Hi5mze4rq7CPt7tH1fwl0fFlHh5wark4K5XcsMr5R7SQzPv6FH5uhI7rJw0tRn3GFfvMrboVR-KUdhZY_l7Rl1)
+[3] [ogmpartnership.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHqf-UHQ9kZpjEhk4Dit5wp36aLYWNuJRgaSqgmhPX55IDZM3t9xxziCuR2b30ZFRtrKBm9nTBvMyPMmLB1fiyl1YxcK3nUv-Hi5mze4rq7CPt7tH1fwl0fFlHh5wark4K5XcsMr5R7SQzPv6FH5uhI7rJw0tRn3GFfvMrboVR-KUdhZY_l7Rl1)
+[4] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGXbzWH3kOrD2qGlJkZxVqW4a4qS7Vwf44tGZ6BKXUQ-ODj7GVgmT-Zd9Wlm9tHmw80PEKkCVwGM512eVvFgXpPU_bAlu7g7MXlZQbXl__eXqgCyQdoQpzKm2VVyQ3LYBxdd9R56TbaR6KdSG64290M0ptfANq6d0O6KumNjiv9RtTzqBXf3u2u8Q==)
+[5] [ogmpartnership.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHqf-UHQ9kZpjEhk4Dit5wp36aLYWNuJRgaSqgmhPX55IDZM3t9xxziCuR2b30ZFRtrKBm9nTBvMyPMmLB1fiyl1YxcK3nUv-Hi5mze4rq7CPt7tH1fwl0fFlHh5wark4K5XcsMr5R7SQzPv6FH5uhI7rJw0tRn3GFfvMrboVR-KUdhZY_l7Rl1)
+[6] [ogmpartnership.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHqf-UHQ9kZpjEhk4Dit5wp36aLYWNuJRgaSqgmhPX55IDZM3t9xxziCuR2b30ZFRtrKBm9nTBvMyPMmLB1fiyl1YxcK3nUv-Hi5mze4rq7CPt7tH1fwl0fFlHh5wark4K5XcsMr5R7SQzPv6FH5uhI7rJw0tRn3GFfvMrboVR-KUdhZY_l7Rl1)
+[7] [ogmpartnership.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHqf-UHQ9kZpjEhk4Dit5wp36aLYWNuJRgaSqgmhPX55IDZM3t9xxziCuR2b30ZFRtrKBm9nTBvMyPMmLB1fiyl1YxcK3nUv-Hi5mze4rq7CPt7tH1fwl0fFlHh5wark4K5XcsMr5R7SQzPv6FH5uhI7rJw0tRn3GFfvMrboVR-KUdhZY_l7Rl1)
+[8] [ogmpartnership.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHqf-UHQ9kZpjEhk4Dit5wp36aLYWNuJRgaSqgmhPX55IDZM3t9xxziCuR2b30ZFRtrKBm9nTBvMyPMmLB1fiyl1YxcK3nUv-Hi5mze4rq7CPt7tH1fwl0fFlHh5wark4K5XcsMr5R7SQzPv6FH5uhI7rJw0tRn3GFfvMrboVR-KUdhZY_l7Rl1)
+[9] [ogmpartnership.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHqf-UHQ9kZpjEhk4Dit5wp36aLYWNuJRgaSqgmhPX55IDZM3t9xxziCuR2b30ZFRtrKBm9nTBvMyPMmLB1fiyl1YxcK3nUv-Hi5mze4rq7CPt7tH1fwl0fFlHh5wark4K5XcsMr5R7SQzPv6FH5uhI7rJw0tRn3GFfvMrboVR-KUdhZY_l7Rl1)
+[10] [ogmpartnership.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHqf-UHQ9kZpjEhk4Dit5wp36aLYWNuJRgaSqgmhPX55IDZM3t9xxziCuR2b30ZFRtrKBm9nTBvMyPMmLB1fiyl1YxcK3nUv-Hi5mze4rq7CPt7tH1fwl0fFlHh5wark4K5XcsMr5R7SQzPv6FH5uhI7rJw0tRn3GFfvMrboVR-KUdhZY_l7Rl1)

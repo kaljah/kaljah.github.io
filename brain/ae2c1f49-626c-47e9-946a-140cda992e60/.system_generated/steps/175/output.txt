@@ -1,0 +1,25 @@
+
+The command exited with code 0.
+Output:
+
+  new\server\emission_factors_api2021.py:1144:        "source": "API Compendium 2021 Section 6, pg 407",
+  new\server\emission_factors_api2021.py:1145:    },
+  new\server\emission_factors_api2021.py:1146:}
+  new\server\emission_factors_api2021.py:1147:
+  new\server\emission_factors_api2021.py:1148:# Merge all API factors
+> new\server\emission_factors_api2021.py:1149:API_FACTORS = {
+  new\server\emission_factors_api2021.py:1150:    **COMBUSTION_FACTORS,
+  new\server\emission_factors_api2021.py:1151:    **FLARING_FACTORS,
+  new\server\emission_factors_api2021.py:1152:    **VENTED_FACTORS,
+  new\server\emission_factors_api2021.py:1153:    **CHEMICAL_PRODUCTION_FACTORS,
+  new\server\emission_factors_api2021.py:1154:    **N2O_PRODUCTION_FACTORS,
+  new\server\emission_factors_api2021.py:1155:}
+  new\server\emission_factors_api2021.py:1156:
+  new\server\emission_factors_api2021.py:1157:# 
+=============================================================================
+  new\server\emission_factors_api2021.py:1158:# SECTION 7: FUGITIVE & EQUIPMENT EMISSION FACTORS
+  new\server\emission_factors_api2021.py:1159:# 
+=============================================================================
+
+
+

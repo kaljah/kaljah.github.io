@@ -1,0 +1,16 @@
+
+The command exited with code 0.
+Output:
+
+docs\validation-report.md:37:| **API Compendium (2021)** | Section 6.1 - 6.10 | Mud degassing, completions, liquids 
+unloading, vessel blowdown, tank flashing, pneumatics |
+docs\validation-report.md:63:�   �   � vented_processes.py          <- Mud, completions, unloading, blowdown, tanks, 
+pneumatics
+docs\validation-report.md:124:| **Completion Flowback** | API Compendium �6.2 | $E_{\text{CH4}} = V_{\text{gas}} 
+\times c_{\text{CH4}} \times (1 - \eta_{\text{ctrl}})$ | Dual-Model Differential | No | Verified | **PASS** |
+docs\validation-report.md:249:| **Scope 1: Vented & Process** | **PRODUCTION READY** | Mud degassing, completions, 
+liquids unloading, blowdown, tanks, and pneumatics match API Compendium 2021 formulas exactly. Pneumatics alias 
+active. |
+
+
+

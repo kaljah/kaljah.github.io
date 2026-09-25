@@ -1,0 +1,59 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\vented.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -132,11 +132,11 @@
+     # API Compendium Table 6-3: Default for natural gas well drilling (tonnes CH4 / well)
+     TIER1_WELL_EF = 0.0524
+ 
+-    # API Compendium Table 6-2: Onshore mud degassing (tonnes CH4 / drilling day)
++    # API Compendium 2021: Onshore mud degassing (tonnes CH4 / drilling day)
+     TABLE_6_2_ONSHORE = {
+-        "water_based": 0.2605,
+-        "oil_based": 0.0586,
+-        "synthetic": 0.0586,
++        "water_based": 0.0458,
++        "oil_based": 0.0103,
++        "synthetic": 0.0103,
+     }
+     DEFAULT_CH4_CONCENTRATION = 0.8385  # 83.85% molar default underlying Table 6-2
+ 
+@@ -157,8 +157,8 @@
+         """
+         API Compendium 2021 Drilling Mud Degassing:
+         - Tier 1 (Table 6-3): Simplified API default: wells × 0.0524 t CH4/well
+-        - Tier 2 (Table 6-2): Mud-specific onshore EF: drilling days × mud EF (water: 0.2605, oil: 0.0586 t CH4/day)
+-        - Tier 2+ (Table 6-2 + Gas Composition): DD × EF × (X_CH4,site / 83.85%) [+ CO2 if X_CO2,site provided]
++        - Tier 2 (Onshore defaults or Custom Factor from DB): drilling days × mud EF (water: 0.0458, oil: 0.0103 t CH4/day, or custom factor EF)
++        - Tier 2+ (Onshore + Gas Composition): DD × EF × (X_CH4,site / 83.85%) [+ CO2 if X_CO2,site provided]
+         """
+         # Flexible argument unpacking to support legacy positional calls:
+         if isinstance(wells_or_tier, (int, float)) and not isinstance(wells_or_tier, bool):
+@@ -241,7 +241,7 @@
+             ef = (
+                 float(ef_ch4)
+                 if (ef_ch4 is not None and float(ef_ch4) > 0)
+-                else self.TABLE_6_2_ONSHORE.get(norm_type, 0.2605)
++                else self.TABLE_6_2_ONSHORE.get(norm_type, 0.0458)
+             )
+             ch4_tonnes = dd * ef
+             co2_tonnes = 0.0
+@@ -250,7 +250,7 @@
+                 "drilling_days": dd,
+                 "mud_type": norm_type,
+                 "ef_ch4_used": ef,
+-                "api_reference": "Table 6-2 (Onshore)",
++                "api_reference": "API Compendium (Onshore)",
+             }
+ 
+         else:
+@@ -271,7 +271,7 @@
+             ef = (
+                 float(ef_ch4)
+                 if (ef_ch4 is not None and float(ef_ch4) > 0)
+-                else self.TABLE_6_2_ONSHORE.get(norm_type, 0.2605)
++                else self.TABLE_6_2_ONSHORE.get(norm_type, 0.0458)
+             )
+ 
+             x_ch4 = float(
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

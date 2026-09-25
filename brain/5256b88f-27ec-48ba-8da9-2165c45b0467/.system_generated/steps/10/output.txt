@@ -1,0 +1,53 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2\docs
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/20/2026  10:08 AM          19664 calculation-specification.md                                         
+-a----         9/20/2026  10:43 AM          25275 validation-report.md                                                 
+
+
+    Directory: C:\Users\samsung\Desktop\H2\docs\validation
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/20/2026   4:01 PM          13403 00-current-architecture.md                                           
+-a----         9/20/2026   4:41 PM          18494 00-repository-audit.md                                               
+-a----         9/20/2026  11:40 AM          36909 01-calculation-inventory.md                                          
+-a----         9/20/2026   4:44 PM          10421 01-testing-inventory.md                                              
+-a----         9/20/2026   4:45 PM          13658 02-calculation-inventory.md                                          
+-a----         9/20/2026   4:02 PM           8848 02-test-inventory.md                                                 
+-a----         9/20/2026   4:02 PM           9193 03-security-audit.md                                                 
+-a----         9/20/2026   4:02 PM           8465 04-database-audit.md                                                 
+-a----         9/20/2026   4:02 PM           5385 05-performance-audit.md                                              
+-a----         9/20/2026   4:02 PM           4003 06-accessibility-audit.md                                            
+-a----         9/20/2026   4:03 PM           4168 07-browser-audit.md                                                  
+-a----         9/20/2026   4:03 PM           7300 08-production-readiness.md                                           
+-a----         9/20/2026   4:03 PM          10198 09-calculation-validation.md                                         
+-a----         9/20/2026   4:03 PM           6452 10-human-review.md                                                   
+-a----         9/20/2026  11:40 AM          36909 calculation-inventory.md                                             
+-a----         9/20/2026   4:47 PM           9901 CALCULATION_VALIDATION_REPORT.md                                     
+-a----         9/20/2026   4:46 PM          11920 FINAL_VALIDATION_REPORT.md                                           
+-a----         9/20/2026   4:14 PM          21896 FINAL_VALIDATION_REPORT.pdf                                          
+-a----         9/20/2026   4:48 PM          10946 HUMAN_REVIEW_REQUIRED.md                                             
+-a----         9/20/2026   6:22 PM           7045 LEGACY_TEST_AUDIT.md                                                 
+-a----         9/20/2026  11:40 AM           9524 methodology-matrix.md                                                
+-a----         9/20/2026  11:39 AM          16830 repository-audit.md                                                  
+-a----         9/20/2026  11:40 AM           8332 unit-and-dimensional-analysis.md                                     
+
+
+    Directory: C:\Users\samsung\Desktop\H2\knowledge
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/19/2026   4:04 PM              0 knowledge.lock                                                       
+
+
+

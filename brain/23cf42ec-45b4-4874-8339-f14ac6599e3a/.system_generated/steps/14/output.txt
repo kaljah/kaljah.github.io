@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+
+AUDIT_MEMORY.md:131:| D-01 | B1: How to compute CO2 from the flared fraction in completions/unloading/blowdown Tier 3? 
+| Always stoichiometric: CH4_flared * 0.98 * (44.01/16.04) + native CO2; unburnt CH4 = 2%; N2O = flared MMBtu * 
+catalog EF. | DECIDED: stoichiometric flaring implemented. |
+
+
+

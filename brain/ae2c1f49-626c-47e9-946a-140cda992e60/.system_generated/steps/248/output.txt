@@ -1,0 +1,20 @@
+Task: ae2c1f49-626c-47e9-946a-140cda992e60/task-246
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\ae2c1f49-626c-47e9-946a-140cda992e60\.system_generated\tasks\task-246.log
+Log output:
+<truncated 97 lines>
+]
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:184 POST /api/emissions/ 201 [0.052s] [ReqID: 728161d6-4b40-4c3e-ab4c-41f657c83fa7]
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_associated_gas_venting.py::test_dispatcher_routing - assert...
+FAILED tests/test_associated_gas_venting.py::test_api_add_emission_associated_gas_venting
+=================== 2 failed, 15 passed, 1 warning in 1.86s ===================
+
+Last progress: 3s ago

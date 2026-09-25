@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\legacy_engine.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -874,7 +874,7 @@
+         em["ch4"] = ch4_kg / 1000.0
+         em["n2o"] = n2o_kg / 1000.0
+ 
+-    elif process in ["venting", "loading", "separation"]:
++    elif process in ["venting", "loading", "separation", "associated_gas_venting"]:
+         # Primarily CH4 release, minor CO2
+         em["ch4"] = ch4_kg / 1000.0
+         em["co2"] = co2_kg / 1000.0 if co2_kg > 0 else 0
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

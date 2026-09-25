@@ -1,0 +1,149 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\Desktop\H2\new\server\emission_factors_api2021.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -419,6 +419,143 @@
+ 
+ VENTED_FACTORS = {
+     # =========================================================================
++    # SECTION 6.2.3 WELL COMPLETIONS
++    # =========================================================================
++    # --- TABLE 6-5: WELL COMPLETIONS WITH HYDRAULIC FRACTURING ---
++    "Well Completion - Gas Well with Hydraulic Fracturing (Uncontrolled Venting)": {
++        "code": "CompGasHF_Uncontrolled",
++        "co2": 0.0,
++        "ch4": 28.8,  # 28,800 kg CH4/completion -> 28.8 tonnes CH4/completion
++        "n2o": 0.0,
++        "factor": 28.8,
++        "whole_gas_ef": 1842577.0,  # scf gas/completion
++        "ch4_mol_pct": 81.6,  # mole % CH4 basis (Footnote c)
++        "uncertainty": {"co2": 0.30, "ch4": 0.30, "n2o": 0.0},
++        "unit": "tonnes/completion",
++        "baseUnit": "completions",
++        "usage": ["completions", "vented"],
++        "segment": "Upstream",
++        "process_category": "completions",
++        "tier": "Tier 1",
++        "type": "completion",
++        "fracturing": True,
++        "well_type": "gas",
++        "control_type": "uncontrolled",
++        "source": "API Compendium 2021 Section 6.2.3, Table 6-5",
++        "description": "API Table 6-5: Gas Well Completion with Hydraulic Fracturing - Uncontrolled Venting (28,800 kg CH4/completion)",
++    },
++    "Well Completion - Gas Well with Hydraulic Fracturing (REC with Venting)": {
++        "code": "CompGasHF_REC",
++        "co2": 0.0,
++        "ch4": 13.542,  # 13,542 kg CH4/completion -> 13.542 tonnes CH4/completion
++        "n2o": 0.0,
++        "factor": 13.542,
++        "whole_gas_ef": 866413.0,  # scf gas/completion
++        "ch4_mol_pct": 81.6,
++        "uncertainty": {"co2": 0.30, "ch4": 0.30, "n2o": 0.0},
++        "unit": "tonnes/completion",
++        "baseUnit": "completions",
++        "usage": ["completions", "vented"],
++        "segment": "Upstream",
++        "process_category": "completions",
++        "tier": "Tier 1",
++        "type": "completion",
++        "fracturing": True,
++        "well_type": "gas",
++        "control_type": "rec",
++        "source": "API Compendium 2021 Section 6.2.3, Table 6-5",
++        "description": "API Table 6-5: Gas Well Completion with Hydraulic Fracturing - REC with Venting (13,542 kg CH4/completion)",
++    },
++    "Well Completion - Oil Well with Hydraulic Fracturing (Uncontrolled Venting)": {
++        "code": "CompOilHF_Uncontrolled",
++        "co2": 0.0,
++        "ch4": 14.419,  # 14,419 kg CH4/completion -> 14.419 tonnes CH4/completion
++        "n2o": 0.0,
++        "factor": 14.419,
++        "whole_gas_ef": 922498.0,  # scf gas/completion
++        "ch4_mol_pct": 81.6,
++        "uncertainty": {"co2": 0.30, "ch4": 0.30, "n2o": 0.0},
++        "unit": "tonnes/completion",
++        "baseUnit": "completions",
++        "usage": ["completions", "vented"],
++        "segment": "Upstream",
++        "process_category": "completions",
++        "tier": "Tier 1",
++        "type": "completion",
++        "fracturing": True,
++        "well_type": "oil",
++        "control_type": "uncontrolled",
++        "source": "API Compendium 2021 Section 6.2.3, Table 6-5",
++        "description": "API Table 6-5: Oil Well Completion with Hydraulic Fracturing - Uncontrolled Venting (14,419 kg CH4/completion)",
++    },
++    "Well Completion - Oil Well with Hydraulic Fracturing (REC with Venting)": {
++        "code": "CompOilHF_REC",
++        "co2": 0.0,
++        "ch4": 0.615,  # 615 kg CH4/completion -> 0.615 tonnes CH4/completion
++        "n2o": 0.0,
++        "factor": 0.615,
++        "whole_gas_ef": 39357.0,  # scf gas/completion
++        "ch4_mol_pct": 81.6,
++        "uncertainty": {"co2": 0.30, "ch4": 0.30, "n2o": 0.0},
++        "unit": "tonnes/completion",
++        "baseUnit": "completions",
++        "usage": ["completions", "vented"],
++        "segment": "Upstream",
++        "process_category": "completions",
++        "tier": "Tier 1",
++        "type": "completion",
++        "fracturing": True,
++        "well_type": "oil",
++        "control_type": "rec",
++        "source": "API Compendium 2021 Section 6.2.3, Table 6-5",
++        "description": "API Table 6-5: Oil Well Completion with Hydraulic Fracturing - REC with Venting (615 kg CH4/completion)",
++    },
++    # --- TABLE 6-6: ONSHORE WELL COMPLETIONS WITHOUT HYDRAULIC FRACTURING ---
++    "Well Completion - Gas Well without Hydraulic Fracturing (Vented)": {
++        "code": "CompGasNoHF_Vented",
++        "co2": 0.0,
++        "ch4": 1.7376,  # 1,737.6 kg CH4/completion -> 1.7376 tonnes CH4/completion
++        "n2o": 0.0,
++        "factor": 1.7376,
++        "whole_gas_ef": 111173.0,  # scf gas/completion
++        "ch4_mol_pct": 81.6,
++        "uncertainty": {"co2": 0.30, "ch4": 0.30, "n2o": 0.0},
++        "unit": "tonnes/completion",
++        "baseUnit": "completions",
++        "usage": ["completions", "vented"],
++        "segment": "Upstream",
++        "process_category": "completions",
++        "tier": "Tier 1",
++        "type": "completion",
++        "fracturing": False,
++        "well_type": "gas",
++        "control_type": "uncontrolled",
++        "source": "API Compendium 2021 Section 6.2.3, Table 6-6",
++        "description": "API Table 6-6: Onshore Gas Well Completion without Hydraulic Fracturing - Vented (1,737.6 kg CH4/completion)",
++    },
++    "Well Completion - Oil Well without Hydraulic Fracturing (Vented)": {
++        "code": "CompOilNoHF_Vented",
++        "co2": 0.0,
++        "ch4": 0.0141,  # 14.1 kg CH4/completion -> 0.0141 tonnes CH4/completion
++        "n2o": 0.0,
++        "factor": 0.0141,
++        "whole_gas_ef": 902.0,  # scf gas/completion
++        "ch4_mol_pct": 81.6,
++        "uncertainty": {"co2": 0.30, "ch4": 0.30, "n2o": 0.0},
++        "unit": "tonnes/completion",
++        "baseUnit": "completions",
++        "usage": ["completions", "vented"],
++        "segment": "Upstream",
++        "process_category": "completions",
++        "tier": "Tier 1",
++        "type": "completion",
++        "fracturing": False,
++        "well_type": "oil",
++        "control_type": "uncontrolled",
++        "source": "API Compendium 2021 Section 6.2.3, Table 6-6",
++        "description": "API Table 6-6: Onshore Oil Well Completion without Hydraulic Fracturing - Vented (14.1 kg CH4/completion)",
++    },
++    # =========================================================================
+     # SECTION 6.3.4 WELL VENTING FROM LIQUIDS UNLOADING
+     # =========================================================================
+     # --- TABLE 6-11: TIER 1 PER-WELL VENTED EMISSION FACTORS ---
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,153 @@
+
+The command exited with code 1.
+Output:
+<truncated 1 lines>
+                    ch4_content=ch4_content,
+                    control_eff=control_eff,
+                    uncertainties=uncertainties,
+                    contactor_pressure=contactor_press,
+                    press_unit=press_u,
+                    contactor_temperature=contactor_t,
+                    temp_unit=temp_u,
+                    has_flash_tank=has_flash,
+                    flash_control_eff=flash_eff,
+                    still_control_type=still_type,
+                    flash_control_type=flash_type,
+                    stripping_gas_rate=float(stripping_rate) if stripping_rate not in [None, "", "-"] else 0.0,
+                    stripping_gas_unit=stripping_unit,
+                    stripping_gas_scf=float(stripping_scf) if stripping_scf not in [None, "", "-"] else None,
+                    gwp_dict=gwp_dict,
+                )
+    
+            elif process_type == "indirect_steam":
+                heat = self._require_float(
+                    flat_inputs, ["quantity", "amount", "heat_energy"], "heat energy"
+                )
+                boiler_eff = self._require_float(
+                    flat_inputs,
+                    ["boiler_eff", "boiler_efficiency"],
+                    "boiler efficiency fraction (e.g. 0.80)",
+                )
+                trans_loss = self._optional_fraction(
+                    flat_inputs, ["trans_loss", "transmission_loss"], 0.0
+                )
+    
+                return calculator.calculate(
+                    heat_energy=heat,
+                    ef_co2=emission_factors.get("co2", 0),
+                    boiler_efficiency=boiler_eff,
+                    transmission_loss=trans_loss,
+                    uncertainties=uncertainties,
+                    heat_unit=flat_inputs.get("heat_unit", "btu"),
+                )
+    
+            else:
+                return self._generic_calculation(
+                    flat_inputs,
+                    emission_factors,
+                    uncertainties,
+                    process_type,
+                    gwp_dict=gwp_dict,
+                )
+    
+        except Exception as e:
+            from flask import current_app, has_app_context
+    
+            if has_app_context():
+                current_app.logger.error(
+                    f"[Dispatcher] Calculation failed for process_type='{process_type}': {e}",
+                    exc_info=True,
+                )
+            else:
+                import logging
+    
+                logging.error(
+                    f"[Dispatcher] Calculation failed for process_type='{process_type}': {e}",
+                    exc_info=True,
+                )
+>           raise ValueError(f"Calculation error for '{process_type}': {str(e)}") from e
+E           ValueError: Calculation error for 'associated_gas_venting': 'CalculationDispatcher' object has no attribute '_optional_float'
+
+calculations\dispatcher.py:1697: ValueError
+---------------------------- Captured stderr call -----------------------------
+[2026-09-25 22:53:43,700] ERROR in dispatcher: [Dispatcher] Calculation failed for process_type='associated_gas_venting': 'CalculationDispatcher' object has no attribute '_optional_float'
+Traceback (most recent call last):
+  File "C:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py", line 1010, in dispatch
+    raw_oil = self._optional_float(
+              ^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'CalculationDispatcher' object has no attribute '_optional_float'. Did you mean: '_optional_fraction'?
+------------------------------ Captured log call ------------------------------
+ERROR    app:dispatcher.py:1686 [Dispatcher] Calculation failed for process_type='associated_gas_venting': 'CalculationDispatcher' object has no attribute '_optional_float'
+Traceback (most recent call last):
+  File "C:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py", line 1010, in dispatch
+    raw_oil = self._optional_float(
+              ^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'CalculationDispatcher' object has no attribute '_optional_float'. Did you mean: '_optional_fraction'?
+________________ test_api_add_emission_associated_gas_venting _________________
+
+    def test_api_add_emission_associated_gas_venting():
+        """Verify POST /api/emissions/ saves Associated Gas Venting and calculates properly."""
+        with app.app_context():
+            # Setup facility and user
+            user = User.query.filter_by(role="admin").first()
+            if not user:
+                user = User(fullName="Admin", orgName="TestOrg", sector="Upstream", email="admin_agv@test.com", role="admin")
+                user.set_password("Admin1234!")
+                db.session.add(user)
+                db.session.commit()
+    
+            fac = Facility.query.first()
+            if not fac:
+                fac = Facility(name="Test Field AGV", location="Hassi Messaoud", segment="Upstream", code="FAC-AGV-01")
+                db.session.add(fac)
+                db.session.commit()
+    
+            client = app.test_client()
+            with client.session_transaction() as sess:
+                sess["user_id"] = user.id
+    
+            # 1. Test POST Tier 1
+            payload_t1 = {
+                "year": 2025,
+                "month": 6,
+                "facility_id": fac.id,
+                "process_type": "associated_gas_venting",
+                "quantity": 10000,
+                "unit": "bbl",
+                "basin": "Permian Basin (Basin 430)",
+                "tier": "Tier 1",
+                "ch4_content": 81.6,
+            }
+            resp = client.post("/api/emissions/", json=payload_t1)
+>           assert resp.status_code == 201
+E           assert 422 == 201
+E            +  where 422 = <WrapperTestResponse streamed [422 UNPROCESSABLE ENTITY]>.status_code
+
+tests\test_associated_gas_venting.py:413: AssertionError
+---------------------------- Captured stderr call -----------------------------
+[2026-09-25 22:53:44,298] ERROR in dispatcher: [Dispatcher] Calculation failed for process_type='associated_gas_venting': 'CalculationDispatcher' object has no attribute '_optional_float'
+Traceback (most recent call last):
+  File "C:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py", line 1010, in dispatch
+    raw_oil = self._optional_float(
+              ^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'CalculationDispatcher' object has no attribute '_optional_float'. Did you mean: '_optional_fraction'?
+[2026-09-25 22:53:44,301] INFO in app: POST /api/emissions/ 422 [0.011s] [ReqID: 88be942f-3a8e-4a14-b2c5-49699258dcac]
+------------------------------ Captured log call ------------------------------
+ERROR    app:dispatcher.py:1686 [Dispatcher] Calculation failed for process_type='associated_gas_venting': 'CalculationDispatcher' object has no attribute '_optional_float'
+Traceback (most recent call last):
+  File "C:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py", line 1010, in dispatch
+    raw_oil = self._optional_float(
+              ^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'CalculationDispatcher' object has no attribute '_optional_float'. Did you mean: '_optional_fraction'?
+INFO     app:app.py:184 POST /api/emissions/ 422 [0.011s] [ReqID: 88be942f-3a8e-4a14-b2c5-49699258dcac]
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_associated_gas_venting.py::test_dispatcher_routing - ValueE...
+FAILED tests/test_associated_gas_venting.py::test_api_add_emission_associated_gas_venting
+=================== 2 failed, 15 passed, 1 warning in 1.34s ===================
+

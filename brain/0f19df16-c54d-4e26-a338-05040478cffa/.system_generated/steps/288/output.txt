@@ -1,0 +1,83 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_battery_midstream_process_equipment.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -44,19 +44,28 @@
+ 
+ 
+ class TestMudDegassingBattery:
+-    """Verifies drilling mud degassing calculations against independent reference."""
++    """Verifies drilling mud degassing calculations against independent reference (Tier 1, Tier 2, Tier 2+)."""
++
++    def test_tier1_wells_default(self):
++        calc = MudDegassingCalculator()
++        wells = 8.0
++        res = calc.calculate(tier="tier1", wells=wells, gwp_dict=GWP_AR5)
++        ref = IndependentMudDegassing.calculate(tier="tier1", wells=wells, gwp_standard="AR5")
++
++        assert pytest.approx(_val(res["results"]["ch4"]), rel=1e-5) == ref["ch4"]
++        assert pytest.approx(res["total_co2e"], rel=1e-5) == ref["co2e"]
++        assert res["inputs"]["ef_ch4_used"] == 0.0524
+ 
+     @pytest.mark.parametrize("mud_type, expected_ef", [
+-        ("water_based", 0.15),
+-        ("oil_based", 0.35),
+-        ("synthetic", 0.25),
+-        ("unknown_default", 0.25),
++        ("water_based", 0.2605),
++        ("oil_based", 0.0586),
++        ("synthetic", 0.0586),
+     ])
+-    def test_mud_types_standard_factors(self, mud_type, expected_ef):
+-        calc = MudDegassingCalculator()
+-        vol = 2500.0  # m3
+-        res = calc.calculate(vol, mud_type, {}, gwp_dict=GWP_AR5)
+-        ref = IndependentMudDegassing.calculate(vol, "m3", mud_type, gwp_standard="AR5")
++    def test_tier2_mud_types_standard_factors(self, mud_type, expected_ef):
++        calc = MudDegassingCalculator()
++        days = 30.0  # drilling days
++        res = calc.calculate(tier="tier2", drilling_days=days, mud_type=mud_type, gwp_dict=GWP_AR5)
++        ref = IndependentMudDegassing.calculate(tier="tier2", drilling_days=days, mud_type=mud_type, gwp_standard="AR5")
+ 
+         assert pytest.approx(_val(res["results"]["ch4"]), rel=1e-5) == ref["ch4"]
+         assert pytest.approx(res["total_co2e"], rel=1e-5) == ref["co2e"]
+@@ -63,13 +63,29 @@
+ 
+-    def test_mud_custom_ef_override(self):
+-        calc = MudDegassingCalculator()
+-        vol = 1200.0
+-        custom_ef = 0.42  # kg/m3
+-        res = calc.calculate(vol, "water_based", {}, ef_ch4=custom_ef, gwp_dict=GWP_AR5)
+-        ref = IndependentMudDegassing.calculate(vol, "m3", "water_based", custom_ef=custom_ef, gwp_standard="AR5")
+-
+-        assert pytest.approx(_val(res["results"]["ch4"]), rel=1e-5) == ref["ch4"]
+-        assert res["inputs"]["ef_ch4_used"] == custom_ef
++    def test_tier2_plus_gas_composition(self):
++        calc = MudDegassingCalculator()
++        days = 20.0
++        ch4_c = 0.88
++        co2_c = 0.03
++        res = calc.calculate(
++            tier="tier2_plus",
++            drilling_days=days,
++            mud_type="water_based",
++            ch4_concentration=ch4_c,
++            co2_concentration=co2_c,
++            gwp_dict=GWP_AR5,
++        )
++        ref = IndependentMudDegassing.calculate(
++            tier="tier2_plus",
++            drilling_days=days,
++            mud_type="water_based",
++            ch4_concentration=ch4_c,
++            co2_concentration=co2_c,
++            gwp_standard="AR5",
++        )
++
++        assert pytest.approx(_val(res["results"]["ch4"]), rel=1e-5) == ref["ch4"]
++        assert pytest.approx(_val(res["results"]["co2"]), rel=1e-5) == ref["co2"]
++        assert pytest.approx(res["total_co2e"], rel=1e-5) == ref["co2e"]
+ 
+ 
+ class TestWellCompletionFlowbackBattery:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

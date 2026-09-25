@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+calc in d.calculators: <calculations.vented.AssociatedGasVentingCalculator object at 0x0000021F88D4FAA0>
+Keys in calculators with vent: ['venting', 'associated_gas_venting', 'associated_venting']
+

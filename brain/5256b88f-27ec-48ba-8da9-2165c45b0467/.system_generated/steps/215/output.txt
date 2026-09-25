@@ -1,0 +1,26 @@
+
+The command exited with code 0.
+Output:
+
+  new\server\routes\emissions.py:36:
+  new\server\routes\emissions.py:37:
+> new\server\routes\emissions.py:38:def _lookup_api_factor(fuel_name: str) -> dict:
+  new\server\routes\emissions.py:39:    """Look up an emission factor from ALL_EMISSION_FACTORS / API_FACTORS 
+supporting exact, normalized, and alias matches."""
+  new\server\routes\emissions.py:40:    if not fuel_name:
+  new\server\routes\emissions.py:41:        return {}
+  new\server\routes\emissions.py:42:    factor_catalog = {**API_FACTORS, **ALL_EMISSION_FACTORS}
+  new\server\routes\emissions.py:43:    if fuel_name in factor_catalog:
+  new\server\routes\emissions.py:44:        return factor_catalog[fuel_name]
+  new\server\routes\emissions.py:45:    norm = str(fuel_name).lower().replace("_", " ").replace("-", " ").strip()
+  new\server\routes\emissions.py:46:    aliases = {
+  new\server\routes\emissions.py:47:        "natural gas": "Natural Gas",
+  new\server\routes\emissions.py:48:        "gas": "Natural Gas",
+  new\server\routes\emissions.py:49:        "diesel": "Diesel (No. 2 Fuel Oil)",
+  new\server\routes\emissions.py:50:        "crude oil": "Crude Oil",
+  new\server\routes\emissions.py:51:        "fuel gas": "Refinery Fuel Gas",
+  new\server\routes\emissions.py:52:        "lpg": "Propane (Liquid)",
+  new\server\routes\emissions.py:53:        "propane": "Propane (Gas)",
+
+
+

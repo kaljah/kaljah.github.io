@@ -1,0 +1,71 @@
+
+The command exited with code 0.
+Output:
+
+  new\server\calculations\vented.py:1:"""
+  new\server\calculations\vented.py:2:API Compendium 2021 - Section 6: Vented and Process Emissions
+> new\server\calculations\vented.py:3:Implementation of equations for mud degassing, completions, liquids unloading, 
+  new\server\calculations\vented.py:4:blowdowns (with thermodynamic T & P corrections), tanks, and pneumatics.
+  new\server\calculations\vented.py:5:"""
+  new\server\calculations\vented.py:6:
+  new\server\calculations\vented.py:7:from .base import BaseCalculator
+  new\server\calculations\vented.py:8:from .units import (
+  new\server\calculations\vented.py:9:    CONVERSIONS,
+  new\server\calculations\vented.py:10:    calculate_co2e,
+  new\server\calculations\vented.py:11:    convert,
+  new\server\calculations\vented.py:12:    to_psia,
+  new\server\calculations\vented.py:13:    to_kelvin,
+  new\server\calculations\vented.py:14:    STD_TEMP_K,
+  new\server\calculations\vented.py:15:    STD_PRESSURE_PSIA,
+  new\server\calculations\vented.py:16:    normalize_efficiency,
+  new\server\calculations\vented.py:17:)
+  new\server\calculations\vented.py:18:from .uncertainty import (
+  new\server\calculations\vented.py:468:                "calculation_method": method,
+  new\server\calculations\vented.py:469:            },
+  new\server\calculations\vented.py:470:        )
+  new\server\calculations\vented.py:471:
+  new\server\calculations\vented.py:472:
+> new\server\calculations\vented.py:473:class LiquidsUnloadingCalculator(BaseCalculator):
+  new\server\calculations\vented.py:474:    def __init__(self):
+> new\server\calculations\vented.py:475:        super().__init__("Liquids Unloading (Volume-Based)", "Section 6.4")
+  new\server\calculations\vented.py:476:
+  new\server\calculations\vented.py:477:    def calculate(
+  new\server\calculations\vented.py:478:        self,
+  new\server\calculations\vented.py:479:        well_depth,
+  new\server\calculations\vented.py:480:        diameter,
+  new\server\calculations\vented.py:481:        pressure,
+  new\server\calculations\vented.py:482:        ch4_content,
+  new\server\calculations\vented.py:483:        events,
+  new\server\calculations\vented.py:484:        uncertainties,
+  new\server\calculations\vented.py:485:        co2_content=0.0,
+  new\server\calculations\vented.py:486:        control_efficiency=0.0,
+  new\server\calculations\vented.py:487:        ef_co2=None,
+  new\server\calculations\vented.py:488:        ef_ch4=None,
+  new\server\calculations\vented.py:489:        ef_n2o=None,
+  new\server\calculations\vented.py:490:        operating_temperature=60.0,
+  new\server\calculations\vented.py:495:        z_factor=1.0,
+  new\server\calculations\vented.py:496:        hhv=1020.0,
+  new\server\calculations\vented.py:497:        gwp_dict=None,
+  new\server\calculations\vented.py:498:    ):
+  new\server\calculations\vented.py:499:        """
+> new\server\calculations\vented.py:500:        API Equation 6-3 - Volume per unloading event with temperature and 
+compressibility correction:
+  new\server\calculations\vented.py:501:        V_std = (pi/4) * D^2 * Depth * (P_tubing_abs / P_std) * (T_std / 
+T_well_abs) * (1 / Z)
+  new\server\calculations\vented.py:502:        """
+  new\server\calculations\vented.py:503:        self.validate_inputs(
+  new\server\calculations\vented.py:504:            {
+  new\server\calculations\vented.py:505:                "depth": well_depth,
+  new\server\calculations\vented.py:506:                "diameter": diameter,
+  new\server\calculations\vented.py:507:                "pressure": pressure,
+  new\server\calculations\vented.py:508:                "events": events,
+  new\server\calculations\vented.py:509:            },
+  new\server\calculations\vented.py:510:            ["depth", "diameter", "pressure", "events"],
+  new\server\calculations\vented.py:511:        )
+  new\server\calculations\vented.py:512:
+  new\server\calculations\vented.py:513:        # Diameter conversion to meters
+  new\server\calculations\vented.py:514:        d_val = float(diameter)
+  new\server\calculations\vented.py:515:        du = str(diameter_unit or "in").lower().strip()
+
+
+

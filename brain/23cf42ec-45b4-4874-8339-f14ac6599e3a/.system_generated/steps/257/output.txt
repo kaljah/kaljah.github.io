@@ -1,0 +1,118 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collected 40 items
+
+tests\test_battery_midstream_process_equipment.py ......F.........       [ 40%]
+tests\test_numerical_invariants.py ....F...................              [100%]
+
+================================== FAILURES ===================================
+_ TestWellCompletionFlowbackBattery.test_rate_duration_with_flaring_partition _
+
+self = <test_battery_midstream_process_equipment.TestWellCompletionFlowbackBattery object at 0x00000224D009DD00>
+
+    def test_rate_duration_with_flaring_partition(self):
+        calc = CompletionFlowbackCalculator()
+        rate_mscfd = 450.0   # Mscf/day
+        hours = 72.0         # 3 days flowback
+        ctrl_eff = 0.95      # 95% routed to flare
+        res = calc.calculate(
+            calculation_method="rate_duration",
+            flowback_rate=rate_mscfd,
+            flowback_duration_hours=hours,
+            ch4_content=0.85,
+            co2_content=0.03,
+            control_efficiency=ctrl_eff,
+            hhv=1050.0,
+            gwp_dict=GWP_AR5,
+        )
+        ref = IndependentCompletions.calculate(
+            method="rate_duration",
+            flowback_rate=rate_mscfd,
+            duration_hours=hours,
+            ch4_content=0.85,
+            co2_content=0.03,
+            control_efficiency=ctrl_eff,
+            hhv=1050.0,
+            gwp_standard="AR5",
+        )
+    
+>       assert pytest.approx(_val(res["results"]["ch4"]), rel=1e-4) == ref["ch4"]
+E       assert 2.149572264795261 � 2.1e-04 == 1.5212357566243382
+E         
+E         comparison failed
+E         Obtained: 1.5212357566243382
+E         Expected: 2.149572264795261 � 2.1e-04
+
+tests\test_battery_midstream_process_equipment.py:139: AssertionError
+_____ TestBoundaryConditions.test_all_calculators_zero_activity_no_crash ______
+
+self = <test_numerical_invariants.TestBoundaryConditions object at 0x00000224D00CC950>
+
+    def test_all_calculators_zero_activity_no_crash(self):
+        """Every calculation engine must return 0.0 total_co2e on zero activity without ZeroDivisionError."""
+        # 1. Stoichiometry
+        assert StoichiometricCalculator().calculate(0.0, 0.85, {})["total_co2e"] == 0.0
+    
+        # 2. Combustion
+        assert CombustionCalculator().calculate(0.0, 50.0, 0.01, 0.001, {}, 1020.0, "kg/m3", "m3", "gas")["total_co2e"] == 0.0
+    
+        # 3. Flaring
+        assert FlaringCalculator().calculate(0.0, 0.90, "elevated", {})["total_co2e"] == 0.0
+    
+        # 4. Indirect Steam
+        assert IndirectSteamCalculator().calculate(0.0, 50.0, 0.80, 0.05, {})["total_co2e"] == 0.0
+    
+        # 5. Cogen Allocation
+        assert CogenAllocationCalculator().calculate(0.0, 100.0, 50.0)["total_co2e"] == 0.0
+    
+        # 6. Fugitive Component
+        assert ComponentFugitiveCalculator().calculate({}, 0.85, {})["total_co2e"] == 0.0
+    
+        # 7. Equipment Fugitive
+        assert EquipmentFugitiveCalculator().calculate(0, 0.01, 0.85, {})["total_co2e"] == 0.0
+    
+        # 8. Compressor Seal
+        assert CompressorSealCalculator().calculate(0, "reciprocating", {})["total_co2e"] == 0.0
+    
+        # 9. Mud Degassing
+        assert MudDegassingCalculator().calculate(0, 0.85, {})["total_co2e"] == 0.0
+    
+        # 10. Completions Flowback
+>       assert CompletionFlowbackCalculator().calculate(0, 0, 0.85, {})["total_co2e"] == 0.0
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_numerical_invariants.py:182: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+calculations\vented.py:470: in calculate
+    y_co2 = self._normalize_fraction(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <calculations.vented.CompletionFlowbackCalculator object at 0x00000224D036AC90>
+val = {}, name = 'Carbon dioxide (CO2) mole fraction', default = 0.0
+
+    def _normalize_fraction(self, val, name, default=0.0):
+        if val is None or val == "":
+            return default
+>       num = float(val)
+              ^^^^^^^^^^
+E       TypeError: float() argument must be a string or a real number, not 'dict'
+
+calculations\vented.py:398: TypeError
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_battery_midstream_process_equipment.py::TestWellCompletionFlowbackBattery::test_rate_duration_with_flaring_partition
+FAILED tests/test_numerical_invariants.py::TestBoundaryConditions::test_all_calculators_zero_activity_no_crash
+=================== 2 failed, 38 passed, 1 warning in 2.18s ===================
+

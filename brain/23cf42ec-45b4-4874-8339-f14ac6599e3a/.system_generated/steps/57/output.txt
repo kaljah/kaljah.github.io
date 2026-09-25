@@ -1,0 +1,13 @@
+
+The command exited with code 1.
+Output:
+Select-String : Cannot find path 'C:\Users\samsung\Desktop\H2\new\server\tests\test_api_exhibits.py' because it does 
+not exist.
+At line:1 char:1
++ Select-String -Path new\server\tests\test_api_exhibits.py -Pattern "e ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (C:\Users\samsun...api_exhibits.py:String) [Select-String], ItemNotFound 
+   Exception
+    + FullyQualifiedErrorId : PathNotFound,Microsoft.PowerShell.Commands.SelectStringCommand
+ 
+

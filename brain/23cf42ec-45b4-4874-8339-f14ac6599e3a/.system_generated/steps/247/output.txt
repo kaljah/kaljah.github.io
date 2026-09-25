@@ -1,0 +1,16 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\Desktop\H2\new\server\tests\test_onshore_well_completions_audit.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -375,7 +375,9 @@
+ 
+     def test_rejects_invalid_ch4_content(self, calc):
+         with pytest.raises(ValueError, match="Methane.*between 0 and 1"):
+-            calc.calculate(tier="tier3", flowback_volume=100.0, ch4_content=1.5)
++            calc.calculate(tier="tier3", flowback_volume=100.0, ch4_content=150.0)
++        with pytest.raises(ValueError, match="cannot be negative"):
++            calc.calculate(tier="tier3", flowback_volume=100.0, ch4_content=-0.1)
+ 
+     def test_rejects_invalid_disposition_split_sum(self, calc):
+         with pytest.raises(ValueError, match="Disposition.*must sum to 100%"):
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,127 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\test_emission_calculations.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -623,30 +623,32 @@
+ # =============================================================================
+ # TIER 3 — DRILLING MUD DEGASSING
+ # =============================================================================
++# TIER 1 / TIER 2 — DRILLING MUD DEGASSING (API Compendium Tables 6-2 & 6-3)
++# =============================================================================
+ class TestTier1DrillingMud(unittest.TestCase):
+     """
+-    Mud Degassing Tier 1 (water-based mud):
+-      mud_volume = 500 m3
+-      EF (water-based) = 0.15 kg CH4/m3
+-      CH4 = 500 * 0.15 = 75 kg = 0.075 tonne
+-      CO2e = 0.075 * 28 = 2.1 tonne
+-    """
+-
+-    def setUp(self):
+-        self.mud_vol = 500.0
+-        self.expected_ch4 = self.mud_vol * 0.15 / 1000.0
+-
+-        inputs = {
+-            "amount": self.mud_vol,
+-            "quantity": self.mud_vol,
+-            "unit": "m3",
+-            "factor_source": "specific",
+-            "mud_type": "water_based",
+-            "mud_vol": self.mud_vol,
+-        }
+-        ef = {"co2": 0, "ch4": 0, "n2o": 0, "unit": "kg/m3"}
+-        self.result = dispatcher.dispatch(
+-            "drilling", inputs, ef, UNC_SPECIFIC, gwp_dict=GWP
++    Mud Degassing Tier 1 (API Table 6-3 default):
++      wells = 10 wells
++      EF = 0.0524 t CH4/well
++      CH4 = 10 * 0.0524 = 0.524 tonne
++      CO2e = 0.524 * 28 = 14.672 tonne
++    """
++
++    def setUp(self):
++        self.wells = 10.0
++        self.expected_ch4 = self.wells * 0.0524
++
++        inputs = {
++            "amount": self.wells,
++            "quantity": self.wells,
++            "unit": "well",
++            "tier": "tier1",
++            "factor_source": "default",
++            "wells": self.wells,
++        }
++        ef = {"co2": 0, "ch4": 0.0524, "n2o": 0, "unit": "t/well"}
++        self.result = dispatcher.dispatch(
++            "drilling", inputs, ef, UNC_DEFAULT, gwp_dict=GWP
+         )
+ 
+     def test_mud_ch4(self):
+@@ -662,21 +662,53 @@
+         expected = ch4 * GWP_CH4
+         self.assertAlmostEqual(float(self.result["total_co2e"]), expected, places=5)
+ 
++    def test_tier2_water_based_mud(self):
++        """Water-based mud uses API Table 6-2 EF=0.2605 t CH4/day."""
++        inputs = {
++            "amount": 20,
++            "quantity": 20,
++            "unit": "days",
++            "tier": "tier2",
++            "mud_type": "water_based",
++            "drilling_days": 20,
++        }
++        ef = {"co2": 0, "ch4": 0.2605, "n2o": 0, "unit": "t/day"}
++        result = dispatcher.dispatch("drilling", inputs, ef, UNC_SPECIFIC, gwp_dict=GWP)
++        ch4 = extract_val(result["results"]["ch4"])
++        expected = 20 * 0.2605
++        self.assertAlmostEqual(ch4, expected, places=6)
++
+     def test_oil_based_mud(self):
+-        """Oil-based mud uses EF=0.35 kg/m3."""
+-        inputs = {
+-            "amount": 200,
+-            "quantity": 200,
+-            "unit": "m3",
+-            "factor_source": "specific",
++        """Oil-based mud uses API Table 6-2 EF=0.0586 t CH4/day."""
++        inputs = {
++            "amount": 20,
++            "quantity": 20,
++            "unit": "days",
++            "tier": "tier2",
+             "mud_type": "oil_based",
+-            "mud_vol": 200,
+-        }
+-        ef = {"co2": 0, "ch4": 0, "n2o": 0, "unit": "kg/m3"}
+-        result = dispatcher.dispatch("drilling", inputs, ef, UNC_SPECIFIC, gwp_dict=GWP)
+-        ch4 = extract_val(result["results"]["ch4"])
+-        expected = 200 * 0.35 / 1000.0
+-        self.assertAlmostEqual(ch4, expected, places=6)
++            "drilling_days": 20,
++        }
++        ef = {"co2": 0, "ch4": 0.0586, "n2o": 0, "unit": "t/day"}
++        result = dispatcher.dispatch("drilling", inputs, ef, UNC_SPECIFIC, gwp_dict=GWP)
++        ch4 = extract_val(result["results"]["ch4"])
++        expected = 20 * 0.0586
++        self.assertAlmostEqual(ch4, expected, places=6)
++
++    def test_tier2_plus_site_gas(self):
++        """Tier 2+ scales by X_ch4 / 0.8385."""
++        inputs = {
++            "amount": 10,
++            "unit": "days",
++            "tier": "tier2_plus",
++            "mud_type": "water_based",
++            "drilling_days": 10,
++            "ch4_pct": 90.0,
++            "co2_pct": 5.0,
++        }
++        result = dispatcher.dispatch("drilling", inputs, {}, UNC_SPECIFIC, gwp_dict=GWP)
++        ch4 = extract_val(result["results"]["ch4"])
++        expected = 10 * 0.2605 * (0.90 / 0.8385)
++        self.assertAlmostEqual(ch4, expected, places=5)
+ 
+ 
+ # =============================================================================
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

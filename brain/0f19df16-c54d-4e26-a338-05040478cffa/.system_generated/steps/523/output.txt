@@ -1,0 +1,47 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\utils\EmissionFactors.js. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -923,25 +923,25 @@
+   },
+   "Drilling - Mud Degassing (Water Based)": {
+     code: "MudWater",
+-    ch4: 0.2605,
+-    co2: 0,
+-    n2o: 0,
+-    uncertainty: { ch4: 0.15 },
+-    unit: "t CH4/day",
+-    baseUnit: "days",
+-    usage: ["drilling"],
+-    description: "API Table 6-2 - Water Based Mud Degassing (Onshore)",
++    ch4: 0.0458,
++    co2: 0,
++    n2o: 0,
++    uncertainty: { ch4: 0.15 },
++    unit: "t CH4/day",
++    baseUnit: "days",
++    usage: ["drilling"],
++    description: "API Compendium - Water Based Mud Degassing (Onshore)",
+   },
+   "Drilling - Mud Degassing (Oil Based)": {
+     code: "MudOil",
+-    ch4: 0.0586,
+-    co2: 0,
+-    n2o: 0,
+-    uncertainty: { ch4: 0.15 },
+-    unit: "t CH4/day",
+-    baseUnit: "days",
+-    usage: ["drilling"],
+-    description: "API Table 6-2 - Oil Based Mud Degassing (Onshore)",
++    ch4: 0.0103,
++    co2: 0,
++    n2o: 0,
++    uncertainty: { ch4: 0.15 },
++    unit: "t CH4/day",
++    baseUnit: "days",
++    usage: ["drilling"],
++    description: "API Compendium - Oil Based Mud Degassing (Onshore)",
+   },
+ 
+   "Dehydrator - Glycol (Uncontrolled)": {
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

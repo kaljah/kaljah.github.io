@@ -1,0 +1,11 @@
+
+The command exited with code 1.
+Output:
+Select-String : A parameter cannot be found that matches parameter name 'Recurse'.
+At line:1 char:36
++ Select-String -Path new\client\src -Recurse -Pattern "CompletionsForm ...
++                                    ~~~~~~~~
+    + CategoryInfo          : InvalidArgument: (:) [Select-String], ParameterBindingException
+    + FullyQualifiedErrorId : NamedParameterNotFound,Microsoft.PowerShell.Commands.SelectStringCommand
+ 
+

@@ -1,0 +1,45 @@
+
+The command exited with code 0.
+Output:
+Appendix B. Additional Calculation Approaches 
+B-32 November 2021 
+B.6.2 Calculating Well Unloading Emissions 
+CAPP (CAPP, 2002, Section 3.2.1) provides information on calculating the volume of gas released 
+during well unloading. The total volume released is dependent on many properties, including the 
+duration of the event, size of the vent line, quantity of water released, and properties of the gas. 
+CAPP models the vent process as an isentropic flow of an ideal gas through a nozzle4
+, as shown in 
+Equation B-14. 
+  
+* 0
+T k+1 ÷ 2 k-2
+0
+P k1 m = A × × × ×1000
+T R k+1
+2
+
+  
+ (Equation B-14) 
+where 
+mT  = the total mass flow rate of gas and water vapor from the unloading (kg/s); 
+A* = the cross sectional area of the unloading valve or vent pipe (m2
+); 
+P0 = wellhead pressure (kPa); 
+T0 = wellhead temperature (K); 
+k = specific heat ratio, Cp/Cv (1.32 for natural gas); and 
+R = gas constant (kJ/kg K), (8314.5 / gas molecular weight). 
+The quantity of water produced during the unloading must be subtracted from the quantity of gas 
+vented. Equation B-15 can be used to calculate the quantity of water vented: 
+w
+W
+V×ρ m =
+t  (Equation B-15) 
+where 
+mW = mass flow rate of water produced by the unloading event (kg/s); 
+V = volume of liquid water produced by the unloading event (m3
+); 
+ρw = density of liquid water (1000 kg/m3
+); and 
+t = duration of the blow down event (s). 
+The mass flow rate of gas released is calculated using
+

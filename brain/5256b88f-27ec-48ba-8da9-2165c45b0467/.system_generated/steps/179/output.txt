@@ -1,0 +1,110 @@
+
+The command exited with code 0.
+Output:
+<truncated 45 lines>
+  new\server\tests\test_qfull_api_pipeline.py:758:        from calculations.legacy_engine import compute_emissions
+  new\server\tests\test_qfull_api_pipeline.py:770:        }
+> new\server\tests\test_qfull_api_pipeline.py:771:        double = {**base, "pneu_count": 20.0, "quantity": 20.0}
+  new\server\tests\test_qfull_api_pipeline.py:772:
+  new\server\tests\test_qfull_api_pipeline.py:773:        em_base, _ = compute_emissions(base, {})
+> new\server\tests\test_qfull_api_pipeline.py:774:        em_double, _ = compute_emissions(double, {})
+  new\server\tests\test_qfull_api_pipeline.py:775:
+> new\server\tests\test_qfull_api_pipeline.py:776:        assert em_double["ch4"] == pytest.approx(2 * em_base["ch4"], 
+rel=1e-4), (
+> new\server\tests\test_qfull_api_pipeline.py:777:            f"Double count OAT: expected 2�{em_base['ch4']:.6f}, got 
+{em_double['ch4']:.6f}"
+  new\server\tests\test_qfull_api_pipeline.py:778:        )
+  new\server\tests\test_qfull_api_pipeline.py:779:
+  new\server\tests\test_qfull_boundary_sensitivity.py:283:    # 
+------------------------------------------------------------------
+> new\server\tests\test_qfull_boundary_sensitivity.py:284:    def test_double_quantity_doubles_all_emissions(self):
+  new\server\tests\test_qfull_boundary_sensitivity.py:285:        """
+  new\server\tests\test_qfull_boundary_sensitivity.py:286:        OAT: Q  2Q, EFs unchanged.
+  new\server\tests\test_qfull_boundary_sensitivity.py:287:        Mathematical relationship: E_i = Q � EF_i  2Q � 
+EF_i = 2 � E_i
+> new\server\tests\test_qfull_boundary_sensitivity.py:288:        ALL gases and CO2e should double exactly.
+  new\server\tests\test_qfull_boundary_sensitivity.py:289:        """
+  new\server\tests\test_qfull_boundary_sensitivity.py:290:        em_base = self._baseline()
+  new\server\tests\test_qfull_boundary_sensitivity.py:301:
+> new\server\tests\test_qfull_boundary_sensitivity.py:302:    def test_double_ef_co2_only_changes_co2(self):
+  new\server\tests\test_qfull_boundary_sensitivity.py:303:        """
+  new\server\tests\test_qfull_boundary_sensitivity.py:304:        OAT: EF_co2  2�EF_co2, quantity/EF_ch4/EF_n2o 
+unchanged.
+> new\server\tests\test_qfull_boundary_sensitivity.py:305:        CO2 should double, CH4 and N2O must remain EXACTLY 
+unchanged.
+  new\server\tests\test_qfull_boundary_sensitivity.py:306:        """
+  new\server\tests\test_qfull_boundary_sensitivity.py:307:        em_base = self._baseline()
+  new\server\tests\test_qfull_boundary_sensitivity.py:322:
+> new\server\tests\test_qfull_boundary_sensitivity.py:323:    def test_double_ef_ch4_only_changes_ch4(self):
+  new\server\tests\test_qfull_boundary_sensitivity.py:324:        """
+  new\server\tests\test_qfull_boundary_sensitivity.py:325:        OAT: EF_ch4  2�EF_ch4, quantity/EF_co2/EF_n2o 
+unchanged.
+> new\server\tests\test_qfull_boundary_sensitivity.py:326:        CH4 should double, CO2 and N2O unchanged.
+  new\server\tests\test_qfull_boundary_sensitivity.py:327:        """
+  new\server\tests\test_qfull_boundary_sensitivity.py:328:        em_base = self._baseline()
+  new\server\tests\test_qfull_boundary_sensitivity.py:336:
+> new\server\tests\test_qfull_boundary_sensitivity.py:337:    def test_double_ef_n2o_only_changes_n2o(self):
+  new\server\tests\test_qfull_boundary_sensitivity.py:338:        """
+  new\server\tests\test_qfull_boundary_sensitivity.py:339:        OAT: EF_n2o  2�EF_n2o, everything else unchanged.
+> new\server\tests\test_qfull_boundary_sensitivity.py:340:        N2O should double, CO2 and CH4 unchanged.
+  new\server\tests\test_qfull_boundary_sensitivity.py:341:        """
+  new\server\tests\test_qfull_boundary_sensitivity.py:342:        em_base = self._baseline()
+  new\server\tests\test_qfull_boundary_sensitivity.py:401:        OAT: 8760 hr vs 4380 hr (same count, bleed_rate, 
+CH4).
+> new\server\tests\test_qfull_boundary_sensitivity.py:402:        CH4 must be exactly 2� for double hours.
+  new\server\tests\test_qfull_boundary_sensitivity.py:403:        """
+  new\server\tests\test_qfull_boundary_sensitivity.py:404:        base_payload = {
+  new\server\tests\test_qfull_boundary_sensitivity.py:447:
+> new\server\tests\test_qfull_boundary_sensitivity.py:448:    def 
+test_agr_co2_removal_doubles_with_double_differential(self):
+  new\server\tests\test_qfull_boundary_sensitivity.py:449:        """
+> new\server\tests\test_qfull_boundary_sensitivity.py:450:        OAT: AGR, double the CO2 removal (co2_in 4% vs 8%, 
+same co2_out=0%).
+> new\server\tests\test_qfull_boundary_sensitivity.py:451:        CO2 vented should double exactly (linear: co2_vented 
+= throughput � (co2_in - co2_out)).
+  new\server\tests\test_qfull_boundary_sensitivity.py:452:        """
+  new\server\tests\test_qfull_boundary_sensitivity.py:453:        base = {
+  new\server\tests\test_qfull_boundary_sensitivity.py:462:        assert em_8pct["co2"] == pytest.approx(2 * 
+em_4pct["co2"], rel=1e-3), (
+> new\server\tests\test_qfull_boundary_sensitivity.py:463:            f"Double CO2 diff: expected 
+{2*em_4pct['co2']:.4f}, got {em_8pct['co2']:.4f}"
+  new\server\tests\test_qfull_boundary_sensitivity.py:464:        )
+  new\server\tests\test_qfull_boundary_sensitivity.py:465:
+  new\server\tests\test_qfull_boundary_sensitivity.py:550:        """
+> new\server\tests\test_qfull_boundary_sensitivity.py:551:        OAT: Double GOR  double gas volume  double CH4.
+  new\server\tests\test_qfull_boundary_sensitivity.py:552:        total_gas = throughput � GOR  2�GOR  2�gas  2�ch4.
+  new\server\tests\test_qfull_boundary_sensitivity.py:553:        """
+  new\server\tests\test_qfull_unit_conversions.py:444:
+> new\server\tests\test_qfull_unit_conversions.py:445:    def test_combustion_double_quantity_double_result(self):
+  new\server\tests\test_qfull_unit_conversions.py:446:        """
+  new\server\tests\test_qfull_unit_conversions.py:447:        Unit conversion consistency via linearity:
+> new\server\tests\test_qfull_unit_conversions.py:448:        2000 m3 should give exactly double 1000 m3 emissions.
+  new\server\tests\test_qfull_unit_conversions.py:449:        """
+  new\server\tests\test_qfull_unit_conversions.py:450:        factor_data = {"co2": 1.9, "ch4": 0.00004, "n2o": 
+0.000002, "unit": "kg/m3", "hhv": 1020.0}
+  new\server\tests\test_security_hardening.py:5:  - The /api/auth/init-admin public route has been removed
+> new\server\tests\test_security_hardening.py:6:  - The CSRF token endpoint sets a double-submit cookie
+  new\server\tests\test_security_hardening.py:7:"""
+  new\server\tests\test_security_hardening.py:8:import os
+  new\server\tests\test_security_hardening.py:84:    The cookie must NOT be HttpOnly - the SPA JavaScript needs to 
+read it
+> new\server\tests\test_security_hardening.py:85:    for the double-submit cookie pattern.
+  new\server\tests\test_security_hardening.py:86:    """
+  new\server\tests\test_security_hardening.py:87:    resp = client.get("/api/csrf-token")
+  new\server\tests\test_security_hardening.py:89:    assert "csrf_token" in set_cookie, (
+> new\server\tests\test_security_hardening.py:90:        "CSRF endpoint must set a csrf_token cookie for the 
+double-submit pattern. "
+  new\server\tests\test_security_hardening.py:91:        f"Got Set-Cookie: {set_cookie!r}"
+  new\server\tests\test_security_hardening.py:92:    )
+  new\server\tests\test_security_hardening.py:94:        "CSRF cookie must NOT be HttpOnly - JavaScript must be able 
+to read it "
+> new\server\tests\test_security_hardening.py:95:        "for the double-submit cookie CSRF pattern."
+  new\server\tests\test_security_hardening.py:96:    )
+  new\server\tests\test_security_hardening.py:97:
+  new\server\app.py:412:    """
+> new\server\app.py:413:    Issues a CSRF token for the double-submit cookie pattern.
+  new\server\app.py:414:    Sets a non-HttpOnly cookie readable by the SPA via document.cookie.
+  new\server\app.py:415:    The client must send the same value as X-CSRFToken header on mutating requests.
+
+
+

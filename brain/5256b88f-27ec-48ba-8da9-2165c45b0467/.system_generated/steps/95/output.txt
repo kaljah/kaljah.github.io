@@ -1,0 +1,32 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\server\routes
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----         9/25/2026   3:24 PM                __pycache__                                                          
+-a----         9/23/2026  12:41 PM          14068 audit.py                                                             
+-a----         9/24/2026  11:12 PM          42958 auth.py                                                              
+-a----         9/24/2026  11:13 PM          10025 cap_routes.py                                                        
+-a----         9/20/2026   5:35 PM          14324 custom_factors.py                                                    
+-a----         9/24/2026   5:00 PM         127293 dashboard.py                                                         
+-a----         9/24/2026  11:00 PM          39424 data.py                                                              
+-a----         9/24/2026   5:17 PM         191754 emissions.py                                                         
+-a----         8/11/2026  12:56 PM          12387 emission_factors_routes.py                                           
+-a----         9/24/2026  11:13 PM           7170 equity_routes.py                                                     
+-a----         9/24/2026   4:58 PM          16857 facilities.py                                                        
+-a----         9/21/2026   7:34 PM          40749 managedata.py                                                        
+-a----         9/24/2026  11:22 PM           8885 notifications.py                                                     
+-a----         9/24/2026  11:21 PM          37173 qaqc.py                                                              
+-a----         9/24/2026  11:19 PM          55993 reports.py                                                           
+-a----         9/24/2026  11:19 PM          21061 satellite.py                                                         
+-a----         9/25/2026   3:23 PM          29318 scope2.py                                                            
+-a----         9/24/2026  10:59 PM          21589 scope3.py                                                            
+-a----         8/11/2026  12:56 PM            590 __init__.py                                                          
+
+
+

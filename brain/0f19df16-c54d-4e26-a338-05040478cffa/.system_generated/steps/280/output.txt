@@ -1,0 +1,17 @@
+
+The command exited with code 0.
+Output:
+new/server/tests/test_battery_midstream_process_equipment.py:22:    MudDegassingCalculator,
+new/server/tests/test_battery_midstream_process_equipment.py:31:    IndependentMudDegassing,
+new/server/tests/test_battery_midstream_process_equipment.py:46:class TestMudDegassingBattery:
+new/server/tests/test_battery_midstream_process_equipment.py:56:        calc = MudDegassingCalculator()
+new/server/tests/test_battery_midstream_process_equipment.py:59:        ref = IndependentMudDegassing.calculate(vol, "m3", mud_type, gwp_standard="AR5")
+new/server/tests/test_battery_midstream_process_equipment.py:66:        calc = MudDegassingCalculator()
+new/server/tests/test_battery_midstream_process_equipment.py:70:        ref = IndependentMudDegassing.calculate(vol, "m3", "water_based", custom_ef=custom_ef, gwp_standard="AR5")
+new/server/tests/test_independent_differential.py:32:    IndependentMudDegassing,
+new/server/tests/test_numerical_invariants.py:45:    MudDegassingCalculator,
+new/server/tests/test_numerical_invariants.py:179:        assert MudDegassingCalculator().calculate(0, 0.85, {})["total_co2e"] == 0.0
+new/server/tests/test_qfull_api_pipeline.py:506:class TestMudDegassingPipeline:
+new/server/tests/test_qfull_validation.py:319:class TestMudDegassing:
+new/server/tests/test_tier_scope_kpi_numerical.py:24:    MudDegassingCalculator,
+

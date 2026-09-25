@@ -1,0 +1,640 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\Desktop\H2\new\server\calculations\vented.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -345,8 +345,65 @@
+ 
+ 
+ class CompletionFlowbackCalculator(BaseCalculator):
+-    def __init__(self):
+-        super().__init__("Well Completion Flowback", "Section 6.3")
++    """
++    API Compendium 2021 Section 6.2.3: Well Completions (Onshore).
++    Implements the full 3-tier hierarchy:
++      - Tier 1: API Tables 6-5 & 6-6 default emission factors (Oil vs Gas, Hydraulic Fracturing vs Non-HF,
++        Uncontrolled Venting vs REC with Venting vs Flared, with Footnote c composition adjustments).
++      - Tier 2: API Engineering calculations from operational data:
++          * API Eq. 6-7: Average daily production rate * vent duration (for completions without HF)
++          * Liquid flowback volume * GOR minus sales gas
++          * Flowback rate * duration (with explicit unit conversion: Mcf/hr, Mcf/day, scf/hr, m3/day, m3/hr)
++      - Tier 3: Direct / Metered Flowback:
++          * API Eq. 6-4: Net flowback volume = V_t - EnF (injected N2 deduction; injected CO2 does not deduct)
++          * API Eq. 6-5: Initial unmetered flowback V_i = (T_i * (V_gas / T_m)) / 2 (100% vented)
++          * Fate partitioning: Vented, Flared (combusted with flare efficiency, N2O), and Recovered (REC / sales = 0 emissions)
++    """
++
++    TABLE_6_5 = {
++        ("gas", "uncontrolled"): {"ch4": 28.8, "scf": 1842577.0, "code": "CompGasHF_Uncontrolled", "standard": "API Compendium 2021 §6.2.3.1, Table 6-5"},
++        ("gas", "rec"): {"ch4": 13.542, "scf": 866413.0, "code": "CompGasHF_REC", "standard": "API Compendium 2021 §6.2.3.1, Table 6-5"},
++        ("oil", "uncontrolled"): {"ch4": 14.419, "scf": 922498.0, "code": "CompOilHF_Uncontrolled", "standard": "API Compendium 2021 §6.2.3.1, Table 6-5"},
++        ("oil", "rec"): {"ch4": 0.615, "scf": 39357.0, "code": "CompOilHF_REC", "standard": "API Compendium 2021 §6.2.3.1, Table 6-5"},
++    }
++
++    TABLE_6_6 = {
++        ("gas", "uncontrolled"): {"ch4": 1.7376, "scf": 111173.0, "code": "CompGasNoHF_Vented", "standard": "API Compendium 2021 §6.2.3.2, Table 6-6"},
++        ("gas", "vented"): {"ch4": 1.7376, "scf": 111173.0, "code": "CompGasNoHF_Vented", "standard": "API Compendium 2021 §6.2.3.2, Table 6-6"},
++        ("oil", "uncontrolled"): {"ch4": 0.0141, "scf": 902.0, "code": "CompOilNoHF_Vented", "standard": "API Compendium 2021 §6.2.3.2, Table 6-6"},
++        ("oil", "vented"): {"ch4": 0.0141, "scf": 902.0, "code": "CompOilNoHF_Vented", "standard": "API Compendium 2021 §6.2.3.2, Table 6-6"},
++    }
++
++    DEFAULT_CH4_MOL_PCT = 0.816  # 81.6 mole % per API Footnote c
++
++    def __init__(self):
++        super().__init__("Well Completion Flowback", "Section 6.2.3")
++
++    def _validate_non_negative(self, val, name):
++        if val is not None:
++            try:
++                num = float(val)
++                if num < 0:
++                    raise ValueError(f"{name} cannot be negative (received {val})")
++                return num
++            except (ValueError, TypeError) as e:
++                if "cannot be negative" in str(e):
++                    raise
++                raise ValueError(f"Invalid numeric value for {name}: {val}")
++        return None
++
++    def _normalize_fraction(self, val, name, default=0.0):
++        if val is None or val == "":
++            return default
++        num = float(val)
++        if num < 0:
++            raise ValueError(f"{name} cannot be negative (received {val})")
++        if num > 1.0:
++            if num <= 100.0:
++                num = num / 100.0
++            else:
++                raise ValueError(f"{name} must be between 0 and 1 (or 0% to 100%, received {val})")
++        return num
+ 
+     def calculate(
+         self,
+@@ -353,120 +353,454 @@
+-        ch4_content=0.85,
+-        control_efficiency=0.0,
+-        uncertainties=None,
+-        co2_content=0.0,
+-        ef_co2=None,
+-        ef_ch4=None,
+-        ef_n2o=None,
+-        calculation_method="metered_volume",
++        volume_unit="m3",
++        ch4_content=None,
++        co2_content=None,
++        control_efficiency=None,
++        uncertainties=None,
++        ef_co2=None,
++        ef_ch4=None,
++        ef_n2o=None,
++        calculation_method=None,
++        tier=None,
++        well_type="gas",
++        fracturing=None,
++        control_type=None,
+         flowback_rate=None,
++        rate_unit="mscf/day",
+         flowback_duration_hours=None,
++        daily_production_rate=None,
++        prod_rate_unit="mcf/day",
++        vent_duration_hours=None,
++        vent_duration_days=None,
+         liquid_flowback_bbl=None,
+         gas_oil_ratio=None,
+-        choke_size_in=None,
+-        well_head_pressure=None,
+-        hhv=1020.0,
+-        gwp_dict=None,
+-        events=1.0,
+         gas_produced_sales_scf=0.0,
+-        rate_unit="mscf/day",
+-    ):
+-        """
+-        API Compendium 2021 §6.3 & EPA Subpart W §98.233(c) Completions & Workovers Flowback:
+-        Supports 3 rigorous calculation methodologies:
+-        1. 'metered_volume': Direct standard gas volume measurement (scf or m3).
+-        2. 'rate_duration': Flowback rate (Mcf/day or Mcf/hr) * duration (hours) * events.
+-        3. 'gor' / 'gor_liquid': Liquid flowback volume (bbl) * GOR (scf/bbl) * events - sales gas.
+-        """
+-        uncertainties = uncertainties or {}
+-
+-        # Determine standard gas volume (in m3) based on selected method
+-        method = str(calculation_method).lower()
+-        total_gas_scf = 0.0
+-        num_events = float(events if events is not None else 1.0)
+-
+-        if method == "rate_duration" and flowback_rate and flowback_duration_hours:
+-            rate_unit_norm = str(rate_unit or "mscf/day").lower().strip()
+-            multiplier = 1000.0 if ("mscf" in rate_unit_norm or "mcf" in rate_unit_norm) else (1_000_000.0 if "mmscf" in rate_unit_norm else 1.0)
+-            if "hr" in rate_unit_norm or "hour" in rate_unit_norm:
+-                rate_scf_hr = float(flowback_rate) * multiplier
+-            else:
+-                rate_scf_hr = (float(flowback_rate) * multiplier) / 24.0
+-            total_gas_scf = rate_scf_hr * float(flowback_duration_hours) * num_events
+-            total_gas_m3 = convert(total_gas_scf, "scf", "m3")
+-        elif method in ["gor", "gor_liquid"] and liquid_flowback_bbl and gas_oil_ratio:
+-            gross_gas_scf = float(liquid_flowback_bbl) * float(gas_oil_ratio) * num_events
+-            deduct_scf = float(gas_produced_sales_scf or 0.0)
+-            total_gas_scf = max(0.0, gross_gas_scf - deduct_scf)
+-            total_gas_m3 = convert(total_gas_scf, "scf", "m3")
+-        else:
+-            # Direct flowback volume passed in m3 (or scf)
+-            self.validate_inputs(
+-                {"flowback_volume": flowback_volume}, ["flowback_volume"]
+-            )
+-            total_gas_m3 = float(flowback_volume) * num_events
+-            total_gas_scf = convert(total_gas_m3, "m3", "scf")
+-
+-        ch4_frac = max(
+-            0.0, min(1.0, float(ch4_content if ch4_content is not None else 0.85))
+-        )
+-        co2_frac = max(0.0, min(1.0, float(co2_content or 0.0)))
+-        ctrl_eff = max(0.0, min(1.0, float(control_efficiency or 0.0)))
+-
+-        # Methane mass
+-        ch4_vol = total_gas_m3 * ch4_frac
+-        ch4_mass_kg = ch4_vol * CONVERSIONS["density_ch4"]
+-        ch4_tonnes = ch4_mass_kg / 1000.0
+-
+-        # CO2 mass
+-        co2_vol = total_gas_m3 * co2_frac
+-        co2_mass_kg = co2_vol * CONVERSIONS["density_co2"]
+-        co2_tonnes = co2_mass_kg / 1000.0
+-
+-        split = _split_vented_and_flared(
+-            total_gas_m3=total_gas_m3,
+-            ch4_tonnes=ch4_tonnes,
+-            co2_tonnes=co2_tonnes,
+-            ctrl_eff=ctrl_eff,
+-            hhv=hhv,
+-            ef_n2o=ef_n2o,
+-        )
+-        total_ch4 = split["total_ch4"]
+-        total_co2 = split["total_co2"]
+-        flared_n2o_tonnes = split["flared_n2o"]
+-
+-        ch4_res, co2_res, n2o_res = _propagate_vented_results(
+-            total_ch4=total_ch4,
+-            total_co2=total_co2,
+-            flared_n2o=flared_n2o_tonnes,
+-            uncertainties=uncertainties,
+-            factor_source=uncertainties.get(
+-                "_factor_source",
+-                "site_specific" if method != "metered_volume" else "default",
+-            ),
+-            process_category="vented",
+-        )
+-
+-        total_co2e = calculate_co2e(
+-            ch4=total_ch4, co2=total_co2, n2o=flared_n2o_tonnes, gwp_dict=gwp_dict
+-        )
+-
+-        return self.format_result(
+-            ch4=ch4_res,
+-            co2=co2_res,
+-            n2o=n2o_res,
+-            total_co2e=total_co2e,
+-            inputs={
+-                "method": method,
+-                "flowback_volume_m3": total_gas_m3,
+-                "flowback_volume_scf": total_gas_scf,
+-                "ch4_content": ch4_frac,
+-                "control_efficiency": ctrl_eff,
+-            },
+-            metadata={
+-                "standard": "API Compendium §6.3 / EPA Subpart W §98.233(c)",
+-                "calculation_method": method,
+-            },
+-        )
++        injected_n2_volume=0.0,
++        injected_n2_unit="scf",
++        injected_gas_type="n2",
++        initial_flowback_hours=None,
++        disposition=None,
++        frac_vented=None,
++        frac_flared=None,
++        frac_recovered=None,
++        hhv=1020.0,
++        gwp_dict=None,
++        events=1.0,
++        factor_code=None,
++    ):
++        uncertainties = uncertainties or {}
++
++        # 1. Non-negative validation for core physical inputs
++        num_events = self._validate_non_negative(events, "Number of events")
++        if num_events is None or num_events == 0:
++            num_events = 1.0 if (events is None) else 0.0
++
++        self._validate_non_negative(flowback_volume, "Flowback volume")
++        self._validate_non_negative(flowback_rate, "Flowback rate")
++        self._validate_non_negative(flowback_duration_hours, "Flowback duration")
++        self._validate_non_negative(daily_production_rate, "Daily production rate")
++        self._validate_non_negative(vent_duration_hours, "Vent duration hours")
++        self._validate_non_negative(vent_duration_days, "Vent duration days")
++        self._validate_non_negative(liquid_flowback_bbl, "Liquid flowback volume")
++        self._validate_non_negative(gas_oil_ratio, "Gas-oil ratio (GOR)")
++        self._validate_non_negative(gas_produced_sales_scf, "Gas produced to sales")
++        self._validate_non_negative(injected_n2_volume, "Injected N2 volume")
++        self._validate_non_negative(initial_flowback_hours, "Initial flowback duration")
++
++        # 2. Fractions validation
++        y_ch4 = self._normalize_fraction(
++            ch4_content, "Methane (CH4) mole fraction", default=None
++        )
++        y_co2 = self._normalize_fraction(
++            co2_content, "Carbon dioxide (CO2) mole fraction", default=0.0
++        )
++        if y_ch4 is not None and (y_ch4 + y_co2 > 1.001):
++            raise ValueError(
++                f"Sum of CH4 ({y_ch4*100:.1f}%) and CO2 ({y_co2*100:.1f}%) mole fractions cannot exceed 100%"
++            )
++
++        flare_eff = self._normalize_fraction(
++            control_efficiency, "Flare control efficiency", default=0.98
++        )
++
++        # 3. Determine tier mode
++        raw_tier = str(tier or "").lower().strip()
++        raw_method = str(calculation_method or "").lower().strip()
++        well_type_norm = str(well_type or "gas").lower().strip()
++        if well_type_norm not in ["gas", "oil"]:
++            well_type_norm = "oil" if "oil" in well_type_norm else "gas"
++
++        is_hf = True
++        if fracturing is not None:
++            if isinstance(fracturing, bool):
++                is_hf = fracturing
++            else:
++                is_hf = str(fracturing).lower().strip() in ["true", "1", "yes", "hf", "with_hf"]
++        elif factor_code and "NoHF" in str(factor_code):
++            is_hf = False
++
++        if raw_tier in ["tier1", "t1", "1", "default", "factor"]:
++            resolved_tier = "tier1"
++        elif raw_tier in ["tier2", "t2", "2", "engineering"]:
++            resolved_tier = "tier2"
++        elif raw_tier in ["tier3", "t3", "3", "measured", "direct", "specific"]:
++            resolved_tier = "tier3"
++        else:
++            # Auto-detect tier based on provided inputs
++            if (
++                daily_production_rate is not None
++                or raw_method in ["production_rate_duration", "eq_6_7", "gor", "gor_liquid", "rate_duration"]
++                or (flowback_rate is not None and flowback_duration_hours is not None)
++                or (liquid_flowback_bbl is not None and gas_oil_ratio is not None)
++            ):
++                resolved_tier = "tier2"
++            elif (
++                (injected_n2_volume is not None and float(injected_n2_volume) > 0)
++                or (initial_flowback_hours is not None and float(initial_flowback_hours) > 0)
++                or (flowback_volume is not None and not factor_code)
++                or raw_method == "metered_volume"
++            ):
++                resolved_tier = "tier3"
++            else:
++                resolved_tier = "tier1"
++
++        hhv_val = float(hhv or 1020.0)
++        n2o_ef_val = float(ef_n2o if ef_n2o is not None else 0.0001)
++
++        # Handle zero-event or zero-volume cases cleanly
++        if num_events == 0.0:
++            ch4_res, co2_res, n2o_res = _propagate_vented_results(
++                0.0, 0.0, 0.0, uncertainties=uncertainties, factor_source="default", process_category="completions"
++            )
++            return self.format_result(
++                ch4=ch4_res, co2=co2_res, n2o=n2o_res, total_co2e=0.0,
++                inputs={"tier": resolved_tier, "events": 0.0},
++                metadata={"standard": "API Compendium §6.2.3", "calculation_method": resolved_tier}
++            )
++
++        # =====================================================================
++        # TIER 1: API Compendium 2021 Tables 6-5 & 6-6 Default Factors
++        # =====================================================================
++        if resolved_tier == "tier1":
++            ctrl = str(control_type or disposition or "uncontrolled").lower().strip()
++            is_rec = "rec" in ctrl
++            is_flared = "flare" in ctrl
++
++            if is_hf:
++                table_key = (well_type_norm, "rec" if is_rec else "uncontrolled")
++                entry = self.TABLE_6_5.get(table_key, self.TABLE_6_5[("gas", "uncontrolled")])
++                standard_ref = entry["standard"]
++            else:
++                table_key = (well_type_norm, "uncontrolled")
++                entry = self.TABLE_6_6.get(table_key, self.TABLE_6_6[("gas", "uncontrolled")])
++                standard_ref = entry["standard"]
++
++            base_ch4_per_event = float(ef_ch4) if (ef_ch4 is not None and float(ef_ch4) > 0) else entry["ch4"]
++            base_ch4_tonnes = base_ch4_per_event * num_events
++
++            # Footnote c adjustments
++            actual_ch4_mol = y_ch4 if y_ch4 is not None else self.DEFAULT_CH4_MOL_PCT
++            ch4_adjusted = base_ch4_tonnes * (actual_ch4_mol / self.DEFAULT_CH4_MOL_PCT)
++
++            co2_native = 0.0
++            if y_co2 > 0 and actual_ch4_mol > 0:
++                co2_adjusted = ch4_adjusted * (y_co2 / actual_ch4_mol) * (44.01 / 16.04)
++            else:
++                co2_adjusted = 0.0
++
++            flared_n2o = 0.0
++            if is_flared:
++                unburnt_ch4 = ch4_adjusted * (1.0 - flare_eff)
++                combusted_co2 = ch4_adjusted * flare_eff * (44.01 / 16.04)
++                total_co2 = co2_adjusted + combusted_co2
++                total_ch4 = unburnt_ch4
++
++                scf_flared = entry["scf"] * num_events
++                flared_mmbtu = (scf_flared * hhv_val) / 1_000_000.0
++                flared_n2o = (flared_mmbtu * n2o_ef_val) / 1000.0
++            else:
++                total_ch4 = ch4_adjusted
++                total_co2 = co2_adjusted
++
++            ch4_res, co2_res, n2o_res = _propagate_vented_results(
++                total_ch4=total_ch4,
++                total_co2=total_co2,
++                flared_n2o=flared_n2o,
++                uncertainties=uncertainties,
++                factor_source="default",
++                process_category="completions",
++                tier=Tier.T1,
++            )
++            total_co2e = calculate_co2e(ch4=total_ch4, co2=total_co2, n2o=flared_n2o, gwp_dict=gwp_dict)
++
++            return self.format_result(
++                ch4=ch4_res,
++                co2=co2_res,
++                n2o=n2o_res,
++                total_co2e=total_co2e,
++                inputs={
++                    "tier": "Tier 1",
++                    "table": "Table 6-5" if is_hf else "Table 6-6",
++                    "factor_code": entry["code"],
++                    "well_type": well_type_norm,
++                    "fracturing": is_hf,
++                    "control_type": ctrl,
++                    "events": num_events,
++                    "base_ef_ch4_tonnes": base_ch4_per_event,
++                    "ch4_content": actual_ch4_mol,
++                    "co2_content": y_co2,
++                    "whole_gas_scf": entry["scf"] * num_events,
++                },
++                metadata={
++                    "standard": standard_ref,
++                    "calculation_method": f"Tier 1: {entry['code']}",
++                },
++            )
++
++        # =====================================================================
++        # TIER 2 & TIER 3 VOLUMETRIC DETERMINATION
++        # =====================================================================
++        actual_ch4_mol = y_ch4 if y_ch4 is not None else 0.85
++        actual_co2_mol = y_co2
++        method = raw_method
++
++        total_net_scf = 0.0
++        initial_scf = 0.0
++        standard_ref = "API Compendium 2021 §6.2.3"
++        calc_method_label = "Tier 2: Engineering"
++
++        if resolved_tier == "tier2":
++            if method in ["production_rate_duration", "eq_6_7"] or (daily_production_rate is not None):
++                # API Equation 6-7: V_CC = V_Pi * T (completions without HF)
++                self.validate_inputs({"daily_production_rate": daily_production_rate}, ["daily_production_rate"])
++                rate_val = float(daily_production_rate)
++                unit_norm = str(prod_rate_unit or "mcf/day").lower().strip()
++                if "mmscf" in unit_norm:
++                    rate_scf_day = rate_val * 1_000_000.0
++                elif "mcf" in unit_norm or "mscf" in unit_norm:
++                    rate_scf_day = rate_val * 1000.0
++                elif "m3" in unit_norm or "sm3" in unit_norm:
++                    rate_scf_day = convert(rate_val, "m3", "scf")
++                else:
++                    rate_scf_day = rate_val
++
++                if vent_duration_days is not None:
++                    duration_days = float(vent_duration_days)
++                elif vent_duration_hours is not None:
++                    duration_days = float(vent_duration_hours) / 24.0
++                else:
++                    duration_days = float(flowback_duration_hours or 24.0) / 24.0
++
++                total_net_scf = rate_scf_day * duration_days * num_events
++                standard_ref = "API Compendium 2021 §6.2.3.2, Equation 6-7"
++                calc_method_label = "Tier 2: Eq. 6-7 (Prod Rate × Duration)"
++
++            elif method in ["gor", "gor_liquid"] or (liquid_flowback_bbl is not None and gas_oil_ratio is not None):
++                # Liquid Flowback * GOR - sales gas
++                self.validate_inputs(
++                    {"liquid_flowback_bbl": liquid_flowback_bbl, "gas_oil_ratio": gas_oil_ratio},
++                    ["liquid_flowback_bbl", "gas_oil_ratio"]
++                )
++                gross_scf = float(liquid_flowback_bbl) * float(gas_oil_ratio) * num_events
++                sales_scf = float(gas_produced_sales_scf or 0.0)
++                total_net_scf = max(0.0, gross_scf - sales_scf)
++                standard_ref = "API Compendium 2021 §6.2.3.1, Flowback GOR"
++                calc_method_label = "Tier 2: Liquid Flowback × GOR"
++
++            else:
++                # Rate * Duration
++                self.validate_inputs(
++                    {"flowback_rate": flowback_rate, "flowback_duration_hours": flowback_duration_hours},
++                    ["flowback_rate", "flowback_duration_hours"]
++                )
++                rate_val = float(flowback_rate)
++                rate_u = str(rate_unit or "mscf/day").lower().strip()
++                if "hr" in rate_u or "hour" in rate_u:
++                    if "mmscf" in rate_u:
++                        rate_scf_hr = rate_val * 1_000_000.0
++                    elif "mcf" in rate_u or "mscf" in rate_u:
++                        rate_scf_hr = rate_val * 1000.0
++                    elif "m3" in rate_u or "sm3" in rate_u:
++                        rate_scf_hr = convert(rate_val, "m3", "scf")
++                    else:
++                        rate_scf_hr = rate_val
++                else:  # Daily rate
++                    if "mmscf" in rate_u:
++                        rate_scf_hr = (rate_val * 1_000_000.0) / 24.0
++                    elif "mcf" in rate_u or "mscf" in rate_u:
++                        rate_scf_hr = (rate_val * 1000.0) / 24.0
++                    elif "m3" in rate_u or "sm3" in rate_u:
++                        rate_scf_hr = convert(rate_val, "m3", "scf") / 24.0
++                    else:
++                        rate_scf_hr = rate_val / 24.0
++
++                total_net_scf = rate_scf_hr * float(flowback_duration_hours) * num_events
++                standard_ref = "API Compendium 2021 §6.2.3.1, Flowback Rate × Duration"
++                calc_method_label = "Tier 2: Flowback Rate × Duration"
++
++        else:
++            # TIER 3: Direct / Metered Flowback
++            self.validate_inputs({"flowback_volume": flowback_volume}, ["flowback_volume"])
++            raw_vol = float(flowback_volume or 0.0)
++            u_norm = str(volume_unit or "m3").lower().strip()
++
++            if u_norm in ["m3", "sm3", "cubic_meters"]:
++                vol_scf_raw = convert(raw_vol, "m3", "scf")
++            elif u_norm in ["mcf", "mscf"]:
++                vol_scf_raw = raw_vol * 1000.0
++            elif u_norm in ["mmscf"]:
++                vol_scf_raw = raw_vol * 1_000_000.0
++            else:
++                vol_scf_raw = raw_vol
++
++            # API Eq. 6-4: Net gas V_gas = V_t - EnF (injected N2 deduction)
++            injected_n2_scf = 0.0
++            gas_type_norm = str(injected_gas_type or "n2").lower().strip()
++            if gas_type_norm != "co2" and injected_n2_volume:
++                n2_val = float(injected_n2_volume)
++                n2_u = str(injected_n2_unit or "scf").lower().strip()
++                if n2_u in ["m3", "sm3"]:
++                    injected_n2_scf = convert(n2_val, "m3", "scf")
++                elif n2_u in ["mcf", "mscf"]:
++                    injected_n2_scf = n2_val * 1000.0
++                elif n2_u in ["mmscf"]:
++                    injected_n2_scf = n2_val * 1_000_000.0
++                else:
++                    injected_n2_scf = n2_val
++
++            net_scf_single = max(0.0, vol_scf_raw - injected_n2_scf)
++            total_net_scf = net_scf_single * num_events
++
++            # API Eq. 6-5: Initial unmetered flowback period
++            if initial_flowback_hours and float(initial_flowback_hours) > 0:
++                t_i = float(initial_flowback_hours)
++                t_m = float(flowback_duration_hours or 0.0)
++                if t_m <= 0:
++                    raise ValueError("Metered flowback duration (Tm) cannot be zero when initial flowback duration is specified.")
++                initial_scf = (t_i * (total_net_scf / t_m)) / 2.0
++
++            standard_ref = "API Compendium 2021 §6.2.3.1, Equations 6-4 & 6-5"
++            calc_method_label = "Tier 3: Metered Flowback"
++
++        # =====================================================================
++        # GAS FATE PARTITIONING & STOICHIOMETRIC CALCULATIONS
++        # =====================================================================
++        # Disposition options: 'vented', 'flared', 'rec' / 'recovered', 'split'
++        disp = str(disposition or "").lower().strip()
++        if not disp:
++            # Fallback to control_efficiency if disposition unstated
++            if control_efficiency is not None and float(control_efficiency) > 0:
++                f_flared = flare_eff
++                f_vented = 1.0 - f_flared
++                f_rec = 0.0
++            else:
++                f_vented = 1.0
++                f_flared = 0.0
++                f_rec = 0.0
++        elif disp in ["rec", "recovered", "green", "green_completion"]:
++            f_vented = 0.0
++            f_flared = 0.0
++            f_rec = 1.0
++        elif disp in ["flared", "flare"]:
++            f_vented = 0.0
++            f_flared = 1.0
++            f_rec = 0.0
++        elif disp in ["vented", "vent"]:
++            f_vented = 1.0
++            f_flared = 0.0
++            f_rec = 0.0
++        elif disp in ["split", "custom"]:
++            f_v = self._normalize_fraction(frac_vented, "Vented fraction", default=0.0)
++            f_f = self._normalize_fraction(frac_flared, "Flared fraction", default=0.0)
++            f_r = self._normalize_fraction(frac_recovered, "Recovered fraction", default=0.0)
++            split_sum = f_v + f_f + f_r
++            if abs(split_sum - 1.0) > 0.01:
++                raise ValueError(
++                    f"Disposition fractions (vented={f_v*100:.1f}%, flared={f_f*100:.1f}%, recovered={f_r*100:.1f}%) must sum to 100% (sum is {split_sum*100:.1f}%)"
++                )
++            f_vented = f_v
++            f_flared = f_f
++            f_rec = f_r
++        else:
++            f_vented = 1.0
++            f_flared = 0.0
++            f_rec = 0.0
++
++        # Initial flowback is 100% vented to atmosphere (API Compendium §6.2.3.1)
++        vented_scf = initial_scf + (total_net_scf * f_vented)
++        flared_scf = total_net_scf * f_flared
++        recovered_scf = total_net_scf * f_rec
++
++        # Conversions to m3 at standard conditions
++        vented_m3 = convert(vented_scf, "scf", "m3")
++        flared_m3 = convert(flared_scf, "scf", "m3")
++        net_m3 = convert(total_net_scf, "scf", "m3")
++        initial_m3 = convert(initial_scf, "scf", "m3")
++
++        # 1. Vented Stream Emissions
++        vented_ch4_tonnes = (vented_m3 * actual_ch4_mol * CONVERSIONS["density_ch4"]) / 1000.0
++        vented_co2_tonnes = (vented_m3 * actual_co2_mol * CONVERSIONS["density_co2"]) / 1000.0
++
++        # Initial breakdown
++        init_vented_ch4_tonnes = (initial_m3 * actual_ch4_mol * CONVERSIONS["density_ch4"]) / 1000.0
++
++        # 2. Flared Stream Emissions (Stoichiometric Combustion per API Section 5 & Exhibit 6-3)
++        flared_gross_ch4_tonnes = (flared_m3 * actual_ch4_mol * CONVERSIONS["density_ch4"]) / 1000.0
++        flared_native_co2_tonnes = (flared_m3 * actual_co2_mol * CONVERSIONS["density_co2"]) / 1000.0
++
++        flared_unburnt_ch4 = flared_gross_ch4_tonnes * (1.0 - flare_eff)
++        flared_combustion_co2 = flared_gross_ch4_tonnes * flare_eff * (44.01 / 16.04)
++        flared_total_co2 = flared_native_co2_tonnes + flared_combustion_co2
++
++        flared_mmbtu = (flared_scf * hhv_val) / 1_000_000.0
++        flared_n2o = (flared_mmbtu * n2o_ef_val) / 1000.0 if flared_scf > 0 else 0.0
++
++        # 3. Aggregated Totals
++        total_ch4 = vented_ch4_tonnes + flared_unburnt_ch4
++        total_co2 = vented_co2_tonnes + flared_total_co2
++        total_n2o = flared_n2o
++
++        resolved_tier_enum = Tier.T3 if resolved_tier == "tier3" else (Tier.T2 if resolved_tier == "tier2" else Tier.T1)
++        ch4_res, co2_res, n2o_res = _propagate_vented_results(
++            total_ch4=total_ch4,
++            total_co2=total_co2,
++            flared_n2o=total_n2o,
++            uncertainties=uncertainties,
++            factor_source="site_specific" if resolved_tier in ["tier2", "tier3"] else "default",
++            process_category="completions",
++            tier=resolved_tier_enum,
++        )
++        total_co2e = calculate_co2e(ch4=total_ch4, co2=total_co2, n2o=total_n2o, gwp_dict=gwp_dict)
++
++        return self.format_result(
++            ch4=ch4_res,
++            co2=co2_res,
++            n2o=n2o_res,
++            total_co2e=total_co2e,
++            inputs={
++                "tier": resolved_tier.capitalize(),
++                "method": calc_method_label,
++                "events": num_events,
++                "net_flowback_m3": net_m3,
++                "net_flowback_scf": total_net_scf,
++                "initial_flowback_m3": initial_m3,
++                "initial_flowback_scf": initial_scf,
++                "initial_vented_ch4_tonnes": init_vented_ch4_tonnes,
++                "flared_unburnt_ch4_tonnes": flared_unburnt_ch4,
++                "flared_combustion_co2_tonnes": flared_combustion_co2,
++                "injected_n2_deducted_scf": injected_n2_scf if resolved_tier == "tier3" else 0.0,
++                "disposition": disp or ("flared" if f_flared > 0 else "vented"),
++                "ch4_content": actual_ch4_mol,
++                "co2_content": actual_co2_mol,
++                "control_efficiency": flare_eff,
++                "frac_vented": f_vented,
++                "frac_flared": f_flared,
++                "frac_recovered": f_rec,
++            },
++            metadata={
++                "standard": standard_ref,
++                "calculation_method": calc_method_label,
++            },
++        )
++
+ 
+ 
+ class LiquidsUnloadingCalculator(BaseCalculator):
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

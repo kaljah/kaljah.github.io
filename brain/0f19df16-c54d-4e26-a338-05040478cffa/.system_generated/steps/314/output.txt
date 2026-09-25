@@ -1,0 +1,67 @@
+
+The command exited with code 0.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+hypothesis profile 'default'
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 45 items
+
+new\server\tests\test_qfull_validation.py::TestCombustionTier1::test_combustion_tier1_natural_gas PASSED [  2%]
+new\server\tests\test_qfull_validation.py::TestCombustionTier1::test_combustion_tier1_diesel PASSED [  4%]
+new\server\tests\test_qfull_validation.py::TestCombustionTier1::test_combustion_tier1_zero_quantity PASSED [  6%]
+new\server\tests\test_qfull_validation.py::TestCombustionTier1::test_combustion_tier1_large_quantity PASSED [  8%]
+new\server\tests\test_qfull_validation.py::TestCombustionTier1::test_combustion_tier1_missing_factors PASSED [ 11%]
+new\server\tests\test_qfull_validation.py::TestCombustionTier3::test_combustion_tier3_standard PASSED [ 13%]
+new\server\tests\test_qfull_validation.py::TestCombustionTier3::test_combustion_tier3_pure_methane PASSED [ 15%]
+new\server\tests\test_qfull_validation.py::TestCombustionTier3::test_combustion_tier3_zero_efficiency PASSED [ 17%]
+new\server\tests\test_qfull_validation.py::TestFlaringTier3::test_flaring_tier3_elevated PASSED [ 20%]
+new\server\tests\test_qfull_validation.py::TestFlaringTier3::test_flaring_tier3_enclosed PASSED [ 22%]
+new\server\tests\test_qfull_validation.py::TestFlaringTier3::test_flaring_tier3_custom_efficiency PASSED [ 24%]
+new\server\tests\test_qfull_validation.py::TestMudDegassing::test_tier1_wells PASSED [ 26%]
+new\server\tests\test_qfull_validation.py::TestMudDegassing::test_tier2_water_based PASSED [ 28%]
+new\server\tests\test_qfull_validation.py::TestMudDegassing::test_tier2_oil_based PASSED [ 31%]
+new\server\tests\test_qfull_validation.py::TestMudDegassing::test_tier2_plus_gas_composition PASSED [ 33%]
+new\server\tests\test_qfull_validation.py::TestCompletions::test_completions_metered PASSED [ 35%]
+new\server\tests\test_qfull_validation.py::TestCompletions::test_completions_rate_duration PASSED [ 37%]
+new\server\tests\test_qfull_validation.py::TestCompletions::test_completions_missing_content PASSED [ 40%]
+new\server\tests\test_qfull_validation.py::TestLiquidsUnloading::test_liquids_unloading_standard PASSED [ 42%]
+new\server\tests\test_qfull_validation.py::TestLiquidsUnloading::test_liquids_unloading_single_event PASSED [ 44%]
+new\server\tests\test_qfull_validation.py::TestTankFlashing::test_tank_flashing_standard PASSED [ 46%]
+new\server\tests\test_qfull_validation.py::TestTankFlashing::test_tank_flashing_with_control PASSED [ 48%]
+new\server\tests\test_qfull_validation.py::TestPneumatics::test_pneumatics_standard PASSED [ 51%]
+new\server\tests\test_qfull_validation.py::TestPneumatics::test_pneumatics_zero_hours PASSED [ 53%]
+new\server\tests\test_qfull_validation.py::TestAGR::test_agr_standard PASSED [ 55%]
+new\server\tests\test_qfull_validation.py::TestAGR::test_agr_no_slip PASSED [ 57%]
+new\server\tests\test_qfull_validation.py::TestBlowdown::test_blowdown_standard PASSED [ 60%]
+new\server\tests\test_qfull_validation.py::TestBlowdown::test_blowdown_single_event PASSED [ 62%]
+new\server\tests\test_qfull_validation.py::TestIndirectSteam::test_indirect_steam_standard PASSED [ 64%]
+new\server\tests\test_qfull_validation.py::TestIndirectSteam::test_indirect_steam_zero_loss PASSED [ 66%]
+new\server\tests\test_qfull_validation.py::TestCogen::test_cogen_wri_allocation PASSED [ 68%]
+new\server\tests\test_qfull_validation.py::TestGWPValues::test_gwp_ar4 PASSED [ 71%]
+new\server\tests\test_qfull_validation.py::TestGWPValues::test_gwp_ar5 PASSED [ 73%]
+new\server\tests\test_qfull_validation.py::TestGWPValues::test_gwp_ar6 PASSED [ 75%]
+new\server\tests\test_qfull_validation.py::TestCO2eCalculation::test_calculate_co2e_ar5 PASSED [ 77%]
+new\server\tests\test_qfull_validation.py::TestCO2eCalculation::test_calculate_co2e_ar4 PASSED [ 80%]
+new\server\tests\test_qfull_validation.py::TestSensitivityOAT::test_sensitivity_quantity PASSED [ 82%]
+new\server\tests\test_qfull_validation.py::TestSensitivityOAT::test_sensitivity_ef PASSED [ 84%]
+new\server\tests\test_qfull_validation.py::TestSensitivityOAT::test_sensitivity_ch4_content PASSED [ 86%]
+new\server\tests\test_qfull_validation.py::TestSensitivityOAT::test_sensitivity_combustion_efficiency PASSED [ 88%]
+new\server\tests\test_qfull_validation.py::TestSensitivityOAT::test_sensitivity_pressure PASSED [ 91%]
+new\server\tests\test_qfull_validation.py::TestGasByGasValidation::test_co2_only PASSED [ 93%]
+new\server\tests\test_qfull_validation.py::TestGasByGasValidation::test_ch4_only PASSED [ 95%]
+new\server\tests\test_qfull_validation.py::TestBoundaryZero::test_zero_emissions PASSED [ 97%]
+new\server\tests\test_qfull_validation.py::TestNegativeRejected::test_negative_quantity_raises_value_error PASSED [100%]
+
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================== 45 passed, 1 warning in 0.98s ========================
+

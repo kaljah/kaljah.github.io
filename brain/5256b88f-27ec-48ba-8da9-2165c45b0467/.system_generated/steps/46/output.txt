@@ -1,0 +1,23 @@
+The search for ""Table 6-10" "Table 6-11" "Compendium" "liquids unloading"" returned the following summary:
+The references to "Table 6-10" and "Table 6-11" in the context of "liquids unloading" and the "Compendium" specifically point to the **API Compendium of Greenhouse Gas Emissions Methodologies for the Natural Gas and Oil Industry** (notably the 2021 edition)[1][2].
+
+In this document, these tables are found within the section covering **Process and Vented Emissions Estimation Methods**[3]:
+
+*   **Table 6-10:** Typically titled *"Well Unloading Vented Emission Factors for Wells"*[1][2].
+*   **Table 6-11:** Typically titled *"Liquid Unloading Vented Emission Factors by Well"*[1][2].
+
+These tables provide standardized emission factors used by the oil and gas industry to estimate methane and other greenhouse gas emissions resulting from the practice of liquids unloading—a process used to remove accumulated liquids from gas wells to maintain production[1][4][2]. 
+
+***Note on Confusion with EPA Inventories:***
+Be aware that if you are searching through the **U.S. EPA’s *Inventory of U.S. Greenhouse Gas Emissions and Sinks***, tables labeled "6-10" and "6-11" often refer to forestry, land use, or carbon stock data (e.g., forest area, carbon flux)[5][6][7][8][9]. If you are looking specifically for liquids unloading data, ensure you are referencing the **API Compendium** rather than the EPA national inventory reports[1][2][7].
+
+Sources:
+[1] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEEdtgyaMI8EWdKAvKzG0Aiy-6_97oq1vWxxcDLWPOrRM-vbo_OXokoZTPODok3OmT-9CBMKtG5NQuRHjUTETZvnS4ur_M-pHKfawKgPWX95edgxe5Fjm8CfdSzjXmv8Jd6iLVvSEjS-EkDaCqcYjpTVZxMQepjun1Qa2X-zfkrrYmuBOBi5ikDrQ==)
+[2] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEEdtgyaMI8EWdKAvKzG0Aiy-6_97oq1vWxxcDLWPOrRM-vbo_OXokoZTPODok3OmT-9CBMKtG5NQuRHjUTETZvnS4ur_M-pHKfawKgPWX95edgxe5Fjm8CfdSzjXmv8Jd6iLVvSEjS-EkDaCqcYjpTVZxMQepjun1Qa2X-zfkrrYmuBOBi5ikDrQ==)
+[3] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEEdtgyaMI8EWdKAvKzG0Aiy-6_97oq1vWxxcDLWPOrRM-vbo_OXokoZTPODok3OmT-9CBMKtG5NQuRHjUTETZvnS4ur_M-pHKfawKgPWX95edgxe5Fjm8CfdSzjXmv8Jd6iLVvSEjS-EkDaCqcYjpTVZxMQepjun1Qa2X-zfkrrYmuBOBi5ikDrQ==)
+[4] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEEdtgyaMI8EWdKAvKzG0Aiy-6_97oq1vWxxcDLWPOrRM-vbo_OXokoZTPODok3OmT-9CBMKtG5NQuRHjUTETZvnS4ur_M-pHKfawKgPWX95edgxe5Fjm8CfdSzjXmv8Jd6iLVvSEjS-EkDaCqcYjpTVZxMQepjun1Qa2X-zfkrrYmuBOBi5ikDrQ==)
+[5] [edf.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGQ0lEywMklE2ZLUDIzSINsx7ZFXiXYmE3ZJoQgHHvFI88FrzG2rQERTo9q-c__1L0TMZ1x1_b8MXY86GnceH2tB3MF5quEbj9XGEs0z7O5mh_mAwyeOMDEHuFBiAK6gKyBnyfKcggGwbAF4dNQg7ODXgJLw6LINVm-0ozO)
+[6] [epa.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQE6qEF-VG-6KtB8dXGTp3gXD3ERkg1fWeJrWYJPljYodq2CdcwgGExuEFEI32wS7lRvyuHXdQNN1IkWD-N3Y40WnWYWeacE3maYtvBtiMjcYQWldkr0FxpREa-iWNpAfwDxd8LnVhSVZwTpMkLaPrYiNYJf98miDnSijykK3CgHEbc_qIEf4qpPK0Q=)
+[7] [epa.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGhmo5EepyyvDS6OAA8rIzVPebCl1FZtNF5udMSf0W2VMyho5HAGWeYTB5E2kYbzeg_M7thEp6kHwvsH_NVUdX7K866ERY2QHyDkC1nr4F3hX1hNjZdLdIWpzU0-PI4tige_7h0wWXbVnq7Pt2WJQNi7GL4X4ss3wKATU0QQAmSKJFFw_ETTr6DmqiCpZGjm-eCU3g=)
+[8] [epa.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGIjVhGNF5FKcU__tM3r01vgVbBSQaVQQ68SWRU24wLIOKOmlvK3hpAGADU_EZjrtwC4_qPFkas3KYVDxl_7kwgxj0vaPULYwTMxuXDoJQkKo0jYxzRZW8h_NJDVlnyUI50ZXsjEl_AvQFzTsRBvga5qXLcYScrdHNWoTtXIIsON5MfU3EPUc_Tu09-aQ==)
+[9] [epa.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGB1PdQPqGj8Gb2QJ_n54HbsfZfYJw95g6NAINROMDuTd0WvwjeCgWZYzfmayafKok1IfjYoNdwK6F_NECyeaG4rPAlCG2zdZNsOZ3F0WVO4zLpgC9rKJdUIupHt5VIf9MEOrtILOad6Y33_Mz1hw==)

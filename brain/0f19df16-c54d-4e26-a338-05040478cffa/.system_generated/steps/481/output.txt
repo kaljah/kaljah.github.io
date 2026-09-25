@@ -1,0 +1,22 @@
+
+The command exited with code 0.
+Output:
+new/server/routes/custom_factors.py:3:from models import CustomFactor, User
+new/server/routes/custom_factors.py:20:    factors = CustomFactor.query.all()
+new/server/routes/custom_factors.py:115:    factor = CustomFactor(
+new/server/routes/custom_factors.py:149:            entity="CustomFactor",
+new/server/routes/custom_factors.py:171:    factor = db.session.get(CustomFactor, factor_id)
+new/server/routes/custom_factors.py:240:            entity="CustomFactor",
+new/server/routes/custom_factors.py:257:    factor = db.session.get(CustomFactor, factor_id)
+new/server/routes/custom_factors.py:289:            entity="CustomFactor",
+new/server/routes/custom_factors.py:332:        factor = CustomFactor(
+new/server/routes/custom_factors.py:367:            entity="CustomFactor",
+new/server/routes/emissions.py:12:    CustomFactor,
+new/server/routes/emissions.py:508:    custom_factors = CustomFactor.query.filter_by(created_by=user.id).all()
+new/server/routes/emissions.py:3058:        cf = db.session.get(CustomFactor, custom_factor_id)
+new/server/routes/emissions.py:3061:            # Map CustomFactor to factor_data structure
+new/server/routes/emissions.py:3488:            cf = db.session.get(CustomFactor, cf_id)
+new/server/routes/emissions.py:3852:                cf = db.session.get(CustomFactor, cf_id)
+new/server/routes/qaqc.py:5:from models import Emission, Scope2Emission, Scope3Emission, ActivityLog, Facility, CustomFactor
+new/server/routes/qaqc.py:342:            total_custom_factors = CustomFactor.query.count()
+

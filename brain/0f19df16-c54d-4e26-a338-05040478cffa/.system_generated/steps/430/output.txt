@@ -1,0 +1,159 @@
+
+The command exited with code 0.
+Output:
+<truncated 543 lines>
++                                      handleFormChange("hhv", e.target.value);
++                                      setActivePresetId("");
++                                    }}
++                                  />
++                                  <select
++                                    className="mole-input"
++                                    style={{ width: "110px", padding: "6px 8px", fontSize: "0.8rem" }}
++                                    value={formData.hhv_unit || "BTU/scf"}
++                                    onChange={(e) => handleFormChange("hhv_unit", e.target.value)}
++                                  >
++                                    <option value="BTU/scf">BTU/scf</option>
++                                    <option value="MJ/m3">MJ/m³</option>
++                                    <option value="kcal/m3">kcal/m³</option>
++                                    <option value="BTU/gal">BTU/gal</option>
++                                    <option value="BTU/lb">BTU/lb</option>
++                                    <option value="MJ/kg">MJ/kg</option>
++                                  </select>
++                                </div>
++                              </div>
++
++                              <div>
++                                <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, color: "#374151", marginBottom: "4px" }}>
++                                  Measured Fuel Density (kg/m³)
++                                </label>
++                                <input
++                                  type="number"
++                                  step="any"
++                                  className="mole-input"
++                                  style={{ width: "100%", padding: "6px 8px", fontSize: "0.85rem" }}
++                                  placeholder="e.g. 840.0 for Gasoil NA 8110"
++                                  value={fuelDensity}
++                                  onChange={(e) => {
++                                    setFuelDensity(e.target.value);
++                                    setActivePresetId("");
++                                  }}
++                                />
++                              </div>
++                            </div>
++
++                            {/* Data Source / Audit Reference Field */}
++                            <div>
++                              <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, color: "#374151", marginBottom: "4px" }}>
++                                Analysis Bulletin / Delivery Ticket Ref
++                              </label>
++                              <input
++                                type="text"
++                                className="mole-input"
++                                style={{ width: "100%", padding: "6px 8px", fontSize: "0.85rem" }}
++                                placeholder="e.g. Naftal Delivery Ticket #4902-B, Sonatrach GC #2026-03"
++                                value={dataSourceRef}
++                                onChange={(e) => setDataSourceRef(e.target.value)}
++                              />
++                            </div>
++
++                            {/* Live Calculation Preview & Data Quality Badge */}
++                            <div className="tier2-preview-badge">
++                              <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
++                                <Sparkles size={15} style={{ color: "var(--accent-color, #ff6600)" }} />
++                                <span style={{ fontWeight: 600, fontSize: "0.75rem", color: "#1f2937" }}>
++                                  Tier 2 Data Reliability Rating
++                                </span>
++                              </div>
++                              <div style={{ fontSize: "0.75rem", color: "#065f46" }}>
++                                IPCC Activity Data Uncertainty: <strong>±7.0%</strong> (vs ±10.0% Tier 1 Default) | Method: Measured Fuel Properties
++                              </div>
++                            </div>
++                          </div>
++                        )}
++
++                        {tier2Mode === "custom_factor" && (
++                          <div>
++                            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
++                              <div style={{ flex: 1 }}>
++                                <CustomDropdown
++                                  options={fuelOptions}
++                                  value={formData.fuel || ""}
++                                  onChange={(val) => handleFormChange("fuel", val)}
++                                  placeholder="Select Saved Custom Factor..."
++                                />
++                              </div>
++                              <button
++                                type="button"
++                                className="btn btn-secondary"
++                                onClick={() => setIsQuickAddModalOpen(true)}
++                                style={{
++                                  display: "flex",
++                                  alignItems: "center",
++                                  gap: "4px",
++                                  padding: "8px 12px",
++                                  fontSize: "0.8rem",
++                                  whiteSpace: "nowrap",
++                                }}
++                              >
++                                <PlusCircle size={15} />
++                                <span>+ Quick Add</span>
++                              </button>
++                            </div>
++                            {fuelOptions.length === 0 && (
++                              <div style={{ fontSize: "0.75rem", color: "#6b7280", marginTop: "6px" }}>
++                                No saved custom factors registered for this process yet. Click <strong>+ Quick Add</strong> to register one on the spot.
++                              </div>
++                            )}
++                          </div>
++                        )}
++                      </>
++                    ) : (
++                      <div>
++                        <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
++                          <div style={{ flex: 1 }}>
++                            <CustomDropdown
++                              options={fuelOptions}
++                              value={formData.fuel || ""}
++                              onChange={(val) => handleFormChange("fuel", val)}
++                              placeholder="Select Saved Custom Factor..."
++                            />
++                          </div>
++                          <button
++                            type="button"
++                            className="btn btn-secondary"
++                            onClick={() => setIsQuickAddModalOpen(true)}
++                            style={{
++                              display: "flex",
++                              alignItems: "center",
++                              gap: "4px",
++                              padding: "8px 12px",
++                              fontSize: "0.8rem",
++                              whiteSpace: "nowrap",
++                            }}
++                          >
++                            <PlusCircle size={15} />
++                            <span>+ Quick Add</span>
++                          </button>
++                        </div>
++                      </div>
++                    )}
++                  </div>
+                 )}
+                 {sourceType === "specific" &&
+                   ![
+@@ -2748,6 +3065,14 @@ const Scope1Form = () => {
+         onConfirm={confirmDelete}
+         onCancel={() => setDeleteConfirmId(null)}
+       />
++
++      <QuickAddCustomFactorModal
++        isOpen={isQuickAddModalOpen}
++        onClose={() => setIsQuickAddModalOpen(false)}
++        onFactorCreated={handleFactorCreated}
++        processType={processType}
++        defaultParentFuel={formData.fuel}
++      />
+     </div>
+   );
+ };
+

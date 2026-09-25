@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+completions calculator: <calculations.vented.CompletionFlowbackCalculator object at 0x0000026D61795160>
+

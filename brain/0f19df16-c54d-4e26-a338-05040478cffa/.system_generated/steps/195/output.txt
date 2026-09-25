@@ -1,0 +1,70 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\Scope1Form.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -854,32 +854,38 @@
+ 
+       // --- PROCESS-SPECIFIC UNIT STANDARDIZATION ---
+ 
+-      // 1. Drilling Mud
+-      // Tier 3 (specific): convert mud_vol to m3 for engineering calculator
+-      // Tier 1 (default/custom): keep in bbl to match the kg CH4/bbl factor unit
+-      if (processType === "drilling" && formData.mud_vol) {
+-        const vol = parseFloat(formData.mud_vol);
+-        const unit = formData.mud_unit || "bbl";
+-        if (sourceType === "specific") {
+-          // Engineering calc needs m3
+-          processInputs.mud_volume =
+-            unit !== "m3" ? convertActivityData(vol, unit, "m3") : vol;
+-          finalAmount = processInputs.mud_volume;
+-          finalUnit = "m3";
+-        } else {
+-          // Tier 1 factor is kg/bbl — keep in bbl
+-          processInputs.mud_volume =
+-            unit !== "bbl" ? convertActivityData(vol, unit, "bbl") : vol;
+-          finalAmount = processInputs.mud_volume;
+-          finalUnit = "bbl";
+-        }
+-      } else if (processType === "drilling" && sourceType !== "specific") {
+-        // Tier 1 without mud_vol: use amount field in bbl
+-        const vol = parseFloat(formData.amount || 0);
+-        const unit = formData.unit || "bbl";
+-        finalAmount =
+-          unit !== "bbl" ? convertActivityData(vol, unit, "bbl") : vol;
+-        finalUnit = "bbl";
++      // 1. Drilling Mud Degassing (Tier 1: Table 6-3 wells; Tier 2/2+: Table 6-2 days)
++      if (processType === "drilling") {
++        const val = parseFloat(formData.amount || formData.quantity || 0);
++        if (sourceType === "default" || sourceType === "tier1") {
++          processInputs.tier = "tier1";
++          processInputs.wells = val;
++          finalAmount = val;
++          finalUnit = "well";
++        } else {
++          const isT2Plus =
++            sourceType === "tier2_plus" ||
++            sourceType === "tier2+" ||
++            sourceType === "tier_2_plus";
++          processInputs.tier = isT2Plus ? "tier2_plus" : "tier2";
++          processInputs.drilling_days = val;
++          processInputs.mud_type = formData.mud_type || "water_based";
++          if (isT2Plus) {
++            processInputs.ch4_fraction =
++              formData.ch4_fraction !== undefined &&
++              formData.ch4_fraction !== ""
++                ? parseFloat(formData.ch4_fraction)
++                : 0.8385;
++            if (
++              formData.co2_fraction !== undefined &&
++              formData.co2_fraction !== ""
++            ) {
++              processInputs.co2_fraction = parseFloat(formData.co2_fraction);
++            }
++          }
++          finalAmount = val;
++          finalUnit = "days";
++        }
+       }
+ 
+       // 2. Storage Tanks (must be bbl)
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

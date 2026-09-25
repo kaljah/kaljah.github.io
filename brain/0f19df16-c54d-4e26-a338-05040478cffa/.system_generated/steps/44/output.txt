@@ -1,0 +1,20 @@
+The search for ""Table 6-2" "API Compendium" "drilling days" OR "drilling mud" OR "water-based" "tonnes" OR "tonnes/day" OR "kg/day"" returned the following summary:
+The **API Compendium of Greenhouse Gas Emissions Methodologies for the Oil and Natural Gas Industry** is a widely used foundational document for estimating GHG emissions[1][2].
+
+While multiple editions exist (e.g., 2009, 2021)[2][3], **"Table 6-2"** in several versions of the API Compendium is titled **"Mud Degassing Vented Methane Emission Factors for Oil and Natural Gas Exploration"**[1][4].
+
+Regarding your specific search terms:
+*   **Drilling Mud & Emissions:** The Compendium provides methodologies and emission factors for various sources, including vented emissions from mud degassing during drilling operations[1][4].
+*   **Units:** The document emphasizes using standardized measurement units, typically reporting GHG emissions in metric tonnes (where 1 metric tonne = 1,000 kg)[1][5]. It often guides users through conversions between different unit systems to maintain consistency[1][5].
+*   **Contextual Usage:** In various environmental impact statements (EIS) or project reports that reference the API Compendium, you may find tables (e.g., Tables 6-2 or similar) that estimate drilling activity parameters, such as fuel consumption (e.g., "tonnes fuel/day") or drilling duration (e.g., "days"), to calculate total emissions[6][7].
+
+If you are looking for a specific emission factor or calculation for water-based drilling mud, please refer to the section on **venting/degassing** in the API Compendium, which typically addresses these operational phases[1][2].
+
+Sources:
+[1] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFY32jhjBG0XYFSKxFNXpUcSQkSf_DEQPGxD98tybfip1uLAPxsdAET-8KSRaek5CDDroqdwqjFBwIr94S1DhPsMcgtpaiJaURxmt0aUFFn4I-7Jah9hfSl82BEkMrbUqaQ5ccoSuGPJYyE2U0DqzsAbV3V-OwHZpo2W5cdL4FuVg0A_jz8SiZS)
+[2] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFY32jhjBG0XYFSKxFNXpUcSQkSf_DEQPGxD98tybfip1uLAPxsdAET-8KSRaek5CDDroqdwqjFBwIr94S1DhPsMcgtpaiJaURxmt0aUFFn4I-7Jah9hfSl82BEkMrbUqaQ5ccoSuGPJYyE2U0DqzsAbV3V-OwHZpo2W5cdL4FuVg0A_jz8SiZS)
+[3] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGCVa0G3RyVxZMWCYIPey-rzENDTh-AG1uFFq0Avm85EdfQUZ7ncSxtsPp-wvTvLPxX2Inpg8oZm1wsKqsFB95qI-h2VlWWnh_1vSIdiGCTKXDZ2ZRlk5BAlr1T4OG1rV-MjD8VfCyKO-vhnM_8i1-ZhOzxlr8eGxnMy0mdvXL0umSPWurXWBZbCJ3vvIVZkiHzYqef4lQ=)
+[4] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFY32jhjBG0XYFSKxFNXpUcSQkSf_DEQPGxD98tybfip1uLAPxsdAET-8KSRaek5CDDroqdwqjFBwIr94S1DhPsMcgtpaiJaURxmt0aUFFn4I-7Jah9hfSl82BEkMrbUqaQ5ccoSuGPJYyE2U0DqzsAbV3V-OwHZpo2W5cdL4FuVg0A_jz8SiZS)
+[5] [oilandgasbmps.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGY4XWbCbR2HMHJjLKr__JvMM83sKk1gHDmFcUPhY7aClfFq1EN7U-bJOasN_in14ULfdPTFlXIOBYj3cJLc-A0Dt_hxhAxUknP76PZojGUISYyBpWefK4XjZb-bD5EoCTfQPqft64RvTv_4eBb1iBr)
+[6] [www.gov.fk](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGygVChrjtY2XdlaiwAI76te2vKxyJl9wW5i4YM5usaZoz0HcuPQhBEiap_fn-UMu6BgWCIINWCth5k76Bh3FQy0ilqtAuk06Ml4N23hZbU-QZJK6f0Ldi2B7JTBvP9rOEIEfJDWgT7MKLQ9bAr4xA4BiSFBZv-p536zTJYvp47_AC0VrWkz_G_tGxSJu_AomscMlLzWhFL44yCaj8HaaC-9O1cWA==)
+[7] [www.gov.fk](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGDOy6gGGfaiZByfe9S1p1AzU-Eh17z0EwdaFtSeuglcMhTpToiIDeWhBU4AciOrAugkPMzGjvMt4vfbkzzRf7l18gs6wmaLousJRke5cII5VXw_MZy37RERkJZReCVMZiMtkkls7Tmbvt5cxkDNVCvSTU9mUy49cN4uOzcZlYv1WvrtUAzqoZ-ME4tkC4LJZxwG1Qb7h1kzO-rURkG)

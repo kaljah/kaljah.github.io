@@ -1,0 +1,21 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\process_categories.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -110,10 +110,11 @@
+         "display_name": "Liquids Unloading",
+         "segments": ["upstream"],
+         "category": "vented",
+-        "calculation_method": "unloading_volume",
+-        "api_section": "Section 6.4",
+-        "required_inputs": ["frequency", "wellbore_diameter", "depth", "pressure"],
+-        "description": "Gas venting during liquids unloading operations",
++        "calculation_method": "unloading_tiers",
++        "api_section": "Section 6.3.4",
++        "required_inputs": ["unloading_type", "well_count", "events", "ch4_content"],
++        "equations": ["API_Table_6_10", "API_Table_6_11", "API_6_10", "API_6_11", "API_6_3"],
++        "description": "Gas venting from well liquids unloading (plunger and non-plunger, Tiers 1-3)",
+     },
+     "wellhead_fugitive": {
+         "display_name": "Wellhead Fugitive Emissions",
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

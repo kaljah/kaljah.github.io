@@ -1,0 +1,568 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\vented.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1819,4 +1819,562 @@
+                 "mode": "intermittent_actuation" if is_intermittent else "continuous_bleed",
+             },
+         )
++
++
++class AssociatedGasVentingCalculator(BaseCalculator):
++    """
++    API GHG Compendium 2021 - Section 6.3.1: Associated Gas Venting
++    Implementation of:
++      - Equation 6-8: Direct vent rate / mass emissions:
++          E_x = VR * F_x * (MW_x / molar_volume_conversion) * T_v
++      - Equation 6-9: Gas-to-Oil Ratio (GOR) approach:
++          VR = GOR * Oil_p
++      - Table 6-8: Regional Associated Gas Venting default emission factors with
++        footnote b gas composition adjustment (CH4 and CO2 relative concentration).
++      - Net-vented mass balance partitioning:
++          V_vented = Total_Produced - V_recovered - V_flared
++        Ensuring zero double-counting with Section 5 Flaring.
++      - Full uncertainty propagation across Tiers 1, 2, and 3.
++    """
++
++    # API 2021 Table 6-8: Associated Gas Venting Emission Factors by Region
++    TABLE_6_8_FACTORS = {
++        "us_average": {
++            "name": "Associated Gas Venting – US Average",
++            "ef_ch4_kg_bbl": 1.4,
++            "ef_tonnes_1000bbl": 1.4,
++            "whole_gas_scf_bbl": 89.0,
++            "ch4_mol_basis": 0.816,
++            "uncertainty_ch4": 0.40,
++            "uncertainty_co2": 0.20,
++            "source": "API Compendium 2021 Section 6.3.1, Table 6-8",
++        },
++        "gulf_coast": {
++            "name": "Gulf Coast Basin (Basin 220)",
++            "ef_ch4_kg_bbl": 0.7,
++            "ef_tonnes_1000bbl": 0.7,
++            "whole_gas_scf_bbl": 47.0,
++            "ch4_mol_basis": 0.816,
++            "uncertainty_ch4": 0.40,
++            "uncertainty_co2": 0.20,
++            "source": "API Compendium 2021 Section 6.3.1, Table 6-8",
++        },
++        "anadarko": {
++            "name": "Anadarko Basin (Basin 360)",
++            "ef_ch4_kg_bbl": 9.7,
++            "ef_tonnes_1000bbl": 9.7,
++            "whole_gas_scf_bbl": 622.0,
++            "ch4_mol_basis": 0.816,
++            "uncertainty_ch4": 0.40,
++            "uncertainty_co2": 0.20,
++            "source": "API Compendium 2021 Section 6.3.1, Table 6-8",
++        },
++        "williston": {
++            "name": "Williston Basin (Basin 395)",
++            "ef_ch4_kg_bbl": 8.9,
++            "ef_tonnes_1000bbl": 8.9,
++            "whole_gas_scf_bbl": 570.0,
++            "ch4_mol_basis": 0.816,
++            "uncertainty_ch4": 0.40,
++            "uncertainty_co2": 0.20,
++            "source": "API Compendium 2021 Section 6.3.1, Table 6-8",
++        },
++        "permian": {
++            "name": "Permian Basin (Basin 430)",
++            "ef_ch4_kg_bbl": 6.5,
++            "ef_tonnes_1000bbl": 6.5,
++            "whole_gas_scf_bbl": 419.0,
++            "ch4_mol_basis": 0.816,
++            "uncertainty_ch4": 0.40,
++            "uncertainty_co2": 0.20,
++            "source": "API Compendium 2021 Section 6.3.1, Table 6-8",
++        },
++        "other": {
++            "name": "\"Other\" US Basins",
++            "ef_ch4_kg_bbl": 0.4,
++            "ef_tonnes_1000bbl": 0.4,
++            "whole_gas_scf_bbl": 26.0,
++            "ch4_mol_basis": 0.816,
++            "uncertainty_ch4": 0.40,
++            "uncertainty_co2": 0.20,
++            "source": "API Compendium 2021 Section 6.3.1, Table 6-8",
++        },
++    }
++
++    # Physical molecular weights (API Compendium 2021 Table 3-1 & 3-2)
++    MW_CH4 = 16.0425
++    MW_CO2 = 44.01
++    MOLAR_VOLUME_SCF_LBMOLE = 379.3  # scf/lb-mole at 60°F, 14.696 psia
++    LB_TO_TONNE = 1.0 / 2204.6226218487757
++
++    def __init__(self):
++        super().__init__("Associated Gas Venting", "Section 6.3.1")
++
++    @classmethod
++    def resolve_basin_factor(cls, basin_name):
++        """Matches a basin input string to Table 6-8 factor."""
++        if not basin_name:
++            return cls.TABLE_6_8_FACTORS["us_average"]
++        b = str(basin_name).lower().strip()
++        if "gulf" in b or "220" in b:
++            return cls.TABLE_6_8_FACTORS["gulf_coast"]
++        if "anadarko" in b or "360" in b:
++            return cls.TABLE_6_8_FACTORS["anadarko"]
++        if "williston" in b or "395" in b:
++            return cls.TABLE_6_8_FACTORS["williston"]
++        if "permian" in b or "430" in b:
++            return cls.TABLE_6_8_FACTORS["permian"]
++        if "other" in b:
++            return cls.TABLE_6_8_FACTORS["other"]
++        return cls.TABLE_6_8_FACTORS["us_average"]
++
++    @staticmethod
++    def _normalize_fraction(val, default=0.0):
++        if val in [None, "", "-"]:
++            return default
++        try:
++            f = float(str(val).replace("%", "").strip())
++        except (ValueError, TypeError):
++            return default
++        if f > 1.0:
++            f /= 100.0
++        return f
++
++    def calculate(
++        self,
++        tier=None,
++        factor_source=None,
++        # Tier 1 inputs
++        oil_production=None,
++        oil_unit="bbl",
++        basin="US Average",
++        # Tier 2 inputs
++        gor=None,
++        gor_unit="scf/bbl",
++        venting_duration=None,
++        duration_unit="days",
++        period_duration=None,
++        recovered_gas_volume=0.0,
++        flared_gas_volume=0.0,
++        gas_volume_unit="scf",
++        # Tier 3 inputs
++        vent_rate=None,
++        vent_rate_unit="scfh",
++        vent_volume=None,
++        vent_volume_unit="scf",
++        # Gas composition
++        ch4_content=None,
++        co2_content=None,
++        # Factors & Uncertainty
++        ef_ch4=None,
++        ef_co2=None,
++        uncertainties=None,
++        gwp_dict=None,
++        control_efficiency=0.0,
++        **kwargs,
++    ):
++        uncertainties = uncertainties or {}
++
++        # 1. Resolve Tier
++        resolved_tier = None
++        if tier is not None:
++            t_str = str(tier).strip().lower()
++            if "3" in t_str:
++                resolved_tier = Tier.T3
++            elif "2" in t_str:
++                resolved_tier = Tier.T2
++            elif "1" in t_str:
++                resolved_tier = Tier.T1
++
++        if resolved_tier is None and factor_source is not None:
++            fs_str = str(factor_source).strip().lower()
++            if fs_str in ["specific", "site_specific", "direct", "measurement", "cems", "tier3", "tier_3", "t3"]:
++                resolved_tier = Tier.T3
++            elif fs_str in ["engineering", "custom", "gor", "tier2", "tier_2", "t2"]:
++                resolved_tier = Tier.T2
++            elif fs_str in ["default", "tier1", "tier_1", "t1"]:
++                resolved_tier = Tier.T1
++
++        if resolved_tier is None:
++            # Auto-detect from provided arguments
++            if vent_rate is not None or vent_volume is not None:
++                resolved_tier = Tier.T3
++            elif gor is not None:
++                resolved_tier = Tier.T2
++            else:
++                resolved_tier = Tier.T1
++
++        # 2. Validate Gas Composition (applies across all tiers when provided)
++        c_ch4 = None
++        c_co2 = None
++        if ch4_content is not None:
++            c_ch4 = self._normalize_fraction(ch4_content)
++            if c_ch4 < 0.0 or c_ch4 > 1.0:
++                raise ValueError(f"CH4 molar fraction must be between 0.0 and 1.0 (got {c_ch4}).")
++
++        if co2_content is not None:
++            c_co2 = self._normalize_fraction(co2_content)
++            if c_co2 < 0.0 or c_co2 > 1.0:
++                raise ValueError(f"CO2 molar fraction must be between 0.0 and 1.0 (got {c_co2}).")
++
++        if c_ch4 is not None and c_co2 is not None:
++            if (c_ch4 + c_co2) > 1.0001:
++                raise ValueError(
++                    f"Gas composition error: Sum of CH4 ({c_ch4*100:.1f}%) and CO2 ({c_co2*100:.1f}%) "
++                    f"exceeds 100% ({((c_ch4 + c_co2)*100):.1f}%)."
++                )
++
++        qa_flags = []
++
++        # =====================================================================
++        # TIER 1: API TABLE 6-8 DEFAULT FACTOR METHODOLOGY
++        # =====================================================================
++        if resolved_tier == Tier.T1:
++            if oil_production is None:
++                raise ValueError("Oil production is required for Tier 1 Associated Gas Venting calculation.")
++            oil_val = float(oil_production)
++            if math.isnan(oil_val) or math.isinf(oil_val):
++                raise ValueError(f"Oil production cannot be NaN or Infinite: {oil_val}")
++            if oil_val < 0.0:
++                raise ValueError(f"Oil production cannot be negative: {oil_val}")
++
++            # Unit conversion to barrels (bbl)
++            u_oil = str(oil_unit or "bbl").strip().lower()
++            try:
++                oil_bbl = convert(oil_val, u_oil, "bbl")
++            except Exception:
++                oil_bbl = oil_val  # fallback if already bbl
++
++            # Basin Factor Lookup
++            basin_info = self.resolve_basin_factor(basin or kwargs.get("region") or kwargs.get("fuel"))
++            tbl_ef_ch4 = float(ef_ch4) if (ef_ch4 is not None and float(ef_ch4) > 0) else basin_info["ef_ch4_kg_bbl"]
++            whole_gas_ef = float(basin_info.get("whole_gas_scf_bbl", 89.0))
++            ch4_mol_basis = float(basin_info.get("ch4_mol_basis", 0.816))
++
++            # Gas composition adjustment per Table 6-8 footnote b:
++            # If site-specific CH4 is provided, adjust CH4 factor by (c_ch4 / 0.816)
++            adj_ratio = 1.0
++            if c_ch4 is not None and c_ch4 > 0:
++                adj_ratio = c_ch4 / ch4_mol_basis
++            else:
++                c_ch4 = ch4_mol_basis
++
++            ch4_kg = oil_bbl * tbl_ef_ch4 * adj_ratio
++            ch4_tonnes = ch4_kg / 1000.0
++
++            # CO2 adjustment per Table 6-8 footnote b:
++            # Adjusted based on the relative concentrations of CH4 and CO2
++            if c_co2 is not None and c_co2 > 0:
++                co2_tonnes = ch4_tonnes * (c_co2 / c_ch4) * (self.MW_CO2 / self.MW_CH4)
++            else:
++                co2_tonnes = 0.0
++
++            total_co2e = calculate_co2e(ch4=ch4_tonnes, co2=co2_tonnes, gwp_dict=gwp_dict)
++
++            # Uncertainty propagation (Tier 1)
++            ch4_res = propagate_uncertainty(
++                ch4_tonnes,
++                resolve_ef_uncertainty("vented", "ch4", Tier.T1, uncertainties.get("ch4")),
++                tier=Tier.T1,
++                process_category="vented",
++                gas="ch4",
++            )
++            co2_res = propagate_uncertainty(
++                co2_tonnes,
++                resolve_ef_uncertainty("vented", "co2", Tier.T1, uncertainties.get("co2")),
++                tier=Tier.T1,
++                process_category="vented",
++                gas="co2",
++            ) if co2_tonnes > 0 else {"value": 0.0, "uncertainty": 0.0, "lower_bound": 0.0, "upper_bound": 0.0}
++
++            return self.format_result(
++                ch4=ch4_res,
++                co2=co2_res,
++                total_co2e=total_co2e,
++                inputs={
++                    "tier": "Tier 1",
++                    "method": "api_table_6_8_default",
++                    "basin": basin_info["name"],
++                    "oil_production": oil_val,
++                    "oil_unit": u_oil,
++                    "oil_bbl": oil_bbl,
++                    "ch4_factor_kg_bbl": tbl_ef_ch4,
++                    "ch4_content_mol_pct": c_ch4 * 100.0,
++                    "co2_content_mol_pct": (c_co2 or 0.0) * 100.0,
++                    "composition_adjusted": adj_ratio != 1.0 or (c_co2 and c_co2 > 0),
++                },
++                metadata={
++                    "standard": "API GHG Compendium 2021 Table 6-8 (Tier 1)",
++                    "source": basin_info["source"],
++                    "default_ch4_basis_mol_pct": ch4_mol_basis * 100.0,
++                    "whole_gas_scf_bbl": whole_gas_ef,
++                    "qa_flags": qa_flags,
++                },
++            )
++
++        # =====================================================================
++        # TIER 2: ENGINEERING GOR MASS BALANCE (API Eq. 6-8 & 6-9)
++        # =====================================================================
++        elif resolved_tier == Tier.T2:
++            self.validate_inputs(
++                {"oil_production": oil_production, "gor": gor},
++                ["oil_production", "gor"],
++            )
++            oil_val = float(oil_production)
++            gor_val = float(gor)
++
++            if oil_val < 0.0:
++                raise ValueError(f"Oil production cannot be negative: {oil_val}")
++            if gor_val < 0.0:
++                raise ValueError(f"Gas-to-Oil Ratio (GOR) cannot be negative: {gor_val}")
++
++            # Physical plausibility check on GOR
++            if gor_val > 100_000.0:
++                qa_flags.append(f"High GOR anomaly: {gor_val:.1f} scf/bbl exceeds typical crude oil range (100,000 scf/bbl).")
++
++            # Convert oil throughput to barrels
++            u_oil = str(oil_unit or "bbl").strip().lower()
++            oil_is_daily_rate = u_oil in ["bbl/day", "bpd", "barrel/day", "barrels/day", "m3/day"]
++            oil_is_hourly_rate = u_oil in ["bbl/hr", "bph", "barrel/hr", "m3/hr", "m3/h"]
++
++            # Convert base volumetric rate to bbl or bbl/day
++            if oil_is_daily_rate:
++                oil_rate_bbl_day = convert(oil_val, u_oil.replace("/day", ""), "bbl")
++            elif oil_is_hourly_rate:
++                oil_rate_bbl_day = convert(oil_val, u_oil.replace("/hr", "").replace("/h", ""), "bbl") * 24.0
++            else:
++                oil_bbl = convert(oil_val, u_oil, "bbl")
++                oil_rate_bbl_day = None
++
++            # Convert GOR to scf/bbl
++            u_gor = str(gor_unit or "scf/bbl").strip().lower()
++            if u_gor in ["m3/m3", "sm3/sm3", "m3_per_m3", "sm3/m3"]:
++                gor_scf_bbl = gor_val * (CONVERSIONS["m3_to_scf"] / CONVERSIONS["m3_to_bbl"])
++            elif u_gor in ["sm3/barrel", "sm3/bbl", "m3/bbl"]:
++                gor_scf_bbl = gor_val * CONVERSIONS["m3_to_scf"]
++            else:
++                gor_scf_bbl = gor_val  # already scf/bbl
++
++            # Determine Venting Duration and Total Associated Gas Produced
++            u_dur = str(duration_unit or "days").strip().lower()
++            dur_days = None
++            if venting_duration is not None and str(venting_duration).strip() != "":
++                v_dur = float(venting_duration)
++                if v_dur < 0.0:
++                    raise ValueError(f"Venting duration cannot be negative: {v_dur}")
++                dur_days = v_dur if u_dur in ["day", "days", "d"] else v_dur / 24.0
++
++            # Period duration validation
++            p_days = None
++            if period_duration is not None and str(period_duration).strip() != "":
++                p_dur = float(period_duration)
++                if p_dur <= 0.0:
++                    raise ValueError(f"Period duration must be positive: {p_dur}")
++                p_days = p_dur if u_dur in ["day", "days", "d"] else p_dur / 24.0
++
++            if dur_days is not None and p_days is not None and dur_days > p_days * 1.0001:
++                raise ValueError(
++                    f"Venting duration ({dur_days:.1f} days) cannot exceed total period duration ({p_days:.1f} days)."
++                )
++
++            # Max duration check: annual max 366 days
++            if dur_days is not None and dur_days > 366.0:
++                raise ValueError(f"Venting duration ({dur_days:.1f} days) exceeds maximum annual days (366 days).")
++
++            # Calculate total produced gas during the applicable period
++            if oil_rate_bbl_day is not None:
++                # Exhibit 6-5 / 6-6: rate-based input
++                # Total gas produced during the venting event
++                active_days = dur_days if dur_days is not None else (p_days or 365.0)
++                total_oil_during_vent = oil_rate_bbl_day * active_days
++                total_produced_gas_scf = total_oil_during_vent * gor_scf_bbl
++            else:
++                # Total period volume provided
++                total_period_gas_scf = oil_bbl * gor_scf_bbl
++                if dur_days is not None and p_days is not None:
++                    vent_frac = min(1.0, dur_days / p_days)
++                    total_produced_gas_scf = total_period_gas_scf * vent_frac
++                elif dur_days is not None and dur_days < 365.0:
++                    # Default annual period of 365 days
++                    vent_frac = min(1.0, dur_days / 365.0)
++                    total_produced_gas_scf = total_period_gas_scf * vent_frac
++                else:
++                    total_produced_gas_scf = total_period_gas_scf
++
++            # Disposition Partitioning (Recovered, Flared, Vented)
++            u_gas = str(gas_volume_unit or "scf").strip().lower()
++            rec_scf = convert(recovered_gas_volume or 0.0, u_gas, "scf") if recovered_gas_volume else 0.0
++            flared_scf = convert(flared_gas_volume or 0.0, u_gas, "scf") if flared_gas_volume else 0.0
++
++            if rec_scf < 0.0:
++                raise ValueError(f"Recovered gas volume cannot be negative: {rec_scf}")
++            if flared_scf < 0.0:
++                raise ValueError(f"Flared gas volume cannot be negative: {flared_scf}")
++
++            # Mass balance violation check (Recovered + Flared > Total Produced)
++            if (rec_scf + flared_scf) > (total_produced_gas_scf * 1.0001):
++                raise ValueError(
++                    f"Mass balance violation: Recovered gas ({rec_scf:.1f} scf) + Flared gas ({flared_scf:.1f} scf) "
++                    f"exceeds total produced associated gas ({total_produced_gas_scf:.1f} scf)."
++                )
++
++            # Net vented gas volume
++            net_vented_gas_scf = max(0.0, total_produced_gas_scf - rec_scf - flared_scf)
++
++            # Gas composition (default 70% CH4, 10% CO2 if unspecified per Exhibit 6-5)
++            f_ch4 = c_ch4 if c_ch4 is not None else 0.70
++            f_co2 = c_co2 if c_co2 is not None else 0.10
++
++            # API Eq. 6-8: Ex = VR * Fx * (MWx / 379.3) * Tv
++            # Where (VR * Tv) is net_vented_gas_scf
++            ch4_lb = (net_vented_gas_scf * f_ch4 * self.MW_CH4) / self.MOLAR_VOLUME_SCF_LBMOLE
++            ch4_tonnes = ch4_lb * self.LB_TO_TONNE
++
++            co2_lb = (net_vented_gas_scf * f_co2 * self.MW_CO2) / self.MOLAR_VOLUME_SCF_LBMOLE
++            co2_tonnes = co2_lb * self.LB_TO_TONNE
++
++            total_co2e = calculate_co2e(ch4=ch4_tonnes, co2=co2_tonnes, gwp_dict=gwp_dict)
++
++            # Uncertainty propagation (Tier 2)
++            ch4_res = propagate_uncertainty(
++                ch4_tonnes,
++                resolve_ef_uncertainty("vented", "ch4", Tier.T2, uncertainties.get("ch4")),
++                tier=Tier.T2,
++                process_category="vented",
++                gas="ch4",
++            )
++            co2_res = propagate_uncertainty(
++                co2_tonnes,
++                resolve_ef_uncertainty("vented", "co2", Tier.T2, uncertainties.get("co2")),
++                tier=Tier.T2,
++                process_category="vented",
++                gas="co2",
++            ) if co2_tonnes > 0 else {"value": 0.0, "uncertainty": 0.0, "lower_bound": 0.0, "upper_bound": 0.0}
++
++            return self.format_result(
++                ch4=ch4_res,
++                co2=co2_res,
++                total_co2e=total_co2e,
++                inputs={
++                    "tier": "Tier 2",
++                    "method": "api_equation_6_8_6_9_gor_mass_balance",
++                    "oil_production": oil_val,
++                    "oil_unit": u_oil,
++                    "gor": gor_val,
++                    "gor_unit": u_gor,
++                    "gor_scf_bbl": gor_scf_bbl,
++                    "venting_duration_days": dur_days,
++                    "ch4_content_mol_pct": f_ch4 * 100.0,
++                    "co2_content_mol_pct": f_co2 * 100.0,
++                    "total_produced_gas_scf": total_produced_gas_scf,
++                    "recovered_gas_scf": rec_scf,
++                    "flared_gas_scf": flared_scf,
++                    "net_vented_gas_scf": net_vented_gas_scf,
++                },
++                metadata={
++                    "standard": "API GHG Compendium 2021 Eq. 6-8 & 6-9 (Section 6.3.1)",
++                    "disposition": {
++                        "produced_scf": total_produced_gas_scf,
++                        "recovered_scf": rec_scf,
++                        "flared_scf": flared_scf,
++                        "vented_scf": net_vented_gas_scf,
++                        "zero_double_counting_verified": True,
++                    },
++                    "qa_flags": qa_flags,
++                },
++            )
++
++        # =====================================================================
++        # TIER 3: DIRECT / SITE-SPECIFIC MEASUREMENT (API Eq. 6-8)
++        # =====================================================================
++        elif resolved_tier == Tier.T3:
++            # Requires either vent_rate + duration OR total measured vent_volume
++            if vent_volume is not None and str(vent_volume).strip() != "":
++                v_val = float(vent_volume)
++                if v_val < 0.0:
++                    raise ValueError(f"Measured vent volume cannot be negative: {v_val}")
++                u_vol = str(vent_volume_unit or "scf").strip().lower()
++                net_vented_gas_scf = convert(v_val, u_vol, "scf")
++                dur_hours = float(venting_duration) if (venting_duration and float(venting_duration) > 0) else None
++            elif vent_rate is not None and str(vent_rate).strip() != "":
++                r_val = float(vent_rate)
++                if r_val < 0.0:
++                    raise ValueError(f"Measured vent rate cannot be negative: {r_val}")
++                if venting_duration is None or float(venting_duration) <= 0:
++                    raise ValueError("Venting duration is required when vent rate is specified for Tier 3.")
++                d_val = float(venting_duration)
++                u_dur = str(duration_unit or "hours").strip().lower()
++                dur_hours = d_val if u_dur in ["hour", "hours", "hr", "hrs", "h"] else d_val * 24.0
++
++                u_rate = str(vent_rate_unit or "scfh").strip().lower()
++                if u_rate in ["scfh", "scf/hr", "scf/h"]:
++                    rate_scfh = r_val
++                elif u_rate in ["scf/day", "scfd"]:
++                    rate_scfh = r_val / 24.0
++                elif u_rate in ["scf/min", "scfm"]:
++                    rate_scfh = r_val * 60.0
++                elif u_rate in ["sm3/hr", "sm3/h", "m3/hr", "m3/h"]:
++                    rate_scfh = r_val * CONVERSIONS["m3_to_scf"]
++                elif u_rate in ["sm3/day", "m3/day"]:
++                    rate_scfh = (r_val * CONVERSIONS["m3_to_scf"]) / 24.0
++                else:
++                    rate_scfh = r_val
++
++                net_vented_gas_scf = rate_scfh * dur_hours
++            else:
++                raise ValueError("Tier 3 requires either measured vent rate + duration or total measured vent volume.")
++
++            # Gas composition (default 85% CH4 if not provided)
++            f_ch4 = c_ch4 if c_ch4 is not None else 0.85
++            f_co2 = c_co2 if c_co2 is not None else 0.0
++
++            # API Eq. 6-8: Ex = VR * Fx * (MWx / 379.3) * Tv
++            ch4_lb = (net_vented_gas_scf * f_ch4 * self.MW_CH4) / self.MOLAR_VOLUME_SCF_LBMOLE
++            ch4_tonnes = ch4_lb * self.LB_TO_TONNE
++
++            co2_lb = (net_vented_gas_scf * f_co2 * self.MW_CO2) / self.MOLAR_VOLUME_SCF_LBMOLE
++            co2_tonnes = co2_lb * self.LB_TO_TONNE
++
++            total_co2e = calculate_co2e(ch4=ch4_tonnes, co2=co2_tonnes, gwp_dict=gwp_dict)
++
++            # Uncertainty propagation (Tier 3 - Calibrated measurement)
++            ch4_res = propagate_uncertainty(
++                ch4_tonnes,
++                resolve_ef_uncertainty("vented", "ch4", Tier.T3, uncertainties.get("ch4")),
++                tier=Tier.T3,
++                process_category="vented",
++                gas="ch4",
++            )
++            co2_res = propagate_uncertainty(
++                co2_tonnes,
++                resolve_ef_uncertainty("vented", "co2", Tier.T3, uncertainties.get("co2")),
++                tier=Tier.T3,
++                process_category="vented",
++                gas="co2",
++            ) if co2_tonnes > 0 else {"value": 0.0, "uncertainty": 0.0, "lower_bound": 0.0, "upper_bound": 0.0}
++
++            return self.format_result(
++                ch4=ch4_res,
++                co2=co2_res,
++                total_co2e=total_co2e,
++                inputs={
++                    "tier": "Tier 3",
++                    "method": "api_equation_6_8_direct_measurement",
++                    "vent_rate": vent_rate,
++                    "vent_rate_unit": vent_rate_unit,
++                    "vent_volume": vent_volume,
++                    "vent_volume_unit": vent_volume_unit,
++                    "venting_duration_hours": dur_hours,
++                    "total_vented_scf": net_vented_gas_scf,
++                    "ch4_content_mol_pct": f_ch4 * 100.0,
++                    "co2_content_mol_pct": f_co2 * 100.0,
++                },
++                metadata={
++                    "standard": "API GHG Compendium 2021 Eq. 6-8 (Direct Measurement / Tier 3)",
++                    "qa_flags": qa_flags,
++                },
++            )
++
++        raise ValueError(f"Unknown tier for Associated Gas Venting: {resolved_tier}")
++
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

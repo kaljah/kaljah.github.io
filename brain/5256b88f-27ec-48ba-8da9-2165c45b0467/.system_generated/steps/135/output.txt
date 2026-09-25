@@ -1,0 +1,113 @@
+
+The command exited with code 0.
+Output:
+<truncated 1 lines>
+> new\server\tests\test_csv_engine_matrix.py:435:        lu_calc = LiquidsUnloadingCalculator()
+  new\server\tests\test_csv_engine_matrix.py:436:        res = lu_calc.calculate(
+  new\server\tests\test_csv_engine_matrix.py:437:            well_depth=5000,
+  new\server\tests\test_deep_injection_matrix.py:487:            f"{test_facility.name},2024-08,Flaring,Natural 
+Gas,8000,m3,specific,1020,98.0,85.0,10.0,2.0,,,,,\n"
+> new\server\tests\test_deep_injection_matrix.py:488:            f"{test_facility.name},2024-09,Liquids 
+Unloading,,4,events,specific,,,,,,,3500,2.875,400,4\n"
+  new\server\tests\test_deep_injection_matrix.py:489:        )
+  new\server\tests\test_deep_injection_matrix.py:490:        status = self._run_upload(app, csv_data, 
+"scope1_tier3.csv", test_user.id, scope=1)
+  new\server\tests\test_dispatcher.py:66:
+> new\server\tests\test_dispatcher.py:67:def test_tier3_strict_validation_unloading_missing_fields():
+  new\server\tests\test_dispatcher.py:68:    dispatcher = CalculationDispatcher()
+  new\server\tests\test_dispatcher.py:69:    payload = {
+> new\server\tests\test_dispatcher.py:70:        "process_type": "unloading",
+  new\server\tests\test_dispatcher.py:71:        "factor_source": "specific",
+  new\server\tests\test_dispatcher.py:72:        "calc_inputs": {
+> new\server\tests\test_dispatcher.py:73:            "unloading": {
+  new\server\tests\test_dispatcher.py:74:                "unload_depth": 2500
+  new\server\tests\test_dispatcher.py:75:                # missing unload_diameter, unload_pressure, unload_events, 
+ch4_content
+  new\server\tests\test_dispatcher.py:81:    ):
+> new\server\tests\test_dispatcher.py:82:        dispatcher.dispatch("unloading", payload, {}, {})
+  new\server\tests\test_dispatcher.py:83:
+  new\server\tests\test_dispatcher.py:84:
+  new\server\tests\test_golden_dataset_validation.py:106:
+> new\server\tests\test_golden_dataset_validation.py:107:        elif calc_type == "liquids_unloading":
+  new\server\tests\test_golden_dataset_validation.py:108:            payload["unload_depth"] = 
+act_data.get("well_depth") or act_data.get("unload_depth")
+  new\server\tests\test_golden_dataset_validation.py:109:            payload["unload_diam"] = act_data.get("diameter") 
+or act_data.get("unload_diam")
+  new\server\tests\test_independent_differential.py:33:    IndependentCompletions,
+> new\server\tests\test_independent_differential.py:34:    IndependentLiquidsUnloading,
+  new\server\tests\test_independent_differential.py:35:    IndependentBlowdown,
+  new\server\tests\test_independent_differential.py:36:    IndependentStorageTanks,
+  new\server\tests\test_independent_differential.py:159:
+> new\server\tests\test_independent_differential.py:160:    def test_diff_liquids_unloading(self, prod_dispatcher):
+> new\server\tests\test_independent_differential.py:161:        """Diff Test: Liquids unloading wellbore geometry."""
+  new\server\tests\test_independent_differential.py:162:        payload = {
+  new\server\tests\test_independent_differential.py:163:            "unload_depth": 6000.0,
+  new\server\tests\test_independent_differential.py:173:
+> new\server\tests\test_independent_differential.py:174:        res_prod = 
+prod_dispatcher.dispatch("liquids_unloading", payload, {}, {}, gwp_dict=GWP_AR5)
+> new\server\tests\test_independent_differential.py:175:        res_ref = IndependentLiquidsUnloading.calculate(
+  new\server\tests\test_independent_differential.py:176:            well_depth=6000.0,
+  new\server\tests\test_independent_differential.py:177:            diameter=2.875,
+  new\server\tests\test_numerical_invariants.py:46:    CompletionFlowbackCalculator,
+> new\server\tests\test_numerical_invariants.py:47:    LiquidsUnloadingCalculator,
+  new\server\tests\test_numerical_invariants.py:48:    BlowdownCalculator,
+  new\server\tests\test_numerical_invariants.py:49:    TankFlashingCalculator,
+  new\server\tests\test_numerical_invariants.py:183:
+> new\server\tests\test_numerical_invariants.py:184:        # 11. Liquids Unloading
+> new\server\tests\test_numerical_invariants.py:185:        assert LiquidsUnloadingCalculator().calculate(5000.0, 2.0, 
+100.0, 0.85, 0, {})["total_co2e"] == 0.0
+  new\server\tests\test_numerical_invariants.py:186:
+  new\server\tests\test_numerical_invariants.py:187:        # 12. Blowdown
+  new\server\tests\test_qfull_api_pipeline.py:1121:# 
+=====================================================================
+> new\server\tests\test_qfull_api_pipeline.py:1122:# TEST CLASS: Liquids Unloading
+  new\server\tests\test_qfull_api_pipeline.py:1123:# 
+=====================================================================
+> new\server\tests\test_qfull_api_pipeline.py:1124:class TestLiquidsUnloadingPipeline:
+> new\server\tests\test_qfull_api_pipeline.py:1125:    """API Eq. 6-3: Liquids unloading (T/P corrected column 
+volume)."""
+  new\server\tests\test_qfull_api_pipeline.py:1126:
+> new\server\tests\test_qfull_api_pipeline.py:1127:    def test_standard_well_unloading(self, auth_client, 
+facility_id):
+  new\server\tests\test_qfull_api_pipeline.py:1128:        """
+> new\server\tests\test_qfull_api_pipeline.py:1129:        LIQUIDS UNLOADING T3:
+  new\server\tests\test_qfull_api_pipeline.py:1130:        depth=5000 ft, diameter=2.5 in, pressure=500 psig, 
+events=12, ch4=0.85, temp=60�F
+  new\server\tests\test_qfull_api_pipeline.py:1131:
+  new\server\tests\test_qfull_api_pipeline.py:1171:        payload = {
+> new\server\tests\test_qfull_api_pipeline.py:1172:            "process_type": "liquids_unloading",
+  new\server\tests\test_qfull_api_pipeline.py:1173:            "quantity": events,
+  new\server\tests\test_qfull_api_pipeline.py:1174:            "unit": "m3",
+  new\server\tests\test_qfull_api_pipeline.py:1184:        assert em["ch4"] == pytest.approx(expected_ch4, rel=1e-3), (
+> new\server\tests\test_qfull_api_pipeline.py:1185:            f"Liquids unloading CH4:\n"
+  new\server\tests\test_qfull_api_pipeline.py:1186:            f"  d_m={d_m:.4f}, depth_m={depth_m:.1f}, 
+v_tubing={v_tubing:.6f}\n"
+  new\server\tests\test_qfull_api_pipeline.py:1187:            f"  p_factor={p_factor:.4f}, t_factor={t_factor:.6f}\n"
+  new\server\tests\test_qfull_validation.py:434:
+> new\server\tests\test_qfull_validation.py:435:class TestLiquidsUnloading:
+> new\server\tests\test_qfull_validation.py:436:    def test_liquids_unloading_standard(self):
+  new\server\tests\test_qfull_validation.py:437:        payload = {
+> new\server\tests\test_qfull_validation.py:438:            'process_type': 'liquids_unloading',
+  new\server\tests\test_qfull_validation.py:439:            'quantity': 12.0,
+  new\server\tests\test_qfull_validation.py:440:            'unit': 'm3',
+  new\server\tests\test_qfull_validation.py:463:
+> new\server\tests\test_qfull_validation.py:464:    def test_liquids_unloading_single_event(self):
+  new\server\tests\test_qfull_validation.py:465:        payload = {
+> new\server\tests\test_qfull_validation.py:466:            'process_type': 'liquids_unloading',
+  new\server\tests\test_qfull_validation.py:467:            'quantity': 1.0,
+  new\server\tests\test_qfull_validation.py:468:            'unit': 'm3',
+  new\server\tests\test_tier_scope_kpi_numerical.py:19:    PneumaticDeviceCalculator,
+> new\server\tests\test_tier_scope_kpi_numerical.py:20:    LiquidsUnloadingCalculator,
+  new\server\tests\test_tier_scope_kpi_numerical.py:21:    BlowdownCalculator,
+  new\server\tests\test_tier_scope_kpi_numerical.py:22:    TankFlashingCalculator,
+  new\server\tests\test_vented.py:53:
+> new\server\tests\test_vented.py:54:def test_liquids_unloading_units():
+> new\server\tests\test_vented.py:55:    """Verify liquids unloading accepts depth/diam/press units without error"""
+> new\server\tests\test_vented.py:56:    from calculations.vented import LiquidsUnloadingCalculator
+  new\server\tests\test_vented.py:57:
+> new\server\tests\test_vented.py:58:    calc = LiquidsUnloadingCalculator()
+  new\server\tests\test_vented.py:59:    res = calc.calculate(
+  new\server\tests\test_vented.py:60:        well_depth=1000,
+
+
+

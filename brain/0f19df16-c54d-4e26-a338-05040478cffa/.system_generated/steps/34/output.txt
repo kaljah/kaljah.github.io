@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+docs/validation/01-calculation-inventory.md:- **Emission Factor Source**: Flowback rate or API Table 6-2 defaults.
+docs/validation/calculation-inventory.md:- **Emission Factor Source**: Flowback rate or API Table 6-2 defaults.
+docs/validation/methodology-matrix.md:| **Completions** | API / EPA Subpart W | 2021 / 2024 | Section 6.2 / 40 CFR 98.233(g) | REC or Table 6-2 | AR5 | **PASS** |
+

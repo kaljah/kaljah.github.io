@@ -1,0 +1,84 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+hypothesis profile 'default'
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 24 items
+
+new\server\tests\test_numerical_invariants.py::TestConservationLaws::test_stoichiometric_carbon_mass_balance PASSED [  4%]
+new\server\tests\test_numerical_invariants.py::TestConservationLaws::test_flaring_dual_efficiency_mass_balance PASSED [  8%]
+new\server\tests\test_numerical_invariants.py::TestConservationLaws::test_dehydrator_stoichiometric_carbon_balance PASSED [ 12%]
+new\server\tests\test_numerical_invariants.py::TestConservationLaws::test_cogen_allocation_energy_conservation PASSED [ 16%]
+new\server\tests\test_numerical_invariants.py::TestBoundaryConditions::test_all_calculators_zero_activity_no_crash FAILED [ 20%]
+new\server\tests\test_numerical_invariants.py::TestBoundaryConditions::test_extreme_orders_of_magnitude PASSED [ 25%]
+new\server\tests\test_numerical_invariants.py::TestDimensionalInvariants::test_bidirectional_conversions_exactness PASSED [ 29%]
+new\server\tests\test_numerical_invariants.py::TestDimensionalInvariants::test_thermodynamic_ideal_gas_normalization PASSED [ 33%]
+new\server\tests\test_numerical_invariants.py::TestDimensionalInvariants::test_temperature_unit_conversions PASSED [ 37%]
+new\server\tests\test_numerical_invariants.py::TestUncertaintyQuantification::test_srss_subadditivity_property PASSED [ 41%]
+new\server\tests\test_numerical_invariants.py::TestUncertaintyQuantification::test_confidence_interval_bounds_ordering PASSED [ 45%]
+new\server\tests\test_numerical_invariants.py::TestUncertaintyQuantification::test_zero_emission_uncertainty_bounds PASSED [ 50%]
+new\server\tests\test_numerical_invariants.py::TestAnomalyMathematics::test_z_score_identical_history_no_false_positive PASSED [ 54%]
+new\server\tests\test_numerical_invariants.py::TestAnomalyMathematics::test_z_score_small_sample_guard PASSED [ 58%]
+new\server\tests\test_numerical_invariants.py::TestSatelliteFluxMathematics::test_column_mass_flux_linearity PASSED [ 62%]
+new\server\tests\test_numerical_invariants.py::TestSatelliteFluxMathematics::test_zero_and_negative_anomaly_returns_zero PASSED [ 66%]
+new\server\tests\test_numerical_invariants.py::TestNormativeGoldenBenchmarks::test_api_example_4_1_fuel_gas_combustion PASSED [ 70%]
+new\server\tests\test_numerical_invariants.py::TestNormativeGoldenBenchmarks::test_api_example_4_5_flaring_dual_efficiency PASSED [ 75%]
+new\server\tests\test_numerical_invariants.py::TestNormativeGoldenBenchmarks::test_api_example_6_5_vessel_blowdown_compressibility PASSED [ 79%]
+new\server\tests\test_numerical_invariants.py::TestNormativeGoldenBenchmarks::test_api_example_6_6_teg_dehydration_gri_glycalc PASSED [ 83%]
+new\server\tests\test_numerical_invariants.py::TestNormativeGoldenBenchmarks::test_api_table_7_3_compressor_seals PASSED [ 87%]
+new\server\tests\test_numerical_invariants.py::TestNormativeGoldenBenchmarks::test_scope2_indirect_steam_net_efficiency PASSED [ 91%]
+new\server\tests\test_numerical_invariants.py::TestNormativeGoldenBenchmarks::test_scope3_materials_and_spend_eeio PASSED [ 95%]
+new\server\tests\test_numerical_invariants.py::TestNormativeGoldenBenchmarks::test_ipcc_uncertainty_srss_worked_example PASSED [100%]
+
+================================== FAILURES ===================================
+_____ TestBoundaryConditions.test_all_calculators_zero_activity_no_crash ______
+
+self = <test_numerical_invariants.TestBoundaryConditions object at 0x000001D68A371790>
+
+    def test_all_calculators_zero_activity_no_crash(self):
+        """Every calculation engine must return 0.0 total_co2e on zero activity without ZeroDivisionError."""
+        # 1. Stoichiometry
+        assert StoichiometricCalculator().calculate(0.0, 0.85, {})["total_co2e"] == 0.0
+    
+        # 2. Combustion
+        assert CombustionCalculator().calculate(0.0, 50.0, 0.01, 0.001, {}, 1020.0, "kg/m3", "m3", "gas")["total_co2e"] == 0.0
+    
+        # 3. Flaring
+        assert FlaringCalculator().calculate(0.0, 0.90, "elevated", {})["total_co2e"] == 0.0
+    
+        # 4. Indirect Steam
+        assert IndirectSteamCalculator().calculate(0.0, 50.0, 0.80, 0.05, {})["total_co2e"] == 0.0
+    
+        # 5. Cogen Allocation
+        assert CogenAllocationCalculator().calculate(0.0, 100.0, 50.0)["total_co2e"] == 0.0
+    
+        # 6. Fugitive Component
+        assert ComponentFugitiveCalculator().calculate({}, 0.85, {})["total_co2e"] == 0.0
+    
+        # 7. Equipment Fugitive
+        assert EquipmentFugitiveCalculator().calculate(0, 0.01, 0.85, {})["total_co2e"] == 0.0
+    
+        # 8. Compressor Seal
+        assert CompressorSealCalculator().calculate(0, "reciprocating", {})["total_co2e"] == 0.0
+    
+        # 9. Mud Degassing
+>       assert MudDegassingCalculator().calculate(0, 0.85, {})["total_co2e"] == 0.0
+E       assert 1.24712 == 0.0
+
+new\server\tests\test_numerical_invariants.py:179: AssertionError
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_numerical_invariants.py::TestBoundaryConditions::test_all_calculators_zero_activity_no_crash
+=================== 1 failed, 23 passed, 1 warning in 1.30s ===================
+

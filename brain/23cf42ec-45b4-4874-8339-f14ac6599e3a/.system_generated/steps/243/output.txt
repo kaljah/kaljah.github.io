@@ -1,0 +1,16 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -312,7 +312,9 @@
+         # TIER 1 / TIER 2 ROUTING: default or custom factor sources
+         # Only requires standard activity data; never fails on missing engineering inputs.
+         # =========================================================================
+-        if factor_source in ["default", "custom"] and process_type not in ["drilling", "mud_degassing"]:
++        if factor_source in ["default", "custom"] and process_type not in [
++            "drilling", "mud_degassing", "completions", "completion_flowback"
++        ]:
+             if process_type in [
+                 "stationary_combustion",
+                 "combustion",
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

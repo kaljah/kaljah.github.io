@@ -1,0 +1,33 @@
+
+The command exited with code 0.
+Output:
+
+> new\client\src\utils\EmissionFactors.js:1334:export const PROCESS_TYPES = {
+  new\client\src\utils\EmissionFactors.js:1335:  combustion: "Stationary Combustion",
+  new\client\src\utils\EmissionFactors.js:1336:  flaring: "Flaring",
+  new\client\src\utils\EmissionFactors.js:1337:  routine_flaring: "Routine Flaring",
+  new\client\src\utils\EmissionFactors.js:1338:  non_routine_flaring: "Non-Routine Flaring",
+  new\client\src\utils\EmissionFactors.js:1339:  safety_flaring: "Safety Flaring",
+  new\client\src\utils\EmissionFactors.js:1340:  venting: "Venting (Blowdown)",
+  new\client\src\utils\EmissionFactors.js:1341:  pneumatic: "Pneumatic Device",
+  new\client\src\utils\EmissionFactors.js:1342:  tank_flashing: "Storage Tank - Flashing/Events",
+  new\client\src\utils\EmissionFactors.js:1343:  tank_working: "Storage Tank - Working Losses",
+  new\client\src\utils\EmissionFactors.js:1344:  tank_breathing: "Storage Tank - Breathing Losses",
+  new\client\src\utils\EmissionFactors.js:1345:  drilling: "Drilling Operations",
+  new\client\src\utils\EmissionFactors.js:1346:  completions: "Well Completions & Workovers",
+  new\client\src\utils\EmissionFactors.js:1347:  unloading: "Liquids Unloading",
+  new\client\src\utils\EmissionFactors.js:1348:  agr: "Acid Gas Removal (AGR)",
+  new\client\src\utils\EmissionFactors.js:1349:  dehydrator: "Dehydrator",
+  new\client\src\utils\EmissionFactors.js:1350:  mobile: "Mobile Combustion",
+  new\client\src\utils\EmissionFactors.js:1351:  fugitive: "Fugitive Emissions",
+  new\client\src\utils\EmissionFactors.js:1352:  loading: "Loading Losses",
+  new\client\src\utils\EmissionFactors.js:1353:  separation: "Wastewater / Separation",
+  new\client\src\utils\EmissionFactors.js:1354:  chemical_production: "Chemical Production (Process CO�)",
+  new\client\src\utils\EmissionFactors.js:1355:  nitric_acid_production: "Nitric Acid Production (Process N�O)",
+  new\client\src\utils\EmissionFactors.js:1356:  adipic_acid_production: "Adipic Acid Production (Process N�O)",
+  new\client\src\utils\EmissionFactors.js:1357:  asphalt_blowing: "Asphalt Blowing",
+  new\client\src\utils\EmissionFactors.js:1358:  indirect_steam: "Indirect Steam / Heat (Section 8)",
+  new\client\src\utils\EmissionFactors.js:1359:  cogen_allocation: "Cogeneration Allocation (Section 8)",
+
+
+

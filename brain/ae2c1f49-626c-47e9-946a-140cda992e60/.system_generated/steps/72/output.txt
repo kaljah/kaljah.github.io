@@ -1,0 +1,8 @@
+
+The command exited with code 0.
+Output:
+
+new\server\emission_factors_api2021.py:369:    "Associated Gas (Flaring)": {
+
+
+

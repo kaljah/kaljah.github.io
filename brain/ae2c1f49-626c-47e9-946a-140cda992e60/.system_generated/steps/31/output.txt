@@ -1,0 +1,102 @@
+
+The command exited with code 0.
+Output:
+<truncated 1 lines>
+  new\server\calculations\dispatcher.py:8:    CompletionFlowbackCalculator,
+> new\server\calculations\dispatcher.py:9:    BlowdownCalculator,
+  new\server\calculations\dispatcher.py:10:)
+  new\server\calculations\dispatcher.py:11:from .fugitive import (
+  new\server\calculations\dispatcher.py:12:    ComponentFugitiveCalculator,
+  new\server\calculations\dispatcher.py:13:    EquipmentFugitiveCalculator,
+  new\server\calculations\dispatcher.py:14:    CompressorSealCalculator,
+  new\server\calculations\dispatcher.py:15:)
+  new\server\calculations\dispatcher.py:16:from .midstream import AGRCalculator, DehydratorCalculator
+  new\server\calculations\dispatcher.py:17:from .indirect import IndirectSteamCalculator, CogenAllocationCalculator
+  new\server\calculations\dispatcher.py:18:from .stoichiometry import StoichiometricCalculator, NitricAcidCalculator
+  new\server\calculations\dispatcher.py:19:from .units import CONVERSIONS, calculate_co2e
+  new\server\calculations\dispatcher.py:80:            "chemical_production": StoichiometricCalculator(),
+  new\server\calculations\dispatcher.py:81:            "nitric_acid_production": NitricAcidCalculator(),
+  new\server\calculations\dispatcher.py:82:            "adipic_acid_production": NitricAcidCalculator(),
+  new\server\calculations\dispatcher.py:83:            "asphalt_blowing": StoichiometricCalculator(),
+  new\server\calculations\dispatcher.py:84:            "asphalt": StoichiometricCalculator(),
+> new\server\calculations\dispatcher.py:85:            "venting": BlowdownCalculator(),
+> new\server\calculations\dispatcher.py:86:            "blowdown": BlowdownCalculator(),
+  new\server\calculations\dispatcher.py:87:        }
+  new\server\calculations\dispatcher.py:88:
+  new\server\calculations\dispatcher.py:89:    def _require(self, key, inputs, description):
+  new\server\calculations\dispatcher.py:90:        val = inputs.get(key)
+  new\server\calculations\dispatcher.py:91:        if val in [None, "", "-"]:
+  new\server\calculations\dispatcher.py:92:            from flask import current_app, has_app_context
+  new\server\calculations\dispatcher.py:93:
+  new\server\calculations\dispatcher.py:94:            if has_app_context():
+  new\server\calculations\dispatcher.py:95:                current_app.logger.warning(
+  new\server\calculations\dispatcher.py:96:                    f"Missing required field: {key} ({description})"
+  new\server\calculations\dispatcher.py:737:                    press_unit=press_unit,
+  new\server\calculations\dispatcher.py:738:                    hhv=float(flat_inputs.get("hhv") or 
+emission_factors.get("hhv") or 1020.0),
+  new\server\calculations\dispatcher.py:739:                    gwp_dict=gwp_dict,
+  new\server\calculations\dispatcher.py:740:                )
+  new\server\calculations\dispatcher.py:741:
+> new\server\calculations\dispatcher.py:742:            elif process_type in ["venting", "blowdown"]:
+  new\server\calculations\dispatcher.py:743:                raw_vol = self._require_float(
+  new\server\calculations\dispatcher.py:744:                    flat_inputs,
+> new\server\calculations\dispatcher.py:745:                    ["blowdown_volume", "amount", "quantity"],
+  new\server\calculations\dispatcher.py:746:                    "vessel physical volume",
+  new\server\calculations\dispatcher.py:747:                )
+> new\server\calculations\dispatcher.py:748:                raw_unit = flat_inputs.get("blowdown_unit") or unit or "m3"
+  new\server\calculations\dispatcher.py:749:                vol_m3 = self._normalize_volume(raw_vol, raw_unit, "m3")
+  new\server\calculations\dispatcher.py:750:                press = self._require_float(
+  new\server\calculations\dispatcher.py:751:                    flat_inputs,
+> new\server\calculations\dispatcher.py:752:                    ["blowdown_pressure", "pressure"],
+> new\server\calculations\dispatcher.py:753:                    "vessel pressure before blowdown (psig)",
+  new\server\calculations\dispatcher.py:754:                )
+  new\server\calculations\dispatcher.py:755:                events = int(
+  new\server\calculations\dispatcher.py:756:                    self._require_float(
+  new\server\calculations\dispatcher.py:757:                        flat_inputs,
+> new\server\calculations\dispatcher.py:758:                        ["blowdown_events", "events"],
+> new\server\calculations\dispatcher.py:759:                        "number of blowdown events",
+  new\server\calculations\dispatcher.py:760:                    )
+  new\server\calculations\dispatcher.py:761:                )
+  new\server\calculations\dispatcher.py:762:                ch4_content = self._require_fraction(
+  new\server\calculations\dispatcher.py:763:                    flat_inputs, ["ch4_content", "c1"], "gas CH4 content %"
+  new\server\calculations\dispatcher.py:764:                )
+  new\server\calculations\dispatcher.py:765:                co2_content = self._optional_fraction(
+  new\server\calculations\dispatcher.py:766:                    flat_inputs, ["co2_content", "co2_mol"], 0.0
+  new\server\calculations\dispatcher.py:767:                )
+  new\server\calculations\dispatcher.py:768:                flare_eff = self._optional_fraction(
+  new\server\calculations\dispatcher.py:769:                    flat_inputs, ["control_efficiency"], 0.0
+  new\server\calculations\dispatcher.py:772:                ef_co2 = emission_factors.get("co2")
+  new\server\calculations\dispatcher.py:773:                ef_ch4 = emission_factors.get("ch4")
+  new\server\calculations\dispatcher.py:774:                ef_n2o = emission_factors.get("n2o")
+  new\server\calculations\dispatcher.py:775:
+  new\server\calculations\dispatcher.py:776:                return calculator.calculate(
+> new\server\calculations\dispatcher.py:777:                    blowdown_volume=vol_m3,
+  new\server\calculations\dispatcher.py:778:                    pressure=press,
+  new\server\calculations\dispatcher.py:779:                    events=events,
+  new\server\calculations\dispatcher.py:780:                    ch4_content=ch4_content,
+  new\server\calculations\dispatcher.py:781:                    uncertainties=uncertainties,
+  new\server\calculations\dispatcher.py:782:                    co2_content=co2_content,
+  new\server\calculations\dispatcher.py:783:                    control_efficiency=flare_eff,
+  new\server\calculations\dispatcher.py:784:                    ef_co2=ef_co2,
+  new\server\calculations\dispatcher.py:785:                    ef_ch4=ef_ch4,
+  new\server\calculations\dispatcher.py:786:                    ef_n2o=ef_n2o,
+> new\server\calculations\dispatcher.py:787:                    operating_temperature=flat_inputs.get("blowdown_temp")
+  new\server\calculations\dispatcher.py:788:                    or flat_inputs.get("operating_temperature", 60.0),
+  new\server\calculations\dispatcher.py:789:                    temp_unit=flat_inputs.get("temp_unit")
+> new\server\calculations\dispatcher.py:790:                    or flat_inputs.get("blowdown_temp_unit", "F"),
+  new\server\calculations\dispatcher.py:791:                    press_unit=flat_inputs.get("press_unit")
+> new\server\calculations\dispatcher.py:792:                    or flat_inputs.get("blowdown_press_unit", "psig"),
+  new\server\calculations\dispatcher.py:793:                    z_factor=flat_inputs.get("z_factor", 1.0),
+  new\server\calculations\dispatcher.py:794:                    hhv=float(flat_inputs.get("hhv") or 
+emission_factors.get("hhv") or 1020.0),
+  new\server\calculations\dispatcher.py:795:                    gwp_dict=gwp_dict,
+  new\server\calculations\dispatcher.py:796:                )
+  new\server\calculations\dispatcher.py:797:
+  new\server\calculations\dispatcher.py:798:            elif process_type in [
+  new\server\calculations\dispatcher.py:799:                "tank",
+  new\server\calculations\dispatcher.py:800:                "tank_flashing",
+  new\server\calculations\dispatcher.py:801:                "storage_tanks",
+  new\server\calculations\dispatcher.py:802:                "tank_working",
+
+
+

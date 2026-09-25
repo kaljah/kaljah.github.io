@@ -1,0 +1,22 @@
+
+The command exited with code 0.
+Output:
+
+  new\client\src\components\Scope1Form.jsx:638:
+  new\client\src\components\Scope1Form.jsx:639:    if (!isUpstreamEng && (!amount || parseFloat(amount) <= 0)) {
+  new\client\src\components\Scope1Form.jsx:640:      toast.warning(
+> new\client\src\components\Scope1Form.jsx:641:        "Please enter a valid activity amount/quantity greater than 0",
+  new\client\src\components\Scope1Form.jsx:642:      );
+  new\client\src\components\Scope1Form.jsx:643:      return;
+  new\client\src\components\Scope1Form.jsx:644:    }
+  new\client\src\components\Scope1Form.jsx:645:
+  new\client\src\components\Scope1Form.jsx:646:    // Strict validation for Tier 3 (Engineering / Specific) inputs
+  new\client\src\components\Scope1Form.jsx:647:    if (sourceType === "specific") {
+  new\client\src\components\Scope1Form.jsx:648:      if (
+  new\client\src\components\Scope1Form.jsx:649:        ["combustion", "stationary_combustion", 
+"flaring"].includes(processType)
+  new\client\src\components\Scope1Form.jsx:650:      ) {
+  new\client\src\components\Scope1Form.jsx:651:        if (!formData.hhv || parseFloat(formData.hhv) <= 0) {
+
+
+

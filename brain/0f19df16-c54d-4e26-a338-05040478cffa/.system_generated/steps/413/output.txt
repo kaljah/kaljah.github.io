@@ -1,0 +1,34 @@
+The search for ""Table 6-2" "API" "mud" drilling degassing "water-based" "oil-based" "onshore" "offshore"" returned the following summary:
+The reference to **"Table 6-2"** regarding **mud degassing** in the context of **API** (American Petroleum Institute) documentation is most frequently associated with the **"Compendium of Greenhouse Gas Emissions Methodologies for the Oil and Natural Gas Industry."**[1][2][3]
+
+### Context of "Table 6-2"
+In the API *Compendium of Greenhouse Gas Emissions Methodologies*, **Table 6-2** typically provides **vented methane emission factors** specifically for mud degassing operations during oil and natural gas exploration and production.[1][3]
+
+Key points regarding these emissions and methodologies include:
+*   **Purpose:** Mud degassing involves the separation of formation gas that has become entrained or dissolved in the drilling mud as it returns to the surface.[4] When this gas is vented to the atmosphere, it constitutes a source of greenhouse gas emissions (specifically methane and VOCs).[4]
+*   **Emission Factors:** The table provides standardized emission factors that operators can use to estimate these releases based on drilling activity (e.g., number of days spent drilling) and the type of mud used.[4][5]
+*   **Mud Types:** Methodologies differentiate between:
+    *   **Water-Based Muds (WBM):** Often used for their cost-effectiveness and environmental profile; however, they have different gas-holding characteristics compared to oil-based fluids.[6][7][8]
+    *   **Oil-Based Muds (OBM) / Synthetic-Based Muds (SBM):** Often used in challenging (e.g., HPHT) or complex formations.[9][7] These fluids can have a higher affinity for certain dissolved hydrocarbons, which is accounted for in emission estimation models.[4]
+*   **Onshore vs. Offshore:** The *Compendium* and related regulatory studies (such as those by the EPA or BOEM) apply these methodologies to both onshore and offshore environments, though the specific operational risks and venting regulations may vary by region and platform type.[1][4][5]
+
+### Important Distinction
+It is important not to confuse this GHG methodology table with **API Recommended Practices (RP)** such as **API RP 13B-1** (for water-based fluids) or **API RP 13B-2** (for oil-based fluids).[10][11] Those documents contain technical tables for:
+*   **Fluid Properties:** Measuring density (mud weight), viscosity, gel strength, and filtration rates.[10][11]
+*   **Testing Procedures:** Standardized methods for field and laboratory testing to ensure drilling fluid performance.[10][11]
+
+If you are looking for specific numerical values, you should consult the latest version of the **API Compendium of GHG Emissions Methodologies** directly, as emission factors are occasionally updated based on new industry data and regulatory feedback.[2][12]
+
+Sources:
+[1] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQE8_-dxRuZ-e-6G8KmXfkTbyP69cAokLiROrsaq8SNRTSoCDMJ_bqlO48Iq_DdjjQvDzPwVK_sog6o0AX1EoISQrlumZg2KayOk3_e-7Q64nHPES3rwt0eCRpDePqYQgJ4PBgl5emioGCpNuWp7v6Kru6Rn7rBtrjJHxceIK-Pd6r6vUpzHnzKSHw==)
+[2] [ca.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGFpUiK-3Np8ylBuyGl3RDLTm_wdsPwYJR1VPTG6QKtGysePA28LoKHw-taeNRs5HwJhgfLPLvmQjQ964Y8-FtfMMg4UEXQD-BPNqgTJc2_5PUEe2QhUFzH_2d3SS6fAt2_14dYYAptEC1K3Cp5XMgC4NNlwo5c7g==)
+[3] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQE8_-dxRuZ-e-6G8KmXfkTbyP69cAokLiROrsaq8SNRTSoCDMJ_bqlO48Iq_DdjjQvDzPwVK_sog6o0AX1EoISQrlumZg2KayOk3_e-7Q64nHPES3rwt0eCRpDePqYQgJ4PBgl5emioGCpNuWp7v6Kru6Rn7rBtrjJHxceIK-Pd6r6vUpzHnzKSHw==)
+[4] [govinfo.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFM9OIRbW4lKBvXmagEs0CGqXr_RsIdiQQ6fFTiCwHTqGhdwJDOFlPUTATkldFKFo5le6IL2-9hRuOO2rMXvvttf1rj9s-AVJYNL2CQz7lhY5NFubHHhIB4xmfeleBEVHW_lXalASQZZ2yvZTrhwDNzmXU76OqqalGcDm45Y1RJ8d7w9GlfhqM1aXNxpOh7J0R3LG3Gqnsax1b5UYyoevw-LaAm8tCp5D-gBgG4ThhMKWd5ZQwp)
+[5] [govinfo.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFM9OIRbW4lKBvXmagEs0CGqXr_RsIdiQQ6fFTiCwHTqGhdwJDOFlPUTATkldFKFo5le6IL2-9hRuOO2rMXvvttf1rj9s-AVJYNL2CQz7lhY5NFubHHhIB4xmfeleBEVHW_lXalASQZZ2yvZTrhwDNzmXU76OqqalGcDm45Y1RJ8d7w9GlfhqM1aXNxpOh7J0R3LG3Gqnsax1b5UYyoevw-LaAm8tCp5D-gBgG4ThhMKWd5ZQwp)
+[6] [academia.edu](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHg4vYLtsvsiRIIyvs1wAct4hyHFNy3XhxQgROMw-7IS1BSSEXWBqNR_GmhkzP5xV9cARDCfTN6c7mUuYaqWgQ5zbQy_jkc76fn-WLwQG3QbEqpWHYBY9SWuiLNmuoI93Vdggqc3gu82Mby-V3knCsyDT0xy0iKn0kFklcFQMNAYgUMivxLQg==)
+[7] [basekim.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFYsDxzCjypQSK6CRwZzR5RmqC8_h8XKvw1l411LqLoE4pNxnqChHqzPXaydN3_qzYLzNPKyN3ZUbZ6ZR0gcbSgWPWIHigryTx9MEd5JVUbO6itQkJV5qTH0WP-nqrCshdtwGcwdcxdjXk=)
+[8] [patsnap.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGP7tCciG932GXWZ22PjyOOBEUKWL_qbkCCxF59uAhQyRbs5TLJrKv1twGW58mhm2HkH_ZnF-6gGqllncxYcWa8Sid86JsRi_FSNL4UxsIy4s64dUl0-OWMPLLlzTRXrYTSoVptdKLT-ebV8oVLm-qXTlovlYJ58JgTFJRbb2TI0s_RyP-_NPZrJ_oIMRAihsrkBl3i)
+[9] [researchgate.net](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHdovY-IuMUQoUZBE-GAJ6q0W1cP54aaB2vx0rkkQPFChggKX9q8Aft_vkQmFHZ4mEko3V6szjy8oMh_lsgrjbHbTe3lo2Ne--jTCcBk-_uypyESQbJ6CHwb9mUmR0a8WdIeJyLatLKbqu3BO5iGqmhLuboKiuFZA5VRKhj3CbWI_BWVb8wiQxKCKuCh-0-9KjaUOacvvjpoBGzAoT77bsz7TNYKLlBx8IJt2V3vu3hV_E1V-lSsKfw)
+[10] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGYiV9hQ9FhudXpN2FRV1MWpOSy81AnIs-mhHlcCQdIpVFSEDTPJCOkjGPLtaWVLq6_kBrE1N_NuCAvL-Gc3aiU-0qbShHjdEq1yQeSMhn2bqAhjdtDGyEdLGFBaS9R8eKi3OEBEqprrTdi3h6-jSe2Migcq0k4c--nu55C81cA9ITR5dY=)
+[11] [iadc.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGjEZDdNu3tenwMjjJCtdVDXwMP_9EWrzydpYfKAqthDYnYWH4CGBlPtm9yxTxRx3klg4k2WiS5qzeS-p7Hd9HJQ4O-C3UgH0yRfVzB2eWfXd4mQ_6_X5qDvDK6drkyHQwxo9G37sVyhVxfPVdo_feH)
+[12] [epa.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEJ8vQuN0rFDCCYIepxeMAWIlTNjZDx8xV87ZEwvznNaXbSVxWHIPvV_VCSFlyGFrTB4mujZn0xR0CmVEnoAywyvrWpeB7rvJKchDI_nCGbwQLa03DtthEq1qimWy1pjg2CZxEw8dg-K2Hvsn5ItQUPtZ5fkf6BY5qlGrqR9n7qHWsPVZO88Qbmnu3SD_g7EeOgIuZm8PCO)

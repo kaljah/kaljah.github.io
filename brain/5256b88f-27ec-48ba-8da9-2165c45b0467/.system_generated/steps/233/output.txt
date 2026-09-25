@@ -1,0 +1,47 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\emission_factors.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -140,15 +140,18 @@
+         "description": "Flanges in Gas Service",
+         "uncertainty": {"co2": 0.3, "ch4": 0.3, "n2o": 0.3},
+     },
+-    # Liquids Unloading Tier 1 - API Compendium 2021 Table 6-7
++    # Liquids Unloading Tier 1 - API Compendium 2021 Table 6-11
+     "UnloadPlunger": {
+         "code": "UnloadPlunger",
+         "type": "unloading",
+-        "ch4": 0.0016,  # tonnes CH4 per event (Plunger Lift)
+-        "factor": 0.0016,
+-        "unit": "tonnes CH4/event",
+-        "description": "Liquids Unloading - Plunger Lift (API Table 6-7)",
+-        "uncertainty": {"co2": 0.0, "ch4": 0.50, "n2o": 0.0},
++        "ch4": 1.774,  # tonnes CH4 per well-year (Plunger Lift)
++        "factor": 1.774,
++        "whole_gas_ef": 113466.0,
++        "ch4_mol_pct": 81.6,
++        "unit": "tonnes CH4/well-year",
++        "baseUnit": "wells",
++        "description": "Liquids Unloading - Plunger Lift (API Table 6-11)",
++        "uncertainty": {"co2": 0.50, "ch4": 0.50, "n2o": 0.50},
+     },
+     "UnloadNonPlunger": {
+         "code": "UnloadNonPlunger",
+@@ -155,8 +155,11 @@
+-        "ch4": 0.0341,  # tonnes CH4 per event (Non-Plunger Lift)
+-        "factor": 0.0341,
+-        "unit": "tonnes CH4/event",
+-        "description": "Liquids Unloading - Non-Plunger Lift (API Table 6-7)",
+-        "uncertainty": {"co2": 0.0, "ch4": 0.50, "n2o": 0.0},
++        "ch4": 2.792,  # tonnes CH4 per well-year (Non-Plunger Lift)
++        "factor": 2.792,
++        "whole_gas_ef": 178531.0,
++        "ch4_mol_pct": 81.6,
++        "unit": "tonnes CH4/well-year",
++        "baseUnit": "wells",
++        "description": "Liquids Unloading - Non-Plunger Lift (API Table 6-11)",
++        "uncertainty": {"co2": 0.50, "ch4": 0.50, "n2o": 0.50},
+     },
+     "Natural Gas - 4-Stroke Lean Burn Engine": {
+         "code": "NG_4SLB",
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

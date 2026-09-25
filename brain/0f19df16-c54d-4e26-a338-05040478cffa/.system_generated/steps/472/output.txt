@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+[2026-09-25 22:22:43,052] INFO in app: Admin seeding skipped (SEED_ADMIN is not set)
+['id', 'name', 'co2_factor', 'ch4_factor', 'n2o_factor', 'co_factor', 'unit', 'hhv_factor', 'usage', 'parent_fuel', 'source', 'description', 'version', 'uncertainty', 'co2_uncertainty', 'ch4_uncertainty', 'n2o_uncertainty', 'uncertainty_pct', 'created_by', 'updated_at', 'created_at']
+

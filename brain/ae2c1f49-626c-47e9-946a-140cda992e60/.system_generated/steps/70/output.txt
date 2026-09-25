@@ -1,0 +1,108 @@
+
+The command exited with code 0.
+Output:
+<truncated 338 lines>
+  new\server\emission_factors_api2021.py:724:        "segment": "Upstream",
+  new\server\emission_factors_api2021.py:725:        "process_category": "storage_tanks",
+  new\server\emission_factors_api2021.py:726:        "type": "equipment",
+  new\server\emission_factors_api2021.py:727:        "description": "Production condensate flashing, large tank (> 10 
+bbl/d)",
+> new\server\emission_factors_api2021.py:728:        "source": "API Compendium 2021 Section 6, Table 6-4",
+  new\server\emission_factors_api2021.py:729:    },
+  new\server\emission_factors_api2021.py:730:    "Tank - Gas-Well Condensate (Small, =10 bbl/d)": {
+  new\server\emission_factors_api2021.py:731:        "code": "TankGasSmall",
+  new\server\emission_factors_api2021.py:732:        "type": "tank",
+  new\server\emission_factors_api2021.py:733:        "ch4": 2.65,  # kg CH4/bbl
+  new\server\emission_factors_api2021.py:734:        "co2": 0,
+  new\server\emission_factors_api2021.py:735:        "n2o": 0,
+  new\server\emission_factors_api2021.py:736:        "uncertainty": {"co2": 0, "ch4": 0.30, "n2o": 0},
+  new\server\emission_factors_api2021.py:737:        "unit": "kg CH4/bbl",
+  new\server\emission_factors_api2021.py:738:        "segment": "Upstream",
+  new\server\emission_factors_api2021.py:739:        "process_category": "storage_tanks",
+  new\server\emission_factors_api2021.py:740:        "type": "equipment",
+  new\server\emission_factors_api2021.py:741:        "description": "Gas-well condensate flashing, small tank (= 10 
+bbl/d)",
+> new\server\emission_factors_api2021.py:742:        "source": "API Compendium 2021 Section 6, Table 6-4",
+  new\server\emission_factors_api2021.py:743:    },
+  new\server\emission_factors_api2021.py:744:    "Tank - Gas-Well Condensate (Large, >10 bbl/d)": {
+  new\server\emission_factors_api2021.py:745:        "code": "TankGasLarge",
+  new\server\emission_factors_api2021.py:746:        "type": "tank",
+  new\server\emission_factors_api2021.py:747:        "ch4": 2.05,  # kg CH4/bbl
+  new\server\emission_factors_api2021.py:748:        "co2": 0,
+  new\server\emission_factors_api2021.py:749:        "n2o": 0,
+  new\server\emission_factors_api2021.py:750:        "uncertainty": {"co2": 0, "ch4": 0.30, "n2o": 0},
+  new\server\emission_factors_api2021.py:751:        "unit": "kg CH4/bbl",
+  new\server\emission_factors_api2021.py:752:        "segment": "Upstream",
+  new\server\emission_factors_api2021.py:753:        "process_category": "storage_tanks",
+  new\server\emission_factors_api2021.py:754:        "type": "equipment",
+  new\server\emission_factors_api2021.py:755:        "description": "Gas-well condensate flashing, large tank (> 10 
+bbl/d)",
+> new\server\emission_factors_api2021.py:756:        "source": "API Compendium 2021 Section 6, Table 6-4",
+  new\server\emission_factors_api2021.py:757:    },
+  new\server\emission_factors_api2021.py:758:    # ========== DRILLING ==========
+  new\server\emission_factors_api2021.py:759:    "Drilling - Mud Degassing (Water Based)": {
+  new\server\emission_factors_api2021.py:760:        "code": "MudWater",
+  new\server\emission_factors_api2021.py:761:        "type": "drilling",
+> new\server\emission_factors_api2021.py:762:        "ch4": 0.15,  # kg CH4/m� mud (matches Section 6.2.1)
+  new\server\emission_factors_api2021.py:763:        "co2": 0,
+  new\server\emission_factors_api2021.py:764:        "n2o": 0,
+  new\server\emission_factors_api2021.py:765:        "uncertainty": {"co2": 0.10, "ch4": 0.50, "n2o": 0.10},
+  new\server\emission_factors_api2021.py:766:        "unit": "kg CH4/m�",
+  new\server\emission_factors_api2021.py:767:        "segment": "Upstream",
+  new\server\emission_factors_api2021.py:768:        "process_category": "drilling",
+  new\server\emission_factors_api2021.py:769:        "type": "equipment",
+  new\server\emission_factors_api2021.py:770:        "description": "Drilling mud degassing - water based",
+> new\server\emission_factors_api2021.py:771:        "source": "API Compendium 2021 Section 6.2",
+  new\server\emission_factors_api2021.py:772:    },
+  new\server\emission_factors_api2021.py:773:    "Drilling - Mud Degassing (Oil Based)": {
+  new\server\emission_factors_api2021.py:774:        "code": "MudOil",
+  new\server\emission_factors_api2021.py:775:        "type": "drilling",
+  new\server\emission_factors_api2021.py:776:        "ch4": 37.5,  # kg CH4/bbl mud
+  new\server\emission_factors_api2021.py:777:        "co2": 0,
+  new\server\emission_factors_api2021.py:778:        "n2o": 0,
+  new\server\emission_factors_api2021.py:779:        "uncertainty": {"co2": 0.10, "ch4": 0.50, "n2o": 0.10},
+  new\server\emission_factors_api2021.py:780:        "unit": "kg CH4/bbl mud",
+  new\server\emission_factors_api2021.py:781:        "segment": "Upstream",
+  new\server\emission_factors_api2021.py:782:        "process_category": "drilling",
+  new\server\emission_factors_api2021.py:783:        "type": "equipment",
+  new\server\emission_factors_api2021.py:784:        "description": "Drilling mud degassing - oil based (diesel)",
+> new\server\emission_factors_api2021.py:785:        "source": "API Compendium 2021 Section 6.2",
+  new\server\emission_factors_api2021.py:786:    },
+  new\server\emission_factors_api2021.py:787:    # ========== DEHYDRATORS ==========
+  new\server\emission_factors_api2021.py:788:    "Dehydrator - Glycol (Uncontrolled)": {
+  new\server\emission_factors_api2021.py:789:        "code": "DehyUncont",
+  new\server\emission_factors_api2021.py:790:        "type": "dehydrator",
+  new\server\emission_factors_api2021.py:791:        "ch4": 0.177,  # scf CH4/MMscf throughput
+  new\server\emission_factors_api2021.py:792:        "co2": 0,
+  new\server\emission_factors_api2021.py:793:        "n2o": 0,
+  new\server\emission_factors_api2021.py:794:        "uncertainty": {"co2": 0.30, "ch4": 0.30, "n2o": 0.30},
+  new\server\emission_factors_api2021.py:795:        "unit": "scf/MMscf",
+  new\server\emission_factors_api2021.py:796:        "segment": "Midstream",
+  new\server\emission_factors_api2021.py:797:        "process_category": "dehydrator",
+  new\server\emission_factors_api2021.py:798:        "type": "equipment",
+  new\server\emission_factors_api2021.py:799:        "description": "Glycol dehydrator venting (uncontrolled)",
+> new\server\emission_factors_api2021.py:800:        "source": "API Compendium 2021 Section 6.11",
+  new\server\emission_factors_api2021.py:801:    },
+  new\server\emission_factors_api2021.py:802:    # ========== UPSTREAM: OIL WELLHEADS (Table 7-9) ==========
+  new\server\emission_factors_api2021.py:803:    "Wellhead - Oil (Heavy Crude)": {
+  new\server\emission_factors_api2021.py:804:        "code": "WellOilHeavy",
+  new\server\emission_factors_api2021.py:805:        "type": "wellhead",
+  new\server\emission_factors_api2021.py:806:        "ch4": 6.63e-07,  # tonne CH4/well/hr
+  new\server\emission_factors_api2021.py:807:        "co2": 0,
+  new\server\emission_factors_api2021.py:808:        "n2o": 0,
+  new\server\emission_factors_api2021.py:809:        "uncertainty": {"co2": 0, "ch4": 0.30, "n2o": 0},
+  new\server\emission_factors_api2021.py:810:        "unit": "tonne CH4/well/hr",
+  new\server\emission_factors_api2021.py:811:        "segment": "Upstream",
+  new\server\emission_factors_api2021.py:812:        "process_category": "wellhead_fugitive",
+  new\server\emission_factors_api2021.py:813:        "type": "equipment",
+  new\server\emission_factors_api2021.py:814:        "description": "Oil wellhead fugitive emissions - heavy crude 
+(API < 20�)",
+  new\server\emission_factors_api2021.py:815:        "source": "API Compendium 2021 Section 7.2.2, Table 7-9",
+  new\server\emission_factors_api2021.py:816:    },
+  new\server\emission_factors_api2021.py:817:    "Wellhead - Oil (Light Crude)": {
+  new\server\emission_factors_api2021.py:818:        "code": "WellOilLight",
+  new\server\emission_factors_api2021.py:819:        "type": "wellhead",
+  new\server\emission_factors_api2021.py:820:        "ch4": 1.56e-05,  # tonne CH4/well/hr
+
+
+

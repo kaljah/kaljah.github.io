@@ -1,0 +1,144 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+hypothesis profile 'default'
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 17 items
+
+tests/test_associated_gas_venting.py::test_tier1_us_average_default PASSED [  5%]
+tests/test_associated_gas_venting.py::test_tier1_all_basins PASSED       [ 11%]
+tests/test_associated_gas_venting.py::test_tier1_composition_adjustment_footnote_b PASSED [ 17%]
+tests/test_associated_gas_venting.py::test_tier1_unit_conversions PASSED [ 23%]
+tests/test_associated_gas_venting.py::test_tier2_exhibit_6_5_non_continuous PASSED [ 29%]
+tests/test_associated_gas_venting.py::test_tier2_exhibit_6_6_continuous FAILED [ 35%]
+tests/test_associated_gas_venting.py::test_tier2_net_vented_partitioning_zero_double_counting PASSED [ 41%]
+tests/test_associated_gas_venting.py::test_tier2_gor_metric_conversion PASSED [ 47%]
+tests/test_associated_gas_venting.py::test_tier3_direct_vent_rate PASSED [ 52%]
+tests/test_associated_gas_venting.py::test_tier3_total_measured_volume PASSED [ 58%]
+tests/test_associated_gas_venting.py::test_validation_negative_values PASSED [ 64%]
+tests/test_associated_gas_venting.py::test_validation_gas_composition_exceeds_100 PASSED [ 70%]
+tests/test_associated_gas_venting.py::test_validation_mass_balance_violation PASSED [ 76%]
+tests/test_associated_gas_venting.py::test_validation_duration_exceeds_period PASSED [ 82%]
+tests/test_associated_gas_venting.py::test_high_gor_qa_warning PASSED    [ 88%]
+tests/test_associated_gas_venting.py::test_dispatcher_routing FAILED     [ 94%]
+tests/test_associated_gas_venting.py::test_api_add_emission_associated_gas_venting FAILED [100%]
+
+================================== FAILURES ===================================
+______________________ test_tier2_exhibit_6_6_continuous ______________________
+
+calc = <calculations.vented.AssociatedGasVentingCalculator object at 0x000001EA2DCA92B0>
+
+    def test_tier2_exhibit_6_6_continuous(calc):
+        """
+        API Compendium 2021 Section 6.3.1 - EXHIBIT 6-6:
+        Sample Calculation for Continuous Associated Gas Venting:
+          - Oil production: 5,200 bbl/day
+          - GOR: 700 scf/bbl
+          - Continuous venting throughout 365 days of operation
+          - Gas composition: 70% CH4, 10% CO2
+        Exhibit 6-6 reported values:
+          - E_CH4 = 17,795 tonnes CH4/year
+          - E_CO2 = 6,991 tonnes CO2/year
+        """
+        res = calc.calculate(
+            tier=2,
+            oil_production=5200,
+            oil_unit="bbl/day",
+            gor=700,
+            gor_unit="scf/bbl",
+            venting_duration=365,
+            duration_unit="days",
+            ch4_content=0.70,
+            co2_content=0.10,
+        )
+        ch4_val = res["results"]["ch4"]["value"]
+        co2_val = res["results"]["co2"]["value"]
+    
+        # Exhibit 6-6 exact numbers: 17,795 tonnes CH4 and 6,991 tonnes CO2
+>       assert abs(ch4_val - 17795.0) < 5.0
+E       assert 47.15196186702815 < 5.0
+E        +  where 47.15196186702815 = abs((17842.151961867028 - 17795.0))
+
+tests\test_associated_gas_venting.py:176: AssertionError
+___________________________ test_dispatcher_routing ___________________________
+
+dispatcher = <calculations.dispatcher.CalculationDispatcher object at 0x000001EA2DCAA420>
+
+    def test_dispatcher_routing(dispatcher):
+        """Verify CalculationDispatcher routes associated_gas_venting accurately."""
+        inputs = {
+            "tier": "Tier 1",
+            "oil_production": 5000,
+            "oil_unit": "bbl",
+            "basin": "Williston Basin (Basin 395)",
+        }
+>       res = dispatcher.dispatch("associated_gas_venting", inputs, {})
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: CalculationDispatcher.dispatch() missing 1 required positional argument: 'uncertainties'
+
+tests\test_associated_gas_venting.py:362: TypeError
+________________ test_api_add_emission_associated_gas_venting _________________
+
+    def test_api_add_emission_associated_gas_venting():
+        """Verify POST /api/emissions/ saves Associated Gas Venting and calculates properly."""
+        with app.app_context():
+            # Setup facility and user
+            user = User.query.filter_by(role="admin").first()
+            if not user:
+                user = User(fullName="Admin", orgName="TestOrg", sector="Upstream", email="admin_agv@test.com", role="admin")
+                user.set_password("Admin1234!")
+                db.session.add(user)
+                db.session.commit()
+    
+            fac = Facility.query.first()
+            if not fac:
+                fac = Facility(name="Test Field AGV", location="Hassi Messaoud", segment="Upstream", code="FAC-AGV-01")
+                db.session.add(fac)
+                db.session.commit()
+    
+            client = app.test_client()
+            with client.session_transaction() as sess:
+                sess["user_id"] = user.id
+    
+            # 1. Test POST Tier 1
+            payload_t1 = {
+                "year": 2025,
+                "month": 6,
+                "facility_id": fac.id,
+                "process_type": "associated_gas_venting",
+                "quantity": 10000,
+                "unit": "bbl",
+                "basin": "Permian Basin (Basin 430)",
+                "tier": "Tier 1",
+                "ch4_content": 81.6,
+            }
+            resp = client.post("/api/emissions/", json=payload_t1)
+            assert resp.status_code == 201
+            data = resp.get_json()
+>           assert data["process_type"] == "associated_gas_venting"
+                   ^^^^^^^^^^^^^^^^^^^^
+E           KeyError: 'process_type'
+
+tests\test_associated_gas_venting.py:413: KeyError
+---------------------------- Captured stderr call -----------------------------
+[2026-09-25 22:51:26,493] INFO in app: POST /api/emissions/ 201 [0.044s] [ReqID: 2857a8f8-6242-4a5b-a42c-3835f19f825a]
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:184 POST /api/emissions/ 201 [0.044s] [ReqID: 2857a8f8-6242-4a5b-a42c-3835f19f825a]
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_associated_gas_venting.py::test_tier2_exhibit_6_6_continuous
+FAILED tests/test_associated_gas_venting.py::test_dispatcher_routing - TypeEr...
+FAILED tests/test_associated_gas_venting.py::test_api_add_emission_associated_gas_venting
+=================== 3 failed, 14 passed, 1 warning in 1.75s ===================
+

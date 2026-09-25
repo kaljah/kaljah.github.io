@@ -1,0 +1,22 @@
+The search for ""Table 6-2" "API Compendium" "0.0524" OR "drilling days" OR "mud degassing" "83.85%"" returned the following summary:
+The details you are referencing appear to be related to **Table 6-2** of the **API Compendium of Greenhouse Gas Emissions Estimation Methodologies for the Oil and Natural Gas Industry** (specifically the 2021 edition)[1][2][3].
+
+### Context of the Data
+*   **Table 6-2:** In the 2021 API Compendium, this table is titled **"Mud Degassing Vented Methane Emission Factors for Oil and Natural Gas Exploration"**[1][4].
+*   **Emission Factors:** The Compendium provides methodologies and emission factors for estimating methane (CH4) emissions from mud degassing during drilling operations[1][5].
+*   **Methodology:** The API methodology allows for these factors to be adjusted based on local conditions, drilling days, and the type of drilling mud used (e.g., water-based vs. oil-based/synthetic)[5]. 
+*   **Values Mentioned:** While specific values like "0.0524" or "83.85%" may appear in specific calculation examples, tables, or supplementary regulatory documents (such as EPA Subpart W technical support documents or specific exploration reports), they are typically used as parameters for calculating venting rates or methane content based on specific reservoir or site conditions[6][7][5].
+
+If you are looking for the exact calculation or the specific context of the "0.0524" figure, it is likely a specific emission factor or a conversion coefficient used within the broader methodology provided in the Compendium to derive total emissions over the "drilling days"[3][5]. 
+
+For the most accurate application of these numbers, it is recommended to consult the **2021 API Compendium** directly, as it contains the definitive emission factors and the required steps for unit conversions and adjustments[8][3].
+
+Sources:
+[1] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFbuE6t56J6uqujwZf9XPlhh__ryyGYWtO-e20e-6ezZ_QeN1wUrG1xKHOKjn0TzwYov2xuYJfNh8m-FJwM6Wr8I88xZxxgxFh2hHeeOmnqEJxQLkXNKAApXkZN4eIAHmVdeFk9SkDz0yKi2DkwXi9Iwz0wMWONjSM6HHl5KIUR8_qx_LwoxBv5XQ==)
+[2] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFbuE6t56J6uqujwZf9XPlhh__ryyGYWtO-e20e-6ezZ_QeN1wUrG1xKHOKjn0TzwYov2xuYJfNh8m-FJwM6Wr8I88xZxxgxFh2hHeeOmnqEJxQLkXNKAApXkZN4eIAHmVdeFk9SkDz0yKi2DkwXi9Iwz0wMWONjSM6HHl5KIUR8_qx_LwoxBv5XQ==)
+[3] [environment-agency.gov.uk](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFGK9r_WMsV-KW1mSpD5y1rOpSVGyHSQhxenZTr89sR0CD-fWSrk0vwgJ82qAL_Sf8DHZvRYk_584cd-gsPqtqLfzn-YC4RVpHpjbQYkwCxduAerIORaPSR0qqIG1cUyjXXxohdJzoD2G8naFSk5-k56evtq4gJk5AmLFaByu14O2r2KcGAmrG2LeSFayH5CvAjuPqXByuH0dv8L08KUoUn37CWJ0jgvOfPuEEGEQB-ALOiuoRf5XjM4lrhPip__rISfw==)
+[4] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFbuE6t56J6uqujwZf9XPlhh__ryyGYWtO-e20e-6ezZ_QeN1wUrG1xKHOKjn0TzwYov2xuYJfNh8m-FJwM6Wr8I88xZxxgxFh2hHeeOmnqEJxQLkXNKAApXkZN4eIAHmVdeFk9SkDz0yKi2DkwXi9Iwz0wMWONjSM6HHl5KIUR8_qx_LwoxBv5XQ==)
+[5] [federalregister.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFjgsbEER573aTljZSi2pQSh2G7ET_P9k41tw-U6hx0C_CE_NfLzQyA96hX14DJ1e-m9YZo9tO_uFM_wy9tWYbxN_DDNjYvJIhQebVLWEY3o89FgCl9kCCZme6sRrqwFY2-2OGfoW6Oq2N28Nh-ZMFiFlAA4p7PLOs1Ew7hrVWKch-KKz3zgqxRgSeFbxJhvf1YqkxBszY-8zLrIvfce_97RVeAOH42To7zmz284a3UQMs_wWyMU_kKqD4Z92E6DSICvNfxsXjlQMLG4W-_jC5YDPDUcmZQtZaNtng=)
+[6] [epa.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEFxc8VG3gPVgQLY9o2p4LKFvn7EmMgoADxclgceRzRILX4LNkyyUbD6h0ZJDwrTG4-TdCpshMq5pxqwizSgtZ-rTrKoxBy2jFi3Zrhi2mJF_521g9li-wyZBD5aF2fjuG7LRPRATM5QOpqs2Nh0NXWEpY2Q5xe4ipNWESyDt4mzx_GOJ6o3KphxZHYdw2Vsn7y0E5_etiX)
+[7] [eei.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHdg2BFyvLjRit2YAr1H7hOvBpwUUMDb16CTyjb0tL80VTGXlXFT-PpkuPL6bkC1436Mq9JDsc6eNNPUHSi2HOLkaAZa-etWebjKYMyUwci8Zw8Nfzos_OXQ0MzBydL7kL7ojovsCgjQQ3nyxUa5NGJzxJkyqR8VEgWq11cyzTLWaLoGS8odQC2v8i62wbItSaDk9pUPH7P4yVk)
+[8] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFbuE6t56J6uqujwZf9XPlhh__ryyGYWtO-e20e-6ezZ_QeN1wUrG1xKHOKjn0TzwYov2xuYJfNh8m-FJwM6Wr8I88xZxxgxFh2hHeeOmnqEJxQLkXNKAApXkZN4eIAHmVdeFk9SkDz0yKi2DkwXi9Iwz0wMWONjSM6HHl5KIUR8_qx_LwoxBv5XQ==)

@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+new/client/src/components/Scope1Form.jsx:397:    let factorToUse = null;
+new/client/src/components/Scope1Form.jsx:403:        factorToUse = API_FACTORS[formData.fuel];
+new/client/src/components/Scope1Form.jsx:410:        if (found) factorToUse = found;
+new/client/src/components/Scope1Form.jsx:416:        factorToUse =
+new/client/src/components/Scope1Form.jsx:425:          factorToUse = API_FACTORS[mudKey];
+new/client/src/components/Scope1Form.jsx:430:    updateUncertaintyFromFactor(factorToUse);
+

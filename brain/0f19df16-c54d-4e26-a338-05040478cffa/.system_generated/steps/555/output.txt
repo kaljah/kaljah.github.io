@@ -1,0 +1,86 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\Scope1Form.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -898,34 +898,56 @@
+ 
+       // --- PROCESS-SPECIFIC UNIT STANDARDIZATION ---
+ 
+-      // 1. Drilling Mud Degassing (Tier 1: Table 6-3 wells; Tier 2/2+: Table 6-2 days)
++      // 1. Drilling Mud Degassing (Tier 1: Table 6-3 wells or mud defaults; Tier 2: Custom factor from DB; Tier 2+: Table 6-1/6-2 days)
+       if (processType === "drilling") {
+         const val = parseFloat(formData.amount || formData.quantity || 0);
+         if (sourceType === "default" || sourceType === "tier1") {
++          const selFuel = String(formData.fuel || "");
++          const isWell =
++            selFuel.includes("Well") ||
++            selFuel === "DrillWellDefault" ||
++            !selFuel ||
++            formData.unit === "well";
+           processInputs.tier = "tier1";
+-          processInputs.wells = val;
+-          finalAmount = val;
+-          finalUnit = "well";
+-        } else {
+-          const isT2Plus =
+-            sourceType === "tier2_plus" ||
+-            sourceType === "tier2+" ||
+-            sourceType === "tier_2_plus";
+-          processInputs.tier = isT2Plus ? "tier2_plus" : "tier2";
+-          processInputs.drilling_days = val;
+-          processInputs.mud_type = formData.mud_type || "water_based";
+-          if (isT2Plus) {
+-            processInputs.ch4_fraction =
+-              formData.ch4_fraction !== undefined &&
+-              formData.ch4_fraction !== ""
+-                ? parseFloat(formData.ch4_fraction)
+-                : 0.8385;
+-            if (
+-              formData.co2_fraction !== undefined &&
+-              formData.co2_fraction !== ""
+-            ) {
+-              processInputs.co2_fraction = parseFloat(formData.co2_fraction);
+-            }
++          if (isWell) {
++            processInputs.wells = val;
++            finalAmount = val;
++            finalUnit = "well";
++          } else {
++            processInputs.drilling_days = val;
++            processInputs.mud_type = selFuel.includes("Oil")
++              ? "oil_based"
++              : "water_based";
++            finalAmount = val;
++            finalUnit = "days";
++          }
++        } else if (sourceType === "custom") {
++          // Tier 2: Custom Factor populated from database
++          processInputs.tier = "tier2";
++          processInputs.drilling_days = val;
++          processInputs.custom_factor_id = parseInt(formData.fuel);
++          finalAmount = val;
++          finalUnit = "days";
++        } else {
++          // Tier 2+: Site Gas Composition
++          processInputs.tier = "tier2_plus";
++          processInputs.drilling_days = val;
++          processInputs.mud_type =
++            formData.mud_type ||
++            (formData.fuel?.includes("Oil") ? "oil_based" : "water_based");
++          if (
++            formData.ch4_fraction !== undefined &&
++            formData.ch4_fraction !== ""
++          ) {
++            processInputs.ch4_fraction = parseFloat(formData.ch4_fraction);
++          } else {
++            processInputs.ch4_fraction = 0.8385;
++          }
++          if (
++            formData.co2_fraction !== undefined &&
++            formData.co2_fraction !== ""
++          ) {
++            processInputs.co2_fraction = parseFloat(formData.co2_fraction);
+           }
+           finalAmount = val;
+           finalUnit = "days";
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

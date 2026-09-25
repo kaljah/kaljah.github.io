@@ -1,0 +1,109 @@
+
+The command exited with code 0.
+Output:
+<truncated 2 lines>
+  new\client\src\components\Scope1Form.jsx:18:import CalculationDetails from "./CalculationDetails";
+  new\client\src\components\Scope1Form.jsx:19:import CombustionForm from "./scope1/CombustionForm";
+> new\client\src\components\Scope1Form.jsx:20:import DrillingForm from "./scope1/DrillingForm";
+  new\client\src\components\Scope1Form.jsx:21:import CompletionsForm from "./scope1/CompletionsForm";
+  new\client\src\components\Scope1Form.jsx:22:import UnloadingForm from "./scope1/UnloadingForm";
+  new\client\src\components\Scope1Form.jsx:23:import BlowdownForm from "./scope1/BlowdownForm";
+  new\client\src\components\Scope1Form.jsx:24:import AGRForm from "./scope1/AGRForm";
+  new\client\src\components\Scope1Form.jsx:25:import DehydratorForm from "./scope1/DehydratorForm";
+  new\client\src\components\Scope1Form.jsx:410:        if (found) factorToUse = found;
+  new\client\src\components\Scope1Form.jsx:411:      }
+  new\client\src\components\Scope1Form.jsx:412:    }
+> new\client\src\components\Scope1Form.jsx:413:    // 2. Drilling (Mud Degassing) - implicit factor based on mud type
+> new\client\src\components\Scope1Form.jsx:414:    else if (processType === "drilling") {
+  new\client\src\components\Scope1Form.jsx:415:      const mudType = formData.mud_type || "water";
+  new\client\src\components\Scope1Form.jsx:416:      const mudKey =
+  new\client\src\components\Scope1Form.jsx:417:        mudType === "oil"
+> new\client\src\components\Scope1Form.jsx:418:          ? "Drilling - Mud Degassing (Oil Based)"
+> new\client\src\components\Scope1Form.jsx:419:          : "Drilling - Mud Degassing (Water Based)";
+  new\client\src\components\Scope1Form.jsx:420:      if (API_FACTORS[mudKey]) {
+  new\client\src\components\Scope1Form.jsx:421:        factorToUse = API_FACTORS[mudKey];
+  new\client\src\components\Scope1Form.jsx:422:      }
+  new\client\src\components\Scope1Form.jsx:423:    }
+  new\client\src\components\Scope1Form.jsx:424:
+  new\client\src\components\Scope1Form.jsx:627:    const isUpstreamEng =
+  new\client\src\components\Scope1Form.jsx:628:      sourceType === "specific" &&
+  new\client\src\components\Scope1Form.jsx:629:      [
+> new\client\src\components\Scope1Form.jsx:630:        "drilling",
+  new\client\src\components\Scope1Form.jsx:631:        "completions",
+  new\client\src\components\Scope1Form.jsx:632:        "unloading",
+  new\client\src\components\Scope1Form.jsx:633:        "agr",
+  new\client\src\components\Scope1Form.jsx:634:        "dehydrator",
+  new\client\src\components\Scope1Form.jsx:635:        "venting",
+  new\client\src\components\Scope1Form.jsx:850:
+  new\client\src\components\Scope1Form.jsx:851:      // --- PROCESS-SPECIFIC UNIT STANDARDIZATION ---
+  new\client\src\components\Scope1Form.jsx:852:
+> new\client\src\components\Scope1Form.jsx:853:      // 1. Drilling Mud
+  new\client\src\components\Scope1Form.jsx:854:      // Tier 3 (specific): convert mud_vol to m3 for engineering 
+calculator
+  new\client\src\components\Scope1Form.jsx:855:      // Tier 1 (default/custom): keep in bbl to match the kg CH4/bbl 
+factor unit
+> new\client\src\components\Scope1Form.jsx:856:      if (processType === "drilling" && formData.mud_vol) {
+  new\client\src\components\Scope1Form.jsx:857:        const vol = parseFloat(formData.mud_vol);
+  new\client\src\components\Scope1Form.jsx:858:        const unit = formData.mud_unit || "bbl";
+  new\client\src\components\Scope1Form.jsx:859:        if (sourceType === "specific") {
+  new\client\src\components\Scope1Form.jsx:860:          // Engineering calc needs m3
+  new\client\src\components\Scope1Form.jsx:861:          processInputs.mud_volume =
+  new\client\src\components\Scope1Form.jsx:869:          finalAmount = processInputs.mud_volume;
+  new\client\src\components\Scope1Form.jsx:870:          finalUnit = "bbl";
+  new\client\src\components\Scope1Form.jsx:871:        }
+> new\client\src\components\Scope1Form.jsx:872:      } else if (processType === "drilling" && sourceType !== 
+"specific") {
+  new\client\src\components\Scope1Form.jsx:873:        // Tier 1 without mud_vol: use amount field in bbl
+  new\client\src\components\Scope1Form.jsx:874:        const vol = parseFloat(formData.amount || 0);
+  new\client\src\components\Scope1Form.jsx:875:        const unit = formData.unit || "bbl";
+  new\client\src\components\Scope1Form.jsx:876:        finalAmount =
+  new\client\src\components\Scope1Form.jsx:877:          unit !== "bbl" ? convertActivityData(vol, unit, "bbl") : vol;
+  new\client\src\components\Scope1Form.jsx:1260:    if (
+  new\client\src\components\Scope1Form.jsx:1261:      sourceType !== "specific" &&
+  new\client\src\components\Scope1Form.jsx:1262:      [
+> new\client\src\components\Scope1Form.jsx:1263:        "drilling",
+  new\client\src\components\Scope1Form.jsx:1264:        "completions",
+  new\client\src\components\Scope1Form.jsx:1265:        "unloading",
+  new\client\src\components\Scope1Form.jsx:1266:        "blowdown",
+  new\client\src\components\Scope1Form.jsx:1267:      ].includes(processType)
+  new\client\src\components\Scope1Form.jsx:1268:    ) {
+  new\client\src\components\Scope1Form.jsx:1282:        ) : (
+  new\client\src\components\Scope1Form.jsx:1283:          <CombustionForm {...props} />
+  new\client\src\components\Scope1Form.jsx:1284:        );
+> new\client\src\components\Scope1Form.jsx:1285:      case "drilling":
+> new\client\src\components\Scope1Form.jsx:1286:        return <DrillingForm {...props} />;
+  new\client\src\components\Scope1Form.jsx:1287:      case "completions":
+  new\client\src\components\Scope1Form.jsx:1288:        return <CompletionsForm {...props} />;
+  new\client\src\components\Scope1Form.jsx:1289:      case "unloading":
+  new\client\src\components\Scope1Form.jsx:1290:        return <UnloadingForm {...props} />;
+  new\client\src\components\Scope1Form.jsx:1291:      case "blowdown":
+  new\client\src\components\Scope1Form.jsx:1356:      setProcessType(process);
+  new\client\src\components\Scope1Form.jsx:1357:      if (
+  new\client\src\components\Scope1Form.jsx:1358:        [
+> new\client\src\components\Scope1Form.jsx:1359:          "drilling",
+  new\client\src\components\Scope1Form.jsx:1360:          "completions",
+  new\client\src\components\Scope1Form.jsx:1361:          "unloading",
+  new\client\src\components\Scope1Form.jsx:1362:          "blowdown",
+  new\client\src\components\Scope1Form.jsx:1363:          "agr",
+  new\client\src\components\Scope1Form.jsx:1364:          "dehydrator",
+  new\client\src\components\Scope1Form.jsx:1604:                              if (
+  new\client\src\components\Scope1Form.jsx:1605:                                type === "default" &&
+  new\client\src\components\Scope1Form.jsx:1606:                                [
+> new\client\src\components\Scope1Form.jsx:1607:                                  "drilling",
+  new\client\src\components\Scope1Form.jsx:1608:                                  "completions",
+  new\client\src\components\Scope1Form.jsx:1609:                                  "unloading",
+  new\client\src\components\Scope1Form.jsx:1610:                                  "blowdown",
+  new\client\src\components\Scope1Form.jsx:1611:                                ].includes(processType)
+  new\client\src\components\Scope1Form.jsx:1612:                              ) {
+  new\client\src\components\Scope1Form.jsx:1912:                    "mobile",
+  new\client\src\components\Scope1Form.jsx:1913:                    "fugitive",
+  new\client\src\components\Scope1Form.jsx:1914:                    "venting",
+> new\client\src\components\Scope1Form.jsx:1915:                    "drilling",
+  new\client\src\components\Scope1Form.jsx:1916:                    "completions",
+  new\client\src\components\Scope1Form.jsx:1917:                    "unloading",
+  new\client\src\components\Scope1Form.jsx:1918:                    "blowdown",
+  new\client\src\components\Scope1Form.jsx:1919:                  ].includes(processType) && (
+  new\client\src\components\Scope1Form.jsx:1920:                    <>
+
+
+

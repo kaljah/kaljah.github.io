@@ -1,0 +1,34 @@
+
+The command exited with code 0.
+Output:
+
+LineNumber Line                                                                                                     
+---------- ----                                                                                                     
+         2 from .combustion import CombustionCalculator, FlaringCalculator                                          
+        39             "flaring": FlaringCalculator(),                                                              
+        40             "routine_flaring": FlaringCalculator(),                                                      
+        41             "non_routine_flaring": FlaringCalculator(),                                                  
+        42             "safety_flaring": FlaringCalculator(),                                                       
+        43             "flare": FlaringCalculator(),                                                                
+       274             "flaring",                                                                                   
+       275             "routine_flaring",                                                                           
+       276             "non_routine_flaring",                                                                       
+       277             "safety_flaring",                                                                            
+       278             "flare",                                                                                     
+       436             elif process_type in ["flaring", "routine_flaring", "non_routine_flaring", "safety_flaring"]:
+       440                     "flared gas volume",                                                                 
+       445                     ["c1", "ch4_content", "flare_ch4_content"],                                          
+       446                     "flared gas CH4 content %",                                                          
+       448                 flare_type = flat_inputs.get("flare_type", "elevated")                                   
+       492                     flare_type=flare_type,                                                               
+       575                 flare_eff = self._optional_fraction(                                                     
+       576                     flat_inputs, ["comp_flare_eff", "control_efficiency"], 0.0                           
+       586                     control_efficiency=flare_eff,                                                        
+       634                 flare_eff = self._optional_fraction(                                                     
+       635                     flat_inputs, ["unload_flare_eff", "control_efficiency"], 0.0                         
+       663                     control_efficiency=flare_eff,                                                        
+       703                 flare_eff = self._optional_fraction(                                                     
+       718                     control_efficiency=flare_eff,                                                        
+
+
+

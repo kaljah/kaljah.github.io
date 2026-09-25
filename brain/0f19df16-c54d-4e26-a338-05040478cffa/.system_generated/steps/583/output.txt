@@ -1,0 +1,25 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_qfull_boundary_sensitivity.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -351,8 +351,8 @@
+     def test_mud_oil_over_water_ratio_exact(self):
+         """
+         OAT: Same drilling days, change mud_type: oil_based vs water_based.
+-        oil_based EF = 0.0586 t/day, water_based EF = 0.2605 t/day.
+-        Ratio = 0.0586 / 0.2605.
++        oil_based EF = 0.0103 t/day, water_based EF = 0.0458 t/day.
++        Ratio = 0.0103 / 0.0458.
+ 
+         Both have IDENTICAL CO2 and N2O (zero), only CH4 differs.
+         """
+@@ -366,7 +366,7 @@
+             "tier": "tier2", "factor_source": "custom", "mud_type": "oil_based"
+         }, {})
+ 
+-        expected_ratio = 0.0586 / 0.2605
++        expected_ratio = 0.0103 / 0.0458
+         actual_ratio = em_oil["ch4"] / em_water["ch4"]
+ 
+         assert actual_ratio == pytest.approx(expected_ratio, rel=1e-4), (
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

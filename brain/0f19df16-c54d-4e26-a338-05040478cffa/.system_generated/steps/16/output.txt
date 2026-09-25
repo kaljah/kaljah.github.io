@@ -1,0 +1,87 @@
+
+The command exited with code 0.
+Output:
+<truncated 261 lines>
+new/server/tests/test_battery_midstream_process_equipment.py:        calc = MudDegassingCalculator()
+new/server/tests/test_battery_midstream_process_equipment.py:        ref = IndependentMudDegassing.calculate(vol, "m3", "water_based", custom_ef=custom_ef, gwp_standard="AR5")
+new/server/tests/test_independent_differential.py:    IndependentMudDegassing,
+new/server/tests/test_numerical_invariants.py:    MudDegassingCalculator,
+new/server/tests/test_numerical_invariants.py:        # 9. Mud Degassing
+new/server/tests/test_numerical_invariants.py:        assert MudDegassingCalculator().calculate(0, 0.85, {})["total_co2e"] == 0.0
+new/server/tests/test_qfull_api_pipeline.py:# TEST CLASS: Mud Degassing Pipeline
+new/server/tests/test_qfull_api_pipeline.py:class TestMudDegassingPipeline:
+new/server/tests/test_qfull_api_pipeline.py:    """API §6.2: Drilling mud degassing (CH4 only)."""
+new/server/tests/test_qfull_api_pipeline.py:    def test_water_based_mud(self, auth_client, facility_id):
+new/server/tests/test_qfull_api_pipeline.py:        Reference: water_based mud EF = 0.15 kg CH4/m3
+new/server/tests/test_qfull_api_pipeline.py:        200 m3 mud → ch4_kg = 200 * 0.15 = 30 kg = 0.030 tonnes
+new/server/tests/test_qfull_api_pipeline.py:        mud_vol = 200.0
+new/server/tests/test_qfull_api_pipeline.py:        expected_ch4 = mud_vol * ef / 1000.0  # 0.030 t
+new/server/tests/test_qfull_api_pipeline.py:            "quantity": mud_vol,
+new/server/tests/test_qfull_api_pipeline.py:            "mud_type": "water_based",
+new/server/tests/test_qfull_api_pipeline.py:            f"Water-based mud CH4: expected {expected_ch4}, got {em['ch4']}"
+new/server/tests/test_qfull_api_pipeline.py:    def test_oil_based_mud(self, auth_client, facility_id):
+new/server/tests/test_qfull_api_pipeline.py:        Reference: oil_based mud EF = 0.35 kg CH4/m3
+new/server/tests/test_qfull_api_pipeline.py:        150 m3 mud → ch4_kg = 150 * 0.35 = 52.5 kg = 0.0525 tonnes
+new/server/tests/test_qfull_api_pipeline.py:        mud_vol = 150.0
+new/server/tests/test_qfull_api_pipeline.py:        expected_ch4 = mud_vol * ef / 1000.0
+new/server/tests/test_qfull_api_pipeline.py:            "quantity": mud_vol,
+new/server/tests/test_qfull_api_pipeline.py:            "mud_type": "oil_based",
+new/server/tests/test_qfull_api_pipeline.py:    def test_synthetic_mud(self, auth_client, facility_id):
+new/server/tests/test_qfull_api_pipeline.py:        Reference: synthetic mud EF = 0.25 kg CH4/m3
+new/server/tests/test_qfull_api_pipeline.py:        mud_vol = 100.0
+new/server/tests/test_qfull_api_pipeline.py:        expected_ch4 = mud_vol * 0.25 / 1000.0
+new/server/tests/test_qfull_api_pipeline.py:            "quantity": mud_vol,
+new/server/tests/test_qfull_api_pipeline.py:            "mud_type": "synthetic",
+new/server/tests/test_qfull_api_pipeline.py:        mud_vol = 100.0
+new/server/tests/test_qfull_api_pipeline.py:        p_water = {"process_type": "drilling", "quantity": mud_vol, "unit": "m3",
+new/server/tests/test_qfull_api_pipeline.py:                   "factor_source": "specific", "mud_type": "water_based"}
+new/server/tests/test_qfull_api_pipeline.py:        p_oil = {"process_type": "drilling", "quantity": mud_vol, "unit": "m3",
+new/server/tests/test_qfull_api_pipeline.py:                 "factor_source": "specific", "mud_type": "oil_based"}
+new/server/tests/test_qfull_api_pipeline.py:            "mud_type": "water_based",
+new/server/tests/test_qfull_boundary_sensitivity.py:    def test_zero_quantity_mud_degassing_yields_zero(self):
+new/server/tests/test_qfull_boundary_sensitivity.py:        """BOUNDARY: Zero mud volume = zero CH4 from degassing."""
+new/server/tests/test_qfull_boundary_sensitivity.py:            "factor_source": "specific", "mud_type": "water_based"
+new/server/tests/test_qfull_boundary_sensitivity.py:    def test_negative_quantity_mud_raises(self):
+new/server/tests/test_qfull_boundary_sensitivity.py:        """BOUNDARY: Negative mud volume → ValueError."""
+new/server/tests/test_qfull_boundary_sensitivity.py:                "factor_source": "specific", "mud_type": "water_based"
+new/server/tests/test_qfull_boundary_sensitivity.py:    def test_mud_oil_over_water_ratio_exact(self):
+new/server/tests/test_qfull_boundary_sensitivity.py:        OAT: Same mud volume, change mud_type: oil_based vs water_based.
+new/server/tests/test_qfull_boundary_sensitivity.py:            "factor_source": "specific", "mud_type": "water_based"
+new/server/tests/test_qfull_boundary_sensitivity.py:            "factor_source": "specific", "mud_type": "oil_based"
+new/server/tests/test_qfull_boundary_sensitivity.py:        OAT: Same mud degassing (CH4-only), GWP AR4 vs AR5.
+new/server/tests/test_qfull_boundary_sensitivity.py:            "factor_source": "specific", "mud_type": "water_based"
+new/server/tests/test_qfull_boundary_sensitivity.py:        # Mud degassing: pure CH4 emission
+new/server/tests/test_qfull_boundary_sensitivity.py:            "factor_source": "specific", "mud_type": "water_based"
+new/server/tests/test_qfull_boundary_sensitivity.py:            "factor_source": "specific", "mud_type": "water_based"
+new/server/tests/test_qfull_unit_conversions.py:# TEST CLASS: Mud Degassing Volume Units
+new/server/tests/test_qfull_unit_conversions.py:class TestMudVolumeUnits:
+new/server/tests/test_qfull_unit_conversions.py:    Verify that mud degassing gives same CH4 regardless of volume unit.
+new/server/tests/test_qfull_unit_conversions.py:    Reference formula: ch4_kg = mud_vol_m3 * EF; tonnes = /1000
+new/server/tests/test_qfull_unit_conversions.py:            "mud_type": "water_based",
+new/server/tests/test_qfull_unit_conversions.py:    def test_mud_m3_reference(self):
+new/server/tests/test_qfull_unit_conversions.py:        """Reference: 200 m3 water_based mud = 0.030 t CH4."""
+new/server/tests/test_qfull_unit_conversions.py:    def test_mud_bbl_equivalent_to_m3(self):
+new/server/tests/test_qfull_unit_conversions.py:    def test_mud_gal_equivalent_to_m3(self):
+new/server/tests/test_qfull_unit_conversions.py:    def test_mud_liter_equivalent_to_m3(self):
+new/server/tests/test_qfull_unit_conversions.py:    def test_mud_oil_based_bbl_vs_m3(self):
+new/server/tests/test_qfull_unit_conversions.py:        Oil-based mud (EF=0.35 kg/m3): 100 m3 vs equivalent bbl.
+new/server/tests/test_qfull_unit_conversions.py:                "factor_source": "specific", "mud_type": "oil_based"
+new/server/tests/test_qfull_validation.py:class TestMudDegassing:
+new/server/tests/test_qfull_validation.py:    """Test Suite for Mud Degassing."""
+new/server/tests/test_qfull_validation.py:    def test_mud_water_based(self):
+new/server/tests/test_qfull_validation.py:            'mud_type': 'water_based'
+new/server/tests/test_qfull_validation.py:    def test_mud_oil_based(self):
+new/server/tests/test_qfull_validation.py:            'mud_type': 'oil_based'
+new/server/tests/test_qfull_validation.py:    def test_mud_synthetic(self):
+new/server/tests/test_qfull_validation.py:            'mud_type': 'synthetic'
+new/server/tests/test_tier_scope_kpi_numerical.py:    MudDegassingCalculator,
+package-lock.json:      "integrity": "sha512-oVlzkg3ENAhCk2zdv7IJwd/QUD4z2RxRwpkcGY8psCVcCYZNq4wYnVWALHM+brtuJjePWiYF/ClmuDr8Ch5+kg==",
+validation/golden_dataset/dataset_generator.py:    IndependentMudDegassing,
+validation/reference_model/__init__.py:    IndependentMudDegassing,
+validation/reference_model/__init__.py:    "IndependentMudDegassing",
+validation/reference_model/vented_processes.py:class IndependentMudDegassing:
+validation/reference_model/vented_processes.py:    def calculate(mud_volume, mud_unit="m3", mud_type="water_based", custom_ef=None, gwp_standard="AR5", gwp_horizon="100"):
+validation/reference_model/vented_processes.py:        vol_m3 = IndependentUnitConverter.convert(mud_volume, mud_unit, "m3")
+validation/reference_model/vented_processes.py:        ef = float(custom_ef if custom_ef is not None and float(custom_ef) > 0 else factors.get(mud_type, 0.25))
+validation/reference_model/vented_processes.py:        return {"ch4": ch4_t, "co2": 0.0, "n2o": 0.0, "co2e": co2e, "mud_volume_m3": vol_m3, "ef_used": ef}
+

@@ -1,0 +1,15 @@
+
+The command exited with code 0.
+Output:
+
+LineNumber Line                                                                            
+---------- ----                                                                            
+       649         ["combustion", "stationary_combustion", "flaring"].includes(processType)
+      1043             flare_type: formData.flare_type || undefined,                       
+      1047         // Specific Factors (for combustion/flaring/venting in specific mode)   
+      1275       case "flaring":                                                           
+      1683                       "flaring",                                                
+      1684                       "flare",                                                  
+
+
+

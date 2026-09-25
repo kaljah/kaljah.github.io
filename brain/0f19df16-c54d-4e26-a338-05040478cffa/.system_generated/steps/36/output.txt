@@ -1,0 +1,13 @@
+The search for ""Table 6-2" "drilling mud" OR "drilling days" "API Compendium"" returned the following summary:
+In the **API Compendium of Greenhouse Gas Emissions Estimation Methodologies for the Oil and Natural Gas Industry**, **Table 6-2** is commonly referenced in relation to **Mud Degassing Vented Methane Emission Factors**[1].
+
+While different editions of the Compendium may contain variations in table numbering, the 2021 edition specifically identifies Table 6-2 as the source for **Mud Degassing Vented Methane Emission Factors for Oil and Natural Gas Exploration**[1]. In other editions (such as the 2009 version), the table number may instead correspond to facility-level or fugitive emission factors[2][3].
+
+Regarding "drilling days," this term is frequently used in conjunction with the methodologies presented in the API Compendium when calculating total emissions for drilling activities[4][5]. Users typically apply emission factors (such as those for mud degassing) to the number of days spent drilling in hydrocarbon-bearing formations to estimate total methane emissions[4].
+
+Sources:
+[1] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGLbHgfZZ3w7lbIIJSRkiLCgzV8-JMR34CBze-9cgFzr2XpllakMlM5q4htU_ZGWbDb8MYvUQBN7IhS-4yYtiXaFsVfLc4fhqFktz__F36OIeIN8z1Y2iZl8zDRShjGSAKzN8qG65QOMpIjsVFCvyatzHaleEzhxM0xRUiyCd1Wx1XvE7wD9SVB)
+[2] [ca.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFCopzEivuNbgvgthOKsZLzn2-ecoxi7UpOgdkIMrJEw_OTmD8pDTGdryqhvA7oOjaCi2TabR7riLJYtvWvOBYOIRR4mkzxkTUgFanyhaVr1s3jqqJQauqoNcyMLIAUWYus2ACnfKnQiBQbf2ZKfntGlXyXVmuSVvqSWGzvap81NpS8cw==)
+[3] [ca.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQE-bKCI70bnv_at0PnJLHZSOooA4BZZIqPDeJLGxYum0bgG_xv_XjDILhuJaaDrGjlA8xdv05IXE0kFUAXamjoSbe5BbTq6lOOJQwzIPQ2y4FPNRqPzkVm07fMM_u5EMJBlUxMVscgCuixrNckd3fCyeXZx9oKJ)
+[4] [epa.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFdEpgNvFAoBY8ZbJXuoW1IgpynZVpKuaLPgc7DIJiyToXQq-TO-pOqBQyp7OZib-_CVZOQjmpX1U5uy4rX0l13g0C0EBbqgIsH90qoc6D38YZv7QMEOFpWyv03IcwGBNReyoUq1_aBx72CsYBlmt8kst1hgwsVrCCViOq9INTsJudTcFcnEkyQ7fduNF7uMCUzSzlLKvQ=)
+[5] [environment-agency.gov.uk](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFZoajqbmVhnxWxR_WfgtE2GMv5UrEihRqV_ZIY3tNYSG2QDdRacaUQtFqBfLosAcjrAnUedEIn3C8IGOnMBMQnGcnS8SOBqvb0BrCHwdriXWdE3hdZxhYhDGxSLNDXNlaeGmVgiq62Q5FfY3mSCYwWLQblKvHZQ3nAEeIMFthui-BvWnZcxZK6yeLSgT7kGFG1oFkQ0fqhZQDhGFTPP35cRir02oC6TnPIFc2IZMvn5AIfPhUzzquplWKYFS2uf671)

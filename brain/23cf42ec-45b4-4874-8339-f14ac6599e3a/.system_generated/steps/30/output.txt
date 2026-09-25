@@ -1,0 +1,35 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\components\BulkImportModal.jsx:467:          completions: [
+new\client\src\components\ColumnMappingWizard.jsx:787:          completions: [
+new\client\src\components\Scope1Form.jsx:21:import CompletionsForm from "./scope1/CompletionsForm";
+new\client\src\components\Scope1Form.jsx:405:      // Fallback: Try matching by 'code' property for custom forms 
+(Completions/Unloading)
+new\client\src\components\Scope1Form.jsx:635:        "completions",
+new\client\src\components\Scope1Form.jsx:692:      } else if (processType === "completions") {
+new\client\src\components\Scope1Form.jsx:701:            "Well completions parameters (rate & duration OR liquid & GOR 
+OR volume) are required",
+new\client\src\components\Scope1Form.jsx:709:          toast.warning("Gas CH4 content (%) is required for well 
+completions");
+new\client\src\components\Scope1Form.jsx:921:      // 4. Completions
+new\client\src\components\Scope1Form.jsx:922:      if (processType === "completions" && sourceType === "specific") {
+new\client\src\components\Scope1Form.jsx:1273:        "completions",
+new\client\src\components\Scope1Form.jsx:1296:      case "completions":
+new\client\src\components\Scope1Form.jsx:1297:        return <CompletionsForm {...props} />;
+new\client\src\components\Scope1Form.jsx:1371:          "completions",
+new\client\src\components\Scope1Form.jsx:1665:                                  "completions",
+new\client\src\components\Scope1Form.jsx:1973:                    "completions",
+new\client\src\components\Scope1ImportWizard.jsx:163:  { key: "completions",            label: "Well Completions",     
+    IconComp: Icon.Layers,    tier1Fields: ["quantity","unit"],       tier3Extra: 
+["comp_method","comp_rate","comp_duration","ch4_content","comp_flare_eff"] },
+new\client\src\components\scope1\CompletionsForm.jsx:5: * CompletionsForm - Engineering (Tier 3) Calculation Form
+new\client\src\components\scope1\CompletionsForm.jsx:9:const CompletionsForm = ({ data, onChange }) => {
+new\client\src\components\scope1\CompletionsForm.jsx:11:    <div className="completions-form">
+new\client\src\components\scope1\CompletionsForm.jsx:13:        Completions / Flowback (Engineering Calc)
+new\client\src\components\scope1\CompletionsForm.jsx:210:export default CompletionsForm;
+new\client\src\pages\ReferenceData.jsx:230:          name: "Well Completions & Workovers",
+
+
+

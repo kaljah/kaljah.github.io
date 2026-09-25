@@ -1,0 +1,23 @@
+
+The command exited with code 0.
+Output:
+
+  new\client\src\components\Scope1Form.jsx:78:  const [specFactors, setSpecFactors] = useState({
+  new\client\src\components\Scope1Form.jsx:79:    co2: "",
+> new\client\src\components\Scope1Form.jsx:80:    co2Unit: "kg/m3",
+  new\client\src\components\Scope1Form.jsx:81:    ch4: "",
+> new\client\src\components\Scope1Form.jsx:82:    ch4Unit: "kg/m3",
+  new\client\src\components\Scope1Form.jsx:83:    n2o: "",
+> new\client\src\components\Scope1Form.jsx:84:    n2oUnit: "kg/m3",
+  new\client\src\components\Scope1Form.jsx:85:    co: "",
+> new\client\src\components\Scope1Form.jsx:86:    coUnit: "kg/m3",
+  new\client\src\components\Scope1Form.jsx:87:  });
+  new\client\src\components\Scope1Form.jsx:88:
+  new\client\src\components\Scope1Form.jsx:354:      fuel: fuelVal,
+  new\client\src\components\Scope1Form.jsx:355:      hhv: preset.hhv ? preset.hhv.toString() : prev.hhv,
+> new\client\src\components\Scope1Form.jsx:356:      hhv_unit: preset.hhvUnit || prev.hhv_unit || "BTU/scf",
+  new\client\src\components\Scope1Form.jsx:357:    }));
+  new\client\src\components\Scope1Form.jsx:358:
+
+
+

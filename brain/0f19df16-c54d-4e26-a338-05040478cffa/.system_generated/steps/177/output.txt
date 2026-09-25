@@ -1,0 +1,25 @@
+
+The command exited with code 0.
+Output:
+new/client/src/components/Scope1Form.jsx:519:      e.amount || e.quantity || "",
+new/client/src/components/Scope1Form.jsx:625:    // Validate activity data (amount/quantity)
+new/client/src/components/Scope1Form.jsx:626:    const amount = formData.amount || formData.quantity;
+new/client/src/components/Scope1Form.jsx:639:    if (!isUpstreamEng && (!amount || parseFloat(amount) <= 0)) {
+new/client/src/components/Scope1Form.jsx:641:        "Please enter a valid activity amount/quantity greater than 0",
+new/client/src/components/Scope1Form.jsx:673:          formData.unload_freq || formData.unload_events || formData.amount;
+new/client/src/components/Scope1Form.jsx:693:          formData.amount ||
+new/client/src/components/Scope1Form.jsx:729:          !formData.amount ||
+new/client/src/components/Scope1Form.jsx:751:        if (!formData.amount || !formData.tank_gor) {
+new/client/src/components/Scope1Form.jsx:822:      let finalAmount = formData.amount ? parseFloat(formData.amount) : 0;
+new/client/src/components/Scope1Form.jsx:873:        // Tier 1 without mud_vol: use amount field in bbl
+new/client/src/components/Scope1Form.jsx:874:        const vol = parseFloat(formData.amount || 0);
+new/client/src/components/Scope1Form.jsx:883:        const amt = parseFloat(formData.amount || 0);
+new/client/src/components/Scope1Form.jsx:907:        finalAmount = parseFloat(formData.amount || 0);
+new/client/src/components/Scope1Form.jsx:956:          formData.dehy_throughput || formData.amount || 0,
+new/client/src/components/Scope1Form.jsx:976:        amount: finalAmount,
+new/client/src/components/Scope1Form.jsx:1119:    const qty = entry.amount || entry.quantity || 0;
+new/client/src/components/Scope1Form.jsx:1169:      amount: qty,
+new/client/src/components/Scope1Form.jsx:2447:              {formData.amount || formData.quantity ? `${formData.amount || formData.quantity} ${formData.unit || "units"}` : "[Activity Data]"}
+new/client/src/components/Scope1Form.jsx:2772:                        {entry.amount || entry.quantity
+new/client/src/components/Scope1Form.jsx:2773:                          ? `${formatNumber(entry.amount || entry.quantity, 2)} ${entry.unit}`
+

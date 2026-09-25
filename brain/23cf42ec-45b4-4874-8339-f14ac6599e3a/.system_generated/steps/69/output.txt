@@ -1,0 +1,12 @@
+The search for ""Table 6-5" "Well Completions with Hydraulic Fracturing" "API" OR "Table 6-6" "Well Completions without Hydraulic Fracturing"" returned the following summary:
+These tables are referenced in the **API Compendium of Greenhouse Gas Emissions Methodologies**[1][2]. They provide methane emission factors for different types of well completions in the oil and gas industry[1][2]:
+
+*   **Table 6-5:** Often titled "Well Completions with Hydraulic Fracturing Methane Emission Factors for Oil and Gas Exploration"[1][3].
+*   **Table 6-6:** Often titled "Onshore Well Completions without Hydraulic Fracturing Methane Emission Factors for Oil and Gas Exploration"[1][2].
+
+These tables are standard industry references used to estimate greenhouse gas (GHG) emissions from oil and gas operations[1]. The API Compendium is widely relied upon by regulatory bodies and industry operators globally to support emissions measurement and reporting[1].
+
+Sources:
+[1] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQH2xIUuCkUFl2NzNB7fCAYiGyHowQrrrlB1_C-fSA4FEe9pVOfjpD687om4JZkA6kv89Gu7V0L48IV6eu_0J33Yqks6hYKSiGNoWtBREsn1r8frGvFmJisMO0CkRlYGJO1qv2jTt3Ufo5IbQ2QRCOM7p_n-NidS0iSPaL-22DrD8Y80bgQ7uN0FDA==)
+[2] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQH2xIUuCkUFl2NzNB7fCAYiGyHowQrrrlB1_C-fSA4FEe9pVOfjpD687om4JZkA6kv89Gu7V0L48IV6eu_0J33Yqks6hYKSiGNoWtBREsn1r8frGvFmJisMO0CkRlYGJO1qv2jTt3Ufo5IbQ2QRCOM7p_n-NidS0iSPaL-22DrD8Y80bgQ7uN0FDA==)
+[3] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQH2xIUuCkUFl2NzNB7fCAYiGyHowQrrrlB1_C-fSA4FEe9pVOfjpD687om4JZkA6kv89Gu7V0L48IV6eu_0J33Yqks6hYKSiGNoWtBREsn1r8frGvFmJisMO0CkRlYGJO1qv2jTt3Ufo5IbQ2QRCOM7p_n-NidS0iSPaL-22DrD8Y80bgQ7uN0FDA==)

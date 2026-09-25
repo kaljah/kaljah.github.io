@@ -1,0 +1,47 @@
+
+The command exited with code 0.
+Output:
+
+  new\server\background_processor.py:298:            )
+  new\server\background_processor.py:299:            from extensions import db
+> new\server\background_processor.py:300:            from calculations import compute_emissions
+  new\server\background_processor.py:301:            from calculations.constants import get_active_gwp
+  new\server\background_processor.py:302:            from emission_factors import API_FACTORS
+  new\server\background_processor.py:303:            from electricity_factors import GRID_FACTORS
+  new\server\background_processor.py:304:            import json
+  new\server\background_processor.py:305:
+  new\server\background_processor.py:507:                        fac_id_map,
+  new\server\background_processor.py:508:                        cf_name_map,
+> new\server\background_processor.py:509:                        compute_emissions,
+  new\server\background_processor.py:510:                        API_FACTORS,
+  new\server\background_processor.py:511:                        global_factor_type,
+  new\server\background_processor.py:512:                        gwp_dict=gwp_dict,
+  new\server\background_processor.py:513:                        gwp_std=gwp_std,
+  new\server\background_processor.py:514:                        job_id=job_id,
+  new\server\background_processor.py:1630:    fac_id_map,
+  new\server\background_processor.py:1631:    cf_name_map,
+> new\server\background_processor.py:1632:    compute_emissions_fn,
+  new\server\background_processor.py:1633:    API_FACTORS_dict,
+  new\server\background_processor.py:1634:    global_factor_type,
+  new\server\background_processor.py:1635:    gwp_dict=None,
+  new\server\background_processor.py:1636:    gwp_std="AR5",
+  new\server\background_processor.py:1637:    job_id=None,
+  new\server\background_processor.py:1641:):
+  new\server\background_processor.py:1642:    """
+> new\server\background_processor.py:1643:    Validates a single mapped row and runs calculation via compute_emissions.
+  new\server\background_processor.py:1644:    Returns (Emission_Object, list_of_errors)
+  new\server\background_processor.py:1645:    """
+  new\server\background_processor.py:1646:    from models import Emission
+  new\server\background_processor.py:1647:    from calculations.units import calculate_co2e
+  new\server\background_processor.py:1648:
+  new\server\background_processor.py:1793:    # 6. Run calculation
+  new\server\background_processor.py:1794:    try:
+> new\server\background_processor.py:1795:        em_result, _method = compute_emissions_fn(
+  new\server\background_processor.py:1796:            calc_data, factor_data, gwp_dict=gwp_dict
+  new\server\background_processor.py:1797:        )
+  new\server\background_processor.py:1798:
+  new\server\background_processor.py:1799:        co2_val = float(em_result.get("co2") or 0)
+  new\server\background_processor.py:1800:        ch4_val = float(em_result.get("ch4") or 0)
+
+
+

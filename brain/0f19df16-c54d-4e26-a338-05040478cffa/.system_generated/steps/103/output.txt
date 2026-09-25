@@ -1,0 +1,1 @@
+A1: (Recommended) Yes, onshore factors are sufficient (Water-based: 0.2605, Oil-based: 0.0586 t CH₄/day). Proceed with implementation.

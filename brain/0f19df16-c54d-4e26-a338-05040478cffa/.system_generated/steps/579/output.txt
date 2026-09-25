@@ -1,0 +1,66 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_qfull_api_pipeline.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -532,13 +532,13 @@
+ 
+     def test_tier2_water_based_mud(self, auth_client, facility_id):
+         """
+-        TIER 2 (API Table 6-2 Onshore): Water-based mud EF = 0.2605 t CH4/day.
+-        20 drilling days → ch4 = 20 * 0.2605 = 5.210 tonnes CH4
+-        """
+-        from calculations.legacy_engine import compute_emissions
+-
+-        drilling_days = 20.0
+-        ef = 0.2605
++        TIER 2 (API Compendium Onshore): Water-based mud EF = 0.0458 t CH4/day.
++        20 drilling days → ch4 = 20 * 0.0458 = 0.916 tonnes CH4
++        """
++        from calculations.legacy_engine import compute_emissions
++
++        drilling_days = 20.0
++        ef = 0.0458
+         expected_ch4 = drilling_days * ef
+         expected_co2e = ref_co2e(ch4=expected_ch4)
+ 
+@@ -558,13 +558,13 @@
+ 
+     def test_tier2_oil_based_mud(self, auth_client, facility_id):
+         """
+-        TIER 2 (API Table 6-2 Onshore): Oil-based mud EF = 0.0586 t CH4/day.
+-        20 drilling days → ch4 = 20 * 0.0586 = 1.172 tonnes CH4
+-        """
+-        from calculations.legacy_engine import compute_emissions
+-
+-        drilling_days = 20.0
+-        ef = 0.0586
++        TIER 2 (API Compendium Onshore): Oil-based mud EF = 0.0103 t CH4/day.
++        20 drilling days → ch4 = 20 * 0.0103 = 0.206 tonnes CH4
++        """
++        from calculations.legacy_engine import compute_emissions
++
++        drilling_days = 20.0
++        ef = 0.0103
+         expected_ch4 = drilling_days * ef
+         expected_co2e = ref_co2e(ch4=expected_ch4)
+ 
+@@ -584,8 +584,8 @@
+ 
+     def test_tier2_plus_site_gas_composition(self, auth_client, facility_id):
+         """
+-        TIER 2+ (Table 6-2 + Gas Composition):
+-        10 drilling days, water-based (0.2605 t/day)
++        TIER 2+ (Onshore + Gas Composition):
++        10 drilling days, water-based (0.0458 t/day)
+         X_CH4 = 0.85 (scaled by / 0.8385)
+         X_CO2 = 0.02 (scaled by / 0.8385 * 44.01/16.04)
+         """
+@@ -592,6 +592,6 @@
+ 
+         drilling_days = 10.0
+-        ef = 0.2605
++        ef = 0.0458
+         x_ch4 = 0.85
+         x_co2 = 0.02
+         default_baseline = 0.8385
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

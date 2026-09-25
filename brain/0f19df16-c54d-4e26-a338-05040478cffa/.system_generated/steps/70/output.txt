@@ -1,0 +1,20 @@
+
+The command exited with code 0.
+Output:
+new/client/package-lock.json:      "integrity": "sha512-ctxtJ/eA+t+6q2++vj5j7FYX3nRu311q1wfYH3xjlLOsczhlhxAg2FWNUXhpGvAw3BWo1xBcvOV6/YLc2r5FJw==",
+new/client/package-lock.json:      "integrity": "sha512-jp2L/eY6fn+KgVVQAOqYItbF0VY/YApe5Mz2F0aykSO8gx31bYCZyvSeYxCHKvzHG5eZjc+zyaS5BrBWya2+kQ==",
+new/client/package-lock.json:      "integrity": "sha512-3bYs1rOD33uo8aqJfKP3JWPAibgw8Zm2+L9vBKEHJ2Rg+viTR7o5Mmv5mZcieN+FRYaAOWX5SJATX6k1PWz72g==",
+new/client/package-lock.json:      "integrity": "sha512-o8qghlI8NZHU1lLPrpi2+Uq7abh4GGPpYANlalzWxyWteJOCsr/P+oPBA49TOLu5FTZO4d3F9MnWJfiMo4BkmA==",
+Binary file new/client/public/carbon-tech-logo.png matches
+Binary file new/client/public/company_profile.jpg matches
+Binary file new/client/public/login_animation.mp4 matches
+Binary file new/client/src/assets/loading_animation.mp4 matches
+new/client/src/pages/DashboardEnhanced.jsx:                        <td>Total Footprint (Scopes 1+2+3)</td>
+new/client/src/pages/SbtiDashboard.jsx:  const [scopeMode, setScopeMode] = useState("all"); // 'all' (Scopes 1+2+3) or 's1_s2' (Scopes 1+2)
+new/client/src/pages/SbtiDashboard.jsx:      name: `Actual Emissions (${scopeMode === "s1_s2" ? "Scope 1+2" : "Scope 1+2+3"})`,
+new/client/src/pages/SbtiDashboard.jsx:              All Scopes (1+2+3)
+Binary file new/server.rar matches
+new/server/routes/dashboard.py:    # Get actuals per year (Scope 1+2+3 verified only)
+new/server/tests/test_stress_boundary_resilience.py:4. Formula / CSV injection vectors (=cmd|, @SUM, -2+3*cmd|).
+new/server/tests/test_stress_boundary_resilience.py:            "-2+3*cmd|' /C calc'!A0",
+

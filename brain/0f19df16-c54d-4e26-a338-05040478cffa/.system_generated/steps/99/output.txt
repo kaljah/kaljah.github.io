@@ -1,0 +1,7 @@
+The search for ""Table 6-3" "API Compendium" "0.0524" OR "drilling" OR "wells"" returned the following summary:
+The reference to **"Table 6-3"** in the **API Compendium** (Compendium of Greenhouse Gas Emissions Methodologies for the Oil and Natural Gas Industry) provides a **methane emission factor for natural gas well drilling**[1].
+
+Specifically, Table 6-3 lists a methane emission factor of **0.0524 tonnes CH₄/well** (which corresponds to an original unit of 52.4 kg CH₄/well) for gas well drilling[1]. This factor is used in methodologies to estimate vented methane emissions from drilling activities when site-specific data on mud type or activity duration is limited[1].
+
+Sources:
+[1] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGQT8_ZMWeFISVgaVZh42F6lHm1MlGcUUOMCOBnIrx_MisWH7DsGEqRjxVFJkPeHawyQGOkc19iZk09FddHlGBg01ZL7ogsqjx8hlG9ozev4jJ5OA1Z8MxDh5C7vLZwECchN2l92pdA1LaKiQ-HOkFzRQDGyfO3iO3iZ7BPXeSokJ4vatiHCcrl)

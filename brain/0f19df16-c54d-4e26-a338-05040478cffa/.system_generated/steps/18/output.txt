@@ -1,0 +1,28 @@
+
+The command exited with code 0.
+Output:
+.antigravity/SYSTEM_MEMORY.md:244:  - **Exports:** Classes: `MudDegassingCalculator`, `CompletionFlowbackCalculator`, `LiquidsUnloadingCalculator`, `BlowdownCalculator`, `TankFlashingCalculator`, `PneumaticDeviceCalculator`; Functions: `_split_vented_and_flared`, `_propagate_vented_results`
+brain/5109de9b-129e-4d68-b37b-f863ff35ded0/.system_generated/steps/1507/output.txt:16:{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\vented.py","LineNumber":122,"LineContent":"class MudDegassingCalculator(BaseCalculator):"}
+brain/5109de9b-129e-4d68-b37b-f863ff35ded0/.system_generated/steps/1754/output.txt:55:        assert MudDegassingCalculator().calculate(0, 0.85, {})["total_co2e"] == 0.0
+brain/5109de9b-129e-4d68-b37b-f863ff35ded0/.system_generated/steps/2520/output.txt:5:calculations\vented.py:122:class MudDegassingCalculator(BaseCalculator):
+cbam_removal_utf8.patch:5171:@@ -30,11 +34,17 @@ class MudDegassingCalculator(BaseCalculator):
+docs/validation/00-current-architecture.md:128:  - `MudDegassingCalculator`: Drilling and mud gas desorption.
+docs/validation/00-repository-audit.md:250:| Drilling | ✅ **IMPLEMENTED** | `calculations/vented.py` — MudDegassingCalculator |
+docs/validation/01-calculation-inventory.md:88:- **Function/File**: `MudDegassingCalculator.calculate` in `new/server/calculations/vented.py`
+docs/validation/02-calculation-inventory.md:16:| `vented.py` | 683 | `PneumaticDeviceCalculator`, `LiquidsUnloadingCalculator`, `MudDegassingCalculator`, `TankFlashingCalculator`, `CompletionFlowbackCalculator`, `BlowdownCalculator` | API §6 |
+docs/validation/02-calculation-inventory.md:120:**File**: `calculations/vented.py` — `MudDegassingCalculator`  
+docs/validation/09-calculation-validation.md:36:| **8. Well Drilling (Mud Degas)**| `MudDegassingCalculator.calculate` | $\text{CH}_4 = \text{Days} \times \text{EF}_{\text{mud}} \times x_{\text{CH}_4} \times \rho_{\text{CH}_4} \times 10^{-3}$ | 1 Case | Verified (Water vs Oil Mud) | Verified | Verified | **PASS (INDEPENDENTLY VALIDATED)** |
+docs/validation/calculation-inventory.md:88:- **Function/File**: `MudDegassingCalculator.calculate` in `new/server/calculations/vented.py`
+docs/validation/repository-audit.md:70:| **Mud Degassing & Drilling** | `new/server/calculations/vented.py` | `MudDegassingCalculator` | API Compendium 2021 §6.1 |
+new/file_by_file_analysis.md:129:Python Module. Classes: MudDegassingCalculator, CompletionFlowbackCalculator, LiquidsUnloadingCalculator, BlowdownCalculator, TankFlashingCalculator, PneumaticDeviceCalculator. Functions: __init__, calculate, __init__, calculate, __init__, calculate, __init__, calculate, __init__, calculate, __init__, calculate.
+new/server/calculations/dispatcher.py:6:    MudDegassingCalculator,
+new/server/calculations/dispatcher.py:44:            "drilling": MudDegassingCalculator(),
+new/server/calculations/dispatcher.py:45:            "mud_degassing": MudDegassingCalculator(),
+new/server/calculations/vented.py:123:class MudDegassingCalculator(BaseCalculator):
+new/server/tests/test_battery_midstream_process_equipment.py:22:    MudDegassingCalculator,
+new/server/tests/test_battery_midstream_process_equipment.py:56:        calc = MudDegassingCalculator()
+new/server/tests/test_battery_midstream_process_equipment.py:66:        calc = MudDegassingCalculator()
+new/server/tests/test_numerical_invariants.py:45:    MudDegassingCalculator,
+new/server/tests/test_numerical_invariants.py:179:        assert MudDegassingCalculator().calculate(0, 0.85, {})["total_co2e"] == 0.0
+new/server/tests/test_tier_scope_kpi_numerical.py:24:    MudDegassingCalculator,
+

@@ -1,0 +1,32 @@
+
+The command exited with code 0.
+Output:
+
+> new\server\emission_factors_api2021.py:420:VENTED_FACTORS = {
+  new\server\emission_factors_api2021.py:421:    # 
+=========================================================================
+  new\server\emission_factors_api2021.py:422:    # SECTION 6.2.3 WELL COMPLETIONS
+  new\server\emission_factors_api2021.py:423:    # 
+=========================================================================
+  new\server\emission_factors_api2021.py:424:    # --- TABLE 6-5: WELL COMPLETIONS WITH HYDRAULIC FRACTURING ---
+  new\server\emission_factors_api2021.py:425:    "Well Completion - Gas Well with Hydraulic Fracturing (Uncontrolled 
+Venting)": {
+  new\server\emission_factors_api2021.py:426:        "code": "CompGasHF_Uncontrolled",
+  new\server\emission_factors_api2021.py:427:        "co2": 0.0,
+  new\server\emission_factors_api2021.py:428:        "ch4": 28.8,  # 28,800 kg CH4/completion -> 28.8 tonnes 
+CH4/completion
+  new\server\emission_factors_api2021.py:429:        "n2o": 0.0,
+  new\server\emission_factors_api2021.py:430:        "factor": 28.8,
+  new\server\emission_factors_api2021.py:431:        "whole_gas_ef": 1842577.0,  # scf gas/completion
+  new\server\emission_factors_api2021.py:432:        "ch4_mol_pct": 81.6,  # mole % CH4 basis (Footnote c)
+  new\server\emission_factors_api2021.py:433:        "uncertainty": {"co2": 0.30, "ch4": 0.30, "n2o": 0.0},
+  new\server\emission_factors_api2021.py:434:        "unit": "tonnes/completion",
+  new\server\emission_factors_api2021.py:435:        "baseUnit": "completions",
+  new\server\emission_factors_api2021.py:436:        "usage": ["completions", "vented"],
+  new\server\emission_factors_api2021.py:437:        "segment": "Upstream",
+  new\server\emission_factors_api2021.py:438:        "process_category": "completions",
+  new\server\emission_factors_api2021.py:439:        "tier": "Tier 1",
+  new\server\emission_factors_api2021.py:440:        "type": "completion",
+
+
+

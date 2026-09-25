@@ -1,0 +1,29 @@
+The search for ""Table 6-5" "Well Completions with Hydraulic Fracturing" "tonnes CH4" OR "scf/completion" OR "tonnes/completion"" returned the following summary:
+The reference to **"Table 6-5"** regarding **"Well Completions with Hydraulic Fracturing"** is frequently cited in the *American Petroleum Institute (API) Compendium of Greenhouse Gas Emissions Methodologies*[1][2].
+
+In this context, the table provides methane emission factors used to estimate emissions from oil and gas exploration activities[1][2]. Technical guidance documents often include data for these completions in both **sm3/completion** (standard cubic meters) and **scf/completion** (standard cubic feet)[3][4].
+
+### Example Emission Factors
+According to technical documentation referencing these methodologies, specific emission factors for gas well completions with hydraulic fracturing include[3][4]:
+
+| Source Category | Methane Emission Factor (sm3/completion) | Methane Emission Factor (scf/completion) |
+| :--- | :--- | :--- |
+| **Gas Well Completions (Uncontrolled)** | 52,175.97 | 1,842,577 |
+| **Gas Well Completions (REC with Venting)** | 24,534.08 | 866,413 |
+
+***
+
+**Important Notes:**
+*   **Context:** These factors are typically based on data from hydraulically fractured oil and gas wells in the United States, where the use of Reduced Emission Completions (RECs) is well-established[3][4].
+*   **Variations:** Different reports (such as EPA Inventory reports) may label their tables differently[5][6][7]. If you are looking for a specific government document (e.g., *Inventory of U.S. Greenhouse Gas Emissions and Sinks*), "Table 6-5" in those reports often refers to entirely different sectors, such as "Enteric Fermentation" or "Land Use"[5][6][7].
+*   **Usage:** The API Compendium is a primary industry resource for these specific emission factors, whereas EPA documents generally focus on national-level inventory totals and methodology updates[8][7].
+
+Sources:
+[1] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFw4gKZgVuKJFWPLeKFPiQDMBbok5rQBnrHSsmDoGTjHuoNs7rCYhoPXs4vnAbUMltL578_gYZpYhmg8Wo9lwt3ptMMXukuE7fiL5N4puWKJVcrQOu0NoRrZThtqm_Elm_e8IBfMMe3_yvSaZ7x9pBFxvtoe9npmtibqz5dQfl7ZUYnqYvuoK5wXg==)
+[2] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFw4gKZgVuKJFWPLeKFPiQDMBbok5rQBnrHSsmDoGTjHuoNs7rCYhoPXs4vnAbUMltL578_gYZpYhmg8Wo9lwt3ptMMXukuE7fiL5N4puWKJVcrQOu0NoRrZThtqm_Elm_e8IBfMMe3_yvSaZ7x9pBFxvtoe9npmtibqz5dQfl7ZUYnqYvuoK5wXg==)
+[3] [scribd.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGDtQn8qx5Etml_xNzgvqI00vQCDqZy_pHZmBh5Q9XXz9fLAtda5zbJm3O4amIclSprZyyZWigupzuPdF1VCzxxiwgEMwJb3EI9d8QnK2XsFXW7iKwpU6f79BUWE9h5-XUgD60N6jbdBLcdSo9-Sr_6TYiOnQIjl_399gf05EyR7rQF7VnNITnWmg==)
+[4] [scribd.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGDtQn8qx5Etml_xNzgvqI00vQCDqZy_pHZmBh5Q9XXz9fLAtda5zbJm3O4amIclSprZyyZWigupzuPdF1VCzxxiwgEMwJb3EI9d8QnK2XsFXW7iKwpU6f79BUWE9h5-XUgD60N6jbdBLcdSo9-Sr_6TYiOnQIjl_399gf05EyR7rQF7VnNITnWmg==)
+[5] [epa.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEE3CPo-2NorHtdGqUX5PzyH6LsXa2nIEmaBNnC4Ve8183xHj71Q3tKEJnD_ry1iLy21LuhGQTqGwVxc_BlcneJsPXpf4r13J1JhweWvtRDlRIoTqFuhSfiJrq4TnWu6yhSa9Z8EGNe1CuCKyGN_4dPkR-QKpSG1b9PfN1UcRBwOmx02zwDJhymR-hjzre6nnlflak=)
+[6] [epa.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHxjMg8qvhjmmnOtN-VWUz-KJz1a7bOoh9jopVFr2nQ7AFyKFNcS0lmY7ExeMv1vLRaftZF8BYU3u1RE9YnuJbn_thjceLdyrEf3P17mhRGP-8i_ajEs-UZIrpgyzHjFzYyoinaH7Uz64RVPsJYeg==)
+[7] [epa.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEluMA9JZL5dSrSTEZcbn6Vi5JFEUWgullVZJoruIyMT8ZMzg1dvsrUM3bLJUCCYspDWOArdhdrYYovjhaLQ1UsPvsKQp6OJQasVJprqbbm27zAlKRn0Cs-2oRFGcCpQgOJMrpqWK-kIQOS_Xdg7_nLeKn29e0sH7S5EXESdBIO74JNabkJqjBO)
+[8] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFw4gKZgVuKJFWPLeKFPiQDMBbok5rQBnrHSsmDoGTjHuoNs7rCYhoPXs4vnAbUMltL578_gYZpYhmg8Wo9lwt3ptMMXukuE7fiL5N4puWKJVcrQOu0NoRrZThtqm_Elm_e8IBfMMe3_yvSaZ7x9pBFxvtoe9npmtibqz5dQfl7ZUYnqYvuoK5wXg==)

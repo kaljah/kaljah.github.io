@@ -1,0 +1,1 @@
+A1: (Recommended) Multi-Tier Workflow: Tier 1 based on crude oil production & API Table 6-8 basin factors; Tier 2 based on oil production, GOR, venting duration, gas composition & disposition partitioning (vented vs flared vs recovered); Tier 3 based on direct measured vent rate/volume, duration & measured gas composition.

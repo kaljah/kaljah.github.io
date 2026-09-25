@@ -1,0 +1,111 @@
+
+The command exited with code 0.
+Output:
+<truncated 1 lines>
+new\server\calculations\uncertainty.py:30:class Tier:
+new\server\calculations\uncertainty.py:31:    """Calculation tier following IPCC 2006 GL Vol.1 �2.4 hierarchy."""
+new\server\calculations\uncertainty.py:38:# Activity-data uncertainty by tier - IPCC GL Vol.1 Table 3.1
+new\server\calculations\uncertainty.py:40:    Tier.T1: 0.10,  # �10% - metering without calibration, allocation methods
+new\server\calculations\uncertainty.py:41:    Tier.T2: 0.07,  # �7%  - regional data, estimated throughput
+new\server\calculations\uncertainty.py:42:    Tier.T3: 0.02,  # �2%  - calibrated CEMS / Coriolis meters
+new\server\calculations\uncertainty.py:350:    tier=Tier.T1,
+new\server\calculations\uncertainty.py:368:                                Pass 0.0 if the EF is exact (Tier 3 mass 
+balance).
+new\server\calculations\uncertainty.py:370:                                           If None, derived from tier.
+new\server\calculations\uncertainty.py:371:        tier (int): Tier.T1 / Tier.T2 / Tier.T3
+new\server\calculations\uncertainty.py:387:          tier                  - tier used
+new\server\calculations\uncertainty.py:397:    # --- Resolve activity uncertainty from tier if not explicitly provided 
+---
+new\server\calculations\uncertainty.py:403:            if tier == Tier.T3:
+new\server\calculations\uncertainty.py:404:                activity_uncertainty = ACTIVITY_UNCERTAINTY[Tier.T3]
+new\server\calculations\uncertainty.py:409:                tier, ACTIVITY_UNCERTAINTY[Tier.T1]
+new\server\calculations\uncertainty.py:477:        "tier": tier,
+new\server\calculations\uncertainty.py:484:# HELPER: resolve tier from factor_source string
+new\server\calculations\uncertainty.py:488:def resolve_tier(factor_source: str) -> int:
+new\server\calculations\uncertainty.py:490:    Map factor_source string to a Tier integer.
+new\server\calculations\uncertainty.py:494:        return Tier.T1
+new\server\calculations\uncertainty.py:502:        "tier3",
+new\server\calculations\uncertainty.py:503:        "tier_3",
+new\server\calculations\uncertainty.py:506:        return Tier.T3
+new\server\calculations\uncertainty.py:510:        "tier2",
+new\server\calculations\uncertainty.py:511:        "tier_2",
+new\server\calculations\uncertainty.py:513:        "tier2_plus",
+new\server\calculations\uncertainty.py:514:        "tier_2_plus",
+new\server\calculations\uncertainty.py:515:        "tier2+",
+new\server\calculations\uncertainty.py:516:        "tier_2+",
+new\server\calculations\uncertainty.py:518:        return Tier.T2
+new\server\calculations\uncertainty.py:519:    return Tier.T1  # 'default' or unknown  Tier 1
+new\server\calculations\uncertainty.py:523:    process_type: str, gas: str, tier: int, measured_u: float = None
+new\server\calculations\uncertainty.py:526:    Return the EF uncertainty for a given process, gas, and tier.
+new\server\calculations\uncertainty.py:533:        tier: Tier.T1 / T2 / T3
+new\server\calculations\uncertainty.py:544:    tier_key = {Tier.T1: "T1", Tier.T2: "T2", Tier.T3: "T3"}.get(tier, "T1")
+new\server\calculations\uncertainty.py:546:        return DEFAULT_EF_UNCERTAINTY[category][gas_lu][tier_key]
+new\server\calculations\vented.py:20:    resolve_tier,
+new\server\calculations\vented.py:22:    Tier,
+new\server\calculations\vented.py:95:    _tier = resolve_tier(factor_source)
+new\server\calculations\vented.py:98:        resolve_ef_uncertainty(process_category, "ch4", _tier, (uncertainties or 
+{}).get("ch4")),
+new\server\calculations\vented.py:99:        tier=_tier,
+new\server\calculations\vented.py:106:            resolve_ef_uncertainty(process_category, "co2", _tier, 
+(uncertainties or {}).get("co2")),
+new\server\calculations\vented.py:107:            tier=_tier,
+new\server\calculations\vented.py:117:            resolve_ef_uncertainty(process_category, "n2o", _tier, 
+(uncertainties or {}).get("n2o")),
+new\server\calculations\vented.py:118:            tier=_tier,
+new\server\calculations\vented.py:133:    TIER1_WELL_EF = 0.0524
+new\server\calculations\vented.py:145:        wells_or_tier=None,
+new\server\calculations\vented.py:150:        tier=None,
+new\server\calculations\vented.py:160:        - Tier 1 (Table 6-3): Simplified API default: wells � 0.0524 t CH4/well
+new\server\calculations\vented.py:161:        - Tier 2 (Onshore defaults or Custom Factor from DB): drilling days � 
+mud EF (water: 0.0458, oil: 0.0103 t CH4/day, or custom factor EF)
+new\server\calculations\vented.py:162:        - Tier 2+ (Onshore + Gas Composition): DD � EF � (X_CH4,site / 83.85%) 
+[+ CO2 if X_CO2,site provided]
+new\server\calculations\vented.py:165:        if isinstance(wells_or_tier, (int, float)) and not 
+isinstance(wells_or_tier, bool):
+new\server\calculations\vented.py:167:                wells = float(wells_or_tier)
+new\server\calculations\vented.py:168:        elif isinstance(wells_or_tier, str):
+new\server\calculations\vented.py:169:            if tier is None:
+new\server\calculations\vented.py:170:                tier = wells_or_tier
+new\server\calculations\vented.py:179:        # Determine calculation tier mode
+new\server\calculations\vented.py:181:        raw_tier = str(tier or "tier1").lower().strip()
+new\server\calculations\vented.py:184:            raw_tier in ["tier2_plus", "tier_2_plus", "tier2+", "tier_2+"]
+new\server\calculations\vented.py:185:            or raw_source in ["tier2_plus", "tier_2_plus", "tier2+", "tier_2+"]
+new\server\calculations\vented.py:194:            tier_mode = "tier2_plus"
+new\server\calculations\vented.py:196:            raw_tier in ["tier2", "tier_2", "custom", "t2"]
+new\server\calculations\vented.py:197:            or raw_source in ["tier2", "tier_2", "custom", "t2"]
+new\server\calculations\vented.py:200:            tier_mode = "tier2"
+new\server\calculations\vented.py:202:            tier_mode = "tier1"
+new\server\calculations\vented.py:204:        if tier_mode == "tier1":
+new\server\calculations\vented.py:205:            # Tier 1: Wells count
+new\server\calculations\vented.py:215:                else self.TIER1_WELL_EF
+new\server\calculations\vented.py:219:            resolved_tier_val = Tier.T1
+new\server\calculations\vented.py:221:                "tier": "Tier 1",
+new\server\calculations\vented.py:227:        elif tier_mode == "tier2":
+new\server\calculations\vented.py:228:            # Tier 2: Drilling days * Table 6-2 mud EF
+new\server\calculations\vented.py:250:            resolved_tier_val = Tier.T2
+new\server\calculations\vented.py:252:                "tier": "Tier 2",
+new\server\calculations\vented.py:260:            # Tier 2+: Drilling days * Table 6-2 mud EF * (X_CH4,site / 83.85%) 
+[+ CO2 if X_CO2,site provided]
+new\server\calculations\vented.py:307:            resolved_tier_val = Tier.T2
+new\server\calculations\vented.py:309:                "tier": "Tier 2+",
+new\server\calculations\vented.py:318:        _tier = resolved_tier_val
+new\server\calculations\vented.py:321:            resolve_ef_uncertainty("vented", "ch4", _tier, 
+uncertainties.get("ch4")),
+new\server\calculations\vented.py:322:            tier=_tier,
+new\server\calculations\vented.py:329:                resolve_ef_uncertainty("vented", "co2", _tier, 
+uncertainties.get("co2")),
+new\server\calculations\vented.py:330:                tier=_tier,
+new\server\calculations\vented.py:807:            _tier = resolve_tier(uncertainties.get("_factor_source", "default"))
+new\server\calculations\vented.py:810:                resolve_ef_uncertainty("tank", "ch4", _tier, 
+uncertainties.get("ch4")),
+new\server\calculations\vented.py:811:                tier=_tier,
+new\server\calculations\vented.py:897:        _tier = resolve_tier(uncertainties.get("_factor_source", "default"))
+new\server\calculations\vented.py:900:            resolve_ef_uncertainty("pneumatic", "ch4", _tier, 
+uncertainties.get("ch4")),
+new\server\calculations\vented.py:901:            tier=_tier,
+new\server\calculations\vented.py:907:            resolve_ef_uncertainty("pneumatic", "co2", _tier, 
+uncertainties.get("co2")),
+new\server\calculations\vented.py:908:            tier=_tier,
+
+
+

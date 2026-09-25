@@ -1,0 +1,30 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\src
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----         8/11/2026   2:16 PM                assets                                                               
+d-----         9/24/2026  12:57 PM                components                                                           
+d-----         9/24/2026  12:56 PM                constants                                                            
+d-----          2/9/2026   6:35 PM                context                                                              
+d-----         9/17/2026  12:43 PM                hooks                                                                
+d-----         9/13/2026  11:45 PM                pages                                                                
+d-----         9/19/2026  10:30 PM                utils                                                                
+d-----         9/24/2026  11:31 PM                __tests__                                                            
+-a----         9/14/2026  12:25 AM           2333 api.js                                                               
+-a----         8/11/2026  12:54 PM            190 App.css                                                              
+-a----         9/22/2026   6:01 PM           7031 App.jsx                                                              
+-a----         9/20/2026   3:04 PM           1231 constants.js                                                         
+-a----         8/15/2026   6:32 PM            375 fix_wizards.py                                                       
+-a----         9/19/2026   5:22 PM          10142 index.css                                                            
+-a----         8/11/2026   1:52 PM            164 main.jsx                                                             
+-a----         8/15/2026   7:11 PM           1069 patch_app.py                                                         
+-a----         9/20/2026   5:27 PM             36 test-setup.js                                                        
+
+
+

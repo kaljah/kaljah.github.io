@@ -1,0 +1,104 @@
+
+The command exited with code 0.
+Output:
+
+  new\server\test_emission_calculations.py:10:   Unit conversions (scf, m3, bbl, MMscf)
+  new\server\test_emission_calculations.py:11:   All process types: Combustion, Flaring, Venting/Blowdown,
+> new\server\test_emission_calculations.py:12:    Tank Flashing, Pneumatic Devices, Completions, Liquids Unloading,
+  new\server\test_emission_calculations.py:13:    Drilling Mud Degassing, Fugitive
+  new\server\test_emission_calculations.py:14:
+  new\server\test_emission_calculations.py:15:Run with:
+  new\server\test_emission_calculations.py:16:    cd c:\\Users\\samsung\\Desktop\\H2\\new\\server
+  new\server\test_emission_calculations.py:17:    python -m pytest test_emission_calculations.py -v --tb=short
+  new\server\test_emission_calculations.py:18:  OR:
+  new\server\test_emission_calculations.py:19:    python test_emission_calculations.py
+  new\server\test_emission_calculations.py:20:=========================================================================
+====
+  new\server\test_emission_calculations.py:21:"""
+  new\server\test_emission_calculations.py:22:
+  new\server\test_emission_calculations.py:23:import sys
+  new\server\test_emission_calculations.py:24:import os
+  new\server\test_emission_calculations.py:25:import math
+  new\server\test_emission_calculations.py:26:import unittest
+  new\server\test_emission_calculations.py:27:
+  new\server\test_emission_calculations.py:537:
+  new\server\test_emission_calculations.py:538:# 
+=============================================================================
+> new\server\test_emission_calculations.py:539:# TIER 3 - LIQUIDS UNLOADING
+  new\server\test_emission_calculations.py:540:# 
+=============================================================================
+> new\server\test_emission_calculations.py:541:class TestTier3LiquidsUnloading(unittest.TestCase):
+  new\server\test_emission_calculations.py:542:    """
+> new\server\test_emission_calculations.py:543:    Liquids Unloading Tier 3 (API Eq. 6-3):
+  new\server\test_emission_calculations.py:544:      well_depth = 5000 ft
+  new\server\test_emission_calculations.py:545:      diameter = 2.441 in   D_m = 2.441 * 0.0254 = 0.062001 m
+  new\server\test_emission_calculations.py:546:      pressure = 500 psig  P_abs = 500 + 14.696 = 514.696 psia
+  new\server\test_emission_calculations.py:547:      T = 60 F  standard T_K = 288.706 K
+  new\server\test_emission_calculations.py:548:      events = 12
+  new\server\test_emission_calculations.py:549:
+  new\server\test_emission_calculations.py:550:      A = pi/4 * D_m^2 = pi/4 * 0.062001^2 = 0.003018 m2
+  new\server\test_emission_calculations.py:551:      depth_m = 5000 * 0.3048 = 1524 m
+  new\server\test_emission_calculations.py:552:      V_tubing = A * depth_m = 0.003018 * 1524 = 4.599 m3
+  new\server\test_emission_calculations.py:553:
+  new\server\test_emission_calculations.py:554:      p_factor = 514.696 / 14.696 = 35.02
+  new\server\test_emission_calculations.py:555:      t_factor = 288.706 / 288.706 = 1.0   (T=60F = std)
+  new\server\test_emission_calculations.py:556:      V_std = 4.599 * 35.02 = 161.1 m3
+  new\server\test_emission_calculations.py:557:      total_V = 161.1 * 12 = 1933.2 m3
+  new\server\test_emission_calculations.py:558:
+  new\server\test_emission_calculations.py:602:        ef = {"co2": 0, "ch4": 0, "n2o": 0, "unit": "kg/event"}
+  new\server\test_emission_calculations.py:603:        self.result = dispatcher.dispatch(
+> new\server\test_emission_calculations.py:604:            "liquids_unloading", inputs, ef, UNC_SPECIFIC, gwp_dict=GWP
+  new\server\test_emission_calculations.py:605:        )
+  new\server\test_emission_calculations.py:606:
+> new\server\test_emission_calculations.py:607:    def test_unloading_ch4(self):
+  new\server\test_emission_calculations.py:608:        ch4 = extract_val(self.result["results"]["ch4"])
+  new\server\test_emission_calculations.py:609:        self.assertAlmostEqual(
+  new\server\test_emission_calculations.py:610:            ch4,
+  new\server\test_emission_calculations.py:611:            self.expected_ch4,
+  new\server\test_emission_calculations.py:612:            places=3,
+> new\server\test_emission_calculations.py:613:            msg=f"Liquids Unloading CH4: got {ch4}, expected 
+{self.expected_ch4}",
+  new\server\test_emission_calculations.py:614:        )
+  new\server\test_emission_calculations.py:615:
+> new\server\test_emission_calculations.py:616:    def test_unloading_co2e(self):
+  new\server\test_emission_calculations.py:617:        ch4 = extract_val(self.result["results"]["ch4"])
+  new\server\test_emission_calculations.py:618:        co2 = extract_val(self.result["results"].get("co2", 0))
+  new\server\test_emission_calculations.py:619:        expected = co2 + ch4 * GWP_CH4
+  new\server\test_emission_calculations.py:620:        self.assertAlmostEqual(float(self.result["total_co2e"]), 
+expected, places=3)
+  new\server\test_emission_calculations.py:621:
+  new\server\test_emission_calculations.py:622:
+  new\server\test_emission_calculations.py:623:# 
+=============================================================================
+  new\server\test_emission_calculations.py:624:# TIER 3 - DRILLING MUD DEGASSING
+  new\server\test_emission_calculations.py:625:# 
+=============================================================================
+  new\server\test_emission_calculations.py:626:# TIER 1 / TIER 2 - DRILLING MUD DEGASSING (API Compendium Tables 6-2 & 
+6-3)
+  new\server\test_emission_calculations.py:627:# 
+=============================================================================
+  new\server\test_emission_calculations.py:628:class TestTier1DrillingMud(unittest.TestCase):
+  new\server\test_emission_calculations.py:629:    """
+  new\server\test_emission_calculations.py:630:    Mud Degassing Tier 1 (API Table 6-3 default):
+  new\server\test_emission_calculations.py:631:      wells = 10 wells
+  new\server\test_emission_calculations.py:1275:        TestTier3TankFlashing,
+  new\server\test_emission_calculations.py:1276:        TestTier3PneumaticDevices,
+> new\server\test_emission_calculations.py:1277:        TestTier3LiquidsUnloading,
+  new\server\test_emission_calculations.py:1278:        TestTier1DrillingMud,
+  new\server\test_emission_calculations.py:1279:        TestTier3Completions,
+  new\server\test_emission_calculations.py:1280:        TestTier1FugitiveAverage,
+  new\server\test_emission_calculations.py:1281:        TestTier3CombustionGasComposition,
+  new\server\test_emission_calculations.py:1282:        TestEdgeCases,
+  new\server\test_emission_calculations.py:1283:        TestProcessRowIntegration,
+  new\server\test_emission_calculations.py:1284:    ]
+  new\server\test_emission_calculations.py:1285:
+  new\server\test_emission_calculations.py:1286:    for cls in test_classes:
+  new\server\test_emission_calculations.py:1287:        suite.addTests(loader.loadTestsFromTestCase(cls))
+  new\server\test_emission_calculations.py:1288:
+  new\server\test_emission_calculations.py:1289:    runner = unittest.TextTestRunner(verbosity=2)
+  new\server\test_emission_calculations.py:1290:    result = runner.run(suite)
+  new\server\test_emission_calculations.py:1291:
+  new\server\test_emission_calculations.py:1292:    print("\n" + "=" * 75)
+
+
+

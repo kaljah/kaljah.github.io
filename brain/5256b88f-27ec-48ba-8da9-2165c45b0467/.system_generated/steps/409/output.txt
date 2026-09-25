@@ -1,0 +1,233 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -791,74 +791,159 @@
+                 )
+ 
+             elif process_type in ["liquids_unloading", "unloading"]:
+-                depth = self._require_float(
+-                    flat_inputs, ["unload_depth", "well_depth"], "well depth (ft)"
+-                )
+-                diam = self._require_float(
+-                    flat_inputs, ["unload_diam", "diameter"], "casing diameter (in)"
+-                )
+-                press = self._require_float(
+-                    flat_inputs,
+-                    ["unload_press", "pressure"],
+-                    "shut-in surface pressure (psig)",
+-                )
+-                events = int(
+-                    self._require_float(
+-                        flat_inputs,
+-                        ["unload_freq", "unload_events", "events", "amount"],
+-                        "annual unloading event count",
+-                    )
+-                )
+-                ch4_content = self._require_fraction(
+-                    flat_inputs,
+-                    ["ch4_content", "c1", "unload_ch4_content"],
+-                    "gas CH4 content %",
+-                )
+-                co2_content = self._optional_fraction(
+-                    flat_inputs, ["co2_content", "co2_mol"], 0.0
+-                )
+-                flare_eff = self._optional_fraction(
+-                    flat_inputs, ["unload_flare_eff", "control_efficiency"], 0.0
+-                )
+-
+-                ef_co2 = emission_factors.get("co2")
+-                ef_ch4 = emission_factors.get("ch4")
+-                ef_n2o = emission_factors.get("n2o")
+-
+-                depth_unit = (
+-                    flat_inputs.get("unload_depth_unit")
+-                    or flat_inputs.get("depth_unit", "ft")
+-                )
+-                diam_unit = (
+-                    flat_inputs.get("unload_diam_unit")
+-                    or flat_inputs.get("diameter_unit", "in")
+-                )
+-                press_unit = (
+-                    flat_inputs.get("unload_press_unit")
+-                    or flat_inputs.get("press_unit", "psig")
+-                )
+-
+-                return calculator.calculate(
+-                    well_depth=depth,
+-                    diameter=diam,
+-                    pressure=press,
+-                    ch4_content=ch4_content,
+-                    events=events,
+-                    uncertainties=uncertainties,
+-                    co2_content=co2_content,
+-                    control_efficiency=flare_eff,
+-                    ef_co2=ef_co2,
+-                    ef_ch4=ef_ch4,
+-                    ef_n2o=ef_n2o,
+-                    operating_temperature=flat_inputs.get("unload_temp")
+-                    or flat_inputs.get("operating_temperature", 60.0),
+-                    temp_unit=flat_inputs.get("temp_unit", "F"),
+-                    depth_unit=depth_unit,
+-                    diameter_unit=diam_unit,
+-                    press_unit=press_unit,
+-                    hhv=float(flat_inputs.get("hhv") or emission_factors.get("hhv") or 1020.0),
+-                    gwp_dict=gwp_dict,
+-                )
++                calc_method = str(
++                    flat_inputs.get("calc_method")
++                    or flat_inputs.get("calculation_method")
++                    or flat_inputs.get("method")
++                    or flat_inputs.get("unloading_method")
++                    or ""
++                ).lower().strip()
++
++                # API Equation 6-11: Automated plunger lift
++                if (
++                    calc_method in ["api_equation_6_11", "equation_6_11", "eq_6_11", "automated_plunger"]
++                    or (flat_inputs.get("p_shut") is not None and flat_inputs.get("p_sep") is not None)
++                ):
++                    p_shut = self._require_float(flat_inputs, ["p_shut", "shut_pressure"], "shut-in pressure (Pshut)")
++                    p_line = self._require_float(flat_inputs, ["p_line", "line_pressure"], "flow-line pressure (Pline)")
++                    p_sep = self._require_float(flat_inputs, ["p_sep", "separator_pressure"], "separator pressure (Psep)")
++                    sfr_p = self._require_float(flat_inputs, ["sfr_p", "sfr", "production_rate"], "daily gas production rate (SFRp)")
++                    t_p = self._require_float(flat_inputs, ["t_p", "hours_open", "venting_time"], "hours vented per event (Tp)")
++                    events = int(self._require_float(flat_inputs, ["unload_freq", "unload_events", "events", "amount"], "annual unloading events"))
++                    ch4_content = self._optional_fraction(flat_inputs, ["ch4_content", "c1", "unload_ch4_content"], 0.85)
++                    co2_content = self._optional_fraction(flat_inputs, ["co2_content", "co2_mol"], 0.0)
++                    flare_eff = self._optional_fraction(flat_inputs, ["unload_flare_eff", "control_efficiency"], 0.0)
++                    press_unit = flat_inputs.get("unload_press_unit") or flat_inputs.get("press_unit", "psia")
++
++                    return calculator.calculate_tier3_equation_6_11(
++                        p_shut=p_shut,
++                        p_line=p_line,
++                        p_sep=p_sep,
++                        sfr_p=sfr_p,
++                        t_p=t_p,
++                        events=events,
++                        well_count=float(flat_inputs.get("well_count") or flat_inputs.get("wells") or 1),
++                        ch4_content=ch4_content,
++                        co2_content=co2_content,
++                        control_efficiency=flare_eff,
++                        press_unit=press_unit,
++                        sfr_unit=flat_inputs.get("sfr_unit", "scf/hr"),
++                        uncertainties=uncertainties,
++                        hhv=float(flat_inputs.get("hhv") or emission_factors.get("hhv") or 1020.0),
++                        gwp_dict=gwp_dict,
++                    )
++
++                # API Equation 6-10: EPA Subpart W (W-8 / W-9)
++                elif (
++                    calc_method in ["api_equation_6_10", "equation_6_10", "eq_6_10", "subpart_w"]
++                    or (flat_inputs.get("sfr") is not None and flat_inputs.get("hours_open") is not None)
++                ):
++                    depth = self._require_float(flat_inputs, ["unload_depth", "well_depth"], "well depth (ft)")
++                    diam = self._require_float(flat_inputs, ["unload_diam", "diameter"], "casing diameter (in)")
++                    press = self._require_float(flat_inputs, ["unload_press", "pressure"], "shut-in surface pressure (psig)")
++                    events = int(self._require_float(flat_inputs, ["unload_freq", "unload_events", "events", "amount"], "annual unloading events"))
++                    sfr = self._require_float(flat_inputs, ["sfr", "subpart_w_sfr"], "sales flow rate (SFR)")
++                    hours_open = self._require_float(flat_inputs, ["hours_open", "hrs_open", "venting_hours"], "hours venting during unloading (HR)")
++                    ch4_content = self._require_fraction(flat_inputs, ["ch4_content", "c1", "unload_ch4_content"], "gas CH4 content %")
++                    co2_content = self._optional_fraction(flat_inputs, ["co2_content", "co2_mol"], 0.0)
++                    flare_eff = self._optional_fraction(flat_inputs, ["unload_flare_eff", "control_efficiency"], 0.0)
++                    depth_unit = flat_inputs.get("unload_depth_unit") or flat_inputs.get("depth_unit", "ft")
++                    diam_unit = flat_inputs.get("unload_diam_unit") or flat_inputs.get("diameter_unit", "in")
++                    press_unit = flat_inputs.get("unload_press_unit") or flat_inputs.get("press_unit", "psig")
++
++                    return calculator.calculate_tier3_equation_6_10(
++                        events=events,
++                        well_depth=depth,
++                        diameter=diam,
++                        pressure=press,
++                        sfr=sfr,
++                        hours_open=hours_open,
++                        unloading_type=flat_inputs.get("unloading_type") or flat_inputs.get("unload_type", "non_plunger"),
++                        well_count=float(flat_inputs.get("well_count") or flat_inputs.get("wells") or 1),
++                        ch4_content=ch4_content,
++                        co2_content=co2_content,
++                        control_efficiency=flare_eff,
++                        depth_unit=depth_unit,
++                        diameter_unit=diam_unit,
++                        press_unit=press_unit,
++                        sfr_unit=flat_inputs.get("sfr_unit", "scf/hr"),
++                        uncertainties=uncertainties,
++                        hhv=float(flat_inputs.get("hhv") or emission_factors.get("hhv") or 1020.0),
++                        gwp_dict=gwp_dict,
++                    )
++
++                # Default Tier 3: API Equation 6-3 (Volume-based wellbore decompression geometry)
++                else:
++                    depth = self._require_float(
++                        flat_inputs, ["unload_depth", "well_depth"], "well depth (ft)"
++                    )
++                    diam = self._require_float(
++                        flat_inputs, ["unload_diam", "diameter"], "casing diameter (in)"
++                    )
++                    press = self._require_float(
++                        flat_inputs,
++                        ["unload_press", "pressure"],
++                        "shut-in surface pressure (psig)",
++                    )
++                    events = int(
++                        self._require_float(
++                            flat_inputs,
++                            ["unload_freq", "unload_events", "events", "amount"],
++                            "annual unloading event count",
++                        )
++                    )
++                    ch4_content = self._require_fraction(
++                        flat_inputs,
++                        ["ch4_content", "c1", "unload_ch4_content"],
++                        "gas CH4 content %",
++                    )
++                    co2_content = self._optional_fraction(
++                        flat_inputs, ["co2_content", "co2_mol"], 0.0
++                    )
++                    flare_eff = self._optional_fraction(
++                        flat_inputs, ["unload_flare_eff", "control_efficiency"], 0.0
++                    )
++
++                    ef_co2 = emission_factors.get("co2")
++                    ef_ch4 = emission_factors.get("ch4")
++                    ef_n2o = emission_factors.get("n2o")
++
++                    depth_unit = (
++                        flat_inputs.get("unload_depth_unit")
++                        or flat_inputs.get("depth_unit", "ft")
++                    )
++                    diam_unit = (
++                        flat_inputs.get("unload_diam_unit")
++                        or flat_inputs.get("diameter_unit", "in")
++                    )
++                    press_unit = (
++                        flat_inputs.get("unload_press_unit")
++                        or flat_inputs.get("press_unit", "psig")
++                    )
++
++                    return calculator.calculate_volume_based(
++                        well_depth=depth,
++                        diameter=diam,
++                        pressure=press,
++                        ch4_content=ch4_content,
++                        events=events,
++                        uncertainties=uncertainties,
++                        co2_content=co2_content,
++                        control_efficiency=flare_eff,
++                        ef_co2=ef_co2,
++                        ef_ch4=ef_ch4,
++                        ef_n2o=ef_n2o,
++                        operating_temperature=flat_inputs.get("unload_temp")
++                        or flat_inputs.get("operating_temperature", 60.0),
++                        temp_unit=flat_inputs.get("temp_unit", "F"),
++                        depth_unit=depth_unit,
++                        diameter_unit=diam_unit,
++                        press_unit=press_unit,
++                        hhv=float(flat_inputs.get("hhv") or emission_factors.get("hhv") or 1020.0),
++                        well_count=float(flat_inputs.get("well_count") or flat_inputs.get("wells") or 1),
++                        unloading_type=flat_inputs.get("unloading_type") or flat_inputs.get("unload_type", "plunger"),
++                        gwp_dict=gwp_dict,
++                    )
+ 
+             elif process_type in ["venting", "blowdown"]:
+                 raw_vol = self._require_float(
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

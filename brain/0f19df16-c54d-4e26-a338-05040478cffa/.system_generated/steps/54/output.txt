@@ -1,0 +1,10 @@
+The search for ""Table 6-2" "Mud Degassing Vented Methane Emission Factors" "API Compendium" "water" "oil"" returned the following summary:
+Table 6-2 in the **API Compendium of Greenhouse Gas Emissions Methodologies for the Oil and Natural Gas Industry** is titled **"Mud Degassing Vented Methane Emission Factors for Oil and Natural Gas Exploration."**[1]
+
+This table provides standardized emission factors used to estimate methane emissions resulting from the degassing of drilling mud during exploration activities.[1] These factors are typically categorized to account for the different characteristics of the fluids being processed—specifically distinguishing between **water-based** and **oil-based** drilling mud systems—as the gas content and release potential can vary significantly between them.
+
+For the most accurate and current emission values, you should refer directly to the latest edition of the *API Compendium of Greenhouse Gas Emissions Methodologies* (published in November 2021).[2][1]
+
+Sources:
+[1] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEQzt6e0WtmlgnKVfRcvC662CoTURqSmIehYZhoymuakK3XYaewbFsLE5RQVZhNLwwox5V3RsHhM-1b429RRROgvNTW88W584ftOBZdOcMYOnWLSsuHk2sGiXNlL59qRzdyQPDj6FWYWcYa2BwRyifH6JFbV-HqpyNnO0fjXes0MIzz0jYXJ4a5HQ==)
+[2] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEQzt6e0WtmlgnKVfRcvC662CoTURqSmIehYZhoymuakK3XYaewbFsLE5RQVZhNLwwox5V3RsHhM-1b429RRROgvNTW88W584ftOBZdOcMYOnWLSsuHk2sGiXNlL59qRzdyQPDj6FWYWcYa2BwRyifH6JFbV-HqpyNnO0fjXes0MIzz0jYXJ4a5HQ==)

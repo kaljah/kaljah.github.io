@@ -1,0 +1,94 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\server
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----          9/9/2026  12:00 AM                emission_factors                                                     
+-a----         9/12/2026   4:33 PM           1646 electricity_factors.py                                               
+-a----         9/24/2026   4:55 PM          13680 emission_factors.py                                                  
+-a----         9/22/2026  10:01 PM          49231 emission_factors_api2021.py                                          
+-a----         8/11/2026  12:56 PM            742 list_all_factors.py                                                  
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\server\emission_factors
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         8/15/2026   6:42 PM           3664 eeio_factors.py                                                      
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\server\emission_factors\__pycache__
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----          9/9/2026  12:00 AM           3218 eeio_factors.cpython-312.pyc                                         
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\server\migrations\versions
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         8/11/2026  12:55 PM           5414 2ef6f882b02c_add_ghg_uncertainties_to_customfactor.py                
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\server\migrations\versions\__pycache__
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/25/2026   3:04 PM           7902 2ef6f882b02c_add_ghg_uncertainties_to_customfactor.cpython-312.pyc   
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\server\routes
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/20/2026   5:35 PM          14324 custom_factors.py                                                    
+-a----         8/11/2026  12:56 PM          12387 emission_factors_routes.py                                           
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\server\routes\__pycache__
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/20/2026   6:51 PM          18884 custom_factors.cpython-312.pyc                                       
+-a----          9/5/2026   4:47 PM          12343 emission_factors_routes.cpython-312.pyc                              
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\server\tests
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/20/2026  10:24 AM           5178 test_emission_factor_selection.py                                    
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\server\tests\__pycache__
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/20/2026  10:24 AM          15899 test_emission_factor_selection.cpython-312-pytest-9.1.1.pyc          
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\server\__pycache__
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/12/2026   4:33 PM           1173 electricity_factors.cpython-312.pyc                                  
+-a----         9/24/2026   4:56 PM           7713 emission_factors.cpython-312.pyc                                     
+-a----         9/22/2026  10:03 PM          21444 emission_factors_api2021.cpython-312.pyc                             
+
+
+

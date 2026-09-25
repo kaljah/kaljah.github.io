@@ -1,0 +1,28 @@
+
+The command exited with code 0.
+Output:
+new/client/src/components/scope1/DrillingForm.jsx:132:                  label: "Water-Based Mud (0.2605 t CH₄/day)",
+new/client/src/utils/EmissionFactors.js:926:    ch4: 0.2605,
+new/server/calculations/vented.py:137:        "water_based": 0.2605,
+new/server/calculations/vented.py:161:        - Tier 2 (Table 6-2): Mud-specific onshore EF: drilling days × mud EF (water: 0.2605, oil: 0.0586 t CH4/day)
+new/server/calculations/vented.py:246:                else self.TABLE_6_2_ONSHORE.get(norm_type, 0.2605)
+new/server/calculations/vented.py:278:                else self.TABLE_6_2_ONSHORE.get(norm_type, 0.2605)
+new/server/test_emission_calculations.py:669:        """Water-based mud uses API Table 6-2 EF=0.2605 t CH4/day."""
+new/server/test_emission_calculations.py:678:        ef = {"co2": 0, "ch4": 0.2605, "n2o": 0, "unit": "t/day"}
+new/server/test_emission_calculations.py:681:        expected = 20 * 0.2605
+new/server/test_emission_calculations.py:713:        expected = 10 * 0.2605 * (0.90 / 0.8385)
+new/server/tests/test_battery_midstream_process_equipment.py:60:        ("water_based", 0.2605),
+new/server/tests/test_qfull_api_pipeline.py:535:        TIER 2 (API Table 6-2 Onshore): Water-based mud EF = 0.2605 t CH4/day.
+new/server/tests/test_qfull_api_pipeline.py:536:        20 drilling days → ch4 = 20 * 0.2605 = 5.210 tonnes CH4
+new/server/tests/test_qfull_api_pipeline.py:541:        ef = 0.2605
+new/server/tests/test_qfull_api_pipeline.py:590:        10 drilling days, water-based (0.2605 t/day)
+new/server/tests/test_qfull_api_pipeline.py:597:        ef = 0.2605
+new/server/tests/test_qfull_boundary_sensitivity.py:354:        oil_based EF = 0.0586 t/day, water_based EF = 0.2605 t/day.
+new/server/tests/test_qfull_boundary_sensitivity.py:355:        Ratio = 0.0586 / 0.2605.
+new/server/tests/test_qfull_boundary_sensitivity.py:370:        expected_ratio = 0.0586 / 0.2605
+new/server/tests/test_qfull_unit_conversions.py:74:        """Reference: 20 drilling days water-based = 20 * 0.2605 = 5.210 t CH4."""
+new/server/tests/test_qfull_unit_conversions.py:76:        expected = days * 0.2605
+new/server/tests/test_qfull_validation.py:346:        expected_ch4 = drilling_days * 0.2605
+new/server/tests/test_qfull_validation.py:378:        expected_ch4 = drilling_days * 0.2605 * (0.85 / 0.8385)
+new/server/tests/test_qfull_validation.py:379:        expected_co2 = drilling_days * 0.2605 * (0.02 / 0.8385) * (44.01 / 16.04)
+

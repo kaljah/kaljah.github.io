@@ -1,0 +1,241 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\scope1\DrillingForm.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -5,7 +5,7 @@
+   const currentTier = String(
+     data.drilling_tier || data.tier || sourceType || "default"
+   ).toLowerCase();
+-  const isTier1 = currentTier === "default" || currentTier === "tier1";
++  const isCustom = currentTier === "custom";
+   const isTier2Plus =
+     currentTier === "tier2_plus" ||
+     currentTier === "tier2+" ||
+@@ -12,11 +12,24 @@
++  const isTier1 = !isCustom && !isTier2Plus;
++
++  const selectedFuel = String(data.fuel || "");
++  const isDefaultDays =
++    isTier1 &&
++    (selectedFuel.includes("Water") ||
++      selectedFuel.includes("Oil") ||
++      selectedFuel.includes("Mud") ||
++      data.unit === "days");
+ 
+   useEffect(() => {
+     if (isTier1) {
+-      if (data.unit !== "well") onChange("unit", "well");
++      if (isDefaultDays) {
++        if (data.unit !== "days") onChange("unit", "days");
++      } else {
++        if (data.unit !== "well") onChange("unit", "well");
++      }
+     } else {
+       if (data.unit !== "days") onChange("unit", "days");
+     }
+-  }, [isTier1]);
++  }, [isTier1, isDefaultDays]);
+ 
+   return (
+     <div className="drilling-form" style={{ marginTop: "15px" }}>
+@@ -55,10 +55,10 @@
+           }}
+         >
+           {isTier1
+-            ? "Tier 1: Table 6-3 Default"
++            ? "Tier 1: API Standard Default"
+             : isTier2Plus
+-            ? "Tier 2+: Table 6-2 + Gas Composition"
+-            : "Tier 2: Table 6-2 Onshore Mud EF"}
++            ? "Tier 2+: Onshore EF + Gas Composition"
++            : "Tier 2: Saved Custom Factor (Database)"}
+         </span>
+       </h4>
+ 
+@@ -65,6 +65,6 @@
+         <div className="input-group">
+           <label>
+-            {isTier1 ? "Wells Drilled" : "Drilling Days"}
++            {isTier1 && !isDefaultDays ? "Wells Drilled" : "Drilling Days"}
+             <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+           </label>
+           <input
+@@ -76,7 +76,9 @@
+               onChange("amount", e.target.value);
+               onChange("quantity", e.target.value);
+             }}
+-            placeholder={isTier1 ? "Number of wells" : "Total drilling days"}
++            placeholder={
++              isTier1 && !isDefaultDays ? "Number of wells" : "Total drilling days"
++            }
+           />
+         </div>
+ 
+@@ -84,7 +84,7 @@
+           <input
+             type="text"
+             className="mole-input"
+-            value={isTier1 ? "well" : "days"}
++            value={isTier1 && !isDefaultDays ? "well" : "days"}
+             readOnly
+             disabled
+             style={{
+@@ -96,7 +96,27 @@
+         </div>
+       </div>
+ 
+-      {isTier1 ? (
++      {isCustom && (
++        <div
++          style={{
++            marginTop: "12px",
++            padding: "12px 14px",
++            background: "#fffbeb",
++            border: "1px solid #fde68a",
++            borderRadius: "6px",
++            fontSize: "0.82rem",
++            color: "#92400e",
++            lineHeight: "1.5",
++          }}
++        >
++          <strong>Tier 2 Custom Factor (Database):</strong>
++          <p style={{ margin: "4px 0 0 0" }}>
++            Using custom emission factor populated from your database (selected in Calculation Methodology above). Activity represents total drilling days.
++          </p>
++        </div>
++      )}
++
++      {isTier1 && !isDefaultDays && (
+         <div
+           style={{
+             marginTop: "12px",
+@@ -114,10 +114,12 @@
+             <strong>0.0524 t CH₄ per drilled well</strong>.
+           </p>
+         </div>
+-      ) : (
++      )}
++
++      {isTier2Plus && (
+         <>
+           <div className="input-group" style={{ marginTop: "12px" }}>
+-            <label>Mud Type (API Table 6-2 Onshore)</label>
++            <label>Mud Type (API Compendium Onshore Defaults)</label>
+             <CustomDropdown
+               options={[
+                 {
+@@ -124,8 +124,8 @@
+-                  label: "Water-Based Mud (0.2605 t CH₄/day)",
++                  label: "Water-Based Mud (0.0458 t CH₄/day)",
+                 },
+                 {
+                   value: "oil_based",
+-                  label: "Oil-Based / Synthetic Mud (0.0586 t CH₄/day)",
++                  label: "Oil-Based / Synthetic Mud (0.0103 t CH₄/day)",
+                 },
+               ]}
+               value={data.mud_type || "water_based"}
+@@ -137,18 +137,95 @@
+                 display: "block",
+               }}
+             >
+-              Applies Table 6-2 onshore degassing emission factor to the drilling
+-              days.
++              Applies API Compendium onshore mud degassing emission factor adjusted for site gas composition.
+             </small>
+           </div>
+ 
+-          {isTier2Plus && (
++          <div
++            style={{
++              marginTop: "15px",
++              padding: "14px",
++              background: "#f8fafc",
++              border: "1px solid #e2e8f0",
++              borderRadius: "6px",
++            }}
++          >
++            <h5
++              style={{
++                margin: "0 0 10px 0",
++                fontSize: "0.85rem",
++                color: "#1e293b",
++                fontWeight: 600,
++              }}
++            >
++              Site-Specific Gas Composition Adjustment
++            </h5>
+             <div
+               style={{
+-                marginTop: "15px",
+-                padding: "14px",
+-                background: "#f8fafc",
+-                border: "1px solid #e2e8f0",
++                display: "grid",
++                gridTemplateColumns: "1fr 1fr",
++                gap: "14px",
++              }}
++            >
++              <div className="input-group" style={{ marginBottom: 0 }}>
++                <label style={{ fontSize: "0.8rem" }}>
++                  Site CH₄ Mole Fraction (X<sub>CH₄</sub>)
++                </label>
++                <input
++                  type="number"
++                  step="0.0001"
++                  min="0"
++                  max="1.0"
++                  className="mole-input"
++                  value={
++                    data.ch4_fraction !== undefined
++                      ? data.ch4_fraction
++                      : "0.8385"
++                  }
++                  onChange={(e) => onChange("ch4_fraction", e.target.value)}
++                  placeholder="0.8385"
++                />
++                <small
++                  style={{
++                    color: "#64748b",
++                    fontSize: "0.72rem",
++                  }}
++                >
++                  Default baseline is 0.8385 (83.85%). Scales Onshore EF by
++                  (X<sub>CH₄</sub> / 0.8385).
++                </small>
++              </div>
++
++              <div className="input-group" style={{ marginBottom: 0 }}>
++                <label style={{ fontSize: "0.8rem" }}>
++                  Site CO₂ Mole Fraction (X<sub>CO₂</sub>, Optional)
++                </label>
++                <input
++                  type="number"
++                  step="0.0001"
++                  min="0"
++                  max="1.0"
++                  className="mole-input"
++                  value={
++                    data.co2_fraction !== undefined ? data.co2_fraction : ""
++                  }
++                  onChange={(e) => onChange("co2_fraction", e.target.value)}
++                  placeholder="0.0000"
++                />
++                <small
++                  style={{
++                    color: "#64748b",
++                    fontSize: "0.72rem",
++                  }}
++                >
++                  Optional. Calculates CO₂ mass emissions via stoichiometric
++                  molar conversion (44.01/16.04).
++                </small>
++              </div>
++            </div>
++          </div>
++        </>
++      )}
+                 borderRadius: "6px",
+               }}
+             >
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

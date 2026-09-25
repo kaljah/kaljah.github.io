@@ -1,0 +1,30 @@
+
+The command exited with code 0.
+Output:
+
+new\server\app.py:259:from routes.emission_factors_routes import factors_bp
+new\server\background_processor.py:302:            from emission_factors import API_FACTORS
+new\server\background_processor.py:1091:    from emission_factors.eeio_factors import get_eeio_factor
+new\server\emission_factors.py:6:This module imports from emission_factors_api2021.py which contains
+new\server\emission_factors.py:17:from emission_factors_api2021 import (
+new\server\emission_factors.py:21:    ALL_EMISSION_FACTORS,
+new\server\emission_factors.py:48:# emission_factors_api2021.py which contains the comprehensive API 2021
+new\server\emission_factors.py:62:    "ALL_EMISSION_FACTORS",
+new\server\emission_factors.py:340:# Source of truth: ALL_EMISSION_FACTORS contains the full 120+ factors from 
+Sections 5, 6, 7
+new\server\emission_factors.py:342:API_FACTORS = {**ALL_EMISSION_FACTORS, **LEGACY_FACTORS}
+new\server\emission_factors_api2021.py:1233:ALL_EMISSION_FACTORS = {
+new\server\emission_factors_api2021.py:1321:        for factor_name, factor_data in ALL_EMISSION_FACTORS.items()
+new\server\emission_factors_api2021.py:1338:        for factor_name, factor_data in ALL_EMISSION_FACTORS.items()
+new\server\emission_factors_api2021.py:1356:        for factor_name, factor_data in ALL_EMISSION_FACTORS.items()
+new\server\generate_scenarios.py:13:from emission_factors import API_FACTORS, EQUIPMENT_FACTORS
+new\server\list_all_factors.py:1:from emission_factors_api2021 import API_FACTORS, EQUIPMENT_FACTORS, VENTED_FACTORS
+new\server\patch_bg.py:8:    from emission_factors.eeio_factors import get_eeio_factor
+new\server\test_emission_calculations.py:1070:        from emission_factors import API_FACTORS
+new\server\test_emission_calculations.py:1125:        from emission_factors import API_FACTORS
+new\server\test_emission_calculations.py:1155:        from emission_factors import API_FACTORS
+new\server\test_emission_calculations.py:1183:        from emission_factors import API_FACTORS
+new\server\test_emission_calculations.py:1217:        from emission_factors import API_FACTORS
+
+
+

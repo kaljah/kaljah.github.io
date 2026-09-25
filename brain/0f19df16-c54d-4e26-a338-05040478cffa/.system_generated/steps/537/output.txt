@@ -1,0 +1,92 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\scope1\DrillingForm.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -272,86 +272,6 @@
+           </div>
+         </>
+       )}
+-                borderRadius: "6px",
+-              }}
+-            >
+-              <h5
+-                style={{
+-                  margin: "0 0 10px 0",
+-                  fontSize: "0.85rem",
+-                  color: "#1e293b",
+-                  fontWeight: 600,
+-                }}
+-              >
+-                Site-Specific Gas Composition Adjustment
+-              </h5>
+-              <div
+-                style={{
+-                  display: "grid",
+-                  gridTemplateColumns: "1fr 1fr",
+-                  gap: "14px",
+-                }}
+-              >
+-                <div className="input-group" style={{ marginBottom: 0 }}>
+-                  <label style={{ fontSize: "0.8rem" }}>
+-                    Site CH₄ Mole Fraction (X<sub>CH₄</sub>)
+-                  </label>
+-                  <input
+-                    type="number"
+-                    step="0.0001"
+-                    min="0"
+-                    max="1.0"
+-                    className="mole-input"
+-                    value={
+-                      data.ch4_fraction !== undefined
+-                        ? data.ch4_fraction
+-                        : "0.8385"
+-                    }
+-                    onChange={(e) => onChange("ch4_fraction", e.target.value)}
+-                    placeholder="0.8385"
+-                  />
+-                  <small
+-                    style={{
+-                      color: "#64748b",
+-                      fontSize: "0.72rem",
+-                    }}
+-                  >
+-                    Default baseline is 0.8385 (83.85%). Scales Table 6-2 EF by
+-                    (X<sub>CH₄</sub> / 0.8385).
+-                  </small>
+-                </div>
+-
+-                <div className="input-group" style={{ marginBottom: 0 }}>
+-                  <label style={{ fontSize: "0.8rem" }}>
+-                    Site CO₂ Mole Fraction (X<sub>CO₂</sub>, Optional)
+-                  </label>
+-                  <input
+-                    type="number"
+-                    step="0.0001"
+-                    min="0"
+-                    max="1.0"
+-                    className="mole-input"
+-                    value={
+-                      data.co2_fraction !== undefined ? data.co2_fraction : ""
+-                    }
+-                    onChange={(e) => onChange("co2_fraction", e.target.value)}
+-                    placeholder="0.0000"
+-                  />
+-                  <small
+-                    style={{
+-                      color: "#64748b",
+-                      fontSize: "0.72rem",
+-                    }}
+-                  >
+-                    Optional. Calculates CO₂ mass emissions via stoichiometric
+-                    molar conversion (44.01/16.04).
+-                  </small>
+-                </div>
+-              </div>
+-            </div>
+-          )}
+-        </>
+-      )}
+     </div>
+   );
+ };
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

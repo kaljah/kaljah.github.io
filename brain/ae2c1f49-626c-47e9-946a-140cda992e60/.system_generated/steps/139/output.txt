@@ -1,0 +1,1 @@
+A1: (Recommended) Comprehensive Table 6-8 Catalog: Register all 6 API 2021 Table 6-8 regions in the emission factor catalog with standard uncertainties and metadata, defaulting to 'US Average (1.4 kg CH4/bbl)', and dynamically support the API Compendium footnote adjustment for site-specific CH4 and CO2 gas composition.

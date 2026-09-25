@@ -1,0 +1,13 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\utils\EmissionFactors.js:872:  // --- COMPLETIONS / UNLOADING (Tier 1 Defaults) ---
+new\client\src\utils\EmissionFactors.js:873:  "Completion - Gas Well (No Flaring)": {
+new\client\src\utils\EmissionFactors.js:879:    usage: ["completions"],
+new\client\src\utils\EmissionFactors.js:889:    usage: ["completions"],
+new\client\src\utils\EmissionFactors.js:1407:  completions: "Well Completions & Workovers",
+new\client\src\utils\EmissionFactors.js:1429:      "completions",
+
+
+

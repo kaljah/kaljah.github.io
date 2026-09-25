@@ -1,0 +1,1 @@
+A1: remove it as  recommended but also add CO2 % in tier 2+ if the user want to calculate the CO2 emissions if they are available

@@ -1,0 +1,12 @@
+
+The command exited with code 1.
+Output:
+grep : The term 'grep' is not recognized as the name of a cmdlet, function, script file, or operable program. Check 
+the spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:57
++ git diff -U3 new/client/src/components/Scope1Form.jsx | grep -C 5 "ti ...
++                                                         ~~~~
+    + CategoryInfo          : ObjectNotFound: (grep:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+

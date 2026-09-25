@@ -1,0 +1,16 @@
+
+The command exited with code 1.
+Output:
+Traceback (most recent call last):
+  File "<string>", line 5, in <module>
+  File "C:\Users\samsung\anaconda3\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u2084' in position 8: character maps to <undefined>
+Well Completion - Gas Well with Hydraulic Fracturing (Uncontrolled Venting) -> CompGasHF_Uncontrolled 28.8 tonnes/completion
+Well Completion - Gas Well with Hydraulic Fracturing (REC with Venting) -> CompGasHF_REC 13.542 tonnes/completion
+Well Completion - Oil Well with Hydraulic Fracturing (Uncontrolled Venting) -> CompOilHF_Uncontrolled 14.419 tonnes/completion
+Well Completion - Oil Well with Hydraulic Fracturing (REC with Venting) -> CompOilHF_REC 0.615 tonnes/completion
+Well Completion - Gas Well without Hydraulic Fracturing (Vented) -> CompGasNoHF_Vented 1.7376 tonnes/completion
+Well Completion - Oil Well without Hydraulic Fracturing (Vented) -> CompOilNoHF_Vented 0.0141 tonnes/completion
+Compressor - Gas Production Small Recip -> CompGasSmall 0.000212 

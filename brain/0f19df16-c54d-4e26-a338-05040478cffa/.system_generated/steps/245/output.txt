@@ -1,0 +1,19 @@
+Task: 0f19df16-c54d-4e26-a338-05040478cffa/task-243
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\0f19df16-c54d-4e26-a338-05040478cffa\.system_generated\tasks\task-243.log
+Log output:
+<truncated 171 lines>
+gs summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_qfull_api_pipeline.py::TestMudDegassingPipeline::test_water_based_mud
+FAILED new\server\tests\test_qfull_api_pipeline.py::TestMudDegassingPipeline::test_oil_based_mud
+FAILED new\server\tests\test_qfull_api_pipeline.py::TestMudDegassingPipeline::test_synthetic_mud
+FAILED new\server\tests\test_qfull_api_pipeline.py::TestMudDegassingPipeline::test_oil_to_water_ratio_2_333
+================= 4 failed, 25 deselected, 1 warning in 1.90s =================
+
+Last progress: 2s ago

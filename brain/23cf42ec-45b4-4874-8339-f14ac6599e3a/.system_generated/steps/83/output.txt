@@ -1,0 +1,16 @@
+The search for ""6.2.3 Well Completions" "Compendium of Greenhouse Gas Emissions Methodologies"" returned the following summary:
+In the *Compendium of Greenhouse Gas Emissions Methodologies for the Natural Gas and Oil Industry* (published by the American Petroleum Institute), **Section 6.2.3: Well Completions** addresses the emissions associated with the final stages of well drilling[1][2].
+
+Key details regarding this section include:
+
+*   **Definition:** Well completions are identified as the final step of the well-drilling process[1]. During this phase, the wellbore and the reservoir near the well must be cleaned[1].
+*   **Process:** Cleaning is typically achieved by producing the well so that sand, cuttings, and other reservoir fluids can be collected for recycling or disposal[1]. 
+*   **Purpose:** This step is also used to evaluate the well's production rate, which allows operators to properly size production equipment[1]. 
+*   **Emissions Context:** The *Compendium* provides standardized methodologies for estimating greenhouse gas emissions throughout the natural gas and oil value chain[2][3]. This document is frequently used by industry and referenced by regulators globally (including the U.S. EPA and others) to support consistent emissions reporting[4][5].
+
+Sources:
+[1] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQH7SwLQd465Wkoe7XmFitJ7uE6--g_JwbVv5wnx8FcC0cb5di1dlItwryUDYve4yV_ARsctcJ31VPUN9pgJv_x9ZEyxYZeYP-aogV24slS6aoKNtxevr3wqFEQLTe-gYi4XCqZWnvVwlBv4C7KHrGL6fZvk1VDKl8IT17rGuVk3ujaKyhae4Jug)
+[2] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQH7SwLQd465Wkoe7XmFitJ7uE6--g_JwbVv5wnx8FcC0cb5di1dlItwryUDYve4yV_ARsctcJ31VPUN9pgJv_x9ZEyxYZeYP-aogV24slS6aoKNtxevr3wqFEQLTe-gYi4XCqZWnvVwlBv4C7KHrGL6fZvk1VDKl8IT17rGuVk3ujaKyhae4Jug)
+[3] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQH7SwLQd465Wkoe7XmFitJ7uE6--g_JwbVv5wnx8FcC0cb5di1dlItwryUDYve4yV_ARsctcJ31VPUN9pgJv_x9ZEyxYZeYP-aogV24slS6aoKNtxevr3wqFEQLTe-gYi4XCqZWnvVwlBv4C7KHrGL6fZvk1VDKl8IT17rGuVk3ujaKyhae4Jug)
+[4] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQH7SwLQd465Wkoe7XmFitJ7uE6--g_JwbVv5wnx8FcC0cb5di1dlItwryUDYve4yV_ARsctcJ31VPUN9pgJv_x9ZEyxYZeYP-aogV24slS6aoKNtxevr3wqFEQLTe-gYi4XCqZWnvVwlBv4C7KHrGL6fZvk1VDKl8IT17rGuVk3ujaKyhae4Jug)
+[5] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQH7SwLQd465Wkoe7XmFitJ7uE6--g_JwbVv5wnx8FcC0cb5di1dlItwryUDYve4yV_ARsctcJ31VPUN9pgJv_x9ZEyxYZeYP-aogV24slS6aoKNtxevr3wqFEQLTe-gYi4XCqZWnvVwlBv4C7KHrGL6fZvk1VDKl8IT17rGuVk3ujaKyhae4Jug)

@@ -1,0 +1,30 @@
+
+The command exited with code 0.
+Output:
+
+  new\server\calculations\dispatcher.py:146:                    raise ValueError(f"Invalid numeric value for '{k}' 
+({desc}): {val}")
+  new\server\calculations\dispatcher.py:147:        raise ValueError(
+> new\server\calculations\dispatcher.py:148:            f"Missing required parameter for Tier 3 specific calculation: 
+'{keys[0]}' ({desc})"
+  new\server\calculations\dispatcher.py:149:        )
+  new\server\calculations\dispatcher.py:150:
+  new\server\calculations\dispatcher.py:151:    def _parse_fraction_value(self, val, key_name="", is_percent=False):
+  new\server\calculations\dispatcher.py:152:        """Cleanly parses a percentage (0-100) or fraction (0-1) into a 
+0.0 - 1.0 ratio."""
+  new\server\calculations\dispatcher.py:153:        if val in [None, "", "-"]:
+  new\server\calculations\dispatcher.py:181:                raise ValueError(f"Invalid numeric fraction/percentage for 
+'{k}' ({desc}): {val}")
+  new\server\calculations\dispatcher.py:182:        raise ValueError(
+> new\server\calculations\dispatcher.py:183:            f"Missing required parameter for Tier 3 specific calculation: 
+'{keys[0]}' ({desc})"
+  new\server\calculations\dispatcher.py:184:        )
+  new\server\calculations\dispatcher.py:185:
+  new\server\calculations\dispatcher.py:186:    def _optional_fraction(self, flat_inputs, keys, default=0.0, 
+is_percent=False):
+  new\server\calculations\dispatcher.py:187:        """Extracts an optional percentage or fraction normalized to 0.0 - 
+1.0."""
+  new\server\calculations\dispatcher.py:188:        if isinstance(keys, str):
+
+
+

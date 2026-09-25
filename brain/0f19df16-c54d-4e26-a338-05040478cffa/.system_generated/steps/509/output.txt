@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+validation/reference_model/vented_processes.py:71:        "water_based": 0.2605,
+validation/reference_model/vented_processes.py:141:                else IndependentMudDegassing.TABLE_6_2_ONSHORE.get(norm_type, 0.2605)
+validation/reference_model/vented_processes.py:166:                else IndependentMudDegassing.TABLE_6_2_ONSHORE.get(norm_type, 0.2605)
+

@@ -1,0 +1,23 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2\brain\cb1e2599-6eda-488f-8f5a-372c19ceca8f
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/19/2026   4:04 PM           4288 api_compendium_exhibits.md                                           
+-a----         9/19/2026   4:04 PM            178 api_compendium_exhibits.md.metadata.json                             
+
+
+    Directory: C:\Users\samsung\Desktop\H2\scratch
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/25/2026  10:28 PM       10925047 api_compendium_2021.pdf                                              
+
+
+

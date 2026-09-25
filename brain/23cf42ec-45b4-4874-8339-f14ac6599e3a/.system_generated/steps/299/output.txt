@@ -1,0 +1,22 @@
+Task: 23cf42ec-45b4-4874-8339-f14ac6599e3a/task-291
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\23cf42ec-45b4-4874-8339-f14ac6599e3a\.system_generated\tasks\task-291.log
+Log output:
+<truncated 4 lines>
+otdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+testpaths: tests, .
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collected 1229 items
+
+test_csv_uploader.py .                                                   [  0%]
+test_emission_calculations.py .......................................... [  3%]
+............                                                             [  4%]
+test_performance.py .                                                    [  4%]
+tests\test_aggregation_reconciliation.py ......                          [  5%]
+tests\test_all_bulk_imports.py ..........                                [  5%]
+tests\test_all_process_types_matrix.py ................................. [  8%]
+......................................................F................. [ 14%]
+............................................................             [ 19%]
+tests\test_api_security.py ........
+Last progress: 0s ago

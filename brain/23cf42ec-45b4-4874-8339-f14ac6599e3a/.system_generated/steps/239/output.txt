@@ -1,0 +1,124 @@
+
+The command exited with code 0.
+Output:
+202:     def dispatch(
+203:         self,
+204:         process_type,
+205:         inputs,
+206:         emission_factors,
+207:         uncertainties,
+208:         gwp_dict=None,
+209:         gwp_standard=None,
+210:     ):
+211:         """
+212:         Executes the calculation for the given process type.
+213:         - Tier 1 (default / custom): Requires only activity data (quantity & unit) and uses catalog emission factors.
+214:         - Tier 3 (specific): Requires all physical engineering parameters with zero silent defaults.
+215:         """
+216:         from .constants import get_active_gwp
+217: 
+218:         # Support callers passing gwp_dict as 4th positional argument
+219:         if gwp_dict is None and isinstance(uncertainties, dict) and "CH4" in uncertainties:
+220:             gwp_dict = uncertainties
+221:             uncertainties = {}
+222: 
+223:         if gwp_dict is None:
+224:             gwp_dict = get_active_gwp(standard=gwp_standard)
+225:         calculator = self.calculators.get(process_type)
+226: 
+227:         # Extract process-specific inputs if nested
+228:         calc_inputs = inputs.get("calc_inputs", {}).get(process_type, {})
+229:         flat_inputs = {**inputs, **calc_inputs}
+230: 
+231:         factor_source = flat_inputs.get("factor_source", "default")
+232: 
+233:         if not calculator:
+234:             return self._generic_calculation(
+235:                 flat_inputs,
+236:                 emission_factors,
+237:                 uncertainties,
+238:                 process_type,
+239:                 gwp_dict=gwp_dict,
+240:             )
+241: 
+242:         # Inject tier info into uncertainties dict so calculators can call resolve_tier()
+243:         uncertainties = dict(uncertainties)
+244:         uncertainties.setdefault("_factor_source", factor_source)
+245: 
+246:         # Inject dynamic uncertainty overrides for Tier 3 calculations
+247:         if flat_inputs.get("meter_uncertainty_pct") not in [None, "", "-"]:
+248:             try:
+249:                 uncertainties["_activity_uncertainty"] = (
+250:                     float(flat_inputs["meter_uncertainty_pct"]) / 100.0
+251:                 )
+252:             except ValueError:
+253:                 pass
+254: 
+255:         if flat_inputs.get("gc_uncertainty_pct") not in [None, "", "-"]:
+256:             try:
+257:                 uncertainties["_composition_uncertainty"] = (
+258:                     float(flat_inputs["gc_uncertainty_pct"]) / 100.0
+259:                 )
+260:             except ValueError:
+261:                 pass
+262: 
+263:         user_unc = flat_inputs.get("user_uncertainty")
+264:         if isinstance(user_unc, dict):
+265:             for g in ["co2", "ch4", "n2o"]:
+266:                 if user_unc.get(g) not in [None, "", "-"]:
+267:                     try:
+268:                         uncertainties[g] = float(user_unc[g]) / 100.0
+269:                     except ValueError:
+270:                         pass
+271: 
+272:         # Validate required gas composition for specific factor sources
+273:         if process_type in [
+274:             "stationary_combustion",
+275:             "combustion",
+276:             "mobile_combustion",
+277:             "mobile",
+278:             "flaring",
+279:             "routine_flaring",
+280:             "non_routine_flaring",
+281:             "safety_flaring",
+282:             "flare",
+283:             "separation",
+284:         ]:
+285:             spec = flat_inputs.get("specific_factors") or flat_inputs.get("specificFactors")
+286:             has_spec = isinstance(spec, dict) and any(
+287:                 str(v).strip() not in [None, "", "-"]
+288:                 for k, v in spec.items()
+289:                 if not k.endswith("Unit")
+290:             )
+291:             if factor_source == "specific" and has_spec:
+292:                 has_ef = bool(spec.get("co2") or spec.get("ch4"))
+293:                 c1_val = flat_inputs.get("c1") or flat_inputs.get("ch4_content") or flat_inputs.get("gas_ch4_content")
+294:                 if not has_ef and c1_val in [None, "", "-"]:
+295:                     raise ValueError(
+296:                         "Missing required gas composition (C1 mole fraction) for Tier 3 specific calculation"
+297:                     )
+298: 
+299:         # Extract common quantity
+300:         raw_qty = flat_inputs.get("amount") or flat_inputs.get("quantity") or 0
+301:         try:
+302:             quantity = float(raw_qty)
+303:         except (ValueError, TypeError):
+304:             raise ValueError(f"Invalid numeric quantity/amount: {raw_qty}")
+305:         if math.isnan(quantity) or math.isinf(quantity):
+306:             raise ValueError(f"Quantity/Amount cannot be NaN or Infinite: {quantity}")
+307:         if quantity < 0:
+308:             raise ValueError(f"Quantity/Amount cannot be negative: {quantity}")
+309:         unit = str(flat_inputs.get("unit", "m3")).lower()
+310: 
+311:         # =========================================================================
+312:         # TIER 1 / TIER 2 ROUTING: default or custom factor sources
+313:         # Only requires standard activity data; never fails on missing engineering inputs.
+314:         # =========================================================================
+315:         if factor_source in ["default", "custom"] and process_type not in ["drilling", "mud_degassing"]:
+316:             if process_type in [
+317:                 "stationary_combustion",
+318:                 "combustion",
+319:                 "mobile_combustion",
+320:                 "mobile",
+321:             ]:
+

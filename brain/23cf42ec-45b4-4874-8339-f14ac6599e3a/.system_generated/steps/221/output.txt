@@ -1,0 +1,13 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\Desktop\H2\new\server\calculations\vented.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -823,7 +823,6 @@
+             uncertainties=uncertainties,
+             factor_source="site_specific" if resolved_tier in ["tier2", "tier3"] else "default",
+             process_category="completions",
+-            tier=resolved_tier_enum,
+         )
+         total_co2e = calculate_co2e(ch4=total_ch4, co2=total_co2, n2o=total_n2o, gwp_dict=gwp_dict)
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

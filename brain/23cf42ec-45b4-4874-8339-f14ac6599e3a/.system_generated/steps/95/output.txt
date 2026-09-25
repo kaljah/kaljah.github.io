@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+Extracted pages 249-266 to scratch/api_6_2_3_extracted.txt
+

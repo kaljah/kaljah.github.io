@@ -1,0 +1,27 @@
+
+The command exited with code 0.
+Output:
+
+  new\server\calculations\legacy_engine.py:342:            return {"ch4": potential_ch4_tonnes, "co2": 0}
+  new\server\calculations\legacy_engine.py:343:
+> new\server\calculations\legacy_engine.py:344:    def calculate_unloading(self, freq, diam, depth, press):
+  new\server\calculations\legacy_engine.py:345:        """
+  new\server\calculations\legacy_engine.py:346:        API Compendium 2021, Section 6.4, Equation 6-3
+  new\server\calculations\legacy_engine.py:347:        V (scf/event) = (p/4) � (D_in/12)� � L_ft � (P_abs / 14.696)
+  new\server\calculations\legacy_engine.py:348:        Correct geometric constant: p/4 � (1/12)� = 0.005454 ft� per 
+in� per ft
+  new\server\calculations\legacy_engine.py:349:        """
+  new\server\calculations\legacy_engine.py:350:        import math
+  new\server\calculations\legacy_engine.py:351:
+  new\server\calculations\legacy_engine.py:352:        # Diameter in inches, depth in feet
+  new\server\calculations\legacy_engine.py:353:        # P_gauge (psig)  P_abs (psia)
+  new\server\calculations\legacy_engine.py:354:        p_abs = press + 14.696
+  new\server\calculations\legacy_engine.py:355:        vol_scf_event = (
+  new\server\calculations\legacy_engine.py:356:            (math.pi / 4.0) * ((diam / 12.0) ** 2) * depth * (p_abs / 
+14.696)
+  new\server\calculations\legacy_engine.py:357:        )
+  new\server\calculations\legacy_engine.py:358:        total_vol_mcf = (vol_scf_event * freq) / 1000.0
+  new\server\calculations\legacy_engine.py:359:
+
+
+

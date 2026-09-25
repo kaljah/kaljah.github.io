@@ -1,0 +1,173 @@
+
+The command exited with code 1.
+Output:
+<truncated 14 lines>
+
+================================== FAILURES ===================================
+________________ TestMudDegassingPipeline.test_water_based_mud ________________
+
+self = <test_qfull_api_pipeline.TestMudDegassingPipeline object at 0x000002390666F710>
+auth_client = <FlaskClient <Flask 'app'>>, facility_id = 1
+
+    def test_water_based_mud(self, auth_client, facility_id):
+        """
+        Reference: water_based mud EF = 0.15 kg CH4/m3
+        200 m3 mud \u2192 ch4_kg = 200 * 0.15 = 30 kg = 0.030 tonnes
+        """
+        from calculations.legacy_engine import compute_emissions
+    
+        mud_vol = 200.0
+        ef = 0.15  # water_based
+    
+        expected_ch4 = mud_vol * ef / 1000.0  # 0.030 t
+        expected_co2e = ref_co2e(ch4=expected_ch4)
+    
+        payload = {
+            "process_type": "drilling",
+            "quantity": mud_vol,
+            "unit": "m3",
+            "factor_source": "specific",
+            "mud_type": "water_based",
+        }
+        em, method = compute_emissions(payload, {})
+    
+        assert em["co2"] == 0.0 or em["co2"] is None or em["co2"] == pytest.approx(0, abs=1e-9)
+>       assert em["ch4"] == pytest.approx(expected_ch4, rel=1e-4), (
+            f"Water-based mud CH4: expected {expected_ch4}, got {em['ch4']}"
+        )
+E       AssertionError: Water-based mud CH4: expected 0.03, got 10.48
+E       assert 10.48 == 0.03 � 3.0e-06
+E         
+E         comparison failed
+E         Obtained: 10.48
+E         Expected: 0.03 � 3.0e-06
+
+new\server\tests\test_qfull_api_pipeline.py:532: AssertionError
+---------------------------- Captured stderr setup ----------------------------
+[2026-09-25 22:09:13,222] INFO in app: POST /api/auth/login 200 [0.096s] [ReqID: 52da9ae7-9e7f-40ed-8b40-642d7b445af5]
+----------------------------- Captured log setup ------------------------------
+INFO     app:app.py:184 POST /api/auth/login 200 [0.096s] [ReqID: 52da9ae7-9e7f-40ed-8b40-642d7b445af5]
+_________________ TestMudDegassingPipeline.test_oil_based_mud _________________
+
+self = <test_qfull_api_pipeline.TestMudDegassingPipeline object at 0x000002390666FAA0>
+auth_client = <FlaskClient <Flask 'app'>>, facility_id = 1
+
+    def test_oil_based_mud(self, auth_client, facility_id):
+        """
+        Reference: oil_based mud EF = 0.35 kg CH4/m3
+        150 m3 mud \u2192 ch4_kg = 150 * 0.35 = 52.5 kg = 0.0525 tonnes
+        """
+        from calculations.legacy_engine import compute_emissions
+    
+        mud_vol = 150.0
+        ef = 0.35  # oil_based
+    
+        expected_ch4 = mud_vol * ef / 1000.0
+    
+        payload = {
+            "process_type": "drilling",
+            "quantity": mud_vol,
+            "unit": "m3",
+            "factor_source": "specific",
+            "mud_type": "oil_based",
+        }
+        em, method = compute_emissions(payload, {})
+>       assert em["ch4"] == pytest.approx(expected_ch4, rel=1e-4)
+E       assert 7.86 == 0.0525 � 5.2e-06
+E         
+E         comparison failed
+E         Obtained: 7.86
+E         Expected: 0.0525 � 5.2e-06
+
+new\server\tests\test_qfull_api_pipeline.py:557: AssertionError
+---------------------------- Captured stderr setup ----------------------------
+[2026-09-25 22:09:13,742] INFO in app: POST /api/auth/login 200 [0.096s] [ReqID: b031539f-979a-4389-ab85-04ae73738610]
+----------------------------- Captured log setup ------------------------------
+INFO     app:app.py:184 POST /api/auth/login 200 [0.096s] [ReqID: b031539f-979a-4389-ab85-04ae73738610]
+_________________ TestMudDegassingPipeline.test_synthetic_mud _________________
+
+self = <test_qfull_api_pipeline.TestMudDegassingPipeline object at 0x000002390666FE30>
+auth_client = <FlaskClient <Flask 'app'>>, facility_id = 1
+
+    def test_synthetic_mud(self, auth_client, facility_id):
+        """
+        Reference: synthetic mud EF = 0.25 kg CH4/m3
+        100 m3 \u2192 100 * 0.25 / 1000 = 0.025 tonnes
+        """
+        from calculations.legacy_engine import compute_emissions
+    
+        mud_vol = 100.0
+        expected_ch4 = mud_vol * 0.25 / 1000.0
+    
+        payload = {
+            "process_type": "drilling",
+            "quantity": mud_vol,
+            "unit": "m3",
+            "factor_source": "specific",
+            "mud_type": "synthetic",
+        }
+        em, method = compute_emissions(payload, {})
+>       assert em["ch4"] == pytest.approx(expected_ch4, rel=1e-4)
+E       assert 5.24 == 0.025 � 2.5e-06
+E         
+E         comparison failed
+E         Obtained: 5.24
+E         Expected: 0.025 � 2.5e-06
+
+new\server\tests\test_qfull_api_pipeline.py:577: AssertionError
+---------------------------- Captured stderr setup ----------------------------
+[2026-09-25 22:09:13,864] INFO in app: POST /api/auth/login 200 [0.092s] [ReqID: 50c6c1eb-c2c4-45c5-823c-aca80d6c773e]
+----------------------------- Captured log setup ------------------------------
+INFO     app:app.py:184 POST /api/auth/login 200 [0.092s] [ReqID: 50c6c1eb-c2c4-45c5-823c-aca80d6c773e]
+___________ TestMudDegassingPipeline.test_oil_to_water_ratio_2_333 ____________
+
+self = <test_qfull_api_pipeline.TestMudDegassingPipeline object at 0x000002390668C200>
+auth_client = <FlaskClient <Flask 'app'>>, facility_id = 1
+
+    def test_oil_to_water_ratio_2_333(self, auth_client, facility_id):
+        """
+        SENSITIVITY: Oil_based EF = 0.35, Water_based EF = 0.15
+        Same volume \u2192 oil_based / water_based = 0.35 / 0.15 = 2.3333...
+        """
+        from calculations.legacy_engine import compute_emissions
+    
+        mud_vol = 100.0
+    
+        p_water = {"process_type": "drilling", "quantity": mud_vol, "unit": "m3",
+                   "factor_source": "specific", "mud_type": "water_based"}
+        p_oil = {"process_type": "drilling", "quantity": mud_vol, "unit": "m3",
+                 "factor_source": "specific", "mud_type": "oil_based"}
+    
+        em_water, _ = compute_emissions(p_water, {})
+        em_oil, _ = compute_emissions(p_oil, {})
+    
+        expected_ratio = 0.35 / 0.15
+        actual_ratio = em_oil["ch4"] / em_water["ch4"]
+>       assert actual_ratio == pytest.approx(expected_ratio, rel=1e-4), (
+            f"Oil/Water ratio: expected {expected_ratio:.4f}, got {actual_ratio:.4f}"
+        )
+E       AssertionError: Oil/Water ratio: expected 2.3333, got 1.0000
+E       assert 1.0 == 2.3333333333333335 � 2.3e-04
+E         
+E         comparison failed
+E         Obtained: 1.0
+E         Expected: 2.3333333333333335 � 2.3e-04
+
+new\server\tests\test_qfull_api_pipeline.py:598: AssertionError
+---------------------------- Captured stderr setup ----------------------------
+[2026-09-25 22:09:13,991] INFO in app: POST /api/auth/login 200 [0.099s] [ReqID: 646135e8-eb1c-4ee0-b14d-340097a9dce7]
+----------------------------- Captured log setup ------------------------------
+INFO     app:app.py:184 POST /api/auth/login 200 [0.099s] [ReqID: 646135e8-eb1c-4ee0-b14d-340097a9dce7]
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_qfull_api_pipeline.py::TestMudDegassingPipeline::test_water_based_mud
+FAILED new\server\tests\test_qfull_api_pipeline.py::TestMudDegassingPipeline::test_oil_based_mud
+FAILED new\server\tests\test_qfull_api_pipeline.py::TestMudDegassingPipeline::test_synthetic_mud
+FAILED new\server\tests\test_qfull_api_pipeline.py::TestMudDegassingPipeline::test_oil_to_water_ratio_2_333
+================= 4 failed, 25 deselected, 1 warning in 1.90s =================
+

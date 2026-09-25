@@ -1,0 +1,92 @@
+
+The command exited with code 0.
+Output:
+
+  new\server\routes\dashboard.py:530:        Emission.year.label("year"),
+> new\server\routes\dashboard.py:531:        Emission.process_type,
+  new\server\routes\dashboard.py:532:        func.sum(Emission.co2_emissions).label("co2_total"),
+  new\server\routes\dashboard.py:533:        func.sum(Emission.ch4_emissions).label("ch4_total"),
+  new\server\routes\dashboard.py:534:        func.sum(Emission.n2o_emissions).label("n2o_total"),
+  new\server\routes\dashboard.py:550:    activity_query = activity_query.filter(s1_status_filter)
+> new\server\routes\dashboard.py:551:    activity_groups = [Emission.year, Emission.process_type]
+  new\server\routes\dashboard.py:552:    if group_by == "facility":
+  new\server\routes\dashboard.py:553:        activity_groups.append(Emission.facility_id)
+  new\server\routes\dashboard.py:554:    activity_data = activity_query.group_by(*activity_groups).all()
+  new\server\routes\dashboard.py:577:            g_val = round(max(g100, g100 + (delta_ch4 * ch4_t) + (delta_n2o * 
+n2o_t)), 2) if is_20 else g100
+> new\server\routes\dashboard.py:578:            source_raw = (row.process_type or "").lower().strip()
+  new\server\routes\dashboard.py:579:            mapped = False
+  new\server\routes\dashboard.py:580:            for pattern, category in SOURCE_MAP.items():
+  new\server\routes\dashboard.py:581:                if pattern in source_raw:
+  new\server\routes\dashboard.py:1436:        Emission.status == "Verified",
+> new\server\routes\dashboard.py:1437:        Emission.process_type.ilike("%flare%")
+> new\server\routes\dashboard.py:1438:        | Emission.process_type.ilike("%flaring%"),
+  new\server\routes\dashboard.py:1439:    )
+  new\server\routes\dashboard.py:1440:    if allowed_fids is not None:
+  new\server\routes\dashboard.py:1441:        flare_q = flare_q.filter(Emission.facility_id.in_(allowed_fids))
+  new\server\routes\dashboard.py:1747:        Emission.facility_id,
+> new\server\routes\dashboard.py:1748:        Emission.process_type,
+  new\server\routes\dashboard.py:1749:        Emission.factor_source,
+  new\server\routes\dashboard.py:1750:        Emission.calc_method,
+  new\server\routes\dashboard.py:1751:        func.sum(Emission.co2e_total).label("total_co2e"),
+  new\server\routes\dashboard.py:1775:        Emission.facility_id,
+> new\server\routes\dashboard.py:1776:        Emission.process_type,
+  new\server\routes\dashboard.py:1777:        Emission.factor_source,
+  new\server\routes\dashboard.py:1778:        Emission.calc_method,
+  new\server\routes\dashboard.py:1779:    ).all()
+  new\server\routes\dashboard.py:1814:        # Process breakdown for methane
+> new\server\routes\dashboard.py:1815:        ptype = (rec.process_type or "").lower().strip()
+  new\server\routes\dashboard.py:1816:        if "vent" in ptype:
+  new\server\routes\dashboard.py:1817:            em_map[fid]["ch4_venting"] += ch4
+  new\server\routes\dashboard.py:1818:        elif "fugitive" in ptype or "leak" in ptype:
+  new\server\routes\dashboard.py:1840:        Emission.status == "Verified",
+> new\server\routes\dashboard.py:1841:        Emission.process_type.ilike("%flare%")
+> new\server\routes\dashboard.py:1842:        | Emission.process_type.ilike("%flaring%"),
+  new\server\routes\dashboard.py:1843:    )
+  new\server\routes\dashboard.py:1844:
+  new\server\routes\dashboard.py:1845:    if allowed_fids is not None:
+  new\server\routes\dashboard.py:2373:        s1_q = db.session.query(
+> new\server\routes\dashboard.py:2374:            Emission.process_type,
+  new\server\routes\dashboard.py:2375:            Emission.fuel_type,
+  new\server\routes\dashboard.py:2376:            Emission.calc_method,
+  new\server\routes\dashboard.py:2377:            Emission.uncertainty,
+  new\server\routes\dashboard.py:2385:        s1_q = s1_q.group_by(
+> new\server\routes\dashboard.py:2386:            Emission.process_type,
+  new\server\routes\dashboard.py:2387:            Emission.fuel_type,
+  new\server\routes\dashboard.py:2388:            Emission.calc_method,
+  new\server\routes\dashboard.py:2389:            Emission.uncertainty,
+  new\server\routes\dashboard.py:2461:        method = (getattr(em, "calc_method", "") or "").lower()
+> new\server\routes\dashboard.py:2462:        ptype = (getattr(em, "process_type", "") or "").lower()
+  new\server\routes\dashboard.py:2463:
+  new\server\routes\dashboard.py:2464:        is_fugitive = any(
+  new\server\routes\dashboard.py:2465:            x in ptype
+  new\server\routes\dashboard.py:2497:    for em in s1_emissions:
+> new\server\routes\dashboard.py:2498:        ptype = em.process_type or "Other Scope 1"
+  new\server\routes\dashboard.py:2499:        if ptype not in groups:
+  new\server\routes\dashboard.py:2500:            groups[ptype] = {"emissions": [], "total_e": 0}
+  new\server\routes\dashboard.py:2501:        u = get_ef_uncertainty(em, scope=1)
+  new\server\routes\dashboard.py:2509:                "u_eff": u_eff,
+> new\server\routes\dashboard.py:2510:                "name": em.fuel_type or em.process_type or "Unknown",
+  new\server\routes\dashboard.py:2511:            }
+  new\server\routes\dashboard.py:2512:        )
+  new\server\routes\dashboard.py:2513:        groups[ptype]["total_e"] += tot_e
+  new\server\routes\dashboard.py:2908:        Emission.status == "Verified",
+> new\server\routes\dashboard.py:2909:        Emission.process_type.in_(["routine_flaring", "non_routine_flaring", 
+"safety_flaring", "flaring", "flare"])
+  new\server\routes\dashboard.py:2910:    )
+  new\server\routes\dashboard.py:2911:    if allowed_fids is not None:
+  new\server\routes\dashboard.py:2912:        em_q = em_q.filter(Emission.facility_id.in_(allowed_fids))
+  new\server\routes\dashboard.py:2926:    for e in em_rows:
+> new\server\routes\dashboard.py:2927:        pt = (e.process_type or "").lower()
+  new\server\routes\dashboard.py:2928:        qty = float(e.quantity or 0)
+  new\server\routes\dashboard.py:2929:        co2e = float(e.co2e_total or 0)
+  new\server\routes\dashboard.py:2930:        unit = (e.unit or "m3").lower()
+  new\server\routes\dashboard.py:3015:            Emission.status == "Verified",
+> new\server\routes\dashboard.py:3016:            Emission.process_type.in_(["routine_flaring", "non_routine_flaring", 
+"safety_flaring", "flaring", "flare"])
+  new\server\routes\dashboard.py:3017:        )
+  new\server\routes\dashboard.py:3018:        if allowed_fids is not None:
+  new\server\routes\dashboard.py:3019:            prev_em_q = prev_em_q.filter(Emission.facility_id.in_(allowed_fids))
+
+
+

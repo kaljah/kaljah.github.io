@@ -1,0 +1,87 @@
+
+The command exited with code 0.
+Output:
+<truncated 255 lines>
+Valve (Gas/Vapor)":{"usage":["fugitive"],"baseUnit":null,"unit":"tonnes/yr","co2":0,"stream":null},"Fugitive - 
+Connector (Gas/Vapor)":{"usage":["fugitive"],"baseUnit":null,"unit":"tonnes/yr","co2":0,"stream":null},"Fugitive - 
+Flange (Gas/Vapor)":{"usage":["fugitive"],"baseUnit":null,"unit":"tonnes/yr","co2":0,"stream":null},"Fugitive - Valve 
+(Light Oil)":{"usage":["fugitive"],"baseUnit":null,"unit":"tonnes/yr","co2":0,"stream":null},"Fugitive - Valve (Heavy 
+Oil)":{"usage":["fugitive"],"baseUnit":null,"unit":"tonnes/yr","co2":0,"stream":null},"Fugitive - Connector (Light 
+Oil)":{"usage":["fugitive"],"baseUnit":null,"unit":"tonnes/yr","co2":0,"stream":null},"Fugitive - Connector (Heavy 
+Oil)":{"usage":["fugitive"],"baseUnit":null,"unit":"tonnes/yr","co2":0,"stream":null},"Fugitive - Open-Ended Line 
+(Gas)":{"usage":["fugitive"],"baseUnit":null,"unit":"tonnes/yr","co2":0,"stream":null},"Fugitive - Open-Ended Line 
+(Light Oil)":{"usage":["fugitive"],"baseUnit":null,"unit":"tonnes/yr","co2":0,"stream":null},"Fugitive - Pressure 
+Relief Valve (Gas)":{"usage":["fugitive"],"baseUnit":null,"unit":"tonnes/yr","co2":0,"stream":null},"Fugitive - 
+Pressure Relief Valve (Light 
+Oil)":{"usage":["fugitive"],"baseUnit":null,"unit":"tonnes/yr","co2":0,"stream":null},"Fugitive - Compressor Seal 
+(Centrifugal - Wet)":{"usage":["fugitive"],"baseUnit":null,"unit":"tonnes/yr","co2":0,"stream":null},"Fugitive - 
+Compressor Seal (Centrifugal - 
+Dry)":{"usage":["fugitive"],"baseUnit":null,"unit":"tonnes/yr","co2":0,"stream":null},"Fugitive - Compressor Seal 
+(Reciprocating)":{"usage":["fugitive"],"baseUnit":null,"unit":"tonnes/yr","co2":0,"stream":null},"Fugitive - Pump Seal 
+(Gas)":{"usage":["fugitive"],"baseUnit":null,"unit":"tonnes/yr","co2":0,"stream":null},"Fugitive - Pump Seal (Light 
+Oil)":{"usage":["fugitive"],"baseUnit":null,"unit":"tonnes/yr","co2":0,"stream":null},"Fugitive - Pipeline Leaks 
+(Gas)":{"usage":["fugitive_pipeline"],"baseUnit":null,"unit":"tonnes/km-year","co2":0,"stream":null},"Fugitive - 
+Pipeline Leaks 
+(Oil)":{"usage":["fugitive_pipeline"],"baseUnit":null,"unit":"tonnes/km-year","co2":0,"stream":null},"Methane Flashing 
+- Crude Oil (Small Tank)":{"usage":["tank"],"baseUnit":null,"unit":"kg CH4/bbl","co2":0,"stream":null},"Methane 
+Flashing - Crude Oil (Large Tank)":{"usage":["tank"],"baseUnit":null,"unit":"kg 
+CH4/bbl","co2":0,"stream":null},"Methane Flashing - Production Condensate (Small 
+Tank)":{"usage":["tank"],"baseUnit":null,"unit":"kg CH4/bbl","co2":0,"stream":null},"Methane Flashing - Production 
+Condensate (Large Tank)":{"usage":["tank"],"baseUnit":null,"unit":"kg CH4/bbl","co2":0,"stream":null},"Methane 
+Flashing - Produced Water (Tank)":{"usage":["tank"],"baseUnit":null,"unit":"kg 
+CH4/bbl","co2":0,"stream":null},"Completion - Gas Well (No 
+Flaring)":{"usage":["completions"],"baseUnit":null,"unit":"tonnes/event","co2":0,"stream":null},"Workover - Gas Well 
+(No Flaring)":{"usage":["completions"],"baseUnit":null,"unit":"tonnes/event","co2":0,"stream":null},"Liquids Unloading 
+- Plunger Lift":{"usage":["unloading"],"baseUnit":null,"unit":"tonnes/event","co2":0,"stream":null},"Liquids Unloading 
+- Non-Plunger":{"usage":["unloading"],"baseUnit":null,"unit":"tonnes/event","co2":0,"stream":null},"Drilling - Mud 
+Degassing (Water Based)":{"usage":["drilling"],"baseUnit":"m�","unit":"kg CH4/m� mud","co2":0,"stream":null},"Drilling 
+- Mud Degassing (Oil Based)":{"usage":["drilling"],"baseUnit":"m�","unit":"kg CH4/m� 
+mud","co2":0,"stream":null},"Drilling - Mud Degassing (Synthetic)":{"usage":["drilling"],"baseUnit":"m�","unit":"kg 
+CH4/m� mud","co2":0,"stream":null},"Dehydrator - Glycol 
+(Uncontrolled)":{"usage":["dehydrator"],"baseUnit":"MMscf","unit":"tonnes/MMscf","co2":0,"stream":null},"Dehydrator - 
+Glycol (Controlled)":{"usage":["dehydrator"],"baseUnit":"MMscf","unit":"tonnes/MMscf","co2":0,"stream":null},"Amine 
+Unit - Venting (Generic)":{"usage":["agr"],"baseUnit":null,"unit":"tonnes/MMscf","co2":1.1,"stream":null},"Loading - 
+Crude Oil (Tank Truck)":{"usage":["loading"],"baseUnit":null,"unit":"kg/bbl","co2":0,"stream":null},"Loading - Crude 
+Oil (Rail)":{"usage":["loading"],"baseUnit":null,"unit":"kg/bbl","co2":0,"stream":null},"Loading - Crude Oil (Marine 
+Vessel)":{"usage":["loading"],"baseUnit":null,"unit":"kg/bbl","co2":0,"stream":null},"Loading - Condensate (Tank 
+Truck)":{"usage":["loading"],"baseUnit":null,"unit":"kg/bbl","co2":0,"stream":null},"Loading - Gasoline (Tank 
+Truck)":{"usage":["loading"],"baseUnit":null,"unit":"kg/bbl","co2":0,"stream":null},"Separator Venting - Gas 
+Well":{"usage":["separation"],"baseUnit":"m3","unit":"kg/m3","co2":0.003,"stream":null},"Separator Venting - Oil 
+Well":{"usage":["separation"],"baseUnit":"m3","unit":"kg/m3","co2":0.001,"stream":null},"Wastewater - CH4 (Open 
+System)":{"usage":["separation"],"baseUnit":"m3","unit":"kg/m3","co2":0,"stream":null},"Wastewater - Oil/Water 
+Separator":{"usage":["separation"],"baseUnit":"bbl","unit":"kg/bbl water","co2":0,"stream":null},"Blowdown - 
+Compressor 
+(Reciprocating)":{"usage":["venting"],"baseUnit":null,"unit":"tonnes/event","co2":0.01,"stream":null},"Blowdown - 
+Compressor 
+(Centrifugal)":{"usage":["venting"],"baseUnit":null,"unit":"tonnes/event","co2":0.01,"stream":null},"Blowdown - 
+Pipeline":{"usage":["venting"],"baseUnit":null,"unit":"tonnes/event","co2":0.05,"stream":null},"Dehydrator - TEG (No 
+Controls)":{"usage":["dehydrator"],"baseUnit":null,"unit":"scf/gal TEG","co2":0,"stream":null},"Dehydrator - TEG 
+(Flash Tank)":{"usage":["dehydrator"],"baseUnit":null,"unit":"scf/gal TEG","co2":0,"stream":null},"Dehydrator - TEG 
+(Condenser)":{"usage":["dehydrator"],"baseUnit":null,"unit":"scf/gal TEG","co2":0,"stream":null},"Pneumatic Device - 
+High Bleed":{"usage":["pneumatic"],"baseUnit":null,"unit":"scf/hr/device","co2":0,"stream":null},"Pneumatic Device - 
+Low Bleed":{"usage":["pneumatic"],"baseUnit":null,"unit":"scf/hr/device","co2":0,"stream":null},"Pneumatic Device - 
+Intermittent":{"usage":["pneumatic"],"baseUnit":null,"unit":"scf/event","co2":0,"stream":null},"Tank - Flash Emissions 
+(Oil)":{"usage":["tank_flashing"],"baseUnit":null,"unit":"kg/bbl","co2":0.012,"stream":null},"Tank - Working Losses 
+(Oil)":{"usage":["tank_working"],"baseUnit":null,"unit":"kg/bbl","co2":0,"stream":null},"Tank - Breathing Losses (Oil)"
+:{"usage":["tank_breathing"],"baseUnit":null,"unit":"kg/bbl-year","co2":0,"stream":null},"Acrylonitrile":{"usage":["che
+mical_production"],"baseUnit":null,"unit":"tonne CO�/tonne product","co2":1,"stream":null},"Carbon 
+Black":{"usage":["chemical_production"],"baseUnit":null,"unit":"tonne CO�/tonne 
+product","co2":2.63,"stream":null},"Ethylene":{"usage":["chemical_production"],"baseUnit":null,"unit":"tonne CO�/tonne 
+product","co2":0.77,"stream":null},"Ethylene 
+Dichloride":{"usage":["chemical_production"],"baseUnit":null,"unit":"tonne CO�/tonne 
+product","co2":0.041,"stream":null},"Ethylene Oxide":{"usage":["chemical_production"],"baseUnit":null,"unit":"tonne 
+CO�/tonne product","co2":0.46,"stream":null},"Methanol":{"usage":["chemical_production"],"baseUnit":null,"unit":"tonne 
+CO�/tonne product","co2":0.67,"stream":null},"Nitric Acid - With 
+NSCR":{"usage":["nitric_acid_production"],"baseUnit":null,"unit":"kg N�O/tonne product","co2":0,"stream":null},"Nitric 
+Acid - Without NSCR":{"usage":["nitric_acid_production"],"baseUnit":null,"unit":"kg N�O/tonne 
+product","co2":0,"stream":null},"Adipic Acid - Thermal 
+Abatement":{"usage":["adipic_acid_production"],"baseUnit":null,"unit":"kg N�O/tonne 
+product","co2":0,"stream":null},"Adipic Acid - Catalytic 
+Abatement":{"usage":["adipic_acid_production"],"baseUnit":null,"unit":"kg N�O/tonne 
+product","co2":0,"stream":null},"Adipic Acid - 
+Uncontrolled":{"usage":["adipic_acid_production"],"baseUnit":null,"unit":"kg N�O/tonne product","co2":0,"stream":null},
+"Asphalt":{"usage":["asphalt_blowing"],"baseUnit":null,"unit":"kg/ton","co2":10.4326,"stream":null}}
+audit\work\C\client_factors.json:1282: "Liquids Unloading - Plunger Lift": {
+
+
+

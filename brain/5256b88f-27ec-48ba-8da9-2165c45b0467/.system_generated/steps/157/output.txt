@@ -1,0 +1,78 @@
+
+The command exited with code 0.
+Output:
+
+  new\server\routes\emissions.py:18:    compute_emissions,
+> new\server\routes\emissions.py:19:    calculate_co2e,
+  new\server\routes\emissions.py:20:)
+  new\server\routes\emissions.py:21:from emission_factors import API_FACTORS, ALL_EMISSION_FACTORS
+  new\server\routes\emissions.py:22:from routes.auth import login_required
+  new\server\routes\emissions.py:832:            n2o_val = em_result.get("n2o", 0)
+> new\server\routes\emissions.py:833:            em_result["totalCo2e"] = calculate_co2e(
+  new\server\routes\emissions.py:834:                co2_val, ch4_val, n2o_val, gwp_dict=gwp_dict
+  new\server\routes\emissions.py:835:            )
+  new\server\routes\emissions.py:836:
+  new\server\routes\emissions.py:3043:
+> new\server\routes\emissions.py:3044:    # Calculate Emissions
+  new\server\routes\emissions.py:3045:    # We need to fetch factor data if not specific
+> new\server\routes\emissions.py:3046:    # For now, using a simplified factor data placeholder or letting calculate 
+handle it
+  new\server\routes\emissions.py:3047:    # In a real scenario, we'd query the factor database here.
+  new\server\routes\emissions.py:3048:    # Passing empty factor_data relies on hardcoded defaults in calculations.py 
+if any
+  new\server\routes\emissions.py:3049:
+  new\server\routes\emissions.py:3108:
+> new\server\routes\emissions.py:3109:    # Call compute_emissions to calculate the actual emissions
+  new\server\routes\emissions.py:3110:    gwp_dict = resolve_gwp_dict(user)
+  new\server\routes\emissions.py:3111:    gwp_std = resolve_gwp_standard(user)
+  new\server\routes\emissions.py:3112:    try:
+  new\server\routes\emissions.py:3121:
+> new\server\routes\emissions.py:3122:    # Fallback: Calculate totalCo2e if it's missing or zero
+  new\server\routes\emissions.py:3123:    if not em_result.get("totalCo2e") or em_result.get("totalCo2e") == 0:
+  new\server\routes\emissions.py:3124:        co2_val = em_result.get("co2", 0)
+  new\server\routes\emissions.py:3125:        ch4_val = em_result.get("ch4", 0)
+  new\server\routes\emissions.py:3126:        n2o_val = em_result.get("n2o", 0)
+> new\server\routes\emissions.py:3127:        em_result["totalCo2e"] = calculate_co2e(
+  new\server\routes\emissions.py:3128:            co2_val, ch4_val, n2o_val, gwp_dict=gwp_dict
+  new\server\routes\emissions.py:3129:        )
+  new\server\routes\emissions.py:3130:
+  new\server\routes\emissions.py:3133:    if api_res:
+> new\server\routes\emissions.py:3134:        # Use uncertainties calculated by the new engine, or None if not provided
+  new\server\routes\emissions.py:3135:        uncertainty = {
+  new\server\routes\emissions.py:3136:            "co2": (
+  new\server\routes\emissions.py:3137:                api_res["results"]["co2"].get("uncertainty", None)
+  new\server\routes\emissions.py:3447:
+> new\server\routes\emissions.py:3448:    # Disallow direct client overwrite of calculated totals without recalculation
+  new\server\routes\emissions.py:3449:    data.pop("co2e_total", None)
+  new\server\routes\emissions.py:3450:    data.pop("co2_emissions", None)
+  new\server\routes\emissions.py:3451:    data.pop("ch4_emissions", None)
+  new\server\routes\emissions.py:3472:
+> new\server\routes\emissions.py:3473:    # Recalculate whenever physical activity or factor inputs are modified (L9)
+  new\server\routes\emissions.py:3474:    recalc_keys = {"quantity", "amount", "fuel", "fuel_type", "unit", 
+"custom_factor_id", "calc_method", "process_type"}
+> new\server\routes\emissions.py:3475:    should_recalc = data.get("recalculate") or any(k in data for k in 
+recalc_keys)
+  new\server\routes\emissions.py:3476:
+  new\server\routes\emissions.py:3477:    if should_recalc:
+  new\server\routes\emissions.py:3478:        # Physical edit moves record back to Pending if currently Verified 
+(unless user is admin)
+  new\server\routes\emissions.py:3558:        try:
+> new\server\routes\emissions.py:3559:            calculated_em, method = compute_emissions(
+  new\server\routes\emissions.py:3560:                calc_payload, factor_data, gwp_dict=gwp_dict
+  new\server\routes\emissions.py:3561:            )
+> new\server\routes\emissions.py:3562:            record.co2_emissions = calculated_em["co2"]
+> new\server\routes\emissions.py:3563:            record.ch4_emissions = calculated_em["ch4"]
+> new\server\routes\emissions.py:3564:            record.n2o_emissions = calculated_em["n2o"]
+> new\server\routes\emissions.py:3565:            record.co_emissions = calculated_em.get("co", 0)
+> new\server\routes\emissions.py:3566:            record.co2e_total = calculated_em["totalCo2e"]
+  new\server\routes\emissions.py:3567:            record.calc_method = method
+  new\server\routes\emissions.py:3568:            record.gwp_version = gwp_std
+  new\server\routes\emissions.py:3569:            record.source_payload = json.dumps(calc_payload)
+  new\server\routes\emissions.py:3908:                n2o_val = em_result.get("n2o", 0)
+> new\server\routes\emissions.py:3909:                em_result["totalCo2e"] = calculate_co2e(
+  new\server\routes\emissions.py:3910:                    co2_val, ch4_val, n2o_val, gwp_dict=gwp_dict
+  new\server\routes\emissions.py:3911:                )
+  new\server\routes\emissions.py:3912:
+
+
+

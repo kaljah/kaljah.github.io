@@ -1,0 +1,1 @@
+A1: (Recommended) Disposition selector with options: 'Flared', 'Vented', 'Recovered (REC)', or 'Custom Split (%)' (where user enters % vented, % flared with flare efficiency %, and % recovered, validating sum = 100%)

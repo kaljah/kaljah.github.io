@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+new/client/src/components/Scope1Form.jsx:75:  const [customFactors, setCustomFactors] = useState([]);
+new/client/src/components/Scope1Form.jsx:234:      const options = customFactors
+new/client/src/components/Scope1Form.jsx:245:    customFactors,
+

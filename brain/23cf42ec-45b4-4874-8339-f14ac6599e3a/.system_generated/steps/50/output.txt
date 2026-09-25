@@ -1,0 +1,19 @@
+
+The command exited with code 0.
+Output:
+
+brain\cb1e2599-6eda-488f-8f5a-372c19ceca8f\api_compendium_exhibits.md:30:* **EXHIBIT 6-3:** Sample Calculation for 
+Well Completion with Hydraulic Fracturing
+brain\cb1e2599-6eda-488f-8f5a-372c19ceca8f\api_compendium_exhibits.md:38:* **EXHIBIT 6-30:** Sample Calculation for 
+Processing Non-Routine Related Emissions
+brain\cb1e2599-6eda-488f-8f5a-372c19ceca8f\api_compendium_exhibits.md:39:* **EXHIBIT 6-33:** Sample Calculation for 
+Transmission Non-Routine Related Emissions
+brain\cb1e2599-6eda-488f-8f5a-372c19ceca8f\api_compendium_exhibits.md:40:* **EXHIBIT 6-38:** Sample Calculation for 
+FCCU Process CO2 Calculation Approach
+brain\cb1e2599-6eda-488f-8f5a-372c19ceca8f\api_compendium_exhibits.md:41:* **EXHIBIT 6-39:** Sample Calculation for 
+Other Continuous Catalyst Regeneration
+brain\cb1e2599-6eda-488f-8f5a-372c19ceca8f\walkthrough.md:19:3. **Exhibit 6-3: Well Completion with Hydraulic 
+Fracturing**
+
+
+

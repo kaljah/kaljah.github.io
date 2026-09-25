@@ -1,0 +1,64 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\Scope1Form.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -422,19 +422,39 @@
+ 
+     // 1. Combustion / General Fuel / Any selected from main dropdown
+     if (formData.fuel) {
+-      // Try direct key match first
+-      if (API_FACTORS[formData.fuel]) {
+-        factorToUse = API_FACTORS[formData.fuel];
+-      }
+-      // Fallback: Try matching by 'code' property for custom forms (Completions/Unloading)
+-      else {
+-        const found = Object.values(API_FACTORS).find(
+-          (f) => f.code === formData.fuel,
+-        );
+-        if (found) factorToUse = found;
+-      }
+-    }
+-    // 2. Drilling (Mud Degassing) - Table 6-3 well default or Table 6-2 mud type
++      if (sourceType === "custom") {
++        const found = customFactors.find(
++          (f) => f.id.toString() === formData.fuel?.toString()
++        );
++        if (found) {
++          factorToUse = {
++            ...found,
++            ch4: found.ch4_factor,
++            co2: found.co2_factor,
++            n2o: found.n2o_factor,
++            uncertainty: {
++              ch4: found.ch4_uncertainty || found.uncertainty || 0.2,
++              co2: found.co2_uncertainty || 0.1,
++              n2o: found.n2o_uncertainty || 0.3,
++            },
++          };
++        }
++      }
++      if (!factorToUse) {
++        // Try direct key match first
++        if (API_FACTORS[formData.fuel]) {
++          factorToUse = API_FACTORS[formData.fuel];
++        }
++        // Fallback: Try matching by 'code' property for custom forms (Completions/Unloading)
++        else {
++          const found = Object.values(API_FACTORS).find(
++            (f) => f.code === formData.fuel,
++          );
++          if (found) factorToUse = found;
++        }
++      }
++    }
++    // 2. Drilling (Mud Degassing) - Table 6-3 well default or API onshore mud defaults
+     else if (processType === "drilling") {
+       if (sourceType === "default") {
+         factorToUse =
+@@ -441,4 +441,4 @@
+-      } else {
++      } else if (sourceType === "tier2_plus") {
+         const mudType = formData.mud_type || "water_based";
+         const mudKey =
+           mudType === "oil" || mudType === "oil_based"
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,70 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\components\Scope1Form.jsx:73:  const [sourceType, setSourceType] = useState("default"); // 'default', 
+'custom', 'specific'
+new\client\src\components\Scope1Form.jsx:210:      sourceType === "default" ||
+new\client\src\components\Scope1Form.jsx:211:      (sourceType === "tier2_plus" && processType === "drilling") ||
+new\client\src\components\Scope1Form.jsx:212:      sourceType === "specific" ||
+new\client\src\components\Scope1Form.jsx:213:      (sourceType === "custom" && isCombustion && tier2Mode === 
+"override")
+new\client\src\components\Scope1Form.jsx:267:    sourceType,
+new\client\src\components\Scope1Form.jsx:358:      if (sourceType === "custom" && tier2Mode === "custom_factor" && 
+!isCustomId) return { ...prev, fuel: "" };
+new\client\src\components\Scope1Form.jsx:360:        (sourceType === "default" || sourceType === "specific" || 
+(sourceType === "custom" && tier2Mode === "override")) &&
+new\client\src\components\Scope1Form.jsx:367:  }, [sourceType, tier2Mode]);
+new\client\src\components\Scope1Form.jsx:403:      sourceType === "specific" &&
+new\client\src\components\Scope1Form.jsx:425:      if (sourceType === "custom") {
+new\client\src\components\Scope1Form.jsx:459:      if (sourceType === "default") {
+new\client\src\components\Scope1Form.jsx:462:      } else if (sourceType === "tier2_plus") {
+new\client\src\components\Scope1Form.jsx:475:  }, [sourceType, formData.fuel, processType, formData.mud_type]);
+new\client\src\components\Scope1Form.jsx:667:      (sourceType === "default" || sourceType === "custom") &&
+new\client\src\components\Scope1Form.jsx:677:      sourceType === "specific" &&
+new\client\src\components\Scope1Form.jsx:695:    if (sourceType === "specific") {
+new\client\src\components\Scope1Form.jsx:717:        const tier = String(formData.tier || (sourceType === "specific" ? 
+"tier3" : sourceType === "custom" ? "tier2" : "tier1")).toLowerCase();
+new\client\src\components\Scope1Form.jsx:718:        if (tier === "tier1" || sourceType === "default") {
+new\client\src\components\Scope1Form.jsx:724:        } else if (tier === "tier2" || sourceType === "custom") {
+new\client\src\components\Scope1Form.jsx:909:        sourceType === "default" &&
+new\client\src\components\Scope1Form.jsx:936:        if (sourceType === "default" || sourceType === "tier1") {
+new\client\src\components\Scope1Form.jsx:956:        } else if (sourceType === "custom") {
+new\client\src\components\Scope1Form.jsx:1004:        if (sourceType === "specific") {
+new\client\src\components\Scope1Form.jsx:1020:      if (processType === "completions" && sourceType === "specific") {
+new\client\src\components\Scope1Form.jsx:1031:        const tier = String(formData.tier || (sourceType === "specific" 
+? "tier3" : sourceType === "custom" ? "tier2" : "tier1")).toLowerCase();
+new\client\src\components\Scope1Form.jsx:1032:        if (tier === "tier1" || sourceType === "default") {
+new\client\src\components\Scope1Form.jsx:1044:        sourceType === "specific"
+new\client\src\components\Scope1Form.jsx:1068:      if (processType === "dehydrator" && sourceType === "specific") {
+new\client\src\components\Scope1Form.jsx:1094:        factor_source: sourceType, // 'default', 'custom', 'specific'
+new\client\src\components\Scope1Form.jsx:1099:          sourceType === "custom" && tier2Mode === "custom_factor"
+new\client\src\components\Scope1Form.jsx:1111:          const isTier2Override = sourceType === "custom" && tier2Mode 
+=== "override";
+new\client\src\components\Scope1Form.jsx:1112:          if ((sourceType !== "specific" && !isTier2Override) || 
+!formData.hhv) return {};
+new\client\src\components\Scope1Form.jsx:1163:          sourceType === "specific" &&
+new\client\src\components\Scope1Form.jsx:1168:          sourceType === "specific" &&
+new\client\src\components\Scope1Form.jsx:1173:          sourceType === "specific" ? userUncertainty : undefined,
+new\client\src\components\Scope1Form.jsx:1175:          sourceType === "specific" ? meterUncertaintyPct : undefined,
+new\client\src\components\Scope1Form.jsx:1177:          sourceType === "specific" ? gcUncertaintyPct : undefined,
+new\client\src\components\Scope1Form.jsx:1369:      sourceType,
+new\client\src\components\Scope1Form.jsx:1370:      setSourceType,
+new\client\src\components\Scope1Form.jsx:1375:      sourceType !== "specific" &&
+new\client\src\components\Scope1Form.jsx:1392:        return sourceType === "specific" ? (
+new\client\src\components\Scope1Form.jsx:1481:        setSourceType("default");
+new\client\src\components\Scope1Form.jsx:1496:        setSourceType("specific");
+new\client\src\components\Scope1Form.jsx:1509:        setSourceType("default");
+new\client\src\components\Scope1Form.jsx:1762:                        const isActive = sourceType === type;
+new\client\src\components\Scope1Form.jsx:1769:                              setSourceType(type);
+new\client\src\components\Scope1Form.jsx:1836:                {sourceType === "default" && (
+new\client\src\components\Scope1Form.jsx:1847:                {sourceType === "custom" && (
+new\client\src\components\Scope1Form.jsx:2074:                {sourceType === "specific" &&
+new\client\src\components\Scope1Form.jsx:2212:            {sourceType === "specific" && (
+new\client\src\components\Scope1Form.jsx:2361:                  {sourceType === "specific" ? (
+new\client\src\components\Scope1Form.jsx:2435:                  {sourceType === "specific" ? (
+new\client\src\components\Scope1Form.jsx:2509:                  {sourceType === "specific" ? (
+new\client\src\components\Scope1Form.jsx:2570:                {sourceType === "default"
+
+
+

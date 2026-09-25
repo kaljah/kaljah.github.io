@@ -1,0 +1,25 @@
+The search for ""API" "Compendium" "2021" "liquids unloading" "6-10" OR "6-11"" returned the following summary:
+The **"API Compendium"** refers to the *Compendium of Greenhouse Gas Emissions Methodologies for the Natural Gas and Oil Industry*, published by the American Petroleum Institute (API)[1][2]. The 2021 edition is a major update to the industry-standard guidance for estimating greenhouse gas (GHG) emissions across the value chain[3][2].
+
+Regarding your query about **"liquids unloading"** and the references to **"6-10" or "6-11"**:
+
+*   **Content Context:** In the 2021 API Compendium, liquids unloading is a specific category for estimating methane and other GHG emissions from gas wells[4][5]. These emissions occur when accumulated liquids (water, condensate) are removed from the wellbore to allow gas to flow[6].
+*   **Section/Table Numbering:** The 2021 API Compendium organizes its methodologies by source category. While specific page numbers can vary by formatting, section "6" generally covers **Well Venting** or **Production** related emissions, which include liquids unloading (often appearing in sections like 6.3 or specific tables within chapter 6)[4]. 
+*   **Clarification on 6-10/6-11:** If you are looking for specific emission factors or calculation methods, they are frequently cited in tables within this chapter[6]. Users often reference these specific tables (e.g., Table 6-10 or 6-11) when applying the methodologies for regulatory reporting or voluntary inventory disclosures[1][7].
+
+To access the specific tables or methodology text you need:
+1.  Search for the official document title: **"API Compendium of Greenhouse Gas Emissions Methodologies for the Natural Gas and Oil Industry 2021"**[1].
+2.  Navigate to **Chapter 6** (typically titled "Production" or "Well Venting") to find the precise subsections and tables regarding liquids unloading[4].
+3.  Note that these methodologies are widely used to align with EPA Subpart W reporting and other global climate frameworks[8][9][10].
+
+Sources:
+[1] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEz3jwnWO234VcHaLkLfyByqK8y55JOUh8F-UTAoNPTckre6vnat_xfEw-jR3vpKY5tE-FT6LgawqKZyIbzzW-EVcN5ZivaW_arwdAuRIK6X8qhH4a3M7snrsh5GbRIv_jQBYgDoakY5ZunJrILEb0MW_OjGn_JIlOU0-YPjfzwpieG8K4VIA6dNA==)
+[2] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQE-l8q09tub5vev8BF-ZRtR88BW2MIDQ8K3tpujD-vokQeMjRQ-BC6-ASPE48TVwwBbZRBvHbZ7w0pRQ5oT0W9TW3KLbM54-TJT9mGwjpTnOCt2LxrLZcSYdGR17NeemqJmsbg5YJfMy4Kx36JQO0l7F2pjejWWhU996u1n30eKWWZIXgxqI4cBwE2L)
+[3] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEz3jwnWO234VcHaLkLfyByqK8y55JOUh8F-UTAoNPTckre6vnat_xfEw-jR3vpKY5tE-FT6LgawqKZyIbzzW-EVcN5ZivaW_arwdAuRIK6X8qhH4a3M7snrsh5GbRIv_jQBYgDoakY5ZunJrILEb0MW_OjGn_JIlOU0-YPjfzwpieG8K4VIA6dNA==)
+[4] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEz3jwnWO234VcHaLkLfyByqK8y55JOUh8F-UTAoNPTckre6vnat_xfEw-jR3vpKY5tE-FT6LgawqKZyIbzzW-EVcN5ZivaW_arwdAuRIK6X8qhH4a3M7snrsh5GbRIv_jQBYgDoakY5ZunJrILEb0MW_OjGn_JIlOU0-YPjfzwpieG8K4VIA6dNA==)
+[5] [onefuture.us](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGoz71OZ_kvpQNU4qbF_OIWmW_RFBH5qq2PzDJo4Mnkqbj2j2gT1vlYiHCfyy2pEq_WjJ4hQ1JnPRKlDR9hBccM6X99uAVDuhmaWgeY9wuFBaaUyEaaVV4fgAnXh72kfa9CCyoEnUa4kxR6XsFTJLUbrVwmVNALUMKm_m9pg8f7LY0r)
+[6] [federalregister.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQE57N-MAaHQmPSnuBkaYuRhSJd7ONRGdnG-iSFMtugvnAwvX5XL1Nbfdd055K15byQjnwC210a7ahV-RBM6tr7Wcbb3X2NuRNiMVOKo6PwG3jRHC-UJwGL-kEHZmuQrlupRgaqc3CXlmUL7inJxsipL3W1VhKAFQJl6w_tWvvzBFBTEn9FiomW70NZ-UbUd7s6lqLv8_ck6Qe0GKftxIxQ10QxwxRuMQtBFF-_Tu3aR_Lmmv2H5aytpOuT30jXujtpqJ-NlOUdWbacErLv30aUE6U52fJu9Z_em5GM=)
+[7] [miq.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQF8UeKBTOFES9PfdC7pe9WdYPZzGBa2GNKUuiOhWftQhVLFy7mAxGQlUCQ7LNRiJYCCe9ABXOCTef51TmfImxVbP_giQAWQt3zlQnaFnvfTZ93gSETKHAyvuqwRuta8RpAIGxikUA_AoI_WI7OhISk5yGCRPoJ3)
+[8] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEz3jwnWO234VcHaLkLfyByqK8y55JOUh8F-UTAoNPTckre6vnat_xfEw-jR3vpKY5tE-FT6LgawqKZyIbzzW-EVcN5ZivaW_arwdAuRIK6X8qhH4a3M7snrsh5GbRIv_jQBYgDoakY5ZunJrILEb0MW_OjGn_JIlOU0-YPjfzwpieG8K4VIA6dNA==)
+[9] [regulations.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHE2WbslMP7Hy8pgVebNBsN8L33KDQ5NxoQr5IFm_WeatzrF_P8cknblklBBiEXR723YJcUHJYRIianRC_pegJflXpadskI79UYC7LKKSxOSltR23jIw3TWMEFb9k4IDGRXA8UUWC-JlUAvyWu1RujsG5AnZH1t5EhDJ1KEl5bP9QmRSA==)
+[10] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGW7aYsJOOoKK1CDMzvxXoOWgP6TO8THSNbiDResrYw3cOP68dVeP6lRNtpgL7LHkBtb6x9hV0klx83cJL2TCobRrloJeyBxQQIV00GLhL_EfXQSQHe8zNtKApFkVIey3GudxtyQePLppftZFUadqrYcpc5mpF6BBAhm9C8_BXsf4DvLOJ_I4oOT9NNa5u9Y2w=)

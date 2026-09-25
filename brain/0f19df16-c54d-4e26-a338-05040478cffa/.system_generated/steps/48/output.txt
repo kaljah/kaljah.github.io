@@ -1,0 +1,29 @@
+The search for ""Table 6-2" "mud degassing" "drilling days" OR "water-based" OR "oil-based" OR "0.0524"" returned the following summary:
+The search results indicate that "Table 6-2" frequently appears in technical documents and compendiums related to **oil and gas greenhouse gas emission inventories**, specifically concerning **mud degassing** emission factors[1][2][3].
+
+### Key Information Found:
+*   **Emission Factors for Mud Degassing:** Table 6-2 in several industry compendiums (such as those by the API and California Air Resources Board) provides default emission factors for mud degassing based on the type of drilling mud used[1][2][4]. 
+    *   **Water-based mud:** 881.84 lbs THC / drilling day (or 0.2605 tonnes CH4/drilling day)[1][5].
+    *   **Oil-based mud:** 198.41 lbs THC / drilling day (or 0.0586 tonnes CH4/drilling day)[1][2][4].
+    *   **Synthetic mud:** 198.41 lbs THC / drilling day (or 0.0586 tonnes CH4/drilling day)[1][2].
+*   **Calculation Context:** The emission factors are used in conjunction with the number of "drilling days" to estimate total emissions[1][6]. The mention of **"0.0524"** appears in some versions of these tables as a specific methane-related factor or calculation constant[3].
+*   **Document Sources:**
+    *   *Compendium of Greenhouse Gas Emissions Methodologies for the Oil and Natural Gas Industry* (API)[2][3].
+    *   *2011 Oil and Gas Emission Inventory Enhancement Project for CenSARA States*[1][7].
+    *   *Year 2008 Gulfwide Emission Inventory Study* (which uses "Table 6-2" for "Drilling Vessel Activity Data")[8][9][10].
+
+If you are looking for a specific value or table from a particular report, please clarify the document title, as "Table 6-2" is a common label used across many different technical studies[8][11][12].
+
+Sources:
+[1] [ca.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGwD3DIWq8L711YBKoE4jJcoJRVWa_HhKFh8l3IoS8GBYPmTaxJM89ohpBSc4O6ZK1-LuTyW74AR1VOEO7YqKwypNHqzYaGN_Nb44QIOKMMCv6LF0CtE2nzkpwnUQWG5BnzZhUSvyq6ozPbNri2Rxtv4Ys=)
+[2] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFcNWlNhBrsy1ih8xQS96EkHg328OuAN73cyz3r4_N7DND6IgDQwtGQOrkL5iq5cHMMdeHKH2u05IQz-xZWzxUgxB1g8l9Rh7TSz0FRz5JqeXn3YKv6fHtJRBkJIUIE8jLQQsYc-4pDNVe6PYl7iXjwJ2kD2aossjvev3d2mJ50V55r1C9oEffiBg==)
+[3] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFcNWlNhBrsy1ih8xQS96EkHg328OuAN73cyz3r4_N7DND6IgDQwtGQOrkL5iq5cHMMdeHKH2u05IQz-xZWzxUgxB1g8l9Rh7TSz0FRz5JqeXn3YKv6fHtJRBkJIUIE8jLQQsYc-4pDNVe6PYl7iXjwJ2kD2aossjvev3d2mJ50V55r1C9oEffiBg==)
+[4] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFcNWlNhBrsy1ih8xQS96EkHg328OuAN73cyz3r4_N7DND6IgDQwtGQOrkL5iq5cHMMdeHKH2u05IQz-xZWzxUgxB1g8l9Rh7TSz0FRz5JqeXn3YKv6fHtJRBkJIUIE8jLQQsYc-4pDNVe6PYl7iXjwJ2kD2aossjvev3d2mJ50V55r1C9oEffiBg==)
+[5] [ca.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGwD3DIWq8L711YBKoE4jJcoJRVWa_HhKFh8l3IoS8GBYPmTaxJM89ohpBSc4O6ZK1-LuTyW74AR1VOEO7YqKwypNHqzYaGN_Nb44QIOKMMCv6LF0CtE2nzkpwnUQWG5BnzZhUSvyq6ozPbNri2Rxtv4Ys=)
+[6] [govinfo.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHNxFjS302wBtmq72lbss62CN3O-OP8QQ4D37uwQduiheU0Emuh1OOyq1yzG_Ee25-MkE7LLGw1EOXEmBjASGwIMXzKjlTeA0sy9nrQ09n6XaCPRpPinm_I3_Doh-Nl4L1E9ogz_Z9tWBLpr3wSSfwqvqTjl7iq_WY6UBk196M6bHsxAU981ERgmb7ObNdoRdOtu0M2_aNI0o4uPOL3FkNe63ueJlneQSmwDXFkrtIOn99Fn-9r)
+[7] [ca.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGwD3DIWq8L711YBKoE4jJcoJRVWa_HhKFh8l3IoS8GBYPmTaxJM89ohpBSc4O6ZK1-LuTyW74AR1VOEO7YqKwypNHqzYaGN_Nb44QIOKMMCv6LF0CtE2nzkpwnUQWG5BnzZhUSvyq6ozPbNri2Rxtv4Ys=)
+[8] [govinfo.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHNxFjS302wBtmq72lbss62CN3O-OP8QQ4D37uwQduiheU0Emuh1OOyq1yzG_Ee25-MkE7LLGw1EOXEmBjASGwIMXzKjlTeA0sy9nrQ09n6XaCPRpPinm_I3_Doh-Nl4L1E9ogz_Z9tWBLpr3wSSfwqvqTjl7iq_WY6UBk196M6bHsxAU981ERgmb7ObNdoRdOtu0M2_aNI0o4uPOL3FkNe63ueJlneQSmwDXFkrtIOn99Fn-9r)
+[9] [govinfo.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHNxFjS302wBtmq72lbss62CN3O-OP8QQ4D37uwQduiheU0Emuh1OOyq1yzG_Ee25-MkE7LLGw1EOXEmBjASGwIMXzKjlTeA0sy9nrQ09n6XaCPRpPinm_I3_Doh-Nl4L1E9ogz_Z9tWBLpr3wSSfwqvqTjl7iq_WY6UBk196M6bHsxAU981ERgmb7ObNdoRdOtu0M2_aNI0o4uPOL3FkNe63ueJlneQSmwDXFkrtIOn99Fn-9r)
+[10] [govinfo.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHNxFjS302wBtmq72lbss62CN3O-OP8QQ4D37uwQduiheU0Emuh1OOyq1yzG_Ee25-MkE7LLGw1EOXEmBjASGwIMXzKjlTeA0sy9nrQ09n6XaCPRpPinm_I3_Doh-Nl4L1E9ogz_Z9tWBLpr3wSSfwqvqTjl7iq_WY6UBk196M6bHsxAU981ERgmb7ObNdoRdOtu0M2_aNI0o4uPOL3FkNe63ueJlneQSmwDXFkrtIOn99Fn-9r)
+[11] [epa.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGB-KyVg9_KHTggv_dfZmszKFjzFM-EU1wzYIXj7L6Ihhuzxjcv2aVKeNf2BUM5X7NkXFmS1rJCx1uDa0i2i_AgZY_Ln-weUvMob4Q9DRLe1fU_sTirXSKJupEFRJMG6PE0Os8gJh19V3U70kOnYQ==)
+[12] [scribd.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEnZfSC5ds9QndwIJusMIm8menT9EdalHutpIHKXz8IaAQ_SkQs4nxuGqMXSRKJcaYWHe4kuifiRL8iDkKnASdv_-20kCysQtV1gSBKU-is7EFHAx3SpPdp-lBVRg3zT4u-x0jRzI6xb-pj2lyB1x3QXEE4WC_1xckFPg==)

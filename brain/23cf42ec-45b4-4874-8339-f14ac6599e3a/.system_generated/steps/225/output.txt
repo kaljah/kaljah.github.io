@@ -1,0 +1,141 @@
+
+The command exited with code 1.
+Output:
+<truncated 1 lines>
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier1::test_table_6_5_footnote_c_ch4_adjustment PASSED [ 30%]
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier1::test_table_6_5_footnote_c_co2_adjustment PASSED [ 34%]
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier2::test_api_eq_6_7_production_rate_duration PASSED [ 38%]
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier2::test_liquid_flowback_gor_with_sales_deduction PASSED [ 42%]
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier2::test_flowback_rate_duration_mcf_hr_correctness PASSED [ 46%]
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier3::test_api_eq_6_4_injected_n2_deduction PASSED [ 50%]
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier3::test_injected_co2_not_deducted PASSED [ 53%]
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier3::test_api_exhibit_6_3_exact_benchmark FAILED [ 57%]
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier3::test_gas_fate_partitioning_rec_zero_emissions PASSED [ 61%]
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier3::test_gas_fate_custom_split PASSED [ 65%]
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsValidation::test_rejects_negative_volume PASSED [ 69%]
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsValidation::test_rejects_negative_events PASSED [ 73%]
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsValidation::test_rejects_negative_duration PASSED [ 76%]
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsValidation::test_rejects_invalid_ch4_content FAILED [ 80%]
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsValidation::test_rejects_invalid_disposition_split_sum PASSED [ 84%]
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsValidation::test_zero_volume_clean_zero_emissions PASSED [ 88%]
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsEndToEndPipeline::test_catalog_contains_api_table_6_5_and_6_6 PASSED [ 92%]
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsEndToEndPipeline::test_dispatcher_tier1_flow FAILED [ 96%]
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsEndToEndPipeline::test_compute_emissions_end_to_end FAILED [100%]
+
+================================== FAILURES ===================================
+______ TestOnshoreCompletionsTier3.test_api_exhibit_6_3_exact_benchmark _______
+
+self = <test_onshore_well_completions_audit.TestOnshoreCompletionsTier3 object at 0x00000214366B1760>
+calc = <calculations.vented.CompletionFlowbackCalculator object at 0x0000021436700320>
+
+    def test_api_exhibit_6_3_exact_benchmark(self, calc):
+        """
+        API Compendium 2021 EXHIBIT 6-3 Exact Verification:
+        - Gas well with HF
+        - V_t = 1,480,000 scf metered gas to flare
+        - Injected N2 = 7,390 scf
+        - Metered duration T_m = 20 hours
+        - Initial flowback duration T_i = 4 hours (vented to open pits/tanks)
+        - Gas composition: 70 mole % CH4
+        - Flare efficiency: 98%
+        API Published Results:
+        - V_gas = 1,472,610 scf
+        - V_i = 147,261 scf
+        - Initial vented CH4 = 1.97 tonnes CH4
+        - Flared unburnt CH4 = 0.39 tonnes CH4
+        - Flared combustion CO2 (from CH4) = 53.5 tonnes CO2 (or 98.7 t if remaining 30% ethane combusted)
+        """
+        res = calc.calculate(
+            tier="tier3",
+            flowback_volume=1_480_000.0,
+            volume_unit="scf",
+            injected_n2_volume=7_390.0,
+            injected_n2_unit="scf",
+            flowback_duration_hours=20.0,
+            initial_flowback_hours=4.0,
+            ch4_content=0.70,
+            disposition="flared",
+            control_efficiency=0.98,
+            hhv=1020.0,
+            gwp_dict=GWP_AR5,
+        )
+        assert pytest.approx(res["inputs"]["net_flowback_scf"], rel=1e-5) == 1_472_610.0
+        assert pytest.approx(res["inputs"]["initial_flowback_scf"], rel=1e-4) == 147_261.0
+        # Initial vented CH4: ~1.97 tonnes
+        assert pytest.approx(res["inputs"]["initial_vented_ch4_tonnes"], rel=1e-2) == 1.97
+        # Flared unburnt CH4: ~0.39 tonnes
+>       assert pytest.approx(res["inputs"]["flared_unburnt_ch4_tonnes"], rel=1e-2) == 0.39
+E       assert 0.39610517919...7 � 0.00396105 == 0.39
+E         
+E         comparison failed
+E         Obtained: 0.39
+E         Expected: 0.39610517919706917 � 0.00396105
+
+tests\test_onshore_well_completions_audit.py:313: AssertionError
+______ TestOnshoreCompletionsValidation.test_rejects_invalid_ch4_content ______
+
+self = <test_onshore_well_completions_audit.TestOnshoreCompletionsValidation object at 0x00000214366879B0>
+calc = <calculations.vented.CompletionFlowbackCalculator object at 0x000002143675F920>
+
+    def test_rejects_invalid_ch4_content(self, calc):
+>       with pytest.raises(ValueError, match="Methane.*between 0 and 1"):
+E       Failed: DID NOT RAISE ValueError
+
+tests\test_onshore_well_completions_audit.py:377: Failed
+______ TestOnshoreCompletionsEndToEndPipeline.test_dispatcher_tier1_flow ______
+
+self = <test_onshore_well_completions_audit.TestOnshoreCompletionsEndToEndPipeline object at 0x00000214366B11C0>
+
+    def test_dispatcher_tier1_flow(self):
+        """Verifies dispatcher handles Tier 1 factor selection correctly."""
+        payload = {
+            "tier": "tier1",
+            "well_type": "gas",
+            "fracturing": True,
+            "control_type": "uncontrolled",
+            "amount": 2.0,
+            "unit": "events",
+        }
+        res = dispatcher.dispatch("completions", payload, {}, {}, gwp_dict=GWP_AR5)
+        assert res is not None
+>       assert pytest.approx(res["results"]["ch4"]["value"], rel=1e-4) == 28.8 * 2.0
+E       assert 0.0 � 1.0e-12 == 57.6
+E         
+E         comparison failed
+E         Obtained: 57.6
+E         Expected: 0.0 � 1.0e-12
+
+tests\test_onshore_well_completions_audit.py:426: AssertionError
+__ TestOnshoreCompletionsEndToEndPipeline.test_compute_emissions_end_to_end ___
+
+self = <test_onshore_well_completions_audit.TestOnshoreCompletionsEndToEndPipeline object at 0x00000214366B0AD0>
+
+    def test_compute_emissions_end_to_end(self):
+        """Verifies compute_emissions pipeline returns rich result and correct method."""
+        payload = {
+            "process_type": "completions",
+            "tier": "tier3",
+            "amount": 5000.0,
+            "unit": "m3",
+            "ch4_content": 85.0,
+            "disposition": "flared",
+            "control_efficiency": 98.0,
+        }
+        res, method = compute_emissions(payload, {}, gwp_dict=GWP_AR5)
+>       assert res["ch4"] > 0
+E       assert 0.0 > 0
+
+tests\test_onshore_well_completions_audit.py:441: AssertionError
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier3::test_api_exhibit_6_3_exact_benchmark
+FAILED tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsValidation::test_rejects_invalid_ch4_content
+FAILED tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsEndToEndPipeline::test_dispatcher_tier1_flow
+FAILED tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsEndToEndPipeline::test_compute_emissions_end_to_end
+=================== 4 failed, 22 passed, 1 warning in 2.47s ===================
+

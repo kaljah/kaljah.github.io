@@ -1,0 +1,18 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_battery_midstream_process_equipment.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -57,9 +57,9 @@
+         assert res["inputs"]["ef_ch4_used"] == 0.0524
+ 
+     @pytest.mark.parametrize("mud_type, expected_ef", [
+-        ("water_based", 0.2605),
+-        ("oil_based", 0.0586),
+-        ("synthetic", 0.0586),
++        ("water_based", 0.0458),
++        ("oil_based", 0.0103),
++        ("synthetic", 0.0103),
+     ])
+     def test_tier2_mud_types_standard_factors(self, mud_type, expected_ef):
+         calc = MudDegassingCalculator()
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

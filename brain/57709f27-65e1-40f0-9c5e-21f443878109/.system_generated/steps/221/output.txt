@@ -1,0 +1,44 @@
+
+The command exited with code 0.
+Output:
+
+Search Results for "routine":
+
+constant    PROCESS_TYPES
+  new/client/src/utils/EmissionFactors.js:1334
+  = {
+  combustion: "Stationary Combustion",
+  flaring: "Flaring",
+  routine_flaring: "Routine Flaring",...
+
+constant    PROCESS_TYPES
+  audit/work/C/ef_client.mjs:1334
+  = {
+  combustion: "Stationary Combustion",
+  flaring: "Flaring",
+  routine_flaring: "Routine Flaring",...
+
+variable    streams
+  audit/repro/BUG-026.py:12
+  = sum(f[k]["tco2e"] for k in ("routine_flaring", "non_routine_flaring", "safety_flaring"))
+
+variable    streams
+  audit/repro/BUG-036.py:9
+  = sum(f[k]["tco2e"] for k in ("routine_flaring","non_routine_flaring","safety_flaring"))
+
+variable    PROCESS_TYPES
+  new/server/emission_factors.py:364
+  = {
+    "combustion": "Stationary Combustion",
+    "flaring": "Flaring",
+    "routine_flaring": "Ro...
+
+variable    bad
+  audit/repro/BUG-035.py:18
+  = abs(f["routine_flaring"]["volume_m3"] - M3_PER_MMSCF) > 1 or abs(f["yoy_change_pct"]) > 0.01
+
+variable    bad
+  audit/repro/BUG-036.py:12
+  = (typed == 0 and fd == 0 and f["routine_flaring"]["volume_knm3"] > 0) or abs(streams - f["total_flari...
+
+

@@ -1,0 +1,41 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_qfull_boundary_sensitivity.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -350,24 +350,24 @@
+ 
+     def test_mud_oil_over_water_ratio_exact(self):
+         """
+-        OAT: Same mud volume, change mud_type: oil_based vs water_based.
+-        oil_based EF = 0.35 kg/m3, water_based EF = 0.15 kg/m3.
+-        Ratio = 0.35 / 0.15 = 2.3333...
++        OAT: Same drilling days, change mud_type: oil_based vs water_based.
++        oil_based EF = 0.0586 t/day, water_based EF = 0.2605 t/day.
++        Ratio = 0.0586 / 0.2605.
+ 
+         Both have IDENTICAL CO2 and N2O (zero), only CH4 differs.
+         """
+-        vol = 100.0
++        days = 10.0
+ 
+         em_water, _ = compute_emissions({
+-            "process_type": "drilling", "quantity": vol, "unit": "m3",
+-            "factor_source": "specific", "mud_type": "water_based"
++            "process_type": "drilling", "drilling_days": days, "quantity": days, "unit": "days",
++            "tier": "tier2", "factor_source": "custom", "mud_type": "water_based"
+         }, {})
+         em_oil, _ = compute_emissions({
+-            "process_type": "drilling", "quantity": vol, "unit": "m3",
+-            "factor_source": "specific", "mud_type": "oil_based"
+-        }, {})
+-
+-        expected_ratio = 0.35 / 0.15   # = 2.3333...
++            "process_type": "drilling", "drilling_days": days, "quantity": days, "unit": "days",
++            "tier": "tier2", "factor_source": "custom", "mud_type": "oil_based"
++        }, {})
++
++        expected_ratio = 0.0586 / 0.2605
+         actual_ratio = em_oil["ch4"] / em_water["ch4"]
+ 
+         assert actual_ratio == pytest.approx(expected_ratio, rel=1e-4), (
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

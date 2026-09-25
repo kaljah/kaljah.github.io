@@ -1,0 +1,40 @@
+
+The command exited with code 0.
+Output:
+
+> new\server\calculations\combustion.py:412:class FlaringCalculator(BaseCalculator):
+  new\server\calculations\combustion.py:413:    def __init__(self):
+  new\server\calculations\combustion.py:414:        super().__init__("Flaring Dual-Efficiency", "Section 5.2")
+  new\server\calculations\combustion.py:415:
+  new\server\calculations\combustion.py:416:    def calculate(
+  new\server\calculations\combustion.py:417:        self,
+  new\server\calculations\combustion.py:418:        gas_volume,
+  new\server\calculations\combustion.py:419:        ch4_fraction,
+  new\server\calculations\combustion.py:420:        flare_type,
+  new\server\calculations\combustion.py:421:        uncertainties,
+  new\server\calculations\combustion.py:422:        hhv=None,
+  new\server\calculations\combustion.py:423:        ef_unit=None,
+  new\server\calculations\combustion.py:424:        fuel_unit=None,
+  new\server\calculations\combustion.py:425:        fuel_type=None,
+  new\server\calculations\combustion.py:426:        ef_n2o=None,
+  new\server\calculations\combustion.py:427:        operating_temperature=None,
+  new\server\calculations\combustion.py:428:        temp_unit="C",
+  new\server\calculations\combustion.py:429:        operating_pressure=None,
+  new\server\calculations\combustion.py:430:        press_unit="psig",
+  new\server\calculations\combustion.py:431:        z_factor=1.0,
+  new\server\calculations\combustion.py:432:        gwp_dict=None,
+  new\server\calculations\combustion.py:433:        combustion_efficiency=None,
+  new\server\calculations\combustion.py:434:        destruction_efficiency=None,
+  new\server\calculations\combustion.py:435:        **comps,
+  new\server\calculations\combustion.py:436:    ):
+  new\server\calculations\combustion.py:437:        """
+  new\server\calculations\combustion.py:438:        Dual-efficiency flaring model (API 5-3, 5-4) with API �4.2.1 
+thermodynamic normalization.
+  new\server\calculations\combustion.py:439:        Supports full C1-C10 gas composition tracking for accurate CO2 
+math.
+  new\server\calculations\combustion.py:440:        """
+  new\server\calculations\combustion.py:441:        self.validate_inputs(
+  new\server\calculations\combustion.py:442:            {"volume": gas_volume, "ch4_fraction": ch4_fraction},
+
+
+

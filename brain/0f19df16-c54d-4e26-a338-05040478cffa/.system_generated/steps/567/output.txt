@@ -1,0 +1,36 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\Scope1Form.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1665,14 +1665,14 @@
+                           {
+                             key: "default",
+                             tier: "Tier 1",
+-                            label: "Table 6-3 Default",
+-                            sub: "Wells × 0.0524",
+-                          },
+-                          {
+-                            key: "custom",
+-                            tier: "Tier 2",
+-                            label: "Table 6-2 Mud EF",
+-                            sub: "Drilling Days",
++                            label: "Standard API",
++                            sub: "Catalog Defaults",
++                          },
++                          {
++                            key: "custom",
++                            tier: "Tier 2",
++                            label: "Custom Factor",
++                            sub: "Saved Database Factors",
+                           },
+                           {
+                             key: "tier2_plus",
+@@ -1679,5 +1679,5 @@
+-                            label: "Table 6-2 + Gas Comp",
+-                            sub: "Site CH₄ / CO₂",
++                            label: "Site Gas Composition",
++                            sub: "Onshore EF + Site CH₄/CO₂",
+                           },
+                         ]
+                       : [
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

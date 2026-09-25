@@ -1,0 +1,27 @@
+
+The command exited with code 0.
+Output:
+
+docs\calculation-specification.md:194:- **Applicable Methodology:** API Compendium 2021 �6.5, Table 6-5.
+docs\validation\01-calculation-inventory.md:292:- **Methodology**: API Compendium (2021) �6.5 & Table 6-5.
+docs\validation\01-calculation-inventory.md:293:- **Emission Factor Source**: Stoichiometric gas balance; Table 6-5 
+slip fraction ($0.1\%$).
+docs\validation\02-calculation-inventory.md:169:**Standard**: API Compendium 2021 �6.5, Table 6-5  
+docs\validation\calculation-inventory.md:292:- **Methodology**: API Compendium (2021) �6.5 & Table 6-5.
+docs\validation\calculation-inventory.md:293:- **Emission Factor Source**: Stoichiometric gas balance; Table 6-5 slip 
+fraction ($0.1\%$).
+docs\validation\CALCULATION_VALIDATION_REPORT.md:39:| AGR - amine sweetening | API 2021 �6.5 / Table 6-5 | ? 
+`IndependentAGRModel.calculate()` | ? 2 (G-01, G-02) | - | - | ? PASS |
+docs\validation\methodology-matrix.md:26:| **Liquids Unloading** | API / EPA Subpart W | 2021 / 2024 | Section 6.3 / 
+40 CFR 98.233(c) | Wellbore Expansion Eq. 6-5 | AR5 | **PASS** |
+docs\validation\methodology-matrix.md:33:| **Acid Gas Removal** | API Compendium | 2021 | Section 6.5, Table 6-5 | 
+Stripping Balance + 0.1% Slip | AR5 | **PASS** |
+docs\validation\repository-audit.md:79:| **Acid Gas Removal (AGR)** | `new/server/calculations/midstream.py` | 
+`AGRCalculator` | API Compendium 2021 �6.5, Table 6-5 |
+audit\work\B\d_scope.md:31:- `cogen_allocation` entered through the Scope 1 route is stored in Scope 1 too. The 
+snapshot contains 4 such Pending rows (ids 620-623, "total_emissions 1000 tCO2e", allocated 346.6-562.5 t each, 2034 t 
+in total). These would be added to Scope 1 on approval, on top of the CHP's fuel combustion, which is double counting. 
+It would also be double counting if the same CHP heat is entered in the Scope 2 form.
+
+
+

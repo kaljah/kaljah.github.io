@@ -1,0 +1,98 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+hypothesis profile 'default'
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 26 items
+
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier1::test_table_6_5_gas_well_uncontrolled PASSED [  3%]
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier1::test_table_6_5_gas_well_rec PASSED [  7%]
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier1::test_table_6_5_oil_well_uncontrolled PASSED [ 11%]
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier1::test_table_6_5_oil_well_rec PASSED [ 15%]
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier1::test_table_6_6_gas_well_vented PASSED [ 19%]
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier1::test_table_6_6_oil_well_vented PASSED [ 23%]
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier1::test_tier1_multi_event_scaling PASSED [ 26%]
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier1::test_table_6_5_footnote_c_ch4_adjustment PASSED [ 30%]
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier1::test_table_6_5_footnote_c_co2_adjustment PASSED [ 34%]
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier2::test_api_eq_6_7_production_rate_duration PASSED [ 38%]
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier2::test_liquid_flowback_gor_with_sales_deduction PASSED [ 42%]
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier2::test_flowback_rate_duration_mcf_hr_correctness PASSED [ 46%]
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier3::test_api_eq_6_4_injected_n2_deduction PASSED [ 50%]
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier3::test_injected_co2_not_deducted PASSED [ 53%]
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier3::test_api_exhibit_6_3_exact_benchmark FAILED [ 57%]
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier3::test_gas_fate_partitioning_rec_zero_emissions PASSED [ 61%]
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier3::test_gas_fate_custom_split PASSED [ 65%]
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsValidation::test_rejects_negative_volume PASSED [ 69%]
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsValidation::test_rejects_negative_events PASSED [ 73%]
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsValidation::test_rejects_negative_duration PASSED [ 76%]
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsValidation::test_rejects_invalid_ch4_content PASSED [ 80%]
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsValidation::test_rejects_invalid_disposition_split_sum PASSED [ 84%]
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsValidation::test_zero_volume_clean_zero_emissions PASSED [ 88%]
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsEndToEndPipeline::test_catalog_contains_api_table_6_5_and_6_6 PASSED [ 92%]
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsEndToEndPipeline::test_dispatcher_tier1_flow PASSED [ 96%]
+tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsEndToEndPipeline::test_compute_emissions_end_to_end PASSED [100%]
+
+================================== FAILURES ===================================
+______ TestOnshoreCompletionsTier3.test_api_exhibit_6_3_exact_benchmark _______
+
+self = <test_onshore_well_completions_audit.TestOnshoreCompletionsTier3 object at 0x0000027870AF7A70>
+calc = <calculations.vented.CompletionFlowbackCalculator object at 0x0000027870B2E210>
+
+    def test_api_exhibit_6_3_exact_benchmark(self, calc):
+        """
+        API Compendium 2021 EXHIBIT 6-3 Exact Verification:
+        - Gas well with HF
+        - V_t = 1,480,000 scf metered gas to flare
+        - Injected N2 = 7,390 scf
+        - Metered duration T_m = 20 hours
+        - Initial flowback duration T_i = 4 hours (vented to open pits/tanks)
+        - Gas composition: 70 mole % CH4
+        - Flare efficiency: 98%
+        API Published Results:
+        - V_gas = 1,472,610 scf
+        - V_i = 147,261 scf
+        - Initial vented CH4 = 1.97 tonnes CH4
+        - Flared unburnt CH4 = 0.39 tonnes CH4
+        - Flared combustion CO2 (from CH4) = 53.5 tonnes CO2 (or 98.7 t if remaining 30% ethane combusted)
+        """
+        res = calc.calculate(
+            tier="tier3",
+            flowback_volume=1_480_000.0,
+            volume_unit="scf",
+            injected_n2_volume=7_390.0,
+            injected_n2_unit="scf",
+            flowback_duration_hours=20.0,
+            initial_flowback_hours=4.0,
+            ch4_content=0.70,
+            disposition="flared",
+            control_efficiency=0.98,
+            hhv=1020.0,
+            gwp_dict=GWP_AR5,
+        )
+        assert pytest.approx(res["inputs"]["net_flowback_scf"], rel=1e-5) == 1_472_610.0
+        assert pytest.approx(res["inputs"]["initial_flowback_scf"], rel=1e-4) == 147_261.0
+        # Initial vented CH4: ~1.97 tonnes
+>       assert pytest.approx(res["inputs"]["initial_vented_ch4_tonnes"], abs=0.01) == 1.97
+E       assert 1.9805258959853438 � 0.01 == 1.97
+E         
+E         comparison failed
+E         Obtained: 1.97
+E         Expected: 1.9805258959853438 � 0.01
+
+tests\test_onshore_well_completions_audit.py:311: AssertionError
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsTier3::test_api_exhibit_6_3_exact_benchmark
+=================== 1 failed, 25 passed, 1 warning in 1.55s ===================
+

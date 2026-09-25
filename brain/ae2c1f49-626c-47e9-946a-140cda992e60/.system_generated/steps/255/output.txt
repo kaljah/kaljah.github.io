@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+
+> new\server\calculations\vented.py:2213:class AssociatedGasVentingCalculator(BaseCalculator):
+  new\server\calculations\vented.py:2214:    """
+  new\server\calculations\vented.py:2215:    API GHG Compendium 2021 - Section 6.3.1: Associated Gas Venting
+
+
+

@@ -1,0 +1,108 @@
+
+The command exited with code 0.
+Output:
+
+  new\server\routes\cap_routes.py:116:@login_required
+> new\server\routes\cap_routes.py:117:def create_or_update_cap_emission():
+  new\server\routes\cap_routes.py:118:    """Create or update a Criteria Air Pollutant entry."""
+  new\server\routes\cap_routes.py:119:    user = get_current_user()
+  new\server\routes\cap_routes.py:120:    data = request.get_json() or {}
+  new\server\routes\cap_routes.py:163:        if not record:
+> new\server\routes\cap_routes.py:164:            record = CapEmission(
+  new\server\routes\cap_routes.py:165:                facility_id=int(facility_id),
+  new\server\routes\cap_routes.py:166:                year=int(year),
+  new\server\routes\cap_routes.py:167:                month=data.get("month"),
+  new\server\routes\emissions.py:862:        bulk_status = "Pending"
+> new\server\routes\emissions.py:863:        emission_obj = Emission(
+  new\server\routes\emissions.py:864:            record_id=rec_id,
+  new\server\routes\emissions.py:865:            year=year,
+  new\server\routes\emissions.py:866:            month=month,
+  new\server\routes\emissions.py:2978:@login_required
+> new\server\routes\emissions.py:2979:def add_emission():
+  new\server\routes\emissions.py:2980:    user = get_current_user()
+  new\server\routes\emissions.py:2981:    if not user:
+  new\server\routes\emissions.py:2982:        return jsonify({"error": "Unauthorized"}), 401
+  new\server\routes\emissions.py:3156:
+> new\server\routes\emissions.py:3157:    record = Emission(
+  new\server\routes\emissions.py:3158:        record_id=str(uuid.uuid4()),
+  new\server\routes\emissions.py:3159:        year=data["year"],
+  new\server\routes\emissions.py:3160:        month=data["month"],
+  new\server\routes\emissions.py:3342:@login_required  # SEC-01 FIX: was missing
+> new\server\routes\emissions.py:3343:def delete_emission(id):
+  new\server\routes\emissions.py:3344:    user = get_current_user()
+  new\server\routes\emissions.py:3345:    if not user:
+  new\server\routes\emissions.py:3346:        return jsonify({"error": "Unauthorized"}), 401
+  new\server\routes\emissions.py:3399:@login_required  # EXTRA-06 FIX: decorator was present but get_current_user() 
+could return None causing 500
+> new\server\routes\emissions.py:3400:def update_emission(id):
+  new\server\routes\emissions.py:3401:    user = get_current_user()
+  new\server\routes\emissions.py:3402:    if not user:
+  new\server\routes\emissions.py:3403:        return jsonify({"error": "Unauthorized"}), 401
+  new\server\routes\emissions.py:3913:            # 4. Create record
+> new\server\routes\emissions.py:3914:            record = Emission(
+  new\server\routes\emissions.py:3915:                record_id=f"IMP-{uuid.uuid4().hex[:8]}-{i}",
+  new\server\routes\emissions.py:3916:                year=rec_data.get("year"),
+  new\server\routes\emissions.py:3917:                month=rec_data.get("month"),
+  new\server\routes\emissions.py:4457:@login_required
+> new\server\routes\emissions.py:4458:def approve_emission(emission_id):
+  new\server\routes\emissions.py:4459:    """Approve a single pending emission record (Scope 1, 2, or 3)."""
+  new\server\routes\emissions.py:4460:    user = get_current_user()
+  new\server\routes\emissions.py:4461:    if not user or user.role not in ["admin", "superuser"]:
+  new\server\routes\emissions.py:4512:@login_required
+> new\server\routes\emissions.py:4513:def reject_emission(emission_id):
+  new\server\routes\emissions.py:4514:    """Reject a single pending emission record (Scope 1, 2, or 3)."""
+  new\server\routes\emissions.py:4515:    user = get_current_user()
+  new\server\routes\emissions.py:4516:    if not user or user.role not in ["admin", "superuser"]:
+  new\server\routes\scope2.py:160:@login_required
+> new\server\routes\scope2.py:161:def create_scope2_emission():
+  new\server\routes\scope2.py:162:    user = get_current_user()
+  new\server\routes\scope2.py:163:    if not user:
+  new\server\routes\scope2.py:164:        return jsonify({"error": "Not authenticated"}), 401
+  new\server\routes\scope2.py:256:
+> new\server\routes\scope2.py:257:    emission = Scope2Emission(
+  new\server\routes\scope2.py:258:        facility_id=data.get("facility_id"),
+  new\server\routes\scope2.py:259:        year=data.get("year"),
+  new\server\routes\scope2.py:260:        month=data.get("month"),
+  new\server\routes\scope2.py:356:@login_required
+> new\server\routes\scope2.py:357:def update_scope2_emission(emission_id):
+  new\server\routes\scope2.py:358:    """Update a Scope 2 emission record"""
+  new\server\routes\scope2.py:359:    user = get_current_user()
+  new\server\routes\scope2.py:360:    if not user:
+  new\server\routes\scope2.py:485:@login_required
+> new\server\routes\scope2.py:486:def delete_scope2_emission(emission_id):
+  new\server\routes\scope2.py:487:    """Delete a Scope 2 emission record"""
+  new\server\routes\scope2.py:488:    user = get_current_user()
+  new\server\routes\scope2.py:489:    if not user:
+  new\server\routes\scope2.py:637:
+> new\server\routes\scope2.py:638:            emission = Scope2Emission(
+  new\server\routes\scope2.py:639:                facility_id=facility.id,
+  new\server\routes\scope2.py:640:                year=int(rec.get("year", 2024)),
+  new\server\routes\scope2.py:641:                month=int(rec.get("month", 1)),
+  new\server\routes\scope3.py:71:@login_required
+> new\server\routes\scope3.py:72:def create_scope3_emission():
+  new\server\routes\scope3.py:73:    """Create a new Scope 3 emission record with Maker-Checker status"""
+  new\server\routes\scope3.py:74:    user = get_current_user()
+  new\server\routes\scope3.py:75:    if not user:
+  new\server\routes\scope3.py:108:
+> new\server\routes\scope3.py:109:    emission = Scope3Emission(
+  new\server\routes\scope3.py:110:        facility_id=data.get("facility_id"),
+  new\server\routes\scope3.py:111:        year=data.get("year"),
+  new\server\routes\scope3.py:112:        month=data.get("month"),
+  new\server\routes\scope3.py:217:@login_required
+> new\server\routes\scope3.py:218:def update_scope3_emission(emission_id):
+  new\server\routes\scope3.py:219:    """Update a Scope 3 emission record"""
+  new\server\routes\scope3.py:220:    user = get_current_user()
+  new\server\routes\scope3.py:221:    if not user:
+  new\server\routes\scope3.py:309:@login_required
+> new\server\routes\scope3.py:310:def delete_scope3_emission(emission_id):
+  new\server\routes\scope3.py:311:    """Delete a Scope 3 emission record"""
+  new\server\routes\scope3.py:312:    user = get_current_user()
+  new\server\routes\scope3.py:313:    if not user:
+  new\server\routes\scope3.py:445:
+> new\server\routes\scope3.py:446:            emission = Scope3Emission(
+  new\server\routes\scope3.py:447:                facility_id=facility.id,
+  new\server\routes\scope3.py:448:                year=int(rec.get("year", 2024)),
+  new\server\routes\scope3.py:449:                month=int(rec.get("month", 1)),
+
+
+

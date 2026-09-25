@@ -1,0 +1,70 @@
+
+The command exited with code 0.
+Output:
+
+> new\server\routes\emissions.py:472:@emissions_bp.route("/bulk-upload", methods=["POST"])
+  new\server\routes\emissions.py:473:@limiter.limit("20 per minute")
+  new\server\routes\emissions.py:474:@login_required
+  new\server\routes\emissions.py:475:def add_bulk_upload():
+  new\server\routes\emissions.py:476:    from datetime import datetime
+  new\server\routes\emissions.py:477:
+> new\server\routes\emissions.py:2881:@emissions_bp.route("/upload/start", methods=["POST"])
+  new\server\routes\emissions.py:2882:@login_required
+  new\server\routes\emissions.py:2883:def upload_start():
+  new\server\routes\emissions.py:2884:    user = get_current_user()
+  new\server\routes\emissions.py:2885:    if not user:
+  new\server\routes\emissions.py:2886:        return jsonify({"error": "Unauthorized"}), 401
+> new\server\routes\emissions.py:2977:@emissions_bp.route("/", methods=["POST"])
+  new\server\routes\emissions.py:2978:@login_required
+  new\server\routes\emissions.py:2979:def add_emission():
+  new\server\routes\emissions.py:2980:    user = get_current_user()
+  new\server\routes\emissions.py:2981:    if not user:
+  new\server\routes\emissions.py:2982:        return jsonify({"error": "Unauthorized"}), 401
+> new\server\routes\emissions.py:3659:@emissions_bp.route("/bulk-delete", methods=["POST"])
+  new\server\routes\emissions.py:3660:@login_required  # SEC-01 FIX: was missing
+  new\server\routes\emissions.py:3661:def bulk_delete_emissions():
+  new\server\routes\emissions.py:3662:    user = get_current_user()
+  new\server\routes\emissions.py:3663:    if not user:
+  new\server\routes\emissions.py:3664:        return jsonify({"error": "Unauthorized"}), 401
+> new\server\routes\emissions.py:3701:@emissions_bp.route("/import", methods=["POST"])
+  new\server\routes\emissions.py:3702:@login_required  # SEC-01 FIX: was missing
+  new\server\routes\emissions.py:3703:def import_emissions():
+  new\server\routes\emissions.py:3704:    user = get_current_user()
+  new\server\routes\emissions.py:3705:    if not user:
+  new\server\routes\emissions.py:3706:        return jsonify({"error": "Unauthorized"}), 401
+> new\server\routes\emissions.py:4456:@emissions_bp.route("/approve/<int:emission_id>", methods=["POST"])
+  new\server\routes\emissions.py:4457:@login_required
+  new\server\routes\emissions.py:4458:def approve_emission(emission_id):
+  new\server\routes\emissions.py:4459:    """Approve a single pending emission record (Scope 1, 2, or 3)."""
+  new\server\routes\emissions.py:4460:    user = get_current_user()
+  new\server\routes\emissions.py:4461:    if not user or user.role not in ["admin", "superuser"]:
+> new\server\routes\emissions.py:4511:@emissions_bp.route("/reject/<int:emission_id>", methods=["POST"])
+  new\server\routes\emissions.py:4512:@login_required
+  new\server\routes\emissions.py:4513:def reject_emission(emission_id):
+  new\server\routes\emissions.py:4514:    """Reject a single pending emission record (Scope 1, 2, or 3)."""
+  new\server\routes\emissions.py:4515:    user = get_current_user()
+  new\server\routes\emissions.py:4516:    if not user or user.role not in ["admin", "superuser"]:
+> new\server\routes\emissions.py:4562:@emissions_bp.route("/approve/batch", methods=["POST"])
+  new\server\routes\emissions.py:4563:@login_required
+  new\server\routes\emissions.py:4564:def approve_batch_emissions():
+  new\server\routes\emissions.py:4565:    """Approve multiple pending emission records in one request.
+  new\server\routes\emissions.py:4566:    Body: { "ids": [1, 2, 3], "scope": "1"|"2"|"3"|"all", "approve_all": bool, 
+"by_scope": {"1": [], "2": [], "3": []} }
+  new\server\routes\emissions.py:4567:    """
+> new\server\routes\emissions.py:4648:@emissions_bp.route("/reject/batch", methods=["POST"])
+  new\server\routes\emissions.py:4649:@login_required
+  new\server\routes\emissions.py:4650:def reject_batch_emissions():
+  new\server\routes\emissions.py:4651:    """Reject (delete) multiple pending emission records.
+  new\server\routes\emissions.py:4652:    Body: { "ids": [1, 2, 3], "scope": "1"|"2"|"3"|"all", "reason": "...", 
+"reject_all": bool, "by_scope": {"1": [], "2": [], "3": []} }
+  new\server\routes\emissions.py:4653:    """
+> new\server\routes\emissions.py:4736:@emissions_bp.route("/erp/sync", methods=["POST"])
+  new\server\routes\emissions.py:4737:@login_required
+  new\server\routes\emissions.py:4738:def trigger_erp_sync():
+  new\server\routes\emissions.py:4739:    """ERP integration sync endpoint (Gated by ENABLE_MOCK_ERP flag & Admin 
+role, H8)"""
+  new\server\routes\emissions.py:4740:    user = get_current_user()
+  new\server\routes\emissions.py:4741:    if not user or user.role not in ["admin", "superuser"]:
+
+
+

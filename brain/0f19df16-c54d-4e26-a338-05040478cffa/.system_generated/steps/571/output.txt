@@ -1,0 +1,67 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\test_emission_calculations.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -666,23 +666,23 @@
+         self.assertAlmostEqual(float(self.result["total_co2e"]), expected, places=5)
+ 
+     def test_tier2_water_based_mud(self):
+-        """Water-based mud uses API Table 6-2 EF=0.2605 t CH4/day."""
+-        inputs = {
+-            "amount": 20,
+-            "quantity": 20,
+-            "unit": "days",
+-            "tier": "tier2",
+-            "mud_type": "water_based",
+-            "drilling_days": 20,
+-        }
+-        ef = {"co2": 0, "ch4": 0.2605, "n2o": 0, "unit": "t/day"}
+-        result = dispatcher.dispatch("drilling", inputs, ef, UNC_SPECIFIC, gwp_dict=GWP)
+-        ch4 = extract_val(result["results"]["ch4"])
+-        expected = 20 * 0.2605
++        """Water-based mud uses API Onshore EF=0.0458 t CH4/day."""
++        inputs = {
++            "amount": 20,
++            "quantity": 20,
++            "unit": "days",
++            "tier": "tier2",
++            "mud_type": "water_based",
++            "drilling_days": 20,
++        }
++        ef = {"co2": 0, "ch4": 0.0458, "n2o": 0, "unit": "t/day"}
++        result = dispatcher.dispatch("drilling", inputs, ef, UNC_SPECIFIC, gwp_dict=GWP)
++        ch4 = extract_val(result["results"]["ch4"])
++        expected = 20 * 0.0458
+         self.assertAlmostEqual(ch4, expected, places=6)
+ 
+     def test_oil_based_mud(self):
+-        """Oil-based mud uses API Table 6-2 EF=0.0586 t CH4/day."""
++        """Oil-based mud uses API Onshore EF=0.0103 t CH4/day."""
+         inputs = {
+             "amount": 20,
+             "quantity": 20,
+@@ -690,10 +690,10 @@
+             "mud_type": "oil_based",
+             "drilling_days": 20,
+         }
+-        ef = {"co2": 0, "ch4": 0.0586, "n2o": 0, "unit": "t/day"}
+-        result = dispatcher.dispatch("drilling", inputs, ef, UNC_SPECIFIC, gwp_dict=GWP)
+-        ch4 = extract_val(result["results"]["ch4"])
+-        expected = 20 * 0.0586
++        ef = {"co2": 0, "ch4": 0.0103, "n2o": 0, "unit": "t/day"}
++        result = dispatcher.dispatch("drilling", inputs, ef, UNC_SPECIFIC, gwp_dict=GWP)
++        ch4 = extract_val(result["results"]["ch4"])
++        expected = 20 * 0.0103
+         self.assertAlmostEqual(ch4, expected, places=6)
+ 
+     def test_tier2_plus_site_gas(self):
+@@ -708,7 +708,7 @@
+         }
+         result = dispatcher.dispatch("drilling", inputs, {}, UNC_SPECIFIC, gwp_dict=GWP)
+         ch4 = extract_val(result["results"]["ch4"])
+-        expected = 10 * 0.2605 * (0.90 / 0.8385)
++        expected = 10 * 0.0458 * (0.90 / 0.8385)
+         self.assertAlmostEqual(ch4, expected, places=5)
+ 
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

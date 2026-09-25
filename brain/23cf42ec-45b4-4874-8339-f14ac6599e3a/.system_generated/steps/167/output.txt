@@ -1,0 +1,1 @@
+A1: (Recommended) Save complete breakdown in source_payload and API response (vented CH4, flared CH4, flared CO2, flared N2O, total CO2e, initial unmetered volume, net flowback volume), with calc_method explicitly stating the Tier and API equation used

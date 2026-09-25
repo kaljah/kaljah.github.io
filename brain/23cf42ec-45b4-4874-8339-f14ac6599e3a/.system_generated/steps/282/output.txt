@@ -1,0 +1,29 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\vented.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1857,7 +1857,7 @@
+             or (factor_src == "custom" and well_depth is None and (events is not None or kwargs.get("amount") is not None))
+         )
+         if is_tier2:
+-            ev = events or kwargs.get("unload_events") or kwargs.get("unload_freq") or kwargs.get("amount") or kwargs.get("quantity")
++            ev = events if events is not None else (kwargs.get("unload_events") if kwargs.get("unload_events") is not None else (kwargs.get("unload_freq") if kwargs.get("unload_freq") is not None else kwargs.get("amount") or kwargs.get("quantity")))
+             return self.calculate_tier2(
+                 events=ev,
+                 unloading_type=unloading_type or kwargs.get("unload_type", "plunger"),
+@@ -1874,6 +1874,7 @@
+             )
+ 
+         # Default to Volume-based wellbore decompression (API Eq. 6-3)
++        ev = events if events is not None else (kwargs.get("unload_events") if kwargs.get("unload_events") is not None else kwargs.get("unload_freq"))
+         return self.calculate_volume_based(
+             well_depth=well_depth or kwargs.get("unload_depth"),
+             diameter=diameter or kwargs.get("unload_diam"),
+@@ -1880,5 +1880,5 @@
+             ch4_content=ch4_content,
+-            events=events or kwargs.get("unload_events") or kwargs.get("unload_freq"),
++            events=ev,
+             uncertainties=uncertainties,
+             co2_content=co2_content,
+             control_efficiency=control_efficiency,
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

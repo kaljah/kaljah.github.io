@@ -1,0 +1,24 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\Scope1Form.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1027,9 +1027,15 @@
+       }
+ 
+       // 5. Unloading
+-      if (processType === "unloading" && sourceType === "specific") {
+-        finalAmount = parseFloat(formData.unload_events || 1);
+-        finalUnit = "events";
++      if (processType === "unloading") {
++        const tier = String(formData.tier || (sourceType === "specific" ? "tier3" : sourceType === "custom" ? "tier2" : "tier1")).toLowerCase();
++        if (tier === "tier1" || sourceType === "default") {
++          finalAmount = parseFloat(formData.well_count || formData.wells || formData.amount || 1);
++          finalUnit = "wells";
++        } else {
++          finalAmount = parseFloat(formData.unload_events || formData.unload_freq || formData.events || formData.amount || 1);
++          finalUnit = "events";
++        }
+       }
+ 
+       // 6. Blowdown / Venting
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

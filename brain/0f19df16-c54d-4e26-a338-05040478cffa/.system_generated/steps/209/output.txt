@@ -1,0 +1,92 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\Scope1Form.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1583,13 +1583,51 @@
+                 >
+                   <label style={{ margin: 0, fontWeight: 600 }}>Calculation Methodology</label>
+                   <div className="methodology-toggle">
+-                    {[
+-                      { key: "default", tier: "Tier 1", label: "Standard API", sub: "Catalog Defaults" },
+-                      { key: "custom", tier: "Tier 2", label: "Regional / Lab", sub: "Ticket / Presets / Custom" },
+-                      { key: "specific", tier: "Tier 3", label: "Measurement / GC", sub: "CEMS / Analysis" },
+-                    ]
++                    {(processType === "drilling"
++                      ? [
++                          {
++                            key: "default",
++                            tier: "Tier 1",
++                            label: "Table 6-3 Default",
++                            sub: "Wells × 0.0524",
++                          },
++                          {
++                            key: "custom",
++                            tier: "Tier 2",
++                            label: "Table 6-2 Mud EF",
++                            sub: "Drilling Days",
++                          },
++                          {
++                            key: "tier2_plus",
++                            tier: "Tier 2+",
++                            label: "Table 6-2 + Gas Comp",
++                            sub: "Site CH₄ / CO₂",
++                          },
++                        ]
++                      : [
++                          {
++                            key: "default",
++                            tier: "Tier 1",
++                            label: "Standard API",
++                            sub: "Catalog Defaults",
++                          },
++                          {
++                            key: "custom",
++                            tier: "Tier 2",
++                            label: "Regional / Lab",
++                            sub: "Ticket / Presets / Custom",
++                          },
++                          {
++                            key: "specific",
++                            tier: "Tier 3",
++                            label: "Measurement / GC",
++                            sub: "CEMS / Analysis",
++                          },
++                        ]
++                    )
+                       .filter((item) => {
+                         const type = item.key;
++                        if (processType === "drilling") return true;
+                         if (processType === "mobile" && type === "specific")
+                           return false;
+                         if (processType === "fugitive" && type === "specific")
+@@ -1597,7 +1597,10 @@
+                           return false;
+                         if (processType === "separation" && type === "specific")
+                           return false;
+-                        if (["agr", "dehydrator"].includes(processType) && (type === "default" || type === "custom"))
++                        if (
++                          ["agr", "dehydrator"].includes(processType) &&
++                          (type === "default" || type === "custom")
++                        )
+                           return false;
+                         return true;
+                       })
+@@ -1610,10 +1610,15 @@
+                             className={`tier-selector-btn ${isActive ? "active" : ""}`}
+                             onClick={() => {
+                               setSourceType(type);
+-                              if (
++                              if (processType === "drilling") {
++                                if (type === "default") {
++                                  handleFormChange("unit", "well");
++                                } else {
++                                  handleFormChange("unit", "days");
++                                }
++                              } else if (
+                                 type === "default" &&
+                                 [
+-                                  "drilling",
+                                   "completions",
+                                   "unloading",
+                                   "blowdown",
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

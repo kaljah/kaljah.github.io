@@ -1,0 +1,24 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\components\Scope1Form.jsx:21:import CompletionsForm from "./scope1/CompletionsForm";
+new\client\src\components\Scope1Form.jsx:448:        // Fallback: Try matching by 'code' property for custom forms 
+(Completions/Unloading)
+new\client\src\components\Scope1Form.jsx:679:        "completions",
+new\client\src\components\Scope1Form.jsx:768:      } else if (processType === "completions") {
+new\client\src\components\Scope1Form.jsx:777:            "Well completions parameters (rate & duration OR liquid & GOR 
+OR volume) are required",
+new\client\src\components\Scope1Form.jsx:785:          toast.warning("Gas CH4 content (%) is required for well 
+completions");
+new\client\src\components\Scope1Form.jsx:1019:      // 4. Completions
+new\client\src\components\Scope1Form.jsx:1020:      if (processType === "completions" && sourceType === "specific") {
+new\client\src\components\Scope1Form.jsx:1377:        "completions",
+new\client\src\components\Scope1Form.jsx:1399:      case "completions":
+new\client\src\components\Scope1Form.jsx:1400:        return <CompletionsForm {...props} />;
+new\client\src\components\Scope1Form.jsx:1485:          "completions",
+new\client\src\components\Scope1Form.jsx:1779:                                  "completions",
+new\client\src\components\Scope1Form.jsx:2087:                    "completions",
+
+
+

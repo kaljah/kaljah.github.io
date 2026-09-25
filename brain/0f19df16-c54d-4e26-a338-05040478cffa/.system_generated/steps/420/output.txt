@@ -1,0 +1,31 @@
+The search for ""Table 6-2" "mud degassing" "drilling" "onshore" "offshore" "tonne" OR "tonnes" OR "lb" OR "kg"" returned the following summary:
+"Table 6-2" in the context of **mud degassing** during drilling operations refers to a table commonly found in industry compendiums and emission inventory documentation, such as the *API Compendium of Greenhouse Gas Emissions Methodologies*[1][2][3].
+
+### Content and Context
+*   **Purpose:** This table typically provides **vented methane (CH4) emission factors** for drilling mud degassing, which is the process of extracting entrained gas from drilling mud after it returns from the wellbore[2][4][3].
+*   **Units:** The emission factors in these tables are often expressed in terms of **tonnes of CH4 per drilling day** or **pounds (lb) of total hydrocarbons (THC) per drilling day**, depending on the specific edition and methodology document[4].
+*   **Variations by Mud Base:** Table 6-2 often categorizes these emission factors by the type of mud used, such as[4]:
+    *   **Water-based mud**[4]
+    *   **Oil-based mud**[4]
+    *   **Synthetic-based mud**[4]
+
+### Where to Find It
+This specific table reference appears in several key industry documents used for calculating greenhouse gas emissions in oil and gas exploration[1][2][4]:
+*   **API Compendium of Greenhouse Gas Emissions Methodologies:** Frequently cited as containing "Table 6-2. Mud Degassing Vented Methane Emission Factors for Oil and Natural Gas Exploration"[2][5][3].
+*   **CenSARA / California Air Resources Board (CARB) Reports:** These reports also use a "Table 6-2" to list national default emission factors for mud degassing by mud base to support emission inventory projects[6][7][4].
+
+If you are looking for the exact values (e.g., to perform a calculation), you should consult the latest version of the *API Compendium*[8] or the specific regional emissions inventory documentation relevant to your site (onshore or offshore)[9][10][4]. Note that regulations like 40 CFR Part 98 Subpart W also provide specific requirements for calculating these emissions, which may differ from general default factors[11][12].
+
+Sources:
+[1] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQE8UeVk1ni-eyIMlYNqmV1m06VqzGtYtuvqR0CWC84CZsHhLE4y8kigW7CC6JZ8RMciKhE4Ku1XiZ54LZtKBj-y64GQ3UT0wfoHoZnr1O2Ud_8TaQN-DU2U0R6pTFm-8PpWKvjz50jt46TJcobmjPmr1Y4qfn_B5qfD_-E110A7y1t4-fvaS6ujMQ==)
+[2] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQE8UeVk1ni-eyIMlYNqmV1m06VqzGtYtuvqR0CWC84CZsHhLE4y8kigW7CC6JZ8RMciKhE4Ku1XiZ54LZtKBj-y64GQ3UT0wfoHoZnr1O2Ud_8TaQN-DU2U0R6pTFm-8PpWKvjz50jt46TJcobmjPmr1Y4qfn_B5qfD_-E110A7y1t4-fvaS6ujMQ==)
+[3] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQE8UeVk1ni-eyIMlYNqmV1m06VqzGtYtuvqR0CWC84CZsHhLE4y8kigW7CC6JZ8RMciKhE4Ku1XiZ54LZtKBj-y64GQ3UT0wfoHoZnr1O2Ud_8TaQN-DU2U0R6pTFm-8PpWKvjz50jt46TJcobmjPmr1Y4qfn_B5qfD_-E110A7y1t4-fvaS6ujMQ==)
+[4] [ca.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGoJXdqBwIOhKLin0Aj5Hgw7JST4ztby99fXV6DmhsCrl5ErQ1vtA4GJuTA7tmu-8iS4vBd3tFlVstZPIf4iUiHFnUrJu_eoGVRbLINgBpdF789I90oiEkoqAP32r_iNWQoGP3PvkG1brHzRTbPydii_Yg=)
+[5] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQE8UeVk1ni-eyIMlYNqmV1m06VqzGtYtuvqR0CWC84CZsHhLE4y8kigW7CC6JZ8RMciKhE4Ku1XiZ54LZtKBj-y64GQ3UT0wfoHoZnr1O2Ud_8TaQN-DU2U0R6pTFm-8PpWKvjz50jt46TJcobmjPmr1Y4qfn_B5qfD_-E110A7y1t4-fvaS6ujMQ==)
+[6] [ca.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGoJXdqBwIOhKLin0Aj5Hgw7JST4ztby99fXV6DmhsCrl5ErQ1vtA4GJuTA7tmu-8iS4vBd3tFlVstZPIf4iUiHFnUrJu_eoGVRbLINgBpdF789I90oiEkoqAP32r_iNWQoGP3PvkG1brHzRTbPydii_Yg=)
+[7] [ca.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGoJXdqBwIOhKLin0Aj5Hgw7JST4ztby99fXV6DmhsCrl5ErQ1vtA4GJuTA7tmu-8iS4vBd3tFlVstZPIf4iUiHFnUrJu_eoGVRbLINgBpdF789I90oiEkoqAP32r_iNWQoGP3PvkG1brHzRTbPydii_Yg=)
+[8] [ca.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFsHSpxw7o9NL6gGcdWktwQWbZpSP8q_FP8yjqA6Uc5UxUGTEpAxYiSMifBemvgRtRwj7bKtjJPt3AuyAyRCZS2FHr_ddd8XE1_5aorh6nD1ek3cjmP1AjLg_GlKfT6YN4gRh5NYOkshHiOrQzWDRG7YFFq5rJlNg==)
+[9] [govinfo.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQH59jU91NgqQgpM4jv2VC1lVJNuxD4bO9P2x6vKVmVt-xa8BUiK_z2E1h_LJmbJ0kvcdC6U_9jjyKAvVjUe2MqQqCcF7gAAgYeH8ebA6Hu4rKZFXdXzPKMearMNYki7qvMJGYdMD38RM6TcDKsmH7nZzBIXCVydWuCeFOUKqzM6tyXoktyJvd1g6D-oCidgjTpj7n9BiYFGjmlKIsRwhM7taUKEuCU1aCl3M0GjrU03G8llrSmW)
+[10] [epa.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEd9tGjHe9GjN9D5O08Pc4BH8oYUnetecItP1lp9AS4hFOeHuvabnbMkXPdzgzEOmC134P9Ir8cOlYfNn8Udw6L4tyIEy3-yaMrEebDbImM0jHJbNuaZzTtwP9_igqpNO3W9uoy1i1JVYWjJC_F3w==)
+[11] [aga.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFTXSnlGuWM85s_7GZS7BeAjFJYnoHSBFq2a3xusBFy65EjzYp1glvhqFGIbLePPLHlMzU1NjZ8ZG-Iw7YNFA_QO9iK4uGabk_3LZajdLW5PcSgfFn6m_HlGS80ZSl1cQ20B1QImoXGKkuP3YaIbIsIj4bqQg2eGiYkpmsVWc_TdHqee_NP_PdaQyoR2HsDUVJinwSxzg==)
+[12] [ecfr.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEiABtd5nBBmuOQE1wqxFQzfrkCDKbligI73QJE96aIiaWnv1fkb0-nY4yOOUj8ur6LD_s2jWKjkNWveKtJpMmqu94DJcZj4exiVmEo4kX13DF9skiB7Yw_mhHvUT1hEbCH0Vq2r-WnyWVI4Kyyb0__wkLpo-MdEqmWfU04By5q8tXwe48=)

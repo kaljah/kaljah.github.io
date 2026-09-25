@@ -1,0 +1,40 @@
+
+The command exited with code 0.
+Output:
+
+  new\server\calculations\legacy_engine.py:313:    # Use midstream.DehydratorCalculator (3.0 scf/gal per API Table 
+6-5) via the dispatcher.
+  new\server\calculations\legacy_engine.py:314:
+> new\server\calculations\legacy_engine.py:315:    def calculate_completions(self, duration, rate, eff):
+  new\server\calculations\legacy_engine.py:316:        # Uncontrolled Volume (Mcf)
+  new\server\calculations\legacy_engine.py:317:        vol_mcf = duration * rate
+  new\server\calculations\legacy_engine.py:318:
+  new\server\calculations\legacy_engine.py:319:        # If vented (eff=0 or small), emissions are the gas itself.
+  new\server\calculations\legacy_engine.py:320:        # If flared (eff>0), emissions are unburnt gas + combustion CO2.
+  new\server\calculations\legacy_engine.py:321:
+  new\server\calculations\legacy_engine.py:322:        # Simplified: Assume gas is methane for venting part? Or 
+standard gas composition?
+  new\server\calculations\legacy_engine.py:323:        # Standard: 0.0192 tonnes CH4 / Mcf ? (Density of CH4 at 
+standard conditions)
+  new\server\calculations\legacy_engine.py:324:        # 1 Mcf CH4 ~ 1000 scf * 0.042 lb/scf ~ 42 lbs ~ 19 kg.
+  new\server\calculations\legacy_engine.py:325:
+  new\server\calculations\legacy_engine.py:326:        # Let's use standard factor 19.2 kg CH4 / Mcf gas (if 100% CH4).
+  new\server\calculations\legacy_engine.py:327:        # Adjust for gas composition if known, else assume 100% or high 
+%.
+  new\server\calculations\legacy_engine.py:328:        # API Compendium simplified:
+  new\server\calculations\legacy_engine.py:329:
+  new\server\calculations\legacy_engine.py:330:        potential_ch4_tonnes = vol_mcf * (19.2 / 1000.0)
+  new\server\calculations\legacy_engine.py:331:
+  new\server\calculations\legacy_engine.py:332:        if eff > 0:
+  new\server\calculations\legacy_engine.py:333:            # Flaring logic
+  new\server\calculations\legacy_engine.py:334:            # Unburnt CH4
+  new\server\calculations\legacy_engine.py:335:            ch4_em = potential_ch4_tonnes * (1 - eff)
+  new\server\calculations\legacy_engine.py:336:            # CO2 from combustion (assume 100% conversion of burnt 
+part? ~ 2.75 * mass CH4)
+  new\server\calculations\legacy_engine.py:337:            # 1 kg CH4 -> 2.75 kg CO2
+  new\server\calculations\legacy_engine.py:338:            burnt_ch4 = potential_ch4_tonnes * eff
+  new\server\calculations\legacy_engine.py:339:            co2_em = burnt_ch4 * 2.75
+  new\server\calculations\legacy_engine.py:340:            return {"ch4": ch4_em, "co2": co2_em}
+
+
+

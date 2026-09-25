@@ -1,0 +1,18 @@
+The search for ""Compendium of Greenhouse Gas Emissions Methodologies for the Oil and Natural Gas Industry" 2021 filetype:pdf" returned the following summary:
+The **"Compendium of Greenhouse Gas Emissions Methodologies for the Oil and Natural Gas Industry"** (2021 edition) is a foundational reference document published by the American Petroleum Institute (API)[1].
+
+While I cannot directly provide the PDF file for download, you can access the document through the following official API resource:
+
+*   **Official Link:** [API 2021 GHG Compendium](https://www.api.org/-/media/Files/Policy/ESG/GHG/2021-API-GHG-Compendium-110921.pdf)[1]
+
+### Key Information about this Document:
+*   **Purpose:** It provides standardized methodologies and emission factors for estimating greenhouse gas (GHG) emissions across oil and natural gas industry operations[1]. It is widely used by operators and governments to establish emissions baselines and report Scope 1, Scope 2, and sometimes Scope 3 emissions[1][2][3].
+*   **Context:** This 2021 version represents the fourth update to the original document, which was first published in 2001[1]. It is frequently cited in corporate sustainability reports, CDP questionnaires, and regulatory filings[2][4][3][5].
+*   **Related Tools:** The methodologies in the Compendium are integrated into various industry tools, such as the **SANGEA™** software, which is designed by the API to assist companies in calculating their GHG inventories[2].
+
+Sources:
+[1] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHHhKrOJI2UiL9PlcFq8yzlm5ll-V7l_IkZnfZZ9bxs96rYaDxv4x5fsI97TcdPXBu6xnTSTs23sparvh6Fw_L2kqmHY-K5jYSKTxDa4aHFGaO625WMr8xh-vVuAQeV11ForXY2qlPVackP4XF1sVebVgUr03W9H2yvr3MS3lp1Dj-1fMO1OwUbOgTB11lm_YGF-7DbPE0j1DYXtl0DWHDFRUaqU5F8WMDkE4qnBXCn4xrXEQ4=)
+[2] [sierracolenergy.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHBoh6GiB9uIyEjB3tbukvmZCmfk-eJwcUjQyWlCC6iAOiXL9iLpjEZfBXmFUzr13_4c65Yr_AUgNDPUWhF6a-_PejAYUZbwU3Kktxg_nDVwDAUT-q0_fI4-h-bsiD58uDm7vBL1kL-HfPmvwtEwkbbcdlhFF99aq9mCz1WuR_AQ5WM7k1KtP_oeT8xzfUee6TrK2RdI3NrLhCcZPDZ)
+[3] [oxy.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFhPdnZ3Cxfadt13HyMhx2IU-VM1NALFXU-srQJwB-gDJYMgIAI9Eo6QQNLWwQ71gAOqNfgbo_NlTlhNWls3mO-uv_MMYKg3LAx4YkxomtqUD7YlV-TfYLJ0VSEXJyXrUaGHtGVzEsoqDUm_vet133eZYNzY9yST8WAHMEGzIW8Wehb_KP0foc=)
+[4] [marathonpetroleum.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEt4yJCkFxZBZVEipoEKpwsTsQF9icFES-yBnSmR0s9dwDfTnf4kqA29vJTPwztLUxWIcrAXKGgm5rnQMTX9XguU_sj1bWXciyoCwRf9kzbgOtUJ69aHCQaHGbpUzZwRF95gHf3EPkko_rVsQjhhKpR1gpEV9jvPp1B14agH1fYzevNoiq3x1Gplpf3yqawgXBM-5n6)
+[5] [tcenergy.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGbpUgHU4XwHZGHUtNSV4wAXXkmNw7tmoFMqHKRQGRvP3UR6gd7PSQRX9quwMaa272B9egTh8NRwsxYUTwk0qRXEiU1bXf1uKK3a5501b53ZqwW1a0p1xoK3Krc2t_dDTFdR9vuEFMUF1cA48C6_LLC2T6dzvFk6hcX0iLSO5etyGyu56KTmQsFmvNDqdNauE1DOxvxMAyoyE_NBfwfOGGZ_YrPXy4=)

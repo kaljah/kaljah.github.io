@@ -1,0 +1,98 @@
+
+The command exited with code 0.
+Output:
+<truncated 1 lines>
+new/server/10k_scope3_test.csv:2024-06-22,HMD,1,Subcategory 5,9371.63,1.8779,gal
+new/server/10k_scope3_test.csv:2024-06-21,OHT,1,Subcategory 3,3825.29,2.3465,gal
+new/server/10k_scope3_test.csv:2024-06-26,GTL,11,Subcategory 1,3575.71,3.7888,gal
+new/server/10k_scope3_test.csv:2023-06-21,TFT,6,Subcategory 4,7743.66,1.8678,gal
+new/server/10k_scope3_test.csv:2023-06-29,HRM,13,Subcategory 4,9962.67,2.8759,lbs
+new/server/10k_scope3_test.csv:2024-06-27,OHT,12,Subcategory 1,942.1,4.1729,kg
+new/server/10k_scope3_test.csv:2024-06-29,STAH,1,Subcategory 5,2147.47,1.2409,lbs
+new/server/10k_scope3_test.csv:2024-06-20,GTL,7,Subcategory 3,8324.91,3.0525,tonne
+new/server/10k_scope3_test.csv:2023-06-24,REB,3,Subcategory 2,8598.68,1.8555,gal
+new/server/10k_scope3_test.csv:2024-06-29,ADR,5,Subcategory 4,5183.11,1.0222,tonne
+new/server/10k_scope3_test.csv:2024-06-21,STAH,12,Subcategory 1,9931.95,4.0535,kg
+new/server/10k_scope3_test.csv:2023-06-26,OHT,4,Subcategory 4,8517.53,2.2593,tonne
+new/server/10k_scope3_test.csv:2024-06-24,RNS,1,Subcategory 5,9735.14,1.0122,kg
+new/server/10k_scope3_test.csv:2024-06-26,REB,11,Subcategory 5,103.35,2.8958,kg
+new/server/10k_scope3_test.csv:2024-06-27,RNS,10,Subcategory 2,3990.94,1.5519,kg
+new/server/10k_scope3_test.csv:2023-06-20,REB,7,Subcategory 4,518.37,1.274,kg
+new/server/10k_scope3_test.csv:2024-06-22,OHT,14,Subcategory 4,2199.35,1.31,tonne
+new/server/10k_scope3_test.csv:2023-06-26,REB,11,Subcategory 3,9424.12,1.3955,lbs
+new/server/10k_scope3_test.csv:2023-06-23,REB,12,Subcategory 3,2949.49,2.7822,tonne
+new/server/10k_scope3_test.csv:2024-06-20,TFT,7,Subcategory 1,787.66,2.31,tonne
+new/server/10k_scope3_test.csv:2024-06-20,TFT,15,Subcategory 1,823.37,4.9983,tonne
+new/server/10k_scope3_test.csv:2024-06-22,ADR,4,Subcategory 1,5287.29,3.124,tonne
+new/server/10k_scope3_test.csv:2023-06-24,REB,9,Subcategory 2,6156.22,1.6517,tonne
+new/server/10k_scope3_test.csv:2023-06-26,STAH,2,Subcategory 2,209.34,5.7703,tonne
+new/server/10k_scope3_test.csv:2023-06-28,HRM,1,Subcategory 3,8325.02,2.4148,kg
+new/server/10k_scope3_test.csv:2024-06-28,HMD,11,Subcategory 1,7626.73,1.833,gal
+new/server/10k_scope3_test.csv:2023-06-28,OHT,4,Subcategory 3,782.22,2.5311,tonne
+new/server/10k_scope3_test.csv:2023-06-21,GTL,7,Subcategory 1,9590.76,4.4221,kg
+new/server/10k_scope3_test.csv:2024-06-20,TFT,3,Subcategory 4,7307.94,2.6036,kg
+new/server/10k_scope3_test.csv:2023-06-25,RNS,14,Subcategory 2,1670.64,1.943,kg
+new/server/10k_scope3_test.csv:2023-06-21,REB,3,Subcategory 3,3806.94,2.5992,lbs
+new/server/10k_scope3_test.csv:2023-06-26,HRM,6,Subcategory 1,3446.13,4.2292,gal
+new/server/10k_scope3_test.csv:2023-06-21,HMD,11,Subcategory 1,430.2,2.4173,gal
+new/server/10k_scope3_test.csv:2023-06-27,HBK,5,Subcategory 3,7173.21,4.1217,lbs
+new/server/10k_scope3_test.csv:2023-06-25,RNS,15,Subcategory 4,3282.04,5.6698,lbs
+new/server/10k_scope3_test.csv:2023-06-29,RNS,6,Subcategory 4,2870.78,5.3342,kg
+new/server/10k_scope3_test.csv:2024-06-28,RNS,12,Subcategory 4,1988.3,3.641,lbs
+new/server/10k_scope3_test.csv:2024-06-27,RNS,10,Subcategory 5,4960.8,1.9197,tonne
+new/server/10k_scope3_test.csv:2024-06-27,REB,6,Subcategory 2,4107.43,3.2084,tonne
+new/server/10k_scope3_test.csv:2024-06-21,HMD,6,Subcategory 2,6291.31,4.1099,gal
+new/server/10k_scope3_test.csv:2024-06-23,REB,5,Subcategory 3,5226.73,4.3443,kg
+new/server/10k_scope3_test.csv:2023-06-27,RNS,7,Subcategory 2,3397.46,1.0941,tonne
+new/server/10k_scope3_test.csv:2024-06-27,RNS,8,Subcategory 4,6728.76,1.0918,kg
+new/server/10k_scope3_test.csv:2024-06-27,HRM,9,Subcategory 1,2802.75,1.5715,kg
+new/server/10k_scope3_test.csv:2023-06-27,GTL,15,Subcategory 5,6371.48,1.0876,tonne
+new/server/10k_scope3_test.csv:2023-06-20,RNS,8,Subcategory 4,8924.27,3.6839,lbs
+new/server/10k_scope3_test.csv:2024-06-27,ADR,13,Subcategory 4,5076.78,1.3865,lbs
+new/server/10k_scope3_test.csv:2024-06-29,HRM,6,Subcategory 1,2675.71,3.6868,tonne
+new/server/10k_scope3_test.csv:2023-06-23,RNS,15,Subcategory 1,5535.86,4.4821,gal
+new/server/10k_scope3_test.csv:2024-06-27,REB,3,Subcategory 5,3471.77,2.4648,gal
+new/server/10k_scope3_test.csv:2023-06-20,TFT,8,Subcategory 3,10005.78,2.5941,kg
+new/server/10k_scope3_test.csv:2023-06-22,GTL,14,Subcategory 5,7450.5,1.2371,kg
+new/server/10k_scope3_test.csv:2024-06-27,TFT,8,Subcategory 3,4700.4,5.1707,gal
+new/server/10k_scope3_test.csv:2024-06-27,RNS,1,Subcategory 5,6774.59,2.6204,tonne
+new/server/10k_scope3_test.csv:2023-06-26,HMD,7,Subcategory 3,3091.17,1.5021,kg
+new/server/10k_scope3_test.csv:2023-06-23,ADR,6,Subcategory 5,2097.62,2.4062,gal
+new/server/10k_scope3_test.csv:2024-06-25,OHT,1,Subcategory 5,8023.76,3.6071,tonne
+new/server/10k_scope3_test.csv:2024-06-23,HMD,2,Subcategory 5,6083.94,3.3136,lbs
+new/server/10k_scope3_test.csv:2023-06-24,GTL,4,Subcategory 5,9330.53,3.2023,lbs
+new/server/10k_scope3_test.csv:2023-06-21,HBK,6,Subcategory 5,9599.22,5.3744,kg
+new/server/10k_scope3_test.csv:2023-06-22,REB,2,Subcategory 2,9902.4,3.0338,tonne
+new/server/10k_scope3_test.csv:2023-06-26,HMD,4,Subcategory 2,7949.27,4.3072,lbs
+new/server/10k_scope3_test.csv:2024-06-27,REB,14,Subcategory 3,6055.45,5.6816,lbs
+new/server/10k_scope3_test.csv:2023-06-27,RNS,11,Subcategory 2,9187.33,5.8642,gal
+new/server/10k_scope3_test.csv:2024-06-21,GTL,7,Subcategory 3,309.29,1.5963,kg
+new/server/10k_scope3_test.csv:2023-06-28,TFT,12,Subcategory 4,5470.87,2.9871,gal
+new/server/10k_scope3_test.csv:2023-06-26,HRM,6,Subcategory 3,3208.44,2.228,lbs
+new/server/10k_scope3_test.csv:2023-06-26,OHT,1,Subcategory 4,1046.66,2.2515,tonne
+new/server/10k_scope3_test.csv:2024-06-24,HMD,1,Subcategory 5,5229.27,2.5525,gal
+new/server/10k_scope3_test.csv:2024-06-20,RNS,4,Subcategory 3,2527.08,1.2675,tonne
+new/server/10k_scope3_test.csv:2023-06-27,GTL,3,Subcategory 1,7483.96,1.9363,gal
+new/server/10k_scope3_test.csv:2024-06-24,ADR,10,Subcategory 1,6374.25,3.4489,lbs
+new/server/10k_scope3_test.csv:2024-06-29,ADR,1,Subcategory 3,2138.53,1.5354,tonne
+new/server/10k_scope3_test.csv:2023-06-22,GTL,11,Subcategory 4,5564.89,5.1464,kg
+new/server/10k_scope3_test.csv:2023-06-29,HMD,8,Subcategory 4,720.06,2.1387,lbs
+new/server/10k_scope3_test.csv:2024-06-24,OHT,3,Subcategory 5,9140.79,2.9801,kg
+new/server/10k_scope3_test.csv:2024-06-25,HMD,8,Subcategory 1,4602.37,4.5182,lbs
+new/server/10k_scope3_test.csv:2024-06-22,HMD,4,Subcategory 2,6839.43,1.7951,lbs
+new/server/calculations/vented.py:    # API Compendium Table 6-2: Onshore mud degassing (tonnes CH4 / drilling day)
+new/server/calculations/vented.py:    DEFAULT_CH4_CONCENTRATION = 0.8385  # 83.85% molar default underlying Table 6-2
+new/server/calculations/vented.py:        - Tier 2 (Table 6-2): Mud-specific onshore EF: drilling days × mud EF (water: 0.2605, oil: 0.0586 t CH4/day)
+new/server/calculations/vented.py:        - Tier 2+ (Table 6-2 + Gas Composition): DD × EF × (X_CH4,site / 83.85%) [+ CO2 if X_CO2,site provided]
+new/server/calculations/vented.py:            # Tier 2: Drilling days * Table 6-2 mud EF
+new/server/calculations/vented.py:                "api_reference": "Table 6-2 (Onshore)",
+new/server/calculations/vented.py:            # Tier 2+: Drilling days * Table 6-2 mud EF * (X_CH4,site / 83.85%) [+ CO2 if X_CO2,site provided]
+new/server/calculations/vented.py:                "api_reference": "Table 6-2 (Onshore) + Site-Specific Gas Composition",
+new/server/emission_factors_api2021.py:        "ch4": 0.193,  # kg CH₄/bbl (matches Table 6-22)
+new/server/test_emission_calculations.py:# TIER 1 / TIER 2 — DRILLING MUD DEGASSING (API Compendium Tables 6-2 & 6-3)
+new/server/test_emission_calculations.py:        """Water-based mud uses API Table 6-2 EF=0.2605 t CH4/day."""
+new/server/test_emission_calculations.py:        """Oil-based mud uses API Table 6-2 EF=0.0586 t CH4/day."""
+new/server/tests/test_qfull_api_pipeline.py:        TIER 2 (API Table 6-2 Onshore): Water-based mud EF = 0.2605 t CH4/day.
+new/server/tests/test_qfull_api_pipeline.py:        TIER 2 (API Table 6-2 Onshore): Oil-based mud EF = 0.0586 t CH4/day.
+new/server/tests/test_qfull_api_pipeline.py:        TIER 2+ (Table 6-2 + Gas Composition):
+

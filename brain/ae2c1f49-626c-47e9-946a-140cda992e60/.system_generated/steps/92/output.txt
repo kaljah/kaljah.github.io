@@ -1,0 +1,35 @@
+
+The command exited with code 0.
+Output:
+
+  new\client\src\utils\EmissionFactors.js:1360:};
+  new\client\src\utils\EmissionFactors.js:1361:
+> new\client\src\utils\EmissionFactors.js:1362:export const PROCESS_GROUPS = [
+  new\client\src\utils\EmissionFactors.js:1363:  {
+  new\client\src\utils\EmissionFactors.js:1364:    id: "Upstream",
+  new\client\src\utils\EmissionFactors.js:1365:    label: "Upstream (Exploration & Production)",
+  new\client\src\utils\EmissionFactors.js:1366:    options: [
+  new\client\src\utils\EmissionFactors.js:1367:      "drilling",
+  new\client\src\utils\EmissionFactors.js:1368:      "completions",
+  new\client\src\utils\EmissionFactors.js:1369:      "unloading",
+  new\client\src\utils\EmissionFactors.js:1370:      "combustion",
+  new\client\src\utils\EmissionFactors.js:1371:      "flaring",
+  new\client\src\utils\EmissionFactors.js:1372:      "routine_flaring",
+  new\client\src\utils\EmissionFactors.js:1373:      "non_routine_flaring",
+  new\client\src\utils\EmissionFactors.js:1374:      "safety_flaring",
+  new\client\src\utils\EmissionFactors.js:1375:      "venting",
+  new\client\src\utils\EmissionFactors.js:1376:      "pneumatic",
+  new\client\src\utils\EmissionFactors.js:1377:      "tank_flashing",
+  new\client\src\utils\EmissionFactors.js:1378:      "tank_working",
+  new\client\src\utils\EmissionFactors.js:1379:      "tank_breathing",
+  new\client\src\utils\EmissionFactors.js:1380:      "mobile",
+  new\client\src\utils\EmissionFactors.js:1381:      "fugitive",
+  new\client\src\utils\EmissionFactors.js:1382:      "loading",
+  new\client\src\utils\EmissionFactors.js:1383:      "separation",
+  new\client\src\utils\EmissionFactors.js:1384:    ],
+  new\client\src\utils\EmissionFactors.js:1385:  },
+  new\client\src\utils\EmissionFactors.js:1386:  {
+  new\client\src\utils\EmissionFactors.js:1387:    id: "Midstream",
+
+
+

@@ -1,0 +1,175 @@
+
+The command exited with code 0.
+Output:
+<truncated 1 lines>
++                    None,
++                )
++                vent_rate_unit = flat_inputs.get("vent_rate_unit") or "scfh"
++                vent_volume = self._optional_float(
++                    flat_inputs,
++                    ["vent_volume", "measured_vent_volume"],
++                    None,
++                )
++                vent_volume_unit = flat_inputs.get("vent_volume_unit") or "scf"
++
++                # Gas composition
++                ch4_content = self._optional_fraction(
++                    flat_inputs, ["ch4_content", "c1", "ch4_mol_pct", "ch4"], None
++                )
++                co2_content = self._optional_fraction(
++                    flat_inputs, ["co2_content", "co2_mol", "co2_mol_pct", "co2"], None
++                )
++
++                ef_co2 = emission_factors.get("co2")
++                ef_ch4 = emission_factors.get("ch4")
++
++                return calculator.calculate(
++                    tier=tier_val,
++                    factor_source=factor_src,
++                    oil_production=raw_oil,
++                    oil_unit=oil_unit,
++                    basin=basin,
++                    gor=gor,
++                    gor_unit=gor_unit,
++                    venting_duration=venting_duration,
++                    duration_unit=duration_unit,
++                    period_duration=period_duration,
++                    recovered_gas_volume=rec_gas,
++                    flared_gas_volume=flared_gas,
++                    gas_volume_unit=gas_vol_unit,
++                    vent_rate=vent_rate,
++                    vent_rate_unit=vent_rate_unit,
++                    vent_volume=vent_volume,
++                    vent_volume_unit=vent_volume_unit,
++                    ch4_content=ch4_content,
++                    co2_content=co2_content,
++                    ef_ch4=ef_ch4,
++                    ef_co2=ef_co2,
++                    uncertainties=uncertainties,
++                    gwp_dict=gwp_dict,
++                )
++
+             elif process_type in [
+                 "tank",
+                 "tank_flashing",
+@@ -1085,10 +1488,64 @@ class CalculationDispatcher:
+                 )
+ 
+             elif process_type in [
+-                "stoichiometry",
+-                "chemical_production",
+                 "nitric_acid_production",
+                 "adipic_acid_production",
++            ]:
++                if flat_inputs.get("carbon_content") is not None or flat_inputs.get("c_content") is not None:
++                    stoich_calc = StoichiometricCalculator()
++                    raw_amt = self._require_float(
++                        flat_inputs,
++                        ["quantity", "amount", "fuel_mass", "production_amount"],
++                        "mass / production amount",
++                    )
++                    carbon_content = self._optional_fraction(
++                        flat_inputs,
++                        ["carbon_content", "c_content"],
++                        0.85,
++                    )
++                    oxidation_factor = self._optional_fraction(
++                        flat_inputs,
++                        ["oxidation_factor", "ox_factor"],
++                        1.0,
++                    )
++                    return stoich_calc.calculate(
++                        fuel_mass=raw_amt,
++                        carbon_content=carbon_content,
++                        oxidation_factor=oxidation_factor,
++                        uncertainties=uncertainties,
++                        mass_unit=unit,
++                        gwp_dict=gwp_dict,
++                    )
++                else:
++                    raw_amt = self._require_float(
++                        flat_inputs,
++                        ["production_amount", "amount", "quantity", "fuel_mass"],
++                        "production amount",
++                    )
++                    ef_n2o = (
++                        emission_factors.get("n2o")
++                        or emission_factors.get("ef_n2o")
++                        or flat_inputs.get("ef_n2o")
++                        or flat_inputs.get("n2o")
++                    )
++                    abatement_eff = self._optional_fraction(
++                        flat_inputs,
++                        ["abatement_efficiency", "abatement_eff", "control_efficiency", "eta_abatement"],
++                        0.0,
++                    )
++                    return calculator.calculate(
++                        production_amount=raw_amt,
++                        ef_n2o=ef_n2o,
++                        abatement_efficiency=abatement_eff,
++                        mass_unit=unit,
++                        uncertainties=uncertainties,
++                        gwp_dict=gwp_dict,
++                        process_type=process_type,
++                    )
++
++            elif process_type in [
++                "stoichiometry",
++                "chemical_production",
+                 "asphalt_blowing",
+                 "asphalt",
+             ]:
+@@ -1102,10 +1559,16 @@ class CalculationDispatcher:
+                     ["carbon_content", "c_content"],
+                     0.85,
+                 )
++                oxidation_factor = self._optional_fraction(
++                    flat_inputs,
++                    ["oxidation_factor", "ox_factor"],
++                    1.0,
++                )
+ 
+                 return calculator.calculate(
+                     fuel_mass=raw_amt,
+                     carbon_content=carbon_content,
++                    oxidation_factor=oxidation_factor,
+                     uncertainties=uncertainties,
+                     mass_unit=unit,
+                     gwp_dict=gwp_dict,
+@@ -1300,6 +1763,10 @@ class CalculationDispatcher:
+                     any(liq in fuel_name for liq in ["diesel", "gasoline", "petrol", "fuel oil", "crude", "oil", "kerosene", "lpg", "propane", "condensate", "naphtha", "liquid"])
+                     or unit in ["bbl", "barrel", "barrels", "gal", "gallon", "gallons", "l", "liter", "liters"]
+                 )
++                is_solid = (
++                    any(sol in fuel_name for sol in ["coal", "coke", "petcoke", "anthracite", "lignite", "bituminous", "sub-bituminous", "subbituminous", "peat", "wood", "biomass", "solid"])
++                    or unit in ["tonne", "tonnes", "metric_ton", "metric ton", "mt", "t", "ton", "tons", "short_ton", "us_ton", "kg", "kilogram", "kilograms", "lb", "lbs", "pound", "pounds"]
++                )
+                 if is_liquid:
+                     # Liquid fuel HHV: standard ~138,000 Btu/gal (0.138 MMBtu/gal)
+                     hhv_liquid = float(inputs.get("hhv") or emission_factors.get("hhv") or 138000.0)
+@@ -1312,6 +1779,24 @@ class CalculationDispatcher:
+                     else:  # gal
+                         gallons = quantity
+                     energy_mmbtu = (gallons * hhv_liquid) / 1_000_000.0
++                elif is_solid:
++                    kg_val = quantity * mass_factors.get(unit, 1000.0)
++                    short_tons = kg_val / 907.185
++                    tonnes = kg_val / 1000.0
++                    hhv_raw = inputs.get("hhv") or emission_factors.get("hhv")
++                    if hhv_raw:
++                        hhv_solid = float(hhv_raw)
++                        if hhv_solid > 1000:
++                            # In catalog, coal HHV is stored as kBtu/short ton (e.g. 24930, 25090)
++                            energy_mmbtu = short_tons * (hhv_solid / 1000.0)
++                        elif hhv_solid > 100:
++                            energy_mmbtu = tonnes * (hhv_solid / 1000.0)
++                        else:
++                            # Direct MMBtu/tonne or MMBtu/ton
++                            energy_mmbtu = (short_tons if "ton" in unit and "tonne" not in unit else tonnes) * hhv_solid
++                    else:
++                        # Standard default solid fuel HHV: 26.0 MMBtu/short ton (~28.6 MMBtu/metric ton)
++                        energy_mmbtu = short_tons * 26.0
+                 else:
+                     # Gaseous fuel HHV: standard ~1,020 Btu/scf
+                     hhv_gas = float(inputs.get("hhv") or emission_factors.get("hhv") or 1020.0)
+

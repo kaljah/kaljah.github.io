@@ -1,0 +1,25 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -152,6 +152,19 @@
+             f"Missing required parameter for Tier 3 specific calculation: '{keys[0]}' ({desc})"
+         )
+ 
++    def _optional_float(self, flat_inputs, keys, default=None):
++        """Extracts an optional float parameter from flat_inputs, returning default if missing."""
++        if isinstance(keys, str):
++            keys = [keys]
++        for k in keys:
++            val = flat_inputs.get(k)
++            if val not in [None, "", "-"]:
++                try:
++                    return float(val)
++                except (ValueError, TypeError):
++                    pass
++        return default
++
+     def _parse_fraction_value(self, val, key_name="", is_percent=False):
+         """Cleanly parses a percentage (0-100) or fraction (0-1) into a 0.0 - 1.0 ratio."""
+         if val in [None, "", "-"]:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

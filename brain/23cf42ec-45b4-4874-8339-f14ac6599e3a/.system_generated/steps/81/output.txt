@@ -1,0 +1,22 @@
+The search for ""api-ghg-compendium-2021" "6.2.3" "Table 6-5" "Table 6-6"" returned the following summary:
+The **API Compendium of Greenhouse Gas Emissions Methodologies for the Oil and Natural Gas Industry (2021 Edition)** is a comprehensive technical document used to standardize the estimation and reporting of greenhouse gas (GHG) emissions across the industry[1][2][3].
+
+While the specific content of "Table 6-5" and "Table 6-6" within section "6.2.3" cannot be reproduced here due to the document's length and technical nature, section 6 generally pertains to methodologies for specific industry segments[1].
+
+### Accessing the Document
+You can access the full text of the 2021 API GHG Compendium to view these specific tables directly through the official American Petroleum Institute (API) website or via archived regulatory repositories:
+
+*   **Official Source:** The document is titled *Compendium of Greenhouse Gas Emissions Methodologies For The Natural Gas And Oil Industry (2021)*[4].
+*   **Direct Link (as referenced by Regulations.gov):** [https://www.api.org/-/media/files/policy/esg/ghg/2021-api-ghg-compendium-110921.pdf](https://www.api.org/-/media/files/policy/esg/ghg/2021-api-ghg-compendium-110921.pdf)[4]
+
+### Context of the 2021 Edition
+*   **Purpose:** The Compendium provides emission factors, calculation techniques, and detailed procedures for various oil and gas operations to ensure consistency in emissions inventories[1].
+*   **Updates:** The 2021 (4th) edition includes expanded methodologies, notably for Liquefied Natural Gas (LNG) and Carbon Capture, Use, and Storage (CCUS)[3].
+*   **Usage:** When using the Compendium to calculate emission figures, API requires that the document be cited as the reference source[5].
+
+Sources:
+[1] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFikVXyEbZJvH_uRtf94DEXhy7sM6DaVLT1pSpaNLMuNFYxtekWceEb_xE3stOOjfIIOiv5-CegBamQwl4KHCYpLvKWEGyl2obVoFZVtlAZFlnr3H49penUjVKz8BU-RRq9HCVjsMz-RG1WVB66APGeZV_yjUW_nY0gv4nofJg1L3mJ13Fakwsgag==)
+[2] [ogci.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQH4PHJcG2BazPg2SXyGZ48Vx6hS06tFuMyCfCuCswNpDzAHJw4liTNN_rOUfZhPzfqrKKFNXzbPR-JYz3U9_CfDTWBkLgbLuYE2gvnC5_-4bQJyedUyQcGZPzR-ui7gSToCNjU0w-kRNUVUlq9tifL0EaES2QQ5mtftW7Uuw8YxRo2y6zxLHFPu5qqPeUG1pDFj2qhIDWDKZZVYsJm-_mtIT-Xje6R4FH0SEe2A15HV)
+[3] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHoZx1zvedl-qRWq73sb0ttSFneN4zvd5Op7NeCO-8HTClbiuP46WGBbEF_vZzLZtnD55Xk5JwlKg1fL4I13K95p06T_z9r96Lxv7HDC7OiaJJ0coMWxAs-SOmraM6eAWpTJtU17sZUnXRouJLmA9JpxKVamvLtaxew-Ohk6FUvsCKvtiWwx_VIo3PZ)
+[4] [regulations.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQE2T8mPXA1KBwW9B8PpDyozlwAkd5xuIRURQkToZQ1Yf8np5TQs-HvhXugVslh5cXEpqXFIO4fWsMhBmfmKG_hAKHX3nNMXOeSkGHtUy1w0N4gNL79lOYl03oEpDRB8damzWX6j0uHRFEKZGfPbXK9OqFbTPw==)
+[5] [ca.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQELHaZVXTbUYKGP5Dv2NooeWU6eVkQi1gVAzt3xHtT9ZJ4AuiVm_RmNzMfXuoo7BzfrOxZEG6aqCb4jiXs97uKCxgaAv8QQjKFioVNVmR8BTKNHPncBEYes_TM7xXB-Q4dAx7qLuY3VQduVOow6No9VF29kvRum_u4uvEwW-kG6ciHG0to=)

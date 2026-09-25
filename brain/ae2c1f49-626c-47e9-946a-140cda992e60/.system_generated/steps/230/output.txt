@@ -1,0 +1,118 @@
+
+The command exited with code 0.
+Output:
+<truncated 45 lines>
+emission records"}), 403
+  new\server\routes\emissions.py:3474:
+  new\server\routes\emissions.py:3475:    data = request.get_json()  # EXTRA-03 FIX: removed duplicate call below
+  new\server\routes\emissions.py:3476:    record = Emission.query.filter_by(record_id=id).first() or db.session.get(
+  new\server\routes\emissions.py:3477:        Emission, int(id) if str(id).isdigit() else -1
+  new\server\routes\emissions.py:3478:    )  # EXTRA-02 FIX
+  new\server\routes\emissions.py:3486:    # Enforce creator ownership for standard user role
+  new\server\routes\emissions.py:3487:    if user.role == "user" and record.created_by is not None and 
+record.created_by != user.id:
+> new\server\routes\emissions.py:3488:        return jsonify({"error": "Unauthorized: You may only modify records you 
+created"}), 403
+  new\server\routes\emissions.py:3489:
+  new\server\routes\emissions.py:3490:    # If non-admin modifies a verified record, reset status to Pending for 
+maker-checker review
+  new\server\routes\emissions.py:3491:    if user.role not in ["admin", "superuser"] and record.status == "Verified":
+  new\server\routes\emissions.py:3492:        record.status = "Pending"
+  new\server\routes\emissions.py:3493:        record.approved_by = None
+  new\server\routes\emissions.py:3721:        raise e
+  new\server\routes\emissions.py:3722:
+> new\server\routes\emissions.py:3723:    return jsonify({"message": "Record updated"})
+  new\server\routes\emissions.py:3724:
+  new\server\routes\emissions.py:3725:
+  new\server\routes\emissions.py:3726:@emissions_bp.route("/bulk-delete", methods=["POST"])
+  new\server\routes\emissions.py:3727:@login_required  # SEC-01 FIX: was missing
+  new\server\routes\emissions.py:3728:def bulk_delete_emissions():
+  new\server\routes\emissions.py:3763:        raise e
+  new\server\routes\emissions.py:3764:
+> new\server\routes\emissions.py:3765:    return jsonify({"message": f"{deleted_count} records deleted"})
+  new\server\routes\emissions.py:3766:
+  new\server\routes\emissions.py:3767:
+  new\server\routes\emissions.py:3768:@emissions_bp.route("/import", methods=["POST"])
+  new\server\routes\emissions.py:3769:@login_required  # SEC-01 FIX: was missing
+  new\server\routes\emissions.py:3770:def import_emissions():
+  new\server\routes\emissions.py:3784:
+  new\server\routes\emissions.py:3785:    if not records_data:
+> new\server\routes\emissions.py:3786:        return jsonify({"error": "No records provided"}), 400
+  new\server\routes\emissions.py:3787:
+  new\server\routes\emissions.py:3788:    imported_count = 0
+  new\server\routes\emissions.py:3789:    errors = []
+  new\server\routes\emissions.py:3790:
+  new\server\routes\emissions.py:3791:    allowed_ids = get_allowed_facility_ids(user)
+  new\server\routes\emissions.py:4527:    user = get_current_user()
+  new\server\routes\emissions.py:4528:    if not user or user.role not in ["admin", "superuser"]:
+> new\server\routes\emissions.py:4529:        return jsonify({"error": "Only Admin role can approve emission 
+records"}), 403
+  new\server\routes\emissions.py:4530:
+  new\server\routes\emissions.py:4531:    req_data = request.get_json(silent=True) or {}
+  new\server\routes\emissions.py:4532:    scope = str(req_data.get("scope") or request.args.get("scope") or "1")
+  new\server\routes\emissions.py:4533:
+  new\server\routes\emissions.py:4534:    if scope == "2":
+  new\server\routes\emissions.py:4543:
+  new\server\routes\emissions.py:4544:    if not emission:
+> new\server\routes\emissions.py:4545:        return jsonify({"error": "Record not found"}), 404
+  new\server\routes\emissions.py:4546:
+  new\server\routes\emissions.py:4547:    # Facility scoping check
+  new\server\routes\emissions.py:4548:    allowed_fids = get_allowed_facility_ids(user)
+  new\server\routes\emissions.py:4549:    if allowed_fids is not None and emission.facility_id not in allowed_fids:
+> new\server\routes\emissions.py:4550:        return jsonify({"error": "Access to record facility is denied"}), 403
+  new\server\routes\emissions.py:4551:
+  new\server\routes\emissions.py:4552:    if emission.status not in ["Pending", "Draft", "Pending Approval"]:
+> new\server\routes\emissions.py:4553:        return jsonify({"error": "Record is not pending approval"}), 400
+  new\server\routes\emissions.py:4554:
+  new\server\routes\emissions.py:4555:    # Segregation of duties: the submitter cannot approve their own record
+  new\server\routes\emissions.py:4556:    if getattr(emission, "created_by", None) == user.id:
+> new\server\routes\emissions.py:4557:        return jsonify({"error": "Maker-Checker violation: You cannot approve a 
+record you submitted yourself"}), 403
+  new\server\routes\emissions.py:4558:
+  new\server\routes\emissions.py:4559:    emission.status = "Verified"
+  new\server\routes\emissions.py:4560:    emission.approved_by = user.id
+  new\server\routes\emissions.py:4561:    emission.approved_at = datetime.datetime.now(datetime.timezone.utc)
+  new\server\routes\emissions.py:4562:    rec_id = getattr(emission, "record_id", f"{label}-{emission.id}")
+  new\server\routes\emissions.py:4582:    user = get_current_user()
+  new\server\routes\emissions.py:4583:    if not user or user.role not in ["admin", "superuser"]:
+> new\server\routes\emissions.py:4584:        return jsonify({"error": "Only Admin role can reject emission 
+records"}), 403
+  new\server\routes\emissions.py:4585:
+  new\server\routes\emissions.py:4586:    req_data = request.get_json(silent=True) or {}
+  new\server\routes\emissions.py:4587:    scope = str(req_data.get("scope") or request.args.get("scope") or "1")
+  new\server\routes\emissions.py:4588:    reason = req_data.get("reason", "Rejected by reviewer")
+  new\server\routes\emissions.py:4589:
+  new\server\routes\emissions.py:4599:
+  new\server\routes\emissions.py:4600:    if not emission:
+> new\server\routes\emissions.py:4601:        return jsonify({"error": "Record not found"}), 404
+  new\server\routes\emissions.py:4602:
+  new\server\routes\emissions.py:4603:    # Facility scoping check
+  new\server\routes\emissions.py:4604:    allowed_fids = get_allowed_facility_ids(user)
+  new\server\routes\emissions.py:4605:    if allowed_fids is not None and emission.facility_id not in allowed_fids:
+> new\server\routes\emissions.py:4606:        return jsonify({"error": "Access to record facility is denied"}), 403
+  new\server\routes\emissions.py:4607:
+  new\server\routes\emissions.py:4608:    emission.status = "Rejected"
+  new\server\routes\emissions.py:4609:    if hasattr(emission, "qa_flag"):
+  new\server\routes\emissions.py:4610:        emission.qa_flag = f"Rejected: {reason}"
+  new\server\routes\emissions.py:4611:    emission.approved_by = user.id
+  new\server\routes\emissions.py:4635:    user = get_current_user()
+  new\server\routes\emissions.py:4636:    if not user or user.role not in ["admin", "superuser"]:
+> new\server\routes\emissions.py:4637:        return jsonify({"error": "Only Admin role can approve emission 
+records"}), 403
+  new\server\routes\emissions.py:4638:
+  new\server\routes\emissions.py:4639:    allowed_fids = get_allowed_facility_ids(user)
+  new\server\routes\emissions.py:4640:    data = request.get_json(silent=True) or {}
+  new\server\routes\emissions.py:4641:    ids = data.get("ids", [])
+  new\server\routes\emissions.py:4642:    scope = str(data.get("scope", "1"))
+  new\server\routes\emissions.py:4721:    user = get_current_user()
+  new\server\routes\emissions.py:4722:    if not user or user.role not in ["admin", "superuser"]:
+> new\server\routes\emissions.py:4723:        return jsonify({"error": "Only Admin role can reject emission 
+records"}), 403
+  new\server\routes\emissions.py:4724:
+  new\server\routes\emissions.py:4725:    allowed_fids = get_allowed_facility_ids(user)
+  new\server\routes\emissions.py:4726:    data = request.get_json(silent=True) or {}
+  new\server\routes\emissions.py:4727:    ids = data.get("ids", [])
+  new\server\routes\emissions.py:4728:    scope = str(data.get("scope", "1"))
+
+
+

@@ -1,0 +1,117 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_qfull_validation.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -317,48 +317,69 @@
+         assert em['ch4'] == pytest.approx(ch4_tonnes, rel=1e-4)
+ 
+ class TestMudDegassing:
+-    """Test Suite for Mud Degassing."""
+-    def test_mud_water_based(self):
+-        payload = {
+-            'process_type': 'drilling',
+-            'quantity': 200.0,
+-            'unit': 'm3',
+-            'factor_source': 'specific',
+-            'mud_type': 'water_based'
+-        }
+-        ef = 0.15 # kg CH4/m3
+-        ch4_tonnes = 200.0 * ef / 1000
+-        
+-        em, method = compute_emissions(payload, {}, GWP_AR5)
+-        assert em['ch4'] == pytest.approx(ch4_tonnes, rel=1e-4)
+-        
+-    def test_mud_oil_based(self):
+-        payload = {
+-            'process_type': 'drilling',
+-            'quantity': 100.0,
+-            'unit': 'm3',
+-            'factor_source': 'specific',
+-            'mud_type': 'oil_based'
+-        }
+-        ef = 0.35 # kg CH4/m3
+-        ch4_tonnes = 100.0 * ef / 1000
+-        
+-        em, method = compute_emissions(payload, {}, GWP_AR5)
+-        assert em['ch4'] == pytest.approx(ch4_tonnes, rel=1e-4)
+-
+-    def test_mud_synthetic(self):
+-        payload = {
+-            'process_type': 'drilling',
+-            'quantity': 300.0,
+-            'unit': 'm3',
+-            'factor_source': 'specific',
+-            'mud_type': 'synthetic'
+-        }
+-        ef = 0.25 # kg CH4/m3
+-        ch4_tonnes = 300.0 * ef / 1000
+-        
+-        em, method = compute_emissions(payload, {}, GWP_AR5)
+-        assert em['ch4'] == pytest.approx(ch4_tonnes, rel=1e-4)
++    """Test Suite for Mud Degassing (Tier 1, Tier 2, Tier 2+)."""
++
++    def test_tier1_wells(self):
++        wells = 5.0
++        payload = {
++            'process_type': 'drilling',
++            'quantity': wells,
++            'unit': 'well',
++            'tier': 'tier1',
++            'factor_source': 'default',
++        }
++        expected_ch4 = wells * 0.0524
++        em, method = compute_emissions(payload, {}, GWP_AR5)
++        assert em['ch4'] == pytest.approx(expected_ch4, rel=1e-4)
++
++    def test_tier2_water_based(self):
++        drilling_days = 15.0
++        payload = {
++            'process_type': 'drilling',
++            'drilling_days': drilling_days,
++            'quantity': drilling_days,
++            'unit': 'days',
++            'tier': 'tier2',
++            'factor_source': 'custom',
++            'mud_type': 'water_based',
++        }
++        expected_ch4 = drilling_days * 0.2605
++        em, method = compute_emissions(payload, {}, GWP_AR5)
++        assert em['ch4'] == pytest.approx(expected_ch4, rel=1e-4)
++
++    def test_tier2_oil_based(self):
++        drilling_days = 25.0
++        payload = {
++            'process_type': 'drilling',
++            'drilling_days': drilling_days,
++            'quantity': drilling_days,
++            'unit': 'days',
++            'tier': 'tier2',
++            'factor_source': 'custom',
++            'mud_type': 'oil_based',
++        }
++        expected_ch4 = drilling_days * 0.0586
++        em, method = compute_emissions(payload, {}, GWP_AR5)
++        assert em['ch4'] == pytest.approx(expected_ch4, rel=1e-4)
++
++    def test_tier2_plus_gas_composition(self):
++        drilling_days = 10.0
++        payload = {
++            'process_type': 'drilling',
++            'drilling_days': drilling_days,
++            'quantity': drilling_days,
++            'unit': 'days',
++            'tier': 'tier2_plus',
++            'factor_source': 'tier2_plus',
++            'mud_type': 'water_based',
++            'ch4_fraction': 0.85,
++            'co2_fraction': 0.02,
++        }
++        expected_ch4 = drilling_days * 0.2605 * (0.85 / 0.8385)
++        expected_co2 = drilling_days * 0.2605 * (0.02 / 0.8385) * (44.01 / 16.04)
++        em, method = compute_emissions(payload, {}, GWP_AR5)
++        assert em['ch4'] == pytest.approx(expected_ch4, rel=1e-4)
++        assert em['co2'] == pytest.approx(expected_co2, rel=1e-4)
+ 
+ class TestCompletions:
+     """Test Suite for Completions."""
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

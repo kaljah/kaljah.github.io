@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+validation/reference_model/vented_processes.py:72:        "oil_based": 0.0586,
+validation/reference_model/vented_processes.py:73:        "synthetic": 0.0586,
+

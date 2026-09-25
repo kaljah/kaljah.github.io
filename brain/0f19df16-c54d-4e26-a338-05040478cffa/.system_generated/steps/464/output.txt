@@ -1,0 +1,99 @@
+
+The command exited with code 0.
+Output:
+warning: in the working copy of 'new/client/src/components/Scope1Form.jsx', LF will be replaced by CRLF the next time Git touches it
+
+     const [gcUncertaintyPct, setGcUncertaintyPct] = useState("");
+   
+  +  // Tier 2 Enhanced State
+> +  const [tier2Mode, setTier2Mode] = useState("override"); // 'override' (Mode A: Lab/Ticket properties) or 
+'custom_factor' (Mode B: Saved custom factor)
+  +  const [activePresetId, setActivePresetId] = useState("");
+  +  const [fuelDensity, setFuelDensity] = useState("");
+  +  const [dataSourceRef, setDataSourceRef] = useState("");
+  +    if (
+  +      sourceType === "default" ||
+  +      sourceType === "specific" ||
+> +      (sourceType === "custom" && tier2Mode === "override")
+  +    ) {
+         const options = Object.keys(API_FACTORS)
+           .filter((key) => {
+     }, [
+       processType,
+       sourceType,
+> +    tier2Mode,
+       customFactors,
+       streamType,
+       formData.fugitive_method,
+  -      const isCustomId = !isNaN(parseInt(prev.fuel)); // Rough check, assuming default keys are strings
+  -      if (sourceType === "custom" && !isCustomId) return { ...prev, fuel: "" };
+  +      const isCustomId = !isNaN(parseInt(prev.fuel)) && String(parseInt(prev.fuel)) === String(prev.fuel);
+> +      if (sourceType === "custom" && tier2Mode === "custom_factor" && !isCustomId) return { ...prev, fuel: "" };
+         if (
+  -        (sourceType === "default" || sourceType === "specific") &&
+> +        (sourceType === "default" || sourceType === "specific" || (sourceType === "custom" && tier2Mode === 
+"override")) &&
+           isCustomId &&
+           prev.fuel
+         )
+         return prev;
+       });
+  -  }, [sourceType]);
+> +  }, [sourceType, tier2Mode]);
+  +
+  +  const handleApplyPreset = (preset) => {
+  +    setActivePresetId(preset.id);
+  +  const handleFactorCreated = (newFactor) => {
+  +    loadCustomFactors();
+  +    if (newFactor?.id) {
+> +      setTier2Mode("custom_factor");
+  +      setFormData((prev) => ({ ...prev, fuel: newFactor.id.toString() }));
+  +    }
+  +  };
+           fuel: formData.fuel || undefined,
+           custom_factor_id:
+  -          sourceType === "custom" ? parseInt(formData.fuel) : undefined,
+> +          sourceType === "custom" && tier2Mode === "custom_factor"
+  +            ? parseInt(formData.fuel)
+  +            : undefined,
+  +
+           // Convert user-entered HHV to BTU/unit matching the fuel quantity unit
+           ...(() => {
+  -          if (sourceType !== "specific" || !formData.hhv) return {};
+> +          const isTier2Override = sourceType === "custom" && tier2Mode === "override";
+  +          if ((sourceType !== "specific" && !isTier2Override) || !formData.hhv) return {};
+             const rawHHV = parseFloat(formData.hhv);
+             const hhvUnit = formData.hhv_unit || "BTU/scf";
+  +                        <div className="tier2-mode-tabs">
+  +                          <button
+  +                            type="button"
+> +                            className={`tier2-mode-btn ${tier2Mode === "override" ? "active" : ""}`}
+> +                            onClick={() => setTier2Mode("override")}
+  +                          >
+  +                            <Sliders size={14} />
+  +                            <span>Adjust Standard Fuel by Ticket / Presets</span>
+  +                          </button>
+  +                          <button
+  +                            type="button"
+> +                            className={`tier2-mode-btn ${tier2Mode === "custom_factor" ? "active" : ""}`}
+> +                            onClick={() => setTier2Mode("custom_factor")}
+  +                          >
+  +                            <Layers size={14} />
+  +                            <span>Saved Custom Factors Library</span>
+  +                          </button>
+  +                        </div>
+  +
+> +                        {tier2Mode === "override" && (
+  +                          <div className="tier2-override-card">
+  +                            {/* Base Fuel Dropdown */}
+  +                            <div>
+  +                          </div>
+  +                        )}
+  +
+> +                        {tier2Mode === "custom_factor" && (
+  +                          <div>
+  +                            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+  +                              <div style={{ flex: 1 }}>
+
+
+

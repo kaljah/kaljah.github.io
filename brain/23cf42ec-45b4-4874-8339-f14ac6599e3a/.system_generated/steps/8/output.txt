@@ -1,0 +1,12 @@
+
+The command exited with code 0.
+Output:
+
+FullName                                                                                   
+--------                                                                                   
+C:\Users\samsung\Desktop\H2\new\client\node_modules\yargs\build\lib\completion-templates.js
+C:\Users\samsung\Desktop\H2\new\client\node_modules\yargs\build\lib\completion.js          
+C:\Users\samsung\Desktop\H2\new\client\src\components\scope1\CompletionsForm.jsx           
+
+
+

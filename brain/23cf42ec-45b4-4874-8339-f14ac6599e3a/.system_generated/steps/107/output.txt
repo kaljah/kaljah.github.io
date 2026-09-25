@@ -1,0 +1,15 @@
+
+The command exited with code 0.
+Output:
+
+new\server\tests\test_battery_midstream_process_equipment.py:23:    CompletionFlowbackCalculator,
+new\server\tests\test_battery_midstream_process_equipment.py:105:        calc = CompletionFlowbackCalculator()
+new\server\tests\test_battery_midstream_process_equipment.py:114:        calc = CompletionFlowbackCalculator()
+new\server\tests\test_battery_midstream_process_equipment.py:145:        calc = CompletionFlowbackCalculator()
+new\server\tests\test_numerical_invariants.py:46:    CompletionFlowbackCalculator,
+new\server\tests\test_numerical_invariants.py:182:        assert CompletionFlowbackCalculator().calculate(0, 0, 0.85, 
+{})["total_co2e"] == 0.0
+new\server\tests\test_tier_scope_kpi_numerical.py:23:    CompletionFlowbackCalculator,
+
+
+

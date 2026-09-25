@@ -1,0 +1,1 @@
+A1: (Recommended) Tier 1 uses unit 'well' (wells × 0.0524 t CH₄/well), while Tier 2 and Tier 2+ use unit 'days' (drilling days × mud EF, with Water = 0.2605 and Oil/Synthetic = 0.0586 t CH₄/day).

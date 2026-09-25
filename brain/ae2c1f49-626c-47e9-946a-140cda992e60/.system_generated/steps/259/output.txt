@@ -1,0 +1,18 @@
+
+The command exited with code 0.
+Output:
+
+  new\server\calculations\dispatcher.py:1787:                "co2": wrap(co2_tonnes, "co2"),
+  new\server\calculations\dispatcher.py:1788:                "ch4": wrap(ch4_tonnes, "ch4"),
+  new\server\calculations\dispatcher.py:1789:                "n2o": wrap(n2o_tonnes, "n2o"),
+  new\server\calculations\dispatcher.py:1790:            },
+  new\server\calculations\dispatcher.py:1791:            "total_co2e": total_co2e,
+> new\server\calculations\dispatcher.py:1792:            "method": "api2021_generic",
+  new\server\calculations\dispatcher.py:1793:        }
+  new\server\calculations\dispatcher.py:1794:
+  new\server\calculations\dispatcher.py:1795:
+  new\server\calculations\dispatcher.py:1796:# Global dispatcher instance
+  new\server\calculations\dispatcher.py:1797:dispatcher = CalculationDispatcher()
+
+
+

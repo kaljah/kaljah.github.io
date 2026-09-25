@@ -1,0 +1,55 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\legacy_engine.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -519,9 +519,9 @@
+             em["totalCo2e"] = em["co2"] + (em["ch4"] * gwp_dict["CH4"])
+             return em, "server_completions_calc"
+ 
+-        elif process == "unloading":
+-            fuel_key = payload.get("fuel") or payload.get("fuel_type")
+-            # Tier 1: Factor-based (UnloadPlunger / UnloadNonPlunger)
++        elif process in ["unloading", "liquids_unloading"]:
++            fuel_key = str(payload.get("fuel") or payload.get("fuel_type") or "").strip()
++            # Tier 1: Factor-based (API Table 6-11 per well-year)
+             if (
+                 fuel_key in ["UnloadPlunger", "UnloadNonPlunger"]
+                 and factor_data
+@@ -528,7 +528,6 @@
+             ):
+-                # factor is in tonnes CH4/event; amount is event count
+-                event_count = amount
+-                ch4_tonnes = event_count * factor_data["ch4"]  # already in tonnes
++                well_count = amount
++                ch4_tonnes = well_count * factor_data["ch4"]  # tonnes CH4 per well-year
+                 em["ch4"] = ch4_tonnes
+                 em["totalCo2e"] = ch4_tonnes * gwp_dict["CH4"]
+                 return em, "server_unloading_tier1"
+@@ -535,12 +535,18 @@
+             # Engineering Calc (Tier 3)
+-            freq = float(inputs.get("unload_freq") or amount or 0)
+-            diam = float(inputs.get("unload_diam") or 0)
+-            depth = float(inputs.get("unload_depth") or 0)
+-            press = float(inputs.get("unload_press") or 0)
+-            res = ghg_calc.calculate_unloading(freq, diam, depth, press)
+-            em["ch4"] = res["ch4"]
+-            em["totalCo2e"] = em["ch4"] * gwp_dict["CH4"]
+-            return em, "server_unloading_calc"
++            freq = float(inputs.get("unload_freq") or inputs.get("unload_events") or inputs.get("events") or amount or 0)
++            diam = float(inputs.get("unload_diam") or inputs.get("diameter") or 0)
++            depth = float(inputs.get("unload_depth") or inputs.get("well_depth") or 0)
++            press = float(inputs.get("unload_press") or inputs.get("pressure") or 0)
++            if diam > 0 and depth > 0 and press > 0:
++                res = ghg_calc.calculate_unloading(freq, diam, depth, press)
++                em["ch4"] = res["ch4"]
++                em["totalCo2e"] = em["ch4"] * gwp_dict["CH4"]
++                return em, "server_unloading_calc"
++            else:
++                ch4_tonnes = (amount or 1.0) * 1.774
++                em["ch4"] = ch4_tonnes
++                em["totalCo2e"] = ch4_tonnes * gwp_dict["CH4"]
++                return em, "server_unloading_tier1"
+ 
+     if process == "fugitive":
+         f = calc_inputs.get("fugitive") or {}
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

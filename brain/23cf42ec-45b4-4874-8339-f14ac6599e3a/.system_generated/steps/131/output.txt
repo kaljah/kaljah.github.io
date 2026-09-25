@@ -1,0 +1,8 @@
+
+The command exited with code 0.
+Output:
+
+new\server\emission_factors_api2021.py:444:        "source": "API Compendium 2021 Section 6, Table 6-52",
+
+
+

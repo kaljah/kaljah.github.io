@@ -1,0 +1,1 @@
+A1: (Recommended) Support API Eq. 6-7 (Avg Daily Production Rate × Vent Duration for non-HF), Liquid Flowback × GOR (with sales gas deduction), and Flowback Rate × Duration (with explicit unit selector: Mcf/hr, Mcf/day, scf/hr, m³/day, m³/hr)

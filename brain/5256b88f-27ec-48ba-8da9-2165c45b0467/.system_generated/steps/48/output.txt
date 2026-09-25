@@ -1,0 +1,13 @@
+The search for ""API Compendium" 2021 "Table 6-10" OR "Table 6-11" "liquids unloading"" returned the following summary:
+In the **2021 API Compendium of Greenhouse Gas Emissions Estimation Methodologies for the Oil and Natural Gas Industry**, information regarding liquids unloading emissions is detailed in Section 6, specifically within the tables addressing vented emissions[1][2].
+
+The relevant tables are:
+
+*   **Table 6-10:** Well Unloading Vented Emission Factors for Wells[1].
+*   **Table 6-11:** Liquid Unloading Vented Emission Factors by Well[1][2].
+
+These tables are located in the chapter covering "Liquids Unloading" (which begins on page 6-23 of the document) and provide specific emission factor data used to estimate greenhouse gas emissions from these operations[1][2].
+
+Sources:
+[1] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQG4k4UZMEqJKcfEFs7stFhrSSr2ltOnwCtJ-OkkrHS_jVz-LgqLkbLgurRIn3RCvnVctct_o7-cdKHnpGrR4B2Hh5xf7hQGQ1niE0AuSZxHF2DVhskAxUcn6cJdKkdqri4F79NFEU66NHjAJUV9JAC8OkphqYyA4unqZsqxGBVUZewvLLijqGlVNg==)
+[2] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQG4k4UZMEqJKcfEFs7stFhrSSr2ltOnwCtJ-OkkrHS_jVz-LgqLkbLgurRIn3RCvnVctct_o7-cdKHnpGrR4B2Hh5xf7hQGQ1niE0AuSZxHF2DVhskAxUcn6cJdKkdqri4F79NFEU66NHjAJUV9JAC8OkphqYyA4unqZsqxGBVUZewvLLijqGlVNg==)

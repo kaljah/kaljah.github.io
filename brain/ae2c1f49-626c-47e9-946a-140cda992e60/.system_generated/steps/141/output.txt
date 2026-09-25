@@ -1,0 +1,1 @@
+A1: (Recommended) Two-Tier Validation: Strictly reject physically impossible values (negative volumes, durations > period maximum, CH4 + CO2 > 100%, Recovered + Flared > Total Gas) with HTTP 422 and descriptive field-level error messages; flag extreme operational anomalies (e.g. GOR > 100,000 scf/bbl) with QA audit warning flags.

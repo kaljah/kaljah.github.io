@@ -1,0 +1,21 @@
+The search for ""API Compendium" "onshore" "mud degassing" emission factor OR factors "drilling"" returned the following summary:
+The **API Compendium of Greenhouse Gas Emissions Methodologies for the Oil and Natural Gas Industry** provides methodologies and emission factors for estimating methane (CH₄) emissions from drilling mud degassing.
+
+In the 2021 edition of the API Compendium, the recommended methane emission factors for onshore drilling mud degassing are:
+
+*   **Water-based mud:** 0.0458 metric tons (mt) CH₄ per drilling day[1].
+*   **Oil-based and synthetic muds:** 0.0103 metric tons (mt) CH₄ per drilling day[1].
+
+### Key Contextual Information
+*   **Methodology Development:** API has noted that these factors were adjusted from older (1977) estimates to better reflect the borehole sizes and porosity typically associated with modern onshore drilling practices[1].
+*   **Methane Content:** The default methane content used in the API Compendium for mud degassing calculations is **65.15 wt.%**, a value based on guidance from the Bureau of Ocean Energy Management (BOEM)[2][3].
+*   **Industry Perspective:** API has emphasized that many onshore drilling operations utilize balanced or slightly over-balanced mud systems to prevent gas entrainment, meaning dedicated mud degassing systems are not always necessary or used in the same way they are in offshore environments[4].
+*   **Usage:** The API Compendium is widely recognized as a foundational resource for oil and gas companies to estimate and report greenhouse gas emissions[5][6]. However, API often advises that, where possible, users should consider using site-specific or regional data (such as gas composition by NEMS region) to better represent local variability rather than relying solely on default factors[2][3].
+
+Sources:
+[1] [regulations.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEt10J-e6wcyYd6CtFSpnEfqSIHy4mRKTNYaKEOXCqZrgqo4YKGLxOB0oYYXj33t-qWSUVpXaDIAjCABQBQ2K_s8yUa61rs98OvViPD5KLSt3rfRpKtxdoCsE0ixHdL7Efmqn-Ass1d_iFonjJoRC5lYAOA2g==)
+[2] [epa.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEI1cZbZAGHs42-8ZFEVhvDMrjW92RVR2Au1i7FgphWdArgMsw4ooCDCZc2VN_6ANtBwKfKSIlt9D_-Lhb5TIX5IwvM5e_AJ9k6M4mDSAFfLd4fKuufJnyiHDN3xUktFC0_P3wT6HVJNF-iVB7u2R1fCRuJg5jkZ9xXgx_wP69T6swtOqzHb5QfBWE3YGYGZhV-AlUxS0Lr)
+[3] [epa.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEI1cZbZAGHs42-8ZFEVhvDMrjW92RVR2Au1i7FgphWdArgMsw4ooCDCZc2VN_6ANtBwKfKSIlt9D_-Lhb5TIX5IwvM5e_AJ9k6M4mDSAFfLd4fKuufJnyiHDN3xUktFC0_P3wT6HVJNF-iVB7u2R1fCRuJg5jkZ9xXgx_wP69T6swtOqzHb5QfBWE3YGYGZhV-AlUxS0Lr)
+[4] [epa.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEI1cZbZAGHs42-8ZFEVhvDMrjW92RVR2Au1i7FgphWdArgMsw4ooCDCZc2VN_6ANtBwKfKSIlt9D_-Lhb5TIX5IwvM5e_AJ9k6M4mDSAFfLd4fKuufJnyiHDN3xUktFC0_P3wT6HVJNF-iVB7u2R1fCRuJg5jkZ9xXgx_wP69T6swtOqzHb5QfBWE3YGYGZhV-AlUxS0Lr)
+[5] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGAAEChcSPTcDAsvEGhe5l_EYlD_ZpR6pdozUft5xpG7clU6JPEsa7qhF0yyxsrhTLj7TBkWe2ansjEPONj6cMX1RR-hobtQ-jlYj-i8uoQm1tGM9IPWStWbWx9tdLijircEBZS5YN9BwIN9DpNsxogKVWpelUNw1cIYmDrI58dbBbyOipIKOpGsm_H)
+[6] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFLPv-E_ZzYA-1CzPWCaD0YUV-q9fYGA12vOe2vCqChQc4tzwyiM5px7zJ67rvqmDUoqilVQejL4nfT2GPvo_hA5mXvBuU4eVPjY-5itYEAguui6Jx4nMcKqtA11x6rmE8XXn4SFa_dc2BZdd6S-Sb5BIw3SOmVkpSmsVIk0HQp2nOD-LuscX0odA==)

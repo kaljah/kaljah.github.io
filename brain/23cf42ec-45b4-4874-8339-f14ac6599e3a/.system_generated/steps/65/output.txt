@@ -1,0 +1,25 @@
+The search for ""API Compendium" "Table 6-5" "Table 6-6" "completions" "hydraulic fracturing"" returned the following summary:
+In the **API Compendium of Greenhouse Gas Emissions Methodologies for the Oil and Natural Gas Industry** (specifically the 2021 edition), **Table 6-5** and **Table 6-6** provide methane emission factors related to well completions[1].
+
+*   **Table 6-5:** Often referenced in the context of **Well Completions with Hydraulic Fracturing** (specifically for oil and gas exploration)[1].
+*   **Table 6-6:** Typically provides methane emission factors for **Onshore Well Completions without Hydraulic Fracturing**[1].
+
+### Context and Usage
+*   **Hydraulic Fracturing vs. Conventional:** The Compendium distinguishes between these two processes because completions involving hydraulic fracturing—which require high-rate flowback to clear the wellbore—generally result in a higher volume of methane emissions compared to conventional completions that do not involve hydraulic fracturing[2][3][4].
+*   **Methodology:** These tables are used by industry professionals to quantify greenhouse gas emissions[5][6]. When "Reduced Emissions Completions" (RECs) are employed, the emission factors account for the capture of gas that would otherwise be vented or flared during the flowback period[7][8].
+*   **Reporting:** The API Compendium serves as a foundational resource for companies to estimate and report their GHG emissions, often supporting regulatory requirements for transparency and environmental compliance[5][6].
+
+*Note: As editions of the API Compendium are updated (e.g., 2009 vs. 2021), the specific contents of tables may be revised or renumbered[9][6]. Always verify the specific edition of the document you are referencing for your calculations[10][11].*
+
+Sources:
+[1] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFAxZSQSlJPZn-lgxC7jloAfnVajN1334p8VNV8dTGzK7D8Qd5_59JXJxNBX9HLM7EKg9-vU7mSGZv4wsY9up8tg5qynw4GLWMagXnbwXaH0lOzkPAH2awMrjkY0Djw7GeDEz953s1ECEtjpTRmr45nXYFqu8mJ7BBCtSwpS3pdUM6qzyywv7h9lw==)
+[2] [ogmpartnership.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQE4d7pJH_QNeLUsyrvyaMPdUawsegMqi6Za3oBZzMIOhQUbmUj_WTJdKOcJAcqliKI4m9mG3TzCGSU4BhmMAbh35xxRT4tZCGM64t1x6meteXXkSiw4RnjFEAbxSvv4dO8P4c7b4dQG62IvVWmUAbtK9K5wUpngAq_OpBN0C5UieCtYGb526X2l)
+[3] [ogmpartnership.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQE4d7pJH_QNeLUsyrvyaMPdUawsegMqi6Za3oBZzMIOhQUbmUj_WTJdKOcJAcqliKI4m9mG3TzCGSU4BhmMAbh35xxRT4tZCGM64t1x6meteXXkSiw4RnjFEAbxSvv4dO8P4c7b4dQG62IvVWmUAbtK9K5wUpngAq_OpBN0C5UieCtYGb526X2l)
+[4] [iges.or.jp](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGReJdU-VMCMih2RGre0CTaZx8IIMWhNMCPS1AuTUtP2ALcRk6yP_VxlgKm1xDTzuM-MIjuylGkXaAq9-558oehHMz1iR9lYXFwPK9OEIl2V95qHiPK_-hULVWZZvUrD20s8LavoK0SPxslgDD4A3CgWmUdsgMNeqZc1fEEoa0FWdHWl-cS2U_EnGCBKy1udRlLSUCwkFac8A==)
+[5] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFAxZSQSlJPZn-lgxC7jloAfnVajN1334p8VNV8dTGzK7D8Qd5_59JXJxNBX9HLM7EKg9-vU7mSGZv4wsY9up8tg5qynw4GLWMagXnbwXaH0lOzkPAH2awMrjkY0Djw7GeDEz953s1ECEtjpTRmr45nXYFqu8mJ7BBCtSwpS3pdUM6qzyywv7h9lw==)
+[6] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEweIGmIkqLyisFrNj_fPt1OfVe19GZyiwqpJySzSUp3U3uje-PvPT1HrCODrypbbFH0_9e8J1TTphX_GYKoPRwMBNAxH_QfQW67Z9CDXDtU0ChKUfECEJf6VhGdXAsqpIaBlL5WQVnwtZw1Nx-dhDdnlUXLJj2_9viqf2mQOisDQ1G1KFchCifVrRY02Famz_4dVlHWKnqRKIpNzST5WeP52xDNkxQ8zWgE0FzcPPZd1QManU=)
+[7] [ogmpartnership.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQE4d7pJH_QNeLUsyrvyaMPdUawsegMqi6Za3oBZzMIOhQUbmUj_WTJdKOcJAcqliKI4m9mG3TzCGSU4BhmMAbh35xxRT4tZCGM64t1x6meteXXkSiw4RnjFEAbxSvv4dO8P4c7b4dQG62IvVWmUAbtK9K5wUpngAq_OpBN0C5UieCtYGb526X2l)
+[8] [ny.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGrOygFCtpha-xeSbE-qRnbOjROTLMdhOfqbRRd0caphKSp6fhT6MgZ4lmbDXrX0--lkULYdAWxwqH1n8oFmyzjVeTj6ZNFtvABXp9nl4bKtK4jVTvN5c9rHgYrVbfbZXpQjK-sLeIIFDFZmhP-TDuh4tpXjbJ9jw_p47rP)
+[9] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFAxZSQSlJPZn-lgxC7jloAfnVajN1334p8VNV8dTGzK7D8Qd5_59JXJxNBX9HLM7EKg9-vU7mSGZv4wsY9up8tg5qynw4GLWMagXnbwXaH0lOzkPAH2awMrjkY0Djw7GeDEz953s1ECEtjpTRmr45nXYFqu8mJ7BBCtSwpS3pdUM6qzyywv7h9lw==)
+[10] [nm.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGwIexxCj_Phz36CLSbFVQcKgaZwTCf7cIXKMmvht46u8VngSl9CbsMcff69O8Du1L-1DVF-yTfCHYcPPL7e3ToOnYPo-Stfl7jS_okAzLs9LkhgUTFdC_uB08bIdHwCTPi8IDxUEH5grq-op-NPb--xsAov4eEt_m7ARSWm23uFVnjtYyZPKkazv6gm8fE0pA41_kWUlrpySEICp4N9KSfZarFhNr9OBk=)
+[11] [miq.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEu8Fi4uHONakuAdnITF5aNqVVJ5kIwSYB55VL-aA0pWMCxbhiBPbugzvvbotyQPuSh0LikOZrNWNRQGDmvidhbT7mblxfxsztA61yVRiGc1szahr6iijAYpEJQEjoKSLcPoGhpX5xhOWEEus3aaJxisZgBfO80)

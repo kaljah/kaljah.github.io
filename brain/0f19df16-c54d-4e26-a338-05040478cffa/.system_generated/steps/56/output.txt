@@ -1,0 +1,25 @@
+The search for ""Table 6-2" "0.2605" OR "0.0586" "API Compendium"" returned the following summary:
+The values **0.2605** and **0.0586** (measured in metric tonnes of $CH_4$ per drilling day) are emission factors used for **mud degassing** in oil and natural gas operations[1][2][3].
+
+*   **0.2605**: Factor for **water-based** drilling muds[4][5][3].
+*   **0.0586**: Factor for **oil-based** and **synthetic** drilling muds[4][5][3].
+
+### Context in API Compendium and Regulations
+These factors are widely referenced in industry and regulatory documentation:
+*   **API Compendium:** These values appear in the *Compendium of Greenhouse Gas Emissions Methodologies for the Oil and Natural Gas Industry* (API Compendium)[1][3]. While different editions of the Compendium use various table numbers for different data (e.g., Table 6-2 often refers to "Facility-Level Average Fugitive Emission Factors"[6][7][8]), the specific emission factors for mud degassing are standard benchmarks derived from industry studies[2][9].
+*   **Regulatory Usage (EPA Subpart W):** These specific values (0.2605 for water-based, 0.0586 for oil-based/synthetic) are codified in **40 CFR Part 98 Subpart W** (Petroleum and Natural Gas Systems) as the default emission factors for calculating vented methane emissions from drilling mud degassing[4][5]. 
+
+If you are looking for "Table 6-2" specifically within the API Compendium, please note that table numbering can vary between versions (e.g., the 2009 edition vs. the 2021 edition)[10][11]. In many versions, Table 6-2 is associated with "Facility-Level Average Fugitive Emission Factors," whereas the mud degassing factors may be located in a separate section or table related to "Process and Vented Emissions"[6][10][1].
+
+Sources:
+[1] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFgLa6_TFDvLKjwd8IBc-HK4HpJAfc9bUhaPb0sC8RZgUOGOhedGFOKdwo61F7uL2m3VmGndIzYbo-yBHGkZ-as7eY6E5yj8YXLv_IrBmP8t1mJWHHUliW0AOUrgUMZMQ9JFNUlQQC9cF3tZ0aRpvnsnCYgtdoBILhpq6npwVPatRj1BxB9QyOq)
+[2] [federalregister.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQG5u4YD4Jc4spZMhWpWoQ5LMHIlvWO60XI7Y0jy9ClaCPPaANQvFllZBQWmUuuYM3eHq1V8ZcCWsGl9P8nE99u47zYsB4EEOFg5A7HaTO0qVbZ7O7eWiKFdNE9-AqEB5rBMXda8LwPHt3mRHNVv1Sw-hS_pkfmKyX--d_iL)
+[3] [dcceew.gov.au](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQF8t1IOKbrtWwwLoebxt_UQxi0mc2tlBZJ9M_U7eHAoVr7nTVXLzsCpDPk79B5Oh39lIbG2-_9dmfGzHp7JiF8z_squZRMAxPK5mFUGjrUz35inVDJWIhjCbIZo2DaeL_EFAkTwvo8S-gmbCIbxgpkPBqjkuQvzWNdZCYgzvnmQkwTJj6Wo82ory5POOQcCPlK4doJUTfaMBA==)
+[4] [regulations.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEBdlG3Jd7bbXyN3IyUJVDQrULmIAVX89t372WrGXXco3Ze8dWfB4hKK2H_PwkNF301EjDMZDOg3koqQlBaGwJ6V8-w9fbLK3cRdx5FGuO5XeaadyDpDbPfkCjtpx3dncySCycysHozWGcwColl8Eqc7Q8QZKo0WcCXYLKyHyyerQk=)
+[5] [ecfr.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHIz2TjFjWRePOrkE6tXFDC1ff442auXd6gCDSMFNk6Z9CkfMXj5xBU0wMNui0tVRv-CjROXbApxx8QGihFVw9_DLws9vKBPP1i9rPLPnpKFQSjL8cmT8-ZEJcE-jdGwnleHFgjKUCJE9nB1y_wsif7l6s2Iq9wTDVTuRshEp1wMiZ1IQ==)
+[6] [ca.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHdhubv3W5DQZXMe0iInOM4QEXYMXvM6Qezo96OWWv2Xxs8pBARtLXrh5dOy4ZobkJx2VU0NPDVkpaJZ71CQiosoDyOskHw3MyEj0vrpkWF32aai7ta3Y8nsu79eZoLFtPGGx9Iwe7Omw0FCL1WOYe7xeOCrW-PsXnS7frvgGsMBdW65g==)
+[7] [ca.gov](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGL_Gzd-yYM83GKhJhey8-kU0-3yktpnPOfO1feVps6oksC3-9H_MvOIR7LOLwAxxgpgO8OOiQ2AbDWkneeygdJH7Ibim3tsNeBmJ6BpKGVXNTPOPrFJgvZzQZx0tvdKMmxTyG_JvIpxewWZeRvLmhKiFyYV6ZA)
+[8] [nea.gov.sg](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQE_ajEYAoPHUZ8XrO6AHvkPjGGtr7vCW_Qg7xoLJHnS4rWE_WDnfmN1bgLi3rNp5FNNx2xoSW85IwTISQuUjcml2s9_NHGA9-EgK-Bd00HAQdsfDJM3-YB3mrwQAfNPuYUf_E0SY-vJe_gDFau4AJFp8sOWhc3LocJOL6KUqgV0IC7MdUPRrBIfZiabrEFBrRuDk0soSbQgilxUTYhbBOUdCZL49hIM3zc5Faag)
+[9] [ipaa.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHFjMfnVstlhPPzSzPq-uG4UO0FCwmqkG48CVPyCKz9Ov_qhYa4QNgCrvPNw263UtCW1r7oZauxtyzN6iU3VyXEph6hEnVq4j8KLg-mdtARhZvWu8byelPmnSiezD4jbby_OekYJ6q2QKVjqCgwwmmot6oK26LwE9RwkkI7z2L14JzZGugBbLSRqyrPRHe0AtFiVhv8FOxqoQrmFug=)
+[10] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFgLa6_TFDvLKjwd8IBc-HK4HpJAfc9bUhaPb0sC8RZgUOGOhedGFOKdwo61F7uL2m3VmGndIzYbo-yBHGkZ-as7eY6E5yj8YXLv_IrBmP8t1mJWHHUliW0AOUrgUMZMQ9JFNUlQQC9cF3tZ0aRpvnsnCYgtdoBILhpq6npwVPatRj1BxB9QyOq)
+[11] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFgLa6_TFDvLKjwd8IBc-HK4HpJAfc9bUhaPb0sC8RZgUOGOhedGFOKdwo61F7uL2m3VmGndIzYbo-yBHGkZ-as7eY6E5yj8YXLv_IrBmP8t1mJWHHUliW0AOUrgUMZMQ9JFNUlQQC9cF3tZ0aRpvnsnCYgtdoBILhpq6npwVPatRj1BxB9QyOq)

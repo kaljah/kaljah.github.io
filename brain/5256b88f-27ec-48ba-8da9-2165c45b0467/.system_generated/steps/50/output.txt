@@ -1,0 +1,21 @@
+The search for ""Table 6-10" "Table 6-11" "Plunger" "Non-plunger" "API Compendium"" returned the following summary:
+The tables you are referring to are found in the **API Compendium of Greenhouse Gas Emissions Methodologies** (specifically the 2021 edition)[1][2].
+
+These tables provide vented emission factors for well liquid unloading operations[1][2]:
+
+*   **Table 6-10:** Well Unloading Vented Emission Factors for Wells[1][2]
+*   **Table 6-11:** Liquid Unloading Vented Emission Factors by Well[1][2]
+
+### Context
+In the oil and gas industry, **liquid unloading** is a process used to remove accumulated fluids from a well to allow gas production to continue[1]. The *Compendium* distinguishes between different methods of unloading, such as:
+
+*   **Non-plunger lift well unloading:** Typically a manual process where an operator diverts gas to an atmospheric tank (blowdown tank), reducing pressure and allowing the well's flow to push liquids out[1][2]. The gas entrained in the liquid is then vented to the atmosphere[1][2].
+*   **Plunger lift well unloading:** A method that can be performed manually or in an automated mode to assist in removing liquids[1][2].
+
+The *API Compendium* serves as a standard resource for industry operators to consistently estimate and report direct greenhouse gas (GHG) emissions across the value chain[3][4].
+
+Sources:
+[1] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQH_WdEDolEPnPJwvTmVR7ENpFjakyBVnCnBKyc0pygcMR4vtQdyOHl9xil-pEqUldP4TRNlFdbEikK_YT5n7eHAZ8q7H3hssWJmzMb1mio7sOilB1Y8tLwgCL7TxHHcslgc2HaTFCUVjRDssiiDg6cNZMq-WCnnCCOhz-fOGd2qse5Kaeylfsrc)
+[2] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQH_WdEDolEPnPJwvTmVR7ENpFjakyBVnCnBKyc0pygcMR4vtQdyOHl9xil-pEqUldP4TRNlFdbEikK_YT5n7eHAZ8q7H3hssWJmzMb1mio7sOilB1Y8tLwgCL7TxHHcslgc2HaTFCUVjRDssiiDg6cNZMq-WCnnCCOhz-fOGd2qse5Kaeylfsrc)
+[3] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQH_WdEDolEPnPJwvTmVR7ENpFjakyBVnCnBKyc0pygcMR4vtQdyOHl9xil-pEqUldP4TRNlFdbEikK_YT5n7eHAZ8q7H3hssWJmzMb1mio7sOilB1Y8tLwgCL7TxHHcslgc2HaTFCUVjRDssiiDg6cNZMq-WCnnCCOhz-fOGd2qse5Kaeylfsrc)
+[4] [api.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQH_WdEDolEPnPJwvTmVR7ENpFjakyBVnCnBKyc0pygcMR4vtQdyOHl9xil-pEqUldP4TRNlFdbEikK_YT5n7eHAZ8q7H3hssWJmzMb1mio7sOilB1Y8tLwgCL7TxHHcslgc2HaTFCUVjRDssiiDg6cNZMq-WCnnCCOhz-fOGd2qse5Kaeylfsrc)

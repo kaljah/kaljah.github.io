@@ -1,0 +1,53 @@
+
+The command exited with code 0.
+Output:
+
+AUDIT_FINDINGS.md:488:# BUG-011 - Well-completion "Rate � Duration" method divides the Mcf/hr rate by 24 (treats it as 
+Mcf/day): CH4 understated 24�
+AUDIT_FINDINGS.md:496:- `new/server/calculations/vented.py` `CompletionFlowbackCalculator.calculate` - 
+`rate_unit="mscf/day"` default and branch `rate_scf_hr = (float(flowback_rate) * multiplier) / 24.0`
+AUDIT_FINDINGS.md:497:- `new/server/calculations/dispatcher.py` `dispatch()` `elif process_type == "completions"` - 
+calls the calculator without `rate_unit`
+AUDIT_FINDINGS.md:498:- `new/client/src/components/scope1/CompletionsForm.jsx` - the field is labelled **"Avg Gas Rate 
+(Mcf/hr)"**, and `Scope1Form.jsx` also treats it as Mcf/hr (`finalAmount = rateMcfHr * durationHr * 28.3168`)
+AUDIT_FINDINGS.md:501:1. As admin, send `POST /api/emissions/` with the payload the Scope 1 form builds for 
+Completions (Tier 3, method "Rate � Duration"):
+AUDIT_FINDINGS.md:502:   `process_type=completions, factor_source=specific, amount=339.8016, unit=m3, 
+calc_inputs.completions={calc_method:"rate_duration", comp_rate:0.5, comp_duration:24, ch4_content:80, amount:2}`
+AUDIT_FINDINGS.md:517:The DB row from the audit copy (`agentA.db`): `{'ch4_emissions': 0.015370384330137602, 
+'co2e_total': 0.4303707612438529, 'calc_method': 'Well Completion Flowback'}`. Ratio 0.3689/0.01537 = 24.0.
+AUDIT_FINDINGS.md:523:Every Tier 3 completion or flowback record entered with the Rate � Duration method (the form's 
+default) under-reports CH4 and CO2e by 24�. This feeds Scope 1, methane intensity and OGMP totals.
+AUDIT_FINDINGS.md:526:dispatcher `completions` branch; `CompletionFlowbackCalculator`; Scope 1 form (Completions); 
+bulk import rows that use `comp_rate`.
+AUDIT_FINDINGS.md:534:# BUG-012 - Well-completion Tier 3 uses `amount` as both the flowback volume and the event count 
+(volume squared), and ignores rate � duration when the method dropdown is left at its default
+AUDIT_FINDINGS.md:542:`new/server/calculations/dispatcher.py`, `dispatch()`, `elif process_type == "completions"`:
+AUDIT_FINDINGS.md:547:`CompletionFlowbackCalculator` (metered branch) then computes `total_gas_m3 = flowback_volume * 
+num_events`.
+AUDIT_FINDINGS.md:549:`new/client/src/components/scope1/CompletionsForm.jsx` shows "Rate � Duration" as the selected 
+method (`value={data.calc_method || "rate_duration"}`) but does not put `calc_method` into formData until the user 
+changes the dropdown. It also sends the **event count** as `amount`.
+AUDIT_FINDINGS.md:552:1. `POST /api/emissions/` with `process_type=completions, factor_source=specific, amount=1000, 
+unit=m3, ch4_content=80, comp_method=metered_volume` (1,000 m� metered flowback).
+AUDIT_FINDINGS.md:553:2. `POST /api/emissions/` with the UI payload when the method dropdown was not touched: 
+`calc_inputs.completions={comp_duration:24, comp_rate:0.5, ch4_content:80, amount:2}` (no `calc_method`).
+AUDIT_FINDINGS.md:574:Metered completions submitted through the API or bulk import are inflated by a factor equal to 
+the volume (quadratic). UI entries where the method dropdown was left at its default are understated by orders of 
+magnitude. Both errors flow into Scope 1 CH4, methane intensity and OGMP.
+AUDIT_FINDINGS.md:577:dispatcher completions branch; `CompletionFlowbackCalculator`; `CompletionsForm.jsx` / 
+`Scope1Form.jsx`; bulk import (`background_processor`) rows for completions.
+AUDIT_FINDINGS.md:2939:# BUG-061 - Dashboard "Emissions by Source" mis-classifies process types: fuel-gas combustion 
+(6.47 M t) shown as "Other", pneumatics/tanks/dehydrators/unloading/completions as "Other" instead of Venting, 
+fugitives merged into "Venting", mobile combustion labelled "Stationary Combustion"
+AUDIT_FINDINGS.md:2955:Snapshot Verified Scope 1 rows. Process types present: `fuel_gas` (10 rows, 6,467,367.87 t), 
+`pneumatic`, `tank_flashing`/`tank_working`/`tank_breathing`, `dehydrator`, `agr`, `unloading`, `completions`, 
+`drilling`, `loading`, `mobile`, `mobile_combustion`, `fugitive_equipment_leaks`, `fugitive`.
+AUDIT_FINDINGS.md:2958:Classification by source category, as in the platform's own dispatcher and the API Compendium: 
+fuel gas is combustion; pneumatic, tank, dehydrator, AGR, unloading, completion and drilling are vented; fugitives are 
+a separate category, or at least not called "Venting"; mobile combustion is not "Stationary".
+AUDIT_FINDINGS.md:3394:- Pneumatics, tanks, completions, blowdown, dehydrator, unloading, AGR and drilling CH4 (vented 
+sources) are also reported as `ch4_combustion`.
+
+
+

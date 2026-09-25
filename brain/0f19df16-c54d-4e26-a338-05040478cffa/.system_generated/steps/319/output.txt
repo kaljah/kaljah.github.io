@@ -1,0 +1,18 @@
+
+The command exited with code 0.
+Output:
+new/server/tests/test_qfull_boundary_sensitivity.py:91:    def test_zero_quantity_mud_degassing_yields_zero(self):
+new/server/tests/test_qfull_boundary_sensitivity.py:92:        """BOUNDARY: Zero mud volume = zero CH4 from degassing."""
+new/server/tests/test_qfull_boundary_sensitivity.py:95:            "factor_source": "specific", "mud_type": "water_based"
+new/server/tests/test_qfull_boundary_sensitivity.py:164:    def test_negative_quantity_mud_raises(self):
+new/server/tests/test_qfull_boundary_sensitivity.py:165:        """BOUNDARY: Negative mud volume → ValueError."""
+new/server/tests/test_qfull_boundary_sensitivity.py:169:                "factor_source": "specific", "mud_type": "water_based"
+new/server/tests/test_qfull_boundary_sensitivity.py:351:    def test_mud_oil_over_water_ratio_exact(self):
+new/server/tests/test_qfull_boundary_sensitivity.py:353:        OAT: Same mud volume, change mud_type: oil_based vs water_based.
+new/server/tests/test_qfull_boundary_sensitivity.py:363:            "factor_source": "specific", "mud_type": "water_based"
+new/server/tests/test_qfull_boundary_sensitivity.py:367:            "factor_source": "specific", "mud_type": "oil_based"
+new/server/tests/test_qfull_boundary_sensitivity.py:417:        OAT: Same mud degassing (CH4-only), GWP AR4 vs AR5.
+new/server/tests/test_qfull_boundary_sensitivity.py:430:            "factor_source": "specific", "mud_type": "water_based"
+new/server/tests/test_qfull_boundary_sensitivity.py:581:            "factor_source": "specific", "mud_type": "water_based"
+new/server/tests/test_qfull_boundary_sensitivity.py:596:            "factor_source": "specific", "mud_type": "water_based"
+

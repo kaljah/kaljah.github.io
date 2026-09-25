@@ -1,0 +1,1 @@
+A1: As recommended dont write anything but tier 1 and tier2 and tier 2+ the software should read those as tier and tier 2 regardless in the backend

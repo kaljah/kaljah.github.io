@@ -1,0 +1,18 @@
+The search for ""0.15" "0.35" "kg CH4/m3" OR "kg/m3" "mud" OR "degassing"" returned the following summary:
+The terms provided relate to several distinct technical contexts, primarily in drilling engineering, gas management, and sediment analysis. There is no single standard regulation that links all these values together; instead, they appear in different specialized applications:
+
+### 1. Drilling Fluid and Mud Management
+*   **"0.15" and "0.35" (kg/m³):** In drilling mud manuals, values in this range are often associated with the concentration of chemical additives. For example, specific additives like **Soda Ash** or **Caustic Soda** are sometimes cited in concentration ranges (e.g., 0.50–0.75 kg/m³, which may be converted from imperial units like 0.15–0.25 ppb) to maintain mud properties.
+*   **Degassing:** Vacuum degassers are essential equipment used in drilling to remove entrained gases (such as methane, $H_2S$, and $CO_2$) from "gas-cut" mud. Removing these gases is critical for restoring the specific gravity (density) of the drilling fluid and ensuring borehole stability.
+
+### 2. Methane (CH4) and Gas Concentrations
+*   **"kg CH4/m³":** This unit is used to measure methane concentration or production yields. 
+    *   **Biogas/Digesters:** Methane production rates are often expressed in $m^3 CH_4/m^3$ of reactor volume per day or $m^3/kg$ of volatile solids (VS). Values around **0.15 to 0.35 $m^3/kg$** are typical benchmarks for methane yield from various organic waste substrates in anaerobic digestion.
+    *   **Environmental/Emissions:** Fugitive methane emissions or atmospheric concentrations may be reported in various mass-per-volume units, though $kg/m^3$ is a high concentration for atmospheric settings (usually $mg/m^3$ or $ppm$ are used).
+
+### 3. Geotechnical/Sediment Density
+*   **"kg/m³" (Mud):** Fluid mud densities are frequently cited in marine and geological studies. For instance, high-density fluid mud is often characterized with densities ranging from **1030 kg/m³ to 1300 kg/m³**.
+*   **Volumes:** The values **0.15 and 0.35** appear in geological literature regarding the volumes (in $km^3$) of extruded mud from mud volcanoes (e.g., the Mercator mud volcano).
+
+### Summary of Associations
+If you are looking for a specific threshold for **methane degassing in mud**, it is likely related to the **gas-cut threshold** where drilling fluid properties (density) become compromised, necessitating the use of a vacuum degasser to bring the fluid back to its required operational density. If you are analyzing **biogas systems**, the **0.15–0.35** range likely refers to the specific methane yield ($m^3 CH_4/kg$ VS) expected from the feedstock.

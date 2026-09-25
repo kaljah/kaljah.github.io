@@ -1,0 +1,79 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\emissions.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -3041,6 +3041,73 @@
+ 
+     facility = db.session.get(Facility, fac_id)
+ 
++    # Process-specific input validation for associated_gas_venting
++    p_type = (data.get("process_type") or "").lower().strip()
++    if p_type in ["associated_gas_venting", "associated_venting", "associated_gas"]:
++        ch4_in = data.get("ch4_content")
++        co2_in = data.get("co2_content")
++        c_ch4_val = None
++        c_co2_val = None
++
++        if ch4_in not in [None, "", "-"]:
++            try:
++                c_ch4_val = float(str(ch4_in).replace("%", "").strip())
++                if c_ch4_val > 1.0:
++                    c_ch4_val /= 100.0
++                if c_ch4_val < 0.0 or c_ch4_val > 1.0:
++                    return jsonify({"error": f"Invalid CH4 content: must be between 0% and 100% (got {c_ch4_val*100:.1f}%)", "field": "ch4_content"}), 422
++            except (ValueError, TypeError):
++                return jsonify({"error": "Invalid CH4 content: must be a number", "field": "ch4_content"}), 422
++
++        if co2_in not in [None, "", "-"]:
++            try:
++                c_co2_val = float(str(co2_in).replace("%", "").strip())
++                if c_co2_val > 1.0:
++                    c_co2_val /= 100.0
++                if c_co2_val < 0.0 or c_co2_val > 1.0:
++                    return jsonify({"error": f"Invalid CO2 content: must be between 0% and 100% (got {c_co2_val*100:.1f}%)", "field": "co2_content"}), 422
++            except (ValueError, TypeError):
++                return jsonify({"error": "Invalid CO2 content: must be a number", "field": "co2_content"}), 422
++
++        if c_ch4_val is not None and c_co2_val is not None:
++            if (c_ch4_val + c_co2_val) > 1.0001:
++                return jsonify({
++                    "error": f"Gas composition error: Sum of CH4 ({c_ch4_val*100:.1f}%) and CO2 ({c_co2_val*100:.1f}%) exceeds 100%",
++                    "field": "ch4_content",
++                }), 422
++
++        v_dur = data.get("venting_duration")
++        if v_dur not in [None, "", "-"]:
++            try:
++                dur_float = float(v_dur)
++                if dur_float < 0:
++                    return jsonify({"error": "Venting duration cannot be negative", "field": "venting_duration"}), 422
++                d_unit = str(data.get("duration_unit") or "days").lower()
++                dur_days = dur_float if "day" in d_unit else dur_float / 24.0
++                if dur_days > 366.0:
++                    return jsonify({"error": f"Venting duration ({dur_days:.1f} days) exceeds maximum annual limit of 366 days", "field": "venting_duration"}), 422
++            except (ValueError, TypeError):
++                return jsonify({"error": "Invalid venting duration: must be a number", "field": "venting_duration"}), 422
++
++        gor_in = data.get("gor")
++        if gor_in not in [None, "", "-"]:
++            try:
++                gor_float = float(gor_in)
++                if gor_float < 0:
++                    return jsonify({"error": "Gas-to-Oil Ratio (GOR) cannot be negative", "field": "gor"}), 422
++            except (ValueError, TypeError):
++                return jsonify({"error": "Invalid GOR: must be a number", "field": "gor"}), 422
++
++        for gas_f in ["recovered_gas_volume", "flared_gas_volume"]:
++            val_in = data.get(gas_f)
++            if val_in not in [None, "", "-"]:
++                try:
++                    vf = float(val_in)
++                    if vf < 0:
++                        return jsonify({"error": f"{gas_f.replace('_', ' ').capitalize()} cannot be negative", "field": gas_f}), 422
++                except (ValueError, TypeError):
++                    return jsonify({"error": f"Invalid {gas_f}: must be a number", "field": gas_f}), 422
++
+     # Calculate Emissions
+     # We need to fetch factor data if not specific
+     # For now, using a simplified factor data placeholder or letting calculate handle it
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

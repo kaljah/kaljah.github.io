@@ -1,0 +1,29 @@
+
+The command exited with code 0.
+Output:
+
+LineNumber Line                                                                                                        
+---------- ----                                                                                                        
+       602         if process_type == "Flaring":                                                                       
+       616                 row_errors.append("Invalid engineering calculation inputs for Flaring.")                    
+      1023             "combustion | flaring | venting | blowdown | pneumatic | tank_flashing | tank_working | tank_...
+      1148         # � TIER 3 GAS COMPOSITION (combustion, flaring, completions, blowdown, agr) �                    
+      1153             "Methane (CH4) mole fraction 0-100 mol%. Required for Tier 3 combustion/flaring.",              
+      1176         # � T3 FLARING �                                
+      1187             "Gas stream CH4 content % (0-100). Alias for c1 for flaring/completions/unloading.",            
+      1199             "Flare/control device destruction efficiency 0-100%. Used by flaring, completions, blowdown, ...
+      1584     p_comp = ["all", "combustion", "flaring", "completions", "blowdown", "agr"]                             
+      1587         "flaring",                                                                                          
+      1736         # 4. Tier 3 - Flaring (Engineering Mode)                                                            
+      1740             process_type="flaring",                                                                         
+      1762         # 5. Tier 1 - Flaring (Default Factor)                                                              
+      1766             process_type="flaring",                                                                         
+      2152             "For Tier 3 (Engineering) calculations, fill in the matching process tab (e.g. '? Combustion'...
+      2231             "Select from dropdown. Options: Combustion, Flaring, Venting, Pneumatic Devices, etc.",         
+      2413             9: "Select from list: Combustion, Flaring, Venting, etc.",                                      
+      2426         formula1='"Combustion,Flaring,Fugitive Emissions,Venting,Well Completions & Workovers,Liquids Unl...
+      2517             "Flaring",                                                                                      
+      2522             "Tier 3 - see Flaring sheet",                                                                   
+
+
+
