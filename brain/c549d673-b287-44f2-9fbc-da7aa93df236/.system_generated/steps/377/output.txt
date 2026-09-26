@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\components\Scope1Form.jsx:119:  const [calculationResult, setCalculationResult] = useState(null);
+new\client\src\components\Scope1Form.jsx:1435:        setCalculationResult(res.data);
+new\client\src\components\Scope1Form.jsx:3405:          onClose={() => setCalculationResult(null)}
+
+
+

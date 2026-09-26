@@ -1,0 +1,19 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\emission_factors_api2021.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -14,6 +14,13 @@
+ 3. Fugitive Emissions (Section 7)
+ """
+ 
++from emission_factors_chapter7_onshore import (
++    API_CHAPTER7_ONSHORE_FACTORS,
++    METHOD21_SCREENING_RANGES,
++    OGI_LEAKER_FACTORS,
++    DEFAULT_SERVICE_COMPOSITIONS,
++)
++
+ # =============================================================================
+ # SECTION 5: COMBUSTION & FLARING EMISSION FACTORS
+ # =============================================================================
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

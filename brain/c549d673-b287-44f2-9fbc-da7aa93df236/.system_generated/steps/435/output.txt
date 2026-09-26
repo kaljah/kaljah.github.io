@@ -1,0 +1,65 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\Scope1Form.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1312,6 +1312,59 @@
+         }
+       }
+ 
++      // 10. Fugitives & Equipment Leaks (API Chapter 7 Onshore)
++      if (processType === "fugitive") {
++        const tier = String(
++          formData.fugitive_tier ||
++            (sourceType === "specific"
++              ? "tier3"
++              : sourceType === "custom"
++              ? "tier2"
++              : "tier1")
++        ).toLowerCase();
++        processInputs.fugitive_tier = tier;
++        processInputs.fugitive_method = formData.fugitive_method || "component";
++        processInputs.facility_type = formData.facility_type;
++        processInputs.equipment_type = formData.equipment_type;
++        processInputs.component_type = formData.component_type;
++        processInputs.service_type = formData.service_type || "gas";
++        processInputs.operating_hours = formData.operating_hours !== undefined ? parseFloat(formData.operating_hours) : undefined;
++        processInputs.operating_days = formData.operating_days !== undefined ? parseFloat(formData.operating_days) : undefined;
++        processInputs.time_unit = formData.time_unit || "hours";
++        processInputs.duration_unit = formData.duration_unit || formData.time_unit || "hours";
++        processInputs.screening_ppm = formData.screening_ppm !== undefined ? parseFloat(formData.screening_ppm) : undefined;
++        processInputs.fugitive_ppm = formData.fugitive_ppm !== undefined ? parseFloat(formData.fugitive_ppm) : processInputs.screening_ppm;
++        processInputs.leakers_count = formData.leakers_count !== undefined ? parseFloat(formData.leakers_count) : undefined;
++        processInputs.non_leakers_count = formData.non_leakers_count !== undefined ? parseFloat(formData.non_leakers_count) : undefined;
++        processInputs.measured_rate = formData.measured_rate !== undefined ? parseFloat(formData.measured_rate) : undefined;
++        processInputs.rate_unit = formData.rate_unit || "kg/hr";
++        processInputs.ch4_mole_pct = formData.ch4_mole_pct !== undefined ? parseFloat(formData.ch4_mole_pct) : undefined;
++        processInputs.co2_mole_pct = formData.co2_mole_pct !== undefined ? parseFloat(formData.co2_mole_pct) : undefined;
++        processInputs.gas_stream = formData.gas_stream;
++        processInputs.correlation_type = formData.correlation_type;
++
++        // Set top-level finalAmount and finalUnit for backward compatibility & display
++        if (formData.amount !== undefined && formData.amount !== "") {
++          finalAmount = parseFloat(formData.amount);
++          finalUnit = formData.unit || "count";
++        } else if (tier === "tier1") {
++          finalAmount = parseFloat(formData.facility_count || 1);
++          finalUnit = "facility";
++        } else if (formData.fugitive_method === "equipment") {
++          finalAmount = parseFloat(formData.equipment_count || 1);
++          finalUnit = "equipment";
++        } else if (formData.fugitive_method === "ogi") {
++          finalAmount = parseFloat(formData.leakers_count || 1);
++          finalUnit = "leakers";
++        } else if (formData.fugitive_method === "measurement") {
++          finalAmount = parseFloat(formData.measured_rate || 0);
++          finalUnit = formData.rate_unit || "kg/hr";
++        } else {
++          finalAmount = parseFloat(formData.component_count || 1);
++          finalUnit = "sources";
++        }
++      }
++
+       // Construct Backend-Compliant Payload
+       const finalPayload = {
+         // Identity
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

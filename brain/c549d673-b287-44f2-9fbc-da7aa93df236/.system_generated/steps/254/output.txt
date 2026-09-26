@@ -1,0 +1,9 @@
+
+The command exited with code 0.
+Output:
+Tier 1 result: 198.33075000000002 tCH4
+Tier 2A result: 1.36656 tCH4
+Tier 2B result: 3.3506999999999993 tCH4
+Tier 3C OGI result: 6.442104 tCH4
+Tier 3D Measurement result: 0.3576496303818893 tCH4
+

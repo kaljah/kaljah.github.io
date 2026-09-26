@@ -1,0 +1,57 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\utils\EmissionFactors.js:639:  "Fugitive - Valve (Gas/Vapor)": {
+new\client\src\utils\EmissionFactors.js:644:    // Actually fugitive average factors are usually total hydrocarbon or 
+methane?
+new\client\src\utils\EmissionFactors.js:646:    // For compliance, let's look at legacy: efFugitiveAverage returns 
+tonnes_ch4/year.
+new\client\src\utils\EmissionFactors.js:648:    // Legacy efFugitiveAverage for Gas Valves = 0.026 tonnes CH4/year.
+new\client\src\utils\EmissionFactors.js:653:    usage: ["fugitive"],
+new\client\src\utils\EmissionFactors.js:657:  "Fugitive - Connector (Gas/Vapor)": {
+new\client\src\utils\EmissionFactors.js:663:    usage: ["fugitive"],
+new\client\src\utils\EmissionFactors.js:667:  "Fugitive - Flange (Gas/Vapor)": {
+new\client\src\utils\EmissionFactors.js:673:    usage: ["fugitive"],
+new\client\src\utils\EmissionFactors.js:677:  // --- API 2021 ADDITIONAL FUGITIVES ---
+new\client\src\utils\EmissionFactors.js:678:  "Fugitive - Valve (Light Oil)": {
+new\client\src\utils\EmissionFactors.js:684:    usage: ["fugitive"],
+new\client\src\utils\EmissionFactors.js:688:  "Fugitive - Valve (Heavy Oil)": {
+new\client\src\utils\EmissionFactors.js:694:    usage: ["fugitive"],
+new\client\src\utils\EmissionFactors.js:698:  "Fugitive - Connector (Light Oil)": {
+new\client\src\utils\EmissionFactors.js:704:    usage: ["fugitive"],
+new\client\src\utils\EmissionFactors.js:708:  "Fugitive - Connector (Heavy Oil)": {
+new\client\src\utils\EmissionFactors.js:714:    usage: ["fugitive"],
+new\client\src\utils\EmissionFactors.js:718:  // --- ADDITIONAL FUGITIVES (Seals, OEL, PRV) ---
+new\client\src\utils\EmissionFactors.js:719:  "Fugitive - Open-Ended Line (Gas)": {
+new\client\src\utils\EmissionFactors.js:725:    usage: ["fugitive"],
+new\client\src\utils\EmissionFactors.js:728:  "Fugitive - Open-Ended Line (Light Oil)": {
+new\client\src\utils\EmissionFactors.js:734:    usage: ["fugitive"],
+new\client\src\utils\EmissionFactors.js:737:  "Fugitive - Pressure Relief Valve (Gas)": {
+new\client\src\utils\EmissionFactors.js:743:    usage: ["fugitive"],
+new\client\src\utils\EmissionFactors.js:746:  "Fugitive - Pressure Relief Valve (Light Oil)": {
+new\client\src\utils\EmissionFactors.js:752:    usage: ["fugitive"],
+new\client\src\utils\EmissionFactors.js:755:  "Fugitive - Compressor Seal (Centrifugal - Wet)": {
+new\client\src\utils\EmissionFactors.js:761:    usage: ["fugitive"],
+new\client\src\utils\EmissionFactors.js:764:  "Fugitive - Compressor Seal (Centrifugal - Dry)": {
+new\client\src\utils\EmissionFactors.js:770:    usage: ["fugitive"],
+new\client\src\utils\EmissionFactors.js:773:  "Fugitive - Compressor Seal (Reciprocating)": {
+new\client\src\utils\EmissionFactors.js:779:    usage: ["fugitive"],
+new\client\src\utils\EmissionFactors.js:782:  "Fugitive - Pump Seal (Gas)": {
+new\client\src\utils\EmissionFactors.js:788:    usage: ["fugitive"],
+new\client\src\utils\EmissionFactors.js:791:  "Fugitive - Pump Seal (Light Oil)": {
+new\client\src\utils\EmissionFactors.js:797:    usage: ["fugitive"],
+new\client\src\utils\EmissionFactors.js:800:  // --- PIPELINE FUGITIVES ---
+new\client\src\utils\EmissionFactors.js:801:  "Fugitive - Pipeline Leaks (Gas)": {
+new\client\src\utils\EmissionFactors.js:807:    usage: ["fugitive_pipeline"],
+new\client\src\utils\EmissionFactors.js:808:    description: "Average fugitive emissions per km of gas pipeline",
+new\client\src\utils\EmissionFactors.js:811:  "Fugitive - Pipeline Leaks (Oil)": {
+new\client\src\utils\EmissionFactors.js:817:    usage: ["fugitive_pipeline"],
+new\client\src\utils\EmissionFactors.js:818:    description: "Average fugitive emissions per km of oil pipeline",
+new\client\src\utils\EmissionFactors.js:1583:  fugitive: "Fugitive Emissions",
+new\client\src\utils\EmissionFactors.js:1614:      "fugitive",
+new\client\src\utils\EmissionFactors.js:1636:      "fugitive",
+new\client\src\utils\EmissionFactors.js:1655:      "fugitive",
+
+
+

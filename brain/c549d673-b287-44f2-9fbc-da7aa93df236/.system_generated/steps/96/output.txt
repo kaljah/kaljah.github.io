@@ -1,0 +1,14 @@
+
+The command exited with code 0.
+Output:
+
+new\server\routes\dashboard.py:404:        func.sum(Emission.ch4_emissions).label("ch4_total"),
+new\server\routes\dashboard.py:533:        func.sum(Emission.ch4_emissions).label("ch4_total"),
+new\server\routes\dashboard.py:718:        func.sum(Emission.ch4_emissions).label("ch4_total"),
+new\server\routes\dashboard.py:1167:        Emission.facility_id, func.sum(Emission.ch4_emissions).label("total_ch4")
+new\server\routes\dashboard.py:1400:        func.sum(Emission.ch4_emissions).label("total_ch4"),
+new\server\routes\dashboard.py:1756:        func.sum(Emission.ch4_emissions).label("total_ch4"),
+new\server\routes\dashboard.py:3106:        db.func.sum(Emission.ch4_emissions)
+
+
+

@@ -1,0 +1,28 @@
+
+The command exited with code 0.
+Output:
+
+> new\server\calculations\uncertainty.py:349:def propagate_uncertainty(
+  new\server\calculations\uncertainty.py:350:    value,
+  new\server\calculations\uncertainty.py:351:    ef_uncertainty,
+  new\server\calculations\uncertainty.py:352:    activity_uncertainty=None,
+  new\server\calculations\uncertainty.py:353:    tier=Tier.T1,
+  new\server\calculations\uncertainty.py:354:    process_category="combustion",
+  new\server\calculations\uncertainty.py:355:    gas="co2",
+  new\server\calculations\uncertainty.py:356:    composition_uncertainty=None,
+  new\server\calculations\uncertainty.py:357:    uncertainties_dict=None,
+  new\server\calculations\uncertainty.py:358:):
+  new\server\calculations\uncertainty.py:359:    """
+  new\server\calculations\uncertainty.py:360:    Propagate uncertainty for a single emission source.
+  new\server\calculations\uncertainty.py:361:    E = Activity � EF,  u_E = V(u_AD� + u_EF�)
+  new\server\calculations\uncertainty.py:362:
+  new\server\calculations\uncertainty.py:363:    Compliant with:
+  new\server\calculations\uncertainty.py:364:      - IPCC 2006 GL Vol.1 �3.3 Eq. 3.1
+  new\server\calculations\uncertainty.py:365:      - ISO 14064-1:2018 �7.5.2
+  new\server\calculations\uncertainty.py:366:      - GUM �6.2 (k=2 for 95% CI)
+  new\server\calculations\uncertainty.py:367:
+  new\server\calculations\uncertainty.py:368:    Args:
+  new\server\calculations\uncertainty.py:369:        value (float): Calculated emission in tonnes.
+
+
+

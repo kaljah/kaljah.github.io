@@ -1,0 +1,1 @@
+A1: Embed the factors directly inside emission_factors_api2021.py in the existing dictionary structure, adding metadata fields directly to each factor entry.

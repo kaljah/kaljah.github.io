@@ -1,0 +1,19 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\src\utils
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         8/11/2026  12:54 PM            322 constants.js                                                         
+-a----         9/26/2026   1:50 AM          43495 EmissionFactors.js                                                   
+-a----         9/24/2026  11:24 PM           8488 emissionFactorsAPI.js                                                
+-a----         9/24/2026  11:25 PM           2795 formatters.js                                                        
+-a----         9/24/2026  11:25 PM          80352 ModernReportGenerator.js                                             
+-a----         9/20/2026   7:16 PM           5969 userDefaults.js                                                      
+
+
+

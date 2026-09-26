@@ -1,0 +1,38 @@
+
+The command exited with code 0.
+Output:
+
+new\server\calculations\dispatcher.py:12:from .fugitive import (
+new\server\calculations\dispatcher.py:13:    ComponentFugitiveCalculator,
+new\server\calculations\dispatcher.py:14:    EquipmentFugitiveCalculator,
+new\server\calculations\dispatcher.py:15:    CompressorSealCalculator,
+new\server\calculations\dispatcher.py:60:            "fugitive_component": ComponentFugitiveCalculator(),
+new\server\calculations\dispatcher.py:61:            "component_fugitive": ComponentFugitiveCalculator(),
+new\server\calculations\dispatcher.py:62:            "equipment_fugitive": EquipmentFugitiveCalculator(),
+new\server\calculations\dispatcher.py:63:            "wellhead_fugitive": EquipmentFugitiveCalculator(),
+new\server\calculations\dispatcher.py:64:            "separator_fugitive": EquipmentFugitiveCalculator(),
+new\server\calculations\dispatcher.py:65:            "gathering_boosting": EquipmentFugitiveCalculator(),
+new\server\calculations\dispatcher.py:66:            "gas_processing": EquipmentFugitiveCalculator(),
+new\server\calculations\dispatcher.py:67:            "transmission_storage": EquipmentFugitiveCalculator(),
+new\server\calculations\dispatcher.py:68:            "refinery_fugitive": EquipmentFugitiveCalculator(),
+new\server\calculations\dispatcher.py:69:            "distribution_fugitive": EquipmentFugitiveCalculator(),
+new\server\calculations\dispatcher.py:70:            "lng_operations": EquipmentFugitiveCalculator(),
+new\server\calculations\dispatcher.py:71:            "compressor_fugitive": CompressorSealCalculator(),
+new\server\calculations\dispatcher.py:72:            "compressor_seal": CompressorSealCalculator(),
+new\server\calculations\dispatcher.py:73:            "fugitive": EquipmentFugitiveCalculator(),
+new\server\calculations\dispatcher.py:1225:            elif process_type == "fugitive":
+new\server\calculations\dispatcher.py:1226:                fugitive_method = flat_inputs.get("fugitive_method", 
+"average")
+new\server\calculations\dispatcher.py:1227:                if fugitive_method == "screening":
+new\server\calculations\dispatcher.py:1230:                        ["fugitive_ppm", "ppm", "screening_ppm"],
+new\server\calculations\dispatcher.py:1273:                                "fugitive",
+new\server\calculations\dispatcher.py:1283:                            process_category="fugitive",
+new\server\calculations\dispatcher.py:1297:                        "method": "api2021_fugitive_screening",
+new\server\calculations\dispatcher.py:1308:            elif process_type in ["compressor_seal", "compressor_fugitive"]:
+new\server\calculations\dispatcher.py:1311:                    ["compressor_count", "count", "amount", "quantity"],
+new\server\calculations\dispatcher.py:1312:                    "compressor count",
+new\server\calculations\dispatcher.py:1317:                    or flat_inputs.get("compressor_type")
+new\server\calculations\dispatcher.py:1328:                    compressor_count=count,
+
+
+

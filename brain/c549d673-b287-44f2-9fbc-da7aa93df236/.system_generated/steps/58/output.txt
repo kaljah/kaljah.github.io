@@ -1,0 +1,45 @@
+
+The command exited with code 0.
+Output:
+
+new\server\emission_factors_api2021.py:1485:    # ========== UPSTREAM: OIL WELLHEADS (Table 7-9) ==========
+new\server\emission_factors_api2021.py:1498:        "source": "API Compendium 2021 Section 7.2.2, Table 7-9",
+new\server\emission_factors_api2021.py:1512:        "source": "API Compendium 2021 Section 7.2.2, Table 7-9",
+new\server\emission_factors_api2021.py:1526:        "source": "API Compendium 2021 Section 7.2.2, Table 7-10",
+new\server\emission_factors_api2021.py:1541:        "source": "API Compendium 2021 Section 7.2.2, Table 7-9",
+new\server\emission_factors_api2021.py:1555:        "source": "API Compendium 2021 Section 7.2.2, Table 7-9",
+new\server\emission_factors_api2021.py:1568:        "source": "API Compendium 2021 Section 7.2.2, Table 7-10",
+new\server\emission_factors_api2021.py:1583:        "source": "API Compendium 2021 Section 7.2.2, Table 7-9",
+new\server\emission_factors_api2021.py:1597:        "source": "API Compendium 2021 Section 7.2.2, Table 7-9",
+new\server\emission_factors_api2021.py:1611:        "source": "API Compendium 2021 Section 7.2.2, Table 7-10",
+new\server\emission_factors_api2021.py:1625:        "source": "API Compendium 2021 Section 7.2.2, Table 7-10",
+new\server\emission_factors_api2021.py:1627:    # ========== MIDSTREAM: GATHERING & BOOSTING (Table 7-29) ==========
+new\server\emission_factors_api2021.py:1640:        "source": "API Compendium 2021 Section 7.2.3, Table 7-29",
+new\server\emission_factors_api2021.py:1654:        "source": "API Compendium 2021 Section 7.2.3, Table 7-29",
+new\server\emission_factors_api2021.py:1668:        "source": "API Compendium 2021 Section 7.2.3, Table 7-29",
+new\server\emission_factors_api2021.py:1682:        "source": "API Compendium 2021 Section 7.2.3, Table 7-29",
+new\server\emission_factors_api2021.py:1696:        "source": "API Compendium 2021 Section 7.2.3, Table 7-29",
+new\server\emission_factors_api2021.py:1698:    # ========== MIDSTREAM: COMPONENT-LEVEL FUGITIVE (Table 7-30) 
+==========
+new\server\emission_factors_api2021.py:1711:        "source": "API Compendium 2021 Section 7.2.3, Table 7-30",
+new\server\emission_factors_api2021.py:1725:        "source": "API Compendium 2021 Section 7.2.3, Table 7-30",
+new\server\emission_factors_api2021.py:1739:        "source": "API Compendium 2021 Section 7.2.3, Table 7-30",
+new\server\emission_factors_api2021.py:1753:        "source": "API Compendium 2021 Section 7.2.3, Table 7-30",
+new\server\emission_factors_api2021.py:1767:        "source": "API Compendium 2021 Section 7.2.3, Table 7-30",
+new\server\emission_factors_api2021.py:1781:        "source": "API Compendium 2021 Section 7.2.3, Table 7-30",
+new\server\emission_factors_api2021.py:1783:    # ========== MIDSTREAM: GAS PROCESSING (Table 7-35) ==========
+new\server\emission_factors_api2021.py:1796:        "source": "API Compendium 2021 Section 7.3, Table 7-35",
+new\server\emission_factors_api2021.py:1810:        "source": "API Compendium 2021 Section 7.3, Table 7-35",
+new\server\emission_factors_api2021.py:1812:    # ========== DOWNSTREAM: LNG OPERATIONS (Table 7-76) ==========
+new\server\emission_factors_api2021.py:1825:        "source": "API Compendium 2021 Section 7.3.6, Table 7-76",
+new\server\emission_factors_api2021.py:1839:        "source": "API Compendium 2021 Section 7.3.6, Table 7-76",
+new\server\emission_factors_api2021.py:1853:        "source": "API Compendium 2021 Section 7.3.6, Table 7-76",
+new\server\emission_factors_api2021.py:1855:    # ========== DOWNSTREAM: REFINERY GAS SYSTEMS (Table 7-80) ==========
+new\server\emission_factors_api2021.py:1868:        "source": "API Compendium 2021 Section 7.4.1, Table 7-80",
+new\server\emission_factors_api2021.py:1882:        "source": "API Compendium 2021 Section 7.4.1, Table 7-80",
+new\server\emission_factors_api2021.py:1884:    # ========== OFFSHORE PRODUCTION (Table 7-3) ==========
+new\server\emission_factors_api2021.py:1897:        "source": "API Compendium 2021 Section 7.2, Table 7-3",
+new\server\emission_factors_api2021.py:1911:        "source": "API Compendium 2021 Section 7.2, Table 7-3",
+
+
+

@@ -1,0 +1,8 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\components\Scope1Form.jsx:653:  const handleFormChange = (field, value) => {
+
+
+

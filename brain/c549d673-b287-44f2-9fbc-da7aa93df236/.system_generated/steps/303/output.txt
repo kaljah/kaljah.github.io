@@ -1,0 +1,22 @@
+
+The command exited with code 0.
+Output:
+
+new\server\routes\dashboard.py:504:            "venting": 0,
+new\server\routes\dashboard.py:523:                "venting": 0,
+new\server\routes\dashboard.py:564:        "venting": "venting",
+new\server\routes\dashboard.py:565:        "associated_gas_venting": "venting",
+new\server\routes\dashboard.py:566:        "vent": "venting",
+new\server\routes\dashboard.py:567:        "fugitive": "venting",
+new\server\routes\dashboard.py:568:        "fugitives": "venting",
+new\server\routes\dashboard.py:569:        "liquids_unloading": "venting",
+new\server\routes\dashboard.py:570:        "unloading": "venting",
+new\server\routes\dashboard.py:1797:                "ch4_venting": 0,
+new\server\routes\dashboard.py:1820:            em_map[fid]["ch4_venting"] += ch4
+new\server\routes\dashboard.py:1876:                "ch4_venting": 0,
+new\server\routes\dashboard.py:1934:                "ch4_venting": 0,
+new\server\routes\dashboard.py:2002:                "ch4_venting": 0,
+new\server\routes\dashboard.py:2234:                "ch4_venting": ed["ch4_venting"],
+
+
+

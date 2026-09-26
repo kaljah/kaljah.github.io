@@ -1,0 +1,38 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -64,12 +64,14 @@
+             "pneumatic_device": PneumaticDeviceCalculator(),
+             "pneumatics": PneumaticDeviceCalculator(),
+             "pneumatic": PneumaticDeviceCalculator(),
+-            "fugitive_component": ComponentFugitiveCalculator(),
+-            "component_fugitive": ComponentFugitiveCalculator(),
+-            "equipment_fugitive": EquipmentFugitiveCalculator(),
+-            "wellhead_fugitive": EquipmentFugitiveCalculator(),
+-            "separator_fugitive": EquipmentFugitiveCalculator(),
+-            "gathering_boosting": EquipmentFugitiveCalculator(),
++            "fugitive_facility": OnshoreFacilityFugitiveCalculator(),
++            "facility_fugitive": OnshoreFacilityFugitiveCalculator(),
++            "fugitive_component": OnshoreComponentFugitiveCalculator(),
++            "component_fugitive": OnshoreComponentFugitiveCalculator(),
++            "equipment_fugitive": OnshoreEquipmentFugitiveCalculator(),
++            "wellhead_fugitive": OnshoreEquipmentFugitiveCalculator(),
++            "separator_fugitive": OnshoreEquipmentFugitiveCalculator(),
++            "gathering_boosting": OnshoreEquipmentFugitiveCalculator(),
+             "gas_processing": EquipmentFugitiveCalculator(),
+             "transmission_storage": EquipmentFugitiveCalculator(),
+             "refinery_fugitive": EquipmentFugitiveCalculator(),
+@@ -76,7 +76,10 @@
+             "lng_operations": EquipmentFugitiveCalculator(),
+             "compressor_fugitive": CompressorSealCalculator(),
+             "compressor_seal": CompressorSealCalculator(),
+-            "fugitive": EquipmentFugitiveCalculator(),
++            "fugitive": OnshoreEquipmentFugitiveCalculator(),
++            "fugitive_screening": OnshoreScreeningMeasurementCalculator(),
++            "fugitive_ogi": OnshoreScreeningMeasurementCalculator(),
++            "fugitive_measurement": OnshoreScreeningMeasurementCalculator(),
+             "agr": AGRCalculator(),
+             "acid_gas_removal": AGRCalculator(),
+             "dehydrator": DehydratorCalculator(),
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

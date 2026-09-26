@@ -1,0 +1,22 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\components\Scope1Form.jsx:28:import FugitivesForm from "./scope1/FugitivesForm";
+new\client\src\components\Scope1Form.jsx:220:          // Specific logic for Fugitives (Pipeline vs Standard)
+new\client\src\components\Scope1Form.jsx:221:          if (processType === "fugitive") {
+new\client\src\components\Scope1Form.jsx:222:            const isPipeline = formData.fugitive_method === "pipeline";
+new\client\src\components\Scope1Form.jsx:224:              factor.usage && factor.usage.includes("fugitive_pipeline");
+new\client\src\components\Scope1Form.jsx:225:            const hasFugitiveTag =
+new\client\src\components\Scope1Form.jsx:226:              factor.usage && factor.usage.includes("fugitive");
+new\client\src\components\Scope1Form.jsx:229:            return hasFugitiveTag;
+new\client\src\components\Scope1Form.jsx:272:    formData.fugitive_method,
+new\client\src\components\Scope1Form.jsx:1655:      case "fugitive":
+new\client\src\components\Scope1Form.jsx:1656:        return <FugitivesForm {...props} />;
+new\client\src\components\Scope1Form.jsx:1742:          "fugitive",
+new\client\src\components\Scope1Form.jsx:1989:                        if (processType === "fugitive" && type === 
+"specific")
+new\client\src\components\Scope1Form.jsx:2326:                    "fugitive",
+
+
+

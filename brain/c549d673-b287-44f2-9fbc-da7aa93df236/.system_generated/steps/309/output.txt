@@ -1,0 +1,37 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\dashboard.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -502,6 +502,7 @@
+             "combustion": 0,
+             "flaring": 0,
+             "venting": 0,
++            "fugitive": 0,
+             "other": 0,
+         }
+     for row in scope2_data:
+@@ -520,6 +520,7 @@
+                 "combustion": 0,
+                 "flaring": 0,
+                 "venting": 0,
++                "fugitive": 0,
+                 "other": 0,
+             }
+         yearly_data[key]["scope2_total"] = float(row.scope2_total or 0)
+@@ -562,10 +562,13 @@
+         "venting": "venting",
+         "associated_gas_venting": "venting",
+         "vent": "venting",
+-        "fugitive": "venting",
+-        "fugitives": "venting",
+         "liquids_unloading": "venting",
+         "unloading": "venting",
++        "fugitive": "fugitive",
++        "fugitives": "fugitive",
++        "equipment leak": "fugitive",
++        "equipment_leak": "fugitive",
++        "leak": "fugitive",
+     }
+     for row in activity_data:
+         yr = int(row.year)
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

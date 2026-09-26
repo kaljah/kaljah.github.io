@@ -1,0 +1,52 @@
+
+The command exited with code 0.
+Output:
+Labels after selecting Fugitive: [
+  'Activity',
+  'Division',
+  'Region',
+  'Field',
+  'Year',
+  'Month',
+  'Group Name',
+  'Emission Source(from inventory)',
+  'Equipment ID/Name',
+  'Process Type',
+  'Calculation Methodology',
+  'Method',
+  'Count (Number of Sources)',
+  'Emission Factor / Direct Measurement Uncertainty Override (±%)'
+]
+Dropdown texts after selecting Fugitive: [
+  'Select Region...',
+  'Select Emission Source...',
+  'Fugitive Emissions',
+  'Select Standard Emission Factor...'
+]
+Total dropdown count: 4
+Dropdown #0: Select Region...
+Dropdown #1: Select Emission Source...
+Dropdown #2: Fugitive Emissions
+Dropdown #3: Select Standard Emission Factor...
+Factor Dropdown Options for Fugitive (total 16): [
+  'Fugitive - Valve (Gas/Vapor)±50.0%',
+  'Fugitive - Connector (Gas/Vapor)±50.0%',
+  'Fugitive - Flange (Gas/Vapor)±50.0%',
+  'Fugitive - Valve (Light Oil)±50.0%',
+  'Fugitive - Valve (Heavy Oil)±50.0%',
+  'Fugitive - Connector (Light Oil)±50.0%',
+  'Fugitive - Connector (Heavy Oil)±50.0%',
+  'Fugitive - Open-Ended Line (Gas)±50.0%',
+  'Fugitive - Open-Ended Line (Light Oil)±50.0%',
+  'Fugitive - Pressure Relief Valve (Gas)±50.0%',
+  'Fugitive - Pressure Relief Valve (Light Oil)±50.0%',
+  'Fugitive - Compressor Seal (Centrifugal - Wet)±50.0%',
+  'Fugitive - Compressor Seal (Centrifugal - Dry)±50.0%',
+  'Fugitive - Compressor Seal (Reciprocating)±50.0%',
+  'Fugitive - Pump Seal (Gas)±50.0%',
+  'Fugitive - Pump Seal (Light Oil)±50.0%'
+]
+FugitivesForm text content: [
+  'Fugitive EmissionsMethodAverage (Count)Screening (PPM)PipelineCount (Number of Sources)'
+]
+

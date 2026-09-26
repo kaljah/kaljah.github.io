@@ -1,0 +1,62 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\models.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -258,6 +258,56 @@
+     created_at = db.Column(db.DateTime, default=utc_now)
+ 
+ 
++class ComponentInventory(db.Model):
++    __tablename__ = "component_inventories"
++    id = db.Column(db.Integer, primary_key=True)
++    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), index=True, nullable=False)
++    emission_source_id = db.Column(db.Integer, db.ForeignKey("emission_sources.id"), nullable=True)
++    facility = db.relationship("Facility", foreign_keys=[facility_id])
++    emission_source = db.relationship("EmissionSource", foreign_keys=[emission_source_id])
++
++    equipment_type = db.Column(db.String(100), nullable=False)
++    component_type = db.Column(db.String(100), nullable=False)
++    service_type = db.Column(db.String(50), nullable=False)  # Gas, Light Oil, Heavy Oil, Water/Oil
++    quantity = db.Column(db.Integer, default=1, nullable=False)
++    operating_hours = db.Column(db.Float, default=8760.0)
++    methodology = db.Column(db.String(100), default="Component Average")
++    factor_id = db.Column(db.String(100), nullable=True)
++    factor_value = db.Column(db.Float, nullable=True)
++    factor_unit = db.Column(db.String(50), nullable=True)
++    api_reference = db.Column(db.String(120), nullable=True)
++    status = db.Column(db.String(20), default="Active")
++    description = db.Column(db.Text, nullable=True)
++
++    created_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
++    created_at = db.Column(db.DateTime, default=utc_now)
++    updated_at = db.Column(db.DateTime, onupdate=utc_now)
++
++
++class FugitiveSurvey(db.Model):
++    __tablename__ = "fugitive_surveys"
++    id = db.Column(db.Integer, primary_key=True)
++    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), index=True, nullable=False)
++    component_inventory_id = db.Column(db.Integer, db.ForeignKey("component_inventories.id"), nullable=True)
++    facility = db.relationship("Facility", foreign_keys=[facility_id])
++    component_inventory = db.relationship("ComponentInventory", foreign_keys=[component_inventory_id])
++
++    survey_method = db.Column(db.String(50), nullable=False)  # Method 21, OGI, Measurement
++    survey_date = db.Column(db.String(20), nullable=False)
++    detection_threshold_ppm = db.Column(db.Float, nullable=True)
++    screening_value_ppm = db.Column(db.Float, nullable=True)
++    leak_status = db.Column(db.String(20), default="Non-leaking")  # Leaking, Non-leaking
++    measured_emission_rate = db.Column(db.Float, nullable=True)
++    measurement_unit = db.Column(db.String(50), nullable=True)  # kg/hr, scf/hr, m3/hr
++    repair_date = db.Column(db.String(20), nullable=True)
++    leaking_hours = db.Column(db.Float, default=8760.0)
++    surveyor_name = db.Column(db.String(100), nullable=True)
++    notes = db.Column(db.Text, nullable=True)
++
++    created_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
++    created_at = db.Column(db.DateTime, default=utc_now)
++
++
+ class CustomFactor(db.Model):
+     __tablename__ = "custom_factors"
+     id = db.Column(db.Integer, primary_key=True)
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

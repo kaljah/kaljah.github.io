@@ -1,0 +1,1 @@
+A1: (Recommended) Explicit Source Separation: Segregate Chapter 7 into a distinct top-level category 'Equipment Leaks' across all dashboards, charts, Methane Explorer, and PDF reports (fixing the bug in dashboard.py that aliases 'fugitive' to 'venting'), strictly keeping it isolated from Chapter 6 Venting, Chapter 5 Flaring, and Chapter 4 Combustion.

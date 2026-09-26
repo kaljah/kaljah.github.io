@@ -1,0 +1,153 @@
+
+The command exited with code 1.
+Output:
+<truncated 1 lines>
+          Leaker TOC: 10 * 0.0451 * 8760 = 3,950.76 kg
+          Non-Leaker TOC: 90 * 0.00048 * 8760 = 378.432 kg
+          Total TOC: 4,329.192 kg
+          CH4: 4,329.192 * 0.788 = 3,411.403 kg
+        """
+        calc = OnshoreScreeningMeasurementCalculator()
+>       res_leakers = calc.calculate_method21_ranges(
+            component_type="valve",
+            service_type="gas",
+            screening_value_ppm=15000,
+            count=10.0,
+            operating_hours=8760.0,
+        )
+E       TypeError: OnshoreScreeningMeasurementCalculator.calculate_method21_ranges() got an unexpected keyword argument 'screening_value_ppm'
+
+tests\test_api2021_chapter7_onshore.py:276: TypeError
+________________ test_tier3_direct_measurement_flow_conversion ________________
+
+    def test_tier3_direct_measurement_flow_conversion():
+        """
+        API 2021 Section 7.3.4: Direct Measurement
+        Metered rate: 100 scf/hr of gas stream (80% CH4, 2% CO2).
+        Duration: 1,000 hours.
+        scf/hr to kg/hr conversion factor = 0.0192.
+        Stream mass rate = 100 * 0.0192 = 1.92 kg/hr.
+        CH4 mass = 1.92 * 0.80 * 1000 = 1,536 kg CH4.
+        CO2 mass = 1.92 * 0.02 * 1000 = 38.4 kg CO2.
+        """
+        calc = OnshoreScreeningMeasurementCalculator()
+>       res = calc.calculate_direct_measurement(
+            measured_rate=100.0,
+            rate_unit="scf/hr",
+            operating_hours=1000.0,
+            ch4_mole_pct=80.0,
+            co2_mole_pct=2.0,
+        )
+E       TypeError: OnshoreScreeningMeasurementCalculator.calculate_direct_measurement() got an unexpected keyword argument 'rate_unit'
+
+tests\test_api2021_chapter7_onshore.py:305: TypeError
+______________________ test_convert_fugitive_flow_units _______________________
+
+    def test_convert_fugitive_flow_units():
+        """Validate all supported flow rate units convert accurately to kg/hr."""
+>       assert pytest.approx(convert_fugitive_flow_to_kg_hr(1.0, "kg/hr"), rel=1e-4) == 1.0
+E       AssertionError: assert approx({'ch4_...13 � 2.7e-06}) == 1.0
+E         
+E         (pytest_assertion plugin: representation of details failed: C:\Users\samsung\anaconda3\Lib\site-packages\_pytest\python_api.py:244: TypeError: object of type 'float' has no len().
+E          Probably an object has a faulty __repr__.)
+
+tests\test_api2021_chapter7_onshore.py:322: AssertionError
+_________________________ test_zero_duration_or_count _________________________
+
+    def test_zero_duration_or_count():
+        """Verify 0 operating duration or 0 count yields exactly 0 emissions."""
+        calc_fac = OnshoreFacilityFugitiveCalculator()
+>       res1 = calc_fac.calculate(facility_type="gas_production", count=0, operating_days=365)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: OnshoreFacilityFugitiveCalculator.calculate() got an unexpected keyword argument 'count'
+
+tests\test_api2021_chapter7_onshore.py:336: TypeError
+__________________ test_strict_onshore_rejection_of_offshore __________________
+
+    def test_strict_onshore_rejection_of_offshore():
+        """Verify that offshore / marine / refining facility requests are rejected or not handled by onshore calculator."""
+        calc_fac = OnshoreFacilityFugitiveCalculator()
+        with pytest.raises(ValueError):
+>           calc_fac.calculate(facility_type="offshore_platform", count=1, operating_days=365)
+E           TypeError: OnshoreFacilityFugitiveCalculator.calculate() got an unexpected keyword argument 'count'
+
+tests\test_api2021_chapter7_onshore.py:350: TypeError
+____________________ test_engine_dispatcher_tier1_routing _____________________
+
+    def test_engine_dispatcher_tier1_routing():
+        """Verify CalculationEngine routes Tier 1 fugitive to OnshoreFacilityFugitiveCalculator."""
+        engine = CalculationDispatcher()
+        inputs = {
+            "fugitive_tier": "tier1",
+            "facility_type": "gas_production",
+            "count": 1.0,
+            "operating_days": 365.0,
+        }
+>       res = engine.calculate("fugitive", inputs, {})
+              ^^^^^^^^^^^^^^^^
+E       AttributeError: 'CalculationDispatcher' object has no attribute 'calculate'. Did you mean: 'calculators'?
+
+tests\test_api2021_chapter7_onshore.py:369: AttributeError
+_______________ test_engine_dispatcher_tier2_component_routing ________________
+
+    def test_engine_dispatcher_tier2_component_routing():
+        """Verify CalculationEngine routes Tier 2 component count and applies normalized hours."""
+        engine = CalculationDispatcher()
+        inputs = {
+            "fugitive_tier": "tier2",
+            "fugitive_method": "component",
+            "component_type": "valve",
+            "service_type": "gas",
+            "count": 100.0,
+            "operating_hours": 8760.0,
+        }
+>       res = engine.calculate("fugitive", inputs, {})
+              ^^^^^^^^^^^^^^^^
+E       AttributeError: 'CalculationDispatcher' object has no attribute 'calculate'. Did you mean: 'calculators'?
+
+tests\test_api2021_chapter7_onshore.py:389: AttributeError
+__________________ test_engine_dispatcher_tier3_ogi_routing ___________________
+
+    def test_engine_dispatcher_tier3_ogi_routing():
+        """Verify CalculationEngine routes Tier 3 OGI leaker count properly."""
+        engine = CalculationDispatcher()
+        inputs = {
+            "fugitive_tier": "tier3",
+            "fugitive_method": "ogi",
+            "component_type": "valve",
+            "service_type": "gas",
+            "leakers_count": 4.0,
+            "operating_hours": 8760.0,
+        }
+>       res = engine.calculate("fugitive", inputs, {})
+              ^^^^^^^^^^^^^^^^
+E       AttributeError: 'CalculationDispatcher' object has no attribute 'calculate'. Did you mean: 'calculators'?
+
+tests\test_api2021_chapter7_onshore.py:406: AttributeError
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_api2021_chapter7_onshore.py::test_tier1_gas_production_facility_annual
+FAILED tests/test_api2021_chapter7_onshore.py::test_tier1_oil_production_facility_partial_year
+FAILED tests/test_api2021_chapter7_onshore.py::test_tier1_gathering_station_hourly_basis
+FAILED tests/test_api2021_chapter7_onshore.py::test_tier2a_gas_production_wellheads
+FAILED tests/test_api2021_chapter7_onshore.py::test_tier2a_gathering_compressors
+FAILED tests/test_api2021_chapter7_onshore.py::test_tier2a_crude_oil_production_wellheads
+FAILED tests/test_api2021_chapter7_onshore.py::test_tier2b_gas_service_valves_speciation
+FAILED tests/test_api2021_chapter7_onshore.py::test_tier2b_light_oil_connectors
+FAILED tests/test_api2021_chapter7_onshore.py::test_tier2b_heavy_oil_valves
+FAILED tests/test_api2021_chapter7_onshore.py::test_tier3_ogi_leakers_vs_non_leakers
+FAILED tests/test_api2021_chapter7_onshore.py::test_tier3_method21_screening_ranges
+FAILED tests/test_api2021_chapter7_onshore.py::test_tier3_direct_measurement_flow_conversion
+FAILED tests/test_api2021_chapter7_onshore.py::test_convert_fugitive_flow_units
+FAILED tests/test_api2021_chapter7_onshore.py::test_zero_duration_or_count - ...
+FAILED tests/test_api2021_chapter7_onshore.py::test_strict_onshore_rejection_of_offshore
+FAILED tests/test_api2021_chapter7_onshore.py::test_engine_dispatcher_tier1_routing
+FAILED tests/test_api2021_chapter7_onshore.py::test_engine_dispatcher_tier2_component_routing
+FAILED tests/test_api2021_chapter7_onshore.py::test_engine_dispatcher_tier3_ogi_routing
+======================== 18 failed, 1 warning in 1.55s ========================
+

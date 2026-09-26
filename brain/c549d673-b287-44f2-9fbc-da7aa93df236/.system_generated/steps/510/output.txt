@@ -1,0 +1,19 @@
+Task: c549d673-b287-44f2-9fbc-da7aa93df236/task-508
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\c549d673-b287-44f2-9fbc-da7aa93df236\.system_generated\tasks\task-508.log
+Log output:
+<truncated 384 lines>
+nshore.py::test_tier2a_crude_oil_production_wellheads
+FAILED tests/test_api2021_chapter7_onshore.py::test_tier2b_gas_service_valves_speciation
+FAILED tests/test_api2021_chapter7_onshore.py::test_tier2b_light_oil_connectors
+FAILED tests/test_api2021_chapter7_onshore.py::test_tier2b_heavy_oil_valves
+FAILED tests/test_api2021_chapter7_onshore.py::test_tier3_ogi_leakers_vs_non_leakers
+FAILED tests/test_api2021_chapter7_onshore.py::test_tier3_method21_screening_ranges
+FAILED tests/test_api2021_chapter7_onshore.py::test_tier3_direct_measurement_flow_conversion
+FAILED tests/test_api2021_chapter7_onshore.py::test_zero_duration_or_count - ...
+FAILED tests/test_api2021_chapter7_onshore.py::test_engine_dispatcher_tier1_routing
+FAILED tests/test_api2021_chapter7_onshore.py::test_engine_dispatcher_tier2_component_routing
+FAILED tests/test_api2021_chapter7_onshore.py::test_engine_dispatcher_tier3_ogi_routing
+=================== 16 failed, 2 passed, 1 warning in 1.58s ===================
+
+Last progress: 3s ago

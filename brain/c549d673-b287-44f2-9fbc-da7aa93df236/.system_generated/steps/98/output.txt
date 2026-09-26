@@ -1,0 +1,22 @@
+
+The command exited with code 0.
+Output:
+
+new\server\routes\dashboard.py:567:        "fugitive": "venting",
+new\server\routes\dashboard.py:568:        "fugitives": "venting",
+new\server\routes\dashboard.py:1798:                "ch4_fugitive": 0,
+new\server\routes\dashboard.py:1821:        elif "fugitive" in ptype or "leak" in ptype:
+new\server\routes\dashboard.py:1822:            em_map[fid]["ch4_fugitive"] += ch4
+new\server\routes\dashboard.py:1877:                "ch4_fugitive": 0,
+new\server\routes\dashboard.py:1935:                "ch4_fugitive": 0,
+new\server\routes\dashboard.py:2003:                "ch4_fugitive": 0,
+new\server\routes\dashboard.py:2235:                "ch4_fugitive": ed["ch4_fugitive"],
+new\server\routes\dashboard.py:2467:        is_fugitive = any(
+new\server\routes\dashboard.py:2469:            for x in ["fugitive", "vent", "pneumatic", "blowdown", "completion"]
+new\server\routes\dashboard.py:2483:            return 0.05 if not is_fugitive else 0.15  # Tier 3: low uncertainty
+new\server\routes\dashboard.py:2488:            return 0.10 if not is_fugitive else 0.25  # Tier 2: moderate 
+uncertainty
+new\server\routes\dashboard.py:2493:            return 0.40 if is_fugitive else 0.20  # Tier 1: high uncertainty
+
+
+

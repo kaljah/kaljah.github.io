@@ -1,0 +1,20 @@
+
+The command exited with code 0.
+Output:
+
+  new\client\src\components\Scope1Form.jsx:63:
+> new\client\src\components\Scope1Form.jsx:64:  const [processType, setProcessType] = useState("combustion");
+> new\client\src\components\Scope1Form.jsx:65:  const [streamType, setStreamType] = useState("Upstream"); // 
+'Upstream', 'Midstream', 'Downstream'
+  new\client\src\components\Scope1Form.jsx:66:  const [groupName, setGroupName] = useState("");
+  new\client\src\components\Scope1Form.jsx:67:  const [equipmentId, setEquipmentId] = useState("");
+  new\client\src\components\Scope1Form.jsx:68:  const [deleteConfirmId, setDeleteConfirmId] = useState(null);
+  new\client\src\components\Scope1Form.jsx:120:  const [inspectRecord, setInspectRecord] = useState(null);
+> new\client\src\components\Scope1Form.jsx:121:  const [processTypesAvailable, setProcessTypesAvailable] = 
+useState([]); // API 2021: Dynamic process types
+  new\client\src\components\Scope1Form.jsx:122:  const [importModal, setImportModal] = useState({
+  new\client\src\components\Scope1Form.jsx:123:    isOpen: false,
+  new\client\src\components\Scope1Form.jsx:124:    type: "activity",
+
+
+

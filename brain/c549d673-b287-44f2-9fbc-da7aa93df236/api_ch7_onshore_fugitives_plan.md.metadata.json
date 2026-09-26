@@ -1,0 +1,6 @@
+{
+  "summary": "Comprehensive Execution Plan for API GHG Compendium 2021 Chapter 7 Onshore Equipment Leaks / Fugitive Emissions in Neocarbon. Covers calculation engine (calculations/fugitive_onshore.py), reference data in emission_factors_api2021.py, data models in models.py, dispatcher routing, UI workflow in FugitivesForm.jsx and Scope1Form.jsx, dashboard category separation, golden tests, and browser E2E verification.",
+  "updatedAt": "2026-09-26T02:05:09.410732100Z",
+  "requestFeedback": true,
+  "userFacing": true
+}

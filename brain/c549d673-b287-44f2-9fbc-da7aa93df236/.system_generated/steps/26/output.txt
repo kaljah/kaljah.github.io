@@ -1,0 +1,26 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2\audit
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----         9/26/2026   1:23 AM                db                                                                   
+d-----         9/26/2026   1:13 AM                notes                                                                
+d-----         9/26/2026   1:22 AM                repro                                                                
+d-----         9/25/2026   3:00 PM                tools                                                                
+d-----         9/25/2026   3:05 PM                work                                                                 
+-a----         9/25/2026   3:00 PM           4954 AGENT_PROTOCOL.md                                                    
+-a----         9/26/2026  12:59 AM          45891 baseline2_status.txt                                                 
+-a----         9/26/2026  12:59 AM             29 BASELINE2_TIME.txt                                                   
+-a----         9/26/2026  12:59 AM       81637222 baseline2_uncommitted.diff                                           
+-a----         9/25/2026   2:58 PM             41 BASELINE_COMMIT.txt                                                  
+-a----         9/25/2026   2:58 PM           3239 baseline_status.txt                                                  
+-a----         9/25/2026   2:58 PM        6653982 baseline_uncommitted.diff                                            
+-a----         9/26/2026   1:22 AM          11375 SUSPECTED_AND_QUESTIONS.md                                           
+
+
+

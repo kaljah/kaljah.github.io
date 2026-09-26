@@ -1,0 +1,59 @@
+
+The command exited with code 0.
+Output:
+
+> new\server\models.py:117:class Emission(db.Model):
+  new\server\models.py:118:    __tablename__ = "emissions"
+  new\server\models.py:119:    id = db.Column(db.Integer, primary_key=True)
+  new\server\models.py:120:    record_id = db.Column(db.String(50), unique=True, index=True)
+  new\server\models.py:121:    year = db.Column(db.Integer, index=True)
+  new\server\models.py:122:    month = db.Column(db.Integer)
+  new\server\models.py:123:    company_name = db.Column(db.String(120))
+  new\server\models.py:124:    group_name = db.Column(db.String(120), index=True)
+  new\server\models.py:125:    equipment_id = db.Column(db.String(50))
+  new\server\models.py:126:    process_type = db.Column(db.String(50), index=True)
+  new\server\models.py:127:    fuel_type = db.Column(db.String(50))
+  new\server\models.py:128:    quantity = db.Column(db.Float)
+  new\server\models.py:129:    unit = db.Column(db.String(20))
+  new\server\models.py:130:    factor_source = db.Column(db.String(50))
+  new\server\models.py:131:
+  new\server\models.py:132:    # EF Used
+  new\server\models.py:133:    ef_used_co2 = db.Column(db.Float)
+  new\server\models.py:134:    ef_used_ch4 = db.Column(db.Float)
+  new\server\models.py:135:    ef_used_n2o = db.Column(db.Float)
+  new\server\models.py:136:    ef_used_co = db.Column(db.Float, default=0)
+  new\server\models.py:137:
+  new\server\models.py:138:    # Calculated Emissions
+  new\server\models.py:139:    co2_emissions = db.Column(db.Float)
+  new\server\models.py:140:    ch4_emissions = db.Column(db.Float)
+  new\server\models.py:141:    n2o_emissions = db.Column(db.Float)
+  new\server\models.py:142:    co_emissions = db.Column(db.Float, default=0)
+> new\server\models.py:236:class EmissionSource(db.Model):
+  new\server\models.py:237:    __tablename__ = "emission_sources"
+  new\server\models.py:238:    id = db.Column(db.Integer, primary_key=True)
+  new\server\models.py:239:    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"))
+  new\server\models.py:240:    name = db.Column(db.String(120))
+  new\server\models.py:241:    type = db.Column(db.String(50))
+  new\server\models.py:242:    equipment_id = db.Column(db.String(50))
+  new\server\models.py:243:    fuel_type = db.Column(db.String(50))
+  new\server\models.py:244:    design_capacity = db.Column(db.String(50))
+  new\server\models.py:245:    installation_date = db.Column(db.String(20))
+  new\server\models.py:246:    status = db.Column(db.String(20), default="Active")
+  new\server\models.py:247:    description = db.Column(db.Text)
+  new\server\models.py:248:
+  new\server\models.py:249:    activity = db.Column(db.String(100))
+  new\server\models.py:250:    division = db.Column(db.String(100))
+  new\server\models.py:251:    region = db.Column(db.String(100))
+  new\server\models.py:252:    field = db.Column(db.String(100))  # OF / GF / GNL / GPL / Raffinerie / P�trochimie
+  new\server\models.py:253:    code = db.Column(db.String(50), unique=True)
+  new\server\models.py:254:    external_id = db.Column(db.String(50))
+  new\server\models.py:255:
+  new\server\models.py:256:    created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
+  new\server\models.py:257:    updated_at = db.Column(db.DateTime, onupdate=utc_now)
+  new\server\models.py:258:    created_at = db.Column(db.DateTime, default=utc_now)
+  new\server\models.py:259:
+  new\server\models.py:260:
+  new\server\models.py:261:class CustomFactor(db.Model):
+
+
+

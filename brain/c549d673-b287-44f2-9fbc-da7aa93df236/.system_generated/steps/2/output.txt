@@ -1,0 +1,74 @@
+
+The command exited with code 0.
+Output:
+<truncated 39 lines>
+-a----         9/19/2026   4:04 PM            852 antigravity_state.pbtxt                                              
+-a----         9/26/2026   2:30 AM         306329 AUDIT_FINDINGS.md                                                    
+-a----         9/13/2026  12:08 AM          23169 AUDIT_MEMORY.md                                                      
+-a----         9/25/2026   2:59 PM          10853 AUDIT_SCOPE.md                                                       
+-a----         9/24/2026   8:11 PM          52084 berkine_extracted_tables.json                                        
+-a----          8/7/2026   3:21 PM          44240 build_pitch_deck.py                                                  
+-a----          8/7/2026   3:50 PM        1439638 CarbonTech_PitchDeck_StartupAlgeria.pptx                             
+-a----         8/11/2026   4:05 PM            434 cbam_diff_CarbonIntensity.patch                                      
+-a----         8/11/2026   4:05 PM            434 cbam_diff_CarbonIntensity_css.patch                                  
+-a----         8/11/2026   4:05 PM            326 cbam_diff_data.patch                                                 
+-a----         8/11/2026   4:05 PM            394 cbam_diff_ManageData.patch                                           
+-a----         8/11/2026   4:06 PM         770516 cbam_removal.patch                                                   
+-a----         8/11/2026   4:06 PM         385688 cbam_removal_utf8.patch                                              
+-a----         9/24/2026   9:04 PM         116570 chrome_err.log                                                       
+-a----         9/25/2026   7:50 PM          12252 CLAUDE.md                                                            
+-a----         8/12/2026   1:53 PM          40976 custom_factors.csv                                                   
+-a----         9/14/2026  12:25 AM            865 docker-compose.yml                                                   
+-a----         9/19/2026   4:04 PM           2221 Dockerfile                                                           
+-a----         9/24/2026   8:45 PM        1901139 El_Merk_2025_Annual_GHG_Report.pdf                                   
+-a----         8/12/2026   1:53 PM         971347 emission_sources.csv                                                 
+-a----         8/12/2026   2:05 PM         816010 emission_sources_v2.csv                                              
+-a----         9/20/2026   4:14 PM          21896 FINAL_VALIDATION_REPORT.pdf                                          
+-a----         8/11/2026   4:17 PM           6024 fix_ui.py                                                            
+-a----         8/11/2026   4:17 PM           3720 fix_ui_2.py                                                          
+-a----         8/11/2026   4:21 PM           1685 fix_ui_tab.py                                                        
+-a----         8/12/2026   1:52 PM           4212 generate_mock_data.py                                                
+-a----         8/12/2026   2:05 PM           4396 generate_mock_data_v2.py                                             
+-a----         9/20/2026   4:14 PM          38028 generate_pdf_report.py                                               
+-a----          8/7/2026   3:08 PM          13075 generate_pitch_assets.py                                             
+-a----         9/24/2026   8:20 PM        1912094 Groupement_Berkine_2025_Annual_GHG_Report.pdf                        
+-a----          1/4/2026   8:10 PM         441498 icon.png                                                             
+-a----         9/25/2026   7:52 PM         113790 index.html                                                           
+-a----         9/25/2026   7:53 PM            138 mcp_config.json                                                      
+-a----         8/12/2026   1:53 PM        1292587 mitigation_projects.csv                                              
+-a----         8/12/2026   2:05 PM        1240893 mitigation_projects_v2.csv                                           
+-a----         9/25/2026   3:30 PM          34956 napec_flyer.html                                                     
+-a----         9/25/2026   3:30 PM          35498 napec_flyer_fr.html                                                  
+-a----         9/25/2026   3:51 PM         545012 neocarbon_computer_hero.jpg                                          
+-a----         9/25/2026   3:52 PM         475876 neocarbon_computer_hero_fr.jpg                                       
+-a----         9/25/2026   4:32 PM          34607 neocarbon_flyer.html                                                 
+-a----         9/25/2026   4:33 PM        1045868 neocarbon_flyer.pdf                                                  
+-a----         9/25/2026   4:33 PM          34833 neocarbon_flyer_fr.html                                              
+-a----         9/25/2026   4:33 PM        1039076 neocarbon_flyer_fr.pdf                                               
+-a----         9/25/2026   4:31 PM         605988 neocarbon_flyer_page1_en.jpg                                         
+-a----         9/25/2026   4:31 PM         581804 neocarbon_flyer_page1_fr.jpg                                         
+-a----         8/11/2026   4:05 PM         304628 old_ManageData.jsx                                                   
+-a----         4/25/2026   4:20 PM         251944 package-lock.json                                                    
+-a----          2/2/2026  11:00 PM           1183 package.json                                                         
+-a----         8/11/2026   4:12 PM           6404 patch.py                                                             
+-a----         8/11/2026   4:13 PM           1977 patch_ci.py                                                          
+-a----         8/11/2026   4:13 PM            433 patch_ci_css.py                                                      
+-a----         8/11/2026   4:13 PM           5334 patch_manage_data.py                                                 
+-a----         8/11/2026   4:13 PM            942 patch_manage_data_ui.py                                              
+-a----         8/11/2026   4:12 PM            457 patch_ui.py                                                          
+-a----         9/25/2026   4:33 PM        1040475 preview_en_page_1.png                                                
+-a----         9/25/2026   4:33 PM          98689 preview_en_page_2.png                                                
+-a----         9/25/2026   4:33 PM         978672 preview_fr_page_1.png                                                
+-a----         9/25/2026   4:33 PM         101145 preview_fr_page_2.png                                                
+-a----         8/12/2026   1:53 PM         781882 production_data.csv                                                  
+-a----         8/12/2026   2:05 PM         600634 production_data_v2.csv                                               
+-a----         9/20/2026   3:04 PM            145 pytest.ini                                                           
+-a----         9/13/2026  12:04 AM           6241 README.md                                                            
+-a----         8/12/2026   1:22 PM           4011 regions_upload.csv                                                   
+-a----         8/11/2026   4:19 PM           4941 script.py                                                            
+-a----         9/21/2026   1:48 PM           7920 seed_demo_data.py                                                    
+-a----         9/21/2026   8:10 PM           7247 seed_production_and_cbam.py                                          
+-a----         9/24/2026   9:07 PM              0 users_v2.db                                                          
+
+
+

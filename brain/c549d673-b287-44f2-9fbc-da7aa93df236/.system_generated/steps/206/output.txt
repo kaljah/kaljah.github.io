@@ -1,0 +1,16 @@
+
+The command exited with code 0.
+Output:
+
+  new\server\emission_factors_api2021.py:1282:# 
+=============================================================================
+  new\server\emission_factors_api2021.py:1283:
+> new\server\emission_factors_api2021.py:1284:EQUIPMENT_FACTORS = {
+  new\server\emission_factors_api2021.py:1285:    # ========== PNEUMATIC DEVICES ==========
+  new\server\emission_factors_api2021.py:1286:    "Pneumatic Controller - High Bleed (>6 scfh)": {
+  new\server\emission_factors_api2021.py:1287:        "code": "HighBleed",
+  new\server\emission_factors_api2021.py:1288:        "type": "pneumatic",
+  new\server\emission_factors_api2021.py:1289:        "ch4": 8.304,  # tonnes CH4/controller/yr
+
+
+

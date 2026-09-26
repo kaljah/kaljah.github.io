@@ -1,0 +1,49 @@
+
+The command exited with code 0.
+Output:
+
+AUDIT_FINDINGS.md:718:The other 13 are non-zero only because a hard-coded legacy fallback, such as the fugitive 
+average table, computes something unrelated to the selected factor.
+AUDIT_FINDINGS.md:1200:- `grep -rn "uncertainties_dict" calculations/` finds **no** caller that passes it. Every 
+`propagate_uncertainty(...)` call in combustion/vented/fugitive/midstream/indirect/stoichiometry/dispatcher omits it.
+AUDIT_FINDINGS.md:2319:# BUG-047 - Tier 1 fugitive and equipment factors in "per hour" units are multiplied only by 
+the source count (no operating hours): annual CH4 understated 8,760�, and Tier 1 disagrees with Tier 3 for the same 
+factor
+AUDIT_FINDINGS.md:2328:- It is reached for `factor_source` default/custom for every fugitive alias (`fugitive`, 
+`wellhead_fugitive`, `separator_fugitive`, `gathering_boosting`, `gas_processing`, `compressor_fugitive`, 
+`fugitive_component`, .).
+AUDIT_FINDINGS.md:2330:- The UI (`FugitivesForm.jsx`) asks only for "Count (Number of Sources)" and sends it as 
+`amount`. There is no hours field.
+AUDIT_FINDINGS.md:2333:1. `POST /api/emissions/` with `process_type=fugitive, factor_source=default, fuel="Component - 
+Block Valve", amount=10`.
+AUDIT_FINDINGS.md:2334:2. `POST /api/emissions/` with `process_type=wellhead_fugitive, factor_source=default, 
+fuel="Wellhead - Gas", amount=10`.
+AUDIT_FINDINGS.md:2345:For comparison, Tier 3 (`factor_source=specific`) with the same factor gives 1.340 t for the 
+wellheads, because `EquipmentFugitiveCalculator` multiplies by 8760. It also applies a separate 0.85 error.
+AUDIT_FINDINGS.md:2354:All Tier 1 equipment/component fugitive CH4 (usually the largest methane source in upstream 
+inventories) is understated by about 4 orders of magnitude. This affects methane intensity, OGMP and Scope 1 totals.
+AUDIT_FINDINGS.md:2357:`_generic_calculation`; Tier 1 fugitive UI; bulk import of fugitive rows.
+AUDIT_FINDINGS.md:2365:# BUG-048 - Tier 3 fugitive calculators misread catalog factor units: "CH4" (Unicode subscript) 
+is not recognised as methane (�0.85 applied), and ComponentFugitiveCalculator treats tonne/hr factors as kg/hr (1000� 
+too low)
+AUDIT_FINDINGS.md:2373:- `new/server/calculations/fugitive.py` `EquipmentFugitiveCalculator.calculate`: `is_methane = 
+any(x in u_low for x in ["ch4", "methane", "ch_4"])`
+AUDIT_FINDINGS.md:2374:- `new/server/calculations/fugitive.py` `ComponentFugitiveCalculator.calculate`: the same 
+check, plus `total_ch4_tonnes_year = (total_ch4_kg_hr * 8760) / 1000.0`, which always assumes kg/hr
+AUDIT_FINDINGS.md:2378:1. `POST /api/emissions/` with `process_type=wellhead_fugitive, factor_source=specific, 
+fuel="Wellhead - Gas", amount=10`.
+AUDIT_FINDINGS.md:2379:2. `POST /api/emissions/` with `process_type=fugitive_component, factor_source=specific, 
+fuel="Component - Block Valve", amount=10`.
+AUDIT_FINDINGS.md:2390:`agentA.db` rows: `Equipment-Level Fugitive ch4 1.3402800000000001`; `Component-Level Fugitive 
+ch4 0.0003246455999999999`.
+AUDIT_FINDINGS.md:2397:Every Tier 3 equipment-level fugitive is 15 % low. Every Tier 3 component-level fugitive using 
+catalog factors is about 1000� low.
+AUDIT_FINDINGS.md:2400:`EquipmentFugitiveCalculator`, `ComponentFugitiveCalculator`, dispatcher branches for 
+`equipment_fugitive` / `wellhead_fugitive` / . / `fugitive_component`.
+AUDIT_FINDINGS.md:2408:# BUG-049 - Generic factor math ignores the 10� / 106 multiplier in factor denominators: 
+offshore gas fugitives 1,000,000� and refinery fuel-gas fugitives 1,000� overstated
+AUDIT_FINDINGS.md:2420:1. `POST /api/emissions/` with `process_type=wellhead_fugitive, factor_source=default, 
+fuel="Offshore - Gas Production (Facility)", amount=5, unit=mmscf`.
+
+
+

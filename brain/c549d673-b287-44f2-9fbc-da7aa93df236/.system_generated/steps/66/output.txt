@@ -1,0 +1,1 @@
+A1: (Recommended) Create a dedicated, comprehensive calculations/fugitive_onshore.py module (modeled on the rigorous architecture of vented_production.py) with dedicated classes for Facility-Level, Equipment-Level, Component-Level, and Screening/Measurement methods, cleanly integrated through dispatcher.py.

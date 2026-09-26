@@ -1,0 +1,18 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\server
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----          9/9/2026  12:00 AM                emission_factors                                                     
+-a----         9/12/2026   4:33 PM           1646 electricity_factors.py                                               
+-a----         9/25/2026  10:44 PM          14322 emission_factors.py                                                  
+-a----         9/25/2026  10:49 PM          78372 emission_factors_api2021.py                                          
+-a----         8/11/2026  12:56 PM            742 list_all_factors.py                                                  
+
+
+

@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+Loaded 58 factors, 8 screening ranges, 7 OGI factors
+

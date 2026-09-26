@@ -1,0 +1,111 @@
+
+The command exited with code 0.
+Output:
+<truncated 1 lines>
+  new\client\src\components\Scope1Form.jsx:1475:
+  new\client\src\components\Scope1Form.jsx:1476:    let payload = {};
+  new\client\src\components\Scope1Form.jsx:1516:      `Facility #${entry.facility_id || "N/A"}`;
+  new\client\src\components\Scope1Form.jsx:1517:    const pLabel =
+> new\client\src\components\Scope1Form.jsx:1518:      PROCESS_TYPES[entry.process || entry.process_type]?.label || 
+pType;
+  new\client\src\components\Scope1Form.jsx:1519:
+  new\client\src\components\Scope1Form.jsx:1520:    setInspectRecord({
+> new\client\src\components\Scope1Form.jsx:1521:      process_type: `Scope 1 - ${pLabel}`,
+  new\client\src\components\Scope1Form.jsx:1522:      fuel: fuelVal,
+  new\client\src\components\Scope1Form.jsx:1523:      amount: qty,
+  new\client\src\components\Scope1Form.jsx:1524:      unit: unitVal,
+  new\client\src\components\Scope1Form.jsx:1525:      facility: facName,
+  new\client\src\components\Scope1Form.jsx:1526:      year: entry.year,
+  new\client\src\components\Scope1Form.jsx:1604:  const renderSpecificForm = () => {
+  new\client\src\components\Scope1Form.jsx:1605:    const props = {
+> new\client\src\components\Scope1Form.jsx:1606:      data: { ...formData, process_type: processType },
+  new\client\src\components\Scope1Form.jsx:1607:      onChange: handleFormChange,
+  new\client\src\components\Scope1Form.jsx:1608:      // Pass down hoisted props for forms that might need them 
+(though we are moving logic up)
+  new\client\src\components\Scope1Form.jsx:1609:      sourceType,
+  new\client\src\components\Scope1Form.jsx:1610:      setSourceType,
+  new\client\src\components\Scope1Form.jsx:1611:    };
+  new\client\src\components\Scope1Form.jsx:1666:        return <AssociatedGasVentingForm {...props} />;
+  new\client\src\components\Scope1Form.jsx:1667:      default:
+> new\client\src\components\Scope1Form.jsx:1668:        return <div>Select a process type</div>;
+  new\client\src\components\Scope1Form.jsx:1669:    }
+  new\client\src\components\Scope1Form.jsx:1670:  };
+  new\client\src\components\Scope1Form.jsx:1671:
+  new\client\src\components\Scope1Form.jsx:1672:  const getFacilityOptions = () => [
+  new\client\src\components\Scope1Form.jsx:1673:    { value: "", label: "Select Region..." },
+  new\client\src\components\Scope1Form.jsx:1688:      });
+  new\client\src\components\Scope1Form.jsx:1689:      group.options.forEach((optKey) => {
+> new\client\src\components\Scope1Form.jsx:1690:        if (PROCESS_TYPES[optKey]) {
+  new\client\src\components\Scope1Form.jsx:1691:          // Unique value per group to avoid cross-highlighting
+  new\client\src\components\Scope1Form.jsx:1692:          // value: "Upstream|combustion"
+  new\client\src\components\Scope1Form.jsx:1693:          options.push({
+  new\client\src\components\Scope1Form.jsx:1694:            value: `${group.id}|${optKey}`,
+> new\client\src\components\Scope1Form.jsx:1695:            label: PROCESS_TYPES[optKey],
+  new\client\src\components\Scope1Form.jsx:1696:          });
+  new\client\src\components\Scope1Form.jsx:1697:        }
+  new\client\src\components\Scope1Form.jsx:1698:      });
+  new\client\src\components\Scope1Form.jsx:1699:    });
+  new\client\src\components\Scope1Form.jsx:1700:    return options;
+  new\client\src\components\Scope1Form.jsx:1919:          <div className="form-grid-2">
+  new\client\src\components\Scope1Form.jsx:1920:            <div className="input-group">
+> new\client\src\components\Scope1Form.jsx:1921:              <label>Process Type</label>
+  new\client\src\components\Scope1Form.jsx:1922:              <CustomDropdown
+  new\client\src\components\Scope1Form.jsx:1923:                options={getProcessOptions()}
+  new\client\src\components\Scope1Form.jsx:1924:                value={currentProcessValue}
+  new\client\src\components\Scope1Form.jsx:1925:                onChange={handleProcessChange}
+  new\client\src\components\Scope1Form.jsx:1926:              />
+  new\client\src\components\Scope1Form.jsx:2978:            {[
+  new\client\src\components\Scope1Form.jsx:2979:              ...new Set(
+> new\client\src\components\Scope1Form.jsx:2980:                entries.map((e) => e.process || 
+e.process_type).filter(Boolean),
+  new\client\src\components\Scope1Form.jsx:2981:              ),
+  new\client\src\components\Scope1Form.jsx:2982:            ].map((p) => (
+  new\client\src\components\Scope1Form.jsx:2983:              <option key={p} value={p}>
+> new\client\src\components\Scope1Form.jsx:2984:                {PROCESS_TYPES[p]?.label || p}
+  new\client\src\components\Scope1Form.jsx:2985:              </option>
+  new\client\src\components\Scope1Form.jsx:2986:            ))}
+  new\client\src\components\Scope1Form.jsx:2987:          </select>
+  new\client\src\components\Scope1Form.jsx:2988:          {(filterYear || filterProcess || filterSearch) && (
+  new\client\src\components\Scope1Form.jsx:2989:            <button
+  new\client\src\components\Scope1Form.jsx:3020:                    (!filterYear || e.year?.toString() === filterYear) 
+&&
+  new\client\src\components\Scope1Form.jsx:3021:                    (!filterProcess ||
+> new\client\src\components\Scope1Form.jsx:3022:                      (e.process || e.process_type) === filterProcess)
+  new\client\src\components\Scope1Form.jsx:3023:                  );
+  new\client\src\components\Scope1Form.jsx:3024:                }),
+  new\client\src\components\Scope1Form.jsx:3025:                "scope1_export.csv",
+  new\client\src\components\Scope1Form.jsx:3026:              )
+  new\client\src\components\Scope1Form.jsx:3027:            }
+  new\client\src\components\Scope1Form.jsx:3123:                  const matchProcess =
+  new\client\src\components\Scope1Form.jsx:3124:                    !filterProcess ||
+> new\client\src\components\Scope1Form.jsx:3125:                    (entry.process || entry.process_type) === 
+filterProcess;
+  new\client\src\components\Scope1Form.jsx:3126:                  return matchSearch && matchYear && matchProcess;
+  new\client\src\components\Scope1Form.jsx:3127:                });
+  new\client\src\components\Scope1Form.jsx:3128:                if (filteredEntries.length === 0)
+  new\client\src\components\Scope1Form.jsx:3129:                  return (
+  new\client\src\components\Scope1Form.jsx:3130:                    <tr>
+  new\client\src\components\Scope1Form.jsx:3163:                      <td>{entry.equipment_id || "-"}</td>
+  new\client\src\components\Scope1Form.jsx:3164:                      <td>
+> new\client\src\components\Scope1Form.jsx:3165:                        {PROCESS_TYPES[entry.process || 
+entry.process_type]
+  new\client\src\components\Scope1Form.jsx:3166:                          ?.label ||
+  new\client\src\components\Scope1Form.jsx:3167:                          entry.process ||
+> new\client\src\components\Scope1Form.jsx:3168:                          entry.process_type}
+  new\client\src\components\Scope1Form.jsx:3169:                      </td>
+  new\client\src\components\Scope1Form.jsx:3170:                      <td>
+  new\client\src\components\Scope1Form.jsx:3171:                        {entry.fuel ||
+  new\client\src\components\Scope1Form.jsx:3172:                          entry.fuel_type ||
+  new\client\src\components\Scope1Form.jsx:3173:                          entry.activity_data_label ||
+  new\client\src\components\Scope1Form.jsx:3358:                            entry.year?.toString() === filterYear) &&
+  new\client\src\components\Scope1Form.jsx:3359:                          (!filterProcess ||
+> new\client\src\components\Scope1Form.jsx:3360:                            (entry.process || entry.process_type) ===
+  new\client\src\components\Scope1Form.jsx:3361:                              filterProcess)
+  new\client\src\components\Scope1Form.jsx:3362:                        );
+  new\client\src\components\Scope1Form.jsx:3363:                      })
+  new\client\src\components\Scope1Form.jsx:3364:                      .reduce((sum, e) => sum + (e.co2e_total || 0), 
+0),
+  new\client\src\components\Scope1Form.jsx:3365:                    3,
+
+
+

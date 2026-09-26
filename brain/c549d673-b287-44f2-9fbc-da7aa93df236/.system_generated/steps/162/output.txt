@@ -1,0 +1,18 @@
+
+The command exited with code 1.
+Output:
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+page.fill: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator('input[type="email"]')
+
+    at C:\Users\samsung\Desktop\H2\scratch\check_dropdown.mjs:10:12 {
+  log: [ `  - waiting for locator('input[type="email"]')` ],
+  name: 'TimeoutError'
+}
+
+Node.js v24.12.0
+

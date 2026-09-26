@@ -1,0 +1,22 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\components\Scope1Form.jsx:36:  API_FACTORS,
+new\client\src\components\Scope1Form.jsx:216:      const options = Object.keys(API_FACTORS)
+new\client\src\components\Scope1Form.jsx:218:          const factor = API_FACTORS[key];
+new\client\src\components\Scope1Form.jsx:241:          factor: API_FACTORS[k],
+new\client\src\components\Scope1Form.jsx:406:      API_FACTORS[formData.fuel]
+new\client\src\components\Scope1Form.jsx:408:      const f = API_FACTORS[formData.fuel];
+new\client\src\components\Scope1Form.jsx:446:        if (API_FACTORS[formData.fuel]) {
+new\client\src\components\Scope1Form.jsx:447:          factorToUse = API_FACTORS[formData.fuel];
+new\client\src\components\Scope1Form.jsx:451:          const found = Object.values(API_FACTORS).find(
+new\client\src\components\Scope1Form.jsx:462:          API_FACTORS["Drilling - Gas Well Drilling (Simplified 
+Default)"];
+new\client\src\components\Scope1Form.jsx:469:        if (API_FACTORS[mudKey]) {
+new\client\src\components\Scope1Form.jsx:470:          factorToUse = API_FACTORS[mudKey];
+new\client\src\components\Scope1Form.jsx:1056:        API_FACTORS[formData.fuel]
+new\client\src\components\Scope1Form.jsx:1058:        const factor = API_FACTORS[formData.fuel];
+
+
+

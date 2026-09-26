@@ -1,0 +1,38 @@
+
+The command exited with code 0.
+Output:
+
+Path                                                                          LineNumber
+----                                                                          ----------
+C:\Users\samsung\Desktop\H2\new\client\src\components\BulkImportModal.jsx             14
+C:\Users\samsung\Desktop\H2\new\client\src\components\BulkImportModal.jsx            573
+C:\Users\samsung\Desktop\H2\new\client\src\components\BulkImportModal.jsx            585
+C:\Users\samsung\Desktop\H2\new\client\src\components\BulkImportModal.jsx            716
+C:\Users\samsung\Desktop\H2\new\client\src\components\BulkImportModal.jsx            723
+C:\Users\samsung\Desktop\H2\new\client\src\components\BulkImportModal.jsx            774
+C:\Users\samsung\Desktop\H2\new\client\src\components\BulkImportModal.jsx            781
+C:\Users\samsung\Desktop\H2\new\client\src\components\BulkImportModal.jsx           1145
+C:\Users\samsung\Desktop\H2\new\client\src\components\BulkImportModal.jsx           1191
+C:\Users\samsung\Desktop\H2\new\client\src\components\BulkImportModal.jsx           1267
+C:\Users\samsung\Desktop\H2\new\client\src\components\ColumnMappingWizard.jsx          7
+C:\Users\samsung\Desktop\H2\new\client\src\components\ColumnMappingWizard.jsx       1250
+C:\Users\samsung\Desktop\H2\new\client\src\components\Scope1Form.jsx                  38
+C:\Users\samsung\Desktop\H2\new\client\src\components\Scope1Form.jsx                  48
+C:\Users\samsung\Desktop\H2\new\client\src\components\Scope1Form.jsx                 563
+C:\Users\samsung\Desktop\H2\new\client\src\components\Scope1Form.jsx                1518
+C:\Users\samsung\Desktop\H2\new\client\src\components\Scope1Form.jsx                1690
+C:\Users\samsung\Desktop\H2\new\client\src\components\Scope1Form.jsx                1695
+C:\Users\samsung\Desktop\H2\new\client\src\components\Scope1Form.jsx                2984
+C:\Users\samsung\Desktop\H2\new\client\src\components\Scope1Form.jsx                3165
+C:\Users\samsung\Desktop\H2\new\client\src\components\Scope1ImportWizard.jsx           6
+C:\Users\samsung\Desktop\H2\new\client\src\components\Scope1ImportWizard.jsx         152
+C:\Users\samsung\Desktop\H2\new\client\src\pages\ManageData.jsx                        8
+C:\Users\samsung\Desktop\H2\new\client\src\pages\ManageData.jsx                     2904
+C:\Users\samsung\Desktop\H2\new\client\src\pages\ManageData.jsx                     2944
+C:\Users\samsung\Desktop\H2\new\client\src\pages\ReferenceData.jsx                   204
+C:\Users\samsung\Desktop\H2\new\client\src\pages\ReferenceData.jsx                   411
+C:\Users\samsung\Desktop\H2\new\client\src\utils\EmissionFactors.js                 1565
+C:\Users\samsung\Desktop\H2\new\client\src\utils\emissionFactorsAPI.js                32
+
+
+

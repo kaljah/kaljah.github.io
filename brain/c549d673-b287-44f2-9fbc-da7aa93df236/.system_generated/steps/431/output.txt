@@ -1,0 +1,42 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\Scope1Form.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1960,6 +1960,27 @@
+                             sub: "Onshore EF + Site CH₄/CO₂",
+                           },
+                         ]
++                      : processType === "fugitive"
++                      ? [
++                          {
++                            key: "default",
++                            tier: "Tier 1",
++                            label: "Facility-Level",
++                            sub: "API Tables 7-1, 7-2",
++                          },
++                          {
++                            key: "custom",
++                            tier: "Tier 2",
++                            label: "Equipment & Component",
++                            sub: "Tables 7-9, 7-10, 7-11, 7-30",
++                          },
++                          {
++                            key: "specific",
++                            tier: "Tier 3",
++                            label: "Screening / OGI / Meas.",
++                            sub: "Method 21, OGI, Direct Rate",
++                          },
++                        ]
+                       : [
+                           {
+                             key: "default",
+@@ -1985,8 +1985,6 @@
+                         if (processType === "drilling") return true;
+                         if (processType === "mobile" && type === "specific")
+                           return false;
+-                        if (processType === "fugitive" && type === "specific")
+-                          return false;
+                         if (processType === "loading" && type === "specific")
+                           return false;
+                         if (processType === "separation" && type === "specific")
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

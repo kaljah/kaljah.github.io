@@ -1,0 +1,15 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2\audit\notes
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/26/2026   1:13 AM           6241 F_dashboard_reconciliation.md                                        
+-a----         9/26/2026   1:10 AM          21501 I_endpoints.md                                                       
+
+
+

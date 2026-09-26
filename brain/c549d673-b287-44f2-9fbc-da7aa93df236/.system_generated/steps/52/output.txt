@@ -1,0 +1,21 @@
+
+The command exited with code 0.
+Output:
+
+Path                                                                          
+----                                                                          
+C:\Users\samsung\Desktop\H2\new\client\src\components\BulkImportModal.jsx     
+C:\Users\samsung\Desktop\H2\new\client\src\components\ColumnMappingWizard.jsx 
+C:\Users\samsung\Desktop\H2\new\client\src\components\Scope1Form.jsx          
+C:\Users\samsung\Desktop\H2\new\client\src\components\Scope1ImportWizard.jsx  
+C:\Users\samsung\Desktop\H2\new\client\src\components\scope1\FugitivesForm.jsx
+C:\Users\samsung\Desktop\H2\new\client\src\pages\Emissions.jsx                
+C:\Users\samsung\Desktop\H2\new\client\src\pages\MethaneExplorer.jsx          
+C:\Users\samsung\Desktop\H2\new\client\src\pages\QADashboard.jsx              
+C:\Users\samsung\Desktop\H2\new\client\src\pages\ReferenceData.jsx            
+C:\Users\samsung\Desktop\H2\new\client\src\pages\Reports.jsx                  
+C:\Users\samsung\Desktop\H2\new\client\src\utils\EmissionFactors.js           
+C:\Users\samsung\Desktop\H2\new\client\src\utils\ModernReportGenerator.js     
+
+
+

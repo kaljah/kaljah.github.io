@@ -1,0 +1,1 @@
+A1: (Recommended) Dual-layer: Store detailed component populations, survey parameters, and leak records in a dedicated ComponentInventory/FugitiveSurvey model linked to Facility/EmissionSource, while recording the calculated emissions in the standard Emission table (with full audit trace in source_payload) for Scope 1 and Methane Intensity aggregation.

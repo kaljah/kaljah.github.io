@@ -1,0 +1,20 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\components\BulkImportModal.jsx:239:      { id: "fugitive_method", label: "Fugitive Method", required: 
+false },
+new\client\src\components\BulkImportModal.jsx:240:      { id: "fugitive_ppm", label: "Fugitive PPM", required: false },
+new\client\src\components\BulkImportModal.jsx:533:          fugitive: ["fugitive_method", "fugitive_ppm"],
+new\client\src\components\ColumnMappingWizard.jsx:161:    { id: "fugitive_method", label: "Fugitive Method", required: 
+false },
+new\client\src\components\ColumnMappingWizard.jsx:162:    { id: "fugitive_ppm", label: "Fugitive PPM", required: false 
+},
+new\client\src\components\ColumnMappingWizard.jsx:859:          fugitives_equipment: [
+new\client\src\components\ColumnMappingWizard.jsx:860:            "fugitive_method",
+new\client\src\components\ColumnMappingWizard.jsx:861:            "fugitive_ppm",
+new\client\src\components\ColumnMappingWizard.jsx:867:          fugitives_leaks: [
+new\client\src\components\Scope1Form.jsx:28:import FugitivesForm from "./scope1/FugitivesForm";
+
+
+

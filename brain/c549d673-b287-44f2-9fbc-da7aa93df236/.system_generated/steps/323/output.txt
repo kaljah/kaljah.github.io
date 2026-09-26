@@ -1,0 +1,52 @@
+
+The command exited with code 0.
+Output:
+
+new\server\routes\dashboard.py:504:            "venting": 0,
+new\server\routes\dashboard.py:524:                "venting": 0,
+new\server\routes\dashboard.py:566:        "venting": "venting",
+new\server\routes\dashboard.py:567:        "associated_gas_venting": "venting",
+new\server\routes\dashboard.py:568:        "vent": "venting",
+new\server\routes\dashboard.py:569:        "liquids_unloading": "venting",
+new\server\routes\dashboard.py:570:        "unloading": "venting",
+new\server\routes\dashboard.py:1802:                "ch4_venting": 0,
+new\server\routes\dashboard.py:1825:            em_map[fid]["ch4_venting"] += ch4
+new\server\routes\dashboard.py:1881:                "ch4_venting": 0,
+new\server\routes\dashboard.py:1939:                "ch4_venting": 0,
+new\server\routes\dashboard.py:2007:                "ch4_venting": 0,
+new\server\routes\dashboard.py:2239:                "ch4_venting": ed["ch4_venting"],
+new\server\routes\emissions.py:1023:            "combustion | flaring | venting | blowdown | pneumatic | tank_flashing 
+| tank_working | tank_breathing | drilling | completions | unloading | agr | dehydrator | fugitive | mobile | 
+indirect_steam | stoichiometry | separation",
+new\server\routes\emissions.py:1300:        # � T3 VENTING / BLOWDOWN �
+new\server\routes\emissions.py:1598:    p_bdn = ["all", "venting", "blowdown"]
+new\server\routes\emissions.py:1843:        # 10. Tier 3 - Venting / Blowdown
+new\server\routes\emissions.py:1848:            fuel="Natural Gas (Venting/Blowdown)",
+new\server\routes\emissions.py:2231:            "Select from dropdown. Options: Combustion, Flaring, Venting, 
+Pneumatic Devices, etc.",
+new\server\routes\emissions.py:2413:            9: "Select from list: Combustion, Flaring, Venting, etc.",
+new\server\routes\emissions.py:2426:        formula1='"Combustion,Flaring,Fugitive Emissions,Venting,Well Completions 
+& Workovers,Liquids Unloading,Dehydrator,Pneumatic Device,Storage Tank - Flashing,Storage Tank - Working 
+Losses,Storage Tank - Breathing,Drilling Operations,Acid Gas Removal (AGR),Mobile Combustion,Loading Losses,Wastewater 
+/ Separation"',
+new\server\routes\emissions.py:2534:            "Venting",
+new\server\routes\emissions.py:2535:            "Natural Gas (Venting/Blowdown)",
+new\server\routes\emissions.py:2539:            "Venting from separator depressuring",
+new\server\routes\emissions.py:2588:        2: "venting",
+new\server\routes\emissions.py:2636:        p_bdn = ["all", "venting", "blowdown"]
+new\server\routes\emissions.py:2767:                    "Venting",
+new\server\routes\emissions.py:2768:                    "venting",
+new\server\routes\emissions.py:3044:    # Process-specific input validation for associated_gas_venting
+new\server\routes\emissions.py:3046:    if p_type in ["associated_gas_venting", "associated_venting", 
+"associated_gas"]:
+new\server\routes\emissions.py:3079:        v_dur = data.get("venting_duration")
+new\server\routes\emissions.py:3084:                    return jsonify({"error": "Venting duration cannot be 
+negative", "field": "venting_duration"}), 422
+new\server\routes\emissions.py:3088:                    return jsonify({"error": f"Venting duration ({dur_days:.1f} 
+days) exceeds maximum annual limit of 366 days", "field": "venting_duration"}), 422
+new\server\routes\emissions.py:3090:                return jsonify({"error": "Invalid venting duration: must be a 
+number", "field": "venting_duration"}), 422
+new\server\routes\reports.py:1021:            "venting": "Vented",
+
+
+

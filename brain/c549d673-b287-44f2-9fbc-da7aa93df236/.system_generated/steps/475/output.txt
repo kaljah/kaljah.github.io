@@ -1,0 +1,32 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_api2021_chapter7_onshore.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -359,7 +359,7 @@
+ 
+ def test_engine_dispatcher_tier1_routing():
+     """Verify CalculationEngine routes Tier 1 fugitive to OnshoreFacilityFugitiveCalculator."""
+-    engine = CalculationEngine()
++    engine = CalculationDispatcher()
+     inputs = {
+         "fugitive_tier": "tier1",
+         "facility_type": "gas_production",
+@@ -376,7 +376,7 @@
+ 
+ def test_engine_dispatcher_tier2_component_routing():
+     """Verify CalculationEngine routes Tier 2 component count and applies normalized hours."""
+-    engine = CalculationEngine()
++    engine = CalculationDispatcher()
+     inputs = {
+         "fugitive_tier": "tier2",
+         "fugitive_method": "component",
+@@ -392,7 +392,7 @@
+ 
+ def test_engine_dispatcher_tier3_ogi_routing():
+     """Verify CalculationEngine routes Tier 3 OGI leaker count properly."""
+-    engine = CalculationEngine()
++    engine = CalculationDispatcher()
+     inputs = {
+         "fugitive_tier": "tier3",
+         "fugitive_method": "ogi",
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

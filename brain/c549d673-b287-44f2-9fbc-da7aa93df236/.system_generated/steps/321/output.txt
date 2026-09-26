@@ -1,0 +1,9 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\pages\DashboardEnhanced.jsx:602:          value: Number((stats.venting ?? 0).toFixed(2)),
+new\client\src\pages\DashboardEnhanced.jsx:1594:                          {formatCompactNumber(stats.venting)}
+
+
+

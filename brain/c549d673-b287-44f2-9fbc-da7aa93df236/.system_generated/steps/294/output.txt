@@ -1,0 +1,423 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1234,86 +1234,248 @@
+                     gwp_dict=gwp_dict,
+                 )
+ 
+-            elif process_type == "fugitive":
+-                fugitive_method = flat_inputs.get("fugitive_method", "average")
+-                if fugitive_method == "screening":
+-                    ppm = self._require_float(
+-                        flat_inputs,
+-                        ["fugitive_ppm", "ppm", "screening_ppm"],
+-                        "screening concentration (PPM)",
+-                    )
+-                    comp_count = self._require_float(
+-                        flat_inputs,
+-                        ["amount", "quantity", "component_count", "count", "equipment_count"],
+-                        "component count",
+-                    )
+-                    ef_base = float(
+-                        emission_factors.get("ch4")
+-                        or emission_factors.get("factor")
+-                        or 0.0
+-                    )
+-                    ef_unit = str(emission_factors.get("unit") or flat_inputs.get("unit") or "").lower()
+-                    is_annual = "yr" in ef_unit or "year" in ef_unit
+-                    is_tonne = "tonne" in ef_unit or "mt" in ef_unit
+-                    is_methane = any(x in ef_unit for x in ["ch4", "methane"])
+-
+-                    hours = float(
+-                        flat_inputs.get("hours")
+-                        or flat_inputs.get("hours_operating")
+-                        or 8760.0
+-                    )
+-                    ch4_fraction = self._optional_fraction(
+-                        flat_inputs, ["ch4_fraction", "ch4_content", "c1"], 1.0
+-                    )
+-                    screening_mult = 2.5 if ppm >= 10000 else 1.0
+-
+-                    if is_annual:
+-                        annual_hours_ratio = hours / 8760.0 if hours != 8760.0 else 1.0
+-                        ch4_raw = comp_count * ef_base * screening_mult * annual_hours_ratio
+-                    else:
+-                        ch4_raw = comp_count * ef_base * screening_mult * hours
+-
+-                    if not is_methane:
+-                        ch4_raw *= ch4_fraction
+-
+-                    ch4_tonnes = ch4_raw if is_tonne else (ch4_raw / 1000.0)
+-
+-                    def _wrap_unc(val, gas):
+-                        u = propagate_uncertainty(
+-                            val,
+-                            ef_uncertainty=resolve_ef_uncertainty(
+-                                "fugitive",
+-                                gas,
+-                                resolve_tier(
+-                                    flat_inputs.get("factor_source", "default")
+-                                ),
+-                                uncertainties.get(gas),
+-                            ),
+-                            tier=resolve_tier(
+-                                flat_inputs.get("factor_source", "default")
+-                            ),
+-                            process_category="fugitive",
+-                            gas=gas,
+-                        )
+-                        return u
+-
+-                    return {
+-                        "results": {
+-                            "co2": _wrap_unc(0, "co2"),
+-                            "ch4": _wrap_unc(ch4_tonnes, "ch4"),
+-                            "n2o": _wrap_unc(0, "n2o"),
+-                        },
+-                        "total_co2e": calculate_co2e(
+-                            0, ch4_tonnes, 0, gwp_dict=gwp_dict
+-                        ),
+-                        "method": "api2021_fugitive_screening",
+-                    }
+-                else:
+-                    return self._generic_calculation(
+-                        flat_inputs,
+-                        emission_factors,
+-                        uncertainties,
+-                        process_type,
++            elif process_type in [
++                "fugitive",
++                "fugitive_facility",
++                "facility_fugitive",
++                "fugitive_component",
++                "component_fugitive",
++                "equipment_fugitive",
++                "wellhead_fugitive",
++                "separator_fugitive",
++                "gathering_boosting",
++                "fugitive_screening",
++                "fugitive_ogi",
++                "fugitive_measurement",
++                "gas_processing",
++                "transmission_storage",
++                "refinery_fugitive",
++                "distribution_fugitive",
++                "lng_operations",
++            ]:
++                # 1. Duration / Time Basis Handling with proper unit conversion
++                raw_time = float(
++                    flat_inputs.get("hours")
++                    or flat_inputs.get("operating_hours")
++                    or flat_inputs.get("hours_operating")
++                    or 0.0
++                )
++                time_unit = str(
++                    flat_inputs.get("time_unit")
++                    or flat_inputs.get("duration_unit")
++                    or "hours"
++                ).lower()
++
++                if raw_time <= 0:
++                    raw_days = float(
++                        flat_inputs.get("operating_days")
++                        or flat_inputs.get("days")
++                        or 0.0
++                    )
++                    if raw_days > 0:
++                        op_days = raw_days
++                        op_hours = raw_days * 24.0
++                    else:
++                        op_hours = 8760.0
++                        op_days = 365.25
++                else:
++                    if "day" in time_unit:
++                        op_days = raw_time
++                        op_hours = raw_time * 24.0
++                    elif "month" in time_unit:
++                        op_days = raw_time * (365.25 / 12.0)
++                        op_hours = op_days * 24.0
++                    elif "yr" in time_unit or "year" in time_unit:
++                        op_days = raw_time * 365.25
++                        op_hours = raw_time * 8760.0
++                    else:
++                        op_hours = raw_time
++                        op_days = raw_time / 24.0
++
++                # 2. Methodology & Sub-Type Detection
++                fug_tier = str(flat_inputs.get("fugitive_tier") or "").lower()
++                fug_method = str(flat_inputs.get("fugitive_method") or "").lower()
++                source_type = str(flat_inputs.get("factor_source") or "default").lower()
++                fuel_str = str(flat_inputs.get("fuel") or "").lower()
++                ef_unit_str = str(emission_factors.get("unit") or flat_inputs.get("unit") or "").lower()
++
++                is_facility = (
++                    process_type in ["fugitive_facility", "facility_fugitive"]
++                    or fug_tier in ["tier1", "tier_1", "facility"]
++                    or fug_method == "facility"
++                    or "facility" in fuel_str
++                    or "facility/day" in ef_unit_str
++                    or "pad" in fuel_str
++                )
++
++                is_screening_measurement = (
++                    process_type in ["fugitive_screening", "fugitive_ogi", "fugitive_measurement"]
++                    or fug_tier in ["tier3", "tier_3", "measurement", "screening"]
++                    or fug_method in ["screening", "method21", "ogi", "measurement"]
++                    or source_type == "specific"
++                    or flat_inputs.get("fugitive_ppm") is not None
++                    or flat_inputs.get("screening_ppm") is not None
++                    or flat_inputs.get("measured_rate") is not None
++                    or flat_inputs.get("leakers_count") is not None
++                )
++
++                is_component = (
++                    process_type in ["fugitive_component", "component_fugitive"]
++                    or fug_tier in ["tier2_component", "component"]
++                    or fug_method == "component"
++                    or flat_inputs.get("component_type") is not None
++                    or flat_inputs.get("component_counts") is not None
++                    or "component" in fuel_str
++                    or "kg/hr/source" in ef_unit_str
++                    or "kg toc/hr" in ef_unit_str
++                )
++
++                if is_facility:
++                    calc = OnshoreFacilityFugitiveCalculator()
++                    count = self._require_float(
++                        flat_inputs,
++                        ["facility_count", "amount", "quantity", "count"],
++                        "facility count",
++                    )
++                    fac_type = str(flat_inputs.get("facility_type") or flat_inputs.get("fuel") or "gas_pad_nodehy")
++                    custom_ef = flat_inputs.get("custom_ef") or flat_inputs.get("ef")
++                    return calc.calculate(
++                        facility_count=count,
++                        facility_type=fac_type,
++                        operating_days=op_days,
++                        custom_ef=float(custom_ef) if custom_ef is not None else None,
++                        ef_unit=str(emission_factors.get("unit") or flat_inputs.get("unit") or "tonne CH4/facility/day"),
++                        uncertainties=uncertainties,
++                        gwp_dict=gwp_dict,
++                    )
++
++                elif is_screening_measurement:
++                    calc = OnshoreScreeningMeasurementCalculator()
++                    sub_mode = str(flat_inputs.get("fugitive_sub_method") or fug_method or "measurement").lower()
++                    comp_type = str(flat_inputs.get("component_type") or "valve")
++                    service = str(flat_inputs.get("service_type") or flat_inputs.get("service") or "gas")
++                    c_ch4 = self._optional_fraction(flat_inputs, ["ch4_content", "ch4_fraction", "c1"], 0.85)
++
++                    if "ogi" in sub_mode or flat_inputs.get("leakers_count") is not None or flat_inputs.get("detected_leakers") is not None:
++                        total_surv = int(float(flat_inputs.get("surveyed_count") or flat_inputs.get("total_surveyed") or flat_inputs.get("amount") or 1))
++                        leakers = int(float(flat_inputs.get("leakers_count") or flat_inputs.get("detected_leakers") or 0))
++                        return calc.calculate_ogi_survey(
++                            component_type=comp_type,
++                            service_type=service,
++                            total_surveyed=total_surv,
++                            leakers_detected=leakers,
++                            operating_hours=op_hours,
++                            uncertainties=uncertainties,
++                            gwp_dict=gwp_dict,
++                        )
++                    elif "corr" in sub_mode:
++                        ppm_vals = flat_inputs.get("screening_values_ppm")
++                        if not ppm_vals:
++                            ppm = self._require_float(flat_inputs, ["fugitive_ppm", "ppm", "screening_ppm"], "screening ppm")
++                            count = int(float(flat_inputs.get("amount") or flat_inputs.get("quantity") or 1))
++                            ppm_vals = [ppm] * count
++                        return calc.calculate_correlation_equation(
++                            component_type=comp_type,
++                            service_type=service,
++                            screening_values_ppm=ppm_vals,
++                            operating_hours=op_hours,
++                            ch4_content=c_ch4,
++                            uncertainties=uncertainties,
++                            gwp_dict=gwp_dict,
++                        )
++                    elif "range" in sub_mode:
++                        non_pegged = int(float(flat_inputs.get("non_pegged_count") or flat_inputs.get("non_leakers") or 0))
++                        pegged = int(float(flat_inputs.get("pegged_count") or flat_inputs.get("leakers_count") or flat_inputs.get("amount") or 0))
++                        return calc.calculate_method21_ranges(
++                            component_type=comp_type,
++                            service_type=service,
++                            non_pegged_count=non_pegged,
++                            pegged_count=pegged,
++                            operating_hours=op_hours,
++                            ch4_content=c_ch4,
++                            uncertainties=uncertainties,
++                            gwp_dict=gwp_dict,
++                        )
++                    else:
++                        # Direct Measurement
++                        meas_rate = self._require_float(
++                            flat_inputs,
++                            ["measured_rate", "amount", "quantity", "flow_rate", "rate"],
++                            "measured leak/vent rate",
++                        )
++                        rate_u = str(flat_inputs.get("measurement_unit") or flat_inputs.get("unit") or "kg/hr")
++                        c_co2 = self._optional_fraction(flat_inputs, ["co2_content", "co2_fraction"], 0.01)
++                        return calc.calculate_direct_measurement(
++                            measured_rate=meas_rate,
++                            measurement_unit=rate_u,
++                            operating_hours=op_hours,
++                            ch4_mol=c_ch4,
++                            co2_mol=c_co2,
++                            uncertainties=uncertainties,
++                            gwp_dict=gwp_dict,
++                        )
++
++                elif is_component:
++                    calc = OnshoreComponentFugitiveCalculator()
++                    comps_dict = flat_inputs.get("component_counts")
++                    if not comps_dict:
++                        c_type = str(flat_inputs.get("component_type") or flat_inputs.get("fuel") or "Valves")
++                        c_count = self._require_float(
++                            flat_inputs,
++                            ["amount", "quantity", "count", "component_count"],
++                            "component count",
++                        )
++                        c_ef = float(
++                            emission_factors.get("ch4")
++                            or emission_factors.get("factor")
++                            or flat_inputs.get("ef")
++                            or 0.0045
++                        )
++                        c_unit = str(
++                            emission_factors.get("unit")
++                            or flat_inputs.get("unit")
++                            or "kg/hr"
++                        )
++                        comps_dict = {c_type: {"count": c_count, "ef": c_ef, "unit": c_unit}}
++
++                    service = str(flat_inputs.get("service_type") or flat_inputs.get("service") or "Gas")
++                    c_ch4 = self._optional_fraction(flat_inputs, ["ch4_content", "ch4_fraction", "c1"], None)
++                    c_co2 = self._optional_fraction(flat_inputs, ["co2_content", "co2_fraction"], None)
++                    return calc.calculate(
++                        component_counts=comps_dict,
++                        service_type=service,
++                        operating_hours=op_hours,
++                        ch4_content=c_ch4,
++                        co2_content=c_co2,
++                        uncertainties=uncertainties,
++                        gwp_dict=gwp_dict,
++                    )
++
++                else:
++                    # Equipment-Level (Tier 2A) or backward-compatible equipment factor
++                    calc = OnshoreEquipmentFugitiveCalculator()
++                    count = self._require_float(
++                        flat_inputs,
++                        ["equipment_count", "well_count", "separator_count", "amount", "quantity", "count"],
++                        "equipment count",
++                    )
++                    ef = float(
++                        emission_factors.get("ch4")
++                        or emission_factors.get("factor")
++                        or flat_inputs.get("ef")
++                        or 0.0
++                    )
++                    ef_u = str(emission_factors.get("unit") or flat_inputs.get("unit") or "tonne CH4/well/hr")
++                    eq_type = str(flat_inputs.get("equipment_type") or flat_inputs.get("fuel") or "Equipment")
++                    service = str(flat_inputs.get("service_type") or "Gas")
++                    return calc.calculate(
++                        equipment_count=count,
++                        equipment_type=eq_type,
++                        service_type=service,
++                        operating_hours=op_hours,
++                        factor_value=ef,
++                        factor_unit=ef_u,
++                        uncertainties=uncertainties,
+                         gwp_dict=gwp_dict,
+                     )
+ 
+@@ -1335,85 +1335,12 @@
+                 else:
+                     seal_type = "reciprocating"
+ 
++                raw_hours = float(flat_inputs.get("hours") or flat_inputs.get("operating_hours") or 8760.0)
+                 return calculator.calculate(
+                     compressor_count=count,
+                     seal_type=seal_type,
+-                    uncertainties=uncertainties,
+-                    gwp_dict=gwp_dict,
+-                )
+-
+-            elif process_type in ["fugitive_component", "component_fugitive"]:
+-                comps_dict = flat_inputs.get("component_counts")
+-                if not comps_dict and (
+-                    flat_inputs.get("component_type")
+-                    or flat_inputs.get("count")
+-                    or flat_inputs.get("amount")
+-                    or flat_inputs.get("quantity")
+-                ):
+-                    c_type = str(flat_inputs.get("component_type") or "valves")
+-                    c_count = float(
+-                        flat_inputs.get("count")
+-                        or flat_inputs.get("amount")
+-                        or flat_inputs.get("quantity")
+-                        or 0
+-                    )
+-                    c_ef = float(
+-                        emission_factors.get("ch4")
+-                        or emission_factors.get("factor")
+-                        or flat_inputs.get("ef")
+-                        or 0.0
+-                    )
+-                    c_unit = str(
+-                        emission_factors.get("unit")
+-                        or flat_inputs.get("unit")
+-                        or "kg/hr"
+-                    )
+-                    comps_dict = {
+-                        c_type: {"count": c_count, "ef": c_ef, "unit": c_unit}
+-                    }
+-
+-                ch4_content = self._optional_fraction(
+-                    flat_inputs, ["ch4_content", "ch4_fraction", "c1"], 0.85
+-                )
+-                return calculator.calculate(
+-                    component_counts=comps_dict or {},
+-                    ch4_content=ch4_content,
+-                    uncertainties=uncertainties,
+-                    gwp_dict=gwp_dict,
+-                )
+-
+-            elif process_type in [
+-                "equipment_fugitive",
+-                "wellhead_fugitive",
+-                "separator_fugitive",
+-                "gathering_boosting",
+-                "gas_processing",
+-                "transmission_storage",
+-                "refinery_fugitive",
+-                "distribution_fugitive",
+-                "lng_operations",
+-            ]:
+-                count = self._require_float(
+-                    flat_inputs,
+-                    ["equipment_count", "well_count", "separator_count", "count", "amount", "quantity"],
+-                    "equipment count",
+-                )
+-                ef = float(
+-                    emission_factors.get("ch4")
+-                    or emission_factors.get("factor")
+-                    or flat_inputs.get("ef")
+-                    or 0.0
+-                )
+-                ch4_content = self._optional_fraction(
+-                    flat_inputs, ["ch4_content", "ch4_fraction", "c1"], 0.85
+-                )
+-                ef_unit = str(emission_factors.get("unit") or flat_inputs.get("unit") or "kg/hr")
+-                return calculator.calculate(
+-                    equipment_count=count,
+-                    ef=ef,
+-                    ch4_content=ch4_content,
+-                    uncertainties=uncertainties,
+-                    ef_unit=ef_unit,
++                    hours=raw_hours,
++                    uncertainties=uncertainties,
+                     gwp_dict=gwp_dict,
+                 )
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

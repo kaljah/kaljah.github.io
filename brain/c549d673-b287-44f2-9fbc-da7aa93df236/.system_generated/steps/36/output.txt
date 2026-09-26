@@ -1,0 +1,18 @@
+
+The command exited with code 0.
+Output:
+
+AUDIT_FINDINGS.md:2319:# BUG-047 - Tier 1 fugitive and equipment factors in "per hour" units are multiplied only by 
+the source count (no operating hours): annual CH4 understated 8,760�, and Tier 1 disagrees with Tier 3 for the same 
+factor
+AUDIT_FINDINGS.md:2365:# BUG-048 - Tier 3 fugitive calculators misread catalog factor units: "CH4" (Unicode subscript) 
+is not recognised as methane (�0.85 applied), and ComponentFugitiveCalculator treats tonne/hr factors as kg/hr (1000� 
+too low)
+AUDIT_FINDINGS.md:2408:# BUG-049 - Generic factor math ignores the 10� / 106 multiplier in factor denominators: 
+offshore gas fugitives 1,000,000� and refinery fuel-gas fugitives 1,000� overstated
+AUDIT_FINDINGS.md:2939:# BUG-061 - Dashboard "Emissions by Source" mis-classifies process types: fuel-gas combustion 
+(6.47 M t) shown as "Other", pneumatics/tanks/dehydrators/unloading/completions as "Other" instead of Venting, 
+fugitives merged into "Venting", mobile combustion labelled "Stationary Combustion"
+
+
+

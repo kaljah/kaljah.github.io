@@ -1,0 +1,28 @@
+
+The command exited with code 0.
+Output:
+
+  new\client\src\pages\Login.jsx:261:              </span>
+> new\client\src\pages\Login.jsx:262:              <input
+  new\client\src\pages\Login.jsx:263:                type="text"
+  new\client\src\pages\Login.jsx:264:                className="form-control"
+  new\client\src\pages\Login.jsx:265:                required
+  new\client\src\pages\Login.jsx:266:                placeholder="Email Address"
+  new\client\src\pages\Login.jsx:267:                value={email}
+  new\client\src\pages\Login.jsx:303:              </span>
+> new\client\src\pages\Login.jsx:304:              <input
+  new\client\src\pages\Login.jsx:305:                type="password"
+  new\client\src\pages\Login.jsx:306:                className="form-control"
+  new\client\src\pages\Login.jsx:307:                required
+  new\client\src\pages\Login.jsx:308:                placeholder="Password"
+  new\client\src\pages\Login.jsx:309:                value={password}
+  new\client\src\pages\Login.jsx:397:                    </span>
+> new\client\src\pages\Login.jsx:398:                    <input
+  new\client\src\pages\Login.jsx:399:                      type="email"
+  new\client\src\pages\Login.jsx:400:                      className="form-control"
+  new\client\src\pages\Login.jsx:401:                      required
+  new\client\src\pages\Login.jsx:402:                      placeholder="Enter registered email"
+  new\client\src\pages\Login.jsx:403:                      value={forgotEmail}
+
+
+

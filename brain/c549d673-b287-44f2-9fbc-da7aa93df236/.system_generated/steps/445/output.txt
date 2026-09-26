@@ -1,0 +1,20 @@
+Task: c549d673-b287-44f2-9fbc-da7aa93df236/task-443
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\c549d673-b287-44f2-9fbc-da7aa93df236\.system_generated\tasks\task-443.log
+Log output:
+<truncated 21 lines>
+C:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py)
+------------------------------- Captured stderr -------------------------------
+[2026-09-26 04:27:48,774] INFO in app: Admin seeding skipped (SEED_ADMIN is not set)
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+ERROR tests/test_api2021_chapter7_onshore.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+========================= 1 warning, 1 error in 2.04s =========================
+
+Last progress: 2s ago

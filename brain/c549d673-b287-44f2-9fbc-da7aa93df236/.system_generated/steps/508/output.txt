@@ -1,0 +1,164 @@
+
+The command exited with code 1.
+Output:
+<truncated 236 lines>
+        Factor: 0.160 kg CH4/hr/leaker for Gas Valves, 0.00048 kg CH4/hr/non-leaker.
+        4 detected leakers + 96 non-leakers operating 8,760 hours.
+        Expected:
+          Leakers CH4: 4 * 0.160 = 0.64 kg/hr
+          Non-leakers CH4: 96 * 0.00048 = 0.04608 kg/hr
+          Total CH4/hr: 0.68608 kg/hr
+          Annual CH4: (0.68608 * 8760) / 1000 = 6.01006 tonnes CH4
+        """
+        calc = OnshoreScreeningMeasurementCalculator()
+        res = calc.calculate_ogi_survey(
+            component_type="valve",
+            service_type="gas",
+            total_surveyed=100,
+            leakers_detected=4,
+            operating_hours=8760.0,
+        )
+>       ch4_tonnes = float(res["results"]["ch4"])
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: float() argument must be a string or a real number, not 'dict'
+
+tests\test_api2021_chapter7_onshore.py:252: TypeError
+____________________ test_tier3_method21_screening_ranges _____________________
+
+    def test_tier3_method21_screening_ranges():
+        """
+        API 2021 Table 7-15: Method 21 Screening Ranges for Gas Valves
+        Leaker (>=10,000 ppmv): 0.0451 kg TOC/hr
+        Non-Leaker (<10,000 ppmv): 0.00048 kg TOC/hr
+        Stream: 85% CH4, 8,760 hours.
+        10 leakers + 90 non-leakers:
+          TOC: 10 * 0.0451 + 90 * 0.00048 = 0.451 + 0.0432 = 0.4942 kg TOC/hr
+          CH4: 0.4942 * 0.85 = 0.42007 kg CH4/hr
+          Annual CH4: (0.42007 * 8760) / 1000 = 3.6798 tonnes CH4
+        """
+        calc = OnshoreScreeningMeasurementCalculator()
+        res = calc.calculate_method21_ranges(
+            component_type="valve",
+            service_type="gas",
+            non_pegged_count=90,
+            pegged_count=10,
+            operating_hours=8760.0,
+            ch4_content=0.85,
+        )
+>       ch4_tonnes = float(res["results"]["ch4"])
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: float() argument must be a string or a real number, not 'dict'
+
+tests\test_api2021_chapter7_onshore.py:277: TypeError
+________________ test_tier3_direct_measurement_flow_conversion ________________
+
+    def test_tier3_direct_measurement_flow_conversion():
+        """
+        API 2021 Section 7.3.4: Direct Measurement
+        Metered rate: 100 scf/hr of gas stream (80% CH4, 2% CO2).
+        Duration: 1,000 hours.
+        scf/hr to Sm3/hr conversion = 0.0283168 m3/scf.
+        CH4 density = 0.6785 kg/m3, CO2 density = 1.861 kg/m3.
+        """
+        calc = OnshoreScreeningMeasurementCalculator()
+        res = calc.calculate_direct_measurement(
+            measured_rate=100.0,
+            measurement_unit="scf/hr",
+            operating_hours=1000.0,
+            ch4_mol=0.80,
+            co2_mol=0.02,
+        )
+>       ch4_tonnes = float(res["results"]["ch4"])
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: float() argument must be a string or a real number, not 'dict'
+
+tests\test_api2021_chapter7_onshore.py:297: TypeError
+_________________________ test_zero_duration_or_count _________________________
+
+    def test_zero_duration_or_count():
+        """Verify 0 operating duration or 0 count yields exactly 0 emissions."""
+        calc_fac = OnshoreFacilityFugitiveCalculator()
+        res1 = calc_fac.calculate(facility_count=0, facility_type="gas_pad_nodehy", operating_days=365)
+>       assert float(res1["results"]["ch4"]) == 0.0
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: float() argument must be a string or a real number, not 'dict'
+
+tests\test_api2021_chapter7_onshore.py:328: TypeError
+____________________ test_engine_dispatcher_tier1_routing _____________________
+
+    def test_engine_dispatcher_tier1_routing():
+        """Verify CalculationDispatcher routes Tier 1 fugitive to OnshoreFacilityFugitiveCalculator."""
+        dispatcher = CalculationDispatcher()
+        inputs = {
+            "fugitive_tier": "tier1",
+            "facility_type": "gas_pad_nodehy",
+            "facility_count": 1.0,
+            "operating_days": 365.0,
+        }
+>       res = dispatcher.dispatch("fugitive", inputs, {})
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: CalculationDispatcher.dispatch() missing 1 required positional argument: 'uncertainties'
+
+tests\test_api2021_chapter7_onshore.py:360: TypeError
+_______________ test_engine_dispatcher_tier2_component_routing ________________
+
+    def test_engine_dispatcher_tier2_component_routing():
+        """Verify CalculationDispatcher routes Tier 2 component count and applies normalized hours."""
+        dispatcher = CalculationDispatcher()
+        inputs = {
+            "fugitive_tier": "tier2",
+            "fugitive_method": "component",
+            "component_type": "valve",
+            "service_type": "gas",
+            "amount": 100.0,
+            "operating_hours": 8760.0,
+        }
+>       res = dispatcher.dispatch("fugitive", inputs, {})
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: CalculationDispatcher.dispatch() missing 1 required positional argument: 'uncertainties'
+
+tests\test_api2021_chapter7_onshore.py:377: TypeError
+__________________ test_engine_dispatcher_tier3_ogi_routing ___________________
+
+    def test_engine_dispatcher_tier3_ogi_routing():
+        """Verify CalculationDispatcher routes Tier 3 OGI leaker count properly."""
+        dispatcher = CalculationDispatcher()
+        inputs = {
+            "fugitive_tier": "tier3",
+            "fugitive_method": "ogi",
+            "component_type": "valve",
+            "service_type": "gas",
+            "leakers_count": 4.0,
+            "total_surveyed": 100.0,
+            "operating_hours": 8760.0,
+        }
+>       res = dispatcher.dispatch("fugitive", inputs, {})
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: CalculationDispatcher.dispatch() missing 1 required positional argument: 'uncertainties'
+
+tests\test_api2021_chapter7_onshore.py:395: TypeError
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_api2021_chapter7_onshore.py::test_tier1_gas_production_facility_annual
+FAILED tests/test_api2021_chapter7_onshore.py::test_tier1_oil_production_facility_partial_year
+FAILED tests/test_api2021_chapter7_onshore.py::test_tier1_gathering_station_custom_ef
+FAILED tests/test_api2021_chapter7_onshore.py::test_tier2a_gas_production_wellheads
+FAILED tests/test_api2021_chapter7_onshore.py::test_tier2a_gathering_compressors
+FAILED tests/test_api2021_chapter7_onshore.py::test_tier2a_crude_oil_production_wellheads
+FAILED tests/test_api2021_chapter7_onshore.py::test_tier2b_gas_service_valves_speciation
+FAILED tests/test_api2021_chapter7_onshore.py::test_tier2b_light_oil_connectors
+FAILED tests/test_api2021_chapter7_onshore.py::test_tier2b_heavy_oil_valves
+FAILED tests/test_api2021_chapter7_onshore.py::test_tier3_ogi_leakers_vs_non_leakers
+FAILED tests/test_api2021_chapter7_onshore.py::test_tier3_method21_screening_ranges
+FAILED tests/test_api2021_chapter7_onshore.py::test_tier3_direct_measurement_flow_conversion
+FAILED tests/test_api2021_chapter7_onshore.py::test_zero_duration_or_count - ...
+FAILED tests/test_api2021_chapter7_onshore.py::test_engine_dispatcher_tier1_routing
+FAILED tests/test_api2021_chapter7_onshore.py::test_engine_dispatcher_tier2_component_routing
+FAILED tests/test_api2021_chapter7_onshore.py::test_engine_dispatcher_tier3_ogi_routing
+=================== 16 failed, 2 passed, 1 warning in 1.58s ===================
+

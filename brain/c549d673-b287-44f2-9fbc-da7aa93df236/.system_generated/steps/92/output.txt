@@ -1,0 +1,23 @@
+
+The command exited with code 0.
+Output:
+
+new\server\routes\dashboard.py:220:            f_intensity = executor.submit(
+new\server\routes\dashboard.py:223:                _query_intensity_stats,
+new\server\routes\dashboard.py:231:            f_intensity_py = None
+new\server\routes\dashboard.py:233:                f_intensity_py = executor.submit(
+new\server\routes\dashboard.py:236:                    _query_intensity_stats,
+new\server\routes\dashboard.py:326:            "intensity_stats": f_intensity.result(),
+new\server\routes\dashboard.py:327:            "intensity_stats_py": f_intensity_py.result() if f_intensity_py else 
+None,
+new\server\routes\dashboard.py:352:@dashboard_bp.route("/intensity-trend", methods=["GET"])
+new\server\routes\dashboard.py:354:def get_intensity_trend():
+new\server\routes\dashboard.py:377:    bulk = _query_intensity_trend_bulk(
+new\server\routes\dashboard.py:1272:@dashboard_bp.route("/intensity-stats", methods=["GET"])
+new\server\routes\dashboard.py:1274:def get_intensity_stats():
+new\server\routes\dashboard.py:1276:    Get intensity metrics (kg/BOE) per facility.
+new\server\routes\dashboard.py:1277:    Delegates to _query_intensity_stats() for thread-safe reuse.
+new\server\routes\dashboard.py:1289:        _query_intensity_stats(
+
+
+

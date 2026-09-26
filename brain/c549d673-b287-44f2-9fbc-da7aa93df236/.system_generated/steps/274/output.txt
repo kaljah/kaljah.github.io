@@ -1,0 +1,18 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\pages\DashboardEnhanced.jsx:96:    venting: 0,
+new\client\src\pages\DashboardEnhanced.jsx:277:        venting: 0,
+new\client\src\pages\DashboardEnhanced.jsx:306:          totals.venting += row.venting || 0;
+new\client\src\pages\DashboardEnhanced.jsx:601:          name: "Venting",
+new\client\src\pages\DashboardEnhanced.jsx:602:          value: Number((stats.venting ?? 0).toFixed(2)),
+new\client\src\pages\DashboardEnhanced.jsx:1592:                        <td className="indent">Venting</td>
+new\client\src\pages\DashboardEnhanced.jsx:1594:                          {formatCompactNumber(stats.venting)}
+new\client\src\pages\MethaneExplorer.jsx:644:        deltaText: `Satellite top-down flux is +${pctExcess}% above 
+reported inventory. Possible fugitive venting or flare malfunction.`,
+new\client\src\pages\ReferenceData.jsx:239:          desc: "Gas venting during liquids unloading operations",
+new\client\src\pages\ReferenceData.jsx:257:          desc: "CO� venting from AGR units",
+
+
+

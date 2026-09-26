@@ -1,0 +1,27 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\components\Scope1Form.jsx:45:  convertActivityData,
+new\client\src\components\Scope1Form.jsx:1060:          const converted = convertActivityData(
+new\client\src\components\Scope1Form.jsx:1139:          finalAmount = convertActivityData(amt, unit, "bbl");
+new\client\src\components\Scope1Form.jsx:1153:            processInputs.pneu_bleed_rate = convertActivityData(
+new\client\src\components\Scope1Form.jsx:1198:          finalAmount = convertActivityData(vol, unit, "m3");
+new\client\src\utils\emissionFactorsAPI.js:232:export const convertActivityData = (amount, fromUnit, toUnit) => {
+new\client\src\__tests__\mathParityAndFormatters.test.js:3:import { convertActivityData } from 
+'../utils/emissionFactorsAPI';
+new\client\src\__tests__\mathParityAndFormatters.test.js:19:  it('converts units bidirectionally in 
+convertActivityData', () => {
+new\client\src\__tests__\mathParityAndFormatters.test.js:22:    const m3 = convertActivityData(bbl, 'bbl', 'm3');
+new\client\src\__tests__\mathParityAndFormatters.test.js:24:    const roundtripBbl = convertActivityData(m3, 'm3', 
+'bbl');
+new\client\src\__tests__\mathParityAndFormatters.test.js:29:    const kg = convertActivityData(lb, 'lb', 'kg');
+new\client\src\__tests__\mathParityAndFormatters.test.js:31:    const roundtripLb = convertActivityData(kg, 'kg', 
+'lb');
+new\client\src\__tests__\mathParityAndFormatters.test.js:35:    expect(convertActivityData(1.5, 'mmscf', 
+'scf')).toBe(1500000);
+new\client\src\__tests__\mathParityAndFormatters.test.js:36:    expect(convertActivityData(500000, 'scf', 
+'mmscf')).toBe(0.5);
+
+
+

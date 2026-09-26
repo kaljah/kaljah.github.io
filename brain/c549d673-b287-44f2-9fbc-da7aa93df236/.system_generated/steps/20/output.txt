@@ -1,0 +1,16 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\server\emission_factors
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----          9/9/2026  12:01 AM                __pycache__                                                          
+-a----         8/15/2026   6:42 PM           3664 eeio_factors.py                                                      
+-a----          9/9/2026  12:01 AM            623 __init__.py                                                          
+
+
+

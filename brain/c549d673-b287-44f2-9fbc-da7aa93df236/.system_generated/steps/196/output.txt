@@ -1,0 +1,82 @@
+
+The command exited with code 0.
+Output:
+
+> new\server\calculations\units.py:312:def convert_temperature(val, from_unit, to_unit):
+  new\server\calculations\units.py:313:    """Converts temperature value across C, F, K, R."""
+  new\server\calculations\units.py:314:    k = to_kelvin(val, from_unit)
+  new\server\calculations\units.py:315:    u_to = str(to_unit).strip().lower()
+  new\server\calculations\units.py:316:    if u_to in ["k", "kelvin"]:
+  new\server\calculations\units.py:317:        return k
+  new\server\calculations\units.py:318:    elif u_to in ["c", "celsius", "degc", "�c"]:
+  new\server\calculations\units.py:319:        return k - 273.15
+  new\server\calculations\units.py:320:    elif u_to in ["f", "fahrenheit", "degf", "�f"]:
+  new\server\calculations\units.py:321:        return (k - 273.15) * 9.0 / 5.0 + 32.0
+  new\server\calculations\units.py:322:    elif u_to in ["r", "rankine", "degr", "�r"]:
+  new\server\calculations\units.py:323:        return k * 9.0 / 5.0
+  new\server\calculations\units.py:324:    return k
+  new\server\calculations\units.py:325:
+  new\server\calculations\units.py:326:
+> new\server\calculations\units.py:327:def convert_pressure(val, from_unit, to_unit, 
+atmospheric_psia=STD_PRESSURE_PSIA):
+  new\server\calculations\units.py:328:    """Converts pressure value across psia, psig, bar, barg, kpa, kpag, mpa, 
+mpag, atm, pa, mbar."""
+  new\server\calculations\units.py:329:    psia = to_psia(val, from_unit, atmospheric_psia=atmospheric_psia)
+  new\server\calculations\units.py:330:    return from_psia(psia, to_unit, atmospheric_psia=atmospheric_psia)
+  new\server\calculations\units.py:331:
+  new\server\calculations\units.py:332:
+  new\server\calculations\units.py:333:DISTANCE_UNITS_TO_M = {
+  new\server\calculations\units.py:334:    "m": 1.0,
+  new\server\calculations\units.py:335:    "meter": 1.0,
+  new\server\calculations\units.py:336:    "meters": 1.0,
+  new\server\calculations\units.py:337:    "km": 1000.0,
+  new\server\calculations\units.py:338:    "kilometer": 1000.0,
+  new\server\calculations\units.py:339:    "kilometers": 1000.0,
+  new\server\calculations\units.py:340:    "mile": 1609.344,
+  new\server\calculations\units.py:341:    "miles": 1609.344,
+  new\server\calculations\units.py:342:    "mi": 1609.344,
+> new\server\calculations\units.py:374:TIME_UNITS_TO_HOURS = {
+  new\server\calculations\units.py:375:    "hr": 1.0,
+  new\server\calculations\units.py:376:    "hrs": 1.0,
+  new\server\calculations\units.py:377:    "hour": 1.0,
+> new\server\calculations\units.py:378:    "hours": 1.0,
+  new\server\calculations\units.py:379:    "h": 1.0,
+  new\server\calculations\units.py:380:    "day": 24.0,
+  new\server\calculations\units.py:381:    "days": 24.0,
+  new\server\calculations\units.py:382:    "d": 24.0,
+  new\server\calculations\units.py:383:    "min": 1.0 / 60.0,
+  new\server\calculations\units.py:384:    "minute": 1.0 / 60.0,
+  new\server\calculations\units.py:385:    "minutes": 1.0 / 60.0,
+  new\server\calculations\units.py:386:    "sec": 1.0 / 3600.0,
+  new\server\calculations\units.py:387:    "second": 1.0 / 3600.0,
+  new\server\calculations\units.py:388:    "seconds": 1.0 / 3600.0,
+  new\server\calculations\units.py:389:    "yr": 8760.0,
+  new\server\calculations\units.py:390:    "year": 8760.0,
+  new\server\calculations\units.py:391:    "years": 8760.0,
+  new\server\calculations\units.py:392:}
+  new\server\calculations\units.py:393:
+> new\server\calculations\units.py:433:    TIME_UNITS_TO_HOURS,
+  new\server\calculations\units.py:434:    LIQUID_FLOW_UNITS_TO_M3_HR,
+  new\server\calculations\units.py:435:]
+  new\server\calculations\units.py:436:
+  new\server\calculations\units.py:437:
+> new\server\calculations\units.py:438:def convert(value, from_unit, to_unit):
+  new\server\calculations\units.py:439:    """Simple unit conversion wrapper supporting direct keys, dimensional base 
+units, temperatures, and pressures."""
+  new\server\calculations\units.py:440:    if value is None:
+  new\server\calculations\units.py:441:        return 0.0
+  new\server\calculations\units.py:442:    val = float(value)
+  new\server\calculations\units.py:443:    u_from = str(from_unit).strip().lower()
+  new\server\calculations\units.py:444:    u_to = str(to_unit).strip().lower()
+  new\server\calculations\units.py:445:    if u_from == u_to:
+  new\server\calculations\units.py:446:        return val
+  new\server\calculations\units.py:447:
+  new\server\calculations\units.py:448:    # Direct / reverse lookup in legacy CONVERSIONS
+  new\server\calculations\units.py:449:    key = f"{u_from}_to_{u_to}"
+  new\server\calculations\units.py:450:    if key in CONVERSIONS:
+  new\server\calculations\units.py:451:        return val * CONVERSIONS[key]
+  new\server\calculations\units.py:452:
+  new\server\calculations\units.py:453:    rev_key = f"{u_to}_to_{u_from}"
+
+
+

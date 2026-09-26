@@ -1,0 +1,1 @@
+A1: (Recommended) Flexible dual-mode: Provide API-aligned default compositions by service type (e.g. Onshore Gas: 85% CH4, Light Oil: 60% CH4, Heavy Oil: 15% CH4), while allowing full site-specific stream analysis override (CH4 mol%, CO2 mol%, MW) for exact TOC-to-speciation conversions.

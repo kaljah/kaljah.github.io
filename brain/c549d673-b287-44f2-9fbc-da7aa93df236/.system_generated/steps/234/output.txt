@@ -1,0 +1,16 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\emission_factors.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -70,6 +70,10 @@
+     "CHEMICAL_PRODUCTION_FACTORS",
+     "N2O_PRODUCTION_FACTORS",
+     "CORRELATION_EQUATIONS",
++    "API_CHAPTER7_ONSHORE_FACTORS",
++    "METHOD21_SCREENING_RANGES",
++    "OGI_LEAKER_FACTORS",
++    "DEFAULT_SERVICE_COMPOSITIONS",
+     "get_factor_by_segment",
+     "get_factor_by_process_category",
+     "get_factors_by_segment_and_category",
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

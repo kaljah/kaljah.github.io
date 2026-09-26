@@ -1,0 +1,24 @@
+
+The command exited with code 0.
+Output:
+
+  new\client\src\components\Scope1Form.jsx:1755:
+  new\client\src\components\Scope1Form.jsx:1756:  // Compute current dropdown value from state
+> new\client\src\components\Scope1Form.jsx:1757:  const currentProcessValue = `${streamType}|${processType}`;
+  new\client\src\components\Scope1Form.jsx:1758:
+  new\client\src\components\Scope1Form.jsx:1759:  const handleGasApply = (res) => {
+  new\client\src\components\Scope1Form.jsx:1760:    setSpecFactors((prev) => ({
+  new\client\src\components\Scope1Form.jsx:1761:      ...prev,
+  new\client\src\components\Scope1Form.jsx:1762:      co2: res.co2,
+  new\client\src\components\Scope1Form.jsx:1922:              <CustomDropdown
+  new\client\src\components\Scope1Form.jsx:1923:                options={getProcessOptions()}
+> new\client\src\components\Scope1Form.jsx:1924:                value={currentProcessValue}
+  new\client\src\components\Scope1Form.jsx:1925:                onChange={handleProcessChange}
+  new\client\src\components\Scope1Form.jsx:1926:              />
+  new\client\src\components\Scope1Form.jsx:1927:            </div>
+  new\client\src\components\Scope1Form.jsx:1928:
+  new\client\src\components\Scope1Form.jsx:1929:            {/* Hoisted Emission Factor Selection - hidden for 
+stoichiometry and dedicated downstream process forms */}
+
+
+
