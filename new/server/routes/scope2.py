@@ -1,11 +1,12 @@
-from flask import Blueprint, request, jsonify, session
+from flask import Blueprint, request, jsonify, session, current_app
 from models import User, Scope2Emission, Facility
 from extensions import db
 from sqlalchemy import func
 from electricity_factors import GRID_FACTORS
 from routes.auth import login_required
 from calculations.uncertainty import propagate_uncertainty, Tier
-from utils import get_current_user, get_allowed_facility_ids, require_facility_access
+from utils import get_current_user, get_allowed_facility_ids, require_facility_access, initial_record_status
+from validation import ValidationError, parse_number, parse_year, parse_month
 import datetime
 
 scope2_bp = Blueprint("scope2", __name__)
@@ -13,6 +14,9 @@ scope2_bp = Blueprint("scope2", __name__)
 # Default emission factor for natural-gas-fired boilers (indirect steam)
 # Per EPA AP-42 / API Compendium: ~53.06 kg CO2/MMBtu for natural gas
 _DEFAULT_BOILER_EF_KG_PER_MMBTU = 53.06
+MMBTU_PER_MWH = 3.412142
+# Upper bound for a supplier-specific grid factor; the most carbon-intensive grids are ~1.2 kg CO2e/kWh.
+MAX_GRID_EF_KG_PER_KWH = 2.0
 
 
 def _calc_indirect_steam(data):
@@ -81,14 +85,15 @@ def _calc_cogen_allocation(data):
         total_emissions = (float(data["fuel_consumed_mmbtu"]) * _DEFAULT_BOILER_EF_KG_PER_MMBTU) / 1000.0
     heat_output = float(data.get("heat_output_mmbtu") or ci.get("heat_output", 0))
     power_output = float(data.get("power_output_mwh") or ci.get("power_output", 0))
+    power_mmbtu = power_output * MMBTU_PER_MWH  # BUG-097: power output is entered in MWh
     method = data.get("allocation_method") or ci.get("allocation_method", "wri_efficiency")
 
     if method == "wri_efficiency":
         e_h, e_p = 0.8, 0.33
-        denom = (heat_output / e_h) + (power_output / e_p)
+        denom = (heat_output / e_h) + (power_mmbtu / e_p)
         allocated = ((heat_output / e_h) / denom) * total_emissions if denom else 0
     else:
-        denom = heat_output + power_output
+        denom = heat_output + power_mmbtu
         allocated = (heat_output / denom) * total_emissions if denom else 0
     return allocated
 
@@ -149,10 +154,8 @@ def get_scope2_emissions():
             ]
         )
     except Exception as e:
-        import traceback
-
-        traceback.print_exc()
-        return jsonify({"error": str(e)}), 500
+        current_app.logger.exception(f"Failed to list Scope 2 emissions: {e}")
+        return jsonify({"error": "Failed to load Scope 2 emissions"}), 500
 
 
 @scope2_bp.route("", methods=["POST"])
@@ -175,50 +178,74 @@ def create_scope2_emission():
 
     user_id = user.id
     source_type = data.get("source_type", "electricity")
+    if source_type not in ("electricity", "indirect_steam", "cogen_allocation"):
+        return jsonify({"error": f"Unsupported source_type '{source_type}'"}), 400
 
-    # --- Run calculation for source types ---
-    co2e = float(data.get("co2e", 0))
-    emission_factor = float(data.get("emission_factor", 0))
-    electricity_kwh = float(data.get("electricity_kwh", 0))
+    # BUG-073: year/month are required and range-checked (a NULL year broke every dashboard).
+    year_val = parse_year(data.get("year"))
+    month_val = parse_month(data.get("month"))
+
+    # BUG-099: CO2e is always computed server-side; a client-supplied co2e is ignored.
+    co2e = 0.0
+    emission_factor = 0.0
+    electricity_kwh = 0.0
     heat_mmbtu = 0.0
 
     if source_type == "electricity":
-        # Authoritative server-side electricity calculation
-        if electricity_kwh == 0 and data.get("amount"):
-            raw_amt = float(data.get("amount", 0))
+        electricity_kwh = parse_number(data.get("electricity_kwh"), "electricity_kwh", required=False, min_value=0, default=0.0)
+        if electricity_kwh == 0 and data.get("amount") not in (None, ""):
+            raw_amt = parse_number(data.get("amount"), "amount", min_value=0)
             raw_unit = str(data.get("unit") or "kwh").lower().strip()
             if raw_unit in ["mwh", "mw-hr", "megawatthour"]:
                 electricity_kwh = raw_amt * 1000.0
             elif raw_unit in ["gwh", "gw-hr", "gigawatthour"]:
                 electricity_kwh = raw_amt * 1_000_000.0
-            else:
+            elif raw_unit in ["kwh", "kw-hr", "kilowatthour"]:
                 electricity_kwh = raw_amt
+            else:
+                return jsonify({"error": f"Unsupported electricity unit '{raw_unit}'"}), 400
+        if electricity_kwh <= 0:
+            return jsonify({"error": "'electricity_kwh' must be greater than 0"}), 400
 
         grid_region = data.get("grid_region") or data.get("location")
         grid_entry = GRID_FACTORS.get(grid_region, {})
         resolved_ef = grid_entry.get("factor") if grid_entry else None
         if resolved_ef is not None:
             emission_factor = float(resolved_ef)
-
-        if emission_factor > 0 and (electricity_kwh > 0 or co2e == 0):
-            co2e = (electricity_kwh * emission_factor) / 1000.0
+        else:
+            # Unknown grid: only an explicit, plausible supplier factor (kg CO2e/kWh) is accepted.
+            emission_factor = parse_number(
+                data.get("emission_factor"), "emission_factor", required=False, min_value=0, max_value=MAX_GRID_EF_KG_PER_KWH
+            )
+            if not emission_factor:
+                return jsonify({"error": f"Unknown grid region '{grid_region}'. Select a known grid or provide a supplier emission factor (kg CO2e/kWh)."}), 400
+        co2e = (electricity_kwh * emission_factor) / 1000.0
 
     elif source_type == "indirect_steam":
         try:
             co2e, heat_mmbtu, emission_factor = _calc_indirect_steam(data)
+        except ValidationError:
+            raise
         except Exception as exc:
-            return jsonify({"error": f"Indirect steam calculation failed: {exc}"}), 422
+            current_app.logger.warning(f"Indirect steam calculation failed: {exc}")
+            return jsonify({"error": "Indirect steam calculation failed: check the amount, unit and inputs"}), 422
 
     elif source_type == "cogen_allocation":
         try:
             co2e = _calc_cogen_allocation(data)
+        except ValidationError:
+            raise
         except Exception as exc:
-            return jsonify({"error": f"CHP allocation calculation failed: {exc}"}), 422
+            current_app.logger.warning(f"CHP allocation calculation failed: {exc}")
+            return jsonify({"error": "CHP allocation calculation failed: check the inputs"}), 422
 
-    # Calculate uncertainty
+    if co2e < 0:
+        return jsonify({"error": "Calculated emissions cannot be negative"}), 400
+
+    # Calculate uncertainty (BUG-043: stored as a 1-sigma fraction, 0..2)
     provided_uncertainty = data.get("uncertainty")
-    if provided_uncertainty is not None:
-        final_uncertainty = float(provided_uncertainty)
+    if provided_uncertainty not in (None, ""):
+        final_uncertainty = parse_number(provided_uncertainty, "uncertainty", min_value=0, max_value=2)
     else:
         # Default Scope 2 uncertainty (5% EF, 2% AD -> ~5.4% combined)
         u_res = propagate_uncertainty(
@@ -231,18 +258,13 @@ def create_scope2_emission():
         )
         final_uncertainty = u_res["relative_uncertainty"]
 
-    user = get_current_user()
-    req_status = data.get("status")
-    if req_status == "Draft":
-        initial_status = "Draft"
-    else:
-        # Maker-Checker (D-04): admin and superuser manual entries are auto-Verified
-        initial_status = "Verified" if user and user.role in ["admin", "superuser"] else "Pending"
+    # BUG-060: one maker-checker policy for every scope (only admins are auto-Verified).
+    initial_status = initial_record_status(user, data.get("status"))
 
     # Map amount to steam_ton / cooling_ton if source_type or unit indicates steam or cooling
-    steam_ton_val = float(data.get("steam_ton") or data.get("stream_ton", 0) or 0)
-    cooling_ton_val = float(data.get("cooling_ton", 0) or 0)
-    raw_amt = float(data.get("amount", 0) or 0)
+    steam_ton_val = parse_number(data.get("steam_ton") or data.get("stream_ton"), "steam_ton", required=False, min_value=0, default=0.0)
+    cooling_ton_val = parse_number(data.get("cooling_ton"), "cooling_ton", required=False, min_value=0, default=0.0)
+    raw_amt = parse_number(data.get("amount"), "amount", required=False, min_value=0, default=0.0)
     raw_unit = str(data.get("unit") or "").lower().strip()
 
     if steam_ton_val == 0 and ("steam" in source_type.lower() or raw_unit in ["ton", "tonne", "mt", "us_ton", "short_ton", "tons"]):
@@ -255,8 +277,8 @@ def create_scope2_emission():
 
     emission = Scope2Emission(
         facility_id=data.get("facility_id"),
-        year=data.get("year"),
-        month=data.get("month"),
+        year=year_val,
+        month=month_val,
         source_type=source_type,
         electricity_kwh=electricity_kwh,
         steam_ton=steam_ton_val,
@@ -283,7 +305,8 @@ def create_scope2_emission():
         db.session.commit()
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": f"Failed to create Scope 2 emission: {str(e)}"}), 500
+        current_app.logger.error(f"Failed to create Scope 2 emission: {e}")
+        return jsonify({"error": "Failed to create Scope 2 emission"}), 500
 
     if user:
         try:
@@ -372,13 +395,13 @@ def update_scope2_emission(emission_id):
     if user.role == "user" and emission.created_by is not None and emission.created_by != user.id:
         return jsonify({"error": "Unauthorized: You may only modify records you created"}), 403
 
-    # If non-admin modifies a verified record, reset status to Pending for maker-checker review
-    if user.role not in ["admin", "superuser"] and emission.status == "Verified":
+    data = request.get_json() or {}
+
+    # BUG-067/RC-2: any non-admin edit of a decided record sends it back to maker-checker review.
+    if user.role != "admin" and emission.status in ("Verified", "Rejected"):
         emission.status = "Pending"
         emission.approved_by = None
         emission.approved_at = None
-
-    data = request.get_json() or {}
 
     # Strip status and co2e from direct client overwrite
     data.pop("status", None)
@@ -392,9 +415,9 @@ def update_scope2_emission(emission_id):
             return jsonify({"error": "Unauthorized to reassign to this facility"}), 403
         emission.facility_id = new_fid
     if "year" in data:
-        emission.year = int(data["year"])
+        emission.year = parse_year(data["year"])
     if "month" in data:
-        emission.month = int(data["month"])
+        emission.month = parse_month(data["month"])
     if "source_type" in data:
         emission.source_type = data["source_type"]
 
@@ -409,16 +432,20 @@ def update_scope2_emission(emission_id):
             "emission_factor",
         ]
     )
-    if "electricity_kwh" in data:
-        emission.electricity_kwh = float(data["electricity_kwh"] or 0)
-    if "steam_ton" in data:
-        emission.steam_ton = float(data["steam_ton"] or 0)
-    if "heat_mmbtu" in data:
-        emission.heat_mmbtu = float(data["heat_mmbtu"] or 0)
-    if "cooling_ton" in data:
-        emission.cooling_ton = float(data["cooling_ton"] or 0)
-    if "emission_factor" in data:
-        emission.emission_factor = float(data["emission_factor"] or 0)
+    for fld in ("electricity_kwh", "steam_ton", "heat_mmbtu", "cooling_ton"):
+        if fld in data:
+            setattr(emission, fld, parse_number(data[fld], fld, required=False, min_value=0, default=0.0))
+    if "grid_region" in data or "location" in data:
+        emission.grid_region = data.get("grid_region") or data.get("location") or emission.grid_region
+        activity_changed = True
+    st_now = (emission.source_type or "").strip().lower()
+    grid_entry = GRID_FACTORS.get(emission.grid_region or "", {}) if ("electric" in st_now) else {}
+    if grid_entry.get("factor") is not None:
+        # BUG-099: a known grid always uses the server factor, never the client's.
+        emission.emission_factor = float(grid_entry["factor"])
+    elif "emission_factor" in data:
+        max_ef = MAX_GRID_EF_KG_PER_KWH if "electric" in st_now else None
+        emission.emission_factor = parse_number(data["emission_factor"], "emission_factor", min_value=0, max_value=max_ef)
 
     if activity_changed:
         factor = emission.emission_factor or 0.0
@@ -461,17 +488,16 @@ def update_scope2_emission(emission_id):
             emission.co2e = round((emission.cooling_ton * factor) / 1000.0, 4)
 
     if "uncertainty" in data:
-        emission.uncertainty = float(data["uncertainty"] or 0)
+        emission.uncertainty = parse_number(data["uncertainty"], "uncertainty", required=False, min_value=0, max_value=2)
     if "location" in data:
         emission.location = data["location"]
-    if "grid_region" in data:
-        emission.grid_region = data["grid_region"]
 
     try:
         db.session.commit()
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": f"Failed to update Scope 2 emission: {str(e)}"}), 500
+        current_app.logger.error(f"Failed to update Scope 2 emission: {e}")
+        return jsonify({"error": "Failed to update Scope 2 emission"}), 500
 
     from routes.dashboard import clear_dashboard_cache
 
@@ -562,8 +588,8 @@ def bulk_import_scope2():
             413,
         )
 
-    # Per Maker-Checker: admin/superuser imports are Verified, regular user imports are Pending
-    bulk_status = "Verified" if user.role in ["admin", "superuser"] else "Pending"
+    # BUG-060/RC-2: every bulk import is Pending until an approver reviews it (same as Scope 1/3).
+    bulk_status = initial_record_status(user, channel="bulk")
     imported_count = 0
     errors = []
     facility_cache = {}
@@ -610,16 +636,23 @@ def bulk_import_scope2():
 
             ef = factor_info["factor"]
             # consumption in payload might be kwh, mwh, gwh. BulkImportModal uses 'consumption' and 'unit'
-            val = float(rec.get("consumption") or 0)
-            unit = str(rec.get("unit") or "kwh").lower().strip()
+            val = parse_number(rec.get("consumption"), "consumption", min_value=0)
+            if val <= 0:
+                raise ValidationError("'consumption' must be greater than 0", "consumption")
+            unit = str(rec.get("unit") or "").lower().strip()
+            if not unit:
+                raise ValidationError("'unit' is required", "unit")
 
-            kwh = val
             if unit in ["mwh", "mw-hr", "megawatthour"]:
                 kwh = val * 1000.0
             elif unit in ["gwh", "gw-hr", "gigawatthour"]:
                 kwh = val * 1_000_000.0
-            else:
+            elif unit in ["kwh", "kw-hr", "kilowatthour"]:
                 kwh = val
+            else:
+                raise ValidationError(f"Unsupported electricity unit '{unit}'", "unit")
+            row_year = parse_year(rec.get("year"))
+            row_month = parse_month(rec.get("month"), required=True)
 
             co2e_val = (kwh * ef) / 1000
 
@@ -636,8 +669,8 @@ def bulk_import_scope2():
 
             emission = Scope2Emission(
                 facility_id=facility.id,
-                year=int(rec.get("year", 2024)),
-                month=int(rec.get("month", 1)),
+                year=row_year,
+                month=row_month,
                 source_type="electricity",
                 electricity_kwh=kwh,
                 emission_factor=ef,
@@ -655,14 +688,18 @@ def bulk_import_scope2():
             )
             db.session.add(emission)
             imported_count += 1
+        except ValidationError as e:
+            errors.append(f"Row {i}: {e.message}")
         except Exception as e:
-            errors.append(f"Row {i}: {str(e)}")
+            current_app.logger.warning(f"Scope 2 bulk row {i} failed: {e}")
+            errors.append(f"Row {i}: invalid row")
 
     try:
         db.session.commit()
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": f"Failed to bulk import Scope 2 emissions: {str(e)}"}), 500
+        current_app.logger.error(f"Failed to bulk import Scope 2 emissions: {e}")
+        return jsonify({"error": "Failed to bulk import Scope 2 emissions"}), 500
 
     try:
         log_activity_and_notify(

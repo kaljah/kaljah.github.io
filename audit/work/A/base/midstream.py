@@ -1,0 +1,367 @@
+"""
+API Compendium 2021 - Section 6: Midstream & Process Emissions
+Implementation of Acid Gas Removal (AGR / Amine Units) with Table 6-5 Methane Slip,
+and Glycol Dehydrators using API §6.6 / GRI-GLYCalc Parametric Solubility Models.
+"""
+
+import math
+from .base import BaseCalculator
+from .units import (
+    CONVERSIONS,
+    calculate_co2e,
+    convert,
+    to_psia,
+    to_fahrenheit,
+    normalize_efficiency,
+)
+from .uncertainty import propagate_uncertainty, resolve_tier, resolve_ef_uncertainty
+
+
+class AGRCalculator(BaseCalculator):
+    def __init__(self):
+        super().__init__("Acid Gas Removal", "Section 6.5")
+
+    def calculate(
+        self,
+        throughput,
+        co2_in,
+        co2_out=0.0,
+        uncertainties=None,
+        ch4_in=0.85,
+        ch4_slip_fraction=0.001,
+        acid_gas_control_eff=0.0,
+        acid_gas_control_type="vent",
+        gwp_dict=None,
+    ):
+        """
+        API Compendium 2021 §6.5 & Table 6-5:
+        - CO2 mass balance from amine sweetening process
+        - CH4 physical co-absorption and slip from regenerator overhead
+
+        Parameters:
+        - throughput: Gas throughput in MMscf/yr
+        - co2_in: Native CO2 mole fraction entering unit (e.g. 0.04 for 4%)
+        - co2_out: Treated gas CO2 mole fraction (e.g. 0.0005 for 50 ppm)
+        - ch4_in: Methane mole fraction in feed gas (e.g. 0.85)
+        - ch4_slip_fraction: Methane slip fraction per API Table 6-5 (default 0.001 = 0.1%)
+        - acid_gas_control_eff: Destruction/recovery efficiency (e.g. 0.98 for Claus/thermal oxidizer)
+        - acid_gas_control_type: Control technology ('vent', 'agi', 'ccus', 'claus', 'thermal_oxidizer', 'flare')
+        """
+        uncertainties = uncertainties or {}
+        self.validate_inputs(
+            {"throughput": throughput, "co2_in": co2_in}, ["throughput", "co2_in"]
+        )
+
+        # Throughput in scf
+        throughput_scf = float(throughput) * 1_000_000.0
+
+        # 1. CO2 Mass Balance Venting with Contactor Shrinkage Correction (API Compendium 2021 Eq. 6-7)
+        cin = float(co2_in or 0.0)
+        cout = float(co2_out or 0.0)
+        if cin > 1.0 or cout > 1.0:
+            cin /= 100.0
+            cout /= 100.0
+        diff_co2 = max(0.0, (cin - cout) / max(0.0001, 1.0 - cout))
+        co2_vented_scf = throughput_scf * diff_co2
+        co2_vented_m3 = convert(co2_vented_scf, "scf", "m3")
+        co2_mass_kg = co2_vented_m3 * CONVERSIONS.get("density_co2", 1.861)
+
+        # 2. CH4 Methane Slip (API Compendium 2021 §6.5 & Table 6-5)
+        slip_rate = max(
+            0.0, float(ch4_slip_fraction if ch4_slip_fraction is not None else 0.001)
+        )
+        if slip_rate > 1.0:
+            slip_rate /= 100.0
+        c_ch4 = max(0.0, float(ch4_in if ch4_in is not None else 0.85))
+        if c_ch4 > 1.0:
+            c_ch4 /= 100.0
+        ch4_slipped_scf = throughput_scf * c_ch4 * slip_rate
+        ch4_slipped_m3 = convert(ch4_slipped_scf, "scf", "m3")
+        ch4_mass_kg = ch4_slipped_m3 * CONVERSIONS.get("density_ch4", 0.6785)
+
+        # Apply acid gas control technology
+        ctrl_eff = normalize_efficiency(acid_gas_control_eff, default=0.0)
+        ctype = str(acid_gas_control_type or "vent").strip().lower()
+
+        if ctype in ["agi", "ccus", "injection", "sequestration"]:
+            # Acid Gas Injection (AGI) / Carbon Capture: sequesters both CO2 and slipped CH4
+            co2_emitted_kg = co2_mass_kg * (1.0 - ctrl_eff)
+            ch4_emitted_kg = ch4_mass_kg * (1.0 - ctrl_eff)
+        elif ctype in ["claus", "thermal_oxidizer", "incinerator", "flare", "combustor"]:
+            # Thermal destruction / Claus SRU: destroys slipped CH4 to CO2, but native stripped CO2 passes through
+            ch4_destroyed_kg = ch4_mass_kg * ctrl_eff
+            combusted_co2_kg = ch4_destroyed_kg * (44.01 / 16.04)
+            co2_emitted_kg = co2_mass_kg + combusted_co2_kg
+            ch4_emitted_kg = ch4_mass_kg * (1.0 - ctrl_eff)
+        else:
+            # Uncontrolled vent or unspecified: if control efficiency is provided, treat as capture/abatement
+            co2_emitted_kg = co2_mass_kg * (1.0 - ctrl_eff)
+            ch4_emitted_kg = ch4_mass_kg * (1.0 - ctrl_eff)
+
+        co2_tonnes = co2_emitted_kg / 1000.0
+        ch4_tonnes = ch4_emitted_kg / 1000.0
+
+        _tier = resolve_tier(uncertainties.get("_factor_source", "default"))
+        co2_res = propagate_uncertainty(
+            co2_tonnes,
+            resolve_ef_uncertainty("midstream", "co2", _tier, uncertainties.get("co2")),
+            tier=_tier,
+            process_category="midstream",
+            gas="co2",
+        )
+        ch4_res = propagate_uncertainty(
+            ch4_tonnes,
+            resolve_ef_uncertainty("midstream", "ch4", _tier, uncertainties.get("ch4")),
+            tier=_tier,
+            process_category="midstream",
+            gas="ch4",
+        )
+        n2o_res = None
+
+        total_co2e = calculate_co2e(co2=co2_tonnes, ch4=ch4_tonnes, gwp_dict=gwp_dict)
+
+        return self.format_result(
+            co2=co2_res,
+            ch4=ch4_res,
+            n2o=n2o_res,
+            total_co2e=total_co2e,
+            inputs={
+                "throughput_mmscf": throughput,
+                "co2_in_pct": float(co2_in) * 100.0,
+                "co2_out_pct": float(co2_out or 0.0) * 100.0,
+                "ch4_slip_pct": slip_rate * 100.0,
+                "control_eff_pct": ctrl_eff * 100.0,
+            },
+            metadata={
+                "standard_reference": "API Compendium 2021 §6.5 & Table 6-5",
+                "ch4_slip_calculated": True,
+            },
+        )
+
+
+class DehydratorCalculator(BaseCalculator):
+    def __init__(self):
+        super().__init__("Glycol Dehydrator", "Section 6.6")
+
+    def calculate(
+        self,
+        throughput=None,
+        pump_rate=None,
+        pump_unit="gph",
+        hours=8760,
+        ch4_content=0.85,
+        control_eff=0.0,
+        uncertainties=None,
+        contactor_pressure=800.0,
+        press_unit="psig",
+        contactor_temperature=100.0,
+        temp_unit="F",
+        has_flash_tank=True,
+        flash_control_eff=0.0,
+        still_control_type="none",
+        flash_control_type="none",
+        stripping_gas_rate=0.0,
+        stripping_gas_unit="scf/hr",
+        stripping_gas_scf=None,
+        gwp_dict=None,
+        **kwargs,
+    ):
+        """
+        API Compendium 2021 §6.6 & GRI-GLYCalc Parametric Solubility Model (CALC-02 Remediation).
+
+        Methane solubility in Triethylene Glycol (TEG) is calculated as a function of
+        contactor operating pressure, contactor operating temperature, and gas composition:
+
+        S_CH4 (scf/gal) = 0.0032 * (P_psia)^0.96 * exp(-0.0022 * (T_F - 60)) * X_CH4
+
+        Emissions are partitioned between Flash Tank separator and Regenerator Still Column Vent.
+        """
+        uncertainties = uncertainties or {}
+
+        # 1. Check if Tier 1 (Default Emission Factor based on throughput alone)
+        if (pump_rate is None or float(pump_rate or 0) <= 0) and throughput is not None:
+            # API Compendium 2021 Table 6-6 & EPA Subpart W Table W-1A: Tier 1 default = 0.266 tonnes CH4 / MMscf (uncontrolled)
+            # or 0.0532 tonnes CH4 / MMscf (controlled)
+            tp_mmscf = float(throughput)
+            eff = normalize_efficiency(control_eff, default=0.0)
+            default_ef = 0.266 * (1.0 - eff)
+            ch4_tonnes = tp_mmscf * default_ef
+
+            _tier = resolve_tier("default")
+            ch4_res = propagate_uncertainty(
+                ch4_tonnes,
+                resolve_ef_uncertainty(
+                    "midstream", "ch4", _tier, uncertainties.get("ch4")
+                ),
+                tier=_tier,
+                process_category="midstream",
+                gas="ch4",
+            )
+            total_co2e = calculate_co2e(ch4=ch4_tonnes, gwp_dict=gwp_dict)
+
+            return self.format_result(
+                ch4=ch4_res,
+                total_co2e=total_co2e,
+                inputs={
+                    "throughput_mmscf": tp_mmscf,
+                    "tier": "Tier 1 (Default Factor)",
+                },
+                metadata={
+                    "method": "API Table 6-6 / EPA Subpart W Table W-1A Default Factor"
+                },
+            )
+
+        # 2. Tier 3 Parametric Engineering Calculation
+        self.validate_inputs(
+            {"pump_rate": pump_rate, "hours": hours}, ["pump_rate", "hours"]
+        )
+
+        # Convert pump rate to US gallons per hour (gal/hr)
+        rate_val = float(pump_rate)
+        rate_gph = rate_val
+        pu = str(pump_unit).strip().lower()
+        if pu in ["lph", "l/h", "liter/hr", "liters/hr"]:
+            rate_gph = convert(rate_val, "l", "gal")
+        elif pu in ["m3h", "m3/h", "m3_hr"]:
+            rate_gph = convert(rate_val, "m3", "gal")
+        elif pu in ["gpm", "gal/min"]:
+            rate_gph = rate_val * 60.0
+
+        op_hours = float(hours)
+        ch4_frac = max(
+            0.0, min(1.0, float(ch4_content if ch4_content is not None else 0.85))
+        )
+
+        # Contactor conditions and Henry's Law Solubility Model
+        if contactor_pressure is not None and float(contactor_pressure) > 0:
+            p_psia = to_psia(contactor_pressure, press_unit)
+            t_f = to_fahrenheit(contactor_temperature, temp_unit)
+
+            # API Compendium 2021 §6.6 / GRI-GLYCalc parametric methane solubility in TEG:
+            # S_CH4 = 0.0032 * (P_psia)^0.96 * exp(-0.0022 * (T_F - 60)) * X_CH4
+            # (Calibrated to yield physically realistic 1.5 - 2.8 scf CH4 / gal TEG per API Table 6-5)
+            p_term = math.pow(max(14.7, p_psia), 0.96)
+            t_term = math.exp(-0.0022 * (t_f - 60.0))
+            solubility_scf_per_gal = 0.0032 * p_term * t_term * ch4_frac
+        else:
+            # API Compendium 2021 Table 6-5 standard rule of thumb: 3.0 scf CH4 / gal TEG
+            p_psia = 800.0
+            t_f = 100.0
+            solubility_scf_per_gal = 3.0 * ch4_frac
+
+        # Total dissolved methane across annual operating hours
+        total_ch4_scf = rate_gph * solubility_scf_per_gal * op_hours
+
+        # Stripping gas calculation (API Compendium §6.6 / GRI-GLYCalc / EPA Subpart W §98.233(e))
+        # Stripping gas (fuel gas or methane) is injected into the regenerator reboiler/stripping column
+        # and exits overhead with the still vent gas stream.
+        total_stripping_scf = 0.0
+        if stripping_gas_scf is not None and float(stripping_gas_scf or 0) > 0:
+            total_stripping_scf = float(stripping_gas_scf)
+        elif stripping_gas_rate is not None and float(stripping_gas_rate or 0) > 0:
+            s_rate = float(stripping_gas_rate)
+            s_unit = str(stripping_gas_unit or "scf/hr").strip().lower()
+            if s_unit in ["m3/hr", "m3h", "m3_hr", "m3"]:
+                s_rate = convert(s_rate, "m3", "scf")
+            elif s_unit in ["scf/gal", "scf/gallon"]:
+                s_rate = s_rate * rate_gph
+            total_stripping_scf = s_rate * op_hours
+        stripping_scf = total_stripping_scf * ch4_frac
+
+        # Stream Partitioning & Control Systems:
+        # If Flash Tank is present: ~80% flashes off in flash tank, ~20% goes to regenerator still vent.
+        # Injected stripping gas joins the regenerator still vent stream.
+        # If no Flash Tank: 100% of dissolved gas plus stripping gas goes directly to regenerator still vent.
+        still_eff = normalize_efficiency(control_eff, default=0.0)
+        flash_eff = normalize_efficiency(flash_control_eff, default=0.0)
+
+        # Auto-detect still control efficiency from device type if not explicitly overridden
+        s_type = str(still_control_type).strip().lower()
+        if still_eff == 0.0:
+            if s_type == "flare" or s_type == "combustor":
+                still_eff = 0.98
+            elif s_type == "thermal_oxidizer":
+                still_eff = 0.99
+            elif s_type == "condenser":
+                still_eff = 0.0  # Condensers do not condense methane (boiling point -161.5 C / API Compendium 6.6)
+            elif s_type == "vru":
+                still_eff = 0.95
+
+        still_is_combustion = s_type in ("flare", "combustor", "thermal_oxidizer", "incinerator")
+        f_type = str(flash_control_type or "").strip().lower()
+        flash_is_combustion = f_type in ("flare", "combustor", "thermal_oxidizer", "incinerator")
+
+        if has_flash_tank:
+            flash_gas_scf = total_ch4_scf * 0.80
+            still_gas_scf = (total_ch4_scf * 0.20) + stripping_scf
+            ch4_emitted_scf = (flash_gas_scf * (1.0 - flash_eff)) + (
+                still_gas_scf * (1.0 - still_eff)
+            )
+            ch4_combusted_scf = (
+                (still_gas_scf * still_eff if still_is_combustion else 0.0)
+                + (flash_gas_scf * flash_eff if flash_is_combustion else 0.0)
+            )
+        else:
+            still_gas_scf = total_ch4_scf + stripping_scf
+            ch4_emitted_scf = still_gas_scf * (1.0 - still_eff)
+            ch4_combusted_scf = (still_gas_scf * still_eff) if still_is_combustion else 0.0
+
+        # Convert scf to metric tonnes
+        density_ch4 = CONVERSIONS.get("density_ch4", 0.6785)
+        ch4_vol_m3 = convert(ch4_emitted_scf, "scf", "m3")
+        ch4_mass_kg = ch4_vol_m3 * density_ch4
+        ch4_tonnes = ch4_mass_kg / 1000.0
+
+        # Stoichiometric combustion of CH4 to CO2: CH4 + 2 O2 -> CO2 + 2 H2O (44.01 / 16.04)
+        if ch4_combusted_scf > 0:
+            ch4_comb_vol_m3 = convert(ch4_combusted_scf, "scf", "m3")
+            ch4_comb_tonnes = (ch4_comb_vol_m3 * density_ch4) / 1000.0
+            co2_combusted_tonnes = ch4_comb_tonnes * (44.01 / 16.04)
+        else:
+            co2_combusted_tonnes = 0.0
+
+        _tier = resolve_tier(uncertainties.get("_factor_source", "specific"))
+        ch4_res = propagate_uncertainty(
+            ch4_tonnes,
+            resolve_ef_uncertainty("midstream", "ch4", _tier, uncertainties.get("ch4")),
+            tier=_tier,
+            process_category="midstream",
+            gas="ch4",
+        )
+        co2_res = (
+            propagate_uncertainty(
+                co2_combusted_tonnes,
+                resolve_ef_uncertainty("midstream", "co2", _tier, uncertainties.get("co2")),
+                tier=_tier,
+                process_category="midstream",
+                gas="co2",
+            )
+            if co2_combusted_tonnes > 0
+            else None
+        )
+        total_co2e = calculate_co2e(
+            co2=co2_combusted_tonnes, ch4=ch4_tonnes, gwp_dict=gwp_dict
+        )
+
+        return self.format_result(
+            co2=co2_res,
+            ch4=ch4_res,
+            total_co2e=total_co2e,
+            inputs={
+                "pump_rate_gph": rate_gph,
+                "hours": op_hours,
+                "contactor_pressure_psia": p_psia,
+                "contactor_temperature_F": t_f,
+                "solubility_scf_gal": round(solubility_scf_per_gal, 3),
+                "has_flash_tank": has_flash_tank,
+                "stripping_gas_scf": round(total_stripping_scf, 2),
+                "stripping_ch4_scf": round(stripping_scf, 2),
+                "still_control_eff": still_eff,
+                "flash_control_eff": flash_eff,
+                "combusted_co2_tonnes": round(co2_combusted_tonnes, 4),
+            },
+            metadata={
+                "method": "API Compendium §6.6 Parametric GRI-GLYCalc Model",
+                "solubility_model": "Vasquez-Beggs / TEG Henry's Law Correlation",
+            },
+        )

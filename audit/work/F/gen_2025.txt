@@ -1,0 +1,195 @@
+                           GHG Emissions Report
+
+                                        Generated on September 26, 2026
+
+Report Filters:
+Year: 2025
+
+Emission Summary                                                                                      Quantity
+
+                           Metric                                                     1,636,881.80 tCOse
+                                                                                        317,312.53 tCOse
+                           Scope 1 -- Direct Emissions                                            0.00 tCOse
+                           Scope 2 -- Indirect Electricity
+                           Scope 3 -- Value Chain                              1,580,624.20 tonnes COs
+                           Total COs Gas Mass                                        1,782.39 tonnes CHs
+                           Total CHs Gas Mass                                            94.06 tonnes NsO
+                           Total NsO Gas Mass                                         1,954,194.33 tCOse
+                           Total COse (Grand Total)
+
+Detailed Emissions Data
+
+     Date        Facility  Process        Fuel/Source Amount                   COs (t)    CHs (t)  NsO (t) Total COse (t)
+
+2025-12-01  HBNS (Hassi Ber Scope 2: Ele  Grid              124,937,872.0 kWh       0.00   0.00                 0.00  78,086.17
+2025-12-01                                                                          0.00   0.00
+2025-11-01  El Merk        Scope 2: Ele   Grid              382,762,176.0 kWh  4,269.40   22.08                 0.00  239,226.36
+2025-11-01                                                                     7,142.18   36.94
+2025-11-01  HRM            stationary_c   Natural Gas       2,494.8 kwh        8,830.22   45.67                 0.22  4,946.24
+2025-11-01                                                                       187.66    0.97
+2025-11-01  HRM            stationary_c   Natural Gas       4,687.8 kwh          314.85    1.63                 0.37  8,274.46
+2025-11-01                                                                       442.04    2.29
+2025-11-01  HRM            stationary_c   Natural Gas       6,880.8 kwh          230.62    1.19                 0.46  10,230.11
+2025-11-01                                                                       357.81    1.85
+2025-11-01  RNS            stationary_c   Bituminous C      3,235.4 gal          485.00    2.51                 0.01  217.41
+2025-09-01                                                                       140.53    0.21
+2025-09-01  RNS            stationary_c   Bituminous C      5,428.4 gal          285.27    0.43                 0.02  364.76
+2025-09-01                                                                       430.01    0.65
+2025-09-01  RNS            stationary_c   Bituminous C      7,621.4 gal          189.42    0.29                 0.02  512.12
+
+            Complexe Ammoni stationary_c  Crude Oil         3,976.2 kwh                                         0.01  267.18
+
+            Complexe Ammoni stationary_c  Crude Oil         6,169.1 kwh                                         0.02  414.54
+
+            Complexe Ammoni stationary_c  Crude Oil         8,362.1 kwh                                         0.03  561.89
+
+            HRM            stationary_c   Refinery Fue      2,129.2 gal                                         0.00  147.62
+
+            HRM            stationary_c   Refinery Fue      4,322.2 gal                                         0.01  299.66
+
+            HRM            stationary_c   Refinery Fue      6,515.2 gal                                         0.01  451.70
+
+            RNS            stationary_c   Diesel (No.       2,869.9 kwh                                         0.01  198.97
+2025-09-01  RNS              stationary_c  Diesel (No.   5,062.9 kwh         334.15      0.51   0.01       351.01
+2025-09-01                                                                   478.89      0.73   0.01       503.06
+2025-09-01  RNS              stationary_c  Diesel (No.   7,255.9 kwh         238.30      0.36   0.01       250.33
+2025-09-01                                                                   383.04      0.58   0.01       402.37
+2025-09-01  Complexe Ammoni stationary_c   Anthracite C  3,610.7 gal         527.78      0.80   0.02       554.41
+2025-07-01                                                                               0.53   0.00       103.47
+2025-07-01  Complexe Ammoni stationary_c   Anthracite C  5,803.6 gal           88.19     1.19   0.00       232.12
+2025-07-01                                                                   197.84      1.84   0.01       360.78
+2025-07-01  Complexe Ammoni stationary_c   Anthracite C  7,996.6 gal         307.49      0.75   0.00       146.92
+2025-07-01                                                                   125.22      1.41   0.00       275.58
+2025-07-01  HRM              stationary_c  Kerosene      1,763.8 kwh         234.87      2.07   0.01       404.23
+2025-07-01                                                                   344.52      0.97   0.00       190.38
+2025-07-01  HRM              stationary_c  Kerosene      3,956.8 kwh         162.26      1.63   0.01       319.03
+2025-07-01                                                                   271.91      2.29   0.01       447.68
+2025-06-01  HRM              stationary_c  Kerosene      6,149.8 kwh         381.56    34.30   27.04  540,740.16
+2025-06-01                                                              535,332.80     39.82   34.70  694,054.62
+2025-06-01  RNS              stationary_c  Associated G  2,504.4 gal    687,114.10     89.09    0.00     2,494.63
+2025-06-01                                                                   249.50   195.63    0.00     5,477.63
+2025-06-01  RNS              stationary_c  Associated G  4,697.4 gal         547.80    75.45    0.01     9,425.70
+2025-06-01                                                                 9,406.40    58.54    0.01     5,000.09
+2025-06-01  RNS              stationary_c  Associated G  6,890.4 gal       4,986.40    14.73    5.49   54,928.09
+2025-06-01                                                               53,829.50     19.15    4.20   42,004.48
+2025-06-01  Complexe Ammoni stationary_c   Propane (Liq  3,245.2 kwh     41,164.40     20.83    7.76   77,646.92
+2025-06-01                                                               76,094.00     52.40   11.49  114,919.42
+2025-06-01  Complexe Ammoni stationary_c   Propane (Liq  5,438.1 kwh    112,621.00       1.52   0.57     5,672.84
+2025-06-01                                                                 5,559.40      4.94   1.08   10,843.47
+2025-06-01  Complexe Ammoni stationary_c   Propane (Liq  7,631.1 kwh     10,626.60    536.54    0.00   15,035.33
+2025-06-01                                                                 1,503.50   475.13    0.00   13,329.14
+2025-05-01  HBNS (Hassi Ber fuel_gas       natural_gas   245,791.0 m3      1,332.90      1.90   0.06     1,168.88
+2025-05-01                                                                 1,100.66      2.33   0.07     1,435.56
+2025-05-01  El Merk          fuel_gas      natural_gas   315,479.4 m3      1,351.77      1.01   0.03       619.84
+2025-05-01                                                                   583.67      0.21   0.01       131.75
+2025-05-01  HBNS (Hassi Ber fugitive_equ   natural_gas   0.0 m3              124.06      0.43   0.01       266.83
+2025-05-01                                                                   251.25      0.65   0.02       401.90
+2025-05-01  El Merk          fugitive_equ  natural_gas   0.0 m3              378.45      0.29   0.01       177.37
+2025-05-01                                                                   167.02      0.51   0.02       312.45
+2025-05-01  HBNS (Hassi Ber mobile_combu   diesel        3,509.9 liter       294.21      0.73   0.02       447.53
+2025-05-01                                                                   421.41      0.00   0.00
+            El Merk          mobile_combu  diesel        1,860.6 liter                                       10.84
+                                                                               10.82
+            HBNS (Hassi Ber non_routine_   natural_gas 20,014,000.0 m3
+
+            El Merk          non_routine_  natural_gas 17,269,000.0 m3
+
+            HBNS (Hassi Ber routine_flar   natural_gas 28,292,000.0 m3
+
+            El Merk          routine_flar  natural_gas 47,246,000.0 m3
+
+            HBNS (Hassi Ber safety_flari   natural_gas 2,067,000.0 m3
+
+            El Merk          safety_flari  natural_gas 4,458,000.0 m3
+
+            HBNS (Hassi Ber venting        natural_gas   0.0 m3
+
+            El Merk          venting       natural_gas   0.0 m3
+
+            HRM              stationary_c  Natural Gas   1,398.2 gal
+
+            HRM              stationary_c  Natural Gas   3,591.2 gal
+
+            HRM              stationary_c  Natural Gas   5,784.2 gal
+
+            RNS              stationary_c  Bituminous C  2,138.9 kwh
+
+            RNS              stationary_c  Bituminous C  4,331.9 kwh
+
+            RNS              stationary_c  Bituminous C  6,524.9 kwh
+
+            Complexe Ammoni stationary_c   Crude Oil     2,879.7 gal
+
+            Complexe Ammoni stationary_c   Crude Oil     5,072.6 gal
+
+            Complexe Ammoni stationary_c   Crude Oil     7,265.6 gal
+
+            DB Integrity Ve  stationary_c  Natural Gas   200.0 mscf
+2025-05-01  DB Integrity Ve  Scope 2: ele  US            0.0 kWh        0.00      0.00  0.00  0.00
+
+2025-03-01  HRM              stationary_c  Refinery Fue  1,032.8 kwh    68.16     0.31  0.00  77.38
+
+2025-03-01  HRM              stationary_c  Refinery Fue  3,225.8 kwh    212.90    0.97  0.01  241.71
+
+2025-03-01  HRM              stationary_c  Refinery Fue  5,418.8 kwh    357.64    1.63  0.01  406.03
+
+2025-03-01  HRM              stationary_c  Refinery Fue  7,611.8 kwh    502.38    2.28  0.02  570.35
+
+2025-03-01  RNS              stationary_c  Diesel (No.   1,773.5 gal    117.05    0.53  0.00  132.88
+
+2025-03-01  RNS              stationary_c  Diesel (No.   3,966.4 gal    261.79    1.19  0.01  297.21
+
+2025-03-01  RNS              stationary_c  Diesel (No.   6,159.4 gal    406.52    1.85  0.01  461.53
+
+2025-03-01  RNS              stationary_c  Diesel (No.   8,352.5 gal    551.26    2.51  0.02  625.85
+
+2025-03-01  Complexe Ammoni stationary_c   Anthracite C  2,514.2 kwh    165.93    0.75  0.01  188.39
+
+2025-03-01  Complexe Ammoni stationary_c   Anthracite C  4,707.1 kwh    310.67    1.41  0.01  352.71
+
+2025-03-01  Complexe Ammoni stationary_c   Anthracite C  6,900.1 kwh    455.41    2.07  0.01  517.03
+
+2025-03-01  Complexe Ammoni stationary_c   Anthracite C  9,093.1 kwh    600.15    2.73  0.02  681.35
+
+2025-03-01  Industrial Comp  stationary_c  Natural Gas   25,000.0 mscf  1,353.03  0.03  0.00  1,354.42
+
+2025-03-01  Industrial Comp  Scope 2: ele  US            0.0 kWh        0.00      0.00  0.00  0.00
+
+2025-02-01  Complexe Sidéru  stationary_c  Diesel        0.0 gal        0.00      0.00  0.00  0.00
+
+2025-02-01  Complexe Sidéru  stationary_c  Diesel        0.0 gal        0.00      0.00  0.00  0.00
+
+2025-02-01  Complexe Sidéru  stationary_c  Diesel        0.0 gal        0.00      0.00  0.00  0.00
+
+2025-01-01  Complexe Sidéru  flaring       N/A           50.0 mscf      0.00      0.00  0.00  0.00
+
+2025-01-01  Complexe Sidéru  flaring       N/A           50.0 mscf      0.00      0.00  0.00  0.00
+
+2025-01-01  HRM              stationary_c  Kerosene      667.2 gal      33.36     0.07  0.00  35.41
+
+2025-01-01  HRM              stationary_c  Kerosene      2,860.2 gal    143.01    0.29  0.00  151.78
+
+2025-01-01  HRM              stationary_c  Kerosene      5,053.2 gal    252.66    0.51  0.01  268.15
+
+2025-01-01  HRM              stationary_c  Kerosene      7,246.2 gal    362.31    0.72  0.01  384.52
+
+2025-01-01  RNS              stationary_c  Associated G  1,408.0 kwh    70.40     0.14  0.00  74.71
+
+2025-01-01  RNS              stationary_c  Associated G  3,600.9 kwh    180.05    0.36  0.00  191.08
+
+2025-01-01  RNS              stationary_c  Associated G  5,793.9 kwh    289.70    0.58  0.01  307.46
+
+2025-01-01  RNS              stationary_c  Associated G  7,986.9 kwh    399.35    0.80  0.01  423.83
+
+2025-01-01  Complexe Ammoni stationary_c   Propane (Liq  2,148.7 gal    107.43    0.21  0.00  114.02
+
+2025-01-01  Complexe Ammoni stationary_c   Propane (Liq  4,341.6 gal    217.08    0.43  0.00  230.39
+
+2025-01-01  Complexe Ammoni stationary_c   Propane (Liq  6,534.6 gal    326.73    0.65  0.01  346.76
+
+2025-01-01  Complexe Ammoni stationary_c   Propane (Liq  8,727.6 gal    436.38    0.87  0.01  463.13
+
+2025-01-01  Complexe Sidéru  stationary_c  Diesel        1,000.0 gal    10.21     0.00  0.00  10.24
+
+Report contains 86 emission records. Generated by GHG Emissions Management System.
+

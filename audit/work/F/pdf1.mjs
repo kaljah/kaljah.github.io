@@ -1,0 +1,16 @@
+import { pathToFileURL } from "url";
+const CLIENT = "C:/Users/samsung/Desktop/H2/new/client";
+const { chromium } = await import(pathToFileURL(CLIENT + "/node_modules/playwright/index.mjs").href);
+const browser = await chromium.launch({ executablePath: process.env.USERPROFILE + "/AppData/Local/ms-playwright/chromium-1208/chrome-win64/chrome.exe" });
+const ctx = await browser.newContext({ acceptDownloads: true, viewport: { width: 1440, height: 900 } });
+const page = await ctx.newPage();
+await page.goto("http://127.0.0.1:5192/login"); const skip = page.locator(".skip-intro-btn"); if (await skip.count()) await skip.click().catch(()=>{});
+await page.fill('input[placeholder="Email Address"]', "audit_admin@audit.local");
+await page.fill('input[type="password"]', "AuditPass!2026");
+await page.keyboard.press("Enter");
+await page.waitForTimeout(3000);
+await page.goto("http://127.0.0.1:5192/dashboard"); await page.waitForTimeout(7000);
+const [dl] = await Promise.all([page.waitForEvent("download", { timeout: 120000 }), page.click("text=Export Executive Brief (PDF)")]);
+await dl.saveAs("C:/Users/samsung/Desktop/H2/audit/work/F/exec_brief_allyears.pdf");
+console.log("saved", dl.suggestedFilename());
+await browser.close();

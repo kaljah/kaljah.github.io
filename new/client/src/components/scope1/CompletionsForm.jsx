@@ -1,74 +1,851 @@
-import React from "react";
+import React, { useEffect } from "react";
 import CustomDropdown from "../CustomDropdown";
 
 /**
- * CompletionsForm — Engineering (Tier 3) Calculation Form
- * Rendered only when sourceType === 'specific' (controlled by Scope1Form's outer toggle).
- * The outer toggle handles Tier 1 (default catalog factor) vs Specific (this form).
+ * CompletionsForm — Complete Onshore Well Completion Emissions UI
+ * Primary Reference: API GHG Compendium 2021 §6.2.3 (Tables 6-5, 6-6, Equations 6-4, 6-5, 6-7, 6-12)
+ *
+ * Fully supports all three Neocarbon calculation tiers:
+ *   - Tier 1: API Tabulated Default Factors (Tables 6-5 & 6-6)
+ *             * Gas vs Oil wells
+ *             * With Hydraulic Fracturing (HF) vs Without HF
+ *             * Vented vs REC vs Flared
+ *             * Footnote c site-specific gas composition scaling (CH4%, CO2%)
+ *   - Tier 2: Engineering Operational Data Calculations
+ *             * API Eq. 6-7: Flowback rate × vent duration before separation (V = V_Pi × T)
+ *             * API Eq. 6-12: Liquid flowback volume × GOR minus gas to sales
+ *             * Flowback Rate × Duration with explicit rate unit selector (Mcf/hr, Mcf/day, etc.)
+ *   - Tier 3: Direct Measurement & Composition
+ *             * API Eq. 6-4: Net metered gas flowback with injected N2 deduction (V_gas = V_t - EnF)
+ *             * API Eq. 6-5: Initial unmetered flowback calculation Vi = (Ti × (V_gas / Tm)) / 2
+ *             * Fate partitioning: Vented, Flared (with flare efficiency), REC, or Custom Split %
  */
-const CompletionsForm = ({ data, onChange }) => {
-  return (
-    <div className="completions-form">
-      <h4 style={{ color: "var(--accent-color)", marginBottom: "15px" }}>
-        Completions / Flowback (Engineering Calc)
-      </h4>
 
-      <div className="input-group" style={{ marginBottom: "16px" }}>
-        <label>Calculation Method</label>
-        <CustomDropdown
-          options={[
-            {
-              value: "rate_duration",
-              label: "Rate × Duration (Direct Measurement)",
-            },
-            { value: "gor", label: "Liquid Flowback × GOR (API Eq. 6-12)" },
-          ]}
-          value={data.calc_method || "rate_duration"}
-          onChange={(val) => onChange("calc_method", val)}
-        />
+// Mapping of Tier 1 selections to official API 2021 factor definitions
+const TIER1_FACTOR_MAP = {
+  // Hydraulic Fracturing (API Table 6-5)
+  "gas_hf_uncontrolled": {
+    code: "CompGasHF_Uncontrolled",
+    name: "Gas Well Completion - Hydraulic Fracturing (Uncontrolled / Vented)",
+    table: "Table 6-5",
+    ch4_tonnes: 28.8,
+    co2_tonnes: 0.252,
+    whole_gas_mscf: 1944.0,
+    std_ch4_pct: 78.8,
+    std_co2_pct: 0.44,
+  },
+  "gas_hf_rec": {
+    code: "CompGasHF_REC",
+    name: "Gas Well Completion - Hydraulic Fracturing (REC with Venting)",
+    table: "Table 6-5",
+    ch4_tonnes: 13.542,
+    co2_tonnes: 0.118,
+    whole_gas_mscf: 914.0,
+    std_ch4_pct: 78.8,
+    std_co2_pct: 0.44,
+  },
+  "gas_hf_flared": {
+    code: "CompGasHF_Uncontrolled",
+    name: "Gas Well Completion - Hydraulic Fracturing (Flared)",
+    table: "Table 6-5 + §5.2 Flare",
+    ch4_tonnes: 0.576, // 28.8 * 0.02
+    co2_tonnes: 78.9,
+    whole_gas_mscf: 1944.0,
+    std_ch4_pct: 78.8,
+    std_co2_pct: 0.44,
+  },
+  "oil_hf_uncontrolled": {
+    code: "CompOilHF_Uncontrolled",
+    name: "Oil Well Completion - Hydraulic Fracturing (Uncontrolled / Vented)",
+    table: "Table 6-5",
+    ch4_tonnes: 14.419,
+    co2_tonnes: 0.134,
+    whole_gas_mscf: 973.0,
+    std_ch4_pct: 78.8,
+    std_co2_pct: 0.44,
+  },
+  "oil_hf_rec": {
+    code: "CompOilHF_REC",
+    name: "Oil Well Completion - Hydraulic Fracturing (REC with Venting)",
+    table: "Table 6-5",
+    ch4_tonnes: 0.615,
+    co2_tonnes: 0.005,
+    whole_gas_mscf: 41.5,
+    std_ch4_pct: 78.8,
+    std_co2_pct: 0.44,
+  },
+  "oil_hf_flared": {
+    code: "CompOilHF_Uncontrolled",
+    name: "Oil Well Completion - Hydraulic Fracturing (Flared)",
+    table: "Table 6-5 + §5.2 Flare",
+    ch4_tonnes: 0.288,
+    co2_tonnes: 39.5,
+    whole_gas_mscf: 973.0,
+    std_ch4_pct: 78.8,
+    std_co2_pct: 0.44,
+  },
+  // Without Hydraulic Fracturing (API Table 6-6)
+  "gas_nohf_vented": {
+    code: "CompGasNoHF_Vented",
+    name: "Gas Well Completion - Without Hydraulic Fracturing (Vented)",
+    table: "Table 6-6",
+    ch4_tonnes: 1.7376,
+    co2_tonnes: 0.0152,
+    whole_gas_mscf: 117.3,
+    std_ch4_pct: 78.8,
+    std_co2_pct: 0.44,
+  },
+  "gas_nohf_flared": {
+    code: "CompGasNoHF_Vented",
+    name: "Gas Well Completion - Without Hydraulic Fracturing (Flared)",
+    table: "Table 6-6 + §5.2 Flare",
+    ch4_tonnes: 0.0347,
+    co2_tonnes: 4.76,
+    whole_gas_mscf: 117.3,
+    std_ch4_pct: 78.8,
+    std_co2_pct: 0.44,
+  },
+  "oil_nohf_vented": {
+    code: "CompOilNoHF_Vented",
+    name: "Oil Well Completion - Without Hydraulic Fracturing (Vented)",
+    table: "Table 6-6",
+    ch4_tonnes: 0.0141,
+    co2_tonnes: 0.00013,
+    whole_gas_mscf: 0.95,
+    std_ch4_pct: 78.8,
+    std_co2_pct: 0.44,
+  },
+  "oil_nohf_flared": {
+    code: "CompOilNoHF_Vented",
+    name: "Oil Well Completion - Without Hydraulic Fracturing (Flared)",
+    table: "Table 6-6 + §5.2 Flare",
+    ch4_tonnes: 0.00028,
+    co2_tonnes: 0.038,
+    whole_gas_mscf: 0.95,
+    std_ch4_pct: 78.8,
+    std_co2_pct: 0.44,
+  },
+};
+
+const CompletionsForm = ({ data, onChange, sourceType, setSourceType }) => {
+  // Determine active tier: prefers data.tier, else derives from sourceType
+  const currentTier = String(
+    data.tier ||
+      (sourceType === "specific"
+        ? "tier3"
+        : sourceType === "custom"
+        ? "tier2"
+        : "tier1")
+  ).toLowerCase();
+
+  const isTier1 = currentTier === "tier1" || currentTier === "1";
+  const isTier2 = currentTier === "tier2" || currentTier === "2" || currentTier === "custom";
+  const isTier3 = !isTier1 && !isTier2;
+
+  // Tier 1 configuration state
+  const wellType = data.well_type || "gas";
+  const fracturing = data.fracturing === false || data.fracturing === "without_hf" || data.fracturing === "no_hf" ? "no_hf" : "hf";
+  const disposition = data.comp_disposition || data.disposition || (fracturing === "hf" ? "uncontrolled" : "vented");
+
+  // Lookup active Tier 1 factor
+  const factorKey = `${wellType}_${fracturing}_${disposition}`;
+  const activeT1Factor = TIER1_FACTOR_MAP[factorKey] || TIER1_FACTOR_MAP["gas_hf_uncontrolled"];
+
+  // Tier 2 Active engineering method
+  const activeMethod = String(
+    data.calc_method || data.comp_method || "rate_duration"
+  ).toLowerCase();
+
+  // Tier 3 Active disposition
+  const tier3Disposition = String(
+    data.comp_disposition || data.disposition || "vented"
+  ).toLowerCase();
+
+  // Synchronize tier and default parameters
+  useEffect(() => {
+    if (isTier1) {
+      if (data.unit !== "events") onChange("unit", "events");
+      if (data.tier !== "tier1") onChange("tier", "tier1");
+      if (!data.calc_method || data.calc_method.startsWith("api_equation")) {
+        onChange("calc_method", "api_table_6_5");
+      }
+      if (activeT1Factor && data.fuel !== activeT1Factor.name) {
+        onChange("fuel", activeT1Factor.name);
+        onChange("factor_code", activeT1Factor.code);
+      }
+      const eventsCount = data.events || data.amount || 1;
+      if (data.amount !== eventsCount) onChange("amount", eventsCount);
+    } else if (isTier2) {
+      if (data.unit !== "events") onChange("unit", "events");
+      if (data.tier !== "tier2") onChange("tier", "tier2");
+      if (!data.calc_method || data.calc_method.startsWith("api_table")) {
+        onChange("calc_method", "rate_duration");
+      }
+      if (!data.comp_rate_unit) onChange("comp_rate_unit", "Mcf/hr");
+      const eventsCount = data.events || data.amount || 1;
+      if (data.amount !== eventsCount) onChange("amount", eventsCount);
+    } else {
+      if (data.tier !== "tier3") onChange("tier", "tier3");
+      if (!data.volume_unit && !data.unit) onChange("volume_unit", "Mcf");
+      if (!data.comp_injected_n2_unit) onChange("comp_injected_n2_unit", "scf");
+      if (!data.comp_disposition) onChange("comp_disposition", "vented");
+    }
+  }, [currentTier, factorKey]);
+
+  const handleTierSwitch = (newTier) => {
+    onChange("tier", newTier);
+    if (setSourceType) {
+      setSourceType(newTier === "tier1" ? "default" : newTier === "tier2" ? "custom" : "specific");
+    }
+    if (newTier === "tier1") {
+      onChange("calc_method", "api_table_6_5");
+      onChange("unit", "events");
+      onChange("amount", data.events || 1);
+      if (activeT1Factor) {
+        onChange("fuel", activeT1Factor.name);
+        onChange("factor_code", activeT1Factor.code);
+      }
+    } else if (newTier === "tier2") {
+      onChange("calc_method", "rate_duration");
+      onChange("unit", "events");
+      onChange("comp_rate_unit", data.comp_rate_unit || "Mcf/hr");
+      onChange("amount", data.events || 1);
+    } else {
+      onChange("calc_method", "metered");
+      onChange("volume_unit", data.volume_unit || "Mcf");
+      onChange("comp_disposition", data.comp_disposition || "vented");
+    }
+  };
+
+  return (
+    <div className="completions-form" style={{ marginTop: "15px" }}>
+      {/* HEADER & TIER SELECTOR */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "16px",
+          borderBottom: "1px solid var(--border-color, #e5e7eb)",
+          paddingBottom: "10px",
+          flexWrap: "wrap",
+          gap: "8px",
+        }}
+      >
+        <div>
+          <h4 style={{ color: "var(--accent-color, #2563eb)", margin: 0 }}>
+            Onshore Well Completion Flowback
+          </h4>
+          <small style={{ color: "var(--text-muted, #6b7280)", fontSize: "0.8rem" }}>
+            API GHG Compendium 2021 §6.2.3 (Tables 6-5, 6-6; Equations 6-4, 6-5, 6-7, 6-12)
+          </small>
+        </div>
+        <div style={{ display: "flex", gap: "6px" }}>
+          <button
+            type="button"
+            className={`btn-tier ${isTier1 ? "active" : ""}`}
+            style={{
+              padding: "4px 10px",
+              borderRadius: "4px",
+              fontSize: "0.8rem",
+              fontWeight: 600,
+              cursor: "pointer",
+              background: isTier1 ? "var(--accent-color, #2563eb)" : "rgba(107, 114, 128, 0.1)",
+              color: isTier1 ? "#fff" : "var(--text-primary, #374151)",
+              border: "1px solid var(--border-color, #d1d5db)",
+            }}
+            onClick={() => handleTierSwitch("tier1")}
+          >
+            Tier 1: API Defaults
+          </button>
+          <button
+            type="button"
+            className={`btn-tier ${isTier2 ? "active" : ""}`}
+            style={{
+              padding: "4px 10px",
+              borderRadius: "4px",
+              fontSize: "0.8rem",
+              fontWeight: 600,
+              cursor: "pointer",
+              background: isTier2 ? "var(--accent-color, #2563eb)" : "rgba(107, 114, 128, 0.1)",
+              color: isTier2 ? "#fff" : "var(--text-primary, #374151)",
+              border: "1px solid var(--border-color, #d1d5db)",
+            }}
+            onClick={() => handleTierSwitch("tier2")}
+          >
+            Tier 2: Operational Data
+          </button>
+          <button
+            type="button"
+            className={`btn-tier ${isTier3 ? "active" : ""}`}
+            style={{
+              padding: "4px 10px",
+              borderRadius: "4px",
+              fontSize: "0.8rem",
+              fontWeight: 600,
+              cursor: "pointer",
+              background: isTier3 ? "var(--accent-color, #2563eb)" : "rgba(107, 114, 128, 0.1)",
+              color: isTier3 ? "#fff" : "var(--text-primary, #374151)",
+              border: "1px solid var(--border-color, #d1d5db)",
+            }}
+            onClick={() => handleTierSwitch("tier3")}
+          >
+            Tier 3: Direct Measurement
+          </button>
+        </div>
       </div>
 
-      <div className="form-grid-2">
-        {(!data.calc_method || data.calc_method === "rate_duration") && (
-          <>
+      {/* ========================================================================= */}
+      {/* TIER 1: API DEFAULT EMISSION FACTORS (TABLES 6-5 & 6-6) */}
+      {/* ========================================================================= */}
+      {isTier1 && (
+        <div>
+          <div
+            style={{
+              background: "rgba(59, 130, 246, 0.08)",
+              border: "1px solid rgba(59, 130, 246, 0.25)",
+              borderRadius: "6px",
+              padding: "10px 14px",
+              marginBottom: "16px",
+              fontSize: "0.85rem",
+              color: "var(--text-primary, #1e3a8a)",
+            }}
+          >
+            <strong>API Tables 6-5 & 6-6 Methodology:</strong> Tabulated default emission factors per completion event.
+            Accounts for well hydrocarbon stream (gas vs oil), hydraulic fracturing status, and emission controls (Uncontrolled, REC, or Flared).
+            Footnote c scales default factors when site-specific CH₄ and CO₂ mole percentages are provided.
+          </div>
+
+          <div className="form-grid-3" style={{ marginBottom: "16px" }}>
             <div className="input-group">
               <label>
-                Flowback Duration (hrs)
+                Well Hydrocarbon Type
+                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+              </label>
+              <select
+                className="mole-input"
+                value={wellType}
+                onChange={(e) => {
+                  onChange("well_type", e.target.value);
+                }}
+              >
+                <option value="gas">Gas Well</option>
+                <option value="oil">Oil Well</option>
+              </select>
+            </div>
+
+            <div className="input-group">
+              <label>
+                Hydraulic Fracturing Status
+                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+              </label>
+              <select
+                className="mole-input"
+                value={fracturing}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  onChange("fracturing", val === "hf");
+                  if (val === "no_hf" && disposition === "rec") {
+                    onChange("comp_disposition", "vented");
+                    onChange("disposition", "vented");
+                  }
+                }}
+              >
+                <option value="hf">With Hydraulic Fracturing (Table 6-5)</option>
+                <option value="no_hf">Without Hydraulic Fracturing (Table 6-6)</option>
+              </select>
+            </div>
+
+            <div className="input-group">
+              <label>
+                Flowback Disposition / Control
+                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+              </label>
+              <select
+                className="mole-input"
+                value={disposition}
+                onChange={(e) => {
+                  onChange("comp_disposition", e.target.value);
+                  onChange("disposition", e.target.value);
+                  if (e.target.value === "flared") {
+                    onChange("comp_flare_eff", data.comp_flare_eff || 98);
+                  }
+                }}
+              >
+                {fracturing === "hf" ? (
+                  <>
+                    <option value="uncontrolled">Uncontrolled Venting</option>
+                    <option value="rec">Reduced Emissions Completion (REC)</option>
+                    <option value="flared">Flared Completion</option>
+                  </>
+                ) : (
+                  <>
+                    <option value="vented">Vented (Uncontrolled)</option>
+                    <option value="flared">Flared Completion</option>
+                  </>
+                )}
+              </select>
+            </div>
+          </div>
+
+          {/* ACTIVE FACTOR BADGE */}
+          {activeT1Factor && (
+            <div
+              style={{
+                background: "rgba(16, 185, 129, 0.08)",
+                border: "1px solid rgba(16, 185, 129, 0.3)",
+                borderRadius: "6px",
+                padding: "10px 14px",
+                marginBottom: "16px",
+                fontSize: "0.82rem",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                flexWrap: "wrap",
+                gap: "8px",
+              }}
+            >
+              <div>
+                <strong>Active Factor ({activeT1Factor.table}): </strong>
+                <span>{activeT1Factor.name}</span>
+                <span style={{ display: "block", color: "#6b7280", marginTop: "2px" }}>
+                  Whole Gas: {activeT1Factor.whole_gas_mscf.toLocaleString()} Mscf/event |
+                  Base CH₄: {activeT1Factor.ch4_tonnes} t/event |
+                  Base CO₂: {activeT1Factor.co2_tonnes} t/event (at {activeT1Factor.std_ch4_pct} mol% CH₄)
+                </span>
+              </div>
+              <span
+                style={{
+                  background: "#10b981",
+                  color: "#fff",
+                  padding: "3px 8px",
+                  borderRadius: "4px",
+                  fontWeight: 600,
+                  fontSize: "0.75rem",
+                }}
+              >
+                {activeT1Factor.code}
+              </span>
+            </div>
+          )}
+
+          <div className="form-grid-3">
+            <div className="input-group">
+              <label>
+                Number of Completion Events
                 <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
               </label>
               <input
                 type="number"
+                min="1"
+                step="1"
                 className="mole-input"
-                value={data.comp_duration || ""}
-                onChange={(e) => onChange("comp_duration", e.target.value)}
-                placeholder="e.g. 24"
+                value={data.amount || data.events || "1"}
+                onChange={(e) => {
+                  onChange("amount", e.target.value);
+                  onChange("events", e.target.value);
+                }}
+                placeholder="1"
                 required
               />
             </div>
 
             <div className="input-group">
-              {/* BUG-UI-03 FIX: Explicit Mcf/hr label to prevent scf/hr entry (100× error) */}
               <label>
-                Avg Gas Rate
-                <span
-                  style={{
-                    marginLeft: "6px",
-                    fontSize: "0.75rem",
-                    fontWeight: 700,
-                    color: "var(--accent-color)",
-                  }}
+                Site Gas CH₄ Content (%)
+                <small style={{ color: "#6b7280", marginLeft: "4px" }}>(Footnote c, default 78.8%)</small>
+              </label>
+              <input
+                type="number"
+                min="0"
+                max="100"
+                step="0.1"
+                className="mole-input"
+                value={data.ch4_content !== undefined && data.ch4_content !== null ? data.ch4_content : ""}
+                onChange={(e) => onChange("ch4_content", e.target.value)}
+                placeholder="78.8"
+              />
+            </div>
+
+            <div className="input-group">
+              <label>
+                Site Gas CO₂ Content (%)
+                <small style={{ color: "#6b7280", marginLeft: "4px" }}>(Footnote c, default 0.44%)</small>
+              </label>
+              <input
+                type="number"
+                min="0"
+                max="100"
+                step="0.01"
+                className="mole-input"
+                value={data.co2_content !== undefined && data.co2_content !== null ? data.co2_content : ""}
+                onChange={(e) => onChange("co2_content", e.target.value)}
+                placeholder="0.44"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* TIER 2: ENGINEERING OPERATIONAL DATA CALCULATIONS */}
+      {/* ========================================================================= */}
+      {isTier2 && (
+        <div>
+          <div
+            style={{
+              background: "rgba(245, 158, 11, 0.08)",
+              border: "1px solid rgba(245, 158, 11, 0.25)",
+              borderRadius: "6px",
+              padding: "10px 14px",
+              marginBottom: "16px",
+              fontSize: "0.85rem",
+              color: "var(--text-primary, #92400e)",
+            }}
+          >
+            <strong>Tier 2 Engineering Methodology:</strong> Calculates whole gas flowback volume from operational data:
+            flowback rate × duration, API Eq. 6-12 (liquid flowback × GOR minus gas to sales), or API Eq. 6-7 (daily production rate × vent duration before separation).
+          </div>
+
+          <div className="input-group" style={{ marginBottom: "16px" }}>
+            <label>
+              Engineering Calculation Model
+              <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+            </label>
+            <CustomDropdown
+              options={[
+                {
+                  value: "rate_duration",
+                  label: "Rate × Duration (Direct Flowback Rate Measurement)",
+                },
+                {
+                  value: "gor",
+                  label: "Liquid Flowback × GOR (API Eq. 6-12)",
+                },
+                {
+                  value: "api_equation_6_7",
+                  label: "Initial Production Rate × Vent Duration (API Eq. 6-7, Non-HF)",
+                },
+              ]}
+              value={activeMethod}
+              onChange={(val) => onChange("calc_method", val)}
+            />
+          </div>
+
+          {/* Model 1: Rate × Duration */}
+          {activeMethod === "rate_duration" && (
+            <div className="form-grid-3" style={{ marginBottom: "16px" }}>
+              <div className="input-group">
+                <label>
+                  Avg Gas Flowback Rate
+                  <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  step="any"
+                  className="mole-input"
+                  value={data.comp_rate || ""}
+                  onChange={(e) => onChange("comp_rate", e.target.value)}
+                  placeholder="e.g. 50"
+                  required
+                />
+              </div>
+
+              <div className="input-group">
+                <label>
+                  Flowback Rate Unit
+                  <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+                </label>
+                <select
+                  className="mole-input"
+                  value={data.comp_rate_unit || "Mcf/hr"}
+                  onChange={(e) => onChange("comp_rate_unit", e.target.value)}
                 >
-                  (Mcf/hr)
-                </span>
-                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-                <span
-                  style={{
-                    marginLeft: "4px",
-                    fontSize: "0.7rem",
-                    color: "#6b7280",
-                    cursor: "help",
+                  <option value="Mcf/hr">Mcf / hr (thousand scf / hr)</option>
+                  <option value="Mcf/day">Mcf / day (thousand scf / day)</option>
+                  <option value="scf/hr">scf / hr</option>
+                  <option value="scf/day">scf / day</option>
+                  <option value="m3/day">m³ / day</option>
+                  <option value="m3/hr">m³ / hr</option>
+                </select>
+              </div>
+
+              <div className="input-group">
+                <label>
+                  Flowback Duration (hours)
+                  <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.5"
+                  className="mole-input"
+                  value={data.comp_duration || ""}
+                  onChange={(e) => onChange("comp_duration", e.target.value)}
+                  placeholder="e.g. 24"
+                  required
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Model 2: Liquid × GOR (API Eq. 6-12) */}
+          {activeMethod === "gor" && (
+            <div className="form-grid-3" style={{ marginBottom: "16px" }}>
+              <div className="input-group">
+                <label>
+                  Total Liquid Flowback (bbl)
+                  <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  step="any"
+                  className="mole-input"
+                  value={data.comp_liquid_bbl || ""}
+                  onChange={(e) => onChange("comp_liquid_bbl", e.target.value)}
+                  placeholder="e.g. 5000"
+                  required
+                />
+              </div>
+
+              <div className="input-group">
+                <label>
+                  Flowback GOR (scf/bbl)
+                  <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  step="any"
+                  className="mole-input"
+                  value={data.comp_gor || ""}
+                  onChange={(e) => onChange("comp_gor", e.target.value)}
+                  placeholder="e.g. 1500"
+                  required
+                />
+              </div>
+
+              <div className="input-group">
+                <label>
+                  Gas Produced to Sales (Mcf)
+                  <small style={{ color: "#6b7280", marginLeft: "4px" }}>(deducted)</small>
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  step="any"
+                  className="mole-input"
+                  value={data.comp_gas_produced_mcf || ""}
+                  onChange={(e) => onChange("comp_gas_produced_mcf", e.target.value)}
+                  placeholder="0"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Model 3: API Eq. 6-7 (V_cc = V_Pi × T) */}
+          {activeMethod === "api_equation_6_7" && (
+            <div className="form-grid-3" style={{ marginBottom: "16px" }}>
+              <div className="input-group">
+                <label>
+                  Production / Well Test Rate (V_Pi)
+                  <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  step="any"
+                  className="mole-input"
+                  value={data.comp_daily_prod_rate || data.comp_rate || ""}
+                  onChange={(e) => {
+                    onChange("comp_daily_prod_rate", e.target.value);
+                    onChange("comp_rate", e.target.value);
                   }}
-                  title="Enter the average flowback rate in Mcf/hr (thousand cubic feet per hour). Do NOT enter in scf/hr — that would give a 1000× error."
+                  placeholder="e.g. 250"
+                  required
+                />
+              </div>
+
+              <div className="input-group">
+                <label>
+                  Production Rate Unit
+                  <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+                </label>
+                <select
+                  className="mole-input"
+                  value={data.comp_prod_rate_unit || "Mcf/day"}
+                  onChange={(e) => onChange("comp_prod_rate_unit", e.target.value)}
+                >
+                  <option value="Mcf/day">Mcf / day (thousand scf / day)</option>
+                  <option value="Mcf/hr">Mcf / hr</option>
+                  <option value="m3/day">m³ / day</option>
+                  <option value="m3/hr">m³ / hr</option>
+                </select>
+              </div>
+
+              <div className="input-group">
+                <label>
+                  Vent Duration Before Separation (hrs)
+                  <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.5"
+                  className="mole-input"
+                  value={data.comp_duration || data.vent_duration_hours || ""}
+                  onChange={(e) => {
+                    onChange("comp_duration", e.target.value);
+                    onChange("vent_duration_hours", e.target.value);
+                  }}
+                  placeholder="e.g. 12"
+                  required
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Gas Properties & Control for Tier 2 */}
+          <div className="form-grid-4">
+            <div className="input-group">
+              <label>
+                Gas CH₄ Content (%)
+                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+              </label>
+              <input
+                type="number"
+                min="0"
+                max="100"
+                step="0.1"
+                className="mole-input"
+                value={data.ch4_content !== undefined && data.ch4_content !== null ? data.ch4_content : ""}
+                onChange={(e) => onChange("ch4_content", e.target.value)}
+                placeholder="e.g. 85"
+                required
+              />
+            </div>
+
+            <div className="input-group">
+              <label>Gas CO₂ Content (%)</label>
+              <input
+                type="number"
+                min="0"
+                max="100"
+                step="0.1"
+                className="mole-input"
+                value={data.co2_content || ""}
+                onChange={(e) => onChange("co2_content", e.target.value)}
+                placeholder="e.g. 1.5"
+              />
+            </div>
+
+            <div className="input-group">
+              <label>Flowback Disposition</label>
+              <select
+                className="mole-input"
+                value={data.comp_disposition || "vented"}
+                onChange={(e) => {
+                  onChange("comp_disposition", e.target.value);
+                  onChange("disposition", e.target.value);
+                }}
+              >
+                <option value="vented">Vented directly to atmosphere</option>
+                <option value="flared">Routed to Flare</option>
+                <option value="rec">Recovered / REC (Zero Venting)</option>
+              </select>
+            </div>
+
+            <div className="input-group">
+              <label>
+                Flare Comb. Efficiency (%)
+                <small style={{ color: "#6b7280", marginLeft: "4px" }}>(if flared)</small>
+              </label>
+              <input
+                type="number"
+                min="0"
+                max="100"
+                step="0.1"
+                className="mole-input"
+                value={data.comp_flare_eff || "98"}
+                onChange={(e) => onChange("comp_flare_eff", e.target.value)}
+                placeholder="98"
+                disabled={data.comp_disposition !== "flared"}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* TIER 3: DIRECT MEASUREMENT & FLOWBACK PARTITIONING */}
+      {/* ========================================================================= */}
+      {isTier3 && (
+        <div>
+          <div
+            style={{
+              background: "rgba(16, 185, 129, 0.08)",
+              border: "1px solid rgba(16, 185, 129, 0.25)",
+              borderRadius: "6px",
+              padding: "10px 14px",
+              marginBottom: "16px",
+              fontSize: "0.85rem",
+              color: "var(--text-primary, #065f46)",
+            }}
+          >
+            <strong>Tier 3 Measurement Methodology:</strong> Full flowback measurement with nitrogen deduction (API Eq. 6-4),
+            initial unmetered flowback estimation (API Eq. 6-5), and fate partitioning across Vented, Flared, and Recovered volumes.
+          </div>
+
+          {/* Section 1: Metered Gas & Injected N2 Deduction */}
+          <div className="form-grid-4" style={{ marginBottom: "16px" }}>
+            <div className="input-group">
+              <label>
+                Total Metered Gas Volume (V_t)
+                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+              </label>
+              <input
+                type="number"
+                min="0"
+                step="any"
+                className="mole-input"
+                value={data.comp_volume || data.flowback_volume || data.amount || ""}
+                onChange={(e) => {
+                  onChange("comp_volume", e.target.value);
+                  onChange("flowback_volume", e.target.value);
+                  onChange("amount", e.target.value);
+                }}
+                placeholder="e.g. 500"
+                required
+              />
+            </div>
+
+            <div className="input-group">
+              <label>
+                Volume Unit
+                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+              </label>
+              <select
+                className="mole-input"
+                value={data.volume_unit || data.unit || "Mcf"}
+                onChange={(e) => {
+                  onChange("volume_unit", e.target.value);
+                  onChange("unit", e.target.value);
+                }}
+              >
+                <option value="Mcf">Mcf (thousand scf)</option>
+                <option value="scf">scf</option>
+                <option value="m3">m³</option>
+              </select>
+            </div>
+
+            <div className="input-group">
+              <label>
+                Injected N₂ Deduction (EnF)
+                <span
+                  style={{ marginLeft: "4px", fontSize: "0.7rem", color: "#6b7280", cursor: "help" }}
+                  title="API Eq. 6-4: Non-combustible gases such as nitrogen are deducted from total flowback volume. Injected CO2 is NOT deducted per API §6.2.3.1."
                 >
                   ⓘ
                 </span>
@@ -76,133 +853,247 @@ const CompletionsForm = ({ data, onChange }) => {
               <input
                 type="number"
                 min="0"
+                step="any"
                 className="mole-input"
-                value={data.comp_rate || ""}
-                onChange={(e) => {
-                  const val = parseFloat(e.target.value);
-                  if (val > 10000) {
-                    alert(
-                      `Warning: ${val.toLocaleString()} Mcf/hr is an unusually high flowback rate. Did you mean ${val.toLocaleString()} scf/hr? If so, enter ${(val / 1000).toFixed(2)} Mcf/hr instead.`,
-                    );
-                  }
-                  onChange("comp_rate", e.target.value);
-                }}
-                placeholder="e.g. 0.5"
-                required
+                value={data.comp_injected_n2 || ""}
+                onChange={(e) => onChange("comp_injected_n2", e.target.value)}
+                placeholder="0"
               />
             </div>
-          </>
-        )}
 
-        {data.calc_method === "gor" && (
-          <>
             <div className="input-group">
-              <label>
-                Total Liquid Flowback (bbl)
-                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-              </label>
-              <input
-                type="number"
+              <label>Injected N₂ Unit</label>
+              <select
                 className="mole-input"
-                value={data.comp_liquid_bbl || ""}
-                onChange={(e) => onChange("comp_liquid_bbl", e.target.value)}
-                placeholder="e.g. 5000"
-                required
-              />
+                value={data.comp_injected_n2_unit || "scf"}
+                onChange={(e) => onChange("comp_injected_n2_unit", e.target.value)}
+              >
+                <option value="scf">scf</option>
+                <option value="Mcf">Mcf</option>
+                <option value="m3">m³</option>
+              </select>
             </div>
+          </div>
+
+          {/* Section 2: Initial Unmetered Flowback (API Eq. 6-5) */}
+          <div
+            style={{
+              background: "#f9fafb",
+              border: "1px solid #e5e7eb",
+              borderRadius: "6px",
+              padding: "12px",
+              marginBottom: "16px",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
+              <label style={{ fontWeight: 600, fontSize: "0.85rem", color: "#374151", margin: 0 }}>
+                Initial Unmetered Flowback Period (API Eq. 6-5: V_i = [T_i × (V_gas / T_m)] / 2)
+              </label>
+              <span style={{ fontSize: "0.75rem", color: "#6b7280" }}>
+                100% vented directly to atmosphere before routing to separator
+              </span>
+            </div>
+            <div className="form-grid-2">
+              <div className="input-group">
+                <label>
+                  Initial Unmetered Duration (T_i, hrs)
+                  <small style={{ color: "#6b7280", marginLeft: "4px" }}>(0 if none)</small>
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.5"
+                  className="mole-input"
+                  value={data.comp_initial_flowback_hours || ""}
+                  onChange={(e) => onChange("comp_initial_flowback_hours", e.target.value)}
+                  placeholder="e.g. 4"
+                />
+              </div>
+
+              <div className="input-group">
+                <label>
+                  Metered Flowback Duration (T_m, hrs)
+                  <small style={{ color: "#6b7280", marginLeft: "4px" }}>(required if T_i &gt; 0)</small>
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.5"
+                  className="mole-input"
+                  value={data.comp_duration || ""}
+                  onChange={(e) => onChange("comp_duration", e.target.value)}
+                  placeholder="e.g. 24"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Section 3: Gas Composition */}
+          <div className="form-grid-2" style={{ marginBottom: "16px" }}>
             <div className="input-group">
               <label>
-                Flowback GOR (scf/bbl)
+                Gas CH₄ Content (%)
                 <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
               </label>
               <input
                 type="number"
                 min="0"
+                max="100"
+                step="0.1"
                 className="mole-input"
-                value={data.comp_gor || ""}
-                onChange={(e) => onChange("comp_gor", e.target.value)}
-                placeholder="e.g. 1500"
+                value={data.ch4_content !== undefined && data.ch4_content !== null ? data.ch4_content : ""}
+                onChange={(e) => onChange("ch4_content", e.target.value)}
+                placeholder="e.g. 85.5"
                 required
               />
             </div>
+
             <div className="input-group">
-              <label>
-                Gas Produced to Sales (Mcf){" "}
-                <small style={{ color: "#6b7280" }}>(deducted)</small>
-              </label>
+              <label>Gas CO₂ Content (%)</label>
               <input
                 type="number"
+                min="0"
+                max="100"
+                step="0.1"
                 className="mole-input"
-                value={data.comp_gas_produced_mcf || ""}
-                onChange={(e) =>
-                  onChange("comp_gas_produced_mcf", e.target.value)
-                }
-                placeholder="0"
+                value={data.co2_content || ""}
+                onChange={(e) => onChange("co2_content", e.target.value)}
+                placeholder="e.g. 1.2"
               />
             </div>
-            <div></div> {/* Empty div to align grid */}
-          </>
-        )}
+          </div>
 
-        <div className="input-group">
-          <label>
-            Gas CH4 Content (%)
-            <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-          </label>
-          <input
-            type="number"
-            className="mole-input"
-            value={
-              data.ch4_content !== undefined && data.ch4_content !== null
-                ? data.ch4_content
-                : ""
-            }
-            onChange={(e) => onChange("ch4_content", e.target.value)}
-            placeholder="e.g. 85"
-            required
-          />
-        </div>
+          {/* Section 4: Gas Disposition / Fate Split */}
+          <div className="input-group" style={{ marginBottom: "16px" }}>
+            <label>
+              Metered Gas Fate &amp; Disposition Partitioning
+              <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+            </label>
+            <CustomDropdown
+              options={[
+                { value: "vented", label: "100% Vented to Atmosphere" },
+                { value: "flared", label: "100% Routed to Flare" },
+                { value: "rec", label: "100% Recovered / Reduced Emissions Completion (REC)" },
+                { value: "split", label: "Custom Disposition Split (% Vented / % Flared / % REC)" },
+              ]}
+              value={tier3Disposition}
+              onChange={(val) => {
+                onChange("comp_disposition", val);
+                onChange("disposition", val);
+              }}
+            />
+          </div>
 
-        <div className="input-group">
-          <label>Gas CO2 Content (%)</label>
-          <input
-            type="number"
-            className="mole-input"
-            value={data.co2_content || ""}
-            onChange={(e) => onChange("co2_content", e.target.value)}
-            placeholder="e.g. 2"
-          />
-        </div>
+          {tier3Disposition === "split" && (
+            <div
+              style={{
+                background: "#f0fdf4",
+                border: "1px solid #bbf7d0",
+                borderRadius: "6px",
+                padding: "12px",
+                marginBottom: "16px",
+              }}
+            >
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
+                <span style={{ fontWeight: 600, fontSize: "0.85rem", color: "#166534" }}>
+                  Custom Split Allocation (must sum to 100%)
+                </span>
+                {(() => {
+                  const fV = parseFloat(data.comp_frac_vented || 0);
+                  const fF = parseFloat(data.comp_frac_flared || 0);
+                  const fR = parseFloat(data.comp_frac_recovered || 0);
+                  const sumP = Math.round((fV > 1 ? fV : fV * 100) + (fF > 1 ? fF : fF * 100) + (fR > 1 ? fR : fR * 100));
+                  return (
+                    <span
+                      style={{
+                        fontWeight: 700,
+                        fontSize: "0.85rem",
+                        color: sumP === 100 ? "#16a34a" : "#dc2626",
+                      }}
+                    >
+                      Total: {sumP}% {sumP === 100 ? "✓" : "⚠ (must equal 100%)"}
+                    </span>
+                  );
+                })()}
+              </div>
 
-        <div className="input-group">
-          <label>
-            Flare Efficiency (%){" "}
-            <small style={{ color: "#6b7280" }}>(0 if vented)</small>
-          </label>
-          <input
-            type="number"
-            className="mole-input"
-            value={data.comp_flare_eff || ""}
-            onChange={(e) => onChange("comp_flare_eff", e.target.value)}
-            placeholder="e.g. 98"
-          />
-        </div>
+              <div className="form-grid-3">
+                <div className="input-group">
+                  <label>Vented (%)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    step="1"
+                    className="mole-input"
+                    value={data.comp_frac_vented || ""}
+                    onChange={(e) => {
+                      onChange("comp_frac_vented", e.target.value);
+                      onChange("frac_vented", e.target.value);
+                    }}
+                    placeholder="e.g. 20"
+                  />
+                </div>
 
-        <div className="input-group">
-          <label>
-            Number of Events
-            <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-          </label>
-          <input
-            type="number"
-            className="mole-input"
-            value={data.amount || ""}
-            onChange={(e) => onChange("amount", e.target.value)}
-            placeholder="e.g. 1"
-            required
-          />
+                <div className="input-group">
+                  <label>Flared (%)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    step="1"
+                    className="mole-input"
+                    value={data.comp_frac_flared || ""}
+                    onChange={(e) => {
+                      onChange("comp_frac_flared", e.target.value);
+                      onChange("frac_flared", e.target.value);
+                    }}
+                    placeholder="e.g. 50"
+                  />
+                </div>
+
+                <div className="input-group">
+                  <label>Recovered / REC (%)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    step="1"
+                    className="mole-input"
+                    value={data.comp_frac_recovered || ""}
+                    onChange={(e) => {
+                      onChange("comp_frac_recovered", e.target.value);
+                      onChange("frac_recovered", e.target.value);
+                    }}
+                    placeholder="e.g. 30"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {(tier3Disposition === "flared" || (tier3Disposition === "split" && parseFloat(data.comp_frac_flared || 0) > 0)) && (
+            <div className="form-grid-2" style={{ marginBottom: "16px" }}>
+              <div className="input-group">
+                <label>
+                  Flare Combustion Efficiency (%)
+                  <small style={{ color: "#6b7280", marginLeft: "4px" }}>(default 98% per API §5.2)</small>
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="0.1"
+                  className="mole-input"
+                  value={data.comp_flare_eff || "98"}
+                  onChange={(e) => onChange("comp_flare_eff", e.target.value)}
+                  placeholder="98"
+                />
+              </div>
+            </div>
+          )}
         </div>
-      </div>
+      )}
     </div>
   );
 };

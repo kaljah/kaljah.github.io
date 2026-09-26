@@ -23,8 +23,12 @@ import {
   Eye,
   EyeOff,
   ArrowRight,
+  Flame,
+  CheckCircle2,
+  AlertTriangle,
 } from "lucide-react";
 import "./Dashboard.css";
+import { useGwpStandard } from "../hooks/useGwpStandard";
 
 // Simple Linear Regression for Forecasting
 const calculateForecast = (data) => {
@@ -43,7 +47,9 @@ const calculateForecast = (data) => {
     sumXX += p.year * p.year;
   });
 
-  const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+  const denom = n * sumXX - sumX * sumX;
+  if (!denom || Math.abs(denom) < 1e-9) return [];
+  const slope = (n * sumXY - sumX * sumY) / denom;
   const intercept = (sumY - slope * sumX) / n;
 
   const lastYear = data[data.length - 1].year;
@@ -64,6 +70,7 @@ const DashboardEnhanced = () => {
   const { setTopBarLeft, setTopBarRight } = useLayout();
 
   // Filter states
+  const [isReady, setIsReady] = useState(false);
   const [currentActivity, setCurrentActivity] = useState("all");
   const [currentDivision, setCurrentDivision] = useState("all");
   const [currentRegion, setCurrentRegion] = useState("all");
@@ -88,10 +95,12 @@ const DashboardEnhanced = () => {
     combustion: 0,
     flaring: 0,
     venting: 0,
+    fugitive: 0,
     other: 0,
   });
 
   const [sbtiData, setSbtiData] = useState(null);
+  const [flaringData, setFlaringData] = useState(null);
   const [trendData, setTrendData] = useState([]);
   const [categoricalData, setCategoricalData] = useState([]);
   const [currentYear, setCurrentYear] = useState("all");
@@ -113,6 +122,8 @@ const DashboardEnhanced = () => {
   const [detailedBreakdownCollapsed, setDetailedBreakdownCollapsed] = useState(false);
   const [exportingPDF, setExportingPDF] = useState(false);
   const [gwpHorizon, setGwpHorizon] = useState("100"); // "100" (Standard 100-yr) or "20" (Near-term 20-yr)
+  // BUG-013: tooltip values come from the active standard in constants.js
+  const { standard: activeGwpStandard, gwp: activeGwp } = useGwpStandard();
 
   const navigate = useNavigate();
 
@@ -146,8 +157,10 @@ const DashboardEnhanced = () => {
           if (opDefaults.defaultDivision) setCurrentDivision(opDefaults.defaultDivision);
           if (opDefaults.defaultFacilityId) setCurrentRegion(opDefaults.defaultFacilityId);
         }
+        setIsReady(true);
       } catch (error) {
         console.error("Failed to load initial data:", error);
+        setIsReady(true);
       }
     };
     loadInitialData();
@@ -158,8 +171,10 @@ const DashboardEnhanced = () => {
 
   // Load dashboard data
   useEffect(() => {
+    if (!isReady) return;
     loadDashboardData();
   }, [
+    isReady,
     currentActivity,
     currentDivision,
     currentRegion,
@@ -237,6 +252,15 @@ const DashboardEnhanced = () => {
         console.error("Failed to load SBTi data", err);
       }
 
+      // Fetch Flaring Summary (Executive Decree 21-330 breakdown)
+      try {
+        const flareRes = await api.get(`/dashboard/flaring-summary?${filterParams}`);
+        setFlaringData(flareRes.data);
+      } catch (err) {
+        console.error("Failed to load flaring summary", err);
+        setFlaringData(null);
+      }
+
 
       let totals = {
         totalEmissions: 0,
@@ -255,6 +279,7 @@ const DashboardEnhanced = () => {
         combustion: 0,
         flaring: 0,
         venting: 0,
+        fugitive: 0,
         other: 0,
         totalProductionBoe: 0,
       };
@@ -284,6 +309,7 @@ const DashboardEnhanced = () => {
           totals.combustion += row.combustion || 0;
           totals.flaring += row.flaring || 0;
           totals.venting += row.venting || 0;
+          totals.fugitive += row.fugitive || 0;
           totals.other += row.other || 0;
           totals.methaneEmissions += row.ch4_total || 0;
           totals.purchasedEnergy += (row.scope2_energy || 0) / 1000;
@@ -583,6 +609,11 @@ const DashboardEnhanced = () => {
           color: "#f59e0b",
         },
         {
+          name: "Equipment Leaks",
+          value: Number((stats.fugitive ?? 0).toFixed(2)),
+          color: "#8b5cf6",
+        },
+        {
           name: "Other",
           value: Number((stats.other ?? 0).toFixed(2)),
           color: "#3b82f6",
@@ -700,7 +731,11 @@ const DashboardEnhanced = () => {
             padding: "2px",
             border: "1px solid var(--border-color, rgba(226, 232, 240, 0.8))",
           }}
-          title="Global Warming Potential Horizon: 100-Year (Standard, CH4=28) vs 20-Year (Near-term, CH4=84 per IPCC AR5/AR6)"
+          title={
+            activeGwp
+              ? `Global Warming Potential Horizon: 100-Year (Standard, CH4=${activeGwp.CH4}) vs 20-Year (Near-term, CH4=${activeGwp.CH4_20}) per IPCC ${activeGwpStandard}`
+              : "Global Warming Potential Horizon: 100-Year (Standard) vs 20-Year (Near-term)"
+          }
         >
           <button
             type="button"
@@ -912,146 +947,6 @@ const DashboardEnhanced = () => {
           </div>
         )}
 
-        {/* Zero-Data Quick Start Onboarding Card */}
-        {!loading && stats.totalEmissions === 0 && stats.netEmissions === 0 && stats.scope3 === 0 && trendData.length === 0 && (
-          <div
-            className="card glass-panel"
-            style={{
-              background: "linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%)",
-              border: "1px solid rgba(16, 185, 129, 0.2)",
-              borderRadius: "12px",
-              padding: "24px",
-              marginBottom: "24px",
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px" }}>
-              <div
-                style={{
-                  background: "#10b981",
-                  color: "#fff",
-                  borderRadius: "8px",
-                  width: "36px",
-                  height: "36px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontWeight: 700,
-                  fontSize: "1.2rem",
-                }}
-              >
-                ✦
-              </div>
-              <div>
-                <h3 style={{ margin: 0, fontSize: "1.1rem", color: "var(--text-primary)" }}>
-                  Welcome to Antigravity GHG Inventory
-                </h3>
-                <p style={{ margin: "2px 0 0 0", fontSize: "0.875rem", color: "var(--text-secondary)" }}>
-                  Your emissions workspace is initialized. Follow this 4-step workflow to establish your inventory:
-                </p>
-              </div>
-            </div>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-                gap: "14px",
-              }}
-            >
-              <div
-                style={{
-                  background: "var(--bg-card, rgba(255, 255, 255, 0.05))",
-                  border: "1px solid var(--border-color)",
-                  borderRadius: "8px",
-                  padding: "14px",
-                }}
-              >
-                <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "#10b981", textTransform: "uppercase" }}>
-                  Step 1 • Facilities
-                </div>
-                <h4 style={{ margin: "6px 0 4px 0", fontSize: "0.95rem" }}>Set Boundaries</h4>
-                <p style={{ margin: "0 0 10px 0", fontSize: "0.8rem", color: "var(--text-secondary)" }}>
-                  Define production facilities, segments, and operational control.
-                </p>
-                <button
-                  className="btn-secondary-unified"
-                  style={{ fontSize: "0.75rem", padding: "4px 10px", width: "100%" }}
-                  onClick={() => navigate("/manage-data")}
-                >
-                  Manage Facilities →
-                </button>
-              </div>
-              <div
-                style={{
-                  background: "var(--bg-card, rgba(255, 255, 255, 0.05))",
-                  border: "1px solid var(--border-color)",
-                  borderRadius: "8px",
-                  padding: "14px",
-                }}
-              >
-                <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "#3b82f6", textTransform: "uppercase" }}>
-                  Step 2 • Ingestion
-                </div>
-                <h4 style={{ margin: "6px 0 4px 0", fontSize: "0.95rem" }}>Log Activity Data</h4>
-                <p style={{ margin: "0 0 10px 0", fontSize: "0.8rem", color: "var(--text-secondary)" }}>
-                  Import Scope 1 fuel, Scope 2 electricity, or Scope 3 supply chain CSVs.
-                </p>
-                <button
-                  className="btn-secondary-unified"
-                  style={{ fontSize: "0.75rem", padding: "4px 10px", width: "100%" }}
-                  onClick={() => navigate("/emissions")}
-                >
-                  Enter Emissions →
-                </button>
-              </div>
-              <div
-                style={{
-                  background: "var(--bg-card, rgba(255, 255, 255, 0.05))",
-                  border: "1px solid var(--border-color)",
-                  borderRadius: "8px",
-                  padding: "14px",
-                }}
-              >
-                <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "#f59e0b", textTransform: "uppercase" }}>
-                  Step 3 • Verification
-                </div>
-                <h4 style={{ margin: "6px 0 4px 0", fontSize: "0.95rem" }}>QA/QC & Approvals</h4>
-                <p style={{ margin: "0 0 10px 0", fontSize: "0.8rem", color: "var(--text-secondary)" }}>
-                  Maker-checker dual approval and anomaly outlier resolution.
-                </p>
-                <button
-                  className="btn-secondary-unified"
-                  style={{ fontSize: "0.75rem", padding: "4px 10px", width: "100%" }}
-                  onClick={() => navigate("/qa-dashboard")}
-                >
-                  QA/QC Console →
-                </button>
-              </div>
-              <div
-                style={{
-                  background: "var(--bg-card, rgba(255, 255, 255, 0.05))",
-                  border: "1px solid var(--border-color)",
-                  borderRadius: "8px",
-                  padding: "14px",
-                }}
-              >
-                <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "#8b5cf6", textTransform: "uppercase" }}>
-                  Step 4 • Compliance
-                </div>
-                <h4 style={{ margin: "6px 0 4px 0", fontSize: "0.95rem" }}>Generate Reports</h4>
-                <p style={{ margin: "0 0 10px 0", fontSize: "0.8rem", color: "var(--text-secondary)" }}>
-                  Export OGMP 2.0 Gold Standard and GHG Protocol disclosures.
-                </p>
-                <button
-                  className="btn-secondary-unified"
-                  style={{ fontSize: "0.75rem", padding: "4px 10px", width: "100%" }}
-                  onClick={() => navigate("/reports")}
-                >
-                  View Reports →
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Hero Overview Card */}
         <div className="card hero-card glass-panel">
@@ -1215,6 +1110,127 @@ const DashboardEnhanced = () => {
             </div>
           </div>
         </div>
+
+        {/* --- Operational Flaring & Decree 21-330 Regulatory Compliance Banner --- */}
+        {flaringData && (flaringData.total_flaring?.volume_knm3 > 0 || stats.flaring > 0) && (
+          <div className="card glass-panel flaring-kpi-banner">
+            <div className="flaring-banner-header">
+              <div className="flaring-banner-title-group">
+                <div className="flaring-banner-icon">
+                  <Flame size={22} />
+                </div>
+                <div>
+                  <h3 className="flaring-banner-title">
+                    Operational Flaring &amp; Regulatory Compliance
+                  </h3>
+                  <p className="flaring-banner-sub">
+                    Executive Decree 21-330 Article 9 (1.00% Gas Production Threshold)
+                  </p>
+                </div>
+              </div>
+
+              <div className="flaring-banner-badges">
+                <span
+                  className={`flaring-badge ${flaringData.is_compliant ? "compliant" : "non-compliant"}`}
+                >
+                  {flaringData.is_compliant ? (
+                    <CheckCircle2 size={13} />
+                  ) : (
+                    <AlertTriangle size={13} />
+                  )}
+                  {flaringData.compliance_status || (flaringData.is_compliant ? "COMPLIANT (≤ 1.00%)" : "EXCEEDS 1.00% LIMIT")}
+                </span>
+
+                <span className="flaring-badge dre">
+                  {flaringData.dre_method || "VISR Camera"}: {flaringData.measured_dre_pct ?? 98.0}% DRE
+                </span>
+
+                {flaringData.yoy_change_pct !== 0 && (
+                  <span className="flaring-badge yoy">
+                    {flaringData.yoy_change_pct > 0 ? `+${flaringData.yoy_change_pct}% YoY` : `${flaringData.yoy_change_pct}% YoY`}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            <div className="flaring-streams-grid">
+              <div className="flaring-stream-item total-stream">
+                <div className="stream-label">Total Flared Volume</div>
+                <div className="stream-value">
+                  {formatCompactNumber(flaringData.total_flaring?.volume_knm3 ?? (stats.flaring / 2.5))}
+                  <span className="stream-unit">kNm³</span>
+                </div>
+                <div className="stream-sublabel">
+                  <strong>{formatCompactNumber(flaringData.total_flaring?.tco2e ?? stats.flaring)}</strong> tCO₂e • 100% Stream
+                </div>
+              </div>
+
+              <div className="flaring-stream-item routine-stream">
+                <div className="stream-label">Routine Flaring</div>
+                <div className="stream-value">
+                  {formatCompactNumber(flaringData.routine_flaring?.volume_knm3 ?? 0)}
+                  <span className="stream-unit">kNm³</span>
+                </div>
+                <div className="stream-sublabel">
+                  <strong>{flaringData.routine_flaring?.percentage ?? 0}%</strong> of total • {formatCompactNumber(flaringData.routine_flaring?.tco2e ?? 0)} tCO₂e
+                </div>
+              </div>
+
+              <div className="flaring-stream-item non-routine-stream">
+                <div className="stream-label">Non-Routine Flaring</div>
+                <div className="stream-value">
+                  {formatCompactNumber(flaringData.non_routine_flaring?.volume_knm3 ?? 0)}
+                  <span className="stream-unit">kNm³</span>
+                </div>
+                <div className="stream-sublabel">
+                  <strong>{flaringData.non_routine_flaring?.percentage ?? 0}%</strong> of total • {formatCompactNumber(flaringData.non_routine_flaring?.tco2e ?? 0)} tCO₂e
+                </div>
+              </div>
+
+              <div className="flaring-stream-item safety-stream">
+                <div className="stream-label">Safety &amp; Purge Flaring</div>
+                <div className="stream-value">
+                  {formatCompactNumber(flaringData.safety_flaring?.volume_knm3 ?? 0)}
+                  <span className="stream-unit">kNm³</span>
+                </div>
+                <div className="stream-sublabel">
+                  <strong>{flaringData.safety_flaring?.percentage ?? 0}%</strong> of total • {formatCompactNumber(flaringData.safety_flaring?.tco2e ?? 0)} tCO₂e
+                </div>
+              </div>
+            </div>
+
+            {flaringData.gas_production_m3 > 0 && (
+              <div className="flaring-intensity-bar-card">
+                <div className="flaring-intensity-meta">
+                  <span>
+                    <strong>Decree 21-330 Flaring Intensity:</strong>{" "}
+                    <span style={{ color: flaringData.is_compliant ? "#15803d" : "#b91c1c", fontWeight: 700 }}>
+                      {flaringData.flaring_intensity_pct}%
+                    </span>{" "}
+                    of Gross Gas Produced ({formatCompactNumber(flaringData.gas_production_m3 / 1e6, 2)} MMSm³)
+                  </span>
+                  <span style={{ fontSize: "0.78rem", color: "#64748b" }}>
+                    Statutory Limit: <strong>1.00%</strong> (Executive Decree 21-330 Art. 9)
+                  </span>
+                </div>
+                <div className="flaring-progress-track">
+                  <div
+                    className="flaring-progress-fill"
+                    style={{
+                      width: `${Math.min(100, (flaringData.flaring_intensity_pct / 1.00) * 100)}%`,
+                      backgroundColor: flaringData.is_compliant ? "#10b981" : "#ef4444",
+                    }}
+                  />
+                  <div
+                    className="flaring-progress-marker"
+                    style={{ left: "100%" }}
+                    title="1.00% Statutory Ceiling"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* --- Primary Analytics Grid: Trend Line (2fr) + Donuts (1fr) --- */}
         <div className="charts-section">
@@ -1565,10 +1581,38 @@ const DashboardEnhanced = () => {
                           {formatCompactNumber(stats.flaring)}
                         </td>
                       </tr>
+                      {flaringData && (flaringData.routine_flaring?.volume_knm3 > 0 || flaringData.non_routine_flaring?.volume_knm3 > 0 || flaringData.safety_flaring?.volume_knm3 > 0) && (
+                        <>
+                          <tr className="detail-row" style={{ fontSize: "0.82rem", color: "#64748b", background: "rgba(248, 250, 252, 0.5)" }}>
+                            <td style={{ paddingLeft: "36px" }}>↳ Routine ({flaringData.routine_flaring?.percentage ?? 0}%)</td>
+                            <td className="text-right font-normal">
+                              {formatCompactNumber(flaringData.routine_flaring?.tco2e ?? 0)}
+                            </td>
+                          </tr>
+                          <tr className="detail-row" style={{ fontSize: "0.82rem", color: "#64748b", background: "rgba(248, 250, 252, 0.5)" }}>
+                            <td style={{ paddingLeft: "36px" }}>↳ Non-Routine ({flaringData.non_routine_flaring?.percentage ?? 0}%)</td>
+                            <td className="text-right font-normal">
+                              {formatCompactNumber(flaringData.non_routine_flaring?.tco2e ?? 0)}
+                            </td>
+                          </tr>
+                          <tr className="detail-row" style={{ fontSize: "0.82rem", color: "#64748b", background: "rgba(248, 250, 252, 0.5)" }}>
+                            <td style={{ paddingLeft: "36px" }}>↳ Safety &amp; Purge ({flaringData.safety_flaring?.percentage ?? 0}%)</td>
+                            <td className="text-right font-normal">
+                              {formatCompactNumber(flaringData.safety_flaring?.tco2e ?? 0)}
+                            </td>
+                          </tr>
+                        </>
+                      )}
                       <tr className="detail-row">
                         <td className="indent">Venting</td>
                         <td className="text-right">
                           {formatCompactNumber(stats.venting)}
+                        </td>
+                      </tr>
+                      <tr className="detail-row">
+                        <td className="indent">Equipment Leaks / Fugitives</td>
+                        <td className="text-right">
+                          {formatCompactNumber(stats.fugitive)}
                         </td>
                       </tr>
                       <tr className="detail-row">

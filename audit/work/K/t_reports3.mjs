@@ -1,0 +1,15 @@
+import { start, OUT, UI } from "./lib.mjs";
+const { browser, page, log } = await start("admin");
+await page.goto(UI + "/reports"); await page.waitForTimeout(4000);
+const yearSel = page.locator("select").nth(4); await yearSel.selectOption("all"); await page.waitForTimeout(1500);
+const divSel = page.locator("select").filter({ has: page.locator('option', { hasText: "All Divisions" }) });
+await divSel.selectOption("Upstream"); await page.waitForTimeout(2500);
+const listReq = log.reqs.filter(r => r.u.startsWith("/api/emissions?")).pop();
+const listResp = log.resps.filter(r => r.u.startsWith("/api/emissions?")).pop();
+console.log("LIST", listReq.u, "total=", JSON.parse(listResp.body).total);
+const hdr = await page.locator(".reports-subtitle").innerText(); console.log(hdr);
+log.reqs.length = 0;
+await page.getByText("Excel Export").click(); await page.waitForTimeout(3000);
+await page.getByText("PDF Report").first().click(); await page.waitForTimeout(4000);
+console.log(log.reqs.filter(r => r.u.includes("export")).map(r => r.m + " " + r.u));
+await browser.close();

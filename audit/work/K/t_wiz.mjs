@@ -1,0 +1,10 @@
+import { start, OUT, UI } from "./lib.mjs";
+const { browser, page } = await start("admin");
+await page.goto(UI + "/manage-data"); await page.waitForTimeout(7000);
+await page.locator(".manage-nav-item", { hasText: "Pending Review" }).click(); await page.waitForTimeout(3000);
+await page.getByText("Launch Review Wizard").click(); await page.waitForTimeout(4000);
+const txt = await page.locator("body").innerText();
+const lines = txt.split("\n").filter(l => l.includes("Scope 2"));
+console.log(lines.slice(0, 8));
+await page.screenshot({ path: OUT + "wiz.png" });
+await browser.close();

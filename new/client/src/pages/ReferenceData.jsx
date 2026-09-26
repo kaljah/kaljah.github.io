@@ -223,8 +223,8 @@ const ReferenceData = () => {
         {
           name: "Drilling - Mud Degassing",
           cat: "Vented",
-          sec: "Section 6.2",
-          desc: "CH₄ emissions from drilling mud degassing",
+          sec: "Section 6.2 & 6.3",
+          desc: "CH₄ emissions from well drilling (Table 6-3) and mud degassing (Table 6-2)",
         },
         {
           name: "Well Completions & Workovers",

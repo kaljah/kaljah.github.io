@@ -350,24 +350,24 @@ class TestOATSensitivity:
 
     def test_mud_oil_over_water_ratio_exact(self):
         """
-        OAT: Same mud volume, change mud_type: oil_based vs water_based.
-        oil_based EF = 0.35 kg/m3, water_based EF = 0.15 kg/m3.
-        Ratio = 0.35 / 0.15 = 2.3333...
+        OAT: Same drilling days, change mud_type: oil_based vs water_based.
+        oil_based EF = 0.0103 t/day, water_based EF = 0.0458 t/day.
+        Ratio = 0.0103 / 0.0458.
 
         Both have IDENTICAL CO2 and N2O (zero), only CH4 differs.
         """
-        vol = 100.0
+        days = 10.0
 
         em_water, _ = compute_emissions({
-            "process_type": "drilling", "quantity": vol, "unit": "m3",
-            "factor_source": "specific", "mud_type": "water_based"
+            "process_type": "drilling", "drilling_days": days, "quantity": days, "unit": "days",
+            "tier": "tier2", "factor_source": "custom", "mud_type": "water_based"
         }, {})
         em_oil, _ = compute_emissions({
-            "process_type": "drilling", "quantity": vol, "unit": "m3",
-            "factor_source": "specific", "mud_type": "oil_based"
+            "process_type": "drilling", "drilling_days": days, "quantity": days, "unit": "days",
+            "tier": "tier2", "factor_source": "custom", "mud_type": "oil_based"
         }, {})
 
-        expected_ratio = 0.35 / 0.15   # = 2.3333...
+        expected_ratio = 0.0103 / 0.0458
         actual_ratio = em_oil["ch4"] / em_water["ch4"]
 
         assert actual_ratio == pytest.approx(expected_ratio, rel=1e-4), (

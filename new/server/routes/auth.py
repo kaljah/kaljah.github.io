@@ -335,7 +335,7 @@ def register():
 
 @auth_bp.route("/login", methods=["POST"])
 @csrf.exempt
-@limiter.limit(lambda: os.environ.get("LOGIN_RATE_LIMIT", "20 per 15 minutes"))
+@limiter.limit(os.environ.get("LOGIN_RATE_LIMIT", "20 per 15 minutes"))
 def login():
     data = request.get_json()
     if not data or not data.get("email") or not data.get("password"):
@@ -345,11 +345,6 @@ def login():
     password_input = str(data.get("password", ""))
 
     user = User.query.filter(db.func.lower(User.email) == email_input.lower()).first()
-    if not user:
-        if email_input.lower() in ["a", "a@a"]:
-            user = User.query.filter(User.email.in_(["a", "a@a"])).first()
-        elif email_input.lower() in ["z", "z@z"]:
-            user = User.query.filter(User.email.in_(["z", "z@z"])).first()
 
     if user and user.check_password(password_input):
         if user.status != "active":
@@ -1000,6 +995,9 @@ def update_user(id):
         new_role = str(data["role"]).strip().lower()
         if new_role not in VALID_ROLES:
             return jsonify({"error": f"Invalid role. Must be one of: {', '.join(sorted(VALID_ROLES))}"}), 400
+        # Separation of Duties: IT Admin cannot assign business compliance Admin or Superuser role
+        if new_role in ["admin", "superuser"] and it_admin.role not in ["admin", "it_manager"]:
+            return jsonify({"error": "Forbidden: IT Administrators cannot assign business compliance roles (admin, superuser)"}), 403
         target_new_rank = ROLE_RANK.get(new_role, 0)
         if target_new_rank > requester_rank:
             return jsonify({"error": "Cannot assign a role higher than your own"}), 403

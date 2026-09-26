@@ -254,7 +254,19 @@ def export_satellite_to_ogmp():
             delta_ch4_ppb=delta_ppb, wind_speed_m_s=wind_speed, pbl_height_m=pbl_height
         )
 
-    operating_hours = float(data.get("operating_hours") or 8760.0)
+    is_continuous = data.get("is_continuous", False)
+    if isinstance(is_continuous, str):
+        is_continuous = is_continuous.lower() in ("true", "1", "yes")
+
+    if data.get("operating_hours") is not None:
+        operating_hours = float(data.get("operating_hours") or 0.0)
+    elif data.get("duration_hours") is not None:
+        operating_hours = float(data.get("duration_hours") or 0.0)
+    elif data.get("plume_duration_hours") is not None:
+        operating_hours = float(data.get("plume_duration_hours") or 0.0)
+    else:
+        operating_hours = 8760.0 if is_continuous else 1.0
+
     estimated_annual_tch4 = (measured_rate_kg_hr * operating_hours) / 1000.0
 
     # Retrieve bottom-up Scope 1 methane total for reconciliation comparison

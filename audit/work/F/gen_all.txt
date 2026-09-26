@@ -1,0 +1,1011 @@
+                             GHG Emissions Report
+
+                                          Generated on September 26, 2026
+
+Report Filters:
+
+Emission Summary                                                                              Quantity
+
+                           Metric                                  3,723,125,709,415.04 tCOse
+                                                                               1,539,702.62 tCOse
+                           Scope 1 -- Direct Emissions                                 216.85 tCOse
+                           Scope 2 -- Indirect Electricity
+                           Scope 3 -- Value Chain           3,718,872,212,754.03 tonnes COs
+                           Total COs Gas Mass                         84,338,950.20 tonnes CHs
+                           Total CHs Gas Mass                          7,140,935.01 tonnes NsO
+                           Total NsO Gas Mass
+                           Total COse (Grand Total)                3,723,127,249,334.51 tCOse
+
+Detailed Emissions Data
+
+     Date         Facility       Process   Fuel/Source Amount             COs (t)  CHs (t)  NsO (t) Total COse (t)
+
+2099-01-01  Updated Facilit  Combustion    N/A              0.0 MMBtu     53.06    0.00                 0.00  53.11
+2099-01-01  Complexe Sidéru  Combustion                                                                       53.11
+2099-01-01  Updated Facilit  Combustion    N/A              0.0 MMBtu     53.06    0.00                 0.00  53.11
+2099-01-01  Updated Facilit  Combustion                                                                       53.11
+2026-10-01  Facility-AGT01-  Fuel Combust  N/A              0.0 MMBtu     53.06    0.00                 0.00
+2026-10-01  Facility-AGT02-  Fuel Combust                                                                      0.00
+2026-10-01  Facility-AGT03-  Fuel Combust  N/A              0.0 MMBtu     53.06    0.00                 0.00   0.00
+2026-10-01  Facility-AGT04-  Fuel Combust                                                                      0.00
+2026-10-01  Facility-AGT05-  Fuel Combust  N/A              0.0 m3        0.00     0.00                 0.00   0.00
+2026-10-01  Facility-AGT06-  Fuel Combust                                                                      0.00
+2026-10-01  Facility-AGT07-  Fuel Combust  N/A              0.0 m3        0.00     0.00                 0.00   0.00
+2026-10-01  Facility-AGT08-  Fuel Combust                                                                      0.00
+2026-10-01  Facility-AGT09-  Fuel Combust  N/A              0.0 m3        0.00     0.00                 0.00   0.00
+2026-10-01  Facility-AGT10-  Fuel Combust                                                                      0.00
+2026-09-01  RNS              tank_flashin  N/A              0.0 m3        0.00     0.00                 0.00   0.00
+2026-09-01  RNS              separation                                                                        0.00
+                                           N/A              0.0 m3        0.00     0.00                 0.00   0.00
+
+                                           N/A              0.0 m3        0.00     0.00                 0.00
+
+                                           N/A              0.0 m3        0.00     0.00                 0.00
+
+                                           N/A              0.0 m3        0.00     0.00                 0.00
+
+                                           N/A              0.0 m3        0.00     0.00                 0.00
+
+                                           N/A              0.0 m3        0.00     0.00                 0.00
+
+                                           Tank - Flash     10,000.0 bbl  0.00     0.00                 0.00
+
+                                           Separator Ve     1,000.0 m3    0.00     0.00                 0.00
+2026-09-01  Facility-AGT01-  Fuel Combust  N/A           0.0 m3          0.00    0.00    0.00  0.00
+
+2026-09-01  Facility-AGT02-  Fuel Combust  N/A           0.0 m3          0.00    0.00    0.00  0.00
+
+2026-09-01  Facility-AGT03-  Fuel Combust  N/A           0.0 m3          0.00    0.00    0.00  0.00
+
+2026-09-01  Facility-AGT04-  Fuel Combust  N/A           0.0 m3          0.00    0.00    0.00  0.00
+
+2026-09-01  Facility-AGT05-  Fuel Combust  N/A           0.0 m3          0.00    0.00    0.00  0.00
+
+2026-09-01  Facility-AGT06-  Fuel Combust  N/A           0.0 m3          0.00    0.00    0.00  0.00
+
+2026-09-01  Facility-AGT07-  Fuel Combust  N/A           0.0 m3          0.00    0.00    0.00  0.00
+
+2026-09-01  Facility-AGT08-  Fuel Combust  N/A           0.0 m3          0.00    0.00    0.00  0.00
+
+2026-09-01  Facility-AGT09-  Fuel Combust  N/A           0.0 m3          0.00    0.00    0.00  0.00
+
+2026-09-01  Facility-AGT10-  Fuel Combust  N/A           0.0 m3          0.00    0.00    0.00  0.00
+
+2026-09-01  RNS              fugitive      Fugitive - V  10.0 m3         0.00    0.00    0.00  0.00
+
+2026-09-01  RNS              completions   N/A           28.3 m3         0.00    0.00    0.00  0.00
+
+2026-09-01  RNS              loading       Loading - Cr  1,000.0 bbl     0.00    0.00    0.00  0.00
+
+2026-09-01  RNS              fugitive      Fugitive - V  50.0 m3         0.00    0.00    0.00  0.01
+
+2026-09-01  RNS              combustion    Natural Gas   100,000.0 m3    0.00    0.00    0.00  0.20
+
+2026-09-01  RNS              tank_breathi  Tank - Breat  10,000.0 bbl    0.00    0.01    0.00  0.28
+
+2026-09-01  RNS              unloading     N/A           1.0 events      0.00    0.06    0.00  1.67
+
+2026-09-01  Complexe Sidéru  combustion    Natural Gas   35,314.7 scf    1.91    0.00    0.00  1.91
+
+2026-09-01  RNS              drilling      N/A           1,000.0 m3      0.00    0.15    0.00  4.20
+
+2026-09-01  RNS              drilling      N/A           1,000.0 m3      0.00    0.35    0.00  9.80
+
+2026-09-01  RNS              tank_working  Tank - Worki  10,000.0 bbl    0.00    0.50    0.00  14.00
+
+2026-09-01  RNS              pneumatic     N/A           5.0 devices     0.00    1.50    0.00  42.06
+
+2026-09-01  RNS              mobile        Motor Gasoli  5,000.0 gal     43.89   0.00    0.00  44.04
+
+2026-09-01  RNS              venting       N/A           2.8 m3          0.26    3.23    0.00  90.75
+
+2026-09-01  RNS              flaring       N/A           50,000.0 m3     80.57   0.60    0.00  97.29
+
+2026-09-01  RNS              dehydrator    N/A           50.0 MMscf/day  0.00    3.92    0.00  109.71
+
+2026-09-01  RNS              flaring       Natural Gas   50,000.0 m3     96.00   0.60    0.00  112.93
+
+2026-09-01  RNS              tank_flashin  N/A           10,000.0 bbl    0.00    7.69    0.00  215.19
+
+2026-09-01  RNS              agr           N/A           100.0 MMscf     260.85  0.65    0.00  279.14
+
+2026-09-01  RNS              pneumatic     Pneumatic Co  10.0 devices    0.00    83.04   0.00  2,325.12
+
+2026-09-01  RNS              venting       Natural Gas   353,147.0 scf   19.07   236.61  0.00  6,644.11
+
+2026-09-01  Complexe Sidéru  Scope 2: ele  Algerian Nat 100,000.0 kWh    0.00    0.00    0.00  52.20
+
+2026-09-01  Complexe Sidéru  11            Crude Oil     500.0 bbl       0.00    0.00    0.00  216.85
+
+2026-08-01  Facility-AGT01-  Fuel Combust  N/A           0.0 m3          0.00    0.00    0.00  0.00
+
+2026-08-01  Facility-AGT02-  Fuel Combust  N/A           0.0 m3          0.00    0.00    0.00  0.00
+
+2026-08-01  Facility-AGT03-  Fuel Combust  N/A           0.0 m3          0.00    0.00    0.00  0.00
+
+2026-08-01  Facility-AGT04-  Fuel Combust  N/A           0.0 m3          0.00    0.00    0.00  0.00
+
+2026-08-01  Facility-AGT05-  Fuel Combust  N/A           0.0 m3          0.00    0.00    0.00  0.00
+2026-08-01  Facility-AGT06-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+2026-08-01  Facility-AGT07-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+2026-08-01  Facility-AGT08-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+2026-08-01  Facility-AGT09-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+2026-08-01  Facility-AGT10-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+2026-07-01  Facility-AGT01-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+2026-07-01  Facility-AGT02-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+2026-07-01  Facility-AGT03-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+2026-07-01  Facility-AGT04-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+2026-07-01  Facility-AGT05-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+2026-07-01  Facility-AGT06-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+2026-07-01  Facility-AGT07-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+2026-07-01  Facility-AGT08-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+2026-07-01  Facility-AGT09-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+2026-07-01  Facility-AGT10-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+2026-06-01  Complexe Sidéru  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+2026-06-01  Complexe Sidéru  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+2026-06-01  Complexe Sidéru  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+2026-06-01  Complexe Sidéru  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+2026-06-01  Facility-AGT01-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+2026-06-01  Facility-AGT02-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+2026-06-01  Facility-AGT03-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+2026-06-01  Facility-AGT04-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+2026-06-01  Facility-AGT05-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+2026-06-01  Facility-AGT06-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+2026-06-01  Facility-AGT07-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+2026-06-01  Facility-AGT08-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+2026-06-01  Facility-AGT09-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+2026-06-01  Facility-AGT10-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+2026-05-01  Facility-AGT01-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+2026-05-01  Facility-AGT02-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+2026-05-01  Facility-AGT03-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+2026-05-01  Facility-AGT04-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+2026-05-01  Facility-AGT05-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+2026-05-01  Facility-AGT06-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+2026-05-01  Facility-AGT07-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+2026-05-01  Facility-AGT08-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+2026-05-01  Facility-AGT09-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+2026-05-01  Facility-AGT10-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+2026-04-01  Facility-AGT01-
+2026-04-01  Facility-AGT02-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+2026-04-01  Facility-AGT03-
+2026-04-01  Facility-AGT04-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+2026-04-01  Facility-AGT05-
+2026-04-01  Facility-AGT06-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+2026-04-01  Facility-AGT07-
+2026-04-01  Facility-AGT08-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+2026-04-01  Facility-AGT09-
+2026-04-01  Facility-AGT10-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+2026-03-01  Facility-AGT01-
+2026-03-01  Facility-AGT02-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+2026-03-01  Facility-AGT03-
+2026-03-01  Facility-AGT04-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+2026-03-01  Facility-AGT05-
+2026-03-01  Facility-AGT06-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+2026-03-01  Facility-AGT07-
+2026-03-01  Facility-AGT08-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+2026-03-01  Facility-AGT09-
+2026-03-01  Facility-AGT10-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+2026-02-01  Facility-AGT01-
+2026-02-01  Facility-AGT02-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+2026-02-01  Facility-AGT03-
+2026-02-01  Facility-AGT04-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+2026-02-01  Facility-AGT05-
+2026-02-01  Facility-AGT06-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+2026-02-01  Facility-AGT07-
+2026-02-01  Facility-AGT08-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+2026-02-01  Facility-AGT09-
+2026-02-01  Facility-AGT10-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+2026-01-01  Facility-AGT01-
+2026-01-01  Facility-AGT02-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+2026-01-01  Facility-AGT03-
+2026-01-01  Facility-AGT04-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+2026-01-01  Facility-AGT05-
+2026-01-01  Facility-AGT06-  Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+2026-01-01  Facility-AGT07-
+                             Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+                             Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+                             Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+                             Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+                             Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+                             Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+                             Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+                             Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+                             Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+                             Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+                             Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+                             Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+                             Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+                             Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+                             Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+                             Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+                             Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+                             Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+
+                             Fuel Combust  N/A  0.0 m3  0.00  0.00  0.00  0.00
+2026-01-01  Facility-AGT08-  Fuel Combust  N/A           0.0 m3                    0.00     0.00  0.00  0.00
+2026-01-01                                                                         0.00     0.00
+2026-01-01  Facility-AGT09-  Fuel Combust  N/A           0.0 m3                    0.00     0.00  0.00  0.00
+2025-12-01                                                                         0.00     0.00
+2025-12-01  Facility-AGT10-  Fuel Combust  N/A           0.0 m3                    0.00     0.00  0.00  0.00
+2025-11-01                                                                      187.66      0.97
+2025-11-01  HBNS (Hassi Ber Scope 2: Ele   Grid          124,937,872.0 kWh      230.62      1.19  0.00  78,086.17
+2025-11-01                                                                      314.85      1.63
+2025-11-01  El Merk          Scope 2: Ele  Grid          382,762,176.0 kWh      357.81      1.85  0.00  239,226.36
+2025-11-01                                                                      442.04      2.29
+2025-11-01  RNS              stationary_c  Bituminous C  3,235.4 gal            485.00      2.51  0.01  217.41
+2025-11-01                                                                   4,269.40     22.08
+2025-11-01  Complexe Ammoni stationary_c   Crude Oil     3,976.2 kwh         7,142.18     36.94   0.01  267.18
+2025-11-01                                                                   8,830.22     45.67
+2025-09-01  RNS              stationary_c  Bituminous C  5,428.4 gal            140.53      0.21  0.02  364.76
+2025-09-01                                                                      189.42      0.29
+2025-09-01  Complexe Ammoni stationary_c   Crude Oil     6,169.1 kwh            238.30      0.36  0.02  414.54
+2025-09-01                                                                      285.27      0.43
+2025-09-01  RNS              stationary_c  Bituminous C  7,621.4 gal            334.15      0.51  0.02  512.12
+2025-09-01                                                                      383.04      0.58
+2025-09-01  Complexe Ammoni stationary_c   Crude Oil     8,362.1 kwh            430.01      0.65  0.03  561.89
+2025-09-01                                                                      478.89      0.73
+2025-09-01  HRM              stationary_c  Natural Gas   2,494.8 kwh            527.78      0.80  0.22  4,946.24
+2025-07-01                                                                       88.19      0.53
+2025-07-01  HRM              stationary_c  Natural Gas   4,687.8 kwh            125.22      0.75  0.37  8,274.46
+2025-07-01                                                                      162.26      0.97
+2025-07-01  HRM              stationary_c  Natural Gas   6,880.8 kwh            197.84      1.19  0.46  10,230.11
+2025-07-01                                                                      234.87      1.41
+2025-07-01  HRM              stationary_c  Refinery Fue  2,129.2 gal            271.91      1.63  0.00  147.62
+2025-07-01                                                                      307.49      1.84
+2025-07-01  RNS              stationary_c  Diesel (No.   2,869.9 kwh            344.52      2.07  0.01  198.97
+2025-07-01                                                                      381.56      2.29
+2025-06-01  Complexe Ammoni stationary_c   Anthracite C  3,610.7 gal            249.50    89.09   0.01  250.33
+2025-06-01                                                                   4,986.40     58.54
+2025-06-01  HRM              stationary_c  Refinery Fue  4,322.2 gal            547.80   195.63   0.01  299.66
+2025-06-01                                                                   5,559.40       1.52
+2025-06-01  RNS              stationary_c  Diesel (No.   5,062.9 kwh         9,406.40     75.45   0.01  351.01
+2025-06-01                                                                  10,626.60       4.94
+            Complexe Ammoni stationary_c   Anthracite C  5,803.6 gal                              0.01  402.37
+
+            HRM              stationary_c  Refinery Fue  6,515.2 gal                              0.01  451.70
+
+            RNS              stationary_c  Diesel (No.   7,255.9 kwh                              0.01  503.06
+
+            Complexe Ammoni stationary_c   Anthracite C  7,996.6 gal                              0.02  554.41
+
+            HRM              stationary_c  Kerosene      1,763.8 kwh                              0.00  103.47
+
+            RNS              stationary_c  Associated G  2,504.4 gal                              0.00  146.92
+
+            Complexe Ammoni stationary_c   Propane (Liq  3,245.2 kwh                              0.00  190.38
+
+            HRM              stationary_c  Kerosene      3,956.8 kwh                              0.00  232.12
+
+            RNS              stationary_c  Associated G  4,697.4 gal                              0.00  275.58
+
+            Complexe Ammoni stationary_c   Propane (Liq  5,438.1 kwh                              0.01  319.03
+
+            HRM              stationary_c  Kerosene      6,149.8 kwh                              0.01  360.78
+
+            RNS              stationary_c  Associated G  6,890.4 gal                              0.01  404.23
+
+            Complexe Ammoni stationary_c   Propane (Liq  7,631.1 kwh                              0.01  447.68
+
+            HBNS (Hassi Ber fugitive_equ   natural_gas   0.0 m3                                   0.00  2,494.63
+
+            El Merk          mobile_combu  diesel        1,860.6 liter                            0.01  5,000.09
+
+            El Merk          fugitive_equ  natural_gas   0.0 m3                                   0.00  5,477.63
+
+            HBNS (Hassi Ber safety_flari   natural_gas 2,067,000.0 m3                             0.57  5,672.84
+
+            HBNS (Hassi Ber mobile_combu   diesel        3,509.9 liter                            0.01  9,425.70
+
+            El Merk          safety_flari  natural_gas 4,458,000.0 m3                             1.08  10,843.47
+2025-06-01  El Merk          venting       natural_gas   0.0 m3            1,332.90    475.13    0.00   13,329.14
+2025-06-01                                                                 1,503.50    536.54    0.00   15,035.33
+2025-06-01  HBNS (Hassi Ber venting        natural_gas   0.0 m3          41,164.40               4.20   42,004.48
+2025-06-01                                                               53,829.50      19.15    5.49   54,928.09
+2025-06-01  El Merk          non_routine_  natural_gas 17,269,000.0 m3   76,094.00      14.73    7.76   77,646.92
+2025-06-01                                                              112,621.00      20.83   11.49  114,919.42
+2025-06-01  HBNS (Hassi Ber non_routine_   natural_gas 20,014,000.0 m3  535,332.80      52.40   27.04  540,740.16
+2025-06-01                                                              687,114.10      34.30   34.70  694,054.62
+2025-05-01  HBNS (Hassi Ber routine_flar   natural_gas 28,292,000.0 m3                  39.82    0.00
+2025-05-01                                                                     10.82             0.01         10.84
+2025-05-01  El Merk          routine_flar  natural_gas 47,246,000.0 m3       124.06       0.00   0.01       131.75
+2025-05-01                                                                   167.02       0.21   0.01       177.37
+2025-05-01  HBNS (Hassi Ber fuel_gas       natural_gas   245,791.0 m3        251.25       0.29   0.02       266.83
+2025-05-01                                                                   294.21       0.43   0.02       312.45
+2025-05-01  El Merk          fuel_gas      natural_gas   315,479.4 m3        378.45       0.51   0.02       401.90
+2025-05-01                                                                   421.41       0.65   0.03       447.53
+2025-05-01  DB Integrity Ve  stationary_c  Natural Gas   200.0 mscf          583.67       0.73   0.06       619.84
+2025-05-01                                                                 1,100.66       1.01   0.07     1,168.88
+2025-05-01  RNS              stationary_c  Bituminous C  2,138.9 kwh       1,351.77       1.90   0.00     1,435.56
+2025-03-01                                                                                2.33   0.00
+2025-03-01  Complexe Ammoni stationary_c   Crude Oil     2,879.7 gal             0.00     0.00   0.00           0.00
+2025-03-01                                                                     68.16      0.31   0.01         77.38
+2025-03-01  RNS              stationary_c  Bituminous C  4,331.9 kwh         117.05       0.53   0.01       132.88
+2025-03-01                                                                   165.93       0.75   0.01       188.39
+2025-03-01  Complexe Ammoni stationary_c   Crude Oil     5,072.6 gal         212.90       0.97   0.01       241.71
+2025-03-01                                                                   261.79       1.19   0.01       297.21
+2025-03-01  RNS              stationary_c  Bituminous C  6,524.9 kwh         310.67       1.41   0.01       352.71
+2025-03-01                                                                   357.64       1.63   0.01       406.03
+2025-03-01  Complexe Ammoni stationary_c   Crude Oil     7,265.6 gal         406.52       1.85   0.02       461.53
+2025-03-01                                                                   455.41       2.07   0.02       517.03
+2025-03-01  HRM              stationary_c  Natural Gas   5,784.2 gal         502.38       2.28   0.02       570.35
+2025-03-01                                                                   551.26       2.51   0.00       625.85
+2025-03-01  HRM              stationary_c  Natural Gas   1,398.2 gal         600.15       2.73   0.00       681.35
+2025-02-01                                                                 1,353.03       0.03   0.00     1,354.42
+2025-02-01  HRM              stationary_c  Natural Gas   3,591.2 gal                      0.00   0.00
+2025-02-01                                                                       0.00     0.00   0.00           0.00
+2025-01-01  DB Integrity Ve  Scope 2: ele  US            0.0 kWh                 0.00     0.00   0.00           0.00
+2025-01-01                                                                       0.00     0.00   0.00           0.00
+            HRM              stationary_c  Refinery Fue  1,032.8 kwh             0.00     0.00                  0.00
+                                                                                 0.00     0.00                  0.00
+            RNS              stationary_c  Diesel (No.   1,773.5 gal             0.00                           0.00
+
+            Complexe Ammoni stationary_c   Anthracite C  2,514.2 kwh
+
+            HRM              stationary_c  Refinery Fue  3,225.8 kwh
+
+            RNS              stationary_c  Diesel (No.   3,966.4 gal
+
+            Complexe Ammoni stationary_c   Anthracite C  4,707.1 kwh
+
+            HRM              stationary_c  Refinery Fue  5,418.8 kwh
+
+            RNS              stationary_c  Diesel (No.   6,159.4 gal
+
+            Complexe Ammoni stationary_c   Anthracite C  6,900.1 kwh
+
+            HRM              stationary_c  Refinery Fue  7,611.8 kwh
+
+            RNS              stationary_c  Diesel (No.   8,352.5 gal
+
+            Complexe Ammoni stationary_c   Anthracite C  9,093.1 kwh
+
+            Industrial Comp  stationary_c  Natural Gas   25,000.0 mscf
+
+            Industrial Comp  Scope 2: ele  US            0.0 kWh
+
+            Complexe Sidéru  stationary_c  Diesel        0.0 gal
+
+            Complexe Sidéru  stationary_c  Diesel        0.0 gal
+
+            Complexe Sidéru  stationary_c  Diesel        0.0 gal
+
+            Complexe Sidéru  flaring       N/A           50.0 mscf
+
+            Complexe Sidéru  flaring       N/A           50.0 mscf
+2025-01-01  Complexe Sidéru  stationary_c  Diesel        1,000.0 gal             10.21    0.00  0.00  10.24
+2025-01-01                                                                       33.36    0.07
+2025-01-01  HRM              stationary_c  Kerosene      667.2 gal               70.40    0.14  0.00  35.41
+2025-01-01                                                                      107.43    0.21
+2025-01-01  RNS              stationary_c  Associated G  1,408.0 kwh            143.01    0.29  0.00  74.71
+2025-01-01                                                                      180.05    0.36
+2025-01-01  Complexe Ammoni stationary_c   Propane (Liq  2,148.7 gal            217.08    0.43  0.00  114.02
+2025-01-01                                                                      252.66    0.51
+2025-01-01  HRM              stationary_c  Kerosene      2,860.2 gal            289.70    0.58  0.00  151.78
+2025-01-01                                                                      326.73    0.65
+2025-01-01  RNS              stationary_c  Associated G  3,600.9 kwh            362.31    0.72  0.00  191.08
+2025-01-01                                                                      399.35    0.80
+2025-01-01  Complexe Ammoni stationary_c   Propane (Liq  4,341.6 gal            436.38    0.87  0.00  230.39
+2024-12-01                                                                                0.00
+2024-12-01  HRM              stationary_c  Kerosene      5,053.2 gal               0.00   0.00  0.01  268.15
+2024-11-01                                                                         0.00   0.64
+2024-11-01  RNS              stationary_c  Associated G  5,793.9 kwh            123.22    1.08  0.01  307.46
+2024-11-01                                                                      209.14    1.30
+2024-11-01  Complexe Ammoni stationary_c   Propane (Liq  6,534.6 gal            250.41    1.74  0.01  346.76
+2024-11-01                                                                      336.33    1.95
+2024-11-01  HRM              stationary_c  Kerosene      7,246.2 gal            377.60    2.40  0.01  384.52
+2024-11-01                                                                      463.52   24.34
+2024-11-01  RNS              stationary_c  Associated G  7,986.9 kwh         4,705.57    42.97  0.01  423.83
+2024-11-01                                                                   8,307.30    61.60
+2024-10-01  Complexe Ammoni stationary_c   Propane (Liq  8,727.6 gal        11,909.03     0.00  0.01  463.13
+2024-09-01                                                                       15.92    0.25
+2024-09-01  HBNS (Hassi Ber Scope 2: Ele   Grid          121,285,616.0 kWh      164.97    0.47  0.00  75,803.51
+2024-09-01                                                                      309.71    0.69
+2024-09-01  El Merk          Scope 2: Ele  Grid          400,756,960.0 kWh      454.45    4.98  0.00  250,473.10
+2024-09-01                                                                   3,287.23     9.18
+2024-09-01  HBK              stationary_c  Crude Oil     2,124.4 tonne       6,055.83    11.19  0.01  142.75
+2024-09-01                                                                   7,385.75    15.39
+2024-09-01  Cimenterie Indu  stationary_c  LPG           3,605.8 tonne      10,154.35    17.40  0.01  242.29
+2024-09-01                                                                  11,484.27    21.60
+2024-07-01  HBK              stationary_c  Crude Oil     4,317.4 tonne      14,252.87     0.42  0.01  290.11
+2024-07-01                                                                       69.67    0.86
+2024-07-01  Cimenterie Indu  stationary_c  LPG           5,798.8 tonne          143.74    1.08  0.02  389.65
+2024-07-01                                                                      179.32    1.52
+            HBK              stationary_c  Crude Oil     6,510.4 tonne          253.39          0.02  437.47
+
+            Cimenterie Indu  stationary_c  LPG           7,991.8 tonne                          0.02  537.01
+
+            ADR              stationary_c  Propane (Gas  2,865.1 mscf                           0.24  5,451.57
+
+            ADR              stationary_c  Propane (Gas  5,058.1 mscf                           0.43  9,624.29
+
+            ADR              stationary_c  Propane (Gas  7,251.1 mscf                           0.62  13,797.02
+
+            Complexe Sidéru  Flaring       N/A           0.0 MMBtu                              0.00  15.93
+
+            ADR              stationary_c  Ethane        2,499.6 tonne                          0.00  173.30
+
+            ADR              stationary_c  Ethane        4,692.6 tonne                          0.01  325.34
+
+            ADR              stationary_c  Ethane        6,885.6 tonne                          0.01  477.38
+
+            HBK              stationary_c  Anthracite C  1,758.9 mscf                           0.10  3,453.08
+
+            Cimenterie Indu  stationary_c  Motor Gasoli  3,240.3 mscf                           0.18  6,361.37
+
+            HBK              stationary_c  Anthracite C  3,951.9 mscf                           0.22  7,758.39
+
+            Cimenterie Indu  stationary_c  Motor Gasoli  5,433.3 mscf                           0.31  10,666.68
+
+            HBK              stationary_c  Anthracite C  6,144.9 mscf                           0.35  12,063.70
+
+            Cimenterie Indu  stationary_c  Motor Gasoli  7,626.3 mscf                           0.43  14,971.99
+
+            HBK              stationary_c  Propane (Liq  1,393.4 tonne                          0.00  81.74
+
+            Cimenterie Indu  stationary_c  Butane        2,874.8 tonne                          0.00  168.65
+
+            HBK              stationary_c  Propane (Liq  3,586.4 tonne                          0.00  210.40
+
+            Cimenterie Indu  stationary_c  Butane        5,067.8 tonne                          0.01  297.30
+2024-07-01  HBK              stationary_c  Propane (Liq  5,779.4 tonne       288.97       1.73   0.01       339.05
+2024-07-01  Cimenterie Indu  stationary_c                                    363.04       2.18   0.01       425.95
+2024-07-01  ADR              stationary_c  Butane        7,260.8 tonne     3,021.55     18.13    0.06     3,545.18
+2024-07-01  ADR              stationary_c                                  6,126.49     36.76    0.12     7,188.21
+2024-07-01  ADR              stationary_c  Residual Fue  2,134.1 mscf      9,231.42     55.39    0.18   10,831.23
+2024-06-01  HBNS (Hassi Ber  fugitive_equ                                    105.70     37.75    0.00     1,056.95
+2024-06-01  El Merk          fugitive_equ  Residual Fue  4,327.1 mscf        170.50     60.88    0.00     1,704.77
+2024-06-01  El Merk          mobile_combu                                  4,645.00     67.60    0.01     4,654.41
+2024-06-01  HBNS (Hassi Ber  safety_flari  Residual Fue  6,520.1 mscf      5,953.40     19.58    0.61     6,074.91
+2024-06-01  HBNS (Hassi Ber  mobile_combu                                  7,769.60     68.97    0.01     7,794.64
+2024-06-01  El Merk          safety_flari  natural_gas   0.0 m3          11,574.90      46.49    1.18   11,811.11
+2024-06-01  El Merk          venting                                       1,368.70    487.88    0.00   13,686.82
+2024-06-01  HBNS (Hassi Ber  venting       natural_gas   0.0 m3            1,559.70    556.60    0.00   15,597.37
+2024-06-01  El Merk          non_routine_                                23,983.60      96.34    2.45   24,473.04
+2024-06-01  HBNS (Hassi Ber  routine_flar  diesel        1,733.2 liter   82,607.70     271.75    8.43   84,293.62
+2024-06-01  HBNS (Hassi Ber  non_routine_                               110,039.10     361.99   11.23  112,284.76
+2024-06-01  El Merk          routine_flar  natural_gas 2,011,000.0 m3   127,885.70     513.69   13.05  130,495.57
+2024-06-01  HBNS (Hassi Ber  fuel_gas                                   547,003.60      33.40   27.63  552,528.86
+2024-06-01  El Merk          fuel_gas      diesel        2,899.1 liter  688,940.50      40.61   34.79  695,899.51
+2024-06-01  Updated Facilit  Scope 2: ele                                                 0.00   0.00
+2024-06-01  Updated Facilit  Scope 2: ele  natural_gas 4,470,000.0 m3            0.00     0.00   0.00           0.00
+2024-06-01  Complexe Sidéru  Scope 2: ele                                        0.00     0.00   0.00           0.00
+2024-06-01  Updated Facilit  Scope 2: ele  natural_gas   0.0 m3                  0.00     0.00   0.00           0.00
+2024-06-01  Updated Facilit  Scope 2: ele                                        0.00     0.00   0.00           0.00
+2024-06-01  Updated Facilit  Scope 2: ele  natural_gas   0.0 m3                  0.00     0.00   0.00           0.00
+2024-06-01  Updated Facilit  Scope 2: ele                                        0.00     0.00   0.00           0.00
+2024-05-01  ADR              stationary_c  natural_gas 9,262,000.0 m3            0.00     0.18   0.01           0.00
+2024-05-01  ADR              stationary_c                                    102.58       0.40   0.01       108.94
+2024-05-01  ADR              stationary_c  natural_gas 27,904,000.0 m3       229.77       0.62   0.02       244.01
+2024-05-01  HBK              stationary_c                                    356.97       2.91   0.09       379.09
+2024-05-01  Cimenterie Indu  stationary_c  natural_gas 37,170,000.0 m3     1,688.20       7.11   0.21     1,792.84
+2024-05-01  HBK              stationary_c                                  4,121.21       9.12   0.27     4,376.66
+2024-05-01  Cimenterie Indu  stationary_c  natural_gas 49,387,000.0 m3     5,289.93     13.32    0.40     5,617.81
+2024-05-01  HBK              stationary_c                                  7,722.94     15.33    0.46     8,201.63
+2024-05-01  Cimenterie Indu  stationary_c  natural_gas   251,149.5 m3      8,891.66     19.53    0.59     9,442.79
+2024-04-01  Complexe Sidéru  Scope 2: ele                                11,324.67        0.00   0.00   12,026.61
+2024-04-01  Complexe Sidéru  Scope 2: ele  natural_gas   316,318.0 m3            0.00     0.00   0.00           0.00
+2024-04-01  Complexe Sidéru  Scope 2: ele                                        0.00     0.00   0.00           0.00
+                                           Algeria Nati  50,000.0 kWh            0.00                           0.00
+
+                                           Algeria Nati  50,000.0 kWh
+
+                                           Algeria Nati  50,000.0 kWh
+
+                                           Algeria Nati  50,000.0 kWh
+
+                                           Algeria Nati  50,000.0 kWh
+
+                                           Algeria Nati  50,000.0 kWh
+
+                                           Algeria Nati  50,000.0 kWh
+
+                                           Propane (Gas 1,768.6 tonne
+
+                                           Propane (Gas 3,961.6 tonne
+
+                                           Propane (Gas 6,154.6 tonne
+
+                                           Crude Oil     1,027.9 mscf
+
+                                           LPG           2,509.3 mscf
+
+                                           Crude Oil     3,220.9 mscf
+
+                                           LPG           4,702.3 mscf
+
+                                           Crude Oil     5,413.9 mscf
+
+                                           LPG           6,895.3 mscf
+
+                                           Algeria       12,000.0 kWh
+
+                                           Algeria       12,000.0 kWh
+
+                                           Algeria       12,000.0 kWh
+2024-03-01  HBK              stationary_c  Anthracite C  662.4 tonne    43.72      0.20   0.00  49.63
+2024-03-01  Cimenterie Indu  stationary_c  Motor Gasoli
+2024-03-01  HBK              stationary_c  Anthracite C  2,143.8 tonne  141.49     0.64   0.00  160.63
+2024-03-01  Cimenterie Indu  stationary_c  Motor Gasoli
+2024-03-01  HBK              stationary_c  Anthracite C  2,855.4 tonne  188.46     0.86   0.01  213.96
+2024-03-01  Cimenterie Indu  stationary_c  Motor Gasoli
+2024-03-01  HBK              stationary_c  Anthracite C  4,336.8 tonne  286.23     1.30   0.01  324.96
+2024-03-01  Cimenterie Indu  stationary_c  Motor Gasoli
+2024-03-01  ADR              stationary_c  Ethane        5,048.4 tonne  333.19     1.51   0.01  378.28
+2024-03-01  ADR              stationary_c  Ethane
+2024-03-01  ADR              stationary_c  Ethane        6,529.8 tonne  430.97     1.96   0.01  489.28
+2024-03-01  ADR              stationary_c  Ethane
+2024-01-01  Updated Facilit  Combustion    N/A           7,241.4 tonne  477.93     2.17   0.01  542.60
+2024-01-01  Complexe Sidéru  Combustion    N/A
+2024-01-01  Updated Facilit  Combustion    N/A           8,722.8 tonne  575.70     2.62   0.02  653.60
+2024-01-01  Updated Facilit  Combustion    N/A
+2024-01-01  Updated Facilit  Combustion    N/A           1,403.1 mscf   2,622.27   11.92  0.08  2,977.07
+2024-01-01  Updated Facilit  Combustion    N/A
+2024-01-01  Complexe Sidéru  '; SELECT *   N/A           3,596.1 mscf   6,720.79   30.55  0.20  7,630.13
+2024-01-01  Complexe Sidéru  '; SELECT *   N/A
+2024-01-01  Complexe Sidéru  '; SELECT *   N/A           5,789.1 mscf   10,819.31  49.18  0.33  12,283.19
+2024-01-01  Complexe Sidéru  '; SELECT *   N/A
+2024-01-01  Complexe Sidéru  '; SELECT *   N/A           7,982.1 mscf   14,917.83  67.81  0.45  16,936.25
+2024-01-01  Updated Facilit  Combustion    N/A
+2024-01-01  ADR              stationary_c  Residual Fue  0.0 MMBtu      0.00       0.00   0.00  0.00
+2024-01-01  ADR              stationary_c  Residual Fue
+2024-01-01  ADR              stationary_c  Residual Fue  0.0 MMBtu      0.00       0.00   0.00  0.00
+2024-01-01  ADR              stationary_c  Residual Fue
+2024-01-01  HBK              stationary_c  Propane (Liq  0.0 MMBtu      0.00       0.00   0.00  0.00
+2024-01-01  Cimenterie Indu  stationary_c  Butane
+2024-01-01  HBK              stationary_c  Propane (Liq  0.0 MMBtu      0.00       0.00   0.00  0.00
+2024-01-01  Cimenterie Indu  stationary_c  Butane
+2024-01-01  HBK              stationary_c  Propane (Liq  0.0 MMBtu      0.00       0.00   0.00  0.00
+2024-01-01  Cimenterie Indu  stationary_c  Butane
+2024-01-01  HBK              stationary_c  Propane (Liq  0.0 MMBtu      0.00       0.00   0.00  0.00
+2024-01-01  Cimenterie Indu  stationary_c  Butane
+2024-01-01  Updated Facilit  Combustion    N/A           0.0 MMBtu      5.31       0.00   0.00  5.31
+2024-01-01  Complexe Sidéru  Combustion    N/A
+                                                         0.0 MMBtu      5.31       0.00   0.00  5.31
+
+                                                         0.0 MMBtu      5.31       0.00   0.00  5.31
+
+                                                         0.0 MMBtu      5.31       0.00   0.00  5.31
+
+                                                         0.0 MMBtu      5.31       0.00   0.00  5.31
+
+                                                         0.0 MMBtu      53.06      0.00   0.00  53.11
+
+                                                         1,037.6 tonne  51.88      0.10   0.00  55.06
+
+                                                         3,230.6 tonne  161.53     0.32   0.00  171.43
+
+                                                         5,423.6 tonne  271.18     0.54   0.01  287.80
+
+                                                         7,616.6 tonne  380.83     0.76   0.01  404.17
+
+                                                         296.9 mscf     420.36     0.84   0.01  446.13
+
+                                                         1,778.3 mscf   2,517.79   5.04   0.05  2,672.13
+
+                                                         2,489.9 mscf   3,525.30   7.05   0.07  3,741.40
+
+                                                         3,971.3 mscf   5,622.73   11.25  0.11  5,967.40
+
+                                                         4,682.9 mscf   6,630.24   13.26  0.13  7,036.68
+
+                                                         6,164.3 mscf   8,727.67   17.46  0.17  9,262.67
+
+                                                         6,875.9 mscf   9,735.18   19.47  0.19  10,331.95
+
+                                                         8,357.3 mscf   11,832.61  23.67  0.24  12,557.95
+
+                                                         0.0 MM5B3t0u,599,999,999.95 10,000,000.00 1,000,000.00 531,144,999,999.95
+
+                                                         0.0 MM5B3t0u,599,999,999.95 10,000,000.00 1,000,000.00 531,144,999,999.95
+2024-01-01  Updated Facilit  Combustion    N/A           0.0 MM5B3t0u,599,999,999.95 10,000,000.00 1,000,000.00 531,144,999,999.95
+2024-01-01  Updated Facilit  Combustion
+2024-01-01  Updated Facilit  Combustion    N/A           0.0 MM5B3t0u,599,999,999.95 10,000,000.00 1,000,000.00 531,144,999,999.95
+2024-01-01  Updated Facilit  Combustion
+2024-01-01  Updated Facilit  Combustion    N/A           0.0 MM5B3t0u,599,999,999.95 10,000,000.00 1,000,000.00 531,144,999,999.95
+2024-01-01  Updated Facilit  Category 1
+2024-01-01  Complexe Sidéru  Category 1    N/A           0.0 MM5B3t0u,599,999,999.95 10,000,000.00 1,000,000.00 531,144,999,999.95
+2024-01-01  Updated Facilit  Category 1
+2024-01-01  Updated Facilit  Category 1    N/A           0.0 MM5B3t0u,599,999,999.95 10,000,000.00 1,000,000.00 531,144,999,999.95
+2024-01-01  Updated Facilit  Category 1
+2024-01-01  Updated Facilit  Category 1    Value Chain   0.0 tonnes         0.00      0.00   0.00  0.00
+2023-12-01  HBNS (Hassi Ber  Scope 2: Ele
+2023-12-01  El Merk          Scope 2: Ele  Value Chain   0.0 tonnes         0.00      0.00   0.00  0.00
+2023-11-01  Centre de Trait  stationary_c
+2023-11-01  Centre de Trait  stationary_c  Value Chain   0.0 tonnes         0.00      0.00   0.00  0.00
+2023-11-01  Complexe Sidéru  stationary_c
+2023-11-01  Complexe Sidéru  stationary_c  Value Chain   0.0 tonnes         0.00      0.00   0.00  0.00
+2023-11-01  Centre de Trait  stationary_c
+2023-11-01  Complexe Sidéru  stationary_c  Value Chain   0.0 tonnes         0.00      0.00   0.00  0.00
+2023-11-01  Centre de Trait  stationary_c
+2023-11-01  Complexe Sidéru  stationary_c  Value Chain   0.0 tonnes         0.00      0.00   0.00  0.00
+2023-11-01  Complexe Sidéru  stationary_c
+2023-11-01  Centre de Trait  stationary_c  Grid          146,086,208.0 kWh  0.00      0.00   0.00  91,303.88
+2023-11-01  Centre de Trait  stationary_c
+2023-11-01  Complexe Sidéru  stationary_c  Grid          391,359,216.0 kWh  0.00      0.00   0.00  244,599.51
+2023-09-01  Centre de Trait  stationary_c
+2023-09-01  Complexe Sidéru  stationary_c  Butane        2,371.3 mmbtu      137.54    0.71   0.01  159.34
+2023-09-01  Complexe Sidéru  stationary_c
+2023-09-01  Centre de Trait  stationary_c  Kerosene      3,112.0 bbl        180.50    0.93   0.01  209.11
+2023-09-01  Complexe Sidéru  stationary_c
+2023-09-01  Complexe Sidéru  stationary_c  Butane        4,223.1 scf        204.15    1.06   0.01  236.51
+2023-09-01  Centre de Trait  stationary_c
+2023-09-01  Complexe Sidéru  stationary_c  Associated G 3,852.7 mmbtu       223.46    1.16   0.01  258.88
+2023-09-01  Complexe Sidéru  stationary_c
+2023-09-01  Centre de Trait  stationary_c  Butane        4,564.3 mmbtu      264.73    1.37   0.01  306.70
+2023-09-01  Centre de Trait  stationary_c
+2023-09-01  Centre de Trait  stationary_c  Butane        6,416.1 scf        276.73    1.43   0.01  320.60
+2023-07-01  Centre de Trait  stationary_c
+                                           Kerosene      5,305.0 bbl        307.69    1.59   0.02  356.47
+
+                                           Butane        8,609.0 scf        313.69    1.62   0.02  363.42
+
+                                           Associated G 6,045.7 mmbtu       350.65    1.81   0.02  406.24
+
+                                           Butane        6,757.3 mmbtu      391.92    2.03   0.02  454.06
+
+                                           Kerosene      7,498.0 bbl        434.88    2.25   0.02  503.83
+
+                                           Associated G 8,238.7 mmbtu       477.84    2.47   0.02  553.60
+
+                                           LPG           2,005.8 bbl        132.38    0.20   0.00  139.06
+
+                                           Bituminous C  3,487.2 bbl        230.16    0.35   0.01  241.77
+
+                                           LPG           3,857.6 kg         254.60    0.39   0.01  267.44
+
+                                           LPG           4,198.8 bbl        277.12    0.42   0.01  291.10
+
+                                           Bituminous C  5,680.2 bbl        374.89    0.57   0.01  393.81
+
+                                           LPG           6,050.6 kg         399.34    0.61   0.01  419.48
+
+                                           LPG           6,391.8 bbl        421.86    0.64   0.01  443.14
+
+                                           Bituminous C  7,873.2 bbl        519.63    0.79   0.02  545.85
+
+                                           LPG           8,243.5 kg         544.07    0.82   0.02  571.53
+
+                                           Natural Gas   2,746.5 mmbtu      4,688.03  7.10   0.14  4,924.57
+
+                                           Natural Gas   7,132.5 mmbtu      6,089.47  9.23   0.18  6,396.71
+
+                                           Natural Gas   4,939.5 mmbtu      7,115.07  10.78  0.22  7,474.06
+
+                                           Motor Gasoli 1,640.3 mmbtu       82.02     0.49   0.00  96.23
+2023-07-01  Complexe Sidéru  stationary_c  Motor Gasoli  7,878.1 scf           89.72       0.54   0.00       105.27
+2023-07-01  Complexe Sidéru  stationary_c                                    105.59        0.63   0.00       123.89
+2023-07-01  Centre de Trait  stationary_c  Motor Gasoli  3,492.1 scf         119.05        0.71   0.00       139.68
+2023-07-01  Complexe Sidéru  stationary_c                                    132.32        0.79   0.00       155.26
+2023-07-01  Complexe Sidéru  stationary_c  Refinery Fue  2,381.0 bbl         156.09        0.94   0.00       183.13
+2023-07-01  Centre de Trait  stationary_c                                    191.66        1.15   0.00       224.88
+2023-07-01  Centre de Trait  stationary_c  Motor Gasoli  5,685.1 scf         228.70        1.37   0.00       268.33
+2023-07-01  Complexe Sidéru  stationary_c                                    265.74        1.59   0.01       311.79
+2023-07-01  Centre de Trait  stationary_c  Diesel (No.   3,121.7 mmbtu       301.31        1.81   0.01       353.53
+2023-07-01  Centre de Trait  stationary_c                                    338.35        2.03   0.01       396.99
+2023-07-01  Complexe Sidéru  stationary_c  Motor Gasoli 3,833.3 mmbtu        375.38        2.25   0.01       440.44
+2023-06-01  HBNS (Hassi Ber  non_routine_                                    822.20        2.73   0.08       838.98
+2023-06-01  El Merk          mobile_combu  Refinery Fue  4,574.0 bbl       4,796.10       59.58   0.01     4,806.21
+2023-06-01  HBNS (Hassi Ber  mobile_combu                                  7,466.70       65.08   0.01     7,494.08
+2023-06-01  El Merk          non_routine_  Diesel (No.   5,314.7 mmbtu     7,958.80       32.41   0.81     8,121.22
+2023-06-01  El Merk          venting                                       1,191.70     475.65    0.00   11,916.70
+2023-06-01  HBNS (Hassi Ber  venting       Motor Gasoli 6,026.3 mmbtu      1,348.40     538.89    0.00   13,484.33
+2023-06-01  HBNS (Hassi Ber  fugitive_equ                                  3,389.10   1,354.57    0.00   33,890.67
+2023-06-01  HBNS (Hassi Ber  safety_flari  Refinery Fue  6,767.0 bbl     63,900.10      212.18    6.52   65,204.15
+2023-06-01  El Merk          fugitive_equ                                  7,125.70   2,844.54    0.00   71,256.55
+2023-06-01  El Merk          safety_flari  Diesel (No.   7,507.7 mmbtu   73,251.90      298.27    7.47   74,746.84
+2023-06-01  HBNS (Hassi Ber  routine_flar                               107,909.10      358.30   11.01  110,111.29
+2023-06-01  El Merk          routine_flar  natural_gas   291,000.0 m3   110,668.90      450.62   11.29  112,927.47
+2023-06-01  HBNS (Hassi Ber  fuel_gas                                   708,693.70        37.16  35.79  715,852.19
+2023-06-01  El Merk          fuel_gas      diesel        1,789.6 liter  713,437.30        42.20  36.03  720,643.74
+2023-05-01  Centre de Trait  stationary_c                                                  0.13   0.00
+2023-05-01  Centre de Trait  stationary_c  diesel        2,786.1 liter         73.94       0.20   0.01         78.52
+2023-05-01  Complexe Sidéru  stationary_c                                    116.90        0.28   0.01       124.14
+2023-05-01  Complexe Sidéru  stationary_c  natural_gas 3,134,000.0 m3        159.86        0.31   0.01       169.77
+2023-05-01  Centre de Trait  stationary_c                                    181.34        0.35   0.01       192.58
+2023-05-01  Centre de Trait  stationary_c  natural_gas   0.0 m3              201.13        0.42   0.01       213.60
+2023-05-01  Complexe Sidéru  stationary_c                                    244.09        0.49   0.01       259.22
+2023-05-01  Complexe Sidéru  stationary_c  natural_gas   0.0 m3              287.05        0.53   0.02       304.85
+2023-05-01  Centre de Trait  stationary_c                                    308.53        0.57   0.02       327.66
+2023-05-01  Centre de Trait  stationary_c  natural_gas   0.0 m3              328.33        0.64   0.02       348.68
+2023-05-01  Complexe Sidéru  stationary_c                                    371.29        0.71   0.02       394.30
+2023-05-01  Complexe Sidéru  stationary_c  natural_gas 22,616,000.0 m3       414.25        0.75   0.02       439.92
+2023-03-01  Complexe Sidéru  stationary_c                                    435.73        0.06   0.00       462.74
+                                           natural_gas   0.0 m3
+                                                                               12.25                           13.91
+                                           natural_gas 28,845,000.0 m3
+
+                                           natural_gas 38,192,000.0 m3
+
+                                           natural_gas 43,579,000.0 m3
+
+                                           natural_gas   325,387.4 m3
+
+                                           natural_gas   327,565.3 m3
+
+                                           Butane        1,274.8 bbl
+
+                                           Kerosene      2,015.5 mmbtu
+
+                                           Associated G  2,756.2 bbl
+
+                                           Butane        3,126.6 kg
+
+                                           Butane        3,467.8 bbl
+
+                                           Kerosene      4,208.5 mmbtu
+
+                                           Associated G  4,949.2 bbl
+
+                                           Butane        5,319.6 kg
+
+                                           Butane        5,660.8 bbl
+
+                                           Kerosene      6,401.5 mmbtu
+
+                                           Associated G  7,142.2 bbl
+
+                                           Butane        7,512.6 kg
+
+                                           LPG           4,954.1 scf
+2023-03-01  Complexe Sidéru  stationary_c  LPG           2,761.1 scf             40.70    0.19  0.00  46.21
+2023-03-01  Centre de Trait  stationary_c                                        60.01    0.27
+2023-03-01  Complexe Sidéru  stationary_c  LPG           909.3 mmbtu            157.79    0.72  0.00  68.13
+2023-03-01  Centre de Trait  stationary_c                                       204.75    0.93
+2023-03-01  Complexe Sidéru  stationary_c  Bituminous C 2,390.7 mmbtu           302.52    1.38  0.00  179.14
+2023-03-01  Centre de Trait  stationary_c                                       336.30    1.53
+2023-03-01  Centre de Trait  stationary_c  LPG           3,102.3 mmbtu          349.49    1.59  0.01  232.46
+2023-03-01  Complexe Sidéru  stationary_c                                       447.26    2.03
+2023-03-01  Centre de Trait  stationary_c  Bituminous C 4,583.7 mmbtu           494.23    2.25  0.01  343.46
+2023-03-01  Complexe Sidéru  stationary_c                                       510.52    2.32
+2023-03-01  Complexe Sidéru  stationary_c  Natural Gas   3,843.0 bbl            592.00    2.69  0.01  381.80
+2023-03-01  Complexe Sidéru  stationary_c                                       614.69    2.79
+2023-03-01  Centre de Trait  stationary_c  LPG           5,295.3 mmbtu          865.13    3.93  0.01  396.78
+2023-03-01  Centre de Trait  stationary_c                                   15,303.04    69.56
+2023-03-01  Centre de Trait  stationary_c  Bituminous C 6,776.7 mmbtu       19,091.77    86.78  0.01  507.78
+2023-01-01  Centre de Trait  stationary_c                                        27.19    0.05
+2023-01-01  Centre de Trait  stationary_c  LPG           7,488.3 mmbtu           64.22    0.13  0.01  561.10
+2023-01-01  Complexe Sidéru  stationary_c                                       101.26    0.20
+2023-01-01  Complexe Sidéru  stationary_c  LPG           7,147.1 scf            119.78    0.24  0.02  579.60
+2023-01-01  Centre de Trait  stationary_c                                       136.84    0.27
+2023-01-01  Centre de Trait  stationary_c  Bituminous C 8,969.7 mmbtu           173.88    0.35  0.02  672.10
+2023-01-01  Complexe Sidéru  stationary_c                                       210.91    0.42
+2023-01-01  Complexe Sidéru  stationary_c  LPG           9,340.0 scf            229.43    0.46  0.02  697.86
+2023-01-01  Centre de Trait  stationary_c                                       246.49    0.49
+2023-01-01  Centre de Trait  stationary_c  Natural Gas   1,650.0 bbl            283.52    0.57  0.03  982.19
+2023-01-01  Complexe Sidéru  stationary_c                                       320.56    0.64
+2023-01-01  Complexe Sidéru  stationary_c  Natural Gas   6,036.0 bbl            339.08    0.68  0.46  17,373.59
+2023-01-01  Centre de Trait  stationary_c                                       356.14    0.71
+2023-01-01  Centre de Trait  stationary_c  Natural Gas   8,229.0 bbl            393.18    0.79  0.58  21,674.94
+2023-01-01  Complexe Sidéru  stationary_c                                       430.21    0.86
+2023-01-01  Complexe Sidéru  stationary_c  Motor Gasoli  543.8 bbl              448.73    0.90  0.00  28.86
+2022-12-01  HBNS (Hassi Ber  Scope 2: Ele                                                 0.00
+2022-12-01  El Merk          Scope 2: Ele  Refinery Fue 1,284.5 mmbtu              0.00   0.00  0.00  68.16
+2022-11-01  Complexe Sidéru  stationary_c                                          0.00   0.60
+2022-11-01  REB              stationary_c  Diesel (No.   2,025.2 bbl            116.06    0.69  0.00  107.47
+2022-11-01  INAS             stationary_c                                       133.01    1.04
+2022-11-01  REB              stationary_c  Motor Gasoli  2,395.6 kg             201.98    1.09  0.00  127.12
+2022-11-01  Complexe Sidéru  stationary_c                                       211.37    1.26
+                                           Motor Gasoli  2,736.8 bbl            243.25          0.00  145.23
+
+                                           Refinery Fue 3,477.5 mmbtu                           0.00  184.53
+
+                                           Diesel (No.   4,218.2 bbl                            0.00  223.84
+
+                                           Motor Gasoli  4,588.6 kg                             0.00  243.49
+
+                                           Motor Gasoli  4,929.8 bbl                            0.00  261.60
+
+                                           Refinery Fue 5,670.5 mmbtu                           0.01  300.91
+
+                                           Diesel (No.   6,411.2 bbl                            0.01  340.21
+
+                                           Motor Gasoli  6,781.6 kg                             0.01  359.86
+
+                                           Motor Gasoli  7,122.8 bbl                            0.01  377.97
+
+                                           Refinery Fue 7,863.5 mmbtu                           0.01  417.28
+
+                                           Diesel (No.   8,604.2 bbl                            0.01  456.58
+
+                                           Motor Gasoli  8,974.5 kg                             0.01  476.23
+
+                                           Grid          138,297,040.0 kWh                      0.00  86,435.65
+
+                                           Grid          343,286,608.0 kWh                      0.00  214,554.13
+
+                                           Associated G  2,001.0 kg                             0.01  134.45
+
+                                           Propane (Liq  2,741.7 scf                            0.01  154.10
+
+                                           Residual Fue  3,482.3 kg                             0.01  234.00
+
+                                           Propane (Liq  4,934.6 scf                            0.01  244.87
+
+                                           Associated G  4,193.9 kg                             0.01  281.81
+2022-11-01  REB              stationary_c  Propane (Liq  7,127.6 scf        260.20       1.35  0.01  301.46
+2022-11-01  INAS             stationary_c                                   329.17       1.70
+2022-11-01  Complexe Sidéru  stationary_c  Residual Fue  5,675.4 kg         370.44       1.92  0.02  381.36
+2022-11-01  INAS             stationary_c                                   456.36       2.36
+2022-11-01  Complexe Sidéru  stationary_c  Associated G  6,386.9 kg      7,005.20       36.23  0.02  429.17
+2022-11-01  Complexe Sidéru  stationary_c                                9,526.08       49.27
+2022-11-01  Complexe Sidéru  stationary_c  Residual Fue  7,868.4 kg     10,975.35       56.77  0.02  528.71
+2022-09-01  Complexe Sidéru  stationary_c                                                0.12
+2022-09-01  Complexe Sidéru  stationary_c  Ethane        4,099.6 m3          78.79       0.22  0.36  8,115.76
+2022-09-01  INAS             stationary_c                                   146.02       0.23
+2022-09-01  Complexe Sidéru  stationary_c  Ethane        6,292.6 m3         151.44       0.24  0.49  11,036.30
+2022-09-01  REB              stationary_c                                   156.49       0.24
+2022-09-01  INAS             stationary_c  Ethane        8,485.6 m3         156.83       0.28  0.57  12,715.32
+2022-09-01  INAS             stationary_c                                   181.80       0.33
+2022-09-01  Complexe Sidéru  stationary_c  Bituminous C  1,635.5 scf        215.75       0.37  0.00  82.77
+2022-09-01  REB              stationary_c                                   246.45       0.46
+2022-09-01  Complexe Sidéru  stationary_c  Bituminous C  6,021.4 scf        301.56       0.59  0.00  153.39
+2022-09-01  REB              stationary_c                                   391.19       0.68
+2022-09-01  Complexe Sidéru  stationary_c  Propane (Gas  3,116.8 scf        446.30       0.81  0.00  159.08
+2022-07-01  REB              stationary_c                                   535.93       0.37
+2022-07-01  Complexe Sidéru  stationary_c  Bituminous C  3,828.4 scf                     0.38  0.00  164.39
+2022-07-01  REB              stationary_c                                    61.01       0.44
+2022-07-01  REB              stationary_c  Crude Oil     2,376.2 kg          63.50       0.59  0.00  164.74
+2022-07-01  INAS             stationary_c                                    72.72       0.83
+2022-07-01  Complexe Sidéru  stationary_c  Propane (Gas  7,502.9 scf         98.26       1.04  0.01  190.98
+2022-07-01  INAS             stationary_c                                   137.57       1.48
+2022-07-01  Complexe Sidéru  stationary_c  Propane (Gas  5,309.9 scf        173.15       1.70  0.01  226.63
+2022-07-01  INAS             stationary_c                                   247.22       2.14
+2022-07-01  Complexe Sidéru  stationary_c  Residual Fue  3,734.1 liter      282.80      18.62  0.01  258.89
+2022-07-01  Complexe Sidéru  stationary_c                                   356.87      21.63
+2022-07-01  Complexe Sidéru  stationary_c  Crude Oil     4,569.1 kg      3,102.88       27.36  0.01  316.78
+2022-06-01  HBNS (Hassi Ber  non_routine_                                3,604.94        2.68
+2022-06-01  El Merk          mobile_combu  Residual Fue  5,927.1 liter   4,560.15       11.42  0.01  410.93
+2022-06-01  HBNS (Hassi Ber  mobile_combu                                   830.90      63.31
+2022-06-01  El Merk          non_routine_  Crude Oil     6,762.1 kg      2,641.50       24.53  0.01  468.82
+2022-06-01  El Merk          venting                                     3,531.90     443.89
+2022-06-01  HBNS (Hassi Ber  venting       Residual Fue  8,120.1 liter   6,187.40     538.92   0.02  562.97
+2022-06-01  HBNS (Hassi Ber  fugitive_equ                                1,112.00   1,356.56
+                                           Anthracite C  2,010.7 scf     1,348.50              0.00  71.59
+                                                                         3,394.00
+                                           Diesel (No.   1,270.0 kg                            0.00  74.50
+
+                                           Anthracite C  6,396.6 scf                           0.00  85.32
+
+                                           Anthracite C  4,203.6 scf                           0.00  115.29
+
+                                           Ethane        2,751.3 kg                            0.00  161.41
+
+                                           Diesel (No.   3,462.9 kg                            0.00  203.15
+
+                                           Ethane        4,944.4 kg                            0.00  290.06
+
+                                           Diesel (No.   5,655.9 kg                            0.01  331.81
+
+                                           Ethane        7,137.4 kg                            0.01  418.71
+
+                                           Propane (Gas  7,754.6 m3                            0.06  3,640.60
+
+                                           Propane (Gas  3,368.6 m3                            0.07  4,229.68
+
+                                           Propane (Gas  5,561.6 m3                            0.09  5,350.42
+
+                                           natural_gas   289,000.0 m3                          0.08  847.82
+
+                                           diesel        985.6 liter                           0.01  2,652.43
+
+                                           diesel        1,317.9 liter                         0.01  3,550.97
+
+                                           natural_gas 2,393,000.0 m3                          0.63  6,313.65
+
+                                           natural_gas   0.0 m3                                0.00  11,119.57
+
+                                           natural_gas   0.0 m3                                0.00  13,485.24
+
+                                           natural_gas   0.0 m3                                0.00  33,940.36
+2022-06-01  El Merk          fugitive_equ  natural_gas   0.0 m3            7,032.70    2,807.79    0.00   70,327.44
+2022-06-01  El Merk          routine_flar                                95,838.40       379.93    9.78   97,794.25
+2022-06-01  HBNS (Hassi Ber  safety_flari  natural_gas 37,066,000.0 m3  105,229.30       338.87   10.74  107,376.85
+2022-06-01  HBNS (Hassi Ber  routine_flar                               133,110.70       428.66   13.58  135,827.23
+2022-06-01  El Merk          safety_flari  natural_gas 36,602,000.0 m3  233,005.20       923.69   23.78  237,760.39
+2022-06-01  El Merk          fuel_gas                                   579,486.70         34.49  29.27  585,340.12
+2022-06-01  HBNS (Hassi Ber  fuel_gas      natural_gas 46,300,000.0 m3  705,395.50         36.88  35.63  712,520.69
+2022-05-01  Complexe Sidéru  stationary_c                                                   0.03   0.00
+2022-05-01  INAS             stationary_c  natural_gas 90,116,000.0 m3         15.18        0.03   0.00         16.12
+2022-05-01  Complexe Sidéru  stationary_c                                      19.46        0.03   0.00         20.66
+2022-05-01  Complexe Sidéru  stationary_c  natural_gas   266,063.7 m3          20.10        0.06   0.00         21.35
+2022-05-01  INAS             stationary_c                                      33.12        0.08   0.00         35.17
+2022-05-01  INAS             stationary_c  natural_gas   323,873.0 m3          48.55        0.09   0.00         51.56
+2022-05-01  REB              stationary_c                                      53.01        0.16   0.00         56.30
+2022-05-01  Complexe Sidéru  stationary_c  Associated G  5,290.4 scf           95.42        0.30   0.01       101.33
+2022-05-01  REB              stationary_c                                    174.18         0.38   0.01       184.98
+2022-05-01  Complexe Sidéru  stationary_c  Residual Fue  6,771.9 scf         222.61         0.52   0.02       236.41
+2022-05-01  REB              stationary_c                                    301.37         0.60   0.02       320.05
+2022-05-01  Complexe Sidéru  stationary_c  Associated G  904.5 scf           349.81         0.74   0.02       371.49
+2022-03-01  REB              stationary_c                                    428.57         0.04   0.00       455.13
+2022-03-01  REB              stationary_c  Associated G  3,097.4 scf                        0.09   0.00
+2022-03-01  Complexe Sidéru  stationary_c                                        8.56       0.16   0.00           9.72
+2022-03-01  INAS             stationary_c  Residual Fue  4,578.9 scf           18.92        0.61   0.00         21.48
+2022-03-01  Complexe Sidéru  stationary_c                                      35.57        0.82   0.01         40.38
+2022-03-01  INAS             stationary_c  Residual Fue  2,385.8 scf         133.34         1.26   0.01       151.38
+2022-03-01  Complexe Sidéru  stationary_c                                    180.31         1.48   0.01       204.71
+2022-03-01  REB              stationary_c  Propane (Liq  1,645.2 kg          278.08         1.84   0.01       315.71
+2022-03-01  INAS             stationary_c                                    325.05         1.92   0.01       369.03
+                                           Ethane        3,003.1 liter       403.96                           458.61
+                                                                             422.82                           480.03
+                                           Propane (Liq  3,838.2 kg
+
+                                           Ethane        5,196.1 liter
+
+                                           Propane (Liq  6,031.1 kg
+
+                                           Ethane        7,389.1 liter
+
+                                           Crude Oil     3,472.7 scf
+
+                                           Crude Oil     1,279.7 scf
+
+                                           Bituminous C  539.0 kg
+
+                                           Propane (Gas  2,020.3 kg
+
+                                           Bituminous C  2,731.9 kg
+
+                                           Propane (Gas  4,213.4 kg
+
+                                           Bituminous C  4,924.9 kg
+
+                                           Crude Oil     5,665.6 scf
+
+                                           Propane (Gas  6,406.4 kg
+
+Report contains 660 emission records. Generated by GHG Emissions Management System.
+

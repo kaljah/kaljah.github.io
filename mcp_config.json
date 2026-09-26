@@ -1,10 +1,11 @@
 {
   "mcpServers": {
-"graphify": {
-    "command": "uv",
-    "args": ["run", "--with", "graphifyy", "--with", "mcp", "-m", "graphify.serve", "${workspace.path}/graphify-out/graph.json"]
-  }"graphify": {
-    "command": "uv",
-    "args": ["run", "--with", "graphifyy", "--with", "mcp", "-m", "graphify.serve", "${workspace.path}/graphify-out/graph.json"]
+    "codegraph": {
+      "command": "codegraph",
+      "args": [
+        "serve",
+        "--mcp"
+      ]
+    }
   }
-
+}
