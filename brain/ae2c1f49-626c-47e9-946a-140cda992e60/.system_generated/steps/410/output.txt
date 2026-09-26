@@ -1,0 +1,109 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\Scope1Form.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -887,6 +887,103 @@
+       }
+     }
+ 
++    // Associated Gas Venting Validations (All Tiers)
++    if (processType === "associated_gas_venting") {
++      const tier = String(
++        formData.tier ||
++          (sourceType === "specific"
++            ? "tier3"
++            : sourceType === "custom"
++            ? "tier2"
++            : "tier1"),
++      ).toLowerCase();
++
++      if (tier === "tier1" || sourceType === "default") {
++        const oil = parseFloat(formData.oil_production || formData.amount || 0);
++        if (oil <= 0 || isNaN(oil)) {
++          toast.warning(
++            "Crude oil production throughput must be greater than zero for Tier 1",
++          );
++          return;
++        }
++      } else if (tier === "tier2" || sourceType === "custom") {
++        const oil = parseFloat(formData.oil_production || formData.amount || 0);
++        if (oil <= 0 || isNaN(oil)) {
++          toast.warning(
++            "Crude oil production throughput must be greater than zero for Tier 2",
++          );
++          return;
++        }
++        const gor = parseFloat(formData.gor);
++        if (
++          formData.gor === undefined ||
++          formData.gor === "" ||
++          isNaN(gor) ||
++          gor < 0
++        ) {
++          toast.warning("Gas-Oil Ratio (GOR) is required and cannot be negative");
++          return;
++        }
++        const dur = parseFloat(
++          formData.venting_duration !== undefined
++            ? formData.venting_duration
++            : 365,
++        );
++        if (dur < 0) {
++          toast.warning("Venting duration cannot be negative");
++          return;
++        }
++        if (dur > 366) {
++          toast.warning("Venting duration cannot exceed 366 days");
++          return;
++        }
++      } else {
++        // Tier 3
++        const rate = parseFloat(formData.vent_rate || 0);
++        const vol = parseFloat(formData.vent_volume || formData.amount || 0);
++        if (rate <= 0 && vol <= 0) {
++          toast.warning(
++            "Measured vent flow rate or total measured vent volume is required for Tier 3",
++          );
++          return;
++        }
++        if (
++          rate > 0 &&
++          (!formData.venting_duration ||
++            parseFloat(formData.venting_duration) <= 0)
++        ) {
++          toast.warning(
++            "Venting duration is required when vent rate is specified for Tier 3",
++          );
++          return;
++        }
++      }
++
++      // Composition check if provided
++      const ch4 =
++        formData.ch4_content !== undefined && formData.ch4_content !== ""
++          ? parseFloat(formData.ch4_content)
++          : null;
++      const co2 =
++        formData.co2_content !== undefined && formData.co2_content !== ""
++          ? parseFloat(formData.co2_content)
++          : null;
++      if (ch4 !== null && (ch4 < 0 || ch4 > 100)) {
++        toast.warning("Methane (CH4) content must be between 0% and 100%");
++        return;
++      }
++      if (co2 !== null && (co2 < 0 || co2 > 100)) {
++        toast.warning(
++          "Carbon dioxide (CO2) content must be between 0% and 100%",
++        );
++        return;
++      }
++      if (ch4 !== null && co2 !== null && ch4 + co2 > 100.01) {
++        toast.warning("Sum of CH4 and CO2 content cannot exceed 100%");
++        return;
++      }
++    }
++
+     try {
+       setSubmitting(true);
+       // Construct calc_inputs based on process type
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

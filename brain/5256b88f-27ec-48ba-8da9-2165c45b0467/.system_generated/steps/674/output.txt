@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+tests/test_qfull_api_pipeline.py:8:  POST /api/emissions/ → Flask route → compute_emissions() → DB → GET /api/emissions/
+tests/test_qfull_api_pipeline.py:171:            "/api/emissions/",
+

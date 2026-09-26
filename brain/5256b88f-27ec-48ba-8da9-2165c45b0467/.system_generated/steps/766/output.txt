@@ -1,0 +1,262 @@
+
+The command exited with code 1.
+Output:
+<truncated 1 lines>
+          style="margin-bottom: 16px;"
+        >
+          <label
+            style="display: block; margin-bottom: 6px; font-weight: 600;"
+          >
+            Engineering Calculation Methodology:
+          </label>
+          <div
+            style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;"
+          >
+            <button
+              style="padding: 8px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; text-align: center; background: rgba(107, 114, 128, 0.08); color: var(--text-primary, #374151); border: 1px solid var(--border-color, #d1d5db);"
+              type="button"
+            >
+              API Eq. 6-10 (Subpart W)
+            </button>
+            <button
+              style="padding: 8px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; text-align: center; background: var(--accent-color, #2563eb); color: rgb(255, 255, 255); border: 1px solid var(--accent-color, #2563eb);"
+              type="button"
+            >
+              API Eq. 6-11 (Auto Plunger)
+            </button>
+            <button
+              style="padding: 8px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; text-align: center; background: rgba(107, 114, 128, 0.08); color: var(--text-primary, #374151); border: 1px solid var(--border-color, #d1d5db);"
+              type="button"
+            >
+              API Eq. 6-3 (Well Decomp.)
+            </button>
+          </div>
+        </div>
+        <div>
+          <div
+            style="background: rgba(147, 51, 234, 0.08); border: 1px solid rgba(147, 51, 234, 0.25); border-radius: 6px; padding: 10px 14px; margin-bottom: 16px; font-size: 0.85rem; color: var(--text-primary, #581c87);"
+          >
+            <strong>
+              API Equation 6-11:
+            </strong>
+            <br />
+            <code>
+              VR = √[(Pshut - Patm) / (Pline - Psep)] × SFRp × Tp
+            </code>
+            <br />
+            <span
+              style="font-size: 0.8rem; color: var(--text-muted, #4b5563);"
+            >
+              Models vented gas volume per cycle from automated plunger lift well unloadings based on pressure expansion ratios.
+            </span>
+          </div>
+          <div
+            class="form-grid-2"
+          >
+            <div
+              class="input-group"
+            >
+              <label>
+                Shut-In Pressure Pshut (psia)
+                <span
+                  style="color: rgb(239, 68, 68); margin-left: 3px;"
+                >
+                  *
+                </span>
+              </label>
+              <input
+                class="mole-input"
+                min="14.7"
+                placeholder="e.g. 150"
+                required=""
+                step="0.1"
+                type="number"
+                value="150"
+              />
+            </div>
+            <div
+              class="input-group"
+            >
+              <label>
+                Flow-Line Pressure Pline (psia)
+                <span
+                  style="color: rgb(239, 68, 68); margin-left: 3px;"
+                >
+                  *
+                </span>
+              </label>
+              <input
+                class="mole-input"
+                min="14.7"
+                placeholder="e.g. 100"
+                required=""
+                step="0.1"
+                type="number"
+                value="100"
+              />
+            </div>
+            <div
+              class="input-group"
+            >
+              <label>
+                Separator Pressure Psep (psia)
+                <span
+                  style="color: rgb(239, 68, 68); margin-left: 3px;"
+                >
+                  *
+                </span>
+              </label>
+              <input
+                class="mole-input"
+                min="0"
+                placeholder="e.g. 50"
+                required=""
+                step="0.1"
+                type="number"
+                value="50"
+              />
+            </div>
+            <div
+              class="input-group"
+            >
+              <label>
+                Gas Production Rate SFRp (scf/hr)
+                <span
+                  style="color: rgb(239, 68, 68); margin-left: 3px;"
+                >
+                  *
+                </span>
+              </label>
+              <input
+                class="mole-input"
+                min="0"
+                placeholder="e.g. 12000"
+                required=""
+                step="1"
+                type="number"
+                value="10000"
+              />
+            </div>
+            <div
+              class="input-group"
+            >
+              <label>
+                Venting Time Tp (hours/event)
+                <span
+                  style="color: rgb(239, 68, 68); margin-left: 3px;"
+                >
+                  *
+                </span>
+              </label>
+              <input
+                class="mole-input"
+                min="0"
+                placeholder="e.g. 0.5"
+                required=""
+                step="0.05"
+                type="number"
+                value="0.5"
+              />
+            </div>
+            <div
+              class="input-group"
+            >
+              <label>
+                Annual Unloading Events
+                <span
+                  style="color: rgb(239, 68, 68); margin-left: 3px;"
+                >
+                  *
+                </span>
+              </label>
+              <input
+                class="mole-input"
+                min="1"
+                placeholder="e.g. 50"
+                required=""
+                step="1"
+                type="number"
+                value="20"
+              />
+            </div>
+            <div
+              class="input-group"
+            >
+              <label>
+                Gas CH₄ Content (mol %)
+                <span
+                  style="color: rgb(239, 68, 68); margin-left: 3px;"
+                >
+                  *
+                </span>
+              </label>
+              <input
+                class="mole-input"
+                max="100"
+                min="0"
+                placeholder="85.0"
+                required=""
+                step="0.01"
+                type="number"
+                value="85"
+              />
+            </div>
+            <div
+              class="input-group"
+            >
+              <label>
+                Gas CO₂ Content (mol %)
+              </label>
+              <input
+                class="mole-input"
+                max="100"
+                min="0"
+                placeholder="1.0"
+                step="0.01"
+                type="number"
+                value="1"
+              />
+            </div>
+            <div
+              class="input-group"
+            >
+              <label>
+                Control / Flare Efficiency (%)
+              </label>
+              <input
+                class="mole-input"
+                max="100"
+                min="0"
+                placeholder="0"
+                step="0.1"
+                type="number"
+                value="0"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/__tests__/UnloadingForm.test.jsx:159:19
+    157|     );
+    158|
+    159|     expect(screen.getByText(/Shut-In Pressure \(Pshut\)/i)).toBeInTheD…
+       |                   ^
+    160|     expect(screen.getByText(/Flow-Line Pressure \(Pline\)/i)).toBeInTh…
+    161|     expect(screen.getByText(/Separator Pressure \(Psep\)/i)).toBeInThe…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 4 passed (7)
+   Start at  02:01:41
+   Duration  2.26s (environment 63%, tests 14%, transform 10%, setup 9%, import 4%, worker 1%)
+
+

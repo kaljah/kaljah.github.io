@@ -1,0 +1,55 @@
+
+The command exited with code 1.
+Output:
+
+> client@0.0.0 test
+> vitest run
+
+
+ RUN  v5.0.1 C:/Users/samsung/Desktop/H2/new/client
+
+ ❯ src/__tests__/mathParityAndFormatters.test.js (5 tests | 1 failed) 61ms
+   ❯ Client Math Parity and Formatters Tests (5)
+     ✓ normalizes negative zero in formatters 43ms
+     ✓ correctly calculates trend percentage 1ms
+     ✓ converts units bidirectionally in convertActivityData 1ms
+     × aligns mud degassing emission factors with API Section 6.2 13ms
+     ✓ aligns TEG dehydrator emission factors with backend 1ms
+ ✓ src/__tests__/EmissionResult.test.jsx (3 tests) 153ms
+ ✓ src/__tests__/UnloadingForm.test.jsx (7 tests) 426ms
+ ✓ src/__tests__/AssociatedGasVentingForm.test.jsx (7 tests) 780ms
+   ✓ AssociatedGasVentingForm & Table 6-8 API Reference Integrity (7)
+     ✓ renders Tier 1 Table 6-8 form with regional basin selector and crude throughput 508ms
+stdout | src/__tests__/Scope1FormAssociatedGasVenting.test.jsx > Scope1Form Associated Gas Venting Integration > selects Associated Gas Venting, populates Tier 1 data, and submits successfully
+Converting 10000 m3 to 62898.1 bbl
+
+ ✓ src/__tests__/Scope1FormAssociatedGasVenting.test.jsx (2 tests) 1094ms
+   ✓ Scope1Form Associated Gas Venting Integration (2)
+     ✓ selects Associated Gas Venting, populates Tier 1 data, and submits successfully 648ms
+     ✓ selects Tier 2 GOR Balance, fills engineering parameters, and submits payload 442ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/mathParityAndFormatters.test.js > Client Math Parity and Formatters Tests > aligns mud degassing emission factors with API Section 6.2
+AssertionError: expected 't CH4/day' to be 'kg CH4/m³ mud' // Object.is equality
+
+Expected: "kg CH4/m³ mud"
+Received: "t CH4/day"
+
+ ❯ src/__tests__/mathParityAndFormatters.test.js:43:27
+     41|     expect(waterMud).toBeDefined();
+     42|     expect(waterMud.ch4).toBe(0.0458);
+     43|     expect(waterMud.unit).toBe("kg CH4/m³ mud");
+       |                           ^
+     44|
+     45|     const oilMud = API_FACTORS["Drilling - Mud Degassing (Oil Based)"];
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 4 passed (5)
+      Tests  1 failed | 23 passed (24)
+   Start at  02:02:46
+   Duration  5.57s (environment 55%, transform 15%, tests 13%, setup 10%, import 7%, worker 1%)
+
+

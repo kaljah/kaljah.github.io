@@ -1,0 +1,89 @@
+
+The command exited with code 0.
+Output:
+<truncated 21 lines>
+calculations/dispatcher.py:            "mcf": 1000.0 * CONVERSIONS["scf_to_m3"], "mscf": 1000.0 * CONVERSIONS["scf_to_m3"],
+calculations/dispatcher.py:            "mmscf": 1_000_000.0 * CONVERSIONS["scf_to_m3"],
+calculations/dispatcher.py:            "bbl": CONVERSIONS["bbl_to_m3"], "barrel": CONVERSIONS["bbl_to_m3"], "barrels": CONVERSIONS["bbl_to_m3"],
+calculations/dispatcher.py:            "gal": CONVERSIONS["gal_to_m3"], "gallon": CONVERSIONS["gal_to_m3"], "gallons": CONVERSIONS["gal_to_m3"],
+calculations/dispatcher.py:            "l": CONVERSIONS["liter_to_m3"], "liter": CONVERSIONS["liter_to_m3"], "liters": CONVERSIONS["liter_to_m3"],
+calculations/dispatcher.py:                        gallons = quantity * CONVERSIONS.get("l_to_gal", 0.264172)
+calculations/dispatcher.py:                        gallons = quantity * CONVERSIONS["m3_to_gal"]
+calculations/dispatcher.py:                        scf = quantity * CONVERSIONS["m3_to_scf"]
+calculations/midstream.py:    CONVERSIONS,
+calculations/midstream.py:        co2_mass_kg = co2_vented_m3 * CONVERSIONS.get("density_co2", 1.861)
+calculations/midstream.py:        ch4_mass_kg = ch4_slipped_m3 * CONVERSIONS.get("density_ch4", 0.6785)
+calculations/midstream.py:        density_ch4 = CONVERSIONS.get("density_ch4", 0.6785)
+calculations/stoichiometry.py:from .units import CONVERSIONS, calculate_co2e
+calculations/stoichiometry.py:            norm_mass = fuel_mass * CONVERSIONS["lb_to_kg"]
+calculations/stoichiometry.py:            norm_mass = fuel_mass * CONVERSIONS["tonne_to_kg"]
+calculations/stoichiometry.py:            norm_mass = fuel_mass * CONVERSIONS["short_ton_to_kg"]
+calculations/stoichiometry.py:            norm_mass = fuel_mass * CONVERSIONS["long_ton_to_kg"]
+calculations/stoichiometry.py:            norm_tonnes = norm_mass * CONVERSIONS["lb_to_kg"] / 1000.0
+calculations/stoichiometry.py:            norm_tonnes = norm_mass * CONVERSIONS["short_ton_to_kg"] / 1000.0
+calculations/units.py:CONVERSIONS = {
+calculations/units.py:    # Direct / reverse lookup in legacy CONVERSIONS
+calculations/units.py:    if key in CONVERSIONS:
+calculations/units.py:        return val * CONVERSIONS[key]
+calculations/units.py:    if rev_key in CONVERSIONS:
+calculations/units.py:        return val / CONVERSIONS[rev_key]
+calculations/vented.py:    CONVERSIONS,
+calculations/vented.py:        vented_ch4_tonnes = (vented_m3 * actual_ch4_mol * CONVERSIONS["density_ch4"]) / 1000.0
+calculations/vented.py:        vented_co2_tonnes = (vented_m3 * actual_co2_mol * CONVERSIONS["density_co2"]) / 1000.0
+calculations/vented.py:        init_vented_ch4_tonnes = (initial_m3 * actual_ch4_mol * CONVERSIONS["density_ch4"]) / 1000.0
+calculations/vented.py:        flared_gross_ch4_tonnes = (flared_m3 * actual_ch4_mol * CONVERSIONS["density_ch4"]) / 1000.0
+calculations/vented.py:        flared_native_co2_tonnes = (flared_m3 * actual_co2_mol * CONVERSIONS["density_co2"]) / 1000.0
+calculations/vented.py:        total_gas_m3 = total_gas_scf * CONVERSIONS["scf_to_m3"]
+calculations/vented.py:        total_gas_m3 = total_gas_scf * CONVERSIONS["scf_to_m3"]
+calculations/vented.py:                sfr_scf_hr = (sfr_val * CONVERSIONS["m3_to_scf"]) / 24.0
+calculations/vented.py:            sfr_scf_hr = sfr_val * CONVERSIONS["m3_to_scf"]
+calculations/vented.py:        total_gas_m3 = total_gas_scf * CONVERSIONS["scf_to_m3"]
+calculations/vented.py:                sfr_rate = (sfr_val * CONVERSIONS["m3_to_scf"]) / 24.0
+calculations/vented.py:            sfr_rate = sfr_val * CONVERSIONS["m3_to_scf"]
+calculations/vented.py:        total_gas_m3 = total_gas_scf * CONVERSIONS["scf_to_m3"]
+calculations/vented.py:        ch4_mass_kg = ch4_vol * CONVERSIONS["density_ch4"]
+calculations/vented.py:        co2_mass_kg = co2_vol * CONVERSIONS["density_co2"]
+calculations/vented.py:        ch4_mass_kg = ch4_vol * CONVERSIONS["density_ch4"]
+calculations/vented.py:        co2_mass_kg = co2_vol * CONVERSIONS["density_co2"]
+calculations/vented.py:            ch4_mass_kg = ch4_vol_m3 * CONVERSIONS["density_ch4"]
+calculations/vented.py:            co2_mass_kg = co2_vol_m3 * CONVERSIONS["density_co2"]
+calculations/vented.py:        ch4_mass_kg = total_ch4_vol * CONVERSIONS["density_ch4"]
+calculations/vented.py:        co2_mass_kg = total_co2_vol * CONVERSIONS["density_co2"]
+calculations/vented.py:                gor_scf_bbl = gor_val * (CONVERSIONS["m3_to_scf"] / CONVERSIONS["m3_to_bbl"])
+calculations/vented.py:                gor_scf_bbl = gor_val * CONVERSIONS["m3_to_scf"]
+calculations/vented.py:                    rate_scfh = r_val * CONVERSIONS["m3_to_scf"]
+calculations/vented.py:                    rate_scfh = (r_val * CONVERSIONS["m3_to_scf"]) / 24.0
+test_emission_calculations.py:from calculations.units import CONVERSIONS, calculate_co2e
+test_emission_calculations.py:        qty_m3 = 10000 * CONVERSIONS["scf_to_m3"]
+test_emission_calculations.py:        self.density_ch4 = CONVERSIONS["density_ch4"]  # 0.6785
+test_emission_calculations.py:        self.density_co2 = CONVERSIONS["density_co2"]  # 1.861
+test_emission_calculations.py:        self.expected_ch4 = ch4_vol * CONVERSIONS["density_ch4"] / 1000.0
+test_emission_calculations.py:        ch4_m3 = ch4_scf * CONVERSIONS["scf_to_m3"]
+test_emission_calculations.py:        self.expected_ch4 = ch4_m3 * CONVERSIONS["density_ch4"] / 1000.0
+test_emission_calculations.py:        ch4_m3 = ch4_scf * CONVERSIONS["scf_to_m3"]
+test_emission_calculations.py:        self.expected_ch4 = ch4_m3 * CONVERSIONS["density_ch4"] / 1000.0
+test_emission_calculations.py:        self.expected_ch4 = ch4_vol * CONVERSIONS["density_ch4"] / 1000.0
+test_emission_calculations.py:            self.vol_m3 * self.ch4_frac * CONVERSIONS["density_ch4"] / 1000.0
+test_emission_calculations.py:        self.assertAlmostEqual(CONVERSIONS["scf_to_m3"], 0.0283168, places=7)
+test_emission_calculations.py:        self.assertAlmostEqual(CONVERSIONS["m3_to_scf"], 35.3147, places=4)
+test_emission_calculations.py:        self.assertAlmostEqual(CONVERSIONS["bbl_to_m3"], 0.158987, places=6)
+test_emission_calculations.py:        roundtrip = val * CONVERSIONS["scf_to_m3"] * CONVERSIONS["m3_to_scf"]
+test_emission_calculations.py:        self.assertAlmostEqual(CONVERSIONS["density_ch4"], 0.6785, places=4)
+test_emission_calculations.py:        self.assertAlmostEqual(CONVERSIONS["density_co2"], 1.861, places=3)
+test_emission_calculations.py:        vol_m3 = self.vol_scf * CONVERSIONS["scf_to_m3"]
+test_emission_calculations.py:        density_co2 = CONVERSIONS["density_co2"]
+tests/test_deep_injection_matrix.py:# PART 1: MANUAL INJECTION ACROSS ALL UNIT CONVERSIONS (VOLUME, MASS, ENERGY, T, P)
+tests/test_independent_differential.py:from calculations.units import compute_scope3_co2e, CONVERSIONS, calculate_co2e
+tests/test_numerical_invariants.py:    CONVERSIONS,
+tests/test_numerical_invariants.py:# 3. UNIT CONVERSIONS & DIMENSIONAL INVARIANTS
+tests/test_numerical_invariants.py:        """Every unit conversion pair in CONVERSIONS must round-trip with relative error < 1e-6."""
+tests/test_tier_scope_kpi_numerical.py:from calculations.units import CONVERSIONS, convert, calculate_co2e, normalize_gas_volume_to_standard
+tests/test_tier_scope_kpi_numerical.py:        vol_m3 = 100.0 * 1000.0 * CONVERSIONS["scf_to_m3"]
+tests/test_tier_scope_kpi_numerical.py:        expected_comb_co2 = (vol_m3 * 1.15 * 0.995 * CONVERSIONS["density_co2"]) / 1000.0
+tests/test_tier_scope_kpi_numerical.py:        expected_native_co2 = (vol_m3 * 0.05 * CONVERSIONS["density_co2"]) / 1000.0
+tests/test_tier_scope_kpi_numerical.py:        expected_ch4_slip = (vol_m3 * 0.80 * (1.0 - 0.995) * CONVERSIONS["density_ch4"]) / 1000.0
+tests/test_tier_scope_kpi_numerical.py:        expected_t1_ch4_tonnes = (total_m3_ch4 * CONVERSIONS["density_ch4"]) / 1000.0
+tests/test_tier_scope_kpi_numerical.py:        expected_t3_ch4_tonnes = (total_t3_m3 * CONVERSIONS["density_ch4"]) / 1000.0
+tests/test_unit_conversions_exhaustive.py:    CONVERSIONS,
+tests/test_zero_trust_adversarial.py:from calculations.units import calculate_co2e, CONVERSIONS
+

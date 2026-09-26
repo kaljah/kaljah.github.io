@@ -1,0 +1,84 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collected 29 items
+
+tests\test_onshore_well_completions_audit.py ..........................F [ 93%]
+..                                                                       [100%]
+
+================================== FAILURES ===================================
+____ TestOnshoreCompletionsFullPipelineApi.test_api_tier1_completion_flow _____
+
+self = <test_onshore_well_completions_audit.TestOnshoreCompletionsFullPipelineApi object at 0x0000023EFA041640>
+api_client = <FlaskClient <Flask 'app'>>
+
+    def test_api_tier1_completion_flow(self, api_client):
+        """Tier 1: Post 2 gas well completions with REC, verify emissions and DB storage."""
+        from app import app
+        from models import db, Emission
+        payload = {
+            "year": 2024,
+            "month": 5,
+            "facility_id": 999,
+            "process_type": "completions",
+            "tier": "tier1",
+            "well_type": "gas",
+            "fracturing": True,
+            "control_type": "rec",
+            "disposition": "rec",
+            "fuel": "Gas Well Completion - Hydraulic Fracturing (REC with Venting)",
+            "amount": 2.0,
+            "quantity": 2.0,
+            "unit": "events",
+            "calc_inputs": {
+                "completions": {
+                    "tier": "tier1",
+                    "well_type": "gas",
+                    "fracturing": True,
+                    "disposition": "rec",
+                    "amount": 2.0,
+                    "unit": "events",
+                }
+            },
+        }
+        res = api_client.post("/api/emissions/", json=payload)
+        assert res.status_code == 200 or res.status_code == 201
+        data = res.get_json()
+        assert "emissions" in data
+        # Table 6-5: 13.542 t CH4 * 2 events = 27.084 t CH4
+        assert pytest.approx(data["emissions"]["ch4"], rel=1e-3) == 27.084
+        assert data["emissions"]["totalCo2e"] > 0
+    
+        with app.app_context():
+            saved = Emission.query.filter_by(facility_id=999, process_type="completions", month=5, year=2024).order_by(Emission.id.desc()).first()
+            assert saved is not None
+            assert pytest.approx(saved.ch4_emissions, rel=1e-3) == 27.084
+>           assert "Table 6-5" in saved.calc_method
+E           AssertionError: assert 'Table 6-5' in 'Well Completion Flowback'
+E            +  where 'Well Completion Flowback' = <Emission 1>.calc_method
+
+tests\test_onshore_well_completions_audit.py:523: AssertionError
+---------------------------- Captured stderr setup ----------------------------
+[2026-09-26 01:56:44,090] INFO in app: POST /api/auth/login 200 [0.121s] [ReqID: 000dfc9a-18ea-4eea-9243-766f343f089e]
+----------------------------- Captured log setup ------------------------------
+INFO     app:app.py:184 POST /api/auth/login 200 [0.121s] [ReqID: 000dfc9a-18ea-4eea-9243-766f343f089e]
+---------------------------- Captured stderr call -----------------------------
+[2026-09-26 01:56:44,136] INFO in app: POST /api/emissions/ 201 [0.044s] [ReqID: 07e9f16d-6409-4de0-aa05-3b74956e743a]
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:184 POST /api/emissions/ 201 [0.044s] [ReqID: 07e9f16d-6409-4de0-aa05-3b74956e743a]
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsFullPipelineApi::test_api_tier1_completion_flow
+=================== 1 failed, 28 passed, 1 warning in 2.13s ===================
+

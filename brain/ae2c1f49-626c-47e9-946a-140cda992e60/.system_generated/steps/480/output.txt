@@ -1,0 +1,369 @@
+
+The command exited with code 1.
+Output:
+<truncated 1179 lines>
+  strong:
+
+  Name "":
+  <strong
+    style="font-size: 0.95rem; margin-right: 4px;"
+  />
+
+  --------------------------------------------------
+  table:
+
+  Name "":
+  <table
+    class="excel-table"
+  />
+
+  --------------------------------------------------
+  rowgroup:
+
+  Name "":
+  <thead />
+
+  Name "":
+  <tbody />
+
+  Name "":
+  <tfoot />
+
+  --------------------------------------------------
+  row:
+
+  Name "Year Activity Region Division Field Emission Source Equipment ID Process Activity/Fuel Factor Type Quantity CO₂ (t) CH₄ (t) N₂O (t) Total (tCO₂e) CO₂ 1σ (±%) CH₄ 1σ (±%) N₂O 1σ (±%) CO₂ 95%CI (±%) CH₄ 95%CI (±%) N₂O 95%CI (±%) Actions":
+  <tr />
+
+  Name "No entries yet":
+  <tr />
+
+  Name "Total (Page): 0.000":
+  <tr
+    style="background-color: rgb(249, 250, 251); font-weight: bold;"
+  />
+
+  --------------------------------------------------
+  columnheader:
+
+  Name "Year":
+  <th />
+
+  Name "Activity":
+  <th />
+
+  Name "Region":
+  <th />
+
+  Name "Division":
+  <th />
+
+  Name "Field":
+  <th />
+
+  Name "Emission Source":
+  <th />
+
+  Name "Equipment ID":
+  <th />
+
+  Name "Process":
+  <th />
+
+  Name "Activity/Fuel":
+  <th />
+
+  Name "Factor Type":
+  <th />
+
+  Name "Quantity":
+  <th />
+
+  Name "CO₂ (t)":
+  <th />
+
+  Name "CH₄ (t)":
+  <th />
+
+  Name "N₂O (t)":
+  <th />
+
+  Name "Total (tCO₂e)":
+  <th />
+
+  Name "CO₂ 1σ (±%)":
+  <th
+    style="text-align: center;"
+    title="Standard Combined Uncertainty (1σ)"
+  />
+
+  Name "CH₄ 1σ (±%)":
+  <th
+    style="text-align: center;"
+    title="Standard Combined Uncertainty (1σ)"
+  />
+
+  Name "N₂O 1σ (±%)":
+  <th
+    style="text-align: center;"
+    title="Standard Combined Uncertainty (1σ)"
+  />
+
+  Name "CO₂ 95%CI (±%)":
+  <th
+    style="text-align: center;"
+    title="Expanded Uncertainty (95% Confidence Interval, k=2)"
+  />
+
+  Name "CH₄ 95%CI (±%)":
+  <th
+    style="text-align: center;"
+    title="Expanded Uncertainty (95% Confidence Interval, k=2)"
+  />
+
+  Name "N₂O 95%CI (±%)":
+  <th
+    style="text-align: center;"
+    title="Expanded Uncertainty (95% Confidence Interval, k=2)"
+  />
+
+  Name "Actions":
+  <th
+    style="text-align: center;"
+  />
+
+  --------------------------------------------------
+  cell:
+
+  Name "No entries yet":
+  <td
+    colspan="22"
+    style="text-align: center; color: var(--text-secondary); padding: 30px;"
+  />
+
+  Name "Total (Page):":
+  <td
+    colspan="14"
+    style="text-align: right; padding-right: 15px;"
+  />
+
+  Name "0.000":
+  <td
+    style="color: var(--accent-color);"
+  />
+
+  Name "":
+  <td
+    colspan="7"
+  />
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="scope-form"
+    >
+      <div
+        class="calc-panel"
+        style="background: white; border-radius: 8px; padding: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);"
+      >
+        <h2
+          style="font-size: 1.2rem; font-weight: bold; margin-bottom: 25px; color: rgb(51, 51, 51);"
+        >
+          New Activity Entry
+        </h2>
+        <div
+          style="margin-bottom: 30px;"
+        >
+          <h4
+            class="section-title"
+          >
+            1. IDENTITY & LOCATION
+          </h4>
+          <div
+            class="form-grid-4"
+          >
+            <div
+              class="input-group"
+            >
+              <label>
+                Activity
+              </label>
+              <input
+                class="mole-input readonly"
+                disabled=""
+                type="text"
+                value="Exploration & Production"
+              />
+            </div>
+            <div
+              class="input-group"
+            >
+              <label>
+                Division
+              </label>
+              <input
+                class="mole-input readonly"
+                disabled=""
+                type="text"
+                value="Permian Division"
+              />
+            </div>
+            <div
+              class="input-group"
+            >
+              <label>
+                Region
+              </label>
+              <div
+                class="custom-dropdown "
+              >
+                <div
+                  class="dropdown-selected"
+                >
+                  <span
+                    class="display-text"
+                  >
+                    <div
+                      class="selected-with-sub"
+                    >
+                      Permian Production Hub
+                       
+                      <span
+                        class="sub-label"
+                      >
+                         - 
+                        Midland Field
+                      </span>
+                    </div>
+                  </span>
+                  <svg
+                    fill="none"
+                    height="10"
+                    stroke="currentColor"
+                    stroke-width="3"
+                    viewBox="0 0 24 24"
+                    width="10"
+                  >
+                    <polyline
+                      points="6 9 12 15 18 9"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
+            <div
+              class="input-group"
+            >
+              <label>
+                Field
+              </label>
+              <input
+                class="mole-input readonly"
+                disabled=""
+                type="text"
+                value="Midland Field"
+              />
+            </div>
+          </div>
+          <div
+            class="form-grid-3"
+          >
+            <div
+              class="input-group"
+            >
+              <label>
+                Year
+              </label>
+              <input
+                class="mole-input"
+                type="number"
+                value="2026"
+              />
+            </div>
+            <div
+              class="input-group"
+            >
+              <label>
+                Month
+              </label>
+              <select
+                class="component-select"
+              >
+                <option
+                  value="1"
+                >
+                  01
+                </option>
+                <option
+                  value="2"
+                >
+                  02
+                </option>
+                <option
+                  value="3"
+                >
+                  03
+                </option>
+                <option
+                  value="4"
+                >
+                  04
+                </option>
+                <option
+                  value="5"
+                >
+                  05
+                </option>
+                <option
+                  value="6"
+                >
+                  06
+                </option>
+                <option
+                  value="7"
+                >
+                  07
+                </option>
+                <option
+                  value="8"
+                >
+                  08
+                </option>
+                <option
+                  value="9"
+                >
+                  09
+                </option>
+                <option
+                  value="10"
+                >
+                  10
+                </option>
+                <option
+                  value="11"
+                >
+              ...
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/__tests__/Scope1FormAssociatedGasVenting.test.jsx:150:30
+    148|
+    149|     // Submit
+    150|     const submitBtn = screen.getByRole("button", { name: /Add Scope 1 …
+       |                              ^
+    151|     fireEvent.click(submitBtn);
+    152|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  01:55:33
+   Duration  6.26s (environment 41%, tests 33%, transform 18%, import 5%, setup 4%)
+
+

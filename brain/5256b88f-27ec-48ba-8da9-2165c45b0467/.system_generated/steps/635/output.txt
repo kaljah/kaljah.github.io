@@ -1,0 +1,60 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -346,27 +346,24 @@
+                 ).lower().strip()
+                 u_type = flat_inputs.get("unloading_type") or flat_inputs.get("unload_type") or "plunger"
+ 
+-                is_tier2 = (
+-                    raw_tier in ["tier2", "tier_2", "t2", "2"]
+-                    or calc_m in ["api_table_6_10", "table_6_10", "event_based"]
+-                    or str(unit).lower() in ["events", "event", "count"]
+-                    or flat_inputs.get("events") is not None
+-                    or flat_inputs.get("unload_events") is not None
+-                    or flat_inputs.get("unload_freq") is not None
+-                    or flat_inputs.get("frequency_category") is not None
+-                    or flat_inputs.get("region") is not None
+-                )
+-                is_tier1 = (
+-                    not is_tier2
+-                    and (
+-                        raw_tier in ["tier1", "tier_1", "t1", "1"]
+-                        or calc_m in ["api_table_6_11", "table_6_11", "per_well"]
+-                        or str(unit).lower() in ["wells", "well", "well-yr", "wells/year"]
+-                        or flat_inputs.get("well_count") is not None
+-                        or flat_inputs.get("wells") is not None
+-                        or flat_inputs.get("unloading_type") is not None
+-                    )
+-                )
++                is_explicit_tier1 = raw_tier in ["tier1", "tier_1", "t1", "1"] or calc_m in ["api_table_6_11", "table_6_11", "per_well"]
++                is_explicit_tier2 = raw_tier in ["tier2", "tier_2", "t2", "2"] or calc_m in ["api_table_6_10", "table_6_10", "event_based"]
++                if is_explicit_tier1:
++                    is_tier1 = True
++                    is_tier2 = False
++                elif is_explicit_tier2:
++                    is_tier2 = True
++                    is_tier1 = False
++                else:
++                    is_tier2 = (
++                        str(unit).lower() in ["events", "event", "count"]
++                        or flat_inputs.get("events") is not None
++                        or flat_inputs.get("unload_events") is not None
++                        or flat_inputs.get("unload_freq") is not None
++                        or flat_inputs.get("frequency_category") is not None
++                        or flat_inputs.get("region") is not None
++                    )
++                    is_tier1 = not is_tier2
+ 
+                 if is_tier2:
+                     ev = (
+@@ -391,7 +391,7 @@
+                         hhv=float(flat_inputs.get("hhv") or emission_factors.get("hhv") or 1020.0),
+                         gwp_dict=gwp_dict,
+                     )
+-                elif is_tier1 and str(unit).lower() not in ["m3", "scf", "mmscf"]:
++                elif is_tier1:
+                     wc = (
+                         flat_inputs.get("well_count")
+                         or flat_inputs.get("wells")
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

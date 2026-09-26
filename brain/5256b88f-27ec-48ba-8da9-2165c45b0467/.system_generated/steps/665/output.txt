@@ -1,0 +1,127 @@
+
+The command exited with code 1.
+Output:
+<truncated 1 lines>
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingTier2::test_tier2_regional_factors[midcontinent-plunger-150-0.006] PASSED [ 46%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingTier2::test_tier2_regional_factors[midcontinent-non_plunger-20-0.916] PASSED [ 48%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingTier2::test_tier2_regional_factors[rocky_mountain-plunger-50-0.241] PASSED [ 51%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingTier2::test_tier2_regional_factors[rocky_mountain-plunger-150-0.027] PASSED [ 53%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingTier2::test_tier2_regional_factors[rocky_mountain-non_plunger-20-0.291] PASSED [ 56%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingTier3Engineering::test_tier3_equation_6_10_exact_exhibit_6_8 FAILED [ 58%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingTier3Engineering::test_tier3_equation_6_10_flowing_gas_component PASSED [ 61%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingTier3Engineering::test_tier3_equation_6_11_automated_plunger_lift PASSED [ 64%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingTier3Engineering::test_tier3_equation_6_3_volume_based_geometry PASSED [ 66%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingUnitConversions::test_depth_conversions PASSED [ 69%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingUnitConversions::test_diameter_conversions PASSED [ 71%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingUnitConversions::test_pressure_conversions PASSED [ 74%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingValidation::test_zero_activity_zero_emissions PASSED [ 76%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingValidation::test_negative_inputs_rejected PASSED [ 79%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingValidation::test_combined_gas_fractions_over_100_rejected PASSED [ 82%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingValidation::test_equation_6_11_impossible_pressures_rejected PASSED [ 84%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingDispatcherPipeline::test_dispatcher_tier1_routing PASSED [ 87%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingDispatcherPipeline::test_dispatcher_tier2_routing PASSED [ 89%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingDispatcherPipeline::test_dispatcher_tier3_equation_6_10_routing PASSED [ 92%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingDispatcherPipeline::test_dispatcher_tier3_equation_6_11_routing PASSED [ 94%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingDispatcherPipeline::test_legacy_engine_compute_emissions_tier1 PASSED [ 97%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingDatabaseAndDashboard::test_api_emission_creation_and_dashboard_aggregation FAILED [100%]
+
+================================== FAILURES ===================================
+_ TestLiquidsUnloadingTier3Engineering.test_tier3_equation_6_10_exact_exhibit_6_8 _
+
+self = <test_liquids_unloading_compendium.TestLiquidsUnloadingTier3Engineering object at 0x000001C12F6D5E20>
+calc = <calculations.vented.LiquidsUnloadingCalculator object at 0x000001C12F84F800>
+
+    def test_tier3_equation_6_10_exact_exhibit_6_8(self, calc):
+        """
+        API Compendium 2021 Exhibit 6-8 (Exact Golden Test):
+        Given:
+          - Gas well with NO plunger lift (unloading_type='non_plunger')
+          - Unloadings per year = 12
+          - Casing diameter = 10 inches
+          - Well depth = 12,000 feet
+          - Shut-in surface pressure = 250 psig
+          - Sales flow rate SFR = 35,000 scf/hr
+          - Hours open HR = 1 hour (HR - X = 1.0 - 1.0 = 0.0 -> no flowing gas venting)
+          - Gas composition = 80 mol% CH4, 3 mol% CO2
+        Compendium Results:
+          - Wellbore vented volume VR = 1,332,000 scf/yr
+          - E_CH4 = 20.39 tonnes CH4/yr
+          - E_CO2 = 2.10 tonnes CO2/yr
+        """
+        res = calc.calculate_tier3_equation_6_10(
+            events=12,
+            well_depth=12000,
+            diameter=10.0,
+            pressure=250.0,
+            sfr=35000.0,
+            hours_open=1.0,
+            unloading_type="non_plunger",
+            ch4_content=0.80,
+            co2_content=0.03,
+            gwp_dict=GWP_AR5,
+        )
+        # Check volume
+        assert res["inputs"]["whole_gas_scf"] == pytest.approx(1332000.0, rel=1e-4)
+    
+        # Check exact emissions from Exhibit 6-8 (20.39 tonnes CH4, 2.10 tonnes CO2)
+        assert res["results"]["ch4"]["value"] == pytest.approx(20.39, abs=0.1)
+        assert res["results"]["co2"]["value"] == pytest.approx(2.10, abs=0.1)
+    
+        # Check CO2e
+        expected_co2e = 20.39 * 28.0 + 2.10 * 1.0
+>       assert res["total_co2e"] == pytest.approx(expected_co2e, abs=0.5)
+E       assert 574.4238663470205 == 573.0200000000001 � 0.5
+E         
+E         comparison failed
+E         Obtained: 574.4238663470205
+E         Expected: 573.0200000000001 � 0.5
+
+tests\test_liquids_unloading_compendium.py:258: AssertionError
+_ TestLiquidsUnloadingDatabaseAndDashboard.test_api_emission_creation_and_dashboard_aggregation _
+
+self = <test_liquids_unloading_compendium.TestLiquidsUnloadingDatabaseAndDashboard object at 0x000001C12F6F3410>
+auth_client = <FlaskClient <Flask 'app'>>, facility_id = 1
+
+    def test_api_emission_creation_and_dashboard_aggregation(self, auth_client, facility_id):
+        # 1. Create Tier 1 Liquids Unloading record
+        payload = {
+            "facility_id": facility_id,
+            "process_type": "liquids_unloading",
+            "source_type": "default",
+            "tier": "tier1",
+            "wells": 2,
+            "unloading_type": "plunger",
+            "year": 2025,
+            "month": 6,
+            "scope": "Scope 1",
+            "amount": 2,
+            "unit": "wells",
+        }
+        resp = auth_client.post("/api/emissions", json=payload)
+        assert resp.status_code in [200, 201]
+        data = resp.get_json()
+        assert "id" in data
+>       assert data["ch4"] == pytest.approx(2 * 1.774, rel=1e-3)
+               ^^^^^^^^^^^
+E       KeyError: 'ch4'
+
+tests\test_liquids_unloading_compendium.py:511: KeyError
+---------------------------- Captured stderr setup ----------------------------
+[2026-09-26 01:57:16,944] INFO in app: POST /api/auth/login 200 [0.126s] [ReqID: 622d8983-31f3-4356-a1af-b984b1e08789]
+----------------------------- Captured log setup ------------------------------
+INFO     app:app.py:184 POST /api/auth/login 200 [0.126s] [ReqID: 622d8983-31f3-4356-a1af-b984b1e08789]
+---------------------------- Captured stderr call -----------------------------
+[2026-09-26 01:57:17,001] INFO in app: POST /api/emissions 201 [0.038s] [ReqID: 48c84247-298d-485e-890b-03914036b76f]
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:184 POST /api/emissions 201 [0.038s] [ReqID: 48c84247-298d-485e-890b-03914036b76f]
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingTier3Engineering::test_tier3_equation_6_10_exact_exhibit_6_8
+FAILED tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingDatabaseAndDashboard::test_api_emission_creation_and_dashboard_aggregation
+=================== 2 failed, 37 passed, 1 warning in 2.42s ===================
+

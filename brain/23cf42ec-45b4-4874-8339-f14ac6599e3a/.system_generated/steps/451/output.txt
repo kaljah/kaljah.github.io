@@ -1,0 +1,13 @@
+
+The command exited with code 0.
+Output:
+
+FullName                                                                            
+--------                                                                            
+C:\Users\samsung\Desktop\H2\new\client\src\__tests__                                
+C:\Users\samsung\Desktop\H2\new\client\src\test-setup.js                            
+C:\Users\samsung\Desktop\H2\new\client\src\__tests__\EmissionResult.test.jsx        
+C:\Users\samsung\Desktop\H2\new\client\src\__tests__\mathParityAndFormatters.test.js
+
+
+

@@ -1,0 +1,44 @@
+
+The command exited with code 1.
+Output:
+
+ RUN  v5.0.1 C:/Users/samsung/Desktop/H2/new/client
+
+ ❯ src/__tests__/UnloadingForm.test.jsx (7 tests | 1 failed) 230ms
+   ❯ UnloadingForm & API Compendium 2021 Reference Integrity (7)
+     × verifies API Table 6-11 per-well default factors in EmissionFactors catalog 9ms
+     ✓ verifies API Table 6-10 event-based factors in EmissionFactors catalog 1ms
+     ✓ renders Tier 1 form and updates well count and unloading type 112ms
+     ✓ switches to Tier 2 tab and handles event frequency inputs 23ms
+     ✓ switches to Tier 3 tab and renders Equation 6-10 engineering parameters 39ms
+     ✓ renders Equation 6-11 parameters when automated plunger lift is selected 21ms
+     ✓ renders Equation 6-3 volume-based decompression method 21ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/UnloadingForm.test.jsx > UnloadingForm & API Compendium 2021 Reference Integrity > verifies API Table 6-11 per-well default factors in EmissionFactors catalog
+AssertionError: expected undefined to be 113466 // Object.is equality
+
+- Expected:
+113466
+
++ Received:
+undefined
+
+ ❯ src/__tests__/UnloadingForm.test.jsx:14:35
+     12|     expect(plunger.unit).toBe("tonnes CH4/well-year");
+     13|     expect(plunger.baseUnit).toBe("wells");
+     14|     expect(plunger.whole_gas_scf).toBe(113466);
+       |                                   ^
+     15|
+     16|     const nonPlunger = API_FACTORS["Liquids Unloading - Non-Plunger"];
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 6 passed (7)
+   Start at  02:02:26
+   Duration  2.36s (environment 65%, tests 11%, transform 10%, setup 10%, import 4%, worker 1%)
+
+

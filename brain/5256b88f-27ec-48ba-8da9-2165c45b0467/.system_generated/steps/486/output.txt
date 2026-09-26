@@ -1,0 +1,17 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -756,8 +756,9 @@
+                 co2_content = self._optional_fraction(
+                     flat_inputs, ["co2_content", "co2_mol", "comp_co2_content"], 0.0
+                 )
+-                flare_eff = self._optional_fraction(
+-                    flat_inputs, ["comp_flare_eff", "control_efficiency", "flare_efficiency"], 0.98
++                default_eff = 0.98 if str(flat_inputs.get("disposition") or flat_inputs.get("comp_disposition") or "").lower() == "flared" else 0.0
++                flare_eff = self._optional_fraction(
++                    flat_inputs, ["comp_flare_eff", "control_efficiency", "flare_efficiency"], default_eff
+                 )
+ 
+                 # Rate unit: UI default is Mcf/hr
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,141 @@
+
+The command exited with code 0.
+Output:
+<truncated 1 lines>
+ D new/graphify-out/cache/ast/v0.9.39/682460c3bb59eb32e0a1909fa2d23d077f87f5e7e74959c1a17bb71e840b26e8.json
+ D new/graphify-out/cache/ast/v0.9.39/69180fda8d4bbb3f0d30499d1f854c8b68e7da5f6ec2ef9cbbd62ebcc26fafda.json
+ D new/graphify-out/cache/ast/v0.9.39/6e9b456591352e833646c02c024b09b1da7a7be2899a6c21756f36f4817e69fa.json
+ D new/graphify-out/cache/ast/v0.9.39/726437ec72c9990b0a65c4587863ff06a139a1bc4817092495874343e50e158d.json
+ D new/graphify-out/cache/ast/v0.9.39/7797846837581d2a93036c7b907124dbb68d389bf1b79b5942ae699ba01c43aa.json
+ D new/graphify-out/cache/ast/v0.9.39/787e9134fd22d43c70a61a55cf249c2d17a25ef30597ba779105dab14dab6be3.json
+ D new/graphify-out/cache/ast/v0.9.39/78a9c0d25a80e5c8191a6b55c90009a2de2d13f016ac5202fb29ef34ffc7ab2d.json
+ D new/graphify-out/cache/ast/v0.9.39/799b535d7988f28a6c9715057430a669296b4532801c629a9f3dd00ac1b8ff2c.json
+ D new/graphify-out/cache/ast/v0.9.39/7a306000561481b331787218a12ffbd6476883cbded9fe52b56ed6bdf97bc163.json
+ D new/graphify-out/cache/ast/v0.9.39/7ac4c5dece9ad3e0de540ca2ff5a0f07e2c4a03e066cd57631a4e205aa3e979f.json
+ D new/graphify-out/cache/ast/v0.9.39/7c5af11ecfc0c5c7a277c7ab8c78ceab45dfaed98aad6a3d2890dff6769e292b.json
+ D new/graphify-out/cache/ast/v0.9.39/85b70e1b80d11680688472bdc1bfff5275942d63de76c85967a42bb2ba5672bc.json
+ D new/graphify-out/cache/ast/v0.9.39/8b5a35bd5faad060a72de9cc3efd3cbaf0394336a0989027e63de0c14a825ddc.json
+ D new/graphify-out/cache/ast/v0.9.39/8f8a7d2a9880987400824b0e9b2598be1804082b617c0358ccf5db357edf0292.json
+ D new/graphify-out/cache/ast/v0.9.39/926f749af25568bc01554d2a5c27904bc32018879b95764c2e76825b0903a5c3.json
+ D new/graphify-out/cache/ast/v0.9.39/943bd00f99a0549fa402ae20b8024a03503f00f4edcb7214986a093790f96272.json
+ D new/graphify-out/cache/ast/v0.9.39/94a7e8069bcd0c933ca05670fb04f9e673ab245d417d7616b8125202c0763a96.json
+ D new/graphify-out/cache/ast/v0.9.39/972975b9d0a6c5b7de58dc948741bbdb9d5d94ddf65c7bbfb95e98bcdd03afd0.json
+ D new/graphify-out/cache/ast/v0.9.39/9fc4870c91bc04d661ed87d6083c3b94a48e03d422e60b2e253d81a77c4a64e7.json
+ D new/graphify-out/cache/ast/v0.9.39/a48d197e7164633e7aa5735ec36d184553c29faa3271f136f5a1481115174fc9.json
+ D new/graphify-out/cache/ast/v0.9.39/abb91446b3d193266c69082b4d6f0eb87f5667536498e665ef295ed9a6e994da.json
+ D new/graphify-out/cache/ast/v0.9.39/ad04f20ee15379e98fd285b928c3ea1dd960e7dbb294fa6fb2a3417ec61deb7c.json
+ D new/graphify-out/cache/ast/v0.9.39/b3ac2ddbae7db6500d4c82e161b77a64904c554543da27115b151b302de8baf4.json
+ D new/graphify-out/cache/ast/v0.9.39/b62d3bc5ab3618d561d78cf6716a9441bdf3ba4e7508db9740a69f2236a99fd4.json
+ D new/graphify-out/cache/ast/v0.9.39/b7f8a1ef19656b92d26668133f920bd5f2bdcfe4c870f1858b3211929ad9b58c.json
+ D new/graphify-out/cache/ast/v0.9.39/bcc21427e76baa1b8a067aac92a746749cde8449c5bca25763535e27595e7cab.json
+ D new/graphify-out/cache/ast/v0.9.39/bee7d56452f4c6b97a4bfff90c632f7451f867742a6833c6fcd0982bec4bb7ed.json
+ D new/graphify-out/cache/ast/v0.9.39/c62d09a57376dfb0dfd446343c5cbf0e73b7760eee70b5562bc0af4ce290a7b4.json
+ D new/graphify-out/cache/ast/v0.9.39/c823618d2533705d7d7f43bc347d391eb43916f2e2756e4d0c0d9df7d5776694.json
+ D new/graphify-out/cache/ast/v0.9.39/ccacf33099a81b298aedb2915cb456631bee255a745de1926bf43519cb55b587.json
+ D new/graphify-out/cache/ast/v0.9.39/cdd5bad4a5d6825017eb4d911311b678befc95a39d2295e4ed0dfe2621ac3a3c.json
+ D new/graphify-out/cache/ast/v0.9.39/d3f35de9e107a33e7df318fe4a92bdb126df6587c1d87f48e183eac78eadcda4.json
+ D new/graphify-out/cache/ast/v0.9.39/d78805baee88448d045349bcb9b10b0b386cba2e39a9e18162e591d695cb6a89.json
+ D new/graphify-out/cache/ast/v0.9.39/df2291cd5093d454667845f25c28026a00b8a981a8aeb65fd534d775641f9c8f.json
+ D new/graphify-out/cache/ast/v0.9.39/df37de1cff5e52d78fb8fdb983e2634447c1569e05a396aec71acd23db7ca245.json
+ D new/graphify-out/cache/ast/v0.9.39/e099dee53f0d6bf88c94398dbe9104533208bb02fa623d7a73d7c50a8667c7c0.json
+ D new/graphify-out/cache/ast/v0.9.39/e67cf4589bd22b37e0a8ee0fd9166aff760a1a314e347d383600bd649f150fae.json
+ D new/graphify-out/cache/ast/v0.9.39/e822ce2e51164ad00c4f48486cf98a020c31ad0cbc390682e7d433e1905306d6.json
+ D new/graphify-out/cache/ast/v0.9.39/e95eef6aeea7909e56b6a21f9fcbc6eb3df3945d39004f4b52fdc7bb2094d809.json
+ D new/graphify-out/cache/ast/v0.9.39/eb6a86b986728a2513eb48e6e04b6cd03e7bf2ff78f20d938447024725fcd907.json
+ D new/graphify-out/cache/ast/v0.9.39/ebb36a9b1399303e7728559bec8db422953cb86ad5c04220eff16d797a15f186.json
+ D new/graphify-out/cache/ast/v0.9.39/f0a8987bd199d2a3b2b76a3759e7bf7fb7c81832387654e3693f5a4bd6aa6ed5.json
+ D new/graphify-out/cache/ast/v0.9.39/f30b9304976cceb0b77b72f497aab67cb0d01e55190ded3d66b7cda9f883290a.json
+ D new/graphify-out/cache/ast/v0.9.39/f47c1663451fe45a330e0a0c2a2446d4068eedc6c3f35e7c07a574409864cc0d.json
+ D new/graphify-out/cache/ast/v0.9.39/fe67e231a204b23bdd0add387232b7665ffb04373a60548a01b3d44c38f382f8.json
+ D new/graphify-out/cache/stat-index.json
+ D new/graphify-out/graph.html
+ D new/graphify-out/graph.json
+ D new/graphify-out/manifest.json
+ M new/server/app.py
+ M new/server/calculations/anomaly.py
+ M new/server/calculations/base.py
+ M new/server/calculations/combustion.py
+ M new/server/calculations/constants.py
+ M new/server/calculations/dispatcher.py
+ M new/server/calculations/fugitive.py
+ M new/server/calculations/indirect.py
+ M new/server/calculations/legacy_engine.py
+ M new/server/calculations/midstream.py
+ M new/server/calculations/stoichiometry.py
+ M new/server/calculations/uncertainty.py
+ M new/server/calculations/units.py
+ M new/server/calculations/vented.py
+ M new/server/emission_factors.py
+ M new/server/emission_factors_api2021.py
+ M new/server/models.py
+ M new/server/process_categories.py
+ M new/server/routes/auth.py
+ M new/server/routes/dashboard.py
+ M new/server/routes/data.py
+ M new/server/routes/emissions.py
+ M new/server/routes/facilities.py
+ M new/server/routes/notifications.py
+ M new/server/routes/qaqc.py
+ M new/server/routes/reports.py
+ M new/server/routes/satellite.py
+ M new/server/routes/scope2.py
+ M new/server/routes/scope3.py
+ M new/server/test_emission_calculations.py
+ M new/server/tests/test_battery_midstream_process_equipment.py
+ M new/server/tests/test_battery_statistical_anomaly_detection.py
+ M new/server/tests/test_dispatcher.py
+ M new/server/tests/test_qfull_api_pipeline.py
+ M new/server/tests/test_qfull_boundary_sensitivity.py
+ M new/server/tests/test_qfull_unit_conversions.py
+ M new/server/tests/test_qfull_validation.py
+ M new/server/tests/test_tier_scope_kpi_numerical.py
+ M new/server/tests/test_uncertainty.py
+ M new/server/utils.py
+ D run_graphify.py
+ D run_graphify_cluster.py
+ M validation/reference_model/vented_processes.py
+?? .agents/rules/antigravity-rtk-rules.md
+?? .codegraph/
+?? .rtk/
+?? AUDIT_FINDINGS.md
+?? AUDIT_SCOPE.md
+?? CLAUDE.md
+?? El_Merk_2025_Annual_GHG_Report.pdf
+?? Groupement_Berkine_2025_Annual_GHG_Report.pdf
+?? audit/
+?? berkine_extracted_tables.json
+?? index.html
+?? napec_flyer.html
+?? napec_flyer_fr.html
+?? neocarbon_computer_hero.jpg
+?? neocarbon_computer_hero_fr.jpg
+?? neocarbon_flyer.html
+?? neocarbon_flyer.pdf
+?? neocarbon_flyer_fr.html
+?? neocarbon_flyer_fr.pdf
+?? neocarbon_flyer_page1_en.jpg
+?? neocarbon_flyer_page1_fr.jpg
+?? new/client/src/__tests__/AssociatedGasVentingForm.test.jsx
+?? new/client/src/__tests__/Scope1FormAssociatedGasVenting.test.jsx
+?? new/client/src/__tests__/UnloadingForm.test.jsx
+?? new/client/src/__tests__/mathParityAndFormatters.test.js
+?? new/client/src/components/QuickAddCustomFactorModal.jsx
+?? new/client/src/components/scope1/AssociatedGasVentingForm.jsx
+?? new/client/src/constants/
+?? new/server/generate_berkine_master_report.py
+?? new/server/generate_elm_master_report.py
+?? new/server/routes/cap_routes.py
+?? new/server/routes/equity_routes.py
+?? new/server/seed_berkine_data.py
+?? new/server/seed_berkine_full_exact.py
+?? new/server/tests/test_associated_gas_venting.py
+?? new/server/tests/test_berkine_cap_equity.py
+?? new/server/tests/test_liquids_unloading_compendium.py
+?? new/server/tests/test_onshore_well_completions_audit.py
+?? new/server/tests/test_tier2_api_e2e.py
+?? preview_en_page_1.png
+?? preview_en_page_2.png
+?? preview_fr_page_1.png
+?? preview_fr_page_2.png
+?? site_assets/
+

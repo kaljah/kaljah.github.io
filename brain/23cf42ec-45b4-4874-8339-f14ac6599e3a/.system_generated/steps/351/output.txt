@@ -1,0 +1,9 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\components\Scope1Form.jsx:21:import CompletionsForm from "./scope1/CompletionsForm";
+new\client\src\components\Scope1Form.jsx:1400:        return <CompletionsForm {...props} />;
+
+
+

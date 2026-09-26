@@ -1,0 +1,15 @@
+
+The command exited with code 0.
+Output:
+
+new\server\calculations\dispatcher.py:47:            "completions": CompletionFlowbackCalculator(),
+new\server\calculations\dispatcher.py:329:            "drilling", "mud_degassing", "completions", 
+"completion_flowback",
+new\server\calculations\dispatcher.py:708:            elif process_type == "completions":
+new\server\calculations\dispatcher.py:730:                    or (flat_inputs.get("amount") if str(unit).lower() in 
+["count", "event", "events", "completions", "wells"] else (
+new\server\calculations\dispatcher.py:744:                        flat_inputs.get("amount") if vol_unit_val not in 
+["count", "event", "events", "completions"] else None
+
+
+

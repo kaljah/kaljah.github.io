@@ -1,0 +1,23 @@
+
+The command exited with code 0.
+Output:
+
+ RUN  v5.0.1 C:/Users/samsung/Desktop/H2/new/client
+
+ ✓ src/__tests__/AssociatedGasVentingForm.test.jsx (7 tests) 990ms
+   ✓ AssociatedGasVentingForm & Table 6-8 API Reference Integrity (7)
+     ✓ renders Tier 1 Table 6-8 form with regional basin selector and crude throughput 552ms
+stdout | src/__tests__/Scope1FormAssociatedGasVenting.test.jsx > Scope1Form Associated Gas Venting Integration > selects Associated Gas Venting, populates Tier 1 data, and submits successfully
+Converting 10000 m3 to 62898.1 bbl
+
+ ✓ src/__tests__/Scope1FormAssociatedGasVenting.test.jsx (2 tests) 1727ms
+   ✓ Scope1Form Associated Gas Venting Integration (2)
+     ✓ selects Associated Gas Venting, populates Tier 1 data, and submits successfully 1106ms
+     ✓ selects Tier 2 GOR Balance, fills engineering parameters, and submits payload 614ms
+
+ Test Files  2 passed (2)
+      Tests  9 passed (9)
+   Start at  01:57:28
+   Duration  6.09s (environment 37%, tests 27%, transform 20%, setup 8%, import 8%, worker 1%)
+
+

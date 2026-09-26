@@ -1,0 +1,8 @@
+
+The command exited with code 0.
+Output:
+src/utils/EmissionFactors.js:  "Drilling - Mud Degassing (Water Based)": {
+src/utils/EmissionFactors.js:    description: "API Compendium - Water Based Mud Degassing (Onshore)",
+src/utils/EmissionFactors.js:  "Drilling - Mud Degassing (Oil Based)": {
+src/utils/EmissionFactors.js:    description: "API Compendium - Oil Based Mud Degassing (Onshore)",
+

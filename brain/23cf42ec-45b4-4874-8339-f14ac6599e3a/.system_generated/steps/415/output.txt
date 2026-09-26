@@ -1,0 +1,84 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\Scope1Form.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -778,24 +778,60 @@
+           }
+         }
+       } else if (processType === "completions") {
+-        const hasRateDur = formData.comp_duration && formData.comp_rate;
+-        const hasGor = formData.comp_liquid_bbl && formData.comp_gor;
+-        const hasVol =
+-          formData.comp_volume ||
+-          formData.amount ||
+-          formData.flowback_volume;
+-        if (!hasRateDur && !hasGor && !hasVol) {
+-          toast.warning(
+-            "Well completions parameters (rate & duration OR liquid & GOR OR volume) are required",
+-          );
+-          return;
+-        }
+-        if (
+-          formData.comp_ch4_content === undefined &&
+-          formData.ch4_content === undefined
+-        ) {
+-          toast.warning("Gas CH4 content (%) is required for well completions");
+-          return;
++        const tier = String(formData.tier || (sourceType === "specific" ? "tier3" : sourceType === "custom" ? "tier2" : "tier1")).toLowerCase();
++        if (tier === "tier1" || sourceType === "default") {
++          const events = parseFloat(formData.amount || formData.events || 0);
++          if (events <= 0 || isNaN(events)) {
++            toast.warning("Number of completion events must be greater than zero for Tier 1 completions");
++            return;
++          }
++        } else if (tier === "tier2" || sourceType === "custom") {
++          const method = String(formData.calc_method || formData.comp_method || "rate_duration").toLowerCase();
++          if (method === "gor") {
++            if (!formData.comp_liquid_bbl || !formData.comp_gor) {
++              toast.warning("Liquid flowback volume (bbl) and GOR (scf/bbl) are required for GOR method");
++              return;
++            }
++          } else if (method === "api_equation_6_7" || method === "pressure_volume") {
++            const hasRate = formData.comp_rate || formData.daily_production_rate || formData.comp_daily_prod_rate;
++            const hasDur = formData.comp_duration || formData.vent_duration_hours;
++            if (!hasRate || !hasDur) {
++              toast.warning("Initial production rate and vent duration are required for API Eq. 6-7");
++              return;
++            }
++          } else {
++            // rate_duration
++            if (!formData.comp_rate || !formData.comp_duration) {
++              toast.warning("Flowback rate and duration are required for Rate × Duration calculation");
++              return;
++            }
++          }
++          if (formData.comp_ch4_content === undefined && formData.ch4_content === undefined) {
++            toast.warning("Gas CH4 content (%) is required for Tier 2 completions");
++            return;
++          }
++        } else {
++          // Tier 3 Direct Measurement
++          const hasVol = formData.comp_volume || formData.flowback_volume || (formData.unit !== "events" && formData.amount);
++          if (!hasVol || parseFloat(hasVol) <= 0) {
++            toast.warning("Measured flowback gas volume must be greater than zero for Tier 3 completions");
++            return;
++          }
++          if (formData.comp_ch4_content === undefined && formData.ch4_content === undefined) {
++            toast.warning("Gas CH4 content (%) is required for Tier 3 completions");
++            return;
++          }
++          const disp = String(formData.comp_disposition || formData.disposition || "vented").toLowerCase();
++          if (disp === "split") {
++            const fV = parseFloat(formData.comp_frac_vented || formData.frac_vented || 0);
++            const fF = parseFloat(formData.comp_frac_flared || formData.frac_flared || 0);
++            const fR = parseFloat(formData.comp_frac_recovered || formData.frac_recovered || 0);
++            const sumP = Math.round((fV > 1 ? fV : fV * 100) + (fF > 1 ? fF : fF * 100) + (fR > 1 ? fR : fR * 100));
++            if (sumP !== 100) {
++              toast.warning(`Custom split percentages must sum to 100% (currently ${sumP}%)`);
++              return;
++            }
++          }
+         }
+       } else if (processType === "blowdown" || processType === "venting") {
+         if (
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,23 @@
+
+The command exited with code 0.
+Output:
+src/utils/EmissionFactors.js:984:  "Liquids Unloading - Plunger Lift": {
+src/utils/EmissionFactors.js:985:    code: "UnloadPlunger",
+src/utils/EmissionFactors.js:997:  "Liquids Unloading - Non-Plunger": {
+src/utils/EmissionFactors.js:998:    code: "UnloadNonPlunger",
+src/utils/EmissionFactors.js:1010:  "Liquids Unloading - Plunger (≤100 events/yr)": {
+src/utils/EmissionFactors.js:1011:    code: "UnloadPlungerLE100",
+src/utils/EmissionFactors.js:1018:    description: "API Table 6-10: Plunger Lift ≤100 events/yr (0.185 tonnes CH4/event)",
+src/utils/EmissionFactors.js:1021:  "Liquids Unloading - Plunger (>100 events/yr)": {
+src/utils/EmissionFactors.js:1022:    code: "UnloadPlungerGT100",
+src/utils/EmissionFactors.js:1029:    description: "API Table 6-10: Plunger Lift >100 events/yr (0.024 tonnes CH4/event)",
+src/utils/EmissionFactors.js:1032:  "Liquids Unloading - Non-Plunger (≤10 events/yr)": {
+src/utils/EmissionFactors.js:1033:    code: "UnloadNonPlungerLE10",
+src/utils/EmissionFactors.js:1040:    description: "API Table 6-10: Non-Plunger ≤10 events/yr (0.412 tonnes CH4/event)",
+src/utils/EmissionFactors.js:1043:  "Liquids Unloading - Non-Plunger (10-50 events/yr)": {
+src/utils/EmissionFactors.js:1044:    code: "UnloadNonPlunger10To50",
+src/utils/EmissionFactors.js:1051:    description: "API Table 6-10: Non-Plunger 10-50 events/yr (0.462 tonnes CH4/event)",
+src/utils/EmissionFactors.js:1054:  "Liquids Unloading - Non-Plunger (>50 events/yr)": {
+src/utils/EmissionFactors.js:1055:    code: "UnloadNonPlungerGT50",
+src/utils/EmissionFactors.js:1062:    description: "API Table 6-10: Non-Plunger >50 events/yr (0.670 tonnes CH4/event)",
+

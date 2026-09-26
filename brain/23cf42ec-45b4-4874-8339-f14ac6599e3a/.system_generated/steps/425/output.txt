@@ -1,0 +1,9 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\components\Scope1Form.jsx:1604:  const renderSpecificForm = () => {
+new\client\src\components\Scope1Form.jsx:2445:          {renderSpecificForm()}
+
+
+

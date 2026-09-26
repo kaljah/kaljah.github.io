@@ -1,0 +1,88 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collected 165 items
+
+tests\test_all_process_types_matrix.py ................................. [ 20%]
+........................................................................ [ 63%]
+...........F................................................             [100%]
+
+================================== FAILURES ===================================
+_ TestPhysicalConservationAcrossAllProcesses.test_zero_activity_produces_zero_emissions[liquids_unloading] _
+
+self = <test_all_process_types_matrix.TestPhysicalConservationAcrossAllProcesses object at 0x000001F01C24BF20>
+dispatcher = <calculations.dispatcher.CalculationDispatcher object at 0x000001F01C2FFD70>
+process_id = 'liquids_unloading'
+
+    @pytest.mark.parametrize("process_id", list(PROCESS_TYPES.keys()))
+    def test_zero_activity_produces_zero_emissions(self, dispatcher, process_id):
+        """Conservation Law: 0 activity MUST produce exactly 0.0 emissions."""
+        meta = PROCESS_TYPES[process_id]
+        payload = {
+            "process_type": process_id,
+            "factor_source": "default",
+            "amount": 0.0,
+            "quantity": 0.0,
+            "unit": "m3" if meta["category"] in ["combustion", "vented"] else "devices",
+        }
+        factors = {"co2": 50.0, "ch4": 0.5, "n2o": 0.01, "unit": "kg/m3"}
+>       res = dispatcher.dispatch(process_id, payload, factors, {})
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_all_process_types_matrix.py:467: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+calculations\dispatcher.py:401: in dispatch
+    return calculator.calculate_tier1(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <calculations.vented.LiquidsUnloadingCalculator object at 0x000001F01C2C8D40>
+well_count = 0.0, unloading_type = 'plunger', ch4_content = None
+co2_content = 0.0, control_efficiency = 0.0, factor_key = None
+uncertainties = {'_factor_source': 'default'}, hhv = 1020.0, ef_n2o = None
+gwp_dict = {'CO2': 1.0, 'CH4': 28.0, 'N2O': 265.0}
+
+    def calculate_tier1(
+        self,
+        well_count,
+        unloading_type="plunger",
+        ch4_content=None,
+        co2_content=0.0,
+        control_efficiency=0.0,
+        factor_key=None,
+        uncertainties=None,
+        hhv=1020.0,
+        ef_n2o=None,
+        gwp_dict=None,
+    ):
+        """
+        API Compendium 2021 Section 6.3.4 / Table 6-11:
+        Tier 1: Per-well default vented emission factors.
+        Used when the number of unloading events is not available.
+        """
+        if well_count is None or str(well_count).strip() == "":
+            raise ValueError("Number of wells is required for Tier 1 calculation.")
+        try:
+            wells = float(well_count)
+        except (ValueError, TypeError):
+            raise ValueError(f"Invalid well count: {well_count}")
+        if wells <= 0:
+>           raise ValueError("Number of wells must be greater than zero.")
+E           ValueError: Number of wells must be greater than zero.
+
+calculations\vented.py:1018: ValueError
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_all_process_types_matrix.py::TestPhysicalConservationAcrossAllProcesses::test_zero_activity_produces_zero_emissions[liquids_unloading]
+================== 1 failed, 164 passed, 1 warning in 1.75s ===================
+

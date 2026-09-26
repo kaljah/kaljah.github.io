@@ -1,0 +1,103 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\Scope1Form.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1217,6 +1217,97 @@
+         finalUnit = formData.dehy_unit || formData.unit || "MMscf/day";
+       }
+ 
++      // 9. Associated Gas Venting
++      if (processType === "associated_gas_venting") {
++        const tier = String(
++          formData.tier ||
++            (sourceType === "specific"
++              ? "tier3"
++              : sourceType === "custom"
++              ? "tier2"
++              : "tier1"),
++        ).toLowerCase();
++        processInputs.tier = tier;
++
++        if (tier === "tier3" || sourceType === "specific") {
++          finalAmount = parseFloat(
++            formData.vent_volume ||
++              formData.amount ||
++              parseFloat(formData.vent_rate || 0) *
++                parseFloat(formData.venting_duration || 0),
++          );
++          finalUnit = formData.vent_volume_unit || formData.unit || "scf";
++        } else {
++          finalAmount = parseFloat(
++            formData.oil_production !== undefined
++              ? formData.oil_production
++              : formData.amount || 0,
++          );
++          finalUnit = formData.oil_unit || formData.unit || "bbl";
++        }
++
++        processInputs.oil_production = parseFloat(
++          formData.oil_production !== undefined
++            ? formData.oil_production
++            : formData.amount || 0,
++        );
++        processInputs.oil_unit = formData.oil_unit || finalUnit || "bbl";
++
++        if (formData.basin || formData.fuel) {
++          processInputs.basin = formData.basin || formData.fuel;
++        }
++        if (formData.gor !== undefined && formData.gor !== "") {
++          processInputs.gor = parseFloat(formData.gor);
++          processInputs.gor_unit = formData.gor_unit || "scf/bbl";
++        }
++        if (
++          formData.venting_duration !== undefined &&
++          formData.venting_duration !== ""
++        ) {
++          processInputs.venting_duration = parseFloat(formData.venting_duration);
++          processInputs.duration_unit = formData.duration_unit || "days";
++        }
++        if (
++          formData.period_duration !== undefined &&
++          formData.period_duration !== ""
++        ) {
++          processInputs.period_duration = parseFloat(formData.period_duration);
++        }
++        if (
++          formData.recovered_gas_volume !== undefined &&
++          formData.recovered_gas_volume !== ""
++        ) {
++          processInputs.recovered_gas_volume = parseFloat(
++            formData.recovered_gas_volume,
++          );
++        }
++        if (
++          formData.flared_gas_volume !== undefined &&
++          formData.flared_gas_volume !== ""
++        ) {
++          processInputs.flared_gas_volume = parseFloat(
++            formData.flared_gas_volume,
++          );
++        }
++        if (formData.gas_volume_unit) {
++          processInputs.gas_volume_unit = formData.gas_volume_unit;
++        }
++        if (formData.vent_rate !== undefined && formData.vent_rate !== "") {
++          processInputs.vent_rate = parseFloat(formData.vent_rate);
++          processInputs.vent_rate_unit = formData.vent_rate_unit || "scfh";
++        }
++        if (formData.vent_volume !== undefined && formData.vent_volume !== "") {
++          processInputs.vent_volume = parseFloat(formData.vent_volume);
++          processInputs.vent_volume_unit = formData.vent_volume_unit || "scf";
++        }
++        if (formData.ch4_content !== undefined && formData.ch4_content !== "") {
++          processInputs.ch4_content = parseFloat(formData.ch4_content);
++        }
++        if (formData.co2_content !== undefined && formData.co2_content !== "") {
++          processInputs.co2_content = parseFloat(formData.co2_content);
++        }
++      }
++
+       // Construct Backend-Compliant Payload
+       const finalPayload = {
+         // Identity
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

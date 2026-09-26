@@ -1,0 +1,158 @@
+
+The command exited with code 1.
+Output:
+<truncated 19 lines>
+        from app import app
+        from models import db, Emission
+        payload = {
+            "year": 2024,
+            "month": 5,
+            "facility_id": 999,
+            "process_type": "completions",
+            "tier": "tier1",
+            "well_type": "gas",
+            "fracturing": True,
+            "control_type": "rec",
+            "disposition": "rec",
+            "fuel": "Gas Well Completion - Hydraulic Fracturing (REC with Venting)",
+            "amount": 2.0,
+            "quantity": 2.0,
+            "unit": "events",
+            "calc_inputs": {
+                "completions": {
+                    "tier": "tier1",
+                    "well_type": "gas",
+                    "fracturing": True,
+                    "disposition": "rec",
+                    "amount": 2.0,
+                    "unit": "events",
+                }
+            },
+        }
+        res = api_client.post("/api/emissions/", json=payload)
+>       assert res.status_code == 200 or res.status_code == 201
+E       assert (403 == 200 or 403 == 201)
+E        +  where 403 = <WrapperTestResponse streamed [403 FORBIDDEN]>.status_code
+E        +  and   403 = <WrapperTestResponse streamed [403 FORBIDDEN]>.status_code
+
+tests\test_onshore_well_completions_audit.py:509: AssertionError
+---------------------------- Captured stderr setup ----------------------------
+[2026-09-26 01:56:17,162] INFO in app: POST /api/auth/login 200 [0.136s] [ReqID: f3801082-c9cf-4216-8ed3-c95c709c36b9]
+----------------------------- Captured log setup ------------------------------
+INFO     app:app.py:184 POST /api/auth/login 200 [0.136s] [ReqID: f3801082-c9cf-4216-8ed3-c95c709c36b9]
+---------------------------- Captured stderr call -----------------------------
+[2026-09-26 01:56:17,172] INFO in app: POST /api/emissions/ 403 [0.006s] [ReqID: d08b9f50-fede-4dcf-a9b4-ea713b065229]
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:184 POST /api/emissions/ 403 [0.006s] [ReqID: d08b9f50-fede-4dcf-a9b4-ea713b065229]
+_ TestOnshoreCompletionsFullPipelineApi.test_api_tier2_completion_rate_duration _
+
+self = <test_onshore_well_completions_audit.TestOnshoreCompletionsFullPipelineApi object at 0x00000284D3564DA0>
+api_client = <FlaskClient <Flask 'app'>>
+
+    def test_api_tier2_completion_rate_duration(self, api_client):
+        """Tier 2: Rate x Duration (50 Mcf/hr * 20 hrs = 1000 Mcf), site CH4 = 85%."""
+        payload = {
+            "year": 2024,
+            "month": 6,
+            "facility_id": 999,
+            "process_type": "completions",
+            "tier": "tier2",
+            "calc_method": "rate_duration",
+            "comp_rate": 50.0,
+            "comp_rate_unit": "Mcf/hr",
+            "comp_duration": 20.0,
+            "ch4_content": 85.0,
+            "co2_content": 1.5,
+            "comp_disposition": "vented",
+            "amount": 1.0,
+            "quantity": 1.0,
+            "unit": "events",
+            "calc_inputs": {
+                "completions": {
+                    "tier": "tier2",
+                    "calc_method": "rate_duration",
+                    "comp_rate": 50.0,
+                    "comp_rate_unit": "Mcf/hr",
+                    "comp_duration": 20.0,
+                    "ch4_content": 85.0,
+                    "co2_content": 1.5,
+                    "comp_disposition": "vented",
+                }
+            },
+        }
+        res = api_client.post("/api/emissions/", json=payload)
+>       assert res.status_code in [200, 201]
+E       assert 403 in [200, 201]
+E        +  where 403 = <WrapperTestResponse streamed [403 FORBIDDEN]>.status_code
+
+tests\test_onshore_well_completions_audit.py:554: AssertionError
+---------------------------- Captured stderr setup ----------------------------
+[2026-09-26 01:56:17,692] INFO in app: POST /api/auth/login 200 [0.121s] [ReqID: d7a8bb0d-e43f-4546-a32f-43dc56eea801]
+----------------------------- Captured log setup ------------------------------
+INFO     app:app.py:184 POST /api/auth/login 200 [0.121s] [ReqID: d7a8bb0d-e43f-4546-a32f-43dc56eea801]
+---------------------------- Captured stderr call -----------------------------
+[2026-09-26 01:56:17,695] INFO in app: POST /api/emissions/ 403 [0.001s] [ReqID: e88cdc5b-60b5-4aaa-8a04-da16028c4906]
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:184 POST /api/emissions/ 403 [0.001s] [ReqID: e88cdc5b-60b5-4aaa-8a04-da16028c4906]
+_ TestOnshoreCompletionsFullPipelineApi.test_api_tier3_completion_metered_with_n2_deduction _
+
+self = <test_onshore_well_completions_audit.TestOnshoreCompletionsFullPipelineApi object at 0x00000284D3565670>
+api_client = <FlaskClient <Flask 'app'>>
+
+    def test_api_tier3_completion_metered_with_n2_deduction(self, api_client):
+        """Tier 3: Metered volume 10,000 m3 with 2,000 m3 N2 deduction -> net 8,000 m3."""
+        payload = {
+            "year": 2024,
+            "month": 7,
+            "facility_id": 999,
+            "process_type": "completions",
+            "tier": "tier3",
+            "comp_volume": 10000.0,
+            "volume_unit": "m3",
+            "comp_injected_n2": 2000.0,
+            "comp_injected_n2_unit": "m3",
+            "ch4_content": 85.0,
+            "co2_content": 2.0,
+            "comp_disposition": "vented",
+            "amount": 1.0,
+            "quantity": 1.0,
+            "unit": "events",
+            "calc_inputs": {
+                "completions": {
+                    "tier": "tier3",
+                    "comp_volume": 10000.0,
+                    "volume_unit": "m3",
+                    "comp_injected_n2": 2000.0,
+                    "comp_injected_n2_unit": "m3",
+                    "ch4_content": 85.0,
+                    "co2_content": 2.0,
+                    "comp_disposition": "vented",
+                }
+            },
+        }
+        res = api_client.post("/api/emissions/", json=payload)
+>       assert res.status_code in [200, 201]
+E       assert 403 in [200, 201]
+E        +  where 403 = <WrapperTestResponse streamed [403 FORBIDDEN]>.status_code
+
+tests\test_onshore_well_completions_audit.py:593: AssertionError
+---------------------------- Captured stderr setup ----------------------------
+[2026-09-26 01:56:17,811] INFO in app: POST /api/auth/login 200 [0.090s] [ReqID: 504fbfa8-c325-4060-b640-dcaad25f3853]
+----------------------------- Captured log setup ------------------------------
+INFO     app:app.py:184 POST /api/auth/login 200 [0.090s] [ReqID: 504fbfa8-c325-4060-b640-dcaad25f3853]
+---------------------------- Captured stderr call -----------------------------
+[2026-09-26 01:56:17,813] INFO in app: POST /api/emissions/ 403 [0.000s] [ReqID: b1112f64-306b-4777-8bce-422ad48adb35]
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:184 POST /api/emissions/ 403 [0.000s] [ReqID: b1112f64-306b-4777-8bce-422ad48adb35]
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsFullPipelineApi::test_api_tier1_completion_flow
+FAILED tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsFullPipelineApi::test_api_tier2_completion_rate_duration
+FAILED tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsFullPipelineApi::test_api_tier3_completion_metered_with_n2_deduction
+=================== 3 failed, 26 passed, 1 warning in 2.35s ===================
+

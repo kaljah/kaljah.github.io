@@ -1,0 +1,19 @@
+Task: 23cf42ec-45b4-4874-8339-f14ac6599e3a/task-520
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\23cf42ec-45b4-4874-8339-f14ac6599e3a\.system_generated\tasks\task-520.log
+Log output:
+<truncated 69 lines>
+44s] [ReqID: 07e9f16d-6409-4de0-aa05-3b74956e743a]
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:184 POST /api/emissions/ 201 [0.044s] [ReqID: 07e9f16d-6409-4de0-aa05-3b74956e743a]
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_onshore_well_completions_audit.py::TestOnshoreCompletionsFullPipelineApi::test_api_tier1_completion_flow
+=================== 1 failed, 28 passed, 1 warning in 2.13s ===================
+
+Last progress: 3s ago

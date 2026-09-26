@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_liquids_unloading_compendium.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -361,7 +361,7 @@
+         )
+         res_bar = calc.calculate_tier3_equation_6_10(
+             events=10, well_depth=5000.0, diameter=2.5, pressure=13.7895,
+-            sfr=10000.0, hours_open=1.0, press_unit="bar",
++            sfr=10000.0, hours_open=1.0, press_unit="barg",
+         )
+         assert res_bar["results"]["ch4"]["value"] == pytest.approx(res_psig["results"]["ch4"]["value"], rel=1e-3)
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

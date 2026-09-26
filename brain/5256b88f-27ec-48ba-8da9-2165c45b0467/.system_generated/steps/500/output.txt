@@ -1,0 +1,16 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -762,9 +762,7 @@
+                 )
+ 
+                 # Rate unit: UI default is Mcf/hr
+-                rate_u = flat_inputs.get("comp_rate_unit") or flat_inputs.get("rate_unit")
+-                if not rate_u:
+-                    rate_u = "mcf/hr" if flat_inputs.get("comp_rate") else "mscf/day"
++                rate_u = flat_inputs.get("comp_rate_unit") or flat_inputs.get("rate_unit") or "mscf/day"
+ 
+                 return calculator.calculate(
+                     flowback_volume=vol_val,
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

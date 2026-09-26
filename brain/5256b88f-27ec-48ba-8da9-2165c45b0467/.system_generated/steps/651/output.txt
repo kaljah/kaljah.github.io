@@ -1,0 +1,29 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_liquids_unloading_compendium.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -145,7 +145,7 @@
+         assert res["total_co2e"] == pytest.approx(expected_co2e, rel=1e-4)
+ 
+     def test_tier1_flaring_control_efficiency(self, calc):
+-        """98% flaring destruction efficiency: 98% combusted to CO2, 2% unburnt CH4 slip."""
++        """Flaring control: partition gas into (1-ctrl) vented and ctrl flared with 98% combustion."""
+         res = calc.calculate_tier1(
+             well_count=1,
+             unloading_type="plunger",
+@@ -152,10 +152,10 @@
+             gwp_dict=GWP_AR5,
+         )
+         base_ch4 = 1.774
+-        unburnt_ch4 = base_ch4 * 0.02
+-        combusted_co2 = base_ch4 * 0.98 * (44.01 / 16.04)
+-        assert res["results"]["ch4"]["value"] == pytest.approx(unburnt_ch4, rel=1e-3)
+-        assert res["results"]["co2"]["value"] == pytest.approx(combusted_co2, rel=1e-3)
++        expected_ch4 = base_ch4 * (0.02 + 0.98 * 0.02)
++        expected_co2 = base_ch4 * 0.98 * 0.98 * (44.01 / 16.04)
++        assert res["results"]["ch4"]["value"] == pytest.approx(expected_ch4, rel=1e-3)
++        assert res["results"]["co2"]["value"] == pytest.approx(expected_co2, rel=1e-3)
+ 
+ 
+ # ==============================================================================
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

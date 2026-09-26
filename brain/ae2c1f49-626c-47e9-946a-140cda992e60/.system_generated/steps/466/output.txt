@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\__tests__\AssociatedGasVentingForm.test.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -68,7 +68,7 @@
+ 
+     expect(screen.getByText("Associated Gas Venting")).toBeInTheDocument();
+     expect(screen.getByText(/API GHG Compendium 2021 §6.3.1/i)).toBeInTheDocument();
+-    expect(screen.getByText(/Tier 1: Table 6-8/i)).toBeInTheDocument();
++    expect(screen.getByRole("button", { name: "Tier 1: Table 6-8" })).toBeInTheDocument();
+ 
+     // Check factor details badge
+     expect(screen.getByText(/Permian Basin - Basin 430:/i)).toBeInTheDocument();
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

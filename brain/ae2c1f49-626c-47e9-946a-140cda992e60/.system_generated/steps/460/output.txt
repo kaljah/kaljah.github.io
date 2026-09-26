@@ -1,0 +1,217 @@
+
+The command exited with code 1.
+Output:
+
+ RUN  v5.0.1 C:/Users/samsung/Desktop/H2/new/client
+
+ ❯ src/__tests__/AssociatedGasVentingForm.test.jsx (7 tests | 1 failed) 408ms
+   ❯ AssociatedGasVentingForm & Table 6-8 API Reference Integrity (7)
+     ✓ verifies all 6 API Table 6-8 regional basin factors are cataloged with correct values 4ms
+     × renders Tier 1 Table 6-8 form with regional basin selector and crude throughput 175ms
+     ✓ renders Tier 2 Engineering GOR Balance with disposition partitioning and zero double-counting 58ms
+     ✓ detects mass balance violations when recovered + flared gas exceeds total produced 54ms
+     ✓ detects physical gas composition errors when sum of CH4 and CO2 exceeds 100% 46ms
+     ✓ renders Tier 3 Direct Measurement with vent rate and total volume modes 38ms
+     ✓ allows switching tiers interactively via tier buttons 30ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/AssociatedGasVentingForm.test.jsx > AssociatedGasVentingForm & Table 6-8 API Reference Integrity > renders Tier 1 Table 6-8 form with regional basin selector and crude throughput
+TestingLibraryElementError: Found multiple elements with the text: /Tier 1: Table 6-8/i
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+<button
+  class="btn-tier active"
+  style="padding: 5px 12px; border-radius: 5px; font-size: 0.78rem; font-weight: 600; cursor: pointer; background: var(--accent-color, #ff6600); color: rgb(255, 255, 255); border: 1px solid rgb(255, 102, 0); transition: all 0.15s ease;"
+  type="button"
+>
+  Tier 1: Table 6-8
+</button>
+
+Ignored nodes: comments, script, style
+<span
+  style="font-size: 0.72rem; padding: 2px 6px; border-radius: 4px; background: rgb(255, 237, 213); color: rgb(154, 52, 18); font-weight: 600;"
+>
+  Tier 1: Table 6-8 Default
+</span>
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="associated-gas-venting-form"
+      style="margin-top: 15px;"
+    >
+      <div
+        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border-color, #e5e7eb); padding-bottom: 12px; flex-wrap: wrap; gap: 10px;"
+      >
+        <div>
+          <div
+            style="display: flex; align-items: center; gap: 8px;"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-wind"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              style="color: var(--accent-color, #ff6600);"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M12.8 19.6A2 2 0 1 0 14 16H2"
+              />
+              <path
+                d="M17.5 8a2.5 2.5 0 1 1 2 4H2"
+              />
+              <path
+                d="M9.8 4.4A2 2 0 1 1 11 8H2"
+              />
+            </svg>
+            <h4
+              style="color: var(--accent-color, #ff6600); margin: 0px; font-weight: 700;"
+            >
+              Associated Gas Venting
+            </h4>
+          </div>
+          <small
+            style="color: var(--text-muted, #6b7280); font-size: 0.8rem;"
+          >
+            API GHG Compendium 2021 §6.3.1 (Equations 6-8, 6-9, Exhibits 6-5 & 6-6, Table 6-8)
+          </small>
+        </div>
+        <div
+          style="display: flex; gap: 6px;"
+        >
+          <button
+            class="btn-tier active"
+            style="padding: 5px 12px; border-radius: 5px; font-size: 0.78rem; font-weight: 600; cursor: pointer; background: var(--accent-color, #ff6600); color: rgb(255, 255, 255); border: 1px solid rgb(255, 102, 0); transition: all 0.15s ease;"
+            type="button"
+          >
+            Tier 1: Table 6-8
+          </button>
+          <button
+            class="btn-tier "
+            style="padding: 5px 12px; border-radius: 5px; font-size: 0.78rem; font-weight: 600; cursor: pointer; background: rgb(243, 244, 246); color: rgb(55, 65, 81); border: 1px solid rgb(209, 213, 219); transition: all 0.15s ease;"
+            type="button"
+          >
+            Tier 2: GOR Balance
+          </button>
+          <button
+            class="btn-tier "
+            style="padding: 5px 12px; border-radius: 5px; font-size: 0.78rem; font-weight: 600; cursor: pointer; background: rgb(243, 244, 246); color: rgb(55, 65, 81); border: 1px solid rgb(209, 213, 219); transition: all 0.15s ease;"
+            type="button"
+          >
+            Tier 3: Measurement
+          </button>
+        </div>
+      </div>
+      <div>
+        <div
+          class="form-grid-2"
+        >
+          <div
+            class="input-group"
+          >
+            <label>
+              Regional Basin Factor (API Table 6-8)
+              <span
+                style="color: rgb(239, 68, 68); margin-left: 3px;"
+              >
+                *
+              </span>
+            </label>
+            <div
+              class="custom-dropdown "
+            >
+              <div
+                class="dropdown-selected"
+              >
+                <span
+                  class="display-text"
+                >
+                  <div
+                    class="selected-with-sub"
+                  >
+                    Permian Basin - Basin 430
+                     
+                    <span
+                      class="sub-label"
+                    >
+                       - 
+                      6.5 kg CH₄/bbl · Whole Gas: 419 scf/bbl
+                    </span>
+                  </div>
+                </span>
+                <svg
+                  fill="none"
+                  height="10"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  viewBox="0 0 24 24"
+                  width="10"
+                >
+                  <polyline
+                    points="6 9 12 15 18 9"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div
+            class="input-group"
+          >
+            <label>
+              Crude Oil Production Throughput
+              <span
+                style="color: rgb(239, 68, 68); margin-left: 3px;"
+              >
+                *
+              </span>
+            </label>
+            <div
+              style="display: flex; gap: 8px;"
+            >
+              <input
+                class="mole-input"
+                min="0"
+                placeholder="e.g. 5000"
+                required=""
+                step="any"
+                style="flex: 1 1 0%;"
+                type="number"
+                value="10000"
+              />
+              <select
+             ...
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ getElementError node_modules/@testing-library/dom/dist/query-helpers.js:20:35
+ ❯ getMultipleElementsFoundError node_modules/@testing-library/dom/dist/query-helpers.js:23:10
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:55:13
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/__tests__/AssociatedGasVentingForm.test.jsx:71:19
+     69|     expect(screen.getByText("Associated Gas Venting")).toBeInTheDocume…
+     70|     expect(screen.getByText(/API GHG Compendium 2021 §6.3.1/i)).toBeIn…
+     71|     expect(screen.getByText(/Tier 1: Table 6-8/i)).toBeInTheDocument();
+       |                   ^
+     72|
+     73|     // Check factor details badge
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 6 passed (7)
+   Start at  01:54:51
+   Duration  3.29s (environment 54%, transform 19%, tests 13%, setup 8%, import 5%)
+
+

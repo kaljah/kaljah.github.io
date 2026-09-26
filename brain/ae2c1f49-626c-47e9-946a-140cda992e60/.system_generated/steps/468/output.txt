@@ -1,0 +1,16 @@
+
+The command exited with code 0.
+Output:
+
+ RUN  v5.0.1 C:/Users/samsung/Desktop/H2/new/client
+
+ ✓ src/__tests__/AssociatedGasVentingForm.test.jsx (7 tests) 505ms
+   ✓ AssociatedGasVentingForm & Table 6-8 API Reference Integrity (7)
+     ✓ renders Tier 1 Table 6-8 form with regional basin selector and crude throughput 304ms
+
+ Test Files  1 passed (1)
+      Tests  7 passed (7)
+   Start at  01:55:04
+   Duration  3.13s (environment 62%, tests 17%, transform 8%, setup 7%, import 5%)
+
+

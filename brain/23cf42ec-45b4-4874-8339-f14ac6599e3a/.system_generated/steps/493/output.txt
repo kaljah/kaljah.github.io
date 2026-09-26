@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\emissions.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -69,7 +69,7 @@
+     for k, v in factor_catalog.items():
+         if k.lower().replace("_", " ").replace("-", " ").strip() == norm:
+             return v
+-        if v.get("code") and v.get("code").lower() == norm:
++        if v.get("code") and v.get("code").lower().replace("_", " ").replace("-", " ").strip() == norm:
+             return v
+     return {}
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,46 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\vented.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1014,8 +1014,8 @@
+             wells = float(well_count)
+         except (ValueError, TypeError):
+             raise ValueError(f"Invalid well count: {well_count}")
+-        if wells <= 0:
+-            raise ValueError("Number of wells must be greater than zero.")
++        if wells < 0:
++            raise ValueError("Number of wells cannot be negative.")
+         if wells > 100000:
+             raise ValueError(f"Unrealistic number of wells: {wells}")
+ 
+@@ -1026,6 +1026,29 @@
+         if c_ch4 + c_co2 > 1.0001:
+             raise ValueError(f"Combined CH4 ({c_ch4*100:.1f}%) and CO2 ({c_co2*100:.1f}%) content cannot exceed 100%.")
+ 
++        if wells == 0:
++            return self.format_result(
++                ch4=None,
++                co2=None,
++                n2o=None,
++                total_co2e=0.0,
++                inputs={
++                    "tier": "Tier 1",
++                    "method": "api_table_6_11",
++                    "calculation_level": "Tier 1 (API Table 6-11)",
++                    "unloading_type": u_type,
++                    "well_count": 0,
++                    "amount": 0,
++                    "unit": "wells",
++                    "whole_gas_scf": 0.0,
++                    "whole_gas_m3": 0.0,
++                    "ch4_content": c_ch4,
++                    "co2_content": c_co2,
++                    "control_efficiency": 0.0,
++                    "api_reference": "API Compendium 2021 Section 6.3.4, Table 6-11",
++                },
++            )
++
+         total_gas_scf = wells * t1_data["whole_gas_scf_per_well_yr"]
+         total_gas_m3 = total_gas_scf * CONVERSIONS["scf_to_m3"]
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,30 @@
+
+The command exited with code 0.
+Output:
+
+> client@0.0.0 test
+> vitest run
+
+
+ RUN  v5.0.1 C:/Users/samsung/Desktop/H2/new/client
+
+ ✓ src/__tests__/mathParityAndFormatters.test.js (5 tests) 37ms
+ ✓ src/__tests__/EmissionResult.test.jsx (3 tests) 151ms
+ ✓ src/__tests__/UnloadingForm.test.jsx (7 tests) 377ms
+ ✓ src/__tests__/AssociatedGasVentingForm.test.jsx (7 tests) 692ms
+   ✓ AssociatedGasVentingForm & Table 6-8 API Reference Integrity (7)
+     ✓ renders Tier 1 Table 6-8 form with regional basin selector and crude throughput 434ms
+stdout | src/__tests__/Scope1FormAssociatedGasVenting.test.jsx > Scope1Form Associated Gas Venting Integration > selects Associated Gas Venting, populates Tier 1 data, and submits successfully
+Converting 10000 m3 to 62898.1 bbl
+
+ ✓ src/__tests__/Scope1FormAssociatedGasVenting.test.jsx (2 tests) 1013ms
+   ✓ Scope1Form Associated Gas Venting Integration (2)
+     ✓ selects Associated Gas Venting, populates Tier 1 data, and submits successfully 630ms
+     ✓ selects Tier 2 GOR Balance, fills engineering parameters, and submits payload 378ms
+
+ Test Files  5 passed (5)
+      Tests  24 passed (24)
+   Start at  02:03:36
+   Duration  5.34s (environment 59%, transform 13%, tests 12%, setup 10%, import 5%, worker 1%)
+
+

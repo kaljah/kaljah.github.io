@@ -1,0 +1,28 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\Scope1Form.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1162,12 +1162,16 @@
+       }
+ 
+       // 4. Completions
+-      if (processType === "completions" && sourceType === "specific") {
+-        const rateMcfHr = parseFloat(formData.comp_rate || 0);
+-        const durationHr = parseFloat(formData.comp_duration || 0);
+-        if (rateMcfHr > 0 && durationHr > 0) {
+-          finalAmount = rateMcfHr * durationHr * 28.3168; // Mcf to m3
+-          finalUnit = "m3";
++      if (processType === "completions") {
++        const tier = String(formData.tier || (sourceType === "specific" ? "tier3" : sourceType === "custom" ? "tier2" : "tier1")).toLowerCase();
++        if (tier === "tier1" || sourceType === "default" || tier === "tier2" || sourceType === "custom") {
++          finalAmount = parseFloat(formData.events || formData.amount || 1);
++          finalUnit = "events";
++        } else {
++          // Tier 3 Direct Measurement: metered volume
++          const vol = parseFloat(formData.comp_volume || formData.flowback_volume || (formData.unit !== "events" ? formData.amount : 0) || 0);
++          finalAmount = vol;
++          finalUnit = formData.volume_unit || (formData.unit !== "events" ? formData.unit : "Mcf") || "Mcf";
+         }
+       }
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

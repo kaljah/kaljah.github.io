@@ -1,0 +1,17 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\components\Scope1Form.jsx:74:  const [fuelOptions, setFuelOptions] = useState([]);
+new\client\src\components\Scope1Form.jsx:242:      setFuelOptions(options);
+new\client\src\components\Scope1Form.jsx:263:      setFuelOptions(options);
+new\client\src\components\Scope1Form.jsx:371:    const matched = fuelOptions.find(
+new\client\src\components\Scope1Form.jsx:1838:                    options={fuelOptions}
+new\client\src\components\Scope1Form.jsx:1885:                                options={fuelOptions}
+new\client\src\components\Scope1Form.jsx:2011:                                  options={fuelOptions}
+new\client\src\components\Scope1Form.jsx:2034:                            {fuelOptions.length === 0 && (
+new\client\src\components\Scope1Form.jsx:2047:                              options={fuelOptions}
+new\client\src\components\Scope1Form.jsx:2093:                        options={fuelOptions}
+
+
+

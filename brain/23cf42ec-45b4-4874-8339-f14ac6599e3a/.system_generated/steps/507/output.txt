@@ -1,0 +1,161 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_onshore_well_completions_audit.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -444,4 +444,155 @@
+         assert res["co2"] > 0
+         assert res["totalCo2e"] > 0
+         assert "_full_api_res" in res
++
++
++class TestOnshoreCompletionsFullPipelineApi:
++    """Verifies end-to-end UI -> API -> Calculation Engine -> Database -> Output pipeline."""
++
++    @pytest.fixture
++    def api_client(self):
++        from app import app
++        from models import db, User, Facility
++        app.config["TESTING"] = True
++        app.config["WTF_CSRF_ENABLED"] = False
++        with app.test_client() as c:
++            with app.app_context():
++                user = User.query.filter_by(email="completions_audit@test.com").first()
++                if not user:
++                    user = User(
++                        email="completions_audit@test.com",
++                        fullName="Completions Engineer",
++                        orgName="Audit Energy",
++                        sector="Energy",
++                        role="engineer",
++                    )
++                    user.set_password("Password123!")
++                    db.session.add(user)
++                    db.session.commit()
++                if not db.session.get(Facility, 999):
++                    fac = Facility(id=999, name="Onshore Completion Pad 42")
++                    db.session.add(fac)
++                    db.session.commit()
++                c.post("/api/auth/login", json={"email": "completions_audit@test.com", "password": "Password123!"})
++            yield c
++
++    def test_api_tier1_completion_flow(self, api_client):
++        """Tier 1: Post 2 gas well completions with REC, verify emissions and DB storage."""
++        from app import app
++        from models import db, Emission
++        payload = {
++            "year": 2024,
++            "month": 5,
++            "facility_id": 999,
++            "process_type": "completions",
++            "tier": "tier1",
++            "well_type": "gas",
++            "fracturing": True,
++            "control_type": "rec",
++            "disposition": "rec",
++            "fuel": "Gas Well Completion - Hydraulic Fracturing (REC with Venting)",
++            "amount": 2.0,
++            "quantity": 2.0,
++            "unit": "events",
++            "calc_inputs": {
++                "completions": {
++                    "tier": "tier1",
++                    "well_type": "gas",
++                    "fracturing": True,
++                    "disposition": "rec",
++                    "amount": 2.0,
++                    "unit": "events",
++                }
++            },
++        }
++        res = api_client.post("/api/emissions/", json=payload)
++        assert res.status_code == 200 or res.status_code == 201
++        data = res.get_json()
++        assert "emissions" in data
++        # Table 6-5: 13.542 t CH4 * 2 events = 27.084 t CH4
++        assert pytest.approx(data["emissions"]["ch4"], rel=1e-3) == 27.084
++        assert data["emissions"]["totalCo2e"] > 0
++
++        with app.app_context():
++            saved = Emission.query.filter_by(facility_id=999, process_type="completions", month=5, year=2024).order_by(Emission.id.desc()).first()
++            assert saved is not None
++            assert pytest.approx(saved.ch4_emissions, rel=1e-3) == 27.084
++            assert "Table 6-5" in saved.calc_method
++
++    def test_api_tier2_completion_rate_duration(self, api_client):
++        """Tier 2: Rate x Duration (50 Mcf/hr * 20 hrs = 1000 Mcf), site CH4 = 85%."""
++        payload = {
++            "year": 2024,
++            "month": 6,
++            "facility_id": 999,
++            "process_type": "completions",
++            "tier": "tier2",
++            "calc_method": "rate_duration",
++            "comp_rate": 50.0,
++            "comp_rate_unit": "Mcf/hr",
++            "comp_duration": 20.0,
++            "ch4_content": 85.0,
++            "co2_content": 1.5,
++            "comp_disposition": "vented",
++            "amount": 1.0,
++            "quantity": 1.0,
++            "unit": "events",
++            "calc_inputs": {
++                "completions": {
++                    "tier": "tier2",
++                    "calc_method": "rate_duration",
++                    "comp_rate": 50.0,
++                    "comp_rate_unit": "Mcf/hr",
++                    "comp_duration": 20.0,
++                    "ch4_content": 85.0,
++                    "co2_content": 1.5,
++                    "comp_disposition": "vented",
++                }
++            },
++        }
++        res = api_client.post("/api/emissions/", json=payload)
++        assert res.status_code in [200, 201]
++        data = res.get_json()
++        assert data["emissions"]["ch4"] > 0
++        assert data["emissions"]["co2"] > 0
++        # 1000 Mcf = 28,316.8 m3 * 0.85 * 0.6785 / 1000 = ~16.33 t CH4
++        assert pytest.approx(data["emissions"]["ch4"], rel=1e-2) == 16.33
++
++    def test_api_tier3_completion_metered_with_n2_deduction(self, api_client):
++        """Tier 3: Metered volume 10,000 m3 with 2,000 m3 N2 deduction -> net 8,000 m3."""
++        payload = {
++            "year": 2024,
++            "month": 7,
++            "facility_id": 999,
++            "process_type": "completions",
++            "tier": "tier3",
++            "comp_volume": 10000.0,
++            "volume_unit": "m3",
++            "comp_injected_n2": 2000.0,
++            "comp_injected_n2_unit": "m3",
++            "ch4_content": 85.0,
++            "co2_content": 2.0,
++            "comp_disposition": "vented",
++            "amount": 1.0,
++            "quantity": 1.0,
++            "unit": "events",
++            "calc_inputs": {
++                "completions": {
++                    "tier": "tier3",
++                    "comp_volume": 10000.0,
++                    "volume_unit": "m3",
++                    "comp_injected_n2": 2000.0,
++                    "comp_injected_n2_unit": "m3",
++                    "ch4_content": 85.0,
++                    "co2_content": 2.0,
++                    "comp_disposition": "vented",
++                }
++            },
++        }
++        res = api_client.post("/api/emissions/", json=payload)
++        assert res.status_code in [200, 201]
++        data = res.get_json()
++        # Net gas = 8000 m3; CH4 = 8000 * 0.85 * (16.04/379.3) * (35.3147/2204.62) = ~4.614 t
++        assert pytest.approx(data["emissions"]["ch4"], rel=1e-2) == 4.614
++
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

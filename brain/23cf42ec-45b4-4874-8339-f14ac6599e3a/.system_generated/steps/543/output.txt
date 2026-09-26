@@ -1,0 +1,17 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_onshore_well_completions_audit.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -520,7 +520,10 @@
+             saved = Emission.query.filter_by(facility_id=999, process_type="completions", month=5, year=2024).order_by(Emission.id.desc()).first()
+             assert saved is not None
+             assert pytest.approx(saved.ch4_emissions, rel=1e-3) == 27.084
+-            assert "Table 6-5" in saved.calc_method
++            assert saved.calc_method == "Well Completion Flowback"
++            saved_payload = json.loads(saved.source_payload)
++            assert saved_payload["tier"] == "tier1"
++            assert "REC" in saved_payload["fuel"]
+ 
+     def test_api_tier2_completion_rate_duration(self, api_client):
+         """Tier 2: Rate x Duration (50 Mcf/hr * 20 hrs = 1000 Mcf), site CH4 = 85%."""
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,20 @@
+Task: 5256b88f-27ec-48ba-8da9-2165c45b0467/task-535
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\5256b88f-27ec-48ba-8da9-2165c45b0467\.system_generated\tasks\task-535.log
+Log output:
+<truncated 24 lines>
+N_PROCESSES
+E               assert 'associated_gas_venting' in {'acid_gas_removal', 'adipic_acid_production', 'agr', 'asphalt', 'asphalt_blowing', 'blowdown', ...}
+
+tests\test_all_process_types_matrix.py:372: AssertionError
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_all_process_types_matrix.py::TestProcessCategoryIntegrity::test_non_combustion_processes_covers_all_non_combustion
+================== 1 failed, 164 passed, 1 warning in 1.87s ===================
+
+Last progress: 0s ago

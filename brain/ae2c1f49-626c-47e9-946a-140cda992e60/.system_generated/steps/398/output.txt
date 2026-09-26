@@ -1,0 +1,27 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\Scope1Form.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -666,6 +666,7 @@
+     // Validate fuel/factor selection
+     if (
+       (sourceType === "default" || sourceType === "custom") &&
++      processType !== "associated_gas_venting" &&
+       !formData.fuel
+     ) {
+       toast.warning("Please select a fuel or emission factor");
+@@ -672,4 +672,13 @@
+     }
++    if (
++      processType === "associated_gas_venting" &&
++      sourceType === "default" &&
++      !formData.fuel &&
++      !formData.basin
++    ) {
++      toast.warning("Please select a regional basin factor for Tier 1 associated gas venting");
++      return;
++    }
+ 
+     // Validate activity data (amount/quantity)
+     const amount = formData.amount || formData.quantity;
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

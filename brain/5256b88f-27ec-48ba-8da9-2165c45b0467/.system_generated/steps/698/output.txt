@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_liquids_unloading_compendium.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -508,7 +508,7 @@
+         assert resp.status_code in [200, 201]
+         data = resp.get_json()
+         assert "id" in data
+-        assert data["ch4"] == pytest.approx(2 * 1.774, rel=1e-3)
++        assert data["emissions"]["ch4"] == pytest.approx(2 * 1.774, rel=1e-3)
+ 
+         # 2. Query Dashboard to verify classification as 'venting'
+         dash_resp = auth_client.get(f"/api/dashboard/summary?facilityId={facility_id}&year=2025")
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

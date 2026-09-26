@@ -1,0 +1,16 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_liquids_unloading_compendium.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -18,8 +18,8 @@
+ import math
+ from calculations.vented import LiquidsUnloadingCalculator
+ from calculations.dispatcher import CalculationDispatcher
+-from calculations.legacy_engine import compute_emissions
+-from calculations.constants import GWP_AR5, CONVERSIONS
++from calculations.constants import GWP_AR5
++from calculations.units import CONVERSIONS
+ 
+ @pytest.fixture
+ def calc():
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

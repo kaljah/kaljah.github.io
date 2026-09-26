@@ -1,0 +1,18 @@
+Task: 5256b88f-27ec-48ba-8da9-2165c45b0467/task-665
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\5256b88f-27ec-48ba-8da9-2165c45b0467\.system_generated\tasks\task-665.log
+Log output:
+<truncated 139 lines>
+4 POST /api/emissions 201 [0.038s] [ReqID: 48c84247-298d-485e-890b-03914036b76f]
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingTier3Engineering::test_tier3_equation_6_10_exact_exhibit_6_8
+FAILED tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingDatabaseAndDashboard::test_api_emission_creation_and_dashboard_aggregation
+=================== 2 failed, 37 passed, 1 warning in 2.42s ===================
+
+Last progress: 1s ago

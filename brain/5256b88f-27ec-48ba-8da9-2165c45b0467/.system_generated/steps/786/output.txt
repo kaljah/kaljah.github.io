@@ -1,0 +1,22 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\__tests__\UnloadingForm.test.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -11,7 +11,7 @@
+     expect(plunger.ch4).toBe(1.774);
+     expect(plunger.unit).toBe("tonnes CH4/well-year");
+     expect(plunger.baseUnit).toBe("wells");
+-    expect(plunger.whole_gas_scf).toBe(113466);
++    expect(plunger.whole_gas_ef).toBe(113466);
+ 
+     const nonPlunger = API_FACTORS["Liquids Unloading - Non-Plunger"];
+     expect(nonPlunger).toBeDefined();
+@@ -18,6 +18,6 @@
+     expect(nonPlunger.unit).toBe("tonnes CH4/well-year");
+     expect(nonPlunger.baseUnit).toBe("wells");
+-    expect(nonPlunger.whole_gas_scf).toBe(178531);
++    expect(nonPlunger.whole_gas_ef).toBe(178531);
+   });
+ 
+   it("verifies API Table 6-10 event-based factors in EmissionFactors catalog", () => {
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

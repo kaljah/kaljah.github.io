@@ -1,0 +1,23 @@
+Task: 5256b88f-27ec-48ba-8da9-2165c45b0467/task-705
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\5256b88f-27ec-48ba-8da9-2165c45b0467\.system_generated\tasks\task-705.log
+Log output:
+<truncated 6 lines>
+ mock-3.15.1
+collected 94 items
+
+tests\test_vented.py .....                                               [  5%]
+tests\test_dispatcher.py ...............                                 [ 21%]
+tests\test_qfull_api_pipeline.py .............................           [ 52%]
+tests\test_qfull_validation.py ......................................... [ 95%]
+....                                                                     [100%]
+
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================== 94 passed, 1 warning in 4.30s ========================
+
+Last progress: 1s ago

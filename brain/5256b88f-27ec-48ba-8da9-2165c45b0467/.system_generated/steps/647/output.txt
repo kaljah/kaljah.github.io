@@ -1,0 +1,71 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_liquids_unloading_compendium.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -18,6 +18,7 @@
+ import math
+ from calculations.vented import LiquidsUnloadingCalculator
+ from calculations.dispatcher import CalculationDispatcher
++from calculations.legacy_engine import compute_emissions
+ from calculations.constants import GWP_AR5
+ from calculations.units import CONVERSIONS
+ 
+@@ -28,6 +28,57 @@
+ def dispatcher():
+     return CalculationDispatcher()
+ 
++@pytest.fixture(scope="function")
++def auth_client(client):
++    from extensions import db
++    from models import User, Facility
++    from werkzeug.security import generate_password_hash
++    from app import app
++
++    with app.app_context():
++        existing = User.query.filter_by(email="qfull_test@validation.io").first()
++        if not existing:
++            u = User(
++                fullName="QFULL Test User",
++                orgName="QFULL Validation Org",
++                email="qfull_test@validation.io",
++                password_hash=generate_password_hash("QfullPass123!"),
++                sector="Oil & Gas",
++                role="admin",
++                status="active",
++            )
++            db.session.add(u)
++            db.session.flush()
++
++            f = Facility(
++                name="QFULL Test Facility",
++                code="QFULL-001",
++                activity="E&P",
++                division="Operations",
++                field="Test Field",
++                segment="Upstream",
++                country="Algeria",
++            )
++            db.session.add(f)
++            db.session.commit()
++
++        resp = client.post(
++            "/api/auth/login",
++            json={"email": "qfull_test@validation.io", "password": "QfullPass123!"},
++        )
++        assert resp.status_code in (200, 201), f"Login failed: {resp.get_json()}"
++        yield client
++
++@pytest.fixture(scope="function")
++def facility_id(auth_client):
++    from app import app
++    from models import Facility
++
++    with app.app_context():
++        f = Facility.query.filter_by(code="QFULL-001").first()
++        assert f is not None, "Test facility not found"
++        return f.id
++
+ 
+ # ==============================================================================
+ # 1. TIER 1: API TABLE 6-11 PER-WELL DEFAULT FACTOR VERIFICATION
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

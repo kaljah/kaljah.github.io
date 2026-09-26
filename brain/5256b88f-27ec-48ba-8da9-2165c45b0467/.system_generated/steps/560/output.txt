@@ -1,0 +1,15 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\src\__tests__
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/20/2026   5:27 PM           1403 EmissionResult.test.jsx                                              
+-a----         9/24/2026  11:31 PM           2431 mathParityAndFormatters.test.js                                      
+
+
+

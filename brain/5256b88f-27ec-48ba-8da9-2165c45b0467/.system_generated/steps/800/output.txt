@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+warning: in the working copy of 'new/server/calculations/vented.py', LF will be replaced by CRLF the next time Git touches it
+ new/server/calculations/vented.py | 2345 +++++++++++++++++++++++++++++++++++--
+ 1 file changed, 2226 insertions(+), 119 deletions(-)
+

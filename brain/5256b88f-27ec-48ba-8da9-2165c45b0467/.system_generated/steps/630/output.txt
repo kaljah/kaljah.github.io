@@ -1,0 +1,42 @@
+
+The command exited with code 0.
+Output:
+tests/test_carbon_intensity_validation.py:217:def auth_client(ci_setup):
+tests/test_carbon_intensity_validation.py:379:def test_cbam_exports_endpoint(auth_client, ci_setup):
+tests/test_carbon_intensity_validation.py:381:    resp = auth_client.get(f"/api/data/cbam-exports?year=2026&facilityId={ci_setup['fac1'].id}")
+tests/test_carbon_intensity_validation.py:392:def test_cbam_exports_cache_invalidation(auth_client, ci_setup):
+tests/test_carbon_intensity_validation.py:394:    post_resp = auth_client.post("/api/data/cbam-exports", json={
+tests/test_carbon_intensity_validation.py:409:    del_resp = auth_client.delete(f"/api/data/cbam-exports/{rec_id}")
+tests/test_qfull_api_pipeline.py:56:def auth_client(client):
+tests/test_qfull_api_pipeline.py:107:def facility_id(auth_client):
+tests/test_qfull_api_pipeline.py:138:        self, auth_client, facility_id
+tests/test_qfull_api_pipeline.py:170:        resp = auth_client.post(
+tests/test_qfull_api_pipeline.py:187:        self, auth_client, facility_id
+tests/test_qfull_api_pipeline.py:243:    def test_tier3_combustion_carbon_mass_balance(self, auth_client, facility_id):
+tests/test_qfull_api_pipeline.py:307:    def test_tier3_pure_methane_combustion(self, auth_client, facility_id):
+tests/test_qfull_api_pipeline.py:364:    def test_flaring_elevated_default_efficiency(self, auth_client, facility_id):
+tests/test_qfull_api_pipeline.py:421:    def test_flaring_with_native_co2(self, auth_client, facility_id):
+tests/test_qfull_api_pipeline.py:467:    def test_flaring_enclosed_higher_efficiency(self, auth_client, facility_id):
+tests/test_qfull_api_pipeline.py:509:    def test_tier1_well_default(self, auth_client, facility_id):
+tests/test_qfull_api_pipeline.py:533:    def test_tier2_water_based_mud(self, auth_client, facility_id):
+tests/test_qfull_api_pipeline.py:560:    def test_tier2_oil_based_mud(self, auth_client, facility_id):
+tests/test_qfull_api_pipeline.py:587:    def test_tier2_plus_site_gas_composition(self, auth_client, facility_id):
+tests/test_qfull_api_pipeline.py:630:    def test_metered_volume_no_control(self, auth_client, facility_id):
+tests/test_qfull_api_pipeline.py:660:    def test_rate_duration_method(self, auth_client, facility_id):
+tests/test_qfull_api_pipeline.py:712:    def test_continuous_bleed_standard(self, auth_client, facility_id):
+tests/test_qfull_api_pipeline.py:756:    def test_count_doubles_emissions(self, auth_client, facility_id):
+tests/test_qfull_api_pipeline.py:787:    def test_agr_co2_mass_balance(self, auth_client, facility_id):
+tests/test_qfull_api_pipeline.py:852:    def test_blowdown_standard_conditions(self, auth_client, facility_id):
+tests/test_qfull_api_pipeline.py:1080:    def test_tank_flashing_gor_method(self, auth_client, facility_id):
+tests/test_qfull_api_pipeline.py:1127:    def test_standard_well_unloading(self, auth_client, facility_id):
+tests/test_qfull_api_pipeline.py:1199:    def test_indirect_steam_mmbtu(self, auth_client, facility_id):
+tests/test_stress_volume_analytics.py:146:def auth_client(volume_test_env):
+tests/test_stress_volume_analytics.py:158:    def test_dashboard_summary_high_volume_latency(self, auth_client):
+tests/test_stress_volume_analytics.py:161:        res = auth_client.get("/api/dashboard/summary")
+tests/test_stress_volume_analytics.py:173:    def test_dashboard_batch_all_parallel_threads_under_volume(self, auth_client):
+tests/test_stress_volume_analytics.py:176:        res = auth_client.get("/api/dashboard/batch-all")
+tests/test_stress_volume_analytics.py:188:    def test_excel_export_streaming_under_volume(self, auth_client):
+tests/test_stress_volume_analytics.py:191:        res = auth_client.get("/api/reports/export?scope=all")
+tests/test_stress_volume_analytics.py:206:    def test_mathematical_aggregation_grand_total_fidelity(self, auth_client):
+tests/test_stress_volume_analytics.py:208:        res = auth_client.get("/api/dashboard/summary")
+

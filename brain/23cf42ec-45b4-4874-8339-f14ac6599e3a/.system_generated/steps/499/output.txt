@@ -1,0 +1,16 @@
+
+The command exited with code 0.
+Output:
+
+new\server\tests\test_api_security.py:150:            from models import Facility
+new\server\tests\test_api_security.py:151:            if not db.session.get(Facility, 1):
+new\server\tests\test_api_security.py:152:                f = Facility(id=1, name="Test Facility")
+new\server\tests\test_api_security.py:163:                facility_id=1,
+new\server\tests\test_api_security.py:186:            from models import Facility
+new\server\tests\test_api_security.py:187:            if not db.session.get(Facility, 1):
+new\server\tests\test_api_security.py:188:                f = Facility(id=1, name="Test Facility")
+new\server\tests\test_api_security.py:199:                facility_id=1,
+new\server\tests\test_api_security.py:282:            "facility_id": 1,
+
+
+

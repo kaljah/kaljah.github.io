@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+
+new\server\emission_factors.py:6:This module imports from emission_factors_api2021.py which contains
+new\server\emission_factors.py:17:from emission_factors_api2021 import (
+new\server\emission_factors.py:48:# emission_factors_api2021.py which contains the comprehensive API 2021
+
+
+

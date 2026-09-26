@@ -1,0 +1,21 @@
+
+The command exited with code 0.
+Output:
+
+new\server\routes\emissions.py:177:            if hasattr(model, "calc_method"):
+new\server\routes\emissions.py:179:                    model.calc_method.ilike(
+new\server\routes\emissions.py:268:            Emission.calc_method.label("factor_type"),
+new\server\routes\emissions.py:882:            calc_method=method,
+new\server\routes\emissions.py:3244:        calc_method=method,
+new\server\routes\emissions.py:3276:            or ("custom" if data.get("factor_type") == "custom" else ("specific" 
+if data.get("calc_method") in ("direct_measurement", "engineering", "specific", "tier3") else "default"))
+new\server\routes\emissions.py:3541:    recalc_keys = {"quantity", "amount", "fuel", "fuel_type", "unit", 
+"custom_factor_id", "calc_method", "process_type"}
+new\server\routes\emissions.py:3617:            "calc_method": record.calc_method,
+new\server\routes\emissions.py:3634:            record.calc_method = method
+new\server\routes\emissions.py:4012:                calc_method=method,
+new\server\routes\emissions.py:4168:            q1 = 
+q1.filter(Emission.calc_method.ilike(f"%{_escape_like(method_arg.strip())}%", escape="\\"))
+
+
+

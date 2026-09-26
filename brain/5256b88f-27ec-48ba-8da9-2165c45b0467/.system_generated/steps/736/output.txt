@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\__tests__\mathParityAndFormatters.test.js. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -39,7 +39,7 @@
+   it('aligns mud degassing emission factors with API Section 6.2', () => {
+     const waterMud = API_FACTORS["Drilling - Mud Degassing (Water Based)"];
+     expect(waterMud).toBeDefined();
+-    expect(waterMud.ch4).toBe(0.15);
++    expect(waterMud.ch4).toBe(0.0458);
+     expect(waterMud.unit).toBe("kg CH4/m³ mud");
+ 
+     const oilMud = API_FACTORS["Drilling - Mud Degassing (Oil Based)"];
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,23 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\Scope1Form.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -2075,7 +2075,7 @@
+                 )}
+ 
+                 {/* TIER 1: Standard API Tabulated Factors */}
+-                {sourceType === "default" && (
++                {sourceType === "default" && processType !== "associated_gas_venting" && (
+                   <CustomDropdown
+                     options={fuelOptions}
+                     value={formData.fuel || ""}
+@@ -2085,7 +2085,7 @@
+                 )}
+ 
+                 {/* TIER 2: Regional / Measured / Supplier Factors */}
+-                {sourceType === "custom" && (
++                {sourceType === "custom" && processType !== "associated_gas_venting" && (
+                   <div className="tier2-mode-container">
+                     {[
+                       "combustion",
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

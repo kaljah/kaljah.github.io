@@ -1,0 +1,22 @@
+
+The command exited with code 0.
+Output:
+tests/test_all_process_types_matrix.py:            "control_efficiency": 0.95,
+tests/test_all_process_types_matrix.py:            "control_efficiency": 0.0,
+tests/test_all_process_types_matrix.py:            "control_efficiency": 0.98,
+tests/test_all_process_types_matrix.py:            "control_efficiency": 0.0,
+tests/test_audit_bug_fixes.py:        control_efficiency=0.0,
+tests/test_battery_midstream_process_equipment.py:        res = calc.calculate(flowback_volume=vol_m3, ch4_content=0.88, control_efficiency=0.0, gwp_dict=GWP_AR5)
+tests/test_battery_midstream_process_equipment.py:        ref = IndependentCompletions.calculate(method="metered_volume", flowback_volume=vol_m3, ch4_content=0.88, control_efficiency=0.0, gwp_standard="AR5")
+tests/test_battery_midstream_process_equipment.py:            control_efficiency=ctrl_eff,
+tests/test_battery_midstream_process_equipment.py:            control_efficiency=ctrl_eff,
+tests/test_battery_midstream_process_equipment.py:            control_efficiency=0.98,
+tests/test_battery_midstream_process_equipment.py:            control_efficiency=0.98,
+tests/test_battery_midstream_process_equipment.py:            control_efficiency=0.98,
+tests/test_battery_midstream_process_equipment.py:            control_efficiency=ctrl,
+tests/test_battery_midstream_process_equipment.py:            control_efficiency=ctrl,
+tests/test_battery_midstream_process_equipment.py:            control_efficiency=0,
+tests/test_dispatcher.py:        "control_efficiency": 0.98,
+tests/test_qfull_boundary_sensitivity.py:    def test_full_control_efficiency_tank_vs_no_control(self):
+tests/test_vented.py:        "control_efficiency": 0.95,
+

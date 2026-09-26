@@ -1,0 +1,18 @@
+
+The command exited with code 0.
+Output:
+calculations/vented.py:1267:        press_unit="psig",
+calculations/vented.py:1337:        pu = str(press_unit or "psig").lower().strip()
+calculations/vented.py:1449:        press_unit="psia",
+calculations/vented.py:1476:        p_shut_abs = to_psia(p_shut, press_unit)
+calculations/vented.py:1477:        p_line_abs = to_psia(p_line, press_unit)
+calculations/vented.py:1478:        p_sep_abs = to_psia(p_sep, press_unit)
+calculations/vented.py:1605:        press_unit="psig",
+calculations/vented.py:1659:        p_abs = to_psia(pressure, press_unit)
+calculations/vented.py:1760:        press_unit="psig",
+calculations/vented.py:1801:                press_unit=press_unit,
+calculations/vented.py:1824:                press_unit=press_unit,
+calculations/vented.py:1895:            press_unit=press_unit,
+calculations/vented.py:1929:        press_unit="psig",
+calculations/vented.py:1945:        p_initial_psia = to_psia(pressure, press_unit)
+

@@ -1,0 +1,20 @@
+
+The command exited with code 0.
+Output:
+281: - V_t = 1,480,000 scf metered gas to flare
+286: - Flare efficiency: 98%
+291: - Flared unburnt CH4 = 0.39 tonnes CH4
+292: - Flared combustion CO2 (from CH4) = 53.5 tonnes CO2 (or 98.7 t if remaining 30% ethane combusted)
+303: disposition="flared",
+304: control_efficiency=0.98,
+312: # Flared unburnt CH4: ~0.39 tonnes
+313: assert pytest.approx(res["inputs"]["flared_unburnt_ch4_tonnes"], abs=0.01) == 0.39
+333: """Tier 3: Custom split between Vented (10%), Flared (60%), and Recovered REC (30%)."""
+342: frac_flared=0.60,
+344: control_efficiency=0.98,
+348: # Flared unburnt: 6000 m3 -> 6000 * 0.80 * 0.6785 * 0.02 / 1000 = 0.065136 t CH4
+349: # Flared CO2: 6000 * 0.80 * 0.6785 * 0.98 * (44.01 / 16.04) / 1000 = 8.756 t CO2
+352: expected_co2 = (6000.0 * 0.80 * 0.6785 * 0.98 * (44.01 / 16.04)) / 1000.0
+389: frac_flared=0.60,
+439: "disposition": "flared",
+

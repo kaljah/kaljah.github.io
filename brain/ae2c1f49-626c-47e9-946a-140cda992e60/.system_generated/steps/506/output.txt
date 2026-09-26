@@ -1,0 +1,51 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\__tests__\Scope1FormAssociatedGasVenting.test.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -14,7 +14,7 @@
+ 
+ vi.mock("../context/AuthContext", () => ({
+   useAuth: () => ({
+-    user: { id: 1, name: "Test User", role: "engineer" },
++    user: { id: 1, name: "Test User", role: "engineer", default_facility_id: "1" },
+   }),
+ }));
+ 
+@@ -33,6 +33,7 @@
+     vi.clearAllMocks();
+ 
+     api.get.mockImplementation((url) => {
++      const headers = { "x-total-count": "0" };
+       if (url.includes("/facilities")) {
+         return Promise.resolve({
+           data: [
+@@ -43,21 +43,22 @@
+               field: "Midland Field",
+             },
+           ],
++          headers,
+         });
+       }
+       if (url.includes("/emissions")) {
+-        return Promise.resolve({ data: [], total: 0 });
++        return Promise.resolve({ data: [], total: 0, headers });
+       }
+       if (url.includes("/custom-factors")) {
+-        return Promise.resolve({ data: [] });
++        return Promise.resolve({ data: [], headers });
+       }
+       if (url.includes("/sources")) {
+-        return Promise.resolve({ data: [] });
++        return Promise.resolve({ data: [], headers });
+       }
+       if (url.includes("/emission-factors/process-types")) {
+-        return Promise.resolve({ data: ["associated_gas_venting", "combustion"] });
+-      }
+-      return Promise.resolve({ data: [] });
++        return Promise.resolve({ data: ["associated_gas_venting", "combustion"], headers });
++      }
++      return Promise.resolve({ data: [], headers });
+     });
+ 
+     api.post.mockResolvedValue({
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

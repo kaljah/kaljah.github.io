@@ -1,0 +1,47 @@
+
+The command exited with code 1.
+Output:
+
+> client@0.0.0 test
+> vitest run
+
+
+ RUN  v5.0.1 C:/Users/samsung/Desktop/H2/new/client
+
+ ✓ src/__tests__/EmissionResult.test.jsx (3 tests) 214ms
+ ❯ src/__tests__/mathParityAndFormatters.test.js (5 tests | 1 failed) 85ms
+   ❯ Client Math Parity and Formatters Tests (5)
+     ✓ normalizes negative zero in formatters 61ms
+     ✓ correctly calculates trend percentage 1ms
+     ✓ converts units bidirectionally in convertActivityData 1ms
+     × aligns mud degassing emission factors with API Section 6.2 17ms
+     ✓ aligns TEG dehydrator emission factors with backend 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/mathParityAndFormatters.test.js > Client Math Parity and Formatters Tests > aligns mud degassing emission factors with API Section 6.2
+AssertionError: expected 0.0458 to be 0.15 // Object.is equality
+
+- Expected
++ Received
+
+- 0.15
++ 0.0458
+
+ ❯ src/__tests__/mathParityAndFormatters.test.js:42:26
+     40|     const waterMud = API_FACTORS["Drilling - Mud Degassing (Water Base…
+     41|     expect(waterMud).toBeDefined();
+     42|     expect(waterMud.ch4).toBe(0.15);
+       |                          ^
+     43|     expect(waterMud.unit).toBe("kg CH4/m³ mud");
+     44|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 7 passed (8)
+   Start at  01:53:46
+   Duration  33.01s (environment 77%, setup 16%, import 6%, transform 1%)
+
+

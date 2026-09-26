@@ -1,0 +1,16 @@
+Task: 5256b88f-27ec-48ba-8da9-2165c45b0467/task-571
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\5256b88f-27ec-48ba-8da9-2165c45b0467\.system_generated\tasks\task-571.log
+Log output:
+<truncated 226 lines>
+=============
+FAILED tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingTier1::test_tier1_flaring_control_efficiency
+FAILED tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingTier3Engineering::test_tier3_equation_6_10_exact_exhibit_6_8
+FAILED tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingUnitConversions::test_pressure_conversions
+FAILED tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingDispatcherPipeline::test_dispatcher_tier1_routing
+FAILED tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingDispatcherPipeline::test_dispatcher_tier3_equation_6_10_routing
+FAILED tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingDispatcherPipeline::test_legacy_engine_compute_emissions_tier1
+ERROR tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingDatabaseAndDashboard::test_api_emission_creation_and_dashboard_aggregation
+============== 6 failed, 32 passed, 1 warning, 1 error in 1.80s ===============
+
+Last progress: 4s ago

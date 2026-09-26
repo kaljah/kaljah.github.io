@@ -1,0 +1,8 @@
+
+The command exited with code 0.
+Output:
+
+new\server\app.py:268:app.register_blueprint(emissions_bp, url_prefix="/api/emissions")
+
+
+

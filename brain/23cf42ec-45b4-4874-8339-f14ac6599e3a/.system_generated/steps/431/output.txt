@@ -1,0 +1,27 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\components\Scope1Form.jsx:21:import CompletionsForm from "./scope1/CompletionsForm";
+new\client\src\components\Scope1Form.jsx:449:        // Fallback: Try matching by 'code' property for custom forms 
+(Completions/Unloading)
+new\client\src\components\Scope1Form.jsx:690:        "completions",
+new\client\src\components\Scope1Form.jsx:780:      } else if (processType === "completions") {
+new\client\src\components\Scope1Form.jsx:785:            toast.warning("Number of completion events must be greater 
+than zero for Tier 1 completions");
+new\client\src\components\Scope1Form.jsx:810:            toast.warning("Gas CH4 content (%) is required for Tier 2 
+completions");
+new\client\src\components\Scope1Form.jsx:817:            toast.warning("Measured flowback gas volume must be greater 
+than zero for Tier 3 completions");
+new\client\src\components\Scope1Form.jsx:821:            toast.warning("Gas CH4 content (%) is required for Tier 3 
+completions");
+new\client\src\components\Scope1Form.jsx:1164:      // 4. Completions
+new\client\src\components\Scope1Form.jsx:1165:      if (processType === "completions") {
+new\client\src\components\Scope1Form.jsx:1638:      case "completions":
+new\client\src\components\Scope1Form.jsx:1639:        return <CompletionsForm {...props} />;
+new\client\src\components\Scope1Form.jsx:1726:          "completions",
+new\client\src\components\Scope1Form.jsx:2020:                                  "completions",
+new\client\src\components\Scope1Form.jsx:2328:                    "completions",
+
+
+

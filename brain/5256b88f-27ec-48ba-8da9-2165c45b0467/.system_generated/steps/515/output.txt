@@ -1,0 +1,9 @@
+
+The command exited with code 0.
+Output:
+178: prod_rate_unit="mcf/day",
+216: def test_flowback_rate_duration_mcf_hr_correctness(self, calc):
+224: flowback_rate=rate_mcf_hr,
+225: rate_unit="mcf/hr",
+374: calc.calculate(tier="tier2", calculation_method="rate_duration", flowback_rate=1.0, flowback_duration_hours=-10.0)
+

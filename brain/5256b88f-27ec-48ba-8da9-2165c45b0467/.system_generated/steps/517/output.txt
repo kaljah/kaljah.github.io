@@ -1,0 +1,65 @@
+
+The command exited with code 0.
+Output:
+660:                 )
+661:                 gross_scf = float(liquid_flowback_bbl) * float(gas_oil_ratio) * num_events
+662:                 sales_scf = float(gas_produced_sales_scf or 0.0)
+663:                 total_net_scf = max(0.0, gross_scf - sales_scf)
+664:                 standard_ref = "API Compendium 2021 �6.2.3.1, Flowback GOR"
+665:                 calc_method_label = "Tier 2: Liquid Flowback � GOR"
+666: 
+667:             else:
+668:                 # Rate * Duration
+669:                 self.validate_inputs(
+670:                     {"flowback_rate": flowback_rate, "flowback_duration_hours": flowback_duration_hours},
+671:                     ["flowback_rate", "flowback_duration_hours"]
+672:                 )
+673:                 rate_val = float(flowback_rate)
+674:                 rate_u = str(rate_unit or "mscf/day").lower().strip()
+675:                 if "hr" in rate_u or "hour" in rate_u:
+676:                     if "mmscf" in rate_u:
+677:                         rate_scf_hr = rate_val * 1_000_000.0
+678:                     elif "mcf" in rate_u or "mscf" in rate_u:
+679:                         rate_scf_hr = rate_val * 1000.0
+680:                     elif "m3" in rate_u or "sm3" in rate_u:
+681:                         rate_scf_hr = convert(rate_val, "m3", "scf")
+682:                     else:
+683:                         rate_scf_hr = rate_val
+684:                 else:  # Daily rate
+685:                     if "mmscf" in rate_u:
+686:                         rate_scf_hr = (rate_val * 1_000_000.0) / 24.0
+687:                     elif "mcf" in rate_u or "mscf" in rate_u:
+688:                         rate_scf_hr = (rate_val * 1000.0) / 24.0
+689:                     elif "m3" in rate_u or "sm3" in rate_u:
+690:                         rate_scf_hr = convert(rate_val, "m3", "scf") / 24.0
+691:                     else:
+692:                         rate_scf_hr = rate_val / 24.0
+693: 
+694:                 total_net_scf = rate_scf_hr * float(flowback_duration_hours) * num_events
+695:                 standard_ref = "API Compendium 2021 �6.2.3.1, Flowback Rate � Duration"
+696:                 calc_method_label = "Tier 2: Flowback Rate � Duration"
+697: 
+698:         else:
+699:             # TIER 3: Direct / Metered Flowback
+700:             self.validate_inputs({"flowback_volume": flowback_volume}, ["flowback_volume"])
+701:             raw_vol = float(flowback_volume or 0.0)
+702:             u_norm = str(volume_unit or "m3").lower().strip()
+703: 
+704:             if u_norm in ["m3", "sm3", "cubic_meters"]:
+705:                 vol_scf_raw = convert(raw_vol, "m3", "scf")
+706:             elif u_norm in ["mcf", "mscf"]:
+707:                 vol_scf_raw = raw_vol * 1000.0
+708:             elif u_norm in ["mmscf"]:
+709:                 vol_scf_raw = raw_vol * 1_000_000.0
+710:             else:
+711:                 vol_scf_raw = raw_vol
+712: 
+713:             # API Eq. 6-4: Net gas V_gas = V_t - EnF (injected N2 deduction)
+714:             injected_n2_scf = 0.0
+715:             gas_type_norm = str(injected_gas_type or "n2").lower().strip()
+716:             if gas_type_norm != "co2" and injected_n2_volume:
+717:                 n2_val = float(injected_n2_volume)
+718:                 n2_u = str(injected_n2_unit or "scf").lower().strip()
+719:                 if n2_u in ["m3", "sm3"]:
+720:                     injected_n2_scf = convert(n2_val, "m3", "scf")
+

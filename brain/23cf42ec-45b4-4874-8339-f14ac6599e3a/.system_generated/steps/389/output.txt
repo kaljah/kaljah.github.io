@@ -1,0 +1,27 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\components\Scope1Form.jsx:22:import UnloadingForm from "./scope1/UnloadingForm";
+new\client\src\components\Scope1Form.jsx:448:        // Fallback: Try matching by 'code' property for custom forms 
+(Completions/Unloading)
+new\client\src\components\Scope1Form.jsx:680:        "unloading",
+new\client\src\components\Scope1Form.jsx:716:      } else if (processType === "unloading") {
+new\client\src\components\Scope1Form.jsx:721:            toast.warning("Number of wells must be greater than zero for 
+Tier 1 liquids unloading");
+new\client\src\components\Scope1Form.jsx:727:            toast.warning("Number of unloading events is required for 
+Tier 2 liquids unloading");
+new\client\src\components\Scope1Form.jsx:755:              toast.warning("Well unloading parameters (depth, diameter, 
+pressure, events) are required");
+new\client\src\components\Scope1Form.jsx:764:            toast.warning("Gas CH4 content (%) is required for well 
+unloading");
+new\client\src\components\Scope1Form.jsx:1029:      // 5. Unloading
+new\client\src\components\Scope1Form.jsx:1030:      if (processType === "unloading") {
+new\client\src\components\Scope1Form.jsx:1401:      case "unloading":
+new\client\src\components\Scope1Form.jsx:1402:        return <UnloadingForm {...props} />;
+new\client\src\components\Scope1Form.jsx:1486:          "unloading",
+new\client\src\components\Scope1Form.jsx:1780:                                  "unloading",
+new\client\src\components\Scope1Form.jsx:2088:                    "unloading",
+
+
+

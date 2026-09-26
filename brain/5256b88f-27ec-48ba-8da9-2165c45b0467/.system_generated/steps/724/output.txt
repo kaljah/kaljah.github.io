@@ -1,0 +1,61 @@
+
+The command exited with code 0.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+hypothesis profile 'default'
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 39 items
+
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingTier1::test_tier1_plunger_lift_table_6_11_single_well PASSED [  2%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingTier1::test_tier1_non_plunger_lift_table_6_11_single_well PASSED [  5%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingTier1::test_tier1_multiple_wells_scaling PASSED [  7%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingTier1::test_tier1_site_specific_gas_composition_adjustment PASSED [ 10%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingTier1::test_tier1_flaring_control_efficiency PASSED [ 12%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingTier2::test_tier2_plunger_average_frequency_bins[50-9.25-565400.0] PASSED [ 15%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingTier2::test_tier2_plunger_average_frequency_bins[150-3.6-225450.0] PASSED [ 17%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingTier2::test_tier2_non_plunger_average_frequency_bins[8-3.296-192872.0] PASSED [ 20%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingTier2::test_tier2_non_plunger_average_frequency_bins[25-11.55-642250.0] PASSED [ 23%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingTier2::test_tier2_non_plunger_average_frequency_bins[80-53.6-2920960.0] PASSED [ 25%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingTier2::test_tier2_regional_factors[appalachia-plunger-50-0.098] PASSED [ 28%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingTier2::test_tier2_regional_factors[appalachia-plunger-150-0.024] PASSED [ 30%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingTier2::test_tier2_regional_factors[appalachia-non_plunger-20-0.087] PASSED [ 33%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingTier2::test_tier2_regional_factors[gulf_coast-plunger-50-0.185] PASSED [ 35%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingTier2::test_tier2_regional_factors[gulf_coast-plunger-150-0.024] PASSED [ 38%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingTier2::test_tier2_regional_factors[gulf_coast-non_plunger-20-0.255] PASSED [ 41%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingTier2::test_tier2_regional_factors[midcontinent-plunger-50-0.123] PASSED [ 43%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingTier2::test_tier2_regional_factors[midcontinent-plunger-150-0.006] PASSED [ 46%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingTier2::test_tier2_regional_factors[midcontinent-non_plunger-20-0.916] PASSED [ 48%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingTier2::test_tier2_regional_factors[rocky_mountain-plunger-50-0.241] PASSED [ 51%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingTier2::test_tier2_regional_factors[rocky_mountain-plunger-150-0.027] PASSED [ 53%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingTier2::test_tier2_regional_factors[rocky_mountain-non_plunger-20-0.291] PASSED [ 56%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingTier3Engineering::test_tier3_equation_6_10_exact_exhibit_6_8 PASSED [ 58%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingTier3Engineering::test_tier3_equation_6_10_flowing_gas_component PASSED [ 61%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingTier3Engineering::test_tier3_equation_6_11_automated_plunger_lift PASSED [ 64%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingTier3Engineering::test_tier3_equation_6_3_volume_based_geometry PASSED [ 66%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingUnitConversions::test_depth_conversions PASSED [ 69%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingUnitConversions::test_diameter_conversions PASSED [ 71%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingUnitConversions::test_pressure_conversions PASSED [ 74%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingValidation::test_zero_activity_zero_emissions PASSED [ 76%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingValidation::test_negative_inputs_rejected PASSED [ 79%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingValidation::test_combined_gas_fractions_over_100_rejected PASSED [ 82%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingValidation::test_equation_6_11_impossible_pressures_rejected PASSED [ 84%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingDispatcherPipeline::test_dispatcher_tier1_routing PASSED [ 87%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingDispatcherPipeline::test_dispatcher_tier2_routing PASSED [ 89%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingDispatcherPipeline::test_dispatcher_tier3_equation_6_10_routing PASSED [ 92%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingDispatcherPipeline::test_dispatcher_tier3_equation_6_11_routing PASSED [ 94%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingDispatcherPipeline::test_legacy_engine_compute_emissions_tier1 PASSED [ 97%]
+tests/test_liquids_unloading_compendium.py::TestLiquidsUnloadingDatabaseAndDashboard::test_api_emission_creation_and_dashboard_aggregation PASSED [100%]
+
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================== 39 passed, 1 warning in 1.71s ========================
+

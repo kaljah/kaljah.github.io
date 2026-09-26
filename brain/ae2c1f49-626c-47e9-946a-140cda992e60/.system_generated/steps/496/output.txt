@@ -1,0 +1,234 @@
+
+The command exited with code 1.
+Output:
+<truncated 1 lines>
+Failed to load entries: TypeError: Cannot read properties of undefined (reading 'x-total-count')
+    at loadEntries (C:/Users/samsung/Desktop/H2/new/client/src/components/Scope1Form.jsx:640:13)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+Failed to load entries: TypeError: Cannot read properties of undefined (reading 'x-total-count')
+    at loadEntries (C:/Users/samsung/Desktop/H2/new/client/src/components/Scope1Form.jsx:640:13)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+Failed to load entries: TypeError: Cannot read properties of undefined (reading 'x-total-count')
+    at loadEntries (C:/Users/samsung/Desktop/H2/new/client/src/components/Scope1Form.jsx:640:13)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+
+stderr | src/__tests__/Scope1FormAssociatedGasVenting.test.jsx > Scope1Form Associated Gas Venting Integration > selects Tier 2 GOR Balance, fills engineering parameters, and submits payload
+Failed to load entries: TypeError: Cannot read properties of undefined (reading 'x-total-count')
+    at loadEntries (C:/Users/samsung/Desktop/H2/new/client/src/components/Scope1Form.jsx:640:13)
+Failed to load entries: TypeError: Cannot read properties of undefined (reading 'x-total-count')
+    at loadEntries (C:/Users/samsung/Desktop/H2/new/client/src/components/Scope1Form.jsx:640:13)
+Failed to load entries: TypeError: Cannot read properties of undefined (reading 'x-total-count')
+    at loadEntries (C:/Users/samsung/Desktop/H2/new/client/src/components/Scope1Form.jsx:640:13)
+
+stderr | src/__tests__/Scope1FormAssociatedGasVenting.test.jsx > Scope1Form Associated Gas Venting Integration > selects Tier 2 GOR Balance, fills engineering parameters, and submits payload
+Failed to load entries: TypeError: Cannot read properties of undefined (reading 'x-total-count')
+    at loadEntries (C:/Users/samsung/Desktop/H2/new/client/src/components/Scope1Form.jsx:640:13)
+
+ ❯ src/__tests__/Scope1FormAssociatedGasVenting.test.jsx (2 tests | 1 failed) 2480ms
+   ❯ Scope1Form Associated Gas Venting Integration (2)
+     × selects Associated Gas Venting, populates Tier 1 data, and submits successfully 1960ms
+     ✓ selects Tier 2 GOR Balance, fills engineering parameters, and submits payload 512ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/Scope1FormAssociatedGasVenting.test.jsx > Scope1Form Associated Gas Venting Integration > selects Associated Gas Venting, populates Tier 1 data, and submits successfully
+AssertionError: expected "vi.fn()" to be called at least once
+
+Ignored nodes: comments, script, style
+<html>
+  <head />
+  <body>
+    <div>
+      <div
+        class="scope-form"
+      >
+        <div
+          class="calc-panel"
+          style="background: white; border-radius: 8px; padding: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);"
+        >
+          <h2
+            style="font-size: 1.2rem; font-weight: bold; margin-bottom: 25px; color: rgb(51, 51, 51);"
+          >
+            New Activity Entry
+          </h2>
+          <div
+            style="margin-bottom: 30px;"
+          >
+            <h4
+              class="section-title"
+            >
+              1. IDENTITY & LOCATION
+            </h4>
+            <div
+              class="form-grid-4"
+            >
+              <div
+                class="input-group"
+              >
+                <label>
+                  Activity
+                </label>
+                <input
+                  class="mole-input readonly"
+                  disabled=""
+                  type="text"
+                  value="Exploration & Production"
+                />
+              </div>
+              <div
+                class="input-group"
+              >
+                <label>
+                  Division
+                </label>
+                <input
+                  class="mole-input readonly"
+                  disabled=""
+                  type="text"
+                  value="Permian Division"
+                />
+              </div>
+              <div
+                class="input-group"
+              >
+                <label>
+                  Region
+                </label>
+                <div
+                  class="custom-dropdown "
+                >
+                  <div
+                    class="dropdown-selected"
+                  >
+                    <span
+                      class="display-text"
+                    >
+                      <div
+                        class="selected-with-sub"
+                      >
+                        Permian Production Hub
+                         
+                        <span
+                          class="sub-label"
+                        >
+                           - 
+                          Midland Field
+                        </span>
+                      </div>
+                    </span>
+                    <svg
+                      fill="none"
+                      height="10"
+                      stroke="currentColor"
+                      stroke-width="3"
+                      viewBox="0 0 24 24"
+                      width="10"
+                    >
+                      <polyline
+                        points="6 9 12 15 18 9"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="input-group"
+              >
+                <label>
+                  Field
+                </label>
+                <input
+                  class="mole-input readonly"
+                  disabled=""
+                  type="text"
+                  value="Midland Field"
+                />
+              </div>
+            </div>
+            <div
+              class="form-grid-3"
+            >
+              <div
+                class="input-group"
+              >
+                <label>
+                  Year
+                </label>
+                <input
+                  class="mole-input"
+                  type="number"
+                  value="2026"
+                />
+              </div>
+              <div
+                class="input-group"
+              >
+                <label>
+                  Month
+                </label>
+                <select
+                  class="component-select"
+                >
+                  <option
+                    value="1"
+                  >
+                    01
+                  </option>
+                  <option
+                    value="2"
+                  >
+                    02
+                  </option>
+                  <option
+                    value="3"
+                  >
+                    03
+                  </option>
+                  <option
+                    value="4"
+                  >
+                    04
+                  </option>
+                  <option
+                    value="5"
+                  >
+                    05
+                  </option>
+                  <option
+                    value="6"
+                  >
+                    06
+                  </option>
+                  <option
+                    value="7"
+                  >
+                    07
+                  </option>
+                  <option
+                    value="8"
+                  >
+                    08
+                  </option>
+                  <option
+                    value="9"
+        ...
+ ❯ src/__tests__/Scope1FormAssociatedGasVenting.test.jsx:108:24
+    106|
+    107|     await waitFor(() => {
+    108|       expect(api.post).toHaveBeenCalled();
+       |                        ^
+    109|     });
+    110|
+ ❯ runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
+ ❯ checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ❯ Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  01:56:06
+   Duration  6.67s (tests 38%, transform 24%, environment 24%, import 7%, setup 6%, worker 1%)
+
+

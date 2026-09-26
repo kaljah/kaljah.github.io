@@ -1,0 +1,37 @@
+
+The command exited with code 1.
+Output:
+
+ RUN  v5.0.1 C:/Users/samsung/Desktop/H2/new/client
+
+ ❯ src/__tests__/UnloadingForm.test.jsx (7 tests | 1 failed | 6 skipped) 9ms
+   ❯ UnloadingForm & API Compendium 2021 Reference Integrity (7)
+     × verifies API Table 6-11 per-well default factors in EmissionFactors catalog 6ms
+     ↓ verifies API Table 6-10 event-based factors in EmissionFactors catalog
+     ↓ renders Tier 1 form and updates well count and unloading type
+     ↓ switches to Tier 2 tab and handles event frequency inputs
+     ↓ switches to Tier 3 tab and renders Equation 6-10 engineering parameters
+     ↓ renders Equation 6-11 parameters when automated plunger lift is selected
+     ↓ renders Equation 6-3 volume-based decompression method
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/UnloadingForm.test.jsx > UnloadingForm & API Compendium 2021 Reference Integrity > verifies API Table 6-11 per-well default factors in EmissionFactors catalog
+AssertionError: expected undefined to be defined
+ ❯ src/__tests__/UnloadingForm.test.jsx:10:21
+      8|   it("verifies API Table 6-11 per-well default factors in EmissionFact…
+      9|     const plunger = API_FACTORS["UnloadPlunger"];
+     10|     expect(plunger).toBeDefined();
+       |                     ^
+     11|     expect(plunger.ch4).toBe(1.774);
+     12|     expect(plunger.unit).toBe("tonnes CH4/well-yr");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 6 skipped (7)
+   Start at  02:00:49
+   Duration  2.01s (environment 71%, transform 12%, setup 11%, import 4%, worker 1%)
+
+
