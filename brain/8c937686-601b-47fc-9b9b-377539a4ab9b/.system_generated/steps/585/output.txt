@@ -1,0 +1,60 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\Desktop\H2\new\server\calculations\vented.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -2826,4 +2826,54 @@
+ 
+         raise ValueError(f"Unknown tier for Associated Gas Venting: {resolved_tier}")
+ 
++
++# ==============================================================================
++# Re-exports of all API Compendium 2021 Section 6 Modular Calculators
++# ==============================================================================
++from .vented_exploration import (
++    WellTestingCalculator,
++    CoalSeamDrillingCalculator,
++)
++from .vented_production import (
++    WorkoverWithoutFracturingCalculator,
++    CasingGasVentCalculator,
++    PneumaticDeviceCalculator,
++    PneumaticPumpCalculator,
++    GasDehydrationCalculator,
++    AcidGasRemovalCalculator,
++    TankFlashingCalculator,
++    CO2EORVentingCalculator,
++    ProductionNonRoutineVentingCalculator,
++    BlowdownCalculator,
++)
++from .vented_midstream import (
++    GatheringCompressorVentingCalculator,
++    GatheringStorageTankCalculator,
++    GatheringNonRoutineVentingCalculator,
++    ProcessingDehydrationCalculator,
++    ProcessingBlanketedTankCalculator,
++    ProcessingNonRoutineCalculator,
++    TransmissionCompressorCalculator,
++    TransmissionNonRoutineCalculator,
++)
++from .vented_lng_distribution import (
++    LNGVentingCalculator,
++    DistributionPneumaticsCalculator,
++    DistributionNonRoutineCalculator,
++)
++from .vented_ccus_transport import (
++    CCUSVentingCalculator,
++    CrudeTransportLossesCalculator,
++)
++from .vented_downstream import (
++    RefiningCatalystRegenCalculator,
++    RefiningCokerCalculator,
++    RefiningHydrogenPlantCalculator,
++    AsphaltBlowingCalculator,
++    RefiningCokeCalciningCalculator,
++    SulfurRecoveryTailGasCalculator,
++    PetrochemicalManufacturingCalculator,
++    FireSuppressionCalculator,
++)
++
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

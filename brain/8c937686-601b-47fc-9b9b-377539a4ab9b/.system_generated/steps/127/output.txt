@@ -1,0 +1,169 @@
+
+The command exited with code 0.
+Output:
+<truncated 1 lines>
+Emission 
+Factor a, b, c 
+(scf CH4/
+workover)
+Uncertainty d
+(±%)
+Methane 
+Emission 
+Factor, 
+Converted to 
+Tonnes Basis
+(tonnes CH4/
+workover)
+Methane 
+Content 
+Basis of 
+Factor
+(mole %)
+Whole Gas 
+Emission 
+Factor
+(scf gas/
+workover)
+Gas well 
+workovers 2,454 924 0.0470 78.8 3,114
+Oil well 
+workovers 96 Not available 0.0018 78.8 122
+Footnotes and Sources:
+a Factors taken from: Tilkicioglu, B.H. Annual Methane Emission Estimate of the Natural Gas Systems in the United States, Phase II, Pipeline 
+Systems Incorporated (PSI), September 1990. An EPA Gas STAR paper on installing plunger lift systems in gas wells presents a gas well 
+workover emission factor of 2000 scf CH4/workover, which equates to 0.0384 tonnes CH4/workover (EPA Gas STAR, Lessons Learned -
+Installing Plunger Lift Systems in Gas Wells, October 2003 (EPA, 2003a). Gas STAR also reports that the number of gas well workovers 
+conducted in a year typically ranges from 1 to 15.
+b The methane content for the original values are not given, as per source (Shires, T.M., and M.R. Harrison. Methane Emissions from the Natural 
+Gas Industry, Volume 6: Vented and Combustion Source Summary, Final Report, GRI-94/0257.23 and EPA-600/R-96-080f, Gas Research 
+Institute and U.S. Environmental Protection Agency, June 1996).
+c Note that EPA’s Subpart W (EPA, 2019a) uses the same gas well workover emission factor (2,454 scf CH4/workover), converted to whole gas, 
+with a methane content basis of 78.8 mol%.
+d Uncertainty based on a 95% confidence interval.
+An example calculation is given in Exhibit 6-7 below that illustrates the use of the workover 
+emission factors.
+EXHIBIT 6-7: Sample Calculation for Workovers without Hydraulic Fracturing
+INPUT DATA:
+An operator performed 10 workovers without hydraulic fracturing in a calendar year on various 
+gas wells in a given production area. There is no flare in place so any gas not captured to sales is 
+assumed to vent to atmosphere. Gas composition is estimated to contain 70 mole % CH4, and 9 
+mole % CO2. Calculate the CH4 and CO2 emissions from the vented gas from the workovers per 
+year.
+CALCULATION METHODOLOGY:
+To calculate the vented CH4 and CO2 emissions, the emission factor from Table 6-9 can be used. 
+The methane emission factor can be used to calculate methane emissions, while the whole gas 
+factor can be used for CO2. 
+=== PAGE 265 ===
+Section 6. Process and Vented Emission Estimation Methods 
+6-23 November 2021
+Gas well workovers without hydraulic fracturing:
+ECH4
+=
+10 workovers
+year
+×
+3,114 scf gas
+workover × 
+0.70 scf CH4
+1 scf gas × 
+lbmole CH4
+379.3 scf CH4
+× 
+16 lb CH4
+lbmole CH4
+× 
+tonne 
+2204.62 lb CH4
+ECH4
+= 0.42 tonnes CH4
+/yr
+ECO2
+=
+10 workovers
+year
+× 
+3,114 scf gas
+workover × 
+0.09 scf CO2
+1 scf gas × 
+lbmole CO2
+379.3 scf CO2
+× 
+44 lb CO2
+lbmole CO2
+× 
+tonne 
+2204.62 lb CO2
+ECO2
+= 0.15 tonnes CO2
+/yr
+6.3.3 Workovers with Hydraulic Fracturing 
+For workovers with hydraulic fracturing, injected gas, water, oil, and proppant are used to re￾fracture and open new fractures in existing low permeability gas reservoirs. During flowback 
+from a well workover activity with hydraulic fracturing, gas entrained in the flowback fluids and 
+produced gas may be vented to the atmosphere, recovered or flared.
+Emissions can be estimated from workovers with hydraulic fracturing similar to the estimation 
+methods described in Section 6.2.3.1 for completions with hydraulic fracturing. Direct 
+measurement is considered the most accurate approach (refer to methods in Section 6.2.3.1); 
+however, when this is not practical or feasible, emission factors listed in Table 6-5 may be 
+applied. These emission factors, cited from the GHGI and calculated using 2017 year-specific 
+GHGRP Subpart W data, are also applicable to workovers with hydraulic fracturing. 
+6.3.4 Well Venting from Liquids Unloading 
+Well unloading (liquids unloading) are sometimes performed to remove liquids that accumulate 
+in the wellbore. Throughout the lifecycle of a well, specific conditions may lead to liquid 
+accumulation, such as a decrease in gas velocity in the well, a decrease in reservoir pressure, or 
+changes in liquid to gas ratios (Allen, 2014). Conditions that lead to liquid accumulation can 
+inhibit the flow of gas to the sales line and therein cause a decline in production. 
+Certain methods of well unloading can result in gas venting which includes well unloading with 
+and without plunger lift systems. 
+=== PAGE 266 ===
+Section 6. Process and Vented Emission Estimation Methods 
+6-24 November 2021
+ Non-plunger lift well unloading typically occurs manually, in which an operator diverts 
+the gas to an atmospheric tank (blowdown tank) and away from the production separator 
+that operates at higher pressure. The increased pressure gradient allows for higher gas 
+flow, which lifts the liquid out of the well. Gas entrained in the liquid is vented to 
+atmosphere once it reaches the atmospheric tank. 
+ Well unloading with plunger lifts can also be conducted manually or in an automated 
+mode. With a plunger lift system, the well is shut-in and the plunger is released, allowing 
+the plunger to drop to the bottom of the well. The well is then re-opened, and gas pushes 
+the plunger to the top of the well with a slug of liquid on top. Certain cases can be void of 
+GHG emissions, if the plunger reaches the top of the wellbore and gas and liquid are 
+routed to the production separator. However, if the plunger does not reach the top of the 
+well as anticipated, flow may be directed to an atmospheric tank (i.e., ensuing an 
+increased pressure gradient) which will lift the plunger out of the wellbore.
+The quantity of gas vented from well unloading depends on the duration of the unloading event, 
+which can be calculated based on field conditions (formation, depth, etc.). Direct measurements 
+are considered the most accurate method for quantifying emissions from well unloading. When 
+this is not practical or feasible, an engineering calculation approach is recommended. EPA’s 
+GHGRP, specifically Subpart W for Petroleum and Natural Gas Systems, contains calculation 
+methods for estimating the volumetric emissions of well unloading. EPA’s Subpart W breaks out 
+the equations by type (Equation W-8 for non-plunger systems and Equation W-9 for plunger 
+systems); however, those equations have been integrated in Equation 6-10 below:
+VR = (
+# events
+well-year
+× (0.37×10-3 𝑓𝑡2
+𝑙𝑏 ) × D
+2
+× Depth × P)+ (SFR × (HR - X) × Z) (Equation 6-10)
+where:
+VR = Gas vent rate (scf/well-year);
+D = For plunger lift systems, tubing diameter (inches), for non-plunger systems, 
+casing diameter (inches);
+Depth = For plunger lift systems, tubing depth to plunger bumper (feet); for non￾plunger systems, well depth from top of well or lowest packer to the bottom 
+of the well (feet);
+P = Flow-line pressure (psig);
+SFR = Average flow-line rate of gas for well at standard conditions (scf/hr); 
+HR = Hours that well was left open to atmosphere during unloading event;
+X = Hours for average well unloading. For plunger lift systems, use 0.5, and for 
+non-plunger systems, use 1; and
+Z = If HR < 1.0, then Z is 0, if HR ≥ 1.0, then Z is 1. 
+Note that Equation 6-11 above from EPA’s GHGRP Subpart W calculates CH4 and CO2
+emissions from well liquid unloading on a whole gas volumetric basis. The conversion from 
+whole gas volumetric emissions to CH4 and CO2 mass emissions is described in Equation 6-2.
+An alternative emission estimation method for liquids unloading for wells using automated 
+plunger lift relies on the duration of the venting activity and the gas production rate of the well, 
+which has been determined to be a more accurate measurement approach than the GHGRP 
+Subpart W method (Pasci, et al, 2020). Equation 6-11 below can be used to quantify the vent rate 
+

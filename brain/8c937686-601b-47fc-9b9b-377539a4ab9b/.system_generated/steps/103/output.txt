@@ -1,0 +1,35 @@
+
+The command exited with code 0.
+Output:
+=== AssociatedGasVentingCalculator ===
+  docstring: API GHG Compendium 2021 - Section 6.3.1: Associated Gas Venting
+    Implementation of:
+      - Equation 6-8: Direct vent rate / mass emissions:
+          E_x = VR * F_x * (MW_x / molar_volume_conversi
+  calculate params: ['self', 'tier', 'factor_source', 'oil_production', 'oil_unit', 'basin', 'gor', 'gor_unit', 'venting_duration', 'duration_unit', 'period_duration', 'recovered_gas_volume', 'flared_gas_volume', 'gas_volume_unit', 'vent_rate', 'vent_rate_unit', 'vent_volume', 'vent_volume_unit', 'ch4_content', 'co2_content', 'ef_ch4', 'ef_co2', 'uncertainties', 'gwp_dict', 'control_efficiency', 'kwargs']
+=== BlowdownCalculator ===
+  docstring: API Eq. 6-4: Vessel/Pipeline Blowdown (Depressurization)
+    V_std = V_physical * (P_vessel_abs / P_std) * (T_std / T_vessel_abs) * (1 / Z) * Events
+    Remediates CALC-06 by incorporating exact tempe
+  calculate params: ['self', 'blowdown_volume', 'pressure', 'events', 'ch4_content', 'uncertainties', 'co2_content', 'control_efficiency', 'ef_co2', 'ef_ch4', 'ef_n2o', 'operating_temperature', 'temp_unit', 'press_unit', 'z_factor', 'hhv', 'gwp_dict']
+=== CompletionFlowbackCalculator ===
+  docstring: API Compendium 2021 Section 6.2.3: Well Completions (Onshore).
+    Implements the full 3-tier hierarchy:
+      - Tier 1: API Tables 6-5 & 6-6 default emission factors (Oil vs Gas, Hydraulic Fracturing
+  calculate params: ['self', 'flowback_volume', 'ch4_content', 'control_efficiency', 'uncertainties', 'co2_content', 'ef_co2', 'ef_ch4', 'ef_n2o', 'calculation_method', 'tier', 'well_type', 'fracturing', 'control_type', 'flowback_rate', 'rate_unit', 'flowback_duration_hours', 'daily_production_rate', 'prod_rate_unit', 'vent_duration_hours', 'vent_duration_days', 'liquid_flowback_bbl', 'gas_oil_ratio', 'gas_produced_sales_scf', 'injected_n2_volume', 'injected_n2_unit', 'injected_gas_type', 'initial_flowback_hours', 'disposition', 'frac_vented', 'frac_flared', 'frac_recovered', 'volume_unit', 'hhv', 'gwp_dict', 'events', 'factor_code', 'choke_size_in', 'well_head_pressure']
+=== LiquidsUnloadingCalculator ===
+  docstring: API Compendium 2021 - Section 6.3.4: Well Venting from Liquids Unloading.
+    Supports complete tier hierarchy:
+      - Tier 1: API Table 6-11 per-well default factors (plunger and non-plunger)
+      
+  calculate params: ['self', 'well_depth', 'diameter', 'pressure', 'ch4_content', 'events', 'uncertainties', 'co2_content', 'control_efficiency', 'ef_co2', 'ef_ch4', 'ef_n2o', 'operating_temperature', 'temp_unit', 'depth_unit', 'diameter_unit', 'press_unit', 'z_factor', 'well_count', 'unloading_type', 'tier', 'method', 'calc_method', 'sfr', 'hours_open', 'p_shut', 'p_line', 'p_sep', 'sfr_p', 't_p', 'region', 'frequency_category', 'hhv', 'gwp_dict', 'kwargs']
+=== MudDegassingCalculator ===
+  docstring: 
+  calculate params: ['self', 'wells_or_tier', 'mud_type_or_wells', 'uncertainties', 'ef_ch4', 'gwp_dict', 'tier', 'wells', 'drilling_days', 'mud_type', 'ch4_concentration', 'co2_concentration', 'mud_volume']
+=== PneumaticDeviceCalculator ===
+  docstring: 
+  calculate params: ['self', 'count', 'hours', 'bleed_rate', 'ch4_content', 'uncertainties', 'actuations', 'co2_content', 'gwp_dict']
+=== TankFlashingCalculator ===
+  docstring: 
+  calculate params: ['self', 'throughput', 'gas_oil_ratio', 'ch4_content', 'control_efficiency', 'uncertainties', 'process_type', 'ef_ch4', 'co2_content', 'ef_co2', 'ef_n2o', 'hhv', 'gwp_dict']
+

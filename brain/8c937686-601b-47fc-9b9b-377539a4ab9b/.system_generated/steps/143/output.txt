@@ -1,0 +1,104 @@
+
+The command exited with code 0.
+Output:
+<truncated 2 lines>
+new\server\tests\test_all_process_types_matrix.py:129:            "process_type": "drilling",
+new\server\tests\test_all_process_types_matrix.py:136:        res = dispatcher.dispatch("drilling", payload, factors, 
+{})
+new\server\tests\test_battery_midstream_process_equipment.py:22:    MudDegassingCalculator,
+new\server\tests\test_battery_midstream_process_equipment.py:31:    IndependentMudDegassing,
+new\server\tests\test_battery_midstream_process_equipment.py:46:class TestMudDegassingBattery:
+new\server\tests\test_battery_midstream_process_equipment.py:47:    """Verifies drilling mud degassing calculations 
+against independent reference (Tier 1, Tier 2, Tier 2+)."""
+new\server\tests\test_battery_midstream_process_equipment.py:50:        calc = MudDegassingCalculator()
+new\server\tests\test_battery_midstream_process_equipment.py:53:        ref = 
+IndependentMudDegassing.calculate(tier="tier1", wells=wells, gwp_standard="AR5")
+new\server\tests\test_battery_midstream_process_equipment.py:65:        calc = MudDegassingCalculator()
+new\server\tests\test_battery_midstream_process_equipment.py:66:        days = 30.0  # drilling days
+new\server\tests\test_battery_midstream_process_equipment.py:67:        res = calc.calculate(tier="tier2", 
+drilling_days=days, mud_type=mud_type, gwp_dict=GWP_AR5)
+new\server\tests\test_battery_midstream_process_equipment.py:68:        ref = 
+IndependentMudDegassing.calculate(tier="tier2", drilling_days=days, mud_type=mud_type, gwp_standard="AR5")
+new\server\tests\test_battery_midstream_process_equipment.py:75:        calc = MudDegassingCalculator()
+new\server\tests\test_battery_midstream_process_equipment.py:81:            drilling_days=days,
+new\server\tests\test_battery_midstream_process_equipment.py:87:        ref = IndependentMudDegassing.calculate(
+new\server\tests\test_battery_midstream_process_equipment.py:89:            drilling_days=days,
+new\server\tests\test_independent_differential.py:32:    IndependentMudDegassing,
+new\server\tests\test_numerical_invariants.py:45:    MudDegassingCalculator,
+new\server\tests\test_numerical_invariants.py:179:        assert MudDegassingCalculator().calculate(0, 0.85, 
+{})["total_co2e"] == 0.0
+new\server\tests\test_qfull_api_pipeline.py:506:class TestMudDegassingPipeline:
+new\server\tests\test_qfull_api_pipeline.py:507:    """API Compendium 2021 Drilling Mud Degassing (Tier 1, Tier 2, 
+Tier 2+)."""
+new\server\tests\test_qfull_api_pipeline.py:521:            "process_type": "drilling",
+new\server\tests\test_qfull_api_pipeline.py:536:        20 drilling days  ch4 = 20 * 0.0458 = 0.916 tonnes CH4
+new\server\tests\test_qfull_api_pipeline.py:540:        drilling_days = 20.0
+new\server\tests\test_qfull_api_pipeline.py:542:        expected_ch4 = drilling_days * ef
+new\server\tests\test_qfull_api_pipeline.py:546:            "process_type": "drilling",
+new\server\tests\test_qfull_api_pipeline.py:547:            "drilling_days": drilling_days,
+new\server\tests\test_qfull_api_pipeline.py:548:            "quantity": drilling_days,
+new\server\tests\test_qfull_api_pipeline.py:563:        20 drilling days  ch4 = 20 * 0.0103 = 0.206 tonnes CH4
+new\server\tests\test_qfull_api_pipeline.py:567:        drilling_days = 20.0
+new\server\tests\test_qfull_api_pipeline.py:569:        expected_ch4 = drilling_days * ef
+new\server\tests\test_qfull_api_pipeline.py:573:            "process_type": "drilling",
+new\server\tests\test_qfull_api_pipeline.py:574:            "drilling_days": drilling_days,
+new\server\tests\test_qfull_api_pipeline.py:575:            "quantity": drilling_days,
+new\server\tests\test_qfull_api_pipeline.py:590:        10 drilling days, water-based (0.0458 t/day)
+new\server\tests\test_qfull_api_pipeline.py:596:        drilling_days = 10.0
+new\server\tests\test_qfull_api_pipeline.py:602:        expected_ch4 = drilling_days * ef * (x_ch4 / default_baseline)
+new\server\tests\test_qfull_api_pipeline.py:603:        expected_co2 = drilling_days * ef * (x_co2 / default_baseline) 
+* (44.01 / 16.04)
+new\server\tests\test_qfull_api_pipeline.py:607:            "process_type": "drilling",
+new\server\tests\test_qfull_api_pipeline.py:608:            "drilling_days": drilling_days,
+new\server\tests\test_qfull_api_pipeline.py:609:            "quantity": drilling_days,
+new\server\tests\test_qfull_api_pipeline.py:945:            "process_type": "drilling",
+new\server\tests\test_qfull_boundary_sensitivity.py:94:            "process_type": "drilling", "quantity": 0.0, 
+"unit": "m3",
+new\server\tests\test_qfull_boundary_sensitivity.py:168:                "process_type": "drilling", "quantity": -50.0, 
+"unit": "m3",
+new\server\tests\test_qfull_boundary_sensitivity.py:353:        OAT: Same drilling days, change mud_type: oil_based vs 
+water_based.
+new\server\tests\test_qfull_boundary_sensitivity.py:362:            "process_type": "drilling", "drilling_days": days, 
+"quantity": days, "unit": "days",
+new\server\tests\test_qfull_boundary_sensitivity.py:366:            "process_type": "drilling", "drilling_days": days, 
+"quantity": days, "unit": "days",
+new\server\tests\test_qfull_boundary_sensitivity.py:429:            "process_type": "drilling", "quantity": 1000.0, 
+"unit": "m3",
+new\server\tests\test_qfull_boundary_sensitivity.py:580:            "process_type": "drilling", "quantity": 100.0, 
+"unit": "m3",
+new\server\tests\test_qfull_boundary_sensitivity.py:595:            "process_type": "drilling", "quantity": 500.0, 
+"unit": "m3",
+new\server\tests\test_qfull_unit_conversions.py:51:# TEST CLASS: Drilling Units (Tier 1 wells, Tier 2 days)
+new\server\tests\test_qfull_unit_conversions.py:55:    Verify drilling mud degassing units:
+new\server\tests\test_qfull_unit_conversions.py:65:            "process_type": "drilling",
+new\server\tests\test_qfull_unit_conversions.py:74:        """Reference: 20 drilling days water-based = 20 * 0.0458 = 
+0.916 t CH4."""
+new\server\tests\test_qfull_unit_conversions.py:78:            "process_type": "drilling",
+new\server\tests\test_qfull_unit_conversions.py:80:            "drilling_days": days,
+new\server\tests\test_qfull_unit_conversions.py:89:        """Reference: 20 drilling days oil-based = 20 * 0.0103 = 
+0.206 t CH4."""
+new\server\tests\test_qfull_unit_conversions.py:93:            "process_type": "drilling",
+new\server\tests\test_qfull_unit_conversions.py:95:            "drilling_days": days,
+new\server\tests\test_qfull_validation.py:319:class TestMudDegassing:
+new\server\tests\test_qfull_validation.py:325:            'process_type': 'drilling',
+new\server\tests\test_qfull_validation.py:336:        drilling_days = 15.0
+new\server\tests\test_qfull_validation.py:338:            'process_type': 'drilling',
+new\server\tests\test_qfull_validation.py:339:            'drilling_days': drilling_days,
+new\server\tests\test_qfull_validation.py:340:            'quantity': drilling_days,
+new\server\tests\test_qfull_validation.py:346:        expected_ch4 = drilling_days * 0.0458
+new\server\tests\test_qfull_validation.py:351:        drilling_days = 25.0
+new\server\tests\test_qfull_validation.py:353:            'process_type': 'drilling',
+new\server\tests\test_qfull_validation.py:354:            'drilling_days': drilling_days,
+new\server\tests\test_qfull_validation.py:355:            'quantity': drilling_days,
+new\server\tests\test_qfull_validation.py:361:        expected_ch4 = drilling_days * 0.0103
+new\server\tests\test_qfull_validation.py:366:        drilling_days = 10.0
+new\server\tests\test_qfull_validation.py:368:            'process_type': 'drilling',
+new\server\tests\test_qfull_validation.py:369:            'drilling_days': drilling_days,
+new\server\tests\test_qfull_validation.py:370:            'quantity': drilling_days,
+new\server\tests\test_qfull_validation.py:378:        expected_ch4 = drilling_days * 0.0458 * (0.85 / 0.8385)
+new\server\tests\test_qfull_validation.py:379:        expected_co2 = drilling_days * 0.0458 * (0.02 / 0.8385) * (44.01 
+/ 16.04)
+new\server\tests\test_tier_scope_kpi_numerical.py:24:    MudDegassingCalculator,
+
+
+

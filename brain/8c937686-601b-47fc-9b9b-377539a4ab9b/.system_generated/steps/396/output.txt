@@ -1,0 +1,64 @@
+
+The command exited with code 0.
+Output:
+=== PAGE 362 ===
+ mental Science & Technology, Supplemental Information: Methane Emissions from Natural Gas Compressor 
+Stations in Transmission and Storage Sector: Measurements and Comparisons with the EPA Greenhouse Gas Reporting Program Protocol, 
+2015.
+d Developed from data used for the June 1996 GRI/EPA CH4 emissions study. Emission factors are based on averaging data by site. The average 
+CH4 concentration associated with these emission factors is provided in Table E-4.
+e Based on engineering judgement.
+f URS Corporation. Updated Canadian National Greenhouse Gas Inventory for 1995, Emission Factor Documentation. Technical Memorandum, 
+Final, October 2001.
+An example calculation shown in Exhibit 6-33 illustrates the use of the transmission segment 
+non-routine emissions.
+EXHIBIT 6-33: Sample Calculation for Transmission Non-Routine Related 
+Emissions
+INPUT DATA:
+A gas transmission system has 50 miles of gas transmission lines and two compressor stations. 
+The natural gas in the transmission system has a typical CH4 content and no CO2. Calculate the 
+non-routine emissions, by activity.
+CALCULATION METHODOLOGY:
+The transmission station count and transmission pipeline miles are each multiplied by the 
+appropriate emission factor from Table 6-43. The CH4 emission factors are not corrected by the 
+site CH4 content because the composition is assumed to be consistent with the default emission 
+factor CH4 content. As noted above, the gas for this exhibit does not contain CO2. 
+=== PAGE 363 ===
+ Section 6: Vented and Process Emission Estimation Methods
+6-121
+November 2021
+Transmission station blowdowns:
+ECH4
+=2 stations ×
+54 tonne CH4
+station-yr
+ECH4
+=108 tonnes CH4
+/yr
+Transmission gas pipeline blowdowns:
+ECH4
+=50 miles ×
+0.6135 tonne CH4
+mile-yr
+ECH4
+=31 tonnes CH4
+/yr
+6.7 LNG Operations 
+The liquefied natural gas (LNG) segment includes the following operations, as described in 
+detail in ‘Liquefied Natural Gas (LNG) Operations; Consistent Methodology for Estimating 
+Greenhouse Gas Emissions’ (API, 2015):
+ Gas treatment and liquefaction processes;
+ Storage and loading operations;
+ LNG shipping; and
+ LNG import and export terminals.
+In this section, the key emission sources related to process venting in LNG operations are 
+discussed, and LNG-specific emission factors are provided, where applicable.
+6.7.1 Gas Treatment and Liquefaction Processes 
+Natural gas feedstock to a liquefaction plant may either be raw material from dedicated gas 
+production fields or gas that has already been through some initial processing. Prior to 
+liquefaction, the feed gas is further treated to remove water, sulfur compounds (primarily 
+hydrogen sulfide), and any residual CO2 that might be present. It is also treated to remove other 
+components that could freeze (e.g., benzene) under the low temperatures needed for liquefaction, 
+or that could be harmful (e.g. mercury) to the liquefaction facility. 
+Depending on the feed gas characteristics, LNG op
+

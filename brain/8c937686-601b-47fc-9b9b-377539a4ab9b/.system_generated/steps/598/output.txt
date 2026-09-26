@@ -1,0 +1,23 @@
+Task: 8c937686-601b-47fc-9b9b-377539a4ab9b/task-596
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\8c937686-601b-47fc-9b9b-377539a4ab9b\.system_generated\tasks\task-596.log
+Log output:
+<truncated 20 lines>
+=1, well_type="gas", location="offshore")
+        assert abs(res["results"]["ch4"]["value"] - 136.2) < 0.5
+>       assert res["inputs"]["location"] == "offshore"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'location'
+
+new\server\tests\test_vented.py:109: KeyError
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_vented.py::test_offshore_completion_table_6_7 - ...
+=================== 1 failed, 6 passed, 1 warning in 1.43s ====================
+
+Last progress: 2s ago

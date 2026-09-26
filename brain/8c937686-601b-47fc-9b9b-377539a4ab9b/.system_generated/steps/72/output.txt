@@ -1,0 +1,19 @@
+
+The command exited with code 0.
+Output:
+Total pages in compendium: 898
+Page 5: 3.2.3 Process Emissions and Vented Sources ........................................... 3-3
+Page 7: 6.0 PROCESS AND VENTED EMISSIONS ESTIMATION METHODS ...................... 6-1
+Page 7: 6.1 Process and Vented Emission Estimated Methods..................................... 6-1
+Page 11: B.6 Additional Vented Volume Calculation Methodologies ..............................B-29
+Page 11: B.7 Derivation of Vented Emission Factors ....................................................B-34
+Page 12: D.1 �Weathered� Crude and Other Petroleum Product Vented CH and CO2
+Page 15: Considerations for Vented Sources ........................................................... 6-1
+Page 15: Table 6-2. Mud Degassing Vented Methane Emission Factors for Oil and Natural
+Page 15: Table 6-10. Well Unloading Vented Emission Factors for Wells ............................. 27
+Page 15: Table 6-11. Liquid Unloading Vented Emission Factors by Well .......................... 6-28
+Page 15: Table 6-12. Heavy Oil and Crude Bitumen Casing Gas Vented CH4 Emission
+Page 15: Table 6-13. Heavy Oil and Crude Bitumen Casing Gas Vented Methane
+Page 23: Table B-17. Transmission Pipeline Blowdown Vented Emission Factor
+Page 23: Table B�18. Distribution Pipeline Blowdown Vented Emission Factor
+

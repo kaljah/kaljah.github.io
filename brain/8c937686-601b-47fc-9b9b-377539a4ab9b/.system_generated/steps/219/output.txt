@@ -1,0 +1,19 @@
+
+The command exited with code 1.
+Output:
+Traceback (most recent call last):
+  File "<string>", line 7, in <module>
+  File "C:\Users\samsung\anaconda3\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u2264' in position 34: character maps to <undefined>
+Current count of VENTED_FACTORS: 29
+  Well Completion - Gas Well with Hydraulic Fracturing (Uncontrolled Venting)
+  Well Completion - Gas Well with Hydraulic Fracturing (REC with Venting)
+  Well Completion - Oil Well with Hydraulic Fracturing (Uncontrolled Venting)
+  Well Completion - Oil Well with Hydraulic Fracturing (REC with Venting)
+  Well Completion - Gas Well without Hydraulic Fracturing (Vented)
+  Well Completion - Oil Well without Hydraulic Fracturing (Vented)
+  Liquids Unloading - Plunger Lift (Tier 1 Default)
+  Liquids Unloading - Non-Plunger (Tier 1 Default)
+  

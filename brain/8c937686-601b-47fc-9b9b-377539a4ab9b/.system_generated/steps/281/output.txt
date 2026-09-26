@@ -1,0 +1,198 @@
+
+The command exited with code 0.
+Output:
+=== Page 294 ===
+Section 6: Vented and Process Emission Estimation Methods
+6-52
+November 2021
+Figure 6-2. CH4 Emissions from Acid Gas Removal (AGR) Units
+As shown, measurement data of use of simulation software to estimate CH4 emissions from AGR 
+units is the preferred approach when site-specific data is available. API’s AMINECalcTM can be 
+used to estimate CH4 for amine units. Details on this software are available at the following API 
+web address by searching for API Publication Number 4679: http://www.api.org/ (API, 1999).
+Emissions from AGR unit vents routed to a flare or other control device should be estimated 
+using the techniques presented in Section 5.
+In the absence of site-specific data, default emission factors can be used for quantifying CH4 
+emissions. For uncontrolled AGR units, two CH4 emission factors for AGR vents were 
+developed as part of the 1996 GRI/EPA CH4 emissions study (Volume 14, page A-13) based on 
+process simulation results for typical unit operations of a diethanol amine (DEA) unit (Myers, 
+1996). Table 6-19 provides the AGR CH4 emission factor on both a throughput basis and unit 
+basis. The throughput basis should be used over the unit basis factor if the volume of treated gas 
+is known.
+Use test data to estimate 
+CH4 emissions.
+Are direct vent test 
+measurement data 
+available?
+Use simple emission factors 
+in Table 6-19.
+Yes
+No
+Yes
+Use specific computer 
+programs such as API’s 
+AMINECalcTM or process 
+simulator programs if 
+sufficient input data are 
+available.
+No
+Are details about the 
+facility known (such as 
+the sour gas pressure and 
+temperature)?
+Evaluate emissions case-by￾case. See text in this section.
+OR 
+Use material balance 
+approach, Equation 6-17
+Is the AGR an amine￾based system?
+Yes
+No
+=== Page 295 ===
+Section 6: Vented and Process Emission Estimation Methods
+6-53
+November 2021
+Table 6-19. Uncontrolled AGR Methane Emission Factor
+Source
+Methane Emission 
+Factor, Original Units
+Methane Emission Factor a
+, 
+Converted to Tonnes Basis
+Uncertainty b
+(+/- %)
+AGR vent 965 scf CH4/106 scf 
+treated gas c
+0.0185 tonnes CH4/106 scf 
+treated gas
+0.654 tonnes CH4/106 Sm3
+treated gas
+119
+33,794 scfd CH4/AGR 
+unit c
+0.6482 tonnes CH4/day-AGR 
+unit
+125
+Footnotes and Sources:
+a CH4 emission factors converted from scf are based on 60°F and 14.7 psia.
+b Uncertainty is based on a 95% confidence interval converted from the 90% confidence intervals for the data used to develop the original 
+emission factor.
+c Myers, D.B. Methane Emissions from the Natural Gas Industry, Volume 14: Glycol Dehydrators, Final Report, GRI-94/0257.31 and EPA￾600/R-96-080n, Gas Research Institute and U.S. Environmental Protection Agency, June 1996. Based on a diethanolamine (DEA) unit.
+There are other acid gas removal technologies besides amine units, including the Morphysorb® 
+process, Kvaerner Membrane technology, and the Molecular Gate® process, the latter of which 
+involves the use of molecular sieves. These technologies are reported to reduce CH4 emissions, 
+although published emission factors are not available (EPA, 2007a).
+An example calculation for AGR CH4 emissions is given in Exhibit 6-16, based on the emission 
+factors in Table 6-19.
+EXHIBIT 6-16: Sample Calculation for AGR Vent Emissions
+INPUT DATA:
+A production facility has one amine-based AGR unit that vents to atmosphere. The treated gas 
+throughput of the AGR unit is not known. The facility operates continuously throughout the year 
+(8,760 hours/year). Calculate the CH4 emissions.
+CALCULATION METHODOLOGY:
+The AGR unit-based CH4 emission factor from Table 6-19 is multiplied by the number of AGR 
+units and converted from a daily basis to an annual basis. 
+=== Page 296 ===
+Section 6: Vented and Process Emission Estimation Methods
+6-54
+November 2021 4
+4
+4
+CH
+CH 4
+0.6482 tonne CH 365 day E = (1 AGR) × ×
+day-AGR yr
+E = 236.6 tonnes CH /yr
+Note that the treated gas throughput-based CH4 emission factor could have been used instead of 
+the unit-based factor if the AGR throughput data had been available.
+Carbon Dioxide Emissions
+Sour gas processing by acid gas removal or sulfur recovery units can directly vent the CO2
+removed from the sour gas stream to the atmosphere or capture the CO2 for other uses, such as 
+enhanced oil recovery. For systems that vent the waste CO2 (for example, amine unit regenerator 
+vents), emissions can be estimated by material balance using the known throughput and CO2
+concentrations of the inlet and outlet gas streams as shown in the following equation (CAPP, 
+2003). 
+CO2
+2 2
+sour sweet
+Volume Volume 44 E CO mole% CO mole%
+time time molar volume conversion
+    
+         
+    
+(Equation 6-18)
+where:
+E
+2
+CO = Mass emissions of CO2 per year (in pounds or kg);
+Volume = Volume of the sour and sweet gas (in scf or Sm3 at STP conditions);
+sour = Refers to the untreated sour inlet raw gas. Acid gas is typically 
+comprised of CO2 and H2S;
+sweet = Refers to the treated gas after the H2S and CO2 have been removed 
+(typically sales gas or pipeline quality gas);
+CO2 mole% = Molar (or volume) concentrations of the sour and sweet gas. If the sweet 
+gas concentration is unknown, 0% can be applied as a simplifying 
+assumption, recognizing that this will likely overestimate emissions. 
+Note, pipeline gas specifications typically limit CO2 concentrations to 
+2% or less; and
+Molar volume 
+conversion
+= Conversion from molar volume to mass (379.3 scf/lbmole or 23.685 
+Sm3
+/kgmole).
+The accuracy of Equation 6-17 is highly dependent on the consistency of the CO2 concentration 
+in the inlet raw gas and sales gas streams. To improve the accuracy of this method, a volume 
+weighted-average CO2 concentration should be determined (especially for the inlet gas) using a 
+range of gas sample data.
+=== Page 297 ===
+Section 6: Vented and Process Emission Estimation Methods
+6-55
+November 2021
+Note that technologies such as the Molecular Gate® process that remove CO2 and route the CO2-
+rich tail gas stream to the fuel gas system must properly account for the CO2 emissions. This 
+would involve using the above material balance approach to account for the CO2 emissions from 
+the acid gas treatment that should be combined with CO2 formed from combustion that is 
+estimated using the approaches in Section 4 (i.e., the CO2 removed by the acid gas treatment 
+process gets emitted from the combustion stack with the CO2 formed from combustion). Care 
+should be taken not to double count these emissions. If the tail gas stream from the Molecular 
+Gate® process is vented, the material balance approach should properly account for the vented 
+CO2 emissions. 
+Estimating vented CO2 emissions from sour gas processing is demonstrated in Exhibit 6-17.
+EXHIBIT 6-17: Sample Calculation for CO2 Venting Emissions from Sour Gas 
+Processing
+INPUT DATA:
+An amine unit has the following operating parameters:
+Unit inlet stream: 150,000 106 scf/yr sour gas processed with 3.0 mole % CO2
+Unit outlet stream: 148,500 106 scf/yr sweet gas produced with 2.0 mole % CO2
+Calculate the vented CO2 emissions.
+CALCULATION METHODOLOGY:
+The CO2 vented emissions are estimated using the material balance from Equation 6-18. 
+2
+2
+66
+22
+CO
+22
+22
+CO
+150,000×10 scf gas 0.030 scf CO 148,500×10 scf gas 0.020 scf CO E = × - ×
+yr scf gas yr scf gas
+lbmole CO 44 lb CO tonnes
+ × × × 
+379.3 scf CO lbmole CO 2204.62 lb
+E = 80,506 tonnes/yr
+   
+   
+   
+2
+ CO
+CH4 emissions are estimated by applying the emission factor from Table 6-19.
+4
+4
+6
+4
+CH 6
+CH 4
+150,000×10 scf gas 0.0185 tonnes CH E = ×
+yr 10 scf gas
+E = 2,775 tonnes/yr CH
+

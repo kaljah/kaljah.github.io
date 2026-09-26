@@ -1,0 +1,50 @@
+
+The command exited with code 0.
+Output:
+ash gas contains gases besides CH4 and thus the RS must be multiplied by the tank vent CH4
+content. The tank vent CH4 content is not known, so the recommended default concentration of 
+27.4 volume % CH4 will be used. The molar volume conversion is included below, taken from 
+Table 3-3. Thus, the CH4 emissions are estimated as:
+4
+4
+33
+4
+CH 33
+4
+4
+CH 4
+1.66 m gas 71.70 m oil 365 day kgmole gas 27.4 kgmole CH E = × × × ×
+m crude day yr 23.685 m 100 kgmole gas
+16 kg CH tonne
+ × ×
+kgmole CH 1000 kg
+E = 8.04 tonnes CH /yr
+Standing Correlation (Correlation Equation Approach)
+The Canadian Association of Petroleum Producers, Estimation of Flaring and Venting Volumes 
+from Upstream Oil and Gas Facilities, 2002 document (CAPP, 2002), includes a standing 
+correlation to estimate flashing losses. This method may be used for estimating flashing losses 
+from crude oil and condensate. This correlation is shown in Equation 6-22.
+GOR = SGflash gas × (
+P
+519.7 × 10yg
+)
+1.204
+(Equation 6-22)
+where:
+GOR = Ratio of flash gas production to oil produced, in m3
+/m3 oil;
+SGflash gas = Specific gravity of the solution gas with respect to air, where air = 1, 
+dimensionless8F
+9
+. A suggested default value for SGflash gas is 0.90 (OK DEQ, 
+2016);
+P = Absolute pressure in vessel of interest, kPa;
+yg =
+oil
+1.769 1.225 0.00164 T￾SG
+
+;
+ 
+9 This value can also be calculated as ratio of molecular weight of solution gas to the molecular weight of air 
+(CAPP, 2002). 
+

@@ -1,0 +1,80 @@
+
+The command exited with code 0.
+Output:
+=== PAGE 346 ===
+ Section 6: Vented and Process Emission Estimation Methods
+6-104
+November 2021
+assumed negligible due to the low solubility of CO2 in glycol.
+ECO2pump
+= 32.26 tonnes
+CH4
+yr
+×
+tonne mole CH4
+16 tonne CH4
+×
+tonne mole gas
+0.90 tonne mole CH4
+×
+0.05 tonne mole CO2
+tonne mole gas
+×
+44 tonne CO2
+tonne mole CO2
+ECO2, pump= 4.93 tonnes CO2
+/yr
+6.5.2.2 Acid Gas Removal/Sulfur Recovery Units 
+Emissions of both CH4 and CO2 from AGRs/SRUs located in the gas processing segment can be 
+estimated using the same estimation methodologies and emission factors as those described in 
+Section 6.3.8.4 for production. See Equation 6-17 and Equation 6-18, as well as emission factors 
+listed in Table 6-19. 
+The table below provides the default emission factor for acid gas removal at a gas processing 
+plant taken from EPA’s GHGI, which references the 1996 EPA/GRI study (Shires, 1996). 
+42,762.9 kg CH4/plant-year (Original Units) a,b
+42.8 tonnes CH4/plant-year
+2.57 x 106 scf whole gas/plant-year c
+Footnotes and Sources:
+a U.S. Environmental Protection Agency (EPA), Inventory of U.S. Greenhouse Gas Emissions and Sinks 1990-2017 (GHGI), 2019.
+b Uncertainty is not specified for this value.
+c Converted to whole gas assuming 86.8 mole % CH4 composition in gas.
+6.5.3 Storage Tank Emissions 
+In the gas processing segment, any vented emissions of CH4 from storage tanks are generally 
+associated with tanks that use natural gas as a blanket gas for safety reasons, or working
+=== PAGE 348 ===
+ Section 6: Vented and Process Emission Estimation Methods
+6-106
+November 2021
+emptying of the tank occurs while simultaneously filling during some periods of the year. The 
+blanket natural gas contains approximately 82 mole % CH4 and 1 mole % CO2. The estimated 
+annual temperature in the tank vapor space is 75°F. Calculate the CH4 and CO2 emissions.
+CALCULATION METHODOLOGY:
+Equation 6-2 is used to estimate the annual emissions. However, the VR term in the equation is 
+on a standard ft3 basis (scf), and the annual volumetric rate is on an actual ft3 basis at 75°F (acf), 
+so the actual vent rate must be converted to standard conditions of 1 atm and 60°F. 
+The actual volumetric displacement rate of 32,000 bbl/yr is used instead of the annual liquid 
+throughput of 36,500 bbl/yr since it represents the actual natural gas displaced. First, the 
+volumetric displacement is converted from barrels to actual cubic feet.
+3
+32,000 bbl 42 gal ft 3 V = × × =179,667 ft (at 75°F)
+yr bbl 7.4805 gal
+Next, Equation 3-5 is applied to convert from acf to scf (note that the actual and standard 
+conditions are both at 1 atm). Also note that the equation requires absolute temperatures (°R). 
+3
+scf
+(1 atm) (60 459.7) V (179,667 ft ) =174,627 scf (at 60 F and 1 atm)
+(1 atm) (75 459.7)
+ 
+  
+  
+Lastly, Equation 6-2 is used to calculate the emissions. 
+CH4 Emissions:
+4
+4
+4 4 4
+CH
+44
+CH 4
+174,627 scf 0.82 scf CH 16 lb CH /lbmole CH tonnes E
+yr scf gas 379.3 scf 
+

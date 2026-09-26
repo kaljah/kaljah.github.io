@@ -1,0 +1,441 @@
+
+The command exited with code 0.
+Output:
+<truncated 1 lines>
+
+tonnes/year);
+
+EFCO2
+
+= Default CO2 emission factor for petroleum coke from Table 4-3 (tonnes 
+
+CO2/MMBtu); and
+
+EFN2O = Default N2O emission factor for petroleum coke” from Table 4-5 (tonnes 
+
+N2O /MMBtu).
+=== PAGE 387 ===
+Section 6: Vented and Process Emission Estimation Methods
+
+6-145
+
+November 2021
+
+EXHIBIT 6-38: Sample Calculation for FCCU Process CO2 Calculation Approach
+
+INPUT DATA:
+
+Assume a 6.36103 m3 per day catalytic cracking unit has a coke burn rate of 119,750 tonnes per 
+
+year and a blower air capacity of 2150 m3
+
+/min. Assume also that the carbon fraction of the coke is 
+
+0.93 based on site-specific data; the flue gas concentrations are 11% CO2 and 9% CO exiting the 
+
+regenerator; and that a CO boiler is used for control of that stream. Supplemental firing with 
+
+natural gas is also employed (100106 Btu/hr, higher heating value basis). Calculate the 
+
+regenerator CO2 emissions using Equation 6-34, Equation 6-36, and Equation 6-37. Calculate the 
+
+emissions from supplemental firing of natural gas. Summarize the FCCU emissions.
+
+CALCULATION METHODOLOGY:
+
+1. Calculate the CO2 emissions using Equation 6-34. Using Equation 6-34, the estimated CO2
+
+emissions from the regenerator would be:
+
+2
+
+2
+
+2
+
+CO
+
+CO 2
+
+tonnes Coke Burned 0.93 tonnes C 44 tonnes CO E = 119,750 × ×
+
+year tonnes Coke 12 tonnes C
+
+E = 408,348 tonnes CO /year
+
+2. Calculate the CO2 emissions using Equation 6-36. Using the air rate in Equation 6-36, the CO2
+
+emission estimate is:
+
+ 
+
+2
+
+2
+
+CO
+
+CO
+
+0.2982 kg - min 2,150 dscm 44 tonne 8760 hr × × 11% + 9% × × ×
+
+hr - dscm % min 12 1,000 kg yr
+
+411,862 tonnes CO /yr 2
+
+E=
+
+E = 
+
+
+
+ 
+=== PAGE 388 ===
+Section 6: Vented and Process Emission Estimation Methods
+
+6-146
+
+November 2021
+
+EXHIBIT 6-38: Sample Calculation for FCCU Process Calculation Approach, 
+
+continued
+
+3. Calculate the CO2 emissions using Equation 6.-37. Using the air rate in Equation 6-37 yields:
+
+2
+
+2
+
+33 33
+
+2 2 2 2
+
+CO 3 3 3 3
+
+22
+
+CO 2
+
+2150 m 0.11 m CO 0.09 m CO m CO 44 kg CO /kgmole CO E = × + × ×
+
+min m gas m gas m CO 23.685 m CO /kgmole CO
+
+525,600 min tonnes
+
+ × ×
+
+year 1000 kg
+
+E =419,859 tonnes CO /year
+
+  
+
+4. Calculate the emissions from supplemental natural gas firing. The emissions from the 
+
+supplemental firing are in addition to the CO2 emissions from the FCCU regenerator. Emissions 
+
+from the supplemental firing of natural gas are estimated using the approaches presented in 
+
+Section 5. The CO2 emission factor was taken from Table 4-3 for pipeline natural gas. The CH4
+
+and N2O emission factors were taken from Table 4-7 for natural gas-fired boilers.
+
+2
+
+2
+
+6
+
+2
+
+CO 6
+
+CO 2
+
+100 10 Btu 0.0531 tonne CO 8760 hr E
+
+hr 10 Btu yr
+
+E 46,516 tonnes CO / yr
+
+
+
+  
+
+
+
+1)
+
+4
+
+4
+
+6 -6
+
+4
+
+CH 6
+
+CH 4
+
+100 10 Btu 1.0 10 tonne CH 8760 hr E
+
+hr 10 Btu yr
+
+E 0.88 tonnes CH / yr
+
+ 
+
+  
+
+
+
+2
+
+2
+
+6 -7
+
+2
+
+NO 6
+
+N O 2
+
+100 10 Btu 9.8 10 tonne N O 8760 hr E
+
+hr 10 Btu yr
+
+E 0.86 tonnes N O / yr
+
+ 
+
+  
+
+
+=== PAGE 389 ===
+Section 6: Vented and Process Emission Estimation Methods
+
+6-147
+
+November 2021
+
+EXHIBIT 6-38: Sample Calculation for FCCU Process Calculation Approach, 
+
+continued
+
+5. Summarize the FCCU emissions. The emissions from the FCCU are summarized below. 
+
+Coke burn rate 
+
+approach 
+
+(Equation 6-34)
+
+Contribution CO2 CH4 N2O
+
+Coke Burn 408,348 12.04 2.40
+
+CO Boiler 46,516 0.88 0.86
+
+Total 454,149 0.88 0.86
+
+“K1, K2, K3” approach 
+
+(Equation 6-35),
+
+Contribution CO2 CH4 N2O
+
+Coke Burn 411,862 12.14 2.45
+
+CO Boiler 46,516 0.88 0.86
+
+Total 458,663 0.88 0.86
+
+Air blower rate 
+
+approach 
+
+(Equation 6-36)
+
+Contribution CO2 CH4 N2O
+
+Coke Burn 419,859 12.38 2.47
+
+CO Boiler 46,516 0.88 0.86
+
+Total 466,660 0.88 0.86
+
+6.11.1.2 Other Catalyst Regenerator 
+
+A variety of other refinery processes employ catalysts that require regeneration (e.g., naphtha 
+
+reformers, hydroprocessing units). Most of these processes use intermittent regeneration, 
+
+although a few have continuous regeneration systems. The primary source of emissions is from 
+
+the combustion of coke on the spent catalyst that results in CO2 emissions. The CO2 emissions 
+
+from intermittent regeneration are not likely to be significant when compared to combustion 
+
+sources and continuous regeneration.
+
+Emissions can be calculated using similar methods listed for the FCCU. Additionally, using the 
+
+fundamental principle of complete stoichiometric combustion, CO2 emissions from continuous 
+
+or intermittent catalyst regeneration can be estimated by Equation 6-40 or Equation 6-41, 
+
+respectively. Both equations can also be used for catalytic reformer units (CRUs). Emissions 
+
+from all other coke combustion on spent catalysts can be calculated assuming complete 
+
+conversion to CO2. A default carbon content for petroleum coke is presented in Table 3-8; all 
+
+other coke types can be assumed to be 100% carbon.
+
+  2
+
+2
+
+CO spent regen
+
+44 mass units CO /mole E CRR H FC - FC
+
+12 mass units C/mole
+
+   
+
+(Equation 6-40)
+=== PAGE 390 ===
+Section 6: Vented and Process Emission Estimation Methods
+
+6-148
+
+November 2021
+
+where:
+
+ECO2
+
+= Emissions of CO2 in tonnes per year;
+
+CRR = Catalyst regeneration rate in tonnes per hour;
+
+H = Hours that the regenerator was operational during the year (hrs/yr);
+
+FCspent = Weight fraction of carbon on spent catalyst; and
+
+FCregen = Weight fraction of carbon on regenerated catalyst.
+
+In the absence of site specific data, FCregen can be assumed to be zero, recognizing that this will 
+
+overestimate emissions. This calculation is illustrated in Exhibit 6-39.
+
+EXHIBIT 6-39: Sample Calculation for Other Continuous Catalyst Regeneration
+
+INPUT DATA:
+
+A catalytic reformer operates with a catalyst circulation rate of 10 tonnes per hour and with 4 
+
+wt% carbon on the spent catalyst. The unit operates for 8,280 hours per year. Calculate the 
+
+CO2 emissions.
+
+CALCULATION METHODOLOGY:
+
+Using Equation 6-40, the estimated CO2 emissions are calculated as follows:
+
+2
+
+2
+
+2
+
+CO
+
+CO 2
+
+10 tonnes catalyst 8280 hr 0.04 tonne C 44 tonne CO /tonne mole E = × × ×
+
+hr yr tonne catalyst 12 tonne C/tonne mole
+
+E =12,144 tonnes CO /yr
+
+Similarly, the catalyst regeneration rate (CRR) for an intermittent regeneration operation consists 
+
+of the catalyst inventory in tonnes multiplied by the number of regeneration events per year. 
+
+  2
+
+2
+
+CO spent regen
+
+44 mass units CO /mole E CRR N FC - FC
+
+12 mass units C/mole
+
+   
+
+(Equation 6-41)
+
+where:
+
+ECO2
+
+= Emissions of CO2 in tonnes per year;
+
+N = Number of regeneration cycles per year;
+
+CRR = Catalyst regeneration rate in tonnes per cycle;
+
+FCspent = Weight fraction of carbon on spent catalyst; and
+
+FCregen = Weight fraction of carbon on regenerated catalyst.
+=== PAGE 391 ===
+Section 6: Vented and Process Emission Estimation Methods
+
+6-149
+
+November 2021
+
+An example of this calculation is presented in Exhibit 6-40.
+
+EXHIBIT 6-40: Sample Calculation for Other Intermittent Catalyst Regeneration
+
+INPUT DATA:
+
+A hydrotreater has a catalyst inventory of 1000 tonnes and the carbon on the spent catalyst is 7 
+
+weight percent (or 0.07 weight fraction). The catalyst is regenerated twice a year, on average. 
+
+Calculate the CO2 emissions.
+
+CALCULATION METHODOLOGY:
+
+The estimated CO2 emissions are calculated using Equation 6-41.
+
+2
+
+2
+
+2
+
+CO
+
+CO 2
+
+1,000 tonnes catalyst 2 regenerations 0.07 tonne C 44 tonne CO /tonne mole E = × × ×
+
+regeneration yr tonne catalyst 12 tonne C/tonne mole
+
+E = 513 tonnes CO /yr
+
+The same methodology to derive CH4 and N2O emissions from the FCCU can be used for other 
+
+catalyst regeneration processes. Refer to Equation 6-38 and Equation 6-39.
+
+
+

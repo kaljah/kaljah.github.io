@@ -1,0 +1,309 @@
+
+The command exited with code 0.
+Output:
+<truncated 531 lines>
+
+accounted for in other combustion systems, such as flares, oxidizers, or fuel gas systems, to 
+
+avoid double counting emissions. 
+
+ECO2i= {∑ (FSi,k × CFSk)-[PPi × CPi+ ∑j(SPi,j × SCj)] k
+
+} × 
+
+44
+
+12
+
+(Equation 6-55)
+
+where:
+
+ECO2i = CO2 emissions from production of petrochemical i, tonnes;
+
+FSi,k = Annual consumption of feedstock k for production of petrochemical i, 
+
+tonnes;
+
+CFSk = Carbon content of feedstock k, tonnes C/tonne feedstock; 
+
+Ppi = Annual production of primary petrochemical product i, tonnes;
+
+CPi = Carbon content of primary petrochemical product i, tonnes C/tonne 
+
+product;
+
+SPi,j = Annual amount of secondary product j produced from production 
+
+process for petrochemical i, tonnes (if applicable); and
+
+SCj = Carbon content of secondary product j, tonnes C/tonne product.
+
+Additionally, nitrous oxide (N2O) emissions result from two additional chemical processes: 
+
+ Adipic acid - Adipic acid is a dicarboxylic acid manufactured from a 
+
+cyclohexanone/cyclohexanol mixture that is oxidized. Nitrous oxide is generated as an 
+
+unintended by-product of the nitric acid oxidation stage. It is used in the manufacture of 
+
+synthetic fibers, coatings, plastics, urethane foams, elastomers, and synthetic lubricants. 
+
+Food-grade adipic acid is used as a flavor additive.
+
+ Nitric acid production - Nitrous oxide is generated as a by-product of nitric acid oxidation 
+
+in the second stage of a two-stage production process. Nitric acid (HNO3) is an inorganic 
+
+compound used primarily to make synthetic commercial fertilizers. It is typically produced 
+
+by the catalytic oxidation of ammonia, where N2O is formed as a by-product.
+
+In the absence of site-specific data, GHG emissions could be calculated through the use of default 
+
+emission factors, which are based on EPA’s annual national GHG inventory (EPA, 2019b) and/or 
+
+the Intergovernmental Panel on Climate Change (IPCC, 201914F
+
+15). Table 6-53 provides average 
+
+ 
+
+15 Note that the 2019 refinement of the IPCC 2006 guidelines indicate that no changes were made from the 2006 IPCC version of the methods 
+
+and emission factors for the petrochemical processes.
+=== PAGE 409 ===
+Section 6: Vented and Process Emission Estimation Methods
+
+6-167
+
+November 2021
+
+emission factors for each of the petrochemical processes described above based on the production 
+
+rate (EPA, 2019b). The CO2 and CH4 emission factors are based on material balances of the 
+
+petrochemical processes. As previously stated, care should be taken to avoid double counting CO2
+
+emissions from process venting with combustion emission sources. The N2O emission factors 
+
+account for the use of N2O abatement technologies, such as non-selective catalytic reduction 
+
+(NSCR) and are derived from IPCC 2006, Volume 3. Emissions are estimated by multiplying the 
+
+chemical production rate by the appropriate emission factor based on the process type, and for 
+
+N2O, the abatement method. 
+
+Table 6-53. Chemical Production Emission Factors
+
+Chemical Production 
+
+Process
+
+Emission Factor, 
+
+Original units
+
+Emission Factor, 
+
+Converted Units
+
+CH4 Emission Factors
+
+Acrylonitrilea 0.18 kg CH4/tonne produced 0.00018 tonne CH4/tonne 
+
+produced
+
+Carbon Blackb
+
+- without abatement 28.7 kg CH4/tonne produced 0.0287 tonne CH4/tonne produced
+
+- with thermal abatement 0.06 kg CH4/tonne produced 0.00006 tonne CH4/tonne 
+
+produced
+
+Ethyleneb
+
+- ethane feedstock 6 kg CH4/tonne produced 0.006 tonne CH4/tonne produced 
+
+- all other feedstocks 
+
+(other than ethane)
+
+3 kg CH4/tonne produced 0.003 tonne CH4/tonne produced 
+
+Ethylene Oxideb
+
+- without abatement 1.79 kg CH4/tonne produced 0.00179 tonne CH4/tonne 
+
+produced
+
+- with thermal abatement 0.79 kg CH4/tonne produced 0.00079 tonne CH4/tonne 
+
+produced
+
+Methanola 2.3 kg CH4/tonne produced 0.0023 tonne CH4/tonne produced
+
+N2O Emission Factors
+
+Nitric acidb
+
+- with NSCR 2 kg N2O/tonne produced 0.002 tonne N2O/tonne produced
+
+- without NSCRc 9 kg N2O/tonne produced 0.009 tonne N2O/tonne produced
+
+Adipic acidb
+
+- with catalyic abatementd 0.053 kg N2O/kg produced 0.053 tonne N2O/tonne produced
+
+- with thermal abatemente 0.013 kg N2O/kg produced 0.013 tonne N2O/tonne produced
+
+- without abatement 0.3 kg N2O/kg produced 0.3 tonne N2O/tonne produced
+
+CO2 Emission Factors
+=== PAGE 410 ===
+Section 6: Vented and Process Emission Estimation Methods
+
+6-168
+
+November 2021
+
+Chemical Production 
+
+Process
+
+Emission Factor, 
+
+Original units
+
+Emission Factor, 
+
+Converted Units
+
+Acrylonitrilea 1.00 tonne CO2/tonne 
+
+produced
+
+1.00 tonne CO2/tonne produced
+
+Carbon Blacka 2.63 tonne CO2/tonne 
+
+produced
+
+2.63 tonne CO2/tonne produced
+
+Ethylenea 0.77 tonne CO2/tonne 
+
+produced
+
+0.77 tonne CO2/tonne produced
+
+Ethylene Dicloridea 0.041 tonne CO2/tonne 
+
+produced
+
+0.041 tonne CO2/tonne produced
+
+Ethylene Oxidea 0.46 tonne CO2/tonne 
+
+produced
+
+0.46 tonne CO2/tonne produced
+
+Methanola 0.67 tonne CO2/tonne 
+
+produced
+
+0.67 tonne CO2/tonne produced
+
+Footnotes and Sources: 
+
+a
+
+ U.S. Environmental Protection Agency (EPA). Inventory of U.S. Greenhouse Gas Emissions and Sinks: 1990-2017, April 2019, pg 4-
+
+54. These values are country-specific and based on US operations. 
+
+b
+
+ Intergovernmental Panel on Climate Change. 2006 IPCC Guidelines for National Greenhouse Gas Inventories, Volume 3: Industrial
+
+Processes and Product Use. Chapter 3: Chemical Industry Emissions. Prepared by the National Greenhouse Gas Inventories Programme. 
+
+Eggleston, H.S., Buendia L., Miwa K., Ngara T. and Tanabe K. (eds).Published: IGES, Japan. 2006.
+
+c
+
+ Note that selective catalytic reduction (SCR) and extended absorption are not known to reduce N2O emissions.
+
+d Catalytic abatement is assumed to have a destruction efficiency of 92.5% of N2O and a utility factor of 89% (IPCC 2006).
+
+e Thermal abatement is assumed to have a destruction efficiency of 98.5% of N2O and a utility factor of 97% (EPA 2009).
+
+6.13 Retail and Marketing of Petroleum Liquids
+
+The retail and marketing segment includes company-owned retail operations and support to 
+
+customer fueling operations. Venting of GHG emissions from the retail and marketing of 
+
+petroleum liquids is considered negligible, because of insignificant concentrations of CH4 and 
+
+CO2 in the fuel products.
+
+6.14 Fire Suppression Emissions
+
+The use of fire suppression equipment may result in emissions of high global warming potential 
+
+(GWP) greenhouse gases (GHGs) as a result of using them as substitutes for ozone-depleting 
+
+substances (ODSs). The GHGs of concern from such fire suppression equipment are typically 
+
+hydrofluorocarbons (HFCs) or perfluorocarbons (PFCs). The global warming potentials for such 
+
+HFCs and PFCs are typically several thousand times larger than for carbon dioxide (CO2). 
+
+Carbon dioxide may also be used as a fire suppressant.
+
+Emissions from the diversity of fuel burned during fires should be calculated using the 
+
+methodology described in Section 4: Combustion Emissions.
+
+To estimate fire extinguisher emissions, a material balance approach, such as provided by 
+
+Equation 6-56 (EPA, 2012), should be used. The material balance should consider the amount of 
+=== PAGE 411 ===
+Section 6: Vented and Process Emission Estimation Methods
+
+6-169
+
+November 2021
+
+fire suppressant released in each event, the number of events annually, and the composition of 
+
+the particular GHG in the fire suppressant.
+
+Ej = r × ∑ QCj+1
+
+k
+
+i=1 (Equation 6-56)
+
+where:
+
+Ej = total emissions of chemical released in year j, by weight;
+
+r = percentage of total chemical in operation released to the atmosphere;
+
+QC = quantity of chemical used in new fire extinguishing equipment one lifetime (k) ago 
+
+(e.g., j – k +1), by weight;
+
+i = counter, from 1 to lifetime (k);
+
+j = year of emissions; and
+
+k = average lifetime of the equipment.
+
+
+

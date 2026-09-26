@@ -1,0 +1,13 @@
+
+The command exited with code 0.
+Output:
+Length of api_6_2_3_extracted.txt: 44147
+=== PAGE 249 ===
+Section 6. Process and Vented Emission Estimation Methods
+EXHIBIT 6-2: Sample Calculation for Oil Well Testing-Related Emissions
+INPUT DATA:
+A new oil well was tested to determine the reservoir characteristics over a period of 36 hours.
+During the testing period, the average crude oil production rate was 4,200 barrels per day
+(bbl/day). The GOR for the field is 700 scf gas/bbl oil. The associated gas produced during the
+well test period is generally flared; however, the flare wa
+

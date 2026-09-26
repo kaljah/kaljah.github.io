@@ -1,0 +1,24 @@
+
+The command exited with code 0.
+Output:
+=== PAGE 358 ===
+ Section 6: Vented and Process Emission Estimation Methods
+6-116
+November 2021
+The annual emissions of CH4 from centrifugal compressor wet seal degassing vents can be 
+estimated using the default emission factor from Table 6-41 in operating mode and the total time 
+in operating mode using Equation 6-29. Alternatively, if the total time in operating mode is 
+unknown, the default average emission factors from Table 6-41 for wet seal and dry seal 
+centrifugal compressors can be used. To avoid double counting, it should be noted that these 
+default average emission factors in Table 6-41 for both wet and dry seal centrifugal compressors 
+include both venting from the compressor seals and equipment leak emissions from the 
+blowdown and isolation valve leakage. An example calculation is shown in Exhibit 6-32 that 
+illustrates the use of centrifugal compressor emission factors.
+EXHIBIT 6-32: Sample Calculation for Reciprocating Compressor Rod Packing 
+Emissions in Transmission and Storage Segment 
+INPUT DATA:
+A gas storage compressor station has 3 centrifugal compressors with wet seal systems, as well as 
+2 centrifugal compressors with dry seals from a recent station expansion. No data is available for 
+the amount of time each compressor operates each year. The average CH4 content of the gas is 
+95 mole %, with minimal CO2. Calculate the CH4 emissions from the centrifu
+

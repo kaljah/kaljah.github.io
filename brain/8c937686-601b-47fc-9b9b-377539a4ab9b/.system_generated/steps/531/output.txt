@@ -1,0 +1,17 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\Desktop\H2\new\server\calculations\vented_ccus_transport.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -310,9 +310,8 @@
+             bcond = str(ballast_condition or "typical").lower().strip()
+             factor_info = self.TABLE_6_48_BALLASTING.get(bcond, self.TABLE_6_48_BALLASTING["typical"])
+ 
+-            # Exhibit 6-36 uses lb/10^3 gal: (1.1 lb / 1000 gal) * gal * wt_ch4 / 2204.62
+-            lb_toc = (gal / 1000.0) * factor_info["lb_toc_per_mgal"]
+-            total_toc_tonnes = lb_toc / LB_PER_TONNE
++            # Exhibit 6-36 uses Table 6-48: 0.488 tonne TOC / 10^6 gal
++            total_toc_tonnes = (gal / 1_000_000.0) * factor_info["tonne_toc_per_mmgal"]
+             gross_ch4_tonnes = total_toc_tonnes * wt_ch4
+ 
+         # ----------------------------------------------------------------------
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

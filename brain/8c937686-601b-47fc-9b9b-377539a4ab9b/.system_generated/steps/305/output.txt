@@ -1,0 +1,202 @@
+
+The command exited with code 0.
+Output:
+<truncated 116 lines>
+ Well blowouts, while very rare, are unplanned events that may occur in production. Well 
+blowouts result in uncontrolled releases, the emissions from which can be calculated 
+using well test data or production data and duration. Refer to Section 6.2 for the 
+exploration segment; 
+ Pressure relief valve (PRV) venting (see below); and
+=== Page 323 ===
+Section 6: Vented and Process Emission Estimation Methods
+6-81
+November 2021
+ Offshore production venting.
+Offshore considerations for venting emissions often coincide with that of onshore. One portion 
+of operational offshore emissions is emissions from non-routine activities; which are the result of 
+unplanned events (such as during emergency or upset conditions) that result in releases of gas 
+(including CH4, and possibly CO2) to the atmosphere. 
+The equation for estimating the emissions of CH4 or CO2 from intermittent, non-continuous 
+venting is shown in Equation 6-28:
+Ex= VR × Fx × 
+MWx
+molar volume conversion
+× Tv ×n (Equation 6-28)
+where:
+Ex = Emissions of “x” in units of mass (pounds, kg, tonnes) per year;
+“x” = GHG compound of interest (CH4, or CO2 for CO2 rich streams);
+VR = Vent rate in volume units at STP conditions (scfm or Sm3
+/min) per 
+event;
+Fx = Molar fraction of compound “x” in the vent gas stream;
+MWx = Molecular weight of compound “x”;
+Molar volume 
+conversion
+= Conversion from molar volume to mass (379.3 scf/lbmole or 23.685 
+Sm3
+/kgmole);
+Tv = Time duration of the venting event (minutes); and
+n = Number of events of this type and magnitude annually.
+This equation calculates the total amount of CH4 or CO2 released during the event. To estimate 
+an annual emission rate, determine the frequency and duration of such venting episodes on a 
+yearly basis using either documentation from actual venting events or averages from past events.
+The GRI/EPA study developed emission factors for facility emergency shut down (ESD) systems 
+at offshore facilities and for PRVs associated with either onshore or offshore production 
+activities. ESDs are manual or automatic safety systems that shut down and vent all rotating 
+equipment when an emergency is detected. The emission factor is based on an average number 
+of ESD blowdowns vented to the atmosphere on an annual basis.
+Similarly, the GRI/EPA study developed a PRV emission factor based on the average size and 
+duration of release events at production facilities. The amount of gas released through a PRV is 
+highly dependent on upstream gas pressure and valve size. A more detailed estimation method 
+for PRV releases is provided in Appendix B (CAPP, 2002, Section 3.2.3). Table 6-28 provides 
+default emission factors for other non-routine venting sources from the production segment 
+operations.
+=== Page 324 ===
+Section 6: Vented and Process Emission Estimation Methods
+6-82
+November 2021
+Table 6-28. Production Segment CH4 Emission Factors for Other 
+Non-Routine Releases
+Source
+Methane
+Emission 
+Factor a
+, 
+Original 
+Units
+Methane
+Emission 
+Factor b
+, 
+Converted to 
+Tonnes Basis
+Methane 
+Content 
+Basis of 
+Factor
+(mole %)
+Uncertainty c
+(%)
+Whole Gas 
+Emission 
+Factor d
+,
+Converted 
+to Whole 
+Gas Volume 
+Basis
+Pressure relief 
+valve releases
+34 scfy CH4/
+PRV
+0.00065 
+tonnes/PRV-yr
+78.8 310 43 scfy gas/
+PRV
+Offshore 
+emergency 
+shutdown 
+(ESD)
+256,888 scfy
+CH4/platform
+4.9276 tonnes/
+platform-yr 78.8 276
+326,000 scfy 
+gas/platform
+Footnotes and Sources: 
+a Shires, T.M. Methane Emissions from the Natural Gas Industry, Volume 7: Blow and Purge Activities, Final Report, GRI-94/0257.24 and 
+EPA-600/R-96-080g, Gas Research Institute and U.S. Environmental Protection Agency, June 1996.
+b CH4 emission factors converted from scf or m3
+are based on 60°F and 14.7 psia. The CH4 emission factors can be adjusted based on the 
+relative concentrations of CH4 and CO2 to estimate CO2 emissions.
+c Uncertainty based on 95% confidence interval converted from the 90% confidence intervals for the data used to develop the original emission 
+factor.
+d Converted using 78.8 mole % CH4 assumed in the derivation of the CH4 emission factor.
+6.4 Oil and Gas Gathering and Boosting
+6.4.1 Gas-Driven Pneumatic Controllers
+As in the production segment, natural gas-operated pneumatic controllers are commonly used in 
+gas gathering and boosting systems. Emissions of CH4 (and CO2, if present in the gas) from 
+pneumatic controllers located in gathering and boosting systems can be estimated using the same 
+estimation methodologies as those described in Section 6.3.6 for production. If site-specific 
+controller measurements or manufacturer’s data is available, the calculation methods presented 
+in Section 6.3.6 can be applied for continuous and intermittent vent controllers, respectively. See 
+Equation 6-12 for estimating the volume of gas vented using controller-specific data from 
+continuous vent pneumatic controllers, and Equations 6-13 or 6-14 for intermittent vent 
+pneumatic controllers.
+Alternatively, default emission factors presented by controller type are provided in Table 6-29
+below for continuous vent and intermittent vent pneumatic controllers in the gathering and 
+boosting segment. The emission factors from the API working paper presented in Section 6.3.6 
+represent an integrated assessment of production and gathering and boosting station 
+measurement data. The pneumatic controller emission factors from the API working paper are 
+presented in Tables 6-14 and 6-15 for continuous and intermittent vent controllers, respectively.
+The emission factors in Table 6-29 are taken from a study conducted by Colorado State 
+University (Zimmerle, 2019) based on measurements of 72 pneumatic controllers in 16 gathering 
+=== Page 325 ===
+Section 6: Vented and Process Emission Estimation Methods
+6-83
+November 2021
+Table 6-29. Natural Gas-Driven Pneumatic Controller Emission Factors in Gathering and 
+Boosting
+Controller Type
+Original Units, 
+Emission 
+Factor (scf gas/
+hr/controller) a
+Uncertainty 
+(± %) b
+Methane 
+Content Basis 
+of Factor 
+(mole %) c
+Methane Emission 
+Factor 
+(Converted) 
+(scf CH4/
+controller-hr)
+Methane 
+Emission Factor 
+(Converted) 
+(tonnes CH4/
+controller-yr)
+d
+Continuous Vent Pneumatic Controllers
+High Bleed 19.25 70 81.6 15.71 2.64
+Low bleed, normal 
+operation e 0.68 74 81.6 0.55 0.093
+Low bleed, 
+malfunctioning f 34 61 81.6 27.74 4.66
+Low bleed, average (if 
+operating condition is 
+unknown) g, h
+6.42 74 81.6 5.24 0.88
+Intermittent Vent Pneumatic Controllers
+Intermittent, normal 
+operation e 2.82 115 81.6 2.30 0.39
+Intermittent, 
+malfunctioning f 16.11 49 81.6 13.15 2.21
+Intermittent, average (if 
+operating condition is 
+unknown) g, h
+11.13 115 81.6 9.08 1.52
+Average Pneumatic Controller, if Controller Type is Unknown
+Gathering and Boosting 
+Average, normal 
+operation e
+4.98 70 81.6 4.06 0.68
+Gathering and Boosting 
+Average, malfunctioning 
+f
+19.09 40 81.6 15.58 2.61
+Gathering and Boosting 
+Average (if operating 
+condition is unknown) g, 
+h
+9.13 70 81.6 7.45 1.25
+Footnotes and sources:
+a Zimmerle, D, et al. 2019. Multiday Measurements of Pneumatic Controller Emissions Reveal the Frequency of Abnormal Emissions Behavior 
+at Natural Gas Gathering Sites. Environ. Sci. Technol. Lett. 2019, 6, 348-352. 10.1021/acs.estlett.9b00158. 
+b Uncertainty based on 95% confidence interval.
+c Gas content of CH4 taken from the GHGI Annex 3.6 Table 3.6-3 for U.S. Production sector CH4 Content in Natural Gas by NEMS Region 
+(General Sources), for the lower 48 states in 2017 (EPA GHGI, 2019). The CH4 emission factor can be adjusted based on the CH4 content of the 
+site-specific gas, if the natural gas has a significantly different CH4 content from the default basis if given). Also, if the facility gas contains 
+

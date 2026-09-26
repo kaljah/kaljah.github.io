@@ -1,0 +1,98 @@
+
+The command exited with code 0.
+Output:
+
+> AUDIT_FINDINGS.md:496:- `new/server/calculations/vented.py` `CompletionFlowbackCalculator.calculate` - 
+`rate_unit="mscf/day"` default and branch `rate_scf_hr = (float(flowback_rate) * multiplier) / 24.0`
+  AUDIT_FINDINGS.md:497:- `new/server/calculations/dispatcher.py` `dispatch()` `elif process_type == "completions"` - 
+calls the calculator without `rate_unit`
+  AUDIT_FINDINGS.md:498:- `new/client/src/components/scope1/CompletionsForm.jsx` - the field is labelled **"Avg Gas 
+Rate (Mcf/hr)"**, and `Scope1Form.jsx` also treats it as Mcf/hr (`finalAmount = rateMcfHr * durationHr * 28.3168`)
+> AUDIT_FINDINGS.md:507:Rate 0.5 Mcf/hr, duration 24 h, 2 events, 80 mol% CH4, vented (no flare). AR5.
+  AUDIT_FINDINGS.md:508:
+  AUDIT_FINDINGS.md:509:## Expected
+> AUDIT_FINDINGS.md:725:- Includes ('Blowdown - Pipeline','venting','event',201,0.0,'server_default').
+  AUDIT_FINDINGS.md:726:
+  AUDIT_FINDINGS.md:727:## Root Cause
+> AUDIT_FINDINGS.md:1182:Independently confirmed by Agent B (Emissions Auditor), `audit/work/B/t6.py`. Every client 
+API_FACTORS key whose usage is combustion, flaring or venting was POSTed with process_type = that usage. 23 of 54 
+combos returned 201 with totalCo2e 0 (`server_default`).
+  AUDIT_FINDINGS.md:1183:- The zeros include all the **flaring** fuels: `Propane (Flaring)`, `Butane (Flaring)`, 
+`Ethylene (Flaring)`, `Propylene (Flaring)`, and Butane/Isobutane/Propylene under flaring.
+  AUDIT_FINDINGS.md:1184:- **Biogenic** fuels (Ethanol, Biodiesel, Wood) also come out at zero. Their fossil CH4/N2O 
+is lost too, not only the biogenic CO2 that should be reported separately.
+> AUDIT_FINDINGS.md:1200:- `grep -rn "uncertainties_dict" calculations/` finds **no** caller that passes it. Every 
+`propagate_uncertainty(...)` call in combustion/vented/fugitive/midstream/indirect/stoichiometry/dispatcher omits it.
+  AUDIT_FINDINGS.md:1201:
+  AUDIT_FINDINGS.md:1202:## Reproduction
+> AUDIT_FINDINGS.md:1947:Consumed by `DashboardEnhanced.jsx` (`totals.combustion/flaring/venting/other`  
+`sourceChartData` donut and the Detailed Breakdown rows "Stationary Combustion / Flaring / Venting / Other Sources").
+  AUDIT_FINDINGS.md:1948:
+  AUDIT_FINDINGS.md:1949:## Reproduction
+> AUDIT_FINDINGS.md:1976:With any Supply Chain filter selected, the "Emissions by Source" donut and the Stationary 
+Combustion / Flaring / Venting / Other rows show the whole company's emissions. The dashboard's source mix does not 
+reconcile with its own Scope 1 figure.
+  AUDIT_FINDINGS.md:1977:
+  AUDIT_FINDINGS.md:1978:## Affected Components
+> AUDIT_FINDINGS.md:2142:- L3143 `saleable_boe = total_boe � 0.85` when unrecorded: an invented "typical saleable 
+fraction". The OGCI comparison (L3154, L3170) is made on this saleable value.
+  AUDIT_FINDINGS.md:2143:- L3150-3151: when `gross_gas_mmsm3` is empty, `methane_intensity_ngsi_wt_pct` returns the 
+constant **0.05**, even though gas production exists in `gas_amount`.
+  AUDIT_FINDINGS.md:2144:- Client `new/client/src/utils/ModernReportGenerator.js` L1232-1242:
+> AUDIT_FINDINGS.md:2177:The fallback is decided all-or-nothing on the aggregate instead of per row, and it is 
+unit-blind. Missing inputs are replaced by invented constants (0.85 saleable, 0.05 % CH4) rather than being reported 
+as "not available". The report template also hard-codes values and verdicts.
+  AUDIT_FINDINGS.md:2178:
+  AUDIT_FINDINGS.md:2179:## Impact
+> AUDIT_FINDINGS.md:2180:The Master Report "Multi-Metric Intensities Matrix" (Chapter 8) shows a carbon intensity that 
+is 47 % too high for 2025. It shows a methane intensity that is invented, and in the facility 13 case hides a breach 
+of the 0.20 % threshold. It also shows a flaring Sm�/BOE value and compliance statements that do not come from data.
+  AUDIT_FINDINGS.md:2181:
+  AUDIT_FINDINGS.md:2182:## Affected Components
+> AUDIT_FINDINGS.md:2702:The two pages give contradictory inventory uncertainty for the same year and facilities, 
+often by more than 10�. The QA figure understates the 95 % uncertainty by about half and covers unapproved data. For 
+CH4-dominated sources (venting, fugitive), where only `uncertainty_ch4` is stored, it falls back to 5 %.
+  AUDIT_FINDINGS.md:2703:
+  AUDIT_FINDINGS.md:2704:## Affected Components
+> AUDIT_FINDINGS.md:2939:# BUG-061 - Dashboard "Emissions by Source" mis-classifies process types: fuel-gas combustion 
+(6.47 M t) shown as "Other", pneumatics/tanks/dehydrators/unloading/completions as "Other" instead of Venting, 
+fugitives merged into "Venting", mobile combustion labelled "Stationary Combustion"
+  AUDIT_FINDINGS.md:2940:
+  AUDIT_FINDINGS.md:2941:**Status:** Confirmed
+> AUDIT_FINDINGS.md:2947:- `new/server/routes/dashboard.py` `_query_summary()` `SOURCE_MAP` (~L555-570). It matches 
+substrings for "combustion", "flaring"/"flare", "vent" and "fugitive" (the last mapped to **venting**), and sends 
+everything else to "other".
+  AUDIT_FINDINGS.md:2948:- `new/client/src/pages/DashboardEnhanced.jsx` Detailed Breakdown labels the `combustion` 
+bucket "Stationary Combustion" (~L1630).
+  AUDIT_FINDINGS.md:2949:
+> AUDIT_FINDINGS.md:2958:Classification by source category, as in the platform's own dispatcher and the API 
+Compendium: fuel gas is combustion; pneumatic, tank, dehydrator, AGR, unloading, completion and drilling are vented; 
+fugitives are a separate category, or at least not called "Venting"; mobile combustion is not "Stationary".
+> AUDIT_FINDINGS.md:2959:Independent split: Combustion 3,723,123,046,693.43 � Flaring 2,199,048.57 � Venting 
+140,187.52 � Fugitive 323,458.97 � Other **26.56**.
+  AUDIT_FINDINGS.md:2960:
+  AUDIT_FINDINGS.md:2961:## Actual
+> AUDIT_FINDINGS.md:2962:API/UI: Combustion 3,723,116,579,281.52 � Flaring 2,199,048.57 � Venting 460,645.31 (includes 
+fugitives) � Other **6,470,439.64**. The UI "Other Sources 6.5M" is 99.95 % fuel-gas combustion. Vented CH4 sources 
+(pneumatics, tanks, dehydrator, unloading) are hidden in "Other". `mobile_combustion` is shown in the "Stationary 
+Combustion" row, while `mobile` goes to "Other".
+  AUDIT_FINDINGS.md:2963:
+  AUDIT_FINDINGS.md:2964:## Evidence
+> AUDIT_FINDINGS.md:2966:expected: {'other': 26.56, 'combustion': 3723123046693.43, 'flaring': 2199048.57, 'venting': 
+140187.52, 'fugitive': 323458.97}
+> AUDIT_FINDINGS.md:2967:API     : {'combustion': 3723116579281.52, 'flaring': 2199048.57, 'venting': 460645.31, 
+'other': 6470439.64}
+  AUDIT_FINDINGS.md:2968:fuel_gas combustion CO2e=6,467,367.87 reported under 'Other Sources'
+  AUDIT_FINDINGS.md:2969:```
+> AUDIT_FINDINGS.md:2975:The source mix on the dashboard (and in the Detailed Breakdown) misreports where emissions 
+come from. Venting and fugitives, the key methane categories for OGMP and methane regulation, are mixed together or 
+hidden in "Other", and a large combustion source is shown as "Other".
+  AUDIT_FINDINGS.md:2976:
+  AUDIT_FINDINGS.md:2977:## Affected Components
+> AUDIT_FINDINGS.md:2978:`/api/dashboard/batch-all` and `/summary` (combustion/flaring/venting/other fields); 
+DashboardEnhanced "Emissions by Source" donut and Detailed Breakdown.
+  AUDIT_FINDINGS.md:2979:
+  AUDIT_FINDINGS.md:2980:## Recommended Fix
+
+
+

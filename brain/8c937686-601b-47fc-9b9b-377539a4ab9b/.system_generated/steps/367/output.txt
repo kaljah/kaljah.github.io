@@ -1,0 +1,223 @@
+
+The command exited with code 0.
+Output:
+class MudDegassingCalculator(BaseCalculator):
+    def __init__(self):
+        super().__init__("Drilling Mud Degassing", "Section 6.2 & 6.3")
+
+    # API Compendium Table 6-3: Default for natural gas well drilling (tonnes CH4 / well)
+    TIER1_WELL_EF = 0.0524
+
+    # API Compendium 2021: Onshore mud degassing (tonnes CH4 / drilling day)
+    TABLE_6_2_ONSHORE = {
+        "water_based": 0.0458,
+        "oil_based": 0.0103,
+        "synthetic": 0.0103,
+    }
+    DEFAULT_CH4_CONCENTRATION = 0.8385  # 83.85% molar default underlying Table 6-2
+
+    def calculate(
+        self,
+        wells_or_tier=None,
+        mud_type_or_wells=None,
+        uncertainties=None,
+        ef_ch4=None,
+        gwp_dict=None,
+        tier=None,
+        wells=None,
+        drilling_days=None,
+        mud_type="water_based",
+        ch4_concentration=None,
+        co2_concentration=None,
+        mud_volume=None,
+    ):
+        """
+        API Compendium 2021 Drilling Mud Degassing:
+        - Tier 1 (Table 6-3): Simplified API default: wells � 0.0524 t CH4/well
+        - Tier 2 (Onshore defaults or Custom Factor from DB): drilling days � mud EF (water: 0.0458, oil: 0.0103 t CH4/day, or custom factor EF)
+        - Tier 2+ (Onshore + Gas Composition): DD � EF � (X_CH4,site / 83.85%) [+ CO2 if X_CO2,site provided]
+        """
+        # Flexible argument unpacking to support legacy positional calls:
+        if isinstance(wells_or_tier, (int, float)) and not isinstance(wells_or_tier, bool):
+            if wells is None and drilling_days is None and mud_volume is None:
+                wells = float(wells_or_tier)
+        elif isinstance(wells_or_tier, str):
+            if tier is None:
+                tier = wells_or_tier
+
+        if isinstance(mud_type_or_wells, str):
+            mud_type = mud_type_or_wells
+        elif isinstance(mud_type_or_wells, dict) and uncertainties is None:
+            uncertainties = mud_type_or_wells
+
+        uncertainties = uncertainties or {}
+
+        # Determine calculation tier mode
+        raw_source = str(uncertainties.get("_factor_source") or "").lower().strip()
+        raw_tier = str(tier or "tier1").lower().strip()
+
+        if (
+            raw_tier in ["tier2_plus", "tier_2_plus", "tier2+", "tier_2+"]
+            or raw_source in ["tier2_plus", "tier_2_plus", "tier2+", "tier_2+"]
+            or (
+                ch4_concentration is not None
+                and (
+                    float(ch4_concentration) != self.DEFAULT_CH4_CONCENTRATION
+                    or (co2_concentration is not None and float(co2_concentration) > 0)
+                )
+            )
+        ):
+            tier_mode = "tier2_plus"
+        elif (
+            raw_tier in ["tier2", "tier_2", "custom", "t2"]
+            or raw_source in ["tier2", "tier_2", "custom", "t2"]
+            or (drilling_days is not None and wells is None)
+        ):
+            tier_mode = "tier2"
+        else:
+            tier_mode = "tier1"
+
+        if tier_mode == "tier1":
+            # Tier 1: Wells count
+            w = float(
+                wells
+                if wells is not None
+                else (drilling_days if drilling_days is not None else (mud_volume if mud_volume is not None else 1.0))
+            )
+            self.validate_inputs({"wells": w}, ["wells"])
+            ef = (
+                float(ef_ch4)
+                if (ef_ch4 is not None and float(ef_ch4) > 0)
+                else self.TIER1_WELL_EF
+            )
+            ch4_tonnes = w * ef
+            co2_tonnes = 0.0
+            resolved_tier_val = Tier.T1
+            inputs_used = {
+                "tier": "Tier 1",
+                "wells": w,
+                "ef_ch4_used": ef,
+                "api_reference": "Table 6-3",
+            }
+
+        elif tier_mode == "tier2":
+            # Tier 2: Drilling days * Table 6-2 mud EF
+            dd = float(
+                drilling_days
+                if drilling_days is not None
+                else (mud_volume if mud_volume is not None else (wells if wells is not None else 0.0))
+            )
+            self.validate_inputs({"drilling_days": dd}, ["drilling_days"])
+
+            raw_type = str(mud_type or "water_based").lower().strip()
+            norm_type = (
+                "oil_based"
+                if ("oil" in raw_type or "synth" in raw_type)
+                else "water_based"
+            )
+
+            ef = (
+                float(ef_ch4)
+                if (ef_ch4 is not None and float(ef_ch4) > 0)
+                else self.TABLE_6_2_ONSHORE.get(norm_type, 0.0458)
+            )
+            ch4_tonnes = dd * ef
+            co2_tonnes = 0.0
+            resolved_tier_val = Tier.T2
+            inputs_used = {
+                "tier": "Tier 2",
+                "drilling_days": dd,
+                "mud_type": norm_type,
+                "ef_ch4_used": ef,
+                "api_reference": "API Compendium (Onshore)",
+            }
+
+        else:
+            # Tier 2+: Drilling days * Table 6-2 mud EF * (X_CH4,site / 83.85%) [+ CO2 if X_CO2,site provided]
+            dd = float(
+                drilling_days
+                if drilling_days is not None
+                else (mud_volume if mud_volume is not None else (wells if wells is not None else 0.0))
+            )
+            self.validate_inputs({"drilling_days": dd}, ["drilling_days"])
+
+            raw_type = str(mud_type or "water_based").lower().strip()
+            norm_type = (
+                "oil_based"
+                if ("oil" in raw_type or "synth" in raw_type)
+                else "water_based"
+            )
+
+            ef = (
+                float(ef_ch4)
+                if (ef_ch4 is not None and float(ef_ch4) > 0)
+                else self.TABLE_6_2_ONSHORE.get(norm_type, 0.0458)
+            )
+
+            x_ch4 = float(
+                ch4_concentration
+                if ch4_concentration is not None
+                else self.DEFAULT_CH4_CONCENTRATION
+            )
+            if x_ch4 > 1.0:
+                x_ch4 = x_ch4 / 100.0
+
+            x_co2 = float(
+                co2_concentration if co2_concentration is not None else 0.0
+            )
+            if x_co2 > 1.0:
+                x_co2 = x_co2 / 100.0
+
+            ch4_tonnes = dd * ef * (x_ch4 / self.DEFAULT_CH4_CONCENTRATION)
+            if x_co2 > 0:
+                # Stoichiometric molar mass conversion: (44.01 / 16.04)
+                co2_tonnes = (
+                    dd
+                    * ef
+                    * (x_co2 / self.DEFAULT_CH4_CONCENTRATION)
+                    * (44.01 / 16.04)
+                )
+            else:
+                co2_tonnes = 0.0
+
+            resolved_tier_val = Tier.T2
+            inputs_used = {
+                "tier": "Tier 2+",
+                "drilling_days": dd,
+                "mud_type": norm_type,
+                "ef_ch4_used": ef,
+                "ch4_fraction": x_ch4,
+                "co2_fraction": x_co2,
+                "api_reference": "Table 6-2 (Onshore) + Site-Specific Gas Composition",
+            }
+
+        _tier = resolved_tier_val
+        ch4_res = propagate_uncertainty(
+            ch4_tonnes,
+            resolve_ef_uncertainty("vented", "ch4", _tier, uncertainties.get("ch4")),
+            tier=_tier,
+            process_category="vented",
+            gas="ch4",
+        )
+        co2_res = (
+            propagate_uncertainty(
+                co2_tonnes,
+                resolve_ef_uncertainty("vented", "co2", _tier, uncertainties.get("co2")),
+                tier=_tier,
+                process_category="vented",
+                gas="co2",
+            )
+            if co2_tonnes > 0
+            else None
+        )
+        total_co2e = calculate_co2e(ch4=ch4_tonnes, co2=co2_tonnes, gwp_dict=gwp_dict)
+
+        return self.format_result(
+            ch4=ch4_res,
+            co2=co2_res,
+            total_co2e=total_co2e,
+            inputs=inputs_used,
+        )
+
+
+

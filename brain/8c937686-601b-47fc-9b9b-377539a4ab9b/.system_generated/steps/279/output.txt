@@ -1,0 +1,167 @@
+
+The command exited with code 0.
+Output:
+<truncated 1 lines>
+191 0.0052859 tonnes 
+CH4/106 scf gas 
+processed
+78.8 349.7 scf 
+gas/106 scf gas 
+processed
+0.18667 tonnes 
+CH4/106 sm3 gas 
+processed
+349.7 sm3
+gas/106 sm3 gas 
+processed
+73.4 Mscf CH4/
+dehydrator-yr e
+Not specified 0.06149 tonnes CH4/
+dehydrator-yr
+93.2 Mscf CH4/
+dehydrator-yr
+Footnotes and Sources:
+a Uncertainty is based on a 95% confidence interval; however, because the data used to calculate the reference emission factor 
+were unavailable, the uncertainty at a 95% confidence interval was calculated based on the uncertainty at a 90% confidence 
+interval presented in the source, assuming a data set size of 10.
+b CH4 emission factors converted from scf are based on 60°F and 14.7 psia.
+c Myers, D.B. Methane Emissions from the Natural Gas Industry, Volume 14: Glycol Dehydrators, Final Report, GRI-94/0257.31 and 
+EPA-600/R-96-080n, Gas Research Institute and U.S. Environmental Protection Agency, June 1996. Emission factor was derived 
+assuming 78.8 mole % CH4 in the wet processed gas stream.
+d Converted using 78.8 mole % CH4 assumed in the derivation of the CH4 emission factor.
+e US EPA, 40 CFR 98.233(e)(2), Subpart W, Equation W-5 (EPA, 2019a).
+The emission factors in Table 6-17 can be scaled based on the ratio of the site-specific CH4
+content to the default emission factor concentration if the site natural gas has a significantly 
+different CH4 content from the default basis of 78.8 mole %. However, if process-specific data is 
+available, it is preferable to use a process simulator to quantify emissions at a significantly 
+different CH4 content, since emissions are dependent on the solubility characteristics of CH4 in 
+glycol at the process conditions in the contactor, which may not be directly proportional to the 
+ratio of CH4 concentrations in the treated wet gas stream. Note that CO2 is not appreciably 
+soluble in glycol; therefore, CO2 emissions are expected to be negligible, even if the gas contains 
+significant quantities of CO2. Exhibit 6-13 demonstrates these calculations.
+=== Page 288 ===
+Section 6: Vented and Process Emission Estimation Methods
+6-46
+November 2021
+EXHIBIT 6-13: Sample Calculation for Dehydration Processing Vent Emissions
+INPUT DATA:
+A glycol dehydrator at a gas production facility treats 25 x 106 scf/day of gas with a CH4 molar 
+content of 82 mole % and CO2 content of 5 mole %. The dehydration unit includes an electric 
+pump and does not include a flash separator. The glycol circulation rate is 200 gallons/hr, and the 
+contactor pressure is 600 psig. Stripping gas is not used in the process. Calculate the CH4 and 
+CO2 emissions.
+CALCULATION METHODOLOGY:
+1. Calculate the CH4 emissions. Emissions would ideally be estimated using a process simulator; 
+however, here they are calculated using an emission factor taken from Table 6-17. Because the 
+CH4 content of this facility differs from the 78.8 mole % default CH4 content associated with the 
+emission factor presented in Table 6-17, the calculations include an adjustment for the 
+composition:
+ECH4
+=
+25×106
+scf
+day
+×
+365 day
+yr
+×
+0.0052859 tonne CH4
+106
+scf
+×
+0.82 tonne mole CH4
+(facility)
+0.788 tonne mole CH4
+(default)
+ECH4
+=50.2 tonnes CH4
+/yr
+CO2 emissions from the glycol dehydrator are negligible because CO2 is not appreciably soluble 
+in glycol.
+Note that the emission factors given in Table 6-17 do not include the emissions from gas-assisted 
+glycol pumps, which can be a significant source of CH4 emissions. Although the CH4 from gas￾assisted pumps are emitted through the regenerator vent, the emission rates were developed as a 
+separate emission source in the GRI/EPA CH4 emissions study, and are discussed below (Myers
+et al, 1996; Harrison et al., 1996).
+Some glycol dehydrators use flash tanks, also referred to as flash separators. Flash tanks are used 
+to drop the glycol line pressure, causing most of the light hydrocarbons in the glycol to flash into 
+the vapor phase. If left uncontrolled, vapors from the flash tank can be a significant source of 
+CH4 emissions. However, flash gas is most often routed to the regenerator burner as fuel, 
+significantly reducing CH4 emissions from the regenerator vent. The uncontrolled emission 
+factors presented in Table 6-17 would overestimate emissions from a glycol dehydration system 
+with a flash tank separator that routes the flash gas to a vapor recovery system. Emission factors 
+that reflect the use of flash separators are discussed below.
+=== Page 289 ===
+Section 6: Vented and Process Emission Estimation Methods
+6-47
+November 2021
+Some dehydrators also introduce stripping gas in the regenerator to help strip water and other 
+absorbed compounds out of the glycol by increasing the vapor flow rate in the reboiler still. 
+Three types of stripping gas are typically used: dry natural gas from the absorber, flash gas from 
+the flash separator, or nitrogen. Any CH4 in the stripping gas will pass directly through the 
+regenerator; therefore, the use of dry natural gas will increase CH4 emissions from the 
+regenerator. GLYCalcTM should be used to estimate CH4 emissions in this situation, as the 
+default approaches presented in this subsection do not account for the use of stripping gas. The 
+emission factors presented in Tables 6-17 or 6-18 may be used to estimate emissions from the 
+dehydrator if flash gas or nitrogen is used as the stripping gas, as CH4 emissions will not be 
+increased.
+Glycol Pumps
+As demonstrated by the GRI/EPA study, gas-assisted glycol pumps can be a significant source of 
+CH4 emissions (Myers et al, 1996). Both electric and gas-assisted pumps are used to circulate 
+glycol in the dehydrator system. If a gas-assisted pump is used, the low-pressure glycol is 
+pumped into the absorber by pistons driven by the high-pressure glycol leaving the absorber.
+This high pressure glycol contains some entrained gas from the absorber. The GRI/EPA CH4 
+emissions project estimated the gas-assisted glycol pump emissions separately from the 
+dehydrator vent emissions, although they are emitted from the same vent.
+The GRI/EPA study noted that Kimray was a leading manufacturer of gas-assisted glycol pumps.
+Emission factors were presented in this study (Volume 15) based on technical data from Kimray 
+and using assumptions about typical dehydrator operation (Myers et al, 1996). Production 
+Kimray pump CH4 emissions are given in Table 6-18. This table also includes the default CH4
+content that can be used for adjusting the emission factors to other CH4 contents.
+Table 6-18. GRI/EPA Kimray Pump Methane Emission Factors
+Industry 
+Segment
+Methane Emission 
+Factor a
+, 
+Original Units
+Uncertainty c
+(+/- %)
+Methane Emission 
+Factor b
+, 
+Converted to 
+Tonnes Basis
+Methane 
+Content Basis 
+of Factor
+(mole %)
+Whole Gas 
+Emission Factor d
+,
+Converted to Whole 
+Gas Volume Basis
+Production 992.0 scf CH4/106
+scf gas processed
+82.8 0.01903 tonnes 
+CH4/106
+scf gas 
+processed
+78.8 1258 scf gas/106
+scf 
+gas processed
+61.5 0.6720 tonnes 
+CH4/106
+sm3 gas 
+processed
+1258 sm3 gas/106
+sm3 gas processed
+Footnotes and Sources:
+a Myers, D.B. and M.R. Harrison. Methane Emissions from the Natural Gas Industry, Volume 15: Gas Assisted Glycol Pumps, Final Report, 
+GRI-94/0257.33 and EPA-600/R-96-080o, Gas Research Institute and U.S. Environmental Protection Agency, June 1996. Emission factor was 
+derived assuming 78.8 mole % CH4 in the wet processed gas stream.
+b CH4 emission factors converted from scfy are based on 60°F and 14.7 psia.
+c Uncertainty is based on a 95% confidence interval; however, because the data used to calculate the reference emission factor were unavailable, 
+the uncertainty at a 95% confidence interval was calculated based on the uncertainty at a 90% confidence interval presented in the source 
+assuming a data set size of 10.
+d Converted using 78.8 mole % CH4 assumed in the derivation of the CH4 emission factor.
+

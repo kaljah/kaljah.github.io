@@ -1,0 +1,122 @@
+
+The command exited with code 1.
+Output:
+Traceback (most recent call last):
+  File "<string>", line 6, in <module>
+  File "C:\Users\samsung\anaconda3\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\ufffe' in position 713: character maps to <undefined>
+=== Page 263 ===
+Section 6. Process and Vented Emission Estimation Methods 
+6-21 November 2021
+Region Original Units, 
+Methane Emission 
+Factor a, b
+Uncertainty Methane 
+Emission 
+Factor, Tonnes 
+Basis
+Methane 
+Content 
+Basis of 
+Factor b
+Whole Gas 
+Emission 
+Factor b
+(kg/bbl) (� %) (tonnes CH4/
+1,000 bbl)
+(mole %) (scf gas/
+bbl)
+Gulf Coast Basin 
+(Basin 220) 0.7 0.7 81.6 47
+Anadarko Basin 
+(Basin 360) 9.7 9.7 81.6 622
+Williston Basin 
+(Basin 395) 8.9 8.9 81.6 570
+Permian Basin 
+(Basin 430) 6.5 6.5 81.6 419
+"Other" US Basins 0.4 0.4 81.6 26
+Footnotes and Sources: 
+a EPA Inventory of U.S. Greenhouse Gas Emissions and Sinks 1990 � 2017 (EPA, 2019b). These values were calculated using 2017 
+year-specific GHGRP Subpart W data by region.
+b These emission factors are only for operators that report venting of associated gas. 
+b Gas content taken from GHGI Annex 3.6 Table 3.6-3 for U.S. Production segment Methane Content in Natural Gas by NEMS Region 
+(General Sources). For the lower 48 states, in 2017, methane content at 81.6 mol%. The CH4 emission factor can be adjusted based on 
+the CH4 content of the site-specific gas, if the natural gas has a significantly different CH4 content from the default basis (if given). Also, 
+if the facility gas contains significant quantities of CO2, the CH4 emission factor can be adjusted based on the relative concentrations of 
+CH4 and CO2 in the gas to estimate the CO2 emissions.
+Note: These factors, used in the USEPA Inventory of U.S. Greenhouse Gas Emissions and Sinks 1990-2017 (EPA, 2019b), are updated 
+annually based on data reported from operators under the GHGRP. 
+6.3.2 Workovers without Hydraulic Fracturing 
+Well workovers refer to activities performed to restore or increase production. Workover 
+activities involve pulling the tubing from the well to repair tubing corrosion or other downhole 
+equipment problems. If the well has positive pressure at the surface, the well is �killed� by 
+replacing the gas and oil in the column with a heavier fluid, such as mud or water, to stop the 
+flow of oil and gas. A small amount of gas is released as the tubing is removed from the open 
+surface casing. Derivation of the GRI/EPA emission factors for well workovers was based on 
+data from a limited number of production fields collected by Pipeline Systems Incorporated 
+(Tilkicioglu, 1990). The EPA GHGRP Subpart W references these same emission factors, as 
+presented in Table 6-9.
+=== Page 264 ===
+Section 6. Process and Vented Emission Estimation Methods 
+6-22 November 2021
+Table 6-9. Production Segment Methane Emission Factors for Workovers without 
+Hydraulic Fracturing
+Source
+Original Units, 
+Methane 
+Emission 
+Factor a, b, c 
+(scf CH4/
+workover)
+Uncertainty d
+(�%)
+Methane 
+Emission 
+Factor, 
+Converted to 
+Tonnes Basis
+(tonnes CH4/
+workover)
+Methane 
+Content 
+Basis of 
+Factor
+(mole %)
+Whole Gas 
+Emission 
+Factor
+(scf gas/
+workover)
+Gas well 
+workovers 2,454 924 0.0470 78.8 3,114
+Oil well 
+workovers 96 Not available 0.0018 78.8 122
+Footnotes and Sources:
+a Factors taken from: Tilkicioglu, B.H. Annual Methane Emission Estimate of the Natural Gas Systems in the United States, Phase II, Pipeline 
+Systems Incorporated (PSI), September 1990. An EPA Gas STAR paper on installing plunger lift systems in gas wells presents a gas well 
+workover emission factor of 2000 scf CH4/workover, which equates to 0.0384 tonnes CH4/workover (EPA Gas STAR, Lessons Learned -
+Installing Plunger Lift Systems in Gas Wells, October 2003 (EPA, 2003a). Gas STAR also reports that the number of gas well workovers 
+conducted in a year typically ranges from 1 to 15.
+b The methane content for the original values are not given, as per source (Shires, T.M., and M.R. Harrison. Methane Emissions from the Natural 
+Gas Industry, Volume 6: Vented and Combustion Source Summary, Final Report, GRI-94/0257.23 and EPA-600/R-96-080f, Gas Research 
+Institute and U.S. Environmental Protection Agency, June 1996).
+c Note that EPA�s Subpart W (EPA, 2019a) uses the same gas well workover emission factor (2,454 scf CH4/workover), converted to whole gas, 
+with a methane content basis of 78.8 mol%.
+d Uncertainty based on a 95% confidence interval.
+An example calculation is given in Exhibit 6-7 below that illustrates the use of the workover 
+emission factors.
+EXHIBIT 6-7: Sample Calculation for Workovers without Hydraulic Fracturing
+INPUT DATA:
+An operator performed 10 workovers without hydraulic fracturing in a calendar year on various 
+gas wells in a given production area. There is no flare in place so any gas not captured to sales is 
+assumed to vent to atmosphere. Gas composition is estimated to contain 70 mole % CH4, and 9 
+mole % CO2. Calculate the CH4 and CO2 emissions from the vented gas from the workovers per 
+year.
+CALCULATION METHODOLOGY:
+To calculate the vented CH4 and CO2 emissions, the emission factor from Table 6-9 can be used. 
+The methane emission factor can be used to calculate methane emissions, while the whole gas 
+factor can be used for CO2. 
+=== Page 265 ===
+

@@ -1,0 +1,355 @@
+
+The command exited with code 0.
+Output:
+<truncated 1 lines>
+
+demonstrated in Exhibit 3.3. The weight percent for each compound is estimated using 
+
+Equation 3-7, rearranged in terms of weight percent. This calculation is demonstrated in Exhibit 
+
+3.4. 
+=== PAGE 398 ===
+Section 6: Vented and Process Emission Estimation Methods
+
+6-156
+
+November 2021
+
+The carbon content in weight percent for each chemical species is calculated using Equation 4-9. 
+
+Once the individual compound weight percents and carbon contents have been estimated, the feed 
+
+gas mixture carbon content is estimated using Equation 4-10. These conversions are demonstrated 
+
+in Exhibit 4.4(a). 
+
+The results of these calculations are shown below.
+
+Compound Mole % MW Weight %
+
+Carbon Content
+
+(Wt. % C)
+
+CH4 85 16 72.1 75.0
+
+C2H6 8 30 12.7 80.0
+
+C4H10 3 58 9.2 82.8
+
+N2 4 28 5.9 0 
+
+Mixture 100 18.86 ~100 71.85
+
+After the feed stock gas mixture molecular weight and carbon content are defined, the CO2 vent 
+
+rate can be calculated using Equation 6-49:
+
+2
+
+2
+
+6
+
+2
+
+CO
+
+CO 2
+
+10 scf feed lbmole feed 18.86 lb feed 0.7185 lb C 44 lb CO tonne E = 5,000 × × × × ×
+
+year 379.3 scf lbmole feed lb feed 12 lb C 2204.62 lb 
+
+E = 297,100 tonnes CO /yr
+
+The other rigorous approach is based on the H2 production rate rather than the feedstock rate. 
+
+This second approach applies the stoichiometric ratio of H2 formed to CO2 formed, as shown in 
+
+Equation 6-50 based on re-arranging Equation 6-48. For this approach, it is important to apply 
+
+the total hydrogen production rate prior to any process slip stream to avoid underestimating 
+
+emissions. 
+
+It is important to note that when refinery gas is used as a feedstock, Equation 6-50 should not be 
+
+used (without modification). Refinery fuel gas typically contains hydrogen, and this “free” 
+
+hydrogen passes through the process without producing any attendant CO2 emissions. Thus, this 
+
+methodology based on hydrogen production rate would tend to overestimate CO2 emissions 
+
+when refinery fuel containing hydrogen is used as a feedstock.
+
+molar volumeconversion 
+
+44
+
+(3 1) mole H
+
+ mole CO RHE
+
+2
+
+2
+
+CO2 2 
+
+
+
+
+
+x
+
+x
+
+(Equation 6-50)
+
+where:
+=== PAGE 399 ===
+Section 6: Vented and Process Emission Estimation Methods
+
+6-157
+
+November 2021
+
+ECO2
+
+= Emissions of CO2 in units of mass (pounds, kg, tonnes) per year;
+
+H2R = Rate of hydrogen production in units of volume (scf, m3
+
+) per year;
+
+x = Stoichiometry from Equation 6-48;
+
+44 = Molecular weight of CO2; and
+
+Molar 
+
+volume 
+
+conversion
+
+= Conversion from molar volume to mass (379.3 scf/lbmole or 23.685 
+
+Sm3
+
+/kgmole).
+
+This second rigorous approach is demonstrated in Exhibit 6-43.
+
+EXHIBIT 6-43: Sample Calculation for Hydrogen Plant - Rigorous Approach based on 
+
+H2 Production Rate
+
+INPUT DATA:
+
+A hydrogen plant produces 13109
+
+scf of hydrogen per year using feed gas with the following 
+
+composition:
+
+CH4 = 85%, C2H6 = 8%, C4H10= 3%; the balance is inerts.
+
+Calculate the CO2 emissions. 
+
+CALCULATION METHODOLOGY:
+
+The first step is to examine the chemical reaction for each compound:
+
+CH4: CH4+2H2O = 4H2+1CO2
+
+C2H6: C2H6+4H2O = 7H2+2CO2
+
+C4H10: C4H10+8H2O = 13H2+4CO2
+
+Next, the moles of carbon and hydrogen are determined by multiplying the number of molecules 
+
+of each in each compound by the composition of each compound in the feed gas (i.e., CH4, C2H6, 
+
+and C4H10). These results are used to determine the ratio of moles of carbon to moles of H2, and 
+
+are shown in the table below.
+
+Compound # C Atoms # H2 Molecules Concentration Moles C Moles H2
+
+CH4 1 4 0.85 0.85 3.4
+
+C2H6 2 7 0.08 0.16 0.56
+
+C4H10 4 13 0.03 0.12 0.39
+
+Total Moles 1.13 4.35
+=== PAGE 400 ===
+Section 6: Vented and Process Emission Estimation Methods
+
+6-158
+
+November 2021
+
+To use Equation 6-50, the carbon to hydrogen ratio must be calculated. The carbon to hydrogen 
+
+ratio is calculated by dividing the total moles C by the total moles H2 (1.13/4.35 = 0.26). Since 
+
+each mole of carbon produces 1 mole of CO2, the CO2/H2 ratio is the same as the C/H2 ratio (0.26).
+
+The CO2 vent rate can then be calculated using Equation 6-50:
+
+2
+
+2
+
+6
+
+2 2 2 2
+
+CO
+
+22
+
+CO 2
+
+10 scf H lbmole H 0.26 lbmole CO 44 lb CO tonne E =13,000 × × × ×
+
+year 379.3 scf lbmole H lbmole CO 2204.62 lb 
+
+E =177,800 tonnes CO /yr
+
+A simpler approach to estimate CO2 emissions from hydrogen plants with a CO2 vent is to use 
+
+default emission factors that are based on either feedstock consumption or hydrogen production. 
+
+These emission factors are based on a stoichiometric conversion (as shown in Equation 6-48) for 
+
+a feed gas with an average natural gas composition. Table 6-50 provides the average natural gas 
+
+composition used to derive these factors, which is based on measurements from pipeline-quality 
+
+gas from 26 U.S. cities (GTI, 1992).
+
+Table 6-50. Composition of U.S. Pipeline-Quality Natural Gas
+
+Compound Average Volume % a, b
+
+CH4
+
+93.07
+
+C2H6
+
+3.21
+
+C3H8
+
+0.59
+
+Higher hydrocarbons c 0.32
+
+Non-hydrocarbons d 2.81
+
+Footnotes and Sources:
+
+a Gas Technology Institute (GTI). Database as documented in W.E. Liss, W.H. Thrasher, G.F. Steinmetz, P. Chowdiah, and A. Atari, 
+
+"Variability of Natural Gas Composition in Select Major Metropolitan Areas of the United States", GRI-92/0123, March 1992.
+
+b Perry and Green. Perry’s Chemical Engineer’s Handbook, Sixth Edition, Table 9-14, 1984.
+
+c Higher molecular weight hydrocarbons were represented by C5 in calculating the CO2 and H2 production rates.
+
+d The non-hydrocarbons are assumed to contain 0.565 volume % CO2 based on an average natural gas composition from Perry’s 
+
+Chemical Engineers Handbook.
+
+Please note that if the feed is different from pipeline-quality natural gas, the emission factors for 
+
+the simple approach will overestimate emissions due to the assumed higher carbon content of 
+
+natural gas. In such an event, the stoichiometric conversion presented in Equation 6-48 should be 
+
+used instead. This simple approach is demonstrated in Exhibit 6-44.
+
+The simple approach is based on an emission factor of 32,721 pounds of carbon per million scf 
+
+of feedstock (excluding H2O) or 8,064 pounds of carbon per million scf of H2 produced. These 
+
+emission factors are shown in Table 6-51 below:
+=== PAGE 401 ===
+Section 6: Vented and Process Emission Estimation Methods
+
+6-159
+
+November 2021
+
+Table 6-51. Stoichiometric Conversion Emission Factor
+
+CO2 Emissions based on Feedstock 
+
+Consumption
+
+CO2 Emissions based on Hydrogen 
+
+Production
+
+119,976 lb CO2/106 scf feedstock 29,568 lb CO2/106 scf H2 produced
+
+54.42 tonnes CO2/106 scf feedstock 13.41 tonnes CO2/106 scf H2 produced
+
+1,922 tonnes CO2/106 m3
+
+feedstock 473.6 tonnes CO2/106 m3 H2 produced
+
+EXHIBIT 6-44: Sample Calculation for Hydrogen Plant Emissions - Simple Approach
+
+INPUT DATA:
+
+A hydrogen plant produces 13109 scf of hydrogen per year. Calculate the CO2 emissions.
+
+CALCULATION METHODOLOGY:
+
+CO2 emissions are calculated using the emission factor derived from the average U.S. natural gas 
+
+composition.
+
+2
+
+2
+
+6
+
+22
+
+CO 6
+
+2
+
+CO 2
+
+10 scf H 13.41 tonnes CO E =13,000 ×
+
+year 10 scf H
+
+E =174,300 tonne CO /yr
+
+Although rare and not applicable to most refineries, a partial H2 generation unit may be used (i.e., 
+
+where only a portion of the H2 available in the hydrocarbon stream is converted to H2). If such a 
+
+system is used, site-specific data or engineering judgment must be used to estimate the CO2
+
+emissions. If site-specific data are not available, one suggested estimation approach is to ratio the 
+
+actual H2 generation rate for the year to the design basis, and multiply this ratio by the design 
+
+CO2 emissions to estimate the actual CO2 emission rate. Alternatively, a simplifying assumption 
+
+would be to assume full conversion and use the simple emission factor or apply Equation 6-50, 
+
+recognizing that this will overestimate emissions.
+
+
+

@@ -1,0 +1,45 @@
+
+The command exited with code 0.
+Output:
+class BlowdownCalculator(BaseCalculator):
+    """
+    API Eq. 6-4: Vessel/Pipeline Blowdown (Depressurization)
+    V_std = V_physical * (P_vessel_abs / P_std) * (T_std / T_vessel_abs) * (1 / Z) * Events
+    Remediates CALC-06 by incorporating exact temperature and compressibility normalization.
+    """
+
+    def __init__(self):
+        super().__init__("Blowdown Events", "Section 6.4")
+
+    def calculate(
+        self,
+        blowdown_volume,
+        pressure,
+        events,
+        ch4_content,
+        uncertainties,
+        co2_content=0.0,
+        control_efficiency=0.0,
+        ef_co2=None,
+        ef_ch4=None,
+        ef_n2o=None,
+        operating_temperature=60.0,
+        temp_unit="F",
+        press_unit="psig",
+        z_factor=1.0,
+        hhv=1020.0,
+        gwp_dict=None,
+    ):
+        uncertainties = uncertainties or {}
+        self.validate_inputs(
+            {
+                "blowdown_volume": blowdown_volume,
+                "pressure": pressure,
+                "events": events,
+            },
+            ["blowdown_volume", "pressure", "events"],
+        )
+
+        # API Eq. 6-4: Vessel depressurization to standard atmospheric pressure
+        p_initial_psia =
+

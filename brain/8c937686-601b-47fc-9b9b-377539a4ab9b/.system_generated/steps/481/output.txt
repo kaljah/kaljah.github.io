@@ -1,0 +1,119 @@
+
+The command exited with code 1.
+Output:
+<truncated 410 lines>
+            ch4_weight_pct=12.0,
+        )
+>       assert pytest.approx(res["inputs"]["toc_tonnes"], rel=1e-2) == 9.24
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'toc_tonnes'
+
+new\server\tests\test_vented_ccus_transport_compendium.py:67: KeyError
+______ TestCrudeTransportCompendium.test_exhibit_6_36_marine_ballasting _______
+
+self = <test_vented_ccus_transport_compendium.TestCrudeTransportCompendium object at 0x000001D36DF3BCE0>
+
+    def test_exhibit_6_36_marine_ballasting(self):
+        """
+        EXHIBIT 6-36 Golden Test:
+        - Ballast water = 80,000 bbl = 3.36 * 10^6 gal
+        - Typical condition factor = 0.488 tonne TOC / 10^6 gal
+        - CH4 wt% = 12%
+        - Expected: E_TOC = 1.64 tonnes, E_CH4 = 0.20 tonnes CH4
+        """
+        res = self.calc.calculate(
+            activity="ballasting",
+            ballast_water_bbl=80000.0,
+            ballast_condition="typical",
+            ch4_weight_pct=12.0,
+        )
+>       assert pytest.approx(res["inputs"]["toc_tonnes"], rel=1e-2) == 1.64
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'toc_tonnes'
+
+new\server\tests\test_vented_ccus_transport_compendium.py:84: KeyError
+________ TestCrudeTransportCompendium.test_exhibit_6_37_marine_transit ________
+
+self = <test_vented_ccus_transport_compendium.TestCrudeTransportCompendium object at 0x000001D36DF3BDA0>
+
+    def test_exhibit_6_37_marine_transit(self):
+        """
+        EXHIBIT 6-37 Golden Test:
+        - Cargo = 500,000 bbl = 21.0 * 10^6 gal
+        - Transit duration = 14 days (2 weeks)
+        - Factor = 0.57 tonne TOC / (week * 10^6 gal)
+        - CH4 wt% = 12%
+        - Expected: E_TOC = 23.94 tonnes, E_CH4 = 2.87 tonnes CH4
+        """
+>       res = self.calc.calculate(
+            activity="transit",
+            volume_transported_bbl=500000.0,
+            transit_days=14.0,
+            ch4_weight_pct=12.0,
+        )
+E       TypeError: CrudeTransportLossesCalculator.calculate() got an unexpected keyword argument 'transit_days'
+
+new\server\tests\test_vented_ccus_transport_compendium.py:96: TypeError
+________ TestCokeCalciningAndSRUCompendium.test_coke_calcining_eq_6_53 ________
+
+self = <test_vented_downstream_compendium.TestCokeCalciningAndSRUCompendium object at 0x000001D36DF8EF00>
+
+    def test_coke_calcining_eq_6_53(self):
+        """Equation 6-53: Coke Calcining carbon mass balance."""
+>       calc = RefiningCokeCalciningCalculator()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: BaseCalculator.__init__() missing 2 required positional arguments: 'name' and 'section_ref'
+
+new\server\tests\test_vented_downstream_compendium.py:226: TypeError
+_________ TestCokeCalciningAndSRUCompendium.test_sru_tail_gas_eq_6_54 _________
+
+self = <test_vented_downstream_compendium.TestCokeCalciningAndSRUCompendium object at 0x000001D36DF8F2F0>
+
+    def test_sru_tail_gas_eq_6_54(self):
+        """Equation 6-54: Sulfur recovery unit sour gas carbon feed."""
+>       calc = SulfurRecoveryTailGasCalculator()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: BaseCalculator.__init__() missing 2 required positional arguments: 'name' and 'section_ref'
+
+new\server\tests\test_vented_downstream_compendium.py:241: TypeError
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_vented_lng_distribution_compendium.py::TestLNGVentingCompendium::test_pipeline_transfer_foam_insulation
+FAILED new\server\tests\test_vented_lng_distribution_compendium.py::TestLNGVentingCompendium::test_pipeline_transfer_vacuum_insulation
+FAILED new\server\tests\test_vented_lng_distribution_compendium.py::TestLNGVentingCompendium::test_direct_bog_venting_and_flaring
+FAILED new\server\tests\test_vented_lng_distribution_compendium.py::TestLNGVentingCompendium::test_recovered_bog_zero_emissions
+FAILED new\server\tests\test_vented_lng_distribution_compendium.py::TestDistributionPneumaticsCompendium::test_isolation_valves_table_6_45
+FAILED new\server\tests\test_vented_lng_distribution_compendium.py::TestDistributionPneumaticsCompendium::test_control_loops_table_6_45
+FAILED new\server\tests\test_vented_lng_distribution_compendium.py::TestDistributionPneumaticsCompendium::test_industrial_meter_regulator
+FAILED new\server\tests\test_vented_lng_distribution_compendium.py::TestDistributionNonRoutineCompendium::test_mr_station_blowdown_table_6_46
+FAILED new\server\tests\test_vented_lng_distribution_compendium.py::TestDistributionNonRoutineCompendium::test_odorizer_and_sampling_table_6_46
+FAILED new\server\tests\test_vented_lng_distribution_compendium.py::TestDistributionNonRoutineCompendium::test_pipeline_blowdown_and_dig_in_table_6_46
+FAILED new\server\tests\test_vented_lng_distribution_compendium.py::TestDistributionNonRoutineCompendium::test_prv_releases_table_6_46
+FAILED new\server\tests\test_vented_ccus_transport_compendium.py::TestCCUSCompendium::test_stripper_offgas_venting
+FAILED new\server\tests\test_vented_ccus_transport_compendium.py::TestCCUSCompendium::test_wellhead_blowdown_eq_6_27
+FAILED new\server\tests\test_vented_ccus_transport_compendium.py::TestCrudeTransportCompendium::test_exhibit_6_35_crude_loading
+FAILED new\server\tests\test_vented_ccus_transport_compendium.py::TestCrudeTransportCompendium::test_exhibit_6_36_marine_ballasting
+FAILED new\server\tests\test_vented_ccus_transport_compendium.py::TestCrudeTransportCompendium::test_exhibit_6_37_marine_transit
+FAILED new\server\tests\test_vented_downstream_compendium.py::TestCokeCalciningAndSRUCompendium::test_coke_calcining_eq_6_53
+FAILED new\server\tests\test_vented_downstream_compendium.py::TestCokeCalciningAndSRUCompendium::test_sru_tail_gas_eq_6_54
+ERROR new\server\tests\test_vented_downstream_compendium.py::TestCatalystRegenerationCompendium::test_exhibit_6_38_fccu_coke_burn_approach
+ERROR new\server\tests\test_vented_downstream_compendium.py::TestCatalystRegenerationCompendium::test_exhibit_6_38_fccu_air_blower_approach
+ERROR new\server\tests\test_vented_downstream_compendium.py::TestCatalystRegenerationCompendium::test_exhibit_6_39_continuous_catalyst_regen
+ERROR new\server\tests\test_vented_downstream_compendium.py::TestCatalystRegenerationCompendium::test_exhibit_6_40_intermittent_catalyst_regen
+ERROR new\server\tests\test_vented_downstream_compendium.py::TestCokerCompendium::test_exhibit_6_61_fluid_coker
+ERROR new\server\tests\test_vented_downstream_compendium.py::TestCokerCompendium::test_dcu_decoking_operations_direct_steam
+ERROR new\server\tests\test_vented_downstream_compendium.py::TestHydrogenPlantCompendium::test_exhibit_6_42_feedstock_material_balance
+ERROR new\server\tests\test_vented_downstream_compendium.py::TestHydrogenPlantCompendium::test_exhibit_6_43_h2_stoichiometry
+ERROR new\server\tests\test_vented_downstream_compendium.py::TestHydrogenPlantCompendium::test_exhibit_6_44_simple_approach
+ERROR new\server\tests\test_vented_downstream_compendium.py::TestAsphaltBlowingCompendium::test_exhibit_6_45_uncontrolled
+ERROR new\server\tests\test_vented_downstream_compendium.py::TestAsphaltBlowingCompendium::test_controlled_incineration
+ERROR new\server\tests\test_vented_downstream_compendium.py::TestPetrochemicalCompendium::test_acrylonitrile_factors
+ERROR new\server\tests\test_vented_downstream_compendium.py::TestPetrochemicalCompendium::test_nitric_acid_n2o
+ERROR new\server\tests\test_vented_downstream_compendium.py::TestFireSuppressionCompendium::test_hfc_227ea_leakage_and_discharge
+================== 18 failed, 1 warning, 14 errors in 1.99s ===================
+

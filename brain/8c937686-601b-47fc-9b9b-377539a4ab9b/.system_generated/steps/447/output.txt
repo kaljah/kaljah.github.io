@@ -1,0 +1,161 @@
+
+The command exited with code 0.
+Output:
+=== PAGE 385 ===
+Section 6: Vented and Process Emission Estimation Methods
+
+6-143
+
+November 2021
+
+SOR = Supplemental oxygen rate (if used) in scf or standard cubic meters per 
+
+minute, on a dry basis;
+
+FCO2 = Fraction CO2 in the flue gas, on a volumetric, dry basis (enter “0.12” for 
+
+12%, not 12);
+
+FCO = Fraction CO in the flue gas, on a volumetric, dry basis (enter “0.08” for 
+
+8%, not 8);
+
+44 = Molecular weight of CO2;
+
+Molar volume 
+
+conversion
+
+= Conversion from molar volume to mass (379.3 scf/lbmole or 23.685 
+
+Sm3
+
+/kgmole at 14.7 psia and 60 °F); and
+
+H = Annual operating time (min/yr); 525,600 min/yr if operating 
+
+continuously throughout the year.
+
+This equation is based on fundamental principles for calculating the mass of a component from 
+
+the total stream flow and concentration of the subject component. The concentration term 
+
+includes both CO and CO2, because a partial oxidation regenerator flue gas contains both 
+
+species, and each mole of CO will become a mole of CO2 when emitted from the CO boiler. 
+
+If the flue gas flow, flue gas concentration, air blower capacity, and average coke burn rate are 
+
+all unknown, the coke burn rate can be calculated based on the amount of feedstock, as provided 
+
+in Equation 6-37. The calculated coke burn rate can then be applied to Equation 6-34 to 
+
+determine CO2 emissions, as identified in Figure 6-5. Equation 6-37 is derived from the US 
+
+EPA’s GHG Reporting Program, 40 CFR 98, Subpart Y (EPA, 2019a). 
+
+CC = Qunit ×(CBF × 0.001) (Equation 6-37)
+
+where:
+
+CC = Daily average coke burn rate in units of average metric tonnes per day;
+
+Qunit = Daily average throughput of unit (bbl/day);
+
+CBF = Coke burn-off factor from engineering calculations (kg coke per barrel 
+
+of feed); default for catalytic cracking units = 7.3; default for fluid 
+
+coking units = 11; and
+
+0.001 = Conversion factor (metric tonne/kg).
+
+An example for calculating CO2 from FCCU catalyst regeneration using the alternative 
+
+approaches is provided in Exhibit 6-38.
+
+Additionally, some CH4 and N2O may be generated during the catalyst regeneration process and 
+
+these emissions can be estimated using default emission factors relative to the amount of CO2
+
+emitted as shown in Equation 6-38 and Equation 6-39. Default factors for petroleum coke are 
+
+listed in Table 4-3. 
+
+ECH4
+
+= (ECO2
+
+×
+
+EFCH4
+
+EFCO2
+
+) (Equation 6-38)
+
+where:
+=== PAGE 386 ===
+Section 6: Vented and Process Emission Estimation Methods
+
+6-144
+
+November 2021
+
+ECH4
+
+= Annual CH4 emissions from coke burn-off (metric tonnes CH4/year);
+
+ECO2
+
+= Emission rate of CO2 from coke burn-off calculated through the use of 
+
+Equation 6-34 through Equation 6-37, converted to metric tonnes/year;
+
+EFCO2
+
+= Default CO2 emission factor for petroleum coke from Table 4-3 (tonnes 
+
+CO2/MMBtu); and
+
+EFCH4
+
+= Default CH4 emission factor for petroleum coke from Table 4-5 (tonnes 
+
+CH4/MMBtu).
+
+EN2O= (ECO2
+
+× 
+
+EFN2O
+
+EFCO2
+
+) (Equation 6-39)
+
+where:
+
+EN2O = Annual nitrous oxide emissions from coke burn-off (metric tonnes 
+
+N2O/year);
+
+ECO2
+
+= Emission rate of CO2 from coke burn-off calculated through the use of 
+
+Equation 6-34, Equation 6-36, or Equation 6-37, converted to (metric 
+
+tonnes/year);
+
+EFCO2
+
+= Default CO2 emission factor for petroleum coke from Table 4-3 (tonnes 
+
+CO2/MMBtu); and
+
+EFN2O = Default N2O emission factor for petroleum coke” from Table 4-5 (tonnes 
+
+N2O /MMBtu).
+
+

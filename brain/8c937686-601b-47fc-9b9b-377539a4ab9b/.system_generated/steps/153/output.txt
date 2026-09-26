@@ -1,0 +1,80 @@
+
+The command exited with code 0.
+Output:
+Section 6: Vented and Process Emission Estimation Methods
+6-93
+November 2021
+The moles of gas released is then calculated using Equation 6-32. The compressibility factor for 
+CH4 is determined to be 0.9864 (Perry, 1984).
+  3
+3
+o
+o
+(100 psig+14.7)× 83.8 ft
+n = 1.68 lbmoles gas/blowdown event
+psi ft 0.9864×10.73 ×539.7 R
+lbmole R
+
+Finally, the CH4 emissions are calculated using Equation 6-33:
+4
+4
+44
+CH
+4
+CH 4
+1.68 lbmoles gas 0.9 lbmoles CH 16 lb CH 1 blowdown tonne E = × × × ×
+blowdown event lbmoles gas lbmole CH yr 2204.62 lb
+E = 0.011 tonne CH /yr
+Use of the gas law is most appropriate for situations where the entire volume of the vessel is 
+blown down and the volume of gas released is finite. More rigorous engineering approaches are 
+needed for a blowdown situation where only a portion of the vessel contents is released. 
+When no specific equipment information is available, simplified CH4 emission factors from 
+certain types of equipment blowdown activities from Table 6-32 may be applied to estimate 
+emissions. The majority of these emission factors are taken from the GRI/EPA study (Shires, 
+1996b). 
+Table 6-32. Gathering Segment CH4 Emission Factors for Certain Blowdown 
+Activities
+Source
+Original Units, 
+Methane 
+Emission 
+Factor a
+Uncertainty b
+(%)
+Methane Emission 
+Factor,
+Converted to 
+Tonnes Basis
+Methane 
+Content Basis 
+of Factor
+(mole %)
+Whole Gas 
+Emission 
+Factor 
+(Converted) c
+Vessel 
+blowdowns
+78 scf CH4/yr￾vessel 326 0.0015 
+tonnes/vessel-yr
+78.8 99 scf gas/yr￾vessel
+Compressor 
+blowdowns
+3,774 scf 
+CH4/yr￾compressor
+179
+0.07239 
+tonnes/compressor￾yr
+78.8 4,789 scf gas/yr￾compressor
+Gathering gas 
+pipeline 
+blowdowns
+309 scf CH4/yr￾mile
+39.5
+0.00593 
+tonnes/mile-yr 78.8 392 scf gas/yr￾0.00368 tonne/km- mile
+yr
+Footnotes and Sources:
+a Shires, T.M. Methane Emissions from the Natural Gas Industry, Volume 7: Blow and Purge Activities, Final Report, GRI-94/0257.24 
+and EPA-600/R-96-080g, Gas Research Institute and U.S. Environmental Protection Agency, June 1996.
+

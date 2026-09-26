@@ -1,0 +1,185 @@
+
+The command exited with code 0.
+Output:
+<truncated 49 lines>
+EXHIBIT 6-39: Sample Calculation for Other Continuous Catalyst Regeneration
+INPUT DATA:
+A catalytic reformer operates with a catalyst circulation rate of 10 tonnes per hour and with 4 
+wt% carbon on the spent catalyst. The unit operates for 8,280 hours per year. Calculate the 
+CO2 emissions.
+CALCULATION METHODOLOGY:
+Using Equation 6-40, the estimated CO2 emissions are calculated as follows:
+2
+2
+2
+CO
+CO 2
+10 tonnes catalyst 8280 hr 0.04 tonne C 44 tonne CO /tonne mole E = × × ×
+hr yr tonne catalyst 12 tonne C/tonne mole
+E =12,144 tonnes CO /yr
+Similarly, the catalyst regeneration rate (CRR) for an intermittent regeneration operation consists 
+of the catalyst inventory in tonnes multiplied by the number of regeneration events per year. 
+  2
+2
+CO spent regen
+44 mass units CO /mole E CRR N FC - FC
+12 mass uni
+*** PAGE 391 ***
+Section 6: Vented and Process Emission Estimation Methods
+6-149
+November 2021
+An example of this calculation is presented in Exhibit 6-40.
+EXHIBIT 6-40: Sample Calculation for Other Intermittent Catalyst Regeneration
+INPUT DATA:
+A hydrotreater has a catalyst inventory of 1000 tonnes and the carbon on the spent catalyst is 7 
+weight percent (or 0.07 weight fraction). The catalyst is regenerated twice a year, on average. 
+Calculate the CO2 emissions.
+CALCULATION METHODOLOGY:
+The estimated CO2 emissions are calculated using Equation 6-41.
+2
+2
+2
+CO
+CO 2
+1,000 tonnes catalyst 2 regenerations 0.07 tonne C 44 tonne CO /tonne mole E = × × ×
+regeneration yr tonne catalyst 12 tonne C/tonne mole
+E = 513 tonnes CO /yr
+The same methodology to derive CH4 and N2O emissions from the FCCU can be used for other 
+catalyst regeneration processes. Refer to Equation 6-38 and Equation 6-39.
+6.11.2 Cokers 
+Coking is another cracking process used at a refinery to generate transportation fuels, such as 
+gasoline and diesel, from lower-value fuel oils. A desired by-product of the coking reaction is 
+petroleum coke, which can be used as a fuel for power plants as well as a raw material for carbon 
+and graphite products. Varieties of cokers are used in refineries, including delayed cokers, flexi￾cokers, and fluid cokers. 
+ Fluid cokers employ a thermal cracking process which util
+*** PAGE 394 ***
+Section 6: Vented and Process Emission Estimation Methods
+6-152
+November 2021
+Msteam=
+(1-fConvLoss)×(Mwater×Cp,water+Mcoke×Cp.coke)×(Tinitial-Tfinal)
+∆Hvap
+(Equation 6-47)
+where:
+Msteam = Mass of steam generated and released per decoking cycle (metric 
+tonnes/cycle);
+fConvLoss = Fraction of total heat loss that is due to convective heat loss from the sides 
+of the coke vessel (unitless); when site specific data is not available 
+assume simplified factor of 0.10; 
+Mwater = Mass of water in the delayed coking unit vessel at the end of the cooling 
+cycle just prior to atmospheric venting (metric tonnes/cycle);
+Cp,water = Heat capacity of water (British thermal units per metric tonne per degree 
+Fahrenheit; Btu/tonne-°F); use the default value of 2,205 Btu/tonne-°F;
+Mcoke = Typical dry mass of coke in the delayed coking unit vessel at the end of 
+the coking cycle (tonnes/cycle) 
+Cp,coke = Heat capacity of petroleum coke (Btu/tonne-°F); when site specific data is 
+not available assume default factor of 584 Btu/tonne-°F;
+Tinitial = Average temperature of the delayed coking unit vessel when the drum is 
+first vented to the atmosphere (°F) 
+Tfinal = Temperature of the delayed coking unit vessel when steam generation 
+stops (°F); or assume a default value of 212°F; and
+ΔHvap = Heat of vaporization of water (British thermal units per metric tonne; 
+Btu/tonne); o
+*** PAGE 397 ***
+Section 6: Vented and Process Emission Estimation Methods
+6-155
+November 2021
+natural gas (i.e., predominantly CH4 with small amounts of other low molecular weight 
+hydrocarbons). However, the more rigorous approaches should be used when the feed gas does 
+not resemble natural gas or a more accurate estimation approach is desired.
+The first of the two rigorous approaches is based on a material balance using the feedstock rate 
+and carbon content. Equation 6-49 presents this material balance approach:
+2
+2
+CO
+44 mass units CO /mole E FR CF
+12 mass units C/mole
+  
+(Equation 6-49)
+where:
+ECO2
+= Emissions of CO2 in units of mass (pounds, kg, tonnes) per year;
+FR = Feedstock rate in units of mass per year (feedstock rate excluding H2O fed);
+CF = Weight fraction of carbon in feedstock;
+44 = Molecular weight of CO2; and
+12 = Molecular weight of carbon.
+The carbon fraction can be estimated using the feedstock composition if it is not explicitly 
+known. Note that if the fraction of carbon in the feedstock (CF) includes carbon accounted for 
+through other end uses (e.g., combustion of PSA purge gas), these emissions will be double 
+counted. To avoid double counting, the quantity of carbon accounted for elsewhere should be 
+subtracted from the feedstock rate. Exhibit 6-42 demonstrates the approach to estimate the CO2
+emissions from a hydrogen plant using the f
+*** PAGE 401 ***
+Section 6: Vented and Process Emission Estimation Methods
+6-159
+November 2021
+Table 6-51. Stoichiometric Conversion Emission Factor
+CO2 Emissions based on Feedstock 
+Consumption
+CO2 Emissions based on Hydrogen 
+Production
+119,976 lb CO2/106 scf feedstock 29,568 lb CO2/106 scf H2 produced
+54.42 tonnes CO2/106 scf feedstock 13.41 tonnes CO2/106 scf H2 produced
+1,922 tonnes CO2/106 m3
+feedstock 473.6 tonnes CO2/106 m3 H2 produced
+EXHIBIT 6-44: Sample Calculation for Hydrogen Plant Emissions - Simple Approach
+INPUT DATA:
+A hydrogen plant produces 13109 scf of hydrogen per year. Calculate the CO2 emissions.
+CALCULATION METHODOLOGY:
+CO2 emissions are calculated using the emission factor derived from the average U.S. natural gas 
+composition.
+2
+2
+6
+22
+CO 6
+2
+CO 2
+10 scf H 13.41 tonnes CO E =13,000 ×
+year 10 scf H
+E =174,300 tonne CO /yr
+Although rare and not applicable to most refineries, a partial H2 generation unit may be used (i.e., 
+where only a portion of the H2 available in the hydrocarbon stream is converted to H2). If such a 
+system is used, site-specific data or engineering judgment must be used to estimate the CO2
+emissions. If site-specific data are not available, one suggested estimation approach is to ratio the 
+actual H2 generation rate for the year to the design basis, and multiply this ratio by the design 
+CO2 emissions to estimate the
+*** PAGE 403 ***
+Section 6: Vented and Process Emission Estimation Methods
+6-161
+November 2021
+In the absence of site-specific data, controlled CH4 and CO2 emissions can be calculated using a 
+mass balance approach, as shown in the following equations:
+    E = Q×EF × 1-DE CH44 CH
+(Equation 6-51)
+where:
+ECH4
+= CH4 emissions (metric tonnes/yr);
+Q = Quantity of asphalt blown (bbl/yr or ton/yr);
+EFCH4
+= CH4 Emission factor from Table 6-52 (tonne/bbl or tonne/ton); and
+DE = Control measure destruction efficiency (default DE = 98%, expressed as 
+0.98).
+ECO2
+= (Q × EFCO2
+) + (Q × EFCH4
+× DE ×
+44 mass units CO2
+/mole
+16 mass units CH4
+/mole) (Equation 6-52)
+where:
+ECO2
+= CO2 emissions (metric tonnes/yr);
+Q = Quantity of asphalt blown (bbl/yr or ton/yr);
+EFCO2
+= CO2 Emission factor from Table 6-52 (tonne/bbl or tonne/ton);
+EFCH4
+= CH4 Emission factor from Table 6-52 (tonne/bbl or tonne/ton); and
+DE = Control measure destruction efficiency (default DE = 98%, expressed as 0.98)/
+Note that the second terms of Equation 6-51 and Equation 6-52 should only be used to calculate 
+emissions from asphalt blowing when vented emissions are routed to a combustion control 
+device. Also note that the first term in Equation 6-52 represents the vented CO2 emissions while 
+the second term reflects CO2 emissions from combustion.
+Exhibit 6-45 provides an example calculation for asphal
+

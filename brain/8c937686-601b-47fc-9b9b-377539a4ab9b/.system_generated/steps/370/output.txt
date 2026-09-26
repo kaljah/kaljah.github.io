@@ -1,0 +1,38 @@
+
+The command exited with code 0.
+Output:
+6.4.2 at PDF page 327
+6.4.3 at PDF page 328
+6.5  at PDF page 328
+6.4.4 at PDF page 331
+6.4.5 at PDF page 331
+6.5.2 at PDF page 331
+6.4.6 at PDF page 332
+6.4.6 at PDF page 338
+6.5  at PDF page 340
+6.5.1 at PDF page 340
+6.5.2 at PDF page 342
+6.5.2 at PDF page 346
+6.5.3 at PDF page 346
+6.4.3 at PDF page 349
+6.5.4 at PDF page 349
+6.5.4 at PDF page 350
+6.4.3 at PDF page 351
+6.4  at PDF page 353
+6.6  at PDF page 353
+6.6.1 at PDF page 353
+6.6.4 at PDF page 353
+6.4.3 at PDF page 354
+6.6.1 at PDF page 354
+6.5.4 at PDF page 356
+6.6.1 at PDF page 356
+6.4  at PDF page 357
+6.6.2 at PDF page 359
+6.6.3 at PDF page 359
+6.4  at PDF page 360
+6.6.4 at PDF page 360
+6.5.2 at PDF page 363
+6.5.4 at PDF page 364
+6.4.3 at PDF page 374
+6.5.2 at PDF page 374
+

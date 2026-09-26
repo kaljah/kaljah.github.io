@@ -1,0 +1,50 @@
+
+The command exited with code 0.
+Output:
+"""
+API Compendium 2021 - Section 6: Vented and Process Emissions
+Implementation of equations for mud degassing, completions, liquids unloading, 
+blowdowns (with thermodynamic T & P corrections), tanks, and pneumatics.
+"""
+
+from .base import BaseCalculator
+from .units import (
+    CONVERSIONS,
+    calculate_co2e,
+    convert,
+    to_psia,
+    to_kelvin,
+    STD_TEMP_K,
+    STD_PRESSURE_PSIA,
+    normalize_efficiency,
+)
+from .uncertainty import (
+    propagate_uncertainty,
+    resolve_tier,
+    resolve_ef_uncertainty,
+    Tier,
+)
+import math
+
+
+def _split_vented_and_flared(
+    total_gas_m3: float,
+    ch4_tonnes: float,
+    co2_tonnes: float,
+    ctrl_eff: float,
+    hhv: float = 1020.0,
+    ef_n2o: float = None,
+):
+    """
+    D-01 / API Compendium 2021 stoichiometric flaring partition helper.
+    Partitions total gas into vented (1 - ctrl_eff) and flared (ctrl_eff).
+    Flared combustion:
+      - 98% CH4 converted to CO2 stoichiometrically: CH4 * 0.98 * (44.01 / 16.04)
+      - Native CO2 in flared stream passes through unreacted
+      - 2% unburnt CH4 emitted
+      - N2O emitted = flared_mmbtu * (ef_n2o or 0.0001) where flared_scf = flared_m3 * (1 / scf_to_m3)
+        and flared_mmbtu = flared_scf * (hhv or 1020.0) / 1e6.
+        Catalog ef_n2o is in kg/MMBtu (default 0.0001 kg/MMBtu); convert to tonnes: / 1000.0.
+    """
+
+

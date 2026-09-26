@@ -1,0 +1,61 @@
+
+The command exited with code 0.
+Output:
+=== Page 373 ===
+   6.9 Enhanced Oil Recovery, Carbon Capture, and Geological Storage 
+   6.9.1 Enhanced Oil Recovery 
+   the crude transportation and processing phases. See Equation 6-26 for estimating CO2
+   valves. See Equation 6-27 for estimating CO2 emissions from EOR CO2 injection pump 
+   6.9.2 Carbon Capture 
+   6.9.2.1 Carbon Capture for ‘Capture-Ready’ Sources
+=== Page 374 ===
+   blowdowns can be estimated using Equation 6-27 for EOR CO2 injection pump 
+=== Page 375 ===
+   6.9.2.2 Carbon Capture for Combustion Sources 
+   carbon capture process are the same as described above in Section 6.9.2.1 for hydrogen 
+   same as described in Section 6.9.2.1.
+   sources are also discussed above in Section 6.9.2.1. More advanced carbon capture 
+   6.9.3 Geological Storage
+=== Page 376 ===
+   6.10 Crude Oil Transport 
+   6.10.1 Loading Loss Emissions – Truck and Marine 
+   Table 6-47 provides simplified TOC emission factors for loading loss emissions for crude oil 
+=== Page 377 ===
+   Table 6-47. Simplified TOC Emission Factors for Loading Losses 
+=== Page 378 ===
+   EXHIBIT 6-35: Sample Calculation for Estimating Loading Loss CH4 Emissions 
+   From Table 6-47, the emission factor corresponding to crude loading losses from rail splash 
+   6.10.2 Ballasting Emissions
+   Table 6-48 provides average emission factors for estimating TOC emissions from crude 
+=== Page 379 ===
+   Table 6-48. Average TOC Emission Factors for Crude Oil Ballasting Operations
+   EXHIBIT 6-36: Sample Calculation for Crude Oil Ballasting Emissions Based on 
+   TOC emissions are calculated using the emission factor provided in Table 6-48.
+=== Page 380 ===
+   6.10.3 Transit Loss Emissions
+   Table 6-49 provides simple transit TOC emission factors for marine transit of crude oil (EPA, 
+   Table 6-49. Simplified TOC Emission Factors for Marine Transit Losses
+=== Page 381 ===
+   EXHIBIT 6-37: Sample Calculation for Estimating CH4 Emissions Using Simplified 
+   Table 6-49 for crude oil, by the volume transported and the CH4 content of the vapors. As a 
+=== Page 382 ===
+=== Page 383 ===
+   × T (Equation 6-34)
+   Equation 6-34.
+   by Equation 6-37 to quantify 
+   Equation 6-34.
+   Equation 6-35.
+   Equation 6-36.
+=== Page 384 ===
+   Equation 6-34 is based on the fundamental principles of complete stoichiometric combustion of 
+   balance approach in Equation 6-34 can be restated in terms of catalyst regeneration rate and 
+   63, Subpart UUU). This equation can be reduced to Equation 6-35. The full equation derivation 
+   (Equation 6-35)
+   (Equation 6-36)
+=== Page 385 ===
+   in Equation 6-37. The calculated coke burn rate can then be applied to Equation 6-34 to 
+   determine CO2 emissions, as identified in Figure 6-5. Equation 6-37 is derived from the US 
+   CC = Qunit ×(CBF × 0.001) (Equation 6-37)
+   emitted as shown in Equation 6-38 and Equation 6-39. Default factors for petroleum coke are 
+   ) (Equation 6-38)
+

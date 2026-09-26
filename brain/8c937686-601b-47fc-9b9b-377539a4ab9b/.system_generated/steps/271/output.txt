@@ -1,0 +1,110 @@
+
+The command exited with code 0.
+Output:
+Section 6: Vented and Process Emission Estimation Methods
+6-40
+November 2021
+Pneumatic Controllers (When Type is Unknown) 
+When the type of pneumatic controllers installed is not known, average default emission factors 
+may be used to quantify the CH4 emissions from natural gas-operated controllers. The table 
+below presents an overall average CH4 emission factor for a pneumatic controller in the 
+production segment that can be applied when the type of controller is unknown.
+9.2 scf whole gas/hr/controller (Original Units) a, b
+7.5 scf CH4/controller-hr(Converted) c
+1.26 tonnes CH4/controller-yr (Converted) c.d
+Footnotes and Sources:
+a API working paper, Pneumatic Controller Inventory and Measurement at 67 Oil and Gas Sites in the Western United States, 2020. 
+b Uncertainty is not specified for this value.
+c The original whole gas emission factor was converted to whole gas assuming 81.6 mole % CH4 in natural gas, according to GHGI (EPA, 
+2019b). The CH4 emission factor can be adjusted based on the CH4 content of the site-specific gas, if the natural gas has a significantly different 
+CH4 content from the default basis (if given). Also, if the facility gas contains significant quantities of CO2, the CH4 emission factor can be 
+adjusted based on the relative concentrations of CH4 and CO2 in the gas to estimate the CO2 emissions.
+d Conversion to annual basis assumes 8,760 hrs/yr operation. 
+6.3.7 Gas Driven Pneumatic Pumps
+Natural gas-driven chemical injection pumps (CIPs) are a source of CH4 emissions due to 
+venting of the gas used to act on a piston or diaphragm to pump chemicals into the process 
+equipment lines. The CIPs can also be a source of CO2 emissions if the gas used to drive the 
+pump contains a significant amount of CO2. 
+If fuel gas is used as the pneumatic gas and is taken downstream of the total fuel gas meter, then 
+the vented gas volume must be subtracted from the total fuel gas volume (used to determine 
+combustion emissions).
+The 1996 GRI/EPA study observed that gas-powered chemical injection pumps are most 
+commonly found in the production segment where electricity may not be readily available 
+(Shires, 1996). Typical chemicals injected into the process lines include biocides, demulsifiers, 
+clarifiers, corrosion inhibitors, scale inhibitors, hydrate inhibitors, paraffin dewaxers, surfactants, 
+oxygen scavengers, and H2S scavengers. 
+The most rigorous approach for estimating GHG emissions from CIPs is to use site-specific gas 
+usage measurements or manufacturer data. Another rigorous approach is to calculate the volume 
+of natural gas emitted from the volume of liquid pumped. The volume of natural gas emissions 
+from a pneumatic pump is a function of the amount of liquid pumped (displacement volume), the 
+liquid outlet pressure from the pump, the gas pressure and temperature used as the pneumatic 
+power gas, and the “mechanical efficiency loss” across the pump. In manufacturers information 
+this relationship is typically described using a set of “pump curves.” However it can be described 
+mathematically using Equation 6-15.
+  OA A
+GL
+G
+P +P T
+V = × ×V × 1+I
+14.7 459.7+T
+ 
+   
+(Equation 6-15)
+where:
+VG = Gas loss from natural gas driven pneumatic pump, scf/yr;
+PO = Outlet pressure from the pump, psig;
+Section 6: Vented and Process Emission Estimation Methods
+6-41
+November 2021
+PA = Atmospheric pressure, psig;
+14.7 = Atmospheric pressure, psig;
+TA = Atmospheric temperature, °R;
+459.7 = Conversion from °F to °R;
+TG = Gas temperature, °F;
+VL = Volume of liquid pumped, ft3
+/yr, from measurement data
+or calculated using Equation 6-16; and
+(1 + I) = Manufacturer-specific pump inefficiency, 
+or assumed default of 30%.
+The volume of liquid pumped in Equation 6-15 can be calculated as shown in Equation 6-16.
+S
+L
+V
+V = ×N×T
+7.48
+(Equation 6-16)
+where:
+VS = Volume of liquid pumped per stroke, gal/stroke;
+7.48 = Conversion from gal to scf;
+N = Number of strokes/min; and
+T = Annual operational time, min/year.
+After calculating the volume of gas loss, CH4 and CO2 emissions can then be calculated using 
+the CH4 and CO2 content of the gas, such as described in Equation 6-2.
+Alternatively, the simplified emission factors in Table 6-16 can be used to estimate CH4
+emissions from gas-driven CIPs. The factors are given for piston and diaphragm type pumps, and 
+an average emission factor is given if the type of pump is unknown. 
+Table 6-16. Gas-Driven Chemical Injection Pump CH4 Emission Factors
+Type of 
+Chemical 
+Injection 
+Pump
+Emission Factor, 
+Original Units
+Uncertainty a
+(±%)
+Methane 
+Emission Factor
+(Converted) b
+(tonnes CH4/
+pump-yr)
+Methane 
+Content 
+Basis of 
+Factor b
+(mole %)
+Whole Gas 
+Emission 
+Factor 
+(Converted) b, c
+(scf gas/pu
+

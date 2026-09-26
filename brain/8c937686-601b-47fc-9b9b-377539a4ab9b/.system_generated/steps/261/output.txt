@@ -1,0 +1,179 @@
+
+The command exited with code 0.
+Output:
+<truncated 1 lines>
+Emission 
+Factor, 
+Converted to 
+Tonnes Basis
+Methane 
+Content 
+Basis of 
+Factor b
+Whole Gas 
+Emission 
+Factor b
+Type of Event (kg CH4/
+well-year)
+(± %) (tonnes CH4/
+well-year)
+(mole %) (scf gas/
+well-year)
+Liquid 
+Unloading, 
+plunger
+1,774 Not specified 1.77 81.6 113,466
+Liquid 
+Unloading, non￾plunger
+2,792 Not specified 2.79 81.6 178,531
+Footnotes and Sources: 
+a EPA Inventory of U.S. Greenhouse Gas Emissions and Sinks 1990 – 2017. (EPA, 2019b). These values were calculated using 2017 
+year-specific GHGRP Subpart W data for each control category.
+b Gas content taken from GHGI Annex 3.6 Table 3.6-3 for U.S. Production segment Methane Content in Natural Gas by NEMS Region 
+(General Sources). For the lower 48 states, in 2017, methane content at 81.6 mol%. The CH4 emission factor can be adjusted based on 
+the CH4 content of the site-specific gas, if the natural gas has a significantly different CH4 content from the default basis (if given). Also, 
+if the facility gas contains significant quantities of CO2, the CH4 emission factor can be adjusted based on the relative concentrations of 
+CH4 and CO2 in the gas to estimate the CO2 emissions. 
+Note: These factors, used in the USEPA Inventory of U.S. Greenhouse Gas Emissions and Sinks 1990-2017 (EPA, 2019b), are updated 
+annually based on data reported from operators under the GHGRP. 
+6.3.5 Casing Gas Vents 
+6.3.5.1 Heavy Oil and Crude Bitumen Casing Gas Vents
+Casing gas vents are a particular concern for heavy oil and crude bitumen wells. Heavy oil wells 
+are relatively shallow (typically 300 to 900 m deep) and, thus are characterized by low reservoir 
+pressures (typically 4000 kPa or less). To achieve reasonable flow potential, it is necessary to 
+relieve gas pressure from the well bore. The wells are not usually equipped with a production 
+packer (a controller that isolates the annulus from the formation), which allows the well pressure 
+to be controlled using the casing vent. Because of the low volumes of gas associated with 
+primary heavy oil casing gas, the gas may be vented directly to atmosphere. For thermal heavy 
+oil projects, the gas is usually flared or conserved because of the potential for hydrogen sulfide
+(H2S) in the gas.
+Casing gas venting associated with heavy oil production may result in emissions of CH4
+contained in the gas, and possibly CO2 emissions. Site-specific volumetric flow rate and CH4
+concentration data (and CO2 if present) provide the most rigorous estimation of these emissions. 
+However, in the absence of site-specific data, the simplified casing gas vented emission factors 
+presented in Tables 6-12 and 6-13 can be used.
+=== Page 271 ===
+Section 6: Vented and Process Emission Estimation Methods
+6-29
+November 2021
+Table 6-12 provides casing gas total hydrocarbon (THC) vented emission factors on a heavy oil 
+production throughput basis. The base THC factors are taken from the Canadian Association of 
+Petroleum Producers (CAPP, 2003). The THC factors in CAPP are based on an assumed 
+percentage vented for each type of oil. However, the factors can be adjusted using actual site￾specific venting percentages if they are available and different from the defaults shown in the 
+table. 
+Table 6-12. Heavy Oil and Crude Bitumen Casing Gas Vented CH4 Emission Factors –
+Throughput Basis
+Type of Oil
+Original Units, 
+Total 
+Hydrocarbon 
+Emission Factor a
+(m3 THC/m3 oil 
+produced)
+Uncertainty
+(± %)
+Methane 
+Emission Factor b
+(tonnes CH4/
+1,000 barrels oil)
+Methane 
+Content 
+Basis of 
+Factor b
+(mole %)
+Whole Gas 
+Emission 
+Factor c, d
+(scf gas/barrel 
+oil produced)
+Primary Heavy Oil 
+(63.2% casing gas 
+vented) e
+37.4
+Not 
+specified
+3.28 81.6 210
+Thermal Heavy Oil 
+(4.7% casing gas 
+vented) e
+2.53 0.223 81.6 14.2
+Crude Bitumen (18% 
+casing gas vented) e
+2.3 0.207 81.6 12.9
+Footnotes and Sources:
+a Canadian Association of Petroleum Producers (CAPP), Calculating Greenhouse Gas Emissions, Table 1-14, Canadian Association of Petroleum 
+Producers, Publication Number 2003-03, April 2003. 
+b For conversion to methane, the actual composition or an assumed 81.6 mol% can be assumed, from GHGI Annex 3.6 Table 3.6-3 for U.S. 
+Production segment Methane Content in Natural Gas by NEMS Region (General Sources).
+c Whole gas emission factor conversion assumes that the gas released comprises 100% (mol or vol) of hydrocarbon; no inerts present in the gas 
+composition. 
+d Emission factors converted from m3
+are based on 15°C and 1 atm
+e Percentage shown is the assumed percent of total casing gas vented. If the actual percent casing gas vented is known, the factor and percentage 
+shown for each crude type can be used to estimate the CH4 emission factor for the actual percent casing gas vented if it is different from the default 
+value shown in the table.
+If the oil production throughput is not known, Table 6-13 can be used. This table provides 
+simplified casing gas vented THC emission factors for active and suspended wells based on data 
+from Alberta, Canada (CAPP, 2002). The active and suspended well emission rate data were 
+based on 883 and 910 wells, respectively.
+=== Page 272 ===
+Section 6: Vented and Process Emission Estimation Methods
+6-30
+November 2021
+Table 6-13. Heavy Oil and Crude Bitumen Casing Gas Vented Methane Emission Factors –
+Well Basis
+Source
+Original Units, 
+Total 
+Hydrocarbon 
+Emission Factor a
+(m3 THC/well-day)
+Uncertainty
+(± %)
+Methane Emission 
+Factor b, c
+(tonnes CH4/
+well-day)
+Methane 
+Content 
+Basis of 
+Factor c
+(mole %)
+Whole Gas 
+Emission Factor b, d
+(scf gas/well-day)
+Active 
+Wells 37.1 Not 
+specified 0.0205 81.6 1,310
+Suspended 
+Wells 20.1 Not 
+specified 0.0111 81.6 710
+Footnotes and Sources:
+a Canadian Association of Petroleum Producers (CAPP), Estimation of Flaring and Venting Volumes from Upstream Oil and Gas Facilities, table 
+on page 3-24, Publication Number 2002-0009, May 2002. Factors shown are based on data collected in Alberta, and were converted from a total 
+gas basis to a CH4 basis using the CH4 content shown in the table.
+b Emission factors converted from m3
+are based on 15°C and 1 atm.
+c For conversion to methane, 81.6 mol% can be assumed, from GHGI Annex 3.6 Table 3.6-3 for U.S. Production segment Methane Content in 
+Natural Gas by NEMS Region (General Sources). 
+d Whole gas emission factor conversion assumes that the gas released comprises 100% (mol or vol) of hydrocarbon; no CO2 present in the gas 
+composition. 
+The THC emission factors from the two CAPP guidance documents were converted to CH4
+emission factors using a default CH4 gas content of 81.6 mole % in the production segment from 
+the GHGI for methane content in natural gas (EPA, 2019b). The casing gas CH4 emission factors 
+can be adjusted based on the CH4 content of the site-specific gas if the natural gas has a CH4
+content significantly different from the default basis. Also, if the gas at the site contains 
+significant quantities of CO2, the CH4 emission factor can be adjusted based on the relative 
+concentrations of CH4 and CO2 in the gas to estimate the CO2 emissions.
+An example calculation is given in Exhibit 6-9 that illustrates the use of the casing gas vent 
+emission factors. It should be emphasized that measurement data is preferred over default 
+emission factors, as noted above.
+EXHIBIT 6-9: Sample Calculation for Heavy Oil Casing Gas Vented Emissions
+INPUT DATA:
+An oil and gas production facility produces 100 bbl/day of primary heavy crude oil. The facility 
+operates 365 days a year. The average CH4 content of the gas is 70 mole %; there is also 9 mole 
+% CO2 in the gas. Calculate the CH4 and CO2 emissions. 
+CALCULATION METHODOLOGY:
+Emissions are calculated by multiplying the oil throughput by the “primary heavy oil” whole gas 
+emission factor from Table 6-12, and adjusted to the site specific basis of 70 mole % CH4. 
+

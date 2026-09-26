@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+b'-based instrument (supplier factor with evidence field, 0 \xe2\x89\xa4 EF \xe2\x89\xa4 plausible max). Reject negative/non-finite values with 400.\r\n\r\n\r\n### Additional confirmation (BUG-099)\r\n\r\nCorrection by Agent L: the repro for this bug is `audit/repro/BUG-099.mjs` (the draft text referred to BUG-098 by mistake).\r\n'
+

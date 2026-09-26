@@ -1,0 +1,118 @@
+
+The command exited with code 0.
+Output:
+=== PAGE 332 ===
+ Section 6: Vented and Process Emission Estimation Methods
+6-90
+November 2021
+Table 6-31. Emission Factors for Storage Tanks in the Gathering and Boosting Segment
+Source
+Original 
+Units, Whole 
+Gas Emission 
+Factor a
+Whole Gas 
+Emission 
+Factor 
+Uncertainty 
+b
+(± %)
+Methane 
+Emission
+Factor c
+Methane 
+Emission 
+Factor 
+Uncertainty b
+(± %)
+Average Storage 
+Tank in 
+Gathering and 
+Boosting 
+39.3 scf 
+gas/hr/tanke 130
+33.6 scf CH4 
+/hr/tankf 134
+Common Single 
+Unit Vent d
+9.21 scf 
+gas/hr/vent 47 8.52 scf 
+CH4/hr/vent 44
+Thief Hatch 9.85 scf 
+gas/hr/tank 28 8.77 scf 
+CH4/hr/vent 30
+Footnotes and Sources:
+a Zimmerle, et al. Characterization of Methane Emissions from Gathering Compressor Stations: Final Report, Table 4, DE￾PE0029068, 2019.
+b Uncertainty based on 95% confidence interval. 
+c Zimmerle, et al. Characterization of Methane Emissions from Gathering Compressor Stations: Final Report, Table 5, DE￾PE0029068, 2019.
+d As reported, most tanks have several vents or outlets that vent directly to the atmosphere (Zimmerle, 2019). Use of this factor is only 
+applicable when the total vents per tank is known. Note that the thief hatch emission factor would also need to be applied to quantify 
+total emissions from a storage tank.
+e Zimmerle, et al. Methane Emissions from Gathering and Boosting Compressor Stations in the U.S.: Supporting Volume 3: Emission 
+Factors, Station Estimates, and National Emissions. October 2019 Revision. Table S3
+=== PAGE 338 ===
+ /year￾PRV 310 0.00065 tonnes 
+CH4/PRV-yr
+78.8 43 scf/yr-PRV
+Gathering gas 
+pipeline mishaps 
+(dig-ins) b
+669 scf/year￾mile 2,350
+0.0128 tonnes 
+CH4/mile-yr 78.8
+849 scf/yr-mile
+0.00797 tonnes 
+CH4/km-yr
+527 scf/yr-km
+Compressor starts c 8,443 scf/year￾compressor
+190
+0.16 tonnes 
+CH4/year￾compressor
+78.8 10,714 scf/yr￾compressor
+Oil pump stations 
+(maintenance) d
+1.56 lb/yr￾station Not available 0.00071 tonnes 
+CH4/year-station 78.8 46.9 scf/yr￾station
+Footnotes and Sources: 
+a Uncertainty based on 95% confidence interval converted from the 90% confidence intervals for the data used to develop the original 
+emission factor.
+b Shires, T.M. Methane Emissions from the Natural Gas Industry, Volume 7: Blow and Purge Activities, Final Report, GRI-94/0257.24 
+and EPA-600/R-96-080g, Gas Research Institute and U.S. Environmental Protection Agency, June 1996.
+c An EPA Gas STAR paper on engine starts reports that typical production compressor engine start-ups vent 1,000 to 5,000 scf of gas 
+with each start-up attempt (EPA Gas STAR, PRO Fact Sheet No. 101, September 2004). This equates to 0.015 to 0.076 tonnes CH4/start￾up attempt assuming 78.8 mole % CH4 in the gas.
+=== PAGE 339 ===
+ Section 6: Vented and Process Emission Estimation Methods
+6-97
+November 2021
+d Tilkicioglu, B.H and D.R. Winters. Annual Methane Emission Estimate of the Natural Gas and Petroleum Systems in the United States. 
+Pipeline Systems Incorporated (PSI), December 1989.
+An example calculation is given below in Exhibit 6-27 that illustrates the use of emission factors 
+from other production segment non-routine emission sources.
+EXHIBIT 6-27: Sample Calculation for Other Gathering and Boosting Segment Non￾routine Emission Sources
+INPUT DATA:
+An oil and gas company has the following non-routine events occur during the calendar year 
+associated with a gathering and boosting operation:
+ 6 PRV releases; 
+ 1 compressor start (using natural gas to start the compressor);
+ 6 miles of affected by pipeline dig-in events; and
+ 1 maintenance event at an oil pump station.
+The site gas has 79 mole % CH4 content and no CO2. Calculate the non-routine emissions by 
+activity.
+CALCULATION METHODOLOGY:
+The PRV release events and miles of gathering pipeline affected by dig-in events are each 
+multiplied by the appropriate emission factor from Table 6-33. The CH4 emission factors are not 
+corrected by the site CH4 content because it is similar to the default concentration associated 
+with the emission factors. Emissions are calculated below, by activity.
+PRV releases:
+ECH4
+= 6 PRV events × 
+34 scf CH4
+year-PRV × 
+lbmole CH4
+379.3 scf CH4
+× 
+16 lb CH4
+lbmole CH4
+× 
+tonne
+

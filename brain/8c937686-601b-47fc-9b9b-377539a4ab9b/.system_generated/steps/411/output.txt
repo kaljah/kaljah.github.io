@@ -1,0 +1,226 @@
+
+The command exited with code 0.
+Output:
+*** PAGE 366 ***
+Section 6: Vented and Process Emission Estimation Methods
+6-124
+November 2021
+Table 6-44 below lists typical pipeline loss rates of BOG during loading and unloading of LNG, 
+if the BOG is not captured or flared (note that is the exception, and not the normal design 
+approach). The emission factors listed below in Table 6-44 should only be used to estimate 
+potential emissions if the emissions are not captured or flared. The data in Table 6-44 could also 
+be useful to assess potential GHG emission reductions due to implemented operational changes.
+Table 6-44. Typical Pipeline Loss Rates
+Pipe Insulation Type Typical Loss Rate a, b, c
+(per km of transfer pipe)
+Foam 0.0012%
+Powder 0.0006%
+Vacuum 0.00012%
+Footnotes and Sources: 
+a B. Kitzel, “Choosing the right insulation”, LNG Industry, Spring 2008.
+b Based on LNG transfer rate of 228 m3
+/min and heat transfer coefficient of pipe wall insulation, where U (W/m2K) = 0.26 (foam), 0.13 (powder), 
+and 0.026 (vacuum). 
+c Uncertainty is not specified for these values.
+6.7.2.3 Non-Routine Vented Emissions from LNG Storage Stations 
+For LNG storage peak-shaving facilities, in addition to BOG losses from the storage tanks, they 
+may also have non-routine blowdown losses from BOG compressors, pumps, and pipelines. In 
+the absence of site-specific data, default emission factors could be used as an alternative for 
+accou
+*** PAGE 369 ***
+Section 6: Vented and Process Emission Estimation Methods
+6-127
+November 2021
+Table 6-45. Emission Factors for Gas-Driven Pneumatic Controllers Located in the Gas 
+Distribution Segment
+Controller Type Emission Factor a
+, 
+Original Units
+(tonnes 
+CH4/controller-yr)
+Uncertainty
+(±%)
+Methane 
+Content of 
+Factor
+(mole %)
+Whole Gas 
+Emission Factor 
+b
+, (Converted)
+(scf gas/hr￾controller)
+Pneumatic isolation 
+valves
+0.366
+Not specified
+93.4 2.33
+Pneumatic control loops 
+c
+3.465 94.4 21.84
+Distribution average 
+(if controller type is 
+unknown)
+2.941 94.9 18.44
+Industrial meter 
+regulator venting d
+3.847 Not specified 93.4 24.51
+Footnotes and Sources:
+a Shires, T.M. and M.R. Harrison. Methane Emissions from the Natural Gas Industry, Volume 12: Pneumatic Controllers, Final Report, GRI￾94/0257.29 and EPA-600/R-96-080l, Gas Research Institute and U.S. Environmental Protection Agency, June 1996; and 
+Harrison, M.R., L.M. Campbell, T.M. Shires, and R.M. Cowgill. Methane Emissions from the Natural Gas Industry, Volume 2: Technical Report, 
+Final Report, GRI-94/0257.1 and EPA-600/R-96-080b, Gas Research Institute and U.S. Environmental Protection Agency, June 1996. The 
+average CH4 concentration associated with these emission factors is provided in Table E-4.
+b CH4 emission factors are converted to whole gas basis in scf are based on 60°F, 14.7 psia, 
+*** PAGE 370 ***
+Section 6: Vented and Process Emission Estimation Methods
+6-128
+November 2021
+Table 6-46. Gas Distribution Segment Emission Factors for Non-Routine Activities
+Source
+Methane 
+Emission 
+Factor, 
+Original Units
+Methane Emission 
+Factor a
+, Converted to 
+Tonnes Basis
+Methane 
+Content 
+Basis of 
+Factor
+Uncertainty b
+(%)
+Emission 
+Factor, 
+Converted to 
+Whole Gas 
+Basis
+M&R Station 
+maintenance/upsets c
+4.27 m3
+CH4/station-yr
+0.002895 tonnes 
+CH4/station-yr
+94.8 mole 
+%
+Not available 159 scf 
+gas/station-yr
+Odorizer and gas 
+sampling vents c
+33.59 m3
+CH4/station-yr
+0.02275 tonnes 
+CH4/station-yr
+94.8 mole 
+%
+Not available 1,251 scf 
+gas/station-yr
+Pipeline blowdowns 
+(based on mains and 
+services length) d, e
+1,679 scf 
+CH4/mile-yr
+0.03220 tonnes CH4/mile￾yr
+0.02001 tonnes CH4/km￾yr
+93.4 mole 
+%
+117 1,798 scf 
+gas/mile-yr
+Pipeline mishaps (dig￾ins) (based on mains 
+and services length) f
+1,585 scf 
+CH4/mile-yr
+0.03040 tonnes CH4/mile￾yr
+0.01889 tonnes CH4/km￾yr
+93.4 mole 
+%
+2,600 1,697 scf 
+gas/mile-yr
+Pipeline mishaps (dig￾ins) g
+2.43 x 103
+scf 
+CH4/mile-yr
+0.0466 tonnes CH4/mile￾yr
+0.0290 tonnes CH4/km-yr
+93.4 
+mole%
+Not available 2,600 scf 
+gas/mile-yr
+Pressure relief valves 
+(based on pipeline 
+mains length) f
+50 scf 
+CH4/mile-yr
+9.591E-04 tonnes
+CH4/mile-yr
+5.959E-04 tonnes
+CH4/km-yr
+93.4 mole 
+*** PAGE 371 ***
+Section 6: Vented and Process Emission Estimation Methods
+6-129
+November 2021
+EXHIBIT 6-34: Sample Calculation for Distribution Non-Routine Related Emissions
+INPUT DATA:
+A gas distribution system has 20 miles of gas distribution main lines and three M&R stations. 
+The natural gas in the distribution system has a typical CH4 content and a no CO2. Calculate the 
+non-routine emissions, by activity type.
+CALCULATION METHODOLOGY:
+The M&R station count and pipeline miles are each multiplied by the appropriate emission factor 
+from Table 6-46. The CH4 emission factors are not corrected by the site CH4 content because the 
+composition is assumed to be consistent with the default emission factor CH4 content. As noted 
+above, the gas for this exhibit does not contain CO2. Emissions are calculated below, by activity 
+type.
+M&R station blowdowns:
+4
+4
+4
+CH
+CH 4
+0.002895 tonne CH E = 3 stations×
+station-yr
+E = 0.0087 tonnes CH /yr
+Odorizer and gas sampling vents:
+4
+4
+4
+CH
+CH 4
+0.02275 tonne CH E = 3 stations×
+station-yr
+E = 0.068 tonnes CH /yr
+*** PAGE 372 ***
+Section 6: Vented and Process Emission Estimation Methods
+6-130
+November 2021
+EXHIBIT 6-34: Sample Calculation for Distribution Non-Routine Related Emissions, 
+continued
+Distribution gas pipeline blowdowns:
+4
+4
+4
+CH
+CH 4
+0.03220 tonne CH E = 20 miles×
+mile-yr
+ E = 0.64 tonnes CH /yr
+Distribution gas pipeline mishaps (dig-ins):
+4
+4
+4
+CH
+CH 4
+0.03040 tonne CH E = 20 miles×
+mile-yr
+E = 0.61 tonnes CH /yr
+Distribution pressure relief valves:
+4
+4
+-4
+4
+CH
+CH 4
+9.591×10 tonne CH E = 20 miles×
+mile-yr
+E = 0.02 tonnes CH /yr
+

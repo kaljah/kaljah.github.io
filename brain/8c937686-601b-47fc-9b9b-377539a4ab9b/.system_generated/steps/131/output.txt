@@ -1,0 +1,52 @@
+
+The command exited with code 0.
+Output:
+=== PAGE 275 ===
+   controller type is unknown, the default emission factors presented in Section 6.3.6.3 can be used.
+   defines a pneumatic controller that bleeds more than 6 scfh as a “high-bleed” controller, with
+   “low-bleed” controllers venting less than 6 scfh (EPA, 2003d)4F
+   calculate the volume of gas vented as shown in Equation 6-12, from the Gas Processors
+   (Equation 6-12)
+   Q = Gas flow rate, scf/day;
+   the CH4 and CO2 content of the gas, such as described in Equation 6-2.
+   Alternatively, default whole gas emission factors by controller type are provided in Table 6-14
+   for continuous operating controllers. Table 6-14 also presents the corresponding CH4 emission
+=== PAGE 276 ===
+   pneumatic controller emission factors shown in Table 6-14 are taken from the 2019 API methane
+   Table 6-14. Natural Gas-Driven Pneumatic Controller Emission Factors for Continuous
+=== PAGE 277 ===
+   EXHIBIT 6-11: Sample Calculation for Gas-Driven Pneumatic Controller Emissions
+   factor from Table 6-14.
+   provided in Table 6-14 of 81.6 mole % CH4 to the site-specific basis of 70 mole % CH4. Because
+=== PAGE 278 ===
+   shown in Equation 6-13 (Simpson, 2014).
+   )× Nact (Equation 6-13)
+   controller (scf/yr or scm/yr);
+   emission factors for intermittent vent pneumatic controllers as presented in Table 6-15. These
+=== PAGE 279 ===
+   Table 6-15. Natural Gas-Driven Pneumatic Controller Emission Factors for Intermittent
+   and repair program, the emission factors in Table 6-15 should be applied to intermittent vent
+=== PAGE 280 ===
+   described in GHGRP (Equation W-30), and shown in Equation 6-14 below.
+   ×Tmf) (Equation 6-14)
+   EXHIBIT 6-12: Sample Calculation for Gas-Driven Intermittent Vent Pneumatic
+=== PAGE 281 ===
+   pneumatic controllers, the emission factors from Table 6-15 for normal and malfunctioning
+   factor from Table 6-15. Equation 6-13 is used to calculate the annual total emissions using the
+   provided in Table 6-15 of 81.6 mole % CH4 to the site-specific basis of 70 mole % CH4. Because
+=== PAGE 282 ===
+   6.3.7 Gas Driven Pneumatic Pumps
+   mathematically using Equation 6-15.
+   (Equation 6-15)
+   VG = Gas loss from natural gas driven pneumatic pump, scf/yr;
+=== PAGE 283 ===
+   or calculated using Equation 6-16; and
+   The volume of liquid pumped in Equation 6-15 can be calculated as shown in Equation 6-16.
+   (Equation 6-16)
+   the CH4 and CO2 content of the gas, such as described in Equation 6-2.
+   Alternatively, the simplified emission factors in Table 6-16 can be used to estimate CH4
+   Table 6-16. Gas-Driven Chemical Injection Pump CH4 Emission Factors
+=== PAGE 284 ===
+   The CIP emission factors in Table 6-16 above include the volumetric emissions in whole gas per
+=== PAGE 285 ===
+

@@ -1,0 +1,15 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\Desktop\H2\new\server\calculations\vented.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -627,7 +627,8 @@
+                 total_co2e=total_co2e,
+                 inputs={
+                     "tier": "Tier 1",
+-                    "table": "Table 6-5" if is_hf else "Table 6-6",
++                    "table": "Table 6-7" if is_offshore else ("Table 6-5" if is_hf else "Table 6-6"),
++                    "location": "offshore" if is_offshore else "onshore",
+                     "factor_code": entry["code"],
+                     "well_type": well_type_norm,
+                     "fracturing": is_hf,
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

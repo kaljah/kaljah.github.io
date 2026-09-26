@@ -1,0 +1,48 @@
+
+The command exited with code 0.
+Output:
+=== PAGE 714 ===
+B-ii November 2021 
+Table of Contents 
+B. ADDITIONAL VENTING CALCULATION INFORMATION ................................... B-1
+B.1 Derivation of Asphalt Blowing Emission Factors ......................................... B-1
+B.2 Catalytic Cracking Regenerator “K1, K2, K3” Approach ............................... B-3
+B.3 Derivation of Simplified Tank Flashing Emission Factors ........................... B-6
+B.3.1 Crude Oil Flashing Losses .............................................................. B-6
+B.3.2 Condensate Flashing Losses .......................................................... B-7
+B.4 Additional Loading, Ballasting, and Transit Loss Methodology ................... B-8
+B.4.1 Loading Loss Emissions ................................................................. B-8
+B.4.2 Ballasting Emissions ..................................................................... B-19
+B.4.3 Transit Loss Emissions ................................................................. B-
+=== PAGE 744 ===
+Appendix B. Additional Calculation Approaches 
+B-29 November 2021 
+EXHIBIT B.12: Sample Calculation for Gas-Driven Pneumatic Device Emissions, 
+continued 
+2
+44
+CO
+44
+44
+0.184 tonne CH 4.941 tonne CH E = (60 pneumatic devices) (20 pneumatic devices) device - yr device - yr
+70 mole % CH tonne mole CH tonne mole gas 78.8 mole % CH 16 tonne CH 0.70 tonne m
+ 
+     
+ 
+2
+22
+42
+CO 2
+0.09 tonne mole CO 44 tonne CO
+ole CH tonne mole gas tonne mole CO
+E 34.51 tonnes CO /yr
+      
+
+B.6 Additional Vented Volume Calculation Methodologies 
+This subsection presents additional calculation methodologies for estimating the volume of gas 
+released in non-routine activities. After calculating the volume of gas released, CH4 and CO2
+emissions from such releases would be calculated using an engineering approach, such as 
+described in Table 6-1. 
+B.6.1 Calculating Pressure Vessel Volume 
+The volume of gas released from an equipment blowdown is typically based 
+

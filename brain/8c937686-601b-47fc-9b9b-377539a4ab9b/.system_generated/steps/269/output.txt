@@ -1,0 +1,168 @@
+
+The command exited with code 0.
+Output:
+<truncated 1 lines>
+pump-yr)
+Methane 
+Content 
+Basis of 
+Factor b
+(mole %)
+Whole Gas 
+Emission 
+Factor 
+(Converted) b, c
+(scf gas/pump￾hr)
+Piston pumps 
+48.9 scfd CH4/pump d 141 e 0.34 78.8 2.59
+2.03 scf gas/hr/pump f Not specified 0.28 81.6 2.03
+0.5917 m3
+gas/hr/pump g Not specified 2.86 81.6 20.9
+Diaphragm 
+pumps 
+446 scfd CH4/pump d 99 e 3.12 78.8 23.6
+18.58 scf gas/hr/
+pump f Not specified 2.54 81.6 18.6
+=== Page 284 ===
+Section 6: Vented and Process Emission Estimation Methods
+6-42
+November 2021
+Type of 
+Chemical 
+Injection 
+Pump
+Emission Factor, 
+Original Units
+Uncertainty a
+(±%)
+Methane 
+Emission Factor
+(Converted) b
+(tonnes CH4/
+pump-yr)
+Methane 
+Content 
+Basis of 
+Factor b
+(mole %)
+Whole Gas 
+Emission 
+Factor 
+(Converted) b, c
+(scf gas/pump￾hr)
+1.0542 m3
+gas/hr/pump g Not specified 5.11 81.6 37.3
+Average 
+pump (if type 
+not known)
+248 scfd CH4/pump d 108 e 1.73 78.8 13.1
+101,000 scf 
+CH4/yr/pump h
+44 1.93 81.6 14.1
+0.9726 m3
+gas/hr/pump i
+14 4.71 81.6 34.4
+Footnotes and Sources:
+a Uncertainty based on 95% confidence interval.
+b Whole gas emission factors converted to CH4 emission factors assuming 81.6 mole % CH4 in the gas, unless otherwise indicated, according to 
+the GHGI methane content for natural gas (EPA, 2019b). Whole gas emissioon factors converted from m3
+are based on 15°C and 1 atm. 
+c CH4 emission factors converted to whole gas are calculated using methane content basis of factor shown.
+d Shires, T.M. Methane Emissions from the Natural Gas Industry, Volume 13: Chemical Injection Pumps, Final Report, GRI-94/0257.30 and 
+EPA-600/R-96-080m, Gas Research Institute and U.S. Environmental Protection Agency, June 1996. 
+e Uncertainty based on 95% confidence interval converted from the 90% confidence intervals for the data used to develop the original emission 
+factor.
+f Climate and Clean Air Coalition (CCAC) O&G Methane Partnership, Technical Guidance Document Number 1: Natural Gas Driven Pneumatic 
+Controllers and Pumps, March 2017.
+g Prasino Group, Determining bleed rates for pneumatic instruments in British Columbia, Dec. 18, 2013.
+h Allen et al, Methane Emissions from Process Equipment at Natural Gas Production Sites in the United States: Pneumatic Controllers, 2014.
+i Clearstone Engineering and Carlton University, Update of Equipment, Component and Fugitive Emission Factors for Alberta 
+Upstream Oil and Gas, prepared for Alberta Energy Regulator, 2018. 
+The emission factors are taken from the following sources: the 1996 GRI/EPA report (Volume 
+13) (Shires, 1996), the 2017 CCAC Technical Guidance Document Number 1: Natural Gas 
+Driven Pneumatic Controllers and Pumps (CCAC, 2017), 2013 study in British Columbia 
+(Prasino Group, 2013), and 2014 University of Texas study (Allen, 2014). These emission 
+factors for piston and diaphragm pumps represent both US and Canadian data sources and 
+measurement programs.
+The CIP emission factors in Table 6-16 above include the volumetric emissions in whole gas per 
+hour per controller as well as tonnes CH4 per year per controller. Values that were originally 
+presented in scf CH4 per time per controller were converted to whole gas assuming 81.6 mole % 
+CH4 composition, from the GHGI (EPA, 2019b). The methane emission factors should be 
+adjusted for site specific operating parameters using gas composition, if the natural gas has a 
+significantly different CH4 content from the default basis. Also, if the pumps are driven with gas 
+that contains significant quantities of CO2, the CH4 emission factor can be adjusted based on the 
+relative concentrations of CH4 and CO2 in the gas to estimate the CO2 emissions. (An example of 
+emission factor adjustment for different compositions of CH4 and CO2 are provided in Exhibit 6-
+12 for intermittent vent pneumatic controllers.)
+=== Page 285 ===
+Section 6: Vented and Process Emission Estimation Methods
+6-43
+November 2021
+6.3.8 Gas Treatment Processes
+6.3.8.1 Glycol Dehydration
+Glycol dehydrators are used to remove water from gas streams by contacting the gas with a 
+liquid glycol stream in an absorber. The liquid glycol absorbs the water from the gas stream, and 
+the water is driven from the rich6F
+7 glycol by heating the glycol in the reboiler (or regenerator). A 
+small amount of CH4 is absorbed by the glycol and driven off to the atmosphere in the glycol 
+regeneration step. A stripping gas may also be introduced into the regenerator to help strip water 
+and other absorbed compounds out of the glycol. Methane emissions from uncontrolled glycol 
+dehydration units occur because the CH4 removed from the glycol stream passes directly through 
+the regenerator and is vented to the atmosphere. 
+Some glycol dehydration systems also have a glycol flash tank separator prior to the rich glycol 
+stream being routed to the regenerator. If a glycol flash separator is present in the process 
+configuration, some of the absorbed CH4 in the rich glycol stream is flashed off in the flash tank 
+separator. The resulting flash gas may be combusted in the glycol regenerator reboiler, the fuel 
+gas stream, or a flare; or the flash gas may be routed to the regenerator as stripping gas. If 
+applicable, appropriate accounting for the CH4 in the flash gas is needed to avoid double 
+counting CH4 emissions in the glycol dehydration regenerator overhead stream.
+The pump used to circulate glycol in a glycol dehydration process may also have an impact on 
+CH4 emissions. Some glycol dehydration systems are configured with a natural gas-assisted 
+pump to circulate glycol and must be accounted for in quantifying CH4 emissions, if applicable.
+Note that combustion emissions from the glycol reboiler are not included in this section, and 
+should be estimated using the combustion techniques presented in Section 4. Similarly, 
+dehydration vents routed to a flare or other combustion control device should be estimated using 
+the techniques presented in Section 5.
+Figure 6-1 illustrates the methods available for estimating CH4 emissions from glycol 
+dehydrators, starting with using test data. However, such test data may not be available. If 
+detailed information about the site-specific glycol dehydrator unit is known, a process simulator 
+or other computer software such as GRI-GLYCalcTM (GRI, 2000) can be used to estimate the 
+emissions. Detailed information needed to run the GRI-GLYCalcTM computer simulation 
+includes: wet gas hydrocarbon composition, wet gas flow rate, wet gas temperature and pressure, 
+existence of a gas-driven glycol pump, wet and dry gas water contents, glycol flow rate, use of 
+stripping gas flowrate to the regenerator, and the temperature and pressure of the flash tank, if 
+present.
+ 
+7 Rich glycol stream refers to the water laden glycol stream after passing through the gas contactor, prior to water removal in the regenerator. 
+=== Page 286 ===
+Section 6: Vented and Process Emission Estimation Methods
+6-44
+November 2021
+Figure 6-1. Methane Emissions from Glycol Dehydrators
+As shown, test data or simulation software, such GRI-GLYCalcTM, are the preferred approaches 
+if site-specific data are available. If this process-specific information is not readily available, 
+simplified emission factors can be used. The emission factors provided in Table 6-17 on a gas 
+processed basis, for a glycol dehydrator without a gas-assisted glycol pump, were developed 
+using both site data and computer simulations (Myers, et al, 1996). The emission factor on a 
+dehydrator population count basis are from GHGRP Subpart W for glycol dehydrators at a well 
+site.
+Use test data to estimate 
+CH4 emissions. Are test data available?
+Use GRI-GLYCalcTM to 
+generate CH4 emission 
+estimates.
+Yes
+No
+Yes
+Use general emission 
+factors provided in Tables 
+6-17 and 6-18.
+OR
+Use tabulated GLYCalcTM
+results provided in Table 6-
+36.
+No
+Are details about the 
+specific glycol 
+dehydrator unit known?
+

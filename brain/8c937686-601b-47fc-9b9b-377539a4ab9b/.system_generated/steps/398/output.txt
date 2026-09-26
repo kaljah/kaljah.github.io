@@ -1,0 +1,83 @@
+
+The command exited with code 0.
+Output:
+=== PAGE 361 ===
+ ault 
+basis (if given). Also, if the facility gas contains significant quantities of CO2, the CH4 emission 
+factor can be adjusted based on the relative concentrations of CH4 and CO2 in the gas to estimate 
+the CO2 emissions.
+Table 6-43. Transmission and Storage Segment Methane Emission Factors for Non￾Routine Activities
+Source Original Units, 
+Emission Factor
+Uncertainty a
+(± %)
+Methane 
+Emission 
+Factor 
+(Converted)
+Methane 
+Content 
+Basis of 
+Factor
+(mole %)
+Whole Gas 
+Emission Factor 
+(Converted)
+(scf gas/
+station-yr)
+Transmission 
+Station Blowdowns 
+b
+54 Mg CH4/
+station-yr
+Not reported 54 tonnes 
+CH4/station-yr
+93.4 3,014 103
+Storage Station 
+Blowdowns b
+43 Mg CH4/
+station-yr
+Not reported 43 tonnes 
+CH4/station-yr
+93.4 2,400 103
+Pipeline venting c 613.5 kg CH4/
+mile-yr
+Not reported 0.6135 tonnes 
+CH4/mile-yr
+93.4 34.2 103
+scf 
+gas/mile-yr
+Compressor 
+blowdowns d
+2,457 103
+scf 
+CH4/station-yr
+168 47.14 tonnes 
+CH4/station-yr
+93.4 2,631 103
+Engine starts d 1,515  103
+scf 
+CH4/ station-yr
+130 29.06 tonnes 
+CH4/station-yr
+93.4 1,622 103
+PRV lifts d 192  103
+scf CH4/
+station-yr
+100 e 3.68 tonnes 
+CH4/station-yr
+93.4 206 103
+ESD activation d 415  103
+scf 
+CH4/station-yr
+346 7.97 tonnes 
+CH4/station-yr
+93.4 444 103
+M&R station 
+blowdowns f
+0.020  106 Sm3 
+CH4/station-yr
+Not available 13.75 93.4 756 103 
+ 
+11 Pipeline drips involve removing liquids in gas pipelines using in-line separators.
+

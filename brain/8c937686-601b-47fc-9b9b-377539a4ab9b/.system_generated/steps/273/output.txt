@@ -1,0 +1,8 @@
+
+The command exited with code 1.
+Output:
+  File "<string>", line 8
+    print(f'=== Page {p+1} ({lines[0] if lines else " \})
+                                                    ^
+SyntaxError: unterminated string literal (detected at line 8)
+

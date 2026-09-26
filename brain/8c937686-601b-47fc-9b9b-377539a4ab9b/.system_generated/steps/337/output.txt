@@ -1,0 +1,45 @@
+
+The command exited with code 0.
+Output:
+Section 6. Process and Vented Emission Estimation Methods 
+6-3 November 2021
+Total Hydrocarbon
+Emission Factor a
+,
+Original Units
+Methane Emission Factor b
+, 
+Converted to Tonnes Basis
+Whole Gas 
+Emission Factor c
+Mud Type (lb THC/drilling day) (tonnes CH4/drilling day) (scf gas/drilling 
+day)
+Onshore Well Mud Degassingd
+Water-based Mud 155.1 0.0458 2,857
+Oil-based Mud 34.9 0.0103 642
+Synthetic Mud 34.9 0.0103 642
+Footnotes and Sources:
+a Wilson, Darcy, Richard Billings, Regi Oommen, and Roger Chang, Eastern Research Group, Inc. Year 2005 Gulfwide Emission 
+Inventory Study, U.S. Department of the Interior, Minerals Management Services, Gulf of Mexico OCS Region, New Orleans, December 
+2007, Section 5.2.10., https://digital.library.unt.edu/ark:/67531/metadc955168/m2/1/high_res_d/4276.pdf
+b Based on gas content of 65.13 weight percent CH4, derived from sample data provided in the original source of the emission factors.
+Original sample data is as follows, in terms of mole%: 83.85% CH4, 5.41% C2H6, 6.12% C3H8, 3.21% C4H10, and 1.40% C5H12 (Wilson 
+et al. 2007).
+c The THC mass emission factor is converted to scf at 60°F and 14.7 psia, with average gas molecular weight of 20.6 based on sample 
+gas composition. The CH4 emission factor can be adjusted based on the CH4 content of the site-specific gas, if the natural gas has a 
+significantly different CH4 content from the default basis (if given). Also, if the facility gas contains significant1F
+2 quantities of CO2, the 
+CH4 emission factor can be adjusted based on the relative concentrations of CH4 and CO2 in the gas to estimate the CO2 emissions.
+d The emission factors for onshore well mud degassing have been adjusted based on API comments to EPA: API Comments on EPA’s 
+Updates under Consideration for the 2021 GHGI: Mud Degassing and Produced Water Emissions (EPA, 2020b), October 16, 2020, 
+https://www.epa.gov/sites/production/files/2020-10/documents/ghgi-webinar2020-degassing-comments.pdf. The emission factors were 
+adjusted by the following estimates: a) typical well bore hole size onshore is around 8 in., which is 44% of the bore cross section used in 
+the offshore emission factor derivation based on 12 in. bore hole; and b) porosity for most current onshore wells is 40% of the porosity 
+assumed offshore in the emission factor derivation.
+An example calculation is given in Exhibit 6-1 to illustrate the use of the mud degassing 
+emission factors.
+ 
+2 Significance threshold is based on individual site data, and is a function of the volume vented and the concentration of CO2. 
+Engineering judgement will be required when determining if the stream has quantities of CO2 that would be deemed significant 
+in the context of the overall GHG emissions inventory for the facility.
+

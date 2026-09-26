@@ -1,0 +1,67 @@
+
+The command exited with code 0.
+Output:
+=== Page 257 ===
+Section 6. Process and Vented Emission Estimation Methods 
+6-15 November 2021
+a Calculated using 2017 year-specific GHGRP Subpart W data for each control category. 
+b US Environmental Protection Agency, Inventory of U.S. Greenhouse Gas Emissions and Sinks, 2019 (EPA, 2019b), 
+https://www.epa.gov/ghgemissions/inventory-us-greenhouse-gas-emissions-and-sinks-1990-2017
+c Converted to whole gas volume assuming 81.6 mole % CH4 in production using the USEPA Inventory of U.S. Greenhouse Gas 
+Emissions and Sinks 1990-2017 (EPA, 2019b) average production segment CH4 content in natural gas by NEMS region. The CH4
+emission factor can be adjusted based on the CH4 content of the site-specific gas, if the natural gas has a significantly different CH4
+content from the default basis (if given). Also, if the facility gas contains significant quantities of CO2, the CH4 emission factor can be 
+adjusted based on the relative concentrations of CH4 and CO2 in the gas to estimate the CO2 emissions.
+Note: The gas well emission factor used in the USEPA Inventory of U.S. Greenhouse Gas Emissions and Sinks 1990-2017 (EPA,
+2019b), may be updated annually based on data reported from operators under the GHGRP. Therefore, the user should periodically 
+review emission factor updates and make an informed decision on updating the emission factor for use in the current inventory. 
+d The emission factor in GHGI for oil well completions without hydraulic fracturing is based on the following study: Harrison, M.R., L.M. 
+Campbell, T.M. Shires, and R.M. Cowgill. Methane Emissions from the Natural Gas Industry, Volume 2: Technical Report, Final Report, 
+GRI-94/0257.1 and EPA-600/R-96-080b, Gas Research Institute and U.S. Environmental Protection Agency, June 1996.
+6.2.3.3 Offshore Well Completions
+Methane emissions from offshore well completions can be quantified based on measured gas 
+flow rates (Equation 6-4) or initial production rates (Equation 6-5) if the supporting data is 
+available.
+In the absence of site-specific data, CH4 emission factors can be used to quantify emissions from 
+offshore well completions, as presented in Table 6-7. Gas well completion data are taken from an 
+Energy Information Administration report (EIA, 2001). The emission factor given in Table 6-7
+can be adjusted based on the CH4 content of the site-specific gas, if the natural gas has a 
+significantly different CH4 content from the default basis (if given). Also, if the facility gas 
+contains significant quantities of CO2, the CH4 emission factor can be adjusted based on the 
+relative concentrations of CH4 and CO2 in the gas to estimate the CO2 emissions.
+Table 6-7. Offshore Well Completion Methane Emission Factors for Oil and Gas 
+Exploration
+Source
+Emission Factor a
+, 
+Original Units
+Methane Emission 
+Factor b
+, Converted 
+to Tonnes Basis
+Methane Content 
+Basis of Factor c
+Offshore gas well 
+completion
+~8,700×103
+scf 
+whole gas/
+completion-day 
+136.2
+tonne/completion-day
+81.6 mole %
+Footnotes and Sources:
+a EIA, U.S. Natural Gas Markets: Mid-Term Prospects for Natural Gas Supply, December 2001. Cites data for initial rates of production 
+for completions in 2000. Offshore factor interpolated from chart "Initial Flow Rates of New Natural Gas Well Completions, 1985-2000." 
+b CH4 emission factors converted from scf are based on 60°F and 14.7 psia, and 81.6 mole % CH4. The CH4 emission factors can be 
+adjusted based on the relative concentrations of CH4 and CO2 to estimate CO2 emissions.
+c The total gas basis was converted to a CH4 basis assuming 81.6 mole % CH4 in production using the USEPA Inventory of U.S. 
+Greenhouse Gas Emissions and Sinks 1990-2017 (EPA, 2019b) average production segment CH4 content in natural gas by NEMS 
+region.
+6.2.4 Coal Seam Exploratory Drilling and Well Testing
+Methane, or natural gas, may be used for drilling coal seam wells, if available at high pressures.
+In this case, CH4, rather than compressed air, is used as the motive force to drill the wells and is 
+emitted back to the atmosphere.
+Methane may also be used to clean coal fines or dust that accumulates in the well. For this use, 
+compressed gas is pumped into the well bore where it builds up pressure over a short duration 
+

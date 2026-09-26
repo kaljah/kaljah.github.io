@@ -1,0 +1,60 @@
+
+The command exited with code 0.
+Output:
+ulated by multiplying the number of reciprocating compressors by the default 
+emission factors for rod packing in normal operation and standby pressurized modes, 
+respectively, from Table 6-40. Using Equation 6-29, CH4 emissions from the compressors can be 
+calculated using the average time in each mode. The whole gas emission factors are used and 
+converted to CH4 based on the site-specific basis of 90 mole % CH4. Because the gas contains an
+insignificant quantity of CO2, emissions of CO2 do not need to be quantified. Emissions are 
+calculated as shown below:
+ECH4, normal operation= (5 reciprocating compressors)×
+263 scf gas
+compressor-hr
+×
+7,970 hrs
+yr
+×
+0.9 lbmole CH4
+lbmole gas
+×
+lbmole gas
+379.3 scf gas
+×
+16 lb CH4
+lbmole CH4
+×
+tonne
+2204.62 lb
+ECH4, normal operation= 180.5 tonnes CH4
+/yr
+ECH4,standby pressurized= (5 reciprocating compressors)×
+385 scf gas
+compressor-hr
+×
+lbmole
+379.3 scf
+×
+0.9 lbmole CH4
+lbmole gas
+×
+16 lb CH4
+lbmole CH4
+×
+tonne
+2204.62 lb
+×
+630 hrs
+yr
+ECH4,standby pressurized= 20.9 tonnes CH4
+/yr
+ECH4
+= ECH4normal operation
++ ECH4standby operation
+= 180.5 + 20.9 = 201.4 tonnes CH4
+/yr
+6.6.1.2 Centrifugal Compressor Venting 
+As discussed in Section 6.5.4.2, the volume of gas venting from centrifugal compressor seals 
+depends on the type of seal, with wet seals generally having a higher vent rate than dry seals.
+Direct measurement is the most accurate way to determine venting losses from centrifugal 
+

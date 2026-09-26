@@ -1,0 +1,27 @@
+
+The command exited with code 0.
+Output:
+ained in the liquid hydrocarbons after storage tank flashing is lost to the 
+atmosphere during the crude transportation and processing phases. 
+Hydrocarbon liquids produced through EOR operations may contain small quantities of CO2
+dissolved in the produced oil, which may cause emissions downstream of the storage tank during 
+the transportation and processing of the oil. The amount of CO2 retained in hydrocarbon liquids 
+after tank flashing at atmospheric pressure can be determined by taking compositional samples 
+that measure the CO2 retention that is occurring in the oil immediately downstream of the storage 
+tank as shown in Equation 6-26 (EPA, 2019a).
+ECO2
+= Sh1 × Vh1 (Equation 6-26)
+where:
+ECO2
+= Annual CO2 emissions from CO2 retained in hydrocarbon liquids produced 
+through EOR operations beyond tankage (tonnes CO2/year);
+Sh1 = Amount of CO2 retained in hydrocarbon liquids downstream of the storage 
+tank, under standard conditions (tonnes CO2/bbl); and
+Vh1 = Total volume of hydrocarbon liquids produced at the EOR operations 
+(bbl/year).
+6.3.10.3 EOR CO2 Injection Pump Blowdown 
+EOR operations use compressors or pumps to inject supercritical phase CO2 into reservoirs. For 
+upsets or maintenance events, these high pressure injection pumps may be blown down to 
+atmospheric pressure, resulting in the release of the supercritical phase CO2 in the pressurized system 
+between isolation valves. The volume of CO2 released during such blowdown events can be 
+

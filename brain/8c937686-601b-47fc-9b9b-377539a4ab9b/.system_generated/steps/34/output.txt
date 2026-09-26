@@ -1,0 +1,11 @@
+
+The command exited with code 1.
+Output:
+Traceback (most recent call last):
+  File "<string>", line 7, in <module>
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "C:\Users\samsung\Desktop\H2\new/server/emission_factors.py", line 17, in <module>
+    from emission_factors_api2021 import (
+ModuleNotFoundError: No module named 'emission_factors_api2021'
+

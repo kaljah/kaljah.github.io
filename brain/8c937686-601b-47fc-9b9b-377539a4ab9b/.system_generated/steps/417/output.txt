@@ -1,0 +1,112 @@
+
+The command exited with code 0.
+Output:
+Page 383: × T (Equation 6-34)
+Page 383: Equation 6-34.
+Page 383: by Equation 6-37 to quantify 
+Page 383: Equation 6-34.
+Page 383: Equation 6-35.
+Page 383: Equation 6-36.
+Page 384: Equation 6-34 is based on the fundamental principles of complete stoichiometric combustion of 
+Page 384: balance approach in Equation 6-34 can be restated in terms of catalyst regeneration rate and 
+Page 384: 63, Subpart UUU). This equation can be reduced to Equation 6-35. The full equation derivation 
+Page 384: (Equation 6-35)
+Page 384: (Equation 6-36)
+Page 385: in Equation 6-37. The calculated coke burn rate can then be applied to Equation 6-34 to 
+Page 385: determine CO2 emissions, as identified in Figure 6-5. Equation 6-37 is derived from the US 
+Page 385: CC = Qunit ×(CBF × 0.001) (Equation 6-37)
+Page 385: emitted as shown in Equation 6-38 and Equation 6-39. Default factors for petroleum coke are 
+Page 385: ) (Equation 6-38)
+Page 386: Equation 6-34 through Equation 6-37, converted to metric tonnes/year;
+Page 386: ) (Equation 6-39)
+Page 386: Equation 6-34, Equation 6-36, or Equation 6-37, converted to (metric 
+Page 387: EXHIBIT 6-38: Sample Calculation for FCCU Process CO2 Calculation Approach
+Page 387: regenerator CO2 emissions using Equation 6-34, Equation 6-36, and Equation 6-37. Calculate the 
+Page 387: 1. Calculate the CO2 emissions using Equation 6-34. Using Equation 6-34, the estimated CO2
+Page 387: 2. Calculate the CO2 emissions using Equation 6-36. Using the air rate in Equation 6-36, the CO2
+Page 388: EXHIBIT 6-38: Sample Calculation for FCCU Process Calculation Approach, 
+Page 388: 3. Calculate the CO2 emissions using Equation 6.-37. Using the air rate in Equation 6-37 yields:
+Page 389: EXHIBIT 6-38: Sample Calculation for FCCU Process Calculation Approach, 
+Page 389: (Equation 6-34)
+Page 389: (Equation 6-35),
+Page 389: (Equation 6-36)
+Page 389: 6.11.1.2 Other Catalyst Regenerator 
+Page 389: or intermittent catalyst regeneration can be estimated by Equation 6-40 or Equation 6-41, 
+Page 389: (Equation 6-40)
+Page 390: EXHIBIT 6-39: Sample Calculation for Other Continuous Catalyst Regeneration
+Page 390: Using Equation 6-40, the estimated CO2 emissions are calculated as follows:
+Page 390: (Equation 6-41)
+Page 391: EXHIBIT 6-40: Sample Calculation for Other Intermittent Catalyst Regeneration
+Page 391: The estimated CO2 emissions are calculated using Equation 6-41.
+Page 391: catalyst regeneration processes. Refer to Equation 6-38 and Equation 6-39.
+Page 391: 6.11.2 Cokers 
+Page 391: Equation 6-34. An example calculation for a fluid coker is shown in Exhibit 6.11-4.
+Page 391: combustion sources described in Section 4. Equation 6-34 can also be used for flexi￾coker emissions,
+Page 392: decoking cycle and the number of decoking cycles using Equation 6-42.
+Page 392: = Msteam× EFDCU × N × 0.001 (Equation 6-42)
+Page 392: using Equation 6-43 through Equation 6-47. First, the mass of coke in the delayed coking unit 
+Page 392: dimensions using Equation 6-43.
+Page 392: ] (Equation 6-43)
+Page 392: Next, the mass of water in the delayed coking unit vessel is calculated using Equation 6-44.
+Page 392: ] (Equation 6-44)
+Page 393: the atmosphere, Equation 6-45 or Equation 6-46 may be used, depending on available data. 
+Page 393: Tinitial = (Toverhead+ Tbottom)/2 (Equation 6-45)
+Page 393: + 3.13 Poverhead + 220 (Equation 6-46)
+Page 393: The results from Equations 6-43 through Equation 6-46 are used below in Equation 6-47 to 
+Page 394: (Equation 6-47)
+Page 394: EXHIBIT 6-61: Sample Calculation for Fluid Coker
+Page 394: fraction is assumed to be equal to 1 minus the fraction H2, or 0.985. Using Equation 6-34, the 
+Page 395: 6.11.3 Refinery Hydrogen Plant 
+Page 395: reformers, the emissions from which are discussed in Section 6.11.1.2. The quantity of H2
+Page 395: (Equation 6-48)
+Page 396: represented by Equation 6-
+Page 396: represented by Equation 6-
+Page 397: and carbon content. Equation 6-49 presents this material balance approach:
+Page 397: (Equation 6-49)
+Page 397: EXHIBIT 6-42: Sample Calculation for Hydrogen Plant - Rigorous Approach based on 
+Page 397: CO2 emissions are calculated using Equation 6-49. The first step in calculating the CO2 emissions 
+Page 398: rate can be calculated using Equation 6-49:
+Page 398: Equation 6-50 based on re-arranging Equation 6-48. For this approach, it is important to apply 
+Page 398: It is important to note that when refinery gas is used as a feedstock, Equation 6-50 should not be 
+Page 398: (Equation 6-50)
+Page 399: x = Stoichiometry from Equation 6-48;
+Page 399: EXHIBIT 6-43: Sample Calculation for Hydrogen Plant - Rigorous Approach based on 
+Page 400: To use Equation 6-50, the carbon to hydrogen ratio must be calculated. The carbon to hydrogen 
+Page 400: The CO2 vent rate can then be calculated using Equation 6-50:
+Page 400: These emission factors are based on a stoichiometric conversion (as shown in Equation 6-48) for 
+Page 400: a feed gas with an average natural gas composition. Table 6-50 provides the average natural gas 
+Page 400: Table 6-50. Composition of U.S. Pipeline-Quality Natural Gas
+Page 400: natural gas. In such an event, the stoichiometric conversion presented in Equation 6-48 should be 
+Page 400: emission factors are shown in Table 6-51 below:
+Page 401: Table 6-51. Stoichiometric Conversion Emission Factor
+Page 401: EXHIBIT 6-44: Sample Calculation for Hydrogen Plant Emissions - Simple Approach
+Page 401: would be to assume full conversion and use the simple emission factor or apply Equation 6-50, 
+Page 401: 6.11.4 Asphalt Blowing
+Page 402: to estimating emissions described later in this Compendium (refer to Section 6.11.5.2).
+Page 402: provided in Table 6-52 can be used:
+Page 402: Table 6-52. Default Asphalt Blowing Emission Factors
+Page 403: (Equation 6-51)
+Page 403: = CH4 Emission factor from Table 6-52 (tonne/bbl or tonne/ton); and
+Page 403: /mole) (Equation 6-52)
+Page 403: = CO2 Emission factor from Table 6-52 (tonne/bbl or tonne/ton);
+Page 403: = CH4 Emission factor from Table 6-52 (tonne/bbl or tonne/ton); and
+Page 403: Note that the second terms of Equation 6-51 and Equation 6-52 should only be used to calculate 
+Page 403: device. Also note that the first term in Equation 6-52 represents the vented CO2 emissions while 
+Page 403: EXHIBIT 6-45: Sample Calculation for Asphalt Blowing Emissions
+Page 403: and CH4 emission factors provided in Table 6-52.
+Page 404: 6.11.5 Coke Calcining
+Page 404: be calculated using engineering approaches such as material balances that incorporate site￾specific 
+Page 404: × (GC × CCGC - (PCout + PCdust) × CCPC) (Equation 6-53)
+Page 405: 6.11.6 Other Refining Related Venting Emissions
+Page 405: the site specific carbon content of the sour gas feed stream, as shown in Equation 6-54.
+Page 406: × FC) (Equation 6-54)
+Page 407: 6.12 Petrochemical Manufacturing
+Page 408: exiting the production process as a petrochemical product or by-product as shown in Equation 6-
+Page 408: (Equation 6-55)
+Page 408: 15). Table 6-53 provides average 
+Page 409: Table 6-53. Chemical Production Emission Factors
+Page 410: 6.13 Retail and Marketing of Petroleum Liquids
+Page 410: 6.14 Fire Suppression Emissions
+Page 410: Equation 6-56 (EPA, 2012), should be used. The material balance should consider the amount of 
+Page 411: i=1 (Equation 6-56)
+

@@ -1,0 +1,12 @@
+
+The command exited with code 0.
+Output:
+PAGE 238 (Section 6 start):
+Section 6. Process and Vented Emission Estimation Methods
+TABLE OF CONTENTS
+6.0 PROCESS AND VENTED EMISSIONS ESTIMATION METHODS ................................. 6-1
+6.1 Process and Vented Emission Estimated Methods ............................................... 6-1
+6.2 Oil and Natural Gas Exploration ............................................................................. 6-2
+6.2.1 Well Drilling ............................................................................................... 6-2
+6.2.2 Well Testing ...........................................................................
+

@@ -1,0 +1,20 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\Desktop\H2\new\server\calculations\vented.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -390,6 +390,14 @@
+         ("oil", "vented"): {"ch4": 0.0141, "scf": 902.0, "code": "CompOilNoHF_Vented", "standard": "API Compendium 2021 §6.2.3.2, Table 6-6"},
+     }
+ 
++    # API Compendium 2021 Table 6-7: Offshore well completions (tonnes CH4 / completion-day)
++    TABLE_6_7 = {
++        ("gas", "uncontrolled"): {"ch4": 136.2, "scf": 8700000.0, "code": "CompOffshoreGas", "standard": "API Compendium 2021 §6.2.3.3, Table 6-7"},
++        ("gas", "vented"): {"ch4": 136.2, "scf": 8700000.0, "code": "CompOffshoreGas", "standard": "API Compendium 2021 §6.2.3.3, Table 6-7"},
++        ("oil", "uncontrolled"): {"ch4": 136.2, "scf": 8700000.0, "code": "CompOffshoreGas", "standard": "API Compendium 2021 §6.2.3.3, Table 6-7"},
++        ("oil", "vented"): {"ch4": 136.2, "scf": 8700000.0, "code": "CompOffshoreGas", "standard": "API Compendium 2021 §6.2.3.3, Table 6-7"},
++    }
++
+     DEFAULT_CH4_MOL_PCT = 0.816  # 81.6 mole % per API Footnote c
+ 
+     def __init__(self):
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

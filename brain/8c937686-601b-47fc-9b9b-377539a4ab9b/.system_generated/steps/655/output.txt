@@ -1,0 +1,23 @@
+
+The command exited with code 0.
+Output:
+ALL_EMISSION_FACTORS = {
+    **API_FACTORS,
+    **EQUIPMENT_FACTORS,
+    **CHEMICAL_PRODUCTION_FACTORS,
+    **N2O_PRODUCTION_FACTORS,
+}
+
+# Correlation equations for screening-based fugitive estimation (Section 7.3.1.6)
+CORRELATION_EQUATIONS = {
+    "gas_valve": {
+        "A": 2.29e-6,
+        "B": 0.746,
+        "max_ppm": 100000,
+        "pegged_10k": 0.064,  # kg/hr
+        "pegged_100k": 0.11,
+        "description": "Valves in gas service",
+        "unit": "kg/hr/component",
+    },
+    "light
+

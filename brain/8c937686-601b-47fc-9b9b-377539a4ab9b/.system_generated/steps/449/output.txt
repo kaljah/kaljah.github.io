@@ -1,0 +1,115 @@
+
+The command exited with code 0.
+Output:
+=== PAGE 384 ===
+Section 6: Vented and Process Emission Estimation Methods
+
+6-142
+
+November 2021
+
+ECO2 = Emissions of CO2 in units of mass (pounds, kg, tonnes) per year;
+
+CCAvg = Daily average coke burn rate in units of average mass per day;
+
+T = Annual operating time (days/year); 
+
+CF = Weight fraction of carbon in the coke burned (if unknown, refer 
+
+to Table 3-8 or conservatively assume default = 1.0);
+
+44 = Molecular weight of CO2; and
+
+12 = Molecular weight of carbon (coke is assumed to be carbon).
+
+Equation 6-34 is based on the fundamental principles of complete stoichiometric combustion of 
+
+the carbon in coke to CO2. Using a site-specific carbon fraction of coke data will result in the 
+
+most accurate estimates. In the absence of site-specific carbon fraction of coke data, the user may 
+
+consult Table 3-8, which contains the properties of various fuels, or assume a carbon fraction of 
+
+1.0 as a simplifying assumption, recognizing that this will overestimate emissions. The mass 
+
+balance approach in Equation 6-34 can be restated in terms of catalyst regeneration rate and 
+
+weight fraction of carbon burned during catalyst regeneration. Refer to Equations 6-40 and 6-41
+
+for continuous and intermittent catalyst regeneration, respectively.
+
+If the coke burn rate is unknown, emissions can also be calculated using the flue gas flow and 
+
+species concentration (also known as the “K1, K2, K3 approach” provided in EPA Rule 40 CFR
+
+63, Subpart UUU). This equation can be reduced to Equation 6-35. The full equation derivation 
+
+is provided in Appendix B.
+
+  22
+
+2
+
+CO 1 r CO CO
+
+44 mass units CO /mole E K Q P +P H
+
+12 mass units C/mole
+
+     
+
+
+
+(Equation 6-35)
+
+where:
+
+ECO2
+
+= Emissions of CO2 (lb/year or kg/year);
+
+K1 = Carbon conversion factor burn term (0.0186 lb-min/hr-dscf-% or 
+
+0.2982 kg-min/hr-dscm-%, given in Table B-2);
+
+Qr = Volumetric flow rate of exhaust gas before entering the emission 
+
+control system, calculated using Equation B-2 (dscf/min or dscm/min);
+
+PCO2
+
+, PCO = Percent CO2 and CO concentrations, respectively, in regenerator 
+
+exhaust, percent by volume (dry basis); and
+
+H = Annual operating time (hrs/yr); 8760 hrs/yr if operating continuously 
+
+throughout the year.
+
+If the flue gas flow is unknown, as shown in Figure 6-5, a process calculation approach based on 
+
+the air blower capacity and flue gas concentration can be used:
+
+    CO2
+
+2
+
+44 E AR SOR FCO FCO H
+
+molar volume conversion
+
+     
+
+(Equation 6-36)
+
+where:
+
+ECO2
+
+= Emissions of CO2 in units of mass (pounds, kg, metric tonnes) per year;
+
+AR = Air rate in standard cubic feet (scf) or standard cubic meters per minute, 
+
+on a dry basis;
+
+

@@ -1,0 +1,28 @@
+
+The command exited with code 0.
+Output:
+241: calc_inputs = inputs.get("calc_inputs", {}).get(process_type, {})
+286: if process_type in [
+328: if factor_source in ["default", "custom"] and process_type not in [
+332: if process_type in ["liquids_unloading", "unloading"]:
+412: if process_type in [
+461: if process_type in [
+536: elif process_type in ["flaring", "routine_flaring", "non_routine_flaring", "safety_flaring"]:
+614: elif process_type in ["drilling", "mud_degassing"]:
+705: elif process_type == "completions":
+803: elif process_type in ["liquids_unloading", "unloading"]:
+958: elif process_type in ["venting", "blowdown"]:
+1014: elif process_type in ["associated_gas_venting", "associated_venting", "associated_gas"]:
+1119: elif process_type in [
+1187: elif process_type in ["pneumatic_devices", "pneumatic_device", "pneumatic"]:
+1225: elif process_type == "fugitive":
+1308: elif process_type in ["compressor_seal", "compressor_fugitive"]:
+1334: elif process_type in ["fugitive_component", "component_fugitive"]:
+1374: elif process_type in [
+1409: elif process_type in ["agr", "acid_gas_removal"]:
+1463: elif process_type in ["cogen_allocation", "cogen"]:
+1486: elif process_type in [
+1542: elif process_type in [
+1573: elif process_type == "dehydrator":
+1660: elif process_type == "indirect_steam":
+

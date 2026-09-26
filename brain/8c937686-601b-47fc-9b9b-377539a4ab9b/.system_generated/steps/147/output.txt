@@ -1,0 +1,11 @@
+
+The command exited with code 0.
+Output:
+Appendix B. Additional Calculation Approaches 
+B-30 November 2021 
+appropriate for releases that do not blow down the entire volume of interest. Refer to the CAPP 
+document for more information on this approach, including an example calculation. 
+The CAPP document also provides a summary of cross-sectional areas for several pipe sizes and 
+schedules (CAPP, 2002, Table 3-6). These areas are useful for applying the isentropic flow 
+equation to estimate the blowdown rates.
+

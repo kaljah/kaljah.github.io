@@ -1,0 +1,53 @@
+
+The command exited with code 1.
+Output:
+Traceback (most recent call last):
+  File "<string>", line 7, in <module>
+  File "C:\Users\samsung\anaconda3\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\ufffe' in position 88: character maps to <undefined>
+10: Exhibit 6-37 illustrates the use of the simple crude oil transit emission factors.
+28: Table 6-49 for crude oil, by the volume transported and the CH4 content of the vapors. As a
+56: 6.11 Refining
+58: 6.11.1 Catalyst Regeneration
+60: 6.11.1.1 Catalytic Cracking Unit
+156: � T (Equation 6-34)
+166: Equation 6-34.
+172: by Equation 6-37 to quantify
+176: Equation 6-34.
+184: Equation 6-35.
+194: Equation 6-36.
+226: Equation 6-34 is based on the fundamental principles of complete stoichiometric combustion of
+236: balance approach in Equation 6-34 can be restated in terms of catalyst regeneration rate and
+246: 63, Subpart UUU). This equation can be reduced to Equation 6-35. The full equation derivation
+264: (Equation 6-35)
+304: (Equation 6-36)
+362: in Equation 6-37. The calculated coke burn rate can then be applied to Equation 6-34 to
+364: determine CO2 emissions, as identified in Figure 6-5. Equation 6-37 is derived from the US
+368: CC = Qunit �(CBF � 0.001) (Equation 6-37)
+386: approaches is provided in Exhibit 6-38.
+392: emitted as shown in Equation 6-38 and Equation 6-39. Default factors for petroleum coke are
+406: ) (Equation 6-38)
+424: Equation 6-34 through Equation 6-37, converted to metric tonnes/year;
+446: ) (Equation 6-39)
+458: Equation 6-34, Equation 6-36, or Equation 6-37, converted to (metric
+494: regenerator CO2 emissions using Equation 6-34, Equation 6-36, and Equation 6-37. Calculate the
+500: 1. Calculate the CO2 emissions using Equation 6-34. Using Equation 6-34, the estimated CO2
+520: 2. Calculate the CO2 emissions using Equation 6-36. Using the air rate in Equation 6-36, the CO2
+558: 3. Calculate the CO2 emissions using Equation 6.-37. Using the air rate in Equation 6-37 yields:
+688: (Equation 6-34)
+700: (Equation 6-35),
+714: (Equation 6-36)
+724: 6.11.1.2 Other Catalyst Regenerator
+742: or intermittent catalyst regeneration can be estimated by Equation 6-40 or Equation 6-41,
+764: (Equation 6-40)
+788: overestimate emissions. This calculation is illustrated in Exhibit 6-39.
+802: Using Equation 6-40, the estimated CO2 emissions are calculated as follows:
+836: (Equation 6-41)
+858: An example of this calculation is presented in Exhibit 6-40.
+872: The estimated CO2 emissions are calculated using Equation 6-41.
+892: catalyst regeneration processes. Refer to Equation 6-38 and Equation 6-39.
+894: 6.11.2 Cokers
+914: Equation 6-34. An example calculation for a fluid coker is shown in Exhibit 6.11-4.
+

@@ -1,0 +1,86 @@
+
+The command exited with code 0.
+Output:
+*** PAGE 327 ***
+Section 6: Vented and Process Emission Estimation Methods
+6-85
+November 2021
+To illustrate the use of the emission factors provided for gathering and boosting in Table 6-29, an 
+example calculation is provided below in Exhibit 6-23 that demonstrates the use of the 
+pneumatic controller emission factors.
+EXHIBIT 6-23: Sample Calculation for Gas-Driven Pneumatic Controller Emissions 
+INPUT DATA:
+A gathering booster station facility has 80 natural gas-driven pneumatic controllers. The average 
+CH4 content of the gas is 70 mole %. There is also 9 mole % CO2 in the gas, so CO2 emissions 
+from the pneumatic controllers are also relevant. At the gathering and boosting station, the 
+monitoring and repair program does not currently include screening of natural gas-operated 
+pneumatic controllers. Calculate the CH4 and CO2 emissions.
+CALCULATION METHODOLOGY:
+Emissions are calculated by multiplying the number of pneumatic controllers by the emission 
+factor from Table 6-29. The average pneumatic controller emission factors for gathering and 
+boosting are appropriate for use since the type of controllers is not known. Further, since there is 
+no pneumatic controller monitoring
+*** PAGE 330 ***
+Section 6: Vented and Process Emission Estimation Methods
+6-88
+November 2021
+“x” = GHG compound of interest (CH4, or CO2 for CO2 rich streams);
+n = Number of reciprocating compressors;
+EFx
+= GHG emission factor for reciprocating compressor rod packing in 
+normal operation (tonnes GHG/compressor-hr); and
+Tpressurized = Average time during the year that reciprocating compressors are in 
+normal operation or standby, pressurized mode (hrs/yr).
+An example calculation is given in Exhibit 6-24 that illustrates the use of reciprocating 
+compressor rod packing emission factors.
+EXHIBIT 6-24: Sample Calculation for Reciprocating Compressor Emissions
+INPUT DATA:
+A gas gathering and boosting facility in the United States has 4 reciprocating compressors. On 
+average, the reciprocating compressors are in normal operation or standby, pressurized mode for 
+8,470 hours in the reporting year. The average CH4 content of the gas is 70 mole %. There is also 
+9 mole % CO2 in the gas. Calculate the CH4 and CO2 emissions from the compressors during 
+normal operation using the EPA GHGRP emission factor.
+CALCULATION METHODOLOGY:
+Emissions are calculated by multiplying the number of recip
+*** PAGE 336 ***
+Section 6: Vented and Process Emission Estimation Methods
+6-94
+November 2021
+b Uncertainty based on a 95% confidence interval.
+c Converted assuming 78.8 mole % CH4 in the gas used in the EPA/GRI study.
+An example calculation is given in Exhibit 6-26 below that illustrates the use of the production 
+segment maintenance/turnaround-related emission factors.
+EXHIBIT 6-26: Sample Calculation for Equipment Blowdown Emissions
+INPUT DATA:
+A gas production field has 10 low-pressure gas wells that send produced gas through 5 miles of 
+gathering pipeline. The field also has five process vessels and a compressor. The gas contains 70 
+mole % CH4 and 8 mole % CO2. Calculate the blowdown vented emissions, by activity.
+CALCULATION METHODOLOGY:
+The equipment count for each maintenance related activity (vessel blowdowns, compressor 
+blowdowns, and gathering pipeline blowdowns) is multiplied by the appropriate emission factor 
+from Table 6-32. The emission factors are corrected by the ratio of the site CH4 content to the 
+emission factor default CH4 content. CO2 emissions are also estimated to account for the CO2
+content of the gas. CO2 emissions are determined by using the whole gas
+*** PAGE 339 ***
+Section 6: Vented and Process Emission Estimation Methods
+6-97
+November 2021
+d Tilkicioglu, B.H and D.R. Winters. Annual Methane Emission Estimate of the Natural Gas and Petroleum Systems in the United States. 
+Pipeline Systems Incorporated (PSI), December 1989.
+An example calculation is given below in Exhibit 6-27 that illustrates the use of emission factors 
+from other production segment non-routine emission sources.
+EXHIBIT 6-27: Sample Calculation for Other Gathering and Boosting Segment Non￾routine Emission Sources
+INPUT DATA:
+An oil and gas company has the following non-routine events occur during the calendar year 
+associated with a gathering and boosting operation:
+ 6 PRV releases; 
+ 1 compressor start (using natural gas to start the compressor);
+ 6 miles of affected by pipeline dig-in events; and
+ 1 maintenance event at an oil pump station.
+The site gas has 79 mole % CH4 content and no CO2. Calculate the non-routine emissions by 
+activity.
+CALCULATION METHODOLOGY:
+The PRV release events and miles of gathering pipeline affected by dig-in events are each 
+multiplied by the appropriate emission factor from Table 6-33. The CH4 emission factors are not 
+
+

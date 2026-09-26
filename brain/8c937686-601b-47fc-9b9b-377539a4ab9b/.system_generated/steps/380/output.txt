@@ -1,0 +1,66 @@
+
+The command exited with code 0.
+Output:
+Section 6: Vented and Process Emission Estimation Methods
+6-88
+November 2021
+“x” = GHG compound of interest (CH4, or CO2 for CO2 rich streams);
+n = Number of reciprocating compressors;
+EFx
+= GHG emission factor for reciprocating compressor rod packing in 
+normal operation (tonnes GHG/compressor-hr); and
+Tpressurized = Average time during the year that reciprocating compressors are in 
+normal operation or standby, pressurized mode (hrs/yr).
+An example calculation is given in Exhibit 6-24 that illustrates the use of reciprocating 
+compressor rod packing emission factors.
+EXHIBIT 6-24: Sample Calculation for Reciprocating Compressor Emissions
+INPUT DATA:
+A gas gathering and boosting facility in the United States has 4 reciprocating compressors. On 
+average, the reciprocating compressors are in normal operation or standby, pressurized mode for 
+8,470 hours in the reporting year. The average CH4 content of the gas is 70 mole %. There is also 
+9 mole % CO2 in the gas. Calculate the CH4 and CO2 emissions from the compressors during 
+normal operation using the EPA GHGRP emission factor.
+CALCULATION METHODOLOGY:
+Emissions are calculated by multiplying the number of reciprocating compressors by the EPA 
+GHGRP rod packing emission factor for CH4. Using Equation 6-29, CH4 and CO2 emissions 
+from the compressors can be calculated. The GHGRP CH4 emission factor is also adjusted from 
+the default basis (78.8 mole % CH4) to the site-specific basis of 70 mole % CH4. Because the gas 
+contains a significant quantity of CO2, emissions of CO2 are also estimated using the relative 
+CO2 and CH4 contents in the gas. Emissions are calculated as shown below:
+ECH4
+= (4 reciprocating compressors)×
+2.07×10-5
+tonnes CH4
+compressor-hr
+×
+8,470 hrs
+yr
+×
+70 mole % CH4
+78.8 mole % CH4
+ECH4
+= 0.62 tonnes CH4
+/yr
+ECO2
+=(4 reciprocating compressors)×
+1.37 scf gas
+compressor-hr
+×
+lbmol
+379.3 scf
+×
+0.09 lb mole CO2
+lb mole gas
+×
+44 lb CO2
+lbmol CO2
+×
+tonne
+2204 lb
+×
+8,470 hrs
+yr
+ECO2
+= 0.22 tonnes CO2
+/yr
+

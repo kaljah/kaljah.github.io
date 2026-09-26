@@ -1,0 +1,177 @@
+
+The command exited with code 0.
+Output:
+<truncated 297 lines>
+improperly operating as part of a routine monitoring program. The 
+malfunctioning operation emission factor would be applied for the period prior 
+to a confirmed repair, akin to leak/no-leak factors applied to fugitive 
+components (EPA, 1995b). 
+=== Page 280 ===
+Section 6: Vented and Process Emission Estimation Methods
+6-38
+November 2021
+ Operations without a proactive monitoring and repair program for pneumatic 
+controllers:
+o Use the average emission factor for all intermittent vent pneumatic controllers.
+o Note that for emission reductions from pneumatic controllers to be quantified 
+using emission factors, a routine monitoring and repair program is necessary to 
+demonstrate that controllers are operating normally.
+For controllers that are part of a monitoring and repair program, the total CH4 emissions may be 
+estimated based on the amount of time the controller was operating normally or malfunctioning 
+using the repair date information collected in a monitoring program. This approach is similar to a 
+leak detection and repair (LDAR) program for fugitives using leak/no-leak emission factors, as 
+described in GHGRP (Equation W-30), and shown in Equation 6-14 below. 
+Ex= (nnormal×EFnormal
+×Tnormal)+(nmf×EFmf
+×Tmf) (Equation 6-14)
+where:
+Ex = Emissions of “x” in units of mass (pounds, kg, tonnes) per year;
+“x” = GHG compound of interest (CH4, or CO2 for CO2 rich streams);
+nnormal = Number of intermittent vent pneumatic controllers in normal operation;
+EFnormal = GHG emission factor for intermittent vent pneumatic controller in 
+normal operation (tonnes CH4/controller-yr);
+Tnormal = Fraction of the year when intermittent vent pneumatic controller is in 
+normal operation;
+nmf = Number of intermittent vent pneumatic controllers in malfunctioning 
+operation;
+EFmf = GHG emission factor for intermittent vent pneumatic controller in 
+malfunctioning operation (tonnes CH4/controller-yr); and
+Tmf = Fraction of the year when intermittent vent pneumatic controller is in 
+malfunctioning operation.
+An example calculation is provided below in Exhibit 6-12 that demonstrates the use of the 
+pneumatic controller emission factors.
+EXHIBIT 6-12: Sample Calculation for Gas-Driven Intermittent Vent Pneumatic 
+Controller Emissions
+INPUT DATA:
+A gas production facility has 80 natural gas-driven intermittent vent pneumatic controllers. The 
+facility has implemented a routine monitoring and repair program that includes surveys of these 
+controllers. In the present year, a monitoring survey was conducted and repairs made that 
+resulted in the following data:
+=== Page 281 ===
+Section 6: Vented and Process Emission Estimation Methods
+6-39
+November 2021
+Operating
+Category
+Number of 
+Controllers 
+Screened by 
+Operating 
+Category
+Repair Date Fraction of 
+Year in 
+Normal 
+Operating 
+Category
+Fraction of 
+Year in 
+Malfunctioning 
+Operating 
+Category
+Normally 
+Operating 76 NA 1.0 0
+Malfunctioning 4 March 31 9/12 months = 
+0.75
+3/12 months = 
+0.25
+The average CH4 content of the gas is 70 mole %. There is also 9 mole % CO2 in the gas, so CO2
+emissions from the pneumatic controllers are also estimated. Calculate the CH4 and CO2
+emissions.
+CALCULATION METHODOLOGY:
+Because the facility has implemented a routine monitoring and repair program that includes 
+pneumatic controllers, the emission factors from Table 6-15 for normal and malfunctioning 
+controllers are used. Emissions are calculated by multiplying the number of intermittent 
+pneumatic controllers screened and reported by operating category by the appropriate emission 
+factor from Table 6-15. Equation 6-13 is used to calculate the annual total emissions using the 
+fraction of the year in each operating category.
+The base pneumatic controller CH4 emission factor is also adjusted from the default basis 
+provided in Table 6-15 of 81.6 mole % CH4 to the site-specific basis of 70 mole % CH4. Because 
+the gas contains a significant quantity of CO2, emissions of CO2 are also estimated using the 
+whole gas emission factor and relative CO2 and CH4 contents in the gas.
+ECH4
+= [(
+0.038 t CH4
+controller-yr
+×[(76 controllers ×1.0)+(4 controllers × 0.75)])]
++ (
+3.30 t CH4
+controller-yr
+×(4 controllers ×0.25))×
+0.70 mole % CH4
+0.816 mole % CH4
+ECH4
+= 5.41 tonnes CH4
+/yr 
+ECO2
+= 
+5.41 tonnes CH4
+yr
+× 
+tonne mole CH4
+16 tonne CH4
+× 
+tonne mole gas
+0.70 tonne mole CH4
+×
+0.09 tonne moleCO2
+tonne mole gas
+×
+44 tonne CO2
+tonne mole CO2
+ECO2
+= 1.91 tonnes CO2
+/yr 
+=== Page 282 ===
+Section 6: Vented and Process Emission Estimation Methods
+6-40
+November 2021
+Pneumatic Controllers (When Type is Unknown) 
+When the type of pneumatic controllers installed is not known, average default emission factors 
+may be used to quantify the CH4 emissions from natural gas-operated controllers. The table 
+below presents an overall average CH4 emission factor for a pneumatic controller in the 
+production segment that can be applied when the type of controller is unknown.
+9.2 scf whole gas/hr/controller (Original Units) a, b
+7.5 scf CH4/controller-hr(Converted) c
+1.26 tonnes CH4/controller-yr (Converted) c.d
+Footnotes and Sources:
+a API working paper, Pneumatic Controller Inventory and Measurement at 67 Oil and Gas Sites in the Western United States, 2020. 
+b Uncertainty is not specified for this value.
+c The original whole gas emission factor was converted to whole gas assuming 81.6 mole % CH4 in natural gas, according to GHGI (EPA, 
+2019b). The CH4 emission factor can be adjusted based on the CH4 content of the site-specific gas, if the natural gas has a significantly different 
+CH4 content from the default basis (if given). Also, if the facility gas contains significant quantities of CO2, the CH4 emission factor can be 
+adjusted based on the relative concentrations of CH4 and CO2 in the gas to estimate the CO2 emissions.
+d Conversion to annual basis assumes 8,760 hrs/yr operation. 
+6.3.7 Gas Driven Pneumatic Pumps
+Natural gas-driven chemical injection pumps (CIPs) are a source of CH4 emissions due to 
+venting of the gas used to act on a piston or diaphragm to pump chemicals into the process 
+equipment lines. The CIPs can also be a source of CO2 emissions if the gas used to drive the 
+pump contains a significant amount of CO2. 
+If fuel gas is used as the pneumatic gas and is taken downstream of the total fuel gas meter, then 
+the vented gas volume must be subtracted from the total fuel gas volume (used to determine 
+combustion emissions).
+The 1996 GRI/EPA study observed that gas-powered chemical injection pumps are most 
+commonly found in the production segment where electricity may not be readily available 
+(Shires, 1996). Typical chemicals injected into the process lines include biocides, demulsifiers, 
+clarifiers, corrosion inhibitors, scale inhibitors, hydrate inhibitors, paraffin dewaxers, surfactants, 
+oxygen scavengers, and H2S scavengers. 
+The most rigorous approach for estimating GHG emissions from CIPs is to use site-specific gas 
+usage measurements or manufacturer data. Another rigorous approach is to calculate the volume 
+of natural gas emitted from the volume of liquid pumped. The volume of natural gas emissions 
+from a pneumatic pump is a function of the amount of liquid pumped (displacement volume), the 
+liquid outlet pressure from the pump, the gas pressure and temperature used as the pneumatic 
+power gas, and the “mechanical efficiency loss” across the pump. In manufacturers information 
+this relationship is typically described using a set of “pump curves.” However it can be described 
+mathematically using Equation 6-15.
+  OA A
+GL
+G
+P +P T
+V = × ×V × 1+I
+14.7 459.7+T
+ 
+   
+(Equation 6-15)
+where:
+VG = Gas loss from natural gas driven pneumatic pump, scf/yr;
+PO = Outlet pressure from the pump, psig;
+

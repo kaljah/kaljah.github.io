@@ -1,0 +1,120 @@
+
+The command exited with code 0.
+Output:
+<truncated 108 lines>
+P371: EXHIBIT 6-34: Sample Calculation for Distribution Non-Routine Related Emissions
+P371: from Table 6-46. The CH4 emission factors are not corrected by the site CH4 content because the
+P372: EXHIBIT 6-34: Sample Calculation for Distribution Non-Routine Related Emissions,
+P373: the crude transportation and processing phases. See Equation 6-26 for estimating CO2
+P373: valves. See Equation 6-27 for estimating CO2 emissions from EOR CO2 injection pump
+P374: blowdowns can be estimated using Equation 6-27 for EOR CO2 injection pump
+P376: Table 6-47 provides simplified TOC emission factors for loading loss emissions for crude oil
+P377: Table 6-47. Simplified TOC Emission Factors for Loading Losses
+P378: EXHIBIT 6-35: Sample Calculation for Estimating Loading Loss CH4 Emissions
+P378: From Table 6-47, the emission factor corresponding to crude loading losses from rail splash
+P378: Table 6-48 provides average emission factors for estimating TOC emissions from crude
+P379: Table 6-48. Average TOC Emission Factors for Crude Oil Ballasting Operations
+P379: EXHIBIT 6-36: Sample Calculation for Crude Oil Ballasting Emissions Based on
+P379: TOC emissions are calculated using the emission factor provided in Table 6-48.
+P380: Table 6-49 provides simple transit TOC emission factors for marine transit of crude oil (EPA,
+P380: Table 6-49. Simplified TOC Emission Factors for Marine Transit Losses
+P381: EXHIBIT 6-37: Sample Calculation for Estimating CH4 Emissions Using Simplified
+P381: Table 6-49 for crude oil, by the volume transported and the CH4 content of the vapors. As a
+P383: × T (Equation 6-34)
+P383: Equation 6-34.
+P383: by Equation 6-37 to quantify
+P383: Equation 6-34.
+P383: Equation 6-35.
+P383: Equation 6-36.
+P384: Equation 6-34 is based on the fundamental principles of complete stoichiometric combustion of
+P384: balance approach in Equation 6-34 can be restated in terms of catalyst regeneration rate and
+P384: 63, Subpart UUU). This equation can be reduced to Equation 6-35. The full equation derivation
+P384: (Equation 6-35)
+P384: (Equation 6-36)
+P385: in Equation 6-37. The calculated coke burn rate can then be applied to Equation 6-34 to
+P385: determine CO2 emissions, as identified in Figure 6-5. Equation 6-37 is derived from the US
+P385: CC = Qunit ×(CBF × 0.001) (Equation 6-37)
+P385: emitted as shown in Equation 6-38 and Equation 6-39. Default factors for petroleum coke are
+P385: ) (Equation 6-38)
+P386: Equation 6-34 through Equation 6-37, converted to metric tonnes/year;
+P386: ) (Equation 6-39)
+P386: Equation 6-34, Equation 6-36, or Equation 6-37, converted to (metric
+P387: EXHIBIT 6-38: Sample Calculation for FCCU Process CO2 Calculation Approach
+P387: regenerator CO2 emissions using Equation 6-34, Equation 6-36, and Equation 6-37. Calculate the
+P387: 1. Calculate the CO2 emissions using Equation 6-34. Using Equation 6-34, the estimated CO2
+P387: 2. Calculate the CO2 emissions using Equation 6-36. Using the air rate in Equation 6-36, the CO2
+P388: EXHIBIT 6-38: Sample Calculation for FCCU Process Calculation Approach,
+P388: 3. Calculate the CO2 emissions using Equation 6.-37. Using the air rate in Equation 6-37 yields:
+P389: EXHIBIT 6-38: Sample Calculation for FCCU Process Calculation Approach,
+P389: (Equation 6-34)
+P389: (Equation 6-35),
+P389: (Equation 6-36)
+P389: or intermittent catalyst regeneration can be estimated by Equation 6-40 or Equation 6-41,
+P389: (Equation 6-40)
+P390: EXHIBIT 6-39: Sample Calculation for Other Continuous Catalyst Regeneration
+P390: Using Equation 6-40, the estimated CO2 emissions are calculated as follows:
+P390: (Equation 6-41)
+P391: EXHIBIT 6-40: Sample Calculation for Other Intermittent Catalyst Regeneration
+P391: The estimated CO2 emissions are calculated using Equation 6-41.
+P391: catalyst regeneration processes. Refer to Equation 6-38 and Equation 6-39.
+P391: Equation 6-34. An example calculation for a fluid coker is shown in Exhibit 6.11-4.
+P391: combustion sources described in Section 4. Equation 6-34 can also be used for flexi￾coker emissions, provided that the combustion of the low-Btu gas is not otherwise
+P392: decoking cycle and the number of decoking cycles using Equation 6-42.
+P392: = Msteam× EFDCU × N × 0.001 (Equation 6-42)
+P392: using Equation 6-43 through Equation 6-47. First, the mass of coke in the delayed coking unit
+P392: dimensions using Equation 6-43.
+P392: ] (Equation 6-43)
+P392: Next, the mass of water in the delayed coking unit vessel is calculated using Equation 6-44.
+P392: ] (Equation 6-44)
+P393: the atmosphere, Equation 6-45 or Equation 6-46 may be used, depending on available data.
+P393: Tinitial = (Toverhead+ Tbottom)/2 (Equation 6-45)
+P393: + 3.13 Poverhead + 220 (Equation 6-46)
+P393: The results from Equations 6-43 through Equation 6-46 are used below in Equation 6-47 to
+P394: (Equation 6-47)
+P394: EXHIBIT 6-61: Sample Calculation for Fluid Coker
+P394: fraction is assumed to be equal to 1 minus the fraction H2, or 0.985. Using Equation 6-34, the
+P395: (Equation 6-48)
+P396: represented by Equation 6-
+P396: represented by Equation 6-
+P397: and carbon content. Equation 6-49 presents this material balance approach:
+P397: (Equation 6-49)
+P397: EXHIBIT 6-42: Sample Calculation for Hydrogen Plant - Rigorous Approach based on
+P397: CO2 emissions are calculated using Equation 6-49. The first step in calculating the CO2 emissions
+P398: rate can be calculated using Equation 6-49:
+P398: Equation 6-50 based on re-arranging Equation 6-48. For this approach, it is important to apply
+P398: It is important to note that when refinery gas is used as a feedstock, Equation 6-50 should not be
+P398: (Equation 6-50)
+P399: x = Stoichiometry from Equation 6-48;
+P399: EXHIBIT 6-43: Sample Calculation for Hydrogen Plant - Rigorous Approach based on
+P400: To use Equation 6-50, the carbon to hydrogen ratio must be calculated. The carbon to hydrogen
+P400: The CO2 vent rate can then be calculated using Equation 6-50:
+P400: These emission factors are based on a stoichiometric conversion (as shown in Equation 6-48) for
+P400: a feed gas with an average natural gas composition. Table 6-50 provides the average natural gas
+P400: Table 6-50. Composition of U.S. Pipeline-Quality Natural Gas
+P400: natural gas. In such an event, the stoichiometric conversion presented in Equation 6-48 should be
+P400: emission factors are shown in Table 6-51 below:
+P401: Table 6-51. Stoichiometric Conversion Emission Factor
+P401: EXHIBIT 6-44: Sample Calculation for Hydrogen Plant Emissions - Simple Approach
+P401: would be to assume full conversion and use the simple emission factor or apply Equation 6-50,
+P402: provided in Table 6-52 can be used:
+P402: Table 6-52. Default Asphalt Blowing Emission Factors
+P403: (Equation 6-51)
+P403: = CH4 Emission factor from Table 6-52 (tonne/bbl or tonne/ton); and
+P403: /mole) (Equation 6-52)
+P403: = CO2 Emission factor from Table 6-52 (tonne/bbl or tonne/ton);
+P403: = CH4 Emission factor from Table 6-52 (tonne/bbl or tonne/ton); and
+P403: Note that the second terms of Equation 6-51 and Equation 6-52 should only be used to calculate
+P403: device. Also note that the first term in Equation 6-52 represents the vented CO2 emissions while
+P403: EXHIBIT 6-45: Sample Calculation for Asphalt Blowing Emissions
+P403: and CH4 emission factors provided in Table 6-52.
+P404: be calculated using engineering approaches such as material balances that incorporate site￾specific values such as the CO2 content of the exhaust gas as shown in Equation 6-53.
+P404: × (GC × CCGC - (PCout + PCdust) × CCPC) (Equation 6-53)
+P405: the site specific carbon content of the sour gas feed stream, as shown in Equation 6-54.
+P406: × FC) (Equation 6-54)
+P408: exiting the production process as a petrochemical product or by-product as shown in Equation 6-
+P408: (Equation 6-55)
+P408: 15). Table 6-53 provides average
+P409: Table 6-53. Chemical Production Emission Factors
+P410: Equation 6-56 (EPA, 2012), should be used. The material balance should consider the amount of
+P411: i=1 (Equation 6-56)
+

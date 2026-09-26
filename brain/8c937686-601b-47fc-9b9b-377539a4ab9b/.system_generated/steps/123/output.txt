@@ -1,0 +1,184 @@
+
+The command exited with code 0.
+Output:
+<truncated 184 lines>
+vent rate and duration of the testing period. If the gas vented during well testing is routed to a
+flare, the emissions should be treated like other flared sources described in Section 5.
+VWT = VP × T (Equation 6-1)
+where:
+VWT = Gas vented in volumetric units at standard temperature and pressure (STP)
+conditions per well testing event, e.g., standard cubic feet (scf)/event or 
+standard cubic meter (Sm3
+)/event;
+=== PAGE 248 ===
+Section 6. Process and Vented Emission Estimation Methods 
+6-6 November 2021
+VP = Average gas production rate in volumetric units at STP conditions per day 
+for the gas well being tested, e.g., scf/day or Sm3
+/day; and
+T = Number of days that the well is tested, days/well test.
+The whole gas vent rate is converted to CH4 and CO2 emissions based on the composition of the 
+gas stream, in accordance with Equation 6-2 below.
+Ex= VR × Fx × 
+MWx
+molar volume conversion
+(Equation 6-2)
+where:
+Ex = Emissions of “x” in units of mass (pounds, kg, tonnes) per unit of time;
+“x” = Greenhouse gas compound of interest (CH4 or CO2, for CO2 rich streams);
+VR = Vent rate in volumetric units at STP conditions per unit of time (e.g., scf/m 
+or Sm3
+/min);
+Fx = Molar fraction of compound “x” in the vent gas stream;
+MWx = Molecular weight of compound “x”; and
+Molar 
+volume 
+conversion
+= Conversion from molar volume to mass (379.3 scf/lbmole or 23.685 
+Sm3
+/kgmole at 60oF and 14.7 psi).
+Equation 6-3 presents the calculation of total gas vented from oil well testing using the GOR, oil 
+flow rate, and duration of the testing period. The vented emissions to the atmosphere from oil 
+well testing would be adjusted by the volume routed to a flare or recovered to sales, if applicable.
+VWT = GOR × PR× T (Equation 6-3)
+where:
+VWT = Gas vented in volume units at STP conditions per well testing event, e.g., 
+scf/event or Sm3
+/event;
+GOR = Gas to oil ratio in standard cubic feet of gas per barrel of oil; oil here refers 
+to hydrocarbon liquids produced of all API gravities;
+PR = Average annual production rate for the oil well being tested, barrels/day;
+and
+T = Number of days that the well is tested, days/well test.
+An example of the calculation of CH4 and CO2 emissions from oil well testing using the GOR 
+approach is shown in Exhibit 6-2.
+=== PAGE 249 ===
+Section 6. Process and Vented Emission Estimation Methods 
+6-7 November 2021
+EXHIBIT 6-2: Sample Calculation for Oil Well Testing-Related Emissions
+INPUT DATA:
+A new oil well was tested to determine the reservoir characteristics over a period of 36 hours. 
+During the testing period, the average crude oil production rate was 4,200 barrels per day 
+(bbl/day). The GOR for the field is 700 scf gas/bbl oil. The associated gas produced during the 
+well test period is generally flared; however, the flare was not operated for a period of 6 hours, 
+during which time the gas was vented to the atmosphere. A gas sample indicates that the gas 
+molar composition is approximately 70% CH4, 20% volatile organic compounds (VOCs), and 
+10% CO2. Calculate the CH4 and CO2 emissions from the associated gas that is vented to the 
+atmosphere.
+CALCULATION METHODOLOGY:
+The total volume of associated gas from the well test is estimated using Equation 6-3, based on 
+the GOR, oil production rate, and the duration of the well test event. The volume of associated 
+gas that is vented to the atmosphere is based on actual time prior to flaring that the gas was 
+released to the atmosphere. 
+VWellTest = 
+700 scf gas
+bbl oil
+×
+4,200 bbl oil
+day
+×
+6 hours
+event
+×
+1 day
+24 hours
+VWellTest = 735,000 scf gas/event
+Emissions of CH4 and CO2 from the volume of associated gas vented to the atmosphere are 
+determined using Equation 6-2 and the concentration of these constituents in the gas sample.
+ECH4
+=
+735,000 scf gas
+event
+×
+1 lbmole gas
+379.3 scf gas
+×
+0.70 lbmole CH4
+1 lbmole gas
+×
+16 lb CH4
+1 lbmole CH4
+×
+1 tonne CH4
+2204.62 lb CH4
+ECH4
+= 9.84 tonnes CH4
+/event
+ECO2
+= 
+735,000 scf gas
+event
+×
+1 lbmole gas
+379.3 scf gas
+×
+0.10 lbmole CO2
+lbmole gas
+×
+44 lb CO2
+lbmole CO2
+×
+1 tonne CO2
+2204.62 lb CO2
+ECO2
+= 3.87 tonnes CO2
+/event
+=== PAGE 250 ===
+Section 6. Process and Vented Emission Estimation Methods 
+6-8 November 2021
+A simplified default CH4 emission factor approach can be used for well testing activities, when 
+site-specific data is unavailable. The emission factors shown in Table 6-4 for gas and oil wells, 
+respectively, include factors for well testing events that are vented to atmosphere. These factors, 
+used in the GHGI (EPA, 2019b), may be updated annually based on data reported from operators 
+under the GHGRP2F
+3
+.
+Table 6-4. Well Testing Methane Emission Factors for Oil and Gas Exploration
+Source Methane Emission 
+Factor a, b
+,
+Original Units
+(kg CH4/well test)
+Methane Emission 
+Factor, Converted 
+to Tonnes Basis
+(tonnes CH4/well 
+test)
+Whole Gas 
+Emission Factor c
+(scf gas/well)
+Gas Well Testing – Vented to 
+Atmosphere 728.8 0.728 46,625
+Oil Well Testing – Vented to 
+Atmosphere 56.5 0.057 3,613
+Footnotes and Sources:
+a Calculated using 2017 GHGRP Subpart W data for each control category (EPA, 2019a). 
+b US Environmental Protection Agency, Inventory of U.S. Greenhouse Gas Emissions and Sinks, 2019 (EPA, 2019b), 
+https://www.epa.gov/ghgemissions/inventory-us-greenhouse-gas-emissions-and-sinks-1990-2017
+c Converted to whole gas volume assuming 81.6 mole % CH4 in production using the USEPA Inventory of U.S. Greenhouse Gas 
+Emissions and Sinks 1990-2017 (EPA, 2019b) average production segment CH4 content in natural gas by NEMS region. The CH4
+emission factor can be adjusted based on the CH4 content of the site-specific gas, if the natural gas has a significantly different CH4
+content from the default basis (if given). Also, if the facility gas contains significant quantities of CO2, the CH4 emission factor can be 
+adjusted based on the relative concentrations of CH4 and CO2 in the gas to estimate the CO2 emissions.
+Note: These factors, used in the USEPA Inventory of U.S. Greenhouse Gas Emissions and Sinks 1990-2017 (EPA, 2019b), may be 
+updated annually based on data reported from operators under the GHGRP. Therefore, the user should periodically review emission 
+factor updates and make an informed decision on updating the emission factor for use in the current inventory. 
+6.2.3 Well Completions
+Well completions are associated with the final step of the well drilling. After a well is drilled, the 
+well bore and reservoir near the well have to be cleaned. This is accomplished by producing the 
+well tanks3F
+4 where sand, cuttings, and other reservoir fluids are collected for recycle or disposal. 
+This step is also useful to evaluate the well production rate to properly size the production 
+equipment. 
+Reservoir and drilling fluids are removed from the wellbore during completion, in a process 
+called ‘flowback’. Hydrocarbons, including CH4, can be dissolved or entrained in these liquids 
+and released to the atmosphere during the flowback process.
+ 
+3 GHGI emission factors may be updated annually; therefore, the user should periodically review emission factor updates and 
+make an informed decision on updating the emission factor for use in the current inventory. Important considerations for 
+updating the emission factor include the materiality of the updated emission factor on overall emissions, EPA’s basis for the 
+emission factor, and industry comments to GHGI regarding the emission factor, if applicable. 
+4
+In most countries with strict environmental regulations, the completion fluids are collected in tanks; however, there may be 
+instances in less regulated countries where the well reservoir fluids are collected in pits during the well completion process. 
+

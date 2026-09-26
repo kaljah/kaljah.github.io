@@ -1,0 +1,33 @@
+
+The command exited with code 0.
+Output:
+def add_emission():
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Unauthorized"}), 401
+    if user.role in ("auditor", "it_admin", "it_manager", "it"):
+        return jsonify({"error": "Forbidden: Read-only or administrative role cannot create emission records"}), 403
+
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        return jsonify({"error": "Invalid JSON: payload must be a JSON object"}), 400
+
+    # Map source_type to process_type if missing, and vice versa
+    if not data.get("process_type") and data.get("source_type"):
+        data["process_type"] = data["source_type"]
+    if not data.get("source_type") and data.get("process_type"):
+        data["source_type"] = data["process_type"]
+
+    # Validation
+    required = ["year", "month", "facility_id", "process_type"]
+    for field in required:
+        if field not in data or data[field] is None:
+            return jsonify({"error": f"Missing field: {field}"}), 422
+
+    # Numeric & bounds validation
+    try:
+        yr = int(data["year"])
+        if yr < 1900 or yr > 2100:
+            return jsonify({"error": "Invalid year: must be between 1900 and 2100"}), 422
+   
+

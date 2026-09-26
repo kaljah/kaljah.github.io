@@ -1,0 +1,16 @@
+Task: 8c937686-601b-47fc-9b9b-377539a4ab9b/task-481
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\8c937686-601b-47fc-9b9b-377539a4ab9b\.system_generated\tasks\task-481.log
+Log output:
+<truncated 516 lines>
+nPlantCompendium::test_exhibit_6_42_feedstock_material_balance
+ERROR new\server\tests\test_vented_downstream_compendium.py::TestHydrogenPlantCompendium::test_exhibit_6_43_h2_stoichiometry
+ERROR new\server\tests\test_vented_downstream_compendium.py::TestHydrogenPlantCompendium::test_exhibit_6_44_simple_approach
+ERROR new\server\tests\test_vented_downstream_compendium.py::TestAsphaltBlowingCompendium::test_exhibit_6_45_uncontrolled
+ERROR new\server\tests\test_vented_downstream_compendium.py::TestAsphaltBlowingCompendium::test_controlled_incineration
+ERROR new\server\tests\test_vented_downstream_compendium.py::TestPetrochemicalCompendium::test_acrylonitrile_factors
+ERROR new\server\tests\test_vented_downstream_compendium.py::TestPetrochemicalCompendium::test_nitric_acid_n2o
+ERROR new\server\tests\test_vented_downstream_compendium.py::TestFireSuppressionCompendium::test_hfc_227ea_leakage_and_discharge
+================== 18 failed, 1 warning, 14 errors in 1.99s ===================
+
+Last progress: 0s ago

@@ -1,0 +1,34 @@
+
+The command exited with code 0.
+Output:
+Current count of VENTED_FACTORS: 29
+  Well Completion - Gas Well with Hydraulic Fracturing (Uncontrolled Venting)
+  Well Completion - Gas Well with Hydraulic Fracturing (REC with Venting)
+  Well Completion - Oil Well with Hydraulic Fracturing (Uncontrolled Venting)
+  Well Completion - Oil Well with Hydraulic Fracturing (REC with Venting)
+  Well Completion - Gas Well without Hydraulic Fracturing (Vented)
+  Well Completion - Oil Well without Hydraulic Fracturing (Vented)
+  Liquids Unloading - Plunger Lift (Tier 1 Default)
+  Liquids Unloading - Non-Plunger (Tier 1 Default)
+  Liquids Unloading - Plunger Lift (≤100 events/yr)
+  Liquids Unloading - Plunger Lift (>100 events/yr)
+  Liquids Unloading - Non-Plunger (≤10 events/yr)
+  Liquids Unloading - Non-Plunger (10-50 events/yr)
+  Liquids Unloading - Non-Plunger (>50 events/yr)
+  Liquids Unloading - Plunger Lift (Appalachia <100 events/yr)
+  Liquids Unloading - Plunger Lift (Appalachia >100 events/yr)
+  Liquids Unloading - Plunger Lift (Gulf Coast <100 events/yr)
+  Liquids Unloading - Plunger Lift (Gulf Coast >100 events/yr)
+  Liquids Unloading - Plunger Lift (Midcontinent <100 events/yr)
+  Liquids Unloading - Plunger Lift (Midcontinent >100 events/yr)
+  Liquids Unloading - Plunger Lift (Rocky Mountain <100 events/yr)
+  Liquids Unloading - Plunger Lift (Rocky Mountain >100 events/yr)
+  Liquids Unloading - Non-Plunger (Appalachia)
+  Liquids Unloading - Non-Plunger (Gulf Coast)
+  Liquids Unloading - Non-Plunger (Midcontinent)
+  Liquids Unloading - Non-Plunger (Rocky Mountain)
+  Liquids Unloading - Plunger Lift
+  Liquids Unloading - Non-Plunger
+  Natural Gas (Venting/Blowdown)
+  Asphalt
+

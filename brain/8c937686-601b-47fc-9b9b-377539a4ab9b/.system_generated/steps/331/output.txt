@@ -1,0 +1,24 @@
+
+The command exited with code 0.
+Output:
+class CompletionFlowbackCalculator(BaseCalculator):
+    """
+    API Compendium 2021 Section 6.2.3: Well Completions (Onshore).
+    Implements the full 3-tier hierarchy:
+      - Tier 1: API Tables 6-5 & 6-6 default emission factors (Oil vs Gas, Hydraulic Fracturing vs Non-HF,
+        Uncontrolled Venting vs REC with Venting vs Flared, with Footnote c composition adjustments).
+      - Tier 2: API Engineering calculations from operational data:
+          * API Eq. 6-7: Average daily production rate * vent duration (for completions without HF)
+          * Liquid flowback volume * GOR minus sales gas
+          * Flowback rate * duration (with explicit unit conversion: Mcf/hr, Mcf/day, scf/hr, m3/day, m3/hr)
+      - Tier 3: Direct / Metered Flowback:
+          * API Eq. 6-4: Net flowback volume = V_t - EnF (injected N2 deduction; injected CO2 does not deduct)
+          * API Eq. 6-5: Initial unmetered flowback V_i = (T_i * (V_gas / T_m)) / 2 (100% vented)
+          * Fate partitioning: Vented, Flared (combusted with flare efficiency, N2O), and Recovered (REC / sales = 0 emissions)
+    """
+
+    TABLE_6_5 = {
+        ("gas", "uncontrolled"): {"ch4": 28.8, "scf": 1842577.0, "code": "CompGasHF_Uncontrolled", "standard": "API Compendium 2021 �6.2.3.1, Table 6-5"},
+        ("gas", "rec"): {"ch4": 13.542, "scf": 866413.0, "code": "CompGasHF_REC", "standard": "API Compendium 2021 �6.2.3.1, Table 6-5"},
+        ("oil", "uncontrolled"): {"ch4": 14.419, "scf": 922498.0, "code": "CompOilHF_Unc
+

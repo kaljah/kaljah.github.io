@@ -1,0 +1,235 @@
+
+The command exited with code 0.
+Output:
+*** PAGE 377 ***
+Section 6: Vented and Process Emission Estimation Methods
+6-135
+November 2021
+Table 6-47. Simplified TOC Emission Factors for Loading Losses 
+Loading Type Units Crude Oil a, b, c
+Rail / Truck Loading d
+Submerged Loading –
+Dedicated normal service 
+Original 
+Units
+lb TOC/103 gal loaded
+mg TOC/L loaded
+2
+240
+Converted 
+Units e
+tonne TOC/ 106 gal loaded
+tonne TOC/103 m3
+loaded
+0.91
+0.240
+Rail / Truck Loading d
+Submerged Loading – Vapor 
+balance service
+Original 
+Units
+lb TOC/103 gal loaded
+mg TOC/L loaded
+3
+400
+Converted 
+Units e
+tonne TOC/ 106 gal loaded
+tonne TOC/103 m3
+loaded
+1.51
+0.400
+Rail / Truck Loading d Splash 
+Loading – Dedicated normal 
+service
+Original 
+Units
+lb TOC/103 gal loaded
+mg TOC/L loaded
+5
+580
+Converted 
+Units e
+tonne TOC/ 106 gal loaded
+tonne TOC/103 m3
+loaded
+2.20
+0.580
+Rail / Truck Loading d Splash 
+Loading – Vapor balance 
+service
+Original 
+Units
+lb TOC/103 gal loaded
+mg TOC/L loaded
+3
+400
+Converted 
+Units e
+tonne TOC/ 106 gal loaded
+tonne TOC/103 m3
+loaded
+1.51
+0.400
+Marine Loading f – Ships/ocean 
+barges
+Original 
+Units
+lb TOC/103 gal loaded
+mg TOC/L loaded
+0.61
+73
+Converted 
+Units e
+tonne TOC/ 106 gal loaded
+tonne TOC/103 m3
+loaded
+0.28
+0.073
+Marine Loading f – Barges Original 
+Units
+lb TOC/103 gal loaded
+mg TOC/L loaded
+1.0
+120
+Converted 
+Units e
+tonne TOC/ 106 
+*** PAGE 378 ***
+Section 6: Vented and Process Emission Estimation Methods
+6-136
+November 2021
+EXHIBIT 6-35: Sample Calculation for Estimating Loading Loss CH4 Emissions 
+Using Simplified Emission Factor Approach
+INPUT DATA:
+50,000 bbl/yr of crude oil is loaded into rail tankers via splash loading and dedicated normal 
+service. The crude vapors are estimated to contain 12 wt% CH4, based on the crude composition 
+using simulation modeling. Calculate the CH4 emissions.
+CALCULATION METHODOLOGY:
+From Table 6-47, the emission factor corresponding to crude loading losses from rail splash 
+loading, dedicated service is 2.20 tonnes TOC/million gallons loaded. The loading emissions are 
+calculated by converting the TOC emissions to CH4 and applying the annual loading rate, as 
+shown below:
+4
+4
+4
+CH 6
+CH 4
+2.20 tonnes TOC 42 gal 50,000 bbl 12 tonne CH E =
+10 gal bbl yr 100 tonne TOC
+E 0.554 tonnes CH / yr
+  
+
+6.10.2 Ballasting Emissions
+Ballasting operations are used to improve the stability of empty tanker ships after their cargo 
+tanks have been unloaded. After the ships filled with petroleum liquid are unloaded at marine 
+terminals, sea water or “ballast” water is loaded into the empty cargo tank compartment. The 
+ballast water displaces the vapor in the “empty” cargo tank to the atmosphere resulting in 
+ballasting emissions. 
+Table 6-48 provides average emission fact
+*** PAGE 379 ***
+Section 6: Vented and Process Emission Estimation Methods
+6-137
+November 2021
+Table 6-48. Average TOC Emission Factors for Crude Oil Ballasting Operations
+Compartment 
+Condition Before 
+Cargo Discharge
+Average TOC Emission Factors 
+a, b, Original Units
+Average TOC Emission Factors c
+, 
+Converted to Tonnes
+lb TOC/103 gal 
+ballast water
+mg TOC/L 
+ballast water
+tonne TOC/106
+gal ballast 
+water
+tonne TOC/103
+m3 ballast water
+Fully loaded d 0.9 111 0.420 0.111
+Lightered or previously 
+short loaded e
+1.4 171 0.647 0.171
+Typical overall 
+situation f
+1.1 129 0.488 0.129
+Footnotes and Sources:
+a EPA, AP-42, Section 5, Table 5.2-4, 2008.
+b The factors shown are for total organic compounds. The average factors were derived assuming an average crude temperature of 60°F 
+and a crude RVP of 5 psi. AP-42 reports that the VOC comprises an approximate average of 85% of the TOC for crude. Thus, a 
+simplifying assumption for the CH4 content of the TOC is 15% in the absence of site-specific data, recognizing that this will likely 
+overestimate emissions.
+c Converted from original emission factors provided in units of mg/L in AP-42. Thus, round-off errors may result in some small 
+differences when converting from the emission factors provided in units of lb/103
+gallons.
+d Based on assumed typical arrival ullage of 0.6 m (2 feet).
+e Based on assumed typical arri
+*** PAGE 380 ***
+Section 6: Vented and Process Emission Estimation Methods
+6-138
+November 2021
+The ballasting TOC emissions are calculated by multiplying the ballasting emission factor by the 
+annual ballast water throughput loaded into the ships. The TOC emissions must be multiplied by 
+the CH4 content of the vapors to obtain the CH4 emissions. As a simplifying assumption, the CH4
+content of the vapors will be assumed to be 15 wt% per AP-42 (EPA, AP-42 Section 5.2, 2008). 
+Thus, the CH4 emissions from the ballasting operations are:
+4
+4
+6
+4
+CH 3
+CH 4
+1.1 lb TOC 42 gal 1 10 bbl 15 lb CH tonne E
+10 gal bbl yr 100 lb TOC 2204.62 lb
+E 3.14 tonnes CH /yr
+
+    
+
+6.10.3 Transit Loss Emissions
+In addition to emissions resulting from loading operations and marine ballasting operations, 
+hydrocarbon emissions also occur during petroleum transit. The mechanism resulting in transit 
+losses is similar to breathing losses that occur for storage tanks. The conditions that affect transit 
+emissions are the vapor tightness of the cargo vessel, the cargo vessel pressure at the beginning 
+of the trip, the pressure relief valve settings, the liquid vapor pressure, and the degree of vapor 
+saturation in the vapor void space of the cargo tank.
+Table 6-49 provides simple transit TOC emission factors for marine transit of crude oil (EPA, 
+AP-42 Section 5.2.2.1.3, 2008).
+Table 6-49. 
+*** PAGE 381 ***
+Section 6: Vented and Process Emission Estimation Methods
+6-139
+November 2021
+8.7E-04 tonne CO2e/tonne crude transported
+Exhibit 6-37 illustrates the use of the simple crude oil transit emission factors.
+EXHIBIT 6-37: Sample Calculation for Estimating CH4 Emissions Using Simplified 
+Transit Emission Factors
+INPUT DATA:
+500,000 barrels of crude oil (RVP 5) are transported via ships with an average trip duration of 10 
+days. The company transports the crude 25 times during the given reporting year. Calculate the
+CH4 emissions using the AP-42 emission factors.
+CALCULATION METHODOLOGY:
+Transit loss emissions are calculated by multiplying the transit loss emission factor given in 
+Table 6-49 for crude oil, by the volume transported and the CH4 content of the vapors. As a 
+simplifying assumption, the CH4 content of the vapors is assumed to be 15 wt% (EPA, AP-42 
+Section 5.2, 2008).
+4
+4
+CH 6
+4
+CH 4
+0.57 tonne TOC 42 gal 10 days 25 trips E = × ×500,000 bbl× ×
+week-10 gal transported bbl trip yr
+week 15 lb CH
+ × ×
+7 days 100 lb TOC
+E = 64.1 tonnes CH /yr
+6.11 Refining
+6.11.1 Catalyst Regeneration
+6.11.1.1 Catalytic Cracking Unit
+The catalytic cracking processes deposit coke on the catalyst as a byproduct of the reaction. That 
+coke must be burned off to restore the activity of the catalyst. The coke is continuously burned 
+off in the regenerator. This pro
+

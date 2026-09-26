@@ -1,0 +1,63 @@
+
+The command exited with code 0.
+Output:
+P240: Table 6-1. Emission Estimation Approaches – GHG and Source-Specific Considerations for
+P240: Table 6-2. Mud Degassing Vented Methane Emission Factors for Oil and Natural Gas
+P240: Table 6-3. Natural Gas Well Drilling Methane Emission Factors for Oil and Gas Exploration .6-5
+P240: Table 6-4. Well Testing Methane Emission Factors for Oil and Gas Exploration ...................... 6-8
+P240: Table 6-5. Well Completions with Hydraulic Fracturing Methane Emission Factors for Oil and
+P240: Table 6-6. Onshore Well Completions without Hydraulic Fracturing Methane Emission Factors
+P240: Table 6-7. Offshore Well Completion Methane Emission Factors for Oil and Gas Exploration .. 6-
+P240: Table 6-8. Associated Gas Venting Emission Factors............................................................... 6-20
+P240: Table 6-9. Production Segment Methane Emission Factors for Workovers without Hydraulic
+P240: Table 6-10. Well Unloading Vented Emission Factors for Wells ................................................ 27
+P240: Table 6-11. Liquid Unloading Vented Emission Factors by Well............................................. 6-28
+P240: Table 6-12. Heavy Oil and Crude Bitumen Casing Gas Vented CH4 Emission Factors –
+P240: Table 6-13. Heavy Oil and Crude Bitumen Casing Gas Vented Methane Emission Factors – Well
+P240: Table 6-14. Natural Gas-Driven Pneumatic Controller Emission Factors for Continuous Vent
+P240: Table 6-15. Natural Gas-Driven Pneumatic Controller Emission Factors for Intermittent Vent
+P240: Table 6-16. Gas-Driven Chemical Injection Pump CH4 Emission Factors............................... 6-41
+P240: Table 6-17. Production Segment Uncontrolled Gas Dehydration Methane Emission Factors..6-45
+P240: Table 6-18. GRI/EPA Kimray Pump Methane Emission Factors ............................................. 6-47
+P240: Table 6-19. Uncontrolled AGR Methane Emission Factor ....................................................... 6-53
+P240: Table 6-20. Suggested Allowable and Default Values for VBE ............................................... 6-60
+P240: Table 6-21. Summary of Range of Data Used in Standing Correlation a
+P240: Table 6-22. Methane Flashing Loss Emission Factors for Crude Oil Storage Tanks................ 6-69
+P240: Table 6-23. Summary of Crude Oil Production Tank Flashing Losses Using Different
+P240: Table 6-24. Production Condensate Flashing Emission Factors ............................................... 6-72
+P240: Table 6-25. Improperly Functioning Separator Dump Valve Emission Factors....................... 6-74
+P240: Table 6-26. Produced Salt Water Tank Methane Flashing Emission Factors ........................... 6-76
+P240: Table 6-27. Methane Emission Factors from Produced Water from Shallow Gas Wells ......... 6-77
+P240: Table 6-28. Production Segment CH4 Emission Factors for Other Non-Routine Releases .....6-82
+P240: Table 6-29. Natural Gas-Driven Pneumatic Controller Emission Factors in Gathering and
+P241: Table 6-30. Emission Factors for Compressor Rod Packing in the Gathering and Boosting and
+P241: Table 6-31. Emission Factors for Storage Tanks in the Gathering and Boosting Segment…...6-93
+P241: Table 6-32. Gathering Segment CH4 Emission Factors for Certain Blowdown Activities....... 6-93
+P241: Table 6-33. Gathering Segment Emission Factors for Other Non-Routine Releases............... 6-96
+P241: Table 6-34. Gas-Driven Pneumatic Controller CH4 Emission Factors in Gas Processing Segment
+P241: Table 6-35. Processing Segment Specific Uncontrolled Gas Dehydration CH4 Emission Factors
+P241: Table 6-36. GRI/EPA Kimray Pump CH4 Emission Factors .................................................. 6-101
+P241: Table 6-37. Emission Factors for Reciprocating Compressors in Natural Gas Processing..... 6-107
+P241: Table 6-38. Emission Factors for Centrifugal Compressors in Natural Gas Processing ......... 6-109
+P241: Table 6-39. Gas Processing Segment CH4 Emission Factor for Non-Routine Activities ....... 6-110
+P241: Table 6-40. Emission Factors for Compressor Rod Packing Based on 2015 Measurement Study
+P241: Table 6-41. Emission Factors for Centrifugal Compressor Seals in the Transmission and Storage
+P241: Table 6-42. Natural Gas-Driven Pneumatic Controller Methane Emission Factors in
+P241: Table 6-43. Transmission and Storage Segment Methane Emission Factors for Non-Routine
+P241: Table 6-44. Typical Pipeline Loss Rates ................................................................................. 6-124
+P241: Table 6-45. Emission Factors for Gas-Driven Pneumatic Controllers Located in the Gas
+P241: Table 6-46. Gas Distribution Segment Emission Factors for Non-Routine Activities............ 6-128
+P241: Table 6-47. Simplified TOC Emission Factors for Loading Losses........................................ 6-135
+P241: Table 6-48. Average TOC Emission Factors for Crude Oil Ballasting Operations................. 6-137
+P241: Table 6-49. Simplified TOC Emission Factors for Marine Transit Losses............................. 6-138
+P241: Table 6-50. Composition of U.S. Pipeline-Quality Natural Gas ............................................. 6-158
+P241: Table 6-51. Stoichiometric Conversion Emission Factor........................................................ 6-159
+P241: Table 6-52. Default Asphalt Blowing Emission Factors......................................................... 6-160
+P241: Table 6-53. Chemical Production Emission Factors................................................................ 6-167
+P242: Table 6-1 illustrates the range of available options for estimating vented GHG emissions and
+P243: Table 6-1. Emission Estimation Approaches – GHG and Source-Specific Considerations for
+P244: emissions (e.g. mud-logger services with gas detection system). However, in the absence of site￾specific data, use of simplified emission factors presented in Table 6-2 or Table 6-3 can be used.
+P244: Table 6-2 provides mud degassing total hydrocarbon (THC) vented emission factors on a drilling
+P244: Table 6-2. Mud Degassing Vented Methane Emission Factors for Oil and Natural Gas
+P245: An example calculation is given in Exhibit 6-1 to illustrate the use of the mud degassing
+

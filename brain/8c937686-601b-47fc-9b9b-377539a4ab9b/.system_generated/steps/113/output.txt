@@ -1,0 +1,87 @@
+
+The command exited with code 0.
+Output:
+P259: 6.3.1 Associated Gas Venting
+P260: (CH4) or carbon dioxide (CO2) emissions from associated gas venting from a continuous or non￾continuous process vent using measured or estimated vent rate data is shown in Equation 6-8:
+P260: (Equation 6-8)
+P260: shown in Equation 6-9:
+P260: (Equation 6-9)
+P260: The whole gas volumetric emissions quantified in Equation 6-9 can be converted to CH4 and
+P260: CO2 emissions using Equation 6-8.
+P261: EXHIBIT 6-5: Sample Calculation for Non-Continuous Associated Gas Venting
+P261: calculated from the GOR and the oil production rate using Equation 6-9.
+P261: Equation 6-8 is used to calculate emissions for the venting period of 15 days during the year.
+P262: EXHIBIT 6-6: Sample Calculation for Continuous Associated Gas Venting
+P262: Equation 6-8 and 6-9 are combined to provide the approach for estimating emissions from a
+P262: Table 6-8 below presents the GHGI emission factors, which represent average GHGRP data
+P262: Table 6-8. Associated Gas Venting Emission Factors
+P263: 6.3.2 Workovers without Hydraulic Fracturing
+P263: presented in Table 6-9.
+P264: Table 6-9. Production Segment Methane Emission Factors for Workovers without
+P264: EXHIBIT 6-7: Sample Calculation for Workovers without Hydraulic Fracturing
+P264: To calculate the vented CH4 and CO2 emissions, the emission factor from Table 6-9 can be used.
+P265: 6.3.3 Workovers with Hydraulic Fracturing
+P265: however, when this is not practical or feasible, emission factors listed in Table 6-5 may be
+P265: 6.3.4 Well Venting from Liquids Unloading
+P266: systems); however, those equations have been integrated in Equation 6-10 below:
+P266: × Depth × P)+ (SFR × (HR - X) × Z) (Equation 6-10)
+P266: Note that Equation 6-11 above from EPA’s GHGRP Subpart W calculates CH4 and CO2
+P266: whole gas volumetric emissions to CH4 and CO2 mass emissions is described in Equation 6-2.
+P266: Subpart W method (Pasci, et al, 2020). Equation 6-11 below can be used to quantify the vent rate
+P267: × SFRp × Tp (Equation 6-11)
+P267: EXHIBIT 6-8: Sample Calculation for Estimating Well Unloading Emissions
+P267: estimated using Equation 6-10.
+P268: When wellbore information is not available, the simplified emission factors in Table 6-10 can be
+P268: Table 6-10 below include the volumetric emissions in scf gas per well unloading event, and
+P268: average emission factors from Table 6-10 can be applied.
+P269: Table 6-10. Well Unloading Vented Emission Factors for Wells
+P270: Emission factors in Table 6-10 above are based on methane emitted per well unloading event.
+P270: Table 6-11. Liquid Unloading Vented Emission Factors by Well
+P270: 6.3.5 Casing Gas Vents
+P270: 6.3.5.1 Heavy Oil and Crude Bitumen Casing Gas Vents
+P271: Table 6-12 provides casing gas total hydrocarbon (THC) vented emission factors on a heavy oil
+P271: Table 6-12. Heavy Oil and Crude Bitumen Casing Gas Vented CH4 Emission Factors –
+P271: If the oil production throughput is not known, Table 6-13 can be used. This table provides
+P272: Table 6-13. Heavy Oil and Crude Bitumen Casing Gas Vented Methane Emission Factors –
+P272: EXHIBIT 6-9: Sample Calculation for Heavy Oil Casing Gas Vented Emissions
+P272: emission factor from Table 6-12, and adjusted to the site specific basis of 70 mole % CH4.
+P273: 6.3.5.2 Low Pressure Gas Well Casing Vents
+P274: EXHIBIT 6-10: Sample Calculation for Low-Pressure Casing Gas Migration
+P274: 6.3.6 Natural Gas Driven Pneumatic Controllers
+P275: controller type is unknown, the default emission factors presented in Section 6.3.6.3 can be used.
+P275: 6.3.5.3 Continuous Vent Controllers
+P275: calculate the volume of gas vented as shown in Equation 6-12, from the Gas Processors
+P275: (Equation 6-12)
+P275: the CH4 and CO2 content of the gas, such as described in Equation 6-2.
+P275: Alternatively, default whole gas emission factors by controller type are provided in Table 6-14
+P275: for continuous operating controllers. Table 6-14 also presents the corresponding CH4 emission
+P276: pneumatic controller emission factors shown in Table 6-14 are taken from the 2019 API methane
+P276: Table 6-14. Natural Gas-Driven Pneumatic Controller Emission Factors for Continuous
+P277: EXHIBIT 6-11: Sample Calculation for Gas-Driven Pneumatic Controller Emissions
+P277: factor from Table 6-14.
+P277: provided in Table 6-14 of 81.6 mole % CH4 to the site-specific basis of 70 mole % CH4. Because
+P277: 6.3.5.4 Intermittent Operating Controllers
+P278: shown in Equation 6-13 (Simpson, 2014).
+P278: )× Nact (Equation 6-13)
+P278: emission factors for intermittent vent pneumatic controllers as presented in Table 6-15. These
+P279: Table 6-15. Natural Gas-Driven Pneumatic Controller Emission Factors for Intermittent
+P279: and repair program, the emission factors in Table 6-15 should be applied to intermittent vent
+P280: described in GHGRP (Equation W-30), and shown in Equation 6-14 below.
+P280: ×Tmf) (Equation 6-14)
+P280: EXHIBIT 6-12: Sample Calculation for Gas-Driven Intermittent Vent Pneumatic
+P281: pneumatic controllers, the emission factors from Table 6-15 for normal and malfunctioning
+P281: factor from Table 6-15. Equation 6-13 is used to calculate the annual total emissions using the
+P281: provided in Table 6-15 of 81.6 mole % CH4 to the site-specific basis of 70 mole % CH4. Because
+P282: 6.3.7 Gas Driven Pneumatic Pumps
+P282: mathematically using Equation 6-15.
+P282: (Equation 6-15)
+P283: or calculated using Equation 6-16; and
+P283: The volume of liquid pumped in Equation 6-15 can be calculated as shown in Equation 6-16.
+P283: (Equation 6-16)
+P283: the CH4 and CO2 content of the gas, such as described in Equation 6-2.
+P283: Alternatively, the simplified emission factors in Table 6-16 can be used to estimate CH4
+P283: Table 6-16. Gas-Driven Chemical Injection Pump CH4 Emission Factors
+P284: The CIP emission factors in Table 6-16 above include the volumetric emissions in whole gas per
+P285: 6.3.8 Gas Treatment Processes
+P285: 6.3.8.1 Glycol Dehydration
+

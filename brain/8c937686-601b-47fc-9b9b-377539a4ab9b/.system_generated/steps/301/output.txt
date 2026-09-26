@@ -1,0 +1,71 @@
+
+The command exited with code 0.
+Output:
+Section 6: Vented and Process Emission Estimation Methods
+6-69
+November 2021
+Emission Factor Approach For Crude Oil Tank Flashing
+In the absence of site-specific data to quantify flashing losses from crude oil storage tanks, a 
+default emission factor approach can be used. Table 6-22 below presents default emission factors 
+for flashing losses from production segment crude oil storage tanks, taken from EPA’s GHGI 
+(EPA, 2019b). The default emission factors are broken down by tank throughput: large tanks 
+with an annual average daily throughput of greater than or equal to 10 barrels; and small tanks 
+with an annual average daily throughput of less than 10 barrels. Note that the GHGI emission 
+factors are based on data reported to EPA in the US through the GHGRP, which requires 
+measurement or simulation for large tanks and allows a default emission factor approach for 
+small tanks (with annual average throughput of less than 10 barrels per day).
+The average value also presented in Table 6-22 below is derived from two published studies, one 
+by API/GRI (Ogle, 1997a; Ogle, 1997b) and the other by the Canadian Petroleum Association 
+(Picard, Vol. III, 1992). A summary of the results of these studies, including development of an 
+average tank CH4 flashing loss emission factor, is included in Appendix B.
+Table 6-22. Methane Flashing Loss Emission Factors for Crude Oil Storage Tanks
+Emission Source Original Units,
+Crude Oil 
+Methane Flashing 
+Loss Emission 
+Factor
+Uncertainty Crude Oil 
+Methane Flashing 
+Loss Emission 
+Factor, Converted 
+to Tonnes Basis
+Separator 
+Methane 
+Content 
+Basis of 
+Factor a
+(kg CH4/bbl crude) (±%) (tonnes CH4/m3
+crude)
+(mole %)
+Large Tanks (≥ 10 bbl crude/day) b
+Without control c, 
+d
+0.193
+Not 
+specified
+1.21E-03
+81.6 With VRU c, d 0.0283 1.78E-04
+With flares c, d 5.25E-3 3.30E-05
+Small Tanks (< 10 bbl crude/day) b
+Without control c, 
+d
+0.0184 Not 
+specified
+1.15E-04
+81.6
+With flares c, d 2.06E-3 1.29E-05
+Average Value 
+Without control e, 
+f, g, h 0.886 110 i 5.57E-03 78.8
+Footnotes and Sources: 
+a Gas content taken from GHGI Annex 3.6 Table 3.6-3 for U.S. Production segment Methane Content in Natural Gas by NEMS Region (General 
+Sources). For the lower 48 states, in 2017, CH4 content at 81.6 mol%. The CH4 emission factor can be adjusted based on the CH4 content of the 
+site-specific gas, if the natural gas has a significantly different CH4 content from the default basis (if given). Also, if the facility gas contains 
+significant quantities of CO2, the CH4 emission factor can be adjusted based on the relative concentrations of CH4 and CO2 in the gas to estimate 
+the CO2 emissions. Average value factors based on separator CH4 content of 78.8% (vol.); can ratio to other separator concentrations.
+b Differentiation in throughput cited from U.S. Environmental Protection Agency (USEPA), 2019. Greenhouse Gas Reporting Program – Subpart 
+W – Petroleum and Natural Gas Systems. (EPA, 2019a). Data reported as of August 2, 2019. https://ecfr.io/Title-40/sp40.23.98.w.
+c EPA Inventory of U.S. Greenhouse Gas Emissions and Sinks 1990-2017. (EPA, 2019b). These values were calculated using year-specific 
+GHGRP Subpart W data for each control category (2017b). Note: These factors, used in the USEPA Inventory of U.S. Greenhouse Gas Emissions 
+and Sinks 1990-2017 (EPA 2019), are updated annually based on data reported from operators under the GHGRP.
+

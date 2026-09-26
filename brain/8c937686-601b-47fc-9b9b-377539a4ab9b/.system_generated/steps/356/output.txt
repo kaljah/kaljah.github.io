@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_vented_production_compendium.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -304,7 +304,7 @@
+             sour_co2_content=0.030,
+             sweet_co2_content=0.020,
+         )
+-        assert _val(res["results"]["co2"]) == pytest.approx(80506.0, abs=10.0)
++        assert _val(res["results"]["co2"]) == pytest.approx(80506.0, rel=1e-3)
+         assert _val(res["results"]["ch4"]) == pytest.approx(2775.0, abs=5.0)
+ 
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

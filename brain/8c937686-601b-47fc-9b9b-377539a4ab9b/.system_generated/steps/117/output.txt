@@ -1,0 +1,193 @@
+
+The command exited with code 0.
+Output:
+==============================
+CLASS: BlowdownCalculator
+class BlowdownCalculator(BaseCalculator):
+    """
+    API Eq. 6-4: Vessel/Pipeline Blowdown (Depressurization)
+    V_std = V_physical * (P_vessel_abs / P_std) * (T_std / T_vessel_abs) * (1 / Z) * Events
+    Remediates CALC-06 by incorporating exact temperature and compressibility normalization.
+    """
+
+    def __init__(self):
+        super().__init__("Blowdown Events", "Section 6.4")
+
+    def calculate(
+        self,
+        blowdown_volume,
+        pressure,
+        events,
+        ch4_content,
+        uncertainties,
+        co2_content=0.0,
+        control_efficiency=0.0,
+        ef_co2=None,
+        ef_ch4=None,
+        ef_n2o=None,
+        operating_temperature=60.0,
+        temp_unit="F",
+        press_unit="psig",
+        z_factor=1.0,
+        hhv=1020.0,
+        gwp_dict=None,
+    ):
+        uncertainties = uncertainties or {}
+        self.validate_inputs(
+            {
+                "blowdown_volume": blowdown_volume,
+                "pressure": pressure,
+                "events": events,
+            },
+            ["blowdown_volume", "pressure", "events"],
+        )
+
+        # API Eq. 6-4: Vessel depressurization to standard atmospheric pressure
+        p_initial_psia = to_psia(pressure, press_unit)
+        p_factor = p_initial_psia / STD_PRESSURE_PSIA
+
+        t_abs_k = to_kelvin(operating_temperature, temp_unit)
+        t_factor = STD_TEMP_K / max(1.0, t_abs_k)
+
+        z = float(z_factor) if z_factor and float(z_factor) > 0 else 1.0
+
+        v_std_per_event = float(blowdown_volume) * p_factor * t_factor * (1.0 / z)
+        total_v_std = v_std_per_event * float(events)
+
+        c_ch4 = float(ch4_content if ch4_content is not None else 0.85)
+        if c_ch4 > 1.0:
+            c_ch4 /= 100.0
+        c_ch4 = max(0.0, min(1.0, c_ch4))
+
+        c_co2 = float(co2_content or 0.0)
+        if c_co2 > 1.0:
+            c_co2 /= 100.0
+        c_co2 = max(0.0, min(1.0, c_co2))
+
+==============================
+CLASS: TankFlashingCalculator
+class TankFlashingCalculator(BaseCalculator):
+    def __init__(self):
+        super().__init__("Storage Tank Emissions", "Section 6.8")
+
+    def calculate(
+        self,
+        throughput,
+        gas_oil_ratio,
+        ch4_content,
+        control_efficiency,
+        uncertainties,
+        process_type="tank_flashing",
+        ef_ch4=0,
+        co2_content=0.0,
+        ef_co2=None,
+        ef_n2o=None,
+        hhv=1020.0,
+        gwp_dict=None,
+    ):
+        """
+        Calculates Tank Emissions (API Compendium Section 6.8 & EPA Subpart W �98.233(j)).
+        If Flashing: Uses GOR method with flared combustion products when control_efficiency > 0.
+        If Working/Breathing: Uses simple Factor * Throughput.
+        """
+        uncertainties = uncertainties or {}
+        self.validate_inputs({"throughput": throughput}, ["throughput"])
+
+        is_flashing = process_type in ["tank_flashing", "tank", "storage_tanks"] or (gas_oil_ratio and float(gas_oil_ratio) > 0 and not ef_ch4)
+
+        if is_flashing:
+            total_gas_scf = float(throughput) * float(gas_oil_ratio or 0.0)
+            total_gas_m3 = convert(total_gas_scf, "scf", "m3")
+
+            ch4_vol_scf = total_gas_scf * float(ch4_content if ch4_content is not None else 0.85)
+            ch4_vol_m3 = convert(ch4_vol_scf, "scf", "m3")
+            ch4_mass_kg = ch4_vol_m3 * CONVERSIONS["density_ch4"]
+            ch4_tonnes = ch4_mass_kg / 1000.0
+
+            co2_vol_scf = total_gas_scf * float(co2_content or 0.0)
+            co2_vol_m3 = convert(co2_vol_scf, "scf", "m3")
+            co2_mass_kg = co2_vol_m3 * CONVERSIONS["density_co2"]
+            co2_tonnes = co2_mass_kg / 1000.0
+
+            ctrl_eff = float(control_efficiency or 0.0)
+            split = _split_vented_and_flared(
+                total_gas_m3=total_gas_m3,
+                ch4_tonnes=ch4_tonnes,
+                co2_tonnes=co2_tonnes,
+                ctrl_eff=ctrl_eff,
+                hhv=hhv,
+                ef_n2o=ef_n2o,
+            )
+            total_ch4 = split["total_ch4"]
+            total_co2 = split["total_co2"]
+            flared_n2o_tonnes = split["flared_n2o"]
+
+            ch4_res, co2_res, n2o_res = _propagate_vented_results(
+                total_ch4=total_ch4,
+                total_co2=total_co2,
+                flared_n2o=flared_n2o_tonnes,
+
+==============================
+CLASS: PneumaticDeviceCalculator
+class PneumaticDeviceCalculator(BaseCalculator):
+    def __init__(self):
+        super().__init__("Pneumatic Devices", "Section 6.10")
+
+    def calculate(
+        self,
+        count,
+        hours=8760,
+        bleed_rate=None,
+        ch4_content=0.85,
+        uncertainties=None,
+        actuations=None,
+        co2_content=0.0,
+        gwp_dict=None,
+    ):
+        """
+        API Section 6.10 & EPA Subpart W �98.233(a):
+        - Continuous bleed: Device count * Hours * Bleed rate (scf/hr)
+        - Intermittent / actuation-based: Device count * Actuations * Bleed per event (scf/actuation)
+        Accounts for both CH4 and native CO2 in supply gas.
+        """
+        uncertainties = uncertainties or {}
+        self.validate_inputs(
+            {"count": count},
+            ["count"],
+        )
+
+        c_ch4 = float(ch4_content if ch4_content is not None else 0.85)
+        if c_ch4 > 1.0:
+            c_ch4 /= 100.0
+        c_ch4 = max(0.0, min(1.0, c_ch4))
+
+        c_co2 = float(co2_content or 0.0)
+        if c_co2 > 1.0:
+            c_co2 /= 100.0
+        c_co2 = max(0.0, min(1.0, c_co2))
+
+        is_intermittent = actuations is not None and float(actuations) > 0
+        if is_intermittent:
+            # Bleed rate is scf/event (default 13.5 scf/event per EPA Subpart W Table W-1 / API �6.10 if bleed_rate <= 0)
+            event_bleed_scf = float(bleed_rate) if (bleed_rate and float(bleed_rate) > 0) else 13.5
+            event_bleed_m3 = convert(event_bleed_scf, "scf", "m3")
+            total_bleed_vol = float(count) * float(actuations) * event_bleed_m3
+        else:
+            self.validate_inputs(
+                {"hours": hours, "bleed_rate": bleed_rate},
+                ["hours", "bleed_rate"],
+            )
+            # Bleed rate in scf/hr -> m3/hr
+            bleed_m3_hr = convert(float(bleed_rate), "scf", "m3")
+            total_bleed_vol = float(count) * float(hours) * bleed_m3_hr
+
+        total_ch4_vol = total_bleed_vol * c_ch4
+        ch4_mass_kg = total_ch4_vol * CONVERSIONS["density_ch4"]
+        ch4_tonnes = ch4_mass_kg / 1000.0
+
+        total_co2_vol = total_bleed_vol * c_co2
+        co2_mass_kg = total_co2_vol * CONVERSIONS["density_co2"]
+        co2_tonnes = co2_mass_kg / 1000.0
+
+
+

@@ -1,0 +1,85 @@
+
+The command exited with code 0.
+Output:
+<truncated 38 lines>
+6.6.1 Compressor Venting............................................................................. 6-111
+6.6.2 Transmission Storage Tanks ............................................................... 6-117
+6.6.3 Gas-Driven Pneumatic Controllers ...................................................... 6-117
+6.6.4 Other Transmission and Storage-Related Venting Emissions ............ 6-118
+6.7 LNG Operations.................................................................................................. 6-121
+6.7.1 Gas Treatment and Liquefaction Processes........................................ 6-121
+6.7.2 LNG Storage and Loading Operations................................................. 6-123
+6.7.3 LNG Shipping ....................................................................................... 6-124
+6.7.4 LNG Import and Export Terminals ....................................................... 6-125
+6.8 Natural Gas Distribution ..................................................................................... 6-126
+6.8.1 Natural Gas Driven Pneumatic Controllers.......................................... 6-126
+=== Page 239 ===
+Section 6. Process and Vented Emission Estimation Methods 
+6-iii November 2021
+6.8.2 Other Natural Gas Distribution Venting Related Emissions ................ 6-127
+6.9 Enhanced Oil Recovery, Carbon Capture, and Geological Storage ................. 6-131
+6.9.1 Enhanced Oil Recovery........................................................................ 6-131
+6.9.2 Carbon Capture .................................................................................... 6-131
+6.9.3 Geological Storage ............................................................................... 6-133
+6.10 Crude Oil Transport............................................................................................ 6-134
+6.10.1 Loading Loss Emissions � Truck and Marine...................................... 6-134
+6.10.2 Ballasting Emissions ............................................................................ 6-136
+6.10.3 Transit Loss Emissions ........................................................................ 6-138
+6.11 Refining............................................................................................................... 6-139
+6.11.1 Catalyst Regeneration.......................................................................... 6-139
+6.11.2 Cokers .................................................................................................. 6-149
+6.11.3 Refinery Hydrogen Plant ...................................................................... 6-153
+6.11.4 Asphalt Blowing.................................................................................... 6-159
+6.11.5 Coke Calcining ..................................................................................... 6-162
+6.11.6 Other Refining Related Venting Emissions.......................................... 6-163
+6.12 Petrochemical Manufacturing............................................................................. 6-165
+6.13 Retail and Marketing of Petroleum Liquids ........................................................ 6-168
+6.14 Fire Suppression Emissions............................................................................... 6-168
+6.15 References ......................................................................................................... 6-169
+=== Page 240 ===
+Section 6. Process and Vented Emission Estimation Methods 
+6-iv November 2021
+List of Tables
+Table 6-1. Emission Estimation Approaches � GHG and Source-Specific Considerations for 
+Vented Sources ............................................................................................................................ 6-1
+Table 6-2. Mud Degassing Vented Methane Emission Factors for Oil and Natural Gas 
+Exploration...................................................................................................................................6-2
+Table 6-3. Natural Gas Well Drilling Methane Emission Factors for Oil and Gas Exploration .6-5
+Table 6-4. Well Testing Methane Emission Factors for Oil and Gas Exploration ...................... 6-8
+Table 6-5. Well Completions with Hydraulic Fracturing Methane Emission Factors for Oil and 
+Gas Exploration ......................................................................................................................... 6-13
+Table 6-6. Onshore Well Completions without Hydraulic Fracturing Methane Emission Factors 
+for Oil and Gas Exploration ....................................................................................................... 6-14
+Table 6-7. Offshore Well Completion Methane Emission Factors for Oil and Gas Exploration .. 6-
+15
+Table 6-8. Associated Gas Venting Emission Factors............................................................... 6-20
+Table 6-9. Production Segment Methane Emission Factors for Workovers without Hydraulic 
+Fracturing...................................................................................................................................6-22
+Table 6-10. Well Unloading Vented Emission Factors for Wells ................................................ 27
+Table 6-11. Liquid Unloading Vented Emission Factors by Well............................................. 6-28
+Table 6-12. Heavy Oil and Crude Bitumen Casing Gas Vented CH4 Emission Factors �
+Throughput Basis....................................................................................................................... 6-29
+Table 6-13. Heavy Oil and Crude Bitumen Casing Gas Vented Methane Emission Factors � Well 
+Basis........................................................................................................................................... 6-30
+Table 6-14. Natural Gas-Driven Pneumatic Controller Emission Factors for Continuous Vent 
+Controllers in Production........................................................................................................... 6-34
+Table 6-15. Natural Gas-Driven Pneumatic Controller Emission Factors for Intermittent Vent 
+Controllers in Production........................................................................................................... 6-37
+Table 6-16. Gas-Driven Chemical Injection Pump CH4 Emission Factors............................... 6-41
+Table 6-17. Production Segment Uncontrolled Gas Dehydration Methane Emission Factors..6-45
+Table 6-18. GRI/EPA Kimray Pump Methane Emission Factors ............................................. 6-47
+Table 6-19. Uncontrolled AGR Methane Emission Factor ....................................................... 6-53
+Table 6-20. Suggested Allowable and Default Values for VBE ............................................... 6-60
+Table 6-21. Summary of Range of Data Used in Standing Correlation a
+..................................6-63
+Table 6-22. Methane Flashing Loss Emission Factors for Crude Oil Storage Tanks................ 6-69
+Table 6-23. Summary of Crude Oil Production Tank Flashing Losses Using Different 
+Correlation Equation Approaches.............................................................................................. 6-71
+Table 6-24. Production Condensate Flashing Emission Factors ............................................... 6-72
+Table 6-25. Improperly Functioning Separator Dump Valve Emission Factors....................... 6-74
+Table 6-26. Produced Salt Water Tank Methane Flashing Emission Factors ........................... 6-76
+Table 6-27. Methane Emission Factors from Produced Water from Shallow Gas Wells ......... 6-77
+Table 6-28. Production Segment CH4 Emission Factors for Other Non-Routine Releases .....6-82
+Table 6-29. Natural Gas-Driven Pneumatic Controller Emission Factors in Gathering and 
+Boosting .....................................................................................................................................6-83
+

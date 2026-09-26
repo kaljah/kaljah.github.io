@@ -1,0 +1,27 @@
+
+The command exited with code 0.
+Output:
+PROCESS TYPE MATCHES IN DISPATCHER:
+process_type in [
+process_type in ["liquids_unloading", "unloading"]
+process_type in [
+process_type in [
+process_type in ["flaring", "routine_flaring", "non_routine_flaring", "safety_flaring"]
+process_type in ["drilling", "mud_degassing"]
+process_type == "completions"
+process_type in ["liquids_unloading", "unloading"]
+process_type in ["venting", "blowdown"]
+process_type in ["associated_gas_venting", "associated_venting", "associated_gas"]
+process_type in [
+process_type in ["pneumatic_devices", "pneumatic_device", "pneumatic"]
+process_type == "fugitive"
+process_type in ["compressor_seal", "compressor_fugitive"]
+process_type in ["fugitive_component", "component_fugitive"]
+process_type in [
+process_type in ["agr", "acid_gas_removal"]
+process_type in ["cogen_allocation", "cogen"]
+process_type in [
+process_type in [
+process_type == "dehydrator"
+process_type == "indirect_steam"
+

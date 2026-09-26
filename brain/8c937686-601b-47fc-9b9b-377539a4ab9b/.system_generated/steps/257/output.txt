@@ -1,0 +1,65 @@
+
+The command exited with code 0.
+Output:
+Section 6. Process and Vented Emission Estimation Methods 
+6-23 November 2021
+Gas well workovers without hydraulic fracturing:
+ECH4
+=
+10 workovers
+year
+×
+3,114 scf gas
+workover × 
+0.70 scf CH4
+1 scf gas × 
+lbmole CH4
+379.3 scf CH4
+× 
+16 lb CH4
+lbmole CH4
+× 
+tonne 
+2204.62 lb CH4
+ECH4
+= 0.42 tonnes CH4
+/yr
+ECO2
+=
+10 workovers
+year
+× 
+3,114 scf gas
+workover × 
+0.09 scf CO2
+1 scf gas × 
+lbmole CO2
+379.3 scf CO2
+× 
+44 lb CO2
+lbmole CO2
+× 
+tonne 
+2204.62 lb CO2
+ECO2
+= 0.15 tonnes CO2
+/yr
+6.3.3 Workovers with Hydraulic Fracturing 
+For workovers with hydraulic fracturing, injected gas, water, oil, and proppant are used to re￾fracture and open new fractures in existing low permeability gas reservoirs. During flowback 
+from a well workover activity with hydraulic fracturing, gas entrained in the flowback fluids and 
+produced gas may be vented to the atmosphere, recovered or flared.
+Emissions can be estimated from workovers with hydraulic fracturing similar to the estimation 
+methods described in Section 6.2.3.1 for completions with hydraulic fracturing. Direct 
+measurement is considered the most accurate approach (refer to methods in Section 6.2.3.1); 
+however, when this is not practical or feasible, emission factors listed in Table 6-5 may be 
+applied. These emission factors, cited from the GHGI and calculated using 2017 year-specific 
+GHGRP Subpart W data, are also applicable to workovers with hydraulic fracturing. 
+6.3.4 Well Venting from Liquids Unloading 
+Well unloading (liquids unloading) are sometimes performed to remove liquids that accumulate 
+in the wellbore. Throughout the lifecycle of a well, specific conditions may lead to liquid 
+accumulation, such as a decrease in gas velocity in the well, a decrease in reservoir pressure, or 
+changes in liquid to gas ratios (Allen, 2014). Conditions that lead to liquid accumulation can 
+inhibit the flow of gas to the sales line and therein cause a decline in production. 
+Certain methods of well unloading can result in gas venting which includes well unloading with 
+and without plunger lift systems. 
+

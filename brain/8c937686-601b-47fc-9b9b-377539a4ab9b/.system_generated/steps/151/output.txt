@@ -1,0 +1,89 @@
+
+The command exited with code 0.
+Output:
+=== PAGE 334 ===
+Section 6: Vented and Process Emission Estimation Methods
+6-92
+November 2021
+Using this equation, the moles of gas emitted can be converted to a mass basis by applying the 
+molecular weight of CH4 or CO2 as shown in Equation 6-33.
+CH or CO 4 2 CH or CO 4 2 CH or CO 4 2
+Moles Gas Released #Events E Mole% MW
+Event Year
+   
+(Equation 6-33)
+For gas pipeline pigging operations, the volume released would be based on the segment of 
+pipeline depressurized plus the volume of the pig catcher or launcher. Note that emissions 
+associated with unstabilized oil pipeline pigging operations should be calculated in a manner 
+similar to emissions from crude tank flashing, which is described in Section 6.3.9.1 for Flashing 
+Losses from Unstabilized Crude and Condensate Storage Tanks.
+An example of this approach is demonstrated in Exhibit 6-25.
+EXHIBIT 6-25: Sample Calculation for Estimating Equipment Blowdown Emissions
+INPUT DATA:
+The volume of gas vented from a vessel (e.g., a separator) must take into account whether or not 
+the fluids contained within the vessel will need to be removed to perform the desired maintenance 
+activity. For example, a low pressure separator, operating at 100 psig and ambient temperature 
+(~80 F), that is blown down to replace a gauge or a relief valve will likely leave the fluid levels 
+intact and remove only the gas. The vessel dimensions are 4 ft in diameter and 10 ft long. The gas 
+composition in the separator is 90% CH4 with no CO2. Calculate the CH4 emissions assuming that 
+the liquid volume occupies 1/3 of the vessel.
+CALCULATION METHODOLOGY:
+The first step in calculating emissions is to calculate the total volume (VT) of the vessel in the 
+separator. The actual volume is estimated based upon the internal dimensions:
+2
+23 4ft V r L 10 ft (actual)=125.7 ft (actual)
+2
+
+
+     
+The volume of gas (VG) released is a fraction of this total volume as defined by:
+VG = VT - (
+1
+3
+× VT ) = 125.7 ft3
+- (
+1
+3
+× 125.7 ft3
+) = 83.8 ft3
+(estimated) 
+=== PAGE 336 ===
+Section 6: Vented and Process Emission Estimation Methods
+6-94
+November 2021
+b Uncertainty based on a 95% confidence interval.
+c Converted assuming 78.8 mole % CH4 in the gas used in the EPA/GRI study.
+An example calculation is given in Exhibit 6-26 below that illustrates the use of the production 
+segment maintenance/turnaround-related emission factors.
+EXHIBIT 6-26: Sample Calculation for Equipment Blowdown Emissions
+INPUT DATA:
+A gas production field has 10 low-pressure gas wells that send produced gas through 5 miles of 
+gathering pipeline. The field also has five process vessels and a compressor. The gas contains 70 
+mole % CH4 and 8 mole % CO2. Calculate the blowdown vented emissions, by activity.
+CALCULATION METHODOLOGY:
+The equipment count for each maintenance related activity (vessel blowdowns, compressor 
+blowdowns, and gathering pipeline blowdowns) is multiplied by the appropriate emission factor 
+from Table 6-32. The emission factors are corrected by the ratio of the site CH4 content to the 
+emission factor default CH4 content. CO2 emissions are also estimated to account for the CO2
+content of the gas. CO2 emissions are determined by using the whole gas emission factor and 
+adjusting for the concentration of CO2 in the gas. 
+Emissions are calculated below, by maintenance activity. 
+Vessel blowdowns: 
+ECH4
+= 5 vessels × 
+78 scf CH4
+year-vessel × 
+70 mole % CH4
+78.8 mole % CH4
+× 
+lbmole CH4
+379.3 scf CH4
+× 
+16 lb CH4
+lbmole CH4
+× 
+tonne
+2204.62 lb CH4
+ECH4
+= 0.007 tonnes CH4/yr
+

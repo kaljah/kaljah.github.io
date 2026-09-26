@@ -1,0 +1,81 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collected 29 items
+
+new\server\tests\test_vented_production_compendium.py ......F.........F. [ 62%]
+...........                                                              [100%]
+
+================================== FAILURES ===================================
+_______ TestPneumaticControllers.test_exhibit_6_11_continuous_low_bleed _______
+
+self = <test_vented_production_compendium.TestPneumaticControllers object at 0x0000017445DFEB10>
+
+    def test_exhibit_6_11_continuous_low_bleed(self):
+        """
+        API Exhibit 6-11:
+        80 low-bleed controllers, 8760 hrs, 70% CH4, 9% CO2.
+        Table 6-14 factor: 2.1 scf CH4 / hr-controller at 81.6% basis (2.6 scf gas/hr).
+        Expected: ECH4 = 24.2 tonnes CH4/yr, ECO2 = 7.0 tonnes CO2/yr.
+        """
+        calc = PneumaticDeviceCalculator()
+        res = calc.calculate(
+            count=80,
+            hours=8760,
+            controller_type="low_bleed",
+            source_standard="api",
+            ch4_content=0.70,
+            co2_content=0.09,
+        )
+        assert _val(res["results"]["ch4"]) == pytest.approx(24.2, abs=0.5)
+>       assert _val(res["results"]["co2"]) == pytest.approx(7.0, abs=0.3)
+E       assert 8.630664150076962 == 7.0 � 0.3
+E         
+E         comparison failed
+E         Obtained: 8.630664150076962
+E         Expected: 7.0 � 0.3
+
+new\server\tests\test_vented_production_compendium.py:147: AssertionError
+_________ TestGasTreatment.test_exhibit_6_17_agr_co2_material_balance _________
+
+self = <test_vented_production_compendium.TestGasTreatment object at 0x0000017445DFF5C0>
+
+    def test_exhibit_6_17_agr_co2_material_balance(self):
+        """
+        API Exhibit 6-17:
+        Inlet: 150,000 MMscf/yr at 3.0% CO2.
+        Outlet: 148,500 MMscf/yr at 2.0% CO2.
+        Expected: ECO2 = 80,506 tonnes CO2/yr, ECH4 = 2,775 tonnes CH4/yr.
+        """
+        calc = AcidGasRemovalCalculator()
+        res = calc.calculate(
+            sour_gas_mmscf_yr=150000.0,
+            sweet_gas_mmscf_yr=148500.0,
+            sour_co2_content=0.030,
+            sweet_co2_content=0.020,
+        )
+>       assert _val(res["results"]["co2"]) == pytest.approx(80506.0, abs=10.0)
+E       assert 80524.0662052755 == 80506.0 � 10
+E         
+E         comparison failed
+E         Obtained: 80524.0662052755
+E         Expected: 80506.0 � 10
+
+new\server\tests\test_vented_production_compendium.py:306: AssertionError
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_vented_production_compendium.py::TestPneumaticControllers::test_exhibit_6_11_continuous_low_bleed
+FAILED new\server\tests\test_vented_production_compendium.py::TestGasTreatment::test_exhibit_6_17_agr_co2_material_balance
+=================== 2 failed, 27 passed, 1 warning in 1.50s ===================
+

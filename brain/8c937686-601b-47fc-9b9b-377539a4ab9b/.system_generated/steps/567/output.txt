@@ -1,0 +1,53 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\Desktop\H2\new\server\calculations\vented.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -247,10 +247,14 @@
+                 else "water_based"
+             )
+ 
+-            ef = (
+-                float(ef_ch4)
+-                if (ef_ch4 is not None and float(ef_ch4) > 0)
+-                else self.TABLE_6_2_ONSHORE.get(norm_type, 0.0458)
++            is_offshore = str(location or "onshore").lower().strip() == "offshore"
++            mud_table = self.TABLE_6_2_OFFSHORE if is_offshore else self.TABLE_6_2_ONSHORE
++            default_mud_ef = 0.2605 if is_offshore else 0.0458
++
++            ef = (
++                float(ef_ch4)
++                if (ef_ch4 is not None and float(ef_ch4) > 0)
++                else mud_table.get(norm_type, default_mud_ef)
+             )
+             ch4_tonnes = dd * ef
+             co2_tonnes = 0.0
+@@ -259,7 +259,8 @@
+                 "drilling_days": dd,
+                 "mud_type": norm_type,
+                 "ef_ch4_used": ef,
+-                "api_reference": "API Compendium (Onshore)",
++                "location": "offshore" if is_offshore else "onshore",
++                "api_reference": "API Compendium Table 6-2 (Offshore)" if is_offshore else "API Compendium Table 6-2 (Onshore)",
+             }
+ 
+         else:
+@@ -277,10 +277,14 @@
+                 else "water_based"
+             )
+ 
+-            ef = (
+-                float(ef_ch4)
+-                if (ef_ch4 is not None and float(ef_ch4) > 0)
+-                else self.TABLE_6_2_ONSHORE.get(norm_type, 0.0458)
++            is_offshore = str(location or "onshore").lower().strip() == "offshore"
++            mud_table = self.TABLE_6_2_OFFSHORE if is_offshore else self.TABLE_6_2_ONSHORE
++            default_mud_ef = 0.2605 if is_offshore else 0.0458
++
++            ef = (
++                float(ef_ch4)
++                if (ef_ch4 is not None and float(ef_ch4) > 0)
++                else mud_table.get(norm_type, default_mud_ef)
+             )
+ 
+             x_ch4 = float(
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

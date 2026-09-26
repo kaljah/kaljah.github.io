@@ -1,0 +1,15 @@
+
+The command exited with code 0.
+Output:
+Page 327: EXHIBIT 6-23: Sample Calculation for Gas-Driven Pneumatic Controller Emissions 
+Page 330: EXHIBIT 6-24: Sample Calculation for Reciprocating Compressor Emissions
+Page 334: EXHIBIT 6-25: Sample Calculation for Estimating Equipment Blowdown Emissions
+Page 336: EXHIBIT 6-26: Sample Calculation for Equipment Blowdown Emissions
+Page 339: EXHIBIT 6-27: Sample Calculation for Other Gathering and Boosting Segment Non￾routine Emission Sources
+Page 345: EXHIBIT 6-28: Sample Calculation for Glycol Dehydrator Vent Emissions in Processing 
+Page 347: EXHIBIT 6-29: Sample Calculation for Natural Gas Blanketed Tank Emissions
+Page 353: EXHIBIT 6-30: Sample Calculation for Processing Non-Routine Related Emissions
+Page 356: EXHIBIT 6-31: Sample Calculation for Reciprocating Compressor Rod Packing 
+Page 358: EXHIBIT 6-32: Sample Calculation for Reciprocating Compressor Rod Packing 
+Page 362: EXHIBIT 6-33: Sample Calculation for Transmission Non-Routine Related 
+

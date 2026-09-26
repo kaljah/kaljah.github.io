@@ -1,0 +1,144 @@
+
+The command exited with code 0.
+Output:
+<truncated 456 lines>
+	deleted:    new/graphify-out/cache/ast/v0.9.39/926f749af25568bc01554d2a5c27904bc32018879b95764c2e76825b0903a5c3.json
+	deleted:    new/graphify-out/cache/ast/v0.9.39/943bd00f99a0549fa402ae20b8024a03503f00f4edcb7214986a093790f96272.json
+	deleted:    new/graphify-out/cache/ast/v0.9.39/94a7e8069bcd0c933ca05670fb04f9e673ab245d417d7616b8125202c0763a96.json
+	deleted:    new/graphify-out/cache/ast/v0.9.39/972975b9d0a6c5b7de58dc948741bbdb9d5d94ddf65c7bbfb95e98bcdd03afd0.json
+	deleted:    new/graphify-out/cache/ast/v0.9.39/9fc4870c91bc04d661ed87d6083c3b94a48e03d422e60b2e253d81a77c4a64e7.json
+	deleted:    new/graphify-out/cache/ast/v0.9.39/a48d197e7164633e7aa5735ec36d184553c29faa3271f136f5a1481115174fc9.json
+	deleted:    new/graphify-out/cache/ast/v0.9.39/abb91446b3d193266c69082b4d6f0eb87f5667536498e665ef295ed9a6e994da.json
+	deleted:    new/graphify-out/cache/ast/v0.9.39/ad04f20ee15379e98fd285b928c3ea1dd960e7dbb294fa6fb2a3417ec61deb7c.json
+	deleted:    new/graphify-out/cache/ast/v0.9.39/b3ac2ddbae7db6500d4c82e161b77a64904c554543da27115b151b302de8baf4.json
+	deleted:    new/graphify-out/cache/ast/v0.9.39/b62d3bc5ab3618d561d78cf6716a9441bdf3ba4e7508db9740a69f2236a99fd4.json
+	deleted:    new/graphify-out/cache/ast/v0.9.39/b7f8a1ef19656b92d26668133f920bd5f2bdcfe4c870f1858b3211929ad9b58c.json
+	deleted:    new/graphify-out/cache/ast/v0.9.39/bcc21427e76baa1b8a067aac92a746749cde8449c5bca25763535e27595e7cab.json
+	deleted:    new/graphify-out/cache/ast/v0.9.39/bee7d56452f4c6b97a4bfff90c632f7451f867742a6833c6fcd0982bec4bb7ed.json
+	deleted:    new/graphify-out/cache/ast/v0.9.39/c62d09a57376dfb0dfd446343c5cbf0e73b7760eee70b5562bc0af4ce290a7b4.json
+	deleted:    new/graphify-out/cache/ast/v0.9.39/c823618d2533705d7d7f43bc347d391eb43916f2e2756e4d0c0d9df7d5776694.json
+	deleted:    new/graphify-out/cache/ast/v0.9.39/ccacf33099a81b298aedb2915cb456631bee255a745de1926bf43519cb55b587.json
+	deleted:    new/graphify-out/cache/ast/v0.9.39/cdd5bad4a5d6825017eb4d911311b678befc95a39d2295e4ed0dfe2621ac3a3c.json
+	deleted:    new/graphify-out/cache/ast/v0.9.39/d3f35de9e107a33e7df318fe4a92bdb126df6587c1d87f48e183eac78eadcda4.json
+	deleted:    new/graphify-out/cache/ast/v0.9.39/d78805baee88448d045349bcb9b10b0b386cba2e39a9e18162e591d695cb6a89.json
+	deleted:    new/graphify-out/cache/ast/v0.9.39/df2291cd5093d454667845f25c28026a00b8a981a8aeb65fd534d775641f9c8f.json
+	deleted:    new/graphify-out/cache/ast/v0.9.39/df37de1cff5e52d78fb8fdb983e2634447c1569e05a396aec71acd23db7ca245.json
+	deleted:    new/graphify-out/cache/ast/v0.9.39/e099dee53f0d6bf88c94398dbe9104533208bb02fa623d7a73d7c50a8667c7c0.json
+	deleted:    new/graphify-out/cache/ast/v0.9.39/e67cf4589bd22b37e0a8ee0fd9166aff760a1a314e347d383600bd649f150fae.json
+	deleted:    new/graphify-out/cache/ast/v0.9.39/e822ce2e51164ad00c4f48486cf98a020c31ad0cbc390682e7d433e1905306d6.json
+	deleted:    new/graphify-out/cache/ast/v0.9.39/e95eef6aeea7909e56b6a21f9fcbc6eb3df3945d39004f4b52fdc7bb2094d809.json
+	deleted:    new/graphify-out/cache/ast/v0.9.39/eb6a86b986728a2513eb48e6e04b6cd03e7bf2ff78f20d938447024725fcd907.json
+	deleted:    new/graphify-out/cache/ast/v0.9.39/ebb36a9b1399303e7728559bec8db422953cb86ad5c04220eff16d797a15f186.json
+	deleted:    new/graphify-out/cache/ast/v0.9.39/f0a8987bd199d2a3b2b76a3759e7bf7fb7c81832387654e3693f5a4bd6aa6ed5.json
+	deleted:    new/graphify-out/cache/ast/v0.9.39/f30b9304976cceb0b77b72f497aab67cb0d01e55190ded3d66b7cda9f883290a.json
+	deleted:    new/graphify-out/cache/ast/v0.9.39/f47c1663451fe45a330e0a0c2a2446d4068eedc6c3f35e7c07a574409864cc0d.json
+	deleted:    new/graphify-out/cache/ast/v0.9.39/fe67e231a204b23bdd0add387232b7665ffb04373a60548a01b3d44c38f382f8.json
+	deleted:    new/graphify-out/cache/stat-index.json
+	deleted:    new/graphify-out/graph.html
+	deleted:    new/graphify-out/graph.json
+	deleted:    new/graphify-out/manifest.json
+	modified:   new/server/app.py
+	modified:   new/server/calculations/anomaly.py
+	modified:   new/server/calculations/base.py
+	modified:   new/server/calculations/combustion.py
+	modified:   new/server/calculations/constants.py
+	modified:   new/server/calculations/dispatcher.py
+	modified:   new/server/calculations/fugitive.py
+	modified:   new/server/calculations/indirect.py
+	modified:   new/server/calculations/legacy_engine.py
+	modified:   new/server/calculations/midstream.py
+	modified:   new/server/calculations/stoichiometry.py
+	modified:   new/server/calculations/uncertainty.py
+	modified:   new/server/calculations/units.py
+	modified:   new/server/calculations/vented.py
+	modified:   new/server/emission_factors.py
+	modified:   new/server/emission_factors_api2021.py
+	modified:   new/server/models.py
+	modified:   new/server/process_categories.py
+	modified:   new/server/routes/auth.py
+	modified:   new/server/routes/dashboard.py
+	modified:   new/server/routes/data.py
+	modified:   new/server/routes/emissions.py
+	modified:   new/server/routes/facilities.py
+	modified:   new/server/routes/notifications.py
+	modified:   new/server/routes/qaqc.py
+	modified:   new/server/routes/reports.py
+	modified:   new/server/routes/satellite.py
+	modified:   new/server/routes/scope2.py
+	modified:   new/server/routes/scope3.py
+	modified:   new/server/test_emission_calculations.py
+	modified:   new/server/tests/test_battery_midstream_process_equipment.py
+	modified:   new/server/tests/test_battery_statistical_anomaly_detection.py
+	modified:   new/server/tests/test_dispatcher.py
+	modified:   new/server/tests/test_qfull_api_pipeline.py
+	modified:   new/server/tests/test_qfull_boundary_sensitivity.py
+	modified:   new/server/tests/test_qfull_unit_conversions.py
+	modified:   new/server/tests/test_qfull_validation.py
+	modified:   new/server/tests/test_tier_scope_kpi_numerical.py
+	modified:   new/server/tests/test_uncertainty.py
+	modified:   new/server/tests/test_vented.py
+	modified:   new/server/utils.py
+	deleted:    run_graphify.py
+	deleted:    run_graphify_cluster.py
+	modified:   validation/reference_model/vented_processes.py
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	.agents/rules/antigravity-rtk-rules.md
+	.codegraph/
+	.rtk/
+	AUDIT_FINDINGS.md
+	AUDIT_SCOPE.md
+	CLAUDE.md
+	El_Merk_2025_Annual_GHG_Report.pdf
+	Groupement_Berkine_2025_Annual_GHG_Report.pdf
+	audit/
+	berkine_extracted_tables.json
+	index.html
+	napec_flyer.html
+	napec_flyer_fr.html
+	neocarbon_computer_hero.jpg
+	neocarbon_computer_hero_fr.jpg
+	neocarbon_flyer.html
+	neocarbon_flyer.pdf
+	neocarbon_flyer_fr.html
+	neocarbon_flyer_fr.pdf
+	neocarbon_flyer_page1_en.jpg
+	neocarbon_flyer_page1_fr.jpg
+	new/client/src/__tests__/AssociatedGasVentingForm.test.jsx
+	new/client/src/__tests__/Scope1FormAssociatedGasVenting.test.jsx
+	new/client/src/__tests__/UnloadingForm.test.jsx
+	new/client/src/__tests__/mathParityAndFormatters.test.js
+	new/client/src/components/QuickAddCustomFactorModal.jsx
+	new/client/src/components/scope1/AssociatedGasVentingForm.jsx
+	new/client/src/constants/
+	new/server/calculations/vented_ccus_transport.py
+	new/server/calculations/vented_downstream.py
+	new/server/calculations/vented_exploration.py
+	new/server/calculations/vented_lng_distribution.py
+	new/server/calculations/vented_midstream.py
+	new/server/calculations/vented_production.py
+	new/server/generate_berkine_master_report.py
+	new/server/generate_elm_master_report.py
+	new/server/routes/cap_routes.py
+	new/server/routes/equity_routes.py
+	new/server/seed_berkine_data.py
+	new/server/seed_berkine_full_exact.py
+	new/server/tests/test_associated_gas_venting.py
+	new/server/tests/test_berkine_cap_equity.py
+	new/server/tests/test_liquids_unloading_compendium.py
+	new/server/tests/test_onshore_well_completions_audit.py
+	new/server/tests/test_tier2_api_e2e.py
+	new/server/tests/test_vented_ccus_transport_compendium.py
+	new/server/tests/test_vented_downstream_compendium.py
+	new/server/tests/test_vented_lng_distribution_compendium.py
+	new/server/tests/test_vented_midstream_compendium.py
+	new/server/tests/test_vented_production_compendium.py
+	preview_en_page_1.png
+	preview_en_page_2.png
+	preview_fr_page_1.png
+	preview_fr_page_2.png
+	site_assets/
+
+no changes added to commit (use "git add" and/or "git commit -a")
+

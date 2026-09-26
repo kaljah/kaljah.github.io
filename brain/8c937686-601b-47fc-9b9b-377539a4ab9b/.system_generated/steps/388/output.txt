@@ -1,0 +1,46 @@
+
+The command exited with code 0.
+Output:
+=== PAGE 357 ===
+ Section 6: Vented and Process Emission Estimation Methods
+6-115
+November 2021
+compressor wet seal degassing as set out in the CCAC Technical Guidance Document Number 3:
+Centrifugal Compressors with “Wet” (Oil) Seals (CCAC, 2017b). In the absence of measurement 
+data, default CH4 emission factors can be used to quantify the vented emissions from centrifugal 
+compressor wet seal degassing. Likewise, vented emissions from centrifugal dry seals can be 
+quantified using default emission factors in the absence of direct measurement data.
+Default emission factors are provided in Table 6-41 below for centrifugal compressor wet 
+degassing and dry seal venting in the transmission and storage segment. Emission factors are 
+provided from two separate but related studies: a) CH4 measurement study of 45 compressor 
+stations in the transmission and storage segment in the US (Subramanian, 2015) which published 
+an average emission factor for compressor wet seals in operating mode; and b) study based on 
+statistical modeling using the same measurement data set, as well as data from six large 
+transmission and storage operators, and data reported under EPA’s GHGRP (Zimmerle, 2015).
+The latter study published emission factors for an average compressor wet seal and dry seal, 
+taking into consideration all modes of operation.
+Table 6-41. Emission Factors for Centrifugal Compressor 
+=== PAGE 359 ===
+ Section 6: Vented and Process Emission Estimation Methods
+6-117
+November 2021
+ECH4
+=ECH4, wet seal
++ECH4, dry seal = 491.1+102.2 = 593.3 tonnes CH4
+/yr
+6.6.2 Transmission Storage Tanks 
+Emissions from storage tanks in the transmission and storage segment can be estimated using the 
+same methodologies as those described in Section 6.3.9. In the transmission segment, storage 
+tanks may be used to collect residual liquids that accumulate in the transmission lines and could 
+result in some flashing from pipeline pigging operations as previously described, as well as 
+working and standing losses. The volume of liquids accumulated from transmission lines is 
+minimal and therefore, venting from flashing, working and standing losses from condensate 
+storage tanks is typically an insignificant source of methane emissions. Vented methane 
+emissions from condensate storage tanks in this segment are primarily attributed to leakage from 
+the dump valve feeding the storage tank, which is measured as part of EPA’s GHGRP Subpart W 
+reporting. Transmission and storage segment tank flashing, working and standing losses, and 
+separator dump valve losses can be estimated using the same approaches presented in Section 
+6.3.9 for the production segment.
+In the absence of site-specific data to quantify CH4 emissions from storage tanks in transmission 
+and storage, default emissio
+

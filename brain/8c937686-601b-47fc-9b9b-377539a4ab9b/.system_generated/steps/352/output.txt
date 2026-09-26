@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+c with 2.1: 6.970921113377813
+c with 2.6: 8.630664235610626
+

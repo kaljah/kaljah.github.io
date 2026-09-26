@@ -1,0 +1,215 @@
+
+The command exited with code 0.
+Output:
+<truncated 1 lines>
+composition. 
+d Emission factors converted from m3
+are based on 15°C and 1 atm
+e Percentage shown is the assumed percent of total casing gas vented. If the actual percent casing gas vented is known, the factor and percentage 
+shown for each crude type can be used to estimate the CH4 emission factor for the actual percent casing gas vented if it is different from the default 
+value shown in the table.
+If the oil production throughput is not known, Table 6-13 can be used. This table provides 
+simplified casing gas vented THC emission factors for active and suspended wells based on data 
+from Alberta, Canada (CAPP, 2002). The active and suspended well emission rate data were 
+based on 883 and 910 wells, respectively.
+=== PAGE 272 ===
+Section 6: Vented and Process Emission Estimation Methods
+6-30
+November 2021
+Table 6-13. Heavy Oil and Crude Bitumen Casing Gas Vented Methane Emission Factors –
+Well Basis
+Source
+Original Units, 
+Total 
+Hydrocarbon 
+Emission Factor a
+(m3 THC/well-day)
+Uncertainty
+(± %)
+Methane Emission 
+Factor b, c
+(tonnes CH4/
+well-day)
+Methane 
+Content 
+Basis of 
+Factor c
+(mole %)
+Whole Gas 
+Emission Factor b, d
+(scf gas/well-day)
+Active 
+Wells 37.1 Not 
+specified 0.0205 81.6 1,310
+Suspended 
+Wells 20.1 Not 
+specified 0.0111 81.6 710
+Footnotes and Sources:
+a Canadian Association of Petroleum Producers (CAPP), Estimation of Flaring and Venting Volumes from Upstream Oil and Gas Facilities, table 
+on page 3-24, Publication Number 2002-0009, May 2002. Factors shown are based on data collected in Alberta, and were converted from a total 
+gas basis to a CH4 basis using the CH4 content shown in the table.
+b Emission factors converted from m3
+are based on 15°C and 1 atm.
+c For conversion to methane, 81.6 mol% can be assumed, from GHGI Annex 3.6 Table 3.6-3 for U.S. Production segment Methane Content in 
+Natural Gas by NEMS Region (General Sources). 
+d Whole gas emission factor conversion assumes that the gas released comprises 100% (mol or vol) of hydrocarbon; no CO2 present in the gas 
+composition. 
+The THC emission factors from the two CAPP guidance documents were converted to CH4
+emission factors using a default CH4 gas content of 81.6 mole % in the production segment from 
+the GHGI for methane content in natural gas (EPA, 2019b). The casing gas CH4 emission factors 
+can be adjusted based on the CH4 content of the site-specific gas if the natural gas has a CH4
+content significantly different from the default basis. Also, if the gas at the site contains 
+significant quantities of CO2, the CH4 emission factor can be adjusted based on the relative 
+concentrations of CH4 and CO2 in the gas to estimate the CO2 emissions.
+An example calculation is given in Exhibit 6-9 that illustrates the use of the casing gas vent 
+emission factors. It should be emphasized that measurement data is preferred over default 
+emission factors, as noted above.
+EXHIBIT 6-9: Sample Calculation for Heavy Oil Casing Gas Vented Emissions
+INPUT DATA:
+An oil and gas production facility produces 100 bbl/day of primary heavy crude oil. The facility 
+operates 365 days a year. The average CH4 content of the gas is 70 mole %; there is also 9 mole 
+% CO2 in the gas. Calculate the CH4 and CO2 emissions. 
+CALCULATION METHODOLOGY:
+Emissions are calculated by multiplying the oil throughput by the “primary heavy oil” whole gas 
+emission factor from Table 6-12, and adjusted to the site specific basis of 70 mole % CH4. 
+=== PAGE 273 ===
+Section 6: Vented and Process Emission Estimation Methods
+6-31
+November 2021
+Because the gas contains a significant quantity of CO2, emissions of CO2 are also estimated 
+using the relative CO2 and CH4 contents in the gas.
+ECH4
+=
+100 bbl crude
+day
+×
+365 day
+yr
+×
+210 scf gas
+barrel oil produced
+×
+0.70 lbmol CH4
+1 lbmol gas
+×
+lbmol CH4
+379.3 scf CH4
+×
+16 lb CH4
+lbmol CH4
+×
+1 tonne
+2204.62 lb
+ECH4
+=102.7 tonnes CH4
+/yr
+ECO2
+=
+100 bbl crude
+day
+×
+365 day
+yr
+×
+210 scf gas
+barrel oil produced
+×
+0.09 lbmol CO2
+1 lbmol gas
+×
+lbmol CO2
+379.3 scf CO2
+×
+44 lb CO2
+lbmol CO2
+×
+1 tonne
+2204.62 lb
+ECO2
+= 36.3 tonnes CO2
+/yr
+6.3.5.2 Low Pressure Gas Well Casing Vents
+Casing gas migration from low-pressure natural gas wells can result in CH4 emissions and 
+possibly CO2 emissions, if CO2 is present in the gas. This migration results from the flow of gas 
+around the outside of a well casing. It is typically caused by gas migrating from one or more 
+shallow, low-productivity gas bearing zones that were penetrated during the drilling process or as 
+a result of natural processes within the soil (CAPP, 2002). Similar to the approach for crude oil 
+casing gas venting, site-specific measurements provide the most rigorous estimate of low￾pressure gas well casing emissions. In the absence of site-specific data, the following emission 
+factor from page 3-25 of the CAPP document, Estimation of Flaring and Venting Volumes from 
+Upstream Oil and Gas Facilities, can be used (CAPP, 2002):
+3.85 m3 gas/well-day (Original Units)a,b
+0.00213 tonnes CH4/well-day (Converted)c
+Footnotes and Sources:
+a Canadian Association of Petroleum Producers (CAPP), Estimation of Flaring and Venting Volumes from Upstream Oil and Gas 
+Facilities, Publication Number 2002-0009, May 2002. 
+b Uncertainty is not specified for this value.
+c Note that the THC factor was converted to a CH4 emission factor assuming 81.6 mole % CH4 in the gas, according to the GHGI 
+methane content for natural gas (EPA, 2019b).
+The casing gas migration emission factor was based on test data of the “…average vent rate for 
+wells with gas migration problems…” (CAPP, 2002). 
+An example calculation is given in Exhibit 6-10 that demonstrates the use of the gas well casing 
+emission factor.
+=== PAGE 274 ===
+Section 6: Vented and Process Emission Estimation Methods
+6-32
+November 2021
+EXHIBIT 6-10: Sample Calculation for Low-Pressure Casing Gas Migration 
+Emissions
+INPUT DATA:
+An oil and gas production facility has three low pressure wells. Sampling data show that casing 
+gas migration occurs, but the emission rate has not been measured. The average CH4 content of 
+the gas is 70 mole %; there is also 9 mole % CO2 in the gas. Calculate the CH4 and CO2
+emissions.
+CALCULATION METHODOLOGY:
+Emissions are calculated by multiplying the number of wells by the casing gas migration CH4
+emission factor. The base casing gas migration CH4 emission factor is also adjusted from the 
+default basis of 81.6 mole % CH4 from GHGI to the site-specific basis of 70 mole % CH4. 
+Because the gas contains a significant quantity of CO2, emissions of CO2 are also estimated
+using the relative CO2 and CH4 contents in the gas.
+ECH4
+= 3 wells × 
+0.00213 tonnes CH4
+well-day
+×
+365 day
+year
+×
+70 mole % CH4
+81.6 mole % CH4
+ECH4
+= 2.00 tonnes CH4
+/yr
+ECO2
+= 3 wells ×
+0.00213 tonnes CH4
+well-day
+×
+365 day
+year
+×
+70 mole % CH4
+81.6 mole % CH4
+×
+tonne mole CH4
+16 tonne CH4
+×
+tonne mole gas
+0.70 tonne mole CH4
+×
+0.09 tonne mole CO2
+tonne mole gas
+×
+44 tonne CO2
+tonne mole CO2
+ECO2
+= 0.71 tonnes CO2
+/yr
+6.3.6 Natural Gas Driven Pneumatic Controllers
+Pneumatic controllers are used in oil and gas operations for maintaining a process condition, 
+such as liquid level or pressure conditions for process control. In the production segment, natural 
+gas is often used to operate pneumatic controllers. Natural gas-driven pneumatic controllers are a 
+source of CH4 emissions (and CO2, if present in the gas). Pneumatic controllers may be designed 
+to vent gas continuously (such as when designed with a pilot gas stream) or intermittently (i.e., 
+only when actuated). Low vent and no vent pneumatic controllers may also be used. Pneumatic 
+controllers may also be operated using compressed air, resulting in no venting of CH4.
+

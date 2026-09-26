@@ -1,0 +1,115 @@
+
+The command exited with code 0.
+Output:
+<truncated 1 lines>
+P284: The CIP emission factors in Table 6-16 above include the volumetric emissions in whole gas per
+P285: 6.3.8 Gas Treatment Processes
+P285: 6.3.8.1 Glycol Dehydration
+P286: simplified emission factors can be used. The emission factors provided in Table 6-17 on a gas
+P286: results provided in Table 6-
+P287: Table 6-17. Production Segment Uncontrolled Gas Dehydration Methane Emission Factors
+P287: Excludes Glycol Gas-Assisted Pump Emissions – See Table 6-18
+P287: The emission factors in Table 6-17 can be scaled based on the ratio of the site-specific CH4
+P288: EXHIBIT 6-13: Sample Calculation for Dehydration Processing Vent Emissions
+P288: however, here they are calculated using an emission factor taken from Table 6-17. Because the
+P288: emission factor presented in Table 6-17, the calculations include an adjustment for the
+P288: Note that the emission factors given in Table 6-17 do not include the emissions from gas-assisted
+P288: factors presented in Table 6-17 would overestimate emissions from a glycol dehydration system
+P289: Kimray pump CH4 emissions are given in Table 6-18. This table also includes the default CH4
+P289: Table 6-18. GRI/EPA Kimray Pump Methane Emission Factors
+P290: EXHIBIT 6-14: Sample Calculation for Dehydration Kimray Vent Emissions
+P290: Table 6-18 provides an appropriate emission factor. The CH4 emissions are calculated by
+P290: 6.3.8.2 Desiccant Dehydration
+P291: (Equation 6-17)
+P291: EXHIBIT 6-15: Sample Calculation for Desiccant Dehydration Venting
+P292: The gas vented from the desiccant dehydrator vessel is estimated using Equation 6-16.
+P292: 6.3.8.3 Other Gas Dehydration Alternatives
+P292: Section 6.3.8.2), separators, and in-line heaters, or methanol injection units.
+P293: 6.3.8.4 Acid Gas Removal/Sulfur Recovery Units
+P294: 1996). Table 6-19 provides the AGR CH4 emission factor on both a throughput basis and unit
+P294: in Table 6-19.
+P294: approach, Equation 6-17
+P295: Table 6-19. Uncontrolled AGR Methane Emission Factor
+P295: factors in Table 6-19.
+P295: EXHIBIT 6-16: Sample Calculation for AGR Vent Emissions
+P295: The AGR unit-based CH4 emission factor from Table 6-19 is multiplied by the number of AGR
+P296: (Equation 6-18)
+P296: The accuracy of Equation 6-17 is highly dependent on the consistency of the CO2 concentration
+P297: EXHIBIT 6-17: Sample Calculation for CO2 Venting Emissions from Sour Gas
+P297: The CO2 vented emissions are estimated using the material balance from Equation 6-18.
+P297: CH4 emissions are estimated by applying the emission factor from Table 6-19.
+P298: calculated using a mass balance approach, such as provided in Equation 6-19. CO2 emissions
+P298: from SRUs downstream of an amine unit should be calculated using Equation 6-19.
+P298: (Equation 6-19)
+P298: 6.3.9 Storage Tank Emissions
+P299: 6.3.9.1 Flashing Losses from Unstabilized Crude and Condensate Storage Tanks
+P301: the specific gravity of the gas at 100 psig, as shown in Equation 6-20:
+P301: (Equation 6-20)
+P301: The flash GOR is then calculated using Equation 6-21:
+P301: (Equation 6-21)
+P301: SGX = Dissolved gas gravity, adjusted to 100 psig. Calculated using Equation 6-19;
+P302: are shown in Table 6-20.
+P302: Table 6-20. Suggested Allowable and Default Values for VBE
+P303: EXHIBIT 6-18(a): Sample Calculation for Flashing Loss Emissions –VBE
+P303: Equation 6-8. The flash gas specific gravity at initial conditions, SGi, is not known, so the
+P303: GOR is calculated below, as shown in Equation 6-21.
+P304: from crude oil and condensate. This correlation is shown in Equation 6-22.
+P304: (Equation 6-22)
+P305: must be evaluated separately for the separator and the storage tank. For this scenario, Equation 6-
+P305: 1.204 ] (Equation 6-23)
+P305: derived data. Table 6-21 below presents the range of parameters for the correlation and is
+P305: Table 6-21. Summary of Range of Data Used in Standing Correlation a
+P306: EXHIBIT 6-18(b): Sample Calculation for Flashing Loss Emissions – Standing
+P306: using the definition in Equation 6-21:
+P307: The flash gas vent flow rate is calculated below, using Equation 6-23 and the above parameters.
+P307: (Equation 6-24)
+P308: EXHIBIT 6-18(c): Sample Calculation for Flashing Loss Emissions – EUB Rule-of￾Thumb
+P310: EXHIBIT 6-19: Sample Calculation for Tank Flashing Losses – Chart Approach
+P311: default emission factor approach can be used. Table 6-22 below presents default emission factors
+P311: The average value also presented in Table 6-22 below is derived from two published studies, one
+P311: Table 6-22. Methane Flashing Loss Emission Factors for Crude Oil Storage Tanks
+P312: The factors above in Table 6-22 can be used when the amount of produced crude is known. For
+P312: EXHIBIT 6-20: Sample Calculation for Tank Flashing Losses - Simple Emission
+P312: provided in Table 6-22. Please note that even though this emission factor is based on 81.6 mole
+P313: Table 6-23 summarizes tank flashing loss emission estimates for the various approaches
+P313: Table 6-23. Summary of Crude Oil Production Tank Flashing Losses Using Different
+P314: Note that the comparison in Table 6-23 is not comprehensive because it is for only one set of
+P314: production condensate flashing are presented below in Table 6-24, taken from EPA’s GHGI
+P314: Table 6-24. Production Condensate Flashing Emission Factors
+P315: The factors above in Table 6-24 can be used when the amount of produced condensate is known.
+P315: 6.3.9.2 Improperly Functioning Separator Dump Valve Emissions from Unstabilized
+P316: × T (Equation 6-25)
+P316: See Equation 6-2 for an example of the conversion of volumetric emissions to mass emissions.
+P316: Table 6-25 presents emission factors for improperly functioning separator dump valves, from
+P316: Table 6-25. Improperly Functioning Separator Dump Valve Emission Factors
+P317: 6.3.9.3 Stabilized Tanks Working/Standing Losses
+P317: flashing (refer to Section 6.3.9.1), working and breathing loss emissions of these gases are very
+P317: 6.3.9.4 Produced Water Tank Emissions
+P318: Table 6-26 presents default emission factors from produced (salt) water tanks. These emission
+P318: Table 6-26. Produced Salt Water Tank Methane Flashing Emission Factors
+P318: flashing losses (ARPEL, 1998). Table 6-27 presents CH4 emission factors for produced water
+P319: Table 6-27. Methane Emission Factors from Produced Water from Shallow Gas Wells
+P319: EXHIBIT 6-21: Sample Calculation for Water Tank Emissions – Simple Emission
+P319: The CH4 flashing losses are calculated using the emission factor provided in Table 6-26 for
+P320: 6.3.10 CO2 Enhanced Oil Recovery (EOR) Production-Related Venting Operations
+P320: 6.3.10.1 CO2 EOR Unstabilized Crude Storage Tanks
+P320: from tank flashing would be estimated using methodologies described in Section 6.3.9.
+P320: 6.3.10.2 EOR Hydrocarbon Liquids Dissolved CO2
+P320: tank as shown in Equation 6-26 (EPA, 2019a).
+P320: = Sh1 × Vh1 (Equation 6-26)
+P320: 6.3.10.3 EOR CO2 Injection Pump Blowdown
+P321: × 0.001 (Equation 6-27)
+P321: EXHIBIT 6-22: Sample Calculation for CO2 Venting Emissions from CO2 EOR
+P321: The CO2 vented emissions are estimated using Equation 6-20. The density of CO2 is estimated
+P322: 6.3.11 Other Production Related Venting
+P323: venting is shown in Equation 6-28:
+P323: × Tv ×n (Equation 6-28)
+P323: for PRV releases is provided in Appendix B (CAPP, 2002, Section 3.2.3). Table 6-28 provides
+P324: Table 6-28. Production Segment CH4 Emission Factors for Other
+P324: estimation methodologies as those described in Section 6.3.6 for production. If site-specific
+P324: in Section 6.3.6 can be applied for continuous and intermittent vent controllers, respectively. See
+P324: Equation 6-12 for estimating the volume of gas vented using controller-specific data from
+P324: Alternatively, default emission factors presented by controller type are provided in Table 6-29
+P324: boosting segment. The emission factors from the API working paper presented in Section 6.3.6
+P324: The emission factors in Table 6-29 are taken from a study conducted by Colorado State
+

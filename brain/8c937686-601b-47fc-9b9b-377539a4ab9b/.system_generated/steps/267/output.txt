@@ -1,0 +1,67 @@
+
+The command exited with code 0.
+Output:
+Section 6: Vented and Process Emission Estimation Methods
+6-34
+November 2021
+factors, converted using 81.6 mole % CH4 from the GHGI (EPA, 2019). The CH4 emission 
+factors can be adjusted based on the CH4 content of the site-specific gas used to drive the 
+controllers if the natural gas is significantly different from the default basis of 81.6 mole %.
+Also, if the pneumatic controllers are driven with gas that contains significant quantities of CO2, 
+the CH4 emission factors can be adjusted based on the relative concentrations of CH4 and CO2 in 
+the gas to estimate the CO2 emissions.
+For the production segment, the continuous vent (high and low) and production average 
+pneumatic controller emission factors shown in Table 6-14 are taken from the 2019 API methane
+pneumatic controller emissions study (Pacsi, 2019). 
+Table 6-14. Natural Gas-Driven Pneumatic Controller Emission Factors for Continuous 
+Vent Controllers in Production
+Controller Type Original Units, 
+Emission Factor
+(whole gas basis)
+Uncertainty
+(±%)
+Methane 
+Emission Factor 
+(Converted)a
+(scf CH4/
+controller-hr)
+Methane 
+Content 
+Basis of 
+Factora
+(mole %)
+Methane 
+Emission Factor 
+(Converted)a,d
+(tonnes CH4/
+controller-yr)
+API Study Emission Factorsb
+High bleed b
+16.4 scf 
+gas/hr/controller Not 
+specified
+13.4 81.6 2.25
+Low bleed b
+2.6 scf 
+gas/hr/controller 2.1 81.6 0.36
+EPA GHGRP Subpart W Emission Factorsc
+High bleedc
+37.3 scf 
+gas/hr/controller Not 
+specified
+30.4 81.6 5.11
+Low bleedc
+1.39 scf 
+gas/hr/controller 1.13 81.6 0.191
+Footnotes and Sources:
+a Conversion from whole gas to methane was calculated assuming 81.6 mole % CH4 in the gas, according to the GHGI methane content for natural 
+gas (EPA, 2019b). Emission factors converted from m3
+are based on 15°C and 1 atm.
+b API working paper, Pneumatic Controller Inventory and Measurement at 67 Oil and Gas Sites in the Western United States, 2020.
+c EPA GHGRP Subpart W Table W-1A. (EPA, 2019a).
+d Annual emission factor based on 8,760 hr/yr operation.
+An alternative example of the classification of high bleed and low bleed, using a 1996 GRI/EPA 
+natural gas emissions study, is provided in Appendix B (Shires, et al, 1996a).
+An example calculation is provided below in Exhibit 6-11 that demonstrates the use of the 
+pneumatic controller emission factors.
+

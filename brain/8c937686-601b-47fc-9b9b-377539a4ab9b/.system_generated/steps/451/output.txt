@@ -1,0 +1,301 @@
+
+The command exited with code 0.
+Output:
+<truncated 23 lines>
+
+flare, and typically will not have CO2 emissions other than those calculated for the 
+
+combustion sources described in Section 4. Equation 6-34 can also be used for flexi￾coker emissions, provided that the combustion of the low-Btu gas is not otherwise 
+
+accounted for (e.g., routed to and accounted for in flare emissions, or routed to fuel gas 
+
+system and accounted for in plant-wide combustion emissions). 
+=== PAGE 392 ===
+Section 6: Vented and Process Emission Estimation Methods
+
+6-150
+
+November 2021
+
+ Delayed cokers will not have CO2 emissions other than from their process heaters that are 
+
+calculated as any other combustion source (as described in Section 4). Emissions of CH4
+
+can occur from delayed decoking operations (venting, draining, deheading, and coke￾cutting), which can be determined based on the mass of steam generated and released per 
+
+decoking cycle and the number of decoking cycles using Equation 6-42.
+
+ECH4
+
+= Msteam× EFDCU × N × 0.001 (Equation 6-42)
+
+where:
+
+ECH4
+
+= Annual CH4 emissions from the delayed coking unit decoking operations (metric 
+
+tonne/year);
+
+Msteam = Mass of steam generated and released per decoking cycle (metric tonnes/cycle)
+
+EFDCU = CH4 content for delayed coking unit (kg CH4/metric tonnes steam) from unit-specific 
+
+measurement data; if you do not have unit-specific measurement data, use the simplified 
+
+emission factor of 7.9 kg CH4/metric tonne steam;
+
+N = Cumulative number of decoking cycles (or coke-cutting cycles) for all delayed coking unit 
+
+vessels associated with the delayed coking unit during the year; and
+
+0.001 = Conversion factor (metric tonne/kg).
+
+If the amount of steam generated and released during decoking is unknown, it can be estimated 
+
+using Equation 6-43 through Equation 6-47. First, the mass of coke in the delayed coking unit 
+
+vessel at the end of the coking cycle can be calculated based on coke bed density and vessel 
+
+dimensions using Equation 6-43.
+
+Mcoke= ρ
+
+bulk
+
+× [(Hdrum- Houtage) ×
+
+π × D
+
+2
+
+4
+
+] (Equation 6-43)
+
+where:
+
+Mcoke = Typical dry mass of coke in the delayed coking unit vessel at the end of the 
+
+coking cycle (metric tonnes/cycle);
+
+ρbulk = Bulk coke bed density (metric tonnes per scftonnes/scf), use simplified 
+
+factor of 0.0191 tonne/scf when site specific data is not available;
+
+Hdrum = Internal height of delayed coking unit vessel (feet);
+
+Houtage = Typical distance from the top of the coking unit vessel to the top of the 
+
+coke bed (i.e., coke drum outage) at the end of the coking cycle (feet) from 
+
+company records or engineering estimates; and
+
+D = Diameter of delayed coking unit vessel (feet).
+
+Next, the mass of water in the delayed coking unit vessel is calculated using Equation 6-44.
+
+Mwater= ρwater
+
+× [(Hwater) ×
+
+π×D
+
+2
+
+4
+
+-
+
+Mcoke
+
+ρ
+
+particle
+
+] (Equation 6-44)
+
+where:
+=== PAGE 393 ===
+Section 6: Vented and Process Emission Estimation Methods
+
+6-151
+
+November 2021
+
+Mwater = Mass of water in the delayed coking unit vessel at the end of the cooling 
+
+cycle just prior to atmospheric venting (metric tonnes/cycle);
+
+ρwater = Density of water at average temperature of the delayed coking unit vessel 
+
+at the end of the cooling cycle just prior to atmospheric venting 
+
+(tonnes/scf), when site specific data is not available assume simplified 
+
+factor of 0.0270 tonnes/scf;
+
+Hwater = Typical distance from the bottom of the coking unit vessel to the top of 
+
+the water level at the end of the cooling cycle just prior to atmospheric 
+
+venting (feet) from design specifications or engineering estimates;
+
+Mcoke = Typical dry mass of coke in the delayed coking unit vessel at the end of 
+
+the coking cycle (metric tonnes/cycle) 
+
+ρparticle = Particle density of coke (metric tonnes/scf), when site specific data is not 
+
+available assume simplified factor of 0.0382 tonnes/scf; and
+
+D = Diameter of delayed coking unit vessel (feet).
+
+To calculate the average temperature of the delayed coking unit when the drum is first vented to 
+
+the atmosphere, Equation 6-45 or Equation 6-46 may be used, depending on available data. 
+
+Tinitial = (Toverhead+ Tbottom)/2 (Equation 6-45)
+
+where:
+
+Tinitial = Average temperature of the delayed coking unit vessel when the drum is 
+
+first vented to the atmosphere (°F);
+
+Toverhead = Temperature of the delayed coking unit vessel overhead line measured as 
+
+near the coking unit vessel as practical just prior to venting to the 
+
+atmosphere; if the temperature of the delayed coking unit vessel overhead 
+
+line is less than 216°F, use Toverhead = 216°F; and
+
+Tbottom = Temperature of the delayed coking unit vessel near the bottom of the coke 
+
+bed; if the temperature at the bottom of the coke bed is less than 212°F, 
+
+use Tbottom = 212°F.
+
+Tinitial= -0.039 Poverhead
+
+2
+
++ 3.13 Poverhead + 220 (Equation 6-46)
+
+where:
+
+Tinitial = Average temperature of the delayed coking unit vessel when the drum is 
+
+first vented to the atmosphere (°F); and
+
+Poverhead = Pressure of the delayed coking unit vessel just prior to opening the 
+
+atmospheric vent (pounds per square inch gauge, psig).
+
+The results from Equations 6-43 through Equation 6-46 are used below in Equation 6-47 to 
+
+calculate the mass of steam generated and released per decoking cycle. 
+=== PAGE 394 ===
+Section 6: Vented and Process Emission Estimation Methods
+
+6-152
+
+November 2021
+
+Msteam=
+
+(1-fConvLoss)×(Mwater×Cp,water+Mcoke×Cp.coke)×(Tinitial-Tfinal)
+
+∆Hvap
+
+(Equation 6-47)
+
+where:
+
+Msteam = Mass of steam generated and released per decoking cycle (metric 
+
+tonnes/cycle);
+
+fConvLoss = Fraction of total heat loss that is due to convective heat loss from the sides 
+
+of the coke vessel (unitless); when site specific data is not available 
+
+assume simplified factor of 0.10; 
+
+Mwater = Mass of water in the delayed coking unit vessel at the end of the cooling 
+
+cycle just prior to atmospheric venting (metric tonnes/cycle);
+
+Cp,water = Heat capacity of water (British thermal units per metric tonne per degree 
+
+Fahrenheit; Btu/tonne-°F); use the default value of 2,205 Btu/tonne-°F;
+
+Mcoke = Typical dry mass of coke in the delayed coking unit vessel at the end of 
+
+the coking cycle (tonnes/cycle) 
+
+Cp,coke = Heat capacity of petroleum coke (Btu/tonne-°F); when site specific data is 
+
+not available assume default factor of 584 Btu/tonne-°F;
+
+Tinitial = Average temperature of the delayed coking unit vessel when the drum is 
+
+first vented to the atmosphere (°F) 
+
+Tfinal = Temperature of the delayed coking unit vessel when steam generation 
+
+stops (°F); or assume a default value of 212°F; and
+
+ΔHvap = Heat of vaporization of water (British thermal units per metric tonne; 
+
+Btu/tonne); or assume the default value of 2,116,000 Btu/tonne.
+
+Note that if the coke burner off-gas is exported for recovery of CO2, direct CO2 emissions from 
+
+the coker may be eliminated or reduced. As stated previously, if the coke burner off-gas is 
+
+burned as a low-Btu fuel gas, the CO2 present in the stream should be counted as combustion 
+
+exhaust emissions and not as process venting.
+
+EXHIBIT 6-61: Sample Calculation for Fluid Coker
+
+INPUT DATA:
+
+A fluid coker combusts 140106 pounds per year of coke in the coke burner. The weight percent 
+
+H2 in the coke is known to be 1.5% (0.015 on a fraction basis). Calculate the CO2 emissions.
+
+CALCULATION METHODOLOGY:
+
+The carbon fraction is equal to 1 minus the non-hydrocarbon fraction. In this example, the carbon 
+
+fraction is assumed to be equal to 1 minus the fraction H2, or 0.985. Using Equation 6-34, the 
+
+estimated CO2 emissions are:
+=== PAGE 395 ===
+Section 6: Vented and Process Emission Estimation Methods
+
+6-153
+
+November 2021 2
+
+2
+
+6
+
+2
+
+CO
+
+CO 2
+
+140×10 lb Coke 0.985 lb C 44 lb CO /lbmole tonne E = × × ×
+
+year lb Coke 12 lb C/lbmole 2204.62 lb
+
+E = 229,350 tonnes CO /yr
+
+
+

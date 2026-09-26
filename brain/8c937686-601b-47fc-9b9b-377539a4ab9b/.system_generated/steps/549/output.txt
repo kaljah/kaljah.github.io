@@ -1,0 +1,17 @@
+
+The command exited with code 0.
+Output:
+Page 257:
+   d The emission factor in GHGI for oil well completions without hydraulic fracturing is based on the 
+   6.2.3.3 Offshore Well Completions
+   Methane emissions from offshore well completions can be quantified based on measured gas
+   offshore well completions, as presented in Table 6-7. Gas well completion data are taken from an
+   Energy Information Administration report (EIA, 2001). The emission factor given in Table 6-7
+   Table 6-7. Offshore Well Completion Methane Emission Factors for Oil and Gas
+   Offshore gas well
+   completion
+   completion-day
+   136.2
+   tonne/completion-day
+   for completions in 2000. Offshore factor interpolated from chart "Initial Flow Rates of New Natural 
+

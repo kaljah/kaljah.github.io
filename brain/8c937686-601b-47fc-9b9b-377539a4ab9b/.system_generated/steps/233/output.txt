@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+Exhibit 6-5 test:
+Total drilling scf: 19250000.0 Expected: 19.25e6
+Drilling CH4 tonnes: 327.5228583372167 Expected: 327
+Drilling CO2 tonnes: 110.43112543478385 Expected: 110
+Flared CO2 tonnes: 1044.1346618046591 Expected: 1050
+Flared CH4 tonnes: 6.900949160601311 Expected: 6.9
+

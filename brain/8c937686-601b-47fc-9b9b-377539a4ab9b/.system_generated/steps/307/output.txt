@@ -1,0 +1,125 @@
+
+The command exited with code 0.
+Output:
+=== Page 321 ===
+Section 6: Vented and Process Emission Estimation Methods
+6-79
+November 2021
+calculated using the estimated total physical volume between isolation valves (including, but not 
+limited to, pipelines, compressors and vessels) and density of the supercritical phase CO2 released. 
+The emissions can be calculated using the following equation taken from EPA GHGRP Subpart W, 
+equation W-37 (EPA, 2019a).
+ECO2
+= N × Vv × Rc × GHGCO2
+× 0.001 (Equation 6-27)
+where:
+ECO2
+= Annual EOR injection pump system emissions from EOR Injection pump 
+blowdowns (tonnes CO2/yr);
+N = Number of blowdowns for the EOR injection pump system (events/year);
+VV = Total physical volume of EOR injection pump system chambers (including pipelines, 
+manifolds, and vessels) between isolation valves (cubic feet or cubic meters);
+RC = Density of EOR injection gas at the supercritical operating temperature and pressure 
+of the injection pump (kg/ft3 or kg/m3
+); and
+GHGCO2
+= Mass fraction of CO2 in critical phase injection gas.
+An example calculation is shown in Exhibit 6.3-18 for a CO2 injection pump blowdown event. 
+EXHIBIT 6-22: Sample Calculation for CO2 Venting Emissions from CO2 EOR 
+Injection Pump Blowdown 
+INPUT DATA:
+In a CO2 EOR operation, one of the CO2 injection pumps was blown down for maintenance, 
+releasing CO2 into the atmosphere to depressurize the system. The following parameters were 
+estimated for the operational conditions of the injection pump:
+ Estimated physical volume between isolation valves: 36.4 m3
+ Injected gas composition: 98.5 weight % CO2
+ Pressure of EOR gas at pump discharge prior to release: 2,000 psig (13.79 MPag)
+ Temperature of EOR gas at pump discharge prior to release: 60oC
+Calculate the vented CO2 emissions.
+CALCULATION METHODOLOGY:
+The CO2 vented emissions are estimated using Equation 6-20. The density of CO2 is estimated 
+using data showing the relation of the density of CO2 to temperature and pressure.
+=== Page 322 ===
+Section 6: Vented and Process Emission Estimation Methods
+6-80
+November 2021
+Reference: Whittaker, S. et al. 2013. Technical aspects of CO2 enhanced oil recovery and associated carbon storage.
+Based on the CO2 density diagram above, the approximate density of CO2 at 14 MPa and 60oC is 
+650 kg/m3
+.
+ECO2
+=
+1 blowdown event
+yr
+×
+36.4 m3 gas vented
+blowdown event 
+×
+650 kg gas
+m3gas
+×
+0.985 kg CO2
+kg gas ×0.001
+ECO2
+=23 tonne CO2
+/yr
+6.3.11 Other Production Related Venting
+Other sources of venting in the production segment may include:
+ Well completions and well testing may be conducted in the production segment. 
+Calculation approaches for well completions and well testing are covered in Section 6.2 
+for the exploration segment;
+ Compressor venting, although typically considered part of gathering and boosting, can 
+occur at the wellhead or other production facilities. Calculation approaches for 
+compressor venting are covered in Section 6.4 for the gathering and boosting segment;
+ Blowdowns from pipelines and equipment for maintenance activities or emergency 
+conditions. Refer to Section 6.4 for the gathering and boosting segment; 
+ Well blowouts, while very rare, are unplanned events that may occur in production. Well 
+blowouts result in uncontrolled releases, the emissions from which can be calculated 
+using well test data or production data and duration. Refer to Section 6.2 for the 
+exploration segment; 
+ Pressure relief valve (PRV) venting (see below); and
+=== Page 323 ===
+Section 6: Vented and Process Emission Estimation Methods
+6-81
+November 2021
+ Offshore production venting.
+Offshore considerations for venting emissions often coincide with that of onshore. One portion 
+of operational offshore emissions is emissions from non-routine activities; which are the result of 
+unplanned events (such as during emergency or upset conditions) that result in releases of gas 
+(including CH4, and possibly CO2) to the atmosphere. 
+The equation for estimating the emissions of CH4 or CO2 from intermittent, non-continuous 
+venting is shown in Equation 6-28:
+Ex= VR × Fx × 
+MWx
+molar volume conversion
+× Tv ×n (Equation 6-28)
+where:
+Ex = Emissions of “x” in units of mass (pounds, kg, tonnes) per year;
+“x” = GHG compound of interest (CH4, or CO2 for CO2 rich streams);
+VR = Vent rate in volume units at STP conditions (scfm or Sm3
+/min) per 
+event;
+Fx = Molar fraction of compound “x” in the vent gas stream;
+MWx = Molecular weight of compound “x”;
+Molar volume 
+conversion
+= Conversion from molar volume to mass (379.3 scf/lbmole or 23.685 
+Sm3
+/kgmole);
+Tv = Time duration of the venting event (minutes); and
+n = Number of events of this type and magnitude annually.
+This equation calculates the total amount of CH4 or CO2 released during the event. To estimate 
+an annual emission rate, determine the frequency and duration of such venting episodes on a 
+yearly basis using either documentation from actual venting events or averages from past events.
+The GRI/EPA study developed emission factors for facility emergency shut down (ESD) systems 
+at offshore facilities and for PRVs associated with either onshore or offshore production 
+activities. ESDs are manual or automatic safety systems that shut down and vent all rotating 
+equipment when an emergency is detected. The emission factor is based on an average number 
+of ESD blowdowns vented to the atmosphere on an annual basis.
+Similarly, the GRI/EPA study developed a PRV emission factor based on the average size and 
+duration of release events at production facilities. The amount of gas released through a PRV is 
+highly dependent on upstream gas pressure and valve size. A more detailed estimation method 
+for PRV releases is provided in Appendix B (CAPP, 2002, Section 3.2.3). Table 6-28 provides 
+default emission factors for other non-routine venting sources from the production segment 
+operations.
+

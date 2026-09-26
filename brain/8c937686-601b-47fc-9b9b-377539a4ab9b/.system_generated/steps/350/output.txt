@@ -1,0 +1,70 @@
+
+The command exited with code 0.
+Output:
+Section 6: Vented and Process Emission Estimation Methods
+6-35
+November 2021
+EXHIBIT 6-11: Sample Calculation for Gas-Driven Pneumatic Controller Emissions
+INPUT DATA:
+A gas production facility has 80 natural gas-driven low bleed pneumatic controllers. The average 
+CH4 content of the gas is 70 mole %. There is also 9 mole % CO2 in the gas so CO2 emissions 
+from the pneumatic controllers are also estimated. Calculate the CH4 and CO2 emissions using 
+the API study emission factor for low bleed controllers.
+CALCULATION METHODOLOGY:
+Emissions are calculated by multiplying the number of pneumatic controllers by the emission 
+factor from Table 6-14. 
+The base pneumatic controller CH4 emission factor is also adjusted from the default basis 
+provided in Table 6-14 of 81.6 mole % CH4 to the site-specific basis of 70 mole % CH4. Because 
+the gas contains a significant quantity of CO2, emissions of CO2 are also estimated using the 
+whole gas emission factor and relative CO2 and CH4 contents in the gas.
+ECH4
+= 80 pneumatic controllers × 
+2.1 scf CH4
+hr-controller × 
+70 mole % CH4
+81.6 mole % CH4
+× 
+lbmole CH4
+379.3 scf CH4
+× 
+16 lb CH4
+lbmole CH4
+× 
+tonne CH4
+2204.62 lb CH4
+× 
+8760 hr
+yr
+ECH4
+= 24.2 tonnes CH4
+/yr 
+ECO2
+= 80 pneumatic controllers × 
+2.1 scf gas
+hr-controller × 
+0.09 lbmol CO2
+1 lbmol gas × 
+lbmole CO2
+379.3 scf CO2
+× 
+44 lb CO2
+lbmole CO2
+× 
+tonne CO2
+2204.62 lb CO2
+× 
+8760 hr
+yr
+ECO2
+= 7.0 tonnes CO2
+/yr
+6.3.5.4 Intermittent Operating Controllers 
+The GHGRP defines intermittent vent5F
+6 pneumatic controllers as automated flow control devices, 
+powered by pressurized natural gas, that discharge all or a portion of the full volume of the 
+actuator on an intermittent basis, not continuously (EPA, 2019a). The actual volume vented from 
+ 
+6 Also commonly referred to as intermittent ‘bleed’ pneumatic controllers. This definition of intermittent controllers only includes snap-acting 
+controllers; there are also a class of intermittent controllers called throttling actuator controllers, which are covered by this definition. For more 
+information, refer to the Simpson paper (Simpson, 2014).
+

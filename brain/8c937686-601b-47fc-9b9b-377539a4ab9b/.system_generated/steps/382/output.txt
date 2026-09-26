@@ -1,0 +1,12 @@
+
+The command exited with code 0.
+Output:
+*** PAGE 331 ***
+   and boosting, default emission factors may be used. Table 6-31 presents whole gas and CH4
+   vents’ (Zimmerle, 2019). The average storage tank emission factor in Table 6-31 should be used 
+*** PAGE 337 ***
+*** PAGE 338 ***
+   releases is given in Table 6-33.
+   atmosphere. All of the emission factors given in Table 6-33 are provided on an equipment (or 
+   Table 6-33. Gathering Segment Emission Factors for Other 
+

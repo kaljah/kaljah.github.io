@@ -1,0 +1,14 @@
+
+The command exited with code 0.
+Output:
+Page 387: EXHIBIT 6-38: Sample Calculation for FCCU Process CO2 Calculation Approach
+Page 388: EXHIBIT 6-38: Sample Calculation for FCCU Process Calculation Approach, 
+Page 389: EXHIBIT 6-38: Sample Calculation for FCCU Process Calculation Approach, 
+Page 390: EXHIBIT 6-39: Sample Calculation for Other Continuous Catalyst Regeneration
+Page 391: EXHIBIT 6-40: Sample Calculation for Other Intermittent Catalyst Regeneration
+Page 394: EXHIBIT 6-61: Sample Calculation for Fluid Coker
+Page 397: EXHIBIT 6-42: Sample Calculation for Hydrogen Plant - Rigorous Approach based on 
+Page 399: EXHIBIT 6-43: Sample Calculation for Hydrogen Plant - Rigorous Approach based on 
+Page 401: EXHIBIT 6-44: Sample Calculation for Hydrogen Plant Emissions - Simple Approach
+Page 403: EXHIBIT 6-45: Sample Calculation for Asphalt Blowing Emissions
+

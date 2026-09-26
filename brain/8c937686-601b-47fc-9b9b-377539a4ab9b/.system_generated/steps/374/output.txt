@@ -1,0 +1,186 @@
+
+The command exited with code 0.
+Output:
+<truncated 83 lines>
+and CO2 emissions.
+CALCULATION METHODOLOGY:
+1. Calculate the CH4 emissions. Emissions are calculated from the glycol dehydration unit 
+without the Kimray pump using an emission factor specific to gas processing facilities, taken 
+from Table 6-35. Because the CH4 content of this facility differs from the 86.8% default CH4
+content associated with the emission factor presented in Table E-4, the calculations include an 
+adjustment for the composition:
+4
+4
+6
+44
+CH 6
+4
+44
+44
+CH
+25×10 scf 365 day 0.0023315 tonne CH tonne mole CH E = × × ×
+day yr 10 scf 16 tonne CH
+0.90 tonne mole CH (facility) 16 tonne CH
+ × ×
+0.868 tonne mole CH (default) tonne mole CH
+E = 22.06 tonn 4
+es CH /yr
+For the gas assisted glycol circulation pump, Table 6-36 provides a CH4 emission factor of 
+0.0034096 tonnes CH4/1
+*** PAGE 347 ***
+Section 6: Vented and Process Emission Estimation Methods
+6-105
+November 2021
+If the tanks are uncontrolled (i.e., the vapor space vents to atmosphere), CH4 emissions (and 
+possibly CO2 emissions, if present in the natural gas or used as blanket gas) occur as the natural 
+gas is displaced by the liquid pumped into the tanks. The recommended approach for estimating 
+emissions from this source is the equation for cold process vents presented in Section 6.3, as 
+shown below in Equation 6-2, converted to an annual basis. 
+Ex= VR × Fx × 
+MWx
+molar volume conversion × Tv
+(Equation 6-8)
+where
+Ex = Emissions of “x” in units of mass (pounds, kg, tonnes);
+“x” = GHG compound of interest (CH4 or CO2, for CO2 rich streams);
+VR = Vent rate in volume units at STP conditions per unit of time (e.g., scfh or 
+Sm3
+/hr);
+Fx = Molar fraction of compound “x” in the vent gas stream;
+MWx = Molecular weight of compound “x”; 
+Molar volume 
+conversion
+= Conversion from molar volume to mass (379.3 scf/lbmole or 23.685 
+Sm3
+/kgmole at STP conditions); and
+Tv = Time duration of the venting (hours).
+The blanket natural gas is generally charged to the tank intermittently rather than continuously. 
+Thus, the emissions are based on vapor displacement when liquid fills the tank rather than based 
+on a continuous flow of the natural gas to the tank. The vent rate (VR) term in Equation 
+*** PAGE 353 ***
+Section 6: Vented and Process Emission Estimation Methods
+6-111
+November 2021
+An example is provided in Exhibit 6-30.
+EXHIBIT 6-30: Sample Calculation for Processing Non-Routine Related Emissions
+INPUT DATA:
+A natural gas processing facility treats 20106 m3 of gas per day. The facility gas has a typical 
+CH4 content and no CO2. Estimate the blowdown emissions for this facility.
+CALCULATION METHODOLOGY:
+The processing plant throughput is multiplied by the emission factor presented in Table 6-39.
+The CH4 emission factor is not corrected by the site CH4 content because the composition is 
+assumed to be consistent with the default emission factor CH4 content.
+Gas processing plant blowdowns:
+63
+4
+44 63
+20 10 m 365 days 0.1244 tonnes CH CH : 908 tonnes CH /yr
+day yr 10 m
+
+  
+6.6 Natural Gas Transmission and Storage 
+The natural gas transmission and storage (T&S) segment comprises the natural gas system 
+infrastructure between the custody transfer at the gathering or processing system extending to the 
+custody transfer at the distribution system (commonly called a “city gate”) or an industrial user. 
+The transmissions and storage segment includes pressurized gas pipeline infrastructure, 
+compressor stations, metering and regulation stations, and supporting equipment. Venting of 
+CH4, and CO2 from gas streams with appreciable concentration of CO2, may occ
+*** PAGE 356 ***
+Section 6: Vented and Process Emission Estimation Methods
+6-114
+November 2021
+EXHIBIT 6-31: Sample Calculation for Reciprocating Compressor Rod Packing 
+Emissions in Transmission and Storage Segment 
+INPUT DATA:
+A gas transmission compressor station has 5 reciprocating compressors. On average, the 
+reciprocating compressors are in normal operation for 7,970 hr/yr and in standby, pressurized 
+mode for 630 hours in the reporting year. The average CH4 content of the gas is 90 mole %, with 
+minimal CO2. Calculate the CH4 emissions from the compressor rod packing vents during the 
+year.
+CALCULATION METHODOLOGY:
+Emissions are calculated by multiplying the number of reciprocating compressors by the default 
+emission factors for rod packing in normal operation and standby pressurized modes, 
+respectively, from Table 6-40. Using Equation 6-29, CH4 emissions from the compressors can be 
+calculated using the average time in each mode. The whole gas emission factors are used and 
+converted to CH4 based on the site-specific basis of 90 mole % CH4. Because the gas contains an
+insignificant quantity of CO2, emissions of CO2 do not need to be quantified. Emissions are 
+calculated as shown below:
+ECH4, normal operation= (5 reciprocating compressors)×
+263 scf gas
+compressor-hr
+×
+7,970 hrs
+yr
+×
+0.9 lbmole CH4
+lbmole gas
+×
+lbmole gas
+379.3 scf gas
+×
+16 lb CH4
+lbmol
+*** PAGE 358 ***
+Section 6: Vented and Process Emission Estimation Methods
+6-116
+November 2021
+The annual emissions of CH4 from centrifugal compressor wet seal degassing vents can be 
+estimated using the default emission factor from Table 6-41 in operating mode and the total time 
+in operating mode using Equation 6-29. Alternatively, if the total time in operating mode is 
+unknown, the default average emission factors from Table 6-41 for wet seal and dry seal 
+centrifugal compressors can be used. To avoid double counting, it should be noted that these 
+default average emission factors in Table 6-41 for both wet and dry seal centrifugal compressors 
+include both venting from the compressor seals and equipment leak emissions from the 
+blowdown and isolation valve leakage. An example calculation is shown in Exhibit 6-32 that 
+illustrates the use of centrifugal compressor emission factors.
+EXHIBIT 6-32: Sample Calculation for Reciprocating Compressor Rod Packing 
+Emissions in Transmission and Storage Segment 
+INPUT DATA:
+A gas storage compressor station has 3 centrifugal compressors with wet seal systems, as well as 
+2 centrifugal compressors with dry seals from a recent station expansion. No data is available for 
+the amount of time each compressor operates each year. The average CH4 content of the gas is 
+95 mole %, with minimal CO2. Calculate the CH4 emissions from the centrifu
+*** PAGE 362 ***
+Section 6: Vented and Process Emission Estimation Methods
+6-120
+November 2021
+Source Original Units, 
+Emission Factor
+Uncertainty a
+(± %)
+Methane 
+Emission 
+Factor 
+(Converted)
+Methane 
+Content 
+Basis of 
+Factor
+(mole %)
+Whole Gas 
+Emission Factor 
+(Converted)
+(scf gas/
+station-yr)
+Miscellaneous 
+(includes M&R, 
+odorizer, drips, 
+sampling, pigging, 
+dehydrators) d
+1,134  103
+scf 
+CH4/station-yr
+43.3 21.75 93.4 1,214 103
+Footnotes and Sources:
+a Uncertainty based on 95% confidence interval converted from the 90% confidence intervals for the data used to develop the original emission 
+factor.
+b Zimmerle, D, et al, Environmental Science & Technology, Methane Emissions from the Natural Gas Transmission and Storage System in the 
+United States, 2015.
+c Subramanian, R., et al. Environmental Science & Technology, Supplemental Information: Methane Emissions from Natural Gas Compressor 
+Stations in Transmission and Storage Sector: Measurements and Comparisons with the EPA Greenhouse Gas Reporting Program Protocol, 
+2015.
+d Developed from data used for the June 1996 GRI/EPA CH4 emissions study. Emission factors are based on averaging data by site. The average 
+CH4 concentration associated with these emission factors is provided in Table E-4.
+e Based on engineering judgement.
+f URS Corporation. Updated Canadian National Greenhouse Gas Inventory f
+

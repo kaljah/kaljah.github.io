@@ -1,0 +1,66 @@
+
+The command exited with code 0.
+Output:
+he CH4 emissions are estimated as:
+ECH4
+= 
+1.329 m3 gas
+m3 oil × 
+71.7 m3 oil 
+day × 
+35.3147 ft3
+(scf) gas 
+m3
+× 
+lb mole gas
+379.3 scf gas × 
+27.4 lbmole CH4
+100 lbmole gas × 
+365 day
+yr
+× 
+16 lb CH4
+lbmole CH4
+× 
+tonne
+2204.62 lb
+ECH4
+= 6.44 tonnes CH4/yr
+Alberta Energy and Utilities Board (EUB) Rule-of-Thumb (Correlation Equation 
+Approach)
+The CAPP document, Estimation of Flaring and Venting Volumes from Upstream Oil and Gas 
+Facilities, includes the EUB rule-of-thumb approach to estimate flashing losses (CAPP, 2002). 
+CAPP reports that this approach tends to yield flashing loss estimates biased high and is 
+recommended for facilities with low oil volumes, established pools, mature pools with declining 
+GORs, and some heavy oil production facilities (CAPP, 2002). The EUB rule-of-thumb 
+correlation should not be used for condensate since this approach is specific to crude oil and does 
+not take into account the condensate physical properties.
+The EUB rule-of-thumb equation is:
+V 0.0257 V P so    
+(Equation 6-24)
+where:
+Vs = Volume of gas released, m3
+;
+Vo = Oil production volume, m3
+; and
+P = Pressure drop to atmospheric tank, kPa.
+Section 6: Vented and Process Emission Estimation Methods
+6-66
+November 2021
+Similar to the VBE and standing correlation approaches, the flash gas emissions estimated using 
+the EUB rule-of-thumb approach are in terms of total hydrocarbon and must be converted to a 
+CH4 emissions basis. As noted earlier, a default of 27.4 volume % CH4 is assumed for crude oil
+in the absence of site-specific data (Ogle, 1997a; Ogle, 1997b; Picard, 1992). 
+A sample calculation illustrating the use of the EUB rule-of-thumb approach follows in 
+Exhibit 6-18(c).
+EXHIBIT 6-18(c): Sample Calculation for Flashing Loss Emissions – EUB Rule-of￾Thumb
+INPUT DATA:
+The facility is the same oil and gas production facility described in Exhibits 6.3-14(a) and 6.3-
+14(b) for the other two correlation approaches. For illustrative purposes, this exhibit shows how 
+CO2 emissions would be estimated as well. For this facility, the CO2 tank vent concentration is 
+assumed to be approximately 4.5 volume %. Calculate the flashing loss emissions using the EUB 
+rule-of-thumb approach.
+CALCULATION METHODOLOGY:
+Note that the separator gauge pressure, 197.2 kPa gauge psig, is equal to the pressure drop from 
+the
+

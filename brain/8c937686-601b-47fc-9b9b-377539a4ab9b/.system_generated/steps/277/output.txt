@@ -1,0 +1,178 @@
+
+The command exited with code 0.
+Output:
+<truncated 188 lines>
+assuming a data set size of 10.
+d Converted using 78.8 mole % CH4 assumed in the derivation of the CH4 emission factor.
+=== Page 290 ===
+Section 6: Vented and Process Emission Estimation Methods
+6-48
+November 2021
+An example calculation for glycol dehydrator Kimray pump CH4 emissions is given below.
+EXHIBIT 6-14: Sample Calculation for Dehydration Kimray Vent Emissions
+INPUT DATA:
+A glycol dehydrator in a production facility treats 25106 scf/day of gas with a CH4 molar 
+content of 82 mole % and CO2 content of 5 mole %. This dehydration unit includes a gas￾operated pump but does not include a flash separator. Calculate the vented emissions from the 
+pump.
+CALCULATION METHODOLOGY:
+Assuming the pump is a Kimray or similar type, 
+Table 6-18 provides an appropriate emission factor. The CH4 emissions are calculated by 
+multiplying this emission factor by the annual gas throughput and adjusting for the facility CH4
+concentration, as shown below.
+ECH4
+, pump=
+25×106
+scf
+day
+×
+365 day
+yr
+×
+0.01903 tonne CH4
+106
+scf
+×
+0.82 tonne mole CH4
+(facility)
+0.788 tonne mole CH4
+(default)
+ECH4
+, pump=180.7 tonnes CH4
+/yr
+CO2 emissions are calculated by correcting the CH4 emissions by the ratio of CH4 to CO2 in the 
+facility gas.
+ECO2
+, pump=180.7 tonnes CH4×
+tonne mole CH4
+16 tonne CH4
+×
+tonne mole gas
+0.82 tonne mole CH4
+×
+0.05 tonne mole CO2
+tonne mole gas
+×
+44 tonne CO2
+tonne mole CO2
+ECO2
+, pump=30.3 tonnes CO2
+/yr
+6.3.8.2 Desiccant Dehydration
+Desiccant dehydrators have lower CH4 (and CO2) emissions compared to glycol-based systems. 
+Desiccant systems remove the moisture in the gas by passing the wet gas through a drying bed of 
+desiccant tablets (e.g., salts such as calcium, potassium, or lithium chlorides). Molecular sieves 
+can also be used as the desiccant in these systems. Molecular sieves selectively adsorb acid gas 
+molecules of smaller diameter than methane, and can be used for both gas dehydration and acid 
+gas treatment. 
+=== Page 291 ===
+Section 6: Vented and Process Emission Estimation Methods
+6-49
+November 2021
+Portable desiccant dehydrators can also be used during maintenance activities when the glycol 
+dehydrator that is normally used has to be shut down. For example, low pressure wells may be 
+vented to the atmosphere during maintenance activities because it can be difficult to resume flow 
+if the wells are shut in (EPA, 2004b). However, the portable desiccant system can be used in 
+place of the glycol dehydrator system, thus avoiding having to vent the low pressure well to the 
+atmosphere.
+Since the desiccant dehydrator systems are fully enclosed, emissions only occur when the vessel 
+is opened to change out the desiccant tablets. The emissions from these desiccant dehydrators 
+can be estimated based on the internal volume of the dehydrator, as shown in the following:
+2
+2
+1
+HD π P G N GLD =
+4P
+    
+
+(Equation 6-17)
+where:
+GLD = Gas loss from desiccant dehydrator, scf/yr;
+H = Dehydrator vessel height, ft;
+D = Dehydrator vessel inside diameter, ft;
+P2 = Gas pressure, psia;
+P1 = Atmospheric pressure, 14.7 psia;
+G = Fraction of packed vessel volume that is gas; and
+N = Number of desiccant change outs per year.
+An example calculation for desiccant dehydrator emissions is shown in Exhibit 6-15. The 
+example is based on Exhibit 12 presented in the November 2003 EPA Gas STAR Lessons 
+Learned document, Replacing Glycol Dehydrators with Desiccant Dehydrators (EPA, 2003c).
+EXHIBIT 6-15: Sample Calculation for Desiccant Dehydration Venting
+INPUT DATA:
+A desiccant dehydrator at a gas processing plant has a vessel height of 6.40 feet and an inside 
+diameter of 1.60 feet. The pressure of the gas inside the vessel is 450 psig (464.7 psia). The 
+desiccant material is refilled 52 times annually. The vessel is assumed to be 45% packed. The 
+CH4 and CO2 molar contents are 90% and 5%, respectively. Calculate the CH4 and CO2
+emissions.
+=== Page 292 ===
+Section 6: Vented and Process Emission Estimation Methods
+6-50
+November 2021
+CALCULATION METHODOLOGY:
+The gas vented from the desiccant dehydrator vessel is estimated using Equation 6-16.
+2
+(6.40 ft) (1.60 ft) (3.1416) (464.7 psia) (0.45) 52 GLD =
+4 (14.7 psia)
+GLD = 9,519 scf/yr (total gas)
+    
+
+The CH4 and CO2 emissions are then estimated using the gas molar contents:
+4
+4
+4 4 4
+CH
+44
+CH 4
+9,519 scf 0.90 scf CH lbmole CH 16 lb CH tonnes E = × × × ×
+yr scf gas 379.3 scf CH lbmole CH 2204.62 lb
+E = 0.16 tonnes CH /year
+2
+2
+2 2 2
+CO
+22
+CO 2
+9,519 scf 0.05 scf CO lbmole CO 44 lb CO tonnes E = × × × ×
+yr scf gas 379.3 scf CO lbmole CO 2204.62 lb
+E = 0.025 tonnes CO /yr
+6.3.8.3 Other Gas Dehydration Alternatives
+Methods of reducing CH4 emissions range from operational alterations to technological 
+alternatives. Operational alterations, such as optimizing glycol circulation rates or installing 
+electric pumps, have been shown to reduce, but not eliminate, CH4 emissions. Technological 
+alternatives include replacing glycol dehydrators with desiccant dehydrators (discussed in
+Section 6.3.8.2), separators, and in-line heaters, or methanol injection units. 
+The use of separators and in-line heaters for water removal is a two-step process. First, the gas is 
+expanded in a cyclone. This expansion lowers the temperature of the gas, enhancing water 
+condensation and separation. Then the gas is reheated to restore it to a dew point below 
+conditions in the pipeline system. Vented emissions from the separator should be calculated 
+using an engineering approach. Combustion emissions from the line heater should be calculated 
+using the methodology described in Section 4.
+Methanol injection units are an efficient method for controlling gas hydrate formation in the 
+lines. While methanol may absorb some of the water in the gas, its primary function is to act as a 
+=== Page 293 ===
+Section 6: Vented and Process Emission Estimation Methods
+6-51
+November 2021
+hydrate inhibitor. Methanol injection lowers the temperature at which hydrates can form, thereby 
+reducing gas hydrate formation. Unlike glycol dehydration, methanol injection requires no 
+regeneration, thus eliminating vented emissions.
+6.3.8.4 Acid Gas Removal/Sulfur Recovery Units
+Natural gas with high concentrations of acid gas species (H2S and CO2), referred to as sour gas, 
+must be treated to reduce the acid gases to a concentration that meets pipeline corrosion￾prevention specifications. Acid Gas Removal (AGR) units remove H2S and CO2 by contacting 
+the sour gas with a liquid solution (typically amines). AGR units have similar equipment to those 
+in the dehydrator units (an absorber, liquid circulation pump, and a reboiler to regenerate the 
+absorber liquid).
+Sulfur Recovery Units (SRUs) can also be used to recover elemental sulfur from H2S. A 
+byproduct of natural gas processing or crude oil refining, H2S is converted to elemental sulfur 
+through the use of a recovery process. The most common process is the Claus process, in which 
+the H2S undergoes catalytic oxidation in a two-step process. The Claus process consists of a 
+thermal process and a catalytic process, both of which form elemental sulfur through the 
+conversion of H2S to sulfur and water. During the oxidation process, side reactions occur then 
+produce other compounds including CO2.
+Methane Emissions
+The amine solution associated with AGR units can absorb a small amount of CH4 from the gas, 
+and some CH4 can be driven off to the atmosphere from the reboiler vent. In closed amine 
+systems, the reboiler vent is directed to the facility flare and no methane venting occurs.
+Figure 6-2 shows the approaches available to estimate CH4 emissions from AGR units, which are 
+dictated by whether specific information is known about the sour gas, such as temperature and 
+pressure.
+

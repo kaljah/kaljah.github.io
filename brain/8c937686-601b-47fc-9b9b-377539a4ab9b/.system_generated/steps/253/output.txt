@@ -1,0 +1,28 @@
+
+The command exited with code 0.
+Output:
+6.3.2 found at PDF page 263
+6.3.5 found at PDF page 270
+6.3.5 found at PDF page 273
+6.3.6 found at PDF page 274
+6.3.5 found at PDF page 275
+6.3.6 found at PDF page 275
+6.3.5 found at PDF page 277
+6.3.7 found at PDF page 282
+6.3.8 found at PDF page 285
+6.3.8 found at PDF page 290
+6.3.8 found at PDF page 292
+6.3.8 found at PDF page 293
+6.3.9 found at PDF page 298
+6.3.9 found at PDF page 299
+6.3.9 found at PDF page 315
+6.3.9 found at PDF page 317
+6.3.9 found at PDF page 320
+6.3.10 found at PDF page 320
+6.3.11 found at PDF page 322
+6.3.6 found at PDF page 324
+6.3.7 found at PDF page 328
+6.3.8 found at PDF page 331
+6.3.9 found at PDF page 331
+6.3.9 found at PDF page 334
+

@@ -1,0 +1,79 @@
+
+The command exited with code 0.
+Output:
+<truncated 1 lines>
+-a----         9/26/2026   1:09 AM           1838 t_dehy.mjs                                                           
+-a----         9/25/2026   3:14 PM            412 t_em.mjs                                                             
+-a----         9/26/2026   1:18 AM           2293 t_hhv.mjs                                                            
+-a----         9/26/2026   1:12 AM           1120 t_recent.mjs                                                         
+-a----         9/26/2026   1:12 AM            942 t_recent2.mjs                                                        
+-a----         9/26/2026   1:13 AM           1040 t_recent3.mjs                                                        
+-a----         9/25/2026   3:04 PM            703 t_reports.mjs                                                        
+-a----         9/25/2026   3:05 PM            780 t_reports2.mjs                                                       
+-a----         9/25/2026   3:06 PM           1071 t_reports3.mjs                                                       
+-a----         9/25/2026   3:10 PM           1513 t_reports4.mjs                                                       
+-a----         9/26/2026   1:19 AM           1260 t_roles.mjs                                                          
+-a----         9/25/2026   7:33 PM            630 t_s1.mjs                                                             
+-a----         9/26/2026   1:15 AM           1968 t_s2.mjs                                                             
+
+
+    Directory: C:\Users\samsung\Desktop\H2\audit\work\L
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/26/2026   1:02 AM            419 apiq.mjs                                                             
+-a----         9/25/2026   7:35 PM           2637 bug_fac500.md                                                        
+-a----         9/25/2026   3:12 PM           2836 bug_md.md                                                            
+-a----         9/26/2026   1:11 AM           3356 bug_reject.md                                                        
+-a----         9/26/2026   1:21 AM           3385 bug_s2trust.md                                                       
+-a----         9/25/2026   3:07 PM         139671 em_page.png                                                          
+-a----         9/25/2026   3:07 PM          67849 em_s1.png                                                            
+-a----         9/25/2026   3:07 PM            702 explore.mjs                                                          
+-a----         9/26/2026   1:16 AM           7150 lib.mjs                                                              
+-a----         9/25/2026   3:13 PM          89573 md.png                                                               
+-a----         9/25/2026   3:11 PM         227452 md_crash_user.png                                                    
+-a----         9/25/2026   3:14 PM          95086 md_regions.png                                                       
+-a----         9/26/2026   1:02 AM            547 note29.md                                                            
+-a----         9/26/2026   1:05 AM           1069 note71.md                                                            
+-a----         9/26/2026   1:22 AM            124 note99.md                                                            
+-a----         9/25/2026   7:36 PM           1270 s1opts.mjs                                                           
+-a----         9/25/2026   7:36 PM          76041 s1opts.png                                                           
+-a----         9/26/2026   1:20 AM          67805 s2.png                                                               
+-a----         9/26/2026   1:21 AM           1187 s2trust.mjs                                                          
+-a----         9/25/2026   3:03 PM         226888 w1_admin_landing.png                                                 
+-a----         9/25/2026   3:06 PM         901639 w1_badpw.png                                                         
+-a----         9/25/2026   3:06 PM         506881 w1_expired.png                                                       
+-a----         9/25/2026   3:05 PM         160306 w1_it_admin_landing.png                                              
+-a----         9/25/2026   3:03 PM           2040 w1_login.mjs                                                         
+-a----         9/25/2026   3:04 PM         154635 w1_superuser_landing.png                                             
+-a----         9/25/2026   3:05 PM         153289 w1_user_landing.png                                                  
+-a----         9/25/2026   7:35 PM         103354 w2_fac.png                                                           
+-a----         9/25/2026   7:34 PM           1624 w2_facility.mjs                                                      
+-a----         9/25/2026   7:38 PM         179027 w3_after.png                                                         
+-a----         9/25/2026   7:38 PM          67793 w3_before.png                                                        
+-a----         9/25/2026   7:37 PM            820 w3_comb.mjs                                                          
+-a----         9/25/2026   7:39 PM            655 w3_dash.mjs                                                          
+-a----         9/25/2026   7:39 PM         119626 w3_dash.png                                                          
+-a----         9/25/2026   7:41 PM           1660 w4_approve.mjs                                                       
+-a----         9/26/2026   1:06 AM            517 w4_banner.mjs                                                        
+-a----         9/25/2026   7:40 PM            848 w4_maker.mjs                                                         
+-a----         9/26/2026   1:06 AM         169884 w4_pending.png                                                       
+-a----         9/26/2026   1:09 AM           1287 w4_reject.mjs                                                        
+-a----         9/26/2026   1:09 AM         198868 w4_reject_modal.png                                                  
+-a----         9/26/2026   1:02 AM            812 w4_stale.mjs                                                         
+-a----         9/25/2026   7:41 PM         186154 w4_user_after.png                                                    
+-a----         9/26/2026   1:10 AM            679 w4_uview.mjs                                                         
+-a----         9/26/2026   1:12 AM           1335 w5_sbti.mjs                                                          
+-a----         9/26/2026   1:12 AM         162890 w5_sbti.png                                                          
+-a----         9/26/2026   1:12 AM         162694 w5_sbti_s12.png                                                      
+-a----         9/26/2026   1:19 AM         162969 w6_after.png                                                         
+-a----         9/26/2026   1:13 AM         152487 w6_modal.png                                                         
+-a----         9/26/2026   1:17 AM           2270 w6_target.mjs                                                        
+-a----         9/26/2026   1:19 AM            728 w6_valid.mjs                                                         
+-a----         9/26/2026   1:20 AM           1585 w7_s2.mjs                                                            
+-a----         9/26/2026   1:20 AM         144074 w7_s2.png                                                            
+-a----         9/25/2026   3:10 PM           1088 w_md_crash.mjs                                                       
+
+
+

@@ -1,0 +1,67 @@
+
+The command exited with code 0.
+Output:
+---
+ensions import db, limiter
+from utils import log_activity_and_notify
+from calculations import (
+    compute_emissions,
+    calculate_co2e,
+)
+from emission_factors import API_FACTORS, ALL_EMISSION_FACTORS
+from routes.auth import login_required
+import datetime
+import uuid
+import json
+from sqlalchemy import cast, String, literal, Float, union_all, or_
+from services.ogmp import ogmp_level_for
+from pro
+---
+ict(user)
+        gwp_std = resolve_gwp_standard(user)
+        try:
+            em_result, method = compute_emissions(
+                calc_data, factor_data, gwp_dict=gwp_dict
+            )
+        except Exception as e:
+            errors.append(
+                {
+                    "row": row_num,
+                    "reasons": [f"Calculation failed: {str(e)}"],
+                    "original":
+---
+t_factor:
+                    factor_data["uncertainty"] = parent_factor["uncertainty"]
+
+    # Call compute_emissions to calculate the actual emissions
+    gwp_dict = resolve_gwp_dict(user)
+    gwp_std = resolve_gwp_standard(user)
+    try:
+        em_result, method = compute_emissions(data, factor_data, gwp_dict=gwp_dict)
+    except ValueError as e:
+        # Extract missing field name from error 
+---
+esolve_gwp_dict(user)
+    gwp_std = resolve_gwp_standard(user)
+    try:
+        em_result, method = compute_emissions(data, factor_data, gwp_dict=gwp_dict)
+    except ValueError as e:
+        # Extract missing field name from error message
+        import re
+
+        match = re.search(r"Missing required field: (\w+)", str(e))
+        field = match.group(1) if match else "unknown"
+        return jso
+---
+_payload[k] = v
+        calc_payload.update(data)
+
+        try:
+            calculated_em, method = compute_emissions(
+                calc_payload, factor_data, gwp_dict=gwp_dict
+            )
+            record.co2_emissions = calculated_em["co2"]
+            record.ch4_emissions = calculated_em["ch4"]
+            record.n2o_emissions = calculated_em["n2o"]
+            record.co_emissions = calc
+

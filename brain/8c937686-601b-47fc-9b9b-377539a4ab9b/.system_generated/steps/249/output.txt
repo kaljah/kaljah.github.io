@@ -1,0 +1,88 @@
+
+The command exited with code 1.
+Output:
+<truncated 1 lines>
+Table 6-11. Liquid Unloading Vented Emission Factors by Well............................................. 6-28
+Table 6-12. Heavy Oil and Crude Bitumen Casing Gas Vented CH4 Emission Factors �
+Throughput Basis....................................................................................................................... 6-29
+Table 6-13. Heavy Oil and Crude Bitumen Casing Gas Vented Methane Emission Factors � Well 
+Basis........................................................................................................................................... 6-30
+Table 6-14. Natural Gas-Driven Pneumatic Controller Emission Factors for Continuous Vent 
+Controllers in Production........................................................................................................... 6-34
+Table 6-15. Natural Gas-Driven Pneumatic Controller Emission Factors for Intermittent Vent 
+Controllers in Production........................................................................................................... 6-37
+Table 6-16. Gas-Driven Chemical Injection Pump CH4 Emission Factors............................... 6-41
+Table 6-17. Production Segment Uncontrolled Gas Dehydration Methane Emission Factors..6-45
+Table 6-18. GRI/EPA Kimray Pump Methane Emission Factors ............................................. 6-47
+Table 6-19. Uncontrolled AGR Methane Emission Factor ....................................................... 6-53
+Table 6-20. Suggested Allowable and Default Values for VBE ............................................... 6-60
+Table 6-21. Summary of Range of Data Used in Standing Correlation a
+..................................6-63
+Table 6-22. Methane Flashing Loss Emission Factors for Crude Oil Storage Tanks................ 6-69
+Table 6-23. Summary of Crude Oil Production Tank Flashing Losses Using Different 
+Correlation Equation Approaches.............................................................................................. 6-71
+Table 6-24. Production Condensate Flashing Emission Factors ............................................... 6-72
+Table 6-25. Improperly Functioning Separator Dump Valve Emission Factors....................... 6-74
+Table 6-26. Produced Salt Water Tank Methane Flashing Emission Factors ........................... 6-76
+Table 6-27. Methane Emission Factors from Produced Water from Shallow Gas Wells ......... 6-77
+Table 6-28. Production Segment CH4 Emission Factors for Other Non-Routine Releases .....6-82
+Table 6-29. Natural Gas-Driven Pneumatic Controller Emission Factors in Gathering and 
+Boosting .....................................................................................................................................6-83
+=== Page 241 ===
+Section 6. Process and Vented Emission Estimation Methods 
+6-v November 2021
+Table 6-30. Emission Factors for Compressor Rod Packing in the Gathering and Boosting and 
+Production Segments ................................................................................................................. 6-87
+Table 6-31. Emission Factors for Storage Tanks in the Gathering and Boosting Segment�...6-93
+Table 6-32. Gathering Segment CH4 Emission Factors for Certain Blowdown Activities....... 6-93
+Table 6-33. Gathering Segment Emission Factors for Other Non-Routine Releases............... 6-96
+Table 6-34. Gas-Driven Pneumatic Controller CH4 Emission Factors in Gas Processing Segment
+.................................................................................................................................................... 6-99
+Table 6-35. Processing Segment Specific Uncontrolled Gas Dehydration CH4 Emission Factors
+.................................................................................................................................................. 6-100
+Table 6-36. GRI/EPA Kimray Pump CH4 Emission Factors .................................................. 6-101
+Table 6-37. Emission Factors for Reciprocating Compressors in Natural Gas Processing..... 6-107
+Table 6-38. Emission Factors for Centrifugal Compressors in Natural Gas Processing ......... 6-109
+Table 6-39. Gas Processing Segment CH4 Emission Factor for Non-Routine Activities ....... 6-110
+Table 6-40. Emission Factors for Compressor Rod Packing Based on 2015 Measurement Study 
+in the Transmission and Storage Segment ............................................................................... 6-112
+Table 6-41. Emission Factors for Centrifugal Compressor Seals in the Transmission and Storage 
+Segment.................................................................................................................................... 6-115
+Table 6-42. Natural Gas-Driven Pneumatic Controller Methane Emission Factors in 
+Transmission and Storage ........................................................................................................ 6-118
+Table 6-43. Transmission and Storage Segment Methane Emission Factors for Non-Routine 
+Activities..................................................................................................................................6-119
+Table 6-44. Typical Pipeline Loss Rates ................................................................................. 6-124
+Table 6-45. Emission Factors for Gas-Driven Pneumatic Controllers Located in the Gas 
+Distribution Segment ............................................................................................................... 6-127
+Table 6-46. Gas Distribution Segment Emission Factors for Non-Routine Activities............ 6-128
+Table 6-47. Simplified TOC Emission Factors for Loading Losses........................................ 6-135
+Table 6-48. Average TOC Emission Factors for Crude Oil Ballasting Operations................. 6-137
+Table 6-49. Simplified TOC Emission Factors for Marine Transit Losses............................. 6-138
+Table 6-50. Composition of U.S. Pipeline-Quality Natural Gas ............................................. 6-158
+Table 6-51. Stoichiometric Conversion Emission Factor........................................................ 6-159
+Table 6-52. Default Asphalt Blowing Emission Factors......................................................... 6-160
+Table 6-53. Chemical Production Emission Factors................................................................ 6-167
+List of Figures
+Figure 6-1. Methane Emissions from Glycol Dehydrators........................................................ 6-44
+Figure 6-2. CH4 Emissions from Acid Gas Removal (AGR) Units .......................................... 6-52
+Figure 6-3. Decision Tree for Unstabilized Storage Tank Flashing Losses .............................. 6-58
+Figure 6-4. Flashing Losses Chart ............................................................................................. 6-67
+Figure 6-5. CO2 Emissions from Fluid Catalytic Cracking Units (FCCU) ............................. 6-141
+Figure 6-6. CO2 Emissions from a Refinery Hydrogen Plant.................................................. 6-154
+=== Page 242 ===
+6-1 November 2021
+6.0 PROCESS AND VENTED EMISSIONS ESTIMATION 
+METHODS
+6.4 Process and Vented Emission Estimated Methods
+Vented emissions are releases to the atmosphere as a result of the process or equipment design or 
+operational practices. A number of vented emission sources are associated with oil and gas 
+industry operations. Vented emissions may come from a variety of non-fired stacks and vents 
+(combustion emissions are covered in Section 4). These emission sources tend to be very specific 
+to the type of operation; therefore, this section is organized by segments of the oil and gas industry. 
+Table 6-1 illustrates the range of available options for estimating vented GHG emissions and 
+associated considerations. To optimize cost effectiveness and reporting efficiency, facility 
+operators may choose to use a mix of estimation approaches. It is important to document the 
+estimation method used for each vent source.
+=== Page 243 ===
+

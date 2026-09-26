@@ -1,0 +1,155 @@
+
+The command exited with code 0.
+Output:
+6.11 Refining
+
+6.11.1 Catalyst Regeneration
+
+6.11.1.1 Catalytic Cracking Unit
+
+The catalytic cracking processes deposit coke on the catalyst as a byproduct of the reaction. That 
+
+coke must be burned off to restore the activity of the catalyst. The coke is continuously burned 
+
+off in the regenerator. This process vent may be a significant source of CO2 emissions. 
+
+Fluid catalytic cracking units (FCCUs) are operated in two basic modes: 
+
+1. Full, or complete, CO burn mode, where essentially all CO is combusted to CO2 within the 
+
+regenerator. The exhaust gas typically contains approximately 2 % O2 and less than 1% CO. 
+=== PAGE 382 ===
+Section 6: Vented and Process Emission Estimation Methods
+
+6-140
+
+November 2021
+
+The hot exhaust gases often pass through a waste heat boiler, operated with or without 
+
+supplemental fuel, to produce steam prior to exiting through the stack.
+
+2. Partial burn mode, where the regenerator exhaust gas typically contains less than 1% O2 and 
+
+6-8% CO (though these compositions can vary). The exhaust gases pass through a CO 
+
+boiler, which completes the combustion of CO to CO2 external to the FCCU regenerator 
+
+before the gases exit the stack.
+
+Sometimes an oxidation promoter (e.g., platinum, palladium, etc.) is added to the process or is 
+
+included within the catalyst to assist combustion in “promoted” operation. Where no promoter is 
+
+used, the operation is referred to as “conventional” or “non-promoted” CO burn. Full or partial 
+
+CO burn modes can be conventional or promoted.
+
+In some cases, the regenerator off-gas may be controlled with a CO boiler (to control CO and 
+
+TOC emissions) if operated in a full or partial burn mode and/or with an electrostatic precipitator 
+
+or scrubber (to control particulate emissions). When a partial burn unit is operated with a CO 
+
+boiler, the unit is equivalent to a full burn unit with respect to CO2, CH4, and TOC emissions 
+
+since the combustion of CO to CO2 is completed. As noted earlier, some catalytic cracking unit 
+
+(CCU) regenerators are designed to complete the combustion of CO to CO2 and do not need a 
+
+CO boiler. These units may also be equipped with a waste heat boiler that can be fired with 
+
+supplemental fuel. The CO2 from the combustion of the supplemental fuel should be accounted 
+
+for as described in Section 4.
+
+Figure 6-5 provides the decision tree for estimating emissions from FCCU regeneration. The 
+
+commonly used approaches for estimating the CO2 and CH4 emissions from FCCU regeneration 
+
+are based on either coke burn rate or flue gas flow rate (or air blower capacity) and composition.
+=== PAGE 383 ===
+Section 6: Vented and Process Emission Estimation Methods
+
+6-141
+
+November 2021
+
+Figure 6-5. CO2 Emissions from Fluid Catalytic Cracking Units (FCCU)
+
+These approaches are based on process parameters that are generally monitored or estimated as 
+
+part of routine refinery operations. The process calculation approaches should provide equally 
+
+accurate emission estimates. The user should pick the approach for which the input data are most 
+
+readily available and are expected to have the lowest uncertainty. 
+
+The first approach uses the coke burn rate expressed in mass per year. The coke burned is 
+
+assumed to proceed completely to CO2. Based on this assumption and accounting for the 
+
+conversion of units, the CO2 emission rate can be calculated from the following equation:
+
+ECO2
+
+= CCAvg × CF ×
+
+44 mass units CO2
+
+/mole 
+
+12 mass units C/mole
+
+× T (Equation 6-34)
+
+where:
+
+No
+
+Yes Apply the approach 
+
+represented by 
+
+Equation 6-34.
+
+Yes
+
+Apply the approach represented 
+
+by Equation 6-37 to quantify 
+
+coke burn rate and apply in 
+
+Equation 6-34.
+
+No
+
+Apply the approach 
+
+represented by 
+
+Equation 6-35.
+
+Is the coke burn rate 
+
+known?
+
+Yes Apply the approach 
+
+represented by 
+
+Equation 6-36.
+
+No
+
+Is the flue gas flow and 
+
+concentration known?
+
+Is the air blower capacity and 
+
+flue gas concentration known?
+=== PAGE 384 ===
+Section 6: Vented and Proce
+

@@ -1,0 +1,73 @@
+
+The command exited with code 0.
+Output:
+Total pages: 898
+Page 238: Section 6. Process and Vented Emission Estimation Methods 
+6-ii November 2021
+TABLE OF CONTENTS
+6.0 PROCESS AND VENTE...
+Page 259: Section 6. Process and Vented Emission Estimation Methods 
+6-17 November 2021
+4
+4
+6 44
+CH
+4
+CH 4
+lbmole gas 0.88...
+Page 269: Section 6. Process and Vented Emission Estimation Methods 
+27 November 2021
+Table 6-10. Well Unloading Vented Emission...
+Page 273: Section 6: Vented and Process Emission Estimation Methods
+6-31
+November 2021
+Because the gas contains a significant q...
+Page 275: Section 6: Vented and Process Emission Estimation Methods
+6-33
+November 2021
+While this section is organized by contr...
+Page 292: Section 6: Vented and Process Emission Estimation Methods
+6-50
+November 2021
+CALCULATION METHODOLOGY:
+The gas vented...
+Page 303: Section 6: Vented and Process Emission Estimation Methods
+6-61
+November 2021
+2009). The average condensate tank vent ...
+Page 305: Section 6: Vented and Process Emission Estimation Methods
+6-63
+November 2021
+SGoil = Specific gravity of oil with res...
+Page 317: Section 6: Vented and Process Emission Estimation Methods
+6-75
+November 2021
+6.3.9.3 Stabilized Tanks Working/Standin...
+Page 320: Section 6: Vented and Process Emission Estimation Methods
+6-78
+November 2021
+6.3.10 CO2 Enhanced Oil Recovery (EOR) P...
+Page 324: Section 6: Vented and Process Emission Estimation Methods
+6-82
+November 2021
+Table 6-28. Production Segment CH4 Emiss...
+Page 328: Section 6: Vented and Process Emission Estimation Methods
+6-86
+November 2021
+Section 6.3.7 for production. See Equati...
+Page 331: Section 6: Vented and Process Emission Estimation Methods
+6-89
+November 2021
+6.4.4 Gas Treatment Processes
+6.4.4.1 G...
+Page 334: Section 6: Vented and Process Emission Estimation Methods
+6-92
+November 2021
+Using this equation, the moles of gas em...
+Page 340: Section 6: Vented and Process Emission Estimation Methods
+6-98
+November 2021
+Compressor starts:
+ECH4
+= 1 compressor...
+

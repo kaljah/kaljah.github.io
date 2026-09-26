@@ -1,0 +1,33 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\Desktop\H2\new\server\calculations\vented.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -132,7 +132,7 @@
+     # API Compendium Table 6-3: Default for natural gas well drilling (tonnes CH4 / well)
+     TIER1_WELL_EF = 0.0524
+ 
+-    # API Compendium 2021: Onshore mud degassing (tonnes CH4 / drilling day)
++    # API Compendium 2021 Table 6-2: Onshore mud degassing (tonnes CH4 / drilling day)
+     TABLE_6_2_ONSHORE = {
+         "water_based": 0.0458,
+         "oil_based": 0.0103,
+@@ -139,4 +139,10 @@
+     }
++    # API Compendium 2021 Table 6-2: Offshore mud degassing (tonnes CH4 / drilling day)
++    TABLE_6_2_OFFSHORE = {
++        "water_based": 0.2605,
++        "oil_based": 0.0586,
++        "synthetic": 0.0586,
++    }
+     DEFAULT_CH4_CONCENTRATION = 0.8385  # 83.85% molar default underlying Table 6-2
+ 
+     def calculate(
+@@ -152,6 +152,7 @@
+         ch4_concentration=None,
+         co2_concentration=None,
+         mud_volume=None,
++        location="onshore",
+     ):
+         """
+         API Compendium 2021 Drilling Mud Degassing:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

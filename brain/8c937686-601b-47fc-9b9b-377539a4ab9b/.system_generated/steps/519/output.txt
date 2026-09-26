@@ -1,0 +1,20 @@
+Task: 8c937686-601b-47fc-9b9b-377539a4ab9b/task-517
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\8c937686-601b-47fc-9b9b-377539a4ab9b\.system_generated\tasks\task-517.log
+Log output:
+<truncated 64 lines>
+95200002 � 0.0167648
+
+new\server\tests\test_vented_ccus_transport_compendium.py:92: AssertionError
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_vented_lng_distribution_compendium.py::TestLNGVentingCompendium::test_direct_bog_venting_and_flaring
+FAILED new\server\tests\test_vented_ccus_transport_compendium.py::TestCrudeTransportCompendium::test_exhibit_6_36_marine_ballasting
+=================== 2 failed, 30 passed, 1 warning in 1.61s ===================
+
+Last progress: 1s ago

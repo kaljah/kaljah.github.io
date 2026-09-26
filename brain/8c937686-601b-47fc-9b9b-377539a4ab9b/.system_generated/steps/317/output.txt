@@ -1,0 +1,58 @@
+
+The command exited with code 0.
+Output:
+=== PneumaticDeviceCalculator ===
+class PneumaticDeviceCalculator(BaseCalculator):
+    def __init__(self):
+        super().__init__("Pneumatic Devices", "Section 6.10")
+
+    def calculate(
+        self,
+        count,
+        hours=8760,
+        bleed_rate=None,
+        ch4_content=0.85,
+        uncertainties=None,
+        actuations=None,
+        co2_content=0.0,
+        gwp_dict=None,
+    ):
+        """
+        API Section 6.10 & EPA Subpart W �98.233(a):
+        - Continuous bleed: Device count * Hours * Bleed rate (scf/hr)
+        - Intermittent / actuation-based: Device count * Actuations * Bleed per event (scf/actuation)
+        Accounts for both CH4 and native CO2 in supply gas.
+        """
+        uncertainties = uncertainties or {}
+        self.validate_inputs(
+            {"count": count},
+            ["count"],
+
+=== TankFlashingCalculator ===
+class TankFlashingCalculator(BaseCalculator):
+    def __init__(self):
+        super().__init__("Storage Tank Emissions", "Section 6.8")
+
+    def calculate(
+        self,
+        throughput,
+        gas_oil_ratio,
+        ch4_content,
+        control_efficiency,
+        uncertainties,
+        process_type="tank_flashing",
+        ef_ch4=0,
+        co2_content=0.0,
+        ef_co2=None,
+        ef_n2o=None,
+        hhv=1020.0,
+        gwp_dict=None,
+    ):
+        """
+        Calculates Tank Emissions (API Compendium Section 6.8 & EPA Subpart W �98.233(j)).
+        If Flashing: Uses GOR method with flared combustion products when control_efficiency > 0.
+        If Working/Breathing: Uses simple Factor * Throughput.
+        """
+        uncertainties = uncertainties or {}
+        self.validate_
+

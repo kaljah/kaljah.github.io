@@ -1,0 +1,101 @@
+
+The command exited with code 0.
+Output:
+=== Page 244 ===
+Section 6. Process and Vented Emission Estimation Methods 
+6-2 November 2021
+6.2 Oil and Natural Gas Exploration
+Vented and process emissions from the oil and natural gas exploration segment include venting 
+of gas containing methane (CH4), and possibly carbon dioxide (CO2), from well drilling0F
+1
+, well 
+testing, and well completion activities. 
+6.2.1 Well Drilling
+Vented emissions during well drilling activities occur due to gas released from the drilling fluid. 
+Drilling fluid (otherwise known as drilling mud) is used for many important purposes, including 
+lubricating and cooling the drill bit, carrying cuttings away from the drill bit, and ma intaining 
+desired pressure within the well. During these operations, gas from the well bore may become 
+entrained in the mud. During the drilling process, the drilling mud is recirculated and degassed 
+once outside the wellbore to remove the entrained gas. During mud degassing, gases entrained in 
+the mud are separated from the mud and vented directly to the atmosphere. This venting results 
+primarily in emissions of CH4 contained in the gas, with some possible CO2 emissions.
+Site-specific CH4 (and CO2 if present) concentration data should be used to estimate these 
+emissions (e.g. mud-logger services with gas detection system). However, in the absence of site￾specific data, use of simplified emission factors presented in Table 6-2 or Table 6-3 can be used.
+Table 6-2 provides mud degassing total hydrocarbon (THC) vented emission factors on a drilling 
+day basis. The base THC factors are taken from U.S. Department of the Interior, Minerals 
+Management Service guidance for offshore wells (Wilson et al., 2007). The CH4 and whole gas 
+factors are derived from the THC factors based on the actual CH4 concentration from the study.
+However, the factors can be adjusted using actual site-specific concentrations if they are 
+available and different from the defaults shown in the table. For onshore wells, the emission 
+factors were adjusted based on API member company comments indicating that the borehole size 
+and porosity are lower (by 44 and 40 percent, respectively) for onshore wells compared to 
+offshore (Koblitz, 2020).
+Table 6-2. Mud Degassing Vented Methane Emission Factors for Oil and Natural Gas 
+Exploration
+Total Hydrocarbon
+Emission Factor a
+,
+Original Units
+Methane Emission Factor b
+, 
+Converted to Tonnes Basis
+Whole Gas 
+Emission Factor c
+Mud Type (lb THC/drilling day) (tonnes CH4/drilling day) (scf gas/drilling 
+day)
+Offshore Well Mud Degassing 
+Water-based Mud 881.84 0.2605 16,223
+Oil-based Mud 198.41 0.0586 3,650
+Synthetic Mud 198.41 0.0586 3,650
+ 
+1 Well drilling activities can occur during exploration (wildcat and appraisal wells) and field development (development wells). The GHG 
+emissions characteristics are typically similar, so they are treated collectively as drilling activities. 
+=== Page 246 ===
+Section 6. Process and Vented Emission Estimation Methods 
+6-4 November 2021
+EXHIBIT 6-1: Sample Calculation for Mud Degassing Vented Emissions
+INPUT DATA:
+An oil and gas production facility performed well drilling activities with water-based mud 85 
+days during the year. The average CH4 content of the gas is 70 mole %; there is also 9 mole % 
+CO2 in the gas. Calculate the CH4 and CO2 emissions.
+CALCULATION METHODOLOGY:
+Emissions are calculated by multiplying the number of days of drilling activities by the CH4
+emission factor from Table 6-2. The base mud degassing vented CH4 emission factor is adjusted 
+from the default basis of 83.85 mole % CH4 to the site-specific basis of 70 mole % CH4. Because 
+the gas contains a significant quantity of CO2, emissions of CO2 are also estimated using the 
+relative CO2 and CH4 contents in the gas.
+4
+4
+44
+CH
+4
+CH 4
+85 day 0.2605 tonnes CH 70 mole % CH E=
+yr day 83.85 mole % CH
+E 18.49 tonnes CH /yr
+
+
+2
+4 4 4
+CO
+44
+22
+42
+CO
+85 day 0.2605 tonnes CH 70 mole % CH tonne mole CH E = ×
+yr day 83.85 mole % CH 16 tonne CH
+tonne mole gas 0.09 tonne mole CO 44 tonne CO
+ × × ×
+0.70 tonne mole CH tonne mole gas tonne mole CO
+E
+
+2
+= 6.54 tonnes CO /yr 2
+A simplified, default CH4 emission factor can be used for venting during natural gas well drilling 
+activities when little information is available on the drilling mud type and/or duration of the 
+drilling activity. This emission factor shown in Table 6-3 is used in the EPA Inventory of U.S. 
+Greenhouse Gas Emissions and Sinks 1990-2017 (EPA, 2019b), also known as GHGI, for CH4
+venting from well drilling for natural gas wells. Note that GHGI does not distinguish between 
+onshore and offshore wells or by mud type, and currently includes a default emission factor for 
+gas wells only. 
+

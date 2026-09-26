@@ -1,0 +1,192 @@
+
+The command exited with code 0.
+Output:
+<truncated 61 lines>
+natural gas emissions study, is provided in Appendix B (Shires, et al, 1996a).
+An example calculation is provided below in Exhibit 6-11 that demonstrates the use of the 
+pneumatic controller emission factors.
+=== Page 277 ===
+Section 6: Vented and Process Emission Estimation Methods
+6-35
+November 2021
+EXHIBIT 6-11: Sample Calculation for Gas-Driven Pneumatic Controller Emissions
+INPUT DATA:
+A gas production facility has 80 natural gas-driven low bleed pneumatic controllers. The average 
+CH4 content of the gas is 70 mole %. There is also 9 mole % CO2 in the gas so CO2 emissions 
+from the pneumatic controllers are also estimated. Calculate the CH4 and CO2 emissions using 
+the API study emission factor for low bleed controllers.
+CALCULATION METHODOLOGY:
+Emissions are calculated by multiplying the number of pneumatic controllers by the emission 
+factor from Table 6-14. 
+The base pneumatic controller CH4 emission factor is also adjusted from the default basis 
+provided in Table 6-14 of 81.6 mole % CH4 to the site-specific basis of 70 mole % CH4. Because 
+the gas contains a significant quantity of CO2, emissions of CO2 are also estimated using the 
+whole gas emission factor and relative CO2 and CH4 contents in the gas.
+ECH4
+= 80 pneumatic controllers × 
+2.1 scf CH4
+hr-controller × 
+70 mole % CH4
+81.6 mole % CH4
+× 
+lbmole CH4
+379.3 scf CH4
+× 
+16 lb CH4
+lbmole CH4
+× 
+tonne CH4
+2204.62 lb CH4
+× 
+8760 hr
+yr
+ECH4
+= 24.2 tonnes CH4
+/yr 
+ECO2
+= 80 pneumatic controllers × 
+2.1 scf gas
+hr-controller × 
+0.09 lbmol CO2
+1 lbmol gas × 
+lbmole CO2
+379.3 scf CO2
+× 
+44 lb CO2
+lbmole CO2
+× 
+tonne CO2
+2204.62 lb CO2
+× 
+8760 hr
+yr
+ECO2
+= 7.0 tonnes CO2
+/yr
+6.3.5.4 Intermittent Operating Controllers 
+The GHGRP defines intermittent vent5F
+6 pneumatic controllers as automated flow control devices, 
+powered by pressurized natural gas, that discharge all or a portion of the full volume of the 
+actuator on an intermittent basis, not continuously (EPA, 2019a). The actual volume vented from 
+ 
+6 Also commonly referred to as intermittent ‘bleed’ pneumatic controllers. This definition of intermittent controllers only includes snap-acting 
+controllers; there are also a class of intermittent controllers called throttling actuator controllers, which are covered by this definition. For more 
+information, refer to the Simpson paper (Simpson, 2014).
+=== Page 278 ===
+Section 6: Vented and Process Emission Estimation Methods
+6-36
+November 2021
+an intermittent vent pneumatic controller is a function of the volume released per actuation, the 
+frequency of actuation, and the gas supply pressure. 
+To estimate CH4 emissions from intermittent vent pneumatic controllers, site-specific controller
+measurements or manufacturers’ data may be used to estimate the vent rate per actuation, 
+combined with the estimated number of actuations per controller during a reporting year. As 
+previously stated for continuous controllers, the manufacturer’s data may understate emissions 
+due to different operating and maintenance conditions for controllers installed in the field. An 
+approach to calculate the volume of gas vented from an intermittent vent pneumatic controller is 
+shown in Equation 6-13 (Simpson, 2014).
+Vol = (
+π
+4
+× ID2
+× Lpipe × ∆Volbonnet) × (
+Pcontrol + Patm
+Pstd
+)× Nact (Equation 6-13)
+where:
+Vol = Volume of gas vented per year from an intermittent vent pneumatic 
+controller (scf/yr or scm/yr);
+ID = Inside diameter of piping (ft or m);
+Lpipe = Length of all piping in system (ft or m);
+∆Volbonnet = The change in the physical volume of a pneumatic valve actuator when 
+changed from at rest to fully actuated (scf or scm);
+Pcontrol = Pressure of the supply gas system (psig or kPag);
+Patm = Local atmospheric pressure (psia or kPaa);
+Pstd = Standard pressure (psia or kPaa); and
+Nact = Estimated number of actuations per controller per year (actuations/yr).
+Methane emissions may be estimated for intermittent vent pneumatic controllers using average 
+emission factors for intermittent vent pneumatic controllers as presented in Table 6-15. These 
+emission factors are based on measurements of over 260 pneumatic controllers in the US (API, 
+2020), and represent intermittent vent pneumatic controllers in normal operation and those 
+classified as malfunctioning. Higher than expected vent rate emissions from malfunctioning 
+intermittent pneumatic controllers were observed in a minority fraction of the population tested. 
+Actions taken to minimize the number of malfunctioning pneumatic controllers, such as a 
+proactive monitoring and repair program, may result in a reduction in the number of 
+malfunctioning intermittent controllers and thus reduce emissions. The average emission factor 
+for intermittent vent pneumatic controllers represents the average emission rates of all controllers 
+tested, including properly functioning and malfunctioning controllers.
+=== Page 279 ===
+Section 6: Vented and Process Emission Estimation Methods
+6-37
+November 2021
+Table 6-15. Natural Gas-Driven Pneumatic Controller Emission Factors for Intermittent 
+Vent Controllers in Production 
+Controller Type Original Units, 
+Emission Factor 
+a
+(scf whole gas/
+controller-hr)
+Uncertainty 
+(±%)
+Methane 
+Emission 
+Factor b
+(Converted) 
+(scf CH4/
+controller-hr)
+Methane 
+Content 
+Basis of 
+Factor b
+(mole %)
+Methane 
+Emission Factor
+b
+(Converted to 
+tonnes basis) 
+(tonnes CH4/
+controller-yr)
+API Study Emission Factorsa
+Intermittent, 
+average c
+9.3 
+Not 
+specified
+7.6 81.6 1.27
+Intermittent, 
+normal operation 
+d
+0.28 0.23 81.6 0.038
+Intermittent, 
+malfunctioning 
+operation e
+24.1 19.7 81.6 3.30
+EPA GHGRP Subpart W Emission Factorsf
+Intermittent 13.5 Not 
+specified 11.0 81.6 1.85
+Footnotes and Sources:
+a
+ API working paper, Pneumatic Controller Inventory and Measurement at 67 Oil and Gas Sites in the Western United States, 2020.
+b Conversion from whole gas to methane was calculated assuming 81.6 mole % CH4 in the gas, according to the GHGI methane content for 
+natural gas (EPA, 2019b). Conversion to annual basis assumes 8,760 hrs/yr operation rather than solely using the controller venting hours since 
+emission factors are based on a time averaging of actuation and non-actuation periods.
+c The average emission factor should be used for controllers that are not routinely monitored as part of a proactive monitoring and repair program. 
+d The normal operation emission factor should be applied to controllers that are found to be operating normally as part of a proactive monitoring 
+and repair program.
+e The malfunctioning operation emission factor should be applied to controllers that are found to be venting at a higher than e xpected rate, as 
+discovered from a proactive monitoring and repair program.
+fEPA GHGRP Subpart W Table W-1A. (EPA, 2019a). 
+Many operators are beginning to monitor intermittent controllers to confirm the controller is 
+operating normally or malfunctioning and venting at a higher rate than expected for a properly
+operated controller. Based on the implementation status of a pneumatic controller monitoring 
+and repair program, the emission factors in Table 6-15 should be applied to intermittent vent 
+pneumatic controllers as follows:
+ Operations with a proactive monitoring and repair program for pneumatic controllers:
+o Use the normal operation emission factor for controllers that are found to be 
+operating properly as part of a routine monitoring program.
+o Use the malfunctioning operation emission factor for controllers found to be 
+improperly operating as part of a routine monitoring program. The 
+malfunctioning operation emission factor would be applied for the period prior 
+to a confirmed repair, akin to leak/no-leak factors applied to fugitive 
+components (EPA, 1995b). 
+

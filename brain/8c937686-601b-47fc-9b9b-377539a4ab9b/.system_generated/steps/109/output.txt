@@ -1,0 +1,69 @@
+
+The command exited with code 0.
+Output:
+=== PDF PAGE 244 ===
+   6.2.1 Well Drilling
+   emissions (e.g. mud-logger services with gas detection system). However, in the absence of site￾specific data, use of simplified emission factors presented in Table 6-2 or Table 6-3 can be used.
+   Table 6-2 provides mud degassing total hydrocarbon (THC) vented emission factors on a drilling
+   Table 6-2. Mud Degassing Vented Methane Emission Factors for Oil and Natural Gas
+=== PDF PAGE 245 ===
+=== PDF PAGE 246 ===
+   EXHIBIT 6-1: Sample Calculation for Mud Degassing Vented Emissions
+   emission factor from Table 6-2. The base mud degassing vented CH4 emission factor is adjusted
+   drilling activity. This emission factor shown in Table 6-3 is used in the EPA Inventory of U.S.
+=== PDF PAGE 247 ===
+   Table 6-3. Natural Gas Well Drilling Methane Emission Factors for Oil and Gas
+   6.2.2 Well Testing
+   Equation 6-1 presents the calculation of gas vented from gas well testing using the measured gas
+   VWT = VP × T (Equation 6-1)
+=== PDF PAGE 248 ===
+   gas stream, in accordance with Equation 6-2 below.
+   (Equation 6-2)
+   Equation 6-3 presents the calculation of total gas vented from oil well testing using the GOR, oil
+   VWT = GOR × PR× T (Equation 6-3)
+=== PDF PAGE 249 ===
+   EXHIBIT 6-2: Sample Calculation for Oil Well Testing-Related Emissions
+   The total volume of associated gas from the well test is estimated using Equation 6-3, based on
+   determined using Equation 6-2 and the concentration of these constituents in the gas sample.
+=== PDF PAGE 250 ===
+   site-specific data is unavailable. The emission factors shown in Table 6-4 for gas and oil wells,
+   Table 6-4. Well Testing Methane Emission Factors for Oil and Gas Exploration
+   6.2.3 Well Completions
+=== PDF PAGE 251 ===
+   6.2.3.1 Well Completions with Hydraulic Fracturing
+   during flowback. Equation 6-4 below shows the calculation approach for quantifying the gas
+   Equation 6-4, after adjusting for any gas volume that was sent to flare or recovered to sales.
+   Vgas = Vt – EnF (Equation 6-4)
+=== PDF PAGE 252 ===
+   measurement period. Equation 6-5 below estimates the gas vent rate during the initial flowback
+   ))÷ 2 (Equation 6-5)
+   EXHIBIT 6-3: Sample Calculation for Well Completion with Hydraulic Fracturing
+=== PDF PAGE 253 ===
+   to flare during flowback when the gas flow is metered is estimated using Equation 6-4.
+   the atmosphere during initial flowback is quantified using Equation 6-5, assuming that the gas
+   stream, in accordance with Equation 6-2.
+=== PDF PAGE 254 ===
+   Equation 6-5, is based on USEPA GHGRP Subpart W calculation methodology using Equations
+   (Gilbert, 1954) is an equation for sonic multiphase flow through a wellhead choke. The Gilbert￾type correlation is shown below in Equation 6-6 in a linear rearranged form that can be used for
+   (Equation 6-6)
+=== PDF PAGE 255 ===
+   hydraulic fracturing. The emission factors shown in Table 6-5 include factors for well
+   Table 6-5. Well Completions with Hydraulic Fracturing Methane Emission Factors for Oil
+   6.2.3.2 Onshore Completions without Hydraulic Fracturing
+=== PDF PAGE 256 ===
+   using Equation 6-4. For completions without hydraulic fracturing where the gas flow rate is not
+   measured, Equation 6-7 below can be used to quantify the gas volume during the completion
+   gas stream, using Equation 6-2. (Note that if well completion gas is flared, emissions should be
+   VCC = VPi × T (Equation 6-7)
+   The emission factors from Table 6-6 may be used when producing the wells to pits or tanks after
+   Table 6-6. Onshore Well Completions without Hydraulic Fracturing Methane Emission
+=== PDF PAGE 257 ===
+   6.2.3.3 Offshore Well Completions
+   flow rates (Equation 6-4) or initial production rates (Equation 6-5) if the supporting data is
+   offshore well completions, as presented in Table 6-7. Gas well completion data are taken from an
+   Energy Information Administration report (EIA, 2001). The emission factor given in Table 6-7
+   Table 6-7. Offshore Well Completion Methane Emission Factors for Oil and Gas
+   6.2.4 Coal Seam Exploratory Drilling and Well Testing
+=== PDF PAGE 258 ===
+   EXHIBIT 6-5: Sample Calculation for Coal Seam Exploratory Drilling or Well
+

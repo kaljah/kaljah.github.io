@@ -1,0 +1,99 @@
+
+The command exited with code 0.
+Output:
+Section 6: Vented and Process Emission Estimation Methods
+6-63
+November 2021
+SGoil = Specific gravity of oil with respect to water = 
+Oil
+141.5
+131.5 G
+;
+Goil = API gravity of stock tank oil at 60°F, oAPI; and
+T = Temperature in vessel of interest, oK.
+Note that the units for the standing correlation variables are different than the VBE, so caution 
+should be exercised if both of these methods are used to estimate the flashing losses. For the 
+situation where the flash occurs from a separator to an atmospheric tank, the term in parenthesis 
+must be evaluated separately for the separator and the storage tank. For this scenario, Equation 6-
+22 would be expressed as shown:
+GOR = SGflash gas × [(
+P
+519.7 ×10yg
+)
+Separator
+1.204
+- (
+P
+519.7 ×10yg
+)
+Storage Tank
+1.204 ] (Equation 6-23)
+The Standing Correlation method was developed using regression analyses of experimentally 
+derived data. Table 6-21 below presents the range of parameters for the correlation and is 
+recommended to be used within the range of the experimental data used for developing this 
+equation.
+Table 6-21. Summary of Range of Data Used in Standing Correlation a
+Parameter Standing Correlation
+Size of Dataset 105
+Bubble Pressure (kPa) 895 to 48,250
+Reservoir Temperature (°C) 38 to 126
+Solution Gas-to-Oil Ratio at 
+Bubble Point Pressure (m3
+/m3
+)
+3.5 to 254
+Oil Specific Gravity (oAPI) 16.5 to 63.8
+Vapor Specific Gravity 0.59 to 0.95
+Footnotes and Sources:
+a Data obtained from the Canadian Association of Petroleum Products (CAPP) Estimation of Flaring and Venting 
+Volumes from Upstream Oil and Gas Facilities, Publication Number 2002-0009, May 2002. 
+Similar to the VBE correlation approach, the flash gas emissions estimated using the standing 
+correlation is provided in terms of total hydrocarbon and must be converted to a CH4 emissions 
+basis. As noted earlier, a default of 27.4 volume % CH4 is assumed for crude oil and 36.3 volume 
+% CH4 is assumed for condensate in the absence of site-specific data (Ogle, 1997a; Ogle, 1997b; 
+Picard, 1992; Hendler et al., 2009).
+A sample calculation illustrating the use of the standing correlation approach follows in 
+Exhibit 6-18(b):
+Section 6: Vented and Process Emission Estimation Methods
+6-64
+November 2021
+EXHIBIT 6-18(b): Sample Calculation for Flashing Loss Emissions – Standing 
+Correlation
+INPUT DATA:
+The facility is the same oil and gas production facility described in Exhibit 6.3-14(a) for the VBE 
+correlation approach. Namely, 451 bbl/day (71.70 m3
+/day) of crude (48.8° API gravity) is 
+produced, and flashing losses occur as the oil flows from a separator at 28.6 psig (197.2 kPa 
+gauge) and 112°F (44.4 °C) to an atmospheric tank. The atmospheric temperature (and thus the 
+storage tank temperature) is assumed to be 80°F (299.8 K). (Note that the atmospheric 
+temperature was not needed for the VBE approach presented earlier.) Flashing losses are not 
+controlled by a vapor recovery system. Calculate the flashing loss emissions using the standing 
+correlation approach.
+CALCULATION METHODOLOGY:
+Note that the separator absolute pressure is 43.3 psia (28.6 psig + 14.7 psia) while the tank 
+pressure is 1 atm. Thus, the pressures in kPa are:
+sep
+6.894757 kPa P = (43.3 psi)× =298.5 kPa
+psi tank
+101.325 kPa P (1 atm) =101.3 kPa
+atm
+
+Next, the oil API gravity (Goil) is converted to a specific gravity, using the definition in Equation 
+6-21:
+oil
+oil
+141.5 141.5 SG 0.785
+131.5 G 131.5 48.8
+  
+
+Next, the parameter, yg, can be calculated for both the separator and tank using the oil-specific 
+gravity and temperatures in the separator (112°F or 317.6 K) and the tank (80°F or 299.8 K), 
+using the definition in Equation 6-21:
+g, sep
+1.769 y 1.225 (0.00164) (317.6)- 0.5076
+0.785
+     g, tank
+1.769 y 1.225 (0.00164) (299.8)- 0.5368
+0.785
+    
+

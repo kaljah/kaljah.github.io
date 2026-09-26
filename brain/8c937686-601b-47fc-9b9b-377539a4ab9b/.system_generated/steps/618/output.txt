@@ -1,0 +1,42 @@
+
+The command exited with code 0.
+Output:
+elif process_type in ["flaring", "routine_flaring", "non_routine_flaring", "safety_flaring"]:
+elif process_type in ["drilling", "mud_degassing"]:
+elif process_type in ["liquids_unloading", "unloading"]:
+elif process_type in ["venting", "blowdown"]:
+elif process_type in ["associated_gas_venting", "associated_venting", "associated_gas"]:
+elif process_type in [
+                "tank",
+                "tank_flashing",
+                "storage_tanks",
+                "tank_working",
+                "tank_breathing",
+            ]:
+elif process_type in ["pneumatic_devices", "pneumatic_device", "pneumatic"]:
+elif process_type in ["compressor_seal", "compressor_fugitive"]:
+elif process_type in ["fugitive_component", "component_fugitive"]:
+elif process_type in [
+                "equipment_fugitive",
+                "wellhead_fugitive",
+                "separator_fugitive",
+                "gathering_boosting",
+                "gas_processing",
+                "transmission_storage",
+                "refinery_fugitive",
+                "distribution_fugitive",
+                "lng_operations",
+            ]:
+elif process_type in ["agr", "acid_gas_removal"]:
+elif process_type in ["cogen_allocation", "cogen"]:
+elif process_type in [
+                "nitric_acid_production",
+                "adipic_acid_production",
+            ]:
+elif process_type in [
+                "stoichiometry",
+                "chemical_production",
+                "asphalt_blowing",
+                "asphalt",
+            ]:
+

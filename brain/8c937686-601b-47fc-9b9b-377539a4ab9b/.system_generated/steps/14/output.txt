@@ -1,0 +1,13 @@
+
+The command exited with code 0.
+Output:
+27: def _split_vented_and_flared(
+87: def _propagate_vented_results(
+128: class MudDegassingCalculator(BaseCalculator):
+347: class CompletionFlowbackCalculator(BaseCalculator):
+868: class LiquidsUnloadingCalculator(BaseCalculator):
+1928: class BlowdownCalculator(BaseCalculator):
+2044: class TankFlashingCalculator(BaseCalculator):
+2149: class PneumaticDeviceCalculator(BaseCalculator):
+2243: class AssociatedGasVentingCalculator(BaseCalculator):
+

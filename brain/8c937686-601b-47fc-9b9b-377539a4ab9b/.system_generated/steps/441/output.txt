@@ -1,0 +1,121 @@
+
+The command exited with code 0.
+Output:
+Exhibit 6-37 illustrates the use of the simple crude oil transit emission factors.
+Table 6-49 for crude oil, by the volume transported and the CH4 content of the vapors. As a 
+6.11 Refining
+6.11.1 Catalyst Regeneration
+6.11.1.1 Catalytic Cracking Unit
+Equation 6-34)
+Equation 6-34.
+Equation 6-37 to quantify 
+Equation 6-34.
+Equation 6-35.
+Equation 6-36.
+Equation 6-34 is based on the fundamental principles of complete stoichiometric combustion of 
+Equation 6-34 can be restated in terms of catalyst regeneration rate and 
+Equation 6-35. The full equation derivation 
+Equation 6-35)
+Equation 6-36)
+Equation 6-37. The calculated coke burn rate can then be applied to Equation 6-34 to 
+Equation 6-37 is derived from the US 
+Equation 6-37)
+Exhibit 6-38.
+Equation 6-38 and Equation 6-39. Default factors for petroleum coke are 
+Equation 6-38)
+Equation 6-34 through Equation 6-37, converted to metric tonnes/year;
+Equation 6-39)
+Equation 6-34, Equation 6-36, or Equation 6-37, converted to (metric 
+6.36103 m3 per day catalytic cracking unit has a coke burn rate of 119,750 tonnes per 
+Equation 6-34, Equation 6-36, and Equation 6-37. Calculate the 
+Equation 6-34. Using Equation 6-34, the estimated CO2
+Equation 6-36. Using the air rate in Equation 6-36, the CO2
+Equation 6-37 yields:
+Equation 6-34)
+Equation 6-35),
+Equation 6-36)
+6.11.1.2 Other Catalyst Regenerator 
+Equation 6-40 or Equation 6-41, 
+Equation 6-40)
+Exhibit 6-39.
+Equation 6-40, the estimated CO2 emissions are calculated as follows:
+Equation 6-41)
+Exhibit 6-40.
+Equation 6-41.
+Equation 6-38 and Equation 6-39.
+6.11.2 Cokers 
+Equation 6-34. An example calculation for a fluid coker is shown in Exhibit 6.11-4.
+Equation 6-34 can also be used for flexi￾coker emissions, provided that the combustion of the low-Bt
+Equation 6-42.
+Equation 6-42)
+Equation 6-43 through Equation 6-47. First, the mass of coke in the delayed coking unit 
+Equation 6-43.
+Equation 6-43)
+Equation 6-44.
+Equation 6-44)
+Equation 6-45 or Equation 6-46 may be used, depending on available data. 
+Equation 6-45)
+Equation 6-46)
+Equation 6-46 are used below in Equation 6-47 to 
+Equation 6-47)
+Equation 6-34, the 
+6.11.3 Refinery Hydrogen Plant 
+6.11.1.2. The quantity of H2
+Equation 6-48)
+Equation 6-49 presents this material balance approach:
+Equation 6-49)
+Exhibit 6-42 demonstrates the approach to estimate the CO2
+Equation 6-49. The first step in calculating the CO2 emissions 
+Equation 6-49:
+Equation 6-50 based on re-arranging Equation 6-48. For this approach, it is important to apply 
+Equation 6-50 should not be 
+Equation 6-50)
+Equation 6-48;
+Exhibit 6-43.
+Equation 6-50, the carbon to hydrogen ratio must be calculated. The carbon to hydrogen 
+Equation 6-50:
+Equation 6-48) for 
+Table 6-50 provides the average natural gas 
+Table 6-50. Composition of U.S. Pipeline-Quality Natural Gas
+Equation 6-48 should be 
+Exhibit 6-44.
+Table 6-51 below:
+Table 6-51. Stoichiometric Conversion Emission Factor
+Equation 6-50, 
+6.11.4 Asphalt Blowing
+6.11.5.2).
+Table 6-52 can be used:
+Table 6-52. Default Asphalt Blowing Emission Factors
+6.38E-03 tonne CO2/m3 asphalt blown
+6.19E-03 tonne CO2/tonne asphalt blown
+6.24, 1998.
+Equation 6-51)
+Table 6-52 (tonne/bbl or tonne/ton); and
+Equation 6-52)
+Table 6-52 (tonne/bbl or tonne/ton);
+Table 6-52 (tonne/bbl or tonne/ton); and
+Equation 6-51 and Equation 6-52 should only be used to calculate 
+Equation 6-52 represents the vented CO2 emissions while 
+Exhibit 6-45 provides an example calculation for asphalt blowing emissions.
+Table 6-52.
+6.11.5 Coke Calcining
+Equation 6-53.
+Equation 6-53)
+6.11.6 Other Refining Related Venting Emissions
+6.10 for crude oil transport.
+6.10 for crude oil transport would also apply for 
+Equation 6-54.
+Equation 6-54)
+6.4), or by using a simplified emission 
+6.3.1 for associated gas venting should be used to estimate 
+6.12 Petrochemical Manufacturing
+6.11). 
+Equation 6-55)
+Table 6-53 provides average 
+Table 6-53. Chemical Production Emission Factors
+6.13 Retail and Marketing of Petroleum Liquids
+6.14 Fire Suppression Emissions
+Equation 6-56 (EPA, 2012), should be used. The material balance should consider the amount of 
+Equation 6-56)
+6.15 References
+

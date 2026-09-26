@@ -1,0 +1,16 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\Desktop\H2\new\server\calculations\vented_lng_distribution.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -209,9 +209,7 @@
+             gross_ch4_tonnes = 0.0
+             gross_co2_tonnes = 0.0
+         elif disp == "flared":
+-            eff = float(control_efficiency if control_efficiency is not None else 1.0)
+-            if eff < 0.5:  # If user supplied a percentage like 98%, normalize_efficiency handles it, but default is 1.0 of stream routed
+-                eff = normalize_efficiency(eff, default=1.0)
++            eff = 1.0
+         else:
+             eff = float(control_efficiency or 0.0)
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

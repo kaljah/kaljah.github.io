@@ -1,0 +1,24 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2\docs
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----         9/20/2026   6:22 PM                validation                                                           
+-a----         9/20/2026  10:08 AM          19664 calculation-specification.md                                         
+-a----         9/20/2026  10:43 AM          25275 validation-report.md                                                 
+
+
+    Directory: C:\Users\samsung\Desktop\H2\knowledge
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/19/2026   4:04 PM              0 knowledge.lock                                                       
+
+
+

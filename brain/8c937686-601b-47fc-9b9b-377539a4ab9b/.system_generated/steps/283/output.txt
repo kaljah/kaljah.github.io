@@ -1,0 +1,176 @@
+
+The command exited with code 0.
+Output:
+<truncated 6 lines>
+Produced water tanks may also contribute to CH4 vented emissions, though at a lower rate than 
+crude or condensate tanks. Methane is much less soluble in water than in hydrocarbon liquids; 
+therefore, the CH4 emissions are significantly lower. 
+6.3.9.1 Flashing Losses from Unstabilized Crude and Condensate Storage Tanks
+Unstabilized crude oil and condensate production tanks (primarily fixed roof tanks) emit CH4
+(and potentially CO2 for a CO2 -rich stream) through flashing losses, which occur as the liquid 
+pressure decreases from the sepa
+=== Page 300 ===
+Section 6: Vented and Process Emission Estimation Methods
+6-58
+November 2021
+However, such test data may not be available. Other estimation methods include computer 
+programs or process simulators, if sufficient input data are available. Correlation equations and 
+the chart approach may be used with less input data than the software programs or process 
+simulators require, but some basic process parameters are still needed (such as the separator 
+pressure). A simple emission factor approach is provided if only limited data are available. 
+Figure 6-3. Decision Tree for Unstabilized Storage Tank Flashing Losses
+Estimated flashing losses should be adjusted for any vapor recovery methods that may be 
+employed. These vapor recovery methods include capturing the flash gas and sending i
+=== Page 301 ===
+Section 6: Vented and Process Emission Estimation Methods
+6-59
+November 2021
+Flashing Losses from Computer Simulation Programs
+If sufficient input data is available, operators may choose to estimate flashing losses with process 
+simulators instead of the correlation approaches described below. The results could differ 
+between the process simulators and the correlation equations or chart approach due to different 
+assumptions used by each approach. However, if very limited input data is available, a simple 
+emission factor approach may be used.
+The use of correlation equations and emission factors for estimating flashing losses from crude 
+oil, condensate, and produced water storage tanks are discussed in the following subsections. 
+Example calculations are provided for these ap
+=== Page 302 ===
+Section 6: Vented and Process Emission Estimation Methods
+6-60
+November 2021
+The VBE correlation method was developed using regression analyses of experimentally derived 
+data. Below is the range of parameters for the correlation and is recommended to be used within 
+the range of the experimental data used for developing these equations (CAPP, 2002). The 
+Oklahoma Department of Environmental Quality and Texas Commission on Environmental 
+Quality also have guidance on a suggested allowable range and/or suggested default value for each 
+input variable (OK DEQ, 2016; TX CEQ, 2012). If a variable is below a suggested minimum 
+allowable value, the suggested minimum allowable value may be used for that variable. If a 
+variable is above a suggested maximum allowable value, another metho
+=== Page 303 ===
+Section 6: Vented and Process Emission Estimation Methods
+6-61
+November 2021
+2009). The average condensate tank vent CH4 content was 36.3 volume % from this study. These 
+values are recommended in the absence of site-specific data. A summary of the results of the 
+three studies is included in Appendix B.
+A sample calculation illustrating the use of the VBE applied to flashing loss emissions is 
+provided in Exhibit 6-18(a) below.
+EXHIBIT 6-18(a): Sample Calculation for Flashing Loss Emissions –VBE
+INPUT DATA:
+An oil and gas production facility produces 71.70 m3
+/day (451 bbl/day) of crude oil with an API 
+gravity of 48.8°. The separator pressure (immediately upstream of the tank) is 197.2 kPa gauge 
+(28.6 psig), and the separator temperature is 44.4C (112°F). Neither the tank 
+=== Page 304 ===
+Section 6: Vented and Process Emission Estimation Methods
+6-62
+November 2021
+3
+S 3
+3
+S 3
+9.33 scf gas m gas bbl crude R = × ×
+bbl crude 35.3147 scf gas 0.1589873 m crude
+1.66 m gas R =
+m crude
+The flash gas contains gases besides CH4 and thus the RS must be multiplied by the tank vent CH4
+content. The tank vent CH4 content is not known, so the recommended default concentration of 
+27.4 volume % CH4 will be used. The molar volume conversion is included below, taken from 
+Table 3-3. Thus, the CH4 emissions are estimated as:
+4
+4
+33
+4
+CH 33
+4
+4
+CH 4
+1.66 m gas 71.70 m oil 365 day kgmole gas 27.4 kgmole CH E = × × × ×
+m crude day yr 23.685 m 100 kgmole gas
+16 kg CH tonne
+ × ×
+kgmole CH 1000 kg
+E = 8.04 tonnes CH /yr
+Standing Correlation (Correlation Equation Approac
+=== Page 305 ===
+Section 6: Vented and Process Emission Estimation Methods
+6-63
+November 2021
+SGoil = Specific gravity of oil with respect to water = 
+Oil
+141.5
+131.5 G
+;
+Goil = API gravity of stock tank oil at 60°F, oAPI; and
+T = Temperature in vessel of interest, oK.
+Note that the units for the standing correlation variables are different than the VBE, so caution 
+should be exercised if both of these methods are used to estimate the flashing losses. For the 
+situation where the flash occurs from a separator to an atmospheric tank, the term in parenthesis 
+must be evaluated separately for the separator and the storage tank. For this scenario, Equation 6-
+22 would be expressed as shown:
+GOR = SGflash gas × [(
+P
+519.7 ×10yg
+)
+Separator
+1.204
+- (
+P
+519.7 ×10yg
+)
+Storage Tank
+1.204 
+=== Page 306 ===
+Section 6: Vented and Process Emission Estimation Methods
+6-64
+November 2021
+EXHIBIT 6-18(b): Sample Calculation for Flashing Loss Emissions – Standing 
+Correlation
+INPUT DATA:
+The facility is the same oil and gas production facility described in Exhibit 6.3-14(a) for the VBE 
+correlation approach. Namely, 451 bbl/day (71.70 m3
+/day) of crude (48.8° API gravity) is 
+produced, and flashing losses occur as the oil flows from a separator at 28.6 psig (197.2 kPa 
+gauge) and 112°F (44.4 °C) to an atmospheric tank. The atmospheric temperature (and thus the 
+storage tank temperature) is assumed to be 80°F (299.8 K). (Note that the atmospheric 
+temperature was not needed for the VBE approach presented earlier.) Flashing losses are not 
+controlled by a vapor recovery system. Calculate 
+=== Page 307 ===
+Section 6: Vented and Process Emission Estimation Methods
+6-65
+November 2021
+Thus, the input parameters for the standing correlation approach have been defined, and are 
+summarized below:
+SGflash gas = 0.90 (assume the default value in the absence of data)
+Psep = 298.5 kPa
+Ptank = 101.3 kPa
+yg, sep = -0.5076
+yg, tank = -0.5368
+The flash gas vent flow rate is calculated below, using Equation 6-23 and the above parameters.
+1.204 1.204
+33
+-0.5076 -0.5368
+Separator Storage Tank
+298.5 101.3 GOR = (0.90)× - 1.329 m gas/m oil
+519.7×10 519.7×10
+    
+     
+     
+The flash gas contains gases besides CH4 and must be multiplied by the tank vent CH4 content. 
+The tank vent CH4 content is not known, so the recommended default concentration of 27.4 
+volume % CH4
+=== Page 308 ===
+Section 6: Vented and Process Emission Estimation Methods
+6-66
+November 2021
+Similar to the VBE and standing correlation approaches, the flash gas emissions estimated using 
+the EUB rule-of-thumb approach are in terms of total hydrocarbon and must be converted to a 
+CH4 emissions basis. As noted earlier, a default of 27.4 volume % CH4 is assumed for crude oil
+in the absence of site-specific data (Ogle, 1997a; Ogle, 1997b; Picard, 1992). 
+A sample calculation illustrating the use of the EUB rule-of-thumb approach follows in 
+Exhibit 6-18(c).
+EXHIBIT 6-18(c): Sample Calculation for Flashing Loss Emissions – EUB Rule-of￾Thumb
+INPUT DATA:
+The facility is the same oil and gas production facility described in Exhibits 6.3-14(a) and 6.3-
+14(b) for the other two correlation approaches.
+

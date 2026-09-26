@@ -1,0 +1,21 @@
+Task: 8c937686-601b-47fc-9b9b-377539a4ab9b/task-343
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\8c937686-601b-47fc-9b9b-377539a4ab9b\.system_generated\tasks\task-343.log
+Log output:
+<truncated 64 lines>
+5
+E         Expected: 80506.0 � 10
+
+new\server\tests\test_vented_production_compendium.py:306: AssertionError
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_vented_production_compendium.py::TestPneumaticControllers::test_exhibit_6_11_continuous_low_bleed
+FAILED new\server\tests\test_vented_production_compendium.py::TestGasTreatment::test_exhibit_6_17_agr_co2_material_balance
+=================== 2 failed, 27 passed, 1 warning in 1.50s ===================
+
+Last progress: 1s ago

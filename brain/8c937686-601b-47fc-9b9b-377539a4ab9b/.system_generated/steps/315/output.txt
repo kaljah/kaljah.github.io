@@ -1,0 +1,208 @@
+
+The command exited with code 0.
+Output:
+<truncated 50 lines>
+Factors, Station Estimates, and National Emissions. October 2019 Revision. Table S3-42. 
+6.4.6 Other Gathering and Boosting-Related Venting Emissions
+6.4.6.1 Equipment and Process Blowdowns 
+Equipment blowdowns often take place prior to maintenance activities or as a result of 
+emergency conditions. This typically results in the depressurization of equipment to evacuate the 
+accumulated gas so maintenance or other activities can be performed. Equipment that is 
+frequently blown down in the gathering and boosting segment includes (but is not limited to) 
+compressors, process vessels (including separators, dehydrators, and in-line heaters), pipelines, 
+and pig launchers or receivers. 
+Emissions from blowdowns can generally be estimated by the following equation:
+ECH4 or CO2
+= 
+Gas Volume Released
+Event
+× Mole % CH4 or CO2
+× 
+#Events
+Year × 
+MWCH4 or CO2
+molar volume conversion
+(Equation 6-30)
+where:
+E
+4
+CH or 
+2
+CO = Emissions of CH4 or CO2 emissions in units of mass (e.g, lb or kg);
+=== Page 333 ===
+Section 6: Vented and Process Emission Estimation Methods
+6-91
+November 2021
+Gas Volume 
+Released
+= Volume of gas released during the blowdown event, in standard 
+conditions (e.g., scf @ 60oF and 14.7 psia or sm3 @ 15oC and 1 atm)
+MW CH4 or CO2 = Molecular weight of CH4 or CO2; and 
+Molar volume 
+conversion
+= Conversion from molar volume to mass (379.3 scf/lbmole or 23.685 
+Sm3
+/kgmole).
+Engineering assumptions based on equipment design specifications for the 
+vessel/pipeline/equipment of interest may be required to estimate the volume of gas released, 
+which is listed in Equation 6-31 below. For example, the volume released may be based on the 
+internal volume of a piece of equipment or the volume contained between isolation valves within
+a pipe section (assuming the entire contents are released). 
+In the absence of such design data, the CAPP document, Estimation of Flaring and Venting 
+Volumes from Upstream Oil and Gas Facilities, provides guidance on estimating the volumes for 
+several vessel types (CAPP, 2002, Section 3.2.4). These vessel types include horizontal and 
+vertical cylinders, and hemispherical and ellipsoidal end caps. Standard engineering equations 
+for estimating internal volumes may be applied and are described in the CAPP document 
+referenced above. The CAPP document also provides volumes per meter of pipeline length for 
+several pipe sizes and schedules (CAPP, 2002, Table 3-8). These volumes are provided in 
+Appendix B.
+The volume estimated using physical equipment dimensions represents the volume of gas at 
+actual temperature and pressure conditions at the process conditions before the blowdown event. 
+The actual volume of gas must be converted to standard conditions to use in Equation 6-30 (i.e., 
+the gas must be converted from actual cubic feet of gas (at actual temperature and pressure) to 
+standard cubic feet (at standard temperature and pressure) using the ideal gas law (see Section 
+3.5, Equation 3-4). Note that at high pressure conditions, the gas may not behave as an ideal gas 
+and the compressibility factor term in the gas law should be used to estimate the moles of gas, as 
+shown in Equation 6-31 below.
+PV nRT  z
+(Equation 6-31)
+where:
+P = Pressure (psia or atm);
+V = Volume;
+z = Compressibility factor, tables for CH4 and CO2 are provided in Perry’s Chemical 
+Engineer’s Handbook, Tables 3-172 and 3-166, respectively (Perry, 1984);
+n = Number of moles;
+R = Gas constant; and
+T = Absolute temperature (°R or K).
+Rearranging the ideal gas law, the equation to estimate moles of gas in the actual volume vented 
+becomes:
+RT
+PV
+ n
+z
+
+(Equation 6-32)
+=== Page 334 ===
+Section 6: Vented and Process Emission Estimation Methods
+6-92
+November 2021
+Using this equation, the moles of gas emitted can be converted to a mass basis by applying the 
+molecular weight of CH4 or CO2 as shown in Equation 6-33.
+CH or CO 4 2 CH or CO 4 2 CH or CO 4 2
+Moles Gas Released #Events E Mole% MW
+Event Year
+   
+(Equation 6-33)
+For gas pipeline pigging operations, the volume released would be based on the segment of 
+pipeline depressurized plus the volume of the pig catcher or launcher. Note that emissions 
+associated with unstabilized oil pipeline pigging operations should be calculated in a manner 
+similar to emissions from crude tank flashing, which is described in Section 6.3.9.1 for Flashing 
+Losses from Unstabilized Crude and Condensate Storage Tanks.
+An example of this approach is demonstrated in Exhibit 6-25.
+EXHIBIT 6-25: Sample Calculation for Estimating Equipment Blowdown Emissions
+INPUT DATA:
+The volume of gas vented from a vessel (e.g., a separator) must take into account whether or not 
+the fluids contained within the vessel will need to be removed to perform the desired maintenance 
+activity. For example, a low pressure separator, operating at 100 psig and ambient temperature 
+(~80 F), that is blown down to replace a gauge or a relief valve will likely leave the fluid levels 
+intact and remove only the gas. The vessel dimensions are 4 ft in diameter and 10 ft long. The gas 
+composition in the separator is 90% CH4 with no CO2. Calculate the CH4 emissions assuming that 
+the liquid volume occupies 1/3 of the vessel.
+CALCULATION METHODOLOGY:
+The first step in calculating emissions is to calculate the total volume (VT) of the vessel in the 
+separator. The actual volume is estimated based upon the internal dimensions:
+2
+23 4ft V r L 10 ft (actual)=125.7 ft (actual)
+2
+
+
+     
+The volume of gas (VG) released is a fraction of this total volume as defined by:
+VG = VT - (
+1
+3
+× VT ) = 125.7 ft3
+- (
+1
+3
+× 125.7 ft3
+) = 83.8 ft3
+(estimated) 
+=== Page 335 ===
+Section 6: Vented and Process Emission Estimation Methods
+6-93
+November 2021
+The moles of gas released is then calculated using Equation 6-32. The compressibility factor for 
+CH4 is determined to be 0.9864 (Perry, 1984).
+  3
+3
+o
+o
+(100 psig+14.7)× 83.8 ft
+n = 1.68 lbmoles gas/blowdown event
+psi ft 0.9864×10.73 ×539.7 R
+lbmole R
+
+Finally, the CH4 emissions are calculated using Equation 6-33:
+4
+4
+44
+CH
+4
+CH 4
+1.68 lbmoles gas 0.9 lbmoles CH 16 lb CH 1 blowdown tonne E = × × × ×
+blowdown event lbmoles gas lbmole CH yr 2204.62 lb
+E = 0.011 tonne CH /yr
+Use of the gas law is most appropriate for situations where the entire volume of the vessel is 
+blown down and the volume of gas released is finite. More rigorous engineering approaches are 
+needed for a blowdown situation where only a portion of the vessel contents is released. 
+When no specific equipment information is available, simplified CH4 emission factors from 
+certain types of equipment blowdown activities from Table 6-32 may be applied to estimate 
+emissions. The majority of these emission factors are taken from the GRI/EPA study (Shires, 
+1996b). 
+Table 6-32. Gathering Segment CH4 Emission Factors for Certain Blowdown 
+Activities
+Source
+Original Units, 
+Methane 
+Emission 
+Factor a
+Uncertainty b
+(%)
+Methane Emission 
+Factor,
+Converted to 
+Tonnes Basis
+Methane 
+Content Basis 
+of Factor
+(mole %)
+Whole Gas 
+Emission 
+Factor 
+(Converted) c
+Vessel 
+blowdowns
+78 scf CH4/yr￾vessel 326 0.0015 
+tonnes/vessel-yr
+78.8 99 scf gas/yr￾vessel
+Compressor 
+blowdowns
+3,774 scf 
+CH4/yr￾compressor
+179
+0.07239 
+tonnes/compressor￾yr
+78.8 4,789 scf gas/yr￾compressor
+Gathering gas 
+pipeline 
+blowdowns
+309 scf CH4/yr￾mile
+39.5
+0.00593 
+tonnes/mile-yr 78.8 392 scf gas/yr￾0.00368 tonne/km- mile
+yr
+Footnotes and Sources:
+a Shires, T.M. Methane Emissions from the Natural Gas Industry, Volume 7: Blow and Purge Activities, Final Report, GRI-94/0257.24 
+and EPA-600/R-96-080g, Gas Research Institute and U.S. Environmental Protection Agency, June 1996.
+

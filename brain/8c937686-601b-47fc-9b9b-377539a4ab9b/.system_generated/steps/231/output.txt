@@ -1,0 +1,8 @@
+
+The command exited with code 0.
+Output:
+Exhibit 6-2 test:
+Total gas scf: 735000.0 Expected: 735000
+CH4 tonnes: 9.868988454559977 Expected: ~9.84
+CO2 tonnes: 3.868312984371078 Expected: ~3.87
+

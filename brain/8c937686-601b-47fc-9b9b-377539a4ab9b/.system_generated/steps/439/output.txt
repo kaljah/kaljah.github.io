@@ -1,0 +1,35 @@
+
+The command exited with code 1.
+Output:
+Traceback (most recent call last):
+  File "<string>", line 8, in <module>
+  File "C:\Users\samsung\anaconda3\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\uf0b4' in position 4: character maps to <undefined>
+Exhibit 6-37 illustrates the use of the simple crude oil transit emission factors.
+Table 6-49 for crude oil, by the volume transported and the CH4 content of the vapors. As a 
+6.11 Refining
+6.11.1 Catalyst Regeneration
+6.11.1.1 Catalytic Cracking Unit
+Equation 6-34)
+Equation 6-34.
+Equation 6-37 to quantify 
+Equation 6-34.
+Equation 6-35.
+Equation 6-36.
+Equation 6-34 is based on the fundamental principles of complete stoichiometric combustion of 
+Equation 6-34 can be restated in terms of catalyst regeneration rate and 
+Equation 6-35. The full equation derivation 
+Equation 6-35)
+Equation 6-36)
+Equation 6-37. The calculated coke burn rate can then be applied to Equation 6-34 to 
+Equation 6-37 is derived from the US 
+Equation 6-37)
+Exhibit 6-38.
+Equation 6-38 and Equation 6-39. Default factors for petroleum coke are 
+Equation 6-38)
+Equation 6-34 through Equation 6-37, converted to metric tonnes/year;
+Equation 6-39)
+Equation 6-34, Equation 6-36, or Equation 6-37, converted to (metric 
+

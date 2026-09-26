@@ -1,0 +1,20 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\components\Scope1Form.jsx:33:import AssociatedGasVentingForm from "./scope1/AssociatedGasVentingForm";
+new\client\src\components\Scope1Form.jsx:1666:        return <AssociatedGasVentingForm {...props} />;
+new\client\src\__tests__\AssociatedGasVentingForm.test.jsx:4:import AssociatedGasVentingForm, { TABLE_6_8_BASINS } 
+from "../components/scope1/AssociatedGasVentingForm";
+new\client\src\__tests__\AssociatedGasVentingForm.test.jsx:7:describe("AssociatedGasVentingForm & Table 6-8 API 
+Reference Integrity", () => {
+new\client\src\__tests__\AssociatedGasVentingForm.test.jsx:61:      <AssociatedGasVentingForm
+new\client\src\__tests__\AssociatedGasVentingForm.test.jsx:104:      <AssociatedGasVentingForm
+new\client\src\__tests__\AssociatedGasVentingForm.test.jsx:138:      <AssociatedGasVentingForm
+new\client\src\__tests__\AssociatedGasVentingForm.test.jsx:161:      <AssociatedGasVentingForm
+new\client\src\__tests__\AssociatedGasVentingForm.test.jsx:187:      <AssociatedGasVentingForm
+new\client\src\__tests__\AssociatedGasVentingForm.test.jsx:201:      <AssociatedGasVentingForm
+new\client\src\__tests__\AssociatedGasVentingForm.test.jsx:222:      <AssociatedGasVentingForm
+
+
+

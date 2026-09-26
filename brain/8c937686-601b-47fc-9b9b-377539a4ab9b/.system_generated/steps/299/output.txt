@@ -1,0 +1,200 @@
+
+The command exited with code 0.
+Output:
+<truncated 140 lines>
+program conducted in east Texas for the Houston Advanced Research Center (Hendler et al., 
+2009), and is presented below. The development of this CH4 emission factor is presented in 
+Appendix B.
+Table 6-24. Production Condensate Flashing Emission Factors
+Emission Source Original Units, 
+Condensate Methane 
+Flashing Loss 
+Emission Factor
+Uncertainty Condensate 
+Methane Flashing 
+Loss Emission 
+Factor, Converted 
+to Tonnes Basis
+Separator 
+Methane 
+Content 
+Basis of 
+Factor a
+(kg CH4/bbl 
+condensate)
+(± %) (tonnes CH4/
+m3 condensate)
+(mole %)
+Large Tanks (≥ 10 bbl/day) b
+Without control c 0.146 Not specified 9.17E-4
+81.6% With VRU c 6.65E-3 4.19E-5
+*** PAGE 316 ***
+Section 6: Vented and Process Emission Estimation Methods
+6-74
+November 2021
+properly. When the dump valve is stuck open, natural gas from the separator may be vented to 
+the atmosphere through the storage tank. 
+EPA’s GHGRP requires producers to record the number of hours the dump valve was 
+malfunctioning and provides the following equation for estimating vented emissions during 
+valve malfunctioning (EPA, 2019a). 
+EDump Valve = CF ×E × yr
+8,760 hours
+× T (Equation 6-25)
+where:
+EDump 
+Valve
+= Annual volumetric GHG emissions resulted from dump valve malfunction 
+(scf/year); and
+CF = Correction factor for tank emission for a period of time, (dimensionless). 
+For separators in crude oil service, use 2.87, and for separators in 
+condensate service, use 4.37; and
+E = Storage tank emissions (scf/year); and
+T = Number of hours of dump malfunction (hours/year).
+See Equation 6-2 for an example of the conversion of volumetric emissions to mass emissions.
+Table 6-25 presents emission factors for improperly functioning separator dump valves, from 
+EPA’s GHGI (EPA, 2019b).
+Table 6-25. Improperly Functioning Separator Dump Valve Emission Factors
+Emission Source Original Units, 
+Emission Factor a
+(kg CH4/bbl)
+Uncertainty 
+(± %)
+Converted,
+Emission Factor
+(tonne CH4/m3
+)
+Methane 
+Content 
+Basis of 
+Factor b
+(mole %)
+Malfunctioning 
+separator dump 
+valves, in crude 
+service a
+2.70E-3 Not 
+specified
+1.70E-5 81.6%
+Malfunctioning 
+separator dump 
+valves, in condensate 
+service a
+2.64E-3 Not 
+specified
+1.66E-5 81.6%
+Footnotes and Sources:
+a EPA Inventory of U.S. Greenhouse Gas Emissions and Sinks 1990-2017. 2019. These values were calculated using year-specific 
+GHGRP Subpart W data for each control category (2017b). Note: These factors, used in the USEPA Inventory of U.S. Greenhouse Gas 
+Emissions and Sinks 1990-2017 (EPA, 2019b), are updated annually based on data reported from operators under the GHGRP.
+b Gas content taken from GHGI Annex 3.6 Table 3.6-3 for U.S. Production segment Methane Content in Natural Gas by NEMS Region (General 
+Sources). For the lower 48 states, in 2017, CH4 content at 81.6 mol%. The CH4 emission factor can be adjusted based on the CH4 content of the 
+site-specific gas, if the natural gas has a significantly different CH4 content from the default basis (if given). Also, if the facility gas contains 
+significant quantities of CO2, the CH4 emission factor can be adjusted based on the relative concentrations of CH4 and CO2 in the gas to estimate 
+the CO2 emissions.
+*** PAGE 318 ***
+Section 6: Vented and Process Emission Estimation Methods
+6-76
+November 2021
+(API, 1997b; API, 2014) and the VBE are based on properties specific to crude oil and, therefore 
+are not applicable to water tanks.
+Table 6-26 presents default emission factors from produced (salt) water tanks. These emission 
+factors were developed from data presented in Volume 6 of the 1996 GRI/EPA study (Shires et 
+al, 1996c). The GRI/EPA study estimated produced water emissions based on process simulator 
+modeling for salt contents of 2, 10, and 20%, and pressures of 50, 250, and 1000 psi. The 
+original emission factors are converted from a total CH4 mass rate to tonnes CH4 per volume of 
+produced water based on the national produced water volume used in the original process 
+simulations (Energy Environmental Research Center, 1995).
+Table 6-26. Produced Salt Water Tank Methane Flashing Emission Factors
+Separator 
+Pressure
+(psi)
+Produced Water 
+Salt Content
+GRI/EPA 
+Emission Rate a
+, 
+Original Units 
+(106
+lb CH4/yr)
+Water Tank Emission Factor
+tonne CH4 /1000 
+bbl produced 
+water b
+tonne CH4 /1000 
+m3 produced 
+water
+50 20% 1.6 0.0015 0.009185
+250 20% 10.8 0.00986 0.06200
+250 10% 16.4 0.0150 0.09414
+250 2% 19.4 0.0177 0.11137
+250 Average of 10.7% 
+c
+-- 0.0142 0.08917
+1000 20% 38.8 0.0354 0.22273
+1000 10% 58.7 0.0536 0.33697
+1000 2% 69.5 0.0634 0.39896
+1000 Average of 10.7%
+c
+-- 0.0508 0.31955
+Footnotes and Sources: 
+a Emission factors developed from Table 5-5 of Shires, T.M., and M.R. Harrison. Methane Emissions from the Natural Gas Industry, Volume 6:
+Vented and Combustion Source Summary, Final Report, GRI-94/0257.23 and EPA-600/R-96-080f, Gas Research Institute and U.S. Environmental 
+Protection Agency, June 1996. Uncertainty and CH4 content were not specified. 
+b Process simulation modeling based on 1990 annual salt water production of 497 million barrels from Energy Environmental Research Center, 1995.
+c Average of emission factors at 20, 10, and 2% salt.
+The Regional Association of Oil, Gas and Biofuels Sector Companies in Latin America and the 
+Caribbean (ARPEL) provides another source of general emission factors for produced water 
+flashing losses (ARPEL, 1998). Table 6-27 presents CH4 emission factors for produced water 
+from shallow gas wells (76 psi or less). These factors are based on produced water at a 
+temperature of 50°C (122°F). The base emission factor, developed from Chapter 9 of the API 
+Technical Data Book (API, 1984), is reported to be extremely approximate (ARPEL, 1998).
+*** PAGE 319 ***
+Section 6: Vented and Process Emission Estimation Methods
+6-77
+November 2021
+Table 6-27. Methane Emission Factors from Produced Water from Shallow Gas Wells
+Source 
+Information
+Methane Water Tank 
+Emission Factor a
+, 
+Original Units
+(kg/m3 produced 
+water)
+Methane Water Tank Emission 
+Factor, Converted to Tonnes Basis
+Shallow gas well
+(76 psi or less, 
+50°C)
+0.036 0.0057 tonnes/1000 bbl produced water
+0.036 tonnes/1000 m3 produced water
+Footnotes and Sources: 
+a Table 3.6 of ARPEL, Atmospheric Emissions Inventories Methodologies in the Petroleum Industry. ARPEL Guideline # 
+ARPELCIDA02AEGUI2298, Prepared by Jaques Whitford Environment Limited, December 1998. Uncertainty and CH4 content were 
+not specified.
+A sample calculation illustrating the use of the simple emission factor for produced water 
+emissions is presented below in Exhibit 6-21. 
+EXHIBIT 6-21: Sample Calculation for Water Tank Emissions – Simple Emission 
+Factor Approach
+INPUT DATA:
+An oil and gas production facility produces 50 bbl/day of water. The salt content of the water is 
+not known. The separator pressure (immediately upstream of the water tank) is 200 psig. 
+Calculate the CH4 emissions.
+CALCULATION METHODOLOGY:
+The CH4 flashing losses are calculated using the emission factor provided in Table 6-26 for 
+250 psi. It is recognized that this emission factor biases the estimate high since the actual 
+separator pressure is less than 250 psi. Because the salt content of the produced water is 
+unknown, the emission factor provided for the average salt content is used. The CH4 emissions 
+are estimated as shown below.
+4
+4
+4
+CH
+CH 4
+50 bbl water 365 day 0.0142 tonnes CH E = × ×
+day yr 1000 bbl water
+E = 0.26 tonne CH /yr
+Produced water tanks may also use natural gas for tank blanketing for safety purposes. If the 
+blanket gas is vented to the atmosphere, this is a source of CH4 vented emissions. Refer to 
+Section 6.5.3.1 for a discussion of the approach to quantify emissions from tank blanketing.
+

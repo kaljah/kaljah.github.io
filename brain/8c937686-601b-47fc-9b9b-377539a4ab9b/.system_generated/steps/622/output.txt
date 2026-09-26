@@ -1,0 +1,29 @@
+
+The command exited with code 0.
+Output:
+Line 379: return calculator.calculate_tier2(
+Line 401: return calculator.calculate_tier1(
+Line 421: return calculator.calculate(
+Line 511: return calculator.calculate(
+Line 589: return calculator.calculate(
+Line 666: return calculator.calculate(
+Line 682: return calculator.calculate(
+Line 697: return calculator.calculate(
+Line 764: return calculator.calculate(
+Line 828: return calculator.calculate_tier3_equation_6_11(
+Line 864: return calculator.calculate_tier3_equation_6_10(
+Line 934: return calculator.calculate_volume_based(
+Line 992: return calculator.calculate(
+Line 1093: return calculator.calculate(
+Line 1174: return calculator.calculate(
+Line 1215: return calculator.calculate(
+Line 1327: return calculator.calculate(
+Line 1367: return calculator.calculate(
+Line 1400: return calculator.calculate(
+Line 1451: return calculator.calculate(
+Line 1478: return calculator.calculate(
+Line 1532: return calculator.calculate(
+Line 1564: return calculator.calculate(
+Line 1638: return calculator.calculate(
+Line 1673: return calculator.calculate(
+

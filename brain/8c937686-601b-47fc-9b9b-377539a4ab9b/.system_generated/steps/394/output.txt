@@ -1,0 +1,42 @@
+
+The command exited with code 0.
+Output:
+=== PAGE 357 table ===
+ hole Gas 
+Emission Factor 
+(Converted)
+(scf gas/
+compressor-hr)
+Centrifugal 
+Compressor Wet 
+Seal – Operating 
+Mode a
+26.4 scf CH4/
+compressor-min Not reported 3.04x10-2 93.4 1,696
+Transmission 
+Centrifugal 
+Compressor Wet 
+Seal Degassing 
+Vent – Operating 
+Mode d, e
+160.2 scf whole 
+gas/compressor-hr Not reported 2.87x10-3 93.4 160
+Compressor Wet 
+Seal – average b, c
+16.0 scf CH4/
+compressor-min Not reported 1.84x10-2 93.4 1,028
+Compressor Dry 
+Seal – average b, c
+5.0 scf CH4/
+compressor-min Not reported 5.75x10-3 93.4 321
+Footnotes and Sources: 
+a Subramanian, R., et al. Environmental Science & Technology, Supplemental Information: Methane Emissions from Natural Gas Compressor 
+Stations in Transmission and Storage Sector: Measurements and Comparisons with the EPA Greenhouse Gas Reporting Program Protocol, 
+2015. 
+b Zimmerle, D, et al, Environmental Science & Technology, Methane Emissions from the Natural Gas Transmission and Storage System in the 
+United States, 2015.
+c Zimmerle study data includes venting from compressor seal as well as fugitive emissions from blowdown and isolation valve leakage.
+d Pipeline Research Council International, Inc. PRCI White Paper: Methane Emission Factors for Compressors in Natural Gas Transmission and 
+Underground Storage based on Subpart W Measurement Data. PR-312-18209-E01. October 2019. 
+e PRCI emission factors reported in Table 3-20 based on Subpart W measurement data reported to U.S. EPA under GHGRP.
+

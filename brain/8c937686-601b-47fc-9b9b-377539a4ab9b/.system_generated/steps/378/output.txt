@@ -1,0 +1,125 @@
+
+The command exited with code 0.
+Output:
+*** PAGE 328 ***
+Section 6: Vented and Process Emission Estimation Methods
+6-86
+November 2021
+Section 6.3.7 for production. See Equation 6-15 and Equation 6-16, as well as emission factors 
+listed in Table 6-16.
+6.4.3 Compressor Venting 
+In natural gas upstream and midstream segments, compressors are commonly used to increase 
+natural gas pressure in pipelines and production operations. Vented emissions from compressors
+occur from wet seals and dry seals in centrifugal compressors or rod packing surrounding the 
+mechanical compression components in reciprocating compressors. Compressors are a source of 
+vented emissions of CH4 during normal operation and during standby mode when the 
+compressor is pressurized and gas escapes through the seals. 
+In the gathering and boosting sector, reciprocating compressors are the primary compressors 
+used in onshore operations. Therefore, reciprocating compressor venting is discussed in this 
+section whereas centrifugal compressor venting is discussed in Section 6.5 for gas processing.
+Compressors are also a source of fugitive emissions from leakage across the compressor 
+blowdown valve when the compressor is pressurized (i.e., leakage across the closed blowdown 
+valve) or isolation valves when the compressor is depressurized and the blowdown valve is open 
+(i.e., leakage from the closed suction and discharge isolation valves). These fugitive emission 
+sources are covered in Section 7 under fugitive emissions from compressors. 
+6.4.3.1 Reciprocating Compressor Venting 
+Vented emissions from reciprocating compressors results from gas escaping through the rod 
+packing, a series of flexible rings that surround the piston rod and act as a seal to limit the release
+of compressed natural gas. Although the rod packing is designed to prevent leakage, small 
+amounts of natural gas slip out from around the rod packing when the compressor is pressurized 
+in either operating mode when the piston is moving or in pressurized, standby mode. The amount 
+of gas passing through the rod packing is a function of the cylinder pressure, alignment and wear 
+on the packing based on hours of operation. 
+Direct measurement is the most accurate way to determine venting losses from reciprocating 
+compressor venting as set out in the CCAC Technical Guidance Document Number 4: 
+Reciprocating Compressors (CCAC, 2017c). In the absence of measurement data, default CH4
+emission factors can be used to quantify the vented emissions from reciprocating compressor rod 
+packing seals. 
+Default emission factors are provided in Table 6-30 are based on a recent measurement study of 
+CH4 emissions from gathering and boosting stations in the US (Zimmerle, 2019), which includes 
+compressor venting emission factors for not only compressor rod packing, but also blowdown 
+vent, pocket vent on each cylinder, and a common single-unit vent. 
+In addition, default emission factors for rod packing venting are provided from production 
+operations in Canada based on a measurement program in Alberta are provided (Clearstone 
+Engineering, 2018). For comparison, default emission factors are also provided from EPA’s
+GHGRP which provides default emission factors for CH4 emitted from the rod packing on 
+reciprocating compressors during normal operation in the production and gathering and boosting 
+segments. These EPA GHGRP factors are derived from the GRI/EPA study (Hummel et al, 
+1996). See below for emission factors from the GHGRP (EPA, 2019a).
+*** PAGE 329 ***
+Section 6: Vented and Process Emission Estimation Methods
+6-87
+November 2021
+Table 6-30. Emission Factors for Compressor Rod Packing in the Gathering and Boosting 
+and Production Segments
+Source
+Original 
+Units, 
+Emission 
+Factor
+Uncertainty a
+(± %)
+Methane 
+Content 
+Basis of 
+Factor
+(mole %)
+Methane 
+Emission 
+Factor 
+(Converted) b
+(tonnes CH4/
+compressor￾hr)
+Whole Gas 
+Emission 
+Factor 
+(Converted) b
+(scf gas/
+compressor￾hr)
+Compressor Rod Packing 
+Compressor Rod 
+Packing – US c
+28.4 scf whole 
+gas/hr/
+compressor
+21 81.6 d 4.43x10-4 28.4
+Compressor Rod 
+Packing – US 
+GHGRP e,f
+9.48×103
+scf 
+CH4/year￾compressor
+85 78.8 g 2.07x10-5 1.37
+Compressor Rod 
+Packing -
+Alberta, Canada 
+h,i
+0.28745 m3
+THC/hr/
+compressor 
+88 81.6 d 1.39x10-4 10.2
+Footnotes and Sources:
+a Uncertainty based on 95% confidence interval. 
+b Assumes 8.760 hours/yr operation in pressurized mode.
+c Zimmerle, et al. Characterization of Methane Emissions from Gathering Compressor Stations: Final Report, DE-PE0029068, 2019.
+d Note that the original CH4 emission factor was converted to whole gas assuming 81.6 mole % CH4 in natural gas, according to GHGI (EPA, 
+2019b). 
+e US Environmental Protection Agency (USEPA), 2019. Greenhouse Gas Reporting Program – Subpart W – Petroleum and Natural Gas Systems. 
+Data reported as of August 4, 2019. https://ecfr.io/Title-40/sp40.23.98.w. These emission factors are based on EPA/GRI. Methane Emissions 
+from the Natural Gas Industry: Volume 8 – Equipment Leaks. Table 4-8, “Compressor Seal.” Pg 39. 1996. 
+https://www.epa.gov/sites/production/files/2016-08/documents/8_equipmentleaks.pdf.
+f Confidence interval converted from 90% in original data set to 95%. 
+g The original CH4 emission factor from the EPA/GRI study was based on 78.8 mole % CH4 in natural gas from the original study. 
+Therefore, 78.8 mole % CH4 composition should be used to adjust the emission factor to a different CH4 content.
+h Clearstone Engineering, Technical Report: Update of Equipment, Component and Fugitive Emission Factors for Alberta 
+Upstream Oil and Gas, prepared for Alberta Energy Regulator, June 10, 2018. 
+i Default emission factors are based on m3 THC at conditions of 15oC and 1 atm. Total hydrocarbon (THC) content of gas is assumed to be 100% 
+(i.e., no appreciable inerts).
+Gathering and boosting or production facilities can calculate GHG emissions from reciprocating 
+compressor rod packing venting using Equation 6-29 below. This is based on the GHGRP 
+Equation W-29D, with the inclusion of the average time that reciprocating compressors are in 
+pressurized mode (EPA, 2019a).
+Ex= (n × EFx × Tpressurized) (Equation 6-29)
+where:
+Ex = Emissions of “x” in units of mass (pounds, kg, tonnes) per year;
+

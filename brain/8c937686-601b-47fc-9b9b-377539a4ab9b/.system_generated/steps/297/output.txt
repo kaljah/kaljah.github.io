@@ -1,0 +1,40 @@
+
+The command exited with code 0.
+Output:
+=== Page 311 ===
+   default emission factor approach can be used. Table 6-22 below presents default emission factors 
+   The average value also presented in Table 6-22 below is derived from two published studies, one 
+   Table 6-22. Methane Flashing Loss Emission Factors for Crude Oil Storage Tanks
+=== Page 312 ===
+   The factors above in Table 6-22 can be used when the amount of produced crude is known. For 
+   EXHIBIT 6-20: Sample Calculation for Tank Flashing Losses - Simple Emission 
+   provided in Table 6-22. Please note that even though this emission factor is based on 81.6 mole 
+=== Page 313 ===
+   ECH4
+   ECH4
+   Table 6-23 summarizes tank flashing loss emission estimates for the various approaches 
+   Table 6-23. Summary of Crude Oil Production Tank Flashing Losses Using Different 
+=== Page 314 ===
+   Note that the comparison in Table 6-23 is not comprehensive because it is for only one set of 
+   production condensate flashing are presented below in Table 6-24, taken from EPA’s GHGI 
+   Table 6-24. Production Condensate Flashing Emission Factors
+=== Page 315 ===
+   The factors above in Table 6-24 can be used when the amount of produced condensate is known. 
+   6.3.9.2 Improperly Functioning Separator Dump Valve Emissions from Unstabilized 
+=== Page 316 ===
+   EDump Valve = CF ×E × yr
+   × T (Equation 6-25)
+   EDump 
+   See Equation 6-2 for an example of the conversion of volumetric emissions to mass emissions.
+   Table 6-25 presents emission factors for improperly functioning separator dump valves, from 
+   Table 6-25. Improperly Functioning Separator Dump Valve Emission Factors
+=== Page 317 ===
+=== Page 318 ===
+   Table 6-26 presents default emission factors from produced (salt) water tanks. These emission 
+   Table 6-26. Produced Salt Water Tank Methane Flashing Emission Factors
+   flashing losses (ARPEL, 1998). Table 6-27 presents CH4 emission factors for produced water 
+=== Page 319 ===
+   Table 6-27. Methane Emission Factors from Produced Water from Shallow Gas Wells
+   EXHIBIT 6-21: Sample Calculation for Water Tank Emissions – Simple Emission 
+   The CH4 flashing losses are calculated using the emission factor provided in Table 6-26 for 
+

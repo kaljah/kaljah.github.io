@@ -1,0 +1,49 @@
+
+The command exited with code 0.
+Output:
+=== Page 363 ===
+   ECH4
+   ECH4
+   ECH4
+   ECH4
+   6.7 LNG Operations 
+   6.7.1 Gas Treatment and Liquefaction Processes 
+=== Page 364 ===
+   6.7.1.1 LNG Compressor Venting 
+   6.7.1.2 LNG Other Generic Process Vents 
+=== Page 365 ===
+   6.7.1.3 Non-Routine Vented Emissions from LNG Liquefaction 
+   6.7.2 LNG Storage and Loading Operations 
+   6.7.2.1 LNG Storage 
+   6.7.2.2 LNG Loading and Unloading 
+=== Page 366 ===
+   Table 6-44 below lists typical pipeline loss rates of BOG during loading and unloading of LNG, 
+   approach). The emission factors listed below in Table 6-44 should only be used to estimate 
+   potential emissions if the emissions are not captured or flared. The data in Table 6-44 could also 
+   Table 6-44. Typical Pipeline Loss Rates
+   6.7.2.3 Non-Routine Vented Emissions from LNG Storage Stations 
+   6.7.3 LNG Shipping
+=== Page 367 ===
+   6.7.4 LNG Import and Export Terminals 
+=== Page 368 ===
+   6.8 Natural Gas Distribution
+   6.8.1 Natural Gas Driven Pneumatic Controllers 
+   Alternatively, default emission factors presented by controller type are provided in Table 6-45
+=== Page 369 ===
+   Table 6-45. Emission Factors for Gas-Driven Pneumatic Controllers Located in the Gas 
+   6.8.2 Other Natural Gas Distribution Venting Related Emissions 
+   Table 6-46. Note that the factors shown in Table 6-46 are provided on an equipment/facility 
+=== Page 370 ===
+   Table 6-46. Gas Distribution Segment Emission Factors for Non-Routine Activities
+   Similar to the transmission segment, the non-routine emission factors given in Table 6-46 can be 
+=== Page 371 ===
+   EXHIBIT 6-34: Sample Calculation for Distribution Non-Routine Related Emissions
+   from Table 6-46. The CH4 emission factors are not corrected by the site CH4 content because the 
+=== Page 372 ===
+   EXHIBIT 6-34: Sample Calculation for Distribution Non-Routine Related Emissions, 
+=== Page 373 ===
+=== Page 374 ===
+=== Page 375 ===
+=== Page 376 ===
+   Table 6-47 provides simplified TOC emission factors for loading loss emissions for crude oil 
+

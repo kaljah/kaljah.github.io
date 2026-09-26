@@ -1,0 +1,46 @@
+
+The command exited with code 0.
+Output:
+Page 332:
+   6.4.6.1 Equipment and Process Blowdowns 
+   Equipment blowdowns often take place prior to maintenance activities or as a result of 
+   emergency conditions. This typically results in the depressurization of equipment to evacuate the 
+   Emissions from blowdowns can generally be estimated by the following equation:
+   (Equation 6-30)
+Page 333:
+   = Volume of gas released during the blowdown event, in standard 
+   which is listed in Equation 6-31 below. For example, the volume released may be based on the 
+   actual temperature and pressure conditions at the process conditions before the blowdown event. 
+   The actual volume of gas must be converted to standard conditions to use in Equation 6-30 (i.e., 
+   shown in Equation 6-31 below.
+   (Equation 6-31)
+   (Equation 6-32)
+Page 334:
+   molecular weight of CH4 or CO2 as shown in Equation 6-33.
+   (Equation 6-33)
+   pipeline depressurized plus the volume of the pig catcher or launcher. Note that emissions 
+   EXHIBIT 6-25: Sample Calculation for Estimating Equipment Blowdown Emissions
+Page 335:
+   The moles of gas released is then calculated using Equation 6-32. The compressibility factor for 
+   n = 1.68 lbmoles gas/blowdown event
+   Finally, the CH4 emissions are calculated using Equation 6-33:
+   1.68 lbmoles gas 0.9 lbmoles CH 16 lb CH 1 blowdown tonne E = × × × ×
+   blowdown event lbmoles gas lbmole CH yr 2204.62 lb
+   needed for a blowdown situation where only a portion of the vessel contents is released. 
+   certain types of equipment blowdown activities from Table 6-32 may be applied to estimate 
+   Table 6-32. Gathering Segment CH4 Emission Factors for Certain Blowdown 
+   blowdowns
+   blowdowns
+   blowdowns
+Page 336:
+   EXHIBIT 6-26: Sample Calculation for Equipment Blowdown Emissions
+   mole % CH4 and 8 mole % CO2. Calculate the blowdown vented emissions, by activity.
+   The equipment count for each maintenance related activity (vessel blowdowns, compressor 
+   blowdowns, and gathering pipeline blowdowns) is multiplied by the appropriate emission factor 
+   Vessel blowdowns: 
+Page 337:
+   Compressor blowdowns:
+   Gathering pipeline blowdowns:
+Page 338:
+   blowdowns occur when the compressor is depressurized to the atmosphere when it is shutdown. 
+

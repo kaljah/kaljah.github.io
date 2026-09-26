@@ -1,0 +1,18 @@
+
+The command exited with code 0.
+Output:
+on equipment design 
+specifications for the vessel/pipeline/equipment of interest. In the absence of design data, the 
+CAPP document, Estimation of Flaring and Venting Volumes from Upstream Oil and Gas 
+Facilities, provides guidance on estimating the volumes for several vessel types (CAPP, 2002, 
+Section 3.2.4). These vessel types include horizontal and vertical cylinders, and hemispherical and 
+ellipsoidal end caps. 
+The CAPP document also provides volumes per meter of pipeline length for several pipe sizes and 
+schedules, which are presented in Table B-15. 
+Use of the gas law is most appropriate for situations where the entire volume of the vessel is blown 
+down and the gas blowdown volume is finite. More rigorous engineering approaches are needed 
+for a blowdown situation where only a portion of the vessel contents are released. 
+These approaches are based on modeling the releases as isentropic flow of an ideal gas through a 
+nozzle. This approach requires release parameters such as the open cross-sectional area of the 
+release, wellhead pressure, and the gas specific heat ratio (Cp/Cv). These approaches are most 
+

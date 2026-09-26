@@ -1,0 +1,32 @@
+
+The command exited with code 0.
+Output:
+6.2 Oil and Natural Gas Exploration -> PDF page 244
+6.2.1 Well Drilling -> PDF page 244
+6.2.2 Well Testing -> PDF page 247
+6.2.3 Well Completions -> PDF page 250
+6.2.4 Coal Seam Exploratory Drilling -> PDF page 257
+6.3 Oil and Natural Gas Production -> PDF page 259
+6.3.1 Associated Gas Venting -> PDF page 259
+6.3.2 Workovers without Hydraulic Fracturing -> PDF page 263
+6.3.3 Workovers with Hydraulic Fracturing -> PDF page 265
+6.3.4 Well Venting from Liquids Unloading -> PDF page 265
+6.3.5 Casing Gas Vents -> PDF page 270
+6.3.6 Natural Gas Driven Pneumatic Controllers -> PDF page 274
+6.3.7 Gas Driven Pneumatic Pumps -> PDF page 282
+6.3.8 Gas Treatment Processes -> PDF page 285
+6.3.9 Storage Tank Emissions -> PDF page 298
+6.3.10 CO2 Enhanced Oil Recovery -> PDF page 320
+6.3.11 Other Production Related Venting -> PDF page 322
+6.4 Oil and Gas Gathering and Boosting -> PDF page 324
+6.5 Natural Gas Processing -> PDF page 340
+6.6 Natural Gas Transmission and Storage -> PDF page 353
+6.7 LNG Operations -> PDF page 363
+6.8 Natural Gas Distribution -> PDF page 368
+6.9 Enhanced Oil Recovery, Carbon Capture -> PDF page 373
+6.10 Crude Oil Transport -> PDF page 376
+6.11 Refining -> PDF page 381
+6.12 Petrochemical Manufacturing -> PDF page 407
+6.13 Retail and Marketing -> PDF page 410
+6.14 Fire Suppression Emissions -> PDF page 410
+
