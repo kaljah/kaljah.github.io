@@ -6,7 +6,7 @@ from routes.auth import login_required
 from calculations.uncertainty import propagate_uncertainty, Tier
 from calculations.units import compute_scope3_co2e
 from utils import get_current_user, get_allowed_facility_ids, log_activity_and_notify, require_facility_access, initial_record_status
-from validation import ValidationError, parse_number, parse_year, parse_month, normalize_scope3_category
+from input_validation import ValidationError, parse_number, parse_year, parse_month, normalize_scope3_category
 import datetime
 
 scope3_bp = Blueprint("scope3", __name__)

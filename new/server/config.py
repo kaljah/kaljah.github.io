@@ -14,6 +14,7 @@ class Config:
         or "development"
     ).lower()
     _is_production = _env_name in ["production", "prod", "staging"]
+    IS_PRODUCTION = _is_production
 
     if _is_production:
         SECRET_KEY = os.environ.get("SECRET_KEY")

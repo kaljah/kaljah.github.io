@@ -1,0 +1,122 @@
+"""RC-1 authorization / facility-scope regressions (AUDIT_FINDINGS.md).
+
+Each test names the BUG it guards. Expected values come from the audit's stated
+expected behaviour, not from current output.
+"""
+import pytest
+
+from extensions import db
+from models import CustomFactor, Facility
+from tests.audit_helpers import login, make_facility, make_user, uniq, upload
+
+
+@pytest.fixture
+def ctx(app):
+    with app.app_context():
+        yield
+
+
+# ── BUG-001: bulk job endpoint must enforce the dedicated endpoints' roles ──────────
+
+@pytest.mark.parametrize("role,location", [("user", "West"), ("it_admin", "Global"), ("it", "Global")])
+def test_bug001_non_admin_cannot_bulk_import_facilities_or_factors(client, ctx, role, location):
+    target = make_facility(region="Center")
+    u = make_user(role, location)
+    login(client, u)
+    evil = uniq("EVIL")
+    r1, _, _ = upload(client, f"name,location\n{target.name},HACKED\nNEW_{evil},X\n", "facilities")
+    r2, _, _ = upload(client, f"name,co2_factor,unit\n{evil},999,scf\n", "custom_factors")
+    assert r1.status_code == 403 and r2.status_code == 403
+    db.session.expire_all()
+    assert db.session.get(Facility, target.id).location == "Center"
+    assert Facility.query.filter_by(name=f"NEW_{evil}").count() == 0
+    assert CustomFactor.query.filter_by(name=evil).count() == 0
+
+
+def test_bug001_it_roles_cannot_start_any_bulk_job(client, ctx):
+    login(client, make_user("it_admin", "Global"))
+    r, _, _ = upload(client, "date,facility_name,quantity\n2024-01,X,1\n", "1")
+    assert r.status_code == 403
+
+
+def test_bug001_regional_superuser_cannot_overwrite_or_reregion_other_region(client, ctx):
+    center = make_facility(region="Center")
+    west = make_facility(region="West")
+    login(client, make_user("superuser", "West"))
+    # overwrite a Center facility
+    _, _, st = upload(client, f"name,location\n{center.name},HACKED\n", "facilities")
+    # move own West facility to East through bulk overwrite
+    _, _, st2 = upload(client, f"name,region\n{west.name},East\n", "facilities")
+    db.session.expire_all()
+    assert db.session.get(Facility, center.id).location == "Center"
+    assert db.session.get(Facility, west.id).region == "West"
+
+
+def test_bug001_admin_can_still_bulk_import_facilities(client, ctx):
+    login(client, make_user("admin", "Global"))
+    name = uniq("ADMINFAC")
+    _, _, st = upload(client, f"name,location,region\n{name},Loc,East\n", "facilities")
+    assert st["status"] == "completed", st
+    assert Facility.query.filter_by(name=name).count() == 1
+
+
+# ── BUG-093: PUT /api/facilities/<id> must keep the facility inside the caller's scope ──
+
+def test_bug093_regional_superuser_cannot_move_facility_out_of_region(client, ctx):
+    f = make_facility(region="West")
+    login(client, make_user("superuser", "West"))
+    r = client.put(f"/api/facilities/{f.id}", json={"region": "East", "location": "East"})
+    assert r.status_code == 403
+    db.session.expire_all()
+    assert db.session.get(Facility, f.id).region == "West"
+    # editing within the region still works
+    assert client.put(f"/api/facilities/{f.id}", json={"description": "ok"}).status_code == 200
+
+
+def test_bug093_admin_may_reregion(client, ctx):
+    f = make_facility(region="West")
+    login(client, make_user("admin", "Global"))
+    assert client.put(f"/api/facilities/{f.id}", json={"region": "East"}).status_code == 200
+
+
+# ── BUG-029: facility name is required; NULL-name rows must not break bulk import ──
+
+@pytest.mark.parametrize("payload", [{"region": "West"}, {"name": "", "region": "West"}, {"name": "   ", "region": "West"}])
+def test_bug029_create_facility_requires_name(client, ctx, payload):
+    login(client, make_user("admin", "Global"))
+    before = Facility.query.count()
+    r = client.post("/api/facilities", json=payload)
+    assert r.status_code == 400
+    assert Facility.query.count() == before
+
+
+def test_bug029_bulk_import_survives_legacy_null_name_facility(client, ctx):
+    legacy = Facility(name=None, region=None)
+    db.session.add(legacy)
+    db.session.commit()
+    fac = make_facility(region="West")
+    login(client, make_user("admin", "Global"))
+    csv = ("date,facility_name,process_type,fuel_type,quantity,unit,factor_type\n"
+           f"2024-03,{fac.name},combustion,Natural Gas,100,MMBtu,default\n")
+    _, _, st = upload(client, csv, "1")
+    assert st["status"] == "completed", st
+    assert not any("NoneType" in str(e) for e in st.get("errors", []))
+    db.session.delete(legacy)
+    db.session.commit()
+
+
+# ── BUG-045: optional latitude/longitude ────────────────────────────────────────────
+
+def test_bug045_blank_coordinates_are_accepted(client, ctx):
+    login(client, make_user("admin", "Global"))
+    r = client.post("/api/facilities", json={"name": uniq("F"), "region": "West", "latitude": "", "longitude": ""})
+    assert r.status_code == 201, r.get_data(as_text=True)
+    f = db.session.get(Facility, r.get_json()["id"])
+    assert f.latitude is None and f.longitude is None
+
+
+@pytest.mark.parametrize("lat,lon", [("abc", 3), (91, 3), (10, 181)])
+def test_bug045_invalid_coordinates_rejected_with_400(client, ctx, lat, lon):
+    login(client, make_user("admin", "Global"))
+    r = client.post("/api/facilities", json={"name": uniq("F"), "region": "West", "latitude": lat, "longitude": lon})
+    assert r.status_code == 400
