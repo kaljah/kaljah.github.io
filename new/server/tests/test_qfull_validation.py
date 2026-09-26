@@ -317,48 +317,69 @@ class TestFlaringTier3:
         assert em['ch4'] == pytest.approx(ch4_tonnes, rel=1e-4)
 
 class TestMudDegassing:
-    """Test Suite for Mud Degassing."""
-    def test_mud_water_based(self):
-        payload = {
-            'process_type': 'drilling',
-            'quantity': 200.0,
-            'unit': 'm3',
-            'factor_source': 'specific',
-            'mud_type': 'water_based'
-        }
-        ef = 0.15 # kg CH4/m3
-        ch4_tonnes = 200.0 * ef / 1000
-        
-        em, method = compute_emissions(payload, {}, GWP_AR5)
-        assert em['ch4'] == pytest.approx(ch4_tonnes, rel=1e-4)
-        
-    def test_mud_oil_based(self):
-        payload = {
-            'process_type': 'drilling',
-            'quantity': 100.0,
-            'unit': 'm3',
-            'factor_source': 'specific',
-            'mud_type': 'oil_based'
-        }
-        ef = 0.35 # kg CH4/m3
-        ch4_tonnes = 100.0 * ef / 1000
-        
-        em, method = compute_emissions(payload, {}, GWP_AR5)
-        assert em['ch4'] == pytest.approx(ch4_tonnes, rel=1e-4)
+    """Test Suite for Mud Degassing (Tier 1, Tier 2, Tier 2+)."""
 
-    def test_mud_synthetic(self):
+    def test_tier1_wells(self):
+        wells = 5.0
         payload = {
             'process_type': 'drilling',
-            'quantity': 300.0,
-            'unit': 'm3',
-            'factor_source': 'specific',
-            'mud_type': 'synthetic'
+            'quantity': wells,
+            'unit': 'well',
+            'tier': 'tier1',
+            'factor_source': 'default',
         }
-        ef = 0.25 # kg CH4/m3
-        ch4_tonnes = 300.0 * ef / 1000
-        
+        expected_ch4 = wells * 0.0524
         em, method = compute_emissions(payload, {}, GWP_AR5)
-        assert em['ch4'] == pytest.approx(ch4_tonnes, rel=1e-4)
+        assert em['ch4'] == pytest.approx(expected_ch4, rel=1e-4)
+
+    def test_tier2_water_based(self):
+        drilling_days = 15.0
+        payload = {
+            'process_type': 'drilling',
+            'drilling_days': drilling_days,
+            'quantity': drilling_days,
+            'unit': 'days',
+            'tier': 'tier2',
+            'factor_source': 'custom',
+            'mud_type': 'water_based',
+        }
+        expected_ch4 = drilling_days * 0.0458
+        em, method = compute_emissions(payload, {}, GWP_AR5)
+        assert em['ch4'] == pytest.approx(expected_ch4, rel=1e-4)
+
+    def test_tier2_oil_based(self):
+        drilling_days = 25.0
+        payload = {
+            'process_type': 'drilling',
+            'drilling_days': drilling_days,
+            'quantity': drilling_days,
+            'unit': 'days',
+            'tier': 'tier2',
+            'factor_source': 'custom',
+            'mud_type': 'oil_based',
+        }
+        expected_ch4 = drilling_days * 0.0103
+        em, method = compute_emissions(payload, {}, GWP_AR5)
+        assert em['ch4'] == pytest.approx(expected_ch4, rel=1e-4)
+
+    def test_tier2_plus_gas_composition(self):
+        drilling_days = 10.0
+        payload = {
+            'process_type': 'drilling',
+            'drilling_days': drilling_days,
+            'quantity': drilling_days,
+            'unit': 'days',
+            'tier': 'tier2_plus',
+            'factor_source': 'tier2_plus',
+            'mud_type': 'water_based',
+            'ch4_fraction': 0.85,
+            'co2_fraction': 0.02,
+        }
+        expected_ch4 = drilling_days * 0.0458 * (0.85 / 0.8385)
+        expected_co2 = drilling_days * 0.0458 * (0.02 / 0.8385) * (44.01 / 16.04)
+        em, method = compute_emissions(payload, {}, GWP_AR5)
+        assert em['ch4'] == pytest.approx(expected_ch4, rel=1e-4)
+        assert em['co2'] == pytest.approx(expected_co2, rel=1e-4)
 
 class TestCompletions:
     """Test Suite for Completions."""

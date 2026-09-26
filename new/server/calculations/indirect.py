@@ -111,6 +111,8 @@ class CogenAllocationCalculator(BaseCalculator):
         power_output,
         method="wri_efficiency",
         uncertainties=None,
+        heat_unit="mmbtu",
+        power_unit="mmbtu",
     ):
         """
         API Section 8.3 - Allocation of Cogeneration Emissions
@@ -125,19 +127,26 @@ class CogenAllocationCalculator(BaseCalculator):
             ["total_emissions", "heat_output", "power_output"],
         )
 
+        p_unit = str(power_unit or "mmbtu").lower().strip()
+        if p_unit in ["mwh", "megawatt_hours", "kwh"]:
+            mult = 3.412142 if p_unit != "kwh" else 0.003412142
+            power_mmbtu = power_output * mult
+        else:
+            power_mmbtu = power_output
+
         if method == "wri_efficiency":
             # API Equation 8-5: WRI/WBCSD Efficiency Method
             # e_h = 0.8 (default), e_p = 0.33 (default)
             e_h = 0.8
             e_p = 0.33
-            denominator = (heat_output / e_h) + (power_output / e_p)
+            denominator = (heat_output / e_h) + (power_mmbtu / e_p)
             allocated_heat = ((heat_output / e_h) / denominator) * total_emissions if denominator > 0 else 0.0
-            allocated_power = ((power_output / e_p) / denominator) * total_emissions if denominator > 0 else 0.0
+            allocated_power = ((power_mmbtu / e_p) / denominator) * total_emissions if denominator > 0 else 0.0
         else:
             # Energy content allocation
-            denominator = heat_output + power_output
+            denominator = heat_output + power_mmbtu
             allocated_heat = (heat_output / denominator) * total_emissions if denominator > 0 else 0.0
-            allocated_power = (power_output / denominator) * total_emissions if denominator > 0 else 0.0
+            allocated_power = (power_mmbtu / denominator) * total_emissions if denominator > 0 else 0.0
 
         _unc_dict = uncertainties or {}
         _tier = resolve_tier(_unc_dict.get("_factor_source", "default"))

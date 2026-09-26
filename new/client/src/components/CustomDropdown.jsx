@@ -1,4 +1,11 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  useId,
+  useLayoutEffect,
+} from "react";
 import { createPortal } from "react-dom";
 import "./CustomDropdown.css";
 
@@ -8,11 +15,43 @@ const CustomDropdown = ({
   onChange,
   placeholder = "Select...",
   renderOption,
+  id,
+  "aria-label": ariaLabel,
+  "aria-labelledby": ariaLabelledBy,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [position, setPosition] = useState(null);
+  const [activeIndex, setActiveIndex] = useState(-1);
+  const [autoLabelId, setAutoLabelId] = useState(null);
   const wrapperRef = useRef(null);
   const portalRef = useRef(null);
+  const triggerRef = useRef(null);
+  const reactId = useId();
+  const baseId = id || `dd-${reactId.replace(/[^a-zA-Z0-9_-]/g, "")}`;
+  const listboxId = `${baseId}-listbox`;
+  const optionId = (idx) => `${baseId}-opt-${idx}`;
+
+  // BUG-107: give the trigger an accessible name. Most call sites render
+  // `<label>Region</label><CustomDropdown/>` inside the same group, so when no
+  // explicit aria-label / aria-labelledby is passed, associate the nearest
+  // preceding <label> sibling (or the group's first label) with the trigger.
+  useLayoutEffect(() => {
+    if (ariaLabel || ariaLabelledBy || !wrapperRef.current) return;
+    let label = null;
+    let el = wrapperRef.current.previousElementSibling;
+    while (el && !label) {
+      if (el.tagName === "LABEL") label = el;
+      else label = el.querySelector?.("label") || null;
+      el = el.previousElementSibling;
+    }
+    if (!label) {
+      const parent = wrapperRef.current.parentElement;
+      label = (parent && parent.querySelector(":scope > label")) || null;
+    }
+    if (!label) return;
+    if (!label.id) label.id = `${baseId}-label`;
+    setAutoLabelId(label.id);
+  }, [ariaLabel, ariaLabelledBy, baseId]);
 
   const updatePosition = useCallback(() => {
     if (!wrapperRef.current) return;
@@ -41,14 +80,109 @@ const CustomDropdown = ({
     });
   }, []);
 
+  const selectableIndexes = options
+    .map((opt, idx) => (opt && !opt.isHeader ? idx : -1))
+    .filter((idx) => idx >= 0);
+
+  const openMenu = () => {
+    updatePosition();
+    const selectedIdx = options.findIndex(
+      (opt) => opt && !opt.isHeader && opt.value === value,
+    );
+    setActiveIndex(
+      selectedIdx >= 0 ? selectedIdx : (selectableIndexes[0] ?? -1),
+    );
+    setIsOpen(true);
+  };
+
+  const closeMenu = (restoreFocus = false) => {
+    setIsOpen(false);
+    setActiveIndex(-1);
+    if (restoreFocus && triggerRef.current) triggerRef.current.focus();
+  };
+
   const handleToggle = () => {
     if (!isOpen) {
-      updatePosition();
-      setIsOpen(true);
+      openMenu();
     } else {
-      setIsOpen(false);
+      closeMenu();
     }
   };
+
+  const moveActive = (delta) => {
+    if (selectableIndexes.length === 0) return;
+    const pos = selectableIndexes.indexOf(activeIndex);
+    let next;
+    if (delta === "first") next = 0;
+    else if (delta === "last") next = selectableIndexes.length - 1;
+    else if (pos < 0) next = delta > 0 ? 0 : selectableIndexes.length - 1;
+    else
+      next = Math.min(selectableIndexes.length - 1, Math.max(0, pos + delta));
+    setActiveIndex(selectableIndexes[next]);
+  };
+
+  const handleKeyDown = (e) => {
+    switch (e.key) {
+      case "ArrowDown":
+        e.preventDefault();
+        if (!isOpen) openMenu();
+        else moveActive(1);
+        break;
+      case "ArrowUp":
+        e.preventDefault();
+        if (!isOpen) openMenu();
+        else moveActive(-1);
+        break;
+      case "Home":
+        if (isOpen) {
+          e.preventDefault();
+          moveActive("first");
+        }
+        break;
+      case "End":
+        if (isOpen) {
+          e.preventDefault();
+          moveActive("last");
+        }
+        break;
+      case "Enter":
+      case " ":
+        e.preventDefault();
+        if (!isOpen) {
+          openMenu();
+        } else if (
+          activeIndex >= 0 &&
+          options[activeIndex] &&
+          !options[activeIndex].isHeader
+        ) {
+          handleSelect(options[activeIndex].value);
+        } else {
+          closeMenu();
+        }
+        break;
+      case "Escape":
+        if (isOpen) {
+          e.preventDefault();
+          e.stopPropagation();
+          closeMenu(true);
+        }
+        break;
+      case "Tab":
+        if (isOpen) closeMenu();
+        break;
+      default:
+        break;
+    }
+  };
+
+  // Keep the keyboard-highlighted option visible while navigating.
+  useEffect(() => {
+    if (!isOpen || activeIndex < 0 || !portalRef.current) return;
+    const el = portalRef.current.querySelector(
+      `[id="${baseId}-opt-${activeIndex}"]`,
+    );
+    if (el && el.scrollIntoView) el.scrollIntoView({ block: "nearest" });
+  }, [isOpen, activeIndex, baseId]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -104,14 +238,31 @@ const CustomDropdown = ({
     }
   }
 
-  const handleSelect = (optionValue) => {
+  function handleSelect(optionValue) {
     onChange(optionValue);
-    setIsOpen(false);
-  };
+    closeMenu(true);
+  }
 
   return (
     <div className={`custom-dropdown ${isOpen ? "open" : ""}`} ref={wrapperRef}>
-      <div className="dropdown-selected" onClick={handleToggle}>
+      <button
+        type="button"
+        ref={triggerRef}
+        id={id}
+        className="dropdown-selected"
+        onClick={handleToggle}
+        onKeyDown={handleKeyDown}
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+        aria-controls={isOpen ? listboxId : undefined}
+        aria-activedescendant={
+          isOpen && activeIndex >= 0 ? optionId(activeIndex) : undefined
+        }
+        aria-label={ariaLabel}
+        aria-labelledby={
+          ariaLabel ? undefined : ariaLabelledBy || autoLabelId || undefined
+        }
+      >
         <span className="display-text">{displayContent}</span>
         <svg
           width="10"
@@ -123,13 +274,19 @@ const CustomDropdown = ({
         >
           <polyline points="6 9 12 15 18 9" />
         </svg>
-      </div>
+      </button>
 
       {isOpen &&
         position &&
         createPortal(
           <div
             ref={portalRef}
+            id={listboxId}
+            role="listbox"
+            aria-label={ariaLabel}
+            aria-labelledby={
+              ariaLabel ? undefined : ariaLabelledBy || autoLabelId || undefined
+            }
             className="dropdown-options dropdown-portal"
             style={{
               position: "fixed",
@@ -148,6 +305,7 @@ const CustomDropdown = ({
                 return (
                   <div
                     key={`header-${idx}`}
+                    role="presentation"
                     className="dropdown-header"
                     style={{
                       padding: "5px 10px",
@@ -166,8 +324,12 @@ const CustomDropdown = ({
               return (
                 <div
                   key={option.value}
-                  className={`dropdown-option ${value === option.value ? "selected" : ""}`}
+                  id={optionId(idx)}
+                  role="option"
+                  aria-selected={value === option.value}
+                  className={`dropdown-option ${value === option.value ? "selected" : ""} ${activeIndex === idx ? "active" : ""}`}
                   onClick={() => handleSelect(option.value)}
+                  onMouseEnter={() => setActiveIndex(idx)}
                 >
                   {renderOption ? (
                     renderOption(option)

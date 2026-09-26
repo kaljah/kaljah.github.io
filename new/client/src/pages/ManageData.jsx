@@ -344,14 +344,14 @@ const ManageDataInner = () => {
             if (pendingScopeFilter !== 'all' && item.scope !== pendingScopeFilter) return false;
             if (pendingQaFilter === 'flagged' && !item.qa_flag) return false;
             if (pendingQaFilter === 'clean' && item.qa_flag) return false;
-            if (pendingSearch.trim()) {
+            if (pendingSearch && pendingSearch.trim()) {
                 const q = pendingSearch.toLowerCase().trim();
-                const facilityName = facilities.find(f => f.id === item.facility_id)?.name?.toLowerCase() || '';
-                const matchId = String(item.id).toLowerCase().includes(q);
-                const matchDate = item.date.toLowerCase().includes(q);
-                const matchDesc = item.desc.toLowerCase().includes(q);
-                const matchFacility = facilityName.includes(q) || String(item.facility_id).toLowerCase().includes(q);
-                const matchQa = (item.qa_flag || '').toLowerCase().includes(q);
+                const facilityName = (facilities.find(f => f && f.id === item.facility_id)?.name || '').toLowerCase();
+                const matchId = String(item.id || '').toLowerCase().includes(q);
+                const matchDate = String(item.date || '').toLowerCase().includes(q);
+                const matchDesc = String(item.desc || '').toLowerCase().includes(q);
+                const matchFacility = facilityName.includes(q) || String(item.facility_id || '').toLowerCase().includes(q);
+                const matchQa = String(item.qa_flag || '').toLowerCase().includes(q);
                 if (!matchId && !matchDate && !matchDesc && !matchFacility && !matchQa) return false;
             }
             return true;
@@ -572,7 +572,7 @@ const ManageDataInner = () => {
     // Forms State
     const [facilityForm, setFacilityForm] = useState({
         name: '', activity: '', division: '', field: '', location: '',
-        boundary_type: '', boundary_detail: '',
+        boundary_type: '', boundary_detail: '', equity_share_pct: '',
         segment: '', latitude: '', longitude: ''
     });
 
@@ -588,7 +588,10 @@ const ManageDataInner = () => {
         activity: '', division: '', facility_id: '',
         month: 1, year: new Date().getFullYear(),
         oil_amount: '', oil_unit: 'bbl',
-        gas_amount: '', gas_unit: 'mscf'
+        gas_amount: '', gas_unit: 'mscf',
+        gross_gas_mmsm3: '', gas_without_injected_mmsm3: '', injected_gas_mmsm3: '',
+        crude_oil_mmboe: '', condensate_mmboe: '', lpg_mmboe: '',
+        total_production_mmboe: '', saleable_production_mmboe: ''
     });
 
     const [sourceForm, setSourceForm] = useState({
@@ -931,7 +934,7 @@ const ManageDataInner = () => {
             toast.success('Region added!');
             setFacilityForm({
                 name: '', activity: '', division: '', field: '', location: '',
-                boundary_type: '', boundary_detail: '',
+                boundary_type: '', boundary_detail: '', equity_share_pct: '',
                 segment: '', latitude: '', longitude: ''
             });
             fetchFacilities();
@@ -996,11 +999,25 @@ const ManageDataInner = () => {
             await api.post('/data/production', {
                 ...prodForm,
                 oil_amount: parseFloat(prodForm.oil_amount) || 0,
-                gas_amount: parseFloat(prodForm.gas_amount) || 0
+                gas_amount: parseFloat(prodForm.gas_amount) || 0,
+                gross_gas_mmsm3: parseFloat(prodForm.gross_gas_mmsm3) || 0,
+                gas_without_injected_mmsm3: parseFloat(prodForm.gas_without_injected_mmsm3) || 0,
+                injected_gas_mmsm3: parseFloat(prodForm.injected_gas_mmsm3) || 0,
+                crude_oil_mmboe: parseFloat(prodForm.crude_oil_mmboe) || 0,
+                condensate_mmboe: parseFloat(prodForm.condensate_mmboe) || 0,
+                lpg_mmboe: parseFloat(prodForm.lpg_mmboe) || 0,
+                total_production_mmboe: parseFloat(prodForm.total_production_mmboe) || 0,
+                saleable_production_mmboe: parseFloat(prodForm.saleable_production_mmboe) || 0,
             });
             toast.success('Production record saved!');
             fetchProduction();
-            setProdForm(prev => ({ ...prev, oil_amount: '', gas_amount: '' }));
+            setProdForm(prev => ({
+                ...prev,
+                oil_amount: '', gas_amount: '',
+                gross_gas_mmsm3: '', gas_without_injected_mmsm3: '', injected_gas_mmsm3: '',
+                crude_oil_mmboe: '', condensate_mmboe: '', lpg_mmboe: '',
+                total_production_mmboe: '', saleable_production_mmboe: ''
+            }));
         } catch (err) { toast.error('Failed to save production'); }
     };
 
@@ -1284,10 +1301,19 @@ const ManageDataInner = () => {
     };
 
     // --- Pre-calculate Filtered Data for Pagination ---
-    const getFilteredFactors = () => customFactors.filter(f => f.factor_name.toLowerCase().includes(searchTerm.toLowerCase()));
+    const getFilteredFactors = () => customFactors.filter(f => {
+        if (!f) return false;
+        const sTerm = (searchTerm || '').toLowerCase();
+        return (f.factor_name || '').toLowerCase().includes(sTerm);
+    });
     
     const getFilteredFacilities = () => facilities.filter(f => {
-        const matchesSearch = f.name.toLowerCase().includes(searchTerm.toLowerCase()) || (f.location?.toLowerCase() || '').includes(searchTerm.toLowerCase()) || (f.field?.toLowerCase() || '').includes(searchTerm.toLowerCase());
+        if (!f) return false;
+        const sTerm = (searchTerm || '').toLowerCase();
+        const matchesSearch = (f.name || '').toLowerCase().includes(sTerm) || 
+                              (f.location || '').toLowerCase().includes(sTerm) || 
+                              (f.field || '').toLowerCase().includes(sTerm) ||
+                              (f.code || '').toLowerCase().includes(sTerm);
         const matchesAct = filterActivity ? matchesActivity(f.activity, filterActivity) : true;
         const matchesDiv = filterDivision ? f.division === filterDivision : true;
         const matchesReg = matchesRegionCheck(f, filterRegion);
@@ -1295,19 +1321,27 @@ const ManageDataInner = () => {
     });
 
     const getFilteredProduction = () => productionData.filter(d => {
-        const fac = facilities.find(f => f.id === d.facilityId);
-        const facName = fac ? fac.name.toLowerCase() : String(d.facilityId).toLowerCase();
-        const matchesSearch = facName.includes(searchTerm.toLowerCase()) || d.year.toString().includes(searchTerm) || (d.activity?.toLowerCase() || '').includes(searchTerm.toLowerCase());
+        if (!d) return false;
+        const sTerm = (searchTerm || '').toLowerCase();
+        const fac = facilities.find(f => f && f.id === d.facilityId);
+        const facName = (fac ? fac.name : String(d.facilityId || '')) || '';
+        const matchesSearch = facName.toLowerCase().includes(sTerm) || 
+                              (d.year ? d.year.toString().includes(searchTerm || '') : false) || 
+                              (d.activity || '').toLowerCase().includes(sTerm);
         const matchesAct = filterActivity ? (matchesActivity(d.activity, filterActivity) || (fac && matchesActivity(fac.activity, filterActivity))) : true;
         const matchesDiv = filterDivision ? (d.division === filterDivision || (fac && fac.division === filterDivision)) : true;
         const matchesReg = matchesRegionCheck(fac, filterRegion);
-        const matchesYear = filterYear ? d.year.toString() === filterYear.toString() : true;
+        const matchesYear = filterYear ? d.year?.toString() === filterYear.toString() : true;
         return matchesSearch && matchesAct && matchesDiv && matchesReg && matchesYear;
     });
 
     const getFilteredSources = () => sources.filter(s => {
-        const fac = facilities.find(f => f.id === s.facility_id);
-        const matchesSearch = s.name.toLowerCase().includes(searchTerm.toLowerCase()) || (s.equipment_id?.toLowerCase() || '').includes(searchTerm.toLowerCase()) || (s.type?.toLowerCase() || '').includes(searchTerm.toLowerCase());
+        if (!s) return false;
+        const sTerm = (searchTerm || '').toLowerCase();
+        const fac = facilities.find(f => f && f.id === s.facility_id);
+        const matchesSearch = (s.name || '').toLowerCase().includes(sTerm) || 
+                              (s.equipment_id || '').toLowerCase().includes(sTerm) || 
+                              (s.type || '').toLowerCase().includes(sTerm);
         const matchesAct = filterActivity ? (fac && matchesActivity(fac.activity, filterActivity)) : true;
         const matchesDiv = filterDivision ? (fac && fac.division === filterDivision) : true;
         const matchesReg = matchesRegionCheck(fac, filterRegion);
@@ -1315,11 +1349,13 @@ const ManageDataInner = () => {
     });
 
     const getFilteredMitigations = () => mitigations.filter(m => {
-        const fac = facilities.find(f => f.id === m.facility_id);
-        const matchesSearch = (m.name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) || 
-                              (m.mitigation_type?.toLowerCase() || m.type?.toLowerCase() || '').includes(searchTerm.toLowerCase()) || 
-                              (m.notes?.toLowerCase() || '').includes(searchTerm.toLowerCase()) || 
-                              m.year?.toString().includes(searchTerm);
+        if (!m) return false;
+        const sTerm = (searchTerm || '').toLowerCase();
+        const fac = facilities.find(f => f && f.id === m.facility_id);
+        const matchesSearch = (m.name || '').toLowerCase().includes(sTerm) || 
+                              (m.mitigation_type || m.type || '').toLowerCase().includes(sTerm) || 
+                              (m.notes || '').toLowerCase().includes(sTerm) || 
+                              (m.year ? m.year.toString().includes(searchTerm || '') : false);
         const matchesAct = filterActivity ? (matchesActivity(m.activity, filterActivity) || (fac && matchesActivity(fac.activity, filterActivity))) : true;
         const matchesDiv = filterDivision ? (m.division === filterDivision || fac?.division === filterDivision) : true;
         const matchesReg = matchesRegionCheck(fac || { region: m.region, location: m.region }, filterRegion);
@@ -1328,20 +1364,22 @@ const ManageDataInner = () => {
     });
 
     const getFilteredOgmp = () => ogmpSurveys.filter(o => {
+        if (!o) return false;
+        const sTerm = (searchTerm || '').toLowerCase();
         const fid = o.facility_id || o.facilityId;
-        const fac = facilities.find(f => f.id === fid);
-        const sType = o.survey_type || o.surveyType || '';
-        const fName = o.facility_name || o.facilityName || fac?.name || '';
-        const rStatus = o.reconciliation_status || o.reconciliationStatus || '';
-        const yr = (o.year || (o.survey_date || o.surveyDate ? new Date(o.survey_date || o.surveyDate).getFullYear() : '')).toString();
+        const fac = facilities.find(f => f && f.id === fid);
+        const sType = String(o.survey_type || o.surveyType || '');
+        const fName = String(o.facility_name || o.facilityName || fac?.name || '');
+        const rStatus = String(o.reconciliation_status || o.reconciliationStatus || '');
+        const yr = (o.year || (o.survey_date || o.surveyDate ? new Date(o.survey_date || o.surveyDate).getFullYear() : '') || '').toString();
 
         // Only show O&G facilities in the OGMP tab
         const isOilAndGas = !fac || !NON_OG_ACTIVITIES.includes(fac.activity);
 
-        const matchesSearch = sType.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            fName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            rStatus.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            yr.includes(searchTerm);
+        const matchesSearch = sType.toLowerCase().includes(sTerm) ||
+            fName.toLowerCase().includes(sTerm) ||
+            rStatus.toLowerCase().includes(sTerm) ||
+            yr.includes(searchTerm || '');
         const matchesAct = filterActivity ? (fac && matchesActivity(fac.activity, filterActivity)) : true;
         const matchesDiv = filterDivision ? (fac && fac.division === filterDivision) : true;
         const matchesReg = matchesRegionCheck(fac, filterRegion);
@@ -1350,24 +1388,29 @@ const ManageDataInner = () => {
     });
 
     const getFilteredGoals = () => goals.filter(g => {
-        const yr = String(g.year);
-        const target = String(g.target_amount);
-        return yr.includes(searchTerm) || target.includes(searchTerm);
+        if (!g) return false;
+        const yr = String(g.year || '');
+        const target = String(g.target_amount || '');
+        return yr.includes(searchTerm || '') || target.includes(searchTerm || '');
     });
 
     const getFilteredBaseYears = () => (baseYearsData.history || []).filter(b => {
-        const yr = String(b.year);
-        const reason = (b.reason || '').toLowerCase();
-        return yr.includes(searchTerm) || reason.includes(searchTerm.toLowerCase());
+        if (!b) return false;
+        const sTerm = (searchTerm || '').toLowerCase();
+        const yr = String(b.year || '');
+        const reason = String(b.reason || '').toLowerCase();
+        return yr.includes(searchTerm || '') || reason.includes(sTerm);
     });
 
     const getFilteredCbam = () => cbamExports.filter(item => {
-        const fac = facilities.find(f => f.id === item.facility_id);
+        if (!item) return false;
+        const sTerm = (searchTerm || '').toLowerCase();
+        const fac = facilities.find(f => f && f.id === item.facility_id);
         if (filterActivity && (!fac || !matchesActivity(fac.activity, filterActivity))) return false;
         if (filterDivision && (!fac || fac.division !== filterDivision)) return false;
         if (filterRegion && filterRegion !== 'all' && !matchesRegionCheck(fac, filterRegion)) return false;
         if (filterYear && filterYear !== 'all' && item.year?.toString() !== filterYear.toString()) return false;
-        if (searchTerm && !item.product_name?.toLowerCase().includes(searchTerm.toLowerCase())) return false;
+        if (searchTerm && !String(item.product_name || '').toLowerCase().includes(sTerm)) return false;
         return true;
     });
 
@@ -2477,6 +2520,22 @@ const ManageDataInner = () => {
                                                     ))}
                                                 </select>
                                             </div>
+                                            {facilityForm.boundary_type === 'Equity Share' && (
+                                                <div className="input-group">
+                                                    <label>Equity Share Percentage (%)</label>
+                                                    <input
+                                                        type="number"
+                                                        step="0.01"
+                                                        min="0"
+                                                        max="100"
+                                                        name="equity_share_pct"
+                                                        value={facilityForm.equity_share_pct !== undefined ? facilityForm.equity_share_pct : ''}
+                                                        onChange={(e) => setFacilityForm({ ...facilityForm, equity_share_pct: e.target.value })}
+                                                        className="mole-input"
+                                                        placeholder="e.g. 51.00"
+                                                    />
+                                                </div>
+                                            )}
                                             <div className="input-group">
                                                 <label>Supply Chain Segment</label>
                                                 <select name="segment" value={facilityForm.segment} onChange={handleFacilityChange} className="component-select">
@@ -2670,6 +2729,38 @@ const ManageDataInner = () => {
                                             </select>
                                         </div>
                                     </div>
+                                    <div className="input-group">
+                                        <label>Gross Gas (MMSm³)</label>
+                                        <input type="number" step="any" value={prodForm.gross_gas_mmsm3} onChange={(e) => setProdForm({ ...prodForm, gross_gas_mmsm3: e.target.value })} className="mole-input" placeholder="0.0" />
+                                    </div>
+                                    <div className="input-group">
+                                        <label>Gas w/o Injection (MMSm³)</label>
+                                        <input type="number" step="any" value={prodForm.gas_without_injected_mmsm3} onChange={(e) => setProdForm({ ...prodForm, gas_without_injected_mmsm3: e.target.value })} className="mole-input" placeholder="0.0" />
+                                    </div>
+                                    <div className="input-group">
+                                        <label>Injected Gas (MMSm³)</label>
+                                        <input type="number" step="any" value={prodForm.injected_gas_mmsm3} onChange={(e) => setProdForm({ ...prodForm, injected_gas_mmsm3: e.target.value })} className="mole-input" placeholder="0.0" />
+                                    </div>
+                                    <div className="input-group">
+                                        <label>Crude Oil (MMBOE)</label>
+                                        <input type="number" step="any" value={prodForm.crude_oil_mmboe} onChange={(e) => setProdForm({ ...prodForm, crude_oil_mmboe: e.target.value })} className="mole-input" placeholder="0.0" />
+                                    </div>
+                                    <div className="input-group">
+                                        <label>Condensate (MMBOE)</label>
+                                        <input type="number" step="any" value={prodForm.condensate_mmboe} onChange={(e) => setProdForm({ ...prodForm, condensate_mmboe: e.target.value })} className="mole-input" placeholder="0.0" />
+                                    </div>
+                                    <div className="input-group">
+                                        <label>LPG (MMBOE)</label>
+                                        <input type="number" step="any" value={prodForm.lpg_mmboe} onChange={(e) => setProdForm({ ...prodForm, lpg_mmboe: e.target.value })} className="mole-input" placeholder="0.0" />
+                                    </div>
+                                    <div className="input-group">
+                                        <label>Total Production (MMBOE)</label>
+                                        <input type="number" step="any" value={prodForm.total_production_mmboe} onChange={(e) => setProdForm({ ...prodForm, total_production_mmboe: e.target.value })} className="mole-input" placeholder="0.0" />
+                                    </div>
+                                    <div className="input-group">
+                                        <label>Total Saleable (MMBOE)</label>
+                                        <input type="number" step="any" value={prodForm.saleable_production_mmboe} onChange={(e) => setProdForm({ ...prodForm, saleable_production_mmboe: e.target.value })} className="mole-input" placeholder="0.0" />
+                                    </div>
                                 </div>
                                 <div style={{ display: 'flex', gap: '12px', marginTop: '20px' }}>
                                     <button className="action-btn" onClick={handleSaveProduction}>Save Record</button>
@@ -2690,6 +2781,9 @@ const ManageDataInner = () => {
                                                 <th>Month</th>
                                                 <th style={{ textAlign: 'right' }}>Oil (bbl)</th>
                                                 <th style={{ textAlign: 'right' }}>Gas (mcf)</th>
+                                                <th style={{ textAlign: 'right' }}>Gross Gas (MMSm³)</th>
+                                                <th style={{ textAlign: 'right' }}>Total (MMBOE)</th>
+                                                <th style={{ textAlign: 'right' }}>Saleable (MMBOE)</th>
                                                 <th style={{ textAlign: 'center' }}>Actions</th>
                                             </tr>
                                         </thead>
@@ -2709,6 +2803,9 @@ const ManageDataInner = () => {
                                                     <td>{new Date(2000, d.month - 1).toLocaleString('default', { month: 'short' })}</td>
                                                     <td style={{ textAlign: 'right' }}>{(d.oil || 0).toLocaleString()} {d.oilUnit || 'bbl'}</td>
                                                     <td style={{ textAlign: 'right' }}>{(d.gas || 0).toLocaleString()} {d.gasUnit || 'mscf'}</td>
+                                                    <td style={{ textAlign: 'right' }}>{d.gross_gas_mmsm3 ? Number(d.gross_gas_mmsm3).toLocaleString(undefined, { minimumFractionDigits: 2 }) : '-'}</td>
+                                                    <td style={{ textAlign: 'right' }}>{d.total_production_mmboe ? Number(d.total_production_mmboe).toLocaleString(undefined, { minimumFractionDigits: 2 }) : '-'}</td>
+                                                    <td style={{ textAlign: 'right' }}>{d.saleable_production_mmboe ? Number(d.saleable_production_mmboe).toLocaleString(undefined, { minimumFractionDigits: 2 }) : '-'}</td>
                                                     <td style={{ textAlign: 'center' }}>
                                                         <button
                                                             className="btn-delete"
@@ -2722,7 +2819,7 @@ const ManageDataInner = () => {
                                             ))}
                                             {filteredProduction.length === 0 && (
                                                 <tr>
-                                                    <td colSpan="8" style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>
+                                                    <td colSpan="11" style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>
                                                         No production records found.
                                                     </td>
                                                 </tr>

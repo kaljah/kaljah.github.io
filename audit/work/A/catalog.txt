@@ -1,0 +1,106 @@
+'Natural Gas' {'code': 'NG', 'hhv': 1020, 'co2': 53.06, 'ch4': 0.001, 'n2o': 0.0001, 'unit': 'kg/MMBtu', 'process_category': 'stationary_combustion', 'type': 'gases'}
+'Landfill Gas' {'code': 'LFG', 'hhv': 500, 'co2': 52.07, 'ch4': 0.0032, 'n2o': 0.00063, 'unit': 'kg/MMBtu', 'process_category': 'stationary_combustion', 'type': 'gases'}
+'Coke Oven Gas' {'code': 'COG', 'hhv': 590, 'co2': 46.85, 'ch4': 0.00048, 'n2o': 0.0001, 'unit': 'kg/MMBtu', 'process_category': 'stationary_combustion', 'type': 'gases'}
+'Blast Furnace Gas' {'code': 'BFG', 'hhv': 92, 'co2': 274.32, 'ch4': 2.2e-05, 'n2o': 0.0001, 'unit': 'kg/MMBtu', 'process_category': 'stationary_combustion', 'type': 'gases'}
+'Propane (Gas)' {'code': 'LPG_Gas', 'hhv': 2500, 'co2': 61.46, 'ch4': 0.003, 'n2o': 0.0006, 'unit': 'kg/MMBtu', 'process_category': 'stationary_combustion', 'type': 'gases'}
+'Refinery Fuel Gas' {'code': 'RFG', 'hhv': 1400, 'co2': 57.78, 'ch4': 0.0028, 'n2o': 0.0001, 'unit': 'kg/MMBtu', 'process_category': 'stationary_combustion', 'type': 'gases'}
+'Marine Diesel Oil' {'code': 'MDO', 'hhv': 138858, 'co2': 73.19, 'ch4': 0.003, 'n2o': 0.0006, 'unit': 'kg/MMBtu', 'process_category': 'stationary_combustion', 'type': 'liquids'}
+'Diesel (No. 2 Fuel Oil)' {'code': 'DSL', 'hhv': 138000, 'co2': 73.96, 'ch4': 0.003, 'n2o': 0.0006, 'unit': 'kg/MMBtu', 'process_category': 'stationary_combustion', 'type': 'liquids'}
+'Residual Fuel Oil (No. 6)' {'code': 'RFO', 'hhv': 150000, 'co2': 75.1, 'ch4': 0.003, 'n2o': 0.0006, 'unit': 'kg/MMBtu', 'process_category': 'stationary_combustion', 'type': 'liquids'}
+'Kerosene' {'code': 'Kero', 'hhv': 135000, 'co2': 75.2, 'ch4': 0.003, 'n2o': 0.0006, 'unit': 'kg/MMBtu', 'process_category': 'stationary_combustion', 'type': 'liquids'}
+'Motor Gasoline' {'code': 'GAS', 'hhv': 125000, 'co2': 70.22, 'ch4': 0.003, 'n2o': 0.0006, 'unit': 'kg/MMBtu', 'process_category': 'mobile_combustion', 'type': 'liquids'}
+'Jet Fuel' {'code': 'JET', 'hhv': 135000, 'co2': 72.22, 'ch4': 0.003, 'n2o': 0.0006, 'unit': 'kg/MMBtu', 'process_category': 'mobile_combustion', 'type': 'liquids'}
+'Propane (Liquid/LPG)' {'code': 'LPG_Liq', 'hhv': 91500, 'co2': 62.88, 'ch4': 0.003, 'n2o': 0.0006, 'unit': 'kg/MMBtu', 'process_category': 'stationary_combustion', 'type': 'liquids'}
+'Ethane' {'code': 'Ethane', 'hhv': 69600, 'co2': 59.6, 'ch4': 0.003, 'n2o': 0.0006, 'unit': 'kg/MMBtu', 'process_category': 'stationary_combustion', 'type': 'gases'}
+'Crude Oil' {'code': 'Crude', 'hhv': 138000, 'co2': 74.54, 'ch4': 0.003, 'n2o': 0.0006, 'unit': 'kg/MMBtu', 'process_category': 'stationary_combustion', 'type': 'liquids'}
+'Anthracite Coal' {'code': 'CoalAnth', 'hhv': 25090, 'co2': 103.69, 'ch4': 0.011, 'n2o': 0.0016, 'unit': 'kg/MMBtu', 'process_category': 'stationary_combustion', 'type': 'solids'}
+'Bituminous Coal' {'code': 'CoalBit', 'hhv': 24930, 'co2': 93.26, 'ch4': 0.011, 'n2o': 0.0016, 'unit': 'kg/MMBtu', 'process_category': 'stationary_combustion', 'type': 'solids'}
+'Sub-Bituminous Coal' {'code': 'CoalSub', 'hhv': 17250, 'co2': 97.17, 'ch4': 0.011, 'n2o': 0.0016, 'unit': 'kg/MMBtu', 'process_category': 'stationary_combustion', 'type': 'solids'}
+'Lignite Coal' {'code': 'CoalLig', 'hhv': 14210, 'co2': 97.72, 'ch4': 0.011, 'n2o': 0.0016, 'unit': 'kg/MMBtu', 'process_category': 'stationary_combustion', 'type': 'solids'}
+'Petroleum Coke' {'code': 'PetCoke', 'hhv': 30000, 'co2': 102.41, 'ch4': 0.003, 'n2o': 0.0006, 'unit': 'kg/MMBtu', 'process_category': 'stationary_combustion', 'type': 'solids'}
+'Natural Gas (Flaring - Elevated)' {'code': 'NG_Flare_Elev', 'co2': 1.92, 'ch4': 0.012, 'n2o': 1e-05, 'combustion_efficiency_co2': 0.98, 'combustion_efficiency_ch4': 0.98, 'unit': 'kg/m³', 'process_category': 'flaring', 'type': 'gases'}
+'Natural Gas (Flaring - Ground)' {'code': 'NG_Flare_Ground', 'co2': 1.88, 'ch4': 0.024, 'n2o': 1e-05, 'combustion_efficiency_co2': 0.98, 'combustion_efficiency_ch4': 0.96, 'unit': 'kg/m³', 'process_category': 'flaring', 'type': 'gases'}
+'Natural Gas (Flaring)' {'code': 'NG_Flare', 'co2': 1.92, 'ch4': 0.012, 'n2o': 1e-05, 'combustion_efficiency_co2': 0.98, 'combustion_efficiency_ch4': 0.98, 'unit': 'kg/m³', 'process_category': 'flaring', 'type': 'gases'}
+'Natural Gas (Flaring - Enclosed)' {'code': 'NG_Flare_Enc', 'co2': 1.94, 'ch4': 0.006, 'n2o': 1e-05, 'combustion_efficiency_co2': 0.98, 'combustion_efficiency_ch4': 0.99, 'unit': 'kg/m³', 'process_category': 'flaring', 'type': 'gases'}
+'Associated Gas (Flaring)' {'code': 'AG_Flare', 'co2': 2.15, 'ch4': 0.018, 'n2o': 1e-05, 'combustion_efficiency_co2': 0.98, 'combustion_efficiency_ch4': 0.98, 'unit': 'kg/m³', 'process_category': 'flaring', 'type': 'gases'}
+'Sour Gas (Flaring)' {'code': 'SG_Flare', 'co2': 2.3, 'ch4': 0.015, 'n2o': 1e-05, 'combustion_efficiency_co2': 0.98, 'combustion_efficiency_ch4': 0.98, 'unit': 'kg/m³', 'process_category': 'flaring', 'type': 'gases'}
+'Refinery Gas (Flaring)' {'code': 'REF_Flare', 'co2': 2.1, 'ch4': 0.025, 'n2o': 1e-05, 'combustion_efficiency_co2': 0.98, 'combustion_efficiency_ch4': 0.95, 'unit': 'kg/m³', 'process_category': 'flaring', 'type': 'gases'}
+'Natural Gas (Venting/Blowdown)' {'code': 'NG_Vent', 'co2': 0.054, 'ch4': 0.67, 'n2o': 0, 'unit': 'kg/m³', 'process_category': 'venting', 'type': 'gases'}
+'Asphalt' {'code': 'Asphalt', 'type': 'equipment', 'ch4': 0.0226796, 'co2': 10.432616, 'n2o': 0, 'unit': 'kg/ton', 'process_category': 'asphalt_blowing'}
+'Acrylonitrile' {'code': 'ACN_Prod', 'co2': 1.0, 'ch4': 0, 'n2o': 0, 'unit': 'tonne CO₂/tonne product', 'process_category': 'chemical_production'}
+'Carbon Black' {'code': 'CB_Prod', 'co2': 2.63, 'ch4': 0, 'n2o': 0, 'unit': 'tonne CO₂/tonne product', 'process_category': 'chemical_production'}
+'Ethylene' {'code': 'ETH_Prod', 'co2': 0.77, 'ch4': 0, 'n2o': 0, 'unit': 'tonne CO₂/tonne product', 'process_category': 'chemical_production'}
+'Ethylene Dichloride' {'code': 'EDC_Prod', 'co2': 0.041, 'ch4': 0, 'n2o': 0, 'unit': 'tonne CO₂/tonne product', 'process_category': 'chemical_production'}
+'Ethylene Oxide' {'code': 'ETO_Prod', 'co2': 0.46, 'ch4': 0, 'n2o': 0, 'unit': 'tonne CO₂/tonne product', 'process_category': 'chemical_production'}
+'Methanol' {'code': 'MEOH_Prod', 'co2': 0.67, 'ch4': 0.0023, 'n2o': 0, 'unit': 'tonne CO₂/tonne product', 'process_category': 'chemical_production'}
+'Nitric Acid - With NSCR' {'code': 'HNO3_NSCR', 'co2': 0, 'ch4': 0, 'n2o': 2.0, 'unit': 'kg N₂O/tonne product', 'process_category': 'nitric_acid_production'}
+'Nitric Acid - Without NSCR' {'code': 'HNO3_NoNSCR', 'co2': 0, 'ch4': 0, 'n2o': 9.0, 'unit': 'kg N₂O/tonne product', 'process_category': 'nitric_acid_production'}
+'Adipic Acid - Thermal Abatement' {'code': 'AA_Thermal', 'co2': 0, 'ch4': 0, 'n2o': 13.0, 'unit': 'kg N₂O/tonne product', 'process_category': 'adipic_acid_production'}
+'Adipic Acid - Catalytic Abatement' {'code': 'AA_Catalytic', 'co2': 0, 'ch4': 0, 'n2o': 53.0, 'unit': 'kg N₂O/tonne product', 'process_category': 'adipic_acid_production'}
+'Adipic Acid - Uncontrolled' {'code': 'AA_Uncontrolled', 'co2': 0, 'ch4': 0, 'n2o': 300.0, 'unit': 'kg N₂O/tonne product', 'process_category': 'adipic_acid_production'}
+'Pneumatic Controller - High Bleed (>6 scfh)' {'code': 'HighBleed', 'type': 'equipment', 'ch4': 8.304, 'co2': 0, 'n2o': 0, 'unit': 'tonnes CH₄/yr', 'process_category': 'pneumatic_devices'}
+'Pneumatic Controller - Low Bleed (<6 scfh)' {'code': 'LowBleed', 'type': 'equipment', 'ch4': 0.0939, 'co2': 0, 'n2o': 0, 'unit': 'tonnes CH₄/yr', 'process_category': 'pneumatic_devices'}
+'Pneumatic Controller - Intermittent' {'code': 'Intermittent', 'type': 'equipment', 'ch4': 0.4, 'co2': 0, 'n2o': 0, 'unit': 'tonnes CH₄/yr', 'process_category': 'pneumatic_devices'}
+'Pneumatic Controller - Continuous Vent (T&S)' {'code': 'ContinuousVentTS', 'type': 'equipment', 'ch4': 3.5, 'co2': 0, 'n2o': 0, 'unit': 'tonnes CH₄/yr', 'process_category': 'pneumatic_devices'}
+'Tank - Flash Emissions (Oil)' {'code': 'TankFlashOil', 'type': 'equipment', 'ch4': 0.193, 'co2': 0.012, 'n2o': 0, 'unit': 'kg/bbl', 'process_category': 'storage_tanks'}
+'Tank - Crude Oil (Small, ≤10 bbl/d)' {'code': 'TankCrudeSmall', 'type': 'equipment', 'ch4': 0.18, 'co2': 0, 'n2o': 0, 'unit': 'kg CH₄/bbl', 'process_category': 'storage_tanks'}
+'Tank - Crude Oil (Large, >10 bbl/d)' {'code': 'TankCrudeLarge', 'type': 'equipment', 'ch4': 0.193, 'co2': 0, 'n2o': 0, 'unit': 'kg CH₄/bbl', 'process_category': 'storage_tanks'}
+'Tank - Production Condensate (Small, ≤10 bbl/d)' {'code': 'TankProdSmall', 'type': 'equipment', 'ch4': 1.56, 'co2': 0, 'n2o': 0, 'unit': 'kg CH₄/bbl', 'process_category': 'storage_tanks'}
+'Tank - Production Condensate (Large, >10 bbl/d)' {'code': 'TankProdLarge', 'type': 'equipment', 'ch4': 1.16, 'co2': 0, 'n2o': 0, 'unit': 'kg CH₄/bbl', 'process_category': 'storage_tanks'}
+'Tank - Gas-Well Condensate (Small, ≤10 bbl/d)' {'code': 'TankGasSmall', 'type': 'equipment', 'ch4': 2.65, 'co2': 0, 'n2o': 0, 'unit': 'kg CH₄/bbl', 'process_category': 'storage_tanks'}
+'Tank - Gas-Well Condensate (Large, >10 bbl/d)' {'code': 'TankGasLarge', 'type': 'equipment', 'ch4': 2.05, 'co2': 0, 'n2o': 0, 'unit': 'kg CH₄/bbl', 'process_category': 'storage_tanks'}
+'Drilling - Mud Degassing (Water Based)' {'code': 'MudWater', 'type': 'equipment', 'ch4': 0.15, 'co2': 0, 'n2o': 0, 'unit': 'kg CH₄/m³', 'process_category': 'drilling'}
+'Drilling - Mud Degassing (Oil Based)' {'code': 'MudOil', 'type': 'equipment', 'ch4': 37.5, 'co2': 0, 'n2o': 0, 'unit': 'kg CH₄/bbl mud', 'process_category': 'drilling'}
+'Dehydrator - Glycol (Uncontrolled)' {'code': 'DehyUncont', 'type': 'equipment', 'ch4': 0.177, 'co2': 0, 'n2o': 0, 'unit': 'scf/MMscf', 'process_category': 'dehydrator'}
+'Wellhead - Oil (Heavy Crude)' {'code': 'WellOilHeavy', 'type': 'equipment', 'ch4': 6.63e-07, 'co2': 0, 'n2o': 0, 'unit': 'tonne CH₄/well/hr', 'process_category': 'wellhead_fugitive'}
+'Wellhead - Oil (Light Crude)' {'code': 'WellOilLight', 'type': 'equipment', 'ch4': 1.56e-05, 'co2': 0, 'n2o': 0, 'unit': 'tonne CH₄/well/hr', 'process_category': 'wellhead_fugitive'}
+'Wellhead - Gas' {'code': 'WellGas', 'type': 'equipment', 'ch4': 1.8e-05, 'co2': 0, 'n2o': 0, 'unit': 'tonne CH₄/well/hr', 'process_category': 'wellhead_fugitive'}
+'Separator - Heavy Crude' {'code': 'SepHeavy', 'type': 'equipment', 'ch4': 6.79e-07, 'co2': 0, 'n2o': 0, 'unit': 'tonne CH₄/separator/hr', 'process_category': 'separator_fugitive'}
+'Separator - Light Crude' {'code': 'SepLight', 'type': 'equipment', 'ch4': 4.1e-05, 'co2': 0, 'n2o': 0, 'unit': 'tonne CH₄/separator/hr', 'process_category': 'separator_fugitive'}
+'Separator - Gas Production' {'code': 'SepGas', 'type': 'separator', 'ch4': 4.42e-05, 'co2': 0, 'n2o': 0, 'unit': 'tonne CH₄/separator/hr', 'process_category': 'separator_fugitive'}
+'Compressor - Small Reciprocating' {'code': 'CompSmall', 'type': 'equipment', 'ch4': 3.69e-05, 'co2': 0, 'n2o': 0, 'unit': 'tonne CH₄/compressor/hr', 'process_category': 'compressor_fugitive'}
+'Compressor - Large Reciprocating' {'code': 'CompLarge', 'type': 'equipment', 'ch4': 0.0131, 'co2': 0, 'n2o': 0, 'unit': 'tonne CH₄/compressor/hr', 'process_category': 'compressor_fugitive'}
+'Compressor - Gas Production Small Recip' {'code': 'CompGasSmall', 'type': 'equipment', 'ch4': 0.000212, 'co2': 0, 'n2o': 0, 'unit': 'tonne CH₄/compressor/hr', 'process_category': 'compressor_fugitive'}
+'Compressor - Gas Production Large Recip' {'code': 'CompGasLarge', 'type': 'equipment', 'ch4': 0.0122, 'co2': 0, 'n2o': 0, 'unit': 'tonne CH₄/compressor/hr', 'process_category': 'compressor_fugitive'}
+'Gathering - AGRU' {'code': 'GathAGRU', 'type': 'equipment', 'ch4': 6.83e-05, 'co2': 0, 'n2o': 0, 'unit': 'tonne CH₄/unit/hr', 'process_category': 'gathering_boosting'}
+'Gathering - Compressor' {'code': 'GathComp', 'type': 'equipment', 'ch4': 0.00184, 'co2': 0, 'n2o': 0, 'unit': 'tonne CH₄/unit/hr', 'process_category': 'gathering_boosting'}
+'Gathering - Dehydrator' {'code': 'GathDehy', 'type': 'equipment', 'ch4': 5.69e-05, 'co2': 0, 'n2o': 0, 'unit': 'tonne CH₄/unit/hr', 'process_category': 'gathering_boosting'}
+'Gathering - Separator' {'code': 'GathSep', 'type': 'equipment', 'ch4': 1.05e-05, 'co2': 0, 'n2o': 0, 'unit': 'tonne CH₄/unit/hr', 'process_category': 'gathering_boosting'}
+'Gathering - Tank' {'code': 'GathTank', 'type': 'equipment', 'ch4': 0.00064, 'co2': 0, 'n2o': 0, 'unit': 'tonne CH₄/unit/hr', 'process_category': 'gathering_boosting'}
+'Component - Connector (Non-Compressor)' {'code': 'ConnNonComp', 'type': 'equipment', 'ch4': 9.79e-07, 'co2': 0, 'n2o': 0, 'unit': 'tonne CH₄/hr/source', 'process_category': 'fugitive_component'}
+'Component - Block Valve' {'code': 'BlockValve', 'type': 'equipment', 'ch4': 4.36e-06, 'co2': 0, 'n2o': 0, 'unit': 'tonne CH₄/hr/source', 'process_category': 'fugitive_component'}
+'Component - Control Valve' {'code': 'ControlValve', 'type': 'equipment', 'ch4': 1.11e-05, 'co2': 0, 'n2o': 0, 'unit': 'tonne CH₄/hr/source', 'process_category': 'fugitive_component'}
+'Component - Pressure Relief Valve' {'code': 'PRV', 'type': 'equipment', 'ch4': 1.39e-07, 'co2': 0, 'n2o': 0, 'unit': 'tonne CH₄/hr/source', 'process_category': 'fugitive_component'}
+'Component - Pressure Regulator' {'code': 'Regulator', 'type': 'equipment', 'ch4': 1.87e-06, 'co2': 0, 'n2o': 0, 'unit': 'tonne CH₄/hr/source', 'process_category': 'fugitive_component'}
+'Component - Compressor Seal' {'code': 'CompSeal', 'type': 'equipment', 'ch4': 0.000154, 'co2': 0, 'n2o': 0, 'unit': 'tonne CH₄/hr/source', 'process_category': 'fugitive_component'}
+'Processing - Reciprocating Compressor' {'code': 'ProcRecipComp', 'type': 'equipment', 'ch4': 0.00895, 'co2': 0, 'n2o': 0, 'unit': 'tonne CH₄/compressor/hr', 'process_category': 'gas_processing'}
+'Processing - Centrifugal Compressor' {'code': 'ProcCentComp', 'type': 'equipment', 'ch4': 0.017, 'co2': 0, 'n2o': 0, 'unit': 'tonne CH₄/compressor/hr', 'process_category': 'gas_processing'}
+'LNG - Storage Station' {'code': 'LNGStorage', 'type': 'equipment', 'ch4': 0.000439, 'co2': 0, 'n2o': 0, 'unit': 'tonne CH₄/facility', 'process_category': 'lng_operations'}
+'LNG - Import Terminal' {'code': 'LNGImport', 'type': 'equipment', 'ch4': 0.000329, 'co2': 0, 'n2o': 0, 'unit': 'tonne CH₄/facility', 'process_category': 'lng_operations'}
+'LNG - Export Terminal' {'code': 'LNGExport', 'type': 'equipment', 'ch4': 0.00126, 'co2': 0, 'n2o': 0, 'unit': 'tonne CH₄/facility', 'process_category': 'lng_operations'}
+'Refinery - Fuel Gas System (50-99k bbl/day)' {'code': 'RefFuelGasSmall', 'type': 'equipment', 'ch4': 0.000375, 'co2': 0, 'n2o': 0, 'unit': 'tonnes CH₄/10³ bbl feedstock', 'process_category': 'refinery_fugitive'}
+'Refinery - Fuel Gas System (100-199k bbl/day)' {'code': 'RefFuelGasLarge', 'type': 'equipment', 'ch4': 0.00141, 'co2': 0, 'n2o': 0, 'unit': 'tonnes CH₄/10³ bbl feedstock', 'process_category': 'refinery_fugitive'}
+'Offshore - Oil Production (Facility)' {'code': 'OffshoreOil', 'type': 'equipment', 'ch4': 3.86e-06, 'co2': 0, 'n2o': 0, 'unit': 'tonne CH₄/bbl produced', 'process_category': 'wellhead_fugitive'}
+'Offshore - Gas Production (Facility)' {'code': 'OffshoreGas', 'type': 'equipment', 'ch4': 0.0104, 'co2': 0, 'n2o': 0, 'unit': 'tonne CH₄/10⁶ scf produced', 'process_category': 'wellhead_fugitive'}
+'Pneumatic Controller - High Bleed' {'code': 'HighBleed', 'type': 'pneumatic', 'ch4': 8.304, 'factor': 8.304, 'unit': 'tonnes CH4/yr'}
+'Pneumatic Controller - Low Bleed' {'code': 'LowBleed', 'type': 'pneumatic', 'ch4': 0.0939, 'factor': 0.0939, 'unit': 'tonnes CH4/yr'}
+'Fugitive - Valve (Gas/Vapor)' {'code': 'ValveGas', 'type': 'fugitive', 'ch4': 0.0045, 'factor': 0.0045, 'unit': 'kg/hr'}
+'Fugitive - Connector (Gas/Vapor)' {'code': 'ConnGas', 'type': 'fugitive', 'ch4': 0.0002, 'factor': 0.0002, 'unit': 'kg/hr'}
+'Fugitive - Flange (Gas/Vapor)' {'code': 'FlangeGas', 'type': 'fugitive', 'ch4': 0.00039, 'factor': 0.00039, 'unit': 'kg/hr'}
+'UnloadPlunger' {'code': 'UnloadPlunger', 'type': 'unloading', 'ch4': 0.0016, 'factor': 0.0016, 'unit': 'tonnes CH4/event'}
+'UnloadNonPlunger' {'code': 'UnloadNonPlunger', 'type': 'unloading', 'ch4': 0.0341, 'factor': 0.0341, 'unit': 'tonnes CH4/event'}
+'Natural Gas - 4-Stroke Lean Burn Engine' {'code': 'NG_4SLB', 'hhv': 1020, 'co2': 53.06, 'ch4': 0.3, 'n2o': 0.0001, 'unit': 'kg/MMBtu', 'baseUnit': 'scf'}
+'Natural Gas - 4-Stroke Rich Burn Engine' {'code': 'NG_4SRB', 'hhv': 1020, 'co2': 53.06, 'ch4': 0.001, 'n2o': 0.0001, 'unit': 'kg/MMBtu', 'baseUnit': 'scf'}
+'Liquids Unloading - Plunger Lift' {'code': 'UnloadPlunger', 'type': 'unloading', 'ch4': 0.1, 'factor': 0.1, 'unit': 'tonnes/event'}
+'Liquids Unloading - Non-Plunger' {'code': 'UnloadNonPlunger', 'type': 'unloading', 'ch4': 0.2, 'factor': 0.2, 'unit': 'tonnes/event'}
+'Propane (Liquid)' {'code': 'LPG_Liq', 'hhv': 91500, 'co2': 62.88, 'ch4': 0.003, 'n2o': 0.0006, 'unit': 'kg/MMBtu', 'baseUnit': 'gal'}
+'Natural Gas - Turbine' {'code': 'NG_Turbine', 'hhv': 1020, 'co2': 53.06, 'ch4': 0.0037, 'n2o': 0.0013, 'unit': 'kg/MMBtu', 'baseUnit': 'scf'}
+'Natural Gas - 2-Stroke Lean Burn Engine' {'code': 'NG_2SLB', 'hhv': 1020, 'co2': 53.06, 'ch4': 0.6, 'n2o': 0.0001, 'unit': 'kg/MMBtu', 'baseUnit': 'scf'}
+'Natural Gas - Heater/Boiler' {'code': 'NG_Heater', 'hhv': 1020, 'co2': 53.06, 'ch4': 0.001, 'n2o': 0.0001, 'unit': 'kg/MMBtu', 'baseUnit': 'scf'}
+'Completion - Gas Well (No Flaring)' {'code': 'CompGasNoFlare', 'ch4': 0.7, 'co2': 0, 'n2o': 0, 'factor': 0.7, 'unit': 'tonnes/event'}
+'Workover - Gas Well (No Flaring)' {'code': 'WorkoverGasNoFlare', 'ch4': 0.05, 'co2': 0, 'n2o': 0, 'factor': 0.05, 'unit': 'tonnes/event'}
+'Tank - Working Losses (Oil)' {'code': 'TankWorkOil', 'ch4': 0.05, 'co2': 0, 'n2o': 0, 'factor': 0.05, 'unit': 'kg/bbl'}
+'Tank - Breathing Losses (Oil)' {'code': 'TankBreathOil', 'ch4': 0.001, 'co2': 0, 'n2o': 0, 'factor': 0.001, 'unit': 'kg/bbl-year'}
+'Loading - Crude Oil (Tank Truck)' {'code': 'LoadCrudeTruck', 'ch4': 0.00016, 'co2': 0, 'n2o': 0, 'factor': 0.00016, 'unit': 'kg/bbl'}
+'Loading - Crude Oil (Marine Vessel)' {'code': 'LoadCrudeMarine', 'ch4': 8e-05, 'co2': 0, 'n2o': 0, 'factor': 8e-05, 'unit': 'kg/bbl'}
+'Wastewater - Oil/Water Separator' {'code': 'WaterSep', 'ch4': 0.0005, 'co2': 0, 'n2o': 0, 'factor': 0.0005, 'unit': 'kg/bbl water', 'baseUnit': 'bbl'}

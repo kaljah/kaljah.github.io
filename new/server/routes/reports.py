@@ -451,6 +451,37 @@ def generate_report():
         )
 
 
+@reports_bp.route("/master-annual-report", methods=["GET"])
+@login_required
+def get_master_annual_report():
+    """Download the comprehensive master annual GHG & CAP report for a specific facility or consolidated."""
+    import os
+    facility_id = request.args.get("facility_id")
+
+    if facility_id in ("170", 170, "elm", "ELM"):
+        pdf_path = os.path.abspath("c:/Users/samsung/Desktop/H2/El_Merk_2025_Annual_GHG_Report.pdf")
+        if not os.path.exists(pdf_path):
+            from generate_elm_master_report import build_elm_master_pdf
+            build_elm_master_pdf(pdf_path)
+        return send_file(
+            pdf_path,
+            mimetype="application/pdf",
+            as_attachment=True,
+            download_name="El_Merk_2025_Annual_GHG_Report.pdf",
+        )
+
+    pdf_path = os.path.abspath("c:/Users/samsung/Desktop/H2/Groupement_Berkine_2025_Annual_GHG_Report.pdf")
+    if not os.path.exists(pdf_path):
+        from generate_berkine_master_report import build_master_pdf
+        build_master_pdf(pdf_path)
+    return send_file(
+        pdf_path,
+        mimetype="application/pdf",
+        as_attachment=True,
+        download_name="Groupement_Berkine_2025_Annual_GHG_Report.pdf",
+    )
+
+
 @reports_bp.route("/export", methods=["GET"])
 @login_required
 def export_emissions():
@@ -786,7 +817,8 @@ def export_ogmp_excel():
             "mmscf": 28316.8,
             "m3": 1.0,
             "scf": 0.0283168,
-            "bbl": 0.158987,
+            "bbl": 164.238,
+            "boe": 164.238,
         }
 
         # -------------------------------------------------------------
@@ -891,13 +923,21 @@ def export_ogmp_excel():
 
             # Loss rate %
             ch4_vol_m3 = (bu_ch4 * 1000.0) / 0.6785 if bu_ch4 > 0 else 0.0
-            loss_rate_pct = (ch4_vol_m3 / gas_m3 * 100.0) if gas_m3 > 0 else 0.0
             target_rate = (
                 0.20 if "upstream" in (f.segment or "Upstream").lower() else 0.05
             )
-            comp_status = (
-                "Compliant" if loss_rate_pct <= target_rate else "Non-Compliant"
-            )
+            if gas_m3 > 0:
+                loss_rate_pct = (ch4_vol_m3 / gas_m3 * 100.0)
+                comp_status = (
+                    "Compliant" if loss_rate_pct <= target_rate else "Non-Compliant"
+                )
+            else:
+                if bu_ch4 > 0:
+                    loss_rate_pct = None
+                    comp_status = "Non-Compliant (Missing Production Data)"
+                else:
+                    loss_rate_pct = 0.0
+                    comp_status = "N/A (No Activity)"
 
             # Canonical OGMP Level calculation
             curr_lvl = compute_facility_ogmp_level(
@@ -928,7 +968,11 @@ def export_ogmp_excel():
             ws1.cell(row=row_curr, column=9, value=round(gas_m3, 2))
             ws1.cell(row=row_curr, column=10, value=round(bu_ch4, 2))
             ws1.cell(row=row_curr, column=11, value=round(td_ch4, 2))
-            ws1.cell(row=row_curr, column=12, value=round(loss_rate_pct, 4))
+            ws1.cell(
+                row=row_curr,
+                column=12,
+                value=round(loss_rate_pct, 4) if loss_rate_pct is not None else "N/A",
+            )
             ws1.cell(row=row_curr, column=13, value=target_rate)
             ws1.cell(row=row_curr, column=14, value=comp_status)
             ws1.cell(row=row_curr, column=15, value=pathway)
@@ -980,6 +1024,7 @@ def export_ogmp_excel():
             "tank": "Vented",
             "tank_flashing": "Vented",
             "liquids_unloading": "Vented",
+            "unloading": "Vented",
             "agr": "Process",
             "dehydrator": "Process",
         }

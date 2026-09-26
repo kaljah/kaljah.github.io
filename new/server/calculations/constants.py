@@ -42,8 +42,14 @@ def get_active_gwp(standard=None, gwp_dict=None, horizon="100"):
     :param horizon: '100' (default) or '20' for 20-year horizon
     :return: dict with 'CO2', 'CH4', 'N2O'
     """
-    if gwp_dict is not None and isinstance(gwp_dict, dict) and "CH4" in gwp_dict:
-        return gwp_dict
+    if gwp_dict is not None and isinstance(gwp_dict, dict):
+        norm_dict = {str(k).upper(): float(v) for k, v in gwp_dict.items() if v is not None}
+        if "CH4" in norm_dict:
+            return {
+                "CO2": norm_dict.get("CO2", 1.0),
+                "CH4": norm_dict["CH4"],
+                "N2O": norm_dict.get("N2O", 265.0),
+            }
 
     std_key = str(standard or "").upper().strip()
     if not std_key:

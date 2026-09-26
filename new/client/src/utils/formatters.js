@@ -8,7 +8,7 @@
  */
 export const formatCompactNumber = (value, decimals = 1) => {
   if (value === null || value === undefined || value === "") return "0";
-  const num = parseFloat(value);
+  let num = parseFloat(value);
   if (!Number.isFinite(num)) {
     if (num === Infinity) return "∞";
     if (num === -Infinity) return "-∞";
@@ -17,11 +17,17 @@ export const formatCompactNumber = (value, decimals = 1) => {
 
   const safeDecimals = Math.max(0, Math.min(20, Math.round(Number(decimals) || 0)));
 
-  return new Intl.NumberFormat("en-US", {
+  if (Object.is(num, -0) || Math.abs(num) < 1e-12) {
+    num = 0;
+  }
+
+  const res = new Intl.NumberFormat("en-US", {
     notation: "compact",
     compactDisplay: "short",
     maximumFractionDigits: safeDecimals,
   }).format(num);
+
+  return res.replace(/^-0(\.0+)?$/, "0$1");
 };
 
 /**
@@ -32,7 +38,7 @@ export const formatCompactNumber = (value, decimals = 1) => {
  */
 export const formatNumber = (value, decimals = 3) => {
   if (value === null || value === undefined || value === "") return "0";
-  const num = parseFloat(value);
+  let num = parseFloat(value);
   if (!Number.isFinite(num)) {
     if (num === Infinity) return "∞";
     if (num === -Infinity) return "-∞";
@@ -41,10 +47,16 @@ export const formatNumber = (value, decimals = 3) => {
 
   const safeDecimals = Math.max(0, Math.min(20, Math.round(Number(decimals) || 0)));
 
-  return num.toLocaleString("en-US", {
+  if (Object.is(num, -0) || Math.abs(num) < Math.pow(10, -(safeDecimals + 1))) {
+    num = 0;
+  }
+
+  const res = num.toLocaleString("en-US", {
     minimumFractionDigits: safeDecimals,
     maximumFractionDigits: safeDecimals,
   });
+
+  return res.replace(/^-0(\.0+)?$/, "0$1");
 };
 
 /**

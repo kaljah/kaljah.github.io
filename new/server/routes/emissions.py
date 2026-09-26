@@ -69,7 +69,7 @@ def _lookup_api_factor(fuel_name: str) -> dict:
     for k, v in factor_catalog.items():
         if k.lower().replace("_", " ").replace("-", " ").strip() == norm:
             return v
-        if v.get("code") and v.get("code").lower() == norm:
+        if v.get("code") and v.get("code").lower().replace("_", " ").replace("-", " ").strip() == norm:
             return v
     return {}
 
@@ -2907,6 +2907,12 @@ def upload_start():
     scope = request.form.get("scope", "1")
     overwrite_duplicates = request.form.get("overwrite_duplicates") == "true"
 
+    # BUG-001: the bulk job must enforce the same roles as the dedicated endpoints.
+    if user.role in ["it_admin", "it_manager", "it"]:
+        return jsonify({"error": "IT accounts cannot upload business data"}), 403
+    if scope in ("facilities", "custom_factors") and user.role not in ["admin", "superuser"]:
+        return jsonify({"error": "Only admins and superusers can import facilities or custom factors"}), 403
+
     import json
 
     provided_mapping = None
@@ -2983,7 +2989,9 @@ def add_emission():
     if user.role in ("auditor", "it_admin", "it_manager", "it"):
         return jsonify({"error": "Forbidden: Read-only or administrative role cannot create emission records"}), 403
 
-    data = request.get_json(silent=True) or {}
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        return jsonify({"error": "Invalid JSON: payload must be a JSON object"}), 400
 
     # Map source_type to process_type if missing, and vice versa
     if not data.get("process_type") and data.get("source_type"):
@@ -3038,6 +3046,73 @@ def add_emission():
         return jsonify({"error": "Unauthorized for this facility"}), 403
 
     facility = db.session.get(Facility, fac_id)
+
+    # Process-specific input validation for associated_gas_venting
+    p_type = (data.get("process_type") or "").lower().strip()
+    if p_type in ["associated_gas_venting", "associated_venting", "associated_gas"]:
+        ch4_in = data.get("ch4_content")
+        co2_in = data.get("co2_content")
+        c_ch4_val = None
+        c_co2_val = None
+
+        if ch4_in not in [None, "", "-"]:
+            try:
+                c_ch4_val = float(str(ch4_in).replace("%", "").strip())
+                if c_ch4_val > 1.0:
+                    c_ch4_val /= 100.0
+                if c_ch4_val < 0.0 or c_ch4_val > 1.0:
+                    return jsonify({"error": f"Invalid CH4 content: must be between 0% and 100% (got {c_ch4_val*100:.1f}%)", "field": "ch4_content"}), 422
+            except (ValueError, TypeError):
+                return jsonify({"error": "Invalid CH4 content: must be a number", "field": "ch4_content"}), 422
+
+        if co2_in not in [None, "", "-"]:
+            try:
+                c_co2_val = float(str(co2_in).replace("%", "").strip())
+                if c_co2_val > 1.0:
+                    c_co2_val /= 100.0
+                if c_co2_val < 0.0 or c_co2_val > 1.0:
+                    return jsonify({"error": f"Invalid CO2 content: must be between 0% and 100% (got {c_co2_val*100:.1f}%)", "field": "co2_content"}), 422
+            except (ValueError, TypeError):
+                return jsonify({"error": "Invalid CO2 content: must be a number", "field": "co2_content"}), 422
+
+        if c_ch4_val is not None and c_co2_val is not None:
+            if (c_ch4_val + c_co2_val) > 1.0001:
+                return jsonify({
+                    "error": f"Gas composition error: Sum of CH4 ({c_ch4_val*100:.1f}%) and CO2 ({c_co2_val*100:.1f}%) exceeds 100%",
+                    "field": "ch4_content",
+                }), 422
+
+        v_dur = data.get("venting_duration")
+        if v_dur not in [None, "", "-"]:
+            try:
+                dur_float = float(v_dur)
+                if dur_float < 0:
+                    return jsonify({"error": "Venting duration cannot be negative", "field": "venting_duration"}), 422
+                d_unit = str(data.get("duration_unit") or "days").lower()
+                dur_days = dur_float if "day" in d_unit else dur_float / 24.0
+                if dur_days > 366.0:
+                    return jsonify({"error": f"Venting duration ({dur_days:.1f} days) exceeds maximum annual limit of 366 days", "field": "venting_duration"}), 422
+            except (ValueError, TypeError):
+                return jsonify({"error": "Invalid venting duration: must be a number", "field": "venting_duration"}), 422
+
+        gor_in = data.get("gor")
+        if gor_in not in [None, "", "-"]:
+            try:
+                gor_float = float(gor_in)
+                if gor_float < 0:
+                    return jsonify({"error": "Gas-to-Oil Ratio (GOR) cannot be negative", "field": "gor"}), 422
+            except (ValueError, TypeError):
+                return jsonify({"error": "Invalid GOR: must be a number", "field": "gor"}), 422
+
+        for gas_f in ["recovered_gas_volume", "flared_gas_volume"]:
+            val_in = data.get(gas_f)
+            if val_in not in [None, "", "-"]:
+                try:
+                    vf = float(val_in)
+                    if vf < 0:
+                        return jsonify({"error": f"{gas_f.replace('_', ' ').capitalize()} cannot be negative", "field": gas_f}), 422
+                except (ValueError, TypeError):
+                    return jsonify({"error": f"Invalid {gas_f}: must be a number", "field": gas_f}), 422
 
     # Calculate Emissions
     # We need to fetch factor data if not specific
@@ -3205,6 +3280,10 @@ def add_emission():
         factor_source=(
             data.get("factor_source")
             or ("custom" if data.get("factor_type") == "custom" else ("specific" if data.get("calc_method") in ("direct_measurement", "engineering", "specific", "tier3") else "default"))
+        ),
+        data_source_ref=(
+            str(data.get("data_source_ref") or data.get("ticket_ref") or data.get("bulletin_ref") or "")[:120]
+            or None
         ),
     )
     record.ogmp_level = ogmp_level_for(record)

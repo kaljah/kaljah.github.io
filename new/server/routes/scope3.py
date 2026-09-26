@@ -1,11 +1,12 @@
-from flask import Blueprint, request, jsonify, session
+from flask import Blueprint, request, jsonify, session, current_app
 from models import User, Scope3Emission, Facility
 from extensions import db
 from sqlalchemy import func
 from routes.auth import login_required
 from calculations.uncertainty import propagate_uncertainty, Tier
 from calculations.units import compute_scope3_co2e
-from utils import get_current_user, get_allowed_facility_ids, log_activity_and_notify, require_facility_access
+from utils import get_current_user, get_allowed_facility_ids, log_activity_and_notify, require_facility_access, initial_record_status
+from validation import ValidationError, parse_number, parse_year, parse_month, normalize_scope3_category
 import datetime
 
 scope3_bp = Blueprint("scope3", __name__)
@@ -86,31 +87,34 @@ def create_scope3_emission():
     if allowed_fids is not None and int(facility_id) not in allowed_fids:
         return jsonify({"error": "Unauthorized for this facility"}), 403
 
-    req_status = data.get("status")
-    if req_status == "Draft":
-        initial_status = "Draft"
-    else:
-        # Maker-Checker: only admin role auto-verifies; all other roles (superuser, user) require admin approval
-        initial_status = "Verified" if user.role == "admin" else "Pending"
+    initial_status = initial_record_status(user, data.get("status"))
 
-    activity_data = float(data.get("activity_data") or data.get("amount", 0))
-    emission_factor = float(data.get("emission_factor", 0))
-    co2e_input = data.get("co2e") or data.get("emissions_tco2e")
+    # BUG-073 / BUG-089 / BUG-083: validate period, category and numbers before anything is stored.
+    year_val = parse_year(data.get("year"))
+    month_val = parse_month(data.get("month"))
+    category_val = normalize_scope3_category(data.get("category", "Category 11"))
+    activity_data = parse_number(
+        data.get("activity_data") if data.get("activity_data") not in (None, "") else data.get("amount"),
+        "activity_data", required=False, min_value=0, default=0.0,
+    )
+    emission_factor = parse_number(data.get("emission_factor"), "emission_factor", required=False, min_value=0, default=0.0)
+    co2e_input = data.get("co2e") if data.get("co2e") not in (None, "") else data.get("emissions_tco2e")
     # Enforce server-side calculation from activity_data and emission_factor to prevent client-side tampering
     if activity_data > 0 and emission_factor > 0:
         factor_unit = str(data.get("factor_unit") or data.get("emission_factor_unit") or "")
         calc_method = str(data.get("calculation_method") or "")
         co2e_val = compute_scope3_co2e(activity_data, emission_factor, factor_unit, calc_method)
     elif co2e_input not in [None, ""] and user.role in ["admin", "superuser"]:
-        co2e_val = float(co2e_input)
+        # Supplier-specific total reported directly (approver roles only)
+        co2e_val = parse_number(co2e_input, "co2e", min_value=0)
     else:
         co2e_val = 0.0
 
     emission = Scope3Emission(
         facility_id=data.get("facility_id"),
-        year=data.get("year"),
-        month=data.get("month"),
-        category=data.get("category", "Category 11"),
+        year=year_val,
+        month=month_val,
+        category=category_val,
         sub_category=data.get("sub_category")
         or data.get("activity_type"),  # Fallback to activity_type
         activity_data=activity_data,
@@ -124,8 +128,8 @@ def create_scope3_emission():
 
     # Calculate uncertainty
     provided_uncertainty = data.get("uncertainty")
-    if provided_uncertainty is not None:
-        final_uncertainty = float(provided_uncertainty)
+    if provided_uncertainty not in (None, ""):
+        final_uncertainty = parse_number(provided_uncertainty, "uncertainty", min_value=0, max_value=2)
     else:
         # Default Scope 3 uncertainty (20% EF, 10% AD -> ~22.3% combined)
         u_res = propagate_uncertainty(
@@ -152,7 +156,8 @@ def create_scope3_emission():
         db.session.commit()
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": f"Failed to create Scope 3 emission: {str(e)}"}), 500
+        current_app.logger.error(f"Failed to create Scope 3 emission: {e}")
+        return jsonify({"error": "Failed to create Scope 3 emission"}), 500
 
     try:
         log_activity_and_notify(
@@ -235,7 +240,7 @@ def update_scope3_emission(emission_id):
         return jsonify({"error": "Unauthorized: You may only modify records you created"}), 403
 
     # If non-admin modifies a verified record, reset status to Pending for maker-checker review
-    if user.role not in ["admin", "superuser"] and emission.status == "Verified":
+    if user.role != "admin" and emission.status in ("Verified", "Rejected"):
         emission.status = "Pending"
         emission.approved_by = None
         emission.approved_at = None
@@ -254,20 +259,20 @@ def update_scope3_emission(emission_id):
             return jsonify({"error": "Unauthorized to reassign to this facility"}), 403
         emission.facility_id = new_fid
     if "year" in data:
-        emission.year = int(data["year"])
+        emission.year = parse_year(data["year"])
     if "category" in data:
-        emission.category = data["category"]
+        emission.category = normalize_scope3_category(data["category"])
     if "sub_category" in data:
         emission.sub_category = data["sub_category"]
 
     recalc = False
     if "activity_data" in data:
-        emission.activity_data = float(data["activity_data"] or 0)
+        emission.activity_data = parse_number(data["activity_data"], "activity_data", required=False, min_value=0, default=0.0)
         recalc = True
     if "unit" in data:
         emission.unit = data["unit"]
     if "emission_factor" in data:
-        emission.emission_factor = float(data["emission_factor"] or 0)
+        emission.emission_factor = parse_number(data["emission_factor"], "emission_factor", required=False, min_value=0, default=0.0)
         recalc = True
 
     if recalc:
@@ -284,7 +289,7 @@ def update_scope3_emission(emission_id):
             emission.approved_at = None
 
     if "uncertainty" in data:
-        emission.uncertainty = float(data["uncertainty"] or 0)
+        emission.uncertainty = parse_number(data["uncertainty"], "uncertainty", required=False, min_value=0, max_value=2)
     if "calculation_method" in data:
         emission.calculation_method = data["calculation_method"]
     if "data_quality" in data:
@@ -296,7 +301,8 @@ def update_scope3_emission(emission_id):
         db.session.commit()
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": f"Failed to update Scope 3 emission: {str(e)}"}), 500
+        current_app.logger.error(f"Failed to update Scope 3 emission: {e}")
+        return jsonify({"error": "Failed to update Scope 3 emission"}), 500
 
     from routes.dashboard import clear_dashboard_cache
 

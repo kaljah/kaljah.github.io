@@ -267,6 +267,18 @@ const S = {
     fontSize: "0.78rem",
     fontWeight: 700,
   }),
+  roleBadge: (color, bg, border) => ({
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "5px",
+    padding: "3px 10px",
+    borderRadius: "100px",
+    background: bg,
+    color: color,
+    border: `1px solid ${border}`,
+    fontSize: "0.78rem",
+    fontWeight: 700,
+  }),
 
   /* action buttons */
   iconBtn: (color = "var(--text-secondary)") => ({

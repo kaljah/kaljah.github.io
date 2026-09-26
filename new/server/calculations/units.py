@@ -179,6 +179,12 @@ def normalize_gas_volume_to_standard(
 VOLUME_UNITS_TO_M3 = {
     "m3": 1.0,
     "m³": 1.0,
+    "sm3": 1.0,
+    "sm³": 1.0,
+    "nm3": 1.0,
+    "nm³": 1.0,
+    "ksm3": 1000.0,
+    "mmsm3": 1_000_000.0,
     "cubic_meter": 1.0,
     "cubic_meters": 1.0,
     "scf": 0.028316846592,
@@ -190,6 +196,9 @@ VOLUME_UNITS_TO_M3 = {
     "bbl": 0.158987295,
     "barrel": 0.158987295,
     "barrels": 0.158987295,
+    "kbbl": 158.987295,
+    "mbbl": 158.987295,
+    "mmbbl": 158987.295,
     "gal": 0.003785411784,
     "gallon": 0.003785411784,
     "gallons": 0.003785411784,
@@ -539,19 +548,32 @@ def compute_scope3_co2e(
     # 2. Extract numerator before '/' or ' per '
     num = unit_str.split("/")[0].split(" per ")[0].strip()
 
-    # 3. Check if numerator specifies tonnes CO2e
-    # Must NOT be kg, g, or lb
+    # 3. Check numerator dimension
     is_tonne_num = False
     if not any(
-        prefix in num for prefix in ["kg", "kilogram", " g", "gram", "lb", "pound"]
-    ):
+        prefix in num for prefix in ["kg", "kilogram", "lb", "pound"]
+    ) and not (num.startswith("g") and not num.startswith("gj")):
         if any(
             t in num for t in ["tonne", "metric_ton", "tco2", "mtco2", "t/"]
         ) or num.startswith("t ") or num == "t":
             is_tonne_num = True
 
+    is_gram_num = (
+        num.startswith("g ")
+        or num.startswith("gco2")
+        or num.startswith("g/")
+        or "gram" in num
+        or num == "g"
+    ) and not num.startswith("gj")
+
     if is_tonne_num:
         return amt_val * ef_val
+    elif is_gram_num:
+        # Grams CO2e to tonnes CO2e: divide by 1,000,000
+        return (amt_val * ef_val) / 1_000_000.0
+    elif num.startswith("lb") or "pound" in num:
+        # Pounds CO2e to tonnes CO2e: 0.45359237 kg/lb / 1000 kg/t
+        return (amt_val * ef_val * 0.45359237) / 1000.0
     else:
         # Standard kg CO2e / unit -> tonnes CO2e
         return (amt_val * ef_val) / 1000.0

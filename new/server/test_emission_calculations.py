@@ -623,30 +623,32 @@ class TestTier3LiquidsUnloading(unittest.TestCase):
 # =============================================================================
 # TIER 3 — DRILLING MUD DEGASSING
 # =============================================================================
+# TIER 1 / TIER 2 — DRILLING MUD DEGASSING (API Compendium Tables 6-2 & 6-3)
+# =============================================================================
 class TestTier1DrillingMud(unittest.TestCase):
     """
-    Mud Degassing Tier 1 (water-based mud):
-      mud_volume = 500 m3
-      EF (water-based) = 0.15 kg CH4/m3
-      CH4 = 500 * 0.15 = 75 kg = 0.075 tonne
-      CO2e = 0.075 * 28 = 2.1 tonne
+    Mud Degassing Tier 1 (API Table 6-3 default):
+      wells = 10 wells
+      EF = 0.0524 t CH4/well
+      CH4 = 10 * 0.0524 = 0.524 tonne
+      CO2e = 0.524 * 28 = 14.672 tonne
     """
 
     def setUp(self):
-        self.mud_vol = 500.0
-        self.expected_ch4 = self.mud_vol * 0.15 / 1000.0
+        self.wells = 10.0
+        self.expected_ch4 = self.wells * 0.0524
 
         inputs = {
-            "amount": self.mud_vol,
-            "quantity": self.mud_vol,
-            "unit": "m3",
-            "factor_source": "specific",
-            "mud_type": "water_based",
-            "mud_vol": self.mud_vol,
+            "amount": self.wells,
+            "quantity": self.wells,
+            "unit": "well",
+            "tier": "tier1",
+            "factor_source": "default",
+            "wells": self.wells,
         }
-        ef = {"co2": 0, "ch4": 0, "n2o": 0, "unit": "kg/m3"}
+        ef = {"co2": 0, "ch4": 0.0524, "n2o": 0, "unit": "t/well"}
         self.result = dispatcher.dispatch(
-            "drilling", inputs, ef, UNC_SPECIFIC, gwp_dict=GWP
+            "drilling", inputs, ef, UNC_DEFAULT, gwp_dict=GWP
         )
 
     def test_mud_ch4(self):
@@ -663,21 +665,53 @@ class TestTier1DrillingMud(unittest.TestCase):
         expected = ch4 * GWP_CH4
         self.assertAlmostEqual(float(self.result["total_co2e"]), expected, places=5)
 
-    def test_oil_based_mud(self):
-        """Oil-based mud uses EF=0.35 kg/m3."""
+    def test_tier2_water_based_mud(self):
+        """Water-based mud uses API Onshore EF=0.0458 t CH4/day."""
         inputs = {
-            "amount": 200,
-            "quantity": 200,
-            "unit": "m3",
-            "factor_source": "specific",
-            "mud_type": "oil_based",
-            "mud_vol": 200,
+            "amount": 20,
+            "quantity": 20,
+            "unit": "days",
+            "tier": "tier2",
+            "mud_type": "water_based",
+            "drilling_days": 20,
         }
-        ef = {"co2": 0, "ch4": 0, "n2o": 0, "unit": "kg/m3"}
+        ef = {"co2": 0, "ch4": 0.0458, "n2o": 0, "unit": "t/day"}
         result = dispatcher.dispatch("drilling", inputs, ef, UNC_SPECIFIC, gwp_dict=GWP)
         ch4 = extract_val(result["results"]["ch4"])
-        expected = 200 * 0.35 / 1000.0
+        expected = 20 * 0.0458
         self.assertAlmostEqual(ch4, expected, places=6)
+
+    def test_oil_based_mud(self):
+        """Oil-based mud uses API Onshore EF=0.0103 t CH4/day."""
+        inputs = {
+            "amount": 20,
+            "quantity": 20,
+            "unit": "days",
+            "tier": "tier2",
+            "mud_type": "oil_based",
+            "drilling_days": 20,
+        }
+        ef = {"co2": 0, "ch4": 0.0103, "n2o": 0, "unit": "t/day"}
+        result = dispatcher.dispatch("drilling", inputs, ef, UNC_SPECIFIC, gwp_dict=GWP)
+        ch4 = extract_val(result["results"]["ch4"])
+        expected = 20 * 0.0103
+        self.assertAlmostEqual(ch4, expected, places=6)
+
+    def test_tier2_plus_site_gas(self):
+        """Tier 2+ scales by X_ch4 / 0.8385."""
+        inputs = {
+            "amount": 10,
+            "unit": "days",
+            "tier": "tier2_plus",
+            "mud_type": "water_based",
+            "drilling_days": 10,
+            "ch4_pct": 90.0,
+            "co2_pct": 5.0,
+        }
+        result = dispatcher.dispatch("drilling", inputs, {}, UNC_SPECIFIC, gwp_dict=GWP)
+        ch4 = extract_val(result["results"]["ch4"])
+        expected = 10 * 0.0458 * (0.90 / 0.8385)
+        self.assertAlmostEqual(ch4, expected, places=5)
 
 
 # =============================================================================

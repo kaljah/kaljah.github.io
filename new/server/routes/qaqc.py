@@ -173,7 +173,9 @@ def get_qaqc_dashboard():
             return default_val
 
         # Scope 1
-        s1_q = _fac_filter(Emission.query, Emission)
+        s1_q = _fac_filter(Emission.query, Emission).filter(
+            or_(Emission.status.is_(None), func.lower(Emission.status) != "rejected")
+        )
         s1_rows = s1_q.with_entities(
             Emission.co2e_total,
             Emission.uncertainty_pct,
@@ -185,7 +187,9 @@ def get_qaqc_dashboard():
         )
 
         # Scope 2
-        s2_q = _fac_filter(Scope2Emission.query, Scope2Emission)
+        s2_q = _fac_filter(Scope2Emission.query, Scope2Emission).filter(
+            or_(Scope2Emission.status.is_(None), func.lower(Scope2Emission.status) != "rejected")
+        )
         s2_rows = s2_q.with_entities(
             Scope2Emission.co2e,
             Scope2Emission.uncertainty_pct,
@@ -197,7 +201,9 @@ def get_qaqc_dashboard():
         )
 
         # Scope 3
-        s3_q = _fac_filter(Scope3Emission.query, Scope3Emission)
+        s3_q = _fac_filter(Scope3Emission.query, Scope3Emission).filter(
+            or_(Scope3Emission.status.is_(None), func.lower(Scope3Emission.status) != "rejected")
+        )
         s3_rows = s3_q.with_entities(
             Scope3Emission.co2e,
             Scope3Emission.uncertainty_pct,
@@ -243,17 +249,22 @@ def get_qaqc_dashboard():
             recent_s3 = 0
         recent_records_count = recent_s1 + recent_s2 + recent_s3
 
-        # Field-level gap checks on Scope 1
+        # Field-level gap checks across scopes
         if allowed_fids is not None:
             missing_facility_count = 0
         else:
             missing_fac_q = Emission.query.filter(Emission.facility_id.is_(None))
+            missing_fac_s2 = Scope2Emission.query.filter(Scope2Emission.facility_id.is_(None))
+            missing_fac_s3 = Scope3Emission.query.filter(Scope3Emission.facility_id.is_(None))
             if year_arg and year_arg not in ["all", ""]:
                 try:
-                    missing_fac_q = missing_fac_q.filter(Emission.year == int(year_arg))
+                    yr = int(year_arg)
+                    missing_fac_q = missing_fac_q.filter(Emission.year == yr)
+                    missing_fac_s2 = missing_fac_s2.filter(Scope2Emission.year == yr)
+                    missing_fac_s3 = missing_fac_s3.filter(Scope3Emission.year == yr)
                 except ValueError:
                     pass
-            missing_facility_count = missing_fac_q.count()
+            missing_facility_count = missing_fac_q.count() + missing_fac_s2.count() + missing_fac_s3.count()
 
         # Facility names lookup for sample records
         fac_map = {}
@@ -283,12 +294,27 @@ def get_qaqc_dashboard():
         missing_amount_q = q_s1_all.filter(
             or_(Emission.quantity.is_(None), Emission.quantity <= 0)
         )
-        missing_amount_count = missing_amount_q.count()
+        missing_amount_s2_count = q_s2_all.filter(
+            (Scope2Emission.electricity_kwh.is_(None) | (Scope2Emission.electricity_kwh <= 0))
+            & (Scope2Emission.steam_ton.is_(None) | (Scope2Emission.steam_ton <= 0))
+            & (Scope2Emission.heat_mmbtu.is_(None) | (Scope2Emission.heat_mmbtu <= 0))
+            & (Scope2Emission.cooling_ton.is_(None) | (Scope2Emission.cooling_ton <= 0))
+        ).count()
+        missing_amount_s3_count = q_s3_all.filter(
+            or_(Scope3Emission.activity_data.is_(None), Scope3Emission.activity_data <= 0)
+        ).count()
+        missing_amount_count = missing_amount_q.count() + missing_amount_s2_count + missing_amount_s3_count
 
         missing_co2e_q = q_s1_all.filter(
             or_(Emission.co2e_total.is_(None), Emission.co2e_total < 0)
         )
-        missing_co2e_count = missing_co2e_q.count()
+        missing_co2e_s2_count = q_s2_all.filter(
+            or_(Scope2Emission.co2e.is_(None), Scope2Emission.co2e < 0)
+        ).count()
+        missing_co2e_s3_count = q_s3_all.filter(
+            or_(Scope3Emission.co2e.is_(None), Scope3Emission.co2e < 0)
+        ).count()
+        missing_co2e_count = missing_co2e_q.count() + missing_co2e_s2_count + missing_co2e_s3_count
 
         # Facilities coverage (scoped to allowed facilities and reporting year)
         if allowed_fids is not None:
@@ -347,11 +373,12 @@ def get_qaqc_dashboard():
         rejected_anomalies += q3_flags.filter(Scope3Emission.status.ilike("%rejected%")).count()
 
         # Completeness rates per dimension
-        if s1_count > 0:
-            fac_completeness = round(max(0.0, (s1_count - missing_facility_count) / s1_count * 100), 1)
+        denom = total_records_count if total_records_count > 0 else s1_count
+        if denom > 0:
+            fac_completeness = round(max(0.0, (denom - missing_facility_count) / denom * 100), 1)
             fuel_completeness = round(max(0.0, (comb_count - missing_fuel_count) / comb_count * 100), 1) if comb_count > 0 else 100.0
-            amount_completeness = round(max(0.0, (s1_count - missing_amount_count) / s1_count * 100), 1)
-            calc_completeness = round(max(0.0, (s1_count - missing_co2e_count) / s1_count * 100), 1)
+            amount_completeness = round(max(0.0, (denom - missing_amount_count) / denom * 100), 1)
+            calc_completeness = round(max(0.0, (denom - missing_co2e_count) / denom * 100), 1)
             overall_completeness = round(
                 (fac_completeness + fuel_completeness + amount_completeness + calc_completeness) / 4, 1
             )
