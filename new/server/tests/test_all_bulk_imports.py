@@ -497,11 +497,11 @@ def test_bulk_import_duplicate_prevention_and_overwrite(logged_client, app):
     }, content_type="multipart/form-data")
     assert res1.status_code == 200
     job1 = wait_for_job(client, res1.get_json()["job_id"])
-    assert job1["status"] == "completed"
+    assert job1["status"] == "completed", job1.get("skipped_preview")
 
     with app.app_context():
         count1 = Emission.query.filter_by(year=2025, month=1).count()
-        assert count1 == 1
+        assert count1 == 1, job1.get("skipped_preview")
 
     # Second upload WITHOUT overwrite: should skip the duplicate row
     res2 = client.post("/api/emissions/upload/start", data={
@@ -564,7 +564,8 @@ def test_vented_fuel_key_deduplication_normalization(logged_client, app):
     # Upload 1: pneumatics row with empty fuel
     csv_data1 = (
         "facility_name,date,process,fuel,quantity,unit\n"
-        "Test Facility A,2025-02,pneumatics,,500,count\n"
+        # BUG-015: a row with no resolvable factor is rejected, so both uploads use catalog pneumatic factors
+        "Test Facility A,2025-02,pneumatics,Pneumatic Controller - Intermittent,500,count\n"
     )
     mapping = {
         "facility_name": "facility_name",
@@ -583,18 +584,18 @@ def test_vented_fuel_key_deduplication_normalization(logged_client, app):
     }, content_type="multipart/form-data")
     assert res1.status_code == 200
     job1 = wait_for_job(client, res1.get_json()["job_id"])
-    assert job1["status"] == "completed"
+    assert job1["status"] == "completed", job1.get("skipped_preview")
 
     with app.app_context():
         count1 = Emission.query.filter_by(year=2025, month=2).count()
-        assert count1 == 1
+        assert count1 == 1, job1.get("skipped_preview")
 
     # Upload 2: same facility, date, process ("pneumatics"), but with fuel="Natural Gas"
     # Because pneumatics is a non-combustion process, fuel_k is normalized to "",
     # so without overwrite, this should be detected as a duplicate and skipped.
     csv_data2 = (
         "facility_name,date,process,fuel,quantity,unit\n"
-        "Test Facility A,2025-02,pneumatics,Natural Gas,500,count\n"
+        "Test Facility A,2025-02,pneumatics,Pneumatic Controller - Low Bleed (<6 scfh),500,count\n"
     )
     res2 = client.post("/api/emissions/upload/start", data={
         "scope": "1",
