@@ -73,6 +73,73 @@ def require_facility_access(user, facility_id):
         return False
 
 
+def facility_in_user_scope(user, region=None, location=None, name=None):
+    """True when a facility with these attributes falls inside the user's region scope.
+
+    Mirrors get_allowed_facility_ids (a regional user sees facilities whose region, location
+    or name equals user.location). Used to validate the *resulting* values of facility
+    creates/updates so a regional user cannot move a facility out of its own scope
+    (audit RC-1: BUG-001, BUG-093).
+    """
+    if not user or user.role in ["it_admin", "it_manager", "it"]:
+        return False
+    if user.role == "admin":
+        return True
+    user_loc = str(user.location or "").strip().lower()
+    if user.role == "superuser" and is_unrestricted_location(user_loc):
+        return True
+    if not user_loc or is_unrestricted_location(user_loc):
+        return False
+    return user_loc in {str(v or "").strip().lower() for v in (region, location, name)}
+
+
+def facility_change_allowed(user, current, region=None, location=None, name=None):
+    """May `user` create (current=None) or update `current` to these attribute values?
+
+    Regional users must keep the facility in their scope and may not assign a region
+    other than their own (re-regioning moves the facility into another region's scope).
+    """
+    if not facility_in_user_scope(user, region, location, name):
+        return False
+    if user.role == "admin" or (user.role == "superuser" and is_unrestricted_location(user.location)):
+        return True
+    user_loc = str(user.location or "").strip().lower()
+    old_region = str(getattr(current, "region", None) or "").strip().lower()
+    new_region = str(region or "").strip().lower()
+    return new_region == old_region or new_region in ("", user_loc)
+
+
+class NameMap(dict):
+    """Case-insensitive name -> object map for bulk imports.
+
+    Rows with a NULL/blank name are skipped (BUG-029: a NULL facility name crashed every
+    import) and names shared by several objects are left out and listed in ``ambiguous``
+    so a lookup can never silently pick one of them (BUG-065).
+    """
+
+    def __init__(self):
+        super().__init__()
+        self.ambiguous = set()
+
+    def add(self, key, obj, overwrite=True):
+        key = str(key or "").strip().lower()
+        if not key or key in self.ambiguous:
+            return
+        if key in self and self[key] is not obj:
+            if overwrite:
+                del self[key]
+                self.ambiguous.add(key)
+            return
+        self[key] = obj
+
+
+def build_name_map(objs, attr="name"):
+    m = NameMap()
+    for o in objs:
+        m.add(getattr(o, attr, None), o)
+    return m
+
+
 # ── Maker-checker status policy (audit RC-2) ────────────────────────────────
 # One rule for every scope and channel: only an admin's own manual entry is
 # Verified on creation; everything else waits for an approver.

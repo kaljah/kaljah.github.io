@@ -502,11 +502,13 @@ def add_bulk_upload():
 
     # Pre-fetch facilities and custom factors for resolution
     all_facilities = Facility.query.all()
-    fac_name_map = {f.name.lower(): f for f in all_facilities}
+    from utils import build_name_map
+
+    fac_name_map = build_name_map(all_facilities)
 
     # Pre-fetch user's custom factors
     custom_factors = CustomFactor.query.filter_by(created_by=user.id).all()
-    cf_name_map = {cf.name.lower(): cf for cf in custom_factors}
+    cf_name_map = build_name_map(custom_factors)
 
     valid_records = []
     errors = []
@@ -615,8 +617,10 @@ def add_bulk_upload():
             except ValueError:
                 row_errors.append("Invalid engineering calculation inputs for Flaring.")
         elif factor_type == "custom":
-            cf = cf_name_map.get(fuel.lower())
-            if not cf:
+            cf = cf_name_map.get(fuel.strip().lower())
+            if fuel.strip().lower() in cf_name_map.ambiguous:
+                row_errors.append(f"Custom factor name '{fuel}' is not unique; rename the duplicates first.")
+            elif not cf:
                 row_errors.append(
                     f"Custom factor not found for fuel: '{fuel}'. Please save it in the app first."
                 )
