@@ -113,6 +113,9 @@ PROCESS_CATEGORY = {
     "wellhead_fugitive": "fugitive",
     "separator_fugitive": "fugitive",
     "venting": "vented",
+    "associated_gas_venting": "vented",
+    "associated_venting": "vented",
+    "associated_gas": "vented",
     "blowdown": "vented",
     "completions": "vented",
     "completion_flowback": "vented",
@@ -156,14 +159,19 @@ PROCESS_CATEGORY = {
 # ---------------------------------------------------------------------------
 
 
-def combine_uncertainties_product(u_ef, u_ad):
+def combine_uncertainties_product(u_ef, u_ad, exact=False):
     """
     Combine relative uncertainties for E = Activity × EF (multiplicative).
-    Formula: u_E = √(u_AD² + u_EF²)
+    Standard IPCC Eq 3.1: u_E = sqrt(u_AD^2 + u_EF^2).
+    If exact=True, includes Goodman (1960) higher-order term sqrt(u_AD^2 + u_EF^2 + u_AD^2*u_EF^2).
     Reference: IPCC 2006 GL Vol.1 §3.3 Eq. 3.1
     Returns: combined relative standard uncertainty (1σ)
     """
-    return math.sqrt(u_ef**2 + u_ad**2)
+    u_ef_f = float(u_ef or 0.0)
+    u_ad_f = float(u_ad or 0.0)
+    if exact:
+        return math.sqrt(u_ef_f**2 + u_ad_f**2 + (u_ef_f**2 * u_ad_f**2))
+    return math.sqrt(u_ef_f**2 + u_ad_f**2)
 
 
 def combine_uncertainties_sum(val1, u1_rel, val2, u2_rel):
@@ -185,7 +193,7 @@ def combine_uncertainties_sum(val1, u1_rel, val2, u2_rel):
 def srss_inventory(source_list):
     """
     Aggregate uncertainty across multiple sources using SRSS Approach 1.
-    Formula: U_inv = √(Σ(Eᵢ·uᵢ)²) / Σ(Eᵢ)
+    Formula: U_inv = √(Σ(Eᵢ·uᵢ)²) / |Σ(Eᵢ)|
     Reference: IPCC 2006 GL Vol.1 §3.3 Eq. 3.3
 
     Args:
@@ -206,27 +214,130 @@ def srss_inventory(source_list):
         val = float(s.get("value") or 0.0)
         u_rel = s.get("relative_uncertainty")
         if u_rel is None:
-            u_rel = s.get("uncertainty") or s.get("uncertainty_1sigma") or 0.05
+            u_rel = s.get("uncertainty") if s.get("uncertainty") is not None else (
+                s.get("uncertainty_1sigma") if s.get("uncertainty_1sigma") is not None else 0.05
+            )
         u_rel = float(u_rel or 0.0)
         valid_sources.append({"value": val, "relative_uncertainty": u_rel})
 
-    total_value = sum(s["value"] for s in valid_sources if s["value"] > 0)
-    if total_value <= 0:
+    total_value = sum(s["value"] for s in valid_sources)
+    abs_total = abs(total_value)
+    if abs_total <= 0:
         return {
             "relative_uncertainty_1sigma": 0.0,
             "relative_uncertainty_95pct": 0.0,
             "total_value": 0.0,
         }
     sum_sq = sum(
-        (s["value"] * s["relative_uncertainty"]) ** 2
+        (abs(s["value"]) * s["relative_uncertainty"]) ** 2
         for s in valid_sources
-        if s["value"] > 0
     )
-    u_1sigma = math.sqrt(sum_sq) / total_value
+    u_1sigma = math.sqrt(sum_sq) / abs_total
     return {
         "relative_uncertainty_1sigma": u_1sigma,
         "relative_uncertainty_95pct": COVERAGE_FACTOR_95 * u_1sigma,
         "total_value": total_value,
+    }
+
+
+def monte_carlo_simulation(
+    source_list,
+    iterations=10000,
+    seed=42,
+    confidence_level=0.95,
+):
+    """
+    IPCC 2006 GL Vol.1 §3.4 Approach 2 — Monte Carlo Simulation for GHG Uncertainty Analysis.
+    Models each emission source as an independent lognormal random variable:
+      ln(X) ~ N(mu, sigma^2)
+    where:
+      sigma^2 = ln(1 + var / mean^2) = ln(1 + u_rel^2)
+      mu = ln(mean^2 / sqrt(var + mean^2))
+
+    Args:
+        source_list: list of dicts with 'value' (tCO2e) and 'relative_uncertainty' (1σ, decimal)
+        iterations: number of Monte Carlo runs (default: 10,000)
+        seed: random seed for reproducibility
+        confidence_level: confidence level for bounds (default: 0.95)
+
+    Returns:
+        dict containing mean, median, std, ci_lower, ci_upper, relative_uncertainty_95pct, iterations
+    """
+    import random
+    if seed is not None:
+        random.seed(seed)
+
+    if not source_list:
+        return {
+            "mean": 0.0,
+            "median": 0.0,
+            "std": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.0,
+            "relative_uncertainty_95pct": 0.0,
+            "iterations": iterations,
+        }
+
+    params = []
+    deterministic_offset = 0.0
+    for s in source_list:
+        mean_val = float(s.get("value") or 0.0)
+        u_rel = s.get("relative_uncertainty")
+        if u_rel is None:
+            u_rel = s.get("uncertainty") if s.get("uncertainty") is not None else 0.05
+        u_rel = max(0.0, float(u_rel or 0.0))
+
+        if mean_val <= 0 or u_rel == 0:
+            deterministic_offset += mean_val
+        else:
+            var = (mean_val * u_rel) ** 2
+            sig_sq = math.log(1.0 + (var / (mean_val ** 2)))
+            sigma = math.sqrt(sig_sq)
+            mu = math.log((mean_val ** 2) / math.sqrt(var + (mean_val ** 2)))
+            params.append((mu, sigma))
+
+    if not params:
+        return {
+            "mean": deterministic_offset,
+            "median": deterministic_offset,
+            "std": 0.0,
+            "ci_lower": deterministic_offset,
+            "ci_upper": deterministic_offset,
+            "relative_uncertainty_95pct": 0.0,
+            "iterations": iterations,
+        }
+
+    totals = []
+    for _ in range(iterations):
+        tot = deterministic_offset
+        for mu, sigma in params:
+            tot += math.exp(random.gauss(mu, sigma))
+        totals.append(tot)
+
+    totals.sort()
+    n = len(totals)
+    mean_res = sum(totals) / n
+    median_res = totals[n // 2]
+    var_res = sum((x - mean_res) ** 2 for x in totals) / max(1, n - 1)
+    std_res = math.sqrt(var_res)
+
+    alpha = 1.0 - confidence_level
+    lower_idx = max(0, int((alpha / 2.0) * n))
+    upper_idx = min(n - 1, int((1.0 - alpha / 2.0) * n))
+    ci_lower = totals[lower_idx]
+    ci_upper = totals[upper_idx]
+
+    half_width = (ci_upper - ci_lower) / 2.0
+    u_95_pct = (half_width / abs(mean_res)) * 100.0 if abs(mean_res) > 0 else 0.0
+
+    return {
+        "mean": round(mean_res, 4),
+        "median": round(median_res, 4),
+        "std": round(std_res, 4),
+        "ci_lower": round(ci_lower, 4),
+        "ci_upper": round(ci_upper, 4),
+        "relative_uncertainty_95pct": round(u_95_pct, 2),
+        "iterations": iterations,
     }
 
 
@@ -396,7 +507,17 @@ def resolve_tier(factor_source: str) -> int:
         "t3",
     ]:
         return Tier.T3
-    if fs in ["custom", "regional", "tier2", "tier_2", "t2"]:
+    if fs in [
+        "custom",
+        "regional",
+        "tier2",
+        "tier_2",
+        "t2",
+        "tier2_plus",
+        "tier_2_plus",
+        "tier2+",
+        "tier_2+",
+    ]:
         return Tier.T2
     return Tier.T1  # 'default' or unknown → Tier 1
 

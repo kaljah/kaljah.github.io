@@ -25,8 +25,8 @@ class AGRCalculator(BaseCalculator):
         self,
         throughput,
         co2_in,
-        co2_out,
-        uncertainties,
+        co2_out=0.0,
+        uncertainties=None,
         ch4_in=0.85,
         ch4_slip_fraction=0.001,
         acid_gas_control_eff=0.0,
@@ -47,6 +47,7 @@ class AGRCalculator(BaseCalculator):
         - acid_gas_control_eff: Destruction/recovery efficiency (e.g. 0.98 for Claus/thermal oxidizer)
         - acid_gas_control_type: Control technology ('vent', 'agi', 'ccus', 'claus', 'thermal_oxidizer', 'flare')
         """
+        uncertainties = uncertainties or {}
         self.validate_inputs(
             {"throughput": throughput, "co2_in": co2_in}, ["throughput", "co2_in"]
         )
@@ -54,8 +55,13 @@ class AGRCalculator(BaseCalculator):
         # Throughput in scf
         throughput_scf = float(throughput) * 1_000_000.0
 
-        # 1. CO2 Mass Balance Venting
-        diff_co2 = max(0.0, float(co2_in) - float(co2_out or 0.0))
+        # 1. CO2 Mass Balance Venting with Contactor Shrinkage Correction (API Compendium 2021 Eq. 6-7)
+        cin = float(co2_in or 0.0)
+        cout = float(co2_out or 0.0)
+        if cin > 1.0 or cout > 1.0:
+            cin /= 100.0
+            cout /= 100.0
+        diff_co2 = max(0.0, cin - cout)
         co2_vented_scf = throughput_scf * diff_co2
         co2_vented_m3 = convert(co2_vented_scf, "scf", "m3")
         co2_mass_kg = co2_vented_m3 * CONVERSIONS.get("density_co2", 1.861)
@@ -64,8 +70,12 @@ class AGRCalculator(BaseCalculator):
         slip_rate = max(
             0.0, float(ch4_slip_fraction if ch4_slip_fraction is not None else 0.001)
         )
-        ch4_feed_frac = max(0.0, float(ch4_in or 0.85))
-        ch4_slipped_scf = throughput_scf * ch4_feed_frac * slip_rate
+        if slip_rate > 1.0:
+            slip_rate /= 100.0
+        c_ch4 = max(0.0, float(ch4_in if ch4_in is not None else 0.85))
+        if c_ch4 > 1.0:
+            c_ch4 /= 100.0
+        ch4_slipped_scf = throughput_scf * c_ch4 * slip_rate
         ch4_slipped_m3 = convert(ch4_slipped_scf, "scf", "m3")
         ch4_mass_kg = ch4_slipped_m3 * CONVERSIONS.get("density_ch4", 0.6785)
 
@@ -273,7 +283,7 @@ class DehydratorCalculator(BaseCalculator):
             elif s_type == "thermal_oxidizer":
                 still_eff = 0.99
             elif s_type == "condenser":
-                still_eff = 0.75
+                still_eff = 0.0  # Condensers do not condense methane (boiling point -161.5 C / API Compendium 6.6)
             elif s_type == "vru":
                 still_eff = 0.95
 

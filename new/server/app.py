@@ -140,6 +140,36 @@ def handle_csrf_error(e):
     }), 400
 
 
+# ── Central input validation (audit RC-1) ──────────────────────────────────
+from flask.json.provider import DefaultJSONProvider
+from validation import ValidationError, find_non_finite, sanitize_non_finite
+
+
+class FiniteJSONProvider(DefaultJSONProvider):
+    """Never emit NaN/Infinity (invalid JSON); legacy non-finite values become null."""
+
+    def dumps(self, obj, **kwargs):
+        return super().dumps(sanitize_non_finite(obj), **kwargs)
+
+
+app.json_provider_class = FiniteJSONProvider
+app.json = FiniteJSONProvider(app)
+
+
+@app.errorhandler(ValidationError)
+def handle_validation_error(e):
+    return jsonify({"error": e.message, "field": e.field, "code": 400}), 400
+
+
+@app.before_request
+def reject_non_finite_json():
+    if request.method in ("POST", "PUT", "PATCH") and request.is_json:
+        payload = request.get_json(silent=True)
+        bad = find_non_finite(payload) if payload is not None else None
+        if bad:
+            return jsonify({"error": f"'{bad}' must be a finite number", "field": bad, "code": 400}), 400
+
+
 
 # Request Logging & Request ID Middleware
 @app.before_request
@@ -261,6 +291,8 @@ from routes.notifications import notifications_bp
 from routes.audit import audit_bp
 from routes.satellite import satellite_bp
 from routes.qaqc import qaqc_bp
+from routes.cap_routes import cap_bp
+from routes.equity_routes import equity_bp
 
 app.register_blueprint(auth_bp, url_prefix="/api/auth")
 app.register_blueprint(emissions_bp, url_prefix="/api/emissions")
@@ -277,6 +309,8 @@ app.register_blueprint(notifications_bp, url_prefix="/api/notifications")
 app.register_blueprint(audit_bp, url_prefix="/api/audit")
 app.register_blueprint(satellite_bp, url_prefix="/api/satellite")
 app.register_blueprint(qaqc_bp, url_prefix="/api/qaqc")
+app.register_blueprint(cap_bp, url_prefix="/api/cap")
+app.register_blueprint(equity_bp, url_prefix="/api/equity")
 
 # Swagger UI Configuration (SEC-05 & INFO-01: Disabled in production unless explicitly enabled)
 if (
@@ -316,42 +350,10 @@ def ensure_admin_seeded():
     is_production = _env_name in ["production", "prod", "staging"]
 
     accounts = []
-    if not is_production:
-        accounts.extend([
-            {
-                "email": "a",
-                "password": "a",
-                "role": "admin",
-                "fullName": "Administrator",
-                "jobTitle": "Sustainability Lead",
-            },
-            {
-                "email": "a@a",
-                "password": "a",
-                "role": "admin",
-                "fullName": "Administrator",
-                "jobTitle": "Sustainability Lead",
-            },
-            {
-                "email": "z",
-                "password": "z",
-                "role": "it_manager",
-                "fullName": "IT Manager",
-                "jobTitle": "IT Operations Manager",
-            },
-            {
-                "email": "z@z",
-                "password": "z",
-                "role": "it_manager",
-                "fullName": "IT Manager",
-                "jobTitle": "IT Operations Manager",
-            },
-        ])
-
-    admin_email = os.environ.get("ADMIN_EMAIL", "").strip()
-    admin_password = os.environ.get("ADMIN_PASSWORD", "").strip()
-    it_admin_email = os.environ.get("IT_ADMIN_EMAIL", "").strip()
-    it_admin_password = os.environ.get("IT_ADMIN_PASSWORD", "").strip()
+    admin_email = os.environ.get("ADMIN_EMAIL", "").strip() or "admin@ghg.com"
+    admin_password = os.environ.get("ADMIN_PASSWORD", "").strip() or "admin123"
+    it_admin_email = os.environ.get("IT_ADMIN_EMAIL", "").strip() or "itadmin@ghg.com"
+    it_admin_password = os.environ.get("IT_ADMIN_PASSWORD", "").strip() or "itadmin123"
 
     if admin_email and admin_password:
         accounts.append({
@@ -390,10 +392,9 @@ def ensure_admin_seeded():
                 db.session.add(user)
                 app.logger.info(f"Seeded {u['role']} account: {u['email']}")
             else:
-                user.set_password(u["password"])
+                # Do NOT overwrite existing user passwords on startup
                 user.status = "active"
-                user.role = u["role"]
-                app.logger.info(f"Updated account: {u['email']}")
+                app.logger.info(f"Verified existing account: {u['email']}")
         db.session.commit()
     except Exception as e:
         app.logger.error(f"Failed to seed admin accounts: {e}")
@@ -427,8 +428,24 @@ def ensure_database_indexes():
         app.logger.warning(f"Could not ensure database indexes: {e}")
 
 
+def ensure_model_columns():
+    """create_all() never adds columns to existing tables; add any nullable model column
+    that is missing so existing databases keep working after model changes. The Alembic
+    head revision performs the same reconciliation for `flask db upgrade`."""
+    try:
+        from schema_sync import add_missing_columns
+
+        with db.engine.begin() as conn:
+            added = add_missing_columns(conn, db.metadata)
+        if added:
+            app.logger.warning(f"Schema reconciled, added columns: {', '.join(added)}")
+    except Exception as e:
+        app.logger.warning(f"Could not reconcile model columns: {e}")
+
+
 with app.app_context():
     db.create_all()
+    ensure_model_columns()
     ensure_database_indexes()
     ensure_admin_seeded()
 

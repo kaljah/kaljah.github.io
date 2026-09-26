@@ -85,3 +85,26 @@ def test_blowdown_calculator():
     # 28.32 m3 * (114.696 / 14.696) = ~220.97 m3 at std conditions
     # ch4 = 220.97 * 0.85 * 0.6785 kg/m3 / 1000 = ~0.127 tonnes
     assert abs(res["results"]["ch4"]["value"] - 0.127) < 0.01
+
+
+def test_offshore_mud_degassing_table_6_2():
+    """Verify BUG-103 remediation: Table 6-2 offshore mud factors."""
+    from calculations.vented import MudDegassingCalculator
+    calc = MudDegassingCalculator()
+
+    # 10 drilling days with water-based mud offshore: 10 * 0.2605 = 2.605 tonnes CH4
+    res = calc.calculate(drilling_days=10, mud_type="water_based", location="offshore")
+    assert abs(res["results"]["ch4"]["value"] - 2.605) < 0.01
+    assert res["inputs"]["location"] == "offshore"
+
+
+def test_offshore_completion_table_6_7():
+    """Verify BUG-103 remediation: Table 6-7 offshore completion factor (136.2 tonnes CH4)."""
+    from calculations.vented import CompletionFlowbackCalculator
+    calc = CompletionFlowbackCalculator()
+
+    # 1 offshore gas completion: 136.2 tonnes CH4
+    res = calc.calculate(events=1, well_type="gas", location="offshore")
+    assert abs(res["results"]["ch4"]["value"] - 136.2) < 0.5
+    assert res["inputs"]["location"] == "offshore"
+

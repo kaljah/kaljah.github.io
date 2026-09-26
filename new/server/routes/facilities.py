@@ -55,6 +55,7 @@ def get_facilities():
                 "boundary_notes": f.boundary_notes,
                 "boundary_type": f.boundary_type or "Operational Control",
                 "boundary_detail": f.boundary_detail or "",
+                "equity_share_pct": f.equity_share_pct if f.equity_share_pct is not None else 100.0,
                 "segment": f.segment,
                 "operator_status": f.operator_status or "operated",
                 "country": f.country or "Algeria",
@@ -164,6 +165,7 @@ def add_facility():
         boundary_notes=data.get("boundary_notes"),
         boundary_type=data.get("boundary_type", "Operational Control"),
         boundary_detail=data.get("boundary_detail"),
+        equity_share_pct=float(data.get("equity_share_pct", 100.0) or 100.0),
         segment=data.get("segment"),
         operator_status=data.get("operator_status", "operated"),
         country=data.get("country", "Algeria"),
@@ -254,6 +256,8 @@ def update_facility(facility_id):
         facility.boundary_type = data["boundary_type"]
     if "boundary_detail" in data:
         facility.boundary_detail = data["boundary_detail"]
+    if "equity_share_pct" in data and data["equity_share_pct"] is not None:
+        facility.equity_share_pct = float(data["equity_share_pct"])
     if "activity" in data:
         facility.activity = data["activity"]
     if "region" in data:

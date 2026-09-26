@@ -1552,12 +1552,32 @@ def _process_row_facilities(row, user_id, overwrite_duplicates):
 
     errors = []
 
-    name = row.get("name")
+    name = str(row.get("name") or "").strip()
     if not name:
         errors.append("Facility Name is required")
         return None, errors
 
     existing = Facility.query.filter_by(name=name).first()
+
+    # BUG-001: region-restricted superusers may only create/overwrite facilities in their
+    # own region (same rule as POST /api/facilities/import).
+    from extensions import db
+    from models import User
+    from utils import is_unrestricted_location
+
+    uploader = db.session.get(User, user_id)
+    if uploader is None or uploader.role not in ("admin", "superuser"):
+        errors.append("Not authorised to import facilities")
+        return None, errors
+    if uploader.role == "superuser" and not is_unrestricted_location(uploader.location):
+        user_loc = (uploader.location or "").strip().lower()
+        targets = [row.get("region"), row.get("location"), name]
+        if existing is not None:
+            targets = [existing.region, existing.location, existing.name]
+        if user_loc not in {str(t or "").strip().lower() for t in targets}:
+            errors.append(f"Superusers can only import facilities in their assigned region: {uploader.location}")
+            return None, errors
+
     if existing:
         if not overwrite_duplicates:
             errors.append(f"Region '{name}' already exists. Choose 'Overwrite' to update it.")

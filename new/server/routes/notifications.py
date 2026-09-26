@@ -16,6 +16,19 @@ from models import Notification
 notifications_bp = Blueprint("notifications", __name__)
 
 
+def _is_read_for_user(n, uid):
+    if n.is_read:
+        return True
+    if n.user_id is None and n.metadata_json:
+        try:
+            meta = json.loads(n.metadata_json)
+            if uid in meta.get("read_by", []):
+                return True
+        except Exception:
+            pass
+    return False
+
+
 @notifications_bp.route("/", methods=["GET"])
 @login_required
 def get_notifications():
@@ -39,7 +52,7 @@ def get_notifications():
                 "type": n.type,
                 "title": n.title,
                 "message": n.message,
-                "is_read": n.is_read,
+                "is_read": _is_read_for_user(n, user_id),
                 "time": n.created_at.isoformat() + "Z",
                 "metadata": n.metadata_json,
             }
@@ -98,7 +111,7 @@ def stream_notifications():
                                 "type": n.type,
                                 "title": n.title,
                                 "message": n.message,
-                                "is_read": n.is_read,
+                                "is_read": _is_read_for_user(n, uid),
                                 "time": n.created_at.isoformat() + "Z",
                             }
                         )
@@ -117,6 +130,10 @@ def stream_notifications():
                 except Exception as exc:
                     try:
                         current_app.logger.error(f"SSE stream error for user {uid}: {exc}")
+                    except Exception:
+                        pass
+                    try:
+                        db.session.rollback()
                     except Exception:
                         pass
                     time.sleep(POLL_INTERVAL)
@@ -154,12 +171,22 @@ def mark_read(id):
 
     n = Notification.query.get_or_404(id)
     if n.user_id is None:
-        # Broadcast/system notification: allowed to mark read by any authenticated user
-        pass
+        try:
+            meta = json.loads(n.metadata_json) if n.metadata_json else {}
+        except Exception:
+            meta = {}
+        read_by = meta.get("read_by", [])
+        if user.id not in read_by:
+            read_by.append(user.id)
+            meta["read_by"] = read_by
+            n.metadata_json = json.dumps(meta)
+        if user.role in ["admin", "superuser"]:
+            n.is_read = True
     elif n.user_id != user.id and user.role not in ["admin", "superuser"]:
         return jsonify({"error": "Unauthorized"}), 403
+    else:
+        n.is_read = True
 
-    n.is_read = True
     try:
         db.session.commit()
     except Exception as e:
@@ -184,6 +211,19 @@ def dismiss_all():
         Notification.query.filter_by(user_id=user.id, is_read=False).update(
             {"is_read": True}
         )
+        broadcasts = Notification.query.filter(
+            Notification.user_id.is_(None), Notification.is_read == False
+        ).all()
+        for b in broadcasts:
+            try:
+                meta = json.loads(b.metadata_json) if b.metadata_json else {}
+            except Exception:
+                meta = {}
+            read_by = meta.get("read_by", [])
+            if user.id not in read_by:
+                read_by.append(user.id)
+                meta["read_by"] = read_by
+                b.metadata_json = json.dumps(meta)
     try:
         db.session.commit()
     except Exception as e:

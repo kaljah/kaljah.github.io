@@ -1,5 +1,5 @@
 from routes.auth import login_required
-from flask import request, jsonify, session
+from flask import request, jsonify, session, current_app
 import json
 from . import data_bp
 from utils import get_current_user, get_allowed_facility_ids, log_activity_and_notify, require_facility_access
@@ -52,6 +52,17 @@ def get_production():
         'gas': d.gas_amount,
         'oilUnit': d.oil_unit,
         'gasUnit': d.gas_unit,
+        'gross_gas_mmsm3': d.gross_gas_mmsm3 or 0.0,
+        'gas_without_injected_mmsm3': d.gas_without_injected_mmsm3 or 0.0,
+        'injected_gas_mmsm3': d.injected_gas_mmsm3 or 0.0,
+        'crude_oil_mmboe': d.crude_oil_mmboe or 0.0,
+        'condensate_mmboe': d.condensate_mmboe or 0.0,
+        'lpg_mmboe': d.lpg_mmboe or 0.0,
+        'ngl_mmboe': d.ngl_mmboe or 0.0,
+        'total_production_mmboe': d.total_production_mmboe or 0.0,
+        'total_production_no_injected_mmboe': d.total_production_no_injected_mmboe or 0.0,
+        'saleable_production_mmboe': d.saleable_production_mmboe or 0.0,
+        'fuel_gas_export_mmsm3': d.fuel_gas_export_mmsm3 or 0.0,
         'activity': d.activity,
         'division': d.division,
         'field': d.field
@@ -106,11 +117,34 @@ def add_production():
             month=month
         ).first()
         
+        gross_gas_mmsm3 = float(data.get('gross_gas_mmsm3') or 0.0)
+        gas_without_injected_mmsm3 = float(data.get('gas_without_injected_mmsm3') or 0.0)
+        injected_gas_mmsm3 = float(data.get('injected_gas_mmsm3') or 0.0)
+        crude_oil_mmboe = float(data.get('crude_oil_mmboe') or 0.0)
+        condensate_mmboe = float(data.get('condensate_mmboe') or 0.0)
+        lpg_mmboe = float(data.get('lpg_mmboe') or 0.0)
+        ngl_mmboe = float(data.get('ngl_mmboe') or 0.0)
+        total_production_mmboe = float(data.get('total_production_mmboe') or 0.0)
+        total_production_no_injected_mmboe = float(data.get('total_production_no_injected_mmboe') or 0.0)
+        saleable_production_mmboe = float(data.get('saleable_production_mmboe') or 0.0)
+        fuel_gas_export_mmsm3 = float(data.get('fuel_gas_export_mmsm3') or 0.0)
+
         if existing:
             existing.oil_amount = oil_amount
             existing.gas_amount = gas_amount
             existing.oil_unit = oil_unit
             existing.gas_unit = gas_unit
+            existing.gross_gas_mmsm3 = gross_gas_mmsm3
+            existing.gas_without_injected_mmsm3 = gas_without_injected_mmsm3
+            existing.injected_gas_mmsm3 = injected_gas_mmsm3
+            existing.crude_oil_mmboe = crude_oil_mmboe
+            existing.condensate_mmboe = condensate_mmboe
+            existing.lpg_mmboe = lpg_mmboe
+            existing.ngl_mmboe = ngl_mmboe
+            existing.total_production_mmboe = total_production_mmboe
+            existing.total_production_no_injected_mmboe = total_production_no_injected_mmboe
+            existing.saleable_production_mmboe = saleable_production_mmboe
+            existing.fuel_gas_export_mmsm3 = fuel_gas_export_mmsm3
             existing.activity = activity
             existing.division = division
             existing.field = field
@@ -126,6 +160,17 @@ def add_production():
                 gas_amount=gas_amount,
                 oil_unit=oil_unit,
                 gas_unit=gas_unit,
+                gross_gas_mmsm3=gross_gas_mmsm3,
+                gas_without_injected_mmsm3=gas_without_injected_mmsm3,
+                injected_gas_mmsm3=injected_gas_mmsm3,
+                crude_oil_mmboe=crude_oil_mmboe,
+                condensate_mmboe=condensate_mmboe,
+                lpg_mmboe=lpg_mmboe,
+                ngl_mmboe=ngl_mmboe,
+                total_production_mmboe=total_production_mmboe,
+                total_production_no_injected_mmboe=total_production_no_injected_mmboe,
+                saleable_production_mmboe=saleable_production_mmboe,
+                fuel_gas_export_mmsm3=fuel_gas_export_mmsm3,
                 activity=activity,
                 division=division,
                 field=field

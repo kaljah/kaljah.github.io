@@ -31,12 +31,15 @@ def get_allowed_facility_ids(user):
     if user.role in ["it_admin", "it_manager", "it"]:
         return []
 
-    # Only admin has full unrestricted data access.
+    # Admin has full unrestricted data access.
     if user.role == "admin":
         return None
 
-    # User is tied to a specific location/region
+    # Superuser with unrestricted location has full access across all facilities
     user_region = str(user.location).strip() if user.location else ""
+    if user.role == "superuser" and is_unrestricted_location(user_region):
+        return None
+
     if not user_region or is_unrestricted_location(user_region):
         return []  # No region assigned, no access for restricted role
 
@@ -68,6 +71,36 @@ def require_facility_access(user, facility_id):
         return int(facility_id) in [int(fid) for fid in allowed_ids]
     except (ValueError, TypeError):
         return False
+
+
+# ── Maker-checker status policy (audit RC-2) ────────────────────────────────
+# One rule for every scope and channel: only an admin's own manual entry is
+# Verified on creation; everything else waits for an approver.
+STATUS_DRAFT = "Draft"
+STATUS_PENDING = "Pending"
+STATUS_VERIFIED = "Verified"
+STATUS_REJECTED = "Rejected"
+APPROVER_ROLES = ("admin", "superuser")
+
+
+def initial_record_status(user, requested_status=None, channel="manual"):
+    """Status for a newly created emission-type record.
+
+    channel: "manual" (form / API create) or "bulk" (file or JSON import).
+    """
+    if channel == "bulk":
+        return STATUS_PENDING
+    if requested_status == STATUS_DRAFT:
+        return STATUS_DRAFT
+    return STATUS_VERIFIED if user is not None and user.role == "admin" else STATUS_PENDING
+
+
+def can_approve(user, record):
+    """An approver may not approve a record they created or last modified."""
+    if user is None or user.role not in APPROVER_ROLES:
+        return False
+    actor_ids = {getattr(record, "created_by", None), getattr(record, "updated_by", None)}
+    return user.id not in actor_ids
 
 
 def log_activity_and_notify(
