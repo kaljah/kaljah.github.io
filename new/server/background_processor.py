@@ -1836,6 +1836,10 @@ def _process_row(
 
     if not process_type:
         return None, ["Missing process type."]
+    from services.scope1_calc import SCOPE2_PROCESS_TYPES
+
+    if process_type.strip().lower() in SCOPE2_PROCESS_TYPES:  # BUG-068
+        return None, [f"'{process_type}' is a Scope 2 (purchased energy) source; import it with the Scope 2 template"]
 
     # 4. Resolve emission factor (same logic as emissions route)
     factor_type_raw = str(
@@ -1870,41 +1874,17 @@ def _process_row(
         if fuel.strip().lower() in getattr(cf_name_map, "ambiguous", ()):
             return None, [f"Custom factor name '{fuel}' is not unique; rename the duplicates before importing"]
         cf = cf_name_map.get(fuel.strip().lower())
-        if cf:
-            factor_data = {
-                "co2": cf.co2_factor,
-                "ch4": cf.ch4_factor,
-                "n2o": cf.n2o_factor,
-                "co": cf.co_factor,
-                "unit": cf.unit,
-                "hhv": cf.hhv_factor,
-                "type": "custom",
-                "name": cf.name,
-                "uncertainty": {
-                    "co2": float(
-                        getattr(cf, "co2_uncertainty", None)
-                        or getattr(cf, "uncertainty", 0)
-                        or 0
-                    )
-                    / 100.0,
-                    "ch4": float(
-                        getattr(cf, "ch4_uncertainty", None)
-                        or getattr(cf, "uncertainty", 0)
-                        or 0
-                    )
-                    / 100.0,
-                    "n2o": float(
-                        getattr(cf, "n2o_uncertainty", None)
-                        or getattr(cf, "uncertainty", 0)
-                        or 0
-                    )
-                    / 100.0,
-                },
-            }
-        else:
-            factor_data = API_FACTORS_dict.get(fuel, {})
-    else:
-        factor_data = API_FACTORS_dict.get(fuel, {})
+        if not cf:
+            # BUG-042: a Tier 2 row never falls back to the catalog (or to zero)
+            return None, [f"Custom factor '{fuel}' not found. Save it under Manage Data > Custom Factors first."]
+        from services.scope1_calc import custom_factor_data
+
+        factor_data = custom_factor_data(cf)
+    elif factor_source == "default":
+        # same catalog lookup (with aliases) as the manual form (BUG-015)
+        from routes.emissions import _lookup_api_factor
+
+        factor_data = _lookup_api_factor(fuel) or API_FACTORS_dict.get(fuel, {})
 
     # 5. Build calc_data payload (mirrors what the emissions route sends)
     calc_data = {
@@ -1942,6 +1922,11 @@ def _process_row(
             em_result.get("totalCo2e")
             or calculate_co2e(co2_val, ch4_val, n2o_val, gwp_dict=gwp_dict)
         )
+        from calculations.anomaly import plausibility_check
+
+        verdict, qa_msg = plausibility_check(total)  # BUG-007: same bounds as the manual form
+        if verdict == "reject":
+            return None, [qa_msg]
 
         # 7. Uncertainty extraction
         api_res = em_result.get("_full_api_res")

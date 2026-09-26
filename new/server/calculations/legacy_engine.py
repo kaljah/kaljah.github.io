@@ -367,7 +367,7 @@ class GHGCalculator:
 ghg_calc = GHGCalculator()
 
 
-def compute_emissions(payload, factor_data=None, gwp_dict=None, gwp_standard=None):
+def _compute_emissions_impl(payload, factor_data=None, gwp_dict=None, gwp_standard=None):
     if factor_data is None:
         factor_data = {}
     if gwp_dict is None:
@@ -927,3 +927,45 @@ def compute_emissions(payload, factor_data=None, gwp_dict=None, gwp_standard=Non
     )
 
     return em, calc_method
+
+
+
+class MissingFactorError(ValueError):
+    """Raised instead of silently booking 0 tCO2e when no emission factor could be resolved."""
+
+
+def _has_factor_values(factor_data):
+    if not factor_data:
+        return False
+    for key in ("co2", "ch4", "n2o"):
+        try:
+            if float(factor_data.get(key) or 0) > 0:
+                return True
+        except (TypeError, ValueError):
+            continue
+    return False
+
+
+def compute_emissions(payload, factor_data=None, gwp_dict=None, gwp_standard=None):
+    """Entry point for Scope 1 calculations (routes, bulk, recalculation).
+
+    Audit BUG-015 / BUG-042 / BUG-102 / BUG-112: a positive activity amount that yields zero
+    emissions because no factor was resolved is an error, never a silent 0 tCO2e record.
+    Tier 3 ("specific") engineering results are exempt: zero can be a real engineering outcome.
+    """
+    em, method = _compute_emissions_impl(payload, factor_data, gwp_dict=gwp_dict, gwp_standard=gwp_standard)
+    if any(float(em.get(g) or 0) for g in ("co2", "ch4", "n2o")):
+        return em, method
+    raw = payload.get("amount") if payload.get("amount") not in (None, "") else payload.get("quantity")
+    try:
+        amount = float(str(raw).replace(",", "")) if raw not in (None, "") else 0.0
+    except (TypeError, ValueError):
+        amount = 0.0
+    source = str(payload.get("factor_source") or "default").lower()
+    if amount > 0 and source in ("default", "custom", "") and not _has_factor_values(factor_data):
+        name = payload.get("fuel") or payload.get("fuel_type") or payload.get("custom_factor_id") or "(none)"
+        raise MissingFactorError(
+            f"No emission factor found for '{name}' ({payload.get('process_type') or 'process'}); "
+            "the record was not saved. Select a factor from the catalog or a saved custom factor."
+        )
+    return em, method

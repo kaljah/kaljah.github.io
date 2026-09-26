@@ -332,3 +332,27 @@ class AnomalyDetector:
             return result
         except Exception as e:
             return {"flagged": False, "error": str(e)}
+
+
+# ── Hard plausibility bounds for a single record (audit BUG-007) ─────────────────
+# The largest single industrial sources emit on the order of 10-30 Mt CO2e per YEAR, so one
+# record (one source, one month) above 100 Mt is certainly a data-entry error, and anything
+# above 1 Mt needs a human look before it can count as Verified.
+PLAUSIBILITY_REJECT_TCO2E = 1e8
+PLAUSIBILITY_FLAG_TCO2E = 1e6
+
+
+def plausibility_check(co2e_tonnes, z_flag=None):
+    """Return (verdict, message): verdict is "reject", "flag" or None."""
+    try:
+        v = float(co2e_tonnes or 0)
+    except (TypeError, ValueError):
+        return "reject", "Calculated emissions are not a number"
+    if v > PLAUSIBILITY_REJECT_TCO2E:
+        return "reject", (f"Implausible value: {v:,.0f} tCO2e in one record exceeds {PLAUSIBILITY_REJECT_TCO2E:,.0f} t; "
+                          "check the quantity and unit")
+    if v > PLAUSIBILITY_FLAG_TCO2E:
+        return "flag", f"Plausibility review: {v:,.0f} tCO2e in one record exceeds {PLAUSIBILITY_FLAG_TCO2E:,.0f} t"
+    if z_flag:
+        return "flag", z_flag
+    return None, None

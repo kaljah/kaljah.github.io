@@ -127,17 +127,16 @@ class TestBoundaryConditions:
         }, {})
         assert em["ch4"] == 0.0
 
-    def test_zero_ef_combustion_yields_zero(self):
+    def test_zero_ef_combustion_is_rejected_not_booked_as_zero(self):
         """
-        BOUNDARY: Zero emission factor = zero emissions.
-        Even with large quantity, EF=0 → 0 emissions.
+        BOUNDARY (audit BUG-015 / BUG-112): an all-zero factor is not a factor. A large activity
+        amount must raise instead of silently producing a 0 tCO2e record.
         """
+        from calculations.legacy_engine import MissingFactorError
+
         factor_data = {"co2": 0.0, "ch4": 0.0, "n2o": 0.0, "unit": "kg/m3", "hhv": 1020.0}
-        em, _ = compute_emissions({**BASELINE_PAYLOAD, "quantity": 10000.0}, factor_data)
-        assert em["co2"] == 0.0
-        assert em["ch4"] == 0.0
-        assert em["n2o"] == 0.0
-        assert em["totalCo2e"] == 0.0
+        with pytest.raises(MissingFactorError):
+            compute_emissions({**BASELINE_PAYLOAD, "quantity": 10000.0}, factor_data)
 
     def test_zero_ch4_content_completions_yields_zero_ch4(self):
         """

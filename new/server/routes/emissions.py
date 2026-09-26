@@ -1,4 +1,4 @@
-from flask import request, jsonify, session
+from flask import request, jsonify, session, current_app
 from sqlalchemy import func
 from . import emissions_bp
 from utils import get_current_user, get_allowed_facility_ids, require_facility_access
@@ -3019,31 +3019,18 @@ def add_emission():
         if field not in data or data[field] is None:
             return jsonify({"error": f"Missing field: {field}"}), 422
 
-    # Numeric & bounds validation
-    try:
-        yr = int(data["year"])
-        if yr < 1900 or yr > 2100:
-            return jsonify({"error": "Invalid year: must be between 1900 and 2100"}), 422
-    except (ValueError, TypeError):
-        return jsonify({"error": "Invalid year: must be an integer"}), 422
+    # Numeric & bounds validation (shared validators: year 1900..current+1, month 1..12)
+    from input_validation import ValidationError, parse_month, parse_year
+    from services.scope1_calc import canonicalize, resolve_factor, validate_activity
 
     try:
-        mo = int(data["month"])
-        if mo < 1 or mo > 12:
-            return jsonify({"error": "Invalid month: must be between 1 and 12"}), 422
-    except (ValueError, TypeError):
-        return jsonify({"error": "Invalid month: must be an integer between 1 and 12"}), 422
-
-    if "quantity" in data and data["quantity"] is not None:
-        try:
-            q_val = float(data["quantity"])
-            import math
-            if math.isinf(q_val) or math.isnan(q_val):
-                return jsonify({"error": "Invalid quantity: value must be a finite number"}), 422
-            if q_val < 0:
-                return jsonify({"error": "Invalid quantity: cannot be negative"}), 422
-        except (ValueError, TypeError):
-            return jsonify({"error": "Invalid quantity: must be a valid number"}), 422
+        data["year"] = parse_year(data["year"])
+        data["month"] = parse_month(data["month"], required=True)
+        # RC-6: amount/quantity and fuel/fuel_type are one value each (BUG-030)
+        data = canonicalize(data)
+        validate_activity(data, require_unit=str(data.get("factor_source") or "default").lower() in ("default", "custom"))
+    except ValidationError as err:
+        return jsonify({"error": err.message, "field": err.field}), 422
 
     for str_field in ["fuel", "fuel_type", "source_type", "sub_type", "process_type"]:
         val = data.get(str_field)
@@ -3134,64 +3121,13 @@ def add_emission():
     # In a real scenario, we'd query the factor database here.
     # Passing empty factor_data relies on hardcoded defaults in calculations.py if any
 
-    # Fetch real factor data from Constants based on fuel_type
-    factor_data = _lookup_api_factor(data.get("fuel") or data.get("fuel_type"))
+    # RC-4 / RC-6: one factor resolution (catalog or custom), never a silent zero factor
+    try:
+        factor_data = resolve_factor(data)
+    except ValidationError as err:
+        return jsonify({"error": err.message, "field": err.field}), 422
     if factor_data.get("hhv") and not data.get("hhv"):
         data["hhv"] = factor_data["hhv"]
-
-    # Custom Factor Override
-    custom_factor_id = data.get("custom_factor_id")
-    if custom_factor_id:
-        cf = db.session.get(CustomFactor, custom_factor_id)
-
-        if cf:
-            # Map CustomFactor to factor_data structure
-            # API_FACTORS usually has: { 'co2': val, 'ch4': val, 'n2o': val, 'unit': '...', 'hhv': ... }
-            factor_data = {
-                "co2": cf.co2_factor,
-                "ch4": cf.ch4_factor,
-                "n2o": cf.n2o_factor,
-                "co": cf.co_factor,
-                "unit": cf.unit,
-                "hhv": cf.hhv_factor,
-                "type": "custom",  # Helper to know source
-                "name": cf.name,
-            }
-
-            # Uncertainty Handling
-            if cf.co2_uncertainty or cf.ch4_uncertainty or cf.n2o_uncertainty:
-                factor_data["uncertainty"] = {
-                    "co2": float(
-                        getattr(cf, "co2_uncertainty", None)
-                        or getattr(cf, "uncertainty", 0)
-                        or 0
-                    )
-                    / 100.0,
-                    "ch4": float(
-                        getattr(cf, "ch4_uncertainty", None)
-                        or getattr(cf, "uncertainty", 0)
-                        or 0
-                    )
-                    / 100.0,
-                    "n2o": float(
-                        getattr(cf, "n2o_uncertainty", None)
-                        or getattr(cf, "uncertainty", 0)
-                        or 0
-                    )
-                    / 100.0,
-                }
-            elif cf.uncertainty and cf.uncertainty > 0:
-                # Use saved custom uncertainty
-                factor_data["uncertainty"] = {
-                    "co2": float(cf.uncertainty or 0) / 100.0,
-                    "ch4": float(cf.uncertainty or 0) / 100.0,
-                    "n2o": float(cf.uncertainty or 0) / 100.0,
-                }
-            elif cf.parent_fuel:
-                # Fallback to parent fuel uncertainty
-                parent_factor = API_FACTORS.get(cf.parent_fuel, {})
-                if "uncertainty" in parent_factor:
-                    factor_data["uncertainty"] = parent_factor["uncertainty"]
 
     # Call compute_emissions to calculate the actual emissions
     gwp_dict = resolve_gwp_dict(user)
@@ -3215,31 +3151,25 @@ def add_emission():
             co2_val, ch4_val, n2o_val, gwp_dict=gwp_dict
         )
 
-    # Extract uncertainty from rich API result if available, otherwise fallback to factor data
-    api_res = em_result.get("_full_api_res")
-    if api_res:
-        # Use uncertainties calculated by the new engine, or None if not provided
-        uncertainty = {
-            "co2": (
-                api_res["results"]["co2"].get("uncertainty", None)
-                if isinstance(api_res["results"]["co2"], dict)
-                else None
-            ),
-            "ch4": (
-                api_res["results"]["ch4"].get("uncertainty", None)
-                if isinstance(api_res["results"]["ch4"], dict)
-                else None
-            ),
-            "n2o": (
-                api_res["results"]["n2o"].get("uncertainty", None)
-                if isinstance(api_res["results"]["n2o"], dict)
-                else None
-            ),
-        }
-    else:
-        uncertainty = factor_data.get("uncertainty", {})
+    # BUG-007: plausibility bounds and statistical anomaly check on the manual path too
+    from calculations.anomaly import AnomalyDetector, plausibility_check
+    from services.scope1_calc import apply_result
+    from utils import initial_record_status, user_label
 
-    # NOTE: user_uncertainty is now handled inside dispatcher.py and propagated via SRSS
+    z_msg = None
+    try:
+        z = AnomalyDetector().check_scope1(int(data["facility_id"]), data["process_type"], em_result["totalCo2e"],
+                                           data["year"], data["month"])
+        z_msg = z.get("message") if z.get("flagged") else None
+    except Exception:
+        z_msg = None
+    verdict, qa_msg = plausibility_check(em_result["totalCo2e"], z_msg)
+    if verdict == "reject":
+        return jsonify({"error": qa_msg, "field": "amount"}), 422
+
+    status = initial_record_status(user, data.get("status"))
+    if verdict == "flag" and status == "Verified":
+        status = "Pending"  # flagged values always need a reviewer, even for admins
 
     record = Emission(
         record_id=str(uuid.uuid4()),
@@ -3251,46 +3181,14 @@ def add_emission():
         division=data.get("division") or (facility.division if facility else None),
         region=data.get("region") or (facility.region if facility and facility.region else (facility.name if facility else None)),
         field=data.get("field") or (facility.field if facility else None),
-        process_type=data["process_type"],
-        fuel_type=data.get("fuel"),
-        quantity=data.get("amount"),
-        unit=data.get("unit"),
         equipment_id=data.get("equipment_id"),
-        co2_emissions=em_result["co2"],
-        ch4_emissions=em_result["ch4"],
-        n2o_emissions=em_result["n2o"],
-        co_emissions=em_result.get("co", 0),
-        co2e_total=em_result["totalCo2e"],
-        calc_method=method,
-        gwp_version=gwp_std,
-        source_payload=json.dumps(data),
         created_by=user.id,
-        uncertainty=(
-            uncertainty.get("co2", None)
-            if isinstance(uncertainty, dict)
-            else (uncertainty or None)
-        ),
-        uncertainty_ch4=(
-            uncertainty.get("ch4", None)
-            if isinstance(uncertainty, dict)
-            else (uncertainty or None)
-        ),
-        uncertainty_n2o=(
-            uncertainty.get("n2o", None)
-            if isinstance(uncertainty, dict)
-            else (uncertainty or None)
-        ),
-        status=(
-            "Draft"
-            if data.get("status") == "Draft"
-            else ("Verified" if user.role == "admin" else "Pending")
-        ),
-        approved_by=user.id if (data.get("status") != "Draft" and user.role == "admin") else None,
-        approved_at=(
-            datetime.datetime.now(datetime.timezone.utc)
-            if (data.get("status") != "Draft" and user.role == "admin")
-            else None
-        ),
+        created_by_name=user_label(user),
+        status=status,
+        approved_by=user.id if status == "Verified" else None,
+        approved_by_name=user_label(user) if status == "Verified" else None,
+        approved_at=datetime.datetime.now(datetime.timezone.utc) if status == "Verified" else None,
+        qa_flag=qa_msg[:255] if qa_msg else None,
         factor_source=(
             data.get("factor_source")
             or ("custom" if data.get("factor_type") == "custom" else ("specific" if data.get("calc_method") in ("direct_measurement", "engineering", "specific", "tier3") else "default"))
@@ -3300,6 +3198,8 @@ def add_emission():
             or None
         ),
     )
+    apply_result(record, data, em_result, method, factor_data, gwp_std)
+    uncertainty = {"co2": record.uncertainty, "ch4": record.uncertainty_ch4, "n2o": record.uncertainty_n2o}
     record.ogmp_level = ogmp_level_for(record)
 
     db.session.add(record)
@@ -3307,9 +3207,16 @@ def add_emission():
         db.session.flush()
         record_id_val = record.id
         db.session.commit()
-    except Exception as e:
+    except Exception:
         db.session.rollback()
-        return jsonify({"error": f"Failed to record emission: {e}"}), 500
+        current_app.logger.exception("Failed to record emission")
+        return jsonify({"error": "Failed to record emission"}), 500
+    try:
+        from routes.dashboard import clear_dashboard_cache
+
+        clear_dashboard_cache()  # BUG-071: flushed rows are invisible to the before_commit hook
+    except Exception:
+        pass
 
     facility = db.session.get(Facility, data.get("facility_id"))
     facility_name = facility.name if facility else "Unknown"
@@ -3350,7 +3257,12 @@ def add_emission():
                 # Get Total Emissions for Year
                 total_emissions = (
                     db.session.query(func.sum(Emission.co2e_total))
-                    .filter(Emission.year == current_year)
+                    .filter(Emission.year == current_year, Emission.status == "Verified")
+                    .scalar()
+                    or 0
+                ) + (
+                    db.session.query(func.sum(Scope2Emission.co2e))
+                    .filter(Scope2Emission.year == current_year, Scope2Emission.status == "Verified")
                     .scalar()
                     or 0
                 )
@@ -3538,137 +3450,67 @@ def update_emission(id):
         record.facility_id = new_fid
     # BUG-067: every edit records the last maker; non-admin edits of decided records go back to review
     on_edit(record, user)
-    if "process_type" in data:
-        record.process_type = data["process_type"]
-    if "fuel_type" in data:
-        record.fuel_type = data["fuel_type"]
-    if "quantity" in data:
-        record.quantity = data["quantity"]
-    if "unit" in data:
-        record.unit = data["unit"]
-
     # Recalculate whenever physical activity or factor inputs are modified (L9)
-    recalc_keys = {"quantity", "amount", "fuel", "fuel_type", "unit", "custom_factor_id", "calc_method", "process_type"}
+    recalc_keys = {"quantity", "amount", "fuel", "fuel_type", "unit", "custom_factor_id", "calc_method",
+                   "process_type", "factor_source", "calc_inputs", "hhv", "user_uncertainty"}
     should_recalc = data.get("recalculate") or any(k in data for k in recalc_keys)
 
     if should_recalc:
-        factor_data = _lookup_api_factor(data.get("fuel") or data.get("fuel_type") or record.fuel_type)
-        # Handle Custom Factor in update
-        cf_id = data.get("custom_factor_id")
-        if cf_id:
-            cf = db.session.get(CustomFactor, cf_id)
-            if cf:
-                factor_data = {
-                    "co2": cf.co2_factor,
-                    "ch4": cf.ch4_factor,
-                    "n2o": cf.n2o_factor,
-                    "co": cf.co_factor,
-                    "unit": cf.unit,
-                    "hhv": cf.hhv_factor,
-                    "type": "custom",
-                    "name": cf.name,
-                }
-                # Uncertainty Handle (Update)
-                if cf.co2_uncertainty or cf.ch4_uncertainty or cf.n2o_uncertainty:
-                    factor_data["uncertainty"] = {
-                        "co2": float(
-                            getattr(cf, "co2_uncertainty", None)
-                            or getattr(cf, "uncertainty", 0)
-                            or 0
-                        )
-                        / 100.0,
-                        "ch4": float(
-                            getattr(cf, "ch4_uncertainty", None)
-                            or getattr(cf, "uncertainty", 0)
-                            or 0
-                        )
-                        / 100.0,
-                        "n2o": float(
-                            getattr(cf, "n2o_uncertainty", None)
-                            or getattr(cf, "uncertainty", 0)
-                            or 0
-                        )
-                        / 100.0,
-                    }
-                elif cf.uncertainty and cf.uncertainty > 0:
-                    factor_data["uncertainty"] = {
-                        "co2": float(cf.uncertainty or 0) / 100.0,
-                        "ch4": float(cf.uncertainty or 0) / 100.0,
-                        "n2o": float(cf.uncertainty or 0) / 100.0,
-                    }
-                elif cf.parent_fuel:
-                    parent_factor = API_FACTORS.get(cf.parent_fuel, {})
-                    if "uncertainty" in parent_factor:
-                        factor_data["uncertainty"] = parent_factor["uncertainty"]
+        # RC-6: rebuild the calculation from the stored payload + record + this edit, with aliases
+        # synchronised (BUG-003), the custom factor carried over (BUG-042), and the result
+        # persisted exactly like a create (BUG-030 / BUG-037).
+        from services.scope1_calc import apply_result, canonicalize, resolve_factor, validate_activity
 
-        gwp_dict = resolve_gwp_dict(user)
-        gwp_std = resolve_gwp_standard(user)
-        # Build merged calc_payload from existing source_payload / record fields and new data
-        calc_payload = {}
+        stored = {}
         if record.source_payload:
             try:
-                calc_payload = json.loads(record.source_payload)
+                stored = json.loads(record.source_payload)
             except Exception:
-                calc_payload = {}
-        base_record_fields = {
-            "process_type": record.process_type,
-            "process": record.process_type,
-            "fuel_type": record.fuel_type,
-            "fuel": record.fuel_type,
-            "unit": record.unit,
-            "quantity": record.quantity,
-            "amount": record.quantity,
-            "calc_method": record.calc_method,
-            "factor_source": record.factor_source,
+                stored = {}
+        base = {
+            "process_type": record.process_type, "process": record.process_type, "fuel_type": record.fuel_type,
+            "fuel": record.fuel_type, "unit": record.unit, "quantity": record.quantity, "amount": record.quantity,
+            "calc_method": record.calc_method, "factor_source": record.factor_source,
+            "custom_factor_id": record.custom_factor_id or stored.get("custom_factor_id"),
         }
-        for k, v in base_record_fields.items():
-            if k not in calc_payload or calc_payload[k] is None:
-                calc_payload[k] = v
-        calc_payload.update(data)
-
+        calc_payload = canonicalize({**base, **{k: v for k, v in stored.items() if v is not None}})
+        calc_payload = canonicalize(calc_payload, delta={k: v for k, v in data.items() if k != "recalculate"})
+        calc_payload["year"], calc_payload["month"] = record.year, record.month
+        calc_payload["facility_id"] = record.facility_id
+        if "fuel" in data or "fuel_type" in data:
+            # a changed fuel on a Tier 2 record means the user picked another factor
+            if "custom_factor_id" not in data and str(calc_payload.get("factor_source")).lower() != "custom":
+                calc_payload.pop("custom_factor_id", None)
         try:
-            calculated_em, method = compute_emissions(
-                calc_payload, factor_data, gwp_dict=gwp_dict
-            )
-            record.co2_emissions = calculated_em["co2"]
-            record.ch4_emissions = calculated_em["ch4"]
-            record.n2o_emissions = calculated_em["n2o"]
-            record.co_emissions = calculated_em.get("co", 0)
-            record.co2e_total = calculated_em["totalCo2e"]
-            record.calc_method = method
-            record.gwp_version = gwp_std
-            record.source_payload = json.dumps(calc_payload)
+            validate_activity(calc_payload, require_unit=str(calc_payload.get("factor_source") or "default").lower() in ("default", "custom"))
+            factor_data = resolve_factor(calc_payload, stored_payload=stored, allow_archived=True)
+            if factor_data.get("hhv") and "hhv" not in data:
+                calc_payload["hhv"] = factor_data["hhv"]
+            gwp_dict = resolve_gwp_dict(user)
+            gwp_std = resolve_gwp_standard(user)
+            calculated_em, method = compute_emissions(calc_payload, factor_data, gwp_dict=gwp_dict)
+        except ValueError as err:  # ValidationError, MissingFactorError, calculator input errors
+            db.session.rollback()
+            return jsonify({"error": getattr(err, "message", None) or str(err),
+                            "field": getattr(err, "field", None)}), 422
 
-            # Update record uncertainty
-            u_dict = factor_data.get("uncertainty", {})
-            record.uncertainty = (
-                u_dict.get("co2", None)
-                if isinstance(u_dict, dict)
-                else (u_dict or None)
-            )
-            record.uncertainty_ch4 = (
-                u_dict.get("ch4", None)
-                if isinstance(u_dict, dict)
-                else (u_dict or None)
-            )
-            record.uncertainty_n2o = (
-                u_dict.get("n2o", None)
-                if isinstance(u_dict, dict)
-                else (u_dict or None)
-            )
+        from calculations.anomaly import plausibility_check
 
-            # Override with user-provided uncertainties if they exist
-            user_unc = data.get("user_uncertainty")
-            if user_unc and isinstance(user_unc, dict):
-                if "co2" in user_unc and user_unc["co2"] not in [None, ""]:
-                    record.uncertainty = float(user_unc["co2"]) / 100.0
-                if "ch4" in user_unc and user_unc["ch4"] not in [None, ""]:
-                    record.uncertainty_ch4 = float(user_unc["ch4"]) / 100.0
-                if "n2o" in user_unc and user_unc["n2o"] not in [None, ""]:
-                    record.uncertainty_n2o = float(user_unc["n2o"]) / 100.0
-
-        except Exception as e:
-            print(f"Error during emission recalculation: {e}")
+        verdict, qa_msg = plausibility_check(calculated_em["totalCo2e"])
+        if verdict == "reject":
+            db.session.rollback()
+            return jsonify({"error": qa_msg, "field": "amount"}), 422
+        apply_result(record, calc_payload, calculated_em, method, factor_data, gwp_std)
+        if verdict == "flag":
+            record.qa_flag = qa_msg[:255]
+            if record.status == "Verified":
+                record.status, record.approved_by, record.approved_at = "Pending", None, None
+                record.approved_by_name = None
+    else:
+        if "process_type" in data:
+            record.process_type = data["process_type"]
+        if "unit" in data:
+            record.unit = data["unit"]
 
     record.updated_by = user.id
     record.updated_at = datetime.datetime.now(datetime.timezone.utc)
@@ -3740,12 +3582,17 @@ def bulk_delete_emissions():
     if not ids:
         return jsonify({"error": "No IDs provided"}), 400
 
-    # SEC-03 FIX: IDOR — non-admins can only bulk-delete their own records
-    query = Emission.query.filter(Emission.id.in_(ids))
-    allowed_fids = get_allowed_facility_ids(user)
-    if allowed_fids is not None:
-        query = query.filter(Emission.facility_id.in_(allowed_fids))
-    deleted_count = query.delete(synchronize_session=False)
+    # BUG-067 (alternative endpoint): the same per-record rules as DELETE /api/emissions/<id>
+    from services.maker_checker import delete_denied_reason
+
+    deleted_count, denied = 0, []
+    for rec in Emission.query.filter(Emission.id.in_(ids)).all():
+        reason = delete_denied_reason(user, rec)
+        if reason:
+            denied.append({"id": rec.id, "error": reason})
+            continue
+        db.session.delete(rec)
+        deleted_count += 1
     db.session.flush()
 
     # --- Audit Log ---
@@ -3766,7 +3613,7 @@ def bulk_delete_emissions():
         db.session.rollback()
         raise e
 
-    return jsonify({"message": f"{deleted_count} records deleted"})
+    return jsonify({"message": f"{deleted_count} records deleted", "deleted": deleted_count, "denied": denied})
 
 
 @emissions_bp.route("/import", methods=["POST"])
@@ -3845,235 +3692,109 @@ def import_emissions():
             rec_data["division"] = rec_data.get("division") or facility.division
             rec_data["field"] = rec_data.get("field") or facility.field
 
-            # CRITICAL: Sanitize CSV placeholders ('-') to prevent float conversion errors
             # CSV templates use '-' for empty optional fields
-            for key in [
-                "ch4_content",
-                "hhv",
-                "comp_flare_eff",
-                "tank_gor",
-                "tank_api_gravity",
-                "flare_type",
-                "pneu_bleed_rate",
-                "pneu_hours",
-                "dehy_pump_rate",
-                "unload_diam",
-                "unload_depth",
-                "unload_press",
-                "comp_duration",
-                "comp_rate",
-                "amount",
-            ]:
-                if rec_data.get(key) in ["-", "", None]:
+            for key in list(rec_data.keys()):
+                if rec_data.get(key) == "-":
                     rec_data[key] = None
 
-            # Safe float conversion for amount
-            if rec_data.get("amount") is not None:
-                try:
-                    rec_data["amount"] = float(rec_data["amount"])
-                except (ValueError, TypeError):
-                    errors.append(
-                        f"Row {i}: Invalid numeric amount '{rec_data['amount']}'"
-                    )
-                    continue
+            # RC-6: same validation, factor resolution and persistence as the manual form
+            from calculations.anomaly import plausibility_check
+            from input_validation import ValidationError, parse_month, parse_year
+            from services.scope1_calc import apply_result, canonicalize, resolve_factor, validate_activity
+            from utils import user_label
 
-            # 2. Fetch factor data
-            fuel_key = rec_data.get("fuel") or rec_data.get("fuel_type")
-
-            # CRITICAL: Fuel name aliasing - handle common variations
             FUEL_ALIASES = {
                 "Diesel": "Diesel (No. 2 Fuel Oil)",
                 "No. 2 Diesel": "Diesel (No. 2 Fuel Oil)",
                 "Gasoline": "Motor Gasoline",
                 "Petrol": "Motor Gasoline",
             }
+            try:
+                rec_data["year"] = parse_year(rec_data.get("year"))
+                rec_data["month"] = parse_month(rec_data.get("month"), required=True)
+                rec_data["process_type"] = rec_data.get("process_type") or rec_data.get("type")
+                fuel_key = rec_data.get("fuel") or rec_data.get("fuel_type")
+                if fuel_key in FUEL_ALIASES:
+                    rec_data["fuel"] = rec_data["fuel_type"] = FUEL_ALIASES[fuel_key]
+                rec_data = canonicalize(rec_data)
+                validate_activity(rec_data, require_unit=str(rec_data.get("factor_source") or "default").lower() in ("default", "custom"))
+                factor_data = resolve_factor(rec_data)
+                if factor_data.get("hhv") and not rec_data.get("hhv"):
+                    rec_data["hhv"] = factor_data["hhv"]
+                gwp_dict = resolve_gwp_dict(user)
+                gwp_std = resolve_gwp_standard(user)
+                em_result, method = compute_emissions(rec_data, factor_data, gwp_dict=gwp_dict)
+            except ValueError as err:
+                errors.append(f"Row {i}: {getattr(err, 'message', None) or err}")
+                continue
+            verdict, qa_msg = plausibility_check(em_result["totalCo2e"])
+            if verdict == "reject":
+                errors.append(f"Row {i}: {qa_msg}")
+                continue
 
-            # Try alias first, then original
-            canonical_fuel = FUEL_ALIASES.get(fuel_key, fuel_key)
-            rec_data["fuel"] = canonical_fuel  # Update to canonical name
-
-            factor_data = API_FACTORS.get(canonical_fuel, {})
-            if not factor_data and fuel_key != canonical_fuel:
-                # Fallback to original if alias didn't work
-                factor_data = API_FACTORS.get(fuel_key, {})
-                rec_data["fuel"] = fuel_key
-
-            # CRITICAL: If no HHV provided in CSV, use factor's HHV or standard defaults
-            if not rec_data.get("hhv"):
-                # Try to get HHV from the emission factor
-                if factor_data.get("hhv"):
-                    rec_data["hhv"] = factor_data.get("hhv")
-                else:
-                    # Hardcoded defaults for common fuels (BTU/unit)
-                    FUEL_HHV_DEFAULTS = {
-                        "Natural Gas": 1020,  # BTU/scf
-                        "Diesel": 138700,  # BTU/gal
-                        "Gasoline": 125000,  # BTU/gal
-                        "Fuel Oil": 138000,  # BTU/gal
-                        "Propane": 91500,  # BTU/gal
-                        "Butane": 103000,  # BTU/gal
-                    }
-                    default_hhv = FUEL_HHV_DEFAULTS.get(fuel_key)
-                    if default_hhv:
-                        rec_data["hhv"] = default_hhv
-
-            # Check for custom factor if provided
-            cf_id = rec_data.get("custom_factor_id")
-            if cf_id:
-                cf = db.session.get(CustomFactor, cf_id)
-                if cf:
-                    factor_data = {
-                        "co2": cf.co2_factor,
-                        "ch4": cf.ch4_factor,
-                        "n2o": cf.n2o_factor,
-                        "co": cf.co_factor,
-                        "unit": cf.unit,
-                        "hhv": cf.hhv_factor,
-                        "type": "custom",
-                        "name": cf.name,
-                    }
-                    # Uncertainty Handling (Import)
-                    if cf.co2_uncertainty or cf.ch4_uncertainty or cf.n2o_uncertainty:
-                        factor_data["uncertainty"] = {
-                            "co2": float(
-                                getattr(cf, "co2_uncertainty", None)
-                                or getattr(cf, "uncertainty", 0)
-                                or 0
-                            )
-                            / 100.0,
-                            "ch4": float(
-                                getattr(cf, "ch4_uncertainty", None)
-                                or getattr(cf, "uncertainty", 0)
-                                or 0
-                            )
-                            / 100.0,
-                            "n2o": float(
-                                getattr(cf, "n2o_uncertainty", None)
-                                or getattr(cf, "uncertainty", 0)
-                                or 0
-                            )
-                            / 100.0,
-                        }
-                    elif cf.uncertainty and cf.uncertainty > 0:
-                        factor_data["uncertainty"] = {
-                            "co2": float(cf.uncertainty or 0) / 100.0,
-                            "ch4": float(cf.uncertainty or 0) / 100.0,
-                            "n2o": float(cf.uncertainty or 0) / 100.0,
-                        }
-                    elif cf.parent_fuel:
-                        parent_factor = API_FACTORS.get(cf.parent_fuel, {})
-                        if "uncertainty" in parent_factor:
-                            factor_data["uncertainty"] = parent_factor["uncertainty"]
-
-            # 3. Compute emissions
-            gwp_dict = resolve_gwp_dict(user)
-            gwp_std = resolve_gwp_standard(user)
-            em_result, method = compute_emissions(
-                rec_data, factor_data, gwp_dict=gwp_dict
-            )
-
-            # Fallback for totalCo2e
-            if not em_result.get("totalCo2e") or em_result.get("totalCo2e") == 0:
-                co2_val = em_result.get("co2", 0)
-                ch4_val = em_result.get("ch4", 0)
-                n2o_val = em_result.get("n2o", 0)
-                em_result["totalCo2e"] = calculate_co2e(
-                    co2_val, ch4_val, n2o_val, gwp_dict=gwp_dict
-                )
-
-            # 4. Create record
             record = Emission(
                 record_id=f"IMP-{uuid.uuid4().hex[:8]}-{i}",
-                year=rec_data.get("year"),
-                month=rec_data.get("month"),
+                year=rec_data["year"],
+                month=rec_data["month"],
                 facility_id=facility.id,
                 group_name=rec_data["group_name"],
                 activity=rec_data["activity"],
                 division=rec_data["division"],
                 field=rec_data["field"],
-                process_type=rec_data.get("process_type") or rec_data.get("type"),
-                fuel_type=fuel_key,
-                quantity=rec_data.get("amount"),
-                unit=rec_data.get("unit"),
                 equipment_id=rec_data.get("equipment_id"),
-                co2_emissions=(
-                    em_result.get("co2") if em_result.get("co2") is not None else 0
-                ),
-                ch4_emissions=(
-                    em_result.get("ch4") if em_result.get("ch4") is not None else 0
-                ),
-                n2o_emissions=(
-                    em_result.get("n2o") if em_result.get("n2o") is not None else 0
-                ),
-                co_emissions=(
-                    em_result.get("co") if em_result.get("co") is not None else 0
-                ),
-                co2e_total=(
-                    em_result.get("totalCo2e")
-                    if em_result.get("totalCo2e") is not None
-                    else 0
-                ),
-                calc_method=method,
-                gwp_version=gwp_std,
-                source_payload=json.dumps(rec_data),
                 created_by=user.id,
-                uncertainty=(
-                    factor_data.get("uncertainty", {}).get("co2", 0)
-                    if isinstance(factor_data.get("uncertainty"), dict)
-                    else (factor_data.get("uncertainty") or 0)
-                ),
+                created_by_name=user_label(user),
+                factor_source=rec_data.get("factor_source") or "default",
+                qa_flag=qa_msg[:255] if qa_msg else None,
                 status="Pending",  # D-04: all bulk imports queue as Pending
                 approved_by=None,
                 approved_at=None,
             )
+            apply_result(record, rec_data, em_result, method, factor_data, gwp_std)
             record.ogmp_level = ogmp_level_for(record)
             db.session.add(record)
             imported_count += 1
-        except Exception as e:
-            import traceback
-
-            traceback.print_exc()
-            errors.append(f"Row {i}: {str(e)}")
-
-    from flask import current_app
+        except Exception:
+            current_app.logger.exception("Import row %s failed", i)
+            errors.append(f"Row {i}: could not be processed")  # BUG-087: no raw exception text
 
     current_app.logger.info(
         f"Import summary: imported={imported_count}, errors={len(errors)}"
     )
     if errors and imported_count == 0:
+        db.session.rollback()
         return jsonify({"error": "Import failed", "details": errors}), 400
 
-    db.session.commit()
-
     if imported_count > 0:
-        try:
-            log_activity_and_notify(
-                action="IMPORT",
-                record_id=f"BATCH-{imported_count}",
-                user=user,
-                request=request,
-                entity="Emission",
-                details=f"Bulk imported {imported_count} emission records (status: {'Verified' if user.role == 'admin' else 'Pending'})",
+        # audit entry + reviewer notifications commit atomically with the data (project convention)
+        log_activity_and_notify(
+            action="IMPORT",
+            record_id=f"BATCH-{imported_count}",
+            user=user,
+            request=request,
+            entity="Emission",
+            details=f"Bulk imported {imported_count} emission records (status: Pending)",
+        )
+        for admin in User.query.filter_by(role="admin", status="active").all():
+            if admin.id == user.id:
+                continue
+            Notification.create(
+                user_id=admin.id,
+                type="warning",
+                title="Bulk Emission Records Awaiting Approval",
+                message=f"{user.fullName or user.email} imported {imported_count} emission records that require verification.",
+                metadata={"imported_count": imported_count, "uploader_id": user.id},
             )
-            if user.role != "admin":
-                admins = User.query.filter_by(role="admin", status="active").all()
-                for admin in admins:
-                    Notification.create(
-                        user_id=admin.id,
-                        type="warning",
-                        title="Bulk Emission Records Awaiting Approval",
-                        message=f"{user.name or user.email} imported {imported_count} emission records that require verification.",
-                        metadata={"imported_count": imported_count, "uploader_id": user.id},
-                    )
-            db.session.commit()
-        except Exception as e:
-            current_app.logger.warning(f"Failed to create import notification: {e}")
+    db.session.commit()
+    from routes.dashboard import clear_dashboard_cache
+
+    clear_dashboard_cache()
 
     return jsonify(
         {
             "message": f"{imported_count} records imported",
             "imported": imported_count,
-            "status": "Verified" if user.role == "admin" else "Pending",
+            "status": "Pending",
             "errors": errors,
         }
     )
