@@ -119,6 +119,17 @@ def _run_in_app_ctx(app, fn, *args, **kwargs):
 dashboard_bp = Blueprint("dashboard", __name__)
 
 
+
+def _finite_or_none(value):
+    """BUG-039: legacy goal rows may hold NULL/NaN; never let them break the dashboard."""
+    import math
+
+    try:
+        v = float(value)
+    except (TypeError, ValueError):
+        return None
+    return v if math.isfinite(v) else None
+
 @dashboard_bp.route("/batch-all", methods=["GET"])
 @login_required
 def get_batch_dashboard_data():
@@ -255,7 +266,7 @@ def get_batch_dashboard_data():
         goal_obj = (
             {
                 "year": goal.year,
-                "target_amount": float(goal.target_amount),
+                "target_amount": _finite_or_none(goal.target_amount),
                 "created_at": goal.created_at.isoformat() if goal.created_at else None,
             }
             if goal
@@ -968,7 +979,7 @@ def get_goal(year):
         return jsonify(
             {
                 "year": goal.year,
-                "target_amount": float(goal.target_amount),
+                "target_amount": _finite_or_none(goal.target_amount),
                 "created_at": goal.created_at.isoformat() if goal.created_at else None,
             }
         )

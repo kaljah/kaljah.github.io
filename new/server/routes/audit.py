@@ -8,7 +8,7 @@ from functools import wraps
 from flask import Blueprint, jsonify, request, Response, current_app
 from sqlalchemy import distinct, func
 from models import ActivityLog, db
-from utils import get_current_user, log_activity_and_notify
+from utils import get_current_user, log_activity_and_notify, get_allowed_facility_ids
 
 audit_bp = Blueprint("audit", __name__)
 
@@ -48,6 +48,26 @@ def audit_access_required(f):
     return decorated
 
 
+SECURITY_ACTIONS = ["LOGIN", "LOGOUT", "REGISTER", "SECURITY", "UPDATE_PASSWORD", "PASSWORD_RESET"]
+
+
+def _scoped_base(user):
+    """Audit rows the user may see.
+
+    - IT roles: security / account-lifecycle actions only.
+    - BUG-038: region-restricted business users see entries for facilities in their scope
+      and their own actions; entries without a facility (other regions' users, legacy rows)
+      stay hidden from them.
+    """
+    query = ActivityLog.query
+    if user and is_it_role(user):
+        return query.filter(ActivityLog.action.in_(SECURITY_ACTIONS))
+    allowed = get_allowed_facility_ids(user)
+    if allowed is not None:
+        query = query.filter(db.or_(ActivityLog.facility_id.in_(allowed or [-1]), ActivityLog.user_id == user.id))
+    return query
+
+
 def _build_audit_query(current_user=None):
     user_filter = request.args.get("user")
     action_filter = request.args.get("action")
@@ -56,13 +76,7 @@ def _build_audit_query(current_user=None):
     start_date_str = request.args.get("start_date")
     end_date_str = request.args.get("end_date")
 
-    query = ActivityLog.query
-
-    # Separation of duties: IT Admins / Managers are strictly scoped to security and account lifecycle logs
-    if current_user and is_it_role(current_user):
-        query = query.filter(
-            ActivityLog.action.in_(["LOGIN", "LOGOUT", "REGISTER", "SECURITY", "UPDATE_PASSWORD", "PASSWORD_RESET"])
-        )
+    query = _scoped_base(current_user)
 
     if user_filter and user_filter != "all":
         query = query.filter(ActivityLog.user_name == user_filter)
@@ -219,17 +233,12 @@ def get_audit_stats():
             or 0
         )
     else:
-        total_events = ActivityLog.query.count()
-        total_logins = ActivityLog.query.filter(ActivityLog.action == "LOGIN").count()
-        data_mutations = ActivityLog.query.filter(
-            ActivityLog.action.in_(["CREATE", "UPDATE", "DELETE"])
-        ).count()
-        security_alerts = ActivityLog.query.filter(
-            ActivityLog.action.in_(["SECURITY", "FAILED_LOGIN", "SUSPICIOUS"])
-        ).count()
-        unique_users = (
-            db.session.query(func.count(distinct(ActivityLog.user_name))).scalar() or 0
-        )
+        base = _scoped_base(user)
+        total_events = base.count()
+        total_logins = base.filter(ActivityLog.action == "LOGIN").count()
+        data_mutations = base.filter(ActivityLog.action.in_(["CREATE", "UPDATE", "DELETE"])).count()
+        security_alerts = base.filter(ActivityLog.action.in_(["SECURITY", "FAILED_LOGIN", "SUSPICIOUS"])).count()
+        unique_users = base.with_entities(func.count(distinct(ActivityLog.user_name))).scalar() or 0
 
     return jsonify(
         {
@@ -262,9 +271,10 @@ def get_audit_filters():
             }
         )
 
-    users = db.session.query(distinct(ActivityLog.user_name)).all()
-    actions = db.session.query(distinct(ActivityLog.action)).all()
-    entities = db.session.query(distinct(ActivityLog.entity)).all()
+    base = _scoped_base(user)
+    users = base.with_entities(distinct(ActivityLog.user_name)).all()
+    actions = base.with_entities(distinct(ActivityLog.action)).all()
+    entities = base.with_entities(distinct(ActivityLog.entity)).all()
 
     norm_entities = set()
     for e in entities:
@@ -389,6 +399,9 @@ def verify_audit_chain():
     ActivityLog entries to guarantee tamper-evident integrity for third-party audit assurance
     (compliant with ISO 14064-3 and ISAE 3410 assurance requirements).
     """
+    user = get_current_user()
+    if get_allowed_facility_ids(user) is not None and not is_it_role(user):
+        return jsonify({"error": "Chain verification requires organisation-wide audit access"}), 403
     logs = ActivityLog.query.order_by(ActivityLog.id.asc()).all()
 
     prev_hash = "0" * 64

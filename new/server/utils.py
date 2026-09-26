@@ -73,6 +73,15 @@ def require_facility_access(user, facility_id):
         return False
 
 
+def user_label(user):
+    """Human-readable identity snapshot stored on records (BUG-069)."""
+    if user is None:
+        return None
+    name = (getattr(user, "fullName", None) or "").strip()
+    email = (getattr(user, "email", None) or "").strip()
+    return f"{name} <{email}>" if name and email else (name or email or f"user#{user.id}")
+
+
 def facility_in_user_scope(user, region=None, location=None, name=None):
     """True when a facility with these attributes falls inside the user's region scope.
 
@@ -170,6 +179,34 @@ def can_approve(user, record):
     return user.id not in actor_ids
 
 
+_FACILITY_ENTITIES = {
+    "Emission": "Emission", "Scope1": "Emission", "Scope2": "Scope2Emission", "Scope2Emission": "Scope2Emission",
+    "Scope3": "Scope3Emission", "Scope3Emission": "Scope3Emission", "ProductionData": "ProductionData",
+    "Production": "ProductionData", "CapEmission": "CapEmission", "OgmpSurvey": "OgmpSurvey",
+    "MitigationProject": "MitigationProject", "EmissionSource": "EmissionSource",
+}
+
+
+def _resolve_log_facility(entity, record_id):
+    """BUG-038: attach the facility to an ActivityLog row so the audit trail can be region-scoped."""
+    import models
+    from extensions import db
+
+    if entity == "Facility":
+        try:
+            return int(record_id)
+        except (TypeError, ValueError):
+            return None
+    model_name = _FACILITY_ENTITIES.get(entity or "")
+    if not model_name:
+        return None
+    try:
+        obj = db.session.get(getattr(models, model_name), int(record_id))
+    except Exception:
+        return None
+    return getattr(obj, "facility_id", None) if obj is not None else None
+
+
 def log_activity_and_notify(
     action,
     record_id,
@@ -181,6 +218,7 @@ def log_activity_and_notify(
     metadata_json=None,
     old_values=None,
     new_values=None,
+    facility_id=None,
 ):
     import json
     from models import ActivityLog, Notification, User
@@ -207,6 +245,7 @@ def log_activity_and_notify(
         entity=entity,
         entity_id=str(entity_id) if entity_id else (str(record_id) if record_id is not None else None),
         metadata_json=metadata_json,
+        facility_id=facility_id if facility_id is not None else _resolve_log_facility(entity, entity_id or record_id),
     )
     db.session.add(log)
 

@@ -451,35 +451,54 @@ def generate_report():
         )
 
 
+# BUG-020: the master reports are generated per request from the current database and
+# are only served to business roles with access to the facilities they cover.
+MASTER_REPORTS = {
+    "170": ("El_Merk_2025_Annual_GHG_Report.pdf", "generate_elm_master_report", "build_elm_master_pdf", [170]),
+    None: ("Groupement_Berkine_2025_Annual_GHG_Report.pdf", "generate_berkine_master_report", "build_master_pdf", None),
+}
+
+
 @reports_bp.route("/master-annual-report", methods=["GET"])
 @login_required
 def get_master_annual_report():
-    """Download the comprehensive master annual GHG & CAP report for a specific facility or consolidated."""
+    """Download the master annual GHG & CAP report for a supported facility or the consolidated entity."""
+    import importlib
     import os
-    facility_id = request.args.get("facility_id")
+    import tempfile
 
-    if facility_id in ("170", 170, "elm", "ELM"):
-        pdf_path = os.path.abspath("c:/Users/samsung/Desktop/H2/El_Merk_2025_Annual_GHG_Report.pdf")
-        if not os.path.exists(pdf_path):
-            from generate_elm_master_report import build_elm_master_pdf
-            build_elm_master_pdf(pdf_path)
-        return send_file(
-            pdf_path,
-            mimetype="application/pdf",
-            as_attachment=True,
-            download_name="El_Merk_2025_Annual_GHG_Report.pdf",
-        )
+    from utils import require_facility_access
 
-    pdf_path = os.path.abspath("c:/Users/samsung/Desktop/H2/Groupement_Berkine_2025_Annual_GHG_Report.pdf")
-    if not os.path.exists(pdf_path):
-        from generate_berkine_master_report import build_master_pdf
-        build_master_pdf(pdf_path)
-    return send_file(
-        pdf_path,
-        mimetype="application/pdf",
-        as_attachment=True,
-        download_name="Groupement_Berkine_2025_Annual_GHG_Report.pdf",
-    )
+    user = get_current_user()
+    if not user or user.role in ["it_admin", "it_manager", "it"]:
+        return jsonify({"error": "Forbidden: IT personnel cannot access operational emission reports"}), 403
+
+    raw = (request.args.get("facility_id") or "").strip().lower()
+    key = "170" if raw in ("170", "elm") else (None if raw in ("", "all", "consolidated") else raw)
+    if key not in MASTER_REPORTS:
+        return jsonify({"error": "No master report is available for this facility"}), 404
+    filename, module_name, builder_name, facility_ids = MASTER_REPORTS[key]
+
+    if facility_ids is None:
+        # consolidated report covers every facility: unrestricted users only
+        if get_allowed_facility_ids(user) is not None:
+            return jsonify({"error": "Forbidden: the consolidated report requires organisation-wide access"}), 403
+    elif not all(require_facility_access(user, fid) for fid in facility_ids):
+        return jsonify({"error": "Forbidden: outside your facility scope"}), 403
+
+    builder = getattr(importlib.import_module(module_name), builder_name)
+    fd, path = tempfile.mkstemp(suffix=".pdf")
+    os.close(fd)
+    try:
+        builder(path)
+        with open(path, "rb") as fh:
+            data = BytesIO(fh.read())
+    finally:
+        try:
+            os.remove(path)
+        except OSError:
+            pass
+    return send_file(data, mimetype="application/pdf", as_attachment=True, download_name=filename)
 
 
 @reports_bp.route("/export", methods=["GET"])

@@ -144,6 +144,8 @@ SCOPE3_CATEGORY_NAMES = {
     15: "investments",
 }
 _CATEGORY_NUMBER = re.compile(r"^\s*(?:cat(?:egory)?\.?\s*)?(\d{1,2})\s*$", re.IGNORECASE)
+# "Category 1: Purchased goods", "Cat 6 - Business travel"
+_CATEGORY_PREFIX = re.compile(r"^\s*cat(?:egory)?\.?\s*(\d{1,2})\s*[-:–.)]\s*\S", re.IGNORECASE)
 
 
 def scope3_category_number(value):
@@ -154,7 +156,7 @@ def scope3_category_number(value):
         number = int(value)
         return number if 1 <= number <= 15 else None
     text = str(value).strip()
-    m = _CATEGORY_NUMBER.match(text)
+    m = _CATEGORY_NUMBER.match(text) or _CATEGORY_PREFIX.match(text)
     if m:
         number = int(m.group(1))
         return number if 1 <= number <= 15 else None

@@ -181,14 +181,20 @@ class TestIDOR:
         ), f"IDOR: regular user was able to delete admin's record! (HTTP {res.status_code})"
 
     def test_user_can_delete_own_emission(self, client, app, regular_user):
-        """User should be able to delete their own emission record."""
+        """User should be able to delete their own (not yet approved) record in their own region.
+
+        Audit BUG-067: the user must hold region access to the facility (a user without a
+        region has no facility access), and the record must not be Verified."""
         with app.app_context():
             from models import Facility
-            if not db.session.get(Facility, 1):
-                f = Facility(id=1, name="Test Facility")
-                db.session.add(f)
-                db.session.commit()
-                
+            fac = Facility.query.filter_by(name="IDOR Own Facility").first()
+            if not fac:
+                fac = Facility(name="IDOR Own Facility", region="IDOR-Region")
+                db.session.add(fac)
+            db.session.get(User, regular_user).location = "IDOR-Region"
+            db.session.commit()
+            fac_id = fac.id
+
             # Clean up prior test record if any
             Emission.query.filter_by(record_id="test-own-001").delete()
             db.session.commit()
@@ -196,7 +202,8 @@ class TestIDOR:
                 record_id="test-own-001",
                 year=2024,
                 month=1,
-                facility_id=1,
+                facility_id=fac_id,
+                status="Pending",
                 process_type="combustion",
                 co2_emissions=1.0,
                 ch4_emissions=0.0,

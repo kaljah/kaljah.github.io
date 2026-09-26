@@ -30,6 +30,9 @@ class User(db.Model):
         db.Text
     )  # JSON string for user settings (theme, language, etc.)
     created_at = db.Column(db.DateTime, default=utc_now)
+    # BUG-114: bumped on logout / password change / deactivation; sessions carrying an
+    # older value are rejected, so a copied cookie stops working after logout.
+    session_version = db.Column(db.Integer, default=0, server_default="0", nullable=False)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -151,6 +154,13 @@ class Emission(db.Model):
     uncertainty_ch4 = db.Column(db.Float, nullable=True)  # CH₄ uncertainty
     uncertainty_n2o = db.Column(db.Float, nullable=True)  # N₂O uncertainty
     uncertainty_pct = db.Column(db.Float, nullable=True)  # Overall combined uncertainty percentage
+    # RC-10 (BUG-008/037): 1-sigma relative components kept separately so the inventory
+    # can correlate the emission-factor part across records that share a factor.
+    uncertainty_ad = db.Column(db.Float, nullable=True)
+    uncertainty_ef_co2 = db.Column(db.Float, nullable=True)
+    uncertainty_ef_ch4 = db.Column(db.Float, nullable=True)
+    uncertainty_ef_n2o = db.Column(db.Float, nullable=True)
+    ef_key = db.Column(db.String(200), nullable=True)  # identifies the factor for correlation
     qa_flag = db.Column(db.String(255), nullable=True)
     status = db.Column(db.String(20), default="Pending", index=True)
 
@@ -180,6 +190,11 @@ class Emission(db.Model):
     # Maker-Checker Approval
     approved_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
     approved_at = db.Column(db.DateTime, nullable=True)
+    # BUG-069: identity snapshots survive user deletion
+    created_by_name = db.Column(db.String(255), nullable=True)
+    approved_by_name = db.Column(db.String(255), nullable=True)
+    # BUG-056: Tier 2 records reference their custom factor by id (real FK)
+    custom_factor_id = db.Column(db.Integer, db.ForeignKey("custom_factors.id"), nullable=True, index=True)
 
     __table_args__ = (
         db.Index("ix_emissions_fac_yr_status", "facility_id", "year", "status"),
@@ -331,6 +346,8 @@ class CustomFactor(db.Model):
     created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
     updated_at = db.Column(db.DateTime, onupdate=utc_now)
     created_at = db.Column(db.DateTime, default=utc_now)
+    # BUG-056: referenced factors are archived instead of deleted (ids are never reused)
+    is_archived = db.Column(db.Boolean, default=False, server_default="0", nullable=False)
 
 
 class ActivityLog(db.Model):
@@ -348,6 +365,8 @@ class ActivityLog(db.Model):
     )  # DB-03 FIX: add index
     entity = db.Column(db.String(50), index=True)  # DB-03 FIX: add index
     entity_id = db.Column(db.String(50))
+    # BUG-038: facility the entry relates to (no FK: log rows outlive deleted facilities)
+    facility_id = db.Column(db.Integer, nullable=True, index=True)
     metadata_json = db.Column("metadata", db.Text)
     timestamp = db.Column(db.DateTime, default=utc_now, index=True)
 
@@ -432,6 +451,10 @@ class Scope2Emission(db.Model):
     # Maker-Checker Approval
     approved_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
     approved_at = db.Column(db.DateTime, nullable=True)
+    updated_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    updated_at = db.Column(db.DateTime, onupdate=utc_now)
+    created_by_name = db.Column(db.String(255), nullable=True)
+    approved_by_name = db.Column(db.String(255), nullable=True)
 
     __table_args__ = (
         db.Index("ix_scope2_fac_yr_status", "facility_id", "year", "status"),
@@ -464,6 +487,10 @@ class Scope3Emission(db.Model):
     # Maker-Checker Approval
     approved_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
     approved_at = db.Column(db.DateTime, nullable=True)
+    updated_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    updated_at = db.Column(db.DateTime, onupdate=utc_now)
+    created_by_name = db.Column(db.String(255), nullable=True)
+    approved_by_name = db.Column(db.String(255), nullable=True)
 
     __table_args__ = (
         db.Index("ix_scope3_fac_yr_status", "facility_id", "year", "status"),
@@ -620,7 +647,8 @@ class LevelUpgradeLog(db.Model):
     facility_id = db.Column(
         db.Integer, db.ForeignKey("facilities.id"), nullable=False, index=True
     )
-    facility = db.relationship("Facility")
+    # BUG-009: deleted with its facility (was the only facility child without a cascade)
+    facility = db.relationship("Facility", backref=db.backref("level_upgrade_logs", cascade="all, delete-orphan"))
     source_type_code = db.Column(db.String(50))
     old_level = db.Column(db.Integer, nullable=False)
     new_level = db.Column(db.Integer, nullable=False)
@@ -637,7 +665,9 @@ class SbtiTarget(db.Model):
     base_year_emissions = db.Column(db.Float, nullable=False)
     target_year = db.Column(db.Integer, default=2050)
     reduction_rate_pct = db.Column(db.Float, default=4.2)
-    pathway_type = db.Column(db.String(20), default="1.5C")  # 1.5C, WB2C
+    pathway_type = db.Column(db.String(20), default="1.5C")  # 1.5C, WB2C, custom
+    # BUG-019: which scopes the base-year emissions / target cover ("S1S2S3" or "S1S2")
+    scope_coverage = db.Column(db.String(10), default="S1S2S3", server_default="S1S2S3", nullable=False)
     created_at = db.Column(db.DateTime, default=utc_now)
     created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
 
@@ -672,10 +702,15 @@ class CapEmission(db.Model):
     flue_gas_volume_nm3 = db.Column(db.Float, nullable=True)
     calc_method = db.Column(db.String(100), default="API Compendium")
     notes = db.Column(db.String(255), nullable=True)
-    status = db.Column(db.String(20), default="Verified", index=True)
+    status = db.Column(db.String(20), default="Pending", index=True)  # BUG-053: maker-checker
     created_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
     created_at = db.Column(db.DateTime, default=utc_now)
     updated_at = db.Column(db.DateTime, onupdate=utc_now)
+    updated_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    approved_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    approved_at = db.Column(db.DateTime, nullable=True)
+    created_by_name = db.Column(db.String(255), nullable=True)
+    approved_by_name = db.Column(db.String(255), nullable=True)
 
     __table_args__ = (
         db.Index("ix_cap_fac_yr_mod_pol", "facility_id", "year", "source_module", "pollutant"),
