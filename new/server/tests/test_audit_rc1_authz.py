@@ -96,7 +96,7 @@ def test_bug029_bulk_import_survives_legacy_null_name_facility(client, ctx):
     db.session.commit()
     fac = make_facility(region="West")
     login(client, make_user("admin", "Global"))
-    csv = ("date,facility_name,process_type,fuel_type,quantity,unit,factor_type\n"
+    csv = ("date,facility_name,process,fuel,quantity,unit,factor_type\n"
            f"2024-03,{fac.name},combustion,Natural Gas,100,MMBtu,default\n")
     _, _, st = upload(client, csv, "1")
     assert st["status"] == "completed", st

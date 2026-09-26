@@ -86,42 +86,116 @@ def get_equity_shares():
     ])
 
 
+def _parse_date(value, field, required=True):
+    import datetime as _dt
+    from input_validation import ValidationError
+
+    if value in (None, ""):
+        if required:
+            raise ValidationError(f"'{field}' is required", field)
+        return None
+    try:
+        return _dt.date.fromisoformat(str(value)[:10])
+    except ValueError:
+        raise ValidationError(f"'{field}' must be an ISO date (YYYY-MM-DD)", field)
+
+
+def _overlap_days(start, end, lo, hi):
+    """Inclusive day overlap between [start, end or +inf] and [lo, hi]."""
+    s = max(start, lo)
+    e = min(end or hi, hi)
+    return max(0, (e - s).days + 1)
+
+
+def effective_share_pct(slices, year):
+    """BUG-046: time-weighted equity % of one partner over a calendar year.
+
+    `slices` are FacilityEquityShare rows for one facility/partner. Each slice counts for the
+    days of `year` it covers; days no slice covers contribute nothing. Returns None when no
+    slice overlaps the year (caller decides the fallback).
+    """
+    import datetime as _dt
+
+    lo, hi = _dt.date(year, 1, 1), _dt.date(year, 12, 31)
+    days_in_year = (hi - lo).days + 1
+    total, covered = 0.0, 0
+    for sl in slices:
+        try:
+            start = _dt.date.fromisoformat(str(sl.effective_start_date)[:10])
+            end = _dt.date.fromisoformat(str(sl.effective_end_date)[:10]) if sl.effective_end_date else None
+        except ValueError:
+            continue
+        d = _overlap_days(start, end, lo, hi)
+        if d:
+            total += float(sl.equity_share_pct or 0.0) * d
+            covered += d
+    if not covered:
+        return None
+    return total / days_in_year
+
+
 @equity_bp.route("/shares", methods=["POST"])
 @login_required
 def save_equity_share():
+    from input_validation import parse_number
+
     user = get_current_user()
+    # BUG-046: ownership is organisation configuration, not operational data entry
+    if not user or user.role not in ("admin", "superuser"):
+        return jsonify({"error": "Forbidden: only administrators and super users can change equity shares"}), 403
     data = request.get_json() or {}
 
-    facility_id = data.get("facility_id")
-    partner_id = data.get("partner_id")
-    equity_pct = data.get("equity_share_pct")
+    facility_id = int(parse_number(data.get("facility_id"), "facility_id", min_value=1))
+    partner_id = int(parse_number(data.get("partner_id"), "partner_id", min_value=1))
+    equity_pct = parse_number(data.get("equity_share_pct"), "equity_share_pct", min_value=0, max_value=100)
 
-    if not facility_id or not partner_id or equity_pct is None:
-        return jsonify({"error": "facility_id, partner_id, and equity_share_pct are required"}), 400
-
-    if not require_facility_access(user, int(facility_id)):
+    if not require_facility_access(user, facility_id):
         return jsonify({"error": "Forbidden: You do not have access to this facility"}), 403
+    if db.session.get(JvPartner, partner_id) is None:
+        return jsonify({"error": "Unknown partner"}), 400
 
-    start_date = data.get("effective_start_date", "2021-01-01")
+    start = _parse_date(data.get("effective_start_date") or "2021-01-01", "effective_start_date")
+    end = _parse_date(data.get("effective_end_date"), "effective_end_date", required=False)
+    if end is not None and end < start:
+        return jsonify({"error": "effective_end_date must not be before effective_start_date"}), 400
 
     share = FacilityEquityShare.query.filter_by(
-        facility_id=int(facility_id),
-        partner_id=int(partner_id),
-        effective_start_date=start_date,
+        facility_id=facility_id, partner_id=partner_id, effective_start_date=start.isoformat()
     ).first()
 
+    # Shares of all partners that overlap this period must not exceed 100 %
+    import datetime as _dt
+
+    far = _dt.date(9999, 12, 31)
+    others = []
+    for other in FacilityEquityShare.query.filter_by(facility_id=facility_id).all():
+        if share is not None and other.id == share.id:
+            continue
+        o_start = _dt.date.fromisoformat(str(other.effective_start_date)[:10])
+        o_end = _dt.date.fromisoformat(str(other.effective_end_date)[:10]) if other.effective_end_date else far
+        if o_start <= (end or far) and start <= o_end:
+            others.append((o_start, o_end, float(other.equity_share_pct or 0.0)))
+    # the concurrent total can only change at a slice start, so check each start inside the period
+    checkpoints = {start} | {o[0] for o in others if start <= o[0] <= (end or far)}
+    pct_sum = max(
+        equity_pct + sum(p for (o_s, o_e, p) in others if o_s <= day <= o_e) for day in checkpoints
+    )
+    if pct_sum > 100.0 + 1e-9:
+        return jsonify({"error": f"Equity shares overlapping this period would total {pct_sum:.2f}% (max 100%)"}), 400
+
     if not share:
-        share = FacilityEquityShare(
-            facility_id=int(facility_id),
-            partner_id=int(partner_id),
-            effective_start_date=start_date,
-        )
+        share = FacilityEquityShare(facility_id=facility_id, partner_id=partner_id, effective_start_date=start.isoformat())
         db.session.add(share)
 
-    share.equity_share_pct = float(equity_pct)
-    share.effective_end_date = data.get("effective_end_date")
+    share.equity_share_pct = equity_pct
+    share.effective_end_date = end.isoformat() if end else None
     share.agreement_reference = data.get("agreement_reference")
 
+    from utils import log_activity_and_notify
+
+    log_activity_and_notify(action="UPDATE", record_id=f"equity-{facility_id}-{partner_id}", user=user, request=request,
+                            entity="FacilityEquityShare", facility_id=facility_id,
+                            details=f"Equity share {equity_pct}% for partner {partner_id} from {start} to {end or 'open'}")
     db.session.commit()
     return jsonify({"success": True, "id": share.id, "message": "Equity share saved successfully"})
 
@@ -173,14 +247,13 @@ def get_equity_allocation():
         total_co2e = float(total_co2e or 0.0)
         total_ch4 = float(total_ch4 or 0.0)
 
-        # Get equity shares for this facility active during year yr
+        # BUG-046: time-weighted share of every slice that is effective during year yr
         shares = FacilityEquityShare.query.filter_by(facility_id=fac.id).all()
-        # Find active share for the year
         partner_allocations = []
         for p in partners:
-            # Match share
-            p_share = next((s for s in shares if s.partner_id == p.id), None)
-            pct = p_share.equity_share_pct if p_share else (fac.equity_share_pct if p.is_operator else 0.0)
+            pct = effective_share_pct([s for s in shares if s.partner_id == p.id], yr)
+            if pct is None:
+                pct = (fac.equity_share_pct or 0.0) if p.is_operator and not shares else 0.0
             allocated_co2e = total_co2e * (pct / 100.0)
             allocated_ch4 = total_ch4 * (pct / 100.0)
 

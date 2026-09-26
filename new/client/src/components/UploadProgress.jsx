@@ -142,7 +142,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel }) => {
         setErrors(data.errors || []);
         setSkippedCount(data.skipped_count || 0);
         setSkippedPreview(data.skipped_preview || []);
-        setHasErrorCsv(!!data.error_csv_path);
+        setHasErrorCsv(!!(data.has_error_csv ?? data.error_csv_path));
         setAnomalyCount(data.anomaly_count || 0);
         setAnomalies(data.anomalies || []);
         if (data.status === "completed" || data.status === "error") {
