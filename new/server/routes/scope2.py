@@ -19,6 +19,32 @@ MMBTU_PER_MWH = 3.412142
 MAX_GRID_EF_KG_PER_KWH = 2.0
 
 
+def resolve_electricity_factor(grid_region, supplied_ef):
+    """One Scope 2 electricity factor policy for manual, JSON-import and file-bulk paths (BUG-099).
+
+    - Known grid region: the location-based grid factor; a client factor is ignored.
+    - Otherwise: an explicit supplier / contractual factor (market-based instrument, e.g. a
+      renewable PPA at 0) within [0, MAX_GRID_EF_KG_PER_KWH] kg CO2e/kWh.
+    Returns (factor_kg_per_kwh, resolved_grid_region). Raises ValidationError otherwise.
+    """
+    from input_validation import ValidationError, parse_number
+
+    name = str(grid_region or "").strip()
+    entry = GRID_FACTORS.get(name) or next(
+        (v for k, v in GRID_FACTORS.items() if k.lower() == name.lower()), None
+    ) if name else None
+    if entry and entry.get("factor") is not None:
+        canonical = next((k for k in GRID_FACTORS if k.lower() == name.lower()), name)
+        return float(entry["factor"]), canonical
+    ef = parse_number(supplied_ef, "emission_factor", required=False, min_value=0, max_value=MAX_GRID_EF_KG_PER_KWH)
+    if ef is None:
+        raise ValidationError(
+            f"Unknown grid region '{name}'. Select a known grid or provide a supplier emission factor (kg CO2e/kWh).",
+            "grid_region",
+        )
+    return ef, name or None
+
+
 def _calc_indirect_steam(data):
     """Calculate tCO2e for indirect steam / heat entry."""
     amount = float(data.get("amount") or data.get("heat_mmbtu") or 0)
@@ -208,17 +234,7 @@ def create_scope2_emission():
             return jsonify({"error": "'electricity_kwh' must be greater than 0"}), 400
 
         grid_region = data.get("grid_region") or data.get("location")
-        grid_entry = GRID_FACTORS.get(grid_region, {})
-        resolved_ef = grid_entry.get("factor") if grid_entry else None
-        if resolved_ef is not None:
-            emission_factor = float(resolved_ef)
-        else:
-            # Unknown grid: only an explicit, plausible supplier factor (kg CO2e/kWh) is accepted.
-            emission_factor = parse_number(
-                data.get("emission_factor"), "emission_factor", required=False, min_value=0, max_value=MAX_GRID_EF_KG_PER_KWH
-            )
-            if not emission_factor:
-                return jsonify({"error": f"Unknown grid region '{grid_region}'. Select a known grid or provide a supplier emission factor (kg CO2e/kWh)."}), 400
+        emission_factor, _ = resolve_electricity_factor(grid_region, data.get("emission_factor"))
         co2e = (electricity_kwh * emission_factor) / 1000.0
 
     elif source_type == "indirect_steam":
@@ -397,11 +413,10 @@ def update_scope2_emission(emission_id):
 
     data = request.get_json() or {}
 
-    # BUG-067/RC-2: any non-admin edit of a decided record sends it back to maker-checker review.
-    if user.role != "admin" and emission.status in ("Verified", "Rejected"):
-        emission.status = "Pending"
-        emission.approved_by = None
-        emission.approved_at = None
+    # BUG-067/RC-2: record the last maker; non-admin edits of decided records go back to review.
+    from services.maker_checker import on_edit
+
+    on_edit(emission, user)
 
     # Strip status and co2e from direct client overwrite
     data.pop("status", None)
@@ -523,17 +538,12 @@ def delete_scope2_emission(emission_id):
     if not emission:
         return jsonify({"error": "Emission not found"}), 404
 
-    if user.role not in ["admin", "superuser"]:
-        if emission.created_by != user.id:
-            return (
-                jsonify(
-                    {"error": "Forbidden: You do not have permission to delete records created by another user"}
-                ),
-                403,
-            )
-    else:
-        if not require_facility_access(user, emission.facility_id):
-            return jsonify({"error": "Unauthorized: Outside your region"}), 403
+    from services.maker_checker import delete_denied_reason
+
+    denied = delete_denied_reason(user, emission)
+    if denied:
+        return jsonify({"error": denied}), 403
+    fac_id_for_log = emission.facility_id
 
     log_details = f"Deleted Scope 2 emission: {emission.source_type} ({emission.co2e:.2f} tCO2e, facility #{emission.facility_id})"
 
@@ -547,6 +557,7 @@ def delete_scope2_emission(emission_id):
             request=request,
             entity="Scope2Emission",
             details=log_details,
+            facility_id=fac_id_for_log,
         )
         db.session.commit()
     except Exception as e:
@@ -629,12 +640,11 @@ def bulk_import_scope2():
 
             # 2. Get Factor and Calculate
             grid_region = rec.get("grid_region")
-            factor_info = GRID_FACTORS.get(grid_region)
-            if not factor_info:
-                errors.append(f"Row {i}: Grid Region '{grid_region}' not found")
+            try:
+                ef, grid_region = resolve_electricity_factor(grid_region, rec.get("emission_factor") or rec.get("factor"))
+            except ValidationError as err:
+                errors.append(f"Row {i}: {err.message}")
                 continue
-
-            ef = factor_info["factor"]
             # consumption in payload might be kwh, mwh, gwh. BulkImportModal uses 'consumption' and 'unit'
             val = parse_number(rec.get("consumption"), "consumption", min_value=0)
             if val <= 0:

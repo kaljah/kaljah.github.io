@@ -112,6 +112,114 @@ def _prune_old_jobs(max_age_seconds=86400):
                 pass
 
 
+
+# -- Bulk-import integrity helpers (audit RC-13) --------------------------------
+
+_PERIOD_FORMATS = ("%Y-%m", "%Y-%m-%d", "%m/%Y", "%Y/%m")
+
+
+def _parse_row_period(row):
+    """BUG-085 / BUG-111: explicit period parsing with range checks; never a default year.
+
+    Accepts a `date` cell (YYYY-MM, YYYY-MM-DD, MM/YYYY, YYYY/MM) or `year` + `month` columns.
+    Returns (year, month, error).
+    """
+    import datetime as _dt
+    from input_validation import ValidationError, parse_month, parse_year
+
+    raw = row.get("date")
+    date_str = "" if raw is None else str(raw).strip()
+    if isinstance(raw, (_dt.date, _dt.datetime)):
+        date_str = raw.strftime("%Y-%m-%d")
+    elif date_str.endswith(" 00:00:00"):
+        date_str = date_str[:-9]
+    try:
+        if date_str and date_str.lower() != "none":
+            for fmt in _PERIOD_FORMATS:
+                try:
+                    d = _dt.datetime.strptime(date_str, fmt)
+                except ValueError:
+                    continue
+                return parse_year(d.year), parse_month(d.month, required=True), None
+            return None, None, f"Invalid date '{date_str}': use YYYY-MM, YYYY-MM-DD or MM/YYYY"
+        year = parse_year(row.get("year"))
+        month = parse_month(row.get("month"), required=True)
+        return year, month, None
+    except ValidationError as err:
+        return None, None, err.message
+
+
+def _dedupe(batch_keys, key, overwrite, describe):
+    """BUG-057: returns ("new", None), ("error", message) or ("update", existing_object_or_id).
+
+    batch_keys maps natural key -> existing DB id, or -> the pending object created earlier in
+    this same file, so an in-file repeat updates that row instead of inserting a copy.
+    """
+    if batch_keys is None or key not in batch_keys:
+        return "new", None
+    if not overwrite:
+        return "error", f"Duplicate record: {describe} already exists. Enable 'Overwrite Duplicates' to replace it."
+    return "update", batch_keys[key]
+
+
+def _resolve_existing(model, existing):
+    from extensions import db
+
+    if existing is None:
+        return None
+    if isinstance(existing, int):
+        return db.session.get(model, existing)
+    return existing  # pending object from this file
+
+
+def _bulk_overwrite(obj, values, user_id, label):
+    """BUG-058: overwrite through the maker-checker: back to Pending, approval cleared,
+    last maker recorded, old/new values captured in the audit trail."""
+    from extensions import db
+    from models import User
+    from utils import log_activity_and_notify
+
+    old = {k: getattr(obj, k, None) for k in values}
+    for k, v in values.items():
+        setattr(obj, k, v)
+    was_saved = getattr(obj, "id", None) is not None
+    obj.status = "Pending"
+    obj.approved_by = None
+    obj.approved_at = None
+    if hasattr(obj, "approved_by_name"):
+        obj.approved_by_name = None
+    if hasattr(obj, "updated_by"):
+        obj.updated_by = user_id
+    if was_saved:
+        log_activity_and_notify(
+            action="BULK_OVERWRITE",
+            record_id=str(obj.id),
+            details=f"{label} record {obj.id} overwritten by bulk import",
+            user=db.session.get(User, user_id),
+            entity=type(obj).__name__,
+            entity_id=obj.id,
+            facility_id=getattr(obj, "facility_id", None),
+            old_values=old,
+            new_values=values,
+        )
+
+
+def _scope2_key(facility_id, year, month, source_type, grid_region, meter):
+    return (facility_id, year, month, (source_type or "electricity").strip().lower(),
+            (grid_region or "").strip().lower(), (meter or "").strip().lower())
+
+
+def _scope3_key(facility_id, year, month, category, sub_category, unit):
+    return (facility_id, year, month, (category or "").strip().lower(),
+            (sub_category or "").strip().lower(), (unit or "").strip().lower())
+
+
+def _scope1_key(facility_id, year, month, process_type, fuel, equipment_id, source_ref):
+    proc = (process_type or "").strip().lower()
+    fuel_k = "" if proc in NON_COMBUSTION_PROCESSES else (fuel or "").strip().lower()
+    return (facility_id, year, month, proc, fuel_k, (equipment_id or "").strip().lower(),
+            (source_ref or "").strip().lower())
+
 def start_background_upload(
     app,
     file_path,
@@ -135,6 +243,7 @@ def start_background_upload(
             "error_csv_path": None,
             "anomalies": [],  # anomaly-flagged rows
             "created_at": time.time(),
+            "owner_id": user_id,  # BUG-076: only the uploader (or an admin) may read the job
         }
 
     # Spawn the background thread
@@ -158,6 +267,18 @@ def start_background_upload(
     return job_id
 
 
+def get_job_owner(job_id):
+    with upload_jobs_lock:
+        job = upload_jobs.get(job_id)
+        return job.get("owner_id") if job else None
+
+
+def get_job_error_csv_path(job_id):
+    with upload_jobs_lock:
+        job = upload_jobs.get(job_id)
+        return job.get("error_csv_path") if job else None
+
+
 def get_job_status(job_id):
     with upload_jobs_lock:
         job = upload_jobs.get(job_id)
@@ -173,7 +294,7 @@ def get_job_status(job_id):
             "errors": list(job.get("errors", [])),
             "skipped_count": len(skipped_all),
             "skipped_preview": skipped_all[:100],  # first 100 for inline display
-            "error_csv_path": job.get("error_csv_path"),
+            "has_error_csv": bool(job.get("error_csv_path")),  # BUG-076: no server path disclosure
             "anomaly_count": len(anomalies),
             "anomalies": anomalies[:50],  # first 50 anomalies for review
         }
@@ -337,7 +458,7 @@ def _process_file_thread(
                 fac_name_map.add(fac.region, fac, overwrite=False)
             fac_id_map = {str(fac.id): fac for fac in all_facilities}
 
-            custom_factors = CustomFactor.query.all()
+            custom_factors = CustomFactor.query.filter(CustomFactor.is_archived.is_(False)).all()
             cf_name_map = build_name_map(custom_factors)
 
             processed = 0
@@ -345,65 +466,42 @@ def _process_file_thread(
             skipped_rows = []  # Store raw row data for error CSV
             anomaly_rows = []  # Store anomaly-flagged rows for reviewer warning
             batch_prod_map = {}  # In-batch duplicate tracking for production upserts
+            batch_cf_names = set()  # BUG-065: in-file duplicate custom factor names
             batch_scope1_map = {}
             batch_scope2_map = {}
             batch_scope3_map = {}
 
             from models import Emission, Scope2Emission, Scope3Emission
 
+            # BUG-081: natural keys include the sub-identifiers real inventories need, and
+            # Rejected / Draft rows are not treated as existing records.
+            live = ("Pending", "Verified", "Pending Approval")
             if str(scope) == "1":
-                for e in Emission.query.with_entities(
-                    Emission.id,
-                    Emission.facility_id,
-                    Emission.year,
-                    Emission.month,
-                    Emission.process_type,
-                    Emission.fuel_type,
-                    Emission.equipment_id,
+                for e in Emission.query.filter(Emission.status.in_(live)).with_entities(
+                    Emission.id, Emission.facility_id, Emission.year, Emission.month, Emission.process_type,
+                    Emission.fuel_type, Emission.equipment_id, Emission.data_source_ref,
                 ).all():
-                    proc_k = (e.process_type or "").strip().lower()
-                    fuel_k = "" if proc_k in NON_COMBUSTION_PROCESSES else (e.fuel_type or "").strip().lower()
-                    k = (
-                        e.facility_id,
-                        e.year,
-                        e.month,
-                        proc_k,
-                        fuel_k,
-                        (e.equipment_id or "").strip().lower(),
-                    )
+                    k = _scope1_key(e.facility_id, e.year, e.month, e.process_type, e.fuel_type, e.equipment_id, e.data_source_ref)
                     batch_scope1_map[k] = e.id
 
             elif str(scope) == "2":
-                for e in Scope2Emission.query.with_entities(
-                    Scope2Emission.id,
-                    Scope2Emission.facility_id,
-                    Scope2Emission.year,
-                    Scope2Emission.month,
-                    Scope2Emission.source_type,
+                for e in Scope2Emission.query.filter(Scope2Emission.status.in_(live)).with_entities(
+                    Scope2Emission.id, Scope2Emission.facility_id, Scope2Emission.year, Scope2Emission.month,
+                    Scope2Emission.source_type, Scope2Emission.grid_region, Scope2Emission.location,
                 ).all():
-                    k = (
-                        e.facility_id,
-                        e.year,
-                        e.month,
-                        (e.source_type or "electricity").strip().lower(),
-                    )
-                    batch_scope2_map[k] = e.id
+                    meter = e.location if (e.location or "") != (e.grid_region or "") else ""
+                    batch_scope2_map[_scope2_key(e.facility_id, e.year, e.month, e.source_type, e.grid_region, meter)] = e.id
 
             elif str(scope) in ["3", "3_eeio"]:
-                for e in Scope3Emission.query.with_entities(
-                    Scope3Emission.id,
-                    Scope3Emission.facility_id,
-                    Scope3Emission.year,
-                    Scope3Emission.month,
-                    Scope3Emission.category,
+                from input_validation import scope3_category_number
+
+                for e in Scope3Emission.query.filter(Scope3Emission.status.in_(live)).with_entities(
+                    Scope3Emission.id, Scope3Emission.facility_id, Scope3Emission.year, Scope3Emission.month,
+                    Scope3Emission.category, Scope3Emission.sub_category, Scope3Emission.unit,
                 ).all():
-                    k = (
-                        e.facility_id,
-                        e.year,
-                        e.month,
-                        (e.category or "").strip().lower(),
-                    )
-                    batch_scope3_map[k] = e.id
+                    n = scope3_category_number(e.category)
+                    cat = f"Category {n}" if n else (e.category or "")
+                    batch_scope3_map[_scope3_key(e.facility_id, e.year, e.month, cat, e.sub_category, e.unit)] = e.id
 
             # Initialize anomaly detector
             from calculations.anomaly import AnomalyDetector
@@ -495,8 +593,7 @@ def _process_file_thread(
                     )
                 elif str(scope) == "custom_factors":
                     emission_obj, row_errors = _process_row_custom_factors(
-                        mapped_data, user_id
-                    )
+                        mapped_data, user_id, batch_cf_names)
                 elif str(scope) == "facilities":
                     emission_obj, row_errors = _process_row_facilities(
                         mapped_data, user_id, overwrite_duplicates
@@ -577,7 +674,10 @@ def _process_file_thread(
 
                 # Commit chunks of 2000
                 if len(chunk) >= 2000:
-                    db.session.bulk_save_objects(chunk)
+                    # add_all (not bulk_save_objects): objects stay tracked, so an in-file
+                    # duplicate later in the file can still update them (BUG-057), and the
+                    # dashboard-cache hook sees the new rows (BUG-071)
+                    db.session.add_all(chunk)
                     db.session.commit()
                     chunk = []
 
@@ -593,8 +693,27 @@ def _process_file_thread(
 
             # Final chunk commit
             if chunk:
-                db.session.bulk_save_objects(chunk)
+                db.session.add_all(chunk)
+            # BUG-058: one IMPORT summary entry per job, committed with the data
+            from utils import log_activity_and_notify as _log
+
+            with upload_jobs_lock:
+                _skipped_n = len(upload_jobs.get(job_id, {}).get("skipped", []))
+            _log(
+                action="IMPORT",
+                record_id=job_id,
+                details=f"Bulk import ({scope}) of '{original_filename}': {processed} rows read, {_skipped_n} skipped",
+                user=user_obj,
+                entity=f"bulk_scope_{scope}",
+                entity_id=job_id,
+            )
             db.session.commit()
+            try:
+                from routes.dashboard import clear_dashboard_cache
+
+                clear_dashboard_cache()  # BUG-071
+            except Exception:
+                pass
 
             _update_job(
                 job_id,
@@ -883,18 +1002,10 @@ def _process_row_scope2(
 
     errors = []
 
-    # 1. Parse Date
-    date_str = str(row.get("date") or "").strip()
-    year = int(row.get("year") or 2024)
-    month = int(row.get("month") or 1)
-    if date_str and date_str != "None":
-        try:
-            parts = date_str.split("-")
-            year = int(parts[0])
-            if len(parts) > 1:
-                month = int(parts[1])
-        except:
-            pass
+    # 1. Parse Date (BUG-085: no default year/month, explicit formats, range-checked)
+    year, month, period_error = _parse_row_period(row)
+    if period_error:
+        return None, [period_error]
 
     # 2. Resolve Facility
     facility = None
@@ -919,22 +1030,17 @@ def _process_row_scope2(
         source_type = "electricity"
 
     grid_region = str(row.get("grid_region") or "").strip()
-    factor_info = GRID_FACTORS.get(grid_region)
-    if not factor_info and grid_region:
-        for k, v in GRID_FACTORS.items():
-            if k.lower() == grid_region.lower():
-                factor_info = v
-                grid_region = k
-                break
-    if not factor_info:
-        grid_region = "Algerian National Grid"
-        factor_info = GRID_FACTORS.get("Algerian National Grid", {"factor": 0.522})
+    ef = None
+    if source_type == "electricity":
+        # BUG-099: same factor policy as the manual Scope 2 form (routes.scope2.resolve_electricity_factor)
+        from input_validation import ValidationError
+        from routes.scope2 import resolve_electricity_factor
 
-    custom_ef = row.get("factor") or row.get("emission_factor")
-    if custom_ef not in [None, ""]:
-        ef = _clean_float(custom_ef, default=factor_info["factor"])
-    else:
-        ef = factor_info["factor"]
+        supplied = row.get("factor") if row.get("factor") not in (None, "") else row.get("emission_factor")
+        try:
+            ef, grid_region = resolve_electricity_factor(grid_region, supplied)
+        except ValidationError as err:
+            return None, [f"Row {row_idx}: {err.message}"]
 
     if source_type == "indirect_steam":
         val = _clean_float(
@@ -1006,8 +1112,24 @@ def _process_row_scope2(
         co2e = co2_kg / 1000.0
         ef = boiler_ef
     elif source_type in ["cogen_allocation", "cogen"]:
+        # BUG-099 pattern: never book a client-supplied co2e; allocate on the server
+        from routes.scope2 import _calc_cogen_allocation
+
         source_type = "cogen_allocation"
-        co2e = _clean_float(row.get("co2e"), default=((val * ef) / 1000 if ef else val))
+        cogen_in = {
+            "total_emissions": row.get("total_emissions"),
+            "fuel_consumed_mmbtu": row.get("fuel_consumed_mmbtu"),
+            "heat_output_mmbtu": row.get("heat_output_mmbtu"),
+            "power_output_mwh": row.get("power_output_mwh"),
+            "allocation_method": row.get("allocation_method") or "wri_efficiency",
+        }
+        if not _clean_float(cogen_in["heat_output_mmbtu"], default=0.0) or not (
+            _clean_float(cogen_in["total_emissions"], default=0.0) or _clean_float(cogen_in["fuel_consumed_mmbtu"], default=0.0)
+        ):
+            return None, [f"Row {row_idx}: CHP rows need heat_output_mmbtu and total_emissions or fuel_consumed_mmbtu"]
+        co2e = _calc_cogen_allocation({k: v for k, v in cogen_in.items() if v not in (None, "")})
+        heat_mmbtu = _clean_float(cogen_in["heat_output_mmbtu"], default=0.0)
+        ef = None
     else:
         source_type = "electricity"
         u = unit.lower().replace(" ", "")
@@ -1022,31 +1144,25 @@ def _process_row_scope2(
             return None, errors
         co2e = (kwh * ef) / 1000.0
 
-    key = (facility.id, year, month, source_type.strip().lower())
-    if batch_keys is not None:
-        if key in batch_keys:
-            existing_id = batch_keys[key]
-            if not overwrite_duplicates:
-                errors.append(
-                    f"Duplicate record: Scope 2 emission for '{facility.name}' "
-                    f"({year}-{month:02d}, source '{source_type}') already exists. "
-                    f"Enable 'Overwrite Duplicates' to replace it."
-                )
-                return None, errors
-            else:
-                from extensions import db
-                existing_obj = db.session.get(Scope2Emission, existing_id) if existing_id else None
-                if existing_obj:
-                    existing_obj.source_type = source_type
-                    existing_obj.electricity_kwh = kwh
-                    existing_obj.heat_mmbtu = heat_mmbtu
-                    existing_obj.emission_factor = ef
-                    existing_obj.co2e = co2e
-                    existing_obj.grid_region = grid_region
-                    existing_obj.location = grid_region
-                    existing_obj.status = "Pending"
-                    return None, []
-        batch_keys[key] = None
+    if val < 0 or co2e is None or co2e < 0:
+        return None, [f"Row {row_idx}: consumption and emissions must be non-negative"]
+    meter = str(row.get("meter") or row.get("meter_id") or "").strip()
+    key = _scope2_key(facility.id, year, month, source_type, grid_region, meter)
+    action, existing = _dedupe(
+        batch_keys, key, overwrite_duplicates,
+        f"Scope 2 emission for '{facility.name}' ({year}-{month:02d}, source '{source_type}', grid '{grid_region}'{', meter ' + meter if meter else ''})",
+    )
+    if action == "error":
+        return None, [existing]
+    values = {
+        "source_type": source_type, "electricity_kwh": kwh, "heat_mmbtu": heat_mmbtu, "emission_factor": ef,
+        "co2e": co2e, "grid_region": grid_region, "location": meter or grid_region,
+    }
+    if action == "update":
+        obj = _resolve_existing(Scope2Emission, existing)
+        if obj is not None:
+            _bulk_overwrite(obj, values, user_id, "Scope 2")
+            return None, []
 
     emission = Scope2Emission(
         facility_id=facility.id,
@@ -1058,7 +1174,7 @@ def _process_row_scope2(
         emission_factor=ef,
         co2e=co2e,
         grid_region=grid_region,
-        location=grid_region,
+        location=meter or grid_region,
         activity=row.get("activity") or facility.activity,
         division=row.get("division") or facility.division,
         field=row.get("field") or facility.field,
@@ -1076,6 +1192,8 @@ def _process_row_scope2(
             "amount": amount
         })
 
+    if batch_keys is not None:
+        batch_keys[key] = emission  # BUG-057: later in-file repeats update this row
     return emission, errors
 
 
@@ -1094,21 +1212,11 @@ def _process_row_scope3_eeio(
 
     errors = []
 
-    # 1. Parse Date
-    date_str = str(row.get("date") or "").strip()
-    year = int(row.get("year") or 2024)
-    month = int(row.get("month") or 1)
-    if date_str and date_str != "None":
-        try:
-            parts = date_str.split("-")
-            year = int(parts[0])
-            if len(parts) > 1:
-                month = int(parts[1])
-        except:
-            pass
+    # 1. Parse Date (BUG-085: no default year/month, explicit formats, range-checked)
+    year, month, period_error = _parse_row_period(row)
+    if period_error:
+        return None, [period_error]
 
-    if not year or not month:
-        return None, ["Missing valid date (YYYY-MM) or separate year and month columns"]
 
     # 2. Resolve Facility
     fac_raw = str(row.get("facility_name") or row.get("facility_id") or "").strip()
@@ -1128,29 +1236,22 @@ def _process_row_scope3_eeio(
     kg_co2e = spend_k * factor_data["kg_co2e_per_1000_usd"]
     tonnes_co2e = kg_co2e / 1000.0
 
-    key = (facility.id, year, month, "category 1")
-    if batch_keys is not None:
-        if key in batch_keys:
-            existing_id = batch_keys[key]
-            if not overwrite_duplicates:
-                return None, [
-                    f"Duplicate record: Scope 3 emission for facility '{facility.name}' "
-                    f"({year}-{month:02d}, Category 1) already exists. "
-                    f"Enable 'Overwrite Duplicates' to replace it."
-                ]
-            else:
-                from extensions import db
-                existing_obj = db.session.get(Scope3Emission, existing_id) if existing_id else None
-                if existing_obj:
-                    existing_obj.sub_category = f"Spend-based: {factor_data['name']} (NAICS {naics})"
-                    existing_obj.activity_data = spend_usd
-                    existing_obj.unit = "USD"
-                    existing_obj.emission_factor = factor_data["kg_co2e_per_1000_usd"]
-                    existing_obj.co2e = tonnes_co2e
-                    existing_obj.notes = row.get("notes", "Bulk Imported via EEIO")
-                    existing_obj.status = "Pending"
-                    return None, []
-        batch_keys[key] = None
+    sub_cat = f"Spend-based: {factor_data['name']} (NAICS {naics})"
+    key = _scope3_key(facility.id, year, month, "Category 1", sub_cat, "USD")
+    action, existing = _dedupe(batch_keys, key, overwrite_duplicates,
+                               f"Scope 3 emission for facility '{facility.name}' ({year}-{month:02d}, Category 1, NAICS {naics})")
+    if action == "error":
+        return None, [existing]
+    values = {
+        "sub_category": sub_cat, "activity_data": spend_usd, "unit": "USD",
+        "emission_factor": factor_data["kg_co2e_per_1000_usd"], "co2e": tonnes_co2e,
+        "notes": row.get("notes", "Bulk Imported via EEIO"),
+    }
+    if action == "update":
+        obj = _resolve_existing(Scope3Emission, existing)
+        if obj is not None:
+            _bulk_overwrite(obj, values, user_id, "Scope 3")
+            return None, []
 
     emission = Scope3Emission(
         facility_id=facility.id,
@@ -1178,6 +1279,8 @@ def _process_row_scope3_eeio(
             "amount": spend_usd
         })
 
+    if batch_keys is not None:
+        batch_keys[key] = emission  # BUG-057
     return emission, errors
 
 def _process_row_scope3(
@@ -1194,18 +1297,10 @@ def _process_row_scope3(
 
     errors = []
 
-    # 1. Parse Date
-    date_str = str(row.get("date") or "").strip()
-    year = int(row.get("year") or 2024)
-    month = int(row.get("month") or 1)
-    if date_str and date_str != "None":
-        try:
-            parts = date_str.split("-")
-            year = int(parts[0])
-            if len(parts) > 1:
-                month = int(parts[1])
-        except:
-            pass
+    # 1. Parse Date (BUG-085: no default year/month, explicit formats, range-checked)
+    year, month, period_error = _parse_row_period(row)
+    if period_error:
+        return None, [period_error]
 
     # 2. Resolve Facility
     facility = None
@@ -1221,8 +1316,13 @@ def _process_row_scope3(
         errors.append(f"Facility '{fac_input}' not found")
         return None, errors
 
-    cat = row.get("category", "11")
-    cat_str = f"Category {cat}" if not str(cat).startswith("Category") else cat
+    # BUG-085 / BUG-089: category is required and stored in the canonical "Category N" form
+    from input_validation import ValidationError, normalize_scope3_category
+
+    try:
+        cat_str = normalize_scope3_category(row.get("category"))
+    except ValidationError:
+        return None, [f"Invalid or missing Scope 3 category '{row.get('category') or ''}': use a GHG Protocol category 1-15"]
     sub_cat = row.get("sub_category")
 
     amt = _clean_float(
@@ -1250,37 +1350,33 @@ def _process_row_scope3(
 
     from calculations.units import compute_scope3_co2e
 
+    if amt < 0 or ef < 0:
+        return None, ["Activity amount and emission factor must be non-negative"]
     if amt > 0 and ef > 0:
         co2e = compute_scope3_co2e(amt, ef, ef_unit, calc_method)
-    elif row.get("co2e"):
-        co2e = _clean_float(row.get("co2e"), default=0.0)
+    elif row.get("co2e") not in (None, ""):
+        # supplier-specific total (GHG Protocol Scope 3 supplier-specific method)
+        co2e = _clean_float(row.get("co2e"), default=-1.0)
+        if co2e < 0:
+            return None, ["co2e must be a non-negative number"]
     else:
-        co2e = 0.0
+        # never book a missing calculation as 0 tCO2e
+        return None, ["Provide activity amount and emission factor (or a supplier-specific co2e)"]
 
-    key = (facility.id, year, month, str(cat_str).strip().lower())
-    if batch_keys is not None:
-        if key in batch_keys:
-            existing_id = batch_keys[key]
-            if not overwrite_duplicates:
-                return None, [
-                    f"Duplicate record: Scope 3 emission for facility '{facility.name}' "
-                    f"({year}-{month:02d}, {cat_str}) already exists. "
-                    f"Enable 'Overwrite Duplicates' to replace it."
-                ]
-            else:
-                from extensions import db
-                existing_obj = db.session.get(Scope3Emission, existing_id) if existing_id else None
-                if existing_obj:
-                    existing_obj.category = cat_str
-                    existing_obj.sub_category = sub_cat
-                    existing_obj.activity_data = amt
-                    existing_obj.unit = row.get("unit")
-                    existing_obj.emission_factor = ef
-                    existing_obj.co2e = co2e
-                    existing_obj.notes = row.get("notes")
-                    existing_obj.status = "Pending"
-                    return None, []
-        batch_keys[key] = None
+    key = _scope3_key(facility.id, year, month, cat_str, sub_cat, row.get("unit"))
+    action, existing = _dedupe(batch_keys, key, overwrite_duplicates,
+                               f"Scope 3 emission for facility '{facility.name}' ({year}-{month:02d}, {cat_str}, '{sub_cat or ''}')")
+    if action == "error":
+        return None, [existing]
+    values = {
+        "category": cat_str, "sub_category": sub_cat, "activity_data": amt, "unit": row.get("unit"),
+        "emission_factor": ef, "co2e": co2e, "notes": row.get("notes"),
+    }
+    if action == "update":
+        obj = _resolve_existing(Scope3Emission, existing)
+        if obj is not None:
+            _bulk_overwrite(obj, values, user_id, "Scope 3")
+            return None, []
 
     emission = Scope3Emission(
         facility_id=facility.id,
@@ -1306,6 +1402,8 @@ def _process_row_scope3(
             "amount": amt
         })
 
+    if batch_keys is not None:
+        batch_keys[key] = emission  # BUG-057
     return emission, errors
 
 
@@ -1519,7 +1617,7 @@ def _process_row_mitigation(row, user_id, fac_name_map, fac_id_map):
     return proj, errors
 
 
-def _process_row_custom_factors(row, user_id):
+def _process_row_custom_factors(row, user_id, batch_names=None):
     from models import CustomFactor
 
     errors = []
@@ -1536,6 +1634,25 @@ def _process_row_custom_factors(row, user_id):
     if uploader is None or uploader.role not in ("admin", "superuser"):
         errors.append("Not authorised to import custom factors")
         return None, errors
+
+    # BUG-065 / BUG-112 / BUG-083: same rules as POST /api/custom-factors
+    from routes.custom_factors import _name_taken, _parse_non_negative_float, _require_some_factor
+
+    name = str(row.get("name")).strip()
+    if _name_taken(name) or (batch_names is not None and name.lower() in batch_names):
+        return None, [f"A custom factor named '{name}' already exists"]
+    if not str(row.get("unit") or "").strip():
+        return None, ["Unit is required for custom factor"]
+    try:
+        vals = {k: _parse_non_negative_float(row.get(k), k) for k in (
+            "co2_factor", "ch4_factor", "n2o_factor", "co_factor", "hhv_factor",
+            "uncertainty", "co2_uncertainty", "ch4_uncertainty", "n2o_uncertainty")}
+        _require_some_factor(vals["co2_factor"], vals["ch4_factor"], vals["n2o_factor"])
+    except ValueError as err:
+        return None, [str(err)]
+    row = dict(row, name=name, **vals)
+    if batch_names is not None:
+        batch_names.add(name.lower())
 
     factor = CustomFactor(
         name=row.get("name"),
@@ -1688,30 +1805,10 @@ def _process_row(
     if str(row.get("date", "")).strip().upper().startswith("[INSTRUCTION]"):
         return None, []
 
-    # 1. Parse Date
-    date_str = str(row.get("date") or "").strip()
-    year, month = None, None
-    if date_str and date_str != "None":
-        try:
-            parts = date_str.split("-")
-            year = int(parts[0])
-            month = int(parts[1]) if len(parts) > 1 else None
-        except:
-            pass
-
-    if not year:
-        try:
-            year = int(row.get("year") or 0) or None
-            raw_month = row.get("month")
-            month = int(raw_month) if raw_month and str(raw_month).strip().isdigit() else None
-        except:
-            pass
-
-    if not year:
-        return None, ["Missing valid date or year. Provide a date (YYYY-MM) or separate year and month columns."]
-
-    if not month:
-        return None, ["Missing month. Provide a date (YYYY-MM) or a separate month column (1-12)"]
+    # 1. Parse Date (BUG-111: same year/month range rules as POST /api/emissions/)
+    year, month, period_error = _parse_row_period(row)
+    if period_error:
+        return None, [period_error]
 
     # 2. Resolve Facility
     fac_raw = str(row.get("facility_name") or "").strip()
@@ -1727,12 +1824,15 @@ def _process_row(
 
     # 3. Quantity
     amount = _clean_float(row.get("quantity"), default=None)
-    if amount is None:
-        return None, [f"Invalid quantity: {row.get('quantity')}"]
+    if amount is None or amount < 0:
+        return None, [f"Invalid quantity: {row.get('quantity')} (must be a non-negative number)"]
 
     process_type = str(row.get("process") or "").strip()
     fuel = str(row.get("fuel") or "").strip()
-    unit = str(row.get("unit") or "m3").strip()
+    # BUG-111: a blank unit is a row error, never an assumed m3
+    unit = str(row.get("unit") or "").strip()
+    if not unit:
+        return None, ["Missing unit. Provide the activity unit (e.g. MMBtu, scf, gal, tonne)."]
 
     if not process_type:
         return None, ["Missing process type."]
@@ -1887,55 +1987,32 @@ def _process_row(
         import uuid
         import json
 
-        eq_id = str(row.get("equipment_id") or row.get("equipment") or "").strip().lower()
-        proc_lower = process_type.strip().lower()
-        fuel_k = "" if proc_lower in NON_COMBUSTION_PROCESSES else fuel.strip().lower()
-        key = (
-            facility.id,
-            year,
-            month,
-            proc_lower,
-            fuel_k,
-            eq_id,
+        source_ref = str(row.get("source_ref") or row.get("meter_id") or row.get("data_source_ref") or "").strip()
+        key = _scope1_key(facility.id, year, month, process_type, fuel,
+                          str(row.get("equipment_id") or row.get("equipment") or ""), source_ref)
+        action, existing = _dedupe(
+            batch_keys, key, overwrite_duplicates,
+            f"Scope 1 emission for facility '{facility.name}' ({year}-{month:02d}, process '{process_type}', fuel '{fuel}'"
+            + (f", source ref '{source_ref}'" if source_ref else "") + ")",
         )
-        if batch_keys is not None:
-            if key in batch_keys:
-                existing_id = batch_keys[key]
-                if not overwrite_duplicates:
-                    return None, [
-                        f"Duplicate record: Scope 1 emission for facility '{facility.name}' "
-                        f"({year}-{month:02d}, process '{process_type}', fuel '{fuel}') already exists. "
-                        f"Enable 'Overwrite Duplicates' to replace it."
-                    ]
-                else:
-                    from extensions import db
-                    existing_obj = db.session.get(Emission, existing_id) if existing_id else None
-                    if existing_obj:
-                        existing_obj.quantity = amount
-                        existing_obj.unit = unit
-                        existing_obj.co2_emissions = co2_val
-                        existing_obj.ch4_emissions = ch4_val
-                        existing_obj.n2o_emissions = n2o_val
-                        existing_obj.co2e_total = total
-                        existing_obj.calc_method = _method
-                        existing_obj.gwp_version = gwp_std
-                        existing_obj.source_payload = json.dumps(calc_data)
-                        existing_obj.factor_source = factor_data.get("type", "API")
-                        existing_obj.ef_used_co2 = factor_data.get("co2", 0)
-                        existing_obj.ef_used_ch4 = factor_data.get("ch4", 0)
-                        existing_obj.ef_used_n2o = factor_data.get("n2o", 0)
-                        existing_obj.uncertainty = (
-                            unc.get("co2", None) if isinstance(unc, dict) else (unc or None)
-                        )
-                        existing_obj.uncertainty_ch4 = (
-                            unc.get("ch4", None) if isinstance(unc, dict) else (unc or None)
-                        )
-                        existing_obj.uncertainty_n2o = (
-                            unc.get("n2o", None) if isinstance(unc, dict) else (unc or None)
-                        )
-                        existing_obj.status = "Pending"
-                        return None, []
-            batch_keys[key] = None
+        if action == "error":
+            return None, [existing]
+        unc_vals = {
+            "uncertainty": unc.get("co2", None) if isinstance(unc, dict) else (unc or None),
+            "uncertainty_ch4": unc.get("ch4", None) if isinstance(unc, dict) else (unc or None),
+            "uncertainty_n2o": unc.get("n2o", None) if isinstance(unc, dict) else (unc or None),
+        }
+        if action == "update":
+            obj = _resolve_existing(Emission, existing)
+            if obj is not None:
+                _bulk_overwrite(obj, dict({
+                    "quantity": amount, "unit": unit, "co2_emissions": co2_val, "ch4_emissions": ch4_val,
+                    "n2o_emissions": n2o_val, "co2e_total": total, "calc_method": _method, "gwp_version": gwp_std,
+                    "source_payload": json.dumps(calc_data), "factor_source": factor_data.get("type", "API"),
+                    "ef_used_co2": factor_data.get("co2", 0), "ef_used_ch4": factor_data.get("ch4", 0),
+                    "ef_used_n2o": factor_data.get("n2o", 0),
+                }, **unc_vals), user_id, "Scope 1")
+                return None, []
 
         emission = Emission(
             record_id=str(uuid.uuid4()),
@@ -1974,7 +2051,10 @@ def _process_row(
                 unc.get("n2o", None) if isinstance(unc, dict) else (unc or None)
             ),
             status="Pending",  # Maker-Checker: awaits reviewer approval
+            data_source_ref=source_ref or None,
         )
+        if batch_keys is not None:
+            batch_keys[key] = emission  # BUG-057: later in-file repeats update this row
         return emission, []
 
     except Exception as e:

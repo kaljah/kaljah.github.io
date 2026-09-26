@@ -160,6 +160,26 @@ def reject_non_finite_json():
 
 
 
+@app.before_request
+def enforce_session_version():
+    """BUG-114: server-side revocation for the signed-cookie session.
+
+    Each session records the user's session_version at login. Logout, password change or
+    reset, and deactivation bump the version, so any copy of an older cookie is rejected.
+    """
+    from flask import session as flask_session
+
+    uid = flask_session.get("user_id")
+    if not uid:
+        return None
+    from models import User
+
+    user = db.session.get(User, uid)
+    if user is None or int(flask_session.get("sv", 0)) != int(user.session_version or 0):
+        flask_session.clear()
+    return None
+
+
 # Request Logging & Request ID Middleware
 @app.before_request
 def before_request():

@@ -112,38 +112,45 @@ def get_cap_emissions():
     ])
 
 
+CAP_POLLUTANTS = ("NO2", "CO", "SO2", "PM", "VOC")
+
+
 @cap_bp.route("/emissions", methods=["POST"])
 @login_required
 def create_or_update_cap_emission():
-    """Create or update a Criteria Air Pollutant entry."""
+    """Create or update a Criteria Air Pollutant entry.
+
+    BUG-053: status is decided by the server (maker-checker), never taken from the payload,
+    and every numeric input must be finite and non-negative.
+    """
+    from input_validation import parse_month, parse_number, parse_year, require_text
+    from services.maker_checker import on_edit
+    from utils import initial_record_status, log_activity_and_notify, user_label
+
     user = get_current_user()
+    if not user or user.role in ("auditor", "it_admin", "it_manager", "it"):
+        return jsonify({"error": "Forbidden: this account cannot record CAP emissions"}), 403
     data = request.get_json() or {}
 
-    facility_id = data.get("facility_id")
-    if not facility_id:
-        return jsonify({"error": "facility_id is required"}), 400
-
-    if not require_facility_access(user, int(facility_id)):
+    facility_id = int(parse_number(data.get("facility_id"), "facility_id", min_value=1))
+    if not require_facility_access(user, facility_id):
         return jsonify({"error": "Forbidden: You do not have access to this facility"}), 403
 
-    year = data.get("year")
-    source_module = data.get("source_module")
-    pollutant = data.get("pollutant")
+    year = parse_year(data.get("year"))
+    month = parse_month(data.get("month"))
+    source_module = require_text(data.get("source_module"), "source_module")
+    pollutant = require_text(data.get("pollutant"), "pollutant").upper()
+    if pollutant not in CAP_POLLUTANTS:
+        return jsonify({"error": f"pollutant must be one of {', '.join(CAP_POLLUTANTS)}", "field": "pollutant"}), 400
 
-    if not year or not source_module or not pollutant:
-        return jsonify({"error": "year, source_module, and pollutant are required"}), 400
-
-    # If concentration and flue gas flow are provided, mass can be calculated per Algerian Law
-    # mass (tonnes) = concentration (mg/Nm3) * volume (Nm3) * 1e-9
-    concentration = data.get("concentration_mg_nm3")
-    flue_gas_vol = data.get("flue_gas_volume_nm3")
-    mass_val = data.get("mass_tonnes")
-
-    if concentration is not None and flue_gas_vol is not None and mass_val is None:
-        try:
-            mass_val = float(concentration) * float(flue_gas_vol) * 1e-9
-        except (ValueError, TypeError):
-            mass_val = 0.0
+    concentration = parse_number(data.get("concentration_mg_nm3"), "concentration_mg_nm3", required=False, min_value=0)
+    flue_gas_vol = parse_number(data.get("flue_gas_volume_nm3"), "flue_gas_volume_nm3", required=False, min_value=0)
+    mass_val = parse_number(data.get("mass_tonnes"), "mass_tonnes", required=False, min_value=0)
+    if mass_val is None:
+        if concentration is None or flue_gas_vol is None:
+            return jsonify({"error": "Provide mass_tonnes, or both concentration_mg_nm3 and flue_gas_volume_nm3"}), 400
+        # mass (t) = concentration (mg/Nm3) x volume (Nm3) x 1e-9 (mg -> t)
+        mass_val = concentration * flue_gas_vol * 1e-9
 
     rec_id = data.get("id")
     if rec_id:
@@ -154,33 +161,41 @@ def create_or_update_cap_emission():
             return jsonify({"error": "Forbidden: You do not have access to this facility"}), 403
     else:
         record = CapEmission.query.filter_by(
-            facility_id=int(facility_id),
-            year=int(year),
-            month=data.get("month"),
-            source_module=source_module,
-            pollutant=pollutant,
+            facility_id=facility_id, year=year, month=month, source_module=source_module, pollutant=pollutant,
         ).first()
-        if not record:
-            record = CapEmission(
-                facility_id=int(facility_id),
-                year=int(year),
-                month=data.get("month"),
-                source_module=source_module,
-                pollutant=pollutant,
-                created_by=user.id,
-            )
-            db.session.add(record)
 
-    record.mass_tonnes = float(mass_val or 0.0)
-    record.concentration_mg_nm3 = float(concentration) if concentration is not None else None
-    record.flue_gas_volume_nm3 = float(flue_gas_vol) if flue_gas_vol is not None else None
-    record.calc_method = data.get("calc_method", "API Compendium")
+    if record is None:
+        status = initial_record_status(user, data.get("status"))
+        record = CapEmission(
+            facility_id=facility_id, year=year, month=month, source_module=source_module, pollutant=pollutant,
+            created_by=user.id, created_by_name=user_label(user), status=status,
+        )
+        if status == "Verified":
+            import datetime as _dt
+
+            record.approved_by = user.id
+            record.approved_at = _dt.datetime.now(_dt.timezone.utc)
+            record.approved_by_name = user_label(user)
+        db.session.add(record)
+        action = "CREATE"
+    else:
+        if user.role == "user" and record.created_by not in (None, user.id):
+            return jsonify({"error": "Unauthorized: You may only modify records you created"}), 403
+        on_edit(record, user)
+        action = "UPDATE"
+
+    record.mass_tonnes = mass_val
+    record.concentration_mg_nm3 = concentration
+    record.flue_gas_volume_nm3 = flue_gas_vol
+    record.calc_method = data.get("calc_method") or "API Compendium"
     record.notes = data.get("notes")
-    record.status = data.get("status", "Verified")
-
+    db.session.flush()
+    log_activity_and_notify(action=action, record_id=str(record.id), user=user, request=request, entity="CapEmission",
+                            facility_id=record.facility_id,
+                            details=f"CAP {pollutant} {source_module} {year}/{month or '-'}: {mass_val:.6g} t (status {record.status})")
     db.session.commit()
 
-    return jsonify({"success": True, "id": record.id, "message": "CAP emission record saved"})
+    return jsonify({"success": True, "id": record.id, "status": record.status, "message": "CAP emission record saved"})
 
 
 @cap_bp.route("/compliance", methods=["GET"])
@@ -215,7 +230,8 @@ def get_cap_compliance():
 
     for fac in facilities:
         # Retrieve all CAP emissions for this facility and year
-        cap_records = CapEmission.query.filter_by(facility_id=fac.id, year=yr).all()
+        # BUG-053: compliance is assessed on approved (Verified) records only
+        cap_records = CapEmission.query.filter_by(facility_id=fac.id, year=yr, status="Verified").all()
 
         pollutants_map = {}
         for r in cap_records:

@@ -1,7 +1,7 @@
 from flask import request, jsonify, session
 from sqlalchemy import func
 from . import emissions_bp
-from utils import get_current_user, get_allowed_facility_ids
+from utils import get_current_user, get_allowed_facility_ids, require_facility_access
 from models import (
     User,
     Emission,
@@ -507,7 +507,7 @@ def add_bulk_upload():
     fac_name_map = build_name_map(all_facilities)
 
     # Pre-fetch user's custom factors
-    custom_factors = CustomFactor.query.filter_by(created_by=user.id).all()
+    custom_factors = CustomFactor.query.filter_by(created_by=user.id, is_archived=False).all()
     cf_name_map = build_name_map(custom_factors)
 
     valid_records = []
@@ -2960,10 +2960,19 @@ def upload_start():
     return jsonify({"job_id": job_id})
 
 
+def _job_visible(job_id):
+    """BUG-076: a bulk job is readable by its uploader, or by an admin; others get 404."""
+    from background_processor import get_job_owner
+
+    user = get_current_user()
+    owner = get_job_owner(job_id)
+    return user is not None and owner is not None and (owner == user.id or user.role == "admin")
+
+
 @emissions_bp.route("/upload/status/<job_id>", methods=["GET"])
 @login_required
 def upload_status(job_id):
-    status = get_job_status(job_id)
+    status = get_job_status(job_id) if _job_visible(job_id) else None
     if not status:
         return jsonify({"error": "Job not found"}), 404
     return jsonify(status)
@@ -2972,10 +2981,11 @@ def upload_status(job_id):
 @emissions_bp.route("/upload/errors/<job_id>", methods=["GET"])
 @login_required
 def upload_errors(job_id):
-    status = get_job_status(job_id)
-    if not status or not status.get("error_csv_path"):
+    from background_processor import get_job_error_csv_path
+
+    path = get_job_error_csv_path(job_id) if _job_visible(job_id) else None
+    if not path:
         return jsonify({"error": "No errors file found"}), 404
-    path = status["error_csv_path"]
     return send_file(
         path,
         as_attachment=True,
@@ -3427,25 +3437,13 @@ def delete_emission(id):
     )
     if not record:
         return jsonify({"error": "Record not found"}), 404
-    # SEC-03 FIX: IDOR — enforce ownership; admins may delete any record, users can delete own records
-    if user.role in ["auditor"]:
-        return (
-            jsonify({"error": "Forbidden: Read-only accounts cannot delete emission records"}),
-            403,
-        )
+    # BUG-067: approved records are not deletable by makers; region and ownership enforced
+    from services.maker_checker import delete_denied_reason
 
-    if user.role not in ["admin", "superuser"]:
-        if record.created_by != user.id:
-            return (
-                jsonify(
-                    {"error": "Forbidden: You do not have permission to delete records created by another user"}
-                ),
-                403,
-            )
-    else:
-        allowed_fids = get_allowed_facility_ids(user)
-        if allowed_fids is not None and record.facility_id not in allowed_fids:
-            return jsonify({"error": "Forbidden: Outside your region"}), 403
+    denied = delete_denied_reason(user, record)
+    if denied:
+        return jsonify({"error": denied}), 403
+    fac_id_for_log = record.facility_id
 
     # BUG-05 FIX: capture audit data before deletion, then commit everything atomically
     log_details = f"Deleted {record.process_type} record: {record.quantity} {record.unit} of {record.fuel_type} ({record.month}/{record.year})"
@@ -3460,6 +3458,7 @@ def delete_emission(id):
             request=request,
             entity="Emission",
             details=log_details,
+            facility_id=fac_id_for_log,
         )
         db.session.commit()  # single atomic commit for delete + audit
         from routes.dashboard import clear_dashboard_cache
@@ -3497,13 +3496,9 @@ def update_emission(id):
     if user.role == "user" and record.created_by is not None and record.created_by != user.id:
         return jsonify({"error": "Unauthorized: You may only modify records you created"}), 403
 
-    # If non-admin modifies a verified record, reset status to Pending for maker-checker review
-    if user.role not in ["admin", "superuser"] and record.status == "Verified":
-        record.status = "Pending"
-        record.approved_by = None
-        record.approved_at = None
-        # EXTRA-03 FIX: removed second data = request.get_json() (double-read, second returns None)
     import json
+
+    data = data or {}
     
     before_state = {
         "year": record.year,
@@ -3528,16 +3523,21 @@ def update_emission(id):
     data.pop("ch4_emissions", None)
     data.pop("n2o_emissions", None)
 
-    # Update fields
+    # Update fields (validated: BUG-073 / BUG-083 on the edit path too)
+    from input_validation import parse_year, parse_month
+    from services.maker_checker import on_edit
+
     if "year" in data:
-        record.year = data["year"]
+        record.year = parse_year(data["year"])
     if "month" in data:
-        record.month = data["month"]
+        record.month = parse_month(data["month"], required=True)
     if "facility_id" in data:
         new_fid = int(data["facility_id"])
-        if allowed_fids is not None and new_fid not in allowed_fids:
+        if not require_facility_access(user, new_fid):
             return jsonify({"error": "Unauthorized to reassign to this facility"}), 403
         record.facility_id = new_fid
+    # BUG-067: every edit records the last maker; non-admin edits of decided records go back to review
+    on_edit(record, user)
     if "process_type" in data:
         record.process_type = data["process_type"]
     if "fuel_type" in data:
@@ -3552,12 +3552,6 @@ def update_emission(id):
     should_recalc = data.get("recalculate") or any(k in data for k in recalc_keys)
 
     if should_recalc:
-        # Physical edit moves record back to Pending if currently Verified (unless user is admin)
-        if record.status == "Verified" and user.role != "admin":
-            record.status = "Pending"
-            record.approved_by = None
-            record.approved_at = None
-
         factor_data = _lookup_api_factor(data.get("fuel") or data.get("fuel_type") or record.fuel_type)
         # Handle Custom Factor in update
         cf_id = data.get("custom_factor_id")
@@ -4533,51 +4527,16 @@ def export_emissions():
 @emissions_bp.route("/approve/<int:emission_id>", methods=["POST"])
 @login_required
 def approve_emission(emission_id):
-    """Approve a single pending emission record (Scope 1, 2, or 3)."""
-    user = get_current_user()
-    if not user or user.role not in ["admin", "superuser"]:
-        return jsonify({"error": "Only Admin role can approve emission records"}), 403
+    """Approve a single record awaiting review (Scope 1, 2, 3 or CAP) — RC-2 state machine."""
+    from services.maker_checker import DecisionError, decide_single
 
     req_data = request.get_json(silent=True) or {}
     scope = str(req_data.get("scope") or request.args.get("scope") or "1")
-
-    if scope == "2":
-        emission = db.session.get(Scope2Emission, emission_id)
-        label = "Scope 2"
-    elif scope == "3":
-        emission = db.session.get(Scope3Emission, emission_id)
-        label = "Scope 3"
-    else:
-        emission = db.session.get(Emission, emission_id)
-        label = "Scope 1"
-
-    if not emission:
-        return jsonify({"error": "Record not found"}), 404
-
-    # Facility scoping check
-    allowed_fids = get_allowed_facility_ids(user)
-    if allowed_fids is not None and emission.facility_id not in allowed_fids:
-        return jsonify({"error": "Access to record facility is denied"}), 403
-
-    if emission.status not in ["Pending", "Draft", "Pending Approval"]:
-        return jsonify({"error": "Record is not pending approval"}), 400
-
-    # Segregation of duties: the submitter cannot approve their own record
-    if getattr(emission, "created_by", None) == user.id:
-        return jsonify({"error": "Maker-Checker violation: You cannot approve a record you submitted yourself"}), 403
-
-    emission.status = "Verified"
-    emission.approved_by = user.id
-    emission.approved_at = datetime.datetime.now(datetime.timezone.utc)
-    rec_id = getattr(emission, "record_id", f"{label}-{emission.id}")
-    log_activity_and_notify(
-        action="UPDATE",
-        record_id=rec_id,
-        details=f"{label} emission approved by {user.fullName}",
-        user=user,
-        entity=f"scope{scope}_emission",
-        entity_id=emission.id,
-    )
+    try:
+        decide_single(get_current_user(), scope, emission_id, "approve", request=request)
+    except DecisionError as err:
+        db.session.rollback()
+        return jsonify({"error": err.message}), err.status
     db.session.commit()
     from routes.dashboard import clear_dashboard_cache
 
@@ -4588,47 +4547,17 @@ def approve_emission(emission_id):
 @emissions_bp.route("/reject/<int:emission_id>", methods=["POST"])
 @login_required
 def reject_emission(emission_id):
-    """Reject a single pending emission record (Scope 1, 2, or 3)."""
-    user = get_current_user()
-    if not user or user.role not in ["admin", "superuser"]:
-        return jsonify({"error": "Only Admin role can reject emission records"}), 403
+    """Reject a single record awaiting review; decided records cannot be flipped (BUG-070)."""
+    from services.maker_checker import DecisionError, decide_single
 
     req_data = request.get_json(silent=True) or {}
     scope = str(req_data.get("scope") or request.args.get("scope") or "1")
-    reason = req_data.get("reason", "Rejected by reviewer")
-
-    if scope == "2":
-        emission = db.session.get(Scope2Emission, emission_id)
-        label = "Scope 2"
-    elif scope == "3":
-        emission = db.session.get(Scope3Emission, emission_id)
-        label = "Scope 3"
-    else:
-        emission = db.session.get(Emission, emission_id)
-        label = "Scope 1"
-
-    if not emission:
-        return jsonify({"error": "Record not found"}), 404
-
-    # Facility scoping check
-    allowed_fids = get_allowed_facility_ids(user)
-    if allowed_fids is not None and emission.facility_id not in allowed_fids:
-        return jsonify({"error": "Access to record facility is denied"}), 403
-
-    emission.status = "Rejected"
-    if hasattr(emission, "qa_flag"):
-        emission.qa_flag = f"Rejected: {reason}"
-    emission.approved_by = user.id
-    emission.approved_at = datetime.datetime.now(datetime.timezone.utc)
-    rec_id = getattr(emission, "record_id", f"{label}-{emission.id}")
-    log_activity_and_notify(
-        action="UPDATE",
-        record_id=rec_id,
-        details=f"{label} emission rejected by {user.fullName}: {reason}",
-        user=user,
-        entity=f"scope{scope}_emission",
-        entity_id=emission.id,
-    )
+    reason = str(req_data.get("reason") or "Rejected by reviewer")
+    try:
+        decide_single(get_current_user(), scope, emission_id, "reject", reason=reason, request=request)
+    except DecisionError as err:
+        db.session.rollback()
+        return jsonify({"error": err.message}), err.status
     db.session.commit()
     from routes.dashboard import clear_dashboard_cache
 
@@ -4636,178 +4565,71 @@ def reject_emission(emission_id):
     return jsonify({"success": True, "id": emission_id, "scope": scope, "status": "Rejected", "reason": reason})
 
 
-@emissions_bp.route("/approve/batch", methods=["POST"])
-@login_required
-def approve_batch_emissions():
-    """Approve multiple pending emission records in one request.
-    Body: { "ids": [1, 2, 3], "scope": "1"|"2"|"3"|"all", "approve_all": bool, "by_scope": {"1": [], "2": [], "3": []} }
-    """
-    user = get_current_user()
-    if not user or user.role not in ["admin", "superuser"]:
-        return jsonify({"error": "Only Admin role can approve emission records"}), 403
-
-    allowed_fids = get_allowed_facility_ids(user)
-    data = request.get_json(silent=True) or {}
-    ids = data.get("ids", [])
+def _batch_targets(data, all_flag):
+    """Map the batch body to {scope: ids | None}. Plain `ids` are only unambiguous for one scope."""
     scope = str(data.get("scope", "1"))
-    approve_all = data.get("approve_all", False)
-    by_scope = data.get("by_scope", {})
+    by_scope = data.get("by_scope") if isinstance(data.get("by_scope"), dict) else {}
+    picked = {}
+    for k in ("1", "2", "3", "cap"):
+        ids = by_scope.get(k) or (by_scope.get(int(k)) if k.isdigit() else None)
+        if ids:
+            picked[k] = list(ids)
+    if picked:
+        return picked
+    if scope == "all":
+        if all_flag:
+            return {"1": None, "2": None, "3": None}
+        return None  # ids without by_scope would hit the same ids in every table
+    if scope in ("1", "2", "3", "cap"):
+        return {scope: None if all_flag else list(data.get("ids") or [])}
+    return None
 
-    has_by_scope = isinstance(by_scope, dict) and any(bool(by_scope.get(k) or by_scope.get(int(k))) for k in ["1", "2", "3"] if k in by_scope or (k.isdigit() and int(k) in by_scope))
 
-    if not ids and not approve_all and not has_by_scope:
-        return jsonify({"error": "No IDs or scope mapping provided"}), 400
+def _batch_decide(decision):
+    from services.maker_checker import DecisionError, decide
 
-    now = datetime.datetime.now(datetime.timezone.utc)
-    approved_count = 0
-    pending_statuses = ["Pending", "Draft", "Pending Approval"]
-
-    def apply_approval(model, target_ids=None):
-        q = model.query.filter(model.status.in_(pending_statuses))
-        if allowed_fids is not None:
-            q = q.filter(model.facility_id.in_(allowed_fids))
-        # Segregation of duties: Maker cannot approve their own submitted records
-        q = q.filter(or_(model.created_by != user.id, model.created_by.is_(None)))
-        if target_ids is not None:
-            q = q.filter(model.id.in_(target_ids))
-        return q.update({"status": "Verified", "approved_by": user.id, "approved_at": now}, synchronize_session=False)
-
-    if scope == "all" and approve_all:
-        approved_count = (
-            apply_approval(Emission)
-            + apply_approval(Scope2Emission)
-            + apply_approval(Scope3Emission)
-        )
-    elif has_by_scope:
-        s1_ids = by_scope.get("1") or by_scope.get(1) or []
-        s2_ids = by_scope.get("2") or by_scope.get(2) or []
-        s3_ids = by_scope.get("3") or by_scope.get(3) or []
-        if s1_ids:
-            approved_count += apply_approval(Emission, s1_ids)
-        if s2_ids:
-            approved_count += apply_approval(Scope2Emission, s2_ids)
-        if s3_ids:
-            approved_count += apply_approval(Scope3Emission, s3_ids)
-    elif scope == "1":
-        approved_count = apply_approval(Emission, None if approve_all else ids)
-    elif scope == "2":
-        approved_count = apply_approval(Scope2Emission, None if approve_all else ids)
-    elif scope == "3":
-        approved_count = apply_approval(Scope3Emission, None if approve_all else ids)
-    elif scope == "all" and ids:
-        approved_count = (
-            apply_approval(Emission, ids)
-            + apply_approval(Scope2Emission, ids)
-            + apply_approval(Scope3Emission, ids)
-        )
-    else:
-        return jsonify({"error": f"Invalid scope: {scope}"}), 400
-
-    log_activity_and_notify(
-        action="UPDATE",
-        record_id="batch_approve",
-        details=f"{approved_count} pending records approved by {user.fullName}",
-        user=user,
-        entity="batch_emissions",
-        entity_id="batch",
-    )
+    user = get_current_user()
+    data = request.get_json(silent=True) or {}
+    all_flag = bool(data.get("approve_all") if decision == "approve" else data.get("reject_all"))
+    targets = _batch_targets(data, all_flag)
+    if not targets:
+        return jsonify({"error": "Provide by_scope ids, a single scope with ids, or scope='all' with the all flag"}), 400
+    reason = str(data.get("reason") or "Batch rejected by reviewer")
+    done = []
+    try:
+        for scope, ids in targets.items():
+            if ids is not None and not ids:
+                continue
+            done += decide(user, scope, ids, decision, reason=reason, request=request)
+    except DecisionError as err:
+        db.session.rollback()
+        return jsonify({"error": err.message}), err.status
     db.session.commit()
     from routes.dashboard import clear_dashboard_cache
 
     clear_dashboard_cache()
-    return jsonify({
-        "success": True,
-        "approved_count": approved_count,
-        "approved_ids": ids if not approve_all else [],
-    })
+    return done
+
+
+@emissions_bp.route("/approve/batch", methods=["POST"])
+@login_required
+def approve_batch_emissions():
+    """Approve records awaiting review. Body: {by_scope: {"1": [...], ...}} or {scope, ids} or {scope: "all", approve_all: true}.
+    Records the caller created or last modified are skipped (segregation of duties)."""
+    done = _batch_decide("approve")
+    if not isinstance(done, list):
+        return done
+    return jsonify({"success": True, "approved_count": len(done), "approved_ids": done})
 
 
 @emissions_bp.route("/reject/batch", methods=["POST"])
 @login_required
 def reject_batch_emissions():
-    """Reject (delete) multiple pending emission records.
-    Body: { "ids": [1, 2, 3], "scope": "1"|"2"|"3"|"all", "reason": "...", "reject_all": bool, "by_scope": {"1": [], "2": [], "3": []} }
-    """
-    user = get_current_user()
-    if not user or user.role not in ["admin", "superuser"]:
-        return jsonify({"error": "Only Admin role can reject emission records"}), 403
-
-    allowed_fids = get_allowed_facility_ids(user)
-    data = request.get_json(silent=True) or {}
-    ids = data.get("ids", [])
-    scope = str(data.get("scope", "1"))
-    reason = data.get("reason", "Batch rejected by reviewer")
-    reject_all = data.get("reject_all", False)
-    by_scope = data.get("by_scope", {})
-
-    has_by_scope = isinstance(by_scope, dict) and any(bool(by_scope.get(k) or by_scope.get(int(k))) for k in ["1", "2", "3"] if k in by_scope or (k.isdigit() and int(k) in by_scope))
-
-    if not ids and not reject_all and not has_by_scope:
-        return jsonify({"error": "No IDs or scope mapping provided"}), 400
-
-    deleted_count = 0
-    pending_statuses = ["Pending", "Draft", "Pending Approval"]
-
-    def apply_rejection(model, scope_label, target_ids=None):
-        q = model.query.filter(model.status.in_(pending_statuses))
-        if allowed_fids is not None:
-            q = q.filter(model.facility_id.in_(allowed_fids))
-        if target_ids is not None:
-            q = q.filter(model.id.in_(target_ids))
-        now_utc = datetime.datetime.now(datetime.timezone.utc)
-        update_vals = {
-            "status": "Rejected",
-            "approved_by": user.id,
-            "approved_at": now_utc,
-        }
-        if hasattr(model, "qa_flag"):
-            update_vals["qa_flag"] = f"Rejected: {reason}"
-        return q.update(update_vals, synchronize_session=False)
-
-    if scope == "all" and reject_all:
-        deleted_count = (
-            apply_rejection(Emission, "Scope 1")
-            + apply_rejection(Scope2Emission, "Scope 2")
-            + apply_rejection(Scope3Emission, "Scope 3")
-        )
-    elif has_by_scope:
-        s1_ids = by_scope.get("1") or by_scope.get(1) or []
-        s2_ids = by_scope.get("2") or by_scope.get(2) or []
-        s3_ids = by_scope.get("3") or by_scope.get(3) or []
-        if s1_ids:
-            deleted_count += apply_rejection(Emission, "Scope 1", s1_ids)
-        if s2_ids:
-            deleted_count += apply_rejection(Scope2Emission, "Scope 2", s2_ids)
-        if s3_ids:
-            deleted_count += apply_rejection(Scope3Emission, "Scope 3", s3_ids)
-    elif scope == "1":
-        deleted_count = apply_rejection(Emission, "Scope 1", None if reject_all else ids)
-    elif scope == "2":
-        deleted_count = apply_rejection(Scope2Emission, "Scope 2", None if reject_all else ids)
-    elif scope == "3":
-        deleted_count = apply_rejection(Scope3Emission, "Scope 3", None if reject_all else ids)
-    elif scope == "all" and ids:
-        deleted_count = (
-            apply_rejection(Emission, "Scope 1", ids)
-            + apply_rejection(Scope2Emission, "Scope 2", ids)
-            + apply_rejection(Scope3Emission, "Scope 3", ids)
-        )
-    else:
-        return jsonify({"error": f"Invalid scope: {scope}"}), 400
-
-    log_activity_and_notify(
-        action="DELETE",
-        record_id="batch_reject",
-        details=f"{deleted_count} pending records rejected by {user.fullName}: {reason}",
-        user=user,
-        entity="batch_emissions",
-        entity_id="batch",
-    )
-    db.session.commit()
-    from routes.dashboard import clear_dashboard_cache
-
-    clear_dashboard_cache()
-    return jsonify({"success": True, "deleted_count": deleted_count})
+    """Reject records awaiting review (soft: status Rejected, excluded from totals)."""
+    done = _batch_decide("reject")
+    if not isinstance(done, list):
+        return done
+    return jsonify({"success": True, "deleted_count": len(done), "rejected_count": len(done), "rejected_ids": done})
 
 
 @emissions_bp.route("/erp/sync", methods=["POST"])

@@ -239,11 +239,10 @@ def update_scope3_emission(emission_id):
     if user.role == "user" and emission.created_by is not None and emission.created_by != user.id:
         return jsonify({"error": "Unauthorized: You may only modify records you created"}), 403
 
-    # If non-admin modifies a verified record, reset status to Pending for maker-checker review
-    if user.role != "admin" and emission.status in ("Verified", "Rejected"):
-        emission.status = "Pending"
-        emission.approved_by = None
-        emission.approved_at = None
+    # BUG-067/RC-2: record the last maker; non-admin edits of decided records go back to review.
+    from services.maker_checker import on_edit
+
+    on_edit(emission, user)
 
     data = request.get_json() or {}
 
@@ -328,17 +327,12 @@ def delete_scope3_emission(emission_id):
     if not emission:
         return jsonify({"error": "Emission not found"}), 404
 
-    if user.role not in ["admin", "superuser"]:
-        if emission.created_by != user.id:
-            return (
-                jsonify(
-                    {"error": "Forbidden: You do not have permission to delete records created by another user"}
-                ),
-                403,
-            )
-    else:
-        if not require_facility_access(user, emission.facility_id):
-            return jsonify({"error": "Unauthorized: Outside your region"}), 403
+    from services.maker_checker import delete_denied_reason
+
+    denied = delete_denied_reason(user, emission)
+    if denied:
+        return jsonify({"error": denied}), 403
+    fac_id_for_log = emission.facility_id
 
     log_details = f"Deleted Scope 3 emission: {emission.category} ({emission.co2e:.2f} tCO2e, facility #{emission.facility_id})"
     db.session.delete(emission)
@@ -351,6 +345,7 @@ def delete_scope3_emission(emission_id):
             request=request,
             entity="Scope3Emission",
             details=log_details,
+            facility_id=fac_id_for_log,
         )
         db.session.commit()
     except Exception as e:
