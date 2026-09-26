@@ -1,4 +1,5 @@
 import os
+import sys
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_migrate import Migrate
@@ -45,7 +46,7 @@ CORS(
 # Database
 db.init_app(app)
 limiter.init_app(app)  # SEC-08 FIX: activate flask-limiter
-migrate = Migrate(app, db)
+migrate = Migrate(app, db, directory=os.path.join(os.path.dirname(os.path.abspath(__file__)), "migrations"))
 
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
@@ -66,27 +67,15 @@ _WAL_CHECKPOINT_INTERVAL = int(os.environ.get("WAL_CHECKPOINT_INTERVAL", "100"))
 
 
 
-_custom_factors_migrated = False
-
-
 @event.listens_for(Engine, "connect")
 def set_sqlite_pragmas(dbapi_conn, _):
-    global _custom_factors_migrated
+    # BUG-016: pragmas only. Schema changes (e.g. custom_factors.description) are Alembic revisions.
     if isinstance(dbapi_conn, sqlite3.Connection):
         cursor = dbapi_conn.cursor()
         cursor.execute("PRAGMA foreign_keys = ON")
         cursor.execute("PRAGMA journal_mode = WAL")
         cursor.execute("PRAGMA synchronous = NORMAL")
         cursor.execute("PRAGMA busy_timeout = 30000")
-        if not _custom_factors_migrated:
-            _custom_factors_migrated = True
-            try:
-                cursor.execute("SELECT description FROM custom_factors LIMIT 1")
-            except sqlite3.OperationalError:
-                try:
-                    cursor.execute("ALTER TABLE custom_factors ADD COLUMN description TEXT")
-                except Exception:
-                    pass
         cursor.close()
 
 
@@ -142,7 +131,7 @@ def handle_csrf_error(e):
 
 # ── Central input validation (audit RC-1) ──────────────────────────────────
 from flask.json.provider import DefaultJSONProvider
-from validation import ValidationError, find_non_finite, sanitize_non_finite
+from input_validation import ValidationError, find_non_finite, sanitize_non_finite
 
 
 class FiniteJSONProvider(DefaultJSONProvider):
@@ -428,24 +417,45 @@ def ensure_database_indexes():
         app.logger.warning(f"Could not ensure database indexes: {e}")
 
 
-def ensure_model_columns():
-    """create_all() never adds columns to existing tables; add any nullable model column
-    that is missing so existing databases keep working after model changes. The Alembic
-    head revision performs the same reconciliation for `flask db upgrade`."""
-    try:
-        from schema_sync import add_missing_columns
+def _is_schema_cli():
+    """True when this import comes from `flask db ...` (Alembic manages the schema itself)."""
+    return len(sys.argv) > 1 and sys.argv[1] == "db"
 
-        with db.engine.begin() as conn:
-            added = add_missing_columns(conn, db.metadata)
-        if added:
-            app.logger.warning(f"Schema reconciled, added columns: {', '.join(added)}")
-    except Exception as e:
-        app.logger.warning(f"Could not reconcile model columns: {e}")
+
+def init_schema():
+    """BUG-016: Alembic is the single authority for schema changes.
+
+    - Outside production (or with AUTO_MIGRATE=true) the app upgrades the database to the
+      Alembic head on start-up; the reconcile revision creates a fresh schema.
+    - In production the container entrypoint runs `flask db upgrade`; the app only verifies
+      that the database is at head and refuses to start otherwise.
+    """
+    if _is_schema_cli():
+        return
+    from alembic.migration import MigrationContext
+    from alembic.script import ScriptDirectory
+
+    script = ScriptDirectory.from_config(migrate.get_config())
+    heads = set(script.get_heads())
+    with db.engine.connect() as conn:
+        current = set(MigrationContext.configure(conn).get_current_heads())
+    if current == heads:
+        return
+    auto = os.environ.get("AUTO_MIGRATE", "").lower()
+    if auto == "true" or (auto != "false" and not app.config.get("IS_PRODUCTION")):
+        from flask_migrate import upgrade
+
+        upgrade(directory=migrate.directory)
+        app.logger.info("Database upgraded to Alembic head %s", ", ".join(sorted(heads)))
+        return
+    raise RuntimeError(
+        f"Database schema is at {sorted(current) or 'no revision'}, expected {sorted(heads)}. "
+        "Run `flask db upgrade` before starting the application."
+    )
 
 
 with app.app_context():
-    db.create_all()
-    ensure_model_columns()
+    init_schema()
     ensure_database_indexes()
     ensure_admin_seeded()
 
@@ -522,7 +532,6 @@ def health_readiness():
 
 if __name__ == "__main__":
     with app.app_context():
-        db.create_all()
         try:
             from routes.auth import load_settings_from_db
             load_settings_from_db()

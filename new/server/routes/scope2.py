@@ -6,7 +6,7 @@ from electricity_factors import GRID_FACTORS
 from routes.auth import login_required
 from calculations.uncertainty import propagate_uncertainty, Tier
 from utils import get_current_user, get_allowed_facility_ids, require_facility_access, initial_record_status
-from validation import ValidationError, parse_number, parse_year, parse_month
+from input_validation import ValidationError, parse_number, parse_year, parse_month
 import datetime
 
 scope2_bp = Blueprint("scope2", __name__)

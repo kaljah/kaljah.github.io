@@ -329,14 +329,16 @@ def _process_file_thread(
                     Facility.id.in_(allowed_fac_ids)
                 ).all()
 
-            fac_name_map = {fac.name.lower(): fac for fac in all_facilities}
+            from utils import build_name_map
+
+            fac_name_map = build_name_map(all_facilities)
             for fac in all_facilities:
-                if fac.region and fac.region.lower() not in fac_name_map:
-                    fac_name_map[fac.region.lower()] = fac
+                # region names are a convenience alias only when no facility carries that name
+                fac_name_map.add(fac.region, fac, overwrite=False)
             fac_id_map = {str(fac.id): fac for fac in all_facilities}
 
             custom_factors = CustomFactor.query.all()
-            cf_name_map = {cf.name.lower(): cf for cf in custom_factors}
+            cf_name_map = build_name_map(custom_factors)
 
             processed = 0
             chunk = []
@@ -1526,6 +1528,15 @@ def _process_row_custom_factors(row, user_id):
         errors.append("Name is required for custom factor")
         return None, errors
 
+    # BUG-001: defence in depth - the job endpoint already rejects other roles.
+    from extensions import db
+    from models import User
+
+    uploader = db.session.get(User, user_id)
+    if uploader is None or uploader.role not in ("admin", "superuser"):
+        errors.append("Not authorised to import custom factors")
+        return None, errors
+
     factor = CustomFactor(
         name=row.get("name"),
         co2_factor=float(row.get("co2_factor") or 0),
@@ -1563,20 +1574,26 @@ def _process_row_facilities(row, user_id, overwrite_duplicates):
     # own region (same rule as POST /api/facilities/import).
     from extensions import db
     from models import User
-    from utils import is_unrestricted_location
+
+    from utils import facility_in_user_scope, facility_change_allowed
 
     uploader = db.session.get(User, user_id)
     if uploader is None or uploader.role not in ("admin", "superuser"):
         errors.append("Not authorised to import facilities")
         return None, errors
-    if uploader.role == "superuser" and not is_unrestricted_location(uploader.location):
-        user_loc = (uploader.location or "").strip().lower()
-        targets = [row.get("region"), row.get("location"), name]
-        if existing is not None:
-            targets = [existing.region, existing.location, existing.name]
-        if user_loc not in {str(t or "").strip().lower() for t in targets}:
-            errors.append(f"Superusers can only import facilities in their assigned region: {uploader.location}")
-            return None, errors
+
+    def _new(field, current):
+        v = row.get(field)
+        return v if v is not None and str(v).strip() != "" else current
+
+    if existing is not None and not facility_in_user_scope(uploader, existing.region, existing.location, existing.name):
+        errors.append(f"Superusers can only import facilities in their assigned region: {uploader.location}")
+        return None, errors
+    # The facility must also stay in scope after the row is applied (no re-regioning out of scope).
+    cur = existing or Facility()
+    if not facility_change_allowed(uploader, existing, _new("region", cur.region), _new("location", cur.location), name):
+        errors.append(f"Superusers can only import facilities in their assigned region: {uploader.location}")
+        return None, errors
 
     if existing:
         if not overwrite_duplicates:
@@ -1750,7 +1767,9 @@ def _process_row(
 
     factor_data = {}
     if factor_source == "custom":
-        cf = cf_name_map.get(fuel.lower())
+        if fuel.strip().lower() in getattr(cf_name_map, "ambiguous", ()):
+            return None, [f"Custom factor name '{fuel}' is not unique; rename the duplicates before importing"]
+        cf = cf_name_map.get(fuel.strip().lower())
         if cf:
             factor_data = {
                 "co2": cf.co2_factor,
