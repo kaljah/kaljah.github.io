@@ -100,9 +100,6 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
           <h4 style={{ color: "var(--accent-color, #2563eb)", margin: 0 }}>
             Liquids Unloading Emissions
           </h4>
-          <small style={{ color: "var(--text-muted, #6b7280)", fontSize: "0.8rem" }}>
-            API GHG Compendium 2021 §6.3.4 (Tables 6-10, 6-11, Equations 6-10, 6-11, 6-3)
-          </small>
         </div>
         <div style={{ display: "flex", gap: "6px" }}>
           <button
@@ -164,21 +161,6 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
       {/* ========================================================================= */}
       {isTier1 && (
         <div>
-          <div
-            style={{
-              background: "rgba(59, 130, 246, 0.08)",
-              border: "1px solid rgba(59, 130, 246, 0.25)",
-              borderRadius: "6px",
-              padding: "10px 14px",
-              marginBottom: "16px",
-              fontSize: "0.85rem",
-              color: "var(--text-primary, #1e3a8a)",
-            }}
-          >
-            <strong>API Table 6-11 Methodology:</strong> Used when unloading event counts are not monitored.
-            Emissions are calculated per well-year using standard gas volume (113,466 scf for plunger; 178,531 scf for non-plunger)
-            at 81.6 mol% CH₄ baseline with site gas composition adjustment.
-          </div>
 
           <div className="form-grid-2">
             <div className="input-group">
@@ -283,20 +265,6 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
       {/* ========================================================================= */}
       {isTier2 && (
         <div>
-          <div
-            style={{
-              background: "rgba(16, 185, 129, 0.08)",
-              border: "1px solid rgba(16, 185, 129, 0.25)",
-              borderRadius: "6px",
-              padding: "10px 14px",
-              marginBottom: "16px",
-              fontSize: "0.85rem",
-              color: "var(--text-primary, #065f46)",
-            }}
-          >
-            <strong>API Table 6-10 Methodology:</strong> Event-based vented emissions for wells with monitored unloading event frequency.
-            Supports national average frequency bins and regional basin factors (Appalachia, Gulf Coast, Midcontinent, Rocky Mountain).
-          </div>
 
           <div className="form-grid-2">
             <div className="input-group">
@@ -451,7 +419,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                 }}
                 onClick={() => onChange("calc_method", "api_equation_6_10")}
               >
-                API Eq. 6-10 (Subpart W)
+                Wellbore + Flow Volume
               </button>
 
               <button
@@ -469,7 +437,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                 }}
                 onClick={() => onChange("calc_method", "api_equation_6_11")}
               >
-                API Eq. 6-11 (Auto Plunger)
+                Automated Plunger Lift
               </button>
 
               <button
@@ -487,7 +455,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                 }}
                 onClick={() => onChange("calc_method", "api_equation_6_3")}
               >
-                API Eq. 6-3 (Well Decomp.)
+                Well Decompression
               </button>
             </div>
           </div>
@@ -495,25 +463,6 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
           {/* METHOD 1: API EQUATION 6-10 (EPA SUBPART W) */}
           {activeMethod === "api_equation_6_10" && (
             <div>
-              <div
-                style={{
-                  background: "rgba(99, 102, 241, 0.08)",
-                  border: "1px solid rgba(99, 102, 241, 0.25)",
-                  borderRadius: "6px",
-                  padding: "10px 14px",
-                  marginBottom: "16px",
-                  fontSize: "0.85rem",
-                  color: "var(--text-primary, #312e81)",
-                }}
-              >
-                <strong>API Equation 6-10 / EPA Subpart W:</strong>
-                <br />
-                <code>VR = [Events × 0.37×10⁻³ × D² × Depth × P] + [SFR × (HR - X) × Z]</code>
-                <br />
-                <span style={{ fontSize: "0.8rem", color: "var(--text-muted, #4b5563)" }}>
-                  Calculates wellbore blowdown volume plus flowing gas volume during unloading. X = 0.5 hr (plunger) or 1.0 hr (non-plunger).
-                </span>
-              </div>
 
               <div className="form-grid-2">
                 <div className="input-group">
@@ -706,25 +655,6 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
           {/* METHOD 2: API EQUATION 6-11 (AUTOMATED PLUNGER LIFT) */}
           {activeMethod === "api_equation_6_11" && (
             <div>
-              <div
-                style={{
-                  background: "rgba(147, 51, 234, 0.08)",
-                  border: "1px solid rgba(147, 51, 234, 0.25)",
-                  borderRadius: "6px",
-                  padding: "10px 14px",
-                  marginBottom: "16px",
-                  fontSize: "0.85rem",
-                  color: "var(--text-primary, #581c87)",
-                }}
-              >
-                <strong>API Equation 6-11:</strong>
-                <br />
-                <code>VR = √[(Pshut - Patm) / (Pline - Psep)] × SFRp × Tp</code>
-                <br />
-                <span style={{ fontSize: "0.8rem", color: "var(--text-muted, #4b5563)" }}>
-                  Models vented gas volume per cycle from automated plunger lift well unloadings based on pressure expansion ratios.
-                </span>
-              </div>
 
               <div className="form-grid-2">
                 <div className="input-group">
@@ -889,25 +819,6 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
           {/* METHOD 3: API EQUATION 6-3 (VOLUME-BASED WELLBORE DECOMPRESSION) */}
           {activeMethod === "api_equation_6_3" && (
             <div>
-              <div
-                style={{
-                  background: "rgba(234, 88, 12, 0.08)",
-                  border: "1px solid rgba(234, 88, 12, 0.25)",
-                  borderRadius: "6px",
-                  padding: "10px 14px",
-                  marginBottom: "16px",
-                  fontSize: "0.85rem",
-                  color: "var(--text-primary, #9a3412)",
-                }}
-              >
-                <strong>API Equation 6-3:</strong>
-                <br />
-                <code>V_std = (π/4) × D² × Depth × (P_abs / P_std) × (T_std / T_well) × (1 / Z)</code>
-                <br />
-                <span style={{ fontSize: "0.8rem", color: "var(--text-muted, #4b5563)" }}>
-                  Pure geometric wellbore column decompression with compressibility and temperature correction.
-                </span>
-              </div>
 
               <div className="form-grid-2">
                 <div className="input-group">

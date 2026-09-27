@@ -67,8 +67,9 @@ describe("AssociatedGasVentingForm & Table 6-8 API Reference Integrity", () => {
     );
 
     expect(screen.getByText("Associated Gas Venting")).toBeInTheDocument();
-    expect(screen.getByText(/API GHG Compendium 2021 §6.3.1/i)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Tier 1: Table 6-8" })).toBeInTheDocument();
+    // the emission UI shows no API Compendium / table citations (user request)
+    expect(screen.queryByText(/Compendium|Table 6-8/i)).toBeNull();
+    expect(screen.getByRole("button", { name: "Tier 1: Regional Default" })).toBeInTheDocument();
 
     // Check factor details badge
     expect(screen.getByText(/Permian Basin - Basin 430:/i)).toBeInTheDocument();

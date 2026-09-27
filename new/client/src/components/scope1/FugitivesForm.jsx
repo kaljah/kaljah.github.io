@@ -11,9 +11,8 @@ import CustomDropdown from "../CustomDropdown";
 const TIER1_FACILITIES = [
   {
     id: "oil_production",
-    label: "Onshore Oil Production (Table 7-8)",
+    label: "Onshore Oil Production",
     sub: "0.5173 lb CH₄ per bbl oil produced",
-    api_table: "Table 7-8",
     units: [
       { value: "bbl", label: "bbl oil", t_per_unit: 2.346e-4 },
       { value: "m3", label: "m³ oil", t_per_unit: 1.476e-3 },
@@ -21,9 +20,8 @@ const TIER1_FACILITIES = [
   },
   {
     id: "gas_production",
-    label: "Onshore Gas Production (Table 7-8)",
+    label: "Onshore Gas Production",
     sub: "57.33 lb CH₄ per 10⁶ scf gas produced",
-    api_table: "Table 7-8",
     units: [
       { value: "MMscf", label: "MMscf gas", t_per_unit: 2.601e-2 },
       { value: "Mcf", label: "Mcf gas", t_per_unit: 2.601e-5 },
@@ -38,8 +36,7 @@ const TIER1_FACILITIES = [
 // the server applies, so the preview and the saved record use the same factor. CH4 only.
 const TIER2A_EQUIPMENT_DATA = {
   gas_production: {
-    label: "Onshore Natural Gas Production (Table 7-10)",
-    api_table: "Table 7-10",
+    label: "Onshore Natural Gas Production",
     default_stream: { ch4: 78.8, co2: 0 },
     equipment: [
       { id: "wellhead", label: "Gas Wellhead", fuel: "Wellhead - Gas", factor: 0.018, unit: "kg CH₄/hr/well" },
@@ -52,8 +49,7 @@ const TIER2A_EQUIPMENT_DATA = {
     ],
   },
   oil_production: {
-    label: "Onshore Crude Oil Production (Table 7-9)",
-    api_table: "Table 7-9",
+    label: "Onshore Crude Oil Production",
     default_stream: { ch4: 78.8, co2: 0 },
     equipment: [
       { id: "wellhead_light", label: "Wellhead - light crude", fuel: "Wellhead - Oil (Light Crude)", factor: 0.0156, unit: "kg CH₄/hr/well" },
@@ -72,8 +68,7 @@ const TIER2A_EQUIPMENT_DATA = {
 
 const TIER2B_COMPONENTS_DATA = {
   gas_gathering: {
-    label: "Onshore Gas Production & Gathering (Table 7-11)",
-    api_table: "Table 7-11",
+    label: "Onshore Gas Production & Gathering",
     services: {
       gas: {
         label: "Gas / Vapor Service",
@@ -118,8 +113,7 @@ const TIER2B_COMPONENTS_DATA = {
     },
   },
   crude_production: {
-    label: "Onshore Crude Production (Table 7-30)",
-    api_table: "Table 7-30",
+    label: "Onshore Crude Production",
     services: {
       gas: {
         label: "Gas Service",
@@ -153,9 +147,9 @@ const TIER2B_COMPONENTS_DATA = {
 };
 
 const TIER3_METHODS = [
-  { id: "method21", label: "Method 21 Screening Ranges", sub: "Tables 7-15, 7-16 (<10k vs ≥10k ppmv)" },
-  { id: "correlation", label: "EPA / API Correlation Equations", sub: "Tables 7-17, 7-18 (Continuous Leak Rate)" },
-  { id: "ogi", label: "OGI Leaker Survey", sub: "Tables 7-19, 7-20 / W-1E (Leakers vs Non-Leakers)" },
+  { id: "method21", label: "Method 21 Screening Ranges", sub: "<10k vs ≥10k ppmv" },
+  { id: "correlation", label: "Leak-Rate Correlation", sub: "Continuous leak rate" },
+  { id: "ogi", label: "OGI Leaker Survey", sub: "Leakers vs non-leakers" },
   { id: "measurement", label: "Direct High-Flow Measurement", sub: "Metered Rate / Bagging / High-Flow Sampler" },
 ];
 
@@ -170,22 +164,22 @@ const OGI_LEAKER_FACTORS = [
 
 const METHOD21_FACTORS = {
   valve_gas: {
-    label: "Gas Valves (Table 7-15)",
+    label: "Gas Valves",
     leaker: { factor: 0.0451, unit: "kg TOC/hr/source", label: "≥ 10,000 ppmv (Leaker)" },
     non_leaker: { factor: 0.00048, unit: "kg TOC/hr/source", label: "< 10,000 ppmv (Non-Leaker)" },
   },
   connector_gas: {
-    label: "Gas Connectors (Table 7-15)",
+    label: "Gas Connectors",
     leaker: { factor: 0.0152, unit: "kg TOC/hr/source", label: "≥ 10,000 ppmv (Leaker)" },
     non_leaker: { factor: 0.00008, unit: "kg TOC/hr/source", label: "< 10,000 ppmv (Non-Leaker)" },
   },
   flange_gas: {
-    label: "Gas Flanges (Table 7-15)",
+    label: "Gas Flanges",
     leaker: { factor: 0.0850, unit: "kg TOC/hr/source", label: "≥ 10,000 ppmv (Leaker)" },
     non_leaker: { factor: 0.00006, unit: "kg TOC/hr/source", label: "< 10,000 ppmv (Non-Leaker)" },
   },
   prv_gas: {
-    label: "Gas Relief Valves (Table 7-15)",
+    label: "Gas Relief Valves",
     leaker: { factor: 1.6900, unit: "kg TOC/hr/source", label: "≥ 10,000 ppmv (Leaker)" },
     non_leaker: { factor: 0.0447, unit: "kg TOC/hr/source", label: "< 10,000 ppmv (Non-Leaker)" },
   },
@@ -320,7 +314,6 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default", setSourceT
   const estimate = useMemo(() => {
     let ch4_kg = 0;
     let co2_kg = 0;
-    let citation = "";
     let methodology = "";
     let intermediateSteps = [];
 
@@ -328,7 +321,6 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default", setSourceT
 
     if (activeTier === "tier1") {
       const u = tier1Fac.units.find((x) => x.value === tier1Unit);
-      citation = `API Compendium (2021) ${tier1Fac.api_table}`;
       methodology = `Tier 1: Facility-Level Average (${tier1Fac.label})`;
       ch4_kg = tier1Production * u.t_per_unit * 1000;
       co2_kg = 0;
@@ -337,7 +329,6 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default", setSourceT
     } else if (activeTier === "tier2" && tier2SubMethod === "equipment") {
       const seg = TIER2A_EQUIPMENT_DATA[tier2aSegment];
       const eq = seg.equipment.find((e) => e.id === tier2aEquipId) || seg.equipment[0];
-      citation = `API Compendium (2021) ${seg.api_table}`;
       methodology = `Tier 2A: Equipment-Level (${seg.label} - ${eq.label})`;
 
       const normHours = tier2aHours;
@@ -352,7 +343,6 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default", setSourceT
       const seg = TIER2B_COMPONENTS_DATA[tier2bSegment];
       const srv = seg.services[tier2bService] || seg.services.gas;
       const comp = srv.components.find((c) => c.id === tier2bCompId) || srv.components[0];
-      citation = `API Compendium (2021) ${seg.api_table}`;
       methodology = `Tier 2B: Component-Level (${seg.label} - ${srv.label} - ${comp.label})`;
 
       const normHours = tier2bHours;
@@ -369,7 +359,6 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default", setSourceT
       intermediateSteps.push(`Gas Stream Speciation: CH₄ = ${(ch4Frac * 100).toFixed(1)}%, CO₂ = ${(co2Frac * 100).toFixed(2)}%`);
     } else if (activeTier === "tier3" && tier3Method === "ogi") {
       const eq = OGI_LEAKER_FACTORS.find((o) => o.id === ogiCompId) || OGI_LEAKER_FACTORS[0];
-      citation = "API Compendium Table 7-19 / EPA Subpart W Table W-1E";
       methodology = `Tier 3C: Optical Gas Imaging (OGI) Survey (${eq.label})`;
 
       const normHours = ogiHours;
@@ -384,7 +373,6 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default", setSourceT
       }
     } else if (activeTier === "tier3" && tier3Method === "method21") {
       const mData = METHOD21_FACTORS[m21Key] || METHOD21_FACTORS.valve_gas;
-      citation = "API Compendium Table 7-15 / EPA 453/R-95-017";
       const isLeaker = m21Ppm >= 10000;
       const targetFactor = isLeaker ? mData.leaker : mData.non_leaker;
       methodology = `Tier 3A: Method 21 (${mData.label} - ${targetFactor.label})`;
@@ -402,7 +390,6 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default", setSourceT
       intermediateSteps.push(`TOC Factor: ${targetFactor.factor} kg TOC/hr`);
       intermediateSteps.push(`Duration: ${normHours} hrs`);
     } else if (activeTier === "tier3" && tier3Method === "measurement") {
-      citation = "API Compendium Section 7.3.4 (Direct Measurement)";
       methodology = `Tier 3D: Direct Measurement (${directRateUnit})`;
 
       const normHours = directHours;
@@ -428,7 +415,6 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default", setSourceT
       co2_kg,
       co2_tonnes,
       co2e_tonnes,
-      citation,
       methodology,
       intermediateSteps,
     };
@@ -482,22 +468,10 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default", setSourceT
             Onshore Equipment Leaks / Fugitives
           </h4>
           <span style={{ fontSize: "0.8rem", color: "#6b7280" }}>
-            API GHG Compendium (2021) Chapter 7 — Strictly Onshore Exploration, Production & Gathering
+            Onshore exploration, production & gathering
           </span>
         </div>
         <div style={{ display: "flex", gap: "6px" }}>
-          <span
-            style={{
-              padding: "4px 8px",
-              background: "#dbeafe",
-              color: "#1e40af",
-              borderRadius: "4px",
-              fontSize: "0.75rem",
-              fontWeight: 600,
-            }}
-          >
-            API 2021 Ch. 7
-          </span>
           <span
             style={{
               padding: "4px 8px",
@@ -516,7 +490,7 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default", setSourceT
       {/* METHODOLOGY TIER SELECTOR */}
       <div style={{ marginBottom: "20px" }}>
         <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, color: "#374151", marginBottom: "8px" }}>
-          API Chapter 7 Calculation Tier
+          Calculation Tier
         </label>
         <div
           style={{
@@ -542,18 +516,6 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default", setSourceT
               <span style={{ fontWeight: 700, color: activeTier === "tier1" ? "#1e40af" : "#111827", fontSize: "0.9rem" }}>
                 Tier 1: Facility-Level
               </span>
-              <span
-                style={{
-                  fontSize: "0.7rem",
-                  padding: "2px 6px",
-                  borderRadius: "4px",
-                  background: activeTier === "tier1" ? "#bfdbfe" : "#f3f4f6",
-                  color: "#1e3a8a",
-                  fontWeight: 600,
-                }}
-              >
-                Table 7-8
-              </span>
             </div>
             <p style={{ margin: 0, fontSize: "0.75rem", color: "#6b7280", lineHeight: "1.3" }}>
               Facility average per unit of oil or gas produced. Ideal for high-level screening.
@@ -576,18 +538,6 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default", setSourceT
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
               <span style={{ fontWeight: 700, color: activeTier === "tier2" ? "#1e40af" : "#111827", fontSize: "0.9rem" }}>
                 Tier 2: Population
-              </span>
-              <span
-                style={{
-                  fontSize: "0.7rem",
-                  padding: "2px 6px",
-                  borderRadius: "4px",
-                  background: activeTier === "tier2" ? "#bfdbfe" : "#f3f4f6",
-                  color: "#1e3a8a",
-                  fontWeight: 600,
-                }}
-              >
-                Tables 7-9, 7-10, 7-11
               </span>
             </div>
             <p style={{ margin: 0, fontSize: "0.75rem", color: "#6b7280", lineHeight: "1.3" }}>
@@ -612,18 +562,6 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default", setSourceT
               <span style={{ fontWeight: 700, color: activeTier === "tier3" ? "#1e40af" : "#111827", fontSize: "0.9rem" }}>
                 Tier 3: Detection / Meas.
               </span>
-              <span
-                style={{
-                  fontSize: "0.7rem",
-                  padding: "2px 6px",
-                  borderRadius: "4px",
-                  background: activeTier === "tier3" ? "#bfdbfe" : "#f3f4f6",
-                  color: "#1e3a8a",
-                  fontWeight: 600,
-                }}
-              >
-                Tables 7-15, 7-19
-              </span>
             </div>
             <p style={{ margin: 0, fontSize: "0.75rem", color: "#6b7280", lineHeight: "1.3" }}>
               Optical Gas Imaging (OGI), Method 21 screening ranges, correlation equations, or direct measurement.
@@ -642,7 +580,7 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default", setSourceT
           </h5>
           <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1.5fr", gap: "12px" }}>
             <div className="input-group">
-              <label>Facility Type (API Table Citation)</label>
+              <label>Facility Type</label>
               <CustomDropdown
                 options={TIER1_FACILITIES.map((f) => ({ value: f.id, label: f.label, subLabel: f.sub }))}
                 value={selectedFacilityId}
@@ -704,7 +642,7 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default", setSourceT
                 cursor: "pointer",
               }}
             >
-              Tier 2A: Equipment-Level (Tables 7-9, 7-10, 7-29)
+              Tier 2A: Equipment-Level
             </button>
             <button
               type="button"
@@ -721,7 +659,7 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default", setSourceT
                 cursor: "pointer",
               }}
             >
-              Tier 2B: Component-Level (Tables 7-11, 7-30)
+              Tier 2B: Component-Level
             </button>
           </div>
 
@@ -967,7 +905,7 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default", setSourceT
           {tier3Method === "ogi" && (
             <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr 1fr 1fr", gap: "12px" }}>
               <div className="input-group">
-                <label>Component Leaker Type (Table 7-19 / W-1E)</label>
+                <label>Component Leaker Type</label>
                 <CustomDropdown
                   options={OGI_LEAKER_FACTORS.map((f) => ({
                     value: f.id,
@@ -1028,7 +966,7 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default", setSourceT
           {tier3Method === "method21" && (
             <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr 1fr 1fr", gap: "12px" }}>
               <div className="input-group">
-                <label>Component Category (Table 7-15)</label>
+                <label>Component Category</label>
                 <CustomDropdown
                   options={Object.keys(METHOD21_FACTORS).map((k) => ({
                     value: k,
@@ -1093,7 +1031,7 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default", setSourceT
           {tier3Method === "correlation" && (
             <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr 1fr 1fr", gap: "12px" }}>
               <div className="input-group">
-                <label>Correlation Curve (Table 7-17)</label>
+                <label>Correlation Curve</label>
                 <CustomDropdown
                   options={[
                     { value: "gas_valve", label: "Gas Valves: Rate = 1.87e-6 × (PPM)^0.873" },
@@ -1241,16 +1179,13 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default", setSourceT
                 color: "#166534",
               }}
             >
-              Estimated Emissions Preview (Real-Time API Calculation)
+              Estimated Emissions
             </span>
             <h5 style={{ margin: "4px 0 0 0", color: "#14532d", fontSize: "1.05rem", fontWeight: 700 }}>
               {estimate.co2e_tonnes.toFixed(3)} t CO₂e
             </h5>
           </div>
           <div style={{ textAlign: "right" }}>
-            <span style={{ fontSize: "0.75rem", color: "#166534", fontWeight: 600 }}>
-              Citation: {estimate.citation}
-            </span>
             <div style={{ fontSize: "0.7rem", color: "#4ade80" }}>
               IPCC AR5 GWP: CH₄ = 28.0 | CO₂ = 1.0
             </div>
@@ -1288,16 +1223,6 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default", setSourceT
         </div>
 
         {/* Calculation Audit Trace */}
-        <div style={{ background: "rgba(255, 255, 255, 0.7)", padding: "8px 12px", borderRadius: "6px", fontSize: "0.75rem", color: "#374151" }}>
-          <strong style={{ color: "#166534" }}>Calculation Audit Trail:</strong>
-          <ul style={{ margin: "4px 0 0 16px", padding: 0 }}>
-            {estimate.intermediateSteps.map((step, idx) => (
-              <li key={idx} style={{ marginBottom: "2px" }}>
-                {step}
-              </li>
-            ))}
-          </ul>
-        </div>
       </div>
     </div>
   );

@@ -96,7 +96,7 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
                 letterSpacing: "0.04em",
               }}
             >
-              FUEL HEATING VALUE (API Compendium 2021 §5)
+              FUEL HEATING VALUE
             </span>
           </div>
           <div className="form-grid-2" style={{ gap: "10px" }}>

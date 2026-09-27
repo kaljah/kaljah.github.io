@@ -183,7 +183,8 @@ describe("UnloadingForm & API Compendium 2021 Reference Integrity", () => {
       />
     );
 
-    expect(screen.getByText(/API Equation 6-3:/i)).toBeInTheDocument();
+    // no equation / API citation is displayed (user request)
+    expect(screen.queryByText(/API Equation|Equation 6-3/i)).toBeNull();
     expect(screen.getByText(/Frequency \(events\/yr\)/i)).toBeInTheDocument();
     expect(screen.getByText(/Casing\/Tubing Diameter \(in\)/i)).toBeInTheDocument();
     expect(screen.getByText(/Surface Pressure \(psig\)/i)).toBeInTheDocument();

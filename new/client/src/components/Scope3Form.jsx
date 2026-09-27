@@ -8,7 +8,6 @@ import { formatNumber } from "../utils/formatters";
 import ColumnMappingWizard from "./ColumnMappingWizard";
 import Scope3ImportWizard from "./Scope3ImportWizard";
 import { Upload, Trash2, Eye } from "lucide-react";
-import EmissionResult from "./EmissionResult";
 import CalculationDetails from "./CalculationDetails";
 import ConfirmModal from "./ConfirmModal";
 import "./ScopeTables.css";
@@ -34,7 +33,6 @@ const Scope3Form = () => {
   const [baseFactor, setBaseFactor] = useState(0);
 
   // Result and Inspect Modals
-  const [calculationResult, setCalculationResult] = useState(null);
   const [inspectRecord, setInspectRecord] = useState(null);
 
   // EEIO Quick Calculator State
@@ -318,9 +316,6 @@ const Scope3Form = () => {
           ? "Entry saved as draft"
           : "Scope 3 entry added successfully",
       );
-      if (res.data && res.data.emissions) {
-        setCalculationResult(res.data);
-      }
       setAmount("");
       setCurrentPage(1);
       loadEntries();
@@ -841,13 +836,6 @@ const Scope3Form = () => {
             loadEntries();
             toast.success("Bulk import completed successfully");
           }}
-        />
-      )}
-
-      {calculationResult && (
-        <EmissionResult
-          result={calculationResult}
-          onClose={() => setCalculationResult(null)}
         />
       )}
 

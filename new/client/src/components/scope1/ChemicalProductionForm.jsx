@@ -64,19 +64,6 @@ const ChemicalProductionForm = ({ data, onChange }) => {
         </div>
       </div>
 
-      <div
-        style={{
-          marginTop: "12px",
-          padding: "10px 14px",
-          background: "#f9fafb",
-          border: "1px solid #e5e7eb",
-          borderRadius: "6px",
-          fontSize: "0.8rem",
-          color: "#6b7280",
-        }}
-      >
-        <strong>API Compendium 2021 Section 6, Table 6-167:</strong> Stoichiometric process CO₂ and CH₄ emissions from petrochemical production based on mass balance and catalytic selectivity.
-      </div>
     </div>
   );
 };

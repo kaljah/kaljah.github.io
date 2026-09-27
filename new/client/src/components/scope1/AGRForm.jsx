@@ -123,7 +123,7 @@ const AGRForm = ({ data, onChange, sourceType }) => {
                   : ""
               }
               onChange={(e) => onChange("methane_slip_factor", e.target.value)}
-              placeholder="e.g. 0.00040 (API Table 6-5)"
+              placeholder="e.g. 0.00040"
               step="0.00001"
             />
             <div

@@ -92,8 +92,9 @@ describe("Scope1Form Associated Gas Venting Integration", () => {
     fireEvent.click(agvOption);
 
     // Verify Associated Gas Venting form is rendered
-    expect(screen.getByText(/API GHG Compendium 2021 §6.3.1/i)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Tier 1: Table 6-8" })).toBeInTheDocument();
+    // the emission UI shows no API Compendium / table citations (user request)
+    expect(screen.queryByText(/Compendium|Table 6-8/i)).toBeNull();
+    expect(screen.getByRole("button", { name: "Tier 1: Regional Default" })).toBeInTheDocument();
 
     // Fill in crude oil throughput
     const spinInputs = screen.getAllByRole("spinbutton");
