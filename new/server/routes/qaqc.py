@@ -157,69 +157,21 @@ def get_qaqc_dashboard():
             all_flagged.sort(key=lambda x: (x["co2e"] or 0), reverse=True)
             flagged_records = all_flagged
 
-        # ── Uncertainty aggregation (IPCC SRSS — scoped to allowed facilities) ──
-        def _norm_unc(pct_val, frac_val, default_val=0.05):
-            if pct_val is not None:
-                try:
-                    return float(pct_val) / 100.0
-                except (ValueError, TypeError):
-                    pass
-            if frac_val is not None:
-                try:
-                    fval = float(frac_val)
-                    return (fval / 100.0) if fval > 1.0 else fval
-                except (ValueError, TypeError):
-                    pass
-            return default_val
+        # ── Uncertainty (BUG-055): the same service as the Uncertainty page — Verified records,
+        # CO2e-weighted per gas, EF correlated within a factor, reported at 95 % (k = 2) ──
+        from services.inventory_uncertainty import inventory_uncertainty
 
-        # Scope 1
-        s1_q = _fac_filter(Emission.query, Emission).filter(
-            or_(Emission.status.is_(None), func.lower(Emission.status) != "rejected")
-        )
-        s1_rows = s1_q.with_entities(
-            Emission.co2e_total,
-            Emission.uncertainty_pct,
-            Emission.uncertainty,
-        ).all()
-        s1_total = sum((r[0] or 0) for r in s1_rows)
-        s1_unc_var = sum(
-            ((_norm_unc(r[1], r[2], 0.05) * (r[0] or 0)) ** 2) for r in s1_rows
-        )
-
-        # Scope 2
-        s2_q = _fac_filter(Scope2Emission.query, Scope2Emission).filter(
-            or_(Scope2Emission.status.is_(None), func.lower(Scope2Emission.status) != "rejected")
-        )
-        s2_rows = s2_q.with_entities(
-            Scope2Emission.co2e,
-            Scope2Emission.uncertainty_pct,
-            Scope2Emission.uncertainty,
-        ).all()
-        s2_total = sum((r[0] or 0) for r in s2_rows)
-        s2_unc_var = sum(
-            ((_norm_unc(r[1], r[2], 0.05) * (r[0] or 0)) ** 2) for r in s2_rows
-        )
-
-        # Scope 3
-        s3_q = _fac_filter(Scope3Emission.query, Scope3Emission).filter(
-            or_(Scope3Emission.status.is_(None), func.lower(Scope3Emission.status) != "rejected")
-        )
-        s3_rows = s3_q.with_entities(
-            Scope3Emission.co2e,
-            Scope3Emission.uncertainty_pct,
-            Scope3Emission.uncertainty,
-        ).all()
-        s3_total = sum((r[0] or 0) for r in s3_rows)
-        s3_unc_var = sum(
-            ((_norm_unc(r[1], r[2], 0.10) * (r[0] or 0)) ** 2) for r in s3_rows
-        )
-
-        total_inventory = s1_total + s2_total + s3_total
-        total_unc_var = s1_unc_var + s2_unc_var + s3_unc_var
-
-        overall_uncertainty = (
-            (total_unc_var ** 0.5) / total_inventory if total_inventory > 0 else 0
-        )
+        cy = datetime.now(timezone.utc).year
+        if year_arg and year_arg not in ["all", ""]:
+            unc_year = int(year_arg)
+        else:
+            unc_year = db.session.query(func.max(Emission.year)).filter(
+                Emission.status == "Verified", Emission.year <= cy).scalar() or cy
+        unc = {sc: inventory_uncertainty(unc_year, allowed_fids=allowed_fids, scope=sc) for sc in ("all", "1", "2", "3")}
+        overall_uncertainty = unc["all"]["inventory_uncertainty_decimal"]
+        s1_total = unc["1"]["total_inventory_emissions"]
+        s2_total = unc["2"]["total_inventory_emissions"]
+        s3_total = unc["3"]["total_inventory_emissions"]
 
         # ── Diagnostic & Data Health Analysis (SQL-speed) ───────────────────
         cutoff_30d = datetime.now(timezone.utc) - timedelta(days=30)
@@ -598,9 +550,13 @@ def get_qaqc_dashboard():
             "offset": offset,
             "tier1_uncertainty": {
                 "overall": overall_uncertainty,
-                "scope1": (s1_unc_var ** 0.5) / s1_total if s1_total > 0 else 0,
-                "scope2": (s2_unc_var ** 0.5) / s2_total if s2_total > 0 else 0,
-                "scope3": (s3_unc_var ** 0.5) / s3_total if s3_total > 0 else 0,
+                "scope1": unc["1"]["inventory_uncertainty_decimal"],
+                "scope2": unc["2"]["inventory_uncertainty_decimal"],
+                "scope3": unc["3"]["inventory_uncertainty_decimal"],
+                "confidence_level_pct": 95,
+                "coverage_factor": 2,
+                "year": unc_year,
+                "status_basis": "Verified",
                 "s1_total_tco2e": s1_total,
                 "s2_total_tco2e": s2_total,
                 "s3_total_tco2e": s3_total,

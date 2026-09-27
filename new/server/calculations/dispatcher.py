@@ -1,6 +1,7 @@
 import math
 
 from .units import UnitError
+from .uncertainty import COVERAGE_FACTOR_95
 import math
 from .combustion import CombustionCalculator, FlaringCalculator, factor_hhv_unit
 from .vented import (
@@ -263,7 +264,54 @@ class CalculationDispatcher:
                     return res
         return default
 
-    def dispatch(
+    def dispatch(self, process_type, inputs, emission_factors, uncertainties=None, gwp_dict=None, gwp_standard=None):
+        """Run the calculator, then apply the audit RC-10 uncertainty rules to every result.
+
+        - BUG-025: meter (activity-data) and GC (composition) uncertainty overrides are applied to
+          every gas result whichever calculator ran (they were collected but never used).
+        - BUG-008: the EF and AD components (1-sigma) are exposed as `uncertainty_components` so
+          the record can store them and the inventory can correlate the EF part.
+        """
+        if uncertainties is None:
+            uncertainties = {}
+        res = self._dispatch_impl(process_type, inputs, emission_factors, uncertainties,
+                                  gwp_dict=gwp_dict, gwp_standard=gwp_standard)
+        if not isinstance(res, dict) or "results" not in res:
+            return res
+        calc_inputs = (inputs.get("calc_inputs") or {}).get(process_type, {}) if isinstance(inputs, dict) else {}
+        flat = {**(inputs or {}), **(calc_inputs or {})}
+
+        def pct(key):
+            v = flat.get(key)
+            if v in (None, "", "-"):
+                return None
+            x = float(v)
+            if not math.isfinite(x) or x < 0 or x > 200:
+                raise ValueError(f"'{key}' must be a percentage between 0 and 200")
+            return x / 100.0  # entered as a 95 % half-width, like catalog uncertainties
+
+        meter, gc = pct("meter_uncertainty_pct"), pct("gc_uncertainty_pct")
+        comps = {}
+        for gas in ("co2", "ch4", "n2o"):
+            r = res["results"].get(gas)
+            if not isinstance(r, dict) or "value" not in r:
+                continue
+            if meter is not None or gc is not None:
+                u_ef95 = float(r.get("ef_uncertainty_1sigma") or 0.0) * COVERAGE_FACTOR_95
+                u_ad95 = meter if meter is not None else float(r.get("ad_uncertainty_1sigma") or 0.0) * COVERAGE_FACTOR_95
+                new = propagate_uncertainty(r["value"], ef_uncertainty=u_ef95, activity_uncertainty=u_ad95,
+                                            composition_uncertainty=gc if gc is not None else (
+                                                float(r.get("comp_uncertainty_1sigma") or 0.0) * COVERAGE_FACTOR_95 or None),
+                                            gas=gas)
+                r.update(new)
+            if r.get("value"):
+                comps[f"ef_{gas}"] = r.get("ef_uncertainty_1sigma")
+                comps.setdefault("activity", r.get("ad_uncertainty_1sigma"))
+        if comps:
+            res["uncertainty_components"] = comps
+        return res
+
+    def _dispatch_impl(
         self,
         process_type,
         inputs,
