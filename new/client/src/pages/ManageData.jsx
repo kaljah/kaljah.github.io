@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import api from '../api';
+import { apiError } from '../utils/apiError';
 import CustomDropdown from '../components/CustomDropdown';
 
 import ColumnMappingWizard from '../components/ColumnMappingWizard';
@@ -172,7 +173,7 @@ const ManageDataInner = () => {
             toast.success('SBTi Target saved successfully');
             setHasSbti(true);
         } catch (e) {
-            toast.error('Failed to save SBTi Target');
+            toast.error(apiError(e, 'Failed to save SBTi Target'));
         }
     };
 
@@ -748,7 +749,7 @@ const ManageDataInner = () => {
                 regions.unshift(userLoc);
             }
             setAvailableFilters(prev => ({ ...prev, regions }));
-        } catch (err) { console.error(err); }
+        } catch (err) { console.error(err); toast.error(apiError(err, 'Failed to load facilities')); }
     };
 
     const fetchCustomFactors = async () => {
@@ -756,7 +757,7 @@ const ManageDataInner = () => {
             const res = await api.get('/custom-factors');
             const data = Array.isArray(res.data) ? res.data : (res.data?.data || []);
             setCustomFactors(data);
-        } catch (err) { console.error(err); }
+        } catch (err) { console.error(err); toast.error(apiError(err, 'Failed to load custom factors')); }
     };
 
     const fetchProduction = async () => {
@@ -766,7 +767,7 @@ const ManageDataInner = () => {
             setProductionData(data);
             const years = [...new Set(data.map(d => d.year))].sort((a, b) => b - a);
             setAvailableFilters(prev => ({ ...prev, years }));
-        } catch (err) { console.error(err); }
+        } catch (err) { console.error(err); toast.error(apiError(err, 'Failed to load production')); }
     };
 
     const fetchSources = async () => {
@@ -774,7 +775,7 @@ const ManageDataInner = () => {
             const res = await api.get('/sources');
             const data = Array.isArray(res.data) ? res.data : (res.data?.data || []);
             setSources(data);
-        } catch (err) { console.error(err); }
+        } catch (err) { console.error(err); toast.error(apiError(err, 'Failed to load sources')); }
     };
 
     const fetchMitigations = async () => {
@@ -782,7 +783,7 @@ const ManageDataInner = () => {
             const res = await api.get('/mitigation');
             const data = Array.isArray(res.data) ? res.data : (res.data?.data || []);
             setMitigations(data);
-        } catch (err) { console.error(err); }
+        } catch (err) { console.error(err); toast.error(apiError(err, 'Failed to load mitigations')); }
     };
 
   const fetchCbamExports = async () => {
@@ -790,7 +791,7 @@ const ManageDataInner = () => {
       const res = await api.get('/data/cbam-exports');
       setCbamExports(res.data || []);
     } catch (err) {
-      console.error(err);
+      console.error(err); toast.error(apiError(err, 'Failed to load cbam exports'));
     }
   };
 
@@ -799,7 +800,7 @@ const ManageDataInner = () => {
             const res = await api.get('/data/ogmp-surveys');
             const data = Array.isArray(res.data) ? res.data : (res.data?.data || []);
             setOgmpSurveys(data);
-        } catch (err) { console.error(err); }
+        } catch (err) { console.error(err); toast.error(apiError(err, 'Failed to load ogmp surveys')); }
     };
 
     const fetchGoals = async () => {
@@ -807,14 +808,14 @@ const ManageDataInner = () => {
             const res = await api.get('/goals');
             const data = Array.isArray(res.data) ? res.data : (res.data?.data || []);
             setGoals(data);
-        } catch (err) { console.error('Failed to fetch goals:', err); }
+        } catch (err) { console.error('Failed to fetch goals:', err); toast.error(apiError(err, 'Failed to load emission goals')); }
     };
 
     const fetchBaseYears = async () => {
         try {
             const res = await api.get('/base-years');
             setBaseYearsData(res.data || { active_year: null, active_record: null, history: [] });
-        } catch (err) { console.error('Failed to fetch base years:', err); }
+        } catch (err) { console.error('Failed to fetch base years:', err); toast.error(apiError(err, 'Failed to load base years')); }
     };
 
     const handleSaveGoal = async () => {
@@ -927,10 +928,12 @@ const ManageDataInner = () => {
                 ? `${facilityForm.boundary_type} - ${facilityForm.boundary_detail}`
                 : facilityForm.boundary_type;
 
-            await api.post('/facilities', {
-                ...facilityForm,
-                boundary_notes: fullBoundary // Map back to API field
+            // BUG-045: optional numeric fields are omitted when empty (the server used to 500 on "")
+            const body = { ...facilityForm, boundary_notes: fullBoundary };
+            ['latitude', 'longitude', 'equity_share_pct'].forEach((k) => {
+                if (body[k] === '' || body[k] === null || body[k] === undefined) delete body[k];
             });
+            await api.post('/facilities', body);
             toast.success('Region added!');
             setFacilityForm({
                 name: '', activity: '', division: '', field: '', location: '',
@@ -938,7 +941,7 @@ const ManageDataInner = () => {
                 segment: '', latitude: '', longitude: ''
             });
             fetchFacilities();
-        } catch (err) { toast.error('Failed to add region'); }
+        } catch (err) { toast.error(apiError(err, 'Failed to add region')); }
     };
 
     const handleSaveFactor = async () => {
@@ -954,7 +957,7 @@ const ManageDataInner = () => {
             setFactorForm({ factor_name: '', parent_fuel: '', unit: 'scf', co2_factor: '', ch4_factor: '', n2o_factor: '', co_factor: '', co2_uncertainty: '', ch4_uncertainty: '', n2o_uncertainty: '', source: '', description: '' });
             setEditingFactorId(null);
             fetchCustomFactors();
-        } catch (err) { toast.error('Failed to save factor'); }
+        } catch (err) { toast.error(apiError(err, 'Failed to save factor')); }
     };
 
     const handleDeleteFactor = (id) => {
@@ -968,9 +971,18 @@ const ManageDataInner = () => {
                     await api.delete(`/custom-factors/${id}`);
                     toast.success('Factor deleted!');
                     fetchCustomFactors();
-                } catch (err) { toast.error('Failed to delete factor'); }
+                } catch (err) { toast.error(apiError(err, 'Failed to delete factor')); }
             }
         });
+    };
+
+    // BUG-056: a factor used by records cannot be deleted; archiving hides it from new entries
+    const handleArchiveFactor = async (id) => {
+        try {
+            await api.post(`/custom-factors/${id}/archive`, {});
+            toast.success('Factor archived');
+            fetchCustomFactors();
+        } catch (err) { toast.error(apiError(err, 'Failed to archive factor')); }
     };
 
     const handleEditFactor = (factor) => {
@@ -1018,7 +1030,7 @@ const ManageDataInner = () => {
                 crude_oil_mmboe: '', condensate_mmboe: '', lpg_mmboe: '',
                 total_production_mmboe: '', saleable_production_mmboe: ''
             }));
-        } catch (err) { toast.error('Failed to save production'); }
+        } catch (err) { toast.error(apiError(err, 'Failed to save production')); }
     };
 
     const handleSaveSource = async () => {
@@ -1028,7 +1040,7 @@ const ManageDataInner = () => {
             toast.success('Source added!');
             fetchSources();
             setSourceForm({ ...sourceForm, name: '', equipment_id: '', fuel_type: '', design_capacity: '', description: '' });
-        } catch (err) { toast.error('Failed to add source'); }
+        } catch (err) { toast.error(apiError(err, 'Failed to add source')); }
     };
 
     const handleSaveMitigation = async () => {
@@ -1038,7 +1050,7 @@ const ManageDataInner = () => {
             toast.success('Mitigation record saved!');
             fetchMitigations();
             setMitigationForm({ ...mitigationForm, quantity_tco2e: '', notes: '', reference_id: '', name: '' });
-        } catch (err) { toast.error('Failed to save mitigation'); }
+        } catch (err) { toast.error(apiError(err, 'Failed to save mitigation')); }
     };
 
   const handleSaveCbamExport = async () => {
@@ -1086,7 +1098,7 @@ const ManageDataInner = () => {
           toast.success('CBAM export record deleted');
           fetchCbamExports();
         } catch (err) {
-          toast.error('Failed to delete CBAM record');
+          toast.error(apiError(err, 'Failed to delete CBAM record'));
         }
       }
     });
@@ -1134,7 +1146,7 @@ const ManageDataInner = () => {
                     toast.success('OGMP survey record deleted');
                     fetchOgmpSurveys();
                 } catch (err) {
-                    toast.error('Failed to delete OGMP survey');
+                    toast.error(apiError(err, 'Failed to delete OGMP survey'));
                 }
             }
         });
@@ -1587,7 +1599,7 @@ const ManageDataInner = () => {
                                             }}>
                                                 <AlertCircle size={16} style={{ flexShrink: 0, marginTop: '2px' }} />
                                                 <span>
-                                                    Rejecting will permanently delete the staged record from the pending queue. The reason will be recorded for audit and compliance.
+                                                    The record will be marked Rejected and excluded from totals; it is kept for the audit trail. The submitter is notified with your reason.
                                                 </span>
                                             </div>
 
@@ -2436,6 +2448,7 @@ const ManageDataInner = () => {
                                                     <td style={{ color: f.n2o_uncertainty ? '#8b5cf6' : 'inherit' }}>{f.n2o_uncertainty ? `±${f.n2o_uncertainty}%` : '—'}</td>
                                                     <td>
                                                         <button onClick={() => handleEditFactor(f)}>Edit</button>
+                                                        <button onClick={() => handleArchiveFactor(f.id)} title="Hide from new entries; records that use it keep it">Archive</button>
                                                         <button onClick={() => handleDeleteFactor(f.id)}>Delete</button>
                                                     </td>
                                                 </tr>

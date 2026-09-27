@@ -3255,18 +3255,24 @@ const Scope1Form = () => {
                         }}
                       >
                         {formatNumber(entry.co2e_total, 3)}
-                        {entry.status === "Draft" && (
+                        {/* BUG-092: every record shows its maker-checker status */}
+                        {entry.status && (
                           <span
+                            title={`Status: ${entry.status}`}
                             style={{
                               marginLeft: "8px",
                               fontSize: "0.65rem",
-                              background: "#fee2e2",
-                              color: "#b91c1c",
                               padding: "1px 5px",
                               borderRadius: "4px",
+                              ...({
+                                Verified: { background: "#dcfce7", color: "#166534" },
+                                Pending: { background: "#fef9c3", color: "#854d0e" },
+                                Rejected: { background: "#fee2e2", color: "#b91c1c" },
+                                Draft: { background: "#e0e7ff", color: "#3730a3" },
+                              }[entry.status] || { background: "#f1f5f9", color: "#334155" }),
                             }}
                           >
-                            Draft
+                            {entry.status}
                           </span>
                         )}
                       </td>
