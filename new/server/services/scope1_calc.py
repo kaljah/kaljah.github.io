@@ -88,7 +88,10 @@ def validate_activity(payload, require_unit):
         raise ValidationError("'unit' is required for the activity amount", "unit")
     # one activity representation: calc_inputs must not contradict the top-level activity
     ci = (payload.get("calc_inputs") or {}).get(payload.get("process_type") or "") or {}
-    if isinstance(ci, dict) and amount is not None and ci.get("amount") not in (None, ""):
+    tier12 = str(payload.get("factor_source") or "default").lower() in ("default", "custom")
+    # Tier 3 engineering forms carry method-specific inputs in calc_inputs (e.g. the completions
+    # event count), so the "one activity representation" rule applies to catalog/custom factors.
+    if tier12 and isinstance(ci, dict) and amount is not None and ci.get("amount") not in (None, ""):
         ci_amt = parse_number(ci.get("amount"), "calc_inputs.amount", min_value=0)
         ci_unit = str(ci.get("unit") or payload.get("unit") or "").strip().lower()
         top_unit = str(payload.get("unit") or "").strip().lower()

@@ -199,6 +199,7 @@ const MethaneIntensity = () => {
         tFlaringEm = 0;
       let wCh4Sum = 0,
         tCh4Tonnes = 0,
+        tCh4WithGas = 0,
         tWecFee = 0;
 
       let upGasM3 = 0,
@@ -210,8 +211,8 @@ const MethaneIntensity = () => {
         const boe = d.total_boe || 0;
         const gasM3 = d.total_gas_m3 || (d.total_gas || 0) * 28.3168;
         const ch4Tonnes = d.total_ch4 || 0;
-        // Use stored Facility.segment — exact match: "Upstream", "Midstream", or "Downstream".
-        const seg = (d.segment || "").trim().toLowerCase();
+        // BUG-086: one server-side segment classifier (segment_category) for KPI cards, trend and targets
+        const seg = d.segment_category || "";
 
         tOil += d.total_oil || 0;
         tGasMscf += d.total_gas || 0;
@@ -219,11 +220,13 @@ const MethaneIntensity = () => {
         tFlaringVol += d.flaring_volume || 0;
         tFlaringEm += d.flaring_emissions || 0;
         tCh4Tonnes += ch4Tonnes;
+        if (gasM3 > 0) tCh4WithGas += ch4Tonnes; // loss-rate numerator: facilities with gas production
         tWecFee += d.wec_fee_usd || 0;
-        if (seg === "midstream") {
+        // loss rate numerator and denominator cover the same facilities (those with gas production)
+        if (seg === "midstream" && gasM3 > 0) {
           midGasM3 += gasM3;
           midCh4Tonnes += ch4Tonnes;
-        } else if (seg === "upstream") {
+        } else if (seg === "upstream" && gasM3 > 0) {
           upGasM3 += gasM3;
           upCh4Tonnes += ch4Tonnes;
         }
@@ -237,7 +240,7 @@ const MethaneIntensity = () => {
       });
 
       // Methane density at standard conditions = 0.6785 kg/m3
-      const totalCh4VolM3 = (tCh4Tonnes * 1000.0) / 0.6785;
+      const totalCh4VolM3 = (tCh4WithGas * 1000.0) / 0.6785;
       const avgLossRatePct =
         tGasM3 > 0 ? (totalCh4VolM3 / tGasM3) * 100.0 : 0.0;
 
@@ -617,28 +620,15 @@ const MethaneIntensity = () => {
         const gasM3 = d.total_gas_m3 || (d.total_gas || 0) * 28.3168;
         const ch4Tonnes = d.total_ch4 || 0;
         const volM3 = (ch4Tonnes * 1000.0) / 0.6785;
-        const seg = (d.segment || "").trim().toLowerCase();
+        const seg = d.segment_category || ""; // BUG-086
 
         tGasM3 += gasM3;
-        tCh4VolM3 += volM3;
+        if (gasM3 > 0) tCh4VolM3 += volM3;
 
-        if (
-          seg === "midstream" ||
-          seg.includes("midstream") ||
-          seg.includes("processing") ||
-          seg.includes("lng") ||
-          seg.includes("lsh") ||
-          seg.includes("gnl") ||
-          seg.includes("gpl")
-        ) {
+        if (seg === "midstream" && gasM3 > 0) {
           midGas += gasM3;
           midCh4 += volM3;
-        } else if (
-          seg === "upstream" ||
-          seg.includes("upstream") ||
-          seg.includes("production") ||
-          seg.includes("exploration")
-        ) {
+        } else if (seg === "upstream" && gasM3 > 0) {
           upGas += gasM3;
           upCh4 += volM3;
         }
@@ -1453,10 +1443,12 @@ const MethaneIntensity = () => {
             </div>
             <div style={{ height: "300px" }}>
               <BarChart
-                data={regionalData.map((d) => ({
-                  name: d.facility_name,
-                  value: d.methane_loss_rate_pct || 0,
-                }))}
+                data={regionalData
+                  .filter((d) => d.methane_loss_rate_pct != null) /* BUG-088: no gas production = no rate */
+                  .map((d) => ({
+                    name: d.facility_name,
+                    value: d.methane_loss_rate_pct,
+                  }))}
                 dataKey="value"
                 xKey="name"
                 color="#2563eb"
@@ -1631,18 +1623,17 @@ const MethaneIntensity = () => {
                         const record = yData.data.find(
                           (r) => r.facility_id === facData.facility_id,
                         );
-                        const rawVal = record
-                          ? record.methane_loss_rate_pct || 0
-                          : 0;
+                        const missing = record && record.methane_loss_rate_pct == null && record.total_ch4 > 0;
+                        const rawVal = record ? record.methane_loss_rate_pct || 0 : 0;
                         const numVal = Number(rawVal);
                         const val = isFinite(numVal) ? numVal : 0;
                         return (
                           <div
                             key={yData.year}
-                            className={`heatmap-cell ${getHeatmapClass(val)}`}
-                            title={`${yData.year} Loss Rate: ${val.toFixed(3)}%`}
+                            className={`heatmap-cell ${missing ? "" : getHeatmapClass(val)}`}
+                            title={missing ? `${yData.year}: methane reported but no gas production recorded` : `${yData.year} Loss Rate: ${val.toFixed(3)}%`}
                           >
-                            {val > 0 ? `${val.toFixed(3)}%` : "-"}
+                            {missing ? "n/a" : val > 0 ? `${val.toFixed(3)}%` : "-"}
                           </div>
                         );
                       })}

@@ -407,6 +407,7 @@ class TestCompletions:
             'ch4_content': 0.85,
             'comp_method': 'rate_duration',
             'comp_rate': 10.0,
+            'comp_rate_unit': 'mscf/day',  # audit BUG-011: default unit is now the form's Mcf/hr
             'comp_duration': 24.0
         }
         rate_scf_hr = (10.0 * 1000) / 24

@@ -26,11 +26,12 @@ class ComponentFugitiveCalculator(BaseCalculator):
         for comp_type, data in component_counts.items():
             if isinstance(data, dict):
                 count = data.get("count", 0)
-                ef = data.get("ef", 0)
-                ef_unit = str(data.get("unit") or data.get("ef_unit") or "").lower()
-                is_methane = bool(data.get("is_methane")) or any(
-                    x in ef_unit for x in ["ch4", "methane", "ch_4"]
-                )
+                ef_unit = str(data.get("unit") or data.get("ef_unit") or "kg TOC/hr/component")
+                # BUG-048: numerator mass (t/kg) and gas (CH4 incl. "CH₄") come from the unit
+                from .units import per_source_hour_kg
+
+                ef, unit_is_ch4 = per_source_hour_kg(data.get("ef", 0), ef_unit)
+                is_methane = bool(data.get("is_methane")) or unit_is_ch4
             else:
                 count = float(data or 0)
                 ef = 0.0
@@ -77,35 +78,16 @@ class EquipmentFugitiveCalculator(BaseCalculator):
         uncertainties = uncertainties or {}
         self.validate_inputs({"count": equipment_count, "ef": ef}, ["count", "ef"])
 
-        # Check if EF is already in tonnes
-        u_low = str(ef_unit or "kg/hr").lower().strip()
-        is_tonne = any(x in u_low for x in ["tonne", " mt", "t/", "tco2", "tch4"]) or u_low.startswith("t ") or u_low == "t"
-        # Check if EF is already methane-based (do not match substrings like 'component')
-        is_methane = any(x in u_low for x in ["ch4", "methane", "ch_4"])
+        # BUG-048: parse the unit (subscript CH4, tonne vs kg, hourly vs annual)
+        from .units import per_source_hour_kg
 
+        kg_per_hr, is_methane = per_source_hour_kg(ef, ef_unit or "kg CH4/hr/source")
         c_ch4 = float(ch4_content if ch4_content is not None else 0.85)
         if c_ch4 > 1.0:
             c_ch4 /= 100.0
         c_ch4 = max(0.0, min(1.0, c_ch4))
-
-        total_ch4_raw = equipment_count * ef
-        if not is_methane:
-            total_ch4_raw *= c_ch4
-
-        # Determine annual tonnes
-        if "yr" in u_low or "year" in u_low:
-            # Factor is already annual
-            if is_tonne:
-                total_ch4_tonnes_year = total_ch4_raw
-            else:
-                total_ch4_tonnes_year = total_ch4_raw / 1000.0
-        else:
-            # Factor is hourly (default for API fugitive components)
-            total_ch4_annual_raw = total_ch4_raw * 8760
-            if is_tonne:
-                total_ch4_tonnes_year = total_ch4_annual_raw
-            else:
-                total_ch4_tonnes_year = total_ch4_annual_raw / 1000.0
+        scaling = 1.0 if is_methane else c_ch4
+        total_ch4_tonnes_year = equipment_count * kg_per_hr * scaling * 8760.0 / 1000.0
 
         _tier = resolve_tier(uncertainties.get("_factor_source", "default"))
         ch4_res = propagate_uncertainty(
