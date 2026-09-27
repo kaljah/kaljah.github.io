@@ -1802,7 +1802,7 @@ const Scope1Form = () => {
       <div className="calc-panel s1-form">
         <h2 className="s1-form-title">New entry</h2>
 
-        <Section n={1} title="Where & when">
+        <Section n={1} title="Identity & Location">
           <FieldGrid min={180}>
             <div className="input-group s1-span-2">
               <label>Region</label>
@@ -1876,7 +1876,7 @@ const Scope1Form = () => {
           </div>
         </Section>
 
-        <Section n={2} title="What & how">
+        <Section n={2} title="Process & Source Details">
           <div className="s1-stack">
             <div className="input-group">
               <label>Process</label>
@@ -2389,7 +2389,7 @@ const Scope1Form = () => {
           </div>
         </Section>
 
-        <Section n={3} title="Inputs">
+        <Section n={3} title="Activity Data">
           <div className="s1-inputs">{renderSpecificForm()}</div>
           <MoreOptions label="Uncertainty">
           <div className="form-grid-3">
