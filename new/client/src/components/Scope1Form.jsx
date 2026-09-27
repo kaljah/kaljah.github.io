@@ -3041,7 +3041,7 @@ const Scope1Form = () => {
             <option value="">All Processes</option>
             {Object.keys(PROCESS_TYPES).map((p) => (
               <option key={p} value={p}>
-                {PROCESS_TYPES[p]?.label || p}
+                {typeof PROCESS_TYPES[p] === "string" ? PROCESS_TYPES[p] : PROCESS_TYPES[p]?.label || p}
               </option>
             ))}
           </select>
