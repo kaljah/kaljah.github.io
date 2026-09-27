@@ -97,109 +97,100 @@ def convert_fugitive_flow_to_kg_hr(value: float, unit: str, ch4_mol: float = 0.8
     return {"ch4_kg_hr": ch4_kg, "co2_kg_hr": co2_kg}
 
 
-# Facility-type ids used by the Scope 1 form and the API (Table 7-1 gas / Table 7-2 oil)
-FACILITY_TYPE_KEYS = {
-    "gas_pad_nodehy": "Facility - Gas Well Pad / Battery (Without Dehydrator)",
-    "gas_pad_dehy": "Facility - Gas Well Pad / Battery (With Dehydrator)",
-    "central_gas": "Facility - Central Gas Production Facility",
-    "oil_pad_light": "Facility - Oil Well Pad / Battery (Light Crude)",
-    "oil_pad_heavy": "Facility - Oil Well Pad / Battery (Heavy Crude)",
-    "central_oil": "Facility - Central Oil Treatment / Battery",
+# API Compendium 2021 Table 7-8 - facility-level average equipment leak factors for onshore
+# production, per unit of production (tonnes CH4). Gas factors are on a 78.8 mol % CH4 basis.
+TABLE_7_8 = {
+    "oil_production": {"bbl": 2.346e-04, "m3": 1.476e-03, "basis": None,
+                       "name": "Facility - Onshore Oil Production (Table 7-8)"},
+    "gas_production": {"mmscf": 2.601e-02, "mm_m3": 9.184e-01, "basis": 0.788,
+                       "name": "Facility - Onshore Gas Production (Table 7-8)"},
 }
+FACILITY_TYPE_KEYS = {k: v["name"] for k, v in TABLE_7_8.items()}
 
 
 class OnshoreFacilityFugitiveCalculator(BaseCalculator):
     """
-    Tier 1: Facility-Level Average Factors
-    Governing Standard: API Compendium 2021 §7.2.2, Table 7-1 (Gas) & Table 7-2 (Oil)
+    Tier 1: facility-level average factors on production throughput.
+    Governing Standard: API Compendium 2021 section 7.2.2.1, Table 7-8 (Equation 7-7).
     """
+
     def __init__(self):
-        super().__init__("Onshore Facility-Level Fugitives", "Section 7.2.2")
+        super().__init__("Onshore Facility-Level Fugitives", "Section 7.2.2.1")
+
+    @staticmethod
+    def _production_in_table_unit(ftype, production, unit):
+        from .units import norm_unit
+
+        u = norm_unit(unit or "")
+        if ftype == "oil_production":
+            if u in ("bbl", "bbls", "barrel", "barrels"):
+                return float(production), "bbl"
+            if u in ("m3", "sm3"):
+                return float(production), "m3"
+            raise ValueError(f"Oil production must be in bbl or m3 (got '{unit}')")
+        scale = {"scf": 1e-6, "mscf": 1e-3, "mcf": 1e-3, "mmscf": 1.0, "bcf": 1e3}
+        if u in scale:
+            return float(production) * scale[u], "mmscf"
+        if u in ("m3", "sm3"):
+            return float(production) * 1e-6, "mm_m3"
+        if u in ("mm3", "mmm3", "10^6m3", "e6m3"):
+            return float(production), "mm_m3"
+        raise ValueError(f"Gas production must be in scf / Mcf / MMscf or m3 (got '{unit}')")
 
     def calculate(
         self,
-        facility_count: float,
+        production: float,
+        production_unit: str,
         facility_type: str,
-        operating_days: float = 365.25,
-        factor_id: str = None,
-        custom_ef: float = None,
-        ef_unit: str = "tonne CH4/facility/day",
+        ch4_content: float = None,
         uncertainties: dict = None,
         gwp_dict: dict = None,
     ) -> dict:
-        self.validate_inputs(
-            {"facility_count": facility_count, "operating_days": operating_days},
-            ["facility_count", "operating_days"],
-        )
-        if facility_count < 0:
-            raise ValueError("Facility count cannot be negative")
-        if operating_days < 0 or operating_days > 366:
-            raise ValueError(f"Operating days ({operating_days}) must be between 0 and 366 days/year")
-
+        ftype = str(facility_type or "").strip().lower()
+        if ftype not in TABLE_7_8:
+            by_name = {v["name"].lower(): k for k, v in TABLE_7_8.items()}
+            ftype = by_name.get(ftype, ftype)
+        if ftype not in TABLE_7_8:
+            raise ValueError(
+                f"Unknown facility type '{facility_type}' for facility-level fugitives; use oil_production "
+                f"or gas_production (API Compendium 2021 Table 7-8, per unit of production)"
+            )
+        self.validate_inputs({"production": production}, ["production"])
+        if float(production) < 0:
+            raise ValueError("Production cannot be negative")
         uncertainties = uncertainties or {}
-
-        # Resolve factor
-        ef_val = 0.0
-        table_ref = "Table 7-1 / Table 7-2"
-        f_type_clean = str(facility_type or "").lower()
-
-        if custom_ef is not None:
-            ef_val = float(custom_ef)
-            table_ref = "Custom Facility Factor"
-        else:
-            # BUG-110: exact facility-type keys only; an unknown type is an error, never a silent
-            # fallback to the light-crude well pad factor
-            key = FACILITY_TYPE_KEYS.get(f_type_clean.strip())
-            if key is None:
-                key = next((k for k in FACILITY_TYPE_KEYS.values() if k.lower() == f_type_clean.strip()), None)
-            if key is None:
-                raise ValueError(
-                    f"Unknown facility type '{facility_type}' for facility-level fugitives; "
-                    f"use one of: {', '.join(sorted(FACILITY_TYPE_KEYS))}"
-                )
-            factor_meta = API_CHAPTER7_ONSHORE_FACTORS[key]
-
-            ef_val = factor_meta["factor_value"]
-            table_ref = factor_meta["API_table"]
-            ef_unit = factor_meta["factor_unit"]
-
-        # Calculation: Count * EF * Operating Days
-        total_ch4_tonnes = float(facility_count) * ef_val * float(operating_days)
-        total_co2_tonnes = 0.0  # Facility-level API factors are pure CH4
+        row = TABLE_7_8[ftype]
+        qty, tunit = self._production_in_table_unit(ftype, production, production_unit)
+        ef = row[tunit]
+        scale = 1.0
+        if ch4_content not in (None, "") and row["basis"]:
+            c = float(ch4_content)
+            c = c / 100.0 if c > 1.0 else c
+            scale = c / row["basis"]
+        total_ch4 = qty * ef * scale
 
         _tier = resolve_tier(uncertainties.get("_factor_source", "default"))
+        u_ef = 0.955 if ftype == "oil_production" else 0.529  # Table 7-8, 95 % half-widths
         ch4_res = propagate_uncertainty(
-            total_ch4_tonnes,
-            resolve_ef_uncertainty("fugitive_facility", "ch4", _tier, uncertainties.get("ch4", 0.50)),
-            tier=_tier,
-            process_category="fugitive_facility",
-            gas="ch4",
+            total_ch4,
+            resolve_ef_uncertainty("fugitive_facility", "ch4", _tier, uncertainties.get("ch4", u_ef)),
+            tier=_tier, process_category="fugitive_facility", gas="ch4",
         )
         co2_res = propagate_uncertainty(0.0, 0.0, tier=_tier, process_category="fugitive_facility", gas="co2")
-        total_co2e = calculate_co2e(co2=0.0, ch4=total_ch4_tonnes, gwp_dict=gwp_dict)
-
-        audit_trace = {
-            "api_section": "Section 7.2.2",
-            "api_table": table_ref,
-            "methodology": "Tier 1: Facility-Level Average Factor",
-            "activity_inputs": {
-                "facility_count": facility_count,
-                "operating_days": operating_days,
-                "facility_type": facility_type,
-            },
-            "factor_used": {
-                "factor_value": ef_val,
-                "factor_unit": ef_unit,
-                "time_basis": "daily",
-            },
-            "math_trace": f"{facility_count} facilities * {ef_val} {ef_unit} * {operating_days} days = {total_ch4_tonnes:.5f} tonnes CH4/yr",
-            "co2e_total": total_co2e,
-        }
-
+        total_co2e = calculate_co2e(co2=0.0, ch4=total_ch4, gwp_dict=gwp_dict)
         return {
             "results": {"ch4": ch4_res, "co2": co2_res, "n2o": 0.0},
             "total_co2e": total_co2e,
-            "intermediate": audit_trace,
+            "intermediate": {
+                "api_section": "Section 7.2.2.1",
+                "api_table": "Table 7-8",
+                "methodology": "Tier 1: Facility-Level Average Factor (production basis)",
+                "activity_inputs": {"production": production, "production_unit": production_unit,
+                                    "facility_type": ftype},
+                "factor_used": {"factor_value": ef, "factor_unit": f"tonne CH4/{tunit}", "ch4_scale": scale},
+                "math_trace": f"{qty:g} {tunit} x {ef:g} t CH4/{tunit} x {scale:.4f} = {total_ch4:.5f} t CH4",
+                "co2e_total": total_co2e,
+            },
         }
 
 
@@ -238,6 +229,11 @@ class OnshoreEquipmentFugitiveCalculator(BaseCalculator):
         from .units import per_source_hour_kg
 
         ef_val = float(factor_value or 0.0)
+        if ef_val <= 0:
+            # never a silent zero (BUG-015 class): the equipment factor comes from the catalog
+            # (Tables 7-9 / 7-10 / 7-29) or a custom factor
+            raise ValueError(f"No equipment-level emission factor for '{equipment_type}'; select a catalog "
+                             "equipment factor (API 2021 Tables 7-9 / 7-10 / 7-29) or a custom factor")
         kg_per_hr, _is_ch4 = per_source_hour_kg(ef_val, factor_unit or "tonne CH4/well/hr")
         total_ch4 = float(equipment_count) * kg_per_hr * float(operating_hours) / 1000.0
         kg_per_source_hour = kg_per_hr  # audit trace
@@ -351,6 +347,10 @@ class OnshoreComponentFugitiveCalculator(BaseCalculator):
 
             if count < 0:
                 raise ValueError(f"Component count for '{comp_name}' cannot be negative ({count})")
+            if count > 0 and not (float(ef or 0) > 0):
+                # never a silent zero (BUG-015 class)
+                raise ValueError(f"No component-level emission factor for '{comp_name}'; give its factor and "
+                                 "unit (catalog component factor or a custom factor)")
 
             # EF in kg TOC or kg CH4 per component-hour
             ef_kg_hr = ef_kg_hr_parsed if isinstance(data, dict) else ef

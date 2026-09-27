@@ -76,7 +76,9 @@ def test_tank_flashing_calculator_null_gor():
     )
     assert res is not None
     assert "total_co2e" in res
-    assert res["total_co2e"] == 0.0
+    # BUG-102: a missing GOR no longer means zero emissions. API Compendium 2021 Table 6-22, large tank
+    # without control: 0.193 kg CH4/bbl -> 1,000 bbl = 0.193 t CH4 (table basis, no composition given)
+    assert res["results"]["ch4"]["value"] == pytest.approx(0.193)
 
 def test_delete_mitigation_invalid_id_format(client, test_users):
     """Verify delete_mitigation returns 400 Bad Request on malformed ID instead of 500 crash."""

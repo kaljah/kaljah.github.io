@@ -394,8 +394,7 @@ class CompletionFlowbackCalculator(BaseCalculator):
     TABLE_6_7 = {
         ("gas", "uncontrolled"): {"ch4": 136.2, "scf": 8700000.0, "code": "CompOffshoreGas", "standard": "API Compendium 2021 §6.2.3.3, Table 6-7"},
         ("gas", "vented"): {"ch4": 136.2, "scf": 8700000.0, "code": "CompOffshoreGas", "standard": "API Compendium 2021 §6.2.3.3, Table 6-7"},
-        ("oil", "uncontrolled"): {"ch4": 136.2, "scf": 8700000.0, "code": "CompOffshoreGas", "standard": "API Compendium 2021 §6.2.3.3, Table 6-7"},
-        ("oil", "vented"): {"ch4": 136.2, "scf": 8700000.0, "code": "CompOffshoreGas", "standard": "API Compendium 2021 §6.2.3.3, Table 6-7"},
+        # Table 6-7 has no offshore oil-well row; oil wells are rejected rather than given the gas factor
     }
 
     DEFAULT_CH4_MOL_PCT = 0.816  # 81.6 mole % per API Footnote c
@@ -572,7 +571,10 @@ class CompletionFlowbackCalculator(BaseCalculator):
             is_offshore = str(location or "onshore").lower().strip() == "offshore"
             if is_offshore:
                 table_key = (well_type_norm, "uncontrolled")
-                entry = self.TABLE_6_7.get(table_key, self.TABLE_6_7[("gas", "uncontrolled")])
+                if table_key not in self.TABLE_6_7:
+                    raise ValueError("API Compendium 2021 Table 6-7 gives an offshore completion factor for gas "
+                                     "wells only; use a measured / engineering (Tier 3) method for this well")
+                entry = self.TABLE_6_7[table_key]
                 standard_ref = entry["standard"]
             elif is_hf:
                 table_key = (well_type_norm, "rec" if is_rec else "uncontrolled")
@@ -1945,319 +1947,8 @@ class LiquidsUnloadingCalculator(BaseCalculator):
 
 
 
-class BlowdownCalculator(BaseCalculator):
-    """
-    API Eq. 6-4: Vessel/Pipeline Blowdown (Depressurization)
-    V_std = V_physical * (P_vessel_abs / P_std) * (T_std / T_vessel_abs) * (1 / Z) * Events
-    Remediates CALC-06 by incorporating exact temperature and compressibility normalization.
-    """
-
-    def __init__(self):
-        super().__init__("Blowdown Events", "Section 6.4")
-
-    def calculate(
-        self,
-        blowdown_volume,
-        pressure,
-        events,
-        ch4_content,
-        uncertainties,
-        co2_content=0.0,
-        control_efficiency=0.0,
-        ef_co2=None,
-        ef_ch4=None,
-        ef_n2o=None,
-        operating_temperature=60.0,
-        temp_unit="F",
-        press_unit="psig",
-        z_factor=1.0,
-        hhv=1020.0,
-        gwp_dict=None,
-    ):
-        uncertainties = uncertainties or {}
-        self.validate_inputs(
-            {
-                "blowdown_volume": blowdown_volume,
-                "pressure": pressure,
-                "events": events,
-            },
-            ["blowdown_volume", "pressure", "events"],
-        )
-
-        # API Eq. 6-4: Vessel depressurization to standard atmospheric pressure
-        p_initial_psia = to_psia(pressure, press_unit)
-        p_factor = p_initial_psia / STD_PRESSURE_PSIA
-
-        t_abs_k = to_kelvin(operating_temperature, temp_unit)
-        t_factor = STD_TEMP_K / max(1.0, t_abs_k)
-
-        z = float(z_factor) if z_factor and float(z_factor) > 0 else 1.0
-
-        v_std_per_event = float(blowdown_volume) * p_factor * t_factor * (1.0 / z)
-        total_v_std = v_std_per_event * float(events)
-
-        c_ch4 = float(ch4_content if ch4_content is not None else 0.85)
-        if c_ch4 > 1.0:
-            c_ch4 /= 100.0
-        c_ch4 = max(0.0, min(1.0, c_ch4))
-
-        c_co2 = float(co2_content or 0.0)
-        if c_co2 > 1.0:
-            c_co2 /= 100.0
-        c_co2 = max(0.0, min(1.0, c_co2))
-
-        ch4_vol = total_v_std * c_ch4
-        ch4_mass_kg = ch4_vol * CONVERSIONS["density_ch4"]
-        ch4_tonnes = ch4_mass_kg / 1000.0
-
-        co2_vol = total_v_std * c_co2
-        co2_mass_kg = co2_vol * CONVERSIONS["density_co2"]
-        co2_tonnes = co2_mass_kg / 1000.0
-
-        ctrl_eff = float(control_efficiency or 0.0)
-        split = _split_vented_and_flared(
-            total_gas_m3=total_v_std,
-            ch4_tonnes=ch4_tonnes,
-            co2_tonnes=co2_tonnes,
-            ctrl_eff=ctrl_eff,
-            hhv=hhv,
-            ef_n2o=ef_n2o,
-        )
-        total_ch4 = split["total_ch4"]
-        total_co2 = split["total_co2"]
-        flared_n2o_tonnes = split["flared_n2o"]
-
-        ch4_res, co2_res, n2o_res = _propagate_vented_results(
-            total_ch4=total_ch4,
-            total_co2=total_co2,
-            flared_n2o=flared_n2o_tonnes,
-            uncertainties=uncertainties,
-            factor_source=uncertainties.get("_factor_source", "default"),
-            process_category="vented",
-        )
-
-        total_co2e = calculate_co2e(
-            ch4=total_ch4, co2=total_co2, n2o=flared_n2o_tonnes, gwp_dict=gwp_dict
-        )
-
-        return self.format_result(
-            ch4=ch4_res,
-            co2=co2_res,
-            n2o=n2o_res,
-            total_co2e=total_co2e,
-            inputs={
-                "blowdown_volume": blowdown_volume,
-                "pressure": pressure,
-                "events": events,
-                "ch4_content": ch4_content,
-                "co2_content": co2_content,
-                "control_efficiency": control_efficiency,
-                "operating_temperature": operating_temperature,
-            },
-            metadata={
-                "standard": "API Compendium Eq. 6-4 (T & P corrected)",
-                "temp_correction_applied": True,
-            },
-        )
-
-
-class TankFlashingCalculator(BaseCalculator):
-    def __init__(self):
-        super().__init__("Storage Tank Emissions", "Section 6.8")
-
-    def calculate(
-        self,
-        throughput,
-        gas_oil_ratio,
-        ch4_content,
-        control_efficiency,
-        uncertainties,
-        process_type="tank_flashing",
-        ef_ch4=0,
-        co2_content=0.0,
-        ef_co2=None,
-        ef_n2o=None,
-        hhv=1020.0,
-        gwp_dict=None,
-    ):
-        """
-        Calculates Tank Emissions (API Compendium Section 6.8 & EPA Subpart W §98.233(j)).
-        If Flashing: Uses GOR method with flared combustion products when control_efficiency > 0.
-        If Working/Breathing: Uses simple Factor * Throughput.
-        """
-        uncertainties = uncertainties or {}
-        self.validate_inputs({"throughput": throughput}, ["throughput"])
-
-        is_flashing = process_type in ["tank_flashing", "tank", "storage_tanks"] or (gas_oil_ratio and float(gas_oil_ratio) > 0 and not ef_ch4)
-
-        if is_flashing:
-            total_gas_scf = float(throughput) * float(gas_oil_ratio or 0.0)
-            total_gas_m3 = convert(total_gas_scf, "scf", "m3")
-
-            ch4_vol_scf = total_gas_scf * float(ch4_content if ch4_content is not None else 0.85)
-            ch4_vol_m3 = convert(ch4_vol_scf, "scf", "m3")
-            ch4_mass_kg = ch4_vol_m3 * CONVERSIONS["density_ch4"]
-            ch4_tonnes = ch4_mass_kg / 1000.0
-
-            co2_vol_scf = total_gas_scf * float(co2_content or 0.0)
-            co2_vol_m3 = convert(co2_vol_scf, "scf", "m3")
-            co2_mass_kg = co2_vol_m3 * CONVERSIONS["density_co2"]
-            co2_tonnes = co2_mass_kg / 1000.0
-
-            ctrl_eff = float(control_efficiency or 0.0)
-            split = _split_vented_and_flared(
-                total_gas_m3=total_gas_m3,
-                ch4_tonnes=ch4_tonnes,
-                co2_tonnes=co2_tonnes,
-                ctrl_eff=ctrl_eff,
-                hhv=hhv,
-                ef_n2o=ef_n2o,
-            )
-            total_ch4 = split["total_ch4"]
-            total_co2 = split["total_co2"]
-            flared_n2o_tonnes = split["flared_n2o"]
-
-            ch4_res, co2_res, n2o_res = _propagate_vented_results(
-                total_ch4=total_ch4,
-                total_co2=total_co2,
-                flared_n2o=flared_n2o_tonnes,
-                uncertainties=uncertainties,
-                factor_source=uncertainties.get("_factor_source", "default"),
-                process_category="tank_flashing",
-            )
-        else:
-            ctrl_eff = float(control_efficiency or 0.0)
-            if ctrl_eff > 1.0:
-                ctrl_eff /= 100.0
-            ctrl_eff = max(0.0, min(1.0, ctrl_eff))
-            ch4_kg = float(throughput) * float(ef_ch4 or 0.0) * (1.0 - ctrl_eff)
-            ch4_tonnes = ch4_kg / 1000.0
-            total_ch4 = ch4_tonnes
-            total_co2 = 0.0
-            flared_n2o_tonnes = 0.0
-
-            _tier = resolve_tier(uncertainties.get("_factor_source", "default"))
-            ch4_res = propagate_uncertainty(
-                ch4_tonnes,
-                resolve_ef_uncertainty("tank", "ch4", _tier, uncertainties.get("ch4")),
-                tier=_tier,
-                process_category="tank",
-                gas="ch4",
-            )
-            co2_res = None
-            n2o_res = None
-
-        total_co2e = calculate_co2e(
-            ch4=total_ch4, co2=total_co2, n2o=flared_n2o_tonnes, gwp_dict=gwp_dict
-        )
-
-        return self.format_result(
-            ch4=ch4_res,
-            co2=co2_res,
-            n2o=n2o_res,
-            total_co2e=total_co2e,
-            inputs={
-                "throughput_bbl": throughput,
-                "gor": gas_oil_ratio if is_flashing else None,
-                "type": process_type,
-                "ef_used": ef_ch4 if not is_flashing else "GOR Calc",
-                "control_efficiency": control_efficiency,
-            },
-        )
-
-
-class PneumaticDeviceCalculator(BaseCalculator):
-    def __init__(self):
-        super().__init__("Pneumatic Devices", "Section 6.10")
-
-    def calculate(
-        self,
-        count,
-        hours=8760,
-        bleed_rate=None,
-        ch4_content=0.85,
-        uncertainties=None,
-        actuations=None,
-        co2_content=0.0,
-        gwp_dict=None,
-    ):
-        """
-        API Section 6.10 & EPA Subpart W §98.233(a):
-        - Continuous bleed: Device count * Hours * Bleed rate (scf/hr)
-        - Intermittent / actuation-based: Device count * Actuations * Bleed per event (scf/actuation)
-        Accounts for both CH4 and native CO2 in supply gas.
-        """
-        uncertainties = uncertainties or {}
-        self.validate_inputs(
-            {"count": count},
-            ["count"],
-        )
-
-        c_ch4 = float(ch4_content if ch4_content is not None else 0.85)
-        if c_ch4 > 1.0:
-            c_ch4 /= 100.0
-        c_ch4 = max(0.0, min(1.0, c_ch4))
-
-        c_co2 = float(co2_content or 0.0)
-        if c_co2 > 1.0:
-            c_co2 /= 100.0
-        c_co2 = max(0.0, min(1.0, c_co2))
-
-        is_intermittent = actuations is not None and float(actuations) > 0
-        if is_intermittent:
-            # Bleed rate is scf/event (default 13.5 scf/event per EPA Subpart W Table W-1 / API §6.10 if bleed_rate <= 0)
-            event_bleed_scf = float(bleed_rate) if (bleed_rate and float(bleed_rate) > 0) else 13.5
-            event_bleed_m3 = convert(event_bleed_scf, "scf", "m3")
-            total_bleed_vol = float(count) * float(actuations) * event_bleed_m3
-        else:
-            self.validate_inputs(
-                {"hours": hours, "bleed_rate": bleed_rate},
-                ["hours", "bleed_rate"],
-            )
-            # Bleed rate in scf/hr -> m3/hr
-            bleed_m3_hr = convert(float(bleed_rate), "scf", "m3")
-            total_bleed_vol = float(count) * float(hours) * bleed_m3_hr
-
-        total_ch4_vol = total_bleed_vol * c_ch4
-        ch4_mass_kg = total_ch4_vol * CONVERSIONS["density_ch4"]
-        ch4_tonnes = ch4_mass_kg / 1000.0
-
-        total_co2_vol = total_bleed_vol * c_co2
-        co2_mass_kg = total_co2_vol * CONVERSIONS["density_co2"]
-        co2_tonnes = co2_mass_kg / 1000.0
-
-        _tier = resolve_tier(uncertainties.get("_factor_source", "default"))
-        ch4_res = propagate_uncertainty(
-            ch4_tonnes,
-            resolve_ef_uncertainty("pneumatic", "ch4", _tier, uncertainties.get("ch4")),
-            tier=_tier,
-            process_category="pneumatic",
-            gas="ch4",
-        )
-        co2_res = propagate_uncertainty(
-            co2_tonnes,
-            resolve_ef_uncertainty("pneumatic", "co2", _tier, uncertainties.get("co2")),
-            tier=_tier,
-            process_category="pneumatic",
-            gas="co2",
-        ) if co2_tonnes > 0 else None
-
-        total_co2e = calculate_co2e(co2=co2_tonnes, ch4=ch4_tonnes, gwp_dict=gwp_dict)
-
-        result_kwargs = {"ch4": ch4_res, "total_co2e": total_co2e}
-        if co2_res is not None:
-            result_kwargs["co2"] = co2_res
-
-        return self.format_result(
-            **result_kwargs,
-            inputs={
-                "device_count": count,
-                "hours_operating": hours if not is_intermittent else None,
-                "actuations": actuations if is_intermittent else None,
-                "bleed_rate": bleed_rate,
-                "mode": "intermittent_actuation" if is_intermittent else "continuous_bleed",
-            },
-        )
+# BlowdownCalculator, TankFlashingCalculator, PneumaticDeviceCalculator: canonical implementations in
+# vented_production.py, re-exported at the end of this module (audit RC-17 dedupe)
 
 
 class AssociatedGasVentingCalculator(BaseCalculator):
@@ -2825,6 +2516,10 @@ from .vented_exploration import (
     CoalSeamDrillingCalculator,
 )
 from .vented_production import (
+    # RC-17: single implementations (Tables 6-14/6-15, 6-22/6-24, Eq 6-32 / Table 6-32)
+    PneumaticDeviceCalculator,
+    TankFlashingCalculator,
+    BlowdownCalculator,
     WorkoverWithoutFracturingCalculator,
     CasingGasVentCalculator,
     PneumaticPumpCalculator,
