@@ -429,15 +429,26 @@ def get_ogmp_surveys():
         'instrument_vendor': d.instrument_vendor or '',
         'instrumentVendor': d.instrument_vendor or '',
         'raw_file_ref': d.raw_file_ref or '',
-        'bottom_up_tch4': d.bottom_up_tch4 or 0.0,
-        'variance_pct': d.variance_pct or 0.0,
-        'variance_flag': bool(d.variance_flag),
-        'reconciliation_status': d.reconciliation_status or 'Reconciled',
-        'reconciliationStatus': d.reconciliation_status or 'Reconciled',
+        **_live_reconciliation(d),
         'status': d.status or 'pending',
         'operator_notes': d.operator_notes or '',
         'operatorNotes': d.operator_notes or ''
     } for d in data])
+
+def _live_reconciliation(d):
+    """BUG-052: variance / status recomputed against the current Verified bottom-up inventory;
+    a stored manual override (noted in operator_notes) is kept, a missing variance stays null."""
+    from services.ogmp import facility_bottom_up_tch4, reconcile
+
+    td = d.estimated_annual_tch4 or (d.measured_rate_kg_hr or 0.0) * (d.operating_hours_year or 8760.0) / 1000.0
+    bu = round(facility_bottom_up_tch4(d.facility_id, d.year), 2)
+    thr = (d.facility.reconciliation_threshold if d.facility and d.facility.reconciliation_threshold else 20.0)
+    v, flag, status = reconcile(td, bu, thr)
+    if d.operator_notes and '[Status override:' in d.operator_notes and d.reconciliation_status:
+        status = d.reconciliation_status
+    return {'bottom_up_tch4': bu, 'variance_pct': v, 'variance_flag': flag,
+            'reconciliation_status': status, 'reconciliationStatus': status}
+
 
 @data_bp.route('/ogmp-surveys', methods=['POST'])
 @data_bp.route('/ogmp-surveys/', methods=['POST'])
@@ -447,16 +458,22 @@ def save_ogmp_survey():
     if is_it_role(user):
         return jsonify({'error': 'IT administrators are not authorized to modify operational OGMP data.'}), 403
     data = request.get_json() or {}
+    from input_validation import parse_number, parse_year
+    from services.ogmp import facility_bottom_up_tch4, reconcile
+
     record_id = data.get('id')
     facility_id = data.get('facility_id') or data.get('facilityId')
-    year = int(data.get('year', 2026))
+    year = parse_year(data.get('year'))
     survey_date = (data.get('survey_date') or data.get('surveyDate') or '').strip()
     survey_type = (data.get('survey_type') or data.get('surveyType') or 'Satellite (Sentinel-5P/MethaneSAT)').strip()
-    measured_rate_kg_hr = float(data.get('measured_rate_kg_hr') or data.get('measuredRateKgHr') or 0.0)
-    operating_hours = float(data.get('operating_hours_year') or data.get('operatingHoursYear') or 8760.0)
+    measured_rate_kg_hr = parse_number(data.get('measured_rate_kg_hr', data.get('measuredRateKgHr')), 'measured_rate_kg_hr', min_value=0)
+    operating_hours = parse_number(data.get('operating_hours_year', data.get('operatingHoursYear')), 'operating_hours_year',
+                                   required=False, min_value=0, max_value=8784, default=8760.0)
     detection_threshold = float(data.get('detection_threshold') or data.get('detectionThreshold')) if data.get('detection_threshold') is not None or data.get('detectionThreshold') is not None else None
     instrument_vendor = (data.get('instrument_vendor') or data.get('instrumentVendor') or '').strip()
-    reconciliation_status = (data.get('reconciliation_status') or data.get('reconciliationStatus') or 'Reconciled').strip()
+    # BUG-052: the status is derived on the server; a manual override needs a justification
+    requested_status = (data.get('reconciliation_status') or data.get('reconciliationStatus') or '').strip()
+    override_reason = (data.get('reconciliation_override_reason') or '').strip()
     operator_notes = data.get('operator_notes') or data.get('operatorNotes') or ''
 
     if not facility_id or not survey_date or measured_rate_kg_hr < 0:
@@ -478,28 +495,14 @@ def save_ogmp_survey():
 
     estimated_annual_tch4 = round(measured_rate_kg_hr * operating_hours / 1000.0, 2)
 
-    # Compute bottom-up methane total for facility & year to compute variance
-    bottom_up_sum = db.session.query(func.sum(Emission.ch4_emissions)).filter(
-        Emission.facility_id == facility_id,
-        Emission.year == year,
-        Emission.status == 'Verified'
-    ).scalar() or 0.0
-    bottom_up_tch4 = round(float(bottom_up_sum), 2)
-
-    # Compute variance %
+    bottom_up_tch4 = round(facility_bottom_up_tch4(facility_id, year), 2)
     threshold = (fac.reconciliation_threshold if fac and fac.reconciliation_threshold else 20.0)
-    if bottom_up_tch4 > 0 and estimated_annual_tch4 > 0:
-        variance_pct = round(((estimated_annual_tch4 - bottom_up_tch4) / bottom_up_tch4 * 100.0), 2)
-        variance_flag = abs(variance_pct) > threshold
-    elif bottom_up_tch4 > 0 and estimated_annual_tch4 == 0:
-        variance_pct = None
-        variance_flag = False
-    elif estimated_annual_tch4 > 0 and bottom_up_tch4 == 0:
-        variance_pct = None
-        variance_flag = True
-    else:
-        variance_pct = None
-        variance_flag = False
+    variance_pct, variance_flag, reconciliation_status = reconcile(estimated_annual_tch4, bottom_up_tch4, threshold)
+    if requested_status and requested_status != reconciliation_status:
+        if not override_reason:
+            return jsonify({'error': f"Computed status is '{reconciliation_status}'; overriding it to '{requested_status}' requires reconciliation_override_reason"}), 400
+        operator_notes = (operator_notes + f"\n[Status override: {reconciliation_status} -> {requested_status}] {override_reason}").strip()
+        reconciliation_status = requested_status
 
     if record_id:
         record = db.session.get(OgmpSurvey, record_id)
