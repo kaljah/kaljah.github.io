@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import CustomDropdown from "../CustomDropdown";
+import { Segmented } from "./ui";
 
 /**
  * UnloadingForm — Complete Liquids Unloading UI Pipeline
@@ -68,22 +69,6 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
   return (
     <div className="unloading-form" style={{ marginTop: "15px" }}>
       {/* HEADER & TIER BADGE */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "16px",
-          borderBottom: "1px solid var(--border-color, #e5e7eb)",
-          paddingBottom: "10px",
-        }}
-      >
-        <div>
-          <h4 style={{ color: "var(--accent-color, #2563eb)", margin: 0 }}>
-            Liquids Unloading Emissions
-          </h4>
-        </div>
-      </div>
 
       {/* ========================================================================= */}
       {/* TIER 1: PER-WELL DEFAULT FACTOR (API TABLE 6-11) */}
@@ -94,7 +79,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
           <div className="form-grid-2">
             <div className="input-group">
               <label>
-                Unloading Lift Technology
+                Lift type
                 <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
               </label>
               <select
@@ -105,14 +90,14 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                   onChange("unload_type", e.target.value);
                 }}
               >
-                <option value="plunger">Plunger Lift (1,774 kg CH₄ / well-yr)</option>
-                <option value="non_plunger">Non-Plunger Lift (2,792 kg CH₄ / well-yr)</option>
+                <option value="plunger">Plunger lift</option>
+                <option value="non_plunger">Non-plunger</option>
               </select>
             </div>
 
             <div className="input-group">
               <label>
-                Number of Wells (well-years)
+                Wells
                 <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
               </label>
               <input
@@ -134,8 +119,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 
             <div className="input-group">
               <label>
-                Gas CH₄ Content (mol %)
-                <small style={{ color: "#6b7280", marginLeft: "4px" }}>(Default: 81.6%)</small>
+                CH₄ (mol %)
               </label>
               <input
                 type="number"
@@ -151,8 +135,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 
             <div className="input-group">
               <label>
-                Gas CO₂ Content (mol %)
-                <small style={{ color: "#6b7280", marginLeft: "4px" }}>(Default: 0%)</small>
+                CO₂ (mol %)
               </label>
               <input
                 type="number"
@@ -168,8 +151,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 
             <div className="input-group">
               <label>
-                Control / Flare Efficiency (%)
-                <small style={{ color: "#6b7280", marginLeft: "4px" }}>(0% if directly vented)</small>
+                Control efficiency (%)
               </label>
               <input
                 type="number"
@@ -198,7 +180,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
           <div className="form-grid-2">
             <div className="input-group">
               <label>
-                Unloading Lift Technology
+                Lift type
                 <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
               </label>
               <select
@@ -216,7 +198,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 
             <div className="input-group">
               <label>
-                Total Unloading Events
+                Events
                 <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
               </label>
               <input
@@ -254,8 +236,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 
             <div className="input-group">
               <label>
-                Number of Associated Wells
-                <small style={{ color: "#6b7280", marginLeft: "4px" }}>(Default: 1)</small>
+                Wells
               </label>
               <input
                 type="number"
@@ -273,8 +254,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 
             <div className="input-group">
               <label>
-                Gas CH₄ Content (mol %)
-                <small style={{ color: "#6b7280", marginLeft: "4px" }}>(Leave blank for table default)</small>
+                CH₄ (mol %)
               </label>
               <input
                 type="number"
@@ -289,7 +269,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
             </div>
 
             <div className="input-group">
-              <label>Gas CO₂ Content (mol %)</label>
+              <label>CO₂ (mol %)</label>
               <input
                 type="number"
                 step="0.01"
@@ -303,7 +283,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
             </div>
 
             <div className="input-group">
-              <label>Control / Flare Efficiency (%)</label>
+              <label>Control efficiency (%)</label>
               <input
                 type="number"
                 step="0.1"
@@ -329,64 +309,16 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
         <div>
           {/* METHOD SELECTION TABS */}
           <div style={{ marginBottom: "16px" }}>
-            <label style={{ display: "block", marginBottom: "6px", fontWeight: 600 }}>
-              Engineering Calculation Methodology:
-            </label>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "8px" }}>
-              <button
-                type="button"
-                style={{
-                  padding: "8px 10px",
-                  borderRadius: "6px",
-                  fontSize: "0.8rem",
-                  fontWeight: 600,
-                  cursor: "pointer",
-                  textAlign: "center",
-                  background: activeMethod === "api_equation_6_10" ? "var(--accent-color, #2563eb)" : "rgba(107, 114, 128, 0.08)",
-                  color: activeMethod === "api_equation_6_10" ? "#fff" : "var(--text-primary, #374151)",
-                  border: `1px solid ${activeMethod === "api_equation_6_10" ? "var(--accent-color, #2563eb)" : "var(--border-color, #d1d5db)"}`,
-                }}
-                onClick={() => onChange("calc_method", "api_equation_6_10")}
-              >
-                Wellbore + Flow Volume
-              </button>
-
-              <button
-                type="button"
-                style={{
-                  padding: "8px 10px",
-                  borderRadius: "6px",
-                  fontSize: "0.8rem",
-                  fontWeight: 600,
-                  cursor: "pointer",
-                  textAlign: "center",
-                  background: activeMethod === "api_equation_6_11" ? "var(--accent-color, #2563eb)" : "rgba(107, 114, 128, 0.08)",
-                  color: activeMethod === "api_equation_6_11" ? "#fff" : "var(--text-primary, #374151)",
-                  border: `1px solid ${activeMethod === "api_equation_6_11" ? "var(--accent-color, #2563eb)" : "var(--border-color, #d1d5db)"}`,
-                }}
-                onClick={() => onChange("calc_method", "api_equation_6_11")}
-              >
-                Automated Plunger Lift
-              </button>
-
-              <button
-                type="button"
-                style={{
-                  padding: "8px 10px",
-                  borderRadius: "6px",
-                  fontSize: "0.8rem",
-                  fontWeight: 600,
-                  cursor: "pointer",
-                  textAlign: "center",
-                  background: activeMethod === "api_equation_6_3" ? "var(--accent-color, #2563eb)" : "rgba(107, 114, 128, 0.08)",
-                  color: activeMethod === "api_equation_6_3" ? "#fff" : "var(--text-primary, #374151)",
-                  border: `1px solid ${activeMethod === "api_equation_6_3" ? "var(--accent-color, #2563eb)" : "var(--border-color, #d1d5db)"}`,
-                }}
-                onClick={() => onChange("calc_method", "api_equation_6_3")}
-              >
-                Well Decompression
-              </button>
-            </div>
+            <Segmented
+              ariaLabel="Engineering method"
+              value={activeMethod}
+              onChange={(v) => onChange("calc_method", v)}
+              options={[
+                { value: "api_equation_6_10", label: "Wellbore + flow" },
+                { value: "api_equation_6_11", label: "Automated plunger" },
+                { value: "api_equation_6_3", label: "Well decompression" },
+              ]}
+            />
           </div>
 
           {/* METHOD 1: API EQUATION 6-10 (EPA SUBPART W) */}
@@ -396,7 +328,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
               <div className="form-grid-2">
                 <div className="input-group">
                   <label>
-                    Unloading Technology
+                    Lift type
                     <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
                   </label>
                   <select
@@ -407,14 +339,14 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                       onChange("unload_type", e.target.value);
                     }}
                   >
-                    <option value="plunger">Plunger Lift (X = 0.5 hr)</option>
-                    <option value="non_plunger">Non-Plunger Lift (X = 1.0 hr)</option>
+                    <option value="plunger">Plunger lift</option>
+                    <option value="non_plunger">Non-plunger</option>
                   </select>
                 </div>
 
                 <div className="input-group">
                   <label>
-                    Annual Unloading Events
+                    Events per year
                     <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
                   </label>
                   <input
@@ -437,7 +369,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 
                 <div className="input-group">
                   <label>
-                    Casing/Tubing Diameter (in)
+                    Tubing diameter (in)
                     <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
                   </label>
                   <input
@@ -477,7 +409,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 
                 <div className="input-group">
                   <label>
-                    Shut-In Surface Pressure (psig)
+                    Shut-in pressure (psig)
                     <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
                   </label>
                   <input
@@ -497,7 +429,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 
                 <div className="input-group">
                   <label>
-                    Sales Flow Rate (SFR) (scf/hr)
+                    Sales flow rate (scf/hr)
                     <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
                   </label>
                   <input
@@ -514,7 +446,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 
                 <div className="input-group">
                   <label>
-                    Venting Duration HR (hours/event)
+                    Venting time (h/event)
                     <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
                   </label>
                   <input
@@ -531,7 +463,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 
                 <div className="input-group">
                   <label>
-                    Gas CH₄ Content (mol %)
+                    CH₄ (mol %)
                     <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
                   </label>
                   <input
@@ -548,7 +480,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                 </div>
 
                 <div className="input-group">
-                  <label>Gas CO₂ Content (mol %)</label>
+                  <label>CO₂ (mol %)</label>
                   <input
                     type="number"
                     step="0.01"
@@ -562,7 +494,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                 </div>
 
                 <div className="input-group">
-                  <label>Control / Flare Efficiency (%)</label>
+                  <label>Control efficiency (%)</label>
                   <input
                     type="number"
                     step="0.1"
@@ -673,7 +605,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 
                 <div className="input-group">
                   <label>
-                    Annual Unloading Events
+                    Events per year
                     <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
                   </label>
                   <input
@@ -695,7 +627,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 
                 <div className="input-group">
                   <label>
-                    Gas CH₄ Content (mol %)
+                    CH₄ (mol %)
                     <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
                   </label>
                   <input
@@ -712,7 +644,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                 </div>
 
                 <div className="input-group">
-                  <label>Gas CO₂ Content (mol %)</label>
+                  <label>CO₂ (mol %)</label>
                   <input
                     type="number"
                     step="0.01"
@@ -726,7 +658,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                 </div>
 
                 <div className="input-group">
-                  <label>Control / Flare Efficiency (%)</label>
+                  <label>Control efficiency (%)</label>
                   <input
                     type="number"
                     step="0.1"
@@ -775,7 +707,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 
                 <div className="input-group">
                   <label>
-                    Casing/Tubing Diameter (in)
+                    Tubing diameter (in)
                     <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
                   </label>
                   <input
@@ -835,7 +767,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 
                 <div className="input-group">
                   <label>
-                    Gas CH₄ Content (mol %)
+                    CH₄ (mol %)
                     <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
                   </label>
                   <input
@@ -852,7 +784,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                 </div>
 
                 <div className="input-group">
-                  <label>Gas CO₂ Content (mol %)</label>
+                  <label>CO₂ (mol %)</label>
                   <input
                     type="number"
                     step="0.01"
@@ -866,7 +798,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                 </div>
 
                 <div className="input-group">
-                  <label>Well Operating Temperature (°F)</label>
+                  <label>Well Temperature (°F)</label>
                   <input
                     type="number"
                     step="0.1"
@@ -878,7 +810,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                 </div>
 
                 <div className="input-group">
-                  <label>Control / Flare Efficiency (%)</label>
+                  <label>Control efficiency (%)</label>
                   <input
                     type="number"
                     step="0.1"

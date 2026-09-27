@@ -9,15 +9,12 @@ const DehydratorForm = ({ data, onChange, sourceType }) => {
 
   return (
     <div className="dehydrator-form">
-      <h4 style={{ color: "var(--accent-color)", marginBottom: "15px" }}>
-        Dehydrator Settings {isEngineering && "(Engineering Calculation)"}
-      </h4>
 
       {/* Simple Mode: Throughput Only */}
       {!isEngineering && (
         <>
           <div className="input-group">
-            <label>Gas Throughput (MMscf/yr)</label>
+            <label>Throughput (MMscf/yr)</label>
             <input
               type="number"
               className="mole-input"
@@ -34,7 +31,7 @@ const DehydratorForm = ({ data, onChange, sourceType }) => {
         <>
           <div className="input-group">
             <label>
-              Gas Throughput (MMscf/yr)
+              Throughput (MMscf/yr)
               <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
             </label>
             <input
@@ -49,7 +46,7 @@ const DehydratorForm = ({ data, onChange, sourceType }) => {
 
           <div className="input-group">
             <label>
-              Glycol Pump Rate
+              Glycol pump rate
               <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
             </label>
             <div style={{ display: "flex", gap: "10px" }}>
@@ -78,7 +75,7 @@ const DehydratorForm = ({ data, onChange, sourceType }) => {
 
           <div className="input-group">
             <label>
-              Gas CH4 Content (%)
+              CH₄ (%)
               <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
             </label>
             <input
@@ -98,7 +95,7 @@ const DehydratorForm = ({ data, onChange, sourceType }) => {
 
           <div className="input-group">
             <label>
-              Operating Hours (hr/yr)
+              Hours per year
               <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
             </label>
             <input
@@ -113,7 +110,7 @@ const DehydratorForm = ({ data, onChange, sourceType }) => {
 
           <div className="input-group">
             <label>
-              Contactor Pressure (psig)
+              Contactor pressure (psig)
               <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
             </label>
             <input
@@ -128,7 +125,7 @@ const DehydratorForm = ({ data, onChange, sourceType }) => {
 
           <div className="input-group">
             <label>
-              Contactor Temperature (°F)
+              Contactor temp (°F)
               <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
             </label>
             <input
@@ -142,7 +139,7 @@ const DehydratorForm = ({ data, onChange, sourceType }) => {
           </div>
 
           <div className="input-group">
-            <label>Stripping Gas Rate (scf/hr)</label>
+            <label>Stripping gas (scf/h)</label>
             <input
               type="number"
               className="mole-input"
@@ -158,7 +155,7 @@ const DehydratorForm = ({ data, onChange, sourceType }) => {
           </div>
 
           <div className="input-group">
-            <label>Control Device</label>
+            <label>Control device</label>
             <CustomDropdown
               options={[
                 { value: "none", label: "No Controls" },

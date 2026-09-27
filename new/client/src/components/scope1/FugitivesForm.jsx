@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo } from "react";
 import CustomDropdown from "../CustomDropdown";
+import { Segmented } from "./ui";
 
 // ============================================================================
 // API GHG COMPENDIUM (2021) CHAPTER 7 — ONSHORE REFERENCE TABLES & DATA
@@ -189,24 +190,14 @@ const METHOD21_FACTORS = {
 // MAIN COMPONENT: FugitivesForm
 // ============================================================================
 
-const FugitivesForm = ({ data = {}, onChange, sourceType = "default", setSourceType }) => {
-  // 1. Synchronize Tier Mode
-  // Tier 1 = default, Tier 2 = custom (equipment/component), Tier 3 = specific (measurement/screening/OGI)
-  const activeTier = useMemo(() => {
-    if (data.fugitive_tier) return data.fugitive_tier;
-    if (sourceType === "specific") return "tier3";
-    if (sourceType === "custom") return "tier2";
-    return "tier1";
-  }, [data.fugitive_tier, sourceType]);
-
-  const setTier = (tier) => {
-    onChange("fugitive_tier", tier);
-    if (setSourceType) {
-      if (tier === "tier1") setSourceType("default");
-      else if (tier === "tier2") setSourceType("custom");
-      else if (tier === "tier3") setSourceType("specific");
-    }
-  };
+const FugitivesForm = ({ data = {}, onChange, sourceType = "default" }) => {
+  // One tier selector: the page-level Calculation Methodology control (sourceType) drives the tier;
+  // data.fugitive_tier is kept in sync for the payload
+  const activeTier = sourceType === "specific" ? "tier3" : sourceType === "custom" ? "tier2" : "tier1";
+  useEffect(() => {
+    if (data.fugitive_tier !== activeTier) onChange("fugitive_tier", activeTier);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTier]);
 
   // Sub-Method within Tier
   // Tier 2: equipment vs component
@@ -222,7 +213,6 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default", setSourceT
     : TIER1_FACILITIES[1].id;
   const tier1Fac = TIER1_FACILITIES.find((f) => f.id === selectedFacilityId);
   const tier1Unit = tier1Fac.units.some((u) => u.value === data.unit) ? data.unit : tier1Fac.units[0].value;
-  const tier1Production = parseFloat(data.amount || 0);
 
   // BUG-110: the displayed Tier 1 defaults are written into the form state, so what the preview
   // shows is what is submitted
@@ -295,289 +285,22 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default", setSourceT
   // Duration unit options
 
 
-  // Helper to convert flow rate to kg/hr
-  const convertFlowToKgHr = (rate, unit) => {
-    const r = parseFloat(rate) || 0;
-    const u = (unit || "kg/hr").toLowerCase();
-    if (u === "kg/hr") return r;
-    if (u === "scf/hr" || u === "scfh") return r * 0.0192;
-    if (u === "m3/hr" || u === "m3h") return r * 0.6785;
-    if (u === "lb/hr" || u === "lb/h") return r * 0.45359237;
-    if (u === "tonnes/yr" || u === "tonnes/year") return (r * 1000) / 8760;
-    if (u === "kg/day") return r / 24;
-    return r;
-  };
 
   // ==========================================================================
   // REAL-TIME CLIENT-SIDE ESTIMATION ENGINE
   // ==========================================================================
-  const estimate = useMemo(() => {
-    let ch4_kg = 0;
-    let co2_kg = 0;
-    let methodology = "";
-    let intermediateSteps = [];
-
-    const GWP_CH4 = 28.0; // IPCC AR5 100-yr
-
-    if (activeTier === "tier1") {
-      const u = tier1Fac.units.find((x) => x.value === tier1Unit);
-      methodology = `Tier 1: Facility-Level Average (${tier1Fac.label})`;
-      ch4_kg = tier1Production * u.t_per_unit * 1000;
-      co2_kg = 0;
-      intermediateSteps.push(`Production: ${tier1Production} ${u.label}`);
-      intermediateSteps.push(`Factor: ${u.t_per_unit} t CH₄ per ${u.label}`);
-    } else if (activeTier === "tier2" && tier2SubMethod === "equipment") {
-      const seg = TIER2A_EQUIPMENT_DATA[tier2aSegment];
-      const eq = seg.equipment.find((e) => e.id === tier2aEquipId) || seg.equipment[0];
-      methodology = `Tier 2A: Equipment-Level (${seg.label} - ${eq.label})`;
-
-      const normHours = tier2aHours;
-      ch4_kg = tier2aCount * eq.factor * normHours;
-      co2_kg = 0; // Table 7-9 / 7-10 factors are CH4 only (as the server catalog)
-
-      intermediateSteps.push(`Equipment: ${eq.label} (Count = ${tier2aCount})`);
-      intermediateSteps.push(`Operating Hours: ${normHours} hrs`);
-      intermediateSteps.push(`Factor: ${eq.factor} kg CH₄/hr/equipment`);
-      intermediateSteps.push(`Stream: ${ch4MolePct}% CH₄, ${co2MolePct}% CO₂`);
-    } else if (activeTier === "tier2" && tier2SubMethod === "component") {
-      const seg = TIER2B_COMPONENTS_DATA[tier2bSegment];
-      const srv = seg.services[tier2bService] || seg.services.gas;
-      const comp = srv.components.find((c) => c.id === tier2bCompId) || srv.components[0];
-      methodology = `Tier 2B: Component-Level (${seg.label} - ${srv.label} - ${comp.label})`;
-
-      const normHours = tier2bHours;
-      const totalTocKg = tier2bCount * comp.factor * normHours;
-      const ch4Frac = ch4MolePct / 100.0;
-      const co2Frac = co2MolePct / 100.0;
-
-      ch4_kg = totalTocKg * ch4Frac;
-      co2_kg = totalTocKg * co2Frac;
-
-      intermediateSteps.push(`Component: ${comp.label} (${srv.label}, Count = ${tier2bCount})`);
-      intermediateSteps.push(`TOC Factor: ${comp.factor} kg TOC/hr/component`);
-      intermediateSteps.push(`Operating Hours: ${normHours} hrs (Total TOC = ${totalTocKg.toFixed(2)} kg)`);
-      intermediateSteps.push(`Gas Stream Speciation: CH₄ = ${(ch4Frac * 100).toFixed(1)}%, CO₂ = ${(co2Frac * 100).toFixed(2)}%`);
-    } else if (activeTier === "tier3" && tier3Method === "ogi") {
-      const eq = OGI_LEAKER_FACTORS.find((o) => o.id === ogiCompId) || OGI_LEAKER_FACTORS[0];
-      methodology = `Tier 3C: Optical Gas Imaging (OGI) Survey (${eq.label})`;
-
-      const normHours = ogiHours;
-      ch4_kg = ogiLeakers * eq.factor * normHours;
-      co2_kg = ogiLeakers * (eq.co2_factor || eq.factor * 0.017) * normHours;
-
-      intermediateSteps.push(`Detected Leakers: ${ogiLeakers} ${eq.label}`);
-      intermediateSteps.push(`Operating Duration: ${normHours} hrs`);
-      intermediateSteps.push(`Leaker Factor: ${eq.factor} kg CH₄/hr/leaker`);
-      if (ogiNonLeakers > 0) {
-        intermediateSteps.push(`Non-Leaker Population: ${ogiNonLeakers} components (zero leaker rate)`);
-      }
-    } else if (activeTier === "tier3" && tier3Method === "method21") {
-      const mData = METHOD21_FACTORS[m21Key] || METHOD21_FACTORS.valve_gas;
-      const isLeaker = m21Ppm >= 10000;
-      const targetFactor = isLeaker ? mData.leaker : mData.non_leaker;
-      methodology = `Tier 3A: Method 21 (${mData.label} - ${targetFactor.label})`;
-
-      const normHours = m21Hours;
-      const totalToc = m21Count * targetFactor.factor * normHours;
-      const ch4Frac = ch4MolePct / 100.0;
-      const co2Frac = co2MolePct / 100.0;
-
-      ch4_kg = totalToc * ch4Frac;
-      co2_kg = totalToc * co2Frac;
-
-      intermediateSteps.push(`Screening PPM: ${m21Ppm} ppmv (${isLeaker ? "≥ 10,000 ppmv Leaker" : "< 10,000 ppmv Non-Leaker"})`);
-      intermediateSteps.push(`Component Count: ${m21Count} sources`);
-      intermediateSteps.push(`TOC Factor: ${targetFactor.factor} kg TOC/hr`);
-      intermediateSteps.push(`Duration: ${normHours} hrs`);
-    } else if (activeTier === "tier3" && tier3Method === "measurement") {
-      methodology = `Tier 3D: Direct Measurement (${directRateUnit})`;
-
-      const normHours = directHours;
-      const flowKgHr = convertFlowToKgHr(directRate, directRateUnit, ch4MolePct / 100.0);
-      const ch4Frac = ch4MolePct / 100.0;
-      const co2Frac = co2MolePct / 100.0;
-
-      ch4_kg = flowKgHr * ch4Frac * normHours;
-      co2_kg = flowKgHr * co2Frac * normHours;
-
-      intermediateSteps.push(`Measured Rate: ${directRate} ${directRateUnit} (${flowKgHr.toFixed(3)} kg stream/hr)`);
-      intermediateSteps.push(`Operating Hours: ${normHours} hrs`);
-      intermediateSteps.push(`Gas Stream Speciation: CH₄ = ${(ch4Frac * 100).toFixed(1)}%, CO₂ = ${(co2Frac * 100).toFixed(2)}%`);
-    }
-
-    const ch4_tonnes = ch4_kg / 1000.0;
-    const co2_tonnes = co2_kg / 1000.0;
-    const co2e_tonnes = co2_tonnes + ch4_tonnes * GWP_CH4;
-
-    return {
-      ch4_kg,
-      ch4_tonnes,
-      co2_kg,
-      co2_tonnes,
-      co2e_tonnes,
-      methodology,
-      intermediateSteps,
-    };
-  }, [
-    activeTier,
-    tier2SubMethod,
-    tier3Method,
-    selectedFacilityId,
-    tier1Fac,
-    tier1Unit,
-    tier1Production,
-    tier2aSegment,
-    tier2aEquipId,
-    tier2aCount,
-    tier2aHours,
-    tier2bSegment,
-    tier2bService,
-    tier2bCompId,
-    tier2bCount,
-    tier2bHours,
-    ch4MolePct,
-    co2MolePct,
-    ogiCompId,
-    ogiLeakers,
-    ogiNonLeakers,
-    ogiHours,
-    m21Key,
-    m21Ppm,
-    m21Count,
-    m21Hours,
-    directRate,
-    directRateUnit,
-    directHours,
-  ]);
 
   return (
     <div className="fugitives-form-v2" style={{ fontFamily: "inherit" }}>
       {/* HEADER WITH ONSHORE BADGE */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "16px",
-          paddingBottom: "12px",
-          borderBottom: "1px solid #e5e7eb",
-        }}
-      >
-        <div>
-          <h4 style={{ margin: 0, color: "#111827", fontSize: "1.1rem", fontWeight: 700 }}>
-            Onshore Equipment Leaks / Fugitives
-          </h4>
-          <span style={{ fontSize: "0.8rem", color: "#6b7280" }}>
-            Onshore exploration, production & gathering
-          </span>
-        </div>
-        <div style={{ display: "flex", gap: "6px" }}>
-          <span
-            style={{
-              padding: "4px 8px",
-              background: "#e0e7ff",
-              color: "#4338ca",
-              borderRadius: "4px",
-              fontSize: "0.75rem",
-              fontWeight: 600,
-            }}
-          >
-            Onshore Only
-          </span>
-        </div>
-      </div>
 
       {/* METHODOLOGY TIER SELECTOR */}
-      <div style={{ marginBottom: "20px" }}>
-        <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, color: "#374151", marginBottom: "8px" }}>
-          Calculation Tier
-        </label>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr 1fr",
-            gap: "10px",
-          }}
-        >
-          <button
-            type="button"
-            onClick={() => setTier("tier1")}
-            style={{
-              padding: "12px",
-              borderRadius: "8px",
-              border: activeTier === "tier1" ? "2px solid #2563eb" : "1px solid #d1d5db",
-              background: activeTier === "tier1" ? "#eff6ff" : "#ffffff",
-              cursor: "pointer",
-              textAlign: "left",
-              transition: "all 0.15s ease",
-            }}
-          >
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
-              <span style={{ fontWeight: 700, color: activeTier === "tier1" ? "#1e40af" : "#111827", fontSize: "0.9rem" }}>
-                Tier 1: Facility-Level
-              </span>
-            </div>
-            <p style={{ margin: 0, fontSize: "0.75rem", color: "#6b7280", lineHeight: "1.3" }}>
-              Facility average per unit of oil or gas produced. Ideal for high-level screening.
-            </p>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setTier("tier2")}
-            style={{
-              padding: "12px",
-              borderRadius: "8px",
-              border: activeTier === "tier2" ? "2px solid #2563eb" : "1px solid #d1d5db",
-              background: activeTier === "tier2" ? "#eff6ff" : "#ffffff",
-              cursor: "pointer",
-              textAlign: "left",
-              transition: "all 0.15s ease",
-            }}
-          >
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
-              <span style={{ fontWeight: 700, color: activeTier === "tier2" ? "#1e40af" : "#111827", fontSize: "0.9rem" }}>
-                Tier 2: Population
-              </span>
-            </div>
-            <p style={{ margin: 0, fontSize: "0.75rem", color: "#6b7280", lineHeight: "1.3" }}>
-              Equipment or component count with service stream speciation (Gas, Light/Heavy Oil, Water/Oil).
-            </p>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setTier("tier3")}
-            style={{
-              padding: "12px",
-              borderRadius: "8px",
-              border: activeTier === "tier3" ? "2px solid #2563eb" : "1px solid #d1d5db",
-              background: activeTier === "tier3" ? "#eff6ff" : "#ffffff",
-              cursor: "pointer",
-              textAlign: "left",
-              transition: "all 0.15s ease",
-            }}
-          >
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
-              <span style={{ fontWeight: 700, color: activeTier === "tier3" ? "#1e40af" : "#111827", fontSize: "0.9rem" }}>
-                Tier 3: Detection / Meas.
-              </span>
-            </div>
-            <p style={{ margin: 0, fontSize: "0.75rem", color: "#6b7280", lineHeight: "1.3" }}>
-              Optical Gas Imaging (OGI), Method 21 screening ranges, correlation equations, or direct measurement.
-            </p>
-          </button>
-        </div>
-      </div>
 
       {/* ==================================================================== */}
       {/* TIER 1 INPUTS: FACILITY-LEVEL (TABLES 7-1, 7-2)                      */}
       {/* ==================================================================== */}
       {activeTier === "tier1" && (
-        <div style={{ background: "#f9fafb", padding: "16px", borderRadius: "8px", border: "1px solid #e5e7eb", marginBottom: "20px" }}>
-          <h5 style={{ margin: "0 0 12px 0", fontSize: "0.95rem", color: "#1f2937", fontWeight: 600 }}>
-            Tier 1: Facility-Level Average Inputs
-          </h5>
+        <div className="s1-block">
           <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1.5fr", gap: "12px" }}>
             <div className="input-group">
               <label>Facility Type</label>
@@ -624,43 +347,17 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default", setSourceT
       {/* TIER 2 INPUTS: EQUIPMENT OR COMPONENT POPULATION                     */}
       {/* ==================================================================== */}
       {activeTier === "tier2" && (
-        <div style={{ background: "#f9fafb", padding: "16px", borderRadius: "8px", border: "1px solid #e5e7eb", marginBottom: "20px" }}>
-          {/* Sub-method switch: Equipment vs Component */}
-          <div style={{ display: "flex", gap: "8px", marginBottom: "16px" }}>
-            <button
-              type="button"
-              onClick={() => onChange("fugitive_method", "equipment")}
-              style={{
-                flex: 1,
-                padding: "8px 12px",
-                borderRadius: "6px",
-                border: "none",
-                background: tier2SubMethod === "equipment" ? "#2563eb" : "#e5e7eb",
-                color: tier2SubMethod === "equipment" ? "#ffffff" : "#4b5563",
-                fontWeight: 600,
-                fontSize: "0.85rem",
-                cursor: "pointer",
-              }}
-            >
-              Tier 2A: Equipment-Level
-            </button>
-            <button
-              type="button"
-              onClick={() => onChange("fugitive_method", "component")}
-              style={{
-                flex: 1,
-                padding: "8px 12px",
-                borderRadius: "6px",
-                border: "none",
-                background: tier2SubMethod === "component" ? "#2563eb" : "#e5e7eb",
-                color: tier2SubMethod === "component" ? "#ffffff" : "#4b5563",
-                fontWeight: 600,
-                fontSize: "0.85rem",
-                cursor: "pointer",
-              }}
-            >
-              Tier 2B: Component-Level
-            </button>
+        <div className="s1-block">
+          <div style={{ marginBottom: "16px" }}>
+            <Segmented
+              ariaLabel="Tier 2 method"
+              value={tier2SubMethod}
+              onChange={(v) => onChange("fugitive_method", v)}
+              options={[
+                { value: "equipment", label: "Equipment count" },
+                { value: "component", label: "Component count" },
+              ]}
+            />
           </div>
 
           {/* Tier 2A: Equipment Count Form */}
@@ -688,7 +385,6 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default", setSourceT
                   options={TIER2A_EQUIPMENT_DATA[tier2aSegment]?.equipment.map((e) => ({
                     value: e.id,
                     label: e.label,
-                    subLabel: `${e.factor} ${e.unit}`,
                   })) || []}
                   value={tier2aEquipId}
                   onChange={(val) => onChange("equipment_type", val)}
@@ -770,7 +466,6 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default", setSourceT
                   options={TIER2B_COMPONENTS_DATA[tier2bSegment]?.services[tier2bService]?.components.map((c) => ({
                     value: c.id,
                     label: c.label,
-                    subLabel: `${c.factor} ${c.unit}`,
                   })) || []}
                   value={tier2bCompId}
                   onChange={(val) => onChange("component_type", val)}
@@ -876,29 +571,14 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default", setSourceT
       {/* TIER 3 INPUTS: DETECTION & MEASUREMENT                               */}
       {/* ==================================================================== */}
       {activeTier === "tier3" && (
-        <div style={{ background: "#f9fafb", padding: "16px", borderRadius: "8px", border: "1px solid #e5e7eb", marginBottom: "20px" }}>
-          {/* Tier 3 sub-method navigation */}
-          <div style={{ display: "flex", gap: "6px", marginBottom: "14px" }}>
-            {TIER3_METHODS.map((m) => (
-              <button
-                key={m.id}
-                type="button"
-                onClick={() => onChange("fugitive_method", m.id)}
-                style={{
-                  flex: 1,
-                  padding: "8px 10px",
-                  borderRadius: "6px",
-                  border: "none",
-                  background: tier3Method === m.id ? "#2563eb" : "#e5e7eb",
-                  color: tier3Method === m.id ? "#ffffff" : "#4b5563",
-                  fontWeight: 600,
-                  fontSize: "0.8rem",
-                  cursor: "pointer",
-                }}
-              >
-                {m.label}
-              </button>
-            ))}
+        <div className="s1-block">
+          <div style={{ marginBottom: "16px" }}>
+            <Segmented
+              ariaLabel="Tier 3 method"
+              value={tier3Method}
+              onChange={(v) => onChange("fugitive_method", v)}
+              options={TIER3_METHODS.map((m) => ({ value: m.id, label: m.label }))}
+            />
           </div>
 
           {/* Tier 3C: OGI Leaker Survey */}
@@ -910,7 +590,6 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default", setSourceT
                   options={OGI_LEAKER_FACTORS.map((f) => ({
                     value: f.id,
                     label: f.label,
-                    subLabel: `${f.factor} ${f.unit}`,
                   }))}
                   value={ogiCompId}
                   onChange={(val) => onChange("component_type", val)}
@@ -1159,71 +838,6 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default", setSourceT
       {/* ==================================================================== */}
       {/* REAL-TIME ESTIMATION PREVIEW & AUDIT BANNER                         */}
       {/* ==================================================================== */}
-      <div
-        style={{
-          background: "#f0fdf4",
-          border: "1px solid #bbf7d0",
-          borderRadius: "8px",
-          padding: "16px",
-          marginTop: "16px",
-        }}
-      >
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "12px" }}>
-          <div>
-            <span
-              style={{
-                fontSize: "0.75rem",
-                fontWeight: 700,
-                textTransform: "uppercase",
-                letterSpacing: "0.05em",
-                color: "#166534",
-              }}
-            >
-              Estimated Emissions
-            </span>
-            <h5 style={{ margin: "4px 0 0 0", color: "#14532d", fontSize: "1.05rem", fontWeight: 700 }}>
-              {estimate.co2e_tonnes.toFixed(3)} t CO₂e
-            </h5>
-          </div>
-          <div style={{ textAlign: "right" }}>
-            <div style={{ fontSize: "0.7rem", color: "#4ade80" }}>
-              IPCC AR5 GWP: CH₄ = 28.0 | CO₂ = 1.0
-            </div>
-          </div>
-        </div>
-
-        {/* Breakdown Pills */}
-        <div style={{ display: "flex", gap: "16px", marginBottom: "12px", flexWrap: "wrap" }}>
-          <div style={{ background: "#ffffff", padding: "6px 12px", borderRadius: "6px", border: "1px solid #dcfce7" }}>
-            <span style={{ fontSize: "0.7rem", color: "#6b7280", display: "block" }}>Methane (CH₄)</span>
-            <span style={{ fontSize: "0.9rem", fontWeight: 700, color: "#166534" }}>
-              {estimate.ch4_tonnes.toFixed(4)} tonnes{" "}
-              <span style={{ fontSize: "0.75rem", fontWeight: 400, color: "#4b5563" }}>
-                ({estimate.ch4_kg.toFixed(1)} kg)
-              </span>
-            </span>
-          </div>
-
-          <div style={{ background: "#ffffff", padding: "6px 12px", borderRadius: "6px", border: "1px solid #dcfce7" }}>
-            <span style={{ fontSize: "0.7rem", color: "#6b7280", display: "block" }}>Carbon Dioxide (CO₂)</span>
-            <span style={{ fontSize: "0.9rem", fontWeight: 700, color: "#166534" }}>
-              {estimate.co2_tonnes.toFixed(4)} tonnes{" "}
-              <span style={{ fontSize: "0.75rem", fontWeight: 400, color: "#4b5563" }}>
-                ({estimate.co2_kg.toFixed(1)} kg)
-              </span>
-            </span>
-          </div>
-
-          <div style={{ background: "#ffffff", padding: "6px 12px", borderRadius: "6px", border: "1px solid #dcfce7" }}>
-            <span style={{ fontSize: "0.7rem", color: "#6b7280", display: "block" }}>Methodology</span>
-            <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "#1e3a8a" }}>
-              {estimate.methodology}
-            </span>
-          </div>
-        </div>
-
-        {/* Calculation Audit Trace */}
-      </div>
     </div>
   );
 };

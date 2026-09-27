@@ -66,7 +66,6 @@ describe("AssociatedGasVentingForm & Table 6-8 API Reference Integrity", () => {
       />
     );
 
-    expect(screen.getByText("Associated Gas Venting")).toBeInTheDocument();
     // the emission UI shows no API Compendium / table citations (user request)
     expect(screen.queryByText(/Compendium|Table 6-8/i)).toBeNull();
     // one tier selector: the page-level Calculation Methodology control (the form has no tier buttons)
@@ -113,13 +112,12 @@ describe("AssociatedGasVentingForm & Table 6-8 API Reference Integrity", () => {
 
     // one tier selector: the page-level Calculation Methodology control (the form has no tier buttons)
     expect(screen.queryByText("Tier 2: GOR Balance")).toBeNull();
-    expect(screen.getByText(/Gas Disposition Partitioning & Mass Balance/i)).toBeInTheDocument();
-    expect(screen.getByText(/Zero Double-Counting Verified/i)).toBeInTheDocument();
+    expect(screen.getByText(/Gas disposition/i)).toBeInTheDocument();
 
     // Check Net Vented Calculation display
     // Total produced = 1000 * 365 * 800 = 292,000,000 scf
-    // Net vented = 292,000,000 - 500,000 - 200,000 = 291,300,000 scf
-    expect(screen.getByText(/291,300,000.0 scf/i)).toBeInTheDocument();
+    // produced associated gas shown read-only (the net-vented equation line was removed on request)
+    expect(screen.getByDisplayValue(/292,000,000.0 scf/i)).toBeInTheDocument();
   });
 
   it("detects mass balance violations when recovered + flared gas exceeds total produced", () => {
@@ -195,9 +193,8 @@ describe("AssociatedGasVentingForm & Table 6-8 API Reference Integrity", () => {
       />
     );
 
-    expect(screen.getByText("Mode A: Measured Vent Flow Rate × Duration")).toBeInTheDocument();
-    expect(screen.getByText("Mode B: Total Measured Vent Volume")).toBeInTheDocument();
-    expect(screen.getByText(/Tier 3: CEMS \/ Meter/i)).toBeInTheDocument();
+    expect(screen.getByText("Rate × duration")).toBeInTheDocument();
+    expect(screen.getByText("Total volume")).toBeInTheDocument();
 
     // Switch to volume mode
     rerender(

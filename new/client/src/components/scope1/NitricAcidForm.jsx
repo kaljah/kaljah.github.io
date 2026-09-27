@@ -9,9 +9,6 @@ const NITRIC_ACID_OPTIONS = [
 const NitricAcidForm = ({ data, onChange }) => {
   return (
     <div className="nitric-acid-form">
-      <h4 style={{ color: "var(--accent-color)", marginBottom: "15px" }}>
-        Nitric Acid Production (N₂O)
-      </h4>
 
       <div className="form-grid-2">
         <div className="input-group">

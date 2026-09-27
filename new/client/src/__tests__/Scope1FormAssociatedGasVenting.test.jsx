@@ -80,7 +80,7 @@ describe("Scope1Form Associated Gas Venting Integration", () => {
     render(<Scope1Form />);
 
     await waitFor(() => {
-      expect(screen.getByText("New Activity Entry")).toBeInTheDocument();
+      expect(screen.getByText("New entry")).toBeInTheDocument();
     });
 
     // 1. Select Process Type: Click dropdown
@@ -105,7 +105,7 @@ describe("Scope1Form Associated Gas Venting Integration", () => {
     fireEvent.change(oilInput, { target: { value: "10000" } });
 
     // Submit the entry
-    const submitBtn = screen.getByRole("button", { name: /Calculate & Submit/i });
+    const submitBtn = screen.getByRole("button", { name: "Submit" });
     fireEvent.click(submitBtn);
 
     await waitFor(() => {
@@ -126,7 +126,7 @@ describe("Scope1Form Associated Gas Venting Integration", () => {
     render(<Scope1Form />);
 
     await waitFor(() => {
-      expect(screen.getByText("New Activity Entry")).toBeInTheDocument();
+      expect(screen.getByText("New entry")).toBeInTheDocument();
     });
 
     // Select Process
@@ -151,7 +151,7 @@ describe("Scope1Form Associated Gas Venting Integration", () => {
     fireEvent.change(oilInput, { target: { value: "1200" } });
 
     // Submit
-    const submitBtn = screen.getByRole("button", { name: /Calculate & Submit/i });
+    const submitBtn = screen.getByRole("button", { name: "Submit" });
     fireEvent.click(submitBtn);
 
     await waitFor(() => {

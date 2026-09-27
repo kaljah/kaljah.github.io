@@ -66,8 +66,8 @@ describe("UnloadingForm & API Compendium 2021 Reference Integrity", () => {
     // Verify Tier 1 elements
     // one tier selector: the page-level Calculation Methodology control (the form has no tier buttons)
     expect(screen.queryByText(/Tier 1: Per-Well/i)).toBeNull();
-    expect(screen.getByText(/Number of Wells \(well-years\)/i)).toBeInTheDocument();
-    expect(screen.getByText(/Plunger Lift \(1,774 kg CH₄ \/ well-yr\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/^Wells/)).toBeInTheDocument();
+    expect(screen.getByText(/^Plunger lift$/)).toBeInTheDocument();
 
     // Change well count
     const wellsInput = screen.getByDisplayValue("5");
@@ -96,7 +96,7 @@ describe("UnloadingForm & API Compendium 2021 Reference Integrity", () => {
 
     // one tier selector: the page-level Calculation Methodology control (the form has no tier buttons)
     expect(screen.queryByText(/Tier 2: Event-Based/i)).toBeNull();
-    expect(screen.getByText(/Total Unloading Events/i)).toBeInTheDocument();
+    expect(screen.getByText(/^Events/)).toBeInTheDocument();
     expect(screen.getByText(/Region \/ Basin/i)).toBeInTheDocument();
 
     const eventsInput = screen.getByDisplayValue("15");
@@ -129,12 +129,12 @@ describe("UnloadingForm & API Compendium 2021 Reference Integrity", () => {
 
     // one tier selector: the page-level Calculation Methodology control (the form has no tier buttons)
     expect(screen.queryByText(/Tier 3: Engineering/i)).toBeNull();
-    expect(screen.getByText(/Annual Unloading Events/i)).toBeInTheDocument();
-    expect(screen.getByText(/Casing\/Tubing Diameter \(in\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/Events per year/i)).toBeInTheDocument();
+    expect(screen.getByText(/Tubing diameter \(in\)/i)).toBeInTheDocument();
     expect(screen.getByText(/Well Depth \(ft\)/i)).toBeInTheDocument();
-    expect(screen.getByText(/Shut-In Surface Pressure \(psig\)/i)).toBeInTheDocument();
-    expect(screen.getByText(/Sales Flow Rate \(SFR\) \(scf\/hr\)/i)).toBeInTheDocument();
-    expect(screen.getByText(/Venting Duration HR \(hours\/event\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/Shut-in pressure \(psig\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/Sales flow rate \(scf\/hr\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/Venting time \(h\/event\)/i)).toBeInTheDocument();
   });
 
   it("renders Equation 6-11 parameters when automated plunger lift is selected", () => {
@@ -189,7 +189,7 @@ describe("UnloadingForm & API Compendium 2021 Reference Integrity", () => {
     // no equation / API citation is displayed (user request)
     expect(screen.queryByText(/API Equation|Equation 6-3/i)).toBeNull();
     expect(screen.getByText(/Frequency \(events\/yr\)/i)).toBeInTheDocument();
-    expect(screen.getByText(/Casing\/Tubing Diameter \(in\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/Tubing diameter \(in\)/i)).toBeInTheDocument();
     expect(screen.getByText(/Surface Pressure \(psig\)/i)).toBeInTheDocument();
   });
 });

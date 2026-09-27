@@ -183,24 +183,6 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
   return (
     <div className="completions-form" style={{ marginTop: "15px" }}>
       {/* HEADER & TIER SELECTOR */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "16px",
-          borderBottom: "1px solid var(--border-color, #e5e7eb)",
-          paddingBottom: "10px",
-          flexWrap: "wrap",
-          gap: "8px",
-        }}
-      >
-        <div>
-          <h4 style={{ color: "var(--accent-color, #2563eb)", margin: 0 }}>
-            Onshore Well Completion Flowback
-          </h4>
-        </div>
-      </div>
 
       {/* ========================================================================= */}
       {/* TIER 1: API DEFAULT EMISSION FACTORS (TABLES 6-5 & 6-6) */}
@@ -211,7 +193,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
           <div className="form-grid-3" style={{ marginBottom: "16px" }}>
             <div className="input-group">
               <label>
-                Well Hydrocarbon Type
+                Well type
                 <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
               </label>
               <select
@@ -228,7 +210,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
 
             <div className="input-group">
               <label>
-                Hydraulic Fracturing Status
+                Fracturing
                 <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
               </label>
               <select
@@ -250,7 +232,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
 
             <div className="input-group">
               <label>
-                Flowback Disposition / Control
+                Disposition
                 <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
               </label>
               <select
@@ -281,50 +263,11 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
           </div>
 
           {/* ACTIVE FACTOR BADGE */}
-          {activeT1Factor && (
-            <div
-              style={{
-                background: "rgba(16, 185, 129, 0.08)",
-                border: "1px solid rgba(16, 185, 129, 0.3)",
-                borderRadius: "6px",
-                padding: "10px 14px",
-                marginBottom: "16px",
-                fontSize: "0.82rem",
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                flexWrap: "wrap",
-                gap: "8px",
-              }}
-            >
-              <div>
-                <strong>Active Factor: </strong>
-                <span>{activeT1Factor.name}</span>
-                <span style={{ display: "block", color: "#6b7280", marginTop: "2px" }}>
-                  Whole Gas: {activeT1Factor.whole_gas_mscf.toLocaleString()} Mscf/event |
-                  Base CH₄: {activeT1Factor.ch4_tonnes} t/event |
-                  Base CO₂: {activeT1Factor.co2_tonnes} t/event (at {activeT1Factor.std_ch4_pct} mol% CH₄)
-                </span>
-              </div>
-              <span
-                style={{
-                  background: "#10b981",
-                  color: "#fff",
-                  padding: "3px 8px",
-                  borderRadius: "4px",
-                  fontWeight: 600,
-                  fontSize: "0.75rem",
-                }}
-              >
-                {activeT1Factor.code}
-              </span>
-            </div>
-          )}
 
           <div className="form-grid-3">
             <div className="input-group">
               <label>
-                Number of Completion Events
+                Completions
                 <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
               </label>
               <input
@@ -344,8 +287,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
 
             <div className="input-group">
               <label>
-                Site Gas CH₄ Content (%)
-                <small style={{ color: "#6b7280", marginLeft: "4px" }}>(Footnote c, default 78.8%)</small>
+                CH₄ (%)
               </label>
               <input
                 type="number"
@@ -361,8 +303,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
 
             <div className="input-group">
               <label>
-                Site Gas CO₂ Content (%)
-                <small style={{ color: "#6b7280", marginLeft: "4px" }}>(Footnote c, default 0.44%)</small>
+                CO₂ (%)
               </label>
               <input
                 type="number"
@@ -387,14 +328,14 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
 
           <div className="input-group" style={{ marginBottom: "16px" }}>
             <label>
-              Engineering Calculation Model
+              Model
               <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
             </label>
             <CustomDropdown
               options={[
                 {
                   value: "rate_duration",
-                  label: "Rate × Duration (Direct Flowback Rate Measurement)",
+                  label: "Rate × duration",
                 },
                 {
                   value: "gor",
@@ -415,7 +356,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
             <div className="form-grid-3" style={{ marginBottom: "16px" }}>
               <div className="input-group">
                 <label>
-                  Avg Gas Flowback Rate
+                  Flowback rate
                   <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
                 </label>
                 <input
@@ -451,7 +392,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
 
               <div className="input-group">
                 <label>
-                  Flowback Duration (hours)
+                  Duration (h)
                   <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
                 </label>
                 <input
@@ -508,7 +449,6 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
               <div className="input-group">
                 <label>
                   Gas Produced to Sales (Mcf)
-                  <small style={{ color: "#6b7280", marginLeft: "4px" }}>(deducted)</small>
                 </label>
                 <input
                   type="number"
@@ -589,7 +529,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
           <div className="form-grid-4">
             <div className="input-group">
               <label>
-                Gas CH₄ Content (%)
+                CH₄ (%)
                 <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
               </label>
               <input
@@ -606,7 +546,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
             </div>
 
             <div className="input-group">
-              <label>Gas CO₂ Content (%)</label>
+              <label>CO₂ (%)</label>
               <input
                 type="number"
                 min="0"
@@ -637,8 +577,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
 
             <div className="input-group">
               <label>
-                Flare Comb. Efficiency (%)
-                <small style={{ color: "#6b7280", marginLeft: "4px" }}>(if flared)</small>
+                Flare efficiency (%)
               </label>
               <input
                 type="number"
@@ -666,7 +605,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
           <div className="form-grid-4" style={{ marginBottom: "16px" }}>
             <div className="input-group">
               <label>
-                Total Metered Gas Volume (V_t)
+                Metered volume
                 <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
               </label>
               <input
@@ -706,7 +645,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
 
             <div className="input-group">
               <label>
-                Injected N₂ Deduction (EnF)
+                Injected N₂
                 <span
                   style={{ marginLeft: "4px", fontSize: "0.7rem", color: "#6b7280", cursor: "help" }}
                   title="Non-combustible gases such as nitrogen are deducted from total flowback volume. Injected CO2 is NOT deducted per API §6.2.3.1."
@@ -751,17 +690,13 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
           >
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
               <label style={{ fontWeight: 600, fontSize: "0.85rem", color: "#374151", margin: 0 }}>
-                Initial Unmetered Flowback Period
+                Unmetered flowback
               </label>
-              <span style={{ fontSize: "0.75rem", color: "#6b7280" }}>
-                100% vented directly to atmosphere before routing to separator
-              </span>
             </div>
             <div className="form-grid-2">
               <div className="input-group">
                 <label>
-                  Initial Unmetered Duration (T_i, hrs)
-                  <small style={{ color: "#6b7280", marginLeft: "4px" }}>(0 if none)</small>
+                  Unmetered time (h)
                 </label>
                 <input
                   type="number"
@@ -776,8 +711,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
 
               <div className="input-group">
                 <label>
-                  Metered Flowback Duration (T_m, hrs)
-                  <small style={{ color: "#6b7280", marginLeft: "4px" }}>(required if T_i &gt; 0)</small>
+                  Metered time (h)
                 </label>
                 <input
                   type="number"
@@ -796,7 +730,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
           <div className="form-grid-2" style={{ marginBottom: "16px" }}>
             <div className="input-group">
               <label>
-                Gas CH₄ Content (%)
+                CH₄ (%)
                 <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
               </label>
               <input
@@ -813,7 +747,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
             </div>
 
             <div className="input-group">
-              <label>Gas CO₂ Content (%)</label>
+              <label>CO₂ (%)</label>
               <input
                 type="number"
                 min="0"
@@ -830,7 +764,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
           {/* Section 4: Gas Disposition / Fate Split */}
           <div className="input-group" style={{ marginBottom: "16px" }}>
             <label>
-              Metered Gas Fate &amp; Disposition Partitioning
+              Gas disposition
               <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
             </label>
             <CustomDropdown
@@ -940,8 +874,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
             <div className="form-grid-2" style={{ marginBottom: "16px" }}>
               <div className="input-group">
                 <label>
-                  Flare Combustion Efficiency (%)
-                  <small style={{ color: "#6b7280", marginLeft: "4px" }}></small>
+                  Flare efficiency (%)
                 </label>
                 <input
                   type="number"

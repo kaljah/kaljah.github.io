@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import CustomDropdown from "../CustomDropdown";
+import { Segmented } from "./ui";
 import { formatNumber } from "../../utils/formatters";
 import { Info, AlertTriangle, ShieldCheck, Activity, Flame, Wind } from "lucide-react";
 
@@ -176,7 +177,6 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType }) => {
   const gasVolUnit = data.gas_volume_unit || "scf";
   const recoveredScf = toScf(data.recovered_gas_volume || 0, gasVolUnit);
   const flaredScf = toScf(data.flared_gas_volume || 0, gasVolUnit);
-  const netVentedScf = Math.max(0, totalProducedGasScf - recoveredScf - flaredScf);
 
   // Gas composition validation
   const ch4MolPct = parseFloat(data.ch4_content !== undefined && data.ch4_content !== "" ? data.ch4_content : (isTier1 ? selectedBasin.ch4_mol_basis : isTier2 ? 70.0 : 85.0));
@@ -194,80 +194,9 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType }) => {
   // GOR anomaly
   const isGorHighAnomaly = isTier2 && gorScfBbl > 100000;
 
-  // Live Emissions Estimation
-  let estCh4Tonnes = 0;
-  let estCo2Tonnes = 0;
-  let estCo2eTonnes = 0;
-
-  if (isTier1) {
-    const bbl = oilUnit === "m3" ? oilVal * 6.28981 : oilUnit === "kbbl" ? oilVal * 1000 : oilVal;
-    const baseEf = selectedBasin.ef_ch4_kg_bbl;
-    const adjRatio = data.ch4_content ? ch4MolPct / selectedBasin.ch4_mol_basis : 1.0;
-    const ch4Kg = bbl * baseEf * adjRatio;
-    estCh4Tonnes = ch4Kg / 1000.0;
-    if (co2MolPct > 0) {
-      estCo2Tonnes = estCh4Tonnes * (co2MolPct / ch4MolPct) * (44.01 / 16.0425);
-    }
-    estCo2eTonnes = estCh4Tonnes * 28.0 + estCo2Tonnes * 1.0;
-  } else if (isTier2) {
-    const fCh4 = ch4MolPct / 100.0;
-    const fCo2 = co2MolPct / 100.0;
-    const lbCh4 = (netVentedScf * fCh4 * 16.0425) / 379.3;
-    const lbCo2 = (netVentedScf * fCo2 * 44.01) / 379.3;
-    estCh4Tonnes = lbCh4 / 2204.6226;
-    estCo2Tonnes = lbCo2 / 2204.6226;
-    estCo2eTonnes = estCh4Tonnes * 28.0 + estCo2Tonnes * 1.0;
-  } else if (isTier3) {
-    let ventScf = 0;
-    if (tier3Mode === "volume") {
-      const vol = parseFloat(data.vent_volume || 0);
-      const u = data.vent_volume_unit || "scf";
-      ventScf = toScf(vol, u);
-    } else {
-      const rate = parseFloat(data.vent_rate || 0);
-      const dur = parseFloat(data.venting_duration || 0);
-      const uRate = data.vent_rate_unit || "scfh";
-      let rateScfh = rate;
-      if (uRate === "scf/day") rateScfh = rate / 24.0;
-      else if (uRate === "scfm") rateScfh = rate * 60.0;
-      else if (uRate === "m3/hr") rateScfh = rate * 35.3146667;
-      else if (uRate === "m3/day") rateScfh = (rate * 35.3146667) / 24.0;
-      ventScf = rateScfh * dur;
-    }
-    const fCh4 = ch4MolPct / 100.0;
-    const fCo2 = co2MolPct / 100.0;
-    const lbCh4 = (ventScf * fCh4 * 16.0425) / 379.3;
-    const lbCo2 = (ventScf * fCo2 * 44.01) / 379.3;
-    estCh4Tonnes = lbCh4 / 2204.6226;
-    estCo2Tonnes = lbCo2 / 2204.6226;
-    estCo2eTonnes = estCh4Tonnes * 28.0 + estCo2Tonnes * 1.0;
-  }
-
   return (
     <div className="associated-gas-venting-form" style={{ marginTop: "15px" }}>
       {/* HEADER & TIER SELECTOR */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "16px",
-          borderBottom: "1px solid var(--border-color, #e5e7eb)",
-          paddingBottom: "12px",
-          flexWrap: "wrap",
-          gap: "10px",
-        }}
-      >
-        <div>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <Wind size={20} style={{ color: "var(--accent-color, #ff6600)" }} />
-            <h4 style={{ color: "var(--accent-color, #ff6600)", margin: 0, fontWeight: 700 }}>
-              Associated Gas Venting
-            </h4>
-          </div>
-        </div>
-
-      </div>
 
       {/* TIER 1 VIEW: Table 6-8 Regional Basins */}
       {isTier1 && (
@@ -275,14 +204,14 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType }) => {
           <div className="form-grid-2">
             <div className="input-group">
               <label>
-                Regional Basin Factor
+                Basin
                 <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
               </label>
               <CustomDropdown
                 options={TABLE_6_8_BASINS.map((b) => ({
                   value: b.value,
                   label: b.label,
-                  subLabel: `${b.ef_ch4_kg_bbl} kg CH₄/bbl · Whole Gas: ${b.whole_gas_scf_bbl} scf/bbl`,
+                  
                 }))}
                 value={selectedBasinValue}
                 onChange={(val) => {
@@ -295,7 +224,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType }) => {
 
             <div className="input-group">
               <label>
-                Crude Oil Production Throughput
+                Oil production
                 <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
               </label>
               <div style={{ display: "flex", gap: "8px" }}>
@@ -354,15 +283,12 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType }) => {
               }}
             >
               <Info size={16} style={{ color: "#0284c7" }} />
-              <span>Gas Composition Adjustment (Optional)</span>
-            </div>
-            <div style={{ fontSize: "0.78rem", color: "#64748b", marginBottom: "12px" }}>
-              If site-specific gas analysis is available, the methane factor is adjusted by (X_CH₄ / {selectedBasin.ch4_mol_basis}%), and CO₂ emissions are calculated proportionally.
+              <span>Gas composition</span>
             </div>
 
             <div className="form-grid-2" style={{ marginBottom: 0 }}>
               <div className="input-group" style={{ marginBottom: 0 }}>
-                <label style={{ fontSize: "0.8rem" }}>Site CH₄ Content (mol %)</label>
+                <label style={{ fontSize: "0.8rem" }}>CH₄ (mol %)</label>
                 <input
                   type="number"
                   min="0"
@@ -375,7 +301,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType }) => {
                 />
               </div>
               <div className="input-group" style={{ marginBottom: 0 }}>
-                <label style={{ fontSize: "0.8rem" }}>Site CO₂ Content (mol %)</label>
+                <label style={{ fontSize: "0.8rem" }}>CO₂ (mol %)</label>
                 <input
                   type="number"
                   min="0"
@@ -399,7 +325,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType }) => {
           <div className="form-grid-2">
             <div className="input-group">
               <label>
-                Crude Oil Production Basis
+                Oil production
                 <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
               </label>
               <div style={{ display: "flex", gap: "8px" }}>
@@ -437,7 +363,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType }) => {
 
             <div className="input-group">
               <label>
-                Gas-to-Oil Ratio (GOR)
+                GOR
                 <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
               </label>
               <div style={{ display: "flex", gap: "8px" }}>
@@ -501,7 +427,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType }) => {
             </div>
 
             <div className="input-group">
-              <label>Period Operating Duration (days)</label>
+              <label>Period (days)</label>
               <input
                 type="number"
                 min="1"
@@ -518,7 +444,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType }) => {
           {/* Gas Composition */}
           <div className="form-grid-2">
             <div className="input-group">
-              <label>CH₄ Molar Concentration (mol %)</label>
+              <label>CH₄ (mol %)</label>
               <input
                 type="number"
                 min="0"
@@ -532,7 +458,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType }) => {
             </div>
 
             <div className="input-group">
-              <label>CO₂ Molar Concentration (mol %)</label>
+              <label>CO₂ (mol %)</label>
               <input
                 type="number"
                 min="0"
@@ -549,7 +475,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType }) => {
           {/* Gas Volume Unit Selector for Partitioning */}
           <div style={{ marginBottom: "10px", display: "flex", justifyContent: "flex-end" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-              <span style={{ fontSize: "0.75rem", color: "#6b7280" }}>Partitioning unit:</span>
+              <span style={{ fontSize: "0.75rem", color: "#6b7280" }}>Unit</span>
               <select
                 className="mole-input"
                 style={{ width: "110px", padding: "4px 8px", fontSize: "0.8rem" }}
@@ -586,31 +512,15 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType }) => {
               <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                 <Flame size={16} style={{ color: "#ea580c" }} />
                 <span style={{ fontWeight: 700, fontSize: "0.85rem", color: "#1e293b" }}>
-                  Gas Disposition Partitioning &amp; Mass Balance
+                  Gas disposition
                 </span>
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "4px",
-                  fontSize: "0.72rem",
-                  color: "#059669",
-                  background: "#ecfdf5",
-                  padding: "3px 8px",
-                  borderRadius: "4px",
-                  border: "1px solid #a7f3d0",
-                }}
-              >
-                <ShieldCheck size={14} />
-                <span>Zero Double-Counting Verified</span>
               </div>
             </div>
 
             <div className="form-grid-3" style={{ marginBottom: "12px" }}>
               <div className="input-group" style={{ marginBottom: 0 }}>
                 <label style={{ fontSize: "0.78rem" }}>
-                  1. Produced Associated Gas
+                  Produced
                 </label>
                 <input
                   type="text"
@@ -622,7 +532,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType }) => {
 
               <div className="input-group" style={{ marginBottom: 0 }}>
                 <label style={{ fontSize: "0.78rem" }}>
-                  2. Recovered Gas Volume ({gasVolUnit})
+                  Recovered ({gasVolUnit})
                 </label>
                 <input
                   type="number"
@@ -637,7 +547,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType }) => {
 
               <div className="input-group" style={{ marginBottom: 0 }}>
                 <label style={{ fontSize: "0.78rem" }}>
-                  3. Flared Gas Volume ({gasVolUnit})
+                  Flared ({gasVolUnit})
                 </label>
                 <input
                   type="number"
@@ -652,29 +562,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType }) => {
             </div>
 
             {/* Net Vented Stream Result */}
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                padding: "8px 12px",
-                background: "#eff6ff",
-                border: "1px solid #bfdbfe",
-                borderRadius: "6px",
-                fontSize: "0.82rem",
-              }}
-            >
-              <span style={{ color: "#1e40af", fontWeight: 600 }}>
-                Net Atmospheric Vented Gas = Produced ({formatNumber(totalProducedGasScf, 0)} scf) − Recovered ({formatNumber(recoveredScf, 0)} scf) − Flared ({formatNumber(flaredScf, 0)} scf):
-              </span>
-              <span style={{ fontWeight: 700, color: "#1d4ed8", fontSize: "0.95rem" }}>
-                {formatNumber(netVentedScf, 1)} scf ({(netVentedScf / 35.3146667).toFixed(1)} m³)
-              </span>
-            </div>
 
-            <div style={{ fontSize: "0.72rem", color: "#64748b", marginTop: "8px" }}>
-              💡 Flared gas is partitioned out here so emissions from combustion are accounted for under Section 5 Flaring without double-counting.
-            </div>
           </div>
         </div>
       )}
@@ -683,56 +571,23 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType }) => {
       {isTier3 && (
         <div>
           {/* Measurement Mode Tabs */}
-          <div
-            style={{
-              display: "flex",
-              gap: "8px",
-              marginBottom: "16px",
-            }}
-          >
-            <button
-              type="button"
-              className={`btn-mode ${tier3Mode === "rate" ? "active" : ""}`}
-              onClick={() => onChange("tier3_mode", "rate")}
-              style={{
-                flex: 1,
-                padding: "8px 12px",
-                borderRadius: "6px",
-                fontSize: "0.82rem",
-                fontWeight: 600,
-                cursor: "pointer",
-                background: tier3Mode === "rate" ? "#eff6ff" : "#f9fafb",
-                color: tier3Mode === "rate" ? "#1d4ed8" : "#4b5563",
-                border: tier3Mode === "rate" ? "1px solid #93c5fd" : "1px solid #e5e7eb",
-              }}
-            >
-              Mode A: Measured Vent Flow Rate × Duration
-            </button>
-            <button
-              type="button"
-              className={`btn-mode ${tier3Mode === "volume" ? "active" : ""}`}
-              onClick={() => onChange("tier3_mode", "volume")}
-              style={{
-                flex: 1,
-                padding: "8px 12px",
-                borderRadius: "6px",
-                fontSize: "0.82rem",
-                fontWeight: 600,
-                cursor: "pointer",
-                background: tier3Mode === "volume" ? "#eff6ff" : "#f9fafb",
-                color: tier3Mode === "volume" ? "#1d4ed8" : "#4b5563",
-                border: tier3Mode === "volume" ? "1px solid #93c5fd" : "1px solid #e5e7eb",
-              }}
-            >
-              Mode B: Total Measured Vent Volume
-            </button>
+          <div style={{ marginBottom: "16px" }}>
+            <Segmented
+              ariaLabel="Measurement mode"
+              value={tier3Mode}
+              onChange={(v) => onChange("tier3_mode", v)}
+              options={[
+                { value: "rate", label: "Rate × duration" },
+                { value: "volume", label: "Total volume" },
+              ]}
+            />
           </div>
 
           {tier3Mode === "rate" ? (
             <div className="form-grid-2">
               <div className="input-group">
                 <label>
-                  Measured Vent Flow Rate
+                  Vent rate
                   <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
                 </label>
                 <div style={{ display: "flex", gap: "8px" }}>
@@ -767,7 +622,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType }) => {
 
               <div className="input-group">
                 <label>
-                  Venting Duration (hours)
+                  Venting time (h)
                   <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
                 </label>
                 <input
@@ -826,7 +681,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType }) => {
           <div className="form-grid-2">
             <div className="input-group">
               <label>
-                Measured CH₄ Molar Fraction (mol %)
+                CH₄ (mol %)
                 <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
               </label>
               <input
@@ -843,7 +698,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType }) => {
             </div>
 
             <div className="input-group">
-              <label>Measured CO₂ Molar Fraction (mol %)</label>
+              <label>CO₂ (mol %)</label>
               <input
                 type="number"
                 min="0"
@@ -971,96 +826,6 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType }) => {
       )}
 
       {/* LIVE CALCULATION PREVIEW CARD */}
-      <div
-        style={{
-          background: "#f8fafc",
-          borderRadius: "8px",
-          border: "1px solid #e2e8f0",
-          padding: "16px",
-          marginTop: "10px",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: "12px",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-            <Activity size={16} style={{ color: "var(--accent-color, #ff6600)" }} />
-            <span style={{ fontWeight: 600, fontSize: "0.85rem", color: "#1e293b" }}>
-              Real-Time Emission Preview
-            </span>
-          </div>
-          <span
-            style={{
-              fontSize: "0.72rem",
-              padding: "2px 6px",
-              borderRadius: "4px",
-              background: isTier3 ? "#dbeafe" : isTier2 ? "#dcfce7" : "#ffedd5",
-              color: isTier3 ? "#1e40af" : isTier2 ? "#166534" : "#9a3412",
-              fontWeight: 600,
-            }}
-          >
-            {isTier3 ? "Tier 3: CEMS / Meter" : isTier2 ? "Tier 2: Engineering GOR" : "Tier 1: Regional Default"}
-          </span>
-        </div>
-
-        <div className="form-grid-3" style={{ marginBottom: 0 }}>
-          <div
-            style={{
-              padding: "10px 12px",
-              background: "white",
-              borderRadius: "6px",
-              border: "1px solid #e2e8f0",
-            }}
-          >
-            <div style={{ fontSize: "0.72rem", color: "#64748b" }}>CH₄ Emissions</div>
-            <div style={{ fontSize: "1.1rem", fontWeight: 700, color: "#0f172a" }}>
-              {formatNumber(estCh4Tonnes, 4)} <span style={{ fontSize: "0.8rem", fontWeight: 500 }}>tonnes</span>
-            </div>
-            <div style={{ fontSize: "0.7rem", color: "#94a3b8" }}>
-              ±40% default uncertainty
-            </div>
-          </div>
-
-          <div
-            style={{
-              padding: "10px 12px",
-              background: "white",
-              borderRadius: "6px",
-              border: "1px solid #e2e8f0",
-            }}
-          >
-            <div style={{ fontSize: "0.72rem", color: "#64748b" }}>CO₂ Emissions</div>
-            <div style={{ fontSize: "1.1rem", fontWeight: 700, color: "#0f172a" }}>
-              {formatNumber(estCo2Tonnes, 4)} <span style={{ fontSize: "0.8rem", fontWeight: 500 }}>tonnes</span>
-            </div>
-            <div style={{ fontSize: "0.7rem", color: "#94a3b8" }}>
-              ±20% default uncertainty
-            </div>
-          </div>
-
-          <div
-            style={{
-              padding: "10px 12px",
-              background: "white",
-              borderRadius: "6px",
-              border: "1px solid #e2e8f0",
-            }}
-          >
-            <div style={{ fontSize: "0.72rem", color: "#64748b" }}>Total CO₂ Equivalent</div>
-            <div style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--accent-color, #ff6600)" }}>
-              {formatNumber(estCo2eTonnes, 3)} <span style={{ fontSize: "0.8rem", fontWeight: 500 }}>tCO₂e</span>
-            </div>
-            <div style={{ fontSize: "0.7rem", color: "#94a3b8" }}>
-              IPCC AR5 GWP (CH₄=28, CO₂=1)
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };

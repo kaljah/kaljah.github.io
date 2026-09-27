@@ -13,9 +13,6 @@ const CHEMICAL_OPTIONS = [
 const ChemicalProductionForm = ({ data, onChange }) => {
   return (
     <div className="chemical-production-form">
-      <h4 style={{ color: "var(--accent-color)", marginBottom: "15px" }}>
-        Chemical Manufacturing Parameters
-      </h4>
 
       <div className="form-grid-2">
         <div className="input-group">
