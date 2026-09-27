@@ -1385,7 +1385,7 @@ const DashboardEnhanced = () => {
             <div className="card-header-row" style={{ marginBottom: '16px' }}>
               <div>
                 <h3 className="card-subtitle" style={{ fontSize: '1.15rem', fontWeight: 700 }}>
-                  SBTi Decarbonization Trajectory ({sbtiData.pathway_type || "1.5°C"})
+                  {sbtiData.pathway_label || "Decarbonization Trajectory"}
                 </h3>
                 <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
                   Progress monitoring against corporate Net-Zero targets from Base Year {sbtiData.base_year} to Target Year {sbtiData.target_year}
@@ -1424,7 +1424,7 @@ const DashboardEnhanced = () => {
                   },
                   {
                     dataKey: "sbti_target",
-                    name: "SBTi 1.5°C Linear Target",
+                    name: sbtiData?.pathway_label || "Linear Target", // BUG-059: label follows the stored pathway
                     color: "#10b981",
                     strokeDasharray: "5 5",
                     strokeWidth: 2

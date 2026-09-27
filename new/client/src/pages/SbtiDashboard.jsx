@@ -263,7 +263,9 @@ const SbtiDashboard = () => {
   const isConfigured = Boolean(sbtiData && sbtiData.has_target);
   const currentActual = sbtiData?.current_actual_emissions ?? sbtiData?.current_actual ?? 0;
   const currentTarget = sbtiData?.current_target_emissions ?? sbtiData?.current_target ?? 0;
-  const isOnTrack = isConfigured ? (sbtiData?.on_track ?? true) : null;
+  // BUG-028: no evaluable year -> "No data", never a default ON TRACK
+  const isOnTrack = isConfigured ? (sbtiData?.on_track ?? null) : null;
+  const noData = isConfigured && isOnTrack === null;
   const currentYear = sbtiData?.current_year || sbtiData?.latest_actual_year || new Date().getFullYear();
 
   return (
@@ -486,11 +488,11 @@ const SbtiDashboard = () => {
           </div>
         </div>
 
-        <div className={`sbti-kpi-card ${isConfigured ? (isOnTrack ? "success" : "warning") : "neutral"}`}>
+        <div className={`sbti-kpi-card ${isConfigured && !noData ? (isOnTrack ? "success" : "warning") : "neutral"}`}>
           <div className="sbti-kpi-header">
             <span className="sbti-kpi-title">Pathway Status</span>
-            <div className={`sbti-kpi-icon ${isConfigured ? (isOnTrack ? "success" : "warning") : "neutral"}`}>
-              {isConfigured ? (
+            <div className={`sbti-kpi-icon ${isConfigured && !noData ? (isOnTrack ? "success" : "warning") : "neutral"}`}>
+              {isConfigured && !noData ? (
                 isOnTrack ? <CheckCircle size={18} /> : <AlertTriangle size={18} />
               ) : (
                 <ShieldCheck size={18} />
@@ -498,14 +500,16 @@ const SbtiDashboard = () => {
             </div>
           </div>
           <div className="sbti-kpi-value">
-            <span className={`status-pill ${isConfigured ? (isOnTrack ? "on-track" : "behind") : "not-set"}`}>
-              {isConfigured ? (isOnTrack ? "ON TRACK" : "BEHIND TARGET") : "NOT CONFIGURED"}
+            <span className={`status-pill ${isConfigured && !noData ? (isOnTrack ? "on-track" : "behind") : "not-set"}`}>
+              {!isConfigured ? "NOT CONFIGURED" : noData ? "NO DATA" : isOnTrack ? "ON TRACK" : "BEHIND TARGET"}
             </span>
           </div>
           <div className="sbti-kpi-subtitle">
-            {isConfigured
-              ? `Reduction: ${sbtiData?.reduction_achieved_pct || 0}% vs Baseline`
-              : "Set corporate baseline & targets to track alignment"}
+            {!isConfigured
+              ? "Set corporate baseline & targets to track alignment"
+              : noData
+                ? "No complete year of verified data in the target window"
+                : `Reduction: ${sbtiData?.reduction_achieved_pct}% vs ${sbtiData?.base_year} baseline (progress year ${sbtiData?.latest_actual_year})`}
           </div>
         </div>
 
@@ -533,7 +537,7 @@ const SbtiDashboard = () => {
         <div className="sbti-card">
           <div className="sbti-card-header">
             <div>
-              <h3 className="sbti-card-title">SBTi Decarbonization Pathway ({sbtiData?.pathway_type || "1.5°C"})</h3>
+              <h3 className="sbti-card-title">{sbtiData?.pathway_label || "Decarbonization Pathway"}</h3>
               <p className="sbti-card-subtitle">
                 Linear reduction trajectory from base year {sbtiData?.base_year || 2024} to target year {sbtiData?.target_year || 2050} (Residual emissions capped at 10% per NZ-C1)
               </p>
