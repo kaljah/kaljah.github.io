@@ -674,7 +674,7 @@ const Scope1Form = () => {
     // Validate fuel/factor selection
     if (
       (sourceType === "default" || sourceType === "custom") &&
-      processType !== "associated_gas_venting" &&
+      !["associated_gas_venting", "completions", "unloading"].includes(processType) &&
       !formData.fuel
     ) {
       toast.warning("Please select a fuel or emission factor");
@@ -1976,6 +1976,39 @@ const Scope1Form = () => {
                             sub: "Onshore EF + Site CH₄/CO₂",
                           },
                         ]
+                      : processType === "completions"
+                      ? [
+                          { key: "default", tier: "Tier 1", label: "Defaults", sub: "Per-event factor" },
+                          { key: "custom", tier: "Tier 2", label: "Operational Data", sub: "Rate, GOR or production" },
+                          { key: "specific", tier: "Tier 3", label: "Direct Measurement", sub: "Metered flowback" },
+                        ]
+                      : processType === "unloading"
+                      ? [
+                          { key: "default", tier: "Tier 1", label: "Per-Well", sub: "Per-well annual factor" },
+                          { key: "custom", tier: "Tier 2", label: "Event-Based", sub: "Per-event factor" },
+                          { key: "specific", tier: "Tier 3", label: "Engineering", sub: "Wellbore / plunger models" },
+                        ]
+                      : processType === "associated_gas_venting"
+                      ? [
+                          {
+                            key: "default",
+                            tier: "Tier 1",
+                            label: "Regional Default",
+                            sub: "Basin average factor",
+                          },
+                          {
+                            key: "custom",
+                            tier: "Tier 2",
+                            label: "GOR Balance",
+                            sub: "Oil × GOR × duration",
+                          },
+                          {
+                            key: "specific",
+                            tier: "Tier 3",
+                            label: "Measurement",
+                            sub: "Metered vent rate / volume",
+                          },
+                        ]
                       : processType === "fugitive"
                       ? [
                           {
@@ -2110,7 +2143,7 @@ const Scope1Form = () => {
                 )}
 
                 {/* TIER 1: Standard API Tabulated Factors */}
-                {sourceType === "default" && processType !== "associated_gas_venting" && (
+                {sourceType === "default" && !["associated_gas_venting", "completions", "unloading"].includes(processType) && (
                   <CustomDropdown
                     options={fuelOptions}
                     value={formData.fuel || ""}
@@ -2121,7 +2154,7 @@ const Scope1Form = () => {
                 )}
 
                 {/* TIER 2: Regional / Measured / Supplier Factors */}
-                {sourceType === "custom" && processType !== "associated_gas_venting" && (
+                {sourceType === "custom" && !["associated_gas_venting", "completions", "unloading"].includes(processType) && (
                   <div className="tier2-mode-container">
                     {[
                       "combustion",

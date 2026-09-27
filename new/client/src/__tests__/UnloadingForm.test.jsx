@@ -64,7 +64,8 @@ describe("UnloadingForm & API Compendium 2021 Reference Integrity", () => {
     );
 
     // Verify Tier 1 elements
-    expect(screen.getByText(/Tier 1: Per-Well/i)).toBeInTheDocument();
+    // one tier selector: the page-level Calculation Methodology control (the form has no tier buttons)
+    expect(screen.queryByText(/Tier 1: Per-Well/i)).toBeNull();
     expect(screen.getByText(/Number of Wells \(well-years\)/i)).toBeInTheDocument();
     expect(screen.getByText(/Plunger Lift \(1,774 kg CH₄ \/ well-yr\)/i)).toBeInTheDocument();
 
@@ -93,7 +94,8 @@ describe("UnloadingForm & API Compendium 2021 Reference Integrity", () => {
       />
     );
 
-    expect(screen.getByText(/Tier 2: Event-Based/i)).toBeInTheDocument();
+    // one tier selector: the page-level Calculation Methodology control (the form has no tier buttons)
+    expect(screen.queryByText(/Tier 2: Event-Based/i)).toBeNull();
     expect(screen.getByText(/Total Unloading Events/i)).toBeInTheDocument();
     expect(screen.getByText(/Region \/ Basin/i)).toBeInTheDocument();
 
@@ -125,7 +127,8 @@ describe("UnloadingForm & API Compendium 2021 Reference Integrity", () => {
       />
     );
 
-    expect(screen.getByText(/Tier 3: Engineering/i)).toBeInTheDocument();
+    // one tier selector: the page-level Calculation Methodology control (the form has no tier buttons)
+    expect(screen.queryByText(/Tier 3: Engineering/i)).toBeNull();
     expect(screen.getByText(/Annual Unloading Events/i)).toBeInTheDocument();
     expect(screen.getByText(/Casing\/Tubing Diameter \(in\)/i)).toBeInTheDocument();
     expect(screen.getByText(/Well Depth \(ft\)/i)).toBeInTheDocument();

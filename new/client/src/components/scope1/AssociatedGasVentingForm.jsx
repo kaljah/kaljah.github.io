@@ -99,16 +99,10 @@ const VENT_RATE_UNITS = [
   { value: "m3/day", label: "m³ / day (m³/day)" },
 ];
 
-const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, setSourceType }) => {
-  // Determine current tier from data.tier or hoisted sourceType
-  const currentTier = String(
-    data.tier ||
-      (sourceType === "specific"
-        ? "tier3"
-        : sourceType === "custom"
-        ? "tier2"
-        : "tier1")
-  ).toLowerCase();
+const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType }) => {
+  // One tier selector: the page-level "Calculation Methodology" control (sourceType) drives the
+  // tier; data.tier is kept in sync below for the payload
+  const currentTier = sourceType === "specific" ? "tier3" : sourceType === "custom" ? "tier2" : "tier1";
 
   const isTier1 = currentTier === "tier1" || currentTier === "1";
   const isTier2 = currentTier === "tier2" || currentTier === "2" || currentTier === "custom";
@@ -153,26 +147,6 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, setSourceTy
       if (!data.vent_volume_unit) onChange("vent_volume_unit", "scf");
     }
   }, [currentTier]);
-
-  const handleTierSwitch = (newTier) => {
-    onChange("tier", newTier);
-    if (setSourceType) {
-      if (newTier === "tier1") setSourceType("default");
-      else if (newTier === "tier2") setSourceType("custom");
-      else setSourceType("specific");
-    }
-    if (newTier === "tier1") {
-      onChange("calc_method", "api_table_6_8");
-      onChange("fuel", selectedBasin.value);
-      onChange("basin", selectedBasin.value);
-    } else if (newTier === "tier2") {
-      onChange("calc_method", "api_equation_6_8_6_9");
-      if (data.ch4_content === undefined) onChange("ch4_content", 70.0);
-      if (data.co2_content === undefined) onChange("co2_content", 10.0);
-    } else {
-      onChange("calc_method", "api_equation_6_8_direct");
-    }
-  };
 
   // Convert gas volume helper for Tier 2 UI preview
   const toScf = (val, unit) => {
@@ -293,63 +267,6 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, setSourceTy
           </div>
         </div>
 
-        {/* Tier selection tabs */}
-        <div style={{ display: "flex", gap: "6px" }}>
-          <button
-            type="button"
-            className={`btn-tier ${isTier1 ? "active" : ""}`}
-            onClick={() => handleTierSwitch("tier1")}
-            style={{
-              padding: "5px 12px",
-              borderRadius: "5px",
-              fontSize: "0.78rem",
-              fontWeight: 600,
-              cursor: "pointer",
-              background: isTier1 ? "var(--accent-color, #ff6600)" : "#f3f4f6",
-              color: isTier1 ? "#fff" : "#374151",
-              border: isTier1 ? "1px solid #ff6600" : "1px solid #d1d5db",
-              transition: "all 0.15s ease",
-            }}
-          >
-            Tier 1: Regional Default
-          </button>
-          <button
-            type="button"
-            className={`btn-tier ${isTier2 ? "active" : ""}`}
-            onClick={() => handleTierSwitch("tier2")}
-            style={{
-              padding: "5px 12px",
-              borderRadius: "5px",
-              fontSize: "0.78rem",
-              fontWeight: 600,
-              cursor: "pointer",
-              background: isTier2 ? "var(--accent-color, #ff6600)" : "#f3f4f6",
-              color: isTier2 ? "#fff" : "#374151",
-              border: isTier2 ? "1px solid #ff6600" : "1px solid #d1d5db",
-              transition: "all 0.15s ease",
-            }}
-          >
-            Tier 2: GOR Balance
-          </button>
-          <button
-            type="button"
-            className={`btn-tier ${isTier3 ? "active" : ""}`}
-            onClick={() => handleTierSwitch("tier3")}
-            style={{
-              padding: "5px 12px",
-              borderRadius: "5px",
-              fontSize: "0.78rem",
-              fontWeight: 600,
-              cursor: "pointer",
-              background: isTier3 ? "var(--accent-color, #ff6600)" : "#f3f4f6",
-              color: isTier3 ? "#fff" : "#374151",
-              border: isTier3 ? "1px solid #ff6600" : "1px solid #d1d5db",
-              transition: "all 0.15s ease",
-            }}
-          >
-            Tier 3: Measurement
-          </button>
-        </div>
       </div>
 
       {/* TIER 1 VIEW: Table 6-8 Regional Basins */}
@@ -412,30 +329,6 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, setSourceTy
                   ))}
                 </select>
               </div>
-            </div>
-          </div>
-
-          {/* Factor Details Badge */}
-          <div
-            style={{
-              padding: "10px 14px",
-              background: "#f0fdf4",
-              border: "1px solid #bbf7d0",
-              borderRadius: "6px",
-              marginBottom: "16px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              fontSize: "0.82rem",
-            }}
-          >
-            <div>
-              <span style={{ fontWeight: 600, color: "#166534" }}>
-                {selectedBasin.label}:
-              </span>{" "}
-              <span style={{ color: "#15803d" }}>
-                <strong>{selectedBasin.ef_ch4_kg_bbl} kg CH₄ / bbl crude</strong> (Whole gas: {selectedBasin.whole_gas_scf_bbl} scf/bbl, Basis: {selectedBasin.ch4_mol_basis}% CH₄)
-              </span>
             </div>
           </div>
 
