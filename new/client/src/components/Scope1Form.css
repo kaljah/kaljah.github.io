@@ -361,3 +361,32 @@
   gap: 6px;
 }
 
+
+/* BUG-108: reflow at phone width — grids collapse to one column, tier buttons wrap, and inline
+   multi-column grids inside the form stack instead of being clipped */
+@media (max-width: 600px) {
+  .form-grid-4,
+  .form-grid-3,
+  .form-grid-2 {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .scope-form [style*="grid-template-columns"] {
+    grid-template-columns: 1fr !important;
+  }
+  .tier-selector-btn {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+  .methodology-toggle {
+    flex-wrap: wrap;
+  }
+  .scope-form {
+    overflow-x: hidden;
+  }
+  .scope-form .mole-input,
+  .scope-form .component-select {
+    max-width: 100%;
+    width: 100% !important;
+  }
+}
