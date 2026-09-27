@@ -20,7 +20,7 @@ def test_constants_and_helpers():
 
     # Test 20-year horizon lookup
     ar5_20 = get_active_gwp("AR5", horizon="20")
-    assert ar5_20["CH4"] == 82.5
+    assert ar5_20["CH4"] == 84.0  # IPCC AR5 WG1 Table 8.7 (audit BUG-013)
 
 
 def test_calculate_co2e_dynamic():

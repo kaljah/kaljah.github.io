@@ -1,3 +1,4 @@
+import math
 from .constants import DEFAULT_GWP, get_active_gwp
 
 # Standard Thermodynamic Conditions (API Compendium 2021 §4.2.1, ISO 13443)
@@ -772,3 +773,42 @@ def per_source_hour_kg(value, unit):
     for h in hours:
         per *= h
     return float(value) * spec["mass_kg"] / per, spec["gas"] == "ch4"
+
+
+# -- Gas composition (audit RC-8: BUG-023 / BUG-024) -------------------------------------
+COMPOSITION_KEYS = ("c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", "co2", "n2", "h2s", "other")
+
+
+def composition_fractions(raw, basis=None):
+    """Convert one gas analysis to mole fractions, deciding percent vs fraction ONCE.
+
+    `raw` maps component -> value as entered. The basis is "percent" when requested, or when
+    any component exceeds 1 or the analysis sums above 1.5; otherwise "fraction". Every
+    component (including CO2, N2, H2S) is scaled the same way, so a 1.0 mol% butane can no
+    longer become 100 %. A total above 100 % (+0.5 % rounding) is rejected; an analysis within
+    98-102 % is renormalised to 100 %; an incomplete analysis is used as given (the rest is
+    unspecified, not redistributed).
+    Returns (fractions, info) with info = {"basis", "total", "renormalised"}.
+    """
+    vals = {}
+    for k, v in (raw or {}).items():
+        if v in (None, "", "-"):
+            continue
+        x = float(str(v).replace("%", "").strip())
+        if not math.isfinite(x) or x < 0:
+            raise ValueError(f"Gas composition '{k}' must be a finite, non-negative number")
+        vals[k] = x
+    if not vals:
+        return {}, {"basis": None, "total": 0.0, "renormalised": False}
+    total = sum(vals.values())
+    if basis is None:
+        basis = "percent" if (max(vals.values()) > 1.0 or total > 1.5) else "fraction"
+    scale = 0.01 if basis == "percent" else 1.0
+    fr = {k: v * scale for k, v in vals.items()}
+    tot = sum(fr.values())
+    if tot > 1.005:
+        raise ValueError(f"Gas composition sums to {tot * 100:.2f} % (> 100 %)")
+    renorm = 0.98 <= tot < 0.99999 or 1.00001 < tot <= 1.005
+    if renorm:
+        fr = {k: v / tot for k, v in fr.items()}
+    return fr, {"basis": basis, "total": tot, "renormalised": renorm}

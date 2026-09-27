@@ -225,6 +225,32 @@ class CalculationDispatcher:
             f"Missing required parameter for Tier 3 specific calculation: '{keys[0]}' ({desc})"
         )
 
+    def _composition(self, flat_inputs, c1_keys=("c1",)):
+        """BUG-023: one percent/fraction decision for the whole analysis (calculations.units)."""
+        from .units import composition_fractions
+
+        raw = {}
+        for k in c1_keys:
+            if flat_inputs.get(k) not in (None, "", "-"):
+                raw["c1"] = flat_inputs.get(k)
+                break
+        for i in range(2, 11):
+            if flat_inputs.get(f"c{i}") not in (None, "", "-"):
+                raw[f"c{i}"] = flat_inputs.get(f"c{i}")
+        for key, names in (("co2", ("co2_mol", "co2_content", "co2_comp")), ("n2", ("n2", "n2_mol", "n2_comp")),
+                           ("h2s", ("h2s", "h2s_mol"))):
+            for n in names:
+                if flat_inputs.get(n) not in (None, "", "-"):
+                    raw[key] = flat_inputs.get(n)
+                    break
+        basis = str(flat_inputs.get("composition_basis") or "").lower() or None
+        fr, _info = composition_fractions(raw, basis={"mol%": "percent", "percent": "percent",
+                                                      "fraction": "fraction"}.get(basis) if basis else None)
+        comps = {f"c{i}": fr.get(f"c{i}", 0.0) for i in range(1, 11)}
+        comps["co2_comp"] = fr.get("co2", 0.0)
+        comps["n2_comp"] = fr.get("n2", 0.0)
+        return comps
+
     def _optional_fraction(self, flat_inputs, keys, default=0.0, is_percent=False):
         """Extracts an optional percentage or fraction normalized to 0.0 - 1.0."""
         if isinstance(keys, str):
@@ -510,30 +536,7 @@ class CalculationDispatcher:
                 else:
                     comb_eff_frac = comb_eff
 
-                def safe_frac(key):
-                    val = flat_inputs.get(key)
-                    if val in [None, "", "-"]:
-                        return 0.0
-                    try:
-                        num = float(val)
-                        return num / 100.0 if num > 1.0 else num
-                    except (ValueError, TypeError):
-                        return 0.0
-
-                comps = {
-                    "c1": safe_frac("c1"),
-                    "c2": safe_frac("c2"),
-                    "c3": safe_frac("c3"),
-                    "c4": safe_frac("c4"),
-                    "c5": safe_frac("c5"),
-                    "c6": safe_frac("c6"),
-                    "c7": safe_frac("c7"),
-                    "c8": safe_frac("c8"),
-                    "c9": safe_frac("c9"),
-                    "c10": safe_frac("c10"),
-                    "co2_comp": safe_frac("co2_mol") or safe_frac("co2_content"),
-                    "n2_comp": safe_frac("n2") or safe_frac("n2_mol"),
-                }
+                comps = self._composition(flat_inputs)
 
                 return calculator.calculate(
                     fuel_quantity=quantity,
@@ -575,30 +578,9 @@ class CalculationDispatcher:
                 flare_type = flat_inputs.get("flare_type", "elevated")
                 hhv_val = flat_inputs.get("hhv") or emission_factors.get("hhv")
 
-                def safe_frac(key):
-                    val = flat_inputs.get(key)
-                    if val in [None, "", "-"]:
-                        return 0.0
-                    try:
-                        num = float(val)
-                        return num / 100.0 if num > 1.0 else num
-                    except (ValueError, TypeError):
-                        return 0.0
-
-                comps = {
-                    "c1": ch4_content,
-                    "c2": safe_frac("c2"),
-                    "c3": safe_frac("c3"),
-                    "c4": safe_frac("c4"),
-                    "c5": safe_frac("c5"),
-                    "c6": safe_frac("c6"),
-                    "c7": safe_frac("c7"),
-                    "c8": safe_frac("c8"),
-                    "c9": safe_frac("c9"),
-                    "c10": safe_frac("c10"),
-                    "co2_comp": safe_frac("co2_mol") or safe_frac("co2_content"),
-                    "n2_comp": safe_frac("n2") or safe_frac("n2_mol"),
-                }
+                comps = self._composition(flat_inputs, c1_keys=("c1", "ch4_content", "flare_ch4_content"))
+                if not comps.get("c1"):
+                    comps["c1"] = ch4_content
 
                 def _get_eff(keys):
                     for k in keys:
@@ -1332,7 +1314,8 @@ class CalculationDispatcher:
                     or fug_method in ["screening", "method21", "ogi", "measurement"]
                     # BUG-048: "specific" with a catalog leak factor and no measurement inputs is the
                     # engineering count x factor x hours method, not a direct measurement of `amount`
-                    or (source_type == "specific" and not (emission_factors.get("ch4") or emission_factors.get("factor")))
+                    or (source_type == "specific" and not (emission_factors.get("ch4") or emission_factors.get("factor")
+                                                           or flat_inputs.get("ef") not in (None, "")))
                     or flat_inputs.get("fugitive_ppm") is not None
                     or flat_inputs.get("screening_ppm") is not None
                     or flat_inputs.get("measured_rate") is not None
