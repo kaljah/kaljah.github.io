@@ -224,8 +224,23 @@ COMBUSTION_FACTORS = {
         "usage": ["combustion"],
         "segment": "Midstream",
         "process_category": "stationary_combustion",
-        "type": "gases",
+        "type": "liquids",  # HHV is per gallon of liquid ethane (see "Ethane (Gas)" for gas-phase use)
         "source": "API Compendium 2021 Section 5",
+    },
+    "Ethane (Gas)": {
+        "code": "EthaneGas",
+        # API Compendium 2021 Table 3-7: ethane ideal gross heating value 1768.8 Btu/scf (60 F, 1 atm);
+        # same CO2 / CH4 / N2O factors per MMBtu as liquid ethane
+        "hhv": 1768.8,
+        "hhv_unit": "btu/scf",
+        "co2": 59.60,
+        "ch4": 0.003,
+        "n2o": 0.0006,
+        "uncertainty": {"co2": 0.02, "ch4": 0.25, "n2o": 0.30},
+        "unit": "kg/MMBtu",
+        "usage": ["combustion"],
+        "segment": "Midstream",
+        "type": "gases",
     },
     "Crude Oil": {
         "code": "Crude",
@@ -1004,8 +1019,10 @@ VENTED_FACTORS = {
     "Asphalt": {
         "code": "Asphalt",
         "type": "equipment",
-        "ch4": 0.05 * 0.453592,  # 0.02268 kg/ton
-        "co2": 23.0 * 0.453592,  # 10.4326 kg/ton
+        # API Compendium 2021 Table 6-52 (per short ton blown): CH4 3.07E-03 t, CO2 5.61E-03 t
+        # (Exhibit 6-45). Corrected from 0.02268 / 10.43 kg/ton, which the table does not support.
+        "ch4": 3.07,  # kg CH4/ton
+        "co2": 5.61,  # kg CO2/ton
         "n2o": 0,
         "uncertainty": {"co2": 0.30, "ch4": 0.30, "n2o": 0},
         "unit": "kg/ton",

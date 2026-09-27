@@ -278,6 +278,22 @@ class CalculationDispatcher:
             return None
 
         calc = RefiningHydrogenPlantCalculator()
+        # feed gas composition (mol %): enables the rigorous Eq 6-49 / Eq 6-50 methods (Exhibits 6-42 / 6-43)
+        comp = {}
+        for key, sp in (("feed_ch4", "CH4"), ("feed_c2h6", "C2H6"), ("feed_c3h8", "C3H8"),
+                        ("feed_c4h10", "C4H10"), ("feed_c5h12", "C5H12"), ("feed_co2", "CO2"), ("feed_n2", "N2")):
+            v = num(key)
+            if v is not None:
+                comp[sp] = v / 100.0 if v > 1.0 else v
+        feed_scf = num("feedstock_scf", "feedstock_volume_scf")
+        if comp and feed_scf is not None:
+            res = calc.calculate(method="feedstock_balance", feedstock_volume_scf_yr=feed_scf, feedstock_comp=comp,
+                                 uncertainties=uncertainties, gwp_dict=gwp_dict)
+            return self._apply_capture(res, flat_inputs)
+        if comp and num("h2_produced_scf") is not None:
+            res = calc.calculate(method="h2_stoichiometry", h2_production_scf_yr=num("h2_produced_scf"),
+                                 feedstock_comp=comp, uncertainties=uncertainties, gwp_dict=gwp_dict)
+            return self._apply_capture(res, flat_inputs)
         feed_t = num("feedstock_rate_tonnes", "feedstock_tonnes")
         cf = num("feedstock_carbon_fraction")
         if feed_t is not None and cf is not None:
@@ -296,18 +312,7 @@ class CalculationDispatcher:
                 h2_scf = h2_t * 2204.62 / 2.016 * 379.3
             res = calc.calculate(method="simple_factor", simple_basis="h2_scf", simple_volume=h2_scf,
                                  uncertainties=uncertainties, gwp_dict=gwp_dict)
-        capture = self._optional_fraction(flat_inputs, ["ccs_capture_rate", "capture_rate"], 0.0)
-        if capture:
-            keep = 1.0 - capture
-            co2 = res["results"]["co2"]
-            if isinstance(co2, dict):
-                for k in ("value", "absolute_uncertainty", "lower_bound", "upper_bound", "lower_bound_95",
-                          "upper_bound_95", "ci_95_abs"):
-                    if isinstance(co2.get(k), (int, float)):
-                        co2[k] = co2[k] * keep
-            res["total_co2e"] = float(res.get("total_co2e") or 0.0) * keep
-            res.setdefault("inputs", {})["ccs_capture_rate"] = capture
-        return res
+        return self._apply_capture(res, flat_inputs)
 
     def _facility_fugitive(self, flat_inputs, uncertainties, gwp_dict):
         """BUG-110 / RC-17: facility-level onshore fugitives, API 2021 Table 7-8 (per unit of production)."""
@@ -325,6 +330,20 @@ class CalculationDispatcher:
             production=production, production_unit=unit, facility_type=str(fac_type), ch4_content=ch4,
             uncertainties=uncertainties, gwp_dict=gwp_dict,
         )
+
+    def _apply_capture(self, res, flat_inputs):
+        capture = self._optional_fraction(flat_inputs, ["ccs_capture_rate", "capture_rate"], 0.0)
+        if capture:
+            keep = 1.0 - capture
+            co2 = res["results"]["co2"]
+            if isinstance(co2, dict):
+                for k in ("value", "absolute_uncertainty", "lower_bound", "upper_bound", "lower_bound_95",
+                          "upper_bound_95", "ci_95_abs"):
+                    if isinstance(co2.get(k), (int, float)):
+                        co2[k] = co2[k] * keep
+            res["total_co2e"] = float(res.get("total_co2e") or 0.0) * keep
+            res.setdefault("inputs", {})["ccs_capture_rate"] = capture
+        return res
 
     @staticmethod
     def _blowdown_residual(flat_inputs):
@@ -924,10 +943,13 @@ class CalculationDispatcher:
                     ) or flat_inputs.get("quantity")
                     if raw_vol is not None:
                         vol_val = float(raw_vol)
-                        if vol_unit_val in ["scf", "m3", "sm3", "mcf", "mscf", "mmscf"]:
-                            pass
-                        else:
-                            vol_unit_val = "m3"
+                        # the flowback volume carries its own unit (the record's unit may be "events");
+                        # an unknown unit is an error, never a silent m3 (Exhibit 6-3 check)
+                        explicit = flat_inputs.get("volume_unit") or flat_inputs.get("comp_volume_unit")
+                        if explicit:
+                            vol_unit_val = str(explicit).lower().strip()
+                        if vol_unit_val not in ["scf", "m3", "sm3", "mcf", "mscf", "mmscf"]:
+                            raise ValueError("Tier 3 completions need the flowback volume unit (scf, Mcf, MMscf or m3)")
 
                 ch4_content = self._optional_fraction(
                     flat_inputs, ["ch4_content", "c1", "comp_ch4_content"], None
@@ -970,6 +992,7 @@ class CalculationDispatcher:
                     liquid_flowback_bbl=flat_inputs.get("comp_liquid_bbl") or flat_inputs.get("liquid_flowback_bbl"),
                     gas_oil_ratio=flat_inputs.get("comp_gor") or flat_inputs.get("gas_oil_ratio"),
                     gas_produced_sales_scf=gas_sales_scf,
+                    c2plus_content=self._optional_fraction(flat_inputs, ["comp_c2plus_content", "c2plus_content"], 0.0),
                     injected_n2_volume=flat_inputs.get("comp_injected_n2") or flat_inputs.get("injected_n2_volume") or 0.0,
                     injected_n2_unit=flat_inputs.get("comp_injected_n2_unit") or flat_inputs.get("injected_n2_unit", "scf"),
                     injected_gas_type=flat_inputs.get("comp_injected_gas_type") or flat_inputs.get("injected_gas_type", "n2"),
