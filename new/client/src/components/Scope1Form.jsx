@@ -130,6 +130,12 @@ const Scope1Form = () => {
 
   // Table filter state
   const [filterYear, setFilterYear] = useState("");
+  const [facetYears, setFacetYears] = useState([]);
+  useEffect(() => {
+    api.get("/filters/available")
+      .then((r) => setFacetYears(Array.isArray(r.data?.years) ? r.data.years : []))
+      .catch(() => setFacetYears([]));
+  }, []);
   const [filterProcess, setFilterProcess] = useState("");
   const [filterSearch, setFilterSearch] = useState("");
 
@@ -3034,8 +3040,8 @@ const Scope1Form = () => {
             style={{ width: "100px", fontSize: "0.82rem" }}
           >
             <option value="">All Years</option>
-            {[...new Set(entries.map((e) => e.year))]
-              .sort((a, b) => b - a)
+            {/* BUG-095: options come from the server facets, not from the 10 rows of the current page */}
+            {facetYears
               .map((y) => (
                 <option key={y} value={y}>
                   {y}
@@ -3052,11 +3058,7 @@ const Scope1Form = () => {
             style={{ width: "140px", fontSize: "0.82rem" }}
           >
             <option value="">All Processes</option>
-            {[
-              ...new Set(
-                entries.map((e) => e.process || e.process_type).filter(Boolean),
-              ),
-            ].map((p) => (
+            {Object.keys(PROCESS_TYPES).map((p) => (
               <option key={p} value={p}>
                 {PROCESS_TYPES[p]?.label || p}
               </option>
@@ -3082,26 +3084,24 @@ const Scope1Form = () => {
           )}
           <button
             className="action-btn"
-            onClick={() =>
-              exportToCSV(
-                entries.filter((e) => {
-                  const s = filterSearch.toLowerCase();
-                  const matchSearch =
-                    !s ||
-                    (e.activity || "").toLowerCase().includes(s) ||
-                    (e.equipment_id || "").toLowerCase().includes(s) ||
-                    (e.fuel || e.fuel_type || "").toLowerCase().includes(s) ||
-                    (e.group || "").toLowerCase().includes(s);
-                  return (
-                    matchSearch &&
-                    (!filterYear || e.year?.toString() === filterYear) &&
-                    (!filterProcess ||
-                      (e.process || e.process_type) === filterProcess)
-                  );
-                }),
-                "scope1_export.csv",
-              )
-            }
+            onClick={async () => {
+              // BUG-095: export every matching record (server-side filters), not just the visible page
+              try {
+                const res = await api.get("/emissions/", {
+                  params: {
+                    scope: "1",
+                    limit: "all",
+                    ...(filterYear && { year: filterYear }),
+                    ...(filterProcess && { process_type: filterProcess }),
+                    ...(filterSearch && { search: filterSearch }),
+                  },
+                });
+                const rows = res.data?.emissions || res.data?.data || res.data || [];
+                exportToCSV(Array.isArray(rows) ? rows : [], "scope1_export.csv");
+              } catch (err) {
+                toast.error(err.response?.data?.error || "Export failed");
+              }
+            }}
             style={{
               background: "#10b981",
               padding: "6px 14px",

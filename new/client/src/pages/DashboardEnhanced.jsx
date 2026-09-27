@@ -847,7 +847,7 @@ const DashboardEnhanced = () => {
       toast.info("Generating executive brief PDF...");
       const { generateModernPDF } = await import("../utils/ModernReportGenerator");
       await generateModernPDF(api, {
-        year: currentYear !== "all" ? currentYear : undefined,
+        year: currentYear, // BUG-077: pass "all" explicitly so the brief is labelled correctly
         regionId: currentRegion !== "all" ? currentRegion : undefined,
         scope: "all",
       });
