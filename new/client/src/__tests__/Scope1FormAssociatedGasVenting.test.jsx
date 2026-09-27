@@ -94,7 +94,8 @@ describe("Scope1Form Associated Gas Venting Integration", () => {
     // Verify Associated Gas Venting form is rendered
     // the emission UI shows no API Compendium / table citations (user request)
     expect(screen.queryByText(/Compendium|Table 6-8/i)).toBeNull();
-    expect(screen.getByRole("button", { name: "Tier 1: Regional Default" })).toBeInTheDocument();
+    // one tier selector: the page-level Calculation Methodology control (the form has no tier buttons)
+    expect(screen.getByRole("button", { name: /Regional Default/ })).toBeInTheDocument();
 
     // Fill in crude oil throughput
     const spinInputs = screen.getAllByRole("spinbutton");
@@ -135,7 +136,7 @@ describe("Scope1Form Associated Gas Venting Integration", () => {
     fireEvent.click(agvOption);
 
     // Click Tier 2: GOR Balance
-    const tier2Btn = screen.getByRole("button", { name: "Tier 2: GOR Balance" });
+    const tier2Btn = screen.getByRole("button", { name: /GOR Balance/ });
     fireEvent.click(tier2Btn);
 
     // Enter GOR

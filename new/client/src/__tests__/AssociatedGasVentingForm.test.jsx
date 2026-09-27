@@ -69,11 +69,12 @@ describe("AssociatedGasVentingForm & Table 6-8 API Reference Integrity", () => {
     expect(screen.getByText("Associated Gas Venting")).toBeInTheDocument();
     // the emission UI shows no API Compendium / table citations (user request)
     expect(screen.queryByText(/Compendium|Table 6-8/i)).toBeNull();
-    expect(screen.getByRole("button", { name: "Tier 1: Regional Default" })).toBeInTheDocument();
+    // one tier selector: the page-level Calculation Methodology control (the form has no tier buttons)
+    expect(screen.queryByRole("button", { name: /Tier 1/ })).toBeNull();
 
     // Check factor details badge
-    expect(screen.getByText(/Permian Basin - Basin 430:/i)).toBeInTheDocument();
-    expect(screen.getByText(/6.5 kg CH₄ \/ bbl crude/i)).toBeInTheDocument();
+    // the factor details badge was removed on request
+    expect(screen.queryByText(/kg CH₄ \/ bbl crude/i)).toBeNull();
 
     // Change crude oil throughput
     const inputs = screen.getAllByRole("spinbutton");
@@ -110,7 +111,8 @@ describe("AssociatedGasVentingForm & Table 6-8 API Reference Integrity", () => {
       />
     );
 
-    expect(screen.getByText("Tier 2: GOR Balance")).toBeInTheDocument();
+    // one tier selector: the page-level Calculation Methodology control (the form has no tier buttons)
+    expect(screen.queryByText("Tier 2: GOR Balance")).toBeNull();
     expect(screen.getByText(/Gas Disposition Partitioning & Mass Balance/i)).toBeInTheDocument();
     expect(screen.getByText(/Zero Double-Counting Verified/i)).toBeInTheDocument();
 
@@ -210,36 +212,21 @@ describe("AssociatedGasVentingForm & Table 6-8 API Reference Integrity", () => {
     expect(screen.getByText(/Total Measured Vent Gas Volume/i)).toBeInTheDocument();
   });
 
-  it("allows switching tiers interactively via tier buttons", () => {
+  it("follows the page-level tier selector (sourceType) and keeps data.tier / calc_method in sync", () => {
     const handleChange = vi.fn();
-    const handleSetSourceType = vi.fn();
+    const data = { tier: "tier1", oil_production: 1000 };
 
-    const data = {
-      tier: "tier1",
-      oil_production: 1000,
-    };
-
-    render(
-      <AssociatedGasVentingForm
-        data={data}
-        onChange={handleChange}
-        sourceType="default"
-        setSourceType={handleSetSourceType}
-      />
+    const { rerender } = render(
+      <AssociatedGasVentingForm data={data} onChange={handleChange} sourceType="default" />
     );
+    expect(screen.queryByText("Tier 2: GOR Balance")).toBeNull();
 
-    const tier2Btn = screen.getByText("Tier 2: GOR Balance");
-    fireEvent.click(tier2Btn);
-
+    rerender(<AssociatedGasVentingForm data={data} onChange={handleChange} sourceType="custom" />);
     expect(handleChange).toHaveBeenCalledWith("tier", "tier2");
-    expect(handleSetSourceType).toHaveBeenCalledWith("custom");
     expect(handleChange).toHaveBeenCalledWith("calc_method", "api_equation_6_8_6_9");
 
-    const tier3Btn = screen.getByText("Tier 3: Measurement");
-    fireEvent.click(tier3Btn);
-
+    rerender(<AssociatedGasVentingForm data={data} onChange={handleChange} sourceType="specific" />);
     expect(handleChange).toHaveBeenCalledWith("tier", "tier3");
-    expect(handleSetSourceType).toHaveBeenCalledWith("specific");
     expect(handleChange).toHaveBeenCalledWith("calc_method", "api_equation_6_8_direct");
   });
 });

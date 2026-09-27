@@ -14,14 +14,9 @@ import CustomDropdown from "../CustomDropdown";
  */
 const UnloadingForm = ({ data, onChange, sourceType }) => {
   // Determine active tier: defaults to tier from data, or derives from sourceType
-  const currentTier = String(
-    data.tier ||
-      (sourceType === "specific"
-        ? "tier3"
-        : sourceType === "custom"
-        ? "tier2"
-        : "tier1")
-  ).toLowerCase();
+  // One tier selector: the page-level "Calculation Methodology" control (sourceType) drives the
+  // tier; data.tier is kept in sync below for the payload
+  const currentTier = sourceType === "specific" ? "tier3" : sourceType === "custom" ? "tier2" : "tier1";
 
   const isTier1 = currentTier === "tier1" || currentTier === "1";
   const isTier2 = currentTier === "tier2" || currentTier === "2" || currentTier === "custom";
@@ -64,24 +59,11 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
       const eventsCount = data.unload_events || data.unload_freq || data.events || data.amount || 12;
       if (data.amount !== eventsCount) onChange("amount", eventsCount);
     }
+    const cm = String(data.calc_method || "");
+    const family = { tier1: (m) => m === "api_table_6_11", tier2: (m) => m === "api_table_6_10", tier3: (m) => m.startsWith("api_equation") };
+    const dflt = { tier1: "api_table_6_11", tier2: "api_table_6_10", tier3: "api_equation_6_10" };
+    if (!family[currentTier](cm)) onChange("calc_method", dflt[currentTier]);
   }, [currentTier]);
-
-  const handleTierSwitch = (newTier) => {
-    onChange("tier", newTier);
-    if (newTier === "tier1") {
-      onChange("calc_method", "api_table_6_11");
-      onChange("unit", "wells");
-      onChange("amount", data.well_count || 1);
-    } else if (newTier === "tier2") {
-      onChange("calc_method", "api_table_6_10");
-      onChange("unit", "events");
-      onChange("amount", data.events || 10);
-    } else {
-      onChange("calc_method", "api_equation_6_10");
-      onChange("unit", "events");
-      onChange("amount", data.unload_events || 12);
-    }
-  };
 
   return (
     <div className="unloading-form" style={{ marginTop: "15px" }}>
@@ -100,59 +82,6 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
           <h4 style={{ color: "var(--accent-color, #2563eb)", margin: 0 }}>
             Liquids Unloading Emissions
           </h4>
-        </div>
-        <div style={{ display: "flex", gap: "6px" }}>
-          <button
-            type="button"
-            className={`btn-tier ${isTier1 ? "active" : ""}`}
-            style={{
-              padding: "4px 10px",
-              borderRadius: "4px",
-              fontSize: "0.8rem",
-              fontWeight: 600,
-              cursor: "pointer",
-              background: isTier1 ? "var(--accent-color, #2563eb)" : "rgba(107, 114, 128, 0.1)",
-              color: isTier1 ? "#fff" : "var(--text-primary, #374151)",
-              border: "1px solid var(--border-color, #d1d5db)",
-            }}
-            onClick={() => handleTierSwitch("tier1")}
-          >
-            Tier 1: Per-Well
-          </button>
-          <button
-            type="button"
-            className={`btn-tier ${isTier2 ? "active" : ""}`}
-            style={{
-              padding: "4px 10px",
-              borderRadius: "4px",
-              fontSize: "0.8rem",
-              fontWeight: 600,
-              cursor: "pointer",
-              background: isTier2 ? "var(--accent-color, #2563eb)" : "rgba(107, 114, 128, 0.1)",
-              color: isTier2 ? "#fff" : "var(--text-primary, #374151)",
-              border: "1px solid var(--border-color, #d1d5db)",
-            }}
-            onClick={() => handleTierSwitch("tier2")}
-          >
-            Tier 2: Event-Based
-          </button>
-          <button
-            type="button"
-            className={`btn-tier ${isTier3 ? "active" : ""}`}
-            style={{
-              padding: "4px 10px",
-              borderRadius: "4px",
-              fontSize: "0.8rem",
-              fontWeight: 600,
-              cursor: "pointer",
-              background: isTier3 ? "var(--accent-color, #2563eb)" : "rgba(107, 114, 128, 0.1)",
-              color: isTier3 ? "#fff" : "var(--text-primary, #374151)",
-              border: "1px solid var(--border-color, #d1d5db)",
-            }}
-            onClick={() => handleTierSwitch("tier3")}
-          >
-            Tier 3: Engineering
-          </button>
         </div>
       </div>
 

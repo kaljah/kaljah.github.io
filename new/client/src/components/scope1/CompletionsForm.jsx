@@ -117,16 +117,10 @@ const TIER1_FACTOR_MAP = {
   },
 };
 
-const CompletionsForm = ({ data, onChange, sourceType, setSourceType }) => {
-  // Determine active tier: prefers data.tier, else derives from sourceType
-  const currentTier = String(
-    data.tier ||
-      (sourceType === "specific"
-        ? "tier3"
-        : sourceType === "custom"
-        ? "tier2"
-        : "tier1")
-  ).toLowerCase();
+const CompletionsForm = ({ data, onChange, sourceType }) => {
+  // One tier selector: the page-level "Calculation Methodology" control (sourceType) drives the
+  // tier; data.tier is kept in sync below for the payload
+  const currentTier = sourceType === "specific" ? "tier3" : sourceType === "custom" ? "tier2" : "tier1";
 
   const isTier1 = currentTier === "tier1" || currentTier === "1";
   const isTier2 = currentTier === "tier2" || currentTier === "2" || currentTier === "custom";
@@ -180,32 +174,11 @@ const CompletionsForm = ({ data, onChange, sourceType, setSourceType }) => {
       if (!data.comp_injected_n2_unit) onChange("comp_injected_n2_unit", "scf");
       if (!data.comp_disposition) onChange("comp_disposition", "vented");
     }
+    const cm = String(data.calc_method || "");
+    const family = { tier1: (m) => m.startsWith("api_table"), tier2: (m) => ["rate_duration", "gor", "api_equation_6_7"].includes(m), tier3: (m) => m === "metered" };
+    const dflt = { tier1: "api_table_6_5", tier2: "rate_duration", tier3: "metered" };
+    if (!family[currentTier](cm)) onChange("calc_method", dflt[currentTier]);
   }, [currentTier, factorKey]);
-
-  const handleTierSwitch = (newTier) => {
-    onChange("tier", newTier);
-    if (setSourceType) {
-      setSourceType(newTier === "tier1" ? "default" : newTier === "tier2" ? "custom" : "specific");
-    }
-    if (newTier === "tier1") {
-      onChange("calc_method", "api_table_6_5");
-      onChange("unit", "events");
-      onChange("amount", data.events || 1);
-      if (activeT1Factor) {
-        onChange("fuel", activeT1Factor.name);
-        onChange("factor_code", activeT1Factor.code);
-      }
-    } else if (newTier === "tier2") {
-      onChange("calc_method", "rate_duration");
-      onChange("unit", "events");
-      onChange("comp_rate_unit", data.comp_rate_unit || "Mcf/hr");
-      onChange("amount", data.events || 1);
-    } else {
-      onChange("calc_method", "metered");
-      onChange("volume_unit", data.volume_unit || "Mcf");
-      onChange("comp_disposition", data.comp_disposition || "vented");
-    }
-  };
 
   return (
     <div className="completions-form" style={{ marginTop: "15px" }}>
@@ -226,59 +199,6 @@ const CompletionsForm = ({ data, onChange, sourceType, setSourceType }) => {
           <h4 style={{ color: "var(--accent-color, #2563eb)", margin: 0 }}>
             Onshore Well Completion Flowback
           </h4>
-        </div>
-        <div style={{ display: "flex", gap: "6px" }}>
-          <button
-            type="button"
-            className={`btn-tier ${isTier1 ? "active" : ""}`}
-            style={{
-              padding: "4px 10px",
-              borderRadius: "4px",
-              fontSize: "0.8rem",
-              fontWeight: 600,
-              cursor: "pointer",
-              background: isTier1 ? "var(--accent-color, #2563eb)" : "rgba(107, 114, 128, 0.1)",
-              color: isTier1 ? "#fff" : "var(--text-primary, #374151)",
-              border: "1px solid var(--border-color, #d1d5db)",
-            }}
-            onClick={() => handleTierSwitch("tier1")}
-          >
-            Tier 1: Defaults
-          </button>
-          <button
-            type="button"
-            className={`btn-tier ${isTier2 ? "active" : ""}`}
-            style={{
-              padding: "4px 10px",
-              borderRadius: "4px",
-              fontSize: "0.8rem",
-              fontWeight: 600,
-              cursor: "pointer",
-              background: isTier2 ? "var(--accent-color, #2563eb)" : "rgba(107, 114, 128, 0.1)",
-              color: isTier2 ? "#fff" : "var(--text-primary, #374151)",
-              border: "1px solid var(--border-color, #d1d5db)",
-            }}
-            onClick={() => handleTierSwitch("tier2")}
-          >
-            Tier 2: Operational Data
-          </button>
-          <button
-            type="button"
-            className={`btn-tier ${isTier3 ? "active" : ""}`}
-            style={{
-              padding: "4px 10px",
-              borderRadius: "4px",
-              fontSize: "0.8rem",
-              fontWeight: 600,
-              cursor: "pointer",
-              background: isTier3 ? "var(--accent-color, #2563eb)" : "rgba(107, 114, 128, 0.1)",
-              color: isTier3 ? "#fff" : "var(--text-primary, #374151)",
-              border: "1px solid var(--border-color, #d1d5db)",
-            }}
-            onClick={() => handleTierSwitch("tier3")}
-          >
-            Tier 3: Direct Measurement
-          </button>
         </div>
       </div>
 
