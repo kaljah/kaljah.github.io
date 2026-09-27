@@ -1,0 +1,29 @@
+
+The command exited with code 0.
+Output:
+
+LineNumber Line                                                                                                        
+---------- ----                                                                                                        
+       583         co_factor: '', co2_uncertainty: '', ch4_uncertainty: '', n2o_uncertainty: '',                       
+       650         meter_precision: 5.0, lab_precision: 2.0, gwp_uncertainty: 15.0                                     
+       760         } catch (err) { console.error(err); toast.error(apiError(err, 'Failed to load custom factors')); }  
+       957             setFactorForm({ factor_name: '', parent_fuel: '', unit: 'scf', co2_factor: '', ch4_factor: ''...
+       997             co2_uncertainty: factor.co2_uncertainty || '',                                                  
+       998             ch4_uncertainty: factor.ch4_uncertainty || '',                                                  
+       999             n2o_uncertainty: factor.n2o_uncertainty || '',                                                  
+      1465                         <div className={`manage-nav-item ${activeTab === 'factors' ? 'active' : ''}`} onC...
+      2207                         {activeTab === 'factors' && (                                                       
+      2212                                         <p style={{ color: 'var(--text-secondary)', margin: 0 }}>Define c...
+      2306                                         <label>CO� Uncertainty (�%)</label>                                 
+      2307                                         <input type="number" name="co2_uncertainty" value={factorForm.co2...
+      2310                                         <label>CH4 Uncertainty (�%)</label>                                 
+      2311                                         <input type="number" name="ch4_uncertainty" value={factorForm.ch4...
+      2314                                         <label>N�O Uncertainty (�%)</label>                                 
+      2315                                         <input type="number" name="n2o_uncertainty" value={factorForm.n2o...
+      2342                                 {/* EF Uncertainty Workbench */}                                            
+      2345                                         <Database size={16} /> EF Uncertainty Workbench (ISO 14064-1 comp...
+      2361                                                 value={workbench.gwp_uncertainty}                           
+      2362                                                 onChange={(e) => setWorkbench({ ...workbench, gwp_uncerta...
+
+
+

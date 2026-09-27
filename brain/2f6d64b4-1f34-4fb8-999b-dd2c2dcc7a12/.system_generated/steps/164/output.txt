@@ -1,0 +1,36 @@
+
+The command exited with code 1.
+Output:
+Select-String : The file C:\Users\samsung\Desktop\H2\new\client\src\components\charts cannot be read: Access to the 
+path 'C:\Users\samsung\Desktop\H2\new\client\src\components\charts' is denied.
+At line:1 char:1
++ Select-String -Path .\new\client\src\**\* -Pattern "Corporate ESG" -C ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidArgument: (:) [Select-String], ArgumentException
+    + FullyQualifiedErrorId : ProcessingFile,Microsoft.PowerShell.Commands.SelectStringCommand
+ 
+Select-String : The file C:\Users\samsung\Desktop\H2\new\client\src\components\common cannot be read: Access to the 
+path 'C:\Users\samsung\Desktop\H2\new\client\src\components\common' is denied.
+At line:1 char:1
++ Select-String -Path .\new\client\src\**\* -Pattern "Corporate ESG" -C ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidArgument: (:) [Select-String], ArgumentException
+    + FullyQualifiedErrorId : ProcessingFile,Microsoft.PowerShell.Commands.SelectStringCommand
+ 
+Select-String : The file C:\Users\samsung\Desktop\H2\new\client\src\components\layout cannot be read: Access to the 
+path 'C:\Users\samsung\Desktop\H2\new\client\src\components\layout' is denied.
+At line:1 char:1
++ Select-String -Path .\new\client\src\**\* -Pattern "Corporate ESG" -C ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidArgument: (:) [Select-String], ArgumentException
+    + FullyQualifiedErrorId : ProcessingFile,Microsoft.PowerShell.Commands.SelectStringCommand
+ 
+Select-String : The file C:\Users\samsung\Desktop\H2\new\client\src\components\scope1 cannot be read: Access to the 
+path 'C:\Users\samsung\Desktop\H2\new\client\src\components\scope1' is denied.
+At line:1 char:1
++ Select-String -Path .\new\client\src\**\* -Pattern "Corporate ESG" -C ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidArgument: (:) [Select-String], ArgumentException
+    + FullyQualifiedErrorId : ProcessingFile,Microsoft.PowerShell.Commands.SelectStringCommand
+ 
+

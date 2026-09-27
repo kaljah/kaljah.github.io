@@ -1,0 +1,29 @@
+
+The command exited with code 0.
+Output:
+
+LineNumber Line                                                                                                        
+---------- ----                                                                                                        
+        38       "Standard baseline used by OGMP 2.0, UNFCCC National Inventories, and corporate GHG reporting frame...
+        75   const [globalThreshold, setGlobalThreshold] = useState(20.0);                                             
+        87   const [copernicusQaThreshold, setCopernicusQaThreshold] = useState(0.5);                                  
+        94   // Facility specific overrides                                                                            
+       112         if (settings.ogmp_default_base_year)                                                                
+       113           setDefaultBaseYear(settings.ogmp_default_base_year);                                              
+       114         if (settings.reconciliation_threshold)                                                              
+       115           setGlobalThreshold(settings.reconciliation_threshold);                                            
+       116         if (settings.ogmp_upstream_target_pct !== undefined)                                                
+       117           setUpstreamTarget(Number(settings.ogmp_upstream_target_pct));                                     
+       118         if (settings.ogmp_midstream_target_pct !== undefined)                                               
+       119           setMidstreamTarget(Number(settings.ogmp_midstream_target_pct));                                   
+       130         if (settings.copernicus_qa_threshold !== undefined)                                                 
+       131           setCopernicusQaThreshold(Number(settings.copernicus_qa_threshold));                               
+       151             ogmp_membership_year: f.ogmp_membership_year || 2023,                                           
+       152             reconciliation_threshold: f.reconciliation_threshold || 20.0,                                   
+       188         ogmp_default_base_year: Number(defaultBaseYear),                                                    
+       189         reconciliation_threshold: Number(globalThreshold),                                                  
+       190         ogmp_upstream_target_pct: Number(upstreamTarget),                                                   
+       191         ogmp_midstream_target_pct: Number(midstreamTarget),                                                 
+
+
+

@@ -1,0 +1,101 @@
+
+The command exited with code 0.
+Output:
+<truncated 59 lines>
+  new\client\src\pages\ManageData.jsx:2494:                                                <select name="division" 
+value={facilityForm.division} onChange={handleFacilityChange} className="component-select" 
+disabled={!facilityForm.activity}>
+  new\client\src\pages\ManageData.jsx:2495:                                                    <option value="">Select 
+Division</option>
+> new\client\src\pages\ManageData.jsx:2496:                                                    {facilityForm.activity 
+&& HIERARCHY[facilityForm.activity] && HIERARCHY[facilityForm.activity].map(d => <option key={d} 
+value={d}>{d}</option>)}
+  new\client\src\pages\ManageData.jsx:2497:                                                </select>
+  new\client\src\pages\ManageData.jsx:2498:                                            </div>
+  new\client\src\pages\ManageData.jsx:2499:                                            <div className="input-group">
+  new\client\src\pages\ManageData.jsx:2600:                                            
+{filteredFacilities.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE).map(f => (
+  new\client\src\pages\ManageData.jsx:2601:                                                <tr key={f.id}>
+  new\client\src\pages\ManageData.jsx:2602:                                                    
+<td><strong>{f.name}</strong></td>
+> new\client\src\pages\ManageData.jsx:2603:                                                    
+<td>{ACTIVITY_LABELS[f.activity] || f.activity}</td>
+  new\client\src\pages\ManageData.jsx:2604:                                                    <td>{f.division}</td>
+  new\client\src\pages\ManageData.jsx:2605:                                                    <td>{f.location || 
+'-'}</td>
+  new\client\src\pages\ManageData.jsx:2606:                                                    <td>{f.boundary_notes 
+|| (f.boundary_type ? `${f.boundary_type}${f.boundary_detail ? ' - ' + f.boundary_detail : ''}` : '-')}</td>
+  new\client\src\pages\ManageData.jsx:2665:                                            disabled={!isPrivileged && 
+getAvailableActivities().length === 1}
+  new\client\src\pages\ManageData.jsx:2666:                                        >
+  new\client\src\pages\ManageData.jsx:2667:                                            <option value="">Select 
+Activity</option>
+> new\client\src\pages\ManageData.jsx:2668:                                            {getAvailableActivities().map(a 
+=> <option key={a} value={a}>{ACTIVITY_LABELS[a] || a}</option>)}
+  new\client\src\pages\ManageData.jsx:2669:                                        </select>
+  new\client\src\pages\ManageData.jsx:2670:                                    </div>
+  new\client\src\pages\ManageData.jsx:2671:                                    <div className="input-group">
+  new\client\src\pages\ManageData.jsx:2803:                                        <tbody>
+  new\client\src\pages\ManageData.jsx:2804:                                            
+{filteredProduction.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE).map(d => (
+  new\client\src\pages\ManageData.jsx:2805:                                                <tr key={d.id}>
+> new\client\src\pages\ManageData.jsx:2806:                                                    
+<td>{ACTIVITY_LABELS[d.activity] || d.activity || '-'}</td>
+  new\client\src\pages\ManageData.jsx:2807:                                                    <td>{d.division || 
+'-'}</td>
+  new\client\src\pages\ManageData.jsx:2808:                                                    <td>
+  new\client\src\pages\ManageData.jsx:2809:                                                        {(() => {
+  new\client\src\pages\ManageData.jsx:2865:                                            disabled={!isPrivileged && 
+getAvailableActivities().length === 1}
+  new\client\src\pages\ManageData.jsx:2866:                                        >
+  new\client\src\pages\ManageData.jsx:2867:                                            <option value="">Select 
+Activity</option>
+> new\client\src\pages\ManageData.jsx:2868:                                            {getAvailableActivities().map(a 
+=> <option key={a} value={a}>{ACTIVITY_LABELS[a] || a}</option>)}
+  new\client\src\pages\ManageData.jsx:2869:                                        </select>
+  new\client\src\pages\ManageData.jsx:2870:                                    </div>
+  new\client\src\pages\ManageData.jsx:2871:                                    <div className="input-group">
+  new\client\src\pages\ManageData.jsx:3416:                                            disabled={!isPrivileged && 
+getAvailableActivities().length === 1}
+  new\client\src\pages\ManageData.jsx:3417:                                        >
+  new\client\src\pages\ManageData.jsx:3418:                                            <option value="">Select 
+Activity</option>
+> new\client\src\pages\ManageData.jsx:3419:                                            {getAvailableActivities().map(a 
+=> <option key={a} value={a}>{ACTIVITY_LABELS[a] || a}</option>)}
+  new\client\src\pages\ManageData.jsx:3420:                                        </select>
+  new\client\src\pages\ManageData.jsx:3421:                                    </div>
+  new\client\src\pages\ManageData.jsx:3422:                                    <div className="input-group">
+  new\client\src\pages\ManageData.jsx:3516:                                            
+{filteredMitigations.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE).map(m => (
+  new\client\src\pages\ManageData.jsx:3517:                                                <tr key={m.id}>
+  new\client\src\pages\ManageData.jsx:3518:                                                    <td><strong>{m.name || 
+m.mitigation_type}</strong></td>
+> new\client\src\pages\ManageData.jsx:3519:                                                    
+<td>{ACTIVITY_LABELS[m.activity] || m.activity || '-'}</td>
+  new\client\src\pages\ManageData.jsx:3520:                                                    <td>
+  new\client\src\pages\ManageData.jsx:3521:                                                        {m.region || '-'}
+  new\client\src\pages\ManageData.jsx:3522:                                                        {m.division && 
+m.division !== '-' ? <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{m.division}</div> : null}
+  new\client\src\pages\ManageData.jsx:3582:                                        >
+  new\client\src\pages\ManageData.jsx:3583:                                            <option value="">-- Select 
+Activity --</option>
+  new\client\src\pages\ManageData.jsx:3584:                                            {getAvailableActivities().map(a 
+=> (
+> new\client\src\pages\ManageData.jsx:3585:                                                <option key={a} 
+value={a}>{ACTIVITY_LABELS[a] || a}</option>
+  new\client\src\pages\ManageData.jsx:3586:                                            ))}
+  new\client\src\pages\ManageData.jsx:3587:                                        </select>
+  new\client\src\pages\ManageData.jsx:3588:                                    </div>
+  new\client\src\pages\ManageData.jsx:3911:                                        >
+  new\client\src\pages\ManageData.jsx:3912:                                            <option value="">-- Select 
+Activity (Oil &amp; Gas) --</option>
+  new\client\src\pages\ManageData.jsx:3913:                                            
+{getAvailableActivities().filter(a => !NON_OG_ACTIVITIES.includes(a)).map(a => (
+> new\client\src\pages\ManageData.jsx:3914:                                                <option key={a} 
+value={a}>{ACTIVITY_LABELS[a] || a}</option>
+  new\client\src\pages\ManageData.jsx:3915:                                            ))}
+  new\client\src\pages\ManageData.jsx:3916:                                        </select>
+  new\client\src\pages\ManageData.jsx:3917:                                    </div>
+
+
+

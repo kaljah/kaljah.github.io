@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\components\layout\TopBar.jsx:41:          <span style={{ fontWeight: 600, color: "var(--text-primary)" 
+}}>Corporate ESG</span>
+new\client\src\pages\Settings.jsx:518:                    <td>Near-Term Climate Impact / ESG Analytics</td>
+
+
+

@@ -1,0 +1,1 @@
+A1: (Recommended) Support multi-year selection in the 'Create Report' generator to produce a multi-year comparative PDF (with side-by-side Scope 1/2/3 breakdowns, YoY deltas, % variance, and facility trends across all chosen years), while also updating the Data Table filter to support multi-year selection.

@@ -1,0 +1,78 @@
+
+The command exited with code 0.
+Output:
+
+  new\client\src\pages\ManageData.jsx:138:    const [importModal, setImportModal] = useState({ isOpen: false, type: 
+'sources' });
+  new\client\src\pages\ManageData.jsx:139:    const [sources, setSources] = useState([]);
+  new\client\src\pages\ManageData.jsx:140:    const [mitigations, setMitigations] = useState([]);
+> new\client\src\pages\ManageData.jsx:141:    const [cbamExports, setCbamExports] = useState([]);
+  new\client\src\pages\ManageData.jsx:142:    const [ogmpSurveys, setOgmpSurveys] = useState([]);
+  new\client\src\pages\ManageData.jsx:143:    const [goals, setGoals] = useState([]);
+  new\client\src\pages\ManageData.jsx:144:    const [baseYearsData, setBaseYearsData] = useState({ active_year: null, 
+active_record: null, history: [] });
+  new\client\src\pages\ManageData.jsx:607:        quantity_tco2e: '', status: 'Active', reference_id: '', notes: ''
+  new\client\src\pages\ManageData.jsx:608:    });
+  new\client\src\pages\ManageData.jsx:609:
+> new\client\src\pages\ManageData.jsx:610:  const [cbamForm, setCbamForm] = useState({
+  new\client\src\pages\ManageData.jsx:611:    id: null,
+  new\client\src\pages\ManageData.jsx:612:    activity: "",
+  new\client\src\pages\ManageData.jsx:613:    division: "",
+  new\client\src\pages\ManageData.jsx:622:    specific_embedded_indirect: "",
+  new\client\src\pages\ManageData.jsx:623:    notes: "",
+  new\client\src\pages\ManageData.jsx:624:  });
+> new\client\src\pages\ManageData.jsx:625:  const [editingCbamId, setEditingCbamId] = useState(null);
+  new\client\src\pages\ManageData.jsx:626:
+  new\client\src\pages\ManageData.jsx:627:    const [ogmpForm, setOgmpForm] = useState({
+  new\client\src\pages\ManageData.jsx:628:        id: null, activity: '', division: '', facility_id: '',
+  new\client\src\pages\ManageData.jsx:657:        fetchProduction();
+  new\client\src\pages\ManageData.jsx:658:        fetchSources();
+  new\client\src\pages\ManageData.jsx:659:        fetchMitigations();
+> new\client\src\pages\ManageData.jsx:660:        fetchCbamExports();
+  new\client\src\pages\ManageData.jsx:661:        fetchOgmpSurveys();
+  new\client\src\pages\ManageData.jsx:662:        fetchGoals();
+  new\client\src\pages\ManageData.jsx:663:        fetchBaseYears();
+  new\client\src\pages\ManageData.jsx:716:                division: prev.division || autoFill.division,
+  new\client\src\pages\ManageData.jsx:717:                facility_id: prev.facility_id || autoFill.facility_id,
+  new\client\src\pages\ManageData.jsx:718:            }));
+> new\client\src\pages\ManageData.jsx:719:            setCbamForm(prev => ({
+  new\client\src\pages\ManageData.jsx:720:                ...prev,
+  new\client\src\pages\ManageData.jsx:721:                activity: prev.activity || autoFill.activity,
+  new\client\src\pages\ManageData.jsx:722:                division: prev.division || autoFill.division,
+  new\client\src\pages\ManageData.jsx:786:        } catch (err) { console.error(err); toast.error(apiError(err, 
+'Failed to load mitigations')); }
+  new\client\src\pages\ManageData.jsx:787:    };
+  new\client\src\pages\ManageData.jsx:788:
+> new\client\src\pages\ManageData.jsx:789:  const fetchCbamExports = async () => {
+  new\client\src\pages\ManageData.jsx:790:    try {
+> new\client\src\pages\ManageData.jsx:791:      const res = await api.get('/data/cbam-exports');
+> new\client\src\pages\ManageData.jsx:792:      setCbamExports(res.data || []);
+  new\client\src\pages\ManageData.jsx:793:    } catch (err) {
+> new\client\src\pages\ManageData.jsx:794:      console.error(err); toast.error(apiError(err, 'Failed to load cbam 
+exports'));
+  new\client\src\pages\ManageData.jsx:795:    }
+  new\client\src\pages\ManageData.jsx:796:  };
+  new\client\src\pages\ManageData.jsx:797:
+  new\client\src\pages\ManageData.jsx:1053:        } catch (err) { toast.error(apiError(err, 'Failed to save 
+mitigation')); }
+  new\client\src\pages\ManageData.jsx:1054:    };
+  new\client\src\pages\ManageData.jsx:1055:
+> new\client\src\pages\ManageData.jsx:1056:  const handleSaveCbamExport = async () => {
+> new\client\src\pages\ManageData.jsx:1057:    if (!cbamForm.facility_id || !cbamForm.product_name || 
+!cbamForm.quantity_tonnes) {
+  new\client\src\pages\ManageData.jsx:1058:      return toast.error('Facility, Product Name, and Export Quantity are 
+required');
+  new\client\src\pages\ManageData.jsx:1059:    }
+  new\client\src\pages\ManageData.jsx:1060:    try {
+> new\client\src\pages\ManageData.jsx:1061:      await api.post('/data/cbam-exports', {
+> new\client\src\pages\ManageData.jsx:1062:        id: editingCbamId || undefined,
+> new\client\src\pages\ManageData.jsx:1063:        facility_id: parseInt(cbamForm.facility_id),
+> new\client\src\pages\ManageData.jsx:1064:        year: parseInt(cbamForm.year),
+> new\client\src\pages\ManageData.jsx:1065:        month: parseInt(cbamForm.month),
+> new\client\src\pages\ManageData.jsx:1066:        product_name: cbamForm.product_name,
+> new\client\src\pages\ManageData.jsx:1067:        cn_code: cbamForm.cn_code,
+> new\client\src\pages\ManageData.jsx:1068:        quantity_tonnes: parseFloat(cbamForm.quantity_tonnes),
+> new\client\src\pages\ManageData.jsx:1069:        export_destination: cbamForm.export_destination,
+
+
+

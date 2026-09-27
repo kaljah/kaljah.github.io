@@ -1,0 +1,76 @@
+
+The command exited with code 0.
+Output:
+
+  new\client\src\components\BulkImportModal.jsx:530:            "dehy_ch4_content",
+  new\client\src\components\BulkImportModal.jsx:531:            "dehy_eff",
+  new\client\src\components\BulkImportModal.jsx:532:          ],
+  new\client\src\components\BulkImportModal.jsx:533:          fugitive: ["fugitive_method", "fugitive_ppm"],
+  new\client\src\components\BulkImportModal.jsx:534:          indirect_steam: ["boiler_eff", "trans_loss", 
+"heat_unit"],
+  new\client\src\components\BulkImportModal.jsx:535:          stoichiometry: ["carbon_content"],
+  new\client\src\components\BulkImportModal.jsx:536:        };
+  new\client\src\components\BulkImportModal.jsx:537:
+  new\client\src\components\BulkImportModal.jsx:538:        const specificFields = processFields[selectedProcess] || 
+[];
+  new\client\src\components\BulkImportModal.jsx:539:        return specificFields.includes(t.id);
+  new\client\src\components\BulkImportModal.jsx:540:      });
+  new\client\src\components\BulkImportModal.jsx:541:    }
+  new\client\src\components\BulkImportModal.jsx:542:    return base;
+  new\client\src\components\BulkImportModal.jsx:543:  }, [type, selectedTier, selectedProcess]);
+  new\client\src\components\BulkImportModal.jsx:544:
+> new\client\src\components\BulkImportModal.jsx:545:  const downloadTemplate = async () => {
+  new\client\src\components\BulkImportModal.jsx:546:    if (type === "activity") {
+  new\client\src\components\BulkImportModal.jsx:547:      try {
+  new\client\src\components\BulkImportModal.jsx:548:        const res = await api.get(
+  new\client\src\components\BulkImportModal.jsx:549:          
+`/emissions/template/csv?tier=${selectedTier}&process=${selectedProcess}`,
+  new\client\src\components\BulkImportModal.jsx:550:          { responseType: "blob" }
+  new\client\src\components\BulkImportModal.jsx:551:        );
+  new\client\src\components\BulkImportModal.jsx:552:        const url = window.URL.createObjectURL(new 
+Blob([res.data], { type: "text/csv" }));
+  new\client\src\components\BulkImportModal.jsx:553:        const a = document.createElement("a");
+  new\client\src\components\BulkImportModal.jsx:554:        a.href = url;
+  new\client\src\components\BulkImportModal.jsx:555:        a.download = `scope1_template_${selectedProcess || 
+"all"}.csv`;
+  new\client\src\components\BulkImportModal.jsx:556:        document.body.appendChild(a);
+  new\client\src\components\BulkImportModal.jsx:557:        a.click();
+  new\client\src\components\BulkImportModal.jsx:558:        a.remove();
+  new\client\src\components\BulkImportModal.jsx:559:        setTimeout(() => window.URL.revokeObjectURL(url), 1000);
+  new\client\src\components\BulkImportModal.jsx:560:      } catch (err) {
+  new\client\src\components\BulkImportModal.jsx:1211:              <p style={{ color: "var(--text-secondary)", 
+marginTop: "8px" }}>
+  new\client\src\components\BulkImportModal.jsx:1212:                Standard CSV format with headers
+  new\client\src\components\BulkImportModal.jsx:1213:              </p>
+  new\client\src\components\BulkImportModal.jsx:1214:              <input
+  new\client\src\components\BulkImportModal.jsx:1215:                type="file"
+  new\client\src\components\BulkImportModal.jsx:1216:                ref={fileInputRef}
+  new\client\src\components\BulkImportModal.jsx:1217:                onChange={handleFileChange}
+  new\client\src\components\BulkImportModal.jsx:1218:                accept=".csv"
+  new\client\src\components\BulkImportModal.jsx:1219:                style={{ display: "none" }}
+  new\client\src\components\BulkImportModal.jsx:1220:              />
+  new\client\src\components\BulkImportModal.jsx:1221:
+  new\client\src\components\BulkImportModal.jsx:1222:              <div
+  new\client\src\components\BulkImportModal.jsx:1223:                className="template-download"
+  new\client\src\components\BulkImportModal.jsx:1224:                onClick={(e) => {
+  new\client\src\components\BulkImportModal.jsx:1225:                  e.stopPropagation();
+> new\client\src\components\BulkImportModal.jsx:1226:                  downloadTemplate();
+  new\client\src\components\BulkImportModal.jsx:1227:                }}
+  new\client\src\components\BulkImportModal.jsx:1228:                style={{ marginTop: type === "activity" ? "16px" 
+: "0" }}
+  new\client\src\components\BulkImportModal.jsx:1229:              >
+  new\client\src\components\BulkImportModal.jsx:1230:                <FileText size={14} />
+  new\client\src\components\BulkImportModal.jsx:1231:                <span>Download targeted CSV template</span>
+  new\client\src\components\BulkImportModal.jsx:1232:              </div>
+  new\client\src\components\BulkImportModal.jsx:1233:
+  new\client\src\components\BulkImportModal.jsx:1234:              <div
+  new\client\src\components\BulkImportModal.jsx:1235:                className="cheat-sheet-toggle"
+  new\client\src\components\BulkImportModal.jsx:1236:                onClick={(e) => {
+  new\client\src\components\BulkImportModal.jsx:1237:                  e.stopPropagation();
+  new\client\src\components\BulkImportModal.jsx:1238:                  setShowCheatSheet(!showCheatSheet);
+  new\client\src\components\BulkImportModal.jsx:1239:                }}
+  new\client\src\components\BulkImportModal.jsx:1240:              >
+  new\client\src\components\BulkImportModal.jsx:1241:                <Info size={14} />
+
+
+

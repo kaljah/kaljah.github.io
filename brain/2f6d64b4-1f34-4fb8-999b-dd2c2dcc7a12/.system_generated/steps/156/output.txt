@@ -1,0 +1,64 @@
+
+The command exited with code 0.
+Output:
+
+  new\client\src\pages\ManageData.jsx:1478:                        </div>
+  new\client\src\pages\ManageData.jsx:1479:                        <div className={`manage-nav-item ${activeTab === 
+'goals' ? 'active' : ''}`} onClick={() => handleTabChange('goals')}>
+  new\client\src\pages\ManageData.jsx:1480:                            <span>Emission Goals & Base Years</span>
+  new\client\src\pages\ManageData.jsx:1481:                        </div>
+  new\client\src\pages\ManageData.jsx:1482:                        <div className={`manage-nav-item ${activeTab === 
+'mitigation' ? 'active' : ''}`} onClick={() => handleTabChange('mitigation')}>
+  new\client\src\pages\ManageData.jsx:1483:                            <span>Mitigation Projects</span>
+  new\client\src\pages\ManageData.jsx:1484:                        </div>
+  new\client\src\pages\ManageData.jsx:1485:                        <div className={`manage-nav-item ${activeTab === 
+'ogmp' ? 'active' : ''}`} onClick={() => handleTabChange('ogmp')}>
+  new\client\src\pages\ManageData.jsx:1486:                            <span>OGMP 2.0 Surveys</span>
+  new\client\src\pages\ManageData.jsx:1487:                        </div>
+> new\client\src\pages\ManageData.jsx:1488:                        <div className={`manage-nav-item ${activeTab === 
+'cbam' ? 'active' : ''}`} onClick={() => handleTabChange('cbam')}>
+  new\client\src\pages\ManageData.jsx:1489:                            <span>CBAM Products</span>
+  new\client\src\pages\ManageData.jsx:1490:                        </div>
+  new\client\src\pages\ManageData.jsx:1491:
+  new\client\src\pages\ManageData.jsx:1492:                    </aside>
+  new\client\src\pages\ManageData.jsx:1493:
+  new\client\src\pages\ManageData.jsx:1494:                    {/* Content Area */}
+  new\client\src\pages\ManageData.jsx:1495:                    <section style={{ flex: 1 }}>
+  new\client\src\pages\ManageData.jsx:1496:                        <div style={{ marginBottom: '24px', display: 
+'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
+  new\client\src\pages\ManageData.jsx:1497:                            <div style={{ position: 'relative', flex: 1, 
+minWidth: '250px' }}>
+  new\client\src\pages\ManageData.jsx:1498:                                <Search className="search-icon" size={18} 
+style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' 
+}} />
+  new\client\src\pages\ManageData.jsx:3549:                                                    </td>
+  new\client\src\pages\ManageData.jsx:3550:                                                </tr>
+  new\client\src\pages\ManageData.jsx:3551:                                            )}
+  new\client\src\pages\ManageData.jsx:3552:                                        </tbody>
+  new\client\src\pages\ManageData.jsx:3553:                                    </table>
+  new\client\src\pages\ManageData.jsx:3554:                                    <PaginationControls 
+currentPage={currentPage} totalItems={filteredMitigations.length} itemsPerPage={ITEMS_PER_PAGE} 
+onPageChange={setCurrentPage} />
+  new\client\src\pages\ManageData.jsx:3555:                                </div>
+  new\client\src\pages\ManageData.jsx:3556:                            </div>
+  new\client\src\pages\ManageData.jsx:3557:                        )}
+  new\client\src\pages\ManageData.jsx:3558:
+> new\client\src\pages\ManageData.jsx:3559:                        {activeTab === 'cbam' && (
+  new\client\src\pages\ManageData.jsx:3560:                            <div className="tab-pane active">
+  new\client\src\pages\ManageData.jsx:3561:                                <div className="section-header" style={{ 
+marginBottom: '24px' }}>
+  new\client\src\pages\ManageData.jsx:3562:                                    <h2>EU CBAM Export & Embedded Emission 
+Tracking</h2>
+  new\client\src\pages\ManageData.jsx:3563:                                    <p style={{ color: 
+'var(--text-secondary)', marginTop: '4px' }}>
+  new\client\src\pages\ManageData.jsx:3564:                                        Record product exports subject to 
+EU Carbon Border Adjustment Mechanism (CBAM) with direct and indirect embedded emissions under EU Regulation (EU) 
+2023/956.
+  new\client\src\pages\ManageData.jsx:3565:                                    </p>
+  new\client\src\pages\ManageData.jsx:3566:                                </div>
+  new\client\src\pages\ManageData.jsx:3567:
+  new\client\src\pages\ManageData.jsx:3568:                                <div className="form-grid-3">
+  new\client\src\pages\ManageData.jsx:3569:                                    <div className="input-group">
+
+
+

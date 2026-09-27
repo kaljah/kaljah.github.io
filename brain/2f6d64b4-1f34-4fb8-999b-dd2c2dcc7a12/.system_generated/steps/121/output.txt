@@ -1,0 +1,80 @@
+
+The command exited with code 0.
+Output:
+
+  new\server\background_processor.py:445:
+  new\server\background_processor.py:446:            if allowed_fac_ids is None:
+> new\server\background_processor.py:447:                all_facilities = Facility.query.all()
+  new\server\background_processor.py:448:            else:
+> new\server\background_processor.py:449:                all_facilities = Facility.query.filter(
+  new\server\background_processor.py:450:                    Facility.id.in_(allowed_fac_ids)
+  new\server\background_processor.py:451:                ).all()
+  new\server\background_processor.py:453:            from utils import build_name_map
+  new\server\background_processor.py:454:
+> new\server\background_processor.py:455:            fac_name_map = build_name_map(all_facilities)
+> new\server\background_processor.py:456:            for fac in all_facilities:
+  new\server\background_processor.py:457:                # region names are a convenience alias only when no facility 
+carries that name
+  new\server\background_processor.py:458:                fac_name_map.add(fac.region, fac, overwrite=False)
+> new\server\background_processor.py:459:            fac_id_map = {str(fac.id): fac for fac in all_facilities}
+  new\server\background_processor.py:460:
+  new\server\background_processor.py:461:            custom_factors = 
+CustomFactor.query.filter(CustomFactor.is_archived.is_(False)).all()
+  new\server\background_processor.py:595:                    emission_obj, row_errors = _process_row_custom_factors(
+  new\server\background_processor.py:596:                        mapped_data, user_id, batch_cf_names)
+> new\server\background_processor.py:597:                elif str(scope) == "facilities":
+> new\server\background_processor.py:598:                    emission_obj, row_errors = _process_row_facilities(
+  new\server\background_processor.py:599:                        mapped_data, user_id, overwrite_duplicates
+  new\server\background_processor.py:600:                    )
+  new\server\background_processor.py:647:                            yr = getattr(emission_obj, 'year', 0)
+  new\server\background_processor.py:648:                            mo = getattr(emission_obj, 'month', 0)
+> new\server\background_processor.py:649:                            if scope == "1":
+  new\server\background_processor.py:650:                                co2e_val = getattr(emission_obj, 
+'co2e_total', 0) or 0
+  new\server\background_processor.py:651:                                anomaly = 
+anomaly_detector.check_scope1(fac_id, getattr(emission_obj, 'process_type', ''), co2e_val, yr, mo)
+> new\server\background_processor.py:652:                            elif scope == "2":
+  new\server\background_processor.py:653:                                co2e_val = getattr(emission_obj, 'co2e', 0) 
+or 0
+  new\server\background_processor.py:654:                                anomaly = 
+anomaly_detector.check_scope2(fac_id, getattr(emission_obj, 'source_type', ''), co2e_val, yr, mo)
+  new\server\background_processor.py:729:                    from models import User, Notification, Facility
+  new\server\background_processor.py:730:                    uploaded_regions = set()
+> new\server\background_processor.py:731:                    for fac in all_facilities:
+  new\server\background_processor.py:732:                        if fac.region:
+  new\server\background_processor.py:733:                            uploaded_regions.add(fac.region)
+  new\server\background_processor.py:1682:
+  new\server\background_processor.py:1683:
+> new\server\background_processor.py:1684:def _process_row_facilities(row, user_id, overwrite_duplicates):
+  new\server\background_processor.py:1685:    from models import Facility
+  new\server\background_processor.py:1686:
+  new\server\background_processor.py:1694:    existing = Facility.query.filter_by(name=name).first()
+  new\server\background_processor.py:1695:
+> new\server\background_processor.py:1696:    # BUG-001: region-restricted superusers may only create/overwrite 
+facilities in their
+> new\server\background_processor.py:1697:    # own region (same rule as POST /api/facilities/import).
+  new\server\background_processor.py:1698:    from extensions import db
+  new\server\background_processor.py:1699:    from models import User
+  new\server\background_processor.py:1703:    uploader = db.session.get(User, user_id)
+  new\server\background_processor.py:1704:    if uploader is None or uploader.role not in ("admin", "superuser"):
+> new\server\background_processor.py:1705:        errors.append("Not authorised to import facilities")
+  new\server\background_processor.py:1706:        return None, errors
+  new\server\background_processor.py:1707:
+  new\server\background_processor.py:1711:
+  new\server\background_processor.py:1712:    if existing is not None and not facility_in_user_scope(uploader, 
+existing.region, existing.location, existing.name):
+> new\server\background_processor.py:1713:        errors.append(f"Superusers can only import facilities in their 
+assigned region: {uploader.location}")
+  new\server\background_processor.py:1714:        return None, errors
+  new\server\background_processor.py:1715:    # The facility must also stay in scope after the row is applied (no 
+re-regioning out of scope).
+  new\server\background_processor.py:1716:    cur = existing or Facility()
+  new\server\background_processor.py:1717:    if not facility_change_allowed(uploader, existing, _new("region", 
+cur.region), _new("location", cur.location), name):
+> new\server\background_processor.py:1718:        errors.append(f"Superusers can only import facilities in their 
+assigned region: {uploader.location}")
+  new\server\background_processor.py:1719:        return None, errors
+  new\server\background_processor.py:1720:
+
+
+

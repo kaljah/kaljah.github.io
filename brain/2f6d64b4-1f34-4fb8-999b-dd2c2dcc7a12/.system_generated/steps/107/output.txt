@@ -1,0 +1,63 @@
+
+The command exited with code 0.
+Output:
+
+  new\client\src\components\BulkImportModal.jsx:23:  const [headers, setHeaders] = useState([]);
+  new\client\src\components\BulkImportModal.jsx:24:  const [mapping, setMapping] = useState({});
+> new\client\src\components\BulkImportModal.jsx:25:  const [step, setStep] = useState(1); // 1: Upload, 2: Mapping, 3: 
+Preview
+  new\client\src\components\BulkImportModal.jsx:26:  const [loading, setLoading] = useState(false);
+  new\client\src\components\BulkImportModal.jsx:27:  const [uploadJobId, setUploadJobId] = useState(null);
+  new\client\src\components\BulkImportModal.jsx:664:      header: false,
+  new\client\src\components\BulkImportModal.jsx:665:      skipEmptyLines: true,
+> new\client\src\components\BulkImportModal.jsx:666:      preview: 10, // Only parse first 10 rows to save memory on 
+huge files
+  new\client\src\components\BulkImportModal.jsx:667:      complete: (results) => {
+  new\client\src\components\BulkImportModal.jsx:668:        const data = results.data;
+  new\client\src\components\BulkImportModal.jsx:750:  };
+  new\client\src\components\BulkImportModal.jsx:751:
+> new\client\src\components\BulkImportModal.jsx:752:  const handlePreview = () => {
+  new\client\src\components\BulkImportModal.jsx:753:    setLoading(true);
+  new\client\src\components\BulkImportModal.jsx:754:
+  new\client\src\components\BulkImportModal.jsx:1388:                className="action-btn"
+  new\client\src\components\BulkImportModal.jsx:1389:                disabled={!isMappingValid()}
+> new\client\src\components\BulkImportModal.jsx:1390:                onClick={handlePreview}
+  new\client\src\components\BulkImportModal.jsx:1391:              >
+> new\client\src\components\BulkImportModal.jsx:1392:                Preview Data
+  new\client\src\components\BulkImportModal.jsx:1393:              </button>
+  new\client\src\components\BulkImportModal.jsx:1394:            </div>
+  new\client\src\components\BulkImportModal.jsx:1533:                          }}
+  new\client\src\components\BulkImportModal.jsx:1534:                        >
+> new\client\src\components\BulkImportModal.jsx:1535:                          {uploadStatus.skipped_preview
+  new\client\src\components\BulkImportModal.jsx:1536:                            ?.slice(0, 5)
+  new\client\src\components\BulkImportModal.jsx:1537:                            .map((skip, idx) => (
+  new\client\src\components\BulkImportModal.jsx:1593:            {!uploadJobId ? (
+  new\client\src\components\BulkImportModal.jsx:1594:              <>
+> new\client\src\components\BulkImportModal.jsx:1595:                <div className="preview-header">
+  new\client\src\components\BulkImportModal.jsx:1596:                  <h4>
+  new\client\src\components\BulkImportModal.jsx:1597:                    <CheckCircle2
+  new\client\src\components\BulkImportModal.jsx:1601:                      }}
+  new\client\src\components\BulkImportModal.jsx:1602:                    />{" "}
+> new\client\src\components\BulkImportModal.jsx:1603:                    Preview & Validate
+  new\client\src\components\BulkImportModal.jsx:1604:                  </h4>
+  new\client\src\components\BulkImportModal.jsx:1605:                  <span>{mappedRecords.length} records 
+mapped</span>
+  new\client\src\components\BulkImportModal.jsx:1625:                )}
+  new\client\src\components\BulkImportModal.jsx:1626:
+> new\client\src\components\BulkImportModal.jsx:1627:                <div className="preview-table-container">
+> new\client\src\components\BulkImportModal.jsx:1628:                  <table className="preview-table">
+  new\client\src\components\BulkImportModal.jsx:1629:                    <thead>
+  new\client\src\components\BulkImportModal.jsx:1630:                      <tr>
+  new\client\src\components\BulkImportModal.jsx:1663:                  </table>
+  new\client\src\components\BulkImportModal.jsx:1664:                  {mappedRecords.length > 10 && (
+> new\client\src\components\BulkImportModal.jsx:1665:                    <div className="preview-more">
+  new\client\src\components\BulkImportModal.jsx:1666:                      Showing first 10 records...
+  new\client\src\components\BulkImportModal.jsx:1667:                    </div>
+  new\client\src\components\BulkImportModal.jsx:1766:                          }}
+  new\client\src\components\BulkImportModal.jsx:1767:                        >
+> new\client\src\components\BulkImportModal.jsx:1768:                          {uploadStatus.skipped_preview
+  new\client\src\components\BulkImportModal.jsx:1769:                            ?.slice(0, 5)
+  new\client\src\components\BulkImportModal.jsx:1770:                            .map((skip, idx) => (
+
+
+

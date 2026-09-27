@@ -1,0 +1,27 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/25/2026   7:52 PM         113790 index.html                                                           
+-a----         9/25/2026   3:30 PM          34956 napec_flyer.html                                                     
+-a----         9/25/2026   3:30 PM          35498 napec_flyer_fr.html                                                  
+-a----         9/25/2026   4:32 PM          34607 neocarbon_flyer.html                                                 
+-a----         9/25/2026   4:33 PM          34833 neocarbon_flyer_fr.html                                              
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/19/2026   4:04 PM           1013 index.html                                                           
+-a----         9/27/2026   6:12 PM        1420042 stats.html                                                           
+
+
+

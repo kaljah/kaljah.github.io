@@ -1,0 +1,17 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\pages\CarbonIntensity.jsx:771:              <BarChart
+new\client\src\pages\CarbonIntensity.jsx:797:              <BarChart
+new\client\src\pages\CarbonIntensity.jsx:833:              <BarChart
+new\client\src\pages\CarbonIntensity.jsx:856:              <BarChart
+new\client\src\pages\CarbonIntensity.jsx:892:                  <BarChart2 size={16} /> Chart
+new\client\src\pages\CarbonIntensity.jsx:906:              <LineChart
+new\client\src\pages\MethaneIntensity.jsx:1445:              <BarChart
+new\client\src\pages\MethaneIntensity.jsx:1470:              <BarChart
+new\client\src\pages\MethaneIntensity.jsx:1493:              <BarChart
+new\client\src\pages\MethaneIntensity.jsx:1516:              <BarChart
+
+
+

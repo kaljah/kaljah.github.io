@@ -1,0 +1,61 @@
+
+The command exited with code 0.
+Output:
+
+  new\client\src\pages\ManageData.jsx:1459:                                            {pendingMetrics.totalCount}
+  new\client\src\pages\ManageData.jsx:1460:                                        </span>
+  new\client\src\pages\ManageData.jsx:1461:                                    )}
+  new\client\src\pages\ManageData.jsx:1462:                                </span>
+  new\client\src\pages\ManageData.jsx:1463:                            </div>
+  new\client\src\pages\ManageData.jsx:1464:                        )}
+  new\client\src\pages\ManageData.jsx:1465:                        <div className={`manage-nav-item ${activeTab === 
+'factors' ? 'active' : ''}`} onClick={() => handleTabChange('factors')}>
+  new\client\src\pages\ManageData.jsx:1466:                            <span>Emission Factors</span>
+  new\client\src\pages\ManageData.jsx:1467:                        </div>
+  new\client\src\pages\ManageData.jsx:1468:                        {['admin', 'superuser'].includes(user?.role) && (
+> new\client\src\pages\ManageData.jsx:1469:                            <div className={`manage-nav-item ${activeTab 
+=== 'facilities' ? 'active' : ''}`} onClick={() => handleTabChange('facilities')}>
+  new\client\src\pages\ManageData.jsx:1470:                                <span>Regions</span>
+  new\client\src\pages\ManageData.jsx:1471:                            </div>
+  new\client\src\pages\ManageData.jsx:1472:                        )}
+  new\client\src\pages\ManageData.jsx:1473:                        <div className={`manage-nav-item ${activeTab === 
+'production' ? 'active' : ''}`} onClick={() => handleTabChange('production')}>
+  new\client\src\pages\ManageData.jsx:1474:                            <span>Production Data</span>
+  new\client\src\pages\ManageData.jsx:1475:                        </div>
+  new\client\src\pages\ManageData.jsx:1476:                        <div className={`manage-nav-item ${activeTab === 
+'sources' ? 'active' : ''}`} onClick={() => handleTabChange('sources')}>
+  new\client\src\pages\ManageData.jsx:1477:                            <span>Emission Sources</span>
+  new\client\src\pages\ManageData.jsx:1478:                        </div>
+  new\client\src\pages\ManageData.jsx:1479:                        <div className={`manage-nav-item ${activeTab === 
+'goals' ? 'active' : ''}`} onClick={() => handleTabChange('goals')}>
+  new\client\src\pages\ManageData.jsx:2461:                                                </tr>
+  new\client\src\pages\ManageData.jsx:2462:                                            )}
+  new\client\src\pages\ManageData.jsx:2463:                                        </tbody>
+  new\client\src\pages\ManageData.jsx:2464:                                    </table>
+  new\client\src\pages\ManageData.jsx:2465:                                    <PaginationControls 
+currentPage={currentPage} totalItems={filteredFactors.length} itemsPerPage={ITEMS_PER_PAGE} 
+onPageChange={setCurrentPage} />
+  new\client\src\pages\ManageData.jsx:2466:                                </div>
+  new\client\src\pages\ManageData.jsx:2467:                            </div>
+  new\client\src\pages\ManageData.jsx:2468:                        )}
+  new\client\src\pages\ManageData.jsx:2469:
+  new\client\src\pages\ManageData.jsx:2470:                        {/* Regions Tab - Admin and Superuser */}
+> new\client\src\pages\ManageData.jsx:2471:                        {activeTab === 'facilities' && ['admin', 
+'superuser'].includes(user?.role) && (
+  new\client\src\pages\ManageData.jsx:2472:                            <div className="manage-card glass-panel">
+  new\client\src\pages\ManageData.jsx:2473:                                <h2 style={{ marginBottom: '8px', 
+fontWeight: 700 }}>Active Regions</h2>
+  new\client\src\pages\ManageData.jsx:2474:                                <p style={{ color: 'var(--text-secondary)', 
+marginBottom: '32px' }}>Manage operational regions and their boundaries.</p>
+  new\client\src\pages\ManageData.jsx:2475:
+  new\client\src\pages\ManageData.jsx:2476:
+  new\client\src\pages\ManageData.jsx:2477:                                {/* Add Region form */}
+  new\client\src\pages\ManageData.jsx:2478:                                {['admin', 
+'superuser'].includes(user?.role) && (
+  new\client\src\pages\ManageData.jsx:2479:                                    <>
+  new\client\src\pages\ManageData.jsx:2480:                                        <div className="grid-forms" 
+style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
+  new\client\src\pages\ManageData.jsx:2481:                                            <div className="input-group">
+
+
+

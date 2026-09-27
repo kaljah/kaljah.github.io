@@ -1,0 +1,63 @@
+
+The command exited with code 0.
+Output:
+
+  new\client\src\pages\Reports.jsx:419:    subLabel: f.field,
+  new\client\src\pages\Reports.jsx:420:  }));
+  new\client\src\pages\Reports.jsx:421:
+> new\client\src\pages\Reports.jsx:422:  const [showConfigModal, setShowConfigModal] = useState(false);
+  new\client\src\pages\Reports.jsx:423:  const [reportFormat, setReportFormat] = useState("master");
+  new\client\src\pages\Reports.jsx:424:  const [exclusionCriteria, setExclusionCriteria] = useState("Sources 
+contributing less than 1% of the total footprint are excluded.");
+  new\client\src\pages\Reports.jsx:425:  const [verificationStatus, setVerificationStatus] = useState("Not externally 
+verified");
+  new\client\src\pages\Reports.jsx:426:
+> new\client\src\pages\Reports.jsx:427:  const openConfigModal = () => {
+  new\client\src\pages\Reports.jsx:428:    if (reportSelectedRegions.length === 0) {
+  new\client\src\pages\Reports.jsx:429:      toast.error("Please select at least one region/facility.");
+  new\client\src\pages\Reports.jsx:430:      return;
+  new\client\src\pages\Reports.jsx:431:    }
+> new\client\src\pages\Reports.jsx:432:    setShowConfigModal(true);
+  new\client\src\pages\Reports.jsx:433:  };
+  new\client\src\pages\Reports.jsx:434:
+  new\client\src\pages\Reports.jsx:435:  const handleGenerateModalReport = async () => {
+> new\client\src\pages\Reports.jsx:436:    setShowConfigModal(false);
+  new\client\src\pages\Reports.jsx:437:    if (reportFormat === "master") {
+  new\client\src\pages\Reports.jsx:438:      await handleMasterReportDownload();
+  new\client\src\pages\Reports.jsx:439:      return;
+  new\client\src\pages\Reports.jsx:739:
+  new\client\src\pages\Reports.jsx:740:              <button
+  new\client\src\pages\Reports.jsx:741:                className="btn-create"
+> new\client\src\pages\Reports.jsx:742:                onClick={openConfigModal}
+  new\client\src\pages\Reports.jsx:743:                disabled={loading}
+  new\client\src\pages\Reports.jsx:744:                style={{
+  new\client\src\pages\Reports.jsx:745:                  opacity: loading ? 0.7 : 1,
+  new\client\src\pages\Reports.jsx:1158:        </div>
+  new\client\src\pages\Reports.jsx:1159:      </div>
+  new\client\src\pages\Reports.jsx:1160:
+> new\client\src\pages\Reports.jsx:1161:      {showConfigModal && (
+  new\client\src\pages\Reports.jsx:1162:        <div className="modal-overlay">
+  new\client\src\pages\Reports.jsx:1163:          <div className="modal-content" style={{ maxWidth: '560px' }}>
+  new\client\src\pages\Reports.jsx:1164:            <div className="modal-header">
+  new\client\src\pages\Reports.jsx:1165:              <h2>Generate Executive GHG Report</h2>
+> new\client\src\pages\Reports.jsx:1166:              <button className="close-btn" onClick={() => 
+setShowConfigModal(false)}>�</button>
+  new\client\src\pages\Reports.jsx:1167:            </div>
+  new\client\src\pages\Reports.jsx:1168:            <div className="modal-body" style={{ display: 'flex', 
+flexDirection: 'column', gap: '16px' }}>
+  new\client\src\pages\Reports.jsx:1169:              <div className="input-group">
+  new\client\src\pages\Reports.jsx:1266:              )}
+  new\client\src\pages\Reports.jsx:1267:            </div>
+  new\client\src\pages\Reports.jsx:1268:            <div className="modal-footer" style={{ marginTop: '24px', display: 
+'flex', justifyContent: 'flex-end', gap: '12px' }}>
+> new\client\src\pages\Reports.jsx:1269:              <button className="btn-secondary" onClick={() => 
+setShowConfigModal(false)}>Cancel</button>
+  new\client\src\pages\Reports.jsx:1270:              <button className="btn-primary" 
+onClick={handleGenerateModalReport} disabled={loading} style={{ background: reportFormat === 'master' ? 
+'linear-gradient(135deg, #f97316 0%, #ea580c 100%)' : undefined, border: 'none' }}>
+  new\client\src\pages\Reports.jsx:1271:                {loading ? "Generating..." : reportFormat === 'master' ? 
+"Download Master Report (PDF)" : "Generate ISO PDF"}
+  new\client\src\pages\Reports.jsx:1272:              </button>
+
+
+

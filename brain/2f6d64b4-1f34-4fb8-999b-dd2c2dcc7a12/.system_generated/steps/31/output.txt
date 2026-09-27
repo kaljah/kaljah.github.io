@@ -1,0 +1,17 @@
+
+The command exited with code 0.
+Output:
+
+LineNumber Line                                                                                                        
+---------- ----                                                                                                        
+      1455                                         Pending Review                                                      
+      1545                         {/* Pending Review Tab */}                                                          
+      1683                                             <h2 style={{ margin: 0, fontWeight: 700, letterSpacing: '-0.0...
+      2195                                     The pending review queue is restricted to Regional Managers and Admin...
+      2342                                 {/* EF Uncertainty Workbench */}                                            
+      2345                                         <Database size={16} /> EF Uncertainty Workbench (ISO 14064-1 comp...
+      3166                                         <strong>GHG Protocol Recalculation Rule:</strong> Base year emiss...
+      3892                                             OGMP 2.0 applies exclusively to Oil & Gas operations (Upstrea...
+
+
+

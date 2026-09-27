@@ -1,0 +1,93 @@
+
+The command exited with code 0.
+Output:
+
+  new\server\routes\custom_factors.py:6:from utils import log_activity_and_notify, get_current_user
+  new\server\routes\custom_factors.py:7:
+> new\server\routes\custom_factors.py:8:custom_factors_bp = Blueprint("custom_factors", __name__)
+  new\server\routes\custom_factors.py:9:
+  new\server\routes\custom_factors.py:10:
+> new\server\routes\custom_factors.py:11:@custom_factors_bp.route("", methods=["GET"])
+> new\server\routes\custom_factors.py:12:@custom_factors_bp.route("/", methods=["GET"])
+  new\server\routes\custom_factors.py:13:@login_required
+> new\server\routes\custom_factors.py:14:def get_custom_factors():
+  new\server\routes\custom_factors.py:15:    """Get all custom emission factors"""
+  new\server\routes\custom_factors.py:16:    user = get_current_user()
+  new\server\routes\custom_factors.py:135:
+  new\server\routes\custom_factors.py:136:
+> new\server\routes\custom_factors.py:137:@custom_factors_bp.route("", methods=["POST"])
+  new\server\routes\custom_factors.py:138:
+> new\server\routes\custom_factors.py:139:@custom_factors_bp.route("/", methods=["POST"])
+  new\server\routes\custom_factors.py:140:@superuser_required
+  new\server\routes\custom_factors.py:141:def create_custom_factor():
+  new\server\routes\custom_factors.py:219:
+  new\server\routes\custom_factors.py:220:
+> new\server\routes\custom_factors.py:221:@custom_factors_bp.route("/<int:factor_id>", methods=["PUT"])
+  new\server\routes\custom_factors.py:222:@superuser_required
+  new\server\routes\custom_factors.py:223:def update_custom_factor(factor_id):
+  new\server\routes\custom_factors.py:308:
+  new\server\routes\custom_factors.py:309:
+> new\server\routes\custom_factors.py:310:@custom_factors_bp.route("/<int:factor_id>", methods=["DELETE"])
+  new\server\routes\custom_factors.py:311:@superuser_required
+  new\server\routes\custom_factors.py:312:def delete_custom_factor(factor_id):
+  new\server\routes\custom_factors.py:322:    if refs > 0:
+  new\server\routes\custom_factors.py:323:        # BUG-056: a factor used by emission records cannot be deleted (its 
+id must never be
+> new\server\routes\custom_factors.py:324:        # reused); archive it instead via POST 
+/api/custom-factors/<id>/archive.
+  new\server\routes\custom_factors.py:325:        return jsonify({
+  new\server\routes\custom_factors.py:326:            "error": f"Cannot delete factor '{factor.name}': referenced by 
+{refs} emission records. Archive the factor instead.",
+  new\server\routes\custom_factors.py:353:
+  new\server\routes\custom_factors.py:354:
+> new\server\routes\custom_factors.py:355:@custom_factors_bp.route("/<int:factor_id>/archive", methods=["POST"])
+  new\server\routes\custom_factors.py:356:@superuser_required
+  new\server\routes\custom_factors.py:357:def archive_custom_factor(factor_id):
+  new\server\routes\custom_factors.py:377:
+  new\server\routes\custom_factors.py:378:
+> new\server\routes\custom_factors.py:379:@custom_factors_bp.route("/import", methods=["POST"])
+  new\server\routes\custom_factors.py:380:@superuser_required
+> new\server\routes\custom_factors.py:381:def import_custom_factors():
+  new\server\routes\custom_factors.py:382:    """Bulk import custom factors from CSV/Excel (Super User / Admin only)"""
+  new\server\routes\custom_factors.py:383:    user_id = session.get("user_id")
+  new\server\routes\emissions.py:512:
+  new\server\routes\emissions.py:513:    # Pre-fetch user's custom factors
+> new\server\routes\emissions.py:514:    custom_factors = CustomFactor.query.filter_by(created_by=user.id, 
+is_archived=False).all()
+> new\server\routes\emissions.py:515:    cf_name_map = build_name_map(custom_factors)
+  new\server\routes\emissions.py:516:
+  new\server\routes\emissions.py:517:    valid_records = []
+  new\server\routes\emissions.py:2916:    if user.role in ["it_admin", "it_manager", "it"]:
+  new\server\routes\emissions.py:2917:        return jsonify({"error": "IT accounts cannot upload business data"}), 403
+> new\server\routes\emissions.py:2918:    if scope in ("facilities", "custom_factors") and user.role not in ["admin", 
+"superuser"]:
+  new\server\routes\emissions.py:2919:        return jsonify({"error": "Only admins and superusers can import 
+facilities or custom factors"}), 403
+  new\server\routes\emissions.py:2920:
+  new\server\routes\qaqc.py:325:        # Custom factors
+  new\server\routes\qaqc.py:326:        try:
+> new\server\routes\qaqc.py:327:            total_custom_factors = CustomFactor.query.count()
+  new\server\routes\qaqc.py:328:        except Exception:
+> new\server\routes\qaqc.py:329:            total_custom_factors = 0
+  new\server\routes\qaqc.py:330:
+  new\server\routes\qaqc.py:331:        # Status counts for flagged records
+  new\server\routes\qaqc.py:529:            })
+  new\server\routes\qaqc.py:530:
+> new\server\routes\qaqc.py:531:        if total_custom_factors == 0:
+  new\server\routes\qaqc.py:532:            suggestions.append({
+> new\server\routes\qaqc.py:533:                "id": "no_custom_factors",
+  new\server\routes\qaqc.py:534:                "type": "info",
+  new\server\routes\qaqc.py:535:                "title": "Tier 1 Default Factor Reliance",
+  new\server\routes\qaqc.py:564:            "active_facilities": len(active_fids),
+  new\server\routes\qaqc.py:565:            "unused_facilities": unused_facilities,
+> new\server\routes\qaqc.py:566:            "total_custom_factors": total_custom_factors,
+  new\server\routes\qaqc.py:567:            "anomalies_summary": {
+  new\server\routes\qaqc.py:568:                "total": total_flagged,
+  new\server\routes\__init__.py:6:data_bp = Blueprint("data", __name__)
+  new\server\routes\__init__.py:7:reports_bp = Blueprint("reports", __name__)
+> new\server\routes\__init__.py:8:custom_factors_bp = Blueprint("custom_factors", __name__)
+  new\server\routes\__init__.py:9:scope2_bp = Blueprint("scope2", __name__)
+  new\server\routes\__init__.py:10:scope3_bp = Blueprint("scope3", __name__)
+
+
+
