@@ -434,6 +434,13 @@ class CalculationDispatcher:
 
         factor_source = flat_inputs.get("factor_source", "default")
 
+        # Library factor (site factor database) is activity x the selected factor for every
+        # process — separate from the API Compendium tier methods
+        if str(flat_inputs.get("factor_mode") or "").lower() == "library":
+            return self._generic_calculation(
+                flat_inputs, emission_factors, uncertainties, process_type, gwp_dict=gwp_dict
+            )
+
         if not calculator:
             return self._generic_calculation(
                 flat_inputs,

@@ -106,7 +106,7 @@ const Scope1Form = () => {
   const [gcUncertaintyPct, setGcUncertaintyPct] = useState("");
 
   // Tier 2 Enhanced State
-  const [tier2Mode, setTier2Mode] = useState("override"); // 'override' (Mode A: Lab/Ticket properties) or 'custom_factor' (Mode B: Saved custom factor)
+  const tier2Mode = "override"; // Tier 2 (API Compendium) = measured fuel properties; library factors are separate
   const [activePresetId, setActivePresetId] = useState("");
   const [fuelDensity, setFuelDensity] = useState("");
   const [dataSourceRef, setDataSourceRef] = useState("");
@@ -365,13 +365,8 @@ const Scope1Form = () => {
   useEffect(() => {
     setFormData((prev) => {
       const isCustomId = !isNaN(parseInt(prev.fuel)) && String(parseInt(prev.fuel)) === String(prev.fuel);
-      if (sourceType === "custom" && tier2Mode === "custom_factor" && !isCustomId) return { ...prev, fuel: "" };
-      if (
-        (sourceType === "default" || sourceType === "specific" || (sourceType === "custom" && tier2Mode === "override")) &&
-        isCustomId &&
-        prev.fuel
-      )
-        return { ...prev, fuel: "" };
+      if (sourceType === "library" && !isCustomId) return { ...prev, fuel: "" };
+      if (sourceType !== "library" && isCustomId && prev.fuel) return { ...prev, fuel: "" };
       return prev;
     });
   }, [sourceType, tier2Mode]);
@@ -402,7 +397,7 @@ const Scope1Form = () => {
   const handleFactorCreated = (newFactor) => {
     loadCustomFactors();
     if (newFactor?.id) {
-      setTier2Mode("custom_factor");
+      setSourceType("library");
       setFormData((prev) => ({ ...prev, fuel: newFactor.id.toString() }));
     }
   };
@@ -672,8 +667,16 @@ const Scope1Form = () => {
       return;
     }
 
+    // Library factor: activity x the selected site factor
+    if (sourceType === "library") {
+      if (!formData.fuel || isNaN(parseInt(formData.fuel))) {
+        toast.warning("Select a library factor");
+        return;
+      }
+    }
+
     // Validate fuel/factor selection
-    if (
+    if (sourceType !== "library" &&
       (sourceType === "default" || sourceType === "custom") &&
       !["associated_gas_venting", "completions", "unloading"].includes(processType) &&
       !formData.fuel
@@ -1349,6 +1352,11 @@ const Scope1Form = () => {
         }
       }
 
+      if (sourceType === "library") {
+        finalAmount = parseFloat(formData.amount || formData.quantity || 0);
+        finalUnit = formData.unit || "";
+      }
+
       if (!finalUnit && sourceType !== "specific") {
         toast.warning("Please select a unit");
         setSubmitting(false);
@@ -1374,14 +1382,13 @@ const Scope1Form = () => {
         unit: finalUnit,
 
         // Factor Selection
-        factor_source: sourceType, // 'default', 'custom', 'specific'
+        factor_source: sourceType === "library" ? "custom" : sourceType, // 'default', 'custom', 'specific'
+        factor_mode: sourceType === "library" ? "library" : undefined,
         // Always send fuel so backend can look up the factor (needed for HHV & defaults)
         fuel_type: formData.fuel || undefined,
         fuel: formData.fuel || undefined,
         custom_factor_id:
-          sourceType === "custom" && tier2Mode === "custom_factor"
-            ? parseInt(formData.fuel)
-            : undefined,
+          sourceType === "library" ? parseInt(formData.fuel) : undefined,
 
         // Tier 2 & Tier 3 Fuel Properties (HHV & Density) & Audit References
         density: fuelDensity ? parseFloat(fuelDensity) : undefined,
@@ -1627,6 +1634,11 @@ const Scope1Form = () => {
       setSourceType,
     };
 
+    // Library factor: activity x factor, same inputs for every process
+    if (sourceType === "library") {
+      return <CombustionForm {...props} sourceType="library" />;
+    }
+
     // Fallback to generic form for Tier 1 / Custom on upstream processes
     if (
       sourceType !== "specific" &&
@@ -1724,17 +1736,6 @@ const Scope1Form = () => {
     if (stream && process) {
       setStreamType(stream);
       setProcessType(process);
-      const isComb = [
-        "combustion",
-        "stationary_combustion",
-        "mobile_combustion",
-        "mobile",
-        "flaring",
-        "flare",
-      ].includes(process);
-      if (!isComb) {
-        setTier2Mode("custom_factor");
-      }
       if (process === "drilling") {
         setSourceType("default");
         handleFormChange("unit", "well");
@@ -1989,8 +1990,17 @@ const Scope1Form = () => {
                           },
                         ]
                     )
+                      // Library factors (the site factor database: calculated or equipment factors) are a
+                      // separate choice from the API Compendium tiers
+                      .concat([{ key: "library", tier: "", label: "Library factor", sub: "Site factor database" }])
                       .filter((item) => {
                         const type = item.key;
+                        if (
+                          type === "custom" &&
+                          ["drilling", "pneumatic", "tank", "tank_flashing", "tank_working", "tank_breathing",
+                           "venting", "blowdown", "loading", "separation"].includes(processType)
+                        )
+                          return false;
                         if (processType === "drilling") return true;
                         if (processType === "mobile" && type === "specific")
                           return false;
@@ -2045,35 +2055,10 @@ const Scope1Form = () => {
                 )}
 
                 {/* TIER 2: Regional / Measured / Supplier Factors */}
-                {sourceType === "custom" && !["associated_gas_venting", "completions", "unloading"].includes(processType) && (
+                {((sourceType === "custom" && !["associated_gas_venting", "completions", "unloading", "fugitive"].includes(processType)) || sourceType === "library") && (
                   <div className="tier2-mode-container">
-                    {[
-                      "combustion",
-                      "stationary_combustion",
-                      "mobile_combustion",
-                      "mobile",
-                      "flaring",
-                      "flare",
-                    ].includes(processType) ? (
+                    {sourceType === "custom" ? (
                       <>
-                        <div className="tier2-mode-tabs">
-                          <button
-                            type="button"
-                            className={`tier2-mode-btn ${tier2Mode === "override" ? "active" : ""}`}
-                            onClick={() => setTier2Mode("override")}
-                          >
-                            <Sliders size={14} />
-                            <span>Measured properties</span>
-                          </button>
-                          <button
-                            type="button"
-                            className={`tier2-mode-btn ${tier2Mode === "custom_factor" ? "active" : ""}`}
-                            onClick={() => setTier2Mode("custom_factor")}
-                          >
-                            <Layers size={14} />
-                            <span>Saved factor</span>
-                          </button>
-                        </div>
 
                         {tier2Mode === "override" && (
                           <div className="tier2-override-card">
@@ -2192,41 +2177,6 @@ const Scope1Form = () => {
                                                       </div>
                         )}
 
-                        {tier2Mode === "custom_factor" && (
-                          <div>
-                            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-                              <div style={{ flex: 1 }}>
-                                <CustomDropdown
-                                  options={fuelOptions}
-                                  value={formData.fuel || ""}
-                                  onChange={(val) => handleFormChange("fuel", val)}
-                                  placeholder="Select saved factor"
-                                />
-                              </div>
-                              <button
-                                type="button"
-                                className="btn btn-secondary"
-                                onClick={() => setIsQuickAddModalOpen(true)}
-                                style={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  gap: "4px",
-                                  padding: "8px 12px",
-                                  fontSize: "0.8rem",
-                                  whiteSpace: "nowrap",
-                                }}
-                              >
-                                <PlusCircle size={15} />
-                                <span>+ Quick Add</span>
-                              </button>
-                            </div>
-                            {fuelOptions.length === 0 && (
-                              <div style={{ fontSize: "0.75rem", color: "#6b7280", marginTop: "6px" }}>
-                                No saved custom factors registered for this process yet. Click <strong>+ Quick Add</strong> to register one on the spot.
-                              </div>
-                            )}
-                          </div>
-                        )}
                       </>
                     ) : (
                       <div>
@@ -2253,7 +2203,7 @@ const Scope1Form = () => {
                             }}
                           >
                             <PlusCircle size={15} />
-                            <span>+ Quick Add</span>
+                            <span>New library factor</span>
                           </button>
                         </div>
                       </div>

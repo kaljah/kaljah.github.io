@@ -103,6 +103,13 @@ def validate_activity(payload, require_unit):
     return amount
 
 
+# processes whose API Compendium Tier 2 is computed by their own calculator (no factor needed)
+ENGINEERING_TIER2 = {
+    "completions", "completion_flowback", "unloading", "liquids_unloading",
+    "associated_gas_venting", "associated_venting", "associated_gas", "fugitive",
+}
+
+
 def resolve_factor(payload, stored_payload=None, allow_archived=False):
     """Factor data for a calculation. Raises ValidationError when a required factor is missing."""
     from extensions import db
@@ -110,12 +117,18 @@ def resolve_factor(payload, stored_payload=None, allow_archived=False):
     from routes.emissions import _lookup_api_factor
 
     source = str(payload.get("factor_source") or "").lower()
+    # "Library factor" (the site's own factor database: calculated or equipment factors) is a
+    # separate choice from the API Compendium tiers; it always needs the selected library factor
+    library = str(payload.get("factor_mode") or "").lower() == "library"
+    process = str(payload.get("process_type") or payload.get("process") or "").lower()
     cf_id = payload.get("custom_factor_id")
     if cf_id in (None, "") and stored_payload:
         cf_id = stored_payload.get("custom_factor_id")
-    if cf_id in (None, "") and source == "custom":
+    if cf_id in (None, "") and (source == "custom" or library):
         fuel = str(payload.get("fuel") or "")
         cf_id = int(fuel) if fuel.isdigit() else None
+    if library and cf_id in (None, ""):
+        raise ValidationError("Select a library factor", "custom_factor_id")
     if cf_id not in (None, ""):
         try:
             cf = db.session.get(CustomFactor, int(cf_id))
@@ -127,6 +140,10 @@ def resolve_factor(payload, stored_payload=None, allow_archived=False):
         payload["factor_source"] = "custom"
         return custom_factor_data(cf)
     catalog = _lookup_api_factor(payload.get("fuel") or payload.get("fuel_type"))
+    if source == "custom" and process in ENGINEERING_TIER2:
+        # API Compendium Tier 2 for these processes is an engineering method (operational data,
+        # GOR balance, event factors, equipment counts) computed by the process calculator
+        return catalog
     if source == "custom":
         # Tier 2 without a saved factor is only valid as "catalog EF + site-specific fuel
         # properties" (national HHV / density presets). Otherwise a Tier 2 record must never
