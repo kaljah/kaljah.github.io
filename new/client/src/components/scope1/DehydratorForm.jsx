@@ -119,8 +119,8 @@ const DehydratorForm = ({ data, onChange, sourceType }) => {
             <input
               type="number"
               className="mole-input"
-              value={data.dehy_pressure !== undefined ? data.dehy_pressure : ""}
-              onChange={(e) => onChange("dehy_pressure", e.target.value)}
+              value={data.dehy_press !== undefined ? data.dehy_press : ""}
+              onChange={(e) => onChange("dehy_press", e.target.value)}
               placeholder="e.g. 1000"
               required
             />

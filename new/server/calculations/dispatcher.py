@@ -545,6 +545,31 @@ class CalculationDispatcher:
                         gwp_dict=gwp_dict,
                         density=float(density_val) if density_val else None,
                     )
+            # BUG-110: the facility-level Tier 1 fugitive method (Table 7-1/7-2) is a calculator,
+            # not a catalog multiplication; it used to fall through to "valves x count"
+            if process_type in ("fugitive", "fugitive_facility", "facility_fugitive") and (
+                process_type != "fugitive"
+                or str(flat_inputs.get("fugitive_tier") or "").lower() in ("tier1", "tier_1", "facility")
+                or flat_inputs.get("facility_type") not in (None, "")
+            ):
+                count = self._require_float(flat_inputs, ["facility_count", "amount", "quantity", "count"], "facility count")
+                fac_type = flat_inputs.get("facility_type")
+                if fac_type in (None, ""):
+                    raise ValueError("Missing required field: facility_type for facility-level fugitives")
+                days = flat_inputs.get("operating_days") or flat_inputs.get("days")
+                if days in (None, "") and flat_inputs.get("operating_hours") not in (None, ""):
+                    # same duration rule as the form: value in time_unit (hours / days / months / years)
+                    v = float(flat_inputs.get("operating_hours"))
+                    tu = str(flat_inputs.get("time_unit") or "hours").lower()
+                    hours = v * 24 if "day" in tu else v * 730 if "month" in tu else v * 8760 if "year" in tu else v
+                    days = hours / 24.0
+                return OnshoreFacilityFugitiveCalculator().calculate(
+                    facility_count=count,
+                    facility_type=str(fac_type),
+                    operating_days=float(days) if days not in (None, "") else 365.0,
+                    uncertainties=uncertainties,
+                    gwp_dict=gwp_dict,
+                )
             # Default / Custom for all processes uses standard catalog multiplication
             return self._generic_calculation(
                 flat_inputs,
@@ -1388,7 +1413,7 @@ class CalculationDispatcher:
                         ["facility_count", "amount", "quantity", "count"],
                         "facility count",
                     )
-                    fac_type = str(flat_inputs.get("facility_type") or flat_inputs.get("fuel") or "gas_pad_nodehy")
+                    fac_type = str(flat_inputs.get("facility_type") or flat_inputs.get("fuel") or "")
                     custom_ef = flat_inputs.get("custom_ef") or flat_inputs.get("ef")
                     return calc.calculate(
                         facility_count=count,
@@ -1597,8 +1622,14 @@ class CalculationDispatcher:
                 ctrl_type = (
                     flat_inputs.get("agr_control_type")
                     or flat_inputs.get("acid_gas_control_type")
-                    or flat_inputs.get("control_type", "vent")
+                    or flat_inputs.get("control_type")
+                    # BUG-090: older clients sent a bare "routed to flare" flag
+                    or ("flare" if str(flat_inputs.get("offgas_to_flare", "")).lower() in ("true", "1", "yes") else "vent")
                 )
+                if str(ctrl_type).strip().lower() != "vent" and ctrl_eff <= 0:
+                    raise ValueError(
+                        f"Acid gas control '{ctrl_type}' needs a control / destruction efficiency (agr_control_eff, %)"
+                    )
 
                 return calculator.calculate(
                     throughput=vol_mmscf,
@@ -1752,6 +1783,7 @@ class CalculationDispatcher:
                 )
                 contactor_press = float(
                     flat_inputs.get("dehy_press")
+                    or flat_inputs.get("dehy_pressure")  # BUG-090: key the form used to send
                     or flat_inputs.get("contactor_pressure")
                     or 800.0
                 )

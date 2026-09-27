@@ -141,6 +141,28 @@ const Scope2Form = () => {
     }
   };
 
+  // BUG-096: one list of units per source type; the unit is reset when the source type changes
+  // and submit is blocked when it is not one of the displayed options
+  const UNIT_OPTIONS = {
+    electricity: [
+      { value: "kWh", label: "kWh" },
+      { value: "MWh", label: "MWh" },
+      { value: "GWh", label: "GWh" },
+    ],
+    indirect_steam: [
+      { value: "btu", label: "Btu" },
+      { value: "mmbtu", label: "MMBtu" },
+      { value: "mj", label: "MJ" },
+    ],
+    cogen_allocation: [{ value: "tonnes", label: "Tonnes CO2e" }],
+  };
+  const DEFAULT_UNIT = { electricity: "kWh", indirect_steam: "mmbtu", cogen_allocation: "tonnes" };
+  const unitOptions = UNIT_OPTIONS[sourceType] || UNIT_OPTIONS.electricity;
+  const handleSourceTypeChange = (val) => {
+    setSourceType(val);
+    setUnit(DEFAULT_UNIT[val] || "kWh");
+  };
+
   const handleAddEntry = async (status = "Verified") => {
     if (
       !year ||
@@ -150,6 +172,11 @@ const Scope2Form = () => {
       !amount
     ) {
       toast.warning("Please fill in all required fields");
+      return;
+    }
+
+    if (!unitOptions.some((o) => o.value === unit)) {
+      toast.warning("Please select a unit");
       return;
     }
 
@@ -177,17 +204,12 @@ const Scope2Form = () => {
         if (unit === "MWh") electricityKwh = val * 1000;
         else if (unit === "GWh") electricityKwh = val * 1000000;
 
-        const factorObj = gridFactors.find((f) => f.region === gridRegion);
-        const ef = factorObj ? factorObj.factor : 0;
-        const totalEmissions = (electricityKwh * ef) / 1000;
-
+        // BUG-099: the server resolves the grid factor and computes CO2e; no client result is sent
         payload = {
           ...payload,
           grid_region: gridRegion,
           source_type: "electricity",
           electricity_kwh: electricityKwh,
-          emission_factor: ef,
-          co2e: totalEmissions,
           location: gridRegion,
         };
       } else if (sourceType === "indirect_steam") {
@@ -458,7 +480,7 @@ const Scope2Form = () => {
                   },
                 ]}
                 value={sourceType}
-                onChange={setSourceType}
+                onChange={handleSourceTypeChange}
               />
             </div>
             {sourceType === "electricity" && (
@@ -551,22 +573,8 @@ const Scope2Form = () => {
             <div className="input-group">
               <label>Unit</label>
               <CustomDropdown
-                options={
-                  sourceType === "electricity"
-                    ? [
-                        { value: "kWh", label: "kWh" },
-                        { value: "MWh", label: "MWh" },
-                        { value: "GWh", label: "GWh" },
-                      ]
-                    : sourceType === "indirect_steam"
-                      ? [
-                          { value: "btu", label: "Btu" },
-                          { value: "mmbtu", label: "MMBtu" },
-                          { value: "mj", label: "MJ" },
-                        ]
-                      : [{ value: "tonnes", label: "Tonnes CO2e" }]
-                }
-                value={unit || "kWh"}
+                options={unitOptions}
+                value={unit}
                 onChange={setUnit}
               />
             </div>

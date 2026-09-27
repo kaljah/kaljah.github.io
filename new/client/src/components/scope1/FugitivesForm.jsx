@@ -1,44 +1,31 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import CustomDropdown from "../CustomDropdown";
 
 // ============================================================================
 // API GHG COMPENDIUM (2021) CHAPTER 7 — ONSHORE REFERENCE TABLES & DATA
 // ============================================================================
 
+// BUG-110: the Tier 1 facility list and factors are the server's (calculations/fugitive_onshore.py,
+// FACILITY_TYPE_KEYS / API_CHAPTER7_ONSHORE_FACTORS) so the preview equals the saved record.
+// Facility-level factors are CH4 only, in kg CH4 per facility-day.
+const tier1 = (id, label, table, kgPerDay) => ({
+  id,
+  label: `${label} (${table})`,
+  sub: `Facility average: ${kgPerDay} kg CH₄/day`,
+  api_table: table,
+  factor_ch4: kgPerDay,
+  factor_co2: 0,
+  factor_unit: "kg/day/facility",
+  default_unit: "facilities",
+  default_days: 365,
+});
 const TIER1_FACILITIES = [
-  {
-    id: "gas_production",
-    label: "Gas Production Facility (Table 7-1)",
-    sub: "Whole Facility Average: 810 kg CH₄/day, 120 kg CO₂/day",
-    api_table: "Table 7-1",
-    factor_ch4: 810.0,
-    factor_co2: 120.0,
-    factor_unit: "kg/day/facility",
-    default_unit: "facilities",
-    default_days: 365,
-  },
-  {
-    id: "oil_production",
-    label: "Oil Production Facility (Table 7-1)",
-    sub: "Whole Facility Average: 140 kg CH₄/day, 26 kg CO₂/day",
-    api_table: "Table 7-1",
-    factor_ch4: 140.0,
-    factor_co2: 26.0,
-    factor_unit: "kg/day/facility",
-    default_unit: "facilities",
-    default_days: 365,
-  },
-  {
-    id: "gathering_station",
-    label: "Gas Gathering Compressor Station (Table 7-2)",
-    sub: "Whole Station Average: 210 kg CH₄/hr, 7.3 kg CO₂/hr",
-    api_table: "Table 7-2",
-    factor_ch4: 210.0,
-    factor_co2: 7.3,
-    factor_unit: "kg/hr/station",
-    default_unit: "stations",
-    default_hours: 8760,
-  },
+  tier1("gas_pad_nodehy", "Gas Well Pad / Battery, no dehydrator", "Table 7-1", 54.3),
+  tier1("gas_pad_dehy", "Gas Well Pad / Battery, with dehydrator", "Table 7-1", 106),
+  tier1("central_gas", "Central Gas Production Facility", "Table 7-1", 445),
+  tier1("oil_pad_light", "Oil Well Pad / Battery, light crude", "Table 7-2", 38.4),
+  tier1("oil_pad_heavy", "Oil Well Pad / Battery, heavy crude", "Table 7-2", 3.1),
+  tier1("central_oil", "Central Oil Treatment / Battery", "Table 7-2", 175),
 ];
 
 const TIER2A_EQUIPMENT_DATA = {
@@ -233,10 +220,26 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default", setSourceT
     : "ogi";
 
   // Tier 1 State
-  const selectedFacilityId = data.facility_type || "gas_production";
+  const selectedFacilityId = data.facility_type || TIER1_FACILITIES[0].id;
   const facilityCount = parseFloat(data.facility_count || data.amount || 1);
-  const tier1DurationUnit = data.time_unit || (selectedFacilityId === "gathering_station" ? "hours" : "days");
-  const tier1DurationValue = parseFloat(data.operating_days || data.operating_hours || (selectedFacilityId === "gathering_station" ? 8760 : 365));
+  const tier1DurationUnit = data.time_unit || "days";
+  const tier1DurationValue = parseFloat(data.operating_days || data.operating_hours || 365);
+
+  // BUG-110: the displayed Tier 1 defaults are written into the form state, so what the preview
+  // shows is what is submitted
+  useEffect(() => {
+    if (activeTier !== "tier1" || data.facility_type) return;
+    const def = TIER1_FACILITIES[0];
+    onChange("fugitive_tier", "tier1");
+    onChange("facility_type", def.id);
+    onChange("fuel", def.label);
+    onChange("unit", def.default_unit);
+    onChange("time_unit", "days");
+    if (!data.facility_count) onChange("facility_count", 1);
+    if (!data.amount) onChange("amount", 1);
+    if (!data.operating_days && !data.operating_hours) onChange("operating_days", def.default_days);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTier, data.facility_type]);
 
   // Tier 2A State (Equipment)
   const tier2aSegment = data.equipment_segment || "gas_production";
@@ -330,21 +333,12 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default", setSourceT
       citation = `API Compendium (2021) ${fac.api_table}`;
       methodology = `Tier 1: Facility-Level Average (${fac.label})`;
 
-      if (fac.id === "gathering_station") {
-        const normHours = getNormalizedHours(tier1DurationValue, tier1DurationUnit);
-        ch4_kg = facilityCount * fac.factor_ch4 * normHours;
-        co2_kg = facilityCount * fac.factor_co2 * normHours;
-        intermediateSteps.push(`Facility Count: ${facilityCount} stations`);
-        intermediateSteps.push(`Duration: ${tier1DurationValue} ${tier1DurationUnit} (${normHours.toFixed(1)} hrs)`);
-        intermediateSteps.push(`Factor: ${fac.factor_ch4} kg CH₄/hr, ${fac.factor_co2} kg CO₂/hr`);
-      } else {
-        const normDays = tier1DurationUnit === "hours" ? tier1DurationValue / 24 : tier1DurationValue;
-        ch4_kg = facilityCount * fac.factor_ch4 * normDays;
-        co2_kg = facilityCount * fac.factor_co2 * normDays;
-        intermediateSteps.push(`Facility Count: ${facilityCount} facilities`);
-        intermediateSteps.push(`Duration: ${tier1DurationValue} ${tier1DurationUnit} (${normDays.toFixed(1)} days)`);
-        intermediateSteps.push(`Factor: ${fac.factor_ch4} kg CH₄/day, ${fac.factor_co2} kg CO₂/day`);
-      }
+        const normDays = getNormalizedHours(tier1DurationValue, tier1DurationUnit) / 24;
+      ch4_kg = facilityCount * fac.factor_ch4 * normDays;
+      co2_kg = facilityCount * fac.factor_co2 * normDays;
+      intermediateSteps.push(`Facility Count: ${facilityCount} facilities`);
+      intermediateSteps.push(`Duration: ${tier1DurationValue} ${tier1DurationUnit} (${normDays.toFixed(1)} days)`);
+      intermediateSteps.push(`Factor: ${fac.factor_ch4} kg CH₄/day, ${fac.factor_co2} kg CO₂/day`);
     } else if (activeTier === "tier2" && tier2SubMethod === "equipment") {
       const seg = TIER2A_EQUIPMENT_DATA[tier2aSegment];
       const eq = seg.equipment.find((e) => e.id === tier2aEquipId) || seg.equipment[0];
@@ -667,7 +661,7 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default", setSourceT
                   if (found) {
                     onChange("fuel", found.label);
                     onChange("unit", found.default_unit);
-                    onChange("time_unit", found.id === "gathering_station" ? "hours" : "days");
+                    onChange("time_unit", "days");
                   }
                 }}
               />

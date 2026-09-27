@@ -97,6 +97,17 @@ def convert_fugitive_flow_to_kg_hr(value: float, unit: str, ch4_mol: float = 0.8
     return {"ch4_kg_hr": ch4_kg, "co2_kg_hr": co2_kg}
 
 
+# Facility-type ids used by the Scope 1 form and the API (Table 7-1 gas / Table 7-2 oil)
+FACILITY_TYPE_KEYS = {
+    "gas_pad_nodehy": "Facility - Gas Well Pad / Battery (Without Dehydrator)",
+    "gas_pad_dehy": "Facility - Gas Well Pad / Battery (With Dehydrator)",
+    "central_gas": "Facility - Central Gas Production Facility",
+    "oil_pad_light": "Facility - Oil Well Pad / Battery (Light Crude)",
+    "oil_pad_heavy": "Facility - Oil Well Pad / Battery (Heavy Crude)",
+    "central_oil": "Facility - Central Oil Treatment / Battery",
+}
+
+
 class OnshoreFacilityFugitiveCalculator(BaseCalculator):
     """
     Tier 1: Facility-Level Average Factors
@@ -136,20 +147,17 @@ class OnshoreFacilityFugitiveCalculator(BaseCalculator):
             ef_val = float(custom_ef)
             table_ref = "Custom Facility Factor"
         else:
-            # Map standard facility types
-            if "without dehy" in f_type_clean or "gas_pad_nodehy" in f_type_clean:
-                factor_meta = API_CHAPTER7_ONSHORE_FACTORS["Facility - Gas Well Pad / Battery (Without Dehydrator)"]
-            elif "with dehy" in f_type_clean or "gas_pad_dehy" in f_type_clean:
-                factor_meta = API_CHAPTER7_ONSHORE_FACTORS["Facility - Gas Well Pad / Battery (With Dehydrator)"]
-            elif "central gas" in f_type_clean or "central_gas" in f_type_clean:
-                factor_meta = API_CHAPTER7_ONSHORE_FACTORS["Facility - Central Gas Production Facility"]
-            elif "heavy" in f_type_clean or "oil_pad_heavy" in f_type_clean:
-                factor_meta = API_CHAPTER7_ONSHORE_FACTORS["Facility - Oil Well Pad / Battery (Heavy Crude)"]
-            elif "central oil" in f_type_clean or "central_oil" in f_type_clean:
-                factor_meta = API_CHAPTER7_ONSHORE_FACTORS["Facility - Central Oil Treatment / Battery"]
-            else:
-                # Default Light crude oil well pad
-                factor_meta = API_CHAPTER7_ONSHORE_FACTORS["Facility - Oil Well Pad / Battery (Light Crude)"]
+            # BUG-110: exact facility-type keys only; an unknown type is an error, never a silent
+            # fallback to the light-crude well pad factor
+            key = FACILITY_TYPE_KEYS.get(f_type_clean.strip())
+            if key is None:
+                key = next((k for k in FACILITY_TYPE_KEYS.values() if k.lower() == f_type_clean.strip()), None)
+            if key is None:
+                raise ValueError(
+                    f"Unknown facility type '{facility_type}' for facility-level fugitives; "
+                    f"use one of: {', '.join(sorted(FACILITY_TYPE_KEYS))}"
+                )
+            factor_meta = API_CHAPTER7_ONSHORE_FACTORS[key]
 
             ef_val = factor_meta["factor_value"]
             table_ref = factor_meta["API_table"]

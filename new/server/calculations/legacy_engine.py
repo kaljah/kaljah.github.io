@@ -558,8 +558,12 @@ def _compute_emissions_impl(payload, factor_data=None, gwp_dict=None, gwp_standa
         f = calc_inputs.get("fugitive") or {}
         method = f.get("method") or "average"
         count = float(f.get("count") or amount or 0)
-        component = f.get("component") or f.get("compType") or "valves"
+        component = f.get("component") or f.get("compType")
         calc_method = "server_fugitive"
+        if not component and method != "pipeline":
+            # BUG-110: never book an unrecognised fugitive request as a count of valves
+            raise ValueError("Fugitive request not understood: give a facility_type (Tier 1), a component "
+                             "type, or a catalog / custom fugitive factor")
 
         if method == "pipeline":
             length = float(f.get("length_km") or f.get("length") or 0)
