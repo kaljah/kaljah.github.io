@@ -1380,110 +1380,108 @@ def get_sbti_trajectory():
             actuals[yr] = actuals.get(yr, 0) + v
             scope3_actuals[yr] = scope3_actuals.get(yr, 0) + v
         
-    trajectory = []
     base_year = target.base_year
     target_year = target.target_year
-    rate = target.reduction_rate_pct / 100.0
-    rate_15c = 0.042  # 4.2% annual linear reduction for 1.5°C near-term
-    rate_wb2c = 0.025 # 2.5% annual linear reduction for Well-Below 2°C
-    
-    # SBTi Corporate Net-Zero Standard (v1.2 Criterion NZ-C1):
-    # Long-term target requires at least 90% absolute reduction across scopes,
-    # with residual emissions capped at 10% (0.10 * E_base) for permanent neutralization.
-    residual_floor = target.base_year_emissions * 0.10
-    
+    rate = (target.reduction_rate_pct or 0.0) / 100.0
+    rate_15c = 0.042  # SBTi 1.5C-aligned minimum linear annual reduction
+    rate_wb2c = 0.025  # SBTi well-below-2C minimum
     current_year = datetime.now().year
-    end_year = min(target_year, max(current_year + 10, target_year))
-    
-    for yr in range(base_year, end_year + 1):
-        years_diff = yr - base_year
-        # Target lines bounded by SBTi 10% residual emissions floor
-        sbti_emissions = max(residual_floor, target.base_year_emissions * (1 - (rate * years_diff)))
-        sbti_15c_emissions = max(residual_floor, target.base_year_emissions * (1 - (rate_15c * years_diff)))
-        sbti_wb2c_emissions = max(residual_floor, target.base_year_emissions * (1 - (rate_wb2c * years_diff)))
-        
-        # Business As Usual compounding projection (+1.5% annual growth)
-        bau_emissions = target.base_year_emissions * ((1.0 + 0.015) ** years_diff)
+    last_complete_year = current_year - 1
 
+    # Which series does this view compare, and does it match what the target covers? (BUG-019)
+    coverage = (target.scope_coverage or "S1S2S3").upper()
+    view = {"s1_s2": "S1S2", "s3": "S3"}.get(scope, coverage)
+
+    def series(yr):
+        if view == "S1S2":
+            return (scope1_actuals.get(yr, 0.0) + scope2_actuals.get(yr, 0.0)) if (yr in scope1_actuals or yr in scope2_actuals) else None
+        if view == "S3":
+            return scope3_actuals.get(yr) if yr in scope3_actuals else None
+        return actuals.get(yr) if yr in actuals else None
+
+    restricted = allowed_fids is not None or bool(facility_id and facility_id != "all")
+    if view == coverage and not restricted:
+        baseline = float(target.base_year_emissions)
+        baseline_source = "target"
+    else:
+        # scope subset or a regional / facility view: its own base-year actual is the baseline
+        baseline = series(base_year)
+        baseline_source = "base-year actual for this view"
+    residual_floor = baseline * 0.10 if baseline else None
+
+    def line(r, yrs):
+        if not baseline:
+            return None
+        return round(max(residual_floor, baseline * (1 - r * yrs)), 2)
+
+    end_year = max(target_year, current_year)
+    trajectory = []
+    for yr in range(base_year, end_year + 1):
+        d = yr - base_year
         s1 = round(scope1_actuals.get(yr, 0), 2)
         s2 = round(scope2_actuals.get(yr, 0), 2)
         s3 = round(scope3_actuals.get(yr, 0), 2)
-        s12 = round(s1 + s2, 2)
-        tot = round(s1 + s2 + s3, 2)
-
-        has_actual_data = yr in actuals
-        has_s12_data = (yr in scope1_actuals) or (yr in scope2_actuals)
-        has_s3_data = yr in scope3_actuals
-        if scope == "s1_s2":
-            active_actual = s12 if has_s12_data else None
-        elif scope == "s3":
-            active_actual = s3 if has_s3_data else None
-        else:
-            active_actual = tot if has_actual_data else None
-        
+        has = yr in actuals
+        val = series(yr)
         trajectory.append({
             "year": str(yr),
-            "sbti_target": round(sbti_emissions, 2),
-            "sbti_15c": round(sbti_15c_emissions, 2),
-            "sbti_wb2c": round(sbti_wb2c_emissions, 2),
-            "bau_projection": round(bau_emissions, 2),
-            "actual": active_actual,
-            "scope1": s1 if has_actual_data else 0,
-            "scope2": s2 if has_actual_data else 0,
-            "scope3": s3 if has_actual_data else 0,
-            "scope12": s12 if has_actual_data else 0,
-            "total_emissions": tot if has_actual_data else 0,
+            "sbti_target": line(rate, d),
+            "sbti_15c": line(rate_15c, d),
+            "sbti_wb2c": line(rate_wb2c, d),
+            "bau_projection": round(baseline * (1.015 ** d), 2) if baseline else None,
+            "actual": round(val, 2) if (val is not None and yr <= current_year) else None,
+            "is_partial_year": yr == current_year,
+            "scope1": s1 if has else 0,
+            "scope2": s2 if has else 0,
+            "scope3": s3 if has else 0,
+            "scope12": round(s1 + s2, 2) if has else 0,
+            "total_emissions": round(s1 + s2 + s3, 2) if has else 0,
         })
 
-    # Summary metrics for latest year with actual data or current year
-    if scope == "s1_s2":
-        candidate_years = [
-            y for y in range(base_year, end_year + 1)
-            if (y in scope1_actuals or y in scope2_actuals)
-        ]
-    elif scope == "s3":
-        candidate_years = [
-            y for y in range(base_year, end_year + 1) if y in scope3_actuals
-        ]
+    # BUG-014: progress on the latest COMPLETE year (never the running year or a future-dated one)
+    candidates = [y for y in range(base_year, last_complete_year + 1) if series(y) is not None]
+    progress_year = max(candidates) if candidates else None
+    ytd = series(current_year)
+    if progress_year is None or not baseline:
+        # BUG-028: no data is "not available", never "ON TRACK / 100 %"
+        current_actual = current_target = reduction = on_track = None
     else:
-        candidate_years = [y for y in range(base_year, end_year + 1) if y in actuals]
+        current_actual = series(progress_year)
+        current_target = line(rate, progress_year - base_year)
+        reduction = (baseline - current_actual) / baseline * 100.0
+        on_track = current_actual <= current_target
 
-    latest_actual_year = max(candidate_years, default=base_year)
-    if scope == "s1_s2":
-        current_actual = scope1_actuals.get(latest_actual_year, 0.0) + scope2_actuals.get(latest_actual_year, 0.0)
-    elif scope == "s3":
-        current_actual = scope3_actuals.get(latest_actual_year, 0.0)
-    else:
-        current_actual = actuals.get(latest_actual_year, actuals.get(current_year, 0.0))
+    def r2(v):
+        return round(v, 2) if v is not None else None
 
-    current_target = max(residual_floor, target.base_year_emissions * (1 - (rate * (latest_actual_year - base_year))))
-    reduction_achieved_pct = (
-        ((target.base_year_emissions - current_actual) / target.base_year_emissions) * 100
-        if target.base_year_emissions > 0
-        else 0
-    )
-    on_track = current_actual <= current_target if current_actual > 0 else True
-    target_emissions_final = max(residual_floor, target.base_year_emissions * (1 - (rate * (target_year - base_year))))
-
+    labels = {"1.5C": "SBTi 1.5\u00b0C Linear Target", "WB2C": "SBTi Well-Below 2\u00b0C Linear Target",
+              "custom": "Custom Linear Target"}
     return jsonify({
         "has_target": True,
         "base_year": base_year,
-        "base_year_emissions": round(target.base_year_emissions, 2),
+        "base_year_emissions": r2(baseline),
+        "target_base_year_emissions": round(target.base_year_emissions, 2),
+        "baseline_source": baseline_source,
+        "scope_coverage": coverage,
+        "view_scope": view,
         "target_year": target_year,
-        "target_emissions_final": round(target_emissions_final, 2),
+        "target_emissions_final": line(rate, target_year - base_year),
         "reduction_rate_pct": target.reduction_rate_pct,
         "pathway_type": target.pathway_type,
-        "current_year": latest_actual_year,
-        "latest_actual_year": latest_actual_year,
-        "current_actual_emissions": round(current_actual, 2),
-        "current_target_emissions": round(current_target, 2),
-        "current_actual": round(current_actual, 2),
-        "current_target": round(current_target, 2),
-        "reduction_achieved_pct": round(reduction_achieved_pct, 2),
+        "pathway_label": labels.get(target.pathway_type, "Custom Linear Target"),
+        "current_year": progress_year,
+        "latest_actual_year": progress_year,
+        "ytd_year": current_year,
+        "ytd_actual": r2(ytd),
+        "current_actual_emissions": r2(current_actual),
+        "current_target_emissions": r2(current_target),
+        "current_actual": r2(current_actual),
+        "current_target": r2(current_target),
+        "reduction_achieved_pct": r2(reduction),
         "on_track": on_track,
-        "residual_floor": round(residual_floor, 2),
+        "residual_floor": r2(residual_floor),
         "scope": scope,
-        "trajectory": trajectory
+        "trajectory": trajectory,
     })
 
 
