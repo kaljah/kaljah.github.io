@@ -10,9 +10,6 @@ const ADIPIC_ACID_OPTIONS = [
 const AdipicAcidForm = ({ data, onChange }) => {
   return (
     <div className="adipic-acid-form">
-      <h4 style={{ color: "var(--accent-color)", marginBottom: "15px" }}>
-        Adipic Acid Production (N₂O)
-      </h4>
 
       <div className="form-grid-2">
         <div className="input-group">

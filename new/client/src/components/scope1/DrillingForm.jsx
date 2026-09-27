@@ -34,48 +34,6 @@ const DrillingForm = ({ data, onChange, sourceType }) => {
 
   return (
     <div className="drilling-form" style={{ marginTop: "15px" }}>
-      <h4
-        style={{
-          color: "var(--accent-color)",
-          marginBottom: "15px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <span>Drilling Parameters</span>
-        <span
-          style={{
-            fontSize: "0.75rem",
-            fontWeight: 600,
-            padding: "3px 8px",
-            borderRadius: "4px",
-            background: isTier1
-              ? "rgba(59, 130, 246, 0.1)"
-              : isTier2Plus
-              ? "rgba(16, 185, 129, 0.1)"
-              : "rgba(245, 158, 11, 0.1)",
-            color: isTier1
-              ? "#2563eb"
-              : isTier2Plus
-              ? "#059669"
-              : "#d97706",
-            border: `1px solid ${
-              isTier1
-                ? "rgba(59, 130, 246, 0.3)"
-                : isTier2Plus
-                ? "rgba(16, 185, 129, 0.3)"
-                : "rgba(245, 158, 11, 0.3)"
-            }`,
-          }}
-        >
-          {isTier1
-            ? "Tier 1: Standard Default"
-            : isTier2Plus
-            ? "Tier 2+: Onshore EF + Gas Composition"
-            : "Tier 2: Saved Custom Factor (Database)"}
-        </span>
-      </h4>
 
       <div className="form-grid-2">
         <div className="input-group">
@@ -99,43 +57,8 @@ const DrillingForm = ({ data, onChange, sourceType }) => {
           />
         </div>
 
-        <div className="input-group">
-          <label>Activity Unit</label>
-          <input
-            type="text"
-            className="mole-input"
-            value={isTier1 && !isDefaultDays ? "well" : "days"}
-            readOnly
-            disabled
-            style={{
-              background: "#f3f4f6",
-              cursor: "not-allowed",
-              color: "#374151",
-              fontWeight: 600,
-            }}
-          />
-        </div>
       </div>
 
-      {isCustom && (
-        <div
-          style={{
-            marginTop: "12px",
-            padding: "12px 14px",
-            background: "#fffbeb",
-            border: "1px solid #fde68a",
-            borderRadius: "6px",
-            fontSize: "0.82rem",
-            color: "#92400e",
-            lineHeight: "1.5",
-          }}
-        >
-          <strong>Tier 2 Custom Factor (Database):</strong>
-          <p style={{ margin: "4px 0 0 0" }}>
-            Using custom emission factor populated from your database (selected in Calculation Methodology above). Activity represents total drilling days.
-          </p>
-        </div>
-      )}
 
 
       {isTier2Plus && (
@@ -146,25 +69,16 @@ const DrillingForm = ({ data, onChange, sourceType }) => {
               options={[
                 {
                   value: "water_based",
-                  label: "Water-Based Mud (0.0458 t CH₄/day)",
+                  label: "Water-based",
                 },
                 {
                   value: "oil_based",
-                  label: "Oil-Based / Synthetic Mud (0.0103 t CH₄/day)",
+                  label: "Oil-based / synthetic",
                 },
               ]}
               value={data.mud_type || "water_based"}
               onChange={(val) => onChange("mud_type", val)}
             />
-            <small
-              style={{
-                color: "#6b7280",
-                marginTop: "4px",
-                display: "block",
-              }}
-            >
-              Applies the onshore mud degassing emission factor adjusted for site gas composition.
-            </small>
           </div>
 
           <div
@@ -184,7 +98,7 @@ const DrillingForm = ({ data, onChange, sourceType }) => {
                 fontWeight: 600,
               }}
             >
-              Site-Specific Gas Composition Adjustment
+              Gas composition
             </h5>
             <div
               style={{
@@ -195,7 +109,7 @@ const DrillingForm = ({ data, onChange, sourceType }) => {
             >
               <div className="input-group" style={{ marginBottom: 0 }}>
                 <label style={{ fontSize: "0.8rem" }}>
-                  Site CH₄ Mole Fraction (X<sub>CH₄</sub>)
+                  CH₄ fraction
                 </label>
                 <input
                   type="number"
@@ -211,20 +125,11 @@ const DrillingForm = ({ data, onChange, sourceType }) => {
                   onChange={(e) => onChange("ch4_fraction", e.target.value)}
                   placeholder="0.8385"
                 />
-                <small
-                  style={{
-                    color: "#64748b",
-                    fontSize: "0.72rem",
-                  }}
-                >
-                  Default baseline is 0.8385 (83.85%). Scales Onshore EF by
-                  (X<sub>CH₄</sub> / 0.8385).
-                </small>
               </div>
 
               <div className="input-group" style={{ marginBottom: 0 }}>
                 <label style={{ fontSize: "0.8rem" }}>
-                  Site CO₂ Mole Fraction (X<sub>CO₂</sub>, Optional)
+                  CO₂ fraction
                 </label>
                 <input
                   type="number"
@@ -238,15 +143,6 @@ const DrillingForm = ({ data, onChange, sourceType }) => {
                   onChange={(e) => onChange("co2_fraction", e.target.value)}
                   placeholder="0.0000"
                 />
-                <small
-                  style={{
-                    color: "#64748b",
-                    fontSize: "0.72rem",
-                  }}
-                >
-                  Optional. Calculates CO₂ mass emissions via stoichiometric
-                  molar conversion (44.01/16.04).
-                </small>
               </div>
             </div>
           </div>

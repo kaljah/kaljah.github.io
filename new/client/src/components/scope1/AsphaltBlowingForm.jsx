@@ -11,9 +11,6 @@ const AsphaltBlowingForm = ({ data, onChange }) => {
 
   return (
     <div className="asphalt-blowing-form">
-      <h4 style={{ color: "var(--accent-color)", marginBottom: "15px" }}>
-        Asphalt Blowing Process Parameters
-      </h4>
 
       <div className="form-grid-2">
         <div className="input-group">

@@ -15,6 +15,7 @@ import { Upload, Trash2, Eye, Sliders, Sparkles, BookOpen, Layers, PlusCircle, C
 import { OFFICIAL_FUEL_PRESETS, getPresetsForFuel } from "../constants/officialFuelPresets";
 import QuickAddCustomFactorModal from "./QuickAddCustomFactorModal";
 import CalculationDetails from "./CalculationDetails";
+import { Section, FieldGrid, MoreOptions } from "./scope1/ui";
 import CombustionForm from "./scope1/CombustionForm";
 import DrillingForm from "./scope1/DrillingForm";
 import CompletionsForm from "./scope1/CompletionsForm";
@@ -1467,7 +1468,7 @@ const Scope1Form = () => {
 
       // payload logging removed — do not log emission data in production
 
-      const res = await api.post("/emissions", finalPayload);
+      await api.post("/emissions", finalPayload);
       toast.success(
         status === "Draft"
           ? "Entry saved as draft"
@@ -1798,68 +1799,20 @@ const Scope1Form = () => {
 
   return (
     <div className="scope-form">
-      <div
-        className="calc-panel"
-        style={{
-          background: "white",
-          borderRadius: "8px",
-          padding: "25px",
-          boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
-        }}
-      >
-        <h2
-          style={{
-            fontSize: "1.2rem",
-            fontWeight: "bold",
-            marginBottom: "25px",
-            color: "#333",
-          }}
-        >
-          New Activity Entry
-        </h2>
+      <div className="calc-panel s1-form">
+        <h2 className="s1-form-title">New entry</h2>
 
-        {/* 1. IDENTITY & LOCATION */}
-        <div style={{ marginBottom: "30px" }}>
-          <h4 className="section-title">1. IDENTITY &amp; LOCATION</h4>
-          <div className="form-grid-4">
-            <div className="input-group">
-              <label>Activity</label>
-              <input
-                type="text"
-                className="mole-input readonly"
-                value={activity || "Auto-filled"}
-                disabled
-              />
-            </div>
-            <div className="input-group">
-              <label>Division</label>
-              <input
-                type="text"
-                className="mole-input readonly"
-                value={division || "Auto-filled"}
-                disabled
-              />
-            </div>
-            <div className="input-group">
+        <Section n={1} title="Where & when">
+          <FieldGrid min={180}>
+            <div className="input-group s1-span-2">
               <label>Region</label>
               <CustomDropdown
                 options={getFacilityOptions()}
                 value={facilityId || ""}
                 onChange={setFacilityId}
-                placeholder="Select Region..."
+                placeholder="Select region"
               />
             </div>
-            <div className="input-group">
-              <label>Field</label>
-              <input
-                type="text"
-                className="mole-input readonly"
-                value={field || "Auto-filled"}
-                disabled
-              />
-            </div>
-          </div>
-          <div className="form-grid-3">
             <div className="input-group">
               <label>Year</label>
               <input
@@ -1878,63 +1831,54 @@ const Scope1Form = () => {
               >
                 {[...Array(12)].map((_, i) => (
                   <option key={i + 1} value={i + 1}>
-                    {String(i + 1).padStart(2, "0")}
+                    {new Date(2000, i, 1).toLocaleString(undefined, { month: "short" })}
                   </option>
                 ))}
               </select>
             </div>
-            <div className="input-group">
-              <label>Group Name</label>
-              <input
-                type="text"
-                className="mole-input"
-                value={groupName}
-                onChange={(e) => setGroupName(e.target.value)}
-                placeholder="e.g. West Facility"
-              />
-            </div>
-          </div>
-          <div className="form-grid-3">
-            <div className="input-group">
-              <label>
-                Emission Source
-                <span
-                  style={{
-                    marginLeft: "6px",
-                    fontSize: "0.7rem",
-                    color: "#6b7280",
-                    fontWeight: 400,
-                  }}
-                >
-                  (from inventory)
-                </span>
-              </label>
-              <CustomDropdown
-                options={getEmissionSourceOptions()}
-                value={emissionSourceId}
-                onChange={setEmissionSourceId}
-                placeholder="Select Emission Source..."
-              />
-            </div>
-            <div className="input-group">
-              <label>Equipment ID/Name</label>
-              <input
-                type="text"
-                className="mole-input"
-                value={equipmentId}
-                onChange={(e) => setEquipmentId(e.target.value)}
-                placeholder="e.g. Turbine T-101"
-              />
-            </div>
-          </div>
-        </div>
+          </FieldGrid>
+          {(activity || division || field) && (
+            <div className="s1-meta">{[activity, division, field].filter(Boolean).join(" · ")}</div>
+          )}
+          <MoreOptions label="Source details">
+            <FieldGrid>
+              <div className="input-group">
+                <label>Emission source</label>
+                <CustomDropdown
+                  options={getEmissionSourceOptions()}
+                  value={emissionSourceId}
+                  onChange={setEmissionSourceId}
+                  placeholder="From inventory"
+                />
+              </div>
+              <div className="input-group">
+                <label>Equipment ID</label>
+                <input
+                  type="text"
+                  className="mole-input"
+                  value={equipmentId}
+                  onChange={(e) => setEquipmentId(e.target.value)}
+                  placeholder="e.g. T-101"
+                />
+              </div>
+              <div className="input-group">
+                <label>Group</label>
+                <input
+                  type="text"
+                  className="mole-input"
+                  value={groupName}
+                  onChange={(e) => setGroupName(e.target.value)}
+                  placeholder="e.g. West facility"
+                />
+              </div>
+            </FieldGrid>
+          </MoreOptions>
+        </Section>
 
-        {/* 2. PROCESS & SOURCE DETAILS */}
-        <div style={{ marginBottom: "30px" }}>
-          <h4 className="section-title">2. PROCESS & SOURCE DETAILS</h4>
-          <div className="form-grid-2">
+        <Section n={2} title="What & how">
+          <div className="s1-stack">
             <div className="input-group">
-              <label>Process Type</label>
+              <label>Process</label>
               <CustomDropdown
                 options={getProcessOptions()}
                 value={currentProcessValue}
@@ -1945,15 +1889,8 @@ const Scope1Form = () => {
             {/* Hoisted Emission Factor Selection — hidden for stoichiometry and dedicated downstream process forms */}
             {!["stoichiometry", "chemical_production", "nitric_acid_production", "adipic_acid_production", "asphalt_blowing"].includes(processType) && (
               <div className="input-group">
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    marginBottom: "8px",
-                  }}
-                >
-                  <label style={{ margin: 0, fontWeight: 600 }}>Calculation Methodology</label>
+                <div className="s1-method">
+                  <label style={{ margin: 0 }}>Method</label>
                   <div className="methodology-toggle">
                     {(processType === "drilling"
                       ? [
@@ -2083,18 +2020,6 @@ const Scope1Form = () => {
                                 } else {
                                   handleFormChange("unit", "days");
                                 }
-                              } else if (
-                                type === "default" &&
-                                [
-                                  "completions",
-                                  "unloading",
-                                  "blowdown",
-                                ].includes(processType)
-                              ) {
-                                toast.warning(
-                                  "Tier 1 calculations are not recommended for this process (OGMP 2.0).",
-                                  { duration: 8000 },
-                                );
                               }
                             }}
                           >
@@ -2106,41 +2031,6 @@ const Scope1Form = () => {
                   </div>
                 </div>
 
-                {["agr", "dehydrator"].includes(processType) && (
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "6px",
-                      marginTop: "6px",
-                      marginBottom: "6px",
-                      padding: "8px 12px",
-                      background: "#eff6ff",
-                      border: "1px solid #bfdbfe",
-                      borderRadius: "6px",
-                      fontSize: "0.75rem",
-                      color: "#1d4ed8",
-                    }}
-                  >
-                    <svg
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <circle cx="12" cy="12" r="10" />
-                      <line x1="12" y1="8" x2="12" y2="12" />
-                      <line x1="12" y1="16" x2="12.01" y2="16" />
-                    </svg>
-                    <span>
-                      <strong>OGMP 2.0 Level 4/5:</strong> Engineering model (Tier 3) required. No static Tier 1 factors exist for this process.
-                    </span>
-                  </div>
-                )}
 
                 {/* TIER 1: Standard API Tabulated Factors */}
                 {sourceType === "default" && !["associated_gas_venting", "completions", "unloading"].includes(processType) && (
@@ -2148,7 +2038,7 @@ const Scope1Form = () => {
                     options={fuelOptions}
                     value={formData.fuel || ""}
                     onChange={(val) => handleFormChange("fuel", val)}
-                    placeholder="Select Standard Emission Factor..."
+                    placeholder="Select factor"
                     renderOption={renderFactorOption}
                   />
                 )}
@@ -2172,7 +2062,7 @@ const Scope1Form = () => {
                             onClick={() => setTier2Mode("override")}
                           >
                             <Sliders size={14} />
-                            <span>Adjust Standard Fuel by Ticket / Presets</span>
+                            <span>Measured properties</span>
                           </button>
                           <button
                             type="button"
@@ -2180,7 +2070,7 @@ const Scope1Form = () => {
                             onClick={() => setTier2Mode("custom_factor")}
                           >
                             <Layers size={14} />
-                            <span>Saved Custom Factors Library</span>
+                            <span>Saved factor</span>
                           </button>
                         </div>
 
@@ -2189,7 +2079,7 @@ const Scope1Form = () => {
                             {/* Base Fuel Dropdown */}
                             <div>
                               <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, color: "#374151", marginBottom: "4px" }}>
-                                Base Fuel Type
+                                Fuel
                               </label>
                               <CustomDropdown
                                 options={fuelOptions}
@@ -2198,17 +2088,17 @@ const Scope1Form = () => {
                                   handleFormChange("fuel", val);
                                   setActivePresetId("");
                                 }}
-                                placeholder="Select Base Fuel (e.g. Natural Gas, Diesel)..."
+                                placeholder="Select fuel"
                                 renderOption={renderFactorOption}
                               />
                             </div>
 
-                            {/* Official Legal & Standard Presets Section */}
+                            {/* Presets Section */}
                             <div className="official-presets-section">
                               <div className="official-presets-header">
                                 <span className="official-presets-title">
                                   <BookOpen size={14} style={{ color: "var(--accent-color, #ff6600)" }} />
-                                  Official Legal & Standard Presets
+                                  Presets
                                 </span>
                               </div>
                               <div className="official-presets-chips">
@@ -2233,7 +2123,7 @@ const Scope1Form = () => {
                             <div className="tier2-inputs-grid">
                               <div>
                                 <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, color: "#374151", marginBottom: "4px" }}>
-                                  Measured HHV (Higher Heating Value)
+                                  HHV
                                 </label>
                                 <div style={{ display: "flex", gap: "6px" }}>
                                   <input
@@ -2266,7 +2156,7 @@ const Scope1Form = () => {
 
                               <div>
                                 <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, color: "#374151", marginBottom: "4px" }}>
-                                  Measured Fuel Density (kg/m³)
+                                  Density (kg/m³)
                                 </label>
                                 <input
                                   type="number"
@@ -2286,31 +2176,19 @@ const Scope1Form = () => {
                             {/* Data Source / Audit Reference Field */}
                             <div>
                               <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, color: "#374151", marginBottom: "4px" }}>
-                                Analysis Bulletin / Delivery Ticket Ref
+                                Ticket / lab ref
                               </label>
                               <input
                                 type="text"
                                 className="mole-input"
                                 style={{ width: "100%", padding: "6px 8px", fontSize: "0.85rem" }}
-                                placeholder="e.g. Naftal Delivery Ticket #4902-B, Sonatrach GC #2026-03"
+                                placeholder="e.g. Ticket #4902-B"
                                 value={dataSourceRef}
                                 onChange={(e) => setDataSourceRef(e.target.value)}
                               />
                             </div>
 
-                            {/* Live Calculation Preview & Data Quality Badge */}
-                            <div className="tier2-preview-badge">
-                              <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                                <Sparkles size={15} style={{ color: "var(--accent-color, #ff6600)" }} />
-                                <span style={{ fontWeight: 600, fontSize: "0.75rem", color: "#1f2937" }}>
-                                  Tier 2 Data Reliability Rating
-                                </span>
-                              </div>
-                              <div style={{ fontSize: "0.75rem", color: "#065f46" }}>
-                                IPCC Activity Data Uncertainty: <strong>±7.0%</strong> (vs ±10.0% Tier 1 Default) | Method: Measured Fuel Properties
-                              </div>
-                            </div>
-                          </div>
+                                                      </div>
                         )}
 
                         {tier2Mode === "custom_factor" && (
@@ -2321,7 +2199,7 @@ const Scope1Form = () => {
                                   options={fuelOptions}
                                   value={formData.fuel || ""}
                                   onChange={(val) => handleFormChange("fuel", val)}
-                                  placeholder="Select Saved Custom Factor..."
+                                  placeholder="Select saved factor"
                                 />
                               </div>
                               <button
@@ -2357,7 +2235,7 @@ const Scope1Form = () => {
                               options={fuelOptions}
                               value={formData.fuel || ""}
                               onChange={(val) => handleFormChange("fuel", val)}
-                              placeholder="Select Saved Custom Factor..."
+                              placeholder="Select saved factor"
                             />
                           </div>
                           <button
@@ -2404,7 +2282,7 @@ const Scope1Form = () => {
                         options={fuelOptions}
                         value={formData.fuel || ""}
                         onChange={(val) => handleFormChange("fuel", val)}
-                        placeholder="Select Base Factor (Optional)..."
+                        placeholder="Base factor (optional)"
                         renderOption={renderFactorOption}
                       />
                       <div style={{ marginTop: "10px", marginBottom: "10px" }}>
@@ -2443,7 +2321,7 @@ const Scope1Form = () => {
                             <path d="M12 18h.01"></path>
                             <path d="M8 18h.01"></path>
                           </svg>
-                          Calculate from Analysis
+                          Gas analysis
                         </button>
                       </div>
                       <div
@@ -2508,17 +2386,11 @@ const Scope1Form = () => {
               </div>
             )}
           </div>
-        </div>
+        </Section>
 
-        {/* 3. ACTIVITY DATA */}
-        <div style={{ marginBottom: "30px" }}>
-          <h4 className="section-title">3. ACTIVITY DATA</h4>
-          {renderSpecificForm()}
-        </div>
-
-        {/* 4. COMPLIANCE & UNCERTAINTY */}
-        <div style={{ marginBottom: "30px" }}>
-          <h4 className="section-title">4. COMPLIANCE & UNCERTAINTY</h4>
+        <Section n={3} title="Inputs">
+          <div className="s1-inputs">{renderSpecificForm()}</div>
+          <MoreOptions label="Uncertainty">
           <div className="form-grid-3">
             {sourceType === "specific" && (
               <div
@@ -2871,22 +2743,12 @@ const Scope1Form = () => {
                   )}
                 </div>
               </div>
-              <span
-                style={{
-                  fontSize: "0.7rem",
-                  color: "var(--text-secondary)",
-                  marginTop: "6px",
-                }}
-              >
-                {sourceType === "default"
-                  ? "Automatically populated from the emission factor catalog"
-                  : "Enter specific uncertainties if known, otherwise leave blank to omit (—)"}
-              </span>
             </div>
           </div>
-        </div>
+          </MoreOptions>
+        </Section>
 
-        <div style={{ display: "flex", gap: "10px" }}>
+        <div className="s1-actions">
           <button
             className="btn-add-draft"
             disabled={submitting}
@@ -2903,7 +2765,7 @@ const Scope1Form = () => {
               opacity: submitting ? 0.6 : 1,
             }}
           >
-            {submitting ? "Saving..." : "Save as Draft (Maker Mode)"}
+            {submitting ? "Saving..." : "Save draft"}
           </button>
           <button
             className="btn-add-activity"
@@ -2915,7 +2777,7 @@ const Scope1Form = () => {
               opacity: submitting ? 0.6 : 1,
             }}
           >
-            {submitting ? "Processing..." : "+ Calculate & Submit for Review"}
+            {submitting ? "Saving..." : "Submit"}
           </button>
         </div>
       </div>

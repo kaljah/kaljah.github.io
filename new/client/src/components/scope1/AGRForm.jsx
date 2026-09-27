@@ -4,13 +4,10 @@ import CustomDropdown from "../CustomDropdown";
 const AGRForm = ({ data, onChange, sourceType }) => {
   return (
     <div className="agr-form">
-      <h4 style={{ color: "var(--accent-color)", marginBottom: "15px" }}>
-        Acid Gas Removal
-      </h4>
 
       <div className="input-group">
         <label>
-          Gas Throughput
+          Throughput
           <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
         </label>
         <div
@@ -44,7 +41,7 @@ const AGRForm = ({ data, onChange, sourceType }) => {
       {sourceType === "specific" && (
         <>
           <div className="input-group">
-            <label>Solvent Type</label>
+            <label>Solvent</label>
             <CustomDropdown
               options={[
                 { value: "MEA", label: "Monoethanolamine (MEA)" },
@@ -97,7 +94,7 @@ const AGRForm = ({ data, onChange, sourceType }) => {
           </div>
 
           <div className="input-group">
-            <label>Gas CH4 Content (%)</label>
+            <label>CH₄ (%)</label>
             <input
               type="number"
               className="mole-input"
@@ -112,7 +109,7 @@ const AGRForm = ({ data, onChange, sourceType }) => {
           </div>
 
           <div className="input-group">
-            <label>Methane Slip Factor (mol/mol CO2)</label>
+            <label>CH₄ slip (mol/mol CO₂)</label>
             <input
               type="number"
               className="mole-input"
@@ -126,22 +123,12 @@ const AGRForm = ({ data, onChange, sourceType }) => {
               placeholder="e.g. 0.00040"
               step="0.00001"
             />
-            <div
-              style={{
-                fontSize: "0.75rem",
-                color: "#9ca3af",
-                marginTop: "4px",
-              }}
-            >
-              Default: MEA=0.00035, DEA=0.00030, MDEA=0.00040, DGA=0.00035,
-              Sulfinol=0.00095
-            </div>
           </div>
 
           {/* BUG-090: the old "flash gas recycled" / "routed to flare" checkboxes were read by no
               server code. Control is now sent as the keys the calculator uses. */}
           <div className="input-group">
-            <label>Acid Gas / Offgas Control</label>
+            <label>Offgas control</label>
             <CustomDropdown
               options={[
                 { value: "vent", label: "Vented (uncontrolled)" },

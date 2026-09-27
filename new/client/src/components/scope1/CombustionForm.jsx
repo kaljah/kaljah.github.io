@@ -25,8 +25,8 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
               : data.process_type === "loading"
                 ? "Volume Loaded"
                 : data.process_type === "separation"
-                  ? "Volume Treated (Wastewater)"
-                  : "Fuel / Activity Quantity"}
+                  ? "Volume treated"
+                  : "Quantity"}
           </label>
           <input
             type="number"
@@ -59,50 +59,13 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
         </div>
       </div>
 
-      {/* HHV field — only required in Specific factor mode per API Compendium 2021 Section 5 */}
+      {/* HHV — required in specific (Tier 3) mode */}
       {needsHHV && sourceType === "specific" && (
-        <div
-          style={{
-            marginTop: "14px",
-            padding: "12px 14px",
-            background: "linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%)",
-            borderRadius: "8px",
-            border: "1px solid #bfdbfe",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "6px",
-              marginBottom: "10px",
-            }}
-          >
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#3b82f6"
-              strokeWidth="2.5"
-            >
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
-            </svg>
-            <span
-              style={{
-                fontSize: "0.72rem",
-                fontWeight: 700,
-                color: "#1d4ed8",
-                letterSpacing: "0.04em",
-              }}
-            >
-              FUEL HEATING VALUE
-            </span>
-          </div>
+        <div className="s1-block" style={{ marginTop: "14px" }}>
           <div className="form-grid-2" style={{ gap: "10px" }}>
             <div className="input-group" style={{ marginBottom: 0 }}>
               <label style={{ fontSize: "0.75rem" }}>
-                HHV — Higher Heating Value
+                HHV
                 <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
               </label>
               <input
@@ -116,18 +79,6 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
                 }
                 style={{ borderColor: !data.hhv ? "#fbbf24" : "#d1fae5" }}
               />
-              {!data.hhv && (
-                <span
-                  style={{
-                    fontSize: "0.68rem",
-                    color: "#d97706",
-                    marginTop: "3px",
-                    display: "block",
-                  }}
-                >
-                  Required — must be fuel-specific (OGMP 2.0 / ISO 14064-1)
-                </span>
-              )}
             </div>
             <div className="input-group" style={{ marginBottom: 0 }}>
               <label style={{ fontSize: "0.75rem" }}>HHV Unit</label>
@@ -154,7 +105,7 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
               style={{ marginTop: "10px", marginBottom: 0 }}
             >
               <label style={{ fontSize: "0.75rem" }}>
-                Combustion Efficiency (η<sub>c</sub>)
+                Combustion efficiency
                 <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
               </label>
               <div
@@ -194,19 +145,6 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
                   %
                 </span>
               </div>
-              {data.combustion_efficiency == null && (
-                <span
-                  style={{
-                    fontSize: "0.68rem",
-                    color: "#d97706",
-                    marginTop: "3px",
-                    display: "block",
-                  }}
-                >
-                  Required — typical values: 99.5% (boiler), 98% (heater), 95%
-                  (engine)
-                </span>
-              )}
             </div>
           )}
 
@@ -229,7 +167,7 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
               </div>
               <div className="input-group" style={{ marginBottom: 0 }}>
                 <label style={{ fontSize: "0.75rem" }}>
-                  Flared Gas CH4 Content (%)
+                  CH₄ (%)
                   <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
                 </label>
                 <input
@@ -270,7 +208,7 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
             </div>
             <div className="input-group" style={{ marginBottom: 0 }}>
               <label style={{ fontSize: "0.75rem" }}>
-                Operating Pres. (psia)
+                Pressure (psia)
               </label>
               <input
                 type="number"
