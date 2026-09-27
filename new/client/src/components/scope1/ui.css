@@ -264,3 +264,16 @@
     width: 100%;
   }
 }
+
+/* always-visible sub-group inside a section (e.g. Source details) */
+.s1-subgroup {
+  margin-top: 16px;
+}
+.s1-subhead {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--s1-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 10px;
+}
