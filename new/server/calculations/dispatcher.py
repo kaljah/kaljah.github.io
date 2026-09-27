@@ -1,5 +1,8 @@
 import math
-from .combustion import CombustionCalculator, FlaringCalculator
+
+from .units import UnitError
+import math
+from .combustion import CombustionCalculator, FlaringCalculator, factor_hhv_unit
 from .vented import (
     PneumaticDeviceCalculator,
     LiquidsUnloadingCalculator,
@@ -31,6 +34,29 @@ from .uncertainty import (
     resolve_ef_uncertainty,
     PROCESS_CATEGORY,
 )
+
+
+def operating_hours(inputs):
+    """Operating hours for per-hour factors (BUG-047).
+
+    Uses operating_hours / hours / pneu_hours, or operating_days x 24. Without an input the
+    source count is taken as an annual inventory (8,760 h), the same convention as the Tier 3
+    equipment-fugitive calculator and the audit's hand values.
+    """
+    for key in ("operating_hours", "hours", "pneu_hours", "hours_per_year"):
+        v = inputs.get(key)
+        if v not in (None, "", "-"):
+            h = float(v)
+            if not math.isfinite(h) or h < 0 or h > 8784:
+                raise ValueError(f"'{key}' must be between 0 and 8784 hours")
+            return h
+    d = inputs.get("operating_days") or inputs.get("duration_days")
+    if d not in (None, "", "-"):
+        days = float(d)
+        if not math.isfinite(days) or days < 0 or days > 366:
+            raise ValueError("'operating_days' must be between 0 and 366")
+        return days * 24.0
+    return 8760.0
 
 
 class CalculationDispatcher:
@@ -119,35 +145,22 @@ class CalculationDispatcher:
         return float(val)
 
     def _normalize_volume(self, value, unit, target_unit="m3"):
-        """Normalizes a volume value to the specified target unit."""
-        u = str(unit or "m3").lower()
+        """Normalise a gas/liquid volume or volume RATE to `target_unit` (m3 or mmscf).
+
+        RC-5 (BUG-066 / BUG-033): exact-token parsing; rate units ("MMscfd", "Mcf/day", "m3/yr")
+        are annualised; an unknown unit raises instead of being returned unchanged.
+        """
+        from .units import annual_volume_m3
+
+        try:
+            m3 = annual_volume_m3(value, unit or "m3")
+        except UnitError as err:
+            raise ValueError(str(err))
         if target_unit == "m3":
-            if u in ["scf", "cf", "ft3"]:
-                return value * CONVERSIONS["scf_to_m3"]
-            if u in ["mcf", "mscf"]:
-                return value * 1000.0 * CONVERSIONS["scf_to_m3"]
-            if u == "mmscf":
-                return value * 1000000.0 * CONVERSIONS["scf_to_m3"]
-            if u in ["bbl", "barrel", "barrels"]:
-                return value * CONVERSIONS["bbl_to_m3"]
-            if u in ["gal", "gallon", "gallons"]:
-                return value * CONVERSIONS["gal_to_m3"]
-            if u in ["l", "liter", "liters"]:
-                return value * CONVERSIONS["liter_to_m3"]
-            return value  # Default m3
-        elif target_unit == "mmscf":
-            if u in ["scf", "cf", "ft3"]:
-                return value / 1_000_000.0
-            if u in ["mcf", "mscf"]:
-                return value / 1000.0
-            if u == "m3":
-                return (value / CONVERSIONS["scf_to_m3"]) / 1_000_000.0
-            if u in ["bbl", "barrel", "barrels"]:
-                return (
-                    value * CONVERSIONS["bbl_to_m3"] / CONVERSIONS["scf_to_m3"]
-                ) / 1_000_000.0
-            return value  # Default mmscf
-        return value
+            return m3
+        if target_unit == "mmscf":
+            return m3 / CONVERSIONS["mmscf_to_m3"]
+        raise ValueError(f"Unsupported target volume unit '{target_unit}'")
 
     def _require_float(self, flat_inputs, keys, desc):
         """Strictly extracts a required float parameter without falling back to defaults."""
@@ -441,8 +454,10 @@ class CalculationDispatcher:
                             "ef_unit", emission_factors.get("unit", "kg/unit")
                         ),
                         fuel_unit=unit,
-                        fuel_type=flat_inputs.get("fuel_type")
+                        # BUG-027: the HHV basis comes from the factor's catalog type / hhv_unit
+                        fuel_type=emission_factors.get("type") or flat_inputs.get("fuel_type")
                         or emission_factors.get("fuel_type", "unknown"),
+                        hhv_unit=factor_hhv_unit(emission_factors),
                         combustion_efficiency=float(
                             flat_inputs.get("combustion_efficiency") or 0.995
                         ),
@@ -730,6 +745,8 @@ class CalculationDispatcher:
                     or flat_inputs.get("calc_method")
                     or flat_inputs.get("calculation_method")
                 )
+                if not comp_method and flat_inputs.get("comp_rate") not in (None, "") and flat_inputs.get("comp_duration") not in (None, ""):
+                    comp_method = "rate_duration"  # BUG-012: the method the form shows by default
                 unit = flat_inputs.get("unit") or "m3"
 
                 # Events determination
@@ -771,7 +788,8 @@ class CalculationDispatcher:
                 )
 
                 # Rate unit: UI default is Mcf/hr
-                rate_u = flat_inputs.get("comp_rate_unit") or flat_inputs.get("rate_unit") or "mscf/day"
+                # BUG-011: the form collects "Avg Gas Rate (Mcf/hr)"; default to that unit
+                rate_u = flat_inputs.get("comp_rate_unit") or flat_inputs.get("rate_unit") or "mcf/hr"
 
                 return calculator.calculate(
                     flowback_volume=vol_val,
@@ -1312,7 +1330,9 @@ class CalculationDispatcher:
                     process_type in ["fugitive_screening", "fugitive_ogi", "fugitive_measurement"]
                     or fug_tier in ["tier3", "tier_3", "measurement", "screening"]
                     or fug_method in ["screening", "method21", "ogi", "measurement"]
-                    or source_type == "specific"
+                    # BUG-048: "specific" with a catalog leak factor and no measurement inputs is the
+                    # engineering count x factor x hours method, not a direct measurement of `amount`
+                    or (source_type == "specific" and not (emission_factors.get("ch4") or emission_factors.get("factor")))
                     or flat_inputs.get("fugitive_ppm") is not None
                     or flat_inputs.get("screening_ppm") is not None
                     or flat_inputs.get("measured_rate") is not None
@@ -1822,139 +1842,57 @@ class CalculationDispatcher:
             else:
                 raw_q = s.replace(",", "")
         quantity = float(raw_q or 0)
-        unit = str(inputs.get("unit") or "m3").lower()
-        f_unit = str(emission_factors.get("unit") or "kg/m3").lower()
+        if not math.isfinite(quantity) or quantity < 0:
+            raise ValueError("Activity amount must be a finite, non-negative number")  # BUG-050
+        has_factor = any(emission_factors.get(k) not in (None, "", "-", 0, 0.0)
+                         for k in ("co2", "ch4", "n2o", "ef_co2", "ef_ch4", "ef_n2o"))
+        if quantity == 0 or not has_factor:
+            # zero activity is zero emissions; a missing factor is reported by compute_emissions'
+            # MissingFactorError guard (never booked as zero)
+            zero = {g: propagate_uncertainty(0.0, 0.0, gas=g) for g in ("co2", "ch4", "n2o")}
+            return {"results": zero, "total_co2e": 0.0, "method": "api2021_generic"}
+        unit = inputs.get("unit")
+        f_unit = emission_factors.get("unit")
+        if not unit:
+            raise ValueError("Missing required field: unit (the activity unit is needed to apply the factor)")
+        if not f_unit:
+            raise ValueError(f"Emission factor '{emission_factors.get('name') or inputs.get('fuel')}' has no unit")
 
-        f_parts = f_unit.split("/")
-        f_num = f_parts[0].strip() if len(f_parts) > 0 else f_unit
-        f_denom = f_parts[1].strip() if len(f_parts) > 1 else ""
+        # RC-5 (BUG-047/049/051/063): one parser for every factor unit; per-hour factors need
+        # operating hours; energy factors need the heating value in the factor's declared basis.
+        from .combustion import convert_factor_to_kg_per_unit
 
-        vol_factors = {
-            "m3": 1.0, "m³": 1.0, "cubic_meter": 1.0, "cubic_meters": 1.0,
-            "scf": CONVERSIONS["scf_to_m3"], "cf": CONVERSIONS["scf_to_m3"], "ft3": CONVERSIONS["scf_to_m3"],
-            "mcf": 1000.0 * CONVERSIONS["scf_to_m3"], "mscf": 1000.0 * CONVERSIONS["scf_to_m3"],
-            "mmscf": 1_000_000.0 * CONVERSIONS["scf_to_m3"],
-            "bbl": CONVERSIONS["bbl_to_m3"], "barrel": CONVERSIONS["bbl_to_m3"], "barrels": CONVERSIONS["bbl_to_m3"],
-            "gal": CONVERSIONS["gal_to_m3"], "gallon": CONVERSIONS["gal_to_m3"], "gallons": CONVERSIONS["gal_to_m3"],
-            "l": CONVERSIONS["liter_to_m3"], "liter": CONVERSIONS["liter_to_m3"], "liters": CONVERSIONS["liter_to_m3"],
-        }
-        mass_factors = {
-            "kg": 1.0, "kilogram": 1.0, "kilograms": 1.0,
-            "g": 0.001, "gram": 0.001, "grams": 0.001,
-            "tonne": 1000.0, "tonnes": 1000.0, "metric_ton": 1000.0, "metric ton": 1000.0, "mt": 1000.0, "t": 1000.0,
-            "lb": 0.453592, "lbs": 0.453592, "pound": 0.453592, "pounds": 0.453592,
-            "ton": 907.185, "tons": 907.185, "short_ton": 907.185, "us_ton": 907.185,
-        }
+        hours = operating_hours(inputs)
+        # a named catalog fuel supplies its own tabulated HHV / basis when the factor row lacks them
+        catalog = {}
+        if not (inputs.get("hhv") or emission_factors.get("hhv")):
+            try:
+                from routes.emissions import _lookup_api_factor
 
-        # Energy-based normalization (Standard EFs are usually kg/MMBtu)
-        if "mmbtu" in f_unit:
-            if unit in ["mmbtu", "mm_btu"]:
-                energy_mmbtu = quantity
-            elif unit in ["gj", "gigajoule", "gigajoules"]:
-                energy_mmbtu = quantity * 0.947817
-            elif unit in ["therm", "therms"]:
-                energy_mmbtu = quantity * 0.1
-            else:
-                fuel_name = str(inputs.get("fuel_type") or inputs.get("fuel") or "").lower()
-                is_liquid = (
-                    any(liq in fuel_name for liq in ["diesel", "gasoline", "petrol", "fuel oil", "crude", "oil", "kerosene", "lpg", "propane", "condensate", "naphtha", "liquid"])
-                    or unit in ["bbl", "barrel", "barrels", "gal", "gallon", "gallons", "l", "liter", "liters"]
-                )
-                is_solid = (
-                    any(sol in fuel_name for sol in ["coal", "coke", "petcoke", "anthracite", "lignite", "bituminous", "sub-bituminous", "subbituminous", "peat", "wood", "biomass", "solid"])
-                    or unit in ["tonne", "tonnes", "metric_ton", "metric ton", "mt", "t", "ton", "tons", "short_ton", "us_ton", "kg", "kilogram", "kilograms", "lb", "lbs", "pound", "pounds"]
-                )
-                if is_liquid:
-                    # Liquid fuel HHV: standard ~138,000 Btu/gal (0.138 MMBtu/gal)
-                    hhv_liquid = float(inputs.get("hhv") or emission_factors.get("hhv") or 138000.0)
-                    if unit in ["bbl", "barrel", "barrels"]:
-                        gallons = quantity * 42.0
-                    elif unit in ["l", "liter", "liters"]:
-                        gallons = quantity * CONVERSIONS.get("l_to_gal", 0.264172)
-                    elif unit in ["m3", "m³", "cubic_meter", "cubic_meters"]:
-                        gallons = quantity * CONVERSIONS["m3_to_gal"]
-                    else:  # gal
-                        gallons = quantity
-                    energy_mmbtu = (gallons * hhv_liquid) / 1_000_000.0
-                elif is_solid:
-                    kg_val = quantity * mass_factors.get(unit, 1000.0)
-                    short_tons = kg_val / 907.185
-                    tonnes = kg_val / 1000.0
-                    hhv_raw = inputs.get("hhv") or emission_factors.get("hhv")
-                    if hhv_raw:
-                        hhv_solid = float(hhv_raw)
-                        if hhv_solid > 1000:
-                            # In catalog, coal HHV is stored as kBtu/short ton (e.g. 24930, 25090)
-                            energy_mmbtu = short_tons * (hhv_solid / 1000.0)
-                        elif hhv_solid > 100:
-                            energy_mmbtu = tonnes * (hhv_solid / 1000.0)
-                        else:
-                            # Direct MMBtu/tonne or MMBtu/ton
-                            energy_mmbtu = (short_tons if "ton" in unit and "tonne" not in unit else tonnes) * hhv_solid
-                    else:
-                        # Standard default solid fuel HHV: 26.0 MMBtu/short ton (~28.6 MMBtu/metric ton)
-                        energy_mmbtu = short_tons * 26.0
-                else:
-                    # Gaseous fuel HHV: standard ~1,020 Btu/scf
-                    hhv_gas = float(inputs.get("hhv") or emission_factors.get("hhv") or 1020.0)
-                    if unit in ["m3", "m³", "cubic_meter", "cubic_meters"]:
-                        scf = quantity * CONVERSIONS["m3_to_scf"]
-                    elif unit == "mmscf":
-                        scf = quantity * 1_000_000.0
-                    elif unit in ["mcf", "mscf"]:
-                        scf = quantity * 1000.0
-                    else:
-                        scf = quantity
-                    energy_mmbtu = (scf * hhv_gas) / 1_000_000.0
-            quantity = energy_mmbtu
-        else:
-            # Check for volume factor denominator conversion
-            matched_v_denom = next((k for k in sorted(vol_factors.keys(), key=len, reverse=True) if k == f_denom or k in f_denom), None)
-            matched_v_unit = next((k for k in sorted(vol_factors.keys(), key=len, reverse=True) if k == unit or k in unit), None)
-            if matched_v_denom and matched_v_unit:
-                quantity = quantity * (vol_factors[matched_v_unit] / vol_factors[matched_v_denom])
-            else:
-                # Check for mass factor denominator conversion
-                matched_m_denom = next((k for k in sorted(mass_factors.keys(), key=len, reverse=True) if k == f_denom or k in f_denom), None)
-                matched_m_unit = next((k for k in sorted(mass_factors.keys(), key=len, reverse=True) if k == unit or k in unit), None)
-                if matched_m_denom and matched_m_unit:
-                    quantity = quantity * (mass_factors[matched_m_unit] / mass_factors[matched_m_denom])
-
-        # Calculate raw values (Usually EF is kg/unit)
-        co2_ef = float(
-            emission_factors.get("co2") or emission_factors.get("ef_co2") or 0
-        )
-        ch4_ef = float(
-            emission_factors.get("ch4") or emission_factors.get("ef_ch4") or 0
-        )
-        n2o_ef = float(
-            emission_factors.get("n2o") or emission_factors.get("ef_n2o") or 0
-        )
-        co2_val = quantity * co2_ef
-        ch4_val = quantity * ch4_ef
-        n2o_val = quantity * n2o_ef
-
-        # Determine result unit based on factor numerator only (prevent kg/tonne from being misidentified as tonne)
-        is_tonne = any(
-            t in f_num for t in ["tonne", "metric_ton", "metric ton", "t co2", "tco2", "t ch4", "tch4", "t n2o", "tco2e", "mtco2"]
-        ) or f_num in ["t", "tonne", "tonnes", "mt"]
-        is_gram = (
-            f_num in ["g", "gram", "grams"]
-            or any(f_num.startswith(p) for p in ["g/", "g ", "gco2", "gch4", "gn2o", "gco2e"])
-            or any(p in f_num for p in ["g co2", "g ch4", "g n2o", "g co2e"])
+                catalog = _lookup_api_factor(inputs.get("fuel") or inputs.get("fuel_type")) or {}
+            except Exception:
+                catalog = {}
+        conv = dict(
+            hhv=inputs.get("hhv") or emission_factors.get("hhv") or catalog.get("hhv"),
+            fuel_type=emission_factors.get("type") or catalog.get("type") or inputs.get("fuel_type") or inputs.get("fuel"),
+            density=inputs.get("density") or inputs.get("fuel_density") or emission_factors.get("density"),
+            hhv_unit=factor_hhv_unit(emission_factors) or factor_hhv_unit(catalog),
+            hours=hours,
         )
 
-        if is_tonne:
-            co2_tonnes, ch4_tonnes, n2o_tonnes = co2_val, ch4_val, n2o_val
-        elif is_gram:
-            co2_tonnes = co2_val / 1_000_000.0
-            ch4_tonnes = ch4_val / 1_000_000.0
-            n2o_tonnes = n2o_val / 1_000_000.0
-        else:
-            co2_tonnes = co2_val / 1000.0
-            ch4_val_t = ch4_val / 1000.0
-            n2o_val_t = n2o_val / 1000.0
-            ch4_tonnes, n2o_tonnes = ch4_val_t, n2o_val_t
+        def ef(*keys):
+            for k in keys:
+                v = emission_factors.get(k)
+                if v not in (None, "", "-"):
+                    return float(v)
+            return 0.0
+
+        try:
+            co2_tonnes = quantity * convert_factor_to_kg_per_unit(ef("co2", "ef_co2"), f_unit, unit, **conv) / 1000.0
+            ch4_tonnes = quantity * convert_factor_to_kg_per_unit(ef("ch4", "ef_ch4"), f_unit, unit, **conv) / 1000.0
+            n2o_tonnes = quantity * convert_factor_to_kg_per_unit(ef("n2o", "ef_n2o"), f_unit, unit, **conv) / 1000.0
+        except UnitError as err:
+            raise ValueError(str(err))
 
         # Tier-aware uncertainty propagation — 95% CI, non-negative bounds
         _tier = resolve_tier(

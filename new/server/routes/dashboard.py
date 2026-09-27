@@ -204,6 +204,8 @@ def get_batch_dashboard_data():
                 year=year,
                 allowed_fids=allowed_fids,
                 segment=segment,
+                activity=activity,
+                division=division,
             )
             f_scope3 = executor.submit(
                 _run_in_app_ctx,
@@ -215,6 +217,7 @@ def get_batch_dashboard_data():
                 division=division,
                 allowed_fids=allowed_fids,
                 segment=segment,
+                include_pending=include_pending,
             )
             f_categorical = executor.submit(
                 _run_in_app_ctx,
@@ -227,6 +230,7 @@ def get_batch_dashboard_data():
                 allowed_fids=allowed_fids,
                 segment=segment,
                 gwp_horizon=gwp_horizon,
+                include_pending=include_pending,
             )
             f_intensity = executor.submit(
                 _run_in_app_ctx,
@@ -238,6 +242,8 @@ def get_batch_dashboard_data():
                 division=division,
                 allowed_fids=allowed_fids,
                 segment=segment,
+                include_pending=include_pending,
+                gwp_horizon=gwp_horizon,
             )
             f_intensity_py = None
             if year and year != "all" and str(year).isdigit():
@@ -251,6 +257,8 @@ def get_batch_dashboard_data():
                     division=division,
                     allowed_fids=allowed_fids,
                     segment=segment,
+                    include_pending=include_pending,
+                    gwp_horizon=gwp_horizon,
                 )
             f_uncertainty = executor.submit(
                 _run_in_app_ctx,
@@ -262,7 +270,12 @@ def get_batch_dashboard_data():
             f_years = executor.submit(_run_in_app_ctx, app, _query_available_years)
 
         # Static / cheap lookups (sequential is fine — they're single-row queries)
-        goal = Goal.query.filter_by(year=goal_year).first()
+        # BUG-041: a single-year organisation goal is only comparable with a single-year,
+        # unfiltered, organisation-wide total
+        filtered_view = allowed_fids is not None or any(
+            v not in (None, "", "all") for v in (facility_id, activity, division, segment)
+        )
+        goal = None if (not year or year == "all" or filtered_view) else Goal.query.filter_by(year=goal_year).first()
         goal_obj = (
             {
                 "year": goal.year,
@@ -299,39 +312,33 @@ def get_batch_dashboard_data():
                 else None
             )
 
-        # Compute pending summary stats
-        p_q1 = db.session.query(
-            func.count(Emission.id).label("cnt"),
-            func.sum(Emission.co2e_total).label("tot"),
-        ).filter(Emission.status == "Pending")
-        if allowed_fids is not None:
-            p_q1 = p_q1.filter(Emission.facility_id.in_(allowed_fids))
-        if facility_id and facility_id != "all":
-            p_q1 = p_q1.filter(Emission.facility_id == int(facility_id))
-        if year and year != "all" and str(year).isdigit():
-            p_q1 = p_q1.filter(Emission.year == int(year))
-        p1 = p_q1.first()
+        # BUG-054 / BUG-072: pending banner uses the same filters as every other panel, includes
+        # Scope 3, and follows the GWP horizon
+        from services.dashboard_filters import apply_scope, apply_year, horizon_delta
 
-        p_q2 = db.session.query(
-            func.count(Scope2Emission.id).label("cnt"),
-            func.sum(Scope2Emission.co2e).label("tot"),
-        ).filter(Scope2Emission.status == "Pending")
-        if allowed_fids is not None:
-            p_q2 = p_q2.filter(Scope2Emission.facility_id.in_(allowed_fids))
-        if facility_id and facility_id != "all":
-            p_q2 = p_q2.filter(Scope2Emission.facility_id == int(facility_id))
-        if year and year != "all" and str(year).isdigit():
-            p_q2 = p_q2.filter(Scope2Emission.year == int(year))
-        p2 = p_q2.first()
+        pscope = dict(allowed_fids=allowed_fids, facility_id=facility_id, activity=activity, division=division,
+                      segment=segment)
+        pend = ("Pending", "Pending Approval")
 
+        def pend_q(model, *cols):
+            q = db.session.query(func.count(model.id), *[func.coalesce(func.sum(c), 0.0) for c in cols])
+            return apply_year(apply_scope(q, model, **pscope), model, year).filter(model.status.in_(pend)).first()
+
+        p1 = pend_q(Emission, Emission.co2e_total, Emission.ch4_emissions, Emission.n2o_emissions)
+        p2 = pend_q(Scope2Emission, Scope2Emission.co2e)
+        p3 = pend_q(Scope3Emission, Scope3Emission.co2e)
         pending_stats = {
-            "count": int(p1.cnt or 0) + int(p2.cnt or 0),
-            "totalCo2e": round(float(p1.tot or 0.0) + float(p2.tot or 0.0), 2),
+            "count": int(p1[0] or 0) + int(p2[0] or 0) + int(p3[0] or 0),
+            "totalCo2e": round(float(p1[1]) + horizon_delta(p1[2], p1[3], gwp_horizon) + float(p2[1]) + float(p3[1]), 2),
+            "scope3_count": int(p3[0] or 0),
+            "gwp_horizon": "20" if str(gwp_horizon) == "20" else "100",
         }
 
         batch_result = {
             "summary": f_summary.result(),
-            "mitigation": f_mitigation.result(),
+            # BUG-094: only implemented projects are netted; planned ones are listed separately
+            "mitigation": [m for m in f_mitigation.result() if m.get("counts_toward_net", True)],
+            "mitigation_planned": [m for m in f_mitigation.result() if not m.get("counts_toward_net", True)],
             "scope3_summary": f_scope3.result(),
             "categorical_breakdown": f_categorical.result(),
             "intensity_stats": f_intensity.result(),
@@ -392,6 +399,8 @@ def get_intensity_trend():
         division=division,
         allowed_fids=allowed_fids,
         segment=segment,
+        include_pending=request.args.get("includePending", "false").lower() == "true",
+        gwp_horizon=request.args.get("gwp_horizon", "100"),
     )
     return jsonify(bulk)
 
@@ -408,234 +417,106 @@ def _query_summary(
     include_pending=False,
     gwp_horizon="100",
 ):
-    """Pure query logic for /summary — returns a plain Python list with dual GWP-100 and GWP-20 support."""
-    sel = [
-        Emission.year.label("year"),
-        func.sum(Emission.co2_emissions).label("co2_total"),
-        func.sum(Emission.ch4_emissions).label("ch4_total"),
-        func.sum(Emission.n2o_emissions).label("n2o_total"),
-        func.sum(Emission.co2e_total).label("scope1_total"),
-    ]
-    if group_by == "facility":
-        sel.insert(1, Emission.facility_id)
+    """Scope 1 / Scope 2 totals per year (optionally per facility) with the source split.
 
-    scope1_query = db.session.query(*sel)
-    if allowed_fids is not None:
-        scope1_query = scope1_query.filter(Emission.facility_id.in_(allowed_fids))
-    if facility_id and facility_id != "all":
-        scope1_query = scope1_query.filter(Emission.facility_id == int(facility_id))
-    if segment and segment != "all":
-        scope1_query = scope1_query.join(
-            Facility, Emission.facility_id == Facility.id
-        ).filter(Facility.segment == segment)
-    if activity and activity != "all":
-        scope1_query = scope1_query.filter(Emission.activity == activity)
-    if division and division != "all":
-        scope1_query = scope1_query.filter(Emission.division == division)
-    if year and year != "all":
-        scope1_query = scope1_query.filter(Emission.year == int(year))
-    s1_status_filter = (
-        Emission.status.in_(["Verified", "Pending"])
-        if include_pending
-        else (Emission.status == "Verified")
-    )
-    scope1_query = scope1_query.filter(s1_status_filter)
-    groups = [Emission.year]
-    if group_by == "facility":
-        groups.append(Emission.facility_id)
-    scope1_data = scope1_query.group_by(*groups).all()
+    RC-9: facility-level filters (BUG-004), one grouped Scope 1 query from which both the totals
+    and the source split are derived so they always reconcile (BUG-040), canonical source
+    classification with a fugitive bucket (BUG-061), GWP-20 from the per-gas columns with the
+    active standard and no clamping (BUG-005), NULL years never crash the endpoint (BUG-073).
+    """
+    from services.dashboard_filters import apply_scope, apply_year, horizon_delta, source_category, statuses
 
-    sel2 = [
-        Scope2Emission.year,
-        func.sum(Scope2Emission.co2e).label("scope2_total"),
-        func.sum(Scope2Emission.electricity_kwh).label("scope2_energy"),
-    ]
-    if group_by == "facility":
-        sel2.insert(1, Scope2Emission.facility_id)
-    scope2_query = db.session.query(*sel2)
-    if allowed_fids is not None:
-        scope2_query = scope2_query.filter(Scope2Emission.facility_id.in_(allowed_fids))
-    if facility_id and facility_id != "all":
-        scope2_query = scope2_query.filter(
-            Scope2Emission.facility_id == int(facility_id)
-        )
-    if segment and segment != "all":
-        scope2_query = scope2_query.join(
-            Facility, Scope2Emission.facility_id == Facility.id
-        ).filter(Facility.segment == segment)
-    if activity and activity != "all":
-        scope2_query = scope2_query.filter(Scope2Emission.activity == activity)
-    if division and division != "all":
-        scope2_query = scope2_query.filter(Scope2Emission.division == division)
-    if year and year != "all":
-        scope2_query = scope2_query.filter(Scope2Emission.year == int(year))
-    s2_status_filter = (
-        Scope2Emission.status.in_(["Verified", "Pending"])
-        if include_pending
-        else (Scope2Emission.status == "Verified")
-    )
-    scope2_query = scope2_query.filter(s2_status_filter)
-    groups2 = [Scope2Emission.year]
-    if group_by == "facility":
-        groups2.append(Scope2Emission.facility_id)
-    scope2_data = scope2_query.group_by(*groups2).all()
-
-    yearly_data = {}
     is_20 = str(gwp_horizon).lower() in ("20", "gwp20", "20yr")
-    gwp100_map = get_active_gwp(horizon="100")
-    gwp20_map = get_active_gwp(horizon="20")
-    delta_ch4 = float(gwp20_map.get("CH4", 84.0)) - float(gwp100_map.get("CH4", 28.0))
-    delta_n2o = float(gwp20_map.get("N2O", 264.0)) - float(gwp100_map.get("N2O", 265.0))
+    horizon = "20" if is_20 else "100"
+    scope = dict(allowed_fids=allowed_fids, facility_id=facility_id, activity=activity, division=division,
+                 segment=segment)
+    by_fac = group_by == "facility"
 
-    for row in scope1_data:
-        yr = int(row.year)
-        fid = getattr(row, "facility_id", "total")
-        key = (yr, fid)
-        co2_val = float(row.co2_total or 0)
-        ch4_val = float(row.ch4_total or 0)
-        n2o_val = float(row.n2o_total or 0)
-        gwp100_val = float(row.scope1_total or 0)
-        # Dynamic GWP-20 conversion using active IPCC standards
-        gwp20_val = round(max(gwp100_val, gwp100_val + (delta_ch4 * ch4_val) + (delta_n2o * n2o_val)), 2)
-
-        yearly_data[key] = {
-            "year": yr,
-            "facility_id": fid,
-            "scope1_total": gwp20_val if is_20 else gwp100_val,
-            "scope1_total_gwp100": gwp100_val,
-            "scope1_total_gwp20": gwp20_val,
-            "gwp_horizon": 20 if is_20 else 100,
-            "co2_total": co2_val,
-            "ch4_total": ch4_val,
-            "n2o_total": n2o_val,
-            "scope2_total": 0,
-            "scope2_energy": 0,
-            "combustion": 0,
-            "flaring": 0,
-            "venting": 0,
-            "fugitive": 0,
-            "other": 0,
-        }
-    for row in scope2_data:
-        yr = int(row.year)
-        fid = getattr(row, "facility_id", "total")
-        key = (yr, fid)
-        if key not in yearly_data:
-            yearly_data[key] = {
-                "year": yr,
-                "facility_id": fid,
-                "scope1_total": 0,
-                "co2_total": 0,
-                "ch4_total": 0,
-                "n2o_total": 0,
-                "scope2_total": 0,
-                "scope2_energy": 0,
-                "combustion": 0,
-                "flaring": 0,
-                "venting": 0,
-                "fugitive": 0,
-                "other": 0,
-            }
-        yearly_data[key]["scope2_total"] = float(row.scope2_total or 0)
-        yearly_data[key]["scope2_energy"] = float(row.scope2_energy or 0)
-
-    act_sel = [
-        Emission.year.label("year"),
-        Emission.process_type,
+    s1_cols = [Emission.year.label("year"), Emission.process_type.label("process_type")]
+    if by_fac:
+        s1_cols.append(Emission.facility_id.label("facility_id"))
+    s1_q = db.session.query(
+        *s1_cols,
         func.sum(Emission.co2_emissions).label("co2_total"),
         func.sum(Emission.ch4_emissions).label("ch4_total"),
         func.sum(Emission.n2o_emissions).label("n2o_total"),
         func.sum(Emission.co2e_total).label("total"),
-    ]
-    if group_by == "facility":
-        act_sel.insert(1, Emission.facility_id)
-    activity_query = db.session.query(*act_sel)
-    if allowed_fids is not None:
-        activity_query = activity_query.filter(Emission.facility_id.in_(allowed_fids))
-    if facility_id and facility_id != "all":
-        activity_query = activity_query.filter(Emission.facility_id == int(facility_id))
-    if activity and activity != "all":
-        activity_query = activity_query.filter(Emission.activity == activity)
-    if division and division != "all":
-        activity_query = activity_query.filter(Emission.division == division)
-    if year and year != "all":
-        activity_query = activity_query.filter(Emission.year == int(year))
-    activity_query = activity_query.filter(s1_status_filter)
-    activity_groups = [Emission.year, Emission.process_type]
-    if group_by == "facility":
-        activity_groups.append(Emission.facility_id)
-    activity_data = activity_query.group_by(*activity_groups).all()
+    )
+    s1_q = apply_year(apply_scope(s1_q, Emission, **scope), Emission, year)
+    s1_q = s1_q.filter(Emission.status.in_(statuses(include_pending)), Emission.year.isnot(None))
+    s1_rows = s1_q.group_by(*[c for c in (Emission.year, Emission.process_type,
+                                          Emission.facility_id if by_fac else None) if c is not None]).all()
 
-    SOURCE_MAP = {
-        "combustion": "combustion",
-        "stationary combustion": "combustion",
-        "routine_flaring": "flaring",
-        "non_routine_flaring": "flaring",
-        "safety_flaring": "flaring",
-        "flaring": "flaring",
-        "flare": "flaring",
-        "venting": "venting",
-        "associated_gas_venting": "venting",
-        "vent": "venting",
-        "liquids_unloading": "venting",
-        "unloading": "venting",
-        "fugitive": "fugitive",
-        "fugitives": "fugitive",
-        "equipment leak": "fugitive",
-        "equipment_leak": "fugitive",
-        "leak": "fugitive",
-    }
-    for row in activity_data:
-        yr = int(row.year)
-        fid = getattr(row, "facility_id", "total")
-        key = (yr, fid)
-        if key in yearly_data:
-            g100 = float(row.total or 0)
-            ch4_t = float(row.ch4_total or 0)
-            n2o_t = float(row.n2o_total or 0)
-            g_val = round(max(g100, g100 + (delta_ch4 * ch4_t) + (delta_n2o * n2o_t)), 2) if is_20 else g100
-            source_raw = (row.process_type or "").lower().strip()
-            mapped = False
-            for pattern, category in SOURCE_MAP.items():
-                if pattern in source_raw:
-                    yearly_data[key][category] += g_val
-                    mapped = True
-                    break
-            if not mapped:
-                yearly_data[key]["other"] += g_val
+    def blank(yr, fid):
+        return {"year": yr, "facility_id": fid, "scope1_total": 0.0, "scope1_total_gwp100": 0.0,
+                "scope1_total_gwp20": 0.0, "gwp_horizon": 20 if is_20 else 100, "co2_total": 0.0,
+                "ch4_total": 0.0, "n2o_total": 0.0, "scope2_total": 0.0, "scope2_energy": 0.0,
+                "combustion": 0.0, "flaring": 0.0, "venting": 0.0, "fugitive": 0.0, "process": 0.0, "other": 0.0}
 
-    return list(yearly_data.values())
+    yearly = {}
+    for r in s1_rows:
+        yr = int(r.year)
+        fid = getattr(r, "facility_id", "total") if by_fac else "total"
+        d = yearly.setdefault((yr, fid), blank(yr, fid))
+        g100 = float(r.total or 0)
+        g20 = g100 + horizon_delta(r.ch4_total, r.n2o_total, "20")
+        shown = g20 if is_20 else g100
+        d["scope1_total_gwp100"] += g100
+        d["scope1_total_gwp20"] += g20
+        d["scope1_total"] += shown
+        d["co2_total"] += float(r.co2_total or 0)
+        d["ch4_total"] += float(r.ch4_total or 0)
+        d["n2o_total"] += float(r.n2o_total or 0)
+        cat = source_category(r.process_type)
+        d["venting" if cat == "vented" else cat] += shown
+
+    s2_cols = [Scope2Emission.year.label("year")]
+    if by_fac:
+        s2_cols.append(Scope2Emission.facility_id.label("facility_id"))
+    s2_q = db.session.query(*s2_cols, func.sum(Scope2Emission.co2e).label("scope2_total"),
+                            func.sum(Scope2Emission.electricity_kwh).label("scope2_energy"))
+    s2_q = apply_year(apply_scope(s2_q, Scope2Emission, **scope), Scope2Emission, year)
+    s2_q = s2_q.filter(Scope2Emission.status.in_(statuses(include_pending)), Scope2Emission.year.isnot(None))
+    s2_rows = s2_q.group_by(*[c for c in (Scope2Emission.year, Scope2Emission.facility_id if by_fac else None)
+                              if c is not None]).all()
+    for r in s2_rows:
+        yr = int(r.year)
+        fid = getattr(r, "facility_id", "total") if by_fac else "total"
+        d = yearly.setdefault((yr, fid), blank(yr, fid))
+        d["scope2_total"] += float(r.scope2_total or 0)  # Scope 2 stores CO2e only (no per-gas split)
+        d["scope2_energy"] += float(r.scope2_energy or 0)
+
+    for d in yearly.values():
+        for k in ("scope1_total", "scope1_total_gwp100", "scope1_total_gwp20"):
+            d[k] = round(d[k], 6)
+    return list(yearly.values())
+
+
+IMPLEMENTED_MITIGATION = {"active", "completed", "implemented", "operational", "verified"}
 
 
 @cached(cache=DASHBOARD_CACHE, key=make_cache_key("_query_mitigation"), lock=CACHE_LOCK)
-def _query_mitigation(facility_id=None, year=None, allowed_fids=None, segment=None):
-    """Pure query logic for /mitigation — returns a plain Python list."""
-    proj_query = MitigationProject.query
-    if allowed_fids is not None:
-        proj_query = proj_query.filter(MitigationProject.facility_id.in_(allowed_fids))
-    if facility_id and facility_id != "all":
-        proj_query = proj_query.filter(
-            MitigationProject.facility_id == int(facility_id)
-        )
-    if segment and segment != "all":
-        proj_query = proj_query.join(
-            Facility, MitigationProject.facility_id == Facility.id
-        ).filter(Facility.segment == segment)
-    if year and year != "all":
-        proj_query = proj_query.filter(MitigationProject.year == int(year))
-    projects = proj_query.all()
+def _query_mitigation(facility_id=None, year=None, allowed_fids=None, segment=None, activity=None, division=None):
+    """Mitigation items for the dashboard.
 
-    # Only include unscoped company-wide MitigationRecord offsets when viewing corporate inventory
-    is_facility_scoped = bool(facility_id and facility_id != "all")
+    BUG-094: same facility-level filters as the other panels; unscoped company-wide records are
+    only shown in the unfiltered corporate view; each item says whether it counts toward "Net"
+    (implemented projects only — Planned projects are shown but not netted).
+    """
+    from services.dashboard_filters import apply_scope, apply_year
+
+    proj_query = apply_scope(MitigationProject.query, MitigationProject, allowed_fids=allowed_fids,
+                             facility_id=facility_id, activity=activity, division=division, segment=segment)
+    projects = apply_year(proj_query, MitigationProject, year).all()
+
+    filtered = any(v not in (None, "", "all") for v in (facility_id, activity, division, segment))
     records = []
-    if not is_facility_scoped:
-        rec_query = MitigationRecord.query
-        if year and year != "all":
-            rec_query = rec_query.filter(MitigationRecord.year == int(year))
-        records = rec_query.all()
+    if not filtered and allowed_fids is None:
+        records = apply_year(MitigationRecord.query, MitigationRecord, year).all()
 
     results = []
     for p in projects:
+        status = (p.status or "").strip()
         results.append(
             {
                 "id": f"proj_{p.id}",
@@ -643,7 +524,8 @@ def _query_mitigation(facility_id=None, year=None, allowed_fids=None, segment=No
                 "type": p.project_type,
                 "quantity_tco2e": float(p.quantity_tco2e or 0),
                 "year": p.year,
-                "status": p.status,
+                "status": status,
+                "counts_toward_net": status.lower() in IMPLEMENTED_MITIGATION,
                 "activity": p.facility.activity if p.facility else "-",
                 "division": p.facility.division if p.facility else "-",
                 "region": p.facility.name if p.facility else "-",
@@ -657,7 +539,8 @@ def _query_mitigation(facility_id=None, year=None, allowed_fids=None, segment=No
                 "type": m.type,
                 "quantity_tco2e": float(m.quantity_tco2e or 0),
                 "year": m.year,
-                "status": "Active",
+                "status": "Recorded",
+                "counts_toward_net": True,
             }
         )
     return results
@@ -673,40 +556,18 @@ def _query_scope3_summary(
     division=None,
     allowed_fids=None,
     segment=None,
+    include_pending=False,
 ):
-    """Pure query logic for /scope3/summary — returns a plain Python dict with total and by_year."""
-    need_join = (
-        (activity and activity != "all")
-        or (division and division != "all")
-        or (segment and segment != "all")
-    )
+    """Scope 3 total and per-year totals (RC-9 shared filters and status; NULL years excluded
+    from both the total and by_year so they always reconcile - BUG-073)."""
+    from services.dashboard_filters import apply_scope, statuses
 
-    by_year_query = db.session.query(Scope3Emission.year, func.sum(Scope3Emission.co2e))
-    if allowed_fids is not None:
-        by_year_query = by_year_query.filter(Scope3Emission.facility_id.in_(allowed_fids))
-    if facility_id and facility_id != "all":
-        by_year_query = by_year_query.filter(Scope3Emission.facility_id == int(facility_id))
-    if need_join:
-        by_year_query = by_year_query.join(Facility, Facility.id == Scope3Emission.facility_id)
-        if activity and activity != "all":
-            by_year_query = by_year_query.filter(Facility.activity == activity)
-        if division and division != "all":
-            by_year_query = by_year_query.filter(Facility.division == division)
-        if segment and segment != "all":
-            by_year_query = by_year_query.filter(Facility.segment == segment)
-    by_year_query = by_year_query.filter(Scope3Emission.status == "Verified")
-    by_year_rows = by_year_query.group_by(Scope3Emission.year).all()
-
-    by_year = {}
-    for y, val in by_year_rows:
-        if y is not None:
-            by_year[str(y)] = float(val or 0)
-
-    if year and year != "all":
-        total = by_year.get(str(year), 0.0)
-    else:
-        total = sum(float(val or 0) for _, val in by_year_rows)
-
+    q = db.session.query(Scope3Emission.year, func.sum(Scope3Emission.co2e))
+    q = apply_scope(q, Scope3Emission, allowed_fids=allowed_fids, facility_id=facility_id, activity=activity,
+                    division=division, segment=segment)
+    q = q.filter(Scope3Emission.status.in_(statuses(include_pending)), Scope3Emission.year.isnot(None))
+    by_year = {str(y): float(v or 0) for y, v in q.group_by(Scope3Emission.year).all()}
+    total = by_year.get(str(year), 0.0) if year and year != "all" else sum(by_year.values())
     return {"total": float(total), "by_year": by_year}
 
 
@@ -723,120 +584,48 @@ def _query_categorical_breakdown(
     allowed_fids=None,
     segment=None,
     gwp_horizon="100",
+    include_pending=False,
 ):
-    """Pure query logic for /categorical-breakdown — returns a plain Python list."""
-    query = db.session.query(
-        Facility.activity,
-        Facility.division,
-        Facility.name.label("region"),
-        Facility.field,
-        func.sum(Emission.co2_emissions).label("co2_total"),
-        func.sum(Emission.ch4_emissions).label("ch4_total"),
-        func.sum(Emission.n2o_emissions).label("n2o_total"),
-        func.sum(Emission.co2e_total).label("total_emissions"),
-    ).join(Facility, Emission.facility_id == Facility.id)
-    if allowed_fids is not None:
-        query = query.filter(Emission.facility_id.in_(allowed_fids))
-    if year and year != "all":
-        query = query.filter(Emission.year == int(year))
-    if facility_id and facility_id != "all":
-        query = query.filter(Emission.facility_id == int(facility_id))
-    if segment and segment != "all":
-        query = query.filter(Facility.segment == segment)
-    if activity and activity != "all":
-        query = query.filter(Emission.activity == activity)
-    if division and division != "all":
-        query = query.filter(Emission.division == division)
-    query = query.filter(Emission.status == "Verified")
-    results = query.group_by(
-        Facility.activity, Facility.division, Facility.name, Facility.field
-    ).all()
+    """Emissions per facility with its organisational labels.
 
-    scope2_q = db.session.query(
-        Facility.activity,
-        Facility.division,
-        Facility.name.label("region"),
-        Facility.field,
-        func.sum(Scope2Emission.co2e).label("total_emissions"),
-    ).join(Facility, Scope2Emission.facility_id == Facility.id)
-    if allowed_fids is not None:
-        scope2_q = scope2_q.filter(Scope2Emission.facility_id.in_(allowed_fids))
-    if year and year != "all":
-        scope2_q = scope2_q.filter(Scope2Emission.year == int(year))
-    if facility_id and facility_id != "all":
-        scope2_q = scope2_q.filter(Scope2Emission.facility_id == int(facility_id))
-    if segment and segment != "all":
-        scope2_q = scope2_q.filter(Facility.segment == segment)
-    if activity and activity != "all":
-        scope2_q = scope2_q.filter(Scope2Emission.activity == activity)
-    if division and division != "all":
-        scope2_q = scope2_q.filter(Scope2Emission.division == division)
-    scope2_q = scope2_q.filter(Scope2Emission.status == "Verified")
-    scope2_results = scope2_q.group_by(
-        Facility.activity, Facility.division, Facility.name, Facility.field
-    ).all()
+    BUG-064: grouped by facility id (distinct facilities with the same name stay separate).
+    BUG-004 / BUG-054: facility-level filters and the shared status rule.
+    """
+    from services.dashboard_filters import apply_scope, apply_year, horizon_delta, statuses
 
-    scope3_q = db.session.query(
-        Facility.activity,
-        Facility.division,
-        Facility.name.label("region"),
-        Facility.field,
-        func.sum(Scope3Emission.co2e).label("total_emissions"),
-    ).join(Scope3Emission, Facility.id == Scope3Emission.facility_id)
-    if allowed_fids is not None:
-        scope3_q = scope3_q.filter(Facility.id.in_(allowed_fids))
-    if year and year != "all":
-        scope3_q = scope3_q.filter(Scope3Emission.year == int(year))
-    if facility_id and facility_id != "all":
-        scope3_q = scope3_q.filter(Facility.id == int(facility_id))
-    if segment and segment != "all":
-        scope3_q = scope3_q.filter(Facility.segment == segment)
-    if activity and activity != "all":
-        scope3_q = scope3_q.filter(Facility.activity == activity)
-    if division and division != "all":
-        scope3_q = scope3_q.filter(Facility.division == division)
-    scope3_q = scope3_q.filter(Scope3Emission.status == "Verified")
-    scope3_results = scope3_q.group_by(
-        Facility.activity, Facility.division, Facility.name, Facility.field
-    ).all()
+    scope = dict(allowed_fids=allowed_fids, facility_id=facility_id, activity=activity, division=division,
+                 segment=segment)
+    st = statuses(include_pending)
+    labels = (Facility.id, Facility.activity, Facility.division, Facility.name, Facility.field)
 
-    output_map = {}
-    scope3_map = {}
-    is_20 = str(gwp_horizon).lower() in ("20", "gwp20", "20yr")
-    gwp100_map = get_active_gwp(horizon="100")
-    gwp20_map = get_active_gwp(horizon="20")
-    delta_ch4 = float(gwp20_map.get("CH4", 84.0)) - float(gwp100_map.get("CH4", 28.0))
-    delta_n2o = float(gwp20_map.get("N2O", 264.0)) - float(gwp100_map.get("N2O", 265.0))
+    def grouped(model, *cols):
+        q = db.session.query(*labels, *cols).join(Facility, Facility.id == model.facility_id)
+        q = apply_year(apply_scope(q, model, joined=True, **scope), model, year)
+        return q.filter(model.status.in_(st)).group_by(Facility.id).all()
 
-    for r in results:
-        key = (r.activity, r.division, r.region, r.field)
-        g100 = float(r.total_emissions or 0)
-        ch4_t = float(r.ch4_total or 0)
-        n2o_t = float(r.n2o_total or 0)
-        g_val = round(max(g100, g100 + (delta_ch4 * ch4_t) + (delta_n2o * n2o_t)), 2) if is_20 else g100
-        output_map[key] = g_val
-    for r in scope2_results:
-        key = (r.activity, r.division, r.region, r.field)
-        output_map[key] = output_map.get(key, 0) + float(r.total_emissions or 0)
-    for r in scope3_results:
-        key = (r.activity, r.division, r.region, r.field)
-        scope3_map[key] = scope3_map.get(key, 0) + float(r.total_emissions or 0)
+    s1 = grouped(Emission, func.sum(Emission.co2e_total), func.sum(Emission.ch4_emissions),
+                 func.sum(Emission.n2o_emissions))
+    s2 = grouped(Scope2Emission, func.sum(Scope2Emission.co2e))
+    s3 = grouped(Scope3Emission, func.sum(Scope3Emission.co2e))
 
-    output = []
-    for key in set(output_map.keys()) | set(scope3_map.keys()):
-        act, div, reg, fld = key
-        output.append(
-            {
-                "activity": act,
-                "division": div,
-                "region": reg,
-                "field": fld,
-                "total_emissions": output_map.get(key, 0),
-                "scope3_emissions": scope3_map.get(key, 0),
-                "total_emissions_all": output_map.get(key, 0) + scope3_map.get(key, 0),
-            }
-        )
-    return output
+    out = {}
+
+    def row(r):
+        return out.setdefault(r[0], {
+            "facility_id": r[0], "activity": r[1], "division": r[2], "region": r[3], "field": r[4],
+            "total_emissions": 0.0, "scope3_emissions": 0.0,
+        })
+
+    for r in s1:
+        row(r)["total_emissions"] += float(r[5] or 0) + horizon_delta(r[6], r[7], gwp_horizon)
+    for r in s2:
+        row(r)["total_emissions"] += float(r[5] or 0)
+    for r in s3:
+        row(r)["scope3_emissions"] += float(r[5] or 0)
+    for d in out.values():
+        d["total_emissions_all"] = d["total_emissions"] + d["scope3_emissions"]
+    return list(out.values())
+
 
 
 def _query_available_years():
@@ -936,6 +725,8 @@ def get_mitigation():
             year=request.args.get("year"),
             allowed_fids=allowed_fids,
             segment=request.args.get("segment"),
+            activity=request.args.get("activity"),
+            division=request.args.get("division"),
         )
     )
 
@@ -963,6 +754,7 @@ def get_scope3_summary():
             division=request.args.get("division"),
             allowed_fids=allowed_fids,
             segment=request.args.get("segment"),
+            include_pending=request.args.get("includePending", "false").lower() == "true",
         )
     )
 
@@ -1044,6 +836,7 @@ def get_categorical_breakdown():
             allowed_fids=allowed_fids,
             segment=request.args.get("segment"),
             gwp_horizon=request.args.get("gwp_horizon", "100"),
+            include_pending=request.args.get("includePending", "false").lower() == "true",
         )
     )
 
@@ -1162,34 +955,42 @@ def get_ogmp_metrics():
 
     facilities = query.all()
 
-    # Query survey top-down sums & facility bottom-up CH4
+    # BUG-079: reconcile per facility-YEAR. Surveys are annual estimates, so they are averaged within
+    # a facility-year (D-02) and summed across years; the bottom-up side covers exactly the years
+    # that have a survey. Never pair a multi-year average with a multi-year sum.
+    single_year = year and year != "all" and str(year).isdigit()
     survey_query = db.session.query(
-        OgmpSurvey.facility_id,
-        func.avg(OgmpSurvey.estimated_annual_tch4).label("total_td"),
+        OgmpSurvey.facility_id, OgmpSurvey.year, func.avg(OgmpSurvey.estimated_annual_tch4).label("td"),
     )
     if allowed_fids is not None:
-        survey_query = survey_query.filter(OgmpSurvey.facility_id.in_(allowed_fids))
+        survey_query = survey_query.filter(OgmpSurvey.facility_id.in_(allowed_fids or [-1]))
     if fac_id and fac_id != "all" and str(fac_id).isdigit():
         survey_query = survey_query.filter(OgmpSurvey.facility_id == int(fac_id))
-    if year and year != "all" and str(year).isdigit():
+    if single_year:
         survey_query = survey_query.filter(OgmpSurvey.year == int(year))
-    survey_map = {
-        r.facility_id: float(r.total_td or 0)
-        for r in survey_query.group_by(OgmpSurvey.facility_id).all()
-    }
+    survey_years = {}
+    for r in survey_query.group_by(OgmpSurvey.facility_id, OgmpSurvey.year).all():
+        if r.td is not None:
+            survey_years.setdefault(r.facility_id, {})[r.year] = float(r.td)
 
-    # Query emissions for bottom-up CH4
     ch4_query = db.session.query(
-        Emission.facility_id, func.sum(Emission.ch4_emissions).label("total_ch4")
+        Emission.facility_id, Emission.year, func.sum(Emission.ch4_emissions).label("total_ch4")
     ).filter(Emission.status == "Verified")
     if allowed_fids is not None:
-        ch4_query = ch4_query.filter(Emission.facility_id.in_(allowed_fids))
-    if year and year != "all" and str(year).isdigit():
+        ch4_query = ch4_query.filter(Emission.facility_id.in_(allowed_fids or [-1]))
+    if single_year:
         ch4_query = ch4_query.filter(Emission.year == int(year))
-    ch4_map = {
-        r.facility_id: float(r.total_ch4 or 0)
-        for r in ch4_query.group_by(Emission.facility_id).all()
-    }
+    ch4_years = {}
+    for r in ch4_query.group_by(Emission.facility_id, Emission.year).all():
+        ch4_years.setdefault(r.facility_id, {})[r.year] = float(r.total_ch4 or 0)
+
+    survey_map, ch4_map = {}, {}
+    for fid in set(survey_years) | set(ch4_years):
+        sy = survey_years.get(fid, {})
+        cy = ch4_years.get(fid, {})
+        survey_map[fid] = sum(sy.values())
+        # bottom-up over the surveyed years when there are surveys, else over all years in scope
+        ch4_map[fid] = sum(cy.get(y, 0.0) for y in sy) if sy else sum(cy.values())
 
     fac_list = []
     total_operated = 0
@@ -1232,7 +1033,7 @@ def get_ogmp_metrics():
             rec_status = "No Activity"
 
         highest_level = compute_facility_ogmp_level(
-            f, year=current_year, top_down_tch4=top_down, bottom_up_tch4=bottom_up
+            f, year=int(year) if single_year else None, top_down_tch4=top_down, bottom_up_tch4=bottom_up
         )
 
         fac_list.append(
@@ -1309,6 +1110,8 @@ def get_intensity_stats():
             division=request.args.get("division"),
             allowed_fids=allowed_fids,
             segment=request.args.get("segment"),
+            include_pending=request.args.get("includePending", "false").lower() == "true",
+            gwp_horizon=request.args.get("gwp_horizon", "100"),
         )
     )
 
@@ -1330,347 +1133,15 @@ def _query_intensity_trend_bulk(
     division=None,
     allowed_fids=None,
     segment=None,
+    include_pending=False,
+    gwp_horizon="100",
 ):
-    """
-    Fetches intensity data for ALL requested years in 5 bulk queries instead of
-    5 queries × N_years (the previous N+1 pattern).
-    Returns a list of {year, data} dicts compatible with the frontend.
-    """
-    GAS_TO_BOE = 0.178
-    year_list = list(years) if years else list(range(2019, 2031))
+    """Intensity per year for the trend chart (RC-9: same computation as /intensity-stats)."""
+    from services.intensity import intensity_trend
 
-    # --- 1. Production (all years) ---
-    prod_q = db.session.query(
-        ProductionData.year,
-        ProductionData.facility_id,
-        ProductionData.oil_unit,
-        ProductionData.gas_unit,
-        func.sum(ProductionData.oil_amount).label("total_oil_raw"),
-        func.sum(ProductionData.gas_amount).label("total_gas_raw"),
-    ).filter(ProductionData.year.in_(year_list))
-    if allowed_fids is not None:
-        prod_q = prod_q.filter(ProductionData.facility_id.in_(allowed_fids))
-    if facility_id and facility_id != "all":
-        prod_q = prod_q.filter(ProductionData.facility_id == int(facility_id))
-    if segment and segment != "all":
-        prod_q = prod_q.join(
-            Facility, ProductionData.facility_id == Facility.id
-        ).filter(Facility.segment == segment)
-    if activity and activity != "all":
-        prod_q = prod_q.filter(ProductionData.activity == activity)
-    if division and division != "all":
-        prod_q = prod_q.filter(ProductionData.division == division)
-    prod_rows = prod_q.group_by(
-        ProductionData.year,
-        ProductionData.facility_id,
-        ProductionData.oil_unit,
-        ProductionData.gas_unit,
-    ).all()
-
-    # Build prod_map: {(year, fid): {total_oil, total_gas, total_boe}}
-    prod_map = {}
-    for rec in prod_rows:
-        key = (rec.year, rec.facility_id)
-        if key not in prod_map:
-            prod_map[key] = {
-                "total_oil": 0,
-                "total_gas": 0,
-                "total_boe": 0,
-                "total_gas_m3": 0,
-            }
-        oil = float(rec.total_oil_raw or 0)
-        o_unit = (rec.oil_unit or "bbl").lower().strip()
-        if o_unit in ("m3", "cubic_meters", "m³"):
-            oil *= 6.28981077
-        elif o_unit in ("gal", "gallon", "gallons"):
-            oil /= 42.0
-        elif o_unit in ("l", "liter", "liters"):
-            oil /= 158.987295
-        elif o_unit in ("tonne", "tonnes", "mt", "metric_ton"):
-            oil *= 7.33
-        gas = float(rec.total_gas_raw or 0)
-        g_unit = (rec.gas_unit or "mscf").lower().strip()
-        gas_m3 = 0.0
-        if g_unit in ("m3", "cubic_meters", "m³"):
-            gas_m3 = gas
-            gas *= 0.0353147
-        elif g_unit in ("scf", "cf"):
-            gas_m3 = gas * 0.0283168
-            gas *= 0.001
-        elif g_unit == "mmscf":
-            gas_m3 = gas * 28316.8
-            gas *= 1000.0
-        else:  # mscf, mcf
-            gas_m3 = gas * 28.3168
-        prod_map[key]["total_oil"] += oil
-        prod_map[key]["total_gas"] += gas
-        prod_map[key]["total_gas_m3"] += gas_m3
-        prod_map[key]["total_boe"] += oil + (gas * GAS_TO_BOE)
-
-    # --- 2. Scope 1 emissions (all years) ---
-    em_q = db.session.query(
-        Emission.year,
-        Emission.facility_id,
-        func.sum(Emission.co2e_total).label("total_co2e"),
-        func.sum(Emission.co2_emissions).label("total_co2"),
-        func.sum(Emission.ch4_emissions).label("total_ch4"),
-        func.sum(Emission.n2o_emissions).label("total_n2o"),
-    ).filter(Emission.year.in_(year_list), Emission.status == "Verified")
-    if allowed_fids is not None:
-        em_q = em_q.filter(Emission.facility_id.in_(allowed_fids))
-    if facility_id and facility_id != "all":
-        em_q = em_q.filter(Emission.facility_id == int(facility_id))
-    if segment and segment != "all":
-        em_q = em_q.join(Facility, Emission.facility_id == Facility.id).filter(
-            Facility.segment == segment
-        )
-    if activity and activity != "all":
-        em_q = em_q.filter(Emission.activity == activity)
-    if division and division != "all":
-        em_q = em_q.filter(Emission.division == division)
-    em_rows = em_q.group_by(Emission.year, Emission.facility_id).all()
-    em_map = (
-        {}
-    )  # {(year, fid): {total_co2e, total_co2, total_ch4, total_n2o, total_flaring, total_flaring_vol, total_s2}}
-    for rec in em_rows:
-        em_map[(rec.year, rec.facility_id)] = {
-            "total_co2e": float(rec.total_co2e or 0),
-            "total_co2": float(rec.total_co2 or 0),
-            "total_ch4": float(rec.total_ch4 or 0),
-            "total_n2o": float(rec.total_n2o or 0),
-            "total_flaring": 0,
-            "total_flaring_vol": 0,
-            "total_s2": 0,
-        }
-
-    # --- 3. Flaring (all years) ---
-    flare_q = db.session.query(
-        Emission.year,
-        Emission.facility_id,
-        Emission.unit,
-        func.sum(Emission.co2e_total).label("total_flaring"),
-        func.sum(Emission.quantity).label("total_flaring_qty"),
-    ).filter(
-        Emission.year.in_(year_list),
-        Emission.status == "Verified",
-        Emission.process_type.ilike("%flare%")
-        | Emission.process_type.ilike("%flaring%"),
-    )
-    if allowed_fids is not None:
-        flare_q = flare_q.filter(Emission.facility_id.in_(allowed_fids))
-    if facility_id and facility_id != "all":
-        flare_q = flare_q.filter(Emission.facility_id == int(facility_id))
-    if segment and segment != "all":
-        flare_q = flare_q.join(Facility, Emission.facility_id == Facility.id).filter(
-            Facility.segment == segment
-        )
-    if activity and activity != "all":
-        flare_q = flare_q.filter(Emission.activity == activity)
-    if division and division != "all":
-        flare_q = flare_q.filter(Emission.division == division)
-    flare_rows = flare_q.group_by(
-        Emission.year, Emission.facility_id, Emission.unit
-    ).all()
-    for rec in flare_rows:
-        key = (rec.year, rec.facility_id)
-        if key not in em_map:
-            em_map[key] = {
-                "total_co2e": 0,
-                "total_co2": 0,
-                "total_ch4": 0,
-                "total_n2o": 0,
-                "total_flaring": 0,
-                "total_flaring_vol": 0,
-                "total_s2": 0,
-            }
-        em_map[key]["total_flaring"] += float(rec.total_flaring or 0)
-        qty = float(rec.total_flaring_qty or 0)
-        unit = (rec.unit or "m3").lower().strip()
-        if unit == "scf":
-            qty *= 0.028317
-        elif unit == "mscf":
-            qty *= 28.317
-        elif unit == "mmscf":
-            qty *= 28316.8
-        elif unit in ("liters", "l", "liter"):
-            qty *= 0.001
-        elif unit == "bbl":
-            qty *= 0.158987
-        em_map[key]["total_flaring_vol"] += qty
-
-    # --- 4. Scope 2 (all years) ---
-    s2_q = db.session.query(
-        Scope2Emission.year,
-        Scope2Emission.facility_id,
-        func.sum(Scope2Emission.co2e).label("total_co2e"),
-    ).filter(Scope2Emission.year.in_(year_list), Scope2Emission.status == "Verified")
-    if allowed_fids is not None:
-        s2_q = s2_q.filter(Scope2Emission.facility_id.in_(allowed_fids))
-    if facility_id and facility_id != "all":
-        s2_q = s2_q.filter(Scope2Emission.facility_id == int(facility_id))
-    if segment and segment != "all":
-        s2_q = s2_q.join(Facility, Scope2Emission.facility_id == Facility.id).filter(
-            Facility.segment == segment
-        )
-    if activity and activity != "all":
-        s2_q = s2_q.filter(Scope2Emission.activity == activity)
-    if division and division != "all":
-        s2_q = s2_q.filter(Scope2Emission.division == division)
-    s2_rows = s2_q.group_by(Scope2Emission.year, Scope2Emission.facility_id).all()
-    for rec in s2_rows:
-        key = (rec.year, rec.facility_id)
-        if key not in em_map:
-            em_map[key] = {
-                "total_co2e": 0,
-                "total_co2": 0,
-                "total_ch4": 0,
-                "total_n2o": 0,
-                "total_flaring": 0,
-                "total_flaring_vol": 0,
-                "total_s2": 0,
-            }
-        s2_val = float(rec.total_co2e or 0)
-        em_map[key]["total_s2"] += s2_val
-        em_map[key]["total_co2e"] += s2_val
-
-    # --- 5. Scope 3 (all years) ---
-    s3_q = db.session.query(
-        Scope3Emission.year,
-        Scope3Emission.facility_id,
-        func.sum(Scope3Emission.co2e).label("total_co2e"),
-    ).filter(Scope3Emission.year.in_(year_list), Scope3Emission.status == "Verified")
-    if allowed_fids is not None:
-        s3_q = s3_q.filter(Scope3Emission.facility_id.in_(allowed_fids))
-    if facility_id and facility_id != "all":
-        s3_q = s3_q.filter(Scope3Emission.facility_id == int(facility_id))
-    if segment and segment != "all":
-        s3_q = s3_q.join(Facility, Scope3Emission.facility_id == Facility.id).filter(
-            Facility.segment == segment
-        )
-    if (activity and activity != "all") or (division and division != "all"):
-        if not (segment and segment != "all"):
-            s3_q = s3_q.join(Facility, Scope3Emission.facility_id == Facility.id)
-        if activity and activity != "all":
-            s3_q = s3_q.filter(Facility.activity == activity)
-        if division and division != "all":
-            s3_q = s3_q.filter(Facility.division == division)
-    s3_rows = s3_q.group_by(Scope3Emission.year, Scope3Emission.facility_id).all()
-    s3_map = {}  # {(year, fid): co2e}
-    for rec in s3_rows:
-        s3_map[(rec.year, rec.facility_id)] = float(rec.total_co2e or 0)
-
-    # --- 6. Facility info (single query) ---
-    facilities = Facility.query.all()
-    fac_info = {f.id: f for f in facilities}
-
-    # --- 7. Assemble per-year output ---
-    all_year_fid_keys = set(
-        (y, fid)
-        for (y, fid) in list(em_map.keys()) + list(prod_map.keys())
-        if y in year_list
-    )
-
-    year_buckets = {y: [] for y in year_list}
-
-    # Resolve active 20-year GWP factors
-    gwp20_factors = get_active_gwp(horizon="20")
-    ch4_gwp20 = float(gwp20_factors.get("CH4", 82.5))
-    n2o_gwp20 = float(gwp20_factors.get("N2O", 268.0))
-
-    for yr, fid in all_year_fid_keys:
-        boe = prod_map.get((yr, fid), {}).get("total_boe", 0)
-        prod_d = prod_map.get((yr, fid), {"total_oil": 0, "total_gas": 0})
-        gas_mscf = prod_d.get("total_gas", 0)
-        gas_m3 = gas_mscf * 28.3168
-        ed = em_map.get(
-            (yr, fid),
-            {
-                "total_co2e": 0,
-                "total_co2": 0,
-                "total_ch4": 0,
-                "total_n2o": 0,
-                "total_flaring": 0,
-                "total_flaring_vol": 0,
-                "total_s2": 0,
-            },
-        )
-        scope3 = s3_map.get((yr, fid), 0)
-        fac = fac_info.get(fid)
-        fac_segment = (fac.segment or "Upstream").lower() if fac else "upstream"
-        ogmp_target = 0.20 if "upstream" in fac_segment else 0.05
-        ogmp_warning = round(ogmp_target * 1.25, 4)
-
-        ch4_vol_m3 = (ed["total_ch4"] * 1000.0) / 0.6785 if ed["total_ch4"] > 0 else 0.0
-        methane_loss_rate_pct = (ch4_vol_m3 / gas_m3 * 100.0) if gas_m3 > 0 else 0.0
-        flaring_rate_pct = (
-            (ed["total_flaring_vol"] / gas_m3 * 100.0) if gas_m3 > 0 else 0.0
-        )
-
-        # Exact GWP20 formula using dynamic active standard
-        total_s1 = ed["total_co2e"] - ed["total_s2"]
-        delta_gwp = (ed["total_ch4"] * (ch4_gwp20 - 28.0)) + (ed["total_n2o"] * (n2o_gwp20 - 265.0))
-        s1_gwp20 = round(max(total_s1, total_s1 + delta_gwp), 2)
-        total_gwp20 = s1_gwp20 + ed["total_s2"]
-
-        if boe > 0:
-            co2_int = (ed["total_co2e"] * 1000.0) / boe
-            co2_int_gwp20 = (total_gwp20 * 1000.0) / boe
-            scope1_int = (total_s1 * 1000.0) / boe
-            scope2_int = (ed["total_s2"] * 1000.0) / boe
-            scope3_int = (scope3 * 1000.0) / boe
-            ch4_int = (ed["total_ch4"] * 1000.0) / boe
-            flare_int = (ed["total_flaring"] * 1000.0) / boe
-        else:
-            co2_int = co2_int_gwp20 = scope1_int = scope2_int = scope3_int = ch4_int = (
-                flare_int
-            ) = 0
-
-        year_buckets[yr].append(
-            {
-                "facility_id": fid,
-                "facility_name": fac.name if fac else "Unknown",
-                "activity": fac.activity if fac else "N/A",
-                "division": fac.division if fac else "N/A",
-                "region": fac.region or (fac.name if fac else "N/A"),
-                "segment": fac.segment if fac else "Upstream",
-                "co2_intensity": co2_int,
-                "co2_intensity_gwp20": co2_int_gwp20,
-                "scope1_intensity": scope1_int,
-                "scope2_intensity": scope2_int,
-                "scope3_intensity": scope3_int,
-                "ch4_intensity": ch4_int,
-                "api_flaring_intensity": flare_int,
-                "methane_loss_rate_pct": methane_loss_rate_pct,
-                "flaring_rate_pct": flaring_rate_pct,
-                "ogmp_gold_standard_target": ogmp_target,
-                "ogmp_target_status": (
-                    "Compliant"
-                    if methane_loss_rate_pct <= ogmp_target
-                    else (
-                        "Warning"
-                        if methane_loss_rate_pct <= ogmp_warning
-                        else "Non-Compliant"
-                    )
-                ),
-                "total_boe": boe,
-                "total_oil": prod_d.get("total_oil", 0),
-                "total_gas": prod_d.get("total_gas", 0),
-                "total_gas_m3": gas_m3,
-                "flaring_volume": ed["total_flaring_vol"],
-                "flaring_emissions": ed["total_flaring"],
-                "total_co2e": ed["total_co2e"],
-                "total_co2e_gwp20": total_gwp20,
-                "total_scope1": total_s1,
-                "total_scope2": ed["total_s2"],
-                "total_scope3": scope3,
-                "total_co2e_s3": scope3,
-                "total_co2e_all": ed["total_co2e"] + scope3,
-                "total_ch4": ed["total_ch4"],
-            }
-        )
-
-    return [{"year": str(y), "data": year_buckets[y]} for y in year_list]
-
+    return intensity_trend(years or [], include_pending=include_pending, gwp_horizon=gwp_horizon,
+                           facility_id=facility_id, activity=activity, division=division,
+                           allowed_fids=allowed_fids, segment=segment)
 
 @cached(
     cache=DASHBOARD_CACHE, key=make_cache_key("_query_intensity_stats"), lock=CACHE_LOCK
@@ -1682,600 +1153,15 @@ def _query_intensity_stats(
     division=None,
     allowed_fids=None,
     segment=None,
+    include_pending=False,
+    gwp_horizon="100",
 ):
-    """
-    Pure query logic for /intensity-stats — returns a plain Python list.
-    Get intensity metrics (kg/BOE, loss rates %, EPA WEC, GWP20) per facility.
-    """
-    # 1. Fetch Production Data (Raw for normalization) - Aggregated in SQL
-    prod_query = db.session.query(
-        ProductionData.facility_id,
-        ProductionData.oil_unit,
-        ProductionData.gas_unit,
-        func.sum(ProductionData.oil_amount).label("total_oil_raw"),
-        func.sum(ProductionData.gas_amount).label("total_gas_raw"),
-    )
+    """Per-facility intensity metrics (kg/BOE, loss rates, OGMP) - see services/intensity.py."""
+    from services.intensity import intensity_rows
 
-    if allowed_fids is not None:
-        prod_query = prod_query.filter(ProductionData.facility_id.in_(allowed_fids))
-    if year and year != "all":
-        prod_query = prod_query.filter(ProductionData.year == int(year))
-    if facility_id and facility_id != "all":
-        prod_query = prod_query.filter(ProductionData.facility_id == int(facility_id))
-    if segment and segment != "all":
-        prod_query = prod_query.join(
-            Facility, ProductionData.facility_id == Facility.id
-        ).filter(Facility.segment == segment)
-    if activity and activity != "all":
-        prod_query = prod_query.filter(ProductionData.activity == activity)
-    if division and division != "all":
-        prod_query = prod_query.filter(ProductionData.division == division)
-
-    prod_grouped = prod_query.group_by(
-        ProductionData.facility_id, ProductionData.oil_unit, ProductionData.gas_unit
-    ).all()
-
-    prod_results = {}  # fid -> {oil_bbl, gas_mscf, boe, gas_m3}
-    GAS_TO_BOE = 0.178
-
-    for rec in prod_grouped:
-        fid = rec.facility_id
-        if fid not in prod_results:
-            prod_results[fid] = {
-                "total_oil": 0,
-                "total_gas": 0,
-                "total_boe": 0,
-                "total_gas_m3": 0,
-            }
-
-        oil = float(rec.total_oil_raw or 0)
-        o_unit = (rec.oil_unit or "bbl").lower().strip()
-        if o_unit in ("m3", "cubic_meters", "m³"):
-            oil *= 6.28981077
-        elif o_unit in ("gal", "gallon", "gallons"):
-            oil /= 42.0
-        elif o_unit in ("l", "liter", "liters"):
-            oil /= 158.987295
-        elif o_unit in ("tonne", "tonnes", "mt", "metric_ton"):
-            oil *= 7.33
-
-        gas = float(rec.total_gas_raw or 0)
-        g_unit = (rec.gas_unit or "mscf").lower().strip()
-        gas_m3 = 0.0
-        if g_unit in ("m3", "cubic_meters", "m³"):
-            gas_m3 = gas
-            gas *= 0.0353147
-        elif g_unit in ("scf", "cf"):
-            gas_m3 = gas * 0.0283168
-            gas *= 0.001
-        elif g_unit == "mmscf":
-            gas_m3 = gas * 28316.8
-            gas *= 1000.0
-        else:  # mscf, mcf (default standard 1,000 scf)
-            gas_m3 = gas * 28.3168
-
-        prod_results[fid]["total_oil"] += oil
-        prod_results[fid]["total_gas"] += gas
-        prod_results[fid]["total_gas_m3"] += gas_m3
-        prod_results[fid]["total_boe"] += oil + (gas * GAS_TO_BOE)
-
-    prod_map = {fid: d["total_boe"] for fid, d in prod_results.items()}
-
-    # 2. Fetch Emission Data (Scope 1) with individual gases and processes
-    em_query = db.session.query(
-        Emission.facility_id,
-        Emission.process_type,
-        Emission.factor_source,
-        Emission.calc_method,
-        func.sum(Emission.co2e_total).label("total_co2e"),
-        func.sum(Emission.co2_emissions).label("total_co2"),
-        func.sum(Emission.ch4_emissions).label("total_ch4"),
-        func.sum(Emission.n2o_emissions).label("total_n2o"),
-        func.sum(Emission.co2_biogenic).label("total_biogenic"),
-    )
-
-    if allowed_fids is not None:
-        em_query = em_query.filter(Emission.facility_id.in_(allowed_fids))
-    if year and year != "all":
-        em_query = em_query.filter(Emission.year == int(year))
-    if facility_id and facility_id != "all":
-        em_query = em_query.filter(Emission.facility_id == int(facility_id))
-    if segment and segment != "all":
-        em_query = em_query.join(Facility, Emission.facility_id == Facility.id).filter(
-            Facility.segment == segment
-        )
-    if activity and activity != "all":
-        em_query = em_query.filter(Emission.activity == activity)
-    if division and division != "all":
-        em_query = em_query.filter(Emission.division == division)
-
-    em_query = em_query.filter(Emission.status == "Verified")
-    em_grouped = em_query.group_by(
-        Emission.facility_id,
-        Emission.process_type,
-        Emission.factor_source,
-        Emission.calc_method,
-    ).all()
-
-    em_map = {}  # fid -> totals & detailed splits
-
-    for rec in em_grouped:
-        fid = rec.facility_id
-        if fid not in em_map:
-            em_map[fid] = {
-                "total_co2e": 0,
-                "total_co2": 0,
-                "total_ch4": 0,
-                "total_n2o": 0,
-                "total_biogenic": 0,
-                "total_flaring": 0,
-                "total_flaring_vol": 0,
-                "ch4_venting": 0,
-                "ch4_fugitive": 0,
-                "ch4_flaring": 0,
-                "ch4_combustion": 0,
-                "l3_emissions": 0,
-                "l4_emissions": 0,
-            }
-
-        co2e = float(rec.total_co2e or 0)
-        co2 = float(rec.total_co2 or 0)
-        ch4 = float(rec.total_ch4 or 0)
-        n2o = float(rec.total_n2o or 0)
-        bio = float(rec.total_biogenic or 0)
-
-        em_map[fid]["total_co2e"] += co2e
-        em_map[fid]["total_co2"] += co2
-        em_map[fid]["total_ch4"] += ch4
-        em_map[fid]["total_n2o"] += n2o
-        em_map[fid]["total_biogenic"] += bio
-
-        # Process breakdown for methane
-        ptype = (rec.process_type or "").lower().strip()
-        if "vent" in ptype or "unloading" in ptype:
-            em_map[fid]["ch4_venting"] += ch4
-        elif "fugitive" in ptype or "leak" in ptype:
-            em_map[fid]["ch4_fugitive"] += ch4
-        elif "flare" in ptype:
-            em_map[fid]["ch4_flaring"] += ch4
-        else:
-            em_map[fid]["ch4_combustion"] += ch4
-
-        # OGMP Level classification: Default = Level 3, Specific/Tier 3 = Level 4
-        fsrc = (rec.factor_source or "").lower().strip()
-        cmeth = (rec.calc_method or "").lower().strip()
-        if fsrc == "default" or "tier 1" in cmeth or "tier 2" in cmeth:
-            em_map[fid]["l3_emissions"] += co2e
-        else:
-            em_map[fid]["l4_emissions"] += co2e
-
-    # Flaring volume specifically (since it needs unit normalization)
-    flare_query = db.session.query(
-        Emission.facility_id,
-        Emission.unit,
-        func.sum(Emission.co2e_total).label("total_flaring"),
-        func.sum(Emission.quantity).label("total_flaring_qty"),
-    ).filter(
-        Emission.status == "Verified",
-        Emission.process_type.ilike("%flare%")
-        | Emission.process_type.ilike("%flaring%"),
-    )
-
-    if allowed_fids is not None:
-        flare_query = flare_query.filter(Emission.facility_id.in_(allowed_fids))
-    if year and year != "all":
-        flare_query = flare_query.filter(Emission.year == int(year))
-    if facility_id and facility_id != "all":
-        flare_query = flare_query.filter(Emission.facility_id == int(facility_id))
-    if segment and segment != "all":
-        flare_query = flare_query.join(
-            Facility, Emission.facility_id == Facility.id
-        ).filter(Facility.segment == segment)
-    if activity and activity != "all":
-        flare_query = flare_query.filter(Emission.activity == activity)
-    if division and division != "all":
-        flare_query = flare_query.filter(Emission.division == division)
-
-    flare_grouped = flare_query.group_by(Emission.facility_id, Emission.unit).all()
-
-    for rec in flare_grouped:
-        fid = rec.facility_id
-        if fid not in em_map:
-            em_map[fid] = {
-                "total_co2e": 0,
-                "total_co2": 0,
-                "total_ch4": 0,
-                "total_n2o": 0,
-                "total_biogenic": 0,
-                "total_flaring": 0,
-                "total_flaring_vol": 0,
-                "ch4_venting": 0,
-                "ch4_fugitive": 0,
-                "ch4_flaring": 0,
-                "ch4_combustion": 0,
-                "l3_emissions": 0,
-                "l4_emissions": 0,
-            }
-
-        em_map[fid]["total_flaring"] += float(rec.total_flaring or 0)
-
-        qty = float(rec.total_flaring_qty or 0)
-        unit = (rec.unit or "m3").lower().strip()
-        if unit in ("scf", "cf"):
-            qty *= 0.0283168
-        elif unit in ("mscf", "mcf"):
-            qty *= 28.3168
-        elif unit == "mmscf":
-            qty *= 28316.8
-        elif unit in ("liters", "l", "liter"):
-            qty *= 0.001
-        elif unit == "bbl":
-            qty *= 0.158987
-
-        em_map[fid]["total_flaring_vol"] += qty
-
-    # Fetch Scope 2 for intensity
-    s2_query = db.session.query(
-        Scope2Emission.facility_id, func.sum(Scope2Emission.co2e).label("total_co2e")
-    )
-    if allowed_fids is not None:
-        s2_query = s2_query.filter(Scope2Emission.facility_id.in_(allowed_fids))
-    if year and year != "all":
-        s2_query = s2_query.filter(Scope2Emission.year == int(year))
-    if facility_id and facility_id != "all":
-        s2_query = s2_query.filter(Scope2Emission.facility_id == int(facility_id))
-    if segment and segment != "all":
-        s2_query = s2_query.join(
-            Facility, Scope2Emission.facility_id == Facility.id
-        ).filter(Facility.segment == segment)
-    if activity and activity != "all":
-        s2_query = s2_query.filter(Scope2Emission.activity == activity)
-    if division and division != "all":
-        s2_query = s2_query.filter(Scope2Emission.division == division)
-
-    s2_query = s2_query.filter(Scope2Emission.status == "Verified")
-    s2_results = s2_query.group_by(Scope2Emission.facility_id).all()
-    s2_map = {s2.facility_id: float(s2.total_co2e or 0) for s2 in s2_results}
-
-    for fid, s2_val in s2_map.items():
-        if fid not in em_map:
-            em_map[fid] = {
-                "total_co2e": 0,
-                "total_co2": 0,
-                "total_ch4": 0,
-                "total_n2o": 0,
-                "total_biogenic": 0,
-                "total_flaring": 0,
-                "total_flaring_vol": 0,
-                "ch4_venting": 0,
-                "ch4_fugitive": 0,
-                "ch4_flaring": 0,
-                "ch4_combustion": 0,
-                "l3_emissions": 0,
-                "l4_emissions": 0,
-            }
-        em_map[fid]["total_co2e"] += s2_val
-
-    # Scope 3 (informational only)
-    s3_query = db.session.query(
-        Scope3Emission.facility_id, func.sum(Scope3Emission.co2e).label("total_co2e")
-    ).join(Facility, Scope3Emission.facility_id == Facility.id)
-    if allowed_fids is not None:
-        s3_query = s3_query.filter(Scope3Emission.facility_id.in_(allowed_fids))
-    if year and year != "all":
-        s3_query = s3_query.filter(Scope3Emission.year == int(year))
-    if facility_id and facility_id != "all":
-        s3_query = s3_query.filter(Scope3Emission.facility_id == int(facility_id))
-    if segment and segment != "all":
-        s3_query = s3_query.filter(Facility.segment == segment)
-    if activity and activity != "all":
-        s3_query = s3_query.filter(Facility.activity == activity)
-    if division and division != "all":
-        s3_query = s3_query.filter(Facility.division == division)
-    s3_query = s3_query.filter(Scope3Emission.status == "Verified")
-    s3_results = s3_query.group_by(Scope3Emission.facility_id).all()
-    s3_map = {s3.facility_id: float(s3.total_co2e or 0) for s3 in s3_results}
-
-    # Top-Down OGMP Surveys
-    ogmp_query = db.session.query(
-        OgmpSurvey.facility_id,
-        func.avg(OgmpSurvey.estimated_annual_tch4).label("total_top_down_tch4"),
-    ).join(Facility, OgmpSurvey.facility_id == Facility.id)
-    if allowed_fids is not None:
-        ogmp_query = ogmp_query.filter(OgmpSurvey.facility_id.in_(allowed_fids))
-    if year and year != "all":
-        ogmp_query = ogmp_query.filter(OgmpSurvey.year == int(year))
-    if facility_id and facility_id != "all":
-        ogmp_query = ogmp_query.filter(OgmpSurvey.facility_id == int(facility_id))
-    if segment and segment != "all":
-        ogmp_query = ogmp_query.filter(Facility.segment == segment)
-    if activity and activity != "all":
-        ogmp_query = ogmp_query.filter(Facility.activity == activity)
-    if division and division != "all":
-        ogmp_query = ogmp_query.filter(Facility.division == division)
-    ogmp_surveys = {
-        o.facility_id: float(o.total_top_down_tch4 or 0)
-        for o in ogmp_query.group_by(OgmpSurvey.facility_id).all()
-    }
-
-    output = []
-    facilities = Facility.query.all()
-    fac_info = {f.id: f for f in facilities}
-    prod_details_map = {fid: d for fid, d in prod_results.items()}
-    all_fids = set(em_map.keys()) | set(prod_map.keys())
-
-    for fid in all_fids:
-        ed = em_map.get(
-            fid,
-            {
-                "total_co2e": 0,
-                "total_co2": 0,
-                "total_ch4": 0,
-                "total_n2o": 0,
-                "total_biogenic": 0,
-                "total_flaring": 0,
-                "total_flaring_vol": 0,
-                "ch4_venting": 0,
-                "ch4_fugitive": 0,
-                "ch4_flaring": 0,
-                "ch4_combustion": 0,
-                "l3_emissions": 0,
-                "l4_emissions": 0,
-            },
-        )
-        boe = prod_map.get(fid, 0)
-        prod_details = prod_details_map.get(
-            fid, {"total_oil": 0, "total_gas": 0, "total_gas_m3": 0}
-        )
-        gas_m3 = prod_details.get("total_gas_m3", 0)
-
-        # Methane conversion: 1 tonne CH4 = 1000 kg. Density at std cond ~ 0.6785 kg/m3
-        ch4_vol_m3 = (ed["total_ch4"] * 1000.0) / 0.6785 if ed["total_ch4"] > 0 else 0.0
-        methane_loss_rate_pct = (
-            round((ch4_vol_m3 / gas_m3 * 100.0), 4) if gas_m3 > 0 else 0.0
-        )
-
-        # Flaring Rate %
-        flaring_rate_pct = (
-            round((ed["total_flaring_vol"] / gas_m3 * 100.0), 4) if gas_m3 > 0 else 0.0
-        )
-
-        # GWP 20-Year Horizon: dynamic resolution per active standard
-        gwp20_factors = get_active_gwp(horizon="20")
-        ch4_gwp20 = float(gwp20_factors.get("CH4", 82.5))
-        n2o_gwp20 = float(gwp20_factors.get("N2O", 268.0))
-        s2_val = s2_map.get(fid, 0)
-        total_s1 = ed["total_co2e"] - s2_val
-        delta_gwp = (ed["total_ch4"] * (ch4_gwp20 - 28.0)) + (ed["total_n2o"] * (n2o_gwp20 - 265.0))
-        s1_gwp20 = round(max(total_s1, total_s1 + delta_gwp), 2)
-        total_co2e_gwp20 = s1_gwp20 + s2_val
-
-        # Intensities in kg/BOE
-        if boe > 0:
-            co2_int = (ed["total_co2e"] * 1000.0) / boe
-            co2_int_gwp20 = (total_co2e_gwp20 * 1000.0) / boe
-            scope1_int = ((ed["total_co2e"] - s2_val) * 1000.0) / boe
-            scope1_int_gwp20 = (s1_gwp20 * 1000.0) / boe
-            scope2_int = (s2_val * 1000.0) / boe
-            scope3_int = (s3_map.get(fid, 0) * 1000.0) / boe
-            ch4_int = (ed["total_ch4"] * 1000.0) / boe
-            flare_int = (ed["total_flaring"] * 1000.0) / boe
-            biogenic_int = (ed["total_biogenic"] * 1000.0) / boe
-        else:
-            co2_int = co2_int_gwp20 = scope1_int = scope1_int_gwp20 = scope2_int = scope3_int = ch4_int = (
-                flare_int
-            ) = biogenic_int = 0.0
-
-        # EPA WEC (Waste Emissions Charge per 40 CFR Part 99 / IRA §136)
-        from routes.auth import _app_settings
-
-        up_target = float(_app_settings.get("ogmp_upstream_target_pct", 0.20)) / 100.0
-        mid_target = float(_app_settings.get("ogmp_midstream_target_pct", 0.05)) / 100.0
-        fac = fac_info.get(fid)
-        segment = (fac.segment or "Upstream").lower() if fac else "upstream"
-        wec_threshold_pct = (
-            mid_target
-            if ("processing" in segment or "midstream" in segment or "lng" in segment)
-            else up_target
-        )
-        oil_bbl = prod_details.get("total_oil", 0)
-        if gas_m3 > 0:
-            allowed_ch4_tonnes = (gas_m3 * wec_threshold_pct * 0.6785) / 1000.0
-        elif oil_bbl > 0 and "upstream" in segment:
-            # 40 CFR 99.20(a)(2): 10 metric tons CH4 per million barrels of oil for assets with no gas sales
-            allowed_ch4_tonnes = (oil_bbl / 1_000_000.0) * 10.0
-        else:
-            allowed_ch4_tonnes = 0.0
-        excess_ch4_tonnes = max(0.0, ed["total_ch4"] - allowed_ch4_tonnes)
-
-        # WEC Rate: $900/tonne in 2024, $1,200/tonne in 2025, $1,500/tonne in 2026+ (effective starting 2024)
-        yr_str = str(year) if year and year != "all" else str(datetime.now(timezone.utc).year)
-        yr_int = int(yr_str) if yr_str.isdigit() else datetime.now(timezone.utc).year
-        wec_fee_map = _app_settings.get("wec_fee_rates", {})
-
-        if yr_int < 2024:
-            wec_rate = 0.0
-            excess_ch4_tonnes = 0.0
-            wec_fee_usd = 0.0
-            wec_status = "Not Applicable (Pre-2024)"
-        elif "downstream" in segment or "refining" in segment or "petrochem" in segment:
-            wec_rate = 0.0
-            excess_ch4_tonnes = 0.0
-            wec_fee_usd = 0.0
-            wec_status = "Exempt (Downstream)"
-        else:
-            wec_rate = float(
-                wec_fee_map.get(
-                    yr_str,
-                    900.0 if yr_int == 2024 else (1200.0 if yr_int == 2025 else 1500.0),
-                )
-            )
-            wec_fee_usd = round(excess_ch4_tonnes * wec_rate, 2)
-            wec_status = "Compliant" if excess_ch4_tonnes <= 0 else "Taxable Liability"
-
-        # OGMP Level Distribution & Level Progression
-        total_s1 = ed["total_co2e"] - s2_val
-        l3_pct = (
-            round((ed["l3_emissions"] / total_s1 * 100.0), 1) if total_s1 > 0 else 0.0
-        )
-        l4_pct = (
-            round((ed["l4_emissions"] / total_s1 * 100.0), 1) if total_s1 > 0 else 0.0
-        )
-
-        top_down_tch4 = ogmp_surveys.get(fid, 0.0)
-
-        # Gold Standard Roadmap & Deadline Tracker
-        from routes.auth import _app_settings
-
-        default_base_year = _app_settings.get("ogmp_default_base_year", 2023)
-        default_threshold = _app_settings.get("reconciliation_threshold", 20.0)
-
-        op_status = fac.operator_status or "operated" if fac else "operated"
-        country = fac.country or "Algeria" if fac else "Algeria"
-        base_year = (
-            fac.ogmp_membership_year or default_base_year if fac else default_base_year
-        )
-        deadline_years = 3 if op_status == "operated" else 5
-        target_gold_year = base_year + deadline_years
-        threshold = (
-            fac.reconciliation_threshold or default_threshold
-            if fac
-            else default_threshold
-        )
-
-        # Invariant Zero (Decision D-02): OGMP Top-Down Survey Reconciliation & Zero Bottom-Up Edge Case
-        if ed["total_ch4"] > 0 and top_down_tch4 > 0:
-            reconciliation_ratio = round(top_down_tch4 / ed["total_ch4"], 2)
-            variance_pct = round(((top_down_tch4 - ed["total_ch4"]) / ed["total_ch4"] * 100.0), 2)
-            variance_flag = abs(variance_pct) > threshold
-            reconciliation_status = "Discrepancy Flagged" if variance_flag else "Reconciled"
-        elif top_down_tch4 > 0 and ed["total_ch4"] == 0:
-            reconciliation_ratio = None
-            variance_pct = None
-            variance_flag = True
-            reconciliation_status = "Discrepancy Flagged"
-        elif top_down_tch4 == 0 and ed["total_ch4"] > 0:
-            reconciliation_ratio = None
-            variance_pct = None
-            variance_flag = False
-            reconciliation_status = "Bottom-Up Only"
-        else:
-            reconciliation_ratio = None
-            variance_pct = None
-            variance_flag = False
-            reconciliation_status = "No Activity"
-
-        # Determine Current OGMP Level (1 to 5)
-        if top_down_tch4 > 0 and (
-            variance_pct is not None and abs(variance_pct) <= threshold
-        ):
-            current_level = 5
-        elif top_down_tch4 > 0:
-            current_level = 4  # Top-down measured but variance exceeds threshold (needs reconciliation review)
-        elif l4_pct >= 50:
-            current_level = 4
-        elif l3_pct > 0 or ed["total_ch4"] > 0:
-            current_level = 3
-        else:
-            current_level = 2
-
-        ogmp_target = 0.20 if "upstream" in segment else 0.05
-        ogmp_warning = round(ogmp_target * 1.25, 4)
-
-        current_cal_year = int(year) if (year and str(year).isdigit()) else 2026
-        years_left = max(0, target_gold_year - current_cal_year)
-        if current_level == 5:
-            pathway_status = "Gold Standard Achieved (Level 5)"
-        elif current_level == 4 and methane_loss_rate_pct <= ogmp_target:
-            pathway_status = "Level 4 Pathway (Target Met)"
-        elif current_cal_year <= target_gold_year:
-            pathway_status = (
-                f'On Track ({years_left} yr{"s" if years_left != 1 else ""} remaining)'
-            )
-        else:
-            pathway_status = "Overdue / Action Plan Required"
-
-        scope1_2_co2e = ed["total_co2e"]
-        scope3_co2e = s3_map.get(fid, 0.0)
-
-        output.append(
-            {
-                "facility_id": fid,
-                "facility_name": fac.name if fac else "Unknown",
-                "activity": fac.activity if fac else "N/A",
-                "division": fac.division if fac else "N/A",
-                "region": fac.region or (fac.name if fac else "N/A"),
-                "segment": fac.segment if fac else "Upstream",
-                "operator_status": op_status,
-                "country": country,
-                "ogmp_membership_year": base_year,
-                "target_gold_year": target_gold_year,
-                "deadline_years": deadline_years,
-                "current_ogmp_level": current_level,
-                "gold_pathway_status": pathway_status,
-                "reconciliation_threshold": threshold,
-                "variance_pct": variance_pct,
-                "variance_flag": variance_flag,
-                "reconciliation_status": reconciliation_status,
-                # Operational intensities
-                "co2_intensity": co2_int,
-                "co2_intensity_gwp20": co2_int_gwp20,
-                "scope1_intensity": scope1_int,
-                "scope1_intensity_gwp20": scope1_int_gwp20,
-                "scope2_intensity": scope2_int,
-                "scope3_intensity": scope3_int,
-                "ch4_intensity": ch4_int,
-                "api_flaring_intensity": flare_int,
-                "biogenic_intensity": biogenic_int,
-                # Loss and flaring rates %
-                "methane_loss_rate_pct": methane_loss_rate_pct,
-                "flaring_rate_pct": flaring_rate_pct,
-                "ogmp_gold_standard_target": ogmp_target,
-                "ogmp_target_status": (
-                    "Compliant"
-                    if methane_loss_rate_pct <= ogmp_target
-                    else (
-                        "Warning" if methane_loss_rate_pct <= ogmp_warning else "Non-Compliant"
-                    )
-                ),
-                # EPA WEC
-                "wec_status": wec_status,
-                "excess_ch4_tonnes": excess_ch4_tonnes,
-                "wec_fee_usd": wec_fee_usd,
-                # OGMP 2.0 Levels & Methane process splits
-                "ogmp_l3_pct": l3_pct,
-                "ogmp_l4_pct": l4_pct,
-                "top_down_tch4": top_down_tch4,
-                "reconciliation_ratio": reconciliation_ratio,
-                "ch4_venting": ed["ch4_venting"],
-                "ch4_fugitive": ed["ch4_fugitive"],
-                "ch4_flaring": ed["ch4_flaring"],
-                "ch4_combustion": ed["ch4_combustion"],
-                # Production
-                "total_boe": boe,
-                "total_oil": prod_details.get("total_oil", 0),
-                "total_gas": prod_details.get("total_gas", 0),
-                "total_gas_m3": gas_m3,
-                "flaring_volume": ed["total_flaring_vol"],
-                "flaring_emissions": ed["total_flaring"],
-                # Raw Emissions
-                "total_co2e": scope1_2_co2e,
-                "total_co2e_gwp20": total_co2e_gwp20,
-                "total_scope1": total_s1,
-                "total_scope1_gwp20": s1_gwp20,
-                "total_scope2": s2_val,
-                "total_scope3": scope3_co2e,
-                "total_co2": ed["total_co2"],
-                "total_ch4": ed["total_ch4"],
-                "total_n2o": ed["total_n2o"],
-                "total_biogenic": ed["total_biogenic"],
-                "total_co2e_s3": scope3_co2e,
-                "total_co2e_all": scope1_2_co2e + scope3_co2e,
-            }
-        )
-
-    return output
-
+    return intensity_rows(year=year, include_pending=include_pending, gwp_horizon=gwp_horizon,
+                          facility_id=facility_id, activity=activity, division=division,
+                          allowed_fids=allowed_fids, segment=segment)
 
 @dashboard_bp.route("/uncertainty", methods=["GET"])
 @login_required
@@ -2887,305 +1773,216 @@ def get_sbti_trajectory():
 @dashboard_bp.route("/flaring-summary", methods=["GET"])
 @login_required
 def get_flaring_summary():
+    """Flaring by operational stream (Routine / Non-Routine / Safety / Unclassified) and the
+    Decree 21-330 Art. 9 flaring intensity.
+
+    RC-9 / RC-5: same facility-level filters, status, year and GWP horizon as the rest of the
+    dashboard (BUG-026, BUG-072 addendum); exact unit conversion for flared and produced gas
+    (BUG-033/035); no invented stream split or proxy factor (BUG-036).
     """
-    Returns flaring breakdown by operational stream: Routine, Non-Routine, Safety, and Grand Total.
-    Evaluates compliance against Algerian Executive Decree 21-330 Article 9 (1.00% threshold).
-    """
+    from models import FlaringDetail
+    from services.dashboard_filters import (apply_scope, gas_volume_m3, horizon_delta, production_gas_m3,
+                                            source_category, statuses)
+
     user = get_current_user()
     allowed_fids = get_allowed_facility_ids(user)
-
     year = request.args.get("year")
+    all_years = not year or year == "all"
     try:
-        yr = int(year) if year and year != "all" else datetime.now().year
+        yr = None if all_years else int(year)
     except ValueError:
-        yr = datetime.now().year
+        return jsonify({"error": "Invalid year"}), 400
 
     facility_id = request.args.get("facility_id") or request.args.get("facilityId")
     fac_filter = int(facility_id) if facility_id and facility_id != "all" else None
     if fac_filter and allowed_fids is not None and fac_filter not in allowed_fids:
         return jsonify({"error": "Unauthorized facility"}), 403
+    scope = dict(allowed_fids=allowed_fids, facility_id=fac_filter, activity=request.args.get("activity"),
+                 division=request.args.get("division"), segment=request.args.get("segment"))
+    include_pending = request.args.get("includePending", "false").lower() == "true"
+    horizon = request.args.get("gwp_horizon", "100")
 
-    from models import FlaringDetail
-
-    # 1. First check FlaringDetail model records for explicit operational data
-    fd_q = FlaringDetail.query.filter_by(year=yr)
-    if allowed_fids is not None:
-        fd_q = fd_q.filter(FlaringDetail.facility_id.in_(allowed_fids))
-    if fac_filter:
-        fd_q = fd_q.filter_by(facility_id=fac_filter)
-    flaring_records = fd_q.all()
-
-    routine_knm3 = sum(float(r.routine_knm3 or 0) for r in flaring_records)
-    non_routine_knm3 = sum(float(r.non_routine_knm3 or 0) for r in flaring_records)
-    safety_knm3 = sum(float(r.safety_knm3 or 0) for r in flaring_records)
-    measured_dres = [float(r.measured_dre_pct) for r in flaring_records if r.measured_dre_pct is not None]
-    avg_dre = (sum(measured_dres) / len(measured_dres)) if measured_dres else 98.0
-
-    # 2. Check Emission records for routine_flaring, non_routine_flaring, safety_flaring, and general flaring
-    em_q = Emission.query.filter(
-        Emission.year == yr,
-        Emission.status == "Verified",
-        Emission.process_type.in_(["routine_flaring", "non_routine_flaring", "safety_flaring", "flaring", "flare"])
-    )
-    if allowed_fids is not None:
-        em_q = em_q.filter(Emission.facility_id.in_(allowed_fids))
-    if fac_filter:
-        em_q = em_q.filter_by(facility_id=fac_filter)
-
-    em_rows = em_q.all()
-    em_routine_m3 = 0.0
-    em_routine_tco2e = 0.0
-    em_non_routine_m3 = 0.0
-    em_non_routine_tco2e = 0.0
-    em_safety_m3 = 0.0
-    em_safety_tco2e = 0.0
-    em_general_m3 = 0.0
-    em_general_tco2e = 0.0
-
-    for e in em_rows:
-        pt = (e.process_type or "").lower()
-        qty = float(e.quantity or 0)
-        co2e = float(e.co2e_total or 0)
-        unit = (e.unit or "m3").lower()
-        # Convert to m3
-        if "k" in unit or "knm3" in unit or "1000" in unit:
-            vol_m3 = qty * 1000.0
-        elif "mscf" in unit:
-            vol_m3 = qty * 28.3168
-        elif "mmscf" in unit:
-            vol_m3 = qty * 28316.8
-        else:
-            vol_m3 = qty
-
-        if pt == "routine_flaring":
-            em_routine_m3 += vol_m3
-            em_routine_tco2e += co2e
-        elif pt == "non_routine_flaring":
-            em_non_routine_m3 += vol_m3
-            em_non_routine_tco2e += co2e
-        elif pt == "safety_flaring":
-            em_safety_m3 += vol_m3
-            em_safety_tco2e += co2e
-        else:
-            em_general_m3 += vol_m3
-            em_general_tco2e += co2e
-
-    # Merge FlaringDetail knm3 with Emission table if FlaringDetail was populated
-    if routine_knm3 > 0 or non_routine_knm3 > 0 or safety_knm3 > 0:
-        total_m3 = (routine_knm3 + non_routine_knm3 + safety_knm3) * 1000.0
-        r_m3 = routine_knm3 * 1000.0
-        nr_m3 = non_routine_knm3 * 1000.0
-        s_m3 = safety_knm3 * 1000.0
-    else:
-        # Fall back to emission records
-        r_m3 = em_routine_m3
-        nr_m3 = em_non_routine_m3
-        s_m3 = em_safety_m3
-        # If all were logged as general flaring, default routine to 56% per industry benchmark
-        if r_m3 == 0 and nr_m3 == 0 and s_m3 == 0 and em_general_m3 > 0:
-            r_m3 = em_general_m3 * 0.56
-            nr_m3 = em_general_m3 * 0.40
-            s_m3 = em_general_m3 * 0.04
-        total_m3 = r_m3 + nr_m3 + s_m3
-
-    total_tco2e = em_routine_tco2e + em_non_routine_tco2e + em_safety_tco2e + em_general_tco2e
-    if total_tco2e == 0 and total_m3 > 0:
-        # Approximate 2.5 tonnes CO2e per 1000 m3 flared natural gas
-        total_tco2e = (total_m3 / 1000.0) * 2.5
-
-    # 3. Flaring Intensity vs Gas Produced (Decree 21-330 Article 9)
-    prod_q = ProductionData.query.filter_by(year=yr)
-    if allowed_fids is not None:
-        prod_q = prod_q.filter(ProductionData.facility_id.in_(allowed_fids))
-    if fac_filter:
-        prod_q = prod_q.filter_by(facility_id=fac_filter)
-
-    total_gas_produced_m3 = 0.0
-    for p in prod_q.all():
-        if p.gross_gas_mmsm3 and p.gross_gas_mmsm3 > 0:
-            total_gas_produced_m3 += float(p.gross_gas_mmsm3) * 1_000_000.0
-        elif p.gas_amount and p.gas_amount > 0:
-            unit = str(p.gas_unit or "mscf").lower()
-            if "mmscf" in unit:
-                total_gas_produced_m3 += float(p.gas_amount) * 28316.8
-            elif "m3" in unit:
-                total_gas_produced_m3 += float(p.gas_amount)
+    def streams_for(year_value):
+        fd_q = apply_scope(FlaringDetail.query, FlaringDetail, **scope)
+        if year_value is not None:
+            fd_q = fd_q.filter(FlaringDetail.year == year_value)
+        fd = fd_q.all()
+        em_q = apply_scope(Emission.query, Emission, **scope).filter(Emission.status.in_(statuses(include_pending)))
+        if year_value is not None:
+            em_q = em_q.filter(Emission.year == year_value)
+        out = {k: {"m3": 0.0, "tco2e": 0.0} for k in ("routine", "non_routine", "safety", "unclassified")}
+        unconverted = 0
+        for e in em_q.all():
+            if source_category(e.process_type) != "flaring":
+                continue
+            pt = (e.process_type or "").strip().lower()
+            key = {"routine_flaring": "routine", "non_routine_flaring": "non_routine",
+                   "safety_flaring": "safety"}.get(pt, "unclassified")
+            vol = gas_volume_m3(e.quantity, e.unit)
+            if vol is None:
+                unconverted += 1
             else:
-                total_gas_produced_m3 += float(p.gas_amount) * 28.3168
+                out[key]["m3"] += vol
+            out[key]["tco2e"] += float(e.co2e_total or 0) + horizon_delta(e.ch4_emissions, e.n2o_emissions, horizon)
+        detail_used = False
+        if fd and any((r.routine_knm3 or 0) or (r.non_routine_knm3 or 0) or (r.safety_knm3 or 0) for r in fd):
+            # operator-reported stream volumes take precedence; totals are the sum of the parts
+            detail_used = True
+            out["routine"]["m3"] = sum(float(r.routine_knm3 or 0) for r in fd) * 1000.0
+            out["non_routine"]["m3"] = sum(float(r.non_routine_knm3 or 0) for r in fd) * 1000.0
+            out["safety"]["m3"] = sum(float(r.safety_knm3 or 0) for r in fd) * 1000.0
+            out["unclassified"]["m3"] = 0.0
+        dres = [float(r.measured_dre_pct) for r in fd if r.measured_dre_pct is not None]
+        return out, unconverted, detail_used, dres
 
-    flaring_intensity_pct = (
-        (total_m3 / total_gas_produced_m3 * 100.0) if total_gas_produced_m3 > 0 else 0.0
-    )
-    is_compliant = flaring_intensity_pct <= 1.00
+    streams, unconverted, detail_used, dres = streams_for(yr)
+    total_m3 = sum(v["m3"] for v in streams.values())
+    total_tco2e = sum(v["tco2e"] for v in streams.values())
 
-    # 4. Prior Year YoY calculation
-    prev_yr = yr - 1
-    prev_fd_q = FlaringDetail.query.filter_by(year=prev_yr)
-    if allowed_fids is not None:
-        prev_fd_q = prev_fd_q.filter(FlaringDetail.facility_id.in_(allowed_fids))
-    if fac_filter:
-        prev_fd_q = prev_fd_q.filter_by(facility_id=fac_filter)
-    prev_records = prev_fd_q.all()
-    prev_total_m3 = sum(float(r.total_knm3 or 0) for r in prev_records) * 1000.0
+    # Gas produced over the same population and period
+    prod_q = apply_scope(ProductionData.query, ProductionData, **scope)
+    if yr is not None:
+        prod_q = prod_q.filter(ProductionData.year == yr)
+    gas_m3, prod_unconverted = 0.0, 0
+    for prow in prod_q.all():
+        g = production_gas_m3(prow)
+        if g is None:
+            prod_unconverted += 1
+        else:
+            gas_m3 += g
 
-    if prev_total_m3 == 0:
-        prev_em_q = Emission.query.filter(
-            Emission.year == prev_yr,
-            Emission.status == "Verified",
-            Emission.process_type.in_(["routine_flaring", "non_routine_flaring", "safety_flaring", "flaring", "flare"])
-        )
-        if allowed_fids is not None:
-            prev_em_q = prev_em_q.filter(Emission.facility_id.in_(allowed_fids))
-        if fac_filter:
-            prev_em_q = prev_em_q.filter_by(facility_id=fac_filter)
-        for pe in prev_em_q.all():
-            p_qty = float(pe.quantity or 0)
-            p_u = (pe.unit or "m3").lower()
-            prev_total_m3 += p_qty * 1000.0 if "k" in p_u else p_qty
+    if all_years:
+        intensity, compliant, status_txt = None, None, "Select a single year to assess Decree 21-330 compliance"
+    elif gas_m3 > 0:
+        intensity = total_m3 / gas_m3 * 100.0
+        compliant = intensity <= 1.00
+        status_txt = "COMPLIANT (Under 1.00% Target)" if compliant else "EXCEEDS THRESHOLD (> 1.00%)"
+    else:
+        intensity, compliant, status_txt = None, None, "No gas production recorded for this period"
 
-    yoy_change_pct = (
-        ((total_m3 - prev_total_m3) / prev_total_m3 * 100.0)
-        if prev_total_m3 > 0
-        else 0.0
-    )
+    yoy = None
+    if not all_years:
+        prev, _, _, _ = streams_for(yr - 1)
+        prev_m3 = sum(v["m3"] for v in prev.values())
+        if prev_m3 > 0:
+            yoy = (total_m3 - prev_m3) / prev_m3 * 100.0
 
-    r_pct = (r_m3 / total_m3 * 100.0) if total_m3 > 0 else 0.0
-    nr_pct = (nr_m3 / total_m3 * 100.0) if total_m3 > 0 else 0.0
-    s_pct = (s_m3 / total_m3 * 100.0) if total_m3 > 0 else 0.0
+    def block(key):
+        m3 = streams[key]["m3"]
+        return {
+            "volume_m3": round(m3, 2),
+            "volume_knm3": round(m3 / 1000.0, 2),
+            "percentage": round(m3 / total_m3 * 100.0, 1) if total_m3 > 0 else 0.0,
+            # with operator stream volumes the emissions records may not be split by stream
+            "tco2e": round(streams[key]["tco2e"], 2),
+        }
 
     return jsonify({
-        "year": yr,
+        "year": yr if yr is not None else "all",
         "facility_id": fac_filter,
-        "routine_flaring": {
-            "volume_m3": round(r_m3, 2),
-            "volume_knm3": round(r_m3 / 1000.0, 2),
-            "percentage": round(r_pct, 1),
-            "tco2e": round(em_routine_tco2e, 2),
-        },
-        "non_routine_flaring": {
-            "volume_m3": round(nr_m3, 2),
-            "volume_knm3": round(nr_m3 / 1000.0, 2),
-            "percentage": round(nr_pct, 1),
-            "tco2e": round(em_non_routine_tco2e, 2),
-        },
-        "safety_flaring": {
-            "volume_m3": round(s_m3, 2),
-            "volume_knm3": round(s_m3 / 1000.0, 2),
-            "percentage": round(s_pct, 1),
-            "tco2e": round(em_safety_tco2e, 2),
-        },
+        "gwp_horizon": "20" if str(horizon) == "20" else "100",
+        "includes_pending": include_pending,
+        "routine_flaring": block("routine"),
+        "non_routine_flaring": block("non_routine"),
+        "safety_flaring": block("safety"),
+        "unclassified_flaring": block("unclassified"),
         "total_flaring": {
             "volume_m3": round(total_m3, 2),
             "volume_knm3": round(total_m3 / 1000.0, 2),
             "tco2e": round(total_tco2e, 2),
         },
-        "gas_production_m3": round(total_gas_produced_m3, 2),
-        "flaring_intensity_pct": round(flaring_intensity_pct, 3),
+        "stream_volume_source": "FlaringDetail (operator-reported)" if detail_used else "Emission records",
+        "records_with_unknown_volume_unit": unconverted,
+        "production_rows_with_unknown_gas_unit": prod_unconverted,
+        "gas_production_m3": round(gas_m3, 2),
+        "flaring_intensity_pct": round(intensity, 3) if intensity is not None else None,
         "regulatory_threshold_pct": 1.00,
         "statute": "Executive Decree 21-330 Article 9",
-        "is_compliant": is_compliant,
-        "compliance_status": "COMPLIANT (Under 1.00% Target)" if is_compliant else "EXCEEDS THRESHOLD (> 1.00%)",
-        "yoy_change_pct": round(yoy_change_pct, 2),
-        "measured_dre_pct": round(avg_dre, 2),
-        "dre_method": "VISR Camera" if measured_dres else "Standard 98% Default",
+        "is_compliant": compliant,
+        "compliance_status": status_txt,
+        "yoy_change_pct": round(yoy, 2) if yoy is not None else None,
+        "measured_dre_pct": round(sum(dres) / len(dres), 2) if dres else None,
+        "dre_method": "Measured (FlaringDetail)" if dres else "Not measured (98% default in calculations)",
     })
 
 
 @dashboard_bp.route("/granular-intensities", methods=["GET"])
 @login_required
 def get_granular_intensities():
+    """Multi-metric intensities for the Master Report (BUG-044).
+
+    Numerator and denominator cover the same facility-years (those with production); BOE is
+    computed per production row with the platform's single BOE definition; values that are not
+    recorded (saleable production, gas throughput) are returned as null instead of invented
+    constants. Same filters and role rules as the rest of the dashboard.
     """
-    Computes multi-metric carbon and methane intensities:
-    - Carbon Intensity by Total Production (kg CO2e / Total BOE)
-    - Carbon Intensity by Saleable Production (kg CO2e / Saleable BOE)
-    - Methane Intensity per NGSI Protocol (wt.%)
-    - Flaring Intensity (Sm3/BOE and vol.%)
-    - Comparison against OGCI 2025 Recommended Benchmark (17.0 kg CO2e/BOE)
-    """
+    from services.dashboard_filters import SCF_PER_BOE
+    from services.intensity import intensity_cells
+
     user = get_current_user()
+    if is_it_role(user):
+        return jsonify({"error": "Forbidden: IT Administrators cannot access operational dashboard data"}), 403
     allowed_fids = get_allowed_facility_ids(user)
 
     year = request.args.get("year")
     try:
-        yr = int(year) if year and year != "all" else datetime.now().year
+        years = None if (not year or year == "all") else [int(year)]
     except ValueError:
-        yr = datetime.now().year
-
+        return jsonify({"error": "Invalid year"}), 400
     facility_id = request.args.get("facility_id") or request.args.get("facilityId")
     fac_filter = int(facility_id) if facility_id and facility_id != "all" else None
     if fac_filter and allowed_fids is not None and fac_filter not in allowed_fids:
         return jsonify({"error": "Unauthorized facility"}), 403
 
-    # Total GHG Emissions (Scope 1 + Scope 2)
-    s1_q = db.session.query(
-        db.func.sum(Emission.co2e_total),
-        db.func.sum(Emission.ch4_emissions)
-    ).filter(Emission.year == yr, Emission.status == "Verified")
+    cells = intensity_cells(years=years, facility_id=fac_filter, allowed_fids=allowed_fids,
+                            activity=request.args.get("activity"), division=request.args.get("division"),
+                            segment=request.args.get("segment"))
+    matched = [(k, c) for k, c in cells.items() if c["has_prod"]]
+    ghg = sum(c["s1"] + c["s2"] for _, c in matched)
+    ch4 = sum(c["ch4"] for _, c in matched)
+    boe = sum(c["boe"] for _, c in matched)
+    gas_m3 = sum(c["gas_m3"] for _, c in matched)
+    unmatched_ghg = sum(c["s1"] + c["s2"] for _, c in cells.items() if not c["has_prod"])
+
+    # saleable production only where it is actually recorded (no assumed 85 % fraction)
+    prod_q = ProductionData.query
+    if years:
+        prod_q = prod_q.filter(ProductionData.year.in_(years))
     if allowed_fids is not None:
-        s1_q = s1_q.filter(Emission.facility_id.in_(allowed_fids))
+        prod_q = prod_q.filter(ProductionData.facility_id.in_(allowed_fids or [-1]))
     if fac_filter:
-        s1_q = s1_q.filter_by(facility_id=fac_filter)
+        prod_q = prod_q.filter(ProductionData.facility_id == fac_filter)
+    saleable_rows = [p for p in prod_q.all() if p.saleable_production_mmboe]
+    saleable_boe = sum(float(p.saleable_production_mmboe) * 1e6 for p in saleable_rows) or None
+    saleable_ghg = sum(cells[(p.facility_id, p.year)]["s1"] + cells[(p.facility_id, p.year)]["s2"]
+                       for p in {(r.facility_id, r.year): r for r in saleable_rows}.values()
+                       if (p.facility_id, p.year) in cells) if saleable_boe else None
 
-    s1_co2e, total_ch4_t = s1_q.first()
-    s1_co2e = float(s1_co2e or 0.0)
-    total_ch4_t = float(total_ch4_t or 0.0)
-
-    s2_q = db.session.query(db.func.sum(Scope2Emission.co2e)).filter(
-        Scope2Emission.year == yr, Scope2Emission.status == "Verified"
-    )
-    if allowed_fids is not None:
-        s2_q = s2_q.filter(Scope2Emission.facility_id.in_(allowed_fids))
-    if fac_filter:
-        s2_q = s2_q.filter_by(facility_id=fac_filter)
-    s2_co2e = float(s2_q.scalar() or 0.0)
-
-    total_ghg_co2e = s1_co2e + s2_co2e
-
-    # Production metrics
-    prod_q = ProductionData.query.filter_by(year=yr)
-    if allowed_fids is not None:
-        prod_q = prod_q.filter(ProductionData.facility_id.in_(allowed_fids))
-    if fac_filter:
-        prod_q = prod_q.filter_by(facility_id=fac_filter)
-    prods = prod_q.all()
-
-    total_boe = sum(float(p.total_production_mmboe or 0) * 1e6 for p in prods)
-    saleable_boe = sum(float(p.saleable_production_mmboe or 0) * 1e6 for p in prods)
-    gross_gas_sm3 = sum(float(p.gross_gas_mmsm3 or 0) * 1e6 for p in prods)
-
-    # Fallback to standard oil/gas amounts if granular fields aren't populated
-    if total_boe == 0:
-        oil_boe = sum(float(p.oil_amount or 0) for p in prods)
-        gas_boe = sum(float(p.gas_amount or 0) / 5.8 for p in prods)  # 5.8 mscf/boe
-        total_boe = oil_boe + gas_boe
-    if saleable_boe == 0:
-        saleable_boe = total_boe * 0.85  # typical saleable fraction if unrecorded
-
-    ci_total_prod_kg = (total_ghg_co2e * 1000.0 / total_boe) if total_boe > 0 else 0.0
-    ci_saleable_prod_kg = (total_ghg_co2e * 1000.0 / saleable_boe) if saleable_boe > 0 else 0.0
-
-    # NGSI Methane Intensity wt.%: CH4 mass (tonnes) / Natural Gas Mass (tonnes)
-    # Gas density at standard conditions approx 0.80 kg/Sm3 (0.00080 tonnes/Sm3)
-    gas_mass_tonnes = gross_gas_sm3 * 0.00080 if gross_gas_sm3 > 0 else 1.0
-    methane_intensity_ngsi_wt_pct = (total_ch4_t / gas_mass_tonnes * 100.0) if gross_gas_sm3 > 0 else 0.05
+    ci_total = ghg * 1000.0 / boe if boe > 0 else None
+    ci_saleable = saleable_ghg * 1000.0 / saleable_boe if saleable_boe else None
+    # NGSI methane intensity (wt %): CH4 mass / natural gas mass, pipeline gas ~0.80 kg/Sm3
+    ngsi = ch4 / (gas_m3 * 0.00080) * 100.0 if gas_m3 > 0 else None
 
     OGCI_TARGET = 17.0
-    ratio_to_ogci = ci_saleable_prod_kg / OGCI_TARGET if OGCI_TARGET > 0 else 1.0
-
+    basis = ci_saleable if ci_saleable is not None else ci_total
+    ratio = basis / OGCI_TARGET if basis is not None else None
     return jsonify({
-        "year": yr,
+        "year": years[0] if years else "all",
         "facility_id": fac_filter,
-        "total_ghg_tco2e": round(total_ghg_co2e, 2),
-        "total_ch4_tonnes": round(total_ch4_t, 2),
-        "total_production_boe": round(total_boe, 2),
-        "saleable_production_boe": round(saleable_boe, 2),
-        "gross_gas_sm3": round(gross_gas_sm3, 2),
-        "ci_by_total_production_kg_boe": round(ci_total_prod_kg, 2),
-        "ci_by_saleable_production_kg_boe": round(ci_saleable_prod_kg, 2),
-        "methane_intensity_ngsi_wt_pct": round(methane_intensity_ngsi_wt_pct, 3),
+        "total_ghg_tco2e": round(ghg, 2),
+        "unmatched_ghg_tco2e": round(unmatched_ghg, 2),
+        "total_ch4_tonnes": round(ch4, 2),
+        "total_production_boe": round(boe, 2),
+        "boe_definition_scf_per_boe": round(SCF_PER_BOE, 1),
+        "saleable_production_boe": round(saleable_boe, 2) if saleable_boe else None,
+        "gross_gas_sm3": round(gas_m3, 2),
+        "ci_by_total_production_kg_boe": round(ci_total, 2) if ci_total is not None else None,
+        "ci_by_saleable_production_kg_boe": round(ci_saleable, 2) if ci_saleable is not None else None,
+        "methane_intensity_ngsi_wt_pct": round(ngsi, 3) if ngsi is not None else None,
         "ogci_target_kg_boe": OGCI_TARGET,
-        "ratio_to_ogci_target": round(ratio_to_ogci, 2),
-        "ogci_status": "WITHIN TARGET" if ci_saleable_prod_kg <= OGCI_TARGET else f"{round(ratio_to_ogci, 1)}x ABOVE TARGET",
+        "ogci_comparison_basis": "saleable" if ci_saleable is not None else ("total" if ci_total is not None else None),
+        "ratio_to_ogci_target": round(ratio, 2) if ratio is not None else None,
+        "ogci_status": None if ratio is None else ("WITHIN TARGET" if basis <= OGCI_TARGET else f"{round(ratio, 1)}x ABOVE TARGET"),
     })
 
 

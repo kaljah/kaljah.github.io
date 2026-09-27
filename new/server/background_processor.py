@@ -1641,8 +1641,12 @@ def _process_row_custom_factors(row, user_id, batch_names=None):
     name = str(row.get("name")).strip()
     if _name_taken(name) or (batch_names is not None and name.lower() in batch_names):
         return None, [f"A custom factor named '{name}' already exists"]
-    if not str(row.get("unit") or "").strip():
-        return None, ["Unit is required for custom factor"]
+    from routes.custom_factors import _canonical_factor_unit
+
+    try:
+        row = dict(row, unit=_canonical_factor_unit(row.get("unit")))  # BUG-063
+    except ValueError as err:
+        return None, [str(err)]
     try:
         vals = {k: _parse_non_negative_float(row.get(k), k) for k in (
             "co2_factor", "ch4_factor", "n2o_factor", "co_factor", "hhv_factor",

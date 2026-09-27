@@ -225,24 +225,14 @@ class OnshoreEquipmentFugitiveCalculator(BaseCalculator):
 
         uncertainties = uncertainties or {}
 
-        # Resolve factor
+        # Resolve factor through the canonical unit parser (BUG-048: "CH₄" subscripts,
+        # tonne vs kg numerators and annual vs hourly bases are all read from the unit itself)
+        from .units import per_source_hour_kg
+
         ef_val = float(factor_value or 0.0)
-        u_low = str(factor_unit or "tonne/hr").lower().strip()
-        is_tonne = any(x in u_low for x in ["tonne", " mt", "t/", "tch4"])
-        is_annual = "yr" in u_low or "year" in u_low
-
-        raw_rate = float(equipment_count) * ef_val
-
-        if is_annual:
-            # Factor is already annual per equipment
-            annual_hours_ratio = float(operating_hours) / 8760.0
-            total_ch4 = raw_rate * annual_hours_ratio if is_tonne else (raw_rate * annual_hours_ratio / 1000.0)
-        else:
-            # Hourly factor: Count * EF * Operating Hours
-            if is_tonne:
-                total_ch4 = raw_rate * float(operating_hours)
-            else:
-                total_ch4 = (raw_rate * float(operating_hours)) / 1000.0
+        kg_per_hr, _is_ch4 = per_source_hour_kg(ef_val, factor_unit or "tonne CH4/well/hr")
+        total_ch4 = float(equipment_count) * kg_per_hr * float(operating_hours) / 1000.0
+        kg_per_source_hour = kg_per_hr  # audit trace
 
         total_co2 = 0.0  # Equipment factors are pure CH4
 
@@ -269,8 +259,7 @@ class OnshoreEquipmentFugitiveCalculator(BaseCalculator):
             "factor_used": {
                 "factor_value": ef_val,
                 "factor_unit": factor_unit,
-                "is_tonne": is_tonne,
-                "is_annual": is_annual,
+                "kg_ch4_per_source_hour": kg_per_source_hour,
             },
             "math_trace": f"{equipment_count} units * {ef_val} {factor_unit} * {operating_hours} hrs = {total_ch4:.5f} tonnes CH4/yr",
             "co2e_total": total_co2e,
@@ -340,9 +329,11 @@ class OnshoreComponentFugitiveCalculator(BaseCalculator):
             if isinstance(data, dict):
                 count = float(data.get("count", 0))
                 ef = float(data.get("ef", 0))
-                ef_unit = str(data.get("unit") or data.get("ef_unit") or "kg/hr").lower()
-                is_direct_ch4 = any(x in ef_unit for x in ["ch4", "methane"])
-                is_tonne = any(x in ef_unit for x in ["tonne", " mt", "t/"])
+                ef_unit = str(data.get("unit") or data.get("ef_unit") or "kg TOC/hr/component")
+                from .units import per_source_hour_kg
+
+                ef_kg_hr_parsed, is_direct_ch4 = per_source_hour_kg(ef, ef_unit)  # BUG-048
+                is_tonne = False
             else:
                 count = float(data or 0)
                 ef = 0.0
@@ -353,8 +344,8 @@ class OnshoreComponentFugitiveCalculator(BaseCalculator):
             if count < 0:
                 raise ValueError(f"Component count for '{comp_name}' cannot be negative ({count})")
 
-            # Convert EF to kg TOC or kg CH4 per hour
-            ef_kg_hr = ef * 1000.0 if is_tonne else ef
+            # EF in kg TOC or kg CH4 per component-hour
+            ef_kg_hr = ef_kg_hr_parsed if isinstance(data, dict) else ef
 
             if is_direct_ch4:
                 comp_ch4_kg_hr = count * ef_kg_hr

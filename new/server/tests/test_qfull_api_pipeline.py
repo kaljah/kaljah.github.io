@@ -690,6 +690,8 @@ class TestCompletionsPipeline:
             "ch4_content": ch4_frac,
             "comp_method": "rate_duration",
             "comp_rate": rate_mscf_day,
+            # audit BUG-011: the form's default rate unit is Mcf/hr, so a per-day rate is explicit
+            "comp_rate_unit": "mscf/day",
             "comp_duration": duration_hours,
         }
         em, method = compute_emissions(payload, {})

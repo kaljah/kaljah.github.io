@@ -310,7 +310,7 @@ const DashboardEnhanced = () => {
           totals.flaring += row.flaring || 0;
           totals.venting += row.venting || 0;
           totals.fugitive += row.fugitive || 0;
-          totals.other += row.other || 0;
+          totals.other += (row.other || 0) + (row.process || 0);
           totals.methaneEmissions += row.ch4_total || 0;
           totals.purchasedEnergy += (row.scope2_energy || 0) / 1000;
         }
@@ -339,7 +339,9 @@ const DashboardEnhanced = () => {
       });
 
       mitData.forEach((item) => {
-        if (currentYear === "all" || item.year.toString() === currentYear) {
+        // BUG-094: only implemented projects reduce "Net" (Planned ones are shown, not netted)
+        if (item.counts_toward_net === false) return;
+        if (currentYear === "all" || String(item.year) === currentYear) {
           totals.mitigation += item.quantity_tco2e || 0;
         }
       });
@@ -1124,28 +1126,32 @@ const DashboardEnhanced = () => {
                     Operational Flaring &amp; Regulatory Compliance
                   </h3>
                   <p className="flaring-banner-sub">
-                    Executive Decree 21-330 Article 9 (1.00% Gas Production Threshold)
+                    Executive Decree 21-330 Article 9 (1.00% Gas Production Threshold) •{" "}
+                    {flaringData.year === "all" ? "All years" : `Year ${flaringData.year}`} • GWP-{flaringData.gwp_horizon || "100"}
+                    {flaringData.includes_pending ? " • incl. Pending" : " • Verified only"}
                   </p>
                 </div>
               </div>
 
               <div className="flaring-banner-badges">
                 <span
-                  className={`flaring-badge ${flaringData.is_compliant ? "compliant" : "non-compliant"}`}
+                  className={`flaring-badge ${flaringData.is_compliant === true ? "compliant" : flaringData.is_compliant === false ? "non-compliant" : ""}`}
                 >
-                  {flaringData.is_compliant ? (
+                  {flaringData.is_compliant === true ? (
                     <CheckCircle2 size={13} />
                   ) : (
                     <AlertTriangle size={13} />
                   )}
-                  {flaringData.compliance_status || (flaringData.is_compliant ? "COMPLIANT (≤ 1.00%)" : "EXCEEDS 1.00% LIMIT")}
+                  {flaringData.compliance_status}
                 </span>
 
                 <span className="flaring-badge dre">
-                  {flaringData.dre_method || "VISR Camera"}: {flaringData.measured_dre_pct ?? 98.0}% DRE
+                  {flaringData.measured_dre_pct != null
+                    ? `${flaringData.dre_method}: ${flaringData.measured_dre_pct}% DRE`
+                    : flaringData.dre_method}
                 </span>
 
-                {flaringData.yoy_change_pct !== 0 && (
+                {flaringData.yoy_change_pct != null && flaringData.yoy_change_pct !== 0 && (
                   <span className="flaring-badge yoy">
                     {flaringData.yoy_change_pct > 0 ? `+${flaringData.yoy_change_pct}% YoY` : `${flaringData.yoy_change_pct}% YoY`}
                   </span>
@@ -1157,11 +1163,11 @@ const DashboardEnhanced = () => {
               <div className="flaring-stream-item total-stream">
                 <div className="stream-label">Total Flared Volume</div>
                 <div className="stream-value">
-                  {formatCompactNumber(flaringData.total_flaring?.volume_knm3 ?? (stats.flaring / 2.5))}
+                  {formatCompactNumber(flaringData.total_flaring?.volume_knm3 ?? 0)}
                   <span className="stream-unit">kNm³</span>
                 </div>
                 <div className="stream-sublabel">
-                  <strong>{formatCompactNumber(flaringData.total_flaring?.tco2e ?? stats.flaring)}</strong> tCO₂e • 100% Stream
+                  <strong>{formatCompactNumber(flaringData.total_flaring?.tco2e ?? 0)}</strong> tCO₂e • 100% Stream
                 </div>
               </div>
 
@@ -1197,9 +1203,22 @@ const DashboardEnhanced = () => {
                   <strong>{flaringData.safety_flaring?.percentage ?? 0}%</strong> of total • {formatCompactNumber(flaringData.safety_flaring?.tco2e ?? 0)} tCO₂e
                 </div>
               </div>
+
+              {flaringData.unclassified_flaring?.volume_knm3 > 0 && (
+                <div className="flaring-stream-item">
+                  <div className="stream-label">Unclassified Flaring</div>
+                  <div className="stream-value">
+                    {formatCompactNumber(flaringData.unclassified_flaring.volume_knm3)}
+                    <span className="stream-unit">kNm³</span>
+                  </div>
+                  <div className="stream-sublabel">
+                    <strong>{flaringData.unclassified_flaring.percentage}%</strong> of total • {formatCompactNumber(flaringData.unclassified_flaring.tco2e)} tCO₂e • stream not recorded
+                  </div>
+                </div>
+              )}
             </div>
 
-            {flaringData.gas_production_m3 > 0 && (
+            {flaringData.gas_production_m3 > 0 && flaringData.flaring_intensity_pct != null && (
               <div className="flaring-intensity-bar-card">
                 <div className="flaring-intensity-meta">
                   <span>
@@ -1570,7 +1589,7 @@ const DashboardEnhanced = () => {
                         </td>
                       </tr>
                       <tr className="detail-row">
-                        <td className="indent">Stationary Combustion</td>
+                        <td className="indent">Combustion (stationary &amp; mobile)</td>
                         <td className="text-right">
                           {formatCompactNumber(stats.combustion)}
                         </td>
