@@ -195,7 +195,8 @@ def test_bulk_import_custom_factors(logged_client, app):
         factor = CustomFactor.query.filter_by(name="My Factor").first()
         assert factor is not None
         assert factor.co2_factor == 10.5
-        assert factor.unit == "kg"
+        # audit BUG-063: a bare activity unit is stored in the canonical "kg per <unit>" form
+        assert factor.unit == "kg/kg"
 
 def test_bulk_import_production(logged_client, app):
     client = logged_client

@@ -59,6 +59,23 @@ def _parse_non_negative_float(val, field_name, default=0.0):
         raise ValueError(err.message)
 
 
+def _canonical_factor_unit(unit):
+    """BUG-063: one stored form for custom factor units. The Manage Data form sends the bare
+    activity unit (values labelled "kg/unit"), so "scf" becomes "kg/scf"; anything the
+    calculator cannot interpret is rejected here instead of being applied 1:1 later."""
+    from calculations.units import UnitError, parse_factor_unit
+
+    u = str(unit or "").strip()
+    if not u:
+        raise ValueError("Unit is required")
+    canonical = u if "/" in u else f"kg/{u}"
+    try:
+        parse_factor_unit(canonical)
+    except UnitError as err:
+        raise ValueError(f"Unsupported factor unit '{u}': {err}")
+    return canonical
+
+
 def _name_taken(name, exclude_id=None):
     """BUG-065: factor names are unique (case-insensitive) among active factors."""
     q = CustomFactor.query.filter(db.func.lower(CustomFactor.name) == name.strip().lower(),
@@ -131,9 +148,10 @@ def create_custom_factor():
     if not factor_name:
         return jsonify({"error": "Factor name is required"}), 400
 
-    unit = (data.get("unit") or "scf").strip()
-    if not unit:
-        return jsonify({"error": "Unit is required"}), 400
+    try:
+        unit = _canonical_factor_unit(data.get("unit"))
+    except ValueError as err:
+        return jsonify({"error": str(err), "field": "unit"}), 400
 
     try:
         co2_factor = _parse_non_negative_float(data.get("co2_factor"), "co2_factor")
@@ -224,10 +242,10 @@ def update_custom_factor(factor_id):
         factor.name = fn
 
     if "unit" in data:
-        u = (data.get("unit") or "").strip()
-        if not u:
-            return jsonify({"error": "Unit cannot be empty"}), 400
-        factor.unit = u
+        try:
+            factor.unit = _canonical_factor_unit(data.get("unit"))
+        except ValueError as err:
+            return jsonify({"error": str(err), "field": "unit"}), 400
 
     try:
         if "co2_factor" in data:
@@ -382,6 +400,11 @@ def import_custom_factors():
             continue
         if name.lower() in seen or _name_taken(name):
             skipped.append({"row": i + 1, "error": f"duplicate factor name '{name}'"})
+            continue
+        try:
+            unit = _canonical_factor_unit(unit)
+        except ValueError as err:
+            skipped.append({"row": i + 1, "error": str(err)})
             continue
 
         try:

@@ -419,6 +419,11 @@ def _compute_emissions_impl(payload, factor_data=None, gwp_dict=None, gwp_standa
 
     calc_inputs = payload.get("calc_inputs") or {}
     inputs = calc_inputs.get(process) or {}  # Extract specific inputs
+    if process == "completions" and isinstance(inputs, dict) and inputs.get("amount") not in (None, ""):
+        # BUG-012: the Completions form's `amount` is the event count; it must not replace the
+        # top-level activity volume, and it is passed on explicitly as `events`.
+        inputs = dict(inputs)
+        inputs.setdefault("events", inputs.pop("amount"))
 
     # NEW: Merge root payload into inputs to support flat CSV data
     # This allows keys like 'comp_duration' or 'unload_diam' to be read directly from the CSV row

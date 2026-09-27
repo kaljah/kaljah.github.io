@@ -3470,7 +3470,8 @@ def update_emission(id):
         base = {
             "process_type": record.process_type, "process": record.process_type, "fuel_type": record.fuel_type,
             "fuel": record.fuel_type, "unit": record.unit, "quantity": record.quantity, "amount": record.quantity,
-            "calc_method": record.calc_method, "factor_source": record.factor_source,
+            # record.calc_method is the calculator's result label, not a method input
+            "factor_source": record.factor_source,
             "custom_factor_id": record.custom_factor_id or stored.get("custom_factor_id"),
         }
         calc_payload = canonicalize({**base, **{k: v for k, v in stored.items() if v is not None}})

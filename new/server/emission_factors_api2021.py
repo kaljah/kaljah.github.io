@@ -213,6 +213,9 @@ COMBUSTION_FACTORS = {
     "Ethane": {
         "code": "Ethane",
         "hhv": 69600,
+        # BUG-027: 69,600 Btu is per US gallon of liquid ethane (EPA Table C-1 0.0696 MMBtu/gal),
+        # not per scf; the explicit basis stops it being multiplied by scf.
+        "hhv_unit": "btu/gal",
         "co2": 59.60,
         "ch4": 0.003,
         "n2o": 0.0006,

@@ -340,10 +340,11 @@ def test_zero_production_resilience(ci_setup):
         rec = stats[0]
         assert rec["total_boe"] == 0.0
         assert rec["total_co2e"] == 200.0
-        assert rec["co2_intensity"] == 0.0
-        assert rec["scope1_intensity"] == 0.0
-        assert rec["scope1_intensity_gwp20"] == 0.0
-        assert rec["scope2_intensity"] == 0.0
+        # audit BUG-044 / BUG-088: no production -> intensity is "not available" (None), not 0
+        assert rec["co2_intensity"] is None
+        assert rec["scope1_intensity"] is None
+        assert rec["scope1_intensity_gwp20"] is None
+        assert rec["scope2_intensity"] is None
 
 
 # =========================================================================

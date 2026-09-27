@@ -62,7 +62,9 @@ class TestAllProcessTypesTier1:
                 "process_type": p,
                 "factor_source": "default",
                 "amount": 250.0,
-                "unit": "mmbtu" if "steam" in p else ("kg" if p == "stoichiometry" else "tonnes"),
+                # audit BUG-027: a kg/MMBtu factor applied to tonnes needs a heating value; these
+                # generic dispatch checks therefore use the factor's energy unit
+                "unit": "mmbtu",
             }
             factors = {"co2": 53.06, "ch4": 0.001, "n2o": 0.0001, "unit": "kg/mmbtu"}
             res = dispatcher.dispatch(p, payload, factors, {})

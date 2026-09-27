@@ -702,25 +702,14 @@ class CompletionFlowbackCalculator(BaseCalculator):
                     ["flowback_rate", "flowback_duration_hours"]
                 )
                 rate_val = float(flowback_rate)
-                rate_u = str(rate_unit or "mscf/day").lower().strip()
-                if "hr" in rate_u or "hour" in rate_u:
-                    if "mmscf" in rate_u:
-                        rate_scf_hr = rate_val * 1_000_000.0
-                    elif "mcf" in rate_u or "mscf" in rate_u:
-                        rate_scf_hr = rate_val * 1000.0
-                    elif "m3" in rate_u or "sm3" in rate_u:
-                        rate_scf_hr = convert(rate_val, "m3", "scf")
-                    else:
-                        rate_scf_hr = rate_val
-                else:  # Daily rate
-                    if "mmscf" in rate_u:
-                        rate_scf_hr = (rate_val * 1_000_000.0) / 24.0
-                    elif "mcf" in rate_u or "mscf" in rate_u:
-                        rate_scf_hr = (rate_val * 1000.0) / 24.0
-                    elif "m3" in rate_u or "sm3" in rate_u:
-                        rate_scf_hr = convert(rate_val, "m3", "scf") / 24.0
-                    else:
-                        rate_scf_hr = rate_val / 24.0
+                # BUG-011: exact-token rate parsing ("mmscf/d" is not "mscf/d"); a plain volume is
+                # not a rate and is rejected instead of being read as per-day.
+                from .units import parse_volume_rate
+
+                m3_per_unit, per_year = parse_volume_rate(rate_unit or "mcf/hr")
+                if per_year is None:
+                    raise ValueError(f"Flowback rate unit '{rate_unit}' must be a rate (e.g. Mcf/hr, MMscf/d)")
+                rate_scf_hr = rate_val * m3_per_unit * CONVERSIONS["m3_to_scf"] * per_year / 8760.0
 
                 total_net_scf = rate_scf_hr * float(flowback_duration_hours) * num_events
                 standard_ref = "API Compendium 2021 §6.2.3.1, Flowback Rate × Duration"
