@@ -35,7 +35,7 @@ def traj(c, **q):
 
 def test_bug028_no_data_is_not_on_track(setup):
     c, f = setup
-    d = traj(c)
+    d = traj(c, facility_id=f.id)  # isolated from other tests' data
     assert d["on_track"] is None and d["reduction_achieved_pct"] is None and d["current_actual"] is None
 
 
@@ -47,7 +47,7 @@ def test_bug014_current_partial_year_is_not_the_progress_year(setup):
         Emission(facility_id=f.id, year=CY, month=1, process_type="combustion", co2e_total=10, status="Verified"),
     ])
     db.session.commit()
-    d = traj(c)
+    d = traj(c, facility_id=f.id)
     # 2023: target 1000 x (1 - 0.042 x 3) = 874; actual 950 -> 5 % reduction, behind
     assert d["latest_actual_year"] == 2023
     assert d["current_target"] == pytest.approx(874.0)
@@ -65,7 +65,7 @@ def test_bug019_scope_subset_uses_its_own_baseline(setup):
         Scope3Emission(facility_id=f.id, year=2023, month=1, category="Category 1", co2e=200, status="Verified"),
     ])
     db.session.commit()
-    d = traj(c, scope="s1_s2")
+    d = traj(c, scope="s1_s2", facility_id=f.id)
     # S1+S2 baseline 800; 2023 target 800 x 0.874 = 699.2; actual 750 -> 6.25 %
     assert d["base_year_emissions"] == pytest.approx(800)
     assert d["current_target"] == pytest.approx(699.2)
