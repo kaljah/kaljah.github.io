@@ -111,17 +111,18 @@ def _calc_cogen_allocation(data):
         total_emissions = (float(data["fuel_consumed_mmbtu"]) * _DEFAULT_BOILER_EF_KG_PER_MMBTU) / 1000.0
     heat_output = float(data.get("heat_output_mmbtu") or ci.get("heat_output", 0))
     power_output = float(data.get("power_output_mwh") or ci.get("power_output", 0))
-    power_mmbtu = power_output * MMBTU_PER_MWH  # BUG-097: power output is entered in MWh
     method = data.get("allocation_method") or ci.get("allocation_method", "wri_efficiency")
+    if total_emissions <= 0 or (heat_output + power_output) <= 0:
+        return 0.0
+    # One allocation formula: calculations.indirect.CogenAllocationCalculator. Power output is
+    # entered in MWh (BUG-097) and converted there.
+    from calculations.indirect import CogenAllocationCalculator
 
-    if method == "wri_efficiency":
-        e_h, e_p = 0.8, 0.33
-        denom = (heat_output / e_h) + (power_mmbtu / e_p)
-        allocated = ((heat_output / e_h) / denom) * total_emissions if denom else 0
-    else:
-        denom = heat_output + power_mmbtu
-        allocated = (heat_output / denom) * total_emissions if denom else 0
-    return allocated
+    res = CogenAllocationCalculator().calculate(
+        total_emissions=total_emissions, heat_output=heat_output, power_output=power_output,
+        method="wri_efficiency" if method == "wri_efficiency" else "energy_content", power_unit="mwh",
+    )
+    return res["metadata"]["allocated_heat_tonnes"]
 
 
 @scope2_bp.route("", methods=["GET"])
