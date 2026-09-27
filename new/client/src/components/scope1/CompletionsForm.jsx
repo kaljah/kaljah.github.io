@@ -170,7 +170,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
       if (data.amount !== eventsCount) onChange("amount", eventsCount);
     } else {
       if (data.tier !== "tier3") onChange("tier", "tier3");
-      if (!data.volume_unit && !data.unit) onChange("volume_unit", "Mcf");
+      if (!data.volume_unit) onChange("volume_unit", "Mcf");
       if (!data.comp_injected_n2_unit) onChange("comp_injected_n2_unit", "scf");
       if (!data.comp_disposition) onChange("comp_disposition", "vented");
     }
@@ -631,7 +631,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
               </label>
               <select
                 className="mole-input"
-                value={data.volume_unit || data.unit || "Mcf"}
+                value={data.volume_unit || "Mcf"}
                 onChange={(e) => {
                   onChange("volume_unit", e.target.value);
                   onChange("unit", e.target.value);
@@ -757,6 +757,20 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                 value={data.co2_content || ""}
                 onChange={(e) => onChange("co2_content", e.target.value)}
                 placeholder="e.g. 1.2"
+              />
+            </div>
+
+            <div className="input-group">
+              <label>C₂+ (%)</label>
+              <input
+                type="number"
+                min="0"
+                max="100"
+                step="0.1"
+                className="mole-input"
+                value={data.comp_c2plus_content || ""}
+                onChange={(e) => onChange("comp_c2plus_content", e.target.value)}
+                placeholder="e.g. 5"
               />
             </div>
           </div>

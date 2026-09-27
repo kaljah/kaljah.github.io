@@ -435,6 +435,7 @@ class CompletionFlowbackCalculator(BaseCalculator):
         control_efficiency=None,
         uncertainties=None,
         co2_content=None,
+        c2plus_content=None,
         ef_co2=None,
         ef_ch4=None,
         ef_n2o=None,
@@ -833,6 +834,12 @@ class CompletionFlowbackCalculator(BaseCalculator):
 
         flared_unburnt_ch4 = flared_gross_ch4_tonnes * (1.0 - combustion_eff)
         flared_combustion_co2 = flared_gross_ch4_tonnes * combustion_eff * (44.01 / 16.04)
+        # heavier hydrocarbons in the flowback gas also burn to CO2 (Exhibit 6-3 treats the non-CH4
+        # hydrocarbons as ethane: 2 mol C per mol); counted as ethane-equivalent when given
+        c2 = float(c2plus_content or 0.0)
+        c2 = c2 / 100.0 if c2 > 1.0 else c2
+        if c2 > 0:
+            flared_combustion_co2 += (flared_m3 * c2 * 2.0 * CONVERSIONS["density_co2"] / 1000.0) * combustion_eff
         flared_total_co2 = flared_native_co2_tonnes + flared_combustion_co2
 
         flared_mmbtu = (flared_scf * hhv_val) / 1_000_000.0

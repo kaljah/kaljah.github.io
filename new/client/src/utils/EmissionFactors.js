@@ -423,6 +423,18 @@ export const API_FACTORS = {
     stream: "Midstream",
     baseUnit: "gal",
   },
+  "Ethane (Gas)": {
+    code: "EthaneGas",
+    hhv: 1768.8, // Btu/scf, API Compendium 2021 Table 3-7
+    co2: 59.6,
+    ch4: 0.003,
+    n2o: 0.0006,
+    uncertainty: { co2: 0.02, ch4: 0.25, n2o: 0.3 },
+    unit: "kg/MMBtu",
+    usage: ["combustion"],
+    stream: "Midstream",
+    baseUnit: "scf",
+  },
   "Ethanol (100%)": {
     code: "EtOH",
     hhv: 84000,
@@ -1293,8 +1305,8 @@ export const API_FACTORS = {
   // --- ASPHALT BLOWING (API Section 6, Table 6-52) ---
   "Asphalt": {
     code: "ASPH_Blow",
-    co2: 10.4326,
-    ch4: 0.02268,
+    co2: 5.61, // Table 6-52: 5.61E-03 t CO2/ton
+    ch4: 3.07, // Table 6-52: 3.07E-03 t CH4/ton
     n2o: 0,
     unit: "kg/ton",
     usage: ["asphalt_blowing"],
