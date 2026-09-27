@@ -69,12 +69,12 @@ class IndependentScope2Model:
         }
 
     @staticmethod
-    def calculate_cogen_allocation(total_emissions, heat_output, power_output, method="wri_efficiency"):
+    def calculate_cogen_allocation(total_emissions, heat_output, power_output, method="wri_efficiency", power_unit="mmbtu"):
         tot = float(total_emissions or 0.0)
         heat = float(heat_output or 0.0)
-        # power_output is in MWh and heat_output in MMBtu (the Scope 2 form / API contract, BUG-097);
-        # both terms must be on the same energy basis before allocation: 1 MWh = 3.412142 MMBtu
-        power = float(power_output or 0.0) * 3.412142
+        # heat_output in MMBtu; power_output in `power_unit`. Both terms must be on the same energy
+        # basis before allocation (BUG-097): 1 MWh = 3.412142 MMBtu
+        power = float(power_output or 0.0) * (3.412142 if str(power_unit).lower() == "mwh" else 1.0)
         m = str(method or "wri_efficiency").lower().strip()
 
         if m == "wri_efficiency":

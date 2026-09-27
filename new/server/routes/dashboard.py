@@ -23,6 +23,7 @@ from services.ogmp import compute_facility_ogmp_level, ogmp_level_for
 import threading
 import concurrent.futures
 import math
+from utils import internal_error
 
 def is_it_role(user):
     return bool(user and getattr(user, "role", None) in ["it_admin", "it_manager", "it"])
@@ -356,7 +357,7 @@ def get_batch_dashboard_data():
         import traceback
 
         print(traceback.format_exc())
-        return jsonify({"error": str(e)}), 500
+        return internal_error(e)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -777,7 +778,7 @@ def get_goal(year):
         )
     except Exception as e:
         print(f"Error fetching goal for {year}: {e}")
-        return jsonify({"error": str(e)}), 500
+        return internal_error(e)
 
 
 @dashboard_bp.route("/base-year", methods=["GET"])
@@ -909,7 +910,7 @@ def create_base_year_recalculation():
         return jsonify({"message": "Base year recalculation recorded", "id": recalc.id}), 201
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": str(e)}), 500
+        return internal_error(e)
 
 
 @dashboard_bp.route("/ogmp-metrics", methods=["GET"])

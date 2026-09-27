@@ -380,6 +380,7 @@ class TestDifferentialScope2and3:
             heat_output=50_000.0,
             power_output=10_000.0,
             method="wri_efficiency",
+            power_unit="mwh",  # the route's power_output_mwh contract (BUG-097)
         )
 
         assert pytest.approx(prod_allocated, rel=1e-6) == ref_res["allocated_heat_co2e"]

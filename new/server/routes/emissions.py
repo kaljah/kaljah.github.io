@@ -26,6 +26,7 @@ import json
 from sqlalchemy import cast, String, literal, Float, union_all, or_
 from services.ogmp import ogmp_level_for
 from process_categories import NON_COMBUSTION_PROCESSES
+from utils import internal_error
 
 
 
@@ -965,10 +966,7 @@ def add_bulk_upload():
                     db.session.commit()
             except Exception as e:
                 db.session.rollback()
-                return (
-                    jsonify({"error": "Failed to save to database", "details": str(e)}),
-                    500,
-                )
+                return internal_error(e, "Failed to save to database")
 
         return jsonify(
             {"status": "success", "imported": len(new_emissions), "errors": errors}

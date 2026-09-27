@@ -8,6 +8,7 @@ from utils import get_current_user, get_allowed_facility_ids
 import csv
 import io
 from process_categories import NON_COMBUSTION_PROCESSES
+from utils import internal_error
 
 qaqc_bp = Blueprint("qaqc_bp", __name__)
 
@@ -605,7 +606,7 @@ def get_qaqc_dashboard():
         import traceback
         from flask import current_app
         current_app.logger.error(f"[QAQC] Dashboard error: {e}\n{traceback.format_exc()}")
-        return jsonify({"status": "error", "message": str(e)}), 500
+        return internal_error(e, status_text="error", message="Internal server error")
 
 
 @qaqc_bp.route("/export", methods=["GET"])
@@ -727,7 +728,7 @@ def export_qaqc_report():
             headers={"Content-Disposition": "attachment;filename=qa_qc_report.csv"},
         )
     except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
+        return internal_error(e, status_text="error", message="Internal server error")
 
 
 @qaqc_bp.route("/resolve/<int:record_id>", methods=["POST"])
@@ -801,7 +802,7 @@ def resolve_flagged_record(record_id):
 
     except Exception as e:
         db.session.rollback()
-        return jsonify({"status": "error", "message": str(e)}), 500
+        return internal_error(e, status_text="error", message="Internal server error")
 
 
 @qaqc_bp.route("/bulk-resolve", methods=["POST"])
@@ -895,4 +896,4 @@ def bulk_resolve():
 
     except Exception as e:
         db.session.rollback()
-        return jsonify({"status": "error", "message": str(e)}), 500
+        return internal_error(e, status_text="error", message="Internal server error")

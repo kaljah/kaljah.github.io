@@ -8,6 +8,7 @@ from calculations.units import compute_scope3_co2e
 from utils import get_current_user, get_allowed_facility_ids, log_activity_and_notify, require_facility_access, initial_record_status
 from input_validation import ValidationError, parse_number, parse_year, parse_month, normalize_scope3_category
 import datetime
+from utils import internal_error
 
 scope3_bp = Blueprint("scope3", __name__)
 
@@ -471,7 +472,7 @@ def bulk_import_scope3():
         db.session.commit()
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": f"Failed to bulk import Scope 3 emissions: {str(e)}"}), 500
+        return internal_error(e, "Failed to bulk import Scope 3 emissions")
 
     from routes.dashboard import clear_dashboard_cache
 

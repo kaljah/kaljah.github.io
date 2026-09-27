@@ -9,6 +9,7 @@ from models import (
     MethaneSourceType, LevelUpgradeLog, Emission, CbamProductExport
 )
 from extensions import db
+from utils import internal_error
 
 # Activities that are NOT oil & gas — excluded from OGMP 2.0 scope
 NON_OG_ACTIVITIES = [
@@ -340,7 +341,7 @@ def bulk_import_production():
         db.session.commit()
     except Exception as e:
         db.session.rollback()
-        return jsonify({'error': f'Failed to import production records: {str(e)}'}), 500
+        return internal_error(e, "Failed to import production records")
 
     from routes.dashboard import clear_dashboard_cache
     clear_dashboard_cache()
@@ -563,7 +564,7 @@ def save_ogmp_survey():
         clear_dashboard_cache()
     except Exception as e:
         db.session.rollback()
-        return jsonify({'error': str(e)}), 500
+        return internal_error(e)
 
     return jsonify({'message': 'OGMP survey record saved', 'id': record.id}), 201
 
@@ -642,7 +643,7 @@ def log_level_upgrade():
         db.session.commit()
     except Exception as e:
         db.session.rollback()
-        return jsonify({'error': f'Failed to log level upgrade: {str(e)}'}), 500
+        return internal_error(e, "Failed to log level upgrade")
 
     return jsonify({'message': 'Level upgrade logged successfully', 'id': log.id}), 201
 
@@ -846,7 +847,7 @@ def save_cbam_export():
         from flask import current_app
         current_app.logger.error(f"CBAM Export save error: {traceback.format_exc()}")
         db.session.rollback()
-        return jsonify({'error': str(e)}), 500
+        return internal_error(e)
 
 @data_bp.route('/cbam-exports/<int:record_id>', methods=['DELETE'])
 @login_required
@@ -880,4 +881,4 @@ def delete_cbam_export(record_id):
         from flask import current_app
         current_app.logger.error(f"CBAM Export delete error: {traceback.format_exc()}")
         db.session.rollback()
-        return jsonify({'error': str(e)}), 500
+        return internal_error(e)

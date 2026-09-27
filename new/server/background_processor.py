@@ -780,7 +780,9 @@ def _process_file_thread(
             with upload_jobs_lock:
                 if job_id in upload_jobs:
                     upload_jobs[job_id]["status"] = "error"
-                    upload_jobs[job_id]["errors"].append(f"Fatal error: {str(e)}")
+                    # BUG-087: the exception is logged; the job shows a generic message
+                    upload_jobs[job_id]["errors"].append(
+                        f"Fatal error: the import stopped unexpectedly (job {job_id}); see the server log")
 
         finally:
             if wb:

@@ -19,6 +19,7 @@ from extensions import db
 from utils import log_activity_and_notify, get_current_user, get_allowed_facility_ids
 from sqlalchemy import func, distinct, or_
 from routes.auth import login_required
+from utils import internal_error
 
 managedata_bp = Blueprint("managedata", __name__)
 
@@ -100,7 +101,7 @@ def add_source():
         db.session.commit()
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": f"Failed to add source: {str(e)}"}), 500
+        return internal_error(e, "Failed to add source")
 
     try:
         log_activity_and_notify(
@@ -136,7 +137,7 @@ def delete_source(source_id):
         db.session.commit()
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": f"Failed to delete source: {str(e)}"}), 500
+        return internal_error(e, "Failed to delete source")
 
     try:
         log_activity_and_notify(
@@ -220,7 +221,7 @@ def bulk_import_sources():
         db.session.commit()
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": f"Failed to bulk import sources: {str(e)}"}), 500
+        return internal_error(e, "Failed to bulk import sources")
 
     try:
         log_activity_and_notify(
@@ -345,7 +346,7 @@ def add_mitigation():
             db.session.commit()
         except Exception as e:
             db.session.rollback()
-            return jsonify({"error": f"Failed to add mitigation project: {str(e)}"}), 500
+            return internal_error(e, "Failed to add mitigation project")
 
         from routes.dashboard import clear_dashboard_cache
         clear_dashboard_cache()
@@ -370,7 +371,7 @@ def add_mitigation():
             db.session.commit()
         except Exception as e:
             db.session.rollback()
-            return jsonify({"error": f"Failed to add mitigation record: {str(e)}"}), 500
+            return internal_error(e, "Failed to add mitigation record")
 
         from routes.dashboard import clear_dashboard_cache
         clear_dashboard_cache()
@@ -424,7 +425,7 @@ def delete_mitigation(mitigation_id):
         db.session.commit()
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": f"Failed to delete mitigation item: {str(e)}"}), 500
+        return internal_error(e, "Failed to delete mitigation item")
 
     from routes.dashboard import clear_dashboard_cache
     clear_dashboard_cache()
@@ -514,7 +515,7 @@ def save_reporting_metadata():
         db.session.commit()
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": f"Failed to save reporting metadata: {str(e)}"}), 500
+        return internal_error(e, "Failed to save reporting metadata")
 
     # --- Audit Notification ---
     try:
@@ -722,7 +723,7 @@ def bulk_import_mitigation():
         db.session.commit()
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": f"Failed to bulk import mitigation projects: {str(e)}"}), 500
+        return internal_error(e, "Failed to bulk import mitigation projects")
 
     try:
         log_activity_and_notify(
@@ -764,7 +765,7 @@ def get_all_goals():
             ]
         )
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return internal_error(e)
 
 
 @managedata_bp.route("/goals", methods=["POST"])
@@ -819,7 +820,7 @@ def delete_goal(year):
         return jsonify({"message": "Goal deleted successfully"})
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": str(e)}), 500
+        return internal_error(e)
 
 
 # --- Base Years & Recalculations ---
@@ -879,7 +880,7 @@ def get_base_years():
             }
         )
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return internal_error(e)
 
 
 @managedata_bp.route("/base-years", methods=["POST"])
@@ -939,7 +940,7 @@ def add_base_year_recalculation():
         )
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": str(e)}), 500
+        return internal_error(e)
 
 
 @managedata_bp.route("/base-years/<int:rec_id>", methods=["DELETE"])
@@ -972,7 +973,7 @@ def delete_base_year_recalculation(rec_id):
         return jsonify({"message": "Recalculation record deleted"})
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": str(e)}), 500
+        return internal_error(e)
 
 
 @managedata_bp.route("/sbti", methods=["GET", "POST"])
