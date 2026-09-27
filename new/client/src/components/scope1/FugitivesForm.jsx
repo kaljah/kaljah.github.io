@@ -552,11 +552,11 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default", setSourceT
                   fontWeight: 600,
                 }}
               >
-                Tables 7-1, 7-2
+                Table 7-8
               </span>
             </div>
             <p style={{ margin: 0, fontSize: "0.75rem", color: "#6b7280", lineHeight: "1.3" }}>
-              Whole facility or gathering station average emission rates. Ideal for high-level screening.
+              Facility average per unit of oil or gas produced. Ideal for high-level screening.
             </p>
           </button>
 
@@ -587,7 +587,7 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default", setSourceT
                   fontWeight: 600,
                 }}
               >
-                Tables 7-9, 7-11
+                Tables 7-9, 7-10, 7-11
               </span>
             </div>
             <p style={{ margin: 0, fontSize: "0.75rem", color: "#6b7280", lineHeight: "1.3" }}>
