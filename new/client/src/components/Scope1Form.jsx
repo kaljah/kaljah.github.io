@@ -1840,7 +1840,8 @@ const Scope1Form = () => {
           {(activity || division || field) && (
             <div className="s1-meta">{[activity, division, field].filter(Boolean).join(" · ")}</div>
           )}
-          <MoreOptions label="Source details">
+          <div className="s1-subgroup">
+            <div className="s1-subhead">Source details</div>
             <FieldGrid>
               <div className="input-group">
                 <label>Emission source</label>
@@ -1872,7 +1873,7 @@ const Scope1Form = () => {
                 />
               </div>
             </FieldGrid>
-          </MoreOptions>
+          </div>
         </Section>
 
         <Section n={2} title="What & how">
