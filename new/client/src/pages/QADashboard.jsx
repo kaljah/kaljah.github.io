@@ -530,21 +530,23 @@ export default function QADashboard() {
                     {/* Card 2: IPCC Tier 1 Uncertainty (SRSS) */}
                     <div className="qa-kpi-card">
                         <div className="qa-kpi-header">
-                            <span className="qa-kpi-label">IPCC Tier 1 Uncertainty</span>
+                            <span className="qa-kpi-label" title="IPCC Approach 1, Verified records, 95 % confidence (k = 2)">
+                                Inventory Uncertainty (95% CI{tier1_uncertainty.year ? `, ${tier1_uncertainty.year}` : ""})
+                            </span>
                             <div className="qa-kpi-icon-wrap" style={{ color: '#f59e0b', background: 'rgba(245, 158, 11, 0.12)' }}>
                                 <AlertTriangle size={16} />
                             </div>
                         </div>
                         <div className="qa-kpi-body">
                             <span className="qa-kpi-value" style={{ color: '#d97706' }}>
-                                ±{((tier1_uncertainty.overall || 0) * 100).toFixed(2)}
+                                {tier1_uncertainty.overall != null ? `±${(tier1_uncertainty.overall * 100).toFixed(2)}` : "n/a"}
                             </span>
-                            <span className="qa-kpi-unit">%</span>
+                            <span className="qa-kpi-unit">{tier1_uncertainty.overall != null ? "%" : ""}</span>
                         </div>
                         <div className="qa-kpi-footer">
-                            <span>S1: ±{((tier1_uncertainty.scope1 || 0) * 100).toFixed(1)}%</span>
-                            <span>S2: ±{((tier1_uncertainty.scope2 || 0) * 100).toFixed(1)}%</span>
-                            <span>S3: ±{((tier1_uncertainty.scope3 || 0) * 100).toFixed(1)}%</span>
+                            <span>S1: {tier1_uncertainty.scope1 != null ? `±${(tier1_uncertainty.scope1 * 100).toFixed(1)}%` : "n/a"}</span>
+                            <span>S2: {tier1_uncertainty.scope2 != null ? `±${(tier1_uncertainty.scope2 * 100).toFixed(1)}%` : "n/a"}</span>
+                            <span>S3: {tier1_uncertainty.scope3 != null ? `±${(tier1_uncertainty.scope3 * 100).toFixed(1)}%` : "n/a"}</span>
                         </div>
                     </div>
 

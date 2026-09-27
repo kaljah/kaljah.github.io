@@ -147,9 +147,11 @@ const UncertaintyAssessment = () => {
   };
 
   // Inventory uncertainty level
+  // BUG-062: same thresholds as the legend and the backend `level` (<=10 % low, <=30 % medium, 95 % CI)
   const getUncertaintyLevel = (decimal) => {
-    if (decimal < 0.1) return "level-low";
-    if (decimal < 0.2) return "level-medium";
+    if (decimal == null) return "";
+    if (decimal <= 0.1) return "level-low";
+    if (decimal <= 0.3) return "level-medium";
     return "level-high";
   };
 

@@ -1,35 +1,34 @@
 import React from "react";
 import "./EmissionResult.css";
+import { UNCERTAINTY_COVERAGE_K as COVERAGE_FACTOR_95 } from "../constants";
 
 const EmissionResult = ({ result, onClose, onEdit, onDelete }) => {
   if (!result) return null;
 
   const { emissions, record, calculation_method } = result;
 
-  // Format number with commas
+  // BUG-098: significant-figure formatting so small CH4 / N2O masses are not shown as 0.00 t
   const formatNumber = (num) => {
-    if (num === null || num === undefined) return "0.00";
-    return parseFloat(num).toLocaleString("en-US", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 3,
-    });
+    if (num === null || num === undefined || !isFinite(Number(num))) return "0";
+    const n = Number(num);
+    if (n === 0) return "0";
+    if (Math.abs(n) >= 1) {
+      return n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 3 });
+    }
+    return n.toLocaleString("en-US", { maximumSignificantDigits: 3 });
   };
 
-  // Format uncertainty range
+  // BUG-062: stored uncertainties are 1-sigma; the displayed band is the 95 % interval (k = 2)
+  const K95 = COVERAGE_FACTOR_95;
   const formatUncertainty = (value, uncertainty) => {
     if (!uncertainty || uncertainty === 0) return null;
-    const margin = value * uncertainty;
-    return `±${formatNumber(margin)}`;
+    return `±${formatNumber(value * uncertainty * K95)}`;
   };
 
-  // Calculate confidence interval
   const getConfidenceInterval = (value, uncertainty) => {
     if (!uncertainty || uncertainty === 0) return null;
-    const margin = value * uncertainty;
-    return {
-      lower: value - margin,
-      upper: value + margin,
-    };
+    const margin = value * uncertainty * K95;
+    return { lower: Math.max(0, value - margin), upper: value + margin };
   };
 
   return (
@@ -92,7 +91,7 @@ const EmissionResult = ({ result, onClose, onEdit, onDelete }) => {
                     return ci ? (
                       <span
                         className="breakdown-uncertainty"
-                        title={`Confidence Interval: ${formatNumber(ci.lower)} - ${formatNumber(ci.upper)} tonnes`}
+                        title={`95% confidence interval (k=2): ${formatNumber(ci.lower)} - ${formatNumber(ci.upper)} tonnes`}
                       >
                         {formatUncertainty(
                           emissions.co2,
@@ -123,7 +122,7 @@ const EmissionResult = ({ result, onClose, onEdit, onDelete }) => {
                     return ci ? (
                       <span
                         className="breakdown-uncertainty"
-                        title={`Confidence Interval: ${formatNumber(ci.lower)} - ${formatNumber(ci.upper)} tonnes`}
+                        title={`95% confidence interval (k=2): ${formatNumber(ci.lower)} - ${formatNumber(ci.upper)} tonnes`}
                       >
                         {formatUncertainty(
                           emissions.ch4,
@@ -154,7 +153,7 @@ const EmissionResult = ({ result, onClose, onEdit, onDelete }) => {
                     return ci ? (
                       <span
                         className="breakdown-uncertainty"
-                        title={`Confidence Interval: ${formatNumber(ci.lower)} - ${formatNumber(ci.upper)} tonnes`}
+                        title={`95% confidence interval (k=2): ${formatNumber(ci.lower)} - ${formatNumber(ci.upper)} tonnes`}
                       >
                         {formatUncertainty(
                           emissions.n2o,
