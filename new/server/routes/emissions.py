@@ -124,6 +124,7 @@ def get_emissions():
     field_arg = request.args.get("field")
     search_term = request.args.get("search")
     method_arg = request.args.get("method")
+    status_arg = request.args.get("status")  # BUG-077: inventory consumers request Verified only
 
     results = []
 
@@ -156,6 +157,8 @@ def get_emissions():
                 q = q.filter(model.month == int(month))
             except ValueError:
                 pass
+        if status_arg and status_arg != "all" and hasattr(model, "status"):
+            q = q.filter(model.status.in_([x.strip() for x in status_arg.split(",") if x.strip()]))
         if facility_id and facility_id != "all":
             try:
                 q = q.filter(model.facility_id == int(facility_id))

@@ -42,8 +42,37 @@ def _safe_excel_value(val):
     return val
 
 
+_SUBSCRIPT_ASCII = str.maketrans("₀₁₂₃₄₅₆₇₈₉", "0123456789")
+
+
+def _pdf_fonts():
+    """BUG-113: the built-in Type 1 fonts cover Latin-1 only, so subscript digits (CO₂, CH₄)
+    rendered as boxes. Register DejaVu Sans (shipped with matplotlib) when available; otherwise
+    the caller falls back to ASCII ("CO2e")."""
+    import os
+
+    from reportlab.pdfbase import pdfmetrics
+    from reportlab.pdfbase.ttfonts import TTFont
+
+    try:
+        if "GHGSans" not in pdfmetrics.getRegisteredFontNames():
+            import matplotlib
+
+            base = os.path.join(os.path.dirname(matplotlib.__file__), "mpl-data", "fonts", "ttf")
+            pdfmetrics.registerFont(TTFont("GHGSans", os.path.join(base, "DejaVuSans.ttf")))
+            pdfmetrics.registerFont(TTFont("GHGSans-Bold", os.path.join(base, "DejaVuSans-Bold.ttf")))
+        return "GHGSans", "GHGSans-Bold", True
+    except Exception:
+        return "Helvetica", "Helvetica-Bold", False
+
+
+def _ascii_cells(rows):
+    return [[c.translate(_SUBSCRIPT_ASCII) if isinstance(c, str) else c for c in r] for r in rows]
+
+
 def create_pdf_report(emissions_data, filters):
     """Generate PDF report for emissions data"""
+    font, font_bold, unicode_ok = _pdf_fonts()
     buffer = BytesIO()
     doc = SimpleDocTemplate(
         buffer,
@@ -56,6 +85,8 @@ def create_pdf_report(emissions_data, filters):
 
     elements = []
     styles = getSampleStyleSheet()
+    for st in styles.byName.values():
+        st.fontName = font_bold if "Bold" in getattr(st, "fontName", "") or st.name.startswith("Heading") or st.name == "Title" else font
 
     # Custom styles
     title_style = ParagraphStyle(
@@ -147,20 +178,23 @@ def create_pdf_report(emissions_data, filters):
         ["Total CO₂e (Grand Total)", f"{total_co2e:,.2f} tCO₂e"],
     ]
 
+    if not unicode_ok:
+        summary_data = _ascii_cells(summary_data)
     summary_table = Table(summary_data, colWidths=[3 * inch, 2 * inch])
     summary_table.setStyle(
         TableStyle(
             [
+                ("FONTNAME", (0, 0), (-1, -1), font),
                 ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#10b981")),
                 ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
                 ("ALIGN", (0, 0), (-1, -1), "LEFT"),
                 ("ALIGN", (1, 0), (1, -1), "RIGHT"),
-                ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                ("FONTNAME", (0, 0), (-1, 0), font_bold),
                 ("FONTSIZE", (0, 0), (-1, 0), 10),
                 ("BOTTOMPADDING", (0, 0), (-1, 0), 8),
                 ("BACKGROUND", (0, 1), (-1, -1), colors.beige),
                 ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
-                ("FONTNAME", (0, -1), (-1, -1), "Helvetica-Bold"),
+                ("FONTNAME", (0, -1), (-1, -1), font_bold),
                 ("BACKGROUND", (0, -1), (-1, -1), colors.HexColor("#d1fae5")),
             ]
         )
@@ -216,15 +250,18 @@ def create_pdf_report(emissions_data, filters):
         0.7 * inch,
         0.9 * inch,
     ]
+    if not unicode_ok:
+        table_data = _ascii_cells(table_data)
     details_table = Table(table_data, colWidths=col_widths)
     details_table.setStyle(
         TableStyle(
             [
+                ("FONTNAME", (0, 0), (-1, -1), font),
                 ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#1e293b")),
                 ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
                 ("ALIGN", (0, 0), (-1, 0), "CENTER"),
                 ("ALIGN", (4, 1), (-1, -1), "RIGHT"),
-                ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                ("FONTNAME", (0, 0), (-1, 0), font_bold),
                 ("FONTSIZE", (0, 0), (-1, 0), 8),
                 ("FONTSIZE", (0, 1), (-1, -1), 7),
                 ("BOTTOMPADDING", (0, 0), (-1, 0), 8),

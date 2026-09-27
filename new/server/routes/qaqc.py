@@ -103,6 +103,38 @@ def get_qaqc_dashboard():
                     "co2e": r.co2e_total,
                 })
 
+        # BUG-084: flags written at import time are not enough - scan the STORED inventory for
+        # implausible values (plausibility bound, or > 1000x the median of the same process type)
+        stored_outliers = []
+        if scope_arg in [None, "all", "1"]:
+            from statistics import median
+            from calculations.anomaly import PLAUSIBILITY_FLAG_TCO2E
+
+            rows = _apply_status_filter(_fac_filter(Emission.query, Emission), Emission).filter(
+                Emission.qa_flag.is_(None)).with_entities(
+                Emission.id, Emission.record_id, Emission.facility_id, Emission.year, Emission.month,
+                Emission.process_type, Emission.status, Emission.co2e_total).all()
+            by_proc = {}
+            for r in rows:
+                by_proc.setdefault((r.process_type or "").lower(), []).append(float(r.co2e_total or 0))
+            medians = {k: median([v for v in vals if v > 0]) for k, vals in by_proc.items() if any(v > 0 for v in vals)}
+            for r in rows:
+                v = float(r.co2e_total or 0)
+                med = medians.get((r.process_type or "").lower())
+                reason = None
+                if v > PLAUSIBILITY_FLAG_TCO2E:
+                    reason = f"Stored-data scan: {v:,.0f} tCO2e exceeds the {PLAUSIBILITY_FLAG_TCO2E:,.0f} t plausibility bound"
+                elif med and v > 1000 * med:
+                    reason = f"Stored-data scan: {v / med:,.0f}x the median of '{r.process_type}' records"
+                if reason:
+                    stored_outliers.append({
+                        "id": r.id, "record_id": r.record_id, "scope": 1, "facility_id": r.facility_id,
+                        "year": r.year, "month": r.month, "process_type": r.process_type, "qa_flag": reason,
+                        "status": r.status, "co2e": v, "source": "stored_scan",
+                    })
+            total_flagged += len(stored_outliers)
+            all_flagged.extend(stored_outliers)
+
         if scope_arg in [None, "all", "2"]:
             q2 = Scope2Emission.query.filter(Scope2Emission.qa_flag.isnot(None))
             q2 = _fac_filter(q2, Scope2Emission)
@@ -545,6 +577,10 @@ def get_qaqc_dashboard():
         return jsonify({
             "status": "success",
             "total_flagged_count": total_flagged,
+            "stored_scan_outlier_count": len(stored_outliers),
+            "pending_review_count": sum(
+                _fac_filter(m.query, m).filter(m.status.in_(("Pending", "Pending Approval", "Draft"))).count()
+                for m in (Emission, Scope2Emission, Scope3Emission)),
             "returned_count": len(flagged_records),
             "limit": limit,
             "offset": offset,
