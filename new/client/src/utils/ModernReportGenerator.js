@@ -76,7 +76,9 @@ function loadImage(url) {
 
 export async function generateModernPDF(api, filters) {
   const { year, scope, regionId, processType, comparisonYear, exclusionCriteria = 'None provided', verificationStatus = 'Not externally verified', personResponsible = 'Logged In User', gwpStandard: requestedGwp } = filters;
-  const selectedYear = year && year !== "all" ? year : new Date().getFullYear();
+  // BUG-077: a missing year means ALL years; never relabel it as the current fiscal year
+  const isAllYears = !year || year === "all";
+  const selectedYear = isAllYears ? "All years" : year;
   const isComparison = comparisonYear && comparisonYear !== "none";
 
   // 1. Comprehensive Data Fetching
@@ -84,6 +86,7 @@ export async function generateModernPDF(api, filters) {
   // fetch all data then filter client-side (the API only accepts a single facility_id).
   const params = {
     limit: 5000, // Hard cap client-side; use /api/reports/export for full dataset
+    status: "Verified", // BUG-077: the inventory counts approved records only
     // Omit year param entirely if 'all' is selected to fetch all historical data
     year: year && year !== "all" ? year : undefined,
     scope: scope && scope !== "all" ? scope : undefined,
@@ -337,7 +340,7 @@ export async function generateModernPDF(api, filters) {
       doc.setFontSize(8);
       doc.setTextColor(...THEME.textMuted);
       doc.text(
-        `Sonatrach GHG Inventory ${year === "all" ? "Historical" : selectedYear} | ISO 14064-1 Compliant`,
+        `Sonatrach GHG Inventory ${isAllYears ? "Historical" : selectedYear} | ISO 14064-1 Compliant`,
         margin,
         pageHeight - 6,
       );
@@ -475,7 +478,7 @@ export async function generateModernPDF(api, filters) {
     doc.setFontSize(140);
     doc.setTextColor(240, 240, 240);
     doc.text(
-      `${year === "all" ? "DATA" : selectedYear}`,
+      `${isAllYears ? "DATA" : selectedYear}`,
       pageWidth - 20,
       coverTitleY + 30,
       { align: "right" },
@@ -491,7 +494,7 @@ export async function generateModernPDF(api, filters) {
     doc.setFontSize(22);
     doc.setTextColor(...THEME.textMuted);
     doc.text(
-      `${year === "all" ? "All Historical Records" : "FISCAL YEAR " + selectedYear}`,
+      `${isAllYears ? "All Historical Records" : "FISCAL YEAR " + selectedYear}`,
       25,
       coverTitleY + 32,
     );
@@ -604,7 +607,7 @@ ${scopeText}`;
 
     curY += 20;
 
-    let narrative = `The ${year === "all" ? "comprehensive" : selectedYear} GHG Inventory consolidates emissions from ${reportFacilities.length} facilities. Represents a precise accounting of direct and indirect greenhouse gas emissions in adherence to international standards. Total emissions are calculated in metric tonnes of CO₂ equivalent (tCO₂e) under ${resolvedGwp.label}. ${fullData.primaryDriver} has been identified as the significant emission source over the reporting period.`;
+    let narrative = `The ${isAllYears ? "comprehensive" : selectedYear} GHG Inventory consolidates emissions from ${reportFacilities.length} facilities. Represents a precise accounting of direct and indirect greenhouse gas emissions in adherence to international standards. Total emissions are calculated in metric tonnes of CO₂ equivalent (tCO₂e) under ${resolvedGwp.label}. ${fullData.primaryDriver} has been identified as the significant emission source over the reporting period.`;
     if (isComparison && compData) {
       const diff = fullData.totalEmissions - compData.totalEmissions;
       const pct =
@@ -672,11 +675,18 @@ ${scopeText}`;
     doc.text("2030 Decarbonization Roadmap & Operational Milestones", margin, curY);
     curY += 5;
 
+    // BUG-078: every statement is computed from the fetched data; nothing is a fixed claim
+    const na = "n/a";
+    const flareIntensityHl = flaringSummary?.flaring_intensity_pct;
     const execHighlights = [
-      ["Scope 1 & 2 Emissions Trajectory", `${(fullData.totalEmissions).toLocaleString(undefined, { maximumFractionDigits: 0 })} tCO2e`, "15.9% reduction achieved relative to 2021-2023 baseline average; on track for -30% by 2030."],
-      ["Methane Abatement Performance", `${fullData.ch4Total.toLocaleString(undefined, { maximumFractionDigits: 0 })} tCH4`, "65.9% reduction from baseline following flare optimization and comprehensive OGI LDAR campaigns."],
-      ["Operational Flaring Volume", `${(flaringSummary?.total_flaring?.volume_knm3 || 117898).toLocaleString()} kNm3`, "Lowest annual flaring on record (-38.0% vs baseline); compliant with Executive Decree 21-330 Art. 9."],
-      ["Flare Destruction Efficiency (DRE)", `${flaringSummary?.measured_dre_pct || 99.85}% Measured`, "Multi-spectral VISR camera verified; eliminates default 98% uncertainty."]
+      ["Scope 1 & 2 Emissions", `${(fullData.totalEmissions).toLocaleString(undefined, { maximumFractionDigits: 0 })} tCO2e`,
+        `Verified Scope 1 + 2 for ${isAllYears ? "all years" : selectedYear}.`],
+      ["Methane Emissions", `${fullData.ch4Total.toLocaleString(undefined, { maximumFractionDigits: 0 })} tCH4`,
+        "Verified bottom-up methane for the period."],
+      ["Operational Flaring Volume", flaringSummary?.total_flaring ? `${flaringSummary.total_flaring.volume_knm3.toLocaleString()} kNm3` : na,
+        flareIntensityHl != null ? `Flaring intensity ${flareIntensityHl}% of gross gas vs the 1.00% limit (${flaringSummary.compliance_status}).` : (flaringSummary?.compliance_status || "Flaring intensity not assessable for this period.")],
+      ["Flare Destruction Efficiency (DRE)", flaringSummary?.measured_dre_pct != null ? `${flaringSummary.measured_dre_pct}% measured` : na,
+        flaringSummary?.dre_method || "No measured DRE recorded; calculations use the 98% default."],
     ];
 
     autoTable(doc, {
@@ -781,7 +791,7 @@ Email: ${personResponsible.email || "N/A"}`;
     doc.setFont("helvetica", "bold");
     doc.text("Reporting Period", margin, curY);
     curY += 6;
-    curY = addTextBlock(`The reporting period is for the year ${selectedYear}.`, curY);
+    curY = addTextBlock(isAllYears ? "The reporting period covers all years with verified data." : `The reporting period is the year ${selectedYear}.`, curY);
 
     curY = checkPageBreak(curY, 50);
     curY += 5;
@@ -903,7 +913,7 @@ Email: ${personResponsible.email || "N/A"}`;
     curY += 4;
 
     const currYearProds = allHistoricalProduction.filter(
-      (p) => String(p.year) === String(selectedYear)
+      (p) => isAllYears || String(p.year) === String(selectedYear)
     );
     const grossGasMmsm3 = currYearProds.reduce(
       (sum, p) => sum + (Number(p.gross_gas_mmsm3) || 0),
@@ -1051,8 +1061,8 @@ Email: ${personResponsible.email || "N/A"}`;
     doc.text("Table 5.2: SANGEA Modular Inventory Breakdown", margin, curY);
     curY += 5;
 
-    const sangeaCombustion = fullData.processBreakdown?.["Combustion"] ?? (fullData.scope1Total * 0.75);
-    const sangeaFlaring = fullData.processBreakdown?.["Flaring"] ?? (flaringSummary?.total_flaring?.tco2e ?? (fullData.scope1Total * 0.20));
+    const sangeaCombustion = fullData.processBreakdown?.["Combustion"] ?? 0;
+    const sangeaFlaring = fullData.processBreakdown?.["Flaring"] ?? (flaringSummary?.total_flaring?.tco2e ?? 0);
     const sangeaLeaks = fullData.processBreakdown?.["Fugitive"] ?? 0.0;
     const sangeaVenting = fullData.processBreakdown?.["Venting"] ?? 0.0;
 
@@ -1094,20 +1104,21 @@ Email: ${personResponsible.email || "N/A"}`;
     );
     curY += 4;
 
-    const r_knm3 = flaringSummary?.routine_flaring?.volume_knm3 ?? 73986.0;
-    const nr_knm3 = flaringSummary?.non_routine_flaring?.volume_knm3 ?? 36369.0;
-    const s_knm3 = flaringSummary?.safety_flaring?.volume_knm3 ?? 7543.0;
-    const tot_knm3 = flaringSummary?.total_flaring?.volume_knm3 ?? 117898.0;
+    // BUG-078: no sample figures or invented 56/40/4 split when data is missing
+    const r_knm3 = flaringSummary?.routine_flaring?.volume_knm3 ?? 0;
+    const nr_knm3 = flaringSummary?.non_routine_flaring?.volume_knm3 ?? 0;
+    const s_knm3 = flaringSummary?.safety_flaring?.volume_knm3 ?? 0;
+    const tot_knm3 = flaringSummary?.total_flaring?.volume_knm3 ?? 0;
 
-    const r_tco2e = flaringSummary?.routine_flaring?.tco2e ?? sangeaFlaring * 0.56;
-    const nr_tco2e = flaringSummary?.non_routine_flaring?.tco2e ?? sangeaFlaring * 0.40;
-    const s_tco2e = flaringSummary?.safety_flaring?.tco2e ?? sangeaFlaring * 0.04;
+    const r_tco2e = flaringSummary?.routine_flaring?.tco2e ?? 0;
+    const nr_tco2e = flaringSummary?.non_routine_flaring?.tco2e ?? 0;
+    const s_tco2e = flaringSummary?.safety_flaring?.tco2e ?? 0;
     const tot_tco2e = flaringSummary?.total_flaring?.tco2e ?? sangeaFlaring;
 
     const flareStreamRows = [
-      ["Routine Flaring", r_knm3.toLocaleString(), (r_knm3 / 1000).toFixed(3), (flaringSummary?.routine_flaring?.percentage ?? 56.0) + "%", Number(r_tco2e).toLocaleString(undefined, { maximumFractionDigits: 1 }), "Continuous flaring of associated gas during normal operations"],
-      ["Non-Routine Flaring", nr_knm3.toLocaleString(), (nr_knm3 / 1000).toFixed(3), (flaringSummary?.non_routine_flaring?.percentage ?? 40.0) + "%", Number(nr_tco2e).toLocaleString(undefined, { maximumFractionDigits: 1 }), "Process upsets, plant turnarounds, depressurizations, unit trips"],
-      ["Safety & Purge Flaring", s_knm3.toLocaleString(), (s_knm3 / 1000).toFixed(3), (flaringSummary?.safety_flaring?.percentage ?? 4.0) + "%", Number(s_tco2e).toLocaleString(undefined, { maximumFractionDigits: 1 }), "Continuous flare header sweep, pilot gas, and positive pressure seal"],
+      ["Routine Flaring", r_knm3.toLocaleString(), (r_knm3 / 1000).toFixed(3), (flaringSummary?.routine_flaring?.percentage ?? 0) + "%", Number(r_tco2e).toLocaleString(undefined, { maximumFractionDigits: 1 }), "Continuous flaring of associated gas during normal operations"],
+      ["Non-Routine Flaring", nr_knm3.toLocaleString(), (nr_knm3 / 1000).toFixed(3), (flaringSummary?.non_routine_flaring?.percentage ?? 0) + "%", Number(nr_tco2e).toLocaleString(undefined, { maximumFractionDigits: 1 }), "Process upsets, plant turnarounds, depressurizations, unit trips"],
+      ["Safety & Purge Flaring", s_knm3.toLocaleString(), (s_knm3 / 1000).toFixed(3), (flaringSummary?.safety_flaring?.percentage ?? 0) + "%", Number(s_tco2e).toLocaleString(undefined, { maximumFractionDigits: 1 }), "Continuous flare header sweep, pilot gas, and positive pressure seal"],
       [
         { content: "Total CPF & Field Flaring", styles: { fontStyle: "bold" } },
         { content: tot_knm3.toLocaleString(), styles: { fontStyle: "bold" } },
@@ -1136,13 +1147,18 @@ Email: ${personResponsible.email || "N/A"}`;
     doc.text("Executive Decree 21-330 Article 9 Compliance Verdict", margin, curY);
     curY += 5;
 
-    const flareIntensityVal = flaringSummary?.flaring_intensity_pct ?? 0.865;
-    const isCompliantFlare = flareIntensityVal <= 1.00;
+    const flareIntensityVal = flaringSummary?.flaring_intensity_pct ?? null;
+    const isCompliantFlare = flareIntensityVal != null ? flareIntensityVal <= 1.00 : null;
+    const yoy = flaringSummary?.yoy_change_pct;
+    const measuredDre = flaringSummary?.measured_dre_pct;
 
     const complianceRows = [
-      ["Flaring Intensity (% Gross Gas)", `${flareIntensityVal.toFixed(3)}%`, "≤ 1.00%", "Executive Decree 21-330 Art. 9", isCompliantFlare ? "COMPLIANT (PASS)" : "EXCEEDED"],
-      ["Flare Destruction Efficiency (DRE)", `${flaringSummary?.measured_dre_pct ?? 99.85}%`, "98.0% Standard Default", "VISR Infrared Multi-Spectral Camera", "VERIFIED EFFICIENT"],
-      ["Year-over-Year Flaring Trajectory", `${flaringSummary?.yoy_change_pct ? (flaringSummary.yoy_change_pct > 0 ? "+" : "") + flaringSummary.yoy_change_pct + "%" : "-5.74%"}`, "Negative Trend (<0%)", "Corporate Decarbonization Roadmap", "ON TRACK"],
+      ["Flaring Intensity (% Gross Gas)", flareIntensityVal != null ? `${flareIntensityVal.toFixed(3)}%` : "n/a", "≤ 1.00%", "Executive Decree 21-330 Art. 9",
+        isCompliantFlare == null ? "NOT ASSESSABLE" : isCompliantFlare ? "COMPLIANT (PASS)" : "EXCEEDED"],
+      ["Flare Destruction Efficiency (DRE)", measuredDre != null ? `${measuredDre}%` : "n/a", "98.0% Standard Default",
+        flaringSummary?.dre_method || "Not measured", measuredDre == null ? "DEFAULT APPLIED" : measuredDre >= 98 ? "AT OR ABOVE DEFAULT" : "BELOW DEFAULT"],
+      ["Year-over-Year Flaring Trajectory", yoy != null ? `${yoy > 0 ? "+" : ""}${yoy}%` : "n/a", "Negative Trend (<0%)", "Corporate Decarbonization Roadmap",
+        yoy == null ? "NOT ASSESSABLE" : yoy < 0 ? "DECREASING" : "INCREASING"],
     ];
 
     autoTable(doc, {
@@ -1229,16 +1245,24 @@ Email: ${personResponsible.email || "N/A"}`;
     );
     curY += 4;
 
-    const ciTot = granularIntensities?.ci_by_total_production_kg_boe ?? 11.18;
-    const ciSal = granularIntensities?.ci_by_saleable_production_kg_boe ?? 30.84;
-    const ngsiCh4 = granularIntensities?.methane_intensity_ngsi_wt_pct ?? 0.018;
+    // BUG-044 / BUG-078: values and verdicts computed from the data; "n/a" when not recorded
+    const ciTot = granularIntensities?.ci_by_total_production_kg_boe ?? null;
+    const ciSal = granularIntensities?.ci_by_saleable_production_kg_boe ?? null;
+    const ngsiCh4 = granularIntensities?.methane_intensity_ngsi_wt_pct ?? null;
+    const boeTot = granularIntensities?.total_production_boe || 0;
+    const flaredSm3PerBoe = boeTot > 0 && flaringSummary?.total_flaring ? (flaringSummary.total_flaring.volume_m3 / boeTot) : null;
+    const fmt = (v, d = 2) => (v == null ? "n/a" : Number(v).toFixed(d));
 
     const intensityRows = [
-      ["Carbon Intensity (Total Production)", `${ciTot} kg CO₂e / BOE`, "SANGEA / Ipieca Guidelines", "Top-Quartile Performance (<15.0 kg/BOE)"],
-      ["Carbon Intensity (Saleable Product)", `${ciSal} kg CO₂e / BOE`, "Groupement Berkine Protocol", "Normalized to commercial export sales"],
-      ["Methane Intensity (NGSI Protocol)", `${ngsiCh4} wt.%`, "NGSI Methane Protocol", "Far below global 0.20% methane intensity ceiling"],
-      ["Flaring Intensity (Volume)", "2.02 Sm³ / BOE", "World Bank GGFR Framework", "Continuous reduction across all processing units"],
-      ["Flaring Intensity (Gas Ratio)", `${flareIntensityVal.toFixed(3)} vol.%`, "Executive Decree 21-330 Art. 9", "COMPLIANT with ≤ 1.00% statutory ceiling"],
+      ["Carbon Intensity (Total Production)", `${fmt(ciTot)} kg CO₂e / BOE`, "SANGEA / Ipieca Guidelines",
+        ciTot == null ? "No production recorded" : ciTot < 15 ? "Below 15.0 kg/BOE" : "At or above 15.0 kg/BOE"],
+      ["Carbon Intensity (Saleable Product)", `${fmt(ciSal)} kg CO₂e / BOE`, "Company Protocol",
+        ciSal == null ? "Saleable production not recorded" : "Normalized to commercial export sales"],
+      ["Methane Intensity (NGSI Protocol)", `${fmt(ngsiCh4, 3)} wt.%`, "NGSI Methane Protocol",
+        ngsiCh4 == null ? "Gas throughput not recorded" : ngsiCh4 <= 0.20 ? "Below the 0.20% methane intensity ceiling" : "Above the 0.20% methane intensity ceiling"],
+      ["Flaring Intensity (Volume)", `${fmt(flaredSm3PerBoe)} Sm³ / BOE`, "World Bank GGFR Framework", flaredSm3PerBoe == null ? "Not assessable" : "Computed from recorded flaring and production"],
+      ["Flaring Intensity (Gas Ratio)", `${fmt(flareIntensityVal, 3)} vol.%`, "Executive Decree 21-330 Art. 9",
+        isCompliantFlare == null ? "Not assessable" : isCompliantFlare ? "Within the 1.00% statutory ceiling" : "Exceeds the 1.00% statutory ceiling"],
       ["OGCI 2025 Industry Target", "17.0 kg CO₂e / BOE", "Oil and Gas Climate Initiative", "Global upstream decarbonization benchmark"],
     ];
 
@@ -1267,23 +1291,42 @@ Email: ${personResponsible.email || "N/A"}`;
     );
     curY += 4;
 
-    const totCo2eAll = fullData.totalEmissions ?? (Number(fullData.scope1Total || 0) + Number(fullData.scope2Total || 0));
-    const totCh4All = fullData.ch4Total ?? 0.0;
-
-    const jvRows = [
-      ["Sonatrach (National Operator)", "SH", "Algeria", "51.00%", (totCo2eAll * 0.51).toLocaleString(undefined, { maximumFractionDigits: 1 }), (totCh4All * 0.51).toFixed(1)],
-      ["Occidental Petroleum", "OXY", "United States", "24.50%", (totCo2eAll * 0.245).toLocaleString(undefined, { maximumFractionDigits: 1 }), (totCh4All * 0.245).toFixed(1)],
-      ["Eni", "ENI", "Italy", "12.25%", (totCo2eAll * 0.1225).toLocaleString(undefined, { maximumFractionDigits: 1 }), (totCh4All * 0.1225).toFixed(1)],
-      ["TotalEnergies", "TTE", "France", "12.25%", (totCo2eAll * 0.1225).toLocaleString(undefined, { maximumFractionDigits: 1 }), (totCh4All * 0.1225).toFixed(1)],
-      [
-        { content: "Total Joint Venture (100%)", styles: { fontStyle: "bold" } },
-        { content: "GB", styles: { fontStyle: "bold" } },
-        { content: "Consolidated", styles: { fontStyle: "bold" } },
-        { content: "100.00%", styles: { fontStyle: "bold" } },
-        { content: Number(totCo2eAll).toLocaleString(undefined, { maximumFractionDigits: 1 }), styles: { fontStyle: "bold" } },
-        { content: Number(totCh4All).toFixed(1), styles: { fontStyle: "bold" } },
-      ],
-    ];
+    // BUG-078: partner shares come from the server's /equity/allocation (effective equity slices,
+    // Verified Scope 1 records), never from hard-coded percentages.
+    const partnerAgg = {};
+    let totCo2eAll = 0;
+    let totCh4All = 0;
+    equityAllocations.forEach((fac) => {
+      totCo2eAll += Number(fac.total_co2e || 0);
+      totCh4All += Number(fac.total_ch4 || 0);
+      (fac.partners || []).forEach((pa) => {
+        const k = pa.partner_id ?? pa.partner_name;
+        if (!partnerAgg[k]) partnerAgg[k] = { name: pa.partner_name, code: pa.partner_code || "", co2e: 0, ch4: 0 };
+        partnerAgg[k].co2e += Number(pa.allocated_co2e || 0);
+        partnerAgg[k].ch4 += Number(pa.allocated_ch4 || 0);
+      });
+    });
+    const partnerList = Object.values(partnerAgg).filter((pa) => pa.co2e > 0 || pa.ch4 > 0);
+    const jvRows = partnerList.length === 0
+      ? [[{ content: "No JV equity shares configured for this period (see Equity Share settings).", colSpan: 6 }]]
+      : [
+        ...partnerList.map((pa) => [
+          pa.name,
+          pa.code,
+          "",
+          totCo2eAll > 0 ? `${((pa.co2e / totCo2eAll) * 100).toFixed(2)}%` : "n/a",
+          pa.co2e.toLocaleString(undefined, { maximumFractionDigits: 1 }),
+          pa.ch4.toFixed(1),
+        ]),
+        [
+          { content: "Total (Verified Scope 1)", styles: { fontStyle: "bold" } },
+          "",
+          "",
+          "",
+          { content: totCo2eAll.toLocaleString(undefined, { maximumFractionDigits: 1 }), styles: { fontStyle: "bold" } },
+          { content: totCh4All.toFixed(1), styles: { fontStyle: "bold" } },
+        ],
+      ];
 
     autoTable(doc, {
       startY: curY,
@@ -1561,7 +1604,7 @@ Email: ${personResponsible.email || "N/A"}`;
       },
     });
 
-    const filename = `Groupement_Berkine_Master_GHG_Report_${selectedYear}.pdf`;
+    const filename = `Groupement_Berkine_Master_GHG_Report_${isAllYears ? "All_Years" : selectedYear}.pdf`;
     const pdfBlob = doc.output("blob");
     const pdfBlobWithMime = new Blob([pdfBlob], { type: "application/pdf" });
     const url = window.URL.createObjectURL(pdfBlobWithMime);
@@ -1615,11 +1658,11 @@ async function fetchAllReportData(
     const ch4Val = Number(r.ch4_emissions || 0);
     const n2oVal = Number(r.n2o_emissions || 0);
 
-    let tVal = 0;
-    if (co2Val > 0 || ch4Val > 0 || n2oVal > 0) {
+    // BUG-077: use the stored, server-calculated co2e_total (same basis as the dashboard);
+    // re-deriving it client-side made the PDF disagree with the dashboard
+    let tVal = Number(r.co2e_total || 0);
+    if (!tVal && (co2Val > 0 || ch4Val > 0 || n2oVal > 0)) {
       tVal = (co2Val * co2_factor) + (ch4Val * ch4_factor) + (n2oVal * n2o_factor);
-    } else {
-      tVal = Number(r.co2e_total || 0);
     }
 
     let scope = String(r.scope || "");

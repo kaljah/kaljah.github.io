@@ -737,7 +737,10 @@ export default function QADashboard() {
                                         </h3>
                                         <p style={{ color: '#64748b', maxWidth: '440px', margin: '0 auto' }}>
                                             No statistical outliers or data quality flags detected matching your current filters.
-                                            The inventory is fully verified and audit-compliant.
+                                            {/* BUG-084: say what is actually known, not "fully verified" */}
+                                            {data.pending_review_count > 0
+                                                ? ` ${data.pending_review_count} record(s) are still awaiting reviewer approval.`
+                                                : " All records in scope have been reviewed."}
                                         </p>
                                     </>
                                 ) : (
