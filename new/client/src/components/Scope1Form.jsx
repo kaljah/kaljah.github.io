@@ -1054,33 +1054,9 @@ const Scope1Form = () => {
 
       // Unit Conversion Logic
       let finalAmount = formData.amount ? parseFloat(formData.amount) : 0;
-      let finalUnit = formData.unit || "m3";
-
-      // payload debug logging removed — do not log emission data in production
-
-      // Auto-convert if factor has a baseUnit (e.g., Diesel in BBL -> Gal)
-      if (
-        sourceType === "default" &&
-        formData.fuel &&
-        API_FACTORS[formData.fuel]
-      ) {
-        const factor = API_FACTORS[formData.fuel];
-        if (factor.baseUnit && factor.baseUnit !== finalUnit) {
-          const converted = convertActivityData(
-            finalAmount,
-            finalUnit,
-            factor.baseUnit,
-          );
-          if (converted !== finalAmount) {
-            if (import.meta.env.DEV)
-              console.log(
-                `Converting ${finalAmount} ${finalUnit} to ${converted} ${factor.baseUnit}`,
-              );
-            finalAmount = converted;
-            finalUnit = factor.baseUnit;
-          }
-        }
-      }
+      // BUG-109: no hidden "m3" default and no client-side base-unit rewrite. The entered amount
+      // and unit are sent once (top level and calc_inputs agree) and the server converts them.
+      let finalUnit = formData.unit || "";
 
       // --- PROCESS-SPECIFIC UNIT STANDARDIZATION ---
 
@@ -1211,23 +1187,22 @@ const Scope1Form = () => {
         finalUnit = "m3";
       }
 
-      // 7. AGR — always normalize to MMscf for backend
+      // 7. AGR — send the entered throughput with its unit; the server converts it (BUG-066: the
+      //    old client conversion divided m³/yr by an extra 1000)
       if (processType === "agr") {
-        let throughput = parseFloat(formData.agr_throughput || 0);
         const agrUnit = formData.agr_unit || "MMscf/yr";
-        if (agrUnit === "MMscf/day") throughput *= 365;
-        else if (agrUnit === "Mcf/day") throughput = (throughput / 1000) * 365;
-        else if (agrUnit === "m3/yr") throughput = throughput / 28316.8 / 1000;
-        finalAmount = throughput;
-        finalUnit = "MMscf";
+        finalAmount = parseFloat(formData.agr_throughput || 0);
+        finalUnit = agrUnit;
+        processInputs.agr_unit = agrUnit;
       }
 
-      // 8. Dehydrator
+      // 8. Dehydrator — the throughput field is labelled MMscf/yr and the server calculator reads
+      //    MMscf/yr (BUG-091: it used to be stored as MMscf/day)
       if (processType === "dehydrator" && sourceType === "specific") {
         finalAmount = parseFloat(
           formData.dehy_throughput || formData.amount || 0,
         );
-        finalUnit = formData.dehy_unit || formData.unit || "MMscf/day";
+        finalUnit = "MMscf/yr";
       }
 
       // 9. Associated Gas Venting
@@ -1372,6 +1347,12 @@ const Scope1Form = () => {
           finalAmount = parseFloat(formData.component_count || 1);
           finalUnit = "sources";
         }
+      }
+
+      if (!finalUnit && sourceType !== "specific") {
+        toast.warning("Please select a unit");
+        setSubmitting(false);
+        return;
       }
 
       // Construct Backend-Compliant Payload

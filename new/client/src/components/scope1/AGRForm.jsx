@@ -138,51 +138,40 @@ const AGRForm = ({ data, onChange, sourceType }) => {
             </div>
           </div>
 
-          <div
-            className="checkbox-group"
-            style={{
-              display: "flex",
-              gap: "8px",
-              alignItems: "center",
-              marginTop: "12px",
-            }}
-          >
-            <input
-              type="checkbox"
-              checked={data.flash_gas_recycled || false}
-              onChange={(e) => onChange("flash_gas_recycled", e.target.checked)}
-              id="flash_gas_recycled"
+          {/* BUG-090: the old "flash gas recycled" / "routed to flare" checkboxes were read by no
+              server code. Control is now sent as the keys the calculator uses. */}
+          <div className="input-group">
+            <label>Acid Gas / Offgas Control</label>
+            <CustomDropdown
+              options={[
+                { value: "vent", label: "Vented (uncontrolled)" },
+                { value: "flare", label: "Routed to flare" },
+                { value: "thermal_oxidizer", label: "Thermal oxidizer / incinerator" },
+                { value: "claus", label: "Claus sulfur recovery unit" },
+                { value: "agi", label: "Acid gas injection / CCS" },
+              ]}
+              value={data.agr_control_type || "vent"}
+              onChange={(val) => onChange("agr_control_type", val)}
             />
-            <label
-              htmlFor="flash_gas_recycled"
-              style={{ margin: 0, fontWeight: "normal" }}
-            >
-              Flash Gas Recycled / Recovered
-            </label>
           </div>
-
-          <div
-            className="checkbox-group"
-            style={{
-              display: "flex",
-              gap: "8px",
-              alignItems: "center",
-              marginTop: "8px",
-            }}
-          >
-            <input
-              type="checkbox"
-              checked={data.offgas_to_flare || false}
-              onChange={(e) => onChange("offgas_to_flare", e.target.checked)}
-              id="offgas_to_flare"
-            />
-            <label
-              htmlFor="offgas_to_flare"
-              style={{ margin: 0, fontWeight: "normal" }}
-            >
-              Acid Gas / Offgas Routed to Flare
-            </label>
-          </div>
+          {(data.agr_control_type || "vent") !== "vent" && (
+            <div className="input-group">
+              <label>
+                Control Efficiency (%)
+                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+              </label>
+              <input
+                type="number"
+                className="mole-input"
+                min="0"
+                max="100"
+                value={data.agr_control_eff ?? ""}
+                onChange={(e) => onChange("agr_control_eff", e.target.value)}
+                placeholder="e.g. 98"
+                required
+              />
+            </div>
+          )}
         </>
       )}
     </div>
