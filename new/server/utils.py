@@ -279,3 +279,18 @@ def log_activity_and_notify(
     except Exception as e:
         if current_app:
             current_app.logger.error(f"Failed to create notification: {str(e)}")
+
+
+def internal_error(exc, message="Internal server error", status=500, **extra):
+    """BUG-087: log the exception server-side and return a generic body (no exception text)."""
+    from flask import current_app, jsonify
+
+    try:
+        current_app.logger.error("%s: %s", message, exc, exc_info=exc)
+    except Exception:
+        pass
+    body = {"error": message}
+    if "status_text" in extra:  # QA endpoints answer {"status": "error", "message": ...}
+        body.update(status=extra.pop("status_text"), message=message)
+    body.update(extra)
+    return jsonify(body), status
