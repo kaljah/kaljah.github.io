@@ -70,7 +70,7 @@ const DrillingForm = ({ data, onChange, sourceType }) => {
           }}
         >
           {isTier1
-            ? "Tier 1: API Standard Default"
+            ? "Tier 1: Standard Default"
             : isTier2Plus
             ? "Tier 2+: Onshore EF + Gas Composition"
             : "Tier 2: Saved Custom Factor (Database)"}
@@ -137,31 +137,11 @@ const DrillingForm = ({ data, onChange, sourceType }) => {
         </div>
       )}
 
-      {isTier1 && !isDefaultDays && (
-        <div
-          style={{
-            marginTop: "12px",
-            padding: "12px 14px",
-            background: "#f0f9ff",
-            border: "1px solid #bae6fd",
-            borderRadius: "6px",
-            fontSize: "0.82rem",
-            color: "#0369a1",
-            lineHeight: "1.5",
-          }}
-        >
-          <strong>API Table 6-3 Simplified Default:</strong>
-          <p style={{ margin: "4px 0 0 0" }}>
-            Methane emissions are estimated using the standard API factor of{" "}
-            <strong>0.0524 t CH₄ per drilled well</strong>.
-          </p>
-        </div>
-      )}
 
       {isTier2Plus && (
         <>
           <div className="input-group" style={{ marginTop: "12px" }}>
-            <label>Mud Type (API Compendium Onshore Defaults)</label>
+            <label>Mud Type</label>
             <CustomDropdown
               options={[
                 {
@@ -183,7 +163,7 @@ const DrillingForm = ({ data, onChange, sourceType }) => {
                 display: "block",
               }}
             >
-              Applies API Compendium onshore mud degassing emission factor adjusted for site gas composition.
+              Applies the onshore mud degassing emission factor adjusted for site gas composition.
             </small>
           </div>
 

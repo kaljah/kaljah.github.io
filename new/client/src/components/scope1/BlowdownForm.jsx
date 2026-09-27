@@ -120,10 +120,6 @@ const BlowdownForm = ({ data, onChange }) => {
           />
         </div>
       </div>
-      <div style={{ marginTop: "10px", fontSize: "0.85rem", color: "#9ca3af" }}>
-        * Standard volume is calculated per API Compendium §6.6 using
-        Boyle-Charles ideal/real gas law normalization ($P_1 V_1 / T_1 Z_1$).
-      </div>
     </div>
   );
 };

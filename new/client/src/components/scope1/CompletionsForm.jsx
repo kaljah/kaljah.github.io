@@ -27,7 +27,6 @@ const TIER1_FACTOR_MAP = {
   "gas_hf_uncontrolled": {
     code: "CompGasHF_Uncontrolled",
     name: "Gas Well Completion - Hydraulic Fracturing (Uncontrolled / Vented)",
-    table: "Table 6-5",
     ch4_tonnes: 28.8,
     co2_tonnes: 0.252,
     whole_gas_mscf: 1944.0,
@@ -37,7 +36,6 @@ const TIER1_FACTOR_MAP = {
   "gas_hf_rec": {
     code: "CompGasHF_REC",
     name: "Gas Well Completion - Hydraulic Fracturing (REC with Venting)",
-    table: "Table 6-5",
     ch4_tonnes: 13.542,
     co2_tonnes: 0.118,
     whole_gas_mscf: 914.0,
@@ -47,7 +45,6 @@ const TIER1_FACTOR_MAP = {
   "gas_hf_flared": {
     code: "CompGasHF_Uncontrolled",
     name: "Gas Well Completion - Hydraulic Fracturing (Flared)",
-    table: "Table 6-5 + §5.2 Flare",
     ch4_tonnes: 0.576, // 28.8 * 0.02
     co2_tonnes: 78.9,
     whole_gas_mscf: 1944.0,
@@ -57,7 +54,6 @@ const TIER1_FACTOR_MAP = {
   "oil_hf_uncontrolled": {
     code: "CompOilHF_Uncontrolled",
     name: "Oil Well Completion - Hydraulic Fracturing (Uncontrolled / Vented)",
-    table: "Table 6-5",
     ch4_tonnes: 14.419,
     co2_tonnes: 0.134,
     whole_gas_mscf: 973.0,
@@ -67,7 +63,6 @@ const TIER1_FACTOR_MAP = {
   "oil_hf_rec": {
     code: "CompOilHF_REC",
     name: "Oil Well Completion - Hydraulic Fracturing (REC with Venting)",
-    table: "Table 6-5",
     ch4_tonnes: 0.615,
     co2_tonnes: 0.005,
     whole_gas_mscf: 41.5,
@@ -77,7 +72,6 @@ const TIER1_FACTOR_MAP = {
   "oil_hf_flared": {
     code: "CompOilHF_Uncontrolled",
     name: "Oil Well Completion - Hydraulic Fracturing (Flared)",
-    table: "Table 6-5 + §5.2 Flare",
     ch4_tonnes: 0.288,
     co2_tonnes: 39.5,
     whole_gas_mscf: 973.0,
@@ -88,7 +82,6 @@ const TIER1_FACTOR_MAP = {
   "gas_nohf_vented": {
     code: "CompGasNoHF_Vented",
     name: "Gas Well Completion - Without Hydraulic Fracturing (Vented)",
-    table: "Table 6-6",
     ch4_tonnes: 1.7376,
     co2_tonnes: 0.0152,
     whole_gas_mscf: 117.3,
@@ -98,7 +91,6 @@ const TIER1_FACTOR_MAP = {
   "gas_nohf_flared": {
     code: "CompGasNoHF_Vented",
     name: "Gas Well Completion - Without Hydraulic Fracturing (Flared)",
-    table: "Table 6-6 + §5.2 Flare",
     ch4_tonnes: 0.0347,
     co2_tonnes: 4.76,
     whole_gas_mscf: 117.3,
@@ -108,7 +100,6 @@ const TIER1_FACTOR_MAP = {
   "oil_nohf_vented": {
     code: "CompOilNoHF_Vented",
     name: "Oil Well Completion - Without Hydraulic Fracturing (Vented)",
-    table: "Table 6-6",
     ch4_tonnes: 0.0141,
     co2_tonnes: 0.00013,
     whole_gas_mscf: 0.95,
@@ -118,7 +109,6 @@ const TIER1_FACTOR_MAP = {
   "oil_nohf_flared": {
     code: "CompOilNoHF_Vented",
     name: "Oil Well Completion - Without Hydraulic Fracturing (Flared)",
-    table: "Table 6-6 + §5.2 Flare",
     ch4_tonnes: 0.00028,
     co2_tonnes: 0.038,
     whole_gas_mscf: 0.95,
@@ -236,9 +226,6 @@ const CompletionsForm = ({ data, onChange, sourceType, setSourceType }) => {
           <h4 style={{ color: "var(--accent-color, #2563eb)", margin: 0 }}>
             Onshore Well Completion Flowback
           </h4>
-          <small style={{ color: "var(--text-muted, #6b7280)", fontSize: "0.8rem" }}>
-            API GHG Compendium 2021 §6.2.3 (Tables 6-5, 6-6; Equations 6-4, 6-5, 6-7, 6-12)
-          </small>
         </div>
         <div style={{ display: "flex", gap: "6px" }}>
           <button
@@ -256,7 +243,7 @@ const CompletionsForm = ({ data, onChange, sourceType, setSourceType }) => {
             }}
             onClick={() => handleTierSwitch("tier1")}
           >
-            Tier 1: API Defaults
+            Tier 1: Defaults
           </button>
           <button
             type="button"
@@ -300,21 +287,6 @@ const CompletionsForm = ({ data, onChange, sourceType, setSourceType }) => {
       {/* ========================================================================= */}
       {isTier1 && (
         <div>
-          <div
-            style={{
-              background: "rgba(59, 130, 246, 0.08)",
-              border: "1px solid rgba(59, 130, 246, 0.25)",
-              borderRadius: "6px",
-              padding: "10px 14px",
-              marginBottom: "16px",
-              fontSize: "0.85rem",
-              color: "var(--text-primary, #1e3a8a)",
-            }}
-          >
-            <strong>API Tables 6-5 & 6-6 Methodology:</strong> Tabulated default emission factors per completion event.
-            Accounts for well hydrocarbon stream (gas vs oil), hydraulic fracturing status, and emission controls (Uncontrolled, REC, or Flared).
-            Footnote c scales default factors when site-specific CH₄ and CO₂ mole percentages are provided.
-          </div>
 
           <div className="form-grid-3" style={{ marginBottom: "16px" }}>
             <div className="input-group">
@@ -351,8 +323,8 @@ const CompletionsForm = ({ data, onChange, sourceType, setSourceType }) => {
                   }
                 }}
               >
-                <option value="hf">With Hydraulic Fracturing (Table 6-5)</option>
-                <option value="no_hf">Without Hydraulic Fracturing (Table 6-6)</option>
+                <option value="hf">With Hydraulic Fracturing</option>
+                <option value="no_hf">Without Hydraulic Fracturing</option>
               </select>
             </div>
 
@@ -406,7 +378,7 @@ const CompletionsForm = ({ data, onChange, sourceType, setSourceType }) => {
               }}
             >
               <div>
-                <strong>Active Factor ({activeT1Factor.table}): </strong>
+                <strong>Active Factor: </strong>
                 <span>{activeT1Factor.name}</span>
                 <span style={{ display: "block", color: "#6b7280", marginTop: "2px" }}>
                   Whole Gas: {activeT1Factor.whole_gas_mscf.toLocaleString()} Mscf/event |
@@ -492,20 +464,6 @@ const CompletionsForm = ({ data, onChange, sourceType, setSourceType }) => {
       {/* ========================================================================= */}
       {isTier2 && (
         <div>
-          <div
-            style={{
-              background: "rgba(245, 158, 11, 0.08)",
-              border: "1px solid rgba(245, 158, 11, 0.25)",
-              borderRadius: "6px",
-              padding: "10px 14px",
-              marginBottom: "16px",
-              fontSize: "0.85rem",
-              color: "var(--text-primary, #92400e)",
-            }}
-          >
-            <strong>Tier 2 Engineering Methodology:</strong> Calculates whole gas flowback volume from operational data:
-            flowback rate × duration, API Eq. 6-12 (liquid flowback × GOR minus gas to sales), or API Eq. 6-7 (daily production rate × vent duration before separation).
-          </div>
 
           <div className="input-group" style={{ marginBottom: "16px" }}>
             <label>
@@ -520,11 +478,11 @@ const CompletionsForm = ({ data, onChange, sourceType, setSourceType }) => {
                 },
                 {
                   value: "gor",
-                  label: "Liquid Flowback × GOR (API Eq. 6-12)",
+                  label: "Liquid Flowback × GOR",
                 },
                 {
                   value: "api_equation_6_7",
-                  label: "Initial Production Rate × Vent Duration (API Eq. 6-7, Non-HF)",
+                  label: "Initial Production Rate × Vent Duration",
                 },
               ]}
               value={activeMethod}
@@ -783,20 +741,6 @@ const CompletionsForm = ({ data, onChange, sourceType, setSourceType }) => {
       {/* ========================================================================= */}
       {isTier3 && (
         <div>
-          <div
-            style={{
-              background: "rgba(16, 185, 129, 0.08)",
-              border: "1px solid rgba(16, 185, 129, 0.25)",
-              borderRadius: "6px",
-              padding: "10px 14px",
-              marginBottom: "16px",
-              fontSize: "0.85rem",
-              color: "var(--text-primary, #065f46)",
-            }}
-          >
-            <strong>Tier 3 Measurement Methodology:</strong> Full flowback measurement with nitrogen deduction (API Eq. 6-4),
-            initial unmetered flowback estimation (API Eq. 6-5), and fate partitioning across Vented, Flared, and Recovered volumes.
-          </div>
 
           {/* Section 1: Metered Gas & Injected N2 Deduction */}
           <div className="form-grid-4" style={{ marginBottom: "16px" }}>
@@ -845,7 +789,7 @@ const CompletionsForm = ({ data, onChange, sourceType, setSourceType }) => {
                 Injected N₂ Deduction (EnF)
                 <span
                   style={{ marginLeft: "4px", fontSize: "0.7rem", color: "#6b7280", cursor: "help" }}
-                  title="API Eq. 6-4: Non-combustible gases such as nitrogen are deducted from total flowback volume. Injected CO2 is NOT deducted per API §6.2.3.1."
+                  title="Non-combustible gases such as nitrogen are deducted from total flowback volume. Injected CO2 is NOT deducted per API §6.2.3.1."
                 >
                   ⓘ
                 </span>
@@ -887,7 +831,7 @@ const CompletionsForm = ({ data, onChange, sourceType, setSourceType }) => {
           >
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
               <label style={{ fontWeight: 600, fontSize: "0.85rem", color: "#374151", margin: 0 }}>
-                Initial Unmetered Flowback Period (API Eq. 6-5: V_i = [T_i × (V_gas / T_m)] / 2)
+                Initial Unmetered Flowback Period
               </label>
               <span style={{ fontSize: "0.75rem", color: "#6b7280" }}>
                 100% vented directly to atmosphere before routing to separator
@@ -1077,7 +1021,7 @@ const CompletionsForm = ({ data, onChange, sourceType, setSourceType }) => {
               <div className="input-group">
                 <label>
                   Flare Combustion Efficiency (%)
-                  <small style={{ color: "#6b7280", marginLeft: "4px" }}>(default 98% per API §5.2)</small>
+                  <small style={{ color: "#6b7280", marginLeft: "4px" }}></small>
                 </label>
                 <input
                   type="number"

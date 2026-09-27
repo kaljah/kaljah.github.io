@@ -5,7 +5,6 @@ import { useToast } from "./Toast";
 import { useAuth } from "../context/AuthContext";
 import { getUserOperationalDefaults } from "../utils/userDefaults";
 import { formatNumber } from "../utils/formatters";
-import { useGwpStandard } from "../hooks/useGwpStandard";
 import "./ScopeTables.css";
 import "./Scope1Form.css";
 
@@ -15,7 +14,6 @@ import ConfirmModal from "./ConfirmModal";
 import { Upload, Trash2, Eye, Sliders, Sparkles, BookOpen, Layers, PlusCircle, CheckCircle, Info } from "lucide-react";
 import { OFFICIAL_FUEL_PRESETS, getPresetsForFuel } from "../constants/officialFuelPresets";
 import QuickAddCustomFactorModal from "./QuickAddCustomFactorModal";
-import EmissionResult from "./EmissionResult";
 import CalculationDetails from "./CalculationDetails";
 import CombustionForm from "./scope1/CombustionForm";
 import DrillingForm from "./scope1/DrillingForm";
@@ -48,11 +46,13 @@ import {
 
 const PROCESS_TYPES = PROCESS_TYPES_MAP;
 
+// Emission UI shows no API Compendium / table citations (user request); legal references stay
+const hideApiCitation = (t) => (t && /\bAPI\b|Compendium|\bTables?\s*\d/.test(t) ? null : t);
+
 const Scope1Form = () => {
   const { user } = useAuth();
   const toast = useToast();
   // BUG-082: the inspector label reflects the org's active GWP standard
-  const { standard: activeGwpStandard, gwp: activeGwp } = useGwpStandard();
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
@@ -119,7 +119,6 @@ const Scope1Form = () => {
   const [totalPages, setTotalPages] = useState(1);
 
   const [showGasCalc, setShowGasCalc] = useState(false);
-  const [calculationResult, setCalculationResult] = useState(null);
   const [inspectRecord, setInspectRecord] = useState(null);
   const [processTypesAvailable, setProcessTypesAvailable] = useState([]); // API 2021: Dynamic process types
   const [importModal, setImportModal] = useState({
@@ -394,7 +393,7 @@ const Scope1Form = () => {
       setFuelDensity(preset.densityKgM3.toString());
     }
     if (preset.citation) {
-      setDataSourceRef(preset.citation);
+      setDataSourceRef(hideApiCitation(preset.citation) || "");
     }
     toast.success(`Preset applied: ${preset.shortLabel || preset.name}`);
   };
@@ -753,7 +752,7 @@ const Scope1Form = () => {
           const method = String(formData.calc_method || formData.method || "api_equation_6_10").toLowerCase();
           if (method === "api_equation_6_11") {
             if (!formData.p_shut || !formData.p_line || !formData.p_sep || !formData.sfr_p || !formData.t_p) {
-              toast.warning("All automated plunger parameters (Pshut, Pline, Psep, SFRp, Tp) are required for API Eq. 6-11");
+              toast.warning("All automated plunger parameters (Pshut, Pline, Psep, SFRp, Tp) are required");
               return;
             }
           } else if (method === "api_equation_6_10") {
@@ -764,7 +763,7 @@ const Scope1Form = () => {
             const hasSfr = formData.sfr !== undefined && formData.sfr !== null && formData.sfr !== "";
             const hasHours = formData.hours_open !== undefined && formData.hours_open !== null && formData.hours_open !== "";
             if (!hasDepth || !hasDiam || !hasPress || !hasEvents || !hasSfr || !hasHours) {
-              toast.warning("All Equation 6-10 parameters (depth, diameter, pressure, events, SFR, venting hours) are required");
+              toast.warning("Depth, diameter, pressure, events, SFR and venting hours are required");
               return;
             }
           } else {
@@ -805,7 +804,7 @@ const Scope1Form = () => {
             const hasRate = formData.comp_rate || formData.daily_production_rate || formData.comp_daily_prod_rate;
             const hasDur = formData.comp_duration || formData.vent_duration_hours;
             if (!hasRate || !hasDur) {
-              toast.warning("Initial production rate and vent duration are required for API Eq. 6-7");
+              toast.warning("Initial production rate and vent duration are required");
               return;
             }
           } else {
@@ -1474,9 +1473,6 @@ const Scope1Form = () => {
           ? "Entry saved as draft"
           : "Scope 1 entry added successfully",
       );
-      if (res.data?.emissions) {
-        setCalculationResult(res.data);
-      }
 
       // Reset Form (keep identity)
       setFormData({});
@@ -1552,7 +1548,7 @@ const Scope1Form = () => {
       entry.factor_source ||
       entry.factor_type ||
       payload.factor_source ||
-      "API Compendium 2021 (Default)";
+      "default";
     const facName =
       entry.facility_name ||
       facilities.find((f) => f.id === entry.facility_id)?.name ||
@@ -1575,8 +1571,8 @@ const Scope1Form = () => {
         entry.calc_method ||
         entry.calculation_method ||
         (fSource.toLowerCase().includes("specific")
-          ? "Tier 3 Engineering / CEMS"
-          : "API Compendium / Tier 1-2"),
+          ? "Tier 3 (site-specific)"
+          : "Tier 1-2 (emission factor)"),
       emissions: {
         totalCo2e: co2eVal,
         co2: co2Val,
@@ -1596,29 +1592,6 @@ const Scope1Form = () => {
         ch4: entry.uncertainty_ch4,
         n2o: entry.uncertainty_n2o,
       },
-      steps: [
-        {
-          name: "1. Operational Activity & Facility Scope",
-          desc: `Logged consumption / activity of ${formatNumber(qty, 2)} ${unitVal} for ${fuelVal} at ${facName} (${entry.year}-${String(entry.month || 1).padStart(2, "0")}).`,
-          formula: `Activity = ${formatNumber(qty, 2)} ${unitVal}`,
-        },
-        {
-          name: "2. Emission Factor Application & Species Mass",
-          desc: `Calculated direct chemical emission masses using ${fSource} methodology:`,
-          formula: `CO₂: ${formatNumber(co2Val, 4)} t | CH₄: ${formatNumber(ch4Val, 6)} t | N₂O: ${formatNumber(n2oVal, 6)} t`,
-        },
-        {
-          name: "3. Global Warming Potential (GWP AR5) Weighting",
-          desc: `Weighted summation to CO₂ equivalent using standard IPCC AR5 factors (CO₂: 1.0, CH₄: 28.0, N₂O: 265.0):`,
-          formula: `CO₂e = (${formatNumber(co2Val, 4)} × 1.0) + (${formatNumber(ch4Val, 6)} × 28.0) + (${formatNumber(n2oVal, 6)} × 265.0)`,
-          result: co2eVal,
-          unit: "tCO₂e",
-        },
-        {
-          name: "4. Quality Assurance & Uncertainty Profile",
-          desc: `Standard combined uncertainty (1σ): CO₂ ${entry.uncertainty_co2 != null ? '±' + (entry.uncertainty_co2 * 100).toFixed(0) + '%' : '—'}, CH₄ ${entry.uncertainty_ch4 != null ? '±' + (entry.uncertainty_ch4 * 100).toFixed(0) + '%' : '—'}, N₂O ${entry.uncertainty_n2o != null ? '±' + (entry.uncertainty_n2o * 100).toFixed(0) + '%' : '—'}. Verification Status: ${entry.status || 'Verified'}.`,
-        },
-      ],
     });
   };
 
@@ -1987,7 +1960,7 @@ const Scope1Form = () => {
                           {
                             key: "default",
                             tier: "Tier 1",
-                            label: "Standard API",
+                            label: "Standard",
                             sub: "Catalog Defaults",
                           },
                           {
@@ -2009,13 +1982,13 @@ const Scope1Form = () => {
                             key: "default",
                             tier: "Tier 1",
                             label: "Facility-Level",
-                            sub: "API Tables 7-1, 7-2",
+                            sub: "Facility average",
                           },
                           {
                             key: "custom",
                             tier: "Tier 2",
                             label: "Equipment & Component",
-                            sub: "Tables 7-9, 7-10, 7-11, 7-30",
+                            sub: "Equipment / component count",
                           },
                           {
                             key: "specific",
@@ -2028,7 +2001,7 @@ const Scope1Form = () => {
                           {
                             key: "default",
                             tier: "Tier 1",
-                            label: "Standard API",
+                            label: "Standard",
                             sub: "Catalog Defaults",
                           },
                           {
@@ -2202,7 +2175,7 @@ const Scope1Form = () => {
                               <div className="official-presets-header">
                                 <span className="official-presets-title">
                                   <BookOpen size={14} style={{ color: "var(--accent-color, #ff6600)" }} />
-                                  Official Legal & Standard Presets (Algerian Law / API Compendium)
+                                  Official Legal & Standard Presets
                                 </span>
                               </div>
                               <div className="official-presets-chips">
@@ -2214,9 +2187,9 @@ const Scope1Form = () => {
                                     onClick={() => handleApplyPreset(preset)}
                                     title={preset.description}
                                   >
-                                    <span className={`preset-citation-badge ${preset.citationType}`}>
-                                      {preset.citation}
-                                    </span>
+                                    {hideApiCitation(preset.citation) && <span className={`preset-citation-badge ${preset.citationType}`}>
+                                      {hideApiCitation(preset.citation)}
+                                    </span>}
                                     <span className="preset-name">{preset.shortLabel || preset.name}</span>
                                   </button>
                                 ))}
@@ -2873,71 +2846,10 @@ const Scope1Form = () => {
                 }}
               >
                 {sourceType === "default"
-                  ? "Automatically populated from EPA/IPCC catalogs"
+                  ? "Automatically populated from the emission factor catalog"
                   : "Enter specific uncertainties if known, otherwise leave blank to omit (—)"}
               </span>
             </div>
-          </div>
-        </div>
-
-        <div
-          className="formula-inspector-card"
-          style={{
-            background: "rgba(255, 247, 237, 0.7)",
-            border: "1px solid rgba(255, 102, 0, 0.25)",
-            borderRadius: "14px",
-            padding: "16px 20px",
-            marginBottom: "24px",
-            display: "flex",
-            flexDirection: "column",
-            gap: "8px",
-          }}
-        >
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <span style={{ fontSize: "0.82rem", fontWeight: 700, color: "var(--accent-color, #ff6600)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
-                📐 Live Equation Inspector (Tier 2/3 GHG Protocol)
-              </span>
-            </div>
-            <span style={{ fontSize: "0.78rem", color: "#64748b", fontWeight: 600 }}>
-              {activeGwp
-                ? `GWP Standard: IPCC ${activeGwpStandard} (CO₂:${activeGwp.CO2}, CH₄:${activeGwp.CH4}, N₂O:${activeGwp.N2O})`
-                : "GWP Standard: IPCC (loading active standard…)"}
-            </span>
-          </div>
-
-          <div
-            style={{
-              fontFamily: "monospace",
-              fontSize: "0.88rem",
-              background: "#ffffff",
-              padding: "10px 14px",
-              borderRadius: "8px",
-              border: "1px solid #fed7aa",
-              color: "#0f172a",
-              display: "flex",
-              alignItems: "center",
-              flexWrap: "wrap",
-              gap: "6px",
-            }}
-          >
-            <span style={{ color: "#ea580c", fontWeight: 700 }}>
-              {formData.amount || formData.quantity ? `${formData.amount || formData.quantity} ${formData.unit || "units"}` : "[Activity Data]"}
-            </span>
-            <span style={{ color: "#94a3b8" }}>×</span>
-            <span style={{ color: "#2563eb", fontWeight: 600 }}>
-              {formData.fuel ? `${formData.fuel} Factor` : "[Emission Factor]"}
-            </span>
-            <span style={{ color: "#94a3b8" }}>×</span>
-            <span style={{ color: "#16a34a", fontWeight: 600 }}>
-              {formData.hhv ? `${formData.hhv} HHV` : "1.0 HHV"}
-            </span>
-            <span style={{ color: "#94a3b8" }}>×</span>
-            <span style={{ color: "#9333ea", fontWeight: 600 }}>GWP</span>
-            <span style={{ color: "#94a3b8" }}>=</span>
-            <span style={{ color: "#0f172a", fontWeight: 800, background: "#fef08a", padding: "2px 6px", borderRadius: "4px" }}>
-              CO₂e Total (tCO₂e)
-            </span>
           </div>
         </div>
 
@@ -3462,13 +3374,6 @@ const Scope1Form = () => {
         onApply={handleGasApply}
         processType={processType}
       />
-
-      {calculationResult && (
-        <EmissionResult
-          result={calculationResult}
-          onClose={() => setCalculationResult(null)}
-        />
-      )}
 
       {inspectRecord && (
         <CalculationDetails

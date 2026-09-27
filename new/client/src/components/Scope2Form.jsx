@@ -8,7 +8,6 @@ import LoadingSpinner from "./LoadingSpinner";
 import { formatNumber } from "../utils/formatters";
 import ColumnMappingWizard from "./ColumnMappingWizard";
 import { Upload, Copy, Trash2, Eye } from "lucide-react";
-import EmissionResult from "./EmissionResult";
 import CalculationDetails from "./CalculationDetails";
 import ConfirmModal from "./ConfirmModal";
 import "./ScopeTables.css";
@@ -48,7 +47,6 @@ const Scope2Form = () => {
   const [cogenResults, setCogenResults] = useState(null);
 
   // Result and Inspect Modals
-  const [calculationResult, setCalculationResult] = useState(null);
   const [inspectRecord, setInspectRecord] = useState(null);
 
   const [facilities, setFacilities] = useState([]);
@@ -248,9 +246,6 @@ const Scope2Form = () => {
           ? "Entry saved as draft"
           : "Scope 2 entry added successfully",
       );
-      if (res.data?.emissions) {
-        setCalculationResult(res.data);
-      }
       setAmount("");
       setCurrentPage(1);
       loadEntries();
@@ -902,13 +897,6 @@ const Scope2Form = () => {
             loadEntries();
             toast.success("Bulk import completed successfully");
           }}
-        />
-      )}
-
-      {calculationResult && (
-        <EmissionResult
-          result={calculationResult}
-          onClose={() => setCalculationResult(null)}
         />
       )}
 

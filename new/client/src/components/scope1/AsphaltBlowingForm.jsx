@@ -59,19 +59,6 @@ const AsphaltBlowingForm = ({ data, onChange }) => {
         </div>
       </div>
 
-      <div
-        style={{
-          marginTop: "12px",
-          padding: "10px 14px",
-          background: "#f9fafb",
-          border: "1px solid #e5e7eb",
-          borderRadius: "6px",
-          fontSize: "0.8rem",
-          color: "#6b7280",
-        }}
-      >
-        <strong>API Compendium 2021 Section 6, Table 6-52:</strong> Oxidation of asphalt flux through air blowing at elevated temperature generating CO₂ and trace methane.
-      </div>
     </div>
   );
 };

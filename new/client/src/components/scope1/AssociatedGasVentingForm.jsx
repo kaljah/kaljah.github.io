@@ -16,7 +16,7 @@ import { Info, AlertTriangle, ShieldCheck, Activity, Flame, Wind } from "lucide-
 export const TABLE_6_8_BASINS = [
   {
     value: "Associated Gas Venting - US Average",
-    label: "US Average (Table 6-8)",
+    label: "US Average",
     basinKey: "us_average",
     ef_ch4_kg_bbl: 1.4,
     whole_gas_scf_bbl: 89.0,
@@ -56,7 +56,7 @@ export const TABLE_6_8_BASINS = [
   },
   {
     value: "Associated Gas Venting - Other US Basins",
-    label: "Other US Basins (Table 6-8)",
+    label: "Other US Basins",
     basinKey: "other",
     ef_ch4_kg_bbl: 0.4,
     whole_gas_scf_bbl: 26.0,
@@ -291,9 +291,6 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, setSourceTy
               Associated Gas Venting
             </h4>
           </div>
-          <small style={{ color: "var(--text-muted, #6b7280)", fontSize: "0.8rem" }}>
-            API GHG Compendium 2021 §6.3.1 (Equations 6-8, 6-9, Exhibits 6-5 &amp; 6-6, Table 6-8)
-          </small>
         </div>
 
         {/* Tier selection tabs */}
@@ -314,7 +311,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, setSourceTy
               transition: "all 0.15s ease",
             }}
           >
-            Tier 1: Table 6-8
+            Tier 1: Regional Default
           </button>
           <button
             type="button"
@@ -361,7 +358,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, setSourceTy
           <div className="form-grid-2">
             <div className="input-group">
               <label>
-                Regional Basin Factor (API Table 6-8)
+                Regional Basin Factor
                 <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
               </label>
               <CustomDropdown
@@ -440,18 +437,6 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, setSourceTy
                 <strong>{selectedBasin.ef_ch4_kg_bbl} kg CH₄ / bbl crude</strong> (Whole gas: {selectedBasin.whole_gas_scf_bbl} scf/bbl, Basis: {selectedBasin.ch4_mol_basis}% CH₄)
               </span>
             </div>
-            <span
-              style={{
-                fontSize: "0.72rem",
-                padding: "2px 6px",
-                background: "#dcfce7",
-                color: "#166534",
-                borderRadius: "4px",
-                fontWeight: 600,
-              }}
-            >
-              API Table 6-8
-            </span>
           </div>
 
           {/* Footnote b Gas Composition Adjustment */}
@@ -476,7 +461,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, setSourceTy
               }}
             >
               <Info size={16} style={{ color: "#0284c7" }} />
-              <span>Table 6-8 Footnote b: Gas Composition Adjustment (Optional)</span>
+              <span>Gas Composition Adjustment (Optional)</span>
             </div>
             <div style={{ fontSize: "0.78rem", color: "#64748b", marginBottom: "12px" }}>
               If site-specific gas analysis is available, the methane factor is adjusted by (X_CH₄ / {selectedBasin.ch4_mol_basis}%), and CO₂ emissions are calculated proportionally.
@@ -647,7 +632,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, setSourceTy
                 max="100"
                 step="0.01"
                 className="mole-input"
-                placeholder="Default: 70.0% (API Exhibit 6-5)"
+                placeholder="Default: 70.0%"
                 value={data.ch4_content !== undefined ? data.ch4_content : "70.0"}
                 onChange={(e) => onChange("ch4_content", e.target.value)}
               />
@@ -661,7 +646,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, setSourceTy
                 max="100"
                 step="0.01"
                 className="mole-input"
-                placeholder="Default: 10.0% (API Exhibit 6-5)"
+                placeholder="Default: 10.0%"
                 value={data.co2_content !== undefined ? data.co2_content : "10.0"}
                 onChange={(e) => onChange("co2_content", e.target.value)}
               />
@@ -1126,7 +1111,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, setSourceTy
               fontWeight: 600,
             }}
           >
-            {isTier3 ? "Tier 3: CEMS / Meter" : isTier2 ? "Tier 2: Engineering GOR" : "Tier 1: Table 6-8 Default"}
+            {isTier3 ? "Tier 3: CEMS / Meter" : isTier2 ? "Tier 2: Engineering GOR" : "Tier 1: Regional Default"}
           </span>
         </div>
 
