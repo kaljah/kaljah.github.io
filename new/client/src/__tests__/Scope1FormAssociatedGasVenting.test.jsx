@@ -84,11 +84,11 @@ describe("Scope1Form Associated Gas Venting Integration", () => {
     });
 
     // 1. Select Process Type: Click dropdown
-    const processDropdown = screen.getByText("Stationary Combustion");
+    const processDropdown = screen.getByText("Stationary Combustion", { selector: ".dropdown-selected *" });
     fireEvent.click(processDropdown);
 
     // Find and click "Associated Gas Venting" option
-    const agvOption = await screen.findByText("Associated Gas Venting");
+    const agvOption = (await screen.findAllByText("Associated Gas Venting", { selector: "[role=option], [role=option] *" }))[0];
     fireEvent.click(agvOption);
 
     // Verify Associated Gas Venting form is rendered
@@ -128,9 +128,9 @@ describe("Scope1Form Associated Gas Venting Integration", () => {
     });
 
     // Select Process
-    const processDropdown = screen.getByText("Stationary Combustion");
+    const processDropdown = screen.getByText("Stationary Combustion", { selector: ".dropdown-selected *" });
     fireEvent.click(processDropdown);
-    const agvOption = await screen.findByText("Associated Gas Venting");
+    const agvOption = (await screen.findAllByText("Associated Gas Venting", { selector: "[role=option], [role=option] *" }))[0];
     fireEvent.click(agvOption);
 
     // Click Tier 2: GOR Balance
