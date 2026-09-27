@@ -12,6 +12,7 @@ import EmissionResult from "./EmissionResult";
 import CalculationDetails from "./CalculationDetails";
 import ConfirmModal from "./ConfirmModal";
 import "./ScopeTables.css";
+import { UNCERTAINTY_COVERAGE_K } from "../constants";
 
 const Scope3Form = () => {
   const { user } = useAuth();
@@ -748,7 +749,7 @@ const Scope3Form = () => {
                     </td>
                     <td style={{ color: "#6b7280", fontSize: "0.85rem" }}>
                       {entry.uncertainty != null
-                        ? `${formatNumber(entry.uncertainty * 1.96 * 100, 1)}%`
+                        ? `${formatNumber(entry.uncertainty * UNCERTAINTY_COVERAGE_K * 100, 1)}%`
                         : "—"}
                       {entry.status === "Draft" && (
                         <span
