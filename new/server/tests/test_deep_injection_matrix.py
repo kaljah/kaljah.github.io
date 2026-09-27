@@ -436,7 +436,8 @@ class TestBulkCSVIngestionAllTiersAndScopes:
             f"{test_facility.name},2024-03,Venting,Natural Gas,2000,m3\n"
             # BUG-015: "Pneumatic Devices" is not a catalog factor; such rows used to be saved as 0 t
             f"{test_facility.name},2024-04,Pneumatics,Pneumatic Controller - Intermittent,15,devices\n"
-            f"{test_facility.name},2024-05,Fugitive,Compressor Seals,4,compressors\n"
+            # BUG-110: "Compressor Seals" is not a catalog factor; the row used to be booked as 4 valves
+            f"{test_facility.name},2024-05,Fugitive,Component - Compressor Seal,4,sources\n"
         )
         status = self._run_upload(app, csv_data, "scope1_tier1.csv", test_user.id, scope=1)
         assert status["status"] == "completed"

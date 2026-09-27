@@ -275,17 +275,16 @@ class TestScope2Methods:
         assert energy_mmbtu == 500.0
 
     def test_scope2_cogen_allocation_wri_efficiency_and_energy_methods(self):
-        """Scope 2 Cogeneration (CHP) Allocation Methods:
-        Total Facility Emissions: 10,000 tCO2e.
-        Heat Output H = 60 MWh, Power Output P = 40 MWh.
-        1. WRI Efficiency Method: e_h = 0.80, e_p = 0.33:
-           Denom = (60 / 0.80) + (40 / 0.33) = 75 + 121.212 = 196.212.
-           Heat Share = 75 / 196.212 = 0.38224.
-           Heat Allocated = 0.38224 * 10,000 = 3822.4 tCO2e.
-        2. Energy Content Method:
-           Heat Share = 60 / (60 + 40) = 0.60 (60%).
-           Heat Allocated = 0.60 * 10,000 = 6,000 tCO2e.
+        """Scope 2 Cogeneration (CHP) Allocation Methods.
+
+        Unit contract (BUG-097): heat_output in MMBtu, power_output in MWh (the Scope 2 form
+        labels). The earlier version of this test assumed power was already in MMBtu, which
+        encoded the defect. Re-derived with 1 MWh = 3.412142 MMBtu:
+        Total 10,000 tCO2e, heat H = 60 MMBtu, power P = 40 MWh = 136.4857 MMBtu.
+        1. WRI Efficiency (e_h 0.80, e_p 0.33): 75 / (75 + 413.593) = 0.153504 -> 1,535.04 t.
+        2. Energy Content: 60 / (60 + 136.4857) = 0.305365 -> 3,053.65 t.
         """
+        P_MMBTU = 40.0 * 3.412142
         # 1. WRI Efficiency
         data_wri = {
             "amount": 10000.0,
@@ -299,7 +298,7 @@ class TestScope2Methods:
             },
         }
         res_wri = _calc_cogen_allocation(data_wri)
-        expected_wri = ((60.0 / 0.8) / ((60.0 / 0.8) + (40.0 / 0.33))) * 10000.0
+        expected_wri = ((60.0 / 0.8) / ((60.0 / 0.8) + (P_MMBTU / 0.33))) * 10000.0
         assert abs(res_wri - expected_wri) < 1e-3
 
         # 2. Energy Content
@@ -315,7 +314,7 @@ class TestScope2Methods:
             },
         }
         res_energy = _calc_cogen_allocation(data_energy)
-        assert abs(res_energy - 6000.0) < 1e-4
+        assert abs(res_energy - 60.0 / (60.0 + P_MMBTU) * 10000.0) < 1e-4
 
 
 # ===========================================================================
