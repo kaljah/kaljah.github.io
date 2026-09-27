@@ -155,3 +155,32 @@ def ogmp_level_label(level: int) -> str:
         5: "Level 5 (Reconciled)",
     }
     return labels.get(level, f"Level {level}")
+
+
+def reconcile(top_down_tch4, bottom_up_tch4, threshold_pct=20.0):
+    """BUG-052: one server-side rule for top-down vs bottom-up methane.
+
+    Returns (variance_pct or None, variance_flag, status) where status is one of
+    "Reconciled", "Discrepancy Flagged", "No Bottom-Up", "No Top-Down", "No Activity".
+    """
+    td = float(top_down_tch4 or 0.0)
+    bu = float(bottom_up_tch4 or 0.0)
+    thr = float(threshold_pct or 20.0)
+    if td > 0 and bu > 0:
+        v = round((td - bu) / bu * 100.0, 2)
+        flag = abs(v) > thr
+        return v, flag, ("Discrepancy Flagged" if flag else "Reconciled")
+    if td > 0:
+        return None, True, "No Bottom-Up"
+    if bu > 0:
+        return None, False, "No Top-Down"
+    return None, False, "No Activity"
+
+
+def facility_bottom_up_tch4(facility_id, year):
+    from models import Emission
+    from extensions import db
+    from sqlalchemy import func
+
+    return float(db.session.query(func.coalesce(func.sum(Emission.ch4_emissions), 0.0)).filter(
+        Emission.facility_id == facility_id, Emission.year == year, Emission.status == "Verified").scalar() or 0.0)
