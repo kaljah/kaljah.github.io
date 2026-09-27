@@ -1,9 +1,9 @@
 """Form / payload contract regressions (BUG-090, BUG-110).
 
 Hand values:
-- BUG-110 facility-level fugitives, API Compendium 2021 Table 7-1 as held in
-  calculations/fugitive_onshore.py: gas well pad with dehydrator 0.106 t CH4/facility-day,
-  2 facilities x 365 d = 77.38 t CH4.
+- BUG-110 facility-level fugitives, API Compendium 2021 Table 7-8 (per unit of PRODUCTION, checked
+  against the Compendium text): gas production 2.601E-02 t CH4 / 10^6 scf, oil production
+  2.346E-04 t CH4 / bbl. 500 MMscf -> 13.005 t CH4; 20,000 bbl -> 4.692 t CH4.
 """
 import pytest
 
@@ -41,25 +41,31 @@ def test_bug090_agr_control_without_efficiency_is_rejected():
         dispatcher.dispatch("agr", dict(AGR, agr_control_type="flare"), {})
 
 
-UI_T1 = {"facility_type": "gas_pad_dehy", "unit": "facilities", "time_unit": "days", "facility_count": 2,
-         "amount": 2, "fugitive_tier": "tier1", "fugitive_method": "component", "factor_source": "default",
-         "operating_days": 365}
+UI_T1 = {"facility_type": "gas_production", "unit": "MMscf", "amount": 500, "fugitive_tier": "tier1",
+         "factor_source": "default"}
 
 
-def test_bug110_facility_level_fugitive_uses_table_factor():
+def test_bug110_facility_level_fugitive_uses_table_7_8():
     r = dispatcher.dispatch("fugitive", dict(UI_T1), {})
-    assert _ch4(r) == pytest.approx(2 * 0.106 * 365)
-    assert r["intermediate"]["api_table"] == "Table 7-1"
+    assert _ch4(r) == pytest.approx(500 * 2.601e-02)
+    assert r["intermediate"]["api_table"] == "Table 7-8"
+    oil = dispatcher.dispatch("fugitive", dict(UI_T1, facility_type="oil_production", amount=20000, unit="bbl"), {})
+    assert _ch4(oil) == pytest.approx(20000 * 2.346e-04)
 
 
-def test_bug110_duration_in_months_matches_days():
-    r = dispatcher.dispatch("fugitive", dict(UI_T1, operating_days=None, operating_hours=12, time_unit="months"), {})
-    assert _ch4(r) == pytest.approx(2 * 0.106 * 365)
+def test_bug110_gas_units_and_composition():
+    r = dispatcher.dispatch("fugitive", dict(UI_T1, amount=500e6, unit="scf"), {})
+    assert _ch4(r) == pytest.approx(500 * 2.601e-02)
+    # site gas at 90 % CH4 scales the 78.8 % basis factor
+    r = dispatcher.dispatch("fugitive", dict(UI_T1, ch4_content=90), {})
+    assert _ch4(r) == pytest.approx(500 * 2.601e-02 * 0.90 / 0.788)
 
 
 def test_bug110_unknown_facility_type_rejected():
     with pytest.raises(ValueError, match="facility type"):
-        dispatcher.dispatch("fugitive", dict(UI_T1, facility_type="gas_production"), {})
+        dispatcher.dispatch("fugitive", dict(UI_T1, facility_type="gas_pad_dehy"), {})
+    with pytest.raises(ValueError, match="Oil production must be in bbl"):
+        dispatcher.dispatch("fugitive", dict(UI_T1, facility_type="oil_production", unit="facilities"), {})
 
 
 def test_bug110_unrecognised_fugitive_request_not_booked_as_valves(app):

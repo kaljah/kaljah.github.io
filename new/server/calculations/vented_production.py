@@ -40,6 +40,9 @@ from .uncertainty import (
 )
 from .constants import DEFAULT_GWP, get_active_gwp
 
+# One gas-density convention with the rest of the engine (units.CONVERSIONS): scf -> m3 -> kg
+SCF_TO_M3 = 0.028316846592
+
 # Thermodynamic constants under standard conditions (60°F / 14.696 psia; 15.56°C / 101.325 kPa)
 MOLAR_VOL_US = 379.3   # scf / lb-mole
 MOLAR_VOL_SI = 23.685  # Sm³ / kg-mole
@@ -97,7 +100,9 @@ def _split_vent_flare(total_gas_m3, ch4_tonnes, co2_tonnes, ctrl_eff=0.0, hhv=10
 
 
 def _propagate_results(total_ch4, total_co2, flared_n2o, uncertainties, factor_source="default", category="vented"):
-    _tier = resolve_tier(factor_source)
+    # the dispatcher injects the record's factor source (default / custom / specific) so the tier
+    # follows the method actually used, not the calculator's citation label
+    _tier = resolve_tier((uncertainties or {}).get("_factor_source") or factor_source)
     ch4_res = propagate_uncertainty(
         total_ch4,
         resolve_ef_uncertainty(category, "ch4", _tier, (uncertainties or {}).get("ch4")),
@@ -551,7 +556,7 @@ class PneumaticDeviceCalculator(BaseCalculator):
             c_co2 /= 100.0
         c_co2 = max(0.0, min(1.0, c_co2))
 
-        hrs = max(0.0, float(hours or 8760))
+        hrs = max(0.0, float(8760 if hours is None else hours))  # 0 h is zero, not a full year
         total_gas_scf = 0.0
         calc_mode = "legacy"
 
@@ -612,9 +617,12 @@ class PneumaticDeviceCalculator(BaseCalculator):
             calc_mode = "intermittent_actuation"
             self.validate_inputs({"count": count}, ["count"])
             n_dev = float(count)
-            # Default EPA Subpart W factor: 13.5 scf/actuation
-            rate = float(bleed_rate) if bleed_rate and float(bleed_rate) > 0 else 13.5
-            total_gas_scf = n_dev * float(actuations) * rate
+            # BUG-100: 13.5 is the Subpart W intermittent factor in scf whole gas PER HOUR (Table 6-15),
+            # not a volume per actuation. Eq 6-13 needs the gas vented per actuation.
+            if not bleed_rate or float(bleed_rate) <= 0:
+                raise ValueError("Actuation-based pneumatic emissions need the gas volume per actuation (scf); "
+                                 "otherwise choose a controller type (Tables 6-14 / 6-15)")
+            total_gas_scf = n_dev * float(actuations) * float(bleed_rate)
 
         else:
             calc_mode = "continuous_bleed"
@@ -627,8 +635,8 @@ class PneumaticDeviceCalculator(BaseCalculator):
         total_gas_m3 = convert(total_gas_scf, "scf", "m3")
 
         # Mass via ideal gas law at standard conditions
-        total_ch4 = total_gas_scf * c_ch4 * (MW_CH4 / MOLAR_VOL_US) / LB_PER_TONNE
-        total_co2 = total_gas_scf * c_co2 * (MW_CO2 / MOLAR_VOL_US) / LB_PER_TONNE
+        total_ch4 = total_gas_scf * SCF_TO_M3 * c_ch4 * CONVERSIONS["density_ch4"] / 1000.0  # engine density convention
+        total_co2 = total_gas_scf * SCF_TO_M3 * c_co2 * CONVERSIONS["density_co2"] / 1000.0
 
         ch4_res, co2_res, n2o_res = _propagate_results(
             total_ch4=total_ch4,
@@ -1317,8 +1325,8 @@ class TankFlashingCalculator(BaseCalculator):
 
             rs = c1 * sg_x * ((p_sep + 14.7) ** c2) * math.exp((c3 * api) / (t_sep + 460.0))
             total_gas_scf = q_bbl * rs
-            gross_ch4_tonnes = total_gas_scf * c_ch4 * (MW_CH4 / MOLAR_VOL_US) / LB_PER_TONNE
-            gross_co2_tonnes = total_gas_scf * c_co2 * (MW_CO2 / MOLAR_VOL_US) / LB_PER_TONNE
+            gross_ch4_tonnes = total_gas_scf * SCF_TO_M3 * c_ch4 * CONVERSIONS["density_ch4"] / 1000.0  # engine density convention
+            gross_co2_tonnes = total_gas_scf * SCF_TO_M3 * c_co2 * CONVERSIONS["density_co2"] / 1000.0
 
         # ----------------------------------------------------------------------
         # Method 2: Standing Correlation (Eq 6-22 & 6-23, Exhibit 6-18b)
@@ -1384,6 +1392,8 @@ class TankFlashingCalculator(BaseCalculator):
 
             base_kg_per_bbl = info["kg_ch4_per_bbl"]
             base_mol = info["baseline_ch4_mol"]
+            if ch4_content is None:
+                c_ch4 = base_mol  # no site analysis: the table factor applies unscaled
             gross_ch4_kg = q_bbl * base_kg_per_bbl * (c_ch4 / base_mol)
             gross_ch4_tonnes = gross_ch4_kg / 1000.0
 
@@ -1447,8 +1457,8 @@ class TankFlashingCalculator(BaseCalculator):
         else:
             gor = float(gas_oil_ratio or 0.0)
             total_gas_scf = q_bbl * gor
-            gross_ch4_tonnes = total_gas_scf * c_ch4 * (MW_CH4 / MOLAR_VOL_US) / LB_PER_TONNE
-            gross_co2_tonnes = total_gas_scf * c_co2 * (MW_CO2 / MOLAR_VOL_US) / LB_PER_TONNE
+            gross_ch4_tonnes = total_gas_scf * SCF_TO_M3 * c_ch4 * CONVERSIONS["density_ch4"] / 1000.0  # engine density convention
+            gross_co2_tonnes = total_gas_scf * SCF_TO_M3 * c_co2 * CONVERSIONS["density_co2"] / 1000.0
 
         total_gas_m3 = convert(total_gas_scf, "scf", "m3")
 

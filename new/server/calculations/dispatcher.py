@@ -27,6 +27,7 @@ from .fugitive_onshore import (
 )
 from .midstream import AGRCalculator, DehydratorCalculator
 from .indirect import IndirectSteamCalculator, CogenAllocationCalculator
+from .vented_downstream import RefiningHydrogenPlantCalculator
 from .stoichiometry import StoichiometricCalculator, NitricAcidCalculator
 from .units import CONVERSIONS, calculate_co2e
 from .uncertainty import (
@@ -114,6 +115,10 @@ class CalculationDispatcher:
             "acid_gas_removal": AGRCalculator(),
             "dehydrator": DehydratorCalculator(),
             "indirect_steam": IndirectSteamCalculator(),
+            # section 6.11.3 hydrogen plants (routed to _hydrogen_plant before the catalog path)
+            "hydrogen_production": RefiningHydrogenPlantCalculator(),
+            "hydrogen_plant": RefiningHydrogenPlantCalculator(),
+            "smr_hydrogen": RefiningHydrogenPlantCalculator(),
             "cogen_allocation": CogenAllocationCalculator(),
             "cogen": CogenAllocationCalculator(),
             "stoichiometry": StoichiometricCalculator(),
@@ -251,6 +256,93 @@ class CalculationDispatcher:
         comps["co2_comp"] = fr.get("co2", 0.0)
         comps["n2_comp"] = fr.get("n2", 0.0)
         return comps
+
+    def _hydrogen_plant(self, flat_inputs, uncertainties, gwp_dict):
+        """API Compendium 2021 section 6.11.3 via RefiningHydrogenPlantCalculator.
+
+        - feedstock carbon balance (Eq 6-49) when feedstock rate + carbon fraction / composition are given;
+        - otherwise Table 6-51 on hydrogen produced (13.41 t CO2 / 10^6 scf H2). Tonnes of H2 are
+          converted on the Compendium basis: t x 2204.62 lb/t / 2.016 lb/lbmol x 379.3 scf/lbmol.
+        A CCS capture rate (fraction or %) removes the captured share of the process CO2.
+        """
+        from .vented_downstream import RefiningHydrogenPlantCalculator
+
+        def num(*keys):
+            for k in keys:
+                v = flat_inputs.get(k)
+                if v not in (None, "", "-"):
+                    x = float(v)
+                    if not math.isfinite(x) or x < 0:
+                        raise ValueError(f"'{k}' must be a finite, non-negative number")
+                    return x
+            return None
+
+        calc = RefiningHydrogenPlantCalculator()
+        feed_t = num("feedstock_rate_tonnes", "feedstock_tonnes")
+        cf = num("feedstock_carbon_fraction")
+        if feed_t is not None and cf is not None:
+            res = calc.calculate(method="feedstock_balance", feedstock_rate_tonnes_yr=feed_t,
+                                 feedstock_carbon_fraction=cf if cf <= 1 else cf / 100.0,
+                                 uncertainties=uncertainties, gwp_dict=gwp_dict)
+        else:
+            h2_scf = num("h2_produced_scf")
+            if h2_scf is None:
+                h2_t = num("h2_produced_tonnes")
+                if h2_t is None and str(flat_inputs.get("unit") or "").lower() in ("t", "tonne", "tonnes", "metric ton"):
+                    h2_t = num("amount", "quantity")
+                if h2_t is None:
+                    raise ValueError("Missing required field: hydrogen produced (h2_produced_tonnes or h2_produced_scf), "
+                                     "or feedstock rate with carbon fraction")
+                h2_scf = h2_t * 2204.62 / 2.016 * 379.3
+            res = calc.calculate(method="simple_factor", simple_basis="h2_scf", simple_volume=h2_scf,
+                                 uncertainties=uncertainties, gwp_dict=gwp_dict)
+        capture = self._optional_fraction(flat_inputs, ["ccs_capture_rate", "capture_rate"], 0.0)
+        if capture:
+            keep = 1.0 - capture
+            co2 = res["results"]["co2"]
+            if isinstance(co2, dict):
+                for k in ("value", "absolute_uncertainty", "lower_bound", "upper_bound", "lower_bound_95",
+                          "upper_bound_95", "ci_95_abs"):
+                    if isinstance(co2.get(k), (int, float)):
+                        co2[k] = co2[k] * keep
+            res["total_co2e"] = float(res.get("total_co2e") or 0.0) * keep
+            res.setdefault("inputs", {})["ccs_capture_rate"] = capture
+        return res
+
+    def _facility_fugitive(self, flat_inputs, uncertainties, gwp_dict):
+        """BUG-110 / RC-17: facility-level onshore fugitives, API 2021 Table 7-8 (per unit of production)."""
+        fac_type = flat_inputs.get("facility_type")
+        if fac_type in (None, ""):
+            fuel = str(flat_inputs.get("fuel") or "").lower()
+            fac_type = "oil_production" if "oil production" in fuel else ("gas_production" if "gas production" in fuel else None)
+        if fac_type in (None, ""):
+            raise ValueError("Missing required field: facility_type (oil_production or gas_production) for "
+                             "facility-level fugitives")
+        production = self._require_float(flat_inputs, ["production_volume", "amount", "quantity"], "production volume")
+        unit = flat_inputs.get("production_unit") or flat_inputs.get("unit")
+        ch4 = next((flat_inputs.get(k) for k in ("ch4_content", "c1") if flat_inputs.get(k) not in (None, "", "-")), None)
+        return OnshoreFacilityFugitiveCalculator().calculate(
+            production=production, production_unit=unit, facility_type=str(fac_type), ch4_content=ch4,
+            uncertainties=uncertainties, gwp_dict=gwp_dict,
+        )
+
+    @staticmethod
+    def _blowdown_residual(flat_inputs):
+        fp = flat_inputs.get("blowdown_final_pressure")
+        if fp in (None, ""):
+            fp = flat_inputs.get("final_pressure")
+        if fp in (None, ""):
+            return {}
+        return {"blowdown_mode": "differential", "final_pressure": float(fp)}
+
+    @staticmethod
+    def _well_location(flat_inputs):
+        """'offshore' only when the entry says so explicitly (well_location / location_type)."""
+        for k in ("well_location", "location_type", "offshore"):
+            v = flat_inputs.get(k)
+            if v is True or str(v).strip().lower() in ("offshore", "true", "1", "yes"):
+                return "offshore"
+        return "onshore"
 
     def _optional_fraction(self, flat_inputs, keys, default=0.0, is_percent=False):
         """Extracts an optional percentage or fraction normalized to 0.0 - 1.0."""
@@ -424,7 +516,20 @@ class CalculationDispatcher:
         # TIER 1 / TIER 2 ROUTING: default or custom factor sources
         # Only requires standard activity data; never fails on missing engineering inputs.
         # =========================================================================
-        if factor_source in ["default", "custom"] and process_type not in [
+        # BUG-104 (section 6.11.3): hydrogen plants are a stoichiometric calculation, never a catalog product
+        if process_type in ("hydrogen_production", "hydrogen_plant", "smr_hydrogen"):
+            return self._hydrogen_plant(flat_inputs, uncertainties, gwp_dict)
+
+        # RC-17: Tier 1 table methods that are calculators, not catalog multiplications — pneumatic
+        # controllers by type (Tables 6-14 / 6-15) and tank flashing without a catalog factor
+        # (Tables 6-22 / 6-24)
+        _has_catalog_ef = any(emission_factors.get(k) not in (None, "", "-", 0, 0.0) for k in ("co2", "ch4", "n2o"))
+        table_calculator = (
+            (process_type in ("pneumatic_devices", "pneumatic_device", "pneumatic")
+             and flat_inputs.get("pneu_controller_type") not in (None, ""))
+            or (process_type in ("tank", "tank_flashing", "storage_tanks") and not _has_catalog_ef)
+        )
+        if factor_source in ["default", "custom"] and not table_calculator and process_type not in [
             "drilling", "mud_degassing", "completions", "completion_flowback",
             "associated_gas_venting", "associated_venting", "associated_gas"
         ]:
@@ -552,24 +657,7 @@ class CalculationDispatcher:
                 or str(flat_inputs.get("fugitive_tier") or "").lower() in ("tier1", "tier_1", "facility")
                 or flat_inputs.get("facility_type") not in (None, "")
             ):
-                count = self._require_float(flat_inputs, ["facility_count", "amount", "quantity", "count"], "facility count")
-                fac_type = flat_inputs.get("facility_type")
-                if fac_type in (None, ""):
-                    raise ValueError("Missing required field: facility_type for facility-level fugitives")
-                days = flat_inputs.get("operating_days") or flat_inputs.get("days")
-                if days in (None, "") and flat_inputs.get("operating_hours") not in (None, ""):
-                    # same duration rule as the form: value in time_unit (hours / days / months / years)
-                    v = float(flat_inputs.get("operating_hours"))
-                    tu = str(flat_inputs.get("time_unit") or "hours").lower()
-                    hours = v * 24 if "day" in tu else v * 730 if "month" in tu else v * 8760 if "year" in tu else v
-                    days = hours / 24.0
-                return OnshoreFacilityFugitiveCalculator().calculate(
-                    facility_count=count,
-                    facility_type=str(fac_type),
-                    operating_days=float(days) if days not in (None, "") else 365.0,
-                    uncertainties=uncertainties,
-                    gwp_dict=gwp_dict,
-                )
+                return self._facility_fugitive(flat_inputs, uncertainties, gwp_dict)
             # Default / Custom for all processes uses standard catalog multiplication
             return self._generic_calculation(
                 flat_inputs,
@@ -746,6 +834,7 @@ class CalculationDispatcher:
                         "drilling days",
                     )
                     return calculator.calculate(
+                        location=self._well_location(flat_inputs),  # BUG-103: offshore Tables 6-2 / 6-7
                         tier="tier2_plus",
                         drilling_days=drilling_days,
                         mud_type=mud_type,
@@ -762,6 +851,7 @@ class CalculationDispatcher:
                         "drilling days",
                     )
                     return calculator.calculate(
+                        location=self._well_location(flat_inputs),  # BUG-103: offshore Tables 6-2 / 6-7
                         tier="tier2",
                         drilling_days=drilling_days,
                         mud_type=mud_type,
@@ -777,6 +867,7 @@ class CalculationDispatcher:
                         "well count",
                     )
                     return calculator.calculate(
+                        location=self._well_location(flat_inputs),  # BUG-103: offshore Tables 6-2 / 6-7
                         tier="tier1",
                         wells=wells,
                         uncertainties=uncertainties,
@@ -847,6 +938,7 @@ class CalculationDispatcher:
                 rate_u = flat_inputs.get("comp_rate_unit") or flat_inputs.get("rate_unit") or "mcf/hr"
 
                 return calculator.calculate(
+                    location=self._well_location(flat_inputs),  # BUG-103: offshore Tables 6-2 / 6-7
                     flowback_volume=vol_val,
                     volume_unit=vol_unit_val,
                     ch4_content=ch4_content,
@@ -1094,6 +1186,8 @@ class CalculationDispatcher:
                     z_factor=flat_inputs.get("z_factor", 1.0),
                     hhv=float(flat_inputs.get("hhv") or emission_factors.get("hhv") or 1020.0),
                     gwp_dict=gwp_dict,
+                    # Eq 6-32 / Exhibit 6-25 by default; a residual pressure switches to the released dP (BUG-101)
+                    **self._blowdown_residual(flat_inputs),
                 )
 
             elif process_type in ["associated_gas_venting", "associated_venting", "associated_gas"]:
@@ -1232,70 +1326,85 @@ class CalculationDispatcher:
                 else:
                     throughput_bbl = raw_throughput  # bbl
 
-                gor = self._require_float(
-                    flat_inputs, ["tank_gor", "gor"], "Gas-Oil Ratio (GOR scf/bbl)"
-                )
-                ch4_content = self._require_fraction(
-                    flat_inputs,
-                    ["tank_ch4_content", "ch4_content", "c1"],
-                    "tank flash gas CH4 content %",
-                )
+                # BUG-102: GOR is one of several methods; without it the Table 6-22 / 6-24 defaults (or
+                # VBE / Standing / EUB when separator data are given) apply instead of zero emissions
+                def _opt(keys):
+                    for k in keys:
+                        v = flat_inputs.get(k)
+                        if v not in (None, "", "-"):
+                            return v
+                    return None
+
+                gor = _opt(["tank_gor", "gor"])
+                ch4_raw = _opt(["tank_ch4_content", "ch4_content", "c1"])
                 tank_eff = self._optional_fraction(
                     flat_inputs, ["tank_control_eff", "control_efficiency"], 0.0
                 )
                 co2_content = self._optional_fraction(
                     flat_inputs, ["tank_co2_content", "co2_content", "co2_mol"], 0.0
                 )
-
-                ef_ch4_val = emission_factors.get("ch4", 0)
-                if not ef_ch4_val and gor == 0:
-                    from flask import current_app, has_app_context
-
-                    if has_app_context():
-                        current_app.logger.warning(
-                            "[Dispatcher] Storage tank calculation: both EF CH4 and GOR are zero."
-                        )
+                liquid = str(_opt(["tank_liquid_type", "liquid_type"]) or "crude").lower()
+                if liquid not in ("crude", "condensate", "produced_water"):
+                    raise ValueError("tank liquid type must be crude, condensate or produced_water")
+                api_g = _opt(["api_gravity", "tank_api_gravity"])
+                sep_p = _opt(["separator_pressure_psig", "sep_pressure"])
+                sep_t = _opt(["separator_temp_f", "sep_temp"])
 
                 return calculator.calculate(
                     throughput=throughput_bbl,
-                    gas_oil_ratio=gor,
-                    ch4_content=ch4_content,
+                    gas_oil_ratio=float(gor) if gor is not None else None,
+                    ch4_content=self._parse_fraction_value(ch4_raw, key_name="ch4_content") if ch4_raw is not None else None,
                     control_efficiency=tank_eff,
                     uncertainties=uncertainties,
                     process_type=process_type,
-                    ef_ch4=ef_ch4_val,
+                    ef_ch4=emission_factors.get("ch4", 0),
                     co2_content=co2_content,
                     hhv=float(flat_inputs.get("hhv") or emission_factors.get("hhv") or 1020.0),
                     gwp_dict=gwp_dict,
+                    method=_opt(["tank_method", "flashing_method"]),
+                    liquid_type=liquid,
+                    tank_size=str(_opt(["tank_size"]) or "large").lower(),
+                    api_gravity=float(api_g) if api_g is not None else None,
+                    separator_pressure_psig=float(sep_p) if sep_p is not None else None,
+                    separator_temp_f=float(sep_t) if sep_t is not None else None,
                 )
 
             elif process_type in ["pneumatic_devices", "pneumatic_device", "pneumatic"]:
+                # BUG-100: API 2021 section 6.3.6 - controller type (Tables 6-14 / 6-15), Eq 6-14 monitoring
+                # survey, Eq 6-13 actuation volume, or a measured bleed rate
                 count = self._require_float(
                     flat_inputs,
                     ["pneu_count", "device_count", "count", "amount", "quantity"],
                     "device count",
                 )
-                hours = self._require_float(
-                    flat_inputs,
-                    ["pneu_hours", "hours_operating", "hours", "operating_hours"],
-                    "annual operating hours",
-                )
-                bleed_rate = self._require_float(
-                    flat_inputs,
-                    ["pneu_bleed_rate", "bleed_rate"],
-                    "measured bleed rate",
-                )
-                bleed_unit = flat_inputs.get("pneu_bleed_unit", "scf")
-                if bleed_unit == "m3":
-                    bleed_rate *= 35.3147  # convert m3/hr to scf/hr
-                ch4_content = self._require_fraction(
-                    flat_inputs,
-                    ["pneu_ch4_content", "ch4_content", "c1", "gas_content"],
-                    "gas CH4 content %",
-                )
-
+                hours_raw = next((flat_inputs.get(k) for k in ("pneu_hours", "hours_operating", "hours", "operating_hours")
+                                  if flat_inputs.get(k) not in (None, "", "-")), None)
+                hours = float(hours_raw) if hours_raw is not None else 8760.0
+                if not (0 <= hours <= 8784):
+                    raise ValueError("annual operating hours must be between 0 and 8,784")
+                ctype = flat_inputs.get("pneu_controller_type") or flat_inputs.get("controller_type")
+                monitoring = str(flat_inputs.get("pneu_monitoring") or "").lower() in ("true", "1", "yes")
+                bleed_raw = flat_inputs.get("pneu_bleed_rate") or flat_inputs.get("bleed_rate")
+                if not ctype and not monitoring and bleed_raw in (None, "", "-"):
+                    raise ValueError("Missing required parameter for Tier 3 specific calculation: pneumatic "
+                                     "controllers need a controller type (Tables 6-14 / 6-15), monitoring "
+                                     "survey counts, or a measured bleed rate")
+                bleed_rate = float(bleed_raw) if bleed_raw not in (None, "", "-") else None
+                if bleed_rate is not None and flat_inputs.get("pneu_bleed_unit", "scf") == "m3":
+                    bleed_rate *= 35.3147  # m3 -> scf
+                ch4_raw = next((flat_inputs.get(k) for k in ("pneu_ch4_content", "ch4_content", "c1", "gas_content")
+                                if flat_inputs.get(k) not in (None, "", "-")), None)
+                if ch4_raw is None and bleed_rate is not None and not ctype:
+                    raise ValueError("Missing required field: gas CH4 content % (measured bleed rate method)")
+                # Table factors are on an 81.6 mol % CH4 basis; without a site analysis that basis is used
+                ch4_content = (self._parse_fraction_value(ch4_raw, key_name="ch4_content")
+                               if ch4_raw is not None else 0.816)
                 actuations = flat_inputs.get("pneu_actuations") or flat_inputs.get("actuations")
                 actuations_val = float(actuations) if actuations not in [None, "", "-"] else None
+
+                def _f(k):
+                    v = flat_inputs.get(k)
+                    return float(v) if v not in (None, "", "-") else None
 
                 return calculator.calculate(
                     count=count,
@@ -1304,7 +1413,15 @@ class CalculationDispatcher:
                     ch4_content=ch4_content,
                     uncertainties=uncertainties,
                     actuations=actuations_val,
+                    co2_content=self._optional_fraction(flat_inputs, ["pneu_co2_content", "co2_content"], 0.0),
                     gwp_dict=gwp_dict,
+                    controller_type=str(ctype).lower() if ctype else None,
+                    source_standard=str(flat_inputs.get("pneu_factor_standard") or "api").lower(),
+                    monitoring_program=monitoring,
+                    normal_count=_f("pneu_normal_count"),
+                    normal_fraction_year=_f("pneu_normal_fraction") if _f("pneu_normal_fraction") is not None else 1.0,
+                    malfunctioning_count=_f("pneu_malfunction_count"),
+                    malfunctioning_fraction_year=_f("pneu_malfunction_fraction") or 0.0,
                 )
 
             elif process_type in [
@@ -1407,23 +1524,7 @@ class CalculationDispatcher:
                 )
 
                 if is_facility:
-                    calc = OnshoreFacilityFugitiveCalculator()
-                    count = self._require_float(
-                        flat_inputs,
-                        ["facility_count", "amount", "quantity", "count"],
-                        "facility count",
-                    )
-                    fac_type = str(flat_inputs.get("facility_type") or flat_inputs.get("fuel") or "")
-                    custom_ef = flat_inputs.get("custom_ef") or flat_inputs.get("ef")
-                    return calc.calculate(
-                        facility_count=count,
-                        facility_type=fac_type,
-                        operating_days=op_days,
-                        custom_ef=float(custom_ef) if custom_ef is not None else None,
-                        ef_unit=str(emission_factors.get("unit") or flat_inputs.get("unit") or "tonne CH4/facility/day"),
-                        uncertainties=uncertainties,
-                        gwp_dict=gwp_dict,
-                    )
+                    return self._facility_fugitive(flat_inputs, uncertainties, gwp_dict)
 
                 elif is_screening_measurement:
                     calc = OnshoreScreeningMeasurementCalculator()

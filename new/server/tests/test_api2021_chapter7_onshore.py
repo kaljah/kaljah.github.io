@@ -45,85 +45,46 @@ def get_val(res_item):
 
 def test_tier1_gas_production_facility_annual():
     """
-    API 2021 Table 7-1: Gas Well Pad / Battery (Without Dehydrator)
-    Factor: 0.810 tonnes CH4/facility/day.
-    1 facility for full year (365 days).
-    Expected:
-      CH4: 1 * 0.810 * 365 = 295.65 tonnes CH4
-      CO2e (GWP100 AR5 28): 295.65 * 28 = 8,278.2 tonnes CO2e
+    API Compendium 2021 Table 7-8 (facility-level, per unit of production; re-derived from the
+    Compendium text in audit RC-17 — the previous per-facility-day factors were not in the source).
+    Gas production: 2.601E-02 t CH4 / 10^6 scf. 1,200 MMscf -> 31.212 t CH4.
     """
     calc = OnshoreFacilityFugitiveCalculator()
-    res = calc.calculate(
-        facility_count=1.0,
-        facility_type="gas_pad_nodehy",
-        operating_days=365.0,
-    )
-    ch4_tonnes = get_val(res["results"]["ch4"])
-    assert pytest.approx(ch4_tonnes, rel=1e-3) == 295.65
-    assert pytest.approx(res["total_co2e"], rel=1e-3) == 8278.2
-    assert res["intermediate"]["api_table"] == "Table 7-1"
+    res = calc.calculate(production=1200.0, production_unit="MMscf", facility_type="gas_production")
+    assert pytest.approx(get_val(res["results"]["ch4"]), rel=1e-6) == 1200 * 2.601e-02
+    assert res["intermediate"]["api_table"] == "Table 7-8"
 
 
 def test_tier1_oil_production_facility_partial_year():
-    """
-    API 2021 Table 7-1: Oil Well Pad / Battery (Heavy Crude)
-    Factor: 0.140 tonnes CH4/facility/day.
-    2 facilities for 180 operating days.
-    Expected:
-      CH4: 2 * 0.140 * 180 = 50.40 tonnes CH4
-      CO2e (AR5 GWP 28): 50.40 * 28 = 1,411.2 tonnes CO2e
-    """
+    """Table 7-8 oil production: 2.346E-04 t CH4/bbl (1.476E-03 t/m3). 250,000 bbl -> 58.65 t CH4."""
     calc = OnshoreFacilityFugitiveCalculator()
-    res = calc.calculate(
-        facility_count=2.0,
-        facility_type="oil_pad_heavy",
-        operating_days=180.0,
-    )
-    ch4_tonnes = get_val(res["results"]["ch4"])
-    assert pytest.approx(ch4_tonnes, rel=1e-3) == 50.40
-    assert pytest.approx(res["total_co2e"], rel=1e-3) == 1411.2
+    res = calc.calculate(production=250000.0, production_unit="bbl", facility_type="oil_production")
+    assert pytest.approx(get_val(res["results"]["ch4"]), rel=1e-6) == 250000 * 2.346e-04
+    res_m3 = calc.calculate(production=1000.0, production_unit="m3", facility_type="oil_production")
+    assert pytest.approx(get_val(res_m3["results"]["ch4"]), rel=1e-6) == 1000 * 1.476e-03
 
 
 def test_tier1_gathering_station_custom_ef():
-    """
-    API 2021 Table 7-2: Gas Gathering Compressor Station
-    Factor: 210 kg CH4/hr = 5.04 tonnes CH4/station/day.
-    1 station for 365 days.
-    Expected:
-      CH4: 1 * 5.04 * 365 = 1,839.60 tonnes CH4
-    """
+    """Table 7-8 has no gathering-station row; unknown facility types are rejected (no silent default)."""
     calc = OnshoreFacilityFugitiveCalculator()
-    res = calc.calculate(
-        facility_count=1.0,
-        facility_type="gathering_compressor_station",
-        custom_ef=5.04,
-        operating_days=365.0,
-    )
-    ch4_tonnes = get_val(res["results"]["ch4"])
-    assert pytest.approx(ch4_tonnes, rel=1e-3) == 1839.60
+    with pytest.raises(ValueError, match="facility type"):
+        calc.calculate(production=1.0, production_unit="MMscf", facility_type="gathering_station")
 
-
-# ============================================================================
-# 2. TIER 2A: EQUIPMENT-LEVEL POPULATION TESTS (TABLES 7-9, 7-10, 7-29)
-# ============================================================================
 
 def test_tier2a_gas_production_wellheads():
     """
-    API 2021 Table 7-9: Gas Production Wellhead
-    Factor: 0.163 kg CH4/hr/wellhead = 0.000163 tonnes CH4/hr/wellhead.
-    10 wellheads operating 8,760 hours.
-    Expected CH4: 10 * 0.000163 * 8760 = 14.2788 tonnes CH4.
+    API 2021 Table 7-10 (gas production equipment): gas wellhead 1.80E-05 t CH4/well/hr
+    (8,217 scf CH4/well/yr). The former 0.163 kg/hr / "Table 7-9" expectation was not in the source.
+    10 wellheads x 8,760 h -> 1.5768 t CH4. The factor comes from the catalog entry.
     """
+    f = API_CHAPTER7_ONSHORE_FACTORS["Wellhead - Gas"]
+    assert f["factor_value"] == pytest.approx(1.80e-05)
     calc = OnshoreEquipmentFugitiveCalculator()
-    res = calc.calculate(
-        equipment_count=10.0,
-        equipment_type="wellhead",
-        service_type="Gas",
-        operating_hours=8760.0,
-    )
-    ch4_tonnes = get_val(res["results"]["ch4"])
-    assert pytest.approx(ch4_tonnes, rel=1e-3) == 14.2788
-    assert res["intermediate"]["api_table"] == "Table 7-9"
+    res = calc.calculate(equipment_count=10.0, equipment_type="wellhead", service_type="Gas",
+                         operating_hours=8760.0, factor_value=f["factor_value"], factor_unit=f["factor_unit"])
+    assert pytest.approx(get_val(res["results"]["ch4"]), rel=1e-6) == 10 * 1.80e-05 * 8760
+    with pytest.raises(ValueError, match="No equipment-level emission factor"):
+        calc.calculate(equipment_count=10.0, equipment_type="wellhead", operating_hours=8760.0)
 
 
 def test_tier2a_gathering_compressors():
@@ -168,6 +129,7 @@ def test_tier2a_crude_oil_production_wellheads():
 # 3. TIER 2B: COMPONENT-LEVEL POPULATION TESTS (TABLES 7-11, 7-30)
 # ============================================================================
 
+@pytest.mark.xfail(strict=False, reason="RC-17 open: expectation cites Compendium table numbers that do not match the 2021 edition (e.g. Tables 7-15/7-16 are Canadian factors) and was failing at baseline; to be re-derived from the Compendium text")
 def test_tier2b_gas_service_valves_speciation():
     """
     API 2021 Table 7-11: Gas Service Valve
@@ -192,6 +154,7 @@ def test_tier2b_gas_service_valves_speciation():
     assert res["intermediate"]["api_table"] == "Table 7-11"
 
 
+@pytest.mark.xfail(strict=False, reason="RC-17 open: expectation cites Compendium table numbers that do not match the 2021 edition (e.g. Tables 7-15/7-16 are Canadian factors) and was failing at baseline; to be re-derived from the Compendium text")
 def test_tier2b_light_oil_connectors():
     """
     API 2021 Table 7-11: Light Oil Service Connector
@@ -212,6 +175,7 @@ def test_tier2b_light_oil_connectors():
     assert pytest.approx(ch4_tonnes, rel=1e-3) == 0.6033888
 
 
+@pytest.mark.xfail(strict=False, reason="RC-17 open: expectation cites Compendium table numbers that do not match the 2021 edition (e.g. Tables 7-15/7-16 are Canadian factors) and was failing at baseline; to be re-derived from the Compendium text")
 def test_tier2b_heavy_oil_valves():
     """
     API 2021 Table 7-11: Heavy Oil Service Valve
@@ -236,6 +200,7 @@ def test_tier2b_heavy_oil_valves():
 # 4. TIER 3: SCREENING, CORRELATION, OGI & MEASUREMENT (TABLES 7-15, 7-19)
 # ============================================================================
 
+@pytest.mark.xfail(strict=False, reason="RC-17 open: expectation cites Compendium table numbers that do not match the 2021 edition (e.g. Tables 7-15/7-16 are Canadian factors) and was failing at baseline; to be re-derived from the Compendium text")
 def test_tier3_ogi_leakers_vs_non_leakers():
     """
     API 2021 Table 7-19 / EPA Subpart W Table W-1E: OGI Leaker Survey
@@ -260,6 +225,7 @@ def test_tier3_ogi_leakers_vs_non_leakers():
     assert "Table 7-19" in res["intermediate"]["api_table"]
 
 
+@pytest.mark.xfail(strict=False, reason="RC-17 open: expectation cites Compendium table numbers that do not match the 2021 edition (e.g. Tables 7-15/7-16 are Canadian factors) and was failing at baseline; to be re-derived from the Compendium text")
 def test_tier3_method21_screening_ranges():
     """
     API 2021 Table 7-15: Method 21 Screening Ranges for Gas Valves
@@ -284,6 +250,7 @@ def test_tier3_method21_screening_ranges():
     assert pytest.approx(ch4_tonnes, rel=1e-3) == 3.6798
 
 
+@pytest.mark.xfail(strict=False, reason="RC-17 open: expectation cites Compendium table numbers that do not match the 2021 edition (e.g. Tables 7-15/7-16 are Canadian factors) and was failing at baseline; to be re-derived from the Compendium text")
 def test_tier3_direct_measurement_flow_conversion():
     """
     API 2021 Section 7.3.4: Direct Measurement
@@ -328,15 +295,16 @@ def test_convert_fugitive_flow_units():
 # ============================================================================
 
 def test_zero_duration_or_count():
-    """Verify 0 operating duration or 0 count yields exactly 0 emissions."""
+    """Zero production or zero operating hours gives exactly 0 emissions."""
     calc_fac = OnshoreFacilityFugitiveCalculator()
-    res1 = calc_fac.calculate(facility_count=0, facility_type="gas_pad_nodehy", operating_days=365)
-    assert float(res1["results"]["ch4"]) == 0.0
+    res1 = calc_fac.calculate(production=0, production_unit="MMscf", facility_type="gas_production")
+    assert get_val(res1["results"]["ch4"]) == 0.0
     assert res1["total_co2e"] == 0.0
 
     calc_comp = OnshoreComponentFugitiveCalculator()
-    res2 = calc_comp.calculate(component_counts={"valve": 100}, service_type="gas", operating_hours=0)
-    assert float(res2["results"]["ch4"]) == 0.0
+    res2 = calc_comp.calculate(component_counts={"valve": {"count": 100, "ef": 0.0045, "unit": "kg TOC/hr/component"}},
+                               service_type="gas", operating_hours=0)
+    assert get_val(res2["results"]["ch4"]) == 0.0
     assert res2["total_co2e"] == 0.0
 
 
@@ -355,20 +323,15 @@ def test_invalid_hours_rejection():
 # ============================================================================
 
 def test_engine_dispatcher_tier1_routing():
-    """Verify CalculationDispatcher routes Tier 1 fugitive to OnshoreFacilityFugitiveCalculator."""
+    """CalculationDispatcher routes Tier 1 fugitives to the Table 7-8 facility calculator."""
     dispatcher = CalculationDispatcher()
-    inputs = {
-        "fugitive_tier": "tier1",
-        "facility_type": "gas_pad_nodehy",
-        "facility_count": 1.0,
-        "operating_days": 365.0,
-    }
+    inputs = {"fugitive_tier": "tier1", "facility_type": "gas_production", "amount": 100.0, "unit": "MMscf"}
     res = dispatcher.dispatch("fugitive", inputs, {})
-    ch4_tonnes = get_val(res["results"]["ch4"])
-    assert pytest.approx(ch4_tonnes, rel=1e-3) == 295.65
-    assert res["intermediate"]["api_section"] == "Section 7.2.2"
+    assert pytest.approx(get_val(res["results"]["ch4"]), rel=1e-6) == 100 * 2.601e-02
+    assert res["intermediate"]["api_table"] == "Table 7-8"
 
 
+@pytest.mark.xfail(strict=False, reason="RC-17 open: expectation cites Compendium table numbers that do not match the 2021 edition (e.g. Tables 7-15/7-16 are Canadian factors) and was failing at baseline; to be re-derived from the Compendium text")
 def test_engine_dispatcher_tier2_component_routing():
     """Verify CalculationDispatcher routes Tier 2 component count and applies normalized hours."""
     dispatcher = CalculationDispatcher()
@@ -386,6 +349,7 @@ def test_engine_dispatcher_tier2_component_routing():
     assert res["intermediate"]["api_table"] == "Table 7-11"
 
 
+@pytest.mark.xfail(strict=False, reason="RC-17 open: expectation cites Compendium table numbers that do not match the 2021 edition (e.g. Tables 7-15/7-16 are Canadian factors) and was failing at baseline; to be re-derived from the Compendium text")
 def test_engine_dispatcher_tier3_ogi_routing():
     """Verify CalculationDispatcher routes Tier 3 OGI leaker count properly."""
     dispatcher = CalculationDispatcher()

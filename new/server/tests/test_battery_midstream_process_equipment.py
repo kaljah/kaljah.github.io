@@ -376,11 +376,12 @@ class TestPneumaticsBattery:
         assert pytest.approx(res["total_co2e"], rel=1e-4) == ref["co2e"]
 
     def test_intermittent_actuation_epa_default(self):
+        """BUG-100: 13.5 is the Subpart W intermittent factor in scf/HOUR (API 2021 Table 6-15), not a
+        volume per actuation. Actuation counts without a per-actuation volume are rejected; with one,
+        Eq 6-13 gives count x actuations x volume."""
         calc = PneumaticDeviceCalculator()
-        count = 4
-        actuations = 500  # 500 events per device
-        # When bleed_rate is None or 0, EPA Subpart W default 13.5 scf/actuation is used
-        res = calc.calculate(count=count, actuations=actuations, bleed_rate=None, ch4_content=0.88, gwp_dict=GWP_AR5)
-        ref = IndependentPneumatics.calculate(count=count, actuations=actuations, bleed_rate=13.5, ch4_content=0.88, gwp_standard="AR5")
-
+        with pytest.raises(ValueError, match="per actuation"):
+            calc.calculate(count=4, actuations=500, bleed_rate=None, ch4_content=0.88, gwp_dict=GWP_AR5)
+        res = calc.calculate(count=4, actuations=500, bleed_rate=13.5, ch4_content=0.88, gwp_dict=GWP_AR5)
+        ref = IndependentPneumatics.calculate(count=4, actuations=500, bleed_rate=13.5, ch4_content=0.88, gwp_standard="AR5")
         assert pytest.approx(_val(res["results"]["ch4"]), rel=1e-4) == ref["ch4"]
