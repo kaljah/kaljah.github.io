@@ -18,6 +18,7 @@ import {
   Settings,
 } from "lucide-react";
 import api from "../api";
+import { apiError } from "../utils/apiError";
 import "./ReferenceData.css";
 
 // Factors now loaded from API
@@ -30,19 +31,29 @@ const ReferenceData = () => {
   const [collapsed, setCollapsed] = useState({});
   const [loading, setLoading] = useState(true);
 
+  const [loadErrors, setLoadErrors] = useState([]);
+
+  // BUG-105: each catalog loads independently (allSettled); a failure is shown, not rendered as
+  // an empty catalog, and one failing endpoint no longer discards the other
   const fetchData = async () => {
-    try {
-      const [customRes, apiRes] = await Promise.all([
-        api.get("/custom-factors"),
-        api.get("/emission-factors"),
-      ]);
-      setCustomFactors(customRes.data);
-      setApiFactors(apiRes.data.factors || {});
-      setLoading(false);
-    } catch (error) {
-      console.error("Failed to load factors:", error);
-      setLoading(false);
+    const [customRes, apiRes] = await Promise.allSettled([
+      api.get("/custom-factors"),
+      api.get("/emission-factors"),
+    ]);
+    const errors = [];
+    if (customRes.status === "fulfilled") {
+      const d = customRes.value.data;
+      setCustomFactors(Array.isArray(d) ? d : d?.data || []);
+    } else {
+      errors.push(apiError(customRes.reason, "Custom factors could not be loaded"));
     }
+    if (apiRes.status === "fulfilled") {
+      setApiFactors(apiRes.value.data?.factors || {});
+    } else {
+      errors.push(apiError(apiRes.reason, "The API emission-factor catalog could not be loaded"));
+    }
+    setLoadErrors(errors);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -421,6 +432,16 @@ const ReferenceData = () => {
         </select>
       </div>
 
+      {loadErrors.length > 0 && (
+        <div
+          role="alert"
+          style={{ margin: "0 0 16px", padding: "12px 16px", borderRadius: 8, background: "#fef2f2",
+                   border: "1px solid #fecaca", color: "#991b1b", display: "flex", gap: 12, alignItems: "center" }}
+        >
+          <div style={{ flex: 1 }}>{loadErrors.map((e) => <div key={e}>{e}</div>)}</div>
+          <button type="button" className="btn-ghost" onClick={() => { setLoading(true); fetchData(); }}>Retry</button>
+        </div>
+      )}
       {loading ? (
         <div
           style={{ textAlign: "center", padding: "100px", color: "#64748b" }}
