@@ -5,64 +5,67 @@ import CustomDropdown from "../CustomDropdown";
 // API GHG COMPENDIUM (2021) CHAPTER 7 — ONSHORE REFERENCE TABLES & DATA
 // ============================================================================
 
-// BUG-110: the Tier 1 facility list and factors are the server's (calculations/fugitive_onshore.py,
-// FACILITY_TYPE_KEYS / API_CHAPTER7_ONSHORE_FACTORS) so the preview equals the saved record.
-// Facility-level factors are CH4 only, in kg CH4 per facility-day.
-const tier1 = (id, label, table, kgPerDay) => ({
-  id,
-  label: `${label} (${table})`,
-  sub: `Facility average: ${kgPerDay} kg CH₄/day`,
-  api_table: table,
-  factor_ch4: kgPerDay,
-  factor_co2: 0,
-  factor_unit: "kg/day/facility",
-  default_unit: "facilities",
-  default_days: 365,
-});
+// BUG-110 / RC-17: Tier 1 facility-level factors are API Compendium 2021 Table 7-8 — per unit of
+// PRODUCTION (the server's calculations/fugitive_onshore.py TABLE_7_8), not per facility-day.
+// Factors in tonnes CH4 per unit; gas factors are on a 78.8 mol % CH4 basis.
 const TIER1_FACILITIES = [
-  tier1("gas_pad_nodehy", "Gas Well Pad / Battery, no dehydrator", "Table 7-1", 54.3),
-  tier1("gas_pad_dehy", "Gas Well Pad / Battery, with dehydrator", "Table 7-1", 106),
-  tier1("central_gas", "Central Gas Production Facility", "Table 7-1", 445),
-  tier1("oil_pad_light", "Oil Well Pad / Battery, light crude", "Table 7-2", 38.4),
-  tier1("oil_pad_heavy", "Oil Well Pad / Battery, heavy crude", "Table 7-2", 3.1),
-  tier1("central_oil", "Central Oil Treatment / Battery", "Table 7-2", 175),
-];
-
-const TIER2A_EQUIPMENT_DATA = {
-  gas_production: {
-    label: "Onshore Gas Production (Table 7-9)",
-    api_table: "Table 7-9",
-    default_stream: { ch4: 78.8, co2: 1.4 },
-    equipment: [
-      { id: "wellhead", label: "Wellhead", factor: 0.163, unit: "kg CH₄/hr/wellhead", co2_factor: 0.0029 },
-      { id: "separator", label: "Separator", factor: 0.334, unit: "kg CH₄/hr/separator", co2_factor: 0.0059 },
-      { id: "heater_treater", label: "Heater-Treater", factor: 0.077, unit: "kg CH₄/hr/heater", co2_factor: 0.0014 },
-      { id: "header", label: "Header", factor: 0.106, unit: "kg CH₄/hr/header", co2_factor: 0.0019 },
-      { id: "compressor", label: "Reciprocating Compressor", factor: 1.450, unit: "kg CH₄/hr/compressor", co2_factor: 0.026 },
-      { id: "dehydrator", label: "Dehydrator", factor: 0.126, unit: "kg CH₄/hr/dehydrator", co2_factor: 0.0022 },
-      { id: "storage_tank", label: "Storage Tank Leaks", factor: 0.035, unit: "kg CH₄/hr/tank", co2_factor: 0.00062 },
+  {
+    id: "oil_production",
+    label: "Onshore Oil Production (Table 7-8)",
+    sub: "0.5173 lb CH₄ per bbl oil produced",
+    api_table: "Table 7-8",
+    units: [
+      { value: "bbl", label: "bbl oil", t_per_unit: 2.346e-4 },
+      { value: "m3", label: "m³ oil", t_per_unit: 1.476e-3 },
     ],
   },
-  gathering_boosting: {
-    label: "Onshore Gathering & Boosting (Table 7-10)",
+  {
+    id: "gas_production",
+    label: "Onshore Gas Production (Table 7-8)",
+    sub: "57.33 lb CH₄ per 10⁶ scf gas produced",
+    api_table: "Table 7-8",
+    units: [
+      { value: "MMscf", label: "MMscf gas", t_per_unit: 2.601e-2 },
+      { value: "Mcf", label: "Mcf gas", t_per_unit: 2.601e-5 },
+      { value: "scf", label: "scf gas", t_per_unit: 2.601e-8 },
+      { value: "m3", label: "m³ gas", t_per_unit: 9.184e-7 },
+    ],
+  },
+];
+
+// RC-17 / BUG-110: equipment-level factors are the server catalog entries (API Compendium 2021
+// Table 7-9 crude, Table 7-10 gas; verified against the Compendium text). `fuel` is the catalog key
+// the server applies, so the preview and the saved record use the same factor. CH4 only.
+const TIER2A_EQUIPMENT_DATA = {
+  gas_production: {
+    label: "Onshore Natural Gas Production (Table 7-10)",
     api_table: "Table 7-10",
-    default_stream: { ch4: 78.8, co2: 1.4 },
+    default_stream: { ch4: 78.8, co2: 0 },
     equipment: [
-      { id: "compressor", label: "Compressor", factor: 4.480, unit: "kg CH₄/hr/compressor", co2_factor: 0.079 },
-      { id: "separator", label: "Separator", factor: 0.420, unit: "kg CH₄/hr/separator", co2_factor: 0.0074 },
-      { id: "dehydrator", label: "Dehydrator", factor: 0.380, unit: "kg CH₄/hr/dehydrator", co2_factor: 0.0067 },
-      { id: "header", label: "Gathering Header", factor: 0.180, unit: "kg CH₄/hr/header", co2_factor: 0.0032 },
+      { id: "wellhead", label: "Gas Wellhead", fuel: "Wellhead - Gas", factor: 0.018, unit: "kg CH₄/hr/well" },
+      { id: "separator", label: "Separator", fuel: "Separator - Gas Production", factor: 0.0442, unit: "kg CH₄/hr/separator" },
+      { id: "heater", label: "Gas Heater", fuel: "Heater - Gas Production", factor: 0.046, unit: "kg CH₄/hr/heater" },
+      { id: "dehydrator", label: "Dehydrator", fuel: "Gas Dehydrator Unit - Fugitive Leaks", factor: 0.0713, unit: "kg CH₄/hr/dehydrator" },
+      { id: "meter", label: "Meter / Piping", fuel: "Meter / Piping Run - Gas Production", factor: 0.0352, unit: "kg CH₄/hr/meter" },
+      { id: "compressor_small", label: "Small Reciprocating Compressor", fuel: "Compressor - Gas Production Small Recip", factor: 0.212, unit: "kg CH₄/hr/compressor" },
+      { id: "compressor_large", label: "Large Reciprocating Compressor", fuel: "Compressor - Gas Production Large Recip", factor: 12.2, unit: "kg CH₄/hr/compressor" },
     ],
   },
   oil_production: {
-    label: "Onshore Crude Oil Production (Table 7-29)",
-    api_table: "Table 7-29",
-    default_stream: { ch4: 65.6, co2: 1.4 },
+    label: "Onshore Crude Oil Production (Table 7-9)",
+    api_table: "Table 7-9",
+    default_stream: { ch4: 78.8, co2: 0 },
     equipment: [
-      { id: "wellhead", label: "Wellhead", factor: 0.012, unit: "kg CH₄/hr/wellhead", co2_factor: 0.00021 },
-      { id: "separator", label: "Separator", factor: 0.024, unit: "kg CH₄/hr/separator", co2_factor: 0.00042 },
-      { id: "heater_treater", label: "Heater-Treater", factor: 0.015, unit: "kg CH₄/hr/heater", co2_factor: 0.00027 },
-      { id: "header", label: "Header", factor: 0.008, unit: "kg CH₄/hr/header", co2_factor: 0.00014 },
+      { id: "wellhead_light", label: "Wellhead - light crude", fuel: "Wellhead - Oil (Light Crude)", factor: 0.0156, unit: "kg CH₄/hr/well" },
+      { id: "wellhead_heavy", label: "Wellhead - heavy crude", fuel: "Wellhead - Oil (Heavy Crude)", factor: 0.000663, unit: "kg CH₄/hr/well" },
+      { id: "separator_light", label: "Separator - light crude", fuel: "Separator - Light Crude", factor: 0.041, unit: "kg CH₄/hr/separator" },
+      { id: "separator_heavy", label: "Separator - heavy crude", fuel: "Separator - Heavy Crude", factor: 0.000679, unit: "kg CH₄/hr/separator" },
+      { id: "heater_light", label: "Heater-treater - light crude", fuel: "Heater-Treater - Light Crude", factor: 0.0477, unit: "kg CH₄/hr/heater" },
+      { id: "header_light", label: "Header - light crude", fuel: "Header - Light Crude", factor: 0.162, unit: "kg CH₄/hr/header" },
+      { id: "header_heavy", label: "Header - heavy crude", fuel: "Header - Heavy Crude", factor: 0.000472, unit: "kg CH₄/hr/header" },
+      { id: "tank_light", label: "Tank - light crude", fuel: "Storage Tank Fugitive - Light Crude", factor: 0.0275, unit: "kg CH₄/hr/tank" },
+      { id: "compressor_small", label: "Small compressor - light crude", fuel: "Compressor - Small Reciprocating", factor: 0.0369, unit: "kg CH₄/hr/compressor" },
+      { id: "compressor_large", label: "Large compressor - light crude", fuel: "Compressor - Large Reciprocating", factor: 13.1, unit: "kg CH₄/hr/compressor" },
     ],
   },
 };
@@ -220,32 +223,41 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default", setSourceT
     : "ogi";
 
   // Tier 1 State
-  const selectedFacilityId = data.facility_type || TIER1_FACILITIES[0].id;
-  const facilityCount = parseFloat(data.facility_count || data.amount || 1);
-  const tier1DurationUnit = data.time_unit || "days";
-  const tier1DurationValue = parseFloat(data.operating_days || data.operating_hours || 365);
+  const selectedFacilityId = TIER1_FACILITIES.some((f) => f.id === data.facility_type)
+    ? data.facility_type
+    : TIER1_FACILITIES[1].id;
+  const tier1Fac = TIER1_FACILITIES.find((f) => f.id === selectedFacilityId);
+  const tier1Unit = tier1Fac.units.some((u) => u.value === data.unit) ? data.unit : tier1Fac.units[0].value;
+  const tier1Production = parseFloat(data.amount || 0);
 
   // BUG-110: the displayed Tier 1 defaults are written into the form state, so what the preview
   // shows is what is submitted
   useEffect(() => {
-    if (activeTier !== "tier1" || data.facility_type) return;
-    const def = TIER1_FACILITIES[0];
-    onChange("fugitive_tier", "tier1");
-    onChange("facility_type", def.id);
-    onChange("fuel", def.label);
-    onChange("unit", def.default_unit);
-    onChange("time_unit", "days");
-    if (!data.facility_count) onChange("facility_count", 1);
-    if (!data.amount) onChange("amount", 1);
-    if (!data.operating_days && !data.operating_hours) onChange("operating_days", def.default_days);
+    if (activeTier !== "tier1") return;
+    if (data.facility_type !== selectedFacilityId) {
+      onChange("fugitive_tier", "tier1");
+      onChange("facility_type", selectedFacilityId);
+      onChange("fuel", tier1Fac.label);
+    }
+    if (data.unit !== tier1Unit) onChange("unit", tier1Unit);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeTier, data.facility_type]);
+  }, [activeTier, data.facility_type, data.unit]);
 
   // Tier 2A State (Equipment)
-  const tier2aSegment = data.equipment_segment || "gas_production";
-  const tier2aEquipId = data.equipment_type || "wellhead";
+  const tier2aSegment = TIER2A_EQUIPMENT_DATA[data.equipment_segment] ? data.equipment_segment : "gas_production";
+  const tier2aEquipId = TIER2A_EQUIPMENT_DATA[tier2aSegment].equipment.some((e) => e.id === data.equipment_type)
+    ? data.equipment_type
+    : TIER2A_EQUIPMENT_DATA[tier2aSegment].equipment[0].id;
   const tier2aCount = parseFloat(data.equipment_count || data.amount || 1);
   const tier2aHours = parseFloat(data.operating_hours || 8760);
+
+  useEffect(() => {
+    if (activeTier !== "tier2" || tier2SubMethod !== "equipment") return;
+    const eqSel = TIER2A_EQUIPMENT_DATA[tier2aSegment].equipment.find((e) => e.id === tier2aEquipId);
+    if (eqSel && data.fuel !== eqSel.fuel) onChange("fuel", eqSel.fuel);
+    if (data.equipment_type !== tier2aEquipId) onChange("equipment_type", tier2aEquipId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTier, tier2SubMethod, tier2aSegment, tier2aEquipId, data.fuel]);
 
   // Tier 2B State (Component)
   const tier2bSegment = data.component_segment || "gas_gathering";
@@ -287,21 +299,7 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default", setSourceT
   const directHours = parseFloat(data.operating_hours || 8760);
 
   // Duration unit options
-  const durationUnitOptions = [
-    { value: "hours", label: "Hours" },
-    { value: "days", label: "Days (24h/day)" },
-    { value: "months", label: "Months (30.4d/mo)" },
-    { value: "year", label: "Years (8,760h/yr)" },
-  ];
 
-  // Helper to convert time value to normalized hours
-  const getNormalizedHours = (val, unit) => {
-    const v = parseFloat(val) || 0;
-    if (unit === "days") return v * 24;
-    if (unit === "months") return v * (8760 / 12);
-    if (unit === "year" || unit === "years") return v * 8760;
-    return v;
-  };
 
   // Helper to convert flow rate to kg/hr
   const convertFlowToKgHr = (rate, unit) => {
@@ -329,16 +327,13 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default", setSourceT
     const GWP_CH4 = 28.0; // IPCC AR5 100-yr
 
     if (activeTier === "tier1") {
-      const fac = TIER1_FACILITIES.find((f) => f.id === selectedFacilityId) || TIER1_FACILITIES[0];
-      citation = `API Compendium (2021) ${fac.api_table}`;
-      methodology = `Tier 1: Facility-Level Average (${fac.label})`;
-
-        const normDays = getNormalizedHours(tier1DurationValue, tier1DurationUnit) / 24;
-      ch4_kg = facilityCount * fac.factor_ch4 * normDays;
-      co2_kg = facilityCount * fac.factor_co2 * normDays;
-      intermediateSteps.push(`Facility Count: ${facilityCount} facilities`);
-      intermediateSteps.push(`Duration: ${tier1DurationValue} ${tier1DurationUnit} (${normDays.toFixed(1)} days)`);
-      intermediateSteps.push(`Factor: ${fac.factor_ch4} kg CH₄/day, ${fac.factor_co2} kg CO₂/day`);
+      const u = tier1Fac.units.find((x) => x.value === tier1Unit);
+      citation = `API Compendium (2021) ${tier1Fac.api_table}`;
+      methodology = `Tier 1: Facility-Level Average (${tier1Fac.label})`;
+      ch4_kg = tier1Production * u.t_per_unit * 1000;
+      co2_kg = 0;
+      intermediateSteps.push(`Production: ${tier1Production} ${u.label}`);
+      intermediateSteps.push(`Factor: ${u.t_per_unit} t CH₄ per ${u.label}`);
     } else if (activeTier === "tier2" && tier2SubMethod === "equipment") {
       const seg = TIER2A_EQUIPMENT_DATA[tier2aSegment];
       const eq = seg.equipment.find((e) => e.id === tier2aEquipId) || seg.equipment[0];
@@ -347,7 +342,7 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default", setSourceT
 
       const normHours = tier2aHours;
       ch4_kg = tier2aCount * eq.factor * normHours;
-      co2_kg = tier2aCount * (eq.co2_factor || eq.factor * (co2MolePct / Math.max(0.1, ch4MolePct))) * normHours;
+      co2_kg = 0; // Table 7-9 / 7-10 factors are CH4 only (as the server catalog)
 
       intermediateSteps.push(`Equipment: ${eq.label} (Count = ${tier2aCount})`);
       intermediateSteps.push(`Operating Hours: ${normHours} hrs`);
@@ -442,9 +437,9 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default", setSourceT
     tier2SubMethod,
     tier3Method,
     selectedFacilityId,
-    facilityCount,
-    tier1DurationUnit,
-    tier1DurationValue,
+    tier1Fac,
+    tier1Unit,
+    tier1Production,
     tier2aSegment,
     tier2aEquipId,
     tier2aCount,
@@ -649,64 +644,39 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default", setSourceT
             <div className="input-group">
               <label>Facility Type (API Table Citation)</label>
               <CustomDropdown
-                options={TIER1_FACILITIES.map((f) => ({
-                  value: f.id,
-                  label: f.label,
-                  subLabel: f.sub,
-                }))}
+                options={TIER1_FACILITIES.map((f) => ({ value: f.id, label: f.label, subLabel: f.sub }))}
                 value={selectedFacilityId}
                 onChange={(val) => {
-                  onChange("facility_type", val);
                   const found = TIER1_FACILITIES.find((x) => x.id === val);
+                  onChange("facility_type", val);
                   if (found) {
                     onChange("fuel", found.label);
-                    onChange("unit", found.default_unit);
-                    onChange("time_unit", "days");
+                    onChange("unit", found.units[0].value);
                   }
                 }}
               />
             </div>
 
             <div className="input-group">
-              <label>Facility Count</label>
+              <label>Production Volume</label>
               <input
                 type="number"
-                min="1"
-                step="1"
+                min="0"
+                step="any"
                 className="mole-input"
-                value={facilityCount}
-                onChange={(e) => {
-                  onChange("facility_count", e.target.value);
-                  onChange("amount", e.target.value);
-                }}
-                placeholder="e.g. 1"
+                value={data.amount ?? ""}
+                onChange={(e) => onChange("amount", e.target.value)}
+                placeholder="e.g. 120000"
               />
             </div>
 
             <div className="input-group">
-              <label>Operating Duration</label>
-              <div style={{ display: "flex", gap: "6px" }}>
-                <input
-                  type="number"
-                  min="0"
-                  step="any"
-                  className="mole-input"
-                  style={{ flex: 1 }}
-                  value={tier1DurationValue}
-                  onChange={(e) => {
-                    if (tier1DurationUnit === "days") onChange("operating_days", e.target.value);
-                    else onChange("operating_hours", e.target.value);
-                  }}
-                  placeholder="365"
-                />
-                <div style={{ width: "130px" }}>
-                  <CustomDropdown
-                    options={durationUnitOptions}
-                    value={tier1DurationUnit}
-                    onChange={(val) => onChange("time_unit", val)}
-                  />
-                </div>
-              </div>
+              <label>Production Unit</label>
+              <CustomDropdown
+                options={tier1Fac.units.map((u) => ({ value: u.value, label: u.label }))}
+                value={tier1Unit}
+                onChange={(val) => onChange("unit", val)}
+              />
             </div>
           </div>
         </div>
