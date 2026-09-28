@@ -11,6 +11,8 @@ Gas volume methods ("method"):
                                                                                    (Eq 6-16, Exhibit 6-15)
   co2_mass    physical volume (m3) x CO2 density (kg/m3) x CO2 weight fraction      (Eq 6-20, Exhibit 6-22)
   agr_balance sour gas volume x CO2 % - sweet gas volume x CO2 %, CH4 by Table 6-19   (Eq 6-18, Exhibit 6-17)
+  reported_mass  CH4 / CO2 mass from a process simulation (e.g. GRI-GLYCalc) or measurement, less control
+  thc_mass    total hydrocarbon loss (AP-42 Ch. 7 / simulation) x vent CH4 and CO2 wt %  (Section 6.3.9.3)
 
 Vented gas:  CH4 = V x y_CH4 ; CO2 = V x y_CO2
 Flared gas:  CH4 = V x y_CH4 x (1 - eff) ; CO2 = V x y_CO2 + V x (y_CH4 + 2 y_C2+) x eff   (C2+ as ethane)
@@ -95,7 +97,31 @@ class VentedGasCalculator(BaseCalculator):
 
     def calculate(self, method, inputs, uncertainties=None, gwp_dict=None):
         i = inputs
-        if str(method).lower() == "agr_balance":
+        activity = None
+        if str(method).lower() == "reported_mass":
+            u = str(i.get("mass_unit") or "t").strip().lower()
+            to_t = {"t": 1.0, "tonne": 1.0, "kg": 1e-3, "lb": 1 / 2204.62, "short_ton": 0.90718474}
+            if u not in to_t:
+                raise ValueError("Mass unit must be t, kg, lb or short_ton")
+            ch4 = _num(i.get("ch4_mass"), "CH4 emitted") * to_t[u]
+            co2 = _num(i.get("co2_mass"), "CO2 emitted", default=0.0) * to_t[u]
+            eff = _frac(i.get("control_efficiency"), "control efficiency")
+            ch4, co2, v_scf = ch4 * (1 - eff), co2 * (1 - eff), None
+            activity = (ch4 / (1 - eff) if eff < 1 else ch4, "t CH4 before control")
+        elif str(method).lower() == "thc_mass":
+            u = str(i.get("thc_loss_unit") or "t").strip().lower()
+            to_t = {"t": 1.0, "tonne": 1.0, "kg": 1e-3, "lb": 1 / 2204.62, "short_ton": 0.90718474}
+            if u not in to_t:
+                raise ValueError("Hydrocarbon loss unit must be t, kg, lb or short_ton")
+            m = _num(i.get("thc_loss") if i.get("thc_loss") not in (None, "") else i.get("amount"),
+                     "total hydrocarbon loss") * to_t[u]
+            w_ch4 = _frac(i.get("ch4_wt_pct"), "CH4 in vent (wt %)", required=True)
+            w_co2 = _frac(i.get("co2_wt_pct"), "CO2 in vent (wt %)")
+            if w_ch4 + w_co2 > 1.0001:
+                raise ValueError("Vent composition exceeds 100 wt %")
+            ch4, co2, v_scf = m * w_ch4, m * w_co2, None
+            activity = (m, "t hydrocarbon")
+        elif str(method).lower() == "agr_balance":
             u = str(i.get("gas_volume_unit") or i.get("unit") or "").lower().replace("³", "3")
             if u not in GAS_UNITS:
                 raise ValueError("Gas volume unit must be scf, Mcf, MMscf or m3")
@@ -119,6 +145,7 @@ class VentedGasCalculator(BaseCalculator):
             co2 = n * v * rho * w / 1000.0
             ch4 = 0.0
             v_scf = None
+            activity = (n * v, "m3 released")
         else:
             v_scf = self.gas_volume_scf(method, i)
             y_ch4 = _frac(i.get("ch4_content"), "CH4 content (mol %)", required=True)
@@ -143,5 +170,7 @@ class VentedGasCalculator(BaseCalculator):
                         "n2o": 0.0},
             "total_co2e": calculate_co2e(co2=co2, ch4=ch4, gwp_dict=gwp_dict),
             "intermediate": {"method": method, "gas_volume_scf": v_scf,
+                             "activity_amount": activity[0] if activity else None,
+                             "activity_unit": activity[1] if activity else None,
                              "disposition": str(i.get("disposition") or "vented").lower()},
         }

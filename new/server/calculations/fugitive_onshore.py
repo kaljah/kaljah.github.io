@@ -30,6 +30,7 @@ from .uncertainty import (
 )
 from .constants import DEFAULT_GWP, get_active_gwp
 from emission_factors_chapter7_onshore import (
+    METHOD21_CH4_WT_DEFAULT,
     API_CHAPTER7_ONSHORE_FACTORS,
     METHOD21_SCREENING_RANGES,
     OGI_LEAKER_FACTORS,
@@ -45,56 +46,36 @@ DENSITY_CH4 = 0.6785  # kg / Sm³ at 60°F, 14.696 psia
 DENSITY_CO2 = 1.861   # kg / Sm³ at 60°F, 14.696 psia
 
 
-def convert_fugitive_flow_to_kg_hr(value: float, unit: str, ch4_mol: float = 0.85, co2_mol: float = 0.01) -> dict:
+# measured leak rates: volumetric units are WHOLE GAS at standard conditions (scaled by the gas
+# mole fractions); mass units are CH4 mass (a whole-gas mass cannot be speciated from mole % alone)
+_VOL_M3_PER_HR = {"scf/hr": 0.028316846592, "scfh": 0.028316846592, "scf/h": 0.028316846592,
+                  "scf/day": 0.028316846592 / 24.0, "scfd": 0.028316846592 / 24.0,
+                  "m3/hr": 1.0, "m3/h": 1.0, "sm3/hr": 1.0, "m3/day": 1 / 24.0, "m3/d": 1 / 24.0,
+                  "l/min": 0.06, "lpm": 0.06}
+_MASS_KG_PER_HR = {"kg/hr": 1.0, "kg/h": 1.0, "kg/hour": 1.0, "lb/hr": 0.45359237, "lb/h": 0.45359237,
+                   "g/s": 3.6, "gps": 3.6, "tonne/yr": 1000.0 / 8760.0, "tonnes/yr": 1000.0 / 8760.0,
+                   "t/yr": 1000.0 / 8760.0, "tpy": 1000.0 / 8760.0}
+
+
+def convert_fugitive_flow_to_kg_hr(value: float, unit: str, ch4_mol: float = None, co2_mol: float = None) -> dict:
+    """Measured leak rate -> kg/hr of CH4 and CO2.
+
+    scf/hr, m3/hr ... : whole gas; CH4 = V x y_CH4 x rho_CH4, CO2 = V x y_CO2 x rho_CO2 (y_CH4 required)
+    kg/hr, lb/hr ...  : CH4 mass; CO2 = CH4 x (y_CO2 / y_CH4) x (44.01 / 16.04) when both are given
     """
-    Converts measured flow rate to kg/hr for CH4 and CO2.
-    Explicit conversion with no hidden constants.
-    """
-    u = str(unit or "kg/hr").strip().lower()
+    u = str(unit or "").strip().lower().replace(" ch4", "").replace("ch4", "").strip()
     val = float(value)
-
-    if u in ["kg/hr", "kg/h", "kg/hour"]:
-        ch4_kg = val * ch4_mol
-        co2_kg = val * co2_mol * (MW_CO2 / MW_CH4)
-    elif u in ["tonne/yr", "tonnes/yr", "t/yr", "tpy"]:
-        total_kg_hr = (val * 1000.0) / 8760.0
-        ch4_kg = total_kg_hr * ch4_mol
-        co2_kg = total_kg_hr * co2_mol * (MW_CO2 / MW_CH4)
-    elif u in ["scf/hr", "scfh", "scf/h"]:
-        # Volume flow: scf/hr -> Sm3/hr -> mass via density
-        m3_hr = val * CONVERSIONS["scf_to_m3"]
-        ch4_kg = m3_hr * ch4_mol * DENSITY_CH4
-        co2_kg = m3_hr * co2_mol * DENSITY_CO2
-    elif u in ["scf/day", "scfd"]:
-        scf_hr = val / 24.0
-        m3_hr = scf_hr * CONVERSIONS["scf_to_m3"]
-        ch4_kg = m3_hr * ch4_mol * DENSITY_CH4
-        co2_kg = m3_hr * co2_mol * DENSITY_CO2
-    elif u in ["m3/hr", "m3/h", "sm3/hr"]:
-        ch4_kg = val * ch4_mol * DENSITY_CH4
-        co2_kg = val * co2_mol * DENSITY_CO2
-    elif u in ["m3/day", "m3/d"]:
-        m3_hr = val / 24.0
-        ch4_kg = m3_hr * ch4_mol * DENSITY_CH4
-        co2_kg = m3_hr * co2_mol * DENSITY_CO2
-    elif u in ["l/min", "lpm"]:
-        m3_hr = (val * 60.0) / 1000.0
-        ch4_kg = m3_hr * ch4_mol * DENSITY_CH4
-        co2_kg = m3_hr * co2_mol * DENSITY_CO2
-    elif u in ["g/s", "gps"]:
-        kg_hr = (val * 3600.0) / 1000.0
-        ch4_kg = kg_hr * ch4_mol
-        co2_kg = kg_hr * co2_mol * (MW_CO2 / MW_CH4)
-    elif u in ["lb/hr", "lb/h"]:
-        kg_hr = val * CONVERSIONS["lb_to_kg"]
-        ch4_kg = kg_hr * ch4_mol
-        co2_kg = kg_hr * co2_mol * (MW_CO2 / MW_CH4)
-    else:
-        # Default fallback assume kg/hr
-        ch4_kg = val * ch4_mol
-        co2_kg = val * co2_mol
-
-    return {"ch4_kg_hr": ch4_kg, "co2_kg_hr": co2_kg}
+    y_co2 = float(co2_mol or 0.0)
+    if u in _VOL_M3_PER_HR:
+        if ch4_mol in (None, ""):
+            raise ValueError("A volumetric leak rate needs the gas CH4 content (mol %)")
+        m3_hr = val * _VOL_M3_PER_HR[u]
+        return {"ch4_kg_hr": m3_hr * float(ch4_mol) * DENSITY_CH4, "co2_kg_hr": m3_hr * y_co2 * DENSITY_CO2}
+    if u in _MASS_KG_PER_HR:
+        ch4_kg = val * _MASS_KG_PER_HR[u]
+        co2_kg = ch4_kg * (y_co2 / float(ch4_mol)) * (MW_CO2 / MW_CH4) if (y_co2 and ch4_mol) else 0.0
+        return {"ch4_kg_hr": ch4_kg, "co2_kg_hr": co2_kg}
+    raise ValueError(f"Unknown leak rate unit '{unit}'")
 
 
 # API Compendium 2021 Table 7-8 - facility-level average equipment leak factors for onshore
@@ -434,35 +415,53 @@ class OnshoreScreeningMeasurementCalculator(BaseCalculator):
         non_pegged_count: int,
         pegged_count: int,
         operating_hours: float = 8760.0,
-        ch4_content: float = 0.85,
+        ch4_content: float = None,
         uncertainties: dict = None,
         gwp_dict: dict = None,
     ) -> dict:
-        """Method 21 Screening Ranges (<10,000 ppmv vs >=10,000 ppmv pegged)."""
-        key = f"{component_type.lower()}_{service_type.lower()}".replace(" ", "_")
-        meta = METHOD21_SCREENING_RANGES.get(key, METHOD21_SCREENING_RANGES.get("valve_gas"))
+        """Screening ranges (Table 7-26): counts below / at or above 10,000 ppmv x TOC factor x CH4 wt
+        fraction of TOC (default Table C-1 for the service) x hours."""
+        comp = str(component_type or "").strip().lower().replace(" ", "_").replace("-", "_")
+        comp = {"valves": "valve", "pump": "pump_seal", "pump_seals": "pump_seal", "connectors": "connector",
+                "flanges": "flange", "oel": "open_ended_line", "others": "other", "prv": "other"}.get(comp, comp)
+        serv = str(service_type or "gas").strip().lower().replace(" ", "_").replace("/", "_")
+        key = f"{comp}_{serv}"
+        meta = METHOD21_SCREENING_RANGES.get(key)
+        if meta is None:
+            raise ValueError(f"Table 7-26 has no screening factor for '{component_type}' in '{service_type}' service")
+        n_low, n_high = float(non_pegged_count or 0), float(pegged_count or 0)
+        if n_low < 0 or n_high < 0:
+            raise ValueError("Component counts cannot be negative")
+        if n_low + n_high == 0:
+            raise ValueError("Enter the number of components below and / or at or above 10,000 ppmv")
+        if n_high and meta["pegged_10k_ef"] is None:
+            raise ValueError(f"Table 7-26 has no >= 10,000 ppmv factor for '{component_type}' in '{service_type}' service")
+        if ch4_content in (None, ""):
+            w = METHOD21_CH4_WT_DEFAULT.get(serv)
+            if w is None:
+                raise ValueError(f"Enter the CH4 weight fraction of TOC for '{service_type}' service")
+        else:
+            w = float(ch4_content)
+            w = w / 100.0 if w > 1.0 else w
+        if not 0.0 <= w <= 1.0:
+            raise ValueError("CH4 weight fraction must be between 0 and 100 %")
+        hours = float(operating_hours)
+        if hours < 0:
+            raise ValueError("Operating hours cannot be negative")
 
-        ef_non_pegged = meta["non_pegged_ef"]
-        ef_pegged = meta["pegged_10k_ef"]
-
-        c_ch4 = max(0.0, min(1.0, float(ch4_content or 0.85)))
-        toc_kg_hr = (float(non_pegged_count) * ef_non_pegged) + (float(pegged_count) * ef_pegged)
-        ch4_kg_hr = toc_kg_hr * c_ch4
-
-        total_ch4_tonnes = (ch4_kg_hr * float(operating_hours)) / 1000.0
+        toc_kg_hr = n_low * meta["non_pegged_ef"] + n_high * (meta["pegged_10k_ef"] or 0.0)
+        total_ch4_tonnes = toc_kg_hr * w * hours / 1000.0
         total_co2e = calculate_co2e(co2=0.0, ch4=total_ch4_tonnes, gwp_dict=gwp_dict)
-
-        _tier = "Tier 3"
-        ch4_res = propagate_uncertainty(total_ch4_tonnes, 0.15, tier=_tier, process_category="fugitive_screening", gas="ch4")
-
+        ch4_res = propagate_uncertainty(total_ch4_tonnes, 0.15, tier="Tier 3", process_category="fugitive_screening", gas="ch4")
         return {
             "results": {"ch4": ch4_res, "co2": 0.0, "n2o": 0.0},
             "total_co2e": total_co2e,
             "intermediate": {
                 "api_table": meta["table"],
-                "methodology": "Tier 3A: Method 21 Screening Ranges",
-                "counts": {"non_pegged_<10k": non_pegged_count, "pegged_>=10k": pegged_count},
-                "factors_kg_hr": {"non_pegged": ef_non_pegged, "pegged": ef_pegged},
+                "methodology": "Tier 3A: screening ranges",
+                "counts": {"below_10k": n_low, "at_or_above_10k": n_high},
+                "factors_kg_toc_hr": {"below_10k": meta["non_pegged_ef"], "at_or_above_10k": meta["pegged_10k_ef"]},
+                "ch4_wt_fraction": w,
                 "total_ch4_tonnes": total_ch4_tonnes,
             },
         }
@@ -558,47 +557,53 @@ class OnshoreScreeningMeasurementCalculator(BaseCalculator):
         self,
         component_type: str,
         service_type: str,
-        total_surveyed: int,
-        leakers_detected: int,
+        total_surveyed: int = None,
+        leakers_detected: int = 0,
         operating_hours: float = 8760.0,
         uncertainties: dict = None,
         gwp_dict: dict = None,
+        ch4_mol: float = None,
+        co2_mol: float = None,
     ) -> dict:
-        """Optical Gas Imaging (OGI) Leaker Method (§7.2.2, Table 7-19 / W-1E)."""
-        if total_surveyed < 0:
-            raise ValueError("Total surveyed components cannot be negative")
-        if leakers_detected < 0:
-            raise ValueError("Detected leakers cannot be negative")
-        if leakers_detected > total_surveyed:
-            raise ValueError(f"Detected leakers ({leakers_detected}) cannot exceed total surveyed ({total_surveyed})")
+        """Leaker survey (Table 7-23): leakers x whole-gas factor (scf/h) x hours x site CH4 / CO2.
 
-        key = f"{component_type.lower()}_{service_type.lower()}".replace(" ", "_")
-        meta = OGI_LEAKER_FACTORS.get(key, OGI_LEAKER_FACTORS.get("valve_gas"))
-
-        ef_leak = meta["leaker_ef"]
-        ef_non_leak = meta["non_leaker_ef"]
-
-        non_leakers = total_surveyed - leakers_detected
-        ch4_kg_hr = (float(leakers_detected) * ef_leak) + (float(non_leakers) * ef_non_leak)
-
-        total_ch4_tonnes = (ch4_kg_hr * float(operating_hours)) / 1000.0
-        total_co2e = calculate_co2e(co2=0.0, ch4=total_ch4_tonnes, gwp_dict=gwp_dict)
-
-        _tier = "Tier 3"
-        ch4_res = propagate_uncertainty(total_ch4_tonnes, 0.15, tier=_tier, process_category="fugitive_ogi", gas="ch4")
-
+        The table has leaker factors only; without a site CH4 content its 81.6 mol % basis applies.
+        """
+        leakers = float(leakers_detected or 0)
+        if leakers < 0 or leakers != int(leakers):
+            raise ValueError("Detected leakers must be a whole number, zero or more")
+        if total_surveyed not in (None, "") and leakers > float(total_surveyed):
+            raise ValueError(f"Detected leakers ({int(leakers)}) cannot exceed total surveyed ({total_surveyed})")
+        comp = str(component_type or "").strip().lower().replace(" ", "_").replace("-", "_")
+        comp = {"valves": "valve", "flanges": "flange", "connectors": "connector", "oel": "open_ended_line",
+                "pressure_relief_valve": "prv", "pump": "pump_seal", "pump_seals": "pump_seal",
+                "others": "other"}.get(comp, comp)
+        serv = str(service_type or "gas").strip().lower().replace(" ", "_")
+        serv = {"light_oil": "light_crude", "heavy_oil": "heavy_crude"}.get(serv, serv)
+        meta = OGI_LEAKER_FACTORS.get(f"{comp}_{serv}")
+        if meta is None:
+            raise ValueError(f"Table 7-23 has no leaker factor for '{component_type}' in '{service_type}' service")
+        hours = float(operating_hours)
+        if hours < 0:
+            raise ValueError("Operating hours cannot be negative")
+        y_ch4 = meta["ch4_basis"] if ch4_mol in (None, "") else float(ch4_mol)
+        y_co2 = float(co2_mol or 0.0)
+        gas_m3 = leakers * meta["whole_gas_scf_hr"] * hours * CONVERSIONS["scf_to_m3"]
+        ch4_t = gas_m3 * y_ch4 * DENSITY_CH4 / 1000.0
+        co2_t = gas_m3 * y_co2 * DENSITY_CO2 / 1000.0
+        total_co2e = calculate_co2e(co2=co2_t, ch4=ch4_t, gwp_dict=gwp_dict)
+        ch4_res = propagate_uncertainty(ch4_t, 0.15, tier="Tier 3", process_category="fugitive_ogi", gas="ch4")
+        co2_res = propagate_uncertainty(co2_t, 0.15, tier="Tier 3", process_category="fugitive_ogi", gas="co2") if co2_t else 0.0
         return {
-            "results": {"ch4": ch4_res, "co2": 0.0, "n2o": 0.0},
+            "results": {"ch4": ch4_res, "co2": co2_res, "n2o": 0.0},
             "total_co2e": total_co2e,
             "intermediate": {
                 "api_table": meta["table"],
-                "methodology": "Tier 3C: OGI Leaker Survey",
-                "surveyed_population": total_surveyed,
-                "detected_leakers": leakers_detected,
-                "non_leakers": non_leakers,
-                "leaker_ef_kg_hr": ef_leak,
-                "non_leaker_ef_kg_hr": ef_non_leak,
-                "total_ch4_tonnes": total_ch4_tonnes,
+                "methodology": "Tier 3C: leaker survey",
+                "detected_leakers": int(leakers),
+                "whole_gas_scf_hr_per_leaker": meta["whole_gas_scf_hr"],
+                "ch4_mol_fraction": y_ch4,
+                "total_ch4_tonnes": ch4_t,
             },
         }
 
@@ -607,8 +612,8 @@ class OnshoreScreeningMeasurementCalculator(BaseCalculator):
         measured_rate: float,
         measurement_unit: str = "kg/hr",
         operating_hours: float = 8760.0,
-        ch4_mol: float = 0.85,
-        co2_mol: float = 0.01,
+        ch4_mol: float = None,
+        co2_mol: float = None,
         uncertainties: dict = None,
         gwp_dict: dict = None,
     ) -> dict:

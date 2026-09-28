@@ -166,6 +166,19 @@ def apply_result(record, payload, em_result, method, factor_data, gwp_std):
     if payload.get("amount") not in (None, ""):
         record.quantity = float(payload["amount"])
     record.unit = payload.get("unit") or record.unit
+    if payload.get("amount") in (None, ""):
+        # engineered methods carry no activity amount: record the activity the engine used
+        # (Tier 3 browser test #18: the Quantity column was empty)
+        inter = (em_result.get("_full_api_res") or {}).get("intermediate") or {}
+        if inter.get("activity_amount") not in (None, "") and inter.get("activity_unit"):
+            record.quantity, record.unit = float(inter["activity_amount"]), inter["activity_unit"]
+        for key, unit in (("gas_volume_scf", "scf"), ("energy_mmbtu", "MMBtu"), ("fuel_gal", "gal"),
+                          ("fuel_mass_t", "t fuel"), ("toc_t", "t TOC"), ("hc_emitted_t", "t HC emitted")):
+            if record.quantity is not None and inter.get("activity_amount") not in (None, ""):
+                break
+            if inter.get(key) not in (None, ""):
+                record.quantity, record.unit = float(inter[key]), unit
+                break
     record.co2_emissions = em_result["co2"]
     record.ch4_emissions = em_result["ch4"]
     record.n2o_emissions = em_result["n2o"]
@@ -198,6 +211,13 @@ def apply_result(record, payload, em_result, method, factor_data, gwp_std):
         record.uncertainty = (u.get("co2") / 2.0) if isinstance(u, dict) and u.get("co2") else None
         record.uncertainty_ch4 = (u.get("ch4") / 2.0) if isinstance(u, dict) and u.get("ch4") else None
         record.uncertainty_n2o = (u.get("n2o") / 2.0) if isinstance(u, dict) and u.get("n2o") else None
+    # Tier 3 browser test #19: a gas with emissions must carry an uncertainty; when neither the
+    # calculator nor the factor gives one, the Tier default for the process category applies
+    from calculations.uncertainty import resolve_ef_uncertainty, resolve_tier
+    tier = resolve_tier(str(payload.get("factor_source") or "default"))
+    for attr, gas in (("uncertainty", "co2"), ("uncertainty_ch4", "ch4"), ("uncertainty_n2o", "n2o")):
+        if getattr(record, attr) is None and float(em_result.get(gas) or 0) > 0:
+            setattr(record, attr, resolve_ef_uncertainty(record.process_type or "", gas, tier))
     record.ef_key = _ef_key(payload, factor_data)
 
 

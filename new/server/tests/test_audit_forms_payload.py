@@ -18,11 +18,12 @@ def _ch4(res):
 
 
 def test_bug090_dehydrator_pressure_from_form_key_is_used():
-    lo = dispatcher.dispatch("dehydrator", dict(DEHY, dehy_pressure=200), {})
-    hi = dispatcher.dispatch("dehydrator", dict(DEHY, dehy_pressure=1000), {})
-    assert _ch4(lo) != pytest.approx(_ch4(hi))
-    same = dispatcher.dispatch("dehydrator", dict(DEHY, dehy_press=200), {})
-    assert _ch4(same) == pytest.approx(_ch4(lo))
+    # BUG-090 made the contactor pressure reach the parametric solubility model; that model had no
+    # API Compendium source and was removed (audit/TIER3_BROWSER_TEST.md #12). Its inputs are now
+    # rejected with guidance instead of producing an unsourced result.
+    for key in ("dehy_pressure", "dehy_press"):
+        with pytest.raises(ValueError, match="GLYCalc"):
+            dispatcher.dispatch("dehydrator", dict(DEHY, **{key: 200}), {})
 
 
 AGR = {"agr_throughput": 100, "agr_unit": "MMscf/yr", "agr_co2_in": 5, "agr_co2_out": 0.1, "factor_source": "specific"}
