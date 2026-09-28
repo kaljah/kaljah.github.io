@@ -46,7 +46,6 @@ import {
   PROCESS_TYPES as PROCESS_TYPES_MAP,
 } from "../utils/EmissionFactors";
 import {
-  getProcessTypesForSegment,
   formatUncertainty,
   getSegmentColor,
   getSegmentBgColor,
@@ -129,7 +128,6 @@ const Scope1Form = () => {
 
   const [showGasCalc, setShowGasCalc] = useState(false);
   const [inspectRecord, setInspectRecord] = useState(null);
-  const [processTypesAvailable, setProcessTypesAvailable] = useState([]); // API 2021: Dynamic process types
   const [importModal, setImportModal] = useState({
     isOpen: false,
     type: "activity",
@@ -190,16 +188,6 @@ const Scope1Form = () => {
       }
     }
   }, [emissionSourceId, emissionSources]);
-
-  // API 2021: Load available process types when segment changes
-  useEffect(() => {
-    const loadProcessTypes = async () => {
-      if (!streamType) return;
-      const types = await getProcessTypesForSegment(streamType.toLowerCase());
-      setProcessTypesAvailable(types);
-    };
-    loadProcessTypes();
-  }, [streamType]);
 
   const loadCustomFactors = async () => {
     try {
@@ -731,7 +719,8 @@ const Scope1Form = () => {
     // Validate fuel/factor selection
     if (sourceType !== "library" && !sectionActive &&
       (sourceType === "default" || sourceType === "custom") &&
-      !["associated_gas_venting", "completions", "unloading"].includes(processType) &&
+      // fugitives: Tier 1 / 2B use Compendium tables (7-8, 7-12); Tier 2A sets its catalog key itself
+      !["associated_gas_venting", "completions", "unloading", "fugitive"].includes(processType) &&
       !formData.fuel
     ) {
       toast.warning("Please select a fuel or emission factor");
@@ -1488,7 +1477,6 @@ const Scope1Form = () => {
           if ((sourceType !== "specific" && !isTier2Override) || !formData.hhv) return {};
           const rawHHV = parseFloat(formData.hhv);
           const hhvUnit = formData.hhv_unit || "BTU/scf";
-          const fuelUnit = (formData.unit || finalUnit || "scf").toLowerCase();
 
           // All conversions normalise to BTU per the same unit as the fuel quantity:
           // Gas-volume fuels → BTU/scf  (1 scf = 1 ft³ at standard conditions)
@@ -1611,7 +1599,9 @@ const Scope1Form = () => {
           typeof entry.source_payload === "string"
             ? JSON.parse(entry.source_payload)
             : entry.source_payload;
-      } catch (e) {}
+      } catch {
+        // an unreadable stored payload is shown without its inputs
+      }
     }
 
     const co2Val = Number(entry.co2_emissions || 0);
@@ -1884,14 +1874,22 @@ const Scope1Form = () => {
     }));
 
     // Auto-map composition to engineering forms if raw_composition is provided
+    // The whole analysis is sent in mol % with an explicit basis: c1 used to go as a fraction while
+    // CO2 went as a percent (one analysis, two bases), and C2+ and N2 were dropped
     if (res.raw_composition) {
-      if (res.raw_composition.CH4) {
-        handleFormChange("ch4_content", res.raw_composition.CH4);
-        handleFormChange("c1", parseFloat(res.raw_composition.CH4) / 100.0);
-      }
-      if (res.raw_composition.CO2) {
-        handleFormChange("co2_content", res.raw_composition.CO2);
-      }
+      const rc = res.raw_composition;
+      const pct = (...keys) => keys.reduce((t, k) => t + (parseFloat(rc[k]) || 0), 0);
+      const set = (field, v) => handleFormChange(field, v > 0 ? v : undefined);
+      handleFormChange("composition_basis", "percent");
+      set("c1", pct("CH4"));
+      set("c2", pct("C2H6"));
+      set("c3", pct("C3H8"));
+      set("c4", pct("iC4H10", "nC4H10"));
+      set("c5", pct("iC5H12", "nC5H12"));
+      set("c6", pct("C6H14"));
+      set("n2", pct("N2"));
+      set("ch4_content", pct("CH4"));
+      set("co2_content", pct("CO2"));
     }
 
     setShowGasCalc(false);
@@ -3039,7 +3037,9 @@ const Scope1Form = () => {
                         }}
                       >
                         {entries.length === 0
-                          ? "No entries yet"
+                          ? loading
+                            ? "Loading…"
+                            : "No entries yet"
                           : "No results match your filters"}
                       </td>
                     </tr>

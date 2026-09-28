@@ -740,7 +740,6 @@ const UserManagement = () => {
   const totalUsers = users.length;
   const adminCount = users.filter((u) => u.role === "admin").length;
   const itAdminCount = users.filter((u) => ["it_admin", "it_manager"].includes(u.role)).length;
-  const itCount = users.filter((u) => u.role === "it").length;
   const standardCount = users.filter((u) => u.role === "user").length;
 
   const filteredUsers = users.filter((u) => {

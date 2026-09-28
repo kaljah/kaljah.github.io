@@ -3,6 +3,7 @@ import CustomDropdown from "../CustomDropdown";
 import { Segmented } from "./ui";
 import { formatNumber } from "../../utils/formatters";
 import { Info, AlertTriangle, ShieldCheck, Activity, Flame, Wind } from "lucide-react";
+import { TABLE_6_8_BASINS } from "./agvBasins";
 
 /**
  * AssociatedGasVentingForm — Complete UI Pipeline for Associated Gas Venting
@@ -14,56 +15,6 @@ import { Info, AlertTriangle, ShieldCheck, Activity, Flame, Wind } from "lucide-
  * - Tier 3: Direct / Site-Specific Measurement (API Eq. 6-8: Measured vent flow rate × duration or total measured volume)
  */
 
-export const TABLE_6_8_BASINS = [
-  {
-    value: "Associated Gas Venting - US Average",
-    label: "US Average",
-    basinKey: "us_average",
-    ef_ch4_kg_bbl: 1.4,
-    whole_gas_scf_bbl: 89.0,
-    ch4_mol_basis: 81.6,
-  },
-  {
-    value: "Associated Gas Venting - Gulf Coast Basin (Basin 220)",
-    label: "Gulf Coast Basin - Basin 220",
-    basinKey: "gulf_coast",
-    ef_ch4_kg_bbl: 0.7,
-    whole_gas_scf_bbl: 47.0,
-    ch4_mol_basis: 81.6,
-  },
-  {
-    value: "Associated Gas Venting - Anadarko Basin (Basin 360)",
-    label: "Anadarko Basin - Basin 360",
-    basinKey: "anadarko",
-    ef_ch4_kg_bbl: 9.7,
-    whole_gas_scf_bbl: 622.0,
-    ch4_mol_basis: 81.6,
-  },
-  {
-    value: "Associated Gas Venting - Williston Basin (Basin 395)",
-    label: "Williston Basin - Basin 395",
-    basinKey: "williston",
-    ef_ch4_kg_bbl: 8.9,
-    whole_gas_scf_bbl: 570.0,
-    ch4_mol_basis: 81.6,
-  },
-  {
-    value: "Associated Gas Venting - Permian Basin (Basin 430)",
-    label: "Permian Basin - Basin 430",
-    basinKey: "permian",
-    ef_ch4_kg_bbl: 6.5,
-    whole_gas_scf_bbl: 419.0,
-    ch4_mol_basis: 81.6,
-  },
-  {
-    value: "Associated Gas Venting - Other US Basins",
-    label: "Other US Basins",
-    basinKey: "other",
-    ef_ch4_kg_bbl: 0.4,
-    whole_gas_scf_bbl: 26.0,
-    ch4_mol_basis: 81.6,
-  },
-];
 
 const OIL_UNITS = [
   { value: "bbl", label: "Barrels (bbl)" },

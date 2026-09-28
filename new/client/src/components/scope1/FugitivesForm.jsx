@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect } from "react";
 import CustomDropdown from "../CustomDropdown";
 import { FieldGrid, Segmented } from "./ui";
 
@@ -67,85 +67,21 @@ const TIER2A_EQUIPMENT_DATA = {
   },
 };
 
-const TIER2B_COMPONENTS_DATA = {
-  gas_gathering: {
-    label: "Onshore Gas Production & Gathering",
-    services: {
-      gas: {
-        label: "Gas / Vapor Service",
-        default_stream: { ch4: 78.8, co2: 1.4 },
-        components: [
-          { id: "valve", label: "Valves", factor: 0.0270, unit: "kg TOC/hr/component" },
-          { id: "connector", label: "Connectors", factor: 0.0035, unit: "kg TOC/hr/component" },
-          { id: "flange", label: "Flanges", factor: 0.0039, unit: "kg TOC/hr/component" },
-          { id: "open_ended_line", label: "Open-Ended Lines", factor: 0.0140, unit: "kg TOC/hr/component" },
-          { id: "other", label: "Other Components", factor: 0.0360, unit: "kg TOC/hr/component" },
-        ],
-      },
-      light_oil: {
-        label: "Light Oil Service (< 20° API)",
-        default_stream: { ch4: 65.6, co2: 1.4 },
-        components: [
-          { id: "valve", label: "Valves", factor: 0.0025, unit: "kg TOC/hr/component" },
-          { id: "connector", label: "Connectors", factor: 0.00021, unit: "kg TOC/hr/component" },
-          { id: "pump_seal", label: "Pump Seals", factor: 0.0130, unit: "kg TOC/hr/component" },
-          { id: "other", label: "Other Components", factor: 0.0075, unit: "kg TOC/hr/component" },
-        ],
-      },
-      heavy_oil: {
-        label: "Heavy Oil Service (≥ 20° API)",
-        default_stream: { ch4: 18.0, co2: 1.0 },
-        components: [
-          { id: "valve", label: "Valves", factor: 0.0000084, unit: "kg TOC/hr/component" },
-          { id: "connector", label: "Connectors", factor: 0.0000075, unit: "kg TOC/hr/component" },
-          { id: "flange", label: "Flanges", factor: 0.00000039, unit: "kg TOC/hr/component" },
-          { id: "other", label: "Other Components", factor: 0.000032, unit: "kg TOC/hr/component" },
-        ],
-      },
-      water_oil: {
-        label: "Water / Oil Service",
-        default_stream: { ch4: 60.0, co2: 1.4 },
-        components: [
-          { id: "valve", label: "Valves", factor: 0.000098, unit: "kg TOC/hr/component" },
-          { id: "connector", label: "Connectors", factor: 0.00011, unit: "kg TOC/hr/component" },
-          { id: "other", label: "Other Components", factor: 0.00014, unit: "kg TOC/hr/component" },
-        ],
-      },
-    },
-  },
-  crude_production: {
-    label: "Onshore Crude Production",
-    services: {
-      gas: {
-        label: "Gas Service",
-        default_stream: { ch4: 78.8, co2: 1.4 },
-        components: [
-          { id: "valve", label: "Valves", factor: 0.0059, unit: "kg TOC/hr/component" },
-          { id: "connector", label: "Connectors", factor: 0.00082, unit: "kg TOC/hr/component" },
-          { id: "flange", label: "Flanges", factor: 0.00039, unit: "kg TOC/hr/component" },
-          { id: "open_ended_line", label: "Open-Ended Lines", factor: 0.0020, unit: "kg TOC/hr/component" },
-        ],
-      },
-      light_oil: {
-        label: "Light Oil Service",
-        default_stream: { ch4: 65.6, co2: 1.4 },
-        components: [
-          { id: "valve", label: "Valves", factor: 0.0012, unit: "kg TOC/hr/component" },
-          { id: "connector", label: "Connectors", factor: 0.00011, unit: "kg TOC/hr/component" },
-          { id: "pump_seal", label: "Pump Seals", factor: 0.0075, unit: "kg TOC/hr/component" },
-        ],
-      },
-      heavy_oil: {
-        label: "Heavy Oil Service",
-        default_stream: { ch4: 18.0, co2: 1.0 },
-        components: [
-          { id: "valve", label: "Valves", factor: 0.0000084, unit: "kg TOC/hr/component" },
-          { id: "connector", label: "Connectors", factor: 0.0000075, unit: "kg TOC/hr/component" },
-        ],
-      },
-    },
-  },
-};
+// Tier 2B components / services of API Compendium Table 7-12 (factors on the server)
+const T2B_SERVICES = [
+  { value: "gas", label: "Gas" },
+  { value: "light_oil", label: "Light oil" },
+  { value: "heavy_oil", label: "Heavy oil" },
+  { value: "water_oil", label: "Water / oil" },
+];
+const T2B_COMPONENTS = [
+  { value: "valve", label: "Valves" },
+  { value: "connector", label: "Connectors" },
+  { value: "flange", label: "Flanges" },
+  { value: "open_ended_line", label: "Open-ended lines" },
+  { value: "pump_seal", label: "Pump seals" },
+  { value: "other", label: "Other components" },
+];
 
 const TIER3_METHODS = [
   { id: "method21", label: "Screening Ranges" },
@@ -270,8 +206,6 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default" }) => {
   const tier2aEquipId = TIER2A_EQUIPMENT_DATA[tier2aSegment].equipment.some((e) => e.id === data.equipment_type)
     ? data.equipment_type
     : TIER2A_EQUIPMENT_DATA[tier2aSegment].equipment[0].id;
-  const tier2aCount = parseFloat(data.equipment_count || data.amount || 1);
-  const tier2aHours = parseFloat(data.operating_hours || 8760);
 
   useEffect(() => {
     if (activeTier !== "tier2" || tier2SubMethod !== "equipment") return;
@@ -280,28 +214,6 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default" }) => {
     if (data.equipment_type !== tier2aEquipId) onChange("equipment_type", tier2aEquipId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTier, tier2SubMethod, tier2aSegment, tier2aEquipId, data.fuel]);
-
-  // Tier 2B State (Component)
-  const tier2bSegment = data.component_segment || "gas_gathering";
-  const tier2bService = data.service_type || "gas";
-  const tier2bCompId = data.component_type || "valve";
-  const tier2bCount = parseFloat(data.component_count || data.amount || 100);
-  const tier2bHours = parseFloat(data.operating_hours || 8760);
-
-  // Gas Stream Composition ($x_{CH4}$, $x_{CO2}$)
-  const isCustomStream = data.use_custom_stream || false;
-  const currentDefaultStream = useMemo(() => {
-    if (activeTier === "tier2" && tier2SubMethod === "equipment") {
-      return TIER2A_EQUIPMENT_DATA[tier2aSegment]?.default_stream || { ch4: 78.8, co2: 1.4 };
-    }
-    if (activeTier === "tier2" && tier2SubMethod === "component") {
-      return TIER2B_COMPONENTS_DATA[tier2bSegment]?.services[tier2bService]?.default_stream || { ch4: 78.8, co2: 1.4 };
-    }
-    return { ch4: 78.8, co2: 1.4 };
-  }, [activeTier, tier2SubMethod, tier2aSegment, tier2bSegment, tier2bService]);
-
-  const ch4MolePct = parseFloat(data.ch4_mole_pct !== undefined ? data.ch4_mole_pct : currentDefaultStream.ch4);
-  const co2MolePct = parseFloat(data.co2_mole_pct !== undefined ? data.co2_mole_pct : currentDefaultStream.co2);
 
   // Duration unit options
 
@@ -373,7 +285,12 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default" }) => {
             <Segmented
               ariaLabel="Tier 2 method"
               value={tier2SubMethod}
-              onChange={(v) => onChange("fugitive_method", v)}
+              onChange={(v) => {
+                if (v === tier2SubMethod) return;
+                ["equipment_count", "component_count", "component_type", "service_type", "ch4_mole_pct",
+                 "co2_mole_pct", "operating_hours", "amount", "unit"].forEach((k) => onChange(k, undefined));
+                onChange("fugitive_method", v);
+              }}
               options={[
                 { value: "equipment", label: "Equipment count" },
                 { value: "component", label: "Component count" },
@@ -412,179 +329,42 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default" }) => {
                 />
               </div>
 
-              <div className="input-group">
-                <label>Equipment Count</label>
-                <input
-                  type="number"
-                  min="1"
-                  step="1"
-                  className="mole-input"
-                  value={tier2aCount}
-                  onChange={(e) => {
-                    onChange("equipment_count", e.target.value);
-                    onChange("amount", e.target.value);
-                    onChange("unit", "equipment");
-                  }}
-                  placeholder="1"
-                />
-              </div>
-
-              <div className="input-group">
-                <label>Operating Hours</label>
-                <input
-                  type="number"
-                  min="0"
-                  step="any"
-                  className="mole-input"
-                  value={tier2aHours}
-                  onChange={(e) => onChange("operating_hours", e.target.value)}
-                  placeholder="8760"
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Tier 2B: Component Count Form */}
-          {tier2SubMethod === "component" && (
-            <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr 1fr 0.8fr 1fr", gap: "10px" }}>
-              <div className="input-group">
-                <label>Segment / Table</label>
-                <CustomDropdown
-                  options={Object.keys(TIER2B_COMPONENTS_DATA).map((k) => ({
-                    value: k,
-                    label: TIER2B_COMPONENTS_DATA[k].label,
-                  }))}
-                  value={tier2bSegment}
-                  onChange={(val) => {
-                    onChange("component_segment", val);
-                    onChange("service_type", "gas");
-                  }}
-                />
-              </div>
-
-              <div className="input-group">
-                <label>Service Stream</label>
-                <CustomDropdown
-                  options={Object.keys(TIER2B_COMPONENTS_DATA[tier2bSegment]?.services || {}).map((s) => ({
-                    value: s,
-                    label: TIER2B_COMPONENTS_DATA[tier2bSegment].services[s].label,
-                  }))}
-                  value={tier2bService}
-                  onChange={(val) => {
-                    onChange("service_type", val);
-                    const def = TIER2B_COMPONENTS_DATA[tier2bSegment]?.services[val]?.default_stream;
-                    if (def && !isCustomStream) {
-                      onChange("ch4_mole_pct", def.ch4);
-                      onChange("co2_mole_pct", def.co2);
-                    }
-                  }}
-                />
-              </div>
-
-              <div className="input-group">
-                <label>Component Type</label>
-                <CustomDropdown
-                  options={TIER2B_COMPONENTS_DATA[tier2bSegment]?.services[tier2bService]?.components.map((c) => ({
-                    value: c.id,
-                    label: c.label,
-                  })) || []}
-                  value={tier2bCompId}
-                  onChange={(val) => onChange("component_type", val)}
-                />
-              </div>
-
-              <div className="input-group">
-                <label>Component Count</label>
-                <input
-                  type="number"
-                  min="1"
-                  step="1"
-                  className="mole-input"
-                  value={tier2bCount}
-                  onChange={(e) => {
-                    onChange("component_count", e.target.value);
-                    onChange("amount", e.target.value);
-                    onChange("unit", "sources");
-                  }}
-                  placeholder="100"
-                />
-              </div>
-
-              <div className="input-group">
-                <label>Operating Hours</label>
-                <input
-                  type="number"
-                  min="0"
-                  step="any"
-                  className="mole-input"
-                  value={tier2bHours}
-                  onChange={(e) => onChange("operating_hours", e.target.value)}
-                  placeholder="8760"
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Gas Stream Composition Editor for Tier 2 */}
-          <div
-            style={{
-              marginTop: "12px",
-              paddingTop: "12px",
-              borderTop: "1px solid #e5e7eb",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <input
-                type="checkbox"
-                id="custom-stream-check"
-                checked={isCustomStream}
-                onChange={(e) => {
-                  onChange("use_custom_stream", e.target.checked);
-                  if (!e.target.checked) {
-                    onChange("ch4_mole_pct", currentDefaultStream.ch4);
-                    onChange("co2_mole_pct", currentDefaultStream.co2);
-                  }
+              <Num
+                label="Equipment count"
+                field="equipment_count"
+                data={data}
+                onChange={(k, v) => {
+                  onChange(k, v);
+                  onChange("amount", v);
+                  onChange("unit", "equipment");
                 }}
+                placeholder="e.g. 4"
               />
-              <label htmlFor="custom-stream-check" style={{ fontSize: "0.82rem", color: "#374151", cursor: "pointer", fontWeight: 500 }}>
-                Override default gas stream composition (Defaults: {currentDefaultStream.ch4}% CH₄, {currentDefaultStream.co2}% CO₂)
-              </label>
+              <Num label="Operating hours" field="operating_hours" data={data} onChange={onChange} placeholder="8760" />
             </div>
+          )}
 
-            {isCustomStream && (
-              <div style={{ display: "flex", gap: "12px" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                  <span style={{ fontSize: "0.75rem", color: "#4b5563", fontWeight: 600 }}>CH₄:</span>
-                  <input
-                    type="number"
-                    min="0"
-                    max="100"
-                    step="0.1"
-                    style={{ width: "70px", padding: "4px 6px", borderRadius: "4px", border: "1px solid #d1d5db" }}
-                    value={ch4MolePct}
-                    onChange={(e) => onChange("ch4_mole_pct", e.target.value)}
-                  />
-                  <span style={{ fontSize: "0.75rem", color: "#6b7280" }}>%</span>
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                  <span style={{ fontSize: "0.75rem", color: "#4b5563", fontWeight: 600 }}>CO₂:</span>
-                  <input
-                    type="number"
-                    min="0"
-                    max="100"
-                    step="0.1"
-                    style={{ width: "70px", padding: "4px 6px", borderRadius: "4px", border: "1px solid #d1d5db" }}
-                    value={co2MolePct}
-                    onChange={(e) => onChange("co2_mole_pct", e.target.value)}
-                  />
-                  <span style={{ fontSize: "0.75rem", color: "#6b7280" }}>%</span>
-                </div>
-              </div>
-            )}
-          </div>
+          {/* Tier 2B: component count x Table 7-12 */}
+          {tier2SubMethod === "component" && (
+            <FieldGrid min={160}>
+              <Pick label="Component" field="component_type" options={T2B_COMPONENTS} data={data} onChange={onChange} />
+              <Pick label="Service" field="service_type" options={T2B_SERVICES} data={data} onChange={onChange} />
+              <Num
+                label="Component count"
+                field="component_count"
+                data={data}
+                onChange={(k, v) => {
+                  onChange(k, v);
+                  onChange("amount", v);
+                  onChange("unit", "components");
+                }}
+                placeholder="e.g. 100"
+              />
+              <Num label="Operating hours" field="operating_hours" data={data} onChange={onChange} placeholder="8760" />
+              <Num label="CH₄ (mol %)" field="ch4_mole_pct" data={data} onChange={onChange} placeholder="81.6 (table basis)" />
+              <Num label="CO₂ (mol %)" field="co2_mole_pct" data={data} onChange={onChange} placeholder="0" />
+            </FieldGrid>
+          )}
         </div>
       )}
 

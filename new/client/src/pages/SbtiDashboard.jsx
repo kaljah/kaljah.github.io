@@ -34,7 +34,6 @@ const SbtiDashboard = () => {
   const [showConfig, setShowConfig] = useState(false);
   const [savingTarget, setSavingTarget] = useState(false);
   const [scopeMode, setScopeMode] = useState("all"); // 'all' (Scopes 1+2+3) or 's1_s2' (Scopes 1+2)
-  const [suggestedBaseline, setSuggestedBaseline] = useState(null);
 
   // Editable Target Form State
   const [targetForm, setTargetForm] = useState({
@@ -64,12 +63,6 @@ const SbtiDashboard = () => {
       }
 
       if (manageRes.data) {
-        if (manageRes.data.suggested_base_year_emissions !== undefined) {
-          setSuggestedBaseline({
-            year: manageRes.data.suggested_base_year || 2024,
-            emissions: manageRes.data.suggested_base_year_emissions || 0,
-          });
-        }
         if (manageRes.data.has_target) {
           setTargetForm({
             base_year: manageRes.data.base_year || 2024,
@@ -134,7 +127,7 @@ const SbtiDashboard = () => {
           "success"
         );
       }
-    } catch (e) {
+    } catch {
       toast.show("Could not fetch verified baseline emissions for this year", "warning");
     }
   };

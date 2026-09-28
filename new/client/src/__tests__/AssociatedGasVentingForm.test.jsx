@@ -1,7 +1,8 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
-import AssociatedGasVentingForm, { TABLE_6_8_BASINS } from "../components/scope1/AssociatedGasVentingForm";
+import AssociatedGasVentingForm from "../components/scope1/AssociatedGasVentingForm";
+import { TABLE_6_8_BASINS } from "../components/scope1/agvBasins";
 import { API_FACTORS, PROCESS_GROUPS } from "../utils/EmissionFactors";
 
 describe("AssociatedGasVentingForm & Table 6-8 API Reference Integrity", () => {

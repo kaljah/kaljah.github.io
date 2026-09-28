@@ -242,7 +242,7 @@ test.describe('Baseline UX/UI Audit: Dashboard & Intensity Pages', () => {
     console.log('[DASHBOARD] Charts verified successfully.');
   });
 
-  test('2. Carbon Intensity Page: Filters, Dual GWP & CBAM Table', async ({ page, request }) => {
+  test('2. Carbon Intensity Page: Filters, Dual GWP & CBAM Table', async ({ page }) => {
     await loginAndSetup(page, '/carbon-intensity');
     await expect(page.locator('.grid-title')).toContainText('Carbon Intensity');
 
@@ -295,7 +295,7 @@ test.describe('Baseline UX/UI Audit: Dashboard & Intensity Pages', () => {
     }
   });
 
-  test('3. Methane Intensity Page: Filters, Loss Rates & OGMP Badges', async ({ page, request }) => {
+  test('3. Methane Intensity Page: Filters, Loss Rates & OGMP Badges', async ({ page }) => {
     await loginAndSetup(page, '/methane-intensity');
     await expect(page.locator('.grid-title')).toContainText('Methane');
 

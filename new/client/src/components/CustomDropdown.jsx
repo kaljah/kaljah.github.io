@@ -50,6 +50,8 @@ const CustomDropdown = ({
     }
     if (!label) return;
     if (!label.id) label.id = `${baseId}-label`;
+    // the label is found in the rendered DOM, so this runs after render by necessity
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setAutoLabelId(label.id);
   }, [ariaLabel, ariaLabelledBy, baseId]);
 

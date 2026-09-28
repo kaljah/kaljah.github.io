@@ -57,6 +57,8 @@ const ReferenceData = () => {
   };
 
   useEffect(() => {
+    // initial load from the server
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchData();
   }, []);
 

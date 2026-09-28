@@ -8,6 +8,7 @@ import MultiSelectDropdown from "../components/MultiSelectDropdown";
 import "../pages/Dashboard.css";
 import { getUserOperationalDefaults } from "../utils/userDefaults";
 import { getActiveGwpFactors } from "../constants";
+import { apiError } from "../utils/apiError";
 
 // BUG-013: GWP option labels are generated from constants.js so they always
 // show the values the report generator will actually apply. "20yr" resolves
@@ -45,8 +46,6 @@ const Reports = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
-  const [apiError, setApiError] = useState(null);
-  const [rawDebug, setRawDebug] = useState("");
 
   const [scope, setScope] = useState("all");
 
@@ -213,14 +212,9 @@ const Reports = () => {
       setEmissions(res.data.emissions || res.data.data || res.data || []);
       setTotalRecords(res.data.total || res.data.length || 0);
       setTotalPages(res.data.pages || 1);
-      setApiError(null);
-      setRawDebug(JSON.stringify(res.data).substring(0, 200));
     } catch (err) {
       console.error("Error fetching emissions", err);
-      setApiError(
-        err.message + (err.response ? " (" + err.response.status + ")" : ""),
-      );
-      toast.error("Failed to load emissions data");
+      toast.error(apiError(err, "Failed to load emissions data"));
       setEmissions([]);
       setTotalRecords(0);
     } finally {
@@ -353,31 +347,6 @@ const Reports = () => {
     }
   };
 
-  const handleISOReport = async () => {
-    setLoading(true);
-    toast.info("Generating ISO 14064-1 Report...");
-    try {
-      // Import dynamically or assume imported at top if possible
-      const { generateModernPDF } =
-        await import("../utils/ModernReportGenerator");
-
-      const filters = {
-        year,
-        scope,
-        regionId,
-        processType,
-        gwpStandard: reportGwpStandard,
-      };
-
-      await generateModernPDF(api, filters);
-      toast.success("Report generated successfully!");
-    } catch (err) {
-      console.error("Report Generation Error", err);
-      toast.error("Failed to generate report.");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const getGroupedData = () => {
     if (groupBy === "none") return emissions;

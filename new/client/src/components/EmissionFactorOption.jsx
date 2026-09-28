@@ -8,7 +8,6 @@ import {
   getSegmentColor,
   getSegmentBgColor,
   formatUncertainty,
-  getFactorUncertainty,
 } from "../utils/emissionFactorsAPI";
 import { API_FACTORS } from "../utils/EmissionFactors";
 

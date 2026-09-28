@@ -368,6 +368,7 @@ function StepBar({ current }) {
 }
 
 // ─── Tier Mode Card ───────────────────────────────────────────────────────────
+// eslint-disable-next-line no-unused-vars -- IcoComp is rendered as <IcoComp />
 function ModeCard({ selected, onClick, Icon: IcoComp, title, badge, description }) {
   return (
     <button className={`s1w-mode-card ${selected ? "selected" : ""}`} onClick={onClick}>
