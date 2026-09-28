@@ -338,6 +338,8 @@ class TestDifferentialScope2and3:
             boiler_eff=0.82,
             trans_loss=0.05,
             ef_co2=53.06,
+            ef_ch4=0.001,   # natural-gas boiler, Table 4-6 (= EPA Hub Table 7)
+            ef_n2o=0.0001,
         )
 
         assert pytest.approx(prod_co2e, rel=1e-6) == ref_res["co2e"]

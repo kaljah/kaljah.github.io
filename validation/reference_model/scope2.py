@@ -15,7 +15,8 @@ class IndependentScope2Model:
         return {"co2e": co2e_t, "co2": co2e_t, "ch4": 0.0, "n2o": 0.0}
 
     @staticmethod
-    def calculate_indirect_steam(amount, unit="mmbtu", boiler_eff=0.80, trans_loss=0.0, ef_co2=53.06):
+    def calculate_indirect_steam(amount, unit="mmbtu", boiler_eff=0.80, trans_loss=0.0, ef_co2=53.06,
+                                 ef_ch4=0.0, ef_n2o=0.0, gwp_ch4=28.0, gwp_n2o=265.0):
         amt = float(amount or 0.0)
         u = str(unit or "mmbtu").strip().lower().replace(" ", "")
 
@@ -57,13 +58,17 @@ class IndependentScope2Model:
             raise ValueError(f"Net efficiency must be > 0 (got {net_eff})")
 
         f_co2 = float(ef_co2 or 53.06)
-        co2_kg = (energy_mmbtu * f_co2) / net_eff
-        co2_t = co2_kg / 1000.0
+        fuel_mmbtu = energy_mmbtu / net_eff
+        co2_t = fuel_mmbtu * f_co2 / 1000.0
+        # boiler fuel CH4 / N2O (kg per MMBtu of fuel); for natural gas API Compendium Table 4-6
+        # 1.0E-03 / 1.0E-04 = EPA Emission Factors Hub 2025 Table 7 (1.25 / 0.125 g per MMBtu steam at 80 %)
+        ch4_t = fuel_mmbtu * float(ef_ch4 or 0.0) / 1000.0
+        n2o_t = fuel_mmbtu * float(ef_n2o or 0.0) / 1000.0
         return {
-            "co2e": co2_t,
+            "co2e": co2_t + ch4_t * gwp_ch4 + n2o_t * gwp_n2o,
             "co2": co2_t,
-            "ch4": 0.0,
-            "n2o": 0.0,
+            "ch4": ch4_t,
+            "n2o": n2o_t,
             "energy_mmbtu": energy_mmbtu,
             "net_efficiency": net_eff,
         }

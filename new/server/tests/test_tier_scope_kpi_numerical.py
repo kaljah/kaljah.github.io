@@ -266,7 +266,9 @@ class TestScope2Methods:
             },
         }
         co2_tonnes, energy_mmbtu, ef = _calc_indirect_steam(data)
-        expected = (500.0 * 53.06) / (0.80 * 0.95 * 1000.0)
+        # CO2 plus the natural-gas CH4 / N2O of Table 4-6 (= EPA Hub Table 7) at AR5
+        fuel = 500.0 / (0.80 * 0.95)
+        expected = fuel * (53.06 + 0.001 * 28 + 0.0001 * 265) / 1000.0
         assert abs(co2_tonnes - expected) < 1e-4
         assert energy_mmbtu == 500.0
 

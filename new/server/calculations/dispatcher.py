@@ -2170,6 +2170,9 @@ class CalculationDispatcher:
                     transmission_loss=trans_loss,
                     uncertainties=uncertainties,
                     heat_unit=flat_inputs.get("heat_unit", "btu"),
+                    ef_ch4=emission_factors.get("ch4", 0) or 0,
+                    ef_n2o=emission_factors.get("n2o", 0) or 0,
+                    gwp_dict=gwp_dict,
                 )
 
             else:
