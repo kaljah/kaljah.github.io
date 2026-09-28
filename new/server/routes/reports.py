@@ -4,6 +4,7 @@ from datetime import datetime
 from io import BytesIO
 import html
 from utils import get_current_user, get_allowed_facility_ids
+from services.scope2_activity import scope2_activity
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
@@ -170,7 +171,7 @@ def create_pdf_report(emissions_data, filters):
     summary_data = [
         ["Metric", "Quantity"],
         ["Scope 1 — Direct Emissions", f"{scope1_total:,.2f} tCO₂e"],
-        ["Scope 2 — Indirect Electricity", f"{scope2_total:,.2f} tCO₂e"],
+        ["Scope 2 — Indirect Energy", f"{scope2_total:,.2f} tCO₂e"],
         ["Scope 3 — Value Chain", f"{scope3_total:,.2f} tCO₂e"],
         ["Total CO₂ Gas Mass", f"{total_co2:,.2f} tonnes CO₂"],
         ["Total CH₄ Gas Mass", f"{total_ch4:,.2f} tonnes CH₄"],
@@ -222,15 +223,20 @@ def create_pdf_report(emissions_data, filters):
     ]
 
     # Table rows (support up to 500 records in PDF cleanly)
+    def _amount(v):
+        v = float(v or 0)
+        # very large quantities overprinted the next column (browser test #12)
+        return f"{v:.3e}" if abs(v) >= 1e7 else f"{v:,.1f}"
+
     for emission in emissions_data[:500]:
         unit_str = f" {emission.get('unit')}" if emission.get('unit') else ""
         table_data.append(
             [
                 str(emission.get("date", "N/A")),
-                str(emission.get("facility_name", "N/A"))[:15],
-                str(emission.get("process_type", "N/A"))[:12],
-                str(emission.get("fuel_type", "N/A"))[:12],
-                f"{emission.get('amount', 0):,.1f}{unit_str}",
+                str(emission.get("facility_name", "N/A")),
+                str(emission.get("process_type", "N/A")),
+                str(emission.get("fuel_type", "N/A")),
+                f"{_amount(emission.get('amount', 0))}{unit_str}",
                 f"{emission.get('co2_emissions', 0):,.2f}",
                 f"{emission.get('ch4_emissions', 0):,.2f}",
                 f"{emission.get('n2o_emissions', 0):,.2f}",
@@ -252,7 +258,13 @@ def create_pdf_report(emissions_data, filters):
     ]
     if not unicode_ok:
         table_data = _ascii_cells(table_data)
-    details_table = Table(table_data, colWidths=col_widths)
+    # text columns wrap inside their cell instead of being cut to 12 characters (browser test #12:
+    # different fuels read the same, e.g. "Natural Gas" for engines, turbines and flares)
+    cell_style = ParagraphStyle("pdfcell", fontName=font, fontSize=7, leading=8)
+    for row in table_data[1:]:
+        for c in (1, 2, 3, 4):
+            row[c] = Paragraph(html.escape(str(row[c])), cell_style)
+    details_table = Table(table_data, colWidths=col_widths, repeatRows=1)
     details_table.setStyle(
         TableStyle(
             [
@@ -402,26 +414,14 @@ def generate_report():
             q2 = q2.filter(Scope2Emission.status == "Verified")
             for e in q2.all():
                 m_val = e.month if e.month is not None else 1
-                st = (e.source_type or "Electricity").strip().lower()
-                if "steam" in st:
-                    s2_amount = e.steam_ton or 0
-                    s2_unit = "tons"
-                elif "heat" in st:
-                    s2_amount = e.heat_mmbtu or 0
-                    s2_unit = "MMBtu"
-                elif "cooling" in st:
-                    s2_amount = e.cooling_ton or 0
-                    s2_unit = "tons"
-                else:
-                    s2_amount = e.electricity_kwh or 0
-                    s2_unit = "kWh"
+                s2_amount, s2_unit, _s2_label = scope2_activity(e)
                 emissions_data.append(
                     {
                         "scope": 2,
                         "date": f"{e.year or 0}-{m_val:02d}-01",
                         "facility_name": fac_map.get(e.facility_id, "Unknown"),
                         "process_type": f"Scope 2: {e.source_type or 'Electricity'}",
-                        "fuel_type": e.grid_region or "Grid",
+                        "fuel_type": _s2_label,
                         "amount": s2_amount,
                         "unit": s2_unit,
                         "co2_emissions": 0,
@@ -686,26 +686,14 @@ def export_emissions():
             q2 = q2.filter(Scope2Emission.status == "Verified")
             for e in q2.all():
                 m_val = e.month if e.month is not None else 1
-                st = (e.source_type or "Electricity").strip().lower()
-                if "steam" in st:
-                    s2_amount = e.steam_ton or 0
-                    s2_unit = "tons"
-                elif "heat" in st:
-                    s2_amount = e.heat_mmbtu or 0
-                    s2_unit = "MMBtu"
-                elif "cooling" in st:
-                    s2_amount = e.cooling_ton or 0
-                    s2_unit = "tons"
-                else:
-                    s2_amount = e.electricity_kwh or 0
-                    s2_unit = "kWh"
+                s2_amount, s2_unit, _s2_label = scope2_activity(e)
                 emissions_data.append(
                     {
                         "scope": 2,
                         "date": f"{e.year or 0}-{m_val:02d}-01",
                         "facility_name": fac_map.get(e.facility_id, "Unknown"),
                         "process_type": f"Indirect {e.source_type or 'Electricity'}",
-                        "fuel_type": e.source_type or "Electricity",
+                        "fuel_type": _s2_label,
                         "amount": s2_amount,
                         "unit": s2_unit,
                         "co2_emissions": 0,
@@ -867,16 +855,6 @@ def export_ogmp_excel():
                     max_len = max(max_len, len(val_str))
                 ws.column_dimensions[col_letter].width = max(max_len + 4, 12)
 
-        GAS_UNIT_TO_M3 = {
-            "mscf": 28.3168,
-            "mcf": 28.3168,
-            "mmscf": 28316.8,
-            "m3": 1.0,
-            "scf": 0.0283168,
-            "bbl": 164.238,
-            "boe": 164.238,
-        }
-
         # -------------------------------------------------------------
         # TAB 1: Executive Summary & Facility Metadata
         # -------------------------------------------------------------
@@ -944,6 +922,7 @@ def export_ogmp_excel():
             fac_q = fac_q.filter(Facility.segment == segment)
         facilities = fac_q.all()
 
+        level_by_fac = {}  # OGMP level per facility, shared with the roadmap tab
         row_curr = 5
         for f in facilities:
             op_st = f.operator_status or "operated"
@@ -963,11 +942,10 @@ def export_ogmp_excel():
             if year_filter:
                 prod_q = prod_q.filter(ProductionData.year == year_filter)
             prod_records = prod_q.all()
-            gas_m3 = sum(
-                float(p.gas_amount or 0)
-                * GAS_UNIT_TO_M3.get(str(p.gas_unit or "mscf").lower(), 28.3168)
-                for p in prod_records
-            )
+            # same gas definition as the Methane Intensity page (gross gas first): the export read
+            # gas_amount only and reported a 161,966 % loss rate where the page showed 3.479 %
+            from services.dashboard_filters import production_gas_m3
+            gas_m3 = sum(production_gas_m3(p) or 0.0 for p in prod_records)
 
             # Top Down (D-02: mean of surveys per facility-year)
             td_q = db.session.query(
@@ -999,10 +977,11 @@ def export_ogmp_excel():
             curr_lvl = compute_facility_ogmp_level(
                 f, year=year_filter, top_down_tch4=td_ch4, bottom_up_tch4=bu_ch4
             )
+            level_by_fac[f.id] = curr_lvl
             pathway = (
                 "Gold Standard Achieved"
                 if curr_lvl == 5
-                else ("On Track" if (year_filter or 2026) <= target_yr else "Overdue")
+                else ("On Track" if (year_filter or datetime.now().year) <= target_yr else "Overdue")
             )
 
             ws1.cell(row=row_curr, column=1, value=_safe_excel_value(f.name))
@@ -1316,21 +1295,24 @@ def export_ogmp_excel():
             ws4.cell(row=row_curr, column=5, value=round(td_total, 2))
             ws4.cell(row=row_curr, column=6, value=var_str)
             ws4.cell(row=row_curr, column=7, value=f"±{thresh}%")
-            ws4.cell(
-                row=row_curr,
-                column=8,
-                value="FLAGGED (> Threshold)" if is_flagged else "PASS",
-            )
+            # a reconciliation needs both inventories: without a top-down measurement there is
+            # nothing to pass (browser test #10: "PASS - within acceptable variance" with no survey)
+            if var_pct is None and not is_flagged:
+                flag_txt = "NOT ASSESSED"
+                note = ("No top-down measurement for this period: schedule a site-level survey"
+                        if rec_status == "Pending Measurement" else "No bottom-up or top-down data")
+            elif is_flagged:
+                flag_txt = "FLAGGED (> Threshold)"
+                note = ("Site measurement exceeds bottom-up inventory. Investigate uncombusted slip "
+                        "or uninventoried vent sources." if (var_pct is None or var_pct > 0)
+                        else "Site measurement is below the bottom-up inventory. Review the "
+                             "inventory factors and the survey coverage.")
+            else:
+                flag_txt = "PASS"
+                note = "Within acceptable variance bounds"
+            ws4.cell(row=row_curr, column=8, value=flag_txt)
             ws4.cell(row=row_curr, column=9, value=_safe_excel_value(rec_status))
-            ws4.cell(
-                row=row_curr,
-                column=10,
-                value=_safe_excel_value(
-                    "Within acceptable variance bounds"
-                    if not is_flagged
-                    else "Site measurement exceeds bottom-up inventory. Investigate uncombusted slip or uninventoried vent sources."
-                ),
-            )
+            ws4.cell(row=row_curr, column=10, value=_safe_excel_value(note))
 
             for c in range(1, 11):
                 ws4.cell(row=row_curr, column=c).border = thin_border
@@ -1380,18 +1362,22 @@ def export_ogmp_excel():
                 and not latest_survey.variance_flag
             )
             has_survey = latest_survey is not None
-            curr_lvl = (
-                "Level 5 (Reconciled)"
-                if is_reconciled
-                else (
-                    "Level 4 (Measured)" if has_survey else "Level 3 (Generic Factors)"
-                )
-            )
-            status = (
-                "Gold Standard Achieved"
-                if is_reconciled
-                else ("On Track" if 2026 <= target_yr else "Action Plan Required")
-            )
+            # the level shown in the Executive Summary (browser test #10: Level 2 there, "Level 3"
+            # here); the deadline is compared with the reporting year, not a fixed 2026
+            lvl_num = level_by_fac.get(f.id)
+            lvl_names = {1: "Level 1 (Asset-level estimate)", 2: "Level 2 (Generic factors)",
+                         3: "Level 3 (Source-type factors)", 4: "Level 4 (Source-specific / measured)",
+                         5: "Level 5 (Reconciled with site measurement)"}
+            curr_lvl = lvl_names.get(lvl_num, f"Level {lvl_num}" if lvl_num else "Not assessed")
+            ref_year = year_filter or datetime.now().year
+            if lvl_num == 5 or is_reconciled:
+                status = "Gold Standard Achieved"
+            elif ref_year < target_yr:
+                status = f"On Track ({target_yr - ref_year} yr remaining)"
+            elif ref_year == target_yr:
+                status = "Due this year"
+            else:
+                status = "Overdue - Action Plan Required"
             action = (
                 "Maintain annual top-down measurement campaigns"
                 if is_reconciled

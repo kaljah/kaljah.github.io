@@ -294,3 +294,16 @@ def internal_error(exc, message="Internal server error", status=500, **extra):
         body.update(status=extra.pop("status_text"), message=message)
     body.update(extra)
     return jsonify(body), status
+
+
+
+def iso_utc(dt):
+    """ISO 8601 with an explicit UTC offset. Stored datetimes are naive UTC (SQLite drops the
+    zone); without the offset browsers read them as local time (browser test #19: the audit trail
+    was two hours behind and new events read "2h ago")."""
+    if dt is None:
+        return None
+    from datetime import timezone
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt.astimezone(timezone.utc).isoformat()

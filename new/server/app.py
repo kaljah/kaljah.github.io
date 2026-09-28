@@ -48,6 +48,11 @@ db.init_app(app)
 limiter.init_app(app)  # SEC-08 FIX: activate flask-limiter
 migrate = Migrate(app, db, directory=os.path.join(os.path.dirname(os.path.abspath(__file__)), "migrations"))
 
+# SQLite must not hand a deleted record's id to the next record (audit references by id)
+import id_guard  # noqa: E402
+
+id_guard.install()
+
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
 import sqlite3

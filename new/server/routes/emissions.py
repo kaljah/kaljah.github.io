@@ -14,6 +14,7 @@ from models import (
 )
 from extensions import db, limiter
 from utils import log_activity_and_notify
+from services.scope2_activity import scope2_activity
 from calculations import (
     compute_emissions,
     calculate_co2e,
@@ -437,9 +438,22 @@ def get_emissions():
             try:
                 payload = json.loads(r.source_payload)
                 d["factor_source"] = payload.get("factor_source")
+                if payload.get("custom_factor_id") not in (None, ""):
+                    d["custom_factor_id"] = payload.get("custom_factor_id")
             except Exception:
                 pass
         paginated_results.append(d)
+
+    # Records saved with a library / custom factor before the factor name was stored show the
+    # factor id as their fuel (browser test #13): show the factor's name instead
+    cf_ids = {int(d["custom_factor_id"]) for d in paginated_results
+              if str(d.get("custom_factor_id") or "").isdigit() and str(d.get("fuel") or "").isdigit()}
+    if cf_ids:
+        from models import CustomFactor
+        names = {cf.id: cf.name for cf in CustomFactor.query.filter(CustomFactor.id.in_(cf_ids)).all()}
+        for d in paginated_results:
+            if str(d.get("fuel") or "").isdigit() and str(d.get("custom_factor_id") or "").isdigit():
+                d["fuel"] = names.get(int(d["custom_factor_id"]), d["fuel"])
 
     return jsonify(
         {
@@ -3245,7 +3259,6 @@ def add_emission():
         db.session.commit()
     except Exception as e:
         db.session.rollback()
-        from flask import current_app
         current_app.logger.warning(f"Audit Log Error: {e}")
 
     # --- Notification Logic: Check Goal ---
@@ -3305,8 +3318,12 @@ def add_emission():
                                 title=title, message=msg, type=n_type, user_id=user.id
                             )
                             db.session.commit()
+                        elif existing.message != msg:
+                            # keep the unread notice current: it quoted the total at the time it was
+                            # first raised (browser test: 660,945 t while the year stood at 891,521 t)
+                            existing.message = msg
+                            db.session.commit()
     except Exception as e:
-        from flask import current_app
         current_app.logger.warning(f"Notification check error: {e}")
 
     # Return emission result with uncertainty
@@ -3965,9 +3982,9 @@ def export_emissions():
                     "field": r.field or (fac.field if fac else ""),
                     "group": "N/A",
                     "process": f"Scope 2: {r.source_type or 'Electricity'}",
-                    "fuel": r.grid_region or "Grid Electricity",
-                    "quantity": float(r.electricity_kwh or 0),
-                    "unit": "kWh",
+                    "fuel": scope2_activity(r)[2],
+                    "quantity": scope2_activity(r)[0],
+                    "unit": scope2_activity(r)[1],
                     "co2": 0.0,
                     "ch4": 0.0,
                     "n2o": 0.0,
@@ -4145,9 +4162,8 @@ def export_emissions():
             cell.fill = total_fill
             cell.border = double_bottom_border
 
-        cell_t_qty = ws1.cell(row=row_num, column=11, value=round(total_qty, 2))
-        cell_t_qty.number_format = "#,##0.00"
-        cell_t_qty.font = bold_font
+        # quantities are in different units (kWh, m3, bbl, devices...): they are not summed
+        ws1.cell(row=row_num, column=11, value="—").alignment = Alignment(horizontal="right")
 
         cell_t_co2 = ws1.cell(row=row_num, column=13, value=round(total_co2, 2))
         cell_t_co2.number_format = "#,##0.00"
@@ -4194,13 +4210,12 @@ def export_emissions():
 
         summary_rows = [
             ("Scope 1 — Direct Operational Emissions", s1_sum, "tCO₂e"),
-            ("Scope 2 — Indirect Purchased Electricity", s2_sum, "tCO₂e"),
+            ("Scope 2 — Indirect Energy (electricity, steam, heat, cooling)", s2_sum, "tCO₂e"),
             ("Scope 3 — Value Chain Emissions", s3_sum, "tCO₂e"),
             ("Grand Total CO₂e Footprint", total_co2e, "tCO₂e"),
             ("Total CO₂ Gas Mass", total_co2, "tonnes CO₂"),
             ("Total CH₄ Gas Mass", total_ch4, "tonnes CH₄"),
             ("Total N₂O Gas Mass", total_n2o, "tonnes N₂O"),
-            ("Total Activity Quantity", total_qty, "mixed units"),
             ("Total Record Count", len(export_data), "records"),
         ]
 
@@ -4395,7 +4410,8 @@ def get_pending_emissions():
         return jsonify({"error": "Insufficient permissions"}), 403
 
     allowed_fids = get_allowed_facility_ids(user)
-    pending_statuses = ["Pending", "Draft", "Pending Approval"]
+    # drafts are the maker's unsubmitted work: they enter review only when submitted (browser test)
+    pending_statuses = ["Pending", "Pending Approval", "Pending Review"]
     fetch_all = request.args.get("all", "").lower() == "true"
     limit_val = None if fetch_all else int(request.args.get("limit", 200))
 

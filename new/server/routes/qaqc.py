@@ -357,6 +357,17 @@ def get_qaqc_dashboard():
         verified_anomalies += q3_flags.filter(Scope3Emission.status.ilike("%verified%")).count()
         rejected_anomalies += q3_flags.filter(Scope3Emission.status.ilike("%rejected%")).count()
 
+        # the stored-data scan's outliers are listed in the queue, so they are counted too
+        # (browser test D5: "0 flagged" above a queue showing one flagged record)
+        for o in stored_outliers:
+            st = str(o.get("status") or "").lower()
+            if "rejected" in st:
+                rejected_anomalies += 1
+            elif "verified" in st:
+                verified_anomalies += 1
+            else:
+                pending_anomalies += 1
+
         # Completeness rates per dimension
         denom = total_records_count if total_records_count > 0 else s1_count
         if denom > 0:
@@ -580,7 +591,7 @@ def get_qaqc_dashboard():
             "total_flagged_count": total_flagged,
             "stored_scan_outlier_count": len(stored_outliers),
             "pending_review_count": sum(
-                _fac_filter(m.query, m).filter(m.status.in_(("Pending", "Pending Approval", "Draft"))).count()
+                _fac_filter(m.query, m).filter(m.status.in_(("Pending", "Pending Approval", "Pending Review"))).count()
                 for m in (Emission, Scope2Emission, Scope3Emission)),
             "returned_count": len(flagged_records),
             "limit": limit,
