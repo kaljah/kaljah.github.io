@@ -1136,7 +1136,7 @@ class TestLiquidsUnloadingPipeline:
         v_tubing = (pi/4) * 0.0635^2 * 1524 = 4.8263... m3
 
         p_abs = 500 + 14.696 = 514.696 psia
-        p_factor = 514.696 / 14.696 = 35.023...
+        p_factor = (514.696 - 14.696) / 14.696 = 34.023... (Eq 6-10: gauge pressure)
         t_abs_k = (60-32)*5/9 + 273.15 = 288.706 K (standard = 1.0)
         t_factor = 288.706 / 288.706 = 1.0
 
@@ -1161,7 +1161,7 @@ class TestLiquidsUnloadingPipeline:
         v_tubing = (math.pi / 4.0) * (d_m ** 2) * depth_m
 
         p_abs = pressure_psig + STD_PRESS_PSIA
-        p_factor = p_abs / STD_PRESS_PSIA
+        p_factor = (p_abs - STD_PRESS_PSIA) / STD_PRESS_PSIA  # Eq 6-10 casing term: gauge pressure (Exhibit 6-8)
         t_abs_k = (temp_f - 32.0) * 5.0 / 9.0 + 273.15
         t_factor = STD_TEMP_K / t_abs_k
 

@@ -573,6 +573,29 @@ class CalculationDispatcher:
         if routed is not None:
             return routed
 
+        # One percent / fraction decision per gas analysis (Tier 3 browser test #14: CH4 85 with CO2 1
+        # read CO2 as the fraction 1.0 = 100 %). When any member of a group is above 1 the whole group
+        # is in percent and is converted to fractions here.
+        for group in (("ch4_content", "co2_content", "c2plus_content"),
+                      ("comp_ch4_content", "comp_co2_content", "comp_c2plus_content"),
+                      ("pneu_ch4_content", "pneu_co2_content")):
+            vals = {}
+            for k in group:
+                v = flat_inputs.get(k)
+                if v in (None, "", "-"):
+                    continue
+                try:
+                    vals[k] = float(v)
+                except (TypeError, ValueError):
+                    vals = {}
+                    break
+            # a single member cannot be decided jointly, and a c1..c10 analysis makes its own
+            # whole-analysis decision (BUG-023, Exhibit 5.1)
+            if any(flat_inputs.get(f"c{i}") not in (None, "", "-") for i in range(1, 11)):
+                continue
+            if len(vals) >= 2 and any(v > 1.0 for v in vals.values()):
+                flat_inputs = {**flat_inputs, **{k: v / 100.0 for k, v in vals.items()}}
+
         # Validate required gas composition for specific factor sources
         if process_type in [
             "stationary_combustion",
@@ -798,6 +821,18 @@ class CalculationDispatcher:
                     comb_eff_frac = comb_eff
 
                 comps = self._composition(flat_inputs)
+                # Tier 3 fuel analysis needs the fuel composition or measured factors; an HHV alone
+                # used to give a Verified 0 tCO2e record (Tier 3 browser test #10)
+                _spec = flat_inputs.get("specific_factors") or flat_inputs.get("specificFactors") or {}
+                _measured = any(
+                    (emission_factors.get(k) not in (None, "", "-", 0, 0.0))
+                    or (isinstance(_spec, dict) and str(_spec.get(k) or "").strip() not in ("", "0", "0.0", "-"))
+                    for k in ("co2", "ch4", "n2o")
+                )
+                if not any(comps.get(f"c{i}") for i in range(1, 11)) and not comps.get("co2_comp") and not _measured:
+                    raise ValueError(
+                        "Tier 3 fuel analysis needs the fuel gas composition (Gas analysis) or measured emission factors"
+                    )
 
                 return calculator.calculate(
                     fuel_quantity=quantity,
@@ -1406,6 +1441,12 @@ class CalculationDispatcher:
                 "tank_working",
                 "tank_breathing",
             ]:
+                if process_type in ("tank_working", "tank_breathing"):
+                    # Section 6.3.9.3: working / standing losses are the total hydrocarbon loss (AP-42
+                    # Chapter 7 or simulation) x the vent CH4 / CO2 weight fraction, not flashing
+                    raise ValueError(
+                        "Working and breathing losses: enter the total hydrocarbon loss and the vent CH4 / CO2 weight % (vent_method 'thc_mass')"
+                    )
                 raw_throughput = self._require_float(
                     flat_inputs,
                     ["amount", "quantity", "throughput"],
@@ -1548,19 +1589,17 @@ class CalculationDispatcher:
                 "lng_operations",
             ]:
                 # 1. Duration / Time Basis Handling with proper unit conversion
-                raw_time = float(
-                    flat_inputs.get("hours")
-                    or flat_inputs.get("operating_hours")
-                    or flat_inputs.get("hours_operating")
-                    or 0.0
-                )
+                _t = next((flat_inputs.get(k) for k in ("hours", "operating_hours", "hours_operating")
+                           if flat_inputs.get(k) not in (None, "")), None)
+                raw_time = float(_t) if _t is not None else 0.0
+                _time_given = _t is not None  # an entered 0 h is 0, not a full year
                 time_unit = str(
                     flat_inputs.get("time_unit")
                     or flat_inputs.get("duration_unit")
                     or "hours"
                 ).lower()
 
-                if raw_time <= 0:
+                if not _time_given:
                     raw_days = float(
                         flat_inputs.get("operating_days")
                         or flat_inputs.get("days")
@@ -1632,30 +1671,41 @@ class CalculationDispatcher:
 
                 elif is_screening_measurement:
                     calc = OnshoreScreeningMeasurementCalculator()
-                    sub_mode = str(flat_inputs.get("fugitive_sub_method") or fug_method or "measurement").lower()
+                    # the explicit method decides (Tier 3 browser test #3: "method21" fell through to
+                    # direct measurement; stale keys of another method must not re-route a record)
+                    sub_mode = str(flat_inputs.get("fugitive_sub_method") or fug_method or "").lower()
+                    if not sub_mode:
+                        sub_mode = ("ogi" if flat_inputs.get("leakers_count") is not None
+                                    else "correlation" if flat_inputs.get("corr_screened_count") is not None
+                                    else "measurement")
                     comp_type = str(flat_inputs.get("component_type") or "valve")
                     service = str(flat_inputs.get("service_type") or flat_inputs.get("service") or "gas")
-                    c_ch4 = self._optional_fraction(flat_inputs, ["ch4_content", "ch4_fraction", "c1"], 0.85)
+                    y_ch4 = self._optional_fraction(flat_inputs, ["ch4_content", "ch4_mole_pct", "ch4_fraction", "c1"], None)
+                    y_co2 = self._optional_fraction(flat_inputs, ["co2_content", "co2_mole_pct", "co2_fraction"], None)
 
-                    if "ogi" in sub_mode or flat_inputs.get("leakers_count") is not None or flat_inputs.get("detected_leakers") is not None:
-                        total_surv = int(float(flat_inputs.get("surveyed_count") or flat_inputs.get("total_surveyed") or flat_inputs.get("amount") or 1))
-                        leakers = int(float(flat_inputs.get("leakers_count") or flat_inputs.get("detected_leakers") or 0))
+                    if "ogi" in sub_mode or sub_mode in ("leaker", "leakers"):
+                        leakers = self._require_float(flat_inputs, ["leakers_count", "detected_leakers"], "number of leakers")
+                        surveyed = flat_inputs.get("surveyed_count") or flat_inputs.get("total_surveyed")
                         return calc.calculate_ogi_survey(
-                            component_type=comp_type,
-                            service_type=service,
-                            total_surveyed=total_surv,
+                            component_type=flat_inputs.get("ogi_component") or comp_type,
+                            service_type=flat_inputs.get("ogi_service") or service,
+                            total_surveyed=surveyed,
                             leakers_detected=leakers,
                             operating_hours=op_hours,
                             uncertainties=uncertainties,
                             gwp_dict=gwp_dict,
+                            ch4_mol=y_ch4,
+                            co2_mol=y_co2,
                         )
                     elif "corr" in sub_mode:
                         ppm_vals = flat_inputs.get("screening_values_ppm")
                         if isinstance(ppm_vals, str):
                             ppm_vals = [v for v in ppm_vals.replace(";", ",").split(",") if v.strip()]
                         if not ppm_vals and flat_inputs.get("corr_screened_count") not in (None, ""):
-                            ppm = self._require_float(flat_inputs, ["fugitive_ppm", "screening_ppm", "ppm"], "screening ppm")
-                            ppm_vals = [ppm] * int(float(flat_inputs.get("corr_screened_count") or 0))
+                            n_scr = int(float(flat_inputs.get("corr_screened_count") or 0))
+                            if n_scr:
+                                ppm = self._require_float(flat_inputs, ["fugitive_ppm", "screening_ppm", "ppm"], "screening ppm")
+                                ppm_vals = [ppm] * n_scr
                         elif not ppm_vals and not any(
                             flat_inputs.get(k) not in (None, "")
                             for k in ("corr_zero_count", "corr_pegged_10k_count", "corr_pegged_100k_count")
@@ -1664,50 +1714,54 @@ class CalculationDispatcher:
                             count = int(float(flat_inputs.get("amount") or flat_inputs.get("quantity") or 1))
                             ppm_vals = [ppm] * count
                         # CH4 weight fraction of TOC (not the gas mole %); default 0.564 (Table C-1)
-                        c_toc = flat_inputs.get("ch4_wt_fraction")
                         return calc.calculate_correlation_equation(
                             component_type=flat_inputs.get("correlation_type") or comp_type,
                             service_type=service,
                             screening_values_ppm=ppm_vals or [],
                             operating_hours=op_hours,
-                            ch4_content=c_toc,
+                            ch4_content=flat_inputs.get("ch4_wt_fraction"),
                             uncertainties=uncertainties,
                             gwp_dict=gwp_dict,
                             zero_count=flat_inputs.get("corr_zero_count"),
                             pegged_10k_count=flat_inputs.get("corr_pegged_10k_count"),
                             pegged_100k_count=flat_inputs.get("corr_pegged_100k_count"),
                         )
-                    elif "range" in sub_mode:
-                        non_pegged = int(float(flat_inputs.get("non_pegged_count") or flat_inputs.get("non_leakers") or 0))
-                        pegged = int(float(flat_inputs.get("pegged_count") or flat_inputs.get("leakers_count") or flat_inputs.get("amount") or 0))
+                    elif "method21" in sub_mode or "range" in sub_mode or sub_mode == "screening":
+                        below = flat_inputs.get("m21_below_count")
+                        above = flat_inputs.get("m21_above_count")
+                        if below in (None, "") and above in (None, ""):
+                            # older payloads: one screening value for `amount` components
+                            count = self._require_float(flat_inputs, ["amount", "quantity", "component_count"], "component count")
+                            ppm = self._require_float(flat_inputs, ["screening_ppm", "fugitive_ppm", "ppm"], "screening value (ppmv)")
+                            below, above = (0, count) if ppm >= 10000 else (count, 0)
                         return calc.calculate_method21_ranges(
-                            component_type=comp_type,
-                            service_type=service,
-                            non_pegged_count=non_pegged,
-                            pegged_count=pegged,
+                            component_type=flat_inputs.get("m21_component") or comp_type,
+                            service_type=flat_inputs.get("m21_service") or service,
+                            non_pegged_count=below,
+                            pegged_count=above,
                             operating_hours=op_hours,
-                            ch4_content=c_ch4,
+                            ch4_content=flat_inputs.get("ch4_wt_fraction"),
                             uncertainties=uncertainties,
                             gwp_dict=gwp_dict,
                         )
-                    else:
-                        # Direct Measurement
+                    elif "measure" in sub_mode:
                         meas_rate = self._require_float(
-                            flat_inputs,
-                            ["measured_rate", "amount", "quantity", "flow_rate", "rate"],
-                            "measured leak/vent rate",
+                            flat_inputs, ["measured_rate", "flow_rate", "rate"], "measured leak rate"
                         )
-                        rate_u = str(flat_inputs.get("measurement_unit") or flat_inputs.get("unit") or "kg/hr")
-                        c_co2 = self._optional_fraction(flat_inputs, ["co2_content", "co2_fraction"], 0.01)
+                        rate_u = str(flat_inputs.get("rate_unit") or flat_inputs.get("measurement_unit") or "")
+                        if not rate_u:
+                            raise ValueError("Select the unit of the measured leak rate")
                         return calc.calculate_direct_measurement(
                             measured_rate=meas_rate,
                             measurement_unit=rate_u,
                             operating_hours=op_hours,
-                            ch4_mol=c_ch4,
-                            co2_mol=c_co2,
+                            ch4_mol=y_ch4,
+                            co2_mol=y_co2,
                             uncertainties=uncertainties,
                             gwp_dict=gwp_dict,
                         )
+                    else:
+                        raise ValueError(f"Unknown fugitive Tier 3 method '{sub_mode}'")
 
                 elif is_component:
                     calc = OnshoreComponentFugitiveCalculator()
@@ -1816,7 +1870,10 @@ class CalculationDispatcher:
                 raw_co2_out_val = flat_inputs.get("agr_co2_out") or flat_inputs.get("co2_out")
                 raw_co2_out = float(raw_co2_out_val) if raw_co2_out_val not in [None, "", "-"] else 0.001
 
-                if raw_co2_in > 1.0 or raw_co2_out > 1.0:
+                if flat_inputs.get("agr_co2_in") not in (None, ""):
+                    # the form's fields are labelled "%": always percentages (0.9 % is not 90 %)
+                    co2_in, co2_out = raw_co2_in / 100.0, (raw_co2_out / 100.0 if raw_co2_out_val not in [None, "", "-"] else 0.0)
+                elif raw_co2_in > 1.0 or raw_co2_out > 1.0:
                     co2_in = raw_co2_in / 100.0 if raw_co2_in > 1.0 else raw_co2_in
                     co2_out = (raw_co2_out / 100.0) if raw_co2_in > 1.0 else (raw_co2_out / 100.0 if raw_co2_out > 1.0 else raw_co2_out)
                 else:
@@ -1824,7 +1881,7 @@ class CalculationDispatcher:
                     co2_out = raw_co2_out
 
                 if co2_out > co2_in:
-                    co2_out = co2_in
+                    raise ValueError("Outlet CO2 cannot exceed inlet CO2")
 
                 ch4_in = self._optional_fraction(
                     flat_inputs, ["agr_ch4_in", "ch4_in", "c1", "ch4_mole_pct"], 0.85
@@ -1832,7 +1889,7 @@ class CalculationDispatcher:
                 ch4_slip = self._optional_fraction(
                     flat_inputs,
                     ["agr_ch4_slip_pct", "ch4_slip_pct", "agr_ch4_slip", "ch4_slip_fraction", "methane_slip_factor", "ch4_slip"],
-                    0.001,
+                    None,
                 )
                 ctrl_eff = self._optional_fraction(
                     flat_inputs, ["agr_control_eff", "control_efficiency", "removal_efficiency"], 0.0
@@ -1972,6 +2029,14 @@ class CalculationDispatcher:
                 )
 
             elif process_type == "dehydrator":
+                # Tier 3 browser test #12: the former "parametric solubility" model had no source in the
+                # API Compendium. Section 6.3.8.1 methods: Tables 6-17/6-18/6-35/6-36 (Tier 1 activity
+                # factors), a process simulation (GRI-GLYCalc) or measurement (vent_method routes)
+                if flat_inputs.get("dehy_pump_rate") not in (None, "") or flat_inputs.get("pump_rate") not in (None, ""):
+                    raise ValueError(
+                        "Glycol dehydrator Tier 3: enter the measured vent volume or the simulation (GLYCalc) result; "
+                        "use Tier 1 for the Compendium factors"
+                    )
                 throughput = (
                     flat_inputs.get("dehy_throughput")
                     or flat_inputs.get("amount")

@@ -172,27 +172,22 @@ def test_agr_methane_slip_calculation():
 
 
 def test_dehydrator_parametric_solubility():
-    """CALC-02: Verify Glycol Dehydrator parametric TEG solubility model"""
+    """The parametric TEG solubility model (S = 0.0032 P^0.96 ...) had no API Compendium source and was
+    removed (audit/TIER3_BROWSER_TEST.md #12): its inputs are rejected with guidance."""
     dispatcher = CalculationDispatcher()
     payload = {
         "process_type": "dehydrator",
         "factor_source": "specific",
         "amount": 50,
-        "dehy_pump_rate": 15.0,  # 15 gal/hr
+        "dehy_pump_rate": 15.0,
         "dehy_pump_unit": "gph",
         "dehy_hours": 8760,
         "dehy_ch4_content": 90.0,
-        "dehy_press": 1000.0,  # 1000 psig contactor
-        "dehy_temp": 100.0,  # 100°F
-        "dehy_has_flash": True,
-        "dehy_eff": 0.0,
+        "dehy_press": 1000.0,
+        "dehy_temp": 100.0,
     }
-    res = dispatcher.dispatch("dehydrator", payload, {}, {})
-    assert res is not None
-    assert res["results"]["ch4"]["value"] > 0
-    assert (
-        1.0 < res["inputs"]["solubility_scf_gal"] < 5.0
-    )  # Calibrated Henry's Law solubility per API Table 6-5 (1.5 - 2.8 scf/gal)
+    with pytest.raises(ValueError, match="GLYCalc"):
+        dispatcher.dispatch("dehydrator", payload, {}, {})
 
 
 def test_blowdown_temperature_correction():

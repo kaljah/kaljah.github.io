@@ -451,7 +451,7 @@ class TestLiquidsUnloading:
         depth_m = 5000.0 * 0.3048
         v_tubing = (math.pi/4) * (d_m**2) * depth_m
         p_abs = 500.0 + STD_PRESS_PSIA
-        p_factor = p_abs / STD_PRESS_PSIA
+        p_factor = (p_abs - STD_PRESS_PSIA) / STD_PRESS_PSIA  # Eq 6-10 casing term: gauge pressure
         t_abs_k = ref_f_to_k(60.0)
         t_factor = STD_TEMP_K / t_abs_k
         v_std = v_tubing * p_factor * t_factor
@@ -479,7 +479,7 @@ class TestLiquidsUnloading:
         depth_m = 2000.0 * 0.3048
         v_tubing = (math.pi/4) * (d_m**2) * depth_m
         p_abs = 200.0 + STD_PRESS_PSIA
-        p_factor = p_abs / STD_PRESS_PSIA
+        p_factor = (p_abs - STD_PRESS_PSIA) / STD_PRESS_PSIA  # Eq 6-10 casing term: gauge pressure
         t_abs_k = ref_f_to_k(60.0)
         t_factor = STD_TEMP_K / t_abs_k
         v_std = v_tubing * p_factor * t_factor

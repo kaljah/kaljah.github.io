@@ -168,3 +168,4 @@ Working branch: `fix/audit-remediation` (from `main`).
   - Root Dockerfile upgraded to production multi-stage build (M8, D-07).
   - Dead scratch scripts neutralized and deprecated (S4, M9, T3, T4).
 - 2026-09-28 · Onshore API Compendium exhibits implemented (activity-factor tables, gas-volume methods, combustion / waste-gas methods, correlation approach fixed) with 45 exhibit regression cases; details in audit/FIX_LOG.md and audit/COMPENDIUM_EXHIBIT_CHECK.md section 5. Still open: offshore 7-1..7-3, marine 6-36/6-37, refining, wastewater, HFC/SF6; fugitives Tier 2B routing.
+- 2026-09-28 · Tier 3 browser test of every Scope 1 process: 20 findings fixed, re-run 50/50 (audit/TIER3_BROWSER_TEST.md). Pre-existing, unchanged: GOLD-E01, throughput SLA timing (machine), validation/ GWP-constant tests, Tier 2B fugitive xfails.
