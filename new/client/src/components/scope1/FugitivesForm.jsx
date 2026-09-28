@@ -706,64 +706,49 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default" }) => {
             </div>
           )}
 
-          {/* Tier 3B: Correlation Equations */}
+          {/* Tier 3B: Correlation approach — non-detects, screened values, pegged components */}
           {tier3Method === "correlation" && (
-            <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr 1fr 1fr", gap: "12px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "12px" }}>
               <div className="input-group">
-                <label>Correlation Curve</label>
+                <label>Component</label>
                 <CustomDropdown
                   options={[
-                    { value: "gas_valve", label: "Gas Valves: Rate = 1.87e-6 × (PPM)^0.873" },
-                    { value: "gas_connector", label: "Gas Connectors: Rate = 3.05e-6 × (PPM)^0.885" },
-                    { value: "gas_flange", label: "Gas Flanges: Rate = 4.61e-6 × (PPM)^0.790" },
-                    { value: "light_oil_valve", label: "Light Oil Valves: Rate = 6.41e-6 × (PPM)^0.797" },
+                    { value: "valve", label: "Valves" },
+                    { value: "pump_seal", label: "Pump seals" },
+                    { value: "connector", label: "Connectors" },
+                    { value: "flange", label: "Flanges" },
+                    { value: "open_ended_line", label: "Open-ended lines" },
+                    { value: "other", label: "Other components" },
                   ]}
-                  value={data.correlation_type || "gas_valve"}
+                  value={data.correlation_type || "valve"}
                   onChange={(val) => onChange("correlation_type", val)}
                 />
               </div>
-
-              <div className="input-group">
-                <label>Measured PPMv</label>
-                <input
-                  type="number"
-                  min="0"
-                  step="any"
-                  className="mole-input"
-                  value={data.screening_ppm || 500}
-                  onChange={(e) => {
-                    onChange("screening_ppm", e.target.value);
-                    onChange("fugitive_ppm", e.target.value);
-                  }}
-                  placeholder="e.g. 2500"
-                />
-              </div>
-
-              <div className="input-group">
-                <label>Source Count</label>
-                <input
-                  type="number"
-                  min="1"
-                  step="1"
-                  className="mole-input"
-                  value={data.amount || 1}
-                  onChange={(e) => onChange("amount", e.target.value)}
-                  placeholder="1"
-                />
-              </div>
-
-              <div className="input-group">
-                <label>Operating Hours</label>
-                <input
-                  type="number"
-                  min="0"
-                  step="any"
-                  className="mole-input"
-                  value={data.operating_hours || 8760}
-                  onChange={(e) => onChange("operating_hours", e.target.value)}
-                  placeholder="8760"
-                />
-              </div>
+              {[
+                ["corr_zero_count", "Non-detect count", "0"],
+                ["corr_screened_count", "Screened count", "0"],
+                ["screening_ppm", "Screening value (ppmv)", "e.g. 2500"],
+                ["corr_pegged_10k_count", "Pegged ≥ 10,000 ppmv", "0"],
+                ["corr_pegged_100k_count", "Pegged ≥ 100,000 ppmv", "0"],
+                ["ch4_wt_fraction", "CH₄ in TOC (wt %)", "56.4"],
+                ["operating_hours", "Operating hours", "8760"],
+              ].map(([field, label, ph]) => (
+                <div className="input-group" key={field}>
+                  <label>{label}</label>
+                  <input
+                    type="number"
+                    min="0"
+                    step="any"
+                    className="mole-input"
+                    value={data[field] ?? ""}
+                    onChange={(e) => {
+                      onChange(field, e.target.value);
+                      if (field === "screening_ppm") onChange("fugitive_ppm", e.target.value);
+                    }}
+                    placeholder={ph}
+                  />
+                </div>
+              ))}
             </div>
           )}
 
