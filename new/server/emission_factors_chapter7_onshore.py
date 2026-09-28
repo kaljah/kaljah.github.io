@@ -1492,135 +1492,39 @@ API_CHAPTER7_ONSHORE_FACTORS = {
 # Expressed in kg TOC/hr/component
 # Non-pegged (<10,000 ppmv) and Pegged (>=10,000 ppmv)
 # =============================================================================
-METHOD21_SCREENING_RANGES = {
-    "valve_gas": {
-        "component_type": "Valve",
-        "service_type": "Gas",
-        "non_pegged_ef": 0.000055,  # kg TOC/hr
-        "pegged_10k_ef": 0.045,     # kg TOC/hr
-        "unit": "kg TOC/hr/source",
-        "table": "Table 7-15",
-    },
-    "valve_light_oil": {
-        "component_type": "Valve",
-        "service_type": "Light Oil",
-        "non_pegged_ef": 0.000049,
-        "pegged_10k_ef": 0.030,
-        "unit": "kg TOC/hr/source",
-        "table": "Table 7-15",
-    },
-    "valve_heavy_oil": {
-        "component_type": "Valve",
-        "service_type": "Heavy Oil",
-        "non_pegged_ef": 0.0000084,
-        "pegged_10k_ef": 0.030,
-        "unit": "kg TOC/hr/source",
-        "table": "Table 7-15",
-    },
-    "pump_light_oil": {
-        "component_type": "Pump Seal",
-        "service_type": "Light Oil",
-        "non_pegged_ef": 0.00054,
-        "pegged_10k_ef": 0.098,
-        "unit": "kg TOC/hr/source",
-        "table": "Table 7-15",
-    },
-    "connector_gas": {
-        "component_type": "Connector",
-        "service_type": "Gas",
-        "non_pegged_ef": 0.0000075,
-        "pegged_10k_ef": 0.017,
-        "unit": "kg TOC/hr/source",
-        "table": "Table 7-15",
-    },
-    "flange_gas": {
-        "component_type": "Flange",
-        "service_type": "Gas",
-        "non_pegged_ef": 0.0000031,
-        "pegged_10k_ef": 0.085,
-        "unit": "kg TOC/hr/source",
-        "table": "Table 7-15",
-    },
-    "open_ended_line_gas": {
-        "component_type": "Open-Ended Line",
-        "service_type": "Gas",
-        "non_pegged_ef": 0.00015,
-        "pegged_10k_ef": 0.030,
-        "unit": "kg TOC/hr/source",
-        "table": "Table 7-15",
-    },
-    "prv_gas": {
-        "component_type": "Pressure Relief Valve",
-        "service_type": "Gas",
-        "non_pegged_ef": 0.000051,
-        "pegged_10k_ef": 0.073,
-        "unit": "kg TOC/hr/source",
-        "table": "Table 7-15",
-    },
-}
+# Table 7-26: EPA onshore oil and natural gas production equipment leak screening factors
+# (EPA-453/R-95-017 Table 2-8), kg TOC/component-hr for screening values < 10,000 and >= 10,000 ppmv.
+# None = "NA" in the table (no factor): a count in that range is rejected.
+def _m21(below, above):
+    return {"non_pegged_ef": below, "pegged_10k_ef": above, "unit": "kg TOC/hr/component", "table": "Table 7-26"}
 
-# =============================================================================
-# TIER 3C: OPTICAL GAS IMAGING (OGI) LEAKER FACTORS (§7.2.2, Table 7-19 / W-1E)
-# Expressed in kg CH4/hr/component
-# Leaker EF (detected leaking) vs Non-Leaker EF (surveyed non-leaking)
-# =============================================================================
+
+METHOD21_SCREENING_RANGES = {
+    "valve_gas": _m21(2.5e-05, 9.8e-02), "valve_light_oil": _m21(1.9e-05, 8.7e-02),
+    "valve_water_oil": _m21(9.7e-06, 6.4e-02), "valve_heavy_oil": _m21(8.4e-06, None),
+    "pump_seal_gas": _m21(3.5e-04, 7.4e-02), "pump_seal_light_oil": _m21(5.1e-04, 1.0e-01),
+    "pump_seal_water_oil": _m21(2.4e-05, None),
+    "other_gas": _m21(1.2e-04, 8.9e-02), "other_light_oil": _m21(1.1e-04, 8.3e-02),
+    "other_water_oil": _m21(5.9e-05, 6.9e-02), "other_heavy_oil": _m21(3.2e-05, None),
+    "connector_gas": _m21(1.0e-05, 2.6e-02), "connector_light_oil": _m21(9.7e-06, 2.6e-02),
+    "connector_water_oil": _m21(1.0e-05, 2.8e-02), "connector_heavy_oil": _m21(7.5e-06, None),
+    "flange_gas": _m21(5.7e-06, 8.2e-02), "flange_light_oil": _m21(2.4e-06, 7.3e-02),
+    "flange_heavy_oil": _m21(3.9e-07, None), "flange_water_oil": _m21(2.9e-06, None),
+    "open_ended_line_gas": _m21(1.5e-05, 5.5e-02), "open_ended_line_light_oil": _m21(1.4e-05, 4.4e-02),
+    "open_ended_line_heavy_oil": _m21(7.2e-06, 3.0e-02), "open_ended_line_water_oil": _m21(3.5e-06, 3.0e-02),
+}
+# Table C-1 "generic" CH4 weight fraction of THC for component emissions, by service
+METHOD21_CH4_WT_DEFAULT = {"gas": 0.920, "light_oil": 0.613, "heavy_oil": 0.942}
+
+# Table 7-23: default whole-gas leaker factors (scf gas/component-hr) for surveys under
+# 40 CFR 98.234(a)(1)-(6) (OGI and Method 21 at 10,000 ppmv); CH4 basis 81.6 mol %.
+# Leakers only: the table has no non-leaker factor.
+_OGI_GAS = {"valve": 4.9, "flange": 4.1, "connector": 1.3, "open_ended_line": 2.8, "prv": 4.5, "pump_seal": 3.7, "other": 4.5}
+_OGI_CRUDE = {"valve": 3.2, "flange": 2.7, "connector": 1.0, "open_ended_line": 1.6, "prv": 3.7, "pump_seal": 3.7, "other": 3.1}
 OGI_LEAKER_FACTORS = {
-    "valve_gas": {
-        "component_type": "Valve",
-        "service_type": "Gas",
-        "leaker_ef": 0.141,       # kg CH4/hr/leaker
-        "non_leaker_ef": 0.00032,  # kg CH4/hr/non-leaker
-        "unit": "kg CH4/hr/source",
-        "table": "Table 7-19 / EPA Subpart W Table W-1E",
-    },
-    "valve_light_oil": {
-        "component_type": "Valve",
-        "service_type": "Light Oil",
-        "leaker_ef": 0.096,
-        "non_leaker_ef": 0.00015,
-        "unit": "kg CH4/hr/source",
-        "table": "Table 7-19 / EPA Subpart W Table W-1E",
-    },
-    "connector_gas": {
-        "component_type": "Connector",
-        "service_type": "Gas",
-        "leaker_ef": 0.046,
-        "non_leaker_ef": 0.000062,
-        "unit": "kg CH4/hr/source",
-        "table": "Table 7-19 / EPA Subpart W Table W-1E",
-    },
-    "flange_gas": {
-        "component_type": "Flange",
-        "service_type": "Gas",
-        "leaker_ef": 0.085,
-        "non_leaker_ef": 0.000080,
-        "unit": "kg CH4/hr/source",
-        "table": "Table 7-19 / EPA Subpart W Table W-1E",
-    },
-    "pump_light_oil": {
-        "component_type": "Pump Seal",
-        "service_type": "Light Oil",
-        "leaker_ef": 0.210,
-        "non_leaker_ef": 0.0011,
-        "unit": "kg CH4/hr/source",
-        "table": "Table 7-19 / EPA Subpart W Table W-1E",
-    },
-    "prv_gas": {
-        "component_type": "Pressure Relief Valve",
-        "service_type": "Gas",
-        "leaker_ef": 0.245,
-        "non_leaker_ef": 0.00021,
-        "unit": "kg CH4/hr/source",
-        "table": "Table 7-19 / EPA Subpart W Table W-1E",
-    },
-    "open_ended_line_gas": {
-        "component_type": "Open-Ended Line",
-        "service_type": "Gas",
-        "leaker_ef": 0.052,
-        "non_leaker_ef": 0.00014,
-        "unit": "kg CH4/hr/source",
-        "table": "Table 7-19 / EPA Subpart W Table W-1E",
-    },
+    **{f"{k}_gas": {"whole_gas_scf_hr": v, "ch4_basis": 0.816, "table": "Table 7-23"} for k, v in _OGI_GAS.items()},
+    **{f"{k}_light_crude": {"whole_gas_scf_hr": v, "ch4_basis": 0.816, "table": "Table 7-23"} for k, v in _OGI_CRUDE.items()},
+    **{f"{k}_heavy_crude": {"whole_gas_scf_hr": v, "ch4_basis": 0.816, "table": "Table 7-23"} for k, v in _OGI_CRUDE.items()},
 }
 
 # Default stream compositions by service classification (API Compendium 2021)

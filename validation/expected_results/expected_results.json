@@ -36,14 +36,14 @@
   },
   "GOLD-A03-UNLOAD-NORM": {
     "calc_type": "liquids_unloading",
-    "methodology": "API Compendium 2021 \u00a76.4 Eq. 6-3",
+    "methodology": "API Compendium 2021 Eq 6-10 (casing term, gauge pressure)",
     "intermediate": {},
     "expected_final": {
-      "ch4": 0.35687197224490275,
+      "ch4": 0.32502790496876305,
       "co2": 0.0,
       "n2o": 0.0,
-      "co2e": 9.992415222857277,
-      "total_gas_m3": 618.7905366420786
+      "co2e": 9.100781339125366,
+      "total_gas_m3": 563.5751960965158
     },
     "expected_units": "tCO2e",
     "tolerance": 1e-05,

@@ -267,18 +267,17 @@ class TestAllProcessTypesTier3:
         assert res["results"]["ch4"]["value"] > 0
 
     def test_glycol_dehydrator_tier3(self, dispatcher):
+        # Tier 3 = process simulation (GRI-GLYCalc) or measured result (API Compendium 6.3.8.1); the former
+        # unsourced solubility model was removed (audit/TIER3_BROWSER_TEST.md #12)
         payload = {
             "process_type": "dehydrator",
             "factor_source": "specific",
-            "pump_rate": 20.0,
-            "pump_unit": "gph",
-            "hours": 8760,
-            "ch4_content": 90.0,
-            "contactor_pressure": 900.0,
-            "contactor_temperature": 105.0,
+            "vent_method": "reported_mass",
+            "ch4_mass": 12.0,
+            "co2_mass": 0.5,
         }
         res = dispatcher.dispatch("dehydrator", payload, {}, {})
-        assert res["results"]["ch4"]["value"] > 0
+        assert res["results"]["ch4"]["value"] == pytest.approx(12.0)
 
     def test_indirect_steam_tier3(self, dispatcher):
         payload = {

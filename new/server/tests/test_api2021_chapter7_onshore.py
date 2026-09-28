@@ -200,17 +200,12 @@ def test_tier2b_heavy_oil_valves():
 # 4. TIER 3: SCREENING, CORRELATION, OGI & MEASUREMENT (TABLES 7-15, 7-19)
 # ============================================================================
 
-@pytest.mark.xfail(strict=False, reason="RC-17 open: expectation cites Compendium table numbers that do not match the 2021 edition (e.g. Tables 7-15/7-16 are Canadian factors) and was failing at baseline; to be re-derived from the Compendium text")
 def test_tier3_ogi_leakers_vs_non_leakers():
     """
-    API 2021 Table 7-19 / EPA Subpart W Table W-1E: OGI Leaker Survey
-    Factor: 0.160 kg CH4/hr/leaker for Gas Valves, 0.00048 kg CH4/hr/non-leaker.
-    4 detected leakers + 96 non-leakers operating 8,760 hours.
-    Expected:
-      Leakers CH4: 4 * 0.160 = 0.64 kg/hr
-      Non-leakers CH4: 96 * 0.00048 = 0.04608 kg/hr
-      Total CH4/hr: 0.68608 kg/hr
-      Annual CH4: (0.68608 * 8760) / 1000 = 6.01006 tonnes CH4
+    API Compendium 2021 Table 7-23 (surveys under 40 CFR 98.234(a)(1)-(6)): gas-service valve leaker
+    4.9 scf whole gas / component-hr at 81.6 mol % CH4 (7.7E-05 t CH4/comp-hr). The table has no
+    non-leaker factor: non-leakers add nothing. 4 leakers, 8,760 h:
+      4 x 4.9 x 8,760 = 171,696 scf x 0.816 / 379.3 x 16.04 / 2,204.62 = 2.687 t CH4
     """
     calc = OnshoreScreeningMeasurementCalculator()
     res = calc.calculate_ogi_survey(
@@ -221,21 +216,16 @@ def test_tier3_ogi_leakers_vs_non_leakers():
         operating_hours=8760.0,
     )
     ch4_tonnes = get_val(res["results"]["ch4"])
-    assert pytest.approx(ch4_tonnes, rel=1e-3) == 6.01006
-    assert "Table 7-19" in res["intermediate"]["api_table"]
+    assert ch4_tonnes == pytest.approx(4 * 4.9 * 8760 * 0.816 / 379.3 * 16.04 / 2204.62, rel=5e-3)
+    assert ch4_tonnes == pytest.approx(4 * 7.7e-5 * 8760, rel=5e-3)
+    assert "Table 7-23" in res["intermediate"]["api_table"]
 
 
-@pytest.mark.xfail(strict=False, reason="RC-17 open: expectation cites Compendium table numbers that do not match the 2021 edition (e.g. Tables 7-15/7-16 are Canadian factors) and was failing at baseline; to be re-derived from the Compendium text")
 def test_tier3_method21_screening_ranges():
     """
-    API 2021 Table 7-15: Method 21 Screening Ranges for Gas Valves
-    Leaker (>=10,000 ppmv): 0.0451 kg TOC/hr
-    Non-Leaker (<10,000 ppmv): 0.00048 kg TOC/hr
-    Stream: 85% CH4, 8,760 hours.
-    10 leakers + 90 non-leakers:
-      TOC: 10 * 0.0451 + 90 * 0.00048 = 0.451 + 0.0432 = 0.4942 kg TOC/hr
-      CH4: 0.4942 * 0.85 = 0.42007 kg CH4/hr
-      Annual CH4: (0.42007 * 8760) / 1000 = 3.6798 tonnes CH4
+    API Compendium 2021 Table 7-26 (EPA Protocol Table 2-8), valves - gas: < 10,000 ppmv 2.5E-05,
+    >= 10,000 ppmv 9.8E-02 kg TOC/comp-hr; CH4 weight fraction 0.85 given. 10 + 90 valves, 8,760 h:
+      TOC = 10 x 0.098 + 90 x 2.5E-05 = 0.98225 kg/h; CH4 = 0.98225 x 0.85 x 8,760 / 1,000 = 7.3139 t
     """
     calc = OnshoreScreeningMeasurementCalculator()
     res = calc.calculate_method21_ranges(
@@ -247,17 +237,14 @@ def test_tier3_method21_screening_ranges():
         ch4_content=0.85,
     )
     ch4_tonnes = get_val(res["results"]["ch4"])
-    assert pytest.approx(ch4_tonnes, rel=1e-3) == 3.6798
+    assert ch4_tonnes == pytest.approx((10 * 0.098 + 90 * 2.5e-5) * 0.85 * 8760 / 1000, rel=1e-6)
 
 
-@pytest.mark.xfail(strict=False, reason="RC-17 open: expectation cites Compendium table numbers that do not match the 2021 edition (e.g. Tables 7-15/7-16 are Canadian factors) and was failing at baseline; to be re-derived from the Compendium text")
 def test_tier3_direct_measurement_flow_conversion():
     """
-    API 2021 Section 7.3.4: Direct Measurement
-    Metered rate: 100 scf/hr of gas stream (80% CH4, 2% CO2).
-    Duration: 1,000 hours.
-    scf/hr to Sm3/hr conversion = 0.0283168 m3/scf.
-    CH4 density = 0.6785 kg/m3, CO2 density = 1.861 kg/m3.
+    Direct measurement: 100 scf/h of whole gas (80 % CH4, 2 % CO2) for 1,000 h
+      CH4 = 100,000 scf x 0.80 / 379.3 x 16.04 / 2,204.62 = 1.5345 t
+      CO2 = 100,000 scf x 0.02 / 379.3 x 44.01 / 2,204.62 = 0.1053 t
     """
     calc = OnshoreScreeningMeasurementCalculator()
     res = calc.calculate_direct_measurement(
@@ -267,10 +254,8 @@ def test_tier3_direct_measurement_flow_conversion():
         ch4_mol=0.80,
         co2_mol=0.02,
     )
-    ch4_tonnes = get_val(res["results"]["ch4"])
-    co2_tonnes = float(res["results"]["co2"])
-    assert ch4_tonnes > 0
-    assert co2_tonnes > 0
+    assert get_val(res["results"]["ch4"]) == pytest.approx(1e5 * 0.80 / 379.3 * 16.04 / 2204.62, rel=5e-3)
+    assert get_val(res["results"]["co2"]) == pytest.approx(1e5 * 0.02 / 379.3 * 44.01 / 2204.62, rel=5e-3)
     assert res["intermediate"]["methodology"] == "Tier 3D: Direct Measurement"
 
 
@@ -349,11 +334,11 @@ def test_engine_dispatcher_tier2_component_routing():
     assert res["intermediate"]["api_table"] == "Table 7-11"
 
 
-@pytest.mark.xfail(strict=False, reason="RC-17 open: expectation cites Compendium table numbers that do not match the 2021 edition (e.g. Tables 7-15/7-16 are Canadian factors) and was failing at baseline; to be re-derived from the Compendium text")
 def test_engine_dispatcher_tier3_ogi_routing():
-    """Verify CalculationDispatcher routes Tier 3 OGI leaker count properly."""
+    """The dispatcher routes Tier 3 OGI leaker counts to Table 7-23 (4 gas valve leakers, 8,760 h)."""
     dispatcher = CalculationDispatcher()
     inputs = {
+        "factor_source": "specific",
         "fugitive_tier": "tier3",
         "fugitive_method": "ogi",
         "component_type": "valve",
@@ -363,6 +348,6 @@ def test_engine_dispatcher_tier3_ogi_routing():
         "operating_hours": 8760.0,
     }
     res = dispatcher.dispatch("fugitive", inputs, {})
-    ch4_tonnes = float(res["results"]["ch4"])
-    assert pytest.approx(ch4_tonnes, rel=1e-3) == 6.01006
-    assert "Table 7-19" in res["intermediate"]["api_table"]
+    ch4_tonnes = float(res["results"]["ch4"]["value"] if isinstance(res["results"]["ch4"], dict) else res["results"]["ch4"])
+    assert ch4_tonnes == pytest.approx(4 * 7.7e-5 * 8760, rel=5e-3)
+    assert "Table 7-23" in res["intermediate"]["api_table"]

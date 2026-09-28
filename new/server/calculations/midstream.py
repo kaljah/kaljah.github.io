@@ -66,18 +66,21 @@ class AGRCalculator(BaseCalculator):
         co2_vented_m3 = convert(co2_vented_scf, "scf", "m3")
         co2_mass_kg = co2_vented_m3 * CONVERSIONS.get("density_co2", 1.861)
 
-        # 2. CH4 Methane Slip (API Compendium 2021 §6.5 & Table 6-5)
-        slip_rate = max(
-            0.0, float(ch4_slip_fraction if ch4_slip_fraction is not None else 0.001)
-        )
-        if slip_rate > 1.0:
-            slip_rate /= 100.0
-        c_ch4 = max(0.0, float(ch4_in if ch4_in is not None else 0.85))
-        if c_ch4 > 1.0:
-            c_ch4 /= 100.0
-        ch4_slipped_scf = throughput_scf * c_ch4 * slip_rate
-        ch4_slipped_m3 = convert(ch4_slipped_scf, "scf", "m3")
-        ch4_mass_kg = ch4_slipped_m3 * CONVERSIONS.get("density_ch4", 0.6785)
+        # 2. CH4: a measured slip (fraction of the inlet CH4) when given; otherwise the API Compendium
+        # Table 6-19 AGR vent factor, 0.0185 tonne CH4 per 10^6 scf treated (Exhibit 6-17). The former
+        # 0.1 % default had no source.
+        if ch4_slip_fraction is not None:
+            slip_rate = max(0.0, float(ch4_slip_fraction))
+            if slip_rate > 1.0:
+                raise ValueError("CH4 slip is a fraction of the inlet CH4 (0-1)")
+            c_ch4 = max(0.0, float(ch4_in if ch4_in is not None else 0.85))
+            if c_ch4 > 1.0:
+                c_ch4 /= 100.0
+            ch4_slipped_m3 = convert(throughput_scf * c_ch4 * slip_rate, "scf", "m3")
+            ch4_mass_kg = ch4_slipped_m3 * CONVERSIONS.get("density_ch4", 0.6785)
+        else:
+            slip_rate = None
+            ch4_mass_kg = throughput_scf / 1e6 * 0.0185 * 1000.0
 
         # Apply acid gas control technology
         ctrl_eff = normalize_efficiency(acid_gas_control_eff, default=0.0)
@@ -129,7 +132,7 @@ class AGRCalculator(BaseCalculator):
                 "throughput_mmscf": throughput,
                 "co2_in_pct": float(co2_in) * 100.0,
                 "co2_out_pct": float(co2_out or 0.0) * 100.0,
-                "ch4_slip_pct": slip_rate * 100.0,
+                "ch4_slip_pct": slip_rate * 100.0 if slip_rate is not None else None,
                 "control_eff_pct": ctrl_eff * 100.0,
             },
             metadata={

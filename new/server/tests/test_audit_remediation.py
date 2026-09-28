@@ -471,26 +471,28 @@ def test_bulk_anomaly_flag_persistence(client, test_users):
 
 
 def test_fugitive_screening_count_and_fraction():
-    """Finding 1: Verify fugitive screening calculation handles component count and ch4_fraction."""
+    """Finding 1: screening with a component count (re-derived; audit/TIER3_BROWSER_TEST.md #3/#4).
+
+    The former expectation used an unsourced "x 2.5 screening multiplier" on a catalog factor and had
+    failed since the baseline. Screening = API Compendium 2021 Table 7-26: 20 valves (gas) at
+    >= 10,000 ppmv x 9.8E-02 kg TOC/h x 1,000 h x 0.920 CH4 wt fraction (Table C-1, gas production;
+    `ch4_fraction` is a mole fraction and does not replace the TOC weight fraction) = 1.8032 t CH4.
+    """
     dispatcher = CalculationDispatcher()
     payload = {
         "process_type": "fugitive",
         "factor_source": "specific",
         "fugitive_method": "screening",
-        "fugitive_ppm": 15000,  # >= 10000 -> multiplier 2.5
-        "amount": 20,           # 20 components
-        "hours": 1000,          # 1000 hours
-        "ch4_fraction": 0.8,    # 80% CH4
+        "fugitive_ppm": 15000,
+        "amount": 20,
+        "hours": 1000,
+        "ch4_fraction": 0.8,
     }
-    factor_data = {
-        "factor": 0.01,         # 0.01 kg CH4/hr/comp
-        "unit": "kg/hr",
-    }
+    factor_data = {"factor": 0.01, "unit": "kg/hr"}
     res = dispatcher.dispatch("fugitive", payload, factor_data, {"CO2": 1.0, "CH4": 28.0, "N2O": 265.0})
-    assert res is not None
-    # Expected: 20 * 0.01 * 2.5 * 1000 * 0.8 = 400 kg CH4 = 0.4 tonnes CH4
-    assert abs(res["results"]["ch4"]["value"] - 0.4) < 1e-5
-    assert abs(res["total_co2e"] - (0.4 * 28.0)) < 1e-4
+    expected = 20 * 9.8e-2 * 1000 * 0.920 / 1000
+    assert abs(res["results"]["ch4"]["value"] - expected) < 1e-6
+    assert abs(res["total_co2e"] - expected * 28.0) < 1e-4
 
 
 def test_agr_zero_removal_boundary():

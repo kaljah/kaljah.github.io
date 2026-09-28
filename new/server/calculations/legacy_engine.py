@@ -423,7 +423,11 @@ def _compute_emissions_impl(payload, factor_data=None, gwp_dict=None, gwp_standa
         # BUG-012: the Completions form's `amount` is the event count; it must not replace the
         # top-level activity volume, and it is passed on explicitly as `events`.
         inputs = dict(inputs)
-        inputs.setdefault("events", inputs.pop("amount"))
+        amt = inputs.pop("amount")
+        # Tier 3: the amount is the metered flowback volume, not a count; events are explicit or 1
+        # (Tier 3 browser test #1: 1.48e6 scf was read as 1.48e6 events)
+        if inputs.get("comp_volume") in (None, "") and inputs.get("flowback_volume") in (None, ""):
+            inputs.setdefault("events", amt)
 
     # NEW: Merge root payload into inputs to support flat CSV data
     # This allows keys like 'comp_duration' or 'unload_diam' to be read directly from the CSV row

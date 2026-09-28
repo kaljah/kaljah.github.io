@@ -283,8 +283,10 @@ class IndependentLiquidsUnloading:
         diam_m = IndependentUnitConverter.convert(diameter, diameter_unit, "m")
         v_tubing = (math.pi / 4.0) * (diam_m**2) * depth_m
 
+        # API Compendium Eq 6-10 casing term (0.37e-3 x D^2 x Depth x P, P in psig; Exhibit 6-8):
+        # only the gas above atmospheric pressure leaves the well
         p_abs = to_psia(pressure, press_unit)
-        p_factor = p_abs / STD_P_PSIA
+        p_factor = max(0.0, p_abs - STD_P_PSIA) / STD_P_PSIA
 
         t_abs = to_kelvin(temp, temp_unit)
         t_factor = STD_T_K / max(1.0, t_abs)

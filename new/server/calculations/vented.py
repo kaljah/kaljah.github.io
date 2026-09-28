@@ -1662,9 +1662,11 @@ class LiquidsUnloadingCalculator(BaseCalculator):
         gwp_dict=None,
     ):
         """
-        API Equation 6-3 - Volume per unloading event with temperature and compressibility correction:
-        V_std = (pi/4) * D^2 * Depth * (P_tubing_abs / P_std) * (T_std / T_well_abs) * (1 / Z)
-        Preserved with backwards compatibility for existing differential and unit tests.
+        Wellbore decompression per unloading event, the casing-volume term of API Compendium Eq 6-10
+        (0.37e-3 x D^2 x Depth x P, P in psig, Exhibit 6-8), with temperature and compressibility:
+        V_std = (pi/4) * D^2 * Depth * ((P_abs - P_std) / P_std) * (T_std / T_well_abs) * (1 / Z)
+        Only the gas above atmospheric pressure leaves the well (the former P_abs / P_std counted
+        the gas that stays in the wellbore).
         """
         self.validate_inputs(
             {
@@ -1709,7 +1711,7 @@ class LiquidsUnloadingCalculator(BaseCalculator):
 
         # Pressure, temperature, and compressibility correction (API Eq. 6-3 & §4.2.1)
         p_abs = to_psia(pressure, press_unit)
-        p_factor = p_abs / STD_PRESSURE_PSIA
+        p_factor = max(0.0, p_abs - STD_PRESSURE_PSIA) / STD_PRESSURE_PSIA
 
         t_abs_k = to_kelvin(operating_temperature, temp_unit)
         t_factor = STD_TEMP_K / max(1.0, t_abs_k)
