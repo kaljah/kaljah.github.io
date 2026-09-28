@@ -57,6 +57,15 @@ const PROCESS_TYPES = PROCESS_TYPES_MAP;
 // Emission UI shows no API Compendium / table citations (user request); legal references stay
 const hideApiCitation = (t) => (t && /\bAPI\b|Compendium|\bTables?\s*\d/.test(t) ? null : t);
 
+// Tier shown in the table and CSV: a saved library / custom factor is "Custom", a Tier 2 site
+// property override is "Tier 2" (browser test #13: both were shown as "Specific")
+function factorTypeLabel(entry) {
+  if (entry.factor_source === "default") return "Default";
+  if (entry.factor_source === "custom") return entry.custom_factor_id ? "Custom" : "Tier 2";
+  if (entry.factor_source === "specific") return "Specific";
+  return "-";
+}
+
 const Scope1Form = () => {
   const { user } = useAuth();
   const toast = useToast();
@@ -237,8 +246,11 @@ const Scope1Form = () => {
             return hasFugitiveTag;
           }
 
-          // Standard usage check for other processes
-          const usageMatch = factor.usage && factor.usage.includes(processType);
+          // Standard usage check for other processes; the flaring variants use the flaring factors
+          const usageKey = ["routine_flaring", "non_routine_flaring", "safety_flaring", "flare"].includes(processType)
+            ? "flaring"
+            : processType;
+          const usageMatch = factor.usage && factor.usage.includes(usageKey);
           const streamMatch = !factor.stream || factor.stream === streamType;
 
           return usageMatch && streamMatch;
@@ -587,7 +599,7 @@ const Scope1Form = () => {
         e.process_type ||
         "",
       e.fuel || e.fuel_type || e.activity_data_label || "",
-      e.factor_source === "default" ? "Default" : "Specific",
+      factorTypeLabel(e),
       e.amount || e.quantity || "",
       e.unit || "",
       e.co2_emissions || 0,
@@ -1635,8 +1647,9 @@ const Scope1Form = () => {
       entry.facility_name ||
       facilities.find((f) => f.id === entry.facility_id)?.name ||
       `Facility #${entry.facility_id || "N/A"}`;
-    const pLabel =
-      PROCESS_TYPES[entry.process || entry.process_type]?.label || pType;
+    // PROCESS_TYPES values are labels (strings) or { label } objects
+    const pDef = PROCESS_TYPES[entry.process || entry.process_type];
+    const pLabel = (typeof pDef === "string" ? pDef : pDef?.label) || pType;
 
     setInspectRecord({
       process_type: `Scope 1 - ${pLabel}`,
@@ -3045,15 +3058,7 @@ const Scope1Form = () => {
                     </tr>
                   );
                 return filteredEntries.map((entry) => {
-                  let factorType = "-";
-                  if (entry.factor_source === "default") {
-                    factorType = "Default";
-                  } else if (
-                    entry.factor_source === "custom" ||
-                    entry.factor_source === "specific"
-                  ) {
-                    factorType = "Specific";
-                  }
+                  const factorType = factorTypeLabel(entry);
                   return (
                     <tr key={entry.id}>
                       <td>{entry.year}</td>

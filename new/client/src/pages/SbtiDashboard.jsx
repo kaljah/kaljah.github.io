@@ -254,12 +254,18 @@ const SbtiDashboard = () => {
   }
 
   const isConfigured = Boolean(sbtiData && sbtiData.has_target);
-  const currentActual = sbtiData?.current_actual_emissions ?? sbtiData?.current_actual ?? 0;
-  const currentTarget = sbtiData?.current_target_emissions ?? sbtiData?.current_target ?? 0;
+  // No complete year yet: the server returns null for the current year and a year-to-date total;
+  // the target of that year still comes from the pathway (browser test #14 showed both as 0)
+  const ytdYear = sbtiData?.ytd_year;
+  const ytdRow = (sbtiData?.trajectory || []).find((r) => String(r.year) === String(ytdYear));
+  const currentActual = sbtiData?.current_actual_emissions ?? sbtiData?.current_actual ?? null;
+  const currentTarget =
+    sbtiData?.current_target_emissions ?? sbtiData?.current_target ?? ytdRow?.sbti_target ?? null;
+  const isYtd = currentActual == null && sbtiData?.ytd_actual != null;
   // BUG-028: no evaluable year -> "No data", never a default ON TRACK
   const isOnTrack = isConfigured ? (sbtiData?.on_track ?? null) : null;
   const noData = isConfigured && isOnTrack === null;
-  const currentYear = sbtiData?.current_year || sbtiData?.latest_actual_year || new Date().getFullYear();
+  const currentYear = sbtiData?.current_year || sbtiData?.latest_actual_year || ytdYear || new Date().getFullYear();
 
   return (
     <div className="sbti-container" style={{ opacity: isUpdating ? 0.8 : 1, transition: "opacity 0.2s ease" }}>
@@ -473,11 +479,15 @@ const SbtiDashboard = () => {
             </div>
           </div>
           <div className="sbti-kpi-value">
-            {formatNumber(currentTarget, 0)}
+            {currentTarget == null ? "—" : formatNumber(currentTarget, 0)}
             <span className="sbti-kpi-unit">tCO2e</span>
           </div>
           <div className="sbti-kpi-subtitle">
-            Actual: {formatNumber(currentActual, 0)} tCO2e ({currentYear})
+            {currentActual != null
+              ? `Actual: ${formatNumber(currentActual, 0)} tCO2e (${currentYear})`
+              : isYtd
+                ? `Year to date: ${formatNumber(sbtiData.ytd_actual, 0)} tCO2e (${ytdYear}, partial year)`
+                : `Actual: — (${currentYear})`}
           </div>
         </div>
 

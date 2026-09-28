@@ -69,14 +69,15 @@ const Composition = ({ data, onChange, c2 = false, required = true }) => (
 );
 
 // ---- Tier 1: activity-factor tables ----
+const plural = (a) => (a && !a.endsWith("s") ? `${a}s` : a);
 const PER_INPUT = {
   unit: { label: (a) => `Number (${a || "events"})` },
-  unit_day: { label: (a) => `Number of ${a || "units"}`, extra: { field: "activity_days", label: "Days", placeholder: "365" } },
-  unit_hr: { label: (a) => `Number of ${a || "units"}`, extra: { field: "activity_hours", label: "Hours", placeholder: "8760" } },
+  unit_day: { label: (a) => `Number of ${plural(a) || "units"}`, extra: { field: "activity_days", label: "Days", placeholder: "365" } },
+  unit_hr: { label: (a) => `Number of ${plural(a) || "units"}`, extra: { field: "activity_hours", label: "Hours", placeholder: "8760" } },
   mmscf: { label: () => "Gas throughput", units: GAS_UNITS },
   mm_m3: { label: () => "Gas throughput", units: GAS_UNITS },
   mgal: { label: () => "Liquid loaded", units: LIQ_UNITS },
-  bbl: { label: () => "Oil produced", units: LIQ_UNITS },
+  bbl: { label: (a) => (a && a !== "bbl oil" ? `Volume (${a.replace("bbl ", "")})` : "Oil produced"), units: LIQ_UNITS },
 };
 
 export function ActivityFactorForm({ processType, data, onChange }) {
@@ -119,7 +120,7 @@ export function ActivityFactorForm({ processType, data, onChange }) {
       {spec && (
         <FieldGrid min={180}>
           {spec.units ? (
-            <NumUnit label={spec.label()} field="amount" unitField="unit" units={spec.units} data={data} onChange={onChange} required />
+            <NumUnit label={spec.label(row.activity)} field="amount" unitField="unit" units={spec.units} data={data} onChange={onChange} required />
           ) : (
             <Num label={spec.label(row.activity)} field="amount" data={data} onChange={onChange} required />
           )}

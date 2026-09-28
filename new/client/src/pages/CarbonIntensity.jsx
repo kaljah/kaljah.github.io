@@ -23,6 +23,7 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 import "./CarbonIntensity.css";
+import "./TopBarFilters.css";
 
 const CarbonIntensity = () => {
   const { user } = useAuth();
@@ -362,7 +363,7 @@ const CarbonIntensity = () => {
   useEffect(() => {
     setTopBarLeft(
       <div className="dashboard-filters">
-        <div style={{ width: "120px" }}>
+        <div className="filter-wrapper">
           <CustomDropdown
             options={[
               { value: "all", label: "All Years" },
@@ -376,7 +377,7 @@ const CarbonIntensity = () => {
             placeholder="Year"
           />
         </div>
-        <div style={{ width: "180px" }}>
+        <div className="filter-wrapper">
           <CustomDropdown
             options={getSegmentOptions()}
             value={currentSegment}
@@ -384,7 +385,7 @@ const CarbonIntensity = () => {
             placeholder="Supply Chain"
           />
         </div>
-        <div style={{ width: "160px" }}>
+        <div className="filter-wrapper">
           <CustomDropdown
             options={getActivityOptions()}
             value={currentActivity}
@@ -392,7 +393,7 @@ const CarbonIntensity = () => {
             placeholder="Activity"
           />
         </div>
-        <div style={{ width: "160px" }}>
+        <div className="filter-wrapper">
           <CustomDropdown
             options={getDivisionOptions()}
             value={currentDivision}
@@ -400,7 +401,7 @@ const CarbonIntensity = () => {
             placeholder="Division"
           />
         </div>
-        <div style={{ width: "220px" }}>
+        <div className="filter-wrapper">
           <CustomDropdown
             options={getRegionOptions()}
             value={currentRegion}

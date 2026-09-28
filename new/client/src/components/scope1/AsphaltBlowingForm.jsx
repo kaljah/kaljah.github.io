@@ -7,7 +7,9 @@ const AsphaltBlowingForm = ({ data, onChange }) => {
     if (data.fuel !== "Asphalt") {
       onChange("fuel", "Asphalt");
     }
-  }, [data.fuel, onChange]);
+    // the unit shown by default must also be submitted
+    if (!data.unit) onChange("unit", "tonne");
+  }, [data.fuel, data.unit, onChange]);
 
   return (
     <div className="asphalt-blowing-form">

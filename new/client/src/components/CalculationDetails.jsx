@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Calculator, X, Info, ShieldCheck, CheckCircle2, Clock, AlertCircle } from "lucide-react";
 import "./CalculationDetails.css";
 
@@ -12,6 +12,15 @@ const stripApi = (t) =>
         .trim()
     : t;
 const CalculationDetails = ({ calculation, onClose }) => {
+  // Escape closes the dialog, as its close button advertises
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === "Escape") onClose?.();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
   if (!calculation) return null;
 
   const {

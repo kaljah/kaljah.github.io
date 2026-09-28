@@ -29,6 +29,7 @@ import {
   ChevronUp,
 } from "lucide-react";
 import "./CarbonIntensity.css";
+import "./TopBarFilters.css";
 
 const MethaneIntensity = () => {
   const { user } = useAuth();
@@ -201,6 +202,8 @@ const MethaneIntensity = () => {
         tCh4Tonnes = 0,
         tCh4WithGas = 0,
         tWecFee = 0;
+      // the WEC is assessed per calendar year: the server returns no fee for "all years"
+      let wecAssessed = false;
 
       let upGasM3 = 0,
         upCh4Tonnes = 0;
@@ -222,6 +225,7 @@ const MethaneIntensity = () => {
         tCh4Tonnes += ch4Tonnes;
         if (gasM3 > 0) tCh4WithGas += ch4Tonnes; // loss-rate numerator: facilities with gas production
         tWecFee += d.wec_fee_usd || 0;
+        if (d.wec_fee_usd != null) wecAssessed = true;
         // loss rate numerator and denominator cover the same facilities (those with gas production)
         if (seg === "midstream" && gasM3 > 0) {
           midGasM3 += gasM3;
@@ -286,6 +290,7 @@ const MethaneIntensity = () => {
         totalFlaringVolume: tFlaringVol,
         totalFlaringEmissions: tFlaringEm,
         totalWecFeeUsd: tWecFee,
+        wecAssessed,
         ogmpGoldStatus: goldStatus,
         upstreamGasM3: upGasM3,
         upstreamCh4Tonnes: upCh4Tonnes,
@@ -520,7 +525,7 @@ const MethaneIntensity = () => {
   useEffect(() => {
     setTopBarLeft(
       <div className="dashboard-filters">
-        <div style={{ width: "120px" }}>
+        <div className="filter-wrapper">
           <CustomDropdown
             options={[
               { value: "all", label: "All Years" },
@@ -534,7 +539,7 @@ const MethaneIntensity = () => {
             placeholder="Year"
           />
         </div>
-        <div style={{ width: "180px" }}>
+        <div className="filter-wrapper">
           <CustomDropdown
             options={getSegmentOptions()}
             value={currentSegment}
@@ -542,7 +547,7 @@ const MethaneIntensity = () => {
             placeholder="Supply Chain"
           />
         </div>
-        <div style={{ width: "160px" }}>
+        <div className="filter-wrapper">
           <CustomDropdown
             options={getActivityOptions()}
             value={currentActivity}
@@ -550,7 +555,7 @@ const MethaneIntensity = () => {
             placeholder="Activity"
           />
         </div>
-        <div style={{ width: "160px" }}>
+        <div className="filter-wrapper">
           <CustomDropdown
             options={getDivisionOptions()}
             value={currentDivision}
@@ -558,7 +563,7 @@ const MethaneIntensity = () => {
             placeholder="Division"
           />
         </div>
-        <div style={{ width: "220px" }}>
+        <div className="filter-wrapper">
           <CustomDropdown
             options={getRegionOptions()}
             value={currentRegion}
@@ -961,12 +966,12 @@ const MethaneIntensity = () => {
                 <span
                   className="total-value"
                   style={{
-                    color: stats.totalWecFeeUsd > 0 ? "#ef4444" : "#10b981",
+                    color: !stats.wecAssessed ? "#64748b" : stats.totalWecFeeUsd > 0 ? "#ef4444" : "#10b981",
                   }}
                 >
-                  ${formatNumber(stats.totalWecFeeUsd, 0)}
+                  {stats.wecAssessed ? `$${formatNumber(stats.totalWecFeeUsd, 0)}` : "—"}
                 </span>
-                <span className="kpi-unit">USD Est.</span>
+                <span className="kpi-unit">{stats.wecAssessed ? "USD Est." : "Select a single year"}</span>
               </div>
               <div className="kpi-footer">
                 <span>
