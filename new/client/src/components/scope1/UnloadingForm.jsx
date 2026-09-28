@@ -127,9 +127,9 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                 min="0"
                 max="100"
                 className="mole-input"
-                value={data.ch4_content !== undefined && data.ch4_content !== null ? data.ch4_content : 81.6}
+                value={data.ch4_content ?? ""}
                 onChange={(e) => onChange("ch4_content", e.target.value)}
-                placeholder="81.6"
+                placeholder="e.g. 81.6"
               />
             </div>
 
@@ -143,7 +143,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                 min="0"
                 max="100"
                 className="mole-input"
-                value={data.co2_content !== undefined && data.co2_content !== null ? data.co2_content : 0}
+                value={data.co2_content ?? ""}
                 onChange={(e) => onChange("co2_content", e.target.value)}
                 placeholder="0.0"
               />
@@ -159,7 +159,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                 min="0"
                 max="100"
                 className="mole-input"
-                value={data.control_efficiency !== undefined && data.control_efficiency !== null ? data.control_efficiency : 0}
+                value={data.control_efficiency ?? ""}
                 onChange={(e) => {
                   onChange("control_efficiency", e.target.value);
                   onChange("unload_flare_eff", e.target.value);
@@ -290,7 +290,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                 min="0"
                 max="100"
                 className="mole-input"
-                value={data.control_efficiency !== undefined && data.control_efficiency !== null ? data.control_efficiency : 0}
+                value={data.control_efficiency ?? ""}
                 onChange={(e) => {
                   onChange("control_efficiency", e.target.value);
                   onChange("unload_flare_eff", e.target.value);
@@ -472,9 +472,9 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                     min="0"
                     max="100"
                     className="mole-input"
-                    value={data.ch4_content !== undefined && data.ch4_content !== null ? data.ch4_content : 80.0}
+                    value={data.ch4_content ?? ""}
                     onChange={(e) => onChange("ch4_content", e.target.value)}
-                    placeholder="80.0"
+                    placeholder="e.g. 80.0"
                     required
                   />
                 </div>
@@ -487,9 +487,9 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                     min="0"
                     max="100"
                     className="mole-input"
-                    value={data.co2_content !== undefined && data.co2_content !== null ? data.co2_content : 3.0}
+                    value={data.co2_content ?? ""}
                     onChange={(e) => onChange("co2_content", e.target.value)}
-                    placeholder="3.0"
+                    placeholder="e.g. 3.0"
                   />
                 </div>
 
@@ -501,7 +501,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                     min="0"
                     max="100"
                     className="mole-input"
-                    value={data.control_efficiency !== undefined && data.control_efficiency !== null ? data.control_efficiency : 0}
+                    value={data.control_efficiency ?? ""}
                     onChange={(e) => {
                       onChange("control_efficiency", e.target.value);
                       onChange("unload_flare_eff", e.target.value);
@@ -636,9 +636,9 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                     min="0"
                     max="100"
                     className="mole-input"
-                    value={data.ch4_content !== undefined && data.ch4_content !== null ? data.ch4_content : 85.0}
+                    value={data.ch4_content ?? ""}
                     onChange={(e) => onChange("ch4_content", e.target.value)}
-                    placeholder="85.0"
+                    placeholder="e.g. 85.0"
                     required
                   />
                 </div>
@@ -651,9 +651,9 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                     min="0"
                     max="100"
                     className="mole-input"
-                    value={data.co2_content !== undefined && data.co2_content !== null ? data.co2_content : 1.0}
+                    value={data.co2_content ?? ""}
                     onChange={(e) => onChange("co2_content", e.target.value)}
-                    placeholder="1.0"
+                    placeholder="e.g. 1.0"
                   />
                 </div>
 
@@ -665,7 +665,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                     min="0"
                     max="100"
                     className="mole-input"
-                    value={data.control_efficiency !== undefined && data.control_efficiency !== null ? data.control_efficiency : 0}
+                    value={data.control_efficiency ?? ""}
                     onChange={(e) => {
                       onChange("control_efficiency", e.target.value);
                       onChange("unload_flare_eff", e.target.value);
@@ -776,9 +776,9 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                     min="0"
                     max="100"
                     className="mole-input"
-                    value={data.ch4_content !== undefined && data.ch4_content !== null ? data.ch4_content : 85.0}
+                    value={data.ch4_content ?? ""}
                     onChange={(e) => onChange("ch4_content", e.target.value)}
-                    placeholder="85.0"
+                    placeholder="e.g. 85.0"
                     required
                   />
                 </div>
@@ -791,7 +791,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                     min="0"
                     max="100"
                     className="mole-input"
-                    value={data.co2_content !== undefined && data.co2_content !== null ? data.co2_content : 0}
+                    value={data.co2_content ?? ""}
                     onChange={(e) => onChange("co2_content", e.target.value)}
                     placeholder="e.g. 1"
                   />
@@ -803,7 +803,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                     type="number"
                     step="0.1"
                     className="mole-input"
-                    value={data.unload_temp !== undefined && data.unload_temp !== null ? data.unload_temp : 60}
+                    value={data.unload_temp ?? ""}
                     onChange={(e) => onChange("unload_temp", e.target.value)}
                     placeholder="60"
                   />
@@ -817,7 +817,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                     min="0"
                     max="100"
                     className="mole-input"
-                    value={data.control_efficiency !== undefined && data.control_efficiency !== null ? data.control_efficiency : 0}
+                    value={data.control_efficiency ?? ""}
                     onChange={(e) => {
                       onChange("control_efficiency", e.target.value);
                       onChange("unload_flare_eff", e.target.value);
