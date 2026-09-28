@@ -109,7 +109,7 @@ const AGRForm = ({ data, onChange, sourceType }) => {
           </div>
 
           <div className="input-group">
-            <label>CH₄ slip (mol/mol CO₂)</label>
+            <label>CH₄ slip (fraction of inlet CH₄)</label>
             <input
               type="number"
               className="mole-input"
@@ -120,8 +120,8 @@ const AGRForm = ({ data, onChange, sourceType }) => {
                   : ""
               }
               onChange={(e) => onChange("methane_slip_factor", e.target.value)}
-              placeholder="e.g. 0.00040"
-              step="0.00001"
+              placeholder="blank = Compendium factor"
+              step="any"
             />
           </div>
 

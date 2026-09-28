@@ -221,6 +221,9 @@ const Scope1Form = () => {
       "mobile_combustion",
       "mobile",
       "flaring",
+      "routine_flaring",
+      "non_routine_flaring",
+      "safety_flaring",
       "flare",
     ].includes(processType);
 
@@ -364,6 +367,25 @@ const Scope1Form = () => {
       </div>
     );
   };
+
+  const BLANK_SPEC = {
+    co2: "", co2Unit: "kg/m3", ch4: "", ch4Unit: "kg/m3", n2o: "", n2oUnit: "kg/m3", co: "", coUnit: "kg/m3",
+  };
+  // Form inputs belong to one process and tier: switching either starts from a clean form, so no
+  // value typed for another process / method is submitted with this record (Tier 3 test #17, #20)
+  const resetProcessInputs = () => {
+    setFormData({});
+    setSpecFactors(BLANK_SPEC);
+  };
+  // Tier 3 "fuel analysis" factor fields (base factor, gas analysis, CO2/CH4/N2O factors)
+  const showsTier3Factors =
+    sourceType === "specific" &&
+    !sectionMethodActive(formData) &&
+    !SECTION_PROCESSES[processType] &&
+    ![
+      "tank", "tank_flashing", "tank_working", "tank_breathing", "agr", "dehydrator", "pneumatic", "mobile",
+      "fugitive", "venting", "drilling", "completions", "unloading", "blowdown", "associated_gas_venting",
+    ].includes(processType);
 
   // Handle Resetting Fuel on Context Change
   useEffect(() => {
@@ -737,6 +759,7 @@ const Scope1Form = () => {
         "venting",
         "blowdown",
         "associated_gas_venting",
+        "fugitive",
       ].includes(processType);
 
     const needsAmount = !sectionActive || currentChoice(formData) === "activity";
@@ -750,7 +773,7 @@ const Scope1Form = () => {
     // Strict validation for Tier 3 (Engineering / Specific) inputs
     if (sourceType === "specific" && !sectionActive) {
       if (
-        ["combustion", "stationary_combustion", "flaring"].includes(processType)
+        ["combustion", "stationary_combustion", "flaring", "routine_flaring", "non_routine_flaring", "safety_flaring"].includes(processType)
       ) {
         if (!formData.hhv || parseFloat(formData.hhv) <= 0) {
           toast.warning(
@@ -1213,14 +1236,10 @@ const Scope1Form = () => {
         (processType === "blowdown" || processType === "venting") &&
         sourceType === "specific"
       ) {
-        const vol = parseFloat(formData.blowdown_volume || 0);
-        const unit = formData.blowdown_unit || "scf";
-        if (unit !== "m3") {
-          finalAmount = convertActivityData(vol, unit, "m3");
-        } else {
-          finalAmount = vol;
-        }
-        finalUnit = "m3";
+        // the unit select shows m3 by default: that is the unit of the entered volume
+        finalAmount = parseFloat(formData.blowdown_volume || 0);
+        finalUnit = formData.blowdown_unit || "m3";
+        processInputs.blowdown_unit = finalUnit;
       }
 
       // 7. AGR — send the entered throughput with its unit; the server converts it (BUG-066: the
@@ -1254,13 +1273,18 @@ const Scope1Form = () => {
         processInputs.tier = tier;
 
         if (tier === "tier3" || sourceType === "specific") {
-          finalAmount = parseFloat(
-            formData.vent_volume ||
-              formData.amount ||
-              parseFloat(formData.vent_rate || 0) *
-                parseFloat(formData.venting_duration || 0),
-          );
-          finalUnit = formData.vent_volume_unit || formData.unit || "scf";
+          const rateMode = (formData.tier3_mode || (formData.vent_volume ? "volume" : "rate")) === "rate";
+          if (rateMode) {
+            // record the vented volume (rate x hours), not the rate (Tier 3 browser re-run)
+            const per = { scfh: [1, "scf"], "scf/day": [1 / 24, "scf"], scfm: [60, "scf"], "m3/hr": [1, "m3"], "m3/day": [1 / 24, "m3"] }[
+              formData.vent_rate_unit || "scfh"
+            ] || [1, "scf"];
+            finalAmount = parseFloat(formData.vent_rate || 0) * per[0] * parseFloat(formData.venting_duration || 0);
+            finalUnit = per[1];
+          } else {
+            finalAmount = parseFloat(formData.vent_volume || formData.amount || 0);
+            finalUnit = formData.vent_volume_unit || formData.unit || "scf";
+          }
         } else {
           finalAmount = parseFloat(
             formData.oil_production !== undefined
@@ -1270,12 +1294,14 @@ const Scope1Form = () => {
           finalUnit = formData.oil_unit || formData.unit || "bbl";
         }
 
-        processInputs.oil_production = parseFloat(
-          formData.oil_production !== undefined
-            ? formData.oil_production
-            : formData.amount || 0,
-        );
-        processInputs.oil_unit = formData.oil_unit || finalUnit || "bbl";
+        if (sourceType !== "specific") {
+          processInputs.oil_production = parseFloat(
+            formData.oil_production !== undefined
+              ? formData.oil_production
+              : formData.amount || 0,
+          );
+          processInputs.oil_unit = formData.oil_unit || finalUnit || "bbl";
+        }
 
         if (formData.basin || formData.fuel) {
           processInputs.basin = formData.basin || formData.fuel;
@@ -1289,7 +1315,9 @@ const Scope1Form = () => {
           formData.venting_duration !== ""
         ) {
           processInputs.venting_duration = parseFloat(formData.venting_duration);
-          processInputs.duration_unit = formData.duration_unit || "days";
+          // Tier 3 "Venting time (h)" is in hours; Tier 2 has its own unit select (default days)
+          processInputs.duration_unit =
+            sourceType === "specific" ? "hours" : formData.duration_unit || "days";
         }
         if (
           formData.period_duration !== undefined &&
@@ -1357,14 +1385,31 @@ const Scope1Form = () => {
         processInputs.leakers_count = formData.leakers_count !== undefined ? parseFloat(formData.leakers_count) : undefined;
         processInputs.non_leakers_count = formData.non_leakers_count !== undefined ? parseFloat(formData.non_leakers_count) : undefined;
         processInputs.measured_rate = formData.measured_rate !== undefined ? parseFloat(formData.measured_rate) : undefined;
-        processInputs.rate_unit = formData.rate_unit || "kg/hr";
+        // Tier 3 measurement: the unit must be chosen (kg/h vs scf/h changes the meaning of the rate)
+        processInputs.rate_unit = formData.rate_unit || (tier === "tier3" ? undefined : "kg/hr");
         processInputs.ch4_mole_pct = formData.ch4_mole_pct !== undefined ? parseFloat(formData.ch4_mole_pct) : undefined;
         processInputs.co2_mole_pct = formData.co2_mole_pct !== undefined ? parseFloat(formData.co2_mole_pct) : undefined;
         processInputs.gas_stream = formData.gas_stream;
         processInputs.correlation_type = formData.correlation_type;
 
         // Set top-level finalAmount and finalUnit for backward compatibility & display
-        if (formData.amount !== undefined && formData.amount !== "") {
+        const num = (k) => parseFloat(formData[k] || 0) || 0;
+        if (tier === "tier3") {
+          const m = formData.fugitive_method;
+          if (m === "method21") {
+            finalAmount = num("m21_below_count") + num("m21_above_count");
+            finalUnit = "components";
+          } else if (m === "correlation") {
+            finalAmount = num("corr_zero_count") + num("corr_screened_count") + num("corr_pegged_10k_count") + num("corr_pegged_100k_count");
+            finalUnit = "components";
+          } else if (m === "measurement") {
+            finalAmount = num("measured_rate");
+            finalUnit = formData.rate_unit || "";
+          } else {
+            finalAmount = num("leakers_count");
+            finalUnit = "leakers";
+          }
+        } else if (formData.amount !== undefined && formData.amount !== "") {
           finalAmount = parseFloat(formData.amount);
           finalUnit = formData.unit || "count";
         } else if (tier === "tier1") {
@@ -1491,13 +1536,11 @@ const Scope1Form = () => {
 
         // Specific Factors (for combustion/flaring/venting in specific mode)
         specific_factors:
-          sourceType === "specific" &&
-          (specFactors.co2 || specFactors.ch4 || specFactors.n2o || specFactors.co)
+          showsTier3Factors && (specFactors.co2 || specFactors.ch4 || specFactors.n2o || specFactors.co)
             ? specFactors
             : undefined,
         specificFactors:
-          sourceType === "specific" &&
-          (specFactors.co2 || specFactors.ch4 || specFactors.n2o || specFactors.co)
+          showsTier3Factors && (specFactors.co2 || specFactors.ch4 || specFactors.n2o || specFactors.co)
             ? specFactors
             : undefined,
         user_uncertainty:
@@ -1706,6 +1749,9 @@ const Scope1Form = () => {
       case "combustion":
       case "mobile":
       case "flaring":
+      case "routine_flaring":
+      case "non_routine_flaring":
+      case "safety_flaring":
       case "loading":
       case "separation":
         return <CombustionForm {...props} />;
@@ -1787,6 +1833,7 @@ const Scope1Form = () => {
     // val format: "StreamID|processKey"
     const [stream, process] = val.split("|");
     if (stream && process) {
+      if (process !== processType) resetProcessInputs();
       setStreamType(stream);
       setProcessType(process);
       if (process === "drilling") {
@@ -2078,6 +2125,7 @@ const Scope1Form = () => {
                             type="button"
                             className={`tier-selector-btn ${isActive ? "active" : ""}`}
                             onClick={() => {
+                              if (type !== sourceType) resetProcessInputs();
                               setSourceType(type);
                               if (processType === "drilling") {
                                 if (type === "default") {
@@ -2265,26 +2313,7 @@ const Scope1Form = () => {
                     )}
                   </div>
                 )}
-                {sourceType === "specific" &&
-                  !sectionMethodActive(formData) &&
-                  !SECTION_PROCESSES[processType] &&
-                  ![
-                    "tank",
-                    "tank_flashing",
-                    "tank_working",
-                    "tank_breathing",
-                    "agr",
-                    "dehydrator",
-                    "pneumatic",
-                    "mobile",
-                    "fugitive",
-                    "venting",
-                    "drilling",
-                    "completions",
-                    "unloading",
-                    "blowdown",
-                    "associated_gas_venting",
-                  ].includes(processType) && (
+                {showsTier3Factors && (
                     <>
                       <CustomDropdown
                         options={fuelOptions}
@@ -3035,10 +3064,11 @@ const Scope1Form = () => {
                       <td>{entry.group_name || entry.group || "-"}</td>
                       <td>{entry.equipment_id || "-"}</td>
                       <td>
-                        {PROCESS_TYPES[entry.process || entry.process_type]
-                          ?.label ||
-                          entry.process ||
-                          entry.process_type}
+                        {(() => {
+                          const k = entry.process || entry.process_type;
+                          const v = PROCESS_TYPES[k];
+                          return (typeof v === "string" ? v : v?.label) || k;
+                        })()}
                       </td>
                       <td>
                         {entry.fuel ||

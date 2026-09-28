@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from "react";
 import CustomDropdown from "../CustomDropdown";
-import { Segmented } from "./ui";
+import { FieldGrid, Segmented } from "./ui";
 
 // ============================================================================
 // API GHG COMPENDIUM (2021) CHAPTER 7 — ONSHORE REFERENCE TABLES & DATA
@@ -148,43 +148,79 @@ const TIER2B_COMPONENTS_DATA = {
 };
 
 const TIER3_METHODS = [
-  { id: "method21", label: "Method 21 Screening Ranges", sub: "<10k vs ≥10k ppmv" },
-  { id: "correlation", label: "Leak-Rate Correlation", sub: "Continuous leak rate" },
-  { id: "ogi", label: "OGI Leaker Survey", sub: "Leakers vs non-leakers" },
-  { id: "measurement", label: "Direct High-Flow Measurement", sub: "Metered Rate / Bagging / High-Flow Sampler" },
+  { id: "method21", label: "Screening Ranges" },
+  { id: "correlation", label: "Leak-Rate Correlation" },
+  { id: "ogi", label: "Leaker Survey (OGI)" },
+  { id: "measurement", label: "Direct Measurement" },
+];
+// fields each Tier 3 method writes; switching method clears the others (Tier 3 test #20)
+const TIER3_FIELDS = [
+  "m21_component", "m21_service", "m21_below_count", "m21_above_count", "ch4_wt_fraction",
+  "correlation_type", "corr_zero_count", "corr_screened_count", "screening_ppm", "fugitive_ppm",
+  "corr_pegged_10k_count", "corr_pegged_100k_count", "ogi_component", "ogi_service", "leakers_count",
+  "measured_rate", "rate_unit", "ch4_content", "co2_content", "operating_hours", "amount", "unit",
+];
+const M21_COMPONENTS = [
+  { value: "valve", label: "Valves" },
+  { value: "pump_seal", label: "Pump seals" },
+  { value: "connector", label: "Connectors" },
+  { value: "flange", label: "Flanges" },
+  { value: "open_ended_line", label: "Open-ended lines" },
+  { value: "other", label: "Other components" },
+];
+const M21_SERVICES = [
+  { value: "gas", label: "Gas", ch4: "92.0" },
+  { value: "light_oil", label: "Light oil", ch4: "61.3" },
+  { value: "heavy_oil", label: "Heavy oil", ch4: "94.2" },
+  { value: "water_oil", label: "Water / oil", ch4: "" },
+];
+const OGI_COMPONENTS = [
+  { value: "valve", label: "Valves" },
+  { value: "flange", label: "Flanges" },
+  { value: "connector", label: "Connectors" },
+  { value: "open_ended_line", label: "Open-ended lines" },
+  { value: "prv", label: "Pressure relief valves" },
+  { value: "pump_seal", label: "Pump seals" },
+  { value: "other", label: "Other components" },
+];
+const OGI_SERVICES = [
+  { value: "gas", label: "Gas" },
+  { value: "light_crude", label: "Light crude" },
+  { value: "heavy_crude", label: "Heavy crude" },
+];
+const RATE_UNITS = [
+  { value: "scf/hr", label: "scf/h (whole gas)" },
+  { value: "m3/hr", label: "m³/h (whole gas)" },
+  { value: "kg/hr", label: "kg CH₄/h" },
+  { value: "lb/hr", label: "lb CH₄/h" },
 ];
 
-const OGI_LEAKER_FACTORS = [
-  { id: "valve", label: "Valves", factor: 0.160, unit: "kg CH₄/hr/leaker", co2_factor: 0.0028 },
-  { id: "connector", label: "Connectors", factor: 0.048, unit: "kg CH₄/hr/leaker", co2_factor: 0.00085 },
-  { id: "prv", label: "Pressure Relief Valves (PRV)", factor: 0.440, unit: "kg CH₄/hr/leaker", co2_factor: 0.0078 },
-  { id: "open_ended_line", label: "Open-Ended Lines", factor: 0.110, unit: "kg CH₄/hr/leaker", co2_factor: 0.0019 },
-  { id: "compressor_seal", label: "Compressor Seals", factor: 0.220, unit: "kg CH₄/hr/leaker", co2_factor: 0.0039 },
-  { id: "other", label: "Other Components", factor: 0.120, unit: "kg CH₄/hr/leaker", co2_factor: 0.0021 },
-];
+const Num = ({ label, field, data, onChange, placeholder }) => (
+  <div className="input-group">
+    <label>{label}</label>
+    <input
+      type="number"
+      min="0"
+      step="any"
+      className="mole-input"
+      value={data[field] ?? ""}
+      onChange={(e) => onChange(field, e.target.value)}
+      placeholder={placeholder}
+    />
+  </div>
+);
 
-const METHOD21_FACTORS = {
-  valve_gas: {
-    label: "Gas Valves",
-    leaker: { factor: 0.0451, unit: "kg TOC/hr/source", label: "≥ 10,000 ppmv (Leaker)" },
-    non_leaker: { factor: 0.00048, unit: "kg TOC/hr/source", label: "< 10,000 ppmv (Non-Leaker)" },
-  },
-  connector_gas: {
-    label: "Gas Connectors",
-    leaker: { factor: 0.0152, unit: "kg TOC/hr/source", label: "≥ 10,000 ppmv (Leaker)" },
-    non_leaker: { factor: 0.00008, unit: "kg TOC/hr/source", label: "< 10,000 ppmv (Non-Leaker)" },
-  },
-  flange_gas: {
-    label: "Gas Flanges",
-    leaker: { factor: 0.0850, unit: "kg TOC/hr/source", label: "≥ 10,000 ppmv (Leaker)" },
-    non_leaker: { factor: 0.00006, unit: "kg TOC/hr/source", label: "< 10,000 ppmv (Non-Leaker)" },
-  },
-  prv_gas: {
-    label: "Gas Relief Valves",
-    leaker: { factor: 1.6900, unit: "kg TOC/hr/source", label: "≥ 10,000 ppmv (Leaker)" },
-    non_leaker: { factor: 0.0447, unit: "kg TOC/hr/source", label: "< 10,000 ppmv (Non-Leaker)" },
-  },
-};
+const Pick = ({ label, field, options, data, onChange }) => (
+  <div className="input-group">
+    <label>{label}</label>
+    <CustomDropdown
+      options={options.map(({ value, label: l }) => ({ value, label: l }))}
+      value={data[field] || ""}
+      onChange={(v) => onChange(field, v)}
+      placeholder="Select"
+    />
+  </div>
+);
 
 // ============================================================================
 // MAIN COMPONENT: FugitivesForm
@@ -196,8 +232,10 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default" }) => {
   const activeTier = sourceType === "specific" ? "tier3" : sourceType === "custom" ? "tier2" : "tier1";
   useEffect(() => {
     if (data.fugitive_tier !== activeTier) onChange("fugitive_tier", activeTier);
+    if (activeTier === "tier3" && !["method21", "correlation", "ogi", "measurement"].includes(data.fugitive_method))
+      onChange("fugitive_method", "ogi");
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeTier]);
+  }, [activeTier, data.fugitive_method]);
 
   // Sub-Method within Tier
   // Tier 2: equipment vs component
@@ -264,23 +302,6 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default" }) => {
 
   const ch4MolePct = parseFloat(data.ch4_mole_pct !== undefined ? data.ch4_mole_pct : currentDefaultStream.ch4);
   const co2MolePct = parseFloat(data.co2_mole_pct !== undefined ? data.co2_mole_pct : currentDefaultStream.co2);
-
-  // Tier 3 OGI State
-  const ogiCompId = data.component_type || "valve";
-  const ogiLeakers = parseFloat(data.leakers_count || 1);
-  const ogiNonLeakers = parseFloat(data.non_leakers_count || 0);
-  const ogiHours = parseFloat(data.operating_hours || 8760);
-
-  // Tier 3 Method 21 State
-  const m21Key = data.m21_type || "valve_gas";
-  const m21Ppm = parseFloat(data.screening_ppm || data.fugitive_ppm || 500);
-  const m21Count = parseFloat(data.amount || data.screening_count || 1);
-  const m21Hours = parseFloat(data.operating_hours || 8760);
-
-  // Tier 3 Direct Measurement State
-  const directRate = parseFloat(data.measured_rate || 0.5);
-  const directRateUnit = data.rate_unit || "kg/hr";
-  const directHours = parseFloat(data.operating_hours || 8760);
 
   // Duration unit options
 
@@ -576,246 +597,73 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default" }) => {
             <Segmented
               ariaLabel="Tier 3 method"
               value={tier3Method}
-              onChange={(v) => onChange("fugitive_method", v)}
+              onChange={(v) => {
+                if (v === tier3Method) return;
+                TIER3_FIELDS.forEach((k) => onChange(k, undefined));
+                onChange("fugitive_method", v);
+              }}
               options={TIER3_METHODS.map((m) => ({ value: m.id, label: m.label }))}
             />
           </div>
 
-          {/* Tier 3C: OGI Leaker Survey */}
-          {tier3Method === "ogi" && (
-            <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr 1fr 1fr", gap: "12px" }}>
-              <div className="input-group">
-                <label>Component Leaker Type</label>
-                <CustomDropdown
-                  options={OGI_LEAKER_FACTORS.map((f) => ({
-                    value: f.id,
-                    label: f.label,
-                  }))}
-                  value={ogiCompId}
-                  onChange={(val) => onChange("component_type", val)}
-                />
-              </div>
-
-              <div className="input-group">
-                <label>Detected Leakers Count</label>
-                <input
-                  type="number"
-                  min="0"
-                  step="1"
-                  className="mole-input"
-                  value={ogiLeakers}
-                  onChange={(e) => {
-                    onChange("leakers_count", e.target.value);
-                    onChange("amount", e.target.value);
-                    onChange("unit", "leakers");
-                  }}
-                  placeholder="1"
-                />
-              </div>
-
-              <div className="input-group">
-                <label>Non-Leaker Population (Optional)</label>
-                <input
-                  type="number"
-                  min="0"
-                  step="1"
-                  className="mole-input"
-                  value={ogiNonLeakers}
-                  onChange={(e) => onChange("non_leakers_count", e.target.value)}
-                  placeholder="0"
-                />
-              </div>
-
-              <div className="input-group">
-                <label>Survey Period / Hours</label>
-                <input
-                  type="number"
-                  min="0"
-                  step="any"
-                  className="mole-input"
-                  value={ogiHours}
-                  onChange={(e) => onChange("operating_hours", e.target.value)}
-                  placeholder="8760"
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Tier 3A: Method 21 Screening Ranges */}
           {tier3Method === "method21" && (
-            <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr 1fr 1fr", gap: "12px" }}>
-              <div className="input-group">
-                <label>Component Category</label>
-                <CustomDropdown
-                  options={Object.keys(METHOD21_FACTORS).map((k) => ({
-                    value: k,
-                    label: METHOD21_FACTORS[k].label,
-                  }))}
-                  value={m21Key}
-                  onChange={(val) => onChange("m21_type", val)}
-                />
-              </div>
-
-              <div className="input-group">
-                <label>Screening Value (ppmv)</label>
-                <input
-                  type="number"
-                  min="0"
-                  step="any"
-                  className="mole-input"
-                  value={m21Ppm}
-                  onChange={(e) => {
-                    onChange("screening_ppm", e.target.value);
-                    onChange("fugitive_ppm", e.target.value);
-                  }}
-                  placeholder="e.g. 15000"
-                />
-                <span style={{ fontSize: "0.72rem", color: m21Ppm >= 10000 ? "#dc2626" : "#059669", fontWeight: 600 }}>
-                  {m21Ppm >= 10000 ? "≥ 10,000 ppmv (Leaker Factor Applied)" : "< 10,000 ppmv (Non-Leaker Factor Applied)"}
-                </span>
-              </div>
-
-              <div className="input-group">
-                <label>Component Count</label>
-                <input
-                  type="number"
-                  min="1"
-                  step="1"
-                  className="mole-input"
-                  value={m21Count}
-                  onChange={(e) => {
-                    onChange("amount", e.target.value);
-                    onChange("unit", "sources");
-                  }}
-                  placeholder="1"
-                />
-              </div>
-
-              <div className="input-group">
-                <label>Operating Hours</label>
-                <input
-                  type="number"
-                  min="0"
-                  step="any"
-                  className="mole-input"
-                  value={m21Hours}
-                  onChange={(e) => onChange("operating_hours", e.target.value)}
-                  placeholder="8760"
-                />
-              </div>
-            </div>
+            <FieldGrid min={170}>
+              <Pick label="Component" field="m21_component" options={M21_COMPONENTS} data={data} onChange={onChange} />
+              <Pick label="Service" field="m21_service" options={M21_SERVICES} data={data} onChange={onChange} />
+              <Num label="Count < 10,000 ppmv" field="m21_below_count" data={data} onChange={onChange} placeholder="0" />
+              <Num label="Count ≥ 10,000 ppmv" field="m21_above_count" data={data} onChange={onChange} placeholder="0" />
+              <Num
+                label="CH₄ in TOC (wt %)"
+                field="ch4_wt_fraction"
+                data={data}
+                onChange={onChange}
+                placeholder={(M21_SERVICES.find((x) => x.value === data.m21_service) || {}).ch4 || "required"}
+              />
+              <Num label="Operating hours" field="operating_hours" data={data} onChange={onChange} placeholder="8760" />
+            </FieldGrid>
           )}
 
-          {/* Tier 3B: Correlation approach — non-detects, screened values, pegged components */}
           {tier3Method === "correlation" && (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "12px" }}>
-              <div className="input-group">
-                <label>Component</label>
-                <CustomDropdown
-                  options={[
-                    { value: "valve", label: "Valves" },
-                    { value: "pump_seal", label: "Pump seals" },
-                    { value: "connector", label: "Connectors" },
-                    { value: "flange", label: "Flanges" },
-                    { value: "open_ended_line", label: "Open-ended lines" },
-                    { value: "other", label: "Other components" },
-                  ]}
-                  value={data.correlation_type || "valve"}
-                  onChange={(val) => onChange("correlation_type", val)}
-                />
-              </div>
-              {[
-                ["corr_zero_count", "Non-detect count", "0"],
-                ["corr_screened_count", "Screened count", "0"],
-                ["screening_ppm", "Screening value (ppmv)", "e.g. 2500"],
-                ["corr_pegged_10k_count", "Pegged ≥ 10,000 ppmv", "0"],
-                ["corr_pegged_100k_count", "Pegged ≥ 100,000 ppmv", "0"],
-                ["ch4_wt_fraction", "CH₄ in TOC (wt %)", "56.4"],
-                ["operating_hours", "Operating hours", "8760"],
-              ].map(([field, label, ph]) => (
-                <div className="input-group" key={field}>
-                  <label>{label}</label>
-                  <input
-                    type="number"
-                    min="0"
-                    step="any"
-                    className="mole-input"
-                    value={data[field] ?? ""}
-                    onChange={(e) => {
-                      onChange(field, e.target.value);
-                      if (field === "screening_ppm") onChange("fugitive_ppm", e.target.value);
-                    }}
-                    placeholder={ph}
-                  />
-                </div>
-              ))}
-            </div>
+            <FieldGrid min={160}>
+              <Pick label="Component" field="correlation_type" options={M21_COMPONENTS} data={data} onChange={onChange} />
+              <Num label="Non-detect count" field="corr_zero_count" data={data} onChange={onChange} placeholder="0" />
+              <Num label="Screened count" field="corr_screened_count" data={data} onChange={onChange} placeholder="0" />
+              <Num
+                label="Screening value (ppmv)"
+                field="screening_ppm"
+                data={data}
+                onChange={(k, v) => {
+                  onChange(k, v);
+                  onChange("fugitive_ppm", v);
+                }}
+                placeholder="e.g. 2500"
+              />
+              <Num label="Pegged ≥ 10,000 ppmv" field="corr_pegged_10k_count" data={data} onChange={onChange} placeholder="0" />
+              <Num label="Pegged ≥ 100,000 ppmv" field="corr_pegged_100k_count" data={data} onChange={onChange} placeholder="0" />
+              <Num label="CH₄ in TOC (wt %)" field="ch4_wt_fraction" data={data} onChange={onChange} placeholder="56.4" />
+              <Num label="Operating hours" field="operating_hours" data={data} onChange={onChange} placeholder="8760" />
+            </FieldGrid>
           )}
 
-          {/* Tier 3D: Direct Measurement */}
+          {tier3Method === "ogi" && (
+            <FieldGrid min={170}>
+              <Pick label="Component" field="ogi_component" options={OGI_COMPONENTS} data={data} onChange={onChange} />
+              <Pick label="Service" field="ogi_service" options={OGI_SERVICES} data={data} onChange={onChange} />
+              <Num label="Leakers found" field="leakers_count" data={data} onChange={onChange} placeholder="e.g. 2" />
+              <Num label="Operating hours" field="operating_hours" data={data} onChange={onChange} placeholder="8760" />
+              <Num label="CH₄ (mol %)" field="ch4_content" data={data} onChange={onChange} placeholder="81.6" />
+              <Num label="CO₂ (mol %)" field="co2_content" data={data} onChange={onChange} placeholder="0" />
+            </FieldGrid>
+          )}
+
           {tier3Method === "measurement" && (
-            <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr 1fr 1fr", gap: "12px" }}>
-              <div className="input-group">
-                <label>Direct Metered Leak Rate</label>
-                <input
-                  type="number"
-                  min="0"
-                  step="any"
-                  className="mole-input"
-                  value={directRate}
-                  onChange={(e) => {
-                    onChange("measured_rate", e.target.value);
-                    onChange("amount", e.target.value);
-                  }}
-                  placeholder="0.5"
-                />
-              </div>
-
-              <div className="input-group">
-                <label>Flow Rate Unit</label>
-                <CustomDropdown
-                  options={[
-                    { value: "kg/hr", label: "kg/hr" },
-                    { value: "scf/hr", label: "scf/hr" },
-                    { value: "m3/hr", label: "m³/hr" },
-                    { value: "lb/hr", label: "lb/hr" },
-                    { value: "tonnes/yr", label: "tonnes/yr" },
-                  ]}
-                  value={directRateUnit}
-                  onChange={(val) => {
-                    onChange("rate_unit", val);
-                    onChange("unit", val);
-                  }}
-                />
-              </div>
-
-              <div className="input-group">
-                <label>Operating Duration (hrs)</label>
-                <input
-                  type="number"
-                  min="0"
-                  step="any"
-                  className="mole-input"
-                  value={directHours}
-                  onChange={(e) => onChange("operating_hours", e.target.value)}
-                  placeholder="8760"
-                />
-              </div>
-
-              <div className="input-group">
-                <label>Stream CH₄ Mole %</label>
-                <input
-                  type="number"
-                  min="0"
-                  max="100"
-                  step="0.1"
-                  className="mole-input"
-                  value={ch4MolePct}
-                  onChange={(e) => onChange("ch4_mole_pct", e.target.value)}
-                  placeholder="78.8"
-                />
-              </div>
-            </div>
+            <FieldGrid min={170}>
+              <Num label="Measured leak rate" field="measured_rate" data={data} onChange={onChange} placeholder="e.g. 0.5" />
+              <Pick label="Rate unit" field="rate_unit" options={RATE_UNITS} data={data} onChange={onChange} />
+              <Num label="Operating hours" field="operating_hours" data={data} onChange={onChange} placeholder="8760" />
+              <Num label="CH₄ (mol %)" field="ch4_content" data={data} onChange={onChange} placeholder="e.g. 78.8" />
+              <Num label="CO₂ (mol %)" field="co2_content" data={data} onChange={onChange} placeholder="0" />
+            </FieldGrid>
           )}
         </div>
       )}

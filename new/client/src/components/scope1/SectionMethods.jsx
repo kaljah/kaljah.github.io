@@ -147,6 +147,7 @@ export function VentedGasForm({ data, onChange }) {
   const m = data.vent_method;
   const flared = data.disposition === "flared";
   const canFlare = ["volume", "gor", "rate_days", "actual"].includes(m);
+  const noComposition = ["co2_mass", "agr_balance", "thc_mass", "reported_mass"].includes(m);
   return (
     <div className="s1-stack">
       {m === "volume" && (
@@ -199,7 +200,21 @@ export function VentedGasForm({ data, onChange }) {
           <Num label="Sweet gas CO₂ (mol %)" field="sweet_co2_content" data={data} onChange={onChange} placeholder="0" />
         </FieldGrid>
       )}
-      {!["co2_mass", "agr_balance"].includes(m) && <Composition data={data} onChange={onChange} c2={flared} />}
+      {m === "thc_mass" && (
+        <FieldGrid min={170}>
+          <NumUnit label="Total hydrocarbon loss" field="thc_loss" unitField="thc_loss_unit" units={["t", "kg", "lb"]} data={data} onChange={onChange} required />
+          <Num label="CH₄ in vent (wt %)" field="ch4_wt_pct" data={data} onChange={onChange} required />
+          <Num label="CO₂ in vent (wt %)" field="co2_wt_pct" data={data} onChange={onChange} placeholder="0" />
+        </FieldGrid>
+      )}
+      {m === "reported_mass" && (
+        <FieldGrid min={170}>
+          <NumUnit label="CH₄ emitted" field="ch4_mass" unitField="mass_unit" units={["t", "kg", "lb"]} data={data} onChange={onChange} required />
+          <Num label="CO₂ emitted (same unit)" field="co2_mass" data={data} onChange={onChange} placeholder="0" />
+          <Num label="Control efficiency (%)" field="control_efficiency" data={data} onChange={onChange} placeholder="0" />
+        </FieldGrid>
+      )}
+      {!noComposition && <Composition data={data} onChange={onChange} c2={flared} />}
       {canFlare && (
         <FieldGrid min={180}>
           <div className="input-group">
@@ -415,7 +430,12 @@ export function SectionMethodPanel({ processType, sourceType, data, onChange, le
   return (
     <div className="s1-stack">
       {choices.length > 1 && (
-        <Segmented ariaLabel="Calculation method" options={choices} value={selected} onChange={(v) => applyChoice(v, onChange)} />
+        <Segmented
+          ariaLabel="Calculation method"
+          options={choices}
+          value={selected}
+          onChange={(v) => v !== selected && applyChoice(v, onChange, data)}
+        />
       )}
       {body}
     </div>

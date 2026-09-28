@@ -6,10 +6,13 @@ const HHV_REQUIRED_PROCESSES = [
   "combustion",
   "stationary_combustion",
   "flaring",
+  "routine_flaring",
+  "non_routine_flaring",
+  "safety_flaring",
 ];
 
 const CombustionForm = ({ data, onChange, sourceType }) => {
-  const isFlaring = data.process_type === "flaring";
+  const isFlaring = ["flaring", "routine_flaring", "non_routine_flaring", "safety_flaring"].includes(data.process_type);
   const isCombustion = ["combustion", "stationary_combustion"].includes(
     data.process_type,
   );

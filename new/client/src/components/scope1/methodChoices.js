@@ -14,6 +14,8 @@ const VENT = {
   desiccant: { value: "vent:desiccant", label: "Vessel volume" },
   co2_mass: { value: "vent:co2_mass", label: "Blowdown volume" },
   agr_balance: { value: "vent:agr_balance", label: "Sour / sweet balance" },
+  thc_mass: { value: "vent:thc_mass", label: "Hydrocarbon loss (AP-42 / simulation)" },
+  reported_mass: { value: "vent:reported_mass", label: "Simulation / measured result" },
 };
 const COMB = {
   carbon_content: { value: "comb:carbon_content", label: "Carbon content" },
@@ -54,7 +56,7 @@ export const SECTION_TIERS = {
   co2_eor: [TIER.specific],
   thermal_oxidizer: [TIER.specific],
   agr: [TIER.default, { ...TIER.specific, label: "Engineering", sub: "Throughput, CO₂ in / out" }],
-  dehydrator: [TIER.default, { ...TIER.specific, label: "Engineering", sub: "Glycol / flash model" }],
+  dehydrator: [TIER.default, { ...TIER.specific, label: "Simulation / Measured", sub: "GLYCalc or vent measurement" }],
 };
 
 export function sectionChoices(processType, sourceType) {
@@ -77,15 +79,17 @@ export function sectionChoices(processType, sourceType) {
     case "agr":
       return t === "default" ? [ACTIVITY] : t === "specific" ? [LEGACY("Throughput & CO₂"), VENT.agr_balance] : null;
     case "dehydrator":
-      return t === "default" ? [ACTIVITY] : null;
+      return t === "default" ? [ACTIVITY] : t === "specific" ? [{ ...VENT.volume, label: "Measured vent volume" }, VENT.reported_mass] : null;
     case "pneumatic":
     case "loading":
       return t === "default" ? [LEGACY("Catalog factor"), ACTIVITY] : null;
     case "tank":
     case "tank_flashing":
+      return t === "specific" ? [LEGACY("Flashing"), VENT.actual] : null;
+    // Section 6.3.9.3: working / standing losses are not a flashing calculation
     case "tank_working":
     case "tank_breathing":
-      return t === "specific" ? [LEGACY("Flashing / losses"), VENT.actual] : null;
+      return t === "specific" ? [VENT.thc_mass] : null;
     case "combustion":
       return t === "specific" ? [LEGACY("Fuel analysis"), COMB.carbon_content, COMB.equipment] : null;
     case "mobile":
@@ -112,7 +116,12 @@ export function sectionMethodActive(data) {
   return currentChoice(data) !== "legacy";
 }
 
-export function applyChoice(choice, onChange) {
+// Switching method starts the method's inputs from empty: fields of the previous method are not
+// submitted with the next one (Tier 3 browser test #20)
+export function applyChoice(choice, onChange, data = {}) {
+  Object.keys(data).forEach((k) => {
+    if (k !== "process_type" && data[k] !== undefined) onChange(k, undefined);
+  });
   METHOD_KEYS.forEach((k) => onChange(k, undefined));
   if (choice === "activity") onChange("activity_key", "");
   else if (choice.startsWith("vent:")) onChange("vent_method", choice.slice(5));
@@ -124,8 +133,8 @@ export function syncSectionChoice(processType, sourceType, data, onChange) {
   const choices = sectionChoices(processType, sourceType);
   const cur = currentChoice(data);
   if (!choices) {
-    if (cur !== "legacy") applyChoice("legacy", onChange);
+    if (cur !== "legacy") applyChoice("legacy", onChange, data);
     return;
   }
-  if (!choices.some((c) => c.value === cur)) applyChoice(choices[0].value, onChange);
+  if (!choices.some((c) => c.value === cur)) applyChoice(choices[0].value, onChange, data);
 }
