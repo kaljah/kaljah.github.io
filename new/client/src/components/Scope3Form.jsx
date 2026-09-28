@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { CATEGORY_ACTIVITIES } from "../utils/scope3Factors";
 import api from "../api";
 import CustomDropdown from "./CustomDropdown";
 import { useToast } from "./Toast";
@@ -105,87 +106,6 @@ const Scope3Form = () => {
     15: { name: "Investments", type: "downstream" },
   };
 
-  const CATEGORY_ACTIVITIES = {
-    1: [
-      { value: "Steel", unit: "kg", factor: 1.85 },
-      { value: "Cement", unit: "kg", factor: 0.82 },
-      { value: "Chemicals", unit: "kg", factor: 2.1 },
-      { value: "Equipment", unit: "USD", factor: 0.42 },
-      { value: "Services", unit: "USD", factor: 0.18 },
-    ],
-    2: [
-      { value: "Machinery & Equipment", unit: "USD", factor: 0.45 },
-      { value: "Buildings & Infrastructure", unit: "USD", factor: 0.85 },
-      { value: "IT Equipment", unit: "USD", factor: 0.35 },
-    ],
-    3: [
-      { value: "Upstream of Purchased Fuels", unit: "kg", factor: 0.25 },
-      { value: "T&D Losses (Electricity)", unit: "kWh", factor: 0.05 },
-    ],
-    4: [
-      { value: "Truck Transport", unit: "ton-km", factor: 0.062 },
-      { value: "Rail Transport", unit: "ton-km", factor: 0.022 },
-      { value: "Ship Transport", unit: "ton-km", factor: 0.011 },
-      { value: "Pipeline Transport", unit: "ton-km", factor: 0.005 },
-    ],
-    5: [
-      { value: "Landfill", unit: "kg", factor: 0.57 },
-      { value: "Incineration", unit: "kg", factor: 0.021 },
-      { value: "Recycling", unit: "kg", factor: 0.012 },
-      { value: "Composting", unit: "kg", factor: 0.008 },
-    ],
-    6: [
-      { value: "Air - Domestic", unit: "passenger-km", factor: 0.255 },
-      { value: "Air - International", unit: "passenger-km", factor: 0.195 },
-      { value: "Car - Gasoline", unit: "km", factor: 0.192 },
-      { value: "Car - Diesel", unit: "km", factor: 0.171 },
-      { value: "Train", unit: "passenger-km", factor: 0.041 },
-    ],
-    7: [
-      { value: "Car Commute (Gasoline)", unit: "passenger-km", factor: 0.192 },
-      {
-        value: "Public Transit (Bus/Train)",
-        unit: "passenger-km",
-        factor: 0.05,
-      },
-      { value: "Teleworking", unit: "day", factor: 1.5 },
-    ],
-    8: [
-      { value: "Leased Office Space", unit: "sq ft", factor: 5.5 },
-      { value: "Leased Vehicles", unit: "km", factor: 0.2 },
-    ],
-    9: [
-      { value: "Truck Transport", unit: "ton-km", factor: 0.062 },
-      { value: "Rail Transport", unit: "ton-km", factor: 0.022 },
-      { value: "Ship Transport", unit: "ton-km", factor: 0.011 },
-      { value: "Pipeline Transport", unit: "ton-km", factor: 0.005 },
-    ],
-    10: [
-      { value: "Processing (Electricity)", unit: "kWh", factor: 0.4 },
-      { value: "Processing (Natural Gas)", unit: "mcf", factor: 54.18 },
-    ],
-    11: [
-      // Combustion of sold products: API Compendium 2021 Table 4-5 heating value and CO2, Table 4-6 CH4 / N2O,
-      // as kg CO2e per unit at AR5 (natural gas 1,020 Btu/scf, Table 3-8)
-      { value: "Crude Oil", unit: "bbl", factor: 433.44 },
-      { value: "Natural Gas", unit: "mcf", factor: 54.18 },
-      { value: "NGL - Ethane", unit: "gal", factor: 4.07 },
-      { value: "NGL - Propane", unit: "gal", factor: 5.74 },
-      { value: "NGL - Butane", unit: "gal", factor: 6.7 },
-      { value: "NGL - Mixed (as LPG)", unit: "gal", factor: 5.7 },
-    ],
-    12: [
-      { value: "Landfill", unit: "kg", factor: 0.57 },
-      { value: "Recycling", unit: "kg", factor: 0.012 },
-      { value: "Incineration", unit: "kg", factor: 0.021 },
-    ],
-    13: [{ value: "Downstream Leased Space", unit: "sq ft", factor: 5.5 }],
-    14: [{ value: "Retail Franchise", unit: "sq ft", factor: 10.0 }],
-    15: [
-      { value: "Equity Investments", unit: "USD", factor: 0.001 },
-      { value: "Project Finance", unit: "USD", factor: 0.005 },
-    ],
-  };
 
   useEffect(() => {
     loadFacilities();

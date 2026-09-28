@@ -95,7 +95,14 @@ def _calc_indirect_steam(data):
             f"Net efficiency must be greater than 0 (got {net_eff:.4f}). "
             f"Check boiler efficiency ({boiler_eff}) and transmission loss ({trans_loss})."
         )
-    co2_kg = (energy_mmbtu * ef_co2) / net_eff
+    fuel_mmbtu = energy_mmbtu / net_eff
+    co2_kg = fuel_mmbtu * ef_co2
+    if ef_co2 == _DEFAULT_BOILER_EF_KG_PER_MMBTU:
+        # natural-gas boiler: CH4 / N2O of API Compendium Table 4-6 (1.0E-03 / 1.0E-04 kg per MMBtu of
+        # fuel), the basis of EPA Emission Factors Hub Table 7 (1.25 / 0.125 g per MMBtu of steam at 80 %)
+        from calculations.constants import get_active_gwp
+        gwp = get_active_gwp()
+        co2_kg += fuel_mmbtu * (0.001 * float(gwp["CH4"]) + 0.0001 * float(gwp["N2O"]))
     return co2_kg / 1000.0, energy_mmbtu, ef_co2
 
 

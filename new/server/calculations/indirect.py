@@ -20,6 +20,9 @@ class IndirectSteamCalculator(BaseCalculator):
         transmission_loss,
         uncertainties,
         heat_unit="btu",
+        ef_ch4=0.0,
+        ef_n2o=0.0,
+        gwp_dict=None,
     ):
         """
         API Equation 8-2: Indirect emissions from steam/heat
@@ -71,11 +74,12 @@ class IndirectSteamCalculator(BaseCalculator):
             )
 
         # ef_co2 is expected in kg/MMBtu
-        co2_kg = (energy_btu / 1_000_000.0) * ef_co2 / net_efficiency
-        co2_tonnes = co2_kg / 1000.0
-
-        # Standard Scope 2 usually reported as CO2 only
-        total_co2e = calculate_co2e(co2=co2_tonnes)
+        fuel_mmbtu = (energy_btu / 1_000_000.0) / net_efficiency
+        co2_tonnes = fuel_mmbtu * ef_co2 / 1000.0
+        # boiler fuel CH4 / N2O (kg/MMBtu of fuel, e.g. Table 4-6); they were left out (catalog check)
+        ch4_tonnes = fuel_mmbtu * float(ef_ch4 or 0.0) / 1000.0
+        n2o_tonnes = fuel_mmbtu * float(ef_n2o or 0.0) / 1000.0
+        total_co2e = calculate_co2e(co2=co2_tonnes, ch4=ch4_tonnes, n2o=n2o_tonnes, gwp_dict=gwp_dict)
 
         _unc_dict = uncertainties or {}
         _tier = resolve_tier(_unc_dict.get("_factor_source", "default"))
@@ -89,6 +93,8 @@ class IndirectSteamCalculator(BaseCalculator):
 
         return self.format_result(
             co2=co2_res,
+            ch4=ch4_tonnes,
+            n2o=n2o_tonnes,
             total_co2e=total_co2e,
             inputs={
                 "heat_energy": heat_energy,
