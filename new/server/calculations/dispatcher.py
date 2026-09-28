@@ -272,8 +272,11 @@ class CalculationDispatcher:
         for i in range(2, 11):
             if flat_inputs.get(f"c{i}") not in (None, "", "-"):
                 raw[f"c{i}"] = flat_inputs.get(f"c{i}")
-        for key, names in (("co2", ("co2_mol", "co2_content", "co2_comp")), ("n2", ("n2", "n2_mol", "n2_comp")),
-                           ("h2s", ("h2s", "h2s_mol"))):
+        # N2 / H2S under any of their keys: a dropped inert made a 98.4 % analysis renormalise to 100 %
+        # and inflated the hydrocarbons by 1.6 % (Exhibit 4.4a)
+        for key, names in (("co2", ("co2_mol", "co2_content", "co2_comp")),
+                           ("n2", ("n2", "n2_mol", "n2_comp", "n2_content", "n2_mole_pct")),
+                           ("h2s", ("h2s", "h2s_mol", "h2s_content"))):
             for n in names:
                 if flat_inputs.get(n) not in (None, "", "-"):
                     raw[key] = flat_inputs.get(n)
@@ -651,6 +654,10 @@ class CalculationDispatcher:
             (process_type in ("pneumatic_devices", "pneumatic_device", "pneumatic")
              and flat_inputs.get("pneu_controller_type") not in (None, ""))
             or (process_type in ("tank", "tank_flashing", "storage_tanks") and not _has_catalog_ef)
+            # Tier 2B component count without a selected factor: Table 7-12 by component / service
+            or (process_type in ("fugitive", "fugitive_component", "component_fugitive")
+                and str(flat_inputs.get("fugitive_method") or "").lower() == "component"
+                and not _has_catalog_ef)
         )
         if factor_source in ["default", "custom"] and not table_calculator and process_type not in [
             "drilling", "mud_degassing", "completions", "completion_flowback",
@@ -1767,7 +1774,10 @@ class CalculationDispatcher:
                     calc = OnshoreComponentFugitiveCalculator()
                     comps_dict = flat_inputs.get("component_counts")
                     if not comps_dict:
-                        c_type = str(flat_inputs.get("component_type") or flat_inputs.get("fuel") or "Valves")
+                        c_type = flat_inputs.get("component_type") or flat_inputs.get("fuel")
+                        if not c_type:
+                            raise ValueError("Select the component type")
+                        c_type = str(c_type)
                         c_count = self._require_float(
                             flat_inputs,
                             ["amount", "quantity", "count", "component_count"],
@@ -1777,18 +1787,20 @@ class CalculationDispatcher:
                             emission_factors.get("ch4")
                             or emission_factors.get("factor")
                             or flat_inputs.get("ef")
-                            or 0.0045
+                            or 0.0
                         )
-                        c_unit = str(
-                            emission_factors.get("unit")
-                            or flat_inputs.get("unit")
-                            or "kg/hr"
-                        )
-                        comps_dict = {c_type: {"count": c_count, "ef": c_ef, "unit": c_unit}}
+                        if c_ef > 0:
+                            c_unit = str(emission_factors.get("unit") or flat_inputs.get("ef_unit") or "kg TOC/hr/component")
+                            comps_dict = {c_type: {"count": c_count, "ef": c_ef, "unit": c_unit}}
+                        else:
+                            # no catalog / custom factor: Table 7-12 by component and service (the former
+                            # invented 0.0045 kg/hr fallback is removed)
+                            comps_dict = {c_type: c_count}
 
                     service = str(flat_inputs.get("service_type") or flat_inputs.get("service") or "Gas")
-                    c_ch4 = self._optional_fraction(flat_inputs, ["ch4_content", "ch4_fraction", "c1"], None)
-                    c_co2 = self._optional_fraction(flat_inputs, ["co2_content", "co2_fraction"], None)
+                    # gas mole fractions (Table 7-12 scaling, CO2) and the CH4 weight fraction of TOC
+                    c_ch4 = self._optional_fraction(flat_inputs, ["ch4_mole_pct", "ch4_content", "c1"], None)
+                    c_co2 = self._optional_fraction(flat_inputs, ["co2_mole_pct", "co2_content", "co2_fraction"], None)
                     return calc.calculate(
                         component_counts=comps_dict,
                         service_type=service,
@@ -1797,6 +1809,7 @@ class CalculationDispatcher:
                         co2_content=c_co2,
                         uncertainties=uncertainties,
                         gwp_dict=gwp_dict,
+                        ch4_wt_fraction=flat_inputs.get("ch4_wt_fraction") or flat_inputs.get("ch4_fraction"),
                     )
 
                 else:
@@ -1825,6 +1838,8 @@ class CalculationDispatcher:
                         factor_unit=ef_u,
                         uncertainties=uncertainties,
                         gwp_dict=gwp_dict,
+                        ch4_wt_fraction=next((flat_inputs.get(k) for k in ("ch4_wt_fraction", "ch4_content")
+                                              if flat_inputs.get(k) not in (None, "")), None),
                     )
 
             elif process_type in ["compressor_seal", "compressor_fugitive"]:

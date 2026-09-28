@@ -467,10 +467,19 @@ def _compute_emissions_impl(payload, factor_data=None, gwp_dict=None, gwp_standa
             return r.get("value", 0)
         return r
 
+    # A Tier 3 engineering result of zero is a real outcome (e.g. 0 operating hours); it must not fall
+    # through to the legacy factor path and its misleading "request not understood" error
+    # (entered specific factors are applied by the legacy path below, so they keep that route)
+    _spec = payload.get("specific_factors") or payload.get("specificFactors") or {}
+    _has_spec = isinstance(_spec, dict) and any(
+        str(v).strip() not in ("", "0", "0.0", "None") for k, v in _spec.items() if not str(k).endswith("Unit")
+    )
+    _tier3_zero = (str(payload.get("factor_source") or "").lower() == "specific" and not _has_spec
+                   and api_res and "results" in api_res)
     if (
         api_res
         and "results" in api_res
-        and any(get_val(api_res["results"].get(g)) for g in ["co2", "ch4", "n2o"])
+        and (any(get_val(api_res["results"].get(g)) for g in ["co2", "ch4", "n2o"]) or _tier3_zero)
     ):
         # If the dispatcher handled it, return the rich result structure
         # We extract the 'value' for backward compatibility with the legacy database record creation
