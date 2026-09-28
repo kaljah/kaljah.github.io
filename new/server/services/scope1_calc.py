@@ -163,6 +163,18 @@ def apply_result(record, payload, em_result, method, factor_data, gwp_std):
     """Persist exactly what was calculated (values, activity, factor link, uncertainty)."""
     record.process_type = payload.get("process_type") or record.process_type
     record.fuel_type = payload.get("fuel") if payload.get("fuel") not in (None, "") else record.fuel_type
+    if factor_data and factor_data.get("custom_factor_id") and factor_data.get("name"):
+        # a library / custom factor is recorded by its name, not by its id (browser test #13)
+        record.fuel_type = factor_data["name"]
+    if not record.fuel_type:
+        # Compendium activity rows (Section 6 tables) are recorded by their source label
+        proc = str(payload.get("process_type") or "")
+        key = payload.get("activity_key") or ((payload.get("calc_inputs") or {}).get(proc) or {}).get("activity_key")
+        if key:
+            from calculations.activity_factors import ACTIVITY_FACTORS
+            row = ACTIVITY_FACTORS.get(str(key))
+            if row:
+                record.fuel_type = row["label"]
     if payload.get("amount") not in (None, ""):
         record.quantity = float(payload["amount"])
     record.unit = payload.get("unit") or record.unit

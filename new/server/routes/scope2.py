@@ -5,7 +5,7 @@ from sqlalchemy import func
 from electricity_factors import GRID_FACTORS
 from routes.auth import login_required
 from calculations.uncertainty import propagate_uncertainty, Tier
-from utils import get_current_user, get_allowed_facility_ids, require_facility_access, initial_record_status
+from utils import get_current_user, get_allowed_facility_ids, require_facility_access, initial_record_status, log_activity_and_notify
 from input_validation import ValidationError, parse_number, parse_year, parse_month
 import datetime
 
@@ -175,6 +175,9 @@ def get_scope2_emissions():
                     "activity": e.activity,
                     "division": e.division,
                     "field": e.field,
+                    # stored with the record; the table showed "—" without it (browser test)
+                    "uncertainty": getattr(e, "uncertainty", None),
+                    "status": getattr(e, "status", None),
                     "created_at": e.created_at.isoformat() if e.created_at else None,
                 }
                 for e in emissions
@@ -334,6 +337,7 @@ def create_scope2_emission():
                 user=user,
                 request=request,
                 entity="Scope2Emission",
+                entity_id=str(emission_id_val),
                 details=f"Created Scope 2 emission: {source_type} ({co2e:.2f} tCO2e, Status: {initial_status})",
             )
             from status import PENDING_STATUS_SET
@@ -347,8 +351,11 @@ def create_scope2_emission():
                         title="New Scope 2 Emission Pending Review",
                         message=f"A new Scope 2 emission record ({source_type}) was submitted by {user.fullName} and is awaiting your approval.",
                     )
-                db.session.commit()
+            # the audit entry is committed for every status (browser test #18: a Verified record left
+            # no audit trace because the commit only ran for pending records)
+            db.session.commit()
         except Exception:
+            current_app.logger.exception("Failed to write the Scope 2 audit entry")
             db.session.rollback()
 
     from routes.dashboard import clear_dashboard_cache
@@ -509,6 +516,17 @@ def update_scope2_emission(emission_id):
         emission.location = data["location"]
 
     try:
+        from utils import log_activity_and_notify
+        log_activity_and_notify(
+            action="UPDATE",
+            record_id=str(emission.id),
+            user=user,
+            request=request,
+            entity="Scope2Emission",
+            entity_id=str(emission.id),
+            details=f"Updated Scope 2 emission #{emission.id}: {emission.source_type} ({float(emission.co2e or 0):.2f} tCO2e)",
+            facility_id=emission.facility_id,
+        )
         db.session.commit()
     except Exception as e:
         db.session.rollback()

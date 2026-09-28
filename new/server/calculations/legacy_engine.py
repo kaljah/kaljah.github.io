@@ -390,8 +390,8 @@ def _compute_emissions_impl(payload, factor_data=None, gwp_dict=None, gwp_standa
         process = "venting"
     elif process == "liquid unloading":
         process = "unloading"
-    elif process == "separation":
-        process = "tank"
+    # "separation" stays its own process: it is not a tank-flashing calculation (browser test F4:
+    # every separator / produced-water factor was computed with the crude flashing factor)
     elif process in ["associated gas venting", "associated venting", "associated gas"]:
         process = "associated_gas_venting"
     raw_amt = payload.get("amount") if payload.get("amount") not in [None, ""] else payload.get("quantity")
