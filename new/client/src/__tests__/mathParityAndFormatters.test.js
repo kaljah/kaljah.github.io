@@ -47,18 +47,4 @@ describe('Client Math Parity and Formatters Tests', () => {
     expect(oilMud.ch4).toBe(0.0103);
     expect(oilMud.unit).toBe("t CH4/day");
   });
-
-  it('aligns TEG dehydrator emission factors with backend', () => {
-    const noCtrl = API_FACTORS["Dehydrator - TEG (No Controls)"];
-    expect(noCtrl).toBeDefined();
-    expect(noCtrl.ch4).toBe(3.0);
-
-    const flash = API_FACTORS["Dehydrator - TEG (Flash Tank)"];
-    expect(flash).toBeDefined();
-    expect(flash.ch4).toBe(1.2);
-
-    const cond = API_FACTORS["Dehydrator - TEG (Condenser)"];
-    expect(cond).toBeDefined();
-    expect(cond.ch4).toBe(0.3);
-  });
 });

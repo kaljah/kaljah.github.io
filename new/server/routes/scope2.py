@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify, session, current_app
 from models import User, Scope2Emission, Facility
 from extensions import db
 from sqlalchemy import func
-from electricity_factors import GRID_FACTORS
+from electricity_factors import GRID_FACTORS, grid_entry, grid_factor_kg_co2e_per_kwh
 from routes.auth import login_required
 from calculations.uncertainty import propagate_uncertainty, Tier
 from utils import get_current_user, get_allowed_facility_ids, require_facility_access, initial_record_status, log_activity_and_notify
@@ -30,12 +30,10 @@ def resolve_electricity_factor(grid_region, supplied_ef):
     from input_validation import ValidationError, parse_number
 
     name = str(grid_region or "").strip()
-    entry = GRID_FACTORS.get(name) or next(
-        (v for k, v in GRID_FACTORS.items() if k.lower() == name.lower()), None
-    ) if name else None
-    if entry and entry.get("factor") is not None:
-        canonical = next((k for k in GRID_FACTORS if k.lower() == name.lower()), name)
-        return float(entry["factor"]), canonical
+    canonical, entry = grid_entry(name) if name else (name, None)
+    if entry is not None:
+        # CO2 / CH4 / N2O of the grid (API Compendium Tables 8-2 / 8-6) with the active GWP set
+        return grid_factor_kg_co2e_per_kwh(entry), canonical
     ef = parse_number(supplied_ef, "emission_factor", required=False, min_value=0, max_value=MAX_GRID_EF_KG_PER_KWH)
     if ef is None:
         raise ValidationError(
@@ -462,10 +460,10 @@ def update_scope2_emission(emission_id):
         emission.grid_region = data.get("grid_region") or data.get("location") or emission.grid_region
         activity_changed = True
     st_now = (emission.source_type or "").strip().lower()
-    grid_entry = GRID_FACTORS.get(emission.grid_region or "", {}) if ("electric" in st_now) else {}
-    if grid_entry.get("factor") is not None:
+    _grid = grid_entry(emission.grid_region)[1] if ("electric" in st_now) else None
+    if _grid is not None:
         # BUG-099: a known grid always uses the server factor, never the client's.
-        emission.emission_factor = float(grid_entry["factor"])
+        emission.emission_factor = grid_factor_kg_co2e_per_kwh(_grid)
     elif "emission_factor" in data:
         max_ef = MAX_GRID_EF_KG_PER_KWH if "electric" in st_now else None
         emission.emission_factor = parse_number(data["emission_factor"], "emission_factor", min_value=0, max_value=max_ef)
@@ -760,9 +758,11 @@ def get_emission_factors():
         factors.append(
             {
                 "region": region,
-                "factor": info["factor"],
+                "factor": round(grid_factor_kg_co2e_per_kwh(info), 6),
                 "unit": info["unit"],
                 "description": info["description"],
+                "source": info.get("source"),
+                "verified": info.get("verified", True),
             }
         )
 

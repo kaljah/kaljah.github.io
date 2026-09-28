@@ -43,7 +43,7 @@ COMBUSTION_FACTORS = {
     },
     "Landfill Gas": {
         "code": "LFG",
-        "hhv": 500,
+        "hhv": 485,  # Table 4-5: 4.85E-04 MMBtu/scf
         "co2": 52.07,
         "ch4": 0.0032,
         "n2o": 0.00063,
@@ -57,7 +57,7 @@ COMBUSTION_FACTORS = {
     },
     "Coke Oven Gas": {
         "code": "COG",
-        "hhv": 590,
+        "hhv": 599,  # Table 4-5: 5.99E-04 MMBtu/scf
         "co2": 46.85,
         "ch4": 0.00048,
         "n2o": 0.0001,
@@ -85,7 +85,7 @@ COMBUSTION_FACTORS = {
     },
     "Propane (Gas)": {
         "code": "LPG_Gas",
-        "hhv": 2500,  # Btu/scf
+        "hhv": 2516,  # Table 4-5: 2.516E-03 MMBtu/scf
         "co2": 61.46,
         "ch4": 0.003,
         "n2o": 0.0006,
@@ -99,10 +99,10 @@ COMBUSTION_FACTORS = {
     },
     "Refinery Fuel Gas": {
         "code": "RFG",
-        "hhv": 1400,  # Btu/scf (typical)
-        "co2": 57.78,
-        "ch4": 0.0028,
-        "n2o": 0.0001,
+        "hhv": 1388,  # Table 4-5 fuel gas: 1.388E-03 MMBtu/scf
+        "co2": 59.0,  # Table 4-5 fuel gas
+        "ch4": 0.003,  # 40 CFR 98 Table C-2 fuel gas
+        "n2o": 0.0006,  # 40 CFR 98 Table C-2 fuel gas
         "uncertainty": {"co2": 0.10, "ch4": 0.30, "n2o": 0.40},
         "unit": "kg/MMBtu",
         "usage": ["combustion"],
@@ -114,8 +114,8 @@ COMBUSTION_FACTORS = {
     # LIQUID FUELS
     "Marine Diesel Oil": {
         "code": "MDO",
-        "hhv": 138858,
-        "co2": 73.19,
+        "hhv": 138000,  # marine diesel = distillate No. 2, Table 4-5: 0.138 MMBtu/gal
+        "co2": 73.96,  # Table 4-5 distillate No. 2
         "ch4": 0.003,
         "n2o": 0.0006,
         "uncertainty": {"co2": 0.02, "ch4": 0.25, "n2o": 0.30},
@@ -124,7 +124,7 @@ COMBUSTION_FACTORS = {
         "segment": "Downstream",
         "process_category": "stationary_combustion",
         "type": "liquids",
-        "source": "API Compendium 2021 Section 4, Table 4-14",
+        "source": "API Compendium 2021 Table 4-5 / 4-6 (distillate fuel oil No. 2)",
     },
     "Diesel (No. 2 Fuel Oil)": {
         "code": "DSL",
@@ -198,8 +198,8 @@ COMBUSTION_FACTORS = {
     },
     "Propane (Liquid/LPG)": {
         "code": "LPG_Liq",
-        "hhv": 91500,
-        "co2": 62.88,
+        "hhv": 91000,  # Table 4-5 propane: 0.091 MMBtu/gal
+        "co2": 62.87,  # Table 4-5 propane
         "ch4": 0.003,
         "n2o": 0.0006,
         "uncertainty": {"co2": 0.02, "ch4": 0.25, "n2o": 0.30},
@@ -212,7 +212,7 @@ COMBUSTION_FACTORS = {
     },
     "Ethane": {
         "code": "Ethane",
-        "hhv": 69600,
+        "hhv": 68000,  # Table 4-5: 0.068 MMBtu/gal (liquid)
         # BUG-027: 69,600 Btu is per US gallon of liquid ethane (EPA Table C-1 0.0696 MMBtu/gal),
         # not per scf; the explicit basis stops it being multiplied by scf.
         "hhv_unit": "btu/gal",
@@ -274,7 +274,7 @@ COMBUSTION_FACTORS = {
     "Bituminous Coal": {
         "code": "CoalBit",
         "hhv": 24930,
-        "co2": 93.26,
+        "co2": 93.28,  # Table 4-5
         "ch4": 0.011,
         "n2o": 0.0016,
         "uncertainty": {"co2": 0.03, "ch4": 0.30, "n2o": 0.40},
@@ -317,8 +317,8 @@ COMBUSTION_FACTORS = {
         "code": "PetCoke",
         "hhv": 30000,
         "co2": 102.41,
-        "ch4": 0.003,
-        "n2o": 0.0006,
+        "ch4": 0.032,  # Table 4-6: 3.20E-05 t/MMBtu (HHV)
+        "n2o": 0.0042,  # Table 4-6: 4.20E-06 t/MMBtu (HHV)
         "uncertainty": {"co2": 0.03, "ch4": 0.30, "n2o": 0.40},
         "unit": "kg/MMBtu",
         "usage": ["combustion"],
@@ -333,39 +333,9 @@ COMBUSTION_FACTORS = {
 FLARING_FACTORS = {
     "Natural Gas (Flaring - Elevated)": {
         "code": "NG_Flare_Elev",
-        "co2": 1.92,  # kg CO₂/m³ flared
-        "ch4": 0.012,  # kg CH₄/m³ flared
-        "n2o": 0.00001,
-        "combustion_efficiency_co2": 0.98,  # 98% for CO₂ formation
-        "combustion_efficiency_ch4": 0.98,  # 98% for CH₄ destruction (production flare)
-        "uncertainty": {"co2": 0.02, "ch4": 0.25, "n2o": 0.50},
-        "unit": "kg/m³",
-        "usage": ["flaring"],
-        "segment": "Upstream",
-        "process_category": "flaring",
-        "type": "gases",
-        "source": "API Compendium 2021 Section 5.2, Equations 5-3 & 5-4",
-    },
-    "Natural Gas (Flaring - Ground)": {
-        "code": "NG_Flare_Ground",
-        "co2": 1.88,
-        "ch4": 0.024,
-        "n2o": 0.00001,
-        "combustion_efficiency_co2": 0.98,
-        "combustion_efficiency_ch4": 0.96,  # 96% for ground flares
-        "uncertainty": {"co2": 0.03, "ch4": 0.30, "n2o": 0.50},
-        "unit": "kg/m³",
-        "usage": ["flaring"],
-        "segment": "Upstream",
-        "process_category": "flaring",
-        "type": "gases",
-        "source": "API Compendium 2021 Section 5.2",
-    },
-    "Natural Gas (Flaring)": {
-        "code": "NG_Flare",
-        "co2": 1.92,
-        "ch4": 0.012,
-        "n2o": 0.00001,
+        "co2": 1.9334,  # kg/Sm3, Equation 5-2
+        "ch4": 0.012447,  # kg/Sm3, Equation 5-4
+        "n2o": 3.222e-06,  # kg/Sm3, Equation 5-6
         "combustion_efficiency_co2": 0.98,
         "combustion_efficiency_ch4": 0.98,
         "uncertainty": {"co2": 0.02, "ch4": 0.25, "n2o": 0.50},
@@ -374,28 +344,43 @@ FLARING_FACTORS = {
         "segment": "Upstream",
         "process_category": "flaring",
         "type": "gases",
-        "source": "API Compendium 2021 Section 5.2",
+        "source": "API Compendium 2021 Equations 5-2 / 5-4 / 5-6; Table 5-1 processing-plant gas, 98 % (production flare)",
+    },
+    "Natural Gas (Flaring)": {
+        "code": "NG_Flare",
+        "co2": 1.9334,  # kg/Sm3, Equation 5-2
+        "ch4": 0.012447,  # kg/Sm3, Equation 5-4
+        "n2o": 3.222e-06,  # kg/Sm3, Equation 5-6
+        "combustion_efficiency_co2": 0.98,
+        "combustion_efficiency_ch4": 0.98,
+        "uncertainty": {"co2": 0.02, "ch4": 0.25, "n2o": 0.50},
+        "unit": "kg/m³",
+        "usage": ["flaring"],
+        "segment": "Upstream",
+        "process_category": "flaring",
+        "type": "gases",
+        "source": "API Compendium 2021 Equations 5-2 / 5-4 / 5-6; Table 5-1 processing-plant gas, 98 % (production flare)",
     },
     "Natural Gas (Flaring - Enclosed)": {
         "code": "NG_Flare_Enc",
-        "co2": 1.94,
-        "ch4": 0.006,
-        "n2o": 0.00001,
-        "combustion_efficiency_co2": 0.98,
-        "combustion_efficiency_ch4": 0.99,  # 99% for enclosed flares
+        "co2": 1.9628,  # kg/Sm3, Equation 5-2
+        "ch4": 0.003112,  # kg/Sm3, Equation 5-4
+        "n2o": 3.271e-06,  # kg/Sm3, Equation 5-6
+        "combustion_efficiency_co2": 0.995,
+        "combustion_efficiency_ch4": 0.995,
         "uncertainty": {"co2": 0.02, "ch4": 0.20, "n2o": 0.50},
         "unit": "kg/m³",
         "usage": ["flaring"],
         "segment": "Upstream",
         "process_category": "flaring",
         "type": "gases",
-        "source": "API Compendium 2021 Section 5.2",
+        "source": "API Compendium 2021 Equations 5-2 / 5-4 / 5-6; Table 5-1 processing-plant gas, 99.5 % (well-designed flare)",
     },
     "Associated Gas (Flaring)": {
         "code": "AG_Flare",
-        "co2": 2.15,
-        "ch4": 0.018,
-        "n2o": 0.00001,
+        "co2": 2.2762,  # kg/Sm3, Equation 5-2
+        "ch4": 0.010836,  # kg/Sm3, Equation 5-4
+        "n2o": 3.794e-06,  # kg/Sm3, Equation 5-6
         "combustion_efficiency_co2": 0.98,
         "combustion_efficiency_ch4": 0.98,
         "uncertainty": {"co2": 0.03, "ch4": 0.25, "n2o": 0.50},
@@ -404,37 +389,7 @@ FLARING_FACTORS = {
         "segment": "Upstream",
         "process_category": "flaring",
         "type": "gases",
-        "source": "API Compendium 2021 Section 5.2",
-    },
-    "Sour Gas (Flaring)": {
-        "code": "SG_Flare",
-        "co2": 2.30,
-        "ch4": 0.015,
-        "n2o": 0.00001,
-        "combustion_efficiency_co2": 0.98,
-        "combustion_efficiency_ch4": 0.98,
-        "uncertainty": {"co2": 0.03, "ch4": 0.25, "n2o": 0.50},
-        "unit": "kg/m³",
-        "usage": ["flaring"],
-        "segment": "Upstream",
-        "process_category": "flaring",
-        "type": "gases",
-        "source": "API Compendium 2021 Section 5.2",
-    },
-    "Refinery Gas (Flaring)": {
-        "code": "REF_Flare",
-        "co2": 2.10,
-        "ch4": 0.025,
-        "n2o": 0.00001,
-        "combustion_efficiency_co2": 0.98,
-        "combustion_efficiency_ch4": 0.95,  # 95% for refinery flares
-        "uncertainty": {"co2": 0.03, "ch4": 0.30, "n2o": 0.50},
-        "unit": "kg/m³",
-        "usage": ["flaring"],
-        "segment": "Downstream",
-        "process_category": "flaring",
-        "type": "gases",
-        "source": "API Compendium 2021 Section 5.2, Eq 5-4",
+        "source": "API Compendium 2021 Equations 5-2 / 5-4 / 5-6; Table 5-1 raw / produced gas, 98 %",
     },
 }
 
@@ -1005,8 +960,8 @@ VENTED_FACTORS = {
     },
     "Natural Gas (Venting/Blowdown)": {
         "code": "NG_Vent",
-        "co2": 0.054,  # kg CO₂/m³
-        "ch4": 0.67,  # kg CH₄/m³
+        "co2": 0.010498,  # kg/Sm3: Table 6-50 0.565 mol % CO2
+        "ch4": 0.63029,  # kg/Sm3: Table 6-50 93.07 mol % CH4
         "n2o": 0,
         "uncertainty": {"co2": 0.05, "ch4": 0.30, "n2o": 0.50},
         "unit": "kg/m³",
@@ -1014,7 +969,7 @@ VENTED_FACTORS = {
         "segment": "Upstream",
         "process_category": "venting",
         "type": "gases",
-        "source": "API Compendium 2021 Section 6",
+        "source": "API Compendium 2021 Table 6-50 (pipeline-quality natural gas), 23.685 Sm3/kgmole",
     },
     "Asphalt": {
         "code": "Asphalt",
@@ -1037,38 +992,62 @@ CHEMICAL_PRODUCTION_FACTORS = {
     "Acrylonitrile": {
         "code": "ACN_Prod",
         "co2": 1.00,  # tonne CO₂/tonne product
-        "ch4": 0,
+        "ch4": 0.00018,  # Table 6-53: 0.18 kg CH4/t
         "n2o": 0,
         "uncertainty": {"co2": 0.15, "ch4": 0, "n2o": 0},
         "unit": "tonne CO₂/tonne product",
         "usage": ["chemical_production"],
         "segment": "Downstream",
         "process_category": "chemical_production",
-        "source": "API Compendium 2021 Section 6, Table 6-167",
+        "source": "API Compendium 2021 Table 6-53",
     },
     "Carbon Black": {
         "code": "CB_Prod",
         "co2": 2.63,
-        "ch4": 0,
+        "ch4": 0.0287,  # Table 6-53 without abatement: 28.7 kg CH4/t
         "n2o": 0,
         "uncertainty": {"co2": 0.15, "ch4": 0, "n2o": 0},
         "unit": "tonne CO₂/tonne product",
         "usage": ["chemical_production"],
         "segment": "Downstream",
         "process_category": "chemical_production",
-        "source": "API Compendium 2021 Section 6, Table 6-167",
+        "source": "API Compendium 2021 Table 6-53",
     },
-    "Ethylene": {
+    "Carbon Black (Thermal Abatement)": {
+        "code": "CB_Prod",
+        "co2": 2.63,
+        "ch4": 6e-05,  # Table 6-53 with thermal abatement: 0.06 kg CH4/t
+        "n2o": 0,
+        "uncertainty": {"co2": 0.15, "ch4": 0, "n2o": 0},
+        "unit": "tonne CO₂/tonne product",
+        "usage": ["chemical_production"],
+        "segment": "Downstream",
+        "process_category": "chemical_production",
+        "source": "API Compendium 2021 Table 6-53",
+    },
+    "Ethylene (Other Feedstocks)": {
         "code": "ETH_Prod",
         "co2": 0.77,
-        "ch4": 0,
+        "ch4": 0.003,  # Table 6-53 other feedstocks: 3 kg CH4/t
         "n2o": 0,
         "uncertainty": {"co2": 0.10, "ch4": 0, "n2o": 0},
         "unit": "tonne CO₂/tonne product",
         "usage": ["chemical_production"],
         "segment": "Downstream",
         "process_category": "chemical_production",
-        "source": "API Compendium 2021 Section 6, Table 6-167",
+        "source": "API Compendium 2021 Table 6-53",
+    },
+    "Ethylene (Ethane Feedstock)": {
+        "code": "ETH_Prod",
+        "co2": 0.77,
+        "ch4": 0.006,  # Table 6-53 ethane feedstock: 6 kg CH4/t
+        "n2o": 0,
+        "uncertainty": {"co2": 0.10, "ch4": 0, "n2o": 0},
+        "unit": "tonne CO₂/tonne product",
+        "usage": ["chemical_production"],
+        "segment": "Downstream",
+        "process_category": "chemical_production",
+        "source": "API Compendium 2021 Table 6-53",
     },
     "Ethylene Dichloride": {
         "code": "EDC_Prod",
@@ -1080,19 +1059,31 @@ CHEMICAL_PRODUCTION_FACTORS = {
         "usage": ["chemical_production"],
         "segment": "Downstream",
         "process_category": "chemical_production",
-        "source": "API Compendium 2021 Section 6, Table 6-167",
+        "source": "API Compendium 2021 Table 6-53",
     },
     "Ethylene Oxide": {
         "code": "ETO_Prod",
         "co2": 0.46,
-        "ch4": 0,
+        "ch4": 0.00179,  # Table 6-53 without abatement: 1.79 kg CH4/t
         "n2o": 0,
         "uncertainty": {"co2": 0.10, "ch4": 0, "n2o": 0},
         "unit": "tonne CO₂/tonne product",
         "usage": ["chemical_production"],
         "segment": "Downstream",
         "process_category": "chemical_production",
-        "source": "API Compendium 2021 Section 6, Table 6-167",
+        "source": "API Compendium 2021 Table 6-53",
+    },
+    "Ethylene Oxide (Thermal Abatement)": {
+        "code": "ETO_Prod",
+        "co2": 0.46,
+        "ch4": 0.00079,  # Table 6-53 with thermal abatement: 0.79 kg CH4/t
+        "n2o": 0,
+        "uncertainty": {"co2": 0.10, "ch4": 0, "n2o": 0},
+        "unit": "tonne CO₂/tonne product",
+        "usage": ["chemical_production"],
+        "segment": "Downstream",
+        "process_category": "chemical_production",
+        "source": "API Compendium 2021 Table 6-53",
     },
     "Methanol": {
         "code": "MEOH_Prod",
@@ -1104,7 +1095,7 @@ CHEMICAL_PRODUCTION_FACTORS = {
         "usage": ["chemical_production"],
         "segment": "Downstream",
         "process_category": "chemical_production",
-        "source": "API Compendium 2021 Section 6, Table 6-167",
+        "source": "API Compendium 2021 Table 6-53",
     },
 }
 
@@ -1120,7 +1111,7 @@ N2O_PRODUCTION_FACTORS = {
         "usage": ["nitric_acid_production"],
         "segment": "Downstream",
         "process_category": "nitric_acid_production",
-        "source": "API Compendium 2021 Section 6, pg 407",
+        "source": "API Compendium 2021 Table 6-53",
     },
     "Nitric Acid - Without NSCR": {
         "code": "HNO3_NoNSCR",
@@ -1132,7 +1123,7 @@ N2O_PRODUCTION_FACTORS = {
         "usage": ["nitric_acid_production"],
         "segment": "Downstream",
         "process_category": "nitric_acid_production",
-        "source": "API Compendium 2021 Section 6, pg 407",
+        "source": "API Compendium 2021 Table 6-53",
     },
     "Adipic Acid - Thermal Abatement": {
         "code": "AA_Thermal",
@@ -1144,7 +1135,7 @@ N2O_PRODUCTION_FACTORS = {
         "usage": ["adipic_acid_production"],
         "segment": "Downstream",
         "process_category": "adipic_acid_production",
-        "source": "API Compendium 2021 Section 6, pg 407",
+        "source": "API Compendium 2021 Table 6-53",
     },
     "Adipic Acid - Catalytic Abatement": {
         "code": "AA_Catalytic",
@@ -1156,7 +1147,7 @@ N2O_PRODUCTION_FACTORS = {
         "usage": ["adipic_acid_production"],
         "segment": "Downstream",
         "process_category": "adipic_acid_production",
-        "source": "API Compendium 2021 Section 6, pg 407",
+        "source": "API Compendium 2021 Table 6-53",
     },
     "Adipic Acid - Uncontrolled": {
         "code": "AA_Uncontrolled",
@@ -1168,7 +1159,7 @@ N2O_PRODUCTION_FACTORS = {
         "usage": ["adipic_acid_production"],
         "segment": "Downstream",
         "process_category": "adipic_acid_production",
-        "source": "API Compendium 2021 Section 6, pg 407",
+        "source": "API Compendium 2021 Table 6-53",
     },
     # =========================================================================
     # SECTION 6.3.1 ASSOCIATED GAS VENTING (TABLE 6-8)
@@ -1313,7 +1304,7 @@ EQUIPMENT_FACTORS = {
     "Pneumatic Controller - High Bleed (>6 scfh)": {
         "code": "HighBleed",
         "type": "pneumatic",
-        "ch4": 8.304,  # tonnes CH₄/controller/yr
+        "ch4": 5.11,  # tonnes CH4/controller-yr
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 0.30, "n2o": 0},
@@ -1321,13 +1312,13 @@ EQUIPMENT_FACTORS = {
         "segment": "Upstream",
         "process_category": "pneumatic_devices",
         "type": "equipment",
-        "description": "Continuous bleed pneumatic controller in gas processing",
-        "source": "API Compendium 2021 Section 6, Table 6-34",
+        "description": "Table 6-14 EPA GHGRP production high-bleed (37.3 scf/h)",
+        "source": "API Compendium 2021 Table 6-14 EPA GHGRP production high-bleed (37.3 scf/h)",
     },
     "Pneumatic Controller - Low Bleed (<6 scfh)": {
         "code": "LowBleed",
         "type": "pneumatic",
-        "ch4": 0.0939,  # tonnes CH₄/controller/yr
+        "ch4": 0.191,  # tonnes CH4/controller-yr
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 0.30, "n2o": 0},
@@ -1335,13 +1326,13 @@ EQUIPMENT_FACTORS = {
         "segment": "Upstream",
         "process_category": "pneumatic_devices",
         "type": "equipment",
-        "description": "Pneumatic/hydraulic valve operator in gas processing",
-        "source": "API Compendium 2021 Section 6, Table 6-34",
+        "description": "Table 6-14 EPA GHGRP production low-bleed (1.39 scf/h)",
+        "source": "API Compendium 2021 Table 6-14 EPA GHGRP production low-bleed (1.39 scf/h)",
     },
     "Pneumatic Controller - Intermittent": {
         "code": "Intermittent",
         "type": "pneumatic",
-        "ch4": 0.4,  # tonnes CH₄/controller/yr
+        "ch4": 1.85,  # tonnes CH4/controller-yr
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 0.30, "n2o": 0},
@@ -1349,8 +1340,8 @@ EQUIPMENT_FACTORS = {
         "segment": "Midstream",
         "process_category": "pneumatic_devices",
         "type": "equipment",
-        "description": "Intermittent vent controller in transmission/storage",
-        "source": "API Compendium 2021 Section 6, Table 6-42",
+        "description": "Table 6-15 EPA GHGRP production intermittent (13.5 scf/h)",
+        "source": "API Compendium 2021 Table 6-15 EPA GHGRP production intermittent (13.5 scf/h)",
     },
     "Pneumatic Controller - Continuous Vent (T&S)": {
         "code": "ContinuousVentTS",
@@ -1364,14 +1355,14 @@ EQUIPMENT_FACTORS = {
         "process_category": "pneumatic_devices",
         "type": "equipment",
         "description": "Continuous vent controller in transmission/storage",
-        "source": "API Compendium 2021 Section 6, Table 6-42",
+        "source": "API Compendium 2021 Table 6-42 (transmission & storage)",
     },
     # ========== STORAGE TANKS (TANK FLASHING) ==========
     "Tank - Flash Emissions (Oil)": {
         "code": "TankFlashOil",
         "type": "tank",
         "ch4": 0.193,  # kg CH₄/bbl (API Table 6-4 / Table 5-16)
-        "co2": 0.012,  # kg CO₂/bbl
+        "co2": 0,  # Table 6-22 is CH4 only; CO2 needs the separator gas CO2 content
         "n2o": 0,
         "uncertainty": {"co2": 0.15, "ch4": 0.40, "n2o": 0},
         "unit": "kg/bbl",
@@ -1379,12 +1370,12 @@ EQUIPMENT_FACTORS = {
         "process_category": "storage_tanks",
         "type": "equipment",
         "description": "API Table 5-16 / 6-4 — Default crude oil flash emission factor",
-        "source": "API Compendium 2021 Section 6, Table 6-4",
+        "source": "API Compendium 2021 Table 6-22 (large tanks without control)",
     },
     "Tank - Crude Oil (Small, ≤10 bbl/d)": {
         "code": "TankCrudeSmall",
         "type": "tank",
-        "ch4": 0.18,  # kg CH₄/bbl
+        "ch4": 0.0184,  # Table 6-22 small tanks without control
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 0.30, "n2o": 0},
@@ -1393,7 +1384,7 @@ EQUIPMENT_FACTORS = {
         "process_category": "storage_tanks",
         "type": "equipment",
         "description": "Crude oil flashing, small tank (≤ 10 bbl/d)",
-        "source": "API Compendium 2021 Section 6, Table 6-4",
+        "source": "API Compendium 2021 Table 6-22",
     },
     "Tank - Crude Oil (Large, >10 bbl/d)": {
         "code": "TankCrudeLarge",
@@ -1407,12 +1398,12 @@ EQUIPMENT_FACTORS = {
         "process_category": "storage_tanks",
         "type": "equipment",
         "description": "Crude oil flashing, large tank (> 10 bbl/d)",
-        "source": "API Compendium 2021 Section 6, Table 6-4",
+        "source": "API Compendium 2021 Table 6-22",
     },
     "Tank - Production Condensate (Small, ≤10 bbl/d)": {
         "code": "TankProdSmall",
         "type": "tank",
-        "ch4": 1.56,  # kg CH₄/bbl
+        "ch4": 0.119,  # Table 6-24 small tanks without flare
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 0.30, "n2o": 0},
@@ -1421,12 +1412,12 @@ EQUIPMENT_FACTORS = {
         "process_category": "storage_tanks",
         "type": "equipment",
         "description": "Production condensate flashing, small tank (≤ 10 bbl/d)",
-        "source": "API Compendium 2021 Section 6, Table 6-4",
+        "source": "API Compendium 2021 Table 6-24",
     },
     "Tank - Production Condensate (Large, >10 bbl/d)": {
         "code": "TankProdLarge",
         "type": "tank",
-        "ch4": 1.16,  # kg CH₄/bbl
+        "ch4": 0.146,  # Table 6-24 large tanks without control
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 0.30, "n2o": 0},
@@ -1435,35 +1426,7 @@ EQUIPMENT_FACTORS = {
         "process_category": "storage_tanks",
         "type": "equipment",
         "description": "Production condensate flashing, large tank (> 10 bbl/d)",
-        "source": "API Compendium 2021 Section 6, Table 6-4",
-    },
-    "Tank - Gas-Well Condensate (Small, ≤10 bbl/d)": {
-        "code": "TankGasSmall",
-        "type": "tank",
-        "ch4": 2.65,  # kg CH₄/bbl
-        "co2": 0,
-        "n2o": 0,
-        "uncertainty": {"co2": 0, "ch4": 0.30, "n2o": 0},
-        "unit": "kg CH₄/bbl",
-        "segment": "Upstream",
-        "process_category": "storage_tanks",
-        "type": "equipment",
-        "description": "Gas-well condensate flashing, small tank (≤ 10 bbl/d)",
-        "source": "API Compendium 2021 Section 6, Table 6-4",
-    },
-    "Tank - Gas-Well Condensate (Large, >10 bbl/d)": {
-        "code": "TankGasLarge",
-        "type": "tank",
-        "ch4": 2.05,  # kg CH₄/bbl
-        "co2": 0,
-        "n2o": 0,
-        "uncertainty": {"co2": 0, "ch4": 0.30, "n2o": 0},
-        "unit": "kg CH₄/bbl",
-        "segment": "Upstream",
-        "process_category": "storage_tanks",
-        "type": "equipment",
-        "description": "Gas-well condensate flashing, large tank (> 10 bbl/d)",
-        "source": "API Compendium 2021 Section 6, Table 6-4",
+        "source": "API Compendium 2021 Table 6-24",
     },
     # ========== DRILLING ==========
     # Table 6-2 onshore mud degassing (tonnes CH4 / drilling day, 83.85 mol % CH4 basis). The drilling
@@ -1520,16 +1483,16 @@ EQUIPMENT_FACTORS = {
     "Dehydrator - Glycol (Uncontrolled)": {
         "code": "DehyUncont",
         "type": "dehydrator",
-        "ch4": 0.177,  # scf CH₄/MMscf throughput
+        "ch4": 0.0052859,  # Table 6-17: tonnes CH4 / 10^6 scf processed
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0.30, "ch4": 0.30, "n2o": 0.30},
-        "unit": "scf/MMscf",
+        "unit": "tonnes CH4/MMscf",
         "segment": "Midstream",
         "process_category": "dehydrator",
         "type": "equipment",
         "description": "Glycol dehydrator venting (uncontrolled)",
-        "source": "API Compendium 2021 Section 6.11",
+        "source": "API Compendium 2021 Table 6-17 (78.8 mol % CH4 basis)",
     },
     # ========== UPSTREAM: OIL WELLHEADS (Table 7-9) ==========
     "Wellhead - Oil (Heavy Crude)": {
@@ -1934,7 +1897,7 @@ EQUIPMENT_FACTORS = {
     "Offshore - Oil Production (Facility)": {
         "code": "OffshoreOil",
         "type": "facility",
-        "ch4": 3.86e-06,  # tonne CH₄/bbl produced
+        "ch4": 9.386e-05,  # Table 7-3: 0.2069 lb CH4/bbl
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 0.30, "n2o": 0},

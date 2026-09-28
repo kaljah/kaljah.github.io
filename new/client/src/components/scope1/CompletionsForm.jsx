@@ -21,99 +21,50 @@ import CustomDropdown from "../CustomDropdown";
  *             * Fate partitioning: Vented, Flared (with flare efficiency), REC, or Custom Split %
  */
 
-// Mapping of Tier 1 selections to official API 2021 factor definitions
+// Tier 1 selection -> factor sent to the server (Tables 6-5 / 6-6 are applied there, with the
+// flared case derived from the whole-gas factor); no values are kept on the client
 const TIER1_FACTOR_MAP = {
   // Hydraulic Fracturing (API Table 6-5)
   "gas_hf_uncontrolled": {
     code: "CompGasHF_Uncontrolled",
     name: "Gas Well Completion - Hydraulic Fracturing (Uncontrolled / Vented)",
-    ch4_tonnes: 28.8,
-    co2_tonnes: 0.252,
-    whole_gas_mscf: 1944.0,
-    std_ch4_pct: 78.8,
-    std_co2_pct: 0.44,
   },
   "gas_hf_rec": {
     code: "CompGasHF_REC",
     name: "Gas Well Completion - Hydraulic Fracturing (REC with Venting)",
-    ch4_tonnes: 13.542,
-    co2_tonnes: 0.118,
-    whole_gas_mscf: 914.0,
-    std_ch4_pct: 78.8,
-    std_co2_pct: 0.44,
   },
   "gas_hf_flared": {
     code: "CompGasHF_Uncontrolled",
     name: "Gas Well Completion - Hydraulic Fracturing (Flared)",
-    ch4_tonnes: 0.576, // 28.8 * 0.02
-    co2_tonnes: 78.9,
-    whole_gas_mscf: 1944.0,
-    std_ch4_pct: 78.8,
-    std_co2_pct: 0.44,
   },
   "oil_hf_uncontrolled": {
     code: "CompOilHF_Uncontrolled",
     name: "Oil Well Completion - Hydraulic Fracturing (Uncontrolled / Vented)",
-    ch4_tonnes: 14.419,
-    co2_tonnes: 0.134,
-    whole_gas_mscf: 973.0,
-    std_ch4_pct: 78.8,
-    std_co2_pct: 0.44,
   },
   "oil_hf_rec": {
     code: "CompOilHF_REC",
     name: "Oil Well Completion - Hydraulic Fracturing (REC with Venting)",
-    ch4_tonnes: 0.615,
-    co2_tonnes: 0.005,
-    whole_gas_mscf: 41.5,
-    std_ch4_pct: 78.8,
-    std_co2_pct: 0.44,
   },
   "oil_hf_flared": {
     code: "CompOilHF_Uncontrolled",
     name: "Oil Well Completion - Hydraulic Fracturing (Flared)",
-    ch4_tonnes: 0.288,
-    co2_tonnes: 39.5,
-    whole_gas_mscf: 973.0,
-    std_ch4_pct: 78.8,
-    std_co2_pct: 0.44,
   },
   // Without Hydraulic Fracturing (API Table 6-6)
   "gas_nohf_vented": {
     code: "CompGasNoHF_Vented",
     name: "Gas Well Completion - Without Hydraulic Fracturing (Vented)",
-    ch4_tonnes: 1.7376,
-    co2_tonnes: 0.0152,
-    whole_gas_mscf: 117.3,
-    std_ch4_pct: 78.8,
-    std_co2_pct: 0.44,
   },
   "gas_nohf_flared": {
     code: "CompGasNoHF_Vented",
     name: "Gas Well Completion - Without Hydraulic Fracturing (Flared)",
-    ch4_tonnes: 0.0347,
-    co2_tonnes: 4.76,
-    whole_gas_mscf: 117.3,
-    std_ch4_pct: 78.8,
-    std_co2_pct: 0.44,
   },
   "oil_nohf_vented": {
     code: "CompOilNoHF_Vented",
     name: "Oil Well Completion - Without Hydraulic Fracturing (Vented)",
-    ch4_tonnes: 0.0141,
-    co2_tonnes: 0.00013,
-    whole_gas_mscf: 0.95,
-    std_ch4_pct: 78.8,
-    std_co2_pct: 0.44,
   },
   "oil_nohf_flared": {
     code: "CompOilNoHF_Vented",
     name: "Oil Well Completion - Without Hydraulic Fracturing (Flared)",
-    ch4_tonnes: 0.00028,
-    co2_tonnes: 0.038,
-    whole_gas_mscf: 0.95,
-    std_ch4_pct: 78.8,
-    std_co2_pct: 0.44,
   },
 };
 
