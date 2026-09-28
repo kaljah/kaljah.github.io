@@ -29,6 +29,9 @@ from .midstream import AGRCalculator, DehydratorCalculator
 from .indirect import IndirectSteamCalculator, CogenAllocationCalculator
 from .vented_downstream import RefiningHydrogenPlantCalculator
 from .stoichiometry import StoichiometricCalculator, NitricAcidCalculator
+from .activity_factors import ACTIVITY_FACTORS, ActivityFactorCalculator
+from .vented_gas import VentedGasCalculator
+from .combustion_methods import CombustionMethodCalculator
 from .units import CONVERSIONS, calculate_co2e
 from .uncertainty import (
     propagate_uncertainty,
@@ -36,6 +39,21 @@ from .uncertainty import (
     resolve_ef_uncertainty,
     PROCESS_CATEGORY,
 )
+
+
+# process-type aliases -> the `processes` names used by ACTIVITY_FACTORS rows
+ACTIVITY_PROCESS_ALIASES = {
+    "pneumatic_devices": "pneumatic", "pneumatic_device": "pneumatic", "pneumatics": "pneumatic",
+    "acid_gas_removal": "agr", "dehydrators": "dehydrator", "well_test": "well_testing",
+    "workover": "workovers", "blowdown": "non_routine_venting", "venting": "non_routine_venting",
+    "crude_loading": "loading",
+}
+# default gas-volume method for the processes that are VentedGasCalculator-only
+VENT_DEFAULT_METHOD = {"desiccant_dehydrator": "desiccant", "co2_eor": "co2_mass", "vented_gas": "volume"}
+COMBUSTION_METHOD_PROCESSES = {
+    "stationary_combustion", "combustion", "mobile_combustion", "mobile", "flaring", "routine_flaring",
+    "non_routine_flaring", "safety_flaring", "flare", "thermal_oxidizer",
+}
 
 
 def operating_hours(inputs):
@@ -132,6 +150,17 @@ class CalculationDispatcher:
             "associated_gas_venting": AssociatedGasVentingCalculator(),
             "associated_venting": AssociatedGasVentingCalculator(),
             "associated_gas": AssociatedGasVentingCalculator(),
+            # Section 6 activity-factor sources (Tables 6-4 to 6-47) and measured / engineered gas volumes
+            "well_testing": ActivityFactorCalculator(),
+            "workovers": ActivityFactorCalculator(),
+            "casing_gas": ActivityFactorCalculator(),
+            "compressor_venting": ActivityFactorCalculator(),
+            "non_routine_venting": ActivityFactorCalculator(),
+            "loading": ActivityFactorCalculator(),
+            "vented_gas": VentedGasCalculator(),
+            "desiccant_dehydrator": VentedGasCalculator(),
+            "co2_eor": VentedGasCalculator(),
+            "thermal_oxidizer": CombustionMethodCalculator(),
         }
 
     def _require(self, key, inputs, description):
@@ -422,6 +451,47 @@ class CalculationDispatcher:
             res["uncertainty_components"] = comps
         return res
 
+    def _route_section_methods(self, process_type, flat_inputs, uncertainties, gwp_dict):
+        """Activity-factor rows, gas-volume methods and combustion / waste-gas methods.
+
+        Chosen by an explicit key in the inputs (activity_key, vent_method, combustion_method) or by a
+        process type that only has these methods. Returns None when none applies.
+        """
+        key = flat_inputs.get("activity_key")
+        if key not in (None, ""):
+            row = ACTIVITY_FACTORS.get(str(key))
+            if row is None:
+                raise ValueError(f"Unknown activity factor '{key}'")
+            canon = ACTIVITY_PROCESS_ALIASES.get(process_type, process_type)
+            if canon not in row["processes"]:
+                raise ValueError(f"Activity factor '{key}' does not apply to process '{process_type}'")
+            return ActivityFactorCalculator().calculate(
+                key,
+                flat_inputs.get("activity_amount") if flat_inputs.get("activity_amount") not in (None, "")
+                else flat_inputs.get("amount") if flat_inputs.get("amount") not in (None, "") else flat_inputs.get("quantity"),
+                unit=flat_inputs.get("activity_unit") or flat_inputs.get("unit"),
+                days=flat_inputs.get("activity_days"),
+                hours=flat_inputs.get("activity_hours") if flat_inputs.get("activity_hours") not in (None, "")
+                else flat_inputs.get("operating_hours"),
+                ch4_content=flat_inputs.get("ch4_content"),
+                co2_content=flat_inputs.get("co2_content"),
+                toc_ch4_wt=flat_inputs.get("toc_ch4_wt"),
+                uncertainties=uncertainties,
+                gwp_dict=gwp_dict,
+            )
+
+        vent_method = flat_inputs.get("vent_method") or VENT_DEFAULT_METHOD.get(process_type)
+        if vent_method not in (None, ""):
+            return VentedGasCalculator().calculate(vent_method, flat_inputs, uncertainties=uncertainties, gwp_dict=gwp_dict)
+
+        comb_method = flat_inputs.get("combustion_method") or ("thermal_oxidizer" if process_type == "thermal_oxidizer" else None)
+        if comb_method not in (None, "") and process_type in COMBUSTION_METHOD_PROCESSES:
+            return CombustionMethodCalculator().calculate(comb_method, flat_inputs, uncertainties=uncertainties, gwp_dict=gwp_dict)
+
+        if isinstance(self.calculators.get(process_type), ActivityFactorCalculator):
+            raise ValueError("Select an activity factor (activity_key) or a gas volume method (vent_method)")
+        return None
+
     def _dispatch_impl(
         self,
         process_type,
@@ -498,6 +568,10 @@ class CalculationDispatcher:
                         uncertainties[g] = float(user_unc[g]) / 100.0
                     except ValueError:
                         pass
+
+        routed = self._route_section_methods(process_type, flat_inputs, uncertainties, gwp_dict)
+        if routed is not None:
+            return routed
 
         # Validate required gas composition for specific factor sources
         if process_type in [
@@ -1531,7 +1605,7 @@ class CalculationDispatcher:
                 is_screening_measurement = (
                     process_type in ["fugitive_screening", "fugitive_ogi", "fugitive_measurement"]
                     or fug_tier in ["tier3", "tier_3", "measurement", "screening"]
-                    or fug_method in ["screening", "method21", "ogi", "measurement"]
+                    or fug_method in ["screening", "method21", "ogi", "measurement", "correlation"]
                     # BUG-048: "specific" with a catalog leak factor and no measurement inputs is the
                     # engineering count x factor x hours method, not a direct measurement of `amount`
                     or (source_type == "specific" and not (emission_factors.get("ch4") or emission_factors.get("factor")
@@ -1577,18 +1651,31 @@ class CalculationDispatcher:
                         )
                     elif "corr" in sub_mode:
                         ppm_vals = flat_inputs.get("screening_values_ppm")
-                        if not ppm_vals:
+                        if isinstance(ppm_vals, str):
+                            ppm_vals = [v for v in ppm_vals.replace(";", ",").split(",") if v.strip()]
+                        if not ppm_vals and flat_inputs.get("corr_screened_count") not in (None, ""):
+                            ppm = self._require_float(flat_inputs, ["fugitive_ppm", "screening_ppm", "ppm"], "screening ppm")
+                            ppm_vals = [ppm] * int(float(flat_inputs.get("corr_screened_count") or 0))
+                        elif not ppm_vals and not any(
+                            flat_inputs.get(k) not in (None, "")
+                            for k in ("corr_zero_count", "corr_pegged_10k_count", "corr_pegged_100k_count")
+                        ):
                             ppm = self._require_float(flat_inputs, ["fugitive_ppm", "ppm", "screening_ppm"], "screening ppm")
                             count = int(float(flat_inputs.get("amount") or flat_inputs.get("quantity") or 1))
                             ppm_vals = [ppm] * count
+                        # CH4 weight fraction of TOC (not the gas mole %); default 0.564 (Table C-1)
+                        c_toc = flat_inputs.get("ch4_wt_fraction")
                         return calc.calculate_correlation_equation(
-                            component_type=comp_type,
+                            component_type=flat_inputs.get("correlation_type") or comp_type,
                             service_type=service,
-                            screening_values_ppm=ppm_vals,
+                            screening_values_ppm=ppm_vals or [],
                             operating_hours=op_hours,
-                            ch4_content=c_ch4,
+                            ch4_content=c_toc,
                             uncertainties=uncertainties,
                             gwp_dict=gwp_dict,
+                            zero_count=flat_inputs.get("corr_zero_count"),
+                            pegged_10k_count=flat_inputs.get("corr_pegged_10k_count"),
+                            pegged_100k_count=flat_inputs.get("corr_pegged_100k_count"),
                         )
                     elif "range" in sub_mode:
                         non_pegged = int(float(flat_inputs.get("non_pegged_count") or flat_inputs.get("non_leakers") or 0))

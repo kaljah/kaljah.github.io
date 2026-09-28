@@ -1950,71 +1950,29 @@ ALL_EMISSION_FACTORS = {
     **N2O_PRODUCTION_FACTORS,
 }
 
-# Correlation equations for screening-based fugitive estimation (Section 7.3.1.6)
+# Petroleum industry leak rate / screening value correlations (Tables 7-40, 7-41, 7-42).
+# Rates in kg TOC/hr/component; SV in ppmv. default_zero applies below the detection limit,
+# pegged_10k / pegged_100k to components that peg a 10,000 or 100,000 ppmv instrument.
+def _corr(a, b, zero, p10k, p100k, description):
+    return {"A": a, "B": b, "default_zero": zero, "pegged_10k": p10k, "pegged_100k": p100k,
+            "max_ppm": 100000, "description": description, "unit": "kg/hr/component"}
+
+
 CORRELATION_EQUATIONS = {
-    "gas_valve": {
-        "A": 2.29e-6,
-        "B": 0.746,
-        "max_ppm": 100000,
-        "pegged_10k": 0.064,  # kg/hr
-        "pegged_100k": 0.11,
-        "description": "Valves in gas service",
-        "unit": "kg/hr/component",
-    },
-    "light_liquid_valve": {
-        "A": 6.41e-6,
-        "B": 0.797,
-        "max_ppm": 100000,
-        "pegged_10k": 0.074,
-        "pegged_100k": 0.15,
-        "description": "Valves in light liquid service",
-        "unit": "kg/hr/component",
-    },
-    "light_liquid_pump": {
-        "A": 5.03e-5,
-        "B": 0.610,
-        "max_ppm": 100000,
-        "pegged_10k": 0.16,
-        "pegged_100k": 0.68,
-        "description": "Pump seals in light liquid service",
-        "unit": "kg/hr/component",
-    },
-    "connector": {
-        "A": 1.53e-6,
-        "B": 0.735,
-        "max_ppm": 100000,
-        "pegged_10k": 0.028,
-        "pegged_100k": 0.030,
-        "description": "Connectors in gas service",
-        "unit": "kg/hr/component",
-    },
-    "flange": {
-        "A": 4.61e-6,
-        "B": 0.703,
-        "max_ppm": 100000,
-        "pegged_10k": 0.085,
-        "pegged_100k": 0.089,
-        "description": "Flanges in gas service",
-        "unit": "kg/hr/component",
-    },
-    "open_ended_line": {
-        "A": 2.20e-6,
-        "B": 0.704,
-        "max_ppm": 100000,
-        "pegged_10k": 0.012,
-        "pegged_100k": 0.014,
-        "description": "Open-ended lines in gas service",
-        "unit": "kg/hr/component",
-    },
-    "other": {
-        "A": 1.36e-5,
-        "B": 0.589,
-        "max_ppm": 100000,
-        "pegged_10k": 0.073,
-        "pegged_100k": 0.11,
-        "description": "Other components in gas service",
-        "unit": "kg/hr/component",
-    },
+    "valve": _corr(2.29e-6, 0.746, 7.8e-6, 0.064, 0.140, "Valves"),
+    "pump_seal": _corr(5.03e-5, 0.610, 2.4e-5, 0.074, 0.160, "Pump seals"),
+    "connector": _corr(1.53e-6, 0.735, 7.5e-6, 0.028, 0.030, "Connectors"),
+    "flange": _corr(4.61e-6, 0.703, 3.1e-7, 0.085, 0.084, "Flanges"),
+    "open_ended_line": _corr(2.20e-6, 0.704, 2.0e-6, 0.030, 0.079, "Open-ended lines"),
+    "other": _corr(1.36e-5, 0.589, 4.0e-6, 0.073, 0.110, "Other components"),
+}
+# Earlier keys, kept so stored inputs still resolve (Table 7-40 is not split by service)
+CORRELATION_ALIASES = {
+    "gas_valve": "valve", "light_liquid_valve": "valve", "light_oil_valve": "valve",
+    "light_liquid_pump": "pump_seal", "pump": "pump_seal", "pump_seals": "pump_seal",
+    "gas_connector": "connector", "gas_flange": "flange", "oel": "open_ended_line",
+    "open_ended_lines": "open_ended_line", "valves": "valve", "connectors": "connector",
+    "flanges": "flange", "others": "other",
 }
 
 

@@ -246,3 +246,59 @@ Notes: 4.2 and 4.4(a) expected values are derived (4.2 energy x Table 4-3 factor
 - Hydrogen plant rigorous methods (Eq 6-49 feedstock balance, Eq 6-50 H2 stoichiometry) existed in the calculator but were unreachable - routed when feed composition is given (Exhibits 6-42 / 6-43 within 0.2 %)
 - Catalog "Ethane" is liquid ethane (HHV per gal) but was typed as a gas; retyped and "Ethane (Gas)" added with API Table 3-7 HHV 1768.8 Btu/scf
 
+
+## 5. Onshore upstream / midstream exhibits added (2026-09-28)
+
+Scope chosen by the user: onshore upstream + midstream (offshore 7-1..7-3, marine 6-36/6-37, refining,
+wastewater and HFC/SF6 excluded). Each exhibit is now a regression case in
+`new/server/tests/test_onshore_exhibits.py`, run through resolve_factor + compute_emissions (the POST path).
+Inputs are the exhibits' stated inputs; expected values are the printed answers.
+
+| Exhibit | Method (process / key) | Engine (t) | Compendium (t) |
+|---|---|---|---|
+| 6-2 | well_testing, gas volume from GOR x oil rate x hours | CH4 9.885 · CO2 3.873 | 9.84 · 3.87 |
+| 6-5 | vented_gas volume, vented / flared (C2+ as ethane) | 328.1 · 110.6; flared CO2 1,054 · CH4 6.912 | 327 · 110; 1,050 · 6.9 |
+| 6-7 | workovers, Table 6-9 | 0.4175 · 0.1477 | 0.42 · 0.15 |
+| 6-9 | casing_gas, Table 6-12 | 102.7 · 36.35 | 102.7 · 36.3 |
+| 6-10 | casing_gas, CAPP migration | 2.001 · 0.7061 | 2.00 · 0.71 |
+| 6-14 | dehydrator Tier 1, Kimray Table 6-18 | 180.7 · 30.25 | 180.7 · 30.3 |
+| 6-15 | desiccant_dehydrator, Eq 6-16 | 0.1646 · 0.02508 | 0.16 · 0.025 |
+| 6-16 | agr Tier 1, per AGR unit (Table 6-19) | 236.6 | 236.6 |
+| 6-17 | agr, sour / sweet balance (Eq 6-18) | CO2 80,630 · CH4 2,775 | 80,506 · 2,775 |
+| 6-22 | co2_eor, Eq 6-20 | 23.31 | 23 |
+| 6-23 | pneumatic Tier 1, G&B Table 6-29 | 86.05 · 30.35 | 85.7 · 30.3 |
+| 6-24 | compressor_venting, GHGRP rod packing | 0.623 · 0.2201 | 0.62 · 0.22 |
+| 6-26 | non_routine_venting, Table 6-32 | vessel 0.00666 · 0.00209; compressor 0.0643 · 0.0202; pipeline 0.0263 · 0.00826 | 0.007 · 0.002; 0.064 · 0.020; 0.026 · 0.008 |
+| 6-27 | non_routine_venting, Table 6-33 | 0.0039; 0.0768; 0.16; 0.00071 | 0.0039; 0.077; 0.16; 0.00071 |
+| 6-28 | dehydrator Tier 1, Tables 6-35 / 6-36 | 22.06; 32.26 · 4.929 | 22.06; 32.26 · 4.93 |
+| 6-29 | tank, actual volume at 75 F -> standard | 2.751 · 0.0920 | 2.74 · 0.09 |
+| 6-30 | non_routine_venting, per 10^6 m3 (Table 6-39) | 908.1 | 908 |
+| 6-31 | compressor_venting, Table 6-40 | 181.2 + 20.97 | 180.5 + 20.9 |
+| 6-32 | compressor_venting, Table 6-41 | 491.8 + 102.5 | 491.1 + 102.2 |
+| 6-33 | non_routine_venting, Table 6-43 | 108; 30.68 | 108; 31 |
+| 6-34 | non_routine_venting, Table 6-46 | 0.008685; 0.06825; 0.644; 0.608; 0.0192 | 0.0087; 0.068; 0.64; 0.61; 0.02 |
+| 6-35 | loading, Table 6-47 (TOC x 12 wt % CH4) | 0.5544 | 0.554 |
+| 7-5 | fugitive correlation (Tables 7-40/41/42) | 0.4704 | 0.47 |
+| 4.5 | combustion, carbon content | 50,930 | 50,966 |
+| 4.7 | combustion, equipment basis (Table 4-9) | CH4 0.8256 · N2O 0.2312 | 0.83 · 0.23 |
+| 4.8 | combustion, equipment basis (Table 4-11) | 0.6221 · 0.003024 | 0.62 · 0.00303 |
+| 4.12 | mobile, distance / fuel economy | 1,297 · 0.04773 · 0.06477 | 1,297 · 0.048 · 0.064 |
+| 5.2 | flaring, back-calculated from VOC emitted | 516.3 · 1.027 | 515.7 · 1.03 |
+| 5.3 | thermal_oxidizer | 338.7 · 0.08524 | 338.9 · 0.085 |
+
+Differences come from rounding in the printed answers, the exhibits' 379.3 scf/lbmol and 44/12 against the
+engine's gas densities and 44.01/12.011 (about 0.4 %), and exhibits that round an intermediate (6-23 uses 7.45 scf/h CH4).
+
+Defects found while adding these:
+
+- Correlation approach (Tables 7-40/41/42): pegged rates were wrong (pump seals 0.16 / 0.68 vs 0.074 / 0.160;
+  valves 100k 0.11 vs 0.140; flanges 100k 0.089 vs 0.084; open-ended lines 0.012 / 0.014 vs 0.030 / 0.079), default-zero
+  rates were missing, the CH4 fraction defaulted to 0.85 mol instead of 0.564 wt (Table C-1), an unknown component
+  silently used the gas-valve curve, `fugitive_method: "correlation"` never reached the correlation branch, and the
+  form's `correlation_type` and equation labels did not match any table. All fixed; the form takes non-detect,
+  screened and pegged counts.
+- Exhibit 4.12 multiplies by 0.0822 t CO2/MMBtu for diesel; Table 4-5 (Part 98) gives 73.96 kg/MMBtu, which is the
+  engine default. The test passes the exhibit's own factor and HHV (5.83 MMBtu/bbl) as overrides.
+- Tables 4-12 and 4-16 (fuel economy, per-vehicle CH4 / N2O) do not extract with their row labels aligned, so only
+  the heavy-duty diesel advanced-control row used by Exhibit 4.12 is built in; other vehicles take user-entered
+  factors or the Table 4-6 fuel-basis CH4 / N2O.

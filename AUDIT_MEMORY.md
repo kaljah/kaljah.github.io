@@ -167,3 +167,4 @@ Working branch: `fix/audit-remediation` (from `main`).
   - Frontend Settings tabs gated for non-admin users with read-only banner and masked credential protections (C5).
   - Root Dockerfile upgraded to production multi-stage build (M8, D-07).
   - Dead scratch scripts neutralized and deprecated (S4, M9, T3, T4).
+- 2026-09-28 · Onshore API Compendium exhibits implemented (activity-factor tables, gas-volume methods, combustion / waste-gas methods, correlation approach fixed) with 45 exhibit regression cases; details in audit/FIX_LOG.md and audit/COMPENDIUM_EXHIBIT_CHECK.md section 5. Still open: offshore 7-1..7-3, marine 6-36/6-37, refining, wastewater, HFC/SF6; fugitives Tier 2B routing.

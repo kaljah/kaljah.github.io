@@ -470,50 +470,86 @@ class OnshoreScreeningMeasurementCalculator(BaseCalculator):
     def calculate_correlation_equation(
         self,
         component_type: str,
-        service_type: str,
-        screening_values_ppm: list,
+        service_type: str = None,
+        screening_values_ppm: list = None,
         operating_hours: float = 8760.0,
-        ch4_content: float = 0.85,
+        ch4_content: float = None,
         uncertainties: dict = None,
         gwp_dict: dict = None,
+        zero_count: int = 0,
+        pegged_10k_count: int = 0,
+        pegged_100k_count: int = 0,
     ) -> dict:
-        """Method 21 Correlation Equations: Rate = a * (PPM)^b."""
-        from emission_factors_api2021 import CORRELATION_EQUATIONS
-        key = f"{service_type.lower()}_{component_type.lower()}".replace(" ", "_")
-        corr = CORRELATION_EQUATIONS.get(key, CORRELATION_EQUATIONS.get("gas_valve"))
+        """Correlation approach (Tables 7-40 / 7-41 / 7-42, Exhibit 7-5).
 
-        a = corr["A"]
-        b = corr["B"]
-        pegged_default = corr.get("pegged_10k", 0.064)
-        c_ch4 = max(0.0, min(1.0, float(ch4_content or 0.85)))
+        Non-detects use the default-zero rate, screened values the correlation a*(SV)^b, and
+        components pegging the instrument the 10,000 or 100,000 ppmv pegged rate. ch4_content is
+        the CH4 weight fraction of TOC (default 0.564, Table C-1).
+        """
+        from emission_factors_api2021 import CORRELATION_ALIASES, CORRELATION_EQUATIONS
+        key = str(component_type or "").strip().lower().replace(" ", "_").replace("-", "_")
+        key = CORRELATION_ALIASES.get(key, key)
+        corr = CORRELATION_EQUATIONS.get(key)
+        if corr is None:
+            raise ValueError(
+                f"Unknown correlation component '{component_type}'. Use one of: {', '.join(CORRELATION_EQUATIONS)}"
+            )
+        a, b = corr["A"], corr["B"]
 
-        total_toc_kg_hr = 0.0
-        for ppm in screening_values_ppm:
+        def _count(v, name):
+            n = float(v or 0)
+            if n < 0 or n != int(n):
+                raise ValueError(f"{name} must be a whole number of components, zero or more")
+            return int(n)
+
+        n_zero = _count(zero_count, "Non-detect count")
+        n_p10 = _count(pegged_10k_count, "Pegged (10,000 ppmv) count")
+        n_p100 = _count(pegged_100k_count, "Pegged (100,000 ppmv) count")
+
+        toc_zero = n_zero * corr["default_zero"]
+        toc_corr = 0.0
+        n_corr = 0
+        for ppm in screening_values_ppm or []:
             p_val = float(ppm)
             if p_val < 0:
                 raise ValueError("Screening concentration cannot be negative")
-            if p_val >= 10000.0:
-                rate = pegged_default
+            if p_val == 0:
+                toc_zero += corr["default_zero"]
+                n_zero += 1
             else:
-                rate = a * (p_val ** b)
-            total_toc_kg_hr += rate
+                toc_corr += a * (p_val ** b)
+                n_corr += 1
+        toc_pegged = n_p10 * corr["pegged_10k"] + n_p100 * corr["pegged_100k"]
+        if n_zero + n_corr + n_p10 + n_p100 == 0:
+            raise ValueError("Enter at least one screened component")
 
-        ch4_kg_hr = total_toc_kg_hr * c_ch4
-        total_ch4_tonnes = (ch4_kg_hr * float(operating_hours)) / 1000.0
+        c_ch4 = 0.564 if ch4_content in (None, "") else float(ch4_content)
+        if c_ch4 > 1.0:
+            c_ch4 /= 100.0
+        if not 0.0 <= c_ch4 <= 1.0:
+            raise ValueError("CH4 weight fraction must be between 0 and 100 %")
+        hours = float(operating_hours)
+        if hours < 0:
+            raise ValueError("Operating hours cannot be negative")
+
+        total_toc_kg_hr = toc_zero + toc_corr + toc_pegged
+        total_ch4_tonnes = total_toc_kg_hr * c_ch4 * hours / 1000.0
         total_co2e = calculate_co2e(co2=0.0, ch4=total_ch4_tonnes, gwp_dict=gwp_dict)
-
-        _tier = "Tier 3"
-        ch4_res = propagate_uncertainty(total_ch4_tonnes, 0.15, tier=_tier, process_category="fugitive_screening", gas="ch4")
+        ch4_res = propagate_uncertainty(total_ch4_tonnes, 0.15, tier="Tier 3", process_category="fugitive_screening", gas="ch4")
 
         return {
             "results": {"ch4": ch4_res, "co2": 0.0, "n2o": 0.0},
             "total_co2e": total_co2e,
             "intermediate": {
-                "api_table": "Table 7-17 / Table 7-18",
-                "methodology": "Tier 3B: Method 21 Correlation Equation",
-                "equation": f"Rate (kg TOC/hr) = {a} * (PPM)^{b}",
-                "screening_count": len(screening_values_ppm),
+                "api_table": "Tables 7-40 / 7-41 / 7-42",
+                "methodology": "Tier 3B: correlation approach",
+                "component": key,
+                "screening_count": n_zero + n_corr + n_p10 + n_p100,
+                "toc_default_zero_kg_hr": toc_zero,
+                "toc_correlation_kg_hr": toc_corr,
+                "toc_pegged_kg_hr": toc_pegged,
                 "total_toc_kg_hr": total_toc_kg_hr,
+                "ch4_wt_fraction": c_ch4,
                 "total_ch4_tonnes": total_ch4_tonnes,
             },
         }
