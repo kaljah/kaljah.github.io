@@ -343,9 +343,10 @@ class TestScope2UINumericalParity:
         rec = data["record"]
         em = data["emissions"]
 
-        # 50,000 kWh * 0.385 kg/kWh / 1,000 = 19.25 tCO2e
-        assert pytest.approx(rec["co2e"], 1e-3) == 19.25
-        assert pytest.approx(em["totalCo2e"], 1e-3) == 19.25
+        # Table 8-2 U.S. average at AR5: (0.401 + 3.40E-05 x 28 + 4.99E-06 x 265) kg CO2e/kWh
+        expected = 50000 * (0.401 + 3.40e-05 * 28 + 4.99e-06 * 265) / 1000.0
+        assert pytest.approx(rec["co2e"], 1e-3) == expected
+        assert pytest.approx(em["totalCo2e"], 1e-3) == expected
 
         # UI Scope2Form Table Cell Emulation:
         # Line 689: consumptionDisplay = `${formatNumber(entry.electricity_kwh, 0)} kWh`
@@ -358,13 +359,13 @@ class TestScope2UINumericalParity:
 
         # Line 730: formatNumber(entry.co2e, 3)
         co2e_display = ui_format_number(rec["co2e"], 3)
-        assert co2e_display == "19.250"
+        assert co2e_display == f"{expected:,.3f}"  # 20.164
 
         # CalculationDetails Stepper Emulation (Line 274 in Scope2Form.jsx):
         # `(${formatNumber(amountVal, 2)} kWh × ${entry.emission_factor}) ÷ 1,000 = ${formatNumber(entry.co2e, 3)} tCO₂e`
         stepper_str = f"({ui_format_number(rec['electricity_kwh'], 2)} kWh × {rec['emission_factor']}) ÷ 1,000 = {ui_format_number(rec['co2e'], 3)} tCO₂e"
         assert "50,000.00 kWh" in stepper_str
-        assert "19.250 tCO₂e" in stepper_str
+        assert f"{expected:,.3f} tCO₂e" in stepper_str
 
     def test_indirect_steam_heat_ui_parity(self, client, auth_admin, test_facility):
         """Indirect Steam / District Heat: 1,200 MMBtu with boiler efficiency."""

@@ -92,26 +92,26 @@ LEGACY_FACTORS = {
     "Pneumatic Controller - High Bleed": {
         "code": "HighBleed",
         "type": "pneumatic",
-        "ch4": 8.304,
-        "factor": 8.304,
+        "ch4": 5.11,
+        "factor": 5.11,
         "unit": "tonnes CH4/yr",
-        "description": "Table 6-34 continuous bleed (gas processing)",
+        "description": "Table 6-14 EPA GHGRP production high-bleed",
     },
     "Pneumatic Controller - Low Bleed": {
         "code": "LowBleed",
         "type": "pneumatic",
-        "ch4": 0.0939,
-        "factor": 0.0939,
+        "ch4": 0.191,
+        "factor": 0.191,
         "unit": "tonnes CH4/yr",
-        "description": "Table 6-34 pneumatic/hydraulic valve operator (gas processing)",
+        "description": "Table 6-14 EPA GHGRP production low-bleed",
     },
     "Pneumatic Controller - Intermittent": {
         "code": "Intermittent",
         "type": "pneumatic",
-        "ch4": 0.4,
-        "factor": 0.4,
+        "ch4": 1.85,
+        "factor": 1.85,
         "unit": "tonnes CH4/yr",
-        "description": "Table 6-42 intermittent vent controller (transmission/storage)",
+        "description": "Table 6-15 EPA GHGRP production intermittent",
     },
     "Pneumatic Controller - Continuous Vent (T&S)": {
         "code": "ContinuousVentTS",
@@ -120,33 +120,6 @@ LEGACY_FACTORS = {
         "factor": 3.5,
         "unit": "tonnes CH4/yr",
         "description": "Table 6-42 continuous vent controller (transmission/storage)",
-    },
-    "Fugitive - Valve (Gas/Vapor)": {
-        "code": "ValveGas",
-        "type": "fugitive",
-        "ch4": 0.0045,
-        "factor": 0.0045,
-        "unit": "kg/hr",
-        "description": "Valves in Gas Service",
-        "uncertainty": {"co2": 0.3, "ch4": 0.3, "n2o": 0.3},
-    },
-    "Fugitive - Connector (Gas/Vapor)": {
-        "code": "ConnGas",
-        "type": "fugitive",
-        "ch4": 0.0002,
-        "factor": 0.0002,
-        "unit": "kg/hr",
-        "description": "Connectors in Gas Service",
-        "uncertainty": {"co2": 0.3, "ch4": 0.3, "n2o": 0.3},
-    },
-    "Fugitive - Flange (Gas/Vapor)": {
-        "code": "FlangeGas",
-        "type": "fugitive",
-        "ch4": 0.00039,
-        "factor": 0.00039,
-        "unit": "kg/hr",
-        "description": "Flanges in Gas Service",
-        "uncertainty": {"co2": 0.3, "ch4": 0.3, "n2o": 0.3},
     },
     # Liquids Unloading Tier 1 - API Compendium 2021 Table 6-11
     "UnloadPlunger": {
@@ -223,9 +196,10 @@ LEGACY_FACTORS = {
         "uncertainty": {"co2": 0.50, "ch4": 0.50, "n2o": 0.50},
     },
     "Propane (Liquid)": {
+        "source": "API Compendium 2021 Table 4-5 / Table 4-6",
         "code": "LPG_Liq",
-        "hhv": 91500,
-        "co2": 62.88,
+        "hhv": 91000,  # Table 4-5 propane: 0.091 MMBtu/gal
+        "co2": 62.87,  # Table 4-5 propane
         "ch4": 0.003,
         "n2o": 0.0006,
         "uncertainty": {"co2": 0.02, "ch4": 0.25, "n2o": 0.3},
@@ -267,22 +241,24 @@ LEGACY_FACTORS = {
         "baseUnit": "scf",
     },
     "Completion - Gas Well (No Flaring)": {
+        "source": "API Compendium 2021 Table 6-6",
         "code": "CompGasNoFlare",
-        "ch4": 0.7,
+        "ch4": 1.7376,  # Table 6-6 gas well completion without HF, vented
         "co2": 0,
         "n2o": 0,
-        "factor": 0.7,
+        "factor": 1.7376,
         "unit": "tonnes/event",
         "usage": ["completions"],
         "description": "Average per event (Uncontrolled)",
         "uncertainty": {"co2": 0.0, "ch4": 0.3, "n2o": 0.0},
     },
     "Workover - Gas Well (No Flaring)": {
+        "source": "API Compendium 2021 Table 6-9",
         "code": "WorkoverGasNoFlare",
-        "ch4": 0.05,
+        "ch4": 0.047,  # Table 6-9 gas well workover without HF
         "co2": 0,
         "n2o": 0,
-        "factor": 0.05,
+        "factor": 0.047,
         "unit": "tonnes/event",
         "usage": ["completions"],
         "description": "Average per event (Uncontrolled)",
@@ -300,61 +276,6 @@ LEGACY_FACTORS = {
         "description": "API Table 5-16 / 6-4 — Default crude oil flash emission factor",
         "uncertainty": {"co2": 0.15, "ch4": 0.4, "n2o": 0.0},
     },
-    "Tank - Working Losses (Oil)": {
-        "code": "TankWorkOil",
-        "ch4": 0.05,
-        "co2": 0,
-        "n2o": 0,
-        "factor": 0.05,
-        "unit": "kg/bbl",
-        "usage": ["tank_working"],
-        "description": "API 4.4 - Working losses",
-        "uncertainty": {"co2": 0.0, "ch4": 0.4, "n2o": 0.0},
-    },
-    "Tank - Breathing Losses (Oil)": {
-        "code": "TankBreathOil",
-        "ch4": 0.001,
-        "co2": 0,
-        "n2o": 0,
-        "factor": 0.001,
-        "unit": "kg/bbl-year",
-        "usage": ["tank_breathing"],
-        "description": "API 4.4 - Standing storage breathing losses",
-        "uncertainty": {"co2": 0.0, "ch4": 0.4, "n2o": 0.0},
-    },
-    "Loading - Crude Oil (Tank Truck)": {
-        "code": "LoadCrudeTruck",
-        "ch4": 0.00016,
-        "co2": 0,
-        "n2o": 0,
-        "factor": 0.00016,
-        "unit": "kg/bbl",
-        "usage": ["loading"],
-        "description": "Truck Loading (Submerged)",
-        "uncertainty": {"co2": 0.0, "ch4": 0.3, "n2o": 0.0},
-    },
-    "Loading - Crude Oil (Marine Vessel)": {
-        "code": "LoadCrudeMarine",
-        "ch4": 0.00008,
-        "co2": 0,
-        "n2o": 0,
-        "factor": 0.00008,
-        "unit": "kg/bbl",
-        "usage": ["loading"],
-        "uncertainty": {"co2": 0.0, "ch4": 0.3, "n2o": 0.0},
-    },
-    "Wastewater - Oil/Water Separator": {
-        "code": "WaterSep",
-        "ch4": 0.0005,
-        "co2": 0,
-        "n2o": 0,
-        "factor": 0.0005,
-        "unit": "kg/bbl water",
-        "baseUnit": "bbl",
-        "usage": ["separation"],
-        "description": "API Section 5.4 Separator",
-        "uncertainty": {"co2": 0.0, "ch4": 0.5, "n2o": 0.0},
-    },
 }
 
 # Tier 1 fuels offered by the Scope 1 form that had no server factor (browser test F1: the form
@@ -371,9 +292,9 @@ def _fuel(code, hhv, base_unit, co2, ch4, n2o, source, usage=("combustion",), un
             "uncertainty": {"co2": unc[0], "ch4": unc[1], "n2o": unc[2]}, **extra}
 
 
-# Pure-gas flare streams: CO2 by carbon balance at 98 % combustion (Equation 5-3; 379.3 scf/lbmol,
-# 60 F), no CH4 in the stream, N2O by Equation 5-6 (natural gas 1e-4 / 60 kg CO2 per MMBtu).
-_MV_SM3_PER_KMOL = 379.3 * 0.028316846592 / 0.45359237
+# Pure-gas flare streams: CO2 by carbon balance at 98 % combustion (Equation 5-2, 23.685 Sm3/kgmole),
+# no CH4 in the stream, N2O by Equation 5-6 (natural gas 1e-4 / 60 kg CO2 per MMBtu).
+_MV_SM3_PER_KMOL = 23.685  # Sm3 / kgmole (Compendium section 5.1.2)
 
 
 def _pure_gas_flare(code, carbon_atoms, description):

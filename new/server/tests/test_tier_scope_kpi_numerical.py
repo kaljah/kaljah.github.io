@@ -216,22 +216,18 @@ class TestScope2Methods:
     def test_scope2_location_based_grid_averages(self):
         """Scope 2 Location-Based Method:
         Emissions (tCO2e) = Electricity (kWh) × Grid Emission Factor (kg CO2e / kWh) / 1,000.
-        Test regional factors from electricity_factors.GRID_FACTORS:
-        - US Average: 0.385 kg/kWh
-        - EU Grid Average: 0.295 kg/kWh
-        - Algerian National Grid: 0.522 kg/kWh
+        Regional factors (kg CO2e / kWh at AR5, API Compendium 2021):
+        - US Average, Table 8-2: 0.401 t CO2 + 3.40E-05 t CH4 x 28 + 4.99E-06 t N2O x 265 per MWh
+        - United Kingdom, Table 8-6: 0.1964 t CO2 per MWh
         """
-        for region, expected_factor in [("US Average", 0.385), ("EU Grid Average", 0.295), ("Algerian National Grid", 0.522)]:
+        for region, expected_factor in [("US Average", 0.401 + 3.40e-05 * 28 + 4.99e-06 * 265),
+                                        ("United Kingdom (grid average)", 0.1964)]:
             factor = GRID_FACTORS[region]["factor"]
-            assert abs(factor - expected_factor) < 1e-4
-
-            kwh = 1_000_000.0  # 1 GWh = 1,000,000 kWh
-            expected_tco2e = (kwh * factor) / 1000.0
-            assert expected_tco2e > 0
-            if region == "EU Grid Average":
-                assert expected_tco2e < 300.0
-            elif region == "Algerian National Grid":
-                assert expected_tco2e > 500.0
+            assert abs(factor - expected_factor) < 1e-6
+            kwh = 1_000_000.0  # 1 GWh
+            assert (kwh * factor) / 1000.0 == pytest.approx(expected_factor * 1000.0)
+        # the Algerian grid is not in the Compendium: carried over and flagged as unverified
+        assert GRID_FACTORS["Algerian National Grid"]["verified"] is False
 
     def test_scope2_market_based_contractual_instruments(self):
         """Scope 2 Market-Based Method:

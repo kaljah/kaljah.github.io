@@ -162,15 +162,17 @@ const Scope3Form = () => {
     ],
     10: [
       { value: "Processing (Electricity)", unit: "kWh", factor: 0.4 },
-      { value: "Processing (Natural Gas)", unit: "mcf", factor: 54.6 },
+      { value: "Processing (Natural Gas)", unit: "mcf", factor: 54.18 },
     ],
     11: [
-      { value: "Crude Oil", unit: "bbl", factor: 433.7 },
-      { value: "Natural Gas", unit: "mcf", factor: 54.6 },
-      { value: "NGL - Ethane", unit: "gal", factor: 3.93 },
+      // Combustion of sold products: API Compendium 2021 Table 4-5 heating value and CO2, Table 4-6 CH4 / N2O,
+      // as kg CO2e per unit at AR5 (natural gas 1,020 Btu/scf, Table 3-8)
+      { value: "Crude Oil", unit: "bbl", factor: 433.44 },
+      { value: "Natural Gas", unit: "mcf", factor: 54.18 },
+      { value: "NGL - Ethane", unit: "gal", factor: 4.07 },
       { value: "NGL - Propane", unit: "gal", factor: 5.74 },
-      { value: "NGL - Butane", unit: "gal", factor: 6.38 },
-      { value: "NGL - Mixed", unit: "gal", factor: 5.5 },
+      { value: "NGL - Butane", unit: "gal", factor: 6.7 },
+      { value: "NGL - Mixed (as LPG)", unit: "gal", factor: 5.7 },
     ],
     12: [
       { value: "Landfill", unit: "kg", factor: 0.57 },
