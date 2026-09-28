@@ -96,8 +96,8 @@ class TestGridFactorResolution:
     @pytest.mark.parametrize("grid_name", [
         "Algerian National Grid",
         "US Average",
-        "US-ERCOT",
-        "UK National Grid",
+        "US-ERCT (ERCOT All)",
+        "United Kingdom (grid average)",
     ])
     def test_grid_factors_validity(self, grid_name):
         assert grid_name in GRID_FACTORS

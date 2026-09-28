@@ -15,7 +15,7 @@ from services.scope1_calc import resolve_factor
 
 SCF_PER_M3 = 35.3146667
 J_PER_MMBTU = 1.055056e9
-MV_SM3_PER_KMOL = 379.3 * 0.028316846592 / 0.45359237
+MV_SM3_PER_KMOL = 23.685  # Sm3 / kgmole, Compendium section 5.1.2
 
 
 def calc(app, payload):
@@ -100,7 +100,8 @@ def test_f1_pure_gas_flares_equation_5_3(app, fuel, carbons):
 
 def test_f1_flaring_variants_use_flaring_factors(app):
     em = calc(app, tier1("routine_flaring", "Natural Gas (Flaring - Elevated)", 1000, "m3"))
-    assert em["co2"] == pytest.approx(1.92, rel=1e-3)
+    # Equation 5-2 on the Table 5-1 processing-plant gas (CH4 91.9, NMHC 6.84 as C2, CO2 0.58 mol %), 98 %
+    assert em["co2"] == pytest.approx(((0.919 + 0.0684 * 2) * 0.98 + 0.0058) * 44.01 / MV_SM3_PER_KMOL, rel=1e-3)
 
 
 # ---- F4: separators / produced water are not tank flashing ----

@@ -59,8 +59,6 @@ def _lookup_api_factor(fuel_name: str) -> dict:
         "tank flash emissions oil": "Tank - Flash Emissions (Oil)",
         "tank flash oil": "Tank - Flash Emissions (Oil)",
         "tank flash": "Tank - Flash Emissions (Oil)",
-        "tank working losses oil": "Tank - Working Losses (Oil)",
-        "tank breathing losses oil": "Tank - Breathing Losses (Oil)",
         "asphalt": "Asphalt",
         "asphalt blowing": "Asphalt",
     }
