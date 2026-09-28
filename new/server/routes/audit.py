@@ -8,6 +8,7 @@ from functools import wraps
 from flask import Blueprint, jsonify, request, Response, current_app
 from sqlalchemy import distinct, func
 from models import ActivityLog, db
+from utils import iso_utc
 from utils import get_current_user, log_activity_and_notify, get_allowed_facility_ids
 
 audit_bp = Blueprint("audit", __name__)
@@ -165,7 +166,7 @@ def _serialize_log(log, is_it_user=False):
         "ipAddress": log.ip_address or "Local / System",
         "entity": log.entity or "General",
         "entityId": ent_id,
-        "timestamp": log.timestamp.isoformat() if log.timestamp else None,
+        "timestamp": iso_utc(log.timestamp),
     }
 
 

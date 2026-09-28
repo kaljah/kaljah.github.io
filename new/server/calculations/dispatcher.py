@@ -534,6 +534,9 @@ class CalculationDispatcher:
             )
 
         if not calculator:
+            # processes without a calculator (e.g. separation) still take Compendium activity rows
+            if flat_inputs.get("activity_key") not in (None, ""):
+                return self._route_section_methods(process_type, flat_inputs, uncertainties, gwp_dict)
             return self._generic_calculation(
                 flat_inputs,
                 emission_factors,
@@ -932,9 +935,17 @@ class CalculationDispatcher:
                     or "tier1"
                 ).lower().strip()
 
-                # Mud type parsing
-                raw_mud_type = str(flat_inputs.get("mud_type") or "water_based").lower()
+                # Mud type parsing: an explicit mud type, else the one named by the selected Table 6-2 row
+                raw_mud_type = str(flat_inputs.get("mud_type") or emission_factors.get("mud_type") or "water_based").lower()
                 mud_type = "oil_based" if ("oil" in raw_mud_type or "synth" in raw_mud_type) else "water_based"
+                # Catalog rows carry no override: Table 6-2 is applied by mud type and location (browser test
+                # F3: the rows' kg-based values were read as tonnes per day). A saved library / custom factor is
+                # in kg per unit (Manage Data convention) and the calculator works in tonnes.
+                if str(emission_factors.get("type") or "").lower() == "custom":
+                    _cf = emission_factors.get("ch4")
+                    drill_ef = float(_cf) / 1000.0 if _cf not in (None, "", "-") else 0
+                else:
+                    drill_ef = 0
 
                 # Check gas concentrations for Tier 2+
                 ch4_conc = (
@@ -983,7 +994,7 @@ class CalculationDispatcher:
                         ch4_concentration=ch4_conc,
                         co2_concentration=co2_conc,
                         uncertainties=uncertainties,
-                        ef_ch4=emission_factors.get("ch4", 0),
+                        ef_ch4=drill_ef,
                         gwp_dict=gwp_dict,
                     )
                 elif is_tier2:
@@ -998,7 +1009,7 @@ class CalculationDispatcher:
                         drilling_days=drilling_days,
                         mud_type=mud_type,
                         uncertainties=uncertainties,
-                        ef_ch4=emission_factors.get("ch4", 0),
+                        ef_ch4=drill_ef,
                         gwp_dict=gwp_dict,
                     )
                 else:
@@ -1013,7 +1024,7 @@ class CalculationDispatcher:
                         tier="tier1",
                         wells=wells,
                         uncertainties=uncertainties,
-                        ef_ch4=emission_factors.get("ch4", 0),
+                        ef_ch4=drill_ef,
                         gwp_dict=gwp_dict,
                     )
 
