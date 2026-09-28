@@ -31,6 +31,14 @@ import NitricAcidForm from "./scope1/NitricAcidForm";
 import AdipicAcidForm from "./scope1/AdipicAcidForm";
 import AsphaltBlowingForm from "./scope1/AsphaltBlowingForm";
 import AssociatedGasVentingForm from "./scope1/AssociatedGasVentingForm";
+import { SectionMethodPanel } from "./scope1/SectionMethods";
+import {
+  SECTION_PROCESSES,
+  SECTION_TIERS,
+  currentChoice,
+  sectionMethodActive,
+  syncSectionChoice,
+} from "./scope1/methodChoices";
 import GasCompositionCalculator from "./GasCompositionCalculator";
 import {
   API_FACTORS,
@@ -658,12 +666,35 @@ const Scope1Form = () => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  // Keep the calculation-method keys (activity_key / vent_method / combustion_method) in step
+  // with the process and tier, including after the form is reset
+  const sectionChoice = currentChoice(formData);
+  useEffect(() => {
+    // processes whose tiers are these methods: move off a tier the process does not offer
+    const tiers = SECTION_TIERS[processType];
+    if (tiers && sourceType !== "library" && !tiers.some((t) => t.key === sourceType)) {
+      setSourceType(tiers[0].key);
+      return;
+    }
+    syncSectionChoice(processType, sourceType, formData, handleFormChange);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [processType, sourceType, sectionChoice]);
+
   const handleAddEntry = async (status = "Verified") => {
     // Validate identity fields
     if (!year || !month || !facilityId || !processType) {
       toast.warning(
         "Please fill in all identity fields (Year, Month, Region, Process)",
       );
+      return;
+    }
+
+    // API Compendium activity tables, gas-volume and combustion methods: the server validates
+    // their inputs (SectionMethods); only the activity-table choice is checked here
+    const sectionActive =
+      sourceType !== "library" && (sectionMethodActive(formData) || Boolean(SECTION_PROCESSES[processType]));
+    if (sectionActive && currentChoice(formData) === "activity" && !formData.activity_key) {
+      toast.warning("Select a source");
       return;
     }
 
@@ -676,7 +707,7 @@ const Scope1Form = () => {
     }
 
     // Validate fuel/factor selection
-    if (sourceType !== "library" &&
+    if (sourceType !== "library" && !sectionActive &&
       (sourceType === "default" || sourceType === "custom") &&
       !["associated_gas_venting", "completions", "unloading"].includes(processType) &&
       !formData.fuel
@@ -708,7 +739,8 @@ const Scope1Form = () => {
         "associated_gas_venting",
       ].includes(processType);
 
-    if (!isUpstreamEng && (!amount || parseFloat(amount) <= 0)) {
+    const needsAmount = !sectionActive || currentChoice(formData) === "activity";
+    if (!isUpstreamEng && needsAmount && (!amount || parseFloat(amount) <= 0)) {
       toast.warning(
         "Please enter a valid activity amount/quantity greater than 0",
       );
@@ -716,7 +748,7 @@ const Scope1Form = () => {
     }
 
     // Strict validation for Tier 3 (Engineering / Specific) inputs
-    if (sourceType === "specific") {
+    if (sourceType === "specific" && !sectionActive) {
       if (
         ["combustion", "stationary_combustion", "flaring"].includes(processType)
       ) {
@@ -1063,6 +1095,7 @@ const Scope1Form = () => {
 
       // --- PROCESS-SPECIFIC UNIT STANDARDIZATION ---
 
+      if (!sectionActive) {
       // 1. Drilling Mud Degassing (Tier 1: Table 6-3 wells or mud defaults; Tier 2: Custom factor from DB; Tier 2+: Table 6-1/6-2 days)
       if (processType === "drilling") {
         const val = parseFloat(formData.amount || formData.quantity || 0);
@@ -1352,12 +1385,20 @@ const Scope1Form = () => {
         }
       }
 
+      } // !sectionActive
+
+      if (sectionActive) {
+        // amount/unit only for activity tables; engineered methods carry their own inputs
+        finalAmount = formData.amount ? parseFloat(formData.amount) : undefined;
+        finalUnit = formData.amount ? formData.unit || "count" : undefined;
+      }
+
       if (sourceType === "library") {
         finalAmount = parseFloat(formData.amount || formData.quantity || 0);
         finalUnit = formData.unit || "";
       }
 
-      if (!finalUnit && sourceType !== "specific") {
+      if (!finalUnit && sourceType !== "specific" && !sectionActive) {
         toast.warning("Please select a unit");
         setSubmitting(false);
         return;
@@ -1649,6 +1690,18 @@ const Scope1Form = () => {
       return <CombustionForm {...props} />;
     }
 
+    return (
+      <SectionMethodPanel
+        processType={processType}
+        sourceType={sourceType}
+        data={props.data}
+        onChange={handleFormChange}
+        legacy={renderProcessForm(props)}
+      />
+    );
+  };
+
+  const renderProcessForm = (props) => {
     switch (processType) {
       case "combustion":
       case "mobile":
@@ -1894,7 +1947,9 @@ const Scope1Form = () => {
                 <div className="s1-method">
                   <label style={{ margin: 0 }}>Method</label>
                   <div className="methodology-toggle">
-                    {(processType === "drilling"
+                    {(SECTION_TIERS[processType]
+                      ? SECTION_TIERS[processType]
+                      : processType === "drilling"
                       ? [
                           {
                             key: "default",
@@ -1995,6 +2050,7 @@ const Scope1Form = () => {
                       .concat([{ key: "library", tier: "", label: "Library factor", sub: "Site factor database" }])
                       .filter((item) => {
                         const type = item.key;
+                        if (SECTION_TIERS[processType]) return true;
                         if (
                           type === "custom" &&
                           ["drilling", "pneumatic", "tank", "tank_flashing", "tank_working", "tank_breathing",
@@ -2002,8 +2058,6 @@ const Scope1Form = () => {
                         )
                           return false;
                         if (processType === "drilling") return true;
-                        if (processType === "mobile" && type === "specific")
-                          return false;
                         if (processType === "loading" && type === "specific")
                           return false;
                         if (processType === "separation" && type === "specific")
@@ -2044,7 +2098,8 @@ const Scope1Form = () => {
 
 
                 {/* TIER 1: Standard API Tabulated Factors */}
-                {sourceType === "default" && !["associated_gas_venting", "completions", "unloading"].includes(processType) && (
+                {sourceType === "default" && !sectionMethodActive(formData) && !SECTION_PROCESSES[processType] &&
+                  !["associated_gas_venting", "completions", "unloading"].includes(processType) && (
                   <CustomDropdown
                     options={fuelOptions}
                     value={formData.fuel || ""}
@@ -2211,6 +2266,8 @@ const Scope1Form = () => {
                   </div>
                 )}
                 {sourceType === "specific" &&
+                  !sectionMethodActive(formData) &&
+                  !SECTION_PROCESSES[processType] &&
                   ![
                     "tank",
                     "tank_flashing",
