@@ -322,10 +322,14 @@ export default function Scope3ImportWizard({ onClose, onUploadSuccess }) {
     }).catch(() => {});
   }, []);
 
+  // Activity-based or spend-based (EEIO / NAICS) import: each has its own columns and server scope
+  const [importMode, setImportMode] = useState("activity");
+  const FIELD_GROUPS = importMode === "eeio" ? FIELD_GROUPS_EEIO : FIELD_GROUPS_ACTIVITY;
+
   // All fields flattened
   const allFields = useMemo(() =>
-    FIELD_GROUPS.flatMap(g => g.fields),
-  []);
+    (importMode === "eeio" ? FIELD_GROUPS_EEIO : FIELD_GROUPS_ACTIVITY).flatMap(g => g.fields),
+  [importMode]);
 
   // Required fields check
   const requiredFields = FIELD_GROUPS.flatMap(g => g.fields).filter(f => f.required);
@@ -366,7 +370,7 @@ export default function Scope3ImportWizard({ onClose, onUploadSuccess }) {
     setIsSubmitting(true);
     const form = new FormData();
     form.append("file", file);
-    form.append("scope", "3");
+    form.append("scope", importMode === "eeio" ? "3_eeio" : "3");
     form.append("column_mapping", JSON.stringify(mapping));
     try {
       const res = await api.post("/emissions/upload/start", form, {
@@ -421,6 +425,20 @@ export default function Scope3ImportWizard({ onClose, onUploadSuccess }) {
                 )}
               </div>
             )}
+            <div className="s1w-mode-switch" role="radiogroup" aria-label="Import type" style={{ display: "flex", gap: "8px", marginBottom: "12px" }}>
+              {[["activity", "Activity data"], ["eeio", "Spend (EEIO / NAICS)"]].map(([v, l]) => (
+                <button
+                  key={v}
+                  type="button"
+                  role="radio"
+                  aria-checked={importMode === v}
+                  className={importMode === v ? "s1w-btn-primary" : "s1w-btn-ghost"}
+                  onClick={() => setImportMode(v)}
+                >
+                  {l}
+                </button>
+              ))}
+            </div>
             <div
               className={`s1w-dropzone ${isDragging ? "dragging" : ""}`}
               onClick={() => fileInputRef.current.click()}

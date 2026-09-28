@@ -16,7 +16,6 @@ import { UNCERTAINTY_COVERAGE_K } from "../constants";
 const Scope3Form = () => {
   const { user } = useAuth();
   const toast = useToast();
-  const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [showWizard, setShowWizard] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState(null);
@@ -59,7 +58,7 @@ const Scope3Form = () => {
       setEmissionFactor(normalizedEf);
       setBaseFactor(parseFloat(normalizedEf));
       setBaseUnit("USD");
-    } catch (err) {
+    } catch {
       toast.show("Error calculating EEIO emissions", "error");
     }
   };
@@ -258,7 +257,6 @@ const Scope3Form = () => {
   }, [user, facilities]);
 
   const loadEntries = async () => {
-    setLoading(true);
     try {
       const res = await api.get("/scope3");
       const allEntries = Array.isArray(res.data)
@@ -271,8 +269,6 @@ const Scope3Form = () => {
     } catch (error) {
       console.error("Failed to load entries:", error);
       toast.error("Failed to load Scope 3 data");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -310,7 +306,7 @@ const Scope3Form = () => {
         status: status,
       };
 
-      const res = await api.post("/scope3", payload);
+      await api.post("/scope3", payload);
       toast.success(
         status === "Draft"
           ? "Entry saved as draft"

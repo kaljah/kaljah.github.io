@@ -1,7 +1,4 @@
 import React, { useState, useEffect } from "react";
-import api from "../api";
-import { useToast } from "../components/Toast";
-import { useAuth } from "../context/AuthContext";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import "./Emissions.css";
 import "../pages/Dashboard.css";
@@ -19,7 +16,6 @@ import {
 } from "../utils/constants";
 
 const Emissions = () => {
-  const { user } = useAuth();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [stage, setStage] = useState(STAGE_SCOPE_SELECTION);
@@ -29,6 +25,8 @@ const Emissions = () => {
     if (scopeParam) {
       const lower = scopeParam.toLowerCase();
       if (lower === "1" || lower === "scope1" || lower === "s1") {
+        // the stage follows the URL (?scope=...), an external source
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setStage(STAGE_SCOPE1_SUB_SELECTION);
       } else if (lower === "2" || lower === "scope2" || lower === "s2") {
         setStage(STAGE_SCOPE2);

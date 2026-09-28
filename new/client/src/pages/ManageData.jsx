@@ -164,7 +164,9 @@ const ManageDataInner = () => {
                     pathway_type: res.data.pathway_type
                 });
             }
-        } catch (e) {}
+        } catch (err) {
+            toast.error(apiError(err, 'Failed to load the SBTi target'));
+        }
     };
 
     const handleSaveSbti = async () => {
@@ -177,7 +179,6 @@ const ManageDataInner = () => {
         }
     };
 
-    const [loading, setLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [pendingEmissions, setPendingEmissions] = useState({ scope1: [], scope2: [], scope3: [], total_pending: 0 });
     const [isProcessingBatch, setIsProcessingBatch] = useState(false);
@@ -1280,9 +1281,6 @@ const ManageDataInner = () => {
         URL.revokeObjectURL(url);
     };
 
-    const handleImportCSV = async (file, type) => {
-        toast.info(`Importing ${type} CSV... (Logic to be handled by backend)`);
-    };
 
 
     // --- Dynamic Options and Matching for Filters ---
@@ -1439,7 +1437,6 @@ const ManageDataInner = () => {
 
     return (
         <div className="manage-data-page" >
-            {loading && <LoadingSpinner message="Loading Data..." fullScreen />}
             <div className="manage-container">
                 <div className="manage-layout">
                     {/* Sidebar Navigation */}

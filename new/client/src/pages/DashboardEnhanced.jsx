@@ -15,7 +15,7 @@ import {
   calculateTrend,
 } from "../utils/formatters";
 import { useLayout } from "../context/LayoutContext";
-import { getUserOperationalDefaults, isUnrestrictedLocation } from "../utils/userDefaults";
+import { getUserOperationalDefaults } from "../utils/userDefaults";
 import {
   ChevronDown,
   ChevronUp,

@@ -25,7 +25,6 @@
  */
 
 import { test, expect } from '@playwright/test';
-import path from 'path';
 import fs from 'fs';
 import { execFileSync } from 'child_process';
 

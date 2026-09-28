@@ -75,7 +75,6 @@ const Settings = () => {
   const [globalThreshold, setGlobalThreshold] = useState(20.0);
   const [upstreamTarget, setUpstreamTarget] = useState(0.2);
   const [midstreamTarget, setMidstreamTarget] = useState(0.05);
-  const [theme, setTheme] = useState("light");
   const [unitSystem, setUnitSystem] = useState("metric");
   const [autoFlagDiscrepancy, setAutoFlagDiscrepancy] = useState(true);
 
@@ -131,10 +130,8 @@ const Settings = () => {
           setCopernicusQaThreshold(Number(settings.copernicus_qa_threshold));
         if (settings.copernicus_enabled !== undefined)
           setCopernicusEnabled(Boolean(settings.copernicus_enabled));
-        if (settings.theme) {
-          setTheme("light");
-          applyThemeLive("light");
-        }
+        // light theme only
+        document.documentElement.removeAttribute("data-theme");
         if (settings.unit_system) setUnitSystem(settings.unit_system);
         if (settings.auto_flag_discrepancy !== undefined)
           setAutoFlagDiscrepancy(settings.auto_flag_discrepancy);
@@ -162,14 +159,6 @@ const Settings = () => {
     }
   };
 
-  const applyThemeLive = (newTheme) => {
-    document.documentElement.removeAttribute("data-theme");
-  };
-
-  const handleThemeChange = (newTheme) => {
-    setTheme("light");
-    applyThemeLive("light");
-  };
 
   const isAdmin =
     user?.role === "admin" ||
@@ -204,7 +193,6 @@ const Settings = () => {
         payload.copernicus_client_secret = copernicusClientSecret;
       }
       await api.post("/auth/settings", payload);
-      applyThemeLive("light");
       toast.success(
         "System settings and Copernicus credentials saved successfully!",
       );
@@ -308,7 +296,6 @@ const Settings = () => {
     );
   }
 
-  const currentGwp = GWP_DATA[gwpStandard] || GWP_DATA.AR5;
 
   return (
     <div className="settings-page-wrapper">

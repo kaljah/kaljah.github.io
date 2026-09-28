@@ -35,6 +35,8 @@ export function useFormDraft(draftKey, initialValues = {}) {
 
   useEffect(() => {
     const saved = getSavedDraft();
+    // re-read the stored draft (localStorage) when the draft key changes
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setHasDraft(!!saved && Object.keys(saved).length > 0);
   }, [getSavedDraft]);
 

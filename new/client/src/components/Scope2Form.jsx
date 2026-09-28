@@ -34,8 +34,6 @@ const Scope2Form = () => {
   const [gridRegion, setGridRegion] = useState("");
   const [amount, setAmount] = useState("");
   const [unit, setUnit] = useState("kWh");
-  const [groupName, setGroupName] = useState("");
-  const [equipmentId, setEquipmentId] = useState("");
   const [sourceType, setSourceType] = useState("electricity");
 
   // Section 8 specific state
@@ -44,7 +42,6 @@ const Scope2Form = () => {
   const [heatOutput, setHeatOutput] = useState("");
   const [powerOutput, setPowerOutput] = useState("");
   const [allocationMethod, setAllocationMethod] = useState("wri_efficiency");
-  const [cogenResults, setCogenResults] = useState(null);
 
   // Result and Inspect Modals
   const [inspectRecord, setInspectRecord] = useState(null);
@@ -240,7 +237,7 @@ const Scope2Form = () => {
         };
       }
 
-      const res = await api.post("/scope2", payload);
+      await api.post("/scope2", payload);
       toast.success(
         status === "Draft"
           ? "Entry saved as draft"
