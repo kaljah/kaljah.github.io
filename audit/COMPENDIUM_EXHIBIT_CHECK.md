@@ -302,3 +302,5 @@ Defects found while adding these:
 - Tables 4-12 and 4-16 (fuel economy, per-vehicle CH4 / N2O) do not extract with their row labels aligned, so only
   the heavy-duty diesel advanced-control row used by Exhibit 4.12 is built in; other vehicles take user-entered
   factors or the Table 4-6 fuel-basis CH4 / N2O.
+
+- 2026-09-28: Exhibit 4.4a now 42,748 vs 42,684 t CO2 (0.15 %): the 1.8 % came from an unread `n2_content` key and the renormalisation of the 98.4 % analysis.

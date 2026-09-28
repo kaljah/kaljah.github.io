@@ -251,26 +251,33 @@ def get_cap_compliance():
             "pollutants": []
         }
 
-        all_compliant = True
+        any_exceeded = False
+        any_measured = False
         for pol in ["NO2", "CO", "SO2", "PM", "VOC"]:
             lim_val = limits.get(pol, 200.0)
             p_data = pollutants_map.get(pol, {"total_mass": 0.0, "concentration": 0.0})
             measured_c = p_data["concentration"]
-            is_exceeded = measured_c > lim_val if measured_c > 0 else False
-            if is_exceeded:
-                all_compliant = False
+            # compliance with a concentration limit can only be stated from a measured concentration;
+            # no verified measurement is "not measured", never "compliant"
+            measured = measured_c > 0
+            is_exceeded = measured and measured_c > lim_val
+            any_measured = any_measured or measured
+            any_exceeded = any_exceeded or is_exceeded
 
             fac_compliance["pollutants"].append({
                 "pollutant": pol,
                 "total_tonnes": round(p_data["total_mass"], 2),
                 "measured_concentration_mg_nm3": round(measured_c, 2),
                 "statutory_limit_mg_nm3": lim_val,
-                "is_compliant": not is_exceeded,
-                "status": "NON-COMPLIANT (Exceeded)" if is_exceeded else "COMPLIANT",
-                "notes": "Additional sampling conducted to confirm" if is_exceeded else "Within permissible limits"
+                "is_compliant": (not is_exceeded) if measured else None,
+                "status": ("NON-COMPLIANT (Exceeded)" if is_exceeded else "COMPLIANT") if measured else "NOT MEASURED",
+                "notes": ("Measured concentration above the statutory limit" if is_exceeded else "Within permissible limits")
+                if measured else "No verified concentration measurement",
             })
 
-        fac_compliance["overall_status"] = "COMPLIANT" if all_compliant else "NON-COMPLIANT"
+        fac_compliance["overall_status"] = (
+            "NON-COMPLIANT" if any_exceeded else "COMPLIANT" if any_measured else "NOT ASSESSED"
+        )
         results.append(fac_compliance)
 
     return jsonify(results)

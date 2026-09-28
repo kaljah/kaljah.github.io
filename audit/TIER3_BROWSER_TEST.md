@@ -125,3 +125,22 @@ pre-existing errors.
 
 Not changed: Tier 2B fugitive xfails (outside Tier 3); Exhibit 4.4a differs by 1.8 % as recorded in
 COMPENDIUM_EXHIBIT_CHECK.md.
+
+## Remaining issues fixed (follow-up, 2026-09-28)
+
+| Issue | Fix |
+|---|---|
+| 3 `validation/` GWP tests failing | The reference model, `ref_constants` and the tests held non-IPCC GWP-20 values (82.5 / 268). Corrected to AR5 WG1 Table 8.7 (CH4 84, N2O 264) and AR6 Table 7.15 (CH4 27.9 pairs with 81.2), as the app already used (BUG-013) |
+| GOLD-E01 failing | A non-CH4 ("kg/hr", TOC) equipment factor is converted with the CH4 weight fraction (Eq 7-6) and rejected without one; it was used as pure CH4 |
+| Tier 2B component leaks (4 xfail tests) | Bare component counts use Table 7-12 (EPA protocol, by component / service) scaled to the site CH4 mol % with CO2 from the whole-gas factor; the dispatcher's invented 0.0045 kg/hr fallback, the TOC x CO2-mole-fraction CO2 and the unsourced 0.85 default are removed; no component type is rejected. Form rebuilt (state-backed inputs, no client factor tables); the "select a fuel" check no longer blocks it. Browser: 100 gas valves at 70 % CH4 saved 2.2093 t = 100 x 2.94E-06 x 8,760 x 70/81.6 |
+| Exhibit 4.4a 1.8 % high | `n2_content` was not read, the 98.4 % analysis was renormalised to 100 % (+1.63 % on every hydrocarbon). N2 / H2S aliases added: 42,748 vs 42,684 t (0.15 %, 379.3 scf/lbmol convention). The Gas analysis modal sent c1 as a fraction and CO2 as a percent and dropped C2+ / N2; it now sends the whole analysis in mol % with an explicit basis |
+| Throughput SLA test | Throughput was measured under tracemalloc (profiler overhead); now measured on a separate untraced loop |
+| Zero Tier 3 result | A real zero engineering result (e.g. 0 operating hours) is saved as zero instead of falling through to "request not understood" (entered specific factors keep their route) |
+| Lint | Project-wide lint now has 0 errors (was 102): dead code, unused imports / state / catch bindings removed; set-state-in-effect uses that sync with URL / DOM / storage / server annotated; provider hooks allowed by config; Node globals for config and e2e files |
+| Scope 3 import wizard crashed on open | `FIELD_GROUPS` was undefined after an unfinished split into activity / EEIO groups: the wizard now has an Activity / Spend (EEIO) switch and uploads with scope "3" or "3_eeio" (browser: opens, both modes) |
+| PDF report: hard-coded figures | Chapter 7 (CAP) printed fixed tonnages and a fixed "NON-COMPLIANT" verdict; Chapter 4 fell back to another operator's 2025 production figures; Annex A printed fixed 2021-2025 production, flaring, decree status and intensity tables. All are now built from the records (verified CAP records, production records, per-year flaring / intensity endpoints); missing data shows "—". Gas BOE uses the platform definition (0.178 BOE/Mcf) instead of 0.0083 MMBOE/MMSm3 (+32 %). Subscript characters jsPDF cannot draw replaced. Browser: report generated, CAP rows 123.45 t NO2 / 67.89 t CO from the records, Hassi R'Mel NO2 250 vs 200 mg/Nm3 NON-COMPLIANT, no borrowed figures, no garbled glyphs |
+| CAP compliance endpoint | A pollutant without a verified concentration is "NOT MEASURED" (was "COMPLIANT"); overall NON-COMPLIANT / COMPLIANT / NOT ASSESSED |
+| Reports page, SBTi load | Load errors show the server message; the SBTi target load failure is shown instead of swallowed |
+
+Suites: backend 1,639 passed, 0 failed, 0 xfailed; `validation/` 128 passed; vitest 24/24; build OK;
+lint 0 errors (40 warnings, mostly `react-hooks/exhaustive-deps`).

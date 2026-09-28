@@ -11,11 +11,14 @@ INDEPENDENT_GWP_REGISTRY = {
     },
     "AR5": {
         "100": {"CO2": 1.0, "CH4": 28.0, "N2O": 265.0},
-        "20": {"CO2": 1.0, "CH4": 82.5, "N2O": 268.0},
+        # AR5 WG1 Table 8.7: GWP-20 CH4 84, N2O 264 (82.5 is the AR6 fossil-CH4 value; 268 matches
+        # no AR5 value) - BUG-013
+        "20": {"CO2": 1.0, "CH4": 84.0, "N2O": 264.0},
     },
     "AR6": {
         "100": {"CO2": 1.0, "CH4": 27.9, "N2O": 273.0},
-        "20": {"CO2": 1.0, "CH4": 82.5, "N2O": 273.0},
+        # AR6 WG1 Table 7.15: CH4 27.9 (100-yr) pairs with 81.2 (20-yr); 82.5 is the fossil-CH4 pair
+        "20": {"CO2": 1.0, "CH4": 81.2, "N2O": 273.0},
     },
 }
 
