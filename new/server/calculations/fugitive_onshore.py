@@ -193,6 +193,7 @@ class OnshoreEquipmentFugitiveCalculator(BaseCalculator):
         factor_unit: str = "tonne CH4/well/hr",
         uncertainties: dict = None,
         gwp_dict: dict = None,
+        ch4_wt_fraction: float = None,
     ) -> dict:
         self.validate_inputs(
             {"count": equipment_count, "hours": operating_hours},
@@ -216,6 +217,16 @@ class OnshoreEquipmentFugitiveCalculator(BaseCalculator):
             raise ValueError(f"No equipment-level emission factor for '{equipment_type}'; select a catalog "
                              "equipment factor (API 2021 Tables 7-9 / 7-10 / 7-29) or a custom factor")
         kg_per_hr, _is_ch4 = per_source_hour_kg(ef_val, factor_unit or "tonne CH4/well/hr")
+        if not _is_ch4:
+            # a TOC / whole-hydrocarbon mass factor is converted with the CH4 weight fraction
+            # (API Compendium Eq 7-6); without one the CH4 share is unknown, never assumed 100 %
+            if ch4_wt_fraction in (None, ""):
+                raise ValueError(f"Factor unit '{factor_unit}' is not CH4-specific: give the CH4 weight fraction")
+            w = float(ch4_wt_fraction)
+            w = w / 100.0 if w > 1.0 else w
+            if not 0.0 <= w <= 1.0:
+                raise ValueError("CH4 weight fraction must be between 0 and 100 %")
+            kg_per_hr *= w
         total_ch4 = float(equipment_count) * kg_per_hr * float(operating_hours) / 1000.0
         kg_per_source_hour = kg_per_hr  # audit trace
 
@@ -259,11 +270,15 @@ class OnshoreEquipmentFugitiveCalculator(BaseCalculator):
 
 class OnshoreComponentFugitiveCalculator(BaseCalculator):
     """
-    Tier 2B: Component-Level Population Factors
-    Governing Standard: API Compendium 2021 §7.2.2, Table 7-11 (EPA 1995 Protocol) & §7.2.3 Table 7-30
+    Tier 2B: component-level average factors.
+    A bare count uses API Compendium 2021 Table 7-12 (EPA protocol, by component and service): CH4 =
+    count x converted CH4 factor x hours x (site CH4 mol % / 81.6 %), CO2 = count x whole-gas factor x
+    hours x site CO2 mol %. A given factor is used as given: a CH4 factor directly, a TOC / hydrocarbon
+    factor x the CH4 weight fraction (Eq 7-6; default Table C-1 for the service). No CO2 is derived
+    from a TOC mass (TOC contains no CO2).
     """
     def __init__(self):
-        super().__init__("Onshore Component-Level Fugitives", "Section 7.2.2 & 7.2.3")
+        super().__init__("Onshore Component-Level Fugitives", "Section 7.2.2")
 
     def calculate(
         self,
@@ -274,6 +289,7 @@ class OnshoreComponentFugitiveCalculator(BaseCalculator):
         co2_content: float = None,
         uncertainties: dict = None,
         gwp_dict: dict = None,
+        ch4_wt_fraction: float = None,
     ) -> dict:
         self.validate_inputs(
             {"component_counts": component_counts, "operating_hours": operating_hours},
@@ -281,79 +297,74 @@ class OnshoreComponentFugitiveCalculator(BaseCalculator):
         )
         if operating_hours < 0 or operating_hours > 8784:
             raise ValueError(f"Operating hours ({operating_hours}) must be between 0 and 8,784 hours/year")
+        from emission_factors_chapter7_onshore import COMPONENT_FACTORS_T7_12
+        from .units import per_source_hour_kg
 
         uncertainties = uncertainties or {}
+        sv = str(service_type or "gas").strip().lower().replace("/", "_").replace(" ", "_")
+        service_key = ("light_oil" if "light" in sv else "heavy_oil" if "heavy" in sv
+                       else "water_oil" if "water" in sv else "gas")
+        service_norm = {"gas": "Gas", "light_oil": "Light Oil", "heavy_oil": "Heavy Oil", "water_oil": "Water/Oil"}[service_key]
 
-        # Resolve gas/liquid stream composition
-        service_clean = str(service_type or "Gas").strip().title()
-        if "Light" in service_clean:
-            service_norm = "Light Oil"
-        elif "Heavy" in service_clean:
-            service_norm = "Heavy Oil"
-        elif "Water" in service_clean:
-            service_norm = "Water/Oil"
-        else:
-            service_norm = "Gas"
+        def _frac(v):
+            if v in (None, ""):
+                return None
+            x = float(v)
+            x = x / 100.0 if x > 1.0 else x
+            if not 0.0 <= x <= 1.0:
+                raise ValueError("Gas content must be between 0 and 100 %")
+            return x
 
-        defaults = DEFAULT_SERVICE_COMPOSITIONS.get(service_norm, DEFAULT_SERVICE_COMPOSITIONS["Gas"])
-        c_ch4 = float(ch4_content if ch4_content is not None else defaults["ch4_wt_in_toc"])
-        if c_ch4 > 1.0:
-            c_ch4 /= 100.0
-        c_ch4 = max(0.0, min(1.0, c_ch4))
-
-        c_co2 = float(co2_content if co2_content is not None else defaults.get("co2_mol", 0.01))
-        if c_co2 > 1.0:
-            c_co2 /= 100.0
-        c_co2 = max(0.0, min(1.0, c_co2))
+        y_ch4, y_co2, w_ch4 = _frac(ch4_content), _frac(co2_content), _frac(ch4_wt_fraction)
+        aliases = {"valves": "valve", "connectors": "connector", "flanges": "flange", "oel": "open_ended_line",
+                   "open-ended_line": "open_ended_line", "pump": "pump_seal", "pump_seals": "pump_seal",
+                   "others": "other", "prv": "other"}
 
         total_ch4_kg_hr = 0.0
         total_co2_kg_hr = 0.0
         component_breakdown = []
-
+        tables = set()
         for comp_name, data in component_counts.items():
             if isinstance(data, dict):
                 count = float(data.get("count", 0))
-                ef = float(data.get("ef", 0))
+                ef = float(data.get("ef", 0) or 0)
                 ef_unit = str(data.get("unit") or data.get("ef_unit") or "kg TOC/hr/component")
-                from .units import per_source_hour_kg
-
-                ef_kg_hr_parsed, is_direct_ch4 = per_source_hour_kg(ef, ef_unit)  # BUG-048
-                is_tonne = False
             else:
-                count = float(data or 0)
-                ef = 0.0
-                ef_unit = "kg/hr"
-                is_direct_ch4 = False
-                is_tonne = False
-
+                count, ef, ef_unit = float(data or 0), 0.0, None
             if count < 0:
                 raise ValueError(f"Component count for '{comp_name}' cannot be negative ({count})")
-            if count > 0 and not (float(ef or 0) > 0):
-                # never a silent zero (BUG-015 class)
-                raise ValueError(f"No component-level emission factor for '{comp_name}'; give its factor and "
-                                 "unit (catalog component factor or a custom factor)")
 
-            # EF in kg TOC or kg CH4 per component-hour
-            ef_kg_hr = ef_kg_hr_parsed if isinstance(data, dict) else ef
-
-            if is_direct_ch4:
-                comp_ch4_kg_hr = count * ef_kg_hr
-                comp_co2_kg_hr = 0.0
+            if ef > 0:
+                ef_kg_hr, is_ch4 = per_source_hour_kg(ef, ef_unit)  # BUG-048
+                if is_ch4:
+                    ch4_kg_hr = count * ef_kg_hr
+                else:
+                    w = w_ch4 if w_ch4 is not None else METHOD21_CH4_WT_DEFAULT.get(service_key)
+                    if w is None:
+                        raise ValueError(f"Give the CH4 weight fraction of TOC for '{service_norm}' service")
+                    ch4_kg_hr = count * ef_kg_hr * w
+                co2_kg_hr = 0.0
+                source = "given factor"
             else:
-                # TOC factor -> scale by CH4 weight fraction in TOC
-                comp_ch4_kg_hr = count * ef_kg_hr * c_ch4
-                comp_co2_kg_hr = count * ef_kg_hr * c_co2
+                comp = str(comp_name or "").strip().lower().replace(" ", "_")
+                comp = aliases.get(comp, comp)
+                row = COMPONENT_FACTORS_T7_12.get(f"{comp}_{service_key}")
+                if row is None:
+                    if count > 0:
+                        # never a silent zero (BUG-015 class)
+                        raise ValueError(f"Table 7-12 has no factor for '{comp_name}' in {service_norm} service")
+                    continue
+                scale = (y_ch4 / row["ch4_basis"]) if y_ch4 is not None else 1.0
+                ch4_kg_hr = count * row["ch4_t_hr"] * 1000.0 * scale
+                co2_kg_hr = count * row["scf_hr"] * CONVERSIONS["scf_to_m3"] * (y_co2 or 0.0) * DENSITY_CO2
+                ef, ef_unit, source = row["ch4_t_hr"], "tonne CH4/hr/component", row["table"]
+                tables.add(row["table"])
 
-            total_ch4_kg_hr += comp_ch4_kg_hr
-            total_co2_kg_hr += comp_co2_kg_hr
-
-            component_breakdown.append({
-                "component": comp_name,
-                "count": count,
-                "ef": ef,
-                "unit": ef_unit,
-                "ch4_kg_hr": comp_ch4_kg_hr,
-            })
+            total_ch4_kg_hr += ch4_kg_hr
+            total_co2_kg_hr += co2_kg_hr
+            component_breakdown.append({"component": comp_name, "count": count, "ef": ef, "unit": ef_unit,
+                                        "source": source, "ch4_kg_hr": ch4_kg_hr})
+        c_ch4, c_co2 = y_ch4, y_co2
 
         total_ch4_tonnes = (total_ch4_kg_hr * float(operating_hours)) / 1000.0
         total_co2_tonnes = (total_co2_kg_hr * float(operating_hours)) / 1000.0
@@ -376,7 +387,8 @@ class OnshoreComponentFugitiveCalculator(BaseCalculator):
         total_co2e = calculate_co2e(co2=total_co2_tonnes, ch4=total_ch4_tonnes, gwp_dict=gwp_dict)
 
         audit_trace = {
-            "api_section": "Section 7.2.2 / Table 7-11 & Section 7.2.3 / Table 7-30",
+            "api_section": "Section 7.2.2",
+            "api_table": ", ".join(sorted(tables)) or "given factor",
             "methodology": "Tier 2B: Component-Level Average Factor",
             "service_classification": service_norm,
             "speciation_used": {

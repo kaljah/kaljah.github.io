@@ -165,4 +165,7 @@ def test_bug053_cap_compliance_uses_verified_only(client, ctx):
     rows = client.get(f"/api/cap/compliance?year=2031&facility_id={fac.id}").get_json()
     no2 = [p for r in rows for p in r["pollutants"] if p["pollutant"] == "NO2"]
     assert no2, rows
-    assert all(p["total_tonnes"] == 0 and p["measured_concentration_mg_nm3"] == 0 and p["is_compliant"] for p in no2)
+    # the Pending exceedance is not counted; with no verified measurement the pollutant is "not
+    # measured" (is_compliant None), never stated as compliant or non-compliant
+    assert all(p["total_tonnes"] == 0 and p["measured_concentration_mg_nm3"] == 0 and p["is_compliant"] is None
+               and p["status"] == "NOT MEASURED" for p in no2)

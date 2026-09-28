@@ -1513,6 +1513,28 @@ METHOD21_SCREENING_RANGES = {
     "open_ended_line_gas": _m21(1.5e-05, 5.5e-02), "open_ended_line_light_oil": _m21(1.4e-05, 4.4e-02),
     "open_ended_line_heavy_oil": _m21(7.2e-06, 3.0e-02), "open_ended_line_water_oil": _m21(3.5e-06, 3.0e-02),
 }
+# Table 7-12: EPA average oil and gas production component leak factors (EPA-453/R-95-017
+# Table 2-4): kg gas/component-hr, the converted tonne CH4/component-hr at the 81.6 mol % CH4 basis,
+# and the whole-gas scf/component-hr. No pump-seal / heavy-oil row.
+def _t712(kg_gas, t_ch4, scf):
+    return {"kg_gas_hr": kg_gas, "ch4_t_hr": t_ch4, "scf_hr": scf, "ch4_basis": 0.816, "table": "Table 7-12"}
+
+
+COMPONENT_FACTORS_T7_12 = {
+    "valve_gas": _t712(4.5e-03, 2.94e-06, 1.88e-01), "valve_heavy_oil": _t712(8.4e-06, 5.48e-09, 3.51e-04),
+    "valve_light_oil": _t712(2.5e-03, 1.63e-06, 1.05e-01), "valve_water_oil": _t712(9.8e-05, 6.39e-08, 4.10e-03),
+    "connector_gas": _t712(2.0e-04, 1.30e-07, 8.36e-03), "connector_heavy_oil": _t712(7.5e-06, 4.89e-09, 3.14e-04),
+    "connector_light_oil": _t712(2.1e-04, 1.37e-07, 8.78e-03), "connector_water_oil": _t712(1.1e-04, 7.18e-08, 4.60e-03),
+    "flange_gas": _t712(3.9e-04, 2.54e-07, 1.63e-02), "flange_heavy_oil": _t712(3.9e-07, 2.54e-10, 1.63e-05),
+    "flange_light_oil": _t712(1.1e-04, 7.18e-08, 4.60e-03), "flange_water_oil": _t712(2.9e-06, 1.89e-09, 1.21e-04),
+    "open_ended_line_gas": _t712(2.0e-03, 1.30e-06, 8.36e-02), "open_ended_line_heavy_oil": _t712(1.4e-04, 9.13e-08, 5.85e-03),
+    "open_ended_line_light_oil": _t712(1.4e-03, 9.13e-07, 5.85e-02), "open_ended_line_water_oil": _t712(2.5e-04, 1.63e-07, 1.05e-02),
+    "pump_seal_gas": _t712(2.4e-03, 1.57e-06, 1.00e-01), "pump_seal_light_oil": _t712(1.3e-02, 8.48e-06, 5.44e-01),
+    "pump_seal_water_oil": _t712(2.4e-05, 1.57e-08, 1.00e-03),
+    "other_gas": _t712(8.8e-03, 5.74e-06, 3.68e-01), "other_heavy_oil": _t712(3.2e-05, 2.09e-08, 1.34e-03),
+    "other_light_oil": _t712(7.5e-03, 4.89e-06, 3.14e-01), "other_water_oil": _t712(1.4e-02, 9.13e-06, 5.85e-01),
+}
+
 # Table C-1 "generic" CH4 weight fraction of THC for component emissions, by service
 METHOD21_CH4_WT_DEFAULT = {"gas": 0.920, "light_oil": 0.613, "heavy_oil": 0.942}
 

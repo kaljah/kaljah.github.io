@@ -209,3 +209,51 @@ def test_19_entered_factor_record_has_uncertainty(app, client, api):
     with app.app_context():
         rec = Emission.query.get(rid)
         assert rec.uncertainty is not None and rec.uncertainty_ch4 is not None
+
+
+# ---- follow-up fixes (audit/TIER3_BROWSER_TEST.md, "Remaining issues") ----
+def test_exhibit_4_4a_n2_is_read_not_renormalised(app):
+    # N2 1.6 % under the form key n2_content: the analysis is complete, nothing is renormalised
+    # (dropping N2 inflated the hydrocarbons by 1/0.984). Expected: Eq 4-11, 1.014 mol C / mol gas.
+    em = run(app, "combustion", top={"amount": 8e8, "unit": "scf", "hhv": 1020, "combustion_efficiency": 1},
+             hhv=1020, combustion_efficiency=100, c1=95.3, c2=1.7, c3=0.5, c4=0.1, co2_content=0.8, n2_content=1.6)
+    assert em["co2"] == pytest.approx(800e6 / 379.3 * 1.014 * 44.01 / LB, rel=5e-3)
+
+
+def test_tier3_zero_result_is_saved_as_zero(app):
+    em = run(app, "fugitive", fugitive_tier="tier3", fugitive_method="ogi", ogi_component="valve",
+             ogi_service="gas", leakers_count=2, operating_hours=0)
+    assert em["ch4"] == 0 and em["totalCo2e"] == 0
+
+
+def test_equipment_factor_not_ch4_needs_weight_fraction(app):
+    from calculations.fugitive_onshore import OnshoreEquipmentFugitiveCalculator
+    calc = OnshoreEquipmentFugitiveCalculator()
+    with pytest.raises(ValueError, match="CH4 weight fraction"):
+        calc.calculate(equipment_count=10, equipment_type="x", factor_value=0.0045, factor_unit="kg/hr")
+    res = calc.calculate(equipment_count=10, equipment_type="x", factor_value=0.0045, factor_unit="kg/hr",
+                         ch4_wt_fraction=0.8)
+    assert res["results"]["ch4"]["value"] == pytest.approx(10 * 0.0045 * 0.8 * 8760 / 1000)
+
+
+def test_tier2b_component_count_uses_table_7_12(app):
+    em = run(app, "fugitive", source="custom", top={"amount": 100, "unit": "components"}, fugitive_tier="tier2",
+             fugitive_method="component", component_type="valve", service_type="gas", amount=100,
+             operating_hours=8760, ch4_mole_pct=70)
+    assert em["ch4"] == pytest.approx(100 * 2.94e-6 * 8760 * 70 / 81.6, rel=1e-6)
+    fails(app, "component type", "fugitive", source="custom", top={"amount": 100, "unit": "components"},
+          fugitive_tier="tier2", fugitive_method="component", amount=100)
+
+
+def test_cap_compliance_not_measured_is_not_compliant(app, client, api):
+    from models import CapEmission
+    from extensions import db
+
+    with app.app_context():
+        db.session.add(CapEmission(facility_id=api.id, year=2032, source_module="Flare", pollutant="NO2",
+                                   mass_tonnes=5.0, status="Verified"))
+        db.session.commit()
+    rows = client.get(f"/api/cap/compliance?year=2032&facility_id={api.id}").get_json()
+    no2 = [p for r in rows for p in r["pollutants"] if p["pollutant"] == "NO2"][0]
+    assert no2["status"] == "NOT MEASURED" and no2["is_compliant"] is None and no2["total_tonnes"] == 5.0
+    assert rows[0]["overall_status"] == "NOT ASSESSED"

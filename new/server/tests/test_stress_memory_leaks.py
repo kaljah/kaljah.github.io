@@ -87,7 +87,13 @@ class TestMemoryLeakAndSustainedLoops:
         net_leak_bytes = max(0, current_mem - mem_at_warmup)
         net_leak_mb = net_leak_bytes / (1024 * 1024)
         peak_mb = peak_mem / (1024 * 1024)
-        calcs_per_sec = num_iterations / total_elapsed
+        # Throughput is measured without tracemalloc: tracing every allocation slows the loop several
+        # times over, so the SLA used to measure the profiler rather than the calculation engine
+        t_fast = time.perf_counter()
+        for i in range(3000):
+            compute_emissions({"process_type": "combustion", "fuel": "Natural Gas",
+                               "quantity": 1500.0 + (i % 100), "unit": "m3"}, factor_data=factor_ng)
+        calcs_per_sec = 3000 / (time.perf_counter() - t_fast)
 
         print(f"\n[CALCULATION LOOP MEMORY PROFILE]")
         print(f"   Iterations: {num_iterations:,}")

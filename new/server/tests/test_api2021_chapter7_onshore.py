@@ -129,71 +129,36 @@ def test_tier2a_crude_oil_production_wellheads():
 # 3. TIER 2B: COMPONENT-LEVEL POPULATION TESTS (TABLES 7-11, 7-30)
 # ============================================================================
 
-@pytest.mark.xfail(strict=False, reason="RC-17 open: expectation cites Compendium table numbers that do not match the 2021 edition (e.g. Tables 7-15/7-16 are Canadian factors) and was failing at baseline; to be re-derived from the Compendium text")
 def test_tier2b_gas_service_valves_speciation():
     """
-    API 2021 Table 7-11: Gas Service Valve
-    Factor: 0.0270 kg TOC/hr/component.
-    Default Gas Composition: 78.8% CH4 wt in TOC, 1.4% CO2.
-    100 valves operating 8,760 hours.
-    Expected:
-      Total TOC: 100 * 0.0270 * 8760 = 23,652 kg TOC = 23.652 tonnes TOC
-      CH4: 23.652 * 0.788 = 18.637776 tonnes CH4
-      CO2: 23.652 * 0.014 = 0.331128 tonnes CO2
+    API Compendium 2021 Table 7-12 (EPA protocol), valves - gas: 4.5E-03 kg gas/comp-hr = 2.94E-06 t
+    CH4/comp-hr at 81.6 mol % CH4; whole gas 1.88E-01 scf/comp-hr. 100 valves, 8,760 h, site gas
+    70 mol % CH4 / 5 mol % CO2:
+      CH4 = 100 x 2.94E-06 x 8,760 x 70 / 81.6 = 2.2093 t
+      CO2 = 100 x 0.188 x 8,760 scf x 0.05 / 379.3 x 44.01 / 2,204.62 = 0.4334 t
     """
     calc = OnshoreComponentFugitiveCalculator()
-    res = calc.calculate(
-        component_counts={"valve": 100.0},
-        service_type="Gas",
-        operating_hours=8760.0,
-    )
-    ch4_tonnes = get_val(res["results"]["ch4"])
-    co2_tonnes = float(res["results"]["co2"])
-    assert pytest.approx(ch4_tonnes, rel=1e-3) == 18.637776
-    assert pytest.approx(co2_tonnes, rel=1e-3) == 0.331128
-    assert res["intermediate"]["api_table"] == "Table 7-11"
+    res = calc.calculate(component_counts={"valve": 100.0}, service_type="Gas", operating_hours=8760.0,
+                         ch4_content=70, co2_content=5)
+    assert get_val(res["results"]["ch4"]) == pytest.approx(100 * 2.94e-6 * 8760 * 70 / 81.6, rel=1e-6)
+    assert get_val(res["results"]["co2"]) == pytest.approx(100 * 0.188 * 8760 * 0.05 / 379.3 * 44.01 / 2204.62, rel=5e-3)
+    assert res["intermediate"]["api_table"] == "Table 7-12"
 
 
-@pytest.mark.xfail(strict=False, reason="RC-17 open: expectation cites Compendium table numbers that do not match the 2021 edition (e.g. Tables 7-15/7-16 are Canadian factors) and was failing at baseline; to be re-derived from the Compendium text")
 def test_tier2b_light_oil_connectors():
-    """
-    API 2021 Table 7-11: Light Oil Service Connector
-    Factor: 0.00021 kg TOC/hr/component.
-    Stream: Light Oil (65.6% CH4 wt in TOC).
-    500 connectors operating 8,760 hours.
-    Expected:
-      Total TOC: 500 * 0.00021 * 8760 = 919.8 kg TOC = 0.9198 tonnes TOC
-      CH4: 0.9198 * 0.656 = 0.6033888 tonnes CH4
-    """
+    """Table 7-12 connectors - light oil: 1.37E-07 t CH4/comp-hr (81.6 % basis).
+    500 connectors, 8,760 h, no site composition: 500 x 1.37E-07 x 8,760 = 0.60006 t CH4."""
     calc = OnshoreComponentFugitiveCalculator()
-    res = calc.calculate(
-        component_counts={"connector": 500.0},
-        service_type="Light Oil",
-        operating_hours=8760.0,
-    )
-    ch4_tonnes = get_val(res["results"]["ch4"])
-    assert pytest.approx(ch4_tonnes, rel=1e-3) == 0.6033888
+    res = calc.calculate(component_counts={"connector": 500.0}, service_type="Light Oil", operating_hours=8760.0)
+    assert get_val(res["results"]["ch4"]) == pytest.approx(500 * 1.37e-7 * 8760, rel=1e-6)
 
 
-@pytest.mark.xfail(strict=False, reason="RC-17 open: expectation cites Compendium table numbers that do not match the 2021 edition (e.g. Tables 7-15/7-16 are Canadian factors) and was failing at baseline; to be re-derived from the Compendium text")
 def test_tier2b_heavy_oil_valves():
-    """
-    API 2021 Table 7-11: Heavy Oil Service Valve
-    Factor: 0.0000084 kg TOC/hr/component.
-    Stream: Heavy Oil (18.0% CH4 wt in TOC).
-    200 valves operating 8,760 hours.
-    Expected:
-      Total TOC: 200 * 0.0000084 * 8760 = 14.7168 kg TOC = 0.0147168 tonnes TOC
-      CH4: 0.0147168 * 0.18 = 0.002649 tonnes CH4
-    """
+    """Table 7-12 valves - heavy oil: 5.48E-09 t CH4/comp-hr. 200 valves, 8,760 h:
+    200 x 5.48E-09 x 8,760 = 0.0096010 t CH4."""
     calc = OnshoreComponentFugitiveCalculator()
-    res = calc.calculate(
-        component_counts={"valve": 200.0},
-        service_type="Heavy Oil",
-        operating_hours=8760.0,
-    )
-    ch4_tonnes = get_val(res["results"]["ch4"])
-    assert pytest.approx(ch4_tonnes, rel=1e-3) == 0.002649
+    res = calc.calculate(component_counts={"valve": 200.0}, service_type="Heavy Oil", operating_hours=8760.0)
+    assert get_val(res["results"]["ch4"]) == pytest.approx(200 * 5.48e-9 * 8760, rel=1e-6)
 
 
 # ============================================================================
@@ -316,11 +281,12 @@ def test_engine_dispatcher_tier1_routing():
     assert res["intermediate"]["api_table"] == "Table 7-8"
 
 
-@pytest.mark.xfail(strict=False, reason="RC-17 open: expectation cites Compendium table numbers that do not match the 2021 edition (e.g. Tables 7-15/7-16 are Canadian factors) and was failing at baseline; to be re-derived from the Compendium text")
 def test_engine_dispatcher_tier2_component_routing():
-    """Verify CalculationDispatcher routes Tier 2 component count and applies normalized hours."""
+    """The dispatcher routes a Tier 2 component count without a selected factor to Table 7-12
+    (100 gas valves, 8,760 h: 100 x 2.94E-06 x 8,760 = 2.5754 t CH4)."""
     dispatcher = CalculationDispatcher()
     inputs = {
+        "factor_source": "custom",
         "fugitive_tier": "tier2",
         "fugitive_method": "component",
         "component_type": "valve",
@@ -329,9 +295,8 @@ def test_engine_dispatcher_tier2_component_routing():
         "operating_hours": 8760.0,
     }
     res = dispatcher.dispatch("fugitive", inputs, {})
-    ch4_tonnes = get_val(res["results"]["ch4"])
-    assert pytest.approx(ch4_tonnes, rel=1e-3) == 18.637776
-    assert res["intermediate"]["api_table"] == "Table 7-11"
+    assert get_val(res["results"]["ch4"]) == pytest.approx(100 * 2.94e-6 * 8760, rel=1e-6)
+    assert res["intermediate"]["api_table"] == "Table 7-12"
 
 
 def test_engine_dispatcher_tier3_ogi_routing():
