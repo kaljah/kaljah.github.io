@@ -143,3 +143,41 @@ The nitric and adipic acid values were correct, but cited "pg 407"; they now cit
   - 100 t of carbon black: 263 t CO2 and 2.87 t CH4.
   - 100,000 kWh on the US average grid: 40.33 t.
   - The Scope 3 crude factor shows 433.44.
+
+## Follow-up: EPA and IPCC sources (2026-09-29)
+
+**EPA GHG Emission Factors Hub 2025** (`ghg-emission-factors-hub-2025.xlsx`), CO2e at AR5 in the form's units:
+
+| Row | Was | Now |
+|---|---|---|
+| Truck | 0.062 | 0.1284 kg/t-km (Table 8, short ton-mile, x 1/1.45997) |
+| Rail | 0.022 | 0.0145 |
+| Ship | 0.011 | 0.0537 |
+| Air freight | — | 0.750 (added) |
+| Pipeline transport | 0.005 | Removed: no EPA or Compendium factor |
+| Air, short / medium / long haul | "Air domestic / international" 0.255 / 0.195 | 0.1298 / 0.0808 / 0.1022 kg per passenger-km (Table 10) |
+| Passenger car | 0.192 / km | 0.1855 per vehicle-km |
+| Light-duty truck | — | 0.2465 |
+| Intercity rail | 0.041 | 0.0601 |
+| Bus | — | 0.0414 |
+| Commuter rail / transit rail | "Public transit" 0.05 | 0.0833 / 0.0581 |
+| "Car - Diesel", "Teleworking" | 0.171 / 1.5 | Removed: no EPA factor |
+| Landfill | 0.57 kg/kg | 0.639 (Table 9 WARM, mixed MSW) |
+| Incineration | 0.021 | 0.474 (mixed MSW) |
+| Recycling | 0.012 | 0.099 (mixed recyclables) |
+| Composting | 0.008 | 0.143 (mixed organics) |
+| Leased vehicles | 0.2 | 0.1855 (Table 10 passenger car) |
+
+**Purchased steam** (EPA Table 7: 66.33 kg CO2, 1.25 g CH4, 0.125 g N2O per MMBtu of steam at 80 % natural gas):
+- The app's CO2 already matched (53.06 / 0.8).
+- CH4 and N2O were missing. They are now added in both the Scope 2 route (natural-gas boiler) and the Scope 1 indirect-steam calculator (the selected fuel's Table 4-6 CH4 / N2O), with the active GWP.
+
+**Not covered by EPA or IPCC:**
+- **Algeria grid:** the IPCC publishes no grid factors, and the EPA Hub covers US grids only. The standard location-based source is the IEA Emissions Factors database, which is licensed. The only free copy found is ADEME Base Carbone's withdrawn IEA-2017 value of 0.548 kg CO2e/kWh. The UNFCCC harmonized IFI dataset gives combined-margin factors for projects, which are not suitable for location-based Scope 2. So 0.522 remains flagged as unverified; a Sonelgaz or IEA value is needed.
+- **Categories 1, 2 and 15** (steel, cement, chemicals, spend-based, investments): the EPA source is the per-dollar USEEIO Supply Chain Factors dataset, which isn't in the Hub. Categories 3, 8 (office space), 10 (electricity), 13 and 14 have no EPA factor. These remain unverified and are listed in `client/src/utils/scope3Factors.js`.
+- **IPCC 2006/2019 default combustion factors:** cover the same fuels as Compendium Tables 4-5 / 4-6, which are already used.
+
+**Tests:**
+- `client/src/__tests__/scope3Factors.test.js`: the Scope 3 factors, re-derived from the EPA and Compendium table numbers.
+- The steam tests and the reference model were re-derived with Table 4-6 CH4 / N2O.
+- Results: client 28/28, backend 1,742 passed, validation 128.
