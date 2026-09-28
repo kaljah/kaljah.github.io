@@ -12,6 +12,7 @@ import {
 import CustomDropdown from "../components/CustomDropdown";
 import {
   formatCompactNumber,
+  formatNumber,
   calculateTrend,
 } from "../utils/formatters";
 import { useLayout } from "../context/LayoutContext";
@@ -28,6 +29,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import "./Dashboard.css";
+import "./TopBarFilters.css";
 import { useGwpStandard } from "../hooks/useGwpStandard";
 
 // Simple Linear Regression for Forecasting
@@ -1163,7 +1165,7 @@ const DashboardEnhanced = () => {
               <div className="flaring-stream-item total-stream">
                 <div className="stream-label">Total Flared Volume</div>
                 <div className="stream-value">
-                  {formatCompactNumber(flaringData.total_flaring?.volume_knm3 ?? 0)}
+                  {formatNumber(flaringData.total_flaring?.volume_knm3 ?? 0, 0)}
                   <span className="stream-unit">kNm³</span>
                 </div>
                 <div className="stream-sublabel">
@@ -1174,7 +1176,7 @@ const DashboardEnhanced = () => {
               <div className="flaring-stream-item routine-stream">
                 <div className="stream-label">Routine Flaring</div>
                 <div className="stream-value">
-                  {formatCompactNumber(flaringData.routine_flaring?.volume_knm3 ?? 0)}
+                  {formatNumber(flaringData.routine_flaring?.volume_knm3 ?? 0, 0)}
                   <span className="stream-unit">kNm³</span>
                 </div>
                 <div className="stream-sublabel">
@@ -1185,7 +1187,7 @@ const DashboardEnhanced = () => {
               <div className="flaring-stream-item non-routine-stream">
                 <div className="stream-label">Non-Routine Flaring</div>
                 <div className="stream-value">
-                  {formatCompactNumber(flaringData.non_routine_flaring?.volume_knm3 ?? 0)}
+                  {formatNumber(flaringData.non_routine_flaring?.volume_knm3 ?? 0, 0)}
                   <span className="stream-unit">kNm³</span>
                 </div>
                 <div className="stream-sublabel">
@@ -1196,7 +1198,7 @@ const DashboardEnhanced = () => {
               <div className="flaring-stream-item safety-stream">
                 <div className="stream-label">Safety &amp; Purge Flaring</div>
                 <div className="stream-value">
-                  {formatCompactNumber(flaringData.safety_flaring?.volume_knm3 ?? 0)}
+                  {formatNumber(flaringData.safety_flaring?.volume_knm3 ?? 0, 0)}
                   <span className="stream-unit">kNm³</span>
                 </div>
                 <div className="stream-sublabel">
@@ -1208,7 +1210,7 @@ const DashboardEnhanced = () => {
                 <div className="flaring-stream-item">
                   <div className="stream-label">Unclassified Flaring</div>
                   <div className="stream-value">
-                    {formatCompactNumber(flaringData.unclassified_flaring.volume_knm3)}
+                    {formatNumber(flaringData.unclassified_flaring.volume_knm3, 0)}
                     <span className="stream-unit">kNm³</span>
                   </div>
                   <div className="stream-sublabel">

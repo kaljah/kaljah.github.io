@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import CustomDropdown from "../CustomDropdown";
 
 const ADIPIC_ACID_OPTIONS = [
@@ -8,6 +8,13 @@ const ADIPIC_ACID_OPTIONS = [
 ];
 
 const AdipicAcidForm = ({ data, onChange }) => {
+  // the product and unit shown by default must also be in the submitted data (browser test #8:
+  // "Please select a unit" while the unit box showed a tonne)
+  useEffect(() => {
+    if (!data.fuel) onChange("fuel", "Adipic Acid - Thermal Abatement");
+    if (!data.unit) onChange("unit", "tonne");
+  }, [data.fuel, data.unit, onChange]);
+
   return (
     <div className="adipic-acid-form">
 

@@ -80,9 +80,14 @@ export function sectionChoices(processType, sourceType) {
       return t === "default" ? [ACTIVITY] : t === "specific" ? [LEGACY("Throughput & CO₂"), VENT.agr_balance] : null;
     case "dehydrator":
       return t === "default" ? [ACTIVITY] : t === "specific" ? [{ ...VENT.volume, label: "Measured vent volume" }, VENT.reported_mass] : null;
+    // Tier 1 pneumatics, loading and separators use the Compendium tables only (Tables 6-14 to 6-16,
+    // 6-29, 6-34, 6-42, 6-47, 6-25 to 6-27); the old catalog rows were mislabelled or had no source
     case "pneumatic":
     case "loading":
-      return t === "default" ? [LEGACY("Catalog factor"), ACTIVITY] : null;
+    case "separation":
+      return t === "default" ? [ACTIVITY] : null;
+    case "venting":
+      return t === "default" ? [LEGACY("Gas volume factor"), ACTIVITY] : null;
     case "tank":
     case "tank_flashing":
       return t === "specific" ? [LEGACY("Flashing"), VENT.actual] : null;

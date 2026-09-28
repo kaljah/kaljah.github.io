@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import CustomDropdown from "../CustomDropdown";
 
 const NITRIC_ACID_OPTIONS = [
@@ -7,6 +7,13 @@ const NITRIC_ACID_OPTIONS = [
 ];
 
 const NitricAcidForm = ({ data, onChange }) => {
+  // the product and unit shown by default must also be in the submitted data (browser test #8:
+  // "Please select a unit" while the unit box showed a tonne)
+  useEffect(() => {
+    if (!data.fuel) onChange("fuel", "Nitric Acid - With NSCR");
+    if (!data.unit) onChange("unit", "tonne");
+  }, [data.fuel, data.unit, onChange]);
+
   return (
     <div className="nitric-acid-form">
 

@@ -1,5 +1,41 @@
-import React from "react";
+import React, { useEffect } from "react";
 import CustomDropdown from "../CustomDropdown";
+import { API_FACTORS } from "../../utils/EmissionFactors";
+
+const ALL_UNITS = [
+  { value: "m3", label: "m³" },
+  { value: "scf", label: "scf" },
+  { value: "Mcf", label: "Mcf" },
+  { value: "MMscf", label: "MMscf" },
+  { value: "gal", label: "gal" },
+  { value: "bbl", label: "bbl" },
+  { value: "L", label: "L" },
+  { value: "kg", label: "kg" },
+  { value: "ton", label: "ton (short)" },
+  { value: "tonne", label: "tonne (metric)" },
+  { value: "events", label: "events" },
+];
+const UNIT_FAMILIES = {
+  gas: ["m3", "scf", "Mcf", "MMscf"],
+  liquid: ["m3", "gal", "bbl", "L"],
+  solid: ["kg", "ton", "tonne"],
+  event: ["events"],
+};
+
+// Units that can be applied to the selected catalog factor without a density (browser test F6:
+// coal was offered m³, gases were offered kg and events)
+function unitFamily(factor) {
+  if (!factor) return null;
+  const base = String(factor.baseUnit || "").toLowerCase();
+  const type = String(factor.type || "").toLowerCase();
+  const unit = String(factor.unit || "").toLowerCase();
+  if (["ton", "short_ton", "tonne", "kg", "lb"].includes(base) || type === "solids") return "solid";
+  if (["gal", "bbl", "l"].includes(base) || type === "liquids") return "liquid";
+  if (["scf", "m3", "mcf"].includes(base) || type === "gases" || /\/(m³|m3|scf|mcf)/.test(unit)) return "gas";
+  if (unit.includes("event")) return "event";
+  if (unit.includes("bbl")) return "liquid";
+  return null;
+}
 
 // Process types that require HHV input per API Compendium 2021 Section 5
 const HHV_REQUIRED_PROCESSES = [
@@ -17,6 +53,12 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
     data.process_type,
   );
   const needsHHV = HHV_REQUIRED_PROCESSES.includes(data.process_type);
+  const family = sourceType === "library" ? null : unitFamily(API_FACTORS[data.fuel]);
+  const unitOptions = family ? ALL_UNITS.filter((u) => UNIT_FAMILIES[family].includes(u.value)) : ALL_UNITS;
+  // a unit left over from another factor that cannot apply to this one is cleared
+  useEffect(() => {
+    if (family && data.unit && !UNIT_FAMILIES[family].includes(data.unit)) onChange("unit", undefined);
+  }, [family, data.unit, onChange]);
 
   return (
     <div className="combustion-form">
@@ -43,19 +85,7 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
         <div className="input-group">
           <label>Unit</label>
           <CustomDropdown
-            options={[
-              { value: "m3", label: "m³" },
-              { value: "scf", label: "scf" },
-              { value: "Mcf", label: "Mcf" },
-              { value: "MMscf", label: "MMscf" },
-              { value: "gal", label: "gal" },
-              { value: "bbl", label: "bbl" },
-              { value: "L", label: "L" },
-              { value: "kg", label: "kg" },
-              { value: "ton", label: "ton (short)" },
-              { value: "tonne", label: "tonne (metric)" },
-              { value: "events", label: "events" },
-            ]}
+            options={unitOptions}
             value={data.unit}
             onChange={(val) => onChange("unit", val)}
           />
