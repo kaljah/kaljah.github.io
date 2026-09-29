@@ -4,7 +4,7 @@ import CustomDropdown from "./CustomDropdown";
 import { useToast } from "./Toast";
 import { useAuth } from "../context/AuthContext";
 import { getUserOperationalDefaults } from "../utils/userDefaults";
-import { formatNumber } from "../utils/formatters";
+import { formatNumber, formatEmission } from "../utils/formatters";
 import "./ScopeTables.css";
 import "./Scope1Form.css";
 
@@ -2966,7 +2966,7 @@ const Scope1Form = () => {
           <table className="excel-table">
             <thead>
               <tr>
-                <th>Year</th>
+                <th>Period</th>
                 <th>Activity</th>
                 <th>Region</th>
                 <th>Division</th>
@@ -3063,7 +3063,7 @@ const Scope1Form = () => {
                   const factorType = factorTypeLabel(entry);
                   return (
                     <tr key={entry.id}>
-                      <td>{entry.year}</td>
+                      <td>{entry.month ? `${entry.year}-${String(entry.month).padStart(2, "0")}` : entry.year}</td>
                       <td>{entry.activity || "-"}</td>
                       <td>{entry.facility_name || entry.region || "-"}</td>
                       <td>{entry.division || "-"}</td>
@@ -3074,7 +3074,10 @@ const Scope1Form = () => {
                         {(() => {
                           const k = entry.process || entry.process_type;
                           const v = PROCESS_TYPES[k];
-                          return (typeof v === "string" ? v : v?.label) || k;
+                          // keys the form does not list (e.g. stoichiometry) get a readable label
+                          const other = { stoichiometry: "Carbon Mass Balance (Stoichiometry)" };
+                          return (typeof v === "string" ? v : v?.label) || other[k] ||
+                            String(k || "").replace(/_/g, " ").replace(/^\w/, (c) => c.toUpperCase());
                         })()}
                       </td>
                       <td>
@@ -3093,20 +3096,20 @@ const Scope1Form = () => {
                         {factorType}
                       </td>
                       <td>
-                        {entry.amount || entry.quantity
-                          ? `${formatNumber(entry.amount || entry.quantity, 2)} ${entry.unit}`
+                        {(entry.amount ?? entry.quantity) != null && (entry.amount ?? entry.quantity) !== ""
+                          ? `${formatNumber(entry.amount ?? entry.quantity, 2)} ${entry.unit || ""}`
                           : "-"}
                       </td>
-                      <td>{formatNumber(entry.co2_emissions || 0, 3)}</td>
-                      <td>{formatNumber(entry.ch4_emissions || 0, 5)}</td>
-                      <td>{formatNumber(entry.n2o_emissions || 0, 5)}</td>
+                      <td>{formatEmission(entry.co2_emissions || 0, 3)}</td>
+                      <td>{formatEmission(entry.ch4_emissions || 0, 5)}</td>
+                      <td>{formatEmission(entry.n2o_emissions || 0, 5)}</td>
                       <td
                         style={{
                           color: "var(--accent-color)",
                           fontWeight: 600,
                         }}
                       >
-                        {formatNumber(entry.co2e_total, 3)}
+                        {formatEmission(entry.co2e_total, 3)}
                         {/* BUG-092: every record shows its maker-checker status */}
                         {entry.status && (
                           <span
@@ -3133,13 +3136,13 @@ const Scope1Form = () => {
                           textAlign: "center",
                           fontSize: "0.82rem",
                           color:
-                            entry.uncertainty_co2 != null
+                            (entry.uncertainty_co2 != null && Number(entry.co2_emissions) > 0)
                               ? "#10b981"
                               : "var(--text-muted)",
                         }}
                         title="Standard Combined Uncertainty (1σ)"
                       >
-                        {entry.uncertainty_co2 != null
+                        {(entry.uncertainty_co2 != null && Number(entry.co2_emissions) > 0)
                           ? `±${(entry.uncertainty_co2 * 100).toFixed(0)}%`
                           : "—"}
                       </td>
@@ -3148,13 +3151,13 @@ const Scope1Form = () => {
                           textAlign: "center",
                           fontSize: "0.82rem",
                           color:
-                            entry.uncertainty_ch4 != null
+                            (entry.uncertainty_ch4 != null && Number(entry.ch4_emissions) > 0)
                               ? "#3b82f6"
                               : "var(--text-muted)",
                         }}
                         title="Standard Combined Uncertainty (1σ)"
                       >
-                        {entry.uncertainty_ch4 != null
+                        {(entry.uncertainty_ch4 != null && Number(entry.ch4_emissions) > 0)
                           ? `±${(entry.uncertainty_ch4 * 100).toFixed(0)}%`
                           : "—"}
                       </td>
@@ -3163,13 +3166,13 @@ const Scope1Form = () => {
                           textAlign: "center",
                           fontSize: "0.82rem",
                           color:
-                            entry.uncertainty_n2o != null
+                            (entry.uncertainty_n2o != null && Number(entry.n2o_emissions) > 0)
                               ? "#8b5cf6"
                               : "var(--text-muted)",
                         }}
                         title="Standard Combined Uncertainty (1σ)"
                       >
-                        {entry.uncertainty_n2o != null
+                        {(entry.uncertainty_n2o != null && Number(entry.n2o_emissions) > 0)
                           ? `±${(entry.uncertainty_n2o * 100).toFixed(0)}%`
                           : "—"}
                       </td>
@@ -3178,13 +3181,13 @@ const Scope1Form = () => {
                           textAlign: "center",
                           fontSize: "0.82rem",
                           color:
-                            entry.uncertainty_co2 != null
+                            (entry.uncertainty_co2 != null && Number(entry.co2_emissions) > 0)
                               ? "#10b981"
                               : "var(--text-muted)",
                         }}
                         title="Expanded Uncertainty (95% Confidence Interval, k=2)"
                       >
-                        {entry.uncertainty_co2 != null
+                        {(entry.uncertainty_co2 != null && Number(entry.co2_emissions) > 0)
                           ? `±${(entry.uncertainty_co2 * 200).toFixed(0)}%`
                           : "—"}
                       </td>
@@ -3193,13 +3196,13 @@ const Scope1Form = () => {
                           textAlign: "center",
                           fontSize: "0.82rem",
                           color:
-                            entry.uncertainty_ch4 != null
+                            (entry.uncertainty_ch4 != null && Number(entry.ch4_emissions) > 0)
                               ? "#3b82f6"
                               : "var(--text-muted)",
                         }}
                         title="Expanded Uncertainty (95% Confidence Interval, k=2)"
                       >
-                        {entry.uncertainty_ch4 != null
+                        {(entry.uncertainty_ch4 != null && Number(entry.ch4_emissions) > 0)
                           ? `±${(entry.uncertainty_ch4 * 200).toFixed(0)}%`
                           : "—"}
                       </td>
@@ -3208,13 +3211,13 @@ const Scope1Form = () => {
                           textAlign: "center",
                           fontSize: "0.82rem",
                           color:
-                            entry.uncertainty_n2o != null
+                            (entry.uncertainty_n2o != null && Number(entry.n2o_emissions) > 0)
                               ? "#8b5cf6"
                               : "var(--text-muted)",
                         }}
                         title="Expanded Uncertainty (95% Confidence Interval, k=2)"
                       >
-                        {entry.uncertainty_n2o != null
+                        {(entry.uncertainty_n2o != null && Number(entry.n2o_emissions) > 0)
                           ? `±${(entry.uncertainty_n2o * 200).toFixed(0)}%`
                           : "—"}
                       </td>

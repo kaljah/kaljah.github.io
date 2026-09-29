@@ -276,6 +276,10 @@ def apply_result(record, payload, em_result, method, factor_data, gwp_std):
     if factor_data and factor_data.get("custom_factor_id") and factor_data.get("name"):
         # a library / custom factor is recorded by its name, not by its id (browser test #13)
         record.fuel_type = factor_data["name"]
+    elif factor_data and record.fuel_type:
+        # a catalog factor is recorded under its catalog name ("natural gas" -> "Natural Gas")
+        from routes.emissions import _canonical_api_factor_name
+        record.fuel_type = _canonical_api_factor_name(record.fuel_type) or record.fuel_type
     if not record.fuel_type:
         # Compendium activity rows (Section 6 tables) are recorded by their source label
         proc = str(payload.get("process_type") or "")

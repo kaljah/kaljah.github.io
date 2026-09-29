@@ -13,13 +13,13 @@ const TEMPLATES = {
     {
       id: "activity",
       label: "Activity",
-      required: true,
+      required: false,
       hint: "e.g. Exploration & Production",
     },
     {
       id: "division",
       label: "Division",
-      required: true,
+      required: false,
       hint: "e.g. Production, Association",
     },
     {
@@ -34,7 +34,7 @@ const TEMPLATES = {
     {
       id: "type",
       label: "Process Type",
-      required: true,
+      required: false,
       hint: "e.g. combustion, flaring",
     },
     {
@@ -269,7 +269,7 @@ const TEMPLATES = {
     {
       id: "project_type",
       label: "Type",
-      required: true,
+      required: false,
       hint: "e.g. CCUS, REC",
     },
     { id: "year", label: "Year", required: true },
@@ -287,15 +287,19 @@ const TEMPLATES = {
   ],
   facilities: [
     { id: "name", label: "Region Name", required: true },
-    { id: "activity", label: "Activity", required: true },
-    { id: "division", label: "Division", required: true },
+    { id: "region", label: "Region", required: false, hint: "Region the facility belongs to (dashboard filter)" },
+    { id: "code", label: "Facility Code", required: false, hint: "Unique code" },
+    { id: "equity_share_pct", label: "Equity Share (%)", required: false, hint: "0-100; default 100" },
+    { id: "operator_status", label: "Operator Status", required: false, hint: "operated or non-operated" },
+    { id: "activity", label: "Activity", required: false },
+    { id: "division", label: "Division", required: false },
     { id: "field", label: "Field / Block", required: false },
-    { id: "location", label: "Location (Wilaya)", required: true },
-    { id: "boundary_type", label: "Consolidation Approach", required: true },
-    { id: "boundary_detail", label: "Boundary Details", required: true },
-    { id: "segment", label: "Supply Chain Segment", required: true },
-    { id: "latitude", label: "Latitude", required: true },
-    { id: "longitude", label: "Longitude", required: true },
+    { id: "location", label: "Location (Wilaya)", required: false },
+    { id: "boundary_type", label: "Consolidation Approach", required: false },
+    { id: "boundary_detail", label: "Boundary Details", required: false },
+    { id: "segment", label: "Supply Chain Segment", required: false },
+    { id: "latitude", label: "Latitude", required: false },
+    { id: "longitude", label: "Longitude", required: false },
   ],
 };
 
@@ -661,7 +665,7 @@ export default function ColumnMappingWizard({
     } else if (type === "activity_scope3") {
       csvContent = `${headers}\nHassi Messaoud,2024,1,4,Truck Transport,10000,t-km,0.12841,kg,,Crude trucking`;
     } else if (type === "facilities") {
-      csvContent = `${headers}\nHassi R'Mel,Exploration & Production,Production,Block A,Laghouat,Operational Control,Details here,Upstream,33.8,3.2`;
+      csvContent = `${headers}\nHassi R'Mel,Laghouat,HRM-01,100,operated,Exploration & Production,Production,Block A,Laghouat,Operational Control,Details here,Upstream,33.8,3.2`;
     }
 
     const blob = new Blob([csvContent], { type: "text/csv" });

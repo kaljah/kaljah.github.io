@@ -281,7 +281,7 @@ class TestScope2Methods:
         labels). The earlier version of this test assumed power was already in MMBtu, which
         encoded the defect. Re-derived with 1 MWh = 3.412142 MMBtu:
         Total 10,000 tCO2e, heat H = 60 MMBtu, power P = 40 MWh = 136.4857 MMBtu.
-        1. WRI Efficiency (e_h 0.80, e_p 0.33): 75 / (75 + 413.593) = 0.153504 -> 1,535.04 t.
+        1. WRI Efficiency (Compendium 8.2.2 defaults e_h 0.80, e_p 0.35): 75 / (75 + 389.959) -> 1,613.04 t.
         2. Energy Content: 60 / (60 + 136.4857) = 0.305365 -> 3,053.65 t.
         """
         P_MMBTU = 40.0 * 3.412142
@@ -298,7 +298,7 @@ class TestScope2Methods:
             },
         }
         res_wri = _calc_cogen_allocation(data_wri)
-        expected_wri = ((60.0 / 0.8) / ((60.0 / 0.8) + (P_MMBTU / 0.33))) * 10000.0
+        expected_wri = ((60.0 / 0.8) / ((60.0 / 0.8) + (P_MMBTU / 0.35))) * 10000.0
         assert abs(res_wri - expected_wri) < 1e-3
 
         # 2. Energy Content

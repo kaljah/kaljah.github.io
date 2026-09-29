@@ -56,6 +56,31 @@ COMBUSTION_METHOD_PROCESSES = {
 }
 
 
+def unloading_row_selection(code):
+    """Type / frequency class / basin of a liquids-unloading catalog row (Tables 6-10 and 6-11), from its code."""
+    import re
+
+    c = str(code or "")
+    m = re.fullmatch(r"Unload(Plunger|NonPlunger)(?:_(T1))?(?:_(LE100|GT100|LE10|10_50|GT50))?"
+                     r"(?:_(Appalachia|GulfCoast|Midcontinent|RockyMountain)(?:_(LT100|GT100))?)?", c)
+    if not m:
+        return {}
+    kind = "plunger" if m.group(1) == "Plunger" else "non_plunger"
+    out = {"type": kind}
+    freq, region, rfreq = m.group(3), m.group(4), m.group(5)
+    if not (freq or region):
+        out["tier"] = 1  # per well-year (Table 6-11)
+        return out
+    out["tier"] = 2  # per event (Table 6-10)
+    if region:
+        out["region"] = re.sub(r"(?<!^)(?=[A-Z])", "_", region).lower()
+    f = freq or rfreq
+    if f:
+        out["frequency"] = {"LE100": "plunger_le100", "LT100": "plunger_le100", "GT100": "plunger_gt100",
+                            "LE10": "non_plunger_le10", "10_50": "non_plunger_10_to_50", "GT50": "non_plunger_gt50"}[f]
+    return out
+
+
 def record_period(inputs):
     """(hours, days, fraction of the year) of the period a record covers.
 
@@ -703,10 +728,12 @@ class CalculationDispatcher:
                     or flat_inputs.get("unloading_method")
                     or ""
                 ).lower().strip()
-                u_type = flat_inputs.get("unloading_type") or flat_inputs.get("unload_type") or "plunger"
+                # the selected catalog row (Tables 6-10 / 6-11) names the type, frequency class and basin
+                sel = unloading_row_selection(emission_factors.get("code"))
+                u_type = flat_inputs.get("unloading_type") or flat_inputs.get("unload_type") or sel.get("type") or "plunger"
 
-                is_explicit_tier1 = raw_tier in ["tier1", "tier_1", "t1", "1"] or calc_m in ["api_table_6_11", "table_6_11", "per_well"]
-                is_explicit_tier2 = raw_tier in ["tier2", "tier_2", "t2", "2"] or calc_m in ["api_table_6_10", "table_6_10", "event_based"]
+                is_explicit_tier1 = raw_tier in ["tier1", "tier_1", "t1", "1"] or calc_m in ["api_table_6_11", "table_6_11", "per_well"]                     or (sel.get("tier") == 1 and not raw_tier and not calc_m)
+                is_explicit_tier2 = raw_tier in ["tier2", "tier_2", "t2", "2"] or calc_m in ["api_table_6_10", "table_6_10", "event_based"]                     or (sel.get("tier") == 2 and not raw_tier and not calc_m)
                 if is_explicit_tier1:
                     is_tier1 = True
                     is_tier2 = False
@@ -739,8 +766,9 @@ class CalculationDispatcher:
                         events=ev,
                         unloading_type=u_type,
                         well_count=wc,
-                        frequency_category=flat_inputs.get("frequency_category") or flat_inputs.get("freq_category"),
-                        region=flat_inputs.get("region"),
+                        frequency_category=flat_inputs.get("frequency_category") or flat_inputs.get("freq_category")
+                        or sel.get("frequency"),
+                        region=flat_inputs.get("unload_region") or sel.get("region") or flat_inputs.get("region"),
                         ch4_content=ch4_c,
                         co2_content=co2_c,
                         control_efficiency=flare_e,
@@ -757,8 +785,9 @@ class CalculationDispatcher:
                     ch4_c = self._optional_fraction(flat_inputs, ["ch4_content", "c1", "unload_ch4_content"], None)
                     co2_c = self._optional_fraction(flat_inputs, ["co2_content", "co2_mol"], 0.0)
                     flare_e = self._optional_fraction(flat_inputs, ["unload_flare_eff", "control_efficiency"], 0.0)
+                    # Table 6-11 is per well-YEAR: a record covers its own period (a month is its share of a year)
                     return calculator.calculate_tier1(
-                        well_count=wc,
+                        well_count=float(wc) * record_period(flat_inputs)[2] if wc not in (None, "") else wc,
                         unloading_type=u_type,
                         ch4_content=ch4_c,
                         co2_content=co2_c,
@@ -865,6 +894,14 @@ class CalculationDispatcher:
                     raise ValueError(
                         "Tier 3 fuel analysis needs the fuel gas composition (Gas analysis) or measured emission factors"
                     )
+                if any(comps.get(f"c{i}") for i in range(1, 11)):
+                    # a carbon balance on the gas composition needs the gas volume (an energy or mass
+                    # quantity was silently calculated with the catalog factor instead)
+                    from .units import UnitError, gas_volume_m3
+                    try:
+                        gas_volume_m3(quantity, unit)
+                    except UnitError as err:
+                        raise ValueError(str(err))
 
                 return calculator.calculate(
                     fuel_quantity=quantity,
@@ -1993,6 +2030,8 @@ class CalculationDispatcher:
                     power_output=power_out,
                     method=c_method,
                     uncertainties=uncertainties,
+                    heat_efficiency=flat_inputs.get("heat_efficiency"),
+                    power_efficiency=flat_inputs.get("power_efficiency"),
                 )
 
             elif process_type in [

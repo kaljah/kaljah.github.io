@@ -514,6 +514,7 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [jobId, setJobId] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [overwrite, setOverwrite] = useState(false);  // replace records that already exist
 
   // ── Access Control: fetch allowed regions on mount ─────────────────────────
   const [allowedRegions, setAllowedRegions] = useState(null);  // null = loading, [] = restricted with no regions
@@ -607,6 +608,7 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
     form.append("file", file);
     form.append("global_factor_type", globalFactor);
     form.append("scope", "1");
+    form.append("overwrite_duplicates", overwrite ? "true" : "false");
     form.append("column_mapping", JSON.stringify(mapping));
     try {
       const res = await api.post("/emissions/upload/start", form, {
@@ -879,6 +881,13 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
                 <option value="specific">Force Tier 3 (site data)</option>
               </select>
             </div>
+
+            <label className="s1w-factor-row" style={{ gap: "8px", cursor: "pointer" }}>
+              <input type="checkbox" checked={overwrite} onChange={e => setOverwrite(e.target.checked)} />
+              <span className="s1w-factor-label">
+                Overwrite records that already exist (same facility, month and source). Overwritten records go back to Pending review.
+              </span>
+            </label>
 
             {/* Field groups */}
             <div className="s1w-field-groups">
