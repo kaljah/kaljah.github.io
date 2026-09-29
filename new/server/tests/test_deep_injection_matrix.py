@@ -430,14 +430,16 @@ class TestBulkCSVIngestionAllTiersAndScopes:
     def test_scope1_tier1_bulk_csv_upload(self, app, test_user, test_facility, db_session):
         """Tier 1 Bulk CSV: Default catalog factors across combustion, venting, and fugitives."""
         csv_data = (
-            "Facility,Date,Process,Fuel,Quantity,Unit\n"
-            f"{test_facility.name},2024-01,Combustion,Natural Gas,10000,m3\n"
-            f"{test_facility.name},2024-02,Flaring,Natural Gas,5000,m3\n"
-            f"{test_facility.name},2024-03,Venting,Natural Gas,2000,m3\n"
+            "Facility,Date,Process,Fuel,Quantity,Unit,Operating Hours\n"
+            f"{test_facility.name},2024-01,Combustion,Natural Gas,10000,m3,\n"
+            # flaring / venting use the flare and vent factors, not the combustion factor
+            f"{test_facility.name},2024-02,Flaring,Natural Gas (Flaring),5000,m3,\n"
+            f"{test_facility.name},2024-03,Venting,Natural Gas (Venting/Blowdown),2000,m3,\n"
             # BUG-015: "Pneumatic Devices" is not a catalog factor; such rows used to be saved as 0 t
-            f"{test_facility.name},2024-04,Pneumatics,Pneumatic Controller - Intermittent,15,devices\n"
-            # BUG-110: "Compressor Seals" is not a catalog factor; the row used to be booked as 4 valves
-            f"{test_facility.name},2024-05,Fugitive,Component - Compressor Seal,4,sources\n"
+            f"{test_facility.name},2024-04,Pneumatics,Pneumatic Controller - Intermittent,15,devices,\n"
+            # BUG-110: "Compressor Seals" is not a catalog factor; the row used to be booked as 4 valves.
+            # A monthly leak row states its operating hours (744 h in May)
+            f"{test_facility.name},2024-05,Fugitive,Component - Compressor Seal,4,sources,744\n"
         )
         status = self._run_upload(app, csv_data, "scope1_tier1.csv", test_user.id, scope=1)
         assert status["status"] == "completed"
@@ -484,10 +486,11 @@ class TestBulkCSVIngestionAllTiersAndScopes:
     def test_scope1_tier3_bulk_csv_upload_engineering_parameters(self, app, test_user, test_facility, db_session):
         """Tier 3 Bulk CSV: Engineering mode with physical parameters (c1, c2, hhv, GOR, depth, diameter)."""
         csv_data = (
-            "Facility,Date,Process,Fuel,Quantity,Unit,FactorSource,HHV,CombustionEff,C1,C2,CO2Mol,UnloadDepth,UnloadDiam,UnloadPress,UnloadEvents\n"
+            "Facility,Date,Process,Fuel,Quantity,Unit,FactorSource,HHV,CombustionEff,C1,C2,CO2Mol,UnloadDepth,UnloadDiam,UnloadPress,UnloadEvents,CH4 Content\n"
             f"{test_facility.name},2024-07,Combustion,Natural Gas,15000,m3,specific,1020,99.5,88.5,8.2,1.5,,,,,\n"
             f"{test_facility.name},2024-08,Flaring,Natural Gas,8000,m3,specific,1020,98.0,85.0,10.0,2.0,,,,,\n"
-            f"{test_facility.name},2024-09,Liquids Unloading,,4,events,specific,,,,,,,3500,2.875,400,4\n"
+            # (one value per column; the gas CH4 content is a required Tier 3 input, not a default)
+            f"{test_facility.name},2024-09,Liquids Unloading,,4,events,specific,,,,,,3500,2.875,400,4,87\n"
         )
         status = self._run_upload(app, csv_data, "scope1_tier3.csv", test_user.id, scope=1)
         assert status["status"] == "completed"

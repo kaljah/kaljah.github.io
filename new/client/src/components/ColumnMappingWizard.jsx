@@ -1,6 +1,7 @@
 import React, { useState, useRef, useCallback } from "react";
 import Papa from "papaparse";
 import api from "../api";
+import { autoDetectMapping, missingRequiredFields } from "../utils/importMapping";
 import { useToast } from "./Toast";
 import UploadProgress from "./UploadProgress";
 import "./ColumnMappingWizard.css";
@@ -42,15 +43,9 @@ const TEMPLATES = {
       required: false,
       hint: "e.g. Natural Gas",
     },
-    {
-      id: "amount",
-      label: "Quantity",
-      required: false,
-      hint: "Optional initial activity data",
-    },
-    { id: "unit", label: "Unit", required: false, hint: "e.g. scf, m3, gal" },
-    { id: "year", label: "Year", required: false },
-    { id: "month", label: "Month", required: false },
+    { id: "design_capacity", label: "Design Capacity", required: false },
+    { id: "installation_date", label: "Installation Date", required: false, hint: "YYYY-MM-DD" },
+    { id: "status", label: "Status", required: false, hint: "Active / Inactive" },
   ],
   activity: [
     { id: "activity", label: "Activity", required: false },
@@ -66,7 +61,7 @@ const TEMPLATES = {
     { id: "date", label: "Date", required: true },
     { id: "process", label: "Process Type", required: true },
     { id: "process_type", label: "Process Type (legacy)", required: false },
-    { id: "fuel", label: "Activity / Fuel", required: true },
+    { id: "fuel", label: "Activity / Fuel", required: false, hint: "Emission factor name (default and custom rows)" },
     { id: "fuel_type", label: "Fuel Type (legacy)", required: false },
     { id: "quantity", label: "Quantity", required: true },
     { id: "amount", label: "Amount", required: false },
@@ -174,9 +169,11 @@ const TEMPLATES = {
     { id: "facility_id", label: "Region", required: true },
     { id: "year", label: "Year", required: true },
     { id: "month", label: "Month", required: true },
-    { id: "grid_region", label: "Grid Region", required: true },
+    { id: "grid_region", label: "Grid Region", required: false, hint: "e.g. Algerian National Grid" },
     { id: "consumption", label: "Consumption", required: true },
-    { id: "unit", label: "Unit", required: true, hint: "kWh, MWh, GWh" },
+    { id: "unit", label: "Unit", required: true, hint: "kWh, MWh, GWh (steam: MMBtu, GJ)" },
+    { id: "source_type", label: "Source Type", required: false, hint: "electricity (default), indirect_steam, cogen_allocation" },
+    { id: "factor", label: "Supplier Factor", required: false, hint: "kg CO2e/kWh, when the grid is not listed" },
   ],
   activity_scope3: [
     { id: "facility_id", label: "Region", required: true },
@@ -191,6 +188,10 @@ const TEMPLATES = {
     },
     { id: "amount", label: "Quantity", required: true },
     { id: "unit", label: "Unit", required: true },
+    { id: "emission_factor", label: "Emission Factor", required: false, hint: "Per activity unit; required unless CO2e is given" },
+    { id: "ef_unit", label: "EF Unit", required: false, hint: "kg (default) or t CO2e per unit" },
+    { id: "co2e", label: "Total CO2e (t)", required: false, hint: "Supplier-specific total instead of a factor" },
+    { id: "notes", label: "Notes", required: false },
   ],
   custom_factors: [
     {
@@ -299,23 +300,6 @@ const TEMPLATES = {
 };
 
 // Auto-detect: tries to match a column header to a system field key/label
-function autoDetectMapping(headers, fields) {
-  const mapping = {};
-  fields.forEach((field) => {
-    const match = headers.find((h) => {
-      const hl = h.toLowerCase();
-      return (
-        hl === field.key.toLowerCase() ||
-        hl.includes(field.key.replace(/_/g, " ")) ||
-        hl.includes(field.label.toLowerCase()) ||
-        field.label.toLowerCase().includes(hl)
-      );
-    });
-    if (match) mapping[field.key] = match;
-  });
-  return mapping;
-}
-
 // ─── SVG Icons ────────────────────────────────────────────────────────────────
 const Icons = {
   Upload: () => (
@@ -665,17 +649,17 @@ export default function ColumnMappingWizard({
     let csvContent = headers;
 
     if (type === "custom_factors") {
-      csvContent = `${headers}\nSpecialized Generator Gas,Natural Gas,scf,53.06,0.001,0.0001,0,5,50,150,combustion`;
+      csvContent = `${headers}\nSpecialized Generator Gas,Natural Gas,MMBtu,53.06,0.001,0.0001,0,5,50,150,combustion`;
     } else if (type === "production") {
       csvContent = `${headers}\nHassi Messaoud,Exploration & Production,Production,Bir Berkine,2024,1,50000,bbl,12000,mscf`;
     } else if (type === "mitigation") {
       csvContent = `${headers}\nHassi Messaoud,Solar Farm A,REC,2024,1500,Active,2024-01-01,,500000,Solar panel installation`;
     } else if (type === "sources") {
-      csvContent = `${headers}\nExploration & Production,Production,Hassi Messaoud,Bir Berkine,Combustion Unit A,EQ-001,combustion,Natural Gas,1000,scf,2024,1`;
+      csvContent = `${headers}\nExploration & Production,Production,Hassi Messaoud,Bir Berkine,Combustion Unit A,EQ-001,combustion,Natural Gas,5 MW,2015-06-01,Active`;
     } else if (type === "activity_scope2") {
-      csvContent = `${headers}\nHassi Messaoud,2024,1,National Grid,500,MWh`;
+      csvContent = `${headers}\nHassi Messaoud,2024,1,Algerian National Grid,500,MWh,electricity,`;
     } else if (type === "activity_scope3") {
-      csvContent = `${headers}\nHassi Messaoud,2024,1,1,Purchased Goods,500,tonnes`;
+      csvContent = `${headers}\nHassi Messaoud,2024,1,4,Truck Transport,10000,t-km,0.12841,kg,,Crude trucking`;
     } else if (type === "facilities") {
       csvContent = `${headers}\nHassi R'Mel,Exploration & Production,Production,Block A,Laghouat,Operational Control,Details here,Upstream,33.8,3.2`;
     }
@@ -937,7 +921,10 @@ export default function ColumnMappingWizard({
   const activeRequired = currentFields.req;
   const activeOptional = currentFields.opt;
 
-  const missingRequired = activeRequired.filter((f) => !mapping[f.key]);
+  const missingRequired = missingRequiredFields(
+    [...activeRequired.map((f) => ({ ...f, required: true })), ...activeOptional],
+    mapping,
+  );
 
   const canProceed = missingRequired.length === 0 || headers.length === 0; // xlsx: skip client-side check
 

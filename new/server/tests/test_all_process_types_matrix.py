@@ -16,6 +16,13 @@ from calculations.dispatcher import CalculationDispatcher
 from calculations.legacy_engine import compute_emissions
 from process_categories import PROCESS_TYPES, NON_COMBUSTION_PROCESSES
 
+def _activity_unit(process_id, category):
+    """Activity unit of a generic test row; mud degassing (Table 6-2) is per drilling day."""
+    if process_id in ("drilling", "mud_degassing"):
+        return "days"
+    return "m3" if category in ["combustion", "vented"] else "devices"
+
+
 
 @pytest.fixture(scope="module")
 def dispatcher():
@@ -37,7 +44,7 @@ class TestAllProcessTypesTier1:
             "factor_source": "default",
             "amount": 100.0,
             "quantity": 100.0,
-            "unit": "m3" if meta["category"] in ["combustion", "vented"] else "devices",
+            "unit": _activity_unit(process_id, meta["category"]),
             "fuel_type": "Natural Gas" if meta["category"] == "combustion" else None,
         }
         factor_data = {
@@ -130,8 +137,8 @@ class TestAllProcessTypesTier3:
         payload = {
             "process_type": "drilling",
             "factor_source": "specific",
-            "amount": 500.0,
-            "mud_unit": "m3",
+            "amount": 30.0,
+            "unit": "days",  # Table 6-2 is per drilling day
             "mud_type": "water_based",
         }
         factors = {"ch4": 0.05}
@@ -337,7 +344,7 @@ class TestComputeEmissionsIntegration:
             "process_type": process_id,
             "process": process_id,
             "amount": 200.0,
-            "unit": "m3" if PROCESS_TYPES[process_id]["category"] in ["combustion", "vented"] else "devices",
+            "unit": _activity_unit(process_id, PROCESS_TYPES[process_id]["category"]),
             "fuel_type": "Natural Gas" if PROCESS_TYPES[process_id]["category"] == "combustion" else None,
         }
         factors = {
@@ -462,7 +469,7 @@ class TestPhysicalConservationAcrossAllProcesses:
             "factor_source": "default",
             "amount": 0.0,
             "quantity": 0.0,
-            "unit": "m3" if meta["category"] in ["combustion", "vented"] else "devices",
+            "unit": _activity_unit(process_id, meta["category"]),
         }
         factors = {"co2": 50.0, "ch4": 0.5, "n2o": 0.01, "unit": "kg/m3"}
         res = dispatcher.dispatch(process_id, payload, factors, {})
@@ -472,7 +479,7 @@ class TestPhysicalConservationAcrossAllProcesses:
     def test_strictly_positive_monotonicity(self, dispatcher, process_id):
         """Monotonicity Law: Doubling activity data MUST double emissions."""
         meta = PROCESS_TYPES[process_id]
-        unit = "m3" if meta["category"] in ["combustion", "vented"] else "devices"
+        unit = _activity_unit(process_id, meta["category"])
         factors = {"co2": 50.0, "ch4": 0.5, "n2o": 0.01, "unit": f"kg/{unit}"}
 
         p1 = {"process_type": process_id, "factor_source": "default", "amount": 100.0, "unit": unit}

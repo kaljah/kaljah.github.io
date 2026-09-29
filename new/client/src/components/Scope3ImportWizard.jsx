@@ -1,6 +1,7 @@
 import React, { useState, useRef, useCallback, useMemo, useEffect } from "react";
 import Papa from "papaparse";
 import api from "../api";
+import { autoDetectMapping, missingRequiredFields } from "../utils/importMapping";
 import { useToast } from "./Toast";
 import UploadProgress from "./UploadProgress";
 import "./Scope1ImportWizard.css"; // Reuse the same CSS for identical aesthetic
@@ -130,8 +131,8 @@ const FIELD_GROUPS_ACTIVITY = [
     fields: [
       { key: "amount",          label: "Activity Data Amount", required: true, hint: "Quantity of the activity" },
       { key: "unit",            label: "Activity Unit",        required: true, hint: "e.g. kg, USD, miles" },
-      { key: "emission_factor", label: "Emission Factor",      required: false, hint: "Custom EF. If empty, the system will try to resolve it." },
-      { key: "ef_unit",         label: "EF Unit",              required: false, hint: "e.g. kgCO2e/unit. Defaults to kg." },
+      { key: "emission_factor", label: "Emission Factor",      required: false, hint: "Emission factor per activity unit. Required unless a Total CO2e is given." },
+      { key: "ef_unit",         label: "EF Unit",              required: false, hint: "kg CO2e per unit (default), t CO2e per unit, or kg CO2e per $1,000" },
       { key: "co2e",            label: "Total CO2e",           required: false, hint: "Provide direct CO2e to skip calculations" },
     ],
   }
@@ -278,18 +279,6 @@ function FieldGroup({ group, headers, mapping, setMapping, searchQuery }) {
 }
 
 // ─── Auto-detect mapping ───────────────────────────────────────────────────────
-function autoDetect(headers, allFields) {
-  const mapping = {};
-  allFields.forEach(f => {
-    const match = headers.find(h => {
-      const hl = h.toLowerCase();
-      return hl === f.key || hl.includes(f.key.replace(/_/g, " ")) || hl.includes(f.label.toLowerCase()) || f.label.toLowerCase().includes(hl);
-    });
-    if (match && !mapping[f.key]) mapping[f.key] = match;
-  });
-  return mapping;
-}
-
 // ─── Main Wizard ──────────────────────────────────────────────────────────────
 export default function Scope3ImportWizard({ onClose, onUploadSuccess }) {
   const toast = useToast();
@@ -332,8 +321,7 @@ export default function Scope3ImportWizard({ onClose, onUploadSuccess }) {
   [importMode]);
 
   // Required fields check
-  const requiredFields = FIELD_GROUPS.flatMap(g => g.fields).filter(f => f.required);
-  const missingRequired = requiredFields.filter(f => !mapping[f.key]);
+  const missingRequired = missingRequiredFields(FIELD_GROUPS.flatMap(g => g.fields), mapping);
   const canSubmit = missingRequired.length === 0 || headers.length === 0;
 
   // File processing
@@ -354,7 +342,7 @@ export default function Scope3ImportWizard({ onClose, onUploadSuccess }) {
         }
         const hdrs = results.meta.fields;
         setHeaders(hdrs);
-        setMapping(autoDetect(hdrs, allFields));
+        setMapping(autoDetectMapping(hdrs, allFields));
         setFile(f);
         setStep(2);
       },

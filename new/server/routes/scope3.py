@@ -387,8 +387,8 @@ def bulk_import_scope3():
             413,
         )
 
-    # Per D-04: bulk imports are Verified only if created by admin, otherwise Pending
-    bulk_status = "Verified" if user.role == "admin" else "Pending"
+    # D-04: every bulk import is Pending until a reviewer approves it (same as the file import)
+    bulk_status = "Pending"
     allowed_fids = get_allowed_facility_ids(user)
 
     imported_count = 0
@@ -428,41 +428,17 @@ def bulk_import_scope3():
                 errors.append(f"Row {i}: Unauthorized for facility '{f_val}'")
                 continue
 
-            # 2. Extract Data and Calculate
-            from background_processor import _clean_float
-            cat = rec.get("category", "11")
-            sub_cat = rec.get("sub_category")
-            amt = _clean_float(rec.get("amount"), default=0.0)
-            ef = _clean_float(rec.get("emission_factor"), default=0.0)
-            ef_unit = str(rec.get("ef_unit") or rec.get("factor_unit") or "kg").strip()
-            calc_method = str(rec.get("calculation_method") or "")
+            # 2. Validate and calculate exactly as the file import does (required category and
+            # period, no zero co2e for a missing factor, the same unit handling)
+            from background_processor import _process_row_scope3
 
-            # Authoritatively calculate co2e when activity amount and EF are present
-            if amt > 0 and ef > 0:
-                co2e = compute_scope3_co2e(amt, ef, ef_unit, calc_method)
-            elif rec.get("co2e") and user.role in ["admin", "superuser"]:
-                co2e = _clean_float(rec.get("co2e"), default=0.0)
-            else:
-                co2e = 0.0
-
-            emission = Scope3Emission(
-                facility_id=facility.id,
-                year=int(rec.get("year", 2024)),
-                month=int(rec.get("month", 1)),
-                category=(
-                    f"Category {cat}" if not str(cat).startswith("Category") else cat
-                ),
-                sub_category=sub_cat,
-                activity_data=amt,
-                unit=rec.get("unit"),
-                emission_factor=ef,
-                co2e=co2e,
-                notes=rec.get("notes", "Bulk Imported"),
-                created_by=user.id,
-                status=bulk_status,
-                approved_by=user.id if bulk_status == "Verified" else None,
-                approved_at=datetime.datetime.now(datetime.timezone.utc) if bulk_status == "Verified" else None,
+            emission, row_errors = _process_row_scope3(
+                dict(rec, facility_name=facility.name), user.id, {facility.name.strip().lower(): facility},
+                {str(facility.id): facility}, None, i,
             )
+            if row_errors or emission is None:
+                errors.append(f"Row {i}: " + "; ".join(row_errors or ["not imported"]))
+                continue
             db.session.add(emission)
             imported_count += 1
         except Exception as e:

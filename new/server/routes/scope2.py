@@ -43,6 +43,13 @@ def resolve_electricity_factor(grid_region, supplied_ef):
     return ef, name or None
 
 
+def default_scope2_uncertainty(co2e):
+    """Default Scope 2 uncertainty (5 % factor, 2 % activity -> ~5.4 % combined), 1-sigma fraction."""
+    return propagate_uncertainty(
+        co2e, ef_uncertainty=0.05, activity_uncertainty=0.02, tier=Tier.T2, process_category="scope2", gas="co2",
+    )["relative_uncertainty"]
+
+
 def _calc_indirect_steam(data):
     """Calculate tCO2e for indirect steam / heat entry."""
     amount = float(data.get("amount") or data.get("heat_mmbtu") or 0)
@@ -272,16 +279,7 @@ def create_scope2_emission():
     if provided_uncertainty not in (None, ""):
         final_uncertainty = parse_number(provided_uncertainty, "uncertainty", min_value=0, max_value=2)
     else:
-        # Default Scope 2 uncertainty (5% EF, 2% AD -> ~5.4% combined)
-        u_res = propagate_uncertainty(
-            co2e,
-            ef_uncertainty=0.05,
-            activity_uncertainty=0.02,
-            tier=Tier.T2,
-            process_category="scope2",
-            gas="co2",
-        )
-        final_uncertainty = u_res["relative_uncertainty"]
+        final_uncertainty = default_scope2_uncertainty(co2e)
 
     # BUG-060: one maker-checker policy for every scope (only admins are auto-Verified).
     initial_status = initial_record_status(user, data.get("status"))
