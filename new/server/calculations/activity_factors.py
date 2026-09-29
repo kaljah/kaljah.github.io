@@ -176,7 +176,7 @@ class ActivityFactorCalculator(BaseCalculator):
         super().__init__("API Compendium activity factor", "Section 6")
 
     def calculate(self, key, amount, unit=None, days=None, hours=None, ch4_content=None, co2_content=None,
-                  toc_ch4_wt=None, uncertainties=None, gwp_dict=None):
+                  toc_ch4_wt=None, uncertainties=None, gwp_dict=None, year_fraction=1.0):
         row = ACTIVITY_FACTORS.get(key)
         if row is None:
             raise ValueError(f"Unknown activity factor '{key}'")
@@ -187,6 +187,12 @@ class ActivityFactorCalculator(BaseCalculator):
         u = str(unit or "").strip().lower().replace("³", "3")
         if per == "unit":
             n = amount
+            if "-year" in str(row.get("activity") or ""):
+                # factors per unit-year (compressor-, station-, mile-year): the record's share of a year
+                yf = float(year_fraction if year_fraction not in (None, "") else 1.0)
+                if not 0 < yf <= 1:
+                    raise ValueError("The period must be a fraction of a year between 0 and 1")
+                n = amount * yf
         elif per == "unit_day":
             n = amount * float(days if days not in (None, "") else 365)
         elif per == "unit_hr":

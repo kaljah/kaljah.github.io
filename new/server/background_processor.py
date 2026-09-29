@@ -6,22 +6,105 @@ import csv
 import traceback
 from openpyxl import load_workbook
 
-# Global in-memory job tracker
+# Job tracker. The running worker keeps the full job in memory; a snapshot is written to a JSON
+# file so that another worker process (Gunicorn), or the same server after a restart, can answer
+# status and error-file requests.
 # Structure: { job_id: { 'status', 'progress', 'processed', 'total', 'skipped': [{row, reason, ...}], 'error_csv_path', 'created_at' } }
 upload_jobs = {}
 upload_jobs_lock = threading.Lock()
+
+UPLOAD_JOB_DIR = os.environ.get("UPLOAD_JOB_DIR") or os.path.join(
+    __import__("tempfile").gettempdir(), "ghg_upload_jobs")
+STALE_JOB_SECONDS = 600  # a job whose worker stopped writing for this long was interrupted
+_last_persist = {}
+
+
+def _job_file(job_id):
+    import re
+
+    if not re.fullmatch(r"[A-Za-z0-9-]{1,64}", str(job_id or "")):
+        return None
+    return os.path.join(UPLOAD_JOB_DIR, f"{job_id}.json")
+
+
+def _snapshot(job):
+    skipped = job.get("skipped", [])
+    anomalies = job.get("anomalies", [])
+    return {
+        "status": job.get("status", "unknown"),
+        "progress": job.get("progress", 0),
+        "processed": job.get("processed", 0),
+        "total": job.get("total", 0),
+        "errors": list(job.get("errors", [])),
+        "skipped_count": len(skipped),
+        "skipped_preview": list(skipped[:100]),
+        "error_csv_path": job.get("error_csv_path"),
+        "anomaly_count": len(anomalies),
+        "anomalies": list(anomalies[:50]),
+        "owner_id": job.get("owner_id"),
+        "created_at": job.get("created_at"),
+        "heartbeat": time.time(),
+    }
+
+
+def _persist_job(job_id, force=False):
+    """Write the job snapshot (at most once a second while running; always when forced)."""
+    import json
+
+    now = time.time()
+    if not force and now - _last_persist.get(job_id, 0) < 1.0:
+        return
+    path = _job_file(job_id)
+    if not path:
+        return
+    with upload_jobs_lock:
+        job = upload_jobs.get(job_id)
+        if job is None:
+            return
+        snap = _snapshot(job)
+    try:
+        os.makedirs(UPLOAD_JOB_DIR, exist_ok=True)
+        tmp = f"{path}.{os.getpid()}.{threading.get_ident()}.tmp"
+        with open(tmp, "w", encoding="utf-8") as fh:
+            json.dump(snap, fh, default=str)
+        os.replace(tmp, path)
+        _last_persist[job_id] = now
+    except OSError:
+        pass  # the in-memory job still answers for this worker
+
+
+def _load_job(job_id):
+    import json
+
+    path = _job_file(job_id)
+    if not path or not os.path.exists(path):
+        return None
+    try:
+        with open(path, encoding="utf-8") as fh:
+            snap = json.load(fh)
+    except (OSError, ValueError):
+        return None
+    if snap.get("status") == "processing" and time.time() - float(snap.get("heartbeat") or 0) > STALE_JOB_SECONDS:
+        snap["status"] = "error"
+        snap["errors"] = list(snap.get("errors") or []) + [
+            "The import was interrupted (the server stopped while it was running); upload the file again. "
+            "Rows are saved together at the end of an import, so none of this job's rows were saved."]
+    return snap
 
 
 def _update_job(job_id, **kwargs):
     with upload_jobs_lock:
         if job_id in upload_jobs:
             upload_jobs[job_id].update(kwargs)
+    # progress ticks are throttled; status, results and file paths are written at once
+    _persist_job(job_id, force=bool(set(kwargs) - {"processed", "progress", "total"}))
 
 
 def _append_job_list(job_id, list_key, item):
     with upload_jobs_lock:
         if job_id in upload_jobs:
             upload_jobs[job_id].setdefault(list_key, []).append(item)
+    _persist_job(job_id)
 
 
 def _clean_float(val, default=0.0):
@@ -94,7 +177,9 @@ from process_categories import NON_COMBUSTION_PROCESSES
 
 
 def _prune_old_jobs(max_age_seconds=86400):
-    """Prunes job entries older than max_age_seconds (default 24h) and removes orphan error CSV files."""
+    """Prunes job entries older than max_age_seconds (default 24h), their snapshot files and error CSV files."""
+    import json
+
     now = time.time()
     to_delete = []
     with upload_jobs_lock:
@@ -104,13 +189,25 @@ def _prune_old_jobs(max_age_seconds=86400):
                 to_delete.append((jid, job.get("error_csv_path")))
         for jid, _ in to_delete:
             upload_jobs.pop(jid, None)
-    for _, csv_path in to_delete:
-        if csv_path and os.path.exists(csv_path):
-            try:
-                os.remove(csv_path)
-            except Exception:
-                pass
-
+    try:
+        for name in os.listdir(UPLOAD_JOB_DIR):
+            path = os.path.join(UPLOAD_JOB_DIR, name)
+            if name.endswith(".json") and now - os.path.getmtime(path) > max_age_seconds:
+                try:
+                    with open(path, encoding="utf-8") as fh:
+                        to_delete.append((None, json.load(fh).get("error_csv_path")))
+                except (OSError, ValueError):
+                    pass
+                to_delete.append((None, path))
+    except OSError:
+        pass
+    for jid, csv_path in to_delete:
+        for f in (csv_path, _job_file(jid) if jid else None):
+            if f and os.path.exists(f):
+                try:
+                    os.remove(f)
+                except Exception:
+                    pass
 
 
 # -- File layout helpers ---------------------------------------------------------
@@ -214,7 +311,10 @@ def _dedupe(batch_keys, key, overwrite, describe):
     if batch_keys is None or key not in batch_keys:
         return "new", None
     if not overwrite:
-        return "error", f"Duplicate record: {describe} already exists. Enable 'Overwrite Duplicates' to replace it."
+        existing = batch_keys[key]
+        where = "earlier in this file" if not isinstance(existing, int) else "in the platform"
+        return "error", (f"Duplicate record: {describe} already exists {where}. Enable 'Overwrite Duplicates' to "
+                         "replace it, or give each source its own Equipment ID / source reference to keep both.")
     return "update", batch_keys[key]
 
 
@@ -276,6 +376,13 @@ def _scope1_key(facility_id, year, month, process_type, fuel, equipment_id, sour
     return (facility_id, year, month, proc, fuel_k, (equipment_id or "").strip().lower(),
             (source_ref or "").strip().lower())
 
+MAX_IMPORT_ROWS = 50_000  # rows are held until the single commit at the end of the file
+
+
+class ImportTooLarge(Exception):
+    pass
+
+
 def start_background_upload(
     app,
     file_path,
@@ -302,6 +409,8 @@ def start_background_upload(
             "owner_id": user_id,  # BUG-076: only the uploader (or an admin) may read the job
         }
 
+    _persist_job(job_id, force=True)
+
     # Spawn the background thread
     thread = threading.Thread(
         target=_process_file_thread,
@@ -323,37 +432,42 @@ def start_background_upload(
     return job_id
 
 
-def get_job_owner(job_id):
+def _job_view(job_id):
+    """The job as this worker knows it, else its snapshot file (another worker or before a restart)."""
     with upload_jobs_lock:
         job = upload_jobs.get(job_id)
-        return job.get("owner_id") if job else None
+        if job is not None:
+            return _snapshot(job)
+    return _load_job(job_id)
+
+
+def get_job_owner(job_id):
+    job = _job_view(job_id)
+    return job.get("owner_id") if job else None
 
 
 def get_job_error_csv_path(job_id):
-    with upload_jobs_lock:
-        job = upload_jobs.get(job_id)
-        return job.get("error_csv_path") if job else None
+    job = _job_view(job_id)
+    path = job.get("error_csv_path") if job else None
+    return path if path and os.path.exists(path) else None
 
 
 def get_job_status(job_id):
-    with upload_jobs_lock:
-        job = upload_jobs.get(job_id)
-        if not job:
-            return None
-        skipped_all = list(job.get("skipped", []))
-        anomalies = list(job.get("anomalies", []))
-        return {
-            "status": job.get("status", "unknown"),
-            "progress": job.get("progress", 0),
-            "processed": job.get("processed", 0),
-            "total": job.get("total", 0),
-            "errors": list(job.get("errors", [])),
-            "skipped_count": len(skipped_all),
-            "skipped_preview": skipped_all[:100],  # first 100 for inline display
-            "has_error_csv": bool(job.get("error_csv_path")),  # BUG-076: no server path disclosure
-            "anomaly_count": len(anomalies),
-            "anomalies": anomalies[:50],  # first 50 anomalies for review
-        }
+    job = _job_view(job_id)
+    if not job:
+        return None
+    return {
+        "status": job.get("status", "unknown"),
+        "progress": job.get("progress", 0),
+        "processed": job.get("processed", 0),
+        "total": job.get("total", 0),
+        "errors": list(job.get("errors", [])),
+        "skipped_count": job.get("skipped_count", 0),
+        "skipped_preview": job.get("skipped_preview", []),  # first 100 for inline display
+        "has_error_csv": bool(job.get("error_csv_path")),  # BUG-076: no server path disclosure
+        "anomaly_count": job.get("anomaly_count", 0),
+        "anomalies": job.get("anomalies", []),  # first 50 anomalies for review
+    }
 
 
 def _process_file_thread(
@@ -451,6 +565,7 @@ def _process_file_thread(
                 reader = csv.reader(f, delimiter=delimiter)
                 headers = next(reader, [])
                 headers = [h.strip() for h in headers]
+                header_row_no = 1
                 rows_iterator = reader
                 total_rows = max(0, sum(1 for ln in decoded_text.split("\n") if ln.strip()) - 1)
 
@@ -513,7 +628,6 @@ def _process_file_thread(
             cf_name_map = build_name_map(custom_factors)
 
             processed = 0
-            committed_rows = 0  # rows already committed (large files commit every 2,000 rows)
             chunk = []
             skipped_rows = []  # Store raw row data for error CSV
             anomaly_rows = []  # Store anomaly-flagged rows for reviewer warning
@@ -558,13 +672,18 @@ def _process_file_thread(
                     batch_scope3_map[_scope3_key(e.facility_id, e.year, e.month, cat, e.sub_category, e.unit)] = e.id
 
             # Initialize anomaly detector
-            from calculations.anomaly import AnomalyDetector
-            anomaly_detector = AnomalyDetector()
+            from calculations.anomaly import BatchAnomalyDetector
+            anomaly_detector = BatchAnomalyDetector()  # history read once per series
 
             # Headers for error CSV
             error_headers = ["Error Reason"] + headers
 
-            for raw_row in rows_iterator:
+            # All or nothing: the rows are saved in one commit at the end of the file, so a fatal
+            # error or a server restart never leaves half an import behind. Queries during the
+            # import must not flush the staged rows (that would open the write transaction early).
+            db.session.autoflush = False
+
+            for line_no, raw_row in enumerate(rows_iterator, start=header_row_no + 1):
                 # Stop if empty row (Excel read_only sometimes yields empty trailing rows, or CSV whitespace-only rows)
                 if not any(str(c).strip() for c in raw_row if c is not None):
                     continue
@@ -580,6 +699,9 @@ def _process_file_thread(
                 if _is_template_note_row(row_dict):
                     continue  # the template's description / instruction row
                 processed += 1
+                if processed > MAX_IMPORT_ROWS:
+                    raise ImportTooLarge(
+                        f"The file has more than {MAX_IMPORT_ROWS:,} data rows; split it into smaller files. No rows were saved.")
 
                 # Extract mapped values, preserving raw entries as case/spacing-insensitive fallbacks
                 mapped_data = {
@@ -621,7 +743,7 @@ def _process_file_thread(
                         fac_id_map,
                         GRID_FACTORS,
                         job_id,
-                        processed,
+                        line_no,
                         batch_keys=batch_scope2_map,
                         overwrite_duplicates=overwrite_duplicates,
                     )
@@ -632,7 +754,7 @@ def _process_file_thread(
                         fac_name_map,
                         fac_id_map,
                         job_id,
-                        processed,
+                        line_no,
                         batch_keys=batch_scope3_map,
                         overwrite_duplicates=overwrite_duplicates,
                     )
@@ -643,7 +765,7 @@ def _process_file_thread(
                         fac_name_map,
                         fac_id_map,
                         job_id,
-                        processed,
+                        line_no,
                         batch_keys=batch_scope3_map,
                         overwrite_duplicates=overwrite_duplicates,
                     )
@@ -679,7 +801,7 @@ def _process_file_thread(
                         gwp_dict=gwp_dict,
                         gwp_std=gwp_std,
                         job_id=job_id,
-                        row_idx=processed,
+                        row_idx=line_no,
                         batch_keys=batch_scope1_map,
                         overwrite_duplicates=overwrite_duplicates,
                     )
@@ -691,7 +813,7 @@ def _process_file_thread(
 
                 if row_errors:
                     skip_entry = {
-                        "row": processed,
+                        "row": line_no,  # line of the file (header and description rows included)
                         "reason": "; ".join(row_errors),
                         "date": mapped_data.get("date", ""),
                         "year": str(mapped_data.get("year") or ""),
@@ -730,7 +852,7 @@ def _process_file_thread(
                                     flag_msg = flag_msg[:252] + "..."
                                 emission_obj.qa_flag = flag_msg
                                 anomaly_rows.append({
-                                    "row": processed,
+                                    "row": line_no,
                                     "facility_id": fac_id,
                                     "value": co2e_val,
                                     "z_score": anomaly.get('z_score'),
@@ -740,15 +862,6 @@ def _process_file_thread(
                         except Exception:
                             pass  # Never let anomaly detection crash the upload
 
-                # Commit chunks of 2000
-                if len(chunk) >= 2000:
-                    # add_all (not bulk_save_objects): objects stay tracked, so an in-file
-                    # duplicate later in the file can still update them (BUG-057), and the
-                    # dashboard-cache hook sees the new rows (BUG-071)
-                    db.session.add_all(chunk)
-                    db.session.commit()
-                    committed_rows += len(chunk)
-                    chunk = []
 
                 # Update progress every 100 rows
                 if processed % 100 == 0:
@@ -760,7 +873,9 @@ def _process_file_thread(
                         progress=min(99, int((processed / total_rows) * 100)) if total_rows > 0 else min(95, int(100 * (1.0 - (0.98 ** (processed / 100.0))))),
                     )
 
-            # Final chunk commit
+            # One commit for the whole file. add_all (not bulk_save_objects): objects stay tracked, so
+            # an in-file duplicate can update them (BUG-057), and the dashboard-cache hook sees the new
+            # rows (BUG-071)
             if chunk:
                 db.session.add_all(chunk)
             # BUG-058: one IMPORT summary entry per job, committed with the data
@@ -852,13 +967,20 @@ def _process_file_thread(
                 if job_id in upload_jobs:
                     upload_jobs[job_id]["status"] = "error"
                     # BUG-087: the exception is logged; the job shows a generic message
-                    saved = locals().get("committed_rows") or 0
                     upload_jobs[job_id]["errors"].append(
-                        f"Fatal error: the import stopped unexpectedly (job {job_id}); see the server log"
-                        + (f". {saved} rows committed before the error are saved as Pending" if saved else
-                           ". No rows were saved"))
+                        str(e) if isinstance(e, ImportTooLarge) else
+                        f"Fatal error: the import stopped unexpectedly (job {job_id}); see the server log. "
+                        "No rows were saved.")
+            _persist_job(job_id, force=True)
 
         finally:
+            try:
+                from extensions import db as _db
+
+                _db.session.autoflush = True
+                _db.session.remove()  # the import thread's session ends with the thread
+            except Exception:
+                pass
             if wb:
                 wb.close()
             if f:
@@ -1479,10 +1601,27 @@ def _process_row_scope3(
 
     if amt < 0 or ef < 0:
         return None, ["Activity amount and emission factor must be non-negative"]
+    supplier_total = row.get("co2e") not in (None, "")
+    if amt > 0 and raw_ef is None and not supplier_total:
+        # no factor in the file: the factor of the same activity in the Scope 3 form (kg CO2e / unit)
+        from emission_factors.scope3_activity_factors import scope3_activity_factor
+        from input_validation import scope3_category_number
+
+        ef_found, why = scope3_activity_factor(scope3_category_number(cat_str), sub_cat, row.get("unit"))
+        if ef_found is None:
+            return None, [why]
+        ef, ef_unit = ef_found, "kg"
     if amt > 0 and ef > 0:
         co2e = compute_scope3_co2e(amt, ef, ef_unit, calc_method)
-    elif row.get("co2e") not in (None, ""):
-        # supplier-specific total (GHG Protocol Scope 3 supplier-specific method)
+    elif supplier_total:
+        # supplier-specific total (GHG Protocol supplier-specific method): the same roles as the
+        # manual form may enter it
+        from extensions import db as _db
+        from models import User
+
+        uploader = _db.session.get(User, user_id)
+        if uploader is None or uploader.role not in ("admin", "superuser"):
+            return None, ["Only admins and superusers may import a supplier-reported co2e total; give the activity and factor"]
         co2e = _clean_float(row.get("co2e"), default=-1.0)
         if co2e < 0:
             return None, ["co2e must be a non-negative number"]
@@ -2131,29 +2270,6 @@ def _process_row(
             payload.pop("fuel", None)
             fuel = ""
 
-    # A bulk row is one month: time-based methods must state the operating time of that period
-    # (the calculators fall back to a full year, 8,760 h, which a monthly record would book 12 times)
-    def _given(*keys):
-        return any(payload.get(k) not in (None, "") for k in keys)
-
-    from calculations.dispatcher import dispatcher as _disp
-
-    leak_calc = type(_disp.calculators.get(process_type)).__name__ in (
-        "OnshoreFacilityFugitiveCalculator", "OnshoreEquipmentFugitiveCalculator", "OnshoreComponentFugitiveCalculator",
-        "OnshoreScreeningMeasurementCalculator", "EquipmentFugitiveCalculator")
-
-    per = ACTIVITY_FACTORS[akey]["per"] if akey else None
-    if per == "unit_hr" and not _given("activity_hours", "operating_hours"):
-        return None, ["Give the operating hours of the month (operating_hours): this factor is per device-hour"]
-    if per == "unit_day" and not _given("activity_days"):
-        return None, ["Give the operating days of the month (activity_days): this factor is per unit-day"]
-    if not akey and leak_calc and not _given(
-            "hours", "operating_hours", "hours_operating", "operating_days", "days"):
-        return None, ["Give the operating hours of the month (operating_hours) for the leak calculation"]
-    if not akey and process_type == "pneumatic" and factor_source == "specific" and not _given(
-            "pneu_hours", "hours_operating", "hours", "operating_hours"):
-        return None, ["Give the operating hours of the month (pneu_hours) for the pneumatic devices"]
-
     try:
         payload = canonicalize(payload)
         validate_activity(payload, require_unit=factor_source in ("default", "custom"))
@@ -2231,3 +2347,41 @@ def _process_row(
     if batch_keys is not None:
         batch_keys[key] = record  # BUG-057: later in-file repeats update this row
     return record, []
+
+
+def process_json_records(kind, records, user):
+    """Rows of the JSON bulk endpoints (/production/bulk-import, /sources/bulk-import,
+    /mitigation/bulk-import) through the same row validation as the file import.
+    Adds the new objects to the session (the caller commits) and returns (count, errors)."""
+    from extensions import db
+    from models import Facility
+    from utils import build_name_map, get_allowed_facility_ids
+
+    allowed = get_allowed_facility_ids(user)
+    facs = Facility.query.all() if allowed is None else Facility.query.filter(Facility.id.in_(allowed)).all()
+    name_map = build_name_map(facs)
+    id_map = {str(f.id): f for f in facs}
+    batch_prod, batch_src = {}, set()
+    count, errors = 0, []
+    for i, rec in enumerate(records):
+        if not isinstance(rec, dict):
+            errors.append(f"Row {i}: not an object")
+            continue
+        row = dict(rec)
+        f_val = str(row.get("facility_id") or row.get("facility_name") or row.get("facility") or "").strip()
+        row["facility_name"] = f_val
+        if kind == "production":
+            obj, errs = _process_row_production(row, user.id, name_map, id_map, batch_prod)
+        elif kind == "sources":
+            obj, errs = _process_row_sources(row, user.id, name_map, id_map, batch_src)
+        elif kind == "mitigation":
+            obj, errs = _process_row_mitigation(row, user.id, name_map, id_map)
+        else:
+            raise ValueError(kind)
+        if errs:
+            errors.append(f"Row {i}: " + "; ".join(errs))
+            continue
+        if obj is not None:
+            db.session.add(obj)
+        count += 1
+    return count, errors

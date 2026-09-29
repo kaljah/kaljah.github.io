@@ -356,3 +356,62 @@ def plausibility_check(co2e_tonnes, z_flag=None):
     if z_flag:
         return "flag", z_flag
     return None, None
+
+
+class BatchAnomalyDetector(AnomalyDetector):
+    """Same checks as AnomalyDetector for a bulk import: the history of a facility and process /
+    source / category is read once and the trailing-12-month windows are taken in memory
+    (one query per series instead of two per row)."""
+
+    _SERIES = {
+        "1": ("Emission", "process_type", "co2e_total"),
+        "2": ("Scope2Emission", "source_type", "co2e"),
+        "3": ("Scope3Emission", "category", "co2e"),
+    }
+
+    def __init__(self, db_session=None):
+        super().__init__(db_session)
+        self._cache = {}
+
+    def _series(self, scope, facility_id, key):
+        ck = (scope, facility_id, key)
+        if ck not in self._cache:
+            import models
+
+            name, key_col, val_col = self._SERIES[scope]
+            m = getattr(models, name)
+            rows = self._get_db().session.query(m.year, m.month, getattr(m, val_col), m.status, m.qa_flag).filter(
+                m.facility_id == facility_id, getattr(m, key_col) == key, getattr(m, val_col).isnot(None),
+            ).all()
+            self._cache[ck] = sorted(rows, key=lambda r: (r[0] or 0, r[1] or 0), reverse=True)
+        return self._cache[ck]
+
+    def _check(self, scope, facility_id, key, value, year, month):
+        try:
+            def prior(r):
+                if year is None:
+                    return True
+                if month is None:
+                    return (r[0] or 0) < year
+                return (r[0] or 0) < year or ((r[0] or 0) == year and (r[1] or 0) < month)
+
+            rows = [r for r in self._series(scope, facility_id, key) if prior(r)]
+            historical = [float(r[2]) for r in rows if r[3] == "Verified"][:12]
+            if len(historical) < 3:
+                fb = [float(r[2]) for r in rows if r[4] is None][:12]
+                if len(fb) >= len(historical):
+                    historical = fb
+            result = self._z_score_check(value, historical)
+            result.update(scope=scope, facility_id=facility_id, value=value)
+            return result
+        except Exception as e:
+            return {"flagged": False, "error": str(e)}
+
+    def check_scope1(self, facility_id, process_type, co2e, year, month):
+        return self._check("1", facility_id, process_type, co2e, year, month)
+
+    def check_scope2(self, facility_id, source_type, co2e, year, month):
+        return self._check("2", facility_id, source_type, co2e, year, month)
+
+    def check_scope3(self, facility_id, category, co2e, year, month):
+        return self._check("3", facility_id, category, co2e, year, month)

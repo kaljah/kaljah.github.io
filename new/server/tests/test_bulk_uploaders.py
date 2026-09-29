@@ -114,20 +114,25 @@ def test_scope1_process_names(app, client, env):
     assert got == {"combustion", "pneumatic"}
 
 
-def test_scope1_activity_rows_need_the_hours_of_the_month(app, client, env):
+def test_scope1_time_basis_is_the_month_of_the_record(app, client, env):
     fac = env["fac"]
-    st = upload(client, 1, csv_rows("Date,Facility,Process,Fuel,Quantity,Unit,Operating Hours", [
-        f"2025-04,{fac},pneumatic,Production high-bleed controller (API study),12,devices,",
-        f"2025-05,{fac},pneumatic,Production high-bleed controller (API study),12,devices,744",
+    st = upload(client, 1, csv_rows("Date,Facility,Process,Fuel,Quantity,Unit,Operating Hours,Equipment ID", [
+        f"2025-04,{fac},pneumatic,Production high-bleed controller (API study),12,devices,,PC-A",
+        f"2025-04,{fac},pneumatic,Production high-bleed controller (API study),12,devices,720,PC-B",
+        f"2025-02,{fac},compressor_venting,\"Centrifugal wet seal, processing\",3,compressors,,CV-1",
     ]))
-    assert st["skipped_count"] == 1 and "operating hours" in reasons(st)[0]
-    rec = emissions(app, env["fid"], year=2025, month=5)[0]
-    # the manual form with the same device-hours books the same methane
+    assert st["skipped_count"] == 0, reasons(st)
+    april = {e.equipment_id: e for e in emissions(app, env["fid"], year=2025, month=4)}
+    # no hours given: the controllers operate for April (30 x 24 h), not a year
+    assert april["PC-A"].ch4_emissions == pytest.approx(april["PC-B"].ch4_emissions)
     manual = client.post("/api/emissions/", json={
         "year": 2025, "month": 6, "facility_id": env["fid"], "process_type": "pneumatic", "factor_source": "default",
-        "activity_key": "prod_pc_high_bleed_api", "amount": 12, "unit": "devices", "activity_hours": 744})
+        "activity_key": "prod_pc_high_bleed_api", "amount": 12, "unit": "devices", "activity_hours": 720})
     assert manual.status_code == 201, manual.get_json()
-    assert rec.ch4_emissions == pytest.approx(emissions(app, env["fid"], year=2025, month=6)[0].ch4_emissions)
+    assert april["PC-A"].ch4_emissions == pytest.approx(emissions(app, env["fid"], year=2025, month=6)[0].ch4_emissions)
+    # Table 6-38: 86.43 t CH4 per centrifugal wet-seal compressor-year; February 2025 = 28 / 365 of a year
+    feb = emissions(app, env["fid"], year=2025, month=2)[0]
+    assert feb.ch4_emissions == pytest.approx(3 * 86.43 * 28 / 365, rel=1e-6)
 
 
 def test_scope1_blank_and_text_quantities(app, client, env):
@@ -323,3 +328,223 @@ def test_no_reviewer_notification_when_nothing_imported(app, client, env):
     upload(client, 1, csv_rows("Date,Facility,Process,Fuel,Quantity,Unit", [f"2025-01,{env['fac']},combustion,Nope,1,MMBtu"]))
     with app.app_context():
         assert Notification.query.filter_by(title="Scope 1 Bulk Upload Pending Review").count() == before
+
+
+# ---------------------------------------------------------------- Tier 3 methods outside the templates
+TIER3_METHODS = [
+    dict(process_type="vented_gas", vent_method="gor", gor=500, oil_rate=100, vent_hours=48, ch4_content=80, co2_content=5),
+    dict(process_type="vented_gas", vent_method="rate_days", gas_rate=20, gas_rate_unit="Mcf/day", days=10, ch4_content=85),
+    dict(process_type="vented_gas", vent_method="actual", actual_volume=1000, actual_unit="ft3", gas_temp_f=100,
+         gas_pressure_atm=3, ch4_content=85),
+    dict(process_type="desiccant_dehydrator", vent_method="desiccant", vessel_height_ft=10, vessel_diameter_ft=3,
+         vessel_pressure_psig=500, refills=4, ch4_content=85),
+    dict(process_type="co2_eor", vent_method="co2_mass", physical_volume_m3=50, co2_density=1.8, events=2),
+    dict(process_type="combustion", combustion_method="carbon_content", fuel_volume=1000, fuel_volume_unit="gal",
+         fuel_density=7.1, density_unit="lb/gal", carbon_wt_pct=85),
+    dict(process_type="mobile", combustion_method="vehicle_distance", distance=1000, distance_unit="km",
+         vehicle_fuel="diesel", fuel_economy_mpg=8.8),
+    dict(process_type="well_testing", vent_method="volume", amount=50, unit="Mscf", ch4_content=85),
+]
+
+
+@pytest.mark.parametrize("case", TIER3_METHODS,
+                         ids=lambda c: f"{c['process_type']}-{c.get('vent_method') or c.get('combustion_method')}")
+def test_tier3_methods_bulk_equals_manual(app, client, env, case):
+    row = dict(case, date="2025-11", facility=env["fac"], factor_type="specific", equipment_id="BULK")
+    if "amount" in row:
+        row["quantity"] = row.pop("amount")
+    st = upload(client, 1, csv_rows(",".join(row), [",".join(str(v) for v in row.values())]))
+    assert st["skipped_count"] == 0, reasons(st)
+    manual = client.post("/api/emissions/", json=dict(case, year=2025, month=11, facility_id=env["fid"],
+                                                      factor_source="specific", equipment_id="MANUAL"))
+    assert manual.status_code == 201, manual.get_json()
+    recs = {e.equipment_id: e for e in emissions(app, env["fid"], year=2025, month=11)}
+    assert recs["BULK"].co2e_total == pytest.approx(recs["MANUAL"].co2e_total, rel=1e-9)
+    assert recs["BULK"].co2e_total > 0
+
+
+def test_vented_gas_by_gor_hand_value(app, client, env):
+    # 500 scf/bbl x 100 bbl/day x 2 days = 100,000 scf at 80 % CH4 (0.6785 kg per Sm3)
+    upload(client, 1, csv_rows("date,facility,process_type,factor_type,vent_method,gor,oil_rate,vent_hours,ch4_content,co2_content",
+                               [f"2025-12,{env['fac']},vented_gas,specific,gor,500,100,48,80,5"]))
+    rec = emissions(app, env["fid"], year=2025, month=12)[0]
+    m3 = 100000 * 0.028316846592
+    assert rec.ch4_emissions == pytest.approx(m3 * 0.80 * 0.6785 / 1000, rel=2e-3)
+
+
+# ---------------------------------------------------------------- roles
+@pytest.fixture
+def regional(app, env):
+    from extensions import db
+    from models import Facility, User
+
+    tag = env["tag"]
+    with app.app_context():
+        other = Facility(name=f"Other Fac {tag}", region=f"OtherRegion{tag}", activity="EP", code=f"OTH-{tag}")
+        users = {}
+        for role in ("superuser", "user", "auditor", "it"):
+            u = User(email=f"{role}_{tag}@test.com", fullName=role, orgName="T", sector="Energy", role=role,
+                     location="BulkRegion")
+            u.set_password("Regional123!")
+            db.session.add(u)
+            users[role] = u
+        db.session.add(other)
+        db.session.commit()
+        return {k: v.id for k, v in users.items()}, other.name
+
+
+@pytest.mark.parametrize("role", ["superuser", "user"])
+def test_regional_roles_upload_only_their_facilities(app, client, env, regional, role):
+    uids, other = regional
+    with client.session_transaction() as sess:
+        sess["user_id"] = uids[role]
+    st = upload(client, 1, csv_rows("Date,Facility,Process,Fuel,Quantity,Unit", [
+        f"2024-03,{env['fac']},combustion,Natural Gas,100,MMBtu", f"2024-03,{other},combustion,Natural Gas,100,MMBtu"]))
+    assert st["processed"] == 2 and st["skipped_count"] == 1
+    assert "does not have permission" in reasons(st)[0]
+    rec = emissions(app, env["fid"], year=2024, month=3)[0]
+    assert rec.status == "Pending" and rec.created_by == uids[role]
+
+
+@pytest.mark.parametrize("role", ["auditor", "it"])
+def test_read_only_roles_cannot_upload(client, env, regional, role):
+    uids, _ = regional
+    with client.session_transaction() as sess:
+        sess["user_id"] = uids[role]
+    assert upload(client, 1, "Date,Facility\n2024-01,x\n").status_code == 403
+
+
+def test_user_cannot_import_supplier_co2e(app, client, env, regional):
+    uids, _ = regional
+    with client.session_transaction() as sess:
+        sess["user_id"] = uids["user"]
+    st = upload(client, 3, csv_rows("Facility,Year,Month,Category,Sub Category,Amount,Unit,CO2e",
+                                    [f"{env['fac']},2024,6,1,Supplier X,1,lot,500"]))
+    assert "Only admins and superusers" in reasons(st)[0]
+
+
+# ---------------------------------------------------------------- Scope 3 factors of the form
+def test_scope3_takes_the_form_factor_when_none_is_given(app, client, env):
+    from models import Scope3Emission
+
+    st = upload(client, 3, csv_rows("Facility,Year,Month,Category,Sub Category,Amount,Unit", [
+        f"{env['fac']},2024,8,4,Truck Transport,10000,t-km", f"{env['fac']},2024,9,4,Truck Transport,10,t",
+        f"{env['fac']},2024,8,15,Equity Investments,1000,USD"]))
+    r = reasons(st)
+    assert len(r) == 2 and "per ton-km" in r[0] and "no published default" in r[1]
+    with app.app_context():
+        rec = Scope3Emission.query.filter_by(facility_id=env["fid"], year=2024, month=8).one()
+        # EPA Hub 2025 Table 8 truck: 0.186 kg CO2 + 0.0016 g CH4 + 0.0054 g N2O per short ton-mile (AR5)
+        per_tkm = (0.186 + 0.0016 * 28 / 1000 + 0.0054 * 265 / 1000) / (0.90718474 * 1.609344)
+        assert rec.co2e == pytest.approx(10000 * per_tkm / 1000, rel=1e-3)
+
+
+def test_scope3_factor_table_matches_the_client():
+    from emission_factors.scope3_activity_factors import SCOPE3_ACTIVITY_FACTORS
+
+    src = open(os.path.join(os.path.dirname(__file__), "..", "..", "client", "src", "utils", "scope3Factors.js"),
+               encoding="utf-8").read()
+    rows = re.findall(r'\{ value: "([^"]+)", unit: "([^"]+)", factor: ([0-9.]+|null) \}', src)
+    ours = [(v, u, f) for cat in SCOPE3_ACTIVITY_FACTORS.values() for v, u, f in cat]
+    assert [(v, u, None if f == "null" else float(f)) for v, u, f in rows] == ours
+
+
+# ---------------------------------------------------------------- period of a record
+def test_record_period():
+    from calculations.dispatcher import operating_hours, record_period
+
+    assert record_period({"year": 2024, "month": 2}) == (29 * 24.0, 29.0, 29 / 366)
+    assert record_period({}) == (8760.0, 365.0, 1.0)
+    assert operating_hours({"year": 2025, "month": 4}) == 720.0
+    assert operating_hours({"year": 2025, "month": 4, "operating_hours": 100}) == 100.0
+
+
+# ---------------------------------------------------------------- jobs across workers / restarts
+def test_job_snapshot_survives_the_worker(app, client, env):
+    import background_processor as bp
+
+    st = upload(client, 1, csv_rows("Date,Facility,Process,Fuel,Quantity,Unit",
+                                    [f"2024-09,{env['fac']},combustion,Nope,1,MMBtu"]))
+    job = [j for j, v in bp.upload_jobs.items() if v.get("owner_id") == env["uid"]][-1]
+    with bp.upload_jobs_lock:
+        saved = bp.upload_jobs.pop(job)  # as another worker, or the server after a restart, sees it
+    try:
+        again = client.get(f"/api/emissions/upload/status/{job}").get_json()
+        assert again["status"] == "completed" and again["skipped_count"] == st["skipped_count"] == 1
+        assert client.get(f"/api/emissions/upload/errors/{job}").status_code == 200
+    finally:
+        with bp.upload_jobs_lock:
+            bp.upload_jobs[job] = saved
+
+
+def test_interrupted_job_is_reported(app, client, env):
+    import background_processor as bp
+
+    jid = "interrupted-" + env["tag"]
+    os.makedirs(bp.UPLOAD_JOB_DIR, exist_ok=True)
+    with open(bp._job_file(jid), "w", encoding="utf-8") as fh:
+        json.dump({"status": "processing", "owner_id": env["uid"], "heartbeat": time.time() - 3600,
+                   "errors": [], "skipped_preview": []}, fh)
+    st = client.get(f"/api/emissions/upload/status/{jid}").get_json()
+    assert st["status"] == "error" and "interrupted" in st["errors"][0]
+
+
+def test_fatal_error_saves_nothing(app, client, env, monkeypatch):
+    import background_processor as bp
+
+    calls = {"n": 0}
+    real = bp._process_row
+
+    def boom(*a, **k):
+        calls["n"] += 1
+        if calls["n"] == 3:
+            raise RuntimeError("disk full")
+        return real(*a, **k)
+
+    monkeypatch.setattr(bp, "_process_row", boom)
+    st = upload(client, 1, csv_rows("Date,Facility,Process,Fuel,Quantity,Unit,Equipment ID", [
+        f"2022-01,{env['fac']},combustion,Natural Gas,100,MMBtu,A", f"2022-01,{env['fac']},combustion,Natural Gas,100,MMBtu,B",
+        f"2022-01,{env['fac']},combustion,Natural Gas,100,MMBtu,C"]))
+    assert st["status"] == "error" and "No rows were saved" in st["errors"][0]
+    assert emissions(app, env["fid"], year=2022, month=1) == []
+
+
+def test_skipped_rows_report_the_file_line(client, env):
+    st = upload(client, 1, "Date,Facility,Process,Fuel,Quantity,Unit\n"
+                           f"2024-10,{env['fac']},combustion,Natural Gas,1,MMBtu\n\n"
+                           f"2024-10,{env['fac']},combustion,Nope,1,MMBtu\n")
+    assert [s["row"] for s in st["skipped_preview"]] == [4]
+
+
+# ---------------------------------------------------------------- recalculation tool
+def test_recalculation_tool(app, env, capsys):
+    import sys
+
+    from extensions import db
+    from models import ActivityLog, Emission, User
+
+    sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "scripts")))
+    import recalculate_emissions as tool
+
+    with app.app_context():
+        payload = {"process_type": "combustion", "fuel": "Natural Gas", "amount": 1000, "unit": "MMBtu",
+                   "factor_source": "default", "ch4_content": 85.0, "co2_content": 2.0}
+        rec = Emission(facility_id=env["fid"], year=2021, month=5, process_type="combustion", fuel_type="Natural Gas",
+                       quantity=1000, unit="MMBtu", factor_source="gases", co2e_total=1.0, status="Verified",
+                       source_payload=json.dumps(payload), gwp_version="AR5")
+        db.session.add(rec)
+        db.session.commit()
+        rid = rec.id
+        email = db.session.get(User, env["uid"]).email
+    tool.main(["--ids", str(rid)])
+    assert "report only" in capsys.readouterr().out
+    with app.app_context():
+        assert db.session.get(Emission, rid).co2e_total == 1.0  # nothing written without --apply
+    tool.main(["--ids", str(rid), "--apply", "--user", email])
+    with app.app_context():
+        db.session.expire_all()
+        rec = db.session.get(Emission, rid)
+        assert rec.co2e_total == pytest.approx(1000 * NG_KG_PER_MMBTU / 1000)
+        assert rec.factor_source == "default" and rec.status == "Pending"
+        assert "ch4_content" not in json.loads(rec.source_payload)
+        assert ActivityLog.query.filter_by(action="RECALCULATE", record_id=str(rid)).count() == 1
