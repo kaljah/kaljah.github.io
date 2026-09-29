@@ -181,3 +181,72 @@ The nitric and adipic acid values were correct, but cited "pg 407"; they now cit
 - `client/src/__tests__/scope3Factors.test.js`: the Scope 3 factors, re-derived from the EPA and Compendium table numbers.
 - The steam tests and the reference model were re-derived with Table 4-6 CH4 / N2O.
 - Results: client 28/28, backend 1,742 passed, validation 128.
+
+## Follow-up: spend factors and the Algerian grid (2026-09-29)
+
+### Spend-based factors: EPA Supply Chain GHG Emission Factors v1.3.0
+
+**Dataset:** NAICS-6, USEEIO v2.2.22-GHG, 2022 US GHG data, AR5, kg CO2e per 2022 USD at purchaser price, "with margins". Downloaded from pasteur.epa.gov and shipped as `server/emission_factors/data/SupplyChainGHGEmissionFactors_v1.3.0_NAICS_CO2e_USD2022.csv`.
+
+**What the old server table got wrong** (`emission_factors/eeio_factors.py`):
+- It said "EPA USEEIO v1.3" but held 3-digit codes with values that are not in that dataset. Oil and gas extraction was 3.20 kg/USD; EPA gives 0.405 (211120 / 211130). Utilities were 5.4 kg/USD; EPA does not cover electricity.
+- It fell back to a 0.35 kg/USD "generic corporate spend" for any unknown code.
+
+**Replacement:**
+- The table now holds all 1,016 EPA codes. Lookup is by exact 6-digit code; a partial or unknown code is rejected with a 422 error, or a row error in bulk imports.
+- `GET /api/scope3/eeio-factors?q=` searches codes by number or title, and the form's NAICS field suggests matches.
+
+**Scope 3 form rows** (kg CO2e per USD):
+
+| Category | Rows |
+|---|---|
+| 1 | Iron and steel 0.787, steel pipe 0.36, cement 3.924, organic chemicals 1.184, inorganic chemicals 1.01, O&G support services 0.372, engineering services 0.103 |
+| 2 | O&G field machinery 0.219, pipeline construction 0.277, buildings 0.224, computers 0.058 |
+| 3 | Refined fuels 0.27, natural gas 0.405 (cradle-to-gate) |
+| 8 and 13 | Building rent 0.246 |
+
+These replace the per-kg steel, cement and chemicals rows and the per-dollar rows, which had no source.
+
+**No published default** (the form asks the user for a factor):
+- T&D losses and processing electricity: the site grid factor applies.
+- Franchises.
+- Investments: EPA has none; PCAF or investee data applies.
+
+### Algerian National Grid: 0.4979 kg CO2e/kWh (2024, direct combustion)
+
+**Inputs**, from the Ministère des Hydrocarbures et des Mines, *Bilan Énergétique National 2024* (oilmines.gov.dz):
+- Gas to power plants, including Sonelgaz, independents and self-generators: 23,855 ktep, 25,244 million m3 (Tableau 3).
+- The balance's tep are on the gross calorific basis ("pouvoir calorifique supérieur"; 1,000 m3 = 0.945 tep).
+- National electricity production: 101,386 GWh, of which 100,684 thermal and 702 renewable (Tableau 1.B).
+
+**Calculation:**
+- Energy: 23,855 ktep x 41.868 = 998,761 TJ gross, which is 898,885 TJ net (net = 0.9 x gross, the IPCC convention for gases).
+- Emissions, with the IPCC 2006 Vol. 2 Table 2.2 natural-gas factors for energy industries (56,100 kg CO2, 1 kg CH4 and 0.1 kg N2O per TJ net): 50.43 Mt CO2, 899 t CH4 and 89.9 t N2O.
+- Factor: 0.4974 kg CO2/kWh, or 0.4979 kg CO2e/kWh at AR5. The app computes CO2e with the active GWP.
+
+**Cross-checks:**
+- The Compendium natural-gas factor (53.06 kg/MMBtu, higher heating value) on the same gas gives 0.495.
+- Implied fleet efficiency is 40 % (net), with 53 % combined cycle and 41 % gas turbines.
+- Algeria's BUR1 inventory (1.A.1.a public generation 2020: 35.3 Mt CO2) implies about 71 TWh of public generation at this rate, consistent with national output minus self-generation.
+- The Sonelgaz technology factors quoted in BUR1 (combined cycle 436, simple cycle 549 kg CO2/MWh) bound the value.
+
+**Rejected sources:**
+- Ember, 633 g CO2e/kWh: life-cycle basis, including upstream methane.
+- ADEME / IEA 2017, 0.548: withdrawn and old.
+- IFI combined margin: project-crediting basis.
+
+**Limitations:**
+- Diesel units (0.3 % of output) are not in the numerator, understating the result by about 0.2 %.
+- Self-generators are included in both numerator and denominator.
+- The previous 0.522 had no source; the new value is 4.6 % lower.
+
+### Tests
+
+- New and changed: `test_catalog_factors.py` (EEIO dataset and Algeria derivation), `test_calculations_page.py` and `test_tier_scope_kpi_numerical.py` (EPA EEIO values, 422 on partial codes), and `scope3Factors.test.js` (spend rows and empty defaults).
+- Results: backend 1,743 passed, validation 128, client 30/30, build OK.
+- Browser check:
+  - Category 1 lists the EPA rows.
+  - Typing "steel" suggests NAICS 331110 and 331210.
+  - NAICS 331110 with USD 100,000 of spend gives 78.7 t.
+  - Code "541" is rejected with a message.
+  - 100,000 kWh on the Algerian grid gives 49.79 t.

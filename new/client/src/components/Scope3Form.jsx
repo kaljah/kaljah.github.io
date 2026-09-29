@@ -40,6 +40,17 @@ const Scope3Form = () => {
   const [eeioNaics, setEeioNaics] = useState("");
   const [eeioSpend, setEeioSpend] = useState("");
   const [eeioResult, setEeioResult] = useState(null);
+  const [naicsOptions, setNaicsOptions] = useState([]);
+  // six-digit NAICS codes of the EPA supply chain factor dataset matching the typed code or title
+  const searchNaics = async (q) => {
+    if (!q || q.trim().length < 2) return setNaicsOptions([]);
+    try {
+      const res = await api.get("/scope3/eeio-factors", { params: { q } });
+      setNaicsOptions(Array.isArray(res.data) ? res.data : []);
+    } catch {
+      setNaicsOptions([]);
+    }
+  };
   
   const handleCalculateEeio = async () => {
     if (!eeioNaics || !eeioSpend) return;
@@ -59,8 +70,8 @@ const Scope3Form = () => {
       setEmissionFactor(normalizedEf);
       setBaseFactor(parseFloat(normalizedEf));
       setBaseUnit("USD");
-    } catch {
-      toast.show("Error calculating EEIO emissions", "error");
+    } catch (err) {
+      toast.show(err?.response?.data?.error || "Error calculating EEIO emissions", "error");
     }
   };
 
@@ -123,7 +134,8 @@ const Scope3Form = () => {
       setBaseUnit(activities[0].unit);
       setBaseFactor(activities[0].factor);
       setUnit(activities[0].unit);
-      setEmissionFactor(activities[0].factor.toString());
+      // factor null: no published default, the user enters the supplier / site factor
+      setEmissionFactor(activities[0].factor == null ? "" : activities[0].factor.toString());
     } else {
       setActivityType("");
       setUnit("");
@@ -139,14 +151,14 @@ const Scope3Form = () => {
         setBaseUnit(activity.unit);
         setBaseFactor(activity.factor);
         setUnit(activity.unit);
-        setEmissionFactor(activity.factor.toString());
+        setEmissionFactor(activity.factor == null ? "" : activity.factor.toString());
       }
     }
   }, [activityType, category]);
 
   const handleUnitChange = (newUnit) => {
     setUnit(newUnit);
-    if (UNIT_MULTIPLIERS[baseUnit] && UNIT_MULTIPLIERS[baseUnit][newUnit]) {
+    if (baseFactor != null && UNIT_MULTIPLIERS[baseUnit] && UNIT_MULTIPLIERS[baseUnit][newUnit]) {
       const multiplier = UNIT_MULTIPLIERS[baseUnit][newUnit];
       const newFactor = baseFactor * multiplier;
       // Round to 5 decimal places to avoid floating point weirdness
@@ -358,14 +370,23 @@ const Scope3Form = () => {
           {showEeioCalc && (
             <div style={{ marginTop: "16px", display: "flex", gap: "16px", alignItems: "flex-end" }}>
               <div className="input-group" style={{ flex: 1 }}>
-                <label>NAICS Code (3-6 digits)</label>
+                <label>NAICS Code (6 digits)</label>
                 <input
                   type="text"
                   className="mole-input"
-                  placeholder="e.g. 541 (Consulting)"
+                  placeholder="e.g. 331110 or steel"
                   value={eeioNaics}
-                  onChange={(e) => setEeioNaics(e.target.value)}
+                  list="eeio-naics-options"
+                  onChange={(e) => {
+                    setEeioNaics(e.target.value);
+                    searchNaics(e.target.value);
+                  }}
                 />
+                <datalist id="eeio-naics-options">
+                  {naicsOptions.map((o) => (
+                    <option key={o.naics} value={o.naics}>{`${o.name} (${o.kg_co2e_per_usd} kg CO2e/USD)`}</option>
+                  ))}
+                </datalist>
               </div>
               <div className="input-group" style={{ flex: 1 }}>
                 <label>Spend Amount (USD)</label>

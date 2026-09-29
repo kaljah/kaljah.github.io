@@ -7,7 +7,7 @@ them to kg CO2e/kWh with the active GWP set; `factor` is that value at AR5 (refe
 
 Sources: API Compendium 2021 Table 8-2 (U.S. eGRID2019 subregions, CO2 / CH4 / N2O) and Table 8-6
 (European grid averages, AIB 2020 production mix, CO2 only). The Algerian grid is not in the
-Compendium: its value is carried over from the original catalog and is NOT verified.
+Compendium: it is derived from Algeria's 2024 national energy balance with IPCC 2006 defaults.
 """
 
 _AR5 = {"CH4": 28.0, "N2O": 265.0}
@@ -20,11 +20,18 @@ def _grid(co2, ch4=0.0, n2o=0.0, description="", source="", verified=True):
 
 
 GRID_FACTORS = {
-    # not in the API Compendium; value from the original catalog ("Sonelgaz / IEA typical"), unverified:
-    # replace with the published Sonelgaz / IEA factor, or enter a supplier factor
-    "Algerian National Grid": {"co2": 0.522, "ch4": 0.0, "n2o": 0.0, "factor": 0.522, "unit": "kg CO2e/kWh",
-                               "description": "Algerian electricity mix (primarily natural gas)",
-                               "source": "Not in the API Compendium - unverified catalog value", "verified": False},
+    # Algeria, 2024, direct combustion (location-based): Ministere des Hydrocarbures et des Mines, Bilan
+    # Energetique National 2024 - gas to power plants (Sonelgaz, independents, auto-producers) 23,855 ktep
+    # on a gross calorific basis (Tableau 3; 1,000 m3 = 0.945 tep PCS) and national production 101,386 GWh
+    # (Tableau 1.B) - with IPCC 2006 Vol. 2 Table 2.2 natural gas defaults (56,100 kg CO2, 1 kg CH4,
+    # 0.1 kg N2O per TJ, net = 0.9 x gross). Diesel units (0.3 % of output) are not included.
+    # Cross-checks: API Compendium natural gas 53.06 kg/MMBtu on the same gas gives 0.495; Algeria's BUR1
+    # inventory (1.A.1.a public generation 2020, 35.3 Mt CO2) is consistent.
+    "Algerian National Grid": _grid(
+        0.4974, 8.866e-06, 8.866e-07,
+        "Algerian electricity mix 2024 (98.6 % natural gas)",
+        "Derived: MEM Bilan Energetique National 2024 x IPCC 2006 natural gas defaults",
+    ),
     "US Average": _grid(0.401, 3.40e-05, 4.99e-06, "U.S. average (eGRID2019)", "API Compendium 2021 Table 8-2"),
     "US-AKGD (ASCC Alaska Grid)": _grid(0.505, 4.44e-05, 5.9e-06, "ASCC Alaska Grid (eGRID2019)", "API Compendium 2021 Table 8-2"),
     "US-AKMS (ASCC Miscellaneous)": _grid(0.249, 1.18e-05, 1.81e-06, "ASCC Miscellaneous (eGRID2019)", "API Compendium 2021 Table 8-2"),

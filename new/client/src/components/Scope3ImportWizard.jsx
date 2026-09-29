@@ -154,7 +154,7 @@ const FIELD_GROUPS_EEIO = [
     label: "Spend & NAICS",
     IconComp: Icon.Settings,
     fields: [
-      { key: "naics_code",      label: "NAICS Code",      required: true,  hint: "3-to-6 digit NAICS industry code" },
+      { key: "naics_code",      label: "NAICS Code",      required: true,  hint: "6-digit 2017 NAICS code (EPA supply chain factors)" },
       { key: "spend_usd",       label: "Spend (USD)",     required: true,  hint: "Amount spent in USD" },
       { key: "notes",           label: "Description / Notes", required: false, hint: "Optional supplier or purchase description" },
     ],

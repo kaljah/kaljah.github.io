@@ -156,5 +156,23 @@ def test_grid_factors_tables_8_2_8_6():
     assert grid_entry("UK National Grid") == ("United Kingdom (grid average)", GRID_FACTORS["United Kingdom (grid average)"])
     for gone in ("US-WECC", "EU Grid Average", "Algerian Grid - North", "Algerian Grid - South / Isolated"):
         assert grid_entry(gone)[1] is None
-    assert GRID_FACTORS["Algerian National Grid"]["verified"] is False
-    assert all(v["verified"] for k, v in GRID_FACTORS.items() if k != "Algerian National Grid")
+    # Algeria 2024: MEM Bilan Energetique National (23,855 ktep gas to power, PCS; 101,386 GWh) x IPCC 2006
+    # natural gas (56,100 kg CO2, 1 kg CH4, 0.1 kg N2O per TJ NCV; NCV = 0.9 x PCS)
+    tj_ncv = 23855 * 41.868 * 0.9
+    dz = GRID_FACTORS["Algerian National Grid"]
+    assert dz["co2"] == pytest.approx(tj_ncv * 56.1 / 101386 / 1000.0, rel=1e-3)
+    assert dz["ch4"] == pytest.approx(tj_ncv * 1e-3 / 101386 / 1000.0, rel=1e-3)
+    assert all(v["verified"] for v in GRID_FACTORS.values())
+
+
+# ---- Scope 3 spend: EPA Supply Chain GHG Emission Factors v1.3.0 (NAICS-6, 2022 USD, AR5, with margins) ----
+def test_eeio_factors_are_the_epa_dataset():
+    from emission_factors.eeio_factors import EEIO_FACTORS, get_eeio_factor, search_eeio_factors
+
+    assert len(EEIO_FACTORS) == 1016
+    for code, per_usd in (("331110", 0.787), ("327310", 3.924), ("213112", 0.372), ("211130", 0.405)):
+        assert get_eeio_factor(code)["kg_co2e_per_usd"] == per_usd
+    for bad in ("211", "000", "221112", "abc"):        # partial, invented fallback, electricity, junk
+        with pytest.raises(LookupError):
+            get_eeio_factor(bad)
+    assert {"331110", "331210"} <= {h["naics"] for h in search_eeio_factors("steel")}

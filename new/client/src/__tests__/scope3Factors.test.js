@@ -36,9 +36,23 @@ describe("Scope 3 factors", () => {
     expect(find(11, "NGL - Butane")).toBeCloseTo(0.103 * (64.77 + 0.003 * 28 + 0.0006 * 265), 2);
   });
 
+  it("spend rows = EPA Supply Chain GHG Emission Factors v1.3.0 (with margins)", () => {
+    expect(find(1, "Iron & steel products (NAICS 331110)")).toBe(0.787);
+    expect(find(1, "Cement (NAICS 327310)")).toBe(3.924);
+    expect(find(2, "Oil & gas field machinery (NAICS 333132)")).toBe(0.219);
+    expect(find(3, "Purchased natural gas, upstream (NAICS 211130)")).toBe(0.405);
+    expect(find(13, "Downstream leased buildings (rent) (NAICS 531120)")).toBe(0.246);
+  });
+
+  it("has no default where no published factor exists", () => {
+    expect(find(10, "Processing (Electricity)")).toBeNull();
+    expect(find(15, "Equity Investments")).toBeNull();
+    expect(find(14, "Franchise operations")).toBeNull();
+  });
+
   it("drops the unsourced rows", () => {
     const all = Object.values(CATEGORY_ACTIVITIES).flat().map((a) => a.value);
-    for (const gone of ["Pipeline Transport", "Teleworking", "Car - Diesel", "Air - Domestic"]) {
+    for (const gone of ["Pipeline Transport", "Teleworking", "Car - Diesel", "Air - Domestic", "Steel", "Cement", "Leased Office Space", "Retail Franchise"]) {
       expect(all).not.toContain(gone);
     }
   });
