@@ -10,6 +10,8 @@ from .units import (
     calculate_co2e,
     normalize_gas_volume_to_standard,
     is_actual_volume_unit,
+    gas_volume_m3,
+    GAS_VOLUME_UNITS,
 )
 from .uncertainty import (
     propagate_uncertainty,
@@ -227,7 +229,7 @@ class CombustionCalculator(BaseCalculator):
             "gas",
             "Natural Gas",
             "natural_gas",
-        ] or str(fuel_unit).lower() in ["m3", "scf", "mmscf", "cubic_meters", "m³"]
+        ] or str(fuel_unit).strip().lower().replace(" ", "") in GAS_VOLUME_UNITS  # any gas volume (Sm3, Nm3, Mscf...)
 
         # Apply API §4.2.1 thermodynamic normalization to gas fuels if operating T/P supplied
         raw_quantity = fuel_quantity
@@ -314,20 +316,8 @@ class CombustionCalculator(BaseCalculator):
 
             # Apply to gas streams (by fuel_type or volumetric units)
             if is_gas_fuel:
-                # Convert quantity to standard m3
-                vol_m3 = raw_quantity
-                if u in ["scf", "cf", "ft3"]:
-                    vol_m3 = raw_quantity * CONVERSIONS.get("scf_to_m3", 0.028316846592)
-                elif u in ["mscf", "mcf"]:
-                    vol_m3 = (
-                        raw_quantity * 1_000.0 * CONVERSIONS.get("scf_to_m3", 0.028316846592)
-                    )
-                elif u in ["mmscf"]:
-                    vol_m3 = (
-                        raw_quantity
-                        * 1_000_000.0
-                        * CONVERSIONS.get("scf_to_m3", 0.028316846592)
-                    )
+                # quantity in standard m3; an energy or mass quantity is not a volume
+                vol_m3 = gas_volume_m3(raw_quantity, u)
 
                 density_co2 = CONVERSIONS.get("density_co2", 1.861)
 
@@ -455,15 +445,10 @@ class FlaringCalculator(BaseCalculator):
         eta_d = _normalize_efficiency(destruction_efficiency, default=default_eta_d)
 
         # Normalize gas volume if actual temperature/pressure supplied
-        vol_std = float(gas_volume)
         unit_norm = str(fuel_unit or "").strip().lower()
         actual_volume = is_actual_volume_unit(unit_norm)
-        if unit_norm in ["mscf", "kscf"]:
-            vol_std *= 28.316846592
-        elif unit_norm in ["mmscf"]:
-            vol_std *= 28316.846592
-        elif unit_norm in ["scf", "cf"]:
-            vol_std *= 0.028316846592
+        # standard m3; an energy or mass quantity is refused (it used to be read as m3)
+        vol_std = gas_volume_m3(gas_volume, "mscf" if unit_norm == "kscf" else (unit_norm or "m3"))
 
         if actual_volume and (operating_temperature is not None or operating_pressure is not None):
             vol_std = normalize_gas_volume_to_standard(

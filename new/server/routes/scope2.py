@@ -133,6 +133,8 @@ def _calc_cogen_allocation(data):
     res = CogenAllocationCalculator().calculate(
         total_emissions=total_emissions, heat_output=heat_output, power_output=power_output,
         method="wri_efficiency" if method == "wri_efficiency" else "energy_content", power_unit="mwh",
+        heat_efficiency=data.get("heat_efficiency") or ci.get("heat_efficiency"),
+        power_efficiency=data.get("power_efficiency") or ci.get("power_efficiency"),
     )
     return res["metadata"]["allocated_heat_tonnes"]
 

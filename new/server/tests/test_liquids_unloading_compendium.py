@@ -508,7 +508,8 @@ class TestLiquidsUnloadingDatabaseAndDashboard:
         assert resp.status_code in [200, 201]
         data = resp.get_json()
         assert "id" in data
-        assert data["emissions"]["ch4"] == pytest.approx(2 * 1.774, rel=1e-3)
+        # Table 6-11 is per well-year; the record covers June 2025 (30 of 365 days)
+        assert data["emissions"]["ch4"] == pytest.approx(2 * 1.774 * 30 / 365, rel=1e-3)
 
         # 2. Query Dashboard to verify classification as 'venting'
         dash_resp = auth_client.get(f"/api/dashboard/summary?facilityId={facility_id}&year=2025")

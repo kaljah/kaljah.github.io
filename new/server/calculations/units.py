@@ -186,13 +186,16 @@ def normalize_gas_volume_to_standard(
     return vol * p_factor * t_factor * (1.0 / z)
 
 
+# Normal m3 (0 C, 101.325 kPa) in the platform's standard m3 (60 F, 14.696 psia; 1 m3 = 35.3147 scf)
+NM3_TO_SM3 = STD_TEMP_K / 273.15
+
 VOLUME_UNITS_TO_M3 = {
     "m3": 1.0,
     "m³": 1.0,
     "sm3": 1.0,
     "sm³": 1.0,
-    "nm3": 1.0,
-    "nm³": 1.0,
+    "nm3": NM3_TO_SM3,
+    "nm³": NM3_TO_SM3,
     "ksm3": 1000.0,
     "mmsm3": 1_000_000.0,
     "cubic_meter": 1.0,
@@ -522,6 +525,18 @@ def normalize_efficiency(eff_val, default=0.0):
 _normalize_efficiency = normalize_efficiency
 
 
+def scope3_ef_kg_per_unit(amount, co2e_tonnes, ef=None):
+    """The factor as stored on a Scope 3 record: kg CO2e per activity unit (the unit the tables and
+    calculation details read), whatever unit it was entered in (t/unit, g/unit, per $1,000)."""
+    try:
+        amt = float(amount or 0)
+        if amt > 0 and co2e_tonnes is not None:
+            return float(co2e_tonnes) * 1000.0 / amt
+    except (TypeError, ValueError):
+        pass
+    return ef
+
+
 def compute_scope3_co2e(
     amt: float, ef: float, ef_unit: str = "", calc_method: str = ""
 ) -> float:
@@ -629,6 +644,19 @@ def norm_unit(unit):
     u = u.replace("per ", "/").replace(" / ", "/").replace(" /", "/").replace("/ ", "/")
     u = _re.sub(r"\s+", " ", u)
     return _VOLUME_ALIASES.get(u, u)
+
+
+GAS_VOLUME_UNITS = {"m3", "m³", "sm3", "sm³", "nm3", "nm³", "ksm3", "mmsm3", "cubic_meter", "cubic_meters",
+                    "scf", "cf", "ft3", "mscf", "mcf", "mmscf"}
+
+
+def gas_volume_m3(quantity, unit):
+    """A gas volume in standard m3. A gas-composition (carbon balance) method needs a volume:
+    an energy, mass or liquid quantity is refused instead of being read as m3."""
+    u = str(unit or "").strip().lower().replace(" ", "")
+    if u not in GAS_VOLUME_UNITS:
+        raise UnitError(f"The gas composition method needs a gas volume (scf, Mscf, MMscf, m3, Sm3, Nm3), not '{unit}'")
+    return float(quantity) * VOLUME_UNITS_TO_M3[u]
 
 
 def unit_dimension(unit):

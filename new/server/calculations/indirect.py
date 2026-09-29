@@ -119,6 +119,8 @@ class CogenAllocationCalculator(BaseCalculator):
         uncertainties=None,
         heat_unit="mmbtu",
         power_unit="mmbtu",
+        heat_efficiency=None,
+        power_efficiency=None,
     ):
         """
         API Section 8.3 - Allocation of Cogeneration Emissions
@@ -141,10 +143,19 @@ class CogenAllocationCalculator(BaseCalculator):
             power_mmbtu = power_output
 
         if method == "wri_efficiency":
-            # API Equation 8-5: WRI/WBCSD Efficiency Method
-            # e_h = 0.8 (default), e_p = 0.33 (default)
-            e_h = 0.8
-            e_p = 0.33
+            # API Equation 8-5: WRI/WBCSD Efficiency Method. Without the plant's actual efficiencies,
+            # the Compendium (section 8.2.2, EPA Climate Leaders / WRI tool) defaults are 80 % for heat
+            # and 35 % for electricity (the 33 % in Exhibit 8.4 is that plant's known efficiency)
+            def _eff(v, default, name):
+                if v in (None, ""):
+                    return default
+                v = float(v)
+                v = v / 100.0 if v > 1.0 else v
+                if not 0 < v <= 1:
+                    raise ValueError(f"{name} efficiency must be between 0 and 100 %")
+                return v
+            e_h = _eff(heat_efficiency, 0.80, "Heat")
+            e_p = _eff(power_efficiency, 0.35, "Power")
             denominator = (heat_output / e_h) + (power_mmbtu / e_p)
             allocated_heat = ((heat_output / e_h) / denominator) * total_emissions if denominator > 0 else 0.0
             allocated_power = ((power_mmbtu / e_p) / denominator) * total_emissions if denominator > 0 else 0.0

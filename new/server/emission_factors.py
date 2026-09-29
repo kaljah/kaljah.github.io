@@ -268,7 +268,7 @@ LEGACY_FACTORS = {
         "code": "TankFlashOil",
         "type": "tank",
         "ch4": 0.193,
-        "co2": 0.012,
+        "co2": 0,  # Table 6-22 is CH4 only (same as emission_factors_api2021 and the client catalog)
         "n2o": 0,
         "factor": 0.193,
         "unit": "kg/bbl",
