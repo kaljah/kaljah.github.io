@@ -9,6 +9,7 @@ from .units import (
     CONVERSIONS,
     calculate_co2e,
     normalize_gas_volume_to_standard,
+    is_actual_volume_unit,
 )
 from .uncertainty import (
     propagate_uncertainty,
@@ -230,7 +231,8 @@ class CombustionCalculator(BaseCalculator):
 
         # Apply API §4.2.1 thermodynamic normalization to gas fuels if operating T/P supplied
         raw_quantity = fuel_quantity
-        if is_gas_fuel and (
+        # only a volume read at operating conditions is corrected (scf / Sm3 are already standard)
+        if is_gas_fuel and is_actual_volume_unit(fuel_unit) and (
             operating_temperature is not None or operating_pressure is not None
         ):
             normalized_gas_vol = normalize_gas_volume_to_standard(
@@ -455,6 +457,7 @@ class FlaringCalculator(BaseCalculator):
         # Normalize gas volume if actual temperature/pressure supplied
         vol_std = float(gas_volume)
         unit_norm = str(fuel_unit or "").strip().lower()
+        actual_volume = is_actual_volume_unit(unit_norm)
         if unit_norm in ["mscf", "kscf"]:
             vol_std *= 28.316846592
         elif unit_norm in ["mmscf"]:
@@ -462,7 +465,7 @@ class FlaringCalculator(BaseCalculator):
         elif unit_norm in ["scf", "cf"]:
             vol_std *= 0.028316846592
 
-        if operating_temperature is not None or operating_pressure is not None:
+        if actual_volume and (operating_temperature is not None or operating_pressure is not None):
             vol_std = normalize_gas_volume_to_standard(
                 volume=vol_std,
                 operating_temp=operating_temperature,

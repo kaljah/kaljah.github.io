@@ -946,7 +946,7 @@ class TestGWPValidation:
         payload = {
             "process_type": "drilling",
             "quantity": 1000.0,
-            "unit": "m3",
+            "unit": "days",  # Table 6-2 is per drilling day
             "factor_source": "specific",
             "mud_type": "water_based",
         }

@@ -138,6 +138,15 @@ def to_psia(val, unit="psig", atmospheric_psia=STD_PRESSURE_PSIA):
     return max(0.0, v + atmospheric_psia)
 
 
+# Volume units that can be read at operating conditions. scf / Mscf / Sm3 / Nm3 are standard by
+# definition, and energy or mass quantities have no volume to correct.
+ACTUAL_VOLUME_UNITS = {"m3", "m³", "cubic_meters", "cubic_meter", "cf", "ft3", "ft³", "acf", "am3", "actual_m3"}
+
+
+def is_actual_volume_unit(unit):
+    return str(unit or "").strip().lower() in ACTUAL_VOLUME_UNITS
+
+
 def normalize_gas_volume_to_standard(
     volume,
     operating_temp=None,

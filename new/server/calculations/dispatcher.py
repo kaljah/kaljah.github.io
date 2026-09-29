@@ -965,6 +965,10 @@ class CalculationDispatcher:
                     co2_conc = float(flat_inputs.get("co2_pct")) / 100.0
 
                 unit_str = str(flat_inputs.get("unit") or unit or "").lower().strip()
+                # Table 6-2 is per drilling day (or per well at Tier 1): a volume or mass is not an activity
+                given_unit = str(flat_inputs.get("unit") or "").lower().strip()  # (not the dispatcher's "m3" default)
+                if given_unit and given_unit not in ("days", "day", "d", "drilling_days", "well", "wells", "well_count"):
+                    raise ValueError(f"Drilling activity is in drilling days (or wells at Tier 1), not '{given_unit}'")
 
                 # Determine whether Tier 1, Tier 2, or Tier 2+
                 is_tier2_plus = (

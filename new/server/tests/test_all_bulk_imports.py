@@ -209,7 +209,8 @@ def test_bulk_import_production(logged_client, app):
             
     csv_data = (
         "facility_name,activity,division,field,year,month,production_volume,production_unit,energy_consumption,energy_unit\n"
-        "Test Facility A,Upstream,Prod,Field 1,2024,5,1000,bbl,500,MWh\n"
+        # gas production is a gas volume (an energy unit such as MWh cannot enter the intensity KPIs)
+        "Test Facility A,Upstream,Prod,Field 1,2024,5,1000,bbl,500,mscf\n"
     )
     
     mapping = {
@@ -458,7 +459,8 @@ def test_bulk_import_scope1(logged_client, app):
     assert status["status"] == "completed"
     
     with app.app_context():
-        s1 = Emission.query.filter_by(year=2024, month=8).first()
+        fac_id = Facility.query.filter_by(name="Test Facility A").first().id
+        s1 = Emission.query.filter_by(year=2024, month=8, facility_id=fac_id).first()
         assert s1 is not None
         assert s1.process_type == "combustion"
         assert s1.co2e_total > 0

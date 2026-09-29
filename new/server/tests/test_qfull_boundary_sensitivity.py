@@ -91,7 +91,7 @@ class TestBoundaryConditions:
     def test_zero_quantity_mud_degassing_yields_zero(self):
         """BOUNDARY: Zero mud volume = zero CH4 from degassing."""
         em, _ = compute_emissions({
-            "process_type": "drilling", "quantity": 0.0, "unit": "m3",
+            "process_type": "drilling", "quantity": 0.0, "unit": "days",
             "factor_source": "specific", "mud_type": "water_based"
         }, {})
         assert em["ch4"] == 0.0
@@ -164,7 +164,7 @@ class TestBoundaryConditions:
         """BOUNDARY: Negative mud volume → ValueError."""
         with pytest.raises((ValueError, Exception)):
             compute_emissions({
-                "process_type": "drilling", "quantity": -50.0, "unit": "m3",
+                "process_type": "drilling", "quantity": -50.0, "unit": "days",
                 "factor_source": "specific", "mud_type": "water_based"
             }, {})
 
@@ -425,7 +425,7 @@ class TestOATSensitivity:
         gwp_ar4 = {"CO2": 1.0, "CH4": 25.0, "N2O": 298.0}
 
         payload = {
-            "process_type": "drilling", "quantity": 1000.0, "unit": "m3",
+            "process_type": "drilling", "quantity": 1000.0, "unit": "days",
             "factor_source": "specific", "mud_type": "water_based"
         }
 
@@ -576,7 +576,7 @@ class TestCO2eSensitivity:
         """
         # Mud degassing: pure CH4 emission
         em, _ = compute_emissions({
-            "process_type": "drilling", "quantity": 100.0, "unit": "m3",
+            "process_type": "drilling", "quantity": 100.0, "unit": "days",
             "factor_source": "specific", "mud_type": "water_based"
         }, {}, gwp_dict={"CO2": 1.0, "CH4": 28.0, "N2O": 265.0})
 
@@ -591,7 +591,7 @@ class TestCO2eSensitivity:
         AR5 totalCo2e > AR4 totalCo2e.
         """
         payload = {
-            "process_type": "drilling", "quantity": 500.0, "unit": "m3",
+            "process_type": "drilling", "quantity": 500.0, "unit": "days",
             "factor_source": "specific", "mud_type": "water_based"
         }
         em_ar4, _ = compute_emissions(payload, {}, gwp_dict={"CO2": 1.0, "CH4": 25.0, "N2O": 298.0})
