@@ -56,12 +56,30 @@ COMBUSTION_METHOD_PROCESSES = {
 }
 
 
+def record_period(inputs):
+    """(hours, days, fraction of the year) of the period a record covers.
+
+    Records are monthly (year + month): the default operating time is that calendar month, never a
+    full year, so twelve monthly records add up to one year. Without a period (annual inventories,
+    exhibit examples) the year is used.
+    """
+    import calendar
+
+    try:
+        y, m = int(inputs.get("year")), int(inputs.get("month"))
+        if 1 <= m <= 12:
+            days = calendar.monthrange(y, m)[1]
+            return days * 24.0, float(days), days / (366.0 if calendar.isleap(y) else 365.0)
+    except (TypeError, ValueError):
+        pass
+    return 8760.0, 365.0, 1.0
+
+
 def operating_hours(inputs):
     """Operating hours for per-hour factors (BUG-047).
 
     Uses operating_hours / hours / pneu_hours, or operating_days x 24. Without an input the
-    source count is taken as an annual inventory (8,760 h), the same convention as the Tier 3
-    equipment-fugitive calculator and the audit's hand values.
+    source count operates for the whole period of the record (record_period).
     """
     for key in ("operating_hours", "hours", "pneu_hours", "hours_per_year"):
         v = inputs.get(key)
@@ -76,7 +94,7 @@ def operating_hours(inputs):
         if not math.isfinite(days) or days < 0 or days > 366:
             raise ValueError("'operating_days' must be between 0 and 366")
         return days * 24.0
-    return 8760.0
+    return record_period(inputs)[0]
 
 
 class CalculationDispatcher:
@@ -473,9 +491,13 @@ class CalculationDispatcher:
                 flat_inputs.get("activity_amount") if flat_inputs.get("activity_amount") not in (None, "")
                 else flat_inputs.get("amount") if flat_inputs.get("amount") not in (None, "") else flat_inputs.get("quantity"),
                 unit=flat_inputs.get("activity_unit") or flat_inputs.get("unit"),
-                days=flat_inputs.get("activity_days"),
+                days=flat_inputs.get("activity_days") if flat_inputs.get("activity_days") not in (None, "")
+                else record_period(flat_inputs)[1],
                 hours=flat_inputs.get("activity_hours") if flat_inputs.get("activity_hours") not in (None, "")
-                else flat_inputs.get("operating_hours"),
+                else flat_inputs.get("operating_hours") if flat_inputs.get("operating_hours") not in (None, "")
+                else record_period(flat_inputs)[0],
+                year_fraction=flat_inputs.get("activity_year_fraction") if flat_inputs.get("activity_year_fraction") not in (None, "")
+                else record_period(flat_inputs)[2],
                 ch4_content=flat_inputs.get("ch4_content"),
                 co2_content=flat_inputs.get("co2_content"),
                 toc_ch4_wt=flat_inputs.get("toc_ch4_wt"),
@@ -1392,6 +1414,8 @@ class CalculationDispatcher:
                     ["period_duration", "total_period", "period_days", "operating_days"],
                     None,
                 )
+                if period_duration is None and str(flat_inputs.get("duration_unit") or "days").lower().startswith("d"):
+                    period_duration = record_period(flat_inputs)[1]  # the record's month, not a year
 
                 rec_gas = self._optional_float(
                     flat_inputs,
@@ -1546,7 +1570,7 @@ class CalculationDispatcher:
                 )
                 hours_raw = next((flat_inputs.get(k) for k in ("pneu_hours", "hours_operating", "hours", "operating_hours")
                                   if flat_inputs.get(k) not in (None, "", "-")), None)
-                hours = float(hours_raw) if hours_raw is not None else 8760.0
+                hours = float(hours_raw) if hours_raw is not None else record_period(flat_inputs)[0]
                 if not (0 <= hours <= 8784):
                     raise ValueError("annual operating hours must be between 0 and 8,784")
                 ctype = flat_inputs.get("pneu_controller_type") or flat_inputs.get("controller_type")
@@ -1631,8 +1655,8 @@ class CalculationDispatcher:
                         op_days = raw_days
                         op_hours = raw_days * 24.0
                     else:
-                        op_hours = 8760.0
-                        op_days = 365.25
+                        op_hours = record_period(flat_inputs)[0]  # the record's month
+                        op_days = op_hours / 24.0
                 else:
                     if "day" in time_unit:
                         op_days = raw_time
@@ -1876,7 +1900,7 @@ class CalculationDispatcher:
                 else:
                     seal_type = "reciprocating"
 
-                raw_hours = float(flat_inputs.get("hours") or flat_inputs.get("operating_hours") or 8760.0)
+                raw_hours = float(flat_inputs.get("hours") or flat_inputs.get("operating_hours") or record_period(flat_inputs)[0])
                 return calculator.calculate(
                     compressor_count=count,
                     seal_type=seal_type,
@@ -2086,7 +2110,7 @@ class CalculationDispatcher:
                     flat_inputs.get("dehy_hours")
                     or flat_inputs.get("hours_operating")
                     or flat_inputs.get("annual_hours")
-                    or 8760
+                    or record_period(flat_inputs)[0]
                 )
                 ch4_content = self._optional_fraction(
                     flat_inputs, ["dehy_ch4_content", "ch4_content", "c1", "gas_ch4_mole_pct"], 0.85

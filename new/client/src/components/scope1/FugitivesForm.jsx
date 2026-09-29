@@ -340,7 +340,7 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default" }) => {
                 }}
                 placeholder="e.g. 4"
               />
-              <Num label="Operating hours" field="operating_hours" data={data} onChange={onChange} placeholder="8760" />
+              <Num label="Operating hours" field="operating_hours" data={data} onChange={onChange} placeholder="whole month" />
             </div>
           )}
 
@@ -360,7 +360,7 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default" }) => {
                 }}
                 placeholder="e.g. 100"
               />
-              <Num label="Operating hours" field="operating_hours" data={data} onChange={onChange} placeholder="8760" />
+              <Num label="Operating hours" field="operating_hours" data={data} onChange={onChange} placeholder="whole month" />
               <Num label="CH₄ (mol %)" field="ch4_mole_pct" data={data} onChange={onChange} placeholder="81.6 (table basis)" />
               <Num label="CO₂ (mol %)" field="co2_mole_pct" data={data} onChange={onChange} placeholder="0" />
             </FieldGrid>
@@ -399,7 +399,7 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default" }) => {
                 onChange={onChange}
                 placeholder={(M21_SERVICES.find((x) => x.value === data.m21_service) || {}).ch4 || "required"}
               />
-              <Num label="Operating hours" field="operating_hours" data={data} onChange={onChange} placeholder="8760" />
+              <Num label="Operating hours" field="operating_hours" data={data} onChange={onChange} placeholder="whole month" />
             </FieldGrid>
           )}
 
@@ -421,7 +421,7 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default" }) => {
               <Num label="Pegged ≥ 10,000 ppmv" field="corr_pegged_10k_count" data={data} onChange={onChange} placeholder="0" />
               <Num label="Pegged ≥ 100,000 ppmv" field="corr_pegged_100k_count" data={data} onChange={onChange} placeholder="0" />
               <Num label="CH₄ in TOC (wt %)" field="ch4_wt_fraction" data={data} onChange={onChange} placeholder="56.4" />
-              <Num label="Operating hours" field="operating_hours" data={data} onChange={onChange} placeholder="8760" />
+              <Num label="Operating hours" field="operating_hours" data={data} onChange={onChange} placeholder="whole month" />
             </FieldGrid>
           )}
 
@@ -430,7 +430,7 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default" }) => {
               <Pick label="Component" field="ogi_component" options={OGI_COMPONENTS} data={data} onChange={onChange} />
               <Pick label="Service" field="ogi_service" options={OGI_SERVICES} data={data} onChange={onChange} />
               <Num label="Leakers found" field="leakers_count" data={data} onChange={onChange} placeholder="e.g. 2" />
-              <Num label="Operating hours" field="operating_hours" data={data} onChange={onChange} placeholder="8760" />
+              <Num label="Operating hours" field="operating_hours" data={data} onChange={onChange} placeholder="whole month" />
               <Num label="CH₄ (mol %)" field="ch4_content" data={data} onChange={onChange} placeholder="81.6" />
               <Num label="CO₂ (mol %)" field="co2_content" data={data} onChange={onChange} placeholder="0" />
             </FieldGrid>
@@ -440,7 +440,7 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default" }) => {
             <FieldGrid min={170}>
               <Num label="Measured leak rate" field="measured_rate" data={data} onChange={onChange} placeholder="e.g. 0.5" />
               <Pick label="Rate unit" field="rate_unit" options={RATE_UNITS} data={data} onChange={onChange} />
-              <Num label="Operating hours" field="operating_hours" data={data} onChange={onChange} placeholder="8760" />
+              <Num label="Operating hours" field="operating_hours" data={data} onChange={onChange} placeholder="whole month" />
               <Num label="CH₄ (mol %)" field="ch4_content" data={data} onChange={onChange} placeholder="e.g. 78.8" />
               <Num label="CO₂ (mol %)" field="co2_content" data={data} onChange={onChange} placeholder="0" />
             </FieldGrid>

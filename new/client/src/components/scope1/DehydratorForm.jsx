@@ -103,7 +103,7 @@ const DehydratorForm = ({ data, onChange, sourceType }) => {
               className="mole-input"
               value={data.dehy_hours || ""}
               onChange={(e) => onChange("dehy_hours", e.target.value)}
-              placeholder="e.g. 8760"
+              placeholder="whole month if blank"
               required
             />
           </div>

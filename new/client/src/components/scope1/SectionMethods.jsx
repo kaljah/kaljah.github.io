@@ -72,8 +72,8 @@ const Composition = ({ data, onChange, c2 = false, required = true }) => (
 const plural = (a) => (a && !a.endsWith("s") ? `${a}s` : a);
 const PER_INPUT = {
   unit: { label: (a) => `Number (${a || "events"})` },
-  unit_day: { label: (a) => `Number of ${plural(a) || "units"}`, extra: { field: "activity_days", label: "Days", placeholder: "365" } },
-  unit_hr: { label: (a) => `Number of ${plural(a) || "units"}`, extra: { field: "activity_hours", label: "Hours", placeholder: "8760" } },
+  unit_day: { label: (a) => `Number of ${plural(a) || "units"}`, extra: { field: "activity_days", label: "Days", placeholder: "whole month" } },
+  unit_hr: { label: (a) => `Number of ${plural(a) || "units"}`, extra: { field: "activity_hours", label: "Hours", placeholder: "whole month" } },
   mmscf: { label: () => "Gas throughput", units: GAS_UNITS },
   mm_m3: { label: () => "Gas throughput", units: GAS_UNITS },
   mgal: { label: () => "Liquid loaded", units: LIQ_UNITS },

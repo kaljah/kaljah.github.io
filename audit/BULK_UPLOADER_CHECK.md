@@ -86,6 +86,38 @@ Test inputs changed because they relied on removed behaviour:
 - **A misaligned CSV row.**
 - **Production gas given in MWh.**
 
+## Follow-up: the remaining gaps (2026-09-29)
+
+| # | Gap | Fix |
+|---|---|---|
+| 38 | Monthly records used a full year (8,760 h / 365 d) as the default operating time; factors per unit-year (compressor-, station-, mile-year, 26 Compendium rows) booked a full year per monthly record | Default time basis is the record's own month (`dispatcher.record_period`: its hours, days and share of the year), for manual and bulk entry; an explicit value still wins; the forms show "whole month" |
+| 39 | Associated-gas venting form pre-filled 365 days | Pre-fills the days of the record's month; the server uses the same default |
+| 40 | Job state lived in one worker's memory: lost on restart, "Job not found" from another Gunicorn worker | Job snapshot in `UPLOAD_JOB_DIR` (JSON, written as the job runs); status and error file readable from any worker and after a restart; an interrupted job is reported as such |
+| 41 | Large files committed every 2,000 rows: a fatal error left part of the file saved | One commit per file (no autoflush during the import); an error or restart saves nothing; files are limited to 50,000 data rows |
+| 42 | Skipped-row numbers counted data rows | They are file line numbers |
+| 43 | Rows without an equipment ID for the same process / fuel / month were reported as a bare duplicate | The message says where the duplicate is and that an equipment ID or source reference keeps both |
+| 44 | Scope 3 import needed a factor on every row | A row without a factor takes the factor of the same activity in the Scope 3 form (server copy `emission_factors/scope3_activity_factors.py`, kept identical to the client by a test); units must match; activities without a published default ask for a factor |
+| 45 | Any role could import a supplier CO2e total | Admins and superusers only, as in the manual form |
+| 46 | Manage Data wizard listed Tier 3 fields no calculator reads | Field lists aligned with the calculators |
+| 47 | JSON `/production`, `/sources`, `/mitigation` bulk-import endpoints skipped or accepted bad rows silently | Same row validation as the file import; errors returned |
+| 48 | Import result offered "Review Pending Records" for facilities, factors, production, sources and mitigation | Only for emission imports |
+| 49 | Anomaly check ran two queries per row (48 % of the import time) | History read once per facility / process (`BatchAnomalyDetector`); 20,000 rows: 49.8 s -> 22.0 s |
+| 50 | Stored records keep old values | `scripts/recalculate_emissions.py`: report of what the current engine gives per record, with reasons; `--apply` writes through the maker-checker (Pending, RECALCULATE audit entry with old and new values). Not run on the live database |
+
+Checked:
+- Tier 3 methods outside the templates, through a file and through the manual form with the same inputs: identical results. Methods: vented gas by GOR, rate x days and actual volume; desiccant; CO2 EOR; carbon content; vehicle distance; well-test volume.
+- Regional superuser and user: their facilities are imported and the others refused. Auditor and IT get 403.
+- Browser:
+  - Manage Data imports (custom factors, facilities, production, sources, mitigation): each imports the good row and skips the bad one with its reason.
+  - Scope 3 wizard without factors: truck 10,000 t-km gives 1.28 t; a short-haul flight 5,000 passenger-km gives 0.65 t.
+
+Recalculation report on a copy of the live database (23 Scope 1 records, all dated 2026-09, several with test-sized quantities):
+- **Would change:** 7 records.
+- **Cannot be recalculated:** 13 records. Seven are drilling records entered as volumes; the other six have quantities over 100 Mt or inputs that no longer apply.
+- **Unchanged:** 3 records.
+
+Tests: backend 1,784 passed (`tests/test_bulk_uploaders.py`: 41), validation 128, vitest 36.
+
 ## Still open
-- Manual forms show 8,760 h as the default operating time on monthly records (pneumatics, leaks). The bulk path now requires the month's hours, but the manual default is unchanged.
-- Records imported before this change keep their stored values, for example rows booked with the injected 85 % CH4 or with the pressure correction on scf.
+- Applying the recalculation to the live records is the owner's decision (`python scripts/recalculate_emissions.py --apply --user <admin> --ids ...`).
+- A file with more than 50,000 rows must be split.

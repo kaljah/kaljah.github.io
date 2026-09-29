@@ -254,88 +254,15 @@ def bulk_import_production():
     user = get_current_user()
     if user and (user.role in ['auditor'] or is_it_role(user)):
         return jsonify({'error': 'Read-only or IT administrative role cannot modify operational production data.'}), 403
-    allowed_fids = get_allowed_facility_ids(user)
     data = request.get_json() or {}
     records = data.get('records', [])
     if not records:
         return jsonify({'error': 'No records provided'}), 400
     
-    imported_count = 0
-    facility_cache = {}
+    # same validation as the file import (period, non-negative numbers, units, facility access)
+    from background_processor import process_json_records
 
-    for rec in records:
-        f_val = rec.get('facility_id')
-        facility = None
-        
-        if isinstance(f_val, str) and not str(f_val).isdigit():
-            f_name_clean = f_val.strip()
-            if f_name_clean.lower() in facility_cache:
-                facility = facility_cache[f_name_clean.lower()]
-            else:
-                facility = Facility.query.filter(func.lower(Facility.name) == f_name_clean.lower()).first()
-                facility_cache[f_name_clean.lower()] = facility
-        else:
-            try:
-                fid = int(f_val) if f_val else None
-                if fid in facility_cache:
-                    facility = facility_cache[fid]
-                else:
-                    facility = db.session.get(Facility, fid)
-                    facility_cache[fid] = facility
-            except (ValueError, TypeError):
-                facility = None
-
-        if not facility:
-            continue
-
-        if allowed_fids is not None and facility.id not in allowed_fids:
-            continue
-
-        year = rec.get('year')
-        month = rec.get('month')
-        if not year or not month:
-            continue
-
-        try:
-            year = int(year)
-            month = int(month)
-        except ValueError:
-            continue
-
-        existing = ProductionData.query.filter_by(
-            facility_id=facility.id,
-            year=year,
-            month=month
-        ).first()
-
-        from background_processor import _clean_float
-        oil_amount = _clean_float(rec.get('oil_amount'), default=0.0)
-        gas_amount = _clean_float(rec.get('gas_amount'), default=0.0)
-
-        if existing:
-            existing.oil_amount = oil_amount
-            existing.gas_amount = gas_amount
-            if rec.get('oil_unit'): existing.oil_unit = rec.get('oil_unit')
-            if rec.get('gas_unit'): existing.gas_unit = rec.get('gas_unit')
-            if rec.get('activity'): existing.activity = rec.get('activity')
-            if rec.get('division'): existing.division = rec.get('division')
-            if rec.get('field'): existing.field = rec.get('field')
-        else:
-            prod = ProductionData(
-                facility_id=facility.id,
-                year=year,
-                month=month,
-                oil_amount=oil_amount,
-                gas_amount=gas_amount,
-                oil_unit=rec.get('oil_unit', 'bbl'),
-                gas_unit=rec.get('gas_unit', 'mscf'),
-                activity=rec.get('activity') or facility.activity,
-                division=rec.get('division') or facility.division,
-                field=rec.get('field') or facility.field
-            )
-            db.session.add(prod)
-        
-        imported_count += 1
+    imported_count, row_errors = process_json_records("production", records, user)
     
     try:
         db.session.commit()
@@ -345,7 +272,7 @@ def bulk_import_production():
 
     from routes.dashboard import clear_dashboard_cache
     clear_dashboard_cache()
-    return jsonify({'message': f'{imported_count} production records imported'}), 201
+    return jsonify({'message': f'{imported_count} production records imported', 'errors': row_errors}), 201
 
 
 

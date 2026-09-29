@@ -51,7 +51,7 @@ const VENT_RATE_UNITS = [
   { value: "m3/day", label: "m³ / day (m³/day)" },
 ];
 
-const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType }) => {
+const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays }) => {
   // One tier selector: the page-level "Calculation Methodology" control (sourceType) drives the
   // tier; data.tier is kept in sync below for the payload
   const currentTier = sourceType === "specific" ? "tier3" : sourceType === "custom" ? "tier2" : "tier1";
@@ -119,8 +119,9 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType }) => {
   const oilUnit = data.oil_unit || "bbl/day";
   const isRate = oilUnit.includes("/day");
   const oilBblRate = oilUnit.includes("m3") ? oilVal * 6.28981 : oilVal;
-  const durationDays = parseFloat(data.venting_duration !== undefined ? data.venting_duration : 365);
-  const totalPeriodDays = parseFloat(data.period_duration !== undefined ? data.period_duration : 365);
+  const monthDays = periodDays || 365; // the record's month
+  const durationDays = parseFloat(data.venting_duration !== undefined ? data.venting_duration : monthDays);
+  const totalPeriodDays = parseFloat(data.period_duration !== undefined ? data.period_duration : monthDays);
 
   const totalOilBbl = isRate ? oilBblRate * durationDays : oilBblRate;
   const totalProducedGasScf = totalOilBbl * gorScfBbl;
@@ -360,8 +361,8 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType }) => {
                   step="any"
                   className="mole-input"
                   style={{ flex: 1 }}
-                  placeholder="e.g. 365"
-                  value={data.venting_duration !== undefined ? data.venting_duration : "365"}
+                  placeholder={`e.g. ${monthDays}`}
+                  value={data.venting_duration !== undefined ? data.venting_duration : String(monthDays)}
                   onChange={(e) => onChange("venting_duration", e.target.value)}
                   required
                 />
@@ -385,8 +386,8 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType }) => {
                 max="366"
                 step="any"
                 className="mole-input"
-                placeholder="Default: 365"
-                value={data.period_duration !== undefined ? data.period_duration : "365"}
+                placeholder={`Default: ${monthDays}`}
+                value={data.period_duration !== undefined ? data.period_duration : String(monthDays)}
                 onChange={(e) => onChange("period_duration", e.target.value)}
               />
             </div>

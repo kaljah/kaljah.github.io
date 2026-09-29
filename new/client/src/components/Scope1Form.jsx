@@ -1031,7 +1031,7 @@ const Scope1Form = () => {
         const dur = parseFloat(
           formData.venting_duration !== undefined
             ? formData.venting_duration
-            : 365,
+            : new Date(Number(year), Number(month), 0).getDate() || 365,
         );
         if (dur < 0) {
           toast.warning("Venting duration cannot be negative");
@@ -1716,6 +1716,8 @@ const Scope1Form = () => {
     const props = {
       data: { ...formData, process_type: processType },
       onChange: handleFormChange,
+      // days in the record's month: the default operating period of a monthly record
+      periodDays: new Date(Number(year), Number(month), 0).getDate() || 365,
       // Pass down hoisted props for forms that might need them (though we are moving logic up)
       sourceType,
       setSourceType,
