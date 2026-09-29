@@ -129,3 +129,7 @@ Baseline commit 087f6f7c: backend 28 failed / 1277 passed (pre-existing failures
 ## 2026-09-29 - Bulk uploaders
 
 See audit/BULK_UPLOADER_CHECK.md (37 findings). Files: new/server/background_processor.py, services/scope1_calc.py, calculations/units.py, calculations/combustion.py, calculations/dispatcher.py, routes/emissions.py (upload/start, templates, JSON bulk-upload), routes/scope2.py, routes/scope3.py; client Scope1/2/3ImportWizard, ColumnMappingWizard, Scope2Form, scope1/CombustionForm, utils/importMapping.js. Tests: tests/test_bulk_uploaders.py, client importMapping.test.js; inputs corrected in test_all_bulk_imports, test_deep_injection_matrix, test_all_process_types_matrix, test_qfull_boundary_sensitivity, test_qfull_api_pipeline.
+
+## 2026-09-29 - Bulk uploader follow-up
+
+See audit/BULK_UPLOADER_CHECK.md #38-50. Files: calculations/dispatcher.py (record_period), calculations/activity_factors.py (unit-year fraction), calculations/anomaly.py (BatchAnomalyDetector), background_processor.py (job snapshots, single commit, line numbers, Scope 3 factor lookup, process_json_records), emission_factors/scope3_activity_factors.py, routes/data.py, routes/managedata.py, scripts/recalculate_emissions.py; client scope1 forms (month defaults), ColumnMappingWizard, Scope3ImportWizard, UploadProgress. Tests: tests/test_bulk_uploaders.py (41).

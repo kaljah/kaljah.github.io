@@ -88,7 +88,7 @@ const PneumaticsForm = ({ data, onChange, sourceType }) => {
               className="mole-input"
               value={data.pneu_hours || ""}
               onChange={(e) => onChange("pneu_hours", e.target.value)}
-              placeholder="e.g. 8760"
+              placeholder="whole month if blank"
               required
             />
           </div>

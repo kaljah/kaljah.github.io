@@ -160,63 +160,15 @@ def bulk_import_sources():
     user = get_current_user()
     if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to modify operational emission sources."}), 403
-    allowed_fids = get_allowed_facility_ids(user)
     data = request.get_json() or {}
     records = data.get("records", [])
     if not records:
         return jsonify({"error": "No records provided"}), 400
 
-    imported_count = 0
-    facility_cache = {}
+    # same validation as the file import (facility access, duplicates, dates)
+    from background_processor import process_json_records
 
-    for rec in records:
-        # Resolve facility_id (could be a name string from CSV)
-        f_val = rec.get("facility_id")
-        facility = None
-
-        if isinstance(f_val, str) and not str(f_val).isdigit():
-            f_name_clean = f_val.strip()
-            if f_name_clean.lower() in facility_cache:
-                facility = facility_cache[f_name_clean.lower()]
-            else:
-                facility = Facility.query.filter(
-                    func.lower(Facility.name) == f_name_clean.lower()
-                ).first()
-                facility_cache[f_name_clean.lower()] = facility
-        else:
-            try:
-                fid = int(f_val) if f_val else None
-                if fid in facility_cache:
-                    facility = facility_cache[fid]
-                else:
-                    facility = db.session.get(Facility, fid)
-                    facility_cache[fid] = facility
-            except (ValueError, TypeError):
-                facility = None
-
-        if not facility:
-            continue
-
-        if allowed_fids is not None and facility.id not in allowed_fids:
-            continue
-
-        source = EmissionSource(
-            facility_id=facility.id,
-            name=rec.get("name"),
-            equipment_id=rec.get("equipment_id"),
-            type=rec.get("type"),
-            fuel_type=rec.get("fuel_type") or rec.get("fuel"),
-            design_capacity=rec.get("design_capacity"),
-            installation_date=rec.get("installation_date"),
-            status=rec.get("status", "Active"),
-            description=rec.get("description"),
-            activity=rec.get("activity") or facility.activity,
-            division=rec.get("division") or facility.division,
-            field=rec.get("field") or facility.field,
-        )
-        db.session.add(source)
-        imported_count += 1
-
+    imported_count, row_errors = process_json_records("sources", records, user)
     try:
         db.session.commit()
     except Exception as e:
@@ -235,7 +187,7 @@ def bulk_import_sources():
         db.session.commit()
     except Exception:
         db.session.rollback()
-    return jsonify({"message": f"{imported_count} sources imported"}), 201
+    return jsonify({"message": f"{imported_count} sources imported", "errors": row_errors}), 201
 
 
 # --- Mitigation Records ---
@@ -628,96 +580,15 @@ def bulk_import_mitigation():
     user = get_current_user()
     if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to modify operational mitigation data."}), 403
-    allowed_fids = get_allowed_facility_ids(user)
     data = request.get_json() or {}
     records = data.get("records", [])
     if not records:
         return jsonify({"error": "No records provided"}), 400
 
-    imported_count = 0
-    facility_cache = {}
-    from datetime import datetime
+    # same validation as the file import (required year, numbers, dates, facility access)
+    from background_processor import process_json_records
 
-    for rec in records:
-        # Skip records with no project name
-        project_name = str(rec.get("name") or "").strip()
-        if not project_name:
-            continue
-
-        f_val = rec.get("facility_id")
-        facility = None
-
-        if isinstance(f_val, str) and not str(f_val).isdigit():
-            f_name_clean = f_val.strip()
-            if f_name_clean.lower() in facility_cache:
-                facility = facility_cache[f_name_clean.lower()]
-            else:
-                facility = Facility.query.filter(
-                    func.lower(Facility.name) == f_name_clean.lower()
-                ).first()
-                facility_cache[f_name_clean.lower()] = facility
-        else:
-            try:
-                fid = int(f_val) if f_val else None
-                if fid in facility_cache:
-                    facility = facility_cache[fid]
-                else:
-                    facility = db.session.get(Facility, fid)
-                    facility_cache[fid] = facility
-            except (ValueError, TypeError):
-                facility = None
-
-        if not facility:
-            continue
-
-        if allowed_fids is not None and facility.id not in allowed_fids:
-            continue
-
-        try:
-            year = int(rec.get("year"))
-        except (ValueError, TypeError):
-            continue
-
-        try:
-            qty = float(rec.get("quantity_tco2e") or 0)
-        except (ValueError, TypeError):
-            continue
-
-        start_date = None
-        end_date = None
-        if rec.get("start_date"):
-            try:
-                start_date = datetime.strptime(rec.get("start_date"), "%Y-%m-%d").date()
-            except ValueError:
-                pass
-        if rec.get("end_date"):
-            try:
-                end_date = datetime.strptime(rec.get("end_date"), "%Y-%m-%d").date()
-            except ValueError:
-                pass
-
-        investment = None
-        if rec.get("investment_amount"):
-            try:
-                investment = float(rec.get("investment_amount"))
-            except ValueError:
-                pass
-
-        proj = MitigationProject(
-            facility_id=facility.id,
-            name=project_name,
-            project_type=rec.get("project_type"),
-            year=year,
-            quantity_tco2e=qty,
-            status=rec.get("status", "Active"),
-            start_date=start_date,
-            end_date=end_date,
-            investment_amount=investment,
-            description=rec.get("description"),
-            created_by=user.id if user else None,
-        )
-        db.session.add(proj)
-        imported_count += 1
+    imported_count, row_errors = process_json_records("mitigation", records, user)
 
     try:
         db.session.commit()
@@ -739,7 +610,7 @@ def bulk_import_mitigation():
         clear_dashboard_cache()
     except Exception:
         db.session.rollback()
-    return jsonify({"message": f"{imported_count} mitigation projects imported"}), 201
+    return jsonify({"message": f"{imported_count} mitigation projects imported", "errors": row_errors}), 201
 
 
 # --- Yearly Emission Goals ---

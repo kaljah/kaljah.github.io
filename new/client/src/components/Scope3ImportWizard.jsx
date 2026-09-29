@@ -120,7 +120,7 @@ const FIELD_GROUPS_ACTIVITY = [
     IconComp: Icon.Globe,
     fields: [
       { key: "category",      label: "Category",      required: true,  hint: "e.g. 1, 2, 3... or 'Category 11'" },
-      { key: "sub_category",  label: "Sub Category",  required: false, hint: "e.g. Purchased Goods" },
+      { key: "sub_category",  label: "Sub Category",  required: false, hint: "Activity name as in the Scope 3 form (e.g. Truck Transport) to use its factor" },
       { key: "notes",         label: "Description / Notes", required: false, hint: "Description of the emission source" },
     ],
   },
@@ -131,7 +131,7 @@ const FIELD_GROUPS_ACTIVITY = [
     fields: [
       { key: "amount",          label: "Activity Data Amount", required: true, hint: "Quantity of the activity" },
       { key: "unit",            label: "Activity Unit",        required: true, hint: "e.g. kg, USD, miles" },
-      { key: "emission_factor", label: "Emission Factor",      required: false, hint: "Emission factor per activity unit. Required unless a Total CO2e is given." },
+      { key: "emission_factor", label: "Emission Factor",      required: false, hint: "kg CO2e per activity unit. If empty, the factor of the Sub Category activity in the Scope 3 form is used (unit must match)." },
       { key: "ef_unit",         label: "EF Unit",              required: false, hint: "kg CO2e per unit (default), t CO2e per unit, or kg CO2e per $1,000" },
       { key: "co2e",            label: "Total CO2e",           required: false, hint: "Provide direct CO2e to skip calculations" },
     ],
