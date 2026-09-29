@@ -217,14 +217,16 @@ def test_scope3_eeio_and_fallback_calculation(client, admin_user, regular_user, 
 
     # 1. Test EEIO quick calculator endpoint
     eeio_res = client.post("/api/scope3/eeio-calculate", json={
-        "naics_code": "2111",
+        "naics_code": "211120",
         "spend_usd": 10000,
     })
     assert eeio_res.status_code == 200
     eeio_data = eeio_res.get_json()
-    assert "emission_factor" in eeio_data
-    assert "co2e" in eeio_data
-    assert eeio_data["co2e"] > 0
+    # EPA Supply Chain GHG Emission Factors v1.3.0: crude petroleum extraction 0.405 kg CO2e / 2022 USD
+    assert eeio_data["emission_factor"] == pytest.approx(405.0)
+    assert eeio_data["co2e"] == pytest.approx(10000 * 0.405 / 1000.0)
+    # a partial code is rejected, never mapped to a generic factor
+    assert client.post("/api/scope3/eeio-calculate", json={"naics_code": "2111", "spend_usd": 10000}).status_code == 422
 
     # 2. Test Scope 3 submission with draft and fallback calculation
     client.post("/api/auth/login", json={"email": "maker_calc@test.com", "password": "password"})
