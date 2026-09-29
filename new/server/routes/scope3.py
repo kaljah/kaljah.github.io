@@ -522,8 +522,11 @@ def calculate_eeio():
         return jsonify({"co2e": 0, "emission_factor": 0, "message": "Zero spend"}), 200
         
     from emission_factors.eeio_factors import get_eeio_factor
-    factor_data = get_eeio_factor(naics_code)
-    
+    try:
+        factor_data = get_eeio_factor(naics_code)
+    except LookupError as exc:
+        return jsonify({"error": str(exc), "field": "naics_code"}), 422
+
     # Calculate emissions
     # Factor is kg CO2e per $1000 spend
     # So formula is: (spend_usd / 1000) * factor -> gives kg CO2e
@@ -536,5 +539,15 @@ def calculate_eeio():
         "co2e": tonnes_co2e,
         "emission_factor": factor_data["kg_co2e_per_1000_usd"],
         "ef_unit": "kg CO2e / $1000",
-        "industry_name": factor_data["name"]
+        "industry_name": factor_data["name"],
+        "naics_code": naics_code,
+        "source": factor_data["source"],
     }), 200
+
+
+@scope3_bp.route("/eeio-factors", methods=["GET"])
+@login_required
+def search_eeio():
+    """Six-digit NAICS codes of the EPA supply chain factor dataset matching ?q= (code prefix or title)."""
+    from emission_factors.eeio_factors import search_eeio_factors
+    return jsonify(search_eeio_factors(request.args.get("q", ""), limit=25))

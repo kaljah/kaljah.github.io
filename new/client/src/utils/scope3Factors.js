@@ -1,21 +1,29 @@
-// Scope 3 activity factors, kg CO2e per unit at AR5. Sources are noted per category; categories
-// without a note (1, 2, 3, 8 office space, 10 electricity, 13, 14, 15) have no verified source.
+// Scope 3 activity factors, kg CO2e per unit at AR5, with their source noted per category.
+// factor: null = no published default; the user enters a supplier / site factor.
 export const CATEGORY_ACTIVITIES = {
   1: [
-    { value: "Steel", unit: "kg", factor: 1.85 },
-    { value: "Cement", unit: "kg", factor: 0.82 },
-    { value: "Chemicals", unit: "kg", factor: 2.1 },
-    { value: "Equipment", unit: "USD", factor: 0.42 },
-    { value: "Services", unit: "USD", factor: 0.18 },
+    // EPA Supply Chain GHG Emission Factors v1.3.0, kg CO2e per 2022 USD (purchaser price, with margins, AR5)
+    { value: "Iron & steel products (NAICS 331110)", unit: "USD", factor: 0.787 },
+    { value: "Steel pipe & tube (NAICS 331210)", unit: "USD", factor: 0.36 },
+    { value: "Cement (NAICS 327310)", unit: "USD", factor: 3.924 },
+    { value: "Organic chemicals (NAICS 325199)", unit: "USD", factor: 1.184 },
+    { value: "Inorganic chemicals (NAICS 325180)", unit: "USD", factor: 1.01 },
+    { value: "Oil & gas support services (NAICS 213112)", unit: "USD", factor: 0.372 },
+    { value: "Engineering services (NAICS 541330)", unit: "USD", factor: 0.103 },
   ],
   2: [
-    { value: "Machinery & Equipment", unit: "USD", factor: 0.45 },
-    { value: "Buildings & Infrastructure", unit: "USD", factor: 0.85 },
-    { value: "IT Equipment", unit: "USD", factor: 0.35 },
+    // EPA Supply Chain GHG Emission Factors v1.3.0, kg CO2e per 2022 USD (purchaser price, with margins, AR5)
+    { value: "Oil & gas field machinery (NAICS 333132)", unit: "USD", factor: 0.219 },
+    { value: "Pipeline construction (NAICS 237120)", unit: "USD", factor: 0.277 },
+    { value: "Commercial / industrial buildings (NAICS 236220)", unit: "USD", factor: 0.224 },
+    { value: "Computers (NAICS 334111)", unit: "USD", factor: 0.058 },
   ],
   3: [
-    { value: "Upstream of Purchased Fuels", unit: "kg", factor: 0.25 },
-    { value: "T&D Losses (Electricity)", unit: "kWh", factor: 0.05 },
+    // EPA Supply Chain GHG Emission Factors v1.3.0 (cradle-to-gate of the purchased fuel), kg CO2e per 2022 USD
+    { value: "Purchased refined fuels, upstream (NAICS 324110)", unit: "USD", factor: 0.27 },
+    { value: "Purchased natural gas, upstream (NAICS 211130)", unit: "USD", factor: 0.405 },
+    // T&D losses: kWh lost x the site grid factor (Scope 2 grid list); no fixed default
+    { value: "T&D Losses (Electricity)", unit: "kWh", factor: null },
   ],
   4: [
     // EPA GHG Emission Factors Hub 2025, Table 8 (short ton-mile), as kg CO2e per tonne-km at AR5
@@ -50,7 +58,8 @@ export const CATEGORY_ACTIVITIES = {
     { value: "Transit Rail (subway, tram)", unit: "passenger-km", factor: 0.05808 },
   ],
   8: [
-    { value: "Leased Office Space", unit: "sq ft", factor: 5.5 },
+    // EPA Supply Chain GHG Emission Factors v1.3.0, NAICS 531120, kg CO2e per 2022 USD of rent
+    { value: "Leased buildings (rent) (NAICS 531120)", unit: "USD", factor: 0.246 },
     // EPA GHG Emission Factors Hub 2025, Table 10 passenger car, per vehicle-km at AR5
     { value: "Leased Vehicles (passenger car)", unit: "km", factor: 0.18552 },
   ],
@@ -62,7 +71,8 @@ export const CATEGORY_ACTIVITIES = {
     { value: "Air Freight", unit: "ton-km", factor: 0.74991 },
   ],
   10: [
-    { value: "Processing (Electricity)", unit: "kWh", factor: 0.4 },
+    // electricity: enter the grid factor of the processing site (kg CO2e / kWh, Scope 2 grid list)
+    { value: "Processing (Electricity)", unit: "kWh", factor: null },
     { value: "Processing (Natural Gas)", unit: "mcf", factor: 54.18 },
   ],
   11: [
@@ -81,10 +91,17 @@ export const CATEGORY_ACTIVITIES = {
     { value: "Recycling (mixed recyclables)", unit: "kg", factor: 0.0992 },
     { value: "Incineration (mixed MSW)", unit: "kg", factor: 0.474 },
   ],
-  13: [{ value: "Downstream Leased Space", unit: "sq ft", factor: 5.5 }],
-  14: [{ value: "Retail Franchise", unit: "sq ft", factor: 10.0 }],
+  13: [
+    // EPA Supply Chain GHG Emission Factors v1.3.0, NAICS 531120, kg CO2e per 2022 USD of rent
+    { value: "Downstream leased buildings (rent) (NAICS 531120)", unit: "USD", factor: 0.246 },
+  ],
+  14: [
+    // no EPA factor: enter the franchisee's reported emission intensity
+    { value: "Franchise operations", unit: "USD", factor: null },
+  ],
   15: [
-    { value: "Equity Investments", unit: "USD", factor: 0.001 },
-    { value: "Project Finance", unit: "USD", factor: 0.005 },
+    // no EPA factor: enter the investee factor (e.g. PCAF), kg CO2e per USD invested
+    { value: "Equity Investments", unit: "USD", factor: null },
+    { value: "Project Finance", unit: "USD", factor: null },
   ],
 };

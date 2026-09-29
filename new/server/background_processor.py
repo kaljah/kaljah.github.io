@@ -1232,8 +1232,11 @@ def _process_row_scope3_eeio(
     if spend_usd <= 0:
         return None, ["Spend amount must be greater than zero"]
 
-    # 4. Calculate
-    factor_data = get_eeio_factor(naics)
+    # 4. Calculate (EPA supply chain factors; an unknown code is a row error, not a default factor)
+    try:
+        factor_data = get_eeio_factor(naics)
+    except LookupError as exc:
+        return None, [str(exc)]
     spend_k = spend_usd / 1000.0
     kg_co2e = spend_k * factor_data["kg_co2e_per_1000_usd"]
     tonnes_co2e = kg_co2e / 1000.0

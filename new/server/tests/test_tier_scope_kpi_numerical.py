@@ -226,8 +226,10 @@ class TestScope2Methods:
             assert abs(factor - expected_factor) < 1e-6
             kwh = 1_000_000.0  # 1 GWh
             assert (kwh * factor) / 1000.0 == pytest.approx(expected_factor * 1000.0)
-        # the Algerian grid is not in the Compendium: carried over and flagged as unverified
-        assert GRID_FACTORS["Algerian National Grid"]["verified"] is False
+        # Algeria 2024: MEM energy balance gas to power (23,855 ktep PCS) x IPCC 56.1 t CO2/TJ (NCV = 0.9 PCS)
+        # over 101,386 GWh
+        co2 = 23855 * 41.868 * 0.9 * 56.1 / 101386 / 1000.0
+        assert GRID_FACTORS["Algerian National Grid"]["co2"] == pytest.approx(co2, rel=1e-3)
 
     def test_scope2_market_based_contractual_instruments(self):
         """Scope 2 Market-Based Method:
@@ -325,17 +327,18 @@ class TestScope3Tiers:
     def test_scope3_tier1_spend_based_eeio(self):
         """Tier 1 Spend-Based:
         Emissions = Spend ($) × EEIO Factor (kg CO2e / $1,000) / (1,000 * 1,000).
-        NAICS 211 (Oil and Gas Extraction): 3,200.1 kg CO2e / $1,000 spend.
-        Spend: $500,000.
-        Emissions = (500,000 / 1,000) * 3,200.1 / 1,000 = 500 * 3.2001 = 1,600.05 tCO2e.
+        NAICS 211130 (Natural Gas Extraction), EPA Supply Chain GHG Emission Factors v1.3.0 with
+        margins: 0.405 kg CO2e / 2022 USD = 405 kg / $1,000. Spend $500,000 -> 202.5 tCO2e.
         """
-        factor_info = get_eeio_factor("211")
-        assert factor_info["name"] == "Oil and Gas Extraction"
+        factor_info = get_eeio_factor("211130")
+        assert factor_info["name"] == "Natural Gas Extraction"
         ef_kg_per_1000 = factor_info["kg_co2e_per_1000_usd"]
 
         spend_usd = 500_000.0
         emissions_tco2e = (spend_usd / 1000.0) * (ef_kg_per_1000 / 1000.0)
-        assert abs(emissions_tco2e - 1600.05) < 1e-4
+        assert abs(emissions_tco2e - 202.5) < 1e-6
+        with pytest.raises(LookupError):
+            get_eeio_factor("211")
 
         # Uncertainty: Spend-based has Tier 1 high uncertainty (30-40%)
         u = propagate_uncertainty(emissions_tco2e, ef_uncertainty=0.30, activity_uncertainty=0.15, tier=Tier.T1)
