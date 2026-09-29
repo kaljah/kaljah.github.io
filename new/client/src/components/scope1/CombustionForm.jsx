@@ -218,7 +218,8 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
             </div>
           )}
 
-          {/* Operating conditions for Gas standard volume normalization */}
+          {/* Operating conditions: a gas volume in m3 / cf read at these conditions is
+              converted to standard conditions (scf and Sm3 are already standard) */}
           <div
             className="form-grid-2"
             style={{ gap: "10px", marginTop: "10px" }}
@@ -233,9 +234,10 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
                     ? data.operating_temperature
                     : ""
                 }
-                onChange={(e) =>
-                  onChange("operating_temperature", e.target.value)
-                }
+                onChange={(e) => {
+                  onChange("operating_temperature", e.target.value);
+                  onChange("temp_unit", "F"); // the unit shown on the label
+                }}
                 placeholder="Def: 60°F"
               />
             </div>
@@ -251,7 +253,10 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
                     ? data.operating_pressure
                     : ""
                 }
-                onChange={(e) => onChange("operating_pressure", e.target.value)}
+                onChange={(e) => {
+                  onChange("operating_pressure", e.target.value);
+                  onChange("press_unit", "psia"); // the unit shown on the label
+                }}
                 placeholder="Def: 14.696"
               />
             </div>

@@ -1,9 +1,9 @@
 import React, { useState, useRef, useCallback, useMemo, useEffect } from "react";
 import Papa from "papaparse";
 import api from "../api";
+import { autoDetectMapping, missingRequiredFields } from "../utils/importMapping";
 import { useToast } from "./Toast";
 import UploadProgress from "./UploadProgress";
-import { PROCESS_TYPES } from "../utils/EmissionFactors";
 import "./Scope1ImportWizard.css";
 
 // ─── SVG Icon Library ────────────────────────────────────────────────────────
@@ -149,21 +149,21 @@ const Icon = {
   ),
 };
 
-// ─── Process catalogue (maps to backend PROCESS_TYPES) ────────────────────────
+// ─── Process catalogue (keys are the server's Scope 1 process types) ─────────
+const COMP = ["c1","c2","c3","c4","c5","c6","c7","c8","c9","c10","co2_mol","n2_mol"];
 const PROCESS_CATALOGUE = [
-  { key: "combustion",             label: "Combustion",               IconComp: Icon.Flame,     tier1Fields: ["fuel","quantity","unit"], tier3Extra: ["hhv","c1","c2","c3","c4","c5","c6","c7","c8","c9","c10","co2_mol","n2_mol","combustion_efficiency","operating_temperature","operating_pressure"] },
-  { key: "flaring",                label: "Flaring",                  IconComp: Icon.Flame,     tier1Fields: ["fuel","quantity","unit"], tier3Extra: ["flare_type","ch4_content","co2_content","control_efficiency","c1","c2","c3","c4","c5","c6","c7","c8","c9","c10"] },
-  { key: "venting",                label: "Venting",                  IconComp: Icon.Wind,      tier1Fields: ["fuel","quantity","unit"], tier3Extra: ["ch4_content","co2_content"] },
-  { key: "tank_flashing",          label: "Tank Flashing",            IconComp: Icon.Container, tier1Fields: ["fuel","quantity","unit"], tier3Extra: ["tank_gor","tank_ch4_content","tank_control_eff","tank_api_gravity"] },
-  { key: "tank_working_standing",  label: "Tank Working/Standing",    IconComp: Icon.Container, tier1Fields: ["fuel","quantity","unit"], tier3Extra: ["tank_throughput","tank_ch4_content","tank_control_eff","tank_turnovers"] },
-  { key: "pneumatic_device",       label: "Pneumatic Devices",        IconComp: Icon.Cpu,       tier1Fields: ["quantity","unit"],       tier3Extra: ["pneu_type","pneu_count","pneu_bleed_rate","pneu_hours","ch4_content"] },
-  { key: "pneumatic_pump",         label: "Pneumatic Pumps",          IconComp: Icon.Cpu,       tier1Fields: ["quantity","unit"],       tier3Extra: ["pump_type","pump_count","pump_gas_rate","pump_hours"] },
-  { key: "fugitives_equipment",    label: "Fugitive Equipment",       IconComp: Icon.Wind,      tier1Fields: ["quantity","unit"],       tier3Extra: ["fugitive_method","fugitive_ppm","comp_count","operating_hours","ch4_content"] },
-  { key: "fugitives_leaks",        label: "Fugitive Leaks",           IconComp: Icon.Droplets,  tier1Fields: ["quantity","unit"],       tier3Extra: ["leak_count","leak_duration","leak_rate","ch4_content"] },
-  { key: "completions",            label: "Well Completions",         IconComp: Icon.Layers,    tier1Fields: ["quantity","unit"],       tier3Extra: ["comp_method","comp_rate","comp_duration","ch4_content","comp_flare_eff"] },
-  { key: "blowdown",               label: "Blowdowns",                IconComp: Icon.Zap,       tier1Fields: ["quantity","unit"],       tier3Extra: ["blowdown_pressure","blowdown_events","ch4_content","blowdown_temp","z_factor"] },
-  { key: "dehydrator",             label: "Dehydrators",              IconComp: Icon.Droplets,  tier1Fields: ["quantity","unit"],       tier3Extra: ["dehy_throughput","dehy_pump_rate","dehy_hours","dehy_press","dehy_temp","dehy_ch4_content","dehy_eff"] },
-  { key: "agr",                    label: "AGR / Acid Gas Removal",   IconComp: Icon.Activity,  tier1Fields: ["quantity","unit"],       tier3Extra: ["agr_throughput","agr_co2_in","agr_co2_out","agr_ch4_in","agr_ch4_slip","agr_control_eff"] },
+  { key: "combustion",    label: "Combustion",             IconComp: Icon.Flame,     tier3Extra: ["hhv", ...COMP, "combustion_efficiency", "operating_temperature", "temp_unit", "operating_pressure", "press_unit", "z_factor"] },
+  { key: "flaring",       label: "Flaring",                IconComp: Icon.Flame,     tier3Extra: ["flare_type", "control_efficiency", ...COMP] },
+  { key: "venting",       label: "Venting",                IconComp: Icon.Wind,      tier3Extra: ["vent_method", "disposition", "ch4_content", "co2_content"] },
+  { key: "blowdown",      label: "Blowdowns",              IconComp: Icon.Zap,       tier3Extra: ["blowdown_pressure", "blowdown_events", "blowdown_temp", "blowdown_temp_unit", "blowdown_press_unit", "z_factor", "ch4_content", "co2_content"] },
+  { key: "tank_flashing", label: "Tank Flashing",          IconComp: Icon.Container, tier3Extra: ["tank_gor", "tank_ch4_content", "tank_control_eff", "tank_api_gravity"] },
+  { key: "pneumatic",     label: "Pneumatic Devices",      IconComp: Icon.Cpu,       tier3Extra: ["pneu_count", "pneu_bleed_rate", "pneu_bleed_unit", "pneu_hours", "pneu_ch4_content"] },
+  { key: "fugitive",      label: "Equipment Leaks",        IconComp: Icon.Droplets,  tier3Extra: ["fugitive_method", "component_type", "service", "m21_below_count", "m21_above_count"] },
+  { key: "completions",   label: "Well Completions",       IconComp: Icon.Layers,    tier3Extra: ["comp_method", "comp_rate", "comp_rate_unit", "comp_duration", "comp_flare_eff", "ch4_content", "co2_content"] },
+  { key: "unloading",     label: "Liquids Unloading",      IconComp: Icon.Layers,    tier3Extra: ["unload_depth", "unload_diam", "unload_press", "unload_freq", "unload_flare_eff", "ch4_content", "co2_content"] },
+  { key: "drilling",      label: "Drilling",               IconComp: Icon.Layers,    tier3Extra: ["mud_type"] },
+  { key: "dehydrator",    label: "Dehydrators",            IconComp: Icon.Droplets,  tier3Extra: ["vent_method", "ch4_content", "co2_content"] },
+  { key: "agr",           label: "AGR / Acid Gas Removal", IconComp: Icon.Activity,  tier3Extra: ["agr_co2_in", "agr_co2_out", "agr_ch4_in", "agr_ch4_slip", "agr_control_eff"] },
 ];
 
 // ─── ALL field definitions with grouping + tooltips ────────────────────────
@@ -173,14 +173,14 @@ const FIELD_GROUPS = [
     label: "Location & Identity",
     IconComp: Icon.Layers,
     fields: [
-      { key: "date",          label: "Date",           required: true,  hint: "Format: YYYY-MM-DD or YYYY-MM" },
+      { key: "date",          label: "Date",           required: true,  hint: "Format: YYYY-MM-DD or YYYY-MM (or map Year and Month)" },
       { key: "facility_name", label: "Region / Facility", required: true, hint: "Must match an existing region in the system" },
       { key: "activity",      label: "Activity",       required: false, hint: "e.g. Exploration & Production" },
       { key: "division",      label: "Division",       required: false, hint: "e.g. Production, Association" },
       { key: "field",         label: "Field",          required: false, hint: "e.g. Bir Berkine" },
       { key: "group",         label: "Emission Source",required: false, hint: "Logical grouping for this emission source" },
       { key: "equipment",     label: "Equipment Name", required: false, hint: "Name of the piece of equipment" },
-      { key: "equipment_id",  label: "Equipment ID",   required: false, hint: "Unique identifier for the equipment" },
+      { key: "equipment_id",  label: "Equipment ID",   required: false, hint: "Unique identifier for the equipment (duplicate check)" },
     ],
   },
   {
@@ -188,11 +188,12 @@ const FIELD_GROUPS = [
     label: "Measurement",
     IconComp: Icon.Activity,
     fields: [
-      { key: "process",       label: "Process Type",  required: true,  hint: "e.g. Combustion, Flaring, Venting" },
-      { key: "fuel",          label: "Activity / Fuel", required: true, hint: "Must match an API Compendium fuel name exactly" },
-      { key: "quantity",      label: "Quantity",      required: true,  hint: "Numeric activity data value" },
-      { key: "unit",          label: "Unit",          required: true,  hint: "e.g. scf, m3, bbl, kg, tonne" },
-      { key: "factor_type",   label: "Factor Type",   required: false, hint: "'default' uses API Compendium. 'custom' uses your factors." },
+      { key: "process",       label: "Process Type",  required: true,  hint: "e.g. combustion, flaring, venting (keys or the form's names)" },
+      { key: "fuel",          label: "Activity / Fuel", required: false, hint: "Emission factor name as listed in the manual form (default and custom rows)" },
+      { key: "quantity",      label: "Quantity",      required: true,  hint: "Activity of the month" },
+      { key: "unit",          label: "Unit",          required: true,  hint: "e.g. scf, Mscf, m3, bbl, gal, tonne, days, devices" },
+      { key: "factor_type",   label: "Factor Type",   required: false, hint: "default (API Compendium) | custom (saved factor) | specific (Tier 3)" },
+      { key: "operating_hours", label: "Operating Hours", required: false, hint: "Hours in the month: required for pneumatic controller factors and equipment leaks" },
       { key: "year",          label: "Year",          required: true,  hint: "4-digit year (e.g. 2024) — required unless using a date column" },
       { key: "month",         label: "Month",         required: true,  hint: "1–12 — required unless using a date column (YYYY-MM)" },
     ],
@@ -203,19 +204,21 @@ const FIELD_GROUPS = [
     IconComp: Icon.Settings,
     tier3Only: true,
     fields: [
-      { key: "c1",      label: "C1 (Methane) mol%",  required: false, hint: "Methane mole fraction %" },
-      { key: "c2",      label: "C2 (Ethane) mol%",   required: false, hint: "Ethane mole fraction %" },
-      { key: "c3",      label: "C3 (Propane) mol%",  required: false, hint: "Propane mole fraction %" },
-      { key: "c4",      label: "C4 mol%",            required: false, hint: "Butane mole fraction %" },
-      { key: "c5",      label: "C5 mol%",            required: false, hint: "Pentane mole fraction %" },
-      { key: "c6",      label: "C6 mol%",            required: false, hint: "Hexane mole fraction %" },
+      { key: "c1",      label: "C1 (Methane) mol%",  required: false, hint: "Methane mole %" },
+      { key: "c2",      label: "C2 (Ethane) mol%",   required: false, hint: "Ethane mole %" },
+      { key: "c3",      label: "C3 (Propane) mol%",  required: false, hint: "Propane mole %" },
+      { key: "c4",      label: "C4 mol%",            required: false, hint: "Butane mole %" },
+      { key: "c5",      label: "C5 mol%",            required: false, hint: "Pentane mole %" },
+      { key: "c6",      label: "C6 mol%",            required: false, hint: "Hexane mole %" },
       { key: "c7",      label: "C7 mol%",            required: false, hint: "" },
       { key: "c8",      label: "C8 mol%",            required: false, hint: "" },
       { key: "c9",      label: "C9 mol%",            required: false, hint: "" },
       { key: "c10",     label: "C10+ mol%",          required: false, hint: "" },
-      { key: "co2_mol", label: "CO₂ mol%",           required: false, hint: "CO2 mole fraction %" },
-      { key: "n2_mol",  label: "N₂ mol%",            required: false, hint: "Nitrogen mole fraction %" },
-      { key: "hhv",     label: "HHV",               required: false, hint: "Higher Heating Value (Btu/scf or kJ/m³)" },
+      { key: "co2_mol", label: "CO₂ mol%",           required: false, hint: "CO2 mole % of the gas" },
+      { key: "n2_mol",  label: "N₂ mol%",            required: false, hint: "Nitrogen mole %" },
+      { key: "hhv",     label: "HHV",               required: false, hint: "Higher heating value (Btu/scf for gas)" },
+      { key: "ch4_content", label: "CH4 Content %",  required: false, hint: "CH4 mole % when the full composition is not given" },
+      { key: "co2_content", label: "CO2 Content %",  required: false, hint: "CO2 mole % when the full composition is not given" },
     ],
   },
   {
@@ -224,34 +227,42 @@ const FIELD_GROUPS = [
     IconComp: Icon.Flame,
     tier3Only: true,
     fields: [
-      { key: "combustion_efficiency", label: "Combustion Efficiency %", required: false, hint: "Defaults to 98% if not provided" },
-      { key: "flare_type",           label: "Flare Type",             required: false, hint: "e.g. steam_assisted, air_assisted, non_assisted" },
-      { key: "control_efficiency",   label: "Control Efficiency %",   required: false, hint: "% of emissions captured/destroyed" },
-      { key: "ch4_content",          label: "CH4 Content %",          required: false, hint: "Used when full gas composition is not available" },
-      { key: "co2_content",          label: "CO2 Content %",          required: false, hint: "Used when full gas composition is not available" },
-      { key: "operating_temperature",label: "Operating Temp",         required: false, hint: "Temperature of gas stream" },
+      { key: "combustion_efficiency", label: "Combustion Efficiency %", required: false, hint: "Defaults to 99.5 % for combustion" },
+      { key: "flare_type",           label: "Flare Type",             required: false, hint: "elevated | enclosed_ground | air_assisted | steam_assisted" },
+      { key: "control_efficiency",   label: "Flare Control Efficiency %", required: false, hint: "Flare destruction efficiency %" },
+      { key: "operating_temperature",label: "Metering Temp",          required: false, hint: "Only for volumes in m3 / cf read at metering conditions" },
       { key: "temp_unit",            label: "Temp Unit",              required: false, hint: "C or F" },
-      { key: "operating_pressure",   label: "Operating Pressure",     required: false, hint: "Pressure of gas stream" },
-      { key: "press_unit",           label: "Press Unit",             required: false, hint: "kPa, psi, bar" },
+      { key: "operating_pressure",   label: "Metering Pressure",      required: false, hint: "Only for volumes in m3 / cf read at metering conditions" },
+      { key: "press_unit",           label: "Press Unit",             required: false, hint: "psig, psia, kPa, barg, bara" },
       { key: "z_factor",             label: "Z Factor",               required: false, hint: "Gas compressibility factor" },
     ],
   },
   {
+    id: "vent_params",
+    label: "Venting / Dehydrator / Blowdown (Tier 3)",
+    IconComp: Icon.Wind,
+    tier3Only: true,
+    fields: [
+      { key: "vent_method",         label: "Vent Method",          required: false, hint: "volume: the quantity is the measured gas volume (scf, Mcf, MMscf, m3)" },
+      { key: "disposition",         label: "Disposition",          required: false, hint: "vented (default) or flared" },
+      { key: "blowdown_pressure",   label: "Blowdown Pressure",    required: false, hint: "Vessel pressure before blowdown" },
+      { key: "blowdown_events",     label: "Blowdown Events",      required: false, hint: "Events in the month" },
+      { key: "blowdown_temp",       label: "Blowdown Temp",        required: false, hint: "Gas temperature in the vessel" },
+      { key: "blowdown_temp_unit",  label: "Blowdown Temp Unit",   required: false, hint: "F | C | K" },
+      { key: "blowdown_press_unit", label: "Blowdown Press Unit",  required: false, hint: "psig | psia | kPa" },
+    ],
+  },
+  {
     id: "pneumatic_params",
-    label: "Pneumatic / Compressor Parameters (Tier 3)",
+    label: "Pneumatic Parameters (Tier 3)",
     IconComp: Icon.Cpu,
     tier3Only: true,
     fields: [
-      { key: "pneu_type",       label: "Pneumatic Type",       required: false, hint: "high_bleed, low_bleed, intermittent" },
-      { key: "pneu_count",      label: "Pneumatic Count",      required: false, hint: "Number of pneumatic devices" },
-      { key: "pneu_bleed_rate", label: "Pneumatic Bleed Rate", required: false, hint: "Gas bleed rate per device" },
-      { key: "pneu_hours",      label: "Operating Hours",      required: false, hint: "Annual or period hours of operation" },
-      { key: "pump_type",       label: "Pump Type",            required: false, hint: "e.g. reciprocating" },
-      { key: "pump_count",      label: "Pump Count",           required: false, hint: "Number of pneumatic pumps" },
-      { key: "pump_gas_rate",   label: "Pump Gas Rate",        required: false, hint: "Gas displacement rate per pump" },
-      { key: "pump_hours",      label: "Pump Hours",           required: false, hint: "Annual operating hours" },
-      { key: "comp_mode",       label: "Compressor Mode",      required: false, hint: "e.g. wet_seal, dry_seal" },
-      { key: "comp_hours",      label: "Compressor Hours",     required: false, hint: "Annual operating hours" },
+      { key: "pneu_count",       label: "Pneumatic Count",      required: false, hint: "Number of devices" },
+      { key: "pneu_bleed_rate",  label: "Bleed Rate",           required: false, hint: "Measured bleed rate per device" },
+      { key: "pneu_bleed_unit",  label: "Bleed Rate Unit",      required: false, hint: "scf or m3 (per hour)" },
+      { key: "pneu_hours",       label: "Pneumatic Hours",      required: false, hint: "Operating hours in the month" },
+      { key: "pneu_ch4_content", label: "Supply Gas CH4 %",     required: false, hint: "CH4 mole % of the supply gas" },
     ],
   },
   {
@@ -260,64 +271,55 @@ const FIELD_GROUPS = [
     IconComp: Icon.Container,
     tier3Only: true,
     fields: [
-      { key: "tank_gor",            label: "Tank GOR",             required: false, hint: "Gas-oil ratio for flash calculation" },
-      { key: "tank_ch4_content",    label: "Tank CH4 Content %",   required: false, hint: "Methane content of tank vapors" },
-      { key: "tank_control_eff",    label: "Tank Control Eff %",   required: false, hint: "Vapor recovery efficiency" },
-      { key: "tank_api_gravity",    label: "Tank API Gravity",     required: false, hint: "API gravity of stored crude" },
-      { key: "tank_throughput",     label: "Tank Throughput",      required: false, hint: "For working/standing loss calculations" },
-      { key: "tank_throughput_unit",label: "Tank Throughput Unit", required: false, hint: "bbl, m3" },
-      { key: "tank_turnovers",      label: "Tank Turnovers",       required: false, hint: "Annual turnovers for standing loss" },
+      { key: "tank_gor",            label: "Tank GOR",             required: false, hint: "Flash gas-to-oil ratio (scf/bbl)" },
+      { key: "tank_ch4_content",    label: "Tank CH4 Content %",   required: false, hint: "CH4 mole % of the flash gas" },
+      { key: "tank_control_eff",    label: "Tank Control Eff %",   required: false, hint: "Vapour control efficiency" },
+      { key: "tank_api_gravity",    label: "Tank API Gravity",     required: false, hint: "API gravity of the stored liquid" },
     ],
   },
   {
     id: "fugitive_params",
-    label: "Fugitive Emission Parameters (Tier 3)",
+    label: "Equipment Leak Parameters (Tier 3)",
     IconComp: Icon.Wind,
     tier3Only: true,
     fields: [
-      { key: "fugitive_method", label: "Fugitive Method",  required: false, hint: "e.g. EPA_factor, OGI_measurement, direct" },
-      { key: "fugitive_ppm",    label: "Fugitive PPM",     required: false, hint: "Measured concentration in PPM" },
-      { key: "comp_count",      label: "Component Count",  required: false, hint: "Number of components surveyed" },
-      { key: "operating_hours", label: "Operating Hours",  required: false, hint: "Hours of operation for leak calculation" },
-      { key: "leak_count",      label: "Leak Count",       required: false, hint: "Number of leaks detected" },
-      { key: "leak_duration",   label: "Leak Duration",    required: false, hint: "Duration of each leak event (hours)" },
-      { key: "leak_rate",       label: "Leak Rate",        required: false, hint: "Gas leak rate per event" },
+      { key: "fugitive_method", label: "Leak Method",       required: false, hint: "screening | correlation | ogi | measurement" },
+      { key: "component_type",  label: "Component Type",    required: false, hint: "valve | connector | flange | open_ended_line | pump_seal | other" },
+      { key: "service",         label: "Service",           required: false, hint: "gas | light_oil | heavy_oil | water_oil" },
+      { key: "m21_below_count", label: "Screened < 10,000 ppmv", required: false, hint: "Components screened below 10,000 ppmv" },
+      { key: "m21_above_count", label: "Screened ≥ 10,000 ppmv", required: false, hint: "Components screened at or above 10,000 ppmv" },
     ],
   },
   {
     id: "well_params",
-    label: "Well / Completion Parameters (Tier 3)",
+    label: "Well / Drilling Parameters (Tier 3)",
     IconComp: Icon.Layers,
     tier3Only: true,
     fields: [
-      { key: "comp_method",       label: "Completion Method",  required: false, hint: "e.g. open_vent, flared" },
-      { key: "comp_rate",         label: "Completion Rate",    required: false, hint: "Gas flow rate during completion" },
-      { key: "comp_duration",     label: "Completion Duration",required: false, hint: "Duration of flowback (hours)" },
-      { key: "comp_flare_eff",    label: "Flare Efficiency %", required: false, hint: "% of completion gas flared" },
-      { key: "blowdown_pressure", label: "Blowdown Pressure",  required: false, hint: "Pipeline or vessel pressure before blowdown" },
-      { key: "blowdown_events",   label: "Blowdown Events",    required: false, hint: "Number of blowdown events" },
-      { key: "blowdown_temp",     label: "Blowdown Temp",      required: false, hint: "Gas temperature at blowdown" },
+      { key: "mud_type",          label: "Mud Type",           required: false, hint: "water_based | oil_based | synthetic (quantity in drilling days)" },
+      { key: "comp_method",       label: "Completion Method",  required: false, hint: "metered_volume | rate_duration | gor_liquid" },
+      { key: "comp_rate",         label: "Flowback Rate",      required: false, hint: "Gas rate during flowback" },
+      { key: "comp_rate_unit",    label: "Flowback Rate Unit", required: false, hint: "Mcf/hr (default) | Mcf/day | scf/hr | m3/hr" },
+      { key: "comp_duration",     label: "Flowback Duration",  required: false, hint: "Hours" },
+      { key: "comp_flare_eff",    label: "Completion Flare %", required: false, hint: "% of flowback gas flared" },
+      { key: "unload_depth",      label: "Well Depth (ft)",    required: false, hint: "Liquids unloading" },
+      { key: "unload_diam",       label: "Casing Diameter (in)", required: false, hint: "Liquids unloading" },
+      { key: "unload_press",      label: "Shut-in Pressure (psig)", required: false, hint: "Liquids unloading" },
+      { key: "unload_freq",       label: "Unloading Events",   required: false, hint: "Events in the month" },
+      { key: "unload_flare_eff",  label: "Unloading Flare %",  required: false, hint: "% of unloading gas flared" },
     ],
   },
   {
     id: "dehydrator_agr",
-    label: "Dehydrator / AGR Parameters (Tier 3)",
+    label: "AGR Parameters (Tier 3)",
     IconComp: Icon.Droplets,
     tier3Only: true,
     fields: [
-      { key: "dehy_throughput",   label: "Dehy Throughput",    required: false, hint: "Gas throughput through dehydrator" },
-      { key: "dehy_pump_rate",    label: "Dehy Pump Rate",     required: false, hint: "Glycol circulation rate" },
-      { key: "dehy_hours",        label: "Dehy Hours",         required: false, hint: "Annual operating hours" },
-      { key: "dehy_press",        label: "Dehy Pressure",      required: false, hint: "Contactor pressure" },
-      { key: "dehy_temp",         label: "Dehy Temperature",   required: false, hint: "Contactor temperature" },
-      { key: "dehy_ch4_content",  label: "Dehy CH4 Content %", required: false, hint: "CH4 content of gas stream" },
-      { key: "dehy_eff",          label: "Dehy Efficiency %",  required: false, hint: "Water removal efficiency" },
-      { key: "agr_throughput",    label: "AGR Throughput",     required: false, hint: "Gas throughput through AGR unit" },
-      { key: "agr_co2_in",        label: "AGR CO₂ In",        required: false, hint: "Inlet CO2 concentration" },
-      { key: "agr_co2_out",       label: "AGR CO₂ Out",       required: false, hint: "Outlet CO2 concentration" },
-      { key: "agr_ch4_in",        label: "AGR CH₄ In",        required: false, hint: "Inlet CH4 concentration" },
-      { key: "agr_ch4_slip",      label: "AGR CH₄ Slip",      required: false, hint: "Methane lost through solvent" },
-      { key: "agr_control_eff",   label: "AGR Control Eff %", required: false, hint: "CO2 capture efficiency" },
+      { key: "agr_co2_in",        label: "AGR CO₂ In %",       required: false, hint: "CO2 mole % in the feed" },
+      { key: "agr_co2_out",       label: "AGR CO₂ Out %",      required: false, hint: "CO2 mole % in the sweet gas" },
+      { key: "agr_ch4_in",        label: "AGR CH₄ In %",       required: false, hint: "CH4 mole % in the feed" },
+      { key: "agr_ch4_slip",      label: "AGR CH₄ Slip",       required: false, hint: "Fraction of inlet CH4 (e.g. 0.001)" },
+      { key: "agr_control_eff",   label: "AGR Control Eff %",  required: false, hint: "Acid gas destruction efficiency" },
     ],
   },
   {
@@ -494,18 +496,6 @@ function FieldGroup({ group, headers, mapping, setMapping, searchQuery, tier, pr
 }
 
 // ─── Auto-detect mapping ───────────────────────────────────────────────────────
-function autoDetect(headers, allFields) {
-  const mapping = {};
-  allFields.forEach(f => {
-    const match = headers.find(h => {
-      const hl = h.toLowerCase();
-      return hl === f.key || hl.includes(f.key.replace(/_/g, " ")) || hl.includes(f.label.toLowerCase()) || f.label.toLowerCase().includes(hl);
-    });
-    if (match && !mapping[f.key]) mapping[f.key] = match;
-  });
-  return mapping;
-}
-
 // ─── Main Wizard ──────────────────────────────────────────────────────────────
 export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
   const toast = useToast();
@@ -560,8 +550,7 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
   []);
 
   // Required fields check
-  const requiredFields = FIELD_GROUPS.flatMap(g => g.fields).filter(f => f.required);
-  const missingRequired = requiredFields.filter(f => !mapping[f.key]);
+  const missingRequired = missingRequiredFields(FIELD_GROUPS.flatMap(g => g.fields), mapping);
   const canSubmit = missingRequired.length === 0 || headers.length === 0;
 
   // File processing
@@ -582,7 +571,7 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
         }
         const hdrs = results.meta.fields;
         setHeaders(hdrs);
-        setMapping(autoDetect(hdrs, allFields));
+        setMapping(autoDetectMapping(hdrs, allFields));
         setFile(f);
         setStep(4);
       },
@@ -887,6 +876,7 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
                 <option value="auto">Auto-detect from file</option>
                 <option value="default">Force Standard (API Compendium)</option>
                 <option value="custom">Force Custom Factors</option>
+                <option value="specific">Force Tier 3 (site data)</option>
               </select>
             </div>
 

@@ -7,6 +7,7 @@ import { getUserOperationalDefaults } from "../utils/userDefaults";
 import LoadingSpinner from "./LoadingSpinner";
 import { formatNumber } from "../utils/formatters";
 import ColumnMappingWizard from "./ColumnMappingWizard";
+import Scope2ImportWizard from "./Scope2ImportWizard";
 import { Upload, Copy, Trash2, Eye } from "lucide-react";
 import CalculationDetails from "./CalculationDetails";
 import ConfirmModal from "./ConfirmModal";

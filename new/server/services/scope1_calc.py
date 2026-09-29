@@ -22,6 +22,116 @@ SCOPE2_PROCESS_TYPES = {
 }
 
 
+# Scope 1 process types offered by the manual form (client utils/EmissionFactors.js PROCESS_TYPES,
+# kept in sync by tests/test_bulk_uploaders.py); bulk files may use the key or the label
+PROCESS_LABELS = {
+    "combustion": "Stationary Combustion",
+    "flaring": "Flaring",
+    "routine_flaring": "Routine Flaring",
+    "non_routine_flaring": "Non-Routine Flaring",
+    "safety_flaring": "Safety Flaring",
+    "associated_gas_venting": "Associated Gas Venting",
+    "venting": "Venting (Blowdown)",
+    "pneumatic": "Pneumatic Device",
+    "tank_flashing": "Storage Tank - Flashing/Events",
+    "tank_working": "Storage Tank - Working Losses",
+    "tank_breathing": "Storage Tank - Breathing Losses",
+    "drilling": "Drilling Operations",
+    "completions": "Well Completions & Workovers",
+    "unloading": "Liquids Unloading",
+    "agr": "Acid Gas Removal (AGR)",
+    "dehydrator": "Dehydrator",
+    "mobile": "Mobile Combustion",
+    "fugitive": "Onshore Equipment Leaks / Fugitives",
+    "loading": "Loading Losses",
+    "separation": "Wastewater / Separation",
+    "chemical_production": "Chemical Production (Process CO₂)",
+    "nitric_acid_production": "Nitric Acid Production (Process N₂O)",
+    "adipic_acid_production": "Adipic Acid Production (Process N₂O)",
+    "asphalt_blowing": "Asphalt Blowing",
+    "indirect_steam": "Indirect Steam / Heat (Section 8)",
+    "cogen_allocation": "Cogeneration Allocation (Section 8)",
+    "well_testing": "Well Testing",
+    "workovers": "Workovers (no hydraulic fracturing)",
+    "casing_gas": "Casing Gas Venting",
+    "compressor_venting": "Compressor Venting (seals / rod packing)",
+    "non_routine_venting": "Non-Routine Venting (blowdowns, PRVs, dig-ins)",
+    "vented_gas": "Vented / Flared Gas Volume",
+    "desiccant_dehydrator": "Desiccant Dehydrator",
+    "co2_eor": "CO₂ EOR Venting",
+    "thermal_oxidizer": "Thermal Oxidizer",
+}
+
+# names used by the earlier Excel template and import wizard
+_PROCESS_SYNONYMS = {
+    "storage_tank_flashing": "tank_flashing",
+    "storage_tank_working": "tank_working",
+    "storage_tank_breathing": "tank_breathing",
+    "pneumatic_device": "pneumatic",
+    "pneumatic_devices": "pneumatic",
+    "pneumatics": "pneumatic",
+    "pneumatic_controller": "pneumatic",
+    "pneumatic_controllers": "pneumatic",
+    "pneumatic_pump": "pneumatic",
+    "pneumatic_pumps": "pneumatic",
+    "well_completions": "completions",
+    "well_completion": "completions",
+    "fugitives": "fugitive",
+    "fugitive_emissions": "fugitive",
+    "fugitives_equipment": "fugitive",
+    "fugitive_equipment": "fugitive",
+    "equipment_leaks": "fugitive",
+    "blowdowns": "blowdown",
+    "acid_gas_removal": "agr",
+    "dehydrators": "dehydrator",
+    "glycol_dehydrator": "dehydrator",
+}
+
+
+def _slug(text):
+    import re
+
+    return re.sub(r"[^a-z0-9]+", "_", str(text or "").lower()).strip("_")
+
+
+def normalize_process_type(raw):
+    """Canonical process key for a bulk-file value (key, label or known synonym), or None."""
+    from calculations.dispatcher import dispatcher
+
+    s = _slug(raw)
+    if not s:
+        return None
+    if s in PROCESS_LABELS:
+        return s
+    for key, label in PROCESS_LABELS.items():
+        if s == _slug(label):
+            return key
+    if s in _PROCESS_SYNONYMS:
+        return _PROCESS_SYNONYMS[s]
+    return s if s in dispatcher.calculators else None
+
+
+def check_factor_usage(process_type, factor_data, fuel=None):
+    """A catalog factor carries the processes it applies to (`usage`); a Tier 1 row must not
+    book, for example, crude-oil combustion under tank flashing."""
+    from calculations.dispatcher import dispatcher
+
+    usage = (factor_data or {}).get("usage")
+    if not usage or factor_data.get("custom_factor_id"):
+        return
+    usage = [usage] if isinstance(usage, str) else list(usage)
+    proc = _slug(process_type)
+    calc = dispatcher.calculators.get(proc)
+    for u in usage:
+        if u == proc or (calc is not None and type(dispatcher.calculators.get(u)) is type(calc)):
+            return
+    raise ValidationError(
+        f"'{fuel or factor_data.get('name') or 'This factor'}' is a {'/'.join(usage)} factor and does not apply to "
+        f"process '{process_type}'",
+        "fuel",
+    )
+
+
 def custom_factor_data(cf):
     """Map a CustomFactor row to the calculator's factor_data structure."""
     from emission_factors_api2021 import API_FACTORS  # noqa: WPS433
