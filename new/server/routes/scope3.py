@@ -109,7 +109,13 @@ def create_scope3_emission():
         # Supplier-specific total reported directly (approver roles only)
         co2e_val = parse_number(co2e_input, "co2e", min_value=0)
     else:
-        co2e_val = 0.0
+        # never book a missing calculation as 0 tCO2e
+        return jsonify({"error": "Give the activity amount and emission factor (or, for admins and superusers, "
+                                 "a supplier-reported co2e)"}), 422
+    if activity_data > 0 and emission_factor > 0:
+        # stored as kg CO2e per activity unit whatever unit it was entered in (t/unit, g/unit, per $1,000)
+        from calculations.units import scope3_ef_kg_per_unit
+        emission_factor = scope3_ef_kg_per_unit(activity_data, co2e_val, emission_factor)
 
     emission = Scope3Emission(
         facility_id=data.get("facility_id"),
@@ -282,6 +288,9 @@ def update_scope3_emission(emission_id):
         factor_unit = str(data.get("factor_unit") or data.get("emission_factor_unit") or getattr(emission, "factor_unit", "") or "")
         calc_method = str(data.get("calculation_method") or getattr(emission, "calculation_method", "") or "")
         emission.co2e = round(compute_scope3_co2e(act, ef, factor_unit, calc_method), 4)
+        if act > 0 and ef > 0:
+            from calculations.units import scope3_ef_kg_per_unit
+            emission.emission_factor = scope3_ef_kg_per_unit(act, emission.co2e, ef)
 
         if emission.status == "Verified" and user.role != "admin":
             emission.status = "Pending"

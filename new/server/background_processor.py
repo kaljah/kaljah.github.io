@@ -826,7 +826,7 @@ def _process_file_thread(
                     _append_job_list(job_id, "skipped", skip_entry)
                     # Also keep flat list for CSV
                     skipped_list = ["; ".join(row_errors)]
-                    skipped_list.extend([str(row_dict.get(h, "")) for h in headers])
+                    skipped_list.extend(["" if row_dict.get(h) is None else str(row_dict.get(h)) for h in headers])
                     skipped_rows.append(skipped_list)
                 elif emission_obj:
                     chunk.append(emission_obj)
@@ -1185,6 +1185,10 @@ _MAP_BY_SCOPE = {
         ("region", "region"),
         ("code", "code"),
         ("boundary_type", "consolidation approach"),
+        ("equity_share_pct", "equity share"),
+        ("equity_share_pct", "equity share pct"),
+        ("equity_share_pct", "equity"),
+        ("operator_status", "operator status"),
         ("boundary_type", "boundary type"),
         ("boundary_detail", "boundary details"),
         ("boundary_detail", "boundary detail"),
@@ -1358,6 +1362,8 @@ def _process_row_scope2(
             "heat_output_mmbtu": row.get("heat_output_mmbtu"),
             "power_output_mwh": row.get("power_output_mwh"),
             "allocation_method": row.get("allocation_method") or "wri_efficiency",
+            "heat_efficiency": row.get("heat_efficiency"),
+            "power_efficiency": row.get("power_efficiency"),
         }
         if not _clean_float(cogen_in["heat_output_mmbtu"], default=0.0) or not (
             _clean_float(cogen_in["total_emissions"], default=0.0) or _clean_float(cogen_in["fuel_consumed_mmbtu"], default=0.0)
@@ -1500,7 +1506,7 @@ def _process_row_scope3_eeio(
         return None, [existing]
     values = {
         "sub_category": sub_cat, "activity_data": spend_usd, "unit": "USD",
-        "emission_factor": factor_data["kg_co2e_per_1000_usd"], "co2e": tonnes_co2e,
+        "emission_factor": factor_data["kg_co2e_per_usd"], "co2e": tonnes_co2e,
         "notes": row.get("notes", "Bulk Imported via EEIO"),
     }
     if action == "update":
@@ -1517,7 +1523,7 @@ def _process_row_scope3_eeio(
         sub_category=f"Spend-based: {factor_data['name']} (NAICS {naics})",
         activity_data=spend_usd,
         unit="USD",
-        emission_factor=factor_data["kg_co2e_per_1000_usd"],
+        emission_factor=factor_data["kg_co2e_per_usd"],  # kg CO2e per USD, like the manual form
         co2e=tonnes_co2e,
         calculation_method="Spend-based (EEIO)",
         data_quality="Average-data method",
@@ -1629,6 +1635,10 @@ def _process_row_scope3(
         # never book a missing calculation as 0 tCO2e
         return None, ["Provide activity amount and emission factor (or a supplier-specific co2e)"]
 
+    if amt > 0 and ef > 0:
+        # stored as kg CO2e per activity unit, the unit the tables and edits read
+        from calculations.units import scope3_ef_kg_per_unit
+        ef = scope3_ef_kg_per_unit(amt, co2e, ef)
     key = _scope3_key(facility.id, year, month, cat_str, sub_cat, row.get("unit"))
     action, existing = _dedupe(batch_keys, key, overwrite_duplicates,
                                f"Scope 3 emission for facility '{facility.name}' ({year}-{month:02d}, {cat_str}, '{sub_cat or ''}')")
@@ -2003,8 +2013,13 @@ def _process_row_facilities(row, user_id, overwrite_duplicates, batch=None):
     try:
         for fld, lim in (("latitude", 90), ("longitude", 180)):
             coords[fld] = parse_number(row.get(fld), fld, required=False, min_value=-lim, max_value=lim)
+        # equity share (%) for equity-share consolidation, as on the manual form
+        equity = parse_number(row.get("equity_share_pct"), "equity_share_pct", required=False, min_value=0, max_value=100)
     except ValidationError as err:
         return None, [err.message]
+    operator = str(row.get("operator_status") or "").strip().lower().replace("-", "_").replace(" ", "_") or None
+    if operator and operator not in ("operated", "non_operated", "joint_venture"):
+        return None, [f"Unknown operator status '{row.get('operator_status')}': use operated or non-operated"]
 
     batch = batch if batch is not None else {}
     if name.lower() in batch.setdefault("names", set()):
@@ -2068,6 +2083,10 @@ def _process_row_facilities(row, user_id, overwrite_duplicates, batch=None):
             if fld in row and row[fld] is not None and str(row[fld]).strip() != "":
                 setattr(existing, fld, row[fld])
 
+        if equity is not None:
+            existing.equity_share_pct = equity
+        if operator:
+            existing.operator_status = operator
         if coords["latitude"] is not None:
             existing.latitude = coords["latitude"]
         if coords["longitude"] is not None:
@@ -2099,10 +2118,16 @@ def _process_row_facilities(row, user_id, overwrite_duplicates, batch=None):
             segment=row.get("segment"),
             latitude=lat,
             longitude=lon,
+            equity_share_pct=100.0 if equity is None else equity,
+            operator_status=operator or "operated",
             created_by=user_id,
         )
         return facility, errors
 
+
+_UNIT_SPELLING = {u.lower(): u for u in (
+    "MMBtu", "GJ", "MJ", "kWh", "MWh", "therm", "scf", "Mscf", "MMscf", "m3", "Sm3", "Nm3", "gal", "bbl", "L",
+    "kg", "tonne", "lb", "short ton", "days", "devices", "components", "events", "wells")}
 
 _S1_TIER = {
     "specific": "specific", "site_specific": "specific", "site-specific": "specific", "engineering": "specific",
@@ -2215,6 +2240,7 @@ def _process_row(
     elif factor_source != "specific":
         return None, ["Missing quantity."]
     unit = str(row.get("unit") or "").strip()
+    unit = _UNIT_SPELLING.get(unit.lower(), unit)  # "mmbtu" -> "MMBtu", as the form writes it
     if amount is not None and not unit:
         # BUG-111: a blank unit is a row error, never an assumed m3
         return None, ["Missing unit. Provide the activity unit (e.g. MMBtu, scf, gal, tonne)."]

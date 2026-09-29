@@ -732,7 +732,7 @@ class TestCogen:
             'power_output': 400.0,
             'allocation_method': 'wri_efficiency'
         }
-        denom = (600.0 / 0.8) + (400.0 / 0.33)
+        denom = (600.0 / 0.8) + (400.0 / 0.35)  # Compendium section 8.2.2 default efficiencies: heat 80 %, electricity 35 %
         allocated_heat = (600.0 / 0.8) / denom * 1000.0
         
         em, method = compute_emissions(payload, {}, GWP_AR5)

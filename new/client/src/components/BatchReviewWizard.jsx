@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { showReviewResult } from "../utils/reviewResult";
 import { createPortal } from 'react-dom';
 import { 
   Sparkles, X, Check, Trash2, Search, Filter, AlertTriangle, 
@@ -350,7 +351,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
         by_scope
       });
 
-      toast.success(`Successfully approved ${res.data.approved_count || selectedKeys.size} records`);
+      showReviewResult(toast, "approved", res.data.approved_count, selectedKeys.size);
       setSelectedKeys(new Set());
       fetchAllPendingData();
     } catch (err) {
@@ -383,7 +384,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
               scope: "all",
               approve_all: true
             });
-            toast.success(`Approved all ${res.data.approved_count} pending records`);
+            showReviewResult(toast, "approved", res.data.approved_count);
           } else {
             // Scoped to current filters
             const by_scope = { "1": [], "2": [], "3": [] };
@@ -397,7 +398,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
               ids,
               by_scope
             });
-            toast.success(`Approved ${res.data.approved_count} filtered records`);
+            showReviewResult(toast, "approved", res.data.approved_count);
           }
           setSelectedKeys(new Set());
           fetchAllPendingData();
@@ -441,14 +442,14 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
           by_scope,
           reason
         });
-        toast.success(`Rejected ${res.data.deleted_count || selectedKeys.size} records`);
+        showReviewResult(toast, "rejected", res.data.rejected_count ?? res.data.deleted_count, selectedKeys.size);
       } else if (rejectionModal.mode === 'all') {
         const res = await api.post('/emissions/reject/batch', {
           scope: "all",
           reject_all: true,
           reason
         });
-        toast.success(`Purged all ${res.data.deleted_count} pending records`);
+        showReviewResult(toast, "rejected", res.data.rejected_count ?? res.data.deleted_count);
       } else if (rejectionModal.mode === 'filtered') {
         const by_scope = { "1": [], "2": [], "3": [] };
         const ids = [];
@@ -462,7 +463,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
           by_scope,
           reason
         });
-        toast.success(`Rejected ${res.data.deleted_count} filtered records`);
+        showReviewResult(toast, "rejected", res.data.rejected_count ?? res.data.deleted_count);
       }
 
       setRejectionModal({ isOpen: false, mode: 'selected', targetItem: null, reason: '' });

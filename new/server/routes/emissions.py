@@ -37,13 +37,14 @@ def _escape_like(val: str) -> str:
     return val.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
 
 
-def _lookup_api_factor(fuel_name: str) -> dict:
-    """Look up an emission factor from ALL_EMISSION_FACTORS / API_FACTORS supporting exact, normalized, and alias matches."""
+def _canonical_api_factor_name(fuel_name: str):
+    """The catalog name a fuel / factor name resolves to (exact, alias, case- and punctuation-
+    insensitive, or factor code), or None."""
     if not fuel_name:
-        return {}
+        return None
     factor_catalog = {**API_FACTORS, **ALL_EMISSION_FACTORS}
     if fuel_name in factor_catalog:
-        return factor_catalog[fuel_name]
+        return fuel_name
     norm = str(fuel_name).lower().replace("_", " ").replace("-", " ").strip()
     aliases = {
         "natural gas": "Natural Gas",
@@ -64,14 +65,19 @@ def _lookup_api_factor(fuel_name: str) -> dict:
     }
     canonical = aliases.get(norm)
     if canonical and canonical in factor_catalog:
-        return factor_catalog[canonical]
-
+        return canonical
     for k, v in factor_catalog.items():
         if k.lower().replace("_", " ").replace("-", " ").strip() == norm:
-            return v
+            return k
         if v.get("code") and v.get("code").lower().replace("_", " ").replace("-", " ").strip() == norm:
-            return v
-    return {}
+            return k
+    return None
+
+
+def _lookup_api_factor(fuel_name: str) -> dict:
+    """Look up an emission factor from ALL_EMISSION_FACTORS / API_FACTORS supporting exact, normalized, and alias matches."""
+    name = _canonical_api_factor_name(fuel_name)
+    return {**API_FACTORS, **ALL_EMISSION_FACTORS}[name] if name else {}
 
 
 @emissions_bp.route("/", methods=["GET"])
@@ -4120,10 +4126,24 @@ def get_pending_emissions():
             q = q.filter(model.facility_id.in_(allowed_fids))
         return q.count()
 
+    counts = {"1": count_pending(Emission), "2": count_pending(Scope2Emission), "3": count_pending(Scope3Emission)}
+
+    def sum_pending(model, col):
+        q = db.session.query(db.func.coalesce(db.func.sum(col), 0.0)).filter(model.status.in_(pending_statuses))
+        if allowed_fids is not None:
+            q = q.filter(model.facility_id.in_(allowed_fids))
+        return float(q.scalar() or 0.0)
+
+    pending_co2e = (sum_pending(Emission, Emission.co2e_total) + sum_pending(Scope2Emission, Scope2Emission.co2e)
+                    + sum_pending(Scope3Emission, Scope3Emission.co2e))
     return jsonify({
         "scope1": q_scope1(),
         "scope2": q_scope2(),
         "scope3": q_scope3(),
-        "total_pending": count_pending(Emission) + count_pending(Scope2Emission) + count_pending(Scope3Emission),
+        # the lists hold at most `limit` rows per scope; the counts are the whole queue
+        "pending_counts": counts,
+        "pending_co2e": pending_co2e,
+        "limit": limit_val,
+        "total_pending": sum(counts.values()),
     })
 

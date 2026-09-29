@@ -60,6 +60,18 @@ export const formatNumber = (value, decimals = 3) => {
 };
 
 /**
+ * An emission in tonnes with `decimals` places; a non-zero value too small for them is shown in
+ * scientific notation (2.70e-4) instead of 0.000.
+ */
+export const formatEmission = (value, decimals = 3) => {
+  const num = parseFloat(value);
+  if (Number.isFinite(num) && num !== 0 && Math.abs(num) < 0.5 * Math.pow(10, -decimals)) {
+    return num.toExponential(2);
+  }
+  return formatNumber(value, decimals);
+};
+
+/**
  * Calculate percentage change
  * @param {number|string} current - Current value
  * @param {number|string} base - Base value for comparison

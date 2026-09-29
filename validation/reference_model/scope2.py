@@ -83,8 +83,9 @@ class IndependentScope2Model:
         m = str(method or "wri_efficiency").lower().strip()
 
         if m == "wri_efficiency":
+            # Compendium section 8.2.2 defaults (EPA Climate Leaders / WRI tool): heat 80 %, power 35 %
             e_h = 0.80
-            e_p = 0.33
+            e_p = 0.35
             denom = (heat / e_h) + (power / e_p)
             allocated_heat = ((heat / e_h) / denom) * tot if denom > 0 else 0.0
             allocated_power = ((power / e_p) / denom) * tot if denom > 0 else 0.0

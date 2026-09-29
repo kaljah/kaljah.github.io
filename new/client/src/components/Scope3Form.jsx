@@ -5,7 +5,7 @@ import CustomDropdown from "./CustomDropdown";
 import { useToast } from "./Toast";
 import { useAuth } from "../context/AuthContext";
 import { getUserOperationalDefaults } from "../utils/userDefaults";
-import { formatNumber } from "../utils/formatters";
+import { formatNumber, formatEmission } from "../utils/formatters";
 import ColumnMappingWizard from "./ColumnMappingWizard";
 import Scope3ImportWizard from "./Scope3ImportWizard";
 import { Upload, Trash2, Eye } from "lucide-react";
@@ -623,7 +623,7 @@ const Scope3Form = () => {
           <table className="excel-table">
             <thead>
               <tr>
-                <th>Year</th>
+                <th>Period</th>
                 <th>Facility</th>
                 <th>Category</th>
                 <th>Activity/Product</th>
@@ -661,7 +661,7 @@ const Scope3Form = () => {
               ) : (
                 entries.map((entry) => (
                   <tr key={entry.id}>
-                    <td>{entry.year}</td>
+                    <td>{entry.month ? `${entry.year}-${String(entry.month).padStart(2, "0")}` : entry.year}</td>
                     <td>
                       {facilities.find((f) => f.id === entry.facility_id)
                         ?.name || "Unknown"}
@@ -672,9 +672,12 @@ const Scope3Form = () => {
                       {formatNumber(entry.activity_data || entry.volume, 2)}{" "}
                       {entry.unit}
                     </td>
-                    <td>{formatNumber(entry.emission_factor, 2)}</td>
+                    <td>
+                      {/* kg CO2e per activity unit; a supplier-reported total has no factor */}
+                      {Number(entry.emission_factor) > 0 ? formatEmission(entry.emission_factor, 4) : "—"}
+                    </td>
                     <td style={{ color: "#8b5cf6", fontWeight: 600 }}>
-                      {formatNumber(entry.co2e || entry.emissions_tco2e, 3)}
+                      {formatEmission(entry.co2e || entry.emissions_tco2e, 3)}
                     </td>
                     <td style={{ color: "#6b7280", fontSize: "0.85rem" }}>
                       {entry.uncertainty != null

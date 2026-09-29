@@ -293,6 +293,7 @@ export default function Scope3ImportWizard({ onClose, onUploadSuccess }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [jobId, setJobId] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [overwrite, setOverwrite] = useState(false);  // replace records that already exist
 
   // ── Access Control: fetch allowed regions on mount ─────────────────────────
   const [allowedRegions, setAllowedRegions] = useState(null);
@@ -359,6 +360,7 @@ export default function Scope3ImportWizard({ onClose, onUploadSuccess }) {
     const form = new FormData();
     form.append("file", file);
     form.append("scope", importMode === "eeio" ? "3_eeio" : "3");
+    form.append("overwrite_duplicates", overwrite ? "true" : "false");
     form.append("column_mapping", JSON.stringify(mapping));
     try {
       const res = await api.post("/emissions/upload/start", form, {
@@ -503,6 +505,13 @@ export default function Scope3ImportWizard({ onClose, onUploadSuccess }) {
                 <button className="s1w-search-clear" onClick={() => setSearchQuery("")}><Icon.Close /></button>
               )}
             </div>
+
+            <label className="s1w-factor-row" style={{ gap: "8px", cursor: "pointer" }}>
+              <input type="checkbox" checked={overwrite} onChange={e => setOverwrite(e.target.checked)} />
+              <span className="s1w-factor-label">
+                Overwrite records that already exist (same facility, month and source). Overwritten records go back to Pending review.
+              </span>
+            </label>
 
             <div className="s1w-field-groups">
               {FIELD_GROUPS.map(group => (

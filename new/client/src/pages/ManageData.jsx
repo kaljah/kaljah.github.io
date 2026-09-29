@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { showReviewResult } from '../utils/reviewResult';
 import { useLocation } from 'react-router-dom';
 import api from '../api';
 import { apiError } from '../utils/apiError';
@@ -247,7 +248,10 @@ const ManageDataInner = () => {
                 scope1: res.data.scope1 || [],
                 scope2: res.data.scope2 || [],
                 scope3: res.data.scope3 || [],
-                total_pending: res.data.total_pending || 0
+                total_pending: res.data.total_pending || 0,
+                // whole-queue counts; the lists hold at most `limit` rows per scope
+                pending_counts: res.data.pending_counts || null,
+                pending_co2e: res.data.pending_co2e,
             });
         } catch (e) {
             console.error("Failed to fetch pending emissions", e);
@@ -261,15 +265,17 @@ const ManageDataInner = () => {
         const s2 = pendingEmissions?.scope2 || [];
         const s3 = pendingEmissions?.scope3 || [];
 
-        const count1 = s1.length;
-        const count2 = s2.length;
-        const count3 = s3.length;
+        const pc = pendingEmissions?.pending_counts;
+        const count1 = pc ? pc['1'] : s1.length;
+        const count2 = pc ? pc['2'] : s2.length;
+        const count3 = pc ? pc['3'] : s3.length;
         const totalCount = count1 + count2 + count3;
+        const loadedCount = s1.length + s2.length + s3.length;
 
         const tco2e1 = s1.reduce((acc, r) => acc + (Number(r.co2e_total || r.co2e) || 0), 0);
         const tco2e2 = s2.reduce((acc, r) => acc + (Number(r.co2e_total || r.co2e) || 0), 0);
         const tco2e3 = s3.reduce((acc, r) => acc + (Number(r.co2e_total || r.co2e) || 0), 0);
-        const totalTco2e = tco2e1 + tco2e2 + tco2e3;
+        const totalTco2e = typeof pendingEmissions?.pending_co2e === 'number' ? pendingEmissions.pending_co2e : tco2e1 + tco2e2 + tco2e3;
 
         let flaggedCount = 0;
         let cleanCount = 0;
@@ -279,7 +285,7 @@ const ManageDataInner = () => {
         });
 
         return {
-            count1, count2, count3, totalCount,
+            count1, count2, count3, totalCount, loadedCount,
             tco2e1, tco2e2, tco2e3, totalTco2e,
             flaggedCount, cleanCount
         };
@@ -454,7 +460,7 @@ const ManageDataInner = () => {
                 approve_all: false
             });
 
-            toast.success(`Successfully approved ${res.data?.approved_count || selectedPendingKeys.size} record${selectedPendingKeys.size > 1 ? 's' : ''}`);
+            showReviewResult(toast, 'approved', res.data?.approved_count, selectedPendingKeys.size);
             setSelectedPendingKeys(new Set());
             fetchPendingEmissions();
         } catch (err) {
@@ -493,7 +499,7 @@ const ManageDataInner = () => {
                     reason: rejectionModal.reason.trim(),
                     reject_all: false
                 });
-                toast.success(`Rejected ${res.data?.deleted_count || rejectionModal.recordIds.length} record${rejectionModal.recordIds.length > 1 ? 's' : ''}`);
+                showReviewResult(toast, 'rejected', res.data?.rejected_count ?? res.data?.deleted_count, rejectionModal.recordIds.length);
             }
             setRejectionModal({ isOpen: false, isBatch: false, scope: '1', recordId: null, recordIds: [], reason: '' });
             setSelectedPendingKeys(new Set());
@@ -2004,6 +2010,11 @@ const ManageDataInner = () => {
                                                 }}>
                                                     Showing {filteredPendingRecords.length} of {pendingMetrics.totalCount}
                                                 </span>
+                                                {pendingMetrics.loadedCount < pendingMetrics.totalCount && (
+                                                    <span style={{ fontSize: '0.78rem', color: '#b45309', marginLeft: '8px' }}>
+                                                        The first {pendingMetrics.loadedCount} are listed (200 per scope); decide on them to load the next ones, or use the Review Wizard to approve all
+                                                    </span>
+                                                )}
                                             </div>
 
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>

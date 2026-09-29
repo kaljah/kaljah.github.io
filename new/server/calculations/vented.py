@@ -1206,7 +1206,9 @@ class LiquidsUnloadingCalculator(BaseCalculator):
         if reg_key in self.TABLE_6_10_REGIONAL:
             reg_dict = self.TABLE_6_10_REGIONAL[reg_key]
             if u_type == "plunger":
-                sub_key = "plunger_le100" if ev_per_well <= 100 else "plunger_gt100"
+                # an explicit frequency class (the selected table row) wins over the events on this record
+                sub_key = frequency_category if frequency_category in reg_dict else (
+                    "plunger_le100" if ev_per_well <= 100 else "plunger_gt100")
                 selected_factor = reg_dict[sub_key]
             else:
                 selected_factor = reg_dict["non_plunger"]

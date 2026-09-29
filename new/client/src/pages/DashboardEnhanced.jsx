@@ -1166,7 +1166,7 @@ const DashboardEnhanced = () => {
                 <div className="stream-label">Total Flared Volume</div>
                 <div className="stream-value">
                   {formatNumber(flaringData.total_flaring?.volume_knm3 ?? 0, 0)}
-                  <span className="stream-unit">kNm³</span>
+                  <span className="stream-unit" title="thousand standard m³ (15.6 °C / 60 °F, 1 atm)">kSm³</span>
                 </div>
                 <div className="stream-sublabel">
                   <strong>{formatCompactNumber(flaringData.total_flaring?.tco2e ?? 0)}</strong> tCO₂e • 100% Stream
@@ -1177,7 +1177,7 @@ const DashboardEnhanced = () => {
                 <div className="stream-label">Routine Flaring</div>
                 <div className="stream-value">
                   {formatNumber(flaringData.routine_flaring?.volume_knm3 ?? 0, 0)}
-                  <span className="stream-unit">kNm³</span>
+                  <span className="stream-unit" title="thousand standard m³ (15.6 °C / 60 °F, 1 atm)">kSm³</span>
                 </div>
                 <div className="stream-sublabel">
                   <strong>{flaringData.routine_flaring?.percentage ?? 0}%</strong> of total • {formatCompactNumber(flaringData.routine_flaring?.tco2e ?? 0)} tCO₂e
@@ -1188,7 +1188,7 @@ const DashboardEnhanced = () => {
                 <div className="stream-label">Non-Routine Flaring</div>
                 <div className="stream-value">
                   {formatNumber(flaringData.non_routine_flaring?.volume_knm3 ?? 0, 0)}
-                  <span className="stream-unit">kNm³</span>
+                  <span className="stream-unit" title="thousand standard m³ (15.6 °C / 60 °F, 1 atm)">kSm³</span>
                 </div>
                 <div className="stream-sublabel">
                   <strong>{flaringData.non_routine_flaring?.percentage ?? 0}%</strong> of total • {formatCompactNumber(flaringData.non_routine_flaring?.tco2e ?? 0)} tCO₂e
@@ -1199,7 +1199,7 @@ const DashboardEnhanced = () => {
                 <div className="stream-label">Safety &amp; Purge Flaring</div>
                 <div className="stream-value">
                   {formatNumber(flaringData.safety_flaring?.volume_knm3 ?? 0, 0)}
-                  <span className="stream-unit">kNm³</span>
+                  <span className="stream-unit" title="thousand standard m³ (15.6 °C / 60 °F, 1 atm)">kSm³</span>
                 </div>
                 <div className="stream-sublabel">
                   <strong>{flaringData.safety_flaring?.percentage ?? 0}%</strong> of total • {formatCompactNumber(flaringData.safety_flaring?.tco2e ?? 0)} tCO₂e
@@ -1211,7 +1211,7 @@ const DashboardEnhanced = () => {
                   <div className="stream-label">Unclassified Flaring</div>
                   <div className="stream-value">
                     {formatNumber(flaringData.unclassified_flaring.volume_knm3, 0)}
-                    <span className="stream-unit">kNm³</span>
+                    <span className="stream-unit" title="thousand standard m³ (15.6 °C / 60 °F, 1 atm)">kSm³</span>
                   </div>
                   <div className="stream-sublabel">
                     <strong>{flaringData.unclassified_flaring.percentage}%</strong> of total • {formatCompactNumber(flaringData.unclassified_flaring.tco2e)} tCO₂e • stream not recorded

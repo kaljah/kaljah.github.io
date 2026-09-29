@@ -5,7 +5,7 @@ import { useToast } from "./Toast";
 import { useAuth } from "../context/AuthContext";
 import { getUserOperationalDefaults } from "../utils/userDefaults";
 import LoadingSpinner from "./LoadingSpinner";
-import { formatNumber } from "../utils/formatters";
+import { formatNumber, formatEmission } from "../utils/formatters";
 import ColumnMappingWizard from "./ColumnMappingWizard";
 import Scope2ImportWizard from "./Scope2ImportWizard";
 import { Upload, Copy, Trash2, Eye } from "lucide-react";
@@ -41,6 +41,9 @@ const Scope2Form = () => {
   const [boilerEff, setBoilerEff] = useState(0.8);
   const [transLoss, setTransLoss] = useState(0.0);
   const [heatOutput, setHeatOutput] = useState("");
+  // plant efficiencies for the WRI efficiency method; blank = Compendium defaults (80 % heat, 35 % power)
+  const [heatEff, setHeatEff] = useState("");
+  const [powerEff, setPowerEff] = useState("");
   const [powerOutput, setPowerOutput] = useState("");
   const [allocationMethod, setAllocationMethod] = useState("wri_efficiency");
 
@@ -233,6 +236,8 @@ const Scope2Form = () => {
               heat_output: parseFloat(heatOutput),
               power_output: parseFloat(powerOutput),
               allocation_method: allocationMethod,
+              ...(allocationMethod === "wri_efficiency" && heatEff !== "" ? { heat_efficiency: parseFloat(heatEff) } : {}),
+              ...(allocationMethod === "wri_efficiency" && powerEff !== "" ? { power_efficiency: parseFloat(powerEff) } : {}),
             },
           },
         };
@@ -540,6 +545,20 @@ const Scope2Form = () => {
                     <option value="energy_content">Energy Content</option>
                   </select>
                 </div>
+                {allocationMethod === "wri_efficiency" && (
+                  <>
+                    <div className="input-group">
+                      <label>Heat Efficiency (%)</label>
+                      <input type="number" className="mole-input" min="1" max="100" placeholder="80"
+                        value={heatEff} onChange={(e) => setHeatEff(e.target.value)} />
+                    </div>
+                    <div className="input-group">
+                      <label>Power Efficiency (%)</label>
+                      <input type="number" className="mole-input" min="1" max="100" placeholder="35"
+                        value={powerEff} onChange={(e) => setPowerEff(e.target.value)} />
+                    </div>
+                  </>
+                )}
               </div>
             )}
           </div>
@@ -650,7 +669,7 @@ const Scope2Form = () => {
           <table className="excel-table">
             <thead>
               <tr>
-                <th>Year</th>
+                <th>Period</th>
                 <th>Facility</th>
                 <th>Source Type</th>
                 <th>Grid / Region</th>
@@ -713,13 +732,15 @@ const Scope2Form = () => {
                     consumptionDisplay = `${formatNumber(entry.co2e, 3)} tCO₂e allocated`;
                   }
 
-                  const efDisplay = entry.emission_factor
+                  // a 0 factor (renewable contract) is a value, not a missing factor
+                  // (a CHP allocation has no factor)
+                  const efDisplay = entry.source_type !== "cogen_allocation" && entry.emission_factor != null && entry.emission_factor !== ""
                     ? formatNumber(entry.emission_factor, 4)
                     : "—";
 
                   return (
                     <tr key={entry.id}>
-                      <td>{entry.year}</td>
+                      <td>{entry.month ? `${entry.year}-${String(entry.month).padStart(2, "0")}` : entry.year}</td>
                       <td style={{ fontWeight: 500 }}>
                         {facilities.find((f) => f.id === entry.facility_id)
                           ?.name || "Unknown"}
@@ -745,7 +766,7 @@ const Scope2Form = () => {
                       <td>{consumptionDisplay}</td>
                       <td>{efDisplay}</td>
                       <td style={{ color: "#3b82f6", fontWeight: 600 }}>
-                        {formatNumber(entry.co2e, 3)}
+                        {formatEmission(entry.co2e, 3)}
                       </td>
                       <td style={{ color: "#6b7280", fontSize: "0.85rem" }}>
                         {entry.uncertainty != null
