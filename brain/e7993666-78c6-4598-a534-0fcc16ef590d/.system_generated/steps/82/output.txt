@@ -1,0 +1,12 @@
+
+The command exited with code 0.
+Output:
+[{'mime_type': 'application/pdf', 'uri': 'C:/Users/samsung/.gemini/antigravity/brain/e7993666-78c6-4598-a534-0fcc16ef590d/.user_uploaded/media_1790676404712.pdf'}]
+[{'mime_type': 'image/png', 'uri': 'C:/Users/samsung/.gemini/antigravity/brain/e7993666-78c6-4598-a534-0fcc16ef590d/.tempmediaStorage/media_1790676681864.png'}]
+[{'mime_type': 'image/png', 'uri': 'C:/Users/samsung/.gemini/antigravity/brain/e7993666-78c6-4598-a534-0fcc16ef590d/.tempmediaStorage/media_1790676691376.png'}]
+[{'mime_type': 'image/jpeg', 'uri': 'C:/Users/samsung/.gemini/antigravity/brain/e7993666-78c6-4598-a534-0fcc16ef590d/.tempmediaStorage/media_1790676704584.jpg'}]
+[{'mime_type': 'image/png', 'uri': 'C:/Users/samsung/.gemini/antigravity/brain/e7993666-78c6-4598-a534-0fcc16ef590d/.tempmediaStorage/media_1790676799631.png'}]
+[{'mime_type': 'image/png', 'uri': 'C:/Users/samsung/.gemini/antigravity/brain/e7993666-78c6-4598-a534-0fcc16ef590d/.tempmediaStorage/media_1790676812392.png'}]
+[{'mime_type': 'image/png', 'uri': 'C:/Users/samsung/.gemini/antigravity/brain/e7993666-78c6-4598-a534-0fcc16ef590d/.tempmediaStorage/media_1790677863970.png'}]
+[{'mime_type': 'image/png', 'uri': 'C:/Users/samsung/.gemini/antigravity/brain/e7993666-78c6-4598-a534-0fcc16ef590d/.tempmediaStorage/media_1790677877527.png'}]
+

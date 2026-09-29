@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+Real font names: {'LiberationSans', 'WenQuanYiZenHei', 'LiberationSans-Bold'}
+

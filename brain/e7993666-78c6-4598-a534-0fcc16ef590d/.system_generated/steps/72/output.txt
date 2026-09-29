@@ -1,0 +1,26 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/25/2026   3:30 PM          34956 napec_flyer.html                                                     
+-a----         9/25/2026   3:30 PM          35498 napec_flyer_fr.html                                                  
+-a----         9/25/2026   4:32 PM          34607 neocarbon_flyer.html                                                 
+-a----         9/25/2026   4:33 PM        1045868 neocarbon_flyer.pdf                                                  
+-a----         9/25/2026   4:33 PM          34833 neocarbon_flyer_fr.html                                              
+-a----         9/25/2026   4:33 PM        1039076 neocarbon_flyer_fr.pdf                                               
+-a----         9/25/2026   4:31 PM         605988 neocarbon_flyer_page1_en.jpg                                         
+-a----         9/25/2026   4:31 PM         581804 neocarbon_flyer_page1_fr.jpg                                         
+-a----         9/29/2026  12:12 PM          68569 neocarbon_software_flyer.html                                        
+-a----         9/29/2026  12:13 PM        1081234 neocarbon_software_flyer.pdf                                         
+-a----         9/29/2026  12:13 PM        1001390 preview_flyer_page_1.png                                             
+-a----         9/29/2026  12:13 PM         972286 preview_flyer_page_2.png                                             
+-a----         9/29/2026  12:10 PM           1381 render_flyer.py                                                      
+
+
+
