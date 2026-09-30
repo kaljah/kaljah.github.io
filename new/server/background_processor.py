@@ -1765,7 +1765,10 @@ def _process_row_scope3(
             return None, [why]
         ef, ef_unit = ef_found, "kg"
     if amt > 0 and ef > 0:
-        co2e = compute_scope3_co2e(amt, ef, ef_unit, calc_method)
+        try:
+            co2e = compute_scope3_co2e(amt, ef, ef_unit, calc_method)
+        except ValidationError as err:
+            return None, [err.message]
     elif supplier_total:
         # supplier-specific total (GHG Protocol supplier-specific method): the same roles as the
         # manual form may enter it
