@@ -25,8 +25,8 @@ class AGRCalculator(BaseCalculator):
         self,
         throughput,
         co2_in,
-        co2_out,
-        uncertainties,
+        co2_out=0.0,
+        uncertainties=None,
         ch4_in=0.85,
         ch4_slip_fraction=0.001,
         acid_gas_control_eff=0.0,
@@ -47,6 +47,7 @@ class AGRCalculator(BaseCalculator):
         - acid_gas_control_eff: Destruction/recovery efficiency (e.g. 0.98 for Claus/thermal oxidizer)
         - acid_gas_control_type: Control technology ('vent', 'agi', 'ccus', 'claus', 'thermal_oxidizer', 'flare')
         """
+        uncertainties = uncertainties or {}
         self.validate_inputs(
             {"throughput": throughput, "co2_in": co2_in}, ["throughput", "co2_in"]
         )
@@ -54,20 +55,32 @@ class AGRCalculator(BaseCalculator):
         # Throughput in scf
         throughput_scf = float(throughput) * 1_000_000.0
 
-        # 1. CO2 Mass Balance Venting
-        diff_co2 = max(0.0, float(co2_in) - float(co2_out or 0.0))
+        # 1. CO2 Mass Balance Venting with Contactor Shrinkage Correction (API Compendium 2021 Eq. 6-7)
+        cin = float(co2_in or 0.0)
+        cout = float(co2_out or 0.0)
+        if cin > 1.0 or cout > 1.0:
+            cin /= 100.0
+            cout /= 100.0
+        diff_co2 = max(0.0, cin - cout)
         co2_vented_scf = throughput_scf * diff_co2
         co2_vented_m3 = convert(co2_vented_scf, "scf", "m3")
         co2_mass_kg = co2_vented_m3 * CONVERSIONS.get("density_co2", 1.861)
 
-        # 2. CH4 Methane Slip (API Compendium 2021 §6.5 & Table 6-5)
-        slip_rate = max(
-            0.0, float(ch4_slip_fraction if ch4_slip_fraction is not None else 0.001)
-        )
-        ch4_feed_frac = max(0.0, float(ch4_in or 0.85))
-        ch4_slipped_scf = throughput_scf * ch4_feed_frac * slip_rate
-        ch4_slipped_m3 = convert(ch4_slipped_scf, "scf", "m3")
-        ch4_mass_kg = ch4_slipped_m3 * CONVERSIONS.get("density_ch4", 0.6785)
+        # 2. CH4: a measured slip (fraction of the inlet CH4) when given; otherwise the API Compendium
+        # Table 6-19 AGR vent factor, 0.0185 tonne CH4 per 10^6 scf treated (Exhibit 6-17). The former
+        # 0.1 % default had no source.
+        if ch4_slip_fraction is not None:
+            slip_rate = max(0.0, float(ch4_slip_fraction))
+            if slip_rate > 1.0:
+                raise ValueError("CH4 slip is a fraction of the inlet CH4 (0-1)")
+            c_ch4 = max(0.0, float(ch4_in if ch4_in is not None else 0.85))
+            if c_ch4 > 1.0:
+                c_ch4 /= 100.0
+            ch4_slipped_m3 = convert(throughput_scf * c_ch4 * slip_rate, "scf", "m3")
+            ch4_mass_kg = ch4_slipped_m3 * CONVERSIONS.get("density_ch4", 0.6785)
+        else:
+            slip_rate = None
+            ch4_mass_kg = throughput_scf / 1e6 * 0.0185 * 1000.0
 
         # Apply acid gas control technology
         ctrl_eff = normalize_efficiency(acid_gas_control_eff, default=0.0)
@@ -119,7 +132,7 @@ class AGRCalculator(BaseCalculator):
                 "throughput_mmscf": throughput,
                 "co2_in_pct": float(co2_in) * 100.0,
                 "co2_out_pct": float(co2_out or 0.0) * 100.0,
-                "ch4_slip_pct": slip_rate * 100.0,
+                "ch4_slip_pct": slip_rate * 100.0 if slip_rate is not None else None,
                 "control_eff_pct": ctrl_eff * 100.0,
             },
             metadata={
@@ -170,11 +183,14 @@ class DehydratorCalculator(BaseCalculator):
 
         # 1. Check if Tier 1 (Default Emission Factor based on throughput alone)
         if (pump_rate is None or float(pump_rate or 0) <= 0) and throughput is not None:
-            # API Compendium 2021 Table 6-6 & EPA Subpart W Table W-1A: Tier 1 default = 0.266 tonnes CH4 / MMscf (uncontrolled)
-            # or 0.0532 tonnes CH4 / MMscf (controlled)
+            # API Compendium 2021 Table 6-17 (production segment, uncontrolled glycol dehydration, excludes
+            # gas-assisted pump emissions): 0.0052859 t CH4 / 10^6 scf processed at 78.8 mol % CH4;
+            # scaled by the site CH4 content (Exhibit 6-13). The former 0.266 t/MMscf had no source.
             tp_mmscf = float(throughput)
             eff = normalize_efficiency(control_eff, default=0.0)
-            default_ef = 0.266 * (1.0 - eff)
+            c = float(ch4_content if ch4_content is not None else 0.788)
+            c = c / 100.0 if c > 1.0 else c
+            default_ef = 0.0052859 * (c / 0.788) * (1.0 - eff)
             ch4_tonnes = tp_mmscf * default_ef
 
             _tier = resolve_tier("default")
@@ -197,7 +213,7 @@ class DehydratorCalculator(BaseCalculator):
                     "tier": "Tier 1 (Default Factor)",
                 },
                 metadata={
-                    "method": "API Table 6-6 / EPA Subpart W Table W-1A Default Factor"
+                    "method": "API Compendium 2021 Table 6-17 (uncontrolled glycol dehydration)"
                 },
             )
 
@@ -273,7 +289,7 @@ class DehydratorCalculator(BaseCalculator):
             elif s_type == "thermal_oxidizer":
                 still_eff = 0.99
             elif s_type == "condenser":
-                still_eff = 0.75
+                still_eff = 0.0  # Condensers do not condense methane (boiling point -161.5 C / API Compendium 6.6)
             elif s_type == "vru":
                 still_eff = 0.95
 

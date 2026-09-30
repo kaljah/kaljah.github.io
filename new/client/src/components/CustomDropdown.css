@@ -14,6 +14,17 @@
   align-items: center;
   transition: all 0.2s;
   font-size: 0.9rem;
+  /* BUG-107: the trigger is a <button>; neutralise native button styling */
+  width: 100%;
+  font-family: inherit;
+  color: inherit;
+  text-align: left;
+  min-width: 0;
+}
+
+.dropdown-selected:focus-visible {
+  outline: 2px solid var(--accent-color, #10b981);
+  outline-offset: 2px;
 }
 
 .dropdown-selected:hover {
@@ -74,7 +85,8 @@
   transition: background 0.15s;
 }
 
-.dropdown-option:hover {
+.dropdown-option:hover,
+.dropdown-option.active {
   background: var(--bg-hover);
 }
 

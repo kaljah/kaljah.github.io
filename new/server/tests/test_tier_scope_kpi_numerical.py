@@ -216,22 +216,20 @@ class TestScope2Methods:
     def test_scope2_location_based_grid_averages(self):
         """Scope 2 Location-Based Method:
         Emissions (tCO2e) = Electricity (kWh) × Grid Emission Factor (kg CO2e / kWh) / 1,000.
-        Test regional factors from electricity_factors.GRID_FACTORS:
-        - US Average: 0.385 kg/kWh
-        - EU Grid Average: 0.295 kg/kWh
-        - Algerian National Grid: 0.522 kg/kWh
+        Regional factors (kg CO2e / kWh at AR5, API Compendium 2021):
+        - US Average, Table 8-2: 0.401 t CO2 + 3.40E-05 t CH4 x 28 + 4.99E-06 t N2O x 265 per MWh
+        - United Kingdom, Table 8-6: 0.1964 t CO2 per MWh
         """
-        for region, expected_factor in [("US Average", 0.385), ("EU Grid Average", 0.295), ("Algerian National Grid", 0.522)]:
+        for region, expected_factor in [("US Average", 0.401 + 3.40e-05 * 28 + 4.99e-06 * 265),
+                                        ("United Kingdom (grid average)", 0.1964)]:
             factor = GRID_FACTORS[region]["factor"]
-            assert abs(factor - expected_factor) < 1e-4
-
-            kwh = 1_000_000.0  # 1 GWh = 1,000,000 kWh
-            expected_tco2e = (kwh * factor) / 1000.0
-            assert expected_tco2e > 0
-            if region == "EU Grid Average":
-                assert expected_tco2e < 300.0
-            elif region == "Algerian National Grid":
-                assert expected_tco2e > 500.0
+            assert abs(factor - expected_factor) < 1e-6
+            kwh = 1_000_000.0  # 1 GWh
+            assert (kwh * factor) / 1000.0 == pytest.approx(expected_factor * 1000.0)
+        # Algeria 2024: MEM energy balance gas to power (23,855 ktep PCS) x IPCC 56.1 t CO2/TJ (NCV = 0.9 PCS)
+        # over 101,386 GWh
+        co2 = 23855 * 41.868 * 0.9 * 56.1 / 101386 / 1000.0
+        assert GRID_FACTORS["Algerian National Grid"]["co2"] == pytest.approx(co2, rel=1e-3)
 
     def test_scope2_market_based_contractual_instruments(self):
         """Scope 2 Market-Based Method:
@@ -270,22 +268,23 @@ class TestScope2Methods:
             },
         }
         co2_tonnes, energy_mmbtu, ef = _calc_indirect_steam(data)
-        expected = (500.0 * 53.06) / (0.80 * 0.95 * 1000.0)
+        # CO2 plus the natural-gas CH4 / N2O of Table 4-6 (= EPA Hub Table 7) at AR5
+        fuel = 500.0 / (0.80 * 0.95)
+        expected = fuel * (53.06 + 0.001 * 28 + 0.0001 * 265) / 1000.0
         assert abs(co2_tonnes - expected) < 1e-4
         assert energy_mmbtu == 500.0
 
     def test_scope2_cogen_allocation_wri_efficiency_and_energy_methods(self):
-        """Scope 2 Cogeneration (CHP) Allocation Methods:
-        Total Facility Emissions: 10,000 tCO2e.
-        Heat Output H = 60 MWh, Power Output P = 40 MWh.
-        1. WRI Efficiency Method: e_h = 0.80, e_p = 0.33:
-           Denom = (60 / 0.80) + (40 / 0.33) = 75 + 121.212 = 196.212.
-           Heat Share = 75 / 196.212 = 0.38224.
-           Heat Allocated = 0.38224 * 10,000 = 3822.4 tCO2e.
-        2. Energy Content Method:
-           Heat Share = 60 / (60 + 40) = 0.60 (60%).
-           Heat Allocated = 0.60 * 10,000 = 6,000 tCO2e.
+        """Scope 2 Cogeneration (CHP) Allocation Methods.
+
+        Unit contract (BUG-097): heat_output in MMBtu, power_output in MWh (the Scope 2 form
+        labels). The earlier version of this test assumed power was already in MMBtu, which
+        encoded the defect. Re-derived with 1 MWh = 3.412142 MMBtu:
+        Total 10,000 tCO2e, heat H = 60 MMBtu, power P = 40 MWh = 136.4857 MMBtu.
+        1. WRI Efficiency (Compendium 8.2.2 defaults e_h 0.80, e_p 0.35): 75 / (75 + 389.959) -> 1,613.04 t.
+        2. Energy Content: 60 / (60 + 136.4857) = 0.305365 -> 3,053.65 t.
         """
+        P_MMBTU = 40.0 * 3.412142
         # 1. WRI Efficiency
         data_wri = {
             "amount": 10000.0,
@@ -299,7 +298,7 @@ class TestScope2Methods:
             },
         }
         res_wri = _calc_cogen_allocation(data_wri)
-        expected_wri = ((60.0 / 0.8) / ((60.0 / 0.8) + (40.0 / 0.33))) * 10000.0
+        expected_wri = ((60.0 / 0.8) / ((60.0 / 0.8) + (P_MMBTU / 0.35))) * 10000.0
         assert abs(res_wri - expected_wri) < 1e-3
 
         # 2. Energy Content
@@ -315,7 +314,7 @@ class TestScope2Methods:
             },
         }
         res_energy = _calc_cogen_allocation(data_energy)
-        assert abs(res_energy - 6000.0) < 1e-4
+        assert abs(res_energy - 60.0 / (60.0 + P_MMBTU) * 10000.0) < 1e-4
 
 
 # ===========================================================================
@@ -328,17 +327,18 @@ class TestScope3Tiers:
     def test_scope3_tier1_spend_based_eeio(self):
         """Tier 1 Spend-Based:
         Emissions = Spend ($) × EEIO Factor (kg CO2e / $1,000) / (1,000 * 1,000).
-        NAICS 211 (Oil and Gas Extraction): 3,200.1 kg CO2e / $1,000 spend.
-        Spend: $500,000.
-        Emissions = (500,000 / 1,000) * 3,200.1 / 1,000 = 500 * 3.2001 = 1,600.05 tCO2e.
+        NAICS 211130 (Natural Gas Extraction), EPA Supply Chain GHG Emission Factors v1.3.0 with
+        margins: 0.405 kg CO2e / 2022 USD = 405 kg / $1,000. Spend $500,000 -> 202.5 tCO2e.
         """
-        factor_info = get_eeio_factor("211")
-        assert factor_info["name"] == "Oil and Gas Extraction"
+        factor_info = get_eeio_factor("211130")
+        assert factor_info["name"] == "Natural Gas Extraction"
         ef_kg_per_1000 = factor_info["kg_co2e_per_1000_usd"]
 
         spend_usd = 500_000.0
         emissions_tco2e = (spend_usd / 1000.0) * (ef_kg_per_1000 / 1000.0)
-        assert abs(emissions_tco2e - 1600.05) < 1e-4
+        assert abs(emissions_tco2e - 202.5) < 1e-6
+        with pytest.raises(LookupError):
+            get_eeio_factor("211")
 
         # Uncertainty: Spend-based has Tier 1 high uncertainty (30-40%)
         u = propagate_uncertainty(emissions_tco2e, ef_uncertainty=0.30, activity_uncertainty=0.15, tier=Tier.T1)
@@ -612,3 +612,60 @@ class TestUncertaintyQuantificationMath:
         assert u["lower_bound"] == 0.0
         assert u["upper_bound"] > 100.0
         assert u["coverage_factor"] == 2.0
+
+
+class TestOfficialPresetsTier2:
+    """Verifies numerical exactness of Tier 2 calculations using official legal and technical presets."""
+
+    def test_tier2_algerian_gas_sonatrach_iso6976(self):
+        """Sonatrach ISO 6976 Hassi R'Mel sales gas preset: HHV = 1085 Btu/scf.
+        Fuel: 50,000 scf Natural Gas. Standard API factor: 53.06 kg CO2/MMBtu.
+        Energy = 50,000 scf * (1085 / 1e6) = 54.25 MMBtu.
+        CO2 = 54.25 * 53.06 / 1000 = 2.878505 tCO2.
+        Tier: Tier 2 (activity data uncertainty u_AD = 7% per IPCC Table 3.1).
+        """
+        from calculations.combustion import CombustionCalculator
+        calc = CombustionCalculator()
+        res = calc.calculate(
+            fuel_quantity=50000.0,
+            ef_co2=53.06,
+            ef_ch4=0.001,
+            ef_n2o=0.0001,
+            uncertainties={"_factor_source": "custom"},
+            hhv=1085.0,
+            ef_unit="kg/MMBtu",
+            fuel_unit="scf",
+            fuel_type="gas",
+        )
+        expected_co2 = 50000.0 * (1085.0 / 1e6) * 53.06 / 1000.0
+        assert abs(res["results"]["co2"]["value"] - expected_co2) < 1e-4
+        assert res["results"]["co2"]["tier"] == Tier.T2
+        assert res["results"]["co2"]["ad_uncertainty_1sigma"] == (0.07 / 2.0)
+
+    def test_tier2_algerian_gasoil_ianor_na8110(self):
+        """IANOR NA 8110 Diesel preset: density = 840 kg/m3.
+        Fuel: 10 m3 Diesel. Standard factor: 73.96 kg CO2/MMBtu, default liquid HHV = 138,000 Btu/gal.
+        Activity = 10 m3 * 264.172 gal/m3 = 2641.72 gal.
+        Energy = 2641.72 * 138000 / 1e6 = 364.557 MMBtu.
+        CO2 = 364.557 * 73.96 / 1000 = 26.9626 tCO2.
+        Tier: Tier 2.
+        """
+        from calculations.combustion import CombustionCalculator
+        calc = CombustionCalculator()
+        res = calc.calculate(
+            fuel_quantity=10.0,
+            ef_co2=73.96,
+            ef_ch4=0.003,
+            ef_n2o=0.0006,
+            uncertainties={"_factor_source": "custom"},
+            hhv=138000.0,
+            ef_unit="kg/MMBtu",
+            fuel_unit="m3",
+            fuel_type="liquids",
+            density=840.0,
+        )
+        expected_co2 = 10.0 * 264.172 * (138000.0 / 1e6) * 73.96 / 1000.0
+        assert abs(res["results"]["co2"]["value"] - expected_co2) < 1e-3
+        assert res["results"]["co2"]["tier"] == Tier.T2
+        assert res["results"]["co2"]["ad_uncertainty_1sigma"] == (0.07 / 2.0)
+

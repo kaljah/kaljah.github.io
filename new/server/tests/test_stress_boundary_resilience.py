@@ -101,12 +101,14 @@ class TestBoundaryResilienceEngine:
 
     def test_microscopic_quantities_resilience(self):
         """Quantities of 10^-15 and 10^-20 must compute without underflow errors or ZeroDivision."""
-        factor = API_FACTORS.get("Diesel", {})
+        # "Diesel" is not a catalog key (the catalog name is "Diesel (No. 2 Fuel Oil)"); the old
+        # lookup returned {} so this test ran with no factor at all (audit BUG-015).
+        factor = API_FACTORS["Diesel (No. 2 Fuel Oil)"]
         micros = [1e-12, 1e-15, 1e-20]
         for micro in micros:
             payload = {
                 "process_type": "combustion",
-                "fuel": "Diesel",
+                "fuel": "Diesel (No. 2 Fuel Oil)",
                 "quantity": micro,
                 "unit": "gal",
             }

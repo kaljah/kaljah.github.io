@@ -400,3 +400,27 @@ def get_database_version():
             "last_updated": "2026-02-10",
         }
     )
+
+
+@factors_bp.route("/api/activity-factors", methods=["GET"])
+@login_required
+def get_activity_factors():
+    """API Compendium activity factors (Section 6 tables), optionally for one process type."""
+    from calculations.activity_factors import activity_factor_list
+    from calculations.dispatcher import ACTIVITY_PROCESS_ALIASES
+
+    process = (request.args.get("process") or "").strip().lower() or None
+    if process:
+        process = ACTIVITY_PROCESS_ALIASES.get(process, process)
+    rows = activity_factor_list(process)
+    return jsonify({"count": len(rows), "factors": rows})
+
+
+@factors_bp.route("/api/equipment-combustion-factors", methods=["GET"])
+@login_required
+def get_equipment_combustion_factors():
+    """Equipment-specific combustion CH4 / N2O factors (Tables 4-9, 4-11)."""
+    from calculations.combustion_methods import equipment_factor_list
+
+    rows = equipment_factor_list()
+    return jsonify({"count": len(rows), "factors": rows})

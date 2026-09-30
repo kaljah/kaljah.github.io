@@ -91,7 +91,7 @@ class TestBoundaryConditions:
     def test_zero_quantity_mud_degassing_yields_zero(self):
         """BOUNDARY: Zero mud volume = zero CH4 from degassing."""
         em, _ = compute_emissions({
-            "process_type": "drilling", "quantity": 0.0, "unit": "m3",
+            "process_type": "drilling", "quantity": 0.0, "unit": "days",
             "factor_source": "specific", "mud_type": "water_based"
         }, {})
         assert em["ch4"] == 0.0
@@ -127,17 +127,16 @@ class TestBoundaryConditions:
         }, {})
         assert em["ch4"] == 0.0
 
-    def test_zero_ef_combustion_yields_zero(self):
+    def test_zero_ef_combustion_is_rejected_not_booked_as_zero(self):
         """
-        BOUNDARY: Zero emission factor = zero emissions.
-        Even with large quantity, EF=0 → 0 emissions.
+        BOUNDARY (audit BUG-015 / BUG-112): an all-zero factor is not a factor. A large activity
+        amount must raise instead of silently producing a 0 tCO2e record.
         """
+        from calculations.legacy_engine import MissingFactorError
+
         factor_data = {"co2": 0.0, "ch4": 0.0, "n2o": 0.0, "unit": "kg/m3", "hhv": 1020.0}
-        em, _ = compute_emissions({**BASELINE_PAYLOAD, "quantity": 10000.0}, factor_data)
-        assert em["co2"] == 0.0
-        assert em["ch4"] == 0.0
-        assert em["n2o"] == 0.0
-        assert em["totalCo2e"] == 0.0
+        with pytest.raises(MissingFactorError):
+            compute_emissions({**BASELINE_PAYLOAD, "quantity": 10000.0}, factor_data)
 
     def test_zero_ch4_content_completions_yields_zero_ch4(self):
         """
@@ -165,7 +164,7 @@ class TestBoundaryConditions:
         """BOUNDARY: Negative mud volume → ValueError."""
         with pytest.raises((ValueError, Exception)):
             compute_emissions({
-                "process_type": "drilling", "quantity": -50.0, "unit": "m3",
+                "process_type": "drilling", "quantity": -50.0, "unit": "days",
                 "factor_source": "specific", "mud_type": "water_based"
             }, {})
 
@@ -350,24 +349,24 @@ class TestOATSensitivity:
 
     def test_mud_oil_over_water_ratio_exact(self):
         """
-        OAT: Same mud volume, change mud_type: oil_based vs water_based.
-        oil_based EF = 0.35 kg/m3, water_based EF = 0.15 kg/m3.
-        Ratio = 0.35 / 0.15 = 2.3333...
+        OAT: Same drilling days, change mud_type: oil_based vs water_based.
+        oil_based EF = 0.0103 t/day, water_based EF = 0.0458 t/day.
+        Ratio = 0.0103 / 0.0458.
 
         Both have IDENTICAL CO2 and N2O (zero), only CH4 differs.
         """
-        vol = 100.0
+        days = 10.0
 
         em_water, _ = compute_emissions({
-            "process_type": "drilling", "quantity": vol, "unit": "m3",
-            "factor_source": "specific", "mud_type": "water_based"
+            "process_type": "drilling", "drilling_days": days, "quantity": days, "unit": "days",
+            "tier": "tier2", "factor_source": "custom", "mud_type": "water_based"
         }, {})
         em_oil, _ = compute_emissions({
-            "process_type": "drilling", "quantity": vol, "unit": "m3",
-            "factor_source": "specific", "mud_type": "oil_based"
+            "process_type": "drilling", "drilling_days": days, "quantity": days, "unit": "days",
+            "tier": "tier2", "factor_source": "custom", "mud_type": "oil_based"
         }, {})
 
-        expected_ratio = 0.35 / 0.15   # = 2.3333...
+        expected_ratio = 0.0103 / 0.0458
         actual_ratio = em_oil["ch4"] / em_water["ch4"]
 
         assert actual_ratio == pytest.approx(expected_ratio, rel=1e-4), (
@@ -426,7 +425,7 @@ class TestOATSensitivity:
         gwp_ar4 = {"CO2": 1.0, "CH4": 25.0, "N2O": 298.0}
 
         payload = {
-            "process_type": "drilling", "quantity": 1000.0, "unit": "m3",
+            "process_type": "drilling", "quantity": 1000.0, "unit": "days",
             "factor_source": "specific", "mud_type": "water_based"
         }
 
@@ -577,7 +576,7 @@ class TestCO2eSensitivity:
         """
         # Mud degassing: pure CH4 emission
         em, _ = compute_emissions({
-            "process_type": "drilling", "quantity": 100.0, "unit": "m3",
+            "process_type": "drilling", "quantity": 100.0, "unit": "days",
             "factor_source": "specific", "mud_type": "water_based"
         }, {}, gwp_dict={"CO2": 1.0, "CH4": 28.0, "N2O": 265.0})
 
@@ -592,7 +591,7 @@ class TestCO2eSensitivity:
         AR5 totalCo2e > AR4 totalCo2e.
         """
         payload = {
-            "process_type": "drilling", "quantity": 500.0, "unit": "m3",
+            "process_type": "drilling", "quantity": 500.0, "unit": "days",
             "factor_source": "specific", "mud_type": "water_based"
         }
         em_ar4, _ = compute_emissions(payload, {}, gwp_dict={"CO2": 1.0, "CH4": 25.0, "N2O": 298.0})

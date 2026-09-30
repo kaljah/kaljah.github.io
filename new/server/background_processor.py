@@ -6,22 +6,105 @@ import csv
 import traceback
 from openpyxl import load_workbook
 
-# Global in-memory job tracker
+# Job tracker. The running worker keeps the full job in memory; a snapshot is written to a JSON
+# file so that another worker process (Gunicorn), or the same server after a restart, can answer
+# status and error-file requests.
 # Structure: { job_id: { 'status', 'progress', 'processed', 'total', 'skipped': [{row, reason, ...}], 'error_csv_path', 'created_at' } }
 upload_jobs = {}
 upload_jobs_lock = threading.Lock()
+
+UPLOAD_JOB_DIR = os.environ.get("UPLOAD_JOB_DIR") or os.path.join(
+    __import__("tempfile").gettempdir(), "ghg_upload_jobs")
+STALE_JOB_SECONDS = 600  # a job whose worker stopped writing for this long was interrupted
+_last_persist = {}
+
+
+def _job_file(job_id):
+    import re
+
+    if not re.fullmatch(r"[A-Za-z0-9-]{1,64}", str(job_id or "")):
+        return None
+    return os.path.join(UPLOAD_JOB_DIR, f"{job_id}.json")
+
+
+def _snapshot(job):
+    skipped = job.get("skipped", [])
+    anomalies = job.get("anomalies", [])
+    return {
+        "status": job.get("status", "unknown"),
+        "progress": job.get("progress", 0),
+        "processed": job.get("processed", 0),
+        "total": job.get("total", 0),
+        "errors": list(job.get("errors", [])),
+        "skipped_count": len(skipped),
+        "skipped_preview": list(skipped[:100]),
+        "error_csv_path": job.get("error_csv_path"),
+        "anomaly_count": len(anomalies),
+        "anomalies": list(anomalies[:50]),
+        "owner_id": job.get("owner_id"),
+        "created_at": job.get("created_at"),
+        "heartbeat": time.time(),
+    }
+
+
+def _persist_job(job_id, force=False):
+    """Write the job snapshot (at most once a second while running; always when forced)."""
+    import json
+
+    now = time.time()
+    if not force and now - _last_persist.get(job_id, 0) < 1.0:
+        return
+    path = _job_file(job_id)
+    if not path:
+        return
+    with upload_jobs_lock:
+        job = upload_jobs.get(job_id)
+        if job is None:
+            return
+        snap = _snapshot(job)
+    try:
+        os.makedirs(UPLOAD_JOB_DIR, exist_ok=True)
+        tmp = f"{path}.{os.getpid()}.{threading.get_ident()}.tmp"
+        with open(tmp, "w", encoding="utf-8") as fh:
+            json.dump(snap, fh, default=str)
+        os.replace(tmp, path)
+        _last_persist[job_id] = now
+    except OSError:
+        pass  # the in-memory job still answers for this worker
+
+
+def _load_job(job_id):
+    import json
+
+    path = _job_file(job_id)
+    if not path or not os.path.exists(path):
+        return None
+    try:
+        with open(path, encoding="utf-8") as fh:
+            snap = json.load(fh)
+    except (OSError, ValueError):
+        return None
+    if snap.get("status") == "processing" and time.time() - float(snap.get("heartbeat") or 0) > STALE_JOB_SECONDS:
+        snap["status"] = "error"
+        snap["errors"] = list(snap.get("errors") or []) + [
+            "The import was interrupted (the server stopped while it was running); upload the file again. "
+            "Rows are saved together at the end of an import, so none of this job's rows were saved."]
+    return snap
 
 
 def _update_job(job_id, **kwargs):
     with upload_jobs_lock:
         if job_id in upload_jobs:
             upload_jobs[job_id].update(kwargs)
+    # progress ticks are throttled; status, results and file paths are written at once
+    _persist_job(job_id, force=bool(set(kwargs) - {"processed", "progress", "total"}))
 
 
 def _append_job_list(job_id, list_key, item):
     with upload_jobs_lock:
         if job_id in upload_jobs:
             upload_jobs[job_id].setdefault(list_key, []).append(item)
+    _persist_job(job_id)
 
 
 def _clean_float(val, default=0.0):
@@ -94,7 +177,9 @@ from process_categories import NON_COMBUSTION_PROCESSES
 
 
 def _prune_old_jobs(max_age_seconds=86400):
-    """Prunes job entries older than max_age_seconds (default 24h) and removes orphan error CSV files."""
+    """Prunes job entries older than max_age_seconds (default 24h), their snapshot files and error CSV files."""
+    import json
+
     now = time.time()
     to_delete = []
     with upload_jobs_lock:
@@ -104,12 +189,198 @@ def _prune_old_jobs(max_age_seconds=86400):
                 to_delete.append((jid, job.get("error_csv_path")))
         for jid, _ in to_delete:
             upload_jobs.pop(jid, None)
-    for _, csv_path in to_delete:
-        if csv_path and os.path.exists(csv_path):
-            try:
-                os.remove(csv_path)
-            except Exception:
-                pass
+    try:
+        for name in os.listdir(UPLOAD_JOB_DIR):
+            path = os.path.join(UPLOAD_JOB_DIR, name)
+            if name.endswith(".json") and now - os.path.getmtime(path) > max_age_seconds:
+                try:
+                    with open(path, encoding="utf-8") as fh:
+                        to_delete.append((None, json.load(fh).get("error_csv_path")))
+                except (OSError, ValueError):
+                    pass
+                to_delete.append((None, path))
+    except OSError:
+        pass
+    for jid, csv_path in to_delete:
+        for f in (csv_path, _job_file(jid) if jid else None):
+            if f and os.path.exists(f):
+                try:
+                    os.remove(f)
+                except Exception:
+                    pass
+
+
+# -- File layout helpers ---------------------------------------------------------
+
+def _clean_sheet_name(name):
+    """Sheet name without the template's emoji / symbol prefix ("📊 Data Entry" -> "data entry")."""
+    import re
+
+    return re.sub(r"^[^A-Za-z0-9]+", "", str(name or "")).strip().lower()
+
+
+def _data_sheet(wb):
+    """The data-entry sheet of a workbook: the one named "Data Entry" (with or without the
+    template's icon), otherwise the first sheet that is not a reference or Tier 3 sheet."""
+    names = {_clean_sheet_name(n): n for n in wb.sheetnames}
+    for wanted in ("data entry", "data"):
+        if wanted in names:
+            return wb[names[wanted]]
+    skip = ("facilities", "facility", "instructions", "readme", "gas composition", "tier 3 calculations", "lists")
+    for n in wb.sheetnames:
+        if _clean_sheet_name(n) not in skip and not n.startswith("⚙"):
+            return wb[n]
+    return wb.active
+
+
+def _find_header_row(rows_iterator, max_scan=20):
+    """Skip title rows: the header is the first row with at least two filled cells.
+    Returns (header_values, header_row_number)."""
+    first = None
+    for i, row in enumerate(rows_iterator, start=1):
+        if first is None:
+            first = (row, i)
+        if sum(1 for c in row if c not in (None, "") and str(c).strip()) >= 2:
+            return row, i
+        if i >= max_scan:
+            break
+    return first if first else ((), 0)
+
+
+def _is_template_note_row(row_dict):
+    """The CSV template's second row describes each column; instruction rows start with [INSTRUCTION]."""
+    vals = [str(v).strip() for v in row_dict.values() if v is not None]
+    if any(v.upper().startswith("[INSTRUCTION]") for v in vals):
+        return True
+    return any(v.startswith("Date as YYYY-MM") for v in vals)
+
+
+def _canonical_header(header):
+    """Field name carried by a header: template tags and unit notes are dropped
+    ("[T3-Tank] tank_gor" -> "tank_gor", "Bleed Rate (scf/hr)" -> "bleed_rate")."""
+    import re
+
+    h = re.sub(r"^\s*(\[[^\]]*\]\s*)+", "", str(header or ""))
+    h = re.sub(r"\([^)]*\)", " ", h)
+    h = re.sub(r"(?<=[a-z0-9])(?=[A-Z])", "_", h)  # CamelCase: UnloadDepth -> Unload_Depth
+    return re.sub(r"[^a-z0-9]+", "_", h.lower()).strip("_")
+
+
+# -- Bulk-import integrity helpers (audit RC-13) --------------------------------
+
+_PERIOD_FORMATS = ("%Y-%m", "%Y-%m-%d", "%m/%Y", "%Y/%m")
+
+
+def _parse_row_period(row):
+    """BUG-085 / BUG-111: explicit period parsing with range checks; never a default year.
+
+    Accepts a `date` cell (YYYY-MM, YYYY-MM-DD, MM/YYYY, YYYY/MM) or `year` + `month` columns.
+    Returns (year, month, error).
+    """
+    import datetime as _dt
+    from input_validation import ValidationError, parse_month, parse_year
+
+    raw = row.get("date")
+    date_str = "" if raw is None else str(raw).strip()
+    if isinstance(raw, (_dt.date, _dt.datetime)):
+        date_str = raw.strftime("%Y-%m-%d")
+    elif date_str.endswith(" 00:00:00"):
+        date_str = date_str[:-9]
+    try:
+        if date_str and date_str.lower() != "none":
+            for fmt in _PERIOD_FORMATS:
+                try:
+                    d = _dt.datetime.strptime(date_str, fmt)
+                except ValueError:
+                    continue
+                return parse_year(d.year), parse_month(d.month, required=True), None
+            return None, None, f"Invalid date '{date_str}': use YYYY-MM, YYYY-MM-DD or MM/YYYY"
+        year = parse_year(row.get("year"))
+        month = parse_month(row.get("month"), required=True)
+        return year, month, None
+    except ValidationError as err:
+        return None, None, err.message
+
+
+def _dedupe(batch_keys, key, overwrite, describe):
+    """BUG-057: returns ("new", None), ("error", message) or ("update", existing_object_or_id).
+
+    batch_keys maps natural key -> existing DB id, or -> the pending object created earlier in
+    this same file, so an in-file repeat updates that row instead of inserting a copy.
+    """
+    if batch_keys is None or key not in batch_keys:
+        return "new", None
+    if not overwrite:
+        existing = batch_keys[key]
+        where = "earlier in this file" if not isinstance(existing, int) else "in the platform"
+        return "error", (f"Duplicate record: {describe} already exists {where}. Enable 'Overwrite Duplicates' to "
+                         "replace it, or give each source its own Equipment ID / source reference to keep both.")
+    return "update", batch_keys[key]
+
+
+def _resolve_existing(model, existing):
+    from extensions import db
+
+    if existing is None:
+        return None
+    if isinstance(existing, int):
+        return db.session.get(model, existing)
+    return existing  # pending object from this file
+
+
+def _bulk_overwrite(obj, values, user_id, label):
+    """BUG-058: overwrite through the maker-checker: back to Pending, approval cleared,
+    last maker recorded, old/new values captured in the audit trail."""
+    from extensions import db
+    from models import User
+    from utils import log_activity_and_notify
+
+    old = {k: getattr(obj, k, None) for k in values}
+    for k, v in values.items():
+        setattr(obj, k, v)
+    was_saved = getattr(obj, "id", None) is not None
+    obj.status = "Pending"
+    obj.approved_by = None
+    obj.approved_at = None
+    if hasattr(obj, "approved_by_name"):
+        obj.approved_by_name = None
+    if hasattr(obj, "updated_by"):
+        obj.updated_by = user_id
+    if was_saved:
+        log_activity_and_notify(
+            action="BULK_OVERWRITE",
+            record_id=str(obj.id),
+            details=f"{label} record {obj.id} overwritten by bulk import",
+            user=db.session.get(User, user_id),
+            entity=type(obj).__name__,
+            entity_id=obj.id,
+            facility_id=getattr(obj, "facility_id", None),
+            old_values=old,
+            new_values=values,
+        )
+
+
+def _scope2_key(facility_id, year, month, source_type, grid_region, meter):
+    return (facility_id, year, month, (source_type or "electricity").strip().lower(),
+            (grid_region or "").strip().lower(), (meter or "").strip().lower())
+
+
+def _scope3_key(facility_id, year, month, category, sub_category, unit):
+    return (facility_id, year, month, (category or "").strip().lower(),
+            (sub_category or "").strip().lower(), (unit or "").strip().lower())
+
+
+def _scope1_key(facility_id, year, month, process_type, fuel, equipment_id, source_ref):
+    proc = (process_type or "").strip().lower()
+    fuel_k = "" if proc in NON_COMBUSTION_PROCESSES else (fuel or "").strip().lower()
+    return (facility_id, year, month, proc, fuel_k, (equipment_id or "").strip().lower(),
+            (source_ref or "").strip().lower())
+
+MAX_IMPORT_ROWS = 50_000  # rows are held until the single commit at the end of the file
+
+
+class ImportTooLarge(Exception):
+    pass
 
 
 def start_background_upload(
@@ -135,7 +406,10 @@ def start_background_upload(
             "error_csv_path": None,
             "anomalies": [],  # anomaly-flagged rows
             "created_at": time.time(),
+            "owner_id": user_id,  # BUG-076: only the uploader (or an admin) may read the job
         }
+
+    _persist_job(job_id, force=True)
 
     # Spawn the background thread
     thread = threading.Thread(
@@ -158,25 +432,42 @@ def start_background_upload(
     return job_id
 
 
-def get_job_status(job_id):
+def _job_view(job_id):
+    """The job as this worker knows it, else its snapshot file (another worker or before a restart)."""
     with upload_jobs_lock:
         job = upload_jobs.get(job_id)
-        if not job:
-            return None
-        skipped_all = list(job.get("skipped", []))
-        anomalies = list(job.get("anomalies", []))
-        return {
-            "status": job.get("status", "unknown"),
-            "progress": job.get("progress", 0),
-            "processed": job.get("processed", 0),
-            "total": job.get("total", 0),
-            "errors": list(job.get("errors", [])),
-            "skipped_count": len(skipped_all),
-            "skipped_preview": skipped_all[:100],  # first 100 for inline display
-            "error_csv_path": job.get("error_csv_path"),
-            "anomaly_count": len(anomalies),
-            "anomalies": anomalies[:50],  # first 50 anomalies for review
-        }
+        if job is not None:
+            return _snapshot(job)
+    return _load_job(job_id)
+
+
+def get_job_owner(job_id):
+    job = _job_view(job_id)
+    return job.get("owner_id") if job else None
+
+
+def get_job_error_csv_path(job_id):
+    job = _job_view(job_id)
+    path = job.get("error_csv_path") if job else None
+    return path if path and os.path.exists(path) else None
+
+
+def get_job_status(job_id):
+    job = _job_view(job_id)
+    if not job:
+        return None
+    return {
+        "status": job.get("status", "unknown"),
+        "progress": job.get("progress", 0),
+        "processed": job.get("processed", 0),
+        "total": job.get("total", 0),
+        "errors": list(job.get("errors", [])),
+        "skipped_count": job.get("skipped_count", 0),
+        "skipped_preview": job.get("skipped_preview", []),  # first 100 for inline display
+        "has_error_csv": bool(job.get("error_csv_path")),  # BUG-076: no server path disclosure
+        "anomaly_count": job.get("anomaly_count", 0),
+        "anomalies": job.get("anomalies", []),  # first 50 anomalies for review
+    }
 
 
 def _process_file_thread(
@@ -204,44 +495,48 @@ def _process_file_thread(
             if is_excel:
                 wb = load_workbook(file_path, read_only=True, data_only=True)
 
-                # Check for Gas Composition and Tier 3 sheets
+                # Tier 3 / gas composition sheets: parameters per equipment ID (and month), with
+                # the same header mapping as the data sheet so the values reach the calculators
                 for sheet_name in wb.sheetnames:
-                    if sheet_name == "Gas Composition" or sheet_name.startswith("⚙ "):
-                        t3_ws = wb[sheet_name]
-                        # Tier 3 sheets have headers on row 3, but let's just find the header row by looking for 'Equipment ID'
-                        t3_iter = t3_ws.iter_rows(values_only=True)
+                    if _clean_sheet_name(sheet_name) in ("gas composition", "tier 3 calculations") or sheet_name.startswith("⚙"):
+                        t3_iter = wb[sheet_name].iter_rows(values_only=True)
                         t3_headers = []
                         for row in t3_iter:
-                            str_row = [
-                                str(c).strip().lower() if c is not None else ""
-                                for c in row
-                            ]
-                            if "equipment id" in str_row:
+                            str_row = [str(c).strip() if c is not None else "" for c in row]
+                            if "equipment id" in [c.lower() for c in str_row]:
                                 t3_headers = str_row
                                 break
-
                         if not t3_headers:
                             continue
-
-                        # Read data rows
+                        t3_map = _build_mapping(t3_headers, scope=scope)
                         for t3_row in t3_iter:
-                            if not any(t3_row):
+                            if not any(c not in (None, "") for c in t3_row):
                                 continue
-                            row_dict = dict(zip(t3_headers, t3_row))
-                            eq_id = str(row_dict.get("equipment id") or "").strip()
-                            if eq_id:
-                                if eq_id not in tier3_data_map:
-                                    tier3_data_map[eq_id] = {}
-                                tier3_data_map[eq_id].update(row_dict)
+                            raw = dict(zip(t3_headers, t3_row))
+                            eq_id = str(next((v for k, v in raw.items() if k.lower() == "equipment id"), "") or "").strip()
+                            if not eq_id:
+                                continue
+                            params = {}
+                            skip = ("equipment", "equipment_id", "date", "process")
+                            for h, val in raw.items():  # unmapped columns by their field name
+                                ck = _canonical_header(h)
+                                if ck and ck not in skip and h not in t3_map.values() and val not in (None, "", "-"):
+                                    params[ck] = val
+                            for sys_key, header_name in t3_map.items():
+                                val = raw.get(header_name)
+                                if sys_key not in skip and val not in (None, "", "-"):
+                                    params[sys_key] = val
+                            y, m, _ = _parse_row_period({"date": raw.get(t3_map.get("date"))}) if t3_map.get("date") else (None, None, None)
+                            tier3_data_map.setdefault((eq_id, y, m), {}).update(params)
 
-                ws = wb["Data Entry"] if "Data Entry" in wb.sheetnames else wb.active
+                ws = _data_sheet(wb)
                 rows_iterator = ws.iter_rows(values_only=True)
-                headers_tuple = next(rows_iterator, [])
+                headers_tuple, header_row_no = _find_header_row(rows_iterator)
                 headers = [
                     str(h).strip() if h is not None else "" for h in headers_tuple
                 ]
 
-                total_rows = ws.max_row - 1 if ws.max_row else 0
+                total_rows = max(0, (ws.max_row or 0) - header_row_no)
             else:
                 # Read file bytes with multi-encoding fallback (UTF-8-BOM, UTF-8, Windows-1252, ISO-8859-1)
                 with open(file_path, "rb") as raw_f:
@@ -260,35 +555,27 @@ def _process_file_thread(
                 decoded_text = decoded_text.replace("\r\n", "\n").replace("\r", "\n")
 
                 import io
-                # Automatic delimiter sniffing (comma, semicolon, tab, pipe)
-                sample = decoded_text[:4096]
-                delimiter = ","
-                try:
-                    dialect = csv.Sniffer().sniff(sample, delimiters=";,|\t,")
-                    delimiter = dialect.delimiter
-                except Exception:
-                    first_line = sample.splitlines()[0] if sample.splitlines() else ""
-                    if ";" in first_line and "," not in first_line:
-                        delimiter = ";"
-                    elif "\t" in first_line and "," not in first_line:
-                        delimiter = "\t"
-                    elif "|" in first_line and "," not in first_line:
-                        delimiter = "|"
+                # Delimiter (comma, semicolon, tab, pipe) from the header line only: data rows and
+                # the template's description row contain free text ("a | b", "1,5")
+                first_line = decoded_text.lstrip("\n").split("\n", 1)[0]
+                counts = {d: first_line.count(d) for d in (",", ";", "\t", "|")}
+                delimiter = max(counts, key=counts.get) if max(counts.values()) > 0 else ","
 
                 f = io.StringIO(decoded_text)
                 reader = csv.reader(f, delimiter=delimiter)
                 headers = next(reader, [])
                 headers = [h.strip() for h in headers]
+                header_row_no = 1
                 rows_iterator = reader
-                total_rows = 0
+                total_rows = max(0, sum(1 for ln in decoded_text.split("\n") if ln.strip()) - 1)
 
             _update_job(job_id, total=total_rows)
 
-            # Resolve mapping
-            if provided_mapping:
-                mapping = provided_mapping
-            else:
-                mapping = _build_mapping(headers, scope=scope)
+            # Resolve mapping: the automatic mapping, overridden by the columns the user chose in
+            # the wizard (the wizard lists only some fields; the others still map automatically)
+            mapping = _build_mapping(headers, scope=scope)
+            if isinstance(provided_mapping, dict):
+                mapping.update({str(k): v for k, v in provided_mapping.items() if isinstance(v, str) and v in headers})
 
             # 3. Setup context variables for calculation
             from models import (
@@ -329,101 +616,92 @@ def _process_file_thread(
                     Facility.id.in_(allowed_fac_ids)
                 ).all()
 
-            fac_name_map = {fac.name.lower(): fac for fac in all_facilities}
+            from utils import build_name_map
+
+            fac_name_map = build_name_map(all_facilities)
             for fac in all_facilities:
-                if fac.region and fac.region.lower() not in fac_name_map:
-                    fac_name_map[fac.region.lower()] = fac
+                # region names are a convenience alias only when no facility carries that name
+                fac_name_map.add(fac.region, fac, overwrite=False)
             fac_id_map = {str(fac.id): fac for fac in all_facilities}
 
-            custom_factors = CustomFactor.query.all()
-            cf_name_map = {cf.name.lower(): cf for cf in custom_factors}
+            custom_factors = CustomFactor.query.filter(CustomFactor.is_archived.is_(False)).all()
+            cf_name_map = build_name_map(custom_factors)
 
             processed = 0
             chunk = []
             skipped_rows = []  # Store raw row data for error CSV
             anomaly_rows = []  # Store anomaly-flagged rows for reviewer warning
             batch_prod_map = {}  # In-batch duplicate tracking for production upserts
+            batch_cf_names = set()  # BUG-065: in-file duplicate custom factor names
+            batch_facilities = {}  # in-file facility names / codes
+            batch_sources = set()  # in-file emission sources
             batch_scope1_map = {}
             batch_scope2_map = {}
             batch_scope3_map = {}
 
             from models import Emission, Scope2Emission, Scope3Emission
 
+            # BUG-081: natural keys include the sub-identifiers real inventories need, and
+            # Rejected / Draft rows are not treated as existing records.
+            live = ("Pending", "Verified", "Pending Approval")
             if str(scope) == "1":
-                for e in Emission.query.with_entities(
-                    Emission.id,
-                    Emission.facility_id,
-                    Emission.year,
-                    Emission.month,
-                    Emission.process_type,
-                    Emission.fuel_type,
-                    Emission.equipment_id,
+                for e in Emission.query.filter(Emission.status.in_(live)).with_entities(
+                    Emission.id, Emission.facility_id, Emission.year, Emission.month, Emission.process_type,
+                    Emission.fuel_type, Emission.equipment_id, Emission.data_source_ref,
                 ).all():
-                    proc_k = (e.process_type or "").strip().lower()
-                    fuel_k = "" if proc_k in NON_COMBUSTION_PROCESSES else (e.fuel_type or "").strip().lower()
-                    k = (
-                        e.facility_id,
-                        e.year,
-                        e.month,
-                        proc_k,
-                        fuel_k,
-                        (e.equipment_id or "").strip().lower(),
-                    )
+                    k = _scope1_key(e.facility_id, e.year, e.month, e.process_type, e.fuel_type, e.equipment_id, e.data_source_ref)
                     batch_scope1_map[k] = e.id
 
             elif str(scope) == "2":
-                for e in Scope2Emission.query.with_entities(
-                    Scope2Emission.id,
-                    Scope2Emission.facility_id,
-                    Scope2Emission.year,
-                    Scope2Emission.month,
-                    Scope2Emission.source_type,
+                for e in Scope2Emission.query.filter(Scope2Emission.status.in_(live)).with_entities(
+                    Scope2Emission.id, Scope2Emission.facility_id, Scope2Emission.year, Scope2Emission.month,
+                    Scope2Emission.source_type, Scope2Emission.grid_region, Scope2Emission.location,
                 ).all():
-                    k = (
-                        e.facility_id,
-                        e.year,
-                        e.month,
-                        (e.source_type or "electricity").strip().lower(),
-                    )
-                    batch_scope2_map[k] = e.id
+                    meter = e.location if (e.location or "") != (e.grid_region or "") else ""
+                    batch_scope2_map[_scope2_key(e.facility_id, e.year, e.month, e.source_type, e.grid_region, meter)] = e.id
 
             elif str(scope) in ["3", "3_eeio"]:
-                for e in Scope3Emission.query.with_entities(
-                    Scope3Emission.id,
-                    Scope3Emission.facility_id,
-                    Scope3Emission.year,
-                    Scope3Emission.month,
-                    Scope3Emission.category,
+                from input_validation import scope3_category_number
+
+                for e in Scope3Emission.query.filter(Scope3Emission.status.in_(live)).with_entities(
+                    Scope3Emission.id, Scope3Emission.facility_id, Scope3Emission.year, Scope3Emission.month,
+                    Scope3Emission.category, Scope3Emission.sub_category, Scope3Emission.unit,
                 ).all():
-                    k = (
-                        e.facility_id,
-                        e.year,
-                        e.month,
-                        (e.category or "").strip().lower(),
-                    )
-                    batch_scope3_map[k] = e.id
+                    n = scope3_category_number(e.category)
+                    cat = f"Category {n}" if n else (e.category or "")
+                    batch_scope3_map[_scope3_key(e.facility_id, e.year, e.month, cat, e.sub_category, e.unit)] = e.id
 
             # Initialize anomaly detector
-            from calculations.anomaly import AnomalyDetector
-            anomaly_detector = AnomalyDetector()
+            from calculations.anomaly import BatchAnomalyDetector
+            anomaly_detector = BatchAnomalyDetector()  # history read once per series
 
             # Headers for error CSV
             error_headers = ["Error Reason"] + headers
 
-            for raw_row in rows_iterator:
+            # All or nothing: the rows are saved in one commit at the end of the file, so a fatal
+            # error or a server restart never leaves half an import behind. Queries during the
+            # import must not flush the staged rows (that would open the write transaction early).
+            db.session.autoflush = False
+
+            for line_no, raw_row in enumerate(rows_iterator, start=header_row_no + 1):
                 # Stop if empty row (Excel read_only sometimes yields empty trailing rows, or CSV whitespace-only rows)
                 if not any(str(c).strip() for c in raw_row if c is not None):
                     continue
 
-                processed += 1
-
-                # Zip headers with row values safely
+                # Zip headers with row values safely; the templates write "-" for a blank cell
                 row_dict = {}
                 for i, h in enumerate(headers):
-                    if i < len(raw_row):
-                        row_dict[h] = raw_row[i]
-                    else:
-                        row_dict[h] = None
+                    v = raw_row[i] if i < len(raw_row) else None
+                    if isinstance(v, str) and v.strip() in ("", "-", "--"):
+                        v = None
+                    row_dict[h] = v
+
+                if _is_template_note_row(row_dict):
+                    continue  # the template's description / instruction row
+                processed += 1
+                if processed > MAX_IMPORT_ROWS:
+                    raise ImportTooLarge(
+                        f"The file has more than {MAX_IMPORT_ROWS:,} data rows; split it into smaller files. No rows were saved.")
 
                 # Extract mapped values, preserving raw entries as case/spacing-insensitive fallbacks
                 mapped_data = {
@@ -432,6 +710,11 @@ def _process_file_thread(
                     if k is not None
                 }
                 mapped_data.update(row_dict)
+                # the header's field name ("[T3-Tank] tank_gor" -> tank_gor, "Unit\n(bbl)" -> unit)
+                for h, v in row_dict.items():
+                    ck = _canonical_header(h)
+                    if ck and v is not None and mapped_data.get(ck) in (None, ""):
+                        mapped_data[ck] = v
                 for sys_key, header_name in mapping.items():
                     if header_name:
                         val = row_dict.get(header_name)
@@ -440,9 +723,16 @@ def _process_file_thread(
 
 
                 # Merge Tier 3 / Gas Composition if present
-                eq_id_raw = str(mapped_data.get("equipment") or "").strip()
-                if eq_id_raw and eq_id_raw in tier3_data_map:
-                    mapped_data.update(tier3_data_map[eq_id_raw])
+                # (keyed by equipment ID and month; a Tier 3 row without a date applies to every month)
+                if tier3_data_map:
+                    y, m, _ = _parse_row_period(mapped_data)
+                    for eq in {str(mapped_data.get(k) or "").strip() for k in ("equipment_id", "equipment")} - {""}:
+                        params = tier3_data_map.get((eq, y, m)) or tier3_data_map.get((eq, None, None))
+                        if params:
+                            for k, v in params.items():
+                                if mapped_data.get(k) in (None, ""):
+                                    mapped_data[k] = v
+                            break
 
                 # Process Row based on scope
                 if str(scope) == "2":
@@ -453,7 +743,7 @@ def _process_file_thread(
                         fac_id_map,
                         GRID_FACTORS,
                         job_id,
-                        processed,
+                        line_no,
                         batch_keys=batch_scope2_map,
                         overwrite_duplicates=overwrite_duplicates,
                     )
@@ -464,7 +754,7 @@ def _process_file_thread(
                         fac_name_map,
                         fac_id_map,
                         job_id,
-                        processed,
+                        line_no,
                         batch_keys=batch_scope3_map,
                         overwrite_duplicates=overwrite_duplicates,
                     )
@@ -475,13 +765,13 @@ def _process_file_thread(
                         fac_name_map,
                         fac_id_map,
                         job_id,
-                        processed,
+                        line_no,
                         batch_keys=batch_scope3_map,
                         overwrite_duplicates=overwrite_duplicates,
                     )
                 elif str(scope) == "sources":
                     emission_obj, row_errors = _process_row_sources(
-                        mapped_data, user_id, fac_name_map, fac_id_map
+                        mapped_data, user_id, fac_name_map, fac_id_map, batch_sources
                     )
                 elif str(scope) == "production":
                     emission_obj, row_errors = _process_row_production(
@@ -493,11 +783,10 @@ def _process_file_thread(
                     )
                 elif str(scope) == "custom_factors":
                     emission_obj, row_errors = _process_row_custom_factors(
-                        mapped_data, user_id
-                    )
+                        mapped_data, user_id, batch_cf_names)
                 elif str(scope) == "facilities":
                     emission_obj, row_errors = _process_row_facilities(
-                        mapped_data, user_id, overwrite_duplicates
+                        mapped_data, user_id, overwrite_duplicates, batch_facilities
                     )
                 elif str(scope) == "1":
                     emission_obj, row_errors = _process_row(
@@ -512,7 +801,7 @@ def _process_file_thread(
                         gwp_dict=gwp_dict,
                         gwp_std=gwp_std,
                         job_id=job_id,
-                        row_idx=processed,
+                        row_idx=line_no,
                         batch_keys=batch_scope1_map,
                         overwrite_duplicates=overwrite_duplicates,
                     )
@@ -524,7 +813,7 @@ def _process_file_thread(
 
                 if row_errors:
                     skip_entry = {
-                        "row": processed,
+                        "row": line_no,  # line of the file (header and description rows included)
                         "reason": "; ".join(row_errors),
                         "date": mapped_data.get("date", ""),
                         "year": str(mapped_data.get("year") or ""),
@@ -537,7 +826,7 @@ def _process_file_thread(
                     _append_job_list(job_id, "skipped", skip_entry)
                     # Also keep flat list for CSV
                     skipped_list = ["; ".join(row_errors)]
-                    skipped_list.extend([str(row_dict.get(h, "")) for h in headers])
+                    skipped_list.extend(["" if row_dict.get(h) is None else str(row_dict.get(h)) for h in headers])
                     skipped_rows.append(skipped_list)
                 elif emission_obj:
                     chunk.append(emission_obj)
@@ -563,7 +852,7 @@ def _process_file_thread(
                                     flag_msg = flag_msg[:252] + "..."
                                 emission_obj.qa_flag = flag_msg
                                 anomaly_rows.append({
-                                    "row": processed,
+                                    "row": line_no,
                                     "facility_id": fac_id,
                                     "value": co2e_val,
                                     "z_score": anomaly.get('z_score'),
@@ -573,11 +862,6 @@ def _process_file_thread(
                         except Exception:
                             pass  # Never let anomaly detection crash the upload
 
-                # Commit chunks of 2000
-                if len(chunk) >= 2000:
-                    db.session.bulk_save_objects(chunk)
-                    db.session.commit()
-                    chunk = []
 
                 # Update progress every 100 rows
                 if processed % 100 == 0:
@@ -589,21 +873,36 @@ def _process_file_thread(
                         progress=min(99, int((processed / total_rows) * 100)) if total_rows > 0 else min(95, int(100 * (1.0 - (0.98 ** (processed / 100.0))))),
                     )
 
-            # Final chunk commit
+            # One commit for the whole file. add_all (not bulk_save_objects): objects stay tracked, so
+            # an in-file duplicate can update them (BUG-057), and the dashboard-cache hook sees the new
+            # rows (BUG-071)
             if chunk:
-                db.session.bulk_save_objects(chunk)
-            db.session.commit()
+                db.session.add_all(chunk)
+            # BUG-058: one IMPORT summary entry per job, committed with the data
+            from utils import log_activity_and_notify as _log
 
-            _update_job(
-                job_id,
-                processed=processed,
-                progress=100,
-                status="completed",
-                anomalies=anomaly_rows,
+            with upload_jobs_lock:
+                _skipped_n = len(upload_jobs.get(job_id, {}).get("skipped", []))
+            _log(
+                action="IMPORT",
+                record_id=job_id,
+                details=f"Bulk import ({scope}) of '{original_filename}': {processed} rows read, {_skipped_n} skipped",
+                user=user_obj,
+                entity=f"bulk_scope_{scope}",
+                entity_id=job_id,
             )
+            db.session.commit()
+            try:
+                from routes.dashboard import clear_dashboard_cache
+
+                clear_dashboard_cache()  # BUG-071
+            except Exception:
+                pass
 
             # --- Maker-Checker: Notify reviewers for bulk Scope 1/2/3 uploads ---
-            if str(scope) in ["1", "2", "3"] and processed > 0:
+            with upload_jobs_lock:
+                _n_skipped = len(upload_jobs.get(job_id, {}).get("skipped", []))
+            if str(scope) in ["1", "2", "3", "3_eeio"] and processed - _n_skipped > 0:
                 try:
                     from models import User, Notification, Facility
                     uploaded_regions = set()
@@ -622,7 +921,7 @@ def _process_file_thread(
                     with upload_jobs_lock:
                         skipped_count = len(upload_jobs.get(job_id, {}).get("skipped", []))
                     success_count = processed - skipped_count
-                    scope_label = f"Scope {scope}"
+                    scope_label = "Scope 3" if str(scope) == "3_eeio" else f"Scope {scope}"
 
                     for reviewer in reviewers:
                         Notification.create(
@@ -630,7 +929,7 @@ def _process_file_thread(
                             type="audit",
                             title=f"{scope_label} Bulk Upload Pending Review",
                             message=(
-                                f"{success_count} new {scope_label} emission records were imported "
+                                f"{success_count} {scope_label} emission records were imported or updated "
                                 f"by {user_obj.fullName if user_obj else 'a user'} and are "
                                 f"awaiting your approval."
                             ),
@@ -643,11 +942,24 @@ def _process_file_thread(
             # Generate Error CSV if needed
             if skipped_rows:
                 error_file = file_path + "_errors.csv"
-                with open(error_file, "w", newline="", encoding="utf-8") as ef:
-                    writer = csv.writer(ef)
-                    writer.writerow(error_headers)
-                    writer.writerows(skipped_rows)
-                _update_job(job_id, error_csv_path=error_file)
+                try:
+                    with open(error_file, "w", newline="", encoding="utf-8") as ef:
+                        writer = csv.writer(ef)
+                        writer.writerow(error_headers)
+                        writer.writerows(skipped_rows)
+                    _update_job(job_id, error_csv_path=error_file)
+                except OSError:
+                    traceback.print_exc()  # the import itself is committed; only the download is missing
+
+            # completed only once the error file and the reviewer notices exist: a client polling the
+            # status used to see "completed" and get a 404 for the error file it was about to write
+            _update_job(
+                job_id,
+                processed=processed,
+                progress=100,
+                status="completed",
+                anomalies=anomaly_rows,
+            )
 
         except Exception as e:
             traceback.print_exc()
@@ -659,9 +971,21 @@ def _process_file_thread(
             with upload_jobs_lock:
                 if job_id in upload_jobs:
                     upload_jobs[job_id]["status"] = "error"
-                    upload_jobs[job_id]["errors"].append(f"Fatal error: {str(e)}")
+                    # BUG-087: the exception is logged; the job shows a generic message
+                    upload_jobs[job_id]["errors"].append(
+                        str(e) if isinstance(e, ImportTooLarge) else
+                        f"Fatal error: the import stopped unexpectedly (job {job_id}); see the server log. "
+                        "No rows were saved.")
+            _persist_job(job_id, force=True)
 
         finally:
+            try:
+                from extensions import db as _db
+
+                _db.session.autoflush = True
+                _db.session.remove()  # the import thread's session ends with the thread
+            except Exception:
+                pass
             if wb:
                 wb.close()
             if f:
@@ -676,51 +1000,56 @@ def _process_file_thread(
                 pass
 
 
-def _build_mapping(headers, scope=1):
-    # Matches the exact UI table headers and standard enterprise headers to backend keys
-    EXPECTED_FIELDS = [
-        ("facility_name", "facility name"),
-        ("facility_name", "facility"),
-        ("facility_name", "facility id"),
-        ("facility_name", "plant"),
-        ("facility_name", "site"),
-        ("name", "name"),
-        ("name", "region name"),
-        ("date", "date"),
-        ("activity", "activity"),
-        ("division", "division"),
-        ("field", "field"),
-        ("facility_name", "region") if str(scope) != "2" else ("grid_region", "region"),
-        ("group", "emission source"),  # Emission Source maps to Group
+_MAP_COMMON = [
+    ("facility_name", "facility name"),
+    ("facility_name", "facility"),
+    ("facility_name", "facility id"),
+    ("facility_name", "region facility"),
+    ("facility_name", "plant"),
+    ("facility_name", "site"),
+    ("date", "date"),
+    ("year", "year"),
+    ("month", "month"),
+    ("activity", "activity"),
+    ("division", "division"),
+    ("field", "field"),
+    ("unit", "unit"),
+    ("notes", "notes"),
+]
+
+_MAP_BY_SCOPE = {
+    "1": [
+        ("facility_name", "region"),
+        ("group", "emission source"),
+        ("group", "group"),
+        ("equipment_id", "equipment id"),
         ("equipment", "equipment"),
+        ("process", "process type"),
         ("process", "process"),
+        ("fuel", "activity fuel"),
         ("fuel", "fuel"),
-        ("fuel", "activity/fuel"),
         ("factor_type", "factor type"),
         ("factor_type", "factor source"),
-        ("factor_type", "factorsource"),
-        ("factor_type", "factor_source"),
         ("factor_type", "tier"),
         ("quantity", "quantity"),
-        ("unit", "unit"),
-        ("year", "year"),
+        ("quantity", "amount"),
         ("ch4_content", "ch4 content"),
-        ("ch4_content", "ch4_content"),
         ("co2_content", "co2 content"),
-        ("co2_content", "co2_content"),
-        ("month", "month"),
         ("combustion_efficiency", "combustion efficiency"),
         ("combustion_efficiency", "combustion eff"),
-        ("combustion_efficiency", "combustioneff"),
-        ("combustion_efficiency", "combustion_eff"),
         ("flare_type", "flare type"),
+        ("control_efficiency", "flare control efficiency"),
+        ("control_efficiency", "control efficiency"),
         ("control_efficiency", "control eff"),
         ("tank_gor", "tank gor"),
+        ("tank_ch4_content", "tank ch4 content"),
+        ("tank_control_eff", "tank control eff"),
+        ("tank_control_eff", "tank control efficiency"),
         ("gor", "gor"),
         ("pneu_count", "pneumatic count"),
         ("pneu_bleed_rate", "bleed rate"),
         ("pneu_hours", "hours"),
-        ("well_depth", "well depth"),
+        ("unload_depth", "well depth"),
         ("unload_diam", "diameter"),
         ("unload_press", "pressure"),
         ("unload_freq", "events"),
@@ -737,85 +1066,118 @@ def _build_mapping(headers, scope=1):
         ("c3", "c3 mol"),
         ("c4", "c4 mol"),
         ("c5", "c5 mol"),
+        ("c1", "c1"),
+        ("c2", "c2"),
+        ("c3", "c3"),
+        ("c4", "c4"),
+        ("c5", "c5"),
         ("c6", "c6"),
         ("c7", "c7"),
         ("c8", "c8"),
         ("c9", "c9"),
         ("c10", "c10"),
-        ("n2", "n2 mol"),
+        ("n2_mol", "n2 mol"),
+        ("n2_mol", "n2"),
+        ("co2_mol", "co2 mol"),
+        ("co2_mol", "co2"),
         ("hhv", "hhv"),
         ("user_unc_co2", "user uncertainty co2"),
         ("user_unc_ch4", "user uncertainty ch4"),
         ("user_unc_n2o", "user uncertainty n2o"),
-        # Scope 2 fields
+    ],
+    "2": [
         ("grid_region", "grid region"),
-        ("grid_region", "grid_region"),
-        (
-            "grid_region",
-            "region",
-        ),  # Might overlap with facility region but we check mapping
+        ("grid_region", "region"),
         ("consumption", "consumption"),
         ("consumption", "kwh"),
-        ("consumption", "electricitykwh"),
+        ("consumption", "electricity kwh"),
         ("consumption", "electricity"),
-        ("consumption", "steammmbtu"),
+        ("consumption", "steam mmbtu"),
         ("consumption", "steam"),
+        ("consumption", "amount"),
+        ("consumption", "quantity"),
         ("source_type", "source type"),
-        ("source_type", "source_type"),
-        ("source_type", "factor type"),
-        ("source_type", "factortype"),
         ("source_type", "utility type"),
+        ("source_type", "factor type"),
+        ("factor", "emission factor"),
         ("factor", "factor"),
-        ("unit", "heatunit"),
         ("unit", "heat unit"),
-        # Scope 3 fields
+        ("meter", "meter"),
+        ("meter", "meter id"),
+        ("boiler_eff", "boiler efficiency"),
+        ("boiler_eff", "boiler eff"),
+        ("trans_loss", "transmission loss"),
+        ("trans_loss", "trans loss"),
+    ],
+    "3": [
+        ("facility_name", "region"),
         ("category", "category"),
         ("sub_category", "sub category"),
-        ("sub_category", "sub_category"),
         ("amount", "activity amount"),
-        ("amount", "activity_amount"),
         ("amount", "activity data"),
-        ("amount", "activity_data"),
         ("amount", "amount"),
         ("amount", "quantity"),
         ("emission_factor", "emission factor"),
-        ("emission_factor", "emission_factor"),
         ("emission_factor", "ef"),
         ("emission_factor", "factor"),
         ("ef_unit", "ef unit"),
-        ("ef_unit", "ef_unit"),
         ("ef_unit", "emission factor unit"),
         ("ef_unit", "factor unit"),
         ("co2e", "co2e"),
-        ("notes", "notes"),
-        # Sources fields
+    ],
+    "3_eeio": [
+        ("facility_name", "region"),
+        ("naics_code", "naics code"),
+        ("naics_code", "naics"),
+        ("spend_usd", "spend usd"),
+        ("spend_usd", "spend"),
+    ],
+    "sources": [
+        ("facility_name", "region"),
+        ("name", "equipment name"),
+        ("name", "source name"),
         ("name", "name"),
         ("equipment_id", "equipment id"),
-        ("type", "type"),
         ("type", "process type"),
+        ("type", "type"),
         ("fuel_type", "fuel type"),
         ("design_capacity", "design capacity"),
         ("installation_date", "installation date"),
         ("status", "status"),
         ("description", "description"),
-        # Production fields
+    ],
+    "production": [
+        ("facility_name", "region"),
         ("oil_volume", "oil volume"),
+        ("oil_volume", "oil amount"),
         ("oil_unit", "oil unit"),
         ("gas_volume", "gas volume"),
+        ("gas_volume", "gas amount"),
         ("gas_unit", "gas unit"),
-        # Mitigation fields
+    ],
+    "mitigation": [
+        ("facility_name", "region"),
+        ("name", "project name"),
+        ("name", "name"),
         ("quantity_tco2e", "quantity tco2e"),
+        ("quantity_tco2e", "quantity"),
         ("start_date", "start date"),
         ("end_date", "end date"),
         ("investment_amount", "investment amount"),
         ("investment_amount", "investment"),
         ("project_type", "project type"),
-        # Custom factors fields
+        ("project_type", "type"),
+        ("status", "status"),
+        ("description", "description"),
+    ],
+    "custom_factors": [
+        ("name", "name"),
         ("co2_factor", "co2 factor"),
         ("ch4_factor", "ch4 factor"),
-        ("n2o_factor", "n2o_factor"),
+        ("n2o_factor", "n2o factor"),
         ("co_factor", "co factor"),
-        ("hhv_factor", "hhv_factor"),
+        ("hhv_factor", "hhv factor"),
+        ("hhv_factor", "hhv"),
         ("usage", "usage"),
         ("parent_fuel", "parent fuel"),
         ("source", "source"),
@@ -824,44 +1186,66 @@ def _build_mapping(headers, scope=1):
         ("co2_uncertainty", "co2 uncertainty"),
         ("ch4_uncertainty", "ch4 uncertainty"),
         ("n2o_uncertainty", "n2o uncertainty"),
-        # Facility fields
+    ],
+    "facilities": [
         ("name", "region name"),
+        ("name", "facility name"),
+        ("name", "name"),
+        ("region", "region"),
+        ("code", "code"),
         ("boundary_type", "consolidation approach"),
+        ("equity_share_pct", "equity share"),
+        ("equity_share_pct", "equity share pct"),
+        ("equity_share_pct", "equity"),
+        ("operator_status", "operator status"),
+        ("boundary_type", "boundary type"),
         ("boundary_detail", "boundary details"),
+        ("boundary_detail", "boundary detail"),
         ("segment", "supply chain segment"),
+        ("segment", "segment"),
         ("latitude", "latitude"),
         ("longitude", "longitude"),
         ("location", "wilaya"),
         ("location", "location"),
-    ]
+        ("description", "description"),
+    ],
+}
 
-    mapping = {}
+
+def _build_mapping(headers, scope=1):
+    """Header -> field mapping for one import type. Headers are compared without the
+    template tags and unit notes; exact names win over partial (word) matches."""
     import re
-    normalized_headers = {h: re.sub(r'[^a-z0-9]+', ' ', str(h).lower()).strip() for h in headers}
 
-    # Sort EXPECTED_FIELDS by search_term length descending so longer/more specific terms take priority
-    sorted_expected = sorted(EXPECTED_FIELDS, key=lambda x: len(x[1]), reverse=True)
+    scope = str(scope)
+    fields = list(_MAP_BY_SCOPE.get(scope, _MAP_BY_SCOPE["1"]))
+    if scope == "facilities":
+        # a facility import names the facility itself: its "facility" column is the name
+        fields += [(k, t) for k, t in _MAP_COMMON if k != "facility_name"] + [("name", "facility")]
+    else:
+        fields += _MAP_COMMON
+    mapping = {}
+    normalized_headers = {h: _canonical_header(h).replace("_", " ") for h in headers if str(h or "").strip()}
+    # longer (more specific) terms first; within a length, the listed order
+    sorted_expected = sorted(fields, key=lambda x: len(x[1]), reverse=True)
 
-    # Pass 1: Exact / normalized full match
-    for h, h_norm in normalized_headers.items():
-        for sys_key, search_term in sorted_expected:
-            st_norm = re.sub(r'[^a-z0-9]+', ' ', search_term.lower()).strip()
-            if sys_key not in mapping and h not in mapping.values():
-                if h_norm == st_norm:
-                    mapping[sys_key] = h
-                    break
+    # Pass 1: exact match
+    for sys_key, search_term in sorted_expected:
+        if sys_key in mapping:
+            continue
+        for h, h_norm in normalized_headers.items():
+            if h_norm == search_term and h not in mapping.values():
+                mapping[sys_key] = h
+                break
 
-    # Pass 2: Word-boundary match for remaining unmapped keys
+    # Pass 2: whole-word match for the remaining fields
     for h, h_norm in normalized_headers.items():
         if h in mapping.values():
             continue
         for sys_key, search_term in sorted_expected:
-            if sys_key not in mapping:
-                st_norm = re.sub(r'[^a-z0-9]+', ' ', search_term.lower()).strip()
-                pattern = r'(?:\b|_)' + re.escape(st_norm) + r'(?:\b|_)'
-                if re.search(pattern, h_norm):
-                    mapping[sys_key] = h
-                    break
+            if sys_key not in mapping and re.search(r"\b" + re.escape(search_term) + r"\b", h_norm):
+                mapping[sys_key] = h
+                break
 
     return mapping
 
@@ -881,18 +1265,10 @@ def _process_row_scope2(
 
     errors = []
 
-    # 1. Parse Date
-    date_str = str(row.get("date") or "").strip()
-    year = int(row.get("year") or 2024)
-    month = int(row.get("month") or 1)
-    if date_str and date_str != "None":
-        try:
-            parts = date_str.split("-")
-            year = int(parts[0])
-            if len(parts) > 1:
-                month = int(parts[1])
-        except:
-            pass
+    # 1. Parse Date (BUG-085: no default year/month, explicit formats, range-checked)
+    year, month, period_error = _parse_row_period(row)
+    if period_error:
+        return None, [period_error]
 
     # 2. Resolve Facility
     facility = None
@@ -917,95 +1293,104 @@ def _process_row_scope2(
         source_type = "electricity"
 
     grid_region = str(row.get("grid_region") or "").strip()
-    factor_info = GRID_FACTORS.get(grid_region)
-    if not factor_info and grid_region:
-        for k, v in GRID_FACTORS.items():
-            if k.lower() == grid_region.lower():
-                factor_info = v
-                grid_region = k
-                break
-    if not factor_info:
-        grid_region = "Algerian National Grid"
-        factor_info = GRID_FACTORS.get("Algerian National Grid", {"factor": 0.522})
+    ef = None
+    if source_type == "electricity":
+        # BUG-099: same factor policy as the manual Scope 2 form (routes.scope2.resolve_electricity_factor)
+        from input_validation import ValidationError
+        from routes.scope2 import resolve_electricity_factor
 
-    custom_ef = row.get("factor") or row.get("emission_factor")
-    if custom_ef not in [None, ""]:
-        ef = _clean_float(custom_ef, default=factor_info["factor"])
-    else:
-        ef = factor_info["factor"]
+        supplied = row.get("factor") if row.get("factor") not in (None, "") else row.get("emission_factor")
+        try:
+            ef, grid_region = resolve_electricity_factor(grid_region, supplied)
+        except ValidationError as err:
+            return None, [f"Row {row_idx}: {err.message}"]
 
     if source_type == "indirect_steam":
-        val = _clean_float(
-            row.get("steammmbtu")
-            or row.get("steam")
-            or row.get("consumption")
-            or row.get("amount")
-            or row.get("quantity"),
-            default=0.0,
-        )
+        raw_val = _first(row, "steammmbtu", "steam_mmbtu", "steam", "consumption", "amount", "quantity")
     else:
-        val = _clean_float(
-            row.get("electricitykwh")
-            or row.get("consumption")
-            or row.get("amount")
-            or row.get("quantity"),
-            default=0.0,
-        )
+        raw_val = _first(row, "electricitykwh", "electricity_kwh", "consumption", "amount", "quantity")
+    if source_type != "cogen_allocation":
+        # the manual form requires a positive consumption; a blank or text cell is never 0 kWh
+        val = _clean_float(raw_val, default=None)
+        if val is None or val <= 0:
+            return None, [f"Row {row_idx}: consumption must be a positive number (got '{raw_val if raw_val is not None else ''}')"]
+    else:
+        val = 0.0
     unit = str(
         row.get("unit")
         or row.get("heat_unit")
         or ("mmbtu" if source_type == "indirect_steam" else "kWh")
     ).strip()
-    
+
     kwh = 0.0
     heat_mmbtu = 0.0
-    
-    # Map 'consumption' alias to specific fields based on source_type
-    if source_type in ["indirect_steam", "steam", "heat"]:
-        source_type = "indirect_steam"
+    steam_ton = 0.0
+
+    if source_type == "indirect_steam":
+        # same calculation as the manual form (routes.scope2._calc_indirect_steam), including the
+        # boiler CH4 / N2O; the unit must be one it converts
+        from routes.scope2 import _calc_indirect_steam
+
         u = unit.lower().replace(" ", "")
-        known_steam_units = {
-            "mmbtu": 1.0,
-            "mm_btu": 1.0,
-            "btu": 1e-6,
-            "mj": 0.000947817,
-            "megajoule": 0.000947817,
-            "gj": 0.947817,
-            "gigajoule": 0.947817,
-            "kwh": 0.003412142,
-            "mwh": 3.412142,
-            "ton": 2.0,  # 1 US short ton saturated steam = 2.0 MMBtu
-            "us_ton": 2.0,
-            "short_ton": 2.0,
-            "tonne": 2.20462,  # 1 metric tonne = 2.20462 MMBtu
-            "metric_ton": 2.20462,
-            "mt": 2.20462,
-            "mlb": 1.0,
-            "klb": 1.0,
-            "thousand_lbs": 1.0,
-            "lb": 0.001,
-            "lbs": 0.001,
-            "kg": 0.00220462,
-        }
+        known_steam_units = {"mmbtu", "mm_btu", "btu", "mj", "megajoule", "gj", "gigajoule", "kwh", "mwh", "ton",
+                             "us_ton", "short_ton", "tonne", "metric_ton", "mt", "mlb", "klb", "thousand_lbs", "lb",
+                             "lbs", "kg"}
         if u not in known_steam_units:
             errors.append(f"Row {row_idx}: Unknown unit '{unit}' for indirect steam")
             return None, errors
-
-        heat_mmbtu = val * known_steam_units[u]
-        boiler_eff = _clean_float(row.get("boiler_eff"), default=0.80)
-        trans_loss = _clean_float(row.get("trans_loss"), default=0.0)
-        net_eff = boiler_eff * (1.0 - trans_loss)
-        if net_eff <= 0:
-            errors.append(f"Row {row_idx}: Net efficiency must be greater than 0 (got {net_eff:.4f})")
-            return None, errors
-
-        boiler_ef = _clean_float(row.get("factor") or row.get("emission_factor") or row.get("ef_co2"), default=53.06)
-        co2_kg = (heat_mmbtu * boiler_ef) / net_eff
-        co2e = co2_kg / 1000.0
-        ef = boiler_ef
+        # boiler efficiency: a fraction (0.85) or a percentage (85) - unambiguous, no boiler runs at 1 %.
+        # transmission loss: always a percentage in the file (0.9 = 0.9 %); it used to be read as a
+        # fraction at or below 1, so 0.9 % became 90 % and 1 % was rejected
+        raw_be = _first(row, "boiler_eff", "boiler_efficiency", "boiler_eff_pct")
+        boiler_eff = 0.80 if raw_be in (None, "") else _clean_float(raw_be, default=None)
+        if boiler_eff is None:
+            return None, [f"Row {row_idx}: boiler efficiency '{raw_be}' is not a number (e.g. 85 or 0.85)"]
+        if boiler_eff > 1.0 or "%" in str(raw_be):
+            boiler_eff /= 100.0
+        raw_tl = _first(row, "trans_loss", "trans_loss_pct", "transmission_loss")
+        trans_loss = 0.0 if raw_tl in (None, "") else _clean_float(raw_tl, default=None)
+        if trans_loss is None:
+            return None, [f"Row {row_idx}: transmission loss '{raw_tl}' is not a number (a percentage, e.g. 5)"]
+        trans_loss /= 100.0
+        if not 0 < boiler_eff <= 1.0:
+            return None, [f"Row {row_idx}: boiler efficiency must be above 0 and at most 100 % (got {raw_be})"]
+        if not 0 <= trans_loss < 1.0:
+            return None, [f"Row {row_idx}: transmission loss is a percentage from 0 to below 100 (got {raw_tl})"]
+        ci = {"trans_loss": trans_loss}
+        boiler_ef = _first(row, "ef_co2", "factor", "emission_factor")
+        if boiler_ef is not None:
+            ef_val = _clean_float(boiler_ef, default=None)
+            if ef_val is None or ef_val <= 0:
+                return None, [f"Row {row_idx}: boiler emission factor must be a positive number (kg CO2 / MMBtu)"]
+            ci["ef_co2"] = ef_val
+        try:
+            co2e, heat_mmbtu, ef = _calc_indirect_steam(
+                {"amount": val, "unit": u, "boiler_efficiency": boiler_eff, "calc_inputs": {"indirect_steam": ci}})
+        except ValueError as err:
+            return None, [f"Row {row_idx}: {err}"]
+        if u in ("ton", "tonne", "mt", "us_ton", "short_ton", "metric_ton"):
+            steam_ton = val
     elif source_type in ["cogen_allocation", "cogen"]:
+        # BUG-099 pattern: never book a client-supplied co2e; allocate on the server
+        from routes.scope2 import _calc_cogen_allocation
+
         source_type = "cogen_allocation"
-        co2e = _clean_float(row.get("co2e"), default=((val * ef) / 1000 if ef else val))
+        cogen_in = {
+            "total_emissions": row.get("total_emissions"),
+            "fuel_consumed_mmbtu": row.get("fuel_consumed_mmbtu"),
+            "heat_output_mmbtu": row.get("heat_output_mmbtu"),
+            "power_output_mwh": row.get("power_output_mwh"),
+            "allocation_method": row.get("allocation_method") or "wri_efficiency",
+            "heat_efficiency": row.get("heat_efficiency"),
+            "power_efficiency": row.get("power_efficiency"),
+        }
+        if not _clean_float(cogen_in["heat_output_mmbtu"], default=0.0) or not (
+            _clean_float(cogen_in["total_emissions"], default=0.0) or _clean_float(cogen_in["fuel_consumed_mmbtu"], default=0.0)
+        ):
+            return None, [f"Row {row_idx}: CHP rows need heat_output_mmbtu and total_emissions or fuel_consumed_mmbtu"]
+        co2e = _calc_cogen_allocation({k: v for k, v in cogen_in.items() if v not in (None, "")})
+        heat_mmbtu = _clean_float(cogen_in["heat_output_mmbtu"], default=0.0)
+        ef = None
     else:
         source_type = "electricity"
         u = unit.lower().replace(" ", "")
@@ -1020,31 +1405,38 @@ def _process_row_scope2(
             return None, errors
         co2e = (kwh * ef) / 1000.0
 
-    key = (facility.id, year, month, source_type.strip().lower())
-    if batch_keys is not None:
-        if key in batch_keys:
-            existing_id = batch_keys[key]
-            if not overwrite_duplicates:
-                errors.append(
-                    f"Duplicate record: Scope 2 emission for '{facility.name}' "
-                    f"({year}-{month:02d}, source '{source_type}') already exists. "
-                    f"Enable 'Overwrite Duplicates' to replace it."
-                )
-                return None, errors
-            else:
-                from extensions import db
-                existing_obj = db.session.get(Scope2Emission, existing_id) if existing_id else None
-                if existing_obj:
-                    existing_obj.source_type = source_type
-                    existing_obj.electricity_kwh = kwh
-                    existing_obj.heat_mmbtu = heat_mmbtu
-                    existing_obj.emission_factor = ef
-                    existing_obj.co2e = co2e
-                    existing_obj.grid_region = grid_region
-                    existing_obj.location = grid_region
-                    existing_obj.status = "Pending"
-                    return None, []
-        batch_keys[key] = None
+    if co2e is None or co2e < 0:
+        return None, [f"Row {row_idx}: consumption and emissions must be non-negative"]
+
+    # uncertainty: the value given, else the manual form's default for Scope 2
+    from routes.scope2 import default_scope2_uncertainty
+
+    if row.get("uncertainty") not in (None, ""):
+        unc = _clean_float(row.get("uncertainty"), default=None)
+        if unc is not None and unc > 2:
+            unc /= 100.0  # entered as a percentage
+        if unc is None or not 0 <= unc <= 2:
+            return None, [f"Row {row_idx}: uncertainty must be a fraction (0-2) or a percentage"]
+    else:
+        unc = default_scope2_uncertainty(co2e)
+    meter = str(row.get("meter") or row.get("meter_id") or "").strip()
+    key = _scope2_key(facility.id, year, month, source_type, grid_region, meter)
+    action, existing = _dedupe(
+        batch_keys, key, overwrite_duplicates,
+        f"Scope 2 emission for '{facility.name}' ({year}-{month:02d}, source '{source_type}', grid '{grid_region}'{', meter ' + meter if meter else ''})",
+    )
+    if action == "error":
+        return None, [existing]
+    values = {
+        "source_type": source_type, "electricity_kwh": kwh, "heat_mmbtu": heat_mmbtu, "steam_ton": steam_ton,
+        "emission_factor": ef, "co2e": co2e, "uncertainty": unc, "grid_region": grid_region or None,
+        "location": meter or grid_region or None,
+    }
+    if action == "update":
+        obj = _resolve_existing(Scope2Emission, existing)
+        if obj is not None:
+            _bulk_overwrite(obj, values, user_id, "Scope 2")
+            return None, []
 
     emission = Scope2Emission(
         facility_id=facility.id,
@@ -1053,10 +1445,12 @@ def _process_row_scope2(
         source_type=source_type,
         electricity_kwh=kwh,
         heat_mmbtu=heat_mmbtu,
+        steam_ton=steam_ton,
         emission_factor=ef,
         co2e=co2e,
-        grid_region=grid_region,
-        location=grid_region,
+        uncertainty=unc,
+        grid_region=grid_region or None,
+        location=meter or grid_region or None,
         activity=row.get("activity") or facility.activity,
         division=row.get("division") or facility.division,
         field=row.get("field") or facility.field,
@@ -1074,8 +1468,24 @@ def _process_row_scope2(
             "amount": amount
         })
 
+    if batch_keys is not None:
+        batch_keys[key] = emission  # BUG-057: later in-file repeats update this row
     return emission, errors
 
+
+
+def _scope3_uncertainty(row, co2e, row_idx):
+    """(value, error): the file's uncertainty (fraction 0-2 or a percentage), else the form default."""
+    from routes.scope3 import default_scope3_uncertainty
+
+    if row.get("uncertainty") in (None, ""):
+        return default_scope3_uncertainty(co2e), None
+    unc = _clean_float(row.get("uncertainty"), default=None)
+    if unc is not None and unc > 2:
+        unc /= 100.0
+    if unc is None or not 0 <= unc <= 2:
+        return None, f"Row {row_idx}: uncertainty must be a fraction (0-2) or a percentage"
+    return unc, None
 
 def _process_row_scope3_eeio(
     row,
@@ -1092,21 +1502,11 @@ def _process_row_scope3_eeio(
 
     errors = []
 
-    # 1. Parse Date
-    date_str = str(row.get("date") or "").strip()
-    year = int(row.get("year") or 2024)
-    month = int(row.get("month") or 1)
-    if date_str and date_str != "None":
-        try:
-            parts = date_str.split("-")
-            year = int(parts[0])
-            if len(parts) > 1:
-                month = int(parts[1])
-        except:
-            pass
+    # 1. Parse Date (BUG-085: no default year/month, explicit formats, range-checked)
+    year, month, period_error = _parse_row_period(row)
+    if period_error:
+        return None, [period_error]
 
-    if not year or not month:
-        return None, ["Missing valid date (YYYY-MM) or separate year and month columns"]
 
     # 2. Resolve Facility
     fac_raw = str(row.get("facility_name") or row.get("facility_id") or "").strip()
@@ -1116,39 +1516,40 @@ def _process_row_scope3_eeio(
 
     # 3. Resolve NAICS and Spend
     naics = str(row.get("naics_code") or "").strip()
+    if naics.endswith(".0") and naics[:-2].isdigit():
+        naics = naics[:-2]  # an Excel number cell (331110.0)
     spend_usd = _clean_float(row.get("spend_usd"), default=-1.0)
     if spend_usd <= 0:
-        return None, ["Spend amount must be greater than zero"]
+        return None, [f"Spend amount must be a number greater than zero (got '{row.get('spend_usd') or ''}')"]
 
-    # 4. Calculate
-    factor_data = get_eeio_factor(naics)
+    # 4. Calculate (EPA supply chain factors; an unknown code is a row error, not a default factor)
+    try:
+        factor_data = get_eeio_factor(naics)
+    except LookupError as exc:
+        return None, [str(exc)]
     spend_k = spend_usd / 1000.0
     kg_co2e = spend_k * factor_data["kg_co2e_per_1000_usd"]
     tonnes_co2e = kg_co2e / 1000.0
 
-    key = (facility.id, year, month, "category 1")
-    if batch_keys is not None:
-        if key in batch_keys:
-            existing_id = batch_keys[key]
-            if not overwrite_duplicates:
-                return None, [
-                    f"Duplicate record: Scope 3 emission for facility '{facility.name}' "
-                    f"({year}-{month:02d}, Category 1) already exists. "
-                    f"Enable 'Overwrite Duplicates' to replace it."
-                ]
-            else:
-                from extensions import db
-                existing_obj = db.session.get(Scope3Emission, existing_id) if existing_id else None
-                if existing_obj:
-                    existing_obj.sub_category = f"Spend-based: {factor_data['name']} (NAICS {naics})"
-                    existing_obj.activity_data = spend_usd
-                    existing_obj.unit = "USD"
-                    existing_obj.emission_factor = factor_data["kg_co2e_per_1000_usd"]
-                    existing_obj.co2e = tonnes_co2e
-                    existing_obj.notes = row.get("notes", "Bulk Imported via EEIO")
-                    existing_obj.status = "Pending"
-                    return None, []
-        batch_keys[key] = None
+    sub_cat = f"Spend-based: {factor_data['name']} (NAICS {naics})"
+    key = _scope3_key(facility.id, year, month, "Category 1", sub_cat, "USD")
+    action, existing = _dedupe(batch_keys, key, overwrite_duplicates,
+                               f"Scope 3 emission for facility '{facility.name}' ({year}-{month:02d}, Category 1, NAICS {naics})")
+    if action == "error":
+        return None, [existing]
+    unc, unc_err = _scope3_uncertainty(row, tonnes_co2e, row_idx)
+    if unc_err:
+        return None, [unc_err]
+    values = {
+        "sub_category": sub_cat, "activity_data": spend_usd, "unit": "USD",
+        "emission_factor": factor_data["kg_co2e_per_usd"], "co2e": tonnes_co2e,
+        "notes": row.get("notes", "Bulk Imported via EEIO"), "uncertainty": unc,
+    }
+    if action == "update":
+        obj = _resolve_existing(Scope3Emission, existing)
+        if obj is not None:
+            _bulk_overwrite(obj, values, user_id, "Scope 3")
+            return None, []
 
     emission = Scope3Emission(
         facility_id=facility.id,
@@ -1158,8 +1559,9 @@ def _process_row_scope3_eeio(
         sub_category=f"Spend-based: {factor_data['name']} (NAICS {naics})",
         activity_data=spend_usd,
         unit="USD",
-        emission_factor=factor_data["kg_co2e_per_1000_usd"],
+        emission_factor=factor_data["kg_co2e_per_usd"],  # kg CO2e per USD, like the manual form
         co2e=tonnes_co2e,
+        uncertainty=unc,
         calculation_method="Spend-based (EEIO)",
         data_quality="Average-data method",
         notes=row.get("notes", "Bulk Imported via EEIO"),
@@ -1176,6 +1578,8 @@ def _process_row_scope3_eeio(
             "amount": spend_usd
         })
 
+    if batch_keys is not None:
+        batch_keys[key] = emission  # BUG-057
     return emission, errors
 
 def _process_row_scope3(
@@ -1192,18 +1596,10 @@ def _process_row_scope3(
 
     errors = []
 
-    # 1. Parse Date
-    date_str = str(row.get("date") or "").strip()
-    year = int(row.get("year") or 2024)
-    month = int(row.get("month") or 1)
-    if date_str and date_str != "None":
-        try:
-            parts = date_str.split("-")
-            year = int(parts[0])
-            if len(parts) > 1:
-                month = int(parts[1])
-        except:
-            pass
+    # 1. Parse Date (BUG-085: no default year/month, explicit formats, range-checked)
+    year, month, period_error = _parse_row_period(row)
+    if period_error:
+        return None, [period_error]
 
     # 2. Resolve Facility
     facility = None
@@ -1219,25 +1615,23 @@ def _process_row_scope3(
         errors.append(f"Facility '{fac_input}' not found")
         return None, errors
 
-    cat = row.get("category", "11")
-    cat_str = f"Category {cat}" if not str(cat).startswith("Category") else cat
+    # BUG-085 / BUG-089: category is required and stored in the canonical "Category N" form
+    from input_validation import ValidationError, normalize_scope3_category
+
+    try:
+        cat_str = normalize_scope3_category(row.get("category"))
+    except ValidationError:
+        return None, [f"Invalid or missing Scope 3 category '{row.get('category') or ''}': use a GHG Protocol category 1-15"]
     sub_cat = row.get("sub_category")
 
-    amt = _clean_float(
-        row.get("amount")
-        or row.get("activityamount")
-        or row.get("activity_amount")
-        or row.get("activitydata")
-        or row.get("quantity"),
-        default=0.0,
-    )
-    ef = _clean_float(
-        row.get("emission_factor")
-        or row.get("emissionfactor")
-        or row.get("factor")
-        or row.get("ef"),
-        default=0.0,
-    )
+    raw_amt = _first(row, "amount", "activityamount", "activity_amount", "activitydata", "quantity")
+    raw_ef = _first(row, "emission_factor", "emissionfactor", "factor", "ef")
+    amt = _clean_float(raw_amt, default=None) if raw_amt is not None else 0.0
+    ef = _clean_float(raw_ef, default=None) if raw_ef is not None else 0.0
+    if amt is None:
+        return None, [f"Activity amount '{raw_amt}' is not a number"]
+    if ef is None:
+        return None, [f"Emission factor '{raw_ef}' is not a number"]
     ef_unit = str(
         row.get("ef_unit")
         or row.get("efunit")
@@ -1248,37 +1642,57 @@ def _process_row_scope3(
 
     from calculations.units import compute_scope3_co2e
 
+    if amt < 0 or ef < 0:
+        return None, ["Activity amount and emission factor must be non-negative"]
+    supplier_total = row.get("co2e") not in (None, "")
+    if amt > 0 and raw_ef is None and not supplier_total:
+        # no factor in the file: the factor of the same activity in the Scope 3 form (kg CO2e / unit)
+        from emission_factors.scope3_activity_factors import scope3_activity_factor
+        from input_validation import scope3_category_number
+
+        ef_found, why = scope3_activity_factor(scope3_category_number(cat_str), sub_cat, row.get("unit"))
+        if ef_found is None:
+            return None, [why]
+        ef, ef_unit = ef_found, "kg"
     if amt > 0 and ef > 0:
         co2e = compute_scope3_co2e(amt, ef, ef_unit, calc_method)
-    elif row.get("co2e"):
-        co2e = _clean_float(row.get("co2e"), default=0.0)
-    else:
-        co2e = 0.0
+    elif supplier_total:
+        # supplier-specific total (GHG Protocol supplier-specific method): the same roles as the
+        # manual form may enter it
+        from extensions import db as _db
+        from models import User
 
-    key = (facility.id, year, month, str(cat_str).strip().lower())
-    if batch_keys is not None:
-        if key in batch_keys:
-            existing_id = batch_keys[key]
-            if not overwrite_duplicates:
-                return None, [
-                    f"Duplicate record: Scope 3 emission for facility '{facility.name}' "
-                    f"({year}-{month:02d}, {cat_str}) already exists. "
-                    f"Enable 'Overwrite Duplicates' to replace it."
-                ]
-            else:
-                from extensions import db
-                existing_obj = db.session.get(Scope3Emission, existing_id) if existing_id else None
-                if existing_obj:
-                    existing_obj.category = cat_str
-                    existing_obj.sub_category = sub_cat
-                    existing_obj.activity_data = amt
-                    existing_obj.unit = row.get("unit")
-                    existing_obj.emission_factor = ef
-                    existing_obj.co2e = co2e
-                    existing_obj.notes = row.get("notes")
-                    existing_obj.status = "Pending"
-                    return None, []
-        batch_keys[key] = None
+        uploader = _db.session.get(User, user_id)
+        if uploader is None or uploader.role not in ("admin", "superuser"):
+            return None, ["Only admins and superusers may import a supplier-reported co2e total; give the activity and factor"]
+        co2e = _clean_float(row.get("co2e"), default=-1.0)
+        if co2e < 0:
+            return None, ["co2e must be a non-negative number"]
+    else:
+        # never book a missing calculation as 0 tCO2e
+        return None, ["Provide activity amount and emission factor (or a supplier-specific co2e)"]
+
+    if amt > 0 and ef > 0:
+        # stored as kg CO2e per activity unit, the unit the tables and edits read
+        from calculations.units import scope3_ef_kg_per_unit
+        ef = scope3_ef_kg_per_unit(amt, co2e, ef)
+    key = _scope3_key(facility.id, year, month, cat_str, sub_cat, row.get("unit"))
+    action, existing = _dedupe(batch_keys, key, overwrite_duplicates,
+                               f"Scope 3 emission for facility '{facility.name}' ({year}-{month:02d}, {cat_str}, '{sub_cat or ''}')")
+    if action == "error":
+        return None, [existing]
+    unc, unc_err = _scope3_uncertainty(row, co2e, row_idx)
+    if unc_err:
+        return None, [unc_err]
+    values = {
+        "category": cat_str, "sub_category": sub_cat, "activity_data": amt, "unit": row.get("unit"),
+        "emission_factor": ef, "co2e": co2e, "notes": row.get("notes"), "uncertainty": unc,
+    }
+    if action == "update":
+        obj = _resolve_existing(Scope3Emission, existing)
+        if obj is not None:
+            _bulk_overwrite(obj, values, user_id, "Scope 3")
+            return None, []
 
     emission = Scope3Emission(
         facility_id=facility.id,
@@ -1290,6 +1704,7 @@ def _process_row_scope3(
         unit=row.get("unit"),
         emission_factor=ef,
         co2e=co2e,
+        uncertainty=unc,
         notes=row.get("notes", "Bulk Imported"),
         created_by=user_id,
         status="Pending",  # Maker-Checker: awaits reviewer approval
@@ -1304,10 +1719,13 @@ def _process_row_scope3(
             "amount": amt
         })
 
+    if batch_keys is not None:
+        batch_keys[key] = emission  # BUG-057
     return emission, errors
 
 
-def _process_row_sources(row, user_id, fac_name_map, fac_id_map):
+def _process_row_sources(row, user_id, fac_name_map, fac_id_map, batch=None):
+    from extensions import db
     from models import EmissionSource
 
     errors = []
@@ -1331,14 +1749,41 @@ def _process_row_sources(row, user_id, fac_name_map, fac_id_map):
         errors.append(f"Facility '{fac_input}' not found")
         return None, errors
 
+    # the same source (facility, name, equipment ID) is registered once
+    equipment_id = str(row.get("equipment_id") or "").strip() or None
+    key = (facility.id, name.lower(), (equipment_id or "").lower())
+    if batch is not None and key in batch:
+        return None, [f"Source '{name}' ({equipment_id or 'no equipment ID'}) appears more than once in the file"]
+    dup = EmissionSource.query.filter(
+        EmissionSource.facility_id == facility.id, db.func.lower(EmissionSource.name) == name.lower(),
+        db.func.coalesce(EmissionSource.equipment_id, "") == (equipment_id or ""),
+    ).first()
+    if dup is not None:
+        return None, [f"Source '{name}' ({equipment_id or 'no equipment ID'}) already exists for '{facility.name}'"]
+    inst = row.get("installation_date")
+    if inst not in (None, ""):
+        import datetime as _dt
+
+        if isinstance(inst, (_dt.date, _dt.datetime)):
+            inst = inst.strftime("%Y-%m-%d")
+        else:
+            inst = str(inst).strip()
+            try:
+                _dt.datetime.strptime(inst[:10], "%Y-%m-%d")
+                inst = inst[:10]
+            except ValueError:
+                return None, [f"Invalid installation date '{inst}': use YYYY-MM-DD"]
+    if batch is not None:
+        batch.add(key)
+
     source = EmissionSource(
         facility_id=facility.id,
         name=name,
-        equipment_id=row.get("equipment_id"),
+        equipment_id=equipment_id,
         type=row.get("type") or row.get("process_type"),
         fuel_type=row.get("fuel_type") or row.get("fuel"),
         design_capacity=row.get("design_capacity"),
-        installation_date=row.get("installation_date"),
+        installation_date=inst or None,
         status=row.get("status", "Active"),
         description=row.get("description"),
         activity=row.get("activity") or facility.activity,
@@ -1368,30 +1813,35 @@ def _process_row_production(row, user_id, fac_name_map, fac_id_map, batch_prod_m
         errors.append(f"Facility '{fac_input}' not found")
         return None, errors
 
-    year = row.get("year")
-    month = row.get("month")
-    if not year or not month:
-        errors.append("Year and month are required")
-        return None, errors
+    # same period rules as the emission imports (range-checked year and month)
+    year, month, period_error = _parse_row_period(row)
+    if period_error:
+        return None, [period_error]
+
+    volumes = {}
+    for name, keys in (("oil", ("production_volume", "oil_volume", "oil_amount")),
+                       ("gas", ("energy_consumption", "gas_volume", "gas_amount"))):
+        raw = _first(row, *keys)
+        v = _clean_float(raw, default=None) if raw is not None else 0.0
+        if v is None or v < 0:
+            return None, [f"{name.title()} production '{raw}' must be a non-negative number"]
+        volumes[name] = v
+    oil_vol, gas_vol = volumes["oil"], volumes["gas"]
+
+    oil_unit = str(row.get("production_unit") or row.get("oil_unit") or "bbl").strip()
+    gas_unit = str(row.get("energy_unit") or row.get("gas_unit") or "mscf").strip()
+    # units the intensity KPIs can convert (services.dashboard_filters); an unknown unit would
+    # silently drop the row from every production-based indicator
+    from calculations.units import UnitError, unit_dimension
+    from services.dashboard_filters import gas_volume_m3
 
     try:
-        year = int(year)
-        month = int(month)
-    except (ValueError, TypeError):
-        errors.append("Invalid year or month format")
-        return None, errors
-
-    oil_vol = _clean_float(
-        row.get("production_volume") or row.get("oil_volume") or row.get("oil_amount"),
-        default=0.0,
-    )
-    gas_vol = _clean_float(
-        row.get("energy_consumption") or row.get("gas_volume") or row.get("gas_amount"),
-        default=0.0,
-    )
-
-    oil_unit = row.get("production_unit") or row.get("oil_unit") or "bbl"
-    gas_unit = row.get("energy_unit") or row.get("gas_unit") or "mscf"
+        if unit_dimension(oil_unit)[0] not in ("volume", "mass"):
+            raise UnitError(oil_unit)
+    except UnitError:
+        return None, [f"Unknown oil unit '{oil_unit}': use bbl, m3, gal, L or tonne"]
+    if gas_volume_m3(1.0, gas_unit) is None:
+        return None, [f"Unknown gas unit '{gas_unit}': use scf, Mscf, MMscf, m3 or Sm3"]
     activity = row.get("activity") or facility.activity
     division = row.get("division") or facility.division
     field = row.get("field") or facility.field
@@ -1468,38 +1918,45 @@ def _process_row_mitigation(row, user_id, fac_name_map, fac_id_map):
         errors.append(f"Facility '{fac_input}' not found")
         return None, errors
 
-    try:
-        year = int(row.get("year") or 2024)
-    except:
-        errors.append("Invalid year")
-        return None, errors
+    # a project year is required (never an assumed year) and range-checked
+    from input_validation import ValidationError, parse_year
 
     try:
-        qty = float(row.get("quantity_tco2e") or row.get("quantity") or 0)
-    except:
-        qty = 0
+        year = parse_year(row.get("year"))
+    except ValidationError as err:
+        return None, [err.message]
 
-    start_date = None
-    end_date = None
-    if row.get("start_date"):
-        try:
-            start_date = datetime.strptime(
-                str(row.get("start_date")), "%Y-%m-%d"
-            ).date()
-        except:
-            pass
-    if row.get("end_date"):
-        try:
-            end_date = datetime.strptime(str(row.get("end_date")), "%Y-%m-%d").date()
-        except:
-            pass
+    raw_qty = _first(row, "quantity_tco2e", "quantity")
+    qty = _clean_float(raw_qty, default=None)
+    if qty is None or qty < 0:
+        return None, [f"Quantity (tCO2e) '{raw_qty if raw_qty is not None else ''}' must be a non-negative number"]
+
+    def _date(field):
+        v = row.get(field)
+        if v in (None, ""):
+            return None, None
+        if hasattr(v, "date"):
+            return v.date(), None  # Excel date cell
+        for fmt in ("%Y-%m-%d", "%Y-%m-%d %H:%M:%S", "%d/%m/%Y", "%Y/%m/%d"):
+            try:
+                return datetime.strptime(str(v).strip(), fmt).date(), None
+            except ValueError:
+                continue
+        return None, f"Invalid {field.replace('_', ' ')} '{v}': use YYYY-MM-DD"
+
+    start_date, err1 = _date("start_date")
+    end_date, err2 = _date("end_date")
+    if err1 or err2:
+        return None, [e for e in (err1, err2) if e]
+    if start_date and end_date and end_date < start_date:
+        return None, ["End date is before the start date"]
 
     investment = None
-    if row.get("investment_amount") or row.get("investment"):
-        try:
-            investment = float(row.get("investment_amount") or row.get("investment"))
-        except:
-            pass
+    raw_inv = _first(row, "investment_amount", "investment")
+    if raw_inv is not None:
+        investment = _clean_float(raw_inv, default=None)
+        if investment is None or investment < 0:
+            return None, [f"Investment '{raw_inv}' must be a non-negative number"]
 
     proj = MitigationProject(
         facility_id=facility.id,
@@ -1517,7 +1974,7 @@ def _process_row_mitigation(row, user_id, fac_name_map, fac_id_map):
     return proj, errors
 
 
-def _process_row_custom_factors(row, user_id):
+def _process_row_custom_factors(row, user_id, batch_names=None):
     from models import CustomFactor
 
     errors = []
@@ -1525,6 +1982,38 @@ def _process_row_custom_factors(row, user_id):
     if not row.get("name"):
         errors.append("Name is required for custom factor")
         return None, errors
+
+    # BUG-001: defence in depth - the job endpoint already rejects other roles.
+    from extensions import db
+    from models import User
+
+    uploader = db.session.get(User, user_id)
+    if uploader is None or uploader.role not in ("admin", "superuser"):
+        errors.append("Not authorised to import custom factors")
+        return None, errors
+
+    # BUG-065 / BUG-112 / BUG-083: same rules as POST /api/custom-factors
+    from routes.custom_factors import _name_taken, _parse_non_negative_float, _require_some_factor
+
+    name = str(row.get("name")).strip()
+    if _name_taken(name) or (batch_names is not None and name.lower() in batch_names):
+        return None, [f"A custom factor named '{name}' already exists"]
+    from routes.custom_factors import _canonical_factor_unit
+
+    try:
+        row = dict(row, unit=_canonical_factor_unit(row.get("unit")))  # BUG-063
+    except ValueError as err:
+        return None, [str(err)]
+    try:
+        vals = {k: _parse_non_negative_float(row.get(k), k) for k in (
+            "co2_factor", "ch4_factor", "n2o_factor", "co_factor", "hhv_factor",
+            "uncertainty", "co2_uncertainty", "ch4_uncertainty", "n2o_uncertainty")}
+        _require_some_factor(vals["co2_factor"], vals["ch4_factor"], vals["n2o_factor"])
+    except ValueError as err:
+        return None, [str(err)]
+    row = dict(row, name=name, **vals)
+    if batch_names is not None:
+        batch_names.add(name.lower())
 
     factor = CustomFactor(
         name=row.get("name"),
@@ -1547,17 +2036,70 @@ def _process_row_custom_factors(row, user_id):
     return factor, errors
 
 
-def _process_row_facilities(row, user_id, overwrite_duplicates):
+def _process_row_facilities(row, user_id, overwrite_duplicates, batch=None):
+    from extensions import db
     from models import Facility
 
     errors = []
 
-    name = row.get("name")
+    name = str(row.get("name") or "").strip()
     if not name:
         errors.append("Facility Name is required")
         return None, errors
 
-    existing = Facility.query.filter_by(name=name).first()
+    # coordinates: blank = not set, otherwise a number in range (same rule as the manual form)
+    from input_validation import ValidationError, parse_number
+
+    coords = {}
+    try:
+        for fld, lim in (("latitude", 90), ("longitude", 180)):
+            coords[fld] = parse_number(row.get(fld), fld, required=False, min_value=-lim, max_value=lim)
+        # equity share (%) for equity-share consolidation, as on the manual form
+        equity = parse_number(row.get("equity_share_pct"), "equity_share_pct", required=False, min_value=0, max_value=100)
+    except ValidationError as err:
+        return None, [err.message]
+    operator = str(row.get("operator_status") or "").strip().lower().replace("-", "_").replace(" ", "_") or None
+    if operator and operator not in ("operated", "non_operated", "joint_venture"):
+        return None, [f"Unknown operator status '{row.get('operator_status')}': use operated or non-operated"]
+
+    batch = batch if batch is not None else {}
+    if name.lower() in batch.setdefault("names", set()):
+        return None, [f"Facility '{name}' appears more than once in the file"]
+    code = str(row.get("code") or "").strip()
+    if code:
+        if code.lower() in batch.setdefault("codes", set()):
+            return None, [f"Facility code '{code}' appears more than once in the file"]
+        holder = Facility.query.filter_by(code=code).first()
+        if holder is not None and holder.name.strip().lower() != name.lower():
+            return None, [f"Facility code '{code}' is already used by '{holder.name}'"]
+
+    existing = Facility.query.filter(db.func.lower(Facility.name) == name.lower()).first()
+
+    # BUG-001: region-restricted superusers may only create/overwrite facilities in their
+    # own region (same rule as POST /api/facilities/import).
+    from extensions import db
+    from models import User
+
+    from utils import facility_in_user_scope, facility_change_allowed
+
+    uploader = db.session.get(User, user_id)
+    if uploader is None or uploader.role not in ("admin", "superuser"):
+        errors.append("Not authorised to import facilities")
+        return None, errors
+
+    def _new(field, current):
+        v = row.get(field)
+        return v if v is not None and str(v).strip() != "" else current
+
+    if existing is not None and not facility_in_user_scope(uploader, existing.region, existing.location, existing.name):
+        errors.append(f"Superusers can only import facilities in their assigned region: {uploader.location}")
+        return None, errors
+    # The facility must also stay in scope after the row is applied (no re-regioning out of scope).
+    cur = existing or Facility()
+    if not facility_change_allowed(uploader, existing, _new("region", cur.region), _new("location", cur.location), name):
+        errors.append(f"Superusers can only import facilities in their assigned region: {uploader.location}")
+        return None, errors
+
     if existing:
         if not overwrite_duplicates:
             errors.append(f"Region '{name}' already exists. Choose 'Overwrite' to update it.")
@@ -1582,26 +2124,25 @@ def _process_row_facilities(row, user_id, overwrite_duplicates):
             if fld in row and row[fld] is not None and str(row[fld]).strip() != "":
                 setattr(existing, fld, row[fld])
 
-        if "latitude" in row and row["latitude"] is not None and str(row["latitude"]).strip() != "":
-            try:
-                existing.latitude = float(row["latitude"])
-            except (ValueError, TypeError):
-                pass
-        if "longitude" in row and row["longitude"] is not None and str(row["longitude"]).strip() != "":
-            try:
-                existing.longitude = float(row["longitude"])
-            except (ValueError, TypeError):
-                pass
+        if equity is not None:
+            existing.equity_share_pct = equity
+        if operator:
+            existing.operator_status = operator
+        if coords["latitude"] is not None:
+            existing.latitude = coords["latitude"]
+        if coords["longitude"] is not None:
+            existing.longitude = coords["longitude"]
+        batch["names"].add(name.lower())
+        if code:
+            batch["codes"].add(code.lower())
         # Return None — session already tracks existing; no need to bulk_save_objects it
         return None, errors
     else:
-        lat, lon = None, None
-        try:
-            lat = float(row.get("latitude"))
-            lon = float(row.get("longitude"))
-        except:
-            pass
-        
+        lat, lon = coords["latitude"], coords["longitude"]
+        batch["names"].add(name.lower())
+        if code:
+            batch["codes"].add(code.lower())
+
         facility = Facility(
             name=name,
             location=row.get("location"),
@@ -1618,9 +2159,42 @@ def _process_row_facilities(row, user_id, overwrite_duplicates):
             segment=row.get("segment"),
             latitude=lat,
             longitude=lon,
+            equity_share_pct=100.0 if equity is None else equity,
+            operator_status=operator or "operated",
             created_by=user_id,
         )
         return facility, errors
+
+
+_UNIT_SPELLING = {u.lower(): u for u in (
+    "MMBtu", "GJ", "MJ", "kWh", "MWh", "therm", "scf", "Mscf", "MMscf", "m3", "Sm3", "Nm3", "gal", "bbl", "L",
+    "kg", "tonne", "lb", "short ton", "days", "devices", "components", "events", "wells")}
+
+_S1_TIER = {
+    "specific": "specific", "site_specific": "specific", "site-specific": "specific", "engineering": "specific",
+    "tier3": "specific", "tier_3": "specific", "tier 3": "specific", "t3": "specific", "3": "specific", "cems": "specific",
+    "custom": "custom", "regional": "custom", "tier2": "custom", "tier_2": "custom", "tier 2": "custom", "t2": "custom",
+    "2": "custom",
+    "default": "default", "tier1": "default", "tier_1": "default", "tier 1": "default", "t1": "default", "1": "default",
+    "api": "default", "catalog": "default", "": "default",
+}
+
+# fields the calculation service writes on a record (services.scope1_calc.apply_result)
+_S1_RESULT_FIELDS = (
+    "process_type", "fuel_type", "quantity", "unit", "co2_emissions", "ch4_emissions", "n2o_emissions",
+    "co_emissions", "co2e_total", "calc_method", "gwp_version", "custom_factor_id", "factor_source",
+    "ef_used_co2", "ef_used_ch4", "ef_used_n2o", "source_payload", "uncertainty", "uncertainty_ch4",
+    "uncertainty_n2o", "uncertainty_ad", "uncertainty_ef_co2", "uncertainty_ef_ch4", "uncertainty_ef_n2o",
+    "ef_key", "qa_flag", "ogmp_level",
+)
+
+
+def _first(row, *keys):
+    for k in keys:
+        v = row.get(k)
+        if v is not None and str(v).strip() != "":
+            return v
+    return None
 
 
 def _process_row(
@@ -1639,45 +2213,35 @@ def _process_row(
     batch_keys=None,
     overwrite_duplicates=False,
 ):
-    """
-    Validates a single mapped row and runs calculation via compute_emissions.
-    Returns (Emission_Object, list_of_errors)
-    """
-    from models import Emission
-    from calculations.units import calculate_co2e
+    """Validates one Scope 1 row and calculates and stores it exactly as the manual form does
+    (services.scope1_calc: same validation, factor resolution, calculation and stored fields).
+    Returns (Emission_Object, list_of_errors)."""
+    import re
+    import uuid
 
+    from calculations.anomaly import plausibility_check
+    from calculations.units import calculate_co2e
+    from extensions import db
+    from input_validation import ValidationError
+    from models import Emission, User
+    from services.ogmp import ogmp_level_for
+    from services.scope1_calc import (
+        SCOPE2_PROCESS_TYPES, apply_result, canonicalize, check_factor_usage, normalize_process_type,
+        resolve_factor, validate_activity,
+    )
+    from utils import user_label
 
     # Skip instructional walkthrough rows
     if str(row.get("date", "")).strip().upper().startswith("[INSTRUCTION]"):
         return None, []
 
-    # 1. Parse Date
-    date_str = str(row.get("date") or "").strip()
-    year, month = None, None
-    if date_str and date_str != "None":
-        try:
-            parts = date_str.split("-")
-            year = int(parts[0])
-            month = int(parts[1]) if len(parts) > 1 else None
-        except:
-            pass
-
-    if not year:
-        try:
-            year = int(row.get("year") or 0) or None
-            raw_month = row.get("month")
-            month = int(raw_month) if raw_month and str(raw_month).strip().isdigit() else None
-        except:
-            pass
-
-    if not year:
-        return None, ["Missing valid date or year. Provide a date (YYYY-MM) or separate year and month columns."]
-
-    if not month:
-        return None, ["Missing month. Provide a date (YYYY-MM) or a separate month column (1-12)"]
+    # 1. Parse Date (BUG-111: same year/month range rules as POST /api/emissions/)
+    year, month, period_error = _parse_row_period(row)
+    if period_error:
+        return None, [period_error]
 
     # 2. Resolve Facility
-    fac_raw = str(row.get("facility_name") or "").strip()
+    fac_raw = str(_first(row, "facility_name", "facility", "facility_id") or "").strip()
     facility = fac_id_map.get(fac_raw) or fac_name_map.get(fac_raw.lower())
     if not facility:
         from flask import has_app_context
@@ -1688,255 +2252,203 @@ def _process_row(
                 return None, [f"Access denied: Region '{fac_raw}' exists but your account does not have permission to upload data for it."]
         return None, [f"Region '{fac_raw}' not found. Check that the region name matches exactly a region in the system."]
 
-    # 3. Quantity
-    amount = _clean_float(row.get("quantity"), default=None)
-    if amount is None:
-        return None, [f"Invalid quantity: {row.get('quantity')}"]
-
-    process_type = str(row.get("process") or "").strip()
-    fuel = str(row.get("fuel") or "").strip()
-    unit = str(row.get("unit") or "m3").strip()
-
-    if not process_type:
+    # 3. Process type: a known Scope 1 process (key or label); never a guessed calculator
+    raw_process = str(_first(row, "process", "process_type", "source_type") or "").strip()
+    if not raw_process:
         return None, ["Missing process type."]
+    if raw_process.lower() in SCOPE2_PROCESS_TYPES or normalize_process_type(raw_process) in SCOPE2_PROCESS_TYPES:  # BUG-068
+        return None, [f"'{raw_process}' is a Scope 2 (purchased energy) source; import it with the Scope 2 template"]
+    process_type = normalize_process_type(raw_process)
+    if not process_type:
+        return None, [f"Unknown process type '{raw_process}'. Use a process key such as combustion, flaring, venting, tank_flashing, pneumatic, fugitive"]
 
-    # 4. Resolve emission factor (same logic as emissions route)
-    factor_type_raw = str(
-        row.get("factor_type")
-        or row.get("factor_source")
-        or row.get("factorsource")
-        or row.get("factortype")
-        or row.get("tier")
-        or ""
-    ).lower().strip()
-    if global_factor_type != "auto":
+    # 4. Tier
+    factor_type_raw = str(_first(row, "factor_type", "factor_source", "factorsource", "factortype", "tier") or "").lower().strip()
+    if global_factor_type not in (None, "", "auto"):
         factor_source = global_factor_type
+    elif factor_type_raw in _S1_TIER:
+        factor_source = _S1_TIER[factor_type_raw]
     else:
-        if factor_type_raw in [
-            "specific",
-            "site_specific",
-            "site-specific",
-            "engineering",
-            "tier3",
-            "tier_3",
-            "t3",
-            "cems",
-        ]:
-            factor_source = "specific"
-        elif factor_type_raw in ["custom", "regional", "tier2", "tier_2", "t2"]:
-            factor_source = "custom"
-        else:
-            factor_source = "default"
+        return None, [f"Unknown factor type '{factor_type_raw}': use default, custom or specific"]
 
-    factor_data = {}
-    if factor_source == "custom":
-        cf = cf_name_map.get(fuel.lower())
-        if cf:
-            factor_data = {
-                "co2": cf.co2_factor,
-                "ch4": cf.ch4_factor,
-                "n2o": cf.n2o_factor,
-                "co": cf.co_factor,
-                "unit": cf.unit,
-                "hhv": cf.hhv_factor,
-                "type": "custom",
-                "name": cf.name,
-                "uncertainty": {
-                    "co2": float(
-                        getattr(cf, "co2_uncertainty", None)
-                        or getattr(cf, "uncertainty", 0)
-                        or 0
-                    )
-                    / 100.0,
-                    "ch4": float(
-                        getattr(cf, "ch4_uncertainty", None)
-                        or getattr(cf, "uncertainty", 0)
-                        or 0
-                    )
-                    / 100.0,
-                    "n2o": float(
-                        getattr(cf, "n2o_uncertainty", None)
-                        or getattr(cf, "uncertainty", 0)
-                        or 0
-                    )
-                    / 100.0,
-                },
-            }
-        else:
-            factor_data = API_FACTORS_dict.get(fuel, {})
-    else:
-        factor_data = API_FACTORS_dict.get(fuel, {})
+    # 5. Quantity: required for catalog / custom factors; engineered (Tier 3) methods may derive it
+    raw_qty = _first(row, "quantity", "amount")
+    amount = None
+    if raw_qty is not None:
+        amount = _clean_float(raw_qty, default=None)
+        if amount is None or amount < 0:
+            return None, [f"Invalid quantity: {raw_qty} (must be a non-negative number)"]
+    elif factor_source != "specific":
+        return None, ["Missing quantity."]
+    unit = str(row.get("unit") or "").strip()
+    unit = _UNIT_SPELLING.get(unit.lower(), unit)  # "mmbtu" -> "MMBtu", as the form writes it
+    if amount is not None and not unit:
+        # BUG-111: a blank unit is a row error, never an assumed m3
+        return None, ["Missing unit. Provide the activity unit (e.g. MMBtu, scf, gal, tonne)."]
 
-    # 5. Build calc_data payload (mirrors what the emissions route sends)
-    calc_data = {
-        "year": year,
-        "month": month,
-        "facility_id": facility.id,
-        "process_type": process_type,
-        "fuel": fuel,
-        "amount": amount,
-        "unit": unit,
-        "factor_source": factor_source,
-    }
+    fuel = str(_first(row, "fuel", "activity_fuel") or "").strip()
 
-    # Inject all other optional variables dynamically (e.g. C1-C10, flare_type, etc.)
+    # 6. Payload in the manual form's shape; the other columns are the method inputs
+    # (the squashed header aliases the reader adds, e.g. "tankgor", are left out)
+    squashed = {str(h).lower().replace("_", "").replace(" ", "") for h in row if isinstance(h, str)
+                and str(h).lower().replace("_", "").replace(" ", "") != _canonical_header(h)}
+    payload = {}
     for k, v in row.items():
-        if k not in calc_data and v is not None:
-            calc_data[k] = v
+        if isinstance(k, str) and re.fullmatch(r"[a-z][a-z0-9_]*", k) and k not in squashed and v is not None and str(v).strip() != "":
+            payload[k] = v
+    payload.update({
+        "year": year, "month": month, "facility_id": facility.id, "process_type": process_type,
+        "source_type": process_type, "factor_source": factor_source, "unit": unit or None,
+    })
+    for k in ("amount", "quantity", "fuel", "fuel_type", "process", "factor_type"):
+        payload.pop(k, None)
+    if amount is not None:
+        payload["amount"] = amount
+    if fuel:
+        payload["fuel"] = fuel
 
-    # Defaults if missing
-    if "ch4_content" not in calc_data:
-        calc_data["ch4_content"] = 85.0
-    if "co2_content" not in calc_data:
-        calc_data["co2_content"] = 2.0
+    if factor_source == "custom" and fuel and not fuel.isdigit():
+        if fuel.lower() in getattr(cf_name_map, "ambiguous", ()):
+            return None, [f"Custom factor name '{fuel}' is not unique; rename the duplicates before importing"]
+        cf = cf_name_map.get(fuel.lower())
+        if not cf:
+            # BUG-042: a Tier 2 row never falls back to the catalog (or to zero)
+            return None, [f"Custom factor '{fuel}' not found. Save it under Manage Data > Custom Factors first."]
+        payload["custom_factor_id"] = cf.id
 
-    # 6. Run calculation
+    # Compendium activity rows (Section 6 tables): the activity_key column, or the row's label in
+    # the fuel / factor column, selects the row as the form's factor list does
+    from calculations.activity_factors import ACTIVITY_FACTORS
+    from routes.emissions import _lookup_api_factor
+
+    akey = str(payload.get("activity_key") or "").strip()
+    by_label = {v["label"].strip().lower(): k for k, v in ACTIVITY_FACTORS.items()}
+    if akey and akey not in ACTIVITY_FACTORS:
+        akey = by_label.get(akey.lower(), "")
+        if not akey:
+            return None, [f"Unknown activity factor '{payload.get('activity_key')}'"]
+    if not akey and fuel and factor_source == "default" and fuel.lower() in by_label and not _lookup_api_factor(fuel):
+        akey = by_label[fuel.lower()]
+    if akey:
+        if process_type not in ACTIVITY_FACTORS[akey]["processes"]:
+            return None, [f"'{ACTIVITY_FACTORS[akey]['label']}' is not a {process_type} factor"]
+        payload["activity_key"] = akey
+        if fuel.lower() == ACTIVITY_FACTORS[akey]["label"].strip().lower():
+            payload.pop("fuel", None)
+            fuel = ""
+
     try:
-        em_result, _method = compute_emissions_fn(
-            calc_data, factor_data, gwp_dict=gwp_dict
-        )
+        payload = canonicalize(payload)
+        validate_activity(payload, require_unit=factor_source in ("default", "custom"))
+        factor_data = resolve_factor(payload) or {}
+        if factor_source == "default" and fuel:
+            if not factor_data:
+                return None, [f"'{fuel}' is not in the emission factor catalog. Use the factor name exactly as listed, or a saved custom factor with factor type 'custom'."]
+            check_factor_usage(process_type, factor_data, fuel)
+        if factor_data.get("hhv") and not payload.get("hhv"):
+            payload["hhv"] = factor_data["hhv"]
+        em_result, method = compute_emissions_fn(payload, factor_data, gwp_dict=gwp_dict)
+    except ValidationError as err:
+        return None, [err.message]
+    except ValueError as err:
+        return None, [str(err)]
+    except Exception:
+        import logging
 
-        co2_val = float(em_result.get("co2") or 0)
-        ch4_val = float(em_result.get("ch4") or 0)
-        n2o_val = float(em_result.get("n2o") or 0)
-        total = float(
-            em_result.get("totalCo2e")
-            or calculate_co2e(co2_val, ch4_val, n2o_val, gwp_dict=gwp_dict)
-        )
+        logging.getLogger(__name__).exception("Bulk Scope 1 row %s failed", row_idx)
+        return None, ["The row could not be calculated; check its inputs"]  # BUG-087: no raw exception text
 
-        # 7. Uncertainty extraction
-        api_res = em_result.get("_full_api_res")
-        if api_res:
-            unc = {
-                "co2": (
-                    api_res["results"]["co2"].get("uncertainty", None)
-                    if isinstance(api_res["results"]["co2"], dict)
-                    else None
-                ),
-                "ch4": (
-                    api_res["results"]["ch4"].get("uncertainty", None)
-                    if isinstance(api_res["results"]["ch4"], dict)
-                    else None
-                ),
-                "n2o": (
-                    api_res["results"]["n2o"].get("uncertainty", None)
-                    if isinstance(api_res["results"]["n2o"], dict)
-                    else None
-                ),
-            }
+    if not em_result.get("totalCo2e"):
+        em_result["totalCo2e"] = calculate_co2e(em_result.get("co2", 0), em_result.get("ch4", 0), em_result.get("n2o", 0), gwp_dict=gwp_dict)
+    verdict, qa_msg = plausibility_check(em_result["totalCo2e"])  # BUG-007: same bounds as the manual form
+    if verdict == "reject":
+        return None, [qa_msg]
+
+    # User uncertainty overrides (percent)
+    user_unc = {}
+    for gas, field in (("co2", "user_unc_co2"), ("ch4", "user_unc_ch4"), ("n2o", "user_unc_n2o")):
+        if row.get(field) not in (None, ""):
+            v = _clean_float(row.get(field), default=None)
+            if v is None or v < 0:
+                return None, [f"Invalid {field}: {row.get(field)} (a percentage)"]
+            user_unc[gas] = v / 100.0
+
+    source_ref = str(_first(row, "source_ref", "meter_id", "data_source_ref") or "").strip()
+    equipment_id = str(_first(row, "equipment_id", "equipment") or "").strip()
+    key = _scope1_key(facility.id, year, month, process_type, fuel, equipment_id, source_ref)
+    action, existing = _dedupe(
+        batch_keys, key, overwrite_duplicates,
+        f"Scope 1 emission for facility '{facility.name}' ({year}-{month:02d}, process '{process_type}', fuel '{fuel}'"
+        + (f", source ref '{source_ref}'" if source_ref else "") + ")",
+    )
+    if action == "error":
+        return None, [existing]
+
+    record = Emission(factor_source=factor_source, qa_flag=qa_msg[:255] if qa_msg else None)
+    apply_result(record, payload, em_result, method, factor_data, gwp_std)
+    for gas, attr in (("co2", "uncertainty"), ("ch4", "uncertainty_ch4"), ("n2o", "uncertainty_n2o")):
+        if gas in user_unc:
+            setattr(record, attr, user_unc[gas])
+    record.ogmp_level = ogmp_level_for(record)
+
+    if action == "update":
+        obj = _resolve_existing(Emission, existing)
+        if obj is not None:
+            _bulk_overwrite(obj, {f: getattr(record, f) for f in _S1_RESULT_FIELDS}, user_id, "Scope 1")
+            return None, []
+
+    uploader = db.session.get(User, user_id)
+    record.record_id = str(uuid.uuid4())
+    record.created_by = user_id
+    record.created_by_name = user_label(uploader)
+    record.facility_id = facility.id
+    record.year, record.month = year, month
+    record.activity = row.get("activity") or facility.activity
+    record.division = row.get("division") or facility.division
+    record.region = row.get("region") or facility.region or facility.name
+    record.field = row.get("field") or facility.field
+    record.group_name = row.get("group") or row.get("group_name") or None
+    record.equipment_id = equipment_id or None
+    record.status = "Pending"  # Maker-Checker: bulk imports await reviewer approval
+    record.data_source_ref = source_ref or None
+    if batch_keys is not None:
+        batch_keys[key] = record  # BUG-057: later in-file repeats update this row
+    return record, []
+
+
+def process_json_records(kind, records, user):
+    """Rows of the JSON bulk endpoints (/production/bulk-import, /sources/bulk-import,
+    /mitigation/bulk-import) through the same row validation as the file import.
+    Adds the new objects to the session (the caller commits) and returns (count, errors)."""
+    from extensions import db
+    from models import Facility
+    from utils import build_name_map, get_allowed_facility_ids
+
+    allowed = get_allowed_facility_ids(user)
+    facs = Facility.query.all() if allowed is None else Facility.query.filter(Facility.id.in_(allowed)).all()
+    name_map = build_name_map(facs)
+    id_map = {str(f.id): f for f in facs}
+    batch_prod, batch_src = {}, set()
+    count, errors = 0, []
+    for i, rec in enumerate(records):
+        if not isinstance(rec, dict):
+            errors.append(f"Row {i}: not an object")
+            continue
+        row = dict(rec)
+        f_val = str(row.get("facility_id") or row.get("facility_name") or row.get("facility") or "").strip()
+        row["facility_name"] = f_val
+        if kind == "production":
+            obj, errs = _process_row_production(row, user.id, name_map, id_map, batch_prod)
+        elif kind == "sources":
+            obj, errs = _process_row_sources(row, user.id, name_map, id_map, batch_src)
+        elif kind == "mitigation":
+            obj, errs = _process_row_mitigation(row, user.id, name_map, id_map)
         else:
-            unc_raw = factor_data.get("uncertainty", {})
-            unc = {
-                "co2": unc_raw.get("co2", None) if isinstance(unc_raw, dict) else None,
-                "ch4": unc_raw.get("ch4", None) if isinstance(unc_raw, dict) else None,
-                "n2o": unc_raw.get("n2o", None) if isinstance(unc_raw, dict) else None,
-            }
-
-        # User Overrides
-        for gas, field in [
-            ("co2", "user_unc_co2"),
-            ("ch4", "user_unc_ch4"),
-            ("n2o", "user_unc_n2o"),
-        ]:
-            val = row.get(field)
-            if val not in [None, ""]:
-                try:
-                    unc[gas] = _clean_float(val, default=0.0) / 100.0
-                except (ValueError, TypeError):
-                    pass
-
-        import uuid
-        import json
-
-        eq_id = str(row.get("equipment_id") or row.get("equipment") or "").strip().lower()
-        proc_lower = process_type.strip().lower()
-        fuel_k = "" if proc_lower in NON_COMBUSTION_PROCESSES else fuel.strip().lower()
-        key = (
-            facility.id,
-            year,
-            month,
-            proc_lower,
-            fuel_k,
-            eq_id,
-        )
-        if batch_keys is not None:
-            if key in batch_keys:
-                existing_id = batch_keys[key]
-                if not overwrite_duplicates:
-                    return None, [
-                        f"Duplicate record: Scope 1 emission for facility '{facility.name}' "
-                        f"({year}-{month:02d}, process '{process_type}', fuel '{fuel}') already exists. "
-                        f"Enable 'Overwrite Duplicates' to replace it."
-                    ]
-                else:
-                    from extensions import db
-                    existing_obj = db.session.get(Emission, existing_id) if existing_id else None
-                    if existing_obj:
-                        existing_obj.quantity = amount
-                        existing_obj.unit = unit
-                        existing_obj.co2_emissions = co2_val
-                        existing_obj.ch4_emissions = ch4_val
-                        existing_obj.n2o_emissions = n2o_val
-                        existing_obj.co2e_total = total
-                        existing_obj.calc_method = _method
-                        existing_obj.gwp_version = gwp_std
-                        existing_obj.source_payload = json.dumps(calc_data)
-                        existing_obj.factor_source = factor_data.get("type", "API")
-                        existing_obj.ef_used_co2 = factor_data.get("co2", 0)
-                        existing_obj.ef_used_ch4 = factor_data.get("ch4", 0)
-                        existing_obj.ef_used_n2o = factor_data.get("n2o", 0)
-                        existing_obj.uncertainty = (
-                            unc.get("co2", None) if isinstance(unc, dict) else (unc or None)
-                        )
-                        existing_obj.uncertainty_ch4 = (
-                            unc.get("ch4", None) if isinstance(unc, dict) else (unc or None)
-                        )
-                        existing_obj.uncertainty_n2o = (
-                            unc.get("n2o", None) if isinstance(unc, dict) else (unc or None)
-                        )
-                        existing_obj.status = "Pending"
-                        return None, []
-            batch_keys[key] = None
-
-        emission = Emission(
-            record_id=str(uuid.uuid4()),
-            created_by=user_id,
-            facility_id=facility.id,
-            activity=row.get("activity", getattr(facility, "activity", None)),
-            division=row.get("division", getattr(facility, "division", None)),
-            region=row.get("region", getattr(facility, "region", None)),
-            field=row.get("field", getattr(facility, "field", None)),
-            group_name=row.get("group", ""),
-            equipment_id=row.get("equipment_id") or row.get("equipment", ""),
-            process_type=process_type,
-            fuel_type=fuel,
-            quantity=amount,
-            unit=unit,
-            year=year,
-            month=month,
-            co2_emissions=co2_val,
-            ch4_emissions=ch4_val,
-            n2o_emissions=n2o_val,
-            co2e_total=total,
-            calc_method=_method,
-            gwp_version=gwp_std,
-            source_payload=json.dumps(calc_data),
-            factor_source=factor_data.get("type", "API"),
-            ef_used_co2=factor_data.get("co2", 0),
-            ef_used_ch4=factor_data.get("ch4", 0),
-            ef_used_n2o=factor_data.get("n2o", 0),
-            uncertainty=(
-                unc.get("co2", None) if isinstance(unc, dict) else (unc or None)
-            ),
-            uncertainty_ch4=(
-                unc.get("ch4", None) if isinstance(unc, dict) else (unc or None)
-            ),
-            uncertainty_n2o=(
-                unc.get("n2o", None) if isinstance(unc, dict) else (unc or None)
-            ),
-            status="Pending",  # Maker-Checker: awaits reviewer approval
-        )
-        return emission, []
-
-    except Exception as e:
-        return None, [f"Calculation error: {str(e)}"]
+            raise ValueError(kind)
+        if errs:
+            errors.append(f"Row {i}: " + "; ".join(errs))
+            continue
+        if obj is not None:
+            db.session.add(obj)
+        count += 1
+    return count, errors

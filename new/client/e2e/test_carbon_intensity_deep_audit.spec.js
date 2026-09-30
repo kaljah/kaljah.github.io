@@ -126,8 +126,6 @@ test.describe('Carbon Intensity Page Deep Audit', () => {
     await expect(card1Footer).toContainText('GWP₁₀₀ Standard');
 
     // Capture initial values
-    const initialGhgInt = await page.locator('.kpi-card').nth(0).locator('.total-value').innerText();
-    const initialS1Int = await page.locator('.kpi-card').nth(1).locator('.total-value').innerText();
 
     // Click 20-Yr toggle
     await btn20.click();

@@ -1,15 +1,37 @@
-from flask import Blueprint, request, jsonify, session
+from flask import Blueprint, request, jsonify, session, current_app
 from models import User, Scope3Emission, Facility
 from extensions import db
 from sqlalchemy import func
 from routes.auth import login_required
 from calculations.uncertainty import propagate_uncertainty, Tier
 from calculations.units import compute_scope3_co2e
-from utils import get_current_user, get_allowed_facility_ids, log_activity_and_notify, require_facility_access
+from utils import get_current_user, get_allowed_facility_ids, log_activity_and_notify, require_facility_access, initial_record_status
+from input_validation import ValidationError, parse_number, parse_year, parse_month, normalize_scope3_category
 import datetime
+from utils import internal_error
 
 scope3_bp = Blueprint("scope3", __name__)
 
+
+
+
+def default_scope3_uncertainty(co2e):
+    """Default Scope 3 uncertainty (20 % factor, 10 % activity -> ~22.4 % combined), 1-sigma fraction.
+    Used by the form and the bulk imports alike (bulk records used to store none)."""
+    return propagate_uncertainty(
+        co2e, ef_uncertainty=0.20, activity_uncertainty=0.10, tier=Tier.T1, process_category="scope3", gas="co2",
+    )["relative_uncertainty"]
+
+def _page_args():
+    """(limit, offset) when the caller asks for a page, else None (full list, the old contract)."""
+    if request.args.get("limit") in (None, ""):
+        return None
+    try:
+        limit = max(1, min(500, int(request.args.get("limit"))))
+        offset = max(0, int(request.args.get("offset") or 0))
+    except ValueError:
+        return None
+    return limit, offset
 
 @scope3_bp.route("", methods=["GET"])
 @login_required
@@ -39,8 +61,15 @@ def get_scope3_emissions():
         except ValueError:
             pass
 
-    emissions = query.order_by(Scope3Emission.created_at.desc()).all()
-    return jsonify(
+    # optional server-side paging (limit / offset): the tables used to download every record on
+    # every page change (4 MB at 10,000 records) to show 10 rows
+    query = query.order_by(Scope3Emission.created_at.desc(), Scope3Emission.id.desc())
+    page_args = _page_args()
+    total = query.count() if page_args else None
+    if page_args:
+        query = query.offset(page_args[1]).limit(page_args[0])
+    emissions = query.all()
+    rows = (
         [
             {
                 "id": e.id,
@@ -65,6 +94,9 @@ def get_scope3_emissions():
             for e in emissions
         ]
     )
+    if page_args:
+        return jsonify({"data": rows, "total": total, "limit": page_args[0], "offset": page_args[1]})
+    return jsonify(rows)
 
 
 @scope3_bp.route("", methods=["POST"])
@@ -86,31 +118,40 @@ def create_scope3_emission():
     if allowed_fids is not None and int(facility_id) not in allowed_fids:
         return jsonify({"error": "Unauthorized for this facility"}), 403
 
-    req_status = data.get("status")
-    if req_status == "Draft":
-        initial_status = "Draft"
-    else:
-        # Maker-Checker: only admin role auto-verifies; all other roles (superuser, user) require admin approval
-        initial_status = "Verified" if user.role == "admin" else "Pending"
+    initial_status = initial_record_status(user, data.get("status"))
 
-    activity_data = float(data.get("activity_data") or data.get("amount", 0))
-    emission_factor = float(data.get("emission_factor", 0))
-    co2e_input = data.get("co2e") or data.get("emissions_tco2e")
+    # BUG-073 / BUG-089 / BUG-083: validate period, category and numbers before anything is stored.
+    year_val = parse_year(data.get("year"))
+    month_val = parse_month(data.get("month"))
+    category_val = normalize_scope3_category(data.get("category", "Category 11"))
+    activity_data = parse_number(
+        data.get("activity_data") if data.get("activity_data") not in (None, "") else data.get("amount"),
+        "activity_data", required=False, min_value=0, default=0.0,
+    )
+    emission_factor = parse_number(data.get("emission_factor"), "emission_factor", required=False, min_value=0, default=0.0)
+    co2e_input = data.get("co2e") if data.get("co2e") not in (None, "") else data.get("emissions_tco2e")
     # Enforce server-side calculation from activity_data and emission_factor to prevent client-side tampering
     if activity_data > 0 and emission_factor > 0:
         factor_unit = str(data.get("factor_unit") or data.get("emission_factor_unit") or "")
         calc_method = str(data.get("calculation_method") or "")
         co2e_val = compute_scope3_co2e(activity_data, emission_factor, factor_unit, calc_method)
     elif co2e_input not in [None, ""] and user.role in ["admin", "superuser"]:
-        co2e_val = float(co2e_input)
+        # Supplier-specific total reported directly (approver roles only)
+        co2e_val = parse_number(co2e_input, "co2e", min_value=0)
     else:
-        co2e_val = 0.0
+        # never book a missing calculation as 0 tCO2e
+        return jsonify({"error": "Give the activity amount and emission factor (or, for admins and superusers, "
+                                 "a supplier-reported co2e)"}), 422
+    if activity_data > 0 and emission_factor > 0:
+        # stored as kg CO2e per activity unit whatever unit it was entered in (t/unit, g/unit, per $1,000)
+        from calculations.units import scope3_ef_kg_per_unit
+        emission_factor = scope3_ef_kg_per_unit(activity_data, co2e_val, emission_factor)
 
     emission = Scope3Emission(
         facility_id=data.get("facility_id"),
-        year=data.get("year"),
-        month=data.get("month"),
-        category=data.get("category", "Category 11"),
+        year=year_val,
+        month=month_val,
+        category=category_val,
         sub_category=data.get("sub_category")
         or data.get("activity_type"),  # Fallback to activity_type
         activity_data=activity_data,
@@ -124,19 +165,10 @@ def create_scope3_emission():
 
     # Calculate uncertainty
     provided_uncertainty = data.get("uncertainty")
-    if provided_uncertainty is not None:
-        final_uncertainty = float(provided_uncertainty)
+    if provided_uncertainty not in (None, ""):
+        final_uncertainty = parse_number(provided_uncertainty, "uncertainty", min_value=0, max_value=2)
     else:
-        # Default Scope 3 uncertainty (20% EF, 10% AD -> ~22.3% combined)
-        u_res = propagate_uncertainty(
-            co2e_val,
-            ef_uncertainty=0.20,
-            activity_uncertainty=0.10,
-            tier=Tier.T1,
-            process_category="scope3",
-            gas="co2",
-        )
-        final_uncertainty = u_res["relative_uncertainty"]
+        final_uncertainty = default_scope3_uncertainty(co2e_val)
 
     emission.uncertainty = final_uncertainty
     calc_method = data.get("calculation_method") or f"Scope 3 - Category {emission.category}"
@@ -152,7 +184,8 @@ def create_scope3_emission():
         db.session.commit()
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": f"Failed to create Scope 3 emission: {str(e)}"}), 500
+        current_app.logger.error(f"Failed to create Scope 3 emission: {e}")
+        return jsonify({"error": "Failed to create Scope 3 emission"}), 500
 
     try:
         log_activity_and_notify(
@@ -234,11 +267,10 @@ def update_scope3_emission(emission_id):
     if user.role == "user" and emission.created_by is not None and emission.created_by != user.id:
         return jsonify({"error": "Unauthorized: You may only modify records you created"}), 403
 
-    # If non-admin modifies a verified record, reset status to Pending for maker-checker review
-    if user.role not in ["admin", "superuser"] and emission.status == "Verified":
-        emission.status = "Pending"
-        emission.approved_by = None
-        emission.approved_at = None
+    # BUG-067/RC-2: record the last maker; non-admin edits of decided records go back to review.
+    from services.maker_checker import on_edit
+
+    on_edit(emission, user)
 
     data = request.get_json() or {}
 
@@ -254,20 +286,20 @@ def update_scope3_emission(emission_id):
             return jsonify({"error": "Unauthorized to reassign to this facility"}), 403
         emission.facility_id = new_fid
     if "year" in data:
-        emission.year = int(data["year"])
+        emission.year = parse_year(data["year"])
     if "category" in data:
-        emission.category = data["category"]
+        emission.category = normalize_scope3_category(data["category"])
     if "sub_category" in data:
         emission.sub_category = data["sub_category"]
 
     recalc = False
     if "activity_data" in data:
-        emission.activity_data = float(data["activity_data"] or 0)
+        emission.activity_data = parse_number(data["activity_data"], "activity_data", required=False, min_value=0, default=0.0)
         recalc = True
     if "unit" in data:
         emission.unit = data["unit"]
     if "emission_factor" in data:
-        emission.emission_factor = float(data["emission_factor"] or 0)
+        emission.emission_factor = parse_number(data["emission_factor"], "emission_factor", required=False, min_value=0, default=0.0)
         recalc = True
 
     if recalc:
@@ -277,6 +309,9 @@ def update_scope3_emission(emission_id):
         factor_unit = str(data.get("factor_unit") or data.get("emission_factor_unit") or getattr(emission, "factor_unit", "") or "")
         calc_method = str(data.get("calculation_method") or getattr(emission, "calculation_method", "") or "")
         emission.co2e = round(compute_scope3_co2e(act, ef, factor_unit, calc_method), 4)
+        if act > 0 and ef > 0:
+            from calculations.units import scope3_ef_kg_per_unit
+            emission.emission_factor = scope3_ef_kg_per_unit(act, emission.co2e, ef)
 
         if emission.status == "Verified" and user.role != "admin":
             emission.status = "Pending"
@@ -284,7 +319,7 @@ def update_scope3_emission(emission_id):
             emission.approved_at = None
 
     if "uncertainty" in data:
-        emission.uncertainty = float(data["uncertainty"] or 0)
+        emission.uncertainty = parse_number(data["uncertainty"], "uncertainty", required=False, min_value=0, max_value=2)
     if "calculation_method" in data:
         emission.calculation_method = data["calculation_method"]
     if "data_quality" in data:
@@ -296,7 +331,8 @@ def update_scope3_emission(emission_id):
         db.session.commit()
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": f"Failed to update Scope 3 emission: {str(e)}"}), 500
+        current_app.logger.error(f"Failed to update Scope 3 emission: {e}")
+        return jsonify({"error": "Failed to update Scope 3 emission"}), 500
 
     from routes.dashboard import clear_dashboard_cache
 
@@ -322,17 +358,12 @@ def delete_scope3_emission(emission_id):
     if not emission:
         return jsonify({"error": "Emission not found"}), 404
 
-    if user.role not in ["admin", "superuser"]:
-        if emission.created_by != user.id:
-            return (
-                jsonify(
-                    {"error": "Forbidden: You do not have permission to delete records created by another user"}
-                ),
-                403,
-            )
-    else:
-        if not require_facility_access(user, emission.facility_id):
-            return jsonify({"error": "Unauthorized: Outside your region"}), 403
+    from services.maker_checker import delete_denied_reason
+
+    denied = delete_denied_reason(user, emission)
+    if denied:
+        return jsonify({"error": denied}), 403
+    fac_id_for_log = emission.facility_id
 
     log_details = f"Deleted Scope 3 emission: {emission.category} ({emission.co2e:.2f} tCO2e, facility #{emission.facility_id})"
     db.session.delete(emission)
@@ -345,6 +376,7 @@ def delete_scope3_emission(emission_id):
             request=request,
             entity="Scope3Emission",
             details=log_details,
+            facility_id=fac_id_for_log,
         )
         db.session.commit()
     except Exception as e:
@@ -385,8 +417,8 @@ def bulk_import_scope3():
             413,
         )
 
-    # Per D-04: bulk imports are Verified only if created by admin, otherwise Pending
-    bulk_status = "Verified" if user.role == "admin" else "Pending"
+    # D-04: every bulk import is Pending until a reviewer approves it (same as the file import)
+    bulk_status = "Pending"
     allowed_fids = get_allowed_facility_ids(user)
 
     imported_count = 0
@@ -426,41 +458,17 @@ def bulk_import_scope3():
                 errors.append(f"Row {i}: Unauthorized for facility '{f_val}'")
                 continue
 
-            # 2. Extract Data and Calculate
-            from background_processor import _clean_float
-            cat = rec.get("category", "11")
-            sub_cat = rec.get("sub_category")
-            amt = _clean_float(rec.get("amount"), default=0.0)
-            ef = _clean_float(rec.get("emission_factor"), default=0.0)
-            ef_unit = str(rec.get("ef_unit") or rec.get("factor_unit") or "kg").strip()
-            calc_method = str(rec.get("calculation_method") or "")
+            # 2. Validate and calculate exactly as the file import does (required category and
+            # period, no zero co2e for a missing factor, the same unit handling)
+            from background_processor import _process_row_scope3
 
-            # Authoritatively calculate co2e when activity amount and EF are present
-            if amt > 0 and ef > 0:
-                co2e = compute_scope3_co2e(amt, ef, ef_unit, calc_method)
-            elif rec.get("co2e") and user.role in ["admin", "superuser"]:
-                co2e = _clean_float(rec.get("co2e"), default=0.0)
-            else:
-                co2e = 0.0
-
-            emission = Scope3Emission(
-                facility_id=facility.id,
-                year=int(rec.get("year", 2024)),
-                month=int(rec.get("month", 1)),
-                category=(
-                    f"Category {cat}" if not str(cat).startswith("Category") else cat
-                ),
-                sub_category=sub_cat,
-                activity_data=amt,
-                unit=rec.get("unit"),
-                emission_factor=ef,
-                co2e=co2e,
-                notes=rec.get("notes", "Bulk Imported"),
-                created_by=user.id,
-                status=bulk_status,
-                approved_by=user.id if bulk_status == "Verified" else None,
-                approved_at=datetime.datetime.now(datetime.timezone.utc) if bulk_status == "Verified" else None,
+            emission, row_errors = _process_row_scope3(
+                dict(rec, facility_name=facility.name), user.id, {facility.name.strip().lower(): facility},
+                {str(facility.id): facility}, None, i,
             )
+            if row_errors or emission is None:
+                errors.append(f"Row {i}: " + "; ".join(row_errors or ["not imported"]))
+                continue
             db.session.add(emission)
             imported_count += 1
         except Exception as e:
@@ -470,7 +478,7 @@ def bulk_import_scope3():
         db.session.commit()
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": f"Failed to bulk import Scope 3 emissions: {str(e)}"}), 500
+        return internal_error(e, "Failed to bulk import Scope 3 emissions")
 
     from routes.dashboard import clear_dashboard_cache
 
@@ -520,8 +528,11 @@ def calculate_eeio():
         return jsonify({"co2e": 0, "emission_factor": 0, "message": "Zero spend"}), 200
         
     from emission_factors.eeio_factors import get_eeio_factor
-    factor_data = get_eeio_factor(naics_code)
-    
+    try:
+        factor_data = get_eeio_factor(naics_code)
+    except LookupError as exc:
+        return jsonify({"error": str(exc), "field": "naics_code"}), 422
+
     # Calculate emissions
     # Factor is kg CO2e per $1000 spend
     # So formula is: (spend_usd / 1000) * factor -> gives kg CO2e
@@ -534,5 +545,15 @@ def calculate_eeio():
         "co2e": tonnes_co2e,
         "emission_factor": factor_data["kg_co2e_per_1000_usd"],
         "ef_unit": "kg CO2e / $1000",
-        "industry_name": factor_data["name"]
+        "industry_name": factor_data["name"],
+        "naics_code": naics_code,
+        "source": factor_data["source"],
     }), 200
+
+
+@scope3_bp.route("/eeio-factors", methods=["GET"])
+@login_required
+def search_eeio():
+    """Six-digit NAICS codes of the EPA supply chain factor dataset matching ?q= (code prefix or title)."""
+    from emission_factors.eeio_factors import search_eeio_factors
+    return jsonify(search_eeio_factors(request.args.get("q", ""), limit=25))

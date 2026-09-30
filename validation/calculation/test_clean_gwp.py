@@ -46,8 +46,9 @@ class TestCleanGWPStandards:
         assert GWP_AR5["N2O"] == ref_100["N2O"] == 265.0
 
         ref_20 = resolve_gwp("AR5", "20")
-        assert GWP_AR5["CH4_20"] == ref_20["CH4"] == 82.5
-        assert GWP_AR5["N2O_20"] == ref_20["N2O"] == 268.0
+        # WG1 Table 8.7 GWP-20: CH4 84, N2O 264 (BUG-013)
+        assert GWP_AR5["CH4_20"] == ref_20["CH4"] == 84.0
+        assert GWP_AR5["N2O_20"] == ref_20["N2O"] == 264.0
 
     def test_ar6_constants_ipcc_2021(self):
         """IPCC Sixth Assessment Report (2021, WG1 Chapter 7) GWP values."""
@@ -57,7 +58,8 @@ class TestCleanGWPStandards:
         assert GWP_AR6["N2O"] == ref_100["N2O"] == 273.0
 
         ref_20 = resolve_gwp("AR6", "20")
-        assert GWP_AR6["CH4_20"] == ref_20["CH4"] == 82.5
+        # Table 7.15: CH4 27.9 (100-yr) pairs with 81.2 (20-yr); 82.5 is the fossil-CH4 pair
+        assert GWP_AR6["CH4_20"] == ref_20["CH4"] == 81.2
         assert GWP_AR6["N2O_20"] == ref_20["N2O"] == 273.0
 
 
@@ -84,10 +86,10 @@ class TestCleanGWPResolutionAndCalculation:
         co2e_ar6 = calculate_co2e(co2=co2_tonnes, ch4=ch4_tonnes, n2o=n2o_tonnes, gwp_dict=gwp_ar6)
         assert abs(co2e_ar6 - 602.0) < 1e-4
 
-        # AR5 20-year horizon: 50*1 + 10*82.5 + 1*268 = 50 + 825 + 268 = 1143.0
+        # AR5 20-year horizon: 50*1 + 10*84 + 1*264 = 50 + 840 + 264 = 1154.0
         gwp_ar5_20 = get_active_gwp("AR5", horizon="20")
         co2e_ar5_20 = calculate_co2e(co2=co2_tonnes, ch4=ch4_tonnes, n2o=n2o_tonnes, gwp_dict=gwp_ar5_20)
-        assert abs(co2e_ar5_20 - 1143.0) < 1e-4
+        assert abs(co2e_ar5_20 - 1154.0) < 1e-4
 
     def test_prevent_mixing_standards(self):
         """Ensures requesting AR6 doesn't accidentally leak AR5 N2O or vice-versa."""

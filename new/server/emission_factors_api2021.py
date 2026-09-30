@@ -14,6 +14,13 @@ Organized by:
 3. Fugitive Emissions (Section 7)
 """
 
+from emission_factors_chapter7_onshore import (
+    API_CHAPTER7_ONSHORE_FACTORS,
+    METHOD21_SCREENING_RANGES,
+    OGI_LEAKER_FACTORS,
+    DEFAULT_SERVICE_COMPOSITIONS,
+)
+
 # =============================================================================
 # SECTION 5: COMBUSTION & FLARING EMISSION FACTORS
 # =============================================================================
@@ -36,7 +43,7 @@ COMBUSTION_FACTORS = {
     },
     "Landfill Gas": {
         "code": "LFG",
-        "hhv": 500,
+        "hhv": 485,  # Table 4-5: 4.85E-04 MMBtu/scf
         "co2": 52.07,
         "ch4": 0.0032,
         "n2o": 0.00063,
@@ -50,7 +57,7 @@ COMBUSTION_FACTORS = {
     },
     "Coke Oven Gas": {
         "code": "COG",
-        "hhv": 590,
+        "hhv": 599,  # Table 4-5: 5.99E-04 MMBtu/scf
         "co2": 46.85,
         "ch4": 0.00048,
         "n2o": 0.0001,
@@ -78,7 +85,7 @@ COMBUSTION_FACTORS = {
     },
     "Propane (Gas)": {
         "code": "LPG_Gas",
-        "hhv": 2500,  # Btu/scf
+        "hhv": 2516,  # Table 4-5: 2.516E-03 MMBtu/scf
         "co2": 61.46,
         "ch4": 0.003,
         "n2o": 0.0006,
@@ -92,10 +99,10 @@ COMBUSTION_FACTORS = {
     },
     "Refinery Fuel Gas": {
         "code": "RFG",
-        "hhv": 1400,  # Btu/scf (typical)
-        "co2": 57.78,
-        "ch4": 0.0028,
-        "n2o": 0.0001,
+        "hhv": 1388,  # Table 4-5 fuel gas: 1.388E-03 MMBtu/scf
+        "co2": 59.0,  # Table 4-5 fuel gas
+        "ch4": 0.003,  # 40 CFR 98 Table C-2 fuel gas
+        "n2o": 0.0006,  # 40 CFR 98 Table C-2 fuel gas
         "uncertainty": {"co2": 0.10, "ch4": 0.30, "n2o": 0.40},
         "unit": "kg/MMBtu",
         "usage": ["combustion"],
@@ -107,8 +114,8 @@ COMBUSTION_FACTORS = {
     # LIQUID FUELS
     "Marine Diesel Oil": {
         "code": "MDO",
-        "hhv": 138858,
-        "co2": 73.19,
+        "hhv": 138000,  # marine diesel = distillate No. 2, Table 4-5: 0.138 MMBtu/gal
+        "co2": 73.96,  # Table 4-5 distillate No. 2
         "ch4": 0.003,
         "n2o": 0.0006,
         "uncertainty": {"co2": 0.02, "ch4": 0.25, "n2o": 0.30},
@@ -117,7 +124,7 @@ COMBUSTION_FACTORS = {
         "segment": "Downstream",
         "process_category": "stationary_combustion",
         "type": "liquids",
-        "source": "API Compendium 2021 Section 4, Table 4-14",
+        "source": "API Compendium 2021 Table 4-5 / 4-6 (distillate fuel oil No. 2)",
     },
     "Diesel (No. 2 Fuel Oil)": {
         "code": "DSL",
@@ -191,8 +198,8 @@ COMBUSTION_FACTORS = {
     },
     "Propane (Liquid/LPG)": {
         "code": "LPG_Liq",
-        "hhv": 91500,
-        "co2": 62.88,
+        "hhv": 91000,  # Table 4-5 propane: 0.091 MMBtu/gal
+        "co2": 62.87,  # Table 4-5 propane
         "ch4": 0.003,
         "n2o": 0.0006,
         "uncertainty": {"co2": 0.02, "ch4": 0.25, "n2o": 0.30},
@@ -205,7 +212,10 @@ COMBUSTION_FACTORS = {
     },
     "Ethane": {
         "code": "Ethane",
-        "hhv": 69600,
+        "hhv": 68000,  # Table 4-5: 0.068 MMBtu/gal (liquid)
+        # BUG-027: 69,600 Btu is per US gallon of liquid ethane (EPA Table C-1 0.0696 MMBtu/gal),
+        # not per scf; the explicit basis stops it being multiplied by scf.
+        "hhv_unit": "btu/gal",
         "co2": 59.60,
         "ch4": 0.003,
         "n2o": 0.0006,
@@ -214,8 +224,23 @@ COMBUSTION_FACTORS = {
         "usage": ["combustion"],
         "segment": "Midstream",
         "process_category": "stationary_combustion",
-        "type": "gases",
+        "type": "liquids",  # HHV is per gallon of liquid ethane (see "Ethane (Gas)" for gas-phase use)
         "source": "API Compendium 2021 Section 5",
+    },
+    "Ethane (Gas)": {
+        "code": "EthaneGas",
+        # API Compendium 2021 Table 3-7: ethane ideal gross heating value 1768.8 Btu/scf (60 F, 1 atm);
+        # same CO2 / CH4 / N2O factors per MMBtu as liquid ethane
+        "hhv": 1768.8,
+        "hhv_unit": "btu/scf",
+        "co2": 59.60,
+        "ch4": 0.003,
+        "n2o": 0.0006,
+        "uncertainty": {"co2": 0.02, "ch4": 0.25, "n2o": 0.30},
+        "unit": "kg/MMBtu",
+        "usage": ["combustion"],
+        "segment": "Midstream",
+        "type": "gases",
     },
     "Crude Oil": {
         "code": "Crude",
@@ -249,7 +274,7 @@ COMBUSTION_FACTORS = {
     "Bituminous Coal": {
         "code": "CoalBit",
         "hhv": 24930,
-        "co2": 93.26,
+        "co2": 93.28,  # Table 4-5
         "ch4": 0.011,
         "n2o": 0.0016,
         "uncertainty": {"co2": 0.03, "ch4": 0.30, "n2o": 0.40},
@@ -292,8 +317,8 @@ COMBUSTION_FACTORS = {
         "code": "PetCoke",
         "hhv": 30000,
         "co2": 102.41,
-        "ch4": 0.003,
-        "n2o": 0.0006,
+        "ch4": 0.032,  # Table 4-6: 3.20E-05 t/MMBtu (HHV)
+        "n2o": 0.0042,  # Table 4-6: 4.20E-06 t/MMBtu (HHV)
         "uncertainty": {"co2": 0.03, "ch4": 0.30, "n2o": 0.40},
         "unit": "kg/MMBtu",
         "usage": ["combustion"],
@@ -308,39 +333,9 @@ COMBUSTION_FACTORS = {
 FLARING_FACTORS = {
     "Natural Gas (Flaring - Elevated)": {
         "code": "NG_Flare_Elev",
-        "co2": 1.92,  # kg CO₂/m³ flared
-        "ch4": 0.012,  # kg CH₄/m³ flared
-        "n2o": 0.00001,
-        "combustion_efficiency_co2": 0.98,  # 98% for CO₂ formation
-        "combustion_efficiency_ch4": 0.98,  # 98% for CH₄ destruction (production flare)
-        "uncertainty": {"co2": 0.02, "ch4": 0.25, "n2o": 0.50},
-        "unit": "kg/m³",
-        "usage": ["flaring"],
-        "segment": "Upstream",
-        "process_category": "flaring",
-        "type": "gases",
-        "source": "API Compendium 2021 Section 5.2, Equations 5-3 & 5-4",
-    },
-    "Natural Gas (Flaring - Ground)": {
-        "code": "NG_Flare_Ground",
-        "co2": 1.88,
-        "ch4": 0.024,
-        "n2o": 0.00001,
-        "combustion_efficiency_co2": 0.98,
-        "combustion_efficiency_ch4": 0.96,  # 96% for ground flares
-        "uncertainty": {"co2": 0.03, "ch4": 0.30, "n2o": 0.50},
-        "unit": "kg/m³",
-        "usage": ["flaring"],
-        "segment": "Upstream",
-        "process_category": "flaring",
-        "type": "gases",
-        "source": "API Compendium 2021 Section 5.2",
-    },
-    "Natural Gas (Flaring)": {
-        "code": "NG_Flare",
-        "co2": 1.92,
-        "ch4": 0.012,
-        "n2o": 0.00001,
+        "co2": 1.9334,  # kg/Sm3, Equation 5-2
+        "ch4": 0.012447,  # kg/Sm3, Equation 5-4
+        "n2o": 3.222e-06,  # kg/Sm3, Equation 5-6
         "combustion_efficiency_co2": 0.98,
         "combustion_efficiency_ch4": 0.98,
         "uncertainty": {"co2": 0.02, "ch4": 0.25, "n2o": 0.50},
@@ -349,28 +344,43 @@ FLARING_FACTORS = {
         "segment": "Upstream",
         "process_category": "flaring",
         "type": "gases",
-        "source": "API Compendium 2021 Section 5.2",
+        "source": "API Compendium 2021 Equations 5-2 / 5-4 / 5-6; Table 5-1 processing-plant gas, 98 % (production flare)",
+    },
+    "Natural Gas (Flaring)": {
+        "code": "NG_Flare",
+        "co2": 1.9334,  # kg/Sm3, Equation 5-2
+        "ch4": 0.012447,  # kg/Sm3, Equation 5-4
+        "n2o": 3.222e-06,  # kg/Sm3, Equation 5-6
+        "combustion_efficiency_co2": 0.98,
+        "combustion_efficiency_ch4": 0.98,
+        "uncertainty": {"co2": 0.02, "ch4": 0.25, "n2o": 0.50},
+        "unit": "kg/m³",
+        "usage": ["flaring"],
+        "segment": "Upstream",
+        "process_category": "flaring",
+        "type": "gases",
+        "source": "API Compendium 2021 Equations 5-2 / 5-4 / 5-6; Table 5-1 processing-plant gas, 98 % (production flare)",
     },
     "Natural Gas (Flaring - Enclosed)": {
         "code": "NG_Flare_Enc",
-        "co2": 1.94,
-        "ch4": 0.006,
-        "n2o": 0.00001,
-        "combustion_efficiency_co2": 0.98,
-        "combustion_efficiency_ch4": 0.99,  # 99% for enclosed flares
+        "co2": 1.9628,  # kg/Sm3, Equation 5-2
+        "ch4": 0.003112,  # kg/Sm3, Equation 5-4
+        "n2o": 3.271e-06,  # kg/Sm3, Equation 5-6
+        "combustion_efficiency_co2": 0.995,
+        "combustion_efficiency_ch4": 0.995,
         "uncertainty": {"co2": 0.02, "ch4": 0.20, "n2o": 0.50},
         "unit": "kg/m³",
         "usage": ["flaring"],
         "segment": "Upstream",
         "process_category": "flaring",
         "type": "gases",
-        "source": "API Compendium 2021 Section 5.2",
+        "source": "API Compendium 2021 Equations 5-2 / 5-4 / 5-6; Table 5-1 processing-plant gas, 99.5 % (well-designed flare)",
     },
     "Associated Gas (Flaring)": {
         "code": "AG_Flare",
-        "co2": 2.15,
-        "ch4": 0.018,
-        "n2o": 0.00001,
+        "co2": 2.2762,  # kg/Sm3, Equation 5-2
+        "ch4": 0.010836,  # kg/Sm3, Equation 5-4
+        "n2o": 3.794e-06,  # kg/Sm3, Equation 5-6
         "combustion_efficiency_co2": 0.98,
         "combustion_efficiency_ch4": 0.98,
         "uncertainty": {"co2": 0.03, "ch4": 0.25, "n2o": 0.50},
@@ -379,37 +389,7 @@ FLARING_FACTORS = {
         "segment": "Upstream",
         "process_category": "flaring",
         "type": "gases",
-        "source": "API Compendium 2021 Section 5.2",
-    },
-    "Sour Gas (Flaring)": {
-        "code": "SG_Flare",
-        "co2": 2.30,
-        "ch4": 0.015,
-        "n2o": 0.00001,
-        "combustion_efficiency_co2": 0.98,
-        "combustion_efficiency_ch4": 0.98,
-        "uncertainty": {"co2": 0.03, "ch4": 0.25, "n2o": 0.50},
-        "unit": "kg/m³",
-        "usage": ["flaring"],
-        "segment": "Upstream",
-        "process_category": "flaring",
-        "type": "gases",
-        "source": "API Compendium 2021 Section 5.2",
-    },
-    "Refinery Gas (Flaring)": {
-        "code": "REF_Flare",
-        "co2": 2.10,
-        "ch4": 0.025,
-        "n2o": 0.00001,
-        "combustion_efficiency_co2": 0.98,
-        "combustion_efficiency_ch4": 0.95,  # 95% for refinery flares
-        "uncertainty": {"co2": 0.03, "ch4": 0.30, "n2o": 0.50},
-        "unit": "kg/m³",
-        "usage": ["flaring"],
-        "segment": "Downstream",
-        "process_category": "flaring",
-        "type": "gases",
-        "source": "API Compendium 2021 Section 5.2, Eq 5-4",
+        "source": "API Compendium 2021 Equations 5-2 / 5-4 / 5-6; Table 5-1 raw / produced gas, 98 %",
     },
 }
 
@@ -418,10 +398,570 @@ FLARING_FACTORS = {
 # =============================================================================
 
 VENTED_FACTORS = {
+    # =========================================================================
+    # SECTION 6.2.3 WELL COMPLETIONS
+    # =========================================================================
+    # --- TABLE 6-5: WELL COMPLETIONS WITH HYDRAULIC FRACTURING ---
+    "Well Completion - Gas Well with Hydraulic Fracturing (Uncontrolled Venting)": {
+        "code": "CompGasHF_Uncontrolled",
+        "co2": 0.0,
+        "ch4": 28.8,  # 28,800 kg CH4/completion -> 28.8 tonnes CH4/completion
+        "n2o": 0.0,
+        "factor": 28.8,
+        "whole_gas_ef": 1842577.0,  # scf gas/completion
+        "ch4_mol_pct": 81.6,  # mole % CH4 basis (Footnote c)
+        "uncertainty": {"co2": 0.30, "ch4": 0.30, "n2o": 0.0},
+        "unit": "tonnes/completion",
+        "baseUnit": "completions",
+        "usage": ["completions", "vented"],
+        "segment": "Upstream",
+        "process_category": "completions",
+        "tier": "Tier 1",
+        "type": "completion",
+        "fracturing": True,
+        "well_type": "gas",
+        "control_type": "uncontrolled",
+        "source": "API Compendium 2021 Section 6.2.3, Table 6-5",
+        "description": "API Table 6-5: Gas Well Completion with Hydraulic Fracturing - Uncontrolled Venting (28,800 kg CH4/completion)",
+    },
+    "Well Completion - Gas Well with Hydraulic Fracturing (REC with Venting)": {
+        "code": "CompGasHF_REC",
+        "co2": 0.0,
+        "ch4": 13.542,  # 13,542 kg CH4/completion -> 13.542 tonnes CH4/completion
+        "n2o": 0.0,
+        "factor": 13.542,
+        "whole_gas_ef": 866413.0,  # scf gas/completion
+        "ch4_mol_pct": 81.6,
+        "uncertainty": {"co2": 0.30, "ch4": 0.30, "n2o": 0.0},
+        "unit": "tonnes/completion",
+        "baseUnit": "completions",
+        "usage": ["completions", "vented"],
+        "segment": "Upstream",
+        "process_category": "completions",
+        "tier": "Tier 1",
+        "type": "completion",
+        "fracturing": True,
+        "well_type": "gas",
+        "control_type": "rec",
+        "source": "API Compendium 2021 Section 6.2.3, Table 6-5",
+        "description": "API Table 6-5: Gas Well Completion with Hydraulic Fracturing - REC with Venting (13,542 kg CH4/completion)",
+    },
+    "Well Completion - Oil Well with Hydraulic Fracturing (Uncontrolled Venting)": {
+        "code": "CompOilHF_Uncontrolled",
+        "co2": 0.0,
+        "ch4": 14.419,  # 14,419 kg CH4/completion -> 14.419 tonnes CH4/completion
+        "n2o": 0.0,
+        "factor": 14.419,
+        "whole_gas_ef": 922498.0,  # scf gas/completion
+        "ch4_mol_pct": 81.6,
+        "uncertainty": {"co2": 0.30, "ch4": 0.30, "n2o": 0.0},
+        "unit": "tonnes/completion",
+        "baseUnit": "completions",
+        "usage": ["completions", "vented"],
+        "segment": "Upstream",
+        "process_category": "completions",
+        "tier": "Tier 1",
+        "type": "completion",
+        "fracturing": True,
+        "well_type": "oil",
+        "control_type": "uncontrolled",
+        "source": "API Compendium 2021 Section 6.2.3, Table 6-5",
+        "description": "API Table 6-5: Oil Well Completion with Hydraulic Fracturing - Uncontrolled Venting (14,419 kg CH4/completion)",
+    },
+    "Well Completion - Oil Well with Hydraulic Fracturing (REC with Venting)": {
+        "code": "CompOilHF_REC",
+        "co2": 0.0,
+        "ch4": 0.615,  # 615 kg CH4/completion -> 0.615 tonnes CH4/completion
+        "n2o": 0.0,
+        "factor": 0.615,
+        "whole_gas_ef": 39357.0,  # scf gas/completion
+        "ch4_mol_pct": 81.6,
+        "uncertainty": {"co2": 0.30, "ch4": 0.30, "n2o": 0.0},
+        "unit": "tonnes/completion",
+        "baseUnit": "completions",
+        "usage": ["completions", "vented"],
+        "segment": "Upstream",
+        "process_category": "completions",
+        "tier": "Tier 1",
+        "type": "completion",
+        "fracturing": True,
+        "well_type": "oil",
+        "control_type": "rec",
+        "source": "API Compendium 2021 Section 6.2.3, Table 6-5",
+        "description": "API Table 6-5: Oil Well Completion with Hydraulic Fracturing - REC with Venting (615 kg CH4/completion)",
+    },
+    # --- TABLE 6-6: ONSHORE WELL COMPLETIONS WITHOUT HYDRAULIC FRACTURING ---
+    "Well Completion - Gas Well without Hydraulic Fracturing (Vented)": {
+        "code": "CompGasNoHF_Vented",
+        "co2": 0.0,
+        "ch4": 1.7376,  # 1,737.6 kg CH4/completion -> 1.7376 tonnes CH4/completion
+        "n2o": 0.0,
+        "factor": 1.7376,
+        "whole_gas_ef": 111173.0,  # scf gas/completion
+        "ch4_mol_pct": 81.6,
+        "uncertainty": {"co2": 0.30, "ch4": 0.30, "n2o": 0.0},
+        "unit": "tonnes/completion",
+        "baseUnit": "completions",
+        "usage": ["completions", "vented"],
+        "segment": "Upstream",
+        "process_category": "completions",
+        "tier": "Tier 1",
+        "type": "completion",
+        "fracturing": False,
+        "well_type": "gas",
+        "control_type": "uncontrolled",
+        "source": "API Compendium 2021 Section 6.2.3, Table 6-6",
+        "description": "API Table 6-6: Onshore Gas Well Completion without Hydraulic Fracturing - Vented (1,737.6 kg CH4/completion)",
+    },
+    "Well Completion - Oil Well without Hydraulic Fracturing (Vented)": {
+        "code": "CompOilNoHF_Vented",
+        "co2": 0.0,
+        "ch4": 0.0141,  # 14.1 kg CH4/completion -> 0.0141 tonnes CH4/completion
+        "n2o": 0.0,
+        "factor": 0.0141,
+        "whole_gas_ef": 902.0,  # scf gas/completion
+        "ch4_mol_pct": 81.6,
+        "uncertainty": {"co2": 0.30, "ch4": 0.30, "n2o": 0.0},
+        "unit": "tonnes/completion",
+        "baseUnit": "completions",
+        "usage": ["completions", "vented"],
+        "segment": "Upstream",
+        "process_category": "completions",
+        "tier": "Tier 1",
+        "type": "completion",
+        "fracturing": False,
+        "well_type": "oil",
+        "control_type": "uncontrolled",
+        "source": "API Compendium 2021 Section 6.2.3, Table 6-6",
+        "description": "API Table 6-6: Onshore Oil Well Completion without Hydraulic Fracturing - Vented (14.1 kg CH4/completion)",
+    },
+    # =========================================================================
+    # SECTION 6.3.4 WELL VENTING FROM LIQUIDS UNLOADING
+    # =========================================================================
+    # --- TABLE 6-11: TIER 1 PER-WELL VENTED EMISSION FACTORS ---
+    "Liquids Unloading - Plunger Lift (Tier 1 Default)": {
+        "code": "UnloadPlunger_T1",
+        "co2": 0.0,
+        "ch4": 1.774,  # tonnes CH4/well-year (Table 6-11: 1,774 kg CH4/well-year)
+        "n2o": 0.0,
+        "factor": 1.774,
+        "whole_gas_ef": 113466.0,  # scf gas/well-year
+        "ch4_mol_pct": 81.6,  # mole % CH4 basis
+        "uncertainty": {"co2": 0.50, "ch4": 0.50, "n2o": 0.50},
+        "unit": "tonnes CH4/well-year",
+        "baseUnit": "wells",
+        "usage": ["unloading", "liquids_unloading", "vented"],
+        "segment": "Upstream",
+        "process_category": "liquids_unloading",
+        "tier": "Tier 1",
+        "type": "unloading",
+        "source": "API Compendium 2021 Section 6.3.4, Table 6-11",
+        "description": "API Table 6-11: Liquid Unloading Vented Emission Factor, plunger lift (1,774 kg CH4/well-year, 81.6 mol% CH4)",
+    },
+    "Liquids Unloading - Non-Plunger (Tier 1 Default)": {
+        "code": "UnloadNonPlunger_T1",
+        "co2": 0.0,
+        "ch4": 2.792,  # tonnes CH4/well-year (Table 6-11: 2,792 kg CH4/well-year)
+        "n2o": 0.0,
+        "factor": 2.792,
+        "whole_gas_ef": 178531.0,  # scf gas/well-year
+        "ch4_mol_pct": 81.6,  # mole % CH4 basis
+        "uncertainty": {"co2": 0.50, "ch4": 0.50, "n2o": 0.50},
+        "unit": "tonnes CH4/well-year",
+        "baseUnit": "wells",
+        "usage": ["unloading", "liquids_unloading", "vented"],
+        "segment": "Upstream",
+        "process_category": "liquids_unloading",
+        "tier": "Tier 1",
+        "type": "unloading",
+        "source": "API Compendium 2021 Section 6.3.4, Table 6-11",
+        "description": "API Table 6-11: Liquid Unloading Vented Emission Factor, non-plunger (2,792 kg CH4/well-year, 81.6 mol% CH4)",
+    },
+    # --- TABLE 6-10: TIER 2 EVENT-BASED EMISSION FACTORS (AVERAGE) ---
+    "Liquids Unloading - Plunger Lift (≤100 events/yr)": {
+        "code": "UnloadPlunger_LE100",
+        "co2": 0.0,
+        "ch4": 0.185,  # tonnes CH4/event (Table 6-10: 9,650 scf CH4/event)
+        "n2o": 0.0,
+        "factor": 0.185,
+        "ch4_scf": 9650.0,
+        "whole_gas_ef": 11308.0,  # scf gas/event
+        "ch4_mol_pct": 85.3,  # mole % CH4 basis
+        "uncertainty": {"co2": 0.285, "ch4": 0.285, "n2o": 0.50},
+        "unit": "tonnes CH4/event",
+        "baseUnit": "events",
+        "usage": ["unloading", "liquids_unloading", "vented"],
+        "segment": "Upstream",
+        "process_category": "liquids_unloading",
+        "tier": "Tier 2",
+        "type": "unloading",
+        "source": "API Compendium 2021 Section 6.3.4, Table 6-10",
+        "description": "API Table 6-10: Well Unloading with Plunger Lifts – Average (≤ 100 events/year)",
+    },
+    "Liquids Unloading - Plunger Lift (>100 events/yr)": {
+        "code": "UnloadPlunger_GT100",
+        "co2": 0.0,
+        "ch4": 0.024,  # tonnes CH4/event (Table 6-10: 1,260 scf CH4/event)
+        "n2o": 0.0,
+        "factor": 0.024,
+        "ch4_scf": 1260.0,
+        "whole_gas_ef": 1503.0,  # scf gas/event
+        "ch4_mol_pct": 83.9,  # mole % CH4 basis
+        "uncertainty": {"co2": 0.667, "ch4": 0.667, "n2o": 0.50},
+        "unit": "tonnes CH4/event",
+        "baseUnit": "events",
+        "usage": ["unloading", "liquids_unloading", "vented"],
+        "segment": "Upstream",
+        "process_category": "liquids_unloading",
+        "tier": "Tier 2",
+        "type": "unloading",
+        "source": "API Compendium 2021 Section 6.3.4, Table 6-10",
+        "description": "API Table 6-10: Well Unloading with Plunger Lifts – Average (> 100 events/year)",
+    },
+    "Liquids Unloading - Non-Plunger (≤10 events/yr)": {
+        "code": "UnloadNonPlunger_LE10",
+        "co2": 0.0,
+        "ch4": 0.412,  # tonnes CH4/event (Table 6-10: 21,500 scf CH4/event)
+        "n2o": 0.0,
+        "factor": 0.412,
+        "ch4_scf": 21500.0,
+        "whole_gas_ef": 24109.0,  # scf gas/event
+        "ch4_mol_pct": 89.2,  # mole % CH4 basis
+        "uncertainty": {"co2": 0.758, "ch4": 0.758, "n2o": 0.50},
+        "unit": "tonnes CH4/event",
+        "baseUnit": "events",
+        "usage": ["unloading", "liquids_unloading", "vented"],
+        "segment": "Upstream",
+        "process_category": "liquids_unloading",
+        "tier": "Tier 2",
+        "type": "unloading",
+        "source": "API Compendium 2021 Section 6.3.4, Table 6-10",
+        "description": "API Table 6-10: Well Unloading without Plunger Lifts – Average (≤ 10 events/year)",
+    },
+    "Liquids Unloading - Non-Plunger (10-50 events/yr)": {
+        "code": "UnloadNonPlunger_10_50",
+        "co2": 0.0,
+        "ch4": 0.462,  # tonnes CH4/event (Table 6-10: 24,100 scf CH4/event)
+        "n2o": 0.0,
+        "factor": 0.462,
+        "ch4_scf": 24100.0,
+        "whole_gas_ef": 25690.0,  # scf gas/event
+        "ch4_mol_pct": 93.8,  # mole % CH4 basis
+        "uncertainty": {"co2": 1.09, "ch4": 1.09, "n2o": 0.50},
+        "unit": "tonnes CH4/event",
+        "baseUnit": "events",
+        "usage": ["unloading", "liquids_unloading", "vented"],
+        "segment": "Upstream",
+        "process_category": "liquids_unloading",
+        "tier": "Tier 2",
+        "type": "unloading",
+        "source": "API Compendium 2021 Section 6.3.4, Table 6-10",
+        "description": "API Table 6-10: Well Unloading without Plunger Lifts – Average (10 < events/year ≤ 50)",
+    },
+    "Liquids Unloading - Non-Plunger (>50 events/yr)": {
+        "code": "UnloadNonPlunger_GT50",
+        "co2": 0.0,
+        "ch4": 0.670,  # tonnes CH4/event (Table 6-10: 35,000 scf CH4/event)
+        "n2o": 0.0,
+        "factor": 0.670,
+        "ch4_scf": 35000.0,
+        "whole_gas_ef": 36512.0,  # scf gas/event
+        "ch4_mol_pct": 95.9,  # mole % CH4 basis
+        "uncertainty": {"co2": 0.514, "ch4": 0.514, "n2o": 0.50},
+        "unit": "tonnes CH4/event",
+        "baseUnit": "events",
+        "usage": ["unloading", "liquids_unloading", "vented"],
+        "segment": "Upstream",
+        "process_category": "liquids_unloading",
+        "tier": "Tier 2",
+        "type": "unloading",
+        "source": "API Compendium 2021 Section 6.3.4, Table 6-10",
+        "description": "API Table 6-10: Well Unloading without Plunger Lifts – Average (> 50 events/year)",
+    },
+    # --- TABLE 6-10: TIER 2 REGIONAL FACTORS ---
+    "Liquids Unloading - Plunger Lift (Appalachia <100 events/yr)": {
+        "code": "UnloadPlunger_Appalachia_LT100",
+        "co2": 0.0,
+        "ch4": 0.098,
+        "factor": 0.098,
+        "n2o": 0.0,
+        "ch4_scf": 5100.0,
+        "whole_gas_ef": 5172.0,
+        "ch4_mol_pct": 98.6,
+        "uncertainty": {"co2": 0.470, "ch4": 0.470, "n2o": 0.50},
+        "unit": "tonnes CH4/event",
+        "baseUnit": "events",
+        "usage": ["unloading", "liquids_unloading", "vented"],
+        "segment": "Upstream",
+        "process_category": "liquids_unloading",
+        "tier": "Tier 2",
+        "type": "unloading",
+        "source": "API Compendium 2021 Section 6.3.4, Table 6-10",
+        "description": "API Table 6-10: Well Unloading with Plunger Lifts – Appalachia (<100 events/well-year)",
+    },
+    "Liquids Unloading - Plunger Lift (Appalachia >100 events/yr)": {
+        "code": "UnloadPlunger_Appalachia_GT100",
+        "co2": 0.0,
+        "ch4": 0.024,
+        "factor": 0.024,
+        "n2o": 0.0,
+        "ch4_scf": 1260.0,
+        "whole_gas_ef": 1278.0,
+        "ch4_mol_pct": 98.6,
+        "uncertainty": {"co2": 0.667, "ch4": 0.667, "n2o": 0.50},
+        "unit": "tonnes CH4/event",
+        "baseUnit": "events",
+        "usage": ["unloading", "liquids_unloading", "vented"],
+        "segment": "Upstream",
+        "process_category": "liquids_unloading",
+        "tier": "Tier 2",
+        "type": "unloading",
+        "source": "API Compendium 2021 Section 6.3.4, Table 6-10",
+        "description": "API Table 6-10: Well Unloading with Plunger Lifts – Appalachia (>100 events/well-year)",
+    },
+    "Liquids Unloading - Plunger Lift (Gulf Coast <100 events/yr)": {
+        "code": "UnloadPlunger_GulfCoast_LT100",
+        "co2": 0.0,
+        "ch4": 0.185,
+        "factor": 0.185,
+        "n2o": 0.0,
+        "ch4_scf": 9650.0,
+        "whole_gas_ef": 9807.0,
+        "ch4_mol_pct": 98.4,
+        "uncertainty": {"co2": 0.285, "ch4": 0.285, "n2o": 0.50},
+        "unit": "tonnes CH4/event",
+        "baseUnit": "events",
+        "usage": ["unloading", "liquids_unloading", "vented"],
+        "segment": "Upstream",
+        "process_category": "liquids_unloading",
+        "tier": "Tier 2",
+        "type": "unloading",
+        "source": "API Compendium 2021 Section 6.3.4, Table 6-10",
+        "description": "API Table 6-10: Well Unloading with Plunger Lifts – Gulf Coast (<100 events/well-year)",
+    },
+    "Liquids Unloading - Plunger Lift (Gulf Coast >100 events/yr)": {
+        "code": "UnloadPlunger_GulfCoast_GT100",
+        "co2": 0.0,
+        "ch4": 0.024,
+        "factor": 0.024,
+        "n2o": 0.0,
+        "ch4_scf": 1260.0,
+        "whole_gas_ef": 1280.0,
+        "ch4_mol_pct": 98.4,
+        "uncertainty": {"co2": 0.667, "ch4": 0.667, "n2o": 0.50},
+        "unit": "tonnes CH4/event",
+        "baseUnit": "events",
+        "usage": ["unloading", "liquids_unloading", "vented"],
+        "segment": "Upstream",
+        "process_category": "liquids_unloading",
+        "tier": "Tier 2",
+        "type": "unloading",
+        "source": "API Compendium 2021 Section 6.3.4, Table 6-10",
+        "description": "API Table 6-10: Well Unloading with Plunger Lifts – Gulf Coast (>100 events/well-year)",
+    },
+    "Liquids Unloading - Plunger Lift (Midcontinent <100 events/yr)": {
+        "code": "UnloadPlunger_Midcontinent_LT100",
+        "co2": 0.0,
+        "ch4": 0.123,
+        "factor": 0.123,
+        "n2o": 0.0,
+        "ch4_scf": 6400.0,
+        "whole_gas_ef": 6544.0,
+        "ch4_mol_pct": 97.8,
+        "uncertainty": {"co2": 0.563, "ch4": 0.563, "n2o": 0.50},
+        "unit": "tonnes CH4/event",
+        "baseUnit": "events",
+        "usage": ["unloading", "liquids_unloading", "vented"],
+        "segment": "Upstream",
+        "process_category": "liquids_unloading",
+        "tier": "Tier 2",
+        "type": "unloading",
+        "source": "API Compendium 2021 Section 6.3.4, Table 6-10",
+        "description": "API Table 6-10: Well Unloading with Plunger Lifts – Midcontinent (<100 events/well-year)",
+    },
+    "Liquids Unloading - Plunger Lift (Midcontinent >100 events/yr)": {
+        "code": "UnloadPlunger_Midcontinent_GT100",
+        "co2": 0.0,
+        "ch4": 0.006,
+        "factor": 0.006,
+        "n2o": 0.0,
+        "ch4_scf": 300.0,
+        "whole_gas_ef": 307.0,
+        "ch4_mol_pct": 97.8,
+        "uncertainty": {"co2": 0.550, "ch4": 0.550, "n2o": 0.50},
+        "unit": "tonnes CH4/event",
+        "baseUnit": "events",
+        "usage": ["unloading", "liquids_unloading", "vented"],
+        "segment": "Upstream",
+        "process_category": "liquids_unloading",
+        "tier": "Tier 2",
+        "type": "unloading",
+        "source": "API Compendium 2021 Section 6.3.4, Table 6-10",
+        "description": "API Table 6-10: Well Unloading with Plunger Lifts – Midcontinent (>100 events/well-year)",
+    },
+    "Liquids Unloading - Plunger Lift (Rocky Mountain <100 events/yr)": {
+        "code": "UnloadPlunger_RockyMountain_LT100",
+        "co2": 0.0,
+        "ch4": 0.241,
+        "factor": 0.241,
+        "n2o": 0.0,
+        "ch4_scf": 12600.0,
+        "whole_gas_ef": 14433.0,
+        "ch4_mol_pct": 87.3,
+        "uncertainty": {"co2": 0.381, "ch4": 0.381, "n2o": 0.50},
+        "unit": "tonnes CH4/event",
+        "baseUnit": "events",
+        "usage": ["unloading", "liquids_unloading", "vented"],
+        "segment": "Upstream",
+        "process_category": "liquids_unloading",
+        "tier": "Tier 2",
+        "type": "unloading",
+        "source": "API Compendium 2021 Section 6.3.4, Table 6-10",
+        "description": "API Table 6-10: Well Unloading with Plunger Lifts – Rocky Mountain (<100 events/well-year)",
+    },
+    "Liquids Unloading - Plunger Lift (Rocky Mountain >100 events/yr)": {
+        "code": "UnloadPlunger_RockyMountain_GT100",
+        "co2": 0.0,
+        "ch4": 0.027,
+        "factor": 0.027,
+        "n2o": 0.0,
+        "ch4_scf": 1400.0,
+        "whole_gas_ef": 1604.0,
+        "ch4_mol_pct": 87.3,
+        "uncertainty": {"co2": 0.857, "ch4": 0.857, "n2o": 0.50},
+        "unit": "tonnes CH4/event",
+        "baseUnit": "events",
+        "usage": ["unloading", "liquids_unloading", "vented"],
+        "segment": "Upstream",
+        "process_category": "liquids_unloading",
+        "tier": "Tier 2",
+        "type": "unloading",
+        "source": "API Compendium 2021 Section 6.3.4, Table 6-10",
+        "description": "API Table 6-10: Well Unloading with Plunger Lifts – Rocky Mountain (>100 events/well-year)",
+    },
+    "Liquids Unloading - Non-Plunger (Appalachia)": {
+        "code": "UnloadNonPlunger_Appalachia",
+        "co2": 0.0,
+        "ch4": 0.087,
+        "factor": 0.087,
+        "n2o": 0.0,
+        "ch4_scf": 4550.0,
+        "whole_gas_ef": 4615.0,
+        "ch4_mol_pct": 98.6,
+        "uncertainty": {"co2": 0.912, "ch4": 0.912, "n2o": 0.50},
+        "unit": "tonnes CH4/event",
+        "baseUnit": "events",
+        "usage": ["unloading", "liquids_unloading", "vented"],
+        "segment": "Upstream",
+        "process_category": "liquids_unloading",
+        "tier": "Tier 2",
+        "type": "unloading",
+        "source": "API Compendium 2021 Section 6.3.4, Table 6-10",
+        "description": "API Table 6-10: Well Unloading without Plunger Lifts – Appalachia",
+    },
+    "Liquids Unloading - Non-Plunger (Gulf Coast)": {
+        "code": "UnloadNonPlunger_GulfCoast",
+        "co2": 0.0,
+        "ch4": 0.255,
+        "factor": 0.255,
+        "n2o": 0.0,
+        "ch4_scf": 13300.0,
+        "whole_gas_ef": 13516.0,
+        "ch4_mol_pct": 98.4,
+        "uncertainty": {"co2": 0.271, "ch4": 0.271, "n2o": 0.50},
+        "unit": "tonnes CH4/event",
+        "baseUnit": "events",
+        "usage": ["unloading", "liquids_unloading", "vented"],
+        "segment": "Upstream",
+        "process_category": "liquids_unloading",
+        "tier": "Tier 2",
+        "type": "unloading",
+        "source": "API Compendium 2021 Section 6.3.4, Table 6-10",
+        "description": "API Table 6-10: Well Unloading without Plunger Lifts – Gulf Coast",
+    },
+    "Liquids Unloading - Non-Plunger (Midcontinent)": {
+        "code": "UnloadNonPlunger_Midcontinent",
+        "co2": 0.0,
+        "ch4": 0.916,
+        "factor": 0.916,
+        "n2o": 0.0,
+        "ch4_scf": 47800.0,
+        "whole_gas_ef": 48875.0,
+        "ch4_mol_pct": 97.8,
+        "uncertainty": {"co2": 0.504, "ch4": 0.504, "n2o": 0.50},
+        "unit": "tonnes CH4/event",
+        "baseUnit": "events",
+        "usage": ["unloading", "liquids_unloading", "vented"],
+        "segment": "Upstream",
+        "process_category": "liquids_unloading",
+        "tier": "Tier 2",
+        "type": "unloading",
+        "source": "API Compendium 2021 Section 6.3.4, Table 6-10",
+        "description": "API Table 6-10: Well Unloading without Plunger Lifts – Midcontinent",
+    },
+    "Liquids Unloading - Non-Plunger (Rocky Mountain)": {
+        "code": "UnloadNonPlunger_RockyMountain",
+        "co2": 0.0,
+        "ch4": 0.291,
+        "factor": 0.291,
+        "n2o": 0.0,
+        "ch4_scf": 15200.0,
+        "whole_gas_ef": 17411.0,
+        "ch4_mol_pct": 87.3,
+        "uncertainty": {"co2": 0.382, "ch4": 0.382, "n2o": 0.50},
+        "unit": "tonnes CH4/event",
+        "baseUnit": "events",
+        "usage": ["unloading", "liquids_unloading", "vented"],
+        "segment": "Upstream",
+        "process_category": "liquids_unloading",
+        "tier": "Tier 2",
+        "type": "unloading",
+        "source": "API Compendium 2021 Section 6.3.4, Table 6-10",
+        "description": "API Table 6-10: Well Unloading without Plunger Lifts – Rocky Mountain",
+    },
+    # Backwards-compatible aliases
+    "Liquids Unloading - Plunger Lift": {
+        "code": "UnloadPlunger",
+        "co2": 0.0,
+        "ch4": 1.774,
+        "factor": 1.774,
+        "n2o": 0.0,
+        "whole_gas_ef": 113466.0,
+        "ch4_mol_pct": 81.6,
+        "uncertainty": {"co2": 0.50, "ch4": 0.50, "n2o": 0.50},
+        "unit": "tonnes CH4/well-year",
+        "baseUnit": "wells",
+        "usage": ["unloading", "liquids_unloading", "vented"],
+        "segment": "Upstream",
+        "process_category": "liquids_unloading",
+        "tier": "Tier 1",
+        "type": "unloading",
+        "source": "API Compendium 2021 Section 6.3.4, Table 6-11",
+        "description": "Liquids Unloading - Plunger Lift (API Table 6-11)",
+    },
+    "Liquids Unloading - Non-Plunger": {
+        "code": "UnloadNonPlunger",
+        "co2": 0.0,
+        "ch4": 2.792,
+        "factor": 2.792,
+        "n2o": 0.0,
+        "whole_gas_ef": 178531.0,
+        "ch4_mol_pct": 81.6,
+        "uncertainty": {"co2": 0.50, "ch4": 0.50, "n2o": 0.50},
+        "unit": "tonnes CH4/well-year",
+        "baseUnit": "wells",
+        "usage": ["unloading", "liquids_unloading", "vented"],
+        "segment": "Upstream",
+        "process_category": "liquids_unloading",
+        "tier": "Tier 1",
+        "type": "unloading",
+        "source": "API Compendium 2021 Section 6.3.4, Table 6-11",
+        "description": "Liquids Unloading - Non-Plunger (API Table 6-11)",
+    },
     "Natural Gas (Venting/Blowdown)": {
         "code": "NG_Vent",
-        "co2": 0.054,  # kg CO₂/m³
-        "ch4": 0.67,  # kg CH₄/m³
+        "co2": 0.010498,  # kg/Sm3: Table 6-50 0.565 mol % CO2
+        "ch4": 0.63029,  # kg/Sm3: Table 6-50 93.07 mol % CH4
         "n2o": 0,
         "uncertainty": {"co2": 0.05, "ch4": 0.30, "n2o": 0.50},
         "unit": "kg/m³",
@@ -429,13 +969,15 @@ VENTED_FACTORS = {
         "segment": "Upstream",
         "process_category": "venting",
         "type": "gases",
-        "source": "API Compendium 2021 Section 6",
+        "source": "API Compendium 2021 Table 6-50 (pipeline-quality natural gas), 23.685 Sm3/kgmole",
     },
     "Asphalt": {
         "code": "Asphalt",
         "type": "equipment",
-        "ch4": 0.05 * 0.453592,  # 0.02268 kg/ton
-        "co2": 23.0 * 0.453592,  # 10.4326 kg/ton
+        # API Compendium 2021 Table 6-52 (per short ton blown): CH4 3.07E-03 t, CO2 5.61E-03 t
+        # (Exhibit 6-45). Corrected from 0.02268 / 10.43 kg/ton, which the table does not support.
+        "ch4": 3.07,  # kg CH4/ton
+        "co2": 5.61,  # kg CO2/ton
         "n2o": 0,
         "uncertainty": {"co2": 0.30, "ch4": 0.30, "n2o": 0},
         "unit": "kg/ton",
@@ -450,38 +992,62 @@ CHEMICAL_PRODUCTION_FACTORS = {
     "Acrylonitrile": {
         "code": "ACN_Prod",
         "co2": 1.00,  # tonne CO₂/tonne product
-        "ch4": 0,
+        "ch4": 0.00018,  # Table 6-53: 0.18 kg CH4/t
         "n2o": 0,
         "uncertainty": {"co2": 0.15, "ch4": 0, "n2o": 0},
         "unit": "tonne CO₂/tonne product",
         "usage": ["chemical_production"],
         "segment": "Downstream",
         "process_category": "chemical_production",
-        "source": "API Compendium 2021 Section 6, Table 6-167",
+        "source": "API Compendium 2021 Table 6-53",
     },
     "Carbon Black": {
         "code": "CB_Prod",
         "co2": 2.63,
-        "ch4": 0,
+        "ch4": 0.0287,  # Table 6-53 without abatement: 28.7 kg CH4/t
         "n2o": 0,
         "uncertainty": {"co2": 0.15, "ch4": 0, "n2o": 0},
         "unit": "tonne CO₂/tonne product",
         "usage": ["chemical_production"],
         "segment": "Downstream",
         "process_category": "chemical_production",
-        "source": "API Compendium 2021 Section 6, Table 6-167",
+        "source": "API Compendium 2021 Table 6-53",
     },
-    "Ethylene": {
+    "Carbon Black (Thermal Abatement)": {
+        "code": "CB_Prod",
+        "co2": 2.63,
+        "ch4": 6e-05,  # Table 6-53 with thermal abatement: 0.06 kg CH4/t
+        "n2o": 0,
+        "uncertainty": {"co2": 0.15, "ch4": 0, "n2o": 0},
+        "unit": "tonne CO₂/tonne product",
+        "usage": ["chemical_production"],
+        "segment": "Downstream",
+        "process_category": "chemical_production",
+        "source": "API Compendium 2021 Table 6-53",
+    },
+    "Ethylene (Other Feedstocks)": {
         "code": "ETH_Prod",
         "co2": 0.77,
-        "ch4": 0,
+        "ch4": 0.003,  # Table 6-53 other feedstocks: 3 kg CH4/t
         "n2o": 0,
         "uncertainty": {"co2": 0.10, "ch4": 0, "n2o": 0},
         "unit": "tonne CO₂/tonne product",
         "usage": ["chemical_production"],
         "segment": "Downstream",
         "process_category": "chemical_production",
-        "source": "API Compendium 2021 Section 6, Table 6-167",
+        "source": "API Compendium 2021 Table 6-53",
+    },
+    "Ethylene (Ethane Feedstock)": {
+        "code": "ETH_Prod",
+        "co2": 0.77,
+        "ch4": 0.006,  # Table 6-53 ethane feedstock: 6 kg CH4/t
+        "n2o": 0,
+        "uncertainty": {"co2": 0.10, "ch4": 0, "n2o": 0},
+        "unit": "tonne CO₂/tonne product",
+        "usage": ["chemical_production"],
+        "segment": "Downstream",
+        "process_category": "chemical_production",
+        "source": "API Compendium 2021 Table 6-53",
     },
     "Ethylene Dichloride": {
         "code": "EDC_Prod",
@@ -493,19 +1059,31 @@ CHEMICAL_PRODUCTION_FACTORS = {
         "usage": ["chemical_production"],
         "segment": "Downstream",
         "process_category": "chemical_production",
-        "source": "API Compendium 2021 Section 6, Table 6-167",
+        "source": "API Compendium 2021 Table 6-53",
     },
     "Ethylene Oxide": {
         "code": "ETO_Prod",
         "co2": 0.46,
-        "ch4": 0,
+        "ch4": 0.00179,  # Table 6-53 without abatement: 1.79 kg CH4/t
         "n2o": 0,
         "uncertainty": {"co2": 0.10, "ch4": 0, "n2o": 0},
         "unit": "tonne CO₂/tonne product",
         "usage": ["chemical_production"],
         "segment": "Downstream",
         "process_category": "chemical_production",
-        "source": "API Compendium 2021 Section 6, Table 6-167",
+        "source": "API Compendium 2021 Table 6-53",
+    },
+    "Ethylene Oxide (Thermal Abatement)": {
+        "code": "ETO_Prod",
+        "co2": 0.46,
+        "ch4": 0.00079,  # Table 6-53 with thermal abatement: 0.79 kg CH4/t
+        "n2o": 0,
+        "uncertainty": {"co2": 0.10, "ch4": 0, "n2o": 0},
+        "unit": "tonne CO₂/tonne product",
+        "usage": ["chemical_production"],
+        "segment": "Downstream",
+        "process_category": "chemical_production",
+        "source": "API Compendium 2021 Table 6-53",
     },
     "Methanol": {
         "code": "MEOH_Prod",
@@ -517,7 +1095,7 @@ CHEMICAL_PRODUCTION_FACTORS = {
         "usage": ["chemical_production"],
         "segment": "Downstream",
         "process_category": "chemical_production",
-        "source": "API Compendium 2021 Section 6, Table 6-167",
+        "source": "API Compendium 2021 Table 6-53",
     },
 }
 
@@ -533,7 +1111,7 @@ N2O_PRODUCTION_FACTORS = {
         "usage": ["nitric_acid_production"],
         "segment": "Downstream",
         "process_category": "nitric_acid_production",
-        "source": "API Compendium 2021 Section 6, pg 407",
+        "source": "API Compendium 2021 Table 6-53",
     },
     "Nitric Acid - Without NSCR": {
         "code": "HNO3_NoNSCR",
@@ -545,7 +1123,7 @@ N2O_PRODUCTION_FACTORS = {
         "usage": ["nitric_acid_production"],
         "segment": "Downstream",
         "process_category": "nitric_acid_production",
-        "source": "API Compendium 2021 Section 6, pg 407",
+        "source": "API Compendium 2021 Table 6-53",
     },
     "Adipic Acid - Thermal Abatement": {
         "code": "AA_Thermal",
@@ -557,7 +1135,7 @@ N2O_PRODUCTION_FACTORS = {
         "usage": ["adipic_acid_production"],
         "segment": "Downstream",
         "process_category": "adipic_acid_production",
-        "source": "API Compendium 2021 Section 6, pg 407",
+        "source": "API Compendium 2021 Table 6-53",
     },
     "Adipic Acid - Catalytic Abatement": {
         "code": "AA_Catalytic",
@@ -569,7 +1147,7 @@ N2O_PRODUCTION_FACTORS = {
         "usage": ["adipic_acid_production"],
         "segment": "Downstream",
         "process_category": "adipic_acid_production",
-        "source": "API Compendium 2021 Section 6, pg 407",
+        "source": "API Compendium 2021 Table 6-53",
     },
     "Adipic Acid - Uncontrolled": {
         "code": "AA_Uncontrolled",
@@ -581,7 +1159,130 @@ N2O_PRODUCTION_FACTORS = {
         "usage": ["adipic_acid_production"],
         "segment": "Downstream",
         "process_category": "adipic_acid_production",
-        "source": "API Compendium 2021 Section 6, pg 407",
+        "source": "API Compendium 2021 Table 6-53",
+    },
+    # =========================================================================
+    # SECTION 6.3.1 ASSOCIATED GAS VENTING (TABLE 6-8)
+    # =========================================================================
+    "Associated Gas Venting - US Average": {
+        "code": "AGV_US_AVG",
+        "co2": 0.0,
+        "ch4": 1.4,  # kg CH4/bbl
+        "n2o": 0.0,
+        "factor": 1.4,
+        "whole_gas_ef": 89.0,  # scf gas/bbl
+        "ch4_mol_basis": 0.816,
+        "uncertainty": {"co2": 0.20, "ch4": 0.40, "n2o": 0.0},
+        "unit": "kg CH4/bbl",
+        "baseUnit": "bbl",
+        "usage": ["associated_gas_venting", "venting"],
+        "segment": "Upstream",
+        "process_category": "associated_gas_venting",
+        "tier": "Tier 1",
+        "type": "venting",
+        "description": "Associated gas venting average (Table 6-8)",
+        "source": "API Compendium 2021 Section 6.3.1, Table 6-8",
+        "version": "API 2021",
+    },
+    "Associated Gas Venting - Gulf Coast Basin (Basin 220)": {
+        "code": "AGV_GULF_COAST",
+        "co2": 0.0,
+        "ch4": 0.7,
+        "n2o": 0.0,
+        "factor": 0.7,
+        "whole_gas_ef": 47.0,
+        "ch4_mol_basis": 0.816,
+        "uncertainty": {"co2": 0.20, "ch4": 0.40, "n2o": 0.0},
+        "unit": "kg CH4/bbl",
+        "baseUnit": "bbl",
+        "usage": ["associated_gas_venting", "venting"],
+        "segment": "Upstream",
+        "process_category": "associated_gas_venting",
+        "tier": "Tier 1",
+        "type": "venting",
+        "description": "Associated gas venting, Gulf Coast Basin 220 (Table 6-8)",
+        "source": "API Compendium 2021 Section 6.3.1, Table 6-8",
+        "version": "API 2021",
+    },
+    "Associated Gas Venting - Anadarko Basin (Basin 360)": {
+        "code": "AGV_ANADARKO",
+        "co2": 0.0,
+        "ch4": 9.7,
+        "n2o": 0.0,
+        "factor": 9.7,
+        "whole_gas_ef": 622.0,
+        "ch4_mol_basis": 0.816,
+        "uncertainty": {"co2": 0.20, "ch4": 0.40, "n2o": 0.0},
+        "unit": "kg CH4/bbl",
+        "baseUnit": "bbl",
+        "usage": ["associated_gas_venting", "venting"],
+        "segment": "Upstream",
+        "process_category": "associated_gas_venting",
+        "tier": "Tier 1",
+        "type": "venting",
+        "description": "Associated gas venting, Anadarko Basin 360 (Table 6-8)",
+        "source": "API Compendium 2021 Section 6.3.1, Table 6-8",
+        "version": "API 2021",
+    },
+    "Associated Gas Venting - Williston Basin (Basin 395)": {
+        "code": "AGV_WILLISTON",
+        "co2": 0.0,
+        "ch4": 8.9,
+        "n2o": 0.0,
+        "factor": 8.9,
+        "whole_gas_ef": 570.0,
+        "ch4_mol_basis": 0.816,
+        "uncertainty": {"co2": 0.20, "ch4": 0.40, "n2o": 0.0},
+        "unit": "kg CH4/bbl",
+        "baseUnit": "bbl",
+        "usage": ["associated_gas_venting", "venting"],
+        "segment": "Upstream",
+        "process_category": "associated_gas_venting",
+        "tier": "Tier 1",
+        "type": "venting",
+        "description": "Associated gas venting, Williston Basin 395 (Table 6-8)",
+        "source": "API Compendium 2021 Section 6.3.1, Table 6-8",
+        "version": "API 2021",
+    },
+    "Associated Gas Venting - Permian Basin (Basin 430)": {
+        "code": "AGV_PERMIAN",
+        "co2": 0.0,
+        "ch4": 6.5,
+        "n2o": 0.0,
+        "factor": 6.5,
+        "whole_gas_ef": 419.0,
+        "ch4_mol_basis": 0.816,
+        "uncertainty": {"co2": 0.20, "ch4": 0.40, "n2o": 0.0},
+        "unit": "kg CH4/bbl",
+        "baseUnit": "bbl",
+        "usage": ["associated_gas_venting", "venting"],
+        "segment": "Upstream",
+        "process_category": "associated_gas_venting",
+        "tier": "Tier 1",
+        "type": "venting",
+        "description": "Associated gas venting, Permian Basin 430 (Table 6-8)",
+        "source": "API Compendium 2021 Section 6.3.1, Table 6-8",
+        "version": "API 2021",
+    },
+    "Associated Gas Venting - Other US Basins": {
+        "code": "AGV_OTHER",
+        "co2": 0.0,
+        "ch4": 0.4,
+        "n2o": 0.0,
+        "factor": 0.4,
+        "whole_gas_ef": 26.0,
+        "ch4_mol_basis": 0.816,
+        "uncertainty": {"co2": 0.20, "ch4": 0.40, "n2o": 0.0},
+        "unit": "kg CH4/bbl",
+        "baseUnit": "bbl",
+        "usage": ["associated_gas_venting", "venting"],
+        "segment": "Upstream",
+        "process_category": "associated_gas_venting",
+        "tier": "Tier 1",
+        "type": "venting",
+        "description": "Associated gas venting, other US basins (Table 6-8)",
+        "source": "API Compendium 2021 Section 6.3.1, Table 6-8",
+        "version": "API 2021",
     },
 }
 
@@ -603,7 +1304,7 @@ EQUIPMENT_FACTORS = {
     "Pneumatic Controller - High Bleed (>6 scfh)": {
         "code": "HighBleed",
         "type": "pneumatic",
-        "ch4": 8.304,  # tonnes CH₄/controller/yr
+        "ch4": 5.11,  # tonnes CH4/controller-yr
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 0.30, "n2o": 0},
@@ -611,13 +1312,13 @@ EQUIPMENT_FACTORS = {
         "segment": "Upstream",
         "process_category": "pneumatic_devices",
         "type": "equipment",
-        "description": "Continuous bleed pneumatic controller in gas processing",
-        "source": "API Compendium 2021 Section 6, Table 6-34",
+        "description": "Table 6-14 EPA GHGRP production high-bleed (37.3 scf/h)",
+        "source": "API Compendium 2021 Table 6-14 EPA GHGRP production high-bleed (37.3 scf/h)",
     },
     "Pneumatic Controller - Low Bleed (<6 scfh)": {
         "code": "LowBleed",
         "type": "pneumatic",
-        "ch4": 0.0939,  # tonnes CH₄/controller/yr
+        "ch4": 0.191,  # tonnes CH4/controller-yr
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 0.30, "n2o": 0},
@@ -625,13 +1326,13 @@ EQUIPMENT_FACTORS = {
         "segment": "Upstream",
         "process_category": "pneumatic_devices",
         "type": "equipment",
-        "description": "Pneumatic/hydraulic valve operator in gas processing",
-        "source": "API Compendium 2021 Section 6, Table 6-34",
+        "description": "Table 6-14 EPA GHGRP production low-bleed (1.39 scf/h)",
+        "source": "API Compendium 2021 Table 6-14 EPA GHGRP production low-bleed (1.39 scf/h)",
     },
     "Pneumatic Controller - Intermittent": {
         "code": "Intermittent",
         "type": "pneumatic",
-        "ch4": 0.4,  # tonnes CH₄/controller/yr
+        "ch4": 1.85,  # tonnes CH4/controller-yr
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 0.30, "n2o": 0},
@@ -639,8 +1340,8 @@ EQUIPMENT_FACTORS = {
         "segment": "Midstream",
         "process_category": "pneumatic_devices",
         "type": "equipment",
-        "description": "Intermittent vent controller in transmission/storage",
-        "source": "API Compendium 2021 Section 6, Table 6-42",
+        "description": "Table 6-15 EPA GHGRP production intermittent (13.5 scf/h)",
+        "source": "API Compendium 2021 Table 6-15 EPA GHGRP production intermittent (13.5 scf/h)",
     },
     "Pneumatic Controller - Continuous Vent (T&S)": {
         "code": "ContinuousVentTS",
@@ -654,14 +1355,14 @@ EQUIPMENT_FACTORS = {
         "process_category": "pneumatic_devices",
         "type": "equipment",
         "description": "Continuous vent controller in transmission/storage",
-        "source": "API Compendium 2021 Section 6, Table 6-42",
+        "source": "API Compendium 2021 Table 6-42 (transmission & storage)",
     },
     # ========== STORAGE TANKS (TANK FLASHING) ==========
     "Tank - Flash Emissions (Oil)": {
         "code": "TankFlashOil",
         "type": "tank",
         "ch4": 0.193,  # kg CH₄/bbl (API Table 6-4 / Table 5-16)
-        "co2": 0.012,  # kg CO₂/bbl
+        "co2": 0,  # Table 6-22 is CH4 only; CO2 needs the separator gas CO2 content
         "n2o": 0,
         "uncertainty": {"co2": 0.15, "ch4": 0.40, "n2o": 0},
         "unit": "kg/bbl",
@@ -669,12 +1370,12 @@ EQUIPMENT_FACTORS = {
         "process_category": "storage_tanks",
         "type": "equipment",
         "description": "API Table 5-16 / 6-4 — Default crude oil flash emission factor",
-        "source": "API Compendium 2021 Section 6, Table 6-4",
+        "source": "API Compendium 2021 Table 6-22 (large tanks without control)",
     },
     "Tank - Crude Oil (Small, ≤10 bbl/d)": {
         "code": "TankCrudeSmall",
         "type": "tank",
-        "ch4": 0.18,  # kg CH₄/bbl
+        "ch4": 0.0184,  # Table 6-22 small tanks without control
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 0.30, "n2o": 0},
@@ -683,7 +1384,7 @@ EQUIPMENT_FACTORS = {
         "process_category": "storage_tanks",
         "type": "equipment",
         "description": "Crude oil flashing, small tank (≤ 10 bbl/d)",
-        "source": "API Compendium 2021 Section 6, Table 6-4",
+        "source": "API Compendium 2021 Table 6-22",
     },
     "Tank - Crude Oil (Large, >10 bbl/d)": {
         "code": "TankCrudeLarge",
@@ -697,12 +1398,12 @@ EQUIPMENT_FACTORS = {
         "process_category": "storage_tanks",
         "type": "equipment",
         "description": "Crude oil flashing, large tank (> 10 bbl/d)",
-        "source": "API Compendium 2021 Section 6, Table 6-4",
+        "source": "API Compendium 2021 Table 6-22",
     },
     "Tank - Production Condensate (Small, ≤10 bbl/d)": {
         "code": "TankProdSmall",
         "type": "tank",
-        "ch4": 1.56,  # kg CH₄/bbl
+        "ch4": 0.119,  # Table 6-24 small tanks without flare
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 0.30, "n2o": 0},
@@ -711,12 +1412,12 @@ EQUIPMENT_FACTORS = {
         "process_category": "storage_tanks",
         "type": "equipment",
         "description": "Production condensate flashing, small tank (≤ 10 bbl/d)",
-        "source": "API Compendium 2021 Section 6, Table 6-4",
+        "source": "API Compendium 2021 Table 6-24",
     },
     "Tank - Production Condensate (Large, >10 bbl/d)": {
         "code": "TankProdLarge",
         "type": "tank",
-        "ch4": 1.16,  # kg CH₄/bbl
+        "ch4": 0.146,  # Table 6-24 large tanks without control
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 0.30, "n2o": 0},
@@ -725,79 +1426,73 @@ EQUIPMENT_FACTORS = {
         "process_category": "storage_tanks",
         "type": "equipment",
         "description": "Production condensate flashing, large tank (> 10 bbl/d)",
-        "source": "API Compendium 2021 Section 6, Table 6-4",
-    },
-    "Tank - Gas-Well Condensate (Small, ≤10 bbl/d)": {
-        "code": "TankGasSmall",
-        "type": "tank",
-        "ch4": 2.65,  # kg CH₄/bbl
-        "co2": 0,
-        "n2o": 0,
-        "uncertainty": {"co2": 0, "ch4": 0.30, "n2o": 0},
-        "unit": "kg CH₄/bbl",
-        "segment": "Upstream",
-        "process_category": "storage_tanks",
-        "type": "equipment",
-        "description": "Gas-well condensate flashing, small tank (≤ 10 bbl/d)",
-        "source": "API Compendium 2021 Section 6, Table 6-4",
-    },
-    "Tank - Gas-Well Condensate (Large, >10 bbl/d)": {
-        "code": "TankGasLarge",
-        "type": "tank",
-        "ch4": 2.05,  # kg CH₄/bbl
-        "co2": 0,
-        "n2o": 0,
-        "uncertainty": {"co2": 0, "ch4": 0.30, "n2o": 0},
-        "unit": "kg CH₄/bbl",
-        "segment": "Upstream",
-        "process_category": "storage_tanks",
-        "type": "equipment",
-        "description": "Gas-well condensate flashing, large tank (> 10 bbl/d)",
-        "source": "API Compendium 2021 Section 6, Table 6-4",
+        "source": "API Compendium 2021 Table 6-24",
     },
     # ========== DRILLING ==========
+    # Table 6-2 onshore mud degassing (tonnes CH4 / drilling day, 83.85 mol % CH4 basis). The drilling
+    # calculator applies Table 6-2 by mud type and location; these rows name the mud type.
     "Drilling - Mud Degassing (Water Based)": {
         "code": "MudWater",
         "type": "drilling",
-        "ch4": 0.15,  # kg CH₄/m³ mud (matches Section 6.2.1)
+        "mud_type": "water_based",
+        "ch4": 0.0458,
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0.10, "ch4": 0.50, "n2o": 0.10},
-        "unit": "kg CH₄/m³",
+        "unit": "tonnes CH4/drilling day",
+        "baseUnit": "days",
+        "usage": ["drilling"],
         "segment": "Upstream",
         "process_category": "drilling",
-        "type": "equipment",
-        "description": "Drilling mud degassing - water based",
-        "source": "API Compendium 2021 Section 6.2",
+        "description": "Drilling mud degassing, water based mud (onshore)",
+        "source": "API Compendium 2021 Section 6.2.1, Table 6-2",
     },
     "Drilling - Mud Degassing (Oil Based)": {
         "code": "MudOil",
         "type": "drilling",
-        "ch4": 37.5,  # kg CH₄/bbl mud
+        "mud_type": "oil_based",
+        "ch4": 0.0103,
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0.10, "ch4": 0.50, "n2o": 0.10},
-        "unit": "kg CH₄/bbl mud",
+        "unit": "tonnes CH4/drilling day",
+        "baseUnit": "days",
+        "usage": ["drilling"],
         "segment": "Upstream",
         "process_category": "drilling",
-        "type": "equipment",
-        "description": "Drilling mud degassing - oil based (diesel)",
-        "source": "API Compendium 2021 Section 6.2",
+        "description": "Drilling mud degassing, oil based mud (onshore)",
+        "source": "API Compendium 2021 Section 6.2.1, Table 6-2",
+    },
+    "Drilling - Mud Degassing (Synthetic)": {
+        "code": "MudSynthetic",
+        "type": "drilling",
+        "mud_type": "synthetic",
+        "ch4": 0.0103,
+        "co2": 0,
+        "n2o": 0,
+        "uncertainty": {"co2": 0.10, "ch4": 0.50, "n2o": 0.10},
+        "unit": "tonnes CH4/drilling day",
+        "baseUnit": "days",
+        "usage": ["drilling"],
+        "segment": "Upstream",
+        "process_category": "drilling",
+        "description": "Drilling mud degassing, synthetic mud (onshore)",
+        "source": "API Compendium 2021 Section 6.2.1, Table 6-2",
     },
     # ========== DEHYDRATORS ==========
     "Dehydrator - Glycol (Uncontrolled)": {
         "code": "DehyUncont",
         "type": "dehydrator",
-        "ch4": 0.177,  # scf CH₄/MMscf throughput
+        "ch4": 0.0052859,  # Table 6-17: tonnes CH4 / 10^6 scf processed
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0.30, "ch4": 0.30, "n2o": 0.30},
-        "unit": "scf/MMscf",
+        "unit": "tonnes CH4/MMscf",
         "segment": "Midstream",
         "process_category": "dehydrator",
         "type": "equipment",
         "description": "Glycol dehydrator venting (uncontrolled)",
-        "source": "API Compendium 2021 Section 6.11",
+        "source": "API Compendium 2021 Table 6-17 (78.8 mol % CH4 basis)",
     },
     # ========== UPSTREAM: OIL WELLHEADS (Table 7-9) ==========
     "Wellhead - Oil (Heavy Crude)": {
@@ -1202,7 +1897,7 @@ EQUIPMENT_FACTORS = {
     "Offshore - Oil Production (Facility)": {
         "code": "OffshoreOil",
         "type": "facility",
-        "ch4": 3.86e-06,  # tonne CH₄/bbl produced
+        "ch4": 9.386e-05,  # Table 7-3: 0.2069 lb CH4/bbl
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 0.30, "n2o": 0},
@@ -1229,79 +1924,40 @@ EQUIPMENT_FACTORS = {
     },
 }
 
+EQUIPMENT_FACTORS.update(API_CHAPTER7_ONSHORE_FACTORS)
+
 # Merge all emission factors
 ALL_EMISSION_FACTORS = {
     **API_FACTORS,
     **EQUIPMENT_FACTORS,
+    **API_CHAPTER7_ONSHORE_FACTORS,
     **CHEMICAL_PRODUCTION_FACTORS,
     **N2O_PRODUCTION_FACTORS,
 }
 
-# Correlation equations for screening-based fugitive estimation (Section 7.3.1.6)
+# Petroleum industry leak rate / screening value correlations (Tables 7-40, 7-41, 7-42).
+# Rates in kg TOC/hr/component; SV in ppmv. default_zero applies below the detection limit,
+# pegged_10k / pegged_100k to components that peg a 10,000 or 100,000 ppmv instrument.
+def _corr(a, b, zero, p10k, p100k, description):
+    return {"A": a, "B": b, "default_zero": zero, "pegged_10k": p10k, "pegged_100k": p100k,
+            "max_ppm": 100000, "description": description, "unit": "kg/hr/component"}
+
+
 CORRELATION_EQUATIONS = {
-    "gas_valve": {
-        "A": 2.29e-6,
-        "B": 0.746,
-        "max_ppm": 100000,
-        "pegged_10k": 0.064,  # kg/hr
-        "pegged_100k": 0.11,
-        "description": "Valves in gas service",
-        "unit": "kg/hr/component",
-    },
-    "light_liquid_valve": {
-        "A": 6.41e-6,
-        "B": 0.797,
-        "max_ppm": 100000,
-        "pegged_10k": 0.074,
-        "pegged_100k": 0.15,
-        "description": "Valves in light liquid service",
-        "unit": "kg/hr/component",
-    },
-    "light_liquid_pump": {
-        "A": 5.03e-5,
-        "B": 0.610,
-        "max_ppm": 100000,
-        "pegged_10k": 0.16,
-        "pegged_100k": 0.68,
-        "description": "Pump seals in light liquid service",
-        "unit": "kg/hr/component",
-    },
-    "connector": {
-        "A": 1.53e-6,
-        "B": 0.735,
-        "max_ppm": 100000,
-        "pegged_10k": 0.028,
-        "pegged_100k": 0.030,
-        "description": "Connectors in gas service",
-        "unit": "kg/hr/component",
-    },
-    "flange": {
-        "A": 4.61e-6,
-        "B": 0.703,
-        "max_ppm": 100000,
-        "pegged_10k": 0.085,
-        "pegged_100k": 0.089,
-        "description": "Flanges in gas service",
-        "unit": "kg/hr/component",
-    },
-    "open_ended_line": {
-        "A": 2.20e-6,
-        "B": 0.704,
-        "max_ppm": 100000,
-        "pegged_10k": 0.012,
-        "pegged_100k": 0.014,
-        "description": "Open-ended lines in gas service",
-        "unit": "kg/hr/component",
-    },
-    "other": {
-        "A": 1.36e-5,
-        "B": 0.589,
-        "max_ppm": 100000,
-        "pegged_10k": 0.073,
-        "pegged_100k": 0.11,
-        "description": "Other components in gas service",
-        "unit": "kg/hr/component",
-    },
+    "valve": _corr(2.29e-6, 0.746, 7.8e-6, 0.064, 0.140, "Valves"),
+    "pump_seal": _corr(5.03e-5, 0.610, 2.4e-5, 0.074, 0.160, "Pump seals"),
+    "connector": _corr(1.53e-6, 0.735, 7.5e-6, 0.028, 0.030, "Connectors"),
+    "flange": _corr(4.61e-6, 0.703, 3.1e-7, 0.085, 0.084, "Flanges"),
+    "open_ended_line": _corr(2.20e-6, 0.704, 2.0e-6, 0.030, 0.079, "Open-ended lines"),
+    "other": _corr(1.36e-5, 0.589, 4.0e-6, 0.073, 0.110, "Other components"),
+}
+# Earlier keys, kept so stored inputs still resolve (Table 7-40 is not split by service)
+CORRELATION_ALIASES = {
+    "gas_valve": "valve", "light_liquid_valve": "valve", "light_oil_valve": "valve",
+    "light_liquid_pump": "pump_seal", "pump": "pump_seal", "pump_seals": "pump_seal",
+    "gas_connector": "connector", "gas_flange": "flange", "oel": "open_ended_line",
+    "open_ended_lines": "open_ended_line", "valves": "valve", "connectors": "connector",
+    "flanges": "flange", "others": "other",
 }
 
 

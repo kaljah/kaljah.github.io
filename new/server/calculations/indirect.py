@@ -20,6 +20,9 @@ class IndirectSteamCalculator(BaseCalculator):
         transmission_loss,
         uncertainties,
         heat_unit="btu",
+        ef_ch4=0.0,
+        ef_n2o=0.0,
+        gwp_dict=None,
     ):
         """
         API Equation 8-2: Indirect emissions from steam/heat
@@ -71,11 +74,12 @@ class IndirectSteamCalculator(BaseCalculator):
             )
 
         # ef_co2 is expected in kg/MMBtu
-        co2_kg = (energy_btu / 1_000_000.0) * ef_co2 / net_efficiency
-        co2_tonnes = co2_kg / 1000.0
-
-        # Standard Scope 2 usually reported as CO2 only
-        total_co2e = calculate_co2e(co2=co2_tonnes)
+        fuel_mmbtu = (energy_btu / 1_000_000.0) / net_efficiency
+        co2_tonnes = fuel_mmbtu * ef_co2 / 1000.0
+        # boiler fuel CH4 / N2O (kg/MMBtu of fuel, e.g. Table 4-6); they were left out (catalog check)
+        ch4_tonnes = fuel_mmbtu * float(ef_ch4 or 0.0) / 1000.0
+        n2o_tonnes = fuel_mmbtu * float(ef_n2o or 0.0) / 1000.0
+        total_co2e = calculate_co2e(co2=co2_tonnes, ch4=ch4_tonnes, n2o=n2o_tonnes, gwp_dict=gwp_dict)
 
         _unc_dict = uncertainties or {}
         _tier = resolve_tier(_unc_dict.get("_factor_source", "default"))
@@ -89,6 +93,8 @@ class IndirectSteamCalculator(BaseCalculator):
 
         return self.format_result(
             co2=co2_res,
+            ch4=ch4_tonnes,
+            n2o=n2o_tonnes,
             total_co2e=total_co2e,
             inputs={
                 "heat_energy": heat_energy,
@@ -111,6 +117,10 @@ class CogenAllocationCalculator(BaseCalculator):
         power_output,
         method="wri_efficiency",
         uncertainties=None,
+        heat_unit="mmbtu",
+        power_unit="mmbtu",
+        heat_efficiency=None,
+        power_efficiency=None,
     ):
         """
         API Section 8.3 - Allocation of Cogeneration Emissions
@@ -125,19 +135,35 @@ class CogenAllocationCalculator(BaseCalculator):
             ["total_emissions", "heat_output", "power_output"],
         )
 
+        p_unit = str(power_unit or "mmbtu").lower().strip()
+        if p_unit in ["mwh", "megawatt_hours", "kwh"]:
+            mult = 3.412142 if p_unit != "kwh" else 0.003412142
+            power_mmbtu = power_output * mult
+        else:
+            power_mmbtu = power_output
+
         if method == "wri_efficiency":
-            # API Equation 8-5: WRI/WBCSD Efficiency Method
-            # e_h = 0.8 (default), e_p = 0.33 (default)
-            e_h = 0.8
-            e_p = 0.33
-            denominator = (heat_output / e_h) + (power_output / e_p)
+            # API Equation 8-5: WRI/WBCSD Efficiency Method. Without the plant's actual efficiencies,
+            # the Compendium (section 8.2.2, EPA Climate Leaders / WRI tool) defaults are 80 % for heat
+            # and 35 % for electricity (the 33 % in Exhibit 8.4 is that plant's known efficiency)
+            def _eff(v, default, name):
+                if v in (None, ""):
+                    return default
+                v = float(v)
+                v = v / 100.0 if v > 1.0 else v
+                if not 0 < v <= 1:
+                    raise ValueError(f"{name} efficiency must be between 0 and 100 %")
+                return v
+            e_h = _eff(heat_efficiency, 0.80, "Heat")
+            e_p = _eff(power_efficiency, 0.35, "Power")
+            denominator = (heat_output / e_h) + (power_mmbtu / e_p)
             allocated_heat = ((heat_output / e_h) / denominator) * total_emissions if denominator > 0 else 0.0
-            allocated_power = ((power_output / e_p) / denominator) * total_emissions if denominator > 0 else 0.0
+            allocated_power = ((power_mmbtu / e_p) / denominator) * total_emissions if denominator > 0 else 0.0
         else:
             # Energy content allocation
-            denominator = heat_output + power_output
+            denominator = heat_output + power_mmbtu
             allocated_heat = (heat_output / denominator) * total_emissions if denominator > 0 else 0.0
-            allocated_power = (power_output / denominator) * total_emissions if denominator > 0 else 0.0
+            allocated_power = (power_mmbtu / denominator) * total_emissions if denominator > 0 else 0.0
 
         _unc_dict = uncertainties or {}
         _tier = resolve_tier(_unc_dict.get("_factor_source", "default"))

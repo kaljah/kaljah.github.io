@@ -14,6 +14,22 @@ from alembic import op
 import sqlalchemy as sa
 
 
+def _bind():
+    return op.get_bind()
+
+
+def _add(table, column):
+    from schema_sync import has_column
+    if has_table_(table) and not has_column(_bind(), table, column.name):
+        with op.batch_alter_table(table, schema=None) as batch_op:
+            batch_op.add_column(column)
+
+
+def has_table_(table):
+    from schema_sync import has_table
+    return has_table(_bind(), table)
+
+
 # revision identifiers, used by Alembic.
 revision = "61bacaad00dc"
 down_revision = "815d10c5bbe4"
@@ -22,9 +38,8 @@ depends_on = None
 
 
 def upgrade():
-    with op.batch_alter_table("emissions", schema=None) as batch_op:
-        batch_op.add_column(sa.Column("uncertainty_ch4", sa.Float(), nullable=True))
-        batch_op.add_column(sa.Column("uncertainty_n2o", sa.Float(), nullable=True))
+    _add("emissions", sa.Column("uncertainty_ch4", sa.Float(), nullable=True))
+    _add("emissions", sa.Column("uncertainty_n2o", sa.Float(), nullable=True))
 
 
 def downgrade():

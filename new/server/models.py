@@ -30,6 +30,9 @@ class User(db.Model):
         db.Text
     )  # JSON string for user settings (theme, language, etc.)
     created_at = db.Column(db.DateTime, default=utc_now)
+    # BUG-114: bumped on logout / password change / deactivation; sessions carrying an
+    # older value are rejected, so a copied cookie stops working after logout.
+    session_version = db.Column(db.Integer, default=0, server_default="0", nullable=False)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -58,6 +61,7 @@ class Facility(db.Model):
         db.String(20), default="operated"
     )  # operated, non_operated
     country = db.Column(db.String(100), default="Algeria")
+    equity_share_pct = db.Column(db.Float, default=100.0)
     ogmp_membership_year = db.Column(db.Integer, default=2023)
     reconciliation_threshold = db.Column(
         db.Float, default=20.0
@@ -150,6 +154,13 @@ class Emission(db.Model):
     uncertainty_ch4 = db.Column(db.Float, nullable=True)  # CH₄ uncertainty
     uncertainty_n2o = db.Column(db.Float, nullable=True)  # N₂O uncertainty
     uncertainty_pct = db.Column(db.Float, nullable=True)  # Overall combined uncertainty percentage
+    # RC-10 (BUG-008/037): 1-sigma relative components kept separately so the inventory
+    # can correlate the emission-factor part across records that share a factor.
+    uncertainty_ad = db.Column(db.Float, nullable=True)
+    uncertainty_ef_co2 = db.Column(db.Float, nullable=True)
+    uncertainty_ef_ch4 = db.Column(db.Float, nullable=True)
+    uncertainty_ef_n2o = db.Column(db.Float, nullable=True)
+    ef_key = db.Column(db.String(200), nullable=True)  # identifies the factor for correlation
     qa_flag = db.Column(db.String(255), nullable=True)
     status = db.Column(db.String(20), default="Pending", index=True)
 
@@ -179,6 +190,11 @@ class Emission(db.Model):
     # Maker-Checker Approval
     approved_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
     approved_at = db.Column(db.DateTime, nullable=True)
+    # BUG-069: identity snapshots survive user deletion
+    created_by_name = db.Column(db.String(255), nullable=True)
+    approved_by_name = db.Column(db.String(255), nullable=True)
+    # BUG-056: Tier 2 records reference their custom factor by id (real FK)
+    custom_factor_id = db.Column(db.Integer, db.ForeignKey("custom_factors.id"), nullable=True, index=True)
 
     __table_args__ = (
         db.Index("ix_emissions_fac_yr_status", "facility_id", "year", "status"),
@@ -201,6 +217,19 @@ class ProductionData(db.Model):
     unit = db.Column(db.String(20), default="bbl")  # Legacy
     oil_unit = db.Column(db.String(20), default="bbl")
     gas_unit = db.Column(db.String(20), default="mscf")
+
+    # Granular Production Metrics (API Compendium / Berkine standard)
+    gross_gas_mmsm3 = db.Column(db.Float, default=0.0)
+    injected_gas_mmsm3 = db.Column(db.Float, default=0.0)
+    gas_without_injected_mmsm3 = db.Column(db.Float, default=0.0)
+    crude_oil_mmboe = db.Column(db.Float, default=0.0)
+    condensate_mmboe = db.Column(db.Float, default=0.0)
+    lpg_mmboe = db.Column(db.Float, default=0.0)
+    ngl_mmboe = db.Column(db.Float, default=0.0)
+    total_production_mmboe = db.Column(db.Float, default=0.0)
+    total_production_no_injected_mmboe = db.Column(db.Float, default=0.0)
+    saleable_production_mmboe = db.Column(db.Float, default=0.0)
+    fuel_gas_export_mmsm3 = db.Column(db.Float, default=0.0)
 
     activity = db.Column(db.String(100), index=True)
     division = db.Column(db.String(100), index=True)
@@ -244,6 +273,56 @@ class EmissionSource(db.Model):
     created_at = db.Column(db.DateTime, default=utc_now)
 
 
+class ComponentInventory(db.Model):
+    __tablename__ = "component_inventories"
+    id = db.Column(db.Integer, primary_key=True)
+    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), index=True, nullable=False)
+    emission_source_id = db.Column(db.Integer, db.ForeignKey("emission_sources.id"), nullable=True)
+    facility = db.relationship("Facility", foreign_keys=[facility_id])
+    emission_source = db.relationship("EmissionSource", foreign_keys=[emission_source_id])
+
+    equipment_type = db.Column(db.String(100), nullable=False)
+    component_type = db.Column(db.String(100), nullable=False)
+    service_type = db.Column(db.String(50), nullable=False)  # Gas, Light Oil, Heavy Oil, Water/Oil
+    quantity = db.Column(db.Integer, default=1, nullable=False)
+    operating_hours = db.Column(db.Float, default=8760.0)
+    methodology = db.Column(db.String(100), default="Component Average")
+    factor_id = db.Column(db.String(100), nullable=True)
+    factor_value = db.Column(db.Float, nullable=True)
+    factor_unit = db.Column(db.String(50), nullable=True)
+    api_reference = db.Column(db.String(120), nullable=True)
+    status = db.Column(db.String(20), default="Active")
+    description = db.Column(db.Text, nullable=True)
+
+    created_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    created_at = db.Column(db.DateTime, default=utc_now)
+    updated_at = db.Column(db.DateTime, onupdate=utc_now)
+
+
+class FugitiveSurvey(db.Model):
+    __tablename__ = "fugitive_surveys"
+    id = db.Column(db.Integer, primary_key=True)
+    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), index=True, nullable=False)
+    component_inventory_id = db.Column(db.Integer, db.ForeignKey("component_inventories.id"), nullable=True)
+    facility = db.relationship("Facility", foreign_keys=[facility_id])
+    component_inventory = db.relationship("ComponentInventory", foreign_keys=[component_inventory_id])
+
+    survey_method = db.Column(db.String(50), nullable=False)  # Method 21, OGI, Measurement
+    survey_date = db.Column(db.String(20), nullable=False)
+    detection_threshold_ppm = db.Column(db.Float, nullable=True)
+    screening_value_ppm = db.Column(db.Float, nullable=True)
+    leak_status = db.Column(db.String(20), default="Non-leaking")  # Leaking, Non-leaking
+    measured_emission_rate = db.Column(db.Float, nullable=True)
+    measurement_unit = db.Column(db.String(50), nullable=True)  # kg/hr, scf/hr, m3/hr
+    repair_date = db.Column(db.String(20), nullable=True)
+    leaking_hours = db.Column(db.Float, default=8760.0)
+    surveyor_name = db.Column(db.String(100), nullable=True)
+    notes = db.Column(db.Text, nullable=True)
+
+    created_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    created_at = db.Column(db.DateTime, default=utc_now)
+
+
 class CustomFactor(db.Model):
     __tablename__ = "custom_factors"
     id = db.Column(db.Integer, primary_key=True)
@@ -267,6 +346,8 @@ class CustomFactor(db.Model):
     created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
     updated_at = db.Column(db.DateTime, onupdate=utc_now)
     created_at = db.Column(db.DateTime, default=utc_now)
+    # BUG-056: referenced factors are archived instead of deleted (ids are never reused)
+    is_archived = db.Column(db.Boolean, default=False, server_default="0", nullable=False)
 
 
 class ActivityLog(db.Model):
@@ -284,6 +365,8 @@ class ActivityLog(db.Model):
     )  # DB-03 FIX: add index
     entity = db.Column(db.String(50), index=True)  # DB-03 FIX: add index
     entity_id = db.Column(db.String(50))
+    # BUG-038: facility the entry relates to (no FK: log rows outlive deleted facilities)
+    facility_id = db.Column(db.Integer, nullable=True, index=True)
     metadata_json = db.Column("metadata", db.Text)
     timestamp = db.Column(db.DateTime, default=utc_now, index=True)
 
@@ -368,6 +451,10 @@ class Scope2Emission(db.Model):
     # Maker-Checker Approval
     approved_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
     approved_at = db.Column(db.DateTime, nullable=True)
+    updated_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    updated_at = db.Column(db.DateTime, onupdate=utc_now)
+    created_by_name = db.Column(db.String(255), nullable=True)
+    approved_by_name = db.Column(db.String(255), nullable=True)
 
     __table_args__ = (
         db.Index("ix_scope2_fac_yr_status", "facility_id", "year", "status"),
@@ -400,6 +487,10 @@ class Scope3Emission(db.Model):
     # Maker-Checker Approval
     approved_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
     approved_at = db.Column(db.DateTime, nullable=True)
+    updated_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    updated_at = db.Column(db.DateTime, onupdate=utc_now)
+    created_by_name = db.Column(db.String(255), nullable=True)
+    approved_by_name = db.Column(db.String(255), nullable=True)
 
     __table_args__ = (
         db.Index("ix_scope3_fac_yr_status", "facility_id", "year", "status"),
@@ -556,7 +647,8 @@ class LevelUpgradeLog(db.Model):
     facility_id = db.Column(
         db.Integer, db.ForeignKey("facilities.id"), nullable=False, index=True
     )
-    facility = db.relationship("Facility")
+    # BUG-009: deleted with its facility (was the only facility child without a cascade)
+    facility = db.relationship("Facility", backref=db.backref("level_upgrade_logs", cascade="all, delete-orphan"))
     source_type_code = db.Column(db.String(50))
     old_level = db.Column(db.Integer, nullable=False)
     new_level = db.Column(db.Integer, nullable=False)
@@ -573,7 +665,9 @@ class SbtiTarget(db.Model):
     base_year_emissions = db.Column(db.Float, nullable=False)
     target_year = db.Column(db.Integer, default=2050)
     reduction_rate_pct = db.Column(db.Float, default=4.2)
-    pathway_type = db.Column(db.String(20), default="1.5C")  # 1.5C, WB2C
+    pathway_type = db.Column(db.String(20), default="1.5C")  # 1.5C, WB2C, custom
+    # BUG-019: which scopes the base-year emissions / target cover ("S1S2S3" or "S1S2")
+    scope_coverage = db.Column(db.String(10), default="S1S2S3", server_default="S1S2S3", nullable=False)
     created_at = db.Column(db.DateTime, default=utc_now)
     created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
 
@@ -588,4 +682,117 @@ class SystemSetting(db.Model):
     key = db.Column(db.String(100), primary_key=True)
     value = db.Column(db.Text, nullable=False)  # JSON-encoded value
     updated_at = db.Column(db.DateTime, default=utc_now, onupdate=utc_now)
+
+
+class CapEmission(db.Model):
+    """
+    Criteria Air Pollutants (CAP) - Mass and stack concentration tracking.
+    Complies with Algerian Executive Decree 06-138 and API Compendium 2021.
+    """
+    __tablename__ = "cap_emissions"
+    id = db.Column(db.Integer, primary_key=True)
+    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), index=True, nullable=False)
+    facility = db.relationship("Facility", backref=db.backref("cap_emissions", cascade="all, delete-orphan"))
+    year = db.Column(db.Integer, index=True, nullable=False)
+    month = db.Column(db.Integer, nullable=True)  # NULL for annual totals
+    source_module = db.Column(db.String(100), index=True, nullable=False)  # Stationary Combustion, Flare, Equipment Leaks, O&G Venting, Total
+    pollutant = db.Column(db.String(20), index=True, nullable=False)  # NO2, CO, SO2, PM, VOC
+    mass_tonnes = db.Column(db.Float, default=0.0, nullable=False)
+    concentration_mg_nm3 = db.Column(db.Float, nullable=True)
+    flue_gas_volume_nm3 = db.Column(db.Float, nullable=True)
+    calc_method = db.Column(db.String(100), default="API Compendium")
+    notes = db.Column(db.String(255), nullable=True)
+    status = db.Column(db.String(20), default="Pending", index=True)  # BUG-053: maker-checker
+    created_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    created_at = db.Column(db.DateTime, default=utc_now)
+    updated_at = db.Column(db.DateTime, onupdate=utc_now)
+    updated_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    approved_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    approved_at = db.Column(db.DateTime, nullable=True)
+    created_by_name = db.Column(db.String(255), nullable=True)
+    approved_by_name = db.Column(db.String(255), nullable=True)
+
+    __table_args__ = (
+        db.Index("ix_cap_fac_yr_mod_pol", "facility_id", "year", "source_module", "pollutant"),
+    )
+
+
+class CapRegulatoryLimit(db.Model):
+    """
+    Regulatory limit values for Criteria Air Pollutants in mg/Nm3.
+    Default standard: Algerian Executive Decree No. 06-138.
+    """
+    __tablename__ = "cap_regulatory_limits"
+    id = db.Column(db.Integer, primary_key=True)
+    standard_name = db.Column(db.String(100), default="Executive Decree 06-138", nullable=False)
+    pollutant = db.Column(db.String(20), nullable=False)  # NO2, CO, SO2, PM, VOC
+    limit_mg_nm3 = db.Column(db.Float, nullable=False)
+    unit = db.Column(db.String(20), default="mg/Nm3")
+    notes = db.Column(db.String(255), nullable=True)
+
+    __table_args__ = (
+        db.UniqueConstraint("standard_name", "pollutant", name="_cap_standard_pollutant_uc"),
+    )
+
+
+class FlaringDetail(db.Model):
+    """
+    Detailed operational flaring streams (Routine, Non-Routine, Safety)
+    and field-measured DRE for Algerian Executive Decree 21-330 compliance.
+    """
+    __tablename__ = "flaring_details"
+    id = db.Column(db.Integer, primary_key=True)
+    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), index=True, nullable=False)
+    facility = db.relationship("Facility", backref=db.backref("flaring_details", cascade="all, delete-orphan"))
+    year = db.Column(db.Integer, index=True, nullable=False)
+    month = db.Column(db.Integer, nullable=True)
+    network = db.Column(db.String(50), default="CPF")  # CPF or Field
+    routine_knm3 = db.Column(db.Float, default=0.0)
+    non_routine_knm3 = db.Column(db.Float, default=0.0)
+    safety_knm3 = db.Column(db.Float, default=0.0)
+    total_knm3 = db.Column(db.Float, default=0.0)
+    measured_dre_pct = db.Column(db.Float, nullable=True)  # e.g. 99.85 from VISR camera
+    dre_method = db.Column(db.String(100), default="VISR Camera")
+    status = db.Column(db.String(20), default="Verified")
+    created_at = db.Column(db.DateTime, default=utc_now)
+
+    __table_args__ = (
+        db.Index("ix_flare_fac_yr_net", "facility_id", "year", "network"),
+    )
+
+
+class JvPartner(db.Model):
+    """
+    Joint Venture Partner metadata for equity share carbon & methane accounting.
+    """
+    __tablename__ = "jv_partners"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), unique=True, nullable=False)  # Sonatrach, Occidental, Eni, TotalEnergies, Pertamina, Repsol
+    code = db.Column(db.String(50), unique=True, nullable=False)
+    country = db.Column(db.String(100), default="Algeria")
+    is_operator = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=utc_now)
+
+
+class FacilityEquityShare(db.Model):
+    """
+    Time-sliced equity ownership percentages per facility.
+    Supports mid-year ownership shifts (e.g. May 2, 2023).
+    """
+    __tablename__ = "facility_equity_shares"
+    id = db.Column(db.Integer, primary_key=True)
+    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), index=True, nullable=False)
+    partner_id = db.Column(db.Integer, db.ForeignKey("jv_partners.id"), index=True, nullable=False)
+    facility = db.relationship("Facility", backref=db.backref("equity_shares", cascade="all, delete-orphan"))
+    partner = db.relationship("JvPartner", backref=db.backref("facility_shares", cascade="all, delete-orphan"))
+    equity_share_pct = db.Column(db.Float, nullable=False)  # e.g. 51.0, 24.5
+    effective_start_date = db.Column(db.String(20), default="2021-01-01", nullable=False)
+    effective_end_date = db.Column(db.String(20), nullable=True)  # None = currently active
+    agreement_reference = db.Column(db.String(255), nullable=True)
+    created_at = db.Column(db.DateTime, default=utc_now)
+
+    __table_args__ = (
+        db.Index("ix_fac_partner_date", "facility_id", "partner_id", "effective_start_date"),
+    )
+
 

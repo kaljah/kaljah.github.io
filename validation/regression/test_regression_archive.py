@@ -84,17 +84,18 @@ class TestRegressionArchive:
     def test_reg_b08_gwp_ar5_constants_alignment(self):
         """
         Bug ID: B8
-        Description: GWP AR5 N2O 264 vs 265; GWP20 N2O 264 vs 268.
+        Description: GWP AR5 N2O 264 vs 265 (100-yr); GWP-20 values.
         Original Failure: Divergence between frontend constants and IPCC AR5 WG1 Table 8.7.
-        Expected Behavior: AR5 100-yr N2O == 265.0, AR5 20-yr N2O == 268.0.
+        Expected Behavior: AR5 100-yr N2O == 265.0; 20-yr (Table 8.7) N2O == 264.0, CH4 == 84.0
+        (BUG-013: 268 / 82.5 are not AR5 values).
         """
         gwp_100 = IndependentGWPModel.get_gwp("AR5", "100")
         gwp_20 = IndependentGWPModel.get_gwp("AR5", "20")
 
         assert gwp_100["N2O"] == 265.0
         assert gwp_100["CH4"] == 28.0
-        assert gwp_20["N2O"] == 268.0
-        assert gwp_20["CH4"] == 82.5
+        assert gwp_20["N2O"] == 264.0
+        assert gwp_20["CH4"] == 84.0
 
     def test_reg_b09_top_down_survey_aggregation(self):
         """
@@ -165,9 +166,10 @@ class TestRegressionArchive:
         Bug ID: B15 / Client Parity
         Description: Frontend constants getActiveGwpFactors fallback returned 264 for 20-year N2O.
         Original Failure: Fallback expression 'std.N2O_20 || 264' reintroduced legacy AR4-era value.
-        Expected Behavior: Active GWP 20-year N2O must strictly equal 268 (IPCC AR5 WG1 Table 8.7).
+        Expected Behavior: Active GWP 20-year values equal IPCC AR5 WG1 Table 8.7: N2O 264, CH4 84
+        (BUG-013 corrected the former 268 / 82.5, which are not AR5 values).
         """
         gwp_20 = IndependentGWPModel.get_gwp("AR5", "20")
-        assert gwp_20["N2O"] == 268.0
-        assert gwp_20["CH4"] == 82.5
+        assert gwp_20["N2O"] == 264.0
+        assert gwp_20["CH4"] == 84.0
 

@@ -36,8 +36,17 @@ class AnomalyDetector:
     def _z_score_check(self, value: float, historical: list[float]) -> dict:
         """
         Compute Z-score of a value against a list of historical values.
-        Returns flagged=True if |z| > 3 (99.7% confidence outlier).
+        Returns flagged=True if |z| > 3 (99.7% confidence outlier) or outside IQR fence.
         """
+        if value is None or math.isnan(value) or math.isinf(value):
+            return {
+                "flagged": True,
+                "z_score": None,
+                "reason": "invalid_value",
+                "message": f"Value {value} is not a valid finite number.",
+                "expected_range": None,
+            }
+
         if not historical or len(historical) < 3:
             return {"flagged": False, "reason": "insufficient_history", "z_score": None, "expected_range": None}
 
@@ -49,13 +58,13 @@ class AnomalyDetector:
 
         if std == 0:
             # All historical values identical — flag only if new value differs significantly
-            if (mean > 0 and abs(value - mean) / mean > 0.5) or (mean == 0 and value > 0):
+            if (abs(mean) > 0 and abs(value - mean) / abs(mean) > 0.5) or (mean == 0 and abs(value) > 0):
                 return {
                     "flagged": True,
                     "z_score": None,
                     "mean": mean,
                     "std": 0,
-                    "expected_range": [mean * 0.5, mean * 1.5] if mean > 0 else [0.0, 0.0],
+                    "expected_range": [mean * 0.5, mean * 1.5] if abs(mean) > 0 else [0.0, 0.0],
                     "reason": "constant_history_deviation",
                     "message": f"Historical values are constant ({mean:.1f}) but new value is {value:.1f}."
                 }
@@ -66,6 +75,8 @@ class AnomalyDetector:
         # IQR fence as secondary check (requires at least 4 observations for quartiles)
         sorted_h = sorted(historical)
         flagged_iqr = False
+        lower_fence = 0.0
+        upper_fence = 0.0
         if len(sorted_h) >= 4:
             def _quantile(sorted_vals, p):
                 n = len(sorted_vals)
@@ -86,21 +97,35 @@ class AnomalyDetector:
         flagged_z = abs(z) > 3
 
         flagged = flagged_z or flagged_iqr
-        expected_low = max(0, mean - 3 * std)
-        expected_high = mean + 3 * std
+        if flagged_z:
+            expected_low = max(0.0, mean - 3 * std)
+            expected_high = mean + 3 * std
+            msg = (
+                f"Value {value:.2f} is {abs(z):.1f} standard deviations from the 12-month average "
+                f"({mean:.2f} ± {std:.2f}). Expected range: [{expected_low:.2f} – {expected_high:.2f}]."
+            )
+            exp_range = [round(expected_low, 2), round(expected_high, 2)]
+        elif flagged_iqr:
+            msg = (
+                f"Value {value:.2f} is an IQR outlier outside the interquartile range fence "
+                f"[{lower_fence:.2f} – {upper_fence:.2f}]."
+            )
+            exp_range = [round(lower_fence, 2), round(upper_fence, 2)]
+        else:
+            expected_low = max(0.0, mean - 3 * std)
+            expected_high = mean + 3 * std
+            msg = None
+            exp_range = [round(expected_low, 2), round(expected_high, 2)]
 
         return {
             "flagged": flagged,
             "z_score": round(z, 2),
             "mean": round(mean, 2),
             "std": round(std, 2),
-            "expected_range": [round(expected_low, 2), round(expected_high, 2)],
+            "expected_range": exp_range,
             "iqr_flagged": flagged_iqr,
             "reason": "z_score" if flagged_z else ("iqr" if flagged_iqr else None),
-            "message": (
-                f"Value {value:.2f} is {abs(z):.1f} standard deviations from the 12-month average "
-                f"({mean:.2f} ± {std:.2f}). Expected range: [{expected_low:.2f} – {expected_high:.2f}]."
-            ) if flagged else None
+            "message": msg
         }
 
     # ─── Scope 1 ─────────────────────────────────────────────────────────────
@@ -307,3 +332,86 @@ class AnomalyDetector:
             return result
         except Exception as e:
             return {"flagged": False, "error": str(e)}
+
+
+# ── Hard plausibility bounds for a single record (audit BUG-007) ─────────────────
+# The largest single industrial sources emit on the order of 10-30 Mt CO2e per YEAR, so one
+# record (one source, one month) above 100 Mt is certainly a data-entry error, and anything
+# above 1 Mt needs a human look before it can count as Verified.
+PLAUSIBILITY_REJECT_TCO2E = 1e8
+PLAUSIBILITY_FLAG_TCO2E = 1e6
+
+
+def plausibility_check(co2e_tonnes, z_flag=None):
+    """Return (verdict, message): verdict is "reject", "flag" or None."""
+    try:
+        v = float(co2e_tonnes or 0)
+    except (TypeError, ValueError):
+        return "reject", "Calculated emissions are not a number"
+    if v > PLAUSIBILITY_REJECT_TCO2E:
+        return "reject", (f"Implausible value: {v:,.0f} tCO2e in one record exceeds {PLAUSIBILITY_REJECT_TCO2E:,.0f} t; "
+                          "check the quantity and unit")
+    if v > PLAUSIBILITY_FLAG_TCO2E:
+        return "flag", f"Plausibility review: {v:,.0f} tCO2e in one record exceeds {PLAUSIBILITY_FLAG_TCO2E:,.0f} t"
+    if z_flag:
+        return "flag", z_flag
+    return None, None
+
+
+class BatchAnomalyDetector(AnomalyDetector):
+    """Same checks as AnomalyDetector for a bulk import: the history of a facility and process /
+    source / category is read once and the trailing-12-month windows are taken in memory
+    (one query per series instead of two per row)."""
+
+    _SERIES = {
+        "1": ("Emission", "process_type", "co2e_total"),
+        "2": ("Scope2Emission", "source_type", "co2e"),
+        "3": ("Scope3Emission", "category", "co2e"),
+    }
+
+    def __init__(self, db_session=None):
+        super().__init__(db_session)
+        self._cache = {}
+
+    def _series(self, scope, facility_id, key):
+        ck = (scope, facility_id, key)
+        if ck not in self._cache:
+            import models
+
+            name, key_col, val_col = self._SERIES[scope]
+            m = getattr(models, name)
+            rows = self._get_db().session.query(m.year, m.month, getattr(m, val_col), m.status, m.qa_flag).filter(
+                m.facility_id == facility_id, getattr(m, key_col) == key, getattr(m, val_col).isnot(None),
+            ).all()
+            self._cache[ck] = sorted(rows, key=lambda r: (r[0] or 0, r[1] or 0), reverse=True)
+        return self._cache[ck]
+
+    def _check(self, scope, facility_id, key, value, year, month):
+        try:
+            def prior(r):
+                if year is None:
+                    return True
+                if month is None:
+                    return (r[0] or 0) < year
+                return (r[0] or 0) < year or ((r[0] or 0) == year and (r[1] or 0) < month)
+
+            rows = [r for r in self._series(scope, facility_id, key) if prior(r)]
+            historical = [float(r[2]) for r in rows if r[3] == "Verified"][:12]
+            if len(historical) < 3:
+                fb = [float(r[2]) for r in rows if r[4] is None][:12]
+                if len(fb) >= len(historical):
+                    historical = fb
+            result = self._z_score_check(value, historical)
+            result.update(scope=scope, facility_id=facility_id, value=value)
+            return result
+        except Exception as e:
+            return {"flagged": False, "error": str(e)}
+
+    def check_scope1(self, facility_id, process_type, co2e, year, month):
+        return self._check("1", facility_id, process_type, co2e, year, month)
+
+    def check_scope2(self, facility_id, source_type, co2e, year, month):
+        return self._check("2", facility_id, source_type, co2e, year, month)
+
+    def check_scope3(self, facility_id, category, co2e, year, month):
+        return self._check("3", facility_id, category, co2e, year, month)

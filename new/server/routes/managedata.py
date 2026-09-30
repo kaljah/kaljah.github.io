@@ -1,3 +1,4 @@
+import datetime
 from flask import Blueprint, jsonify, request
 from models import (
     EmissionSource,
@@ -18,6 +19,7 @@ from extensions import db
 from utils import log_activity_and_notify, get_current_user, get_allowed_facility_ids
 from sqlalchemy import func, distinct, or_
 from routes.auth import login_required
+from utils import internal_error
 
 managedata_bp = Blueprint("managedata", __name__)
 
@@ -99,7 +101,7 @@ def add_source():
         db.session.commit()
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": f"Failed to add source: {str(e)}"}), 500
+        return internal_error(e, "Failed to add source")
 
     try:
         log_activity_and_notify(
@@ -135,7 +137,7 @@ def delete_source(source_id):
         db.session.commit()
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": f"Failed to delete source: {str(e)}"}), 500
+        return internal_error(e, "Failed to delete source")
 
     try:
         log_activity_and_notify(
@@ -158,68 +160,20 @@ def bulk_import_sources():
     user = get_current_user()
     if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to modify operational emission sources."}), 403
-    allowed_fids = get_allowed_facility_ids(user)
     data = request.get_json() or {}
     records = data.get("records", [])
     if not records:
         return jsonify({"error": "No records provided"}), 400
 
-    imported_count = 0
-    facility_cache = {}
+    # same validation as the file import (facility access, duplicates, dates)
+    from background_processor import process_json_records
 
-    for rec in records:
-        # Resolve facility_id (could be a name string from CSV)
-        f_val = rec.get("facility_id")
-        facility = None
-
-        if isinstance(f_val, str) and not str(f_val).isdigit():
-            f_name_clean = f_val.strip()
-            if f_name_clean.lower() in facility_cache:
-                facility = facility_cache[f_name_clean.lower()]
-            else:
-                facility = Facility.query.filter(
-                    func.lower(Facility.name) == f_name_clean.lower()
-                ).first()
-                facility_cache[f_name_clean.lower()] = facility
-        else:
-            try:
-                fid = int(f_val) if f_val else None
-                if fid in facility_cache:
-                    facility = facility_cache[fid]
-                else:
-                    facility = db.session.get(Facility, fid)
-                    facility_cache[fid] = facility
-            except (ValueError, TypeError):
-                facility = None
-
-        if not facility:
-            continue
-
-        if allowed_fids is not None and facility.id not in allowed_fids:
-            continue
-
-        source = EmissionSource(
-            facility_id=facility.id,
-            name=rec.get("name"),
-            equipment_id=rec.get("equipment_id"),
-            type=rec.get("type"),
-            fuel_type=rec.get("fuel_type") or rec.get("fuel"),
-            design_capacity=rec.get("design_capacity"),
-            installation_date=rec.get("installation_date"),
-            status=rec.get("status", "Active"),
-            description=rec.get("description"),
-            activity=rec.get("activity") or facility.activity,
-            division=rec.get("division") or facility.division,
-            field=rec.get("field") or facility.field,
-        )
-        db.session.add(source)
-        imported_count += 1
-
+    imported_count, row_errors = process_json_records("sources", records, user)
     try:
         db.session.commit()
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": f"Failed to bulk import sources: {str(e)}"}), 500
+        return internal_error(e, "Failed to bulk import sources")
 
     try:
         log_activity_and_notify(
@@ -233,7 +187,7 @@ def bulk_import_sources():
         db.session.commit()
     except Exception:
         db.session.rollback()
-    return jsonify({"message": f"{imported_count} sources imported"}), 201
+    return jsonify({"message": f"{imported_count} sources imported", "errors": row_errors}), 201
 
 
 # --- Mitigation Records ---
@@ -344,7 +298,7 @@ def add_mitigation():
             db.session.commit()
         except Exception as e:
             db.session.rollback()
-            return jsonify({"error": f"Failed to add mitigation project: {str(e)}"}), 500
+            return internal_error(e, "Failed to add mitigation project")
 
         from routes.dashboard import clear_dashboard_cache
         clear_dashboard_cache()
@@ -369,7 +323,7 @@ def add_mitigation():
             db.session.commit()
         except Exception as e:
             db.session.rollback()
-            return jsonify({"error": f"Failed to add mitigation record: {str(e)}"}), 500
+            return internal_error(e, "Failed to add mitigation record")
 
         from routes.dashboard import clear_dashboard_cache
         clear_dashboard_cache()
@@ -423,7 +377,7 @@ def delete_mitigation(mitigation_id):
         db.session.commit()
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": f"Failed to delete mitigation item: {str(e)}"}), 500
+        return internal_error(e, "Failed to delete mitigation item")
 
     from routes.dashboard import clear_dashboard_cache
     clear_dashboard_cache()
@@ -513,7 +467,7 @@ def save_reporting_metadata():
         db.session.commit()
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": f"Failed to save reporting metadata: {str(e)}"}), 500
+        return internal_error(e, "Failed to save reporting metadata")
 
     # --- Audit Notification ---
     try:
@@ -626,102 +580,21 @@ def bulk_import_mitigation():
     user = get_current_user()
     if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to modify operational mitigation data."}), 403
-    allowed_fids = get_allowed_facility_ids(user)
     data = request.get_json() or {}
     records = data.get("records", [])
     if not records:
         return jsonify({"error": "No records provided"}), 400
 
-    imported_count = 0
-    facility_cache = {}
-    from datetime import datetime
+    # same validation as the file import (required year, numbers, dates, facility access)
+    from background_processor import process_json_records
 
-    for rec in records:
-        # Skip records with no project name
-        project_name = str(rec.get("name") or "").strip()
-        if not project_name:
-            continue
-
-        f_val = rec.get("facility_id")
-        facility = None
-
-        if isinstance(f_val, str) and not str(f_val).isdigit():
-            f_name_clean = f_val.strip()
-            if f_name_clean.lower() in facility_cache:
-                facility = facility_cache[f_name_clean.lower()]
-            else:
-                facility = Facility.query.filter(
-                    func.lower(Facility.name) == f_name_clean.lower()
-                ).first()
-                facility_cache[f_name_clean.lower()] = facility
-        else:
-            try:
-                fid = int(f_val) if f_val else None
-                if fid in facility_cache:
-                    facility = facility_cache[fid]
-                else:
-                    facility = db.session.get(Facility, fid)
-                    facility_cache[fid] = facility
-            except (ValueError, TypeError):
-                facility = None
-
-        if not facility:
-            continue
-
-        if allowed_fids is not None and facility.id not in allowed_fids:
-            continue
-
-        try:
-            year = int(rec.get("year"))
-        except (ValueError, TypeError):
-            continue
-
-        try:
-            qty = float(rec.get("quantity_tco2e") or 0)
-        except (ValueError, TypeError):
-            continue
-
-        start_date = None
-        end_date = None
-        if rec.get("start_date"):
-            try:
-                start_date = datetime.strptime(rec.get("start_date"), "%Y-%m-%d").date()
-            except ValueError:
-                pass
-        if rec.get("end_date"):
-            try:
-                end_date = datetime.strptime(rec.get("end_date"), "%Y-%m-%d").date()
-            except ValueError:
-                pass
-
-        investment = None
-        if rec.get("investment_amount"):
-            try:
-                investment = float(rec.get("investment_amount"))
-            except ValueError:
-                pass
-
-        proj = MitigationProject(
-            facility_id=facility.id,
-            name=project_name,
-            project_type=rec.get("project_type"),
-            year=year,
-            quantity_tco2e=qty,
-            status=rec.get("status", "Active"),
-            start_date=start_date,
-            end_date=end_date,
-            investment_amount=investment,
-            description=rec.get("description"),
-            created_by=user.id if user else None,
-        )
-        db.session.add(proj)
-        imported_count += 1
+    imported_count, row_errors = process_json_records("mitigation", records, user)
 
     try:
         db.session.commit()
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": f"Failed to bulk import mitigation projects: {str(e)}"}), 500
+        return internal_error(e, "Failed to bulk import mitigation projects")
 
     try:
         log_activity_and_notify(
@@ -737,7 +610,7 @@ def bulk_import_mitigation():
         clear_dashboard_cache()
     except Exception:
         db.session.rollback()
-    return jsonify({"message": f"{imported_count} mitigation projects imported"}), 201
+    return jsonify({"message": f"{imported_count} mitigation projects imported", "errors": row_errors}), 201
 
 
 # --- Yearly Emission Goals ---
@@ -763,7 +636,7 @@ def get_all_goals():
             ]
         )
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return internal_error(e)
 
 
 @managedata_bp.route("/goals", methods=["POST"])
@@ -773,39 +646,30 @@ def add_or_update_goal():
     user = get_current_user()
     if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to modify corporate emission targets."}), 403
-    if not user or user.role not in ["admin", "superuser"]:
-        return jsonify({"error": "Administrator privileges required to modify corporate emission targets."}), 403
-    try:
-        data = request.get_json() or {}
-        if not data.get("year") or data.get("target_amount") is None:
-            return jsonify({"error": "Year and target amount are required"}), 400
+    if not user or user.role not in ["admin", "superuser"] or get_allowed_facility_ids(user) is not None:
+        return jsonify({"error": "Organisation-wide administrator privileges required to modify corporate emission targets."}), 403
+    from input_validation import parse_number
 
-        year = int(data["year"])
-        target = float(data["target_amount"])
+    data = request.get_json() or {}
+    # BUG-039: finite, positive target and a plausible year (targets may lie in the future)
+    year = int(parse_number(data.get("year"), "year", min_value=1990, max_value=2100))
+    if year != parse_number(data.get("year"), "year"):
+        return jsonify({"error": "'year' must be a whole year", "field": "year"}), 400
+    target = parse_number(data.get("target_amount"), "target_amount")
+    if target <= 0:
+        return jsonify({"error": "'target_amount' must be greater than 0", "field": "target_amount"}), 400
 
-        existing = Goal.query.filter_by(year=year).first()
-        if existing:
-            existing.target_amount = target
-        else:
-            goal = Goal(year=year, target_amount=target)
-            db.session.add(goal)
-
-        db.session.commit()
-        from routes.dashboard import clear_dashboard_cache
-        clear_dashboard_cache()
-        return (
-            jsonify(
-                {
-                    "message": "Emission goal saved successfully",
-                    "year": year,
-                    "target_amount": target,
-                }
-            ),
-            200,
-        )
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({"error": str(e)}), 500
+    existing = Goal.query.filter_by(year=year).first()
+    if existing:
+        existing.target_amount = target
+    else:
+        db.session.add(Goal(year=year, target_amount=target))
+    log_activity_and_notify(action="UPDATE", record_id=f"goal-{year}", user=user, request=request,
+                            entity="Goal", details=f"Emission goal for {year} set to {target} tCO2e")
+    db.session.commit()
+    from routes.dashboard import clear_dashboard_cache
+    clear_dashboard_cache()
+    return jsonify({"message": "Emission goal saved successfully", "year": year, "target_amount": target}), 200
 
 
 @managedata_bp.route("/goals/<int:year>", methods=["DELETE"])
@@ -827,7 +691,7 @@ def delete_goal(year):
         return jsonify({"message": "Goal deleted successfully"})
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": str(e)}), 500
+        return internal_error(e)
 
 
 # --- Base Years & Recalculations ---
@@ -887,7 +751,7 @@ def get_base_years():
             }
         )
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return internal_error(e)
 
 
 @managedata_bp.route("/base-years", methods=["POST"])
@@ -947,7 +811,7 @@ def add_base_year_recalculation():
         )
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": str(e)}), 500
+        return internal_error(e)
 
 
 @managedata_bp.route("/base-years/<int:rec_id>", methods=["DELETE"])
@@ -980,7 +844,7 @@ def delete_base_year_recalculation(rec_id):
         return jsonify({"message": "Recalculation record deleted"})
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": str(e)}), 500
+        return internal_error(e)
 
 
 @managedata_bp.route("/sbti", methods=["GET", "POST"])
@@ -1006,20 +870,21 @@ def manage_sbti():
         else:
             calc_year = target.base_year if target else 2024
 
+        # BUG-032: the suggestion is computed only over the caller's facilities
+        allowed_fids = get_allowed_facility_ids(user)
+        per_scope = _verified_totals_by_scope(calc_year, allowed_fids)
         recalc = BaseYearRecalculation.query.filter_by(year=calc_year).order_by(BaseYearRecalculation.recalc_date.desc()).first()
-        if recalc and recalc.adjusted_emissions:
+        if recalc and recalc.adjusted_emissions and allowed_fids is None:
             suggested_emissions = float(recalc.adjusted_emissions)
         else:
-            s1 = sum(float(e.co2e_total or e.co2_emissions or 0) for e in Emission.query.filter_by(status="Verified", year=calc_year).all())
-            s2 = sum(float(e.co2e or 0) for e in Scope2Emission.query.filter_by(status="Verified", year=calc_year).all())
-            s3 = sum(float(e.co2e or 0) for e in Scope3Emission.query.filter_by(status="Verified", year=calc_year).all())
-            suggested_emissions = s1 + s2 + s3
+            suggested_emissions = per_scope["scope1"] + per_scope["scope2"] + per_scope["scope3"]
 
         if not target:
             return jsonify({
                 "has_target": False,
                 "suggested_base_year": calc_year,
-                "suggested_base_year_emissions": round(suggested_emissions, 2)
+                "suggested_base_year_emissions": round(suggested_emissions, 2),
+                "suggested_by_scope": {k: round(v, 2) for k, v in per_scope.items()},
             })
 
         return jsonify({
@@ -1029,48 +894,84 @@ def manage_sbti():
             "target_year": target.target_year,
             "reduction_rate_pct": target.reduction_rate_pct,
             "pathway_type": target.pathway_type,
+            "scope_coverage": target.scope_coverage or "S1S2S3",
             "suggested_base_year": calc_year,
-            "suggested_base_year_emissions": round(suggested_emissions, 2)
+            "suggested_base_year_emissions": round(suggested_emissions, 2),
+            "suggested_by_scope": {k: round(v, 2) for k, v in per_scope.items()},
         })
 
-    # POST
-    if not user or user.role not in ["admin", "superuser"]:
-        return jsonify({"error": "Administrator privileges required to modify SBTi targets."}), 403
+    # POST: the SBTi target is organisation-wide, so only unrestricted approvers may set it
+    if not user or user.role not in ["admin", "superuser"] or get_allowed_facility_ids(user) is not None:
+        return jsonify({"error": "Organisation-wide administrator privileges required to modify SBTi targets."}), 403
     data = request.get_json() or {}
-    try:
-        base_year = int(data.get("base_year"))
-        base_year_emissions = float(data.get("base_year_emissions"))
-        target_year = int(data.get("target_year", 2050))
-        reduction_rate_pct = float(data.get("reduction_rate_pct", 4.2))
-        pathway_type = str(data.get("pathway_type", "1.5C")).strip()
-    except (TypeError, ValueError):
-        return jsonify({"error": "Invalid format: base_year, base_year_emissions, target_year, and reduction_rate_pct must be valid numbers."}), 400
+    from input_validation import parse_number, ValidationError
 
-    if base_year < 2015 or base_year > 2035:
-        return jsonify({"error": "Base year must be between 2015 and 2035 per SBTi Corporate Net-Zero guidelines."}), 400
+    try:
+        current_year = datetime.date.today().year
+        base_year = int(parse_number(data.get("base_year"), "base_year", min_value=2015, max_value=current_year))
+        base_year_emissions = parse_number(data.get("base_year_emissions"), "base_year_emissions", min_value=0)
+        target_year = int(parse_number(data.get("target_year"), "target_year", required=False, default=2050))
+        reduction_rate_pct = parse_number(data.get("reduction_rate_pct"), "reduction_rate_pct",
+                                          required=False, default=4.2, max_value=25.0)
+    except ValidationError as err:
+        return jsonify({"error": err.message, "field": err.field}), 400
+    pathway_type = str(data.get("pathway_type") or "1.5C").strip()
+    scope_coverage = str(data.get("scope_coverage") or "S1S2S3").strip().upper()
+
+    # BUG-034 (finite values, above) / BUG-059: validated pathway tied to its reduction rate
+    if pathway_type not in SBTI_PATHWAY_MIN_RATE:
+        return jsonify({"error": f"pathway_type must be one of {sorted(SBTI_PATHWAY_MIN_RATE)}"}), 400
+    if scope_coverage not in ("S1S2S3", "S1S2"):
+        return jsonify({"error": "scope_coverage must be 'S1S2S3' or 'S1S2'"}), 400
     if target_year <= base_year or target_year > 2070:
         return jsonify({"error": f"Target year must be greater than base year ({base_year}) and not exceed 2070."}), 400
     if base_year_emissions <= 0:
         return jsonify({"error": "Base year baseline emissions must be greater than 0 tCO2e."}), 400
-    if reduction_rate_pct <= 0 or reduction_rate_pct > 25.0:
+    if reduction_rate_pct <= 0:
         return jsonify({"error": "Annual reduction rate must be between 0.1% and 25.0%."}), 400
+    min_rate = SBTI_PATHWAY_MIN_RATE[pathway_type]
+    if reduction_rate_pct < min_rate:
+        return jsonify({"error": f"A {pathway_type} pathway requires an annual linear reduction of at least {min_rate}% (use 'custom' otherwise)."}), 400
 
-    try:
-        new_target = SbtiTarget(
-            base_year=base_year,
-            base_year_emissions=base_year_emissions,
-            target_year=target_year,
-            reduction_rate_pct=reduction_rate_pct,
-            pathway_type=pathway_type,
-            created_by=user.id if user else None
-        )
-        db.session.add(new_target)
-        db.session.commit()
-        clear_dashboard_cache()
-        return jsonify({"message": "SBTi Target saved successfully"}), 201
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({"error": str(e)}), 400
+    new_target = SbtiTarget(
+        base_year=base_year,
+        base_year_emissions=base_year_emissions,
+        target_year=target_year,
+        reduction_rate_pct=reduction_rate_pct,
+        pathway_type=pathway_type,
+        scope_coverage=scope_coverage,
+        created_by=user.id,
+    )
+    db.session.add(new_target)
+    log_activity_and_notify(
+        action="CREATE", record_id="sbti", user=user, request=request, entity="SbtiTarget",
+        details=f"SBTi target set: {pathway_type}, {scope_coverage}, base {base_year} = {base_year_emissions} t, {reduction_rate_pct}%/yr to {target_year}",
+    )
+    db.session.commit()
+    clear_dashboard_cache()
+    return jsonify({"message": "SBTi Target saved successfully"}), 201
+
+
+# SBTi near-term linear annual reduction minimums (SBTi Corporate Net-Zero Standard / criteria v5):
+# 1.5°C-aligned >= 4.2 %/yr, well-below 2°C >= 2.5 %/yr. "custom" targets are labelled as such.
+SBTI_PATHWAY_MIN_RATE = {"1.5C": 4.2, "WB2C": 2.5, "custom": 0.1}
+
+
+def _verified_totals_by_scope(year, allowed_fids):
+    """Verified tCO2e per scope for one year, restricted to allowed facility ids (None = all)."""
+    from models import Emission, Scope2Emission, Scope3Emission
+
+    def total(col, model):
+        q = db.session.query(db.func.coalesce(db.func.sum(col), 0.0)).filter(model.status == "Verified", model.year == year)
+        if allowed_fids is not None:
+            q = q.filter(model.facility_id.in_(allowed_fids or [-1]))
+        return float(q.scalar() or 0.0)
+
+    return {
+        "scope1": total(db.func.coalesce(Emission.co2e_total, Emission.co2_emissions, 0.0), Emission),
+        "scope2": total(Scope2Emission.co2e, Scope2Emission),
+        "scope3": total(Scope3Emission.co2e, Scope3Emission),
+    }
 
 
 # --- Audit Stats Alias (/api/audit/stats) ---

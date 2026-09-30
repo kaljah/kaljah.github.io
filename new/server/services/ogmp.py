@@ -56,6 +56,30 @@ def ogmp_level_for(emission) -> int:
     return 2
 
 
+def materiality_level(records, threshold=0.5):
+    """BUG-031: OGMP 2.0 levels are materiality-based. The facility's bottom-up level is the highest
+    level L such that records at level >= L carry at least `threshold` of the facility's CH4
+    (CO2e when no CH4 is reported) - not the maximum level of any single record."""
+    weights = {}
+    total = 0.0
+    for r in records:
+        w = float(getattr(r, "ch4_emissions", 0) or 0)
+        weights[ogmp_level_for(r)] = weights.get(ogmp_level_for(r), 0.0) + w
+        total += w
+    if total <= 0:
+        weights = {}
+        for r in records:
+            w = float(getattr(r, "co2e_total", 0) or 0)
+            weights[ogmp_level_for(r)] = weights.get(ogmp_level_for(r), 0.0) + w
+            total += w
+    if total <= 0:
+        return 2
+    for level in (4, 3, 2):
+        if sum(v for k, v in weights.items() if k >= level) / total >= threshold:
+            return level
+    return 1
+
+
 def compute_facility_ogmp_level(
     facility,
     year: Optional[int] = None,
@@ -83,18 +107,18 @@ def compute_facility_ogmp_level(
     td = top_down_tch4 if top_down_tch4 is not None else 0.0
     bu = bottom_up_tch4 if bottom_up_tch4 is not None else 0.0
 
-    # If bottom_up_level not passed, check facility's emission records if in app context
+    # If bottom_up_level not passed, derive it from the facility's VERIFIED records (BUG-031)
     if bottom_up_level is None and facility is not None:
         try:
             from flask import has_app_context
             if has_app_context():
                 from models import Emission
-                q = Emission.query.filter_by(facility_id=facility.id)
+                q = Emission.query.filter_by(facility_id=facility.id, status="Verified")
                 if year and year != "all" and str(year).isdigit():
                     q = q.filter_by(year=int(year))
                 records = q.all()
                 if records:
-                    bottom_up_level = max((ogmp_level_for(r) for r in records), default=2)
+                    bottom_up_level = materiality_level(records)
         except Exception:
             pass
 
@@ -131,3 +155,32 @@ def ogmp_level_label(level: int) -> str:
         5: "Level 5 (Reconciled)",
     }
     return labels.get(level, f"Level {level}")
+
+
+def reconcile(top_down_tch4, bottom_up_tch4, threshold_pct=20.0):
+    """BUG-052: one server-side rule for top-down vs bottom-up methane.
+
+    Returns (variance_pct or None, variance_flag, status) where status is one of
+    "Reconciled", "Discrepancy Flagged", "No Bottom-Up", "No Top-Down", "No Activity".
+    """
+    td = float(top_down_tch4 or 0.0)
+    bu = float(bottom_up_tch4 or 0.0)
+    thr = float(threshold_pct or 20.0)
+    if td > 0 and bu > 0:
+        v = round((td - bu) / bu * 100.0, 2)
+        flag = abs(v) > thr
+        return v, flag, ("Discrepancy Flagged" if flag else "Reconciled")
+    if td > 0:
+        return None, True, "No Bottom-Up"
+    if bu > 0:
+        return None, False, "No Top-Down"
+    return None, False, "No Activity"
+
+
+def facility_bottom_up_tch4(facility_id, year):
+    from models import Emission
+    from extensions import db
+    from sqlalchemy import func
+
+    return float(db.session.query(func.coalesce(func.sum(Emission.ch4_emissions), 0.0)).filter(
+        Emission.facility_id == facility_id, Emission.year == year, Emission.status == "Verified").scalar() or 0.0)

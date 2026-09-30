@@ -150,7 +150,6 @@ test.describe('QFULL Auth and Navigation', () => {
 // =====================================================================
 
 test.describe('QFULL API Pipeline (via Browser Request)', () => {
-  let authCookies = '';
   let csrfToken = '';
 
   // Login via API to get session cookie
@@ -529,7 +528,7 @@ test.describe('QFULL Reference Accuracy Matrix', () => {
   ];
 
   for (const scenario of MATRIX) {
-    test(`Reference formula: ${scenario.name}`, async ({ request }) => {
+    test(`Reference formula: ${scenario.name}`, async () => {
       const co2e = refCO2e(scenario.co2, scenario.ch4, scenario.n2o);
 
       console.log(`[QFULL MATRIX] ${scenario.name}`);
@@ -555,7 +554,7 @@ test.describe('QFULL Reference Accuracy Matrix', () => {
     });
   }
 
-  test('MATRIX SUMMARY: All scenarios are internally consistent', async ({ request }) => {
+  test('MATRIX SUMMARY: All scenarios are internally consistent', async () => {
     let passed = 0;
     const failures = [];
 
@@ -582,7 +581,7 @@ test.describe('QFULL Reference Accuracy Matrix', () => {
 // =====================================================================
 
 test.describe('QFULL GWP and Unit Verification', () => {
-  test('AR5 GWP gives higher CO2e than AR4 for CH4-dominant emissions', async ({ request }) => {
+  test('AR5 GWP gives higher CO2e than AR4 for CH4-dominant emissions', async () => {
     const ch4_tonnes = 1.0;  // 1 tonne pure CH4
 
     const co2e_ar5 = refCO2e(0, ch4_tonnes, 0);           // CH4 × 28
@@ -596,7 +595,7 @@ test.describe('QFULL GWP and Unit Verification', () => {
     console.log(`[QFULL GWP] AR5 CO2e=${co2e_ar5} t, AR4 CO2e=${co2e_ar4} t, ratio=${(co2e_ar5/co2e_ar4).toFixed(4)}`);
   });
 
-  test('Volume unit round-trip: m3 ↔ scf ↔ m3 is accurate to 1e-7', async ({ request }) => {
+  test('Volume unit round-trip: m3 ↔ scf ↔ m3 is accurate to 1e-7', async () => {
     const vol_m3 = 1000.0;
     const vol_scf = vol_m3 * M3_TO_SCF;
     const vol_m3_back = vol_scf * SCF_TO_M3;
@@ -606,14 +605,14 @@ test.describe('QFULL GWP and Unit Verification', () => {
     console.log(`[QFULL UNITS] ${vol_m3} m3 = ${vol_scf.toFixed(3)} scf, round-trip error = ${Math.abs(vol_m3_back - vol_m3).toExponential(2)}`);
   });
 
-  test('1 barrel = 42 US gallons (exact via SI definitions)', async ({ request }) => {
+  test('1 barrel = 42 US gallons (exact via SI definitions)', async () => {
     const GAL_TO_M3 = 0.003785411784;
     const ratio = BBL_TO_M3 / GAL_TO_M3;
     expect(ratio).toBeCloseTo(42.0, 5);
     console.log(`[QFULL UNITS] 1 bbl / 1 gal = ${ratio.toFixed(6)} (expected 42.0)`);
   });
 
-  test('Flaring: enclosed flare emits less CH4 than pit flare (same gas, same volume)', async ({ request }) => {
+  test('Flaring: enclosed flare emits less CH4 than pit flare (same gas, same volume)', async () => {
     const vol = 500.0, c1 = 0.90;
 
     // Enclosed: eta_d = 0.995  →  CH4 = vol * c1 * (1 - 0.995)
@@ -629,7 +628,7 @@ test.describe('QFULL GWP and Unit Verification', () => {
     console.log(`[QFULL FLARE] Enclosed: ${ch4_enclosed.toFixed(6)} t | Elevated: ${ch4_elevated.toFixed(6)} t | Pit: ${ch4_pit.toFixed(6)} t`);
   });
 
-  test('Tank flashing: doubled GOR exactly doubles CH4 (linear scaling)', async ({ request }) => {
+  test('Tank flashing: doubled GOR exactly doubles CH4 (linear scaling)', async () => {
     const throughput = 1000;  // bbl
     const ch4Frac = 0.85;
 

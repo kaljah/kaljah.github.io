@@ -44,33 +44,58 @@ def _val(x):
 
 
 class TestMudDegassingBattery:
-    """Verifies drilling mud degassing calculations against independent reference."""
+    """Verifies drilling mud degassing calculations against independent reference (Tier 1, Tier 2, Tier 2+)."""
+
+    def test_tier1_wells_default(self):
+        calc = MudDegassingCalculator()
+        wells = 8.0
+        res = calc.calculate(tier="tier1", wells=wells, gwp_dict=GWP_AR5)
+        ref = IndependentMudDegassing.calculate(tier="tier1", wells=wells, gwp_standard="AR5")
+
+        assert pytest.approx(_val(res["results"]["ch4"]), rel=1e-5) == ref["ch4"]
+        assert pytest.approx(res["total_co2e"], rel=1e-5) == ref["co2e"]
+        assert res["inputs"]["ef_ch4_used"] == 0.0524
 
     @pytest.mark.parametrize("mud_type, expected_ef", [
-        ("water_based", 0.15),
-        ("oil_based", 0.35),
-        ("synthetic", 0.25),
-        ("unknown_default", 0.25),
+        ("water_based", 0.0458),
+        ("oil_based", 0.0103),
+        ("synthetic", 0.0103),
     ])
-    def test_mud_types_standard_factors(self, mud_type, expected_ef):
+    def test_tier2_mud_types_standard_factors(self, mud_type, expected_ef):
         calc = MudDegassingCalculator()
-        vol = 2500.0  # m3
-        res = calc.calculate(vol, mud_type, {}, gwp_dict=GWP_AR5)
-        ref = IndependentMudDegassing.calculate(vol, "m3", mud_type, gwp_standard="AR5")
+        days = 30.0  # drilling days
+        res = calc.calculate(tier="tier2", drilling_days=days, mud_type=mud_type, gwp_dict=GWP_AR5)
+        ref = IndependentMudDegassing.calculate(tier="tier2", drilling_days=days, mud_type=mud_type, gwp_standard="AR5")
 
         assert pytest.approx(_val(res["results"]["ch4"]), rel=1e-5) == ref["ch4"]
         assert pytest.approx(res["total_co2e"], rel=1e-5) == ref["co2e"]
         assert res["inputs"]["ef_ch4_used"] == expected_ef
 
-    def test_mud_custom_ef_override(self):
+    def test_tier2_plus_gas_composition(self):
         calc = MudDegassingCalculator()
-        vol = 1200.0
-        custom_ef = 0.42  # kg/m3
-        res = calc.calculate(vol, "water_based", {}, ef_ch4=custom_ef, gwp_dict=GWP_AR5)
-        ref = IndependentMudDegassing.calculate(vol, "m3", "water_based", custom_ef=custom_ef, gwp_standard="AR5")
+        days = 20.0
+        ch4_c = 0.88
+        co2_c = 0.03
+        res = calc.calculate(
+            tier="tier2_plus",
+            drilling_days=days,
+            mud_type="water_based",
+            ch4_concentration=ch4_c,
+            co2_concentration=co2_c,
+            gwp_dict=GWP_AR5,
+        )
+        ref = IndependentMudDegassing.calculate(
+            tier="tier2_plus",
+            drilling_days=days,
+            mud_type="water_based",
+            ch4_concentration=ch4_c,
+            co2_concentration=co2_c,
+            gwp_standard="AR5",
+        )
 
         assert pytest.approx(_val(res["results"]["ch4"]), rel=1e-5) == ref["ch4"]
-        assert res["inputs"]["ef_ch4_used"] == custom_ef
+        assert pytest.approx(_val(res["results"]["co2"]), rel=1e-5) == ref["co2"]
+        assert pytest.approx(res["total_co2e"], rel=1e-5) == ref["co2e"]
 
 
 class TestWellCompletionFlowbackBattery:
@@ -351,11 +376,12 @@ class TestPneumaticsBattery:
         assert pytest.approx(res["total_co2e"], rel=1e-4) == ref["co2e"]
 
     def test_intermittent_actuation_epa_default(self):
+        """BUG-100: 13.5 is the Subpart W intermittent factor in scf/HOUR (API 2021 Table 6-15), not a
+        volume per actuation. Actuation counts without a per-actuation volume are rejected; with one,
+        Eq 6-13 gives count x actuations x volume."""
         calc = PneumaticDeviceCalculator()
-        count = 4
-        actuations = 500  # 500 events per device
-        # When bleed_rate is None or 0, EPA Subpart W default 13.5 scf/actuation is used
-        res = calc.calculate(count=count, actuations=actuations, bleed_rate=None, ch4_content=0.88, gwp_dict=GWP_AR5)
-        ref = IndependentPneumatics.calculate(count=count, actuations=actuations, bleed_rate=13.5, ch4_content=0.88, gwp_standard="AR5")
-
+        with pytest.raises(ValueError, match="per actuation"):
+            calc.calculate(count=4, actuations=500, bleed_rate=None, ch4_content=0.88, gwp_dict=GWP_AR5)
+        res = calc.calculate(count=4, actuations=500, bleed_rate=13.5, ch4_content=0.88, gwp_dict=GWP_AR5)
+        ref = IndependentPneumatics.calculate(count=4, actuations=500, bleed_rate=13.5, ch4_content=0.88, gwp_standard="AR5")
         assert pytest.approx(_val(res["results"]["ch4"]), rel=1e-4) == ref["ch4"]

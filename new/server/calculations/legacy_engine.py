@@ -367,7 +367,7 @@ class GHGCalculator:
 ghg_calc = GHGCalculator()
 
 
-def compute_emissions(payload, factor_data=None, gwp_dict=None, gwp_standard=None):
+def _compute_emissions_impl(payload, factor_data=None, gwp_dict=None, gwp_standard=None):
     if factor_data is None:
         factor_data = {}
     if gwp_dict is None:
@@ -390,8 +390,10 @@ def compute_emissions(payload, factor_data=None, gwp_dict=None, gwp_standard=Non
         process = "venting"
     elif process == "liquid unloading":
         process = "unloading"
-    elif process == "separation":
-        process = "tank"
+    # "separation" stays its own process: it is not a tank-flashing calculation (browser test F4:
+    # every separator / produced-water factor was computed with the crude flashing factor)
+    elif process in ["associated gas venting", "associated venting", "associated gas"]:
+        process = "associated_gas_venting"
     raw_amt = payload.get("amount") if payload.get("amount") not in [None, ""] else payload.get("quantity")
     if isinstance(raw_amt, str):
         s = raw_amt.strip()
@@ -417,12 +419,28 @@ def compute_emissions(payload, factor_data=None, gwp_dict=None, gwp_standard=Non
 
     calc_inputs = payload.get("calc_inputs") or {}
     inputs = calc_inputs.get(process) or {}  # Extract specific inputs
+    if process == "completions" and isinstance(inputs, dict) and inputs.get("amount") not in (None, ""):
+        # BUG-012: the Completions form's `amount` is the event count; it must not replace the
+        # top-level activity volume, and it is passed on explicitly as `events`.
+        inputs = dict(inputs)
+        amt = inputs.pop("amount")
+        # Tier 3: the amount is the metered flowback volume, not a count; events are explicit or 1
+        # (Tier 3 browser test #1: 1.48e6 scf was read as 1.48e6 events)
+        if inputs.get("comp_volume") in (None, "") and inputs.get("flowback_volume") in (None, ""):
+            inputs.setdefault("events", amt)
 
     # NEW: Merge root payload into inputs to support flat CSV data
     # This allows keys like 'comp_duration' or 'unload_diam' to be read directly from the CSV row
     inputs = {**payload, **inputs}
     if hhv and not inputs.get("hhv"):
         inputs["hhv"] = hhv
+
+    density_val = payload.get("density") or payload.get("fuel_density") or factor_data.get("density")
+    if density_val not in [None, "", "-"]:
+        try:
+            inputs["density"] = float(density_val)
+        except (ValueError, TypeError):
+            pass
 
     is_specific = payload.get("factor_source") == "specific" or payload.get(
         "isSpecific"
@@ -449,10 +467,19 @@ def compute_emissions(payload, factor_data=None, gwp_dict=None, gwp_standard=Non
             return r.get("value", 0)
         return r
 
+    # A Tier 3 engineering result of zero is a real outcome (e.g. 0 operating hours); it must not fall
+    # through to the legacy factor path and its misleading "request not understood" error
+    # (entered specific factors are applied by the legacy path below, so they keep that route)
+    _spec = payload.get("specific_factors") or payload.get("specificFactors") or {}
+    _has_spec = isinstance(_spec, dict) and any(
+        str(v).strip() not in ("", "0", "0.0", "None") for k, v in _spec.items() if not str(k).endswith("Unit")
+    )
+    _tier3_zero = (str(payload.get("factor_source") or "").lower() == "specific" and not _has_spec
+                   and api_res and "results" in api_res)
     if (
         api_res
         and "results" in api_res
-        and any(get_val(api_res["results"].get(g)) for g in ["co2", "ch4", "n2o"])
+        and (any(get_val(api_res["results"].get(g)) for g in ["co2", "ch4", "n2o"]) or _tier3_zero)
     ):
         # If the dispatcher handled it, return the rich result structure
         # We extract the 'value' for backward compatibility with the legacy database record creation
@@ -510,37 +537,46 @@ def compute_emissions(payload, factor_data=None, gwp_dict=None, gwp_standard=Non
             em["totalCo2e"] = em["co2"] + (em["ch4"] * gwp_dict["CH4"])
             return em, "server_completions_calc"
 
-        elif process == "unloading":
-            fuel_key = payload.get("fuel") or payload.get("fuel_type")
-            # Tier 1: Factor-based (UnloadPlunger / UnloadNonPlunger)
+        elif process in ["unloading", "liquids_unloading"]:
+            fuel_key = str(payload.get("fuel") or payload.get("fuel_type") or "").strip()
+            # Tier 1: Factor-based (API Table 6-11 per well-year)
             if (
                 fuel_key in ["UnloadPlunger", "UnloadNonPlunger"]
                 and factor_data
                 and factor_data.get("ch4")
             ):
-                # factor is in tonnes CH4/event; amount is event count
-                event_count = amount
-                ch4_tonnes = event_count * factor_data["ch4"]  # already in tonnes
+                well_count = amount
+                ch4_tonnes = well_count * factor_data["ch4"]  # tonnes CH4 per well-year
                 em["ch4"] = ch4_tonnes
                 em["totalCo2e"] = ch4_tonnes * gwp_dict["CH4"]
                 return em, "server_unloading_tier1"
 
             # Engineering Calc (Tier 3)
-            freq = float(inputs.get("unload_freq") or amount or 0)
-            diam = float(inputs.get("unload_diam") or 0)
-            depth = float(inputs.get("unload_depth") or 0)
-            press = float(inputs.get("unload_press") or 0)
-            res = ghg_calc.calculate_unloading(freq, diam, depth, press)
-            em["ch4"] = res["ch4"]
-            em["totalCo2e"] = em["ch4"] * gwp_dict["CH4"]
-            return em, "server_unloading_calc"
+            freq = float(inputs.get("unload_freq") or inputs.get("unload_events") or inputs.get("events") or amount or 0)
+            diam = float(inputs.get("unload_diam") or inputs.get("diameter") or 0)
+            depth = float(inputs.get("unload_depth") or inputs.get("well_depth") or 0)
+            press = float(inputs.get("unload_press") or inputs.get("pressure") or 0)
+            if diam > 0 and depth > 0 and press > 0:
+                res = ghg_calc.calculate_unloading(freq, diam, depth, press)
+                em["ch4"] = res["ch4"]
+                em["totalCo2e"] = em["ch4"] * gwp_dict["CH4"]
+                return em, "server_unloading_calc"
+            else:
+                ch4_tonnes = (amount or 1.0) * 1.774
+                em["ch4"] = ch4_tonnes
+                em["totalCo2e"] = ch4_tonnes * gwp_dict["CH4"]
+                return em, "server_unloading_tier1"
 
     if process == "fugitive":
         f = calc_inputs.get("fugitive") or {}
         method = f.get("method") or "average"
         count = float(f.get("count") or amount or 0)
-        component = f.get("component") or f.get("compType") or "valves"
+        component = f.get("component") or f.get("compType")
         calc_method = "server_fugitive"
+        if not component and method != "pipeline":
+            # BUG-110: never book an unrecognised fugitive request as a count of valves
+            raise ValueError("Fugitive request not understood: give a facility_type (Tier 1), a component "
+                             "type, or a catalog / custom fugitive factor")
 
         if method == "pipeline":
             length = float(f.get("length_km") or f.get("length") or 0)
@@ -865,7 +901,7 @@ def compute_emissions(payload, factor_data=None, gwp_dict=None, gwp_standard=Non
         em["ch4"] = ch4_kg / 1000.0
         em["n2o"] = n2o_kg / 1000.0
 
-    elif process in ["venting", "loading", "separation"]:
+    elif process in ["venting", "loading", "separation", "associated_gas_venting"]:
         # Primarily CH4 release, minor CO2
         em["ch4"] = ch4_kg / 1000.0
         em["co2"] = co2_kg / 1000.0 if co2_kg > 0 else 0
@@ -913,3 +949,45 @@ def compute_emissions(payload, factor_data=None, gwp_dict=None, gwp_standard=Non
     )
 
     return em, calc_method
+
+
+
+class MissingFactorError(ValueError):
+    """Raised instead of silently booking 0 tCO2e when no emission factor could be resolved."""
+
+
+def _has_factor_values(factor_data):
+    if not factor_data:
+        return False
+    for key in ("co2", "ch4", "n2o"):
+        try:
+            if float(factor_data.get(key) or 0) > 0:
+                return True
+        except (TypeError, ValueError):
+            continue
+    return False
+
+
+def compute_emissions(payload, factor_data=None, gwp_dict=None, gwp_standard=None):
+    """Entry point for Scope 1 calculations (routes, bulk, recalculation).
+
+    Audit BUG-015 / BUG-042 / BUG-102 / BUG-112: a positive activity amount that yields zero
+    emissions because no factor was resolved is an error, never a silent 0 tCO2e record.
+    Tier 3 ("specific") engineering results are exempt: zero can be a real engineering outcome.
+    """
+    em, method = _compute_emissions_impl(payload, factor_data, gwp_dict=gwp_dict, gwp_standard=gwp_standard)
+    if any(float(em.get(g) or 0) for g in ("co2", "ch4", "n2o")):
+        return em, method
+    raw = payload.get("amount") if payload.get("amount") not in (None, "") else payload.get("quantity")
+    try:
+        amount = float(str(raw).replace(",", "")) if raw not in (None, "") else 0.0
+    except (TypeError, ValueError):
+        amount = 0.0
+    source = str(payload.get("factor_source") or "default").lower()
+    if amount > 0 and source in ("default", "custom", "") and not _has_factor_values(factor_data):
+        name = payload.get("fuel") or payload.get("fuel_type") or payload.get("custom_factor_id") or "(none)"
+        raise MissingFactorError(
+            f"No emission factor found for '{name}' ({payload.get('process_type') or 'process'}); "
+            "the record was not saved. Select a factor from the catalog or a saved custom factor."
+        )
+    return em, method

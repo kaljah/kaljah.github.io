@@ -1,3 +1,4 @@
+import json
 import os
 import datetime
 import re
@@ -294,20 +295,19 @@ def register():
     user.set_password(password)
 
     db.session.add(user)
-    db.session.commit()
+    db.session.flush()
 
-    # Audit
-    try:
-        log_activity_and_notify(
-            action="REGISTER",
-            record_id=str(user.id),
-            user=user,
-            request=request,
-            entity="User",
-            details=f"User registered: {user.email}",
-        )
-    except Exception as e:
-        current_app.logger.error(f"Audit Log Error on register: {e}")
+    # BUG-106: the REGISTER entry used to be added after the only commit and was lost.
+    creator = db.session.get(User, session.get("user_id")) if session.get("user_id") else None
+    log_activity_and_notify(
+        action="REGISTER",
+        record_id=str(user.id),
+        user=creator or user,
+        request=request,
+        entity="User",
+        details=f"User account created: {user.email} (role {user.role})",
+    )
+    db.session.commit()
 
     return (
         jsonify(
@@ -335,7 +335,7 @@ def register():
 
 @auth_bp.route("/login", methods=["POST"])
 @csrf.exempt
-@limiter.limit(lambda: os.environ.get("LOGIN_RATE_LIMIT", "20 per 15 minutes"))
+@limiter.limit(os.environ.get("LOGIN_RATE_LIMIT", "20 per 15 minutes"))
 def login():
     data = request.get_json()
     if not data or not data.get("email") or not data.get("password"):
@@ -345,11 +345,6 @@ def login():
     password_input = str(data.get("password", ""))
 
     user = User.query.filter(db.func.lower(User.email) == email_input.lower()).first()
-    if not user:
-        if email_input.lower() in ["a", "a@a"]:
-            user = User.query.filter(User.email.in_(["a", "a@a"])).first()
-        elif email_input.lower() in ["z", "z@z"]:
-            user = User.query.filter(User.email.in_(["z", "z@z"])).first()
 
     if user and user.check_password(password_input):
         if user.status != "active":
@@ -358,6 +353,7 @@ def login():
         session.clear()
         session.permanent = True
         session["user_id"] = user.id
+        session["sv"] = int(user.session_version or 0)  # BUG-114
         current_app.logger.debug(f"Session set for user_id={user.id}")
 
         # Compute operational defaults before setting last_login to prevent premature query autoflush
@@ -493,6 +489,8 @@ def logout():
         user = db.session.get(User, user_id)
         if user:
             try:
+                # BUG-114: invalidate every copy of this user's session cookie
+                user.session_version = int(user.session_version or 0) + 1
                 log_activity_and_notify(
                     action="LOGOUT",
                     record_id=str(user.id),
@@ -501,7 +499,9 @@ def logout():
                     entity="User",
                     details=f"User logged out: {user.email}",
                 )
+                db.session.commit()  # BUG-106: the LOGOUT entry was never committed
             except Exception as e:
+                db.session.rollback()
                 current_app.logger.error(f"Audit Log Error on logout: {e}")
 
     session.clear()
@@ -635,9 +635,12 @@ def change_password():
         return jsonify({"error": "Failed to update password"}), 500
 
     # Session fixation / exfiltration protection: regenerate session ID on credential change
+    user.session_version = int(user.session_version or 0) + 1  # BUG-114: other sessions end
+    db.session.commit()
     session.clear()
     session.permanent = True
     session["user_id"] = user.id
+    session["sv"] = int(user.session_version)
 
     return jsonify({"message": "Password changed successfully"})
 
@@ -690,9 +693,9 @@ _DEFAULT_APP_SETTINGS = {
     "unit_system": "metric",
     "auto_flag_discrepancy": True,
     "gwp_values": {
-        "AR5": {"ch4_100": 28.0, "ch4_20": 82.5, "n2o_100": 265.0, "co2": 1.0},
-        "AR6": {"ch4_100": 27.9, "ch4_20": 82.5, "n2o_100": 273.0, "co2": 1.0},
-        "AR4": {"ch4_100": 25.0, "ch4_20": 72.0, "n2o_100": 298.0, "co2": 1.0},
+        "AR5": {"ch4_100": 28.0, "ch4_20": 84.0, "n2o_100": 265.0, "n2o_20": 264.0, "co2": 1.0},
+        "AR6": {"ch4_100": 27.9, "ch4_20": 81.2, "n2o_100": 273.0, "n2o_20": 273.0, "co2": 1.0},
+        "AR4": {"ch4_100": 25.0, "ch4_20": 72.0, "n2o_100": 298.0, "n2o_20": 289.0, "co2": 1.0},
     },
 }
 
@@ -1000,6 +1003,9 @@ def update_user(id):
         new_role = str(data["role"]).strip().lower()
         if new_role not in VALID_ROLES:
             return jsonify({"error": f"Invalid role. Must be one of: {', '.join(sorted(VALID_ROLES))}"}), 400
+        # Separation of Duties: IT Admin cannot assign business compliance Admin or Superuser role
+        if new_role in ["admin", "superuser"] and it_admin.role not in ["admin", "it_manager"]:
+            return jsonify({"error": "Forbidden: IT Administrators cannot assign business compliance roles (admin, superuser)"}), 403
         target_new_rank = ROLE_RANK.get(new_role, 0)
         if target_new_rank > requester_rank:
             return jsonify({"error": "Cannot assign a role higher than your own"}), 403
@@ -1027,6 +1033,8 @@ def update_user(id):
     if "location" in data:
         user.location = data["location"]
     if "status" in data:
+        if data["status"] != user.status:
+            user.session_version = int(user.session_version or 0) + 1  # BUG-114
         user.status = data["status"]
 
     log_activity_and_notify(
@@ -1072,47 +1080,41 @@ def delete_user(id):
     it_admin_id = session.get("user_id")
     it_admin = db.session.get(User, it_admin_id)
 
-    # Clean up and nullify FK references before deleting
+    # BUG-010 / BUG-069: derive every reference to users.id from the schema instead of a
+    # hand-maintained list, and keep the maker-checker identity on the records.
     from sqlalchemy import text
+    from utils import user_label
 
-    # Delete notifications belonging to the user
-    db.session.execute(
-        text("DELETE FROM notifications WHERE user_id = :uid"),
-        {"uid": id},
-    )
-    # Nullify activity_log.user_id references (user_name is already preserved)
-    db.session.execute(
-        text("UPDATE activity_log SET user_id = NULL WHERE user_id = :uid"), {"uid": id}
-    )
-    # Nullify created_by on facilities
-    db.session.execute(
-        text("UPDATE facilities SET created_by = NULL WHERE created_by = :uid"),
-        {"uid": id},
-    )
-    # Nullify all created_by, approved_by, updated_by references across all tables
-    cols_to_nullify = ["created_by", "approved_by", "updated_by"]
-    tables_to_clean = [
-        "emissions",
-        "scope2_emissions",
-        "scope3_emissions",
-        "mitigation_projects",
-        "mitigation_records",
-        "facilities",
-        "emission_sources",
-        "custom_factors",
-        "cbam_product_exports",
-        "base_year_recalculations",
-        "ogmp_surveys",
-    ]
-    for tbl in tables_to_clean:
-        for col in cols_to_nullify:
-            try:
+    label = user_label(user)
+    db.session.execute(text("DELETE FROM notifications WHERE user_id = :uid"), {"uid": id})
+    for table in db.metadata.sorted_tables:
+        if table.name in ("users", "notifications"):
+            continue
+        for col in table.columns:
+            if not any(fk.column.table.name == "users" for fk in col.foreign_keys):
+                continue
+            snapshot = f"{col.name}_name"
+            if snapshot in table.columns:
                 db.session.execute(
-                    text(f"UPDATE {tbl} SET {col} = NULL WHERE {col} = :uid"),
-                    {"uid": id},
+                    text(f'UPDATE "{table.name}" SET "{snapshot}" = :label '
+                         f'WHERE "{col.name}" = :uid AND ("{snapshot}" IS NULL OR "{snapshot}" = \'\')'),
+                    {"uid": id, "label": label},
                 )
-            except Exception:
-                pass  # Table or column may not exist in current schema; skip
+            db.session.execute(
+                text(f'UPDATE "{table.name}" SET "{col.name}" = NULL WHERE "{col.name}" = :uid'), {"uid": id}
+            )
+
+    # BUG-106: user deletion is an auditable action
+    log_activity_and_notify(
+        action="DELETE_USER",
+        record_id=str(id),
+        user=it_admin,
+        request=request,
+        entity="User",
+        entity_id=str(id),
+        details=f"Deleted user account {label} (role {user.role})",
+        metadata_json=json.dumps({"email": user.email, "role": user.role, "location": user.location}),
+    )
 
     db.session.delete(user)
     db.session.commit()
@@ -1144,6 +1146,7 @@ def admin_reset_password(id):
         return jsonify({"error": err_msg}), 400
 
     user.set_password(new_password)
+    user.session_version = int(user.session_version or 0) + 1  # BUG-114
     user.password_updated_at = datetime.datetime.now(datetime.timezone.utc)
 
     # Create notification for the user whose password was reset
