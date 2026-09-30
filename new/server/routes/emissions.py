@@ -51,7 +51,6 @@ def _canonical_api_factor_name(fuel_name: str):
         "gas": "Natural Gas",
         "diesel": "Diesel (No. 2 Fuel Oil)",
         "crude oil": "Crude Oil",
-        "fuel gas": "Refinery Fuel Gas",
         "lpg": "Propane (Liquid)",
         "propane": "Propane (Gas)",
         "gasoline": "Motor Gasoline",
@@ -66,12 +65,18 @@ def _canonical_api_factor_name(fuel_name: str):
     canonical = aliases.get(norm)
     if canonical and canonical in factor_catalog:
         return canonical
-    for k, v in factor_catalog.items():
-        if k.lower().replace("_", " ").replace("-", " ").strip() == norm:
+    def _n(x):
+        return str(x).lower().replace("_", " ").replace("-", " ").strip()
+
+    for k in factor_catalog:
+        if _n(k) == norm:
             return k
-        if v.get("code") and v.get("code").lower().replace("_", " ").replace("-", " ").strip() == norm:
-            return k
-    return None
+    # a factor code only when it names one factor: several factors share a code (e.g. CB_Prod is
+    # Carbon Black with and without thermal abatement, CH4 478x apart) and the first one used to win
+    by_code = [k for k, v in factor_catalog.items() if v.get("code") and _n(v["code"]) == norm]
+    distinct = {repr(sorted((kk, str(vv)) for kk, vv in factor_catalog[k].items() if kk in ("co2", "ch4", "n2o", "unit", "hhv")))
+                for k in by_code}
+    return by_code[0] if by_code and len(distinct) == 1 else None
 
 
 def _lookup_api_factor(fuel_name: str) -> dict:

@@ -166,3 +166,38 @@ def test_monthly_production_rate_is_not_annualised():
 
     assert production_gas_m3(Row()) == pytest.approx(310 * 28316.846592)
     assert production_boe(Row()) == pytest.approx(310e6 / (1000.0 / 0.178))
+
+
+# -- Factor-name matching, custom factor and equity percentages ---------------------------------
+
+def test_factor_name_matching_is_unambiguous():
+    from routes.emissions import _canonical_api_factor_name as c
+
+    with flask_app.app_context():
+        # "fuel gas" is natural gas upstream and refinery gas downstream: no silent pick
+        assert c("fuel gas") is None
+        assert c("Refinery Fuel Gas") == "Refinery Fuel Gas"
+        assert c("natural gas") == "Natural Gas"
+        # a code shared by factors with different values (Carbon Black, CH4 478x apart) is refused
+        assert c("CB_Prod") is None
+        assert c("Carbon Black") == "Carbon Black"
+        assert c("NG") == "Natural Gas"
+
+
+def test_custom_factor_import_percent_uncertainty(user_id):
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.append(["name", "unit", "co2_factor", "ch4_factor", "uncertainty", "co2_uncertainty"])
+    ws.append(["PR audit factor pct", "scf", 0.0545, 0.00001, 0.05, "3%"])
+    ws["E2"].number_format = "0%"
+    wb.save(path := tempfile.mkstemp(suffix=".xlsx")[1])
+    try:
+        st = _run(path, "cf.xlsx", user_id, "custom_factors")
+    finally:
+        if os.path.exists(path):
+            os.remove(path)
+    assert st["status"] == "completed", st
+    with flask_app.app_context():
+        from models import CustomFactor
+        cf = CustomFactor.query.filter_by(name="PR audit factor pct").first()
+        assert cf.uncertainty == pytest.approx(5.0) and cf.co2_uncertainty == pytest.approx(3.0)
