@@ -4,16 +4,18 @@ import CustomDropdown from "./CustomDropdown";
 import { useToast } from "./Toast";
 import { useAuth } from "../context/AuthContext";
 import { getUserOperationalDefaults } from "../utils/userDefaults";
-import { formatNumber } from "../utils/formatters";
+import { formatNumber, formatEmission } from "../utils/formatters";
 import "./ScopeTables.css";
 import "./Scope1Form.css";
 
 // Sub-components
 import Scope1ImportWizard from "./Scope1ImportWizard";
 import ConfirmModal from "./ConfirmModal";
-import { Upload, Trash2, Eye } from "lucide-react";
-import EmissionResult from "./EmissionResult";
+import { Upload, Trash2, Eye, Sliders, Sparkles, BookOpen, Layers, PlusCircle, CheckCircle, Info } from "lucide-react";
+import { OFFICIAL_FUEL_PRESETS, getPresetsForFuel } from "../constants/officialFuelPresets";
+import QuickAddCustomFactorModal from "./QuickAddCustomFactorModal";
 import CalculationDetails from "./CalculationDetails";
+import { Section, FieldGrid, MoreOptions } from "./scope1/ui";
 import CombustionForm from "./scope1/CombustionForm";
 import DrillingForm from "./scope1/DrillingForm";
 import CompletionsForm from "./scope1/CompletionsForm";
@@ -28,6 +30,15 @@ import ChemicalProductionForm from "./scope1/ChemicalProductionForm";
 import NitricAcidForm from "./scope1/NitricAcidForm";
 import AdipicAcidForm from "./scope1/AdipicAcidForm";
 import AsphaltBlowingForm from "./scope1/AsphaltBlowingForm";
+import AssociatedGasVentingForm from "./scope1/AssociatedGasVentingForm";
+import { SectionMethodPanel } from "./scope1/SectionMethods";
+import {
+  SECTION_PROCESSES,
+  SECTION_TIERS,
+  currentChoice,
+  sectionMethodActive,
+  syncSectionChoice,
+} from "./scope1/methodChoices";
 import GasCompositionCalculator from "./GasCompositionCalculator";
 import {
   API_FACTORS,
@@ -35,7 +46,6 @@ import {
   PROCESS_TYPES as PROCESS_TYPES_MAP,
 } from "../utils/EmissionFactors";
 import {
-  getProcessTypesForSegment,
   formatUncertainty,
   getSegmentColor,
   getSegmentBgColor,
@@ -44,9 +54,22 @@ import {
 
 const PROCESS_TYPES = PROCESS_TYPES_MAP;
 
+// Emission UI shows no API Compendium / table citations (user request); legal references stay
+const hideApiCitation = (t) => (t && /\bAPI\b|Compendium|\bTables?\s*\d/.test(t) ? null : t);
+
+// Tier shown in the table and CSV: a saved library / custom factor is "Custom", a Tier 2 site
+// property override is "Tier 2" (browser test #13: both were shown as "Specific")
+function factorTypeLabel(entry) {
+  if (entry.factor_source === "default") return "Default";
+  if (entry.factor_source === "custom") return entry.custom_factor_id ? "Custom" : "Tier 2";
+  if (entry.factor_source === "specific") return "Specific";
+  return "-";
+}
+
 const Scope1Form = () => {
   const { user } = useAuth();
   const toast = useToast();
+  // BUG-082: the inspector label reflects the org's active GWP standard
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
@@ -98,6 +121,13 @@ const Scope1Form = () => {
   const [meterUncertaintyPct, setMeterUncertaintyPct] = useState("2.0"); // Default Tier 3 ±2.0%
   const [gcUncertaintyPct, setGcUncertaintyPct] = useState("");
 
+  // Tier 2 Enhanced State
+  const tier2Mode = "override"; // Tier 2 (API Compendium) = measured fuel properties; library factors are separate
+  const [activePresetId, setActivePresetId] = useState("");
+  const [fuelDensity, setFuelDensity] = useState("");
+  const [dataSourceRef, setDataSourceRef] = useState("");
+  const [isQuickAddModalOpen, setIsQuickAddModalOpen] = useState(false);
+
   const [facilities, setFacilities] = useState([]);
   const [emissionSources, setEmissionSources] = useState([]);
   const [emissionSourceId, setEmissionSourceId] = useState("");
@@ -106,9 +136,7 @@ const Scope1Form = () => {
   const [totalPages, setTotalPages] = useState(1);
 
   const [showGasCalc, setShowGasCalc] = useState(false);
-  const [calculationResult, setCalculationResult] = useState(null);
   const [inspectRecord, setInspectRecord] = useState(null);
-  const [processTypesAvailable, setProcessTypesAvailable] = useState([]); // API 2021: Dynamic process types
   const [importModal, setImportModal] = useState({
     isOpen: false,
     type: "activity",
@@ -117,6 +145,12 @@ const Scope1Form = () => {
 
   // Table filter state
   const [filterYear, setFilterYear] = useState("");
+  const [facetYears, setFacetYears] = useState([]);
+  useEffect(() => {
+    api.get("/filters/available")
+      .then((r) => setFacetYears(Array.isArray(r.data?.years) ? r.data.years : []))
+      .catch(() => setFacetYears([]));
+  }, []);
   const [filterProcess, setFilterProcess] = useState("");
   const [filterSearch, setFilterSearch] = useState("");
 
@@ -164,16 +198,6 @@ const Scope1Form = () => {
     }
   }, [emissionSourceId, emissionSources]);
 
-  // API 2021: Load available process types when segment changes
-  useEffect(() => {
-    const loadProcessTypes = async () => {
-      if (!streamType) return;
-      const types = await getProcessTypesForSegment(streamType.toLowerCase());
-      setProcessTypesAvailable(types);
-    };
-    loadProcessTypes();
-  }, [streamType]);
-
   const loadCustomFactors = async () => {
     try {
       const res = await api.get("/custom-factors");
@@ -188,7 +212,24 @@ const Scope1Form = () => {
   useEffect(() => {
     if (!processType) return;
 
-    if (sourceType === "default" || sourceType === "specific") {
+    const isCombustion = [
+      "combustion",
+      "stationary_combustion",
+      "mobile_combustion",
+      "mobile",
+      "flaring",
+      "routine_flaring",
+      "non_routine_flaring",
+      "safety_flaring",
+      "flare",
+    ].includes(processType);
+
+    if (
+      sourceType === "default" ||
+      (sourceType === "tier2_plus" && processType === "drilling") ||
+      sourceType === "specific" ||
+      (sourceType === "custom" && isCombustion && tier2Mode === "override")
+    ) {
       const options = Object.keys(API_FACTORS)
         .filter((key) => {
           const factor = API_FACTORS[key];
@@ -205,8 +246,11 @@ const Scope1Form = () => {
             return hasFugitiveTag;
           }
 
-          // Standard usage check for other processes
-          const usageMatch = factor.usage && factor.usage.includes(processType);
+          // Standard usage check for other processes; the flaring variants use the flaring factors
+          const usageKey = ["routine_flaring", "non_routine_flaring", "safety_flaring", "flare"].includes(processType)
+            ? "flaring"
+            : processType;
+          const usageMatch = factor.usage && factor.usage.includes(usageKey);
           const streamMatch = !factor.stream || factor.stream === streamType;
 
           return usageMatch && streamMatch;
@@ -220,14 +264,29 @@ const Scope1Form = () => {
     } else {
       const options = customFactors
         .filter(
-          (f) => !f.usage || f.usage.includes(processType) || f.usage === "All",
+          (f) =>
+            !f.usage ||
+            f.usage === "Custom" ||
+            f.usage === "All" ||
+            f.usage.includes(processType) ||
+            f.usage.toLowerCase().includes(processType.toLowerCase()) ||
+            (processType === "drilling" &&
+              (String(f.usage || "").toLowerCase().includes("drill") ||
+                String(f.usage || "").toLowerCase().includes("mud") ||
+                String(f.factor_name || f.name || "").toLowerCase().includes("drill") ||
+                String(f.factor_name || f.name || "").toLowerCase().includes("mud"))),
         )
-        .map((f) => ({ value: f.id.toString(), label: f.factor_name }));
+        .map((f) => ({
+          value: f.id.toString(),
+          label: f.factor_name || f.name || `Custom Factor #${f.id}`,
+          factor: f,
+        }));
       setFuelOptions(options);
     }
   }, [
     processType,
     sourceType,
+    tier2Mode,
     customFactors,
     streamType,
     formData.fugitive_method,
@@ -309,27 +368,69 @@ const Scope1Form = () => {
     );
   };
 
+  const BLANK_SPEC = {
+    co2: "", co2Unit: "kg/m3", ch4: "", ch4Unit: "kg/m3", n2o: "", n2oUnit: "kg/m3", co: "", coUnit: "kg/m3",
+  };
+  // Form inputs belong to one process and tier: switching either starts from a clean form, so no
+  // value typed for another process / method is submitted with this record (Tier 3 test #17, #20)
+  const resetProcessInputs = () => {
+    setFormData({});
+    setSpecFactors(BLANK_SPEC);
+  };
+  // Tier 3 "fuel analysis" factor fields (base factor, gas analysis, CO2/CH4/N2O factors)
+  const showsTier3Factors =
+    sourceType === "specific" &&
+    !sectionMethodActive(formData) &&
+    !SECTION_PROCESSES[processType] &&
+    ![
+      "tank", "tank_flashing", "tank_working", "tank_breathing", "agr", "dehydrator", "pneumatic", "mobile",
+      "fugitive", "venting", "drilling", "completions", "unloading", "blowdown", "associated_gas_venting",
+    ].includes(processType);
+
   // Handle Resetting Fuel on Context Change
   useEffect(() => {
     setFormData((prev) => ({ ...prev, fuel: "" }));
   }, [processType]);
 
   useEffect(() => {
-    // If switching to Custom, clear fuel (IDs don't match default keys)
-    // If switching from Custom to Default/Specific, clear fuel
-    // If switching between Default and Specific, KEEP fuel (shared options)
     setFormData((prev) => {
-      const isCustomId = !isNaN(parseInt(prev.fuel)); // Rough check, assuming default keys are strings
-      if (sourceType === "custom" && !isCustomId) return { ...prev, fuel: "" };
-      if (
-        (sourceType === "default" || sourceType === "specific") &&
-        isCustomId &&
-        prev.fuel
-      )
-        return { ...prev, fuel: "" };
+      const isCustomId = !isNaN(parseInt(prev.fuel)) && String(parseInt(prev.fuel)) === String(prev.fuel);
+      if (sourceType === "library" && !isCustomId) return { ...prev, fuel: "" };
+      if (sourceType !== "library" && isCustomId && prev.fuel) return { ...prev, fuel: "" };
       return prev;
     });
-  }, [sourceType]);
+  }, [sourceType, tier2Mode]);
+
+  const handleApplyPreset = (preset) => {
+    setActivePresetId(preset.id);
+    const matched = fuelOptions.find(
+      (opt) => opt.value.toLowerCase() === preset.defaultMatchingFuel.toLowerCase()
+    );
+    const fuelVal = matched ? matched.value : preset.defaultMatchingFuel;
+
+    setFormData((prev) => ({
+      ...prev,
+      fuel: fuelVal,
+      hhv: preset.hhv ? preset.hhv.toString() : prev.hhv,
+      hhv_unit: preset.hhvUnit || prev.hhv_unit || "BTU/scf",
+    }));
+
+    if (preset.densityKgM3) {
+      setFuelDensity(preset.densityKgM3.toString());
+    }
+    if (preset.citation) {
+      setDataSourceRef(hideApiCitation(preset.citation) || "");
+    }
+    toast.success(`Preset applied: ${preset.shortLabel || preset.name}`);
+  };
+
+  const handleFactorCreated = (newFactor) => {
+    loadCustomFactors();
+    if (newFactor?.id) {
+      setSourceType("library");
+      setFormData((prev) => ({ ...prev, fuel: newFactor.id.toString() }));
+    }
+  };
 
   // Auto-populate Specific Factors
   useEffect(() => {
@@ -356,27 +457,52 @@ const Scope1Form = () => {
 
     // 1. Combustion / General Fuel / Any selected from main dropdown
     if (formData.fuel) {
-      // Try direct key match first
-      if (API_FACTORS[formData.fuel]) {
-        factorToUse = API_FACTORS[formData.fuel];
-      }
-      // Fallback: Try matching by 'code' property for custom forms (Completions/Unloading)
-      else {
-        const found = Object.values(API_FACTORS).find(
-          (f) => f.code === formData.fuel,
+      if (sourceType === "custom") {
+        const found = customFactors.find(
+          (f) => f.id.toString() === formData.fuel?.toString()
         );
-        if (found) factorToUse = found;
+        if (found) {
+          factorToUse = {
+            ...found,
+            ch4: found.ch4_factor,
+            co2: found.co2_factor,
+            n2o: found.n2o_factor,
+            uncertainty: {
+              ch4: found.ch4_uncertainty || found.uncertainty || 0.2,
+              co2: found.co2_uncertainty || 0.1,
+              n2o: found.n2o_uncertainty || 0.3,
+            },
+          };
+        }
+      }
+      if (!factorToUse) {
+        // Try direct key match first
+        if (API_FACTORS[formData.fuel]) {
+          factorToUse = API_FACTORS[formData.fuel];
+        }
+        // Fallback: Try matching by 'code' property for custom forms (Completions/Unloading)
+        else {
+          const found = Object.values(API_FACTORS).find(
+            (f) => f.code === formData.fuel,
+          );
+          if (found) factorToUse = found;
+        }
       }
     }
-    // 2. Drilling (Mud Degassing) - implicit factor based on mud type
+    // 2. Drilling (Mud Degassing) - Table 6-3 well default or API onshore mud defaults
     else if (processType === "drilling") {
-      const mudType = formData.mud_type || "water";
-      const mudKey =
-        mudType === "oil"
-          ? "Drilling - Mud Degassing (Oil Based)"
-          : "Drilling - Mud Degassing (Water Based)";
-      if (API_FACTORS[mudKey]) {
-        factorToUse = API_FACTORS[mudKey];
+      if (sourceType === "default") {
+        factorToUse =
+          API_FACTORS["Drilling - Gas Well Drilling (Simplified Default)"];
+      } else if (sourceType === "tier2_plus") {
+        const mudType = formData.mud_type || "water_based";
+        const mudKey =
+          mudType === "oil" || mudType === "oil_based"
+            ? "Drilling - Mud Degassing (Oil Based)"
+            : "Drilling - Mud Degassing (Water Based)";
+        if (API_FACTORS[mudKey]) {
+          factorToUse = API_FACTORS[mudKey];
+        }
       }
     }
 
@@ -473,7 +599,7 @@ const Scope1Form = () => {
         e.process_type ||
         "",
       e.fuel || e.fuel_type || e.activity_data_label || "",
-      e.factor_source === "default" ? "Default" : "Specific",
+      factorTypeLabel(e),
       e.amount || e.quantity || "",
       e.unit || "",
       e.co2_emissions || 0,
@@ -562,6 +688,20 @@ const Scope1Form = () => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  // Keep the calculation-method keys (activity_key / vent_method / combustion_method) in step
+  // with the process and tier, including after the form is reset
+  const sectionChoice = currentChoice(formData);
+  useEffect(() => {
+    // processes whose tiers are these methods: move off a tier the process does not offer
+    const tiers = SECTION_TIERS[processType];
+    if (tiers && sourceType !== "library" && !tiers.some((t) => t.key === sourceType)) {
+      setSourceType(tiers[0].key);
+      return;
+    }
+    syncSectionChoice(processType, sourceType, formData, handleFormChange);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [processType, sourceType, sectionChoice]);
+
   const handleAddEntry = async (status = "Verified") => {
     // Validate identity fields
     if (!year || !month || !facilityId || !processType) {
@@ -571,13 +711,41 @@ const Scope1Form = () => {
       return;
     }
 
+    // API Compendium activity tables, gas-volume and combustion methods: the server validates
+    // their inputs (SectionMethods); only the activity-table choice is checked here
+    const sectionActive =
+      sourceType !== "library" && (sectionMethodActive(formData) || Boolean(SECTION_PROCESSES[processType]));
+    if (sectionActive && currentChoice(formData) === "activity" && !formData.activity_key) {
+      toast.warning("Select a source");
+      return;
+    }
+
+    // Library factor: activity x the selected site factor
+    if (sourceType === "library") {
+      if (!formData.fuel || isNaN(parseInt(formData.fuel))) {
+        toast.warning("Select a library factor");
+        return;
+      }
+    }
+
     // Validate fuel/factor selection
-    if (
+    if (sourceType !== "library" && !sectionActive &&
       (sourceType === "default" || sourceType === "custom") &&
+      // fugitives: Tier 1 / 2B use Compendium tables (7-8, 7-12); Tier 2A sets its catalog key itself
+      !["associated_gas_venting", "completions", "unloading", "fugitive"].includes(processType) &&
       !formData.fuel
     ) {
       toast.warning("Please select a fuel or emission factor");
       return;
+    }
+    if (
+      processType === "associated_gas_venting" &&
+      sourceType === "default"
+    ) {
+      if (!formData.fuel && !formData.basin) {
+        formData.fuel = "Associated Gas Venting - US Average";
+        formData.basin = "Associated Gas Venting - US Average";
+      }
     }
 
     // Validate activity data (amount/quantity)
@@ -585,16 +753,18 @@ const Scope1Form = () => {
     const isUpstreamEng =
       sourceType === "specific" &&
       [
-        "drilling",
         "completions",
         "unloading",
         "agr",
         "dehydrator",
         "venting",
         "blowdown",
+        "associated_gas_venting",
+        "fugitive",
       ].includes(processType);
 
-    if (!isUpstreamEng && (!amount || parseFloat(amount) <= 0)) {
+    const needsAmount = !sectionActive || currentChoice(formData) === "activity";
+    if (!isUpstreamEng && needsAmount && (!amount || parseFloat(amount) <= 0)) {
       toast.warning(
         "Please enter a valid activity amount/quantity greater than 0",
       );
@@ -602,9 +772,9 @@ const Scope1Form = () => {
     }
 
     // Strict validation for Tier 3 (Engineering / Specific) inputs
-    if (sourceType === "specific") {
+    if (sourceType === "specific" && !sectionActive) {
       if (
-        ["combustion", "stationary_combustion", "flaring"].includes(processType)
+        ["combustion", "stationary_combustion", "flaring", "routine_flaring", "non_routine_flaring", "safety_flaring"].includes(processType)
       ) {
         if (!formData.hhv || parseFloat(formData.hhv) <= 0) {
           toast.warning(
@@ -624,44 +794,112 @@ const Scope1Form = () => {
           return;
         }
       } else if (processType === "unloading") {
-        const hasDepth = formData.unload_depth;
-        const hasDiam = formData.unload_diam || formData.unload_diameter;
-        const hasPress = formData.unload_press || formData.unload_pressure;
-        const hasEvents =
-          formData.unload_freq || formData.unload_events || formData.amount;
-        if (!hasDepth || !hasDiam || !hasPress || !hasEvents) {
-          toast.warning(
-            "Well unloading parameters (depth, diameter, pressure, events) are required",
-          );
-          return;
-        }
-        if (
-          formData.ch4_content === undefined ||
-          formData.ch4_content === null ||
-          formData.ch4_content === ""
-        ) {
-          toast.warning("Gas CH4 content (%) is required for well unloading");
-          return;
+        const tier = String(formData.tier || (sourceType === "specific" ? "tier3" : sourceType === "custom" ? "tier2" : "tier1")).toLowerCase();
+        if (tier === "tier1" || sourceType === "default") {
+          const wells = parseFloat(formData.well_count || formData.wells || formData.amount || 0);
+          if (wells <= 0) {
+            toast.warning("Number of wells must be greater than zero for Tier 1 liquids unloading");
+            return;
+          }
+        } else if (tier === "tier2" || sourceType === "custom") {
+          const events = parseFloat(formData.events || formData.unload_events || formData.unload_freq || formData.amount || 0);
+          if (events < 0 || isNaN(events)) {
+            toast.warning("Number of unloading events is required for Tier 2 liquids unloading");
+            return;
+          }
+        } else {
+          // Tier 3 Engineering
+          const method = String(formData.calc_method || formData.method || "api_equation_6_10").toLowerCase();
+          if (method === "api_equation_6_11") {
+            if (!formData.p_shut || !formData.p_line || !formData.p_sep || !formData.sfr_p || !formData.t_p) {
+              toast.warning("All automated plunger parameters (Pshut, Pline, Psep, SFRp, Tp) are required");
+              return;
+            }
+          } else if (method === "api_equation_6_10") {
+            const hasDepth = formData.unload_depth || formData.well_depth;
+            const hasDiam = formData.unload_diam || formData.diameter;
+            const hasPress = formData.unload_press || formData.pressure;
+            const hasEvents = formData.unload_events || formData.unload_freq || formData.events || formData.amount;
+            const hasSfr = formData.sfr !== undefined && formData.sfr !== null && formData.sfr !== "";
+            const hasHours = formData.hours_open !== undefined && formData.hours_open !== null && formData.hours_open !== "";
+            if (!hasDepth || !hasDiam || !hasPress || !hasEvents || !hasSfr || !hasHours) {
+              toast.warning("Depth, diameter, pressure, events, SFR and venting hours are required");
+              return;
+            }
+          } else {
+            const hasDepth = formData.unload_depth || formData.well_depth;
+            const hasDiam = formData.unload_diam || formData.diameter;
+            const hasPress = formData.unload_press || formData.pressure;
+            const hasEvents = formData.unload_freq || formData.unload_events || formData.events || formData.amount;
+            if (!hasDepth || !hasDiam || !hasPress || !hasEvents) {
+              toast.warning("Well unloading parameters (depth, diameter, pressure, events) are required");
+              return;
+            }
+          }
+          if (
+            formData.ch4_content === undefined ||
+            formData.ch4_content === null ||
+            formData.ch4_content === ""
+          ) {
+            toast.warning("Gas CH4 content (%) is required for well unloading");
+            return;
+          }
         }
       } else if (processType === "completions") {
-        const hasRateDur = formData.comp_duration && formData.comp_rate;
-        const hasGor = formData.comp_liquid_bbl && formData.comp_gor;
-        const hasVol =
-          formData.comp_volume ||
-          formData.amount ||
-          formData.flowback_volume;
-        if (!hasRateDur && !hasGor && !hasVol) {
-          toast.warning(
-            "Well completions parameters (rate & duration OR liquid & GOR OR volume) are required",
-          );
-          return;
-        }
-        if (
-          formData.comp_ch4_content === undefined &&
-          formData.ch4_content === undefined
-        ) {
-          toast.warning("Gas CH4 content (%) is required for well completions");
-          return;
+        const tier = String(formData.tier || (sourceType === "specific" ? "tier3" : sourceType === "custom" ? "tier2" : "tier1")).toLowerCase();
+        if (tier === "tier1" || sourceType === "default") {
+          const events = parseFloat(formData.amount || formData.events || 0);
+          if (events <= 0 || isNaN(events)) {
+            toast.warning("Number of completion events must be greater than zero for Tier 1 completions");
+            return;
+          }
+        } else if (tier === "tier2" || sourceType === "custom") {
+          const method = String(formData.calc_method || formData.comp_method || "rate_duration").toLowerCase();
+          if (method === "gor") {
+            if (!formData.comp_liquid_bbl || !formData.comp_gor) {
+              toast.warning("Liquid flowback volume (bbl) and GOR (scf/bbl) are required for GOR method");
+              return;
+            }
+          } else if (method === "api_equation_6_7" || method === "pressure_volume") {
+            const hasRate = formData.comp_rate || formData.daily_production_rate || formData.comp_daily_prod_rate;
+            const hasDur = formData.comp_duration || formData.vent_duration_hours;
+            if (!hasRate || !hasDur) {
+              toast.warning("Initial production rate and vent duration are required");
+              return;
+            }
+          } else {
+            // rate_duration
+            if (!formData.comp_rate || !formData.comp_duration) {
+              toast.warning("Flowback rate and duration are required for Rate × Duration calculation");
+              return;
+            }
+          }
+          if (formData.comp_ch4_content === undefined && formData.ch4_content === undefined) {
+            toast.warning("Gas CH4 content (%) is required for Tier 2 completions");
+            return;
+          }
+        } else {
+          // Tier 3 Direct Measurement
+          const hasVol = formData.comp_volume || formData.flowback_volume || (formData.unit !== "events" && formData.amount);
+          if (!hasVol || parseFloat(hasVol) <= 0) {
+            toast.warning("Measured flowback gas volume must be greater than zero for Tier 3 completions");
+            return;
+          }
+          if (formData.comp_ch4_content === undefined && formData.ch4_content === undefined) {
+            toast.warning("Gas CH4 content (%) is required for Tier 3 completions");
+            return;
+          }
+          const disp = String(formData.comp_disposition || formData.disposition || "vented").toLowerCase();
+          if (disp === "split") {
+            const fV = parseFloat(formData.comp_frac_vented || formData.frac_vented || 0);
+            const fF = parseFloat(formData.comp_frac_flared || formData.frac_flared || 0);
+            const fR = parseFloat(formData.comp_frac_recovered || formData.frac_recovered || 0);
+            const sumP = Math.round((fV > 1 ? fV : fV * 100) + (fF > 1 ? fF : fF * 100) + (fR > 1 ? fR : fR * 100));
+            if (sumP !== 100) {
+              toast.warning(`Custom split percentages must sum to 100% (currently ${sumP}%)`);
+              return;
+            }
+          }
         }
       } else if (processType === "blowdown" || processType === "venting") {
         if (
@@ -753,6 +991,103 @@ const Scope1Form = () => {
       }
     }
 
+    // Associated Gas Venting Validations (All Tiers)
+    if (processType === "associated_gas_venting") {
+      const tier = String(
+        formData.tier ||
+          (sourceType === "specific"
+            ? "tier3"
+            : sourceType === "custom"
+            ? "tier2"
+            : "tier1"),
+      ).toLowerCase();
+
+      if (tier === "tier1" || sourceType === "default") {
+        const oil = parseFloat(formData.oil_production || formData.amount || 0);
+        if (oil <= 0 || isNaN(oil)) {
+          toast.warning(
+            "Crude oil production throughput must be greater than zero for Tier 1",
+          );
+          return;
+        }
+      } else if (tier === "tier2" || sourceType === "custom") {
+        const oil = parseFloat(formData.oil_production || formData.amount || 0);
+        if (oil <= 0 || isNaN(oil)) {
+          toast.warning(
+            "Crude oil production throughput must be greater than zero for Tier 2",
+          );
+          return;
+        }
+        const gor = parseFloat(formData.gor);
+        if (
+          formData.gor === undefined ||
+          formData.gor === "" ||
+          isNaN(gor) ||
+          gor < 0
+        ) {
+          toast.warning("Gas-Oil Ratio (GOR) is required and cannot be negative");
+          return;
+        }
+        const dur = parseFloat(
+          formData.venting_duration !== undefined
+            ? formData.venting_duration
+            : new Date(Number(year), Number(month), 0).getDate() || 365,
+        );
+        if (dur < 0) {
+          toast.warning("Venting duration cannot be negative");
+          return;
+        }
+        if (dur > 366) {
+          toast.warning("Venting duration cannot exceed 366 days");
+          return;
+        }
+      } else {
+        // Tier 3
+        const rate = parseFloat(formData.vent_rate || 0);
+        const vol = parseFloat(formData.vent_volume || formData.amount || 0);
+        if (rate <= 0 && vol <= 0) {
+          toast.warning(
+            "Measured vent flow rate or total measured vent volume is required for Tier 3",
+          );
+          return;
+        }
+        if (
+          rate > 0 &&
+          (!formData.venting_duration ||
+            parseFloat(formData.venting_duration) <= 0)
+        ) {
+          toast.warning(
+            "Venting duration is required when vent rate is specified for Tier 3",
+          );
+          return;
+        }
+      }
+
+      // Composition check if provided
+      const ch4 =
+        formData.ch4_content !== undefined && formData.ch4_content !== ""
+          ? parseFloat(formData.ch4_content)
+          : null;
+      const co2 =
+        formData.co2_content !== undefined && formData.co2_content !== ""
+          ? parseFloat(formData.co2_content)
+          : null;
+      if (ch4 !== null && (ch4 < 0 || ch4 > 100)) {
+        toast.warning("Methane (CH4) content must be between 0% and 100%");
+        return;
+      }
+      if (co2 !== null && (co2 < 0 || co2 > 100)) {
+        toast.warning(
+          "Carbon dioxide (CO2) content must be between 0% and 100%",
+        );
+        return;
+      }
+      if (ch4 !== null && co2 !== null && ch4 + co2 > 100.01) {
+        toast.warning("Sum of CH4 and CO2 content cannot exceed 100%");
+        return;
+      }
+    }
+
     try {
       setSubmitting(true);
       // Construct calc_inputs based on process type
@@ -778,62 +1113,67 @@ const Scope1Form = () => {
 
       // Unit Conversion Logic
       let finalAmount = formData.amount ? parseFloat(formData.amount) : 0;
-      let finalUnit = formData.unit || "m3";
-
-      // payload debug logging removed — do not log emission data in production
-
-      // Auto-convert if factor has a baseUnit (e.g., Diesel in BBL -> Gal)
-      if (
-        sourceType === "default" &&
-        formData.fuel &&
-        API_FACTORS[formData.fuel]
-      ) {
-        const factor = API_FACTORS[formData.fuel];
-        if (factor.baseUnit && factor.baseUnit !== finalUnit) {
-          const converted = convertActivityData(
-            finalAmount,
-            finalUnit,
-            factor.baseUnit,
-          );
-          if (converted !== finalAmount) {
-            if (import.meta.env.DEV)
-              console.log(
-                `Converting ${finalAmount} ${finalUnit} to ${converted} ${factor.baseUnit}`,
-              );
-            finalAmount = converted;
-            finalUnit = factor.baseUnit;
-          }
-        }
-      }
+      // BUG-109: no hidden "m3" default and no client-side base-unit rewrite. The entered amount
+      // and unit are sent once (top level and calc_inputs agree) and the server converts them.
+      let finalUnit = formData.unit || "";
 
       // --- PROCESS-SPECIFIC UNIT STANDARDIZATION ---
 
-      // 1. Drilling Mud
-      // Tier 3 (specific): convert mud_vol to m3 for engineering calculator
-      // Tier 1 (default/custom): keep in bbl to match the kg CH4/bbl factor unit
-      if (processType === "drilling" && formData.mud_vol) {
-        const vol = parseFloat(formData.mud_vol);
-        const unit = formData.mud_unit || "bbl";
-        if (sourceType === "specific") {
-          // Engineering calc needs m3
-          processInputs.mud_volume =
-            unit !== "m3" ? convertActivityData(vol, unit, "m3") : vol;
-          finalAmount = processInputs.mud_volume;
-          finalUnit = "m3";
+      if (!sectionActive) {
+      // 1. Drilling Mud Degassing (Tier 1: Table 6-3 wells or mud defaults; Tier 2: Custom factor from DB; Tier 2+: Table 6-1/6-2 days)
+      if (processType === "drilling") {
+        const val = parseFloat(formData.amount || formData.quantity || 0);
+        if (sourceType === "default" || sourceType === "tier1") {
+          const selFuel = String(formData.fuel || "");
+          const isWell =
+            selFuel.includes("Well") ||
+            selFuel === "DrillWellDefault" ||
+            !selFuel ||
+            formData.unit === "well";
+          processInputs.tier = "tier1";
+          if (isWell) {
+            processInputs.wells = val;
+            finalAmount = val;
+            finalUnit = "well";
+          } else {
+            processInputs.drilling_days = val;
+            processInputs.mud_type = selFuel.includes("Oil")
+              ? "oil_based"
+              : "water_based";
+            finalAmount = val;
+            finalUnit = "days";
+          }
+        } else if (sourceType === "custom") {
+          // Tier 2: Custom Factor populated from database
+          processInputs.tier = "tier2";
+          processInputs.drilling_days = val;
+          processInputs.custom_factor_id = parseInt(formData.fuel);
+          finalAmount = val;
+          finalUnit = "days";
         } else {
-          // Tier 1 factor is kg/bbl — keep in bbl
-          processInputs.mud_volume =
-            unit !== "bbl" ? convertActivityData(vol, unit, "bbl") : vol;
-          finalAmount = processInputs.mud_volume;
-          finalUnit = "bbl";
+          // Tier 2+: Site Gas Composition
+          processInputs.tier = "tier2_plus";
+          processInputs.drilling_days = val;
+          processInputs.mud_type =
+            formData.mud_type ||
+            (formData.fuel?.includes("Oil") ? "oil_based" : "water_based");
+          if (
+            formData.ch4_fraction !== undefined &&
+            formData.ch4_fraction !== ""
+          ) {
+            processInputs.ch4_fraction = parseFloat(formData.ch4_fraction);
+          } else {
+            processInputs.ch4_fraction = 0.8385;
+          }
+          if (
+            formData.co2_fraction !== undefined &&
+            formData.co2_fraction !== ""
+          ) {
+            processInputs.co2_fraction = parseFloat(formData.co2_fraction);
+          }
+          finalAmount = val;
+          finalUnit = "days";
         }
-      } else if (processType === "drilling" && sourceType !== "specific") {
-        // Tier 1 without mud_vol: use amount field in bbl
-        const vol = parseFloat(formData.amount || 0);
-        const unit = formData.unit || "bbl";
-        finalAmount =
-          unit !== "bbl" ? convertActivityData(vol, unit, "bbl") : vol;
-        finalUnit = "bbl";
       }
 
       // 2. Storage Tanks (must be bbl)
@@ -867,19 +1207,29 @@ const Scope1Form = () => {
       }
 
       // 4. Completions
-      if (processType === "completions" && sourceType === "specific") {
-        const rateMcfHr = parseFloat(formData.comp_rate || 0);
-        const durationHr = parseFloat(formData.comp_duration || 0);
-        if (rateMcfHr > 0 && durationHr > 0) {
-          finalAmount = rateMcfHr * durationHr * 28.3168; // Mcf to m3
-          finalUnit = "m3";
+      if (processType === "completions") {
+        const tier = String(formData.tier || (sourceType === "specific" ? "tier3" : sourceType === "custom" ? "tier2" : "tier1")).toLowerCase();
+        if (tier === "tier1" || sourceType === "default" || tier === "tier2" || sourceType === "custom") {
+          finalAmount = parseFloat(formData.events || formData.amount || 1);
+          finalUnit = "events";
+        } else {
+          // Tier 3 Direct Measurement: metered volume
+          const vol = parseFloat(formData.comp_volume || formData.flowback_volume || (formData.unit !== "events" ? formData.amount : 0) || 0);
+          finalAmount = vol;
+          finalUnit = formData.volume_unit || (formData.unit !== "events" ? formData.unit : "Mcf") || "Mcf";
         }
       }
 
       // 5. Unloading
-      if (processType === "unloading" && sourceType === "specific") {
-        finalAmount = parseFloat(formData.unload_events || 1);
-        finalUnit = "events";
+      if (processType === "unloading") {
+        const tier = String(formData.tier || (sourceType === "specific" ? "tier3" : sourceType === "custom" ? "tier2" : "tier1")).toLowerCase();
+        if (tier === "tier1" || sourceType === "default") {
+          finalAmount = parseFloat(formData.well_count || formData.wells || formData.amount || 1);
+          finalUnit = "wells";
+        } else {
+          finalAmount = parseFloat(formData.unload_events || formData.unload_freq || formData.events || formData.amount || 1);
+          finalUnit = "events";
+        }
       }
 
       // 6. Blowdown / Venting
@@ -887,33 +1237,217 @@ const Scope1Form = () => {
         (processType === "blowdown" || processType === "venting") &&
         sourceType === "specific"
       ) {
-        const vol = parseFloat(formData.blowdown_volume || 0);
-        const unit = formData.blowdown_unit || "scf";
-        if (unit !== "m3") {
-          finalAmount = convertActivityData(vol, unit, "m3");
-        } else {
-          finalAmount = vol;
-        }
-        finalUnit = "m3";
+        // the unit select shows m3 by default: that is the unit of the entered volume
+        finalAmount = parseFloat(formData.blowdown_volume || 0);
+        finalUnit = formData.blowdown_unit || "m3";
+        processInputs.blowdown_unit = finalUnit;
       }
 
-      // 7. AGR — always normalize to MMscf for backend
+      // 7. AGR — send the entered throughput with its unit; the server converts it (BUG-066: the
+      //    old client conversion divided m³/yr by an extra 1000)
       if (processType === "agr") {
-        let throughput = parseFloat(formData.agr_throughput || 0);
         const agrUnit = formData.agr_unit || "MMscf/yr";
-        if (agrUnit === "MMscf/day") throughput *= 365;
-        else if (agrUnit === "Mcf/day") throughput = (throughput / 1000) * 365;
-        else if (agrUnit === "m3/yr") throughput = throughput / 28316.8 / 1000;
-        finalAmount = throughput;
-        finalUnit = "MMscf";
+        finalAmount = parseFloat(formData.agr_throughput || 0);
+        finalUnit = agrUnit;
+        processInputs.agr_unit = agrUnit;
       }
 
-      // 8. Dehydrator
+      // 8. Dehydrator — the throughput field is labelled MMscf/yr and the server calculator reads
+      //    MMscf/yr (BUG-091: it used to be stored as MMscf/day)
       if (processType === "dehydrator" && sourceType === "specific") {
         finalAmount = parseFloat(
           formData.dehy_throughput || formData.amount || 0,
         );
-        finalUnit = formData.dehy_unit || formData.unit || "MMscf/day";
+        finalUnit = "MMscf/yr";
+      }
+
+      // 9. Associated Gas Venting
+      if (processType === "associated_gas_venting") {
+        const tier = String(
+          formData.tier ||
+            (sourceType === "specific"
+              ? "tier3"
+              : sourceType === "custom"
+              ? "tier2"
+              : "tier1"),
+        ).toLowerCase();
+        processInputs.tier = tier;
+
+        if (tier === "tier3" || sourceType === "specific") {
+          const rateMode = (formData.tier3_mode || (formData.vent_volume ? "volume" : "rate")) === "rate";
+          if (rateMode) {
+            // record the vented volume (rate x hours), not the rate (Tier 3 browser re-run)
+            const per = { scfh: [1, "scf"], "scf/day": [1 / 24, "scf"], scfm: [60, "scf"], "m3/hr": [1, "m3"], "m3/day": [1 / 24, "m3"] }[
+              formData.vent_rate_unit || "scfh"
+            ] || [1, "scf"];
+            finalAmount = parseFloat(formData.vent_rate || 0) * per[0] * parseFloat(formData.venting_duration || 0);
+            finalUnit = per[1];
+          } else {
+            finalAmount = parseFloat(formData.vent_volume || formData.amount || 0);
+            finalUnit = formData.vent_volume_unit || formData.unit || "scf";
+          }
+        } else {
+          finalAmount = parseFloat(
+            formData.oil_production !== undefined
+              ? formData.oil_production
+              : formData.amount || 0,
+          );
+          finalUnit = formData.oil_unit || formData.unit || "bbl";
+        }
+
+        if (sourceType !== "specific") {
+          processInputs.oil_production = parseFloat(
+            formData.oil_production !== undefined
+              ? formData.oil_production
+              : formData.amount || 0,
+          );
+          processInputs.oil_unit = formData.oil_unit || finalUnit || "bbl";
+        }
+
+        if (formData.basin || formData.fuel) {
+          processInputs.basin = formData.basin || formData.fuel;
+        }
+        if (formData.gor !== undefined && formData.gor !== "") {
+          processInputs.gor = parseFloat(formData.gor);
+          processInputs.gor_unit = formData.gor_unit || "scf/bbl";
+        }
+        if (
+          formData.venting_duration !== undefined &&
+          formData.venting_duration !== ""
+        ) {
+          processInputs.venting_duration = parseFloat(formData.venting_duration);
+          // Tier 3 "Venting time (h)" is in hours; Tier 2 has its own unit select (default days)
+          processInputs.duration_unit =
+            sourceType === "specific" ? "hours" : formData.duration_unit || "days";
+        }
+        if (
+          formData.period_duration !== undefined &&
+          formData.period_duration !== ""
+        ) {
+          processInputs.period_duration = parseFloat(formData.period_duration);
+        }
+        if (
+          formData.recovered_gas_volume !== undefined &&
+          formData.recovered_gas_volume !== ""
+        ) {
+          processInputs.recovered_gas_volume = parseFloat(
+            formData.recovered_gas_volume,
+          );
+        }
+        if (
+          formData.flared_gas_volume !== undefined &&
+          formData.flared_gas_volume !== ""
+        ) {
+          processInputs.flared_gas_volume = parseFloat(
+            formData.flared_gas_volume,
+          );
+        }
+        if (formData.gas_volume_unit) {
+          processInputs.gas_volume_unit = formData.gas_volume_unit;
+        }
+        if (formData.vent_rate !== undefined && formData.vent_rate !== "") {
+          processInputs.vent_rate = parseFloat(formData.vent_rate);
+          processInputs.vent_rate_unit = formData.vent_rate_unit || "scfh";
+        }
+        if (formData.vent_volume !== undefined && formData.vent_volume !== "") {
+          processInputs.vent_volume = parseFloat(formData.vent_volume);
+          processInputs.vent_volume_unit = formData.vent_volume_unit || "scf";
+        }
+        if (formData.ch4_content !== undefined && formData.ch4_content !== "") {
+          processInputs.ch4_content = parseFloat(formData.ch4_content);
+        }
+        if (formData.co2_content !== undefined && formData.co2_content !== "") {
+          processInputs.co2_content = parseFloat(formData.co2_content);
+        }
+      }
+
+      // 10. Fugitives & Equipment Leaks (API Chapter 7 Onshore)
+      if (processType === "fugitive") {
+        const tier = String(
+          formData.fugitive_tier ||
+            (sourceType === "specific"
+              ? "tier3"
+              : sourceType === "custom"
+              ? "tier2"
+              : "tier1")
+        ).toLowerCase();
+        processInputs.fugitive_tier = tier;
+        processInputs.fugitive_method = formData.fugitive_method || "component";
+        processInputs.facility_type = formData.facility_type;
+        processInputs.equipment_type = formData.equipment_type;
+        processInputs.component_type = formData.component_type;
+        processInputs.service_type = formData.service_type || "gas";
+        processInputs.operating_hours = formData.operating_hours !== undefined ? parseFloat(formData.operating_hours) : undefined;
+        processInputs.operating_days = formData.operating_days !== undefined ? parseFloat(formData.operating_days) : undefined;
+        processInputs.time_unit = formData.time_unit || "hours";
+        processInputs.duration_unit = formData.duration_unit || formData.time_unit || "hours";
+        processInputs.screening_ppm = formData.screening_ppm !== undefined ? parseFloat(formData.screening_ppm) : undefined;
+        processInputs.fugitive_ppm = formData.fugitive_ppm !== undefined ? parseFloat(formData.fugitive_ppm) : processInputs.screening_ppm;
+        processInputs.leakers_count = formData.leakers_count !== undefined ? parseFloat(formData.leakers_count) : undefined;
+        processInputs.non_leakers_count = formData.non_leakers_count !== undefined ? parseFloat(formData.non_leakers_count) : undefined;
+        processInputs.measured_rate = formData.measured_rate !== undefined ? parseFloat(formData.measured_rate) : undefined;
+        // Tier 3 measurement: the unit must be chosen (kg/h vs scf/h changes the meaning of the rate)
+        processInputs.rate_unit = formData.rate_unit || (tier === "tier3" ? undefined : "kg/hr");
+        processInputs.ch4_mole_pct = formData.ch4_mole_pct !== undefined ? parseFloat(formData.ch4_mole_pct) : undefined;
+        processInputs.co2_mole_pct = formData.co2_mole_pct !== undefined ? parseFloat(formData.co2_mole_pct) : undefined;
+        processInputs.gas_stream = formData.gas_stream;
+        processInputs.correlation_type = formData.correlation_type;
+
+        // Set top-level finalAmount and finalUnit for backward compatibility & display
+        const num = (k) => parseFloat(formData[k] || 0) || 0;
+        if (tier === "tier3") {
+          const m = formData.fugitive_method;
+          if (m === "method21") {
+            finalAmount = num("m21_below_count") + num("m21_above_count");
+            finalUnit = "components";
+          } else if (m === "correlation") {
+            finalAmount = num("corr_zero_count") + num("corr_screened_count") + num("corr_pegged_10k_count") + num("corr_pegged_100k_count");
+            finalUnit = "components";
+          } else if (m === "measurement") {
+            finalAmount = num("measured_rate");
+            finalUnit = formData.rate_unit || "";
+          } else {
+            finalAmount = num("leakers_count");
+            finalUnit = "leakers";
+          }
+        } else if (formData.amount !== undefined && formData.amount !== "") {
+          finalAmount = parseFloat(formData.amount);
+          finalUnit = formData.unit || "count";
+        } else if (tier === "tier1") {
+          finalAmount = parseFloat(formData.facility_count || 1);
+          finalUnit = "facility";
+        } else if (formData.fugitive_method === "equipment") {
+          finalAmount = parseFloat(formData.equipment_count || 1);
+          finalUnit = "equipment";
+        } else if (formData.fugitive_method === "ogi") {
+          finalAmount = parseFloat(formData.leakers_count || 1);
+          finalUnit = "leakers";
+        } else if (formData.fugitive_method === "measurement") {
+          finalAmount = parseFloat(formData.measured_rate || 0);
+          finalUnit = formData.rate_unit || "kg/hr";
+        } else {
+          finalAmount = parseFloat(formData.component_count || 1);
+          finalUnit = "sources";
+        }
+      }
+
+      } // !sectionActive
+
+      if (sectionActive) {
+        // amount/unit only for activity tables; engineered methods carry their own inputs
+        finalAmount = formData.amount ? parseFloat(formData.amount) : undefined;
+        finalUnit = formData.amount ? formData.unit || "count" : undefined;
+      }
+
+      if (sourceType === "library") {
+        finalAmount = parseFloat(formData.amount || formData.quantity || 0);
+        finalUnit = formData.unit || "";
+      }
+
+      if (!finalUnit && sourceType !== "specific" && !sectionActive) {
+        toast.warning("Please select a unit");
+        setSubmitting(false);
+        return;
       }
 
       // Construct Backend-Compliant Payload
@@ -935,20 +1469,26 @@ const Scope1Form = () => {
         unit: finalUnit,
 
         // Factor Selection
-        factor_source: sourceType, // 'default', 'custom', 'specific'
+        factor_source: sourceType === "library" ? "custom" : sourceType, // 'default', 'custom', 'specific'
+        factor_mode: sourceType === "library" ? "library" : undefined,
         // Always send fuel so backend can look up the factor (needed for HHV & defaults)
         fuel_type: formData.fuel || undefined,
         fuel: formData.fuel || undefined,
         custom_factor_id:
-          sourceType === "custom" ? parseInt(formData.fuel) : undefined,
+          sourceType === "library" ? parseInt(formData.fuel) : undefined,
 
-        // HHV & Combustion Parameters — only for specific factor mode (API Compendium 2021 §5)
+        // Tier 2 & Tier 3 Fuel Properties (HHV & Density) & Audit References
+        density: fuelDensity ? parseFloat(fuelDensity) : undefined,
+        fuel_density: fuelDensity ? parseFloat(fuelDensity) : undefined,
+        data_source_ref: dataSourceRef || undefined,
+
+        // HHV & Combustion Parameters — for Tier 2 custom fuel properties or Tier 3 specific factor mode
         // Convert user-entered HHV to BTU/unit matching the fuel quantity unit
         ...(() => {
-          if (sourceType !== "specific" || !formData.hhv) return {};
+          const isTier2Override = sourceType === "custom" && tier2Mode === "override";
+          if ((sourceType !== "specific" && !isTier2Override) || !formData.hhv) return {};
           const rawHHV = parseFloat(formData.hhv);
           const hhvUnit = formData.hhv_unit || "BTU/scf";
-          const fuelUnit = (formData.unit || finalUnit || "scf").toLowerCase();
 
           // All conversions normalise to BTU per the same unit as the fuel quantity:
           // Gas-volume fuels → BTU/scf  (1 scf = 1 ft³ at standard conditions)
@@ -996,13 +1536,11 @@ const Scope1Form = () => {
 
         // Specific Factors (for combustion/flaring/venting in specific mode)
         specific_factors:
-          sourceType === "specific" &&
-          (specFactors.co2 || specFactors.ch4 || specFactors.n2o || specFactors.co)
+          showsTier3Factors && (specFactors.co2 || specFactors.ch4 || specFactors.n2o || specFactors.co)
             ? specFactors
             : undefined,
         specificFactors:
-          sourceType === "specific" &&
-          (specFactors.co2 || specFactors.ch4 || specFactors.n2o || specFactors.co)
+          showsTier3Factors && (specFactors.co2 || specFactors.ch4 || specFactors.n2o || specFactors.co)
             ? specFactors
             : undefined,
         user_uncertainty:
@@ -1021,20 +1559,20 @@ const Scope1Form = () => {
 
       // payload logging removed — do not log emission data in production
 
-      const res = await api.post("/emissions", finalPayload);
+      await api.post("/emissions", finalPayload);
       toast.success(
         status === "Draft"
           ? "Entry saved as draft"
           : "Scope 1 entry added successfully",
       );
-      if (res.data?.emissions) {
-        setCalculationResult(res.data);
-      }
 
       // Reset Form (keep identity)
       setFormData({});
       setGroupName("");
       setEquipmentId("");
+      setFuelDensity("");
+      setDataSourceRef("");
+      setActivePresetId("");
       setUncertainty({ co2: null, ch4: null, n2o: null });
       setSpecFactors({
         co2: "",
@@ -1073,7 +1611,9 @@ const Scope1Form = () => {
           typeof entry.source_payload === "string"
             ? JSON.parse(entry.source_payload)
             : entry.source_payload;
-      } catch (e) {}
+      } catch {
+        // an unreadable stored payload is shown without its inputs
+      }
     }
 
     const co2Val = Number(entry.co2_emissions || 0);
@@ -1102,13 +1642,14 @@ const Scope1Form = () => {
       entry.factor_source ||
       entry.factor_type ||
       payload.factor_source ||
-      "API Compendium 2021 (Default)";
+      "default";
     const facName =
       entry.facility_name ||
       facilities.find((f) => f.id === entry.facility_id)?.name ||
       `Facility #${entry.facility_id || "N/A"}`;
-    const pLabel =
-      PROCESS_TYPES[entry.process || entry.process_type]?.label || pType;
+    // PROCESS_TYPES values are labels (strings) or { label } objects
+    const pDef = PROCESS_TYPES[entry.process || entry.process_type];
+    const pLabel = (typeof pDef === "string" ? pDef : pDef?.label) || pType;
 
     setInspectRecord({
       process_type: `Scope 1 - ${pLabel}`,
@@ -1125,8 +1666,8 @@ const Scope1Form = () => {
         entry.calc_method ||
         entry.calculation_method ||
         (fSource.toLowerCase().includes("specific")
-          ? "Tier 3 Engineering / CEMS"
-          : "API Compendium / Tier 1-2"),
+          ? "Tier 3 (site-specific)"
+          : "Tier 1-2 (emission factor)"),
       emissions: {
         totalCo2e: co2eVal,
         co2: co2Val,
@@ -1146,29 +1687,6 @@ const Scope1Form = () => {
         ch4: entry.uncertainty_ch4,
         n2o: entry.uncertainty_n2o,
       },
-      steps: [
-        {
-          name: "1. Operational Activity & Facility Scope",
-          desc: `Logged consumption / activity of ${formatNumber(qty, 2)} ${unitVal} for ${fuelVal} at ${facName} (${entry.year}-${String(entry.month || 1).padStart(2, "0")}).`,
-          formula: `Activity = ${formatNumber(qty, 2)} ${unitVal}`,
-        },
-        {
-          name: "2. Emission Factor Application & Species Mass",
-          desc: `Calculated direct chemical emission masses using ${fSource} methodology:`,
-          formula: `CO₂: ${formatNumber(co2Val, 4)} t | CH₄: ${formatNumber(ch4Val, 6)} t | N₂O: ${formatNumber(n2oVal, 6)} t`,
-        },
-        {
-          name: "3. Global Warming Potential (GWP AR5) Weighting",
-          desc: `Weighted summation to CO₂ equivalent using standard IPCC AR5 factors (CO₂: 1.0, CH₄: 28.0, N₂O: 265.0):`,
-          formula: `CO₂e = (${formatNumber(co2Val, 4)} × 1.0) + (${formatNumber(ch4Val, 6)} × 28.0) + (${formatNumber(n2oVal, 6)} × 265.0)`,
-          result: co2eVal,
-          unit: "tCO₂e",
-        },
-        {
-          name: "4. Quality Assurance & Uncertainty Profile",
-          desc: `Standard combined uncertainty (1σ): CO₂ ${entry.uncertainty_co2 != null ? '±' + (entry.uncertainty_co2 * 100).toFixed(0) + '%' : '—'}, CH₄ ${entry.uncertainty_ch4 != null ? '±' + (entry.uncertainty_ch4 * 100).toFixed(0) + '%' : '—'}, N₂O ${entry.uncertainty_n2o != null ? '±' + (entry.uncertainty_n2o * 100).toFixed(0) + '%' : '—'}. Verification Status: ${entry.status || 'Verified'}.`,
-        },
-      ],
     });
   };
 
@@ -1198,28 +1716,47 @@ const Scope1Form = () => {
     const props = {
       data: { ...formData, process_type: processType },
       onChange: handleFormChange,
+      // days in the record's month: the default operating period of a monthly record
+      periodDays: new Date(Number(year), Number(month), 0).getDate() || 365,
       // Pass down hoisted props for forms that might need them (though we are moving logic up)
       sourceType,
       setSourceType,
     };
 
+    // Library factor: activity x factor, same inputs for every process
+    if (sourceType === "library") {
+      return <CombustionForm {...props} sourceType="library" />;
+    }
+
     // Fallback to generic form for Tier 1 / Custom on upstream processes
     if (
       sourceType !== "specific" &&
       [
-        "drilling",
-        "completions",
-        "unloading",
         "blowdown",
       ].includes(processType)
     ) {
       return <CombustionForm {...props} />;
     }
 
+    return (
+      <SectionMethodPanel
+        processType={processType}
+        sourceType={sourceType}
+        data={props.data}
+        onChange={handleFormChange}
+        legacy={renderProcessForm(props)}
+      />
+    );
+  };
+
+  const renderProcessForm = (props) => {
     switch (processType) {
       case "combustion":
       case "mobile":
       case "flaring":
+      case "routine_flaring":
+      case "non_routine_flaring":
+      case "safety_flaring":
       case "loading":
       case "separation":
         return <CombustionForm {...props} />;
@@ -1258,6 +1795,8 @@ const Scope1Form = () => {
         return <AdipicAcidForm {...props} />;
       case "asphalt_blowing":
         return <AsphaltBlowingForm {...props} />;
+      case "associated_gas_venting":
+        return <AssociatedGasVentingForm {...props} />;
       default:
         return <div>Select a process type</div>;
     }
@@ -1299,11 +1838,14 @@ const Scope1Form = () => {
     // val format: "StreamID|processKey"
     const [stream, process] = val.split("|");
     if (stream && process) {
+      if (process !== processType) resetProcessInputs();
       setStreamType(stream);
       setProcessType(process);
-      if (
+      if (process === "drilling") {
+        setSourceType("default");
+        handleFormChange("unit", "well");
+      } else if (
         [
-          "drilling",
           "completions",
           "unloading",
           "blowdown",
@@ -1318,6 +1860,7 @@ const Scope1Form = () => {
         setSourceType("specific");
       } else if (
         [
+          "associated_gas_venting",
           "mobile",
           "fugitive",
           "loading",
@@ -1346,14 +1889,22 @@ const Scope1Form = () => {
     }));
 
     // Auto-map composition to engineering forms if raw_composition is provided
+    // The whole analysis is sent in mol % with an explicit basis: c1 used to go as a fraction while
+    // CO2 went as a percent (one analysis, two bases), and C2+ and N2 were dropped
     if (res.raw_composition) {
-      if (res.raw_composition.CH4) {
-        handleFormChange("ch4_content", res.raw_composition.CH4);
-        handleFormChange("c1", parseFloat(res.raw_composition.CH4) / 100.0);
-      }
-      if (res.raw_composition.CO2) {
-        handleFormChange("co2_content", res.raw_composition.CO2);
-      }
+      const rc = res.raw_composition;
+      const pct = (...keys) => keys.reduce((t, k) => t + (parseFloat(rc[k]) || 0), 0);
+      const set = (field, v) => handleFormChange(field, v > 0 ? v : undefined);
+      handleFormChange("composition_basis", "percent");
+      set("c1", pct("CH4"));
+      set("c2", pct("C2H6"));
+      set("c3", pct("C3H8"));
+      set("c4", pct("iC4H10", "nC4H10"));
+      set("c5", pct("iC5H12", "nC5H12"));
+      set("c6", pct("C6H14"));
+      set("n2", pct("N2"));
+      set("ch4_content", pct("CH4"));
+      set("co2_content", pct("CO2"));
     }
 
     setShowGasCalc(false);
@@ -1362,68 +1913,20 @@ const Scope1Form = () => {
 
   return (
     <div className="scope-form">
-      <div
-        className="calc-panel"
-        style={{
-          background: "white",
-          borderRadius: "8px",
-          padding: "25px",
-          boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
-        }}
-      >
-        <h2
-          style={{
-            fontSize: "1.2rem",
-            fontWeight: "bold",
-            marginBottom: "25px",
-            color: "#333",
-          }}
-        >
-          New Activity Entry
-        </h2>
+      <div className="calc-panel s1-form">
+        <h2 className="s1-form-title">New entry</h2>
 
-        {/* 1. IDENTITY & LOCATION */}
-        <div style={{ marginBottom: "30px" }}>
-          <h4 className="section-title">1. IDENTITY &amp; LOCATION</h4>
-          <div className="form-grid-4">
-            <div className="input-group">
-              <label>Activity</label>
-              <input
-                type="text"
-                className="mole-input readonly"
-                value={activity || "Auto-filled"}
-                disabled
-              />
-            </div>
-            <div className="input-group">
-              <label>Division</label>
-              <input
-                type="text"
-                className="mole-input readonly"
-                value={division || "Auto-filled"}
-                disabled
-              />
-            </div>
-            <div className="input-group">
+        <Section n={1} title="Identity & Location">
+          <FieldGrid min={180}>
+            <div className="input-group s1-span-2">
               <label>Region</label>
               <CustomDropdown
                 options={getFacilityOptions()}
                 value={facilityId || ""}
                 onChange={setFacilityId}
-                placeholder="Select Region..."
+                placeholder="Select region"
               />
             </div>
-            <div className="input-group">
-              <label>Field</label>
-              <input
-                type="text"
-                className="mole-input readonly"
-                value={field || "Auto-filled"}
-                disabled
-              />
-            </div>
-          </div>
-          <div className="form-grid-3">
             <div className="input-group">
               <label>Year</label>
               <input
@@ -1442,63 +1945,55 @@ const Scope1Form = () => {
               >
                 {[...Array(12)].map((_, i) => (
                   <option key={i + 1} value={i + 1}>
-                    {String(i + 1).padStart(2, "0")}
+                    {new Date(2000, i, 1).toLocaleString(undefined, { month: "short" })}
                   </option>
                 ))}
               </select>
             </div>
-            <div className="input-group">
-              <label>Group Name</label>
-              <input
-                type="text"
-                className="mole-input"
-                value={groupName}
-                onChange={(e) => setGroupName(e.target.value)}
-                placeholder="e.g. West Facility"
-              />
-            </div>
+          </FieldGrid>
+          {(activity || division || field) && (
+            <div className="s1-meta">{[activity, division, field].filter(Boolean).join(" · ")}</div>
+          )}
+          <div className="s1-subgroup">
+            <div className="s1-subhead">Source details</div>
+            <FieldGrid>
+              <div className="input-group">
+                <label>Emission source</label>
+                <CustomDropdown
+                  options={getEmissionSourceOptions()}
+                  value={emissionSourceId}
+                  onChange={setEmissionSourceId}
+                  placeholder="From inventory"
+                />
+              </div>
+              <div className="input-group">
+                <label>Equipment ID</label>
+                <input
+                  type="text"
+                  className="mole-input"
+                  value={equipmentId}
+                  onChange={(e) => setEquipmentId(e.target.value)}
+                  placeholder="e.g. T-101"
+                />
+              </div>
+              <div className="input-group">
+                <label>Group</label>
+                <input
+                  type="text"
+                  className="mole-input"
+                  value={groupName}
+                  onChange={(e) => setGroupName(e.target.value)}
+                  placeholder="e.g. West facility"
+                />
+              </div>
+            </FieldGrid>
           </div>
-          <div className="form-grid-3">
-            <div className="input-group">
-              <label>
-                Emission Source
-                <span
-                  style={{
-                    marginLeft: "6px",
-                    fontSize: "0.7rem",
-                    color: "#6b7280",
-                    fontWeight: 400,
-                  }}
-                >
-                  (from inventory)
-                </span>
-              </label>
-              <CustomDropdown
-                options={getEmissionSourceOptions()}
-                value={emissionSourceId}
-                onChange={setEmissionSourceId}
-                placeholder="Select Emission Source..."
-              />
-            </div>
-            <div className="input-group">
-              <label>Equipment ID/Name</label>
-              <input
-                type="text"
-                className="mole-input"
-                value={equipmentId}
-                onChange={(e) => setEquipmentId(e.target.value)}
-                placeholder="e.g. Turbine T-101"
-              />
-            </div>
-          </div>
-        </div>
+        </Section>
 
-        {/* 2. PROCESS & SOURCE DETAILS */}
-        <div style={{ marginBottom: "30px" }}>
-          <h4 className="section-title">2. PROCESS & SOURCE DETAILS</h4>
-          <div className="form-grid-2">
+        <Section n={2} title="Process & Source Details">
+          <div className="s1-stack">
             <div className="input-group">
-              <label>Process Type</label>
+              <label>Process</label>
               <CustomDropdown
                 options={getProcessOptions()}
                 value={currentProcessValue}
@@ -1509,160 +2004,335 @@ const Scope1Form = () => {
             {/* Hoisted Emission Factor Selection — hidden for stoichiometry and dedicated downstream process forms */}
             {!["stoichiometry", "chemical_production", "nitric_acid_production", "adipic_acid_production", "asphalt_blowing"].includes(processType) && (
               <div className="input-group">
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    marginBottom: "8px",
-                  }}
-                >
-                  <label style={{ margin: 0 }}>Emission Factor</label>
-                  <div
-                    className="toggle-container"
-                    style={{
-                      background: "#f3f4f6",
-                      padding: "2px",
-                      borderRadius: "4px",
-                      display: "flex",
-                      gap: "2px",
-                    }}
-                  >
-                    {["default", "custom", "specific"]
-                      .filter((type) => {
-                        if (processType === "mobile" && type === "specific")
+                <div className="s1-method">
+                  <label style={{ margin: 0 }}>Method</label>
+                  <div className="methodology-toggle">
+                    {(SECTION_TIERS[processType]
+                      ? SECTION_TIERS[processType]
+                      : processType === "drilling"
+                      ? [
+                          {
+                            key: "default",
+                            tier: "Tier 1",
+                            label: "Standard",
+                            sub: "Catalog Defaults",
+                          },
+                          {
+                            key: "custom",
+                            tier: "Tier 2",
+                            label: "Custom Factor",
+                            sub: "Saved Database Factors",
+                          },
+                          {
+                            key: "tier2_plus",
+                            tier: "Tier 2+",
+                            label: "Site Gas Composition",
+                            sub: "Onshore EF + Site CH₄/CO₂",
+                          },
+                        ]
+                      : processType === "completions"
+                      ? [
+                          { key: "default", tier: "Tier 1", label: "Defaults", sub: "Per-event factor" },
+                          { key: "custom", tier: "Tier 2", label: "Operational Data", sub: "Rate, GOR or production" },
+                          { key: "specific", tier: "Tier 3", label: "Direct Measurement", sub: "Metered flowback" },
+                        ]
+                      : processType === "unloading"
+                      ? [
+                          { key: "default", tier: "Tier 1", label: "Per-Well", sub: "Per-well annual factor" },
+                          { key: "custom", tier: "Tier 2", label: "Event-Based", sub: "Per-event factor" },
+                          { key: "specific", tier: "Tier 3", label: "Engineering", sub: "Wellbore / plunger models" },
+                        ]
+                      : processType === "associated_gas_venting"
+                      ? [
+                          {
+                            key: "default",
+                            tier: "Tier 1",
+                            label: "Regional Default",
+                            sub: "Basin average factor",
+                          },
+                          {
+                            key: "custom",
+                            tier: "Tier 2",
+                            label: "GOR Balance",
+                            sub: "Oil × GOR × duration",
+                          },
+                          {
+                            key: "specific",
+                            tier: "Tier 3",
+                            label: "Measurement",
+                            sub: "Metered vent rate / volume",
+                          },
+                        ]
+                      : processType === "fugitive"
+                      ? [
+                          {
+                            key: "default",
+                            tier: "Tier 1",
+                            label: "Facility-Level",
+                            sub: "Facility average",
+                          },
+                          {
+                            key: "custom",
+                            tier: "Tier 2",
+                            label: "Equipment & Component",
+                            sub: "Equipment / component count",
+                          },
+                          {
+                            key: "specific",
+                            tier: "Tier 3",
+                            label: "Screening / OGI / Meas.",
+                            sub: "Method 21, OGI, Direct Rate",
+                          },
+                        ]
+                      : [
+                          {
+                            key: "default",
+                            tier: "Tier 1",
+                            label: "Standard",
+                            sub: "Catalog Defaults",
+                          },
+                          {
+                            key: "custom",
+                            tier: "Tier 2",
+                            label: "Regional / Lab",
+                            sub: "Ticket / Presets / Custom",
+                          },
+                          {
+                            key: "specific",
+                            tier: "Tier 3",
+                            label: "Measurement / GC",
+                            sub: "CEMS / Analysis",
+                          },
+                        ]
+                    )
+                      // Library factors (the site factor database: calculated or equipment factors) are a
+                      // separate choice from the API Compendium tiers
+                      .concat([{ key: "library", tier: "", label: "Library factor", sub: "Site factor database" }])
+                      .filter((item) => {
+                        const type = item.key;
+                        if (SECTION_TIERS[processType]) return true;
+                        if (
+                          type === "custom" &&
+                          ["drilling", "pneumatic", "tank", "tank_flashing", "tank_working", "tank_breathing",
+                           "venting", "blowdown", "loading", "separation"].includes(processType)
+                        )
                           return false;
-                        if (processType === "fugitive" && type === "specific")
-                          return false;
+                        if (processType === "drilling") return true;
                         if (processType === "loading" && type === "specific")
                           return false;
                         if (processType === "separation" && type === "specific")
                           return false;
-                        if (["agr", "dehydrator"].includes(processType) && (type === "default" || type === "custom"))
+                        if (
+                          ["agr", "dehydrator"].includes(processType) &&
+                          (type === "default" || type === "custom")
+                        )
                           return false;
                         return true;
                       })
-                      .map((type) => (
-                        <button
-                          key={type}
-                          className={`btn-toggle-sm ${sourceType === type ? "active" : ""}`}
-                          onClick={() => {
-                            setSourceType(type);
-                            if (
-                              type === "default" &&
-                              [
-                                "drilling",
-                                "completions",
-                                "unloading",
-                                "blowdown",
-                              ].includes(processType)
-                            ) {
-                              toast.warning(
-                                "Tier 1 calculations are not recommended for this process (OGMP 2.0).",
-                                { duration: 8000 },
-                              );
-                            }
-                          }}
-                          style={{
-                            padding: "2px 8px",
-                            borderRadius: "4px",
-                            border: "none",
-                            background:
-                              sourceType === type ? "#fff" : "transparent",
-                            color:
-                              sourceType === type
-                                ? "var(--accent-color)"
-                                : "#6b7280",
-                            fontSize: "0.75rem",
-                            fontWeight: 600,
-                            cursor: "pointer",
-                            boxShadow:
-                              sourceType === type
-                                ? "0 1px 2px rgba(0,0,0,0.1)"
-                                : "none",
-                            textTransform: "capitalize",
-                          }}
-                        >
-                          {type}
-                        </button>
-                      ))}
+                      .map((item) => {
+                        const type = item.key;
+                        const isActive = sourceType === type;
+                        return (
+                          <button
+                            key={type}
+                            type="button"
+                            className={`tier-selector-btn ${isActive ? "active" : ""}`}
+                            onClick={() => {
+                              if (type !== sourceType) resetProcessInputs();
+                              setSourceType(type);
+                              if (processType === "drilling") {
+                                if (type === "default") {
+                                  handleFormChange("unit", "well");
+                                } else {
+                                  handleFormChange("unit", "days");
+                                }
+                              }
+                            }}
+                          >
+                            <span className="tier-tag">{item.tier}</span>
+                            <span className="tier-label">{item.label}</span>
+                          </button>
+                        );
+                      })}
                   </div>
                 </div>
-                {["agr", "dehydrator"].includes(processType) && (
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "6px",
-                      marginTop: "6px",
-                      marginBottom: "6px",
-                      padding: "8px 12px",
-                      background: "#eff6ff",
-                      border: "1px solid #bfdbfe",
-                      borderRadius: "6px",
-                      fontSize: "0.75rem",
-                      color: "#1d4ed8",
-                    }}
-                  >
-                    <svg
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <circle cx="12" cy="12" r="10" />
-                      <line x1="12" y1="8" x2="12" y2="12" />
-                      <line x1="12" y1="16" x2="12.01" y2="16" />
-                    </svg>
-                    <span>
-                      <strong>OGMP 2.0 Level 4/5:</strong> Engineering model (Tier 3) required. No static Tier 1 factors exist for this process.
-                    </span>
-                  </div>
-                )}
-                {sourceType === "default" && (
+
+
+                {/* TIER 1: Standard API Tabulated Factors */}
+                {sourceType === "default" && !sectionMethodActive(formData) && !SECTION_PROCESSES[processType] &&
+                  !["associated_gas_venting", "completions", "unloading"].includes(processType) && (
                   <CustomDropdown
                     options={fuelOptions}
                     value={formData.fuel || ""}
                     onChange={(val) => handleFormChange("fuel", val)}
-                    placeholder="Select Emission Factor..."
+                    placeholder="Select factor"
                     renderOption={renderFactorOption}
                   />
                 )}
-                {sourceType === "custom" && (
-                  <CustomDropdown
-                    options={fuelOptions}
-                    value={formData.fuel || ""}
-                    onChange={(val) => handleFormChange("fuel", val)}
-                    placeholder="Select Custom Factor..."
-                  />
+
+                {/* TIER 2: Regional / Measured / Supplier Factors */}
+                {((sourceType === "custom" && !["associated_gas_venting", "completions", "unloading", "fugitive"].includes(processType)) || sourceType === "library") && (
+                  <div className="tier2-mode-container">
+                    {sourceType === "custom" ? (
+                      <>
+
+                        {tier2Mode === "override" && (
+                          <div className="tier2-override-card">
+                            {/* Base Fuel Dropdown */}
+                            <div>
+                              <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, color: "#374151", marginBottom: "4px" }}>
+                                Fuel
+                              </label>
+                              <CustomDropdown
+                                options={fuelOptions}
+                                value={formData.fuel || ""}
+                                onChange={(val) => {
+                                  handleFormChange("fuel", val);
+                                  setActivePresetId("");
+                                }}
+                                placeholder="Select fuel"
+                                renderOption={renderFactorOption}
+                              />
+                            </div>
+
+                            {/* Presets Section */}
+                            <div className="official-presets-section">
+                              <div className="official-presets-header">
+                                <span className="official-presets-title">
+                                  <BookOpen size={14} style={{ color: "var(--accent-color, #ff6600)" }} />
+                                  Presets
+                                </span>
+                              </div>
+                              <div className="official-presets-chips">
+                                {getPresetsForFuel(formData.fuel, streamType).map((preset) => (
+                                  <button
+                                    key={preset.id}
+                                    type="button"
+                                    className={`preset-chip ${activePresetId === preset.id ? "active" : ""}`}
+                                    onClick={() => handleApplyPreset(preset)}
+                                    title={preset.description}
+                                  >
+                                    {hideApiCitation(preset.citation) && <span className={`preset-citation-badge ${preset.citationType}`}>
+                                      {hideApiCitation(preset.citation)}
+                                    </span>}
+                                    <span className="preset-name">{preset.shortLabel || preset.name}</span>
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+
+                            {/* Measured Properties Grid */}
+                            <div className="tier2-inputs-grid">
+                              <div>
+                                <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, color: "#374151", marginBottom: "4px" }}>
+                                  HHV
+                                </label>
+                                <div style={{ display: "flex", gap: "6px" }}>
+                                  <input
+                                    type="number"
+                                    step="any"
+                                    className="mole-input"
+                                    style={{ flex: 1, padding: "6px 8px", fontSize: "0.85rem" }}
+                                    placeholder="e.g. 1085"
+                                    value={formData.hhv || ""}
+                                    onChange={(e) => {
+                                      handleFormChange("hhv", e.target.value);
+                                      setActivePresetId("");
+                                    }}
+                                  />
+                                  <select
+                                    className="mole-input"
+                                    style={{ width: "110px", padding: "6px 8px", fontSize: "0.8rem" }}
+                                    value={formData.hhv_unit || "BTU/scf"}
+                                    onChange={(e) => handleFormChange("hhv_unit", e.target.value)}
+                                  >
+                                    <option value="BTU/scf">BTU/scf</option>
+                                    <option value="MJ/m3">MJ/m³</option>
+                                    <option value="kcal/m3">kcal/m³</option>
+                                    <option value="BTU/gal">BTU/gal</option>
+                                    <option value="BTU/lb">BTU/lb</option>
+                                    <option value="MJ/kg">MJ/kg</option>
+                                  </select>
+                                </div>
+                              </div>
+
+                              <div>
+                                <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, color: "#374151", marginBottom: "4px" }}>
+                                  Density (kg/m³)
+                                </label>
+                                <input
+                                  type="number"
+                                  step="any"
+                                  className="mole-input"
+                                  style={{ width: "100%", padding: "6px 8px", fontSize: "0.85rem" }}
+                                  placeholder="e.g. 840.0 for Gasoil NA 8110"
+                                  value={fuelDensity}
+                                  onChange={(e) => {
+                                    setFuelDensity(e.target.value);
+                                    setActivePresetId("");
+                                  }}
+                                />
+                              </div>
+                            </div>
+
+                            {/* Data Source / Audit Reference Field */}
+                            <div>
+                              <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, color: "#374151", marginBottom: "4px" }}>
+                                Ticket / lab ref
+                              </label>
+                              <input
+                                type="text"
+                                className="mole-input"
+                                style={{ width: "100%", padding: "6px 8px", fontSize: "0.85rem" }}
+                                placeholder="e.g. Ticket #4902-B"
+                                value={dataSourceRef}
+                                onChange={(e) => setDataSourceRef(e.target.value)}
+                              />
+                            </div>
+
+                                                      </div>
+                        )}
+
+                      </>
+                    ) : (
+                      <div>
+                        <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                          <div style={{ flex: 1 }}>
+                            <CustomDropdown
+                              options={fuelOptions}
+                              value={formData.fuel || ""}
+                              onChange={(val) => handleFormChange("fuel", val)}
+                              placeholder="Select saved factor"
+                            />
+                          </div>
+                          <button
+                            type="button"
+                            className="btn btn-secondary"
+                            onClick={() => setIsQuickAddModalOpen(true)}
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "4px",
+                              padding: "8px 12px",
+                              fontSize: "0.8rem",
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            <PlusCircle size={15} />
+                            <span>New library factor</span>
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 )}
-                {sourceType === "specific" &&
-                  ![
-                    "tank",
-                    "tank_flashing",
-                    "tank_working",
-                    "tank_breathing",
-                    "agr",
-                    "dehydrator",
-                    "pneumatic",
-                    "mobile",
-                    "fugitive",
-                    "venting",
-                    "drilling",
-                    "completions",
-                    "unloading",
-                    "blowdown",
-                  ].includes(processType) && (
+                {showsTier3Factors && (
                     <>
                       <CustomDropdown
                         options={fuelOptions}
                         value={formData.fuel || ""}
                         onChange={(val) => handleFormChange("fuel", val)}
-                        placeholder="Select Base Factor (Optional)..."
+                        placeholder="Base factor (optional)"
                         renderOption={renderFactorOption}
                       />
                       <div style={{ marginTop: "10px", marginBottom: "10px" }}>
@@ -1701,7 +2371,7 @@ const Scope1Form = () => {
                             <path d="M12 18h.01"></path>
                             <path d="M8 18h.01"></path>
                           </svg>
-                          Calculate from Analysis
+                          Gas analysis
                         </button>
                       </div>
                       <div
@@ -1766,17 +2436,11 @@ const Scope1Form = () => {
               </div>
             )}
           </div>
-        </div>
+        </Section>
 
-        {/* 3. ACTIVITY DATA */}
-        <div style={{ marginBottom: "30px" }}>
-          <h4 className="section-title">3. ACTIVITY DATA</h4>
-          {renderSpecificForm()}
-        </div>
-
-        {/* 4. COMPLIANCE & UNCERTAINTY */}
-        <div style={{ marginBottom: "30px" }}>
-          <h4 className="section-title">4. COMPLIANCE & UNCERTAINTY</h4>
+        <Section n={3} title="Activity Data">
+          <div className="s1-inputs">{renderSpecificForm()}</div>
+          <MoreOptions label="Uncertainty">
           <div className="form-grid-3">
             {sourceType === "specific" && (
               <div
@@ -2129,81 +2793,12 @@ const Scope1Form = () => {
                   )}
                 </div>
               </div>
-              <span
-                style={{
-                  fontSize: "0.7rem",
-                  color: "var(--text-secondary)",
-                  marginTop: "6px",
-                }}
-              >
-                {sourceType === "default"
-                  ? "Automatically populated from EPA/IPCC catalogs"
-                  : "Enter specific uncertainties if known, otherwise leave blank to omit (—)"}
-              </span>
             </div>
           </div>
-        </div>
+          </MoreOptions>
+        </Section>
 
-        <div
-          className="formula-inspector-card"
-          style={{
-            background: "rgba(255, 247, 237, 0.7)",
-            border: "1px solid rgba(255, 102, 0, 0.25)",
-            borderRadius: "14px",
-            padding: "16px 20px",
-            marginBottom: "24px",
-            display: "flex",
-            flexDirection: "column",
-            gap: "8px",
-          }}
-        >
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <span style={{ fontSize: "0.82rem", fontWeight: 700, color: "var(--accent-color, #ff6600)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
-                📐 Live Equation Inspector (Tier 2/3 GHG Protocol)
-              </span>
-            </div>
-            <span style={{ fontSize: "0.78rem", color: "#64748b", fontWeight: 600 }}>
-              GWP Standard: IPCC AR6 (CO₂:1, CH₄:28, N₂O:265)
-            </span>
-          </div>
-
-          <div
-            style={{
-              fontFamily: "monospace",
-              fontSize: "0.88rem",
-              background: "#ffffff",
-              padding: "10px 14px",
-              borderRadius: "8px",
-              border: "1px solid #fed7aa",
-              color: "#0f172a",
-              display: "flex",
-              alignItems: "center",
-              flexWrap: "wrap",
-              gap: "6px",
-            }}
-          >
-            <span style={{ color: "#ea580c", fontWeight: 700 }}>
-              {formData.amount || formData.quantity ? `${formData.amount || formData.quantity} ${formData.unit || "units"}` : "[Activity Data]"}
-            </span>
-            <span style={{ color: "#94a3b8" }}>×</span>
-            <span style={{ color: "#2563eb", fontWeight: 600 }}>
-              {formData.fuel ? `${formData.fuel} Factor` : "[Emission Factor]"}
-            </span>
-            <span style={{ color: "#94a3b8" }}>×</span>
-            <span style={{ color: "#16a34a", fontWeight: 600 }}>
-              {formData.hhv ? `${formData.hhv} HHV` : "1.0 HHV"}
-            </span>
-            <span style={{ color: "#94a3b8" }}>×</span>
-            <span style={{ color: "#9333ea", fontWeight: 600 }}>GWP</span>
-            <span style={{ color: "#94a3b8" }}>=</span>
-            <span style={{ color: "#0f172a", fontWeight: 800, background: "#fef08a", padding: "2px 6px", borderRadius: "4px" }}>
-              CO₂e Total (tCO₂e)
-            </span>
-          </div>
-        </div>
-
-        <div style={{ display: "flex", gap: "10px" }}>
+        <div className="s1-actions">
           <button
             className="btn-add-draft"
             disabled={submitting}
@@ -2220,7 +2815,7 @@ const Scope1Form = () => {
               opacity: submitting ? 0.6 : 1,
             }}
           >
-            {submitting ? "Saving..." : "Save as Draft (Maker Mode)"}
+            {submitting ? "Saving..." : "Save draft"}
           </button>
           <button
             className="btn-add-activity"
@@ -2232,7 +2827,7 @@ const Scope1Form = () => {
               opacity: submitting ? 0.6 : 1,
             }}
           >
-            {submitting ? "Processing..." : "+ Calculate & Submit for Review"}
+            {submitting ? "Saving..." : "Submit"}
           </button>
         </div>
       </div>
@@ -2283,8 +2878,8 @@ const Scope1Form = () => {
             style={{ width: "100px", fontSize: "0.82rem" }}
           >
             <option value="">All Years</option>
-            {[...new Set(entries.map((e) => e.year))]
-              .sort((a, b) => b - a)
+            {/* BUG-095: options come from the server facets, not from the 10 rows of the current page */}
+            {facetYears
               .map((y) => (
                 <option key={y} value={y}>
                   {y}
@@ -2301,13 +2896,9 @@ const Scope1Form = () => {
             style={{ width: "140px", fontSize: "0.82rem" }}
           >
             <option value="">All Processes</option>
-            {[
-              ...new Set(
-                entries.map((e) => e.process || e.process_type).filter(Boolean),
-              ),
-            ].map((p) => (
+            {Object.keys(PROCESS_TYPES).map((p) => (
               <option key={p} value={p}>
-                {PROCESS_TYPES[p]?.label || p}
+                {typeof PROCESS_TYPES[p] === "string" ? PROCESS_TYPES[p] : PROCESS_TYPES[p]?.label || p}
               </option>
             ))}
           </select>
@@ -2331,26 +2922,24 @@ const Scope1Form = () => {
           )}
           <button
             className="action-btn"
-            onClick={() =>
-              exportToCSV(
-                entries.filter((e) => {
-                  const s = filterSearch.toLowerCase();
-                  const matchSearch =
-                    !s ||
-                    (e.activity || "").toLowerCase().includes(s) ||
-                    (e.equipment_id || "").toLowerCase().includes(s) ||
-                    (e.fuel || e.fuel_type || "").toLowerCase().includes(s) ||
-                    (e.group || "").toLowerCase().includes(s);
-                  return (
-                    matchSearch &&
-                    (!filterYear || e.year?.toString() === filterYear) &&
-                    (!filterProcess ||
-                      (e.process || e.process_type) === filterProcess)
-                  );
-                }),
-                "scope1_export.csv",
-              )
-            }
+            onClick={async () => {
+              // BUG-095: export every matching record (server-side filters), not just the visible page
+              try {
+                const res = await api.get("/emissions/", {
+                  params: {
+                    scope: "1",
+                    limit: "all",
+                    ...(filterYear && { year: filterYear }),
+                    ...(filterProcess && { process_type: filterProcess }),
+                    ...(filterSearch && { search: filterSearch }),
+                  },
+                });
+                const rows = res.data?.emissions || res.data?.data || res.data || [];
+                exportToCSV(Array.isArray(rows) ? rows : [], "scope1_export.csv");
+              } catch (err) {
+                toast.error(err.response?.data?.error || "Export failed");
+              }
+            }}
             style={{
               background: "#10b981",
               padding: "6px 14px",
@@ -2377,7 +2966,7 @@ const Scope1Form = () => {
           <table className="excel-table">
             <thead>
               <tr>
-                <th>Year</th>
+                <th>Period</th>
                 <th>Activity</th>
                 <th>Region</th>
                 <th>Division</th>
@@ -2463,24 +3052,18 @@ const Scope1Form = () => {
                         }}
                       >
                         {entries.length === 0
-                          ? "No entries yet"
+                          ? loading
+                            ? "Loading…"
+                            : "No entries yet"
                           : "No results match your filters"}
                       </td>
                     </tr>
                   );
                 return filteredEntries.map((entry) => {
-                  let factorType = "-";
-                  if (entry.factor_source === "default") {
-                    factorType = "Default";
-                  } else if (
-                    entry.factor_source === "custom" ||
-                    entry.factor_source === "specific"
-                  ) {
-                    factorType = "Specific";
-                  }
+                  const factorType = factorTypeLabel(entry);
                   return (
                     <tr key={entry.id}>
-                      <td>{entry.year}</td>
+                      <td>{entry.month ? `${entry.year}-${String(entry.month).padStart(2, "0")}` : entry.year}</td>
                       <td>{entry.activity || "-"}</td>
                       <td>{entry.facility_name || entry.region || "-"}</td>
                       <td>{entry.division || "-"}</td>
@@ -2488,10 +3071,14 @@ const Scope1Form = () => {
                       <td>{entry.group_name || entry.group || "-"}</td>
                       <td>{entry.equipment_id || "-"}</td>
                       <td>
-                        {PROCESS_TYPES[entry.process || entry.process_type]
-                          ?.label ||
-                          entry.process ||
-                          entry.process_type}
+                        {(() => {
+                          const k = entry.process || entry.process_type;
+                          const v = PROCESS_TYPES[k];
+                          // keys the form does not list (e.g. stoichiometry) get a readable label
+                          const other = { stoichiometry: "Carbon Mass Balance (Stoichiometry)" };
+                          return (typeof v === "string" ? v : v?.label) || other[k] ||
+                            String(k || "").replace(/_/g, " ").replace(/^\w/, (c) => c.toUpperCase());
+                        })()}
                       </td>
                       <td>
                         {entry.fuel ||
@@ -2509,32 +3096,38 @@ const Scope1Form = () => {
                         {factorType}
                       </td>
                       <td>
-                        {entry.amount || entry.quantity
-                          ? `${formatNumber(entry.amount || entry.quantity, 2)} ${entry.unit}`
+                        {(entry.amount ?? entry.quantity) != null && (entry.amount ?? entry.quantity) !== ""
+                          ? `${formatNumber(entry.amount ?? entry.quantity, 2)} ${entry.unit || ""}`
                           : "-"}
                       </td>
-                      <td>{formatNumber(entry.co2_emissions || 0, 3)}</td>
-                      <td>{formatNumber(entry.ch4_emissions || 0, 5)}</td>
-                      <td>{formatNumber(entry.n2o_emissions || 0, 5)}</td>
+                      <td>{formatEmission(entry.co2_emissions || 0, 3)}</td>
+                      <td>{formatEmission(entry.ch4_emissions || 0, 5)}</td>
+                      <td>{formatEmission(entry.n2o_emissions || 0, 5)}</td>
                       <td
                         style={{
                           color: "var(--accent-color)",
                           fontWeight: 600,
                         }}
                       >
-                        {formatNumber(entry.co2e_total, 3)}
-                        {entry.status === "Draft" && (
+                        {formatEmission(entry.co2e_total, 3)}
+                        {/* BUG-092: every record shows its maker-checker status */}
+                        {entry.status && (
                           <span
+                            title={`Status: ${entry.status}`}
                             style={{
                               marginLeft: "8px",
                               fontSize: "0.65rem",
-                              background: "#fee2e2",
-                              color: "#b91c1c",
                               padding: "1px 5px",
                               borderRadius: "4px",
+                              ...({
+                                Verified: { background: "#dcfce7", color: "#166534" },
+                                Pending: { background: "#fef9c3", color: "#854d0e" },
+                                Rejected: { background: "#fee2e2", color: "#b91c1c" },
+                                Draft: { background: "#e0e7ff", color: "#3730a3" },
+                              }[entry.status] || { background: "#f1f5f9", color: "#334155" }),
                             }}
                           >
-                            Draft
+                            {entry.status}
                           </span>
                         )}
                       </td>
@@ -2543,13 +3136,13 @@ const Scope1Form = () => {
                           textAlign: "center",
                           fontSize: "0.82rem",
                           color:
-                            entry.uncertainty_co2 != null
+                            (entry.uncertainty_co2 != null && Number(entry.co2_emissions) > 0)
                               ? "#10b981"
                               : "var(--text-muted)",
                         }}
                         title="Standard Combined Uncertainty (1σ)"
                       >
-                        {entry.uncertainty_co2 != null
+                        {(entry.uncertainty_co2 != null && Number(entry.co2_emissions) > 0)
                           ? `±${(entry.uncertainty_co2 * 100).toFixed(0)}%`
                           : "—"}
                       </td>
@@ -2558,13 +3151,13 @@ const Scope1Form = () => {
                           textAlign: "center",
                           fontSize: "0.82rem",
                           color:
-                            entry.uncertainty_ch4 != null
+                            (entry.uncertainty_ch4 != null && Number(entry.ch4_emissions) > 0)
                               ? "#3b82f6"
                               : "var(--text-muted)",
                         }}
                         title="Standard Combined Uncertainty (1σ)"
                       >
-                        {entry.uncertainty_ch4 != null
+                        {(entry.uncertainty_ch4 != null && Number(entry.ch4_emissions) > 0)
                           ? `±${(entry.uncertainty_ch4 * 100).toFixed(0)}%`
                           : "—"}
                       </td>
@@ -2573,13 +3166,13 @@ const Scope1Form = () => {
                           textAlign: "center",
                           fontSize: "0.82rem",
                           color:
-                            entry.uncertainty_n2o != null
+                            (entry.uncertainty_n2o != null && Number(entry.n2o_emissions) > 0)
                               ? "#8b5cf6"
                               : "var(--text-muted)",
                         }}
                         title="Standard Combined Uncertainty (1σ)"
                       >
-                        {entry.uncertainty_n2o != null
+                        {(entry.uncertainty_n2o != null && Number(entry.n2o_emissions) > 0)
                           ? `±${(entry.uncertainty_n2o * 100).toFixed(0)}%`
                           : "—"}
                       </td>
@@ -2588,13 +3181,13 @@ const Scope1Form = () => {
                           textAlign: "center",
                           fontSize: "0.82rem",
                           color:
-                            entry.uncertainty_co2 != null
+                            (entry.uncertainty_co2 != null && Number(entry.co2_emissions) > 0)
                               ? "#10b981"
                               : "var(--text-muted)",
                         }}
                         title="Expanded Uncertainty (95% Confidence Interval, k=2)"
                       >
-                        {entry.uncertainty_co2 != null
+                        {(entry.uncertainty_co2 != null && Number(entry.co2_emissions) > 0)
                           ? `±${(entry.uncertainty_co2 * 200).toFixed(0)}%`
                           : "—"}
                       </td>
@@ -2603,13 +3196,13 @@ const Scope1Form = () => {
                           textAlign: "center",
                           fontSize: "0.82rem",
                           color:
-                            entry.uncertainty_ch4 != null
+                            (entry.uncertainty_ch4 != null && Number(entry.ch4_emissions) > 0)
                               ? "#3b82f6"
                               : "var(--text-muted)",
                         }}
                         title="Expanded Uncertainty (95% Confidence Interval, k=2)"
                       >
-                        {entry.uncertainty_ch4 != null
+                        {(entry.uncertainty_ch4 != null && Number(entry.ch4_emissions) > 0)
                           ? `±${(entry.uncertainty_ch4 * 200).toFixed(0)}%`
                           : "—"}
                       </td>
@@ -2618,13 +3211,13 @@ const Scope1Form = () => {
                           textAlign: "center",
                           fontSize: "0.82rem",
                           color:
-                            entry.uncertainty_n2o != null
+                            (entry.uncertainty_n2o != null && Number(entry.n2o_emissions) > 0)
                               ? "#8b5cf6"
                               : "var(--text-muted)",
                         }}
                         title="Expanded Uncertainty (95% Confidence Interval, k=2)"
                       >
-                        {entry.uncertainty_n2o != null
+                        {(entry.uncertainty_n2o != null && Number(entry.n2o_emissions) > 0)
                           ? `±${(entry.uncertainty_n2o * 200).toFixed(0)}%`
                           : "—"}
                       </td>
@@ -2725,13 +3318,6 @@ const Scope1Form = () => {
         processType={processType}
       />
 
-      {calculationResult && (
-        <EmissionResult
-          result={calculationResult}
-          onClose={() => setCalculationResult(null)}
-        />
-      )}
-
       {inspectRecord && (
         <CalculationDetails
           calculation={inspectRecord}
@@ -2747,6 +3333,14 @@ const Scope1Form = () => {
         confirmVariant="danger"
         onConfirm={confirmDelete}
         onCancel={() => setDeleteConfirmId(null)}
+      />
+
+      <QuickAddCustomFactorModal
+        isOpen={isQuickAddModalOpen}
+        onClose={() => setIsQuickAddModalOpen(false)}
+        onFactorCreated={handleFactorCreated}
+        processType={processType}
+        defaultParentFuel={formData.fuel}
       />
     </div>
   );

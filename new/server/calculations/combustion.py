@@ -9,6 +9,9 @@ from .units import (
     CONVERSIONS,
     calculate_co2e,
     normalize_gas_volume_to_standard,
+    is_actual_volume_unit,
+    gas_volume_m3,
+    GAS_VOLUME_UNITS,
 )
 from .uncertainty import (
     propagate_uncertainty,
@@ -30,6 +33,10 @@ def _normalize_unit_str(u):
     )
 
 
+from .units import (UnitError, factor_to_kg_per_activity, norm_unit, parse_factor_unit,
+                    unit_dimension)
+
+
 def _normalize_efficiency(eff_val, default=0.0):
     """
     Defensively normalizes efficiency inputs provided as either fractional ratios (0.0 - 1.0)
@@ -49,121 +56,140 @@ def _normalize_efficiency(eff_val, default=0.0):
     return max(0.0, min(1.0, val))
 
 
+BTU_TO_MJ = 0.00105505585262
+
+# Catalog HHV basis by fuel type (API Compendium 2021 Table 4-3 conventions used by the catalog):
+# gases in Btu/scf, liquids in Btu/gal, solids in kBtu/short ton. An explicit "hhv_unit" on the
+# factor overrides this (e.g. Ethane, typed as a gas but tabulated per gallon of liquid).
+_HHV_BASIS = {
+    "gases": ("scf", 1.0), "gas": ("scf", 1.0),
+    "liquids": ("gal", 1.0), "liquid": ("gal", 1.0),
+    "solids": ("short_ton", 1000.0), "solid": ("short_ton", 1000.0),
+}
+_LIQUID_WORDS = ("diesel", "gasoil", "gasoline", "fuel oil", "crude", "kerosene", "jet", "petroleum", "naphtha", "condensate")
+_SOLID_WORDS = ("coal", "coke", "lignite", "anthracite", "bituminous", "peat", "wood", "biomass")
+
+
+_GAS_VOL = {"scf", "cf", "ft3", "mscf", "mcf", "mmscf", "sm3", "sm³", "nm3", "ksm3", "mmsm3"}
+_LIQUID_VOL = {"gal", "gallon", "gallons", "bbl", "barrel", "barrels", "kbbl", "mbbl", "mmbbl", "l", "liter", "liters"}
+
+
+_BASEUNIT_HHV = {"gal": "btu/gal", "scf": "btu/scf", "bbl": "btu/bbl", "ton": "kbtu/short_ton",
+                 "short_ton": "kbtu/short_ton", "l": "btu/l", "m3": "btu/m3"}
+
+
+def factor_hhv_unit(factor_data):
+    """Explicit HHV basis of a factor: `hhv_unit`, else derived from its `baseUnit` (BUG-027)."""
+    if not factor_data:
+        return None
+    if factor_data.get("hhv_unit"):
+        return factor_data["hhv_unit"]
+    return _BASEUNIT_HHV.get(str(factor_data.get("baseUnit") or "").strip().lower())
+
+
+def fuel_basis(fuel_type, hhv_unit=None):
+    """(basis unit, Btu multiplier) of a catalog HHV. BUG-027: from the factor, never from the activity unit."""
+    if hhv_unit:
+        hu = norm_unit(hhv_unit)
+        num, _, den = hu.partition("/")
+        mult = {"btu": 1.0, "kbtu": 1e3, "mmbtu": 1e6}.get(num.strip())
+        if mult is None or not den:
+            raise UnitError(f"Unsupported HHV unit '{hhv_unit}'")
+        return den.strip(), mult
+    t = str(fuel_type or "").strip().lower()
+    if t in _HHV_BASIS:
+        return _HHV_BASIS[t]
+    if any(w in t for w in _SOLID_WORDS):
+        return _HHV_BASIS["solids"]
+    if any(w in t for w in _LIQUID_WORDS):
+        return _HHV_BASIS["liquids"]
+    return _HHV_BASIS["gases"]
+
+
+def _density_kg_m3(density, basis_dim):
+    if density in (None, "", 0):
+        return None
+    d = float(density)
+    # liquid/solid densities entered as kg/L (0.81) rather than kg/m3 (810)
+    return d * 1000.0 if (basis_dim == "volume_liquid" and d < 5.0) else d
+
+
+def hhv_mj_per_unit(hhv, activity_unit, fuel_type=None, density=None, hhv_unit=None):
+    """Heating value in MJ per ONE activity unit, converting the activity into the HHV basis.
+
+    Crossing volume <-> mass needs a density (kg/m3); without it the combination is rejected
+    instead of being guessed (BUG-027: diesel per tonne, natural gas per tonne, propane per m3).
+    """
+    if not hhv:
+        raise UnitError("A heating value (HHV) is required to apply an energy-based factor to a physical unit")
+    basis_unit, mult = fuel_basis(fuel_type, hhv_unit)
+    mj_per_basis = float(hhv) * mult * BTU_TO_MJ
+    b_dim, b_f = unit_dimension(basis_unit)
+    a_dim, a_f = unit_dimension(activity_unit)
+    a_tok = norm_unit(activity_unit).replace(" ", "_")
+    b_tok = norm_unit(basis_unit)
+    if b_dim == a_dim == "volume":
+        # gas-phase and liquid-phase volumes are not interchangeable (m3 is accepted for either)
+        if b_tok in _LIQUID_VOL and a_tok in _GAS_VOL:
+            raise UnitError(f"'{activity_unit}' is a gas volume but this fuel's heating value is per {basis_unit} of liquid")
+        if b_tok in _GAS_VOL and a_tok in _LIQUID_VOL:
+            raise UnitError(f"'{activity_unit}' is a liquid volume but this fuel's heating value is per {basis_unit} of gas")
+    if a_dim == b_dim:
+        return mj_per_basis * a_f / b_f
+    liquid = basis_unit in ("gal", "bbl", "l", "liter")
+    rho = _density_kg_m3(density, "volume_liquid" if (liquid or a_dim == "volume") and fuel_type not in ("gases", "gas") else "gas")
+    if rho is None:
+        raise UnitError(f"Activity unit '{activity_unit}' needs the fuel density to use a heating value tabulated per {basis_unit}")
+    if a_dim == "mass" and b_dim == "volume":      # kg -> m3 -> basis
+        return mj_per_basis * (a_f / rho) / b_f
+    if a_dim == "volume" and b_dim == "mass":      # m3 -> kg -> basis
+        return mj_per_basis * (a_f * rho) / b_f
+    raise UnitError(f"Activity unit '{activity_unit}' cannot be converted to the HHV basis '{basis_unit}'")
+
+
 def convert_factor_to_kg_per_unit(
-    value, factor_unit, activity_unit, hhv=None, fuel_type=None
+    value, factor_unit, activity_unit, hhv=None, fuel_type=None, density=None, hhv_unit=None, hours=None,
+    year_hours=None,
 ):
+    """kg of gas per ONE activity unit, through the canonical unit parser (RC-5).
+
+    - "kg/MMBtu" etc.: energy activity converts directly (kWh, MJ, GJ, therm, Btu - BUG-051);
+      physical activity uses the heating value in its declared basis (BUG-027).
+    - A bare factor unit ("scf", "tonne") is the Manage Data convention "kg per <unit>" (BUG-063).
+    - Anything that cannot be interpreted raises UnitError instead of being applied 1:1.
+    """
     if value is None:
         return 0.0
-    try:
-        val = float(value)
-    except (ValueError, TypeError):
-        return 0.0
+    val = float(value)
     if val == 0:
         return 0.0
-
-    f_unit = _normalize_unit_str(factor_unit or "")
-    a_unit = _normalize_unit_str(activity_unit or "")
-
-    if not f_unit or f_unit in [a_unit, "kg/unit", "unit"]:
-        return val
-
-    # Normalize numerator to kg
-    if f_unit.startswith("lb"):
-        val *= 0.453592
-    elif (
-        f_unit.startswith(("tonne", "metric_ton", "t/", "mt/", "tco2", "tch4", "tn2o", "tco2e", "mtco2"))
-        or f_unit.startswith("t ")
-    ):
-        val *= 1000.0
-    elif f_unit.startswith(("g/", "gco2", "gch4", "gn2o", "gco2e")) or f_unit.startswith("g "):
-        val /= 1000.0
-
-    # Extract denominator
-    factor_denom = f_unit.split("/")[1] if "/" in f_unit else f_unit
-
-    # Handle Energy-based factor denominator (e.g. kg/MMBtu)
-    if "mmbtu" in factor_denom or "mm_btu" in factor_denom:
-        if a_unit in ["mmbtu", "mm_btu"]:
-            return val
-        if a_unit in ["gj", "gigajoule", "gigajoules"]:
-            return val * 0.947817
-        if a_unit in ["therm", "therms"]:
-            return val * 0.1
-        if a_unit in ["scf", "cf", "ft3"]:
-            return val * ((hhv or 1020.0) / 1_000_000.0)
-        if a_unit in ["m3", "cubic_meters", "m3"]:
-            if fuel_type == "liquids":
-                return val * (264.172 * (hhv or 138000.0) / 1_000_000.0)
-            else:
-                return val * (35.3147 * (hhv or 1020.0) / 1_000_000.0)
-        if a_unit in ["mscf", "mcf"]:
-            return val * (1000.0 * (hhv or 1020.0) / 1_000_000.0)
-        if a_unit in ["mmscf"]:
-            return val * (1_000_000.0 * (hhv or 1020.0) / 1_000_000.0)
-        if a_unit in ["gal", "gallon", "gallons"]:
-            return val * ((hhv or 138000.0) / 1_000_000.0)
-        if a_unit in ["bbl", "barrel", "barrels"]:
-            return val * (42.0 * (hhv or 138000.0) / 1_000_000.0)
-        if a_unit in ["l", "liter", "liters"]:
-            return val * (0.264172 * (hhv or 138000.0) / 1_000_000.0)
-        return val * ((hhv or 1020.0) / 1_000_000.0)
-
-    # Physical denominator conversions separated into Volume and Mass groups
-    vol_conv = {
-        "m3": 1.0,
-        "cubic_meters": 1.0,
-        "scf": 35.3147,
-        "cf": 35.3147,
-        "ft3": 35.3147,
-        "mscf": 0.0353147,
-        "mcf": 0.0353147,
-        "mmscf": 3.53147e-5,
-        "gal": 264.172,
-        "gallon": 264.172,
-        "gallons": 264.172,
-        "l": 1000.0,
-        "liter": 1000.0,
-        "liters": 1000.0,
-        "bbl": 264.172 / 42.0,
-        "barrel": 264.172 / 42.0,
-        "barrels": 264.172 / 42.0,
-    }
-    mass_conv = {
-        "kg": 1.0,
-        "lb": 2.20462,
-        "tonne": 0.001,
-        "tonnes": 0.001,
-        "ton": 0.00110231,
-        "tons": 0.00110231,
-    }
-
-    # Standard representative fuel densities (kg/m3) when crossing mass/volume boundary
-    fuel_lower = str(fuel_type or "").lower()
-    if any(k in fuel_lower for k in ["gas", "methane", "c1", "natural_gas"]):
-        density_kg_m3 = 0.80
-    elif any(k in fuel_lower for k in ["oil", "diesel", "crude", "petroleum", "gasoline", "fuel_oil", "liquid"]):
-        density_kg_m3 = 850.0
-    elif any(k in fuel_lower for k in ["coal", "coke", "lignite", "solid"]):
-        density_kg_m3 = 1300.0
-    else:
-        density_kg_m3 = 850.0 if "liquid" in a_unit else 0.80
-
-    if factor_denom in vol_conv and a_unit in vol_conv:
-        return val * (vol_conv[factor_denom] / vol_conv[a_unit])
-    elif factor_denom in mass_conv and a_unit in mass_conv:
-        return val * (mass_conv[factor_denom] / mass_conv[a_unit])
-    elif factor_denom in mass_conv and a_unit in vol_conv:
-        # factor is kg / mass_unit. 1 m3 fuel has density_kg_m3 kg.
-        f_relative_to_kg = mass_conv[factor_denom]  # factor_denom / kg
-        kg_per_m3 = val * f_relative_to_kg * density_kg_m3
-        return kg_per_m3 / vol_conv[a_unit]
-    elif factor_denom in vol_conv and a_unit in mass_conv:
-        # factor is kg / vol_unit. 1 kg fuel has (1 / density_kg_m3) m3.
-        f_relative_to_m3 = vol_conv[factor_denom]  # factor_denom / m3
-        kg_per_kg = (val * f_relative_to_m3) / max(0.0001, density_kg_m3)
-        return kg_per_kg / mass_conv[a_unit]
-
-    return val
+    f_unit = norm_unit(factor_unit or "")
+    a_unit = norm_unit(activity_unit or "")
+    if not f_unit:
+        raise UnitError("The emission factor has no unit")
+    if "/" not in f_unit:
+        f_unit = f"kg/{f_unit}"  # Manage Data stores the activity unit only; values are kg per unit
+    spec = parse_factor_unit(f_unit)
+    energy_den = next((d for d in spec["denominators"] if d[0] == "energy"), None)
+    if energy_den is not None:
+        a_dim, _ = unit_dimension(a_unit)
+        if a_dim == "energy":
+            return factor_to_kg_per_activity(val, f_unit, a_unit, hours=hours, year_hours=year_hours)
+        mj = hhv_mj_per_unit(hhv, a_unit, fuel_type=fuel_type, density=density, hhv_unit=hhv_unit)
+        return factor_to_kg_per_activity(val, f_unit, a_unit, hours=hours, hhv_mj_per_unit=mj, year_hours=year_hours)
+    den_dim = spec["denominators"][0][0]
+    a_dim, _ = unit_dimension(a_unit)
+    if den_dim != a_dim and {den_dim, a_dim} == {"volume", "mass"}:
+        rho = _density_kg_m3(density, "volume_liquid")
+        if rho is None:
+            raise UnitError(f"Factor per {spec['denominators'][0][2]} applied to '{activity_unit}' needs the fuel density")
+        # express the activity unit in the factor's dimension, then convert
+        if a_dim == "mass":   # kg of fuel per activity unit -> m3
+            per_unit = factor_to_kg_per_activity(val, f_unit, "m3", hours=hours, year_hours=year_hours) * (unit_dimension(a_unit)[1] / rho)
+        else:                 # m3 of fuel per activity unit -> kg
+            per_unit = factor_to_kg_per_activity(val, f_unit, "kg", hours=hours, year_hours=year_hours) * (unit_dimension(a_unit)[1] * rho)
+        return per_unit
+    return factor_to_kg_per_activity(val, f_unit, a_unit, hours=hours, year_hours=year_hours)
 
 
 class CombustionCalculator(BaseCalculator):
@@ -188,6 +214,8 @@ class CombustionCalculator(BaseCalculator):
         press_unit="psig",
         z_factor=1.0,
         gwp_dict=None,
+        density=None,
+        hhv_unit=None,
         **comps,
     ):
         """
@@ -202,11 +230,12 @@ class CombustionCalculator(BaseCalculator):
             "gas",
             "Natural Gas",
             "natural_gas",
-        ] or str(fuel_unit).lower() in ["m3", "scf", "mmscf", "cubic_meters", "m³"]
+        ] or str(fuel_unit).strip().lower().replace(" ", "") in GAS_VOLUME_UNITS  # any gas volume (Sm3, Nm3, Mscf...)
 
         # Apply API §4.2.1 thermodynamic normalization to gas fuels if operating T/P supplied
         raw_quantity = fuel_quantity
-        if is_gas_fuel and (
+        # only a volume read at operating conditions is corrected (scf / Sm3 are already standard)
+        if is_gas_fuel and is_actual_volume_unit(fuel_unit) and (
             operating_temperature is not None or operating_pressure is not None
         ):
             normalized_gas_vol = normalize_gas_volume_to_standard(
@@ -223,13 +252,13 @@ class CombustionCalculator(BaseCalculator):
 
         # Convert EFs to kg per activity unit (unit-aware normalisation)
         kg_per_unit_co2 = convert_factor_to_kg_per_unit(
-            ef_co2, ef_unit, fuel_unit, hhv=hhv, fuel_type=fuel_type
+            ef_co2, ef_unit, fuel_unit, hhv=hhv, fuel_type=fuel_type, density=density, hhv_unit=hhv_unit
         )
         kg_per_unit_ch4 = convert_factor_to_kg_per_unit(
-            ef_ch4, ef_unit, fuel_unit, hhv=hhv, fuel_type=fuel_type
+            ef_ch4, ef_unit, fuel_unit, hhv=hhv, fuel_type=fuel_type, density=density, hhv_unit=hhv_unit
         )
         kg_per_unit_n2o = convert_factor_to_kg_per_unit(
-            ef_n2o, ef_unit, fuel_unit, hhv=hhv, fuel_type=fuel_type
+            ef_n2o, ef_unit, fuel_unit, hhv=hhv, fuel_type=fuel_type, density=density, hhv_unit=hhv_unit
         )
 
         co2_kg = raw_quantity * kg_per_unit_co2
@@ -244,18 +273,24 @@ class CombustionCalculator(BaseCalculator):
         # Tier 3 Gas Composition Override (Carbon Mass Balance)
         heavy_hc_warning = False
         if "c1" in comps and comps["c1"] not in [None, "", "-"]:
-            c_fractions = {
-                "c1": float(comps.get("c1") or 0),
-                "c2": float(comps.get("c2") or 0),
-                "c3": float(comps.get("c3") or 0),
-                "c4": float(comps.get("c4") or 0),
-                "c5": float(comps.get("c5") or 0),
-                "c6": float(comps.get("c6") or 0),
-                "c7": float(comps.get("c7") or 0),
-                "c8": float(comps.get("c8") or 0),
-                "c9": float(comps.get("c9") or 0),
-                "c10": float(comps.get("c10") or 0),
-            }
+            raw_c = {f"c{i}": float(comps.get(f"c{i}") or 0.0) for i in range(1, 11)}
+            raw_co2 = float(comps.get("co2_comp") or comps.get("co2_mol") or 0.0)
+            total_raw = sum(raw_c.values()) + raw_co2
+
+            if total_raw > 1.5:  # Entered as percentages (> 1.0)
+                c_fractions = {k: v / 100.0 for k, v in raw_c.items()}
+                co2_native_fraction = raw_co2 / 100.0
+                total_sum = total_raw / 100.0
+            else:
+                c_fractions = dict(raw_c)
+                co2_native_fraction = raw_co2
+                total_sum = total_raw
+
+            # Normalize to 1.0 only if total exceeds 1.0 (remainder is inert gas like N2)
+            if total_sum > 1.0001:
+                for k in c_fractions:
+                    c_fractions[k] /= total_sum
+                co2_native_fraction /= total_sum
 
             c2_plus_total = sum(
                 c_fractions[k]
@@ -282,20 +317,8 @@ class CombustionCalculator(BaseCalculator):
 
             # Apply to gas streams (by fuel_type or volumetric units)
             if is_gas_fuel:
-                # Convert quantity to standard m3
-                vol_m3 = raw_quantity
-                if u in ["scf", "cf", "ft3"]:
-                    vol_m3 = raw_quantity * CONVERSIONS.get("scf_to_m3", 0.028316846592)
-                elif u in ["mscf", "mcf"]:
-                    vol_m3 = (
-                        raw_quantity * 1_000.0 * CONVERSIONS.get("scf_to_m3", 0.028316846592)
-                    )
-                elif u in ["mmscf"]:
-                    vol_m3 = (
-                        raw_quantity
-                        * 1_000_000.0
-                        * CONVERSIONS.get("scf_to_m3", 0.028316846592)
-                    )
+                # quantity in standard m3; an energy or mass quantity is not a volume
+                vol_m3 = gas_volume_m3(raw_quantity, u)
 
                 density_co2 = CONVERSIONS.get("density_co2", 1.861)
 
@@ -304,9 +327,6 @@ class CombustionCalculator(BaseCalculator):
                 co2_combusted_kg = co2_combusted_vol * density_co2
 
                 # Native CO2
-                co2_native_fraction = float(
-                    comps.get("co2_comp") or comps.get("co2_mol") or 0
-                )
                 co2_native_kg = (vol_m3 * co2_native_fraction) * density_co2
 
                 co2_val = (co2_combusted_kg + co2_native_kg) / 1000.0
@@ -318,6 +338,7 @@ class CombustionCalculator(BaseCalculator):
                     ch4_val = (ch4_slip_vol * density_ch4) / 1000.0
 
         # Resolve tier from factor_source (passed via uncertainties dict sidecar or defaults)
+        uncertainties = uncertainties or {}
         _tier = resolve_tier(uncertainties.get("_factor_source", "default"))
         _cat = "combustion"
         # Propagate uncertainty — tier-aware, 95% CI, non-negative bounds
@@ -425,16 +446,12 @@ class FlaringCalculator(BaseCalculator):
         eta_d = _normalize_efficiency(destruction_efficiency, default=default_eta_d)
 
         # Normalize gas volume if actual temperature/pressure supplied
-        vol_std = float(gas_volume)
         unit_norm = str(fuel_unit or "").strip().lower()
-        if unit_norm in ["mscf", "kscf"]:
-            vol_std *= 28.316846592
-        elif unit_norm in ["mmscf"]:
-            vol_std *= 28316.846592
-        elif unit_norm in ["scf", "cf"]:
-            vol_std *= 0.028316846592
+        actual_volume = is_actual_volume_unit(unit_norm)
+        # standard m3; an energy or mass quantity is refused (it used to be read as m3)
+        vol_std = gas_volume_m3(gas_volume, "mscf" if unit_norm == "kscf" else (unit_norm or "m3"))
 
-        if operating_temperature is not None or operating_pressure is not None:
+        if actual_volume and (operating_temperature is not None or operating_pressure is not None):
             vol_std = normalize_gas_volume_to_standard(
                 volume=vol_std,
                 operating_temp=operating_temperature,
@@ -445,21 +462,26 @@ class FlaringCalculator(BaseCalculator):
             )
 
         # Parse C1-C10 from kwargs, falling back to ch4_fraction for C1 if not provided
-        c_fractions = {
-            "c1": float(comps.get("c1") or ch4_fraction or 0),
-            "c2": float(comps.get("c2") or 0),
-            "c3": float(comps.get("c3") or 0),
-            "c4": float(comps.get("c4") or 0),
-            "c5": float(comps.get("c5") or 0),
-            "c6": float(comps.get("c6") or 0),
-            "c7": float(comps.get("c7") or 0),
-            "c8": float(comps.get("c8") or 0),
-            "c9": float(comps.get("c9") or 0),
-            "c10": float(comps.get("c10") or 0),
-        }
+        raw_c = {f"c{i}": float(comps.get(f"c{i}") if comps.get(f"c{i}") is not None else (ch4_fraction if i == 1 else 0.0)) for i in range(1, 11)}
+        raw_co2 = float(comps.get("co2_comp") or comps.get("co2_mol") or 0.0)
+        total_raw = sum(raw_c.values()) + raw_co2
+
+        if total_raw > 1.5:  # Percentage format (> 1.0)
+            c_fractions = {k: v / 100.0 for k, v in raw_c.items()}
+            co2_native_fraction = raw_co2 / 100.0
+            total_sum = total_raw / 100.0
+        else:
+            c_fractions = dict(raw_c)
+            co2_native_fraction = raw_co2
+            total_sum = total_raw
+
+        # Normalize sum to 1.0 only if total exceeds 1.0 (remainder is inert gas like N2)
+        if total_sum > 1.0001:
+            for k in c_fractions:
+                c_fractions[k] /= total_sum
+            co2_native_fraction /= total_sum
 
         actual_ch4_fraction = c_fractions["c1"]
-        co2_native_fraction = float(comps.get("co2_comp") or comps.get("co2_mol") or 0)
 
         # CH4 Emissions (Undestroyed native methane)
         density_ch4 = CONVERSIONS.get("density_ch4", 0.6785)
@@ -493,6 +515,7 @@ class FlaringCalculator(BaseCalculator):
         co2_tonnes = (co2_combusted_kg + co2_native_kg) / 1000.0
 
         # Resolve tier — flaring with full gas composition is Tier 3
+        uncertainties = uncertainties or {}
         _tier = resolve_tier(uncertainties.get("_factor_source", "default"))
         _cat = "flaring"
         co2_res = propagate_uncertainty(

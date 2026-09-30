@@ -1,6 +1,7 @@
 import React, { useState, useRef, useCallback, useMemo, useEffect } from "react";
 import Papa from "papaparse";
 import api from "../api";
+import { autoDetectMapping, missingRequiredFields } from "../utils/importMapping";
 import { useToast } from "./Toast";
 import UploadProgress from "./UploadProgress";
 import "./Scope1ImportWizard.css"; // Reuse the same CSS for identical aesthetic
@@ -125,11 +126,26 @@ const FIELD_GROUPS = [
     IconComp: Icon.Activity,
     fields: [
       { key: "source_type",   label: "Source Type",   required: false, hint: "electricity, indirect_steam, or cogen_allocation" },
-      { key: "grid_region",   label: "Grid Region",   required: true,  hint: "E.g. SONELGAZ, REB_GRID. Required for electricity." },
+      { key: "grid_region",   label: "Grid Region",   required: false, hint: "Grid name as listed on the Scope 2 form (e.g. Algerian National Grid). Required for electricity unless a supplier factor is given." },
+      { key: "factor",        label: "Supplier Factor", required: false, hint: "Electricity: supplier / contract factor in kg CO2e/kWh (used when the grid is not listed). Steam: boiler factor in kg CO2/MMBtu" },
       { key: "consumption",   label: "Consumption",   required: true,  hint: "Amount of electricity/steam purchased" },
-      { key: "unit",          label: "Unit",          required: true,  hint: "e.g. kWh, MWh, MMBtu" },
+      { key: "unit",          label: "Unit",          required: true,  hint: "Electricity: kWh, MWh, GWh. Steam: MMBtu, GJ, tonne, klb" },
       { key: "year",          label: "Year",          required: true,  hint: "4-digit year (e.g. 2024) — required unless using a date column" },
       { key: "month",         label: "Month",         required: true,  hint: "1–12 — required unless using a date column" },
+    ],
+  },
+  {
+    id: "steam",
+    label: "Steam & CHP (optional)",
+    IconComp: Icon.Activity,
+    fields: [
+      { key: "boiler_eff",        label: "Boiler Efficiency", required: false, hint: "Steam: % (85) or fraction (0.85). Default 80 %" },
+      { key: "trans_loss",        label: "Transmission Loss", required: false, hint: "Steam: percentage, e.g. 5 = 5 %, 0.9 = 0.9 %. Default 0" },
+      { key: "total_emissions",   label: "CHP Total Emissions", required: false, hint: "CHP: plant emissions, t CO2e" },
+      { key: "heat_output_mmbtu", label: "CHP Heat Output", required: false, hint: "CHP: heat bought, MMBtu" },
+      { key: "power_output_mwh",  label: "CHP Power Output", required: false, hint: "CHP: power bought, MWh" },
+      { key: "heat_efficiency",   label: "CHP Heat Efficiency", required: false, hint: "CHP: % or fraction. Default 80 %" },
+      { key: "power_efficiency",  label: "CHP Power Efficiency", required: false, hint: "CHP: % or fraction. Default 35 %" },
     ],
   }
 ];
@@ -251,18 +267,6 @@ function FieldGroup({ group, headers, mapping, setMapping, searchQuery }) {
 }
 
 // ─── Auto-detect mapping ───────────────────────────────────────────────────────
-function autoDetect(headers, allFields) {
-  const mapping = {};
-  allFields.forEach(f => {
-    const match = headers.find(h => {
-      const hl = h.toLowerCase();
-      return hl === f.key || hl.includes(f.key.replace(/_/g, " ")) || hl.includes(f.label.toLowerCase()) || f.label.toLowerCase().includes(hl);
-    });
-    if (match && !mapping[f.key]) mapping[f.key] = match;
-  });
-  return mapping;
-}
-
 // ─── Main Wizard ──────────────────────────────────────────────────────────────
 export default function Scope2ImportWizard({ onClose, onUploadSuccess }) {
   const toast = useToast();
@@ -277,6 +281,7 @@ export default function Scope2ImportWizard({ onClose, onUploadSuccess }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [jobId, setJobId] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [overwrite, setOverwrite] = useState(false);  // replace records that already exist
 
   // ── Access Control: fetch allowed regions on mount ─────────────────────────
   const [allowedRegions, setAllowedRegions] = useState(null);
@@ -301,8 +306,7 @@ export default function Scope2ImportWizard({ onClose, onUploadSuccess }) {
   []);
 
   // Required fields check
-  const requiredFields = FIELD_GROUPS.flatMap(g => g.fields).filter(f => f.required);
-  const missingRequired = requiredFields.filter(f => !mapping[f.key]);
+  const missingRequired = missingRequiredFields(FIELD_GROUPS.flatMap(g => g.fields), mapping);
   const canSubmit = missingRequired.length === 0 || headers.length === 0;
 
   // File processing
@@ -323,7 +327,7 @@ export default function Scope2ImportWizard({ onClose, onUploadSuccess }) {
         }
         const hdrs = results.meta.fields;
         setHeaders(hdrs);
-        setMapping(autoDetect(hdrs, allFields));
+        setMapping(autoDetectMapping(hdrs, allFields));
         setFile(f);
         setStep(2);
       },
@@ -340,6 +344,7 @@ export default function Scope2ImportWizard({ onClose, onUploadSuccess }) {
     const form = new FormData();
     form.append("file", file);
     form.append("scope", "2");
+    form.append("overwrite_duplicates", overwrite ? "true" : "false");
     form.append("column_mapping", JSON.stringify(mapping));
     try {
       const res = await api.post("/emissions/upload/start", form, {
@@ -470,6 +475,13 @@ export default function Scope2ImportWizard({ onClose, onUploadSuccess }) {
                 <button className="s1w-search-clear" onClick={() => setSearchQuery("")}><Icon.Close /></button>
               )}
             </div>
+
+            <label className="s1w-factor-row" style={{ gap: "8px", cursor: "pointer" }}>
+              <input type="checkbox" checked={overwrite} onChange={e => setOverwrite(e.target.checked)} />
+              <span className="s1w-factor-label">
+                Overwrite records that already exist (same facility, month and source). Overwritten records go back to Pending review.
+              </span>
+            </label>
 
             <div className="s1w-field-groups">
               {FIELD_GROUPS.map(group => (

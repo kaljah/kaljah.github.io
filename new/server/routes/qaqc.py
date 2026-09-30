@@ -8,6 +8,7 @@ from utils import get_current_user, get_allowed_facility_ids
 import csv
 import io
 from process_categories import NON_COMBUSTION_PROCESSES
+from utils import internal_error
 
 qaqc_bp = Blueprint("qaqc_bp", __name__)
 
@@ -103,6 +104,38 @@ def get_qaqc_dashboard():
                     "co2e": r.co2e_total,
                 })
 
+        # BUG-084: flags written at import time are not enough - scan the STORED inventory for
+        # implausible values (plausibility bound, or > 1000x the median of the same process type)
+        stored_outliers = []
+        if scope_arg in [None, "all", "1"]:
+            from statistics import median
+            from calculations.anomaly import PLAUSIBILITY_FLAG_TCO2E
+
+            rows = _apply_status_filter(_fac_filter(Emission.query, Emission), Emission).filter(
+                Emission.qa_flag.is_(None)).with_entities(
+                Emission.id, Emission.record_id, Emission.facility_id, Emission.year, Emission.month,
+                Emission.process_type, Emission.status, Emission.co2e_total).all()
+            by_proc = {}
+            for r in rows:
+                by_proc.setdefault((r.process_type or "").lower(), []).append(float(r.co2e_total or 0))
+            medians = {k: median([v for v in vals if v > 0]) for k, vals in by_proc.items() if any(v > 0 for v in vals)}
+            for r in rows:
+                v = float(r.co2e_total or 0)
+                med = medians.get((r.process_type or "").lower())
+                reason = None
+                if v > PLAUSIBILITY_FLAG_TCO2E:
+                    reason = f"Stored-data scan: {v:,.0f} tCO2e exceeds the {PLAUSIBILITY_FLAG_TCO2E:,.0f} t plausibility bound"
+                elif med and v > 1000 * med:
+                    reason = f"Stored-data scan: {v / med:,.0f}x the median of '{r.process_type}' records"
+                if reason:
+                    stored_outliers.append({
+                        "id": r.id, "record_id": r.record_id, "scope": 1, "facility_id": r.facility_id,
+                        "year": r.year, "month": r.month, "process_type": r.process_type, "qa_flag": reason,
+                        "status": r.status, "co2e": v, "source": "stored_scan",
+                    })
+            total_flagged += len(stored_outliers)
+            all_flagged.extend(stored_outliers)
+
         if scope_arg in [None, "all", "2"]:
             q2 = Scope2Emission.query.filter(Scope2Emission.qa_flag.isnot(None))
             q2 = _fac_filter(q2, Scope2Emission)
@@ -157,63 +190,21 @@ def get_qaqc_dashboard():
             all_flagged.sort(key=lambda x: (x["co2e"] or 0), reverse=True)
             flagged_records = all_flagged
 
-        # ── Uncertainty aggregation (IPCC SRSS — scoped to allowed facilities) ──
-        def _norm_unc(pct_val, frac_val, default_val=0.05):
-            if pct_val is not None:
-                try:
-                    return float(pct_val) / 100.0
-                except (ValueError, TypeError):
-                    pass
-            if frac_val is not None:
-                try:
-                    fval = float(frac_val)
-                    return (fval / 100.0) if fval > 1.0 else fval
-                except (ValueError, TypeError):
-                    pass
-            return default_val
+        # ── Uncertainty (BUG-055): the same service as the Uncertainty page — Verified records,
+        # CO2e-weighted per gas, EF correlated within a factor, reported at 95 % (k = 2) ──
+        from services.inventory_uncertainty import inventory_uncertainty
 
-        # Scope 1
-        s1_q = _fac_filter(Emission.query, Emission)
-        s1_rows = s1_q.with_entities(
-            Emission.co2e_total,
-            Emission.uncertainty_pct,
-            Emission.uncertainty,
-        ).all()
-        s1_total = sum((r[0] or 0) for r in s1_rows)
-        s1_unc_var = sum(
-            ((_norm_unc(r[1], r[2], 0.05) * (r[0] or 0)) ** 2) for r in s1_rows
-        )
-
-        # Scope 2
-        s2_q = _fac_filter(Scope2Emission.query, Scope2Emission)
-        s2_rows = s2_q.with_entities(
-            Scope2Emission.co2e,
-            Scope2Emission.uncertainty_pct,
-            Scope2Emission.uncertainty,
-        ).all()
-        s2_total = sum((r[0] or 0) for r in s2_rows)
-        s2_unc_var = sum(
-            ((_norm_unc(r[1], r[2], 0.05) * (r[0] or 0)) ** 2) for r in s2_rows
-        )
-
-        # Scope 3
-        s3_q = _fac_filter(Scope3Emission.query, Scope3Emission)
-        s3_rows = s3_q.with_entities(
-            Scope3Emission.co2e,
-            Scope3Emission.uncertainty_pct,
-            Scope3Emission.uncertainty,
-        ).all()
-        s3_total = sum((r[0] or 0) for r in s3_rows)
-        s3_unc_var = sum(
-            ((_norm_unc(r[1], r[2], 0.10) * (r[0] or 0)) ** 2) for r in s3_rows
-        )
-
-        total_inventory = s1_total + s2_total + s3_total
-        total_unc_var = s1_unc_var + s2_unc_var + s3_unc_var
-
-        overall_uncertainty = (
-            (total_unc_var ** 0.5) / total_inventory if total_inventory > 0 else 0
-        )
+        cy = datetime.now(timezone.utc).year
+        if year_arg and year_arg not in ["all", ""]:
+            unc_year = int(year_arg)
+        else:
+            unc_year = db.session.query(func.max(Emission.year)).filter(
+                Emission.status == "Verified", Emission.year <= cy).scalar() or cy
+        unc = {sc: inventory_uncertainty(unc_year, allowed_fids=allowed_fids, scope=sc) for sc in ("all", "1", "2", "3")}
+        overall_uncertainty = unc["all"]["inventory_uncertainty_decimal"]
+        s1_total = unc["1"]["total_inventory_emissions"]
+        s2_total = unc["2"]["total_inventory_emissions"]
+        s3_total = unc["3"]["total_inventory_emissions"]
 
         # ── Diagnostic & Data Health Analysis (SQL-speed) ───────────────────
         cutoff_30d = datetime.now(timezone.utc) - timedelta(days=30)
@@ -243,17 +234,22 @@ def get_qaqc_dashboard():
             recent_s3 = 0
         recent_records_count = recent_s1 + recent_s2 + recent_s3
 
-        # Field-level gap checks on Scope 1
+        # Field-level gap checks across scopes
         if allowed_fids is not None:
             missing_facility_count = 0
         else:
             missing_fac_q = Emission.query.filter(Emission.facility_id.is_(None))
+            missing_fac_s2 = Scope2Emission.query.filter(Scope2Emission.facility_id.is_(None))
+            missing_fac_s3 = Scope3Emission.query.filter(Scope3Emission.facility_id.is_(None))
             if year_arg and year_arg not in ["all", ""]:
                 try:
-                    missing_fac_q = missing_fac_q.filter(Emission.year == int(year_arg))
+                    yr = int(year_arg)
+                    missing_fac_q = missing_fac_q.filter(Emission.year == yr)
+                    missing_fac_s2 = missing_fac_s2.filter(Scope2Emission.year == yr)
+                    missing_fac_s3 = missing_fac_s3.filter(Scope3Emission.year == yr)
                 except ValueError:
                     pass
-            missing_facility_count = missing_fac_q.count()
+            missing_facility_count = missing_fac_q.count() + missing_fac_s2.count() + missing_fac_s3.count()
 
         # Facility names lookup for sample records
         fac_map = {}
@@ -283,12 +279,27 @@ def get_qaqc_dashboard():
         missing_amount_q = q_s1_all.filter(
             or_(Emission.quantity.is_(None), Emission.quantity <= 0)
         )
-        missing_amount_count = missing_amount_q.count()
+        missing_amount_s2_count = q_s2_all.filter(
+            (Scope2Emission.electricity_kwh.is_(None) | (Scope2Emission.electricity_kwh <= 0))
+            & (Scope2Emission.steam_ton.is_(None) | (Scope2Emission.steam_ton <= 0))
+            & (Scope2Emission.heat_mmbtu.is_(None) | (Scope2Emission.heat_mmbtu <= 0))
+            & (Scope2Emission.cooling_ton.is_(None) | (Scope2Emission.cooling_ton <= 0))
+        ).count()
+        missing_amount_s3_count = q_s3_all.filter(
+            or_(Scope3Emission.activity_data.is_(None), Scope3Emission.activity_data <= 0)
+        ).count()
+        missing_amount_count = missing_amount_q.count() + missing_amount_s2_count + missing_amount_s3_count
 
         missing_co2e_q = q_s1_all.filter(
             or_(Emission.co2e_total.is_(None), Emission.co2e_total < 0)
         )
-        missing_co2e_count = missing_co2e_q.count()
+        missing_co2e_s2_count = q_s2_all.filter(
+            or_(Scope2Emission.co2e.is_(None), Scope2Emission.co2e < 0)
+        ).count()
+        missing_co2e_s3_count = q_s3_all.filter(
+            or_(Scope3Emission.co2e.is_(None), Scope3Emission.co2e < 0)
+        ).count()
+        missing_co2e_count = missing_co2e_q.count() + missing_co2e_s2_count + missing_co2e_s3_count
 
         # Facilities coverage (scoped to allowed facilities and reporting year)
         if allowed_fids is not None:
@@ -346,12 +357,24 @@ def get_qaqc_dashboard():
         verified_anomalies += q3_flags.filter(Scope3Emission.status.ilike("%verified%")).count()
         rejected_anomalies += q3_flags.filter(Scope3Emission.status.ilike("%rejected%")).count()
 
+        # the stored-data scan's outliers are listed in the queue, so they are counted too
+        # (browser test D5: "0 flagged" above a queue showing one flagged record)
+        for o in stored_outliers:
+            st = str(o.get("status") or "").lower()
+            if "rejected" in st:
+                rejected_anomalies += 1
+            elif "verified" in st:
+                verified_anomalies += 1
+            else:
+                pending_anomalies += 1
+
         # Completeness rates per dimension
-        if s1_count > 0:
-            fac_completeness = round(max(0.0, (s1_count - missing_facility_count) / s1_count * 100), 1)
+        denom = total_records_count if total_records_count > 0 else s1_count
+        if denom > 0:
+            fac_completeness = round(max(0.0, (denom - missing_facility_count) / denom * 100), 1)
             fuel_completeness = round(max(0.0, (comb_count - missing_fuel_count) / comb_count * 100), 1) if comb_count > 0 else 100.0
-            amount_completeness = round(max(0.0, (s1_count - missing_amount_count) / s1_count * 100), 1)
-            calc_completeness = round(max(0.0, (s1_count - missing_co2e_count) / s1_count * 100), 1)
+            amount_completeness = round(max(0.0, (denom - missing_amount_count) / denom * 100), 1)
+            calc_completeness = round(max(0.0, (denom - missing_co2e_count) / denom * 100), 1)
             overall_completeness = round(
                 (fac_completeness + fuel_completeness + amount_completeness + calc_completeness) / 4, 1
             )
@@ -566,14 +589,22 @@ def get_qaqc_dashboard():
         return jsonify({
             "status": "success",
             "total_flagged_count": total_flagged,
+            "stored_scan_outlier_count": len(stored_outliers),
+            "pending_review_count": sum(
+                _fac_filter(m.query, m).filter(m.status.in_(("Pending", "Pending Approval", "Pending Review"))).count()
+                for m in (Emission, Scope2Emission, Scope3Emission)),
             "returned_count": len(flagged_records),
             "limit": limit,
             "offset": offset,
             "tier1_uncertainty": {
                 "overall": overall_uncertainty,
-                "scope1": (s1_unc_var ** 0.5) / s1_total if s1_total > 0 else 0,
-                "scope2": (s2_unc_var ** 0.5) / s2_total if s2_total > 0 else 0,
-                "scope3": (s3_unc_var ** 0.5) / s3_total if s3_total > 0 else 0,
+                "scope1": unc["1"]["inventory_uncertainty_decimal"],
+                "scope2": unc["2"]["inventory_uncertainty_decimal"],
+                "scope3": unc["3"]["inventory_uncertainty_decimal"],
+                "confidence_level_pct": 95,
+                "coverage_factor": 2,
+                "year": unc_year,
+                "status_basis": "Verified",
                 "s1_total_tco2e": s1_total,
                 "s2_total_tco2e": s2_total,
                 "s3_total_tco2e": s3_total,
@@ -586,7 +617,7 @@ def get_qaqc_dashboard():
         import traceback
         from flask import current_app
         current_app.logger.error(f"[QAQC] Dashboard error: {e}\n{traceback.format_exc()}")
-        return jsonify({"status": "error", "message": str(e)}), 500
+        return internal_error(e, status_text="error", message="Internal server error")
 
 
 @qaqc_bp.route("/export", methods=["GET"])
@@ -708,7 +739,7 @@ def export_qaqc_report():
             headers={"Content-Disposition": "attachment;filename=qa_qc_report.csv"},
         )
     except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
+        return internal_error(e, status_text="error", message="Internal server error")
 
 
 @qaqc_bp.route("/resolve/<int:record_id>", methods=["POST"])
@@ -782,7 +813,7 @@ def resolve_flagged_record(record_id):
 
     except Exception as e:
         db.session.rollback()
-        return jsonify({"status": "error", "message": str(e)}), 500
+        return internal_error(e, status_text="error", message="Internal server error")
 
 
 @qaqc_bp.route("/bulk-resolve", methods=["POST"])
@@ -876,4 +907,4 @@ def bulk_resolve():
 
     except Exception as e:
         db.session.rollback()
-        return jsonify({"status": "error", "message": str(e)}), 500
+        return internal_error(e, status_text="error", message="Internal server error")

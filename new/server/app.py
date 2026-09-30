@@ -1,4 +1,5 @@
 import os
+import sys
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_migrate import Migrate
@@ -45,7 +46,12 @@ CORS(
 # Database
 db.init_app(app)
 limiter.init_app(app)  # SEC-08 FIX: activate flask-limiter
-migrate = Migrate(app, db)
+migrate = Migrate(app, db, directory=os.path.join(os.path.dirname(os.path.abspath(__file__)), "migrations"))
+
+# SQLite must not hand a deleted record's id to the next record (audit references by id)
+import id_guard  # noqa: E402
+
+id_guard.install()
 
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
@@ -66,27 +72,15 @@ _WAL_CHECKPOINT_INTERVAL = int(os.environ.get("WAL_CHECKPOINT_INTERVAL", "100"))
 
 
 
-_custom_factors_migrated = False
-
-
 @event.listens_for(Engine, "connect")
 def set_sqlite_pragmas(dbapi_conn, _):
-    global _custom_factors_migrated
+    # BUG-016: pragmas only. Schema changes (e.g. custom_factors.description) are Alembic revisions.
     if isinstance(dbapi_conn, sqlite3.Connection):
         cursor = dbapi_conn.cursor()
         cursor.execute("PRAGMA foreign_keys = ON")
         cursor.execute("PRAGMA journal_mode = WAL")
         cursor.execute("PRAGMA synchronous = NORMAL")
         cursor.execute("PRAGMA busy_timeout = 30000")
-        if not _custom_factors_migrated:
-            _custom_factors_migrated = True
-            try:
-                cursor.execute("SELECT description FROM custom_factors LIMIT 1")
-            except sqlite3.OperationalError:
-                try:
-                    cursor.execute("ALTER TABLE custom_factors ADD COLUMN description TEXT")
-                except Exception:
-                    pass
         cursor.close()
 
 
@@ -140,6 +134,56 @@ def handle_csrf_error(e):
     }), 400
 
 
+# ── Central input validation (audit RC-1) ──────────────────────────────────
+from flask.json.provider import DefaultJSONProvider
+from input_validation import ValidationError, find_non_finite, sanitize_non_finite
+
+
+class FiniteJSONProvider(DefaultJSONProvider):
+    """Never emit NaN/Infinity (invalid JSON); legacy non-finite values become null."""
+
+    def dumps(self, obj, **kwargs):
+        return super().dumps(sanitize_non_finite(obj), **kwargs)
+
+
+app.json_provider_class = FiniteJSONProvider
+app.json = FiniteJSONProvider(app)
+
+
+@app.errorhandler(ValidationError)
+def handle_validation_error(e):
+    return jsonify({"error": e.message, "field": e.field, "code": 400}), 400
+
+
+@app.before_request
+def reject_non_finite_json():
+    if request.method in ("POST", "PUT", "PATCH") and request.is_json:
+        payload = request.get_json(silent=True)
+        bad = find_non_finite(payload) if payload is not None else None
+        if bad:
+            return jsonify({"error": f"'{bad}' must be a finite number", "field": bad, "code": 400}), 400
+
+
+
+@app.before_request
+def enforce_session_version():
+    """BUG-114: server-side revocation for the signed-cookie session.
+
+    Each session records the user's session_version at login. Logout, password change or
+    reset, and deactivation bump the version, so any copy of an older cookie is rejected.
+    """
+    from flask import session as flask_session
+
+    uid = flask_session.get("user_id")
+    if not uid:
+        return None
+    from models import User
+
+    user = db.session.get(User, uid)
+    if user is None or int(flask_session.get("sv", 0)) != int(user.session_version or 0):
+        flask_session.clear()
+    return None
+
 
 # Request Logging & Request ID Middleware
 @app.before_request
@@ -149,6 +193,17 @@ def before_request():
     if not req_id or not re.match(r"^[A-Za-z0-9\-]{1,64}$", req_id):
         req_id = str(uuid.uuid4())
     request.id = req_id
+
+    # V1: every write route treats the JSON body as a dict (data.get(...)).
+    # Reject arrays/scalars up front so they return 400 instead of a 500.
+    if request.method in ("POST", "PUT", "PATCH") and request.is_json and request.get_data(cache=True):
+        body = request.get_json(silent=True)
+        if body is not None and not isinstance(body, dict):
+            return jsonify({
+                "error": "JSON body must be an object",
+                "code": 400,
+                "request_id": req_id,
+            }), 400
 
 
 @app.after_request
@@ -261,6 +316,8 @@ from routes.notifications import notifications_bp
 from routes.audit import audit_bp
 from routes.satellite import satellite_bp
 from routes.qaqc import qaqc_bp
+from routes.cap_routes import cap_bp
+from routes.equity_routes import equity_bp
 
 app.register_blueprint(auth_bp, url_prefix="/api/auth")
 app.register_blueprint(emissions_bp, url_prefix="/api/emissions")
@@ -277,6 +334,8 @@ app.register_blueprint(notifications_bp, url_prefix="/api/notifications")
 app.register_blueprint(audit_bp, url_prefix="/api/audit")
 app.register_blueprint(satellite_bp, url_prefix="/api/satellite")
 app.register_blueprint(qaqc_bp, url_prefix="/api/qaqc")
+app.register_blueprint(cap_bp, url_prefix="/api/cap")
+app.register_blueprint(equity_bp, url_prefix="/api/equity")
 
 # Swagger UI Configuration (SEC-05 & INFO-01: Disabled in production unless explicitly enabled)
 if (
@@ -300,54 +359,15 @@ if (
 
 def ensure_admin_seeded():
     """
-    Seeds essential development and admin accounts when SEED_ADMIN=true.
+    Seeds the env-configured admin / IT admin accounts when SEED_ADMIN=true.
     """
     seed_flag = os.environ.get("SEED_ADMIN", "").strip().lower()
     if seed_flag not in ["1", "true", "yes"]:
         app.logger.info("Admin seeding skipped (SEED_ADMIN is not set)")
         return
 
-    _env_name = (
-        os.environ.get("FLASK_ENV")
-        or os.environ.get("APP_ENV")
-        or os.environ.get("ENVIRONMENT")
-        or "development"
-    ).lower()
-    is_production = _env_name in ["production", "prod", "staging"]
-
+    # C2: no hard-coded dev accounts; only env-provided credentials are seeded.
     accounts = []
-    if not is_production:
-        accounts.extend([
-            {
-                "email": "a",
-                "password": "a",
-                "role": "admin",
-                "fullName": "Administrator",
-                "jobTitle": "Sustainability Lead",
-            },
-            {
-                "email": "a@a",
-                "password": "a",
-                "role": "admin",
-                "fullName": "Administrator",
-                "jobTitle": "Sustainability Lead",
-            },
-            {
-                "email": "z",
-                "password": "z",
-                "role": "it_manager",
-                "fullName": "IT Manager",
-                "jobTitle": "IT Operations Manager",
-            },
-            {
-                "email": "z@z",
-                "password": "z",
-                "role": "it_manager",
-                "fullName": "IT Manager",
-                "jobTitle": "IT Operations Manager",
-            },
-        ])
-
     admin_email = os.environ.get("ADMIN_EMAIL", "").strip()
     admin_password = os.environ.get("ADMIN_PASSWORD", "").strip()
     it_admin_email = os.environ.get("IT_ADMIN_EMAIL", "").strip()
@@ -390,10 +410,9 @@ def ensure_admin_seeded():
                 db.session.add(user)
                 app.logger.info(f"Seeded {u['role']} account: {u['email']}")
             else:
-                user.set_password(u["password"])
+                # Do NOT overwrite existing user passwords on startup
                 user.status = "active"
-                user.role = u["role"]
-                app.logger.info(f"Updated account: {u['email']}")
+                app.logger.info(f"Verified existing account: {u['email']}")
         db.session.commit()
     except Exception as e:
         app.logger.error(f"Failed to seed admin accounts: {e}")
@@ -427,8 +446,45 @@ def ensure_database_indexes():
         app.logger.warning(f"Could not ensure database indexes: {e}")
 
 
+def _is_schema_cli():
+    """True when this import comes from `flask db ...` (Alembic manages the schema itself)."""
+    return len(sys.argv) > 1 and sys.argv[1] == "db"
+
+
+def init_schema():
+    """BUG-016: Alembic is the single authority for schema changes.
+
+    - Outside production (or with AUTO_MIGRATE=true) the app upgrades the database to the
+      Alembic head on start-up; the reconcile revision creates a fresh schema.
+    - In production the container entrypoint runs `flask db upgrade`; the app only verifies
+      that the database is at head and refuses to start otherwise.
+    """
+    if _is_schema_cli():
+        return
+    from alembic.migration import MigrationContext
+    from alembic.script import ScriptDirectory
+
+    script = ScriptDirectory.from_config(migrate.get_config())
+    heads = set(script.get_heads())
+    with db.engine.connect() as conn:
+        current = set(MigrationContext.configure(conn).get_current_heads())
+    if current == heads:
+        return
+    auto = os.environ.get("AUTO_MIGRATE", "").lower()
+    if auto == "true" or (auto != "false" and not app.config.get("IS_PRODUCTION")):
+        from flask_migrate import upgrade
+
+        upgrade(directory=migrate.directory)
+        app.logger.info("Database upgraded to Alembic head %s", ", ".join(sorted(heads)))
+        return
+    raise RuntimeError(
+        f"Database schema is at {sorted(current) or 'no revision'}, expected {sorted(heads)}. "
+        "Run `flask db upgrade` before starting the application."
+    )
+
+
 with app.app_context():
-    db.create_all()
+    init_schema()
     ensure_database_indexes()
     ensure_admin_seeded()
 
@@ -505,7 +561,6 @@ def health_readiness():
 
 if __name__ == "__main__":
     with app.app_context():
-        db.create_all()
         try:
             from routes.auth import load_settings_from_db
             load_settings_from_db()

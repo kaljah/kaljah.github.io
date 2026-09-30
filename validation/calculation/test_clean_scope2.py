@@ -99,10 +99,9 @@ class TestCleanScope2Cogeneration:
         heat_output = 50000.0
         power_output = 30000.0
 
-        # WRI method: e_h = 0.8, e_p = 0.33
-        # denom = (50000 / 0.8) + (30000 / 0.33) = 62,500 + 90,909.09 = 153,409.09
-        # heat_fraction = 62,500 / 153,409.09 = 0.4074
-        # allocated_heat = 1000.0 * 0.4074 = 407.41 tonnes
+        # WRI method, Compendium section 8.2.2 default efficiencies: heat 80 %, electricity 35 %
+        # denom = (50000 / 0.8) + (30000 / 0.35) = 62,500 + 85,714.29 = 148,214.29
+        # heat_fraction = 0.42169 -> allocated_heat = 421.69 tonnes
         res = calc.calculate(
             total_emissions=total_co2e,
             heat_output=heat_output,
@@ -111,6 +110,6 @@ class TestCleanScope2Cogeneration:
             uncertainties={},
         )
 
-        expected_allocated = ((heat_output / 0.8) / ((heat_output / 0.8) + (power_output / 0.33))) * total_co2e
+        expected_allocated = ((heat_output / 0.8) / ((heat_output / 0.8) + (power_output / 0.35))) * total_co2e
         assert abs(res["results"]["co2"]["value"] - expected_allocated) < 1e-2
         assert abs(res["total_co2e"] - expected_allocated) < 1e-2

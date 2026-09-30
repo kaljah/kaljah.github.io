@@ -34,7 +34,6 @@ const SbtiDashboard = () => {
   const [showConfig, setShowConfig] = useState(false);
   const [savingTarget, setSavingTarget] = useState(false);
   const [scopeMode, setScopeMode] = useState("all"); // 'all' (Scopes 1+2+3) or 's1_s2' (Scopes 1+2)
-  const [suggestedBaseline, setSuggestedBaseline] = useState(null);
 
   // Editable Target Form State
   const [targetForm, setTargetForm] = useState({
@@ -64,12 +63,6 @@ const SbtiDashboard = () => {
       }
 
       if (manageRes.data) {
-        if (manageRes.data.suggested_base_year_emissions !== undefined) {
-          setSuggestedBaseline({
-            year: manageRes.data.suggested_base_year || 2024,
-            emissions: manageRes.data.suggested_base_year_emissions || 0,
-          });
-        }
         if (manageRes.data.has_target) {
           setTargetForm({
             base_year: manageRes.data.base_year || 2024,
@@ -134,7 +127,7 @@ const SbtiDashboard = () => {
           "success"
         );
       }
-    } catch (e) {
+    } catch {
       toast.show("Could not fetch verified baseline emissions for this year", "warning");
     }
   };
@@ -261,10 +254,18 @@ const SbtiDashboard = () => {
   }
 
   const isConfigured = Boolean(sbtiData && sbtiData.has_target);
-  const currentActual = sbtiData?.current_actual_emissions ?? sbtiData?.current_actual ?? 0;
-  const currentTarget = sbtiData?.current_target_emissions ?? sbtiData?.current_target ?? 0;
-  const isOnTrack = isConfigured ? (sbtiData?.on_track ?? true) : null;
-  const currentYear = sbtiData?.current_year || sbtiData?.latest_actual_year || new Date().getFullYear();
+  // No complete year yet: the server returns null for the current year and a year-to-date total;
+  // the target of that year still comes from the pathway (browser test #14 showed both as 0)
+  const ytdYear = sbtiData?.ytd_year;
+  const ytdRow = (sbtiData?.trajectory || []).find((r) => String(r.year) === String(ytdYear));
+  const currentActual = sbtiData?.current_actual_emissions ?? sbtiData?.current_actual ?? null;
+  const currentTarget =
+    sbtiData?.current_target_emissions ?? sbtiData?.current_target ?? ytdRow?.sbti_target ?? null;
+  const isYtd = currentActual == null && sbtiData?.ytd_actual != null;
+  // BUG-028: no evaluable year -> "No data", never a default ON TRACK
+  const isOnTrack = isConfigured ? (sbtiData?.on_track ?? null) : null;
+  const noData = isConfigured && isOnTrack === null;
+  const currentYear = sbtiData?.current_year || sbtiData?.latest_actual_year || ytdYear || new Date().getFullYear();
 
   return (
     <div className="sbti-container" style={{ opacity: isUpdating ? 0.8 : 1, transition: "opacity 0.2s ease" }}>
@@ -478,19 +479,23 @@ const SbtiDashboard = () => {
             </div>
           </div>
           <div className="sbti-kpi-value">
-            {formatNumber(currentTarget, 0)}
+            {currentTarget == null ? "—" : formatNumber(currentTarget, 0)}
             <span className="sbti-kpi-unit">tCO2e</span>
           </div>
           <div className="sbti-kpi-subtitle">
-            Actual: {formatNumber(currentActual, 0)} tCO2e ({currentYear})
+            {currentActual != null
+              ? `Actual: ${formatNumber(currentActual, 0)} tCO2e (${currentYear})`
+              : isYtd
+                ? `Year to date: ${formatNumber(sbtiData.ytd_actual, 0)} tCO2e (${ytdYear}, partial year)`
+                : `Actual: — (${currentYear})`}
           </div>
         </div>
 
-        <div className={`sbti-kpi-card ${isConfigured ? (isOnTrack ? "success" : "warning") : "neutral"}`}>
+        <div className={`sbti-kpi-card ${isConfigured && !noData ? (isOnTrack ? "success" : "warning") : "neutral"}`}>
           <div className="sbti-kpi-header">
             <span className="sbti-kpi-title">Pathway Status</span>
-            <div className={`sbti-kpi-icon ${isConfigured ? (isOnTrack ? "success" : "warning") : "neutral"}`}>
-              {isConfigured ? (
+            <div className={`sbti-kpi-icon ${isConfigured && !noData ? (isOnTrack ? "success" : "warning") : "neutral"}`}>
+              {isConfigured && !noData ? (
                 isOnTrack ? <CheckCircle size={18} /> : <AlertTriangle size={18} />
               ) : (
                 <ShieldCheck size={18} />
@@ -498,14 +503,16 @@ const SbtiDashboard = () => {
             </div>
           </div>
           <div className="sbti-kpi-value">
-            <span className={`status-pill ${isConfigured ? (isOnTrack ? "on-track" : "behind") : "not-set"}`}>
-              {isConfigured ? (isOnTrack ? "ON TRACK" : "BEHIND TARGET") : "NOT CONFIGURED"}
+            <span className={`status-pill ${isConfigured && !noData ? (isOnTrack ? "on-track" : "behind") : "not-set"}`}>
+              {!isConfigured ? "NOT CONFIGURED" : noData ? "NO DATA" : isOnTrack ? "ON TRACK" : "BEHIND TARGET"}
             </span>
           </div>
           <div className="sbti-kpi-subtitle">
-            {isConfigured
-              ? `Reduction: ${sbtiData?.reduction_achieved_pct || 0}% vs Baseline`
-              : "Set corporate baseline & targets to track alignment"}
+            {!isConfigured
+              ? "Set corporate baseline & targets to track alignment"
+              : noData
+                ? "No complete year of verified data in the target window"
+                : `Reduction: ${sbtiData?.reduction_achieved_pct}% vs ${sbtiData?.base_year} baseline (progress year ${sbtiData?.latest_actual_year})`}
           </div>
         </div>
 
@@ -533,7 +540,7 @@ const SbtiDashboard = () => {
         <div className="sbti-card">
           <div className="sbti-card-header">
             <div>
-              <h3 className="sbti-card-title">SBTi Decarbonization Pathway ({sbtiData?.pathway_type || "1.5°C"})</h3>
+              <h3 className="sbti-card-title">{sbtiData?.pathway_label || "Decarbonization Pathway"}</h3>
               <p className="sbti-card-subtitle">
                 Linear reduction trajectory from base year {sbtiData?.base_year || 2024} to target year {sbtiData?.target_year || 2050} (Residual emissions capped at 10% per NZ-C1)
               </p>

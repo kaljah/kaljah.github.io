@@ -1,0 +1,53 @@
+// Shared layout pieces for the Scope 1 entry form: one arrangement for every process type
+// (numbered sections, responsive field grids, collapsible advanced options).
+import React, { useState } from "react";
+import { ChevronDown } from "lucide-react";
+import "./ui.css";
+
+export const Section = ({ n, title, aside, children }) => (
+  <section className="s1-section">
+    <header className="s1-section-head">
+      <span className="s1-step">{n}</span>
+      <h3 className="s1-section-title">{title}</h3>
+      {aside && <div className="s1-section-aside">{aside}</div>}
+    </header>
+    <div className="s1-section-body">{children}</div>
+  </section>
+);
+
+export const FieldGrid = ({ children, min = 200 }) => (
+  <div className="s1-grid" style={{ "--s1-min": `${min}px` }}>
+    {children}
+  </div>
+);
+
+export const MoreOptions = ({ label = "More options", defaultOpen = false, children }) => {
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <div className={`s1-more ${open ? "open" : ""}`}>
+      <button type="button" className="s1-more-toggle" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
+        <ChevronDown size={16} className="s1-more-chevron" />
+        {label}
+      </button>
+      {open && <div className="s1-more-body">{children}</div>}
+    </div>
+  );
+};
+
+export const Segmented = ({ options, value, onChange, ariaLabel }) => (
+  <div className="s1-seg" role="radiogroup" aria-label={ariaLabel}>
+    {options.map((o) => (
+      <button
+        key={o.value}
+        type="button"
+        role="radio"
+        aria-checked={value === o.value}
+        className={`s1-seg-btn ${value === o.value ? "active" : ""}`}
+        onClick={() => onChange(o.value)}
+        title={o.hint}
+      >
+        {o.label}
+      </button>
+    ))}
+  </div>
+);

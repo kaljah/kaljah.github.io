@@ -20,7 +20,7 @@ def test_constants_and_helpers():
 
     # Test 20-year horizon lookup
     ar5_20 = get_active_gwp("AR5", horizon="20")
-    assert ar5_20["CH4"] == 82.5
+    assert ar5_20["CH4"] == 84.0  # IPCC AR5 WG1 Table 8.7 (audit BUG-013)
 
 
 def test_calculate_co2e_dynamic():
@@ -47,7 +47,8 @@ def test_legacy_engine_dynamic_gwp():
         "quantity": 10,
         "unit": "units",
     }
-    factor_data = {"ch4": 1.5}
+    # audit BUG-063: a factor needs a unit; 1.5 kg CH4 per unit x 10 units = 15 kg (same values as before)
+    factor_data = {"ch4": 1.5, "unit": "kg/unit"}
 
     em_ar5, method5 = compute_emissions(
         payload, factor_data=factor_data, gwp_dict=GWP_AR5

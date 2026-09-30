@@ -1,7 +1,18 @@
-import React, { useState } from "react";
+import React, { useEffect, useId } from "react";
 import "./Modal.css";
 
 const Modal = ({ isOpen, onClose, title, children, maxWidth }) => {
+  const titleId = useId();
+  // Escape closes the dialog
+  useEffect(() => {
+    if (!isOpen) return undefined;
+    const onKey = (e) => {
+      if (e.key === "Escape") onClose?.();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const handleBackdropClick = (e) => {
@@ -12,10 +23,16 @@ const Modal = ({ isOpen, onClose, title, children, maxWidth }) => {
 
   return (
     <div className="modal-backdrop" onClick={handleBackdropClick}>
-      <div className="modal-content" style={{ maxWidth: maxWidth || "500px" }}>
+      <div
+        className="modal-content"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        style={{ maxWidth: maxWidth || "500px" }}
+      >
         <div className="modal-header">
-          <h3>{title}</h3>
-          <button className="modal-close" onClick={onClose}>
+          <h3 id={titleId}>{title}</h3>
+          <button className="modal-close" onClick={onClose} aria-label="Close">
             <svg
               width="20"
               height="20"

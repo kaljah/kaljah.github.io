@@ -1,0 +1,15 @@
+import { launch, session, shot, UI, sleep, openS1, fillS1, submitS1, toasts } from "./lib.mjs";
+const b = await launch();
+const { page, log } = await session(b, "admin");
+await openS1(page);
+await fillS1(page, { facility: "AUDIT-L Plant", year: 2025, month: 6, factor: "Natural Gas", qty: 1000000, unit: "scf" });
+console.log("identity:", await page.locator(".form-grid-4").first().innerText());
+console.log("inspector:", (await page.locator(".formula-inspector-card").innerText()).replace(/\n/g, " "));
+await shot(page, "w3_before", true);
+const r = await submitS1(page, log);
+console.log("POST", r?.status, r?.req);
+console.log("RESP", JSON.stringify(r?.body).slice(0, 2500));
+console.log("toasts:", await toasts(page));
+await shot(page, "w3_after", true);
+console.log("ERR", log.errors.slice(0, 5));
+await b.close();

@@ -1,8 +1,26 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Calculator, X, Info, ShieldCheck, CheckCircle2, Clock, AlertCircle } from "lucide-react";
 import "./CalculationDetails.css";
 
+// no API Compendium / table / equation references in the emission UI
+const stripApi = (t) =>
+  t
+    ? String(t)
+        .replace(/\s*\([^()]*(?:API|Compendium|Table|Eq\.|§)[^()]*\)/g, "")
+        .replace(/API(?:\s+GHG)?\s+Compendium(?:\s+2021)?[^,;]*[,;]?\s*/g, "")
+        .replace(/\bTables?\s+[\d\-.,\s]+/g, "")
+        .trim()
+    : t;
 const CalculationDetails = ({ calculation, onClose }) => {
+  // Escape closes the dialog, as its close button advertises
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === "Escape") onClose?.();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
   if (!calculation) return null;
 
   const {
@@ -20,8 +38,7 @@ const CalculationDetails = ({ calculation, onClose }) => {
     emissions,
     factors,
     uncertainty,
-    steps,
-  } = calculation;
+      } = calculation;
 
   const formatNumber = (num, decimals = 3) => {
     if (num === null || num === undefined || isNaN(num)) return "0";
@@ -93,7 +110,7 @@ const CalculationDetails = ({ calculation, onClose }) => {
               </div>
               <div className="param-item">
                 <span className="param-label">Calculation Method</span>
-                <span className="param-value">{method || factor_source || "API Compendium / Tier 1"}</span>
+                <span className="param-value">{stripApi(method || factor_source) || "—"}</span>
               </div>
               {equipment_id && equipment_id !== "-" && (
                 <div className="param-item">
@@ -186,39 +203,6 @@ const CalculationDetails = ({ calculation, onClose }) => {
           )}
 
           {/* Calculation Steps */}
-          {steps && steps.length > 0 && (
-            <div className="calc-section">
-              <h4 className="calc-section-title">
-                <Calculator size={16} /> Calculation Methodology & Stepper
-              </h4>
-              <div className="steps-container">
-                {steps.map((step, idx) => (
-                  <div key={idx} className="calc-step">
-                    <div className="step-number">{idx + 1}</div>
-                    <div className="step-content">
-                      <div className="step-label">
-                        {step.label || step.name || `Step ${idx + 1}`}
-                      </div>
-                      {(step.desc || step.description) && (
-                        <div className="step-desc">
-                          {step.desc || step.description}
-                        </div>
-                      )}
-                      {step.formula && (
-                        <div className="step-formula">{step.formula}</div>
-                      )}
-                      {step.result !== undefined && step.result !== null && (
-                        <div className="step-result">
-                          = {formatNumber(step.result, 4)} {step.unit || "tCO₂e"}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
           {/* Uncertainty & ISO 14064 Compliance */}
           {uncertainty && (uncertainty.co2 != null || uncertainty.ch4 != null || uncertainty.n2o != null) && (
             <div className="calc-section">
@@ -311,7 +295,6 @@ const CalculationDetails = ({ calculation, onClose }) => {
         <div className="calc-footer">
           <Info size={16} />
           <span>
-            Calculations strictly adhere to API Compendium 2021, GHG Protocol Corporate Standard, and IPCC AR5/AR6 GWP metrics.
           </span>
         </div>
       </div>

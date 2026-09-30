@@ -1,24 +1,15 @@
 import React from "react";
 import "./LoadingSpinner.css";
 
-import animationVideo from "../assets/loading_animation.mp4";
-
 const LoadingSpinner = ({
   size = "medium",
   fullScreen = false,
   message = "Loading System Resources...",
-  speed = 2.0, // Added speed prop
 }) => {
   const sizeClass = `spinner-${size}`;
-  const videoRef = React.useRef(null);
 
-  React.useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.playbackRate = speed;
-    }
-  }, [speed]);
-
-  const LoaderContent = () => (
+  // plain element, not a component defined during render (it would remount on every render)
+  const content = (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem' }}>
       <div className={`stylish-theme-spinner ${sizeClass}`}>
         <div className="spinner-ring"></div>
@@ -28,19 +19,7 @@ const LoadingSpinner = ({
     </div>
   );
 
-  if (fullScreen) {
-    return (
-      <div className="loading-fullscreen">
-        <LoaderContent />
-      </div>
-    );
-  }
-
-  return (
-    <div className="loading-inline">
-      <LoaderContent />
-    </div>
-  );
+  return <div className={fullScreen ? "loading-fullscreen" : "loading-inline"}>{content}</div>;
 };
 
 export default LoadingSpinner;

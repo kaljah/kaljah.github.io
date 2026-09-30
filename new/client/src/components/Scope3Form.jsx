@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from "react";
+import { CATEGORY_ACTIVITIES } from "../utils/scope3Factors";
 import api from "../api";
 import CustomDropdown from "./CustomDropdown";
 import { useToast } from "./Toast";
 import { useAuth } from "../context/AuthContext";
 import { getUserOperationalDefaults } from "../utils/userDefaults";
-import { formatNumber } from "../utils/formatters";
+import { formatNumber, formatEmission } from "../utils/formatters";
 import ColumnMappingWizard from "./ColumnMappingWizard";
 import Scope3ImportWizard from "./Scope3ImportWizard";
 import { Upload, Trash2, Eye } from "lucide-react";
-import EmissionResult from "./EmissionResult";
 import CalculationDetails from "./CalculationDetails";
 import ConfirmModal from "./ConfirmModal";
 import "./ScopeTables.css";
+import { UNCERTAINTY_COVERAGE_K } from "../constants";
 
 const Scope3Form = () => {
   const { user } = useAuth();
   const toast = useToast();
-  const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [showWizard, setShowWizard] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState(null);
@@ -33,7 +33,6 @@ const Scope3Form = () => {
   const [baseFactor, setBaseFactor] = useState(0);
 
   // Result and Inspect Modals
-  const [calculationResult, setCalculationResult] = useState(null);
   const [inspectRecord, setInspectRecord] = useState(null);
 
   // EEIO Quick Calculator State
@@ -41,6 +40,17 @@ const Scope3Form = () => {
   const [eeioNaics, setEeioNaics] = useState("");
   const [eeioSpend, setEeioSpend] = useState("");
   const [eeioResult, setEeioResult] = useState(null);
+  const [naicsOptions, setNaicsOptions] = useState([]);
+  // six-digit NAICS codes of the EPA supply chain factor dataset matching the typed code or title
+  const searchNaics = async (q) => {
+    if (!q || q.trim().length < 2) return setNaicsOptions([]);
+    try {
+      const res = await api.get("/scope3/eeio-factors", { params: { q } });
+      setNaicsOptions(Array.isArray(res.data) ? res.data : []);
+    } catch {
+      setNaicsOptions([]);
+    }
+  };
   
   const handleCalculateEeio = async () => {
     if (!eeioNaics || !eeioSpend) return;
@@ -61,7 +71,7 @@ const Scope3Form = () => {
       setBaseFactor(parseFloat(normalizedEf));
       setBaseUnit("USD");
     } catch (err) {
-      toast.show("Error calculating EEIO emissions", "error");
+      toast.show(err?.response?.data?.error || "Error calculating EEIO emissions", "error");
     }
   };
 
@@ -83,6 +93,7 @@ const Scope3Form = () => {
   const [entries, setEntries] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [loadError, setLoadError] = useState(false);
   const [importModal, setImportModal] = useState({
     isOpen: false,
     type: "activity_scope3",
@@ -107,85 +118,6 @@ const Scope3Form = () => {
     15: { name: "Investments", type: "downstream" },
   };
 
-  const CATEGORY_ACTIVITIES = {
-    1: [
-      { value: "Steel", unit: "kg", factor: 1.85 },
-      { value: "Cement", unit: "kg", factor: 0.82 },
-      { value: "Chemicals", unit: "kg", factor: 2.1 },
-      { value: "Equipment", unit: "USD", factor: 0.42 },
-      { value: "Services", unit: "USD", factor: 0.18 },
-    ],
-    2: [
-      { value: "Machinery & Equipment", unit: "USD", factor: 0.45 },
-      { value: "Buildings & Infrastructure", unit: "USD", factor: 0.85 },
-      { value: "IT Equipment", unit: "USD", factor: 0.35 },
-    ],
-    3: [
-      { value: "Upstream of Purchased Fuels", unit: "kg", factor: 0.25 },
-      { value: "T&D Losses (Electricity)", unit: "kWh", factor: 0.05 },
-    ],
-    4: [
-      { value: "Truck Transport", unit: "ton-km", factor: 0.062 },
-      { value: "Rail Transport", unit: "ton-km", factor: 0.022 },
-      { value: "Ship Transport", unit: "ton-km", factor: 0.011 },
-      { value: "Pipeline Transport", unit: "ton-km", factor: 0.005 },
-    ],
-    5: [
-      { value: "Landfill", unit: "kg", factor: 0.57 },
-      { value: "Incineration", unit: "kg", factor: 0.021 },
-      { value: "Recycling", unit: "kg", factor: 0.012 },
-      { value: "Composting", unit: "kg", factor: 0.008 },
-    ],
-    6: [
-      { value: "Air - Domestic", unit: "passenger-km", factor: 0.255 },
-      { value: "Air - International", unit: "passenger-km", factor: 0.195 },
-      { value: "Car - Gasoline", unit: "km", factor: 0.192 },
-      { value: "Car - Diesel", unit: "km", factor: 0.171 },
-      { value: "Train", unit: "passenger-km", factor: 0.041 },
-    ],
-    7: [
-      { value: "Car Commute (Gasoline)", unit: "passenger-km", factor: 0.192 },
-      {
-        value: "Public Transit (Bus/Train)",
-        unit: "passenger-km",
-        factor: 0.05,
-      },
-      { value: "Teleworking", unit: "day", factor: 1.5 },
-    ],
-    8: [
-      { value: "Leased Office Space", unit: "sq ft", factor: 5.5 },
-      { value: "Leased Vehicles", unit: "km", factor: 0.2 },
-    ],
-    9: [
-      { value: "Truck Transport", unit: "ton-km", factor: 0.062 },
-      { value: "Rail Transport", unit: "ton-km", factor: 0.022 },
-      { value: "Ship Transport", unit: "ton-km", factor: 0.011 },
-      { value: "Pipeline Transport", unit: "ton-km", factor: 0.005 },
-    ],
-    10: [
-      { value: "Processing (Electricity)", unit: "kWh", factor: 0.4 },
-      { value: "Processing (Natural Gas)", unit: "mcf", factor: 54.6 },
-    ],
-    11: [
-      { value: "Crude Oil", unit: "bbl", factor: 433.7 },
-      { value: "Natural Gas", unit: "mcf", factor: 54.6 },
-      { value: "NGL - Ethane", unit: "gal", factor: 3.93 },
-      { value: "NGL - Propane", unit: "gal", factor: 5.74 },
-      { value: "NGL - Butane", unit: "gal", factor: 6.38 },
-      { value: "NGL - Mixed", unit: "gal", factor: 5.5 },
-    ],
-    12: [
-      { value: "Landfill", unit: "kg", factor: 0.57 },
-      { value: "Recycling", unit: "kg", factor: 0.012 },
-      { value: "Incineration", unit: "kg", factor: 0.021 },
-    ],
-    13: [{ value: "Downstream Leased Space", unit: "sq ft", factor: 5.5 }],
-    14: [{ value: "Retail Franchise", unit: "sq ft", factor: 10.0 }],
-    15: [
-      { value: "Equity Investments", unit: "USD", factor: 0.001 },
-      { value: "Project Finance", unit: "USD", factor: 0.005 },
-    ],
-  };
 
   useEffect(() => {
     loadFacilities();
@@ -203,7 +135,8 @@ const Scope3Form = () => {
       setBaseUnit(activities[0].unit);
       setBaseFactor(activities[0].factor);
       setUnit(activities[0].unit);
-      setEmissionFactor(activities[0].factor.toString());
+      // factor null: no published default, the user enters the supplier / site factor
+      setEmissionFactor(activities[0].factor == null ? "" : activities[0].factor.toString());
     } else {
       setActivityType("");
       setUnit("");
@@ -219,14 +152,14 @@ const Scope3Form = () => {
         setBaseUnit(activity.unit);
         setBaseFactor(activity.factor);
         setUnit(activity.unit);
-        setEmissionFactor(activity.factor.toString());
+        setEmissionFactor(activity.factor == null ? "" : activity.factor.toString());
       }
     }
   }, [activityType, category]);
 
   const handleUnitChange = (newUnit) => {
     setUnit(newUnit);
-    if (UNIT_MULTIPLIERS[baseUnit] && UNIT_MULTIPLIERS[baseUnit][newUnit]) {
+    if (baseFactor != null && UNIT_MULTIPLIERS[baseUnit] && UNIT_MULTIPLIERS[baseUnit][newUnit]) {
       const multiplier = UNIT_MULTIPLIERS[baseUnit][newUnit];
       const newFactor = baseFactor * multiplier;
       // Round to 5 decimal places to avoid floating point weirdness
@@ -259,21 +192,20 @@ const Scope3Form = () => {
   }, [user, facilities]);
 
   const loadEntries = async () => {
-    setLoading(true);
     try {
-      const res = await api.get("/scope3");
-      const allEntries = Array.isArray(res.data)
-        ? res.data
-        : res.data?.data || [];
-      const start = (currentPage - 1) * RECORDS_PER_PAGE;
-      const end = start + RECORDS_PER_PAGE;
-      setEntries(allEntries.slice(start, end));
-      setTotalPages(Math.max(1, Math.ceil(allEntries.length / RECORDS_PER_PAGE)));
+      // one page from the server (the whole list used to be downloaded on every page change)
+      const res = await api.get("/scope3", {
+        params: { limit: RECORDS_PER_PAGE, offset: (currentPage - 1) * RECORDS_PER_PAGE },
+      });
+      const data = Array.isArray(res.data) ? res.data : res.data?.data || [];
+      const total = Array.isArray(res.data) ? data.length : Number(res.data?.total) || 0;
+      setEntries(data);
+      setTotalPages(Math.max(1, Math.ceil(total / RECORDS_PER_PAGE)));
+      setLoadError(false);
     } catch (error) {
       console.error("Failed to load entries:", error);
+      setLoadError(true);
       toast.error("Failed to load Scope 3 data");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -311,15 +243,12 @@ const Scope3Form = () => {
         status: status,
       };
 
-      const res = await api.post("/scope3", payload);
+      await api.post("/scope3", payload);
       toast.success(
         status === "Draft"
           ? "Entry saved as draft"
           : "Scope 3 entry added successfully",
       );
-      if (res.data && res.data.emissions) {
-        setCalculationResult(res.data);
-      }
       setAmount("");
       setCurrentPage(1);
       loadEntries();
@@ -444,14 +373,23 @@ const Scope3Form = () => {
           {showEeioCalc && (
             <div style={{ marginTop: "16px", display: "flex", gap: "16px", alignItems: "flex-end" }}>
               <div className="input-group" style={{ flex: 1 }}>
-                <label>NAICS Code (3-6 digits)</label>
+                <label>NAICS Code (6 digits)</label>
                 <input
                   type="text"
                   className="mole-input"
-                  placeholder="e.g. 541 (Consulting)"
+                  placeholder="e.g. 331110 or steel"
                   value={eeioNaics}
-                  onChange={(e) => setEeioNaics(e.target.value)}
+                  list="eeio-naics-options"
+                  onChange={(e) => {
+                    setEeioNaics(e.target.value);
+                    searchNaics(e.target.value);
+                  }}
                 />
+                <datalist id="eeio-naics-options">
+                  {naicsOptions.map((o) => (
+                    <option key={o.naics} value={o.naics}>{`${o.name} (${o.kg_co2e_per_usd} kg CO2e/USD)`}</option>
+                  ))}
+                </datalist>
               </div>
               <div className="input-group" style={{ flex: 1 }}>
                 <label>Spend Amount (USD)</label>
@@ -688,7 +626,7 @@ const Scope3Form = () => {
           <table className="excel-table">
             <thead>
               <tr>
-                <th>Year</th>
+                <th>Period</th>
                 <th>Facility</th>
                 <th>Category</th>
                 <th>Activity/Product</th>
@@ -711,7 +649,14 @@ const Scope3Form = () => {
               </tr>
             </thead>
             <tbody>
-              {entries.length === 0 ? (
+              {loadError ? (
+                <tr>
+                  <td colSpan="10" style={{ textAlign: "center", color: "var(--danger, #dc2626)" }}>
+                    Could not load the records.{" "}
+                    <button type="button" className="btn-ghost" onClick={loadEntries}>Retry</button>
+                  </td>
+                </tr>
+              ) : entries.length === 0 ? (
                 <tr>
                   <td
                     colSpan="10"
@@ -726,7 +671,7 @@ const Scope3Form = () => {
               ) : (
                 entries.map((entry) => (
                   <tr key={entry.id}>
-                    <td>{entry.year}</td>
+                    <td>{entry.month ? `${entry.year}-${String(entry.month).padStart(2, "0")}` : entry.year}</td>
                     <td>
                       {facilities.find((f) => f.id === entry.facility_id)
                         ?.name || "Unknown"}
@@ -737,9 +682,12 @@ const Scope3Form = () => {
                       {formatNumber(entry.activity_data || entry.volume, 2)}{" "}
                       {entry.unit}
                     </td>
-                    <td>{formatNumber(entry.emission_factor, 2)}</td>
+                    <td>
+                      {/* kg CO2e per activity unit; a supplier-reported total has no factor */}
+                      {Number(entry.emission_factor) > 0 ? formatEmission(entry.emission_factor, 4) : "—"}
+                    </td>
                     <td style={{ color: "#8b5cf6", fontWeight: 600 }}>
-                      {formatNumber(entry.co2e || entry.emissions_tco2e, 3)}
+                      {formatEmission(entry.co2e || entry.emissions_tco2e, 3)}
                     </td>
                     <td style={{ color: "#6b7280", fontSize: "0.85rem" }}>
                       {entry.uncertainty != null
@@ -748,7 +696,7 @@ const Scope3Form = () => {
                     </td>
                     <td style={{ color: "#6b7280", fontSize: "0.85rem" }}>
                       {entry.uncertainty != null
-                        ? `${formatNumber(entry.uncertainty * 1.96 * 100, 1)}%`
+                        ? `${formatNumber(entry.uncertainty * UNCERTAINTY_COVERAGE_K * 100, 1)}%`
                         : "—"}
                       {entry.status === "Draft" && (
                         <span
@@ -840,13 +788,6 @@ const Scope3Form = () => {
             loadEntries();
             toast.success("Bulk import completed successfully");
           }}
-        />
-      )}
-
-      {calculationResult && (
-        <EmissionResult
-          result={calculationResult}
-          onClose={() => setCalculationResult(null)}
         />
       )}
 

@@ -155,7 +155,7 @@ const AuditTrail = () => {
       if (res.data) {
         setStats(res.data);
       }
-    } catch (error) {
+    } catch {
       // Endpoint may be 404 if Flask backend has not been restarted yet
       // Fallback is computed automatically from audit records in fetchAuditLogs
     }

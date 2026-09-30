@@ -1,0 +1,20 @@
+import { start, OUT, UI } from "./lib.mjs";
+const { browser, page, log } = await start("admin");
+await page.goto(UI + "/reports"); await page.waitForTimeout(4000);
+await page.locator("select").nth(4).selectOption("all"); await page.waitForTimeout(2000);
+const rowsBefore = await page.locator(".grid-row").allInnerTexts();
+await page.locator("select").filter({ has: page.locator('option', { hasText: "No Grouping" }) }).selectOption("facility"); await page.waitForTimeout(1000);
+const rowsAfter = await page.locator(".grid-row").allInnerTexts();
+console.log("groupBy changes DOM:", JSON.stringify(rowsBefore) !== JSON.stringify(rowsAfter), rowsBefore.length, rowsAfter.length);
+// pagination + search
+await page.locator(".btn-page").nth(1).click(); await page.waitForTimeout(2000);
+console.log(await page.getByText(/Page [0-9]+ of/).innerText());
+log.reqs.length = 0;
+await page.fill(".search-input", "Flaring"); await page.waitForTimeout(3000);
+console.log("search reqs:", log.reqs.filter(r=>r.u.startsWith("/api/emissions?")).map(r=>r.u));
+const last = log.resps.filter(r=>r.u.startsWith("/api/emissions?")).pop(); const j = JSON.parse(last.body);
+console.log("last resp total", j.total, "pages", j.pages, "len", j.emissions?.length);
+console.log(await page.locator(".reports-subtitle").innerText());
+console.log(await page.getByText(/Page [0-9]+ of/).count() ? await page.getByText(/Page [0-9]+ of/).innerText() : "no pager");
+await page.screenshot({ path: OUT + "reports_search.png" });
+await browser.close();

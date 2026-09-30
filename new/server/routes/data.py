@@ -1,5 +1,5 @@
 from routes.auth import login_required
-from flask import request, jsonify, session
+from flask import request, jsonify, session, current_app
 import json
 from . import data_bp
 from utils import get_current_user, get_allowed_facility_ids, log_activity_and_notify, require_facility_access
@@ -9,6 +9,7 @@ from models import (
     MethaneSourceType, LevelUpgradeLog, Emission, CbamProductExport
 )
 from extensions import db
+from utils import internal_error
 
 # Activities that are NOT oil & gas — excluded from OGMP 2.0 scope
 NON_OG_ACTIVITIES = [
@@ -52,6 +53,17 @@ def get_production():
         'gas': d.gas_amount,
         'oilUnit': d.oil_unit,
         'gasUnit': d.gas_unit,
+        'gross_gas_mmsm3': d.gross_gas_mmsm3 or 0.0,
+        'gas_without_injected_mmsm3': d.gas_without_injected_mmsm3 or 0.0,
+        'injected_gas_mmsm3': d.injected_gas_mmsm3 or 0.0,
+        'crude_oil_mmboe': d.crude_oil_mmboe or 0.0,
+        'condensate_mmboe': d.condensate_mmboe or 0.0,
+        'lpg_mmboe': d.lpg_mmboe or 0.0,
+        'ngl_mmboe': d.ngl_mmboe or 0.0,
+        'total_production_mmboe': d.total_production_mmboe or 0.0,
+        'total_production_no_injected_mmboe': d.total_production_no_injected_mmboe or 0.0,
+        'saleable_production_mmboe': d.saleable_production_mmboe or 0.0,
+        'fuel_gas_export_mmsm3': d.fuel_gas_export_mmsm3 or 0.0,
         'activity': d.activity,
         'division': d.division,
         'field': d.field
@@ -106,11 +118,34 @@ def add_production():
             month=month
         ).first()
         
+        gross_gas_mmsm3 = float(data.get('gross_gas_mmsm3') or 0.0)
+        gas_without_injected_mmsm3 = float(data.get('gas_without_injected_mmsm3') or 0.0)
+        injected_gas_mmsm3 = float(data.get('injected_gas_mmsm3') or 0.0)
+        crude_oil_mmboe = float(data.get('crude_oil_mmboe') or 0.0)
+        condensate_mmboe = float(data.get('condensate_mmboe') or 0.0)
+        lpg_mmboe = float(data.get('lpg_mmboe') or 0.0)
+        ngl_mmboe = float(data.get('ngl_mmboe') or 0.0)
+        total_production_mmboe = float(data.get('total_production_mmboe') or 0.0)
+        total_production_no_injected_mmboe = float(data.get('total_production_no_injected_mmboe') or 0.0)
+        saleable_production_mmboe = float(data.get('saleable_production_mmboe') or 0.0)
+        fuel_gas_export_mmsm3 = float(data.get('fuel_gas_export_mmsm3') or 0.0)
+
         if existing:
             existing.oil_amount = oil_amount
             existing.gas_amount = gas_amount
             existing.oil_unit = oil_unit
             existing.gas_unit = gas_unit
+            existing.gross_gas_mmsm3 = gross_gas_mmsm3
+            existing.gas_without_injected_mmsm3 = gas_without_injected_mmsm3
+            existing.injected_gas_mmsm3 = injected_gas_mmsm3
+            existing.crude_oil_mmboe = crude_oil_mmboe
+            existing.condensate_mmboe = condensate_mmboe
+            existing.lpg_mmboe = lpg_mmboe
+            existing.ngl_mmboe = ngl_mmboe
+            existing.total_production_mmboe = total_production_mmboe
+            existing.total_production_no_injected_mmboe = total_production_no_injected_mmboe
+            existing.saleable_production_mmboe = saleable_production_mmboe
+            existing.fuel_gas_export_mmsm3 = fuel_gas_export_mmsm3
             existing.activity = activity
             existing.division = division
             existing.field = field
@@ -126,6 +161,17 @@ def add_production():
                 gas_amount=gas_amount,
                 oil_unit=oil_unit,
                 gas_unit=gas_unit,
+                gross_gas_mmsm3=gross_gas_mmsm3,
+                gas_without_injected_mmsm3=gas_without_injected_mmsm3,
+                injected_gas_mmsm3=injected_gas_mmsm3,
+                crude_oil_mmboe=crude_oil_mmboe,
+                condensate_mmboe=condensate_mmboe,
+                lpg_mmboe=lpg_mmboe,
+                ngl_mmboe=ngl_mmboe,
+                total_production_mmboe=total_production_mmboe,
+                total_production_no_injected_mmboe=total_production_no_injected_mmboe,
+                saleable_production_mmboe=saleable_production_mmboe,
+                fuel_gas_export_mmsm3=fuel_gas_export_mmsm3,
                 activity=activity,
                 division=division,
                 field=field
@@ -208,98 +254,25 @@ def bulk_import_production():
     user = get_current_user()
     if user and (user.role in ['auditor'] or is_it_role(user)):
         return jsonify({'error': 'Read-only or IT administrative role cannot modify operational production data.'}), 403
-    allowed_fids = get_allowed_facility_ids(user)
     data = request.get_json() or {}
     records = data.get('records', [])
     if not records:
         return jsonify({'error': 'No records provided'}), 400
     
-    imported_count = 0
-    facility_cache = {}
+    # same validation as the file import (period, non-negative numbers, units, facility access)
+    from background_processor import process_json_records
 
-    for rec in records:
-        f_val = rec.get('facility_id')
-        facility = None
-        
-        if isinstance(f_val, str) and not str(f_val).isdigit():
-            f_name_clean = f_val.strip()
-            if f_name_clean.lower() in facility_cache:
-                facility = facility_cache[f_name_clean.lower()]
-            else:
-                facility = Facility.query.filter(func.lower(Facility.name) == f_name_clean.lower()).first()
-                facility_cache[f_name_clean.lower()] = facility
-        else:
-            try:
-                fid = int(f_val) if f_val else None
-                if fid in facility_cache:
-                    facility = facility_cache[fid]
-                else:
-                    facility = db.session.get(Facility, fid)
-                    facility_cache[fid] = facility
-            except (ValueError, TypeError):
-                facility = None
-
-        if not facility:
-            continue
-
-        if allowed_fids is not None and facility.id not in allowed_fids:
-            continue
-
-        year = rec.get('year')
-        month = rec.get('month')
-        if not year or not month:
-            continue
-
-        try:
-            year = int(year)
-            month = int(month)
-        except ValueError:
-            continue
-
-        existing = ProductionData.query.filter_by(
-            facility_id=facility.id,
-            year=year,
-            month=month
-        ).first()
-
-        from background_processor import _clean_float
-        oil_amount = _clean_float(rec.get('oil_amount'), default=0.0)
-        gas_amount = _clean_float(rec.get('gas_amount'), default=0.0)
-
-        if existing:
-            existing.oil_amount = oil_amount
-            existing.gas_amount = gas_amount
-            if rec.get('oil_unit'): existing.oil_unit = rec.get('oil_unit')
-            if rec.get('gas_unit'): existing.gas_unit = rec.get('gas_unit')
-            if rec.get('activity'): existing.activity = rec.get('activity')
-            if rec.get('division'): existing.division = rec.get('division')
-            if rec.get('field'): existing.field = rec.get('field')
-        else:
-            prod = ProductionData(
-                facility_id=facility.id,
-                year=year,
-                month=month,
-                oil_amount=oil_amount,
-                gas_amount=gas_amount,
-                oil_unit=rec.get('oil_unit', 'bbl'),
-                gas_unit=rec.get('gas_unit', 'mscf'),
-                activity=rec.get('activity') or facility.activity,
-                division=rec.get('division') or facility.division,
-                field=rec.get('field') or facility.field
-            )
-            db.session.add(prod)
-        
-        imported_count += 1
+    imported_count, row_errors = process_json_records("production", records, user)
     
     try:
         db.session.commit()
     except Exception as e:
         db.session.rollback()
-        return jsonify({'error': f'Failed to import production records: {str(e)}'}), 500
+        return internal_error(e, "Failed to import production records")
 
     from routes.dashboard import clear_dashboard_cache
     clear_dashboard_cache()
-    return jsonify({'message': f'{imported_count} production records imported'}), 201
+    return jsonify({'message': f'{imported_count} production records imported', 'errors': row_errors}), 201
 
 
 
@@ -384,15 +357,26 @@ def get_ogmp_surveys():
         'instrument_vendor': d.instrument_vendor or '',
         'instrumentVendor': d.instrument_vendor or '',
         'raw_file_ref': d.raw_file_ref or '',
-        'bottom_up_tch4': d.bottom_up_tch4 or 0.0,
-        'variance_pct': d.variance_pct or 0.0,
-        'variance_flag': bool(d.variance_flag),
-        'reconciliation_status': d.reconciliation_status or 'Reconciled',
-        'reconciliationStatus': d.reconciliation_status or 'Reconciled',
+        **_live_reconciliation(d),
         'status': d.status or 'pending',
         'operator_notes': d.operator_notes or '',
         'operatorNotes': d.operator_notes or ''
     } for d in data])
+
+def _live_reconciliation(d):
+    """BUG-052: variance / status recomputed against the current Verified bottom-up inventory;
+    a stored manual override (noted in operator_notes) is kept, a missing variance stays null."""
+    from services.ogmp import facility_bottom_up_tch4, reconcile
+
+    td = d.estimated_annual_tch4 or (d.measured_rate_kg_hr or 0.0) * (d.operating_hours_year or 8760.0) / 1000.0
+    bu = round(facility_bottom_up_tch4(d.facility_id, d.year), 2)
+    thr = (d.facility.reconciliation_threshold if d.facility and d.facility.reconciliation_threshold else 20.0)
+    v, flag, status = reconcile(td, bu, thr)
+    if d.operator_notes and '[Status override:' in d.operator_notes and d.reconciliation_status:
+        status = d.reconciliation_status
+    return {'bottom_up_tch4': bu, 'variance_pct': v, 'variance_flag': flag,
+            'reconciliation_status': status, 'reconciliationStatus': status}
+
 
 @data_bp.route('/ogmp-surveys', methods=['POST'])
 @data_bp.route('/ogmp-surveys/', methods=['POST'])
@@ -402,16 +386,22 @@ def save_ogmp_survey():
     if is_it_role(user):
         return jsonify({'error': 'IT administrators are not authorized to modify operational OGMP data.'}), 403
     data = request.get_json() or {}
+    from input_validation import parse_number, parse_year
+    from services.ogmp import facility_bottom_up_tch4, reconcile
+
     record_id = data.get('id')
     facility_id = data.get('facility_id') or data.get('facilityId')
-    year = int(data.get('year', 2026))
+    year = parse_year(data.get('year'))
     survey_date = (data.get('survey_date') or data.get('surveyDate') or '').strip()
     survey_type = (data.get('survey_type') or data.get('surveyType') or 'Satellite (Sentinel-5P/MethaneSAT)').strip()
-    measured_rate_kg_hr = float(data.get('measured_rate_kg_hr') or data.get('measuredRateKgHr') or 0.0)
-    operating_hours = float(data.get('operating_hours_year') or data.get('operatingHoursYear') or 8760.0)
+    measured_rate_kg_hr = parse_number(data.get('measured_rate_kg_hr', data.get('measuredRateKgHr')), 'measured_rate_kg_hr', min_value=0)
+    operating_hours = parse_number(data.get('operating_hours_year', data.get('operatingHoursYear')), 'operating_hours_year',
+                                   required=False, min_value=0, max_value=8784, default=8760.0)
     detection_threshold = float(data.get('detection_threshold') or data.get('detectionThreshold')) if data.get('detection_threshold') is not None or data.get('detectionThreshold') is not None else None
     instrument_vendor = (data.get('instrument_vendor') or data.get('instrumentVendor') or '').strip()
-    reconciliation_status = (data.get('reconciliation_status') or data.get('reconciliationStatus') or 'Reconciled').strip()
+    # BUG-052: the status is derived on the server; a manual override needs a justification
+    requested_status = (data.get('reconciliation_status') or data.get('reconciliationStatus') or '').strip()
+    override_reason = (data.get('reconciliation_override_reason') or '').strip()
     operator_notes = data.get('operator_notes') or data.get('operatorNotes') or ''
 
     if not facility_id or not survey_date or measured_rate_kg_hr < 0:
@@ -433,28 +423,14 @@ def save_ogmp_survey():
 
     estimated_annual_tch4 = round(measured_rate_kg_hr * operating_hours / 1000.0, 2)
 
-    # Compute bottom-up methane total for facility & year to compute variance
-    bottom_up_sum = db.session.query(func.sum(Emission.ch4_emissions)).filter(
-        Emission.facility_id == facility_id,
-        Emission.year == year,
-        Emission.status == 'Verified'
-    ).scalar() or 0.0
-    bottom_up_tch4 = round(float(bottom_up_sum), 2)
-
-    # Compute variance %
+    bottom_up_tch4 = round(facility_bottom_up_tch4(facility_id, year), 2)
     threshold = (fac.reconciliation_threshold if fac and fac.reconciliation_threshold else 20.0)
-    if bottom_up_tch4 > 0 and estimated_annual_tch4 > 0:
-        variance_pct = round(((estimated_annual_tch4 - bottom_up_tch4) / bottom_up_tch4 * 100.0), 2)
-        variance_flag = abs(variance_pct) > threshold
-    elif bottom_up_tch4 > 0 and estimated_annual_tch4 == 0:
-        variance_pct = None
-        variance_flag = False
-    elif estimated_annual_tch4 > 0 and bottom_up_tch4 == 0:
-        variance_pct = None
-        variance_flag = True
-    else:
-        variance_pct = None
-        variance_flag = False
+    variance_pct, variance_flag, reconciliation_status = reconcile(estimated_annual_tch4, bottom_up_tch4, threshold)
+    if requested_status and requested_status != reconciliation_status:
+        if not override_reason:
+            return jsonify({'error': f"Computed status is '{reconciliation_status}'; overriding it to '{requested_status}' requires reconciliation_override_reason"}), 400
+        operator_notes = (operator_notes + f"\n[Status override: {reconciliation_status} -> {requested_status}] {override_reason}").strip()
+        reconciliation_status = requested_status
 
     if record_id:
         record = db.session.get(OgmpSurvey, record_id)
@@ -515,7 +491,7 @@ def save_ogmp_survey():
         clear_dashboard_cache()
     except Exception as e:
         db.session.rollback()
-        return jsonify({'error': str(e)}), 500
+        return internal_error(e)
 
     return jsonify({'message': 'OGMP survey record saved', 'id': record.id}), 201
 
@@ -594,7 +570,7 @@ def log_level_upgrade():
         db.session.commit()
     except Exception as e:
         db.session.rollback()
-        return jsonify({'error': f'Failed to log level upgrade: {str(e)}'}), 500
+        return internal_error(e, "Failed to log level upgrade")
 
     return jsonify({'message': 'Level upgrade logged successfully', 'id': log.id}), 201
 
@@ -798,7 +774,7 @@ def save_cbam_export():
         from flask import current_app
         current_app.logger.error(f"CBAM Export save error: {traceback.format_exc()}")
         db.session.rollback()
-        return jsonify({'error': str(e)}), 500
+        return internal_error(e)
 
 @data_bp.route('/cbam-exports/<int:record_id>', methods=['DELETE'])
 @login_required
@@ -832,4 +808,4 @@ def delete_cbam_export(record_id):
         from flask import current_app
         current_app.logger.error(f"CBAM Export delete error: {traceback.format_exc()}")
         db.session.rollback()
-        return jsonify({'error': str(e)}), 500
+        return internal_error(e)

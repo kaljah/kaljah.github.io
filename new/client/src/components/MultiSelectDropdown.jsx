@@ -108,6 +108,21 @@ const MultiSelectDropdown = ({
       <div
         className="dropdown-selected"
         onClick={handleToggle}
+        role="button"
+        tabIndex={0}
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+        aria-label={label}
+        onKeyDown={(e) => {
+          // BUG-107: keyboard access to the multi-select trigger
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            handleToggle();
+          } else if (e.key === "Escape" && isOpen) {
+            e.preventDefault();
+            handleToggle();
+          }
+        }}
         style={{
           padding: "10px 12px",
           border: "1px solid var(--border-color)",

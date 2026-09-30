@@ -6,15 +6,12 @@ const PneumaticsForm = ({ data, onChange, sourceType }) => {
 
   return (
     <div className="pneumatics-form">
-      <h4 style={{ color: "var(--accent-color)", marginBottom: "15px" }}>
-        Pneumatic Devices {isEngineering && "(Engineering Calculation)"}
-      </h4>
 
       {/* Device Type removed as per request */}
 
       <div className="input-group">
         <label>
-          Count (Number of Devices)
+          Devices
           <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
         </label>
         <input
@@ -32,7 +29,7 @@ const PneumaticsForm = ({ data, onChange, sourceType }) => {
         <>
           <div className="input-group">
             <label>
-              Measured Bleed Rate
+              Bleed rate
               <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
             </label>
             <div
@@ -63,7 +60,7 @@ const PneumaticsForm = ({ data, onChange, sourceType }) => {
 
           <div className="input-group">
             <label>
-              Gas CH4 Content (%)
+              CH₄ (%)
               <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
             </label>
             <input
@@ -83,7 +80,7 @@ const PneumaticsForm = ({ data, onChange, sourceType }) => {
 
           <div className="input-group">
             <label>
-              Operating Hours (hr/yr)
+              Hours per year
               <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
             </label>
             <input
@@ -91,7 +88,7 @@ const PneumaticsForm = ({ data, onChange, sourceType }) => {
               className="mole-input"
               value={data.pneu_hours || ""}
               onChange={(e) => onChange("pneu_hours", e.target.value)}
-              placeholder="e.g. 8760"
+              placeholder="whole month if blank"
               required
             />
           </div>

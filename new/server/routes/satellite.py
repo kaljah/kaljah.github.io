@@ -254,40 +254,25 @@ def export_satellite_to_ogmp():
             delta_ch4_ppb=delta_ppb, wind_speed_m_s=wind_speed, pbl_height_m=pbl_height
         )
 
-    operating_hours = float(data.get("operating_hours") or 8760.0)
+    # BUG-075: annualise on the same basis as manual surveys (8,760 h unless an explicit
+    # operating duration is given); the observed rate itself is kept in measured_rate_kg_hr.
+    from input_validation import parse_number
+    from services.ogmp import facility_bottom_up_tch4, reconcile
+
+    measured_rate_kg_hr = parse_number(measured_rate_kg_hr, "estimated_emission_rate_kg_hr", min_value=0)
+    hours_in = next((data.get(k) for k in ("operating_hours", "duration_hours", "plume_duration_hours")
+                     if data.get(k) not in (None, "")), None)
+    operating_hours = parse_number(hours_in, "operating_hours", required=False, min_value=0, max_value=8784,
+                                   default=8760.0)
     estimated_annual_tch4 = (measured_rate_kg_hr * operating_hours) / 1000.0
 
-    # Retrieve bottom-up Scope 1 methane total for reconciliation comparison
-    bottom_up_emissions = (
-        db.session.query(db.func.sum(Emission.ch4_emissions))
-        .filter(
-            Emission.facility_id == facility_id,
-            Emission.year == year,
-            Emission.status == "Verified",
-        )
-        .scalar()
-        or 0.0
-    )
+    bottom_up_emissions = facility_bottom_up_tch4(facility_id, year)
+    variance_pct, variance_flag, rec_status = reconcile(estimated_annual_tch4, bottom_up_emissions,
+                                                        facility.reconciliation_threshold or 20.0)
 
-    thresh = facility.reconciliation_threshold or 20.0
-    if bottom_up_emissions > 0 and estimated_annual_tch4 > 0:
-        variance_pct = round(
-            ((estimated_annual_tch4 - bottom_up_emissions) / bottom_up_emissions)
-            * 100.0,
-            2,
-        )
-        variance_flag = abs(variance_pct) > thresh
-    elif bottom_up_emissions > 0 and estimated_annual_tch4 == 0:
-        variance_pct = None
-        variance_flag = False
-    elif estimated_annual_tch4 > 0 and bottom_up_emissions == 0:
-        variance_pct = None
-        variance_flag = True
-    else:
-        variance_pct = None
-        variance_flag = False
+    from utils import initial_record_status
 
-    survey_status = "Verified" if (user and user.role in ["admin", "superuser"]) else "Pending"
+    survey_status = initial_record_status(user)  # BUG-060: one maker-checker policy
     survey = OgmpSurvey(
         facility_id=facility_id,
         year=year,
@@ -301,7 +286,7 @@ def export_satellite_to_ogmp():
         bottom_up_tch4=round(float(bottom_up_emissions), 3),
         variance_pct=variance_pct,
         variance_flag=variance_flag,
-        reconciliation_status="Discrepancy Flagged" if variance_flag else "Reconciled",
+        reconciliation_status=rec_status,
         status=survey_status,
         operator_notes=operator_notes,
         created_by=user_id,

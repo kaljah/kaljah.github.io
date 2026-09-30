@@ -263,6 +263,8 @@ const iconBtnStyle = {
 };
 
 // ─── Main component ───────────────────────────────────────────────────────────
+const TOAST_BURST = 3;
+
 const NotificationCenter = () => {
   const { user } = useAuth();
   const [notifications, setNotifications] = useState([]);
@@ -276,6 +278,31 @@ const NotificationCenter = () => {
   const esRef = useRef(null);
   const retryDelayRef = useRef(1000);
   const toast = useToast();
+  // The stream and the history load depend on WHO is signed in, not on the identity of the
+  // user / toast objects: those change on re-renders, and every change re-ran the effect
+  // (a new history request and a new stream several times a second).
+  const userId = user?.id ?? null;
+  const toastRef = useRef(toast);
+  toastRef.current = toast;
+  // stream bursts are coalesced: more than TOAST_BURST notifications within 500 ms give one toast
+  const pendingToastsRef = useRef([]);
+  const toastTimerRef = useRef(null);
+  const queueToast = useCallback((notif) => {
+    pendingToastsRef.current.push(notif);
+    if (toastTimerRef.current) return;
+    toastTimerRef.current = setTimeout(() => {
+      const batch = pendingToastsRef.current;
+      pendingToastsRef.current = [];
+      toastTimerRef.current = null;
+      if (batch.length > TOAST_BURST) {
+        toastRef.current.info(`${batch.length} new notifications`);
+      } else {
+        batch.forEach((n) => toastRef.current.info(`${n.title}: ${n.message}`));
+      }
+    }, 500);
+  }, []);
+  useEffect(() => () => clearTimeout(toastTimerRef.current), []);
+  const activeRef = useRef(false);
 
   // ── Track position for fixed portal ──────────────────────────────────
   const updatePosition = useCallback(() => {
@@ -307,7 +334,7 @@ const NotificationCenter = () => {
 
   // ── Fetch history ─────────────────────────────────────────────────────
   const fetchNotifications = useCallback(async () => {
-    if (!user) return;
+    if (!userId) return;
     try {
       const res = await api.get("/notifications");
       if (res.status === 200) {
@@ -321,11 +348,11 @@ const NotificationCenter = () => {
     } catch (err) {
       console.error("Failed to fetch notifications", err);
     }
-  }, [user]);
+  }, [userId]);
 
   // ── SSE connection ────────────────────────────────────────────────────
   const connectSSE = useCallback(() => {
-    if (!user) return;
+    if (!userId || !activeRef.current) return;
     if (esRef.current) esRef.current.close();
 
     const base = import.meta.env.VITE_API_URL || "/api";
@@ -343,7 +370,7 @@ const NotificationCenter = () => {
         if (notif.id > lastIdRef.current) lastIdRef.current = notif.id;
         setNotifications((prev) => [notif, ...prev]);
         setUnreadCount((prev) => prev + 1);
-        toast.info(`${notif.title}: ${notif.message}`);
+        queueToast(notif);
       } catch (err) {
         console.error("SSE parse error", err);
       }
@@ -351,19 +378,19 @@ const NotificationCenter = () => {
 
     es.onerror = () => {
       es.close();
-      esRef.current = null;
-      if (!user) return;
+      if (esRef.current === es) esRef.current = null;
+      if (!activeRef.current) return;
       const delay = retryDelayRef.current;
       retryDelayRef.current = Math.min(delay * 2, 30_000);
       setTimeout(() => {
-        if (user) connectSSE();
+        if (activeRef.current && !esRef.current) connectSSE();
       }, delay);
     };
-  }, [user, toast]);
+  }, [userId, queueToast]);
 
   // ── Mount / unmount ───────────────────────────────────────────────────
   useEffect(() => {
-    if (!user) {
+    if (!userId) {
       if (esRef.current) {
         esRef.current.close();
         esRef.current = null;
@@ -373,14 +400,16 @@ const NotificationCenter = () => {
       return;
     }
 
+    activeRef.current = true;
     fetchNotifications().then(() => connectSSE());
     return () => {
+      activeRef.current = false;
       if (esRef.current) {
         esRef.current.close();
         esRef.current = null;
       }
     };
-  }, [user, fetchNotifications, connectSSE]);
+  }, [userId, fetchNotifications, connectSSE]);
 
   // ── Click-outside ─────────────────────────────────────────────────────
   useEffect(() => {
