@@ -680,7 +680,7 @@ class CompletionFlowbackCalculator(BaseCalculator):
                 elif vent_duration_hours is not None:
                     duration_days = float(vent_duration_hours) / 24.0
                 else:
-                    duration_days = float(flowback_duration_hours or 24.0) / 24.0
+                    duration_days = float(24.0 if flowback_duration_hours in (None, "") else flowback_duration_hours) / 24.0
 
                 total_net_scf = rate_scf_day * duration_days * num_events
                 standard_ref = "API Compendium 2021 §6.2.3.2, Equation 6-7"

@@ -688,7 +688,7 @@ def add_bulk_upload():
                         "n2o": float(cf.uncertainty or 0) / 100.0,
                     }
                 elif cf.parent_fuel:
-                    parent_factor = API_FACTORS.get(cf.parent_fuel, {})
+                    parent_factor = _lookup_api_factor(cf.parent_fuel)
                     if "uncertainty" in parent_factor:
                         factor_data["uncertainty"] = parent_factor["uncertainty"]
         elif is_non_comb or is_tier3_factor:

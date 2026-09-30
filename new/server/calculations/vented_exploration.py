@@ -168,7 +168,7 @@ class WellTestingCalculator(BaseCalculator):
         elif test_duration_hours is not None and float(test_duration_hours) > 0:
             duration_days = float(test_duration_hours) / 24.0
 
-        num_events = max(1.0, float(events or 1.0))
+        num_events = max(0.0, float(1.0 if events is None else events))
 
         # Gas composition parsing
         c_ch4 = 0.816
@@ -406,7 +406,7 @@ class CoalSeamDrillingCalculator(BaseCalculator):
         flared_n2o_tonnes = 0.0
 
         if flared_testing_scf > 0:
-            eta_c = float(flare_combustion_efficiency or 0.98)
+            eta_c = float(0.98 if flare_combustion_efficiency is None else flare_combustion_efficiency)
             flared_moles_gas = flared_testing_scf / MOLAR_VOL_US
             moles_ch4 = flared_moles_gas * c_ch4
             moles_native_co2 = flared_moles_gas * c_co2

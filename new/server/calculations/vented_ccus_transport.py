@@ -167,7 +167,7 @@ class CCUSVentingCalculator(BaseCalculator):
 
         elif act == "wellhead_blowdown":
             self.validate_inputs({"physical_volume_m3": physical_volume_m3}, ["physical_volume_m3"])
-            n = max(1.0, float(events or 1.0))
+            n = max(0.0, float(1.0 if events is None else events))
             v_m3 = float(physical_volume_m3)
             rho = float(co2_density_kg_m3 if co2_density_kg_m3 is not None else 650.0)
             wt_frac = float(co2_weight_fraction if co2_weight_fraction is not None else 0.985)

@@ -160,8 +160,12 @@ def custom_factor_data(cf):
         }
     elif cf.uncertainty and cf.uncertainty > 0:
         fd["uncertainty"] = {g: float(cf.uncertainty) / 100.0 for g in ("co2", "ch4", "n2o")}
-    elif cf.parent_fuel and "uncertainty" in API_FACTORS.get(cf.parent_fuel, {}):
-        fd["uncertainty"] = API_FACTORS[cf.parent_fuel]["uncertainty"]
+    elif cf.parent_fuel:
+        from routes.emissions import _lookup_api_factor
+
+        parent_unc = _lookup_api_factor(cf.parent_fuel).get("uncertainty")
+        if parent_unc:
+            fd["uncertainty"] = parent_unc
     return fd
 
 

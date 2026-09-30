@@ -570,6 +570,24 @@ def update_scope2_emission(emission_id):
         max_ef = MAX_GRID_EF_KG_PER_KWH if "electric" in st_now else None
         emission.emission_factor = parse_number(data["emission_factor"], "emission_factor", min_value=0, max_value=max_ef)
 
+    st_cogen = (emission.source_type or "").strip().lower() in ("cogen_allocation", "cogen", "chp")
+    cogen_ci = (data.get("calc_inputs") or {}).get("cogen_allocation") or {}
+    cogen_given = bool(cogen_ci) or any(data.get(k) not in (None, "") for k in (
+        "total_emissions", "fuel_consumed_mmbtu", "heat_output_mmbtu", "power_output_mwh"))
+    if st_cogen and (activity_changed or cogen_given):
+        # the allocation inputs (facility total, heat and power output) are not stored: an edit of the
+        # heat alone changed heat_mmbtu and left the allocated co2e as it was (deep-dive audit)
+        total_in = cogen_ci.get("total_emissions") or data.get("total_emissions") or data.get("fuel_consumed_mmbtu")
+        heat_in = cogen_ci.get("heat_output") or data.get("heat_output_mmbtu")
+        power_in = cogen_ci.get("power_output") if cogen_ci.get("power_output") not in (None, "") else data.get("power_output_mwh")
+        if total_in in (None, "") or heat_in in (None, "") or power_in in (None, ""):
+            db.session.rollback()
+            return jsonify({"error": "A CHP allocation is recalculated from the facility total emissions (or fuel "
+                                     "consumed), heat output and power output: give all three"}), 422
+        emission.co2e = round(_calc_cogen_allocation(data), 4)
+        emission.heat_mmbtu = parse_number(heat_in, "heat_output", min_value=0)
+        activity_changed = False
+
     if activity_changed:
         factor = emission.emission_factor or 0.0
         st = (emission.source_type or "").strip().lower()

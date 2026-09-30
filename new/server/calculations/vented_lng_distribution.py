@@ -166,7 +166,7 @@ class LNGVentingCalculator(BaseCalculator):
         if c_ch4 > 1.0:
             c_ch4 /= 100.0
 
-        c_co2 = float(co2_content or 0.001)
+        c_co2 = float(0.001 if co2_content is None else co2_content)
         if c_co2 > 1.0:
             c_co2 /= 100.0
 
