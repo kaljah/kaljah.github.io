@@ -275,6 +275,13 @@ def resolve_factor(payload, stored_payload=None, allow_archived=False):
         if not (catalog and has_site_props):
             raise ValidationError("factor_source is 'custom' but no custom factor was given", "custom_factor_id")
     if source in ("default", "") and catalog:
+        if catalog.get("unverified_basis"):
+            raise ValidationError(
+                f"'{payload.get('fuel') or payload.get('fuel_type')}' ({catalog.get('unit')}, "
+                f"{catalog.get('source') or 'catalog'}) has no verified time basis and cannot be applied to a monthly "
+                "record; use a custom factor with an explicit unit (e.g. tonne CH4/hr/facility)",
+                "fuel",
+            )
         check_activity_unit(catalog, payload.get("unit"), payload.get("fuel") or payload.get("fuel_type"))
     return catalog
 

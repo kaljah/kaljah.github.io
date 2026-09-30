@@ -168,3 +168,41 @@ share of the annual exhibit.
   "Verified Scope 1 + 2").
 - Tier 3 fugitive screening converts TOC with the CH4 weight fraction (service default 0.92 or
   ch4_wt_fraction); a molar ch4_content is not used (by design).
+
+# Part 6 - Deep dive through the running app (2026-09-30)
+
+Method: the real Flask app on a fresh database (3 facilities: two West, one East) with four accounts
+(admin / Global, superuser / West, user / West, user / East). Every case went through HTTP exactly as
+the browser sends it: file uploads via `/api/emissions/upload/start` and manual entries via the form
+endpoints. Results were compared with an independent hand oracle and between the two paths, then the
+dashboards were opened in Chromium as each role.
+
+| Area | Cases | Result |
+|------|-------|--------|
+| Scope 1 Tier 1, every catalog factor | 178 upload (user) + 178 manual (superuser) | all equal to hand values (leap-year March prorated over 366 days) |
+| Scope 1 Tier 2, custom factors | 9 factors imported (admin), 9 rows uploaded (user) | all equal |
+| Scope 1 Tier 3, every engineering method | 32 methods, upload vs manual vs hand | 31 equal; 1 fixed (#27) |
+| Scope 2 | 67 grids x kWh/MWh/GWh, supplier factors, 11 steam units, efficiency/loss, CHP both methods | 201 equal (upload and manual); edits recalculate correctly; 3 fixed (#28-30) |
+| Scope 3 | 50 default activity factors (15 categories), 14 factor-unit spellings, all 1,016 EEIO NAICS codes, 40 manual EEIO, supplier totals by role | all equal after #31 |
+| Roles / maker-checker | 30 checks: statuses, region isolation (read, create, upload, edit, delete), approve / reject rules, segregation of duties, no flip after decision, values unchanged by approval, dashboards count Verified only per viewer | all pass |
+| Browser | dashboard as admin, West superuser, West user, East user vs database sums | admin and East equal; West fixed (#32) |
+
+## Fixed
+
+| # | Where | Error | Size |
+|---|-------|-------|------|
+| 26 | LNG facility factors (Table 7-76, "tonne CH4/facility") | the time basis could not be verified, so a monthly record could book a whole period. These factors are now refused with a message asking for a custom factor with an explicit unit. | unverified |
+| 27 | completions, manual / API | a metered completion whose volume is in `calc_inputs.amount` (unit Mcf, no `comp_volume`) also took that volume as the event count: 500 Mcf = 500 events x 500 Mcf. An amount in a volume unit, or on the metered method, is never a count. (The form sends `comp_volume`, and the uploader was correct.) | 500x high CH4 |
+| 28 | Scope 2 steam, manual form | a boiler efficiency of 85 was used as 85 (x), not 85 %. It is now read as the upload reads it: above 1 is a percentage, and it must be above 0 and at most 100 %. A transmission loss outside 0-1 gets a clear message. | 100x low |
+| 29 | Scope 2 steam, manual form | an unknown unit ("furlong") was booked as MMBtu; the upload refused it. It is now refused on both paths. | wrong unit |
+| 30 | Scope 2 CHP from fuel consumed | the facility total was CO2 only; it now includes the default boiler's CH4 / N2O (Table 4-6), as steam does. Manual CHP records now store their heat output, like the upload. | 0.1 % low |
+| 31 | Scope 3 factor unit (upload) | "MT CO2e/..", "metric ton(s) CO2e/..", "short ton CO2e/.." were read as kg (1000x / 907x low), and "kg CO2e/k$" / "kgCO2e/kUSD" were not read as per $1,000 (1000x high). The numerator is now matched on exact tokens. A bare "ton" is refused, as in the other uploads, and so is an unknown mass (e.g. "kt"). | 1000x |
+| 32 | dashboard / review queue, client | a region-restricted user with several facilities was locked to the first one (the West dashboard showed Berkine only and left out HMD's 246.8 t). The facility / activity / division default now applies only when every accessible facility shares it. | missing facilities |
+
+Tests: `new/server/tests/test_deep_dive_2026_09_30.py` (25; 16 fail before the fixes).
+
+## Noted, not changed
+
+- Scope 2 steam boiler efficiency 1.5 is read as 1.5 % (upload and manual alike); no sanity floor was added.
+- `ef_co2` below 1 on the steam form is read as t/MMBtu (x1000), as documented.
+- The legacy root `new/server/test_emission_calculations.py` has 4 failing tests on unchanged code (not collected by CI).

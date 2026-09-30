@@ -153,3 +153,7 @@ See audit/CALC_CSV_AUDIT_2026-09-30.md part 2 (fixes 10-14). Server: routes/scop
 ## 2026-09-30 - Tier 3 / Excel / production audit
 
 See audit/CALC_CSV_AUDIT_2026-09-30.md part 3 (fixes 15-17). Server: background_processor.py (_xl_values, _percent_text_to_number), calculations/units.py (period_volume_m3), calculations/dispatcher.py (_normalize_volume by the record's month), services/dashboard_filters.py (gas_volume_m3 / production conversions by period), services/intensity.py and routes/dashboard.py (flaring volume by period). Tests: tests/test_upload_percent_rates_2026_09_30.py (7).
+
+## 2026-09-30 - Deep dive through the running app
+
+See audit/CALC_CSV_AUDIT_2026-09-30.md part 6 (fixes 26-32). Server: emission_factors_api2021.py and services/scope1_calc.py (LNG unverified_basis refusal), calculations/legacy_engine.py (completions volume vs events), routes/scope2.py (steam boiler efficiency %, unknown unit, loss range; CHP fuel CH4/N2O and stored heat), calculations/units.py (Scope 3 numerator tokens, k$ / kUSD), background_processor.py (Scope 3 unit error as a row error). Client: pages/DashboardEnhanced.jsx and components/BatchReviewWizard.jsx (default filters only when shared by every accessible facility). Tests: tests/test_deep_dive_2026_09_30.py (25).
