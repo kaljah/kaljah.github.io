@@ -3,6 +3,7 @@ import time
 import threading
 import uuid
 import csv
+import re
 import traceback
 from openpyxl import load_workbook
 
@@ -174,6 +175,19 @@ def _clean_float(val, default=0.0):
 
 
 from process_categories import NON_COMBUSTION_PROCESSES
+
+
+_DECIMAL_COMMA_NUMBER = re.compile(r"^([-+]?)(\d{1,3}(?:[.\s\u00a0\u202f]\d{3})+|\d+),(\d+)$")
+_GROUP_SEPARATORS = re.compile(r"[.\s\u00a0\u202f]")
+
+
+def _decimal_comma_to_point(text):
+    """A number cell of a decimal-comma file ("1,5", "1.250,75", "12 345,6") in point notation;
+    any other text is returned unchanged."""
+    m = _DECIMAL_COMMA_NUMBER.match(text.strip())
+    if not m:
+        return text
+    return m.group(1) + _GROUP_SEPARATORS.sub("", m.group(2)) + "." + m.group(3)
 
 
 def _prune_old_jobs(max_age_seconds=86400):
@@ -489,6 +503,7 @@ def _process_file_thread(
 
             headers = []
             rows_iterator = None
+            decimal_comma = False  # set for semicolon CSVs (French / European Excel exports)
 
             # 1. Open File & Extract Headers
             tier3_data_map = {}
@@ -560,6 +575,9 @@ def _process_file_thread(
                 first_line = decoded_text.lstrip("\n").split("\n", 1)[0]
                 counts = {d: first_line.count(d) for d in (",", ";", "\t", "|")}
                 delimiter = max(counts, key=counts.get) if max(counts.values()) > 0 else ","
+                # Excel writes ";"-separated CSV where "," is the decimal separator: there "1,500"
+                # is 1.5, not 1500 (audit 2026-09-30)
+                decimal_comma = delimiter == ";"
 
                 f = io.StringIO(decoded_text)
                 reader = csv.reader(f, delimiter=delimiter)
@@ -694,6 +712,8 @@ def _process_file_thread(
                     v = raw_row[i] if i < len(raw_row) else None
                     if isinstance(v, str) and v.strip() in ("", "-", "--"):
                         v = None
+                    elif decimal_comma and isinstance(v, str):
+                        v = _decimal_comma_to_point(v)
                     row_dict[h] = v
 
                 if _is_template_note_row(row_dict):
@@ -1285,12 +1305,18 @@ def _process_row_scope2(
         return None, errors
 
     raw_source = str(row.get("source_type") or row.get("factor_type") or "electricity").strip().lower()
-    if raw_source in ["indirect_steam", "steam", "heat"]:
+    raw_source = re.sub(r"[\s\-/]+", "_", raw_source)
+    if raw_source in ["indirect_steam", "steam", "heat", "purchased_steam", "purchased_heat", "steam_heat"]:
         source_type = "indirect_steam"
-    elif raw_source in ["cogen_allocation", "cogen", "chp"]:
+    elif raw_source in ["cogen_allocation", "cogen", "chp", "cogeneration"]:
         source_type = "cogen_allocation"
-    else:
+    elif raw_source in ["electricity", "purchased_electricity", "power", "grid_electricity", "grid", "market",
+                        "location", "location_based", "market_based"]:
         source_type = "electricity"
+    else:
+        # an unknown source type used to be booked as electricity
+        return None, [f"Row {row_idx}: unknown source type '{row.get('source_type') or row.get('factor_type')}': "
+                      "use electricity, indirect_steam or cogen_allocation"]
 
     grid_region = str(row.get("grid_region") or "").strip()
     ef = None
@@ -1412,10 +1438,8 @@ def _process_row_scope2(
     from routes.scope2 import default_scope2_uncertainty
 
     if row.get("uncertainty") not in (None, ""):
-        unc = _clean_float(row.get("uncertainty"), default=None)
-        if unc is not None and unc > 2:
-            unc /= 100.0  # entered as a percentage
-        if unc is None or not 0 <= unc <= 2:
+        unc = _file_uncertainty(row.get("uncertainty"))
+        if unc is None:
             return None, [f"Row {row_idx}: uncertainty must be a fraction (0-2) or a percentage"]
     else:
         unc = default_scope2_uncertainty(co2e)
@@ -1474,16 +1498,26 @@ def _process_row_scope2(
 
 
 
+def _file_uncertainty(raw):
+    """An uncertainty cell as a fraction: "5 %" / "2%" are percentages, a bare number above 2 is a
+    percentage, a bare number up to 2 a fraction. None when it is not a number in range.
+    ("2%" used to become the fraction 2.0 = 200 %: the sign was dropped before the magnitude test.)"""
+    unc = _clean_float(raw, default=None)
+    if unc is None:
+        return None
+    if "%" in str(raw) or unc > 2:
+        unc /= 100.0
+    return unc if 0 <= unc <= 2 else None
+
+
 def _scope3_uncertainty(row, co2e, row_idx):
     """(value, error): the file's uncertainty (fraction 0-2 or a percentage), else the form default."""
     from routes.scope3 import default_scope3_uncertainty
 
     if row.get("uncertainty") in (None, ""):
         return default_scope3_uncertainty(co2e), None
-    unc = _clean_float(row.get("uncertainty"), default=None)
-    if unc is not None and unc > 2:
-        unc /= 100.0
-    if unc is None or not 0 <= unc <= 2:
+    unc = _file_uncertainty(row.get("uncertainty"))
+    if unc is None:
         return None, f"Row {row_idx}: uncertainty must be a fraction (0-2) or a percentage"
     return unc, None
 
@@ -2337,6 +2371,19 @@ def _process_row(
             payload.pop("fuel", None)
             fuel = ""
 
+    # User uncertainty (percent per gas): an input of the calculation, as on the manual form, so the
+    # stored value is the propagated 1-sigma result (it used to overwrite that result afterwards)
+    user_unc = {}
+    for gas, field in (("co2", "user_unc_co2"), ("ch4", "user_unc_ch4"), ("n2o", "user_unc_n2o")):
+        payload.pop(field, None)
+        if row.get(field) not in (None, ""):
+            v = _clean_float(row.get(field), default=None)
+            if v is None or v < 0:
+                return None, [f"Invalid {field}: {row.get(field)} (a percentage)"]
+            user_unc[gas] = v
+    if user_unc:
+        payload["user_uncertainty"] = user_unc
+
     try:
         payload = canonicalize(payload)
         validate_activity(payload, require_unit=factor_source in ("default", "custom"))
@@ -2364,15 +2411,6 @@ def _process_row(
     if verdict == "reject":
         return None, [qa_msg]
 
-    # User uncertainty overrides (percent)
-    user_unc = {}
-    for gas, field in (("co2", "user_unc_co2"), ("ch4", "user_unc_ch4"), ("n2o", "user_unc_n2o")):
-        if row.get(field) not in (None, ""):
-            v = _clean_float(row.get(field), default=None)
-            if v is None or v < 0:
-                return None, [f"Invalid {field}: {row.get(field)} (a percentage)"]
-            user_unc[gas] = v / 100.0
-
     source_ref = str(_first(row, "source_ref", "meter_id", "data_source_ref") or "").strip()
     equipment_id = str(_first(row, "equipment_id", "equipment") or "").strip()
     key = _scope1_key(facility.id, year, month, process_type, fuel, equipment_id, source_ref)
@@ -2386,9 +2424,6 @@ def _process_row(
 
     record = Emission(factor_source=factor_source, qa_flag=qa_msg[:255] if qa_msg else None)
     apply_result(record, payload, em_result, method, factor_data, gwp_std)
-    for gas, attr in (("co2", "uncertainty"), ("ch4", "uncertainty_ch4"), ("n2o", "uncertainty_n2o")):
-        if gas in user_unc:
-            setattr(record, attr, user_unc[gas])
     record.ogmp_level = ogmp_level_for(record)
 
     if action == "update":
