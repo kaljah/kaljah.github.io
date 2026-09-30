@@ -179,6 +179,10 @@ OGMP_SOURCES = [
 ]
 
 def restore_data():
+    # C2: this demo script creates trivial-password accounts (a/a, z/z) and
+    # resets existing ones; never allow it against a production database.
+    if os.environ.get("FLASK_ENV", "").lower() in ("production", "prod", "staging"):
+        raise SystemExit("restore_full_data.py seeds demo credentials and must not run in production.")
     with app.app_context():
         db.create_all()
         random.seed(42)
