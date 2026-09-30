@@ -115,9 +115,11 @@ def test_excel_percent_transmission_loss_scope2(user_id):
 def test_percent_text_conversion():
     assert _percent_text_to_number("meter_uncertainty_pct", "2.5%") == pytest.approx(2.5)
     assert _percent_text_to_number("user_unc_ch4", "4%") == pytest.approx(4.0)
-    assert _percent_text_to_number("c1", "85%") == pytest.approx(0.85)
+    assert _percent_text_to_number("c1", "85%") == pytest.approx(85.0)
+    assert _percent_text_to_number("co2_content", "0.5%") == pytest.approx(0.005)
     assert _percent_text_to_number("agr_ch4_slip", "0.1%") == pytest.approx(0.001)
-    assert _percent_text_to_number("control_efficiency", "98 %") == pytest.approx(0.98)
+    assert _percent_text_to_number("control_efficiency", "98 %") == pytest.approx(98.0)
+    assert _percent_text_to_number("carbon_content", "85%") == pytest.approx(0.85)
     assert _percent_text_to_number("c1", "85") == "85"
     assert _percent_text_to_number("flare_type", "elevated") == "elevated"
 

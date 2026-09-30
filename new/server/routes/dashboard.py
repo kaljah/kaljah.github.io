@@ -1551,6 +1551,12 @@ def get_flaring_summary():
         if year_value is not None:
             em_q = em_q.filter(Emission.year == year_value)
         out = {k: {"m3": 0.0, "tco2e": 0.0} for k in ("routine", "non_routine", "safety", "unclassified")}
+        # operator-reported stream volumes take precedence for the facilities that report them (the
+        # sum of the parts); the other facilities keep their emission-record volumes. Replacing
+        # every facility's volume dropped the record-only facilities from the flared volume while
+        # their gas production stayed in the intensity denominator.
+        detail_fids = {r.facility_id for r in fd
+                       if (r.routine_knm3 or 0) or (r.non_routine_knm3 or 0) or (r.safety_knm3 or 0)}
         unconverted = 0
         for e in em_q.all():
             if source_category(e.process_type) != "flaring":
@@ -1558,20 +1564,19 @@ def get_flaring_summary():
             pt = (e.process_type or "").strip().lower()
             key = {"routine_flaring": "routine", "non_routine_flaring": "non_routine",
                    "safety_flaring": "safety"}.get(pt, "unclassified")
-            vol = gas_volume_m3(e.quantity, e.unit, e.year, e.month)
-            if vol is None:
-                unconverted += 1
-            else:
-                out[key]["m3"] += vol
+            if e.facility_id not in detail_fids:
+                vol = gas_volume_m3(e.quantity, e.unit, e.year, e.month)
+                if vol is None:
+                    unconverted += 1
+                else:
+                    out[key]["m3"] += vol
             out[key]["tco2e"] += float(e.co2e_total or 0) + horizon_delta(e.ch4_emissions, e.n2o_emissions, horizon)
-        detail_used = False
-        if fd and any((r.routine_knm3 or 0) or (r.non_routine_knm3 or 0) or (r.safety_knm3 or 0) for r in fd):
-            # operator-reported stream volumes take precedence; totals are the sum of the parts
-            detail_used = True
-            out["routine"]["m3"] = sum(float(r.routine_knm3 or 0) for r in fd) * 1000.0
-            out["non_routine"]["m3"] = sum(float(r.non_routine_knm3 or 0) for r in fd) * 1000.0
-            out["safety"]["m3"] = sum(float(r.safety_knm3 or 0) for r in fd) * 1000.0
-            out["unclassified"]["m3"] = 0.0
+        detail_used = bool(detail_fids)
+        for r in fd:
+            if r.facility_id in detail_fids:
+                out["routine"]["m3"] += float(r.routine_knm3 or 0) * 1000.0
+                out["non_routine"]["m3"] += float(r.non_routine_knm3 or 0) * 1000.0
+                out["safety"]["m3"] += float(r.safety_knm3 or 0) * 1000.0
         dres = [float(r.measured_dre_pct) for r in fd if r.measured_dre_pct is not None]
         return out, unconverted, detail_used, dres
 
@@ -1631,7 +1636,8 @@ def get_flaring_summary():
             "volume_knm3": round(total_m3 / 1000.0, 2),
             "tco2e": round(total_tco2e, 2),
         },
-        "stream_volume_source": "FlaringDetail (operator-reported)" if detail_used else "Emission records",
+        "stream_volume_source": ("FlaringDetail (operator-reported)" if detail_used and not streams["unclassified"]["m3"]
+                                 else "FlaringDetail and emission records" if detail_used else "Emission records"),
         "records_with_unknown_volume_unit": unconverted,
         "production_rows_with_unknown_gas_unit": prod_unconverted,
         "gas_production_m3": round(gas_m3, 2),
@@ -1685,13 +1691,14 @@ def get_granular_intensities():
     unmatched_ghg = sum(c["s1"] + c["s2"] for _, c in cells.items() if not c["has_prod"])
 
     # saleable production only where it is actually recorded (no assumed 85 % fraction)
-    prod_q = ProductionData.query
+    # the same facility filters as the emissions (activity / division / segment were not applied,
+    # so a filtered view divided its emissions by every facility's saleable production)
+    from services.dashboard_filters import apply_scope
+    prod_q = apply_scope(ProductionData.query, ProductionData, allowed_fids=allowed_fids, facility_id=fac_filter,
+                         activity=request.args.get("activity"), division=request.args.get("division"),
+                         segment=request.args.get("segment"))
     if years:
         prod_q = prod_q.filter(ProductionData.year.in_(years))
-    if allowed_fids is not None:
-        prod_q = prod_q.filter(ProductionData.facility_id.in_(allowed_fids or [-1]))
-    if fac_filter:
-        prod_q = prod_q.filter(ProductionData.facility_id == fac_filter)
     saleable_rows = [p for p in prod_q.all() if p.saleable_production_mmboe]
     saleable_boe = sum(float(p.saleable_production_mmboe) * 1e6 for p in saleable_rows) or None
     saleable_ghg = sum(cells[(p.facility_id, p.year)]["s1"] + cells[(p.facility_id, p.year)]["s2"]
