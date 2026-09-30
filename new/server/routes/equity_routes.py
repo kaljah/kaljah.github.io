@@ -204,7 +204,7 @@ def save_equity_share():
 @login_required
 def get_equity_allocation():
     """
-    Allocates annual GHG (tCO2e) and Methane (tCH4) emissions to JV partners
+    Allocates annual GHG (Scope 1 + Scope 2 tCO2e) and methane (tCH4) emissions to JV partners
     based on their effective equity share percentages.
     """
     ensure_default_partners()
@@ -243,9 +243,16 @@ def get_equity_allocation():
             Emission.year == yr,
             Emission.status == "Verified"
         )
-        total_co2e, total_ch4 = em_q.first()
-        total_co2e = float(total_co2e or 0.0)
+        total_s1, total_ch4 = em_q.first()
+        total_s1 = float(total_s1 or 0.0)
         total_ch4 = float(total_ch4 or 0.0)
+        # GHG Protocol equity-share approach: the partners take their share of the operation's
+        # Scope 1 and Scope 2 (purchased energy); Scope 2 used to be left out
+        from models import Scope2Emission
+        total_s2 = float(db.session.query(db.func.sum(Scope2Emission.co2e)).filter(
+            Scope2Emission.facility_id == fac.id, Scope2Emission.year == yr,
+            Scope2Emission.status == "Verified").scalar() or 0.0)
+        total_co2e = total_s1 + total_s2
 
         # BUG-046: time-weighted share of every slice that is effective during year yr
         shares = FacilityEquityShare.query.filter_by(facility_id=fac.id).all()
@@ -254,7 +261,9 @@ def get_equity_allocation():
             pct = effective_share_pct([s for s in shares if s.partner_id == p.id], yr)
             if pct is None:
                 pct = (fac.equity_share_pct or 0.0) if p.is_operator and not shares else 0.0
-            allocated_co2e = total_co2e * (pct / 100.0)
+            allocated_s1 = total_s1 * (pct / 100.0)
+            allocated_s2 = total_s2 * (pct / 100.0)
+            allocated_co2e = allocated_s1 + allocated_s2
             allocated_ch4 = total_ch4 * (pct / 100.0)
 
             partner_allocations.append({
@@ -263,6 +272,8 @@ def get_equity_allocation():
                 "partner_code": p.code,
                 "equity_pct": pct,
                 "allocated_co2e": round(allocated_co2e, 2),
+                "allocated_scope1": round(allocated_s1, 2),
+                "allocated_scope2": round(allocated_s2, 2),
                 "allocated_ch4": round(allocated_ch4, 2),
             })
 
@@ -271,6 +282,8 @@ def get_equity_allocation():
             "facility_name": fac.name,
             "year": yr,
             "total_co2e": round(total_co2e, 2),
+            "total_scope1": round(total_s1, 2),
+            "total_scope2": round(total_s2, 2),
             "total_ch4": round(total_ch4, 2),
             "partners": partner_allocations,
         })

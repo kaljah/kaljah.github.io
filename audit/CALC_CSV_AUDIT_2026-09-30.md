@@ -44,9 +44,9 @@ code before the fixes.
 
 ## Open (not changed)
 
-- A bare `ton` / `tons` is a **short ton** (907 kg) everywhere, as the forms label it. In a CSV from
-  an operator who means metric tonnes it is 9.3 % low. Rejecting it would break re-imports of the
-  app's own records, which store `ton`; decide whether files should have to say `tonne` or `short_ton`.
+- Bare `ton` - DONE (owner decision 2026-09-30): the uploaders refuse a bare `ton` / `tons` (also
+  in factor units such as `kg/ton`) and ask for `tonne` or `short_ton`; the forms keep `ton` =
+  short ton, as labelled.
 - In a `,`-separated CSV, "1.500" is read as 1.5 (a European thousands separator is ambiguous
   there). Unchanged: Excel writes decimal-comma numbers only in `;` files.
 
@@ -164,7 +164,8 @@ share of the annual exhibit.
 
 ## Decisions for the owner (not changed)
 
-- JV equity allocation assigns Scope 1 only; the GHG Protocol equity-share approach also allocates
-  Scope 2.
+- JV equity allocation - DONE (owner decision 2026-09-30): partners now take their share of Scope 1
+  and Scope 2 (total_scope1 / total_scope2 / allocated_scope1 / allocated_scope2; report total
+  "Verified Scope 1 + 2").
 - Tier 3 fugitive screening converts TOC with the CH4 weight fraction (service default 0.92 or
   ch4_wt_fraction); a molar ch4_content is not used (by design).
