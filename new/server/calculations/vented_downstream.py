@@ -229,7 +229,7 @@ class RefiningCatalystRegenCalculator(BaseCalculator):
         elif approach == "k1_k2_k3":
             p_co2 = float(co2_pct or 0.0)
             p_co = float(co_pct or 0.0)
-            hrs = float(operating_hours or 8760.0)
+            hrs = float(8760.0 if operating_hours is None else operating_hours)
             if flue_gas_rate_dscm_min is not None:
                 qr = float(flue_gas_rate_dscm_min)
                 k1 = 0.2982
@@ -242,7 +242,7 @@ class RefiningCatalystRegenCalculator(BaseCalculator):
         elif approach == "air_blower":
             f_co2 = float(co2_pct or 11.0) / 100.0 if co2_pct > 1.0 else float(co2_pct)
             f_co = float(co_pct or 9.0) / 100.0 if co_pct > 1.0 else float(co_pct)
-            total_min = float(operating_hours or 8760.0) * 60.0
+            total_min = float(8760.0 if operating_hours is None else operating_hours) * 60.0
 
             if air_rate_m3_min is not None:
                 ar = float(air_rate_m3_min) + float(sor_m3_min or 0.0)
@@ -255,7 +255,7 @@ class RefiningCatalystRegenCalculator(BaseCalculator):
 
         elif approach == "continuous":
             crr = float(catalyst_circulation_rate_tonnes_hr or 0.0)
-            h = float(operating_hours or 8760.0)
+            h = float(8760.0 if operating_hours is None else operating_hours)
             c_diff = float(fc_spent or 0.0) - float(fc_regen or 0.0)
             co2_coke = crr * h * c_diff * (44.0 / 12.0)
 
@@ -277,7 +277,7 @@ class RefiningCatalystRegenCalculator(BaseCalculator):
         supp_ch4 = 0.0
         supp_n2o = 0.0
         if supplemental_fuel_mmbtu_hr > 0:
-            hrs = float(operating_hours or 8760.0)
+            hrs = float(8760.0 if operating_hours is None else operating_hours)
             total_supp_mmbtu = float(supplemental_fuel_mmbtu_hr) * hrs
             supp_co2 = total_supp_mmbtu * float(supplemental_co2_ef_tonne_mmbtu)
             supp_ch4 = total_supp_mmbtu * float(supplemental_ch4_ef_tonne_mmbtu)

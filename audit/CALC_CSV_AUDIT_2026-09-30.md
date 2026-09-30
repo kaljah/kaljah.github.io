@@ -201,8 +201,29 @@ dashboards were opened in Chromium as each role.
 
 Tests: `new/server/tests/test_deep_dive_2026_09_30.py` (25; 16 fail before the fixes).
 
-## Noted, not changed
+## Round 2 - remaining bugs (2026-09-30)
 
-- Scope 2 steam boiler efficiency 1.5 is read as 1.5 % (upload and manual alike); no sanity floor was added.
-- `ef_co2` below 1 on the steam form is read as t/MMBtu (x1000), as documented.
-- The legacy root `new/server/test_emission_calculations.py` has 4 failing tests on unchanged code (not collected by CI).
+| # | Where | Error | Size |
+|---|-------|-------|------|
+| 33 | tank flashing | a measured GOR of 0 (stabilised liquid) was treated as "not given", so the Table 6-22 default applied (1,000 bbl = 3.3 t CO2e instead of 0) | false emissions |
+| 34 | completions, Eq. 6-7 | a flowback duration of 0 h was read as 24 h | false emissions |
+| 35 | section calculators (midstream, downstream, exploration, CCUS, LNG, pneumatic pumps; exported, not routed today) | 0 operating hours read as 8,760, 0 events as 1, a flare efficiency of 0 (unlit) as 98 %, a CO2 content of 0 as 0.1 % | latent |
+| 36 | CSV uploads | a row with more values than the header (an extra comma) was read with every later value under the wrong column; now refused with the line number. Trailing blank cells stay accepted; Excel is unaffected. | shifted data |
+| 37 | custom factors | an unknown `parent_fuel` (e.g. "Deisel") was stored and ignored, so a liquid kg/MMBtu factor fell back to the gas (Btu/scf) basis. Now resolved to the catalog name (case / alias insensitive) or refused, on the form, edit, JSON bulk and file upload. | wrong HHV basis |
+| 38 | Scope 2 CHP edit | changing the heat output changed `heat_mmbtu` but kept the old allocated co2e (the allocation inputs are not stored). An edit now recalculates from total emissions, heat and power output, or is refused when they are not all given. | stale co2e |
+| 39 | legacy root tests | `test_emission_calculations.py` / `test_csv_uploader.py`: unloading oracle counted the gas left in the well (psia, not psig, Exhibit 6-8), mock facility / app context outdated, process types now canonical, a test CSV row had an extra comma | tests |
+
+Tests: `tests/test_deep_dive_2026_09_30.py` (30; the 5 round-2 tests fail before the fixes). Backend 1,946 / 0
+failed; root server tests 55 / 0 (`test_performance.py` needs the pytest-benchmark plugin).
+
+## Needs review (left for the owner, not changed)
+
+- CH4 density basis: 0.6785 kg/m3 (15 C) in units.py vs 16.04 / 379.3 lb/scf (60 F, 0.6774 kg/m3) in vented.py;
+  0.16 % apart. Which reference conditions should be the single basis?
+- In a `,`-separated CSV "1.500" is read as 1.5 (a European thousands separator is ambiguous there).
+- "Overwrite duplicates" with two rows of the same facility / month / process and no equipment ID in one
+  file: the second replaces the first (BUG-057 design).
+- Steam boiler efficiency 1.5 is read as 1.5 % (upload and manual alike); a sanity floor (e.g. 20 %) would
+  refuse it. `ef_co2` below 1 on the steam form is read as t/MMBtu (x1000), as documented.
+- Tier 3 fugitive screening uses the CH4 weight fraction (0.92 default), not a molar CH4 content.
+- Scope 3 manual entries have no duplicate check (two identical supplier totals in a month are both kept).

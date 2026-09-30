@@ -164,7 +164,7 @@ class GatheringCompressorVentingCalculator(BaseCalculator):
         uncertainties = uncertainties or {}
         self.validate_inputs({"compressor_count": compressor_count}, ["compressor_count"])
         n_comp = float(compressor_count)
-        hrs = max(0.0, float(pressurized_hours or 8760.0))
+        hrs = max(0.0, float(8760.0 if pressurized_hours is None else pressurized_hours))
 
         std = str(source_standard or "us_ghgrp").lower().strip()
         factor_info = self.TABLE_6_30.get(std, self.TABLE_6_30["us_ghgrp"])
@@ -284,7 +284,7 @@ class GatheringStorageTankCalculator(BaseCalculator):
     ):
         uncertainties = uncertainties or {}
         n_tanks = max(1.0, float(tank_count or 1.0))
-        hrs = max(0.0, float(hours or 8760.0))
+        hrs = max(0.0, float(8760.0 if hours is None else hours))
 
         ctype = str(component_type or "average_tank").lower().strip()
         factor_info = self.TABLE_6_31.get(ctype, self.TABLE_6_31["average_tank"])
@@ -374,7 +374,7 @@ class GatheringNonRoutineVentingCalculator(BaseCalculator):
         uncertainties = uncertainties or {}
         act = str(activity or "prv_releases").lower().strip()
         factor_info = self.TABLE_6_33.get(act, self.TABLE_6_33["prv_releases"])
-        n = max(0.0, float(events_or_count or 1.0))
+        n = max(0.0, float(1.0 if events_or_count is None else events_or_count))
 
         c_ch4 = factor_info["baseline_ch4_mol"] if ch4_content is None else float(ch4_content)
         if c_ch4 > 1.0:
