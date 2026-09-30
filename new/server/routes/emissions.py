@@ -99,9 +99,11 @@ def get_emissions():
             offset = max(0, int(offset_arg))
             per_page = max(1, min(5000, per_page))
             page = (offset // per_page) + 1
+            start = offset  # honour non page-aligned offsets exactly
         except (ValueError, TypeError, ZeroDivisionError):
             per_page = 50
             page = 1
+            start = 0
     else:
         try:
             page = max(1, request.args.get("page", 1, type=int))
@@ -114,6 +116,7 @@ def get_emissions():
                 per_page = max(1, min(5000, int(limit_arg)))
             except (ValueError, TypeError):
                 per_page = 50
+        start = (page - 1) * per_page
 
     scope = request.args.get("scope", "all")
     year = request.args.get("year")
@@ -372,9 +375,8 @@ def get_emissions():
     # Paginate and sort
     stmt = db.session.query(u).order_by(u.c.timestamp.desc().nullslast())
 
-    if limit_arg != "all":
-        start = (page - 1) * per_page
-        stmt = stmt.offset(start).limit(per_page)
+    # H5: always bounded, including limit=all (capped at 5000 above)
+    stmt = stmt.offset(start).limit(per_page)
 
     records = stmt.all()
 
@@ -442,11 +444,7 @@ def get_emissions():
             "data": paginated_results,
             "emissions": paginated_results,
             "total": total,
-            "pages": (
-                (total // per_page) + (1 if total % per_page > 0 else 0)
-                if limit_arg != "all"
-                else 1
-            ),
+            "pages": (total // per_page) + (1 if total % per_page > 0 else 0),
             "current_page": page,
         }
     )
