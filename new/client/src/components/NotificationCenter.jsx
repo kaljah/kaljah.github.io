@@ -263,6 +263,8 @@ const iconBtnStyle = {
 };
 
 // ─── Main component ───────────────────────────────────────────────────────────
+const TOAST_BURST = 3;
+
 const NotificationCenter = () => {
   const { user } = useAuth();
   const [notifications, setNotifications] = useState([]);
@@ -282,6 +284,24 @@ const NotificationCenter = () => {
   const userId = user?.id ?? null;
   const toastRef = useRef(toast);
   toastRef.current = toast;
+  // stream bursts are coalesced: more than TOAST_BURST notifications within 500 ms give one toast
+  const pendingToastsRef = useRef([]);
+  const toastTimerRef = useRef(null);
+  const queueToast = useCallback((notif) => {
+    pendingToastsRef.current.push(notif);
+    if (toastTimerRef.current) return;
+    toastTimerRef.current = setTimeout(() => {
+      const batch = pendingToastsRef.current;
+      pendingToastsRef.current = [];
+      toastTimerRef.current = null;
+      if (batch.length > TOAST_BURST) {
+        toastRef.current.info(`${batch.length} new notifications`);
+      } else {
+        batch.forEach((n) => toastRef.current.info(`${n.title}: ${n.message}`));
+      }
+    }, 500);
+  }, []);
+  useEffect(() => () => clearTimeout(toastTimerRef.current), []);
   const activeRef = useRef(false);
 
   // ── Track position for fixed portal ──────────────────────────────────
@@ -350,7 +370,7 @@ const NotificationCenter = () => {
         if (notif.id > lastIdRef.current) lastIdRef.current = notif.id;
         setNotifications((prev) => [notif, ...prev]);
         setUnreadCount((prev) => prev + 1);
-        toastRef.current.info(`${notif.title}: ${notif.message}`);
+        queueToast(notif);
       } catch (err) {
         console.error("SSE parse error", err);
       }
@@ -366,7 +386,7 @@ const NotificationCenter = () => {
         if (activeRef.current && !esRef.current) connectSSE();
       }, delay);
     };
-  }, [userId]);
+  }, [userId, queueToast]);
 
   // ── Mount / unmount ───────────────────────────────────────────────────
   useEffect(() => {

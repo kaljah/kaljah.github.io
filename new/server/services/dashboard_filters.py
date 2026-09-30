@@ -84,11 +84,21 @@ _TOKENS = [
 ]
 
 
+# Scope 1 processes the generic classifiers leave as "other": well testing / workovers / separator
+# dump and produced water are vented gas (Compendium 6.2, 6.3), CO2 EOR is vented CO2 (Exhibit 6-22),
+# a thermal oxidizer is a combustion device (5.3). As "other" their CH4 was counted as combustion
+# methane and their emissions left out of Venting on the dashboard.
+_EXPLICIT = {"well_testing": "vented", "workovers": "vented", "workover": "vented", "separation": "vented",
+             "co2_eor": "vented", "thermal_oxidizer": "combustion"}
+
+
 def source_category(process_type):
     """combustion | flaring | vented | fugitive | process | other."""
     p = str(process_type or "").strip().lower()
     if p in _FLARING:
         return "flaring"
+    if p in _EXPLICIT:
+        return _EXPLICIT[p]
     try:
         from calculations.uncertainty import PROCESS_CATEGORY
 

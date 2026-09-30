@@ -148,7 +148,8 @@ def hhv_mj_per_unit(hhv, activity_unit, fuel_type=None, density=None, hhv_unit=N
 
 
 def convert_factor_to_kg_per_unit(
-    value, factor_unit, activity_unit, hhv=None, fuel_type=None, density=None, hhv_unit=None, hours=None
+    value, factor_unit, activity_unit, hhv=None, fuel_type=None, density=None, hhv_unit=None, hours=None,
+    year_hours=None,
 ):
     """kg of gas per ONE activity unit, through the canonical unit parser (RC-5).
 
@@ -173,9 +174,9 @@ def convert_factor_to_kg_per_unit(
     if energy_den is not None:
         a_dim, _ = unit_dimension(a_unit)
         if a_dim == "energy":
-            return factor_to_kg_per_activity(val, f_unit, a_unit, hours=hours)
+            return factor_to_kg_per_activity(val, f_unit, a_unit, hours=hours, year_hours=year_hours)
         mj = hhv_mj_per_unit(hhv, a_unit, fuel_type=fuel_type, density=density, hhv_unit=hhv_unit)
-        return factor_to_kg_per_activity(val, f_unit, a_unit, hours=hours, hhv_mj_per_unit=mj)
+        return factor_to_kg_per_activity(val, f_unit, a_unit, hours=hours, hhv_mj_per_unit=mj, year_hours=year_hours)
     den_dim = spec["denominators"][0][0]
     a_dim, _ = unit_dimension(a_unit)
     if den_dim != a_dim and {den_dim, a_dim} == {"volume", "mass"}:
@@ -184,11 +185,11 @@ def convert_factor_to_kg_per_unit(
             raise UnitError(f"Factor per {spec['denominators'][0][2]} applied to '{activity_unit}' needs the fuel density")
         # express the activity unit in the factor's dimension, then convert
         if a_dim == "mass":   # kg of fuel per activity unit -> m3
-            per_unit = factor_to_kg_per_activity(val, f_unit, "m3", hours=hours) * (unit_dimension(a_unit)[1] / rho)
+            per_unit = factor_to_kg_per_activity(val, f_unit, "m3", hours=hours, year_hours=year_hours) * (unit_dimension(a_unit)[1] / rho)
         else:                 # m3 of fuel per activity unit -> kg
-            per_unit = factor_to_kg_per_activity(val, f_unit, "kg", hours=hours) * (unit_dimension(a_unit)[1] * rho)
+            per_unit = factor_to_kg_per_activity(val, f_unit, "kg", hours=hours, year_hours=year_hours) * (unit_dimension(a_unit)[1] * rho)
         return per_unit
-    return factor_to_kg_per_activity(val, f_unit, a_unit, hours=hours)
+    return factor_to_kg_per_activity(val, f_unit, a_unit, hours=hours, year_hours=year_hours)
 
 
 class CombustionCalculator(BaseCalculator):

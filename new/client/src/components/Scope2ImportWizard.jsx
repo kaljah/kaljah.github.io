@@ -133,6 +133,20 @@ const FIELD_GROUPS = [
       { key: "year",          label: "Year",          required: true,  hint: "4-digit year (e.g. 2024) — required unless using a date column" },
       { key: "month",         label: "Month",         required: true,  hint: "1–12 — required unless using a date column" },
     ],
+  },
+  {
+    id: "steam",
+    label: "Steam & CHP (optional)",
+    IconComp: Icon.Activity,
+    fields: [
+      { key: "boiler_eff",        label: "Boiler Efficiency", required: false, hint: "Steam: % (85) or fraction (0.85). Default 80 %" },
+      { key: "trans_loss",        label: "Transmission Loss", required: false, hint: "Steam: percentage, e.g. 5 = 5 %, 0.9 = 0.9 %. Default 0" },
+      { key: "total_emissions",   label: "CHP Total Emissions", required: false, hint: "CHP: plant emissions, t CO2e" },
+      { key: "heat_output_mmbtu", label: "CHP Heat Output", required: false, hint: "CHP: heat bought, MMBtu" },
+      { key: "power_output_mwh",  label: "CHP Power Output", required: false, hint: "CHP: power bought, MWh" },
+      { key: "heat_efficiency",   label: "CHP Heat Efficiency", required: false, hint: "CHP: % or fraction. Default 80 %" },
+      { key: "power_efficiency",  label: "CHP Power Efficiency", required: false, hint: "CHP: % or fraction. Default 35 %" },
+    ],
   }
 ];
 

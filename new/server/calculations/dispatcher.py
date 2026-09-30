@@ -954,8 +954,15 @@ class CalculationDispatcher:
                             return v
                     return None
 
+                # One flare efficiency (template / form "control_efficiency") is the share of the gas
+                # combusted: it sets both the carbon conversion and the CH4 destruction unless those are
+                # given separately (it used to be ignored and the flare-type default applied)
+                single_eff = _get_eff(["control_efficiency", "flare_efficiency", "flare_eff"])
                 comb_eff = _get_eff(["combustion_efficiency", "combustion_eff", "eta_c"])
                 dest_eff = _get_eff(["destruction_efficiency", "destruction_eff", "eta_d"])
+                if single_eff is not None:
+                    comb_eff = single_eff if comb_eff is None else comb_eff
+                    dest_eff = single_eff if dest_eff is None else dest_eff
                 ef_n2o_val = emission_factors.get("n2o") if emission_factors.get("n2o") not in [None, "", "-"] else (
                     emission_factors.get("ef_n2o") if emission_factors.get("ef_n2o") not in [None, "", "-"] else flat_inputs.get("ef_n2o", 0.0)
                 )
@@ -2320,6 +2327,8 @@ class CalculationDispatcher:
             density=inputs.get("density") or inputs.get("fuel_density") or emission_factors.get("density"),
             hhv_unit=factor_hhv_unit(emission_factors) or factor_hhv_unit(catalog),
             hours=hours,
+            # hours in the record's year: a per-year factor over a leap-year month is days / 366
+            year_hours=record_period(inputs)[0] / record_period(inputs)[2],
         )
 
         def ef(*keys):

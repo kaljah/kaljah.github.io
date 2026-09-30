@@ -93,6 +93,7 @@ const Scope3Form = () => {
   const [entries, setEntries] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [loadError, setLoadError] = useState(false);
   const [importModal, setImportModal] = useState({
     isOpen: false,
     type: "activity_scope3",
@@ -192,16 +193,18 @@ const Scope3Form = () => {
 
   const loadEntries = async () => {
     try {
-      const res = await api.get("/scope3");
-      const allEntries = Array.isArray(res.data)
-        ? res.data
-        : res.data?.data || [];
-      const start = (currentPage - 1) * RECORDS_PER_PAGE;
-      const end = start + RECORDS_PER_PAGE;
-      setEntries(allEntries.slice(start, end));
-      setTotalPages(Math.max(1, Math.ceil(allEntries.length / RECORDS_PER_PAGE)));
+      // one page from the server (the whole list used to be downloaded on every page change)
+      const res = await api.get("/scope3", {
+        params: { limit: RECORDS_PER_PAGE, offset: (currentPage - 1) * RECORDS_PER_PAGE },
+      });
+      const data = Array.isArray(res.data) ? res.data : res.data?.data || [];
+      const total = Array.isArray(res.data) ? data.length : Number(res.data?.total) || 0;
+      setEntries(data);
+      setTotalPages(Math.max(1, Math.ceil(total / RECORDS_PER_PAGE)));
+      setLoadError(false);
     } catch (error) {
       console.error("Failed to load entries:", error);
+      setLoadError(true);
       toast.error("Failed to load Scope 3 data");
     }
   };
@@ -646,7 +649,14 @@ const Scope3Form = () => {
               </tr>
             </thead>
             <tbody>
-              {entries.length === 0 ? (
+              {loadError ? (
+                <tr>
+                  <td colSpan="10" style={{ textAlign: "center", color: "var(--danger, #dc2626)" }}>
+                    Could not load the records.{" "}
+                    <button type="button" className="btn-ghost" onClick={loadEntries}>Retry</button>
+                  </td>
+                </tr>
+              ) : entries.length === 0 ? (
                 <tr>
                   <td
                     colSpan="10"
