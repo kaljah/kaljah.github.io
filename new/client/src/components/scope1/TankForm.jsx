@@ -5,20 +5,9 @@ const TankForm = ({ data, onChange, sourceType }) => {
   const isEngineering = sourceType === "specific";
   const processType = data.process_type || "tank";
 
-  // Title mapping
-  const titles = {
-    tank: "Storage Tank Emissions",
-    tank_flashing: "Storage Tank - Flashing/Events",
-    tank_working: "Storage Tank - Working Losses",
-    tank_breathing: "Storage Tank - Breathing Losses",
-  };
 
   return (
     <div className="tank-form">
-      <h4 style={{ color: "var(--accent-color)", marginBottom: "15px" }}>
-        {titles[processType] || "Storage Tank"}{" "}
-        {isEngineering && "(Engineering Calculation)"}
-      </h4>
 
       <div className="input-group">
         <label>
@@ -78,7 +67,7 @@ const TankForm = ({ data, onChange, sourceType }) => {
             <>
               <div className="input-group">
                 <label>
-                  Gas-Oil Ratio (GOR) - scf/bbl
+                  GOR (scf/bbl)
                   <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
                 </label>
                 <input
@@ -106,7 +95,7 @@ const TankForm = ({ data, onChange, sourceType }) => {
 
           {/* Common Engineering Inputs */}
           <div className="input-group">
-            <label>Storage Temperature (°F)</label>
+            <label>Temperature (°F)</label>
             <input
               type="number"
               className="mole-input"
@@ -117,7 +106,7 @@ const TankForm = ({ data, onChange, sourceType }) => {
           </div>
 
           <div className="input-group">
-            <label>Separator Pressure (psig)</label>
+            <label>Separator pressure (psig)</label>
             <input
               type="number"
               className="mole-input"
@@ -129,7 +118,7 @@ const TankForm = ({ data, onChange, sourceType }) => {
 
           <div className="input-group">
             <label>
-              Gas CH4 Content (%)
+              CH₄ (%)
               <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
             </label>
             <input

@@ -90,11 +90,11 @@ GWP_AR4_20  = {"CO2": 1.0, "CH4": 72.0, "N2O": 289.0}
 
 # IPCC AR5 (2013, WG1 Table 8.7)
 GWP_AR5_100 = {"CO2": 1.0, "CH4": 28.0, "N2O": 265.0}
-GWP_AR5_20  = {"CO2": 1.0, "CH4": 82.5, "N2O": 268.0}
+GWP_AR5_20  = {"CO2": 1.0, "CH4": 84.0, "N2O": 264.0}  # Table 8.7 GWP-20 (BUG-013)
 
-# IPCC AR6 (2021, WG1 Chapter 7)
+# IPCC AR6 (2021, WG1 Chapter 7, Table 7.15): CH4 27.9 pairs with GWP-20 81.2
 GWP_AR6_100 = {"CO2": 1.0, "CH4": 27.9, "N2O": 273.0}
-GWP_AR6_20  = {"CO2": 1.0, "CH4": 82.5, "N2O": 273.0}
+GWP_AR6_20  = {"CO2": 1.0, "CH4": 81.2, "N2O": 273.0}
 
 GWP_REGISTRY = {
     ("AR4", "100"): GWP_AR4_100,

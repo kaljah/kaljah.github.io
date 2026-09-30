@@ -471,26 +471,28 @@ def test_bulk_anomaly_flag_persistence(client, test_users):
 
 
 def test_fugitive_screening_count_and_fraction():
-    """Finding 1: Verify fugitive screening calculation handles component count and ch4_fraction."""
+    """Finding 1: screening with a component count (re-derived; audit/TIER3_BROWSER_TEST.md #3/#4).
+
+    The former expectation used an unsourced "x 2.5 screening multiplier" on a catalog factor and had
+    failed since the baseline. Screening = API Compendium 2021 Table 7-26: 20 valves (gas) at
+    >= 10,000 ppmv x 9.8E-02 kg TOC/h x 1,000 h x 0.920 CH4 wt fraction (Table C-1, gas production;
+    `ch4_fraction` is a mole fraction and does not replace the TOC weight fraction) = 1.8032 t CH4.
+    """
     dispatcher = CalculationDispatcher()
     payload = {
         "process_type": "fugitive",
         "factor_source": "specific",
         "fugitive_method": "screening",
-        "fugitive_ppm": 15000,  # >= 10000 -> multiplier 2.5
-        "amount": 20,           # 20 components
-        "hours": 1000,          # 1000 hours
-        "ch4_fraction": 0.8,    # 80% CH4
+        "fugitive_ppm": 15000,
+        "amount": 20,
+        "hours": 1000,
+        "ch4_fraction": 0.8,
     }
-    factor_data = {
-        "factor": 0.01,         # 0.01 kg CH4/hr/comp
-        "unit": "kg/hr",
-    }
+    factor_data = {"factor": 0.01, "unit": "kg/hr"}
     res = dispatcher.dispatch("fugitive", payload, factor_data, {"CO2": 1.0, "CH4": 28.0, "N2O": 265.0})
-    assert res is not None
-    # Expected: 20 * 0.01 * 2.5 * 1000 * 0.8 = 400 kg CH4 = 0.4 tonnes CH4
-    assert abs(res["results"]["ch4"]["value"] - 0.4) < 1e-5
-    assert abs(res["total_co2e"] - (0.4 * 28.0)) < 1e-4
+    expected = 20 * 9.8e-2 * 1000 * 0.920 / 1000
+    assert abs(res["results"]["ch4"]["value"] - expected) < 1e-6
+    assert abs(res["total_co2e"] - expected * 28.0) < 1e-4
 
 
 def test_agr_zero_removal_boundary():
@@ -1004,10 +1006,15 @@ def test_custom_factor_percentage_uncertainty_in_add_emission(client, test_users
     data = res.get_json()
     with app.app_context():
         em = db.session.get(Emission, data["id"])
-        # Propagated uncertainty with 5% EF uncertainty is ~0.0559 (5.59%), not > 5.0 (500%)
+        # A record that uses a custom factor is Tier 2 (factor_source="custom", audit BUG-042), so
+        # the Tier 2 activity-data default (7 %, 95 %) applies with the 5 % EF (95 %):
+        # 1-sigma = sqrt((0.05/2)^2 + (0.07/2)^2) = 0.04301  (IPCC 2006 Vol.1 Eq. 3.1, k = 2).
+        # The point of the original defect stands: 5.0 is read as 5 %, not 500 %.
+        import math
+
         assert em.uncertainty is not None
-        assert 0.05 <= em.uncertainty < 0.06
-        assert pytest.approx(em.uncertainty, 0.01) == 0.056
+        assert em.uncertainty == pytest.approx(math.hypot(0.05 / 2, 0.07 / 2), rel=1e-6)
+        assert em.factor_source == "custom" and em.custom_factor_id == cf_id
 
 
 def test_update_emission_preserves_calc_payload(client, test_users):
@@ -1020,13 +1027,15 @@ def test_update_emission_preserves_calc_payload(client, test_users):
         "year": 2024,
         "month": 8,
         "process_type": "Venting",
+        # audit BUG-015: without a fuel the record used to be saved at 0 t; it now needs a factor
+        "fuel": "Natural Gas",
         "quantity": 500.0,
         "unit": "m3",
         "calc_method": "engineering_estimate",
         "status": "Draft",
     }
     res = client.post("/api/emissions", json=payload)
-    assert res.status_code == 201
+    assert res.status_code == 201, res.get_json()
     em_id = res.get_json()["id"]
 
     update_res = client.put(f"/api/emissions/{em_id}", json={"quantity": 1000.0})

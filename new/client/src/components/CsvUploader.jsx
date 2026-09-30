@@ -1,5 +1,4 @@
-import React, { useState, useRef } from "react";
-import api from "../api";
+import React, { useState } from "react";
 import ColumnMappingWizard from "./ColumnMappingWizard";
 
 /**

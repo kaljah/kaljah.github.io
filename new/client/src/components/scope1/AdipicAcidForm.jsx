@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import CustomDropdown from "../CustomDropdown";
 
 const ADIPIC_ACID_OPTIONS = [
@@ -8,11 +8,15 @@ const ADIPIC_ACID_OPTIONS = [
 ];
 
 const AdipicAcidForm = ({ data, onChange }) => {
+  // the product and unit shown by default must also be in the submitted data (browser test #8:
+  // "Please select a unit" while the unit box showed a tonne)
+  useEffect(() => {
+    if (!data.fuel) onChange("fuel", "Adipic Acid - Thermal Abatement");
+    if (!data.unit) onChange("unit", "tonne");
+  }, [data.fuel, data.unit, onChange]);
+
   return (
     <div className="adipic-acid-form">
-      <h4 style={{ color: "var(--accent-color)", marginBottom: "15px" }}>
-        Adipic Acid Production (N₂O)
-      </h4>
 
       <div className="form-grid-2">
         <div className="input-group">
@@ -61,19 +65,6 @@ const AdipicAcidForm = ({ data, onChange }) => {
         </div>
       </div>
 
-      <div
-        style={{
-          marginTop: "12px",
-          padding: "10px 14px",
-          background: "#f9fafb",
-          border: "1px solid #e5e7eb",
-          borderRadius: "6px",
-          fontSize: "0.8rem",
-          color: "#6b7280",
-        }}
-      >
-        <strong>API Compendium 2021 Section 6, pg 407:</strong> N₂O emissions from adipic acid synthesis during cyclohexanone/cyclohexanol oxidation with nitric acid.
-      </div>
     </div>
   );
 };

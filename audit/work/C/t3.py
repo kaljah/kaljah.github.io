@@ -1,0 +1,37 @@
+from h import *
+def mkcf(**kw):
+    r=c.post("/api/custom-factors/",json=kw); j=r.get_json(); return j.get("id"), r.status_code, j
+base={"year":2025,"month":1,"facility_id":1,"factor_source":"custom"}
+def run(label, cfid, proc, fuel, q, u, exp_co2_t, extra=None):
+    pl=dict(base,process_type=proc,fuel=fuel,fuel_type=fuel,amount=q,quantity=q,unit=u,custom_factor_id=cfid)
+    if extra: pl.update(extra)
+    s,j=post(pl)
+    r=sql(DB,"select co2_emissions,ch4_emissions,n2o_emissions,calc_method,factor_source,uncertainty,uncertainty_ch4 from emissions order by id desc limit 1")[0]
+    print(f"{label:45s} HTTP{s} exp_co2={exp_co2_t:.6g} act={r['co2_emissions']:.6g} ch4={r['ch4_emissions']:.4g} n2o={r['n2o_emissions']:.4g} {r['calc_method']} fs={r['factor_source']} u={r['uncertainty']},{r['uncertainty_ch4']}")
+a,_,_=mkcf(name="C_mmbtu_hhv900",co2_factor=50,ch4_factor=0.001,n2o_factor=0.0001,unit="kg/MMBtu",hhv_factor=900)
+run("kg/MMBtu hhv900, fuel=id, 1000 scf",a,"combustion",str(a),1000,"scf",1000*900/1e6*50/1000)
+run("kg/MMBtu hhv900, fuel=Natural Gas, 1000 scf",a,"combustion","Natural Gas",1000,"scf",1000*900/1e6*50/1000)
+b,_,_=mkcf(name="C_mmbtu_nohhv",co2_factor=50,ch4_factor=0,n2o_factor=0,unit="kg/MMBtu",hhv_factor=0)
+run("kg/MMBtu hhv0, 1000 scf",b,"combustion",str(b),1000,"scf",float('nan'))
+d,_,_=mkcf(name="C_m3",co2_factor=1.9,ch4_factor=0.0,n2o_factor=0.0,unit="kg/m3")
+run("kg/m3, 1000 scf",d,"combustion",str(d),1000,"scf",1000*0.0283168*1.9/1000)
+run("kg/m3, 1000 scf flaring",d,"flaring",str(d),1000,"scf",1000*0.0283168*1.9/1000)
+e,_,_=mkcf(name="C_gal",co2_factor=10.21,ch4_factor=0.0004,n2o_factor=0.0001,unit="kg/gal")
+run("kg/gal, 1 bbl",e,"combustion",str(e),1,"bbl",42*10.21/1000)
+run("kg/gal, 1 bbl mobile",e,"mobile",str(e),1,"bbl",42*10.21/1000)
+f,_,_=mkcf(name="C_tt",co2_factor=3.17,ch4_factor=0,n2o_factor=0,unit="tonne/tonne")
+run("tonne/tonne, 2 tonne",f,"combustion",str(f),2,"tonne",6.34)
+run("tonne/tonne, 2000 kg",f,"combustion",str(f),2000,"kg",6.34)
+g,_,_=mkcf(name="C_kgkg",co2_factor=3.17,ch4_factor=0,n2o_factor=0,unit="kg/kg")
+run("kg/kg, 1 tonne",g,"combustion",str(g),1,"tonne",3.17)
+h_,_,_=mkcf(name="C_gj",co2_factor=56.1,ch4_factor=0.001,n2o_factor=0.0001,unit="kg/GJ")
+run("kg/GJ, 10 GJ",h_,"combustion",str(h_),10,"GJ",0.561)
+run("kg/GJ, 1000 m3 (hhv none)",h_,"combustion",str(h_),1000,"m3",float('nan'))
+i,_,_=mkcf(name="C_tj",co2_factor=56100,ch4_factor=1,n2o_factor=0.1,unit="kg/TJ")
+run("kg/TJ, 10 GJ",i,"combustion",str(i),10,"GJ",0.561)
+j_,_,_=mkcf(name="C_ch4only",co2_factor=0,ch4_factor=0.5,n2o_factor=0,unit="kg/m3")
+run("ch4-only kg/m3 venting 100 m3",j_,"venting",str(j_),100,"m3",0)
+run("ch4-only kg/m3 combustion 100 m3",j_,"combustion",str(j_),100,"m3",0)
+k,_,_=mkcf(name="C_lb",co2_factor=117,ch4_factor=0,n2o_factor=0,unit="lb/MMBtu",hhv_factor=1020)
+run("lb/MMBtu hhv1020, 1000 scf",k,"combustion",str(k),1000,"scf",1.02*117*0.453592/1000)
+run("seed cf 2 kg/liter 1000 L",2,"combustion","2",1000,"L",2.03)

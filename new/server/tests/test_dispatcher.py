@@ -172,27 +172,22 @@ def test_agr_methane_slip_calculation():
 
 
 def test_dehydrator_parametric_solubility():
-    """CALC-02: Verify Glycol Dehydrator parametric TEG solubility model"""
+    """The parametric TEG solubility model (S = 0.0032 P^0.96 ...) had no API Compendium source and was
+    removed (audit/TIER3_BROWSER_TEST.md #12): its inputs are rejected with guidance."""
     dispatcher = CalculationDispatcher()
     payload = {
         "process_type": "dehydrator",
         "factor_source": "specific",
         "amount": 50,
-        "dehy_pump_rate": 15.0,  # 15 gal/hr
+        "dehy_pump_rate": 15.0,
         "dehy_pump_unit": "gph",
         "dehy_hours": 8760,
         "dehy_ch4_content": 90.0,
-        "dehy_press": 1000.0,  # 1000 psig contactor
-        "dehy_temp": 100.0,  # 100°F
-        "dehy_has_flash": True,
-        "dehy_eff": 0.0,
+        "dehy_press": 1000.0,
+        "dehy_temp": 100.0,
     }
-    res = dispatcher.dispatch("dehydrator", payload, {}, {})
-    assert res is not None
-    assert res["results"]["ch4"]["value"] > 0
-    assert (
-        1.0 < res["inputs"]["solubility_scf_gal"] < 5.0
-    )  # Calibrated Henry's Law solubility per API Table 6-5 (1.5 - 2.8 scf/gal)
+    with pytest.raises(ValueError, match="GLYCalc"):
+        dispatcher.dispatch("dehydrator", payload, {}, {})
 
 
 def test_blowdown_temperature_correction():
@@ -239,3 +234,73 @@ def test_completions_flowback_methods():
     assert res_rate is not None
     assert res_rate["results"]["ch4"]["value"] > 0
     assert res_rate["results"]["co2"]["value"] > 0
+
+
+def test_dispatcher_nitric_acid_production_n2o():
+    """Verify nitric acid production produces N2O, zero CO2, and respects abatement."""
+    dispatcher = CalculationDispatcher()
+    payload = {
+        "process_type": "nitric_acid_production",
+        "factor_source": "specific",
+        "amount": 100.0,
+        "unit": "tonne",
+        "ef_n2o": 9.0,  # 9 kg N2O/tonne
+        "abatement_efficiency": 80.0,  # 80% reduction
+    }
+    res = dispatcher.dispatch("nitric_acid_production", payload, {}, {})
+    assert res is not None
+    # 100 t * 9 kg/t * (1 - 0.8) = 180 kg = 0.18 tonnes N2O
+    assert pytest.approx(res["results"]["n2o"]["value"], rel=1e-3) == 0.18
+    # No stoichiometric carbon in nitric acid -> co2 and ch4 must be 0
+    assert res["results"]["co2"]["value"] == 0.0
+    assert res["results"]["ch4"]["value"] == 0.0
+    # CO2e should be N2O * GWP (~265 or 298)
+    assert res["total_co2e"] > 0
+
+
+def test_dispatcher_adipic_acid_production_n2o():
+    """Verify adipic acid production routes to N2O with high uncontrolled factor."""
+    dispatcher = CalculationDispatcher()
+    payload = {
+        "process_type": "adipic_acid_production",
+        "factor_source": "specific",
+        "amount": 50.0,
+        "unit": "tonne",
+        "ef_n2o": 300.0,  # 300 kg N2O/tonne
+        "abatement_efficiency": 0.0,
+    }
+    res = dispatcher.dispatch("adipic_acid_production", payload, {}, {})
+    assert res is not None
+    # 50 t * 300 kg/t = 15,000 kg = 15.0 tonnes N2O
+    assert pytest.approx(res["results"]["n2o"]["value"], rel=1e-3) == 15.0
+    assert res["results"]["co2"]["value"] == 0.0
+
+
+def test_dispatcher_solid_fuel_combustion_energy():
+    """Verify solid fuel (coal) combustion calculates proper MMBtu energy without 25000x undercount."""
+    dispatcher = CalculationDispatcher()
+    # 10 metric tonnes of Bituminous Coal
+    payload = {
+        "process_type": "stationary_combustion",
+        "factor_source": "default",
+        "amount": 10.0,
+        "unit": "tonne",
+        "fuel": "Bituminous Coal",
+        "fuel_type": "Bituminous Coal",
+    }
+    factor_data = {
+        "co2": 93.26,  # kg CO2/MMBtu
+        "ch4": 0.011,
+        "n2o": 0.0016,
+        "hhv": 24930,  # 24.93 MMBtu/short ton
+        "unit": "kg/MMBtu",
+        "type": "solids",
+    }
+    res = dispatcher.dispatch("stationary_combustion", payload, factor_data, {})
+    assert res is not None
+    # 10 tonnes = 11.0231 short tons.
+    # Energy = 11.0231 * 24.93 = ~274.8 MMBtu.
+    # CO2 = 274.8 * 93.26 kg = ~25,628 kg = ~25.6 metric tonnes CO2.
+    co2_val = res["results"]["co2"]["value"]
+    assert 24.0 < co2_val < 27.0
+

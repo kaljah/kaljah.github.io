@@ -23,15 +23,16 @@ import { useToast } from "../components/Toast";
 import { useAuth } from "../context/AuthContext";
 import LoadingSpinner from "../components/LoadingSpinner";
 import "./Settings.css";
+import { GWP_AR4, GWP_AR5, GWP_AR6 } from "../constants";
 
 const GWP_DATA = {
   AR5: {
     name: "IPCC 5th Assessment Report (AR5)",
     year: "2014",
     status: "UNFCCC / EU Standard (Default)",
-    ch4_100: 28.0,
-    ch4_20: 82.5,
-    n2o_100: 265.0,
+    ch4_100: GWP_AR5.CH4,
+    ch4_20: GWP_AR5.CH4_20,
+    n2o_100: GWP_AR5.N2O,
     co2: 1.0,
     description:
       "Standard baseline used by OGMP 2.0, UNFCCC National Inventories, and corporate GHG reporting frameworks.",
@@ -40,9 +41,9 @@ const GWP_DATA = {
     name: "IPCC 6th Assessment Report (AR6)",
     year: "2021",
     status: "Latest IPCC Physical Science Basis",
-    ch4_100: 27.9,
-    ch4_20: 82.5,
-    n2o_100: 273.0,
+    ch4_100: GWP_AR6.CH4,
+    ch4_20: GWP_AR6.CH4_20,
+    n2o_100: GWP_AR6.N2O,
     co2: 1.0,
     description:
       "Most recent scientific consensus incorporating updated radiative efficiency and tropospheric adjustments.",
@@ -51,9 +52,9 @@ const GWP_DATA = {
     name: "IPCC 4th Assessment Report (AR4)",
     year: "2007",
     status: "Legacy Regulatory Frameworks",
-    ch4_100: 25.0,
-    ch4_20: 72.0,
-    n2o_100: 298.0,
+    ch4_100: GWP_AR4.CH4,
+    ch4_20: GWP_AR4.CH4_20,
+    n2o_100: GWP_AR4.N2O,
     co2: 1.0,
     description:
       "Historical standard preserved for legacy compliance agreements and multi-decade baseline tracking.",
@@ -74,7 +75,6 @@ const Settings = () => {
   const [globalThreshold, setGlobalThreshold] = useState(20.0);
   const [upstreamTarget, setUpstreamTarget] = useState(0.2);
   const [midstreamTarget, setMidstreamTarget] = useState(0.05);
-  const [theme, setTheme] = useState("light");
   const [unitSystem, setUnitSystem] = useState("metric");
   const [autoFlagDiscrepancy, setAutoFlagDiscrepancy] = useState(true);
 
@@ -130,10 +130,8 @@ const Settings = () => {
           setCopernicusQaThreshold(Number(settings.copernicus_qa_threshold));
         if (settings.copernicus_enabled !== undefined)
           setCopernicusEnabled(Boolean(settings.copernicus_enabled));
-        if (settings.theme) {
-          setTheme("light");
-          applyThemeLive("light");
-        }
+        // light theme only
+        document.documentElement.removeAttribute("data-theme");
         if (settings.unit_system) setUnitSystem(settings.unit_system);
         if (settings.auto_flag_discrepancy !== undefined)
           setAutoFlagDiscrepancy(settings.auto_flag_discrepancy);
@@ -161,14 +159,6 @@ const Settings = () => {
     }
   };
 
-  const applyThemeLive = (newTheme) => {
-    document.documentElement.removeAttribute("data-theme");
-  };
-
-  const handleThemeChange = (newTheme) => {
-    setTheme("light");
-    applyThemeLive("light");
-  };
 
   const isAdmin =
     user?.role === "admin" ||
@@ -203,7 +193,6 @@ const Settings = () => {
         payload.copernicus_client_secret = copernicusClientSecret;
       }
       await api.post("/auth/settings", payload);
-      applyThemeLive("light");
       toast.success(
         "System settings and Copernicus credentials saved successfully!",
       );
@@ -284,12 +273,13 @@ const Settings = () => {
       return;
     }
     try {
-      const data = facilityEdits[facId];
+      const fac = facilities.find((f) => f.id === facId);
+      const data = { ...(fac || {}), ...(facilityEdits[facId] || {}) };
       await api.put(`/facilities/${facId}`, {
         operator_status: data.operator_status,
         country: data.country,
-        ogmp_membership_year: Number(data.ogmp_membership_year),
-        reconciliation_threshold: Number(data.reconciliation_threshold),
+        ogmp_membership_year: Number(data.ogmp_membership_year || 2021),
+        reconciliation_threshold: Number(data.reconciliation_threshold || 20),
       });
       toast.success("Facility OGMP settings updated!");
     } catch (err) {
@@ -306,7 +296,6 @@ const Settings = () => {
     );
   }
 
-  const currentGwp = GWP_DATA[gwpStandard] || GWP_DATA.AR5;
 
   return (
     <div className="settings-page-wrapper">
@@ -497,33 +486,33 @@ const Settings = () => {
                     <td>
                       <strong>Methane (CH₄) - 100 Year</strong>
                     </td>
-                    <td>25.0×</td>
+                    <td>{GWP_AR4.CH4.toFixed(1)}×</td>
                     <td>
-                      <strong>28.0×</strong>
+                      <strong>{GWP_AR5.CH4.toFixed(1)}×</strong>
                     </td>
-                    <td>27.9×</td>
+                    <td>{GWP_AR6.CH4.toFixed(1)}×</td>
                     <td>Corporate GHG Inventory / Scope 1</td>
                   </tr>
                   <tr>
                     <td>
                       <strong>Methane (CH₄) - 20 Year</strong>
                     </td>
-                    <td>72.0×</td>
+                    <td>{GWP_AR4.CH4_20.toFixed(1)}×</td>
                     <td>
-                      <strong>82.5×</strong>
+                      <strong>{GWP_AR5.CH4_20.toFixed(1)}×</strong>
                     </td>
-                    <td>82.5×</td>
+                    <td>{GWP_AR6.CH4_20.toFixed(1)}×</td>
                     <td>Near-Term Climate Impact / ESG Analytics</td>
                   </tr>
                   <tr>
                     <td>
                       <strong>Nitrous Oxide (N₂O) - 100 Year</strong>
                     </td>
-                    <td>298.0×</td>
+                    <td>{GWP_AR4.N2O.toFixed(1)}×</td>
                     <td>
-                      <strong>265.0×</strong>
+                      <strong>{GWP_AR5.N2O.toFixed(1)}×</strong>
                     </td>
-                    <td>273.0×</td>
+                    <td>{GWP_AR6.N2O.toFixed(1)}×</td>
                     <td>Flaring / Combustion byproducts</td>
                   </tr>
                 </tbody>

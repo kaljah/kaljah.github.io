@@ -75,7 +75,7 @@ export const AuthProvider = ({ children }) => {
     };
   }, []);
 
-  const applyTheme = (theme) => {
+  const applyTheme = () => {
     // Enforce light theme only by removing data-theme attribute
     document.documentElement.removeAttribute("data-theme");
   };
@@ -83,7 +83,7 @@ export const AuthProvider = ({ children }) => {
   const logout = useCallback(async (isTimeout = false) => {
     try {
       await api.post("/auth/logout");
-    } catch (e) {
+    } catch {
       // Ignore network errors on logout
     }
     setUser(null);
@@ -98,15 +98,15 @@ export const AuthProvider = ({ children }) => {
     if (authChannelRef.current) {
       try {
         authChannelRef.current.postMessage({ type: "LOGOUT", isTimeout });
-      } catch (e) {}
+      } catch { /* best effort: failure changes nothing for the user */ }
     }
     try {
       localStorage.setItem("ghg_auth_logout_event", Date.now().toString());
-    } catch (e) {}
+    } catch { /* best effort: failure changes nothing for the user */ }
 
     try {
       await fetchCsrfToken();
-    } catch (e) {}
+    } catch { /* best effort: failure changes nothing for the user */ }
   }, []);
 
   // ── 10-Minute Idle Session Timeout & 9-Minute Warning ─────────────────────
@@ -130,7 +130,7 @@ export const AuthProvider = ({ children }) => {
       if (authChannelRef.current) {
         try {
           authChannelRef.current.postMessage({ type: "ACTIVITY", timestamp: Date.now() });
-        } catch (e) {}
+        } catch { /* best effort: failure changes nothing for the user */ }
       }
       if (idleTimerRef.current) {
         clearTimeout(idleTimerRef.current);
@@ -203,7 +203,7 @@ export const AuthProvider = ({ children }) => {
           setUser(null);
           setPreferences({});
         }
-      } catch (err) {
+      } catch {
         setUser(null);
         setPreferences({});
       } finally {

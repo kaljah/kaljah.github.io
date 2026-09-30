@@ -290,34 +290,14 @@ class TestDifferentialScope1:
         assert pytest.approx(res_prod["total_co2e"], rel=1e-4) == res_ref["co2e"]
 
     def test_diff_teg_dehydrator(self, prod_dispatcher):
-        """Diff Test: TEG dehydrator parametric Henry's law solubility."""
-        payload = {
-            "dehy_pump_rate": 20.0,
-            "dehy_pump_unit": "gph",
-            "dehy_hours": 8760,
-            "dehy_ch4_content": 85.0,
-            "dehy_press": 850.0,
-            "dehy_press_unit": "psig",
-            "dehy_temp": 110.0,
-            "dehy_temp_unit": "F",
-            "dehy_has_flash": True,
-            "factor_source": "specific",
-        }
-
+        """Diff Test: TEG dehydrator Tier 3 = simulation result (GRI-GLYCalc) less control efficiency.
+        The former parametric solubility model had no API Compendium source (audit/TIER3_BROWSER_TEST.md #12)."""
+        payload = {"vent_method": "reported_mass", "ch4_mass": 40.0, "co2_mass": 2.0, "mass_unit": "t",
+                   "control_efficiency": 95, "factor_source": "specific"}
         res_prod = prod_dispatcher.dispatch("dehydrator", payload, {}, {}, gwp_dict=GWP_AR5)
-        res_ref = IndependentDehydratorModel.calculate_tier3(
-            pump_rate=20.0,
-            pump_unit="gph",
-            hours=8760,
-            ch4_content=0.85,
-            contactor_press=850.0,
-            contactor_temp=110.0,
-            has_flash_tank=True,
-            gwp_standard="AR5",
-        )
-
-        assert pytest.approx(res_prod["results"]["ch4"]["value"], rel=1e-4) == res_ref["ch4"]
-        assert pytest.approx(res_prod["total_co2e"], rel=1e-4) == res_ref["co2e"]
+        ch4, co2 = 40.0 * 0.05, 2.0 * 0.05
+        assert pytest.approx(res_prod["results"]["ch4"]["value"], rel=1e-9) == ch4
+        assert pytest.approx(res_prod["total_co2e"], rel=1e-9) == co2 + ch4 * GWP_AR5["CH4"]
 
 
 class TestDifferentialScope2and3:
@@ -358,6 +338,8 @@ class TestDifferentialScope2and3:
             boiler_eff=0.82,
             trans_loss=0.05,
             ef_co2=53.06,
+            ef_ch4=0.001,   # natural-gas boiler, Table 4-6 (= EPA Hub Table 7)
+            ef_n2o=0.0001,
         )
 
         assert pytest.approx(prod_co2e, rel=1e-6) == ref_res["co2e"]
@@ -380,6 +362,7 @@ class TestDifferentialScope2and3:
             heat_output=50_000.0,
             power_output=10_000.0,
             method="wri_efficiency",
+            power_unit="mwh",  # the route's power_output_mwh contract (BUG-097)
         )
 
         assert pytest.approx(prod_allocated, rel=1e-6) == ref_res["allocated_heat_co2e"]

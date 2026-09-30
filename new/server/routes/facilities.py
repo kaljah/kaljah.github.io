@@ -1,7 +1,8 @@
-from flask import request, jsonify, session
+from flask import request, jsonify, session, current_app
 import json
 from . import facilities_bp
-from utils import get_allowed_facility_ids, log_activity_and_notify, is_unrestricted_location
+from utils import get_allowed_facility_ids, log_activity_and_notify, facility_in_user_scope, facility_change_allowed
+from input_validation import parse_number, require_text
 from models import Facility, User
 from extensions import db
 from sqlalchemy.exc import IntegrityError
@@ -55,6 +56,7 @@ def get_facilities():
                 "boundary_notes": f.boundary_notes,
                 "boundary_type": f.boundary_type or "Operational Control",
                 "boundary_detail": f.boundary_detail or "",
+                "equity_share_pct": f.equity_share_pct if f.equity_share_pct is not None else 100.0,
                 "segment": f.segment,
                 "operator_status": f.operator_status or "operated",
                 "country": f.country or "Algeria",
@@ -118,6 +120,16 @@ def get_all_regions():
     return jsonify(sorted(identifiers))
 
 
+def _parse_coordinates(data, current=(None, None)):
+    """BUG-045: blank latitude/longitude means 'not set'; otherwise a number in range."""
+    lat, lon = current
+    if "latitude" in data:
+        lat = parse_number(data.get("latitude"), "latitude", required=False, min_value=-90, max_value=90)
+    if "longitude" in data:
+        lon = parse_number(data.get("longitude"), "longitude", required=False, min_value=-180, max_value=180)
+    return lat, lon
+
+
 @facilities_bp.route("", methods=["POST"])
 @facilities_bp.route("/", methods=["POST"])
 @login_required
@@ -133,19 +145,17 @@ def add_facility():
         )
 
     data = request.get_json() or {}
+    # BUG-029: a facility must have a non-empty name (NULL names crash the UI and bulk import).
+    data["name"] = require_text(data.get("name"), "name")
+    lat, lon = _parse_coordinates(data)
 
-    if user.role == "superuser" and not is_unrestricted_location(user.location):
-        user_loc = (user.location or "").strip().lower()
-        fac_region = (data.get("region") or "").strip().lower()
-        fac_location = (data.get("location") or "").strip().lower()
-        fac_name = (data.get("name") or "").strip().lower()
-        if user_loc not in (fac_region, fac_location, fac_name):
-            return (
-                jsonify(
-                    {"error": f"Superusers can only create facilities in their assigned region: {user.location}"}
-                ),
-                403,
-            )
+    if not facility_change_allowed(user, None, data.get("region"), data.get("location"), data.get("name")):
+        return (
+            jsonify(
+                {"error": f"Superusers can only create facilities in their assigned region: {user.location}"}
+            ),
+            403,
+        )
 
     code = data.get("code")
     if code:
@@ -164,15 +174,16 @@ def add_facility():
         boundary_notes=data.get("boundary_notes"),
         boundary_type=data.get("boundary_type", "Operational Control"),
         boundary_detail=data.get("boundary_detail"),
+        equity_share_pct=parse_number(data.get("equity_share_pct"), "equity_share_pct", required=False, min_value=0, max_value=100, default=100.0),
         segment=data.get("segment"),
         operator_status=data.get("operator_status", "operated"),
         country=data.get("country", "Algeria"),
         ogmp_membership_year=int(data.get("ogmp_membership_year", 2023) or 2023),
-        reconciliation_threshold=float(
-            data.get("reconciliation_threshold", 20.0) or 20.0
+        reconciliation_threshold=parse_number(
+            data.get("reconciliation_threshold"), "reconciliation_threshold", required=False, min_value=0, max_value=1000, default=20.0
         ),
-        latitude=data.get("latitude"),
-        longitude=data.get("longitude"),
+        latitude=lat,
+        longitude=lon,
     )
 
     try:
@@ -240,7 +251,19 @@ def update_facility(facility_id):
     if allowed_fids is not None and facility.id not in allowed_fids:
         return jsonify({"error": "Unauthorized: Outside your region"}), 403
 
-    data = request.get_json()
+    data = request.get_json() or {}
+    if "name" in data:
+        data["name"] = require_text(data.get("name"), "name")
+    lat, lon = _parse_coordinates(data, (facility.latitude, facility.longitude))
+
+    # BUG-093: the facility must remain inside the caller's scope after the update,
+    # otherwise a regional superuser could push it (and its emissions) into another region.
+    new_region = data.get("region", facility.region)
+    new_location = data.get("location", facility.location)
+    new_name = data.get("name", facility.name)
+    if not facility_change_allowed(user, facility, new_region, new_location, new_name):
+        return jsonify({"error": f"Update would move the facility outside your region: {user.location}"}), 403
+    old_values = {"name": facility.name, "region": facility.region, "location": facility.location}
 
     if "name" in data:
         facility.name = data["name"]
@@ -254,6 +277,8 @@ def update_facility(facility_id):
         facility.boundary_type = data["boundary_type"]
     if "boundary_detail" in data:
         facility.boundary_detail = data["boundary_detail"]
+    if "equity_share_pct" in data and data["equity_share_pct"] is not None:
+        facility.equity_share_pct = parse_number(data["equity_share_pct"], "equity_share_pct", min_value=0, max_value=100)
     if "activity" in data:
         facility.activity = data["activity"]
     if "region" in data:
@@ -278,11 +303,8 @@ def update_facility(facility_id):
         "reconciliation_threshold" in data
         and data["reconciliation_threshold"] is not None
     ):
-        facility.reconciliation_threshold = float(data["reconciliation_threshold"])
-    if "latitude" in data:
-        facility.latitude = data["latitude"]
-    if "longitude" in data:
-        facility.longitude = data["longitude"]
+        facility.reconciliation_threshold = parse_number(data["reconciliation_threshold"], "reconciliation_threshold", min_value=0, max_value=1000)
+    facility.latitude, facility.longitude = lat, lon
 
     import datetime
 
@@ -309,6 +331,7 @@ def update_facility(facility_id):
                 "field",
                 "code",
                 "segment",
+                "region",
             ]
         ]
         log_details = (
@@ -325,6 +348,7 @@ def update_facility(facility_id):
             metadata_json=json.dumps(
                 {
                     "updated_fields": changes,
+                    "old_values": {k: v for k, v in old_values.items() if k in changes},
                     "new_values": {k: v for k, v in data.items() if k in changes},
                 }
             ),
@@ -393,7 +417,8 @@ def delete_facility(facility_id):
         db.session.commit()
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": f"Failed to delete facility: {str(e)}"}), 500
+        current_app.logger.exception("Failed to delete facility %s", facility_id)
+        return jsonify({"error": "Failed to delete facility"}), 500
 
     return jsonify({"message": "Facility deleted"})
 
@@ -418,21 +443,17 @@ def import_facilities():
     if not facilities_data:
         return jsonify({"error": "No facilities provided"}), 400
 
-    if user.role == "superuser" and not is_unrestricted_location(user.location):
-        user_loc = (user.location or "").strip().lower()
-        for fac_data in facilities_data:
-            fac_region = (fac_data.get("region") or "").strip().lower()
-            fac_location = (fac_data.get("location") or "").strip().lower()
-            fac_name = (fac_data.get("name") or "").strip().lower()
-            if user_loc not in (fac_region, fac_location, fac_name):
-                return (
-                    jsonify(
-                        {
-                            "error": f"Superusers can only import facilities in their assigned region: {user.location}"
-                        }
-                    ),
-                    403,
-                )
+    for i, fac_data in enumerate(facilities_data):
+        fac_data["name"] = require_text(fac_data.get("name"), f"facilities[{i}].name")  # BUG-029
+        if not facility_change_allowed(user, None, fac_data.get("region"), fac_data.get("location"), fac_data.get("name")):
+            return (
+                jsonify(
+                    {
+                        "error": f"Superusers can only import facilities in their assigned region: {user.location}"
+                    }
+                ),
+                403,
+            )
 
     imported_count = 0
     for fac_data in facilities_data:

@@ -1,21 +1,29 @@
-import React from "react";
+import React, { useEffect } from "react";
 import CustomDropdown from "../CustomDropdown";
 
+// Table 6-53 (CO2 and CH4 per tonne produced)
 const CHEMICAL_OPTIONS = [
-  { value: "Ethylene", label: "Ethylene (0.77 t CO₂/t)" },
-  { value: "Ethylene Oxide", label: "Ethylene Oxide (0.46 t CO₂/t)" },
+  { value: "Acrylonitrile", label: "Acrylonitrile (1.00 t CO₂/t, 0.18 kg CH₄/t)" },
+  { value: "Carbon Black", label: "Carbon Black (2.63 t CO₂/t, 28.7 kg CH₄/t)" },
+  { value: "Carbon Black (Thermal Abatement)", label: "Carbon Black, thermal abatement (2.63 t CO₂/t, 0.06 kg CH₄/t)" },
+  { value: "Ethylene (Ethane Feedstock)", label: "Ethylene, ethane feedstock (0.77 t CO₂/t, 6 kg CH₄/t)" },
+  { value: "Ethylene (Other Feedstocks)", label: "Ethylene, other feedstocks (0.77 t CO₂/t, 3 kg CH₄/t)" },
   { value: "Ethylene Dichloride", label: "Ethylene Dichloride (0.041 t CO₂/t)" },
-  { value: "Acrylonitrile", label: "Acrylonitrile (1.00 t CO₂/t)" },
-  { value: "Carbon Black", label: "Carbon Black (2.63 t CO₂/t)" },
+  { value: "Ethylene Oxide", label: "Ethylene Oxide (0.46 t CO₂/t, 1.79 kg CH₄/t)" },
+  { value: "Ethylene Oxide (Thermal Abatement)", label: "Ethylene Oxide, thermal abatement (0.46 t CO₂/t, 0.79 kg CH₄/t)" },
   { value: "Methanol", label: "Methanol (0.67 t CO₂/t, 2.3 kg CH₄/t)" },
 ];
 
 const ChemicalProductionForm = ({ data, onChange }) => {
+  // the product and unit shown by default must also be in the submitted data (browser test #8:
+  // "Please select a unit" while the unit box showed a tonne)
+  useEffect(() => {
+    if (!data.fuel) onChange("fuel", "Ethylene (Ethane Feedstock)");
+    if (!data.unit) onChange("unit", "tonne");
+  }, [data.fuel, data.unit, onChange]);
+
   return (
     <div className="chemical-production-form">
-      <h4 style={{ color: "var(--accent-color)", marginBottom: "15px" }}>
-        Chemical Manufacturing Parameters
-      </h4>
 
       <div className="form-grid-2">
         <div className="input-group">
@@ -25,7 +33,7 @@ const ChemicalProductionForm = ({ data, onChange }) => {
           </label>
           <CustomDropdown
             options={CHEMICAL_OPTIONS}
-            value={data.fuel || "Ethylene"}
+            value={data.fuel || "Ethylene (Ethane Feedstock)"}
             onChange={(val) => onChange("fuel", val)}
             placeholder="Select Chemical..."
           />
@@ -64,19 +72,6 @@ const ChemicalProductionForm = ({ data, onChange }) => {
         </div>
       </div>
 
-      <div
-        style={{
-          marginTop: "12px",
-          padding: "10px 14px",
-          background: "#f9fafb",
-          border: "1px solid #e5e7eb",
-          borderRadius: "6px",
-          fontSize: "0.8rem",
-          color: "#6b7280",
-        }}
-      >
-        <strong>API Compendium 2021 Section 6, Table 6-167:</strong> Stoichiometric process CO₂ and CH₄ emissions from petrochemical production based on mass balance and catalytic selectivity.
-      </div>
     </div>
   );
 };

@@ -4,13 +4,10 @@ import CustomDropdown from "../CustomDropdown";
 const AGRForm = ({ data, onChange, sourceType }) => {
   return (
     <div className="agr-form">
-      <h4 style={{ color: "var(--accent-color)", marginBottom: "15px" }}>
-        Acid Gas Removal
-      </h4>
 
       <div className="input-group">
         <label>
-          Gas Throughput
+          Throughput
           <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
         </label>
         <div
@@ -44,7 +41,7 @@ const AGRForm = ({ data, onChange, sourceType }) => {
       {sourceType === "specific" && (
         <>
           <div className="input-group">
-            <label>Solvent Type</label>
+            <label>Solvent</label>
             <CustomDropdown
               options={[
                 { value: "MEA", label: "Monoethanolamine (MEA)" },
@@ -97,7 +94,7 @@ const AGRForm = ({ data, onChange, sourceType }) => {
           </div>
 
           <div className="input-group">
-            <label>Gas CH4 Content (%)</label>
+            <label>CH₄ (%)</label>
             <input
               type="number"
               className="mole-input"
@@ -112,7 +109,7 @@ const AGRForm = ({ data, onChange, sourceType }) => {
           </div>
 
           <div className="input-group">
-            <label>Methane Slip Factor (mol/mol CO2)</label>
+            <label>CH₄ slip (fraction of inlet CH₄)</label>
             <input
               type="number"
               className="mole-input"
@@ -123,66 +120,45 @@ const AGRForm = ({ data, onChange, sourceType }) => {
                   : ""
               }
               onChange={(e) => onChange("methane_slip_factor", e.target.value)}
-              placeholder="e.g. 0.00040 (API Table 6-5)"
-              step="0.00001"
+              placeholder="blank = Compendium factor"
+              step="any"
             />
-            <div
-              style={{
-                fontSize: "0.75rem",
-                color: "#9ca3af",
-                marginTop: "4px",
-              }}
-            >
-              Default: MEA=0.00035, DEA=0.00030, MDEA=0.00040, DGA=0.00035,
-              Sulfinol=0.00095
+          </div>
+
+          {/* BUG-090: the old "flash gas recycled" / "routed to flare" checkboxes were read by no
+              server code. Control is now sent as the keys the calculator uses. */}
+          <div className="input-group">
+            <label>Offgas control</label>
+            <CustomDropdown
+              options={[
+                { value: "vent", label: "Vented (uncontrolled)" },
+                { value: "flare", label: "Routed to flare" },
+                { value: "thermal_oxidizer", label: "Thermal oxidizer / incinerator" },
+                { value: "claus", label: "Claus sulfur recovery unit" },
+                { value: "agi", label: "Acid gas injection / CCS" },
+              ]}
+              value={data.agr_control_type || "vent"}
+              onChange={(val) => onChange("agr_control_type", val)}
+            />
+          </div>
+          {(data.agr_control_type || "vent") !== "vent" && (
+            <div className="input-group">
+              <label>
+                Control Efficiency (%)
+                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+              </label>
+              <input
+                type="number"
+                className="mole-input"
+                min="0"
+                max="100"
+                value={data.agr_control_eff ?? ""}
+                onChange={(e) => onChange("agr_control_eff", e.target.value)}
+                placeholder="e.g. 98"
+                required
+              />
             </div>
-          </div>
-
-          <div
-            className="checkbox-group"
-            style={{
-              display: "flex",
-              gap: "8px",
-              alignItems: "center",
-              marginTop: "12px",
-            }}
-          >
-            <input
-              type="checkbox"
-              checked={data.flash_gas_recycled || false}
-              onChange={(e) => onChange("flash_gas_recycled", e.target.checked)}
-              id="flash_gas_recycled"
-            />
-            <label
-              htmlFor="flash_gas_recycled"
-              style={{ margin: 0, fontWeight: "normal" }}
-            >
-              Flash Gas Recycled / Recovered
-            </label>
-          </div>
-
-          <div
-            className="checkbox-group"
-            style={{
-              display: "flex",
-              gap: "8px",
-              alignItems: "center",
-              marginTop: "8px",
-            }}
-          >
-            <input
-              type="checkbox"
-              checked={data.offgas_to_flare || false}
-              onChange={(e) => onChange("offgas_to_flare", e.target.checked)}
-              id="offgas_to_flare"
-            />
-            <label
-              htmlFor="offgas_to_flare"
-              style={{ margin: 0, fontWeight: "normal" }}
-            >
-              Acid Gas / Offgas Routed to Flare
-            </label>
-          </div>
+          )}
         </>
       )}
     </div>

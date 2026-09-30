@@ -23,7 +23,15 @@ export default defineConfig([
       },
     },
     rules: {
-      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
+      // ^motion$: framer-motion's <motion.div> is a JSX usage core ESLint does not track
+      'no-unused-vars': ['error', { varsIgnorePattern: '^([A-Z_]|motion$)' }],
+      // provider files export their hook next to the provider component
+      'react-refresh/only-export-components': ['error', { allowConstantExport: true, allowExportNames: ['useToast', 'useAuth', 'useLayout'] }],
     },
+  },
+  {
+    // Node-side files: build config, Playwright setup and specs
+    files: ['vite.config.js', 'generate_storage_state.js', 'e2e/**/*.js', 'playwright.config.js'],
+    languageOptions: { globals: { ...globals.node, ...globals.browser } },
   },
 ])

@@ -136,7 +136,6 @@ const EmissionsMap = () => {
   const [loadingSurveys, setLoadingSurveys] = useState(false);
   const [exportingOgmp, setExportingOgmp] = useState(false);
   const [satelliteAlert, setSatelliteAlert] = useState(null);
-  const [lastPollTime, setLastPollTime] = useState(null);
   const satellitePollRef = useRef(null);
   const selectedFacilityRef = useRef(null);
 
@@ -368,7 +367,6 @@ const EmissionsMap = () => {
     try {
       const res = await api.post("/satellite/sentinel5p/poll-new-passes");
       const { new_passes = 0, detections = [] } = res.data || {};
-      setLastPollTime(new Date());
       if (new_passes > 0 && Array.isArray(detections) && detections.length > 0) {
         const sorted = [...detections].sort(
           (a, b) => (b.anomaly_ppb || 0) - (a.anomaly_ppb || 0)
@@ -390,7 +388,7 @@ const EmissionsMap = () => {
           fetchFacilityData(curr);
         }
       }
-    } catch (err) {
+    } catch {
       // Silently ignore background polling network blips
     }
   }, [fetchFacilityData]);
@@ -480,7 +478,7 @@ const EmissionsMap = () => {
       }
       setCopiedCoords(true);
       setTimeout(() => setCopiedCoords(false), 2000);
-    } catch (err) {
+    } catch {
       try {
         const textArea = document.createElement("textarea");
         textArea.value = text;
@@ -493,7 +491,7 @@ const EmissionsMap = () => {
         document.body.removeChild(textArea);
         setCopiedCoords(true);
         setTimeout(() => setCopiedCoords(false), 2000);
-      } catch (fallbackErr) {
+      } catch {
         toast.info(`Coordinates: ${text}`);
       }
     }
@@ -1517,6 +1515,7 @@ const EmissionsMap = () => {
             )}
           </div>
 
+          {loadingSurveys && <div className="card-section-title">Loading recorded surveys…</div>}
           {/* REAL DATABASE VERIFIED OGMP SURVEYS SECTION (IF RECORDED) */}
           {existingSurveys.length > 0 && (
             <div className="dossier-surveys-card">

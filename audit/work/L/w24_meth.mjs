@@ -1,0 +1,14 @@
+import { launch, session, shot, UI, sleep, pick } from "./lib.mjs";
+const b = await launch(); const { page, log } = await session(b, "admin");
+await page.goto(UI + "/methane-intensity"); await sleep(5000);
+const all = (await page.locator(".custom-dropdown .dropdown-selected").allInnerTexts()).map(s => s.trim()); console.log("dds", all);
+await pick(page, null, "AUDIT-L Plant", { idx: all.findIndex(t => t.includes("All Regions")) }); await sleep(3000);
+const all2 = (await page.locator(".custom-dropdown .dropdown-selected").allInnerTexts()).map(s => s.trim());
+await pick(page, null, "2025", { idx: all2.findIndex(t => /All Years|^\d{4}$/.test(t)), exact: true }).catch(e => console.log("yr", e.message.slice(0, 100))); await sleep(3000);
+const t = await page.locator("main, body").first().innerText();
+console.log(t.slice(t.indexOf("Methane"), t.indexOf("Methane") + 1500).replace(/\n+/g, " | "));
+const s = [...log.api].reverse().find(a => a.url.includes("intensity-stats"));
+const r = (s?.body || []).find(x => x.facility_id === 173);
+console.log("API:", s?.url, JSON.stringify(r && { total_ch4: r.total_ch4, methane_loss_rate_pct: r.methane_loss_rate_pct, ch4_intensity: r.ch4_intensity, ch4_fugitive: r.ch4_fugitive, total_gas: r.total_gas, ogmp_target_status: r.ogmp_target_status }));
+await shot(page, "w24_meth", true);
+await b.close();

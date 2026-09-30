@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import api from '../api';
 import { useToast } from '../components/Toast';
-import { useAuth } from '../context/AuthContext';
 import { Database, RefreshCw, CheckCircle, AlertCircle, HardDrive } from 'lucide-react';
 import './ManageData.css';
 
 const ErpSync = () => {
-    const { user } = useAuth();
     const toast = useToast();
     const [isSyncing, setIsSyncing] = useState(false);
     const [syncResult, setSyncResult] = useState(null);
