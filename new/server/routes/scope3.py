@@ -171,7 +171,7 @@ def create_scope3_emission():
         final_uncertainty = default_scope3_uncertainty(co2e_val)
 
     emission.uncertainty = final_uncertainty
-    calc_method = data.get("calculation_method") or f"Scope 3 - Category {emission.category}"
+    calc_method = data.get("calculation_method") or f"Scope 3 - {emission.category}"  # category is "Category N"
     emission.calculation_method = calc_method
     emission.data_quality = data.get("data_quality")
     emission.notes = data.get("notes")

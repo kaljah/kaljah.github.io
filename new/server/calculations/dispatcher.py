@@ -964,8 +964,11 @@ class CalculationDispatcher:
                     comb_eff = single_eff if comb_eff is None else comb_eff
                     dest_eff = single_eff if dest_eff is None else dest_eff
                 ef_n2o_val = emission_factors.get("n2o") if emission_factors.get("n2o") not in [None, "", "-"] else (
-                    emission_factors.get("ef_n2o") if emission_factors.get("ef_n2o") not in [None, "", "-"] else flat_inputs.get("ef_n2o", 0.0)
+                    emission_factors.get("ef_n2o") if emission_factors.get("ef_n2o") not in [None, "", "-"] else flat_inputs.get("ef_n2o")
                 )
+                # No N2O factor: the calculator's API Compendium Table 5-3 default (kg/MMBtu of gas
+                # flared) applies. An explicit 0 used to be passed, so Tier 3 flaring had no N2O.
+                n2o_given = ef_n2o_val not in (None, "", "-")
 
                 return calculator.calculate(
                     gas_volume=vol_m3,
@@ -975,10 +978,10 @@ class CalculationDispatcher:
                     hhv=float(hhv_val) if hhv_val else None,
                     ef_unit=flat_inputs.get(
                         "ef_unit", emission_factors.get("unit", "kg/unit")
-                    ),
+                    ) if n2o_given else None,
                     fuel_unit="m3",
                     fuel_type=flat_inputs.get("fuel_type"),
-                    ef_n2o=float(ef_n2o_val or 0.0),
+                    ef_n2o=float(ef_n2o_val) if n2o_given else None,
                     combustion_efficiency=comb_eff,
                     destruction_efficiency=dest_eff,
                     operating_temperature=flat_inputs.get("operating_temperature")
