@@ -576,7 +576,8 @@ class TestTier3LiquidsUnloading(unittest.TestCase):
         v_tubing = (math.pi / 4.0) * (d_m**2) * depth_m
         p_abs = to_psia(self.press_psig, "psig")
         t_abs = to_kelvin(self.temp_f, "F")
-        v_std = v_tubing * (p_abs / STD_PRESSURE_PSIA) * (STD_TEMP_K / max(1.0, t_abs))
+        # only the gas above atmospheric pressure leaves the well (Exhibit 6-8, P in psig)
+        v_std = v_tubing * ((p_abs - STD_PRESSURE_PSIA) / STD_PRESSURE_PSIA) * (STD_TEMP_K / max(1.0, t_abs))
         total_v = v_std * self.events
         ch4_vol = total_v * self.ch4_frac
         self.expected_ch4 = ch4_vol * CONVERSIONS["density_ch4"] / 1000.0
@@ -1052,12 +1053,25 @@ class TestProcessRowIntegration(unittest.TestCase):
     Uses mock objects to avoid needing a real database.
     """
 
+    def setUp(self):
+        # _process_row reads the active GWP and factor tables through the app
+        from app import app
+
+        self._ctx = app.app_context()
+        self._ctx.push()
+
+    def tearDown(self):
+        self._ctx.pop()
+
     def _make_facility(self, fid=1, name="Test Plant"):
         class MockFacility:
             id = fid
             activity = "Exploration & Production"
             division = "Production"
             field = "North Field"
+            region = "North"
+            location = "North"
+            segment = "Upstream"
 
         f = MockFacility()
         f.name = name
@@ -1102,7 +1116,7 @@ class TestProcessRowIntegration(unittest.TestCase):
         self.assertEqual(errors, [], msg=f"Expected no errors, got: {errors}")
         self.assertIsNotNone(emission)
         self.assertEqual(emission.facility_id, 1)
-        self.assertEqual(emission.process_type, "Combustion")
+        self.assertEqual(emission.process_type, "combustion")  # canonical process type, as the manual form stores it
         self.assertEqual(emission.fuel_type, "Natural Gas")
         self.assertEqual(emission.quantity, 10000)
         self.assertEqual(emission.unit, "scf")

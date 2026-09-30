@@ -105,3 +105,123 @@ def test_scope3_ambiguous_or_unknown_mass_is_refused(unit):
 
     with pytest.raises(ValidationError):
         compute_scope3_co2e(1000, 2.5, unit)
+
+
+# -- Round 2: remaining bugs ----------------------------------------------------------------------
+
+def test_tank_measured_gor_zero_is_zero():
+    from calculations.dispatcher import CalculationDispatcher
+
+    d = CalculationDispatcher()
+    base = dict(amount=1000, unit="bbl", factor_source="specific", tank_ch4_content=50)
+    zero = d.dispatch("tank_flashing", dict(base, tank_gor=0), {}, {})
+    assert zero["total_co2e"] == 0  # was the Table 6-22 default (3.3 t)
+    default = d.dispatch("tank_flashing", dict(base), {}, {})
+    assert default["total_co2e"] > 0  # no GOR given: the table default still applies
+
+
+def test_completion_zero_flowback_duration_is_zero():
+    from calculations.vented import CompletionFlowbackCalculator
+
+    r = CompletionFlowbackCalculator().calculate(tier="tier2", calculation_method="production_rate_duration",
+                                                 daily_production_rate=1000, prod_rate_unit="mcf/day",
+                                                 flowback_duration_hours=0, ch4_content=0.8)
+    assert r["results"]["ch4"]["value"] == 0  # 0 h was read as 24 h
+
+
+EMAIL2 = "deep_dive_round2@ghg.com"
+
+
+@pytest.fixture
+def admin2(client):
+    from extensions import db
+    from models import User
+
+    with flask_app.app_context():
+        if not User.query.filter_by(email=EMAIL2).first():
+            u = User(email=EMAIL2, fullName="Deep Dive", orgName="Audit", sector="Oil & Gas", role="admin",
+                     location="Global")
+            u.set_password("DeepDive0930!")
+            db.session.add(u)
+            db.session.commit()
+    assert client.post("/api/auth/login", json={"email": EMAIL2, "password": "DeepDive0930!"}).status_code == 200
+    return client
+
+
+def _run_upload(text, scope, email=EMAIL2):
+    import os
+    import tempfile
+    import uuid
+    from background_processor import _process_file_thread, get_job_status, upload_jobs, upload_jobs_lock
+    from models import User
+
+    with flask_app.app_context():
+        uid = User.query.filter_by(email=email).first().id
+    fd, path = tempfile.mkstemp(suffix=".csv")
+    os.write(fd, text.encode())
+    os.close(fd)
+    job = "dd-" + uuid.uuid4().hex
+    with upload_jobs_lock:
+        upload_jobs[job] = {"status": "processing", "progress": 0, "processed": 0, "total": 0, "errors": [],
+                            "skipped": [], "error_csv_path": None, "anomalies": []}
+    _process_file_thread(app=flask_app, job_id=job, file_path=path, original_filename="t.csv", user_id=uid,
+                         global_factor_type="auto", provided_mapping=None, scope=scope, overwrite_duplicates=True)
+    return get_job_status(job)
+
+
+def test_csv_row_with_more_values_than_header_is_refused(admin2):
+    from extensions import db
+    from models import Emission, Facility
+
+    with flask_app.app_context():
+        if not Facility.query.filter_by(name="Deep Dive Shift").first():
+            db.session.add(Facility(name="Deep Dive Shift", location="Algeria", country="Algeria", region="DDS",
+                                    division="Production", field="DDS", segment="Upstream", activity="Upstream"))
+            db.session.commit()
+    text = ("Facility,Date,Process,Fuel,Quantity,Unit,Factor_Type\n"
+            "Deep Dive Shift,2014-01,combustion,Diesel,10,gal,default\n"
+            "Deep Dive Shift,2014-02,combustion,Diesel,,10,gal,default\n"      # extra comma: shifted
+            "Deep Dive Shift,2014-03,combustion,Diesel,10,gal,default,,\n")    # trailing blanks: fine
+    st = _run_upload(text, 1)
+    assert st["skipped_count"] == 1 and "extra comma" in st["skipped_preview"][0]["reason"]
+    with flask_app.app_context():
+        fid = Facility.query.filter_by(name="Deep Dive Shift").first().id
+        assert {e.month for e in Emission.query.filter_by(facility_id=fid, year=2014)} == {1, 3}
+
+
+def test_custom_factor_parent_fuel_is_a_catalog_fuel(admin2):
+    base = {"co2_factor": 73.96, "unit": "kg/MMBtu", "hhv_factor": 138000}
+    r = admin2.post("/api/custom-factors", json=dict(base, name="DD diesel typo", parent_fuel="Deisel"))
+    assert r.status_code == 400 and "catalog fuel" in r.get_json()["error"]
+    r = admin2.post("/api/custom-factors", json=dict(base, name="DD diesel ok", parent_fuel="diesel"))
+    assert r.status_code in (200, 201), r.get_json()
+    from models import CustomFactor
+
+    with flask_app.app_context():
+        assert CustomFactor.query.filter_by(name="DD diesel ok").first().parent_fuel == "Diesel (No. 2 Fuel Oil)"
+
+
+def test_chp_edit_recalculates_or_is_refused(admin2):
+    from extensions import db
+    from models import Facility
+
+    with flask_app.app_context():
+        if not Facility.query.filter_by(name="Deep Dive CHP").first():
+            db.session.add(Facility(name="Deep Dive CHP", location="Algeria", country="Algeria", region="DDC",
+                                    division="Production", field="DDC", segment="Upstream", activity="Upstream"))
+            db.session.commit()
+        fid = Facility.query.filter_by(name="Deep Dive CHP").first().id
+    ci = {"total_emissions": 1000, "heat_output": 5000, "power_output": 800, "allocation_method": "energy_content"}
+    r = admin2.post("/api/scope2", json={"facility_id": fid, "year": 2013, "month": 1, "source_type": "cogen_allocation",
+                                          "amount": 1000, "calc_inputs": {"cogen_allocation": ci}})
+    assert r.status_code == 201
+    rid = (r.get_json().get("emission") or r.get_json().get("data") or r.get_json())["id"]
+    assert admin2.put(f"/api/scope2/{rid}", json={"heat_mmbtu": 2500}).status_code == 422
+    r = admin2.put(f"/api/scope2/{rid}", json={"calc_inputs": {"cogen_allocation": dict(ci, heat_output=2500)}})
+    assert r.status_code == 200
+    from models import Scope2Emission
+
+    with flask_app.app_context():
+        e = db.session.get(Scope2Emission, rid)
+        assert e.co2e == pytest.approx(1000 * 2500 / (2500 + 800 * 3.412142), abs=1e-4)
+        assert e.heat_mmbtu == 2500

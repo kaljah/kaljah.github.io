@@ -575,6 +575,7 @@ def _process_file_thread(
 
             headers = []
             rows_iterator = None
+            csv_source = False  # CSV cells are positional by delimiter: an extra one shifts the row
             decimal_comma = False  # set for semicolon CSVs (French / European Excel exports)
 
             # 1. Open File & Extract Headers
@@ -657,6 +658,7 @@ def _process_file_thread(
                 headers = [h.strip() for h in headers]
                 header_row_no = 1
                 rows_iterator = reader
+                csv_source = True
                 total_rows = max(0, sum(1 for ln in decoded_text.split("\n") if ln.strip()) - 1)
 
             _update_job(job_id, total=total_rows)
@@ -826,8 +828,17 @@ def _process_file_thread(
                                     mapped_data[k] = v
                             break
 
+                # a CSV row with more values than the header (an extra delimiter) is shifted: every value
+                # after the extra one sits under the wrong column. It was read silently (deep-dive audit).
+                overflow = csv_source and any(
+                    c is not None and str(c).strip() for c in raw_row[len(headers):])
+
                 # Process Row based on scope
-                if str(scope) == "2":
+                if overflow:
+                    emission_obj = None
+                    row_errors = [f"Row {line_no} has {len(raw_row)} values but the header has {len(headers)} "
+                                  "columns: check for an extra comma / delimiter (values would shift columns)"]
+                elif str(scope) == "2":
                     emission_obj, row_errors = _process_row_scope2(
                         mapped_data,
                         user_id,
@@ -2131,9 +2142,12 @@ def _process_row_custom_factors(row, user_id, batch_names=None):
             "co2_factor", "ch4_factor", "n2o_factor", "co_factor", "hhv_factor",
             "uncertainty", "co2_uncertainty", "ch4_uncertainty", "n2o_uncertainty")}
         _require_some_factor(vals["co2_factor"], vals["ch4_factor"], vals["n2o_factor"])
+        from routes.custom_factors import _canonical_parent_fuel
+
+        parent_fuel = _canonical_parent_fuel(row.get("parent_fuel"))
     except ValueError as err:
         return None, [str(err)]
-    row = dict(row, name=name, **vals)
+    row = dict(row, name=name, parent_fuel=parent_fuel, **vals)
     if batch_names is not None:
         batch_names.add(name.lower())
 

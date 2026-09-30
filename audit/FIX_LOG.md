@@ -157,3 +157,7 @@ See audit/CALC_CSV_AUDIT_2026-09-30.md part 3 (fixes 15-17). Server: background_
 ## 2026-09-30 - Deep dive through the running app
 
 See audit/CALC_CSV_AUDIT_2026-09-30.md part 6 (fixes 26-32). Server: emission_factors_api2021.py and services/scope1_calc.py (LNG unverified_basis refusal), calculations/legacy_engine.py (completions volume vs events), routes/scope2.py (steam boiler efficiency %, unknown unit, loss range; CHP fuel CH4/N2O and stored heat), calculations/units.py (Scope 3 numerator tokens, k$ / kUSD), background_processor.py (Scope 3 unit error as a row error). Client: pages/DashboardEnhanced.jsx and components/BatchReviewWizard.jsx (default filters only when shared by every accessible facility). Tests: tests/test_deep_dive_2026_09_30.py (25).
+
+## 2026-09-30 - Deep dive round 2
+
+See audit/CALC_CSV_AUDIT_2026-09-30.md fixes 33-39. Server: calculations/vented_production.py (tank GOR 0, pump hours / events), calculations/vented.py (flowback duration 0), calculations/vented_midstream.py / vented_downstream.py / vented_exploration.py / vented_ccus_transport.py / vented_lng_distribution.py (zero-as-missing defaults), background_processor.py (CSV overflow rows, custom factor parent_fuel), routes/custom_factors.py (_canonical_parent_fuel), routes/emissions.py and services/scope1_calc.py (parent lookup), routes/scope2.py (CHP edit). Tests: tests/test_deep_dive_2026_09_30.py (+5); legacy test_emission_calculations.py and test_csv_uploader.py repaired.
