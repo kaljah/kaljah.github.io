@@ -345,11 +345,6 @@ def login():
     password_input = str(data.get("password", ""))
 
     user = User.query.filter(db.func.lower(User.email) == email_input.lower()).first()
-    if not user:
-        if email_input.lower() in ["a", "a@a"]:
-            user = User.query.filter(User.email.in_(["a", "a@a"])).first()
-        elif email_input.lower() in ["z", "z@z"]:
-            user = User.query.filter(User.email.in_(["z", "z@z"])).first()
 
     if user and user.check_password(password_input):
         if user.status != "active":
