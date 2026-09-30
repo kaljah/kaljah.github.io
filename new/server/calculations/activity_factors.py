@@ -218,6 +218,10 @@ class ActivityFactorCalculator(BaseCalculator):
 
         basis = row["basis"]
         x_ch4 = _frac(ch4_content)
+        if x_ch4 is not None and ch4_content not in (None, "") and float(ch4_content) <= 1.0:
+            # a CH4 content of 0.85 is the fraction 85 %, not 0.85 % (it made CH4 100x low); vented
+            # gas under 1 % CH4 does not occur for these factors
+            x_ch4 = float(ch4_content)
         x_co2 = _frac(co2_content) or 0.0
         gas = row["gas_scf"]
         if row["toc"]:
