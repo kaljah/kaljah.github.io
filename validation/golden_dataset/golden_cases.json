@@ -389,15 +389,15 @@
     "expected_final_result": {
       "co2": 15.8185,
       "ch4": 0.0,
-      "n2o": 0.0,
-      "co2e": 15.8185,
+      "n2o": 3.602096e-05,
+      "co2e": 15.828045554,
       "vol_m3_std": 10000.0,
       "eta_c": 1.0,
       "eta_d": 1.0
     },
     "expected_units": "tCO2e",
     "tolerance": 1e-05,
-    "assumptions": "100% destruction efficiency must yield exactly 0.0 unburnt CH4",
+    "assumptions": "N2O at the API Compendium Table 5-3 flare default (0.0001 kg/MMBtu, 1,020 Btu/scf; audit 2026-09-30). 100% destruction efficiency must yield exactly 0.0 unburnt CH4",
     "is_invalid": false,
     "expected_error": null
   },
@@ -429,15 +429,15 @@
     "expected_final_result": {
       "co2": 0.0,
       "ch4": 5.76725,
-      "n2o": 0.0,
-      "co2e": 161.483,
+      "n2o": 3.602096e-05,
+      "co2e": 161.492545554,
       "vol_m3_std": 10000.0,
       "eta_c": 0.0,
       "eta_d": 0.0
     },
     "expected_units": "tCO2e",
     "tolerance": 1e-05,
-    "assumptions": "0% combustion efficiency yields 0.0 combusted CO2 and 100% unburnt CH4",
+    "assumptions": "N2O at the API Compendium Table 5-3 flare default (0.0001 kg/MMBtu, 1,020 Btu/scf; audit 2026-09-30). 0% combustion efficiency yields 0.0 combusted CO2 and 100% unburnt CH4",
     "is_invalid": false,
     "expected_error": null
   },
