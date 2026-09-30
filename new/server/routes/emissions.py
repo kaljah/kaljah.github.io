@@ -2274,7 +2274,8 @@ def get_excel_template():
         error="Please enter a date in YYYY-MM format (e.g. 2024-01).",
     )
     ws_data.add_data_validation(dv_date)
-    dv_date.sqref = f"{COL['Date\n(YYYY-MM)']}3:{COL['Date\n(YYYY-MM)']}1048576"
+    date_col = COL["Date\n(YYYY-MM)"]
+    dv_date.sqref = f"{date_col}3:{date_col}1048576"
 
     dv_qty = DataValidation(
         type="decimal",
