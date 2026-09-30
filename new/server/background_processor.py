@@ -899,14 +899,6 @@ def _process_file_thread(
             except Exception:
                 pass
 
-            _update_job(
-                job_id,
-                processed=processed,
-                progress=100,
-                status="completed",
-                anomalies=anomaly_rows,
-            )
-
             # --- Maker-Checker: Notify reviewers for bulk Scope 1/2/3 uploads ---
             with upload_jobs_lock:
                 _n_skipped = len(upload_jobs.get(job_id, {}).get("skipped", []))
@@ -950,11 +942,24 @@ def _process_file_thread(
             # Generate Error CSV if needed
             if skipped_rows:
                 error_file = file_path + "_errors.csv"
-                with open(error_file, "w", newline="", encoding="utf-8") as ef:
-                    writer = csv.writer(ef)
-                    writer.writerow(error_headers)
-                    writer.writerows(skipped_rows)
-                _update_job(job_id, error_csv_path=error_file)
+                try:
+                    with open(error_file, "w", newline="", encoding="utf-8") as ef:
+                        writer = csv.writer(ef)
+                        writer.writerow(error_headers)
+                        writer.writerows(skipped_rows)
+                    _update_job(job_id, error_csv_path=error_file)
+                except OSError:
+                    traceback.print_exc()  # the import itself is committed; only the download is missing
+
+            # completed only once the error file and the reviewer notices exist: a client polling the
+            # status used to see "completed" and get a 404 for the error file it was about to write
+            _update_job(
+                job_id,
+                processed=processed,
+                progress=100,
+                status="completed",
+                anomalies=anomaly_rows,
+            )
 
         except Exception as e:
             traceback.print_exc()
@@ -1099,6 +1104,10 @@ _MAP_BY_SCOPE = {
         ("unit", "heat unit"),
         ("meter", "meter"),
         ("meter", "meter id"),
+        ("boiler_eff", "boiler efficiency"),
+        ("boiler_eff", "boiler eff"),
+        ("trans_loss", "transmission loss"),
+        ("trans_loss", "trans loss"),
     ],
     "3": [
         ("facility_name", "region"),
@@ -1329,14 +1338,24 @@ def _process_row_scope2(
         if u not in known_steam_units:
             errors.append(f"Row {row_idx}: Unknown unit '{unit}' for indirect steam")
             return None, errors
-        boiler_eff = _clean_float(row.get("boiler_eff"), default=0.80)
-        if boiler_eff > 1.0:
-            boiler_eff /= 100.0  # entered as a percentage
-        trans_loss = _clean_float(row.get("trans_loss"), default=0.0)
-        if trans_loss > 1.0:
-            trans_loss /= 100.0
-        if not 0 < boiler_eff <= 1.0 or not 0 <= trans_loss < 1.0:
-            return None, [f"Row {row_idx}: boiler efficiency must be in (0, 1] and transmission loss in [0, 1)"]
+        # boiler efficiency: a fraction (0.85) or a percentage (85) - unambiguous, no boiler runs at 1 %.
+        # transmission loss: always a percentage in the file (0.9 = 0.9 %); it used to be read as a
+        # fraction at or below 1, so 0.9 % became 90 % and 1 % was rejected
+        raw_be = _first(row, "boiler_eff", "boiler_efficiency", "boiler_eff_pct")
+        boiler_eff = 0.80 if raw_be in (None, "") else _clean_float(raw_be, default=None)
+        if boiler_eff is None:
+            return None, [f"Row {row_idx}: boiler efficiency '{raw_be}' is not a number (e.g. 85 or 0.85)"]
+        if boiler_eff > 1.0 or "%" in str(raw_be):
+            boiler_eff /= 100.0
+        raw_tl = _first(row, "trans_loss", "trans_loss_pct", "transmission_loss")
+        trans_loss = 0.0 if raw_tl in (None, "") else _clean_float(raw_tl, default=None)
+        if trans_loss is None:
+            return None, [f"Row {row_idx}: transmission loss '{raw_tl}' is not a number (a percentage, e.g. 5)"]
+        trans_loss /= 100.0
+        if not 0 < boiler_eff <= 1.0:
+            return None, [f"Row {row_idx}: boiler efficiency must be above 0 and at most 100 % (got {raw_be})"]
+        if not 0 <= trans_loss < 1.0:
+            return None, [f"Row {row_idx}: transmission loss is a percentage from 0 to below 100 (got {raw_tl})"]
         ci = {"trans_loss": trans_loss}
         boiler_ef = _first(row, "ef_co2", "factor", "emission_factor")
         if boiler_ef is not None:
@@ -1454,6 +1473,20 @@ def _process_row_scope2(
     return emission, errors
 
 
+
+def _scope3_uncertainty(row, co2e, row_idx):
+    """(value, error): the file's uncertainty (fraction 0-2 or a percentage), else the form default."""
+    from routes.scope3 import default_scope3_uncertainty
+
+    if row.get("uncertainty") in (None, ""):
+        return default_scope3_uncertainty(co2e), None
+    unc = _clean_float(row.get("uncertainty"), default=None)
+    if unc is not None and unc > 2:
+        unc /= 100.0
+    if unc is None or not 0 <= unc <= 2:
+        return None, f"Row {row_idx}: uncertainty must be a fraction (0-2) or a percentage"
+    return unc, None
+
 def _process_row_scope3_eeio(
     row,
     user_id,
@@ -1504,10 +1537,13 @@ def _process_row_scope3_eeio(
                                f"Scope 3 emission for facility '{facility.name}' ({year}-{month:02d}, Category 1, NAICS {naics})")
     if action == "error":
         return None, [existing]
+    unc, unc_err = _scope3_uncertainty(row, tonnes_co2e, row_idx)
+    if unc_err:
+        return None, [unc_err]
     values = {
         "sub_category": sub_cat, "activity_data": spend_usd, "unit": "USD",
         "emission_factor": factor_data["kg_co2e_per_usd"], "co2e": tonnes_co2e,
-        "notes": row.get("notes", "Bulk Imported via EEIO"),
+        "notes": row.get("notes", "Bulk Imported via EEIO"), "uncertainty": unc,
     }
     if action == "update":
         obj = _resolve_existing(Scope3Emission, existing)
@@ -1525,6 +1561,7 @@ def _process_row_scope3_eeio(
         unit="USD",
         emission_factor=factor_data["kg_co2e_per_usd"],  # kg CO2e per USD, like the manual form
         co2e=tonnes_co2e,
+        uncertainty=unc,
         calculation_method="Spend-based (EEIO)",
         data_quality="Average-data method",
         notes=row.get("notes", "Bulk Imported via EEIO"),
@@ -1644,9 +1681,12 @@ def _process_row_scope3(
                                f"Scope 3 emission for facility '{facility.name}' ({year}-{month:02d}, {cat_str}, '{sub_cat or ''}')")
     if action == "error":
         return None, [existing]
+    unc, unc_err = _scope3_uncertainty(row, co2e, row_idx)
+    if unc_err:
+        return None, [unc_err]
     values = {
         "category": cat_str, "sub_category": sub_cat, "activity_data": amt, "unit": row.get("unit"),
-        "emission_factor": ef, "co2e": co2e, "notes": row.get("notes"),
+        "emission_factor": ef, "co2e": co2e, "notes": row.get("notes"), "uncertainty": unc,
     }
     if action == "update":
         obj = _resolve_existing(Scope3Emission, existing)
@@ -1664,6 +1704,7 @@ def _process_row_scope3(
         unit=row.get("unit"),
         emission_factor=ef,
         co2e=co2e,
+        uncertainty=unc,
         notes=row.get("notes", "Bulk Imported"),
         created_by=user_id,
         status="Pending",  # Maker-Checker: awaits reviewer approval

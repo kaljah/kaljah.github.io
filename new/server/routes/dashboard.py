@@ -261,12 +261,18 @@ def get_batch_dashboard_data():
                     include_pending=include_pending,
                     gwp_horizon=gwp_horizon,
                 )
+            # same population as the other panels (the block used to ignore every filter)
+            unc_fids = _filtered_facility_ids(allowed_fids, activity, division, segment)
+            unc_fid = int(facility_id) if str(facility_id or "").isdigit() else None
+            if unc_fid is not None and unc_fids is not None and unc_fid not in unc_fids:
+                unc_fid = -1  # outside the user's scope or the other filters: no records
             f_uncertainty = executor.submit(
                 _run_in_app_ctx,
                 app,
                 _query_uncertainty,
                 year=uncertainty_year,
-                allowed_fids=allowed_fids,
+                allowed_fids=unc_fids,
+                facility_id=unc_fid,
             )
             f_years = executor.submit(_run_in_app_ctx, app, _query_available_years)
 
@@ -1240,6 +1246,24 @@ def get_uncertainty_analysis():
         )
 
     return jsonify(result)
+
+
+def _filtered_facility_ids(allowed_fids, activity=None, division=None, segment=None):
+    """Facility ids for the activity / division / segment filters within the user's scope, as a
+    sorted tuple (hashable for the cache); None = unrestricted."""
+    if all(v in (None, "", "all") for v in (activity, division, segment)):
+        return tuple(sorted(allowed_fids)) if allowed_fids is not None else None
+    q = Facility.query
+    if activity not in (None, "", "all"):
+        q = q.filter(Facility.activity == activity)
+    if division not in (None, "", "all"):
+        q = q.filter(Facility.division == division)
+    if segment not in (None, "", "all"):
+        q = q.filter(Facility.segment == segment)
+    ids = {f.id for f in q.with_entities(Facility.id).all()}
+    if allowed_fids is not None:
+        ids &= set(allowed_fids)
+    return tuple(sorted(ids))
 
 
 @cached(

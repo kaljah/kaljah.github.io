@@ -53,8 +53,27 @@ def default_rel_1sigma(scope, process_type="", calc_method="", factor_source="")
     return 0.20 if diffuse else 0.10
 
 
-def _tier(u95):
-    return "Tier 3" if u95 <= 0.10 else ("Tier 2" if u95 <= 0.30 else "Tier 1")
+def _process_label(process_type):
+    """Readable Scope 1 process name (the page showed raw keys such as "tank_flashing")."""
+    from services.scope1_calc import PROCESS_LABELS
+
+    p = (process_type or "").strip()
+    if not p:
+        return "Other Scope 1"
+    return PROCESS_LABELS.get(p.lower()) or p.replace("_", " ").strip().capitalize()
+
+
+def _band(u95):
+    """Uncertainty band of a record at 95 % (the page legend: low <= 10 %, medium <= 30 %, high)."""
+    return "low" if u95 <= 0.10 else ("medium" if u95 <= 0.30 else "high")
+
+
+def _method_tier(factor_source):
+    """Scope 1 calculation tier from the factor source: catalog / library factors are Tier 1, custom
+    (regional / lab) factors Tier 2, site-specific engineering or measured inputs Tier 3. The page used
+    to label the uncertainty bands as tiers (a 5 % catalog record showed as "Tier 3")."""
+    src = (factor_source or "default").strip().lower()
+    return {"custom": "Tier 2", "specific": "Tier 3"}.get(src, "Tier 1")
 
 
 def inventory_uncertainty(year, allowed_fids=None, facility_id=None, scope="all", statuses=("Verified",)):
@@ -71,7 +90,8 @@ def inventory_uncertainty(year, allowed_fids=None, facility_id=None, scope="all"
     cat_of = {}
     names = defaultdict(lambda: defaultdict(float))
     flagged = 0
-    tier_e = defaultdict(float)
+    band_e = defaultdict(float)
+    tier_s1 = defaultdict(float)
 
     def restrict(q, model):
         q = q.filter(model.year == year, model.status.in_(statuses))
@@ -96,7 +116,7 @@ def inventory_uncertainty(year, allowed_fids=None, facility_id=None, scope="all"
             if sum(e_gas.values()) <= 0:
                 e_gas = {"co2": e_tot, "ch4": 0.0, "n2o": 0.0}  # legacy rows without the gas split
             key = ("S1", r.ef_key or f"{r.process_type}|{r.fuel_type}")
-            cat_of[key] = r.process_type or "Other Scope 1"
+            cat_of[key] = _process_label(r.process_type)
             dflt = default_rel_1sigma(1, r.process_type, r.calc_method, r.factor_source)
             u_ad, bad_ad = _valid(r.uncertainty_ad)
             has_components = u_ad is not None
@@ -115,8 +135,9 @@ def inventory_uncertainty(year, allowed_fids=None, facility_id=None, scope="all"
             if has_components:
                 ad_sq[key] += (u_ad * e_tot) ** 2
             tot[key] += e_tot
-            names[key][r.fuel_type or r.process_type or "Unknown"] += e_tot
-            tier_e[_tier(rec_u95)] += e_tot
+            names[key][r.fuel_type or _process_label(r.process_type)] += e_tot
+            band_e[_band(rec_u95)] += e_tot
+            tier_s1[_method_tier(r.factor_source)] += e_tot
 
     for sc, model, label_col, cat_label in (
         ("2", Scope2Emission, Scope2Emission.grid_region, "Scope 2 (Indirect)"),
@@ -138,7 +159,7 @@ def inventory_uncertainty(year, allowed_fids=None, facility_id=None, scope="all"
             ef_lin[key]["co2e"] += uu * e
             tot[key] += e
             names[key][str(lbl or cat_label)] += e
-            tier_e[_tier(uu * K95)] += e
+            band_e[_band(uu * K95)] += e
 
     def sigma(key):
         return math.sqrt(sum(v ** 2 for v in ef_lin[key].values()) + ad_sq[key])
@@ -174,14 +195,19 @@ def inventory_uncertainty(year, allowed_fids=None, facility_id=None, scope="all"
         })
     results.sort(key=lambda r: r["total_emissions"], reverse=True)
     u95_inv = u_inv_1s * K95 if u_inv_1s is not None else None
+    s1_total = sum(tier_s1.values())
     return {
         "year": year,
         "inventory_uncertainty_pct": f"±{round(u95_inv * 100, 2)}%" if u95_inv is not None else None,
         "inventory_uncertainty_decimal": u95_inv,
         "inventory_uncertainty_1sigma": u_inv_1s,
         "total_inventory_emissions": total,
-        "tier_breakdown": {t: round(tier_e.get(t, 0) / total * 100, 1) if total > 0 else 0
+        # share of Scope 1 emissions by calculation tier (factor source)
+        "tier_breakdown": {t: round(tier_s1.get(t, 0) / s1_total * 100, 1) if s1_total > 0 else 0
                            for t in ("Tier 1", "Tier 2", "Tier 3")},
+        # share of the whole inventory by uncertainty band at 95 %
+        "uncertainty_bands": {b: round(band_e.get(b, 0) / total * 100, 1) if total > 0 else 0
+                              for b in ("low", "medium", "high")},
         "categories": results,
         "confidence_level_pct": 95,
         "coverage_factor": K95,

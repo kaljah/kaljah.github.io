@@ -8,6 +8,32 @@ from .units import CONVERSIONS, calculate_co2e
 from .uncertainty import propagate_uncertainty, resolve_tier, resolve_ef_uncertainty
 
 
+_MASS_KG = {
+    "kg": 1.0, "kgs": 1.0, "kilogram": 1.0, "kilograms": 1.0,
+    "g": 0.001, "gram": 0.001, "grams": 0.001,
+    "lb": CONVERSIONS["lb_to_kg"], "lbs": CONVERSIONS["lb_to_kg"], "pound": CONVERSIONS["lb_to_kg"],
+    "pounds": CONVERSIONS["lb_to_kg"],
+    "tonne": CONVERSIONS["tonne_to_kg"], "tonnes": CONVERSIONS["tonne_to_kg"], "metric_ton": CONVERSIONS["tonne_to_kg"],
+    "metric_tons": CONVERSIONS["tonne_to_kg"], "mt": CONVERSIONS["tonne_to_kg"], "t": CONVERSIONS["tonne_to_kg"],
+    "ton": CONVERSIONS["short_ton_to_kg"], "tons": CONVERSIONS["short_ton_to_kg"],
+    "short_ton": CONVERSIONS["short_ton_to_kg"], "short_tons": CONVERSIONS["short_ton_to_kg"],
+    "us_ton": CONVERSIONS["short_ton_to_kg"],
+    "long_ton": CONVERSIONS["long_ton_to_kg"], "long_tons": CONVERSIONS["long_ton_to_kg"],
+}
+
+
+def mass_to_kg(amount, unit):
+    """Mass in kg. "short ton", "Short-Ton" and "short_ton" are the same unit; an unknown unit is an
+    error (it used to be read as kg, so 100 short tons became 100 kg)."""
+    key = "_".join(str(unit or "").strip().lower().replace("-", " ").replace(".", "").split())
+    if key in _MASS_KG:
+        return float(amount) * _MASS_KG[key]
+    from .units import convert
+    try:
+        return convert(float(amount), unit, "kg")
+    except Exception:
+        raise ValueError(f"Unknown mass unit '{unit}' (use kg, tonne, short ton, long ton, lb or g)") from None
+
 class StoichiometricCalculator(BaseCalculator):
     def __init__(self):
         super().__init__("Stoichiometric Mass Balance", "Section 4.1")
@@ -25,26 +51,7 @@ class StoichiometricCalculator(BaseCalculator):
         )
 
         # Normalize to kg
-        norm_mass = fuel_mass
-        u = str(mass_unit).strip().lower()
-        if u in ["lb", "lbs", "pound", "pounds"]:
-            norm_mass = fuel_mass * CONVERSIONS["lb_to_kg"]
-        elif u in ["tonne", "tonnes", "metric_ton", "metric_tons", "mt", "t"]:
-            norm_mass = fuel_mass * CONVERSIONS["tonne_to_kg"]
-        elif u in ["ton", "tons", "short_ton", "short_tons", "us_ton"]:
-            norm_mass = fuel_mass * CONVERSIONS["short_ton_to_kg"]
-        elif u in ["long_ton", "long_tons"]:
-            norm_mass = fuel_mass * CONVERSIONS["long_ton_to_kg"]
-        elif u in ["g", "gram", "grams"]:
-            norm_mass = fuel_mass * 0.001
-        elif u in ["kg", "kgs", "kilogram", "kilograms"]:
-            norm_mass = fuel_mass
-        else:
-            try:
-                from .units import convert
-                norm_mass = convert(fuel_mass, mass_unit, "kg")
-            except Exception:
-                norm_mass = fuel_mass
+        norm_mass = mass_to_kg(fuel_mass, mass_unit)
 
         # stoichiometric ratio CO2/C
         ratio = 44.01 / 12.011
@@ -108,24 +115,7 @@ class NitricAcidCalculator(BaseCalculator):
             ["production_amount"],
         )
 
-        norm_mass = float(production_amount)
-        u = str(mass_unit).strip().lower()
-        if u in ["lb", "lbs", "pound", "pounds"]:
-            norm_tonnes = norm_mass * CONVERSIONS["lb_to_kg"] / 1000.0
-        elif u in ["tonne", "tonnes", "metric_ton", "metric_tons", "mt", "t"]:
-            norm_tonnes = norm_mass
-        elif u in ["ton", "tons", "short_ton", "short_tons", "us_ton"]:
-            norm_tonnes = norm_mass * CONVERSIONS["short_ton_to_kg"] / 1000.0
-        elif u in ["kg", "kgs", "kilogram", "kilograms"]:
-            norm_tonnes = norm_mass / 1000.0
-        elif u in ["g", "gram", "grams"]:
-            norm_tonnes = norm_mass / 1_000_000.0
-        else:
-            try:
-                from .units import convert
-                norm_tonnes = convert(norm_mass, mass_unit, "tonne")
-            except Exception:
-                norm_tonnes = norm_mass
+        norm_tonnes = mass_to_kg(float(production_amount), mass_unit) / 1000.0
 
         # Emission factor EF_N2O in kg N2O / tonne product
         if ef_n2o is not None and float(ef_n2o) > 0:

@@ -478,11 +478,16 @@ def convert(value, from_unit, to_unit):
     if u_from in PRESS_UNITS and u_to in PRESS_UNITS:
         return convert_pressure(val, u_from, u_to)
 
-    # Dimensional base-unit conversions
+    # Dimensional base-unit conversions ("short ton" and "short_ton" are the same key)
+    def _keys(u):
+        return (u, "_".join(u.replace("-", " ").split()))
+
     for dim_map in ALL_DIMENSION_MAPS:
-        if u_from in dim_map and u_to in dim_map:
-            val_base = val * dim_map[u_from]
-            return val_base / dim_map[u_to]
+        f = next((k for k in _keys(u_from) if k in dim_map), None)
+        t = next((k for k in _keys(u_to) if k in dim_map), None)
+        if f is not None and t is not None:
+            val_base = val * dim_map[f]
+            return val_base / dim_map[t]
 
     raise ValueError(f"Unsupported conversion: {from_unit} to {to_unit}")
 
@@ -758,12 +763,14 @@ def parse_factor_unit(unit):
     return {"mass_kg": MASS_UNITS_TO_KG[mass_tok], "gas": gas, "denominators": dens}
 
 
-def factor_to_kg_per_activity(factor_value, factor_unit, activity_unit, hours=None, hhv_mj_per_unit=None):
+def factor_to_kg_per_activity(factor_value, factor_unit, activity_unit, hours=None, hhv_mj_per_unit=None,
+                              year_hours=None):
     """kg of pollutant per ONE activity unit (BUG-047/049/051/063).
 
     - A volume/mass/energy denominator is converted to the activity unit (energy <-> volume/mass
       needs the heating value in MJ per activity unit, else UnitError).
-    - A time denominator ('/hr') is multiplied by `hours`, which is required.
+    - A time denominator ('/hr') is multiplied by `hours`, which is required. A per-year factor uses
+      `year_hours` (8,784 in a leap year) when given, so a month's share is days / days-in-year.
     - Count denominators ('/source', '/well') pair with a count activity.
     """
     spec = parse_factor_unit(factor_unit)
@@ -774,6 +781,8 @@ def factor_to_kg_per_activity(factor_value, factor_unit, activity_unit, hours=No
         if dim == "time":
             if hours is None:
                 raise UnitError(f"Factor unit '{factor_unit}' is per {tok}: operating hours are required")
+            if year_hours and f == TIME_UNITS_TO_HOURS.get("yr"):
+                f = float(year_hours)
             kg *= float(hours) / f  # f = hours in one time unit
             continue
         if matched:

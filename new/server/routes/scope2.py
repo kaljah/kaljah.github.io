@@ -139,6 +139,18 @@ def _calc_cogen_allocation(data):
     return res["metadata"]["allocated_heat_tonnes"]
 
 
+
+def _page_args():
+    """(limit, offset) when the caller asks for a page, else None (full list, the old contract)."""
+    if request.args.get("limit") in (None, ""):
+        return None
+    try:
+        limit = max(1, min(500, int(request.args.get("limit"))))
+        offset = max(0, int(request.args.get("offset") or 0))
+    except ValueError:
+        return None
+    return limit, offset
+
 @scope2_bp.route("", methods=["GET"])
 @login_required
 def get_scope2_emissions():
@@ -169,8 +181,15 @@ def get_scope2_emissions():
             except ValueError:
                 pass
 
-        emissions = query.order_by(Scope2Emission.created_at.desc()).all()
-        return jsonify(
+        # optional server-side paging (limit / offset): the tables used to download every record on
+        # every page change (4 MB at 10,000 records) to show 10 rows
+        query = query.order_by(Scope2Emission.created_at.desc(), Scope2Emission.id.desc())
+        page_args = _page_args()
+        total = query.count() if page_args else None
+        if page_args:
+            query = query.offset(page_args[1]).limit(page_args[0])
+        emissions = query.all()
+        rows = (
             [
                 {
                     "id": e.id,
@@ -197,6 +216,9 @@ def get_scope2_emissions():
                 for e in emissions
             ]
         )
+        if page_args:
+            return jsonify({"data": rows, "total": total, "limit": page_args[0], "offset": page_args[1]})
+        return jsonify(rows)
     except Exception as e:
         current_app.logger.exception(f"Failed to list Scope 2 emissions: {e}")
         return jsonify({"error": "Failed to load Scope 2 emissions"}), 500
