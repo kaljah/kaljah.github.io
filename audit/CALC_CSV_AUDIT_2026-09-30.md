@@ -136,3 +136,35 @@ quadrature) - correct.
   (and the same equipment ID / source ref) in one file replaces the first (BUG-057 design); two
   sources need their own equipment IDs.
 - Custom factor `parent_fuel` is free text; only a catalog name sets the HHV basis.
+
+# Part 5 - every other calculation (2026-09-30)
+
+Checked: all 104 Compendium activity-factor rows (linearity, gas / liquid unit equivalence, month
+proration of per-day / per-hour / per-unit-year factors); vent gas methods (volume, GOR, rate x days,
+actual conditions, desiccant, reported mass, THC mass, AGR balance, CO2 mass); combustion methods
+(carbon content, equipment factors vs AP-42 / Tables 4-9 / 4-11, vehicle distance, flare VOC = Exhibit
+5.2, thermal oxidizer = Exhibit 5.3); Tier 3 fugitive screening (Table 7-26); SBTi trajectory; goals
+and goal alerts; base-year recalculation; flaring summary; granular intensities; OGMP levels; CAP
+mass and Decree 06-138 compliance; JV equity allocation; Sentinel-5P mass balance and annualisation;
+plausibility bounds; QA/QC completeness; client-side arithmetic (unit multipliers, previews, gas
+composition factor tool, dashboard totals and weighted intensity).
+
+## Fixed
+
+| # | Where | Error | Size |
+|---|-------|-------|------|
+| 21 | activity-factor rows | every CH4 content was a 0-100 %: 0.85 (typed, Excel percent cell, or the uploader's "85%") was 0.85 %. A CH4 content up to 1 is now a fraction. The uploader's "X%" is X above 1 and X/100 up to 1, which every calculator reads alike. | 100x low CH4 |
+| 22 | desiccant dehydrator | refills are per year; each monthly record carried a full year of refills. Now the record's share of the year. | 12x per year |
+| 23 | flaring summary | operator stream volumes (FlaringDetail) of some facilities replaced every facility's volumes: record-only facilities dropped out of the flared volume but stayed in the gas-production denominator (Decree 21-330 intensity understated). Now merged per facility. | intensity low |
+| 24 | granular intensities | saleable production ignored the activity / division / segment filters (filtered emissions over all facilities' saleable BOE). | CI low |
+| 25 | vent gas "reported mass" form | the masses are before control (the control efficiency is applied); the fields were labelled "CH4 emitted" / "CO2 emitted". Relabelled "before control". | label |
+
+Tests: `new/server/tests/test_full_audit_2026_09_30.py`; Exhibit 6-15 API test now expects the March
+share of the annual exhibit.
+
+## Decisions for the owner (not changed)
+
+- JV equity allocation assigns Scope 1 only; the GHG Protocol equity-share approach also allocates
+  Scope 2.
+- Tier 3 fugitive screening converts TOC with the CH4 weight fraction (service default 0.92 or
+  ch4_wt_fraction); a molar ch4_content is not used (by design).

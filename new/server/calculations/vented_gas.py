@@ -92,6 +92,10 @@ class VentedGasCalculator(BaseCalculator):
             p_psig = _num(i.get("vessel_pressure_psig"), "vessel pressure (psig)")
             g = _frac(_or(i.get("gas_fraction"), 45), "gas fraction of packed vessel")
             n = _num(i.get("refills"), "refills per year")
+            # refills are per year; a monthly record carries its month's share (a full year of refills
+            # was booked in every monthly record)
+            from .dispatcher import record_period
+            n *= record_period(i)[2]
             return h * d * d * math.pi / 4.0 * ((p_psig + 14.7) / 14.7) * g * n
         raise ValueError(f"Unknown gas volume method '{method}'")
 

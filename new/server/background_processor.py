@@ -208,22 +208,36 @@ _PERCENT_TEXT = re.compile(r"^\s*([-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][-+]?\d+)?)
 
 
 def _percent_field(name):
-    """Scope 1 fields entered as a percentage number (2.5 = 2.5 %); every other field also takes a
-    fraction (compositions, contents, efficiencies) or is one (agr_ch4_slip, carbon_content)."""
+    """Scope 1 fields entered as a percentage number (2.5 = 2.5 %)."""
     n = str(name).lower()
     return n.endswith("_pct") or n.startswith("user_unc") or "_pct_" in n
 
 
+# Scope 1 fields that are fractions only (0-1), never percentages
+_FRACTION_FIELDS = {"agr_ch4_slip", "ch4_slip", "carbon_content", "ch4_wt_fraction"}
+
+
 def _percent_text_to_number(name, value):
     """"2.5%" in a Scope 1 input column as the number that column expects (it used to reach the
-    calculators as text, and '2.5%' failed with a conversion error)."""
+    calculators as text, and '2.5%' failed with a conversion error).
+
+    Percentage columns (`*_pct`, `user_unc_*`) take X; fraction-only columns X / 100. The other
+    columns (contents, compositions, efficiencies) are read as percentages by some calculators
+    (activity factors, vent and combustion methods: 0-100) and as fraction-or-percent by the others
+    (a value above 1 is a percentage): X above 1 suits both, and X up to 1 is sent as the fraction
+    X / 100 (0.5 % must not become the fraction 0.5 = 50 %)."""
     if not isinstance(value, str):
         return value
     m = _PERCENT_TEXT.match(value)
     if not m:
         return value
     x = float(m.group(1))
-    return x if _percent_field(name) else x / 100.0
+    n = str(name).lower()
+    if _percent_field(n):
+        return x
+    if n in _FRACTION_FIELDS:
+        return x / 100.0
+    return x if x > 1.0 else x / 100.0
 
 
 def _prune_old_jobs(max_age_seconds=86400):
