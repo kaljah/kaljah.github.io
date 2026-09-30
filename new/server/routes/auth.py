@@ -737,15 +737,21 @@ def save_setting_to_db(key: str, val):
         current_app.logger.error(f"Failed to persist system setting '{key}': {e}")
 
 
-def recalculate_all_emissions_gwp(standard):
+def recalculate_all_emissions_gwp(standard, previous=None):
     """
     Recalculates co2e_total for all stored Emission records in the database
     using the specified GWP standard ('AR4', 'AR5', 'AR6').
     Also updates gwp_version on the records and invalidates dashboard caches.
+
+    Scope 2 follows (audit 2026-09-30): grid electricity is recalculated from its grid region's
+    CO2 / CH4 / N2O, and steam from the default natural-gas boiler has its CH4 / N2O re-weighted
+    (the boiler fuel energy is recovered from the stored CO2e with the `previous` standard).
     """
-    from models import Emission
-    from calculations.constants import GWP_STANDARDS, GWP_AR5
+    from models import Emission, Scope2Emission
+    from calculations.constants import GWP_STANDARDS, GWP_AR5, invalidate_gwp_cache
     from sqlalchemy import func
+
+    invalidate_gwp_cache()  # a cached standard would keep new records on the old GWP for 30 s
 
     std_dict = GWP_STANDARDS.get(standard, GWP_AR5)
     co2_factor = float(std_dict.get("CO2", 1.0))
@@ -765,6 +771,25 @@ def recalculate_all_emissions_gwp(standard):
         },
         synchronize_session=False,
     )
+
+    from electricity_factors import grid_entry, grid_factor_kg_co2e_per_kwh
+    from routes.scope2 import _DEFAULT_BOILER_EF_KG_PER_MMBTU as _NG_BOILER
+
+    new_gwp = {"CH4": ch4_factor, "N2O": n2o_factor}
+    old_std = GWP_STANDARDS.get(str(previous or "").upper()) if previous else None
+
+    def _steam_k(g):  # kg CO2e per MMBtu of boiler fuel (routes.scope2._calc_indirect_steam)
+        return _NG_BOILER + 0.001 * float(g["CH4"]) + 0.0001 * float(g["N2O"])
+
+    for e in Scope2Emission.query.all():
+        st = str(e.source_type or "").lower()
+        if "electric" in st:
+            entry = grid_entry(e.grid_region)[1] if e.grid_region else None
+            if entry is not None and e.electricity_kwh:
+                e.emission_factor = grid_factor_kg_co2e_per_kwh(entry, gwp=new_gwp)
+                e.co2e = e.electricity_kwh * e.emission_factor / 1000.0
+        elif "steam" in st and old_std and e.co2e and e.emission_factor == _NG_BOILER:
+            e.co2e = e.co2e * _steam_k(new_gwp) / _steam_k(old_std)
 
     db.session.commit()
 
@@ -849,6 +874,7 @@ def update_settings():
     # Global system & GWP standards updates
     gwp_changed = False
     if is_admin:
+        previous_gwp = _app_settings.get("gwp_standard") or "AR5"
         if "gwp_standard" in data and data["gwp_standard"] in ["AR4", "AR5", "AR6"]:
             new_gwp = data["gwp_standard"]
             if _app_settings.get("gwp_standard") != new_gwp:
@@ -895,7 +921,7 @@ def update_settings():
         # If GWP standard was changed or set, recalculate existing emissions
         if gwp_changed:
             try:
-                recalculate_all_emissions_gwp(_app_settings["gwp_standard"])
+                recalculate_all_emissions_gwp(_app_settings["gwp_standard"], previous=previous_gwp)
             except Exception as e:
                 current_app.logger.error(f"Error recalculating emissions with new GWP: {e}")
 
