@@ -34,9 +34,11 @@ class TestGWPHorizonsAndProfilesBattery:
         ("AR4", "100", 25.0, 298.0),
         ("AR4", "20",  72.0, 289.0),
         ("AR5", "100", 28.0, 265.0),
-        ("AR5", "20",  82.5, 268.0),
+        # audit BUG-013: IPCC AR5 WG1 Table 8.7 GWP-20 = CH4 84, N2O 264;
+        # IPCC AR6 WG1 Table 7.15: methane 27.9 (100-yr) / 81.2 (20-yr), N2O 273 / 273
+        ("AR5", "20",  84.0, 264.0),
         ("AR6", "100", 27.9, 273.0),
-        ("AR6", "20",  82.5, 273.0),
+        ("AR6", "20",  81.2, 273.0),
     ])
     def test_gwp_profile_resolution(self, std, horizon, exp_ch4, exp_n2o):
         gwp = get_active_gwp(standard=std, horizon=horizon)
@@ -47,7 +49,7 @@ class TestGWPHorizonsAndProfilesBattery:
     def test_methane_short_term_forcing_multiplier(self):
         """
         Methane emissions under 20-year horizon reflect immediate near-term warming impact.
-        For AR5: 82.5 / 28.0 = 2.9464x increase in reported CO2e.
+        For AR5 (WG1 Table 8.7): 84 / 28 = 3.0x increase in reported CO2e.
         """
         ch4_mass_tonnes = 50.0
 
@@ -58,8 +60,8 @@ class TestGWPHorizonsAndProfilesBattery:
         co2e_20 = calculate_co2e(ch4=ch4_mass_tonnes, gwp_dict=gwp_20)
 
         assert co2e_100 == 50.0 * 28.0  # 1,400.0 tonnes CO2e
-        assert co2e_20 == 50.0 * 82.5   # 4,125.0 tonnes CO2e
-        assert pytest.approx(co2e_20 / co2e_100, rel=1e-5) == (82.5 / 28.0)
+        assert co2e_20 == 50.0 * 84.0   # 4,200.0 tonnes CO2e
+        assert pytest.approx(co2e_20 / co2e_100, rel=1e-5) == (84.0 / 28.0)
 
     def test_physical_gas_mass_invariance_across_gwp_profiles(self, dispatcher):
         """
@@ -139,5 +141,5 @@ class TestGWPHorizonsAndProfilesBattery:
         # Difference in total CO2e includes unburnt CH4 * (GWP_20 - GWP_100) and N2O * (GWP_20 - GWP_100)
         co2e_diff = res_20["total_co2e"] - res_100["total_co2e"]
         n2o_t = res_100["results"]["n2o"]["value"]
-        expected_diff = unburnt_ch4 * (82.5 - 28.0) + n2o_t * (268.0 - 265.0)
+        expected_diff = unburnt_ch4 * (84.0 - 28.0) + n2o_t * (264.0 - 265.0)  # AR5 Table 8.7
         assert pytest.approx(co2e_diff, rel=1e-4) == expected_diff

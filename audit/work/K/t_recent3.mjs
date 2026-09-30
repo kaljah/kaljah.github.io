@@ -1,0 +1,14 @@
+import { start, OUT, UI } from "./lib.mjs";
+import fs from "fs";
+const { browser, page, log } = await start("admin");
+await page.goto(UI + "/emissions?scope=scope1"); await page.waitForTimeout(9000);
+const yearSel = page.locator("select").filter({ has: page.locator("option", { hasText: "All Years" }) });
+console.log("year options p1:", await yearSel.locator("option").allInnerTexts());
+const fr = log.resps.find(r => r.u.includes("/filters/available")); if (fr) console.log("server years:", JSON.parse(fr.body).years);
+const pager = await page.getByText(/Page \d+ of/).innerText(); console.log(pager);
+const dl = page.waitForEvent("download");
+await page.getByText("Export CSV").click(); const d = await dl; const p = OUT + "s1export.csv"; await d.saveAs(p);
+console.log("CSV data rows:", fs.readFileSync(p, "utf8").trim().split("\n").length - 1);
+await yearSel.selectOption("2026"); await page.waitForTimeout(2500);
+console.log("year options after picking 2026:", await yearSel.locator("option").allInnerTexts());
+await browser.close();

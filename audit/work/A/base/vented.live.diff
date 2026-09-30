@@ -1,0 +1,10 @@
+472c472
+<         # API Eq. 6-4: Differential depressurization from operating to atmospheric pressure
+---
+>         # API Eq. 6-4: Vessel depressurization to standard atmospheric pressure
+474,476c474
+<         p_final_psia = STD_PRESSURE_PSIA  # depressurized to atmospheric
+<         delta_p = max(0.0, p_initial_psia - p_final_psia)
+<         p_factor = delta_p / STD_PRESSURE_PSIA
+---
+>         p_factor = p_initial_psia / STD_PRESSURE_PSIA

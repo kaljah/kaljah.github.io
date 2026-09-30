@@ -1,0 +1,73 @@
+Carbon tech
+Dashboard
+Carbon Intensity
+Methane Intensity
+SBTi Net-Zero
+Calculations
+Emissions Map
+Manage Data
+Reports
+Reference Data
+Uncertainty
+Audit Trail
+QA/QC & Diagnostics
+Settings
+A
+Audit admin
+Auditor
+Corporate ESG
+Audit
+ISO 14064-1 & GHG PROTOCOL ASSURANCE
+QA/QC & System Diagnostics
+
+Automated data validation, IPCC SRSS uncertainty estimation, and inventory anomaly resolution workflow.
+
+All Scopes (1, 2, 3)
+Scope 1 (Direct)
+Scope 2 (Electricity)
+Scope 3 (Value Chain)
+All Reporting Years
+2026
+2025
+2024
+2023
+2022
+2021
+2020
+Run Diagnostics
+Export QA Report
+DATA HEALTH SCORE
+79
+/ 100
+Status: Attention Needed
+Completeness: 89%
+IPCC TIER 1 UNCERTAINTY
+±2.26
+%
+S1: ±2.3%
+S2: ±1.8%
+S3: ±6.7%
+FLAGGED ANOMALIES
+0
+active
+Pending: 0
+Verified: 0
+Rejected: 0
+INVENTORY COVERAGE
+809
+entries
+Active Facilities: 123/170
+Custom Factors: 101
+Anomaly Resolution Queue
+0
+Health & Completeness Diagnostics
+2
+Uncertainty & Rigor Analysis (IPCC)
+All Statuses
+Pending Review
+Verified
+Rejected
+Showing 0 flagged records
+Zero Anomalies Detected
+
+No statistical outliers or data quality flags detected matching your current filters. The inventory is fully verified and audit-compliant.

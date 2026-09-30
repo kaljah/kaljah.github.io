@@ -119,3 +119,26 @@ class TestStatisticalZScoreAndIQRBattery:
         res = detector._z_score_check(12.0, history)
         assert res["expected_range"][0] >= 0.0
         assert res["expected_range"][0] <= res["mean"] <= res["expected_range"][1]
+
+    def test_anomaly_nan_inf_handling(self, detector):
+        import math
+        history = [10.0, 12.0, 11.0]
+        res_nan = detector._z_score_check(float("nan"), history)
+        assert res_nan["flagged"] is True
+        assert res_nan["reason"] == "invalid_value"
+
+        res_inf = detector._z_score_check(float("inf"), history)
+        assert res_inf["flagged"] is True
+        assert res_inf["reason"] == "invalid_value"
+
+    def test_constant_history_zero_deviation(self, detector):
+        history = [0.0, 0.0, 0.0]
+        # Same value (0.0) -> not flagged
+        res_zero = detector._z_score_check(0.0, history)
+        assert res_zero["flagged"] is False
+
+        # Positive surge from 0.0 -> flagged
+        res_surge = detector._z_score_check(50.0, history)
+        assert res_surge["flagged"] is True
+        assert res_surge["reason"] == "constant_history_deviation"
+

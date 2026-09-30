@@ -195,7 +195,8 @@ def test_bulk_import_custom_factors(logged_client, app):
         factor = CustomFactor.query.filter_by(name="My Factor").first()
         assert factor is not None
         assert factor.co2_factor == 10.5
-        assert factor.unit == "kg"
+        # audit BUG-063: a bare activity unit is stored in the canonical "kg per <unit>" form
+        assert factor.unit == "kg/kg"
 
 def test_bulk_import_production(logged_client, app):
     client = logged_client
@@ -208,7 +209,8 @@ def test_bulk_import_production(logged_client, app):
             
     csv_data = (
         "facility_name,activity,division,field,year,month,production_volume,production_unit,energy_consumption,energy_unit\n"
-        "Test Facility A,Upstream,Prod,Field 1,2024,5,1000,bbl,500,MWh\n"
+        # gas production is a gas volume (an energy unit such as MWh cannot enter the intensity KPIs)
+        "Test Facility A,Upstream,Prod,Field 1,2024,5,1000,bbl,500,mscf\n"
     )
     
     mapping = {
@@ -457,7 +459,8 @@ def test_bulk_import_scope1(logged_client, app):
     assert status["status"] == "completed"
     
     with app.app_context():
-        s1 = Emission.query.filter_by(year=2024, month=8).first()
+        fac_id = Facility.query.filter_by(name="Test Facility A").first().id
+        s1 = Emission.query.filter_by(year=2024, month=8, facility_id=fac_id).first()
         assert s1 is not None
         assert s1.process_type == "combustion"
         assert s1.co2e_total > 0
@@ -497,11 +500,11 @@ def test_bulk_import_duplicate_prevention_and_overwrite(logged_client, app):
     }, content_type="multipart/form-data")
     assert res1.status_code == 200
     job1 = wait_for_job(client, res1.get_json()["job_id"])
-    assert job1["status"] == "completed"
+    assert job1["status"] == "completed", job1.get("skipped_preview")
 
     with app.app_context():
         count1 = Emission.query.filter_by(year=2025, month=1).count()
-        assert count1 == 1
+        assert count1 == 1, job1.get("skipped_preview")
 
     # Second upload WITHOUT overwrite: should skip the duplicate row
     res2 = client.post("/api/emissions/upload/start", data={
@@ -564,7 +567,8 @@ def test_vented_fuel_key_deduplication_normalization(logged_client, app):
     # Upload 1: pneumatics row with empty fuel
     csv_data1 = (
         "facility_name,date,process,fuel,quantity,unit\n"
-        "Test Facility A,2025-02,pneumatics,,500,count\n"
+        # BUG-015: a row with no resolvable factor is rejected, so both uploads use catalog pneumatic factors
+        "Test Facility A,2025-02,pneumatics,Pneumatic Controller - Intermittent,500,count\n"
     )
     mapping = {
         "facility_name": "facility_name",
@@ -583,18 +587,18 @@ def test_vented_fuel_key_deduplication_normalization(logged_client, app):
     }, content_type="multipart/form-data")
     assert res1.status_code == 200
     job1 = wait_for_job(client, res1.get_json()["job_id"])
-    assert job1["status"] == "completed"
+    assert job1["status"] == "completed", job1.get("skipped_preview")
 
     with app.app_context():
         count1 = Emission.query.filter_by(year=2025, month=2).count()
-        assert count1 == 1
+        assert count1 == 1, job1.get("skipped_preview")
 
     # Upload 2: same facility, date, process ("pneumatics"), but with fuel="Natural Gas"
     # Because pneumatics is a non-combustion process, fuel_k is normalized to "",
     # so without overwrite, this should be detected as a duplicate and skipped.
     csv_data2 = (
         "facility_name,date,process,fuel,quantity,unit\n"
-        "Test Facility A,2025-02,pneumatics,Natural Gas,500,count\n"
+        "Test Facility A,2025-02,pneumatics,Pneumatic Controller - Low Bleed (<6 scfh),500,count\n"
     )
     res2 = client.post("/api/emissions/upload/start", data={
         "scope": "1",

@@ -1,0 +1,2913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NeoCarbon™ | The Enterprise Oil & Gas Decarbonization Operating System</title>
+  <link rel="icon" type="image/png" href="site_assets/favicon.png">
+  
+  <!-- Modern Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       THEME VARIABLES & DESIGN TOKENS
+       ========================================================================== */
+    :root {
+      --bg-darkest: #050b14;
+      --bg-surface: #0a1322;
+      --bg-surface-elevated: #0f1c30;
+      --bg-card: rgba(15, 28, 48, 0.7);
+      --bg-card-hover: rgba(22, 40, 68, 0.85);
+      
+      --brand-emerald: #00e599;
+      --brand-emerald-dark: #059669;
+      --brand-emerald-glow: rgba(0, 229, 153, 0.35);
+      --brand-teal: #00c48c;
+      --brand-cyan: #00f2fe;
+      --brand-blue: #0284c7;
+      --brand-navy: #0a2540;
+      
+      --text-white: #ffffff;
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-medium: rgba(56, 189, 248, 0.2);
+      --border-emerald: rgba(0, 229, 153, 0.3);
+      --border-glow: rgba(0, 229, 153, 0.6);
+      
+      --font-display: 'Space Grotesk', -apple-system, sans-serif;
+      --font-body: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      
+      --radius-sm: 6px;
+      --radius-md: 12px;
+      --radius-lg: 20px;
+      --radius-xl: 28px;
+      --radius-full: 9999px;
+      
+      --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.2);
+      --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.35);
+      --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.5);
+      --shadow-glow: 0 0 40px rgba(0, 229, 153, 0.15);
+      
+      --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* ==========================================================================
+       GLOBAL RESET & RESETS
+       ========================================================================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+      color-scheme: dark;
+    }
+
+    body {
+      background-color: var(--bg-darkest);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Ambient Background Glows */
+    .ambient-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .ambient-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(140px);
+      opacity: 0.15;
+    }
+    .orb-1 {
+      top: -10%;
+      left: 30%;
+      width: 700px;
+      height: 700px;
+      background: radial-gradient(circle, #00e599 0%, transparent 70%);
+    }
+    .orb-2 {
+      top: 35%;
+      right: -10%;
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(circle, #0284c7 0%, transparent 70%);
+    }
+    .orb-3 {
+      bottom: -15%;
+      left: 10%;
+      width: 900px;
+      height: 900px;
+      background: radial-gradient(circle, #00c48c 0%, transparent 70%);
+    }
+    .grid-lines {
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Container */
+    .container {
+      width: 100%;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Typography Utilities */
+    h1, h2, h3, h4, h5, h6 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      line-height: 1.15;
+      color: var(--text-white);
+      letter-spacing: -0.02em;
+    }
+    p {
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, #ffffff 0%, #a7f3d0 45%, #00e599 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+    }
+    .gradient-cyan {
+      background: linear-gradient(135deg, #38bdf8 0%, #00e599 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .mono {
+      font-family: var(--font-mono);
+    }
+
+    /* Badges & Pills */
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    .pill-emerald {
+      background: rgba(0, 229, 153, 0.08);
+      border: 1px solid var(--border-emerald);
+      color: #34d399;
+    }
+    .pill-blue {
+      background: rgba(2, 132, 199, 0.1);
+      border: 1px solid var(--border-medium);
+      color: #38bdf8;
+    }
+    .pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background-color: var(--brand-emerald);
+      box-shadow: 0 0 10px var(--brand-emerald);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 229, 153, 0.7); }
+      70% { transform: scale(1.1); box-shadow: 0 0 0 8px rgba(0, 229, 153, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 229, 153, 0); }
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 12px 24px;
+      border-radius: var(--radius-full);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      transition: var(--transition);
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #00e599 0%, #059669 100%);
+      color: #04251a;
+      box-shadow: 0 4px 20px rgba(0, 229, 153, 0.35);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0, 229, 153, 0.5);
+      background: linear-gradient(135deg, #10f0a5 0%, #048259 100%);
+    }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-white);
+      border: 1px solid var(--border-medium);
+      backdrop-filter: blur(10px);
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(56, 189, 248, 0.5);
+      transform: translateY(-2px);
+      color: #38bdf8;
+    }
+    .btn-outline-emerald {
+      background: transparent;
+      color: var(--brand-emerald);
+      border: 1px solid var(--border-emerald);
+    }
+    .btn-outline-emerald:hover {
+      background: rgba(0, 229, 153, 0.1);
+      border-color: var(--brand-emerald);
+      transform: translateY(-2px);
+    }
+
+    /* Cards */
+    .glass-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: var(--shadow-md);
+      transition: var(--transition);
+    }
+    .glass-card:hover {
+      border-color: var(--border-medium);
+      box-shadow: var(--shadow-lg), var(--shadow-glow);
+    }
+
+    /* ==========================================================================
+       HEADER & NAVIGATION
+       ========================================================================== */
+    .top-banner {
+      background: linear-gradient(90deg, #06192e 0%, #0a2e28 50%, #06192e 100%);
+      border-bottom: 1px solid rgba(0, 229, 153, 0.2);
+      padding: 8px 16px;
+      font-size: 0.8rem;
+      text-align: center;
+      position: relative;
+      z-index: 100;
+    }
+    .top-banner-inner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .top-banner strong {
+      color: var(--brand-emerald);
+    }
+    .top-banner a {
+      color: #38bdf8;
+      text-decoration: underline;
+      margin-left: 6px;
+      font-weight: 600;
+    }
+
+    .site-nav {
+      position: sticky;
+      top: 0;
+      width: 100%;
+      z-index: 99;
+      background: rgba(5, 11, 20, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      transition: var(--transition);
+    }
+    .nav-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 80px;
+    }
+    
+    /* Logo styling */
+    .brand-logo-wrap {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      gap: 12px;
+    }
+    .brand-logo-img {
+      height: 48px;
+      width: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 8px rgba(0, 229, 153, 0.25));
+      transition: var(--transition);
+    }
+    .brand-logo-wrap:hover .brand-logo-img {
+      transform: scale(1.02);
+    }
+    .brand-logo-card {
+      background: #ffffff;
+      padding: 4px 12px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+    .brand-logo-card img {
+      height: 38px;
+      width: auto;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      list-style: none;
+      gap: 28px;
+    }
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.92rem;
+      font-weight: 500;
+      transition: var(--transition);
+      position: relative;
+    }
+    .nav-links a:hover {
+      color: var(--text-white);
+    }
+    .nav-links a.active::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: var(--brand-emerald);
+      border-radius: 2px;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .mobile-toggle {
+      display: none;
+      background: transparent;
+      border: none;
+      color: var(--text-white);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    /* ==========================================================================
+       HERO SECTION
+       ========================================================================== */
+    .hero-section {
+      padding: 80px 0 60px;
+      position: relative;
+      text-align: center;
+    }
+    .hero-header-area {
+      max-width: 980px;
+      margin: 0 auto 50px;
+    }
+    .hero-badge-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+    .hero-title {
+      font-size: clamp(2.6rem, 5.5vw, 4.4rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 24px;
+    }
+    .hero-subtitle {
+      font-size: clamp(1.05rem, 1.8vw, 1.28rem);
+      line-height: 1.6;
+      color: var(--text-secondary);
+      max-width: 820px;
+      margin: 0 auto 36px;
+    }
+    .hero-cta-group {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+    }
+    
+    /* Trust badges ticker */
+    .trust-strip {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      padding: 14px 20px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-full);
+      max-width: 900px;
+      margin: 0 auto;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+    .trust-item svg {
+      width: 14px;
+      height: 14px;
+      stroke: var(--brand-emerald);
+    }
+
+    /* 3D App Showcase Preview Frame */
+    .hero-mockup-wrapper {
+      position: relative;
+      max-width: 1140px;
+      margin: 40px auto 0;
+      perspective: 1200px;
+    }
+    .mockup-frame {
+      background: #0d1624;
+      border: 1.5px solid rgba(56, 189, 248, 0.25);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 30px 100px rgba(0, 0, 0, 0.8), 0 0 60px rgba(0, 229, 153, 0.2);
+      overflow: hidden;
+      position: relative;
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
+    .mockup-frame:hover {
+      box-shadow: 0 40px 120px rgba(0, 0, 0, 0.9), 0 0 90px rgba(0, 229, 153, 0.3);
+      border-color: rgba(0, 229, 153, 0.4);
+    }
+    .mockup-titlebar {
+      height: 38px;
+      background: #09101b;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+    }
+    .titlebar-dots {
+      display: flex;
+      gap: 7px;
+    }
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .dot-red { background: #ef4444; }
+    .dot-yellow { background: #f59e0b; }
+    .dot-green { background: #10b981; }
+    .titlebar-center {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .titlebar-center svg {
+      width: 12px;
+      height: 12px;
+      stroke: var(--brand-emerald);
+    }
+    .mockup-img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+    
+    /* Floating telemetry tags on hero image */
+    .telemetry-tag {
+      position: absolute;
+      background: rgba(10, 20, 36, 0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-md);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+      z-index: 10;
+      animation: float 4s ease-in-out infinite alternate;
+    }
+    .tag-tl {
+      top: 14%;
+      left: -20px;
+      border-left: 3px solid var(--brand-emerald);
+    }
+    .tag-tr {
+      top: 20%;
+      right: -25px;
+      border-left: 3px solid #38bdf8;
+      animation-delay: -2s;
+    }
+    .tag-bl {
+      bottom: 12%;
+      left: 3%;
+      border-left: 3px solid #f59e0b;
+      animation-delay: -1s;
+    }
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      100% { transform: translateY(-8px); }
+    }
+    .tag-val {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--text-white);
+      line-height: 1;
+    }
+    .tag-lbl {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* ==========================================================================
+       ENTERPRISE METRICS STRIP
+       ========================================================================== */
+    .metrics-section {
+      padding: 40px 0 80px;
+    }
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+    .metric-card {
+      padding: 28px 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .metric-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--brand-emerald), transparent);
+    }
+    .metric-number {
+      font-size: 2.8rem;
+      font-weight: 800;
+      color: var(--text-white);
+      font-family: var(--font-display);
+      margin-bottom: 6px;
+      line-height: 1;
+    }
+    .metric-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #38bdf8;
+      margin-bottom: 4px;
+    }
+    .metric-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* ==========================================================================
+       SECTION HEADERS
+       ========================================================================== */
+    .section-header {
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto 60px;
+    }
+    .section-tag {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--brand-emerald);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 12px;
+      display: inline-block;
+    }
+    .section-title {
+      font-size: clamp(2rem, 3.8vw, 3rem);
+      margin-bottom: 18px;
+    }
+    .section-desc {
+      font-size: 1.05rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* ==========================================================================
+       THE 3 PILLARS: MEASURE | ANALYSE | REDUCE
+       ========================================================================== */
+    .pillars-section {
+      padding: 90px 0;
+      background: linear-gradient(180deg, var(--bg-darkest) 0%, #071220 50%, var(--bg-darkest) 100%);
+    }
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+    .pillar-card {
+      padding: 36px 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+    .pillar-card.p-measure {
+      border-top: 3px solid var(--brand-emerald);
+    }
+    .pillar-card.p-analyse {
+      border-top: 3px solid #38bdf8;
+    }
+    .pillar-card.p-reduce {
+      border-top: 3px solid #a855f7;
+    }
+    .pillar-badge-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .pillar-badge-top .pillar-step {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+    }
+    .pillar-icon-box {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+    .icon-emerald {
+      background: rgba(0, 229, 153, 0.12);
+      border: 1px solid rgba(0, 229, 153, 0.3);
+      color: var(--brand-emerald);
+    }
+    .icon-blue {
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: #38bdf8;
+    }
+    .icon-purple {
+      background: rgba(168, 85, 247, 0.12);
+      border: 1px solid rgba(168, 85, 247, 0.3);
+      color: #c084fc;
+    }
+    .pillar-icon-box svg {
+      width: 24px;
+      height: 24px;
+      stroke-width: 2;
+    }
+    .pillar-card h3 {
+      font-size: 1.6rem;
+      margin-bottom: 12px;
+    }
+    .pillar-card p {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .pillar-features-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 28px;
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 20px;
+    }
+    .pillar-features-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.88rem;
+      color: var(--text-primary);
+    }
+    .pillar-features-list svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      margin-top: 3px;
+      stroke: var(--brand-emerald);
+    }
+
+    /* ==========================================================================
+       INTERACTIVE SCREENSHOT SHOWCASE & GALLERY
+       ========================================================================== */
+    .showcase-section {
+      padding: 90px 0;
+      position: relative;
+    }
+    .showcase-tabs-nav {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+    .tab-btn {
+      padding: 10px 20px;
+      border-radius: var(--radius-full);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      font-family: var(--font-body);
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .tab-btn:hover {
+      background: rgba(255, 255, 255, 0.09);
+      color: var(--text-white);
+    }
+    .tab-btn.active {
+      background: linear-gradient(135deg, rgba(0, 229, 153, 0.15) 0%, rgba(2, 132, 199, 0.15) 100%);
+      border-color: var(--brand-emerald);
+      color: var(--brand-emerald);
+      box-shadow: 0 0 20px rgba(0, 229, 153, 0.2);
+    }
+
+    .tab-content-panel {
+      display: none;
+      animation: fadeIn 0.4s ease forwards;
+    }
+    .tab-content-panel.active {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .showcase-grid-display {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 36px;
+      align-items: center;
+    }
+    .showcase-img-container {
+      position: relative;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      border: 1.5px solid rgba(56, 189, 248, 0.25);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+      cursor: pointer;
+      background: #09121f;
+    }
+    .showcase-img-container img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform 0.4s ease;
+    }
+    .showcase-img-container:hover img {
+      transform: scale(1.02);
+    }
+    .img-zoom-hint {
+      position: absolute;
+      bottom: 16px;
+      right: 16px;
+      background: rgba(10, 19, 34, 0.85);
+      border: 1px solid var(--border-medium);
+      backdrop-filter: blur(8px);
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #38bdf8;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      opacity: 0.9;
+    }
+    .showcase-text-details h3 {
+      font-size: 1.85rem;
+      margin-bottom: 16px;
+    }
+    .showcase-meta-tag {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: #38bdf8;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      padding: 4px 10px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-bottom: 16px;
+    }
+    .showcase-feature-bullets {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin: 24px 0 32px;
+    }
+    .showcase-feature-bullets li {
+      display: flex;
+      gap: 12px;
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+      line-height: 1.45;
+    }
+    .showcase-feature-bullets strong {
+      color: var(--text-white);
+    }
+    .bullet-check-icon {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      stroke: var(--brand-emerald);
+      margin-top: 2px;
+    }
+
+    /* Additional Screenshot Gallery Grid */
+    .screenshot-gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 50px;
+    }
+    .gallery-thumb-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+    }
+    .gallery-thumb-card:hover {
+      border-color: var(--border-medium);
+      transform: translateY(-4px);
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(0, 229, 153, 0.15);
+    }
+    .gt-img-wrap {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 16 / 10;
+      background: #09121f;
+    }
+    .gt-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+    .gallery-thumb-card:hover .gt-img-wrap img {
+      transform: scale(1.05);
+    }
+    .gt-caption {
+      padding: 16px 18px;
+    }
+    .gt-category {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--brand-emerald);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 4px;
+    }
+    .gt-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-white);
+      line-height: 1.3;
+    }
+
+    /* Lightbox Modal */
+    .lightbox-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 6, 12, 0.95);
+      backdrop-filter: blur(20px);
+      z-index: 1000;
+      padding: 40px;
+      align-items: center;
+      justify-content: center;
+    }
+    .lightbox-modal.active {
+      display: flex;
+    }
+    .lightbox-content {
+      max-width: 90vw;
+      max-height: 88vh;
+      position: relative;
+    }
+    .lightbox-content img {
+      max-width: 100%;
+      max-height: 85vh;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-medium);
+      box-shadow: 0 0 80px rgba(0, 229, 153, 0.2);
+      object-fit: contain;
+    }
+    .lightbox-close-btn {
+      position: absolute;
+      top: -30px;
+      right: 0;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+
+    /* ==========================================================================
+       LIVE INTERACTIVE EMISSION & INTENSITY SIMULATOR
+       ========================================================================== */
+    .simulator-section {
+      padding: 90px 0;
+      background: linear-gradient(180deg, var(--bg-darkest) 0%, #081628 50%, var(--bg-darkest) 100%);
+    }
+    .sim-card-wrap {
+      padding: 44px;
+      border: 1.5px solid rgba(0, 229, 153, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    .sim-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 48px;
+    }
+    .sim-control-group {
+      margin-bottom: 26px;
+    }
+    .sim-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-white);
+    }
+    .sim-val-display {
+      font-family: var(--font-mono);
+      color: var(--brand-emerald);
+      font-size: 0.95rem;
+    }
+    .sim-slider {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: #17273d;
+      outline: none;
+      -webkit-appearance: none;
+      cursor: pointer;
+    }
+    .sim-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--brand-emerald);
+      box-shadow: 0 0 10px var(--brand-emerald);
+      cursor: pointer;
+    }
+    .facility-type-pills {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .facility-pill-btn {
+      padding: 10px 14px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: left;
+      transition: var(--transition);
+    }
+    .facility-pill-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-white);
+    }
+    .facility-pill-btn.active {
+      background: rgba(0, 229, 153, 0.12);
+      border-color: var(--brand-emerald);
+      color: var(--brand-emerald);
+    }
+
+    /* Live Output Results Dashboard */
+    .sim-results-panel {
+      background: rgba(8, 17, 30, 0.95);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .sim-metric-headline {
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .sim-metric-headline .label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .sim-metric-headline .big-number {
+      font-size: 3.2rem;
+      font-family: var(--font-display);
+      font-weight: 800;
+      color: var(--text-white);
+      line-height: 1.1;
+      margin: 4px 0;
+    }
+    .sim-breakdown-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .sim-stat-box {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 14px;
+    }
+    .sim-stat-box .sb-lbl {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .sim-stat-box .sb-val {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #38bdf8;
+      margin-top: 4px;
+    }
+    .benchmark-status-badge {
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      background: rgba(0, 229, 153, 0.1);
+      border: 1px solid var(--border-emerald);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .benchmark-status-badge.alert-high {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: rgba(239, 68, 68, 0.3);
+    }
+
+    /* ==========================================================================
+       ENTERPRISE ARCHITECTURE & PIPELINE
+       ========================================================================== */
+    .arch-section {
+      padding: 90px 0;
+    }
+    .pipeline-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      position: relative;
+    }
+    .pipeline-node {
+      padding: 28px 22px;
+      border-radius: var(--radius-md);
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      position: relative;
+    }
+    .pipeline-node::after {
+      content: '→';
+      position: absolute;
+      right: -15px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.4rem;
+      color: var(--brand-emerald);
+      z-index: 2;
+    }
+    .pipeline-node:last-child::after {
+      display: none;
+    }
+    .pipeline-step-badge {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--brand-emerald);
+      margin-bottom: 12px;
+      display: block;
+    }
+    .pipeline-node h4 {
+      font-size: 1.15rem;
+      margin-bottom: 10px;
+    }
+    .pipeline-node p {
+      font-size: 0.84rem;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    /* ==========================================================================
+       COMPETITIVE SUPERIORITY MATRIX
+       ========================================================================== */
+    .matrix-section {
+      padding: 90px 0;
+      background: linear-gradient(180deg, var(--bg-darkest) 0%, #061120 100%);
+    }
+    .matrix-table-wrap {
+      overflow-x: auto;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-card);
+      box-shadow: var(--shadow-lg);
+    }
+    table.matrix-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.92rem;
+    }
+    table.matrix-table th {
+      padding: 18px 24px;
+      background: #091322;
+      color: var(--text-white);
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    table.matrix-table th.col-neocarbon {
+      background: rgba(0, 229, 153, 0.12);
+      border-left: 2px solid var(--brand-emerald);
+      border-right: 2px solid var(--brand-emerald);
+      color: var(--brand-emerald);
+    }
+    table.matrix-table td {
+      padding: 16px 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: var(--text-secondary);
+    }
+    table.matrix-table td.col-neocarbon {
+      background: rgba(0, 229, 153, 0.04);
+      border-left: 2px solid var(--brand-emerald);
+      border-right: 2px solid var(--brand-emerald);
+      font-weight: 700;
+      color: var(--text-white);
+    }
+    .check-icon {
+      color: var(--brand-emerald);
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .cross-icon {
+      color: #ef4444;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* ==========================================================================
+       CASE STUDY / FIELD PERFORMANCE
+       ========================================================================== */
+    .case-section {
+      padding: 90px 0;
+    }
+    .case-card {
+      padding: 48px;
+      background: linear-gradient(135deg, rgba(10, 26, 46, 0.85) 0%, rgba(5, 40, 32, 0.85) 100%);
+      border: 1.5px solid rgba(0, 229, 153, 0.25);
+      border-radius: var(--radius-xl);
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.6);
+    }
+    .case-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 40px;
+      align-items: center;
+    }
+    .case-stats-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+    .case-stat-item {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border-medium);
+      padding: 20px;
+      border-radius: var(--radius-md);
+    }
+    .case-stat-num {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--brand-emerald);
+    }
+    .case-stat-lbl {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    /* ==========================================================================
+       FAQ ACCORDION
+       ========================================================================== */
+    .faq-section {
+      padding: 90px 0;
+    }
+    .faq-accordion {
+      max-width: 860px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .faq-item {
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      background: var(--bg-card);
+      overflow: hidden;
+      transition: var(--transition);
+    }
+    .faq-header {
+      padding: 22px 26px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--text-white);
+    }
+    .faq-header svg {
+      width: 20px;
+      height: 20px;
+      stroke: var(--brand-emerald);
+      transition: transform 0.3s ease;
+    }
+    .faq-item.active .faq-header svg {
+      transform: rotate(180deg);
+    }
+    .faq-body {
+      padding: 0 26px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease, padding 0.35s ease;
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+    .faq-item.active .faq-body {
+      padding: 0 26px 24px;
+      max-height: 400px;
+    }
+
+    /* ==========================================================================
+       CTA & BOOKING MODAL
+       ========================================================================== */
+    .cta-banner-section {
+      padding: 80px 0 120px;
+    }
+    .cta-banner-card {
+      background: linear-gradient(135deg, #091a2e 0%, #053b30 50%, #091a2e 100%);
+      border: 1.5px solid var(--border-emerald);
+      border-radius: var(--radius-xl);
+      padding: 60px 48px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 80px rgba(0, 229, 153, 0.15);
+    }
+    .cta-banner-card h2 {
+      font-size: clamp(2.2rem, 4vw, 3.2rem);
+      margin-bottom: 20px;
+    }
+
+    /* Interactive Demo Booking Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(3, 8, 16, 0.85);
+      backdrop-filter: blur(16px);
+      z-index: 1001;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+    .modal-card {
+      background: #0b1526;
+      border: 1.5px solid rgba(0, 229, 153, 0.4);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 580px;
+      padding: 36px;
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.7);
+      position: relative;
+    }
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    .form-group {
+      margin-bottom: 18px;
+    }
+    .form-label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-white);
+      margin-bottom: 8px;
+    }
+    .form-input, .form-select {
+      width: 100%;
+      padding: 12px 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      color: var(--text-white);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      outline: none;
+      transition: var(--transition);
+    }
+    .form-input:focus, .form-select:focus {
+      border-color: var(--brand-emerald);
+      box-shadow: 0 0 15px rgba(0, 229, 153, 0.25);
+    }
+
+    /* Toast Notification */
+    .toast-notify {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #065f46;
+      color: #fff;
+      padding: 14px 24px;
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 2000;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    .toast-notify.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* ==========================================================================
+       FOOTER
+       ========================================================================== */
+    .site-footer {
+      background: #030811;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 70px 0 30px;
+      color: var(--text-muted);
+      font-size: 0.88rem;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 50px;
+    }
+    .footer-brand p {
+      margin-top: 16px;
+      font-size: 0.86rem;
+      line-height: 1.6;
+    }
+    .footer-col h5 {
+      color: var(--text-white);
+      font-size: 0.95rem;
+      margin-bottom: 18px;
+    }
+    .footer-col ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .footer-col a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+    .footer-col a:hover {
+      color: var(--brand-emerald);
+    }
+    .footer-bottom {
+      padding-top: 30px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: 0.8rem;
+    }
+
+    /* ==========================================================================
+       RESPONSIVE DESIGN
+       ========================================================================== */
+    @media (max-width: 1024px) {
+      .showcase-grid-display, .sim-grid, .case-grid {
+        grid-template-columns: 1fr;
+      }
+      .pillars-grid, .metrics-grid, .pipeline-strip {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .pipeline-node::after {
+        display: none;
+      }
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .nav-links {
+        display: none;
+      }
+      .mobile-toggle {
+        display: block;
+      }
+      .telemetry-tag {
+        display: none;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .pillars-grid, .metrics-grid, .pipeline-strip, .footer-grid, .sim-breakdown-row {
+        grid-template-columns: 1fr;
+      }
+      .sim-card-wrap {
+        padding: 24px;
+      }
+      .case-card {
+        padding: 28px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient Light Orbs & Grid -->
+  <div class="ambient-bg">
+    <div class="ambient-orb orb-1"></div>
+    <div class="ambient-orb orb-2"></div>
+    <div class="ambient-orb orb-3"></div>
+  </div>
+  <div class="grid-lines"></div>
+
+  <!-- Top Certified Banner -->
+  <div class="top-banner">
+    <div class="top-banner-inner">
+      <span>⚡ <strong>ENTERPRISE REGULATORY ACCREDITED:</strong> API Compendium 2021 Tier 3 • OGMP 2.0 Gold Standard Level 5 • ISO 14064-1/2/3 • EU Methane Reg 2024/1787 • CBAM Ready</span>
+      <a href="#simulator">Run Live Intensity Model →</a>
+    </div>
+  </div>
+
+  <!-- Sticky Glass Navigation -->
+  <header class="site-nav">
+    <div class="container nav-container">
+      <!-- Main Brand Logo from user upload -->
+      <a href="#" class="brand-logo-wrap">
+        <div class="brand-logo-card">
+          <img src="site_assets/logo.png" alt="NeoCarbon Logo - Measure | Analyse | Reduce" class="brand-logo-img">
+        </div>
+      </a>
+
+      <!-- Navigation Links -->
+      <nav>
+        <ul class="nav-links">
+          <li><a href="#pillars" class="active">Pillars</a></li>
+          <li><a href="#showcase">Software Modules</a></li>
+          <li><a href="#simulator">Live Simulator</a></li>
+          <li><a href="#architecture">Architecture</a></li>
+          <li><a href="#matrix">Comparison</a></li>
+          <li><a href="#case-study">Field Results</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ul>
+      </nav>
+
+      <!-- Action Buttons -->
+      <div class="nav-actions">
+        <a href="#simulator" class="btn btn-secondary" style="padding: 9px 18px; font-size: 0.85rem;">Interactive Simulator</a>
+        <button class="btn btn-primary" onclick="openDemoModal()" style="padding: 9px 20px; font-size: 0.85rem;">Book Demo</button>
+        <button class="mobile-toggle" onclick="toggleMobileMenu()">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================================================
+       HERO SECTION: SHOWCASING PERFECTION
+       ======================================================================== -->
+  <section class="hero-section">
+    <div class="container">
+      <div class="hero-header-area">
+        <!-- Live Engine Badge -->
+        <div class="hero-badge-wrap">
+          <div class="pill pill-emerald">
+            <span class="pulse-dot"></span>
+            <span>The Oil & Gas Decarbonization Operating System</span>
+          </div>
+        </div>
+
+        <!-- Main Headline -->
+        <h1 class="hero-title">
+          Measure the Physics.<br>
+          <span class="gradient-text">Prove the Reductions.</span><br>
+          Protect Enterprise Value.
+        </h1>
+
+        <!-- Subtitle -->
+        <p class="hero-subtitle">
+          NeoCarbon delivers engineering-grade, deterministic Greenhouse Gas (GHG) accounting and carbon intensity intelligence for complex energy assets. Built from first principles on the <strong>API Compendium 2021</strong>, <strong>OGMP 2.0</strong>, and <strong>ISO 14064</strong>.
+        </p>
+
+        <!-- CTA Buttons -->
+        <div class="hero-cta-group">
+          <button class="btn btn-primary" onclick="openDemoModal()">
+            <span>Schedule Executive Briefing</span>
+            <svg style="width: 18px; height: 18px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+          <a href="#showcase" class="btn btn-secondary">
+            <span>Explore Software Screenshots</span>
+            <svg style="width: 16px; height: 16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+          </a>
+          <a href="#simulator" class="btn btn-outline-emerald">
+            <span>Live Intensity Calculator</span>
+          </a>
+        </div>
+
+        <!-- Trust Badges Ticker -->
+        <div class="trust-strip">
+          <div class="trust-item">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>GHG Protocol Corporate</span>
+          </div>
+          <span>•</span>
+          <div class="trust-item">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>API Compendium Tier 3</span>
+          </div>
+          <span>•</span>
+          <div class="trust-item">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>OGMP 2.0 Gold Standard</span>
+          </div>
+          <span>•</span>
+          <div class="trust-item">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>EU CBAM 2026 Ready</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3D Perspective App Screen Showcase -->
+      <div class="hero-mockup-wrapper">
+        <!-- Floating Telemetry Badges -->
+        <div class="telemetry-tag tag-tl">
+          <div>
+            <div class="tag-val">98.4%</div>
+            <div class="tag-lbl">Flare Combustion Efficiency</div>
+          </div>
+        </div>
+
+        <div class="telemetry-tag tag-tr">
+          <div>
+            <div class="tag-val">18.2 kg CO₂e/boe</div>
+            <div class="tag-lbl">Field Carbon Intensity</div>
+          </div>
+        </div>
+
+        <div class="telemetry-tag tag-bl">
+          <div>
+            <div class="tag-val">100% SHA-256</div>
+            <div class="tag-lbl">Auditor Approved Integrity</div>
+          </div>
+        </div>
+
+        <!-- The App Frame -->
+        <div class="mockup-frame">
+          <div class="mockup-titlebar">
+            <div class="titlebar-dots">
+              <span class="dot dot-red"></span>
+              <span class="dot dot-yellow"></span>
+              <span class="dot dot-green"></span>
+            </div>
+            <div class="titlebar-center">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <span>neocarbon.enterprise.internal/operations/executive-dashboard</span>
+            </div>
+            <div style="font-size: 0.72rem; color: #10b981; font-weight: 700;">● LIVE TELEMETRY</div>
+          </div>
+          <img src="site_assets/dashboard_full.png" alt="NeoCarbon Operational Executive Dashboard" class="mockup-img" onclick="openLightbox('site_assets/dashboard_full.png')">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       ENTERPRISE PROOF METRICS
+       ======================================================================== -->
+  <section class="metrics-section">
+    <div class="container">
+      <div class="metrics-grid">
+        <div class="metric-card glass-card">
+          <div class="metric-number">100%</div>
+          <div class="metric-title">Deterministic Stoichiometry</div>
+          <div class="metric-desc">Pure chemical engineering calculations — zero black-box statistical estimates.</div>
+        </div>
+
+        <div class="metric-card glass-card">
+          <div class="metric-number">15/15</div>
+          <div class="metric-title">Scope 3 Categories</div>
+          <div class="metric-desc">Comprehensive upstream and downstream value chain coverage under GHG Protocol.</div>
+        </div>
+
+        <div class="metric-card glass-card">
+          <div class="metric-number">Level 5</div>
+          <div class="metric-title">OGMP 2.0 Gold Standard</div>
+          <div class="metric-desc">Direct source-level measurement reconciled with top-down site-level monitoring.</div>
+        </div>
+
+        <div class="metric-card glass-card">
+          <div class="metric-number">10x</div>
+          <div class="metric-title">Faster External Audits</div>
+          <div class="metric-desc">Immutable 4-eyes maker-checker logs eliminate weeks of spreadsheet verification.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       THE 3 PILLARS: MEASURE | ANALYSE | REDUCE
+       ======================================================================== -->
+  <section id="pillars" class="pillars-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Brand Philosophy</span>
+        <h2 class="section-title">Engineered Around Three Uncompromising Pillars</h2>
+        <p class="section-desc">
+          Reflecting the core motto of NeoCarbon: <strong>Measure, Analyse, and Reduce</strong>. Every module connects physical plant data to regulatory compliance.
+        </p>
+      </div>
+
+      <div class="pillars-grid">
+        <!-- 01. MEASURE -->
+        <div class="pillar-card glass-card p-measure">
+          <div>
+            <div class="pillar-badge-top">
+              <span class="pillar-step">PILLAR 01</span>
+              <span style="color: var(--brand-emerald); font-weight: 700; font-size: 0.8rem;">ENGINEERING CORE</span>
+            </div>
+            <div class="pillar-icon-box icon-emerald">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </div>
+            <h3>MEASURE</h3>
+            <p>Direct physics-based accounting across all scopes, fuels, and emissions sources.</p>
+            <ul class="pillar-features-list">
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <span><strong>Scope 1 Direct:</strong> Combustion, flaring, venting (AGR/amine units, dehydrators), and pneumatics.</span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <span><strong>Scope 2 Dual Accounting:</strong> Location-based grid factors vs. Market-based PPA contractual instruments.</span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <span><strong>Scope 3 Cradle-to-Gate:</strong> Full 15 categories from purchased chemicals to downstream fuel transport.</span>
+              </li>
+            </ul>
+          </div>
+          <a href="#showcase" class="btn btn-outline-emerald" style="width: 100%; font-size: 0.85rem;">View Measurement Engines →</a>
+        </div>
+
+        <!-- 02. ANALYSE -->
+        <div class="pillar-card glass-card p-analyse">
+          <div>
+            <div class="pillar-badge-top">
+              <span class="pillar-step">PILLAR 02</span>
+              <span style="color: #38bdf8; font-weight: 700; font-size: 0.8rem;">INTEL & BENCHMARKS</span>
+            </div>
+            <div class="pillar-icon-box icon-blue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            </div>
+            <h3>ANALYSE</h3>
+            <p>Granular intensity metrics, uncertainty propagation, and asset hierarchy analytics.</p>
+            <ul class="pillar-features-list">
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <span><strong>Carbon Intensity:</strong> Real-time kg CO₂e / boe, g CO₂e / MJ, and flaring intensity indices.</span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <span><strong>Uncertainty Assessment:</strong> Analytical Gauss propagation and Monte Carlo 95% confidence intervals.</span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <span><strong>Asset Hierarchy:</strong> Roll-up from wellhead & equipment to facility, division, and corporate level.</span>
+              </li>
+            </ul>
+          </div>
+          <a href="#simulator" class="btn btn-secondary" style="width: 100%; font-size: 0.85rem;">Simulate Field Intensity →</a>
+        </div>
+
+        <!-- 03. REDUCE -->
+        <div class="pillar-card glass-card p-reduce">
+          <div>
+            <div class="pillar-badge-top">
+              <span class="pillar-step">PILLAR 03</span>
+              <span style="color: #c084fc; font-weight: 700; font-size: 0.8rem;">VALUE PROTECTION</span>
+            </div>
+            <div class="pillar-icon-box icon-purple">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+            <h3>REDUCE</h3>
+            <p>Actionable abatement curves, compliance export dossiers, and audit defense.</p>
+            <ul class="pillar-features-list">
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <span><strong>Regulatory Dossiers:</strong> Instant PDF/Excel generation for EU CBAM, CSRD (ESRS E1), & OGMP 2.0.</span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <span><strong>MACC Modeling:</strong> Marginal Abatement Cost Curves for Flare Gas Recovery and electrification.</span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <span><strong>Maker-Checker Governance:</strong> 4-eyes approval workflow with immutable SHA-256 tamper logs.</span>
+              </li>
+            </ul>
+          </div>
+          <button class="btn btn-primary" onclick="openDemoModal()" style="width: 100%; font-size: 0.85rem;">Request Compliance Audit →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       INTERACTIVE SCREENSHOT SHOWCASE & GALLERY
+       ======================================================================== -->
+  <section id="showcase" class="showcase-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Interactive Product Tour</span>
+        <h2 class="section-title">Inspect Every Pixel of the Platform</h2>
+        <p class="section-desc">
+          Click any tab to view the live software interfaces. Click on any screenshot to expand in high-definition fullscreen mode.
+        </p>
+      </div>
+
+      <!-- Tab Buttons -->
+      <div class="showcase-tabs-nav">
+        <button class="tab-btn active" onclick="switchTab(0)">1. Operations Dashboard</button>
+        <button class="tab-btn" onclick="switchTab(1)">2. Scope 1 Combustion</button>
+        <button class="tab-btn" onclick="switchTab(2)">3. AGR & Venting Engine</button>
+        <button class="tab-btn" onclick="switchTab(3)">4. Fuel Stoichiometry & Factors</button>
+        <button class="tab-btn" onclick="switchTab(4)">5. Compliance & Reporting</button>
+        <button class="tab-btn" onclick="switchTab(5)">6. Maker-Checker Audit</button>
+        <button class="tab-btn" onclick="switchTab(6)">7. Asset Hierarchy</button>
+      </div>
+
+      <!-- TAB 0: DASHBOARD -->
+      <div class="tab-content-panel active" id="tab-0">
+        <div class="showcase-grid-display glass-card" style="padding: 36px;">
+          <div class="showcase-img-container" onclick="openLightbox('site_assets/dashboard_full.png')">
+            <img src="site_assets/dashboard_full.png" alt="NeoCarbon Operational Executive Dashboard">
+            <div class="img-zoom-hint">
+              <svg style="width: 14px; height: 14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+              <span>Click to Enlarge (1440x900 HD)</span>
+            </div>
+          </div>
+          <div class="showcase-text-details">
+            <span class="showcase-meta-tag">MODULE 01 • REAL-TIME OPERATIONS</span>
+            <h3>Executive Decarbonization Dashboard</h3>
+            <p>
+              Provides leadership and environmental engineers with real-time situational awareness across all producing assets, CPF processing trains, and emission boundaries.
+            </p>
+            <ul class="showcase-feature-bullets">
+              <li>
+                <svg class="bullet-check-icon" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <div><strong>Dynamic Scope Distribution:</strong> Visual breakdown between direct combustion, flaring, fugitives, and imported electricity.</div>
+              </li>
+              <li>
+                <svg class="bullet-check-icon" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <div><strong>Field Intensity Tracking:</strong> Continuous monitoring of kg CO₂e / boe against IOGP benchmarks and Net-Zero 2030 glide paths.</div>
+              </li>
+              <li>
+                <svg class="bullet-check-icon" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <div><strong>Facility Ranking:</strong> Highlights highest emission intensity units for immediate maintenance or flare reduction intervention.</div>
+              </li>
+            </ul>
+            <button class="btn btn-primary" onclick="openDemoModal()">Request Live Demo Access</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 1: COMBUSTION -->
+      <div class="tab-content-panel" id="tab-1">
+        <div class="showcase-grid-display glass-card" style="padding: 36px;">
+          <div class="showcase-img-container" onclick="openLightbox('site_assets/scope1_combustion.png')">
+            <img src="site_assets/scope1_combustion.png" alt="Scope 1 Direct Combustion Calculation Engine">
+            <div class="img-zoom-hint">
+              <svg style="width: 14px; height: 14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+              <span>Click to Enlarge (1440x900 HD)</span>
+            </div>
+          </div>
+          <div class="showcase-text-details">
+            <span class="showcase-meta-tag">MODULE 02 • SCOPE 1 CORE</span>
+            <h3>Stoichiometric Combustion Engine</h3>
+            <p>
+              Replaces generic default factors with actual chemical stoichiometry based on gas chromatography, fuel heating values, and turbine load characteristics.
+            </p>
+            <ul class="showcase-feature-bullets">
+              <li>
+                <svg class="bullet-check-icon" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <div><strong>API Compendium 2021 Tier 3:</strong> Dual HHV and LHV calculations accounting for turbine combustor thermal efficiency.</div>
+              </li>
+              <li>
+                <svg class="bullet-check-icon" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <div><strong>Multi-Fuel Flexibility:</strong> Supports natural gas, associated gas, diesel, heavy fuel oil, LPG, and hydrogen blends.</div>
+              </li>
+              <li>
+                <svg class="bullet-check-icon" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <div><strong>IPCC AR5/AR6 GWP Matrix:</strong> Instant toggling between 100-year and 20-year Global Warming Potentials for CH₄ and N₂O.</div>
+              </li>
+            </ul>
+            <button class="btn btn-outline-emerald" onclick="openLightbox('site_assets/scope1_combustion.png')">Inspect Calculation Inputs</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: AGR ENGINE -->
+      <div class="tab-content-panel" id="tab-2">
+        <div class="showcase-grid-display glass-card" style="padding: 36px;">
+          <div class="showcase-img-container" onclick="openLightbox('site_assets/scope1_agr_engine.png')">
+            <img src="site_assets/scope1_agr_engine.png" alt="Acid Gas Removal (AGR) & Venting Engine">
+            <div class="img-zoom-hint">
+              <svg style="width: 14px; height: 14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+              <span>Click to Enlarge (1440x900 HD)</span>
+            </div>
+          </div>
+          <div class="showcase-text-details">
+            <span class="showcase-meta-tag">MODULE 03 • PROCESS CHEMICAL ENGINEERING</span>
+            <h3>Acid Gas Removal (AGR) & Venting Engine</h3>
+            <p>
+              Simulates amine sweetening contactors, strippers, and flash drums to calculate exact CO₂ and H₂S slip streams vented or routed to incinerators.
+            </p>
+            <ul class="showcase-feature-bullets">
+              <li>
+                <svg class="bullet-check-icon" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <div><strong>Process Mass Balance:</strong> Solves feed gas molar CO₂ content vs. sweet gas specifications (e.g. 2 mol% pipeline limit).</div>
+              </li>
+              <li>
+                <svg class="bullet-check-icon" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <div><strong>Vapor Recovery & Dehydrators:</strong> Rigorous TEG dehydrator flash tank venting and Glycol regeneration unit modeling.</div>
+              </li>
+              <li>
+                <svg class="bullet-check-icon" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <div><strong>Audit Proof Backing:</strong> Produces verifiable engineering calculation sheets acceptable to international verifiers.</div>
+              </li>
+            </ul>
+            <button class="btn btn-primary" onclick="openDemoModal()">See AGR Demonstration</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: STOICHIOMETRY -->
+      <div class="tab-content-panel" id="tab-3">
+        <div class="showcase-grid-display glass-card" style="padding: 36px;">
+          <div class="showcase-img-container" onclick="openLightbox('site_assets/stoichiometry_factors.png')">
+            <img src="site_assets/stoichiometry_factors.png" alt="Fuel Gas Stoichiometry & Factor Library">
+            <div class="img-zoom-hint">
+              <svg style="width: 14px; height: 14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+              <span>Click to Enlarge (1440x900 HD)</span>
+            </div>
+          </div>
+          <div class="showcase-text-details">
+            <span class="showcase-meta-tag">MODULE 04 • REFERENCE DATA</span>
+            <h3>Fuel Stoichiometry & Emission Factor Catalogs</h3>
+            <p>
+              Pre-loaded with over 1,200 validated emission factors from API, EPA GHGRP, UK DEFRA, and IEA, with full support for field-specific custom gas lab analyses.
+            </p>
+            <ul class="showcase-feature-bullets">
+              <li>
+                <svg class="bullet-check-icon" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <div><strong>Molar Gas Composition:</strong> Enter CH₄, C₂H₆, C₃H₈, i-C₄, n-C₄, C₅+, N₂, and CO₂ to compute live molecular weight.</div>
+              </li>
+              <li>
+                <svg class="bullet-check-icon" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <div><strong>Dynamic Heating Value:</strong> Automatically derives gross (HHV) and net (LHV) energy contents at standard conditions.</div>
+              </li>
+              <li>
+                <svg class="bullet-check-icon" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <div><strong>Factor Versioning:</strong> Historical audit trail locks emission factors per reporting year to prevent retrospective drift.</div>
+              </li>
+            </ul>
+            <button class="btn btn-secondary" onclick="openLightbox('site_assets/stoichiometry_factors.png')">Inspect Fuel Specs</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4: COMPLIANCE REPORTS -->
+      <div class="tab-content-panel" id="tab-4">
+        <div class="showcase-grid-display glass-card" style="padding: 36px;">
+          <div class="showcase-img-container" onclick="openLightbox('site_assets/compliance_reports.png')">
+            <img src="site_assets/compliance_reports.png" alt="Compliance Reports Studio & Export Engine">
+            <div class="img-zoom-hint">
+              <svg style="width: 14px; height: 14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+              <span>Click to Enlarge (1440x900 HD)</span>
+            </div>
+          </div>
+          <div class="showcase-text-details">
+            <span class="showcase-meta-tag">MODULE 05 • REGULATORY DISCLOSURE</span>
+            <h3>Automated Compliance Reporting Studio</h3>
+            <p>
+              Generates pixel-perfect, certified compliance dossiers in one click. Fully compliant with international regulatory reporting schemas.
+            </p>
+            <ul class="showcase-feature-bullets">
+              <li>
+                <svg class="bullet-check-icon" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <div><strong>EU CBAM & CSRD ESRS E1:</strong> Pre-formatted XML and PDF templates matching European Commission guidelines.</div>
+              </li>
+              <li>
+                <svg class="bullet-check-icon" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <div><strong>OGMP 2.0 Gold Standard:</strong> Level 4 and Level 5 annual declaration forms with top-down reconciliation appendices.</div>
+              </li>
+              <li>
+                <svg class="bullet-check-icon" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <div><strong>Multi-Format Exports:</strong> Instant generation of signed PDF reports, audited Excel workbooks, and secure REST API payloads.</div>
+              </li>
+            </ul>
+            <button class="btn btn-primary" onclick="openDemoModal()">Download Sample Report</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 5: MAKER-CHECKER -->
+      <div class="tab-content-panel" id="tab-5">
+        <div class="showcase-grid-display glass-card" style="padding: 36px;">
+          <div class="showcase-img-container" onclick="openLightbox('site_assets/audit_maker_checker.png')">
+            <img src="site_assets/audit_maker_checker.png" alt="Audit Trail & Maker-Checker Queue">
+            <div class="img-zoom-hint">
+              <svg style="width: 14px; height: 14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+              <span>Click to Enlarge (1440x1000 HD)</span>
+            </div>
+          </div>
+          <div class="showcase-text-details">
+            <span class="showcase-meta-tag">MODULE 06 • AUDIT & GOVERNANCE</span>
+            <h3>Maker-Checker & Immutable Audit Trail</h3>
+            <p>
+              Enterprise-grade dual authorization (4-eyes principle). Data entered by field operators cannot enter the official ledger until verified and electronically signed by an accredited engineer.
+            </p>
+            <ul class="showcase-feature-bullets">
+              <li>
+                <svg class="bullet-check-icon" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <div><strong>4-Eyes Dual Approval:</strong> Segregation of duties between data makers (field engineers) and checkers (lead auditors).</div>
+              </li>
+              <li>
+                <svg class="bullet-check-icon" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <div><strong>Cryptographic Integrity:</strong> Every record mutation is timestamped and hashed with before/after state diffing.</div>
+              </li>
+              <li>
+                <svg class="bullet-check-icon" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <div><strong>Zero Unauthorized Edits:</strong> Prevents retrospective modifications that could trigger legal and regulatory non-compliance penalties.</div>
+              </li>
+            </ul>
+            <button class="btn btn-secondary" onclick="openLightbox('site_assets/audit_maker_checker.png')">Inspect Approval Queue</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 6: HIERARCHY -->
+      <div class="tab-content-panel" id="tab-6">
+        <div class="showcase-grid-display glass-card" style="padding: 36px;">
+          <div class="showcase-img-container" onclick="openLightbox('site_assets/facility_management.png')">
+            <img src="site_assets/facility_management.png" alt="Facility Hierarchy & Asset Registry">
+            <div class="img-zoom-hint">
+              <svg style="width: 14px; height: 14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+              <span>Click to Enlarge (1440x1000 HD)</span>
+            </div>
+          </div>
+          <div class="showcase-text-details">
+            <span class="showcase-meta-tag">MODULE 07 • ENTERPRISE STRUCTURE</span>
+            <h3>Multi-Asset Facility Hierarchy & GIS Mapping</h3>
+            <p>
+              Model complex corporate structures with multi-field joint ventures, operational control vs. equity share consolidation, and GPS asset geofencing.
+            </p>
+            <ul class="showcase-feature-bullets">
+              <li>
+                <svg class="bullet-check-icon" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <div><strong>Organizational Boundaries:</strong> Seamlessly toggle between Financial Control, Operational Control, and Equity Share (GHG Protocol).</div>
+              </li>
+              <li>
+                <svg class="bullet-check-icon" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <div><strong>Deep Equipment Tagging:</strong> Link emission sources to flare stacks, turbines, boilers, wellheads, and compressors.</div>
+              </li>
+              <li>
+                <svg class="bullet-check-icon" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <div><strong>Role-Based Access Control:</strong> Segment user viewing and entry rights by regional asset or processing facility.</div>
+              </li>
+            </ul>
+            <button class="btn btn-primary" onclick="openDemoModal()">Explore Asset Builder</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Comprehensive Gallery Grid -->
+      <div style="margin-top: 60px; text-align: center;">
+        <span class="section-tag">High-Resolution Gallery</span>
+        <h3 style="font-size: 1.8rem; margin-bottom: 12px;">Operational Proof Across Every Department</h3>
+        <p style="font-size: 0.95rem; color: var(--text-secondary); max-width: 680px; margin: 0 auto 30px;">
+          Click any interface card below to open full-resolution 1440px inspection in the Lightbox viewer.
+        </p>
+
+        <div class="screenshot-gallery-grid">
+          <!-- Card 1 -->
+          <div class="gallery-thumb-card" onclick="openLightbox('site_assets/analytics_kpi.png')">
+            <div class="gt-img-wrap">
+              <img src="site_assets/analytics_kpi.png" alt="Dynamic Emission Analytics & KPIs" loading="lazy">
+            </div>
+            <div class="gt-caption">
+              <div class="gt-category">Executive Intelligence</div>
+              <div class="gt-title">Dynamic Emission Analytics & Intensity Splits</div>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="gallery-thumb-card" onclick="openLightbox('site_assets/scope1_selection.png')">
+            <div class="gt-img-wrap">
+              <img src="site_assets/scope1_selection.png" alt="Scope 1 Category Selection Matrix" loading="lazy">
+            </div>
+            <div class="gt-caption">
+              <div class="gt-category">Calculation Architecture</div>
+              <div class="gt-title">Scope 1 Oil & Gas Engineering Selection Matrix</div>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="gallery-thumb-card" onclick="openLightbox('site_assets/geographic_mapping.png')">
+            <div class="gt-img-wrap">
+              <img src="site_assets/geographic_mapping.png" alt="Asset Boundaries & GIS Regional Mapping" loading="lazy">
+            </div>
+            <div class="gt-caption">
+              <div class="gt-category">GIS & Boundaries</div>
+              <div class="gt-title">Multi-Field Geographic Boundaries & Assets</div>
+            </div>
+          </div>
+
+          <!-- Card 4 -->
+          <div class="gallery-thumb-card" onclick="openLightbox('site_assets/audit_verification.png')">
+            <div class="gt-img-wrap">
+              <img src="site_assets/audit_verification.png" alt="Auditor Verification & Filter Trail" loading="lazy">
+            </div>
+            <div class="gt-caption">
+              <div class="gt-category">Assurance & Verification</div>
+              <div class="gt-title">Auditor Verification Trail & Query Filter</div>
+            </div>
+          </div>
+
+          <!-- Card 5 -->
+          <div class="gallery-thumb-card" onclick="openLightbox('site_assets/admin_portal.png')">
+            <div class="gt-img-wrap">
+              <img src="site_assets/admin_portal.png" alt="RBAC User Permissions & Access Control" loading="lazy">
+            </div>
+            <div class="gt-caption">
+              <div class="gt-category">Enterprise Governance</div>
+              <div class="gt-title">Role-Based Access Control & RLS Security</div>
+            </div>
+          </div>
+
+          <!-- Card 6 -->
+          <div class="gallery-thumb-card" onclick="openLightbox('site_assets/hero_mockup.jpg')">
+            <div class="gt-img-wrap">
+              <img src="site_assets/hero_mockup.jpg" alt="NeoCarbon Enterprise Engineering Station" loading="lazy">
+            </div>
+            <div class="gt-caption">
+              <div class="gt-category">Control Room Readiness</div>
+              <div class="gt-title">Field Decarbonization Workstation Setup</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       LIVE INTERACTIVE EMISSION & INTENSITY SIMULATOR
+       ======================================================================== -->
+  <section id="simulator" class="simulator-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Interactive Engineering Tool</span>
+        <h2 class="section-title">Model Your Facility's Carbon Intensity in Real-Time</h2>
+        <p class="section-desc">
+          Adjust plant throughput, flaring rate, and power demand below. NeoCarbon's live stoichiometry engine instantly calculates gross emissions and compares your intensity against the <strong>IOGP global deciles</strong>.
+        </p>
+      </div>
+
+      <div class="sim-card-wrap glass-card">
+        <div class="sim-grid">
+          <!-- Controls Column -->
+          <div class="sim-controls">
+            <!-- Facility Type -->
+            <div class="sim-control-group">
+              <label class="form-label">Asset Classification</label>
+              <div class="facility-type-pills">
+                <button class="facility-pill-btn active" onclick="setFacilityType('upstream', this)">Upstream Oil & Gas (CPF)</button>
+                <button class="facility-pill-btn" onclick="setFacilityType('gas_plant', this)">Gas Processing & Liquefaction</button>
+                <button class="facility-pill-btn" onclick="setFacilityType('refinery', this)">Modern Complex Refinery</button>
+                <button class="facility-pill-btn" onclick="setFacilityType('petrochem', this)">Petrochemical Complex</button>
+              </div>
+            </div>
+
+            <!-- Monthly Production Slider -->
+            <div class="sim-control-group">
+              <div class="sim-label-row">
+                <span>Monthly Hydrocarbon Production</span>
+                <span class="sim-val-display" id="val-prod">1,200,000 boe</span>
+              </div>
+              <input type="range" class="sim-slider" id="slider-prod" min="200000" max="5000000" step="50000" value="1200000" oninput="updateSimulation()">
+              <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">
+                <span>200k boe/mo</span>
+                <span>5M boe/mo</span>
+              </div>
+            </div>
+
+            <!-- Flaring Fraction Slider -->
+            <div class="sim-control-group">
+              <div class="sim-label-row">
+                <span>Flare Gas Rate (% of Produced Gas)</span>
+                <span class="sim-val-display" id="val-flare">1.40 %</span>
+              </div>
+              <input type="range" class="sim-slider" id="slider-flare" min="0.1" max="5.0" step="0.1" value="1.4" oninput="updateSimulation()">
+              <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">
+                <span>0.1% (Near-Zero Flaring)</span>
+                <span>5.0% (High Routine Flaring)</span>
+              </div>
+            </div>
+
+            <!-- Fuel Gas Consumption -->
+            <div class="sim-control-group">
+              <div class="sim-label-row">
+                <span>Own Fuel Gas Consumption (Power & Compression)</span>
+                <span class="sim-val-display" id="val-fuel">3.8 %</span>
+              </div>
+              <input type="range" class="sim-slider" id="slider-fuel" min="1.0" max="8.0" step="0.2" value="3.8" oninput="updateSimulation()">
+              <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">
+                <span>1.0% (Grid-Electrified)</span>
+                <span>8.0% (Gas-Turbine Driven)</span>
+              </div>
+            </div>
+
+            <!-- Grid Power Imported -->
+            <div class="sim-control-group">
+              <div class="sim-label-row">
+                <span>Imported Grid Power (Scope 2)</span>
+                <span class="sim-val-display" id="val-elec">12,000 MWh</span>
+              </div>
+              <input type="range" class="sim-slider" id="slider-elec" min="0" max="50000" step="1000" value="12000" oninput="updateSimulation()">
+            </div>
+          </div>
+
+          <!-- Live Output Results Dashboard -->
+          <div class="sim-results-panel">
+            <div>
+              <div class="sim-metric-headline">
+                <div class="label">Gross Calculated Monthly Footprint</div>
+                <div class="big-number" id="res-total">24,310 <span style="font-size: 1.4rem; color: var(--brand-emerald);">tCO₂e</span></div>
+                <div style="font-size: 0.82rem; color: var(--text-secondary);">Calculated via API Compendium 2021 Tier 3 Stoichiometry</div>
+              </div>
+
+              <!-- Intensity & Methane Slip -->
+              <div class="sim-breakdown-row">
+                <div class="sim-stat-box">
+                  <div class="sb-lbl">Carbon Intensity</div>
+                  <div class="sb-val" id="res-intensity">20.26 <span style="font-size: 0.85rem; color: var(--text-muted);">kg/boe</span></div>
+                </div>
+                <div class="sim-stat-box">
+                  <div class="sb-lbl">Estimated Methane Slip</div>
+                  <div class="sb-val" id="res-methane">0.14 <span style="font-size: 0.85rem; color: var(--text-muted);">% loss</span></div>
+                </div>
+                <div class="sim-stat-box">
+                  <div class="sb-lbl">Scope 1 Direct</div>
+                  <div class="sb-val" id="res-s1">19,150 <span style="font-size: 0.85rem; color: var(--text-muted);">tCO₂e</span></div>
+                </div>
+                <div class="sim-stat-box">
+                  <div class="sb-lbl">Scope 2 Indirect</div>
+                  <div class="sb-val" id="res-s2">5,160 <span style="font-size: 0.85rem; color: var(--text-muted);">tCO₂e</span></div>
+                </div>
+              </div>
+
+              <!-- Benchmark Classification -->
+              <div class="benchmark-status-badge" id="res-badge">
+                <svg style="width: 24px; height: 24px; stroke: var(--brand-emerald); flex-shrink: 0;" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <div>
+                  <div style="font-weight: 700; color: #fff; font-size: 0.9rem;" id="res-badge-title">Median Decile Performance</div>
+                  <div style="font-size: 0.78rem; color: var(--text-secondary);" id="res-badge-desc">Within the IOGP global average range (18-25 kg CO₂e/boe). Meets EU Methane Reg requirements.</div>
+                </div>
+              </div>
+
+              <!-- Carbon Tax Liability -->
+              <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px;">
+                Estimated Annual CBAM / Carbon Tax Exposure (@ €85/t): <strong style="color: #f59e0b;" id="res-tax">€24.8 Million / year</strong>
+              </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="openDemoModal()" style="width: 100%;">Deploy NeoCarbon to Optimize Asset</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       TECHNICAL ARCHITECTURE & DATA FLOW
+       ======================================================================== -->
+  <section id="architecture" class="arch-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Enterprise Architecture</span>
+        <h2 class="section-title">Built for Massive Industrial Throughput</h2>
+        <p class="section-desc">
+          From DCS and SCADA field telemetry to the executive boardroom. Seamlessly bridging physical plant sensors with international compliance repositories.
+        </p>
+      </div>
+
+      <div class="pipeline-strip">
+        <!-- Node 1 -->
+        <div class="pipeline-node glass-card">
+          <span class="pipeline-step-badge">STEP 01 • INGESTION</span>
+          <h4>Multi-Source Ingestion</h4>
+          <p>
+            Connects to OSIsoft PI, SCADA, SAP ERP, laboratory gas chromatography CSVs, and continuous emission monitoring systems (CEMS).
+          </p>
+        </div>
+
+        <!-- Node 2 -->
+        <div class="pipeline-node glass-card">
+          <span class="pipeline-step-badge">STEP 02 • VALIDATION</span>
+          <h4>Mass-Balance Cleansing</h4>
+          <p>
+            Automated schema mapping, boundary validation, missing data imputation, and unit conversion algorithms eliminate human error.
+          </p>
+        </div>
+
+        <!-- Node 3 -->
+        <div class="pipeline-node glass-card">
+          <span class="pipeline-step-badge">STEP 03 • STOICHIOMETRY</span>
+          <h4>Deterministic Engine</h4>
+          <p>
+            API Compendium 2021 Tier 3 stoichiometric models solve mass balances, combustion chemistry, and analytical error propagation.
+          </p>
+        </div>
+
+        <!-- Node 4 -->
+        <div class="pipeline-node glass-card">
+          <span class="pipeline-step-badge">STEP 04 • GOVERNANCE</span>
+          <h4>Immutable Audit Store</h4>
+          <p>
+            Cryptographic SHA-256 block hashing, 4-eyes Maker-Checker signoffs, and instant generation of certified CSRD, CBAM, and OGMP 2.0 dossiers.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       COMPETITIVE SUPERIORITY MATRIX
+       ======================================================================== -->
+  <section id="matrix" class="matrix-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Market Differentiation</span>
+        <h2 class="section-title">Why Energy Giants Choose NeoCarbon</h2>
+        <p class="section-desc">
+          Generic ESG SaaS platforms were built for tech offices and retail supply chains. NeoCarbon was purpose-engineered for hydrocarbon thermodynamics and oilfield operations.
+        </p>
+      </div>
+
+      <div class="matrix-table-wrap">
+        <table class="matrix-table">
+          <thead>
+            <tr>
+              <th style="width: 38%;">Platform Capability</th>
+              <th class="col-neocarbon" style="width: 28%;">NeoCarbon™ Enterprise</th>
+              <th style="width: 17%;">Generic ESG SaaS</th>
+              <th style="width: 17%;">Legacy Excel Workbooks</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>API Compendium 2021 Tier 3 Stoichiometry</strong></td>
+              <td class="col-neocarbon"><span class="check-icon">✓ Built-in First Principles</span></td>
+              <td><span class="cross-icon">✗ Generic Averages</span></td>
+              <td><span class="cross-icon">✗ Fragmented Formulas</span></td>
+            </tr>
+            <tr>
+              <td><strong>Acid Gas Removal (AGR) & Venting Chemical Modeling</strong></td>
+              <td class="col-neocarbon"><span class="check-icon">✓ Amine Treater Mass Balance</span></td>
+              <td><span class="cross-icon">✗ Unsupported</span></td>
+              <td><span class="cross-icon">✗ Highly Prone to Error</span></td>
+            </tr>
+            <tr>
+              <td><strong>OGMP 2.0 Level 4/5 Gold Standard Reconciliation</strong></td>
+              <td class="col-neocarbon"><span class="check-icon">✓ Native Level 4 & 5 Workflows</span></td>
+              <td><span class="cross-icon">✗ High-level Level 3 Only</span></td>
+              <td><span class="cross-icon">✗ Disconnected Files</span></td>
+            </tr>
+            <tr>
+              <td><strong>Cryptographic Maker-Checker 4-Eyes Governance</strong></td>
+              <td class="col-neocarbon"><span class="check-icon">✓ Immutable SHA-256 Logs</span></td>
+              <td><span class="cross-icon">✗ Basic Permissions Only</span></td>
+              <td><span class="cross-icon">✗ Zero Audit Trail</span></td>
+            </tr>
+            <tr>
+              <td><strong>Automated EU CBAM & CSRD (ESRS E1) Exports</strong></td>
+              <td class="col-neocarbon"><span class="check-icon">✓ Instant Certified Dossiers</span></td>
+              <td><span class="cross-icon">✗ Manual Re-mapping</span></td>
+              <td><span class="cross-icon">✗ Weeks of Manual Assembly</span></td>
+            </tr>
+            <tr>
+              <td><strong>Air-Gapped / Sovereign On-Premise Deployment</strong></td>
+              <td class="col-neocarbon"><span class="check-icon">✓ Full On-Premise & Cloud</span></td>
+              <td><span class="cross-icon">✗ Multi-Tenant Public Cloud</span></td>
+              <td><span class="cross-icon">✗ Local Drive Sprawl</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       PROVEN CASE STUDY: GROUPEMENT BERKINE & EL MERK
+       ======================================================================== -->
+  <section id="case-study" class="case-section">
+    <div class="container">
+      <div class="case-card">
+        <div class="case-grid">
+          <div>
+            <div class="pill pill-emerald" style="margin-bottom: 16px;">
+              <span>PROVEN OPERATIONAL CASE STUDY</span>
+            </div>
+            <h3 style="font-size: 2.2rem; margin-bottom: 16px;">Groupement Berkine & El Merk Field Verification</h3>
+            <p style="font-size: 1.05rem; line-height: 1.6; color: var(--text-primary); margin-bottom: 24px;">
+              Deployed across the Berkine Basin (Blocks 404a & 208) in southern Algeria to unify emissions accounting across Central Processing Facilities (CPF), gathering manifolds, and satellite wellheads.
+            </p>
+            <p style="color: var(--text-secondary); margin-bottom: 28px;">
+              Replaced over 45 disconnected engineering spreadsheets with a single, synchronized corporate platform. Achieved 100% unqualified auditor approval under ISO 14064-3 and uncovered 42,500 tCO₂e/year in flaring optimization opportunities.
+            </p>
+            <button class="btn btn-primary" onclick="openDemoModal()">Read Full Case Study PDF</button>
+          </div>
+
+          <div class="case-stats-row">
+            <div class="case-stat-item">
+              <div class="case-stat-num">1.42M</div>
+              <div class="case-stat-lbl">tCO₂e Audited & Verified</div>
+            </div>
+            <div class="case-stat-item">
+              <div class="case-stat-num">42.5k</div>
+              <div class="case-stat-lbl">tCO₂e Abatement Identified</div>
+            </div>
+            <div class="case-stat-item">
+              <div class="case-stat-num">100%</div>
+              <div class="case-stat-lbl">Auditor Reconciliation</div>
+            </div>
+            <div class="case-stat-item">
+              <div class="case-stat-num">14 Days</div>
+              <div class="case-stat-lbl">From Kickoff to Full Go-Live</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       FREQUENTLY ASKED QUESTIONS
+       ======================================================================== -->
+  <section id="faq" class="faq-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Got Questions?</span>
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        <p class="section-desc">
+          Everything technical, IT security, and executive directors need to know about implementing NeoCarbon.
+        </p>
+      </div>
+
+      <div class="faq-accordion">
+        <!-- Q1 -->
+        <div class="faq-item active">
+          <div class="faq-header" onclick="toggleFaq(this)">
+            <span>How does NeoCarbon differ from generic corporate ESG platforms?</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="faq-body">
+            Generic ESG tools rely on spend-based economic averages that produce massive errors when applied to oil & gas assets. NeoCarbon is an engineering-first platform that uses true chemical stoichiometry, gas chromatography molar splits, higher heating values, and the API Compendium 2021 Tier 3 methodology.
+          </div>
+        </div>
+
+        <!-- Q2 -->
+        <div class="faq-item">
+          <div class="faq-header" onclick="toggleFaq(this)">
+            <span>Can NeoCarbon be deployed on-premise in air-gapped sovereign environments?</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="faq-body">
+            Yes. We recognize that national energy companies and upstream operators have strict data sovereignty requirements. NeoCarbon can be deployed fully on-premise within your secure datacenter, on private government clouds, or via containerized Docker/Kubernetes clusters with zero external internet dependencies.
+          </div>
+        </div>
+
+        <!-- Q3 -->
+        <div class="faq-item">
+          <div class="faq-header" onclick="toggleFaq(this)">
+            <span>How does the Maker-Checker workflow protect against audit penalties?</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="faq-body">
+            NeoCarbon enforces the 4-eyes principle. Field operators or automated SCADA feeds stage data as "Pending Review". A certified emissions checker must review, validate, and electronically sign the records before they commit to the official regulatory ledger. Every change is cryptographically hashed with SHA-256 for non-repudiation.
+          </div>
+        </div>
+
+        <!-- Q4 -->
+        <div class="faq-item">
+          <div class="faq-header" onclick="toggleFaq(this)">
+            <span>How easy is it to migrate our existing Excel emission spreadsheets?</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="faq-body">
+            Extremely rapid. NeoCarbon includes an intelligent column-mapping ingestion wizard that auto-detects date formats, fuel types, activity units (Sm³, MMSCF, boe, MWh), and facility IDs. Typical historical data ingestion for 5 years of field data takes less than 48 hours.
+          </div>
+        </div>
+
+        <!-- Q5 -->
+        <div class="faq-item">
+          <div class="faq-header" onclick="toggleFaq(this)">
+            <span>Does NeoCarbon support EU CBAM cross-border export declarations?</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="faq-body">
+            Yes. NeoCarbon includes a dedicated CBAM export module configured to calculate specific embedded direct and indirect emissions per metric ton of exported hydrocarbon product (LNG, LPG, refinery distillates, fertilizers) matching the transitional and definitive European Commission CBAM registries.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       FINAL CALL TO ACTION
+       ======================================================================== -->
+  <section class="cta-banner-section">
+    <div class="container">
+      <div class="cta-banner-card">
+        <span class="section-tag" style="color: #a7f3d0;">ENTERPRISE DEPLOYMENT</span>
+        <h2>Ready to Transition from Spreadsheet Uncertainty to Engineering Perfection?</h2>
+        <p style="font-size: 1.15rem; color: #cbd5e1; max-width: 720px; margin: 0 auto 36px;">
+          Join the national and international energy producers leading the transition with verified, audit-proof carbon intelligence.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+          <button class="btn btn-primary" onclick="openDemoModal()" style="padding: 14px 32px; font-size: 1.05rem;">
+            <span>Schedule Enterprise Demo</span>
+            <svg style="width: 18px; height: 18px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+          <a href="#simulator" class="btn btn-secondary" style="padding: 14px 28px; font-size: 1.05rem;">
+            <span>Calculate Asset Footprint</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       FOOTER
+       ======================================================================== -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <!-- Logo in Footer -->
+          <div class="brand-logo-card" style="display: inline-block;">
+            <img src="site_assets/logo.png" alt="NeoCarbon" style="height: 34px;">
+          </div>
+          <p>
+            The enterprise-grade Greenhouse Gas accounting, emission analytics, and regulatory compliance platform engineered for upstream, midstream, and downstream industrial assets.
+          </p>
+          <div style="margin-top: 14px; font-family: var(--font-mono); font-size: 0.75rem; color: var(--brand-emerald);">
+            ● MEASURE | ANALYSE | REDUCE
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h5>Core Modules</h5>
+          <ul>
+            <li><a href="#showcase">Scope 1 Combustion Engine</a></li>
+            <li><a href="#showcase">AGR & Amine Venting Simulator</a></li>
+            <li><a href="#showcase">Dual Scope 2 Accounting</a></li>
+            <li><a href="#showcase">15 Scope 3 Categories</a></li>
+            <li><a href="#showcase">Methane OGMP 2.0 Level 5</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h5>Compliance & Standards</h5>
+          <ul>
+            <li><a href="#architecture">API Compendium 2021 Tier 3</a></li>
+            <li><a href="#architecture">GHG Protocol Corporate Standard</a></li>
+            <li><a href="#architecture">ISO 14064-1/2/3 Verification</a></li>
+            <li><a href="#architecture">EU CBAM Registry 2026</a></li>
+            <li><a href="#architecture">CSRD (ESRS E1 Climate Change)</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h5>Enterprise Access</h5>
+          <ul>
+            <li><a href="#" onclick="openDemoModal(); return false;">Book Private Cloud Demo</a></li>
+            <li><a href="#" onclick="openDemoModal(); return false;">On-Premise Deployment</a></li>
+            <li><a href="#" onclick="openDemoModal(); return false;">Audit Evidence Briefing</a></li>
+            <li><a href="mailto:contact@neocarbon.dz">contact@neocarbon.dz</a></li>
+            <li><a href="https://www.neocarbon.dz" target="_blank">www.neocarbon.dz</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>
+          © 2026 NeoCarbon Technologies. All Rights Reserved. Engineered with First-Principles Chemical Stoichiometry.
+        </div>
+        <div style="display: flex; gap: 20px; align-items: center;">
+          <span style="color: var(--brand-emerald); font-family: var(--font-mono); font-size: 0.75rem;">
+            🟢 Core Engine v3.2.0 • Status: Operational
+          </span>
+          <a href="#" style="color: var(--text-muted); text-decoration: none;">Security & Privacy</a>
+          <a href="#" style="color: var(--text-muted); text-decoration: none;">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========================================================================
+       MODALS: LIGHTBOX & ENTERPRISE DEMO BOOKING
+       ======================================================================== -->
+  <!-- Lightbox Modal -->
+  <div class="lightbox-modal" id="lightboxModal" onclick="closeLightbox()">
+    <div class="lightbox-content" onclick="event.stopPropagation()">
+      <button class="lightbox-close-btn" onclick="closeLightbox()">✕</button>
+      <img src="" id="lightboxImg" alt="Enlarged Software Screenshot">
+    </div>
+  </div>
+
+  <!-- Enterprise Demo Booking Modal -->
+  <div class="modal-overlay" id="demoModal">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeDemoModal()">✕</button>
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+        <span class="pill pill-emerald" style="font-size: 0.7rem;">ENTERPRISE EVALUATION</span>
+      </div>
+      <h3 style="font-size: 1.6rem; margin-bottom: 8px;">Request NeoCarbon Enterprise Briefing</h3>
+      <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 24px;">
+        Connect with our principal decarbonization engineers to review your facility's emission profile, migration from spreadsheets, or custom factor models.
+      </p>
+
+      <form id="demoForm" onsubmit="handleDemoSubmit(event)">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" class="form-input" placeholder="e.g. Dr. Youcef Benali" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Corporate Email</label>
+          <input type="email" class="form-input" placeholder="y.benali@company.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Organization / Energy Operator</label>
+          <input type="text" class="form-input" placeholder="e.g. Sonatrach / TotalEnergies / Eni / Berkine" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Primary Objective</label>
+          <select class="form-select">
+            <option>Full Multi-Facility GHG Platform Rollout</option>
+            <option>EU CBAM & CSRD Compliance Acceleration</option>
+            <option>OGMP 2.0 Gold Standard Level 4/5 Methane Reconciliation</option>
+            <option>Spreadsheet Migration & API Integration (SAP/PI)</option>
+            <option>Air-Gapped Sovereign On-Premise Installation</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 14px; margin-top: 10px;">
+          Confirm Executive Demo Request →
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast-notify" id="toastNotify">
+    <svg style="width: 20px; height: 20px; stroke: #fff;" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+    <span id="toastMsg">Executive briefing request confirmed. Our engineering team will contact you within 24 hours.</span>
+  </div>
+
+  <!-- ========================================================================
+       CLIENT-SIDE INTERACTIVE JAVASCRIPT
+       ======================================================================== -->
+  <script>
+    // -------------------------------------------------------------
+    // TAB SWITCHER
+    // -------------------------------------------------------------
+    function switchTab(index) {
+      const tabs = document.querySelectorAll('.tab-btn');
+      const panels = document.querySelectorAll('.tab-content-panel');
+      
+      tabs.forEach((tab, i) => {
+        if (i === index) tab.classList.add('active');
+        else tab.classList.remove('active');
+      });
+
+      panels.forEach((panel, i) => {
+        if (i === index) panel.classList.add('active');
+        else panel.classList.remove('active');
+      });
+    }
+
+    // -------------------------------------------------------------
+    // LIGHTBOX FULLSCREEN PREVIEWS
+    // -------------------------------------------------------------
+    function openLightbox(src) {
+      const modal = document.getElementById('lightboxModal');
+      const img = document.getElementById('lightboxImg');
+      img.src = src;
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      const modal = document.getElementById('lightboxModal');
+      modal.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeLightbox();
+        closeDemoModal();
+      }
+    });
+
+    // -------------------------------------------------------------
+    // DEMO MODAL
+    // -------------------------------------------------------------
+    function openDemoModal() {
+      document.getElementById('demoModal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDemoModal() {
+      document.getElementById('demoModal').classList.remove('active');
+      document.body.style.overflow = 'auto';
+    }
+
+    function handleDemoSubmit(e) {
+      e.preventDefault();
+      closeDemoModal();
+      showToast('Thank you! Your briefing request is confirmed. Our engineering team will be in touch shortly.');
+      document.getElementById('demoForm').reset();
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toastNotify');
+      document.getElementById('toastMsg').innerText = msg;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 4500);
+    }
+
+    // -------------------------------------------------------------
+    // FAQ ACCORDION
+    // -------------------------------------------------------------
+    function toggleFaq(header) {
+      const item = header.parentElement;
+      const allItems = document.querySelectorAll('.faq-item');
+      allItems.forEach(i => {
+        if (i !== item) i.classList.remove('active');
+      });
+      item.classList.toggle('active');
+    }
+
+    // -------------------------------------------------------------
+    // LIVE INTERACTIVE EMISSION SIMULATOR ENGINE
+    // -------------------------------------------------------------
+    let currentFacility = 'upstream';
+
+    const FACILITY_FACTORS = {
+      upstream: {
+        flareFactor: 2.8,   // tCO2e per % flaring per 100k boe
+        fuelFactor: 3.4,    // tCO2e per % fuel per 100k boe
+        elecFactor: 0.43,   // tCO2e per MWh
+        baseMethaneSlip: 0.12,
+        benchmarkTarget: 18.0
+      },
+      gas_plant: {
+        flareFactor: 3.2,
+        fuelFactor: 4.1,
+        elecFactor: 0.43,
+        baseMethaneSlip: 0.15,
+        benchmarkTarget: 22.0
+      },
+      refinery: {
+        flareFactor: 2.2,
+        fuelFactor: 5.6,
+        elecFactor: 0.48,
+        baseMethaneSlip: 0.08,
+        benchmarkTarget: 29.0
+      },
+      petrochem: {
+        flareFactor: 2.5,
+        fuelFactor: 6.2,
+        elecFactor: 0.52,
+        baseMethaneSlip: 0.09,
+        benchmarkTarget: 34.0
+      }
+    };
+
+    function setFacilityType(type, btn) {
+      currentFacility = type;
+      document.querySelectorAll('.facility-pill-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      updateSimulation();
+    }
+
+    function updateSimulation() {
+      const prod = parseFloat(document.getElementById('slider-prod').value);
+      const flare = parseFloat(document.getElementById('slider-flare').value);
+      const fuel = parseFloat(document.getElementById('slider-fuel').value);
+      const elec = parseFloat(document.getElementById('slider-elec').value);
+
+      // Update text displays
+      document.getElementById('val-prod').innerText = prod.toLocaleString('en-US') + ' boe';
+      document.getElementById('val-flare').innerText = flare.toFixed(2) + ' %';
+      document.getElementById('val-fuel').innerText = fuel.toFixed(1) + ' %';
+      document.getElementById('val-elec').innerText = elec.toLocaleString('en-US') + ' MWh';
+
+      const config = FACILITY_FACTORS[currentFacility];
+      const prodIn100k = prod / 100000;
+
+      // Calculate Scope 1
+      const flareEmissions = prodIn100k * flare * config.flareFactor * 35;
+      const fuelEmissions = prodIn100k * fuel * config.fuelFactor * 28;
+      const scope1 = flareEmissions + fuelEmissions;
+
+      // Calculate Scope 2
+      const scope2 = elec * config.elecFactor;
+
+      // Total & Intensity
+      const total = scope1 + scope2;
+      const intensity = (total * 1000) / prod; // kg CO2e / boe
+      const methaneSlip = (config.baseMethaneSlip * (flare / 1.5)).toFixed(2);
+
+      // Carbon Tax Exposure (@ €85/t)
+      const annualExposure = ((total * 12 * 85) / 1000000).toFixed(1);
+
+      // Render Outputs
+      document.getElementById('res-total').innerHTML = Math.round(total).toLocaleString('en-US') + ' <span style="font-size: 1.4rem; color: var(--brand-emerald);">tCO₂e</span>';
+      document.getElementById('res-intensity').innerHTML = intensity.toFixed(2) + ' <span style="font-size: 0.85rem; color: var(--text-muted);">kg/boe</span>';
+      document.getElementById('res-methane').innerHTML = methaneSlip + ' <span style="font-size: 0.85rem; color: var(--text-muted);">% loss</span>';
+      document.getElementById('res-s1').innerHTML = Math.round(scope1).toLocaleString('en-US') + ' <span style="font-size: 0.85rem; color: var(--text-muted);">tCO₂e</span>';
+      document.getElementById('res-s2').innerHTML = Math.round(scope2).toLocaleString('en-US') + ' <span style="font-size: 0.85rem; color: var(--text-muted);">tCO₂e</span>';
+      document.getElementById('res-tax').innerText = '€' + annualExposure + ' Million / year';
+
+      // Benchmark Status Check
+      const badge = document.getElementById('res-badge');
+      const badgeTitle = document.getElementById('res-badge-title');
+      const badgeDesc = document.getElementById('res-badge-desc');
+
+      if (intensity <= config.benchmarkTarget) {
+        badge.className = 'benchmark-status-badge';
+        badgeTitle.innerText = 'Top Decile Performer (Leader)';
+        badgeDesc.innerText = 'Intensity is below the regional industry benchmark (' + config.benchmarkTarget + ' kg/boe). Optimal position for CBAM tax exemptions.';
+      } else if (intensity <= config.benchmarkTarget * 1.35) {
+        badge.className = 'benchmark-status-badge';
+        badgeTitle.innerText = 'Median Industry Range (Moderate)';
+        badgeDesc.innerText = 'Within typical operational parameters. Flare recovery and compressor upgrades recommended to mitigate CBAM liability.';
+      } else {
+        badge.className = 'benchmark-status-badge alert-high';
+        badgeTitle.innerText = 'High Intensity Alert (Regulatory Risk)';
+        badgeDesc.innerText = 'Exceeds benchmark thresholds. Immediate mitigation required to avoid severe EU Methane Regulation penalties.';
+      }
+    }
+
+    // Initialize Simulator on Load
+    window.addEventListener('DOMContentLoaded', () => {
+      updateSimulation();
+    });
+
+    // Mobile Menu Toggle
+    function toggleMobileMenu() {
+      const links = document.querySelector('.nav-links');
+      if (links.style.display === 'flex') {
+        links.style.display = 'none';
+      } else {
+        links.style.display = 'flex';
+        links.style.flexDirection = 'column';
+        links.style.position = 'absolute';
+        links.style.top = '80px';
+        links.style.left = '0';
+        links.style.width = '100%';
+        links.style.background = '#07101c';
+        links.style.padding = '20px';
+        links.style.borderBottom = '1px solid rgba(255,255,255,0.1)';
+      }
+    }
+  </script>
+</body>
+</html>

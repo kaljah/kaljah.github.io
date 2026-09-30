@@ -1,3 +1,4 @@
+import math
 from .constants import DEFAULT_GWP, get_active_gwp
 
 # Standard Thermodynamic Conditions (API Compendium 2021 §4.2.1, ISO 13443)
@@ -137,6 +138,15 @@ def to_psia(val, unit="psig", atmospheric_psia=STD_PRESSURE_PSIA):
     return max(0.0, v + atmospheric_psia)
 
 
+# Volume units that can be read at operating conditions. scf / Mscf / Sm3 / Nm3 are standard by
+# definition, and energy or mass quantities have no volume to correct.
+ACTUAL_VOLUME_UNITS = {"m3", "m³", "cubic_meters", "cubic_meter", "cf", "ft3", "ft³", "acf", "am3", "actual_m3"}
+
+
+def is_actual_volume_unit(unit):
+    return str(unit or "").strip().lower() in ACTUAL_VOLUME_UNITS
+
+
 def normalize_gas_volume_to_standard(
     volume,
     operating_temp=None,
@@ -176,9 +186,18 @@ def normalize_gas_volume_to_standard(
     return vol * p_factor * t_factor * (1.0 / z)
 
 
+# Normal m3 (0 C, 101.325 kPa) in the platform's standard m3 (60 F, 14.696 psia; 1 m3 = 35.3147 scf)
+NM3_TO_SM3 = STD_TEMP_K / 273.15
+
 VOLUME_UNITS_TO_M3 = {
     "m3": 1.0,
     "m³": 1.0,
+    "sm3": 1.0,
+    "sm³": 1.0,
+    "nm3": NM3_TO_SM3,
+    "nm³": NM3_TO_SM3,
+    "ksm3": 1000.0,
+    "mmsm3": 1_000_000.0,
     "cubic_meter": 1.0,
     "cubic_meters": 1.0,
     "scf": 0.028316846592,
@@ -190,6 +209,9 @@ VOLUME_UNITS_TO_M3 = {
     "bbl": 0.158987295,
     "barrel": 0.158987295,
     "barrels": 0.158987295,
+    "kbbl": 158.987295,
+    "mbbl": 158.987295,
+    "mmbbl": 158987.295,
     "gal": 0.003785411784,
     "gallon": 0.003785411784,
     "gallons": 0.003785411784,
@@ -233,6 +255,9 @@ ENERGY_UNITS_TO_MJ = {
     "kilojoule": 0.001,
     "kilojoules": 0.001,
     "gj": 1000.0,
+    "tj": 1_000_000.0,
+    "terajoule": 1_000_000.0,
+    "kbtu": 1.05505585262,
     "gigajoule": 1000.0,
     "gigajoules": 1000.0,
     "btu": 0.00105505585262,
@@ -453,11 +478,16 @@ def convert(value, from_unit, to_unit):
     if u_from in PRESS_UNITS and u_to in PRESS_UNITS:
         return convert_pressure(val, u_from, u_to)
 
-    # Dimensional base-unit conversions
+    # Dimensional base-unit conversions ("short ton" and "short_ton" are the same key)
+    def _keys(u):
+        return (u, "_".join(u.replace("-", " ").split()))
+
     for dim_map in ALL_DIMENSION_MAPS:
-        if u_from in dim_map and u_to in dim_map:
-            val_base = val * dim_map[u_from]
-            return val_base / dim_map[u_to]
+        f = next((k for k in _keys(u_from) if k in dim_map), None)
+        t = next((k for k in _keys(u_to) if k in dim_map), None)
+        if f is not None and t is not None:
+            val_base = val * dim_map[f]
+            return val_base / dim_map[t]
 
     raise ValueError(f"Unsupported conversion: {from_unit} to {to_unit}")
 
@@ -500,6 +530,18 @@ def normalize_efficiency(eff_val, default=0.0):
 _normalize_efficiency = normalize_efficiency
 
 
+def scope3_ef_kg_per_unit(amount, co2e_tonnes, ef=None):
+    """The factor as stored on a Scope 3 record: kg CO2e per activity unit (the unit the tables and
+    calculation details read), whatever unit it was entered in (t/unit, g/unit, per $1,000)."""
+    try:
+        amt = float(amount or 0)
+        if amt > 0 and co2e_tonnes is not None:
+            return float(co2e_tonnes) * 1000.0 / amt
+    except (TypeError, ValueError):
+        pass
+    return ef
+
+
 def compute_scope3_co2e(
     amt: float, ef: float, ef_unit: str = "", calc_method: str = ""
 ) -> float:
@@ -539,19 +581,280 @@ def compute_scope3_co2e(
     # 2. Extract numerator before '/' or ' per '
     num = unit_str.split("/")[0].split(" per ")[0].strip()
 
-    # 3. Check if numerator specifies tonnes CO2e
-    # Must NOT be kg, g, or lb
+    # 3. Check numerator dimension
     is_tonne_num = False
     if not any(
-        prefix in num for prefix in ["kg", "kilogram", " g", "gram", "lb", "pound"]
-    ):
+        prefix in num for prefix in ["kg", "kilogram", "lb", "pound"]
+    ) and not (num.startswith("g") and not num.startswith("gj")):
         if any(
             t in num for t in ["tonne", "metric_ton", "tco2", "mtco2", "t/"]
         ) or num.startswith("t ") or num == "t":
             is_tonne_num = True
 
+    is_gram_num = (
+        num.startswith("g ")
+        or num.startswith("gco2")
+        or num.startswith("g/")
+        or "gram" in num
+        or num == "g"
+    ) and not num.startswith("gj")
+
     if is_tonne_num:
         return amt_val * ef_val
+    elif is_gram_num:
+        # Grams CO2e to tonnes CO2e: divide by 1,000,000
+        return (amt_val * ef_val) / 1_000_000.0
+    elif num.startswith("lb") or "pound" in num:
+        # Pounds CO2e to tonnes CO2e: 0.45359237 kg/lb / 1000 kg/t
+        return (amt_val * ef_val * 0.45359237) / 1000.0
     else:
         # Standard kg CO2e / unit -> tonnes CO2e
         return (amt_val * ef_val) / 1000.0
+
+
+# -- Canonical unit parsing (audit RC-5: BUG-011/027/033/047/048/049/051/063/066) ---------------
+# Every place that interprets a unit string goes through these helpers. Matching is on exact
+# tokens after normalisation, never on substrings ("mmscf" must not match "mscf", "kg" must not
+# match "k"), and an unknown unit raises instead of being passed through 1:1.
+
+import re as _re
+
+_SUBSUP = str.maketrans("₀₁₂₃₄₅₆₇₈₉"
+                        "⁰¹²³⁴⁵⁶⁷⁸⁹",
+                        "01234567890123456789")
+
+# rate suffixes -> periods per year
+_RATE_SUFFIX = {"/d": 365.0, "/day": 365.0, "d": 365.0, "pd": 365.0, "/yr": 1.0, "/year": 1.0, "/y": 1.0,
+                "/hr": 8760.0, "/h": 8760.0, "/hour": 8760.0}
+_VOLUME_ALIASES = {"mmcf": "mmscf", "kscf": "mscf", "mcfd": "mcf/d", "mmscfd": "mmscf/d", "mscfd": "mscf/d",
+                   "m^3": "m3", "cubic metre": "m3", "cubic metres": "m3", "knm3": "ksm3", "kncm": "ksm3",
+                   "thousand m3": "ksm3", "million m3": "mmsm3", "mmm3": "mmsm3"}
+_GASES = {"ch4": "ch4", "methane": "ch4", "co2": "co2", "n2o": "n2o", "co2e": "co2e", "voc": "voc", "gas": "gas",
+          "toc": "toc", "thc": "toc"}
+_COUNT_WORDS = {"count", "unit", "units", "source", "sources", "device", "devices", "well", "wells", "separator",
+                "separators", "compressor", "compressors", "component", "components", "event", "events", "valve",
+                "valves", "connector", "connectors", "each", "ea", "no", "pcs", "controller", "controllers",
+                "pump", "pumps", "tank", "tanks", "facility", "facilities", "site", "sites", "wellhead", "wellheads",
+                "completion", "completions", "heater", "heaters", "header", "headers", "run", "runs", "leak", "leaks",
+                "workover", "workovers", "blowdown", "blowdowns", "vessel", "vessels", "dehydrator", "dehydrators"}
+
+
+class UnitError(ValueError):
+    """A unit string that cannot be interpreted unambiguously."""
+
+
+def norm_unit(unit):
+    """Lower-case, ASCII digits for sub/superscripts, single spaces, aliases applied."""
+    u = str(unit or "").translate(_SUBSUP).strip().lower()
+    u = u.replace("per ", "/").replace(" / ", "/").replace(" /", "/").replace("/ ", "/")
+    u = _re.sub(r"\s+", " ", u)
+    return _VOLUME_ALIASES.get(u, u)
+
+
+GAS_VOLUME_UNITS = {"m3", "m³", "sm3", "sm³", "nm3", "nm³", "ksm3", "mmsm3", "cubic_meter", "cubic_meters",
+                    "scf", "cf", "ft3", "mscf", "mcf", "mmscf"}
+
+
+def gas_volume_m3(quantity, unit):
+    """A gas volume in standard m3. A gas-composition (carbon balance) method needs a volume:
+    an energy, mass or liquid quantity is refused instead of being read as m3."""
+    u = str(unit or "").strip().lower().replace(" ", "")
+    if u not in GAS_VOLUME_UNITS:
+        raise UnitError(f"The gas composition method needs a gas volume (scf, Mscf, MMscf, m3, Sm3, Nm3), not '{unit}'")
+    return float(quantity) * VOLUME_UNITS_TO_M3[u]
+
+
+def unit_dimension(unit):
+    """(dimension, factor_to_base) for a plain unit token; bases: m3, kg, MJ, h, count."""
+    u = norm_unit(unit).replace(" ", "_")
+    for dim, table in (("volume", VOLUME_UNITS_TO_M3), ("mass", MASS_UNITS_TO_KG),
+                       ("energy", ENERGY_UNITS_TO_MJ), ("time", TIME_UNITS_TO_HOURS),
+                       ("distance", DISTANCE_UNITS_TO_M)):
+        if u in table:
+            return dim, table[u]
+    if u in _COUNT_WORDS:
+        return "count", 1.0
+    raise UnitError(f"Unknown unit '{unit}'")
+
+
+def to_base(value, unit, dimension=None):
+    dim, f = unit_dimension(unit)
+    if dimension and dim != dimension:
+        raise UnitError(f"Unit '{unit}' is a {dim} unit, expected {dimension}")
+    return float(value) * f
+
+
+def parse_volume_rate(unit):
+    """BUG-011 / BUG-066: 'MMscf/d', 'Mcf/hr', 'm3/yr', 'MMscfd' -> (m3 per unit, periods per year).
+
+    periods_per_year is None for a plain volume.
+    """
+    u = norm_unit(unit).replace(" ", "")
+    u = _VOLUME_ALIASES.get(u, u)
+    if u in VOLUME_UNITS_TO_M3:
+        return VOLUME_UNITS_TO_M3[u], None
+    for suffix in sorted(_RATE_SUFFIX, key=len, reverse=True):
+        if u.endswith(suffix) and u[: -len(suffix)]:
+            base = u[: -len(suffix)]
+            if base in VOLUME_UNITS_TO_M3:
+                return VOLUME_UNITS_TO_M3[base], _RATE_SUFFIX[suffix]
+    raise UnitError(f"Unknown volume or volume-rate unit '{unit}'")
+
+
+def annual_volume_m3(value, unit):
+    """Annual volume in m3 from a volume (taken as annual) or a rate unit."""
+    f, per_year = parse_volume_rate(unit)
+    return float(value) * f * (per_year or 1.0)
+
+
+_SCALE = _re.compile(r"^(?:10\^?(\d+)|1e(\d+)|(thousand|million|billion))\s*")
+_SCALE_WORDS = {"thousand": 1e3, "million": 1e6, "billion": 1e9}
+
+
+def parse_factor_unit(unit):
+    """Parse an emission-factor unit such as 'tonne CH4/hr/source', 'tonne CH4/10^6 scf produced',
+    'kg/MMBtu', 'kg/scf'.
+
+    Returns dict(mass_kg, gas, denominators=[(dimension, base_factor_per_unit, token)]) where the
+    denominator factor already includes any 10^n scale (BUG-049). Raises UnitError when the
+    numerator mass or a denominator cannot be interpreted (BUG-063).
+    """
+    u = norm_unit(unit)
+    if "/" not in u:
+        raise UnitError(f"Factor unit '{unit}' has no denominator (expected e.g. kg/scf)")
+    parts = [p.strip() for p in u.split("/")]
+    num = parts[0].split()
+    if not num:
+        raise UnitError(f"Factor unit '{unit}' has no numerator")
+    mass_tok, gas = num[0], None
+    for tok in num[1:]:
+        if tok in _GASES:
+            gas = _GASES[tok]
+    if mass_tok not in MASS_UNITS_TO_KG:
+        # compound numerators: "tco2", "kgch4", "tco2e", "mtco2"
+        for g in sorted(_GASES, key=len, reverse=True):
+            if mass_tok.endswith(g) and mass_tok[: -len(g)] in MASS_UNITS_TO_KG:
+                mass_tok, gas = mass_tok[: -len(g)], _GASES[g]
+                break
+    if mass_tok not in MASS_UNITS_TO_KG:
+        raise UnitError(f"Factor unit '{unit}': numerator '{mass_tok}' is not a mass unit")
+    dens = []
+    for p in parts[1:]:
+        scale = 1.0
+        m = _SCALE.match(p)
+        if m:
+            if m.group(1) or m.group(2):
+                scale = 10.0 ** int(m.group(1) or m.group(2))
+            else:
+                scale = _SCALE_WORDS[m.group(3)]
+            p = p[m.end():]
+        toks = p.split()
+        if not toks:
+            raise UnitError(f"Factor unit '{unit}' has an empty denominator")
+        tok = toks[0]
+        if "-" in tok and tok not in ("tonne-km", "passenger-km"):
+            # compound denominators such as "well-year" = per well per year
+            for sub in tok.split("-"):
+                dim, f = unit_dimension(sub)
+                dens.append((dim, f, sub))
+            continue
+        dim, f = unit_dimension(tok)
+        dens.append((dim, f * scale, tok))
+    return {"mass_kg": MASS_UNITS_TO_KG[mass_tok], "gas": gas, "denominators": dens}
+
+
+def factor_to_kg_per_activity(factor_value, factor_unit, activity_unit, hours=None, hhv_mj_per_unit=None,
+                              year_hours=None):
+    """kg of pollutant per ONE activity unit (BUG-047/049/051/063).
+
+    - A volume/mass/energy denominator is converted to the activity unit (energy <-> volume/mass
+      needs the heating value in MJ per activity unit, else UnitError).
+    - A time denominator ('/hr') is multiplied by `hours`, which is required. A per-year factor uses
+      `year_hours` (8,784 in a leap year) when given, so a month's share is days / days-in-year.
+    - Count denominators ('/source', '/well') pair with a count activity.
+    """
+    spec = parse_factor_unit(factor_unit)
+    kg = float(factor_value) * spec["mass_kg"]
+    a_dim, a_f = unit_dimension(activity_unit)
+    matched = False
+    for dim, f, tok in spec["denominators"]:
+        if dim == "time":
+            if hours is None:
+                raise UnitError(f"Factor unit '{factor_unit}' is per {tok}: operating hours are required")
+            if year_hours and f == TIME_UNITS_TO_HOURS.get("yr"):
+                f = float(year_hours)
+            kg *= float(hours) / f  # f = hours in one time unit
+            continue
+        if matched:
+            if dim == "count":
+                continue
+            raise UnitError(f"Factor unit '{factor_unit}' has more than one activity denominator")
+        if dim == a_dim:
+            kg *= a_f / f
+        elif dim == "energy" and a_dim in ("volume", "mass"):
+            if not hhv_mj_per_unit:
+                raise UnitError(f"Energy-based factor '{factor_unit}' needs the fuel heating value for '{activity_unit}'")
+            kg *= float(hhv_mj_per_unit) / f
+        elif dim == "count" and a_dim != "count":
+            raise UnitError(f"Factor unit '{factor_unit}' is per {tok} but the activity is in '{activity_unit}'")
+        else:
+            raise UnitError(f"Factor unit '{factor_unit}' cannot be applied to activity unit '{activity_unit}'")
+        matched = True
+    if not matched and a_dim != "count":
+        raise UnitError(f"Factor unit '{factor_unit}' has no denominator compatible with '{activity_unit}'")
+    return kg
+
+
+def per_source_hour_kg(value, unit):
+    """BUG-048: (kg per source per hour, is_ch4) for an equipment / component leak factor.
+
+    'tonne CH4/hr/source' -> (value*1000, True); 'kg TOC/hr/component' -> (value, False);
+    'tonnes CH4/yr' -> (value*1000/8760, True). A factor without a time basis raises.
+    """
+    spec = parse_factor_unit(unit)
+    hours = [f for d, f, _ in spec["denominators"] if d == "time"]
+    if not hours:
+        raise UnitError(f"Leak factor unit '{unit}' has no time basis (expected e.g. kg/hr/source)")
+    per = 1.0
+    for h in hours:
+        per *= h
+    return float(value) * spec["mass_kg"] / per, spec["gas"] == "ch4"
+
+
+# -- Gas composition (audit RC-8: BUG-023 / BUG-024) -------------------------------------
+COMPOSITION_KEYS = ("c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", "co2", "n2", "h2s", "other")
+
+
+def composition_fractions(raw, basis=None):
+    """Convert one gas analysis to mole fractions, deciding percent vs fraction ONCE.
+
+    `raw` maps component -> value as entered. The basis is "percent" when requested, or when
+    any component exceeds 1 or the analysis sums above 1.5; otherwise "fraction". Every
+    component (including CO2, N2, H2S) is scaled the same way, so a 1.0 mol% butane can no
+    longer become 100 %. A total above 100 % (+0.5 % rounding) is rejected; an analysis within
+    98-102 % is renormalised to 100 %; an incomplete analysis is used as given (the rest is
+    unspecified, not redistributed).
+    Returns (fractions, info) with info = {"basis", "total", "renormalised"}.
+    """
+    vals = {}
+    for k, v in (raw or {}).items():
+        if v in (None, "", "-"):
+            continue
+        x = float(str(v).replace("%", "").strip())
+        if not math.isfinite(x) or x < 0:
+            raise ValueError(f"Gas composition '{k}' must be a finite, non-negative number")
+        vals[k] = x
+    if not vals:
+        return {}, {"basis": None, "total": 0.0, "renormalised": False}
+    total = sum(vals.values())
+    if basis is None:
+        basis = "percent" if (max(vals.values()) > 1.0 or total > 1.5) else "fraction"
+    scale = 0.01 if basis == "percent" else 1.0
+    fr = {k: v * scale for k, v in vals.items()}
+    tot = sum(fr.values())
+    if tot > 1.005:
+        raise ValueError(f"Gas composition sums to {tot * 100:.2f} % (> 100 %)")
+    renorm = 0.98 <= tot < 0.99999 or 1.00001 < tot <= 1.005
+    if renorm:
+        fr = {k: v / tot for k, v in fr.items()}
+    return fr, {"basis": basis, "total": tot, "renormalised": renorm}

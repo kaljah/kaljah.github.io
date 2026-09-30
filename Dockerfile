@@ -41,7 +41,7 @@ COPY --from=frontend-builder /app/client/dist /app/static/dist
 EXPOSE 5000
 
 # Run with Gunicorn WSGI production server
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "4", "--timeout", "120", "app:app"]
+CMD ["sh", "-c", "FLASK_APP=app.py flask db upgrade && exec gunicorn --bind 0.0.0.0:5000 --workers 4 --timeout 120 app:app"]
 # Use official Python runtime
 FROM python:3.11-slim
 
@@ -69,4 +69,4 @@ ENV PORT=10000
 EXPOSE 10000
 
 # Initialize DB tables and start Gunicorn WSGI server
-CMD ["sh", "-c", "python -c 'from app import app, db; app.app_context().push(); db.create_all()' && exec gunicorn --bind 0.0.0.0:${PORT:-10000} --workers 2 --threads 4 --timeout 120 'app:app'"]
+CMD ["sh", "-c", "FLASK_APP=app.py flask db upgrade && exec gunicorn --bind 0.0.0.0:${PORT:-10000} --workers 2 --threads 4 --timeout 120 'app:app'"]

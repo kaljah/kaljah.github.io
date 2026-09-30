@@ -1,0 +1,432 @@
+Carbon tech
+Dashboard
+Carbon Intensity
+Methane Intensity
+SBTi Net-Zero
+Calculations
+Emissions Map
+Manage Data
+Reports
+Reference Data
+Uncertainty
+Audit Trail
+QA/QC & Diagnostics
+Settings
+A
+Audit admin
+Auditor
+Corporate ESG
+All Years
+All Supply Chains
+All Activities
+All Divisions
+All Regions
+GWP-100
+GWP-20
++ Set Target
+Audit
+GHG Emissions Dashboard
+Live Content • Updated 03:03 PM
+Pending Records Awaiting Review
+PENDING APPROVAL
+
+There are 128 emission records4,686,441,566,968.31 tCO₂epending approval. Official metrics currently display verified records only.
+
+Preview Pending Data
+Review Now
+EMISSIONS OVERVIEW
+All Regions
+Export Executive Brief (PDF)
+GROSS OPERATIONAL EMISSIONS (SCOPE 1+2)
+3.7T
+tCO₂e
+NET EMISSIONS
+3.7T
+tCO₂e
+Less
+1M
+Mitigation
+TOTAL CH4 (METHANE)
+84.3M
+tCH₄
+PERFORMANCE INTENSITY
+627.53K
+kg/BOE
+CO₂e Intensity (Scope 1+2)
+Scope 1 (Direct)
+3.7T tCO₂e
+Scope 2 (Indirect)
+1.5M tCO₂e
+Scope 3 (Supply Chain)
+216.9 tCO₂e
+Operational Flaring & Regulatory Compliance
+
+Executive Decree 21-330 Article 9 (1.00% Gas Production Threshold)
+
+COMPLIANT (Under 1.00% Target)
+Standard 98% Default: 98% DRE
+-99.92% YoY
+TOTAL FLARED VOLUME
+100kNm³
+210.2
+tCO₂e • 100% Stream
+ROUTINE FLARING
+56kNm³
+56%
+of total • 0 tCO₂e
+NON-ROUTINE FLARING
+40kNm³
+40%
+of total • 0 tCO₂e
+SAFETY & PURGE FLARING
+4kNm³
+4%
+of total • 0 tCO₂e
+Decree 21-330 Flaring Intensity: 0.003% of Gross Gas Produced (3.87K MMSm³)
+Statutory Limit: 1.00% (Executive Decree 21-330 Art. 9)
+Emissions Trend & Projection
+
+Historical inventory trajectory with 5-year predictive forecast
+
+Compare Regions
+ForecastScope 1Target PathTotal Emissions
+1800
+2020
+2021
+2022
+2023
+2024
+2025
+2026
+2099
+2100
+2101
+2102
+2103
+2104
+0
+950000.0M
+1900000.0M
+2850000.0M
+3800000.0M
+Emissions by Activity
+Cement & ClinkerChemicals & FertilizersE&P (Upstream)ProductionSteel & Iron (Acier DRI)UpstreamUpstream & Midstream Gas
+Emissions by Source
+CombustionFlaringOtherVenting
+SBTi Decarbonization Trajectory (1.5C)
+
+Progress monitoring against corporate Net-Zero targets from Base Year 2024 to Target Year 2030
+
+View Full SBTi Dashboard →
+Actual Verified EmissionsBusiness as Usual (+1.5%/yr)SBTi 1.5°C Linear Target
+2024
+2025
+2026
+2027
+2028
+2029
+2030
+0
+950000.0M
+1900000.0M
+2850000.0M
+3800000.0M
+Categorical Emissions Overview
+Activity → Division → Region
+E&P (Upstream)
+DP
+ADR - OF
+92.9K tCO₂e
+STAH - OF
+1.2B tCO₂e
+RNS - GF
+16.3K tCO₂e
+INAS - GF
+5.2K tCO₂e
+OHT - GF
+2.1B tCO₂e
+HBK - GF
+64.4K tCO₂e
+HRM - GF
+30.4K tCO₂e
+REB - OF
+4.6K tCO₂e
+LQS (Liquefaction)
+No emissions data for this activity
+RPC (Refining)
+No emissions data for this activity
+Association
+UPSTREAM
+Facility-AGT08-08 Sonatrach Association Station
+0 tCO₂e
+Facility-AGT10-08 Sonatrach Association Station
+0 tCO₂e
+Facility-AGT05-08 Sonatrach Association Station
+0 tCO₂e
+Facility-AGT09-08 Sonatrach Association Station
+0 tCO₂e
+Facility-AGT01-08 Sonatrach Association Station
+0 tCO₂e
+Facility-AGT03-02 Sonatrach Association Station
+0 tCO₂e
+Facility-AGT06-02 Sonatrach Association Station
+0 tCO₂e
+Facility-AGT03-08 Sonatrach Association Station
+0 tCO₂e
+Facility-AGT05-02 Sonatrach Association Station
+0 tCO₂e
+Facility-AGT01-02 Sonatrach Association Station
+0 tCO₂e
+Facility-AGT08-02 Sonatrach Association Station
+0 tCO₂e
+Facility-AGT04-02 Sonatrach Association Station
+0 tCO₂e
+Facility-AGT04-08 Sonatrach Association Station
+0 tCO₂e
+Facility-AGT07-08 Sonatrach Association Station
+0 tCO₂e
+Facility-AGT09-02 Sonatrach Association Station
+0 tCO₂e
+Facility-AGT10-02 Sonatrach Association Station
+0 tCO₂e
+Facility-AGT07-02 Sonatrach Association Station
+0 tCO₂e
+Facility-AGT06-08 Sonatrach Association Station
+0 tCO₂e
+Facility-AGT02-02 Sonatrach Association Station
+0 tCO₂e
+Facility-AGT02-08 Sonatrach Association Station
+0 tCO₂e
+Cement & Clinker
+BUILDING MATERIALS
+Cimenterie Industrielle de Chlef (GICA) - Chlef Plant
+90.8K tCO₂e
+Chemicals & Fertilizers
+PETROCHEMICALS
+Complexe Ammoniac & Engrais Azotés (Fertial) - Arzew Port
+80.4K tCO₂e
+LNG
+DOWNSTREAM
+Facility-AGT01-05 Sonatrach LNG Station
+0 tCO₂e
+Facility-AGT07-05 Sonatrach LNG Station
+0 tCO₂e
+Facility-AGT08-05 Sonatrach LNG Station
+0 tCO₂e
+Facility-AGT02-05 Sonatrach LNG Station
+0 tCO₂e
+Facility-AGT09-05 Sonatrach LNG Station
+0 tCO₂e
+Facility-AGT06-05 Sonatrach LNG Station
+0 tCO₂e
+Facility-AGT10-05 Sonatrach LNG Station
+0 tCO₂e
+Facility-AGT05-05 Sonatrach LNG Station
+0 tCO₂e
+Facility-AGT03-05 Sonatrach LNG Station
+0 tCO₂e
+Facility-AGT04-05 Sonatrach LNG Station
+0 tCO₂e
+LPG
+DOWNSTREAM
+Facility-AGT02-04 Sonatrach LPG Station
+0 tCO₂e
+Facility-AGT10-04 Sonatrach LPG Station
+0 tCO₂e
+Facility-AGT01-10 Sonatrach LPG Station
+0 tCO₂e
+Facility-AGT10-10 Sonatrach LPG Station
+0 tCO₂e
+Facility-AGT05-10 Sonatrach LPG Station
+0 tCO₂e
+Facility-AGT01-04 Sonatrach LPG Station
+0 tCO₂e
+Facility-AGT03-04 Sonatrach LPG Station
+0 tCO₂e
+Facility-AGT04-04 Sonatrach LPG Station
+0 tCO₂e
+Facility-AGT06-04 Sonatrach LPG Station
+0 tCO₂e
+Facility-AGT02-10 Sonatrach LPG Station
+0 tCO₂e
+Facility-AGT09-10 Sonatrach LPG Station
+0 tCO₂e
+Facility-AGT07-10 Sonatrach LPG Station
+0 tCO₂e
+Facility-AGT06-10 Sonatrach LPG Station
+0 tCO₂e
+Facility-AGT07-04 Sonatrach LPG Station
+0 tCO₂e
+Facility-AGT05-04 Sonatrach LPG Station
+0 tCO₂e
+Facility-AGT03-10 Sonatrach LPG Station
+0 tCO₂e
+Facility-AGT08-10 Sonatrach LPG Station
+0 tCO₂e
+Facility-AGT08-04 Sonatrach LPG Station
+0 tCO₂e
+Facility-AGT04-10 Sonatrach LPG Station
+0 tCO₂e
+Facility-AGT09-04 Sonatrach LPG Station
+0 tCO₂e
+Petrochemicals
+DOWNSTREAM
+Facility-AGT10-06 Sonatrach Petrochemicals Station
+0 tCO₂e
+Facility-AGT07-06 Sonatrach Petrochemicals Station
+0 tCO₂e
+Facility-AGT01-06 Sonatrach Petrochemicals Station
+0 tCO₂e
+Facility-AGT04-06 Sonatrach Petrochemicals Station
+0 tCO₂e
+Facility-AGT06-06 Sonatrach Petrochemicals Station
+0 tCO₂e
+Facility-AGT08-06 Sonatrach Petrochemicals Station
+0 tCO₂e
+Facility-AGT02-06 Sonatrach Petrochemicals Station
+0 tCO₂e
+Facility-AGT05-06 Sonatrach Petrochemicals Station
+0 tCO₂e
+Facility-AGT09-06 Sonatrach Petrochemicals Station
+0 tCO₂e
+Facility-AGT03-06 Sonatrach Petrochemicals Station
+0 tCO₂e
+Production
+UPSTREAM
+Facility-AGT10-01 Sonatrach Production Station
+0 tCO₂e
+Facility-AGT02-07 Sonatrach Production Station
+0 tCO₂e
+Facility-AGT08-01 Sonatrach Production Station
+0 tCO₂e
+Facility-AGT01-07 Sonatrach Production Station
+0 tCO₂e
+Facility-AGT07-01 Sonatrach Production Station
+0 tCO₂e
+Facility-AGT06-01 Sonatrach Production Station
+0 tCO₂e
+Facility-AGT04-01 Sonatrach Production Station
+0 tCO₂e
+Facility-AGT03-01 Sonatrach Production Station
+0 tCO₂e
+Updated Facility
+3.2T tCO₂e
+Facility-AGT02-01 Sonatrach Production Station
+0 tCO₂e
+Facility-AGT06-07 Sonatrach Production Station
+0 tCO₂e
+Facility-AGT09-07 Sonatrach Production Station
+0 tCO₂e
+Facility-AGT10-07 Sonatrach Production Station
+0 tCO₂e
+Facility-AGT01-01 Sonatrach Production Station
+0 tCO₂e
+Facility-AGT05-01 Sonatrach Production Station
+0 tCO₂e
+Facility-AGT05-07 Sonatrach Production Station
+0 tCO₂e
+Facility-AGT09-01 Sonatrach Production Station
+0 tCO₂e
+Facility-AGT03-07 Sonatrach Production Station
+0 tCO₂e
+Facility-AGT07-07 Sonatrach Production Station
+0 tCO₂e
+Facility-AGT08-07 Sonatrach Production Station
+0 tCO₂e
+Facility-AGT04-07 Sonatrach Production Station
+0 tCO₂e
+Refining
+DOWNSTREAM
+Facility-AGT01-09 Sonatrach Refining Station
+0 tCO₂e
+Facility-AGT10-03 Sonatrach Refining Station
+0 tCO₂e
+Facility-AGT05-09 Sonatrach Refining Station
+0 tCO₂e
+Facility-AGT04-09 Sonatrach Refining Station
+0 tCO₂e
+Facility-AGT03-03 Sonatrach Refining Station
+0 tCO₂e
+Facility-AGT08-09 Sonatrach Refining Station
+0 tCO₂e
+Facility-AGT06-09 Sonatrach Refining Station
+0 tCO₂e
+Facility-AGT04-03 Sonatrach Refining Station
+0 tCO₂e
+Facility-AGT07-03 Sonatrach Refining Station
+0 tCO₂e
+Facility-AGT05-03 Sonatrach Refining Station
+0 tCO₂e
+Facility-AGT02-09 Sonatrach Refining Station
+0 tCO₂e
+Facility-AGT06-03 Sonatrach Refining Station
+0 tCO₂e
+Facility-AGT01-03 Sonatrach Refining Station
+0 tCO₂e
+Facility-AGT08-03 Sonatrach Refining Station
+0 tCO₂e
+Facility-AGT02-03 Sonatrach Refining Station
+0 tCO₂e
+Facility-AGT07-09 Sonatrach Refining Station
+0 tCO₂e
+Facility-AGT03-09 Sonatrach Refining Station
+0 tCO₂e
+Facility-AGT09-03 Sonatrach Refining Station
+0 tCO₂e
+Facility-AGT10-09 Sonatrach Refining Station
+0 tCO₂e
+Facility-AGT09-09 Sonatrach Refining Station
+0 tCO₂e
+Steel & Iron (Acier DRI)
+METALLURGY
+Complexe Sidérurgique DRI/EAF (Tosyali) - Industrial Zone
+532.9B tCO₂e
+Upstream
+GAS PROCESSING & COMPRESSION
+Industrial Complex In-Salah Gas Central
+1.4K tCO₂e
+BERKINE BASIN
+El Merk - Block 208
+5.8M tCO₂e
+HBNS (Hassi Berkine South) - Hassi Berkine South
+4.9M tCO₂e
+DRILLING
+DB Integrity Verification Field
+10.8 tCO₂e
+Upstream & Midstream Gas
+EXPLORATION & PRODUCTION
+Centre de Traitement Gazier Hassi Messaoud (Sonatrach) - HMD Field
+117K tCO₂e
+Detailed Breakdown
+CATEGORY / SOURCE	RESULTS (TCO₂E)
+Scope 1 (Direct)	3.7T
+Stationary Combustion	3.7T
+Flaring	2.2M
+↳ Routine (56%)	0
+↳ Non-Routine (40%)	0
+↳ Safety & Purge (4%)	0
+Venting	460.6K
+Other Sources	6.5M
+Scope 2 (Indirect - Energy)	1.5M
+Scope 3 (Supply Chain)	216.9
+Total Footprint (Scopes 1+2+3)	3.7T
+Net Footprint	3.7T
+ORGANIZATIONAL BREAKDOWN
+▶Upstream	10.7M
+▶E&P (Upstream)	3.4B
+▶Refining	0
+▶Association	0
+▶LPG	0
+▶Petrochemicals	0
+▶LNG	0
+▶Production	3.2T
+▶Chemicals & Fertilizers	80.4K
+▶Cement & Clinker	90.8K
+▶Upstream & Midstream Gas	117K
+▶Steel & Iron (Acier DRI)	532.9B
+Reference Libraries
+API Compendium: 2021
+ISO 14064-1:2018
+GRI 305 Standards
+Manage Custom Factors
+2027

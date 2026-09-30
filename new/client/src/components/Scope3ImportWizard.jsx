@@ -1,6 +1,7 @@
 import React, { useState, useRef, useCallback, useMemo, useEffect } from "react";
 import Papa from "papaparse";
 import api from "../api";
+import { autoDetectMapping, missingRequiredFields } from "../utils/importMapping";
 import { useToast } from "./Toast";
 import UploadProgress from "./UploadProgress";
 import "./Scope1ImportWizard.css"; // Reuse the same CSS for identical aesthetic
@@ -119,7 +120,7 @@ const FIELD_GROUPS_ACTIVITY = [
     IconComp: Icon.Globe,
     fields: [
       { key: "category",      label: "Category",      required: true,  hint: "e.g. 1, 2, 3... or 'Category 11'" },
-      { key: "sub_category",  label: "Sub Category",  required: false, hint: "e.g. Purchased Goods" },
+      { key: "sub_category",  label: "Sub Category",  required: false, hint: "Activity name as in the Scope 3 form (e.g. Truck Transport) to use its factor" },
       { key: "notes",         label: "Description / Notes", required: false, hint: "Description of the emission source" },
     ],
   },
@@ -130,8 +131,8 @@ const FIELD_GROUPS_ACTIVITY = [
     fields: [
       { key: "amount",          label: "Activity Data Amount", required: true, hint: "Quantity of the activity" },
       { key: "unit",            label: "Activity Unit",        required: true, hint: "e.g. kg, USD, miles" },
-      { key: "emission_factor", label: "Emission Factor",      required: false, hint: "Custom EF. If empty, the system will try to resolve it." },
-      { key: "ef_unit",         label: "EF Unit",              required: false, hint: "e.g. kgCO2e/unit. Defaults to kg." },
+      { key: "emission_factor", label: "Emission Factor",      required: false, hint: "kg CO2e per activity unit. If empty, the factor of the Sub Category activity in the Scope 3 form is used (unit must match)." },
+      { key: "ef_unit",         label: "EF Unit",              required: false, hint: "kg CO2e per unit (default), t CO2e per unit, or kg CO2e per $1,000" },
       { key: "co2e",            label: "Total CO2e",           required: false, hint: "Provide direct CO2e to skip calculations" },
     ],
   }
@@ -154,7 +155,7 @@ const FIELD_GROUPS_EEIO = [
     label: "Spend & NAICS",
     IconComp: Icon.Settings,
     fields: [
-      { key: "naics_code",      label: "NAICS Code",      required: true,  hint: "3-to-6 digit NAICS industry code" },
+      { key: "naics_code",      label: "NAICS Code",      required: true,  hint: "6-digit 2017 NAICS code (EPA supply chain factors)" },
       { key: "spend_usd",       label: "Spend (USD)",     required: true,  hint: "Amount spent in USD" },
       { key: "notes",           label: "Description / Notes", required: false, hint: "Optional supplier or purchase description" },
     ],
@@ -278,18 +279,6 @@ function FieldGroup({ group, headers, mapping, setMapping, searchQuery }) {
 }
 
 // ─── Auto-detect mapping ───────────────────────────────────────────────────────
-function autoDetect(headers, allFields) {
-  const mapping = {};
-  allFields.forEach(f => {
-    const match = headers.find(h => {
-      const hl = h.toLowerCase();
-      return hl === f.key || hl.includes(f.key.replace(/_/g, " ")) || hl.includes(f.label.toLowerCase()) || f.label.toLowerCase().includes(hl);
-    });
-    if (match && !mapping[f.key]) mapping[f.key] = match;
-  });
-  return mapping;
-}
-
 // ─── Main Wizard ──────────────────────────────────────────────────────────────
 export default function Scope3ImportWizard({ onClose, onUploadSuccess }) {
   const toast = useToast();
@@ -304,6 +293,7 @@ export default function Scope3ImportWizard({ onClose, onUploadSuccess }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [jobId, setJobId] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [overwrite, setOverwrite] = useState(false);  // replace records that already exist
 
   // ── Access Control: fetch allowed regions on mount ─────────────────────────
   const [allowedRegions, setAllowedRegions] = useState(null);
@@ -322,14 +312,17 @@ export default function Scope3ImportWizard({ onClose, onUploadSuccess }) {
     }).catch(() => {});
   }, []);
 
+  // Activity-based or spend-based (EEIO / NAICS) import: each has its own columns and server scope
+  const [importMode, setImportMode] = useState("activity");
+  const FIELD_GROUPS = importMode === "eeio" ? FIELD_GROUPS_EEIO : FIELD_GROUPS_ACTIVITY;
+
   // All fields flattened
   const allFields = useMemo(() =>
-    FIELD_GROUPS.flatMap(g => g.fields),
-  []);
+    (importMode === "eeio" ? FIELD_GROUPS_EEIO : FIELD_GROUPS_ACTIVITY).flatMap(g => g.fields),
+  [importMode]);
 
   // Required fields check
-  const requiredFields = FIELD_GROUPS.flatMap(g => g.fields).filter(f => f.required);
-  const missingRequired = requiredFields.filter(f => !mapping[f.key]);
+  const missingRequired = missingRequiredFields(FIELD_GROUPS.flatMap(g => g.fields), mapping);
   const canSubmit = missingRequired.length === 0 || headers.length === 0;
 
   // File processing
@@ -350,7 +343,7 @@ export default function Scope3ImportWizard({ onClose, onUploadSuccess }) {
         }
         const hdrs = results.meta.fields;
         setHeaders(hdrs);
-        setMapping(autoDetect(hdrs, allFields));
+        setMapping(autoDetectMapping(hdrs, allFields));
         setFile(f);
         setStep(2);
       },
@@ -366,7 +359,8 @@ export default function Scope3ImportWizard({ onClose, onUploadSuccess }) {
     setIsSubmitting(true);
     const form = new FormData();
     form.append("file", file);
-    form.append("scope", "3");
+    form.append("scope", importMode === "eeio" ? "3_eeio" : "3");
+    form.append("overwrite_duplicates", overwrite ? "true" : "false");
     form.append("column_mapping", JSON.stringify(mapping));
     try {
       const res = await api.post("/emissions/upload/start", form, {
@@ -421,6 +415,20 @@ export default function Scope3ImportWizard({ onClose, onUploadSuccess }) {
                 )}
               </div>
             )}
+            <div className="s1w-mode-switch" role="radiogroup" aria-label="Import type" style={{ display: "flex", gap: "8px", marginBottom: "12px" }}>
+              {[["activity", "Activity data"], ["eeio", "Spend (EEIO / NAICS)"]].map(([v, l]) => (
+                <button
+                  key={v}
+                  type="button"
+                  role="radio"
+                  aria-checked={importMode === v}
+                  className={importMode === v ? "s1w-btn-primary" : "s1w-btn-ghost"}
+                  onClick={() => setImportMode(v)}
+                >
+                  {l}
+                </button>
+              ))}
+            </div>
             <div
               className={`s1w-dropzone ${isDragging ? "dragging" : ""}`}
               onClick={() => fileInputRef.current.click()}
@@ -497,6 +505,13 @@ export default function Scope3ImportWizard({ onClose, onUploadSuccess }) {
                 <button className="s1w-search-clear" onClick={() => setSearchQuery("")}><Icon.Close /></button>
               )}
             </div>
+
+            <label className="s1w-factor-row" style={{ gap: "8px", cursor: "pointer" }}>
+              <input type="checkbox" checked={overwrite} onChange={e => setOverwrite(e.target.checked)} />
+              <span className="s1w-factor-label">
+                Overwrite records that already exist (same facility, month and source). Overwritten records go back to Pending review.
+              </span>
+            </label>
 
             <div className="s1w-field-groups">
               {FIELD_GROUPS.map(group => (

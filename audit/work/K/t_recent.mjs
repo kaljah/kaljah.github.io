@@ -1,0 +1,13 @@
+import { start, OUT, UI } from "./lib.mjs";
+const { browser, page, log } = await start("admin");
+await page.goto(UI + "/emissions?scope=scope1"); await page.waitForTimeout(9000);
+const r = log.resps.filter(r => r.u.includes("/api/emissions?")).pop();
+console.log(r.u); const j = JSON.parse(r.body);
+const list = j.emissions || j.data || j; console.log("keys", Object.keys(j), "n", list.length, "total", j.total);
+console.log("row0 keys:", Object.keys(list[0]).filter(k => /co2|ch4|n2o|total|amount|unit/.test(k)).join(","));
+console.log("row0:", JSON.stringify({ co2: list[0].co2_emissions, co2t: list[0].co2_total, ch4: list[0].ch4_emissions, co2e: list[0].co2e_total }));
+const rows = await page.locator("table tbody tr").allInnerTexts(); console.log(rows.length, rows[0].replace(/\s+/g, " | "));
+console.log("tfoot:", (await page.locator("table tfoot").innerText()).replace(/\s+/g, " "));
+const sel = await page.$$eval("select", ss => ss.map(s => [...s.options].map(o => o.text).join(",")).slice(-3)); console.log(sel);
+console.log(await page.getByText(/Page|Showing|of \d+/).allInnerTexts());
+await browser.close();

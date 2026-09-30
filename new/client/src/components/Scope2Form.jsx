@@ -5,13 +5,14 @@ import { useToast } from "./Toast";
 import { useAuth } from "../context/AuthContext";
 import { getUserOperationalDefaults } from "../utils/userDefaults";
 import LoadingSpinner from "./LoadingSpinner";
-import { formatNumber } from "../utils/formatters";
+import { formatNumber, formatEmission } from "../utils/formatters";
 import ColumnMappingWizard from "./ColumnMappingWizard";
+import Scope2ImportWizard from "./Scope2ImportWizard";
 import { Upload, Copy, Trash2, Eye } from "lucide-react";
-import EmissionResult from "./EmissionResult";
 import CalculationDetails from "./CalculationDetails";
 import ConfirmModal from "./ConfirmModal";
 import "./ScopeTables.css";
+import { UNCERTAINTY_COVERAGE_K } from "../constants";
 
 const Scope2Form = () => {
   const { user } = useAuth();
@@ -34,20 +35,19 @@ const Scope2Form = () => {
   const [gridRegion, setGridRegion] = useState("");
   const [amount, setAmount] = useState("");
   const [unit, setUnit] = useState("kWh");
-  const [groupName, setGroupName] = useState("");
-  const [equipmentId, setEquipmentId] = useState("");
   const [sourceType, setSourceType] = useState("electricity");
 
   // Section 8 specific state
   const [boilerEff, setBoilerEff] = useState(0.8);
   const [transLoss, setTransLoss] = useState(0.0);
   const [heatOutput, setHeatOutput] = useState("");
+  // plant efficiencies for the WRI efficiency method; blank = Compendium defaults (80 % heat, 35 % power)
+  const [heatEff, setHeatEff] = useState("");
+  const [powerEff, setPowerEff] = useState("");
   const [powerOutput, setPowerOutput] = useState("");
   const [allocationMethod, setAllocationMethod] = useState("wri_efficiency");
-  const [cogenResults, setCogenResults] = useState(null);
 
   // Result and Inspect Modals
-  const [calculationResult, setCalculationResult] = useState(null);
   const [inspectRecord, setInspectRecord] = useState(null);
 
   const [facilities, setFacilities] = useState([]);
@@ -55,6 +55,7 @@ const Scope2Form = () => {
   const [entries, setEntries] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [loadError, setLoadError] = useState(false);
   const [importModal, setImportModal] = useState({
     isOpen: false,
     type: "activity",
@@ -126,18 +127,44 @@ const Scope2Form = () => {
   const loadEntries = async () => {
     setLoading(true);
     try {
-      const res = await api.get("/scope2");
+      // one page from the server (the whole list used to be downloaded on every page change)
+      const res = await api.get("/scope2", {
+        params: { limit: RECORDS_PER_PAGE, offset: (currentPage - 1) * RECORDS_PER_PAGE },
+      });
       const data = Array.isArray(res.data) ? res.data : res.data?.data || [];
-      const sorted = data.sort((a, b) => b.id - a.id);
-      const start = (currentPage - 1) * RECORDS_PER_PAGE;
-      setEntries(sorted.slice(start, start + RECORDS_PER_PAGE));
-      setTotalPages(Math.max(1, Math.ceil(sorted.length / RECORDS_PER_PAGE)));
+      const total = Array.isArray(res.data) ? data.length : Number(res.data?.total) || 0;
+      setEntries(data);
+      setTotalPages(Math.max(1, Math.ceil(total / RECORDS_PER_PAGE)));
+      setLoadError(false);
     } catch (error) {
       console.error("Failed to load entries:", error);
+      setLoadError(true);
       toast.error("Failed to load Scope 2 data");
     } finally {
       setLoading(false);
     }
+  };
+
+  // BUG-096: one list of units per source type; the unit is reset when the source type changes
+  // and submit is blocked when it is not one of the displayed options
+  const UNIT_OPTIONS = {
+    electricity: [
+      { value: "kWh", label: "kWh" },
+      { value: "MWh", label: "MWh" },
+      { value: "GWh", label: "GWh" },
+    ],
+    indirect_steam: [
+      { value: "btu", label: "Btu" },
+      { value: "mmbtu", label: "MMBtu" },
+      { value: "mj", label: "MJ" },
+    ],
+    cogen_allocation: [{ value: "tonnes", label: "Tonnes CO2e" }],
+  };
+  const DEFAULT_UNIT = { electricity: "kWh", indirect_steam: "mmbtu", cogen_allocation: "tonnes" };
+  const unitOptions = UNIT_OPTIONS[sourceType] || UNIT_OPTIONS.electricity;
+  const handleSourceTypeChange = (val) => {
+    setSourceType(val);
+    setUnit(DEFAULT_UNIT[val] || "kWh");
   };
 
   const handleAddEntry = async (status = "Verified") => {
@@ -149,6 +176,11 @@ const Scope2Form = () => {
       !amount
     ) {
       toast.warning("Please fill in all required fields");
+      return;
+    }
+
+    if (!unitOptions.some((o) => o.value === unit)) {
+      toast.warning("Please select a unit");
       return;
     }
 
@@ -176,17 +208,12 @@ const Scope2Form = () => {
         if (unit === "MWh") electricityKwh = val * 1000;
         else if (unit === "GWh") electricityKwh = val * 1000000;
 
-        const factorObj = gridFactors.find((f) => f.region === gridRegion);
-        const ef = factorObj ? factorObj.factor : 0;
-        const totalEmissions = (electricityKwh * ef) / 1000;
-
+        // BUG-099: the server resolves the grid factor and computes CO2e; no client result is sent
         payload = {
           ...payload,
           grid_region: gridRegion,
           source_type: "electricity",
           electricity_kwh: electricityKwh,
-          emission_factor: ef,
-          co2e: totalEmissions,
           location: gridRegion,
         };
       } else if (sourceType === "indirect_steam") {
@@ -214,20 +241,19 @@ const Scope2Form = () => {
               heat_output: parseFloat(heatOutput),
               power_output: parseFloat(powerOutput),
               allocation_method: allocationMethod,
+              ...(allocationMethod === "wri_efficiency" && heatEff !== "" ? { heat_efficiency: parseFloat(heatEff) } : {}),
+              ...(allocationMethod === "wri_efficiency" && powerEff !== "" ? { power_efficiency: parseFloat(powerEff) } : {}),
             },
           },
         };
       }
 
-      const res = await api.post("/scope2", payload);
+      await api.post("/scope2", payload);
       toast.success(
         status === "Draft"
           ? "Entry saved as draft"
           : "Scope 2 entry added successfully",
       );
-      if (res.data?.emissions) {
-        setCalculationResult(res.data);
-      }
       setAmount("");
       setCurrentPage(1);
       loadEntries();
@@ -457,7 +483,7 @@ const Scope2Form = () => {
                   },
                 ]}
                 value={sourceType}
-                onChange={setSourceType}
+                onChange={handleSourceTypeChange}
               />
             </div>
             {sourceType === "electricity" && (
@@ -524,6 +550,20 @@ const Scope2Form = () => {
                     <option value="energy_content">Energy Content</option>
                   </select>
                 </div>
+                {allocationMethod === "wri_efficiency" && (
+                  <>
+                    <div className="input-group">
+                      <label>Heat Efficiency (%)</label>
+                      <input type="number" className="mole-input" min="1" max="100" placeholder="80"
+                        value={heatEff} onChange={(e) => setHeatEff(e.target.value)} />
+                    </div>
+                    <div className="input-group">
+                      <label>Power Efficiency (%)</label>
+                      <input type="number" className="mole-input" min="1" max="100" placeholder="35"
+                        value={powerEff} onChange={(e) => setPowerEff(e.target.value)} />
+                    </div>
+                  </>
+                )}
               </div>
             )}
           </div>
@@ -550,22 +590,8 @@ const Scope2Form = () => {
             <div className="input-group">
               <label>Unit</label>
               <CustomDropdown
-                options={
-                  sourceType === "electricity"
-                    ? [
-                        { value: "kWh", label: "kWh" },
-                        { value: "MWh", label: "MWh" },
-                        { value: "GWh", label: "GWh" },
-                      ]
-                    : sourceType === "indirect_steam"
-                      ? [
-                          { value: "btu", label: "Btu" },
-                          { value: "mmbtu", label: "MMBtu" },
-                          { value: "mj", label: "MJ" },
-                        ]
-                      : [{ value: "tonnes", label: "Tonnes CO2e" }]
-                }
-                value={unit || "kWh"}
+                options={unitOptions}
+                value={unit}
                 onChange={setUnit}
               />
             </div>
@@ -648,7 +674,7 @@ const Scope2Form = () => {
           <table className="excel-table">
             <thead>
               <tr>
-                <th>Year</th>
+                <th>Period</th>
                 <th>Facility</th>
                 <th>Source Type</th>
                 <th>Grid / Region</th>
@@ -676,6 +702,13 @@ const Scope2Form = () => {
                 <tr>
                   <td colSpan="11" style={{ textAlign: "center" }}>
                     <LoadingSpinner />
+                  </td>
+                </tr>
+              ) : loadError ? (
+                <tr>
+                  <td colSpan="11" style={{ textAlign: "center", padding: "40px", color: "var(--danger, #dc2626)" }}>
+                    Could not load the records.{" "}
+                    <button type="button" className="btn-ghost" onClick={loadEntries}>Retry</button>
                   </td>
                 </tr>
               ) : entries.length === 0 ? (
@@ -711,13 +744,15 @@ const Scope2Form = () => {
                     consumptionDisplay = `${formatNumber(entry.co2e, 3)} tCO₂e allocated`;
                   }
 
-                  const efDisplay = entry.emission_factor
+                  // a 0 factor (renewable contract) is a value, not a missing factor
+                  // (a CHP allocation has no factor)
+                  const efDisplay = entry.source_type !== "cogen_allocation" && entry.emission_factor != null && entry.emission_factor !== ""
                     ? formatNumber(entry.emission_factor, 4)
                     : "—";
 
                   return (
                     <tr key={entry.id}>
-                      <td>{entry.year}</td>
+                      <td>{entry.month ? `${entry.year}-${String(entry.month).padStart(2, "0")}` : entry.year}</td>
                       <td style={{ fontWeight: 500 }}>
                         {facilities.find((f) => f.id === entry.facility_id)
                           ?.name || "Unknown"}
@@ -743,7 +778,7 @@ const Scope2Form = () => {
                       <td>{consumptionDisplay}</td>
                       <td>{efDisplay}</td>
                       <td style={{ color: "#3b82f6", fontWeight: 600 }}>
-                        {formatNumber(entry.co2e, 3)}
+                        {formatEmission(entry.co2e, 3)}
                       </td>
                       <td style={{ color: "#6b7280", fontSize: "0.85rem" }}>
                         {entry.uncertainty != null
@@ -752,7 +787,7 @@ const Scope2Form = () => {
                       </td>
                       <td style={{ color: "#6b7280", fontSize: "0.85rem" }}>
                         {entry.uncertainty != null
-                          ? `${formatNumber(entry.uncertainty * 1.96 * 100, 1)}%`
+                          ? `${formatNumber(entry.uncertainty * UNCERTAINTY_COVERAGE_K * 100, 1)}%`
                           : "—"}
                         {entry.status === "Draft" ? (
                           <span
@@ -893,13 +928,6 @@ const Scope2Form = () => {
             loadEntries();
             toast.success("Bulk import completed successfully");
           }}
-        />
-      )}
-
-      {calculationResult && (
-        <EmissionResult
-          result={calculationResult}
-          onClose={() => setCalculationResult(null)}
         />
       )}
 

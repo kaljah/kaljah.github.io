@@ -504,100 +504,121 @@ class TestFlaringTier3Pipeline:
 # TEST CLASS: Mud Degassing Pipeline
 # =====================================================================
 class TestMudDegassingPipeline:
-    """API §6.2: Drilling mud degassing (CH4 only)."""
+    """API Compendium 2021 Drilling Mud Degassing (Tier 1, Tier 2, Tier 2+)."""
 
-    def test_water_based_mud(self, auth_client, facility_id):
+    def test_tier1_well_default(self, auth_client, facility_id):
         """
-        Reference: water_based mud EF = 0.15 kg CH4/m3
-        200 m3 mud → ch4_kg = 200 * 0.15 = 30 kg = 0.030 tonnes
+        TIER 1 (API Table 6-3): Simplified default based on well count.
+        10 wells → ch4 = 10 * 0.0524 = 0.524 tonnes CH4
         """
         from calculations.legacy_engine import compute_emissions
 
-        mud_vol = 200.0
-        ef = 0.15  # water_based
-
-        expected_ch4 = mud_vol * ef / 1000.0  # 0.030 t
+        wells = 10.0
+        expected_ch4 = wells * 0.0524
         expected_co2e = ref_co2e(ch4=expected_ch4)
 
         payload = {
             "process_type": "drilling",
-            "quantity": mud_vol,
-            "unit": "m3",
-            "factor_source": "specific",
+            "quantity": wells,
+            "unit": "well",
+            "tier": "tier1",
+            "factor_source": "default",
+        }
+        em, method = compute_emissions(payload, {})
+
+        assert em["co2"] == 0.0 or em["co2"] is None or em["co2"] == pytest.approx(0, abs=1e-9)
+        assert em["ch4"] == pytest.approx(expected_ch4, rel=1e-4)
+        assert em["totalCo2e"] == pytest.approx(expected_co2e, rel=1e-4)
+
+    def test_tier2_water_based_mud(self, auth_client, facility_id):
+        """
+        TIER 2 (API Compendium Onshore): Water-based mud EF = 0.0458 t CH4/day.
+        20 drilling days → ch4 = 20 * 0.0458 = 0.916 tonnes CH4
+        """
+        from calculations.legacy_engine import compute_emissions
+
+        drilling_days = 20.0
+        ef = 0.0458
+        expected_ch4 = drilling_days * ef
+        expected_co2e = ref_co2e(ch4=expected_ch4)
+
+        payload = {
+            "process_type": "drilling",
+            "drilling_days": drilling_days,
+            "quantity": drilling_days,
+            "unit": "days",
+            "tier": "tier2",
+            "factor_source": "custom",
             "mud_type": "water_based",
         }
         em, method = compute_emissions(payload, {})
 
         assert em["co2"] == 0.0 or em["co2"] is None or em["co2"] == pytest.approx(0, abs=1e-9)
-        assert em["ch4"] == pytest.approx(expected_ch4, rel=1e-4), (
-            f"Water-based mud CH4: expected {expected_ch4}, got {em['ch4']}"
-        )
+        assert em["ch4"] == pytest.approx(expected_ch4, rel=1e-4)
         assert em["totalCo2e"] == pytest.approx(expected_co2e, rel=1e-4)
 
-    def test_oil_based_mud(self, auth_client, facility_id):
+    def test_tier2_oil_based_mud(self, auth_client, facility_id):
         """
-        Reference: oil_based mud EF = 0.35 kg CH4/m3
-        150 m3 mud → ch4_kg = 150 * 0.35 = 52.5 kg = 0.0525 tonnes
+        TIER 2 (API Compendium Onshore): Oil-based mud EF = 0.0103 t CH4/day.
+        20 drilling days → ch4 = 20 * 0.0103 = 0.206 tonnes CH4
         """
         from calculations.legacy_engine import compute_emissions
 
-        mud_vol = 150.0
-        ef = 0.35  # oil_based
-
-        expected_ch4 = mud_vol * ef / 1000.0
+        drilling_days = 20.0
+        ef = 0.0103
+        expected_ch4 = drilling_days * ef
+        expected_co2e = ref_co2e(ch4=expected_ch4)
 
         payload = {
             "process_type": "drilling",
-            "quantity": mud_vol,
-            "unit": "m3",
-            "factor_source": "specific",
+            "drilling_days": drilling_days,
+            "quantity": drilling_days,
+            "unit": "days",
+            "tier": "tier2",
+            "factor_source": "custom",
             "mud_type": "oil_based",
         }
         em, method = compute_emissions(payload, {})
-        assert em["ch4"] == pytest.approx(expected_ch4, rel=1e-4)
 
-    def test_synthetic_mud(self, auth_client, facility_id):
+        assert em["co2"] == 0.0 or em["co2"] is None or em["co2"] == pytest.approx(0, abs=1e-9)
+        assert em["ch4"] == pytest.approx(expected_ch4, rel=1e-4)
+        assert em["totalCo2e"] == pytest.approx(expected_co2e, rel=1e-4)
+
+    def test_tier2_plus_site_gas_composition(self, auth_client, facility_id):
         """
-        Reference: synthetic mud EF = 0.25 kg CH4/m3
-        100 m3 → 100 * 0.25 / 1000 = 0.025 tonnes
+        TIER 2+ (Onshore + Gas Composition):
+        10 drilling days, water-based (0.0458 t/day)
+        X_CH4 = 0.85 (scaled by / 0.8385)
+        X_CO2 = 0.02 (scaled by / 0.8385 * 44.01/16.04)
         """
         from calculations.legacy_engine import compute_emissions
 
-        mud_vol = 100.0
-        expected_ch4 = mud_vol * 0.25 / 1000.0
+        drilling_days = 10.0
+        ef = 0.0458
+        x_ch4 = 0.85
+        x_co2 = 0.02
+        default_baseline = 0.8385
+
+        expected_ch4 = drilling_days * ef * (x_ch4 / default_baseline)
+        expected_co2 = drilling_days * ef * (x_co2 / default_baseline) * (44.01 / 16.04)
+        expected_co2e = ref_co2e(co2=expected_co2, ch4=expected_ch4)
 
         payload = {
             "process_type": "drilling",
-            "quantity": mud_vol,
-            "unit": "m3",
-            "factor_source": "specific",
-            "mud_type": "synthetic",
+            "drilling_days": drilling_days,
+            "quantity": drilling_days,
+            "unit": "days",
+            "tier": "tier2_plus",
+            "factor_source": "tier2_plus",
+            "mud_type": "water_based",
+            "ch4_fraction": x_ch4,
+            "co2_fraction": x_co2,
         }
         em, method = compute_emissions(payload, {})
+
         assert em["ch4"] == pytest.approx(expected_ch4, rel=1e-4)
-
-    def test_oil_to_water_ratio_2_333(self, auth_client, facility_id):
-        """
-        SENSITIVITY: Oil_based EF = 0.35, Water_based EF = 0.15
-        Same volume → oil_based / water_based = 0.35 / 0.15 = 2.3333...
-        """
-        from calculations.legacy_engine import compute_emissions
-
-        mud_vol = 100.0
-
-        p_water = {"process_type": "drilling", "quantity": mud_vol, "unit": "m3",
-                   "factor_source": "specific", "mud_type": "water_based"}
-        p_oil = {"process_type": "drilling", "quantity": mud_vol, "unit": "m3",
-                 "factor_source": "specific", "mud_type": "oil_based"}
-
-        em_water, _ = compute_emissions(p_water, {})
-        em_oil, _ = compute_emissions(p_oil, {})
-
-        expected_ratio = 0.35 / 0.15
-        actual_ratio = em_oil["ch4"] / em_water["ch4"]
-        assert actual_ratio == pytest.approx(expected_ratio, rel=1e-4), (
-            f"Oil/Water ratio: expected {expected_ratio:.4f}, got {actual_ratio:.4f}"
-        )
+        assert em["co2"] == pytest.approx(expected_co2, rel=1e-4)
+        assert em["totalCo2e"] == pytest.approx(expected_co2e, rel=1e-4)
 
 
 # =====================================================================
@@ -669,6 +690,8 @@ class TestCompletionsPipeline:
             "ch4_content": ch4_frac,
             "comp_method": "rate_duration",
             "comp_rate": rate_mscf_day,
+            # audit BUG-011: the form's default rate unit is Mcf/hr, so a per-day rate is explicit
+            "comp_rate_unit": "mscf/day",
             "comp_duration": duration_hours,
         }
         em, method = compute_emissions(payload, {})
@@ -923,7 +946,7 @@ class TestGWPValidation:
         payload = {
             "process_type": "drilling",
             "quantity": 1000.0,
-            "unit": "m3",
+            "unit": "days",  # Table 6-2 is per drilling day
             "factor_source": "specific",
             "mud_type": "water_based",
         }
@@ -1113,7 +1136,7 @@ class TestLiquidsUnloadingPipeline:
         v_tubing = (pi/4) * 0.0635^2 * 1524 = 4.8263... m3
 
         p_abs = 500 + 14.696 = 514.696 psia
-        p_factor = 514.696 / 14.696 = 35.023...
+        p_factor = (514.696 - 14.696) / 14.696 = 34.023... (Eq 6-10: gauge pressure)
         t_abs_k = (60-32)*5/9 + 273.15 = 288.706 K (standard = 1.0)
         t_factor = 288.706 / 288.706 = 1.0
 
@@ -1138,7 +1161,7 @@ class TestLiquidsUnloadingPipeline:
         v_tubing = (math.pi / 4.0) * (d_m ** 2) * depth_m
 
         p_abs = pressure_psig + STD_PRESS_PSIA
-        p_factor = p_abs / STD_PRESS_PSIA
+        p_factor = (p_abs - STD_PRESS_PSIA) / STD_PRESS_PSIA  # Eq 6-10 casing term: gauge pressure (Exhibit 6-8)
         t_abs_k = (temp_f - 32.0) * 5.0 / 9.0 + 273.15
         t_factor = STD_TEMP_K / t_abs_k
 

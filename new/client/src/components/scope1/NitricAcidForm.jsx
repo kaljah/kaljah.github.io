@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import CustomDropdown from "../CustomDropdown";
 
 const NITRIC_ACID_OPTIONS = [
@@ -7,11 +7,15 @@ const NITRIC_ACID_OPTIONS = [
 ];
 
 const NitricAcidForm = ({ data, onChange }) => {
+  // the product and unit shown by default must also be in the submitted data (browser test #8:
+  // "Please select a unit" while the unit box showed a tonne)
+  useEffect(() => {
+    if (!data.fuel) onChange("fuel", "Nitric Acid - With NSCR");
+    if (!data.unit) onChange("unit", "tonne");
+  }, [data.fuel, data.unit, onChange]);
+
   return (
     <div className="nitric-acid-form">
-      <h4 style={{ color: "var(--accent-color)", marginBottom: "15px" }}>
-        Nitric Acid Production (N₂O)
-      </h4>
 
       <div className="form-grid-2">
         <div className="input-group">
@@ -60,19 +64,6 @@ const NitricAcidForm = ({ data, onChange }) => {
         </div>
       </div>
 
-      <div
-        style={{
-          marginTop: "12px",
-          padding: "10px 14px",
-          background: "#f9fafb",
-          border: "1px solid #e5e7eb",
-          borderRadius: "6px",
-          fontSize: "0.8rem",
-          color: "#6b7280",
-        }}
-      >
-        <strong>API Compendium 2021 Section 6, pg 407:</strong> N₂O formed as a byproduct of ammonia oxidation in the production of nitric acid (HNO₃). High GWP greenhouse gas (265× CO₂ AR5).
-      </div>
     </div>
   );
 };

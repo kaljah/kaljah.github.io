@@ -1,7 +1,7 @@
-from flask import request, jsonify, session
+from flask import request, jsonify, session, current_app
 from sqlalchemy import func
 from . import emissions_bp
-from utils import get_current_user, get_allowed_facility_ids
+from utils import get_current_user, get_allowed_facility_ids, require_facility_access
 from models import (
     User,
     Emission,
@@ -14,6 +14,7 @@ from models import (
 )
 from extensions import db, limiter
 from utils import log_activity_and_notify
+from services.scope2_activity import scope2_activity
 from calculations import (
     compute_emissions,
     calculate_co2e,
@@ -26,6 +27,7 @@ import json
 from sqlalchemy import cast, String, literal, Float, union_all, or_
 from services.ogmp import ogmp_level_for
 from process_categories import NON_COMBUSTION_PROCESSES
+from utils import internal_error
 
 
 
@@ -35,13 +37,14 @@ def _escape_like(val: str) -> str:
     return val.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
 
 
-def _lookup_api_factor(fuel_name: str) -> dict:
-    """Look up an emission factor from ALL_EMISSION_FACTORS / API_FACTORS supporting exact, normalized, and alias matches."""
+def _canonical_api_factor_name(fuel_name: str):
+    """The catalog name a fuel / factor name resolves to (exact, alias, case- and punctuation-
+    insensitive, or factor code), or None."""
     if not fuel_name:
-        return {}
+        return None
     factor_catalog = {**API_FACTORS, **ALL_EMISSION_FACTORS}
     if fuel_name in factor_catalog:
-        return factor_catalog[fuel_name]
+        return fuel_name
     norm = str(fuel_name).lower().replace("_", " ").replace("-", " ").strip()
     aliases = {
         "natural gas": "Natural Gas",
@@ -57,21 +60,24 @@ def _lookup_api_factor(fuel_name: str) -> dict:
         "tank flash emissions oil": "Tank - Flash Emissions (Oil)",
         "tank flash oil": "Tank - Flash Emissions (Oil)",
         "tank flash": "Tank - Flash Emissions (Oil)",
-        "tank working losses oil": "Tank - Working Losses (Oil)",
-        "tank breathing losses oil": "Tank - Breathing Losses (Oil)",
         "asphalt": "Asphalt",
         "asphalt blowing": "Asphalt",
     }
     canonical = aliases.get(norm)
     if canonical and canonical in factor_catalog:
-        return factor_catalog[canonical]
-
+        return canonical
     for k, v in factor_catalog.items():
         if k.lower().replace("_", " ").replace("-", " ").strip() == norm:
-            return v
-        if v.get("code") and v.get("code").lower() == norm:
-            return v
-    return {}
+            return k
+        if v.get("code") and v.get("code").lower().replace("_", " ").replace("-", " ").strip() == norm:
+            return k
+    return None
+
+
+def _lookup_api_factor(fuel_name: str) -> dict:
+    """Look up an emission factor from ALL_EMISSION_FACTORS / API_FACTORS supporting exact, normalized, and alias matches."""
+    name = _canonical_api_factor_name(fuel_name)
+    return {**API_FACTORS, **ALL_EMISSION_FACTORS}[name] if name else {}
 
 
 @emissions_bp.route("/", methods=["GET"])
@@ -124,6 +130,7 @@ def get_emissions():
     field_arg = request.args.get("field")
     search_term = request.args.get("search")
     method_arg = request.args.get("method")
+    status_arg = request.args.get("status")  # BUG-077: inventory consumers request Verified only
 
     results = []
 
@@ -156,6 +163,8 @@ def get_emissions():
                 q = q.filter(model.month == int(month))
             except ValueError:
                 pass
+        if status_arg and status_arg != "all" and hasattr(model, "status"):
+            q = q.filter(model.status.in_([x.strip() for x in status_arg.split(",") if x.strip()]))
         if facility_id and facility_id != "all":
             try:
                 q = q.filter(model.facility_id == int(facility_id))
@@ -433,9 +442,22 @@ def get_emissions():
             try:
                 payload = json.loads(r.source_payload)
                 d["factor_source"] = payload.get("factor_source")
+                if payload.get("custom_factor_id") not in (None, ""):
+                    d["custom_factor_id"] = payload.get("custom_factor_id")
             except Exception:
                 pass
         paginated_results.append(d)
+
+    # Records saved with a library / custom factor before the factor name was stored show the
+    # factor id as their fuel (browser test #13): show the factor's name instead
+    cf_ids = {int(d["custom_factor_id"]) for d in paginated_results
+              if str(d.get("custom_factor_id") or "").isdigit() and str(d.get("fuel") or "").isdigit()}
+    if cf_ids:
+        from models import CustomFactor
+        names = {cf.id: cf.name for cf in CustomFactor.query.filter(CustomFactor.id.in_(cf_ids)).all()}
+        for d in paginated_results:
+            if str(d.get("fuel") or "").isdigit() and str(d.get("custom_factor_id") or "").isdigit():
+                d["fuel"] = names.get(int(d["custom_factor_id"]), d["fuel"])
 
     return jsonify(
         {
@@ -502,11 +524,13 @@ def add_bulk_upload():
 
     # Pre-fetch facilities and custom factors for resolution
     all_facilities = Facility.query.all()
-    fac_name_map = {f.name.lower(): f for f in all_facilities}
+    from utils import build_name_map
+
+    fac_name_map = build_name_map(all_facilities)
 
     # Pre-fetch user's custom factors
-    custom_factors = CustomFactor.query.filter_by(created_by=user.id).all()
-    cf_name_map = {cf.name.lower(): cf for cf in custom_factors}
+    custom_factors = CustomFactor.query.filter_by(created_by=user.id, is_archived=False).all()
+    cf_name_map = build_name_map(custom_factors)
 
     valid_records = []
     errors = []
@@ -615,8 +639,10 @@ def add_bulk_upload():
             except ValueError:
                 row_errors.append("Invalid engineering calculation inputs for Flaring.")
         elif factor_type == "custom":
-            cf = cf_name_map.get(fuel.lower())
-            if not cf:
+            cf = cf_name_map.get(fuel.strip().lower())
+            if fuel.strip().lower() in cf_name_map.ambiguous:
+                row_errors.append(f"Custom factor name '{fuel}' is not unique; rename the duplicates first.")
+            elif not cf:
                 row_errors.append(
                     f"Custom factor not found for fuel: '{fuel}'. Please save it in the app first."
                 )
@@ -932,8 +958,12 @@ def add_bulk_upload():
             # If confirm=True and they chose to overwrite, we'd update.
             # For simplicity, if we are confirming and hit a duplicate, we can delete the old one and insert new.
             if confirm:
-                db.session.delete(duplicate)
-                new_emissions.append(emission_obj)
+                # overwrite through the maker-checker (back to Pending, old and new values in the
+                # audit trail), never by deleting the reviewed record
+                from background_processor import _S1_RESULT_FIELDS, _bulk_overwrite
+
+                _bulk_overwrite(duplicate, {f: getattr(emission_obj, f) for f in _S1_RESULT_FIELDS
+                                            if f not in ("qa_flag",)}, user.id, "Scope 1")
         else:
             valid_records.append(preview_data)
             if confirm:
@@ -958,10 +988,7 @@ def add_bulk_upload():
                     db.session.commit()
             except Exception as e:
                 db.session.rollback()
-                return (
-                    jsonify({"error": "Failed to save to database", "details": str(e)}),
-                    500,
-                )
+                return internal_error(e, "Failed to save to database")
 
         return jsonify(
             {"status": "success", "imported": len(new_emissions), "errors": errors}
@@ -1020,19 +1047,19 @@ def get_csv_template():
             "[Required] process_type",
             "process_type",
             "Core",
-            "combustion | flaring | venting | blowdown | pneumatic | tank_flashing | tank_working | tank_breathing | drilling | completions | unloading | agr | dehydrator | fugitive | mobile | indirect_steam | stoichiometry | separation",
+            "combustion | mobile | flaring | venting | blowdown | associated_gas_venting | pneumatic | tank_flashing | tank_working | tank_breathing | drilling | completions | workovers | well_testing | unloading | agr | dehydrator | fugitive | loading | separation | stoichiometry | chemical_production (the form's process names are accepted too). Purchased steam / heat / electricity go in the Scope 2 import.",
         ),
         (
             "[Required] fuel",
             "fuel",
             "Core",
-            "Fuel or activity type exactly as in API factors catalog (e.g. Natural Gas, Diesel, Associated Gas). Required for Tier 1.",
+            "Emission factor name exactly as in the factor list of the manual form (e.g. Natural Gas, Diesel (No. 2 Fuel Oil), Associated Gas (Flaring), Production high-bleed controller (API study)); for factor type custom, the saved custom factor name. Required for default and custom.",
         ),
         (
             "[Required] quantity",
             "quantity",
             "Core",
-            "Numeric activity quantity (volume, mass, count, etc.). Required.",
+            "Activity of the month (volume, mass, energy, count, drilling days...). Required, except for Tier 3 methods that derive it (e.g. completions rate x duration).",
         ),
         (
             "[Required] unit",
@@ -1119,7 +1146,7 @@ def get_csv_template():
             "[T1/T3] operating_temperature",
             "operating_temperature",
             "T1",
-            "Measured gas temperature at operating conditions. Enables API §4.2.1 thermodynamic correction.",
+            "Gas temperature at metering conditions. Only used when the quantity is a volume in m3 or cf read at those conditions (scf / Sm3 are already standard).",
         ),
         (
             "[T1/T3] temp_unit",
@@ -1131,7 +1158,7 @@ def get_csv_template():
             "[T1/T3] operating_pressure",
             "operating_pressure",
             "T1",
-            "Measured gas pressure at operating conditions (gauge or absolute depending on press_unit).",
+            "Gas pressure at metering conditions (gauge or absolute per press_unit). Only used for volumes in m3 or cf at those conditions.",
         ),
         (
             "[T1/T3] press_unit",
@@ -1203,13 +1230,7 @@ def get_csv_template():
             "[T3-Drill] mud_type",
             "mud_type",
             "T3",
-            "Drilling mud type: water_based | oil_based | synthetic. Default water_based.",
-        ),
-        (
-            "[T3-Drill] mud_unit",
-            "mud_unit",
-            "T3",
-            "Unit of mud volume: m3 | bbl. Defaults to quantity unit if blank.",
+            "Drilling mud type: water_based | oil_based | synthetic. The quantity is drilling days (unit: days).",
         ),
         # ── T3 WELL COMPLETIONS / WORKOVERS ───────────────────────────────
         (
@@ -1222,7 +1243,13 @@ def get_csv_template():
             "[T3-Comp] comp_rate",
             "comp_rate",
             "T3-Completion",
-            "Flowback rate (Mscf/day). Required when comp_method=rate_duration.",
+            "Flowback gas rate, in comp_rate_unit. Required when comp_method=rate_duration.",
+        ),
+        (
+            "[T3-Comp] comp_rate_unit",
+            "comp_rate_unit",
+            "T3-Completion",
+            "Unit of the flowback rate: Mcf/hr (default) | Mcf/day | scf/hr | m3/hr.",
         ),
         (
             "[T3-Comp] comp_duration",
@@ -1388,7 +1415,7 @@ def get_csv_template():
             "[T3-Pneu] pneu_hours",
             "pneu_hours",
             "T3",
-            "Annual operating hours per device. REQUIRED for pneumatic Tier 3 (e.g. 8760).",
+            "Operating hours per device in the month (e.g. 744 for a 31-day month). REQUIRED for pneumatic Tier 3.",
         ),
         (
             "[T3-Pneu] pneu_ch4_content",
@@ -1425,7 +1452,7 @@ def get_csv_template():
             "[T3-AGR] agr_ch4_slip",
             "agr_ch4_slip",
             "T3",
-            "CH4 slip fraction through solvent (0–1). Default 0.001 (0.1%).",
+            "CH4 slip as a fraction of inlet CH4 (0–1, e.g. 0.001 = 0.1 %).",
         ),
         (
             "[T3-AGR] agr_control_eff",
@@ -1506,24 +1533,31 @@ def get_csv_template():
             "T3",
             "Overall glycol dehydrator emission control efficiency 0–100%. Default 0.",
         ),
-        # ── T3 INDIRECT STEAM / HEAT (Section 8) ─────────────────────────
+        # ── ACTIVITY FACTORS (Compendium Section 6 tables) ─────────────────
         (
-            "[T3-Steam] boiler_eff",
-            "boiler_eff",
-            "T3",
-            "Boiler thermal efficiency fraction (e.g. 0.80 = 80%). REQUIRED for indirect_steam.",
+            "[T1] operating_hours",
+            "operating_hours",
+            "T1",
+            "Operating hours in the month (e.g. 744) for per-hour methods: pneumatic controller / pump factors and equipment leaks. Required for those.",
         ),
         (
-            "[T3-Steam] trans_loss",
-            "trans_loss",
+            "[T1] activity_days",
+            "activity_days",
+            "T1",
+            "Operating days in the month for factors per unit-day (e.g. AGR vent per unit). Required for those factors.",
+        ),
+        # ── T3 MEASURED VENT VOLUME ───────────────────────────────────────
+        (
+            "[T3-Vent] vent_method",
+            "vent_method",
             "T3",
-            "Steam distribution transmission loss fraction 0–1. Default 0.",
+            "Measured gas method: volume (quantity = measured gas volume in scf / Mcf / MMscf / m3). Uses ch4_content and co2_content (mol %).",
         ),
         (
-            "[T3-Steam] heat_unit",
-            "heat_unit",
+            "[T3-Vent] disposition",
+            "disposition",
             "T3",
-            "Heat energy unit: btu | mmbtu | mj | gj | kwh. Default btu.",
+            "vented (default) | flared (then combustion_efficiency applies, default 98 %).",
         ),
         # ── T3 STOICHIOMETRY (Carbon Mass Balance) ────────────────────────
         (
@@ -1537,14 +1571,33 @@ def get_csv_template():
             "[T3-Fug] fugitive_method",
             "fugitive_method",
             "T3",
-            "Fugitive calculation method: average (Tier 1) | screening (OGI/EPA Method 21). Default average.",
+            "Tier 3 leak method: screening (Method 21 ranges) | correlation | ogi | measurement.",
         ),
         (
-            "[T3-Fug] fugitive_ppm",
-            "fugitive_ppm",
+            "[T3-Fug] component_type",
+            "component_type",
             "T3",
-            "Leak concentration in ppm. Required when fugitive_method=screening.",
+            "Component type: valve | connector | flange | open_ended_line | pump_seal | other.",
         ),
+        (
+            "[T3-Fug] service",
+            "service",
+            "T3",
+            "Service: gas | light_oil | heavy_oil | water_oil.",
+        ),
+        (
+            "[T3-Fug] m21_below_count",
+            "m21_below_count",
+            "T3",
+            "Screening method: number of components screened below 10,000 ppmv.",
+        ),
+        (
+            "[T3-Fug] m21_above_count",
+            "m21_above_count",
+            "T3",
+            "Screening method: number of components screened at or above 10,000 ppmv.",
+        ),
+
         # ── UNCERTAINTY OVERRIDES ─────────────────────────────────────────
         (
             "[Unc] meter_uncertainty_pct",
@@ -1600,48 +1653,61 @@ def get_csv_template():
     p_pneu = ["all", "pneumatic"]
     p_agr = ["all", "agr"]
     p_dehy = ["all", "dehydrator"]
-    p_steam = ["all", "indirect_steam"]
     p_stoich = ["all", "stoichiometry", "combustion"]
     p_fug = ["all", "fugitive"]
+    p_vent = ["all", "dehydrator", "venting", "vented_gas", "well_testing", "workovers", "casing_gas",
+              "compressor_venting", "non_routine_venting"]
+    p_act = ["all", "pneumatic", "fugitive", "agr", "dehydrator", "loading", "separation", "well_testing", "workovers",
+             "casing_gas", "compressor_venting", "non_routine_venting"]
+
+    # the wizard sends one process, several ("flaring,venting") or its own names
+    from services.scope1_calc import normalize_process_type
+
+    wanted = {normalize_process_type(p) or p for p in str(process or "all").split(",") if p.strip()} or {"all"}
+    if "all" in wanted:
+        wanted = {"all"}
+
+    def _for(group):
+        return bool(wanted & set(group))
 
     for c in COLUMNS:
         t = c[2]
         header = c[0]
         if t in ["Core", "Meta"]:
             filtered_columns.append(c)
-        elif tier == "3":
+        elif tier in ("3", "auto"):
             if t == "Unc":
                 filtered_columns.append(c)
             elif t == "T1":
                 filtered_columns.append(c)
-            elif header.startswith("[T3] ") and process in p_comp:
+            elif header.startswith("[T3] ") and _for(p_comp):
                 filtered_columns.append(c)
-            elif header.startswith("[T3-Flare]") and process in p_flare:
+            elif header.startswith("[T3-Flare]") and _for(p_flare):
                 filtered_columns.append(c)
-            elif header.startswith("[T3-Drill]") and process in p_drill:
+            elif header.startswith("[T3-Drill]") and _for(p_drill):
                 filtered_columns.append(c)
-            elif header.startswith("[T3-Comp]") and process in p_completion:
+            elif header.startswith("[T3-Comp]") and _for(p_completion):
                 filtered_columns.append(c)
-            elif header.startswith("[T3-Unload]") and process in p_unload:
+            elif header.startswith("[T3-Unload]") and _for(p_unload):
                 filtered_columns.append(c)
-            elif header.startswith("[T3-BDN]") and process in p_bdn:
+            elif header.startswith("[T3-BDN]") and _for(p_bdn):
                 filtered_columns.append(c)
-            elif header.startswith("[T3-Tank]") and process in p_tank:
+            elif header.startswith("[T3-Tank]") and _for(p_tank):
                 filtered_columns.append(c)
-            elif header.startswith("[T3-Pneu]") and process in p_pneu:
+            elif header.startswith("[T3-Pneu]") and _for(p_pneu):
                 filtered_columns.append(c)
-            elif header.startswith("[T3-AGR]") and process in p_agr:
+            elif header.startswith("[T3-AGR]") and _for(p_agr):
                 filtered_columns.append(c)
-            elif header.startswith("[T3-Dehy]") and process in p_dehy:
+            elif header.startswith("[T3-Dehy]") and _for(p_dehy):
                 filtered_columns.append(c)
-            elif header.startswith("[T3-Steam]") and process in p_steam:
+            elif header.startswith("[T3-Vent]") and _for(p_vent):
                 filtered_columns.append(c)
-            elif header.startswith("[T3-Stoich]") and process in p_stoich:
+            elif header.startswith("[T3-Stoich]") and _for(p_stoich):
                 filtered_columns.append(c)
-            elif header.startswith("[T3-Fug]") and process in p_fug:
+            elif header.startswith("[T3-Fug]") and _for(p_fug):
                 filtered_columns.append(c)
         elif tier == "1":
-            if t == "T1":
+            if t == "T1" and (header not in ("[T1] operating_hours", "[T1] activity_days") or _for(p_act)):
                 filtered_columns.append(c)
 
     # Use filtered_columns instead of COLUMNS for mapping
@@ -1664,333 +1730,70 @@ def get_csv_template():
                 result[hdr] = str(v)
         return [result[h] for h in headers]
 
+    F1, F2 = "Hassi Messaoud Gas Plant", "Hassi R'Mel Hub"  # replace with your own facility names
     sample_rows = [
-        # 1. Tier 1 – Natural Gas Combustion
-        _row(
-            date="2024-01",
-            facility_name="Hassi Messaoud Gas Plant",
-            process_type="combustion",
-            fuel="Natural Gas",
-            quantity="50000",
-            unit="scf",
-            factor_type="default",
-            group="Compressor Station A",
-            equipment="EQ-001",
-            equipment_name="CAT G3516 Generator",
-            activity="Upstream & Midstream Gas",
-            region="Ouargla",
-            division="Production",
-            field="Hassi Messaoud",
-            hhv="1020",
-            combustion_efficiency="0.995",
-            fuel_type="gases",
-        ),
-        # 2. Tier 3 – Combustion (Gas Composition Carbon Mass Balance)
-        _row(
-            date="2024-01",
-            facility_name="Hassi Messaoud Gas Plant",
-            process_type="combustion",
-            fuel="Natural Gas",
-            quantity="50000",
-            unit="scf",
-            factor_type="specific",
-            group="Compressor Station B",
-            equipment="EQ-002",
-            activity="Upstream & Midstream Gas",
-            region="Ouargla",
-            division="Production",
-            field="Hassi Messaoud",
-            hhv="1010",
-            combustion_efficiency="0.993",
-            c1="87.5",
-            c2="5.2",
-            c3="2.1",
-            c4="1.0",
-            c5="0.5",
-            co2_mol="1.8",
-            n2_mol="1.9",
-            operating_temperature="45",
-            temp_unit="C",
-            operating_pressure="300",
-            press_unit="psig",
-            z_factor="0.92",
-        ),
-        # 3. Tier 1 – Diesel Combustion
-        _row(
-            date="2024-01",
-            facility_name="Hassi Messaoud Gas Plant",
-            process_type="combustion",
-            fuel="Diesel (No. 2 Fuel Oil)",
-            quantity="1200",
-            unit="gal",
-            factor_type="default",
-            group="Diesel Generators",
-            equipment="EQ-003",
-            activity="Upstream & Midstream Gas",
-            region="Ouargla",
-            division="Production",
-            field="Hassi Messaoud",
-            fuel_type="liquids",
-            hhv="138700",
-        ),
-        # 4. Tier 3 – Flaring (Engineering Mode)
-        _row(
-            date="2024-01",
-            facility_name="Hassi R'Mel Hub",
-            process_type="flaring",
-            fuel="Associated Gas",
-            quantity="120000",
-            unit="scf",
-            factor_type="specific",
-            group="HP Flare Stack",
-            equipment="EQ-010",
-            c1="83",
-            c2="6",
-            c3="3",
-            c4="2",
-            c5="1",
-            co2_mol="2",
-            n2_mol="3",
-            flare_type="elevated",
-            control_efficiency="98",
-            operating_temperature="60",
-            temp_unit="F",
-            operating_pressure="150",
-            press_unit="psig",
-            z_factor="0.95",
-        ),
-        # 5. Tier 1 – Flaring (Default Factor)
-        _row(
-            date="2024-01",
-            facility_name="Hassi R'Mel Hub",
-            process_type="flaring",
-            fuel="Associated Gas",
-            quantity="80000",
-            unit="scf",
-            factor_type="default",
-            group="LP Flare",
-            equipment="EQ-011",
-        ),
-        # 6. Tier 3 – Drilling (Mud Degassing)
-        _row(
-            date="2024-01",
-            facility_name="Hassi Messaoud Gas Plant",
-            process_type="drilling",
-            fuel="Drilling Operations",
-            quantity="500",
-            unit="m3",
-            factor_type="specific",
-            group="Well HMD-47",
-            equipment="EQ-020",
-            mud_type="water_based",
-            mud_unit="m3",
-        ),
-        # 7. Tier 3 – Well Completions (Metered Volume)
-        _row(
-            date="2024-01",
-            facility_name="Hassi Messaoud Gas Plant",
-            process_type="completions",
-            fuel="Associated Gas",
-            quantity="25000",
-            unit="scf",
-            factor_type="specific",
-            group="Well HMD-55 Completion",
-            equipment="EQ-030",
-            comp_method="metered_volume",
-            ch4_content="82",
-            co2_content="3",
-            comp_flare_eff="90",
-        ),
-        # 8. Tier 3 – Well Completions (Rate × Duration)
-        _row(
-            date="2024-01",
-            facility_name="Hassi Messaoud Gas Plant",
-            process_type="completions",
-            fuel="Associated Gas",
-            quantity="-",
-            unit="scf",
-            factor_type="specific",
-            group="Well HMD-56 Workover",
-            equipment="EQ-031",
-            comp_method="rate_duration",
-            comp_rate="50",
-            comp_duration="72",
-            ch4_content="84",
-            co2_content="2",
-            comp_flare_eff="85",
-        ),
-        # 9. Tier 3 – Liquids Unloading
-        _row(
-            date="2024-01",
-            facility_name="Hassi Messaoud Gas Plant",
-            process_type="unloading",
-            fuel="Natural Gas",
-            quantity="12",
-            unit="events",
-            factor_type="specific",
-            group="Well HMD-22",
-            equipment="EQ-040",
-            unload_depth="8500",
-            unload_diam="4.5",
-            unload_press="800",
-            unload_freq="12",
-            unload_flare_eff="0",
-            ch4_content="87",
-            co2_content="1.5",
-            unload_temp="75",
-            temp_unit="F",
-        ),
-        # 10. Tier 3 – Venting / Blowdown
-        _row(
-            date="2024-01",
-            facility_name="Rhourde Nouss Gas Plant",
-            process_type="blowdown",
-            fuel="Natural Gas (Venting/Blowdown)",
-            quantity="200",
-            unit="m3",
-            factor_type="specific",
-            group="Separator S-101",
-            equipment="EQ-050",
-            blowdown_pressure="450",
-            blowdown_events="8",
-            ch4_content="85",
-            co2_content="2",
-            control_efficiency="0",
-            blowdown_temp="65",
-            blowdown_temp_unit="F",
-            blowdown_press_unit="psig",
-            z_factor="0.93",
-        ),
-        # 11. Tier 3 – Storage Tanks (Flashing)
-        _row(
-            date="2024-01",
-            facility_name="Rhourde Nouss Gas Plant",
-            process_type="tank_flashing",
-            fuel="Condensate",
-            quantity="5000",
-            unit="bbl",
-            factor_type="specific",
-            group="Condensate Storage TK-201",
-            equipment="EQ-060",
-            tank_gor="85",
-            tank_ch4_content="65",
-            tank_control_eff="95",
-            tank_unit="bbl",
-            tank_api_gravity="62",
-        ),
-        # 12. Tier 3 – Pneumatic Devices
-        _row(
-            date="2024-01",
-            facility_name="Hassi R'Mel Hub",
-            process_type="pneumatic",
-            fuel="Natural Gas",
-            quantity="25",
-            unit="devices",
-            factor_type="specific",
-            group="High-Bleed Controllers",
-            equipment="EQ-070",
-            pneu_count="25",
-            pneu_bleed_rate="6.0",
-            pneu_bleed_unit="scf",
-            pneu_hours="8760",
-            pneu_ch4_content="85",
-        ),
-        # 13. Tier 3 – AGR (Amine / CO2 Removal)
-        _row(
-            date="2024-01",
-            facility_name="In Salah CCS Plant",
-            process_type="agr",
-            fuel="Natural Gas",
-            quantity="15",
-            unit="mmscf",
-            factor_type="specific",
-            group="Amine Unit K-301",
-            equipment="EQ-080",
-            agr_co2_in="8.5",
-            agr_co2_out="0.5",
-            agr_unit="mmscf",
-            agr_ch4_in="85",
-            agr_ch4_slip="0.1",
-            agr_control_eff="0",
-        ),
-        # 14. Tier 3 – Dehydrator (TEG)
-        _row(
-            date="2024-01",
-            facility_name="Hassi R'Mel Hub",
-            process_type="dehydrator",
-            fuel="Natural Gas",
-            quantity="100",
-            unit="mmscf",
-            factor_type="specific",
-            group="TEG Dehydrator D-401",
-            equipment="EQ-090",
-            dehy_pump_rate="5.0",
-            dehy_pump_unit="gph",
-            dehy_hours="8760",
-            dehy_press="800",
-            dehy_press_unit="psig",
-            dehy_temp="100",
-            dehy_temp_unit="F",
-            dehy_has_flash="true",
-            dehy_flash_eff="90",
-            dehy_still_type="none",
-            dehy_ch4_content="87",
-            dehy_eff="0",
-        ),
-        # 15. Tier 3 – Fugitive (Screening / OGI)
-        _row(
-            date="2024-01",
-            facility_name="Hassi Messaoud Gas Plant",
-            process_type="fugitive",
-            fuel="Natural Gas",
-            quantity="350",
-            unit="components",
-            factor_type="specific",
-            group="Wellhead Valve Leaks",
-            equipment="EQ-100",
-            fugitive_method="screening",
-            fugitive_ppm="12500",
-        ),
-        # 16. Tier 1 – Fugitive (Average Factor)
-        _row(
-            date="2024-01",
-            facility_name="Hassi Messaoud Gas Plant",
-            process_type="fugitive",
-            fuel="Natural Gas",
-            quantity="350",
-            unit="components",
-            factor_type="default",
-            group="Valve Packings",
-            equipment="EQ-101",
-        ),
-        # 17. Tier 3 – Indirect Steam (Section 8)
-        _row(
-            date="2024-01",
-            facility_name="Hassi R'Mel Hub",
-            process_type="indirect_steam",
-            fuel="Natural Gas",
-            quantity="500000000",
-            unit="btu",
-            factor_type="specific",
-            group="Central Boiler House",
-            equipment="EQ-110",
-            boiler_eff="0.82",
-            trans_loss="0.05",
-            heat_unit="btu",
-        ),
-        # 18. Tier 3 – Stoichiometry (Carbon Mass Balance)
-        _row(
-            date="2024-01",
-            facility_name="Hassi Messaoud Gas Plant",
-            process_type="stoichiometry",
-            fuel="Natural Gas",
-            quantity="45000",
-            unit="kg",
-            factor_type="specific",
-            group="Process Furnace F-501",
-            equipment="EQ-120",
-            carbon_content="0.748",
-        ),
+        # Tier 1 - catalog factors
+        _row(date="2024-01", facility_name=F1, process_type="combustion", fuel="Natural Gas", quantity="50000",
+             unit="scf", factor_type="default", group="Compressor Station A", equipment="EQ-001",
+             equipment_name="CAT G3516 Generator", activity="Upstream & Midstream Gas", region="Ouargla",
+             division="Production", field="Hassi Messaoud"),
+        _row(date="2024-01", facility_name=F1, process_type="combustion", fuel="Diesel (No. 2 Fuel Oil)", quantity="1200",
+             unit="gal", factor_type="default", group="Diesel Generators", equipment="EQ-003"),
+        _row(date="2024-01", facility_name=F2, process_type="flaring", fuel="Associated Gas (Flaring)", quantity="80000",
+             unit="scf", factor_type="default", group="LP Flare", equipment="EQ-011"),
+        _row(date="2024-01", facility_name=F2, process_type="venting", fuel="Natural Gas (Venting/Blowdown)", quantity="200",
+             unit="Mscf", factor_type="default", group="Separator depressuring", equipment="EQ-012"),
+        _row(date="2024-01", facility_name=F1, process_type="drilling", fuel="Drilling - Mud Degassing (Water Based)",
+             quantity="30", unit="days", factor_type="default", group="Well HMD-47", equipment="EQ-020"),
+        _row(date="2024-01", facility_name=F2, process_type="pneumatic", fuel="Production high-bleed controller (API study)",
+             quantity="12", unit="devices", factor_type="default", group="Control valves", equipment="EQ-071",
+             operating_hours="744"),
+        _row(date="2024-01", facility_name=F2, process_type="dehydrator", fuel="Glycol dehydrator vent, production (no gas pump)",
+             quantity="100", unit="MMscf", factor_type="default", group="TEG Dehydrator D-401", equipment="EQ-091"),
+        _row(date="2024-01", facility_name=F1, process_type="fugitive", fuel="Component - Valve (Gas Service)",
+             quantity="350", unit="components", factor_type="default", group="Valve Packings", equipment="EQ-101",
+             operating_hours="744"),
+        # Tier 3 - site data and engineering methods
+        _row(date="2024-01", facility_name=F1, process_type="combustion", fuel="Natural Gas", quantity="50000",
+             unit="scf", factor_type="specific", group="Compressor Station B", equipment="EQ-002", hhv="1010",
+             combustion_efficiency="99.5", c1="87.5", c2="5.2", c3="2.1", c4="1.0", c5="0.5", co2_mol="1.8", n2_mol="1.9"),
+        _row(date="2024-01", facility_name=F2, process_type="flaring", fuel="Associated Gas (Flaring)", quantity="120000",
+             unit="scf", factor_type="specific", group="HP Flare Stack", equipment="EQ-010", c1="83", c2="6", c3="3",
+             c4="2", c5="1", co2_mol="2", n2_mol="3", flare_type="elevated", control_efficiency="98"),
+        _row(date="2024-01", facility_name=F1, process_type="drilling", fuel="Drilling - Mud Degassing (Water Based)",
+             quantity="30", unit="days", factor_type="specific", group="Well HMD-48", equipment="EQ-021",
+             mud_type="water_based"),
+        _row(date="2024-01", facility_name=F1, process_type="completions", quantity="25000", unit="scf",
+             factor_type="specific", group="Well HMD-55 Completion", equipment="EQ-030", comp_method="metered_volume",
+             ch4_content="82", co2_content="3", comp_flare_eff="90"),
+        _row(date="2024-01", facility_name=F1, process_type="completions", factor_type="specific",
+             group="Well HMD-56 Completion", equipment="EQ-031", comp_method="rate_duration", comp_rate="50",
+             comp_rate_unit="Mcf/day", comp_duration="72", ch4_content="84", co2_content="2", comp_flare_eff="85"),
+        _row(date="2024-01", facility_name=F1, process_type="unloading", quantity="12", unit="events",
+             factor_type="specific", group="Well HMD-22", equipment="EQ-040", unload_depth="8500", unload_diam="4.5",
+             unload_press="800", unload_freq="12", unload_flare_eff="0", ch4_content="87", co2_content="1.5"),
+        _row(date="2024-01", facility_name=F2, process_type="blowdown", quantity="200", unit="m3", factor_type="specific",
+             group="Separator S-101", equipment="EQ-050", blowdown_pressure="450", blowdown_events="8",
+             ch4_content="85", co2_content="2", blowdown_temp="65", blowdown_temp_unit="F",
+             blowdown_press_unit="psig", z_factor="0.93"),
+        _row(date="2024-01", facility_name=F2, process_type="tank_flashing", quantity="5000", unit="bbl",
+             factor_type="specific", group="Condensate Storage TK-201", equipment="EQ-060", tank_gor="85",
+             tank_ch4_content="65", tank_control_eff="95", tank_unit="bbl", tank_api_gravity="62"),
+        _row(date="2024-01", facility_name=F2, process_type="pneumatic", quantity="25", unit="devices",
+             factor_type="specific", group="High-Bleed Controllers", equipment="EQ-070", pneu_count="25",
+             pneu_bleed_rate="6.0", pneu_bleed_unit="scf", pneu_hours="744", pneu_ch4_content="85"),
+        _row(date="2024-01", facility_name=F2, process_type="agr", quantity="15", unit="mmscf", factor_type="specific",
+             group="Amine Unit K-301", equipment="EQ-080", agr_co2_in="8.5", agr_co2_out="0.5", agr_unit="mmscf",
+             agr_ch4_in="85", agr_ch4_slip="0.001", agr_control_eff="0"),
+        _row(date="2024-01", facility_name=F2, process_type="dehydrator", quantity="150", unit="Mscf",
+             factor_type="specific", group="TEG Dehydrator D-401", equipment="EQ-090", vent_method="volume",
+             ch4_content="87", co2_content="2"),
+        _row(date="2024-01", facility_name=F1, process_type="fugitive", quantity="350", unit="components",
+             factor_type="specific", group="Wellhead Valve Survey", equipment="EQ-100", fugitive_method="screening",
+             component_type="valve", service="gas", m21_below_count="340", m21_above_count="10",
+             operating_hours="744"),
+        _row(date="2024-01", facility_name=F1, process_type="stoichiometry", quantity="45000", unit="kg",
+             factor_type="specific", group="Process Furnace F-501", equipment="EQ-120", carbon_content="0.748"),
     ]
 
     # Filter sample rows based on requested process and tier
@@ -2006,15 +1809,13 @@ def get_csv_template():
         row_factor = row[factor_type_idx]
 
         # Check process match
-        process_match = (process == "all") or (row_process == process)
+        process_match = "all" in wanted or row_process in wanted
 
         # Check tier match
         tier_match = True
         if tier == "1":
             tier_match = row_factor == "default"
         elif tier == "3":
-            # Tier 3 can include both specific and default for demonstration, but let's keep all if tier 3,
-            # or just specific. Let's say if tier == 3, we show 'specific' mostly.
             tier_match = row_factor == "specific"
 
         if process_match and tier_match:
@@ -2022,9 +1823,9 @@ def get_csv_template():
 
     # If filtered_rows is empty (e.g. asking for Tier 1 of a process that only has Tier 3 samples),
     # just show whatever is available for that process.
-    if not filtered_rows and process != "all":
+    if not filtered_rows and "all" not in wanted:
         for row in sample_rows:
-            if row[headers.index("[Required] process_type")] == process:
+            if row[headers.index("[Required] process_type")] in wanted:
                 filtered_rows.append(row)
 
     si = io.StringIO()
@@ -2381,8 +2182,10 @@ def get_excel_template():
         ("Factor Type", 16, True),
         ("Quantity", 14, True),
         ("Unit", 14, True),
+        ("Operating Hours", 14, False),
         ("Notes / Comments", 30, False),
     ]
+    COL = {name: get_column_letter(i) for i, (name, _, _) in enumerate(DATA_COLS, 1)}
 
     # Freeze pane A2
     ws_data.freeze_panes = "A2"
@@ -2408,16 +2211,18 @@ def get_excel_template():
 
         # Header comments
         hints = {
-            1: "Format: YYYY-MM e.g. 2024-01",
-            5: "Must exactly match a name from the 🏢 Facilities sheet",
-            9: "Select from list: Combustion, Flaring, Venting, etc.",
-            10: "Gas/fuel type e.g. Natural Gas, Diesel, Associated Gas",
-            11: "default = API Compendium standard factor | specific = factor for specific setup | custom = your saved factor",
-            12: "Numeric quantity for the month (e.g. 50000)",
-            13: "e.g. scf, m3, gal, bbl, kg, tonne",
+            "Date\n(YYYY-MM)": "Format: YYYY-MM e.g. 2024-01",
+            "Facility Name": "Must exactly match the name of a facility / region in the platform",
+            "Equipment ID": "Links the row to its parameters on the Tier 3 sheet",
+            "Process Type": "Select from the list: Combustion, Flaring, Venting, etc.",
+            "Activity / Fuel": "Emission factor name as listed in the manual form, e.g. Natural Gas, Diesel (No. 2 Fuel Oil), Associated Gas (Flaring); for custom, the saved factor name",
+            "Factor Type": "default = API Compendium factor | custom = your saved factor | specific = Tier 3 (parameters on the Tier 3 sheet)",
+            "Quantity": "Activity of the month (e.g. 50000)",
+            "Unit": "e.g. scf, Mscf, m3, gal, bbl, kg, tonne, days, devices",
+            "Operating Hours": "Hours in the month for per-hour methods (pneumatic controllers, leaks), e.g. 744",
         }
-        if i in hints:
-            add_comment(cell, hints[i])
+        if col_name in hints:
+            add_comment(cell, hints[col_name])
 
     # Data Validations
 
@@ -2433,25 +2238,25 @@ def get_excel_template():
         error="Please select a value from the dropdown list.",
     )
     ws_data.add_data_validation(dv_process)
-    dv_process.sqref = "I3:I1048576"
+    dv_process.sqref = f"{COL['Process Type']}3:{COL['Process Type']}1048576"
 
     dv_factor = DataValidation(
         type="list",
-        formula1='"default,custom"',
+        formula1='"default,custom,specific"',
         allow_blank=True,
         showInputMessage=True,
         promptTitle="Factor Type",
-        prompt="'default' = API Compendium 2021 standard factor.\n'custom' = factor saved in your GHG Platform account.",
+        prompt="'default' = API Compendium 2021 factor.\n'custom' = factor saved in your GHG Platform account.\n'specific' = Tier 3 (Tier 3 sheet).",
         showErrorMessage=True,
         errorTitle="Invalid Value",
-        error="Please select 'default' or 'custom'.",
+        error="Please select 'default', 'custom' or 'specific'.",
     )
     ws_data.add_data_validation(dv_factor)
-    dv_factor.sqref = "K3:K1048576"
+    dv_factor.sqref = f"{COL['Factor Type']}3:{COL['Factor Type']}1048576"
 
     dv_unit = DataValidation(
         type="list",
-        formula1='"scf,Mscf,MMscf,m3,gal,bbl,kg,tonne,tonnes/yr,kWh,MWh,km,miles,hours"',
+        formula1='"scf,Mscf,MMscf,m3,MMBtu,gal,bbl,kg,tonne,days,devices,components,events,km,miles"',
         allow_blank=True,
         showInputMessage=True,
         promptTitle="Unit",
@@ -2459,7 +2264,7 @@ def get_excel_template():
         showErrorMessage=False,  # allow custom units too
     )
     ws_data.add_data_validation(dv_unit)
-    dv_unit.sqref = "M3:M1048576"
+    dv_unit.sqref = f"{COL['Unit']}3:{COL['Unit']}1048576"
 
     dv_date = DataValidation(
         type="textLength",
@@ -2471,7 +2276,7 @@ def get_excel_template():
         error="Please enter a date in YYYY-MM format (e.g. 2024-01).",
     )
     ws_data.add_data_validation(dv_date)
-    dv_date.sqref = "A3:A1048576"
+    dv_date.sqref = f"{COL['Date\n(YYYY-MM)']}3:{COL['Date\n(YYYY-MM)']}1048576"
 
     dv_qty = DataValidation(
         type="decimal",
@@ -2483,120 +2288,41 @@ def get_excel_template():
         error="Quantity must be a non-negative number.",
     )
     ws_data.add_data_validation(dv_qty)
-    dv_qty.sqref = "L3:L1048576"
+    dv_qty.sqref = f"{COL['Quantity']}3:{COL['Quantity']}1048576"
 
     # ── Sample data rows ──
+    # (date, activity, region, division, field, facility, group, equipment name, equipment ID, process,
+    #  activity / fuel, factor type, quantity, unit, operating hours, notes); process key for the filter
     samples = [
-        [
-            "2024-01",
-            "Exploration & Production",
-            "Ouargla",
-            "Production",
-            "Hassi Messaoud",
-            "Field Alpha Processing Plant",
-            "Compressor Station A",
-            "Caterpillar G3516 #1",
-            "EQ-001",
-            "Combustion",
-            "Natural Gas",
-            "default",
-            50000,
-            "scf",
-            "Tier 1 – standard factor",
-        ],
-        [
-            "2024-01",
-            "Exploration & Production",
-            "Ouargla",
-            "Production",
-            "Hassi Messaoud",
-            "Field Alpha Processing Plant",
-            "Flare Stack",
-            "HP Flare Stack - West",
-            "EQ-002",
-            "Flaring",
-            "Associated Gas",
-            "default",
-            120000,
-            "scf",
-            "Tier 3 – see Flaring sheet",
-        ],
-        [
-            "2024-01",
-            "Exploration & Production",
-            "Ouargla",
-            "Production",
-            "Hassi Messaoud",
-            "Field Alpha Processing Plant",
-            "Production Separator",
-            "3-Phase Separator #2",
-            "EQ-003",
-            "Venting",
-            "Natural Gas (Venting/Blowdown)",
-            "default",
-            8000,
-            "m3",
-            "Venting from separator depressuring",
-        ],
-        [
-            "2024-01",
-            "Exploration & Production",
-            "Ouargla",
-            "Production",
-            "Hassi Messaoud",
-            "Field Alpha Processing Plant",
-            "Storage",
-            "Crude Oil Storage Tank #5",
-            "EQ-004",
-            "Storage Tank - Flashing",
-            "Tank - Flash Emissions (Gas Well)",
-            "default",
-            9500,
-            "bbl",
-            "Monthly oil throughput",
-        ],
-        [
-            "2024-01",
-            "Exploration & Production",
-            "South",
-            "Production",
-            "South Field",
-            "South Field Compressor Stn",
-            "Pneumatics",
-            "Control Valve Bank A",
-            "EQ-005",
-            "Pneumatic Device",
-            "Pneumatic High-Bleed Device",
-            "default",
-            12,
-            "units",
-            "Count of high-bleed controllers",
-        ],
+        ("combustion", ["2024-01", "Exploration & Production", "Ouargla", "Production", "Hassi Messaoud",
+                        "Field Alpha Processing Plant", "Compressor Station A", "Caterpillar G3516 #1", "EQ-001",
+                        "Combustion", "Natural Gas", "default", 50000, "scf", None, "Tier 1 - catalog factor"]),
+        ("flaring", ["2024-01", "Exploration & Production", "Ouargla", "Production", "Hassi Messaoud",
+                     "Field Alpha Processing Plant", "Flare Stack", "HP Flare Stack - West", "EQ-002", "Flaring",
+                     "Associated Gas (Flaring)", "specific", 120000, "scf", None,
+                     "Tier 3 - gas composition on the Tier 3 sheet"]),
+        ("venting", ["2024-01", "Exploration & Production", "Ouargla", "Production", "Hassi Messaoud",
+                     "Field Alpha Processing Plant", "Production Separator", "3-Phase Separator #2", "EQ-003",
+                     "Venting", "Natural Gas (Venting/Blowdown)", "default", 8000, "m3", None,
+                     "Venting from separator depressuring"]),
+        ("tank_flashing", ["2024-01", "Exploration & Production", "Ouargla", "Production", "Hassi Messaoud",
+                           "Field Alpha Processing Plant", "Storage", "Crude Oil Storage Tank #5", "EQ-004",
+                           "Storage Tank - Flashing", "Tank - Flash Emissions (Oil)", "default", 9500, "bbl", None,
+                           "Monthly oil throughput"]),
+        ("pneumatic", ["2024-01", "Exploration & Production", "South", "Production", "South Field",
+                       "South Field Compressor Stn", "Pneumatics", "Control Valve Bank A", "EQ-005",
+                       "Pneumatic Device", "Production high-bleed controller (API study)", "default", 12, "devices",
+                       744, "12 high-bleed controllers, 744 h in January"]),
     ]
 
-    filtered_samples = []
-    for s in samples:
-        row_process = s[9]  # Index 9 is 'Process Type' now (was 8)
-        if process == "all" or process.lower() == row_process.lower().replace(" ", "_"):
-            filtered_samples.append(s)
+    from services.scope1_calc import normalize_process_type
 
-    # Simple direct string match, wait 'Storage Tank - Flashing' to 'tank_flashing' is complex.
-    # Better to just use a custom mapping for the samples:
-    sample_process_map = {
-        0: "combustion",
-        1: "flaring",
-        2: "venting",
-        3: "tank_flashing",
-        4: "pneumatic",
-    }
-
-    filtered_samples = []
-    for i, s in enumerate(samples):
-        if process == "all" or sample_process_map.get(i) == process:
-            filtered_samples.append(s)
-
+    wanted = {normalize_process_type(q) or q for q in str(process or "all").split(",") if q.strip()} or {"all"}
+    filtered_samples = [row for key, row in samples if "all" in wanted or key in wanted]
+    if tier == "1":
+        filtered_samples = [row for row in filtered_samples if row[11] != "specific"]
     if not filtered_samples:
-        filtered_samples = samples  # fallback if no match
+        filtered_samples = [row for _, row in samples if row[11] != "specific"]  # fallback if no match
 
     for r, row in enumerate(filtered_samples, 3):
         for c, val in enumerate(row, 1):
@@ -2649,41 +2375,44 @@ def get_excel_template():
             ("User Uncertainty N2O (%)", 22, "Optional: Override N2O Uncertainty"),
         ]
 
+        p_unload = ["all", "unloading"]
         t3_params = [
-            ("C1 (mol %)", 14, "Methane (CH4) fraction", p_comp),
-            ("C2 (mol %)", 14, "Ethane fraction", p_comp),
-            ("C3 (mol %)", 14, "Propane fraction", p_comp),
-            ("C4 (mol %)", 14, "Butane fraction", p_comp),
-            ("C5 (mol %)", 14, "Pentane fraction", p_comp),
-            ("C6 (mol %)", 14, "Hexane fraction", p_comp),
-            ("C7 (mol %)", 14, "Heptane fraction", p_comp),
-            ("C8 (mol %)", 14, "Octane fraction", p_comp),
-            ("C9 (mol %)", 14, "Nonane fraction", p_comp),
-            ("C10 (mol %)", 14, "Decane+ fraction", p_comp),
-            ("N2 (mol %)", 14, "Nitrogen fraction", p_comp),
-            ("Flare Type", 18, "e.g., elevated, enclosed_ground", p_flare),
-            ("Flare Control Efficiency (%)", 22, "Combustion efficiency (%)", p_flare),
-            ("Tank GOR", 14, "Gas-to-Oil Ratio (scf/bbl)", p_tank),
+            ("C1 (mol %)", 14, "Methane (CH4) mole %", p_comp),
+            ("C2 (mol %)", 14, "Ethane mole %", p_comp),
+            ("C3 (mol %)", 14, "Propane mole %", p_comp),
+            ("C4 (mol %)", 14, "Butane mole %", p_comp),
+            ("C5 (mol %)", 14, "Pentane mole %", p_comp),
+            ("C6 (mol %)", 14, "Hexane mole %", p_comp),
+            ("C7 (mol %)", 14, "Heptane mole %", p_comp),
+            ("C8 (mol %)", 14, "Octane mole %", p_comp),
+            ("C9 (mol %)", 14, "Nonane mole %", p_comp),
+            ("C10 (mol %)", 14, "Decane+ mole %", p_comp),
+            ("CO2 (mol %)", 14, "CO2 mole % of the gas", p_comp),
+            ("N2 (mol %)", 14, "Nitrogen mole %", p_comp),
+            ("Flare Type", 18, "elevated | enclosed_ground | air_assisted | steam_assisted", p_flare),
+            ("Flare Control Efficiency (%)", 22, "Destruction efficiency (%)", p_flare),
+            ("Tank GOR", 14, "Flash gas-to-oil ratio (scf/bbl)", p_tank),
+            ("Tank CH4 Content (%)", 18, "CH4 mole % of the flash gas", p_tank),
+            ("Tank Control Eff (%)", 18, "Vapour control efficiency (%)", p_tank),
             ("Pneumatic Count", 16, "Number of identical devices", p_pneu),
-            ("Bleed Rate (scf/hr)", 20, "Bleed rate per device", p_pneu),
-            ("Hours", 10, "Hours of operation in month", p_pneu),
-            ("Well Depth (ft)", 16, "Depth of the well", p_completion),
-            ("Diameter (in)", 14, "Casing or tubing diameter", p_completion),
-            ("Pressure (psi)", 16, "Surface or bottom-hole pressure", p_completion),
-            ("Events", 10, "Number of unloading/completion events", p_completion),
-            ("Blowdown Volume (Mscf)", 22, "Total volume of gas blown down", p_bdn),
-            ("Fugitive Method", 18, "Component count or leak survey method", p_fug),
-            ("PPM", 10, "Leak concentration in PPM", p_fug),
-            ("Dehydrator Throughput (Mscf/day)", 28, "Monthly gas throughput", p_dehy),
-            ("Dehy CH4 (%)", 16, "Methane slip from Dehy", p_dehy),
-            ("AGR Throughput (Mscf/day)", 24, "Monthly gas feed rate to AGR", p_agr),
-            ("CO2 In (%)", 14, "CO2 in feed", p_agr),
-            ("CO2 Out (%)", 14, "CO2 in sweet gas", p_agr),
+            ("Bleed Rate (scf/hr)", 20, "Measured bleed rate per device", p_pneu),
+            ("Hours", 10, "Operating hours in the month", p_pneu),
+            ("Well Depth (ft)", 16, "Liquids unloading: well depth", p_unload),
+            ("Diameter (in)", 14, "Liquids unloading: casing diameter", p_unload),
+            ("Pressure (psi)", 16, "Liquids unloading: shut-in pressure (psig)", p_unload),
+            ("Events", 10, "Liquids unloading: events in the month", p_unload),
+            ("Fugitive Method", 18, "screening | correlation | ogi | measurement", p_fug),
+            ("Component Type", 16, "valve | connector | flange | open_ended_line | pump_seal | other", p_fug),
+            ("Service", 12, "gas | light_oil | heavy_oil | water_oil", p_fug),
+            ("M21 Below Count", 16, "Components screened below 10,000 ppmv", p_fug),
+            ("M21 Above Count", 16, "Components screened at or above 10,000 ppmv", p_fug),
+            ("CO2 In (%)", 14, "AGR: CO2 mole % in the feed", p_agr),
+            ("CO2 Out (%)", 14, "AGR: CO2 mole % in the sweet gas", p_agr),
         ]
 
         filtered_cols = [c for c in base_cols]
         for col_def in t3_params:
-            if process in col_def[3]:
+            if "all" in wanted or wanted & set(col_def[3]):
                 filtered_cols.append((col_def[0], col_def[1], col_def[2]))
 
         TIER3_SHEETS = {
@@ -2740,90 +2469,15 @@ def get_excel_template():
                         "Flare Control Efficiency (%)": "98",
                         "C1 (mol %)": "83",
                         "C2 (mol %)": "6",
+                        "C3 (mol %)": "3",
+                        "C4 (mol %)": "2",
+                        "C5 (mol %)": "1",
+                        "CO2 (mol %)": "2",
+                        "N2 (mol %)": "3",
                     },
-                ),
-                (
-                    "EQ-030",
-                    "2024-01",
-                    "Well Completions & Workovers",
-                    "completions",
-                    {"Well Depth (ft)": "8500", "Events": "1"},
-                ),
-                (
-                    "EQ-040",
-                    "2024-01",
-                    "Liquids Unloading",
-                    "unloading",
-                    {
-                        "Well Depth (ft)": "8500",
-                        "Diameter (in)": "4.5",
-                        "Pressure (psi)": "800",
-                        "Events": "12",
-                    },
-                ),
-                (
-                    "EQ-050",
-                    "2024-01",
-                    "Venting",
-                    "venting",
-                    {"Blowdown Volume (Mscf)": "200"},
-                ),
-                (
-                    "EQ-060",
-                    "2024-01",
-                    "Storage Tank - Flashing",
-                    "tank_flashing",
-                    {"Tank GOR": "85"},
-                ),
-                (
-                    "EQ-070",
-                    "2024-01",
-                    "Pneumatic Device",
-                    "pneumatic",
-                    {
-                        "Pneumatic Count": "25",
-                        "Bleed Rate (scf/hr)": "6.0",
-                        "Hours": "8760",
-                    },
-                ),
-                (
-                    "EQ-080",
-                    "2024-01",
-                    "Acid Gas Removal (AGR)",
-                    "agr",
-                    {
-                        "AGR Throughput (Mscf/day)": "15",
-                        "CO2 In (%)": "8.5",
-                        "CO2 Out (%)": "0.5",
-                    },
-                ),
-                (
-                    "EQ-090",
-                    "2024-01",
-                    "Dehydrator",
-                    "dehydrator",
-                    {"Dehydrator Throughput (Mscf/day)": "100", "Dehy CH4 (%)": "87"},
-                ),
-                (
-                    "EQ-100",
-                    "2024-01",
-                    "Fugitive Emissions",
-                    "fugitive",
-                    {"Fugitive Method": "screening", "PPM": "12500"},
-                ),
-                (
-                    "EQ-110",
-                    "2024-01",
-                    "Stationary Combustion",
-                    "combustion",
-                    {"C1 (mol %)": "87.5", "C2 (mol %)": "5.2", "C3 (mol %)": "2.1"},
                 ),
             ]
-
-            filtered_t3_samples = []
-            for s in t3_samples:
-                if process == "all" or s[3] == process:
-                    filtered_t3_samples.append(s)
+            filtered_t3_samples = [t for t in t3_samples if "all" in wanted or t[3] in wanted]
 
             row_idx = 4
             for s in filtered_t3_samples:
@@ -2892,20 +2546,26 @@ def upload_start():
         return jsonify({"error": "No selected file"}), 400
 
     ext = os.path.splitext(file.filename)[1].lower()
-    if ext not in [".csv", ".xlsx", ".xls"]:
-        return (
-            jsonify(
-                {
-                    "error": "Invalid file type. Only .csv, .xlsx, and .xls files are allowed."
-                }
-            ),
-            400,
-        )
+    if ext == ".xls":
+        # the reader handles Excel 2007+ workbooks only (a .xls file was read as text)
+        return jsonify({"error": "Excel 97-2003 (.xls) files are not supported: save the file as .xlsx or .csv"}), 400
+    if ext not in [".csv", ".xlsx"]:
+        return jsonify({"error": "Invalid file type. Only .csv and .xlsx files are allowed."}), 400
 
     global_factor_type = request.form.get("global_factor_type", "auto")
     mapping_str = request.form.get("column_mapping") or request.form.get("mapping")
     scope = request.form.get("scope", "1")
     overwrite_duplicates = request.form.get("overwrite_duplicates") == "true"
+
+    # BUG-001: the bulk job must enforce the same roles as the dedicated endpoints.
+    if user.role in ["it_admin", "it_manager", "it"]:
+        return jsonify({"error": "IT accounts cannot upload business data"}), 403
+    if user.role == "auditor":
+        return jsonify({"error": "Read-only role cannot upload data"}), 403
+    if scope not in ("1", "2", "3", "3_eeio", "sources", "production", "mitigation", "custom_factors", "facilities"):
+        return jsonify({"error": f"Unknown import type '{scope}'"}), 400
+    if scope in ("facilities", "custom_factors") and user.role not in ["admin", "superuser"]:
+        return jsonify({"error": "Only admins and superusers can import facilities or custom factors"}), 403
 
     import json
 
@@ -2914,7 +2574,9 @@ def upload_start():
         try:
             provided_mapping = json.loads(mapping_str)
         except json.JSONDecodeError:
-            pass
+            return jsonify({"error": "column_mapping is not valid JSON"}), 400
+        if not isinstance(provided_mapping, dict):
+            return jsonify({"error": "column_mapping must be an object of field -> column"}), 400
 
     fd, path = tempfile.mkstemp(suffix=ext)
     os.close(fd)  # H6: Close descriptor immediately to prevent leak
@@ -2950,10 +2612,19 @@ def upload_start():
     return jsonify({"job_id": job_id})
 
 
+def _job_visible(job_id):
+    """BUG-076: a bulk job is readable by its uploader, or by an admin; others get 404."""
+    from background_processor import get_job_owner
+
+    user = get_current_user()
+    owner = get_job_owner(job_id)
+    return user is not None and owner is not None and (owner == user.id or user.role == "admin")
+
+
 @emissions_bp.route("/upload/status/<job_id>", methods=["GET"])
 @login_required
 def upload_status(job_id):
-    status = get_job_status(job_id)
+    status = get_job_status(job_id) if _job_visible(job_id) else None
     if not status:
         return jsonify({"error": "Job not found"}), 404
     return jsonify(status)
@@ -2962,10 +2633,11 @@ def upload_status(job_id):
 @emissions_bp.route("/upload/errors/<job_id>", methods=["GET"])
 @login_required
 def upload_errors(job_id):
-    status = get_job_status(job_id)
-    if not status or not status.get("error_csv_path"):
+    from background_processor import get_job_error_csv_path
+
+    path = get_job_error_csv_path(job_id) if _job_visible(job_id) else None
+    if not path:
         return jsonify({"error": "No errors file found"}), 404
-    path = status["error_csv_path"]
     return send_file(
         path,
         as_attachment=True,
@@ -2983,7 +2655,9 @@ def add_emission():
     if user.role in ("auditor", "it_admin", "it_manager", "it"):
         return jsonify({"error": "Forbidden: Read-only or administrative role cannot create emission records"}), 403
 
-    data = request.get_json(silent=True) or {}
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        return jsonify({"error": "Invalid JSON: payload must be a JSON object"}), 400
 
     # Map source_type to process_type if missing, and vice versa
     if not data.get("process_type") and data.get("source_type"):
@@ -2997,31 +2671,18 @@ def add_emission():
         if field not in data or data[field] is None:
             return jsonify({"error": f"Missing field: {field}"}), 422
 
-    # Numeric & bounds validation
-    try:
-        yr = int(data["year"])
-        if yr < 1900 or yr > 2100:
-            return jsonify({"error": "Invalid year: must be between 1900 and 2100"}), 422
-    except (ValueError, TypeError):
-        return jsonify({"error": "Invalid year: must be an integer"}), 422
+    # Numeric & bounds validation (shared validators: year 1900..current+1, month 1..12)
+    from input_validation import ValidationError, parse_month, parse_year
+    from services.scope1_calc import canonicalize, resolve_factor, validate_activity
 
     try:
-        mo = int(data["month"])
-        if mo < 1 or mo > 12:
-            return jsonify({"error": "Invalid month: must be between 1 and 12"}), 422
-    except (ValueError, TypeError):
-        return jsonify({"error": "Invalid month: must be an integer between 1 and 12"}), 422
-
-    if "quantity" in data and data["quantity"] is not None:
-        try:
-            q_val = float(data["quantity"])
-            import math
-            if math.isinf(q_val) or math.isnan(q_val):
-                return jsonify({"error": "Invalid quantity: value must be a finite number"}), 422
-            if q_val < 0:
-                return jsonify({"error": "Invalid quantity: cannot be negative"}), 422
-        except (ValueError, TypeError):
-            return jsonify({"error": "Invalid quantity: must be a valid number"}), 422
+        data["year"] = parse_year(data["year"])
+        data["month"] = parse_month(data["month"], required=True)
+        # RC-6: amount/quantity and fuel/fuel_type are one value each (BUG-030)
+        data = canonicalize(data)
+        validate_activity(data, require_unit=str(data.get("factor_source") or "default").lower() in ("default", "custom"))
+    except ValidationError as err:
+        return jsonify({"error": err.message, "field": err.field}), 422
 
     for str_field in ["fuel", "fuel_type", "source_type", "sub_type", "process_type"]:
         val = data.get(str_field)
@@ -3039,70 +2700,86 @@ def add_emission():
 
     facility = db.session.get(Facility, fac_id)
 
+    # Process-specific input validation for associated_gas_venting
+    p_type = (data.get("process_type") or "").lower().strip()
+    if p_type in ["associated_gas_venting", "associated_venting", "associated_gas"]:
+        ch4_in = data.get("ch4_content")
+        co2_in = data.get("co2_content")
+        c_ch4_val = None
+        c_co2_val = None
+
+        if ch4_in not in [None, "", "-"]:
+            try:
+                c_ch4_val = float(str(ch4_in).replace("%", "").strip())
+                if c_ch4_val > 1.0:
+                    c_ch4_val /= 100.0
+                if c_ch4_val < 0.0 or c_ch4_val > 1.0:
+                    return jsonify({"error": f"Invalid CH4 content: must be between 0% and 100% (got {c_ch4_val*100:.1f}%)", "field": "ch4_content"}), 422
+            except (ValueError, TypeError):
+                return jsonify({"error": "Invalid CH4 content: must be a number", "field": "ch4_content"}), 422
+
+        if co2_in not in [None, "", "-"]:
+            try:
+                c_co2_val = float(str(co2_in).replace("%", "").strip())
+                if c_co2_val > 1.0:
+                    c_co2_val /= 100.0
+                if c_co2_val < 0.0 or c_co2_val > 1.0:
+                    return jsonify({"error": f"Invalid CO2 content: must be between 0% and 100% (got {c_co2_val*100:.1f}%)", "field": "co2_content"}), 422
+            except (ValueError, TypeError):
+                return jsonify({"error": "Invalid CO2 content: must be a number", "field": "co2_content"}), 422
+
+        if c_ch4_val is not None and c_co2_val is not None:
+            if (c_ch4_val + c_co2_val) > 1.0001:
+                return jsonify({
+                    "error": f"Gas composition error: Sum of CH4 ({c_ch4_val*100:.1f}%) and CO2 ({c_co2_val*100:.1f}%) exceeds 100%",
+                    "field": "ch4_content",
+                }), 422
+
+        v_dur = data.get("venting_duration")
+        if v_dur not in [None, "", "-"]:
+            try:
+                dur_float = float(v_dur)
+                if dur_float < 0:
+                    return jsonify({"error": "Venting duration cannot be negative", "field": "venting_duration"}), 422
+                d_unit = str(data.get("duration_unit") or "days").lower()
+                dur_days = dur_float if "day" in d_unit else dur_float / 24.0
+                if dur_days > 366.0:
+                    return jsonify({"error": f"Venting duration ({dur_days:.1f} days) exceeds maximum annual limit of 366 days", "field": "venting_duration"}), 422
+            except (ValueError, TypeError):
+                return jsonify({"error": "Invalid venting duration: must be a number", "field": "venting_duration"}), 422
+
+        gor_in = data.get("gor")
+        if gor_in not in [None, "", "-"]:
+            try:
+                gor_float = float(gor_in)
+                if gor_float < 0:
+                    return jsonify({"error": "Gas-to-Oil Ratio (GOR) cannot be negative", "field": "gor"}), 422
+            except (ValueError, TypeError):
+                return jsonify({"error": "Invalid GOR: must be a number", "field": "gor"}), 422
+
+        for gas_f in ["recovered_gas_volume", "flared_gas_volume"]:
+            val_in = data.get(gas_f)
+            if val_in not in [None, "", "-"]:
+                try:
+                    vf = float(val_in)
+                    if vf < 0:
+                        return jsonify({"error": f"{gas_f.replace('_', ' ').capitalize()} cannot be negative", "field": gas_f}), 422
+                except (ValueError, TypeError):
+                    return jsonify({"error": f"Invalid {gas_f}: must be a number", "field": gas_f}), 422
+
     # Calculate Emissions
     # We need to fetch factor data if not specific
     # For now, using a simplified factor data placeholder or letting calculate handle it
     # In a real scenario, we'd query the factor database here.
     # Passing empty factor_data relies on hardcoded defaults in calculations.py if any
 
-    # Fetch real factor data from Constants based on fuel_type
-    factor_data = _lookup_api_factor(data.get("fuel") or data.get("fuel_type"))
+    # RC-4 / RC-6: one factor resolution (catalog or custom), never a silent zero factor
+    try:
+        factor_data = resolve_factor(data)
+    except ValidationError as err:
+        return jsonify({"error": err.message, "field": err.field}), 422
     if factor_data.get("hhv") and not data.get("hhv"):
         data["hhv"] = factor_data["hhv"]
-
-    # Custom Factor Override
-    custom_factor_id = data.get("custom_factor_id")
-    if custom_factor_id:
-        cf = db.session.get(CustomFactor, custom_factor_id)
-
-        if cf:
-            # Map CustomFactor to factor_data structure
-            # API_FACTORS usually has: { 'co2': val, 'ch4': val, 'n2o': val, 'unit': '...', 'hhv': ... }
-            factor_data = {
-                "co2": cf.co2_factor,
-                "ch4": cf.ch4_factor,
-                "n2o": cf.n2o_factor,
-                "co": cf.co_factor,
-                "unit": cf.unit,
-                "hhv": cf.hhv_factor,
-                "type": "custom",  # Helper to know source
-                "name": cf.name,
-            }
-
-            # Uncertainty Handling
-            if cf.co2_uncertainty or cf.ch4_uncertainty or cf.n2o_uncertainty:
-                factor_data["uncertainty"] = {
-                    "co2": float(
-                        getattr(cf, "co2_uncertainty", None)
-                        or getattr(cf, "uncertainty", 0)
-                        or 0
-                    )
-                    / 100.0,
-                    "ch4": float(
-                        getattr(cf, "ch4_uncertainty", None)
-                        or getattr(cf, "uncertainty", 0)
-                        or 0
-                    )
-                    / 100.0,
-                    "n2o": float(
-                        getattr(cf, "n2o_uncertainty", None)
-                        or getattr(cf, "uncertainty", 0)
-                        or 0
-                    )
-                    / 100.0,
-                }
-            elif cf.uncertainty and cf.uncertainty > 0:
-                # Use saved custom uncertainty
-                factor_data["uncertainty"] = {
-                    "co2": float(cf.uncertainty or 0) / 100.0,
-                    "ch4": float(cf.uncertainty or 0) / 100.0,
-                    "n2o": float(cf.uncertainty or 0) / 100.0,
-                }
-            elif cf.parent_fuel:
-                # Fallback to parent fuel uncertainty
-                parent_factor = API_FACTORS.get(cf.parent_fuel, {})
-                if "uncertainty" in parent_factor:
-                    factor_data["uncertainty"] = parent_factor["uncertainty"]
 
     # Call compute_emissions to calculate the actual emissions
     gwp_dict = resolve_gwp_dict(user)
@@ -3126,31 +2803,25 @@ def add_emission():
             co2_val, ch4_val, n2o_val, gwp_dict=gwp_dict
         )
 
-    # Extract uncertainty from rich API result if available, otherwise fallback to factor data
-    api_res = em_result.get("_full_api_res")
-    if api_res:
-        # Use uncertainties calculated by the new engine, or None if not provided
-        uncertainty = {
-            "co2": (
-                api_res["results"]["co2"].get("uncertainty", None)
-                if isinstance(api_res["results"]["co2"], dict)
-                else None
-            ),
-            "ch4": (
-                api_res["results"]["ch4"].get("uncertainty", None)
-                if isinstance(api_res["results"]["ch4"], dict)
-                else None
-            ),
-            "n2o": (
-                api_res["results"]["n2o"].get("uncertainty", None)
-                if isinstance(api_res["results"]["n2o"], dict)
-                else None
-            ),
-        }
-    else:
-        uncertainty = factor_data.get("uncertainty", {})
+    # BUG-007: plausibility bounds and statistical anomaly check on the manual path too
+    from calculations.anomaly import AnomalyDetector, plausibility_check
+    from services.scope1_calc import apply_result
+    from utils import initial_record_status, user_label
 
-    # NOTE: user_uncertainty is now handled inside dispatcher.py and propagated via SRSS
+    z_msg = None
+    try:
+        z = AnomalyDetector().check_scope1(int(data["facility_id"]), data["process_type"], em_result["totalCo2e"],
+                                           data["year"], data["month"])
+        z_msg = z.get("message") if z.get("flagged") else None
+    except Exception:
+        z_msg = None
+    verdict, qa_msg = plausibility_check(em_result["totalCo2e"], z_msg)
+    if verdict == "reject":
+        return jsonify({"error": qa_msg, "field": "amount"}), 422
+
+    status = initial_record_status(user, data.get("status"))
+    if verdict == "flag" and status == "Verified":
+        status = "Pending"  # flagged values always need a reviewer, even for admins
 
     record = Emission(
         record_id=str(uuid.uuid4()),
@@ -3162,51 +2833,25 @@ def add_emission():
         division=data.get("division") or (facility.division if facility else None),
         region=data.get("region") or (facility.region if facility and facility.region else (facility.name if facility else None)),
         field=data.get("field") or (facility.field if facility else None),
-        process_type=data["process_type"],
-        fuel_type=data.get("fuel"),
-        quantity=data.get("amount"),
-        unit=data.get("unit"),
         equipment_id=data.get("equipment_id"),
-        co2_emissions=em_result["co2"],
-        ch4_emissions=em_result["ch4"],
-        n2o_emissions=em_result["n2o"],
-        co_emissions=em_result.get("co", 0),
-        co2e_total=em_result["totalCo2e"],
-        calc_method=method,
-        gwp_version=gwp_std,
-        source_payload=json.dumps(data),
         created_by=user.id,
-        uncertainty=(
-            uncertainty.get("co2", None)
-            if isinstance(uncertainty, dict)
-            else (uncertainty or None)
-        ),
-        uncertainty_ch4=(
-            uncertainty.get("ch4", None)
-            if isinstance(uncertainty, dict)
-            else (uncertainty or None)
-        ),
-        uncertainty_n2o=(
-            uncertainty.get("n2o", None)
-            if isinstance(uncertainty, dict)
-            else (uncertainty or None)
-        ),
-        status=(
-            "Draft"
-            if data.get("status") == "Draft"
-            else ("Verified" if user.role == "admin" else "Pending")
-        ),
-        approved_by=user.id if (data.get("status") != "Draft" and user.role == "admin") else None,
-        approved_at=(
-            datetime.datetime.now(datetime.timezone.utc)
-            if (data.get("status") != "Draft" and user.role == "admin")
-            else None
-        ),
+        created_by_name=user_label(user),
+        status=status,
+        approved_by=user.id if status == "Verified" else None,
+        approved_by_name=user_label(user) if status == "Verified" else None,
+        approved_at=datetime.datetime.now(datetime.timezone.utc) if status == "Verified" else None,
+        qa_flag=qa_msg[:255] if qa_msg else None,
         factor_source=(
             data.get("factor_source")
             or ("custom" if data.get("factor_type") == "custom" else ("specific" if data.get("calc_method") in ("direct_measurement", "engineering", "specific", "tier3") else "default"))
         ),
+        data_source_ref=(
+            str(data.get("data_source_ref") or data.get("ticket_ref") or data.get("bulletin_ref") or "")[:120]
+            or None
+        ),
     )
+    apply_result(record, data, em_result, method, factor_data, gwp_std)
+    uncertainty = {"co2": record.uncertainty, "ch4": record.uncertainty_ch4, "n2o": record.uncertainty_n2o}
     record.ogmp_level = ogmp_level_for(record)
 
     db.session.add(record)
@@ -3214,9 +2859,16 @@ def add_emission():
         db.session.flush()
         record_id_val = record.id
         db.session.commit()
-    except Exception as e:
+    except Exception:
         db.session.rollback()
-        return jsonify({"error": f"Failed to record emission: {e}"}), 500
+        current_app.logger.exception("Failed to record emission")
+        return jsonify({"error": "Failed to record emission"}), 500
+    try:
+        from routes.dashboard import clear_dashboard_cache
+
+        clear_dashboard_cache()  # BUG-071: flushed rows are invisible to the before_commit hook
+    except Exception:
+        pass
 
     facility = db.session.get(Facility, data.get("facility_id"))
     facility_name = facility.name if facility else "Unknown"
@@ -3244,7 +2896,6 @@ def add_emission():
         db.session.commit()
     except Exception as e:
         db.session.rollback()
-        from flask import current_app
         current_app.logger.warning(f"Audit Log Error: {e}")
 
     # --- Notification Logic: Check Goal ---
@@ -3257,7 +2908,12 @@ def add_emission():
                 # Get Total Emissions for Year
                 total_emissions = (
                     db.session.query(func.sum(Emission.co2e_total))
-                    .filter(Emission.year == current_year)
+                    .filter(Emission.year == current_year, Emission.status == "Verified")
+                    .scalar()
+                    or 0
+                ) + (
+                    db.session.query(func.sum(Scope2Emission.co2e))
+                    .filter(Scope2Emission.year == current_year, Scope2Emission.status == "Verified")
                     .scalar()
                     or 0
                 )
@@ -3299,8 +2955,12 @@ def add_emission():
                                 title=title, message=msg, type=n_type, user_id=user.id
                             )
                             db.session.commit()
+                        elif existing.message != msg:
+                            # keep the unread notice current: it quoted the total at the time it was
+                            # first raised (browser test: 660,945 t while the year stood at 891,521 t)
+                            existing.message = msg
+                            db.session.commit()
     except Exception as e:
-        from flask import current_app
         current_app.logger.warning(f"Notification check error: {e}")
 
     # Return emission result with uncertainty
@@ -3344,25 +3004,13 @@ def delete_emission(id):
     )
     if not record:
         return jsonify({"error": "Record not found"}), 404
-    # SEC-03 FIX: IDOR — enforce ownership; admins may delete any record, users can delete own records
-    if user.role in ["auditor"]:
-        return (
-            jsonify({"error": "Forbidden: Read-only accounts cannot delete emission records"}),
-            403,
-        )
+    # BUG-067: approved records are not deletable by makers; region and ownership enforced
+    from services.maker_checker import delete_denied_reason
 
-    if user.role not in ["admin", "superuser"]:
-        if record.created_by != user.id:
-            return (
-                jsonify(
-                    {"error": "Forbidden: You do not have permission to delete records created by another user"}
-                ),
-                403,
-            )
-    else:
-        allowed_fids = get_allowed_facility_ids(user)
-        if allowed_fids is not None and record.facility_id not in allowed_fids:
-            return jsonify({"error": "Forbidden: Outside your region"}), 403
+    denied = delete_denied_reason(user, record)
+    if denied:
+        return jsonify({"error": denied}), 403
+    fac_id_for_log = record.facility_id
 
     # BUG-05 FIX: capture audit data before deletion, then commit everything atomically
     log_details = f"Deleted {record.process_type} record: {record.quantity} {record.unit} of {record.fuel_type} ({record.month}/{record.year})"
@@ -3377,6 +3025,7 @@ def delete_emission(id):
             request=request,
             entity="Emission",
             details=log_details,
+            facility_id=fac_id_for_log,
         )
         db.session.commit()  # single atomic commit for delete + audit
         from routes.dashboard import clear_dashboard_cache
@@ -3414,13 +3063,9 @@ def update_emission(id):
     if user.role == "user" and record.created_by is not None and record.created_by != user.id:
         return jsonify({"error": "Unauthorized: You may only modify records you created"}), 403
 
-    # If non-admin modifies a verified record, reset status to Pending for maker-checker review
-    if user.role not in ["admin", "superuser"] and record.status == "Verified":
-        record.status = "Pending"
-        record.approved_by = None
-        record.approved_at = None
-        # EXTRA-03 FIX: removed second data = request.get_json() (double-read, second returns None)
     import json
+
+    data = data or {}
     
     before_state = {
         "year": record.year,
@@ -3445,153 +3090,83 @@ def update_emission(id):
     data.pop("ch4_emissions", None)
     data.pop("n2o_emissions", None)
 
-    # Update fields
+    # Update fields (validated: BUG-073 / BUG-083 on the edit path too)
+    from input_validation import parse_year, parse_month
+    from services.maker_checker import on_edit
+
     if "year" in data:
-        record.year = data["year"]
+        record.year = parse_year(data["year"])
     if "month" in data:
-        record.month = data["month"]
+        record.month = parse_month(data["month"], required=True)
     if "facility_id" in data:
         new_fid = int(data["facility_id"])
-        if allowed_fids is not None and new_fid not in allowed_fids:
+        if not require_facility_access(user, new_fid):
             return jsonify({"error": "Unauthorized to reassign to this facility"}), 403
         record.facility_id = new_fid
-    if "process_type" in data:
-        record.process_type = data["process_type"]
-    if "fuel_type" in data:
-        record.fuel_type = data["fuel_type"]
-    if "quantity" in data:
-        record.quantity = data["quantity"]
-    if "unit" in data:
-        record.unit = data["unit"]
-
+    # BUG-067: every edit records the last maker; non-admin edits of decided records go back to review
+    on_edit(record, user)
     # Recalculate whenever physical activity or factor inputs are modified (L9)
-    recalc_keys = {"quantity", "amount", "fuel", "fuel_type", "unit", "custom_factor_id", "calc_method", "process_type"}
+    recalc_keys = {"quantity", "amount", "fuel", "fuel_type", "unit", "custom_factor_id", "calc_method",
+                   "process_type", "factor_source", "calc_inputs", "hhv", "user_uncertainty"}
     should_recalc = data.get("recalculate") or any(k in data for k in recalc_keys)
 
     if should_recalc:
-        # Physical edit moves record back to Pending if currently Verified (unless user is admin)
-        if record.status == "Verified" and user.role != "admin":
-            record.status = "Pending"
-            record.approved_by = None
-            record.approved_at = None
+        # RC-6: rebuild the calculation from the stored payload + record + this edit, with aliases
+        # synchronised (BUG-003), the custom factor carried over (BUG-042), and the result
+        # persisted exactly like a create (BUG-030 / BUG-037).
+        from services.scope1_calc import apply_result, canonicalize, resolve_factor, validate_activity
 
-        factor_data = _lookup_api_factor(data.get("fuel") or data.get("fuel_type") or record.fuel_type)
-        # Handle Custom Factor in update
-        cf_id = data.get("custom_factor_id")
-        if cf_id:
-            cf = db.session.get(CustomFactor, cf_id)
-            if cf:
-                factor_data = {
-                    "co2": cf.co2_factor,
-                    "ch4": cf.ch4_factor,
-                    "n2o": cf.n2o_factor,
-                    "co": cf.co_factor,
-                    "unit": cf.unit,
-                    "hhv": cf.hhv_factor,
-                    "type": "custom",
-                    "name": cf.name,
-                }
-                # Uncertainty Handle (Update)
-                if cf.co2_uncertainty or cf.ch4_uncertainty or cf.n2o_uncertainty:
-                    factor_data["uncertainty"] = {
-                        "co2": float(
-                            getattr(cf, "co2_uncertainty", None)
-                            or getattr(cf, "uncertainty", 0)
-                            or 0
-                        )
-                        / 100.0,
-                        "ch4": float(
-                            getattr(cf, "ch4_uncertainty", None)
-                            or getattr(cf, "uncertainty", 0)
-                            or 0
-                        )
-                        / 100.0,
-                        "n2o": float(
-                            getattr(cf, "n2o_uncertainty", None)
-                            or getattr(cf, "uncertainty", 0)
-                            or 0
-                        )
-                        / 100.0,
-                    }
-                elif cf.uncertainty and cf.uncertainty > 0:
-                    factor_data["uncertainty"] = {
-                        "co2": float(cf.uncertainty or 0) / 100.0,
-                        "ch4": float(cf.uncertainty or 0) / 100.0,
-                        "n2o": float(cf.uncertainty or 0) / 100.0,
-                    }
-                elif cf.parent_fuel:
-                    parent_factor = API_FACTORS.get(cf.parent_fuel, {})
-                    if "uncertainty" in parent_factor:
-                        factor_data["uncertainty"] = parent_factor["uncertainty"]
-
-        gwp_dict = resolve_gwp_dict(user)
-        gwp_std = resolve_gwp_standard(user)
-        # Build merged calc_payload from existing source_payload / record fields and new data
-        calc_payload = {}
+        stored = {}
         if record.source_payload:
             try:
-                calc_payload = json.loads(record.source_payload)
+                stored = json.loads(record.source_payload)
             except Exception:
-                calc_payload = {}
-        base_record_fields = {
-            "process_type": record.process_type,
-            "process": record.process_type,
-            "fuel_type": record.fuel_type,
-            "fuel": record.fuel_type,
-            "unit": record.unit,
-            "quantity": record.quantity,
-            "amount": record.quantity,
-            "calc_method": record.calc_method,
+                stored = {}
+        base = {
+            "process_type": record.process_type, "process": record.process_type, "fuel_type": record.fuel_type,
+            "fuel": record.fuel_type, "unit": record.unit, "quantity": record.quantity, "amount": record.quantity,
+            # record.calc_method is the calculator's result label, not a method input
             "factor_source": record.factor_source,
+            "custom_factor_id": record.custom_factor_id or stored.get("custom_factor_id"),
         }
-        for k, v in base_record_fields.items():
-            if k not in calc_payload or calc_payload[k] is None:
-                calc_payload[k] = v
-        calc_payload.update(data)
-
+        calc_payload = canonicalize({**base, **{k: v for k, v in stored.items() if v is not None}})
+        calc_payload = canonicalize(calc_payload, delta={k: v for k, v in data.items() if k != "recalculate"})
+        calc_payload["year"], calc_payload["month"] = record.year, record.month
+        calc_payload["facility_id"] = record.facility_id
+        if "fuel" in data or "fuel_type" in data:
+            # a changed fuel on a Tier 2 record means the user picked another factor
+            if "custom_factor_id" not in data and str(calc_payload.get("factor_source")).lower() != "custom":
+                calc_payload.pop("custom_factor_id", None)
         try:
-            calculated_em, method = compute_emissions(
-                calc_payload, factor_data, gwp_dict=gwp_dict
-            )
-            record.co2_emissions = calculated_em["co2"]
-            record.ch4_emissions = calculated_em["ch4"]
-            record.n2o_emissions = calculated_em["n2o"]
-            record.co_emissions = calculated_em.get("co", 0)
-            record.co2e_total = calculated_em["totalCo2e"]
-            record.calc_method = method
-            record.gwp_version = gwp_std
-            record.source_payload = json.dumps(calc_payload)
+            validate_activity(calc_payload, require_unit=str(calc_payload.get("factor_source") or "default").lower() in ("default", "custom"))
+            factor_data = resolve_factor(calc_payload, stored_payload=stored, allow_archived=True)
+            if factor_data.get("hhv") and "hhv" not in data:
+                calc_payload["hhv"] = factor_data["hhv"]
+            gwp_dict = resolve_gwp_dict(user)
+            gwp_std = resolve_gwp_standard(user)
+            calculated_em, method = compute_emissions(calc_payload, factor_data, gwp_dict=gwp_dict)
+        except ValueError as err:  # ValidationError, MissingFactorError, calculator input errors
+            db.session.rollback()
+            return jsonify({"error": getattr(err, "message", None) or str(err),
+                            "field": getattr(err, "field", None)}), 422
 
-            # Update record uncertainty
-            u_dict = factor_data.get("uncertainty", {})
-            record.uncertainty = (
-                u_dict.get("co2", None)
-                if isinstance(u_dict, dict)
-                else (u_dict or None)
-            )
-            record.uncertainty_ch4 = (
-                u_dict.get("ch4", None)
-                if isinstance(u_dict, dict)
-                else (u_dict or None)
-            )
-            record.uncertainty_n2o = (
-                u_dict.get("n2o", None)
-                if isinstance(u_dict, dict)
-                else (u_dict or None)
-            )
+        from calculations.anomaly import plausibility_check
 
-            # Override with user-provided uncertainties if they exist
-            user_unc = data.get("user_uncertainty")
-            if user_unc and isinstance(user_unc, dict):
-                if "co2" in user_unc and user_unc["co2"] not in [None, ""]:
-                    record.uncertainty = float(user_unc["co2"]) / 100.0
-                if "ch4" in user_unc and user_unc["ch4"] not in [None, ""]:
-                    record.uncertainty_ch4 = float(user_unc["ch4"]) / 100.0
-                if "n2o" in user_unc and user_unc["n2o"] not in [None, ""]:
-                    record.uncertainty_n2o = float(user_unc["n2o"]) / 100.0
-
-        except Exception as e:
-            print(f"Error during emission recalculation: {e}")
+        verdict, qa_msg = plausibility_check(calculated_em["totalCo2e"])
+        if verdict == "reject":
+            db.session.rollback()
+            return jsonify({"error": qa_msg, "field": "amount"}), 422
+        apply_result(record, calc_payload, calculated_em, method, factor_data, gwp_std)
+        if verdict == "flag":
+            record.qa_flag = qa_msg[:255]
+            if record.status == "Verified":
+                record.status, record.approved_by, record.approved_at = "Pending", None, None
+                record.approved_by_name = None
+    else:
+        if "process_type" in data:
+            record.process_type = data["process_type"]
+        if "unit" in data:
+            record.unit = data["unit"]
 
     record.updated_by = user.id
     record.updated_at = datetime.datetime.now(datetime.timezone.utc)
@@ -3663,12 +3238,17 @@ def bulk_delete_emissions():
     if not ids:
         return jsonify({"error": "No IDs provided"}), 400
 
-    # SEC-03 FIX: IDOR — non-admins can only bulk-delete their own records
-    query = Emission.query.filter(Emission.id.in_(ids))
-    allowed_fids = get_allowed_facility_ids(user)
-    if allowed_fids is not None:
-        query = query.filter(Emission.facility_id.in_(allowed_fids))
-    deleted_count = query.delete(synchronize_session=False)
+    # BUG-067 (alternative endpoint): the same per-record rules as DELETE /api/emissions/<id>
+    from services.maker_checker import delete_denied_reason
+
+    deleted_count, denied = 0, []
+    for rec in Emission.query.filter(Emission.id.in_(ids)).all():
+        reason = delete_denied_reason(user, rec)
+        if reason:
+            denied.append({"id": rec.id, "error": reason})
+            continue
+        db.session.delete(rec)
+        deleted_count += 1
     db.session.flush()
 
     # --- Audit Log ---
@@ -3689,7 +3269,7 @@ def bulk_delete_emissions():
         db.session.rollback()
         raise e
 
-    return jsonify({"message": f"{deleted_count} records deleted"})
+    return jsonify({"message": f"{deleted_count} records deleted", "deleted": deleted_count, "denied": denied})
 
 
 @emissions_bp.route("/import", methods=["POST"])
@@ -3768,235 +3348,109 @@ def import_emissions():
             rec_data["division"] = rec_data.get("division") or facility.division
             rec_data["field"] = rec_data.get("field") or facility.field
 
-            # CRITICAL: Sanitize CSV placeholders ('-') to prevent float conversion errors
             # CSV templates use '-' for empty optional fields
-            for key in [
-                "ch4_content",
-                "hhv",
-                "comp_flare_eff",
-                "tank_gor",
-                "tank_api_gravity",
-                "flare_type",
-                "pneu_bleed_rate",
-                "pneu_hours",
-                "dehy_pump_rate",
-                "unload_diam",
-                "unload_depth",
-                "unload_press",
-                "comp_duration",
-                "comp_rate",
-                "amount",
-            ]:
-                if rec_data.get(key) in ["-", "", None]:
+            for key in list(rec_data.keys()):
+                if rec_data.get(key) == "-":
                     rec_data[key] = None
 
-            # Safe float conversion for amount
-            if rec_data.get("amount") is not None:
-                try:
-                    rec_data["amount"] = float(rec_data["amount"])
-                except (ValueError, TypeError):
-                    errors.append(
-                        f"Row {i}: Invalid numeric amount '{rec_data['amount']}'"
-                    )
-                    continue
+            # RC-6: same validation, factor resolution and persistence as the manual form
+            from calculations.anomaly import plausibility_check
+            from input_validation import ValidationError, parse_month, parse_year
+            from services.scope1_calc import apply_result, canonicalize, resolve_factor, validate_activity
+            from utils import user_label
 
-            # 2. Fetch factor data
-            fuel_key = rec_data.get("fuel") or rec_data.get("fuel_type")
-
-            # CRITICAL: Fuel name aliasing - handle common variations
             FUEL_ALIASES = {
                 "Diesel": "Diesel (No. 2 Fuel Oil)",
                 "No. 2 Diesel": "Diesel (No. 2 Fuel Oil)",
                 "Gasoline": "Motor Gasoline",
                 "Petrol": "Motor Gasoline",
             }
+            try:
+                rec_data["year"] = parse_year(rec_data.get("year"))
+                rec_data["month"] = parse_month(rec_data.get("month"), required=True)
+                rec_data["process_type"] = rec_data.get("process_type") or rec_data.get("type")
+                fuel_key = rec_data.get("fuel") or rec_data.get("fuel_type")
+                if fuel_key in FUEL_ALIASES:
+                    rec_data["fuel"] = rec_data["fuel_type"] = FUEL_ALIASES[fuel_key]
+                rec_data = canonicalize(rec_data)
+                validate_activity(rec_data, require_unit=str(rec_data.get("factor_source") or "default").lower() in ("default", "custom"))
+                factor_data = resolve_factor(rec_data)
+                if factor_data.get("hhv") and not rec_data.get("hhv"):
+                    rec_data["hhv"] = factor_data["hhv"]
+                gwp_dict = resolve_gwp_dict(user)
+                gwp_std = resolve_gwp_standard(user)
+                em_result, method = compute_emissions(rec_data, factor_data, gwp_dict=gwp_dict)
+            except ValueError as err:
+                errors.append(f"Row {i}: {getattr(err, 'message', None) or err}")
+                continue
+            verdict, qa_msg = plausibility_check(em_result["totalCo2e"])
+            if verdict == "reject":
+                errors.append(f"Row {i}: {qa_msg}")
+                continue
 
-            # Try alias first, then original
-            canonical_fuel = FUEL_ALIASES.get(fuel_key, fuel_key)
-            rec_data["fuel"] = canonical_fuel  # Update to canonical name
-
-            factor_data = API_FACTORS.get(canonical_fuel, {})
-            if not factor_data and fuel_key != canonical_fuel:
-                # Fallback to original if alias didn't work
-                factor_data = API_FACTORS.get(fuel_key, {})
-                rec_data["fuel"] = fuel_key
-
-            # CRITICAL: If no HHV provided in CSV, use factor's HHV or standard defaults
-            if not rec_data.get("hhv"):
-                # Try to get HHV from the emission factor
-                if factor_data.get("hhv"):
-                    rec_data["hhv"] = factor_data.get("hhv")
-                else:
-                    # Hardcoded defaults for common fuels (BTU/unit)
-                    FUEL_HHV_DEFAULTS = {
-                        "Natural Gas": 1020,  # BTU/scf
-                        "Diesel": 138700,  # BTU/gal
-                        "Gasoline": 125000,  # BTU/gal
-                        "Fuel Oil": 138000,  # BTU/gal
-                        "Propane": 91500,  # BTU/gal
-                        "Butane": 103000,  # BTU/gal
-                    }
-                    default_hhv = FUEL_HHV_DEFAULTS.get(fuel_key)
-                    if default_hhv:
-                        rec_data["hhv"] = default_hhv
-
-            # Check for custom factor if provided
-            cf_id = rec_data.get("custom_factor_id")
-            if cf_id:
-                cf = db.session.get(CustomFactor, cf_id)
-                if cf:
-                    factor_data = {
-                        "co2": cf.co2_factor,
-                        "ch4": cf.ch4_factor,
-                        "n2o": cf.n2o_factor,
-                        "co": cf.co_factor,
-                        "unit": cf.unit,
-                        "hhv": cf.hhv_factor,
-                        "type": "custom",
-                        "name": cf.name,
-                    }
-                    # Uncertainty Handling (Import)
-                    if cf.co2_uncertainty or cf.ch4_uncertainty or cf.n2o_uncertainty:
-                        factor_data["uncertainty"] = {
-                            "co2": float(
-                                getattr(cf, "co2_uncertainty", None)
-                                or getattr(cf, "uncertainty", 0)
-                                or 0
-                            )
-                            / 100.0,
-                            "ch4": float(
-                                getattr(cf, "ch4_uncertainty", None)
-                                or getattr(cf, "uncertainty", 0)
-                                or 0
-                            )
-                            / 100.0,
-                            "n2o": float(
-                                getattr(cf, "n2o_uncertainty", None)
-                                or getattr(cf, "uncertainty", 0)
-                                or 0
-                            )
-                            / 100.0,
-                        }
-                    elif cf.uncertainty and cf.uncertainty > 0:
-                        factor_data["uncertainty"] = {
-                            "co2": float(cf.uncertainty or 0) / 100.0,
-                            "ch4": float(cf.uncertainty or 0) / 100.0,
-                            "n2o": float(cf.uncertainty or 0) / 100.0,
-                        }
-                    elif cf.parent_fuel:
-                        parent_factor = API_FACTORS.get(cf.parent_fuel, {})
-                        if "uncertainty" in parent_factor:
-                            factor_data["uncertainty"] = parent_factor["uncertainty"]
-
-            # 3. Compute emissions
-            gwp_dict = resolve_gwp_dict(user)
-            gwp_std = resolve_gwp_standard(user)
-            em_result, method = compute_emissions(
-                rec_data, factor_data, gwp_dict=gwp_dict
-            )
-
-            # Fallback for totalCo2e
-            if not em_result.get("totalCo2e") or em_result.get("totalCo2e") == 0:
-                co2_val = em_result.get("co2", 0)
-                ch4_val = em_result.get("ch4", 0)
-                n2o_val = em_result.get("n2o", 0)
-                em_result["totalCo2e"] = calculate_co2e(
-                    co2_val, ch4_val, n2o_val, gwp_dict=gwp_dict
-                )
-
-            # 4. Create record
             record = Emission(
                 record_id=f"IMP-{uuid.uuid4().hex[:8]}-{i}",
-                year=rec_data.get("year"),
-                month=rec_data.get("month"),
+                year=rec_data["year"],
+                month=rec_data["month"],
                 facility_id=facility.id,
                 group_name=rec_data["group_name"],
                 activity=rec_data["activity"],
                 division=rec_data["division"],
                 field=rec_data["field"],
-                process_type=rec_data.get("process_type") or rec_data.get("type"),
-                fuel_type=fuel_key,
-                quantity=rec_data.get("amount"),
-                unit=rec_data.get("unit"),
                 equipment_id=rec_data.get("equipment_id"),
-                co2_emissions=(
-                    em_result.get("co2") if em_result.get("co2") is not None else 0
-                ),
-                ch4_emissions=(
-                    em_result.get("ch4") if em_result.get("ch4") is not None else 0
-                ),
-                n2o_emissions=(
-                    em_result.get("n2o") if em_result.get("n2o") is not None else 0
-                ),
-                co_emissions=(
-                    em_result.get("co") if em_result.get("co") is not None else 0
-                ),
-                co2e_total=(
-                    em_result.get("totalCo2e")
-                    if em_result.get("totalCo2e") is not None
-                    else 0
-                ),
-                calc_method=method,
-                gwp_version=gwp_std,
-                source_payload=json.dumps(rec_data),
                 created_by=user.id,
-                uncertainty=(
-                    factor_data.get("uncertainty", {}).get("co2", 0)
-                    if isinstance(factor_data.get("uncertainty"), dict)
-                    else (factor_data.get("uncertainty") or 0)
-                ),
+                created_by_name=user_label(user),
+                factor_source=rec_data.get("factor_source") or "default",
+                qa_flag=qa_msg[:255] if qa_msg else None,
                 status="Pending",  # D-04: all bulk imports queue as Pending
                 approved_by=None,
                 approved_at=None,
             )
+            apply_result(record, rec_data, em_result, method, factor_data, gwp_std)
             record.ogmp_level = ogmp_level_for(record)
             db.session.add(record)
             imported_count += 1
-        except Exception as e:
-            import traceback
-
-            traceback.print_exc()
-            errors.append(f"Row {i}: {str(e)}")
-
-    from flask import current_app
+        except Exception:
+            current_app.logger.exception("Import row %s failed", i)
+            errors.append(f"Row {i}: could not be processed")  # BUG-087: no raw exception text
 
     current_app.logger.info(
         f"Import summary: imported={imported_count}, errors={len(errors)}"
     )
     if errors and imported_count == 0:
+        db.session.rollback()
         return jsonify({"error": "Import failed", "details": errors}), 400
 
-    db.session.commit()
-
     if imported_count > 0:
-        try:
-            log_activity_and_notify(
-                action="IMPORT",
-                record_id=f"BATCH-{imported_count}",
-                user=user,
-                request=request,
-                entity="Emission",
-                details=f"Bulk imported {imported_count} emission records (status: {'Verified' if user.role == 'admin' else 'Pending'})",
+        # audit entry + reviewer notifications commit atomically with the data (project convention)
+        log_activity_and_notify(
+            action="IMPORT",
+            record_id=f"BATCH-{imported_count}",
+            user=user,
+            request=request,
+            entity="Emission",
+            details=f"Bulk imported {imported_count} emission records (status: Pending)",
+        )
+        for admin in User.query.filter_by(role="admin", status="active").all():
+            if admin.id == user.id:
+                continue
+            Notification.create(
+                user_id=admin.id,
+                type="warning",
+                title="Bulk Emission Records Awaiting Approval",
+                message=f"{user.fullName or user.email} imported {imported_count} emission records that require verification.",
+                metadata={"imported_count": imported_count, "uploader_id": user.id},
             )
-            if user.role != "admin":
-                admins = User.query.filter_by(role="admin", status="active").all()
-                for admin in admins:
-                    Notification.create(
-                        user_id=admin.id,
-                        type="warning",
-                        title="Bulk Emission Records Awaiting Approval",
-                        message=f"{user.name or user.email} imported {imported_count} emission records that require verification.",
-                        metadata={"imported_count": imported_count, "uploader_id": user.id},
-                    )
-            db.session.commit()
-        except Exception as e:
-            current_app.logger.warning(f"Failed to create import notification: {e}")
+    db.session.commit()
+    from routes.dashboard import clear_dashboard_cache
+
+    clear_dashboard_cache()
 
     return jsonify(
         {
             "message": f"{imported_count} records imported",
             "imported": imported_count,
-            "status": "Verified" if user.role == "admin" else "Pending",
+            "status": "Pending",
             "errors": errors,
         }
     )
@@ -4165,9 +3619,9 @@ def export_emissions():
                     "field": r.field or (fac.field if fac else ""),
                     "group": "N/A",
                     "process": f"Scope 2: {r.source_type or 'Electricity'}",
-                    "fuel": r.grid_region or "Grid Electricity",
-                    "quantity": float(r.electricity_kwh or 0),
-                    "unit": "kWh",
+                    "fuel": scope2_activity(r)[2],
+                    "quantity": scope2_activity(r)[0],
+                    "unit": scope2_activity(r)[1],
                     "co2": 0.0,
                     "ch4": 0.0,
                     "n2o": 0.0,
@@ -4345,9 +3799,8 @@ def export_emissions():
             cell.fill = total_fill
             cell.border = double_bottom_border
 
-        cell_t_qty = ws1.cell(row=row_num, column=11, value=round(total_qty, 2))
-        cell_t_qty.number_format = "#,##0.00"
-        cell_t_qty.font = bold_font
+        # quantities are in different units (kWh, m3, bbl, devices...): they are not summed
+        ws1.cell(row=row_num, column=11, value="—").alignment = Alignment(horizontal="right")
 
         cell_t_co2 = ws1.cell(row=row_num, column=13, value=round(total_co2, 2))
         cell_t_co2.number_format = "#,##0.00"
@@ -4394,13 +3847,12 @@ def export_emissions():
 
         summary_rows = [
             ("Scope 1 — Direct Operational Emissions", s1_sum, "tCO₂e"),
-            ("Scope 2 — Indirect Purchased Electricity", s2_sum, "tCO₂e"),
+            ("Scope 2 — Indirect Energy (electricity, steam, heat, cooling)", s2_sum, "tCO₂e"),
             ("Scope 3 — Value Chain Emissions", s3_sum, "tCO₂e"),
             ("Grand Total CO₂e Footprint", total_co2e, "tCO₂e"),
             ("Total CO₂ Gas Mass", total_co2, "tonnes CO₂"),
             ("Total CH₄ Gas Mass", total_ch4, "tonnes CH₄"),
             ("Total N₂O Gas Mass", total_n2o, "tonnes N₂O"),
-            ("Total Activity Quantity", total_qty, "mixed units"),
             ("Total Record Count", len(export_data), "records"),
         ]
 
@@ -4450,51 +3902,16 @@ def export_emissions():
 @emissions_bp.route("/approve/<int:emission_id>", methods=["POST"])
 @login_required
 def approve_emission(emission_id):
-    """Approve a single pending emission record (Scope 1, 2, or 3)."""
-    user = get_current_user()
-    if not user or user.role not in ["admin", "superuser"]:
-        return jsonify({"error": "Only Admin role can approve emission records"}), 403
+    """Approve a single record awaiting review (Scope 1, 2, 3 or CAP) — RC-2 state machine."""
+    from services.maker_checker import DecisionError, decide_single
 
     req_data = request.get_json(silent=True) or {}
     scope = str(req_data.get("scope") or request.args.get("scope") or "1")
-
-    if scope == "2":
-        emission = db.session.get(Scope2Emission, emission_id)
-        label = "Scope 2"
-    elif scope == "3":
-        emission = db.session.get(Scope3Emission, emission_id)
-        label = "Scope 3"
-    else:
-        emission = db.session.get(Emission, emission_id)
-        label = "Scope 1"
-
-    if not emission:
-        return jsonify({"error": "Record not found"}), 404
-
-    # Facility scoping check
-    allowed_fids = get_allowed_facility_ids(user)
-    if allowed_fids is not None and emission.facility_id not in allowed_fids:
-        return jsonify({"error": "Access to record facility is denied"}), 403
-
-    if emission.status not in ["Pending", "Draft", "Pending Approval"]:
-        return jsonify({"error": "Record is not pending approval"}), 400
-
-    # Segregation of duties: the submitter cannot approve their own record
-    if getattr(emission, "created_by", None) == user.id:
-        return jsonify({"error": "Maker-Checker violation: You cannot approve a record you submitted yourself"}), 403
-
-    emission.status = "Verified"
-    emission.approved_by = user.id
-    emission.approved_at = datetime.datetime.now(datetime.timezone.utc)
-    rec_id = getattr(emission, "record_id", f"{label}-{emission.id}")
-    log_activity_and_notify(
-        action="UPDATE",
-        record_id=rec_id,
-        details=f"{label} emission approved by {user.fullName}",
-        user=user,
-        entity=f"scope{scope}_emission",
-        entity_id=emission.id,
-    )
+    try:
+        decide_single(get_current_user(), scope, emission_id, "approve", request=request)
+    except DecisionError as err:
+        db.session.rollback()
+        return jsonify({"error": err.message}), err.status
     db.session.commit()
     from routes.dashboard import clear_dashboard_cache
 
@@ -4505,47 +3922,17 @@ def approve_emission(emission_id):
 @emissions_bp.route("/reject/<int:emission_id>", methods=["POST"])
 @login_required
 def reject_emission(emission_id):
-    """Reject a single pending emission record (Scope 1, 2, or 3)."""
-    user = get_current_user()
-    if not user or user.role not in ["admin", "superuser"]:
-        return jsonify({"error": "Only Admin role can reject emission records"}), 403
+    """Reject a single record awaiting review; decided records cannot be flipped (BUG-070)."""
+    from services.maker_checker import DecisionError, decide_single
 
     req_data = request.get_json(silent=True) or {}
     scope = str(req_data.get("scope") or request.args.get("scope") or "1")
-    reason = req_data.get("reason", "Rejected by reviewer")
-
-    if scope == "2":
-        emission = db.session.get(Scope2Emission, emission_id)
-        label = "Scope 2"
-    elif scope == "3":
-        emission = db.session.get(Scope3Emission, emission_id)
-        label = "Scope 3"
-    else:
-        emission = db.session.get(Emission, emission_id)
-        label = "Scope 1"
-
-    if not emission:
-        return jsonify({"error": "Record not found"}), 404
-
-    # Facility scoping check
-    allowed_fids = get_allowed_facility_ids(user)
-    if allowed_fids is not None and emission.facility_id not in allowed_fids:
-        return jsonify({"error": "Access to record facility is denied"}), 403
-
-    emission.status = "Rejected"
-    if hasattr(emission, "qa_flag"):
-        emission.qa_flag = f"Rejected: {reason}"
-    emission.approved_by = user.id
-    emission.approved_at = datetime.datetime.now(datetime.timezone.utc)
-    rec_id = getattr(emission, "record_id", f"{label}-{emission.id}")
-    log_activity_and_notify(
-        action="UPDATE",
-        record_id=rec_id,
-        details=f"{label} emission rejected by {user.fullName}: {reason}",
-        user=user,
-        entity=f"scope{scope}_emission",
-        entity_id=emission.id,
-    )
+    reason = str(req_data.get("reason") or "Rejected by reviewer")
+    try:
+        decide_single(get_current_user(), scope, emission_id, "reject", reason=reason, request=request)
+    except DecisionError as err:
+        db.session.rollback()
+        return jsonify({"error": err.message}), err.status
     db.session.commit()
     from routes.dashboard import clear_dashboard_cache
 
@@ -4553,178 +3940,71 @@ def reject_emission(emission_id):
     return jsonify({"success": True, "id": emission_id, "scope": scope, "status": "Rejected", "reason": reason})
 
 
-@emissions_bp.route("/approve/batch", methods=["POST"])
-@login_required
-def approve_batch_emissions():
-    """Approve multiple pending emission records in one request.
-    Body: { "ids": [1, 2, 3], "scope": "1"|"2"|"3"|"all", "approve_all": bool, "by_scope": {"1": [], "2": [], "3": []} }
-    """
-    user = get_current_user()
-    if not user or user.role not in ["admin", "superuser"]:
-        return jsonify({"error": "Only Admin role can approve emission records"}), 403
-
-    allowed_fids = get_allowed_facility_ids(user)
-    data = request.get_json(silent=True) or {}
-    ids = data.get("ids", [])
+def _batch_targets(data, all_flag):
+    """Map the batch body to {scope: ids | None}. Plain `ids` are only unambiguous for one scope."""
     scope = str(data.get("scope", "1"))
-    approve_all = data.get("approve_all", False)
-    by_scope = data.get("by_scope", {})
+    by_scope = data.get("by_scope") if isinstance(data.get("by_scope"), dict) else {}
+    picked = {}
+    for k in ("1", "2", "3", "cap"):
+        ids = by_scope.get(k) or (by_scope.get(int(k)) if k.isdigit() else None)
+        if ids:
+            picked[k] = list(ids)
+    if picked:
+        return picked
+    if scope == "all":
+        if all_flag:
+            return {"1": None, "2": None, "3": None}
+        return None  # ids without by_scope would hit the same ids in every table
+    if scope in ("1", "2", "3", "cap"):
+        return {scope: None if all_flag else list(data.get("ids") or [])}
+    return None
 
-    has_by_scope = isinstance(by_scope, dict) and any(bool(by_scope.get(k) or by_scope.get(int(k))) for k in ["1", "2", "3"] if k in by_scope or (k.isdigit() and int(k) in by_scope))
 
-    if not ids and not approve_all and not has_by_scope:
-        return jsonify({"error": "No IDs or scope mapping provided"}), 400
+def _batch_decide(decision):
+    from services.maker_checker import DecisionError, decide
 
-    now = datetime.datetime.now(datetime.timezone.utc)
-    approved_count = 0
-    pending_statuses = ["Pending", "Draft", "Pending Approval"]
-
-    def apply_approval(model, target_ids=None):
-        q = model.query.filter(model.status.in_(pending_statuses))
-        if allowed_fids is not None:
-            q = q.filter(model.facility_id.in_(allowed_fids))
-        # Segregation of duties: Maker cannot approve their own submitted records
-        q = q.filter(or_(model.created_by != user.id, model.created_by.is_(None)))
-        if target_ids is not None:
-            q = q.filter(model.id.in_(target_ids))
-        return q.update({"status": "Verified", "approved_by": user.id, "approved_at": now}, synchronize_session=False)
-
-    if scope == "all" and approve_all:
-        approved_count = (
-            apply_approval(Emission)
-            + apply_approval(Scope2Emission)
-            + apply_approval(Scope3Emission)
-        )
-    elif has_by_scope:
-        s1_ids = by_scope.get("1") or by_scope.get(1) or []
-        s2_ids = by_scope.get("2") or by_scope.get(2) or []
-        s3_ids = by_scope.get("3") or by_scope.get(3) or []
-        if s1_ids:
-            approved_count += apply_approval(Emission, s1_ids)
-        if s2_ids:
-            approved_count += apply_approval(Scope2Emission, s2_ids)
-        if s3_ids:
-            approved_count += apply_approval(Scope3Emission, s3_ids)
-    elif scope == "1":
-        approved_count = apply_approval(Emission, None if approve_all else ids)
-    elif scope == "2":
-        approved_count = apply_approval(Scope2Emission, None if approve_all else ids)
-    elif scope == "3":
-        approved_count = apply_approval(Scope3Emission, None if approve_all else ids)
-    elif scope == "all" and ids:
-        approved_count = (
-            apply_approval(Emission, ids)
-            + apply_approval(Scope2Emission, ids)
-            + apply_approval(Scope3Emission, ids)
-        )
-    else:
-        return jsonify({"error": f"Invalid scope: {scope}"}), 400
-
-    log_activity_and_notify(
-        action="UPDATE",
-        record_id="batch_approve",
-        details=f"{approved_count} pending records approved by {user.fullName}",
-        user=user,
-        entity="batch_emissions",
-        entity_id="batch",
-    )
+    user = get_current_user()
+    data = request.get_json(silent=True) or {}
+    all_flag = bool(data.get("approve_all") if decision == "approve" else data.get("reject_all"))
+    targets = _batch_targets(data, all_flag)
+    if not targets:
+        return jsonify({"error": "Provide by_scope ids, a single scope with ids, or scope='all' with the all flag"}), 400
+    reason = str(data.get("reason") or "Batch rejected by reviewer")
+    done = []
+    try:
+        for scope, ids in targets.items():
+            if ids is not None and not ids:
+                continue
+            done += decide(user, scope, ids, decision, reason=reason, request=request)
+    except DecisionError as err:
+        db.session.rollback()
+        return jsonify({"error": err.message}), err.status
     db.session.commit()
     from routes.dashboard import clear_dashboard_cache
 
     clear_dashboard_cache()
-    return jsonify({
-        "success": True,
-        "approved_count": approved_count,
-        "approved_ids": ids if not approve_all else [],
-    })
+    return done
+
+
+@emissions_bp.route("/approve/batch", methods=["POST"])
+@login_required
+def approve_batch_emissions():
+    """Approve records awaiting review. Body: {by_scope: {"1": [...], ...}} or {scope, ids} or {scope: "all", approve_all: true}.
+    Records the caller created or last modified are skipped (segregation of duties)."""
+    done = _batch_decide("approve")
+    if not isinstance(done, list):
+        return done
+    return jsonify({"success": True, "approved_count": len(done), "approved_ids": done})
 
 
 @emissions_bp.route("/reject/batch", methods=["POST"])
 @login_required
 def reject_batch_emissions():
-    """Reject (delete) multiple pending emission records.
-    Body: { "ids": [1, 2, 3], "scope": "1"|"2"|"3"|"all", "reason": "...", "reject_all": bool, "by_scope": {"1": [], "2": [], "3": []} }
-    """
-    user = get_current_user()
-    if not user or user.role not in ["admin", "superuser"]:
-        return jsonify({"error": "Only Admin role can reject emission records"}), 403
-
-    allowed_fids = get_allowed_facility_ids(user)
-    data = request.get_json(silent=True) or {}
-    ids = data.get("ids", [])
-    scope = str(data.get("scope", "1"))
-    reason = data.get("reason", "Batch rejected by reviewer")
-    reject_all = data.get("reject_all", False)
-    by_scope = data.get("by_scope", {})
-
-    has_by_scope = isinstance(by_scope, dict) and any(bool(by_scope.get(k) or by_scope.get(int(k))) for k in ["1", "2", "3"] if k in by_scope or (k.isdigit() and int(k) in by_scope))
-
-    if not ids and not reject_all and not has_by_scope:
-        return jsonify({"error": "No IDs or scope mapping provided"}), 400
-
-    deleted_count = 0
-    pending_statuses = ["Pending", "Draft", "Pending Approval"]
-
-    def apply_rejection(model, scope_label, target_ids=None):
-        q = model.query.filter(model.status.in_(pending_statuses))
-        if allowed_fids is not None:
-            q = q.filter(model.facility_id.in_(allowed_fids))
-        if target_ids is not None:
-            q = q.filter(model.id.in_(target_ids))
-        now_utc = datetime.datetime.now(datetime.timezone.utc)
-        update_vals = {
-            "status": "Rejected",
-            "approved_by": user.id,
-            "approved_at": now_utc,
-        }
-        if hasattr(model, "qa_flag"):
-            update_vals["qa_flag"] = f"Rejected: {reason}"
-        return q.update(update_vals, synchronize_session=False)
-
-    if scope == "all" and reject_all:
-        deleted_count = (
-            apply_rejection(Emission, "Scope 1")
-            + apply_rejection(Scope2Emission, "Scope 2")
-            + apply_rejection(Scope3Emission, "Scope 3")
-        )
-    elif has_by_scope:
-        s1_ids = by_scope.get("1") or by_scope.get(1) or []
-        s2_ids = by_scope.get("2") or by_scope.get(2) or []
-        s3_ids = by_scope.get("3") or by_scope.get(3) or []
-        if s1_ids:
-            deleted_count += apply_rejection(Emission, "Scope 1", s1_ids)
-        if s2_ids:
-            deleted_count += apply_rejection(Scope2Emission, "Scope 2", s2_ids)
-        if s3_ids:
-            deleted_count += apply_rejection(Scope3Emission, "Scope 3", s3_ids)
-    elif scope == "1":
-        deleted_count = apply_rejection(Emission, "Scope 1", None if reject_all else ids)
-    elif scope == "2":
-        deleted_count = apply_rejection(Scope2Emission, "Scope 2", None if reject_all else ids)
-    elif scope == "3":
-        deleted_count = apply_rejection(Scope3Emission, "Scope 3", None if reject_all else ids)
-    elif scope == "all" and ids:
-        deleted_count = (
-            apply_rejection(Emission, "Scope 1", ids)
-            + apply_rejection(Scope2Emission, "Scope 2", ids)
-            + apply_rejection(Scope3Emission, "Scope 3", ids)
-        )
-    else:
-        return jsonify({"error": f"Invalid scope: {scope}"}), 400
-
-    log_activity_and_notify(
-        action="DELETE",
-        record_id="batch_reject",
-        details=f"{deleted_count} pending records rejected by {user.fullName}: {reason}",
-        user=user,
-        entity="batch_emissions",
-        entity_id="batch",
-    )
-    db.session.commit()
-    from routes.dashboard import clear_dashboard_cache
-
-    clear_dashboard_cache()
-    return jsonify({"success": True, "deleted_count": deleted_count})
+    """Reject records awaiting review (soft: status Rejected, excluded from totals)."""
+    done = _batch_decide("reject")
+    if not isinstance(done, list):
+        return done
+    return jsonify({"success": True, "deleted_count": len(done), "rejected_count": len(done), "rejected_ids": done})
 
 
 @emissions_bp.route("/erp/sync", methods=["POST"])
@@ -4767,7 +4047,8 @@ def get_pending_emissions():
         return jsonify({"error": "Insufficient permissions"}), 403
 
     allowed_fids = get_allowed_facility_ids(user)
-    pending_statuses = ["Pending", "Draft", "Pending Approval"]
+    # drafts are the maker's unsubmitted work: they enter review only when submitted (browser test)
+    pending_statuses = ["Pending", "Pending Approval", "Pending Review"]
     fetch_all = request.args.get("all", "").lower() == "true"
     limit_val = None if fetch_all else int(request.args.get("limit", 200))
 
@@ -4845,10 +4126,24 @@ def get_pending_emissions():
             q = q.filter(model.facility_id.in_(allowed_fids))
         return q.count()
 
+    counts = {"1": count_pending(Emission), "2": count_pending(Scope2Emission), "3": count_pending(Scope3Emission)}
+
+    def sum_pending(model, col):
+        q = db.session.query(db.func.coalesce(db.func.sum(col), 0.0)).filter(model.status.in_(pending_statuses))
+        if allowed_fids is not None:
+            q = q.filter(model.facility_id.in_(allowed_fids))
+        return float(q.scalar() or 0.0)
+
+    pending_co2e = (sum_pending(Emission, Emission.co2e_total) + sum_pending(Scope2Emission, Scope2Emission.co2e)
+                    + sum_pending(Scope3Emission, Scope3Emission.co2e))
     return jsonify({
         "scope1": q_scope1(),
         "scope2": q_scope2(),
         "scope3": q_scope3(),
-        "total_pending": count_pending(Emission) + count_pending(Scope2Emission) + count_pending(Scope3Emission),
+        # the lists hold at most `limit` rows per scope; the counts are the whole queue
+        "pending_counts": counts,
+        "pending_co2e": pending_co2e,
+        "limit": limit_val,
+        "total_pending": sum(counts.values()),
     })
 
