@@ -1,5 +1,6 @@
 import sys
 import os
+import secrets
 
 # Add current directory to path
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
@@ -27,46 +28,22 @@ def seed_admin():
                 "FATAL: ADMIN_PASSWORD and IT_ADMIN_PASSWORD must be explicitly set via environment variables in production."
             )
 
-        # Fallback for dev local setup only
+        # Fallback for dev local setup only: random one-time passwords, never a
+        # fixed string that is published in the repository.
         if not admin_password:
-            admin_password = "ChangeMeAdmin2026!"
-            print("[WARNING] ADMIN_PASSWORD not set in env; using temporary dev password. Set ADMIN_PASSWORD in production!")
+            admin_password = secrets.token_urlsafe(16)
+            print(f"[WARNING] ADMIN_PASSWORD not set; generated dev password: {admin_password}")
         if not it_admin_password:
-            it_admin_password = "ChangeMeITAdmin2026!"
-            print("[WARNING] IT_ADMIN_PASSWORD not set in env; using temporary dev password. Set IT_ADMIN_PASSWORD in production!")
+            it_admin_password = secrets.token_urlsafe(16)
+            print(f"[WARNING] IT_ADMIN_PASSWORD not set; generated dev password: {it_admin_password}")
 
         it_email = os.environ.get("IT_EMAIL", "it@ghg.com").strip().lower()
-        it_password = os.environ.get("IT_PASSWORD") or "ChangeMeIT2026!"
+        it_password = os.environ.get("IT_PASSWORD")
+        if not it_password:
+            it_password = secrets.token_urlsafe(16)
+            print(f"[WARNING] IT_PASSWORD not set; generated dev password: {it_password}")
 
         users_to_seed = [
-            {
-                "email": "a",
-                "password": "a",
-                "role": "admin",
-                "fullName": "Administrator",
-                "jobTitle": "Sustainability Lead",
-            },
-            {
-                "email": "a@a",
-                "password": "a",
-                "role": "admin",
-                "fullName": "Administrator",
-                "jobTitle": "Sustainability Lead",
-            },
-            {
-                "email": "z",
-                "password": "z",
-                "role": "it_manager",
-                "fullName": "IT Manager",
-                "jobTitle": "IT Systems Manager",
-            },
-            {
-                "email": "z@z",
-                "password": "z",
-                "role": "it_manager",
-                "fullName": "IT Manager",
-                "jobTitle": "IT Systems Manager",
-            },
             {
                 "email": admin_email,
                 "password": admin_password,

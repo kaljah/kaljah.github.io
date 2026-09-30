@@ -124,6 +124,20 @@ Working branch: `fix/audit-remediation` (from `main`).
 
 ---
 
+## 5b. Verification pass (2026-09-30)
+
+Re-checked the "FIXED" claims above against the code. Findings:
+
+| ID | Status | Location | Issue | Remediation Summary |
+|----|--------|----------|-------|---------------------|
+| V1 | FIXED | app.py before_request | JSON body that is an array/scalar crashed every `data.get(...)` route with 500 (failing test `test_corrupted_and_empty_json_payloads`). | Central guard: POST/PUT/PATCH JSON bodies that parse to a non-object return 400 `"JSON body must be an object"`. |
+| V2 | FIXED | seed_admin.py, app.py `ensure_admin_seeded`, routes/auth.py login, restore_full_data.py | C2 regression: a/a, a@a/a, z/z, z@z/z still seeded (app.py in any non-"production" env with SEED_ADMIN=true); login aliased "a"->"a@a", "z"->"z@z"; fixed `ChangeMe...` dev passwords published in repo. | Removed trivial accounts and login alias; dev fallback passwords now `secrets.token_urlsafe(16)` printed once; restore_full_data.py refuses to run when FLASK_ENV is production/staging. |
+| V3 | FIXED | routes/emissions.py get_emissions | H5 incomplete: `limit=all` skipped `.limit()` entirely (5000 cap was dead code); non page-aligned `offset` rounded down to a page boundary. | Always apply `.offset(start).limit(per_page)`; `start = offset` for limit/offset mode; `pages` computed uniformly. |
+
+Verified OK on spot check: C4 (no cross-user credential scan), B8 (client GWP constants match server).
+Tests: `tests/test_audit_continuation.py` (17 tests; fail on pre-fix code). Full suite 1071 passed; one unidentified failure seen in 1 of 11 runs (not reproduced) — possible flaky test, to investigate.
+Still open for review: S4/M9 claim "deprecated" but `new/server.rar`, `calculations/calculations.rar`, `new/test_final*.py` are still in the repo.
+
 ## 6. Decision log
 
 | ID | Question | Recommended | Decision |
