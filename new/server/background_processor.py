@@ -190,6 +190,42 @@ def _decimal_comma_to_point(text):
     return m.group(1) + _GROUP_SEPARATORS.sub("", m.group(2)) + "." + m.group(3)
 
 
+def _xl_values(ws):
+    """Row values of a worksheet, a percent-formatted number as the text Excel shows ("5%" for
+    0.05). The value alone is the fraction, which a percentage column (user_unc_co2, trans_loss,
+    meter_uncertainty_pct) read as 0.05 %; the text is parsed like a typed percent sign."""
+    for row in ws.iter_rows():
+        out = []
+        for cell in row:
+            v = getattr(cell, "value", None)
+            if isinstance(v, (int, float)) and not isinstance(v, bool) and "%" in str(getattr(cell, "number_format", "") or ""):
+                v = f"{v * 100:.12g}%"
+            out.append(v)
+        yield tuple(out)
+
+
+_PERCENT_TEXT = re.compile(r"^\s*([-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][-+]?\d+)?)\s*%\s*$")
+
+
+def _percent_field(name):
+    """Scope 1 fields entered as a percentage number (2.5 = 2.5 %); every other field also takes a
+    fraction (compositions, contents, efficiencies) or is one (agr_ch4_slip, carbon_content)."""
+    n = str(name).lower()
+    return n.endswith("_pct") or n.startswith("user_unc") or "_pct_" in n
+
+
+def _percent_text_to_number(name, value):
+    """"2.5%" in a Scope 1 input column as the number that column expects (it used to reach the
+    calculators as text, and '2.5%' failed with a conversion error)."""
+    if not isinstance(value, str):
+        return value
+    m = _PERCENT_TEXT.match(value)
+    if not m:
+        return value
+    x = float(m.group(1))
+    return x if _percent_field(name) else x / 100.0
+
+
 def _prune_old_jobs(max_age_seconds=86400):
     """Prunes job entries older than max_age_seconds (default 24h), their snapshot files and error CSV files."""
     import json
@@ -514,7 +550,7 @@ def _process_file_thread(
                 # the same header mapping as the data sheet so the values reach the calculators
                 for sheet_name in wb.sheetnames:
                     if _clean_sheet_name(sheet_name) in ("gas composition", "tier 3 calculations") or sheet_name.startswith("⚙"):
-                        t3_iter = wb[sheet_name].iter_rows(values_only=True)
+                        t3_iter = _xl_values(wb[sheet_name])
                         t3_headers = []
                         for row in t3_iter:
                             str_row = [str(c).strip() if c is not None else "" for c in row]
@@ -545,7 +581,7 @@ def _process_file_thread(
                             tier3_data_map.setdefault((eq_id, y, m), {}).update(params)
 
                 ws = _data_sheet(wb)
-                rows_iterator = ws.iter_rows(values_only=True)
+                rows_iterator = _xl_values(ws)
                 headers_tuple, header_row_no = _find_header_row(rows_iterator)
                 headers = [
                     str(h).strip() if h is not None else "" for h in headers_tuple
@@ -2330,6 +2366,7 @@ def _process_row(
     for k, v in row.items():
         if isinstance(k, str) and re.fullmatch(r"[a-z][a-z0-9_]*", k) and k not in squashed and v is not None and str(v).strip() != "":
             payload[k] = v
+    payload = {k: _percent_text_to_number(k, v) for k, v in payload.items()}
     payload.update({
         "year": year, "month": month, "facility_id": facility.id, "process_type": process_type,
         "source_type": process_type, "factor_source": factor_source, "unit": unit or None,

@@ -93,7 +93,7 @@ def intensity_cells(years=None, facility_id=None, activity=None, division=None, 
                        .get(cat, "ch4_combustion")] += ch4
         if cat == "flaring":
             c["flaring_t"] += float(e.co2e_total or 0)
-            vol = gas_volume_m3(e.quantity, e.unit)
+            vol = gas_volume_m3(e.quantity, e.unit, e.year, e.month)
             if vol:
                 c["flaring_m3"] += vol
         c["records"].append(e)

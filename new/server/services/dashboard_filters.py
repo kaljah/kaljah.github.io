@@ -126,14 +126,15 @@ def source_category(process_type):
 
 # ── Gas volume (BUG-033 / BUG-035) ──────────────────────────────────────────────
 
-def gas_volume_m3(quantity, unit):
-    """Standard m3 for a gas volume, or None when the unit is unknown (caller must flag it)."""
-    from calculations.units import UnitError, annual_volume_m3
+def gas_volume_m3(quantity, unit, year=None, month=None):
+    """Standard m3 for a gas volume, or None when the unit is unknown (caller must flag it).
+    A rate unit covers the record's month (its year when no month is given)."""
+    from calculations.units import UnitError, period_volume_m3
 
     if quantity in (None, ""):
         return 0.0
     try:
-        return annual_volume_m3(float(quantity), unit or "")
+        return period_volume_m3(float(quantity), unit or "", year=year, month=month)
     except (UnitError, ValueError, TypeError):
         return None
 
@@ -174,7 +175,7 @@ def production_boe(row):
     if getattr(row, "total_production_mmboe", None):
         return float(row.total_production_mmboe) * 1e6
     oil = production_oil_bbl(row)
-    gas_m3 = gas_volume_m3(row.gas_amount, row.gas_unit or "mscf") if getattr(row, "gas_amount", None) else 0.0
+    gas_m3 = gas_volume_m3(row.gas_amount, row.gas_unit or "mscf", getattr(row, "year", None), getattr(row, "month", None)) if getattr(row, "gas_amount", None) else 0.0
     if oil is None or gas_m3 is None:
         return None
     return oil + gas_m3 * 35.314666721 / SCF_PER_BOE
@@ -185,7 +186,7 @@ def production_gas_m3(row):
     if getattr(row, "gross_gas_mmsm3", None):
         return float(row.gross_gas_mmsm3) * 1e6
     if getattr(row, "gas_amount", None):
-        return gas_volume_m3(row.gas_amount, row.gas_unit or "mscf")
+        return gas_volume_m3(row.gas_amount, row.gas_unit or "mscf", getattr(row, "year", None), getattr(row, "month", None))
     return 0.0
 
 
