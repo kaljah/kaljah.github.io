@@ -254,3 +254,15 @@ def test_unknown_scope2_source_type_is_a_row_error(user, facility):
         steam = Scope2Emission.query.filter_by(facility_id=facility, year=2025, month=11).first()
         assert steam is not None and steam.source_type == "indirect_steam"
     assert status["skipped_count"] == 1
+
+
+# -- Biomass fuels removed (biogenic CO2 is not separated from Scope 1) ------------------------------
+
+@pytest.mark.parametrize("fuel", ["Landfill Gas", "Ethanol (100%)", "Biodiesel (100%)", "Wood / Wood Waste"])
+def test_biomass_fuels_not_in_catalog(fuel):
+    from emission_factors import API_FACTORS
+    from routes.emissions import _lookup_api_factor
+
+    with flask_app.app_context():
+        assert fuel not in API_FACTORS
+        assert not _lookup_api_factor(fuel)
