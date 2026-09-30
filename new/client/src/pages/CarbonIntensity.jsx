@@ -23,6 +23,7 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 import "./CarbonIntensity.css";
+import "./TopBarFilters.css";
 
 const CarbonIntensity = () => {
   const { user } = useAuth();
@@ -68,6 +69,7 @@ const CarbonIntensity = () => {
     totalFlaringVolume: 0,
   });
 
+  const [isReady, setIsReady] = useState(false);
   const [regionalData, setRegionalData] = useState([]);
   const [rawTrendData, setRawTrendData] = useState([]);
   const [cbamProducts, setCbamProducts] = useState([]);
@@ -111,8 +113,10 @@ const CarbonIntensity = () => {
           if (opDefaults.defaultDivision) setCurrentDivision(opDefaults.defaultDivision);
           if (opDefaults.defaultFacilityId) setCurrentRegion(opDefaults.defaultFacilityId);
         }
+        setIsReady(true);
       } catch (error) {
         console.error("Initialization error:", error);
+        setIsReady(true);
       }
     };
     init();
@@ -120,8 +124,10 @@ const CarbonIntensity = () => {
 
   // Load data on filter changes
   useEffect(() => {
+    if (!isReady) return;
     loadIntensityData();
   }, [
+    isReady,
     currentActivity,
     currentDivision,
     currentRegion,
@@ -131,14 +137,16 @@ const CarbonIntensity = () => {
 
   // Load trend data
   useEffect(() => {
+    if (!isReady) return;
     if (selectedYear) {
       loadTrendData(selectedYear);
     }
-  }, [selectedYear, currentActivity, currentDivision, currentSegment, currentRegion]);
+  }, [isReady, selectedYear, currentActivity, currentDivision, currentSegment, currentRegion]);
 
   useEffect(() => {
+    if (!isReady) return;
     loadCbamData();
-  }, [selectedYear, currentRegion, currentActivity, currentDivision, currentSegment]);
+  }, [isReady, selectedYear, currentRegion, currentActivity, currentDivision, currentSegment]);
 
   const loadCbamData = async () => {
     try {
@@ -355,7 +363,7 @@ const CarbonIntensity = () => {
   useEffect(() => {
     setTopBarLeft(
       <div className="dashboard-filters">
-        <div style={{ width: "120px" }}>
+        <div className="filter-wrapper">
           <CustomDropdown
             options={[
               { value: "all", label: "All Years" },
@@ -369,7 +377,7 @@ const CarbonIntensity = () => {
             placeholder="Year"
           />
         </div>
-        <div style={{ width: "180px" }}>
+        <div className="filter-wrapper">
           <CustomDropdown
             options={getSegmentOptions()}
             value={currentSegment}
@@ -377,7 +385,7 @@ const CarbonIntensity = () => {
             placeholder="Supply Chain"
           />
         </div>
-        <div style={{ width: "160px" }}>
+        <div className="filter-wrapper">
           <CustomDropdown
             options={getActivityOptions()}
             value={currentActivity}
@@ -385,7 +393,7 @@ const CarbonIntensity = () => {
             placeholder="Activity"
           />
         </div>
-        <div style={{ width: "160px" }}>
+        <div className="filter-wrapper">
           <CustomDropdown
             options={getDivisionOptions()}
             value={currentDivision}
@@ -393,7 +401,7 @@ const CarbonIntensity = () => {
             placeholder="Division"
           />
         </div>
-        <div style={{ width: "220px" }}>
+        <div className="filter-wrapper">
           <CustomDropdown
             options={getRegionOptions()}
             value={currentRegion}

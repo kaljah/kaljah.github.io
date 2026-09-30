@@ -1,6 +1,7 @@
 import React, { useState, useRef, useCallback } from "react";
 import Papa from "papaparse";
 import api from "../api";
+import { autoDetectMapping, missingRequiredFields } from "../utils/importMapping";
 import { useToast } from "./Toast";
 import UploadProgress from "./UploadProgress";
 import "./ColumnMappingWizard.css";
@@ -12,13 +13,13 @@ const TEMPLATES = {
     {
       id: "activity",
       label: "Activity",
-      required: true,
+      required: false,
       hint: "e.g. Exploration & Production",
     },
     {
       id: "division",
       label: "Division",
-      required: true,
+      required: false,
       hint: "e.g. Production, Association",
     },
     {
@@ -33,7 +34,7 @@ const TEMPLATES = {
     {
       id: "type",
       label: "Process Type",
-      required: true,
+      required: false,
       hint: "e.g. combustion, flaring",
     },
     {
@@ -42,15 +43,9 @@ const TEMPLATES = {
       required: false,
       hint: "e.g. Natural Gas",
     },
-    {
-      id: "amount",
-      label: "Quantity",
-      required: false,
-      hint: "Optional initial activity data",
-    },
-    { id: "unit", label: "Unit", required: false, hint: "e.g. scf, m3, gal" },
-    { id: "year", label: "Year", required: false },
-    { id: "month", label: "Month", required: false },
+    { id: "design_capacity", label: "Design Capacity", required: false },
+    { id: "installation_date", label: "Installation Date", required: false, hint: "YYYY-MM-DD" },
+    { id: "status", label: "Status", required: false, hint: "Active / Inactive" },
   ],
   activity: [
     { id: "activity", label: "Activity", required: false },
@@ -66,7 +61,7 @@ const TEMPLATES = {
     { id: "date", label: "Date", required: true },
     { id: "process", label: "Process Type", required: true },
     { id: "process_type", label: "Process Type (legacy)", required: false },
-    { id: "fuel", label: "Activity / Fuel", required: true },
+    { id: "fuel", label: "Activity / Fuel", required: false, hint: "Emission factor name (default and custom rows)" },
     { id: "fuel_type", label: "Fuel Type (legacy)", required: false },
     { id: "quantity", label: "Quantity", required: true },
     { id: "amount", label: "Amount", required: false },
@@ -154,8 +149,8 @@ const TEMPLATES = {
     { id: "dehy_still_type", label: "Dehy Still Type", required: false },
     { id: "dehy_ch4_content", label: "Dehy CH4 Content", required: false },
     { id: "dehy_eff", label: "Dehy Eff", required: false },
-    { id: "boiler_eff", label: "Boiler Eff", required: false },
-    { id: "trans_loss", label: "Trans Loss", required: false },
+    { id: "boiler_eff", label: "Boiler Efficiency (% or fraction)", required: false },
+    { id: "trans_loss", label: "Transmission Loss (%)", required: false },
     { id: "heat_unit", label: "Heat Unit", required: false },
     { id: "carbon_content", label: "Carbon Content", required: false },
     { id: "fugitive_method", label: "Fugitive Method", required: false },
@@ -174,9 +169,11 @@ const TEMPLATES = {
     { id: "facility_id", label: "Region", required: true },
     { id: "year", label: "Year", required: true },
     { id: "month", label: "Month", required: true },
-    { id: "grid_region", label: "Grid Region", required: true },
+    { id: "grid_region", label: "Grid Region", required: false, hint: "e.g. Algerian National Grid" },
     { id: "consumption", label: "Consumption", required: true },
-    { id: "unit", label: "Unit", required: true, hint: "kWh, MWh, GWh" },
+    { id: "unit", label: "Unit", required: true, hint: "kWh, MWh, GWh (steam: MMBtu, GJ)" },
+    { id: "source_type", label: "Source Type", required: false, hint: "electricity (default), indirect_steam, cogen_allocation" },
+    { id: "factor", label: "Supplier Factor", required: false, hint: "kg CO2e/kWh, when the grid is not listed" },
   ],
   activity_scope3: [
     { id: "facility_id", label: "Region", required: true },
@@ -191,6 +188,10 @@ const TEMPLATES = {
     },
     { id: "amount", label: "Quantity", required: true },
     { id: "unit", label: "Unit", required: true },
+    { id: "emission_factor", label: "Emission Factor", required: false, hint: "kg CO2e per unit; if empty, the Scope 3 form factor of the activity is used" },
+    { id: "ef_unit", label: "EF Unit", required: false, hint: "kg (default) or t CO2e per unit" },
+    { id: "co2e", label: "Total CO2e (t)", required: false, hint: "Supplier-specific total instead of a factor" },
+    { id: "notes", label: "Notes", required: false },
   ],
   custom_factors: [
     {
@@ -268,7 +269,7 @@ const TEMPLATES = {
     {
       id: "project_type",
       label: "Type",
-      required: true,
+      required: false,
       hint: "e.g. CCUS, REC",
     },
     { id: "year", label: "Year", required: true },
@@ -286,36 +287,23 @@ const TEMPLATES = {
   ],
   facilities: [
     { id: "name", label: "Region Name", required: true },
-    { id: "activity", label: "Activity", required: true },
-    { id: "division", label: "Division", required: true },
+    { id: "region", label: "Region", required: false, hint: "Region the facility belongs to (dashboard filter)" },
+    { id: "code", label: "Facility Code", required: false, hint: "Unique code" },
+    { id: "equity_share_pct", label: "Equity Share (%)", required: false, hint: "0-100; default 100" },
+    { id: "operator_status", label: "Operator Status", required: false, hint: "operated or non-operated" },
+    { id: "activity", label: "Activity", required: false },
+    { id: "division", label: "Division", required: false },
     { id: "field", label: "Field / Block", required: false },
-    { id: "location", label: "Location (Wilaya)", required: true },
-    { id: "boundary_type", label: "Consolidation Approach", required: true },
-    { id: "boundary_detail", label: "Boundary Details", required: true },
-    { id: "segment", label: "Supply Chain Segment", required: true },
-    { id: "latitude", label: "Latitude", required: true },
-    { id: "longitude", label: "Longitude", required: true },
+    { id: "location", label: "Location (Wilaya)", required: false },
+    { id: "boundary_type", label: "Consolidation Approach", required: false },
+    { id: "boundary_detail", label: "Boundary Details", required: false },
+    { id: "segment", label: "Supply Chain Segment", required: false },
+    { id: "latitude", label: "Latitude", required: false },
+    { id: "longitude", label: "Longitude", required: false },
   ],
 };
 
 // Auto-detect: tries to match a column header to a system field key/label
-function autoDetectMapping(headers, fields) {
-  const mapping = {};
-  fields.forEach((field) => {
-    const match = headers.find((h) => {
-      const hl = h.toLowerCase();
-      return (
-        hl === field.key.toLowerCase() ||
-        hl.includes(field.key.replace(/_/g, " ")) ||
-        hl.includes(field.label.toLowerCase()) ||
-        field.label.toLowerCase().includes(hl)
-      );
-    });
-    if (match) mapping[field.key] = match;
-  });
-  return mapping;
-}
-
 // ─── SVG Icons ────────────────────────────────────────────────────────────────
 const Icons = {
   Upload: () => (
@@ -665,19 +653,19 @@ export default function ColumnMappingWizard({
     let csvContent = headers;
 
     if (type === "custom_factors") {
-      csvContent = `${headers}\nSpecialized Generator Gas,Natural Gas,scf,53.06,0.001,0.0001,0,5,50,150,combustion`;
+      csvContent = `${headers}\nSpecialized Generator Gas,Natural Gas,MMBtu,53.06,0.001,0.0001,0,5,50,150,combustion`;
     } else if (type === "production") {
       csvContent = `${headers}\nHassi Messaoud,Exploration & Production,Production,Bir Berkine,2024,1,50000,bbl,12000,mscf`;
     } else if (type === "mitigation") {
       csvContent = `${headers}\nHassi Messaoud,Solar Farm A,REC,2024,1500,Active,2024-01-01,,500000,Solar panel installation`;
     } else if (type === "sources") {
-      csvContent = `${headers}\nExploration & Production,Production,Hassi Messaoud,Bir Berkine,Combustion Unit A,EQ-001,combustion,Natural Gas,1000,scf,2024,1`;
+      csvContent = `${headers}\nExploration & Production,Production,Hassi Messaoud,Bir Berkine,Combustion Unit A,EQ-001,combustion,Natural Gas,5 MW,2015-06-01,Active`;
     } else if (type === "activity_scope2") {
-      csvContent = `${headers}\nHassi Messaoud,2024,1,National Grid,500,MWh`;
+      csvContent = `${headers}\nHassi Messaoud,2024,1,Algerian National Grid,500,MWh,electricity,`;
     } else if (type === "activity_scope3") {
-      csvContent = `${headers}\nHassi Messaoud,2024,1,1,Purchased Goods,500,tonnes`;
+      csvContent = `${headers}\nHassi Messaoud,2024,1,4,Truck Transport,10000,t-km,0.12841,kg,,Crude trucking`;
     } else if (type === "facilities") {
-      csvContent = `${headers}\nHassi R'Mel,Exploration & Production,Production,Block A,Laghouat,Operational Control,Details here,Upstream,33.8,3.2`;
+      csvContent = `${headers}\nHassi R'Mel,Laghouat,HRM-01,100,operated,Exploration & Production,Production,Block A,Laghouat,Operational Control,Details here,Upstream,33.8,3.2`;
     }
 
     const blob = new Blob([csvContent], { type: "text/csv" });
@@ -735,177 +723,26 @@ export default function ColumnMappingWizard({
       opt = filteredBase.filter((f) => !f.required);
 
       if (selectedTier === "3") {
+        // Tier 3 inputs each calculator reads (same field names as the Scope 1 templates)
+        const COMP = ["c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", "co2_mol", "n2_mol"];
+        const VENT = ["vent_method", "disposition", "ch4_content", "co2_content"];
         const processFields = {
-          combustion: [
-            "hhv",
-            "ef_unit",
-            "combustion_efficiency",
-            "operating_temperature",
-            "temp_unit",
-            "operating_pressure",
-            "press_unit",
-            "z_factor",
-            "c1",
-            "c2",
-            "c3",
-            "c4",
-            "c5",
-            "c6",
-            "c7",
-            "c8",
-            "c9",
-            "c10",
-            "co2_mol",
-            "n2_mol",
-          ],
-          flaring: [
-            "hhv",
-            "ef_unit",
-            "flare_type",
-            "ch4_content",
-            "co2_content",
-            "control_efficiency",
-            "operating_temperature",
-            "temp_unit",
-            "operating_pressure",
-            "press_unit",
-            "z_factor",
-            "c1",
-            "c2",
-            "c3",
-            "c4",
-            "c5",
-            "c6",
-            "c7",
-            "c8",
-            "c9",
-            "c10",
-            "co2_mol",
-            "n2_mol",
-          ],
-          drilling: ["mud_type", "mud_unit"],
-          completions: [
-            "comp_method",
-            "comp_rate",
-            "comp_duration",
-            "ch4_content",
-            "co2_content",
-            "comp_flare_eff",
-          ],
-          unloading: [
-            "unload_depth",
-            "unload_diam",
-            "unload_press",
-            "unload_freq",
-            "unload_flare_eff",
-            "ch4_content",
-            "co2_content",
-            "unload_temp",
-            "temp_unit",
-          ],
-          blowdown: [
-            "blowdown_pressure",
-            "blowdown_events",
-            "ch4_content",
-            "co2_content",
-            "control_efficiency",
-            "blowdown_temp",
-            "blowdown_temp_unit",
-            "blowdown_press_unit",
-            "z_factor",
-          ],
-          tank_flashing: [
-            "tank_gor",
-            "tank_ch4_content",
-            "tank_control_eff",
-            "tank_unit",
-            "tank_api_gravity",
-          ],
-          tank_working_standing: [
-            "tank_throughput",
-            "tank_throughput_unit",
-            "tank_ch4_content",
-            "tank_control_eff",
-            "tank_turnovers",
-          ],
-          pneumatic_device: [
-            "pneu_type",
-            "pneu_count",
-            "pneu_bleed_rate",
-            "pneu_hours",
-            "ch4_content",
-            "co2_content",
-          ],
-          pneumatic_pump: [
-            "pump_type",
-            "pump_count",
-            "pump_gas_rate",
-            "pump_hours",
-            "ch4_content",
-            "co2_content",
-          ],
-          centrifugal_compressor: [
-            "comp_mode",
-            "comp_hours",
-            "ch4_content",
-            "co2_content",
-          ],
-          reciprocating_compressor: [
-            "comp_mode",
-            "comp_hours",
-            "ch4_content",
-            "co2_content",
-          ],
-          fugitives_equipment: [
-            "fugitive_method",
-            "fugitive_ppm",
-            "comp_count",
-            "ch4_content",
-            "co2_content",
-            "operating_hours",
-          ],
-          fugitives_leaks: [
-            "leak_count",
-            "leak_duration",
-            "leak_rate",
-            "ch4_content",
-            "co2_content",
-          ],
-          agr: [
-            "agr_throughput",
-            "agr_co2_in",
-            "agr_co2_out",
-            "agr_ch4_in",
-            "agr_ch4_out",
-            "agr_vent_rate",
-            "agr_ch4_slip",
-            "agr_control_eff",
-          ],
-          dehydrator: [
-            "dehy_throughput",
-            "dehy_pump_rate",
-            "dehy_pump_unit",
-            "dehy_hours",
-            "dehy_press",
-            "dehy_press_unit",
-            "dehy_temp",
-            "dehy_temp_unit",
-            "dehy_has_flash",
-            "dehy_flash_eff",
-            "dehy_still_type",
-            "dehy_ch4_content",
-            "dehy_eff",
-            "c1",
-            "c2",
-            "c3",
-            "c4",
-            "c5",
-            "c6",
-            "c7",
-            "c8",
-            "c9",
-            "c10",
-          ],
+          combustion: ["hhv", ...COMP, "combustion_efficiency", "operating_temperature", "temp_unit", "operating_pressure", "press_unit", "z_factor"],
+          flaring: ["flare_type", "control_efficiency", ...COMP],
+          routine_flaring: ["flare_type", "control_efficiency", ...COMP],
+          non_routine_flaring: ["flare_type", "control_efficiency", ...COMP],
+          safety_flaring: ["flare_type", "control_efficiency", ...COMP],
+          venting: [...VENT, "blowdown_pressure", "blowdown_events", "blowdown_temp", "blowdown_temp_unit", "blowdown_press_unit", "z_factor"],
+          tank_flashing: ["tank_gor", "tank_ch4_content", "tank_control_eff", "tank_api_gravity"],
+          pneumatic: ["pneu_count", "pneu_bleed_rate", "pneu_bleed_unit", "pneu_hours", "pneu_ch4_content", "operating_hours"],
+          fugitive: ["fugitive_method", "component_type", "service", "m21_below_count", "m21_above_count", "operating_hours"],
+          completions: ["comp_method", "comp_rate", "comp_rate_unit", "comp_duration", "comp_flare_eff", "ch4_content", "co2_content"],
+          unloading: ["unload_depth", "unload_diam", "unload_press", "unload_freq", "unload_flare_eff", "ch4_content", "co2_content"],
+          drilling: ["mud_type"],
+          dehydrator: VENT,
+          vented_gas: VENT,
+          agr: ["agr_co2_in", "agr_co2_out", "agr_ch4_in", "agr_ch4_slip", "agr_control_eff"],
+          stoichiometry: ["carbon_content"],
         };
 
         let allowed = [];
@@ -937,7 +774,10 @@ export default function ColumnMappingWizard({
   const activeRequired = currentFields.req;
   const activeOptional = currentFields.opt;
 
-  const missingRequired = activeRequired.filter((f) => !mapping[f.key]);
+  const missingRequired = missingRequiredFields(
+    [...activeRequired.map((f) => ({ ...f, required: true })), ...activeOptional],
+    mapping,
+  );
 
   const canProceed = missingRequired.length === 0 || headers.length === 0; // xlsx: skip client-side check
 
@@ -1517,6 +1357,7 @@ export default function ColumnMappingWizard({
           <div className="cmw-body cmw-body--progress">
             <UploadProgress
               jobId={jobId}
+              reviewable={["activity", "activity_scope2", "activity_scope3"].includes(type)}
               onComplete={() => {
                 if (onUploadSuccess) onUploadSuccess();
                 onClose();

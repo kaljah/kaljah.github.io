@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { showReviewResult } from '../utils/reviewResult';
 import { useLocation } from 'react-router-dom';
 import api from '../api';
+import { apiError } from '../utils/apiError';
 import CustomDropdown from '../components/CustomDropdown';
 
 import ColumnMappingWizard from '../components/ColumnMappingWizard';
@@ -163,7 +165,9 @@ const ManageDataInner = () => {
                     pathway_type: res.data.pathway_type
                 });
             }
-        } catch (e) {}
+        } catch (err) {
+            toast.error(apiError(err, 'Failed to load the SBTi target'));
+        }
     };
 
     const handleSaveSbti = async () => {
@@ -172,11 +176,10 @@ const ManageDataInner = () => {
             toast.success('SBTi Target saved successfully');
             setHasSbti(true);
         } catch (e) {
-            toast.error('Failed to save SBTi Target');
+            toast.error(apiError(e, 'Failed to save SBTi Target'));
         }
     };
 
-    const [loading, setLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [pendingEmissions, setPendingEmissions] = useState({ scope1: [], scope2: [], scope3: [], total_pending: 0 });
     const [isProcessingBatch, setIsProcessingBatch] = useState(false);
@@ -245,7 +248,10 @@ const ManageDataInner = () => {
                 scope1: res.data.scope1 || [],
                 scope2: res.data.scope2 || [],
                 scope3: res.data.scope3 || [],
-                total_pending: res.data.total_pending || 0
+                total_pending: res.data.total_pending || 0,
+                // whole-queue counts; the lists hold at most `limit` rows per scope
+                pending_counts: res.data.pending_counts || null,
+                pending_co2e: res.data.pending_co2e,
             });
         } catch (e) {
             console.error("Failed to fetch pending emissions", e);
@@ -259,15 +265,17 @@ const ManageDataInner = () => {
         const s2 = pendingEmissions?.scope2 || [];
         const s3 = pendingEmissions?.scope3 || [];
 
-        const count1 = s1.length;
-        const count2 = s2.length;
-        const count3 = s3.length;
+        const pc = pendingEmissions?.pending_counts;
+        const count1 = pc ? pc['1'] : s1.length;
+        const count2 = pc ? pc['2'] : s2.length;
+        const count3 = pc ? pc['3'] : s3.length;
         const totalCount = count1 + count2 + count3;
+        const loadedCount = s1.length + s2.length + s3.length;
 
         const tco2e1 = s1.reduce((acc, r) => acc + (Number(r.co2e_total || r.co2e) || 0), 0);
         const tco2e2 = s2.reduce((acc, r) => acc + (Number(r.co2e_total || r.co2e) || 0), 0);
         const tco2e3 = s3.reduce((acc, r) => acc + (Number(r.co2e_total || r.co2e) || 0), 0);
-        const totalTco2e = tco2e1 + tco2e2 + tco2e3;
+        const totalTco2e = typeof pendingEmissions?.pending_co2e === 'number' ? pendingEmissions.pending_co2e : tco2e1 + tco2e2 + tco2e3;
 
         let flaggedCount = 0;
         let cleanCount = 0;
@@ -277,7 +285,7 @@ const ManageDataInner = () => {
         });
 
         return {
-            count1, count2, count3, totalCount,
+            count1, count2, count3, totalCount, loadedCount,
             tco2e1, tco2e2, tco2e3, totalTco2e,
             flaggedCount, cleanCount
         };
@@ -344,14 +352,14 @@ const ManageDataInner = () => {
             if (pendingScopeFilter !== 'all' && item.scope !== pendingScopeFilter) return false;
             if (pendingQaFilter === 'flagged' && !item.qa_flag) return false;
             if (pendingQaFilter === 'clean' && item.qa_flag) return false;
-            if (pendingSearch.trim()) {
+            if (pendingSearch && pendingSearch.trim()) {
                 const q = pendingSearch.toLowerCase().trim();
-                const facilityName = facilities.find(f => f.id === item.facility_id)?.name?.toLowerCase() || '';
-                const matchId = String(item.id).toLowerCase().includes(q);
-                const matchDate = item.date.toLowerCase().includes(q);
-                const matchDesc = item.desc.toLowerCase().includes(q);
-                const matchFacility = facilityName.includes(q) || String(item.facility_id).toLowerCase().includes(q);
-                const matchQa = (item.qa_flag || '').toLowerCase().includes(q);
+                const facilityName = (facilities.find(f => f && f.id === item.facility_id)?.name || '').toLowerCase();
+                const matchId = String(item.id || '').toLowerCase().includes(q);
+                const matchDate = String(item.date || '').toLowerCase().includes(q);
+                const matchDesc = String(item.desc || '').toLowerCase().includes(q);
+                const matchFacility = facilityName.includes(q) || String(item.facility_id || '').toLowerCase().includes(q);
+                const matchQa = String(item.qa_flag || '').toLowerCase().includes(q);
                 if (!matchId && !matchDate && !matchDesc && !matchFacility && !matchQa) return false;
             }
             return true;
@@ -452,7 +460,7 @@ const ManageDataInner = () => {
                 approve_all: false
             });
 
-            toast.success(`Successfully approved ${res.data?.approved_count || selectedPendingKeys.size} record${selectedPendingKeys.size > 1 ? 's' : ''}`);
+            showReviewResult(toast, 'approved', res.data?.approved_count, selectedPendingKeys.size);
             setSelectedPendingKeys(new Set());
             fetchPendingEmissions();
         } catch (err) {
@@ -491,7 +499,7 @@ const ManageDataInner = () => {
                     reason: rejectionModal.reason.trim(),
                     reject_all: false
                 });
-                toast.success(`Rejected ${res.data?.deleted_count || rejectionModal.recordIds.length} record${rejectionModal.recordIds.length > 1 ? 's' : ''}`);
+                showReviewResult(toast, 'rejected', res.data?.rejected_count ?? res.data?.deleted_count, rejectionModal.recordIds.length);
             }
             setRejectionModal({ isOpen: false, isBatch: false, scope: '1', recordId: null, recordIds: [], reason: '' });
             setSelectedPendingKeys(new Set());
@@ -514,8 +522,9 @@ const ManageDataInner = () => {
             onConfirm: async () => {
                 setIsProcessingBatch(true);
                 try {
-                    await api.post('/emissions/approve/batch', { approve_all: true, scope: String(scopeNum) });
-                    toast.success(`Approved all Scope ${scopeNum} records`);
+                    const res = await api.post('/emissions/approve/batch', { approve_all: true, scope: String(scopeNum) });
+                    // the server skips the reviewer's own records: report its count, not the request
+                    showReviewResult(toast, 'approved', res.data?.approved_count, count);
                     setSelectedPendingKeys(prev => {
                         const next = new Set(prev);
                         Array.from(next).forEach(k => {
@@ -572,7 +581,7 @@ const ManageDataInner = () => {
     // Forms State
     const [facilityForm, setFacilityForm] = useState({
         name: '', activity: '', division: '', field: '', location: '',
-        boundary_type: '', boundary_detail: '',
+        boundary_type: '', boundary_detail: '', equity_share_pct: '',
         segment: '', latitude: '', longitude: ''
     });
 
@@ -588,7 +597,10 @@ const ManageDataInner = () => {
         activity: '', division: '', facility_id: '',
         month: 1, year: new Date().getFullYear(),
         oil_amount: '', oil_unit: 'bbl',
-        gas_amount: '', gas_unit: 'mscf'
+        gas_amount: '', gas_unit: 'mscf',
+        gross_gas_mmsm3: '', gas_without_injected_mmsm3: '', injected_gas_mmsm3: '',
+        crude_oil_mmboe: '', condensate_mmboe: '', lpg_mmboe: '',
+        total_production_mmboe: '', saleable_production_mmboe: ''
     });
 
     const [sourceForm, setSourceForm] = useState({
@@ -745,7 +757,7 @@ const ManageDataInner = () => {
                 regions.unshift(userLoc);
             }
             setAvailableFilters(prev => ({ ...prev, regions }));
-        } catch (err) { console.error(err); }
+        } catch (err) { console.error(err); toast.error(apiError(err, 'Failed to load facilities')); }
     };
 
     const fetchCustomFactors = async () => {
@@ -753,7 +765,7 @@ const ManageDataInner = () => {
             const res = await api.get('/custom-factors');
             const data = Array.isArray(res.data) ? res.data : (res.data?.data || []);
             setCustomFactors(data);
-        } catch (err) { console.error(err); }
+        } catch (err) { console.error(err); toast.error(apiError(err, 'Failed to load custom factors')); }
     };
 
     const fetchProduction = async () => {
@@ -763,7 +775,7 @@ const ManageDataInner = () => {
             setProductionData(data);
             const years = [...new Set(data.map(d => d.year))].sort((a, b) => b - a);
             setAvailableFilters(prev => ({ ...prev, years }));
-        } catch (err) { console.error(err); }
+        } catch (err) { console.error(err); toast.error(apiError(err, 'Failed to load production')); }
     };
 
     const fetchSources = async () => {
@@ -771,7 +783,7 @@ const ManageDataInner = () => {
             const res = await api.get('/sources');
             const data = Array.isArray(res.data) ? res.data : (res.data?.data || []);
             setSources(data);
-        } catch (err) { console.error(err); }
+        } catch (err) { console.error(err); toast.error(apiError(err, 'Failed to load sources')); }
     };
 
     const fetchMitigations = async () => {
@@ -779,7 +791,7 @@ const ManageDataInner = () => {
             const res = await api.get('/mitigation');
             const data = Array.isArray(res.data) ? res.data : (res.data?.data || []);
             setMitigations(data);
-        } catch (err) { console.error(err); }
+        } catch (err) { console.error(err); toast.error(apiError(err, 'Failed to load mitigations')); }
     };
 
   const fetchCbamExports = async () => {
@@ -787,7 +799,7 @@ const ManageDataInner = () => {
       const res = await api.get('/data/cbam-exports');
       setCbamExports(res.data || []);
     } catch (err) {
-      console.error(err);
+      console.error(err); toast.error(apiError(err, 'Failed to load cbam exports'));
     }
   };
 
@@ -796,7 +808,7 @@ const ManageDataInner = () => {
             const res = await api.get('/data/ogmp-surveys');
             const data = Array.isArray(res.data) ? res.data : (res.data?.data || []);
             setOgmpSurveys(data);
-        } catch (err) { console.error(err); }
+        } catch (err) { console.error(err); toast.error(apiError(err, 'Failed to load ogmp surveys')); }
     };
 
     const fetchGoals = async () => {
@@ -804,14 +816,14 @@ const ManageDataInner = () => {
             const res = await api.get('/goals');
             const data = Array.isArray(res.data) ? res.data : (res.data?.data || []);
             setGoals(data);
-        } catch (err) { console.error('Failed to fetch goals:', err); }
+        } catch (err) { console.error('Failed to fetch goals:', err); toast.error(apiError(err, 'Failed to load emission goals')); }
     };
 
     const fetchBaseYears = async () => {
         try {
             const res = await api.get('/base-years');
             setBaseYearsData(res.data || { active_year: null, active_record: null, history: [] });
-        } catch (err) { console.error('Failed to fetch base years:', err); }
+        } catch (err) { console.error('Failed to fetch base years:', err); toast.error(apiError(err, 'Failed to load base years')); }
     };
 
     const handleSaveGoal = async () => {
@@ -924,18 +936,20 @@ const ManageDataInner = () => {
                 ? `${facilityForm.boundary_type} - ${facilityForm.boundary_detail}`
                 : facilityForm.boundary_type;
 
-            await api.post('/facilities', {
-                ...facilityForm,
-                boundary_notes: fullBoundary // Map back to API field
+            // BUG-045: optional numeric fields are omitted when empty (the server used to 500 on "")
+            const body = { ...facilityForm, boundary_notes: fullBoundary };
+            ['latitude', 'longitude', 'equity_share_pct'].forEach((k) => {
+                if (body[k] === '' || body[k] === null || body[k] === undefined) delete body[k];
             });
+            await api.post('/facilities', body);
             toast.success('Region added!');
             setFacilityForm({
                 name: '', activity: '', division: '', field: '', location: '',
-                boundary_type: '', boundary_detail: '',
+                boundary_type: '', boundary_detail: '', equity_share_pct: '',
                 segment: '', latitude: '', longitude: ''
             });
             fetchFacilities();
-        } catch (err) { toast.error('Failed to add region'); }
+        } catch (err) { toast.error(apiError(err, 'Failed to add region')); }
     };
 
     const handleSaveFactor = async () => {
@@ -951,7 +965,7 @@ const ManageDataInner = () => {
             setFactorForm({ factor_name: '', parent_fuel: '', unit: 'scf', co2_factor: '', ch4_factor: '', n2o_factor: '', co_factor: '', co2_uncertainty: '', ch4_uncertainty: '', n2o_uncertainty: '', source: '', description: '' });
             setEditingFactorId(null);
             fetchCustomFactors();
-        } catch (err) { toast.error('Failed to save factor'); }
+        } catch (err) { toast.error(apiError(err, 'Failed to save factor')); }
     };
 
     const handleDeleteFactor = (id) => {
@@ -965,9 +979,18 @@ const ManageDataInner = () => {
                     await api.delete(`/custom-factors/${id}`);
                     toast.success('Factor deleted!');
                     fetchCustomFactors();
-                } catch (err) { toast.error('Failed to delete factor'); }
+                } catch (err) { toast.error(apiError(err, 'Failed to delete factor')); }
             }
         });
+    };
+
+    // BUG-056: a factor used by records cannot be deleted; archiving hides it from new entries
+    const handleArchiveFactor = async (id) => {
+        try {
+            await api.post(`/custom-factors/${id}/archive`, {});
+            toast.success('Factor archived');
+            fetchCustomFactors();
+        } catch (err) { toast.error(apiError(err, 'Failed to archive factor')); }
     };
 
     const handleEditFactor = (factor) => {
@@ -996,12 +1019,26 @@ const ManageDataInner = () => {
             await api.post('/data/production', {
                 ...prodForm,
                 oil_amount: parseFloat(prodForm.oil_amount) || 0,
-                gas_amount: parseFloat(prodForm.gas_amount) || 0
+                gas_amount: parseFloat(prodForm.gas_amount) || 0,
+                gross_gas_mmsm3: parseFloat(prodForm.gross_gas_mmsm3) || 0,
+                gas_without_injected_mmsm3: parseFloat(prodForm.gas_without_injected_mmsm3) || 0,
+                injected_gas_mmsm3: parseFloat(prodForm.injected_gas_mmsm3) || 0,
+                crude_oil_mmboe: parseFloat(prodForm.crude_oil_mmboe) || 0,
+                condensate_mmboe: parseFloat(prodForm.condensate_mmboe) || 0,
+                lpg_mmboe: parseFloat(prodForm.lpg_mmboe) || 0,
+                total_production_mmboe: parseFloat(prodForm.total_production_mmboe) || 0,
+                saleable_production_mmboe: parseFloat(prodForm.saleable_production_mmboe) || 0,
             });
             toast.success('Production record saved!');
             fetchProduction();
-            setProdForm(prev => ({ ...prev, oil_amount: '', gas_amount: '' }));
-        } catch (err) { toast.error('Failed to save production'); }
+            setProdForm(prev => ({
+                ...prev,
+                oil_amount: '', gas_amount: '',
+                gross_gas_mmsm3: '', gas_without_injected_mmsm3: '', injected_gas_mmsm3: '',
+                crude_oil_mmboe: '', condensate_mmboe: '', lpg_mmboe: '',
+                total_production_mmboe: '', saleable_production_mmboe: ''
+            }));
+        } catch (err) { toast.error(apiError(err, 'Failed to save production')); }
     };
 
     const handleSaveSource = async () => {
@@ -1011,7 +1048,7 @@ const ManageDataInner = () => {
             toast.success('Source added!');
             fetchSources();
             setSourceForm({ ...sourceForm, name: '', equipment_id: '', fuel_type: '', design_capacity: '', description: '' });
-        } catch (err) { toast.error('Failed to add source'); }
+        } catch (err) { toast.error(apiError(err, 'Failed to add source')); }
     };
 
     const handleSaveMitigation = async () => {
@@ -1021,7 +1058,7 @@ const ManageDataInner = () => {
             toast.success('Mitigation record saved!');
             fetchMitigations();
             setMitigationForm({ ...mitigationForm, quantity_tco2e: '', notes: '', reference_id: '', name: '' });
-        } catch (err) { toast.error('Failed to save mitigation'); }
+        } catch (err) { toast.error(apiError(err, 'Failed to save mitigation')); }
     };
 
   const handleSaveCbamExport = async () => {
@@ -1069,7 +1106,7 @@ const ManageDataInner = () => {
           toast.success('CBAM export record deleted');
           fetchCbamExports();
         } catch (err) {
-          toast.error('Failed to delete CBAM record');
+          toast.error(apiError(err, 'Failed to delete CBAM record'));
         }
       }
     });
@@ -1117,7 +1154,7 @@ const ManageDataInner = () => {
                     toast.success('OGMP survey record deleted');
                     fetchOgmpSurveys();
                 } catch (err) {
-                    toast.error('Failed to delete OGMP survey');
+                    toast.error(apiError(err, 'Failed to delete OGMP survey'));
                 }
             }
         });
@@ -1251,9 +1288,6 @@ const ManageDataInner = () => {
         URL.revokeObjectURL(url);
     };
 
-    const handleImportCSV = async (file, type) => {
-        toast.info(`Importing ${type} CSV... (Logic to be handled by backend)`);
-    };
 
 
     // --- Dynamic Options and Matching for Filters ---
@@ -1284,10 +1318,19 @@ const ManageDataInner = () => {
     };
 
     // --- Pre-calculate Filtered Data for Pagination ---
-    const getFilteredFactors = () => customFactors.filter(f => f.factor_name.toLowerCase().includes(searchTerm.toLowerCase()));
+    const getFilteredFactors = () => customFactors.filter(f => {
+        if (!f) return false;
+        const sTerm = (searchTerm || '').toLowerCase();
+        return (f.factor_name || '').toLowerCase().includes(sTerm);
+    });
     
     const getFilteredFacilities = () => facilities.filter(f => {
-        const matchesSearch = f.name.toLowerCase().includes(searchTerm.toLowerCase()) || (f.location?.toLowerCase() || '').includes(searchTerm.toLowerCase()) || (f.field?.toLowerCase() || '').includes(searchTerm.toLowerCase());
+        if (!f) return false;
+        const sTerm = (searchTerm || '').toLowerCase();
+        const matchesSearch = (f.name || '').toLowerCase().includes(sTerm) || 
+                              (f.location || '').toLowerCase().includes(sTerm) || 
+                              (f.field || '').toLowerCase().includes(sTerm) ||
+                              (f.code || '').toLowerCase().includes(sTerm);
         const matchesAct = filterActivity ? matchesActivity(f.activity, filterActivity) : true;
         const matchesDiv = filterDivision ? f.division === filterDivision : true;
         const matchesReg = matchesRegionCheck(f, filterRegion);
@@ -1295,19 +1338,27 @@ const ManageDataInner = () => {
     });
 
     const getFilteredProduction = () => productionData.filter(d => {
-        const fac = facilities.find(f => f.id === d.facilityId);
-        const facName = fac ? fac.name.toLowerCase() : String(d.facilityId).toLowerCase();
-        const matchesSearch = facName.includes(searchTerm.toLowerCase()) || d.year.toString().includes(searchTerm) || (d.activity?.toLowerCase() || '').includes(searchTerm.toLowerCase());
+        if (!d) return false;
+        const sTerm = (searchTerm || '').toLowerCase();
+        const fac = facilities.find(f => f && f.id === d.facilityId);
+        const facName = (fac ? fac.name : String(d.facilityId || '')) || '';
+        const matchesSearch = facName.toLowerCase().includes(sTerm) || 
+                              (d.year ? d.year.toString().includes(searchTerm || '') : false) || 
+                              (d.activity || '').toLowerCase().includes(sTerm);
         const matchesAct = filterActivity ? (matchesActivity(d.activity, filterActivity) || (fac && matchesActivity(fac.activity, filterActivity))) : true;
         const matchesDiv = filterDivision ? (d.division === filterDivision || (fac && fac.division === filterDivision)) : true;
         const matchesReg = matchesRegionCheck(fac, filterRegion);
-        const matchesYear = filterYear ? d.year.toString() === filterYear.toString() : true;
+        const matchesYear = filterYear ? d.year?.toString() === filterYear.toString() : true;
         return matchesSearch && matchesAct && matchesDiv && matchesReg && matchesYear;
     });
 
     const getFilteredSources = () => sources.filter(s => {
-        const fac = facilities.find(f => f.id === s.facility_id);
-        const matchesSearch = s.name.toLowerCase().includes(searchTerm.toLowerCase()) || (s.equipment_id?.toLowerCase() || '').includes(searchTerm.toLowerCase()) || (s.type?.toLowerCase() || '').includes(searchTerm.toLowerCase());
+        if (!s) return false;
+        const sTerm = (searchTerm || '').toLowerCase();
+        const fac = facilities.find(f => f && f.id === s.facility_id);
+        const matchesSearch = (s.name || '').toLowerCase().includes(sTerm) || 
+                              (s.equipment_id || '').toLowerCase().includes(sTerm) || 
+                              (s.type || '').toLowerCase().includes(sTerm);
         const matchesAct = filterActivity ? (fac && matchesActivity(fac.activity, filterActivity)) : true;
         const matchesDiv = filterDivision ? (fac && fac.division === filterDivision) : true;
         const matchesReg = matchesRegionCheck(fac, filterRegion);
@@ -1315,11 +1366,13 @@ const ManageDataInner = () => {
     });
 
     const getFilteredMitigations = () => mitigations.filter(m => {
-        const fac = facilities.find(f => f.id === m.facility_id);
-        const matchesSearch = (m.name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) || 
-                              (m.mitigation_type?.toLowerCase() || m.type?.toLowerCase() || '').includes(searchTerm.toLowerCase()) || 
-                              (m.notes?.toLowerCase() || '').includes(searchTerm.toLowerCase()) || 
-                              m.year?.toString().includes(searchTerm);
+        if (!m) return false;
+        const sTerm = (searchTerm || '').toLowerCase();
+        const fac = facilities.find(f => f && f.id === m.facility_id);
+        const matchesSearch = (m.name || '').toLowerCase().includes(sTerm) || 
+                              (m.mitigation_type || m.type || '').toLowerCase().includes(sTerm) || 
+                              (m.notes || '').toLowerCase().includes(sTerm) || 
+                              (m.year ? m.year.toString().includes(searchTerm || '') : false);
         const matchesAct = filterActivity ? (matchesActivity(m.activity, filterActivity) || (fac && matchesActivity(fac.activity, filterActivity))) : true;
         const matchesDiv = filterDivision ? (m.division === filterDivision || fac?.division === filterDivision) : true;
         const matchesReg = matchesRegionCheck(fac || { region: m.region, location: m.region }, filterRegion);
@@ -1328,20 +1381,22 @@ const ManageDataInner = () => {
     });
 
     const getFilteredOgmp = () => ogmpSurveys.filter(o => {
+        if (!o) return false;
+        const sTerm = (searchTerm || '').toLowerCase();
         const fid = o.facility_id || o.facilityId;
-        const fac = facilities.find(f => f.id === fid);
-        const sType = o.survey_type || o.surveyType || '';
-        const fName = o.facility_name || o.facilityName || fac?.name || '';
-        const rStatus = o.reconciliation_status || o.reconciliationStatus || '';
-        const yr = (o.year || (o.survey_date || o.surveyDate ? new Date(o.survey_date || o.surveyDate).getFullYear() : '')).toString();
+        const fac = facilities.find(f => f && f.id === fid);
+        const sType = String(o.survey_type || o.surveyType || '');
+        const fName = String(o.facility_name || o.facilityName || fac?.name || '');
+        const rStatus = String(o.reconciliation_status || o.reconciliationStatus || '');
+        const yr = (o.year || (o.survey_date || o.surveyDate ? new Date(o.survey_date || o.surveyDate).getFullYear() : '') || '').toString();
 
         // Only show O&G facilities in the OGMP tab
         const isOilAndGas = !fac || !NON_OG_ACTIVITIES.includes(fac.activity);
 
-        const matchesSearch = sType.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            fName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            rStatus.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            yr.includes(searchTerm);
+        const matchesSearch = sType.toLowerCase().includes(sTerm) ||
+            fName.toLowerCase().includes(sTerm) ||
+            rStatus.toLowerCase().includes(sTerm) ||
+            yr.includes(searchTerm || '');
         const matchesAct = filterActivity ? (fac && matchesActivity(fac.activity, filterActivity)) : true;
         const matchesDiv = filterDivision ? (fac && fac.division === filterDivision) : true;
         const matchesReg = matchesRegionCheck(fac, filterRegion);
@@ -1350,24 +1405,29 @@ const ManageDataInner = () => {
     });
 
     const getFilteredGoals = () => goals.filter(g => {
-        const yr = String(g.year);
-        const target = String(g.target_amount);
-        return yr.includes(searchTerm) || target.includes(searchTerm);
+        if (!g) return false;
+        const yr = String(g.year || '');
+        const target = String(g.target_amount || '');
+        return yr.includes(searchTerm || '') || target.includes(searchTerm || '');
     });
 
     const getFilteredBaseYears = () => (baseYearsData.history || []).filter(b => {
-        const yr = String(b.year);
-        const reason = (b.reason || '').toLowerCase();
-        return yr.includes(searchTerm) || reason.includes(searchTerm.toLowerCase());
+        if (!b) return false;
+        const sTerm = (searchTerm || '').toLowerCase();
+        const yr = String(b.year || '');
+        const reason = String(b.reason || '').toLowerCase();
+        return yr.includes(searchTerm || '') || reason.includes(sTerm);
     });
 
     const getFilteredCbam = () => cbamExports.filter(item => {
-        const fac = facilities.find(f => f.id === item.facility_id);
+        if (!item) return false;
+        const sTerm = (searchTerm || '').toLowerCase();
+        const fac = facilities.find(f => f && f.id === item.facility_id);
         if (filterActivity && (!fac || !matchesActivity(fac.activity, filterActivity))) return false;
         if (filterDivision && (!fac || fac.division !== filterDivision)) return false;
         if (filterRegion && filterRegion !== 'all' && !matchesRegionCheck(fac, filterRegion)) return false;
         if (filterYear && filterYear !== 'all' && item.year?.toString() !== filterYear.toString()) return false;
-        if (searchTerm && !item.product_name?.toLowerCase().includes(searchTerm.toLowerCase())) return false;
+        if (searchTerm && !String(item.product_name || '').toLowerCase().includes(sTerm)) return false;
         return true;
     });
 
@@ -1384,7 +1444,6 @@ const ManageDataInner = () => {
 
     return (
         <div className="manage-data-page" >
-            {loading && <LoadingSpinner message="Loading Data..." fullScreen />}
             <div className="manage-container">
                 <div className="manage-layout">
                     {/* Sidebar Navigation */}
@@ -1544,7 +1603,7 @@ const ManageDataInner = () => {
                                             }}>
                                                 <AlertCircle size={16} style={{ flexShrink: 0, marginTop: '2px' }} />
                                                 <span>
-                                                    Rejecting will permanently delete the staged record from the pending queue. The reason will be recorded for audit and compliance.
+                                                    The record will be marked Rejected and excluded from totals; it is kept for the audit trail. The submitter is notified with your reason.
                                                 </span>
                                             </div>
 
@@ -1952,6 +2011,11 @@ const ManageDataInner = () => {
                                                 }}>
                                                     Showing {filteredPendingRecords.length} of {pendingMetrics.totalCount}
                                                 </span>
+                                                {pendingMetrics.loadedCount < pendingMetrics.totalCount && (
+                                                    <span style={{ fontSize: '0.78rem', color: '#b45309', marginLeft: '8px' }}>
+                                                        The first {pendingMetrics.loadedCount} are listed (200 per scope); decide on them to load the next ones, or use the Review Wizard to approve all
+                                                    </span>
+                                                )}
                                             </div>
 
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -2393,6 +2457,7 @@ const ManageDataInner = () => {
                                                     <td style={{ color: f.n2o_uncertainty ? '#8b5cf6' : 'inherit' }}>{f.n2o_uncertainty ? `±${f.n2o_uncertainty}%` : '—'}</td>
                                                     <td>
                                                         <button onClick={() => handleEditFactor(f)}>Edit</button>
+                                                        <button onClick={() => handleArchiveFactor(f.id)} title="Hide from new entries; records that use it keep it">Archive</button>
                                                         <button onClick={() => handleDeleteFactor(f.id)}>Delete</button>
                                                     </td>
                                                 </tr>
@@ -2477,6 +2542,22 @@ const ManageDataInner = () => {
                                                     ))}
                                                 </select>
                                             </div>
+                                            {facilityForm.boundary_type === 'Equity Share' && (
+                                                <div className="input-group">
+                                                    <label>Equity Share Percentage (%)</label>
+                                                    <input
+                                                        type="number"
+                                                        step="0.01"
+                                                        min="0"
+                                                        max="100"
+                                                        name="equity_share_pct"
+                                                        value={facilityForm.equity_share_pct !== undefined ? facilityForm.equity_share_pct : ''}
+                                                        onChange={(e) => setFacilityForm({ ...facilityForm, equity_share_pct: e.target.value })}
+                                                        className="mole-input"
+                                                        placeholder="e.g. 51.00"
+                                                    />
+                                                </div>
+                                            )}
                                             <div className="input-group">
                                                 <label>Supply Chain Segment</label>
                                                 <select name="segment" value={facilityForm.segment} onChange={handleFacilityChange} className="component-select">
@@ -2670,6 +2751,38 @@ const ManageDataInner = () => {
                                             </select>
                                         </div>
                                     </div>
+                                    <div className="input-group">
+                                        <label>Gross Gas (MMSm³)</label>
+                                        <input type="number" step="any" value={prodForm.gross_gas_mmsm3} onChange={(e) => setProdForm({ ...prodForm, gross_gas_mmsm3: e.target.value })} className="mole-input" placeholder="0.0" />
+                                    </div>
+                                    <div className="input-group">
+                                        <label>Gas w/o Injection (MMSm³)</label>
+                                        <input type="number" step="any" value={prodForm.gas_without_injected_mmsm3} onChange={(e) => setProdForm({ ...prodForm, gas_without_injected_mmsm3: e.target.value })} className="mole-input" placeholder="0.0" />
+                                    </div>
+                                    <div className="input-group">
+                                        <label>Injected Gas (MMSm³)</label>
+                                        <input type="number" step="any" value={prodForm.injected_gas_mmsm3} onChange={(e) => setProdForm({ ...prodForm, injected_gas_mmsm3: e.target.value })} className="mole-input" placeholder="0.0" />
+                                    </div>
+                                    <div className="input-group">
+                                        <label>Crude Oil (MMBOE)</label>
+                                        <input type="number" step="any" value={prodForm.crude_oil_mmboe} onChange={(e) => setProdForm({ ...prodForm, crude_oil_mmboe: e.target.value })} className="mole-input" placeholder="0.0" />
+                                    </div>
+                                    <div className="input-group">
+                                        <label>Condensate (MMBOE)</label>
+                                        <input type="number" step="any" value={prodForm.condensate_mmboe} onChange={(e) => setProdForm({ ...prodForm, condensate_mmboe: e.target.value })} className="mole-input" placeholder="0.0" />
+                                    </div>
+                                    <div className="input-group">
+                                        <label>LPG (MMBOE)</label>
+                                        <input type="number" step="any" value={prodForm.lpg_mmboe} onChange={(e) => setProdForm({ ...prodForm, lpg_mmboe: e.target.value })} className="mole-input" placeholder="0.0" />
+                                    </div>
+                                    <div className="input-group">
+                                        <label>Total Production (MMBOE)</label>
+                                        <input type="number" step="any" value={prodForm.total_production_mmboe} onChange={(e) => setProdForm({ ...prodForm, total_production_mmboe: e.target.value })} className="mole-input" placeholder="0.0" />
+                                    </div>
+                                    <div className="input-group">
+                                        <label>Total Saleable (MMBOE)</label>
+                                        <input type="number" step="any" value={prodForm.saleable_production_mmboe} onChange={(e) => setProdForm({ ...prodForm, saleable_production_mmboe: e.target.value })} className="mole-input" placeholder="0.0" />
+                                    </div>
                                 </div>
                                 <div style={{ display: 'flex', gap: '12px', marginTop: '20px' }}>
                                     <button className="action-btn" onClick={handleSaveProduction}>Save Record</button>
@@ -2690,6 +2803,9 @@ const ManageDataInner = () => {
                                                 <th>Month</th>
                                                 <th style={{ textAlign: 'right' }}>Oil (bbl)</th>
                                                 <th style={{ textAlign: 'right' }}>Gas (mcf)</th>
+                                                <th style={{ textAlign: 'right' }}>Gross Gas (MMSm³)</th>
+                                                <th style={{ textAlign: 'right' }}>Total (MMBOE)</th>
+                                                <th style={{ textAlign: 'right' }}>Saleable (MMBOE)</th>
                                                 <th style={{ textAlign: 'center' }}>Actions</th>
                                             </tr>
                                         </thead>
@@ -2709,6 +2825,9 @@ const ManageDataInner = () => {
                                                     <td>{new Date(2000, d.month - 1).toLocaleString('default', { month: 'short' })}</td>
                                                     <td style={{ textAlign: 'right' }}>{(d.oil || 0).toLocaleString()} {d.oilUnit || 'bbl'}</td>
                                                     <td style={{ textAlign: 'right' }}>{(d.gas || 0).toLocaleString()} {d.gasUnit || 'mscf'}</td>
+                                                    <td style={{ textAlign: 'right' }}>{d.gross_gas_mmsm3 ? Number(d.gross_gas_mmsm3).toLocaleString(undefined, { minimumFractionDigits: 2 }) : '-'}</td>
+                                                    <td style={{ textAlign: 'right' }}>{d.total_production_mmboe ? Number(d.total_production_mmboe).toLocaleString(undefined, { minimumFractionDigits: 2 }) : '-'}</td>
+                                                    <td style={{ textAlign: 'right' }}>{d.saleable_production_mmboe ? Number(d.saleable_production_mmboe).toLocaleString(undefined, { minimumFractionDigits: 2 }) : '-'}</td>
                                                     <td style={{ textAlign: 'center' }}>
                                                         <button
                                                             className="btn-delete"
@@ -2722,7 +2841,7 @@ const ManageDataInner = () => {
                                             ))}
                                             {filteredProduction.length === 0 && (
                                                 <tr>
-                                                    <td colSpan="8" style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>
+                                                    <td colSpan="11" style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>
                                                         No production records found.
                                                     </td>
                                                 </tr>

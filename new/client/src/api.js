@@ -57,7 +57,7 @@ api.interceptors.response.use(
         originalConfig.headers = originalConfig.headers || {};
         originalConfig.headers["X-CSRFToken"] = freshToken || csrfToken;
         return api(originalConfig);
-      } catch (_) {
+      } catch {
         /* retry also failed — fall through to rejection */
       }
     }

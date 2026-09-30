@@ -1,0 +1,24 @@
+import { launch, session, sleep, openS1, fillS1, submitS1, pick, shot } from "../work/L/lib.mjs";
+const b = await launch(); const { page, log } = await session(b, "admin");
+const P = "Onshore Equipment Leaks / Fugitives (API Chapter 7)";
+const preview = async () => { const t = await page.locator(".calc-panel").innerText(); const i = t.indexOf("ESTIMATED EMISSIONS PREVIEW"); return t.slice(i, i + 260).replace(/\n+/g, " | "); };
+await openS1(page);
+await fillS1(page, { facility: "AUDIT-L Plant", year: 2025, month: 5, process: P });
+console.log("defaults preview:", await preview());
+let n0 = log.api.length;
+await page.getByRole("button", { name: /Calculate & Submit/ }).click(); await sleep(800);
+console.log("submit w/ defaults -> msgs:", (await page.locator("body").innerText()).match(/[^\n]*Please[^\n]*/g), "posts:", log.api.slice(n0).filter(a => a.method === "POST").length);
+// now explicitly set facility type and count
+const all = await page.locator(".custom-dropdown .dropdown-selected").allInnerTexts(); console.log("dds:", all.map(s => s.replace(/\n/g, " ").slice(0, 50)));
+const fi = all.findIndex(t => t.includes("Gas Production Facility"));
+await pick(page, null, "Gas Production Facility", { idx: fi });
+await page.locator("div").filter({ has: page.locator("label", { hasText: "Facility Count" }) }).last().locator("input").fill("2");
+await sleep(800);
+const pvText = await preview(); console.log("explicit preview:", pvText);
+const r = await submitS1(page, log, false);
+console.log("POST", r?.status, "req", r?.req?.slice(0, 700));
+console.log("resp emissions", JSON.stringify(r?.body?.emissions), r?.body?.calculation_method);
+const pv = parseFloat(((pvText).match(/([0-9.]+) t CO/) || [])[1]);
+const saved = r?.body?.emissions?.totalCo2e;
+console.log(`preview ${pv} tCO2e vs saved ${saved} tCO2e`);
+await b.close(); process.exit(Math.abs(pv - saved) / Math.max(pv, 1e-9) > 0.01 ? 1 : 0);

@@ -1,0 +1,17 @@
+import { launch, session, shot, UI, sleep, pick } from "./lib.mjs";
+const b = await launch(); const { page, log } = await session(b, "admin");
+await page.goto(UI + "/uncertainty"); await sleep(4000);
+const dd = async () => (await page.locator(".custom-dropdown .dropdown-selected").allInnerTexts()).map(s => s.trim());
+console.log("dds:", await dd());
+const sel = await page.locator("select").evaluateAll(s => s.map(x => [x.value, [...x.options].map(o => o.value).slice(0, 12)]));
+console.log("selects:", JSON.stringify(sel));
+const setYear = async y => { const s = page.locator("select").filter({ has: page.locator(`option[value="${y}"]`) }).first(); if (await s.count()) await s.selectOption(String(y)); else { const all = await dd(); await pick(page, null, String(y), { idx: all.findIndex(t => /^\d{4}$/.test(t)), exact: true }); } await sleep(3000); };
+await setYear(2025);
+const setFac = async f => { const s = page.locator("select").filter({ has: page.locator("option", { hasText: f }) }).first(); if (await s.count()) { const v = await s.locator("option", { hasText: f }).first().getAttribute("value"); await s.selectOption(v); } else { const all = await dd(); await pick(page, null, f, { idx: all.findIndex(t => /All Facilities/.test(t)) }); } await sleep(3000); };
+await setFac("AUDIT-L Plant");
+const t = await page.locator("main, body").first().innerText(); const i = t.indexOf("Inventory Uncertainty");
+console.log("UI:", t.slice(i, i + 700).replace(/\n+/g, " | "));
+const u = [...log.api].reverse().find(a => a.url.includes("uncertainty"));
+console.log("API:", u?.url, JSON.stringify(u?.body).slice(0, 1200));
+await shot(page, "w19_unc", true);
+await b.close();

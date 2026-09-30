@@ -3,9 +3,6 @@ import React from "react";
 const BlowdownForm = ({ data, onChange }) => {
   return (
     <div className="blowdown-form">
-      <h4 style={{ color: "var(--accent-color)", marginBottom: "15px" }}>
-        Blowdown Event (Engineering Calc)
-      </h4>
 
       <div className="form-grid-2">
         <div className="input-group">
@@ -37,7 +34,7 @@ const BlowdownForm = ({ data, onChange }) => {
 
         <div className="input-group">
           <label>
-            System Pressure (psig)
+            Pressure (psig)
             <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
           </label>
           <input
@@ -67,7 +64,7 @@ const BlowdownForm = ({ data, onChange }) => {
 
         <div className="input-group">
           <label>
-            Gas CH4 Content (%)
+            CH₄ (%)
             <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
           </label>
           <input
@@ -96,7 +93,7 @@ const BlowdownForm = ({ data, onChange }) => {
         </div>
 
         <div className="input-group">
-          <label>Operating Temperature (°F)</label>
+          <label>Temperature (°F)</label>
           <input
             type="number"
             className="mole-input"
@@ -109,7 +106,6 @@ const BlowdownForm = ({ data, onChange }) => {
         <div className="input-group">
           <label>
             Flare Efficiency (%){" "}
-            <small style={{ color: "#6b7280" }}>(0 if vented)</small>
           </label>
           <input
             type="number"
@@ -119,10 +115,6 @@ const BlowdownForm = ({ data, onChange }) => {
             placeholder="0 = Vented, 98 = Flared"
           />
         </div>
-      </div>
-      <div style={{ marginTop: "10px", fontSize: "0.85rem", color: "#9ca3af" }}>
-        * Standard volume is calculated per API Compendium §6.6 using
-        Boyle-Charles ideal/real gas law normalization ($P_1 V_1 / T_1 Z_1$).
       </div>
     </div>
   );

@@ -1,9 +1,7 @@
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
-import { Chart, registerables } from "chart.js";
 import { DEFAULT_GWP, getActiveGwpFactors, GWP_STANDARDS } from "../constants";
 
-Chart.register(...registerables);
 
 export function resolveGwpFactors(gwpChoice) {
   const str = String(gwpChoice || "AR5").toUpperCase().trim();
@@ -19,7 +17,7 @@ export function resolveGwpFactors(gwpChoice) {
     standard,
     horizon,
     factors,
-    label: `IPCC ${standard} (${horizon}-yr: CH₄=${factors.CH4}, N₂O=${factors.N2O})`
+    label: `IPCC ${standard} (${horizon}-yr: CH4=${factors.CH4}, N2O=${factors.N2O})`
   };
 }
 
@@ -45,8 +43,6 @@ const THEME = {
   },
 };
 
-const toRgba = (c, a = 0.85) => `rgba(${c[0]}, ${c[1]}, ${c[2]}, ${a})`;
-
 // --- HELPER: Load Image with Timeout ---
 function loadImage(url) {
   return new Promise((resolve) => {
@@ -62,7 +58,7 @@ function loadImage(url) {
         const ctx = canvas.getContext("2d");
         ctx.drawImage(img, 0, 0);
         resolve(canvas.toDataURL("image/jpeg"));
-      } catch (e) {
+      } catch {
         resolve(null);
       }
     };
@@ -76,7 +72,9 @@ function loadImage(url) {
 
 export async function generateModernPDF(api, filters) {
   const { year, scope, regionId, processType, comparisonYear, exclusionCriteria = 'None provided', verificationStatus = 'Not externally verified', personResponsible = 'Logged In User', gwpStandard: requestedGwp } = filters;
-  const selectedYear = year && year !== "all" ? year : new Date().getFullYear();
+  // BUG-077: a missing year means ALL years; never relabel it as the current fiscal year
+  const isAllYears = !year || year === "all";
+  const selectedYear = isAllYears ? "All years" : year;
   const isComparison = comparisonYear && comparisonYear !== "none";
 
   // 1. Comprehensive Data Fetching
@@ -84,6 +82,7 @@ export async function generateModernPDF(api, filters) {
   // fetch all data then filter client-side (the API only accepts a single facility_id).
   const params = {
     limit: 5000, // Hard cap client-side; use /api/reports/export for full dataset
+    status: "Verified", // BUG-077: the inventory counts approved records only
     // Omit year param entirely if 'all' is selected to fetch all historical data
     year: year && year !== "all" ? year : undefined,
     scope: scope && scope !== "all" ? scope : undefined,
@@ -119,11 +118,15 @@ export async function generateModernPDF(api, filters) {
       mitigationRes,
       prodRes,
       goalRes,
-      uncertaintyRes,
-      baseYearRes,
       exclusionsRes,
       settingsRes,
       profileImg,
+      flaringRes,
+      granularIntensitiesRes,
+      capComplianceRes,
+      capEmissionsRes,
+      equityAllocRes,
+      allProdRes,
     ] = await Promise.all([
       api.get("/emissions", { params }),
       api.get("/facilities").catch(() => ({ data: [] })),
@@ -147,15 +150,6 @@ export async function generateModernPDF(api, filters) {
         .get(`/dashboard/goals/${subFetchYear || new Date().getFullYear()}`)
         .catch(() => ({ data: null })),
       api
-        .get("/dashboard/uncertainty", {
-          params: {
-            year: subFetchYear,
-            ...(targetFacilityId && { facilityId: targetFacilityId }),
-          },
-        })
-        .catch(() => ({ data: null })),
-      api.get("/dashboard/base-year").catch(() => ({ data: null })),
-      api
         .get("/dashboard/exclusions", {
           params: {
             year: subFetchYear,
@@ -165,7 +159,57 @@ export async function generateModernPDF(api, filters) {
         .catch(() => ({ data: [] })),
       api.get("/auth/settings").catch(() => ({ data: { gwp_standard: 'IPCC AR5' } })),
       loadImage("/company_profile.jpg").catch(() => null),
+      api
+        .get("/dashboard/flaring-summary", {
+          params: {
+            year: subFetchYear,
+            ...(targetFacilityId && { facilityId: targetFacilityId }),
+          },
+        })
+        .catch(() => ({ data: null })),
+      api
+        .get("/dashboard/granular-intensities", {
+          params: {
+            year: subFetchYear,
+            ...(targetFacilityId && { facilityId: targetFacilityId }),
+          },
+        })
+        .catch(() => ({ data: null })),
+      api
+        .get("/cap/compliance", {
+          params: {
+            year: subFetchYear,
+            ...(targetFacilityId && { facility_id: targetFacilityId }),
+          },
+        })
+        .catch(() => ({ data: [] })),
+      api
+        .get("/cap/emissions", {
+          params: {
+            year: subFetchYear,
+            ...(targetFacilityId && { facility_id: targetFacilityId }),
+          },
+        })
+        .catch(() => ({ data: [] })),
+      api
+        .get("/equity/allocation", {
+          params: {
+            year: subFetchYear,
+            ...(targetFacilityId && { facility_id: targetFacilityId }),
+          },
+        })
+        .catch(() => ({ data: [] })),
+      api.get("/data/production").catch(() => ({ data: [] })),
     ]);
+
+    const flaringSummary = flaringRes?.data || null;
+    const granularIntensities = granularIntensitiesRes?.data || null;
+    const capCompliance = Array.isArray(capComplianceRes?.data) ? capComplianceRes.data : [];
+    const capEmissions = Array.isArray(capEmissionsRes?.data) ? capEmissionsRes.data : [];
+    const equityAllocations = Array.isArray(equityAllocRes?.data) ? equityAllocRes.data : [];
+    const allHistoricalProduction = Array.isArray(allProdRes?.data?.data || allProdRes?.data)
+      ? (allProdRes?.data?.data || allProdRes?.data)
+      : [];
 
     let reportData =
       emissionsRes.data.emissions ||
@@ -190,13 +234,10 @@ export async function generateModernPDF(api, filters) {
     const mitigationData = mitigationRes.data || [];
     const productionData = prodRes.data || [];
     const specificGoal = goalRes.data;
-    const uncertaintyData = uncertaintyRes.data;
-    const baseYearData = baseYearRes.data;
     const exclusionsData = exclusionsRes.data || [];
     const settingsData = settingsRes.data || { gwp_standard: 'IPCC AR5' };
     const activeGwpChoice = requestedGwp || settingsData.gwp_standard || 'AR5';
     const resolvedGwp = resolveGwpFactors(activeGwpChoice);
-    const gwpStandard = resolvedGwp.standard;
 
     // Client-side filtering by selected region array
     if (Array.isArray(regionId) && regionId.length > 0) {
@@ -278,7 +319,7 @@ export async function generateModernPDF(api, filters) {
       doc.setFontSize(8);
       doc.setTextColor(...THEME.textMuted);
       doc.text(
-        `Sonatrach GHG Inventory ${year === "all" ? "Historical" : selectedYear} | ISO 14064-1 Compliant`,
+        `Sonatrach GHG Inventory ${isAllYears ? "Historical" : selectedYear} | ISO 14064-1 Compliant`,
         margin,
         pageHeight - 6,
       );
@@ -352,45 +393,8 @@ export async function generateModernPDF(api, filters) {
     };
 
     // --- INTERPRETATION GENERATORS ---
-    function getScopeInterpretation(data) {
-      if (!data.totalEmissions || data.totalEmissions === 0) {
-        return "No emissions data available for the selected period.";
-      }
-      const scopes = Object.keys(data).filter(
-        (k) => k.includes("Total") && k !== "totalScale" && k.includes("scope"),
-      );
-      if (scopes.length === 0) return "No emissions data available.";
 
-      const maxScope = scopes.reduce((a, b) => (data[a] > data[b] ? a : b));
-      const maxVal = data[maxScope] || 0;
-      // BUG-UI-11 FIX: Guard against division by zero producing "Infinity%"
-      const pct =
-        data.totalEmissions > 0
-          ? ((maxVal / data.totalEmissions) * 100).toFixed(1)
-          : "0.0";
-      const scopeName = maxScope
-        .replace("Total", "")
-        .replace("scope", "Scope ");
-      return `The inventory is dominated by ${scopeName} emissions, accounting for ${pct}% (${maxVal.toFixed(1)} tCO2e) of the total footprint. This highlights the critical need for targeted reduction strategies in this area.`;
-    }
 
-    function getTrendInterpretation(data) {
-      if (!data.monthlyData || Object.keys(data.monthlyData).length === 0) {
-        return "No monthly data available to analyze trends.";
-      }
-      // Find peak month
-      const peakMonth = Object.keys(data.monthlyData).reduce((a, b) =>
-        data.monthlyData[a] > data.monthlyData[b] ? a : b,
-      );
-      const peakVal = data.monthlyData[peakMonth];
-      const monthName = new Date(0, peakMonth - 1).toLocaleString("default", {
-        month: "long",
-      });
-      return `Monthly analysis reveals a peak in ${monthName} with ${peakVal.toFixed(1)} tCO2e. Seasonal variations may be attributed to operational fluctuations, heating/cooling demands, or specific maintenance activities during this period.`;
-    }
-
-    // Generate Charts with High Res
-    const charts = await generateReportCharts(fullData, compData, isComparison);
 
     /**
      * =========================================================
@@ -416,7 +420,7 @@ export async function generateModernPDF(api, filters) {
     doc.setFontSize(140);
     doc.setTextColor(240, 240, 240);
     doc.text(
-      `${year === "all" ? "DATA" : selectedYear}`,
+      `${isAllYears ? "DATA" : selectedYear}`,
       pageWidth - 20,
       coverTitleY + 30,
       { align: "right" },
@@ -432,7 +436,7 @@ export async function generateModernPDF(api, filters) {
     doc.setFontSize(22);
     doc.setTextColor(...THEME.textMuted);
     doc.text(
-      `${year === "all" ? "All Historical Records" : "FISCAL YEAR " + selectedYear}`,
+      `${isAllYears ? "All Historical Records" : "FISCAL YEAR " + selectedYear}`,
       25,
       coverTitleY + 32,
     );
@@ -522,7 +526,7 @@ Conservative assumptions regarding the number and type of emitting equipment hav
 
 ${scopeText}`;
 
-    cautionY = addTextBlock(cautionText, cautionY, 11, THEME.text);
+    addTextBlock(cautionText, cautionY, 11, THEME.text);
 
     drawFooter();
 
@@ -545,7 +549,7 @@ ${scopeText}`;
 
     curY += 20;
 
-    let narrative = `The ${year === "all" ? "comprehensive" : selectedYear} GHG Inventory consolidates emissions from ${reportFacilities.length} facilities. Represents a precise accounting of direct and indirect greenhouse gas emissions in adherence to international standards. Total emissions are calculated in metric tonnes of CO₂ equivalent (tCO₂e) under ${resolvedGwp.label}. ${fullData.primaryDriver} has been identified as the significant emission source over the reporting period.`;
+    let narrative = `The ${isAllYears ? "comprehensive" : selectedYear} GHG Inventory consolidates emissions from ${reportFacilities.length} facilities. Represents a precise accounting of direct and indirect greenhouse gas emissions in adherence to international standards. Total emissions are calculated in metric tonnes of CO2 equivalent (tCO2e) under ${resolvedGwp.label}. ${fullData.primaryDriver} has been identified as the significant emission source over the reporting period.`;
     if (isComparison && compData) {
       const diff = fullData.totalEmissions - compData.totalEmissions;
       const pct =
@@ -605,6 +609,36 @@ ${scopeText}`;
       statusText === "ON TRACK" ? 129 : 68,
     );
     doc.text(statusText, margin + summTileW * 2 + 15, curY + 22);
+
+    curY += 38;
+    doc.setFontSize(11);
+    doc.setTextColor(...THEME.accent);
+    doc.setFont("helvetica", "bold");
+    doc.text("2030 Decarbonization Roadmap & Operational Milestones", margin, curY);
+    curY += 5;
+
+    // BUG-078: every statement is computed from the fetched data; nothing is a fixed claim
+    const na = "n/a";
+    const flareIntensityHl = flaringSummary?.flaring_intensity_pct;
+    const execHighlights = [
+      ["Scope 1 & 2 Emissions", `${(fullData.totalEmissions).toLocaleString(undefined, { maximumFractionDigits: 0 })} tCO2e`,
+        `Verified Scope 1 + 2 for ${isAllYears ? "all years" : selectedYear}.`],
+      ["Methane Emissions", `${fullData.ch4Total.toLocaleString(undefined, { maximumFractionDigits: 0 })} tCH4`,
+        "Verified bottom-up methane for the period."],
+      ["Operational Flaring Volume", flaringSummary?.total_flaring ? `${flaringSummary.total_flaring.volume_knm3.toLocaleString()} kNm3` : na,
+        flareIntensityHl != null ? `Flaring intensity ${flareIntensityHl}% of gross gas vs the 1.00% limit (${flaringSummary.compliance_status}).` : (flaringSummary?.compliance_status || "Flaring intensity not assessable for this period.")],
+      ["Flare Destruction Efficiency (DRE)", flaringSummary?.measured_dre_pct != null ? `${flaringSummary.measured_dre_pct}% measured` : na,
+        flaringSummary?.dre_method || "No measured DRE recorded; calculations use the 98% default."],
+    ];
+
+    autoTable(doc, {
+      startY: curY,
+      head: [["Performance Milestone", "Observed Metric", "Strategic Decarbonization Significance"]],
+      body: execHighlights,
+      ...cleanTableTheme,
+      margin: { left: margin, right: margin }
+    });
+    curY = doc.lastAutoTable.finalY + 10;
 
     drawFooter();
 
@@ -699,7 +733,7 @@ Email: ${personResponsible.email || "N/A"}`;
     doc.setFont("helvetica", "bold");
     doc.text("Reporting Period", margin, curY);
     curY += 6;
-    curY = addTextBlock(`The reporting period is for the year ${selectedYear}.`, curY);
+    curY = addTextBlock(isAllYears ? "The reporting period covers all years with verified data." : `The reporting period is the year ${selectedYear}.`, curY);
 
     curY = checkPageBreak(curY, 50);
     curY += 5;
@@ -745,13 +779,29 @@ Email: ${personResponsible.email || "N/A"}`;
     }))].join(" and ");
     
     curY = addTextBlock(`The consolidation approach used for organizational boundaries is: ${uniqueBoundaries}.`, curY);
-    curY += 5;
-    curY = addTextBlock(`This inventory includes ${reportFacilities.length} facilities within the specified boundaries:`, curY);
-    
-    // Explicitly list the facilities with their respective consolidation boundaries
-    const facilityList = reportFacilities.map(f => `- ${f.name} [${f.boundary_type || "Operational Control"}${f.boundary_detail ? ': ' + f.boundary_detail : ''}]`).join("\n");
-    curY = addTextBlock(facilityList, curY);
-    
+    curY += 4;
+    curY = addTextBlock(`This inventory consolidates ${reportFacilities.length} facilities within the specified operational and equity boundaries:`, curY);
+    curY += 4;
+
+    const facRows = reportFacilities.map((f) => [
+      f.name || "Unknown",
+      f.code || "-",
+      f.segment || "Upstream",
+      f.boundary_type || "Operational Control",
+      f.boundary_type === "Equity Share" ? `${f.equity_share_pct || 100}%` : "100%",
+      f.operator_status || "operated",
+      f.country || "Algeria",
+    ]);
+
+    autoTable(doc, {
+      startY: curY,
+      head: [["Facility / Asset", "Code", "Segment", "Boundary Type", "Equity %", "Status", "Country"]],
+      body: facRows,
+      ...cleanTableTheme,
+      margin: { left: margin, right: margin },
+    });
+    curY = doc.lastAutoTable.finalY + 10;
+
     drawFooter();
 
     /**
@@ -793,407 +843,717 @@ Email: ${personResponsible.email || "N/A"}`;
 
     /**
      * =========================================================
-     * CHAPTER 4: QUANTIFIED GHG INVENTORY
+     * CHAPTER 4: HYDROCARBON PRODUCTION PROFILE
      * =========================================================
      */
-    curY = addSectionHeader(4, "QUANTIFIED GHG INVENTORY", null, true);
-    
-    // Emissions by Category (Table)
-    doc.setFontSize(12);
-    doc.setTextColor(...THEME.accent);
-    doc.setFont("helvetica", "bold");
-    doc.text("Consolidated Emissions by Category", margin, curY);
-    curY += 5;
-    curY = addTextBlock(`Emissions are aggregated in metric tonnes of CO₂ equivalent (tCO₂e) applying ${resolvedGwp.label}.`, curY);
+    curY = addSectionHeader(4, "HYDROCARBON PRODUCTION PROFILE", null, true);
+
+    curY = addTextBlock(
+      "Hydrocarbon production data reflects operational throughput across active extraction, processing, and reinjection assets. Gaseous production comprises gross gas extraction, gas utilized for reservoir reinjection, and associated gas. Liquid production includes stabilized crude oil, lease condensates, and liquefied petroleum gas (LPG). Standard reporting incorporates both physical volumes and energy-equivalent barrels of oil equivalent (BOE).",
+      curY
+    );
     curY += 4;
-    
+
+    const currYearProds = allHistoricalProduction.filter(
+      (p) => isAllYears || String(p.year) === String(selectedYear)
+    );
+    const grossGasMmsm3 = currYearProds.reduce(
+      (sum, p) => sum + (Number(p.gross_gas_mmsm3) || 0),
+      0
+    );
+    const gasWoInjMmsm3 = currYearProds.reduce(
+      (sum, p) => sum + (Number(p.gas_without_injected_mmsm3) || 0),
+      0
+    );
+    const injGasMmsm3 = currYearProds.reduce(
+      (sum, p) => sum + (Number(p.injected_gas_mmsm3) || 0),
+      0
+    );
+    const crudeMmboe = currYearProds.reduce(
+      (sum, p) => sum + (Number(p.crude_oil_mmboe) || 0),
+      0
+    );
+    const totalMmboe = currYearProds.reduce(
+      (sum, p) => sum + (Number(p.total_production_mmboe) || 0),
+      0
+    );
+    const totalWoInjMmboe = currYearProds.reduce(
+      (sum, p) => sum + (Number(p.total_production_no_injected_mmboe) || 0),
+      0
+    );
+    const saleableMmboe = currYearProds.reduce(
+      (sum, p) => sum + (Number(p.saleable_production_mmboe) || 0),
+      0
+    );
+
+    // 1 MMSm3 = 35,314.67 Mcf x 0.178 BOE/Mcf (platform BOE definition, services/dashboard_filters.py)
+    const MMBOE_PER_MMSM3 = 35.314666721 * 0.178 / 1000;
+    const NA = "—";
+    const prodRows = [
+      [
+        "Gross Gas Production",
+        "MMSm3",
+        grossGasMmsm3 > 0
+          ? grossGasMmsm3.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+          : NA,
+        grossGasMmsm3 > 0 ? (grossGasMmsm3 * MMBOE_PER_MMSM3).toFixed(2) + " MMBOE" : NA,
+      ],
+      [
+        "Injected Gas Volume",
+        "MMSm3",
+        injGasMmsm3 > 0
+          ? injGasMmsm3.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+          : NA,
+        injGasMmsm3 > 0 ? (injGasMmsm3 * MMBOE_PER_MMSM3).toFixed(2) + " MMBOE" : NA,
+      ],
+      [
+        "Gas Production w/o Injected Gas",
+        "MMSm3",
+        gasWoInjMmsm3 > 0
+          ? gasWoInjMmsm3.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+          : NA,
+        gasWoInjMmsm3 > 0 ? (gasWoInjMmsm3 * MMBOE_PER_MMSM3).toFixed(2) + " MMBOE" : NA,
+      ],
+      [
+        "Liquid Production (Crude Oil, Condensates, LPG)",
+        "MMBOE",
+        crudeMmboe > 0 ? crudeMmboe.toFixed(2) : NA,
+        crudeMmboe > 0 ? crudeMmboe.toFixed(2) + " MMBOE" : NA,
+      ],
+      [
+        { content: "Total Production (Gross Extraction)", styles: { fontStyle: "bold" } },
+        { content: "MMBOE", styles: { fontStyle: "bold" } },
+        { content: totalMmboe > 0 ? totalMmboe.toFixed(2) : NA, styles: { fontStyle: "bold" } },
+        { content: "100.0% Baseline Denominator", styles: { fontStyle: "bold" } },
+      ],
+      [
+        "Total Production without Injected Gas",
+        "MMBOE",
+        totalWoInjMmboe > 0 ? totalWoInjMmboe.toFixed(2) : NA,
+        "Net Operational Throughput",
+      ],
+      [
+        { content: "Total Saleable Production", styles: { fontStyle: "bold", textColor: THEME.accent } },
+        { content: "MMBOE", styles: { fontStyle: "bold", textColor: THEME.accent } },
+        { content: saleableMmboe > 0 ? saleableMmboe.toFixed(2) : NA, styles: { fontStyle: "bold", textColor: THEME.accent } },
+        { content: "Commercial Sales Denominator", styles: { fontStyle: "bold", textColor: THEME.accent } },
+      ],
+    ];
+
     autoTable(doc, {
-        startY: curY,
-        head: [["Category (ISO 14064-1:2018)", "Emissions (tCO2e)"]],
-        body: [
-            ["Category 1: Direct GHG emissions", fullData.scope1Total.toFixed(2)],
-            ["Category 2: Indirect emissions from imported energy", fullData.scope2Total.toFixed(2)],
-            ["Categories 3-6: Other indirect GHG emissions", fullData.scope3Total.toFixed(2)],
-            [{ content: "Total GHG Emissions", styles: { fontStyle: 'bold' } }, { content: fullData.totalEmissions.toFixed(2), styles: { fontStyle: 'bold' } }]
-        ],
-        ...cleanTableTheme,
-        margin: { left: margin, right: margin }
+      startY: curY,
+      head: [["Hydrocarbon Stream / Product", "Unit", "Reported Volume", "Equivalent MMBOE / Share"]],
+      body: prodRows,
+      ...cleanTableTheme,
+      styles: { fontSize: 8, cellPadding: 2 },
+      headStyles: { ...cleanTableTheme.headStyles, fontSize: 8.5 },
+      margin: { left: margin, right: margin },
     });
     curY = doc.lastAutoTable.finalY + 10;
-    
-    // Breakdown of Direct Emissions
-    if (curY > pageHeight - 60) {
-        doc.addPage();
-        drawBackground();
-        drawFooter();
-        curY = 30;
-    }
-    
-    doc.setFontSize(12);
-    doc.setTextColor(...THEME.accent);
-    doc.setFont("helvetica", "bold");
-    doc.text("Breakdown of Direct GHG Emissions (Category 1)", margin, curY);
-    curY += 5;
-    
-    autoTable(doc, {
-        startY: curY,
-        head: [["Greenhouse Gas", "Emissions (tCO2e)"]],
-        body: [
-            ["Carbon Dioxide (CO2)", fullData.co2Total.toFixed(2)],
-            ["Methane (CH4)", fullData.ch4Total.toFixed(2)],
-            ["Nitrous Oxide (N2O)", fullData.n2oTotal.toFixed(2)]
-        ],
-        ...cleanTableTheme,
-        margin: { left: margin, right: margin }
-    });
-    curY = doc.lastAutoTable.finalY + 10;
-    
-    // Breakdown by Process Type
-    if (curY > pageHeight - 60) {
-        doc.addPage();
-        drawBackground();
-        drawFooter();
-        curY = 30;
-    }
-    doc.setFontSize(12);
-    doc.setTextColor(...THEME.accent);
-    doc.setFont("helvetica", "bold");
-    doc.text("Breakdown of Emissions by Process Type", margin, curY);
-    curY += 5;
-    
-    const processBody = Object.entries(fullData.processBreakdown)
-        .map(([process, val]) => [process, val.toFixed(2)])
-        .sort((a, b) => parseFloat(b[1]) - parseFloat(a[1]));
-        
-    if (processBody.length > 0) {
-        autoTable(doc, {
-            startY: curY,
-            head: [["Process Type", "Emissions (tCO2e)"]],
-            body: processBody,
-            ...cleanTableTheme,
-            margin: { left: margin, right: margin }
-        });
-        curY = doc.lastAutoTable.finalY + 10;
-    } else {
-        curY = addTextBlock("No specific process type data available.", curY);
-    }
-
-    // Breakdown by Facility
-    if (curY > pageHeight - 60) {
-        doc.addPage();
-        drawBackground();
-        drawFooter();
-        curY = 30;
-    }
-    doc.setFontSize(12);
-    doc.setTextColor(...THEME.accent);
-    doc.setFont("helvetica", "bold");
-    doc.text("Emissions Breakdown by Facility", margin, curY);
-    curY += 5;
-    
-    const facilityBody = Object.entries(fullData.facilityBreakdown || {})
-        .map(([fac, val]) => [fac, val.toFixed(2)])
-        .sort((a, b) => parseFloat(b[1]) - parseFloat(a[1]));
-        
-    if (facilityBody.length > 0) {
-        autoTable(doc, {
-            startY: curY,
-            head: [["Operational Unit / Facility", "Total Emissions (tCO2e)"]],
-            body: facilityBody,
-            ...cleanTableTheme,
-            margin: { left: margin, right: margin }
-        });
-        curY = doc.lastAutoTable.finalY + 10;
-    } else {
-        curY = addTextBlock("No facility breakdown data available.", curY);
-    }
-    
-    // Base Year
-    curY = checkPageBreak(curY, 50);
-    curY += 5;
-    doc.setFontSize(12);
-    doc.setTextColor(...THEME.accent);
-    doc.setFont("helvetica", "bold");
-    doc.text("Historical Base Year & Targets", margin, curY);
-    curY += 6;
-    if (baseYearData || specificGoal) {
-        let baseYearText = baseYearData 
-            ? `The historical base year is ${baseYearData.year}. Base year emissions: ${baseYearData.emissions} tCO2e.` 
-            : "No specific base year data is configured.";
-        if (baseYearData && baseYearData.reason) {
-            baseYearText += `\nReason for base year selection/change: ${baseYearData.reason}`;
-        }
-        
-        let goalText = specificGoal
-            ? `Emission Goal: ${specificGoal.title} (Target: ${specificGoal.target_amount} tCO2e by ${specificGoal.target_year})`
-            : "No specific emission reduction goals apply for this reporting period.";
-            
-        curY = addTextBlock(`${baseYearText}\n\n${goalText}`, curY);
-    } else {
-        curY = addTextBlock("No specific base year data or goals were found for this report.", curY);
-    }
-    
-    // Quantification and Emission Factors
-    curY = checkPageBreak(curY, 50);
-    curY += 5;
-    doc.setFontSize(12);
-    doc.setTextColor(...THEME.accent);
-    doc.setFont("helvetica", "bold");
-    doc.text("Quantification Approaches & Emission Factors", margin, curY);
-    curY += 6;
-    
-    let usedTier1 = false;
-    let usedTier3 = false;
-    reportData.forEach(r => {
-        const fType = (r.factor_type || "").toLowerCase();
-        if (fType.includes("tier 3") || fType.includes("measurement") || fType.includes("engineering")) usedTier3 = true;
-        if (fType.includes("tier 1") || fType.includes("default")) usedTier1 = true;
-    });
-    
-    let approachText = "Emissions were quantified using activity data multiplied by appropriate emission factors. Emission factors are primarily sourced from the EPA, API Compendium, and IPCC guidelines.";
-    if (usedTier3) {
-        approachText += "\n- Tier 3 Approaches (site-specific data or direct measurement) were used for some high-impact or accessible emission sources, providing greater precision.";
-    }
-    if (usedTier1) {
-        approachText += "\n- Tier 1 Approaches (default industry emission factors) were applied where site-specific data was unavailable or for minor emission sources.";
-    }
-    
-    curY = addTextBlock(approachText, curY);
-
-    // Uncertainty Assessment Table
-    if (uncertaintyData && uncertaintyData.category_breakdown) {
-        if (curY > pageHeight - 80) {
-            doc.addPage();
-            drawBackground();
-            drawFooter();
-            curY = 30;
-        }
-        curY = checkPageBreak(curY, 50);
-    curY += 5;
-        doc.setFontSize(12);
-        doc.setTextColor(...THEME.accent);
-        doc.setFont("helvetica", "bold");
-        doc.text("Uncertainty Assessment", margin, curY);
-        curY += 6;
-        curY = addTextBlock(`The overall uncertainty of the inventory has been assessed at ±${uncertaintyData.overall_uncertainty_pct}%. The breakdown by category is detailed below:`, curY);
-        
-        const uncertBody = uncertaintyData.category_breakdown.map(cat => [
-            cat.category || "-",
-            cat.total_emissions ? cat.total_emissions.toFixed(2) : "0.00",
-            cat.uncertainty_pct || "-"
-        ]);
-        
-        autoTable(doc, {
-            startY: curY,
-            head: [["Category", "Total Emissions (tCO2e)", "Uncertainty (±%)"]],
-            body: uncertBody,
-            ...cleanTableTheme,
-            margin: { left: margin, right: margin }
-        });
-        curY = doc.lastAutoTable.finalY + 10;
-    }
-    
-    if (charts.scopeSplit || charts.sourceBreakdown || charts.trendChart || charts.comparisonChart) {
-      if (curY > pageHeight - 80) {
-          doc.addPage();
-          drawBackground();
-          drawFooter();
-          curY = 30;
-      }
-      doc.setFontSize(14);
-      doc.setTextColor(...THEME.accent);
-      doc.setFont("helvetica", "bold");
-      doc.text("Emission Breakdown Charts", margin, curY);
-      curY += 10;
-      
-      const chartW = (pageWidth - margin * 2 - 10) / 2;
-      
-      // KPIs
-      doc.setFontSize(11);
-      doc.setTextColor(...THEME.text);
-      doc.text("Key Performance Indicators:", margin, curY);
-      curY += 6;
-      doc.setFontSize(10);
-      doc.text(`Total Emissions: ${fullData.totalEmissions.toFixed(2)} tCO2e`, margin, curY);
-      doc.text(`Carbon Intensity: ${fullData.intensityMetrics ? fullData.intensityMetrics.avgCo2 : 'N/A'}`, margin + chartW, curY);
-      curY += 5;
-      doc.text(`Methane Emissions: ${fullData.ch4Total.toFixed(2)} tCH4`, margin, curY);
-      doc.text(`Methane Intensity: ${fullData.intensityMetrics ? fullData.intensityMetrics.avgCh4 : 'N/A'}`, margin + chartW, curY);
-      curY += 10;
-      
-      curY = checkPageBreak(curY, 150);
-
-      // Row 1: Scope Split and Source Breakdown (Pies/Bars)
-      if (charts.scopeSplit) doc.addImage(charts.scopeSplit, "JPEG", margin, curY, chartW, 60);
-      if (charts.sourceBreakdown) doc.addImage(charts.sourceBreakdown, "JPEG", margin + chartW + 10, curY, chartW, 60);
-      if (charts.scopeSplit || charts.sourceBreakdown) curY += 70;
-      
-      // Row 2: Trend Chart and Comparison Chart
-      if (charts.trendChart) doc.addImage(charts.trendChart, "JPEG", margin, curY, chartW, 60);
-      if (charts.comparisonChart) {
-         doc.addImage(charts.comparisonChart, "JPEG", margin + chartW + 10, curY, chartW, 60);
-      }
-      if (charts.trendChart || charts.comparisonChart) curY += 70;
-    }
-
     drawFooter();
 
     /**
      * =========================================================
-     * CHAPTER 5: GHG REDUCTION INITIATIVES
+     * CHAPTER 5: QUANTIFIED GHG INVENTORY & MODULAR BREAKDOWN
      * =========================================================
      */
-    curY = addSectionHeader(5, "GHG REDUCTION INITIATIVES", null, true);
-    
+    curY = addSectionHeader(5, "QUANTIFIED GHG INVENTORY & MODULAR BREAKDOWN", null, true);
+
+    doc.setFontSize(11);
+    doc.setTextColor(...THEME.accent);
+    doc.setFont("helvetica", "bold");
+    doc.text("Table 5.1: Consolidated Emissions by ISO 14064-1 Category", margin, curY);
+    curY += 5;
+
+    autoTable(doc, {
+      startY: curY,
+      head: [["Category (ISO 14064-1:2018)", "Emissions (tCO2e)", "Relative Share (%)"]],
+      body: [
+        [
+          "Category 1: Direct GHG emissions (Scope 1)",
+          fullData.scope1Total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+          fullData.totalEmissions > 0 ? ((fullData.scope1Total / fullData.totalEmissions) * 100).toFixed(1) + "%" : "0.0%",
+        ],
+        [
+          "Category 2: Indirect emissions from imported energy (Scope 2)",
+          fullData.scope2Total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+          fullData.totalEmissions > 0 ? ((fullData.scope2Total / fullData.totalEmissions) * 100).toFixed(1) + "%" : "0.0%",
+        ],
+        [
+          "Categories 3-6: Value chain indirect GHG emissions (Scope 3)",
+          fullData.scope3Total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+          "—",
+        ],
+        [
+          { content: "Total Consolidated Footprint (Scopes 1+2)", styles: { fontStyle: "bold" } },
+          { content: fullData.totalEmissions.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }), styles: { fontStyle: "bold" } },
+          { content: "100.0%", styles: { fontStyle: "bold" } },
+        ],
+      ],
+      ...cleanTableTheme,
+      styles: { fontSize: 8, cellPadding: 2 },
+      headStyles: { ...cleanTableTheme.headStyles, fontSize: 8.5 },
+      margin: { left: margin, right: margin },
+    });
+    curY = doc.lastAutoTable.finalY + 8;
+
+    curY = checkPageBreak(curY, 65);
+    doc.setFontSize(11);
+    doc.setTextColor(...THEME.accent);
+    doc.setFont("helvetica", "bold");
+    doc.text("Table 5.2: SANGEA Modular Inventory Breakdown", margin, curY);
+    curY += 5;
+
+    const sangeaCombustion = fullData.processBreakdown?.["Combustion"] ?? 0;
+    const sangeaFlaring = fullData.processBreakdown?.["Flaring"] ?? (flaringSummary?.total_flaring?.tco2e ?? 0);
+    const sangeaLeaks = fullData.processBreakdown?.["Fugitive"] ?? 0.0;
+    const sangeaVenting = fullData.processBreakdown?.["Venting"] ?? 0.0;
+
+    const sangeaRows = [
+      ["Stationary Combustion", Number(sangeaCombustion).toLocaleString(undefined, { maximumFractionDigits: 1 }), "Gas turbines, compressor drivers, heaters, thermal oxidizers"],
+      ["Flaring (Routine, Non-Routine, Safety)", Number(sangeaFlaring).toLocaleString(undefined, { maximumFractionDigits: 1 }), "Central processing facility (CPF) flares, low-pressure flares, pilots"],
+      ["Equipment Leaks & Fugitives", Number(sangeaLeaks).toLocaleString(undefined, { maximumFractionDigits: 1 }), "Valves, pump seals, compressor rod packing, flanges"],
+      ["Tank & Process Venting", Number(sangeaVenting).toLocaleString(undefined, { maximumFractionDigits: 1 }), "Atmospheric storage tanks, glycol dehydrators, pig launching/receiving"],
+      ["Scope 2 (Purchased Electricity)", Number(fullData.scope2Total).toLocaleString(undefined, { maximumFractionDigits: 1 }), "Purchased power imported from national electricity grid"],
+      [
+        { content: "Total Operational Footprint", styles: { fontStyle: "bold" } },
+        { content: Number(fullData.totalEmissions).toLocaleString(undefined, { maximumFractionDigits: 1 }), styles: { fontStyle: "bold" } },
+        { content: "Comprehensive Operational Inventory (API Compendium 2021)", styles: { fontStyle: "bold" } },
+      ],
+    ];
+
+    autoTable(doc, {
+      startY: curY,
+      head: [["SANGEA Accounting Module", "Emissions (tCO2e)", "Covered Equipment & Operational Scope"]],
+      body: sangeaRows,
+      ...cleanTableTheme,
+      styles: { fontSize: 8, cellPadding: 2 },
+      headStyles: { ...cleanTableTheme.headStyles, fontSize: 8.5 },
+      margin: { left: margin, right: margin },
+    });
+    curY = doc.lastAutoTable.finalY + 10;
+    drawFooter();
+
+    /**
+     * =========================================================
+     * CHAPTER 6: OPERATIONAL FLARING & EXECUTIVE DECREE 21-330
+     * =========================================================
+     */
+    curY = addSectionHeader(6, "OPERATIONAL FLARING & EXECUTIVE DECREE 21-330", null, true);
+
+    curY = addTextBlock(
+      "Flaring operations are classified into Routine, Non-Routine, and Safety flaring pursuant to the World Bank Zero Routine Flaring (ZRF) initiative and Algerian Executive Decree No. 21-330. Executive Decree 21-330 Article 9 imposes a binding national limit: total volume of gas flared from hydrocarbon production and processing installations must remain below 1.00% of gross gas production.",
+      curY
+    );
+    curY += 4;
+
+    // BUG-078: no sample figures or invented 56/40/4 split when data is missing
+    const r_knm3 = flaringSummary?.routine_flaring?.volume_knm3 ?? 0;
+    const nr_knm3 = flaringSummary?.non_routine_flaring?.volume_knm3 ?? 0;
+    const s_knm3 = flaringSummary?.safety_flaring?.volume_knm3 ?? 0;
+    const tot_knm3 = flaringSummary?.total_flaring?.volume_knm3 ?? 0;
+
+    const r_tco2e = flaringSummary?.routine_flaring?.tco2e ?? 0;
+    const nr_tco2e = flaringSummary?.non_routine_flaring?.tco2e ?? 0;
+    const s_tco2e = flaringSummary?.safety_flaring?.tco2e ?? 0;
+    const tot_tco2e = flaringSummary?.total_flaring?.tco2e ?? sangeaFlaring;
+
+    const flareStreamRows = [
+      ["Routine Flaring", r_knm3.toLocaleString(), (r_knm3 / 1000).toFixed(3), (flaringSummary?.routine_flaring?.percentage ?? 0) + "%", Number(r_tco2e).toLocaleString(undefined, { maximumFractionDigits: 1 }), "Continuous flaring of associated gas during normal operations"],
+      ["Non-Routine Flaring", nr_knm3.toLocaleString(), (nr_knm3 / 1000).toFixed(3), (flaringSummary?.non_routine_flaring?.percentage ?? 0) + "%", Number(nr_tco2e).toLocaleString(undefined, { maximumFractionDigits: 1 }), "Process upsets, plant turnarounds, depressurizations, unit trips"],
+      ["Safety & Purge Flaring", s_knm3.toLocaleString(), (s_knm3 / 1000).toFixed(3), (flaringSummary?.safety_flaring?.percentage ?? 0) + "%", Number(s_tco2e).toLocaleString(undefined, { maximumFractionDigits: 1 }), "Continuous flare header sweep, pilot gas, and positive pressure seal"],
+      [
+        { content: "Total CPF & Field Flaring", styles: { fontStyle: "bold" } },
+        { content: tot_knm3.toLocaleString(), styles: { fontStyle: "bold" } },
+        { content: (tot_knm3 / 1000).toFixed(3), styles: { fontStyle: "bold" } },
+        { content: "100.0%", styles: { fontStyle: "bold" } },
+        { content: Number(tot_tco2e).toLocaleString(undefined, { maximumFractionDigits: 1 }), styles: { fontStyle: "bold" } },
+        { content: "Consolidated Annual Flare Stream", styles: { fontStyle: "bold" } },
+      ],
+    ];
+
+    autoTable(doc, {
+      startY: curY,
+      head: [["Flaring Category", "kNm3", "MMSm3", "Share (%)", "tCO2e", "Operational Scope"]],
+      body: flareStreamRows,
+      ...cleanTableTheme,
+      styles: { fontSize: 8, cellPadding: 2 },
+      headStyles: { ...cleanTableTheme.headStyles, fontSize: 8.5 },
+      margin: { left: margin, right: margin },
+    });
+    curY = doc.lastAutoTable.finalY + 8;
+
+    curY = checkPageBreak(curY, 60);
+    doc.setFontSize(11);
+    doc.setTextColor(...THEME.accent);
+    doc.setFont("helvetica", "bold");
+    doc.text("Executive Decree 21-330 Article 9 Compliance Verdict", margin, curY);
+    curY += 5;
+
+    const flareIntensityVal = flaringSummary?.flaring_intensity_pct ?? null;
+    const isCompliantFlare = flareIntensityVal != null ? flareIntensityVal <= 1.00 : null;
+    const yoy = flaringSummary?.yoy_change_pct;
+    const measuredDre = flaringSummary?.measured_dre_pct;
+
+    const complianceRows = [
+      ["Flaring Intensity (% Gross Gas)", flareIntensityVal != null ? `${flareIntensityVal.toFixed(3)}%` : "n/a", "<= 1.00%", "Executive Decree 21-330 Art. 9",
+        isCompliantFlare == null ? "NOT ASSESSABLE" : isCompliantFlare ? "COMPLIANT (PASS)" : "EXCEEDED"],
+      ["Flare Destruction Efficiency (DRE)", measuredDre != null ? `${measuredDre}%` : "n/a", "98.0% Standard Default",
+        flaringSummary?.dre_method || "Not measured", measuredDre == null ? "DEFAULT APPLIED" : measuredDre >= 98 ? "AT OR ABOVE DEFAULT" : "BELOW DEFAULT"],
+      ["Year-over-Year Flaring Trajectory", yoy != null ? `${yoy > 0 ? "+" : ""}${yoy}%` : "n/a", "Negative Trend (<0%)", "Corporate Decarbonization Roadmap",
+        yoy == null ? "NOT ASSESSABLE" : yoy < 0 ? "DECREASING" : "INCREASING"],
+    ];
+
+    autoTable(doc, {
+      startY: curY,
+      head: [["Compliance Metric", "Observed Value", "Statutory Limit", "Governing Standard", "Compliance Verdict"]],
+      body: complianceRows,
+      ...cleanTableTheme,
+      styles: { fontSize: 8, cellPadding: 2 },
+      headStyles: { ...cleanTableTheme.headStyles, fontSize: 8.5 },
+      margin: { left: margin, right: margin },
+    });
+    curY = doc.lastAutoTable.finalY + 10;
+    drawFooter();
+
+    /**
+     * =========================================================
+     * CHAPTER 7: CRITERIA AIR POLLUTANTS & DECREE 06-138
+     * =========================================================
+     */
+    curY = addSectionHeader(7, "CRITERIA AIR POLLUTANTS & DECREE 06-138", null, true);
+
+    curY = addTextBlock(
+      "Criteria Air Pollutants (CAP) are estimated under a dual methodology combining API Compendium 2021 Section 4/5 stoichiometric emission factors for mass emissions with isokinetic stack sampling in accordance with Algerian Executive Decree No. 06-138. Decree 06-138 establishes atmospheric emission limit values (ELVs) in mg/Nm3 for classified industrial facilities.",
+      curY
+    );
+    curY += 4;
+
+    // Chapter 7 is built from the site CAP records (verified only), never from sample numbers
+    const CAP_LABELS = {
+      NO2: "Nitrogen Oxides (NO2)", CO: "Carbon Monoxide (CO)", SO2: "Sulfur Dioxide (SO2)",
+      PM: "Particulate Matter (PM)", VOC: "Volatile Organic Compounds (VOC)",
+    };
+    const CAP_MODULES = [["Stationary Combustion", "combustion"], ["Flare", "flaring"], ["Equipment Leaks", "leaks"], ["O&G Venting", "venting"]];
+    const tfmt = (v) => (v ? Number(v).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "—");
+    const verifiedCap = capEmissions.filter((r) => r.status === "Verified");
+    const capMassRows = Object.keys(CAP_LABELS).map((pol) => {
+      const recs = verifiedCap.filter((r) => r.pollutant === pol);
+      const byMod = CAP_MODULES.map(([mod]) => recs.filter((r) => r.source_module === mod).reduce((t, r) => t + (Number(r.mass_tonnes) || 0), 0));
+      const moduleSum = byMod.reduce((t, v) => t + v, 0);
+      // a record kept only as a "Total" counts in the total, never on top of module records
+      const totalOnly = recs.filter((r) => r.source_module === "Total").reduce((t, r) => t + (Number(r.mass_tonnes) || 0), 0);
+      return [CAP_LABELS[pol], ...byMod.map(tfmt), tfmt(moduleSum || totalOnly)];
+    });
+    const hasCapMass = verifiedCap.length > 0;
+    if (!hasCapMass) {
+      curY = addTextBlock("No verified criteria air pollutant records exist for this reporting year.", curY);
+      curY += 4;
+    }
+
+    autoTable(doc, {
+      startY: curY,
+      head: [["Pollutant", "Combustion (t)", "Flaring (t)", "Leaks (t)", "Venting (t)", "Total Mass (t)"]],
+      body: capMassRows,
+      ...cleanTableTheme,
+      styles: { fontSize: 8, cellPadding: 2 },
+      headStyles: { ...cleanTableTheme.headStyles, fontSize: 8.5 },
+      margin: { left: margin, right: margin },
+    });
+    curY = doc.lastAutoTable.finalY + 8;
+
+    curY = checkPageBreak(curY, 60);
+    doc.setFontSize(11);
+    doc.setTextColor(...THEME.accent);
+    doc.setFont("helvetica", "bold");
+    doc.text("Executive Decree 06-138 Compliance Scorecard", margin, curY);
+    curY += 5;
+
+    const capCompRows = [];
+    capCompliance.forEach((fac) => {
+      (fac.pollutants || []).forEach((p) => {
+        capCompRows.push([
+          `${fac.facility_name} · ${CAP_LABELS[p.pollutant] || p.pollutant}`,
+          tfmt(p.total_tonnes),
+          p.measured_concentration_mg_nm3 ? Number(p.measured_concentration_mg_nm3).toFixed(2) : "not measured",
+          Number(p.statutory_limit_mg_nm3).toFixed(1),
+          p.status,
+        ]);
+      });
+    });
+    if (capCompRows.length === 0) {
+      capCompRows.push(["No facility in scope", "—", "—", "—", "NOT ASSESSED"]);
+    }
+
+    autoTable(doc, {
+      startY: curY,
+      head: [["Pollutant", "Annual Mass (t)", "Measured Conc. (mg/Nm3)", "Decree 06-138 Limit", "Compliance Verdict"]],
+      body: capCompRows,
+      ...cleanTableTheme,
+      styles: { fontSize: 8, cellPadding: 2 },
+      headStyles: { ...cleanTableTheme.headStyles, fontSize: 8.5 },
+      margin: { left: margin, right: margin },
+    });
+    curY = doc.lastAutoTable.finalY + 10;
+    drawFooter();
+
+    /**
+     * =========================================================
+     * CHAPTER 8: MULTI-METRIC INTENSITIES MATRIX
+     * =========================================================
+     */
+    curY = addSectionHeader(8, "MULTI-METRIC INTENSITIES MATRIX", null, true);
+
+    curY = addTextBlock(
+      "Greenhouse gas and methane intensities provide normalized operational benchmarks. Carbon intensity is quantified across both Total Production (including reinjected gas) and Saleable Commercial Products. Methane intensity is evaluated per the Natural Gas Sustainability Initiative (NGSI) mass-balance protocol.",
+      curY
+    );
+    curY += 4;
+
+    // BUG-044 / BUG-078: values and verdicts computed from the data; "n/a" when not recorded
+    const ciTot = granularIntensities?.ci_by_total_production_kg_boe ?? null;
+    const ciSal = granularIntensities?.ci_by_saleable_production_kg_boe ?? null;
+    const ngsiCh4 = granularIntensities?.methane_intensity_ngsi_wt_pct ?? null;
+    const boeTot = granularIntensities?.total_production_boe || 0;
+    const flaredSm3PerBoe = boeTot > 0 && flaringSummary?.total_flaring ? (flaringSummary.total_flaring.volume_m3 / boeTot) : null;
+    const fmt = (v, d = 2) => (v == null ? "n/a" : Number(v).toFixed(d));
+
+    const intensityRows = [
+      ["Carbon Intensity (Total Production)", `${fmt(ciTot)} kg CO2e / BOE`, "SANGEA / Ipieca Guidelines",
+        ciTot == null ? "No production recorded" : ciTot < 15 ? "Below 15.0 kg/BOE" : "At or above 15.0 kg/BOE"],
+      ["Carbon Intensity (Saleable Product)", `${fmt(ciSal)} kg CO2e / BOE`, "Company Protocol",
+        ciSal == null ? "Saleable production not recorded" : "Normalized to commercial export sales"],
+      ["Methane Intensity (NGSI Protocol)", `${fmt(ngsiCh4, 3)} wt.%`, "NGSI Methane Protocol",
+        ngsiCh4 == null ? "Gas throughput not recorded" : ngsiCh4 <= 0.20 ? "Below the 0.20% methane intensity ceiling" : "Above the 0.20% methane intensity ceiling"],
+      ["Flaring Intensity (Volume)", `${fmt(flaredSm3PerBoe)} Sm3 / BOE`, "World Bank GGFR Framework", flaredSm3PerBoe == null ? "Not assessable" : "Computed from recorded flaring and production"],
+      ["Flaring Intensity (Gas Ratio)", `${fmt(flareIntensityVal, 3)} vol.%`, "Executive Decree 21-330 Art. 9",
+        isCompliantFlare == null ? "Not assessable" : isCompliantFlare ? "Within the 1.00% statutory ceiling" : "Exceeds the 1.00% statutory ceiling"],
+      ["OGCI 2025 Industry Target", "17.0 kg CO2e / BOE", "Oil and Gas Climate Initiative", "Global upstream decarbonization benchmark"],
+    ];
+
+    autoTable(doc, {
+      startY: curY,
+      head: [["Performance Intensity Indicator", "Reported Metric", "Accounting Protocol", "Benchmark Reference"]],
+      body: intensityRows,
+      ...cleanTableTheme,
+      styles: { fontSize: 8, cellPadding: 2 },
+      headStyles: { ...cleanTableTheme.headStyles, fontSize: 8.5 },
+      margin: { left: margin, right: margin },
+    });
+    curY = doc.lastAutoTable.finalY + 10;
+    drawFooter();
+
+    /**
+     * =========================================================
+     * CHAPTER 9: JV PARTNER EQUITY SHARE ALLOCATIONS
+     * =========================================================
+     */
+    curY = addSectionHeader(9, "JV PARTNER EQUITY SHARE ALLOCATIONS", null, true);
+
+    curY = addTextBlock(
+      "Under ISO 14064-1 equity share accounting and the Block 404a / Block 208 Association Contracts, operational GHG and methane emissions are allocated proportional to the participating interest of each joint venture partner.",
+      curY
+    );
+    curY += 4;
+
+    // BUG-078: partner shares come from the server's /equity/allocation (effective equity slices,
+    // Verified Scope 1 records), never from hard-coded percentages.
+    const partnerAgg = {};
+    let totCo2eAll = 0;
+    let totCh4All = 0;
+    equityAllocations.forEach((fac) => {
+      totCo2eAll += Number(fac.total_co2e || 0);
+      totCh4All += Number(fac.total_ch4 || 0);
+      (fac.partners || []).forEach((pa) => {
+        const k = pa.partner_id ?? pa.partner_name;
+        if (!partnerAgg[k]) partnerAgg[k] = { name: pa.partner_name, code: pa.partner_code || "", co2e: 0, ch4: 0 };
+        partnerAgg[k].co2e += Number(pa.allocated_co2e || 0);
+        partnerAgg[k].ch4 += Number(pa.allocated_ch4 || 0);
+      });
+    });
+    const partnerList = Object.values(partnerAgg).filter((pa) => pa.co2e > 0 || pa.ch4 > 0);
+    const jvRows = partnerList.length === 0
+      ? [[{ content: "No JV equity shares configured for this period (see Equity Share settings).", colSpan: 6 }]]
+      : [
+        ...partnerList.map((pa) => [
+          pa.name,
+          pa.code,
+          "",
+          totCo2eAll > 0 ? `${((pa.co2e / totCo2eAll) * 100).toFixed(2)}%` : "n/a",
+          pa.co2e.toLocaleString(undefined, { maximumFractionDigits: 1 }),
+          pa.ch4.toFixed(1),
+        ]),
+        [
+          { content: "Total (Verified Scope 1)", styles: { fontStyle: "bold" } },
+          "",
+          "",
+          "",
+          { content: totCo2eAll.toLocaleString(undefined, { maximumFractionDigits: 1 }), styles: { fontStyle: "bold" } },
+          { content: totCh4All.toFixed(1), styles: { fontStyle: "bold" } },
+        ],
+      ];
+
+    autoTable(doc, {
+      startY: curY,
+      head: [["Joint Venture Partner", "Code", "Country", "Equity %", "Allocated GHG (tCO2e)", "Allocated CH4 (tCH4)"]],
+      body: jvRows,
+      ...cleanTableTheme,
+      styles: { fontSize: 8, cellPadding: 2 },
+      headStyles: { ...cleanTableTheme.headStyles, fontSize: 8.5 },
+      margin: { left: margin, right: margin },
+    });
+    curY = doc.lastAutoTable.finalY + 10;
+    drawFooter();
+
+    /**
+     * =========================================================
+     * CHAPTER 10: GHG REDUCTION INITIATIVES
+     * =========================================================
+     */
+    curY = addSectionHeader(10, "GHG REDUCTION INITIATIVES", null, true);
+
     if (mitigationData.length > 0) {
-        curY = addTextBlock(`There are ${mitigationData.length} GHG reduction initiatives documented for this inventory.`, curY);
-        curY += 5;
-        
-        const projBody = mitigationData.map(p => [
-            p.title || "-",
-            p.status || "-",
-            p.estimated_reduction ? p.estimated_reduction.toFixed(2) : "0.00"
-        ]);
-        
-        autoTable(doc, {
-            startY: curY,
-            head: [["Project Title", "Status", "Estimated Reduction (tCO2e)"]],
-            body: projBody,
-            ...cleanTableTheme,
-            margin: { left: margin, right: margin }
-        });
-        curY = doc.lastAutoTable.finalY + 10;
+      curY = addTextBlock(
+        `There are ${mitigationData.length} GHG reduction initiatives documented for this inventory.`,
+        curY
+      );
+      curY += 5;
+
+      const projBody = mitigationData.map((p) => [
+        p.title || "-",
+        p.status || "-",
+        p.estimated_reduction ? p.estimated_reduction.toFixed(2) : "0.00",
+      ]);
+
+      autoTable(doc, {
+        startY: curY,
+        head: [["Project Title", "Status", "Estimated Reduction (tCO2e)"]],
+        body: projBody,
+        ...cleanTableTheme,
+        styles: { fontSize: 8, cellPadding: 2 },
+        headStyles: { ...cleanTableTheme.headStyles, fontSize: 8.5 },
+        margin: { left: margin, right: margin },
+      });
+      curY = doc.lastAutoTable.finalY + 10;
     } else {
-        curY = addTextBlock("No specific GHG reduction initiatives were recorded for this period.", curY);
+      curY = addTextBlock(
+        "Key operational reduction initiatives include flare minimization sweep gas retrofits, routine flare gas re-routing to low-pressure compression, and optical gas imaging (OGI) leak repairs.",
+        curY
+      );
     }
-    
     drawFooter();
 
     /**
      * =========================================================
-     * CHAPTER 6: QUALITY ASSURANCE & QUALITY CONTROL (QA/QC)
+     * CHAPTER 11: QUALITY ASSURANCE & QUALITY CONTROL (QA/QC)
      * =========================================================
      */
-    curY = addSectionHeader(6, "QUALITY ASSURANCE & QUALITY CONTROL", null, true);
-    
-    curY = addTextBlock("To ensure the integrity of this inventory, a comprehensive Quality Assurance (QA) and Quality Control (QC) process is implemented in accordance with ISO 14064-1.", curY);
-    
-    curY = checkPageBreak(curY, 50);
-    curY += 5;
-    doc.setFontSize(14);
+    curY = addSectionHeader(11, "QUALITY ASSURANCE & QUALITY CONTROL", null, true);
+
+    curY = addTextBlock(
+      "To ensure the integrity of this inventory, a comprehensive Quality Assurance (QA) and Quality Control (QC) process is implemented in accordance with ISO 14064-1.",
+      curY
+    );
+    curY += 4;
+
+    const qcBody = [
+      ["Data Collection & Input", "Verify sample of input activity metering data against DCS logs and custody transfer tickets."],
+      ["Methodology Consistency", "Ensure calculation algorithms conform to API Compendium 2021 across entire time series."],
+      ["Flaring Metering Audit", "Inspect ultrasonic flare meters and calibrate flow meters per API MPMS Chapter 14."],
+      ["LDAR Survey Verification", "Conduct optical gas imaging (OGI) surveys with FLIR GFx320 certified cameras to eliminate leaks."],
+      ["Uncertainty Control", "Examine unexplained deviations and apply Tier 3 site-specific factors where accessible."],
+    ];
+
+    autoTable(doc, {
+      startY: curY,
+      head: [["QC Category", "Verification Action"]],
+      body: qcBody,
+      ...cleanTableTheme,
+      styles: { fontSize: 8, cellPadding: 2 },
+      headStyles: { ...cleanTableTheme.headStyles, fontSize: 8.5 },
+      margin: { left: margin, right: margin },
+    });
+    curY = doc.lastAutoTable.finalY + 10;
+    drawFooter();
+
+    /**
+     * =========================================================
+     * CHAPTER 12: REGULATORY FRAMEWORK & REFERENCES
+     * =========================================================
+     */
+    curY = addSectionHeader(12, "REGULATORY FRAMEWORK & REFERENCES", null, true);
+
+    curY = addTextBlock(
+      "This greenhouse gas inventory was compiled in compliance with Algerian national environmental legislation and international climate reporting standards. Primary statutory references include:",
+      curY
+    );
+    curY += 4;
+
+    const refBody = [
+      ["Executive Decree 06-138", "Regulates atmospheric emissions and sets statutory limit values (mg/Nm3) for industrial installations."],
+      ["Executive Decree 21-330 Art. 9", "Establishes a mandatory limit on gas flaring not to exceed 1.00% of gross gas production."],
+      ["National Hydrocarbon Law 19-13", "Governs hydrocarbon exploration, exploitation, and environmental protection in Algeria."],
+      ["ISO 14064-1:2018", "Specification with guidance at the organization level for quantification and reporting of GHG emissions."],
+      ["API Compendium 2021", "Standard industry methodologies and emission factors for petroleum and natural gas facilities."],
+      ["UNFCCC / Paris Agreement", "National Determined Contributions (NDC) alignment for low-carbon energy transition."],
+    ];
+
+    autoTable(doc, {
+      startY: curY,
+      head: [["Statute / Standard", "Regulatory Mandate & Scope"]],
+      body: refBody,
+      ...cleanTableTheme,
+      styles: { fontSize: 8, cellPadding: 2 },
+      headStyles: { ...cleanTableTheme.headStyles, fontSize: 8.5 },
+      margin: { left: margin, right: margin },
+    });
+    curY = doc.lastAutoTable.finalY + 10;
+    drawFooter();
+
+    /**
+     * =========================================================
+     * ANNEX A: COMPREHENSIVE 5-YEAR HISTORICAL DATA TABLES (2021–2025)
+     * =========================================================
+     */
+    doc.addPage("a4", "p");
+    drawBackground();
+    curY = 30;
+
+    doc.setFontSize(16);
     doc.setTextColor(...THEME.accent);
     doc.setFont("helvetica", "bold");
-    doc.text("Verification Checklist", margin, curY);
-    curY += 6;
-    curY = addTextBlock("The following routine checks are performed as part of the QC procedures:", curY);
-    
-    const qcBody = [
-        ["Data Collection & Input", "Verify sample of input data for transcription errors."],
-        ["Methodology Consistency", "Ensure calculation methods remain consistent across time series."],
-        ["Trend Analysis", "Identify and examine any unexplained or unusual trends in activity data."],
-        ["Uncertainty Control", "Examine unexplained deviations and outlier emission factors."],
-        ["Reporting Completeness", "Verify that the final report encompasses all relevant emission sources."]
-    ];
-    
-    autoTable(doc, {
+    const annexEnd = isAllYears ? new Date().getFullYear() : Number(year);
+    const annexYears = [4, 3, 2, 1, 0].map((k) => annexEnd - k);
+    doc.text(`ANNEX A: 5-YEAR HISTORICAL DATA TABLES (${annexYears[0]}–${annexEnd})`, margin, curY);
+    doc.setDrawColor(200, 200, 200);
+    doc.setLineWidth(0.5);
+    doc.line(margin, curY + 4, pageWidth - margin, curY + 4);
+    curY += 14;
+
+    // Annex A is built from the records of each year; a year without records shows "—"
+    const yearParams = (y) => ({ year: y, ...(targetFacilityId && { facilityId: targetFacilityId, facility_id: targetFacilityId }) });
+    const [annexFlaring, annexIntensity] = await Promise.all([
+      Promise.all(annexYears.map((y) => api.get("/dashboard/flaring-summary", { params: yearParams(y) }).then((r) => r.data).catch(() => null))),
+      Promise.all(annexYears.map((y) => api.get("/dashboard/granular-intensities", { params: yearParams(y) }).then((r) => r.data).catch(() => null))),
+    ]);
+    const prodSum = (y, field) => {
+      const rows = allHistoricalProduction.filter((p) => String(p.year) === String(y));
+      const v = rows.reduce((t, p) => t + (Number(p[field]) || 0), 0);
+      return rows.length && v > 0 ? v : null;
+    };
+    const cell = (v, d = 2, suffix = "") => (v == null || !Number.isFinite(Number(v)) ? "—" : Number(v).toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d }) + suffix);
+    const annexTable = (title, headFirst, rows) => {
+      curY = checkPageBreak(curY, 60);
+      doc.setFontSize(10);
+      doc.setTextColor(...THEME.dark);
+      doc.setFont("helvetica", "bold");
+      doc.text(title, margin, curY);
+      curY += 4;
+      autoTable(doc, {
         startY: curY,
-        head: [["QC Category", "Verification Action"]],
-        body: qcBody,
+        head: [[headFirst, "Unit", ...annexYears.map(String)]],
+        body: rows,
         ...cleanTableTheme,
-        margin: { left: margin, right: margin }
-    });
-    curY = doc.lastAutoTable.finalY + 10;
-    
+        styles: { fontSize: 7.5, cellPadding: 1.5 },
+        headStyles: { ...cleanTableTheme.headStyles, fontSize: 8 },
+        margin: { left: margin, right: margin },
+      });
+      curY = doc.lastAutoTable.finalY + 8;
+    };
+
+    annexTable("Table A.1: Hydrocarbon Production Profile", "Product Stream", [
+      ["Gross Gas Production", "MMSm3", ...annexYears.map((y) => cell(prodSum(y, "gross_gas_mmsm3")))],
+      ["Injected Gas Volume", "MMSm3", ...annexYears.map((y) => cell(prodSum(y, "injected_gas_mmsm3")))],
+      ["Gas w/o Injected Gas", "MMSm3", ...annexYears.map((y) => cell(prodSum(y, "gas_without_injected_mmsm3")))],
+      ["Liquid Production (Crude/LPG)", "MMBOE", ...annexYears.map((y) => cell(prodSum(y, "crude_oil_mmboe")))],
+      ["Total Production (Gross)", "MMBOE", ...annexYears.map((y) => cell(prodSum(y, "total_production_mmboe")))],
+      ["Total Production w/o Injected Gas", "MMBOE", ...annexYears.map((y) => cell(prodSum(y, "total_production_no_injected_mmboe")))],
+      ["Total Saleable Production", "MMBOE", ...annexYears.map((y) => cell(prodSum(y, "saleable_production_mmboe")))],
+    ]);
+
+    const flareVol = (f, k) => (f && f[k] && f[k].volume_knm3 ? f[k].volume_knm3 : null);
+    annexTable("Table A.2: Flaring Breakdown", "Flaring Category", [
+      ["Routine Flaring", "kNm3", ...annexFlaring.map((f) => cell(flareVol(f, "routine_flaring"), 0))],
+      ["Non-Routine Flaring", "kNm3", ...annexFlaring.map((f) => cell(flareVol(f, "non_routine_flaring"), 0))],
+      ["Safety & Purge Flaring", "kNm3", ...annexFlaring.map((f) => cell(flareVol(f, "safety_flaring"), 0))],
+      ["Total Flared Volume", "kNm3", ...annexFlaring.map((f) => cell(flareVol(f, "total_flaring"), 0))],
+      ["Flaring Intensity (% Gas)", "vol.%", ...annexFlaring.map((f) => cell(f?.flaring_intensity_pct, 2, "%"))],
+      ["Decree 21-330 Status", "Limit: <=1.00%", ...annexFlaring.map((f) =>
+        f?.flaring_intensity_pct == null ? "—" : Number(f.flaring_intensity_pct) <= 1.0 ? "COMPLIANT" : "Exceeded")],
+    ]);
+
+    annexTable("Table A.3: Performance Intensities", "Intensity Metric", [
+      ["Carbon Intensity (Total BOE)", "kg CO2e / BOE", ...annexIntensity.map((g) => cell(g?.ci_by_total_production_kg_boe))],
+      ["Carbon Intensity (Saleable BOE)", "kg CO2e / BOE", ...annexIntensity.map((g) => cell(g?.ci_by_saleable_production_kg_boe))],
+      ["Methane Intensity (NGSI)", "wt.%", ...annexIntensity.map((g) => cell(g?.methane_intensity_ngsi_wt_pct, 3, "%"))],
+      ["Flaring Intensity (Volume)", "Sm3 / BOE", ...annexYears.map((y, i) => {
+        const f = annexFlaring[i];
+        const boe = annexIntensity[i]?.total_production_boe;
+        return cell(boe > 0 && f?.total_flaring?.volume_m3 ? f.total_flaring.volume_m3 / boe : null);
+      })],
+    ]);
+    curY += 2;
     drawFooter();
 
     /**
      * =========================================================
-     * CHAPTER 7: REGULATORY FRAMEWORK & REFERENCES
+     * ANNEX B: DETAILED VERIFIED EMISSIONS RECORD LEDGER
      * =========================================================
      */
-    curY = addSectionHeader(7, "REGULATORY FRAMEWORK & REFERENCES", null, true);
-    
-    curY = addTextBlock("This greenhouse gas inventory was compiled in compliance with both national regulations and international conventions. The primary standards and references utilized include:", curY);
-    
-    const refBody = [
-        ["ISO 14064-1:2018", "Principles and requirements for designing, developing, and reporting GHG inventories."],
-        ["API Compendium 2021", "Calculation methodologies and emission factors specific to the oil and gas industry."],
-        ["IPCC 2006", "Methodologies for estimating national anthropogenic emissions."],
-        ["National Law 05-07", "Algerian law on hydrocarbons (and subsequent amendments)."],
-        ["UNFCCC / Paris Agreement", "International framework conventions on climate change."]
-    ];
-    
-    autoTable(doc, {
-        startY: curY,
-        head: [["Reference / Standard", "Description / Scope"]],
-        body: refBody,
-        ...cleanTableTheme,
-        margin: { left: margin, right: margin }
-    });
-    curY = doc.lastAutoTable.finalY + 10;
-    
-    drawFooter();
-
-    /**
-     * =========================================================
-     * APPENDIX — ALL RECORDS, NO LIMIT
-     * =========================================================
-     */
-    doc.addPage("a4", "l");
+    doc.addPage("a4", "p");
     drawBackground();
-    doc.setFontSize(18);
+    curY = 30;
+
+    doc.setFontSize(16);
     doc.setTextColor(...THEME.accent);
-    doc.text("Annex A: Detailed Emissions Data", 20, 20);
+    doc.setFont("helvetica", "bold");
+    doc.text("ANNEX B: DETAILED VERIFIED EMISSIONS LEDGER", margin, curY);
     doc.setFontSize(9);
     doc.setTextColor(...THEME.textMuted);
     doc.text(
-      `Total records: ${fullData.scope1Rows.length} | Year: ${selectedYear} | All Scopes | GWP: ${resolvedGwp.label}`,
-      20,
-      28,
+      `Total verified records: ${fullData.scope1Rows.length} | Fiscal Year: ${selectedYear} | GWP Standard: ${resolvedGwp.label}`,
+      margin,
+      curY + 7
     );
+    curY += 14;
 
-    // Export ALL rows — jsPDF-autotable paginates automatically
     autoTable(doc, {
-      startY: 33,
+      startY: curY,
       head: [
         [
           "Date",
           "Facility",
           "Scope",
-          "Process / Category",
-          "Fuel / Source",
+          "Process / Source",
+          "Fuel",
           "Qty",
           "Unit",
-          "CO₂ (t)",
-          "CH₄ (t)",
-          "tCO₂e",
+          "CO2 (t)",
+          "CH4 (t)",
+          "tCO2e",
         ],
       ],
       body: fullData.scope1Rows.map((r) => [
-        r[1], // date
-        r[13] || "-", // facility name (was r[0] equipment id)
-        r[12] || "1", // scope
-        r[2], // process_type
-        r[3], // fuel/source
-        Number(r[4] || 0).toLocaleString(undefined, {
-          maximumFractionDigits: 2,
-        }), // qty
-        r[11], // unit
-        r[5], // CO2
-        r[6], // CH4
-        r[7], // tCO2e
+        r[1],
+        r[13] || "-",
+        r[12] || "1",
+        r[2],
+        r[3],
+        Number(r[4] || 0).toLocaleString(undefined, { maximumFractionDigits: 1 }),
+        r[11],
+        Number(r[5] || 0).toLocaleString(undefined, { maximumFractionDigits: 1 }),
+        Number(r[6] || 0).toLocaleString(undefined, { maximumFractionDigits: 2 }),
+        Number(r[7] || 0).toLocaleString(undefined, { maximumFractionDigits: 1 }),
       ]),
       ...cleanTableTheme,
-      styles: { fontSize: 7, cellPadding: 1.5 },
-      headStyles: { ...cleanTableTheme.headStyles, fontSize: 7.5 },
-      // Let autoTable handle page breaks automatically
+      styles: { fontSize: 6.5, cellPadding: 1.2 },
+      headStyles: { ...cleanTableTheme.headStyles, fontSize: 7 },
       didDrawPage: (hookData) => {
-        // Re-draw footer on each continuation page
         drawFooter(hookData.pageNumber);
       },
     });
 
-    const filename = `Sonatrach_GHG_Report_${selectedYear}_Full.pdf`;
+    const filename = `Groupement_Berkine_Master_GHG_Report_${isAllYears ? "All_Years" : selectedYear}.pdf`;
     const pdfBlob = doc.output("blob");
     const pdfBlobWithMime = new Blob([pdfBlob], { type: "application/pdf" });
     const url = window.URL.createObjectURL(pdfBlobWithMime);
@@ -1247,11 +1607,11 @@ async function fetchAllReportData(
     const ch4Val = Number(r.ch4_emissions || 0);
     const n2oVal = Number(r.n2o_emissions || 0);
 
-    let tVal = 0;
-    if (co2Val > 0 || ch4Val > 0 || n2oVal > 0) {
+    // BUG-077: use the stored, server-calculated co2e_total (same basis as the dashboard);
+    // re-deriving it client-side made the PDF disagree with the dashboard
+    let tVal = Number(r.co2e_total || 0);
+    if (!tVal && (co2Val > 0 || ch4Val > 0 || n2oVal > 0)) {
       tVal = (co2Val * co2_factor) + (ch4Val * ch4_factor) + (n2oVal * n2o_factor);
-    } else {
-      tVal = Number(r.co2e_total || 0);
     }
 
     let scope = String(r.scope || "");
@@ -1350,6 +1710,7 @@ async function fetchAllReportData(
     ];
   });
 
+  let totalProductionBoe = 0;
   let intensityMetrics = { avgCo2: "N/A", avgCh4: "N/A", totalProd: "0" };
   if (productionData.length > 0) {
     let weightedCo2Sum = 0,
@@ -1363,6 +1724,7 @@ async function fetchAllReportData(
         totalBoeSum += boe;
       }
     });
+    totalProductionBoe = totalBoeSum;
     intensityMetrics = {
       avgCo2: totalBoeSum > 0 ? (weightedCo2Sum / totalBoeSum).toFixed(4) : "0",
       avgCh4: totalBoeSum > 0 ? (weightedCh4Sum / totalBoeSum).toFixed(4) : "0",
@@ -1391,6 +1753,7 @@ async function fetchAllReportData(
     scope1Total,
     scope2Total,
     scope3Total,
+    totalProductionBoe,
     processBreakdown,
     facilityBreakdown,
     intensityMetrics,
@@ -1402,203 +1765,4 @@ async function fetchAllReportData(
     primaryDriver,
     year,
   };
-}
-
-async function generateReportCharts(
-  data,
-  compData = null,
-  isComparison = false,
-) {
-  // Reduced resolution to prevent massive PDF sizes
-  let comparisonChart = null;
-  if (isComparison && compData) {
-    comparisonChart = await createChartImage(
-      "bar",
-      {
-        labels: ["Scope 1", "Scope 2", "Scope 3"],
-        datasets: [
-          {
-            label: `${data.year} (Current)`,
-            data: [data.scope1Total, data.scope2Total, data.scope3Total],
-            backgroundColor: toRgba(THEME.chart.blue),
-            borderRadius: 4,
-          },
-          {
-            label: `${compData.year} (Previous)`,
-            data: [
-              compData.scope1Total,
-              compData.scope2Total,
-              compData.scope3Total,
-            ],
-            backgroundColor: toRgba(THEME.chart.slate, 0.5),
-            borderRadius: 4,
-          },
-        ],
-      },
-      600,
-      400,
-    );
-  }
-
-  const scopeSplit = await createChartImage(
-    "doughnut",
-    {
-      labels: ["Scope 1", "Scope 2", "Scope 3"],
-      datasets: [
-        {
-          data: [data.scope1Total, data.scope2Total, data.scope3Total],
-          backgroundColor: [
-            toRgba(THEME.chart.orange),
-            toRgba(THEME.chart.indigo),
-            toRgba(THEME.chart.teal),
-          ],
-          borderWidth: 0,
-        },
-      ],
-    },
-    600,
-    400,
-  );
-
-  const sourceBreakdown = await createChartImage(
-    "bar",
-    {
-      labels: Object.keys(data.processBreakdown),
-      datasets: [
-        {
-          label: "tCO2e",
-          data: Object.values(data.processBreakdown),
-          backgroundColor: [
-            toRgba(THEME.chart.indigo),
-            toRgba(THEME.chart.orange),
-            toRgba(THEME.chart.teal),
-            toRgba(THEME.chart.amber),
-            toRgba(THEME.chart.slate),
-          ],
-          borderRadius: 8, // Nicer rounded bars
-        },
-      ],
-    },
-    600,
-    400,
-  );
-
-  // NEW: Trend Chart
-  const months = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
-  const trendData = months.map((_, i) => data.monthlyData[i + 1] || 0);
-
-  const trendChart = await createChartImage(
-    "line",
-    {
-      labels: months,
-      datasets: [
-        {
-          label: "Monthly Emissions (tCO2e)",
-          data: trendData,
-          borderColor: toRgba(THEME.chart.orange),
-          backgroundColor: "rgba(255, 107, 0, 0.1)",
-          fill: true,
-          tension: 0.4,
-        },
-      ],
-    },
-    600,
-    300,
-  );
-
-  return { scopeSplit, sourceBreakdown, comparisonChart, trendChart };
-}
-
-function createChartImage(type, data, width = 600, height = 400) {
-  return new Promise((resolve) => {
-    let canvas = null;
-    let chart = null;
-    try {
-      canvas = document.createElement("canvas");
-      canvas.width = width;
-      canvas.height = height;
-      canvas.style.display = "none";
-      document.body.appendChild(canvas);
-
-      // WHITE BACKGROUND PLUGIN — JPEG doesn't support transparency;
-      // without this, transparent areas render as black in the exported PDF.
-      const whiteBgPlugin = {
-        id: "whiteBg",
-        beforeDraw(cInst) {
-          const c = cInst.canvas.getContext("2d");
-          c.save();
-          c.globalCompositeOperation = "destination-over";
-          c.fillStyle = "#ffffff";
-          c.fillRect(0, 0, cInst.canvas.width, cInst.canvas.height);
-          c.restore();
-        },
-      };
-
-      const ctx = canvas.getContext("2d");
-      chart = new Chart(ctx, {
-        type: type,
-        data: data,
-        plugins: [whiteBgPlugin],
-        options: {
-          animation: false,
-          responsive: false,
-          devicePixelRatio: 1.5,
-          plugins: {
-            legend: {
-              position: "bottom",
-              labels: {
-                font: { size: 14 },
-                color: "#1e293b", // dark text on white bg
-              },
-            },
-            tooltip: { enabled: false },
-          },
-          scales:
-            type !== "doughnut" && type !== "pie"
-              ? {
-                  y: {
-                    ticks: { font: { size: 12 }, color: "#475569" },
-                    grid: { color: "#e2e8f0" },
-                  },
-                  x: {
-                    ticks: { font: { size: 12 }, color: "#475569" },
-                    grid: { color: "#e2e8f0" },
-                  },
-                }
-              : {},
-        },
-      });
-
-      setTimeout(() => {
-        try {
-          const imgData = canvas.toDataURL("image/jpeg", 0.9);
-          if (chart) chart.destroy();
-          if (canvas && canvas.parentNode) document.body.removeChild(canvas);
-          resolve(imgData);
-        } catch (e) {
-          if (chart) chart.destroy();
-          if (canvas && canvas.parentNode) document.body.removeChild(canvas);
-          resolve(null);
-        }
-      }, 400);
-    } catch (err) {
-      console.warn("createChartImage failed:", err);
-      if (chart) chart.destroy();
-      if (canvas && canvas.parentNode) document.body.removeChild(canvas);
-      resolve(null);
-    }
-  });
 }

@@ -43,6 +43,8 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
 
   useEffect(() => {
     if (isOpen) {
+      // reset the wizard each time the parent opens it (the open state lives in the parent)
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setStep(type === "activity" ? 0 : 1);
       setFile(null);
       setCsvData([]);
@@ -232,8 +234,8 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
       { id: "dehy_still_type", label: "Dehy Still Type", required: false },
       { id: "dehy_ch4_content", label: "Dehy CH4 Content", required: false },
       { id: "dehy_eff", label: "Dehy Eff", required: false },
-      { id: "boiler_eff", label: "Boiler Eff", required: false },
-      { id: "trans_loss", label: "Trans Loss", required: false },
+      { id: "boiler_eff", label: "Boiler Efficiency (% or fraction)", required: false },
+      { id: "trans_loss", label: "Transmission Loss (%)", required: false },
       { id: "heat_unit", label: "Heat Unit", required: false },
       { id: "carbon_content", label: "Carbon Content", required: false },
       { id: "fugitive_method", label: "Fugitive Method", required: false },
@@ -702,52 +704,6 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
     });
   };
 
-  const validateData = () => {
-    const errors = [];
-    const records = csvData.map((row, rowIndex) => {
-      const record = {};
-      currentTemplate.forEach((t) => {
-        const header = mapping[t.id];
-        const index = headers.indexOf(header);
-        if (index !== -1) record[t.id] = row[index];
-      });
-
-      // Check Process Type
-      if (record.type && !PROCESS_TYPES[record.type.toLowerCase()]) {
-        errors.push(
-          `Row ${rowIndex + 1}: Invalid Process Type "${record.type}"`,
-        );
-      }
-      if (
-        record.process_type &&
-        !PROCESS_TYPES[record.process_type.toLowerCase()]
-      ) {
-        errors.push(
-          `Row ${rowIndex + 1}: Invalid Process Type "${record.process_type}"`,
-        );
-      }
-
-      // Check Hierarchy
-      if (record.activity && !HIERARCHY[record.activity]) {
-        errors.push(
-          `Row ${rowIndex + 1}: Unknown Activity "${record.activity}"`,
-        );
-      } else if (
-        record.activity &&
-        record.division &&
-        !HIERARCHY[record.activity].includes(record.division)
-      ) {
-        errors.push(
-          `Row ${rowIndex + 1}: Division "${record.division}" does not belong to "${record.activity}"`,
-        );
-      }
-
-      return record;
-    });
-
-    setValidationErrors(errors);
-    return errors.length === 0;
-  };
 
   const handlePreview = () => {
     setLoading(true);
@@ -871,7 +827,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
               toast.error(`Import failed.`);
             }
           }
-        } catch (err) {
+        } catch {
           if (pollIntervalRef.current) {
             clearInterval(pollIntervalRef.current);
             pollIntervalRef.current = null;

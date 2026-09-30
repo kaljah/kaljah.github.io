@@ -1,19 +1,64 @@
-import React from "react";
+import React, { useEffect } from "react";
 import CustomDropdown from "../CustomDropdown";
+import { API_FACTORS } from "../../utils/EmissionFactors";
+
+const ALL_UNITS = [
+  { value: "m3", label: "m³" },
+  { value: "scf", label: "scf" },
+  { value: "Mcf", label: "Mcf" },
+  { value: "MMscf", label: "MMscf" },
+  { value: "gal", label: "gal" },
+  { value: "bbl", label: "bbl" },
+  { value: "L", label: "L" },
+  { value: "kg", label: "kg" },
+  { value: "ton", label: "ton (short)" },
+  { value: "tonne", label: "tonne (metric)" },
+  { value: "events", label: "events" },
+];
+const UNIT_FAMILIES = {
+  gas: ["m3", "scf", "Mcf", "MMscf"],
+  liquid: ["m3", "gal", "bbl", "L"],
+  solid: ["kg", "ton", "tonne"],
+  event: ["events"],
+};
+
+// Units that can be applied to the selected catalog factor without a density (browser test F6:
+// coal was offered m³, gases were offered kg and events)
+function unitFamily(factor) {
+  if (!factor) return null;
+  const base = String(factor.baseUnit || "").toLowerCase();
+  const type = String(factor.type || "").toLowerCase();
+  const unit = String(factor.unit || "").toLowerCase();
+  if (["ton", "short_ton", "tonne", "kg", "lb"].includes(base) || type === "solids") return "solid";
+  if (["gal", "bbl", "l"].includes(base) || type === "liquids") return "liquid";
+  if (["scf", "m3", "mcf"].includes(base) || type === "gases" || /\/(m³|m3|scf|mcf)/.test(unit)) return "gas";
+  if (unit.includes("event")) return "event";
+  if (unit.includes("bbl")) return "liquid";
+  return null;
+}
 
 // Process types that require HHV input per API Compendium 2021 Section 5
 const HHV_REQUIRED_PROCESSES = [
   "combustion",
   "stationary_combustion",
   "flaring",
+  "routine_flaring",
+  "non_routine_flaring",
+  "safety_flaring",
 ];
 
 const CombustionForm = ({ data, onChange, sourceType }) => {
-  const isFlaring = data.process_type === "flaring";
+  const isFlaring = ["flaring", "routine_flaring", "non_routine_flaring", "safety_flaring"].includes(data.process_type);
   const isCombustion = ["combustion", "stationary_combustion"].includes(
     data.process_type,
   );
   const needsHHV = HHV_REQUIRED_PROCESSES.includes(data.process_type);
+  const family = sourceType === "library" ? null : unitFamily(API_FACTORS[data.fuel]);
+  const unitOptions = family ? ALL_UNITS.filter((u) => UNIT_FAMILIES[family].includes(u.value)) : ALL_UNITS;
+  // a unit left over from another factor that cannot apply to this one is cleared
+  useEffect(() => {
+    if (family && data.unit && !UNIT_FAMILIES[family].includes(data.unit)) onChange("unit", undefined);
+  }, [family, data.unit, onChange]);
 
   return (
     <div className="combustion-form">
@@ -25,8 +70,8 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
               : data.process_type === "loading"
                 ? "Volume Loaded"
                 : data.process_type === "separation"
-                  ? "Volume Treated (Wastewater)"
-                  : "Fuel / Activity Quantity"}
+                  ? "Volume treated"
+                  : "Quantity"}
           </label>
           <input
             type="number"
@@ -40,69 +85,20 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
         <div className="input-group">
           <label>Unit</label>
           <CustomDropdown
-            options={[
-              { value: "m3", label: "m³" },
-              { value: "scf", label: "scf" },
-              { value: "Mcf", label: "Mcf" },
-              { value: "MMscf", label: "MMscf" },
-              { value: "gal", label: "gal" },
-              { value: "bbl", label: "bbl" },
-              { value: "L", label: "L" },
-              { value: "kg", label: "kg" },
-              { value: "ton", label: "ton (short)" },
-              { value: "tonne", label: "tonne (metric)" },
-              { value: "events", label: "events" },
-            ]}
+            options={unitOptions}
             value={data.unit}
             onChange={(val) => onChange("unit", val)}
           />
         </div>
       </div>
 
-      {/* HHV field — only required in Specific factor mode per API Compendium 2021 Section 5 */}
+      {/* HHV — required in specific (Tier 3) mode */}
       {needsHHV && sourceType === "specific" && (
-        <div
-          style={{
-            marginTop: "14px",
-            padding: "12px 14px",
-            background: "linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%)",
-            borderRadius: "8px",
-            border: "1px solid #bfdbfe",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "6px",
-              marginBottom: "10px",
-            }}
-          >
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#3b82f6"
-              strokeWidth="2.5"
-            >
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
-            </svg>
-            <span
-              style={{
-                fontSize: "0.72rem",
-                fontWeight: 700,
-                color: "#1d4ed8",
-                letterSpacing: "0.04em",
-              }}
-            >
-              FUEL HEATING VALUE (API Compendium 2021 §5)
-            </span>
-          </div>
+        <div className="s1-block" style={{ marginTop: "14px" }}>
           <div className="form-grid-2" style={{ gap: "10px" }}>
             <div className="input-group" style={{ marginBottom: 0 }}>
               <label style={{ fontSize: "0.75rem" }}>
-                HHV — Higher Heating Value
+                HHV
                 <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
               </label>
               <input
@@ -116,18 +112,6 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
                 }
                 style={{ borderColor: !data.hhv ? "#fbbf24" : "#d1fae5" }}
               />
-              {!data.hhv && (
-                <span
-                  style={{
-                    fontSize: "0.68rem",
-                    color: "#d97706",
-                    marginTop: "3px",
-                    display: "block",
-                  }}
-                >
-                  Required — must be fuel-specific (OGMP 2.0 / ISO 14064-1)
-                </span>
-              )}
             </div>
             <div className="input-group" style={{ marginBottom: 0 }}>
               <label style={{ fontSize: "0.75rem" }}>HHV Unit</label>
@@ -154,7 +138,7 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
               style={{ marginTop: "10px", marginBottom: 0 }}
             >
               <label style={{ fontSize: "0.75rem" }}>
-                Combustion Efficiency (η<sub>c</sub>)
+                Combustion efficiency
                 <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
               </label>
               <div
@@ -194,19 +178,6 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
                   %
                 </span>
               </div>
-              {data.combustion_efficiency == null && (
-                <span
-                  style={{
-                    fontSize: "0.68rem",
-                    color: "#d97706",
-                    marginTop: "3px",
-                    display: "block",
-                  }}
-                >
-                  Required — typical values: 99.5% (boiler), 98% (heater), 95%
-                  (engine)
-                </span>
-              )}
             </div>
           )}
 
@@ -229,7 +200,7 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
               </div>
               <div className="input-group" style={{ marginBottom: 0 }}>
                 <label style={{ fontSize: "0.75rem" }}>
-                  Flared Gas CH4 Content (%)
+                  CH₄ (%)
                   <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
                 </label>
                 <input
@@ -247,7 +218,8 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
             </div>
           )}
 
-          {/* Operating conditions for Gas standard volume normalization */}
+          {/* Operating conditions: a gas volume in m3 / cf read at these conditions is
+              converted to standard conditions (scf and Sm3 are already standard) */}
           <div
             className="form-grid-2"
             style={{ gap: "10px", marginTop: "10px" }}
@@ -262,15 +234,16 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
                     ? data.operating_temperature
                     : ""
                 }
-                onChange={(e) =>
-                  onChange("operating_temperature", e.target.value)
-                }
+                onChange={(e) => {
+                  onChange("operating_temperature", e.target.value);
+                  onChange("temp_unit", "F"); // the unit shown on the label
+                }}
                 placeholder="Def: 60°F"
               />
             </div>
             <div className="input-group" style={{ marginBottom: 0 }}>
               <label style={{ fontSize: "0.75rem" }}>
-                Operating Pres. (psia)
+                Pressure (psia)
               </label>
               <input
                 type="number"
@@ -280,7 +253,10 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
                     ? data.operating_pressure
                     : ""
                 }
-                onChange={(e) => onChange("operating_pressure", e.target.value)}
+                onChange={(e) => {
+                  onChange("operating_pressure", e.target.value);
+                  onChange("press_unit", "psia"); // the unit shown on the label
+                }}
                 placeholder="Def: 14.696"
               />
             </div>

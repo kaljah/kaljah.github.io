@@ -1,0 +1,5 @@
+Independently confirmed by Agent E (Carbon-intensity auditor). This bug explains most of the dashboard's "Performance Intensity 627.53K kg/BOE" on the snapshot.
+- With year=all, `/api/dashboard/batch-all` `intensity_stats` BOE-weighted KPI = 627,530.40 kg/BOE (Σ BOE 854.55 M). Facility 1 (Tosyali) alone reports co2_intensity 97,655,260 kg/BOE, because its Verified total of 5.33e11 t includes test row 645 (5.31e11 t). Its 5.46 M BOE carries 5.33e14 kg / 854.55e6 BOE ≈ 623,500 kg/BOE of the corporate KPI. The other six test rows sit at facilities with no production and are excluded from the ratio.
+- year=2024: KPI = 2,989,929 kg/BOE (facility 1: 434.8 M kg/BOE). Without the test rows, 2022/2023/2025 give 14.01 / 13.31 / 10.86 kg/BOE, which is plausible for upstream O&G.
+- The rest of the distortion in the default year=all view comes from period mixing (filed as BUG-017).
+Additional affected components: DashboardEnhanced "Performance Intensity" KPI and YoY badge, CarbonIntensity.jsx, the MethaneIntensity CH4 intensity for facility 1, and the report generator intensity pages.

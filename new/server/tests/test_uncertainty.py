@@ -187,3 +187,22 @@ def test_uncertainty_category_95ci(client, admin_user):
             assert abs(u_95 - 2.0 * u_1s) < 1e-10, (
                 f"Category '{cat['category']}': 95% CI ({u_95}) should be 2 × 1σ ({u_1s})"
             )
+
+
+def test_monte_carlo_simulation_convergence():
+    """Verify Monte Carlo simulation (IPCC Approach 2) with lognormal parameters."""
+    from calculations.uncertainty import monte_carlo_simulation
+    sources = [
+        {"value": 1000.0, "relative_uncertainty": 0.05},  # 5% 1-sigma
+        {"value": 500.0, "relative_uncertainty": 0.10},   # 10% 1-sigma
+    ]
+    res = monte_carlo_simulation(sources, iterations=10000, seed=42)
+    assert res is not None
+    # Total mean should be close to 1500 (within 1%)
+    assert abs(res["mean"] - 1500.0) / 1500.0 < 0.01
+    # Median should be very close to mean
+    assert abs(res["median"] - 1500.0) / 1500.0 < 0.02
+    # 95% CI relative uncertainty should be ~10-15%
+    assert 8.0 < res["relative_uncertainty_95pct"] < 16.0
+    assert res["ci_lower"] < res["mean"] < res["ci_upper"]
+

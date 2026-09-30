@@ -110,7 +110,8 @@ function categoryFromReason(reason = "") {
 }
 
 /* ── Main component ──────────────────────────────────────── */
-const UploadProgress = ({ jobId, onComplete, onCancel }) => {
+// reviewable: the import creates emission records that wait for approval (Scope 1 / 2 / 3)
+const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const isReviewer = ["admin", "superuser"].includes(user?.role);
@@ -142,7 +143,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel }) => {
         setErrors(data.errors || []);
         setSkippedCount(data.skipped_count || 0);
         setSkippedPreview(data.skipped_preview || []);
-        setHasErrorCsv(!!data.error_csv_path);
+        setHasErrorCsv(!!(data.has_error_csv ?? data.error_csv_path));
         setAnomalyCount(data.anomaly_count || 0);
         setAnomalies(data.anomalies || []);
         if (data.status === "completed" || data.status === "error") {
@@ -442,16 +443,18 @@ const UploadProgress = ({ jobId, onComplete, onCancel }) => {
                 >
                   Close
                 </button>
-                <button
-                  type="button"
-                  className="up-btn-primary"
-                  onClick={() => {
-                    if (onComplete) onComplete();
-                    navigate("/manage-data", { state: { tab: "pending" } });
-                  }}
-                >
-                  Review Pending Records →
-                </button>
+                {reviewable && (
+                  <button
+                    type="button"
+                    className="up-btn-primary"
+                    onClick={() => {
+                      if (onComplete) onComplete();
+                      navigate("/manage-data", { state: { tab: "pending" } });
+                    }}
+                  >
+                    Review Pending Records →
+                  </button>
+                )}
               </>
             ) : (
               <button

@@ -1,0 +1,9 @@
+Date,Site,Process,Fuel,Qty,UOM,Year,Month
+2025-10-01,AUDIT-L Plant,combustion,Diesel (No. 2 Fuel Oil),100,gal,2025,10
+2025-10-01,NoSuchPlant,combustion,Diesel (No. 2 Fuel Oil),100,gal,2025,10
+2025-11-01,AUDIT-L Plant,combustion,Diesel (No. 2 Fuel Oil),-50,gal,2025,11
+2025-11-01,AUDIT-L Plant,combustion,Diesel (No. 2 Fuel Oil),abc,gal,2025,11
+2025-12-01,AUDIT-L Plant,combustion,Diesel (No. 2 Fuel Oil),200,,2025,12
+1800-01-01,AUDIT-L Plant,combustion,Diesel (No. 2 Fuel Oil),10,gal,1800,1
+2025-12-01,AUDIT-L Plant,combustion,Diesel (No. 2 Fuel Oil),"1,000",gal,2025,12
+2025-09-01,AUDIT-L Plant,combustion,Unobtainium Gas,10,scf,2025,9

@@ -26,20 +26,26 @@ class ComponentFugitiveCalculator(BaseCalculator):
         for comp_type, data in component_counts.items():
             if isinstance(data, dict):
                 count = data.get("count", 0)
-                ef = data.get("ef", 0)
-                ef_unit = str(data.get("unit") or data.get("ef_unit") or "").lower()
-                is_methane = bool(data.get("is_methane")) or any(
-                    x in ef_unit for x in ["ch4", "methane", "ch_4"]
-                )
+                ef_unit = str(data.get("unit") or data.get("ef_unit") or "kg TOC/hr/component")
+                # BUG-048: numerator mass (t/kg) and gas (CH4 incl. "CH₄") come from the unit
+                from .units import per_source_hour_kg
+
+                ef, unit_is_ch4 = per_source_hour_kg(data.get("ef", 0), ef_unit)
+                is_methane = bool(data.get("is_methane")) or unit_is_ch4
             else:
                 count = float(data or 0)
                 ef = 0.0
                 is_methane = False
-            ch4_scaling = 1.0 if is_methane else ch4_content
+            c_ch4 = float(ch4_content if ch4_content is not None else 0.85)
+            if c_ch4 > 1.0:
+                c_ch4 /= 100.0
+            c_ch4 = max(0.0, min(1.0, c_ch4))
+            ch4_scaling = 1.0 if is_methane else c_ch4
             total_ch4_kg_hr += count * ef * ch4_scaling
 
         total_ch4_tonnes_year = (total_ch4_kg_hr * 8760) / 1000.0
 
+        uncertainties = uncertainties or {}
         _tier = resolve_tier(uncertainties.get("_factor_source", "default"))
         ch4_res = propagate_uncertainty(
             total_ch4_tonnes_year,
@@ -64,36 +70,24 @@ class EquipmentFugitiveCalculator(BaseCalculator):
         super().__init__("Equipment-Level Fugitive", "Section 7.2.2")
 
     def calculate(
-        self, equipment_count, ef, ch4_content, uncertainties, ef_unit="kg/hr", gwp_dict=None
+        self, equipment_count, ef, ch4_content=0.85, uncertainties=None, ef_unit="kg/hr", gwp_dict=None
     ):
         """
         Average Factor Method for equipment - count * EF
         """
+        uncertainties = uncertainties or {}
         self.validate_inputs({"count": equipment_count, "ef": ef}, ["count", "ef"])
 
-        # Check if EF is already in tonnes
-        is_tonne = "tonne" in ef_unit.lower() or " mt" in ef_unit.lower()
-        # Check if EF is already methane-based (do not match substrings like 'component')
-        is_methane = any(x in ef_unit.lower() for x in ["ch4", "methane", "ch_4"])
+        # BUG-048: parse the unit (subscript CH4, tonne vs kg, hourly vs annual)
+        from .units import per_source_hour_kg
 
-        total_ch4_raw = equipment_count * ef
-        if not is_methane:
-            total_ch4_raw *= ch4_content
-
-        # Determine annual tonnes
-        if "yr" in ef_unit.lower() or "year" in ef_unit.lower():
-            # Factor is already annual
-            if is_tonne:
-                total_ch4_tonnes_year = total_ch4_raw
-            else:
-                total_ch4_tonnes_year = total_ch4_raw / 1000.0
-        else:
-            # Factor is hourly (default for API fugitive components)
-            total_ch4_annual_raw = total_ch4_raw * 8760
-            if is_tonne:
-                total_ch4_tonnes_year = total_ch4_annual_raw
-            else:
-                total_ch4_tonnes_year = total_ch4_annual_raw / 1000.0
+        kg_per_hr, is_methane = per_source_hour_kg(ef, ef_unit or "kg CH4/hr/source")
+        c_ch4 = float(ch4_content if ch4_content is not None else 0.85)
+        if c_ch4 > 1.0:
+            c_ch4 /= 100.0
+        c_ch4 = max(0.0, min(1.0, c_ch4))
+        scaling = 1.0 if is_methane else c_ch4
+        total_ch4_tonnes_year = equipment_count * kg_per_hr * scaling * 8760.0 / 1000.0
 
         _tier = resolve_tier(uncertainties.get("_factor_source", "default"))
         ch4_res = propagate_uncertainty(
@@ -113,7 +107,7 @@ class EquipmentFugitiveCalculator(BaseCalculator):
             inputs={
                 "equipment_count": equipment_count,
                 "ef": ef,
-                "ch4_content": ch4_content,
+                "ch4_content": c_ch4,
             },
         )
 
@@ -122,10 +116,11 @@ class CompressorSealCalculator(BaseCalculator):
     def __init__(self):
         super().__init__("Compressor Seal Leakage", "Section 7.2.3")
 
-    def calculate(self, compressor_count, seal_type, uncertainties, gwp_dict=None):
+    def calculate(self, compressor_count, seal_type, uncertainties=None, hours=8760, gwp_dict=None):
         """
         API Section 7.2.3 - Compressor seals
         """
+        uncertainties = uncertainties or {}
         self.validate_inputs({"count": compressor_count}, ["count"])
 
         # kg CH4 / hr / compressor
@@ -136,8 +131,9 @@ class CompressorSealCalculator(BaseCalculator):
         }
         ef = factors.get(seal_type, 1.2)
 
+        op_hours = float(hours if hours is not None else 8760)
         total_ch4_kg_hr = compressor_count * ef
-        total_ch4_tonnes_year = (total_ch4_kg_hr * 8760) / 1000.0
+        total_ch4_tonnes_year = (total_ch4_kg_hr * op_hours) / 1000.0
 
         _tier = resolve_tier(uncertainties.get("_factor_source", "default"))
         ch4_res = propagate_uncertainty(
@@ -154,6 +150,6 @@ class CompressorSealCalculator(BaseCalculator):
         return self.format_result(
             ch4=ch4_res,
             total_co2e=total_co2e,
-            inputs={"compressor_count": compressor_count, "seal_type": seal_type},
+            inputs={"compressor_count": compressor_count, "seal_type": seal_type, "hours": op_hours},
         )
 

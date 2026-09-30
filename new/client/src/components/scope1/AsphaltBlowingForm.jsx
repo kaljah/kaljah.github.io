@@ -7,13 +7,12 @@ const AsphaltBlowingForm = ({ data, onChange }) => {
     if (data.fuel !== "Asphalt") {
       onChange("fuel", "Asphalt");
     }
-  }, [data.fuel, onChange]);
+    // the unit shown by default must also be submitted
+    if (!data.unit) onChange("unit", "tonne");
+  }, [data.fuel, data.unit, onChange]);
 
   return (
     <div className="asphalt-blowing-form">
-      <h4 style={{ color: "var(--accent-color)", marginBottom: "15px" }}>
-        Asphalt Blowing Process Parameters
-      </h4>
 
       <div className="form-grid-2">
         <div className="input-group">
@@ -59,19 +58,6 @@ const AsphaltBlowingForm = ({ data, onChange }) => {
         </div>
       </div>
 
-      <div
-        style={{
-          marginTop: "12px",
-          padding: "10px 14px",
-          background: "#f9fafb",
-          border: "1px solid #e5e7eb",
-          borderRadius: "6px",
-          fontSize: "0.8rem",
-          color: "#6b7280",
-        }}
-      >
-        <strong>API Compendium 2021 Section 6, Table 6-52:</strong> Oxidation of asphalt flux through air blowing at elevated temperature generating CO₂ and trace methane.
-      </div>
     </div>
   );
 };

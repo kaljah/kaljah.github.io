@@ -7,6 +7,16 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import MultiSelectDropdown from "../components/MultiSelectDropdown";
 import "../pages/Dashboard.css";
 import { getUserOperationalDefaults } from "../utils/userDefaults";
+import { getActiveGwpFactors } from "../constants";
+import { apiError } from "../utils/apiError";
+
+// BUG-013: GWP option labels are generated from constants.js so they always
+// show the values the report generator will actually apply. "20yr" resolves
+// to AR5 20-year in resolveGwpFactors (ModernReportGenerator).
+const gwpOptionLabel = (standard, horizon) => {
+  const f = getActiveGwpFactors(standard, horizon);
+  return `IPCC ${standard} (${horizon}-yr: CH4=${f.CH4}, N2O=${f.N2O})`;
+};
 
 const Reports = () => {
   const { user } = useAuth();
@@ -28,14 +38,14 @@ const Reports = () => {
   const [regionId, setRegionId] = useState("all");
   const [processType, setProcessType] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
+  // BUG-021: debounce the search box so we issue one request per pause, not per keystroke
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [groupBy, setGroupBy] = useState("none"); // none, facility, process, month
 
   // Pagination
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
-  const [apiError, setApiError] = useState(null);
-  const [rawDebug, setRawDebug] = useState("");
 
   const [scope, setScope] = useState("all");
 
@@ -97,6 +107,11 @@ const Reports = () => {
     loadInitialData();
   }, [user]);
 
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedSearch(searchTerm), 300);
+    return () => clearTimeout(t);
+  }, [searchTerm]);
+
   // Reset page to 1 whenever filters change (but not on page itself changing)
   const prevFiltersRef = React.useRef({
     year,
@@ -105,6 +120,9 @@ const Reports = () => {
     processType,
     scope,
     division,
+    field,
+    methodFilter,
+    search: debouncedSearch,
   });
   useEffect(() => {
     const prev = prevFiltersRef.current;
@@ -116,7 +134,8 @@ const Reports = () => {
       prev.scope !== scope ||
       prev.division !== division ||
       prev.field !== field ||
-      prev.methodFilter !== methodFilter;
+      prev.methodFilter !== methodFilter ||
+      prev.search !== debouncedSearch;
     prevFiltersRef.current = {
       year,
       month,
@@ -126,6 +145,7 @@ const Reports = () => {
       division,
       field,
       methodFilter,
+      search: debouncedSearch,
     };
     if (filterChanged && page !== 1) {
       setPage(1);
@@ -142,28 +162,36 @@ const Reports = () => {
     field,
     methodFilter,
     page,
-    searchTerm,
+    debouncedSearch,
   ]);
+
+  // BUG-006: one source of truth for the on-screen filters, shared by the
+  // table query and both exports so the exported file matches the table.
+  const buildFilterParams = () => {
+    const cleanYear =
+      year && year !== "all" && year !== "undefined" && year !== "null"
+        ? year
+        : undefined;
+    return {
+      scope,
+      ...(cleanYear && { year: cleanYear }),
+      ...(month !== "all" && { month }),
+      ...(regionId !== "all" && { facility_id: regionId }),
+      ...(division !== "all" && { division: division }),
+      ...(field !== "all" && { field: field }),
+      ...(methodFilter !== "all" && { method: methodFilter }),
+      ...(processType !== "all" && { process_type: processType }),
+      ...(debouncedSearch && { search: debouncedSearch }),
+    };
+  };
 
   const fetchEmissions = async () => {
     setLoading(true);
     try {
-      const cleanYear =
-        year && year !== "all" && year !== "undefined" && year !== "null"
-          ? year
-          : undefined;
       const params = {
         page,
         per_page: 50,
-        scope,
-        ...(cleanYear && { year: cleanYear }),
-        ...(month !== "all" && { month }),
-        ...(regionId !== "all" && { facility_id: regionId }),
-        ...(division !== "all" && { division: division }),
-        ...(field !== "all" && { field: field }),
-        ...(methodFilter !== "all" && { method: methodFilter }),
-        ...(processType !== "all" && { process_type: processType }),
-        ...(searchTerm && { search: searchTerm }),
+        ...buildFilterParams(),
       };
 
       console.log("[Reports] Fetching with params:", params);
@@ -174,17 +202,19 @@ const Reports = () => {
         "Total reported by API:",
         res.data.total,
       );
+      // BUG-021: if the current page is past the last page (e.g. the result
+      // set shrank), jump back to the last valid page instead of showing 0 rows.
+      const serverPages = Number(res.data.pages);
+      if (Number.isFinite(serverPages) && page > Math.max(1, serverPages)) {
+        setPage(Math.max(1, serverPages));
+        return; // page change triggers a refetch
+      }
       setEmissions(res.data.emissions || res.data.data || res.data || []);
       setTotalRecords(res.data.total || res.data.length || 0);
       setTotalPages(res.data.pages || 1);
-      setApiError(null);
-      setRawDebug(JSON.stringify(res.data).substring(0, 200));
     } catch (err) {
       console.error("Error fetching emissions", err);
-      setApiError(
-        err.message + (err.response ? " (" + err.response.status + ")" : ""),
-      );
-      toast.error("Failed to load emissions data");
+      toast.error(apiError(err, "Failed to load emissions data"));
       setEmissions([]);
       setTotalRecords(0);
     } finally {
@@ -195,11 +225,7 @@ const Reports = () => {
   const handleExcelExport = async () => {
     try {
       const params = {
-        scope,
-        ...(year !== "all" && { year }),
-        ...(month !== "all" && { month }),
-        ...(regionId !== "all" && { facility_id: regionId }),
-        ...(processType !== "all" && { process_type: processType }),
+        ...buildFilterParams(),
         format: "excel",
       };
 
@@ -229,14 +255,7 @@ const Reports = () => {
 
   const handlePDFExport = async () => {
     try {
-      const params = new URLSearchParams();
-      params.append("scope", scope);
-      if (year && year !== "all") params.append("year", year);
-      if (month && month !== "all") params.append("month", month);
-      if (regionId && regionId !== "all")
-        params.append("facility_id", regionId);
-      if (processType && processType !== "all")
-        params.append("process_type", processType);
+      const params = new URLSearchParams(buildFilterParams());
 
       const response = await api.get(`/reports/export?${params.toString()}`, {
         responseType: "blob",
@@ -291,31 +310,43 @@ const Reports = () => {
     }
   };
 
-  const handleISOReport = async () => {
-    setLoading(true);
-    toast.info("Generating ISO 14064-1 Report...");
+  const handleMasterReportDownload = async (targetFacilityId = null) => {
     try {
-      // Import dynamically or assume imported at top if possible
-      const { generateModernPDF } =
-        await import("../utils/ModernReportGenerator");
+      setLoading(true);
+      // BUG-002: only accept a real id; never a click event or other object.
+      const explicitId =
+        typeof targetFacilityId === "string" || typeof targetFacilityId === "number"
+          ? targetFacilityId
+          : null;
+      const selectedId = explicitId || (reportSelectedRegions.length === 1 ? reportSelectedRegions[0] : (regionId !== "all" ? regionId : null));
+      const isElMerk = selectedId === "170" || selectedId === 170;
+      const reportTitle = isElMerk ? "El Merk (Block 208) Master Report" : "Groupement Berkine Master Report";
+      const downloadFilename = isElMerk ? "El_Merk_2025_Annual_GHG_Report.pdf" : "Groupement_Berkine_2025_Annual_GHG_Report.pdf";
 
-      const filters = {
-        year,
-        scope,
-        regionId,
-        processType,
-        gwpStandard: reportGwpStandard,
-      };
-
-      await generateModernPDF(api, filters);
-      toast.success("Report generated successfully!");
-    } catch (err) {
-      console.error("Report Generation Error", err);
-      toast.error("Failed to generate report.");
+      toast.info(`Downloading ${reportTitle} (PDF)...`);
+      const endpoint = selectedId ? `/reports/master-annual-report?facility_id=${encodeURIComponent(selectedId)}` : "/reports/master-annual-report";
+      const response = await api.get(endpoint, {
+        responseType: "blob",
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data], { type: "application/pdf" }));
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = downloadFilename;
+      document.body.appendChild(link);
+      link.click();
+      setTimeout(() => {
+        link.remove();
+        window.URL.revokeObjectURL(url);
+      }, 1000);
+      toast.success(`${reportTitle} downloaded successfully!`);
+    } catch (error) {
+      console.error("Master report download failed:", error);
+      toast.error("Failed to download Master Report.");
     } finally {
       setLoading(false);
     }
   };
+
 
   const getGroupedData = () => {
     if (groupBy === "none") return emissions;
@@ -358,6 +389,7 @@ const Reports = () => {
   }));
 
   const [showConfigModal, setShowConfigModal] = useState(false);
+  const [reportFormat, setReportFormat] = useState("master");
   const [exclusionCriteria, setExclusionCriteria] = useState("Sources contributing less than 1% of the total footprint are excluded.");
   const [verificationStatus, setVerificationStatus] = useState("Not externally verified");
 
@@ -369,8 +401,16 @@ const Reports = () => {
     setShowConfigModal(true);
   };
 
-  const handleISOReportWrapper = async () => {
+  const handleGenerateModalReport = async () => {
     setShowConfigModal(false);
+    if (reportFormat === "master") {
+      await handleMasterReportDownload();
+      return;
+    }
+    await handleISOReportWrapper();
+  };
+
+  const handleISOReportWrapper = async () => {
     setLoading(true);
     toast.info("Generating ISO 14064-1 Report...");
     try {
@@ -539,6 +579,32 @@ const Reports = () => {
                 </svg>
                 PDF Report
               </button>
+              <button
+                className="btn-action"
+                onClick={() => handleMasterReportDownload()}
+                style={{
+                  background: "linear-gradient(135deg, #ea580c 0%, #c2410c 100%)",
+                  color: "#ffffff",
+                  border: "none",
+                  fontWeight: 600,
+                  boxShadow: "0 2px 8px rgba(234, 88, 12, 0.25)",
+                }}
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                </svg>
+                2025 Master Report (PDF)
+              </button>
             </div>
           </div>
 
@@ -617,10 +683,10 @@ const Reports = () => {
                   value={reportGwpStandard}
                   onChange={(e) => setReportGwpStandard(e.target.value)}
                 >
-                  <option value="AR5">IPCC AR5 (100-yr: CH4=28, N2O=265)</option>
-                  <option value="AR6">IPCC AR6 (100-yr: CH4=29.8, N2O=273)</option>
-                  <option value="AR4">IPCC AR4 (100-yr: CH4=25, N2O=298)</option>
-                  <option value="20yr">IPCC AR6 (20-yr: CH4=82.5, N2O=273)</option>
+                  <option value="AR5">{gwpOptionLabel("AR5", "100")}</option>
+                  <option value="AR6">{gwpOptionLabel("AR6", "100")}</option>
+                  <option value="AR4">{gwpOptionLabel("AR4", "100")}</option>
+                  <option value="20yr">{gwpOptionLabel("AR5", "20")}</option>
                 </select>
               </div>
 
@@ -936,8 +1002,37 @@ const Reports = () => {
                 <div className="cell cell-number">Total (tCO₂e)</div>
                 <div className="cell">Status</div>
               </div>
-              {/* Rows */}
-              {emissions.map((row) => (
+              {/* Rows (BUG-022: rendered through getGroupedData so Group By takes effect) */}
+              {(groupBy === "none"
+                ? [[null, emissions]]
+                : Object.entries(getGroupedData())
+              ).map(([groupKey, rows]) => (
+                <React.Fragment key={groupKey ?? "__all__"}>
+                  {groupKey !== null && (
+                    <div
+                      className="grid-row grid-group-header"
+                      style={{ background: "var(--bg-hover)", fontWeight: 700 }}
+                    >
+                      <div className="cell" style={{ gridColumn: "1 / 13" }}>
+                        {groupKey}
+                        <span style={{ fontWeight: 400, marginLeft: "8px", opacity: 0.7 }}>
+                          ({rows.length} record{rows.length === 1 ? "" : "s"} on this page)
+                        </span>
+                      </div>
+                      <div
+                        className="cell cell-number cell-total"
+                        title="Subtotal of the records shown on this page"
+                      >
+                        {formatNumber(
+                          rows.reduce((sum, r) => sum + (Number(r.co2e_total) || 0), 0),
+                        )}
+                      </div>
+                      <div className="cell" style={{ fontSize: "0.75rem", opacity: 0.7 }}>
+                        Subtotal
+                      </div>
+                    </div>
+                  )}
+              {rows.map((row) => (
                 <div key={row.id} className="grid-row">
                   <div
                     className="cell"
@@ -1001,6 +1096,8 @@ const Reports = () => {
                   </div>
                 </div>
               ))}
+                </React.Fragment>
+              ))}
             </div>
           )}
 
@@ -1032,61 +1129,115 @@ const Reports = () => {
 
       {showConfigModal && (
         <div className="modal-overlay">
-          <div className="modal-content" style={{ maxWidth: '500px' }}>
+          <div className="modal-content" style={{ maxWidth: '560px' }}>
             <div className="modal-header">
-              <h2>ISO 14064-1 Report Configuration</h2>
+              <h2>Generate Executive GHG Report</h2>
               <button className="close-btn" onClick={() => setShowConfigModal(false)}>×</button>
             </div>
             <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
-                To ensure 100% compliance with ISO 14064-1, please provide the following mandatory declarations before generating the report.
-              </p>
               <div className="input-group">
-                <label>Exclusion Criteria (Significance)</label>
-                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>
-                  Document the criteria used to define which indirect emissions are significant and justify any exclusions.
-                </p>
-                <textarea
-                  value={exclusionCriteria}
-                  onChange={(e) => setExclusionCriteria(e.target.value)}
-                  rows={3}
-                  style={{ width: '100%', padding: '8px', border: '1px solid #e2e8f0', borderRadius: '4px', resize: 'vertical' }}
-                />
+                <label style={{ fontWeight: 600 }}>Select Report Format</label>
+                <div style={{ display: 'flex', gap: '10px', marginTop: '6px' }}>
+                  <button
+                    type="button"
+                    onClick={() => setReportFormat("master")}
+                    style={{
+                      flex: 1,
+                      padding: '10px 14px',
+                      borderRadius: '8px',
+                      border: reportFormat === "master" ? '2px solid #f97316' : '1px solid #cbd5e1',
+                      background: reportFormat === "master" ? '#fff7ed' : '#ffffff',
+                      color: reportFormat === "master" ? '#c2410c' : '#475569',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                      fontSize: '0.85rem'
+                    }}
+                  >
+                    🏆 2025 Master Analytical Report (Vertical A4, 15 Charts, 18 Tables)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setReportFormat("iso")}
+                    style={{
+                      flex: 1,
+                      padding: '10px 14px',
+                      borderRadius: '8px',
+                      border: reportFormat === "iso" ? '2px solid var(--primary-color, #2563eb)' : '1px solid #cbd5e1',
+                      background: reportFormat === "iso" ? '#eff6ff' : '#ffffff',
+                      color: reportFormat === "iso" ? '#1d4ed8' : '#475569',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                      fontSize: '0.85rem'
+                    }}
+                  >
+                    📋 ISO 14064-1 Compliance Report
+                  </button>
+                </div>
               </div>
-              <div className="input-group">
-                <label>Verification Status</label>
-                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>
-                  State whether the report has been verified, the type of verification, and the level of assurance.
-                </p>
-                <input
-                  type="text"
-                  value={verificationStatus}
-                  onChange={(e) => setVerificationStatus(e.target.value)}
-                  style={{ width: '100%', padding: '8px', border: '1px solid #e2e8f0', borderRadius: '4px' }}
-                />
-              </div>
-              <div className="input-group">
-                <label>GWP Metric Standard</label>
-                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>
-                  Select the IPCC Assessment Report Global Warming Potentials applied to calculate CO2-equivalent totals.
-                </p>
-                <select
-                  className="component-select"
-                  value={reportGwpStandard}
-                  onChange={(e) => setReportGwpStandard(e.target.value)}
-                  style={{ width: '100%', padding: '8px', border: '1px solid #e2e8f0', borderRadius: '4px' }}
-                >
-                  <option value="AR5">IPCC AR5 (100-yr: CH4=28, N2O=265) — Default</option>
-                  <option value="AR6">IPCC AR6 (100-yr: CH4=29.8, N2O=273)</option>
-                  <option value="AR4">IPCC AR4 (100-yr: CH4=25, N2O=298)</option>
-                  <option value="20yr">IPCC AR6 (20-yr: CH4=82.5, N2O=273)</option>
-                </select>
-              </div>
+
+              {reportFormat === "master" ? (
+                <div style={{ background: '#f8fafc', padding: '14px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                  <h4 style={{ margin: '0 0 6px 0', color: '#0f172a', fontSize: '0.9rem' }}>
+                    Authentic Groupement Berkine (HBNS & El Merk) 2021–2025
+                  </h4>
+                  <ul style={{ margin: '0', paddingLeft: '20px', fontSize: '0.8rem', color: '#475569', lineHeight: '1.5' }}>
+                    <li><strong>Vertical A4 Portrait</strong> format (25 publication pages).</li>
+                    <li><strong>15 High-Resolution Charts (300 DPI)</strong>: Scopes 1 & 2, SANGEA modules, 2030 decarbonization target trajectory (-25%), methane abatement (-76.7%), routine vs safety flaring, intensities, JV equity allocation, and Criteria Air Pollutants.</li>
+                    <li><strong>18 Multi-Year Appendix Tables</strong>: Complete raw tables A.1 through A.16 matching Groupement Berkine's corporate reporting standards.</li>
+                  </ul>
+                </div>
+              ) : (
+                <>
+                  <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+                    To ensure 100% compliance with ISO 14064-1, please provide the following mandatory declarations before generating the report.
+                  </p>
+                  <div className="input-group">
+                    <label>Exclusion Criteria (Significance)</label>
+                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>
+                      Document the criteria used to define which indirect emissions are significant and justify any exclusions.
+                    </p>
+                    <textarea
+                      value={exclusionCriteria}
+                      onChange={(e) => setExclusionCriteria(e.target.value)}
+                      rows={2}
+                      style={{ width: '100%', padding: '8px', border: '1px solid #e2e8f0', borderRadius: '4px', resize: 'vertical' }}
+                    />
+                  </div>
+                  <div className="input-group">
+                    <label>Verification Status</label>
+                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>
+                      State whether the report has been verified, the type of verification, and the level of assurance.
+                    </p>
+                    <input
+                      type="text"
+                      value={verificationStatus}
+                      onChange={(e) => setVerificationStatus(e.target.value)}
+                      style={{ width: '100%', padding: '8px', border: '1px solid #e2e8f0', borderRadius: '4px' }}
+                    />
+                  </div>
+                  <div className="input-group">
+                    <label>GWP Metric Standard</label>
+                    <select
+                      className="component-select"
+                      value={reportGwpStandard}
+                      onChange={(e) => setReportGwpStandard(e.target.value)}
+                      style={{ width: '100%', padding: '8px', border: '1px solid #e2e8f0', borderRadius: '4px' }}
+                    >
+                      <option value="AR5">{`${gwpOptionLabel("AR5", "100")} — Default`}</option>
+                      <option value="AR6">{gwpOptionLabel("AR6", "100")}</option>
+                      <option value="AR4">{gwpOptionLabel("AR4", "100")}</option>
+                      <option value="20yr">{gwpOptionLabel("AR5", "20")}</option>
+                    </select>
+                  </div>
+                </>
+              )}
             </div>
             <div className="modal-footer" style={{ marginTop: '24px', display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
               <button className="btn-secondary" onClick={() => setShowConfigModal(false)}>Cancel</button>
-              <button className="btn-primary" onClick={handleISOReportWrapper} disabled={loading}>
-                {loading ? "Generating..." : "Generate PDF"}
+              <button className="btn-primary" onClick={handleGenerateModalReport} disabled={loading} style={{ background: reportFormat === 'master' ? 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)' : undefined, border: 'none' }}>
+                {loading ? "Generating..." : reportFormat === 'master' ? "Download Master Report (PDF)" : "Generate ISO PDF"}
               </button>
             </div>
           </div>

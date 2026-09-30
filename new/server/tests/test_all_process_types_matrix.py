@@ -16,6 +16,13 @@ from calculations.dispatcher import CalculationDispatcher
 from calculations.legacy_engine import compute_emissions
 from process_categories import PROCESS_TYPES, NON_COMBUSTION_PROCESSES
 
+def _activity_unit(process_id, category):
+    """Activity unit of a generic test row; mud degassing (Table 6-2) is per drilling day."""
+    if process_id in ("drilling", "mud_degassing"):
+        return "days"
+    return "m3" if category in ["combustion", "vented"] else "devices"
+
+
 
 @pytest.fixture(scope="module")
 def dispatcher():
@@ -37,7 +44,7 @@ class TestAllProcessTypesTier1:
             "factor_source": "default",
             "amount": 100.0,
             "quantity": 100.0,
-            "unit": "m3" if meta["category"] in ["combustion", "vented"] else "devices",
+            "unit": _activity_unit(process_id, meta["category"]),
             "fuel_type": "Natural Gas" if meta["category"] == "combustion" else None,
         }
         factor_data = {
@@ -62,7 +69,9 @@ class TestAllProcessTypesTier1:
                 "process_type": p,
                 "factor_source": "default",
                 "amount": 250.0,
-                "unit": "mmbtu" if "steam" in p else ("kg" if p == "stoichiometry" else "tonnes"),
+                # audit BUG-027: a kg/MMBtu factor applied to tonnes needs a heating value; these
+                # generic dispatch checks therefore use the factor's energy unit
+                "unit": "mmbtu",
             }
             factors = {"co2": 53.06, "ch4": 0.001, "n2o": 0.0001, "unit": "kg/mmbtu"}
             res = dispatcher.dispatch(p, payload, factors, {})
@@ -128,8 +137,8 @@ class TestAllProcessTypesTier3:
         payload = {
             "process_type": "drilling",
             "factor_source": "specific",
-            "amount": 500.0,
-            "mud_unit": "m3",
+            "amount": 30.0,
+            "unit": "days",  # Table 6-2 is per drilling day
             "mud_type": "water_based",
         }
         factors = {"ch4": 0.05}
@@ -265,18 +274,17 @@ class TestAllProcessTypesTier3:
         assert res["results"]["ch4"]["value"] > 0
 
     def test_glycol_dehydrator_tier3(self, dispatcher):
+        # Tier 3 = process simulation (GRI-GLYCalc) or measured result (API Compendium 6.3.8.1); the former
+        # unsourced solubility model was removed (audit/TIER3_BROWSER_TEST.md #12)
         payload = {
             "process_type": "dehydrator",
             "factor_source": "specific",
-            "pump_rate": 20.0,
-            "pump_unit": "gph",
-            "hours": 8760,
-            "ch4_content": 90.0,
-            "contactor_pressure": 900.0,
-            "contactor_temperature": 105.0,
+            "vent_method": "reported_mass",
+            "ch4_mass": 12.0,
+            "co2_mass": 0.5,
         }
         res = dispatcher.dispatch("dehydrator", payload, {}, {})
-        assert res["results"]["ch4"]["value"] > 0
+        assert res["results"]["ch4"]["value"] == pytest.approx(12.0)
 
     def test_indirect_steam_tier3(self, dispatcher):
         payload = {
@@ -336,7 +344,7 @@ class TestComputeEmissionsIntegration:
             "process_type": process_id,
             "process": process_id,
             "amount": 200.0,
-            "unit": "m3" if PROCESS_TYPES[process_id]["category"] in ["combustion", "vented"] else "devices",
+            "unit": _activity_unit(process_id, PROCESS_TYPES[process_id]["category"]),
             "fuel_type": "Natural Gas" if PROCESS_TYPES[process_id]["category"] == "combustion" else None,
         }
         factors = {
@@ -461,7 +469,7 @@ class TestPhysicalConservationAcrossAllProcesses:
             "factor_source": "default",
             "amount": 0.0,
             "quantity": 0.0,
-            "unit": "m3" if meta["category"] in ["combustion", "vented"] else "devices",
+            "unit": _activity_unit(process_id, meta["category"]),
         }
         factors = {"co2": 50.0, "ch4": 0.5, "n2o": 0.01, "unit": "kg/m3"}
         res = dispatcher.dispatch(process_id, payload, factors, {})
@@ -471,7 +479,7 @@ class TestPhysicalConservationAcrossAllProcesses:
     def test_strictly_positive_monotonicity(self, dispatcher, process_id):
         """Monotonicity Law: Doubling activity data MUST double emissions."""
         meta = PROCESS_TYPES[process_id]
-        unit = "m3" if meta["category"] in ["combustion", "vented"] else "devices"
+        unit = _activity_unit(process_id, meta["category"])
         factors = {"co2": 50.0, "ch4": 0.5, "n2o": 0.01, "unit": f"kg/{unit}"}
 
         p1 = {"process_type": process_id, "factor_source": "default", "amount": 100.0, "unit": unit}
