@@ -51,7 +51,7 @@ CONVERSIONS = {
     "mj_to_mmbtu": 0.0009478171203133172,
     "kwh_to_mj": 3.6,
     "mj_to_kwh": 0.2777777777777778,
-    "therm_to_mj": 105.4804,
+    "therm_to_mj": 105.505585262,  # 1 therm = 100,000 Btu (IT), as in indirect.py
     # Gas Densities (kg/m3 at standard conditions: 60F, 14.696 psia)
     "density_ch4": 0.6785,
     "density_c2h6": 1.282,  # Ethane
@@ -268,8 +268,8 @@ ENERGY_UNITS_TO_MJ = {
     "kilowatt_hour": 3.6,
     "mwh": 3600.0,
     "megawatt_hour": 3600.0,
-    "therm": 105.4804,
-    "therms": 105.4804,
+    "therm": 105.505585262,
+    "therms": 105.505585262,
 }
 
 
@@ -515,13 +515,15 @@ def normalize_efficiency(eff_val, default=0.0):
     """
     if eff_val in [None, "", "-"]:
         return default
+    is_pct = "%" in str(eff_val)
     try:
         val = float(str(eff_val).replace("%", "").strip())
     except (ValueError, TypeError):
         return default
     if val < 0.0:
         return 0.0
-    if val > 1.0:
+    if is_pct or val > 1.0:
+        # an explicit "%" is always a percentage ("1%" is 0.01, not a fraction of 1.0)
         val /= 100.0
     return max(0.0, min(1.0, val))
 
@@ -548,13 +550,12 @@ def compute_scope3_co2e(
     """
     Authoritatively calculates Scope 3 CO2e in metric tonnes from activity amount and emission factor.
 
-    Robustly distinguishes numerator GHG mass unit (t vs kg vs g) from denominator activity unit (e.g. tonne, liter, m3).
-    - If factor is spend-based / EEIO (e.g. per $1,000 spend, or method containing 'eeio'):
-      divide by 1,000,000 (kg -> tonnes and / 1000 spend).
-    - If numerator is tonnes CO2e (e.g. 'tCO2e/unit', 'tonne CO2e/bbl', 't/bbl', 'mtCO2e/t'):
-      co2e = amt * ef
-    - If numerator is kg CO2e (default standard, e.g. 'kg CO2e/liter', 'kg CO2e/tonne', 'kg/unit'):
-      co2e = (amt * ef) / 1000.0
+    Distinguishes the numerator GHG mass unit (t, kg, g, lb; kg when not given) from the
+    denominator activity unit (tonne, liter, $1,000 ...).
+    - A per-1,000 denominator ('kg CO2e/$1000', 't CO2e/1000 km') divides the activity by 1,000.
+    - Tonnes numerator ('tCO2e/unit', 'tonne CO2e/bbl', 't/bbl'): co2e = amt * ef.
+    - kg numerator ('kg CO2e/liter', 'kg/unit'): co2e = amt * ef / 1000.
+    `calc_method` is accepted for backward compatibility and does not change the result.
     """
     try:
         amt_val = float(amt or 0.0)
@@ -566,50 +567,49 @@ def compute_scope3_co2e(
         return 0.0
 
     unit_str = str(ef_unit or "").lower().strip()
-    method_str = str(calc_method or "").lower().strip()
 
-    # 1. EEIO / spend-based per-$1,000 factor check
-    is_per_thousand = any(
-        k in unit_str for k in ["1000", "1,000", "1k", "$1000", "$1k"]
-    ) or (
-        "eeio" in method_str
-        and not any(t in unit_str for t in ["tonne", "tco2", "mtco2"])
-    )
-    if is_per_thousand:
-        return (amt_val * ef_val) / 1_000_000.0
+    # 1. Split the unit into numerator (GHG mass) and denominator (activity)
+    if "/" in unit_str:
+        num, den = (p.strip() for p in unit_str.split("/", 1))
+    elif " per " in unit_str:
+        num, den = (p.strip() for p in unit_str.split(" per ", 1))
+    else:
+        num, den = unit_str, ""
 
-    # 2. Extract numerator before '/' or ' per '
-    num = unit_str.split("/")[0].split(" per ")[0].strip()
+    # 2. A per-1,000 denominator ("kg CO2e/$1000", "t CO2e/1,000 km") scales the activity; it is
+    # read from the unit only. The method name says nothing about the factor's basis: an EEIO
+    # record stores its factor per USD (audit 2026-09-30: an "EEIO" method read a per-USD factor
+    # as per $1,000, 1000x low).
+    per_thousand = bool(_re.match(r"^(?:\$|usd)?\s*(?:1,?000(?![0-9])|1k(?![0-9a-z])|thousand\b)", den))
+    scale = 0.001 if per_thousand else 1.0
 
-    # 3. Check numerator dimension
+    # 3. Numerator mass in tonnes per unit
     is_tonne_num = False
     if not any(
         prefix in num for prefix in ["kg", "kilogram", "lb", "pound"]
     ) and not (num.startswith("g") and not num.startswith("gj")):
         if any(
-            t in num for t in ["tonne", "metric_ton", "tco2", "mtco2", "t/"]
+            t in num for t in ["tonne", "metric_ton", "tco2", "mtco2"]
         ) or num.startswith("t ") or num == "t":
             is_tonne_num = True
 
     is_gram_num = (
         num.startswith("g ")
         or num.startswith("gco2")
-        or num.startswith("g/")
         or "gram" in num
         or num == "g"
     ) and not num.startswith("gj")
 
     if is_tonne_num:
-        return amt_val * ef_val
+        to_tonnes = 1.0
     elif is_gram_num:
-        # Grams CO2e to tonnes CO2e: divide by 1,000,000
-        return (amt_val * ef_val) / 1_000_000.0
+        to_tonnes = 1e-6
     elif num.startswith("lb") or "pound" in num:
-        # Pounds CO2e to tonnes CO2e: 0.45359237 kg/lb / 1000 kg/t
-        return (amt_val * ef_val * 0.45359237) / 1000.0
+        to_tonnes = 0.45359237 / 1000.0
     else:
-        # Standard kg CO2e / unit -> tonnes CO2e
-        return (amt_val * ef_val) / 1000.0
+        # kg CO2e / unit (the default)
+        to_tonnes = 0.001
+    return amt_val * ef_val * scale * to_tonnes
 
 
 # -- Canonical unit parsing (audit RC-5: BUG-011/027/033/047/048/049/051/063/066) ---------------
