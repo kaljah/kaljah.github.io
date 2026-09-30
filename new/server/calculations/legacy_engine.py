@@ -426,7 +426,13 @@ def _compute_emissions_impl(payload, factor_data=None, gwp_dict=None, gwp_standa
         amt = inputs.pop("amount")
         # Tier 3: the amount is the metered flowback volume, not a count; events are explicit or 1
         # (Tier 3 browser test #1: 1.48e6 scf was read as 1.48e6 events)
-        if inputs.get("comp_volume") in (None, "") and inputs.get("flowback_volume") in (None, ""):
+        # and an amount in a volume unit (or on the metered method) is that volume, never a count
+        # (deep-dive audit: 500 Mcf metered was 500 events x 500 Mcf)
+        # (the unit of calc_inputs itself: the top-level unit belongs to the top-level volume)
+        comp_unit = str(inputs.get("unit") or "").lower().strip()
+        comp_meth = str(inputs.get("comp_method") or inputs.get("calc_method") or payload.get("comp_method") or "").lower()
+        is_volume = comp_unit in ("scf", "m3", "sm3", "mcf", "mscf", "mmscf") or comp_meth.startswith("metered")
+        if inputs.get("comp_volume") in (None, "") and inputs.get("flowback_volume") in (None, "") and not is_volume:
             inputs.setdefault("events", amt)
 
     # NEW: Merge root payload into inputs to support flat CSV data

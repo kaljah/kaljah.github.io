@@ -544,6 +544,17 @@ def scope3_ef_kg_per_unit(amount, co2e_tonnes, ef=None):
     return ef
 
 
+_SCOPE3_MASS_TONNES = {
+    "": 0.001, "kg": 0.001, "kgs": 0.001, "kilogram": 0.001, "kilograms": 0.001,
+    "t": 1.0, "tonne": 1.0, "tonnes": 1.0, "metric ton": 1.0, "metric tons": 1.0, "metric tonne": 1.0,
+    "metric tonnes": 1.0, "mt": 1.0,
+    "g": 1e-6, "gram": 1e-6, "grams": 1e-6,
+    "lb": 0.45359237e-3, "lbs": 0.45359237e-3, "pound": 0.45359237e-3, "pounds": 0.45359237e-3,
+    "short ton": 0.90718474, "short tons": 0.90718474, "us ton": 0.90718474, "us tons": 0.90718474,
+    "long ton": 1.0160469088, "long tons": 1.0160469088,
+}
+
+
 def compute_scope3_co2e(
     amt: float, ef: float, ef_unit: str = "", calc_method: str = ""
 ) -> float:
@@ -580,35 +591,22 @@ def compute_scope3_co2e(
     # read from the unit only. The method name says nothing about the factor's basis: an EEIO
     # record stores its factor per USD (audit 2026-09-30: an "EEIO" method read a per-USD factor
     # as per $1,000, 1000x low).
-    per_thousand = bool(_re.match(r"^(?:\$|usd)?\s*(?:1,?000(?![0-9])|1k(?![0-9a-z])|thousand\b)", den))
+    per_thousand = bool(_re.match(r"^(?:\$|usd)?\s*(?:1,?000(?![0-9])|1k(?![0-9a-z])|thousand\b|k\s*(?:\$|usd(?![a-z])))", den))
     scale = 0.001 if per_thousand else 1.0
 
-    # 3. Numerator mass in tonnes per unit
-    is_tonne_num = False
-    if not any(
-        prefix in num for prefix in ["kg", "kilogram", "lb", "pound"]
-    ) and not (num.startswith("g") and not num.startswith("gj")):
-        if any(
-            t in num for t in ["tonne", "metric_ton", "tco2", "mtco2"]
-        ) or num.startswith("t ") or num == "t":
-            is_tonne_num = True
-
-    is_gram_num = (
-        num.startswith("g ")
-        or num.startswith("gco2")
-        or "gram" in num
-        or num == "g"
-    ) and not num.startswith("gj")
-
-    if is_tonne_num:
-        to_tonnes = 1.0
-    elif is_gram_num:
-        to_tonnes = 1e-6
-    elif num.startswith("lb") or "pound" in num:
-        to_tonnes = 0.45359237 / 1000.0
-    else:
-        # kg CO2e / unit (the default)
-        to_tonnes = 0.001
+    # 3. Numerator mass in tonnes per unit, by exact token after the gas name is cut off
+    # ("kgCO2e" -> "kg", "MT CO2e" -> "mt"). "MT" / "metric ton(s)" / "short ton" used to fall
+    # through to kg (1000x / 907x low); a bare "ton" is ambiguous and refused as in the uploads.
+    mass = _re.split(r"co2|ch4|n2o|ghg|carbon", num, maxsplit=1)[0].strip().replace("_", " ")
+    mass = _re.sub(r"\s+", " ", mass)
+    if mass not in _SCOPE3_MASS_TONNES:
+        from input_validation import ValidationError
+        if mass in ("ton", "tons"):
+            raise ValidationError(f"Emission factor unit '{ef_unit}': 'ton' is ambiguous - use tonne (metric) or "
+                                  "short ton", "factor_unit")
+        raise ValidationError(f"Emission factor unit '{ef_unit}': unknown mass '{mass}' (use kg, t, g or lb CO2e "
+                              "per unit)", "factor_unit")
+    to_tonnes = _SCOPE3_MASS_TONNES[mass]
     return amt_val * ef_val * scale * to_tonnes
 
 

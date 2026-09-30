@@ -55,8 +55,18 @@ def _calc_indirect_steam(data):
     amount = float(data.get("amount") or data.get("heat_mmbtu") or 0)
     unit = (data.get("unit") or "mmbtu").lower().replace(" ", "")
     ci = data.get("calc_inputs", {}).get("indirect_steam", {})
-    boiler_eff = float(data.get("boiler_efficiency") or ci.get("boiler_eff", 0.80))
-    trans_loss = float(ci.get("trans_loss", 0.0))
+    raw_be = data.get("boiler_efficiency") or ci.get("boiler_eff") or 0.80
+    boiler_eff = float(str(raw_be).replace("%", "").strip())
+    if boiler_eff > 1.0 or "%" in str(raw_be):
+        # 85 is 85 %, as in the file upload (no boiler runs at 1 %); it was used as 85 x, so the
+        # manual form booked 1/100 of the emissions
+        boiler_eff /= 100.0
+    if not 0 < boiler_eff <= 1.0:
+        raise ValidationError(f"Boiler efficiency must be above 0 and at most 100 % (got {raw_be})", "boiler_eff")
+    trans_loss = float(ci.get("trans_loss", 0.0) or 0.0)
+    if not 0 <= trans_loss < 1.0:
+        raise ValidationError(f"Transmission loss is a fraction from 0 to below 1 (got {trans_loss}; 5 % is 0.05)",
+                              "trans_loss")
     ef_co2 = float(ci.get("ef_co2", _DEFAULT_BOILER_EF_KG_PER_MMBTU))
     if 0 < ef_co2 < 1.0:
         ef_co2 = ef_co2 * 1000.0
@@ -93,8 +103,12 @@ def _calc_indirect_steam(data):
         energy_mmbtu = amount * 0.001
     elif unit in ["kg", "kilogram"]:
         energy_mmbtu = amount * 0.00220462
-    else:  # assume already in MMBtu
+    elif unit in ["mmbtu", "mm_btu", "mmbtus"]:
         energy_mmbtu = amount
+    else:
+        # an unknown unit was booked as MMBtu (the file upload refuses it)
+        raise ValidationError(f"Unknown unit '{data.get('unit')}' for indirect steam (MMBtu, GJ, MJ, kWh, MWh, "
+                              "short_ton, tonne, klb, lb or kg)", "unit")
 
     net_eff = boiler_eff * (1.0 - trans_loss)
     if net_eff <= 0:
@@ -171,7 +185,8 @@ def _calc_cogen_allocation(data):
     total_emissions = float(data.get("total_emissions") or ci.get("total_emissions", val))
     if total_emissions == 0 and data.get("fuel_consumed_mmbtu"):
         # Calculate facility emissions from fuel consumed (e.g. 53.06 kg CO2/MMBtu)
-        total_emissions = (float(data["fuel_consumed_mmbtu"]) * _DEFAULT_BOILER_EF_KG_PER_MMBTU) / 1000.0
+        # natural gas: CO2 plus the Table 4-6 CH4 / N2O, as for the default steam boiler
+        total_emissions = (float(data["fuel_consumed_mmbtu"]) * _steam_fuel_factor_kg_per_mmbtu(None)) / 1000.0
     heat_output = float(data.get("heat_output_mmbtu") or ci.get("heat_output", 0))
     power_output = float(data.get("power_output_mwh") or ci.get("power_output", 0))
     method = data.get("allocation_method") or ci.get("allocation_method", "wri_efficiency")
@@ -340,6 +355,9 @@ def create_scope2_emission():
     elif source_type == "cogen_allocation":
         try:
             co2e = _calc_cogen_allocation(data)
+            # the allocated heat output, as the file upload stores it
+            heat_mmbtu = parse_number(data.get("heat_output_mmbtu") or ((data.get("calc_inputs") or {}).get(
+                "cogen_allocation") or {}).get("heat_output"), "heat_output", required=False, min_value=0, default=0.0)
         except ValidationError:
             raise
         except Exception as exc:

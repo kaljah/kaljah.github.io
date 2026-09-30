@@ -1816,6 +1816,9 @@ EQUIPMENT_FACTORS = {
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 0.30, "n2o": 0},
         "unit": "tonne CH₄/facility",
+        # the table's time basis is not verified: per facility (no time) books a monthly record at
+        # 1/744 of a per-hour factor; refused until checked against Table 7-76 (audit 2026-09-30)
+        "unverified_basis": True,
         "segment": "Downstream",
         "process_category": "lng_operations",
         "type": "equipment",
@@ -1830,6 +1833,9 @@ EQUIPMENT_FACTORS = {
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 0.30, "n2o": 0},
         "unit": "tonne CH₄/facility",
+        # the table's time basis is not verified: per facility (no time) books a monthly record at
+        # 1/744 of a per-hour factor; refused until checked against Table 7-76 (audit 2026-09-30)
+        "unverified_basis": True,
         "segment": "Downstream",
         "process_category": "lng_operations",
         "type": "equipment",
@@ -1844,6 +1850,9 @@ EQUIPMENT_FACTORS = {
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 0.30, "n2o": 0},
         "unit": "tonne CH₄/facility",
+        # the table's time basis is not verified: per facility (no time) books a monthly record at
+        # 1/744 of a per-hour factor; refused until checked against Table 7-76 (audit 2026-09-30)
+        "unverified_basis": True,
         "segment": "Downstream",
         "process_category": "lng_operations",
         "type": "equipment",
