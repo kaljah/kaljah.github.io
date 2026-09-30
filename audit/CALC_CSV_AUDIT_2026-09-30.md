@@ -49,3 +49,37 @@ code before the fixes.
   app's own records, which store `ton`; decide whether files should have to say `tonne` or `short_ton`.
 - In a `,`-separated CSV, "1.500" is read as 1.5 (a European thousands separator is ambiguous
   there). Unchanged: Excel writes decimal-comma numbers only in `;` files.
+
+# Part 2 - whole pipeline, per process (2026-09-30)
+
+Each stage checked on a fresh database, with records entered through the real routes:
+
+| Stage | Check | Result |
+|-------|-------|--------|
+| Calculation | 10 Scope 1 records (Tier 1 combustion by energy and by volume, flaring, completions, unloading, AGV, stationary and mobile diesel, chemical process, Tier 3 flaring), 2 Scope 2, 1 Scope 3 against hand calculations | all equal after fix 12 |
+| Calculation, Tier 3 | flaring and combustion carbon balance by hand; the same gas at operating conditions in C / F / K / R and psig / barg / kPag / psia | equal (1e-6); standard-condition ratio exact |
+| Calculation, Tier 2 | custom factors in kg/scf, bare "scf", kg/MMBtu + HHV (gas and liquid), t/bbl (in bbl and m3), g/m3, kg/tonne | all equal after fix 13 |
+| Input | the same rows through the manual form and a CSV upload, field by field | identical after fix 10 (leap-year month share differs by design) |
+| Edit | no-op save, 2x the amount, GWP AR5 -> AR6 -> AR5 | Scope 1 exact; Scope 2 steam fixed (10, 11) |
+| Aggregation | dashboard summary (totals, source split, GWP-20), categorical breakdown, intensity, flaring, uncertainty, equity, Scope 3 summary, PDF export and report, OGMP workbook against the database | all reconcile |
+
+## Fixed
+
+| # | Where | Error | Size |
+|---|-------|-------|------|
+| 10 | `POST /api/scope2` steam | the amount was stored as steam tonnage whatever the unit (5,000 MMBtu -> steam_ton 5,000) | wrong stored activity |
+| 11 | `PUT /api/scope2/<id>` steam | the edit recalculated from steam_ton as short tons (MMBtu entries 2x, tonne entries 0.907x), ignored an edited heat_mmbtu and reset the boiler efficiency to 80 %. Now from the delivered energy, keeping the record's own net efficiency unless new inputs are given. | 2x |
+| 12 | dispatcher, Tier 3 flaring | no catalog factor -> an explicit N2O factor of 0; the Table 5-3 default now applies (as Tier 1). Golden cases F01 / F02 updated. | small (N2O) |
+| 13 | custom factors | a kg/MMBtu factor of a liquid fuel (parent Diesel) was refused for gallons: its HHV was read per scf. The HHV basis now comes from the parent fuel. | blocked entry |
+| 14 | `POST /api/scope3` | method label "Scope 3 - Category Category 4" | label |
+
+Tests: `new/server/tests/test_pipeline_audit_2026_09_30.py` (7, all fail before the fixes).
+
+## Open (not changed)
+
+- A GWP switch recalculates Scope 1 only; stored Scope 2 values keep the CH4 / N2O of the grid
+  factor and of the default steam boiler at the previous GWP (0.001 % of grid electricity here).
+- `calculations.constants.invalidate_gwp_cache()` is never called; records created right after a
+  switch were on the new GWP in the test, so no effect was observed.
+- A custom kg/MMBtu factor without a parent fuel has its HHV in Btu/scf (as the form says); a liquid
+  fuel needs its parent fuel set.

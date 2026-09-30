@@ -113,6 +113,57 @@ def _calc_indirect_steam(data):
     return co2_kg / 1000.0, energy_mmbtu, ef_co2
 
 
+_STEAM_MASS_UNITS = {"ton", "tons", "tonne", "tonnes", "mt", "metric_ton", "us_ton", "short_ton", "mlb", "klb",
+                     "thousand_lbs", "lb", "lbs", "pound", "pounds", "kg", "kilogram"}
+
+
+def _steam_fuel_factor_kg_per_mmbtu(ef_co2):
+    """kg CO2e per MMBtu of boiler fuel as _calc_indirect_steam applies it (CO2, plus the Table 4-6
+    CH4 / N2O of the default natural-gas boiler)."""
+    ef = float(ef_co2 or _DEFAULT_BOILER_EF_KG_PER_MMBTU)
+    if 0 < ef < 1.0:
+        ef *= 1000.0
+    if ef == _DEFAULT_BOILER_EF_KG_PER_MMBTU:
+        from calculations.constants import get_active_gwp
+        gwp = get_active_gwp()
+        ef += 0.001 * float(gwp["CH4"]) + 0.0001 * float(gwp["N2O"])
+    return ef
+
+
+def _recalc_indirect_steam(emission, data, factor, old_heat, old_co2e, old_ef, old_tons=None):
+    """(co2e t, delivered heat MMBtu) of an edited steam record.
+
+    The delivered energy is the stored heat_mmbtu, or the edited steam tonnage converted in the
+    unit given. Boiler efficiency and transmission loss are not stored: unless the edit gives them,
+    the record keeps the net efficiency it was calculated with (derived from its stored energy,
+    factor and co2e) instead of falling back to 80 %.
+    """
+    tons = parse_number(data.get("steam_ton"), "steam_ton", required=False, min_value=0, default=0.0) \
+        if "steam_ton" in data else 0.0
+    ci = dict((data.get("calc_inputs") or {}).get("indirect_steam") or {})
+    if data.get("steam_enthalpy") not in (None, ""):
+        ci["steam_enthalpy"] = data["steam_enthalpy"]
+    if tons > 0 and not data.get("unit") and not ci.get("steam_enthalpy") and old_tons and old_heat:
+        # same steam as before: the record's own MMBtu per ton (its unit is not stored)
+        heat = tons * float(old_heat) / float(old_tons)
+    elif tons > 0:
+        unit = str(data.get("unit") or "ton").lower().replace(" ", "")
+        _, heat, _ = _calc_indirect_steam({"amount": tons, "unit": unit, "boiler_efficiency": 1.0,
+                                           "calc_inputs": {"indirect_steam": ci}})
+    else:
+        heat = float(emission.heat_mmbtu or 0.0)
+    given = any(data.get(k) not in (None, "") for k in ("boiler_eff", "boiler_efficiency", "trans_loss")) \
+        or any(k in ci for k in ("boiler_eff", "trans_loss"))
+    if not given and old_heat and old_co2e and float(old_heat) > 0 and float(old_co2e) > 0:
+        net_eff = float(old_heat) * _steam_fuel_factor_kg_per_mmbtu(old_ef) / (float(old_co2e) * 1000.0)
+        return round(heat / net_eff * _steam_fuel_factor_kg_per_mmbtu(factor) / 1000.0, 4), heat
+    ci.setdefault("boiler_eff", float(data.get("boiler_eff") or data.get("boiler_efficiency") or 0.80))
+    ci.setdefault("trans_loss", float(data.get("trans_loss") or 0.0))
+    ci["ef_co2"] = factor or _DEFAULT_BOILER_EF_KG_PER_MMBTU
+    co2e, _, _ = _calc_indirect_steam({"amount": heat, "unit": "mmbtu", "calc_inputs": {"indirect_steam": ci}})
+    return round(co2e, 4), heat
+
+
 def _calc_cogen_allocation(data):
     """Calculate heat-allocated tCO2e for CHP / cogeneration entry."""
     val = float(data.get("amount", 0) or data.get("co2e", 0) or data.get("total_emissions", 0))
@@ -314,7 +365,9 @@ def create_scope2_emission():
     raw_amt = parse_number(data.get("amount"), "amount", required=False, min_value=0, default=0.0)
     raw_unit = str(data.get("unit") or "").lower().strip()
 
-    if steam_ton_val == 0 and ("steam" in source_type.lower() or raw_unit in ["ton", "tonne", "mt", "us_ton", "short_ton", "tons"]):
+    # only a mass of steam is a steam tonnage: 5,000 MMBtu of steam is not 5,000 t (it was stored as
+    # such, and an edit then recalculated the record from 5,000 short tons = 10,000 MMBtu)
+    if steam_ton_val == 0 and raw_unit in _STEAM_MASS_UNITS:
         if raw_amt > 0:
             steam_ton_val = raw_amt
 
@@ -471,6 +524,8 @@ def update_scope2_emission(emission_id):
     if "source_type" in data:
         emission.source_type = data["source_type"]
 
+    old_heat, old_co2e, old_ef, old_tons = emission.heat_mmbtu, emission.co2e, emission.emission_factor, emission.steam_ton
+
     # Check for recalculation trigger (L9)
     activity_changed = any(
         k in data
@@ -503,35 +558,8 @@ def update_scope2_emission(emission_id):
         if st in ["electricity"] or "electric" in st:
             emission.co2e = round((emission.electricity_kwh * factor) / 1000.0, 4)
         elif st in ["steam", "indirect_steam"] or "steam" in st:
-            # Authoritative thermodynamic indirect steam formula with enthalpy & efficiency
-            steam_ton_val = emission.steam_ton if (emission.steam_ton and emission.steam_ton > 0) else 0.0
-            is_ton = steam_ton_val > 0
-            temp_data = {
-                "amount": steam_ton_val if is_ton else emission.heat_mmbtu,
-                "unit": "ton" if is_ton else "mmbtu",
-                "calc_inputs": data.get("calc_inputs", {}),
-            }
-            if "indirect_steam" not in temp_data["calc_inputs"]:
-                boiler_eff_val = float(data.get("boiler_eff") or data.get("boiler_efficiency") or 0.80)
-                trans_loss_val = float(data.get("trans_loss") or 0.0)
-                enthalpy_val = float(data.get("steam_enthalpy") or 2.0)
-                temp_data["calc_inputs"]["indirect_steam"] = {
-                    "boiler_eff": boiler_eff_val,
-                    "trans_loss": trans_loss_val,
-                    "ef_co2": factor or _DEFAULT_BOILER_EF_KG_PER_MMBTU,
-                    "steam_enthalpy": enthalpy_val,
-                }
-            try:
-                co2e_val, heat_mmbtu, _ = _calc_indirect_steam(temp_data)
-                emission.co2e = round(co2e_val, 4)
-                if heat_mmbtu:
-                    emission.heat_mmbtu = round(heat_mmbtu, 4)
-            except Exception:
-                eff = float(data.get("boiler_eff") or data.get("boiler_efficiency") or 0.80)
-                enth = float(data.get("steam_enthalpy") or 2.0)
-                mmbtu = (emission.steam_ton * enth) if (emission.steam_ton and emission.steam_ton > 0) else (emission.heat_mmbtu or 0.0)
-                ef_kg = (factor * 1000.0) if (0 < factor < 1.0) else factor
-                emission.co2e = round((mmbtu * ef_kg) / (eff * 1000.0), 4)
+            emission.co2e, emission.heat_mmbtu = _recalc_indirect_steam(
+                emission, data, factor, old_heat, old_co2e, old_ef, old_tons)
         elif st in ["heat"] or "heat" in st:
             emission.co2e = round((emission.heat_mmbtu * factor) / 1000.0, 4)
         elif st in ["cooling"] or "cool" in st:

@@ -145,3 +145,7 @@ See audit/UPLOAD_10K_AUDIT.md (fixes 1-13). Server: calculations/dispatcher.py (
 ## 2026-09-30 - Calculation and CSV uploader audit
 
 See audit/CALC_CSV_AUDIT_2026-09-30.md (fixes 1-9). Server: calculations/units.py (compute_scope3_co2e numerator / per-1,000 denominator, normalize_efficiency explicit %, therm), services/scope1_calc.py (check_activity_unit in resolve_factor), background_processor.py (decimal comma for ";" CSV, user uncertainty as a calculation input, _file_uncertainty, Scope 2 source types). Tests: tests/test_calc_audit_2026_09_30.py (44).
+
+## 2026-09-30 - Whole-pipeline audit
+
+See audit/CALC_CSV_AUDIT_2026-09-30.md part 2 (fixes 10-14). Server: routes/scope2.py (_STEAM_MASS_UNITS, _recalc_indirect_steam), calculations/dispatcher.py (Tier 3 flaring N2O default), services/scope1_calc.py (custom factor HHV basis from the parent fuel), routes/scope3.py (label). Golden cases GOLD-F01 / F02 (flare N2O). Tests: tests/test_pipeline_audit_2026_09_30.py (7).

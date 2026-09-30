@@ -140,6 +140,19 @@ def custom_factor_data(cf):
         "co2": cf.co2_factor, "ch4": cf.ch4_factor, "n2o": cf.n2o_factor, "co": cf.co_factor,
         "unit": cf.unit, "hhv": cf.hhv_factor, "type": "custom", "name": cf.name, "custom_factor_id": cf.id,
     }
+    if cf.parent_fuel:
+        # the HHV is in the parent fuel's basis (Btu/gal for diesel, Btu/scf for gas): without it a
+        # custom kg/MMBtu diesel factor applied to gallons was refused as "per scf of gas"
+        from calculations.combustion import factor_hhv_unit, fuel_basis
+        from routes.emissions import _lookup_api_factor
+
+        parent = _lookup_api_factor(cf.parent_fuel)
+        if parent:
+            hu = factor_hhv_unit(parent)
+            if not hu:
+                basis, mult = fuel_basis(parent.get("type") or cf.parent_fuel)
+                hu = {1.0: "btu", 1e3: "kbtu", 1e6: "mmbtu"}[mult] + "/" + basis
+            fd["hhv_unit"] = hu
     per_gas = [getattr(cf, f"{g}_uncertainty", None) for g in ("co2", "ch4", "n2o")]
     if any(per_gas):
         fd["uncertainty"] = {
