@@ -83,3 +83,33 @@ Tests: `new/server/tests/test_pipeline_audit_2026_09_30.py` (7, all fail before 
   switch were on the new GWP in the test, so no effect was observed.
 - A custom kg/MMBtu factor without a parent fuel has its HHV in Btu/scf (as the form says); a liquid
   fuel needs its parent fuel set.
+
+# Part 3 - Tier 3 engineering, Excel uploads, percent cells, production (2026-09-30)
+
+Checked:
+- One Tier 3 row per engineering process through the CSV uploader with the template's own headers,
+  against hand calculations: pneumatics, tank flashing (with and without vapour control), blowdown,
+  completions (rate x duration), liquids unloading (Eq. 6-3 geometry = Eq. 6-10 constant within its
+  0.3 % rounding), AGR (CO2 removed, CH4 slip), drilling (Table 6-2), flaring with a single
+  efficiency, Tier 3 combustion. All equal.
+- Excel uploads: real date cells, numbers, percent-formatted cells; typed "%" in CSV cells.
+- Production data, BOE, gas volumes, intensities; Scope 3 default factors (unit must match);
+  overwrite on re-upload copies every calculated field.
+
+## Fixed
+
+| # | Where | Error | Size |
+|---|-------|-------|------|
+| 15 | uploader, Excel | a percent-formatted cell arrives as its fraction: 5 % in user_unc_co2, meter_uncertainty_pct or Scope 2 trans_loss was read as 0.05 % (steam 5 % low). Percent cells are now read as the text Excel shows ("5%"). | 100x on those inputs |
+| 16 | uploader, Scope 1 | a typed "2.5%" in a Tier 3 column reached the calculator as text; the row failed with a raw conversion error. "X%" is now X in percentage columns (`*_pct`, `user_unc_*`) and X/100 elsewhere. | row refused |
+| 17 | rate units on monthly records | "MMscf/d", "m3/hr", "Mscf/yr" were annualised (365 days) on monthly Tier 3 flaring / blowdown / AGR records, on production rows (intensities, methane loss rate, WEC) and on the flaring volume KPI. A rate now covers the record's month (`units.period_volume_m3`). | 11.8x (March) |
+
+Tests: `new/server/tests/test_upload_percent_rates_2026_09_30.py` (7, all fail before the fixes).
+
+## Open (not changed)
+
+- Biogenic CO2: `Emission.co2_biogenic` is never set; CO2 from wood, biodiesel, ethanol and landfill
+  gas is counted in Scope 1 CO2e, and the biogenic KPI is always 0. The GHG Protocol and ISO 14064-1
+  report biomass CO2 outside the scopes; changing it changes the Scope 1 boundary.
+- Two CH4 mass constants: 0.6785 kg/m3 (units.py) and 16.04 / 379.3 lb/scf (vented.py, 0.6774
+  kg/m3); 0.16 % apart.

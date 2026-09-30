@@ -222,16 +222,17 @@ class CalculationDispatcher:
             raise ValueError(f"Missing required field: {key} ({description})")
         return float(val)
 
-    def _normalize_volume(self, value, unit, target_unit="m3"):
+    def _normalize_volume(self, value, unit, target_unit="m3", year=None, month=None):
         """Normalise a gas/liquid volume or volume RATE to `target_unit` (m3 or mmscf).
 
-        RC-5 (BUG-066 / BUG-033): exact-token parsing; rate units ("MMscfd", "Mcf/day", "m3/yr")
-        are annualised; an unknown unit raises instead of being returned unchanged.
+        RC-5 (BUG-066 / BUG-033): exact-token parsing; a rate unit ("MMscfd", "Mcf/day", "m3/yr")
+        covers the record's month (its year when no month is given); an unknown unit raises
+        instead of being returned unchanged.
         """
-        from .units import annual_volume_m3
+        from .units import period_volume_m3
 
         try:
-            m3 = annual_volume_m3(value, unit or "m3")
+            m3 = period_volume_m3(value, unit or "m3", year=year, month=month)
         except UnitError as err:
             raise ValueError(str(err))
         if target_unit == "m3":
@@ -934,7 +935,7 @@ class CalculationDispatcher:
                     ["amount", "quantity", "gas_volume"],
                     "flared gas volume",
                 )
-                vol_m3 = self._normalize_volume(vol_raw, unit, "m3")
+                vol_m3 = self._normalize_volume(vol_raw, unit, "m3", flat_inputs.get("year"), flat_inputs.get("month"))
                 ch4_content = self._require_fraction(
                     flat_inputs,
                     ["c1", "ch4_content", "flare_ch4_content"],
@@ -1369,7 +1370,7 @@ class CalculationDispatcher:
                     "vessel physical volume",
                 )
                 raw_unit = flat_inputs.get("blowdown_unit") or unit or "m3"
-                vol_m3 = self._normalize_volume(raw_vol, raw_unit, "m3")
+                vol_m3 = self._normalize_volume(raw_vol, raw_unit, "m3", flat_inputs.get("year"), flat_inputs.get("month"))
                 press = self._require_float(
                     flat_inputs,
                     ["blowdown_pressure", "pressure"],
@@ -1963,7 +1964,7 @@ class CalculationDispatcher:
                     "gas throughput",
                 )
                 vol_mmscf = self._normalize_volume(
-                    agr_vol, flat_inputs.get("agr_unit") or unit, "mmscf"
+                    agr_vol, flat_inputs.get("agr_unit") or unit, "mmscf", flat_inputs.get("year"), flat_inputs.get("month")
                 )
                 raw_co2_in = self._require_float(
                     flat_inputs, ["agr_co2_in", "co2_in", "co2_content"], "inlet CO2 mole %"

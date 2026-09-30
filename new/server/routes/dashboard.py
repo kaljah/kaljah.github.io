@@ -1558,7 +1558,7 @@ def get_flaring_summary():
             pt = (e.process_type or "").strip().lower()
             key = {"routine_flaring": "routine", "non_routine_flaring": "non_routine",
                    "safety_flaring": "safety"}.get(pt, "unclassified")
-            vol = gas_volume_m3(e.quantity, e.unit)
+            vol = gas_volume_m3(e.quantity, e.unit, e.year, e.month)
             if vol is None:
                 unconverted += 1
             else:

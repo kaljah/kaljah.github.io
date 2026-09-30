@@ -707,6 +707,32 @@ def annual_volume_m3(value, unit):
     return float(value) * f * (per_year or 1.0)
 
 
+def period_volume_m3(value, unit, year=None, month=None):
+    """Volume in m3 over a record's period: a plain volume as given; a rate ("MMscf/d", "m3/hr",
+    "Mscf/yr") times the length of the record's month (its year when there is no month).
+    annual_volume_m3 always annualised, so a monthly record entered as 5 MMscf/d counted 365 days
+    of gas instead of the month's (audit 2026-09-30: 12x on monthly flaring and production)."""
+    import calendar
+
+    f, per_year = parse_volume_rate(unit)
+    vol = float(value) * f
+    if per_year is None:
+        return vol
+    try:
+        yr = int(year) if year not in (None, "") else None
+        mo = int(month) if month not in (None, "") else None
+    except (TypeError, ValueError):
+        yr, mo = None, None
+    days_in_year = 366 if (yr and calendar.isleap(yr)) else 365
+    if mo and 1 <= mo <= 12:
+        days = calendar.monthrange(yr or 2001, mo)[1]
+    else:
+        days = days_in_year
+    if per_year == 1.0:  # per year: the period's share of the year
+        return vol * days / days_in_year
+    return vol * (per_year / 365.0) * days  # per day (365) or per hour (8760) over `days`
+
+
 _SCALE = _re.compile(r"^(?:10\^?(\d+)|1e(\d+)|(thousand|million|billion))\s*")
 _SCALE_WORDS = {"thousand": 1e3, "million": 1e6, "billion": 1e9}
 

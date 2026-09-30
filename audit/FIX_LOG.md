@@ -149,3 +149,7 @@ See audit/CALC_CSV_AUDIT_2026-09-30.md (fixes 1-9). Server: calculations/units.p
 ## 2026-09-30 - Whole-pipeline audit
 
 See audit/CALC_CSV_AUDIT_2026-09-30.md part 2 (fixes 10-14). Server: routes/scope2.py (_STEAM_MASS_UNITS, _recalc_indirect_steam), calculations/dispatcher.py (Tier 3 flaring N2O default), services/scope1_calc.py (custom factor HHV basis from the parent fuel), routes/scope3.py (label). Golden cases GOLD-F01 / F02 (flare N2O). Tests: tests/test_pipeline_audit_2026_09_30.py (7).
+
+## 2026-09-30 - Tier 3 / Excel / production audit
+
+See audit/CALC_CSV_AUDIT_2026-09-30.md part 3 (fixes 15-17). Server: background_processor.py (_xl_values, _percent_text_to_number), calculations/units.py (period_volume_m3), calculations/dispatcher.py (_normalize_volume by the record's month), services/dashboard_filters.py (gas_volume_m3 / production conversions by period), services/intensity.py and routes/dashboard.py (flaring volume by period). Tests: tests/test_upload_percent_rates_2026_09_30.py (7).
