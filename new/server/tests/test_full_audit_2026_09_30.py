@@ -102,3 +102,73 @@ def test_granular_saleable_production_uses_the_filters(admin):
     js = admin.get("/api/dashboard/granular-intensities?year=2018&segment=Upstream").get_json()
     assert js["saleable_production_boe"] == pytest.approx(1.0e6)          # was 10e6 (both facilities)
     assert js["ci_by_saleable_production_kg_boe"] == pytest.approx(1000 * 1000 / 1.0e6)
+
+
+# -- 5. JV equity allocation covers Scope 1 and Scope 2 -------------------------------------------
+
+def test_equity_allocation_includes_scope2(admin):
+    from models import Scope2Emission
+
+    with flask_app.app_context():
+        fid = _facility("Full Audit Equity")
+        db.session.add(Emission(facility_id=fid, year=2017, month=1, process_type="combustion", quantity=1,
+                                unit="MMBtu", co2_emissions=100, ch4_emissions=1, n2o_emissions=0, co2e_total=128,
+                                status="Verified"))
+        db.session.add(Scope2Emission(facility_id=fid, year=2017, month=1, source_type="electricity",
+                                      electricity_kwh=100000, emission_factor=0.5, co2e=50, status="Verified"))
+        fac = db.session.get(Facility, fid)
+        fac.equity_share_pct = 40.0
+        db.session.commit()
+    rows = admin.get(f"/api/equity/allocation?year=2017&facility_id={fid}").get_json()
+    row = rows[0]
+    assert row["total_scope1"] == pytest.approx(128) and row["total_scope2"] == pytest.approx(50)
+    assert row["total_co2e"] == pytest.approx(178)
+    alloc = sum(p["allocated_co2e"] for p in row["partners"])
+    shares = sum(p["equity_pct"] for p in row["partners"])
+    assert alloc == pytest.approx(178 * shares / 100.0)
+    for p in row["partners"]:
+        assert p["allocated_co2e"] == pytest.approx(p["allocated_scope1"] + p["allocated_scope2"], abs=0.02)
+
+
+# -- 6. A bare "ton" in an uploaded file is refused ------------------------------------------------
+
+def test_bare_ton_detection():
+    from background_processor import _bare_ton_error, _is_bare_ton
+
+    for u in ("ton", "Tons", "kg/ton", "t CO2/tons"):
+        assert _is_bare_ton(u), u
+    for u in ("tonne", "tonnes", "short_ton", "short ton", "long ton", "metric ton", "ton-km", "t", "kg/tonne"):
+        assert not _is_bare_ton(u), u
+    assert _bare_ton_error({"unit": "ton"})
+    assert _bare_ton_error({"unit": "tonne", "fuel_mass_unit": "tons"})
+    assert _bare_ton_error({"unit": "MMBtu", "notes": "1 ton"}) is None
+
+
+def test_bare_ton_row_is_refused_and_explicit_units_are_calculated(admin):
+    import os
+    import tempfile
+    from background_processor import _process_file_thread, get_job_status, upload_jobs, upload_jobs_lock
+
+    with flask_app.app_context():
+        _facility("Full Audit Ton")
+        uid = User.query.filter_by(email=EMAIL).first().id
+    text = ("Facility,Date,Process,Fuel,Quantity,Unit,Factor_Type\n"
+            "Full Audit Ton,2016-01,combustion,Bituminous Coal,10,ton,default\n"
+            "Full Audit Ton,2016-02,combustion,Bituminous Coal,10,short_ton,default\n"
+            "Full Audit Ton,2016-03,combustion,Bituminous Coal,10,tonne,default\n")
+    fd, path = tempfile.mkstemp(suffix=".csv")
+    os.write(fd, text.encode())
+    os.close(fd)
+    with upload_jobs_lock:
+        upload_jobs["ton-job"] = {"status": "processing", "progress": 0, "processed": 0, "total": 0, "errors": [],
+                                  "skipped": [], "error_csv_path": None, "anomalies": []}
+    _process_file_thread(app=flask_app, job_id="ton-job", file_path=path, original_filename="t.csv", user_id=uid,
+                         global_factor_type="auto", provided_mapping=None, scope=1, overwrite_duplicates=True)
+    st = get_job_status("ton-job")
+    assert st["skipped_count"] == 1 and "ambiguous" in st["skipped_preview"][0]["reason"]
+    with flask_app.app_context():
+        fid = Facility.query.filter_by(name="Full Audit Ton").first().id
+        short = Emission.query.filter_by(facility_id=fid, year=2016, month=2).first()
+        metric = Emission.query.filter_by(facility_id=fid, year=2016, month=3).first()
+        assert Emission.query.filter_by(facility_id=fid, year=2016, month=1).first() is None
+        assert metric.co2_emissions / short.co2_emissions == pytest.approx(1000 / 907.18474, rel=1e-9)

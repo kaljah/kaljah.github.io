@@ -1257,7 +1257,7 @@ Email: ${personResponsible.email || "N/A"}`;
     curY += 4;
 
     // BUG-078: partner shares come from the server's /equity/allocation (effective equity slices,
-    // Verified Scope 1 records), never from hard-coded percentages.
+    // Verified Scope 1 and Scope 2 records), never from hard-coded percentages.
     const partnerAgg = {};
     let totCo2eAll = 0;
     let totCh4All = 0;
@@ -1284,7 +1284,7 @@ Email: ${personResponsible.email || "N/A"}`;
           pa.ch4.toFixed(1),
         ]),
         [
-          { content: "Total (Verified Scope 1)", styles: { fontStyle: "bold" } },
+          { content: "Total (Verified Scope 1 + 2)", styles: { fontStyle: "bold" } },
           "",
           "",
           "",
