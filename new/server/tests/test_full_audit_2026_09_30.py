@@ -172,3 +172,37 @@ def test_bare_ton_row_is_refused_and_explicit_units_are_calculated(admin):
         metric = Emission.query.filter_by(facility_id=fid, year=2016, month=3).first()
         assert Emission.query.filter_by(facility_id=fid, year=2016, month=1).first() is None
         assert metric.co2_emissions / short.co2_emissions == pytest.approx(1000 / 907.18474, rel=1e-9)
+
+
+# -- 7. A GWP switch recalculates Scope 2 as well ---------------------------------------------------
+
+def test_gwp_switch_recalculates_scope2(admin):
+    from models import Scope2Emission
+    from electricity_factors import grid_entry, grid_factor_kg_co2e_per_kwh
+    from calculations.constants import GWP_AR5, GWP_AR6
+
+    with flask_app.app_context():
+        fid = _facility("Full Audit GWP")
+    assert admin.put("/api/auth/settings", json={"gwp_standard": "AR5"}).status_code == 200
+    r1 = admin.post("/api/scope2", json=dict(facility_id=fid, year=2015, month=1, source_type="electricity",
+                                            electricity_kwh=1_000_000, grid_region="Algerian National Grid", unit="kWh"))
+    r2 = admin.post("/api/scope2", json=dict(facility_id=fid, year=2015, month=2, source_type="indirect_steam",
+                                            amount=5000, unit="MMBtu", boiler_efficiency=0.8))
+    assert r1.status_code == 201 and r2.status_code == 201
+    with flask_app.app_context():
+        before = {e.month: e.co2e for e in Scope2Emission.query.filter_by(facility_id=fid, year=2015)}
+    try:
+        assert admin.put("/api/auth/settings", json={"gwp_standard": "AR6"}).status_code == 200
+        with flask_app.app_context():
+            after = {e.month: e.co2e for e in Scope2Emission.query.filter_by(facility_id=fid, year=2015)}
+            entry = grid_entry("Algerian National Grid")[1]
+            assert after[1] == pytest.approx(1_000_000 * grid_factor_kg_co2e_per_kwh(entry, gwp=GWP_AR6) / 1000.0)
+            k = lambda g: 53.06 + 0.001 * g["CH4"] + 0.0001 * g["N2O"]
+            assert after[2] == pytest.approx(5000 / 0.8 * k(GWP_AR6) / 1000.0, rel=1e-6)
+            assert after[2] != pytest.approx(before[2], rel=1e-9)
+    finally:
+        assert admin.put("/api/auth/settings", json={"gwp_standard": "AR5"}).status_code == 200
+    with flask_app.app_context():
+        back = {e.month: e.co2e for e in Scope2Emission.query.filter_by(facility_id=fid, year=2015)}
+        assert back[1] == pytest.approx(before[1], rel=1e-9) and back[2] == pytest.approx(before[2], rel=1e-6)
+        assert GWP_AR5["CH4"] == 28.0

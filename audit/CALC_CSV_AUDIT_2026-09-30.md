@@ -77,10 +77,9 @@ Tests: `new/server/tests/test_pipeline_audit_2026_09_30.py` (7, all fail before 
 
 ## Open (not changed)
 
-- A GWP switch recalculates Scope 1 only; stored Scope 2 values keep the CH4 / N2O of the grid
-  factor and of the default steam boiler at the previous GWP (0.001 % of grid electricity here).
-- `calculations.constants.invalidate_gwp_cache()` is never called; records created right after a
-  switch were on the new GWP in the test, so no effect was observed.
+- GWP switch and Scope 2 - DONE: the switch now recalculates grid electricity from its grid region
+  and re-weights the CH4 / N2O of default-boiler steam, and clears the cached GWP standard
+  (`invalidate_gwp_cache`), so no record is calculated on the previous standard after a switch.
 - A custom kg/MMBtu factor without a parent fuel has its HHV in Btu/scf (as the form says); a liquid
   fuel needs its parent fuel set.
 
