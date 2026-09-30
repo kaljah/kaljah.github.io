@@ -194,6 +194,17 @@ def before_request():
         req_id = str(uuid.uuid4())
     request.id = req_id
 
+    # V1: every write route treats the JSON body as a dict (data.get(...)).
+    # Reject arrays/scalars up front so they return 400 instead of a 500.
+    if request.method in ("POST", "PUT", "PATCH") and request.is_json and request.get_data(cache=True):
+        body = request.get_json(silent=True)
+        if body is not None and not isinstance(body, dict):
+            return jsonify({
+                "error": "JSON body must be an object",
+                "code": 400,
+                "request_id": req_id,
+            }), 400
+
 
 @app.after_request
 def after_request(response):
@@ -348,26 +359,19 @@ if (
 
 def ensure_admin_seeded():
     """
-    Seeds essential development and admin accounts when SEED_ADMIN=true.
+    Seeds the env-configured admin / IT admin accounts when SEED_ADMIN=true.
     """
     seed_flag = os.environ.get("SEED_ADMIN", "").strip().lower()
     if seed_flag not in ["1", "true", "yes"]:
         app.logger.info("Admin seeding skipped (SEED_ADMIN is not set)")
         return
 
-    _env_name = (
-        os.environ.get("FLASK_ENV")
-        or os.environ.get("APP_ENV")
-        or os.environ.get("ENVIRONMENT")
-        or "development"
-    ).lower()
-    is_production = _env_name in ["production", "prod", "staging"]
-
+    # C2: no hard-coded dev accounts; only env-provided credentials are seeded.
     accounts = []
-    admin_email = os.environ.get("ADMIN_EMAIL", "").strip() or "admin@ghg.com"
-    admin_password = os.environ.get("ADMIN_PASSWORD", "").strip() or "admin123"
-    it_admin_email = os.environ.get("IT_ADMIN_EMAIL", "").strip() or "itadmin@ghg.com"
-    it_admin_password = os.environ.get("IT_ADMIN_PASSWORD", "").strip() or "itadmin123"
+    admin_email = os.environ.get("ADMIN_EMAIL", "").strip()
+    admin_password = os.environ.get("ADMIN_PASSWORD", "").strip()
+    it_admin_email = os.environ.get("IT_ADMIN_EMAIL", "").strip()
+    it_admin_password = os.environ.get("IT_ADMIN_PASSWORD", "").strip()
 
     if admin_email and admin_password:
         accounts.append({
