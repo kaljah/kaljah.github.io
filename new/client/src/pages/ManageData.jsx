@@ -522,8 +522,9 @@ const ManageDataInner = () => {
             onConfirm: async () => {
                 setIsProcessingBatch(true);
                 try {
-                    await api.post('/emissions/approve/batch', { approve_all: true, scope: String(scopeNum) });
-                    toast.success(`Approved all Scope ${scopeNum} records`);
+                    const res = await api.post('/emissions/approve/batch', { approve_all: true, scope: String(scopeNum) });
+                    // the server skips the reviewer's own records: report its count, not the request
+                    showReviewResult(toast, 'approved', res.data?.approved_count, count);
                     setSelectedPendingKeys(prev => {
                         const next = new Set(prev);
                         Array.from(next).forEach(k => {

@@ -13,6 +13,26 @@ from utils import internal_error
 scope3_bp = Blueprint("scope3", __name__)
 
 
+
+
+def default_scope3_uncertainty(co2e):
+    """Default Scope 3 uncertainty (20 % factor, 10 % activity -> ~22.4 % combined), 1-sigma fraction.
+    Used by the form and the bulk imports alike (bulk records used to store none)."""
+    return propagate_uncertainty(
+        co2e, ef_uncertainty=0.20, activity_uncertainty=0.10, tier=Tier.T1, process_category="scope3", gas="co2",
+    )["relative_uncertainty"]
+
+def _page_args():
+    """(limit, offset) when the caller asks for a page, else None (full list, the old contract)."""
+    if request.args.get("limit") in (None, ""):
+        return None
+    try:
+        limit = max(1, min(500, int(request.args.get("limit"))))
+        offset = max(0, int(request.args.get("offset") or 0))
+    except ValueError:
+        return None
+    return limit, offset
+
 @scope3_bp.route("", methods=["GET"])
 @login_required
 def get_scope3_emissions():
@@ -41,8 +61,15 @@ def get_scope3_emissions():
         except ValueError:
             pass
 
-    emissions = query.order_by(Scope3Emission.created_at.desc()).all()
-    return jsonify(
+    # optional server-side paging (limit / offset): the tables used to download every record on
+    # every page change (4 MB at 10,000 records) to show 10 rows
+    query = query.order_by(Scope3Emission.created_at.desc(), Scope3Emission.id.desc())
+    page_args = _page_args()
+    total = query.count() if page_args else None
+    if page_args:
+        query = query.offset(page_args[1]).limit(page_args[0])
+    emissions = query.all()
+    rows = (
         [
             {
                 "id": e.id,
@@ -67,6 +94,9 @@ def get_scope3_emissions():
             for e in emissions
         ]
     )
+    if page_args:
+        return jsonify({"data": rows, "total": total, "limit": page_args[0], "offset": page_args[1]})
+    return jsonify(rows)
 
 
 @scope3_bp.route("", methods=["POST"])
@@ -138,16 +168,7 @@ def create_scope3_emission():
     if provided_uncertainty not in (None, ""):
         final_uncertainty = parse_number(provided_uncertainty, "uncertainty", min_value=0, max_value=2)
     else:
-        # Default Scope 3 uncertainty (20% EF, 10% AD -> ~22.3% combined)
-        u_res = propagate_uncertainty(
-            co2e_val,
-            ef_uncertainty=0.20,
-            activity_uncertainty=0.10,
-            tier=Tier.T1,
-            process_category="scope3",
-            gas="co2",
-        )
-        final_uncertainty = u_res["relative_uncertainty"]
+        final_uncertainty = default_scope3_uncertainty(co2e_val)
 
     emission.uncertainty = final_uncertainty
     calc_method = data.get("calculation_method") or f"Scope 3 - Category {emission.category}"

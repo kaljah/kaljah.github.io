@@ -55,6 +55,7 @@ const Scope2Form = () => {
   const [entries, setEntries] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [loadError, setLoadError] = useState(false);
   const [importModal, setImportModal] = useState({
     isOpen: false,
     type: "activity",
@@ -126,14 +127,18 @@ const Scope2Form = () => {
   const loadEntries = async () => {
     setLoading(true);
     try {
-      const res = await api.get("/scope2");
+      // one page from the server (the whole list used to be downloaded on every page change)
+      const res = await api.get("/scope2", {
+        params: { limit: RECORDS_PER_PAGE, offset: (currentPage - 1) * RECORDS_PER_PAGE },
+      });
       const data = Array.isArray(res.data) ? res.data : res.data?.data || [];
-      const sorted = data.sort((a, b) => b.id - a.id);
-      const start = (currentPage - 1) * RECORDS_PER_PAGE;
-      setEntries(sorted.slice(start, start + RECORDS_PER_PAGE));
-      setTotalPages(Math.max(1, Math.ceil(sorted.length / RECORDS_PER_PAGE)));
+      const total = Array.isArray(res.data) ? data.length : Number(res.data?.total) || 0;
+      setEntries(data);
+      setTotalPages(Math.max(1, Math.ceil(total / RECORDS_PER_PAGE)));
+      setLoadError(false);
     } catch (error) {
       console.error("Failed to load entries:", error);
+      setLoadError(true);
       toast.error("Failed to load Scope 2 data");
     } finally {
       setLoading(false);
@@ -697,6 +702,13 @@ const Scope2Form = () => {
                 <tr>
                   <td colSpan="11" style={{ textAlign: "center" }}>
                     <LoadingSpinner />
+                  </td>
+                </tr>
+              ) : loadError ? (
+                <tr>
+                  <td colSpan="11" style={{ textAlign: "center", padding: "40px", color: "var(--danger, #dc2626)" }}>
+                    Could not load the records.{" "}
+                    <button type="button" className="btn-ghost" onClick={loadEntries}>Retry</button>
                   </td>
                 </tr>
               ) : entries.length === 0 ? (

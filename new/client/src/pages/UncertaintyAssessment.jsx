@@ -268,7 +268,7 @@ const UncertaintyAssessment = () => {
       <div className="ua-tier-grid">
         {Object.entries(data.tier_breakdown || {}).map(([tier, pct]) => (
           <div key={tier} className="ua-tier-card">
-            <div className="ua-tier-label">{tier} (Data Quality)</div>
+            <div className="ua-tier-label">{tier} (share of Scope 1)</div>
             <div className={`ua-tier-value ${getTierColorClass(tier)}`}>
               {pct}%
             </div>
@@ -281,6 +281,23 @@ const UncertaintyAssessment = () => {
           </div>
         ))}
       </div>
+
+      {/* ── Uncertainty bands (whole inventory) ── */}
+      {data.uncertainty_bands && (
+        <div className="ua-tier-grid">
+          {[["low", "Low Uncertainty (≤ ±10%)", "tier-3-color"],
+            ["medium", "Medium Uncertainty (±10% to ±30%)", "tier-2-color"],
+            ["high", "High Uncertainty (> ±30%)", "tier-1-color"]].map(([band, label, cls]) => (
+            <div key={band} className="ua-tier-card">
+              <div className="ua-tier-label">{label}</div>
+              <div className={`ua-tier-value ${cls}`}>{data.uncertainty_bands[band] ?? 0}%</div>
+              <div className="ua-tier-bar">
+                <div className={`ua-tier-bar-fill ${cls}`} style={{ width: `${data.uncertainty_bands[band] ?? 0}%` }} />
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* ── Legend ── */}
       <div className="legend-bar">

@@ -72,20 +72,37 @@ def _values(model, user, decision, reason):
     return vals
 
 
+NOTIFY_ID_LIMIT = 200  # record ids kept in a summary notification's metadata
+
+
 def _notify_makers(rows, label, decision, user, reason):
+    """One notification per maker and decision: a record's own message for a single record, one
+    summary for a batch (a 30,000-record approval used to create 30,000 notifications and toasts)."""
     verb = "approved" if decision == "approve" else "rejected"
+    by_maker = {}
     for rec_id, maker_id, facility_id in rows:
         if not maker_id or maker_id == user.id:
             continue
-        msg = f"Your {label} record #{rec_id} was {verb} by {user.fullName}."
+        by_maker.setdefault(maker_id, []).append((rec_id, facility_id))
+    for maker_id, recs in by_maker.items():
+        if len(recs) == 1:
+            rec_id, facility_id = recs[0]
+            msg = f"Your {label} record #{rec_id} was {verb} by {user.fullName}."
+            meta = {"record_id": rec_id, "scope_label": label, "facility_id": facility_id, "decision": verb}
+            title = f"{label} record {verb}"
+        else:
+            msg = f"{len(recs):,} of your {label} records were {verb} by {user.fullName}."
+            meta = {"record_ids": [r for r, _ in recs[:NOTIFY_ID_LIMIT]], "record_count": len(recs),
+                    "scope_label": label, "decision": verb}
+            title = f"{len(recs):,} {label} records {verb}"
         if decision == "reject":
-            msg += f" Reason: {reason}. It is excluded from totals."
+            msg += f" Reason: {reason}. {'It is' if len(recs) == 1 else 'They are'} excluded from totals."
         Notification.create(
-            title=f"{label} record {verb}",
+            title=title,
             message=msg,
             type="APPROVAL" if decision == "approve" else "REJECTION",
             user_id=maker_id,
-            metadata={"record_id": rec_id, "scope_label": label, "facility_id": facility_id, "decision": verb},
+            metadata=meta,
         )
 
 
