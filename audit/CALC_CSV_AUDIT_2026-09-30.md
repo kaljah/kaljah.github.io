@@ -108,8 +108,9 @@ Tests: `new/server/tests/test_upload_percent_rates_2026_09_30.py` (7, all fail b
 
 ## Open (not changed)
 
-- Biogenic CO2: `Emission.co2_biogenic` is never set; CO2 from wood, biodiesel, ethanol and landfill
-  gas is counted in Scope 1 CO2e, and the biogenic KPI is always 0. The GHG Protocol and ISO 14064-1
-  report biomass CO2 outside the scopes; changing it changes the Scope 1 boundary.
+- Biogenic CO2 (decided 2026-09-30): the biomass fuels (Landfill Gas, Ethanol (100%), Biodiesel (100%),
+  Wood / Wood Waste) are removed from the server and client catalogs and the always-zero biogenic
+  KPIs (biogenic_intensity, total_biogenic) from the intensity API, so no biomass CO2 can enter Scope 1.
+  The unused `Emission.co2_biogenic` column is kept (no schema change).
 - Two CH4 mass constants: 0.6785 kg/m3 (units.py) and 16.04 / 379.3 lb/scf (vented.py, 0.6774
   kg/m3); 0.16 % apart.

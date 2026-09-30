@@ -45,7 +45,7 @@ def segment_category(segment):
 
 
 def _blank():
-    return {"s1": 0.0, "co2": 0.0, "ch4": 0.0, "n2o": 0.0, "bio": 0.0, "s2": 0.0, "s3": 0.0,
+    return {"s1": 0.0, "co2": 0.0, "ch4": 0.0, "n2o": 0.0, "s2": 0.0, "s3": 0.0,
             "flaring_t": 0.0, "flaring_m3": 0.0, "ch4_split": defaultdict(float), "records": [],
             "boe": 0.0, "gas_m3": 0.0, "oil_bbl": 0.0, "gas_mscf": 0.0, "has_prod": False,
             "prod_unknown_units": 0, "top_down": None}
@@ -87,7 +87,6 @@ def intensity_cells(years=None, facility_id=None, activity=None, division=None, 
         c["co2"] += float(e.co2_emissions or 0)
         c["ch4"] += ch4
         c["n2o"] += float(e.n2o_emissions or 0)
-        c["bio"] += float(e.co2_biogenic or 0)
         cat = source_category(e.process_type)
         c["ch4_split"][{"flaring": "ch4_flaring", "vented": "ch4_venting", "fugitive": "ch4_fugitive"}
                        .get(cat, "ch4_combustion")] += ch4
@@ -122,7 +121,7 @@ def facility_row(fid, cell_list, fac, year_value, gwp_horizon="100"):
     years_used, top_down_years = [], []
     for yr, c in cell_list:
         for tgt in ([total, matched] if c["has_prod"] else [total]):
-            for k in ("s1", "co2", "ch4", "n2o", "bio", "s2", "s3", "flaring_t", "flaring_m3", "boe", "gas_m3",
+            for k in ("s1", "co2", "ch4", "n2o", "s2", "s3", "flaring_t", "flaring_m3", "boe", "gas_m3",
                       "oil_bbl", "gas_mscf"):
                 tgt[k] += c[k]
             for k, v in c["ch4_split"].items():
@@ -262,7 +261,6 @@ def facility_row(fid, cell_list, fac, year_value, gwp_horizon="100"):
         "scope3_intensity": per_boe(matched["s3"]),
         "ch4_intensity": per_boe(matched["ch4"]),
         "api_flaring_intensity": per_boe(matched["flaring_t"]),
-        "biogenic_intensity": per_boe(matched["bio"]),
         "methane_loss_rate_pct": r4(loss),
         "flaring_rate_pct": r4(matched["flaring_m3"] / gas_m3 * 100.0) if gas_m3 > 0 else None,
         "ogmp_gold_standard_target": target,
@@ -297,7 +295,6 @@ def facility_row(fid, cell_list, fac, year_value, gwp_horizon="100"):
         "total_co2": total["co2"],
         "total_ch4": total["ch4"],
         "total_n2o": total["n2o"],
-        "total_biogenic": total["bio"],
         "total_co2e_s3": total["s3"],
         "total_co2e_all": total["s1"] + total["s2"] + total["s3"],
         "unmatched_co2e": (total["s1"] + total["s2"]) - (matched["s1"] + matched["s2"]),

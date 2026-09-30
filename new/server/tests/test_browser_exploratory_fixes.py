@@ -64,7 +64,7 @@ def test_f2_engine_factors_table_4_7(app, fuel, ch4_t_per_tj, n2o_t_per_tj):
 # ---- F1: fuels the form offered and the server rejected (Table 4-5 / 40 CFR 98 Table C-1) ----
 @pytest.mark.parametrize("fuel,mmbtu_per_gal,kg_co2_per_mmbtu", [
     ("Propylene", 0.091, 67.77), ("Butane", 0.103, 64.77), ("Isobutane", 0.099, 64.94),
-    ("Naphtha", 0.125, 68.02), ("Ethanol (100%)", 0.084, 68.44), ("Biodiesel (100%)", 0.128, 73.84),
+    ("Naphtha", 0.125, 68.02),
     ("Lubricants", 0.144, 74.27), ("Waste Oil", 0.138, 74.00),
 ])
 def test_f1_liquid_fuels_table_4_5(app, fuel, mmbtu_per_gal, kg_co2_per_mmbtu):
@@ -81,8 +81,6 @@ def test_f1_liquid_factor_rejects_gas_volume(app):
 def test_f1_solids_and_gases(app):
     em = calc(app, tier1("combustion", "Tires", 10, "ton"))          # 28.00 MMBtu / short ton
     assert em["co2"] == pytest.approx(10 * 28.0 * 85.97 / 1000, rel=1e-3)
-    em = calc(app, tier1("combustion", "Wood / Wood Waste", 10, "ton"))  # 17.48 MMBtu / short ton
-    assert em["co2"] == pytest.approx(10 * 17.48 * 93.80 / 1000, rel=1e-3)
     # acetylene, Table 3-8: 0.0686 lb/ft3, 92.3 wt % C -> carbon balance at 100 % oxidation
     em = calc(app, tier1("combustion", "Acetylene", 1000, "scf"))
     assert em["co2"] == pytest.approx(1000 * 0.0686 * 0.923 * 44.01 / 12.011 / 2204.62, rel=2e-3)

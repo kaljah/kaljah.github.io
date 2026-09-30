@@ -29,7 +29,7 @@ def flare(ch4, nmhc_c, co2_in, de):
     ("Jet Fuel", 135000, 72.22), ("Motor Gasoline", 125000, 70.22), ("Crude Oil", 138000, 74.54),
     ("Anthracite Coal", 25090, 103.69), ("Bituminous Coal", 24930, 93.28), ("Sub-Bituminous Coal", 17250, 97.17),
     ("Lignite Coal", 14210, 97.72), ("Petroleum Coke", 30000, 102.41), ("Blast Furnace Gas", 92, 274.32),
-    ("Coke Oven Gas", 599, 46.85), ("Landfill Gas", 485, 52.07), ("Refinery Fuel Gas", 1388, 59.00),
+    ("Coke Oven Gas", 599, 46.85), ("Refinery Fuel Gas", 1388, 59.00),
 ])
 def test_table_4_5_fuels(key, hhv, co2):
     assert CAT[key]["hhv"] == pytest.approx(hhv) and CAT[key]["co2"] == pytest.approx(co2)
