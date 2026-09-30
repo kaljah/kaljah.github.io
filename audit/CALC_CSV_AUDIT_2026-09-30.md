@@ -114,3 +114,25 @@ Tests: `new/server/tests/test_upload_percent_rates_2026_09_30.py` (7, all fail b
   The unused `Emission.co2_biogenic` column is kept (no schema change).
 - Two CH4 mass constants: 0.6785 kg/m3 (units.py) and 16.04 / 379.3 lb/scf (vented.py, 0.6774
   kg/m3); 0.16 % apart.
+
+# Part 4 - factor matching, other uploaders, uncertainty roll-up (2026-09-30)
+
+Checked: catalog name / alias / code matching; the custom factor, facility, production, source and
+mitigation uploaders and the JSON bulk endpoints (same row processors); in-file duplicate keys; the
+inventory uncertainty roll-up (IPCC 2006 Approach 1: EF linear within a factor, AD and groups in
+quadrature) - correct.
+
+## Fixed
+
+| # | Where | Error | Size |
+|---|-------|-------|------|
+| 18 | factor lookup | the alias "fuel gas" resolved to Refinery Fuel Gas (1,388 Btu/scf, 59 kg/MMBtu); upstream fuel gas is natural gas. The alias is removed: the row must name the catalog factor. | +51 % per scf |
+| 19 | factor lookup | a factor code shared by factors with different values (CB_Prod, Eth_Prod, EtO_Prod: CH4 up to 478x apart) resolved to whichever came first; now refused as ambiguous, names still match first. | wrong factor |
+| 20 | custom factor / facility uploaders | percent cells: an Excel 5 % uncertainty or 50 % equity share was stored as 0.05 % / 0.5 % before the Excel fix and refused after it; "%" is now accepted in these percentage columns. | 100x (equity share) |
+
+## Open (not changed)
+
+- With "Overwrite duplicates", a second row of the same facility / month / non-combustion process
+  (and the same equipment ID / source ref) in one file replaces the first (BUG-057 design); two
+  sources need their own equipment IDs.
+- Custom factor `parent_fuel` is free text; only a catalog name sets the HHV basis.

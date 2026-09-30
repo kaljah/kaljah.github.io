@@ -2074,6 +2074,11 @@ def _process_row_custom_factors(row, user_id, batch_names=None):
         row = dict(row, unit=_canonical_factor_unit(row.get("unit")))  # BUG-063
     except ValueError as err:
         return None, [str(err)]
+    # uncertainties are percentages (as on the form): "5%" or an Excel percent cell is 5
+    for k in ("uncertainty", "co2_uncertainty", "ch4_uncertainty", "n2o_uncertainty"):
+        v = row.get(k)
+        if isinstance(v, str) and _PERCENT_TEXT.match(v):
+            row = dict(row, **{k: _PERCENT_TEXT.match(v).group(1)})
     try:
         vals = {k: _parse_non_negative_float(row.get(k), k) for k in (
             "co2_factor", "ch4_factor", "n2o_factor", "co_factor", "hhv_factor",
@@ -2125,7 +2130,10 @@ def _process_row_facilities(row, user_id, overwrite_duplicates, batch=None):
         for fld, lim in (("latitude", 90), ("longitude", 180)):
             coords[fld] = parse_number(row.get(fld), fld, required=False, min_value=-lim, max_value=lim)
         # equity share (%) for equity-share consolidation, as on the manual form
-        equity = parse_number(row.get("equity_share_pct"), "equity_share_pct", required=False, min_value=0, max_value=100)
+        raw_equity = row.get("equity_share_pct")
+        if isinstance(raw_equity, str) and _PERCENT_TEXT.match(raw_equity):  # "50%" / an Excel percent cell
+            raw_equity = _PERCENT_TEXT.match(raw_equity).group(1)
+        equity = parse_number(raw_equity, "equity_share_pct", required=False, min_value=0, max_value=100)
     except ValidationError as err:
         return None, [err.message]
     operator = str(row.get("operator_status") or "").strip().lower().replace("-", "_").replace(" ", "_") or None
