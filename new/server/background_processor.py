@@ -240,6 +240,28 @@ def _percent_text_to_number(name, value):
     return x if x > 1.0 else x / 100.0
 
 
+_TON_ERROR = ("'{v}' is ambiguous in a file: write 'tonne' (metric, 1,000 kg) or 'short_ton' (2,000 lb). "
+              "On the forms 'ton' is the short ton, which is 9 % less than a tonne.")
+
+
+def _is_bare_ton(unit):
+    """A unit that says 'ton' / 'tons' without saying which: 'ton', 'tons', 'kg/ton', 't CO2/tons'.
+    'short ton', 'long ton', 'metric ton', 'tonne' and 'ton-km' are explicit."""
+    u = str(unit or "").strip().lower()
+    for explicit in ("short ton", "long ton", "metric ton", "us ton"):
+        u = u.replace(explicit, explicit.replace(" ", "_"))
+    return any(tok in ("ton", "tons") for tok in re.split(r"[/\s]+", u) if tok)
+
+
+def _bare_ton_error(row):
+    """Row error for a bare 'ton' in any unit column of an uploaded row, else None."""
+    for k, v in (row or {}).items():
+        key = str(k).lower()
+        if isinstance(v, str) and (key == "unit" or key.endswith("unit") or key.endswith("_unit")) and _is_bare_ton(v):
+            return _TON_ERROR.format(v=v.strip())
+    return None
+
+
 def _prune_old_jobs(max_age_seconds=86400):
     """Prunes job entries older than max_age_seconds (default 24h), their snapshot files and error CSV files."""
     import json
@@ -1398,6 +1420,9 @@ def _process_row_scope2(
         or ("mmbtu" if source_type == "indirect_steam" else "kWh")
     ).strip()
 
+    if _is_bare_ton(unit):
+        return None, [f"Row {row_idx}: " + _TON_ERROR.format(v=unit)]
+
     kwh = 0.0
     heat_mmbtu = 0.0
     steam_ton = 0.0
@@ -1408,6 +1433,7 @@ def _process_row_scope2(
         from routes.scope2 import _calc_indirect_steam
 
         u = unit.lower().replace(" ", "")
+        u = {"shortton": "short_ton", "shorttons": "short_ton", "metricton": "metric_ton", "tonnes": "tonne"}.get(u, u)
         known_steam_units = {"mmbtu", "mm_btu", "btu", "mj", "megajoule", "gj", "gigajoule", "kwh", "mwh", "ton",
                              "us_ton", "short_ton", "tonne", "metric_ton", "mt", "mlb", "klb", "thousand_lbs", "lb",
                              "lbs", "kg"}
@@ -1913,6 +1939,8 @@ def _process_row_production(row, user_id, fac_name_map, fac_id_map, batch_prod_m
     oil_vol, gas_vol = volumes["oil"], volumes["gas"]
 
     oil_unit = str(row.get("production_unit") or row.get("oil_unit") or "bbl").strip()
+    if _is_bare_ton(oil_unit):
+        return None, [_TON_ERROR.format(v=oil_unit)]
     gas_unit = str(row.get("energy_unit") or row.get("gas_unit") or "mscf").strip()
     # units the intensity KPIs can convert (services.dashboard_filters); an unknown unit would
     # silently drop the row from every production-based indicator
@@ -2084,6 +2112,8 @@ def _process_row_custom_factors(row, user_id, batch_names=None):
         return None, [f"A custom factor named '{name}' already exists"]
     from routes.custom_factors import _canonical_factor_unit
 
+    if _is_bare_ton(row.get("unit")):
+        return None, [_TON_ERROR.format(v=str(row.get("unit")).strip())]
     try:
         row = dict(row, unit=_canonical_factor_unit(row.get("unit")))  # BUG-063
     except ValueError as err:
@@ -2362,6 +2392,10 @@ def _process_row(
         factor_source = _S1_TIER[factor_type_raw]
     else:
         return None, [f"Unknown factor type '{factor_type_raw}': use default, custom or specific"]
+
+    ton_err = _bare_ton_error(row)
+    if ton_err:
+        return None, [ton_err]
 
     # 5. Quantity: required for catalog / custom factors; engineered (Tier 3) methods may derive it
     raw_qty = _first(row, "quantity", "amount")
