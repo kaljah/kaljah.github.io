@@ -7,7 +7,7 @@ const AGRForm = ({ data, onChange, sourceType }) => {
 
       <div className="input-group">
         <label>
-          Throughput
+          Inlet (sour) gas throughput
           <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
         </label>
         <div

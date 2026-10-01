@@ -53,7 +53,8 @@ def ref_calculate_agr(
 
     c_in = max(0.0, float(co2_inlet_fraction or 0.0))
     c_out = max(0.0, float(co2_outlet_fraction or 0.0))
-    delta_co2 = max(0.0, c_in - c_out)
+    # Eq 6-18 with the outlet stream reduced by the CO2 removed: V_out = V_in (1 - y_in) / (1 - y_out)
+    delta_co2 = max(0.0, c_in - c_out) / (1.0 - c_out)
 
     ctrl = max(0.0, min(1.0, float(control_eff or 0.0)))
     co2_vent_m3 = vol_m3 * delta_co2 * (1.0 - ctrl)

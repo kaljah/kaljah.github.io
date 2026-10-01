@@ -1289,8 +1289,13 @@ class TankFlashingCalculator(BaseCalculator):
         meth = str(meth).lower().strip()
 
         # Resolve compositions
-        # Default vent CH4 content: crude tank flash gas is 27.4 mol% (Exhibit 6-18a), condensate is 36.3 mol%
-        default_ch4 = 0.274 if (liquid_type == "crude" and meth in ["vbe", "standing", "eub"]) else 0.85
+        # Default tank-vent CH4 content when the flash gas is not analysed (Section 6.3.9.1): crude 27.4 vol %
+        # (Exhibits 6-18a and 6-19, chart / GOR approach included), condensate 36.3 vol %. The chart / GOR
+        # method used 85 % (Exhibit 6-19: 126 t instead of 40.6 t) and condensate correlations 85 % too.
+        if meth in ["vbe", "standing", "eub", "gor"] and liquid_type in ("crude", "condensate"):
+            default_ch4 = 0.274 if liquid_type == "crude" else 0.363
+        else:
+            default_ch4 = 0.85
         c_ch4 = default_ch4 if ch4_content is None else float(ch4_content)
         if c_ch4 > 1.0:
             c_ch4 /= 100.0
@@ -1393,9 +1398,12 @@ class TankFlashingCalculator(BaseCalculator):
 
             base_kg_per_bbl = info["kg_ch4_per_bbl"]
             base_mol = info["baseline_ch4_mol"]
+            # the factor is never scaled by the separator-gas CH4 content (Exhibit 6-20: flashing losses are
+            # not a linear function of it, they depend on CH4 solubility in the liquid); the site content only
+            # carries the CO2 ratio below. It was scaled (Exhibit 6-20 at 58 % CH4: 22.6 t instead of 31.8 t)
             if ch4_content is None:
-                c_ch4 = base_mol  # no site analysis: the table factor applies unscaled
-            gross_ch4_kg = q_bbl * base_kg_per_bbl * (c_ch4 / base_mol)
+                c_ch4 = base_mol
+            gross_ch4_kg = q_bbl * base_kg_per_bbl
             gross_ch4_tonnes = gross_ch4_kg / 1000.0
 
             if c_ch4 > 0 and c_co2 > 0:

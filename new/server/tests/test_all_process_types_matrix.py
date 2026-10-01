@@ -47,6 +47,9 @@ class TestAllProcessTypesTier1:
             "unit": _activity_unit(process_id, meta["category"]),
             "fuel_type": "Natural Gas" if meta["category"] == "combustion" else None,
         }
+        if process_id == "completions":
+            # without a catalog code the 100 m3 is a measured flowback volume: it needs the gas analysis
+            payload["ch4_content"] = 80
         factor_data = {
             "co2": 50.0 if meta["category"] == "combustion" else 1.0,
             "ch4": 0.5,
@@ -347,6 +350,8 @@ class TestComputeEmissionsIntegration:
             "unit": _activity_unit(process_id, PROCESS_TYPES[process_id]["category"]),
             "fuel_type": "Natural Gas" if PROCESS_TYPES[process_id]["category"] == "combustion" else None,
         }
+        if process_id == "completions":
+            payload["ch4_content"] = 80  # a measured flowback volume needs the gas analysis
         factors = {
             "co2": 53.06 if PROCESS_TYPES[process_id]["category"] == "combustion" else 1.0,
             "ch4": 0.05,
@@ -484,6 +489,8 @@ class TestPhysicalConservationAcrossAllProcesses:
 
         p1 = {"process_type": process_id, "factor_source": "default", "amount": 100.0, "unit": unit}
         p2 = {"process_type": process_id, "factor_source": "default", "amount": 200.0, "unit": unit}
+        if process_id == "completions":
+            p1["ch4_content"] = p2["ch4_content"] = 80  # a measured flowback volume needs the gas analysis
 
         res1 = dispatcher.dispatch(process_id, p1, factors, {})
         res2 = dispatcher.dispatch(process_id, p2, factors, {})

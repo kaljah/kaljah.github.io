@@ -51,6 +51,7 @@ import {
   getSegmentBgColor,
   convertActivityData,
 } from "../utils/emissionFactorsAPI";
+import { hhvToBtu } from "../utils/hhv";
 
 const PROCESS_TYPES = PROCESS_TYPES_MAP;
 
@@ -1502,51 +1503,20 @@ const Scope1Form = () => {
         fuel_density: fuelDensity ? parseFloat(fuelDensity) : undefined,
         data_source_ref: dataSourceRef || undefined,
 
-        // HHV & Combustion Parameters — for Tier 2 custom fuel properties or Tier 3 specific factor mode
-        // Convert user-entered HHV to BTU/unit matching the fuel quantity unit
+        // HHV & Combustion Parameters — for Tier 2 custom fuel properties or Tier 3 specific factor mode.
+        // The HHV is sent in Btu with its real basis (Btu/scf, Btu/gal or Btu/lb); the server converts it
+        // to the fuel's basis (with the density when that crosses volume / mass). It used to be sent as
+        // "BTU/unit", which the server reads in the catalog basis: an MJ/kg value for diesel (Btu/gal
+        // basis) was taken as Btu/gal, ~7x off.
         ...(() => {
           const isTier2Override = sourceType === "custom" && tier2Mode === "override";
           if ((sourceType !== "specific" && !isTier2Override) || !formData.hhv) return {};
-          const rawHHV = parseFloat(formData.hhv);
-          const hhvUnit = formData.hhv_unit || "BTU/scf";
-
-          // All conversions normalise to BTU per the same unit as the fuel quantity:
-          // Gas-volume fuels → BTU/scf  (1 scf = 1 ft³ at standard conditions)
-          // Liquid fuels     → BTU/gal
-          // Mass fuels       → BTU/lb
-          let hhvBtu = rawHHV;
-          switch (hhvUnit) {
-            case "BTU/scf":
-            case "BTU/ft3":
-              hhvBtu = rawHHV; // already correct for scf/ft3 gas
-              break;
-            case "MJ/m3":
-              // 1 MJ/m3 × (947.817 BTU/MJ) / (35.3147 scf/m3) = 26.839 BTU/scf
-              hhvBtu = (rawHHV * 947.817) / 35.3147;
-              break;
-            case "kcal/m3":
-              // 1 kcal/m3 × (3.96567 BTU/kcal) / (35.3147 scf/m3) = 0.11231 BTU/scf
-              hhvBtu = (rawHHV * 3.96567) / 35.3147;
-              break;
-            case "BTU/gal":
-              hhvBtu = rawHHV; // already correct for liquid-gal fuels
-              break;
-            case "BTU/lb":
-              hhvBtu = rawHHV; // already correct for mass-based fuels
-              break;
-            case "MJ/kg":
-              // 1 MJ/kg × (947.817 BTU/MJ) / (2.20462 lb/kg) = 430.0 BTU/lb
-              hhvBtu = (rawHHV * 947.817) / 2.20462;
-              break;
-            default:
-              hhvBtu = rawHHV;
-          }
-
+          const { hhv, hhvUnit } = hhvToBtu(parseFloat(formData.hhv), formData.hhv_unit || "BTU/scf");
           return {
-            hhv: hhvBtu, // always in BTU/unit after conversion
-            hhv_unit: "BTU/unit", // signal to backend that conversion is done
-            hhv_original: rawHHV, // preserve original for audit trail
-            hhv_original_unit: hhvUnit,
+            hhv,
+            hhv_unit: hhvUnit,
+            hhv_original: parseFloat(formData.hhv), // audit trail
+            hhv_original_unit: formData.hhv_unit || "BTU/scf",
             combustion_efficiency: formData.combustion_efficiency
               ? parseFloat(formData.combustion_efficiency) / 100.0
               : undefined,
