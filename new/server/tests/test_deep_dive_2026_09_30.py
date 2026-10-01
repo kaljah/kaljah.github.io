@@ -260,3 +260,78 @@ def test_wec_threshold_uses_part_99_methane_density():
 
     r = M.calculate_wec(100.0, gas_prod_m3=50e6, segment="upstream", year=2025)
     assert r["allowed_ch4_tonnes"] == pytest.approx(50e6 * 35.3146667 / 1000 * 0.002 * 0.0192)
+
+
+# -- Invented / hard-coded values (2026-10-01) ------------------------------------------------------
+
+def test_erp_sync_inserts_no_invented_records(admin2, monkeypatch):
+    from models import Scope3Emission
+
+    monkeypatch.setenv("ENABLE_MOCK_ERP", "true")  # the old flag no longer enables fake records
+    with flask_app.app_context():
+        before = Scope3Emission.query.count()
+    r = admin2.post("/api/emissions/erp/sync")
+    assert r.status_code == 501 and "No ERP connector" in r.get_json()["error"]
+    with flask_app.app_context():
+        assert Scope3Emission.query.count() == before
+
+
+@pytest.mark.parametrize("seal,segment,kg_hr", [
+    ("centrifugal_wet", "production", 26.0), ("reciprocating", "production", 0.443),
+    ("centrifugal_wet", "processing", 86426 / 8760), ("centrifugal_dry", "processing", 28192 / 8760),
+    ("reciprocating", "processing", 2.7), ("centrifugal_dry", "transmission", 5.75),
+])
+def test_compressor_seal_uses_compendium_factors_and_tier_1(seal, segment, kg_hr):
+    from calculations.dispatcher import CalculationDispatcher
+
+    r = CalculationDispatcher().dispatch("compressor_seal", dict(
+        process_type="compressor_seal", factor_source="specific", compressor_count=2, seal_type=seal,
+        segment=segment, hours=744), {}, {})
+    assert r["results"]["ch4"]["value"] == pytest.approx(2 * kg_hr * 744 / 1000, rel=1e-9)
+    assert r["results"]["ch4"]["tier"] == 1  # a Compendium default, not a measurement (was labelled Tier 3)
+
+
+def test_compressor_seal_measured_rate_and_missing_factor():
+    from calculations.dispatcher import CalculationDispatcher
+
+    d = CalculationDispatcher()
+    r = d.dispatch("compressor_seal", dict(process_type="compressor_seal", factor_source="specific",
+                                           compressor_count=1, seal_type="dry", leak_rate_kg_hr=0.8, hours=100), {}, {})
+    assert r["results"]["ch4"]["value"] == pytest.approx(0.08) and r["results"]["ch4"]["tier"] == 3
+    with pytest.raises(ValueError, match="no centrifugal dry"):
+        d.dispatch("compressor_seal", dict(process_type="compressor_seal", factor_source="specific",
+                                           compressor_count=1, seal_type="dry", hours=100), {}, {})
+
+
+def test_tank_table_default_is_labelled_tier_1():
+    from calculations.dispatcher import CalculationDispatcher
+
+    r = CalculationDispatcher().dispatch("tank_flashing", dict(process_type="tank_flashing", factor_source="specific",
+                                                               amount=1000, unit="bbl"), {}, {})
+    assert r["inputs"]["method"] == "table_6_22" and r["results"]["ch4"]["tier"] == 1
+
+
+def test_eq_6_11_needs_the_gas_ch4_content():
+    from calculations.dispatcher import CalculationDispatcher
+
+    with pytest.raises(ValueError, match="CH4 content"):
+        CalculationDispatcher().dispatch("unloading", dict(
+            process_type="unloading", factor_source="specific", calc_method="api_equation_6_11", p_shut=150,
+            p_line=50, p_sep=60, sfr_p=1000, t_p=1, unload_freq=4), {}, {})
+
+
+def test_dehydrator_glycol_rate_alias_is_refused():
+    from calculations.dispatcher import CalculationDispatcher
+
+    with pytest.raises(ValueError, match="GLYCalc"):
+        CalculationDispatcher().dispatch("dehydrator", dict(process_type="dehydrator", factor_source="specific",
+                                                            amount=10, teg_pump_rate=200), {}, {})
+
+
+def test_email_without_smtp_is_not_reported_as_sent(monkeypatch):
+    from services.email_service import send_email
+
+    monkeypatch.delenv("SMTP_HOST", raising=False)
+    monkeypatch.delenv("SMTP_USER", raising=False)
+    with flask_app.app_context():
+        assert send_email("a@b.c", "s", "body") is False

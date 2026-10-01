@@ -128,7 +128,7 @@ const MethaneIntensity = () => {
         if (filterRes.data && filterRes.data.years) {
           setAvailableYears(filterRes.data.years);
         } else {
-          setAvailableYears(["2023", "2024", "2025", "2026"]);
+          setAvailableYears([]); // no invented years when the filter list is unavailable
         }
         if (filterRes.data && filterRes.data.segments) {
           const VALID_SUPPLY_CHAIN = ["upstream", "midstream", "downstream"];
@@ -205,6 +205,7 @@ const MethaneIntensity = () => {
         tWecFee = 0;
       // the WEC is assessed per calendar year: the server returns no fee for "all years"
       let wecAssessed = false;
+      let wecRate = null; // the rate the server applied (Settings), not the statutory default
 
       let upGasM3 = 0,
         upCh4Tonnes = 0;
@@ -227,6 +228,7 @@ const MethaneIntensity = () => {
         if (gasM3 > 0) tCh4WithGas += ch4Tonnes; // loss-rate numerator: facilities with gas production
         tWecFee += d.wec_fee_usd || 0;
         if (d.wec_fee_usd != null) wecAssessed = true;
+        if (d.wec_rate_usd_per_t) wecRate = d.wec_rate_usd_per_t;
         // loss rate numerator and denominator cover the same facilities (those with gas production)
         if (seg === "midstream" && gasM3 > 0) {
           midGasM3 += gasM3;
@@ -292,6 +294,7 @@ const MethaneIntensity = () => {
         totalFlaringEmissions: tFlaringEm,
         totalWecFeeUsd: tWecFee,
         wecAssessed,
+        wecRate,
         ogmpGoldStatus: goldStatus,
         upstreamGasM3: upGasM3,
         upstreamCh4Tonnes: upCh4Tonnes,
@@ -415,7 +418,9 @@ const MethaneIntensity = () => {
   const handleExportExcel = async () => {
     try {
       setExporting(true);
-      const yr = selectedYear !== "all" ? selectedYear : "2024";
+      // "all years": the latest year with data (it was always 2024)
+      const latest = [...availableYears].map(String).sort().pop() || String(new Date().getFullYear());
+      const yr = selectedYear !== "all" ? selectedYear : latest;
       const params = new URLSearchParams({ year: yr });
       if (currentRegion && currentRegion !== "all") {
         params.append("facility_id", currentRegion);
@@ -978,13 +983,11 @@ const MethaneIntensity = () => {
                 <span>
                   Rate:{" "}
                   <strong>
-                    {selectedYear === "2024"
-                      ? "$900"
-                      : selectedYear === "2025"
-                        ? "$1,200"
-                        : selectedYear === "all"
-                          ? "$900–$1,500"
-                          : "$1,500"}
+                    {stats.wecRate
+                      ? `$${formatNumber(stats.wecRate, 0)}`
+                      : selectedYear === "all"
+                        ? "per year"
+                        : "—"}
                     /t CH₄
                   </strong>{" "}
                   (IRA §136)
@@ -1066,7 +1069,7 @@ const MethaneIntensity = () => {
                   Base Year:
                 </span>
                 <div className="baseline-pills">
-                  {[2021, 2022, 2023, 2024, 2025, 2026].map((yr) => (
+                  {Array.from({ length: new Date().getFullYear() - 2020 }, (_, i) => 2021 + i).map((yr) => (
                     <button
                       key={yr}
                       type="button"

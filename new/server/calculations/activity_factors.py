@@ -103,6 +103,7 @@ ACTIVITY_FACTORS = {
     "pw_1000psi_avg": _r("Produced water tank flashing, 1,000 psi separator, salt unknown", ["separation"], "bbl", "Table 6-26", ch4=0.0508e-3, activity="bbl water"),
     "pw_shallow_gas_well": _r("Produced water, shallow gas well (76 psi or less)", ["separation"], "bbl", "Table 6-27", ch4=0.0057e-3, activity="bbl water"),
     # ---- compressor venting (Tables 6-30, 6-37, 6-38, 6-40, 6-41) ----
+    "gb_cent_wet": _r("Centrifugal wet seal degassing, G&B / production (GHGRP)", ["compressor_venting"], "unit_hr", "Section 6.4.3", ch4=0.026, gas=1738, basis=0.788, activity="compressor"),
     "gb_rp_us": _r("Reciprocating rod packing, G&B / production (US)", ["compressor_venting"], "unit_hr", "Table 6-30", ch4=4.43e-4, gas=28.4, basis=0.816, activity="compressor"),
     "gb_rp_ghgrp": _r("Reciprocating rod packing, G&B / production (GHGRP)", ["compressor_venting"], "unit_hr", "Table 6-30", ch4=2.07e-5, gas=1.37, basis=0.788, activity="compressor"),
     "gb_rp_alberta": _r("Reciprocating rod packing, G&B / production (Alberta)", ["compressor_venting"], "unit_hr", "Table 6-30", ch4=1.39e-4, gas=10.2, basis=0.816, activity="compressor"),

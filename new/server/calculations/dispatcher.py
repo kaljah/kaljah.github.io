@@ -1228,7 +1228,8 @@ class CalculationDispatcher:
                     sfr_p = self._require_float(flat_inputs, ["sfr_p", "sfr", "production_rate"], "daily gas production rate (SFRp)")
                     t_p = self._require_float(flat_inputs, ["t_p", "hours_open", "venting_time"], "hours vented per event (Tp)")
                     events = int(self._require_float(flat_inputs, ["unload_freq", "unload_events", "events", "amount"], "annual unloading events"))
-                    ch4_content = self._optional_fraction(flat_inputs, ["ch4_content", "c1", "unload_ch4_content"], 0.85)
+                    # the gas CH4 content is a site input, as for Eq 6-3 / 6-10 (it defaulted to an invented 85 %)
+                    ch4_content = self._require_fraction(flat_inputs, ["ch4_content", "c1", "unload_ch4_content"], "gas CH4 content %")
                     co2_content = self._optional_fraction(flat_inputs, ["co2_content", "co2_mol"], 0.0)
                     flare_eff = self._optional_fraction(flat_inputs, ["unload_flare_eff", "control_efficiency"], 0.0)
                     press_unit = flat_inputs.get("unload_press_unit") or flat_inputs.get("press_unit", "psia")
@@ -1955,6 +1956,9 @@ class CalculationDispatcher:
                     hours=raw_hours,
                     uncertainties=uncertainties,
                     gwp_dict=gwp_dict,
+                    segment=flat_inputs.get("compressor_segment") or flat_inputs.get("segment") or "production",
+                    measured_kg_hr=next((flat_inputs.get(k) for k in ("leak_rate_kg_hr", "measured_kg_hr")
+                                         if flat_inputs.get(k) not in (None, "")), None),
                 )
 
             elif process_type in ["agr", "acid_gas_removal"]:
@@ -2136,7 +2140,7 @@ class CalculationDispatcher:
                 # Tier 3 browser test #12: the former "parametric solubility" model had no source in the
                 # API Compendium. Section 6.3.8.1 methods: Tables 6-17/6-18/6-35/6-36 (Tier 1 activity
                 # factors), a process simulation (GRI-GLYCalc) or measurement (vent_method routes)
-                if flat_inputs.get("dehy_pump_rate") not in (None, "") or flat_inputs.get("pump_rate") not in (None, ""):
+                if any(flat_inputs.get(k) not in (None, "") for k in ("dehy_pump_rate", "pump_rate", "teg_pump_rate")):
                     raise ValueError(
                         "Glycol dehydrator Tier 3: enter the measured vent volume or the simulation (GLYCalc) result; "
                         "use Tier 1 for the Compendium factors"

@@ -414,7 +414,7 @@ export default function QADashboard() {
                                                     <td style={{ fontFamily: 'monospace', fontWeight: 600 }}>#{s.id}</td>
                                                     <td>{s.facility || (s.facility_id ? `Facility #${s.facility_id}` : 'Unassigned Boundary')}</td>
                                                     <td>{s.year || '-'}</td>
-                                                    <td><span className="qa-sample-tag">{s.process || 'Combustion'}</span></td>
+                                                    <td><span className="qa-sample-tag">{s.process || '—'}</span></td>
                                                     <td>
                                                         {s.fuel && <span style={{ marginRight: '8px' }}>Fuel: <strong>{s.fuel}</strong></span>}
                                                         {s.quantity !== undefined && <span>Qty: <strong>{s.quantity === null ? 'None' : s.quantity}</strong></span>}
@@ -475,7 +475,7 @@ export default function QADashboard() {
                                 title="Filter by Reporting Year"
                             >
                                 <option value="all">All Reporting Years</option>
-                                {[2026, 2025, 2024, 2023, 2022, 2021, 2020].map(y => (
+                                {Array.from({ length: new Date().getFullYear() - 2019 }, (_, i) => new Date().getFullYear() - i).map(y => (
                                     <option key={y} value={y}>{y}</option>
                                 ))}
                             </select>
