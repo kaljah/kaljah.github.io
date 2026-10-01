@@ -2582,6 +2582,14 @@ def upload_start():
         if not isinstance(provided_mapping, dict):
             return jsonify({"error": "column_mapping must be an object of field -> column"}), 400
 
+    # Audit A-09: each job is a thread holding up to 50,000 parsed rows until its single commit;
+    # unbounded parallel uploads by one account could exhaust the worker's memory
+    from background_processor import active_job_count
+
+    max_jobs = int(os.environ.get("MAX_CONCURRENT_UPLOADS_PER_USER", "3"))
+    if active_job_count(user.id) >= max_jobs:
+        return jsonify({"error": f"You already have {max_jobs} uploads in progress. Wait for one to finish."}), 429
+
     fd, path = tempfile.mkstemp(suffix=ext)
     os.close(fd)  # H6: Close descriptor immediately to prevent leak
     file.save(path)
