@@ -1,0 +1,7 @@
+Encountered error in step execution: failed to generate content: 500 Internal Server Error, body: {
+  "error": {
+    "code": 500,
+    "message": "Internal error encountered.",
+    "status": "INTERNAL"
+  }
+}

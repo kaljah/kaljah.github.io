@@ -1,0 +1,85 @@
+
+The command exited with code 0.
+Output:
+Pick one path only (per harness)
+
+You can use ECC with Claude Code, Codex, and other harnesses at the same time. Choose one install method for each harness:
+
+- **Recommended default:** run the guided Claude plugin setup above
+- **Also supported for Claude Code:** use the [native plugin commands](#claude-code-details)
+- **Available in release 2.2:** guided package setup for Claude Code, Codex, and Kimi Code
+- **Works:** Claude Code plugin + Codex native plugin
+- **Works:** Claude Code plugin + the legacy Codex sync flow
+- **Avoid:** Claude Code plugin + full Claude manual install
+- **Avoid:** Codex sync + Codex marketplace plugin
+
+**Do not stack install methods.** Installing ECC twice into the same harness can duplicate skills, commands, hooks, or configuration; installing it once into multiple harnesses does not.
+
+If you already layered multiple installs and things look duplicated, skip straight to [Reset / Uninstall ECC](#reset--uninstall-ecc).
+
+**Install trouble?** Open the short [install or runtime problem form](https://github.com/affaan-m/ECC/issues/new?template=install-problem.yml), or run `ecc feedback`. ECC never uploads diagnostics automatically.
+
+### Claude Code details
+
+Alternatively, run Claude Code's native plugin commands inside Claude Code:
+
+```text
+/plugin marketplace add https://github.com/affaan-m/ECC
+/plugin install ecc@ecc
+```
+
+The native path installs ECC's skills, agents, commands, and plugin-managed hooks. If you choose it, stop there. Do not also run a full manual install into Claude Code.
+
+Claude Code owns these built-in commands, including their errors when a marketplace, plugin, or conflicting scope already exists. ECC cannot intercept that parser. If either native command reports an existing install or scope conflict, use the 2.2 guided setup or resolve the conflicting Claude plugin scope before retrying; do not layer a manual install on top.
+
+After ECC is installed, `/ecc:configure-ecc` is the namespaced in-Claude reconfiguration skill. It delegates to the same safe setup flow, but it is available only after the plugin is installed and cannot replace Claude Code's built-in `/plugin` command during a first install.
+
+Claude Code plugins cannot distribute `rules`, so add only the rule packs you actually want:
+
+```bash
+git clone https://github.com/affaan-m/ECC.git
+cd ECC
+mkdir -p ~/.claude/rules/ecc
+cp -R rules/common ~/.claude/rules/ecc/
+cp -R rules/typescript ~/.claude/rules/ecc/  # replace with your stack
+```
+
+Start with `rules/common` plus one language or framework pack you actually use. If you install the plugin, do not run `./install.sh --profile full` afterward.
+
+<details>
+<summary><strong>Prefer settings.json? Add the marketplace declaratively</strong></summary>
+
+Add directly to your `~/.claude/settings.json`:
+
+```json
+{
+  "extraKnownMarketplaces": {
+    "ecc": {
+      "source": {
+        "source": "github",
+        "repo": "affaan-m/ECC"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "ecc@ecc": true
+  }
+}
+```
+
+This gives you the same result as the two `/plugin` commands above.
+</details>
+
+<details>
+<summary><strong>Naming + migration note (ecc@ecc, affaan-m/ECC, ecc-universal)</strong></summary>
+
+ECC has three public identifiers, and they are not interchangeable:
+
+- GitHub source repo: `affaan-m/ECC`
+- Claude marketplace/plugin identifier: `ecc@ecc`
+- npm package: `ecc-universal`
+
+This is intentional. Anthropic marketplace/plugin installs are keyed by a canonical plugin identifier, so ECC uses `ecc@ecc` to keep tool names and slash-command namespaces short enough for strict Desktop/API validators. Older posts may still show the former long marketplace identifier; treat that as a legacy alias only. Separately, the npm package stayed on `ecc-universal`, so npm installs and marketplace installs intentionally use different names.
+
+npm releases are cut per version tag, not per commit, so `ecc-universal` tracks releases (2.1, 2.2, ...) rather than every push to `main`. Install from git if you want the 
+

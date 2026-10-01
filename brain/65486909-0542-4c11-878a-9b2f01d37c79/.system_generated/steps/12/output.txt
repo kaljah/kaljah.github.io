@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+
+name full_name    description                                                                                          
+---- ---------    -----------                                                                                          
+ECC  affaan-m/ECC The agent harness performance optimization system. Skills, instincts, memory, security, and resear...
+
+
+

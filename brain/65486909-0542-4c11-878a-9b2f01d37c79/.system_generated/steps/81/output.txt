@@ -1,0 +1,1 @@
+A1: Install ECC rules, skills, and agents into this project for Antigravity (`.agents/`)

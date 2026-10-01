@@ -1,0 +1,74 @@
+
+The command exited with code 0.
+Output:
+<truncated 63 lines>
+-a----         10/1/2026   8:40 PM           2126 nuxt-coding-style.md                                                 
+-a----         10/1/2026   8:40 PM           1494 nuxt-hooks.md                                                        
+-a----         10/1/2026   8:40 PM           2691 nuxt-patterns.md                                                     
+-a----         10/1/2026   8:40 PM           2540 nuxt-security.md                                                     
+-a----         10/1/2026   8:40 PM           2321 nuxt-testing.md                                                      
+-a----         10/1/2026   8:40 PM           1134 perl-coding-style.md                                                 
+-a----         10/1/2026   8:40 PM            482 perl-hooks.md                                                        
+-a----         10/1/2026   8:40 PM           1462 perl-patterns.md                                                     
+-a----         10/1/2026   8:40 PM           1471 perl-security.md                                                     
+-a----         10/1/2026   8:40 PM            934 perl-testing.md                                                      
+-a----         10/1/2026   8:40 PM           1382 php-coding-style.md                                                  
+-a----         10/1/2026   8:40 PM            678 php-hooks.md                                                         
+-a----         10/1/2026   8:40 PM           1202 php-patterns.md                                                      
+-a----         10/1/2026   8:40 PM           1363 php-security.md                                                      
+-a----         10/1/2026   8:40 PM           1172 php-testing.md                                                       
+-a----         10/1/2026   8:40 PM            708 python-coding-style.md                                               
+-a----         10/1/2026   8:40 PM           1736 python-fastapi.md                                                    
+-a----         10/1/2026   8:40 PM            421 python-hooks.md                                                      
+-a----         10/1/2026   8:40 PM            820 python-patterns.md                                                   
+-a----         10/1/2026   8:40 PM            521 python-security.md                                                   
+-a----         10/1/2026   8:40 PM            578 python-testing.md                                                    
+-a----         10/1/2026   8:40 PM           4452 react-coding-style.md                                                
+-a----         10/1/2026   8:40 PM           6568 react-hooks.md                                                       
+-a----         10/1/2026   8:40 PM           2363 react-native-accessibility.md                                        
+-a----         10/1/2026   8:40 PM           2747 react-native-coding-style.md                                         
+-a----         10/1/2026   8:40 PM           1175 react-native-hooks.md                                                
+-a----         10/1/2026   8:40 PM           3695 react-native-patterns.md                                             
+-a----         10/1/2026   8:40 PM           2352 react-native-performance.md                                          
+-a----         10/1/2026   8:40 PM           2162 react-native-production-readiness.md                                 
+-a----         10/1/2026   8:40 PM           1927 react-native-security.md                                             
+-a----         10/1/2026   8:40 PM           1715 react-native-testing.md                                              
+-a----         10/1/2026   8:40 PM           7250 react-patterns.md                                                    
+-a----         10/1/2026   8:40 PM           6389 react-security.md                                                    
+-a----         10/1/2026   8:40 PM           7018 react-testing.md                                                     
+-a----         10/1/2026   8:40 PM           5694 README.md                                                            
+-a----         10/1/2026   8:40 PM           1943 ruby-coding-style.md                                                 
+-a----         10/1/2026   8:40 PM           1378 ruby-hooks.md                                                        
+-a----         10/1/2026   8:40 PM           2251 ruby-patterns.md                                                     
+-a----         10/1/2026   8:40 PM           1953 ruby-security.md                                                     
+-a----         10/1/2026   8:40 PM           1719 ruby-testing.md                                                      
+-a----         10/1/2026   8:40 PM           4172 rust-coding-style.md                                                 
+-a----         10/1/2026   8:40 PM            403 rust-hooks.md                                                        
+-a----         10/1/2026   8:40 PM           4000 rust-patterns.md                                                     
+-a----         10/1/2026   8:40 PM           4397 rust-security.md                                                     
+-a----         10/1/2026   8:40 PM           3922 rust-testing.md                                                      
+-a----         10/1/2026   8:40 PM           1351 swift-coding-style.md                                                
+-a----         10/1/2026   8:40 PM            506 swift-hooks.md                                                       
+-a----         10/1/2026   8:40 PM           1524 swift-patterns.md                                                    
+-a----         10/1/2026   8:40 PM           1017 swift-security.md                                                    
+-a----         10/1/2026   8:40 PM           1002 swift-testing.md                                                     
+-a----         10/1/2026   8:40 PM           4288 typescript-coding-style.md                                           
+-a----         10/1/2026   8:40 PM            558 typescript-hooks.md                                                  
+-a----         10/1/2026   8:40 PM           1027 typescript-patterns.md                                               
+-a----         10/1/2026   8:40 PM            531 typescript-security.md                                               
+-a----         10/1/2026   8:40 PM            372 typescript-testing.md                                                
+-a----         10/1/2026   8:40 PM           2641 vue-coding-style.md                                                  
+-a----         10/1/2026   8:40 PM           1487 vue-hooks.md                                                         
+-a----         10/1/2026   8:40 PM           2496 vue-patterns.md                                                      
+-a----         10/1/2026   8:40 PM           1973 vue-security.md                                                      
+-a----         10/1/2026   8:40 PM           2045 vue-testing.md                                                       
+-a----         10/1/2026   8:40 PM           2343 web-coding-style.md                                                  
+-a----         10/1/2026   8:40 PM           2670 web-design-quality.md                                                
+-a----         10/1/2026   8:40 PM           3597 web-hooks.md                                                         
+-a----         10/1/2026   8:40 PM           2151 web-patterns.md                                                      
+-a----         10/1/2026   8:40 PM           1994 web-performance.md                                                   
+-a----         10/1/2026   8:40 PM           1744 web-security.md                                                      
+-a----         10/1/2026   8:40 PM           1540 web-testing.md                                                       
+
+
+

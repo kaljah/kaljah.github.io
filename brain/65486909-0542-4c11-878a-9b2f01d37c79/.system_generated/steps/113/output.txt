@@ -1,0 +1,72 @@
+
+The command exited with code 0.
+Output:
+<truncated 660 lines>
+- skills\nanoclaw-repl\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\nanoclaw-repl\SKILL.md
+- skills\prompt-optimizer\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\prompt-optimizer\SKILL.md
+- skills\ralphinho-rfc-pipeline\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\ralphinho-rfc-pipeline\SKILL.md
+- skills\regex-vs-llm-structured-text\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\regex-vs-llm-structured-text\SKILL.md
+- skills\search-first\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\search-first\SKILL.md
+- skills\team-agent-orchestration\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\team-agent-orchestration\SKILL.md
+- skills\token-budget-advisor\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\token-budget-advisor\SKILL.md
+- skills\team-builder\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\team-builder\SKILL.md
+- skills\agent-payment-x402\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\agent-payment-x402\SKILL.md
+- skills\autonomous-agent-harness\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\autonomous-agent-harness\SKILL.md
+- skills\gan-style-harness\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\gan-style-harness\SKILL.md
+- skills\hermes-imports\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\hermes-imports\SKILL.md
+- skills\openclaw-persona-forge\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\openclaw-persona-forge\SKILL.md
+- skills\openclaw-persona-forge\gacha.py -> C:\Users\samsung\Desktop\H2\.agents\skills\openclaw-persona-forge\gacha.py
+- skills\openclaw-persona-forge\gacha.sh -> C:\Users\samsung\Desktop\H2\.agents\skills\openclaw-persona-forge\gacha.sh
+- skills\openclaw-persona-forge\references\avatar-style.md -> C:\Users\samsung\Desktop\H2\.agents\skills\openclaw-persona-forge\references\avatar-style.md
+- skills\openclaw-persona-forge\references\boundary-rules.md -> C:\Users\samsung\Desktop\H2\.agents\skills\openclaw-persona-forge\references\boundary-rules.md
+- skills\openclaw-persona-forge\references\error-handling.md -> C:\Users\samsung\Desktop\H2\.agents\skills\openclaw-persona-forge\references\error-handling.md
+- skills\openclaw-persona-forge\references\identity-tension.md -> C:\Users\samsung\Desktop\H2\.agents\skills\openclaw-persona-forge\references\identity-tension.md
+- skills\openclaw-persona-forge\references\naming-system.md -> C:\Users\samsung\Desktop\H2\.agents\skills\openclaw-persona-forge\references\naming-system.md
+- skills\openclaw-persona-forge\references\output-template.md -> C:\Users\samsung\Desktop\H2\.agents\skills\openclaw-persona-forge\references\output-template.md
+- skills\opensource-pipeline\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\opensource-pipeline\SKILL.md
+- skills\orch-add-feature\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\orch-add-feature\SKILL.md
+- skills\orch-build-mvp\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\orch-build-mvp\SKILL.md
+- skills\orch-change-feature\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\orch-change-feature\SKILL.md
+- skills\orch-fix-defect\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\orch-fix-defect\SKILL.md
+- skills\orch-pipeline\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\orch-pipeline\SKILL.md
+- skills\orch-refine-code\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\orch-refine-code\SKILL.md
+- skills\plan-orchestrate\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\plan-orchestrate\SKILL.md
+- skills\cisco-ios-patterns\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\cisco-ios-patterns\SKILL.md
+- skills\deployment-patterns\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\deployment-patterns\SKILL.md
+- skills\docker-patterns\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\docker-patterns\SKILL.md
+- skills\terminal-opener\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\terminal-opener\SKILL.md
+- skills\terminal-opener\agents\openai.yaml -> C:\Users\samsung\Desktop\H2\.agents\skills\terminal-opener\agents\openai.yaml
+- skills\terminal-opener\scripts\open-terminal.js -> C:\Users\samsung\Desktop\H2\.agents\skills\terminal-opener\scripts\open-terminal.js
+- skills\homelab-network-readiness\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\homelab-network-readiness\SKILL.md
+- skills\homelab-network-setup\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\homelab-network-setup\SKILL.md
+- skills\netmiko-ssh-automation\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\netmiko-ssh-automation\SKILL.md
+- skills\network-bgp-diagnostics\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\network-bgp-diagnostics\SKILL.md
+- skills\network-config-validation\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\network-config-validation\SKILL.md
+- skills\network-interface-health\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\network-interface-health\SKILL.md
+- skills\canary-watch\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\canary-watch\SKILL.md
+- skills\flox-environments\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\flox-environments\SKILL.md
+- skills\homelab-pihole-dns\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\homelab-pihole-dns\SKILL.md
+- skills\homelab-vlan-segmentation\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\homelab-vlan-segmentation\SKILL.md
+- skills\homelab-wireguard-vpn\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\homelab-wireguard-vpn\SKILL.md
+- skills\kubernetes-patterns\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\kubernetes-patterns\SKILL.md
+- skills\uncloud\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\uncloud\SKILL.md
+- skills\mle-workflow\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\mle-workflow\SKILL.md
+- skills\ml-adoption-playbook\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\ml-adoption-playbook\SKILL.md
+- skills\pytorch-patterns\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\pytorch-patterns\SKILL.md
+- skills\recsys-pipeline-architect\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\recsys-pipeline-architect\SKILL.md
+- skills\carrier-relationship-management\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\carrier-relationship-management\SKILL.md
+- skills\customs-trade-compliance\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\customs-trade-compliance\SKILL.md
+- skills\energy-procurement\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\energy-procurement\SKILL.md
+- skills\inventory-demand-planning\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\inventory-demand-planning\SKILL.md
+- skills\logistics-exception-management\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\logistics-exception-management\SKILL.md
+- skills\production-scheduling\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\production-scheduling\SKILL.md
+- skills\quality-nonconformance\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\quality-nonconformance\SKILL.md
+- skills\returns-reverse-logistics\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\returns-reverse-logistics\SKILL.md
+- skills\nutrient-document-processing\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\nutrient-document-processing\SKILL.md
+- skills\visa-doc-translate\README.md -> C:\Users\samsung\Desktop\H2\.agents\skills\visa-doc-translate\README.md
+- skills\visa-doc-translate\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\visa-doc-translate\SKILL.md
+
+Done. Install-state written to C:\Users\samsung\Desktop\H2\.agents\ecc-install-state.json
+
+Compute: Run or self-host any open-source model. Itô is ECC's preferred compute sponsor: open its dashboard to sign in and rent or manage GPUs at https://compute.itomarkets.com. Any GPU provider works. This sponsorship link is passive: it does not invoke an RFQ, reserve capacity, provision compute, or configure serving. Separately, the opt-in "ecc ito find" bridge invokes the explicitly configured canonical Itô CLI and submits a live authenticated RFQ; it does not reserve capacity. Managed inference through Itô is not live yet.
+

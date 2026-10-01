@@ -1,0 +1,175 @@
+
+The command exited with code 0.
+Output:
+<truncated 1 lines>
+        "destinationPath": "C:\\Users\\samsung\\Desktop\\H2\\.agents\\skills\\context-budget\\SKILL.md",
+        "strategy": "preserve-relative-path",
+        "ownership": "managed",
+        "scaffoldOnly": false
+      },
+      {
+        "kind": "copy-file",
+        "moduleId": "workflow-quality",
+        "sourcePath": "C:\\Users\\samsung\\.claude\\plugins\\cache\\ecc\\ecc\\2.2.2\\skills\\delivery-gate\\SKILL.md",
+        "sourceRelativePath": "skills\\delivery-gate\\SKILL.md",
+        "destinationPath": "C:\\Users\\samsung\\Desktop\\H2\\.agents\\skills\\delivery-gate\\SKILL.md",
+        "strategy": "preserve-relative-path",
+        "ownership": "managed",
+        "scaffoldOnly": false
+      },
+      {
+        "kind": "copy-file",
+        "moduleId": "workflow-quality",
+        "sourcePath": "C:\\Users\\samsung\\.claude\\plugins\\cache\\ecc\\ecc\\2.2.2\\skills\\delivery-gate\\hooks\\quality-gate.py",
+        "sourceRelativePath": "skills\\delivery-gate\\hooks\\quality-gate.py",
+        "destinationPath": "C:\\Users\\samsung\\Desktop\\H2\\.agents\\skills\\delivery-gate\\hooks\\quality-gate.py",
+        "strategy": "preserve-relative-path",
+        "ownership": "managed",
+        "scaffoldOnly": false
+      },
+      {
+        "kind": "copy-file",
+        "moduleId": "workflow-quality",
+        "sourcePath": "C:\\Users\\samsung\\.claude\\plugins\\cache\\ecc\\ecc\\2.2.2\\skills\\ecc-guide\\SKILL.md",
+        "sourceRelativePath": "skills\\ecc-guide\\SKILL.md",
+        "destinationPath": "C:\\Users\\samsung\\Desktop\\H2\\.agents\\skills\\ecc-guide\\SKILL.md",
+        "strategy": "preserve-relative-path",
+        "ownership": "managed",
+        "scaffoldOnly": false
+      },
+      {
+        "kind": "copy-file",
+        "moduleId": "workflow-quality",
+        "sourcePath": "C:\\Users\\samsung\\.claude\\plugins\\cache\\ecc\\ecc\\2.2.2\\skills\\ecc-recipes\\SKILL.md",
+        "sourceRelativePath": "skills\\ecc-recipes\\SKILL.md",
+        "destinationPath": "C:\\Users\\samsung\\Desktop\\H2\\.agents\\skills\\ecc-recipes\\SKILL.md",
+        "strategy": "preserve-relative-path",
+        "ownership": "managed",
+        "scaffoldOnly": false
+      },
+      {
+        "kind": "copy-file",
+        "moduleId": "workflow-quality",
+        "sourcePath": "C:\\Users\\samsung\\.claude\\plugins\\cache\\ecc\\ecc\\2.2.2\\skills\\growth-log\\SKILL.md",
+        "sourceRelativePath": "skills\\growth-log\\SKILL.md",
+        "destinationPath": "C:\\Users\\samsung\\Desktop\\H2\\.agents\\skills\\growth-log\\SKILL.md",
+        "strategy": "preserve-relative-path",
+        "ownership": "managed",
+        "scaffoldOnly": false
+      },
+      {
+        "kind": "copy-file",
+        "moduleId": "workflow-quality",
+        "sourcePath": "C:\\Users\\samsung\\.claude\\plugins\\cache\\ecc\\ecc\\2.2.2\\skills\\inherit-legacy-style\\SKILL.md",
+        "sourceRelativePath": "skills\\inherit-legacy-style\\SKILL.md",
+        "destinationPath": "C:\\Users\\samsung\\Desktop\\H2\\.agents\\skills\\inherit-legacy-style\\SKILL.md",
+        "strategy": "preserve-relative-path",
+        "ownership": "managed",
+        "scaffoldOnly": false
+      },
+      {
+        "kind": "copy-file",
+        "moduleId": "workflow-quality",
+        "sourcePath": "C:\\Users\\samsung\\.claude\\plugins\\cache\\ecc\\ecc\\2.2.2\\skills\\intent-driven-development\\SKILL.md",
+        "sourceRelativePath": "skills\\intent-driven-development\\SKILL.md",
+        "destinationPath": "C:\\Users\\samsung\\Desktop\\H2\\.agents\\skills\\intent-driven-development\\SKILL.md",
+        "strategy": "preserve-relative-path",
+        "ownership": "managed",
+        "scaffoldOnly": false
+      },
+      {
+        "kind": "copy-file",
+        "moduleId": "workflow-quality",
+        "sourcePath": "C:\\Users\\samsung\\.claude\\plugins\\cache\\ecc\\ecc\\2.2.2\\skills\\living-docs-governance\\SKILL.md",
+        "sourceRelativePath": "skills\\living-docs-governance\\SKILL.md",
+        "destinationPath": "C:\\Users\\samsung\\Desktop\\H2\\.agents\\skills\\living-docs-governance\\SKILL.md",
+        "strategy": "preserve-relative-path",
+        "ownership": "managed",
+        "scaffoldOnly": false
+      },
+      {
+        "kind": "copy-file",
+        "moduleId": "workflow-quality",
+        "sourcePath": "C:\\Users\\samsung\\.claude\\plugins\\cache\\ecc\\ecc\\2.2.2\\skills\\loop-design-check\\SKILL.md",
+        "sourceRelativePath": "skills\\loop-design-check\\SKILL.md",
+        "destinationPath": "C:\\Users\\samsung\\Desktop\\H2\\.agents\\skills\\loop-design-check\\SKILL.md",
+        "strategy": "preserve-relative-path",
+        "ownership": "managed",
+        "scaffoldOnly": false
+      },
+      {
+        "kind": "copy-file",
+        "moduleId": "workflow-quality",
+        "sourcePath": "C:\\Users\\samsung\\.claude\\plugins\\cache\\ecc\\ecc\\2.2.2\\skills\\product-lens\\SKILL.md",
+        "sourceRelativePath": "skills\\product-lens\\SKILL.md",
+        "destinationPath": "C:\\Users\\samsung\\Desktop\\H2\\.agents\\skills\\product-lens\\SKILL.md",
+        "strategy": "preserve-relative-path",
+        "ownership": "managed",
+        "scaffoldOnly": false
+      },
+      {
+        "kind": "copy-file",
+        "moduleId": "workflow-quality",
+        "sourcePath": "C:\\Users\\samsung\\.claude\\plugins\\cache\\ecc\\ecc\\2.2.2\\skills\\repo-scan\\SKILL.md",
+        "sourceRelativePath": "skills\\repo-scan\\SKILL.md",
+        "destinationPath": "C:\\Users\\samsung\\Desktop\\H2\\.agents\\skills\\repo-scan\\SKILL.md",
+        "strategy": "preserve-relative-path",
+        "ownership": "managed",
+        "scaffoldOnly": false
+      },
+      {
+        "kind": "copy-file",
+        "moduleId": "workflow-quality",
+        "sourcePath": "C:\\Users\\samsung\\.claude\\plugins\\cache\\ecc\\ecc\\2.2.2\\skills\\rules-distill\\SKILL.md",
+        "sourceRelativePath": "skills\\rules-distill\\SKILL.md",
+        "destinationPath": "C:\\Users\\samsung\\Desktop\\H2\\.agents\\skills\\rules-distill\\SKILL.md",
+        "strategy": "preserve-relative-path",
+        "ownership": "managed",
+        "scaffoldOnly": false
+      },
+      {
+        "kind": "copy-file",
+        "moduleId": "workflow-quality",
+        "sourcePath": "C:\\Users\\samsung\\.claude\\plugins\\cache\\ecc\\ecc\\2.2.2\\skills\\rules-distill\\scripts\\scan-rules.sh",
+        "sourceRelativePath": "skills\\rules-distill\\scripts\\scan-rules.sh",
+        "destinationPath": "C:\\Users\\samsung\\Desktop\\H2\\.agents\\skills\\rules-distill\\scripts\\scan-rules.sh",
+        "strategy": "preserve-relative-path",
+        "ownership": "managed",
+        "scaffoldOnly": false
+      },
+      {
+        "kind": "copy-file",
+        "moduleId": "workflow-quality",
+        "sourcePath": "C:\\Users\\samsung\\.claude\\plugins\\cache\\ecc\\ecc\\2.2.2\\skills\\rules-distill\\scripts\\scan-skills.sh",
+        "sourceRelativePath": "skills\\rules-distill\\scripts\\scan-skills.sh",
+        "destinationPath": "C:\\Users\\samsung\\Desktop\\H2\\.agents\\skills\\rules-distill\\scripts\\scan-skills.sh",
+        "strategy": "preserve-relative-path",
+        "ownership": "managed",
+        "scaffoldOnly": false
+      },
+      {
+        "kind": "copy-file",
+        "moduleId": "workflow-quality",
+        "sourcePath": "C:\\Users\\samsung\\.claude\\plugins\\cache\\ecc\\ecc\\2.2.2\\skills\\santa-method\\SKILL.md",
+        "sourceRelativePath": "skills\\santa-method\\SKILL.md",
+        "destinationPath": "C:\\Users\\samsung\\Desktop\\H2\\.agents\\skills\\santa-method\\SKILL.md",
+        "strategy": "preserve-relative-path",
+        "ownership": "managed",
+        "scaffoldOnly": false
+      },
+      {
+        "kind": "copy-file",
+        "moduleId": "workflow-quality",
+        "sourcePath": "C:\\Users\\samsung\\.claude\\plugins\\cache\\ecc\\ecc\\2.2.2\\skills\\git-workflow\\SKILL.md",
+        "sourceRelativePath": "skills\\git-workflow\\SKILL.md",
+        "destinationPath": "C:\\Users\\samsung\\Desktop\\H2\\.agents\\skills\\git-workflow\\SKILL.md",
+        "strategy": "preserve-relative-path",
+        "ownership": "managed",
+        "scaffoldOnly": false
+      }
+    ],
+    "skippedOperations": [],
+    "applied": false
+  }
+}
+

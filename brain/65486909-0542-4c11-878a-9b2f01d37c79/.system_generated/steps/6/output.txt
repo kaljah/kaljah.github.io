@@ -1,0 +1,39 @@
+The search for "install ecc github" returned the following summary:
+To install **ECC (Everything Claude Code)**, the recommended and most straightforward method for Claude Code users is to install it as a plugin directly within the agent[1].
+
+### Recommended Installation (Claude Code Plugin)
+For most users, you do not need to clone the repository or manually manage files[1]. Instead, run these commands inside your project directory where Claude Code is active[1]:
+
+1.  **Add the plugin:**
+    ```bash
+    /plugin marketplace add https://github.com/affaan-m/ECC
+    ```
+2.  **Install the plugin:**
+    ```bash
+    /plugin install ecc
+    ```
+3.  **Verify the installation:**
+    ```bash
+    claude-code-verify
+    ```
+
+---
+
+### Important Considerations
+*   **Avoid Duplication:** Do not mix installation methods. If you use the plugin method, do not also run CLI-based installers or manual file copies, as this will lead to duplicate skills and rules[1].
+*   **Requirements:** Ensure you have **Claude Code 2.1 or newer** installed and available on your PATH[2][1].
+*   **Updates:** The ECC GitHub repository (maintained by `affaan-m`) is the primary source of truth[3][1]. Check the [official GitHub repository](https://github.com/affaan-m/ECC) for the latest instructions and support status, as the project evolves quickly[1].
+
+### Other Versions
+*   **ECC Tools:** If you are looking for the GitHub App version that integrates with repository history and pull requests, it is available via the [GitHub Marketplace](https://github.com/marketplace/ecc-tools)[4][5].
+*   **Other Libraries:** If you were looking for an "ECC" library related to *Subnautica* modding or the *ecCodes* (ECMWF) data library, these are separate projects with their own specific installation requirements (typically via `pip install eccodes` for the latter)[6][7][8].
+
+Sources:
+[1] [bswen.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEFVfs79Jle1zEHRWFEO-10de_kxljNdsmZ1PgEMuyWeXrmzVgPiNEl5mh48FjIL9su9vJJyJhMT9MYNLu9DGCDdR6xH-upJ_7SA1A1XiBpeBX4J5UiZk6QKymNEXkCUOyJMcYYvmljSzfc2cIzUbu-Sv_IRavauQbp)
+[2] [github.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGOAS-icTol0fxj482hQTQ56W6bQNbRx30qh2DzJx3iG4i1gKxB-6Wt0rDKjGJQ43YHgVIXdhwJcToSaHJJPJRuCe73mTlDWqQZWvymVMf3f4nQ1Vk=)
+[3] [datacamp.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQE4it3mKguIZNJZJki8Xu0Jls1GcBTWCUMRSISv55E9IM7eTu-pFDg7F7lUUXKDmakEuSXgVLAy0iQ9ft7fah1Y6P6oAo_Bmsc_3DI61N55ONDH79VBDBFuMc1Ndl1LBTSsNBTmgp_VVDZriudT)
+[4] [github.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHvPRaY_pm2RnOtSXw0Poiex8oZjhV6SnaWhUhyzjoixImO1JqVdxB7aWya5nGCeBI1uugzznVFy8eZNklZmPQCmbwJfp_72zsAr5JDnSSpEnPr-1qhy_fYv95CvTY=)
+[5] [github.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHvPRaY_pm2RnOtSXw0Poiex8oZjhV6SnaWhUhyzjoixImO1JqVdxB7aWya5nGCeBI1uugzznVFy8eZNklZmPQCmbwJfp_72zsAr5JDnSSpEnPr-1qhy_fYv95CvTY=)
+[6] [github.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHO9CF7Ga9IYjL6yyjwzCOSs3amxWremIPOmfoR7Ms7kVO9ig4ZPSf2ul-RR1doWbwKNnAU1RcpnztwOf9hJ1IEupovol_Z8p3BNfjUr8CftDpb9vH_W44dqLKyQ9HU6tox)
+[7] [github.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGypmg0T7rtj_zVLTkg_4lFQuxSdeSD5dOByXgMFnGRwSWl8-GrmQafI1E1xHMqyi3mQ4hYfjb9asdOnRoAnknm11lzCsngIXrE364LX1MIw2Keje9d6FfriTxtdueQV_nJQmNRclszlotE)
+[8] [github.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGhsru96-oWVxNUSw-HeiqVpXo1bu0N55yczp-hEKjasSxRRmHPFsYYcsk-ZbDtlNH7rqDSzXY9u7MaWcB6KGvMs15pR9f_xr2ok2MLDoUoCNXEFWYS)

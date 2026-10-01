@@ -1,0 +1,22 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2\.agents
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----         9/30/2026   7:29 PM                rules                                                                
+
+
+    Directory: C:\Users\samsung\Desktop\H2\.agents\rules
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/30/2026   7:29 PM            791 antigravity-rtk-rules.md                                             
+
+
+

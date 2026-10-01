@@ -1,0 +1,73 @@
+
+The command exited with code 0.
+Output:
+<truncated 461 lines>
+- skills\skill-comply\prompts\classifier.md -> C:\Users\samsung\Desktop\H2\.agents\skills\skill-comply\prompts\classifier.md
+- skills\skill-comply\prompts\scenario_generator.md -> C:\Users\samsung\Desktop\H2\.agents\skills\skill-comply\prompts\scenario_generator.md
+- skills\skill-comply\prompts\spec_generator.md -> C:\Users\samsung\Desktop\H2\.agents\skills\skill-comply\prompts\spec_generator.md
+- skills\skill-comply\pyproject.toml -> C:\Users\samsung\Desktop\H2\.agents\skills\skill-comply\pyproject.toml
+- skills\skill-comply\scripts\__init__.py -> C:\Users\samsung\Desktop\H2\.agents\skills\skill-comply\scripts\__init__.py
+- skills\skill-comply\scripts\classifier.py -> C:\Users\samsung\Desktop\H2\.agents\skills\skill-comply\scripts\classifier.py
+- skills\skill-comply\scripts\grader.py -> C:\Users\samsung\Desktop\H2\.agents\skills\skill-comply\scripts\grader.py
+- skills\skill-comply\scripts\parser.py -> C:\Users\samsung\Desktop\H2\.agents\skills\skill-comply\scripts\parser.py
+- skills\skill-comply\scripts\report.py -> C:\Users\samsung\Desktop\H2\.agents\skills\skill-comply\scripts\report.py
+- skills\skill-comply\scripts\run.py -> C:\Users\samsung\Desktop\H2\.agents\skills\skill-comply\scripts\run.py
+- skills\skill-comply\scripts\runner.py -> C:\Users\samsung\Desktop\H2\.agents\skills\skill-comply\scripts\runner.py
+- skills\skill-comply\scripts\scenario_generator.py -> C:\Users\samsung\Desktop\H2\.agents\skills\skill-comply\scripts\scenario_generator.py
+- skills\skill-comply\scripts\spec_generator.py -> C:\Users\samsung\Desktop\H2\.agents\skills\skill-comply\scripts\spec_generator.py
+- skills\skill-comply\scripts\utils.py -> C:\Users\samsung\Desktop\H2\.agents\skills\skill-comply\scripts\utils.py
+- skills\skill-comply\tests\test_grader.py -> C:\Users\samsung\Desktop\H2\.agents\skills\skill-comply\tests\test_grader.py
+- skills\skill-comply\tests\test_parser.py -> C:\Users\samsung\Desktop\H2\.agents\skills\skill-comply\tests\test_parser.py
+- skills\skill-comply\tests\test_runner.py -> C:\Users\samsung\Desktop\H2\.agents\skills\skill-comply\tests\test_runner.py
+- skills\skill-scout\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\skill-scout\SKILL.md
+- skills\skill-stocktake\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\skill-stocktake\SKILL.md
+- skills\skill-stocktake\scripts\quick-diff.sh -> C:\Users\samsung\Desktop\H2\.agents\skills\skill-stocktake\scripts\quick-diff.sh
+- skills\skill-stocktake\scripts\save-results.sh -> C:\Users\samsung\Desktop\H2\.agents\skills\skill-stocktake\scripts\save-results.sh
+- skills\skill-stocktake\scripts\scan.sh -> C:\Users\samsung\Desktop\H2\.agents\skills\skill-stocktake\scripts\scan.sh
+- skills\strategic-compact\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\strategic-compact\SKILL.md
+- skills\tdd-workflow\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\tdd-workflow\SKILL.md
+- skills\verification-loop\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\verification-loop\SKILL.md
+- skills\windows-desktop-e2e\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\windows-desktop-e2e\SKILL.md
+- skills\agent-self-evaluation\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\agent-self-evaluation\SKILL.md
+- skills\agent-self-evaluation\examples\high-score-example.md -> C:\Users\samsung\Desktop\H2\.agents\skills\agent-self-evaluation\examples\high-score-example.md
+- skills\agent-self-evaluation\examples\low-score-example.md -> C:\Users\samsung\Desktop\H2\.agents\skills\agent-self-evaluation\examples\low-score-example.md
+- skills\agent-self-evaluation\references\evaluation-criteria.md -> C:\Users\samsung\Desktop\H2\.agents\skills\agent-self-evaluation\references\evaluation-criteria.md
+- skills\agent-self-evaluation\references\hook-integration.md -> C:\Users\samsung\Desktop\H2\.agents\skills\agent-self-evaluation\references\hook-integration.md
+- skills\agent-self-evaluation\scripts\evaluate.py -> C:\Users\samsung\Desktop\H2\.agents\skills\agent-self-evaluation\scripts\evaluate.py
+- skills\agent-self-evaluation\templates\evaluation-report.md -> C:\Users\samsung\Desktop\H2\.agents\skills\agent-self-evaluation\templates\evaluation-report.md
+- skills\architecture-decision-records\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\architecture-decision-records\SKILL.md
+- skills\browser-qa\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\browser-qa\SKILL.md
+- skills\ck\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\ck\SKILL.md
+- skills\ck\commands\forget.mjs -> C:\Users\samsung\Desktop\H2\.agents\skills\ck\commands\forget.mjs
+- skills\ck\commands\info.mjs -> C:\Users\samsung\Desktop\H2\.agents\skills\ck\commands\info.mjs
+- skills\ck\commands\init.mjs -> C:\Users\samsung\Desktop\H2\.agents\skills\ck\commands\init.mjs
+- skills\ck\commands\list.mjs -> C:\Users\samsung\Desktop\H2\.agents\skills\ck\commands\list.mjs
+- skills\ck\commands\migrate.mjs -> C:\Users\samsung\Desktop\H2\.agents\skills\ck\commands\migrate.mjs
+- skills\ck\commands\resume.mjs -> C:\Users\samsung\Desktop\H2\.agents\skills\ck\commands\resume.mjs
+- skills\ck\commands\save.mjs -> C:\Users\samsung\Desktop\H2\.agents\skills\ck\commands\save.mjs
+- skills\ck\commands\shared.mjs -> C:\Users\samsung\Desktop\H2\.agents\skills\ck\commands\shared.mjs
+- skills\ck\hooks\session-start.mjs -> C:\Users\samsung\Desktop\H2\.agents\skills\ck\hooks\session-start.mjs
+- skills\click-path-audit\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\click-path-audit\SKILL.md
+- skills\codebase-onboarding\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\codebase-onboarding\SKILL.md
+- skills\codehealth-mcp\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\codehealth-mcp\SKILL.md
+- skills\config-gc\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\config-gc\SKILL.md
+- skills\context-budget\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\context-budget\SKILL.md
+- skills\delivery-gate\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\delivery-gate\SKILL.md
+- skills\delivery-gate\hooks\quality-gate.py -> C:\Users\samsung\Desktop\H2\.agents\skills\delivery-gate\hooks\quality-gate.py
+- skills\ecc-guide\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\ecc-guide\SKILL.md
+- skills\ecc-recipes\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\ecc-recipes\SKILL.md
+- skills\growth-log\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\growth-log\SKILL.md
+- skills\inherit-legacy-style\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\inherit-legacy-style\SKILL.md
+- skills\intent-driven-development\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\intent-driven-development\SKILL.md
+- skills\living-docs-governance\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\living-docs-governance\SKILL.md
+- skills\loop-design-check\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\loop-design-check\SKILL.md
+- skills\product-lens\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\product-lens\SKILL.md
+- skills\repo-scan\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\repo-scan\SKILL.md
+- skills\rules-distill\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\rules-distill\SKILL.md
+- skills\rules-distill\scripts\scan-rules.sh -> C:\Users\samsung\Desktop\H2\.agents\skills\rules-distill\scripts\scan-rules.sh
+- skills\rules-distill\scripts\scan-skills.sh -> C:\Users\samsung\Desktop\H2\.agents\skills\rules-distill\scripts\scan-skills.sh
+- skills\santa-method\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\santa-method\SKILL.md
+- skills\git-workflow\SKILL.md -> C:\Users\samsung\Desktop\H2\.agents\skills\git-workflow\SKILL.md
+
+Compute: Run or self-host any open-source model. Itô is ECC's preferred compute sponsor: open its dashboard to sign in and rent or manage GPUs at https://compute.itomarkets.com. Any GPU provider works. This sponsorship link is passive: it does not invoke an RFQ, reserve capacity, provision compute, or configure serving. Separately, the opt-in "ecc ito find" bridge invokes the explicitly configured canonical Itô CLI and submits a live authenticated RFQ; it does not reserve capacity. Managed inference through Itô is not live yet.
+
