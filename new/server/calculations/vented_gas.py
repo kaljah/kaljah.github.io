@@ -30,6 +30,18 @@ GAS_UNITS = {"scf": 1.0, "mcf": 1e3, "mscf": 1e3, "mmscf": 1e6, "m3": 1 / SCF_TO
 RATE_UNITS = {"scf/day": 1.0, "mcf/day": 1e3, "mmscf/day": 1e6, "m3/day": 1 / SCF_TO_M3}
 ACTUAL_UNITS = {"ft3": 1.0, "acf": 1.0, "bbl": FT3_PER_BBL, "gal": FT3_PER_GAL, "m3": 1 / SCF_TO_M3}
 
+# S1K-F16: every gas volume spelling the rest of the platform accepts (Nm3, ksm3, MMcf, kscf, cf ...)
+from .units import GAS_VOLUME_UNITS as _GV, VOLUME_UNITS_TO_M3 as _V2M3, _VOLUME_ALIASES as _VA
+for _u in _GV:
+    if _u in _V2M3:
+        GAS_UNITS.setdefault(_u, _V2M3[_u] / SCF_TO_M3)
+for _a, _b in _VA.items():
+    if _b in GAS_UNITS:
+        GAS_UNITS.setdefault(_a, GAS_UNITS[_b])
+for _u, _f in list(GAS_UNITS.items()):
+    for _sfx in ("/day", "/d"):
+        RATE_UNITS.setdefault(_u + _sfx, _f)
+
 
 def _frac(v, name, required=False):
     if v in (None, ""):

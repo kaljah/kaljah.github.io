@@ -1087,7 +1087,7 @@ def get_csv_template():
             "[Optional] region",
             "region",
             "Meta",
-            "Region label. Defaults to facility region if blank.",
+            "Region label. Defaults to facility region if blank. For liquids unloading and associated gas venting this column is the basin of the calculation (e.g. Gulf Coast) and the record keeps the facility region.",
         ),
         (
             "[Optional] division",
@@ -1124,7 +1124,7 @@ def get_csv_template():
             "[T1/T3] hhv",
             "hhv",
             "T1",
-            "Higher Heating Value in Btu/scf (gas) or Btu/gal (liquid). Defaults from API catalog if blank. e.g. 1020 for Natural Gas.",
+            "Higher Heating Value in Btu/scf (gas) or Btu/gal (liquid), or in the unit of an hhv_unit column (MJ/m3, kcal/m3, Btu/gal, MJ/kg). Defaults from API catalog if blank. e.g. 1020 for Natural Gas.",
         ),
         (
             "[T1] ef_unit",
@@ -1412,7 +1412,7 @@ def get_csv_template():
             "[T3-Pneu] pneu_bleed_unit",
             "pneu_bleed_unit",
             "T3",
-            "Unit of bleed rate: scf | m3. Default scf.",
+            "Unit of bleed rate per device: scf/hr | m3/hr (scf, m3, Sm3, Nm3 per hour also accepted). Default scf/hr.",
         ),
         (
             "[T3-Pneu] pneu_hours",
@@ -1709,7 +1709,7 @@ def get_csv_template():
                 filtered_columns.append(c)
             elif header.startswith("[T3-Fug]") and _for(p_fug):
                 filtered_columns.append(c)
-        elif tier == "1":
+        elif tier in ("1", "2"):   # Tier 2 = Tier 1 columns + a saved custom factor or site HHV / density
             if t == "T1" and (header not in ("[T1] operating_hours", "[T1] activity_days") or _for(p_act)):
                 filtered_columns.append(c)
 
@@ -1818,6 +1818,8 @@ def get_csv_template():
         tier_match = True
         if tier == "1":
             tier_match = row_factor == "default"
+        elif tier == "2":
+            tier_match = row_factor != "specific"
         elif tier == "3":
             tier_match = row_factor == "specific"
 
@@ -2323,7 +2325,7 @@ def get_excel_template():
 
     wanted = {normalize_process_type(q) or q for q in str(process or "all").split(",") if q.strip()} or {"all"}
     filtered_samples = [row for key, row in samples if "all" in wanted or key in wanted]
-    if tier == "1":
+    if tier in ("1", "2"):
         filtered_samples = [row for row in filtered_samples if row[11] != "specific"]
     if not filtered_samples:
         filtered_samples = [row for _, row in samples if row[11] != "specific"]  # fallback if no match
@@ -2350,7 +2352,7 @@ def get_excel_template():
     # ═══════════════════════════════════════════════════════════
     # SHEET 4+: TIER 3 ENGINEERING SHEETS (one per process)
     # ═══════════════════════════════════════════════════════════
-    if tier != "1":
+    if tier not in ("1", "2"):
         p_comp = ["all", "combustion", "flaring", "completions", "blowdown", "agr"]
         p_flare = [
             "all",

@@ -213,6 +213,11 @@ def validate_activity(payload, require_unit):
         _set_alias(payload, ("amount", "quantity"), amount)
     if require_unit and amount is not None and not str(payload.get("unit") or "").strip():
         raise ValidationError("'unit' is required for the activity amount", "unit")
+    # S1K-F6: "Mt" is the SI megatonne but "MT" is often a metric ton; the case-insensitive unit table
+    # booked "1 Mt" as 1 tonne. Refused as ambiguous, like a bare "ton" in files.
+    if str(payload.get("unit") or "").strip().lower().replace(".", "") in ("mt", "mts"):
+        raise ValidationError(
+            f"'{payload.get('unit')}' is ambiguous (megatonne or metric ton): write 'tonne' (1,000 kg)", "unit")
     # one activity representation: calc_inputs must not contradict the top-level activity
     ci = (payload.get("calc_inputs") or {}).get(payload.get("process_type") or "") or {}
     tier12 = str(payload.get("factor_source") or "default").lower() in ("default", "custom")
@@ -348,7 +353,17 @@ def apply_result(record, payload, em_result, method, factor_data, gwp_std):
     if payload.get("amount") in (None, ""):
         # engineered methods carry no activity amount: record the activity the engine used
         # (Tier 3 browser test #18: the Quantity column was empty)
-        inter = (em_result.get("_full_api_res") or {}).get("intermediate") or {}
+        api_r = em_result.get("_full_api_res") or {}
+        # S1K-F19: the engineered methods report their activity under "inputs" too (flowback volume,
+        # vented volume, leakers found, measured hours)
+        inter = {**(api_r.get("inputs") if isinstance(api_r.get("inputs"), dict) else {}),
+                 **(api_r.get("intermediate") or {})}
+        for key, unit in (("net_flowback_scf", "scf"), ("total_vented_scf", "scf"), ("detected_leakers", "leakers")):
+            if inter.get("activity_amount") in (None, "") and inter.get(key) not in (None, ""):
+                inter = {**inter, "activity_amount": inter[key], "activity_unit": unit}
+        if inter.get("activity_amount") in (None, "") and inter.get("operating_hours") not in (None, "") \
+                and inter.get("measured_input"):
+            inter = {**inter, "activity_amount": inter["operating_hours"], "activity_unit": "h measured"}
         if inter.get("activity_amount") not in (None, "") and inter.get("activity_unit"):
             record.quantity, record.unit = float(inter["activity_amount"]), inter["activity_unit"]
         for key, unit in (("gas_volume_scf", "scf"), ("energy_mmbtu", "MMBtu"), ("fuel_gal", "gal"),
