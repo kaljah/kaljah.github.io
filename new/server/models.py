@@ -127,7 +127,8 @@ class Emission(db.Model):
     group_name = db.Column(db.String(120), index=True)
     equipment_id = db.Column(db.String(50))
     process_type = db.Column(db.String(50), index=True)
-    fuel_type = db.Column(db.String(50))
+    # 255: catalog fuel names (75 chars) and activity-factor labels (70) overflowed 50 on PostgreSQL
+    fuel_type = db.Column(db.String(255))
     quantity = db.Column(db.Float)
     unit = db.Column(db.String(20))
     factor_source = db.Column(db.String(50))
