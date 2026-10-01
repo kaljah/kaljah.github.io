@@ -389,6 +389,30 @@ def _parse_row_period(row):
         return None, None, err.message
 
 
+class _InFile(int):
+    """Id of a row created earlier in this same file and already flushed (not yet committed): an
+    in-file repeat is still "earlier in this file", not a record of the platform."""
+
+
+# Rows of a Scope 1/2/3 import are flushed (not committed) in batches of this size and released from
+# the session: the file is still saved in one transaction, but memory no longer grows with the file
+# (a 100k-row file held every row object until the end: 1.1 GB peak).
+FLUSH_EVERY = 2000
+
+
+def _flush_pending(session, chunk, maps):
+    session.add_all(chunk)
+    session.flush()
+    ids = {id(o): o.id for o in chunk}
+    for m in maps:
+        for k, v in m.items():
+            if not isinstance(v, int) and id(v) in ids:
+                m[k] = _InFile(ids[id(v)])
+    for o in chunk:
+        session.expunge(o)
+    chunk.clear()
+
+
 def _dedupe(batch_keys, key, overwrite, describe):
     """BUG-057: returns ("new", None), ("error", message) or ("update", existing_object_or_id).
 
@@ -399,7 +423,7 @@ def _dedupe(batch_keys, key, overwrite, describe):
         return "new", None
     if not overwrite:
         existing = batch_keys[key]
-        where = "earlier in this file" if not isinstance(existing, int) else "in the platform"
+        where = "earlier in this file" if (not isinstance(existing, int) or isinstance(existing, _InFile)) else "in the platform"
         return "error", (f"Duplicate record: {describe} already exists {where}. Enable 'Overwrite Duplicates' to "
                          "replace it, or give each source its own Equipment ID / source reference to keep both.")
     return "update", batch_keys[key]
@@ -411,7 +435,10 @@ def _resolve_existing(model, existing):
     if existing is None:
         return None
     if isinstance(existing, int):
-        return db.session.get(model, existing)
+        obj = db.session.get(model, int(existing))
+        if obj is not None and isinstance(existing, _InFile):
+            obj._bulk_in_file = True  # flushed earlier in this file: an overwrite is not of a saved record
+        return obj
     return existing  # pending object from this file
 
 
@@ -425,7 +452,7 @@ def _bulk_overwrite(obj, values, user_id, label):
     old = {k: getattr(obj, k, None) for k in values}
     for k, v in values.items():
         setattr(obj, k, v)
-    was_saved = getattr(obj, "id", None) is not None
+    was_saved = getattr(obj, "id", None) is not None and not getattr(obj, "_bulk_in_file", False)
     obj.status = "Pending"
     obj.approved_by = None
     obj.approved_at = None
@@ -463,11 +490,6 @@ def _scope1_key(facility_id, year, month, process_type, fuel, equipment_id, sour
     return (facility_id, year, month, proc, fuel_k, (equipment_id or "").strip().lower(),
             (source_ref or "").strip().lower())
 
-MAX_IMPORT_ROWS = 50_000  # rows are held until the single commit at the end of the file
-
-
-class ImportTooLarge(Exception):
-    pass
 
 
 def start_background_upload(
@@ -663,15 +685,9 @@ def _process_file_thread(
                 total_rows = max(0, sum(1 for ln in decoded_text.split("\n") if ln.strip()) - 1)
 
             if csv_source:
-                # S1K-F15: refuse an oversized file before processing it (it was refused only after the
-                # first 50,000 rows had been calculated, ~90 s). Rows are counted with the CSV reader
-                # (quoted cells may span lines); a few template note rows are allowed for.
-                n_csv_rows = sum(1 for _ in csv.reader(io.StringIO(decoded_text), delimiter=delimiter)) - 1
-                total_rows = n_csv_rows
-                if n_csv_rows > MAX_IMPORT_ROWS + 10:
-                    raise ImportTooLarge(
-                        f"The file has {n_csv_rows:,} data rows, more than {MAX_IMPORT_ROWS:,}; split it into smaller "
-                        "files. No rows were saved.")
+                # rows counted with the CSV reader (quoted cells may span lines) for the progress bar.
+                # There is no row limit: the whole file is still saved in one transaction (all or nothing).
+                total_rows = sum(1 for _ in csv.reader(io.StringIO(decoded_text), delimiter=delimiter)) - 1
             _update_job(job_id, total=total_rows)
 
             # Resolve mapping: the automatic mapping, overridden by the columns the user chose in
@@ -804,9 +820,6 @@ def _process_file_thread(
                 if _is_template_note_row(row_dict):
                     continue  # the template's description / instruction row
                 processed += 1
-                if processed > MAX_IMPORT_ROWS:
-                    raise ImportTooLarge(
-                        f"The file has more than {MAX_IMPORT_ROWS:,} data rows; split it into smaller files. No rows were saved.")
 
                 # Extract mapped values, preserving raw entries as case/spacing-insensitive fallbacks
                 mapped_data = {
@@ -978,6 +991,9 @@ def _process_file_thread(
                                 })
                         except Exception:
                             pass  # Never let anomaly detection crash the upload
+                    # after the anomaly flag is set on the row: flush and release a full batch
+                    if str(scope) in ("1", "2", "3", "3_eeio") and len(chunk) >= FLUSH_EVERY:
+                        _flush_pending(db.session, chunk, (batch_scope1_map, batch_scope2_map, batch_scope3_map))
 
 
                 # Update progress every 100 rows
@@ -990,9 +1006,9 @@ def _process_file_thread(
                         progress=min(99, int((processed / total_rows) * 100)) if total_rows > 0 else min(95, int(100 * (1.0 - (0.98 ** (processed / 100.0))))),
                     )
 
-            # One commit for the whole file. add_all (not bulk_save_objects): objects stay tracked, so
-            # an in-file duplicate can update them (BUG-057), and the dashboard-cache hook sees the new
-            # rows (BUG-071)
+            # One commit for the whole file. add_all (not bulk_save_objects): pending objects stay tracked, so
+            # an in-file duplicate can update them (BUG-057; rows already flushed are reloaded by id), and the
+            # dashboard-cache hook sees the new rows (BUG-071)
             if chunk:
                 db.session.add_all(chunk)
             # BUG-058: one IMPORT summary entry per job, committed with the data
@@ -1090,7 +1106,6 @@ def _process_file_thread(
                     upload_jobs[job_id]["status"] = "error"
                     # BUG-087: the exception is logged; the job shows a generic message
                     upload_jobs[job_id]["errors"].append(
-                        str(e) if isinstance(e, ImportTooLarge) else
                         f"Fatal error: the import stopped unexpectedly (job {job_id}); see the server log. "
                         "No rows were saved.")
             _persist_job(job_id, force=True)

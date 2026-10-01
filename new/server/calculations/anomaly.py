@@ -257,6 +257,18 @@ class BatchAnomalyDetector(AnomalyDetector):
     def __init__(self, db_session=None):
         super().__init__(db_session)
         self._cache = {}
+        # the import flushes its rows in batches before the commit: the history is the data that
+        # existed when the import started, never the file's own earlier rows
+        self._max_id = {}
+        try:
+            import models
+            from sqlalchemy import func
+
+            for sc, (name, _k, _v) in self._SERIES.items():
+                m = getattr(models, name)
+                self._max_id[sc] = self._get_db().session.query(func.max(m.id)).scalar() or 0
+        except Exception:
+            self._max_id = {}
 
     def _rows(self, scope, facility_id, key, source=None, year=None):
         # one query per facility / process series (sources are filtered in memory: a query per source
@@ -270,8 +282,11 @@ class BatchAnomalyDetector(AnomalyDetector):
             cols = [m.year, m.month, getattr(m, val_col), m.status, m.qa_flag]
             if scope == "1":
                 cols += [m.equipment_id, m.fuel_type]
-            rows = self._get_db().session.query(*cols).filter(
-                m.facility_id == facility_id, getattr(m, key_col) == key, getattr(m, val_col).isnot(None)).all()
+            q = self._get_db().session.query(*cols).filter(
+                m.facility_id == facility_id, getattr(m, key_col) == key, getattr(m, val_col).isnot(None))
+            if scope in self._max_id:
+                q = q.filter(m.id <= self._max_id[scope])
+            rows = q.all()
             by_source = {}
             for r in rows:
                 by_source.setdefault(None, []).append(r[:5])

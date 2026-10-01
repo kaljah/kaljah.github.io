@@ -258,6 +258,24 @@ def not_found_error(error):
     )
 
 
+@app.errorhandler(413)
+def too_large_error(error):
+    # an upload over MAX_CONTENT_LENGTH: say what the limit is and what to do (the generic Werkzeug text
+    # "The data value transmitted exceeds the capacity limit" gave neither). Imports have no row limit.
+    limit_mb = (app.config.get("MAX_CONTENT_LENGTH") or 0) / (1024 * 1024)
+    return (
+        jsonify(
+            {
+                "error": f"The file is larger than the {limit_mb:,.0f} MB upload limit; split it into smaller files. "
+                         "No rows were saved.",
+                "code": 413,
+                "request_id": getattr(request, "id", ""),
+            }
+        ),
+        413,
+    )
+
+
 @app.errorhandler(Exception)
 def internal_error(error):
     if isinstance(error, HTTPException):
