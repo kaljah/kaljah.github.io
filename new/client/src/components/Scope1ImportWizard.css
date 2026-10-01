@@ -900,3 +900,30 @@
 .s1w-check-warn { background: #fff7ed; border: 1px solid #fed7aa; border-radius: 8px; padding: 6px 10px; margin-top: 8px; color: #9a3412; }
 .s1w-process-filter { margin: 0 0 12px; font-size: 0.85rem; }
 .s1w-process-filter summary { cursor: pointer; color: #ea580c; font-weight: 600; margin-bottom: 8px; }
+
+/* ─── Template choices (columns follow the tier and the processes picked) ──── */
+.s1w-template-procs { margin: 4px 0 10px; }
+.s1w-template-sub { display: block; font-size: 0.8rem; color: #475569; margin-bottom: 6px; }
+.s1w-template-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.s1w-chip { border: 1px solid #cbd5e1; background: #fff; color: #334155; border-radius: 16px; padding: 4px 11px; font-size: 0.78rem; cursor: pointer; }
+.s1w-chip:hover { border-color: #ff6600; }
+.s1w-chip--on { background: #fff7f0; border-color: #ff6600; color: #c2410c; font-weight: 600; }
+.s1w-template-opt { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: #475569; margin: 4px 0 10px; cursor: pointer; }
+.s1w-template-btn--primary { border-color: #ff6600; background: #fff7f0; }
+.s1w-reco { font-style: normal; font-size: 0.68rem; font-weight: 700; color: #fff; background: #ff6600; border-radius: 10px; padding: 1px 7px; margin-left: 6px; vertical-align: middle; }
+.s1w-template-note { font-size: 0.78rem; color: #64748b; margin: 10px 0 0; }
+
+/* ─── Saved column mappings ───────────────────────────────────────────────── */
+.s1w-saved-map { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; padding: 10px 14px; margin: 0 0 12px; border: 1px solid #e2e8f0; border-radius: 10px; background: #f8fafc; font-size: 0.83rem; color: #334155; }
+.s1w-saved-map > svg { width: 16px; height: 16px; color: #ea580c; flex-shrink: 0; }
+.s1w-saved-save { margin-left: auto; }
+.s1w-saved-select, .s1w-saved-input { border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px 8px; font-size: 0.82rem; background: #fff; color: #0f172a; }
+.s1w-saved-input { width: 220px; max-width: 100%; }
+.s1w-saved-form { display: inline-flex; align-items: center; gap: 6px; margin-left: auto; flex-wrap: wrap; }
+.s1w-btn-small { border: none; border-radius: 6px; background: #ff6600; color: #fff; font-weight: 600; font-size: 0.8rem; padding: 5px 12px; cursor: pointer; }
+.s1w-btn-small:disabled { opacity: 0.5; cursor: default; }
+
+/* the label wraps beside its checkbox (it used to overflow the dialog) */
+.s1w-overwrite-row { display: flex; align-items: flex-start; gap: 8px; cursor: pointer; margin: 0 0 12px; }
+.s1w-overwrite-row input { margin-top: 3px; flex-shrink: 0; }
+.s1w-overwrite-row .s1w-factor-label { flex-shrink: 1; min-width: 0; line-height: 1.45; }

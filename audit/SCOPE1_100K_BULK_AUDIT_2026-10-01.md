@@ -580,3 +580,58 @@ With the 100k file, through the UI, the result is unchanged: 84,165 imported / 1
 Screenshots: `run3_seed20261003/results/screenshots/upload_ux/`. Tests: `new/server/tests/test_upload_ux_2026_10_01.py` (7 tests).
 
 The batched flush from §10.2 now applies only to PostgreSQL. On SQLite a flush holds the single-writer lock for the whole import, so every other save would time out after 30 s. On SQLite the rows therefore stay staged until the commit, as before. Memory there grows with the file: about 1.1 GB for 100k rows.
+
+### 10.4 Follow-up: templates and saved column mappings
+
+The CSV template had 106 columns, headers with 18 kinds of tag (`[Required]`, `[T3-Unload]`, ...), a long description row, and 13 examples, all Tier 3. Its descriptions contradicted the examples (fuel "Required" but blank, units missing from the list), and its example rows imported as real records (13 processed, 0 skipped).
+
+**1. One column spec (`services/scope1_template.py`).** The CSV template, the Excel template and the Excel Reference sheet are all built from it.
+- Headers are the import names (`date`, `tank_gor`), so every column maps automatically. A test checks that each header maps to its own field.
+- A template contains only the columns of the tier chosen in step 1 and of the processes picked:
+
+  | Template | Columns |
+  |---|---|
+  | Tier 1, combustion | 10 |
+  | Tier 3, flaring | 25 |
+  | Tier 3, every process | 93 (was 106) |
+  | Optional columns | added only on request |
+
+- A `tier` column (1 / 2 / 3, the wizard's words) replaces `factor_type`. It is in every template, so a Tier 3 file imported "per row" cannot fall back to Tier 1.
+- Removed columns that the import never read: `equipment_name`, `fuel_type`, `comp_choke_size`, `comp_whp`.
+- Added columns the calculators read but the template lacked: `hhv_unit`, `density` and `density_unit` (Tier 2); the vent volume, vent rate and oil + GOR inputs (associated gas venting); `unloading_type` and the basin (unloading); the leak measurement and OGI inputs (fugitive).
+
+**2. Examples cannot become records.**
+- Example rows are dated `EXAMPLE 2024-01`. The importer skips them under the cause "Example row from the template (not imported)", and the Check step counts them separately.
+- There are examples for Tier 1, 2 and 3 (25 rows over 13 processes).
+- With a real month in place of EXAMPLE, every example imports without a skip, for every tier, from CSV and from Excel (tested).
+
+**3. Excel template, offered first ("Recommended").**
+- *Data Entry:* empty, header help as cell comments, required columns in dark green and Tier 3 inputs in teal.
+- *Dropdowns:*
+  - facility (your facilities) and process;
+  - fuel and unit, which follow the row's process (`INDIRECT("fuel_"&C2)`, built from the factor catalog and the Compendium activity tables);
+  - tier and the method choices.
+- *Date column:* stored as text, so Excel does not turn 2024-03 into a date.
+- *Other sheets:* Examples (not imported); Reference (columns, processes with their usual units, every fuel per process, your facilities, common mistakes); Lists (hidden).
+
+**4. Saved column mappings** (`ImportMapping`, `GET/POST /api/emissions/upload/mappings`, `POST .../<id>/used`, `DELETE .../<id>`).
+- After matching an export's columns once, the user saves the mapping under a name.
+- The next file with those columns opens with the mapping applied and says so ("Using your saved mapping ERP monthly export · Don't use it").
+- Mappings are private to the user and limited to 50 per user.
+- Excel files now get the mapping table too: the Check step returns the column names, which the browser cannot read from .xlsx.
+
+Findings fixed on the way:
+- S1K-F35: the header `agr_control_eff` was also word-matched to `control_efficiency`.
+- S1K-F36: the "Replace existing records" text overflowed the dialog.
+- S1K-F37: the optional Fuel field was hidden in the short mapping list, so an export whose fuel column did not auto-match could not be mapped without "Show all fields".
+
+**UI test (`ui_template.mjs`, headless Chromium):**
+
+| Step | Result |
+|---|---|
+| Tier 3 with Flaring + Tank Flashing: download both templates | 30 columns |
+| CSV uploaded as downloaded | "2 example rows … will not be imported", 0 imported |
+| Excel with the examples copied to Data Entry | 27 of 30 columns mapped, 2 / 2 imported |
+| An ERP export with French column names, mapped once and saved | The next upload opens with it applied: 6 of 6 columns matched, 2 rows will import |
+
+Screenshots and the downloaded templates: `run3_seed20261003/results/screenshots/template/`. Tests: `tests/test_bulk_uploaders.py` (template tests), `tests/test_upload_ux_2026_10_01.py` (mappings), `src/__tests__/savedMappings.test.js`.

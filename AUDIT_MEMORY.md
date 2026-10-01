@@ -197,6 +197,9 @@ Report: audit/SCOPE1_100K_BULK_AUDIT_2026-10-01.md sections 8 and 9. Tests: new/
 | S1K-F32 | FIXED | models.py Emission.fuel_type + migration b7e2d4c91a05 | VARCHAR(50) overflow on PostgreSQL (75-char fuel names) made whole import files fail. |
 | S1K-F33 | FIXED | calculations/anomaly.py, background_processor.py, routes/emissions.py | Anomaly check compared a record with the last 12 records of facility+process (all sources, any month): 15 % of a 100k import flagged. Now same source (equipment, else fuel), 12 calendar months; batch reads each series once. |
 | S1K-F34 | FIXED | UploadProgress.jsx, upload notifications | "anomalys" plural; counts without thousands separators. |
+| S1K-F35 | FIXED | background_processor._build_mapping | Header `agr_control_eff` was also word-matched to `control_efficiency`; a header that is a Scope 1 input name is now never word-matched to another field. |
+| S1K-F36 | FIXED | Scope1ImportWizard.jsx/.css | "Replace existing records" label overflowed the dialog. |
+| S1K-F37 | FIXED | Scope1ImportWizard.jsx | Optional Fuel field hidden in the short mapping list: an export whose fuel column did not auto-match could not be mapped without "Show all fields". |
 
 ## 7. Work log
 
@@ -257,3 +260,11 @@ Report: audit/SCOPE1_100K_BULK_AUDIT_2026-10-01.md sections 8 and 9. Tests: new/
 - 2026-10-01 · Third 100k run (gen.py --seed 20261003, audit report §10), UI wizard and API on fresh DBs: 84,165 saved / 15,835 refused on both, UI = API record by record, oracle 47,228/47,228, groups 20,817/20,817, 0 wrong acceptances / refusals, 1,900/1,900 ambiguous refused, UI table / feed / export = DB. Fixed S1K-F33 (anomaly series per source over 12 calendar months: 6,480 false flags -> 0, 4 correct plausibility flags) and F34 (UI plural / number format). Backend 2,052 / 0 failed, validation 128, vitest 43.
 - 2026-10-01 · 50,000-row import cap removed (audit report §10.2): one-transaction import with rows flushed every 2,000 and released (peak memory for 100k rows 1,141 MB -> 346 MB); 100k file in one upload = two-half upload record by record, also on PostgreSQL; clear 413 message (50 MB MAX_CONTENT_LENGTH, env-configurable) kept visible in the wizard. Backend 2,056 / 0 failed, validation 128, vitest 43.
 - 2026-10-01 · Upload usability (audit report §10.3): one tier choice (step 1, applied); process-scope step removed; skip reasons grouped by cause with column + fix (services/import_feedback.py, job status `skipped_groups`); pre-import check `POST /api/emissions/upload/check` (dry run: 2,000-row spread sample calculated, whole file counted, nothing saved; 100k predicted 84,150 vs 84,165 actual in 8 s) and `GET /upload/limits` (size refused on pick); essential-fields mapping view, relabelled fields; progress in rows with time left; what-happens-next text. Batched flush now PostgreSQL only (SQLite write lock). Backend 2,064 / 0 failed, validation 128, vitest 43.
+- 2026-10-01 · Templates and saved mappings (audit report §10.4):
+  - **One column spec.** `services/scope1_template.py` builds the CSV template, the Excel template and its Reference sheet.
+  - **Columns.** Headers are the import names. Only the columns of the chosen tier and processes are included (Tier 1 combustion has 10 columns, against 106 in the old template). The `tier` column takes 1/2/3.
+  - **Examples.** Example rows are dated EXAMPLE and are skipped and reported, never imported. There are Tier 1, 2 and 3 examples, and every one imports cleanly once dated (CSV and xlsx).
+  - **Excel template (default).** The fuel and unit dropdowns follow the row's process, plus Examples, Reference and hidden Lists sheets.
+  - **Saved column mappings.** Backed by the `import_mappings` table (new, so `create_all` creates it on existing DBs) and `/api/emissions/upload/mappings`. A saved mapping is auto-applied to a file with the same columns, including .xlsx: the check returns the column names.
+  - **Fixes.** S1K-F35..F37.
+

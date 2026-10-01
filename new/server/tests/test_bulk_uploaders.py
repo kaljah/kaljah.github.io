@@ -182,46 +182,138 @@ def test_scope1_standard_volumes_are_not_pressure_corrected(app):
     assert ratio == pytest.approx((300 + 14.696) / 14.696 * 288.706 / 318.15, rel=0.01)
 
 
-def test_scope1_csv_and_excel_templates_import(app, client, env):
-    fac = env["fac"]
+def _real_rows(text, fac, month):
+    """A downloaded CSV template with its examples made real: the facility and the month replaced."""
+    import csv as _csv
 
-    def fix(text):
-        for n in ("Hassi Messaoud Gas Plant", "Hassi R'Mel Hub", "Field Alpha Processing Plant", "South Field Compressor Stn"):
-            text = text.replace(n, fac)
-        return text
+    rows = list(_csv.reader(io.StringIO(text)))
+    head = rows[0]
+    out = [head]
+    for r in rows[2:]:
+        r = dict(zip(head, r))
+        r["date"], r["facility_name"] = month, fac
+        out.append([r[h] for h in head])
+    buf = io.StringIO()
+    _csv.writer(buf).writerows(out)
+    return buf.getvalue(), len(out) - 1
 
-    for tier in ("1", "3", "auto"):
-        txt = fix(client.get(f"/api/emissions/template/csv?tier={tier}&process=all").data.decode("utf-8"))
-        st = upload(client, 1, txt.replace("2024-01", f"2023-0{int(tier) if tier != 'auto' else 9}"),
-                    overwrite_duplicates="true")
+
+def test_scope1_csv_template_examples_import_once_dated(app, client, env):
+    """Every example row of every tier calculates without a skip once its date is real."""
+    for i, tier in enumerate(("1", "2", "3", "auto")):
+        txt = client.get(f"/api/emissions/template/csv?tier={tier}&process=all").data.decode("utf-8")
+        header = txt.split("\n")[0].strip().split(",")
+        assert header[:7] == ["date", "facility_name", "process_type", "fuel", "quantity", "unit", "tier"]
+        assert not any(h.startswith("[") for h in header)                  # plain import names
+        body, n = _real_rows(txt, env["fac"], f"2023-0{i + 1}")
+        assert n >= 3, tier
+        st = upload(client, 1, body, gft={"auto": "auto", "1": "default", "2": "custom", "3": "specific"}[tier])
         assert st["status"] == "completed" and st["skipped_count"] == 0, (tier, reasons(st))
-        assert st["processed"] == len(txt.strip().split("\n")) - 2  # header and description rows
-
-        wb = openpyxl.load_workbook(io.BytesIO(client.get(f"/api/emissions/template/excel?tier={tier}&process=all").data))
-        for ws in wb.worksheets:
-            for row in ws.iter_rows():
-                for cell in row:
-                    if isinstance(cell.value, str):
-                        cell.value = fix(cell.value).replace("2024-01", "2023-11")
-        buf = io.BytesIO()
-        wb.save(buf)
-        st = upload(client, 1, buf.getvalue(), filename="t.xlsx", overwrite_duplicates="true")
-        assert st["status"] == "completed" and st["processed"] >= 4 and st["skipped_count"] == 0, (tier, reasons(st))
-    flare = [e for e in emissions(app, env["fid"], year=2023, month=11) if e.process_type == "flaring"]
-    assert flare and flare[0].factor_source == "specific"  # Tier 3 sheet parameters reached the calculation
+        assert st["processed"] == n
 
 
-def test_template_filters_accept_wizard_process_names(client, env):
-    txt = client.get("/api/emissions/template/csv?tier=3&process=pneumatic_device,flaring").data.decode("utf-8")
-    header = txt.split("\n")[0]
-    assert "[T3-Pneu] pneu_count" in header and "[T3-Flare] flare_type" in header
-    assert "[T3-Steam]" not in header and "indirect_steam" not in txt.split("\n", 2)[2]
+def test_scope1_template_example_rows_are_never_imported(app, client, env):
+    from extensions import db  # noqa: F401
+    from models import Emission
+
+    txt = client.get("/api/emissions/template/csv?tier=auto&process=all").data.decode("utf-8")
+    txt = txt.replace("Your Facility", env["fac"])
+    with app.app_context():
+        before = Emission.query.count()
+    st = upload(client, 1, txt)
+    assert st["status"] == "completed" and st["skipped_count"] == st["processed"] > 0
+    assert st["skipped_groups"][0]["title"] == "Example row from the template (not imported)"
+    with app.app_context():
+        assert Emission.query.count() == before
+
+
+def test_scope1_template_columns_follow_tier_and_processes(client, env):
+    def header(q):
+        return client.get(f"/api/emissions/template/csv?{q}").data.decode("utf-8").split("\n")[0].strip().split(",")
+
+    t1 = header("tier=1&process=combustion")
+    assert t1 == ["date", "facility_name", "process_type", "fuel", "quantity", "unit", "tier", "equipment_id",
+                  "group", "source_ref"]
+    t3 = header("tier=3&process=pneumatic_device,flaring")
+    assert "pneu_count" in t3 and "flare_type" in t3 and "tank_gor" not in t3 and "hhv" not in t3
+    assert "hhv" in header("tier=2&process=combustion")
+    assert "operating_temperature" in header("tier=1&process=combustion&optional=1")
+
+
+def test_scope1_template_headers_map_to_themselves():
+    from background_processor import _build_mapping
+    from services.scope1_template import columns_for
+
+    keys = [c.key for c in columns_for("auto", (), optional=True)]
+    m = _build_mapping(keys, 1)
+    inv = {}
+    for field, h in m.items():
+        inv.setdefault(h, field)
+    alias = {"process_type": "process", "tier": "factor_type"}
+    for h, field in inv.items():
+        assert field == alias.get(h, h), (h, field)
+
+
+def test_scope1_excel_template(app, client, env):
+    from services.scope1_template import PROCESS_UNITS, fuels_by_process
+
+    raw = client.get("/api/emissions/template/excel?tier=auto&process=all").data
+    wb = openpyxl.load_workbook(io.BytesIO(raw))
+    assert wb.sheetnames[:3] == ["Data Entry", "Examples", "Reference"] and wb["Lists"].sheet_state == "hidden"
+    ws = wb["Data Entry"]
+    head = [c.value for c in ws[1]]
+    assert head[:7] == ["date", "facility_name", "process_type", "fuel", "quantity", "unit", "tier"]
+    assert ws.max_row == 1 or all(v is None for row in ws.iter_rows(min_row=2) for v in (c.value for c in row))
+    assert ws["A1"].comment is not None
+    # dependent dropdowns: fuel / unit lists by the row's process
+    formulas = {str(dv.sqref).split(":")[0]: dv.formula1 for dv in ws.data_validations.dataValidation}
+    assert formulas["D2"] == '=INDIRECT("fuel_"&$C2)' and formulas["F2"] == '=INDIRECT("unit_"&$C2)'
+    assert formulas["B2"] == "=Facilities" and formulas["C2"] == "=Processes"
+    names = set(wb.defined_names.keys())
+    assert {"fuel_combustion", "unit_flaring", "Facilities", "Processes"} <= names
+    lists = wb["Lists"]
+    col = {lists.cell(row=1, column=c).value: c for c in range(1, lists.max_column + 1)}
+    fl = [lists.cell(row=r, column=col["fuel_flaring"]).value for r in range(2, lists.max_row + 1)]
+    assert [v for v in fl if v] == fuels_by_process()["flaring"]
+    ul = [lists.cell(row=r, column=col["unit_tank_flashing"]).value for r in range(2, lists.max_row + 1)]
+    assert [v for v in ul if v] == list(PROCESS_UNITS["tank_flashing"])
+
+    # the examples, copied to Data Entry with a real month, import without a skip
+    ex = wb["Examples"]
+    ex_head = [c.value for c in ex[2]]
+    rows = [[c.value for c in r] for r in ex.iter_rows(min_row=3)]
+    for i, r in enumerate(rows, 2):
+        for j, v in enumerate(r, 1):
+            if ex_head[j - 1] == "date":
+                v = "2023-12"
+            elif ex_head[j - 1] == "facility_name":
+                v = env["fac"]
+            ws.cell(row=i, column=j, value=v)
+    buf = io.BytesIO()
+    wb.save(buf)
+    st = upload(client, 1, buf.getvalue(), filename="t.xlsx")
+    assert st["status"] == "completed" and st["skipped_count"] == 0 and st["processed"] == len(rows), reasons(st)
+    flare = [e for e in emissions(app, env["fid"], year=2023, month=12) if e.process_type == "flaring"]
+    assert {e.factor_source for e in flare} == {"default", "specific"}
+
+
+def test_scope1_template_examples_use_listed_fuels_and_units():
+    from services.scope1_template import PROCESS_UNITS, examples, fuels_by_process, normalize_tier  # noqa: F401
+    from services.scope1_calc import normalize_process_type
+
+    fuels = fuels_by_process()
+    for p in PROCESS_UNITS:
+        assert normalize_process_type(p), p
+    for proc, tier, cells in examples():
+        assert cells["unit"] in PROCESS_UNITS[proc], (proc, cells["unit"])
+        if cells.get("fuel"):
+            assert cells["fuel"] in fuels[proc], (proc, cells["fuel"])
 
 
 def test_mapping_is_scope_aware():
     from background_processor import _build_mapping, _canonical_header
 
-    m = _build_mapping(["[Required] date", "[Required] facility_name", "[Required] process_type", "[T3-Tank] tank_gor"], 1)
+    m = _build_mapping(["[Required] date", "[Required] facility_name", "[Required] process_type", "[T3-Tank] tank_gor"], 1)  # earlier template
     assert m["process"] == "[Required] process_type" and "type" not in m
     assert _canonical_header("Bleed Rate (scf/hr)") == "bleed_rate"
     assert _build_mapping(["name", "region"], "facilities") == {"name": "name", "region": "region"}
