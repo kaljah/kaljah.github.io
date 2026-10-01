@@ -160,10 +160,8 @@ const Settings = () => {
   };
 
 
-  const isAdmin =
-    user?.role === "admin" ||
-    user?.role === "superuser" ||
-    user?.role === "it_admin";
+  // same rule as PUT /api/auth/settings (IT roles may not change operational settings)
+  const isAdmin = user?.role === "admin" || user?.role === "superuser";
 
   const handleSaveGlobal = async () => {
     if (!isAdmin) {

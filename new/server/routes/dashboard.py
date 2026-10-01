@@ -158,6 +158,7 @@ def get_batch_dashboard_data():
 
     cache_key = (
         "batch_all",
+        _get_global_cache_epoch(),  # audit A-07: another worker's invalidation must reach this entry
         facility_id,
         year,
         activity,

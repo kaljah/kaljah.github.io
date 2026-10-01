@@ -11,6 +11,7 @@ from . import auth_bp
 from models import User, Notification, Facility
 from extensions import db, limiter, csrf
 from utils import log_activity_and_notify, is_unrestricted_location
+from werkzeug.security import check_password_hash, generate_password_hash
 
 
 def get_user_operational_defaults(user):
@@ -250,6 +251,11 @@ def superuser_required(f):
     return decorated_function
 
 
+ROLE_RANK = {"user": 0, "it": 1, "superuser": 2, "admin": 3, "it_admin": 4, "it_manager": 4}
+BUSINESS_ROLES = ("admin", "superuser")
+BUSINESS_ROLE_GRANTORS = ("admin", "it_manager")  # separation of duties (update_user and register)
+
+
 @auth_bp.route("/register", methods=["POST"])
 @limiter.limit("10 per hour")
 @it_admin_required
@@ -270,7 +276,6 @@ def register():
     if not valid:
         return jsonify({"error": err_msg}), 400
 
-    ROLE_RANK = {"user": 0, "it": 1, "superuser": 2, "admin": 3, "it_admin": 4, "it_manager": 4}
     VALID_ROLES = set(ROLE_RANK.keys())
     role_requested = str(data.get("role", "user")).strip().lower()
     if role_requested not in VALID_ROLES:
@@ -280,6 +285,12 @@ def register():
     creator = db.session.get(User, creator_id) if creator_id else None
     if creator and creator.role in ["it_admin", "it_manager", "it"] and role_requested == "admin":
         return jsonify({"error": "IT administrators cannot create accounts with business admin role"}), 403
+    # Audit 2026-10-01 (A-02): the same separation of duties as update_user, so an IT admin who may
+    # not promote an account to superuser cannot create a new superuser account instead
+    if role_requested in BUSINESS_ROLES and (not creator or creator.role not in BUSINESS_ROLE_GRANTORS):
+        return jsonify({"error": "Forbidden: IT Administrators cannot assign business compliance roles (admin, superuser)"}), 403
+    if creator and ROLE_RANK.get(role_requested, 0) > ROLE_RANK.get(creator.role, 0):
+        return jsonify({"error": "Cannot assign a role higher than your own"}), 403
 
     user = User(
         fullName=data.get("fullName"),
@@ -331,6 +342,9 @@ def register():
         ),
         201,
     )
+
+
+_DUMMY_PASSWORD_HASH = generate_password_hash("timing-equaliser-not-a-real-account")
 
 
 @auth_bp.route("/login", methods=["POST"])
@@ -405,6 +419,10 @@ def login():
             }
         )
 
+    if user is None:
+        # Audit A-06: same password-hash work as for an existing account, so response time does
+        # not reveal which e-mail addresses are registered (forgot-password does the same)
+        check_password_hash(_DUMMY_PASSWORD_HASH, password_input)
     return jsonify({"error": "Invalid credentials"}), 401
 
 
@@ -701,6 +719,10 @@ _DEFAULT_APP_SETTINGS = {
 
 _app_settings = dict(_DEFAULT_APP_SETTINGS)
 
+# Organisation-wide keys (SystemSetting); never stored in or overridden by user preferences.
+# theme / unit_system stay per-user display preferences.
+GLOBAL_SETTING_KEYS = (set(_DEFAULT_APP_SETTINGS) - {"theme", "unit_system"}) | {"gwp_standard"}
+
 
 def load_settings_from_db():
     """Loads all system settings from SystemSetting table in DB into _app_settings."""
@@ -813,13 +835,14 @@ def get_settings():
     # Load fresh persistent settings from DB
     load_settings_from_db()
 
-    # Merge global settings with user preferences
+    # Merge global settings with user preferences (display preferences only: a copy of an
+    # organisation-wide key saved earlier must not mask the current global value, audit A-03)
     resp = dict(_app_settings)
     if user and user.preferences:
         try:
             prefs = json.loads(user.preferences)
             if isinstance(prefs, dict):
-                resp.update(prefs)
+                resp.update({k: v for k, v in prefs.items() if k not in GLOBAL_SETTING_KEYS})
         except Exception:
             pass
 
@@ -930,11 +953,12 @@ def update_settings():
             existing = json.loads(user.preferences) if user.preferences else {}
         except Exception:
             existing = {}
-        user_pref_keys = ["theme", "unit_system", "consolidation", "notifications", "language"]
+        # Audit A-03: organisation-wide keys live in SystemSetting only. Copying them into the
+        # admin's preferences stored the Copernicus secrets in plain text and pinned a stale GWP
+        # standard on that admin's Settings page (re-saving it reverted the global standard).
+        existing = {k: v for k, v in existing.items() if k not in GLOBAL_SETTING_KEYS}
         for k, v in data.items():
-            if is_admin or k in user_pref_keys or k not in operational_keys:
-                if k in ["copernicus_password", "copernicus_client_secret"] and str(v).strip() in ["********", ""]:
-                    continue
+            if k not in GLOBAL_SETTING_KEYS:
                 existing[k] = v
         user.preferences = json.dumps(existing)
 
@@ -1021,7 +1045,6 @@ def update_user(id):
 
     data = request.get_json()
 
-    ROLE_RANK = {"user": 0, "it": 1, "superuser": 2, "admin": 3, "it_admin": 4, "it_manager": 4}
     VALID_ROLES = set(ROLE_RANK.keys())
     requester_rank = ROLE_RANK.get(it_admin.role if it_admin else "user", 0)
 
@@ -1030,7 +1053,7 @@ def update_user(id):
         if new_role not in VALID_ROLES:
             return jsonify({"error": f"Invalid role. Must be one of: {', '.join(sorted(VALID_ROLES))}"}), 400
         # Separation of Duties: IT Admin cannot assign business compliance Admin or Superuser role
-        if new_role in ["admin", "superuser"] and it_admin.role not in ["admin", "it_manager"]:
+        if new_role in BUSINESS_ROLES and it_admin.role not in BUSINESS_ROLE_GRANTORS:
             return jsonify({"error": "Forbidden: IT Administrators cannot assign business compliance roles (admin, superuser)"}), 403
         target_new_rank = ROLE_RANK.get(new_role, 0)
         if target_new_rank > requester_rank:
@@ -1161,8 +1184,13 @@ def admin_reset_password(id):
     current_admin_id = session.get("user_id")
     admin_user = db.session.get(User, current_admin_id) if current_admin_id else None
 
+    # Audit 2026-10-01 (A-01): a reset hands over the account, so only a strictly higher role may
+    # reset it (the IT role could take over admin / IT admin accounts). Own password: /change-password.
+    if not admin_user or ROLE_RANK.get(user.role, 0) >= ROLE_RANK.get(admin_user.role, 0):
+        return jsonify({"error": "You can only reset the password of an account with a lower role than your own"}), 403
+
     data = request.get_json(silent=True) or {}
-    new_password = data.get("newPassword", "").strip()
+    new_password = str(data.get("newPassword") or "").strip()
 
     if not new_password:
         return jsonify({"error": "New password is required"}), 400

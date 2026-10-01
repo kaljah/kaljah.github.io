@@ -138,6 +138,30 @@ Verified OK on spot check: C4 (no cross-user credential scan), B8 (client GWP co
 Tests: `tests/test_audit_continuation.py` (17 tests; fail on pre-fix code). Full suite 1071 passed; one unidentified failure seen in 1 of 11 runs (not reproduced) — possible flaky test, to investigate.
 Still open for review: S4/M9 claim "deprecated" but `new/server.rar`, `calculations/calculations.rar`, `new/test_final*.py` are still in the repo.
 
+## 5c. Full platform audit (2026-10-01) — UI, API, DB, pipelines
+
+Details, reproduction and open items: `audit/FULL_AUDIT_2026-10-01.md`. Tests: `new/server/tests/test_full_audit_2026_10_01.py` (20).
+
+| ID | Status | Location | Issue | Remediation Summary |
+|----|--------|----------|-------|---------------------|
+| A-01 | FIXED | routes/auth.py `admin_reset_password` | `it` role could reset an admin's / IT admin's password (account takeover). | Only a strictly higher role (module `ROLE_RANK`) may reset; own password via /change-password. |
+| A-02 | FIXED | routes/auth.py `register` | it_admin could create a `superuser` account that it may not grant via PUT /users. | Same SoD as `update_user` (`BUSINESS_ROLE_GRANTORS`), no role above the creator. |
+| A-03 | FIXED | routes/auth.py settings GET/PUT | Admin save copied Copernicus secrets (plain text) and gwp_standard into users.preferences; the stale copy masked the global GWP in GET /settings. | `GLOBAL_SETTING_KEYS` never stored in / merged from preferences; legacy copies dropped on next save. |
+| A-04 | FIXED | utils.py `get_allowed_facility_ids` | user.location used as ILIKE pattern (`_` / `%` widened region scope). | LIKE wildcards escaped. |
+| A-05 | FIXED | routes/managedata.py goals / base-years | Regional superuser could delete org goals and move the base year; no audit entries. | Org-wide scope required; ActivityLog in the same commit. |
+| A-06 | FIXED | routes/auth.py login | Timing difference revealed registered e-mails. | Dummy hash check. |
+| A-07 | FIXED | routes/dashboard.py batch-all | Cache key lacked the shared epoch (stale multi-worker dashboards). | Epoch in key. |
+| A-08 | FIXED | app.py Swagger | Gated on FLASK_ENV only. | Uses `IS_PRODUCTION`. |
+| A-09 | FIXED | routes/emissions.py upload_start | Unbounded parallel upload threads per user. | `MAX_CONCURRENT_UPLOADS_PER_USER` (3), 429. |
+| A-10 | FIXED | client package-lock.json | 10 vulnerable runtime deps (jspdf critical). | `npm audit fix` (semver-compatible): 0. |
+| A-11 | FIXED | requirements.txt | Flask 3.0.3, python-dotenv 1.0.1 advisories. | Flask 3.1.3, python-dotenv 1.2.2. |
+| A-12 | FIXED | .github/workflows/deploy-pages.yml | Global `pages` concurrency group: PR pushes cancelled main deploys. | Per-ref group; deploy job keeps a non-cancelling `pages` group. |
+| A-13 | FIXED | deploy-pages.yml | pages/id-token write on every job. | Only on deploy. |
+| A-14 | FIXED | deploy-pages.yml | `pip-audit \|\| true`; no npm audit; validation/ not run. | Audits fail the build; validation/ step added. |
+| A-15 | FIXED | client pages/Settings.jsx | `isAdmin` included it_admin. | admin / superuser only (as the API). |
+
+Open (owner decision / larger work): O-01 Dockerfile has two final stages (the Render stage wins; no FLASK_ENV=production in the image), O-02 SSE stream holds a worker thread per open tab (8 slots on Render), O-03 SQLite multi-worker cache / limiter per process, O-04 referenced custom factors editable in place, O-05 regional superusers change org-wide GWP / Copernicus / factors, O-06 docker-compose hard-coded secrets, O-07 conversations/ brain/ .rar in the repo, O-08 bulk-delete audit lacks ids, O-09 500s on bad profile/user/settings input, O-10 upload job dir in shared /tmp, O-11 lint warnings / no Postgres CI job.
+
 ## 6. Decision log
 
 | ID | Question | Recommended | Decision |
@@ -205,3 +229,4 @@ Still open for review: S4/M9 claim "deprecated" but `new/server.rar`, `calculati
 - 2026-09-30 · Deep dive round 2 (audit/CALC_CSV_AUDIT_2026-09-30.md fixes 33-39): tank GOR 0 used the Table 6-22 default; completion flowback 0 h read as 24 h; zero-as-missing defaults in the section calculators; CSV rows with an extra delimiter (shifted columns) now refused; unknown custom-factor parent_fuel refused / canonicalised; Scope 2 CHP edits recalculate or are refused; legacy root tests repaired. Open for review: CH4 density basis, "1.500" in comma CSVs, BUG-057 in-file overwrite, steam efficiency floor, fugitive weight basis, Scope 3 manual duplicates. Backend 1,946 / 0 failed.
 - 2026-10-01 · Checked against the API Compendium 2021 (audit/CALC_CSV_AUDIT_2026-09-30.md #40-43): gas densities moved from the 15 C values (0.6785 / 1.861) to the Compendium standard conditions, 60 F / 14.696 psia, 23.685 m3/kg-mole (0.67722 / 1.85814; 0.17 % lower everywhere), in one definition used by server, client and validation model; WEC threshold uses the 40 CFR 99.20 density of 0.0192 mt/Mscf; Table 7-76 has no time basis (LNG refusal stays); Eq 7-6 confirms the CH4 weight fraction for fugitive screening. Backend 1,948 / 0 failed.
 - 2026-10-01 · Invented / hard-coded values (audit/CALC_CSV_AUDIT_2026-09-30.md #44-57): mock ERP sync inserting fake Scope 3 records removed; compressor seal factors (15/1.5/1.2 kg/hr, false 'Table 7-3' citation) replaced by Compendium Tables 6-30/6-37/6-38/6-40/6-41 and labelled Tier 1; legacy engine placeholder engineering branches removed; dehydrator solubility model alias closed; tank table default labelled Tier 1; Eq 6-11 CH4 required; forms no longer pre-fill counts / oil / composition or submit blank counts as 1; GWP label, WEC rate label, export years, report GWP default, plume rings, QA fallback, email status and year pickers made truthful. Catalogs: 131/131 API and 82/82 combustion factors found in the Compendium. Backend 1,965 / 0 failed.
+- 2026-10-01 · Full platform audit (audit/FULL_AUDIT_2026-10-01.md): UI, API, DB, upload pipeline, CI/CD, containers. Fixed A-01..A-15: IT-role password reset of admins (account takeover), superuser creation SoD bypass, Copernicus secrets + stale GWP in users.preferences, LIKE wildcards in region scope, regional goal / base-year changes unaudited, login timing, multi-worker batch-all cache, Swagger gating, per-user upload cap, npm (jspdf critical etc.) and Flask / python-dotenv advisories, CI concurrency cancelling main deploys, CI permissions, non-failing audits, validation/ in CI. Open O-01..O-11 (Dockerfile final stage, SSE worker starvation, ...). Backend 1,985 / 0 failed, validation 128, vitest 38, npm / pip audit 0.
