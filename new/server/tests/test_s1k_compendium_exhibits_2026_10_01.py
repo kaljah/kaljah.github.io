@@ -242,3 +242,52 @@ def test_flaring_measured_combustion_and_destruction_efficiency(user_id):
     only_d = _ok(user_id, dict(base, destruction_efficiency="90"))
     assert only_d["co2"] == pytest.approx(dflt["co2"], rel=1e-9)
     assert only_d["ch4"] == pytest.approx(10000 * 0.10 * CONVERSIONS["density_ch4"] / 1000, rel=1e-6)
+
+
+# --- S1K-F33: anomaly series = same source, previous 12 calendar months --------------------------
+def test_anomaly_compares_same_source_over_12_months():
+    from calculations.anomaly import AnomalyDetector, BatchAnomalyDetector, scope1_source
+    from models import Facility
+
+    with flask_app.app_context():
+        fac = Facility(name="S1K Anomaly Fac", location="Illizi", country="Algeria", region="Illizi")
+        db.session.add(fac)
+        db.session.flush()
+        # a large compressor driver and small heaters share the facility and the process
+        for m in range(1, 13):
+            db.session.add(Emission(facility_id=fac.id, year=2025, month=m, process_type="combustion",
+                                    equipment_id="TURBINE-1", fuel_type="Natural Gas", co2e_total=5000.0 + m,
+                                    status="Verified"))
+            for k in range(5):
+                db.session.add(Emission(facility_id=fac.id, year=2025, month=m, process_type="combustion",
+                                        equipment_id=f"HEATER-{k}", fuel_type="Natural Gas", co2e_total=10.0 + k,
+                                        status="Verified"))
+        db.session.commit()
+        for det in (AnomalyDetector(), BatchAnomalyDetector()):
+            # the turbine's usual January value is normal for the turbine (it was flagged against the heaters)
+            r = det.check_scope1(fac.id, "combustion", 5004.0, 2026, 1, source=scope1_source("TURBINE-1", None))
+            assert r["flagged"] is False and r["history_n"] == 12
+            # ten times its usual value is flagged
+            r = det.check_scope1(fac.id, "combustion", 50000.0, 2026, 1, source=scope1_source("TURBINE-1", None))
+            assert r["flagged"] is True
+            # history older than 12 months does not count: 2027-03 sees only 2026-03..2027-02 (empty)
+            r = det.check_scope1(fac.id, "combustion", 50000.0, 2027, 3, source=scope1_source("TURBINE-1", None))
+            assert r["flagged"] is False and r["history_n"] == 0
+        db.session.query(Emission).filter_by(facility_id=fac.id).delete()
+        db.session.delete(fac)
+        db.session.commit()
+
+
+def test_anomaly_import_flags_outlier_of_same_source_only(user_id):
+    """Import path: twelve months of one generator, then a month at 10x its usual fuel use is flagged;
+    a much smaller heater in the same facility and month is not (it was compared with the generator)."""
+    row = dict(process_type="combustion", fuel="Diesel (No. 2 Fuel Oil)", factor_type="default", unit="L")
+    for m in range(1, 13):
+        _ok(user_id, dict(row, date=f"2022-{m:02d}", equipment_id="S1K-GEN-A", quantity=str(100000 + 500 * m)))
+    _ok(user_id, dict(row, date="2023-01", equipment_id="S1K-GEN-A", quantity="1000000"))
+    _ok(user_id, dict(row, date="2023-01", equipment_id="S1K-HEATER-A", quantity="800"))
+    with flask_app.app_context():
+        g = Emission.query.filter_by(equipment_id="S1K-GEN-A", year=2023, month=1).first()
+        h = Emission.query.filter_by(equipment_id="S1K-HEATER-A", year=2023, month=1).first()
+        assert g.qa_flag and "same source" in g.qa_flag
+        assert h.qa_flag is None

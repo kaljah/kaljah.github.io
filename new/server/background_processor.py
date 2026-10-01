@@ -775,7 +775,7 @@ def _process_file_thread(
                     batch_scope3_map[_scope3_key(e.facility_id, e.year, e.month, cat, e.sub_category, e.unit)] = e.id
 
             # Initialize anomaly detector
-            from calculations.anomaly import BatchAnomalyDetector
+            from calculations.anomaly import BatchAnomalyDetector, scope1_source
             anomaly_detector = BatchAnomalyDetector()  # history read once per series
 
             # Headers for error CSV
@@ -952,7 +952,10 @@ def _process_file_thread(
                             mo = getattr(emission_obj, 'month', 0)
                             if scope == "1":
                                 co2e_val = getattr(emission_obj, 'co2e_total', 0) or 0
-                                anomaly = anomaly_detector.check_scope1(fac_id, getattr(emission_obj, 'process_type', ''), co2e_val, yr, mo)
+                                anomaly = anomaly_detector.check_scope1(
+                                    fac_id, getattr(emission_obj, 'process_type', ''), co2e_val, yr, mo,
+                                    source=scope1_source(getattr(emission_obj, 'equipment_id', None),
+                                                         getattr(emission_obj, 'fuel_type', None)))
                             elif scope == "2":
                                 co2e_val = getattr(emission_obj, 'co2e', 0) or 0
                                 anomaly = anomaly_detector.check_scope2(fac_id, getattr(emission_obj, 'source_type', ''), co2e_val, yr, mo)
@@ -1043,7 +1046,7 @@ def _process_file_thread(
                             type="audit",
                             title=f"{scope_label} Bulk Upload Pending Review",
                             message=(
-                                f"{success_count} {scope_label} emission records were imported or updated "
+                                f"{success_count:,} {scope_label} emission records were imported or updated "
                                 f"by {user_obj.fullName if user_obj else 'a user'} and are "
                                 f"awaiting your approval."
                             ),
