@@ -42,7 +42,7 @@ def test_bug100_actuations_need_volume_per_actuation():
 def test_bug100_eq_6_14_monitoring_survey():
     # 10 normal controllers all year at 0.28 scf/h + 1 malfunctioning for 25 % of the year at 24.1 scf/h
     gas_scf = 10 * 0.28 * 8760 + 1 * 24.1 * 8760 * 0.25
-    expected = gas_scf * 0.028316846592 * 0.816 * 0.6785 / 1000.0
+    expected = gas_scf * 0.028316846592 * 0.816 * (16.04 / 23.685) / 1000.0
     v = _ch4("pneumatic", {"factor_source": "specific", "amount": 11, "pneu_monitoring": "true",
                            "pneu_normal_count": 10, "pneu_malfunction_count": 1, "pneu_malfunction_fraction": 0.25})
     assert v == pytest.approx(expected, rel=1e-6)
@@ -60,7 +60,7 @@ def test_bug102_condensate_table_6_24():
 
 def test_bug102_site_gor_still_used():
     # 1,000 bbl x 50 scf/bbl x 60 % CH4, engine density convention
-    expected = 1000 * 50 * 0.028316846592 * 0.60 * 0.6785 / 1000.0
+    expected = 1000 * 50 * 0.028316846592 * 0.60 * (16.04 / 23.685) / 1000.0
     assert _ch4("tank_flashing", {"factor_source": "specific", "amount": 1000, "unit": "bbl", "tank_gor": 50,
                                   "tank_ch4_content": 60}) == pytest.approx(expected, rel=1e-6)
 

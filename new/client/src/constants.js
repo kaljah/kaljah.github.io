@@ -70,3 +70,7 @@ export const BOUNDARY_OPTIONS = {
     "Joint Venture",
   ],
 };
+
+// CH4 density at the API Compendium standard conditions (60 F, 14.696 psia): 16.04 g/mol / 23.685 m3 per
+// kg-mole (379.3 scf/lb-mole). Same value as the server (calculations/units.py CONVERSIONS).
+export const CH4_DENSITY_KG_M3 = 16.04 / 23.685;

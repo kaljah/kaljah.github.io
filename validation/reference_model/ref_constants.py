@@ -41,17 +41,18 @@ MW_nC5H12 = 5 * MW_C + 12 * MW_H       # 72.151 g/mol
 MW_iC5H12 = 5 * MW_C + 12 * MW_H       # 72.151 g/mol
 MW_C6H14 = 6 * MW_C + 14 * MW_H        # 86.178 g/mol
 
-# Standard Gas Densities at 60°F (15.56°C) and 14.696 psia (101.325 kPa) (kg/m³)
-# Derived independently from Ideal Gas Law: rho = (P * MW) / (R_univ * T)
-# R_univ = 8.314462618 J/(mol*K) = 8314.462618 Pa*m³/(kmol*K)
-# rho = (101325 Pa * MW kg/kmol) / (8314.462618 * 288.706 K)
-# Empirical real-gas densities from API Compendium 2021 Table 4-1:
-DENSITY_CH4 = 0.6785    # kg/m³
-DENSITY_CO2 = 1.8610    # kg/m³
-DENSITY_N2O = 1.8600    # kg/m³
-DENSITY_C2H6 = 1.2820   # kg/m³
-DENSITY_C3H8 = 1.8820   # kg/m³
-DENSITY_C4H10 = 2.5190  # kg/m³
+# Standard gas densities at the API Compendium 2021 standard conditions, 60°F and 14.696 psia
+# (Section 3.4): molecular weight (Compendium Table 3-7: CH4 16.04, C2H6 30.07, C3H8 44.10, C4H10 58.12,
+# CO2 44.01) over the molar volume conversion its equations use, 379.3 scf/lb-mole = 23.685 m³/kg-mole.
+# (The former 0.6785 / 1.861 were the 15 °C values, 23.645 m³/kg-mole; the Compendium gives no table
+# of densities.)
+STD_MOLAR_VOLUME_M3_PER_KMOL = 23.685
+DENSITY_CH4 = 16.04 / STD_MOLAR_VOLUME_M3_PER_KMOL    # 0.67722 kg/m³
+DENSITY_CO2 = 44.01 / STD_MOLAR_VOLUME_M3_PER_KMOL    # 1.85814 kg/m³
+DENSITY_N2O = 44.013 / STD_MOLAR_VOLUME_M3_PER_KMOL   # 1.85827 kg/m³
+DENSITY_C2H6 = 30.07 / STD_MOLAR_VOLUME_M3_PER_KMOL   # kg/m³
+DENSITY_C3H8 = 44.10 / STD_MOLAR_VOLUME_M3_PER_KMOL   # kg/m³
+DENSITY_C4H10 = 58.12 / STD_MOLAR_VOLUME_M3_PER_KMOL  # kg/m³
 
 # Exact Physical Unit Conversions (NIST Special Publication 811)
 CONV_LB_TO_KG = 0.45359237

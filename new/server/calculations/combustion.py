@@ -320,7 +320,7 @@ class CombustionCalculator(BaseCalculator):
                 # quantity in standard m3; an energy or mass quantity is not a volume
                 vol_m3 = gas_volume_m3(raw_quantity, u)
 
-                density_co2 = CONVERSIONS.get("density_co2", 1.861)
+                density_co2 = CONVERSIONS["density_co2"]
 
                 # Combusted CO2
                 co2_combusted_vol = vol_m3 * total_carbon_moles * eta_c
@@ -333,7 +333,7 @@ class CombustionCalculator(BaseCalculator):
 
                 # Uncombusted methane slip per stoichiometry & combustion efficiency
                 if c_fractions["c1"] > 0:
-                    density_ch4 = CONVERSIONS.get("density_ch4", 0.6785)
+                    density_ch4 = CONVERSIONS["density_ch4"]
                     ch4_slip_vol = vol_m3 * c_fractions["c1"] * max(0.0, 1.0 - eta_c)
                     ch4_val = (ch4_slip_vol * density_ch4) / 1000.0
 
@@ -484,7 +484,7 @@ class FlaringCalculator(BaseCalculator):
         actual_ch4_fraction = c_fractions["c1"]
 
         # CH4 Emissions (Undestroyed native methane)
-        density_ch4 = CONVERSIONS.get("density_ch4", 0.6785)
+        density_ch4 = CONVERSIONS["density_ch4"]
         ch4_undestroyed_vol = vol_std * actual_ch4_fraction * (1 - eta_d)
         ch4_mass_kg = ch4_undestroyed_vol * density_ch4
         ch4_tonnes = ch4_mass_kg / 1000.0
@@ -504,7 +504,7 @@ class FlaringCalculator(BaseCalculator):
         )
 
         # Calculate Combusted CO2 per API Compendium (2021) Eq. 5-4
-        density_co2 = CONVERSIONS.get("density_co2", 1.861)
+        density_co2 = CONVERSIONS["density_co2"]
         co2_combusted_vol = vol_std * total_carbon_moles_per_mole_gas * eta_c
         co2_combusted_kg = co2_combusted_vol * density_co2
 

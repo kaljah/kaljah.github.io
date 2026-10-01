@@ -28,8 +28,8 @@ from calculations.units import calculate_co2e
 # =====================================================================
 SCF_TO_M3 = 0.028316846592
 M3_TO_SCF = 35.314666721
-DENSITY_CH4 = 0.6785
-DENSITY_CO2 = 1.861
+DENSITY_CH4 = (16.04 / 23.685)
+DENSITY_CO2 = (44.01 / 23.685)
 STD_PRESS_PSIA = 14.696
 STD_TEMP_K = 288.706
 GWP_CO2 = 1.0

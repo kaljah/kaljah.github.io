@@ -8,6 +8,7 @@ import { useLayout } from "../context/LayoutContext";
 import CustomDropdown from "../components/CustomDropdown";
 import { formatNumber } from "../utils/formatters";
 import { getUserOperationalDefaults } from "../utils/userDefaults";
+import { CH4_DENSITY_KG_M3 } from "../constants";
 import {
   Wind,
   Flame,
@@ -243,13 +244,13 @@ const MethaneIntensity = () => {
         }
       });
 
-      // Methane density at standard conditions = 0.6785 kg/m3
-      const totalCh4VolM3 = (tCh4WithGas * 1000.0) / 0.6785;
+      // Methane density at the API Compendium standard conditions (60 F, 14.696 psia)
+      const totalCh4VolM3 = (tCh4WithGas * 1000.0) / CH4_DENSITY_KG_M3;
       const avgLossRatePct =
         tGasM3 > 0 ? (totalCh4VolM3 / tGasM3) * 100.0 : 0.0;
 
-      const upCh4VolM3 = (upCh4Tonnes * 1000.0) / 0.6785;
-      const midCh4VolM3 = (midCh4Tonnes * 1000.0) / 0.6785;
+      const upCh4VolM3 = (upCh4Tonnes * 1000.0) / CH4_DENSITY_KG_M3;
+      const midCh4VolM3 = (midCh4Tonnes * 1000.0) / CH4_DENSITY_KG_M3;
       const upstreamLossRatePct =
         upGasM3 > 0 ? (upCh4VolM3 / upGasM3) * 100.0 : 0.0;
       const midstreamLossRatePct =
@@ -624,7 +625,7 @@ const MethaneIntensity = () => {
         const boe = d.total_boe || 0;
         const gasM3 = d.total_gas_m3 || (d.total_gas || 0) * 28.3168;
         const ch4Tonnes = d.total_ch4 || 0;
-        const volM3 = (ch4Tonnes * 1000.0) / 0.6785;
+        const volM3 = (ch4Tonnes * 1000.0) / CH4_DENSITY_KG_M3;
         const seg = d.segment_category || ""; // BUG-086
 
         tGasM3 += gasM3;

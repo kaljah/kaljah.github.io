@@ -28,7 +28,7 @@ def test_flaring_n2o_default_consistency():
 
 def test_split_vented_and_flared_n2o_default():
     total_gas = 1000.0
-    ch4_tonnes = total_gas * 0.85 * 0.6785 / 1000.0
+    ch4_tonnes = total_gas * 0.85 * (16.04 / 23.685) / 1000.0
     res = _split_vented_and_flared(
         total_gas_m3=total_gas,
         ch4_tonnes=ch4_tonnes,

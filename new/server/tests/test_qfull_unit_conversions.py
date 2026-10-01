@@ -29,8 +29,8 @@ from calculations.legacy_engine import compute_emissions
 # =====================================================================
 SCF_TO_M3 = 0.028316846592
 M3_TO_SCF = 35.314666721
-DENSITY_CH4 = 0.6785   # kg/m3
-DENSITY_CO2 = 1.861    # kg/m3
+DENSITY_CH4 = (16.04 / 23.685)   # kg/m3
+DENSITY_CO2 = (44.01 / 23.685)    # kg/m3
 BBL_TO_M3 = 0.158987295
 GAL_TO_M3 = 0.003785411784
 LITER_TO_M3 = 0.001
@@ -114,7 +114,7 @@ class TestBlowdownVolumeUnits:
     t_factor = 288.706/288.706 = 1.0 (at 60°F)
     v_std = 5 * 35.023 * 1.0 = 175.11 m3 per event
     total = 175.11 * 10 = 1751.1 m3
-    ch4_tonnes = 1751.1 * 0.85 * 0.6785 / 1000 ≈ 1.0093 t
+    ch4_tonnes = 1751.1 * 0.85 * 0.67722 / 1000 ≈ 1.0093 t
     """
 
     BASE_VOL_M3 = 5.0
@@ -182,7 +182,7 @@ class TestBlowdownVolumeUnits:
 class TestCompletionsVolumeUnits:
     """
     Completions metered_volume: 1000 m3 vs 35314.67 scf.
-    Reference: ch4 = 1000 * 0.85 * 0.6785 / 1000 = 0.576725 t
+    Reference: ch4 = 1000 * 0.85 * 0.67722 / 1000 = 0.576725 t
     """
 
     BASE_M3 = 1000.0
@@ -248,7 +248,7 @@ class TestTankThroughputUnits:
     Reference: 1000 bbl, GOR=100 scf/bbl, ch4=0.85
     total_gas_scf = 100000; ch4_scf = 85000
     ch4_m3 = 85000 * 0.028316846592 = 2406.93 m3
-    ch4_tonnes = 2406.93 * 0.6785 / 1000 = 1.633... t
+    ch4_tonnes = 2406.93 * 0.67722 / 1000 = 1.633... t
     """
 
     BASE_BBL = 1000.0
