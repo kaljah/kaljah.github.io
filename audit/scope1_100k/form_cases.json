@@ -1,0 +1,408 @@
+[
+ {
+  "id": "P1-comb-T1-diesel-L",
+  "process": "Stationary Combustion",
+  "tier": "Tier 1",
+  "steps": [
+   [
+    "pick",
+    "Select factor",
+    "Diesel (No. 2 Fuel Oil)"
+   ],
+   [
+    "fill",
+    "Quantity",
+    5000
+   ],
+   [
+    "pick",
+    "Unit",
+    "L"
+   ]
+  ],
+  "csv": {
+   "process_type": "combustion",
+   "fuel": "Diesel (No. 2 Fuel Oil)",
+   "factor_type": "default",
+   "quantity": "5000",
+   "unit": "L"
+  }
+ },
+ {
+  "id": "P5-agr-T3-ex6-17",
+  "process": "Acid Gas Removal",
+  "tier": "Tier 3",
+  "steps": [
+   [
+    "fill",
+    "Inlet (sour) gas throughput",
+    150000
+   ],
+   [
+    "fill",
+    "Inlet CO2",
+    3
+   ],
+   [
+    "fill",
+    "Outlet CO2",
+    2
+   ]
+  ],
+  "csv": {
+   "process_type": "agr",
+   "factor_type": "specific",
+   "quantity": "150000",
+   "unit": "MMscf/yr",
+   "agr_co2_in": "3",
+   "agr_co2_out": "2"
+  }
+ },
+ {
+  "id": "P6-unload-T3-ex6-8",
+  "process": "Liquids Unloading",
+  "tier": "Tier 3",
+  "steps": [
+   [
+    "selectv",
+    "Lift type",
+    "non_plunger"
+   ],
+   [
+    "fill",
+    "Events per year",
+    12
+   ],
+   [
+    "fill",
+    "Casing diameter",
+    10
+   ],
+   [
+    "fill",
+    "Well depth",
+    12000
+   ],
+   [
+    "fill",
+    "Flow-line pressure",
+    250
+   ],
+   [
+    "fill",
+    "Flow-line gas rate",
+    35000
+   ],
+   [
+    "fill",
+    "Hours open",
+    1
+   ],
+   [
+    "fill",
+    "CH₄ (mol %)",
+    80
+   ],
+   [
+    "fill",
+    "CO₂ (mol %)",
+    3
+   ]
+  ],
+  "csv": {
+   "process_type": "unloading",
+   "factor_type": "specific",
+   "quantity": "12",
+   "unit": "events",
+   "unloading_type": "non_plunger",
+   "unload_depth": "12000",
+   "unload_diam": "10",
+   "unload_press": "250",
+   "unload_freq": "12",
+   "sfr": "35000",
+   "hours_open": "1",
+   "ch4_content": "80",
+   "co2_content": "3",
+   "unload_flare_eff": "0"
+  }
+ },
+ {
+  "id": "P2-comb-T2-diesel-MJkg",
+  "process": "Stationary Combustion",
+  "tier": "Tier 2",
+  "steps": [
+   [
+    "pick",
+    "Fuel",
+    "Diesel (No. 2 Fuel Oil)"
+   ],
+   [
+    "fill",
+    "HHV",
+    "45.6"
+   ],
+   [
+    "select",
+    "HHV",
+    "MJ/kg"
+   ],
+   [
+    "fill",
+    "Density",
+    "840"
+   ],
+   [
+    "fill",
+    "Quantity",
+    5000
+   ],
+   [
+    "pick",
+    "Unit",
+    "L"
+   ]
+  ],
+  "csv": {
+   "process_type": "combustion",
+   "fuel": "Diesel (No. 2 Fuel Oil)",
+   "factor_type": "tier2",
+   "quantity": "5000",
+   "unit": "L",
+   "hhv": "45.6",
+   "hhv_unit": "MJ/kg",
+   "density": "840"
+  }
+ },
+ {
+  "id": "P3-flare-T3-ch4",
+  "process": "Flaring",
+  "tier": "Tier 3",
+  "steps": [
+   [
+    "fill",
+    "Gas Volume Flared",
+    20000000
+   ],
+   [
+    "pick",
+    "Unit",
+    "scf"
+   ],
+   [
+    "fill",
+    "HHV",
+    "1020"
+   ],
+   [
+    "fill",
+    "CH₄ (%)",
+    80
+   ]
+  ],
+  "csv": {
+   "process_type": "flaring",
+   "factor_type": "specific",
+   "quantity": "20000000",
+   "unit": "scf",
+   "hhv": "1020",
+   "c1": "80"
+  }
+ },
+ {
+  "id": "P4-tank-T3-gor",
+  "process": "Storage Tank - Flashing",
+  "tier": "Tier 3",
+  "steps": [
+   [
+    "fill",
+    "Throughput",
+    164615
+   ],
+   [
+    "fill",
+    "GOR",
+    47
+   ],
+   [
+    "fill",
+    "CH₄ (%)",
+    27.4
+   ]
+  ],
+  "csv": {
+   "process_type": "tank_flashing",
+   "factor_type": "specific",
+   "quantity": "164615",
+   "unit": "bbl",
+   "tank_gor": "47",
+   "ch4_content": "27.4"
+  }
+ },
+ {
+  "id": "P7-comp-T3-ex6-3",
+  "process": "Well Completions",
+  "tier": "Tier 3",
+  "steps": [
+   [
+    "fill",
+    "Metered volume",
+    1480000
+   ],
+   [
+    "selectv",
+    "Volume Unit",
+    "scf"
+   ],
+   [
+    "fill",
+    "Injected N₂",
+    7390
+   ],
+   [
+    "fill",
+    "Unmetered time",
+    4
+   ],
+   [
+    "fill",
+    "Metered time",
+    20
+   ],
+   [
+    "fill",
+    "CH₄ (%)",
+    70
+   ],
+   [
+    "fill",
+    "C₂+ (%)",
+    30
+   ],
+   [
+    "pick",
+    "Gas disposition",
+    "100% Routed to Flare"
+   ]
+  ],
+  "csv": {
+   "process_type": "completions",
+   "factor_type": "specific",
+   "comp_method": "metered_volume",
+   "quantity": "1480000",
+   "unit": "scf",
+   "comp_injected_n2": "7390",
+   "comp_injected_n2_unit": "scf",
+   "comp_initial_flowback_hours": "4",
+   "comp_duration": "20",
+   "ch4_content": "70",
+   "comp_c2plus_content": "30",
+   "comp_disposition": "flared",
+   "comp_flare_eff": "98"
+  }
+ },
+ {
+  "id": "P8-blowdown-T3-ex6-25",
+  "process": "Venting (Blowdown)",
+  "tier": "Tier 3",
+  "steps": [
+   [
+    "fill",
+    "Physical Volume",
+    2.373
+   ],
+   [
+    "fill",
+    "Pressure (psig)",
+    100
+   ],
+   [
+    "fill",
+    "Number of Events",
+    1
+   ],
+   [
+    "fill",
+    "CH₄ (%)",
+    90
+   ],
+   [
+    "fill",
+    "Temperature",
+    80
+   ]
+  ],
+  "csv": {
+   "process_type": "blowdown",
+   "factor_type": "specific",
+   "quantity": "2.373",
+   "unit": "m3",
+   "blowdown_pressure": "100",
+   "blowdown_events": "1",
+   "blowdown_temp": "80",
+   "ch4_content": "90"
+  }
+ },
+ {
+  "id": "P9-unload-T3-plunger-default",
+  "process": "Liquids Unloading",
+  "tier": "Tier 3",
+  "steps": [
+   [
+    "fill",
+    "Events per year",
+    12
+   ],
+   [
+    "fill",
+    "Tubing diameter",
+    10
+   ],
+   [
+    "fill",
+    "Tubing depth",
+    12000
+   ],
+   [
+    "fill",
+    "Flow-line pressure",
+    250
+   ],
+   [
+    "fill",
+    "Flow-line gas rate",
+    35000
+   ],
+   [
+    "fill",
+    "Hours open",
+    3
+   ],
+   [
+    "fill",
+    "CH₄ (mol %)",
+    80
+   ],
+   [
+    "fill",
+    "CO₂ (mol %)",
+    3
+   ]
+  ],
+  "csv": {
+   "process_type": "unloading",
+   "factor_type": "specific",
+   "quantity": "12",
+   "unit": "events",
+   "unloading_type": "plunger",
+   "unload_depth": "12000",
+   "unload_diam": "10",
+   "unload_press": "250",
+   "unload_freq": "12",
+   "sfr": "35000",
+   "hours_open": "3",
+   "ch4_content": "80",
+   "co2_content": "3",
+   "unload_flare_eff": "0"
+  }
+ }
+]
