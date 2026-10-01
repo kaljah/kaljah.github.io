@@ -101,8 +101,9 @@ class AnomalyDetector:
             expected_low = max(0.0, mean - 3 * std)
             expected_high = mean + 3 * std
             msg = (
-                f"Value {value:.2f} is {abs(z):.1f} standard deviations from the 12-month average "
-                f"({mean:.2f} ± {std:.2f}). Expected range: [{expected_low:.2f} – {expected_high:.2f}]."
+                f"Value {value:.2f} is {abs(z):.1f} standard deviations from the average of the same source "
+                f"over the previous 12 months ({mean:.2f} ± {std:.2f}, {n} records). "
+                f"Expected range: [{expected_low:.2f} – {expected_high:.2f}]."
             )
             exp_range = [round(expected_low, 2), round(expected_high, 2)]
         elif flagged_iqr:
@@ -128,210 +129,101 @@ class AnomalyDetector:
             "message": msg
         }
 
-    # ─── Scope 1 ─────────────────────────────────────────────────────────────
+    # ─── History: the same series over the 12 calendar months before the record ─────
+    # A Scope 1 series is one facility, one process and one source (equipment ID, else fuel /
+    # activity). The history used to be the last 12 *records* of the facility and process: one
+    # month with many sources filled the window and every source was compared with the others
+    # (a 100k-row import flagged 15 % of its rows), while the message said "12-month average".
 
-    def check_scope1(
-        self,
-        facility_id: int,
-        process_type: str,
-        co2e: float,
-        year: int,
-        month: int,
-    ) -> dict:
-        """
-        Check a Scope 1 CO2e value against the trailing 12 months strictly prior to
-        the target (year, month) for the same facility and process type.
-        """
+    _SERIES = {
+        "1": ("Emission", "process_type", "co2e_total"),
+        "2": ("Scope2Emission", "source_type", "co2e"),
+        "3": ("Scope3Emission", "category", "co2e"),
+    }
+
+    @staticmethod
+    def _source_filter(m, source):
+        """(column, value) restricting a Scope 1 series to one source, or None."""
+        if not source:
+            return None
+        kind, value = source
+        if value in (None, ""):
+            return None
+        return getattr(m, "equipment_id" if kind == "equipment" else "fuel_type"), value
+
+    def _rows(self, scope, facility_id, key, source=None, year=None):
+        """(year, month, value, status, qa_flag) of a series; from year - 1 on when a year is given."""
+        import models
+
+        name, key_col, val_col = self._SERIES[scope]
+        m = getattr(models, name)
+        q = self._get_db().session.query(m.year, m.month, getattr(m, val_col), m.status, m.qa_flag).filter(
+            m.facility_id == facility_id, getattr(m, key_col) == key, getattr(m, val_col).isnot(None))
+        sf = self._source_filter(m, source) if scope == "1" else None
+        if sf is not None:
+            q = q.filter(sf[0] == sf[1])
+        if year is not None:
+            q = q.filter(m.year >= int(year) - 1)
+        return q.all()
+
+    @staticmethod
+    def _history(rows, year, month):
+        """Values in the 12 calendar months strictly before (year, month): Verified records, or the
+        unflagged ones when fewer than 3 are Verified (onboarding)."""
+        def in_window(r):
+            ry, rm = r[0] or 0, r[1] or 0
+            if year is None:
+                return True
+            if month is None:
+                return ry == int(year) - 1
+            d = (int(year) * 12 + int(month)) - (ry * 12 + rm)
+            return 1 <= d <= 12
+
+        win = [r for r in rows if in_window(r)]
+        historical = [float(r[2]) for r in win if r[3] == "Verified"]
+        if len(historical) < 3:
+            fb = [float(r[2]) for r in win if r[4] is None]
+            if len(fb) >= len(historical):
+                historical = fb
+        return historical
+
+    def _check(self, scope, facility_id, key, value, year, month, source=None):
         try:
-            from models import Emission
-            from sqlalchemy import or_, and_
-            db = self._get_db()
-
-            q = db.session.query(Emission.co2e_total).filter(
-                Emission.facility_id == facility_id,
-                Emission.process_type == process_type,
-                Emission.status == "Verified",
-                Emission.co2e_total.isnot(None),
-            )
-            if year is not None and month is not None:
-                q = q.filter(
-                    or_(
-                        Emission.year < year,
-                        and_(Emission.year == year, Emission.month < month),
-                    )
-                )
-            elif year is not None:
-                q = q.filter(Emission.year < year)
-
-            historical_raw = q.order_by(Emission.year.desc(), Emission.month.desc()).limit(12).all()
-            historical = [float(r[0]) for r in historical_raw if r[0] is not None]
-
-            # Fallback to unflagged records if insufficient verified records (e.g. initial upload/onboarding)
-            if len(historical) < 3:
-                q_fallback = db.session.query(Emission.co2e_total).filter(
-                    Emission.facility_id == facility_id,
-                    Emission.process_type == process_type,
-                    Emission.qa_flag.is_(None),
-                    Emission.co2e_total.isnot(None),
-                )
-                if year is not None and month is not None:
-                    q_fallback = q_fallback.filter(
-                        or_(
-                            Emission.year < year,
-                            and_(Emission.year == year, Emission.month < month),
-                        )
-                    )
-                elif year is not None:
-                    q_fallback = q_fallback.filter(Emission.year < year)
-                historical_raw_fb = q_fallback.order_by(Emission.year.desc(), Emission.month.desc()).limit(12).all()
-                fb_list = [float(r[0]) for r in historical_raw_fb if r[0] is not None]
-                if len(fb_list) >= len(historical):
-                    historical = fb_list
-
-            result = self._z_score_check(co2e, historical)
-            result["scope"] = "1"
-            result["facility_id"] = facility_id
-            result["process_type"] = process_type
-            result["value"] = co2e
+            historical = self._history(self._rows(scope, facility_id, key, source, year), year, month)
+            result = self._z_score_check(value, historical)
+            result.update(scope=scope, facility_id=facility_id, value=value, history_n=len(historical))
             return result
         except Exception as e:
             return {"flagged": False, "error": str(e)}
 
-    # ─── Scope 2 ─────────────────────────────────────────────────────────────
+    def check_scope1(self, facility_id: int, process_type: str, co2e: float, year: int, month: int,
+                     source=None) -> dict:
+        """Scope 1 CO2e against the same facility, process and source over the previous 12 months.
+        source: ("equipment", equipment_id) or ("fuel", fuel_type); None compares the whole process."""
+        res = self._check("1", facility_id, process_type, co2e, year, month, source)
+        res.setdefault("process_type", process_type)
+        return res
 
-    def check_scope2(
-        self,
-        facility_id: int,
-        source_type: str,
-        co2e: float,
-        year: int,
-        month: int,
-    ) -> dict:
-        """
-        Check a Scope 2 CO2e value against the trailing 12 months strictly prior to
-        the target (year, month) for the same facility and source type.
-        """
-        try:
-            from models import Scope2Emission
-            from sqlalchemy import or_, and_
-            db = self._get_db()
+    def check_scope2(self, facility_id: int, source_type: str, co2e: float, year: int, month: int) -> dict:
+        """Scope 2 CO2e against the same facility and source type over the previous 12 months."""
+        res = self._check("2", facility_id, source_type, co2e, year, month)
+        res.setdefault("source_type", source_type)
+        return res
 
-            q = db.session.query(Scope2Emission.co2e).filter(
-                Scope2Emission.facility_id == facility_id,
-                Scope2Emission.source_type == source_type,
-                Scope2Emission.status == "Verified",
-                Scope2Emission.co2e.isnot(None),
-            )
-            if year is not None and month is not None:
-                q = q.filter(
-                    or_(
-                        Scope2Emission.year < year,
-                        and_(Scope2Emission.year == year, Scope2Emission.month < month),
-                    )
-                )
-            elif year is not None:
-                q = q.filter(Scope2Emission.year < year)
+    def check_scope3(self, facility_id: int, category: str, co2e: float, year: int, month: int) -> dict:
+        """Scope 3 CO2e against the same facility and category over the previous 12 months."""
+        res = self._check("3", facility_id, category, co2e, year, month)
+        res.setdefault("category", category)
+        return res
 
-            historical_raw = q.order_by(Scope2Emission.year.desc(), Scope2Emission.month.desc()).limit(12).all()
-            historical = [float(r[0]) for r in historical_raw if r[0] is not None]
 
-            if len(historical) < 3:
-                q_fb = db.session.query(Scope2Emission.co2e).filter(
-                    Scope2Emission.facility_id == facility_id,
-                    Scope2Emission.source_type == source_type,
-                    Scope2Emission.qa_flag.is_(None),
-                    Scope2Emission.co2e.isnot(None),
-                )
-                if year is not None and month is not None:
-                    q_fb = q_fb.filter(
-                        or_(
-                            Scope2Emission.year < year,
-                            and_(Scope2Emission.year == year, Scope2Emission.month < month),
-                        )
-                    )
-                elif year is not None:
-                    q_fb = q_fb.filter(Scope2Emission.year < year)
-                historical_raw_fb = q_fb.order_by(Scope2Emission.year.desc(), Scope2Emission.month.desc()).limit(12).all()
-                fb_list = [float(r[0]) for r in historical_raw_fb if r[0] is not None]
-                if len(fb_list) >= len(historical):
-                    historical = fb_list
-
-            result = self._z_score_check(co2e, historical)
-            result["scope"] = "2"
-            result["facility_id"] = facility_id
-            result["source_type"] = source_type
-            result["value"] = co2e
-            return result
-        except Exception as e:
-            return {"flagged": False, "error": str(e)}
-
-    # ─── Scope 3 ─────────────────────────────────────────────────────────────
-
-    def check_scope3(
-        self,
-        facility_id: int,
-        category: str,
-        co2e: float,
-        year: int,
-        month: int,
-    ) -> dict:
-        """
-        Check a Scope 3 CO2e value against the trailing 12 months strictly prior to
-        the target (year, month) for the same facility and category.
-        """
-        try:
-            from models import Scope3Emission
-            from sqlalchemy import or_, and_
-            db = self._get_db()
-
-            q = db.session.query(Scope3Emission.co2e).filter(
-                Scope3Emission.facility_id == facility_id,
-                Scope3Emission.category == category,
-                Scope3Emission.status == "Verified",
-                Scope3Emission.co2e.isnot(None),
-            )
-            if year is not None and month is not None:
-                q = q.filter(
-                    or_(
-                        Scope3Emission.year < year,
-                        and_(Scope3Emission.year == year, Scope3Emission.month < month),
-                    )
-                )
-            elif year is not None:
-                q = q.filter(Scope3Emission.year < year)
-
-            historical_raw = q.order_by(Scope3Emission.year.desc(), Scope3Emission.month.desc()).limit(12).all()
-            historical = [float(r[0]) for r in historical_raw if r[0] is not None]
-
-            if len(historical) < 3:
-                q_fb = db.session.query(Scope3Emission.co2e).filter(
-                    Scope3Emission.facility_id == facility_id,
-                    Scope3Emission.category == category,
-                    Scope3Emission.qa_flag.is_(None),
-                    Scope3Emission.co2e.isnot(None),
-                )
-                if year is not None and month is not None:
-                    q_fb = q_fb.filter(
-                        or_(
-                            Scope3Emission.year < year,
-                            and_(Scope3Emission.year == year, Scope3Emission.month < month),
-                        )
-                    )
-                elif year is not None:
-                    q_fb = q_fb.filter(Scope3Emission.year < year)
-                historical_raw_fb = q_fb.order_by(Scope3Emission.year.desc(), Scope3Emission.month.desc()).limit(12).all()
-                fb_list = [float(r[0]) for r in historical_raw_fb if r[0] is not None]
-                if len(fb_list) >= len(historical):
-                    historical = fb_list
-
-            result = self._z_score_check(co2e, historical)
-            result["scope"] = "3"
-            result["facility_id"] = facility_id
-            result["category"] = category
-            result["value"] = co2e
-            return result
-        except Exception as e:
-            return {"flagged": False, "error": str(e)}
+def scope1_source(equipment_id=None, fuel_type=None):
+    """The source key of a Scope 1 record for the anomaly series (equipment ID first, else fuel)."""
+    if equipment_id not in (None, "") and str(equipment_id).strip():
+        return ("equipment", str(equipment_id).strip())
+    if fuel_type not in (None, "") and str(fuel_type).strip():
+        return ("fuel", str(fuel_type).strip())
+    return None
 
 
 # ── Hard plausibility bounds for a single record (audit BUG-007) ─────────────────
@@ -359,59 +251,37 @@ def plausibility_check(co2e_tonnes, z_flag=None):
 
 
 class BatchAnomalyDetector(AnomalyDetector):
-    """Same checks as AnomalyDetector for a bulk import: the history of a facility and process /
-    source / category is read once and the trailing-12-month windows are taken in memory
-    (one query per series instead of two per row)."""
-
-    _SERIES = {
-        "1": ("Emission", "process_type", "co2e_total"),
-        "2": ("Scope2Emission", "source_type", "co2e"),
-        "3": ("Scope3Emission", "category", "co2e"),
-    }
+    """Same checks as AnomalyDetector for a bulk import: each series' history is read once and
+    the 12-month windows are taken in memory (one query per series instead of one per row)."""
 
     def __init__(self, db_session=None):
         super().__init__(db_session)
         self._cache = {}
 
-    def _series(self, scope, facility_id, key):
+    def _rows(self, scope, facility_id, key, source=None, year=None):
+        # one query per facility / process series (sources are filtered in memory: a query per source
+        # tripled the import time when every row has its own equipment ID)
         ck = (scope, facility_id, key)
         if ck not in self._cache:
             import models
 
             name, key_col, val_col = self._SERIES[scope]
             m = getattr(models, name)
-            rows = self._get_db().session.query(m.year, m.month, getattr(m, val_col), m.status, m.qa_flag).filter(
-                m.facility_id == facility_id, getattr(m, key_col) == key, getattr(m, val_col).isnot(None),
-            ).all()
-            self._cache[ck] = sorted(rows, key=lambda r: (r[0] or 0, r[1] or 0), reverse=True)
-        return self._cache[ck]
-
-    def _check(self, scope, facility_id, key, value, year, month):
-        try:
-            def prior(r):
-                if year is None:
-                    return True
-                if month is None:
-                    return (r[0] or 0) < year
-                return (r[0] or 0) < year or ((r[0] or 0) == year and (r[1] or 0) < month)
-
-            rows = [r for r in self._series(scope, facility_id, key) if prior(r)]
-            historical = [float(r[2]) for r in rows if r[3] == "Verified"][:12]
-            if len(historical) < 3:
-                fb = [float(r[2]) for r in rows if r[4] is None][:12]
-                if len(fb) >= len(historical):
-                    historical = fb
-            result = self._z_score_check(value, historical)
-            result.update(scope=scope, facility_id=facility_id, value=value)
-            return result
-        except Exception as e:
-            return {"flagged": False, "error": str(e)}
-
-    def check_scope1(self, facility_id, process_type, co2e, year, month):
-        return self._check("1", facility_id, process_type, co2e, year, month)
-
-    def check_scope2(self, facility_id, source_type, co2e, year, month):
-        return self._check("2", facility_id, source_type, co2e, year, month)
-
-    def check_scope3(self, facility_id, category, co2e, year, month):
-        return self._check("3", facility_id, category, co2e, year, month)
+            cols = [m.year, m.month, getattr(m, val_col), m.status, m.qa_flag]
+            if scope == "1":
+                cols += [m.equipment_id, m.fuel_type]
+            rows = self._get_db().session.query(*cols).filter(
+                m.facility_id == facility_id, getattr(m, key_col) == key, getattr(m, val_col).isnot(None)).all()
+            by_source = {}
+            for r in rows:
+                by_source.setdefault(None, []).append(r[:5])
+                if scope == "1":
+                    if r[5] not in (None, ""):
+                        by_source.setdefault(("equipment", r[5]), []).append(r[:5])
+                    if r[6] not in (None, ""):
+                        by_source.setdefault(("fuel", r[6]), []).append(r[:5])
+            self._cache[ck] = by_source
+        by_source = self._cache[ck]
+        if scope == "1" and source and source[1] not in (None, ""):
+            return by_source.get(source, [])
+        return by_source.get(None, [])

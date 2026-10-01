@@ -380,7 +380,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
                   <line x1="12" y1="17" x2="12.01" y2="17"/>
                 </svg>
                 <span>
-                  {anomalyCount} statistical anomaly{anomalyCount !== 1 ? "s" : ""} detected — click to review
+                  {Number(anomalyCount).toLocaleString("en-US")} statistical {anomalyCount !== 1 ? "anomalies" : "anomaly"} detected — click to review
                 </span>
                 <IconChevron open={showAnomalies} />
               </button>

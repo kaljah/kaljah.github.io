@@ -1,0 +1,194 @@
+{
+ "counts": {
+  "rows": 100000,
+  "acceptance_ok": 97272,
+  "oracle_checked": 47228,
+  "oracle_ok": 47228,
+  "ambiguous_rows": 1900,
+  "ambiguous_rejected": 1900,
+  "either_accepted": 828,
+  "groups_checked": 20817
+ },
+ "by_family": {
+  "T1_COMB": {
+   "rows": 16000,
+   "accepted": 8637,
+   "oracle_checked": 8637,
+   "rejected": 7363,
+   "groups_checked": 2480
+  },
+  "T1_MOBILE": {
+   "rows": 2000,
+   "rejected": 958,
+   "accepted": 1042,
+   "oracle_checked": 1042,
+   "groups_checked": 302
+  },
+  "T1_FLARE": {
+   "rows": 4000,
+   "accepted": 4000,
+   "oracle_checked": 4000,
+   "groups_checked": 800
+  },
+  "T1_VENT": {
+   "rows": 1500,
+   "accepted": 1500,
+   "oracle_checked": 1500,
+   "groups_checked": 300
+  },
+  "T1_AGV": {
+   "rows": 2500,
+   "accepted": 2500,
+   "oracle_checked": 2500,
+   "groups_checked": 500
+  },
+  "T1_COMPL": {
+   "rows": 1500,
+   "accepted": 1500,
+   "oracle_checked": 1500
+  },
+  "T1_UNLOAD": {
+   "rows": 2000,
+   "accepted": 1334,
+   "oracle_checked": 1334,
+   "rejected": 666,
+   "groups_checked": 667
+  },
+  "T1_CHEM": {
+   "rows": 3000,
+   "accepted": 3000,
+   "oracle_checked": 3000,
+   "groups_checked": 600
+  },
+  "T1_DRILL": {
+   "rows": 1000,
+   "accepted": 1000,
+   "oracle_checked": 1000,
+   "groups_checked": 333
+  },
+  "T1_COMPONENT": {
+   "rows": 4000,
+   "accepted": 4000,
+   "oracle_checked": 4000,
+   "groups_checked": 1333
+  },
+  "T1_ACTIVITY": {
+   "rows": 3500,
+   "accepted": 3500,
+   "groups_checked": 1167
+  },
+  "T1_TANK": {
+   "rows": 1000,
+   "accepted": 1000,
+   "oracle_checked": 1000,
+   "groups_checked": 200
+  },
+  "T2_CF": {
+   "rows": 16000,
+   "accepted": 13715,
+   "oracle_checked": 13715,
+   "rejected": 2285,
+   "groups_checked": 1977
+  },
+  "T2_COMPL": {
+   "rows": 1500,
+   "accepted": 1500,
+   "groups_checked": 500
+  },
+  "T2_UNLOAD": {
+   "rows": 1500,
+   "accepted": 1500,
+   "groups_checked": 750
+  },
+  "T2_AGV": {
+   "rows": 1500,
+   "accepted": 1500,
+   "groups_checked": 375
+  },
+  "T2_FUG": {
+   "rows": 1500,
+   "accepted": 1500,
+   "groups_checked": 750
+  },
+  "T3_COMB": {
+   "rows": 6000,
+   "accepted": 6000,
+   "oracle_checked": 1500,
+   "groups_checked": 1500
+  },
+  "T3_FLARE": {
+   "rows": 3500,
+   "accepted": 3500,
+   "groups_checked": 700
+  },
+  "T3_COMPL": {
+   "rows": 2500,
+   "accepted": 2500,
+   "groups_checked": 714
+  },
+  "T3_UNLOAD": {
+   "rows": 2000,
+   "accepted": 2000,
+   "groups_checked": 667
+  },
+  "T3_BLOW": {
+   "rows": 3000,
+   "accepted": 3000,
+   "groups_checked": 600
+  },
+  "T3_TANK": {
+   "rows": 2500,
+   "accepted": 2500,
+   "groups_checked": 500
+  },
+  "T3_PNEU": {
+   "rows": 2000,
+   "accepted": 2000,
+   "groups_checked": 500
+  },
+  "T3_AGR": {
+   "rows": 2000,
+   "accepted": 2000,
+   "groups_checked": 500
+  },
+  "T3_DEHY": {
+   "rows": 1500,
+   "accepted": 1500,
+   "groups_checked": 375
+  },
+  "T3_FUG": {
+   "rows": 2000,
+   "accepted": 2000,
+   "groups_checked": 677
+  },
+  "T3_STOICH": {
+   "rows": 1500,
+   "accepted": 1500,
+   "oracle_checked": 1500,
+   "groups_checked": 300
+  },
+  "T3_AGV": {
+   "rows": 1500,
+   "accepted": 1500,
+   "groups_checked": 500
+  },
+  "T3_VENTGAS": {
+   "rows": 1000,
+   "accepted": 1000,
+   "oracle_checked": 1000,
+   "groups_checked": 250
+  },
+  "NEG": {
+   "rows": 5000,
+   "rejected": 4563,
+   "accepted": 437
+  }
+ },
+ "oracle_fail": [],
+ "group_fail": [],
+ "accept_mismatch": [],
+ "fidelity": {},
+ "unexpected_reject_reasons": [],
+ "ambiguous_accepted": [],
+ "dup_records": []
+}
