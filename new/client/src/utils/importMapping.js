@@ -11,6 +11,12 @@ export function normHeader(h) {
     .trim();
 }
 
+// Generic single words that are also words of other columns ("activity" in "activity_key", "hours" in
+// "operating_hours", "region" in "unload_region"): they map only a header that is exactly that word
+// (S1K-F12: the Activity field was mapped to the activity_key column)
+const EXACT_ONLY = new Set(["activity", "division", "field", "region", "notes", "hours", "pressure", "events",
+  "diameter", "gor", "co2", "n2", "ppm", "service"]);
+
 const hasWord = (text, term) => term && new RegExp(`(^| )${term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}( |$)`).test(text);
 
 // Field -> header. An exact name (field key or label) wins; otherwise a header that contains the
@@ -34,7 +40,7 @@ export function autoDetectMapping(headers, fields) {
     .filter((f) => !mapping[f.key])
     .sort((a, b) => Math.max(...terms(b).map((t) => t.length)) - Math.max(...terms(a).map((t) => t.length)))
     .forEach((f) => {
-      const hit = norm.find(([h, n]) => !used.has(h) && terms(f).some((t) => t.length > 2 && hasWord(n, t)));
+      const hit = norm.find(([h, n]) => !used.has(h) && terms(f).some((t) => t.length > 2 && !EXACT_ONLY.has(t) && hasWord(n, t)));
       if (hit) {
         mapping[f.key] = hit[0];
         used.add(hit[0]);

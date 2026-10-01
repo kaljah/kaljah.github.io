@@ -438,7 +438,7 @@ function FieldGroup({ group, headers, mapping, setMapping, searchQuery, tier, pr
     return group.fields.filter(f => {
       if (q && !f.label.toLowerCase().includes(q) && !f.key.toLowerCase().includes(q) && !f.hint.toLowerCase().includes(q)) return false;
       // Hide tier3 groups entirely if tier is 1
-      if (group.tier3Only && tier === "1") return false;
+      if (group.tier3Only && (tier === "1" || tier === "2")) return false;
       // For specific process scope, hide tier3 params that don't belong to any selected process
       if (group.tier3Only && processScope === "specific") {
         const relevantKeys = new Set(
@@ -664,6 +664,14 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
                 description="Uses API Compendium default emission factors. Only requires fuel type, quantity, and unit. Fast and simple."
               />
               <ModeCard
+                selected={tier === "2"}
+                onClick={() => setTier("2")}
+                Icon={Icon.Layers}
+                title="Tier 2 — Custom / Site Factors"
+                badge={{ label: "Site data", color: "blue" }}
+                description="Uses your saved custom factors (Manage Data › Custom Factors), or a catalog fuel with your measured HHV / density."
+              />
+              <ModeCard
                 selected={tier === "3"}
                 onClick={() => setTier("3")}
                 Icon={Icon.Settings}
@@ -675,17 +683,18 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
                 selected={tier === "auto"}
                 onClick={() => setTier("auto")}
                 Icon={Icon.Wand}
-                title="Both Tiers — Auto Detect"
+                title="Auto Detect — All Tiers"
                 badge={{ label: "Recommended", color: "orange" }}
-                description="Mixes Tier 1 and Tier 3 rows in one file. The system detects per-row: if gas composition columns are filled, Tier 3 is used; otherwise Tier 1."
+                description="Mixes Tier 1, 2 and 3 rows in one file. Each row's factor_type column (default / custom / specific) selects its tier."
               />
             </div>
             <div className="s1w-info-banner">
               <Icon.Info />
               <span>
                 {tier === "1" && "Tier 1 only requires: Region, Date, Process, Fuel, Quantity, Unit."}
+                {tier === "2" && "Tier 2 requires the Tier 1 fields with factor_type custom and either a saved custom factor name in Fuel, or a catalog fuel with hhv (and hhv_unit) / density."}
                 {tier === "3" && "Tier 3 requires all Tier 1 fields plus gas composition and process engineering parameters."}
-                {tier === "auto" && "Auto-detect is ideal when you have a mix of sources — some with gas composition data (Tier 3) and some without (Tier 1)."}
+                {tier === "auto" && "Auto-detect is ideal for a mix of sources: each row's factor_type column selects Tier 1, 2 or 3."}
               </span>
             </div>
           </div>
@@ -799,7 +808,7 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
             {/* Config summary pill */}
             <div className="s1w-config-summary">
               <span className={`s1w-config-pill s1w-config-pill--${tier === "1" ? "blue" : tier === "3" ? "green" : "orange"}`}>
-                {tier === "1" ? "Tier 1" : tier === "3" ? "Tier 3" : "Auto-detect"}
+                {tier === "1" ? "Tier 1" : tier === "2" ? "Tier 2" : tier === "3" ? "Tier 3" : "Auto-detect"}
               </span>
               <span className="s1w-config-pill s1w-config-pill--neutral">
                 {processScope === "all"

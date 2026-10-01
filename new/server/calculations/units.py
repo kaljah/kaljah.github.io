@@ -79,73 +79,64 @@ CONVERSIONS = {
 }
 
 
+# S1K-F7: unknown temperature / pressure units raise instead of being read as C / psig
+_TEMP_KIND = {}
+for _k, _names in (("c", ("c", "celsius", "degc", "°c", "ºc", "deg_c", "centigrade")),
+                   ("f", ("f", "fahrenheit", "degf", "°f", "ºf", "deg_f")),
+                   ("r", ("r", "rankine", "degr", "°r", "deg_r")),
+                   ("k", ("k", "kelvin", "degk", "°k"))):
+    for _n in _names:
+        _TEMP_KIND[_n] = _k
+
+# pressure unit -> (psi per unit, gauge?)
+_PRESSURE_UNITS = {
+    "psig": (1.0, True), "psi_g": (1.0, True), "psia": (1.0, False), "psi_a": (1.0, False), "psi": (1.0, False),
+    "barg": (14.5038, True), "bar_g": (14.5038, True), "bar": (14.5038, False), "bara": (14.5038, False),
+    "mbarg": (0.0145038, True), "mbar_g": (0.0145038, True), "mbar": (0.0145038, False), "mbara": (0.0145038, False),
+    "kpag": (0.145038, True), "kpa_g": (0.145038, True), "kpa": (0.145038, False), "kpaa": (0.145038, False),
+    "mpag": (145.0377, True), "mpa_g": (145.0377, True), "mpa": (145.0377, False), "mpaa": (145.0377, False),
+    "pag": (0.000145038, True), "pa_g": (0.000145038, True), "pa": (0.000145038, False), "paa": (0.000145038, False),
+    "atm": (STD_PRESSURE_PSIA, False), "mmhg": (0.0193367747, False), "torr": (0.0193367747, False),
+    "inhg": (0.4911541, False),
+}
+
+
+def _temp_kind(unit, default):
+    u = str(unit).strip().lower().replace(" ", "_") if unit not in (None, "") else default
+    if u not in _TEMP_KIND:
+        raise UnitError(f"Unknown temperature unit '{unit}' (use C, F, K or R)")
+    return _TEMP_KIND[u]
+
+
+def _pressure_unit(unit, default):
+    u = str(unit).strip().lower().replace(" ", "_") if unit not in (None, "") else default
+    if u not in _PRESSURE_UNITS:
+        raise UnitError(f"Unknown pressure unit '{unit}' (use psig, psia, barg, bara, kPa, kPag, MPa, atm)")
+    return _PRESSURE_UNITS[u]
+
+
 def to_kelvin(val, unit="c"):
     """Converts temperature value to Kelvin."""
     if val is None:
         return STD_TEMP_K
-    u = str(unit).strip().lower()
     v = float(val)
-    if u in ["c", "celsius", "degc", "°c"]:
-        return v + 273.15
-    elif u in ["f", "fahrenheit", "degf", "°f"]:
-        return (v - 32.0) * 5.0 / 9.0 + 273.15
-    elif u in ["r", "rankine", "degr", "°r"]:
-        return v * 5.0 / 9.0
-    elif u in ["k", "kelvin"]:
-        return v
-    return v + 273.15
+    kind = _temp_kind(unit, "c")
+    return {"c": v + 273.15, "f": (v - 32.0) * 5.0 / 9.0 + 273.15, "r": v * 5.0 / 9.0, "k": v}[kind]
 
 
 def to_fahrenheit(val, unit="c"):
     """Converts temperature value to Fahrenheit."""
     if val is None:
         return STD_TEMP_F
-    u = str(unit).strip().lower()
-    v = float(val)
-    if u in ["c", "celsius", "degc", "°c"]:
-        return (v * 9.0 / 5.0) + 32.0
-    elif u in ["f", "fahrenheit", "degf", "°f"]:
-        return v
-    elif u in ["k", "kelvin"]:
-        return (v - 273.15) * 9.0 / 5.0 + 32.0
-    elif u in ["r", "rankine", "degr", "°r"]:
-        return v - 459.67
-    return v
+    return (to_kelvin(val, unit) - 273.15) * 9.0 / 5.0 + 32.0
 
 
 def to_psia(val, unit="psig", atmospheric_psia=STD_PRESSURE_PSIA):
     """Converts gauge or metric pressure to absolute pressure in psia."""
     if val is None:
         return STD_PRESSURE_PSIA
-    u = str(unit).strip().lower()
-    v = float(val)
-    if u in ["psig", "psi_g"]:
-        return max(0.0, v + atmospheric_psia)
-    elif u in ["psia", "psi_a", "psi"]:
-        return max(0.0, v)
-    elif u in ["barg", "bar_g"]:
-        return max(0.0, (v * 14.5038) + atmospheric_psia)
-    elif u in ["bar", "bara"]:
-        return max(0.0, v * 14.5038)
-    elif u in ["mbarg", "mbar_g"]:
-        return max(0.0, (v * 0.0145038) + atmospheric_psia)
-    elif u in ["mbar", "mbara"]:
-        return max(0.0, v * 0.0145038)
-    elif u in ["kpag", "kpa_g"]:
-        return max(0.0, (v * 0.145038) + atmospheric_psia)
-    elif u in ["kpa", "kpaa"]:
-        return max(0.0, v * 0.145038)
-    elif u in ["mpag", "mpa_g"]:
-        return max(0.0, (v * 145.0377) + atmospheric_psia)
-    elif u in ["mpa", "mpaa"]:
-        return max(0.0, v * 145.0377)
-    elif u in ["pa", "paa"]:
-        return max(0.0, v * 0.000145038)
-    elif u in ["pag", "pa_g"]:
-        return max(0.0, (v * 0.000145038) + atmospheric_psia)
-    elif u in ["atm"]:
-        return max(0.0, v * STD_PRESSURE_PSIA)
-    return max(0.0, v + atmospheric_psia)
+    per, gauge = _pressure_unit(unit, "psig")
+    return max(0.0, float(val) * per + (atmospheric_psia if gauge else 0.0))
 
 
 # Volume units that can be read at operating conditions. scf / Mscf / Sm3 / Nm3 are standard by
@@ -228,6 +219,8 @@ VOLUME_UNITS_TO_M3 = {
     "l": 0.001,
     "liter": 0.001,
     "liters": 0.001,
+    "litre": 0.001,
+    "litres": 0.001,
 }
 
 MASS_UNITS_TO_KG = {
@@ -287,52 +280,15 @@ def to_celsius(val, unit="c"):
     """Converts temperature value to Celsius."""
     if val is None:
         return STD_TEMP_C
-    u = str(unit).strip().lower()
-    v = float(val)
-    if u in ["c", "celsius", "degc", "°c"]:
-        return v
-    elif u in ["f", "fahrenheit", "degf", "°f"]:
-        return (v - 32.0) * 5.0 / 9.0
-    elif u in ["k", "kelvin"]:
-        return v - 273.15
-    elif u in ["r", "rankine", "degr", "°r"]:
-        return (v - 491.67) * 5.0 / 9.0
-    return v
+    return to_kelvin(val, unit) - 273.15
 
 
 def from_psia(psia_val, to_unit="psia", atmospheric_psia=STD_PRESSURE_PSIA):
     """Converts absolute psia pressure to any target unit (gauge or absolute)."""
     if psia_val is None:
         return 0.0
-    u = str(to_unit).strip().lower()
-    p = float(psia_val)
-    if u in ["psia", "psi_a", "psi"]:
-        return p
-    elif u in ["psig", "psi_g"]:
-        return p - atmospheric_psia
-    elif u in ["barg", "bar_g"]:
-        return (p - atmospheric_psia) / 14.5038
-    elif u in ["bar", "bara"]:
-        return p / 14.5038
-    elif u in ["kpag", "kpa_g"]:
-        return (p - atmospheric_psia) / 0.145038
-    elif u in ["kpa", "kpaa"]:
-        return p / 0.145038
-    elif u in ["mpag", "mpa_g"]:
-        return (p - atmospheric_psia) / 145.0377
-    elif u in ["mpa", "mpaa"]:
-        return p / 145.0377
-    elif u in ["atm"]:
-        return p / STD_PRESSURE_PSIA
-    elif u in ["mbar", "mbara"]:
-        return p / 0.0145038
-    elif u in ["mbarg", "mbar_g"]:
-        return (p - atmospheric_psia) / 0.0145038
-    elif u in ["pa", "paa"]:
-        return p / 0.000145038
-    elif u in ["pag", "pa_g"]:
-        return (p - atmospheric_psia) / 0.000145038
-    return p
+    per, gauge = _pressure_unit(to_unit, "psia")
+    return (float(psia_val) - (atmospheric_psia if gauge else 0.0)) / per
 
 
 def convert_temperature(val, from_unit, to_unit):
@@ -633,10 +589,12 @@ _SUBSUP = str.maketrans("₀₁₂₃₄₅₆₇₈₉"
 
 # rate suffixes -> periods per year
 _RATE_SUFFIX = {"/d": 365.0, "/day": 365.0, "d": 365.0, "pd": 365.0, "/yr": 1.0, "/year": 1.0, "/y": 1.0,
-                "/hr": 8760.0, "/h": 8760.0, "/hour": 8760.0}
+                "/hr": 8760.0, "/h": 8760.0, "/hour": 8760.0, "h": 8760.0, "/min": 525600.0, "/minute": 525600.0,
+                "m": 525600.0}
 _VOLUME_ALIASES = {"mmcf": "mmscf", "kscf": "mscf", "mcfd": "mcf/d", "mmscfd": "mmscf/d", "mscfd": "mscf/d",
                    "m^3": "m3", "cubic metre": "m3", "cubic metres": "m3", "knm3": "ksm3", "kncm": "ksm3",
-                   "thousand m3": "ksm3", "million m3": "mmsm3", "mmm3": "mmsm3"}
+                   "thousand m3": "ksm3", "million m3": "mmsm3", "mmm3": "mmsm3", "bpd": "bbl/d", "bopd": "bbl/d",
+                   "m³": "m3", "sm³": "sm3", "nm³": "nm3"}
 _GASES = {"ch4": "ch4", "methane": "ch4", "co2": "co2", "n2o": "n2o", "co2e": "co2e", "voc": "voc", "gas": "gas",
           "toc": "toc", "thc": "toc"}
 _COUNT_WORDS = {"count", "unit", "units", "source", "sources", "device", "devices", "well", "wells", "separator",
@@ -667,6 +625,7 @@ def gas_volume_m3(quantity, unit):
     """A gas volume in standard m3. A gas-composition (carbon balance) method needs a volume:
     an energy, mass or liquid quantity is refused instead of being read as m3."""
     u = str(unit or "").strip().lower().replace(" ", "")
+    u = _VOLUME_ALIASES.get(u, u)   # MMcf, kscf, Sm³ (S1K-F16: accepted at Tier 1, refused here)
     if u not in GAS_VOLUME_UNITS:
         raise UnitError(f"The gas composition method needs a gas volume (scf, Mscf, MMscf, m3, Sm3, Nm3), not '{unit}'")
     return float(quantity) * VOLUME_UNITS_TO_M3[u]
@@ -707,6 +666,16 @@ def parse_volume_rate(unit):
             if base in VOLUME_UNITS_TO_M3:
                 return VOLUME_UNITS_TO_M3[base], _RATE_SUFFIX[suffix]
     raise UnitError(f"Unknown volume or volume-rate unit '{unit}'")
+
+
+def volume_rate_m3_per_hour(unit, plain_volume_per="hour"):
+    """m3 per hour for ONE unit of a gas volume rate ('scf/hr', 'scfh', 'Mcf/day', 'm³/h', 'Sm3', 'MMscfd').
+    A plain volume unit is read as per `plain_volume_per` (the input's documented basis). Mass rates
+    and unknown units raise UnitError (S1K-F4 / F5: they were silently read as scf/h)."""
+    f, per_year = parse_volume_rate(unit)
+    if per_year is None:
+        per_year = {"hour": 8760.0, "day": 365.0}[plain_volume_per]
+    return f * per_year / 8760.0
 
 
 def annual_volume_m3(value, unit):

@@ -87,6 +87,30 @@ def factor_hhv_unit(factor_data):
     return _BASEUNIT_HHV.get(str(factor_data.get("baseUnit") or "").strip().lower())
 
 
+_HHV_ENERGY_TO_BTU = {"btu": 1.0, "kbtu": 1e3, "mmbtu": 1e6, "mj": 1.0 / BTU_TO_MJ, "kj": 1e-3 / BTU_TO_MJ,
+                      "gj": 1e3 / BTU_TO_MJ, "kcal": 0.0041868 / BTU_TO_MJ, "kwh": 3.6 / BTU_TO_MJ, "therm": 1e5}
+
+
+def user_hhv(hhv, hhv_unit):
+    """A heating value entered with its own unit ("MJ/m3", "kcal/m3", "BTU/gal", "MJ/kg") ->
+    (value in Btu, "btu/<basis>"). No unit, or the form's already-converted "BTU/unit", keeps the
+    catalog basis: (hhv, None). An unreadable unit raises UnitError (S1K-F11: a bulk "MJ/m3" was
+    read as Btu/scf, 27x low)."""
+    if hhv in (None, "") or hhv_unit in (None, "") or str(hhv_unit).strip().lower() in ("btu/unit", "-"):
+        return hhv, None
+    hu = norm_unit(hhv_unit).replace(" ", "")
+    num, _, den = hu.partition("/")
+    mult = _HHV_ENERGY_TO_BTU.get(num)
+    if mult is None or not den:
+        raise UnitError(f"Unsupported HHV unit '{hhv_unit}' (use e.g. Btu/scf, MJ/m3, kcal/m3, Btu/gal, MJ/kg)")
+    den = {"ft3": "scf", "cf": "scf", "lb": "lb", "m³": "m3"}.get(den, den)
+    try:
+        unit_dimension(den)
+    except UnitError:
+        raise UnitError(f"Unsupported HHV unit '{hhv_unit}': '{den}' is not a volume or mass unit")
+    return float(hhv) * mult, f"btu/{den}"
+
+
 def fuel_basis(fuel_type, hhv_unit=None):
     """(basis unit, Btu multiplier) of a catalog HHV. BUG-027: from the factor, never from the activity unit."""
     if hhv_unit:
@@ -230,7 +254,7 @@ class CombustionCalculator(BaseCalculator):
             "gas",
             "Natural Gas",
             "natural_gas",
-        ] or str(fuel_unit).strip().lower().replace(" ", "") in GAS_VOLUME_UNITS  # any gas volume (Sm3, Nm3, Mscf...)
+        ] or norm_unit(fuel_unit).replace(" ", "") in GAS_VOLUME_UNITS  # any gas volume (Sm3, Nm3, Mscf, MMcf...)
 
         # Apply API §4.2.1 thermodynamic normalization to gas fuels if operating T/P supplied
         raw_quantity = fuel_quantity
@@ -272,7 +296,15 @@ class CombustionCalculator(BaseCalculator):
 
         # Tier 3 Gas Composition Override (Carbon Mass Balance)
         heavy_hc_warning = False
-        if "c1" in comps and comps["c1"] not in [None, "", "-"]:
+        # only a composition that carries hydrocarbons: the dispatcher always passes c1..c10 (0.0
+        # when no analysis was given), and a zero-carbon balance replaced the factor CO2 with 0
+        def _pos(v):
+            try:
+                return float(v) > 0
+            except (TypeError, ValueError):
+                return False
+
+        if any(_pos(comps.get(f"c{i}")) for i in range(1, 11)):
             raw_c = {f"c{i}": float(comps.get(f"c{i}") or 0.0) for i in range(1, 11)}
             raw_co2 = float(comps.get("co2_comp") or comps.get("co2_mol") or 0.0)
             total_raw = sum(raw_c.values()) + raw_co2

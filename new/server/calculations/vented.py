@@ -2184,7 +2184,8 @@ class AssociatedGasVentingCalculator(BaseCalculator):
             try:
                 oil_bbl = convert(oil_val, u_oil, "bbl")
             except Exception:
-                oil_bbl = oil_val  # fallback if already bbl
+                # an unknown unit was taken as bbl
+                raise ValueError(f"Unknown oil production unit '{oil_unit}' (use bbl, m3, gal or L)")
 
             # Basin Factor Lookup
             basin_info = self.resolve_basin_factor(basin or kwargs.get("region") or kwargs.get("fuel"))
@@ -2273,28 +2274,32 @@ class AssociatedGasVentingCalculator(BaseCalculator):
             if gor_val > 100_000.0:
                 qa_flags.append(f"High GOR anomaly: {gor_val:.1f} scf/bbl exceeds typical crude oil range (100,000 scf/bbl).")
 
-            # Convert oil throughput to barrels
+            # Convert oil throughput to barrels (S1K-F16: every volume / volume-rate spelling - bbl/d, bpd,
+            # gal/day, m3/day, bbl/hr - through the shared parser; an unknown unit is refused)
+            from .units import UnitError as _UErr, parse_volume_rate, unit_dimension
             u_oil = str(oil_unit or "bbl").strip().lower()
-            oil_is_daily_rate = u_oil in ["bbl/day", "bpd", "barrel/day", "barrels/day", "m3/day"]
-            oil_is_hourly_rate = u_oil in ["bbl/hr", "bph", "barrel/hr", "m3/hr", "m3/h"]
-
-            # Convert base volumetric rate to bbl or bbl/day
-            if oil_is_daily_rate:
-                oil_rate_bbl_day = convert(oil_val, u_oil.replace("/day", ""), "bbl")
-            elif oil_is_hourly_rate:
-                oil_rate_bbl_day = convert(oil_val, u_oil.replace("/hr", "").replace("/h", ""), "bbl") * 24.0
+            try:
+                m3_per_unit, per_year = parse_volume_rate(u_oil)
+            except _UErr:
+                raise ValueError(f"Unknown oil production unit '{oil_unit}' (use bbl, m3, bbl/day, m3/day)")
+            if per_year is not None:
+                oil_rate_bbl_day = oil_val * m3_per_unit * per_year / 365.0 / CONVERSIONS["bbl_to_m3"]
             else:
-                oil_bbl = convert(oil_val, u_oil, "bbl")
+                oil_bbl = oil_val * m3_per_unit / CONVERSIONS["bbl_to_m3"]
                 oil_rate_bbl_day = None
 
-            # Convert GOR to scf/bbl
-            u_gor = str(gor_unit or "scf/bbl").strip().lower()
-            if u_gor in ["m3/m3", "sm3/sm3", "m3_per_m3", "sm3/m3"]:
-                gor_scf_bbl = gor_val * (CONVERSIONS["m3_to_scf"] / CONVERSIONS["m3_to_bbl"])
-            elif u_gor in ["sm3/barrel", "sm3/bbl", "m3/bbl"]:
-                gor_scf_bbl = gor_val * CONVERSIONS["m3_to_scf"]
-            else:
-                gor_scf_bbl = gor_val  # already scf/bbl
+            # Convert GOR to scf/bbl ("scf/bbl", "m3/m3", "Sm3/Sm3", "Mscf/bbl", "scf/m3" ...); an unknown GOR
+            # unit is refused (it was taken as scf/bbl)
+            u_gor = str(gor_unit or "scf/bbl").strip().lower().replace(" ", "")
+            num, _, den = u_gor.partition("/")
+            try:
+                d_num, f_num = unit_dimension({"m3_per_m3": "m3"}.get(num, num))
+                d_den, f_den = unit_dimension(den) if den else (None, None)
+            except _UErr:
+                d_num = d_den = None
+            if d_num != "volume" or d_den != "volume":
+                raise ValueError(f"Unknown GOR unit '{gor_unit}' (use scf/bbl, Sm3/Sm3 or m3/m3)")
+            gor_scf_bbl = gor_val * (f_num / CONVERSIONS["scf_to_m3"]) / (f_den / CONVERSIONS["bbl_to_m3"])
 
             # Determine Venting Duration and Total Associated Gas Produced
             u_dur = str(duration_unit or "days").strip().lower()
@@ -2444,22 +2449,18 @@ class AssociatedGasVentingCalculator(BaseCalculator):
                 if venting_duration is None or float(venting_duration) <= 0:
                     raise ValueError("Venting duration is required when vent rate is specified for Tier 3.")
                 d_val = float(venting_duration)
+                from .units import TIME_UNITS_TO_HOURS, UnitError, volume_rate_m3_per_hour
                 u_dur = str(duration_unit or "hours").strip().lower()
-                dur_hours = d_val if u_dur in ["hour", "hours", "hr", "hrs", "h"] else d_val * 24.0
+                if u_dur not in TIME_UNITS_TO_HOURS:
+                    raise ValueError(f"Unknown venting duration unit '{duration_unit}' (use hours or days)")
+                dur_hours = d_val * TIME_UNITS_TO_HOURS[u_dur]
 
-                u_rate = str(vent_rate_unit or "scfh").strip().lower()
-                if u_rate in ["scfh", "scf/hr", "scf/h"]:
-                    rate_scfh = r_val
-                elif u_rate in ["scf/day", "scfd"]:
-                    rate_scfh = r_val / 24.0
-                elif u_rate in ["scf/min", "scfm"]:
-                    rate_scfh = r_val * 60.0
-                elif u_rate in ["sm3/hr", "sm3/h", "m3/hr", "m3/h"]:
-                    rate_scfh = r_val * CONVERSIONS["m3_to_scf"]
-                elif u_rate in ["sm3/day", "m3/day"]:
-                    rate_scfh = (r_val * CONVERSIONS["m3_to_scf"]) / 24.0
-                else:
-                    rate_scfh = r_val
+                # S1K-F5: every volume-rate spelling ('Mcf/day', 'scfh', 'm3/h', 'MMscfd' ...); an unknown
+                # unit is refused (it was read as scf/h: Mcf/day 41.7x low)
+                try:
+                    rate_scfh = r_val * volume_rate_m3_per_hour(vent_rate_unit or "scfh") * CONVERSIONS["m3_to_scf"]
+                except UnitError as err:
+                    raise ValueError(f"Vent rate unit: {err} (use scf/hr, Mcf/day or m3/hr)")
 
                 net_vented_gas_scf = rate_scfh * dur_hours
             else:

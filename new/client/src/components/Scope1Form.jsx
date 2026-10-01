@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import api from "../api";
 import CustomDropdown from "./CustomDropdown";
 import { useToast } from "./Toast";
@@ -56,6 +56,15 @@ const PROCESS_TYPES = PROCESS_TYPES_MAP;
 
 // Emission UI shows no API Compendium / table citations (user request); legal references stay
 const hideApiCitation = (t) => (t && /\bAPI\b|Compendium|\bTables?\s*\d/.test(t) ? null : t);
+
+// Process label shown in the table and the CSV export (PROCESS_TYPES values are strings or {label})
+const processLabel = (entry) => {
+  const k = entry.process || entry.process_type;
+  const v = PROCESS_TYPES_MAP[k];
+  const other = { stoichiometry: "Carbon Mass Balance (Stoichiometry)" };
+  return (typeof v === "string" ? v : v?.label) || other[k] ||
+    String(k || "").replace(/_/g, " ").replace(/^\w/, (c) => c.toUpperCase());
+};
 
 // Tier shown in the table and CSV: a saved library / custom factor is "Custom", a Tier 2 site
 // property override is "Tier 2" (browser test #13: both were shown as "Specific")
@@ -156,7 +165,6 @@ const Scope1Form = () => {
 
   useEffect(() => {
     loadFacilities();
-    loadEntries();
     loadCustomFactors();
     loadEmissionSources();
   }, []);
@@ -521,10 +529,6 @@ const Scope1Form = () => {
     });
   };
 
-  useEffect(() => {
-    loadEntries();
-  }, [currentPage]);
-
   // Reset specific form data when process type changes
   useEffect(() => {
     setFormData({});
@@ -572,6 +576,7 @@ const Scope1Form = () => {
     const headers = [
       "Date",
       "Activity",
+      "Region / Facility",
       "Division",
       "Field",
       "Group",
@@ -590,14 +595,12 @@ const Scope1Form = () => {
     const rows = data.map((e) => [
       `${e.year}-${String(e.month).padStart(2, "0")}`,
       e.activity || "",
+      e.facility_name || e.region || "",
       e.division || "",
       e.field || "",
-      e.group || "",
+      e.group_name || e.group || "",
       e.equipment_id || "",
-      PROCESS_TYPES[e.process || e.process_type]?.label ||
-        e.process ||
-        e.process_type ||
-        "",
+      processLabel(e),
       e.fuel || e.fuel_type || e.activity_data_label || "",
       factorTypeLabel(e),
       e.amount || e.quantity || "",
@@ -639,7 +642,11 @@ const Scope1Form = () => {
     return opts;
   };
 
+  // S1K-F14: one request per page / filter change, and only the latest response is rendered (two
+  // effects fired duplicate requests and a late response could show another page's rows)
+  const entriesRequestSeq = useRef(0);
   const loadEntries = async () => {
+    const seq = ++entriesRequestSeq.current;
     setLoading(true);
     try {
       // BUG-UI-07 FIX: Include all active filter params in the API request
@@ -652,6 +659,7 @@ const Scope1Form = () => {
         ...(filterSearch && { search: filterSearch }),
       });
       const res = await api.get(`/emissions?${filterParams}`);
+      if (seq !== entriesRequestSeq.current) return; // a newer request was sent meanwhile
 
       // Safe handling of response data
       let allEntries = [];
@@ -680,7 +688,7 @@ const Scope1Form = () => {
     } catch (error) {
       console.error("Failed to load entries:", error);
     } finally {
-      setLoading(false);
+      if (seq === entriesRequestSeq.current) setLoading(false);
     }
   };
 
@@ -1187,6 +1195,11 @@ const Scope1Form = () => {
           finalAmount = amt;
           finalUnit = "bbl";
         }
+        // one activity representation: the method inputs carry the converted bbl too (the server
+        // refuses a row whose unit and tank_unit disagree, S1K-F9)
+        processInputs.amount = finalAmount;
+        processInputs.quantity = finalAmount;
+        processInputs.tank_unit = "bbl";
       }
 
       // 3. Pneumatics
@@ -2928,19 +2941,30 @@ const Scope1Form = () => {
           <button
             className="action-btn"
             onClick={async () => {
-              // BUG-095: export every matching record (server-side filters), not just the visible page
+              // BUG-095: export every matching record (server-side filters), not just the visible page.
+              // S1K-F13: the server caps one request at 5,000 records ("limit=all" silently returned
+              // 5,000 of 83,147), so the export pages through the whole result.
               try {
-                const res = await api.get("/emissions/", {
-                  params: {
-                    scope: "1",
-                    limit: "all",
-                    ...(filterYear && { year: filterYear }),
-                    ...(filterProcess && { process_type: filterProcess }),
-                    ...(filterSearch && { search: filterSearch }),
-                  },
-                });
-                const rows = res.data?.emissions || res.data?.data || res.data || [];
-                exportToCSV(Array.isArray(rows) ? rows : [], "scope1_export.csv");
+                const rows = [];
+                const PAGE = 5000;
+                let total = Infinity;
+                while (rows.length < total) {
+                  const res = await api.get("/emissions", {
+                    params: {
+                      scope: "1",
+                      limit: PAGE,
+                      offset: rows.length,
+                      ...(filterYear && { year: filterYear }),
+                      ...(filterProcess && { process: filterProcess }),
+                      ...(filterSearch && { search: filterSearch }),
+                    },
+                  });
+                  const page = res.data?.emissions || res.data?.data || (Array.isArray(res.data) ? res.data : []);
+                  total = Number(res.data?.total ?? res.headers?.["x-total-count"] ?? rows.length + page.length);
+                  if (!page.length) break;
+                  rows.push(...page);
+                }
+                exportToCSV(rows, "scope1_export.csv");
               } catch (err) {
                 toast.error(err.response?.data?.error || "Export failed");
               }
@@ -3076,14 +3100,7 @@ const Scope1Form = () => {
                       <td>{entry.group_name || entry.group || "-"}</td>
                       <td>{entry.equipment_id || "-"}</td>
                       <td>
-                        {(() => {
-                          const k = entry.process || entry.process_type;
-                          const v = PROCESS_TYPES[k];
-                          // keys the form does not list (e.g. stoichiometry) get a readable label
-                          const other = { stoichiometry: "Carbon Mass Balance (Stoichiometry)" };
-                          return (typeof v === "string" ? v : v?.label) || other[k] ||
-                            String(k || "").replace(/_/g, " ").replace(/^\w/, (c) => c.toUpperCase());
-                        })()}
+                        {processLabel(entry)}
                       </td>
                       <td>
                         {entry.fuel ||

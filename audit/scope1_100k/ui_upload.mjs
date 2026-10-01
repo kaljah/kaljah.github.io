@@ -61,8 +61,8 @@ for (const [i, file] of files.entries()) {
   await openScope1();
   await page.getByRole("button", { name: /Bulk Import \(Wizard\)/ }).click();
   await page.locator(".s1w-modal").waitFor();
-  // Step 1: tier - "Both Tiers - Auto Detect" (rows carry their own factor_type)
-  await page.getByText("Both Tiers — Auto Detect").click();
+  // Step 1: tier - "Auto Detect — All Tiers" (rows carry their own factor_type)
+  await page.getByText("Auto Detect — All Tiers").click();
   await shot(`${tag}_step1_tier`);
   await page.locator(".s1w-btn-primary", { hasText: "Next" }).click();
   // Step 2: process scope - all processes (default)

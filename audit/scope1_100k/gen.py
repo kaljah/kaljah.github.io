@@ -995,7 +995,8 @@ def negatives(G, target):
         elif kind == 17:
             c["fuel"] = "Diesel (No. 2 Fuel Oil)"
             c["unit"] = G.rng.choice(["litre", "litres"])
-            neg(c, "British spelling of litre", expect="ambiguous")
+            # supported since the S1K fixes (a spelling, not an ambiguity): accepted or refused both pass
+            neg(c, "British spelling of litre", expect="either")
         elif kind == 18:
             # quantity cell that carries its own (different) unit
             c["quantity"] = f"{G.rng.randint(10, 9999)} m3"
@@ -1021,12 +1022,15 @@ def negatives(G, target):
                  "combustion_efficiency": "99.5", "c1": "90", "c2": "5", "operating_temperature": "25",
                  "temp_unit": G.rng.choice(["Celsius degrees", "deg", "centigrade"]),
                  "operating_pressure": "50", "press_unit": "psig"}
-            neg(c, "unknown temperature unit", expect="ambiguous", tier="specific")
+            neg(c, "unknown temperature unit", expect="either" if c["temp_unit"] == "centigrade" else "ambiguous",
+                tier="specific")
         else:
             c = {"process_type": "combustion", "fuel": gas_fuel, "quantity": q, "unit": "m3", "hhv": "1020",
                  "combustion_efficiency": "99.5", "c1": "90", "c2": "5", "operating_temperature": "25",
                  "temp_unit": "C", "operating_pressure": "3", "press_unit": G.rng.choice(PRESS_UNKNOWN)}
-            neg(c, "unknown pressure unit", expect="ambiguous", tier="specific")
+            # mmHg / torr / inHg are absolute units supported since the S1K fixes; kg/cm2 (gauge or absolute?) is not
+            neg(c, "unknown pressure unit", expect="ambiguous" if c["press_unit"] == "kg/cm2" else "either",
+                tier="specific")
     G.fill("NEG", target, mk)
 
 

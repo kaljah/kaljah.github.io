@@ -8,7 +8,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 1150; /* above the top bar (1100): the modal title was hidden under it */
   padding: 16px;
   animation: s1w-fade 0.2s ease;
 }
@@ -253,8 +253,11 @@
 /* ─── Mode Cards ────────────────────────────────────────────────────────────── */
 .s1w-mode-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr)); /* four tier cards: 2 x 2 */
   gap: 12px;
+}
+@media (max-width: 640px) {
+  .s1w-mode-grid { grid-template-columns: 1fr; }
 }
 
 .s1w-scope-cards {

@@ -305,6 +305,9 @@ def _compute_emissions_impl(payload, factor_data=None, gwp_dict=None, gwp_standa
     # NEW: Merge root payload into inputs to support flat CSV data
     # This allows keys like 'comp_duration' or 'unload_diam' to be read directly from the CSV row
     inputs = {**payload, **inputs}
+    # the record-level activity, kept for the unit-consistency check (S1K-F9: a form sends the converted
+    # top-level amount and the method's own amount + unit; both are the same activity)
+    inputs["_top_amount"], inputs["_top_unit"] = payload.get("amount"), payload.get("unit")
     if hhv and not inputs.get("hhv"):
         inputs["hhv"] = hhv
 

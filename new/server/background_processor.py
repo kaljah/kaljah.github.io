@@ -177,6 +177,7 @@ def _clean_float(val, default=0.0):
 from process_categories import NON_COMBUSTION_PROCESSES
 
 
+_THOUSANDS_NUMBER = re.compile(r"^[-+]?\d{1,3}(,\d{3})+(\.\d+)?([eE][-+]?\d+)?$")
 _DECIMAL_COMMA_NUMBER = re.compile(r"^([-+]?)(\d{1,3}(?:[.\s\u00a0\u202f]\d{3})+|\d+),(\d+)$")
 _GROUP_SEPARATORS = re.compile(r"[.\s\u00a0\u202f]")
 
@@ -661,6 +662,16 @@ def _process_file_thread(
                 csv_source = True
                 total_rows = max(0, sum(1 for ln in decoded_text.split("\n") if ln.strip()) - 1)
 
+            if csv_source:
+                # S1K-F15: refuse an oversized file before processing it (it was refused only after the
+                # first 50,000 rows had been calculated, ~90 s). Rows are counted with the CSV reader
+                # (quoted cells may span lines); a few template note rows are allowed for.
+                n_csv_rows = sum(1 for _ in csv.reader(io.StringIO(decoded_text), delimiter=delimiter)) - 1
+                total_rows = n_csv_rows
+                if n_csv_rows > MAX_IMPORT_ROWS + 10:
+                    raise ImportTooLarge(
+                        f"The file has {n_csv_rows:,} data rows, more than {MAX_IMPORT_ROWS:,}; split it into smaller "
+                        "files. No rows were saved.")
             _update_job(job_id, total=total_rows)
 
             # Resolve mapping: the automatic mapping, overridden by the columns the user chose in
@@ -1315,6 +1326,11 @@ _MAP_BY_SCOPE = {
 }
 
 
+_EXACT_ONLY_TERMS = {"activity", "division", "field", "region", "notes", "hours", "pressure", "events",
+                     "diameter", "gor", "co2", "n2", "ppm", "service",
+                     "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10"}
+
+
 def _build_mapping(headers, scope=1):
     """Header -> field mapping for one import type. Headers are compared without the
     template tags and unit notes; exact names win over partial (word) matches."""
@@ -1341,11 +1357,16 @@ def _build_mapping(headers, scope=1):
                 mapping[sys_key] = h
                 break
 
-    # Pass 2: whole-word match for the remaining fields
+    # Pass 2: whole-word match for the remaining fields. S1K-F12 / F19: a generic single word
+    # ("activity", "region", "hours", "pressure", "events", "gor" ...) is also a word of other method
+    # columns ("activity_key", "operating_hours", "blowdown_pressure", "comp_gor"); it only matches a
+    # header that is exactly that word (activity_key values were stored as the business Activity)
     for h, h_norm in normalized_headers.items():
         if h in mapping.values():
             continue
         for sys_key, search_term in sorted_expected:
+            if search_term in _EXACT_ONLY_TERMS:
+                continue
             if sys_key not in mapping and re.search(r"\b" + re.escape(search_term) + r"\b", h_norm):
                 mapping[sys_key] = h
                 break
@@ -2425,6 +2446,14 @@ def _process_row(
         return None, ["Missing quantity."]
     unit = str(row.get("unit") or "").strip()
     unit = _UNIT_SPELLING.get(unit.lower(), unit)  # "mmbtu" -> "MMBtu", as the form writes it
+    # S1K-F8: a quantity cell that carries its own unit ("928 m3") must agree with the unit column
+    # (the trailing text was dropped and the number booked in the unit column's unit)
+    if raw_qty is not None and isinstance(raw_qty, str):
+        m_tail = re.match(r"^\s*[-+]?[0-9.,\s ]+(?:[eE][-+]?[0-9]+)?\s*(\S.*?)?\s*$", raw_qty)
+        tail = (m_tail.group(1) or "").strip() if m_tail else ""
+        if tail and tail.lower().replace(" ", "") != unit.lower().replace(" ", ""):
+            return None, [f"Quantity '{raw_qty}' carries the unit '{tail}' but the unit column says "
+                          f"'{unit or '(empty)'}': put the number in quantity and the unit in unit"]
     if amount is not None and not unit:
         # BUG-111: a blank unit is a row error, never an assumed m3
         return None, ["Missing unit. Provide the activity unit (e.g. MMBtu, scf, gal, tonne)."]
@@ -2440,6 +2469,10 @@ def _process_row(
         if isinstance(k, str) and re.fullmatch(r"[a-z][a-z0-9_]*", k) and k not in squashed and v is not None and str(v).strip() != "":
             payload[k] = v
     payload = {k: _percent_text_to_number(k, v) for k, v in payload.items()}
+    # S1K-F17: "12,345.6" is accepted in the quantity column; the method columns (vent_volume, hhv,
+    # comp_rate ...) refused it. Only the unambiguous thousands-separator form is rewritten.
+    payload = {k: (v.replace(",", "") if isinstance(v, str) and _THOUSANDS_NUMBER.match(v.strip()) else v)
+               for k, v in payload.items()}
     payload.update({
         "year": year, "month": month, "facility_id": facility.id, "process_type": process_type,
         "source_type": process_type, "factor_source": factor_source, "unit": unit or None,
@@ -2454,11 +2487,18 @@ def _process_row(
     if factor_source == "custom" and fuel and not fuel.isdigit():
         if fuel.lower() in getattr(cf_name_map, "ambiguous", ()):
             return None, [f"Custom factor name '{fuel}' is not unique; rename the duplicates before importing"]
+        from routes.emissions import _lookup_api_factor
         cf = cf_name_map.get(fuel.lower())
-        if not cf:
+        site_props = any(str(row.get(k) or "").strip() not in ("", "-", "0") for k in ("hhv", "density", "fuel_density"))
+        if not cf and site_props and _lookup_api_factor(fuel):
+            # S1K-F18: Tier 2 "catalog factor + site fuel properties" (the form's Tier 2 mode)
+            cf = None
+        elif not cf:
             # BUG-042: a Tier 2 row never falls back to the catalog (or to zero)
-            return None, [f"Custom factor '{fuel}' not found. Save it under Manage Data > Custom Factors first."]
-        payload["custom_factor_id"] = cf.id
+            return None, [f"Custom factor '{fuel}' not found. Save it under Manage Data > Custom Factors first, "
+                          "or give the site HHV / density with a catalog fuel."]
+        if cf is not None:
+            payload["custom_factor_id"] = cf.id
 
     # Compendium activity rows (Section 6 tables): the activity_key column, or the row's label in
     # the fuel / factor column, selects the row as the form's factor list does
@@ -2550,7 +2590,10 @@ def _process_row(
     record.year, record.month = year, month
     record.activity = row.get("activity") or facility.activity
     record.division = row.get("division") or facility.division
-    record.region = row.get("region") or facility.region or facility.name
+    # S1K-F12: for liquids unloading / associated gas venting the "region" column is the basin input
+    # of the calculation (Table 6-10 / 6-8), not the organisational region of the record
+    basin_column = process_type in ("unloading", "liquids_unloading", "associated_gas_venting")
+    record.region = (None if basin_column else row.get("region")) or facility.region or facility.name
     record.field = row.get("field") or facility.field
     record.group_name = row.get("group") or row.get("group_name") or None
     record.equipment_id = equipment_id or None

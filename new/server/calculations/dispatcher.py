@@ -3,7 +3,7 @@ import math
 from .units import UnitError
 from .uncertainty import COVERAGE_FACTOR_95
 import math
-from .combustion import CombustionCalculator, FlaringCalculator, factor_hhv_unit
+from .combustion import CombustionCalculator, FlaringCalculator, factor_hhv_unit, user_hhv
 from .vented import (
     PneumaticDeviceCalculator,
     LiquidsUnloadingCalculator,
@@ -240,6 +240,52 @@ class CalculationDispatcher:
         if target_unit == "mmscf":
             return m3 / CONVERSIONS["mmscf_to_m3"]
         raise ValueError(f"Unsupported target volume unit '{target_unit}'")
+
+    def _method_unit(self, flat_inputs, keys, unit, default=None):
+        """The unit of a method input: its own column (tank_unit, agr_unit ...) or the record unit.
+        S1K-F9: when both are given and are different physical amounts (bbl vs m3), the row is
+        contradictory and refused instead of one silently winning."""
+        from .units import UnitError, unit_dimension
+
+        own = next((str(flat_inputs.get(k)).strip() for k in keys if flat_inputs.get(k) not in (None, "", "-")), None)
+        rec = str(unit).strip() if unit not in (None, "", "-") else None
+        if own and rec and own.lower() != rec.lower():
+            try:
+                d1, f1 = unit_dimension(own)
+                d2, f2 = unit_dimension(rec)
+            except UnitError:
+                d1 = d2 = None
+            if d1 and d1 == d2 and abs(f1 - f2) > 1e-12 * max(f1, f2):
+                # two representations of the same activity (the form's converted top-level amount and
+                # the method amount in its own unit) are consistent; one number in two units is not
+                try:
+                    top_amt = float(flat_inputs.get("_top_amount"))
+                    own_amt = float(flat_inputs.get("amount") if flat_inputs.get("amount") not in (None, "") else
+                                    flat_inputs.get("quantity"))
+                    top_u = str(flat_inputs.get("_top_unit") or "").strip()
+                    same = top_u.lower() == rec.lower() and top_amt > 0 and \
+                        abs(top_amt * f2 - own_amt * f1) <= 1e-6 * top_amt * f2
+                except (TypeError, ValueError):
+                    same = False
+                if not same:
+                    raise ValueError(f"Contradicting units on the row: unit '{rec}' and {keys[0]} '{own}'")
+        return own or rec or default
+
+    def _liquid_bbl(self, value, unit_text, desc):
+        """A liquid volume in bbl (S1K-F3: kbbl / Mbbl were read as bbl, and tonne / kg / MMBtu / scf
+        were accepted as bbl)."""
+        from .units import UnitError, unit_dimension
+
+        u = str(unit_text or "bbl").strip().lower().replace(" ", "_")
+        if u in ("scf", "cf", "ft3", "mscf", "mcf", "mmscf", "sm3", "nm3", "ksm3", "mmsm3"):
+            raise ValueError(f"{desc}: '{unit_text}' is a gas volume; give the liquid volume (bbl, m3, gal, L)")
+        try:
+            dim, f = unit_dimension(u)
+        except UnitError:
+            raise ValueError(f"{desc}: unknown unit '{unit_text}' (use bbl, kbbl, m3, gal or L)")
+        if dim != "volume":
+            raise ValueError(f"{desc}: '{unit_text}' is not a liquid volume (use bbl, kbbl, m3, gal or L)")
+        return float(value) * f / CONVERSIONS["bbl_to_m3"]
 
     def _require_float(self, flat_inputs, keys, desc):
         """Strictly extracts a required float parameter without falling back to defaults."""
@@ -729,6 +775,27 @@ class CalculationDispatcher:
                     or flat_inputs.get("unloading_method")
                     or ""
                 ).lower().strip()
+                # S1K-F10: the activity unit must match the factor basis; "wells" with a per-event factor
+                # (or "events" with a per-well-year factor, or "devices" / "components") used to switch
+                # silently to another factor
+                u_cnt = str(unit or "").strip().lower()
+                fac_u = str(emission_factors.get("unit") or "").lower()
+                fac_name = emission_factors.get("name") or flat_inputs.get("fuel") or "This factor"
+                if u_cnt and u_cnt not in ("events", "event", "wells", "well"):
+                    from .units import UnitError, unit_dimension
+                    try:
+                        is_count = unit_dimension(u_cnt)[0] == "count"
+                    except UnitError:
+                        is_count = False
+                    if is_count:
+                        raise ValueError(f"Liquids unloading is counted in events (per-event factors) or wells "
+                                         f"(per well-year factors), not '{unit}'")
+                if "/event" in fac_u and u_cnt in ("wells", "well"):
+                    raise ValueError(f"'{fac_name}' is a per-event factor: give the number of unloading events "
+                                     f"(unit 'events'), not wells")
+                if "well-year" in fac_u and u_cnt in ("events", "event"):
+                    raise ValueError(f"'{fac_name}' is a per well-year factor: give the number of wells "
+                                     f"(unit 'wells'), not events")
                 # the selected catalog row (Tables 6-10 / 6-11) names the type, frequency class and basin
                 sel = unloading_row_selection(emission_factors.get("code"))
                 u_type = flat_inputs.get("unloading_type") or flat_inputs.get("unload_type") or sel.get("type") or "plunger"
@@ -806,6 +873,10 @@ class CalculationDispatcher:
             ]:
                 hhv_val = flat_inputs.get("hhv") or emission_factors.get("hhv")
                 density_val = flat_inputs.get("density") or flat_inputs.get("fuel_density")
+                # S1K-F11: a site HHV carries its own unit (MJ/m3, kcal/m3, Btu/gal ...)
+                user_hu = None
+                if flat_inputs.get("hhv") not in (None, ""):
+                    hhv_val, user_hu = user_hhv(flat_inputs.get("hhv"), flat_inputs.get("hhv_unit"))
                 if hhv_val or density_val:
                     return calculator.calculate(
                         fuel_quantity=quantity,
@@ -821,7 +892,7 @@ class CalculationDispatcher:
                         # BUG-027: the HHV basis comes from the factor's catalog type / hhv_unit
                         fuel_type=emission_factors.get("type") or flat_inputs.get("fuel_type")
                         or emission_factors.get("fuel_type", "unknown"),
-                        hhv_unit=factor_hhv_unit(emission_factors),
+                        hhv_unit=user_hu or factor_hhv_unit(emission_factors),
                         combustion_efficiency=float(
                             flat_inputs.get("combustion_efficiency") or 0.995
                         ),
@@ -882,6 +953,7 @@ class CalculationDispatcher:
                 else:
                     comb_eff_frac = comb_eff
 
+                t3_hhv, t3_hu = user_hhv(hhv_val, flat_inputs.get("hhv_unit"))
                 comps = self._composition(flat_inputs)
                 # Tier 3 fuel analysis needs the fuel composition or measured factors; an HHV alone
                 # used to give a Verified 0 tCO2e record (Tier 3 browser test #10)
@@ -910,13 +982,19 @@ class CalculationDispatcher:
                     ef_ch4=emission_factors.get("ch4", 0),
                     ef_n2o=emission_factors.get("n2o", 0),
                     uncertainties=uncertainties,
-                    hhv=hhv_val,
+                    hhv=t3_hhv,
                     ef_unit=flat_inputs.get(
                         "ef_unit", emission_factors.get("unit", "kg/unit")
                     ),
                     fuel_unit=unit,
-                    fuel_type=flat_inputs.get("fuel_type")
-                    or emission_factors.get("fuel_type", "unknown"),
+                    # S1K-F2: the HHV basis comes from the factor (catalog type / hhv_unit), as at
+                    # Tier 1; the fuel name made "Coke Oven Gas" a solid (short-ton basis)
+                    fuel_type=(emission_factors.get("type") if str(emission_factors.get("type") or "").lower()
+                               in ("gases", "liquids", "solids") else None)
+                    or flat_inputs.get("fuel_type") or emission_factors.get("fuel_type", "unknown"),
+                    hhv_unit=t3_hu or factor_hhv_unit(emission_factors),
+                    density=float(flat_inputs.get("density") or flat_inputs.get("fuel_density"))
+                    if (flat_inputs.get("density") or flat_inputs.get("fuel_density")) else None,
                     combustion_efficiency=comb_eff_frac,
                     operating_temperature=flat_inputs.get("operating_temperature")
                     or flat_inputs.get("temperature"),
@@ -1037,6 +1115,12 @@ class CalculationDispatcher:
                 unit_str = str(flat_inputs.get("unit") or unit or "").lower().strip()
                 # Table 6-2 is per drilling day (or per well at Tier 1): a volume or mass is not an activity
                 given_unit = str(flat_inputs.get("unit") or "").lower().strip()  # (not the dispatcher's "m3" default)
+                if given_unit in ("h", "hr", "hrs", "hour", "hours"):
+                    # S1K-F16: drilling time given in hours is converted to drilling days (it was refused)
+                    for k in ("amount", "quantity", "drilling_days"):
+                        if flat_inputs.get(k) not in (None, "", "-"):
+                            flat_inputs[k] = float(flat_inputs[k]) / 24.0
+                    flat_inputs["unit"] = given_unit = unit_str = "days"
                 if given_unit and given_unit not in ("days", "day", "d", "drilling_days", "well", "wells", "well_count"):
                     raise ValueError(f"Drilling activity is in drilling days (or wells at Tier 1), not '{given_unit}'")
 
@@ -1370,7 +1454,10 @@ class CalculationDispatcher:
                     ["blowdown_volume", "amount", "quantity"],
                     "vessel physical volume",
                 )
-                raw_unit = flat_inputs.get("blowdown_unit") or unit or "m3"
+                if flat_inputs.get("blowdown_volume") in (None, "", "-"):   # the volume is the record quantity
+                    raw_unit = self._method_unit(flat_inputs, ["blowdown_unit"], flat_inputs.get("unit"), "m3")
+                else:
+                    raw_unit = flat_inputs.get("blowdown_unit") or unit or "m3"
                 vol_m3 = self._normalize_volume(raw_vol, raw_unit, "m3", flat_inputs.get("year"), flat_inputs.get("month"))
                 press = self._require_float(
                     flat_inputs,
@@ -1457,7 +1544,11 @@ class CalculationDispatcher:
                     ["venting_duration", "duration", "hours", "days", "vent_duration"],
                     None,
                 )
-                duration_unit = flat_inputs.get("duration_unit") or "days"
+                # S1K-F20: the Tier 3 venting time is in hours (form "Venting time (h)", calculator
+                # default); a file without duration_unit was read in days (24x high)
+                is_t3 = str(tier_val or "").strip().lower() in ("tier3", "tier_3", "3", "t3") or \
+                    str(factor_src or "").strip().lower() == "specific"
+                duration_unit = flat_inputs.get("duration_unit") or ("hours" if is_t3 else "days")
                 period_duration = self._optional_float(
                     flat_inputs,
                     ["period_duration", "total_period", "period_days", "operating_days"],
@@ -1547,24 +1638,8 @@ class CalculationDispatcher:
                     ["amount", "quantity", "throughput"],
                     "tank liquid throughput",
                 )
-                t_unit = str(
-                    flat_inputs.get("tank_unit")
-                    or flat_inputs.get("throughput_unit")
-                    or unit
-                    or "bbl"
-                ).lower()
-                if t_unit in ["m3", "m³", "cubic_meters"]:
-                    throughput_bbl = raw_throughput * CONVERSIONS.get(
-                        "m3_to_bbl", 6.28981
-                    )
-                elif t_unit in ["gal", "gallon", "gallons"]:
-                    throughput_bbl = raw_throughput / 42.0
-                elif t_unit in ["l", "liter", "liters"]:
-                    throughput_bbl = (raw_throughput / 1000.0) * CONVERSIONS.get(
-                        "m3_to_bbl", 6.28981
-                    )
-                else:
-                    throughput_bbl = raw_throughput  # bbl
+                t_unit = self._method_unit(flat_inputs, ["tank_unit", "throughput_unit"], flat_inputs.get("unit"), "bbl")
+                throughput_bbl = self._liquid_bbl(raw_throughput, t_unit, "Tank throughput")
 
                 # BUG-102: GOR is one of several methods; without it the Table 6-22 / 6-24 defaults (or
                 # VBE / Standing / EUB when separator data are given) apply instead of zero emissions
@@ -1630,8 +1705,14 @@ class CalculationDispatcher:
                                      "controllers need a controller type (Tables 6-14 / 6-15), monitoring "
                                      "survey counts, or a measured bleed rate")
                 bleed_rate = float(bleed_raw) if bleed_raw not in (None, "", "-") else None
-                if bleed_rate is not None and flat_inputs.get("pneu_bleed_unit", "scf") == "m3":
-                    bleed_rate *= 35.3147  # m3 -> scf
+                if bleed_rate is not None:
+                    # S1K-F4: every volume-rate spelling (scf, scf/hr, m3, m³, Sm3, m3/hr ...) -> scf/h;
+                    # a mass rate or an unknown unit is refused (only the exact "m3" was converted)
+                    from .units import UnitError, volume_rate_m3_per_hour
+                    try:
+                        bleed_rate *= volume_rate_m3_per_hour(flat_inputs.get("pneu_bleed_unit") or "scf") / CONVERSIONS["scf_to_m3"]
+                    except UnitError as err:
+                        raise ValueError(f"Pneumatic bleed rate unit: {err} (use scf/hr or m3/hr)")
                 ch4_raw = next((flat_inputs.get(k) for k in ("pneu_ch4_content", "ch4_content", "c1", "gas_content")
                                 if flat_inputs.get(k) not in (None, "", "-")), None)
                 if ch4_raw is None and bleed_rate is not None and not ctype:
@@ -1967,8 +2048,12 @@ class CalculationDispatcher:
                     ["agr_throughput", "gas_throughput", "amount", "quantity", "throughput"],
                     "gas throughput",
                 )
+                if flat_inputs.get("agr_throughput") in (None, "", "-") and flat_inputs.get("gas_throughput") in (None, "", "-"):
+                    agr_unit = self._method_unit(flat_inputs, ["agr_unit"], flat_inputs.get("unit"), None) or unit
+                else:
+                    agr_unit = flat_inputs.get("agr_unit") or unit
                 vol_mmscf = self._normalize_volume(
-                    agr_vol, flat_inputs.get("agr_unit") or unit, "mmscf", flat_inputs.get("year"), flat_inputs.get("month")
+                    agr_vol, agr_unit, "mmscf", flat_inputs.get("year"), flat_inputs.get("month")
                 )
                 raw_co2_in = self._require_float(
                     flat_inputs, ["agr_co2_in", "co2_in", "co2_content"], "inlet CO2 mole %"

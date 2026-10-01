@@ -6,7 +6,7 @@
 
 The results were then checked in the database, in the UI table and in the table's data feed.
 
-**Code base.** Branch `ccr-b93733a1-u3m8s8` at commit `714e97e4`. No application code was changed. This document only reports findings.
+**Code base.** Branch `ccr-b93733a1-u3m8s8` at commit `714e97e4` (§1–§5: the findings as found). **All findings were then fixed; see §6 for the fixes and the re-run of the same 100,000 rows.**
 
 ## 1. Summary
 
@@ -315,3 +315,72 @@ Results are in `audit/scope1_100k/results/`:
 
 ¹ Expected refusals: physical units of the wrong phase or dimension for the fuel (e.g. gas fuel in gallons, coal in m³), or a custom factor applied to the wrong dimension. All were refused with clear reasons.
 ² Drilling activity given in hours is refused ("drilling days"). The audit accepts either a conversion or a refusal here.
+
+## 6. Fixes and re-run (2026-10-01)
+
+Every finding is fixed. One more defect found while fixing F5 is also fixed (F20).
+
+### 6.1 Fixes
+
+| ID | Fix | Where |
+|---|---|---|
+| F1 | The carbon balance runs only when the gas analysis contains hydrocarbons. Without one, CO₂ comes from the factor and the site HHV. | `calculations/combustion.py` |
+| F2 | Tier 3 takes the HHV basis from the catalog factor (type, `hhv_unit`), as Tier 1 does. The density is passed through as well. | `calculations/dispatcher.py` |
+| F3 | Tank throughput goes through the shared unit table (kbbl, Mbbl, gal, L, m³ …). Gas volumes, masses, energies and unknown units are refused. | `dispatcher._liquid_bbl` |
+| F4 | The bleed rate goes through the shared volume-rate parser (`scf`, `scf/hr`, `m3`, `m³`, `Sm3`, `m3/hr`, `scfm` …). Mass rates and unknown units are refused. | `units.volume_rate_m3_per_hour`, dispatcher |
+| F5 | The vent rate goes through the same parser (`Mcf/day`, `MMscfd`, `m3/h` …). Unknown rate or duration units are refused. | `calculations/vented.py` |
+| F20 | **New:** the Tier 3 associated-gas venting time defaulted to *days* in the dispatcher (24× high for files without `duration_unit`). It now defaults to hours, as the form and calculator do. | dispatcher |
+| F6 | `Mt` / `MT` / `mt` is refused as ambiguous: "write 'tonne'". This applies to manual, bulk and JSON import. | `services/scope1_calc.validate_activity` |
+| F7 | Unknown temperature or pressure units raise an error. `mmHg`, `torr`, `inHg` (absolute) and `centigrade` were added. `kg/cm2` (gauge or absolute?) and "deg" are refused. | `calculations/units.py` |
+| F8 | A unit written inside the quantity cell must match the unit column, or the row is refused. | `background_processor._process_row` |
+| F9 | Contradicting `unit` / `tank_unit` (also `blowdown_unit` and `agr_unit` when the volume is the record quantity) are refused. Two representations of the same activity are still accepted, e.g. the form's converted bbl at top level plus m³ in `calc_inputs`, as in stored records. The tank form now sends the converted bbl in both places. | `dispatcher._method_unit`, `legacy_engine`, `Scope1Form.jsx` |
+| F10 | Unloading: a per-event factor needs `events`, a per-well-year factor needs `wells`, and other count words are refused. | dispatcher |
+| F11 | `hhv_unit` (MJ/m3, kcal/m3, Btu/gal, MJ/kg, GJ/…) is converted on the server at Tier 1, 2 and 3. Unknown units are refused. | `combustion.user_hhv` |
+| F12 | Generic words (`activity`, `region`, `hours`, `pressure`, `events`, `gor` …) map only an identical header, on both the server and the client. For unloading and associated-gas rows, `region` is the basin and the record keeps the facility region. | `background_processor`, `utils/importMapping.js` |
+| F13 | Export CSV pages through every matching record (5,000 per request). Region / Facility was added, and Group and the process label are fixed. | `Scope1Form.jsx` |
+| F14 | One request per page or filter change; a stale response is ignored. | `Scope1Form.jsx` |
+| F15 | CSV rows are counted before processing; a file over 50,000 rows is refused immediately. | `background_processor` |
+| F16 | Shared vocabularies: `bbl/d`, `bpd`, `gal/day`; GOR units parsed (unknown refused, it was read as scf/bbl); `Nm3`, `MMcf`, `kscf` in every gas method; `barrels`, `gallons`, `litre` in the activity tables; leak rates in g/hr, kg/day, Mcf/day …; drilling time in hours converted to days. The Tier 1 associated-gas oil unit no longer falls back to bbl. | units, vented, vented_gas, activity_factors, fugitive_onshore, dispatcher |
+| F17 | "12,345.6" in any column of a comma CSV is read as 12345.6. | `background_processor` |
+| F18 | Tier 2 "catalog fuel + site HHV / density" is accepted in bulk. The wizard has a Tier 2 card, and templates take `tier=2`. | `background_processor`, wizard, `routes/emissions.py` |
+| F19 | Engineered records store the activity the method used: flowback scf, vented scf, leakers, measured hours. The wizard modal sits above the top bar. Server header aliases were removed (F12). | `services/scope1_calc.apply_result`, CSS |
+
+**Tests.**
+- 53 regression tests in `new/server/tests/test_s1k_bulk_100k_audit_2026_10_01.py`.
+- 2 in `new/client/src/__tests__/importMapping.test.js`.
+
+Results:
+- Backend: 2,082 passed, 1 skipped. `test_performance.py` needs `pytest-benchmark`, which is not installed here; it errors the same way before the fixes.
+- validation: 128 passed.
+- vitest: 40 passed.
+- ESLint: 0 errors.
+- `npm run build`: OK.
+
+### 6.2 Re-run of the same 100,000 rows
+
+The dataset is unchanged: it regenerates byte-identical, MD5 `619b5c5c…`. Expectations changed only where a refused spelling is now supported (`litre`, `centigrade`, `mmHg`/`torr`/`inHg` → "either").
+
+| | Before | After |
+|---|---|---|
+| 100k file | refused after 79 s (API) / 88 s (UI) | refused up front: 3.3 s (API) / ~10 s (UI, including navigation) |
+| Saved / refused | 83,147 / 16,853 | 84,351 / 15,649 |
+| API vs UI database | identical | identical, including the stored payload |
+| Oracle checks | 45,398 / 46,788 pass | **47,434 / 47,434 pass** |
+| Unit-equivalence groups | 19,376 / 20,366 pass | **20,830 / 20,830 pass** |
+| Must-refuse rows accepted | 409 | **0** |
+| Ambiguous rows accepted | 1,667 | **0** (1,897 / 1,897 refused) |
+| Valid rows refused | 2,472 (F2, F16, F17) | **0** |
+| Engineered records without quantity | 3,154 | **0** |
+| Activity / region metadata overwritten | 1,638 / 1,186 | **0 / 0** |
+| UI Export CSV | 5,000 of 83,147 | **84,351 of 84,351** |
+| UI table, 150 pages | 1 page showed the previous page (10 duplicate rows) | **0** |
+| UI table vs DB / table feed vs DB | 0 mismatches | **0 / 0 mismatches** (1,640 rendered rows; 84,351 feed records) |
+
+Evidence is in `audit/scope1_100k/results/rerun_after_fixes/`:
+- check summaries for the API and UI runs;
+- UI table vs DB;
+- upload jobs and the Export CSV count;
+- screenshots, including the record from F1, now at 362.123 tCO₂ (the oracle gives 362.12 t; it was 0.000).
+
+All 18 probes (`probes.py`) now give the expected outcome (`results/probes_result.json`).
+
