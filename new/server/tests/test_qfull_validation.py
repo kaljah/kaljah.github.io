@@ -245,7 +245,7 @@ class TestFlaringTier3:
         c1 = 0.90
         c2 = 0.05
         co2_native = 0.02
-        eta_c = 0.984
+        eta_c = 0.98
         eta_d = 0.98
         payload = {
             'process_type': 'flaring',
@@ -285,7 +285,7 @@ class TestFlaringTier3:
             'hhv': 1020.0
         }
         
-        eta_c = 0.996  # Actual enclosed defaults from combustion.py line 412
+        eta_c = 0.98  # Compendium Eq 5-2 default (enclosed: only the residual CH4 is 0.5 %)
         eta_d = 0.995  # Actual enclosed defaults from combustion.py line 413
         
         co2_tonnes = 1000.0 * 1.0 * eta_c * DENSITY_CO2 / 1000
@@ -619,7 +619,8 @@ class TestAGR:
             'agr_ch4_slip_pct': 0.0
         }
         throughput_scf = 10.0 * 1_000_000
-        co2_vented_scf = throughput_scf * (0.04 - 0.01)
+        # Eq 6-18: outlet stream = inlet x (1 - 0.04) / (1 - 0.01)
+        co2_vented_scf = throughput_scf * (0.04 - 0.01) / (1 - 0.01)
         co2_vented_m3 = co2_vented_scf * SCF_TO_M3
         co2_tonnes = co2_vented_m3 * DENSITY_CO2 / 1000
         

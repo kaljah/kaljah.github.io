@@ -485,6 +485,26 @@ class CalculationDispatcher:
                 return "offshore"
         return "onshore"
 
+    _DENSITY_TO_KG_M3 = {"kg/m3": 1.0, "kg/l": 1000.0, "g/ml": 1000.0, "g/cm3": 1000.0, "t/m3": 1000.0,
+                         "lb/gal": 119.826427, "lb/usgal": 119.826427, "lb/ft3": 16.0184634, "lb/bbl": 119.826427 / 42.0}
+
+    def _fuel_density(self, flat_inputs):
+        """Fuel density in kg/m3 (density / fuel_density, unit density_unit). The form enters kg/m3; a
+        bulk density_unit was ignored (8.3 lb/gal read as 8.3 kg/m3)."""
+        raw = flat_inputs.get("density") if flat_inputs.get("density") not in (None, "", "-") else flat_inputs.get("fuel_density")
+        if raw in (None, "", "-"):
+            return None
+        d = float(raw)
+        if not math.isfinite(d) or d <= 0:
+            raise ValueError("Fuel density must be a positive number")
+        u = str(flat_inputs.get("density_unit") or "").strip().lower().replace(" ", "").replace("³", "3")
+        if not u:
+            return d
+        if u not in self._DENSITY_TO_KG_M3:
+            raise ValueError(f"Unknown density unit '{flat_inputs.get('density_unit')}' "
+                             "(use kg/m3, kg/L, g/cm3, lb/gal or lb/ft3)")
+        return d * self._DENSITY_TO_KG_M3[u]
+
     def _optional_fraction(self, flat_inputs, keys, default=0.0, is_percent=False):
         """Extracts an optional percentage or fraction normalized to 0.0 - 1.0."""
         if isinstance(keys, str):
@@ -872,7 +892,7 @@ class CalculationDispatcher:
                 "mobile",
             ]:
                 hhv_val = flat_inputs.get("hhv") or emission_factors.get("hhv")
-                density_val = flat_inputs.get("density") or flat_inputs.get("fuel_density")
+                density_val = self._fuel_density(flat_inputs)
                 # S1K-F11: a site HHV carries its own unit (MJ/m3, kcal/m3, Btu/gal ...)
                 user_hu = None
                 if flat_inputs.get("hhv") not in (None, ""):
@@ -963,7 +983,10 @@ class CalculationDispatcher:
                     or (isinstance(_spec, dict) and str(_spec.get(k) or "").strip() not in ("", "0", "0.0", "-"))
                     for k in ("co2", "ch4", "n2o")
                 )
-                if not any(comps.get(f"c{i}") for i in range(1, 11)) and not comps.get("co2_comp") and not _measured:
+                carbon_wt = next((flat_inputs.get(k) for k in ("carbon_content", "carbon_wt_pct", "c_content")
+                                  if flat_inputs.get(k) not in (None, "", "-")), None)
+                if (not any(comps.get(f"c{i}") for i in range(1, 11)) and not comps.get("co2_comp") and not _measured
+                        and carbon_wt is None):
                     raise ValueError(
                         "Tier 3 fuel analysis needs the fuel gas composition (Gas analysis) or measured emission factors"
                     )
@@ -993,8 +1016,8 @@ class CalculationDispatcher:
                                in ("gases", "liquids", "solids") else None)
                     or flat_inputs.get("fuel_type") or emission_factors.get("fuel_type", "unknown"),
                     hhv_unit=t3_hu or factor_hhv_unit(emission_factors),
-                    density=float(flat_inputs.get("density") or flat_inputs.get("fuel_density"))
-                    if (flat_inputs.get("density") or flat_inputs.get("fuel_density")) else None,
+                    density=self._fuel_density(flat_inputs),
+                    carbon_wt=carbon_wt,
                     combustion_efficiency=comb_eff_frac,
                     operating_temperature=flat_inputs.get("operating_temperature")
                     or flat_inputs.get("temperature"),
@@ -2417,7 +2440,7 @@ class CalculationDispatcher:
         conv = dict(
             hhv=inputs.get("hhv") or emission_factors.get("hhv") or catalog.get("hhv"),
             fuel_type=emission_factors.get("type") or catalog.get("type") or inputs.get("fuel_type") or inputs.get("fuel"),
-            density=inputs.get("density") or inputs.get("fuel_density") or emission_factors.get("density"),
+            density=self._fuel_density(inputs) or emission_factors.get("density"),
             hhv_unit=factor_hhv_unit(emission_factors) or factor_hhv_unit(catalog),
             hours=hours,
             # hours in the record's year: a per-year factor over a leap-year month is days / 366
