@@ -13,7 +13,7 @@ import pytest
 
 from app import app as flask_app
 from background_processor import (
-    MAX_IMPORT_ROWS, _build_mapping, _process_file_thread, get_job_status, upload_jobs, upload_jobs_lock,
+    _build_mapping, _process_file_thread, get_job_status, upload_jobs, upload_jobs_lock,
 )
 from extensions import db
 from models import Emission, Facility, User
@@ -281,26 +281,83 @@ def test_f12_unloading_basin_not_stored_as_region(user_id):
     assert t["region"] == "Illizi"
 
 
-# --- F15: oversized file refused before processing -------------------------------------------------------------
-def test_f15_oversized_csv_refused_up_front(user_id):
-    lines = ["date,facility_name,process_type,fuel,quantity,unit,factor_type,source_ref"]
-    lines += [f"2024-03,{FACILITY},combustion,Natural Gas,1,MMBtu,default,BIG-{i}" for i in range(MAX_IMPORT_ROWS + 20)]
+# --- F15 (superseded 2026-10-01): the 50,000-row cap is removed; a 100k file imports in one go ---------------
+def test_f15_no_row_limit():
+    import background_processor as bp
+
+    assert not hasattr(bp, "MAX_IMPORT_ROWS") and not hasattr(bp, "ImportTooLarge")
+
+
+def _run_rows(user_id, rows, overwrite):
+    header = ["date", "facility_name", "process_type", "fuel", "quantity", "unit", "factor_type", "equipment_id"]
     fd, path = tempfile.mkstemp(suffix=".csv")
-    os.write(fd, "\n".join(lines).encode())
+    os.write(fd, ("\n".join([",".join(header)] + [",".join(str(r[h]) for h in header) for r in rows])).encode())
     os.close(fd)
-    job = "job-s1k-big-" + os.urandom(4).hex()
+    job = "job-s1k-flush-" + os.urandom(4).hex()
     with upload_jobs_lock:
         upload_jobs[job] = {"status": "processing", "progress": 0, "processed": 0, "total": 0, "errors": [],
                             "skipped": [], "error_csv_path": None, "anomalies": []}
     try:
-        _process_file_thread(app=flask_app, job_id=job, file_path=path, original_filename="big.csv", user_id=user_id,
-                             global_factor_type="auto", provided_mapping=None, scope="1", overwrite_duplicates=False)
+        _process_file_thread(app=flask_app, job_id=job, file_path=path, original_filename="flush.csv", user_id=user_id,
+                             global_factor_type="auto", provided_mapping=None, scope="1", overwrite_duplicates=overwrite)
     finally:
         if os.path.exists(path):
             os.remove(path)
-    st = get_job_status(job)
-    assert st["status"] == "error" and st["processed"] == 0
-    assert "No rows were saved" in st["errors"][0]
+    return get_job_status(job), upload_jobs[job]
+
+
+def _flush_rows(tag, n):
+    return [dict(date="2024-05", facility_name=FACILITY, process_type="combustion", fuel="Natural Gas", quantity=10 + i,
+                 unit="MMBtu", factor_type="default", equipment_id=f"FL-{tag}-{i}") for i in range(n)]
+
+
+def test_batched_flush_in_file_duplicate_updates_flushed_row(user_id, monkeypatch):
+    import background_processor as bp
+    from models import ActivityLog
+
+    monkeypatch.setattr(bp, "FLUSH_EVERY", 3)
+    tag = os.urandom(3).hex()
+    rows = _flush_rows(tag, 7)
+    rows.append(dict(rows[0], quantity=999))          # repeats row 1, flushed two batches earlier
+    st, _job = _run_rows(user_id, rows, overwrite=True)
+    assert st["status"] == "completed", st
+    with flask_app.app_context():
+        recs = Emission.query.filter(Emission.equipment_id.like(f"FL-{tag}-%")).all()
+        assert len(recs) == 7                          # updated, not inserted twice
+        first = [r for r in recs if r.equipment_id == f"FL-{tag}-0"][0]
+        assert first.quantity == 999
+        # an in-file repeat is not an overwrite of a saved platform record
+        assert ActivityLog.query.filter_by(action="BULK_OVERWRITE", record_id=str(first.id)).count() == 0
+
+
+def test_batched_flush_in_file_duplicate_refused_without_overwrite(user_id, monkeypatch):
+    import background_processor as bp
+
+    monkeypatch.setattr(bp, "FLUSH_EVERY", 3)
+    tag = os.urandom(3).hex()
+    rows = _flush_rows(tag, 5)
+    rows.append(dict(rows[0], quantity=999))
+    st, job = _run_rows(user_id, rows, overwrite=False)
+    assert any("earlier in this file" in s["reason"] for s in job["skipped"])
+    with flask_app.app_context():
+        assert Emission.query.filter(Emission.equipment_id.like(f"FL-{tag}-%")).count() == 5
+
+
+def test_batched_flush_is_still_all_or_nothing(user_id, monkeypatch):
+    import background_processor as bp
+    from extensions import db
+
+    monkeypatch.setattr(bp, "FLUSH_EVERY", 3)
+    tag = os.urandom(3).hex()
+
+    def boom():
+        raise RuntimeError("commit failed")
+    monkeypatch.setattr(db.session, "commit", boom)
+    st, _job = _run_rows(user_id, _flush_rows(tag, 10), overwrite=True)
+    monkeypatch.undo()
+    assert st["status"] == "error"
+    with flask_app.app_context():
+        assert Emission.query.filter(Emission.equipment_id.like(f"FL-{tag}-%")).count() == 0   # flushed rows rolled back
 
 
 # --- F16: unit vocabularies --------------------------------------------------------------------------------
@@ -433,3 +490,18 @@ def test_f9_form_representation_is_not_a_contradiction():
         assert _close(two_reps["totalCo2e"], ref["totalCo2e"])
         with pytest.raises(ValueError, match="Contradicting units"):
             compute_emissions(dict(base, amount=1000, unit="bbl", tank_unit="m3", **tank), {})
+
+
+def test_upload_over_size_limit_says_limit_and_what_to_do(user_id):
+    old = flask_app.config.get("MAX_CONTENT_LENGTH")
+    c = flask_app.test_client()
+    assert c.post("/api/auth/login", json={"email": "s1k_audit_1001@ghg.com", "password": "S1kAudit1001!"}).status_code == 200
+    flask_app.config["MAX_CONTENT_LENGTH"] = 1024 * 1024
+    try:
+        r = c.post("/api/emissions/upload/start", data={"file": (io.BytesIO(b"x" * (2 * 1024 * 1024)), "big.csv")},
+                   content_type="multipart/form-data")
+        assert r.status_code == 413
+        msg = r.get_json()["error"]
+        assert "1 MB upload limit" in msg and "split it into smaller files" in msg
+    finally:
+        flask_app.config["MAX_CONTENT_LENGTH"] = old
