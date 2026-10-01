@@ -1,2 +1,0 @@
-{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":60,"LineContent":"    avgMethaneLossRatePct: 0,"}
-{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":259,"LineContent":"        avgMethaneLossRatePct: avgLossRatePct,"}

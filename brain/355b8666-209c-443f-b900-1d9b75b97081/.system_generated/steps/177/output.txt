@@ -1,4 +1,0 @@
-Script ran on page and returned:
-```json
-"Filled and clicked Sign In"
-```

@@ -1,2 +1,0 @@
-{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":107,"LineContent":"          path=\"qa-dashboard\""}
-{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\Sidebar.jsx","LineNumber":332,"LineContent":"                  to=\"/qa-dashboard\""}

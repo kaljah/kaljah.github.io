@@ -1,3 +1,0 @@
-{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\__init__.py"}
-{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py"}
-{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_gwp_dynamic.py"}

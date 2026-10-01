@@ -256,7 +256,7 @@ const GasCompositionCalculator = ({
       setSaveName("");
     } catch (error) {
       console.error("Failed to save factor:", error);
-      toast.error("Failed to save factor");
+      toast.error(error.response?.data?.error || "Failed to save factor");
     } finally {
       setIsSaving(false);
     }

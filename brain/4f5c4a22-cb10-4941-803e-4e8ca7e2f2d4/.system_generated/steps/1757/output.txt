@@ -1,3 +1,0 @@
-Found 2 results
-components/CalculationDetails.css
-components/CalculationDetails.jsx

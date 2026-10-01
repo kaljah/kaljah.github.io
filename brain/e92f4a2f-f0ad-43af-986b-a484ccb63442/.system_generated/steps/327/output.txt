@@ -1,2 +1,0 @@
-{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py"}
-{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_operational_defaults.py"}

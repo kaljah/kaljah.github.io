@@ -1,3 +1,0 @@
-## Latest page snapshot
-uid=331_0 RootWebArea "Carbon Tech" url="http://localhost:5173/emissions?scope=scope3"
-  uid=331_1 StaticText "Authenticating Session..."

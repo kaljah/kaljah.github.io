@@ -1,5 +1,0 @@
-
-The command exited with code 0.
-Output:
-Icon width ~ 270, full width 1024
-

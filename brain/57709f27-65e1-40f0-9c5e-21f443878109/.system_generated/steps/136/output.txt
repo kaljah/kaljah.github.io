@@ -1,7 +1,0 @@
-
-The command exited with code 0.
-Output:
-False
-True
-True
-

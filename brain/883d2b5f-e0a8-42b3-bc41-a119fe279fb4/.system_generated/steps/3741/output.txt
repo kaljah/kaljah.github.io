@@ -1,6 +1,0 @@
-
-The command exited with code 0.
-Output:
-297: @dashboard_bp.route("/intensity-trend", methods=["GET"])
-
-

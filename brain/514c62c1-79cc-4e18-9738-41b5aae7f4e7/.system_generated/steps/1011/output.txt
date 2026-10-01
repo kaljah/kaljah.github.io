@@ -1,5 +1,0 @@
-
-The command exited with code 0.
-Output:
-Breakdown: Counter({'Rejected': 100, 'Pending': 10})
-

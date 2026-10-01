@@ -953,6 +953,7 @@ const ManageDataInner = () => {
     };
 
     const handleSaveFactor = async () => {
+        if (user?.role !== 'admin') return toast.error('Custom factors are organisation-wide: only admins can change them.');
         if (!factorForm.factor_name) return toast.error('Name required');
         try {
             if (editingFactorId) {
@@ -2218,15 +2219,19 @@ const ManageDataInner = () => {
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px' }}>
                                     <div>
                                         <h2 style={{ marginBottom: '8px', fontWeight: 700 }}>Custom Emission Factors</h2>
-                                        <p style={{ color: 'var(--text-secondary)', margin: 0 }}>Define custom factors for specialized equipment.</p>
+                                        <p style={{ color: 'var(--text-secondary)', margin: 0 }}>
+                                            {user?.role === 'admin'
+                                                ? 'Define custom factors for specialized equipment.'
+                                                : 'Custom factors are organisation-wide: only admins can add or change them.'}
+                                        </p>
                                     </div>
-                                    <button 
+                                    {user?.role === 'admin' && <button 
                                         className="action-btn" 
                                         onClick={() => setImportModal({ isOpen: true, type: 'custom_factors' })}
                                         style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', fontSize: '0.9rem', width: 'auto' }}
                                     >
                                         <Upload size={16} /> Bulk Import (CSV)
-                                    </button>
+                                    </button>}
                                 </div>
                                 {/* Create/Edit Form */}
                                 <div className="grid-forms">

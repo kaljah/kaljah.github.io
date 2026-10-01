@@ -1,5 +1,0 @@
-
-The command exited with code 0.
-Output:
-res: 69.0421491709669
-

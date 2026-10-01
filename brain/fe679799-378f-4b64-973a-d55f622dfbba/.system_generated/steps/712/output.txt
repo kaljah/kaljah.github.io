@@ -1,6 +1,0 @@
-
-The command exited with code 0.
-Output:
-p1: 10
-p2: 3
-

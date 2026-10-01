@@ -1,4 +1,0 @@
-Found 3 results
-agent_08_admin_playwright.py
-agent_08_bugs.json
-agent_08_report.md

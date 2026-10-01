@@ -1,5 +1,0 @@
-
-The command exited with code 0.
-Output:
-32         return jsonify({"error": f"Failed to record emission: {e}"}), 500
-

@@ -1,7 +1,0 @@
-
-The command exited with code 1.
-Output:
-
-=== AUTH ===
-[01] EXCEPTION: 'charmap' codec can't encode character '\u2705' in position 5: character maps to <undefined>
-

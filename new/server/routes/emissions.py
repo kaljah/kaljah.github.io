@@ -2568,8 +2568,10 @@ def upload_start():
         return jsonify({"error": "Read-only role cannot upload data"}), 403
     if scope not in ("1", "2", "3", "3_eeio", "sources", "production", "mitigation", "custom_factors", "facilities"):
         return jsonify({"error": f"Unknown import type '{scope}'"}), 400
-    if scope in ("facilities", "custom_factors") and user.role not in ["admin", "superuser"]:
-        return jsonify({"error": "Only admins and superusers can import facilities or custom factors"}), 403
+    if scope == "facilities" and user.role not in ["admin", "superuser"]:
+        return jsonify({"error": "Only admins and superusers can import facilities"}), 403
+    if scope == "custom_factors" and user.role != "admin":  # organisation-wide factors
+        return jsonify({"error": "Only admins can import custom factors"}), 403
 
     import json
 

@@ -1,5 +1,0 @@
-
-The command exited with code 0.
-Output:
-Indexed 69 Frontend files successfully.
-

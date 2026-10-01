@@ -1,6 +1,0 @@
-
-The command exited with code 0.
-Output:
-1: 429
-Got 429!
-

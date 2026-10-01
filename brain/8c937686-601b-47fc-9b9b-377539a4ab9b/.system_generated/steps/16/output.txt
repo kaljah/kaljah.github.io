@@ -1,6 +1,0 @@
-
-The command exited with code 0.
-Output:
-20: class AGRCalculator(BaseCalculator):
-142: class DehydratorCalculator(BaseCalculator):
-

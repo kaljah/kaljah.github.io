@@ -1,1 +1,0 @@
-{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\models.py","LineNumber":292,"LineContent":"class Goal(db.Model):"}

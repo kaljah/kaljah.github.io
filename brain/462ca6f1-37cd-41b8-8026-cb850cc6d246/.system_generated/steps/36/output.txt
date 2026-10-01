@@ -1,8 +1,0 @@
-
-The command exited with code 0.
-Output:
-
-new\client\src\utils\EmissionFactors.js:647:    // So we should pre-calculate or provide the raw CH4 factor.
-
-
-

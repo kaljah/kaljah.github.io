@@ -1,4 +1,0 @@
-Script ran on page and returned:
-```json
-{"loading":false,"h1":"GHG Emissions Dashboard","hasConfigBtn":false}
-```

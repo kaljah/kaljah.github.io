@@ -1,2 +1,0 @@
-## Pages
-2: http://localhost:5173/manage-data [selected]

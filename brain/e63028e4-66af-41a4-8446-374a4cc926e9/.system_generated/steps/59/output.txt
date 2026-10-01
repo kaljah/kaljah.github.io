@@ -1,3 +1,0 @@
-Found 2 results
-validation/mutation/test_calculation_mutations.py
-validation/mutation/test_clean_mutations.py

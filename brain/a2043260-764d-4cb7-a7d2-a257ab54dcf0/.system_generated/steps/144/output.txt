@@ -1,4 +1,0 @@
-Script ran on page and returned:
-```json
-"link not found"
-```

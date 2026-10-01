@@ -1,4 +1,0 @@
-Script ran on page and returned:
-```json
-{"cards":[],"url":"http://localhost:5173/login"}
-```

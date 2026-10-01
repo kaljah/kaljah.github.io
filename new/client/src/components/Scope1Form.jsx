@@ -2310,7 +2310,7 @@ const Scope1Form = () => {
                               placeholder="Select saved factor"
                             />
                           </div>
-                          <button
+                          {user?.role === "admin" && <button
                             type="button"
                             className="btn btn-secondary"
                             onClick={() => setIsQuickAddModalOpen(true)}
@@ -2325,7 +2325,7 @@ const Scope1Form = () => {
                           >
                             <PlusCircle size={15} />
                             <span>New library factor</span>
-                          </button>
+                          </button>}
                         </div>
                       </div>
                     )}

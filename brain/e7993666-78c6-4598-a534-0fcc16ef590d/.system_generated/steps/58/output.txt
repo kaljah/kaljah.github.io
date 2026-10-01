@@ -1,8 +1,0 @@
-
-The command exited with code 0.
-Output:
-Loading C:\Users\samsung\Desktop\H2\neocarbon_software_flyer.html...
-Saved C:\Users\samsung\Desktop\H2\preview_flyer_page_1.png
-Saved C:\Users\samsung\Desktop\H2\preview_flyer_page_2.png
-Saved C:\Users\samsung\Desktop\H2\neocarbon_software_flyer.pdf
-

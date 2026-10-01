@@ -1,1 +1,0 @@
-{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":47,"LineContent":"limiter.init_app(app)  # SEC-08 FIX: activate flask-limiter"}

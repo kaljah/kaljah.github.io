@@ -1,4 +1,0 @@
-Script ran on page and returned:
-```json
-{"clicked":"Complexe Sidérurgique DRI/EAF (Tosyali)\n- Industrial Zone"}
-```

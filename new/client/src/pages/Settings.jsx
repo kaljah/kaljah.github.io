@@ -160,8 +160,9 @@ const Settings = () => {
   };
 
 
-  // same rule as PUT /api/auth/settings (IT roles may not change operational settings)
-  const isAdmin = user?.role === "admin" || user?.role === "superuser";
+  // same rule as PUT /api/auth/settings: organisation-wide settings are admin only
+  // (superusers are limited to one region; they keep the facility settings of their region)
+  const isAdmin = user?.role === "admin";
 
   const handleSaveGlobal = async () => {
     if (!isAdmin) {

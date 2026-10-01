@@ -1,8 +1,0 @@
-
-The command exited with code 1.
-Output:
-  File "<string>", line 6
-    print(f'{fuel}: co2e={em.get(" totalCo2e\)}
-                                 ^
-SyntaxError: unterminated string literal (detected at line 6)
-

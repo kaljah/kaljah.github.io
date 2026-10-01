@@ -1,3 +1,0 @@
-## Console messages
-Showing 1-1 of 1 (Page 1 of 1).
-msgid=37 [log]  (1 args)

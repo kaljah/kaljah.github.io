@@ -1,5 +1,0 @@
-Script ran on page and returned:
-```json
-"Clicked sbti"
-```
-Page navigated to http://localhost:5173/sbti.

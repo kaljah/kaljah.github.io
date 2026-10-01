@@ -1,5 +1,0 @@
-
-The command exited with code 0.
-Output:
-664             elif process_type in ["venting", "blowdown"]:
-

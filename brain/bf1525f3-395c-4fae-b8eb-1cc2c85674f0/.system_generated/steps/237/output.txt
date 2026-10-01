@@ -1,4 +1,0 @@
-Found 3 results
-new/instance/ghg_app.db
-new/server/ghg_app.db
-new/server/ghg_emissions.db

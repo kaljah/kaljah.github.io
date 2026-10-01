@@ -1,2 +1,0 @@
-Successfully killed 1 subagent(s) and their descendants.
-Killed roles: Lead Beta Tester

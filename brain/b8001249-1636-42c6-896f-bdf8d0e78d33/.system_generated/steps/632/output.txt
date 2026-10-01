@@ -1,5 +1,0 @@
-
-The command exited with code 0.
-Output:
-negative quantity: 422 {'error': 'Invalid quantity: cannot be negative'}
-

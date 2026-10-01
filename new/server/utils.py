@@ -20,7 +20,8 @@ def is_unrestricted_location(loc):
 
 def get_allowed_facility_ids(user):
     """
-    Returns None if user is admin or superuser with unrestricted location (allowed all).
+    Returns None for admin (allowed all). Superusers are always limited to one region (owner
+    decision 2026-10-01): a superuser without a specific region sees nothing until IT assigns one.
     Returns [] for it_admin (zero facility/emission data access).
     Returns a list of facility IDs if user is restricted to a region/location/name.
     """
@@ -35,11 +36,7 @@ def get_allowed_facility_ids(user):
     if user.role == "admin":
         return None
 
-    # Superuser with unrestricted location has full access across all facilities
     user_region = str(user.location).strip() if user.location else ""
-    if user.role == "superuser" and is_unrestricted_location(user_region):
-        return None
-
     if not user_region or is_unrestricted_location(user_region):
         return []  # No region assigned, no access for restricted role
 
@@ -98,8 +95,6 @@ def facility_in_user_scope(user, region=None, location=None, name=None):
     if user.role == "admin":
         return True
     user_loc = str(user.location or "").strip().lower()
-    if user.role == "superuser" and is_unrestricted_location(user_loc):
-        return True
     if not user_loc or is_unrestricted_location(user_loc):
         return False
     return user_loc in {str(v or "").strip().lower() for v in (region, location, name)}
@@ -113,7 +108,7 @@ def facility_change_allowed(user, current, region=None, location=None, name=None
     """
     if not facility_in_user_scope(user, region, location, name):
         return False
-    if user.role == "admin" or (user.role == "superuser" and is_unrestricted_location(user.location)):
+    if user.role == "admin":
         return True
     user_loc = str(user.location or "").strip().lower()
     old_region = str(getattr(current, "region", None) or "").strip().lower()
@@ -268,10 +263,9 @@ def log_activity_and_notify(
         elif user.role == "user":
             superusers = User.query.filter_by(role="superuser", status="active").all()
             for su in superusers:
-                if (
-                    not su.location
-                    or su.location == user.location
-                    or su.location == "all"
+                if (  # superusers are region-scoped: only their own region's activity
+                    su.location
+                    and str(su.location).strip().lower() == str(user.location or "").strip().lower()
                 ):
                     Notification.create(
                         user_id=su.id,

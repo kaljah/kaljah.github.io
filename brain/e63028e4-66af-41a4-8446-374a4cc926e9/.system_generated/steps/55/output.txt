@@ -1,3 +1,0 @@
-Found 2 results
-new/server/tests/test_independent_differential.py
-validation/differential/test_clean_differential.py

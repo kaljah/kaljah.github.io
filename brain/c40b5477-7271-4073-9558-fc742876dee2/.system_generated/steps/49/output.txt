@@ -1,2 +1,0 @@
-{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py"}
-{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\requirements.txt"}

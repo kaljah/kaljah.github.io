@@ -1,1 +1,0 @@
-A1: (Recommended) Remove the legacy 'PDF Report' button from the top header bar, keeping '2025 Master Report (PDF)' in the header and using 'Create Report' for all customized PDF reporting.

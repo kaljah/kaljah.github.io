@@ -1,6 +1,0 @@
-
-The command exited with code 0.
-Output:
-api/csrf-token: 200
-auth/csrf-token: 404
-

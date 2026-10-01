@@ -1,2 +1,0 @@
-{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\config.py"}
-{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py"}

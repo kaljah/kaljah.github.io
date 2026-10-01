@@ -1,3 +1,0 @@
-Found 2 results
-routes/__pycache__/auth.cpython-312.pyc
-routes/auth.py

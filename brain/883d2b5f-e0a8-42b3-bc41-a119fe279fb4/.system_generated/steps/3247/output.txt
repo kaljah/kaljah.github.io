@@ -1,8 +1,0 @@
-
-The command exited with code 1.
-Output:
-The string is missing the terminator: ".
-    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
-    + FullyQualifiedErrorId : TerminatorExpectedAtEndOfString
- 
-

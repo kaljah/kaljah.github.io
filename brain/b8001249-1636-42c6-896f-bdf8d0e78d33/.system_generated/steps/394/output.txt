@@ -1,4 +1,0 @@
-Found 3 results
-agent_10_bugs.json
-agent_10_report.md
-agent_10_user_playwright.py

@@ -1,5 +1,0 @@
-
-The command exited with code 0.
-Output:
-itadmin@ghg.com ready with role it_admin
-

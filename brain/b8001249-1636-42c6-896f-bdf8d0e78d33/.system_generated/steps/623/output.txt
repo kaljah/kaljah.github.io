@@ -1,5 +1,0 @@
-
-The command exited with code 0.
-Output:
-me status: 401 {'authenticated': False, 'error': 'Not authenticated', 'user': None}
-

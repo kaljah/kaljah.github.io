@@ -1,1 +1,0 @@
-{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":66,"LineContent":"        cursor.execute(\"PRAGMA journal_mode = WAL\")"}

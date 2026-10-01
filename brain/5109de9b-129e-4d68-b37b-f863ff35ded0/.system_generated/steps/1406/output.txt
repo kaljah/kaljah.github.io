@@ -1,1 +1,0 @@
-Encountered error in step execution: no summary returned from GenerateContent

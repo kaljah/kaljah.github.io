@@ -1,6 +1,0 @@
-
-The command exited with code 0.
-Output:
-selenium 4.49.0
-webdriver-manager OK
-

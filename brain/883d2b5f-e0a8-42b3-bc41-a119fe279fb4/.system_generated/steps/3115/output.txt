@@ -1,9 +1,0 @@
-
-The command exited with code 0.
-Output:
-
-new\server\calculations\combustion.py:173:    def calculate(
-new\server\calculations\combustion.py:379:    def calculate(
-
-
-

@@ -533,8 +533,7 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
     // Also check user role from /api/auth/me or similar
     api.get("/auth/me").then(res => {
       const role = res.data?.role;
-      setIsAdmin(role === "admin" ||
-        (role === "superuser" && res.data?.location === "all"));
+      setIsAdmin(role === "admin"); // superusers are limited to one region
     }).catch(() => {});
   }, []);
 

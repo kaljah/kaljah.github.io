@@ -1,1 +1,0 @@
-{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":360,"LineContent":"def bulk_import_scope3():"}

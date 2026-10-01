@@ -1,3 +1,0 @@
-Found 2 results
-__pycache__/combustion.cpython-312.pyc
-combustion.py

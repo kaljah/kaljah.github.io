@@ -1,6 +1,0 @@
-
-The command exited with code 0.
-Output:
-401 {"error":"Not authenticated"}
-
-

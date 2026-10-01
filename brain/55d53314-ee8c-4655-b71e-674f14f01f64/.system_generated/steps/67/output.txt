@@ -1,6 +1,0 @@
-
-The command exited with code 0.
-Output:
-new/server/emission_factors.py:36:    SEGMENTS,
-new/server/emission_factors.py:72:    "SEGMENTS",
-

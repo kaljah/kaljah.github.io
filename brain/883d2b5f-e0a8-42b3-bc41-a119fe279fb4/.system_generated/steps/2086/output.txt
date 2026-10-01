@@ -1,3 +1,0 @@
-Found 2 results
-__pycache__/background_processor.cpython-312.pyc
-background_processor.py

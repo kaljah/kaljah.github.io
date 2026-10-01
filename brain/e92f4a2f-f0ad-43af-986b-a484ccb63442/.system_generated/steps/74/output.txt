@@ -1,3 +1,0 @@
-{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx"}
-{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\Sidebar.jsx"}
-{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx"}

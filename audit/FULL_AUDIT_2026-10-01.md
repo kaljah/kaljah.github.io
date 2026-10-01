@@ -80,3 +80,15 @@ Results after the fixes:
 - Unauthenticated routes are limited to login / forgot-password / logout / me / CSV & Excel
   templates / health / csrf-token.
 - Session revocation (`session_version`) on logout, password change, reset and deactivation.
+
+## Owner decisions applied (2026-10-01, second commit)
+
+| Item | Decision | Change |
+|------|----------|--------|
+| O-01, O-06 | Remove Docker | `Dockerfile`, `docker-compose.yml` and `.dockerignore` deleted. Render (or any host) runs the API as a Python service: build `pip install -r new/server/requirements.txt`, start `flask db upgrade && gunicorn app:app` in `new/server`, with `FLASK_ENV=production`, `SECRET_KEY` and `DATABASE_URL` set. |
+| O-02 | Switch notifications | The client polls `GET /api/notifications` every 30 s and when the tab becomes visible; new unread items raise toasts. `/api/notifications/stream` removed. |
+| O-04 | Lock referenced custom factors | A value edit (unit, gas factors, HHV, parent fuel, uncertainties) on a factor used by records returns 409. Metadata edits are allowed. Each edit logs old → new values in the same commit. |
+| O-05 | Superuser limited to one region | No organisation-wide superuser (a "Global" / "all" / blank location gives no data access). A region is required when creating a superuser or changing its role / location. Global settings, custom factors (incl. bulk import), goals, base year, SBTi and reporting metadata are admin only. The UI is updated to match. |
+| O-07 | Remove | `conversations/`, `brain/`, `annotations/`, `*.pb` / `*.pbtxt`, `new/server.rar`, `calculations/calculations.rar` removed from the tree and added to `.gitignore`. They remain in git history. |
+
+Results: backend 1,990 passed / 0 failed; `validation/` 128; vitest 38; lint 0 errors; build OK.

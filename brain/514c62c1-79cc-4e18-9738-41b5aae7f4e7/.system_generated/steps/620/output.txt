@@ -1,6 +1,0 @@
-
-The command exited with code 0.
-Output:
-Login status: 401
-First user email: test@example.com
-

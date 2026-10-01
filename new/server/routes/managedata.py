@@ -429,8 +429,9 @@ def save_reporting_metadata():
     user = get_current_user()
     if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to modify reporting metadata."}), 403
-    if not user or user.role not in ["admin", "superuser"]:
-        return jsonify({"error": "Administrator privileges required to modify reporting metadata."}), 403
+    # one row per year for the whole organisation: organisation-wide admins only
+    if not user or user.role not in ["admin", "superuser"] or get_allowed_facility_ids(user) is not None:
+        return jsonify({"error": "Organisation-wide administrator privileges required to modify reporting metadata."}), 403
 
     data = request.get_json() or {}
     year = data.get("year")

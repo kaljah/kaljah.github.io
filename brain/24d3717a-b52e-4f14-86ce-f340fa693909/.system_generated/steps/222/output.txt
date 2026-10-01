@@ -1,4 +1,0 @@
-Script ran on page and returned:
-```json
-{"error":"Region trigger not found","triggers":[]}
-```

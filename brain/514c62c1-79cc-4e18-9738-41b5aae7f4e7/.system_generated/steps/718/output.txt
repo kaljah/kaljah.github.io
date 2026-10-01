@@ -1,6 +1,0 @@
-
-The command exited with code 0.
-Output:
-admin@ghg.com found: True
-Password updated for admin@ghg.com
-
