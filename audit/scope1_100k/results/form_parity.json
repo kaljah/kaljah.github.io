@@ -1,0 +1,401 @@
+[
+ {
+  "id": "P1-comb-T1-diesel-L",
+  "status": "SAME",
+  "detail": {
+   "co2": 13.481334,
+   "ch4": 0.000547,
+   "n2o": 0.000109
+  },
+  "payload": {
+   "facility_id": 3,
+   "year": 2024,
+   "month": 12,
+   "activity": "Exploration & Production",
+   "division": "Production",
+   "field": "In",
+   "process_type": "combustion",
+   "group_name": "",
+   "equipment_id": "P1-comb-T1-diesel-L",
+   "quantity": 5000,
+   "amount": 5000,
+   "unit": "L",
+   "factor_source": "default",
+   "fuel_type": "Diesel (No. 2 Fuel Oil)",
+   "fuel": "Diesel (No. 2 Fuel Oil)",
+   "calc_inputs": {
+    "combustion": {
+     "fuel": "Diesel (No. 2 Fuel Oil)",
+     "amount": 5000,
+     "unit": "L"
+    }
+   },
+   "status": "Verified"
+  }
+ },
+ {
+  "id": "P5-agr-T3-ex6-17",
+  "status": "SAME",
+  "detail": {
+   "co2": 6821.323703,
+   "ch4": 235.040984,
+   "n2o": 0
+  },
+  "payload": {
+   "facility_id": 3,
+   "year": 2024,
+   "month": 12,
+   "activity": "Exploration & Production",
+   "division": "Production",
+   "field": "In",
+   "process_type": "agr",
+   "group_name": "",
+   "equipment_id": "P5-agr-T3-ex6-17",
+   "quantity": 150000,
+   "amount": 150000,
+   "unit": "MMscf/yr",
+   "factor_source": "specific",
+   "user_uncertainty": {
+    "co2": "",
+    "ch4": "",
+    "n2o": ""
+   },
+   "meter_uncertainty_pct": "2.0",
+   "gc_uncertainty_pct": "",
+   "calc_inputs": {
+    "agr": {
+     "agr_throughput": 150000,
+     "agr_co2_in": 3,
+     "agr_co2_out": 2,
+     "agr_unit": "MMscf/yr"
+    }
+   },
+   "status": "Verified"
+  }
+ },
+ {
+  "id": "P6-unload-T3-ex6-8",
+  "status": "SAME",
+  "detail": {
+   "co2": 2.103099,
+   "ch4": 20.440027,
+   "n2o": 0
+  },
+  "payload": {
+   "facility_id": 3,
+   "year": 2024,
+   "month": 12,
+   "activity": "Exploration & Production",
+   "division": "Production",
+   "field": "In",
+   "process_type": "unloading",
+   "group_name": "",
+   "equipment_id": "P6-unload-T3-ex6-8",
+   "quantity": 12,
+   "amount": 12,
+   "unit": "events",
+   "factor_source": "specific",
+   "user_uncertainty": {
+    "co2": "",
+    "ch4": "",
+    "n2o": ""
+   },
+   "meter_uncertainty_pct": "2.0",
+   "gc_uncertainty_pct": "",
+   "calc_inputs": {
+    "unloading": {
+     "unloading_type": "non_plunger",
+     "unload_type": "non_plunger",
+     "unload_events": 12,
+     "unload_freq": 12,
+     "events": 12,
+     "amount": 12,
+     "quantity": 12,
+     "unload_diam": 10,
+     "diameter": 10,
+     "unload_depth": 12000,
+     "well_depth": 12000,
+     "unload_press": 250,
+     "pressure": 250,
+     "sfr": 35000,
+     "hours_open": 1,
+     "ch4_content": 80,
+     "co2_content": 3
+    }
+   },
+   "status": "Verified"
+  }
+ },
+ {
+  "id": "P2-comb-T2-diesel-MJkg",
+  "status": "SAME",
+  "detail": {
+   "co2": 13.425658,
+   "ch4": 0.000545,
+   "n2o": 0.000109
+  },
+  "payload": {
+   "facility_id": 3,
+   "year": 2024,
+   "month": 12,
+   "activity": "Exploration & Production",
+   "division": "Production",
+   "field": "In",
+   "process_type": "combustion",
+   "group_name": "",
+   "equipment_id": "P2-comb-T2-diesel-MJkg",
+   "quantity": 5000,
+   "amount": 5000,
+   "unit": "L",
+   "factor_source": "custom",
+   "fuel_type": "Diesel (No. 2 Fuel Oil)",
+   "fuel": "Diesel (No. 2 Fuel Oil)",
+   "density": 840,
+   "fuel_density": 840,
+   "hhv": 19604.492021300728,
+   "hhv_unit": "BTU/lb",
+   "hhv_original": 45.6,
+   "hhv_original_unit": "MJ/kg",
+   "calc_inputs": {
+    "combustion": {
+     "fuel": "Diesel (No. 2 Fuel Oil)",
+     "hhv": 45.6,
+     "hhv_unit": "MJ/kg",
+     "amount": 5000,
+     "unit": "L"
+    }
+   },
+   "status": "Verified"
+  }
+ },
+ {
+  "id": "P3-flare-T3-ch4",
+  "status": "SAME",
+  "detail": {
+   "co2": 825.028452,
+   "ch4": 6.136572,
+   "n2o": 0.00204
+  },
+  "payload": {
+   "facility_id": 3,
+   "year": 2024,
+   "month": 12,
+   "activity": "Exploration & Production",
+   "division": "Production",
+   "field": "In",
+   "process_type": "flaring",
+   "group_name": "",
+   "equipment_id": "P3-flare-T3-ch4",
+   "quantity": 20000000,
+   "amount": 20000000,
+   "unit": "scf",
+   "factor_source": "specific",
+   "hhv": 1020,
+   "hhv_unit": "BTU/scf",
+   "hhv_original": 1020,
+   "hhv_original_unit": "BTU/scf",
+   "user_uncertainty": {
+    "co2": "",
+    "ch4": "",
+    "n2o": ""
+   },
+   "meter_uncertainty_pct": "2.0",
+   "gc_uncertainty_pct": "",
+   "calc_inputs": {
+    "flaring": {
+     "amount": 20000000,
+     "unit": "scf",
+     "hhv": 1020,
+     "ch4_content": 80
+    }
+   },
+   "status": "Verified"
+  }
+ },
+ {
+  "id": "P4-tank-T3-gor",
+  "status": "SAME",
+  "detail": {
+   "co2": 0,
+   "ch4": 40.653102,
+   "n2o": 0
+  },
+  "payload": {
+   "facility_id": 3,
+   "year": 2024,
+   "month": 12,
+   "activity": "Exploration & Production",
+   "division": "Production",
+   "field": "In",
+   "process_type": "tank_flashing",
+   "group_name": "",
+   "equipment_id": "P4-tank-T3-gor",
+   "quantity": 164615,
+   "amount": 164615,
+   "unit": "bbl",
+   "factor_source": "specific",
+   "user_uncertainty": {
+    "co2": "",
+    "ch4": "",
+    "n2o": ""
+   },
+   "meter_uncertainty_pct": "2.0",
+   "gc_uncertainty_pct": "",
+   "calc_inputs": {
+    "tank_flashing": {
+     "amount": 164615,
+     "tank_gor": 47,
+     "tank_ch4_content": 27.4,
+     "quantity": 164615,
+     "tank_unit": "bbl"
+    }
+   },
+   "status": "Verified"
+  }
+ },
+ {
+  "id": "P7-comp-T3-ex6-3",
+  "status": "SAME",
+  "detail": {
+   "co2": 98.714293,
+   "ch4": 2.372154,
+   "n2o": 0.00015
+  },
+  "payload": {
+   "facility_id": 3,
+   "year": 2024,
+   "month": 12,
+   "activity": "Exploration & Production",
+   "division": "Production",
+   "field": "In",
+   "process_type": "completions",
+   "group_name": "",
+   "equipment_id": "P7-comp-T3-ex6-3",
+   "quantity": 1480000,
+   "amount": 1480000,
+   "unit": "scf",
+   "factor_source": "specific",
+   "user_uncertainty": {
+    "co2": "",
+    "ch4": "",
+    "n2o": ""
+   },
+   "meter_uncertainty_pct": "2.0",
+   "gc_uncertainty_pct": "",
+   "calc_inputs": {
+    "completions": {
+     "comp_volume": 1480000,
+     "flowback_volume": 1480000,
+     "amount": 1480000,
+     "volume_unit": "scf",
+     "unit": "scf",
+     "comp_injected_n2": 7390,
+     "comp_initial_flowback_hours": 4,
+     "comp_duration": 20,
+     "ch4_content": 70,
+     "comp_c2plus_content": 30,
+     "comp_disposition": "flared",
+     "disposition": "flared",
+     "tier": "tier3",
+     "comp_injected_n2_unit": "scf",
+     "calc_method": "metered"
+    }
+   },
+   "status": "Verified"
+  }
+ },
+ {
+  "id": "P8-blowdown-T3-ex6-25",
+  "status": "SAME",
+  "detail": {
+   "co2": 0,
+   "ch4": 0.01087,
+   "n2o": 0
+  },
+  "payload": {
+   "facility_id": 3,
+   "year": 2024,
+   "month": 12,
+   "activity": "Exploration & Production",
+   "division": "Production",
+   "field": "In",
+   "process_type": "venting",
+   "group_name": "",
+   "equipment_id": "P8-blowdown-T3-ex6-25",
+   "quantity": 2.373,
+   "amount": 2.373,
+   "unit": "m3",
+   "factor_source": "specific",
+   "user_uncertainty": {
+    "co2": "",
+    "ch4": "",
+    "n2o": ""
+   },
+   "meter_uncertainty_pct": "2.0",
+   "gc_uncertainty_pct": "",
+   "calc_inputs": {
+    "venting": {
+     "blowdown_volume": 2.373,
+     "blowdown_pressure": 100,
+     "blowdown_events": 1,
+     "ch4_content": 90,
+     "blowdown_temp": 80,
+     "blowdown_unit": "m3"
+    }
+   },
+   "status": "Verified"
+  }
+ },
+ {
+  "id": "P9-unload-T3-plunger-default",
+  "status": "SAME",
+  "detail": {
+   "co2": 3.760948,
+   "ch4": 36.552662,
+   "n2o": 0
+  },
+  "payload": {
+   "facility_id": 3,
+   "year": 2024,
+   "month": 12,
+   "activity": "Exploration & Production",
+   "division": "Production",
+   "field": "In",
+   "process_type": "unloading",
+   "group_name": "",
+   "equipment_id": "P9-unload-T3-plunger-default",
+   "quantity": 12,
+   "amount": 12,
+   "unit": "events",
+   "factor_source": "specific",
+   "user_uncertainty": {
+    "co2": "",
+    "ch4": "",
+    "n2o": ""
+   },
+   "meter_uncertainty_pct": "2.0",
+   "gc_uncertainty_pct": "",
+   "calc_inputs": {
+    "unloading": {
+     "unload_events": 12,
+     "unload_freq": 12,
+     "events": 12,
+     "amount": 12,
+     "quantity": 12,
+     "unload_diam": 10,
+     "diameter": 10,
+     "unload_depth": 12000,
+     "well_depth": 12000,
+     "unload_press": 250,
+     "pressure": 250,
+     "sfr": 35000,
+     "hours_open": 3,
+     "ch4_content": 80,
+     "co2_content": 3,
+     "unloading_type": "plunger"
+    }
+   },
+   "status": "Verified"
+  }
+ }
+]

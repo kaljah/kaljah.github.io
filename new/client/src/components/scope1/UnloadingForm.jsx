@@ -369,7 +369,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 
                 <div className="input-group">
                   <label>
-                    Tubing diameter (in)
+                    {unloadingType === "plunger" ? "Tubing diameter (in)" : "Casing diameter (in)"}
                     <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
                   </label>
                   <input
@@ -389,7 +389,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 
                 <div className="input-group">
                   <label>
-                    Well Depth (ft)
+                    {unloadingType === "plunger" ? "Tubing depth to plunger bumper (ft)" : "Well depth (ft)"}
                     <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
                   </label>
                   <input
@@ -409,7 +409,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 
                 <div className="input-group">
                   <label>
-                    Shut-in pressure (psig)
+                    Flow-line pressure (psig)
                     <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
                   </label>
                   <input
@@ -429,7 +429,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 
                 <div className="input-group">
                   <label>
-                    Sales flow rate (scf/hr)
+                    Flow-line gas rate (scf/hr)
                     <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
                   </label>
                   <input
@@ -446,7 +446,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 
                 <div className="input-group">
                   <label>
-                    Venting time (h/event)
+                    Hours open to atmosphere (h/event)
                     <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
                   </label>
                   <input

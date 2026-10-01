@@ -1243,6 +1243,9 @@ const Scope1Form = () => {
         } else {
           finalAmount = parseFloat(formData.unload_events || formData.unload_freq || formData.events || formData.amount);
           finalUnit = "events";
+          // the lift-type select displays "Plunger lift" until changed: send what is displayed (the server
+          // requires it; it used to assume non-plunger)
+          processInputs.unloading_type = formData.unloading_type || formData.unload_type || "plunger";
         }
       }
 
