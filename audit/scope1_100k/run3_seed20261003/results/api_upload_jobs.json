@@ -1,0 +1,53 @@
+[
+ {
+  "file": "/tmp/claude-0/-home-user-kaljah-github-io/9c685b4e-eafc-5184-927d-b44928679e37/scratchpad/s3/scope1_audit_100k.csv",
+  "job_id": "4cc68bc4-2644-4cad-9a99-744a27fdd0c6",
+  "status": {
+   "anomaly_count": 0,
+   "errors": [
+    "The file has 100,000 data rows, more than 50,000; split it into smaller files. No rows were saved."
+   ],
+   "has_error_csv": false,
+   "processed": 0,
+   "progress": 0,
+   "skipped_count": 0,
+   "status": "error",
+   "total": 0
+  },
+  "elapsed_s": 3.6
+ },
+ {
+  "file": "/tmp/claude-0/-home-user-kaljah-github-io/9c685b4e-eafc-5184-927d-b44928679e37/scratchpad/s3/scope1_audit_part1.csv",
+  "job_id": "63fbd3d3-d163-40f0-8ba2-31790f6ea4e3",
+  "status": {
+   "anomaly_count": 0,
+   "errors": [],
+   "has_error_csv": true,
+   "processed": 50000,
+   "progress": 100,
+   "skipped_count": 10129,
+   "status": "completed",
+   "total": 50000
+  },
+  "elapsed_s": 95.8,
+  "error_csv": "/tmp/claude-0/-home-user-kaljah-github-io/9c685b4e-eafc-5184-927d-b44928679e37/scratchpad/run3/api/errors_scope1_audit_part1.csv",
+  "error_rows": 10129
+ },
+ {
+  "file": "/tmp/claude-0/-home-user-kaljah-github-io/9c685b4e-eafc-5184-927d-b44928679e37/scratchpad/s3/scope1_audit_part2.csv",
+  "job_id": "f03eb2d2-769d-4a1b-a5e5-b8888b7d579a",
+  "status": {
+   "anomaly_count": 6480,
+   "errors": [],
+   "has_error_csv": true,
+   "processed": 50000,
+   "progress": 100,
+   "skipped_count": 5706,
+   "status": "completed",
+   "total": 50000
+  },
+  "elapsed_s": 111.6,
+  "error_csv": "/tmp/claude-0/-home-user-kaljah-github-io/9c685b4e-eafc-5184-927d-b44928679e37/scratchpad/run3/api/errors_scope1_audit_part2.csv",
+  "error_rows": 5706
+ }
+]

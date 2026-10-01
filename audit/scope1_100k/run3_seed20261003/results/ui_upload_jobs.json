@@ -1,0 +1,19 @@
+{
+ "results": [
+  {
+   "file": "/tmp/claude-0/-home-user-kaljah-github-io/9c685b4e-eafc-5184-927d-b44928679e37/scratchpad/s3/scope1_audit_100k.csv",
+   "seconds": 8.678,
+   "resultText": "Scope 1 Bulk Import\n\nUpload emissions data from CSV or Excel\n\nUPLOAD MODE\nPROCESS SCOPE\nSELECT FILE\nMAP COLUMNS\nSUBMITTED FOR REVIEW\n\nUpload Failed\n\nA fatal error occurred while processing the file.\n\nThe file has 100,000 data rows, more than 50,000; split it into smaller files. No rows were saved.\nGo Back"
+  },
+  {
+   "file": "/tmp/claude-0/-home-user-kaljah-github-io/9c685b4e-eafc-5184-927d-b44928679e37/scratchpad/s3/scope1_audit_part1.csv",
+   "seconds": 102.913,
+   "resultText": "Scope 1 Bulk Import\n\nUpload emissions data from CSV or Excel\n\nUPLOAD MODE\nPROCESS SCOPE\nSELECT FILE\nMAP COLUMNS\nSUBMITTED FOR REVIEW\n\n39,871\n\nRows Imported\n\n10,129\n\nRows Skipped\n\n50,000\n\nTotal Processed\n\n10,129 rows skipped \u2014 click to see reasons (showing first 100)\nDownload full CSV\nClose\nReview Pending Records \u2192"
+  },
+  {
+   "file": "/tmp/claude-0/-home-user-kaljah-github-io/9c685b4e-eafc-5184-927d-b44928679e37/scratchpad/s3/scope1_audit_part2.csv",
+   "seconds": 105.563,
+   "resultText": "Scope 1 Bulk Import\n\nUpload emissions data from CSV or Excel\n\nUPLOAD MODE\nPROCESS SCOPE\nSELECT FILE\nMAP COLUMNS\nSUBMITTED FOR REVIEW\n\n44,294\n\nRows Imported\n\n5,706\n\nRows Skipped\n\n50,000\n\nTotal Processed\n\n5,706 rows skipped \u2014 click to see reasons (showing first 100)\nDownload full CSV\nClose\nReview Pending Records \u2192"
+  }
+ ]
+}

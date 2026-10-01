@@ -425,11 +425,11 @@ def test_bulk_anomaly_flag_persistence(client, test_users):
     from calculations.anomaly import AnomalyDetector
     anomaly_detector = AnomalyDetector()
     with app.app_context():
-        # Seed 3 baseline emissions to establish statistical distribution
-        for m in [1, 2, 3]:
+        # Seed 3 baseline emissions in the 12 months before the checked record (2026-09)
+        for m in [6, 7, 8]:
             base_e = Emission(
                 facility_id=test_users["facility_id"],
-                year=2025,
+                year=2026,
                 month=m,
                 process_type="combustion",
                 fuel_type="Diesel",

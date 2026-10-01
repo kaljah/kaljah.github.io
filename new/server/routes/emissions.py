@@ -987,7 +987,7 @@ def add_bulk_upload():
                             user_id=admin.id,
                             type="audit",
                             title="Scope 1 Bulk Upload Pending Review",
-                            message=f"{len(new_emissions)} new Scope 1 emission records were uploaded by {user.fullName} and are awaiting your approval.",
+                            message=f"{len(new_emissions):,} new Scope 1 emission records were uploaded by {user.fullName} and are awaiting your approval.",
                         )
                     db.session.commit()
             except Exception as e:
@@ -2824,18 +2824,12 @@ def add_emission():
         )
 
     # BUG-007: plausibility bounds and statistical anomaly check on the manual path too
-    from calculations.anomaly import AnomalyDetector, plausibility_check
+    from calculations.anomaly import AnomalyDetector, plausibility_check, scope1_source
     from services.scope1_calc import apply_result
     from utils import initial_record_status, user_label
 
-    z_msg = None
-    try:
-        z = AnomalyDetector().check_scope1(int(data["facility_id"]), data["process_type"], em_result["totalCo2e"],
-                                           data["year"], data["month"])
-        z_msg = z.get("message") if z.get("flagged") else None
-    except Exception:
-        z_msg = None
-    verdict, qa_msg = plausibility_check(em_result["totalCo2e"], z_msg)
+    # the statistical check runs once the record carries its final source (equipment / fuel), below
+    verdict, qa_msg = plausibility_check(em_result["totalCo2e"], None)
     if verdict == "reject":
         return jsonify({"error": qa_msg, "field": "amount"}), 422
 
@@ -2873,6 +2867,20 @@ def add_emission():
     apply_result(record, data, em_result, method, factor_data, gwp_std)
     uncertainty = {"co2": record.uncertainty, "ch4": record.uncertainty_ch4, "n2o": record.uncertainty_n2o}
     record.ogmp_level = ogmp_level_for(record)
+
+    # statistical anomaly against the same source's previous 12 months (flagged values need a reviewer)
+    if not qa_msg:
+        try:
+            z = AnomalyDetector().check_scope1(int(data["facility_id"]), record.process_type, em_result["totalCo2e"],
+                                               data["year"], data["month"],
+                                               source=scope1_source(record.equipment_id, record.fuel_type))
+            if z.get("flagged") and z.get("message"):
+                record.qa_flag = z["message"][:255]
+                if record.status == "Verified":
+                    record.status = "Pending"
+                    record.approved_by = record.approved_by_name = record.approved_at = None
+        except Exception:
+            pass
 
     db.session.add(record)
     try:

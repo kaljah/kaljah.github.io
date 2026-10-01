@@ -500,3 +500,42 @@ The Tier 3 flaring form had no efficiency field, so every manual flaring entry u
 The flare-type options now show the default unburnt CH₄ for each type (the old pit label still said 95 %). The import template, the import wizard and the column mapping list `combustion_efficiency` and `destruction_efficiency` for flaring. `control_efficiency` still sets both when they are blank.
 
 Form = CSV holds for the new case: 95 % / 96 % gives CO₂ × 95/98 and CH₄ × 2 (case P10; 10 / 10 form cases identical).
+
+## 10. Third run with a new 100,000-row file (seed 20261003)
+
+A new file was generated with `gen.py --seed 20261003`:
+- 100,000 unique data rows (MD5 `fee705a8…`);
+- 0 data rows in common with the first and second files;
+- 21,650 unit-equivalence groups.
+
+It was uploaded through the UI wizard (headless Chromium) and through the HTTP API, into fresh databases. The current code was used, including all fixes up to S1K-F32 and the flare efficiency fields.
+
+| | Result |
+|---|---|
+| 100k file | refused up front (8–10 s, no rows saved) |
+| Saved / refused (two 50k halves) | 84,165 / 15,835 on both paths (the maximum the expectations allow) |
+| UI vs API database | identical, record by record (all fields except insert time); 635,881,265.59 tCO₂e on both |
+| Independent oracle | **47,228 / 47,228** |
+| Unit-equivalence groups | **20,817 / 20,817** |
+| Wrong acceptances / wrong refusals | **0 / 0** |
+| Ambiguous inputs refused | **1,900 / 1,900** |
+| Field fidelity | 0 issues |
+| Duplicates | 0 |
+| UI table | 1,669 rendered rows (150 pages and 169 searched records, all found): 0 mismatches, 0 stale pages, 0 duplicates |
+| Table feed vs DB | 84,165 / 84,165 |
+| UI Export CSV | 84,165 / 84,165 records, 0 CO₂e differences |
+
+### 10.1 Findings and fixes
+
+| ID | Severity | Finding | Fix |
+|---|---|---|---|
+| F33 | High (review workload) | The statistical anomaly check flagged **6,480 of the 44,294 rows** in the second half (15 %). Each flag is a QA/QC review item, and almost all of them were false. The check compared a record with the last 12 *records* of the facility and process. Here that meant about 242 different sources per facility and process (turbines next to heaters), and 12 records could all come from one month. The message still said "12-month average". | The series is now the same facility, process and **source** (equipment ID, else fuel / activity), and the history is the **12 calendar months** before the record's month. This applies on both the import and the manual-entry path; the manual path checks after the record has its final source. Scope 2 and 3 use the same true 12-month window. The batch detector reads each facility/process series once and filters sources in memory; a per-source query had tripled the import time (339 s instead of 106 s). Re-run: 0 statistical flags. The 4 remaining flags are correct plausibility reviews (single records over 1 Mt CO₂e). Every stored value is unchanged. Tests show a real outlier (10× a generator's usual month) is still flagged, while a small heater in the same facility and month is not. |
+| F34 | Low | The result screen read "6480 statistical anomalys detected", and the notifications showed "44294 … records" without separators. | Correct plural, and thousands separators in the result screen and in the bulk-upload notifications (Scope 1 and 3). |
+
+Files are in `audit/scope1_100k/run3_seed20261003/`:
+- the CSV and its expectations;
+- check summaries: API, UI, and UI before the anomaly fix;
+- UI table vs DB;
+- export check;
+- upload jobs;
+- screenshots.
