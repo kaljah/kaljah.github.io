@@ -210,8 +210,8 @@ export function VentedGasForm({ data, onChange }) {
       )}
       {m === "reported_mass" && (
         <FieldGrid min={170}>
-          <NumUnit label="CH₄ emitted" field="ch4_mass" unitField="mass_unit" units={["t", "kg", "lb"]} data={data} onChange={onChange} required />
-          <Num label="CO₂ emitted (same unit)" field="co2_mass" data={data} onChange={onChange} placeholder="0" />
+          <NumUnit label="CH₄ before control" field="ch4_mass" unitField="mass_unit" units={["t", "kg", "lb"]} data={data} onChange={onChange} required />
+          <Num label="CO₂ before control (same unit)" field="co2_mass" data={data} onChange={onChange} placeholder="0" />
           <Num label="Control efficiency (%)" field="control_efficiency" data={data} onChange={onChange} placeholder="0" />
         </FieldGrid>
       )}

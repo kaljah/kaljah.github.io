@@ -63,10 +63,10 @@
     "gwp_horizon": "100",
     "intermediate_results": {},
     "expected_final_result": {
-      "co2": 91.590976,
-      "ch4": 0.5970800000000005,
+      "co2": 91.45012286257125,
+      "ch4": 0.5959552459362472,
       "n2o": 0.005,
-      "co2e": 109.63421600000002,
+      "co2e": 109.46186974878617,
       "vol_m3_std": 50000.0,
       "eta_c": 0.984,
       "eta_d": 0.98
@@ -99,10 +99,10 @@
     "gwp_horizon": "100",
     "intermediate_results": {},
     "expected_final_result": {
-      "ch4": 0.32502790496876305,
+      "ch4": 0.32441563114122424,
       "co2": 0.0,
       "n2o": 0.0,
-      "co2e": 9.100781339125366,
+      "co2e": 9.083637671954278,
       "total_gas_m3": 563.5751960965158
     },
     "expected_units": "tCO2e",
@@ -132,10 +132,10 @@
     "gwp_horizon": "100",
     "intermediate_results": {},
     "expected_final_result": {
-      "ch4": 7.6851921650688,
+      "ch4": 7.670715124942875,
       "co2": 0.0,
       "n2o": 0.0,
-      "co2e": 215.1853806219264,
+      "co2e": 214.7800234984005,
       "total_gas_m3": 14158.423296
     },
     "expected_units": "tCO2e",
@@ -387,17 +387,17 @@
     "gwp_horizon": "100",
     "intermediate_results": {},
     "expected_final_result": {
-      "co2": 15.8185,
+      "co2": 15.794173527549082,
       "ch4": 0.0,
-      "n2o": 0.0,
-      "co2e": 15.8185,
+      "n2o": 3.602096e-05,
+      "co2e": 15.803719081549081,
       "vol_m3_std": 10000.0,
       "eta_c": 1.0,
       "eta_d": 1.0
     },
     "expected_units": "tCO2e",
     "tolerance": 1e-05,
-    "assumptions": "100% destruction efficiency must yield exactly 0.0 unburnt CH4",
+    "assumptions": "N2O at the API Compendium Table 5-3 flare default (0.0001 kg/MMBtu, 1,020 Btu/scf; audit 2026-09-30). 100% destruction efficiency must yield exactly 0.0 unburnt CH4",
     "is_invalid": false,
     "expected_error": null
   },
@@ -428,16 +428,16 @@
     "intermediate_results": {},
     "expected_final_result": {
       "co2": 0.0,
-      "ch4": 5.76725,
-      "n2o": 0.0,
-      "co2e": 161.483,
+      "ch4": 5.756385898247836,
+      "n2o": 3.602096e-05,
+      "co2e": 161.1883507049394,
       "vol_m3_std": 10000.0,
       "eta_c": 0.0,
       "eta_d": 0.0
     },
     "expected_units": "tCO2e",
     "tolerance": 1e-05,
-    "assumptions": "0% combustion efficiency yields 0.0 combusted CO2 and 100% unburnt CH4",
+    "assumptions": "N2O at the API Compendium Table 5-3 flare default (0.0001 kg/MMBtu, 1,020 Btu/scf; audit 2026-09-30). 0% combustion efficiency yields 0.0 combusted CO2 and 100% unburnt CH4",
     "is_invalid": false,
     "expected_error": null
   },
@@ -463,10 +463,10 @@
     "gwp_horizon": "100",
     "intermediate_results": {},
     "expected_final_result": {
-      "ch4": 21.458977822913354,
+      "ch4": 21.418554307621744,
       "co2": 0.0,
       "n2o": 0.0,
-      "co2e": 600.8513790415739,
+      "co2e": 599.7195206134088,
       "ch4_vol_m3": 31627.0859586048
     },
     "expected_units": "tCO2e",
@@ -720,24 +720,24 @@
     "intermediate_results": {},
     "expected_final_result": {
       "wec_2024": {
-        "allowed_ch4_tonnes": 13.57,
-        "excess_ch4_tonnes": 136.43,
+        "allowed_ch4_tonnes": 13.560832012799999,
+        "excess_ch4_tonnes": 136.4391679872,
         "wec_rate": 900.0,
-        "wec_fee_usd": 122787.0,
+        "wec_fee_usd": 122795.25,
         "status": "Taxable Liability"
       },
       "wec_2025": {
-        "allowed_ch4_tonnes": 13.57,
-        "excess_ch4_tonnes": 136.43,
+        "allowed_ch4_tonnes": 13.560832012799999,
+        "excess_ch4_tonnes": 136.4391679872,
         "wec_rate": 1200.0,
-        "wec_fee_usd": 163716.0,
+        "wec_fee_usd": 163727.0,
         "status": "Taxable Liability"
       },
       "wec_2026": {
-        "allowed_ch4_tonnes": 13.57,
-        "excess_ch4_tonnes": 136.43,
+        "allowed_ch4_tonnes": 13.560832012799999,
+        "excess_ch4_tonnes": 136.4391679872,
         "wec_rate": 1500.0,
-        "wec_fee_usd": 204645.0,
+        "wec_fee_usd": 204658.75,
         "status": "Taxable Liability"
       }
     },
@@ -838,10 +838,10 @@
         "co2e": 372.40000000000003
       },
       "tier3": {
-        "ch4": 3.918292523544391,
+        "ch4": 3.9109114097257542,
         "co2": 0.0,
         "n2o": 0.0,
-        "co2e": 109.71219065924295,
+        "co2e": 109.50551947232111,
         "solubility_scf_gal": 1.5520537243188048,
         "total_ch4_scf": 203939.85937549098
       }

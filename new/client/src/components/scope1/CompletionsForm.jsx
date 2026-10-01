@@ -108,7 +108,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
         onChange("fuel", activeT1Factor.name);
         onChange("factor_code", activeT1Factor.code);
       }
-      const eventsCount = data.events || data.amount || 1;
+      const eventsCount = data.events || data.amount || "";  // never an invented count
       if (data.amount !== eventsCount) onChange("amount", eventsCount);
     } else if (isTier2) {
       if (data.unit !== "events") onChange("unit", "events");
@@ -117,7 +117,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
         onChange("calc_method", "rate_duration");
       }
       if (!data.comp_rate_unit) onChange("comp_rate_unit", "Mcf/hr");
-      const eventsCount = data.events || data.amount || 1;
+      const eventsCount = data.events || data.amount || "";  // never an invented count
       if (data.amount !== eventsCount) onChange("amount", eventsCount);
     } else {
       if (data.tier !== "tier3") onChange("tier", "tier3");

@@ -75,9 +75,9 @@ def test_mass_conservation_combustion():
     # Carbon in fuel (moles C / mole gas): 0.90*1 + 0.06*2 + 0.04*3 = 1.14
     total_carbon_moles_in = vol * 1.14
     # Carbon combusted to CO2:
-    carbon_moles_co2 = (co2_tonnes * 1000.0 / 1.861)  # m3 CO2 = moles CO2 at std
+    carbon_moles_co2 = (co2_tonnes * 1000.0 / (44.01 / 23.685))  # m3 CO2 = moles CO2 at std
     # Carbon slipped as CH4:
-    ch4_moles_slip = (ch4_tonnes * 1000.0 / 0.6785)
+    ch4_moles_slip = (ch4_tonnes * 1000.0 / (16.04 / 23.685))
 
     assert carbon_moles_co2 == pytest.approx(total_carbon_moles_in * eff, rel=1e-3)
     assert ch4_moles_slip == pytest.approx(vol * c1 * (1.0 - eff), rel=1e-3)

@@ -13,6 +13,13 @@ STD_PRESSURE_PSIA = 14.696
 STD_PRESSURE_KPA = 101.325
 STD_PRESSURE_BAR = 1.01325
 
+# API Compendium 2021 standard conditions (Section 3.4, 60 F and 14.696 psia) and the molar volume
+# conversion its equations use: 379.3 scf/lb-mole = 23.685 m3/kg-mole
+MOLAR_VOLUME_SCF_PER_LBMOL = 379.3
+MOLAR_VOLUME_M3_PER_KMOL = 23.685
+MW_CH4 = 16.04
+MW_CO2 = 44.01
+
 CONVERSIONS = {
     # Volume (API Compendium 2021 §4.2 / ISO 13443 at 60°F, 14.696 psia)
     "scf_to_m3": 0.028316846592,
@@ -51,14 +58,17 @@ CONVERSIONS = {
     "mj_to_mmbtu": 0.0009478171203133172,
     "kwh_to_mj": 3.6,
     "mj_to_kwh": 0.2777777777777778,
-    "therm_to_mj": 105.4804,
-    # Gas Densities (kg/m3 at standard conditions: 60F, 14.696 psia)
-    "density_ch4": 0.6785,
-    "density_c2h6": 1.282,  # Ethane
-    "density_c3h8": 1.882,  # Propane
-    "density_c4h10": 2.519,  # n-Butane
-    "density_co2": 1.861,
-    "density_n2o": 1.860,
+    "therm_to_mj": 105.505585262,  # 1 therm = 100,000 Btu (IT), as in indirect.py
+    # Gas densities, kg/m3 at the API Compendium standard conditions (60 F, 14.696 psia): molecular
+    # weight / 23.685 m3 per kg-mole (379.3 scf/lb-mole, the molar volume conversion of the Compendium
+    # equations, e.g. Eq 5-1 / 6-1; Table 3-3 gives 379.48 scf / 23.690 m3). The former 0.6785 / 1.861
+    # were the 15 C values (23.645 m3/kg-mole), 0.17 % high against every scf-based factor.
+    "density_ch4": MW_CH4 / MOLAR_VOLUME_M3_PER_KMOL,
+    "density_c2h6": 30.07 / MOLAR_VOLUME_M3_PER_KMOL,  # Ethane
+    "density_c3h8": 44.10 / MOLAR_VOLUME_M3_PER_KMOL,  # Propane
+    "density_c4h10": 58.12 / MOLAR_VOLUME_M3_PER_KMOL,  # n-Butane
+    "density_co2": MW_CO2 / MOLAR_VOLUME_M3_PER_KMOL,
+    "density_n2o": 44.013 / MOLAR_VOLUME_M3_PER_KMOL,
     # GWP (GHG Protocol AR5)
     "gwp_ch4": DEFAULT_GWP["CH4"],
     "gwp_n2o": DEFAULT_GWP["N2O"],
@@ -268,8 +278,8 @@ ENERGY_UNITS_TO_MJ = {
     "kilowatt_hour": 3.6,
     "mwh": 3600.0,
     "megawatt_hour": 3600.0,
-    "therm": 105.4804,
-    "therms": 105.4804,
+    "therm": 105.505585262,
+    "therms": 105.505585262,
 }
 
 
@@ -515,13 +525,15 @@ def normalize_efficiency(eff_val, default=0.0):
     """
     if eff_val in [None, "", "-"]:
         return default
+    is_pct = "%" in str(eff_val)
     try:
         val = float(str(eff_val).replace("%", "").strip())
     except (ValueError, TypeError):
         return default
     if val < 0.0:
         return 0.0
-    if val > 1.0:
+    if is_pct or val > 1.0:
+        # an explicit "%" is always a percentage ("1%" is 0.01, not a fraction of 1.0)
         val /= 100.0
     return max(0.0, min(1.0, val))
 
@@ -542,19 +554,29 @@ def scope3_ef_kg_per_unit(amount, co2e_tonnes, ef=None):
     return ef
 
 
+_SCOPE3_MASS_TONNES = {
+    "": 0.001, "kg": 0.001, "kgs": 0.001, "kilogram": 0.001, "kilograms": 0.001,
+    "t": 1.0, "tonne": 1.0, "tonnes": 1.0, "metric ton": 1.0, "metric tons": 1.0, "metric tonne": 1.0,
+    "metric tonnes": 1.0, "mt": 1.0,
+    "g": 1e-6, "gram": 1e-6, "grams": 1e-6,
+    "lb": 0.45359237e-3, "lbs": 0.45359237e-3, "pound": 0.45359237e-3, "pounds": 0.45359237e-3,
+    "short ton": 0.90718474, "short tons": 0.90718474, "us ton": 0.90718474, "us tons": 0.90718474,
+    "long ton": 1.0160469088, "long tons": 1.0160469088,
+}
+
+
 def compute_scope3_co2e(
     amt: float, ef: float, ef_unit: str = "", calc_method: str = ""
 ) -> float:
     """
     Authoritatively calculates Scope 3 CO2e in metric tonnes from activity amount and emission factor.
 
-    Robustly distinguishes numerator GHG mass unit (t vs kg vs g) from denominator activity unit (e.g. tonne, liter, m3).
-    - If factor is spend-based / EEIO (e.g. per $1,000 spend, or method containing 'eeio'):
-      divide by 1,000,000 (kg -> tonnes and / 1000 spend).
-    - If numerator is tonnes CO2e (e.g. 'tCO2e/unit', 'tonne CO2e/bbl', 't/bbl', 'mtCO2e/t'):
-      co2e = amt * ef
-    - If numerator is kg CO2e (default standard, e.g. 'kg CO2e/liter', 'kg CO2e/tonne', 'kg/unit'):
-      co2e = (amt * ef) / 1000.0
+    Distinguishes the numerator GHG mass unit (t, kg, g, lb; kg when not given) from the
+    denominator activity unit (tonne, liter, $1,000 ...).
+    - A per-1,000 denominator ('kg CO2e/$1000', 't CO2e/1000 km') divides the activity by 1,000.
+    - Tonnes numerator ('tCO2e/unit', 'tonne CO2e/bbl', 't/bbl'): co2e = amt * ef.
+    - kg numerator ('kg CO2e/liter', 'kg/unit'): co2e = amt * ef / 1000.
+    `calc_method` is accepted for backward compatibility and does not change the result.
     """
     try:
         amt_val = float(amt or 0.0)
@@ -566,50 +588,36 @@ def compute_scope3_co2e(
         return 0.0
 
     unit_str = str(ef_unit or "").lower().strip()
-    method_str = str(calc_method or "").lower().strip()
 
-    # 1. EEIO / spend-based per-$1,000 factor check
-    is_per_thousand = any(
-        k in unit_str for k in ["1000", "1,000", "1k", "$1000", "$1k"]
-    ) or (
-        "eeio" in method_str
-        and not any(t in unit_str for t in ["tonne", "tco2", "mtco2"])
-    )
-    if is_per_thousand:
-        return (amt_val * ef_val) / 1_000_000.0
-
-    # 2. Extract numerator before '/' or ' per '
-    num = unit_str.split("/")[0].split(" per ")[0].strip()
-
-    # 3. Check numerator dimension
-    is_tonne_num = False
-    if not any(
-        prefix in num for prefix in ["kg", "kilogram", "lb", "pound"]
-    ) and not (num.startswith("g") and not num.startswith("gj")):
-        if any(
-            t in num for t in ["tonne", "metric_ton", "tco2", "mtco2", "t/"]
-        ) or num.startswith("t ") or num == "t":
-            is_tonne_num = True
-
-    is_gram_num = (
-        num.startswith("g ")
-        or num.startswith("gco2")
-        or num.startswith("g/")
-        or "gram" in num
-        or num == "g"
-    ) and not num.startswith("gj")
-
-    if is_tonne_num:
-        return amt_val * ef_val
-    elif is_gram_num:
-        # Grams CO2e to tonnes CO2e: divide by 1,000,000
-        return (amt_val * ef_val) / 1_000_000.0
-    elif num.startswith("lb") or "pound" in num:
-        # Pounds CO2e to tonnes CO2e: 0.45359237 kg/lb / 1000 kg/t
-        return (amt_val * ef_val * 0.45359237) / 1000.0
+    # 1. Split the unit into numerator (GHG mass) and denominator (activity)
+    if "/" in unit_str:
+        num, den = (p.strip() for p in unit_str.split("/", 1))
+    elif " per " in unit_str:
+        num, den = (p.strip() for p in unit_str.split(" per ", 1))
     else:
-        # Standard kg CO2e / unit -> tonnes CO2e
-        return (amt_val * ef_val) / 1000.0
+        num, den = unit_str, ""
+
+    # 2. A per-1,000 denominator ("kg CO2e/$1000", "t CO2e/1,000 km") scales the activity; it is
+    # read from the unit only. The method name says nothing about the factor's basis: an EEIO
+    # record stores its factor per USD (audit 2026-09-30: an "EEIO" method read a per-USD factor
+    # as per $1,000, 1000x low).
+    per_thousand = bool(_re.match(r"^(?:\$|usd)?\s*(?:1,?000(?![0-9])|1k(?![0-9a-z])|thousand\b|k\s*(?:\$|usd(?![a-z])))", den))
+    scale = 0.001 if per_thousand else 1.0
+
+    # 3. Numerator mass in tonnes per unit, by exact token after the gas name is cut off
+    # ("kgCO2e" -> "kg", "MT CO2e" -> "mt"). "MT" / "metric ton(s)" / "short ton" used to fall
+    # through to kg (1000x / 907x low); a bare "ton" is ambiguous and refused as in the uploads.
+    mass = _re.split(r"co2|ch4|n2o|ghg|carbon", num, maxsplit=1)[0].strip().replace("_", " ")
+    mass = _re.sub(r"\s+", " ", mass)
+    if mass not in _SCOPE3_MASS_TONNES:
+        from input_validation import ValidationError
+        if mass in ("ton", "tons"):
+            raise ValidationError(f"Emission factor unit '{ef_unit}': 'ton' is ambiguous - use tonne (metric) or "
+                                  "short ton", "factor_unit")
+        raise ValidationError(f"Emission factor unit '{ef_unit}': unknown mass '{mass}' (use kg, t, g or lb CO2e "
+                              "per unit)", "factor_unit")
+    to_tonnes = _SCOPE3_MASS_TONNES[mass]
+    return amt_val * ef_val * scale * to_tonnes
 
 
 # -- Canonical unit parsing (audit RC-5: BUG-011/027/033/047/048/049/051/063/066) ---------------
@@ -705,6 +713,32 @@ def annual_volume_m3(value, unit):
     """Annual volume in m3 from a volume (taken as annual) or a rate unit."""
     f, per_year = parse_volume_rate(unit)
     return float(value) * f * (per_year or 1.0)
+
+
+def period_volume_m3(value, unit, year=None, month=None):
+    """Volume in m3 over a record's period: a plain volume as given; a rate ("MMscf/d", "m3/hr",
+    "Mscf/yr") times the length of the record's month (its year when there is no month).
+    annual_volume_m3 always annualised, so a monthly record entered as 5 MMscf/d counted 365 days
+    of gas instead of the month's (audit 2026-09-30: 12x on monthly flaring and production)."""
+    import calendar
+
+    f, per_year = parse_volume_rate(unit)
+    vol = float(value) * f
+    if per_year is None:
+        return vol
+    try:
+        yr = int(year) if year not in (None, "") else None
+        mo = int(month) if month not in (None, "") else None
+    except (TypeError, ValueError):
+        yr, mo = None, None
+    days_in_year = 366 if (yr and calendar.isleap(yr)) else 365
+    if mo and 1 <= mo <= 12:
+        days = calendar.monthrange(yr or 2001, mo)[1]
+    else:
+        days = days_in_year
+    if per_year == 1.0:  # per year: the period's share of the year
+        return vol * days / days_in_year
+    return vol * (per_year / 365.0) * days  # per day (365) or per hour (8760) over `days`
 
 
 _SCALE = _re.compile(r"^(?:10\^?(\d+)|1e(\d+)|(thousand|million|billion))\s*")

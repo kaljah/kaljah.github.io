@@ -141,3 +141,31 @@ See audit/UPLOAD_SCENARIO_AUDIT.md (fixes 1-22). Server: calculations/dispatcher
 ## 2026-09-30 - 10,000-row upload audit fixes
 
 See audit/UPLOAD_10K_AUDIT.md (fixes 1-13). Server: calculations/dispatcher.py (single flare efficiency, year hours), calculations/stoichiometry.py (mass_to_kg), calculations/units.py (spaced unit names, year_hours), calculations/combustion.py, background_processor.py (steam loss / efficiency parsing and header aliases, Scope 3 uncertainty, job completion after the error file), services/maker_checker.py (one notification per maker), routes/scope2.py and routes/scope3.py (paging, default_scope3_uncertainty), services/dashboard_filters.py (vented processes), services/inventory_uncertainty.py (calculation tiers, bands, labels), routes/dashboard.py (filtered batch uncertainty). Client: ManageData (approve-all toast), NotificationCenter (toast bursts), Scope2Form / Scope3Form (server paging, load error state), Scope2ImportWizard, ColumnMappingWizard, BulkImportModal (steam fields), UncertaintyAssessment (tiers and bands). Tests: tests/test_upload_10k_audit_fixes.py (25).
+
+## 2026-09-30 - Calculation and CSV uploader audit
+
+See audit/CALC_CSV_AUDIT_2026-09-30.md (fixes 1-9). Server: calculations/units.py (compute_scope3_co2e numerator / per-1,000 denominator, normalize_efficiency explicit %, therm), services/scope1_calc.py (check_activity_unit in resolve_factor), background_processor.py (decimal comma for ";" CSV, user uncertainty as a calculation input, _file_uncertainty, Scope 2 source types). Tests: tests/test_calc_audit_2026_09_30.py (44).
+
+## 2026-09-30 - Whole-pipeline audit
+
+See audit/CALC_CSV_AUDIT_2026-09-30.md part 2 (fixes 10-14). Server: routes/scope2.py (_STEAM_MASS_UNITS, _recalc_indirect_steam), calculations/dispatcher.py (Tier 3 flaring N2O default), services/scope1_calc.py (custom factor HHV basis from the parent fuel), routes/scope3.py (label). Golden cases GOLD-F01 / F02 (flare N2O). Tests: tests/test_pipeline_audit_2026_09_30.py (7).
+
+## 2026-09-30 - Tier 3 / Excel / production audit
+
+See audit/CALC_CSV_AUDIT_2026-09-30.md part 3 (fixes 15-17). Server: background_processor.py (_xl_values, _percent_text_to_number), calculations/units.py (period_volume_m3), calculations/dispatcher.py (_normalize_volume by the record's month), services/dashboard_filters.py (gas_volume_m3 / production conversions by period), services/intensity.py and routes/dashboard.py (flaring volume by period). Tests: tests/test_upload_percent_rates_2026_09_30.py (7).
+
+## 2026-09-30 - Deep dive through the running app
+
+See audit/CALC_CSV_AUDIT_2026-09-30.md part 6 (fixes 26-32). Server: emission_factors_api2021.py and services/scope1_calc.py (LNG unverified_basis refusal), calculations/legacy_engine.py (completions volume vs events), routes/scope2.py (steam boiler efficiency %, unknown unit, loss range; CHP fuel CH4/N2O and stored heat), calculations/units.py (Scope 3 numerator tokens, k$ / kUSD), background_processor.py (Scope 3 unit error as a row error). Client: pages/DashboardEnhanced.jsx and components/BatchReviewWizard.jsx (default filters only when shared by every accessible facility). Tests: tests/test_deep_dive_2026_09_30.py (25).
+
+## 2026-09-30 - Deep dive round 2
+
+See audit/CALC_CSV_AUDIT_2026-09-30.md fixes 33-39. Server: calculations/vented_production.py (tank GOR 0, pump hours / events), calculations/vented.py (flowback duration 0), calculations/vented_midstream.py / vented_downstream.py / vented_exploration.py / vented_ccus_transport.py / vented_lng_distribution.py (zero-as-missing defaults), background_processor.py (CSV overflow rows, custom factor parent_fuel), routes/custom_factors.py (_canonical_parent_fuel), routes/emissions.py and services/scope1_calc.py (parent lookup), routes/scope2.py (CHP edit). Tests: tests/test_deep_dive_2026_09_30.py (+5); legacy test_emission_calculations.py and test_csv_uploader.py repaired.
+
+## 2026-10-01 - API Compendium check
+
+See audit/CALC_CSV_AUDIT_2026-09-30.md #40-43. Server: calculations/units.py (MOLAR_VOLUME_*, densities = MW / 23.685), calculations/fugitive_onshore.py, calculations/midstream.py, calculations/combustion.py, routes/reports.py, services/intensity.py (density constant, WEC 0.0192 mt/Mscf). Client: constants.js (CH4_DENSITY_KG_M3), pages/MethaneIntensity.jsx. Validation: reference_model/ref_constants.py, unit_conversions.py, aggregation_intensity.py (WEC), golden_cases.json (density-driven values), mutation tests. Tests: hand-written densities in the test oracles converted; tests/test_deep_dive_2026_09_30.py (+2).
+
+## 2026-10-01 - Invented / hard-coded values
+
+See audit/CALC_CSV_AUDIT_2026-09-30.md #44-57. Server: services/erp_integration.py (removed), routes/emissions.py (erp/sync 501), calculations/fugitive.py (CompressorSealCalculator), calculations/dispatcher.py (seal segment / measured rate, teg_pump_rate, Eq 6-11 CH4), calculations/activity_factors.py (gb_cent_wet), calculations/legacy_engine.py (placeholder branches and helpers removed), calculations/vented_production.py (tank tier), calculations/midstream.py (comments), services/email_service.py. Client: Scope1Form, scope1/UnloadingForm, CompletionsForm, AssociatedGasVentingForm, CalculationDetails, pages/MethaneIntensity, CarbonIntensity, Reports, MethaneExplorer, QADashboard, Settings; pages/ErpSync.jsx removed. Validation: reference_model/fugitives.py. Tests: tests/test_deep_dive_2026_09_30.py (+12), test_battery_compressor_fugitives_equipment.py, test_numerical_invariants.py, test_audit_remediation.py.

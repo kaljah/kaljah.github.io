@@ -732,7 +732,7 @@ class PneumaticPumpCalculator(BaseCalculator):
         uncertainties = uncertainties or {}
         meth = str(method or "factor").lower().strip()
         n_pumps = max(1.0, float(pump_count or 1.0))
-        hrs = max(0.0, float(operating_hours or 8760.0))
+        hrs = max(0.0, float(8760.0 if operating_hours is None else operating_hours))
 
         c_ch4 = float(ch4_content if ch4_content is not None else 0.816)
         if c_ch4 > 1.0:
@@ -1280,7 +1280,8 @@ class TankFlashingCalculator(BaseCalculator):
                 meth = "produced_water"
             elif api_gravity is not None and separator_pressure_psig is not None and separator_temp_f is not None:
                 meth = "vbe"
-            elif gas_oil_ratio and float(gas_oil_ratio) > 0:
+            elif gas_oil_ratio is not None and float(gas_oil_ratio) >= 0:
+                # a measured GOR of 0 (stabilised liquid, no flash gas) is 0, not the Table 6-22 default
                 meth = "gor"
             else:
                 meth = "table_6_22" if liquid_type == "crude" else "table_6_24"
@@ -1477,11 +1478,16 @@ class TankFlashingCalculator(BaseCalculator):
         total_co2 = split["total_co2"]
         flared_n2o = split["flared_n2o"]
 
+        # a Table 6-22 / 6-24 default is a Tier 1 result whatever the record's factor source (a "specific"
+        # record without a GOR or separator data was labelled Tier 3, i.e. measured)
+        tier_unc = dict(uncertainties or {})
+        if meth in ("table_6_22", "table_6_24"):
+            tier_unc["_factor_source"] = "default"
         ch4_res, co2_res, n2o_res = _propagate_results(
             total_ch4=total_ch4,
             total_co2=total_co2,
             flared_n2o=flared_n2o,
-            uncertainties=uncertainties,
+            uncertainties=tier_unc,
             factor_source="API_Section_6.3.9",
             category="tank_flashing",
         )
@@ -1680,7 +1686,7 @@ class ProductionNonRoutineVentingCalculator(BaseCalculator):
             )
             vr = float(vent_rate_scfm)
             tv = float(duration_minutes)
-            n = max(1.0, float(events or 1.0))
+            n = max(0.0, float(1.0 if events is None else events))
             total_gas_scf = vr * tv * n
             gross_ch4_tonnes = total_gas_scf * c_ch4 * (MW_CH4 / MOLAR_VOL_US) / LB_PER_TONNE
             gross_co2_tonnes = total_gas_scf * c_co2 * (MW_CO2 / MOLAR_VOL_US) / LB_PER_TONNE

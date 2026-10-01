@@ -64,7 +64,7 @@ def test_f2_engine_factors_table_4_7(app, fuel, ch4_t_per_tj, n2o_t_per_tj):
 # ---- F1: fuels the form offered and the server rejected (Table 4-5 / 40 CFR 98 Table C-1) ----
 @pytest.mark.parametrize("fuel,mmbtu_per_gal,kg_co2_per_mmbtu", [
     ("Propylene", 0.091, 67.77), ("Butane", 0.103, 64.77), ("Isobutane", 0.099, 64.94),
-    ("Naphtha", 0.125, 68.02), ("Ethanol (100%)", 0.084, 68.44), ("Biodiesel (100%)", 0.128, 73.84),
+    ("Naphtha", 0.125, 68.02),
     ("Lubricants", 0.144, 74.27), ("Waste Oil", 0.138, 74.00),
 ])
 def test_f1_liquid_fuels_table_4_5(app, fuel, mmbtu_per_gal, kg_co2_per_mmbtu):
@@ -81,8 +81,6 @@ def test_f1_liquid_factor_rejects_gas_volume(app):
 def test_f1_solids_and_gases(app):
     em = calc(app, tier1("combustion", "Tires", 10, "ton"))          # 28.00 MMBtu / short ton
     assert em["co2"] == pytest.approx(10 * 28.0 * 85.97 / 1000, rel=1e-3)
-    em = calc(app, tier1("combustion", "Wood / Wood Waste", 10, "ton"))  # 17.48 MMBtu / short ton
-    assert em["co2"] == pytest.approx(10 * 17.48 * 93.80 / 1000, rel=1e-3)
     # acetylene, Table 3-8: 0.0686 lb/ft3, 92.3 wt % C -> carbon balance at 100 % oxidation
     em = calc(app, tier1("combustion", "Acetylene", 1000, "scf"))
     assert em["co2"] == pytest.approx(1000 * 0.0686 * 0.923 * 44.01 / 12.011 / 2204.62, rel=2e-3)
@@ -251,6 +249,9 @@ def test_11_excel_export_scope2_steam_row(client, admin):
     assert rows and rows[0][9] == "Purchased steam / heat" and rows[0][10] == 1000 and rows[0][11] == "MMBtu"
 
 
+_CH4_1E6_M3 = 1e6 * 16.04 / 23.685 / 1000.0  # t CH4 in 1e6 m3 (API Compendium molar volume)
+
+
 def test_10_ogmp_export_loss_rate_and_reconciliation(client, admin, app):
     import openpyxl
     from extensions import db
@@ -266,7 +267,7 @@ def test_10_ogmp_export_loss_rate_and_reconciliation(client, admin, app):
         db.session.add(ProductionData(facility_id=f.id, year=2031, month=1, gas_amount=1000, gas_unit="mscf",
                                       gross_gas_mmsm3=1000.0))
         db.session.add(Emission(facility_id=f.id, year=2031, month=1, process_type="venting", status="Verified",
-                                ch4_emissions=678.5, co2e_total=678.5 * 28, record_id=str(uuid.uuid4())))
+                                ch4_emissions=_CH4_1E6_M3, co2e_total=_CH4_1E6_M3 * 28, record_id=str(uuid.uuid4())))
         db.session.commit()
         fname = f.name
     login(client, uid)
@@ -274,7 +275,7 @@ def test_10_ogmp_export_loss_rate_and_reconciliation(client, admin, app):
     assert x.status_code == 200, x.data[:300]
     wb = openpyxl.load_workbook(io.BytesIO(x.data), data_only=True)
     summary = [r for r in wb.worksheets[0].iter_rows(values_only=True) if r and r[0] == fname][0]
-    # 678.5 t CH4 / 0.6785 kg/m3 = 1e6 m3 over 1e9 m3 gross gas = 0.1 %
+    # 1e6 m3 of CH4 (677.22 t at 0.67722 kg/m3) over 1e9 m3 gross gas = 0.1 %
     assert summary[8] == pytest.approx(1e9) and summary[11] == pytest.approx(0.1, rel=1e-3)
     rec = [r for r in wb["4. Reconciliation Matrix"].iter_rows(values_only=True) if r and r[0] == fname][0]
     assert rec[7] == "NOT ASSESSED"

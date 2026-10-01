@@ -3,7 +3,7 @@ POST /api/emissions (resolve_factor + compute_emissions). Inputs are the exhibit
 expected values their printed results (tonnes), read from scratch/2021-API-GHG-Compendium.pdf.
 
 Tolerance is 2 % unless the printed answer is rounded to one or two significant figures.
-The engine converts scf -> m3 -> mass with its gas densities (0.6785 / 1.861 kg/m3); the
+The engine converts scf -> m3 -> mass with its gas densities (0.67722 / 1.85814 kg/m3, 60 F); the
 exhibits use 379.3 scf/lbmol, which differs by about 0.4 %.
 """
 import json
@@ -238,7 +238,9 @@ def test_post_engineered_record_without_amount(client, api_ctx):
               vessel_diameter_ft=1.6, vessel_pressure_psig=450, gas_fraction=45, refills=52, ch4_content=90,
               co2_content=5)
     assert r.status_code == 201, r.get_json()
-    assert r.get_json()["emissions"]["ch4"] == pytest.approx(0.16, rel=0.03)
+    # the exhibit is annual (52 refills / year); a March record carries 31 / 365 of it
+    # (0.16 t is the exhibit's rounded annual value, 0.1646 unrounded)
+    assert r.get_json()["emissions"]["ch4"] == pytest.approx(0.16 * 31 / 365, rel=0.04)
 
 
 def test_post_combustion_method_record(client, api_ctx):

@@ -51,7 +51,6 @@ def _canonical_api_factor_name(fuel_name: str):
         "gas": "Natural Gas",
         "diesel": "Diesel (No. 2 Fuel Oil)",
         "crude oil": "Crude Oil",
-        "fuel gas": "Refinery Fuel Gas",
         "lpg": "Propane (Liquid)",
         "propane": "Propane (Gas)",
         "gasoline": "Motor Gasoline",
@@ -66,12 +65,18 @@ def _canonical_api_factor_name(fuel_name: str):
     canonical = aliases.get(norm)
     if canonical and canonical in factor_catalog:
         return canonical
-    for k, v in factor_catalog.items():
-        if k.lower().replace("_", " ").replace("-", " ").strip() == norm:
+    def _n(x):
+        return str(x).lower().replace("_", " ").replace("-", " ").strip()
+
+    for k in factor_catalog:
+        if _n(k) == norm:
             return k
-        if v.get("code") and v.get("code").lower().replace("_", " ").replace("-", " ").strip() == norm:
-            return k
-    return None
+    # a factor code only when it names one factor: several factors share a code (e.g. CB_Prod is
+    # Carbon Black with and without thermal abatement, CH4 478x apart) and the first one used to win
+    by_code = [k for k, v in factor_catalog.items() if v.get("code") and _n(v["code"]) == norm]
+    distinct = {repr(sorted((kk, str(vv)) for kk, vv in factor_catalog[k].items() if kk in ("co2", "ch4", "n2o", "unit", "hhv")))
+                for k in by_code}
+    return by_code[0] if by_code and len(distinct) == 1 else None
 
 
 def _lookup_api_factor(fuel_name: str) -> dict:
@@ -105,9 +110,11 @@ def get_emissions():
             offset = max(0, int(offset_arg))
             per_page = max(1, min(5000, per_page))
             page = (offset // per_page) + 1
+            start = offset  # honour non page-aligned offsets exactly
         except (ValueError, TypeError, ZeroDivisionError):
             per_page = 50
             page = 1
+            start = 0
     else:
         try:
             page = max(1, request.args.get("page", 1, type=int))
@@ -120,6 +127,7 @@ def get_emissions():
                 per_page = max(1, min(5000, int(limit_arg)))
             except (ValueError, TypeError):
                 per_page = 50
+        start = (page - 1) * per_page
 
     scope = request.args.get("scope", "all")
     year = request.args.get("year")
@@ -381,9 +389,8 @@ def get_emissions():
     # Paginate and sort
     stmt = db.session.query(u).order_by(u.c.timestamp.desc().nullslast())
 
-    if limit_arg != "all":
-        start = (page - 1) * per_page
-        stmt = stmt.offset(start).limit(per_page)
+    # H5: always bounded, including limit=all (capped at 5000 above)
+    stmt = stmt.offset(start).limit(per_page)
 
     records = stmt.all()
 
@@ -464,11 +471,7 @@ def get_emissions():
             "data": paginated_results,
             "emissions": paginated_results,
             "total": total,
-            "pages": (
-                (total // per_page) + (1 if total % per_page > 0 else 0)
-                if limit_arg != "all"
-                else 1
-            ),
+            "pages": (total // per_page) + (1 if total % per_page > 0 else 0),
             "current_page": page,
         }
     )
@@ -685,7 +688,7 @@ def add_bulk_upload():
                         "n2o": float(cf.uncertainty or 0) / 100.0,
                     }
                 elif cf.parent_fuel:
-                    parent_factor = API_FACTORS.get(cf.parent_fuel, {})
+                    parent_factor = _lookup_api_factor(cf.parent_fuel)
                     if "uncertainty" in parent_factor:
                         factor_data["uncertainty"] = parent_factor["uncertainty"]
         elif is_non_comb or is_tier3_factor:
@@ -2276,7 +2279,8 @@ def get_excel_template():
         error="Please enter a date in YYYY-MM format (e.g. 2024-01).",
     )
     ws_data.add_data_validation(dv_date)
-    dv_date.sqref = f"{COL['Date\n(YYYY-MM)']}3:{COL['Date\n(YYYY-MM)']}1048576"
+    date_col = COL["Date\n(YYYY-MM)"]
+    dv_date.sqref = f"{date_col}3:{date_col}1048576"
 
     dv_qty = DataValidation(
         type="decimal",
@@ -4010,30 +4014,14 @@ def reject_batch_emissions():
 @emissions_bp.route("/erp/sync", methods=["POST"])
 @login_required
 def trigger_erp_sync():
-    """ERP integration sync endpoint (Gated by ENABLE_MOCK_ERP flag & Admin role, H8)"""
+    """ERP integration endpoint. No ERP connector is implemented: the former "mock" sync inserted three
+    invented Scope 3 records (fixed spend, factors and co2e, "SAP Ariba Inv #9921") into the inventory
+    when ENABLE_MOCK_ERP was set; it is removed and the endpoint says so."""
     user = get_current_user()
     if not user or user.role not in ["admin", "superuser"]:
         return jsonify({"error": "Admin privileges required for ERP sync"}), 403
-
-    import os
-    if os.environ.get("ENABLE_MOCK_ERP", "false").lower() not in ["1", "true", "yes"]:
-        return (
-            jsonify(
-                {
-                    "error": "Mock ERP synchronization is disabled in production. Set ENABLE_MOCK_ERP=true to enable testing mode."
-                }
-            ),
-            501,
-        )
-
-    from services.erp_integration import sync_erp_data
-
-    result = sync_erp_data(user.id if user else None)
-
-    if result.get("success"):
-        return jsonify(result), 200
-    else:
-        return jsonify(result), 500
+    return jsonify({"error": "No ERP connector is configured. Import ERP spend or activity data with the "
+                             "Scope 3 file upload."}), 501
 
 
 @emissions_bp.route("/pending", methods=["GET"])

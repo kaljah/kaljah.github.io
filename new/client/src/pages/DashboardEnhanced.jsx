@@ -155,9 +155,13 @@ const DashboardEnhanced = () => {
 
         const opDefaults = getUserOperationalDefaults(user, facilitiesData);
         if (opDefaults.isRestricted || facilitiesData.length === 1) {
-          if (opDefaults.defaultActivity) setCurrentActivity(opDefaults.defaultActivity);
-          if (opDefaults.defaultDivision) setCurrentDivision(opDefaults.defaultDivision);
-          if (opDefaults.defaultFacilityId) setCurrentRegion(opDefaults.defaultFacilityId);
+          // the server already scopes a restricted user to their facilities; a default filter is
+          // only applied when every accessible facility shares it (a region with two fields showed
+          // the first field only)
+          const shared = (key) => facilitiesData.length > 0 && facilitiesData.every((f) => f[key] === facilitiesData[0][key]);
+          if (opDefaults.defaultActivity && shared("activity")) setCurrentActivity(opDefaults.defaultActivity);
+          if (opDefaults.defaultDivision && shared("division")) setCurrentDivision(opDefaults.defaultDivision);
+          if (opDefaults.defaultFacilityId && facilitiesData.length === 1) setCurrentRegion(opDefaults.defaultFacilityId);
         }
         setIsReady(true);
       } catch (error) {

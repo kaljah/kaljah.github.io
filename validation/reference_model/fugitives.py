@@ -58,15 +58,22 @@ class IndependentFugitiveModel:
         return {"ch4": ch4_t, "co2": 0.0, "n2o": 0.0, "co2e": co2e}
 
     @staticmethod
-    def calculate_compressor_seal(count, seal_type="reciprocating", gwp_standard="AR5", gwp_horizon="100"):
+    def calculate_compressor_seal(count, seal_type="reciprocating", gwp_standard="AR5", gwp_horizon="100",
+                                  segment="production"):
+        # API Compendium 2021, kg CH4 per compressor-hour: Section 6.4.3 (G&B wet seal 0.026 t/hr), Table 6-30
+        # (rod packing 4.43E-04 t/hr), Tables 6-37 / 6-38 (processing), Tables 6-40 / 6-41 (transmission & storage)
         cnt = float(count or 0.0)
         st = str(seal_type or "reciprocating").strip().lower()
-        if "dry" in st:
-            ef = 1.5
-        elif "wet" in st:
-            ef = 15.0
-        else:
-            ef = 1.2
+        kind = "dry" if "dry" in st else "wet" if "wet" in st else "recip"
+        seg = str(segment or "production").lower()
+        seg = "processing" if "process" in seg else "ts" if ("transmission" in seg or "storage" in seg) else "prod"
+        table = {("prod", "wet"): 26.0, ("prod", "recip"): 0.443,
+                 ("processing", "wet"): 86426.0 / 8760.0, ("processing", "dry"): 28192.0 / 8760.0,
+                 ("processing", "recip"): 2.7,
+                 ("ts", "wet"): 18.4, ("ts", "dry"): 5.75, ("ts", "recip"): 4.72}
+        if (seg, kind) not in table:
+            raise ValueError("no Compendium factor for this segment / seal type")
+        ef = table[(seg, kind)]
 
         total_kg_hr = cnt * ef
         ch4_t = (total_kg_hr * 8760.0) / 1000.0

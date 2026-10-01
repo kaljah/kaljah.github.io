@@ -140,6 +140,19 @@ def custom_factor_data(cf):
         "co2": cf.co2_factor, "ch4": cf.ch4_factor, "n2o": cf.n2o_factor, "co": cf.co_factor,
         "unit": cf.unit, "hhv": cf.hhv_factor, "type": "custom", "name": cf.name, "custom_factor_id": cf.id,
     }
+    if cf.parent_fuel:
+        # the HHV is in the parent fuel's basis (Btu/gal for diesel, Btu/scf for gas): without it a
+        # custom kg/MMBtu diesel factor applied to gallons was refused as "per scf of gas"
+        from calculations.combustion import factor_hhv_unit, fuel_basis
+        from routes.emissions import _lookup_api_factor
+
+        parent = _lookup_api_factor(cf.parent_fuel)
+        if parent:
+            hu = factor_hhv_unit(parent)
+            if not hu:
+                basis, mult = fuel_basis(parent.get("type") or cf.parent_fuel)
+                hu = {1.0: "btu", 1e3: "kbtu", 1e6: "mmbtu"}[mult] + "/" + basis
+            fd["hhv_unit"] = hu
     per_gas = [getattr(cf, f"{g}_uncertainty", None) for g in ("co2", "ch4", "n2o")]
     if any(per_gas):
         fd["uncertainty"] = {
@@ -147,8 +160,12 @@ def custom_factor_data(cf):
         }
     elif cf.uncertainty and cf.uncertainty > 0:
         fd["uncertainty"] = {g: float(cf.uncertainty) / 100.0 for g in ("co2", "ch4", "n2o")}
-    elif cf.parent_fuel and "uncertainty" in API_FACTORS.get(cf.parent_fuel, {}):
-        fd["uncertainty"] = API_FACTORS[cf.parent_fuel]["uncertainty"]
+    elif cf.parent_fuel:
+        from routes.emissions import _lookup_api_factor
+
+        parent_unc = _lookup_api_factor(cf.parent_fuel).get("uncertainty")
+        if parent_unc:
+            fd["uncertainty"] = parent_unc
     return fd
 
 
@@ -261,7 +278,43 @@ def resolve_factor(payload, stored_payload=None, allow_archived=False):
         has_site_props = any(payload.get(k) not in (None, "", 0) for k in ("hhv", "density", "fuel_density"))
         if not (catalog and has_site_props):
             raise ValidationError("factor_source is 'custom' but no custom factor was given", "custom_factor_id")
+    if source in ("default", "") and catalog:
+        if catalog.get("unverified_basis"):
+            raise ValidationError(
+                f"'{payload.get('fuel') or payload.get('fuel_type')}' ({catalog.get('unit')}, "
+                f"{catalog.get('source') or 'catalog'}) has no verified time basis and cannot be applied to a monthly "
+                "record; use a custom factor with an explicit unit (e.g. tonne CH4/hr/facility)",
+                "fuel",
+            )
+        check_activity_unit(catalog, payload.get("unit"), payload.get("fuel") or payload.get("fuel_type"))
     return catalog
+
+
+def check_activity_unit(factor_data, unit, name=None):
+    """A catalog factor is applied to an activity of its own dimension: per-event, per-completion and
+    per-well-year factors take a count (events, completions, wells) and a per-bbl factor a volume.
+    Those calculators used the amount whatever its unit, so 1,000 m3 of a completion factor was
+    booked as 1,000 completions (audit 2026-09-30). An energy factor may still take a volume or a
+    mass (converted with the heating value). Units that cannot be parsed are left to the calculator."""
+    from calculations.units import UnitError, parse_factor_unit, unit_dimension
+
+    if not unit or not (factor_data or {}).get("unit"):
+        return
+    try:
+        dims = {d for d, _, _ in parse_factor_unit(factor_data["unit"])["denominators"] if d != "time"}
+        a_dim, _ = unit_dimension(unit)
+    except UnitError:
+        return
+    if not dims or a_dim in dims or ("energy" in dims and a_dim in ("volume", "mass")):
+        return
+    expected = {"count": "a count (events, completions, wells)", "volume": "a volume (bbl, m3, scf)",
+                "mass": "a mass (tonne, kg)", "energy": "an energy (MMBtu, GJ)"}
+    need = " or ".join(expected.get(d, d) for d in sorted(dims))
+    raise ValidationError(
+        f"'{name or factor_data.get('name') or 'This factor'}' is in {factor_data['unit']}: the activity must be "
+        f"{need}, not '{unit}'",
+        "unit",
+    )
 
 
 def _gas_unc(api_res, gas):

@@ -222,16 +222,17 @@ class CalculationDispatcher:
             raise ValueError(f"Missing required field: {key} ({description})")
         return float(val)
 
-    def _normalize_volume(self, value, unit, target_unit="m3"):
+    def _normalize_volume(self, value, unit, target_unit="m3", year=None, month=None):
         """Normalise a gas/liquid volume or volume RATE to `target_unit` (m3 or mmscf).
 
-        RC-5 (BUG-066 / BUG-033): exact-token parsing; rate units ("MMscfd", "Mcf/day", "m3/yr")
-        are annualised; an unknown unit raises instead of being returned unchanged.
+        RC-5 (BUG-066 / BUG-033): exact-token parsing; a rate unit ("MMscfd", "Mcf/day", "m3/yr")
+        covers the record's month (its year when no month is given); an unknown unit raises
+        instead of being returned unchanged.
         """
-        from .units import annual_volume_m3
+        from .units import period_volume_m3
 
         try:
-            m3 = annual_volume_m3(value, unit or "m3")
+            m3 = period_volume_m3(value, unit or "m3", year=year, month=month)
         except UnitError as err:
             raise ValueError(str(err))
         if target_unit == "m3":
@@ -934,7 +935,7 @@ class CalculationDispatcher:
                     ["amount", "quantity", "gas_volume"],
                     "flared gas volume",
                 )
-                vol_m3 = self._normalize_volume(vol_raw, unit, "m3")
+                vol_m3 = self._normalize_volume(vol_raw, unit, "m3", flat_inputs.get("year"), flat_inputs.get("month"))
                 ch4_content = self._require_fraction(
                     flat_inputs,
                     ["c1", "ch4_content", "flare_ch4_content"],
@@ -964,8 +965,11 @@ class CalculationDispatcher:
                     comb_eff = single_eff if comb_eff is None else comb_eff
                     dest_eff = single_eff if dest_eff is None else dest_eff
                 ef_n2o_val = emission_factors.get("n2o") if emission_factors.get("n2o") not in [None, "", "-"] else (
-                    emission_factors.get("ef_n2o") if emission_factors.get("ef_n2o") not in [None, "", "-"] else flat_inputs.get("ef_n2o", 0.0)
+                    emission_factors.get("ef_n2o") if emission_factors.get("ef_n2o") not in [None, "", "-"] else flat_inputs.get("ef_n2o")
                 )
+                # No N2O factor: the calculator's API Compendium Table 5-3 default (kg/MMBtu of gas
+                # flared) applies. An explicit 0 used to be passed, so Tier 3 flaring had no N2O.
+                n2o_given = ef_n2o_val not in (None, "", "-")
 
                 return calculator.calculate(
                     gas_volume=vol_m3,
@@ -975,10 +979,10 @@ class CalculationDispatcher:
                     hhv=float(hhv_val) if hhv_val else None,
                     ef_unit=flat_inputs.get(
                         "ef_unit", emission_factors.get("unit", "kg/unit")
-                    ),
+                    ) if n2o_given else None,
                     fuel_unit="m3",
                     fuel_type=flat_inputs.get("fuel_type"),
-                    ef_n2o=float(ef_n2o_val or 0.0),
+                    ef_n2o=float(ef_n2o_val) if n2o_given else None,
                     combustion_efficiency=comb_eff,
                     destruction_efficiency=dest_eff,
                     operating_temperature=flat_inputs.get("operating_temperature")
@@ -1224,7 +1228,8 @@ class CalculationDispatcher:
                     sfr_p = self._require_float(flat_inputs, ["sfr_p", "sfr", "production_rate"], "daily gas production rate (SFRp)")
                     t_p = self._require_float(flat_inputs, ["t_p", "hours_open", "venting_time"], "hours vented per event (Tp)")
                     events = int(self._require_float(flat_inputs, ["unload_freq", "unload_events", "events", "amount"], "annual unloading events"))
-                    ch4_content = self._optional_fraction(flat_inputs, ["ch4_content", "c1", "unload_ch4_content"], 0.85)
+                    # the gas CH4 content is a site input, as for Eq 6-3 / 6-10 (it defaulted to an invented 85 %)
+                    ch4_content = self._require_fraction(flat_inputs, ["ch4_content", "c1", "unload_ch4_content"], "gas CH4 content %")
                     co2_content = self._optional_fraction(flat_inputs, ["co2_content", "co2_mol"], 0.0)
                     flare_eff = self._optional_fraction(flat_inputs, ["unload_flare_eff", "control_efficiency"], 0.0)
                     press_unit = flat_inputs.get("unload_press_unit") or flat_inputs.get("press_unit", "psia")
@@ -1366,7 +1371,7 @@ class CalculationDispatcher:
                     "vessel physical volume",
                 )
                 raw_unit = flat_inputs.get("blowdown_unit") or unit or "m3"
-                vol_m3 = self._normalize_volume(raw_vol, raw_unit, "m3")
+                vol_m3 = self._normalize_volume(raw_vol, raw_unit, "m3", flat_inputs.get("year"), flat_inputs.get("month"))
                 press = self._require_float(
                     flat_inputs,
                     ["blowdown_pressure", "pressure"],
@@ -1951,6 +1956,9 @@ class CalculationDispatcher:
                     hours=raw_hours,
                     uncertainties=uncertainties,
                     gwp_dict=gwp_dict,
+                    segment=flat_inputs.get("compressor_segment") or flat_inputs.get("segment") or "production",
+                    measured_kg_hr=next((flat_inputs.get(k) for k in ("leak_rate_kg_hr", "measured_kg_hr")
+                                         if flat_inputs.get(k) not in (None, "")), None),
                 )
 
             elif process_type in ["agr", "acid_gas_removal"]:
@@ -1960,7 +1968,7 @@ class CalculationDispatcher:
                     "gas throughput",
                 )
                 vol_mmscf = self._normalize_volume(
-                    agr_vol, flat_inputs.get("agr_unit") or unit, "mmscf"
+                    agr_vol, flat_inputs.get("agr_unit") or unit, "mmscf", flat_inputs.get("year"), flat_inputs.get("month")
                 )
                 raw_co2_in = self._require_float(
                     flat_inputs, ["agr_co2_in", "co2_in", "co2_content"], "inlet CO2 mole %"
@@ -2132,7 +2140,7 @@ class CalculationDispatcher:
                 # Tier 3 browser test #12: the former "parametric solubility" model had no source in the
                 # API Compendium. Section 6.3.8.1 methods: Tables 6-17/6-18/6-35/6-36 (Tier 1 activity
                 # factors), a process simulation (GRI-GLYCalc) or measurement (vent_method routes)
-                if flat_inputs.get("dehy_pump_rate") not in (None, "") or flat_inputs.get("pump_rate") not in (None, ""):
+                if any(flat_inputs.get(k) not in (None, "") for k in ("dehy_pump_rate", "pump_rate", "teg_pump_rate")):
                     raise ValueError(
                         "Glycol dehydrator Tier 3: enter the measured vent volume or the simulation (GLYCalc) result; "
                         "use Tier 1 for the Compendium factors"

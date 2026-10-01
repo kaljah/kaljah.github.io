@@ -282,7 +282,6 @@ LEGACY_FACTORS = {
 # listed them, the server rejected every one). CO2 and heating values: Table 4-5 (40 CFR 98 Table C-1,
 # kg CO2/MMBtu HHV); CH4 / N2O: Table 4-6 (HHV basis). Liquids are per gallon of liquid, gases per scf.
 _PETROLEUM_CH4, _PETROLEUM_N2O = 0.003, 0.0006   # Table 4-6 petroleum products, kg/MMBtu (HHV)
-_BIOLIQUID_CH4, _BIOLIQUID_N2O = 0.0011, 0.00011  # Table 4-6 biodiesels / liquid biofuels
 _NG_CH4, _NG_N2O = 0.001, 0.0001                  # Table 4-6 natural gas
 
 
@@ -312,13 +311,7 @@ TIER1_FUEL_ADDITIONS = {
     "Naphtha": _fuel("Naphtha", 125000, "gal", 68.02, _PETROLEUM_CH4, _PETROLEUM_N2O, "Table 4-5 / 4-6, naphtha < 401 F"),
     "Lubricants": _fuel("Lube", 144000, "gal", 74.27, _PETROLEUM_CH4, _PETROLEUM_N2O, "Table 4-5 / 4-6"),
     "Waste Oil": _fuel("WasteOil", 138000, "gal", 74.00, _PETROLEUM_CH4, _PETROLEUM_N2O, "Table 4-5 used oil / Table 4-6"),
-    "Ethanol (100%)": _fuel("EtOH", 84000, "gal", 68.44, _BIOLIQUID_CH4, _BIOLIQUID_N2O, "Table 4-5 / 4-6",
-                            usage=("combustion", "mobile"), unc=(0.05, 0.4, 0.5)),
-    "Biodiesel (100%)": _fuel("BioDSL", 128000, "gal", 73.84, _BIOLIQUID_CH4, _BIOLIQUID_N2O, "Table 4-5 / 4-6",
-                              usage=("combustion", "mobile"), unc=(0.05, 0.4, 0.5)),
     # solids: HHV in kBtu per short ton
-    "Wood / Wood Waste": _fuel("Wood", 17480, "ton", 93.80, 0.0072, 0.0036, "Table 4-5 (dry basis) / Table 4-6",
-                               unc=(0.05, 0.4, 0.5)),
     "Tires": _fuel("Tires", 28000, "ton", 85.97, 0.032, 0.0042,
                    "Table 4-5; CH4 / N2O 40 CFR 98 Table C-2 other solid fuels", unc=(0.03, 0.3, 0.4)),
     # gases (per scf)

@@ -546,7 +546,7 @@ const Settings = () => {
                 (Year 0).
               </span>
               <div className="year-selector-buttons">
-                {[2021, 2022, 2023, 2024, 2025, 2026].map((yr) => (
+                {Array.from({ length: new Date().getFullYear() - 2020 }, (_, i) => 2021 + i).map((yr) => (
                   <button
                     key={yr}
                     type="button"
@@ -824,7 +824,7 @@ const Settings = () => {
                             )
                           }
                         >
-                          {[2021, 2022, 2023, 2024, 2025, 2026].map((y) => (
+                          {Array.from({ length: new Date().getFullYear() - 2020 }, (_, i) => 2021 + i).map((y) => (
                             <option key={y} value={y}>
                               {y}
                             </option>

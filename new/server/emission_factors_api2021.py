@@ -41,20 +41,6 @@ COMBUSTION_FACTORS = {
         "type": "gases",
         "source": "API Compendium 2021 Section 5, Table 5-1",
     },
-    "Landfill Gas": {
-        "code": "LFG",
-        "hhv": 485,  # Table 4-5: 4.85E-04 MMBtu/scf
-        "co2": 52.07,
-        "ch4": 0.0032,
-        "n2o": 0.00063,
-        "uncertainty": {"co2": 0.05, "ch4": 0.40, "n2o": 0.50},
-        "unit": "kg/MMBtu",
-        "usage": ["combustion"],
-        "segment": "Midstream",
-        "process_category": "stationary_combustion",
-        "type": "gases",
-        "source": "API Compendium 2021 Section 5",
-    },
     "Coke Oven Gas": {
         "code": "COG",
         "hhv": 599,  # Table 4-5: 5.99E-04 MMBtu/scf
@@ -1830,6 +1816,9 @@ EQUIPMENT_FACTORS = {
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 0.30, "n2o": 0},
         "unit": "tonne CH₄/facility",
+        # the table's time basis is not verified: per facility (no time) books a monthly record at
+        # 1/744 of a per-hour factor; refused until checked against Table 7-76 (audit 2026-09-30)
+        "unverified_basis": True,
         "segment": "Downstream",
         "process_category": "lng_operations",
         "type": "equipment",
@@ -1844,6 +1833,9 @@ EQUIPMENT_FACTORS = {
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 0.30, "n2o": 0},
         "unit": "tonne CH₄/facility",
+        # the table's time basis is not verified: per facility (no time) books a monthly record at
+        # 1/744 of a per-hour factor; refused until checked against Table 7-76 (audit 2026-09-30)
+        "unverified_basis": True,
         "segment": "Downstream",
         "process_category": "lng_operations",
         "type": "equipment",
@@ -1858,6 +1850,9 @@ EQUIPMENT_FACTORS = {
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 0.30, "n2o": 0},
         "unit": "tonne CH₄/facility",
+        # the table's time basis is not verified: per facility (no time) books a monthly record at
+        # 1/744 of a per-hour factor; refused until checked against Table 7-76 (audit 2026-09-30)
+        "unverified_basis": True,
         "segment": "Downstream",
         "process_category": "lng_operations",
         "type": "equipment",

@@ -44,7 +44,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
       if (!data.calc_method || data.calc_method.startsWith("api_equation")) {
         onChange("calc_method", "api_table_6_11");
       }
-      const wellCount = data.well_count || data.wells || data.amount || 1;
+      const wellCount = data.well_count || data.wells || data.amount || "";  // never an invented count
       if (data.amount !== wellCount) onChange("amount", wellCount);
     } else if (isTier2) {
       if (data.unit !== "events") onChange("unit", "events");
@@ -52,12 +52,12 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
       if (!data.calc_method || data.calc_method.startsWith("api_equation")) {
         onChange("calc_method", "api_table_6_10");
       }
-      const eventsCount = data.events || data.unload_events || data.unload_freq || data.amount || 10;
+      const eventsCount = data.events || data.unload_events || data.unload_freq || data.amount || "";  // never an invented count
       if (data.amount !== eventsCount) onChange("amount", eventsCount);
     } else {
       if (data.unit !== "events") onChange("unit", "events");
       if (data.tier !== "tier3") onChange("tier", "tier3");
-      const eventsCount = data.unload_events || data.unload_freq || data.events || data.amount || 12;
+      const eventsCount = data.unload_events || data.unload_freq || data.events || data.amount || "";  // never an invented count
       if (data.amount !== eventsCount) onChange("amount", eventsCount);
     }
     const cm = String(data.calc_method || "");

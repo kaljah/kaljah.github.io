@@ -1210,7 +1210,7 @@ const Scope1Form = () => {
       if (processType === "completions") {
         const tier = String(formData.tier || (sourceType === "specific" ? "tier3" : sourceType === "custom" ? "tier2" : "tier1")).toLowerCase();
         if (tier === "tier1" || sourceType === "default" || tier === "tier2" || sourceType === "custom") {
-          finalAmount = parseFloat(formData.events || formData.amount || 1);
+          finalAmount = parseFloat(formData.events || formData.amount);
           finalUnit = "events";
         } else {
           // Tier 3 Direct Measurement: metered volume
@@ -1224,10 +1224,10 @@ const Scope1Form = () => {
       if (processType === "unloading") {
         const tier = String(formData.tier || (sourceType === "specific" ? "tier3" : sourceType === "custom" ? "tier2" : "tier1")).toLowerCase();
         if (tier === "tier1" || sourceType === "default") {
-          finalAmount = parseFloat(formData.well_count || formData.wells || formData.amount || 1);
+          finalAmount = parseFloat(formData.well_count || formData.wells || formData.amount);
           finalUnit = "wells";
         } else {
-          finalAmount = parseFloat(formData.unload_events || formData.unload_freq || formData.events || formData.amount || 1);
+          finalAmount = parseFloat(formData.unload_events || formData.unload_freq || formData.events || formData.amount);
           finalUnit = "events";
         }
       }
@@ -1414,19 +1414,19 @@ const Scope1Form = () => {
           finalAmount = parseFloat(formData.amount);
           finalUnit = formData.unit || "count";
         } else if (tier === "tier1") {
-          finalAmount = parseFloat(formData.facility_count || 1);
+          finalAmount = parseFloat(formData.facility_count);
           finalUnit = "facility";
         } else if (formData.fugitive_method === "equipment") {
-          finalAmount = parseFloat(formData.equipment_count || 1);
+          finalAmount = parseFloat(formData.equipment_count);
           finalUnit = "equipment";
         } else if (formData.fugitive_method === "ogi") {
-          finalAmount = parseFloat(formData.leakers_count || 1);
+          finalAmount = parseFloat(formData.leakers_count);
           finalUnit = "leakers";
         } else if (formData.fugitive_method === "measurement") {
           finalAmount = parseFloat(formData.measured_rate || 0);
           finalUnit = formData.rate_unit || "kg/hr";
         } else {
-          finalAmount = parseFloat(formData.component_count || 1);
+          finalAmount = parseFloat(formData.component_count);
           finalUnit = "sources";
         }
       }
@@ -1442,6 +1442,13 @@ const Scope1Form = () => {
       if (sourceType === "library") {
         finalAmount = parseFloat(formData.amount || formData.quantity || 0);
         finalUnit = formData.unit || "";
+      }
+
+      // a blank count is never booked as 1 (wells, events, facilities, components ... were defaulted to 1)
+      if (finalAmount !== undefined && Number.isNaN(finalAmount)) {
+        toast.warning("Please enter the activity amount (count, volume or quantity)");
+        setSubmitting(false);
+        return;
       }
 
       if (!finalUnit && sourceType !== "specific" && !sectionActive) {
@@ -1678,8 +1685,6 @@ const Scope1Form = () => {
         co2: efCo2,
         ch4: efCh4,
         n2o: efN2o,
-        gwp_ch4: 28.0,
-        gwp_n2o: 265.0,
         source: fSource,
       },
       uncertainty: {

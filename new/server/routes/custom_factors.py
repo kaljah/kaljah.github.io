@@ -59,6 +59,21 @@ def _parse_non_negative_float(val, field_name, default=0.0):
         raise ValueError(err.message)
 
 
+def _canonical_parent_fuel(value):
+    """Catalog name of a custom factor's parent fuel (it sets the HHV basis: Btu/gal, Btu/scf ...), or
+    None when blank. An unknown name was stored and silently ignored, so a liquid factor fell back to
+    the gas basis (deep-dive audit); it is now refused."""
+    if value in (None, "") or not str(value).strip():
+        return None
+    from routes.emissions import _canonical_api_factor_name
+
+    name = _canonical_api_factor_name(str(value).strip())
+    if not name:
+        raise ValueError(f"Parent fuel '{value}' is not a catalog fuel (e.g. Diesel, Natural Gas); leave it blank "
+                         "for a gas factor or pick the catalog fuel the HHV belongs to")
+    return name
+
+
 def _canonical_factor_unit(unit):
     """BUG-063: one stored form for custom factor units. The Manage Data form sends the bare
     activity unit (values labelled "kg/unit"), so "scf" becomes "kg/scf"; anything the
@@ -154,6 +169,11 @@ def create_custom_factor():
         return jsonify({"error": str(err), "field": "unit"}), 400
 
     try:
+        parent_fuel = _canonical_parent_fuel(data.get("parent_fuel"))
+    except ValueError as err:
+        return jsonify({"error": str(err), "field": "parent_fuel"}), 400
+
+    try:
         co2_factor = _parse_non_negative_float(data.get("co2_factor"), "co2_factor")
         ch4_factor = _parse_non_negative_float(data.get("ch4_factor"), "ch4_factor")
         n2o_factor = _parse_non_negative_float(data.get("n2o_factor"), "n2o_factor")
@@ -178,7 +198,7 @@ def create_custom_factor():
         unit=unit,
         hhv_factor=hhv_factor,
         usage=data.get("usage", "Custom"),
-        parent_fuel=data.get("parent_fuel"),
+        parent_fuel=parent_fuel,
         source=data.get("source"),
         description=data.get("description"),
         version=data.get("version"),
@@ -274,7 +294,11 @@ def update_custom_factor(factor_id):
     if "usage" in data:
         factor.usage = data["usage"]
     if "parent_fuel" in data:
-        factor.parent_fuel = data["parent_fuel"]
+        try:
+            factor.parent_fuel = _canonical_parent_fuel(data["parent_fuel"])
+        except ValueError as err:
+            db.session.rollback()
+            return jsonify({"error": str(err), "field": "parent_fuel"}), 400
     if "source" in data:
         factor.source = data["source"]
     if "description" in data:
@@ -418,6 +442,7 @@ def import_custom_factors():
             ch4_uncertainty = _parse_non_negative_float(factor_data.get("ch4_uncertainty"), "ch4_uncertainty")
             n2o_uncertainty = _parse_non_negative_float(factor_data.get("n2o_uncertainty"), "n2o_uncertainty")
             _require_some_factor(co2_factor, ch4_factor, n2o_factor)
+            parent_fuel = _canonical_parent_fuel(factor_data.get("parent_fuel"))
         except ValueError as err:
             skipped.append({"row": i + 1, "error": str(err)})
             continue
@@ -432,7 +457,7 @@ def import_custom_factors():
             unit=unit,
             hhv_factor=hhv_factor,
             usage=factor_data.get("usage", "Custom"),
-            parent_fuel=factor_data.get("parent_fuel"),
+            parent_fuel=parent_fuel,
             source=factor_data.get("source"),
             description=factor_data.get("description"),
             version=factor_data.get("version"),

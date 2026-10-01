@@ -84,7 +84,7 @@ class TestConservationLaws:
         co2_tonnes = res["results"]["co2"]["value"]
 
         # Total methane mass entering flare
-        density_ch4 = 0.6785
+        density_ch4 = (16.04 / 23.685)
         total_ch4_mass_tonnes = (10000.0 * density_ch4) / 1000.0
 
         # Unburnt methane: (1 - 0.98) * total_mass = 2%
@@ -92,7 +92,7 @@ class TestConservationLaws:
         assert pytest.approx(ch4_tonnes, rel=1e-4) == expected_unburnt_ch4
 
         # Combusted carbon moles: 10,000 m3 * 0.984 = 9,840 m3 CO2
-        density_co2 = 1.861
+        density_co2 = (44.01 / 23.685)
         expected_combusted_co2 = (10000.0 * 1.0 * 0.984 * density_co2) / 1000.0
         assert pytest.approx(co2_tonnes, rel=1e-4) == expected_combusted_co2
 
@@ -390,8 +390,8 @@ class TestNormativeGoldenBenchmarks:
 
         split = _split_vented_and_flared(
             total_gas_m3=1000.0,
-            ch4_tonnes=0.61065,  # 900 m3 CH4 * 0.6785 / 1000
-            co2_tonnes=0.09305,  # 50 m3 CO2 * 1.861 / 1000
+            ch4_tonnes=0.61065,  # 900 m3 CH4 * 0.67722 / 1000
+            co2_tonnes=0.09305,  # 50 m3 CO2 * 1.85814 / 1000
             ctrl_eff=1.0,  # 100% routed to flare (internal combustion efficiency 98%)
             hhv=1020.0,
         )
@@ -419,8 +419,10 @@ class TestNormativeGoldenBenchmarks:
             z_factor=0.88,
             gwp_dict={"CO2": 1.0, "CH4": 28.0, "N2O": 265.0},
         )
-        assert pytest.approx(res["results"]["ch4"]["value"], rel=1e-3) == 1.55612
-        assert pytest.approx(res["total_co2e"], rel=1e-3) == 43.5714
+        # ideal gas with Z: n = PV / (Z R T) = 5,000 kPa x 50 m3 / (0.88 x 8.3145 x 300 K) kmol, 85 % CH4
+        ch4_t = 5000e3 * 50.0 / (0.88 * 8.314462618 * 300.0) * 0.85 * 16.04 / 1e6
+        assert pytest.approx(res["results"]["ch4"]["value"], rel=1e-3) == ch4_t
+        assert pytest.approx(res["total_co2e"], rel=1e-3) == ch4_t * 28.0
 
     def test_api_example_6_6_teg_dehydration_gri_glycalc(self):
         """API Compendium 2021 §6.6: TEG dehydration GRI-GLYCalc parametric methane solubility."""
@@ -439,12 +441,12 @@ class TestNormativeGoldenBenchmarks:
             gwp_dict={"CO2": 1.0, "CH4": 28.0, "N2O": 265.0},
         )
         # S_CH4 = 0.0032 * 800^0.96 * exp(-0.0022 * 40) * 0.90 = 1.6148 scf/gal
-        # Total CH4 = 5,256,000 gal * 1.6148 scf/gal * 0.0283168 m3/scf * 0.6785 / 1000 = 163.08 tonnes
+        # Total CH4 = 5,256,000 gal * 1.6148 scf/gal * 0.0283168 m3/scf * 0.67722 / 1000 = 163.08 tonnes
         assert pytest.approx(res["results"]["ch4"]["value"], rel=1e-2) == 163.08
         assert pytest.approx(res["total_co2e"], rel=1e-2) == 4566.14
 
     def test_api_table_7_3_compressor_seals(self):
-        """API Compendium 2021 Table 7-3: Reciprocating compressor seals (1.2 kg/hr)."""
+        """API Compendium 2021 Table 6-30: reciprocating rod packing, production (4.43E-04 t CH4/compressor-hr)."""
         calc = CompressorSealCalculator()
         res = calc.calculate(
             compressor_count=2,
@@ -452,9 +454,9 @@ class TestNormativeGoldenBenchmarks:
             uncertainties={},
             gwp_dict={"CO2": 1.0, "CH4": 28.0, "N2O": 265.0},
         )
-        # 2 * 1.2 kg/hr * 8760 hr / 1000 = 21.024 tonnes CH4
-        assert pytest.approx(res["results"]["ch4"]["value"], rel=1e-4) == 21.024
-        assert pytest.approx(res["total_co2e"], rel=1e-4) == 588.672
+        # 2 * 0.443 kg/hr * 8760 hr / 1000 = 7.76136 tonnes CH4
+        assert pytest.approx(res["results"]["ch4"]["value"], rel=1e-4) == 7.76136
+        assert pytest.approx(res["total_co2e"], rel=1e-4) == 7.76136 * 28
         # Fugitive CH4 1-sigma uncertainty: sqrt((0.60/2)^2 + (0.20/2)^2) = sqrt(0.09 + 0.01) = 31.62%
         assert pytest.approx(res["results"]["ch4"]["relative_uncertainty"], rel=1e-3) == 0.3162
         # 95% expanded uncertainty (k=2): 2 * 0.3162 = 63.25%

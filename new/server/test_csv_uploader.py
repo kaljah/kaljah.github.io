@@ -111,7 +111,7 @@ class TestCSVUploaderE2E(unittest.TestCase):
             # Row 3: Tier 3 Flaring (Elevated, CH4=85%)
             "2024-03,Test Plant Alpha,Flaring,Custom,Specific,1000,m3,98.4,elevated,,,,,85\n"
             # Row 4: Tier 3 Liquids Unloading
-            "2024-04,Test Plant Beta,Liquids Unloading,Custom,Specific,12,events,,,,5000,2.441,500,12,85\n"
+            "2024-04,Test Plant Beta,Liquids Unloading,Custom,Specific,12,events,,,5000,2.441,500,12,85\n"
             # Row 5: Invalid Facility (Should error out for this row but process others)
             "2024-05,Invalid Plant,Combustion,Natural Gas,Default,100,m3,,,,,,,,\n"
         )
@@ -178,7 +178,7 @@ class TestCSVUploaderE2E(unittest.TestCase):
 
         # Check Row 1 (Combustion, Alpha)
         row1 = emissions[0]
-        self.assertEqual(row1.process_type, "Combustion")
+        self.assertEqual(row1.process_type, "combustion")
         self.assertEqual(row1.facility.name, "Test Plant Alpha")
         self.assertEqual(row1.quantity, 10000)
         self.assertEqual(row1.unit, "scf")
@@ -188,17 +188,17 @@ class TestCSVUploaderE2E(unittest.TestCase):
 
         # Check Row 2 (Tier 1 Flaring, Alpha)
         row2 = emissions[1]
-        self.assertEqual(row2.process_type, "Flaring")
+        self.assertEqual(row2.process_type, "flaring")
         self.assertGreater(row2.co2e_total, 0)
 
         # Check Row 3 (Tier 3 Flaring, Alpha)
         row3 = emissions[2]
-        self.assertEqual(row3.process_type, "Flaring")
+        self.assertEqual(row3.process_type, "flaring")
 
         # Check Row 4 (Tier 3 Liquids Unloading, Beta)
         row4 = emissions[3]
         self.assertEqual(row4.facility.name, "Test Plant Beta")
-        self.assertEqual(row4.process_type, "Liquids Unloading")
+        self.assertEqual(row4.process_type, "unloading")
         self.assertEqual(row4.quantity, 12)
         self.assertEqual(row4.unit, "events")
 

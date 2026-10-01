@@ -1,0 +1,273 @@
+# Calculation and CSV uploader audit - 2026-09-30
+
+Scope: the calculation engine (units, GWPs, catalog factors, dispatcher entry point), the shared
+Scope 1 service, the Scope 2 / Scope 3 calculations, and the bulk CSV / Excel uploader
+(`background_processor.py`).
+
+Method:
+- Constants checked against their definitions: GWP AR4 / AR5 / AR6 (server and client), volume,
+  mass, energy, pressure and temperature conversions, standard conditions, gas densities.
+- Metamorphic run over the whole factor catalog through `compute_emissions`: every factor with the
+  same physical quantity in 4-7 equivalent units (volume, mass, energy), 2x the activity, and
+  CO2e = CO2 + GWP x CH4 + GWP x N2O. Before the fixes: 539 differences in 35 factors; after: 0
+  (110 valid factor / unit combinations; incompatible units are rejected).
+- The uploader's number parser probed with locale formats (French, European, Excel, Unicode).
+- Code reading of the Scope 1 / 2 / 3 bulk row processors against the manual routes.
+
+## Fixed
+
+| # | Where | Error | Size |
+|---|-------|-------|------|
+| 1 | `units.compute_scope3_co2e` | A method containing "EEIO" made every factor "per $1,000". EEIO records store kg CO2e **per USD**, so editing the amount of a bulk-imported spend record, or a Scope 3 CSV row with a `calculation_method` column, was 1000x low. | 1000x low |
+| 2 | `units.compute_scope3_co2e` | The per-1,000 test ran before the numerator test: "t CO2e/1000 km" was read as kg per 1,000 km. "kg CO2e/1kWh" was read as per 1,000 ("1k"). | 1000x low |
+| 3 | uploader, `;` CSV | French / European Excel writes `;`-separated CSV with a decimal comma. "1,500" (1.5) was stored as 1500. Now every number cell of a `;` file is read with a decimal comma ("1,5", "1.250,75", "12 345,6"); `,` files keep "1,500" = 1500. | 1000x high |
+| 4 | Scope 1 catalog factors | Per-event, per-completion, per-well-year (29 factors: completions, workovers, liquids unloading) and per-bbl associated-gas-venting factors (6) used the amount whatever its unit: 1,000 m3 of a completion factor = 1,000 completions, 1,000 MMBtu of AGV = 1,000 bbl. A catalog row's activity must now have the factor's dimension (`services.scope1_calc.check_activity_unit`, on the manual create / edit, import and CSV paths). | unbounded |
+| 5 | uploader, Scope 1 | `user_unc_co2/ch4/n2o` overwrote the stored propagated 1-sigma uncertainty with the raw input. They now feed the calculation as the manual form's `user_uncertainty` does, so both paths store the same value. | uncertainty |
+| 6 | uploader, Scope 2 / 3 | "2%" uncertainty was 2.0 (200 %): the sign was dropped before the "above 2 = percent" test. An explicit % is now always a percentage. | 100x |
+| 7 | `units.normalize_efficiency` | "1%" was 100 % and "0.5%" 50 % (same pattern). | 100x |
+| 8 | uploader, Scope 2 | An unknown `source_type` ("district cooling", "purchased steam") was booked as electricity. Known aliases are mapped (purchased steam / heat -> indirect_steam; grid / market -> electricity), anything else is a row error, as on the manual route. | wrong source |
+| 9 | `units` | 1 therm was 105.4804 MJ (the older US therm) next to the IT Btu of MMBtu: 10 therm != 1 MMBtu. Now 100,000 Btu = 105.505585262 MJ, as in `indirect.py`. | 0.02 % |
+
+Regression tests: `new/server/tests/test_calc_audit_2026_09_30.py` (44). 26 of them fail on the
+code before the fixes.
+
+## Checked, no error found
+
+- GWP tables (AR4 / AR5 / AR6, 100- and 20-year) on server and client.
+- Volume, mass, energy, distance, freight, pressure and temperature conversions; Nm3 -> Sm3; CH4 /
+  CO2 densities at 60 F / 14.696 psia.
+- Every catalog factor: linear in the activity, CO2e identity holds, no silent zero.
+- Scope 2 electricity (grid factor policy, kWh / MWh / GWh) and indirect steam (boiler efficiency,
+  transmission loss, Table 4-6 CH4 / N2O).
+- Uploader: blank or non-numeric quantity and blank unit are row errors (never 0 or an assumed unit);
+  dates are range-checked; unknown facilities, processes and factors are row errors.
+
+## Open (not changed)
+
+- Bare `ton` - DONE (owner decision 2026-09-30): the uploaders refuse a bare `ton` / `tons` (also
+  in factor units such as `kg/ton`) and ask for `tonne` or `short_ton`; the forms keep `ton` =
+  short ton, as labelled.
+- In a `,`-separated CSV, "1.500" is read as 1.5 (a European thousands separator is ambiguous
+  there). Unchanged: Excel writes decimal-comma numbers only in `;` files.
+
+# Part 2 - whole pipeline, per process (2026-09-30)
+
+Each stage checked on a fresh database, with records entered through the real routes:
+
+| Stage | Check | Result |
+|-------|-------|--------|
+| Calculation | 10 Scope 1 records (Tier 1 combustion by energy and by volume, flaring, completions, unloading, AGV, stationary and mobile diesel, chemical process, Tier 3 flaring), 2 Scope 2, 1 Scope 3 against hand calculations | all equal after fix 12 |
+| Calculation, Tier 3 | flaring and combustion carbon balance by hand; the same gas at operating conditions in C / F / K / R and psig / barg / kPag / psia | equal (1e-6); standard-condition ratio exact |
+| Calculation, Tier 2 | custom factors in kg/scf, bare "scf", kg/MMBtu + HHV (gas and liquid), t/bbl (in bbl and m3), g/m3, kg/tonne | all equal after fix 13 |
+| Input | the same rows through the manual form and a CSV upload, field by field | identical after fix 10 (leap-year month share differs by design) |
+| Edit | no-op save, 2x the amount, GWP AR5 -> AR6 -> AR5 | Scope 1 exact; Scope 2 steam fixed (10, 11) |
+| Aggregation | dashboard summary (totals, source split, GWP-20), categorical breakdown, intensity, flaring, uncertainty, equity, Scope 3 summary, PDF export and report, OGMP workbook against the database | all reconcile |
+
+## Fixed
+
+| # | Where | Error | Size |
+|---|-------|-------|------|
+| 10 | `POST /api/scope2` steam | the amount was stored as steam tonnage whatever the unit (5,000 MMBtu -> steam_ton 5,000) | wrong stored activity |
+| 11 | `PUT /api/scope2/<id>` steam | the edit recalculated from steam_ton as short tons (MMBtu entries 2x, tonne entries 0.907x), ignored an edited heat_mmbtu and reset the boiler efficiency to 80 %. Now from the delivered energy, keeping the record's own net efficiency unless new inputs are given. | 2x |
+| 12 | dispatcher, Tier 3 flaring | no catalog factor -> an explicit N2O factor of 0; the Table 5-3 default now applies (as Tier 1). Golden cases F01 / F02 updated. | small (N2O) |
+| 13 | custom factors | a kg/MMBtu factor of a liquid fuel (parent Diesel) was refused for gallons: its HHV was read per scf. The HHV basis now comes from the parent fuel. | blocked entry |
+| 14 | `POST /api/scope3` | method label "Scope 3 - Category Category 4" | label |
+
+Tests: `new/server/tests/test_pipeline_audit_2026_09_30.py` (7, all fail before the fixes).
+
+## Open (not changed)
+
+- GWP switch and Scope 2 - DONE: the switch now recalculates grid electricity from its grid region
+  and re-weights the CH4 / N2O of default-boiler steam, and clears the cached GWP standard
+  (`invalidate_gwp_cache`), so no record is calculated on the previous standard after a switch.
+- A custom kg/MMBtu factor without a parent fuel has its HHV in Btu/scf (as the form says); a liquid
+  fuel needs its parent fuel set.
+
+# Part 3 - Tier 3 engineering, Excel uploads, percent cells, production (2026-09-30)
+
+Checked:
+- One Tier 3 row per engineering process through the CSV uploader with the template's own headers,
+  against hand calculations: pneumatics, tank flashing (with and without vapour control), blowdown,
+  completions (rate x duration), liquids unloading (Eq. 6-3 geometry = Eq. 6-10 constant within its
+  0.3 % rounding), AGR (CO2 removed, CH4 slip), drilling (Table 6-2), flaring with a single
+  efficiency, Tier 3 combustion. All equal.
+- Excel uploads: real date cells, numbers, percent-formatted cells; typed "%" in CSV cells.
+- Production data, BOE, gas volumes, intensities; Scope 3 default factors (unit must match);
+  overwrite on re-upload copies every calculated field.
+
+## Fixed
+
+| # | Where | Error | Size |
+|---|-------|-------|------|
+| 15 | uploader, Excel | a percent-formatted cell arrives as its fraction: 5 % in user_unc_co2, meter_uncertainty_pct or Scope 2 trans_loss was read as 0.05 % (steam 5 % low). Percent cells are now read as the text Excel shows ("5%"). | 100x on those inputs |
+| 16 | uploader, Scope 1 | a typed "2.5%" in a Tier 3 column reached the calculator as text; the row failed with a raw conversion error. "X%" is now X in percentage columns (`*_pct`, `user_unc_*`) and X/100 elsewhere. | row refused |
+| 17 | rate units on monthly records | "MMscf/d", "m3/hr", "Mscf/yr" were annualised (365 days) on monthly Tier 3 flaring / blowdown / AGR records, on production rows (intensities, methane loss rate, WEC) and on the flaring volume KPI. A rate now covers the record's month (`units.period_volume_m3`). | 11.8x (March) |
+
+Tests: `new/server/tests/test_upload_percent_rates_2026_09_30.py` (7, all fail before the fixes).
+
+## Open (not changed)
+
+- Biogenic CO2 (decided 2026-09-30): the biomass fuels (Landfill Gas, Ethanol (100%), Biodiesel (100%),
+  Wood / Wood Waste) are removed from the server and client catalogs and the always-zero biogenic
+  KPIs (biogenic_intensity, total_biogenic) from the intensity API, so no biomass CO2 can enter Scope 1.
+  The unused `Emission.co2_biogenic` column is kept (no schema change).
+- Two CH4 mass constants: 0.6785 kg/m3 (units.py) and 16.04 / 379.3 lb/scf (vented.py, 0.6774
+  kg/m3); 0.16 % apart.
+
+# Part 4 - factor matching, other uploaders, uncertainty roll-up (2026-09-30)
+
+Checked: catalog name / alias / code matching; the custom factor, facility, production, source and
+mitigation uploaders and the JSON bulk endpoints (same row processors); in-file duplicate keys; the
+inventory uncertainty roll-up (IPCC 2006 Approach 1: EF linear within a factor, AD and groups in
+quadrature) - correct.
+
+## Fixed
+
+| # | Where | Error | Size |
+|---|-------|-------|------|
+| 18 | factor lookup | the alias "fuel gas" resolved to Refinery Fuel Gas (1,388 Btu/scf, 59 kg/MMBtu); upstream fuel gas is natural gas. The alias is removed: the row must name the catalog factor. | +51 % per scf |
+| 19 | factor lookup | a factor code shared by factors with different values (CB_Prod, Eth_Prod, EtO_Prod: CH4 up to 478x apart) resolved to whichever came first; now refused as ambiguous, names still match first. | wrong factor |
+| 20 | custom factor / facility uploaders | percent cells: an Excel 5 % uncertainty or 50 % equity share was stored as 0.05 % / 0.5 % before the Excel fix and refused after it; "%" is now accepted in these percentage columns. | 100x (equity share) |
+
+## Open (not changed)
+
+- With "Overwrite duplicates", a second row of the same facility / month / non-combustion process
+  (and the same equipment ID / source ref) in one file replaces the first (BUG-057 design); two
+  sources need their own equipment IDs.
+- Custom factor `parent_fuel` is free text; only a catalog name sets the HHV basis.
+
+# Part 5 - every other calculation (2026-09-30)
+
+Checked: all 104 Compendium activity-factor rows (linearity, gas / liquid unit equivalence, month
+proration of per-day / per-hour / per-unit-year factors); vent gas methods (volume, GOR, rate x days,
+actual conditions, desiccant, reported mass, THC mass, AGR balance, CO2 mass); combustion methods
+(carbon content, equipment factors vs AP-42 / Tables 4-9 / 4-11, vehicle distance, flare VOC = Exhibit
+5.2, thermal oxidizer = Exhibit 5.3); Tier 3 fugitive screening (Table 7-26); SBTi trajectory; goals
+and goal alerts; base-year recalculation; flaring summary; granular intensities; OGMP levels; CAP
+mass and Decree 06-138 compliance; JV equity allocation; Sentinel-5P mass balance and annualisation;
+plausibility bounds; QA/QC completeness; client-side arithmetic (unit multipliers, previews, gas
+composition factor tool, dashboard totals and weighted intensity).
+
+## Fixed
+
+| # | Where | Error | Size |
+|---|-------|-------|------|
+| 21 | activity-factor rows | every CH4 content was a 0-100 %: 0.85 (typed, Excel percent cell, or the uploader's "85%") was 0.85 %. A CH4 content up to 1 is now a fraction. The uploader's "X%" is X above 1 and X/100 up to 1, which every calculator reads alike. | 100x low CH4 |
+| 22 | desiccant dehydrator | refills are per year; each monthly record carried a full year of refills. Now the record's share of the year. | 12x per year |
+| 23 | flaring summary | operator stream volumes (FlaringDetail) of some facilities replaced every facility's volumes: record-only facilities dropped out of the flared volume but stayed in the gas-production denominator (Decree 21-330 intensity understated). Now merged per facility. | intensity low |
+| 24 | granular intensities | saleable production ignored the activity / division / segment filters (filtered emissions over all facilities' saleable BOE). | CI low |
+| 25 | vent gas "reported mass" form | the masses are before control (the control efficiency is applied); the fields were labelled "CH4 emitted" / "CO2 emitted". Relabelled "before control". | label |
+
+Tests: `new/server/tests/test_full_audit_2026_09_30.py`; Exhibit 6-15 API test now expects the March
+share of the annual exhibit.
+
+## Decisions for the owner (not changed)
+
+- JV equity allocation - DONE (owner decision 2026-09-30): partners now take their share of Scope 1
+  and Scope 2 (total_scope1 / total_scope2 / allocated_scope1 / allocated_scope2; report total
+  "Verified Scope 1 + 2").
+- Tier 3 fugitive screening converts TOC with the CH4 weight fraction (service default 0.92 or
+  ch4_wt_fraction); a molar ch4_content is not used (by design).
+
+# Part 6 - Deep dive through the running app (2026-09-30)
+
+Method: the real Flask app on a fresh database (3 facilities: two West, one East) with four accounts
+(admin / Global, superuser / West, user / West, user / East). Every case went through HTTP exactly as
+the browser sends it: file uploads via `/api/emissions/upload/start` and manual entries via the form
+endpoints. Results were compared with an independent hand oracle and between the two paths, then the
+dashboards were opened in Chromium as each role.
+
+| Area | Cases | Result |
+|------|-------|--------|
+| Scope 1 Tier 1, every catalog factor | 178 upload (user) + 178 manual (superuser) | all equal to hand values (leap-year March prorated over 366 days) |
+| Scope 1 Tier 2, custom factors | 9 factors imported (admin), 9 rows uploaded (user) | all equal |
+| Scope 1 Tier 3, every engineering method | 32 methods, upload vs manual vs hand | 31 equal; 1 fixed (#27) |
+| Scope 2 | 67 grids x kWh/MWh/GWh, supplier factors, 11 steam units, efficiency/loss, CHP both methods | 201 equal (upload and manual); edits recalculate correctly; 3 fixed (#28-30) |
+| Scope 3 | 50 default activity factors (15 categories), 14 factor-unit spellings, all 1,016 EEIO NAICS codes, 40 manual EEIO, supplier totals by role | all equal after #31 |
+| Roles / maker-checker | 30 checks: statuses, region isolation (read, create, upload, edit, delete), approve / reject rules, segregation of duties, no flip after decision, values unchanged by approval, dashboards count Verified only per viewer | all pass |
+| Browser | dashboard as admin, West superuser, West user, East user vs database sums | admin and East equal; West fixed (#32) |
+
+## Fixed
+
+| # | Where | Error | Size |
+|---|-------|-------|------|
+| 26 | LNG facility factors (Table 7-76, "tonne CH4/facility") | the time basis could not be verified, so a monthly record could book a whole period. These factors are now refused with a message asking for a custom factor with an explicit unit. | unverified |
+| 27 | completions, manual / API | a metered completion whose volume is in `calc_inputs.amount` (unit Mcf, no `comp_volume`) also took that volume as the event count: 500 Mcf = 500 events x 500 Mcf. An amount in a volume unit, or on the metered method, is never a count. (The form sends `comp_volume`, and the uploader was correct.) | 500x high CH4 |
+| 28 | Scope 2 steam, manual form | a boiler efficiency of 85 was used as 85 (x), not 85 %. It is now read as the upload reads it: above 1 is a percentage, and it must be above 0 and at most 100 %. A transmission loss outside 0-1 gets a clear message. | 100x low |
+| 29 | Scope 2 steam, manual form | an unknown unit ("furlong") was booked as MMBtu; the upload refused it. It is now refused on both paths. | wrong unit |
+| 30 | Scope 2 CHP from fuel consumed | the facility total was CO2 only; it now includes the default boiler's CH4 / N2O (Table 4-6), as steam does. Manual CHP records now store their heat output, like the upload. | 0.1 % low |
+| 31 | Scope 3 factor unit (upload) | "MT CO2e/..", "metric ton(s) CO2e/..", "short ton CO2e/.." were read as kg (1000x / 907x low), and "kg CO2e/k$" / "kgCO2e/kUSD" were not read as per $1,000 (1000x high). The numerator is now matched on exact tokens. A bare "ton" is refused, as in the other uploads, and so is an unknown mass (e.g. "kt"). | 1000x |
+| 32 | dashboard / review queue, client | a region-restricted user with several facilities was locked to the first one (the West dashboard showed Berkine only and left out HMD's 246.8 t). The facility / activity / division default now applies only when every accessible facility shares it. | missing facilities |
+
+Tests: `new/server/tests/test_deep_dive_2026_09_30.py` (25; 16 fail before the fixes).
+
+## Round 2 - remaining bugs (2026-09-30)
+
+| # | Where | Error | Size |
+|---|-------|-------|------|
+| 33 | tank flashing | a measured GOR of 0 (stabilised liquid) was treated as "not given", so the Table 6-22 default applied (1,000 bbl = 3.3 t CO2e instead of 0) | false emissions |
+| 34 | completions, Eq. 6-7 | a flowback duration of 0 h was read as 24 h | false emissions |
+| 35 | section calculators (midstream, downstream, exploration, CCUS, LNG, pneumatic pumps; exported, not routed today) | 0 operating hours read as 8,760, 0 events as 1, a flare efficiency of 0 (unlit) as 98 %, a CO2 content of 0 as 0.1 % | latent |
+| 36 | CSV uploads | a row with more values than the header (an extra comma) was read with every later value under the wrong column; now refused with the line number. Trailing blank cells stay accepted; Excel is unaffected. | shifted data |
+| 37 | custom factors | an unknown `parent_fuel` (e.g. "Deisel") was stored and ignored, so a liquid kg/MMBtu factor fell back to the gas (Btu/scf) basis. Now resolved to the catalog name (case / alias insensitive) or refused, on the form, edit, JSON bulk and file upload. | wrong HHV basis |
+| 38 | Scope 2 CHP edit | changing the heat output changed `heat_mmbtu` but kept the old allocated co2e (the allocation inputs are not stored). An edit now recalculates from total emissions, heat and power output, or is refused when they are not all given. | stale co2e |
+| 39 | legacy root tests | `test_emission_calculations.py` / `test_csv_uploader.py`: unloading oracle counted the gas left in the well (psia, not psig, Exhibit 6-8), mock facility / app context outdated, process types now canonical, a test CSV row had an extra comma | tests |
+
+Tests: `tests/test_deep_dive_2026_09_30.py` (30; the 5 round-2 tests fail before the fixes). Backend 1,946 / 0
+failed; root server tests 55 / 0 (`test_performance.py` needs the pytest-benchmark plugin).
+
+## Checked against the API Compendium 2021 (2026-10-01)
+
+Source: API Compendium of GHG Emissions Methodologies for the Natural Gas and Oil Industry, November 2021
+(api.org, 898 pages).
+
+| # | Item | Compendium | Result |
+|---|------|-----------|--------|
+| 40 | CH4 / CO2 gas density | Section 3.4: standard conditions 60 F and 14.696 psia; the equations convert with 379.3 scf/lb-mole = 23.685 m3/kg-mole (e.g. Eq 5-1 / 6-1 terms); Table 3-3 lists 23.645 m3/kg-mole for 15 C. MW (Table 3-7): CH4 16.04, CO2 44.01. | FIXED. The engine used the 15 C densities, 0.6785 / 1.861 kg/m3: every m3 or scf converted to mass was 0.17 % high. Now 16.04 / 23.685 = 0.67722 and 44.01 / 23.685 = 1.85814, plus ethane / propane / butane / N2O on the same basis, defined once in `calculations/units.py`. fugitive_onshore, intensity, reports, midstream and combustion now use those constants, and so does the client Methane Intensity page (`constants.js` CH4_DENSITY_KG_M3). The validation reference model claimed 0.6785 came from "Table 4-1", but that table lists estimation approaches, not densities; it is now on the same basis. |
+| 41 | EPA Waste Emissions Charge threshold | not in the Compendium; 40 CFR 99.20 Eq B-1 / B-2 fix the methane density at 0.0192 mt/Mscf | FIXED. The threshold used the gas density. It is now gas sent to sale (Mscf) x threshold x 0.0192, in the app and in the reference model. |
+| 42 | LNG facility factors, Table 7-76 | "kg CH4/facility", a 4-year Subpart W average (EPA GHGI 2019); no time period is given | the refusal (#26) stays: the source has no time basis |
+| 43 | Fugitive screening TOC -> CH4 | Eq 7-6 multiplies by the weight fraction of CH4 (WF_CH4, Table C-1) | correct as implemented; closed |
+
+Tests: `tests/test_deep_dive_2026_09_30.py` (32), plus every test whose hand-written value had the 15 C density
+(converted to `16.04 / 23.685` and `44.01 / 23.685`). The golden dataset's density-driven values were
+regenerated, keeping the hand edits to A03 / F01 / F02. Backend 1,948 / 0 failed.
+
+## Needs review (left for the owner, not changed)
+- In a `,`-separated CSV "1.500" is read as 1.5 (a European thousands separator is ambiguous there).
+- "Overwrite duplicates" with two rows of the same facility / month / process and no equipment ID in one
+  file: the second replaces the first (BUG-057 design).
+- Steam boiler efficiency 1.5 is read as 1.5 % (upload and manual alike); a sanity floor (e.g. 20 %) would
+  refuse it. `ef_co2` below 1 on the steam form is read as t/MMBtu (x1000), as documented.
+- Scope 3 manual entries have no duplicate check (two identical supplier totals in a month are both kept).
+
+# Part 7 - Invented / hard-coded values (2026-10-01)
+
+Method: searched the server and client for random numbers, mock / demo / placeholder data, numeric
+fallbacks shown as results, and pre-filled form values. Every numeric factor in the catalogs was
+cross-checked against the API Compendium 2021 text: 131 / 131 API factors and 82 / 82 combustion factors
+were found. Every numeric literal in `calculations/*.py` was checked the same way, and the 20 not found
+were reviewed by hand.
+
+| # | Where | Invented value | Fix |
+|---|-------|----------------|-----|
+| 44 | `services/erp_integration.py`, `/api/emissions/erp/sync` | with ENABLE_MOCK_ERP set, "ERP sync" inserted three made-up Scope 3 records into the inventory ("SAP Ariba Inv #9921", fixed spend / factor / co2e, always facility 1) | the mock service and the unrouted ErpSync page are removed; the endpoint answers 501 "No ERP connector is configured" |
+| 45 | `CompressorSealCalculator` (process `compressor_seal`) | 15 / 1.5 / 1.2 kg CH4/hr per compressor (wet / dry / reciprocating), attributed to "Table 7-3" (offshore facility factors); the validation model and tests repeated them | Compendium factors by segment: G&B wet 26 kg/hr (Section 6.4.3), rod packing 0.443 (Table 6-30), processing 9.87 / 3.22 / 2.7 (Tables 6-37 / 6-38), transmission & storage 18.4 / 5.75 / 4.72 (Tables 6-40 / 6-41). The result is Tier 1; a measured leak rate (`leak_rate_kg_hr`) is Tier 3; a combination the Compendium does not cover is refused. G&B wet seal added to the `compressor_venting` activity rows. |
+| 46 | `legacy_engine.py` | engineering fallbacks that filled missing inputs: "Placeholder-ish" Table 7-7 screening values, completions as 100 % CH4 at 19.2 kg/Mcf, tank GOR 500 scf/bbl, 85 % CH4, API gravity 35, high-bleed pneumatics (276 + 137 lines; none ran in the 1,948 tests) | removed; a request the API 2021 dispatcher does not handle continues with entered factors or is refused (MissingFactorError) |
+| 47 | glycol dehydrator | a parametric "solubility" model (0.0032 x P^0.96 ...) and "3.0 scf/gal" cited to "Table 6-5" (well completions); its refusal missed the `teg_pump_rate` alias | the alias is refused too; the comments now state there is no Compendium source |
+| 48 | tank flashing, "specific" without GOR / separator data | the Table 6-22 / 6-24 default was labelled Tier 3 (measured) | labelled Tier 1 |
+| 49 | Eq 6-11 liquids unloading | gas CH4 content defaulted to 85 % | required, as for Eq 6-3 / 6-10 |
+| 50 | Scope 1 form | a blank count (wells, events, facilities, equipment, leakers, components) was submitted as 1; the unloading form pre-filled 10 / 12 events, completions 1 event, associated gas venting 1,000 / 500 bbl oil and 70 % / 10 % / 85 % gas composition | no pre-filled activity or composition; a blank amount stops the submit with a message |
+| 51 | calculation details panel | GWPs always shown as "28 / 265 (AR5)" | the organisation's active standard and values |
+| 52 | Methane Intensity | WEC rate label hard-coded ($900 / $1,200 / $1,500) while the fee used the configured rates; "all years" Excel export silently used 2024; invented year list (2023-2026) when the filter list failed (also Carbon Intensity) | rate from the server result; latest year with data; empty list |
+| 53 | Reports | OGMP export for "all years" silently used 2024; report GWP selector always started at AR5 (the report recalculates CO2e with it) | latest year with data; the active standard |
+| 54 | Methane Explorer | fixed-radius rings (22 / 14 / 7.5 km by severity) labelled "Atmospheric Plume Dispersion" / "Plume Footprints"; no dispersion is modelled | relabelled "Severity Rings" (map symbol) |
+| 55 | QA dashboard | a sample record without a process was shown as "Combustion" | "—" |
+| 56 | email | with no SMTP server the message was logged as "dispatched" and reported as sent | logged as NOT SENT, returns False |
+| 57 | year pickers (Settings, Methane Intensity, QA) | hard-coded 2020/2021-2026 | follow the current year |
+
+Checked and correct: Sentinel-5P returns "unconfigured" instead of numbers; Toast ids are the only
+Math.random; the `generate_*.py` / seed scripts are test-data tools; the Halon 1301 7,140 is its IPCC GWP.
+
+Tests: `tests/test_deep_dive_2026_09_30.py` (44); compressor seal battery and invariants re-derived from the
+Compendium; the dehydrator stripping-gas test now expects the refusal. Backend 1,965 / 0 failed.
+

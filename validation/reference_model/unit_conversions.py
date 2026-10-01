@@ -9,9 +9,10 @@ STD_T_K = 288.706      # 60.0 F = 15.556 C
 STD_T_F = 60.0
 STD_P_PSIA = 14.696    # 101.325 kPa = 1.01325 bar
 
-DENSITY_CH4_STD = 0.6785   # kg/m3 at 60F, 14.696 psia
-DENSITY_CO2_STD = 1.8610   # kg/m3 at 60F, 14.696 psia
-DENSITY_N2O_STD = 1.8600   # kg/m3 at 60F, 14.696 psia
+# 60F, 14.696 psia: molecular weight / 23.685 m3 per kg-mole (API Compendium molar volume conversion)
+DENSITY_CH4_STD = 16.04 / 23.685    # kg/m3
+DENSITY_CO2_STD = 44.01 / 23.685    # kg/m3
+DENSITY_N2O_STD = 44.013 / 23.685   # kg/m3
 
 VOLUME_TO_M3 = {
     "m3": 1.0,

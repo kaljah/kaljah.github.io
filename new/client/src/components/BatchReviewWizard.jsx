@@ -143,7 +143,8 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
       fetchAllPendingData();
       setSelectedKeys(new Set());
       const opDefaults = getUserOperationalDefaults(user, facilities);
-      if (opDefaults.isRestricted && opDefaults.defaultFacilityId) {
+      // a reviewer of a region with several facilities sees all of them (not the first one only)
+      if (opDefaults.isRestricted && opDefaults.defaultFacilityId && (facilities || []).length === 1) {
         setFacilityFilter(opDefaults.defaultFacilityId);
       }
     }

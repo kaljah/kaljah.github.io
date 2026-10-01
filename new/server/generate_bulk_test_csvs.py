@@ -42,7 +42,6 @@ TIER1_FUELS = [
     ("Residual Fuel Oil (No. 6 Fuel Oil)", ["gal", "bbl", "m3"]),
     ("Crude Oil", ["bbl", "m3", "gal"]),
     ("Associated Gas (Flaring)", ["scf", "m3", "Mcf"]),
-    ("Landfill Gas", ["scf", "m3"]),
     ("Coke Oven Gas", ["scf", "m3"]),
     ("Refinery Gas", ["scf", "m3"]),
     ("Coal (Bituminous)", ["ton", "tonne", "kg"]),
