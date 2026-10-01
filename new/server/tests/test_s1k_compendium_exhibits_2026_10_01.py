@@ -180,6 +180,12 @@ def test_f28_associated_gas_needs_ch4(user_id):
 
 
 # --- F29: flare defaults (98 % conversion, 2 % / 0.5 % residual CH4) and flare_voc N2O ----------
+def test_f30_unloading_lift_type_required(user_id):
+    row = {k: v for k, v in _UNLOAD.items() if k != "unloading_type"}
+    reason = _refused(user_id, dict(row, sfr="35000", hours_open="1"))
+    assert "lift type" in reason                                  # was silently non-plunger (form showed plunger)
+
+
 def test_f29_flare_voc_n2o_exhibit_5_2(user_id):
     got = _ok(user_id, dict(process_type="flaring", factor_type="specific", combustion_method="flare_voc",
                             voc_mass="2.21", voc_mass_unit="short_ton", wt_ch4="2.73", wt_c2h6="0.85",

@@ -153,7 +153,7 @@ def test_12_dehydrator_tier3(app):
 
 # 13 / 14 — unloading: CO2 kept, 1 mol % is 1 %, decompression = Eq 6-10 casing term (gauge)
 def test_13_14_unloading(app):
-    em = run(app, "unloading", calc_method="api_equation_6_10", unload_events=12, unload_diam=10,
+    em = run(app, "unloading", calc_method="api_equation_6_10", unloading_type="non_plunger", unload_events=12, unload_diam=10,
              unload_depth=12000, unload_press=250, sfr=35000, hours_open=1, ch4_content=80, co2_content=3)
     assert em["ch4"] == pytest.approx(20.39, rel=0.01) and em["co2"] == pytest.approx(2.10, rel=0.01)
     v = 12 * 0.37e-3 * 2.5 ** 2 * 5000 * 150

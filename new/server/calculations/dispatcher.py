@@ -1376,6 +1376,12 @@ class CalculationDispatcher:
                     depth_unit = flat_inputs.get("unload_depth_unit") or flat_inputs.get("depth_unit", "ft")
                     diam_unit = flat_inputs.get("unload_diam_unit") or flat_inputs.get("diameter_unit", "in")
                     press_unit = flat_inputs.get("unload_press_unit") or flat_inputs.get("press_unit", "psig")
+                    # X (0.5 h plunger / 1 h non-plunger) and what D and Depth mean depend on the lift type: it is
+                    # required (it defaulted to non-plunger while the form displayed "Plunger lift")
+                    lift = str(flat_inputs.get("unloading_type") or flat_inputs.get("unload_type") or "").strip().lower()
+                    lift = {"plunger_lift": "plunger", "non-plunger": "non_plunger", "nonplunger": "non_plunger"}.get(lift, lift)
+                    if lift not in ("plunger", "non_plunger"):
+                        raise ValueError("Missing required field: lift type (unloading_type: plunger or non_plunger) for Eq 6-10")
 
                     return calculator.calculate_tier3_equation_6_10(
                         events=events,
@@ -1384,7 +1390,7 @@ class CalculationDispatcher:
                         pressure=press,
                         sfr=sfr,
                         hours_open=hours_open,
-                        unloading_type=flat_inputs.get("unloading_type") or flat_inputs.get("unload_type", "non_plunger"),
+                        unloading_type=lift,
                         well_count=float(flat_inputs.get("well_count") or flat_inputs.get("wells") or 1),
                         ch4_content=ch4_content,
                         co2_content=co2_content,
