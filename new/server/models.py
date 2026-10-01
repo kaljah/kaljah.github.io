@@ -797,3 +797,29 @@ class FacilityEquityShare(db.Model):
     )
 
 
+class ImportMapping(db.Model):
+    """A column mapping a user saved in the import wizard: re-applied to files with the same columns
+    (a monthly export from the same system), so the columns are not matched by hand again."""
+    __tablename__ = "import_mappings"
+    __table_args__ = (db.UniqueConstraint("user_id", "scope", "name", name="uq_import_mapping_user_scope_name"),)
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False, index=True)
+    scope = db.Column(db.String(20), nullable=False, default="1")
+    name = db.Column(db.String(80), nullable=False)
+    headers = db.Column(db.Text, nullable=False)   # JSON list of the file's column names
+    mapping = db.Column(db.Text, nullable=False)   # JSON object field -> column name
+    created_at = db.Column(db.DateTime, default=utc_now)
+    updated_at = db.Column(db.DateTime, default=utc_now, onupdate=utc_now)
+    last_used_at = db.Column(db.DateTime, nullable=True)
+
+    def to_dict(self):
+        import json
+
+        return {
+            "id": self.id, "scope": self.scope, "name": self.name,
+            "headers": json.loads(self.headers or "[]"), "mapping": json.loads(self.mapping or "{}"),
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None,
+            "last_used_at": self.last_used_at.isoformat() if self.last_used_at else None,
+        }
+

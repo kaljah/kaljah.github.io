@@ -7,6 +7,8 @@ import re
 import traceback
 from openpyxl import load_workbook
 
+from services.scope1_template import DATE_HELP, is_example_value
+
 # Job tracker. The running worker keeps the full job in memory; a snapshot is written to a JSON
 # file so that another worker process (Gunicorn), or the same server after a restart, can answer
 # status and error-file requests.
@@ -356,7 +358,7 @@ def _is_template_note_row(row_dict):
     vals = [str(v).strip() for v in row_dict.values() if v is not None]
     if any(v.upper().startswith("[INSTRUCTION]") for v in vals):
         return True
-    return any(v.startswith("Date as YYYY-MM") for v in vals)
+    return any(v.startswith("Date as YYYY-MM") or v.startswith(DATE_HELP[:40]) for v in vals)
 
 
 def _canonical_header(header):
@@ -446,6 +448,9 @@ def _preview_count(pv, row_dict, mapping):
         h = mapping.get(key)
         return row_dict.get(h) if h else None
 
+    if is_example_value(cell("date")):
+        pv["examples"] = pv.get("examples", 0) + 1   # template example rows: reported, never imported
+        return
     y, m, err = _parse_row_period({"date": cell("date"), "year": cell("year"), "month": cell("month")})
     if err or not y:
         pv["bad_dates"] += 1
@@ -495,7 +500,8 @@ def _preview_summary(pv, rows, skipped_in_sample, headers, mapping, fac_name_map
         "processes": processes[:50],
         "unknown_process_rows": sum(p["rows"] for p in processes if not p["known"] and not p["scope2"]),
         "scope2_rows": sum(p["rows"] for p in processes if p["scope2"]),
-        "columns": {"total": len([h for h in headers if h]), "matched": matched,
+        "example_rows": pv.get("examples", 0),
+        "columns": {"total": len([h for h in headers if h]), "headers": [h for h in headers if h], "matched": matched,
                     "by_name": [h for h in headers if h and h not in matched]},
     }
 
@@ -998,6 +1004,10 @@ def _process_file_thread(
                     emission_obj = None
                     row_errors = [f"Row {line_no} has {len(raw_row)} values but the header has {len(headers)} "
                                   "columns: check for an extra comma / delimiter (values would shift columns)"]
+                elif is_example_value(mapped_data.get("date")):
+                    # a template example row left in the file: never a record
+                    emission_obj = None
+                    row_errors = ["Example row from the template (dated EXAMPLE): not imported"]
                 elif str(scope) == "2":
                     emission_obj, row_errors = _process_row_scope2(
                         mapped_data,
@@ -1496,6 +1506,13 @@ _EXACT_ONLY_TERMS = {"activity", "division", "field", "region", "notes", "hours"
                      "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10"}
 
 
+def _scope1_input_names():
+    from services.scope1_template import CORE, IDENT, OPTIONAL, TIER2, TIER3, ACTIVITY_TIME
+
+    return {c.key for c in CORE + IDENT + OPTIONAL + TIER2 + TIER3 + ACTIVITY_TIME} - {
+        "date", "facility_name", "process_type", "fuel", "quantity", "unit"}
+
+
 def _build_mapping(headers, scope=1):
     """Header -> field mapping for one import type. Headers are compared without the
     template tags and unit notes; exact names win over partial (word) matches."""
@@ -1526,8 +1543,11 @@ def _build_mapping(headers, scope=1):
     # ("activity", "region", "hours", "pressure", "events", "gor" ...) is also a word of other method
     # columns ("activity_key", "operating_hours", "blowdown_pressure", "comp_gor"); it only matches a
     # header that is exactly that word (activity_key values were stored as the business Activity)
+    # a header that is already the name of a Scope 1 input ("agr_control_eff") is that input, never a word
+    # match of another one ("control eff" -> control_efficiency)
+    own_names = _scope1_input_names() if scope == "1" else set()
     for h, h_norm in normalized_headers.items():
-        if h in mapping.values():
+        if h in mapping.values() or h_norm.replace(" ", "_") in own_names:
             continue
         for sys_key, search_term in sorted_expected:
             if search_term in _EXACT_ONLY_TERMS:

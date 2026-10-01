@@ -8,6 +8,9 @@ import re
 
 # (pattern on the reason text, title, column to fix, how to fix). First match wins.
 _RULES = [
+    (r"Example row from the template",
+     "Example row from the template (not imported)", "date",
+     "Delete the template's example rows, or replace EXAMPLE in the date with the real month."),
     (r"is a gas volume but this fuel's heating value is per (gal|bbl|l\b|liquid)",
      "Gas volume unit used with a liquid fuel", "unit",
      "Use a liquid unit (gal, bbl, L, m3) for this fuel, or choose a gas fuel in the fuel column."),
