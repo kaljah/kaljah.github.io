@@ -61,22 +61,37 @@ for (const [i, file] of files.entries()) {
   await openScope1();
   await page.getByRole("button", { name: /Bulk Import \(Wizard\)/ }).click();
   await page.locator(".s1w-modal").waitFor();
-  // Step 1: tier - "Auto Detect — All Tiers" (rows carry their own factor_type)
-  await page.getByText("Auto Detect — All Tiers").click();
+  // Step 1: calculation - per row (rows carry their own factor_type)
+  await page.getByText("Per row — mixed tiers").click();
   await shot(`${tag}_step1_tier`);
   await page.locator(".s1w-btn-primary", { hasText: "Next" }).click();
-  // Step 2: process scope - all processes (default)
-  await shot(`${tag}_step2_scope`);
-  await page.locator(".s1w-btn-primary", { hasText: "Next" }).click();
-  // Step 3: file
+  // Step 2: file (the former "process scope" step is gone)
   await page.locator('.s1w-modal input[type="file"]').setInputFiles(file);
-  // Step 4: column mapping (auto-detected by the client)
-  await page.locator(".s1w-btn-primary", { hasText: "Start Import" }).waitFor({ timeout: 60000 });
-  await page.waitForTimeout(800);
+  // Step 3: check & map - wait for the file check (or a refusal before upload)
+  const importBtn = page.locator(".s1w-btn-primary", { hasText: /Start Import|^.*Import .* rows/ });
+  const refused = page.locator(".s1w-inline-error");
+  await Promise.race([importBtn.waitFor({ timeout: 60000 }), refused.waitFor({ timeout: 60000 })]);
+  if (await refused.count()) {
+    const msg = await refused.innerText();
+    await shot(`${tag}_refused_on_pick`);
+    results.push({ file, seconds: (Date.now() - t0) / 1000, resultText: "REFUSED BEFORE UPLOAD: " + msg });
+    console.log(tag, "refused before upload:", msg);
+    continue;
+  }
+  const checkT0 = Date.now();
+  await page.locator(".s1w-check-title, .s1w-check--error").first().waitFor({ timeout: 600000 });
+  const checkSeconds = (Date.now() - checkT0) / 1000;
+  await page.waitForTimeout(500);
   await shot(`${tag}_step4_mapping`);
   const mappingText = await page.locator(".s1w-modal").innerText();
   fs.writeFileSync(path.join(OUT, `${tag}_mapping.txt`), mappingText);
-  await page.locator(".s1w-btn-primary", { hasText: "Start Import" }).click();
+  const checkText = await page.locator(".s1w-check").first().innerText();
+  fs.writeFileSync(path.join(OUT, `${tag}_check.txt`), checkText);
+  console.log(tag, `check ${checkSeconds.toFixed(1)} s |`, checkText.replace(/\s+/g, " ").slice(0, 300));
+  await importBtn.first().click();
+  // progress screen sample (rows + time left)
+  await page.waitForTimeout(8000);
+  await shot(`${tag}_step5_progress`);
   // Step 5: progress until completed / error
   const done = page.locator(".up-card-lbl", { hasText: "Rows Imported" }).or(page.getByText(/No rows were saved|Import failed|failed/i));
   await done.first().waitFor({ timeout: 900000 });

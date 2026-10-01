@@ -2552,25 +2552,25 @@ def get_excel_template():
     )
 
 
-@emissions_bp.route("/upload/start", methods=["POST"])
-@login_required
-def upload_start():
+def _read_upload_request():
+    """The validated upload form (file saved to a temp path), or an error response. Shared by the import
+    and by the "Check file" step so both refuse the same files."""
     user = get_current_user()
     if not user:
-        return jsonify({"error": "Unauthorized"}), 401
+        return None, (jsonify({"error": "Unauthorized"}), 401)
 
     if "file" not in request.files:
-        return jsonify({"error": "No file part"}), 400
+        return None, (jsonify({"error": "No file part"}), 400)
     file = request.files["file"]
     if file.filename == "":
-        return jsonify({"error": "No selected file"}), 400
+        return None, (jsonify({"error": "No selected file"}), 400)
 
     ext = os.path.splitext(file.filename)[1].lower()
     if ext == ".xls":
         # the reader handles Excel 2007+ workbooks only (a .xls file was read as text)
-        return jsonify({"error": "Excel 97-2003 (.xls) files are not supported: save the file as .xlsx or .csv"}), 400
+        return None, (jsonify({"error": "Excel 97-2003 (.xls) files are not supported: save the file as .xlsx or .csv"}), 400)
     if ext not in [".csv", ".xlsx"]:
-        return jsonify({"error": "Invalid file type. Only .csv and .xlsx files are allowed."}), 400
+        return None, (jsonify({"error": "Invalid file type. Only .csv and .xlsx files are allowed."}), 400)
 
     global_factor_type = request.form.get("global_factor_type", "auto")
     mapping_str = request.form.get("column_mapping") or request.form.get("mapping")
@@ -2579,13 +2579,13 @@ def upload_start():
 
     # BUG-001: the bulk job must enforce the same roles as the dedicated endpoints.
     if user.role in ["it_admin", "it_manager", "it"]:
-        return jsonify({"error": "IT accounts cannot upload business data"}), 403
+        return None, (jsonify({"error": "IT accounts cannot upload business data"}), 403)
     if user.role == "auditor":
-        return jsonify({"error": "Read-only role cannot upload data"}), 403
+        return None, (jsonify({"error": "Read-only role cannot upload data"}), 403)
     if scope not in ("1", "2", "3", "3_eeio", "sources", "production", "mitigation", "custom_factors", "facilities"):
-        return jsonify({"error": f"Unknown import type '{scope}'"}), 400
+        return None, (jsonify({"error": f"Unknown import type '{scope}'"}), 400)
     if scope in ("facilities", "custom_factors") and user.role not in ["admin", "superuser"]:
-        return jsonify({"error": "Only admins and superusers can import facilities or custom factors"}), 403
+        return None, (jsonify({"error": "Only admins and superusers can import facilities or custom factors"}), 403)
 
     import json
 
@@ -2594,9 +2594,9 @@ def upload_start():
         try:
             provided_mapping = json.loads(mapping_str)
         except json.JSONDecodeError:
-            return jsonify({"error": "column_mapping is not valid JSON"}), 400
+            return None, (jsonify({"error": "column_mapping is not valid JSON"}), 400)
         if not isinstance(provided_mapping, dict):
-            return jsonify({"error": "column_mapping must be an object of field -> column"}), 400
+            return None, (jsonify({"error": "column_mapping must be an object of field -> column"}), 400)
 
     fd, path = tempfile.mkstemp(suffix=ext)
     os.close(fd)  # H6: Close descriptor immediately to prevent leak
@@ -2612,24 +2612,67 @@ def upload_start():
                         os.remove(path)
                     except OSError:
                         pass
-                    return jsonify({"error": "Invalid or corrupted XLSX file"}), 400
+                    return None, (jsonify({"error": "Invalid or corrupted XLSX file"}), 400)
         except Exception:
             pass
 
+    return {"user": user, "path": path, "filename": file.filename, "global_factor_type": global_factor_type,
+            "mapping": provided_mapping, "scope": scope, "overwrite": overwrite_duplicates}, None
+
+
+@emissions_bp.route("/upload/start", methods=["POST"])
+@login_required
+def upload_start():
+    req, err = _read_upload_request()
+    if err:
+        return err
     from flask import current_app
 
     job_id = start_background_upload(
         current_app._get_current_object(),
-        path,
-        file.filename,
-        user.id,
-        global_factor_type,
-        provided_mapping=provided_mapping,
-        scope=scope,
-        overwrite_duplicates=overwrite_duplicates,
+        req["path"],
+        req["filename"],
+        req["user"].id,
+        req["global_factor_type"],
+        provided_mapping=req["mapping"],
+        scope=req["scope"],
+        overwrite_duplicates=req["overwrite"],
     )
 
     return jsonify({"job_id": job_id})
+
+
+@emissions_bp.route("/upload/check", methods=["POST"])
+@login_required
+def upload_check():
+    """Check a file before importing it: the first `sample_rows` rows are calculated exactly as the import
+    would, every row is counted (period, facilities, processes), and nothing is saved."""
+    req, err = _read_upload_request()
+    if err:
+        return err
+    from flask import current_app
+    from background_processor import run_file_check
+
+    try:
+        sample = max(100, min(int(request.form.get("sample_rows") or 2000), 20000))
+    except ValueError:
+        sample = 2000
+    status = run_file_check(current_app._get_current_object(), req["path"], req["filename"], req["user"].id,
+                            req["global_factor_type"], provided_mapping=req["mapping"], scope=req["scope"],
+                            overwrite_duplicates=req["overwrite"], sample_rows=sample)
+    if not status or status.get("status") != "completed":
+        errors = (status or {}).get("errors") or ["The file could not be checked."]
+        return jsonify({"error": errors[0], "errors": errors}), 400
+    return jsonify({"preview": status.get("preview"), "skipped_groups": status.get("skipped_groups", [])})
+
+
+@emissions_bp.route("/upload/limits", methods=["GET"])
+@login_required
+def upload_limits():
+    """Upload limits the wizard checks when a file is picked (no row limit; the request size is capped)."""
+    from flask import current_app
+
+    return jsonify({"max_bytes": current_app.config.get("MAX_CONTENT_LENGTH")})
 
 
 def _job_visible(job_id):
