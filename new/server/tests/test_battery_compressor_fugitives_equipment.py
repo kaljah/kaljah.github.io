@@ -32,15 +32,23 @@ def _val(x):
 class TestCompressorSealBattery:
     """Verifies API §7.2.3 compressor seal leakage across all mechanical configurations."""
 
-    @pytest.mark.parametrize("seal_type, count, expected_ef", [
-        ("centrifugal_wet", 4, 15.0),
-        ("centrifugal_dry", 6, 1.5),
-        ("reciprocating", 10, 1.2),
+    # API Compendium 2021 kg CH4 / compressor-hr: Section 6.4.3, Tables 6-30 / 6-37 / 6-38 / 6-40 / 6-41
+    @pytest.mark.parametrize("seal_type, segment, count, expected_ef", [
+        ("centrifugal_wet", "production", 4, 26.0),
+        ("reciprocating", "production", 10, 0.443),
+        ("centrifugal_wet", "processing", 4, 86426.0 / 8760.0),
+        ("centrifugal_dry", "processing", 6, 28192.0 / 8760.0),
+        ("reciprocating", "processing", 10, 2.7),
+        ("centrifugal_wet", "transmission", 2, 18.4),
+        ("centrifugal_dry", "storage", 2, 5.75),
+        ("reciprocating", "transmission", 3, 4.72),
     ])
-    def test_compressor_seal_types(self, seal_type, count, expected_ef):
+    def test_compressor_seal_types(self, seal_type, segment, count, expected_ef):
         calc = CompressorSealCalculator()
-        res = calc.calculate(compressor_count=count, seal_type=seal_type, uncertainties={}, gwp_dict=GWP_AR5)
-        ref = IndependentFugitiveModel.calculate_compressor_seal(count=count, seal_type=seal_type, gwp_standard="AR5")
+        res = calc.calculate(compressor_count=count, seal_type=seal_type, uncertainties={}, gwp_dict=GWP_AR5,
+                             segment=segment)
+        ref = IndependentFugitiveModel.calculate_compressor_seal(count=count, seal_type=seal_type, gwp_standard="AR5",
+                                                                 segment=segment)
 
         assert pytest.approx(_val(res["results"]["ch4"]), rel=1e-5) == ref["ch4"]
         assert pytest.approx(res["total_co2e"], rel=1e-5) == ref["co2e"]

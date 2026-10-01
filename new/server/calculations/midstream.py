@@ -243,14 +243,15 @@ class DehydratorCalculator(BaseCalculator):
             p_psia = to_psia(contactor_pressure, press_unit)
             t_f = to_fahrenheit(contactor_temperature, temp_unit)
 
-            # API Compendium 2021 §6.6 / GRI-GLYCalc parametric methane solubility in TEG:
+            # NOT an API Compendium method: a parametric solubility estimate with no published source
+            # (the Compendium gives Tables 6-17 / 6-18 / 6-35 / 6-36 factors, or GRI-GLYCalc). The dispatcher
+            # refuses glycol circulation inputs, so records never reach this branch.
             # S_CH4 = 0.0032 * (P_psia)^0.96 * exp(-0.0022 * (T_F - 60)) * X_CH4
-            # (Calibrated to yield physically realistic 1.5 - 2.8 scf CH4 / gal TEG per API Table 6-5)
             p_term = math.pow(max(14.7, p_psia), 0.96)
             t_term = math.exp(-0.0022 * (t_f - 60.0))
             solubility_scf_per_gal = 0.0032 * p_term * t_term * ch4_frac
         else:
-            # API Compendium 2021 Table 6-5 standard rule of thumb: 3.0 scf CH4 / gal TEG
+            # rule of thumb with no Compendium source (Table 6-5 is well completions): 3.0 scf CH4 / gal TEG
             p_psia = 800.0
             t_f = 100.0
             solubility_scf_per_gal = 3.0 * ch4_frac

@@ -4014,30 +4014,14 @@ def reject_batch_emissions():
 @emissions_bp.route("/erp/sync", methods=["POST"])
 @login_required
 def trigger_erp_sync():
-    """ERP integration sync endpoint (Gated by ENABLE_MOCK_ERP flag & Admin role, H8)"""
+    """ERP integration endpoint. No ERP connector is implemented: the former "mock" sync inserted three
+    invented Scope 3 records (fixed spend, factors and co2e, "SAP Ariba Inv #9921") into the inventory
+    when ENABLE_MOCK_ERP was set; it is removed and the endpoint says so."""
     user = get_current_user()
     if not user or user.role not in ["admin", "superuser"]:
         return jsonify({"error": "Admin privileges required for ERP sync"}), 403
-
-    import os
-    if os.environ.get("ENABLE_MOCK_ERP", "false").lower() not in ["1", "true", "yes"]:
-        return (
-            jsonify(
-                {
-                    "error": "Mock ERP synchronization is disabled in production. Set ENABLE_MOCK_ERP=true to enable testing mode."
-                }
-            ),
-            501,
-        )
-
-    from services.erp_integration import sync_erp_data
-
-    result = sync_erp_data(user.id if user else None)
-
-    if result.get("success"):
-        return jsonify(result), 200
-    else:
-        return jsonify(result), 500
+    return jsonify({"error": "No ERP connector is configured. Import ERP spend or activity data with the "
+                             "Scope 3 file upload."}), 501
 
 
 @emissions_bp.route("/pending", methods=["GET"])

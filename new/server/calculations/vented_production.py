@@ -1478,11 +1478,16 @@ class TankFlashingCalculator(BaseCalculator):
         total_co2 = split["total_co2"]
         flared_n2o = split["flared_n2o"]
 
+        # a Table 6-22 / 6-24 default is a Tier 1 result whatever the record's factor source (a "specific"
+        # record without a GOR or separator data was labelled Tier 3, i.e. measured)
+        tier_unc = dict(uncertainties or {})
+        if meth in ("table_6_22", "table_6_24"):
+            tier_unc["_factor_source"] = "default"
         ch4_res, co2_res, n2o_res = _propagate_results(
             total_ch4=total_ch4,
             total_co2=total_co2,
             flared_n2o=flared_n2o,
-            uncertainties=uncertainties,
+            uncertainties=tier_unc,
             factor_source="API_Section_6.3.9",
             category="tank_flashing",
         )

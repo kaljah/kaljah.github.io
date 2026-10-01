@@ -22,12 +22,12 @@ def send_email(to_email: str, subject: str, text_body: str, html_body: str = Non
     use_tls = os.environ.get("SMTP_USE_TLS", "true").lower() in ("true", "1", "yes")
 
     if not is_smtp_configured():
-        # Clean local logging fallback
-        current_app.logger.info(
-            f"[EmailService MOCK] Outbound email dispatched to: {to_email} | Subject: '{subject}'\n"
+        # no SMTP server: nothing is sent (it was logged as "dispatched" and reported as sent)
+        current_app.logger.warning(
+            f"[EmailService] NOT SENT (SMTP not configured) to: {to_email} | Subject: '{subject}'\n"
             f"  Content: {text_body[:200]}..."
         )
-        return True
+        return False
 
     try:
         msg = MIMEMultipart("alternative")

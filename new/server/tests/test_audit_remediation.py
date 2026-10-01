@@ -1691,8 +1691,8 @@ def test_dehydrator_stripping_gas_dispatcher():
         "stripping_gas_unit": "scf/hr",
     }
     gwps = {"CO2": 1.0, "CH4": 28.0, "N2O": 265.0}
-    res = dispatcher.dispatch("dehydrator", payload, {}, gwps)
-    assert res is not None
-    assert res["inputs"]["stripping_gas_scf"] == 50000.0
-    assert res["results"]["ch4"]["value"] > 0
+    # API Compendium 6.3.8: with stripping gas, GLYCalc is to be used; a glycol circulation rate has no
+    # Compendium method (the parametric solubility model behind it had no source), under any input name
+    with pytest.raises(ValueError, match="GLYCalc"):
+        dispatcher.dispatch("dehydrator", payload, {}, gwps)
 

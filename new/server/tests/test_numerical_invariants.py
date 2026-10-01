@@ -446,7 +446,7 @@ class TestNormativeGoldenBenchmarks:
         assert pytest.approx(res["total_co2e"], rel=1e-2) == 4566.14
 
     def test_api_table_7_3_compressor_seals(self):
-        """API Compendium 2021 Table 7-3: Reciprocating compressor seals (1.2 kg/hr)."""
+        """API Compendium 2021 Table 6-30: reciprocating rod packing, production (4.43E-04 t CH4/compressor-hr)."""
         calc = CompressorSealCalculator()
         res = calc.calculate(
             compressor_count=2,
@@ -454,9 +454,9 @@ class TestNormativeGoldenBenchmarks:
             uncertainties={},
             gwp_dict={"CO2": 1.0, "CH4": 28.0, "N2O": 265.0},
         )
-        # 2 * 1.2 kg/hr * 8760 hr / 1000 = 21.024 tonnes CH4
-        assert pytest.approx(res["results"]["ch4"]["value"], rel=1e-4) == 21.024
-        assert pytest.approx(res["total_co2e"], rel=1e-4) == 588.672
+        # 2 * 0.443 kg/hr * 8760 hr / 1000 = 7.76136 tonnes CH4
+        assert pytest.approx(res["results"]["ch4"]["value"], rel=1e-4) == 7.76136
+        assert pytest.approx(res["total_co2e"], rel=1e-4) == 7.76136 * 28
         # Fugitive CH4 1-sigma uncertainty: sqrt((0.60/2)^2 + (0.20/2)^2) = sqrt(0.09 + 0.01) = 31.62%
         assert pytest.approx(res["results"]["ch4"]["relative_uncertainty"], rel=1e-3) == 0.3162
         # 95% expanded uncertainty (k=2): 2 * 0.3162 = 63.25%
