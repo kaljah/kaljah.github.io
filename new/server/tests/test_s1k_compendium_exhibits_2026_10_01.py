@@ -224,3 +224,21 @@ def test_exhibits_unchanged(user_id, row, expect):
     got = _ok(user_id, row)
     for gas, v in expect.items():
         assert got[gas] == pytest.approx(v, rel=1.5e-2), gas
+
+
+# --- Tier 3 flaring: measured combustion (carbon to CO2) and destruction (CH4) efficiencies -----
+def test_flaring_measured_combustion_and_destruction_efficiency(user_id):
+    from calculations.units import CONVERSIONS
+
+    base = dict(process_type="flaring", factor_type="specific", quantity="10000", unit="m3", hhv="1020", c1="100")
+    got = _ok(user_id, dict(base, combustion_efficiency="95", destruction_efficiency="96"))
+    assert got["co2"] == pytest.approx(10000 * 0.95 * CONVERSIONS["density_co2"] / 1000, rel=1e-6)
+    assert got["ch4"] == pytest.approx(10000 * 0.04 * CONVERSIONS["density_ch4"] / 1000, rel=1e-6)
+    # blank: API Compendium 2021 Eq 5-2 defaults (98 % / 2 % unburnt CH4)
+    dflt = _ok(user_id, base)
+    assert dflt["co2"] == pytest.approx(10000 * 0.98 * CONVERSIONS["density_co2"] / 1000, rel=1e-6)
+    assert dflt["ch4"] == pytest.approx(10000 * 0.02 * CONVERSIONS["density_ch4"] / 1000, rel=1e-6)
+    # only one given: the other keeps its default
+    only_d = _ok(user_id, dict(base, destruction_efficiency="90"))
+    assert only_d["co2"] == pytest.approx(dflt["co2"], rel=1e-9)
+    assert only_d["ch4"] == pytest.approx(10000 * 0.10 * CONVERSIONS["density_ch4"] / 1000, rel=1e-6)
