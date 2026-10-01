@@ -73,6 +73,7 @@ const TEMPLATES = {
     { id: "flare_type", label: "Flare Type", required: false },
     { id: "ch4_content", label: "CH4 Content %", required: false },
     { id: "co2_content", label: "CO2 Content %", required: false },
+    { id: "destruction_efficiency", label: "Flare Destruction Eff", required: false },
     { id: "control_efficiency", label: "Control Eff", required: false },
     { id: "operating_temperature", label: "Op Temp", required: false },
     { id: "temp_unit", label: "Temp Unit", required: false },
@@ -728,10 +729,10 @@ export default function ColumnMappingWizard({
         const VENT = ["vent_method", "disposition", "ch4_content", "co2_content"];
         const processFields = {
           combustion: ["hhv", ...COMP, "combustion_efficiency", "operating_temperature", "temp_unit", "operating_pressure", "press_unit", "z_factor"],
-          flaring: ["flare_type", "control_efficiency", ...COMP],
-          routine_flaring: ["flare_type", "control_efficiency", ...COMP],
-          non_routine_flaring: ["flare_type", "control_efficiency", ...COMP],
-          safety_flaring: ["flare_type", "control_efficiency", ...COMP],
+          flaring: ["flare_type", "combustion_efficiency", "destruction_efficiency", "control_efficiency", ...COMP],
+          routine_flaring: ["flare_type", "combustion_efficiency", "destruction_efficiency", "control_efficiency", ...COMP],
+          non_routine_flaring: ["flare_type", "combustion_efficiency", "destruction_efficiency", "control_efficiency", ...COMP],
+          safety_flaring: ["flare_type", "combustion_efficiency", "destruction_efficiency", "control_efficiency", ...COMP],
           venting: [...VENT, "blowdown_pressure", "blowdown_events", "blowdown_temp", "blowdown_temp_unit", "blowdown_press_unit", "z_factor"],
           tank_flashing: ["tank_gor", "tank_ch4_content", "tank_control_eff", "tank_api_gravity"],
           pneumatic: ["pneu_count", "pneu_bleed_rate", "pneu_bleed_unit", "pneu_hours", "pneu_ch4_content", "operating_hours"],

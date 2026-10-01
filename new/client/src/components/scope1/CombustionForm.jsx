@@ -191,11 +191,11 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
                   value={data.flare_type || "elevated"}
                   onChange={(e) => onChange("flare_type", e.target.value)}
                 >
-                  <option value="elevated">Elevated Flare (η_d=98%)</option>
+                  <option value="elevated">Elevated (2 % CH₄ unburnt)</option>
                   <option value="enclosed_ground">
-                    Enclosed Ground Flare (η_d=99.5%)
+                    Enclosed ground (0.5 % CH₄ unburnt)
                   </option>
-                  <option value="pit">Pit / Open Burn (η_d=95%)</option>
+                  <option value="pit">Pit / open burn (2 % CH₄ unburnt)</option>
                 </select>
               </div>
               <div className="input-group" style={{ marginBottom: 0 }}>
@@ -213,6 +213,39 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
                   value={data.ch4_content !== undefined ? data.ch4_content : ""}
                   onChange={(e) => onChange("ch4_content", e.target.value)}
                   placeholder="e.g. 85.0"
+                />
+              </div>
+              {/* measured efficiencies; blank = API Compendium 2021 Eq 5-2 defaults for the flare type */}
+              <div className="input-group" style={{ marginBottom: 0 }}>
+                <label style={{ fontSize: "0.75rem" }}>
+                  Combustion efficiency (% carbon to CO₂)
+                </label>
+                <input
+                  id="flare-combustion-efficiency-input"
+                  type="number"
+                  className="mole-input"
+                  min="0"
+                  max="100"
+                  step="0.1"
+                  value={data.combustion_efficiency != null ? data.combustion_efficiency : ""}
+                  onChange={(e) => onChange("combustion_efficiency", e.target.value)}
+                  placeholder="blank = 98"
+                />
+              </div>
+              <div className="input-group" style={{ marginBottom: 0 }}>
+                <label style={{ fontSize: "0.75rem" }}>
+                  Destruction efficiency (% CH₄ destroyed)
+                </label>
+                <input
+                  id="flare-destruction-efficiency-input"
+                  type="number"
+                  className="mole-input"
+                  min="0"
+                  max="100"
+                  step="0.1"
+                  value={data.destruction_efficiency != null ? data.destruction_efficiency : ""}
+                  onChange={(e) => onChange("destruction_efficiency", e.target.value)}
+                  placeholder={(data.flare_type || "elevated") === "enclosed_ground" ? "blank = 99.5" : "blank = 98"}
                 />
               </div>
             </div>
