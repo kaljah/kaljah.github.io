@@ -872,7 +872,7 @@ const EmissionsMap = () => {
           <MapController center={mapCenter} zoom={mapZoom} />
           <ZoomControl position="bottomright" />
 
-          {/* Facility Plume Dispersion Envelopes & Markers */}
+          {/* Facility severity rings & markers (a visual scale by emission severity, not a dispersion model) */}
           {filteredFacilities.map((fac) => {
             if (!fac.latitude || !fac.longitude) return null;
             const coords = [Number(fac.latitude), Number(fac.longitude)];
@@ -885,7 +885,7 @@ const EmissionsMap = () => {
             const isSelected = selectedFacility?.id === fac.id;
             const severity = getSeverityLevel(val);
 
-            // Radius in meters for multi-ring concentric plume envelopes
+            // Fixed ring radius per severity class: a map symbol only, no atmospheric dispersion is modelled
             const outerRadius =
               severity === "high" ? 22000 : severity === "medium" ? 14000 : 7500;
             const coreRadius = Math.round(outerRadius * 0.45);
@@ -899,10 +899,10 @@ const EmissionsMap = () => {
 
             return (
               <React.Fragment key={fac.id}>
-                {/* Simulated Atmospheric Plume Dispersion Rings */}
+                {/* Severity rings (symbol size by severity class) */}
                 {showPlumeRings && (
                   <>
-                    {/* Outer atmospheric dispersion boundary */}
+                    {/* Outer ring */}
                     <Circle
                       center={coords}
                       radius={outerRadius}
@@ -914,7 +914,7 @@ const EmissionsMap = () => {
                         dashArray: "4, 6",
                       }}
                     />
-                    {/* High-density plume core */}
+                    {/* Inner ring */}
                     <Circle
                       center={coords}
                       radius={coreRadius}
@@ -1165,7 +1165,7 @@ const EmissionsMap = () => {
                         checked={showPlumeRings}
                         onChange={(e) => setShowPlumeRings(e.target.checked)}
                       />
-                      <span>Plume Footprints</span>
+                      <span title="Symbol size by emission severity; not a modelled plume">Severity Rings</span>
                     </label>
 
                     <label className="recon-checkbox-label">

@@ -77,24 +77,20 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
         onChange("fuel", selectedBasin.value);
         onChange("basin", selectedBasin.value);
       }
-      const oilAmt = data.oil_production !== undefined ? data.oil_production : data.amount || 1000;
+      const oilAmt = data.oil_production !== undefined ? data.oil_production : data.amount || "";  // the operator enters the oil production
       if (data.amount !== oilAmt) onChange("amount", oilAmt);
       if (!data.oil_unit) onChange("oil_unit", data.unit || "bbl");
       if (data.unit !== (data.oil_unit || "bbl")) onChange("unit", data.oil_unit || "bbl");
     } else if (isTier2) {
       if (data.tier !== "tier2") onChange("tier", "tier2");
       if (data.calc_method !== "api_equation_6_8_6_9") onChange("calc_method", "api_equation_6_8_6_9");
-      const oilAmt = data.oil_production !== undefined ? data.oil_production : data.amount || 500;
+      const oilAmt = data.oil_production !== undefined ? data.oil_production : data.amount || "";  // the operator enters the oil production
       if (data.amount !== oilAmt) onChange("amount", oilAmt);
       if (!data.oil_unit) onChange("oil_unit", "bbl/day");
       if (!data.gor_unit) onChange("gor_unit", "scf/bbl");
-      if (data.ch4_content === undefined) onChange("ch4_content", 70.0);
-      if (data.co2_content === undefined) onChange("co2_content", 10.0);
     } else if (isTier3) {
       if (data.tier !== "tier3") onChange("tier", "tier3");
       if (data.calc_method !== "api_equation_6_8_direct") onChange("calc_method", "api_equation_6_8_direct");
-      if (data.ch4_content === undefined) onChange("ch4_content", 85.0);
-      if (data.co2_content === undefined) onChange("co2_content", 0.0);
       if (!data.vent_rate_unit) onChange("vent_rate_unit", "scfh");
       if (!data.vent_volume_unit) onChange("vent_volume_unit", "scf");
     }

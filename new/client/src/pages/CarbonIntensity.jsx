@@ -100,7 +100,7 @@ const CarbonIntensity = () => {
         if (filterRes.data && filterRes.data.years) {
           setAvailableYears(filterRes.data.years);
         } else {
-          setAvailableYears(["2023", "2024", "2025", "2026"]);
+          setAvailableYears([]); // no invented years when the filter list is unavailable
         }
         if (filterRes.data && filterRes.data.segments) {
           setAvailableSegments(filterRes.data.segments);

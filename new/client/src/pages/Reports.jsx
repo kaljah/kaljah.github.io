@@ -9,6 +9,7 @@ import "../pages/Dashboard.css";
 import { getUserOperationalDefaults } from "../utils/userDefaults";
 import { getActiveGwpFactors } from "../constants";
 import { apiError } from "../utils/apiError";
+import { useGwpStandard } from "../hooks/useGwpStandard";
 
 // BUG-013: GWP option labels are generated from constants.js so they always
 // show the values the report generator will actually apply. "20yr" resolves
@@ -285,7 +286,8 @@ const Reports = () => {
     try {
       toast.info("Generating OGMP 2.0 Excel Workbook...");
       const yr =
-        reportYear !== "all" ? reportYear : year !== "all" ? year : "2024";
+        reportYear !== "all" ? reportYear : year !== "all" ? year
+          : String(availableFilters.years[0] || new Date().getFullYear()); // latest year with data (was always 2024)
       const response = await api.get(`/reports/ogmp-export?year=${yr}`, {
         responseType: "blob",
       });
@@ -378,7 +380,13 @@ const Reports = () => {
     new Date().getFullYear().toString(),
   );
   const [comparisonYear, setComparisonYear] = useState("none"); // [NEW] Comparison Year State
-  const [reportGwpStandard, setReportGwpStandard] = useState("AR5"); // [NEW] GWP Standard Selector
+  // the report's GWP set starts at the organisation's active standard (it always started at AR5)
+  const { standard: activeGwpStandard } = useGwpStandard();
+  const [reportGwpStandard, setReportGwpStandard] = useState(activeGwpStandard || "AR5");
+  const gwpTouched = React.useRef(false);
+  useEffect(() => {
+    if (activeGwpStandard && !gwpTouched.current) setReportGwpStandard(activeGwpStandard);
+  }, [activeGwpStandard]);
   const [reportSelectedRegions, setReportSelectedRegions] = useState([]); // Multiselect
 
   // Derived options
@@ -681,7 +689,7 @@ const Reports = () => {
                 <select
                   className="component-select"
                   value={reportGwpStandard}
-                  onChange={(e) => setReportGwpStandard(e.target.value)}
+                  onChange={(e) => { gwpTouched.current = true; setReportGwpStandard(e.target.value); }}
                 >
                   <option value="AR5">{gwpOptionLabel("AR5", "100")}</option>
                   <option value="AR6">{gwpOptionLabel("AR6", "100")}</option>
@@ -1222,7 +1230,7 @@ const Reports = () => {
                     <select
                       className="component-select"
                       value={reportGwpStandard}
-                      onChange={(e) => setReportGwpStandard(e.target.value)}
+                      onChange={(e) => { gwpTouched.current = true; setReportGwpStandard(e.target.value); }}
                       style={{ width: '100%', padding: '8px', border: '1px solid #e2e8f0', borderRadius: '4px' }}
                     >
                       <option value="AR5">{`${gwpOptionLabel("AR5", "100")} — Default`}</option>

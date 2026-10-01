@@ -239,3 +239,35 @@ regenerated, keeping the hand edits to A03 / F01 / F02. Backend 1,948 / 0 failed
 - Steam boiler efficiency 1.5 is read as 1.5 % (upload and manual alike); a sanity floor (e.g. 20 %) would
   refuse it. `ef_co2` below 1 on the steam form is read as t/MMBtu (x1000), as documented.
 - Scope 3 manual entries have no duplicate check (two identical supplier totals in a month are both kept).
+
+# Part 7 - Invented / hard-coded values (2026-10-01)
+
+Method: searched the server and client for random numbers, mock / demo / placeholder data, numeric
+fallbacks shown as results, and pre-filled form values. Every numeric factor in the catalogs was
+cross-checked against the API Compendium 2021 text: 131 / 131 API factors and 82 / 82 combustion factors
+were found. Every numeric literal in `calculations/*.py` was checked the same way, and the 20 not found
+were reviewed by hand.
+
+| # | Where | Invented value | Fix |
+|---|-------|----------------|-----|
+| 44 | `services/erp_integration.py`, `/api/emissions/erp/sync` | with ENABLE_MOCK_ERP set, "ERP sync" inserted three made-up Scope 3 records into the inventory ("SAP Ariba Inv #9921", fixed spend / factor / co2e, always facility 1) | the mock service and the unrouted ErpSync page are removed; the endpoint answers 501 "No ERP connector is configured" |
+| 45 | `CompressorSealCalculator` (process `compressor_seal`) | 15 / 1.5 / 1.2 kg CH4/hr per compressor (wet / dry / reciprocating), attributed to "Table 7-3" (offshore facility factors); the validation model and tests repeated them | Compendium factors by segment: G&B wet 26 kg/hr (Section 6.4.3), rod packing 0.443 (Table 6-30), processing 9.87 / 3.22 / 2.7 (Tables 6-37 / 6-38), transmission & storage 18.4 / 5.75 / 4.72 (Tables 6-40 / 6-41). The result is Tier 1; a measured leak rate (`leak_rate_kg_hr`) is Tier 3; a combination the Compendium does not cover is refused. G&B wet seal added to the `compressor_venting` activity rows. |
+| 46 | `legacy_engine.py` | engineering fallbacks that filled missing inputs: "Placeholder-ish" Table 7-7 screening values, completions as 100 % CH4 at 19.2 kg/Mcf, tank GOR 500 scf/bbl, 85 % CH4, API gravity 35, high-bleed pneumatics (276 + 137 lines; none ran in the 1,948 tests) | removed; a request the API 2021 dispatcher does not handle continues with entered factors or is refused (MissingFactorError) |
+| 47 | glycol dehydrator | a parametric "solubility" model (0.0032 x P^0.96 ...) and "3.0 scf/gal" cited to "Table 6-5" (well completions); its refusal missed the `teg_pump_rate` alias | the alias is refused too; the comments now state there is no Compendium source |
+| 48 | tank flashing, "specific" without GOR / separator data | the Table 6-22 / 6-24 default was labelled Tier 3 (measured) | labelled Tier 1 |
+| 49 | Eq 6-11 liquids unloading | gas CH4 content defaulted to 85 % | required, as for Eq 6-3 / 6-10 |
+| 50 | Scope 1 form | a blank count (wells, events, facilities, equipment, leakers, components) was submitted as 1; the unloading form pre-filled 10 / 12 events, completions 1 event, associated gas venting 1,000 / 500 bbl oil and 70 % / 10 % / 85 % gas composition | no pre-filled activity or composition; a blank amount stops the submit with a message |
+| 51 | calculation details panel | GWPs always shown as "28 / 265 (AR5)" | the organisation's active standard and values |
+| 52 | Methane Intensity | WEC rate label hard-coded ($900 / $1,200 / $1,500) while the fee used the configured rates; "all years" Excel export silently used 2024; invented year list (2023-2026) when the filter list failed (also Carbon Intensity) | rate from the server result; latest year with data; empty list |
+| 53 | Reports | OGMP export for "all years" silently used 2024; report GWP selector always started at AR5 (the report recalculates CO2e with it) | latest year with data; the active standard |
+| 54 | Methane Explorer | fixed-radius rings (22 / 14 / 7.5 km by severity) labelled "Atmospheric Plume Dispersion" / "Plume Footprints"; no dispersion is modelled | relabelled "Severity Rings" (map symbol) |
+| 55 | QA dashboard | a sample record without a process was shown as "Combustion" | "—" |
+| 56 | email | with no SMTP server the message was logged as "dispatched" and reported as sent | logged as NOT SENT, returns False |
+| 57 | year pickers (Settings, Methane Intensity, QA) | hard-coded 2020/2021-2026 | follow the current year |
+
+Checked and correct: Sentinel-5P returns "unconfigured" instead of numbers; Toast ids are the only
+Math.random; the `generate_*.py` / seed scripts are test-data tools; the Halon 1301 7,140 is its IPCC GWP.
+
+Tests: `tests/test_deep_dive_2026_09_30.py` (44); compressor seal battery and invariants re-derived from the
+Compendium; the dehydrator stripping-gas test now expects the refusal. Backend 1,965 / 0 failed.
+

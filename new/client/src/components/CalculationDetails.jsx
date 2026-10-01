@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { Calculator, X, Info, ShieldCheck, CheckCircle2, Clock, AlertCircle } from "lucide-react";
 import "./CalculationDetails.css";
+import { useGwpStandard } from "../hooks/useGwpStandard";
 
 // no API Compendium / table / equation references in the emission UI
 const stripApi = (t) =>
@@ -12,6 +13,8 @@ const stripApi = (t) =>
         .trim()
     : t;
 const CalculationDetails = ({ calculation, onClose }) => {
+  // the organisation's active GWP set: the labels were hard-coded "28 / 265 (AR5)" whatever the standard
+  const { standard: gwpStd, gwp: gwpSet } = useGwpStandard();
   // Escape closes the dialog, as its close button advertises
   useEffect(() => {
     const onKey = (e) => {
@@ -189,14 +192,14 @@ const CalculationDetails = ({ calculation, onClose }) => {
                     <span className="gas-badge gwp">GWP</span>
                     <span>CH₄ Global Warming Potential</span>
                   </div>
-                  <div className="factor-value">{factors.gwp_ch4 || 28.0} (AR5)</div>
+                  <div className="factor-value">{factors.gwp_ch4 ?? gwpSet?.CH4 ?? "—"}{gwpStd ? ` (${gwpStd})` : ""}</div>
                 </div>
                 <div className="factor-item">
                   <div className="factor-label">
                     <span className="gas-badge gwp">GWP</span>
                     <span>N₂O Global Warming Potential</span>
                   </div>
-                  <div className="factor-value">{factors.gwp_n2o || 265.0} (AR5)</div>
+                  <div className="factor-value">{factors.gwp_n2o ?? gwpSet?.N2O ?? "—"}{gwpStd ? ` (${gwpStd})` : ""}</div>
                 </div>
               </div>
             </div>
