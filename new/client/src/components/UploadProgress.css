@@ -553,3 +553,6 @@
   background: #fef3c7 !important;
 }
 
+
+/* what happens to the imported records */
+.up-next-steps { margin: 12px 0 4px; padding: 10px 14px; border-radius: 8px; background: #eff6ff; border: 1px solid #bfdbfe; color: #1e3a8a; font-size: 0.85rem; line-height: 1.45; }

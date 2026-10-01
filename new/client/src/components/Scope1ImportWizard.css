@@ -879,3 +879,24 @@
   .s1w-map-row { grid-template-columns: 1fr; }
   .s1w-group-table-header { display: none; }
 }
+
+
+/* ── File check (step "Check & Map") ── */
+.s1w-link-btn { background: none; border: none; color: #ea580c; font-weight: 600; cursor: pointer; padding: 0 4px; font-size: 0.85rem; }
+.s1w-link-btn:hover { text-decoration: underline; }
+.s1w-check { border: 1px solid #e5e7eb; border-radius: 10px; padding: 14px 16px; margin: 0 0 14px; background: #fafafa; font-size: 0.85rem; color: #374151; }
+.s1w-check--loading { display: flex; align-items: center; gap: 10px; }
+.s1w-check--error { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
+.s1w-check-stale { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; border-radius: 8px; padding: 6px 10px; margin-bottom: 10px; }
+.s1w-check-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 4px; color: #111827; }
+.s1w-check-subtitle { font-weight: 700; margin: 12px 0 6px; color: #111827; }
+.s1w-check-facts { color: #4b5563; margin-bottom: 10px; }
+.s1w-check-totals { display: flex; gap: 12px; flex-wrap: wrap; }
+.s1w-check-total { flex: 1 1 180px; background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 8px 12px; }
+.s1w-check-total span { font-size: 1.25rem; font-weight: 700; margin-right: 4px; }
+.s1w-check-total--ok span { color: #059669; }
+.s1w-check-total--warn span { color: #d97706; }
+.s1w-check-note { color: #6b7280; margin-top: 8px; font-size: 0.8rem; }
+.s1w-check-warn { background: #fff7ed; border: 1px solid #fed7aa; border-radius: 8px; padding: 6px 10px; margin-top: 8px; color: #9a3412; }
+.s1w-process-filter { margin: 0 0 12px; font-size: 0.85rem; }
+.s1w-process-filter summary { cursor: pointer; color: #ea580c; font-weight: 600; margin-bottom: 8px; }

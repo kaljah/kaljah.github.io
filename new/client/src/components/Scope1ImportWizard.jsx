@@ -4,6 +4,7 @@ import api from "../api";
 import { autoDetectMapping, missingRequiredFields } from "../utils/importMapping";
 import { useToast } from "./Toast";
 import UploadProgress from "./UploadProgress";
+import SkipGroupList from "./SkipGroupList";
 import "./Scope1ImportWizard.css";
 
 // ─── SVG Icon Library ────────────────────────────────────────────────────────
@@ -174,11 +175,11 @@ const FIELD_GROUPS = [
     IconComp: Icon.Layers,
     fields: [
       { key: "date",          label: "Date",           required: true,  hint: "Format: YYYY-MM-DD or YYYY-MM (or map Year and Month)" },
-      { key: "facility_name", label: "Region / Facility", required: true, hint: "Must match an existing region in the system" },
+      { key: "facility_name", label: "Facility", required: true, hint: "Facility name exactly as in Manage Data" },
       { key: "activity",      label: "Activity",       required: false, hint: "e.g. Exploration & Production" },
       { key: "division",      label: "Division",       required: false, hint: "e.g. Production, Association" },
       { key: "field",         label: "Field",          required: false, hint: "e.g. Bir Berkine" },
-      { key: "group",         label: "Emission Source",required: false, hint: "Logical grouping for this emission source" },
+      { key: "group",         label: "Group",          required: false, hint: "Free grouping label stored with the record (e.g. West facility)" },
       { key: "equipment",     label: "Equipment Name", required: false, hint: "Name of the piece of equipment" },
       { key: "equipment_id",  label: "Equipment ID",   required: false, hint: "Unique identifier for the equipment (duplicate check)" },
     ],
@@ -337,12 +338,16 @@ const FIELD_GROUPS = [
 
 // ─── Step definitions ────────────────────────────────────────────────────────
 const STEPS = [
-  { id: 1, label: "Upload Mode",     IconComp: Icon.Settings  },
-  { id: 2, label: "Process Scope",  IconComp: Icon.Layers    },
-  { id: 3, label: "Select File",    IconComp: Icon.Upload    },
-  { id: 4, label: "Map Columns",    IconComp: Icon.Columns   },
-  { id: 5, label: "Submitted for Review",    IconComp: Icon.Processing },
+  { id: 1, label: "Calculation",   IconComp: Icon.Settings  },
+  { id: 3, label: "Choose File",   IconComp: Icon.Upload    },
+  { id: 4, label: "Check & Map",   IconComp: Icon.Columns   },
+  { id: 5, label: "Import",        IconComp: Icon.Processing },
 ];
+// the tier chosen in step 1 is the one the server applies (it used to be a second, independent
+// "Default factor" select in the mapping step: choosing Tier 3 in step 1 still imported per row)
+const TIER_TO_FACTOR = { "1": "default", "2": "custom", "3": "specific", auto: "auto" };
+const TIER_LABEL = { "1": "Tier 1 for every row", "2": "Tier 2 for every row", "3": "Tier 3 for every row",
+  auto: "Tier per row (factor_type column)" };
 
 // ─── Step Indicator ───────────────────────────────────────────────────────────
 function StepBar({ current }) {
@@ -430,7 +435,7 @@ function MappingRow({ field, headers, value, onChange }) {
 }
 
 // ─── Field Group Panel ────────────────────────────────────────────────────────
-function FieldGroup({ group, headers, mapping, setMapping, searchQuery, tier, processScope, selectedProcesses }) {
+function FieldGroup({ group, headers, mapping, setMapping, searchQuery, tier, processScope, selectedProcesses, showAll, essentialKeys }) {
   const [open, setOpen] = useState(true);
 
   // Filter fields by search
@@ -438,6 +443,8 @@ function FieldGroup({ group, headers, mapping, setMapping, searchQuery, tier, pr
     const q = searchQuery.toLowerCase();
     return group.fields.filter(f => {
       if (q && !f.label.toLowerCase().includes(q) && !f.key.toLowerCase().includes(q) && !f.hint.toLowerCase().includes(q)) return false;
+      // default view: only the fields that matter for this file (mapped, or required and missing)
+      if (!q && !showAll && !essentialKeys.has(f.key)) return false;
       // Hide tier3 groups entirely if tier is 1
       if (group.tier3Only && (tier === "1" || tier === "2")) return false;
       // For specific process scope, hide tier3 params that don't belong to any selected process
@@ -452,7 +459,7 @@ function FieldGroup({ group, headers, mapping, setMapping, searchQuery, tier, pr
       }
       return true;
     });
-  }, [group.fields, searchQuery, tier, processScope, selectedProcesses, group.tier3Only]);
+  }, [group.fields, searchQuery, tier, processScope, selectedProcesses, group.tier3Only, showAll, essentialKeys]);
 
   if (visibleFields.length === 0) return null;
 
@@ -496,6 +503,104 @@ function FieldGroup({ group, headers, mapping, setMapping, searchQuery, tier, pr
   );
 }
 
+// ─── File check summary ───────────────────────────────────────────────────────
+const fmt = (n) => Number(n || 0).toLocaleString("en-US");
+
+function FileCheckPanel({ check, onRecheck, canRun }) {
+  if (check.loading) {
+    return (
+      <div className="s1w-check s1w-check--loading" role="status">
+        <span className="s1w-spinner" /> Checking your file… a sample of rows spread over the file is calculated exactly as
+        the import would; nothing is saved.
+      </div>
+    );
+  }
+  if (check.error) {
+    return (
+      <div className="s1w-check s1w-check--error" role="alert">
+        <strong>The file could not be checked:</strong> {check.error}{" "}
+        <button className="s1w-link-btn" onClick={onRecheck}>Check again</button>
+      </div>
+    );
+  }
+  if (!check.data) {
+    return canRun ? (
+      <div className="s1w-check">
+        <button className="s1w-link-btn" onClick={onRecheck}>Check the file</button> before importing (nothing is saved).
+      </div>
+    ) : (
+      <div className="s1w-check">Map the required fields below; the file is then checked before anything is saved.</div>
+    );
+  }
+  const p = check.data.preview;
+  const groups = check.data.skipped_groups || [];
+  const scale = p.checked ? p.rows / p.checked : 1;
+  const unknownFac = (p.facilities || []).filter(f => !f.known);
+  const unknownProc = (p.processes || []).filter(x => !x.known && !x.scope2);
+  const scope2Proc = (p.processes || []).filter(x => x.scope2);
+  return (
+    <div className="s1w-check">
+      {check.stale && (
+        <div className="s1w-check-stale">
+          Options or mapping changed since this check. <button className="s1w-link-btn" onClick={onRecheck}>Check again</button>
+        </div>
+      )}
+      <div className="s1w-check-title">File check</div>
+      <div className="s1w-check-facts">
+        {fmt(p.rows)} rows
+        {p.period?.from && <> · {p.period.from} to {p.period.to} ({p.period.months} month{p.period.months !== 1 ? "s" : ""})</>}
+        {" "}· {fmt((p.facilities || []).length)} facilit{(p.facilities || []).length !== 1 ? "ies" : "y"}
+        {" "}· {fmt((p.processes || []).length)} process type{(p.processes || []).length !== 1 ? "s" : ""}
+      </div>
+      <div className="s1w-check-totals">
+        <div className="s1w-check-total s1w-check-total--ok">
+          <span>{p.is_estimate ? "≈ " : ""}{fmt(p.estimated_ok)}</span> rows will be imported
+        </div>
+        <div className={`s1w-check-total ${p.estimated_skipped ? "s1w-check-total--warn" : ""}`}>
+          <span>{p.is_estimate ? "≈ " : ""}{fmt(p.estimated_skipped)}</span> rows will be skipped
+        </div>
+      </div>
+      {p.is_estimate && (
+        <div className="s1w-check-note">Estimated from {fmt(p.checked)} rows spread over the file; the import checks every row.</div>
+      )}
+      {unknownFac.length > 0 && (
+        <div className="s1w-check-warn">
+          <strong>{fmt(p.unknown_facility_rows)} rows name a facility that is not in the platform or not in your regions:</strong>{" "}
+          {unknownFac.slice(0, 5).map(f => `${f.name} (${fmt(f.rows)})`).join(", ")}{unknownFac.length > 5 ? " …" : ""}
+        </div>
+      )}
+      {unknownProc.length > 0 && (
+        <div className="s1w-check-warn">
+          <strong>{fmt(p.unknown_process_rows)} rows have a process type that is not recognised:</strong>{" "}
+          {unknownProc.slice(0, 5).map(x => `${x.name} (${fmt(x.rows)})`).join(", ")}{unknownProc.length > 5 ? " …" : ""}
+        </div>
+      )}
+      {scope2Proc.length > 0 && (
+        <div className="s1w-check-warn">
+          <strong>{fmt(p.scope2_rows)} rows are Scope 2 (purchased energy):</strong>{" "}
+          {scope2Proc.slice(0, 5).map(x => `${x.name} (${fmt(x.rows)})`).join(", ")}. Import them with the Scope 2 template.
+        </div>
+      )}
+      {p.period?.unreadable_rows > 0 && (
+        <div className="s1w-check-warn"><strong>{fmt(p.period.unreadable_rows)} rows have a missing or unreadable date.</strong></div>
+      )}
+      {groups.length > 0 && (
+        <>
+          <div className="s1w-check-subtitle">Why rows would be skipped{p.is_estimate ? " (scaled from the sample)" : ""}</div>
+          <SkipGroupList groups={groups} scale={scale} approx={p.is_estimate} limit={6} />
+        </>
+      )}
+      {p.columns && (
+        <div className="s1w-check-note">
+          {p.columns.matched.length} of {p.columns.total} columns are matched to fields.
+          {p.columns.by_name.length > 0 && <> The other {p.columns.by_name.length} are read by their name when a calculation
+          needs them (for example c1, gor, hhv) and ignored otherwise.</>}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Auto-detect mapping ───────────────────────────────────────────────────────
 // ─── Main Wizard ──────────────────────────────────────────────────────────────
 export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
@@ -511,7 +616,10 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
   const [parseError, setParseError] = useState("");
   const [headers, setHeaders] = useState([]);
   const [mapping, setMapping] = useState({});
-  const [globalFactor, setGlobalFactor] = useState("auto");
+  const globalFactor = TIER_TO_FACTOR[tier] || "auto";
+  const [showAllFields, setShowAllFields] = useState(false);
+  const [maxBytes, setMaxBytes] = useState(null);       // server upload limit, checked when a file is picked
+  const [check, setCheck] = useState({ loading: false, data: null, error: "", stale: false });
   const [searchQuery, setSearchQuery] = useState("");
   const [jobId, setJobId] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -541,6 +649,10 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
     }).catch(() => {});
   }, []);
 
+  useEffect(() => {
+    api.get("/emissions/upload/limits").then(res => setMaxBytes(res.data?.max_bytes || null)).catch(() => {});
+  }, []);
+
   // Toggle process selection
   const toggleProcess = (key) => {
     setSelectedProcesses(prev =>
@@ -556,12 +668,23 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
   // Required fields check
   const missingRequired = missingRequiredFields(FIELD_GROUPS.flatMap(g => g.fields), mapping);
   const canSubmit = missingRequired.length === 0 || headers.length === 0;
+  const essentialKeys = useMemo(() => new Set([
+    ...Object.keys(mapping).filter(k => mapping[k]),
+    ...missingRequired.map(f => f.key),
+  ]), [mapping, missingRequired]);
+  const matchedColumns = useMemo(() => new Set(Object.values(mapping).filter(Boolean)), [mapping]);
 
   // File processing
   const processFile = useCallback((f) => {
     if (!f) return;
     setParseError("");
     setSubmitError("");
+    setCheck({ loading: false, data: null, error: "", stale: false });
+    if (maxBytes && f.size > maxBytes) {
+      // refused before uploading anything (it used to fail only after the upload, with a 3 s toast)
+      setParseError(`This file is ${(f.size / 1048576).toFixed(1)} MB; the upload limit is ${(maxBytes / 1048576).toFixed(0)} MB. Split it into smaller files.`);
+      return;
+    }
     const isExcel = f.name.toLowerCase().endsWith(".xlsx");
     if (isExcel) {
       setFile(f); setHeaders([]); setMapping({}); setStep(4);
@@ -582,7 +705,7 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
       },
       error: () => setParseError("Failed to parse file. Please ensure it is a valid CSV."),
     });
-  }, [allFields]);
+  }, [allFields, maxBytes]);
 
   const onDrop = (e) => { e.preventDefault(); setIsDragging(false); processFile(e.dataTransfer.files[0]); };
   const onFileChange = (e) => { processFile(e.target.files[0]); e.target.value = ""; };
@@ -604,6 +727,39 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
       document.body.appendChild(a); a.click(); a.remove();
     } catch { toast.error("Template download failed."); }
   };
+
+  // Check file: the server calculates a sample spread over the file and counts every row; nothing is saved
+  const runCheck = useCallback(async () => {
+    if (!file) return;
+    setCheck({ loading: true, data: null, error: "", stale: false });
+    const form = new FormData();
+    form.append("file", file);
+    form.append("global_factor_type", globalFactor);
+    form.append("scope", "1");
+    form.append("overwrite_duplicates", overwrite ? "true" : "false");
+    form.append("column_mapping", JSON.stringify(mapping));
+    form.append("sample_rows", "2000");
+    try {
+      const res = await api.post("/emissions/upload/check", form, { headers: { "Content-Type": "multipart/form-data" } });
+      setCheck({ loading: false, data: res.data, error: "", stale: false });
+    } catch (err) {
+      setCheck({ loading: false, data: null, error: err.response?.data?.error || err.message, stale: false });
+    }
+  }, [file, globalFactor, overwrite, mapping]);
+
+  // first check when the mapping step opens; later changes only mark the result out of date
+  const checkedFileRef = useRef(null);
+  useEffect(() => {
+    if (step === 4 && file && checkedFileRef.current !== file && (headers.length === 0 || canSubmit)) {
+      checkedFileRef.current = file;
+      runCheck();
+    }
+  }, [step, file, headers.length, canSubmit, runCheck]);
+  const firstRender = useRef(true);
+  useEffect(() => {
+    if (firstRender.current) { firstRender.current = false; return; }
+    setCheck(c => (c.data || c.error ? { ...c, stale: true } : c));
+  }, [mapping, tier, overwrite]);
 
   // Submit
   const handleSubmit = async () => {
@@ -629,10 +785,7 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
     } finally { setIsSubmitting(false); }
   };
 
-  const canGoNext = () => {
-    if (step === 2 && processScope === "specific" && selectedProcesses.length === 0) return false;
-    return true;
-  };
+  const canGoNext = () => true;
 
   return (
     <div className="s1w-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
@@ -669,7 +822,7 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
                 Icon={Icon.Zap}
                 title="Tier 1 — Standard"
                 badge={{ label: "Minimum fields", color: "blue" }}
-                description="Uses API Compendium default emission factors. Only requires fuel type, quantity, and unit. Fast and simple."
+                description="Every row uses the API Compendium default factors (the file's factor_type column is ignored). Needs fuel, quantity and unit."
               />
               <ModeCard
                 selected={tier === "2"}
@@ -677,7 +830,7 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
                 Icon={Icon.Layers}
                 title="Tier 2 — Custom / Site Factors"
                 badge={{ label: "Site data", color: "blue" }}
-                description="Uses your saved custom factors (Manage Data › Custom Factors), or a catalog fuel with your measured HHV / density."
+                description="Every row uses your saved custom factors (Manage Data › Custom Factors), or a catalog fuel with your measured HHV / density."
               />
               <ModeCard
                 selected={tier === "3"}
@@ -685,13 +838,13 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
                 Icon={Icon.Settings}
                 title="Tier 3 — Engineering"
                 badge={{ label: "Full precision", color: "green" }}
-                description="Uses actual gas composition (C1–C10), operating conditions (T/P), and process-specific parameters for maximum accuracy."
+                description="Every row is calculated from site data: gas composition (C1–C10), operating conditions and process parameters."
               />
               <ModeCard
                 selected={tier === "auto"}
                 onClick={() => setTier("auto")}
                 Icon={Icon.Wand}
-                title="Auto Detect — All Tiers"
+                title="Per row — mixed tiers"
                 badge={{ label: "Recommended", color: "orange" }}
                 description="Mixes Tier 1, 2 and 3 rows in one file. Each row's factor_type column (default / custom / specific) selects its tier."
               />
@@ -705,50 +858,6 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
                 {tier === "auto" && "Auto-detect is ideal for a mix of sources: each row's factor_type column selects Tier 1, 2 or 3."}
               </span>
             </div>
-          </div>
-        )}
-
-        {/* ── STEP 2: Process Scope ── */}
-        {step === 2 && (
-          <div className="s1w-body">
-            <div className="s1w-section-title"><Icon.Layers /><span>Process Scope</span></div>
-            <p className="s1w-section-desc">Does your file contain data for all process types, or a specific process?</p>
-            <div className="s1w-scope-cards">
-              <ModeCard
-                selected={processScope === "all"}
-                onClick={() => setProcessScope("all")}
-                Icon={Icon.Layers}
-                title="All Processes"
-                description="Your file contains a Process column that identifies the type (Combustion, Flaring, Venting, etc.) for each row."
-              />
-              <ModeCard
-                selected={processScope === "specific"}
-                onClick={() => setProcessScope("specific")}
-                Icon={Icon.Activity}
-                title="Specific Process(es)"
-                description="Your file is dedicated to one or more specific processes. Select which ones apply to filter the column mapping to only the relevant fields."
-              />
-            </div>
-            {processScope === "specific" && (
-              <div className="s1w-process-grid-wrap">
-                <p className="s1w-process-grid-label">Select which processes are in your file:</p>
-                <div className="s1w-process-grid">
-                  {PROCESS_CATALOGUE.map(p => (
-                    <ProcessTile
-                      key={p.key}
-                      process={p}
-                      selected={selectedProcesses.includes(p.key)}
-                      onClick={() => toggleProcess(p.key)}
-                    />
-                  ))}
-                </div>
-                {selectedProcesses.length === 0 && (
-                  <div className="s1w-warn-inline">
-                    <Icon.Warning /> Select at least one process type to continue.
-                  </div>
-                )}
-              </div>
-            )}
           </div>
         )}
 
@@ -787,7 +896,7 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
               <input ref={fileInputRef} type="file" accept=".csv,.xlsx" style={{ display: "none" }} onChange={onFileChange} />
               <div className="s1w-dropzone-icon"><Icon.Upload /></div>
               <p className="s1w-dropzone-text">Drag & drop your file here, or <span>click to browse</span></p>
-              <p className="s1w-dropzone-sub">Supports .xlsx and .csv — optimised for millions of rows</p>
+              <p className="s1w-dropzone-sub">.xlsx or .csv{maxBytes ? ` · up to ${(maxBytes / 1048576).toFixed(0)} MB` : ""} · the file is checked before anything is saved</p>
               {parseError && (
                 <div className="s1w-inline-error"><Icon.Warning />{parseError}</div>
               )}
@@ -816,13 +925,9 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
             {/* Config summary pill */}
             <div className="s1w-config-summary">
               <span className={`s1w-config-pill s1w-config-pill--${tier === "1" ? "blue" : tier === "3" ? "green" : "orange"}`}>
-                {tier === "1" ? "Tier 1" : tier === "2" ? "Tier 2" : tier === "3" ? "Tier 3" : "Auto-detect"}
+                {TIER_LABEL[tier]}
               </span>
-              <span className="s1w-config-pill s1w-config-pill--neutral">
-                {processScope === "all"
-                  ? "All Processes"
-                  : `${selectedProcesses.length} process${selectedProcesses.length !== 1 ? "es" : ""} selected`}
-              </span>
+              {maxBytes && <span className="s1w-config-pill s1w-config-pill--neutral">Up to {(maxBytes / 1048576).toFixed(0)} MB per file · no row limit</span>}
             </div>
           </div>
         )}
@@ -851,10 +956,10 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
                 <div className="s1w-file-badge-icon"><Icon.File /></div>
                 <div className="s1w-file-badge-info">
                   <p className="s1w-file-name">{file.name}</p>
-                  <p className="s1w-file-size">{(file.size / 1024).toFixed(1)} KB</p>
+                  <p className="s1w-file-size">{file.size >= 1048576 ? `${(file.size / 1048576).toFixed(1)} MB` : `${(file.size / 1024).toFixed(1)} KB`}</p>
                 </div>
                 {headers.length > 0 && (
-                  <div className="s1w-auto-badge"><Icon.Wand /><span>{Object.keys(mapping).length} auto-detected</span></div>
+                  <div className="s1w-auto-badge"><Icon.Wand /><span>{headers.filter(h => matchedColumns.has(h)).length} of {headers.length} columns matched to fields</span></div>
                 )}
               </div>
             )}
@@ -888,23 +993,50 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
               )}
             </div>
 
-            {/* Factor selector */}
+            {/* Calculation chosen in step 1 (one place to choose it) */}
             <div className="s1w-factor-row">
-              <label className="s1w-factor-label">Default factor when not specified in file:</label>
-              <select className="s1w-factor-select" value={globalFactor} onChange={e => setGlobalFactor(e.target.value)}>
-                <option value="auto">Auto-detect from file</option>
-                <option value="default">Force Standard (API Compendium)</option>
-                <option value="custom">Force Custom Factors</option>
-                <option value="specific">Force Tier 3 (site data)</option>
-              </select>
+              <span className="s1w-factor-label">Calculation: <strong>{TIER_LABEL[tier]}</strong></span>
+              <button className="s1w-link-btn" onClick={() => setStep(1)}>Change</button>
             </div>
 
-            <label className="s1w-factor-row" style={{ gap: "8px", cursor: "pointer" }}>
-              <input type="checkbox" checked={overwrite} onChange={e => setOverwrite(e.target.checked)} />
+            <FileCheckPanel check={check} onRecheck={runCheck} canRun={headers.length === 0 || canSubmit} />
+
+            <label className="s1w-factor-row" style={{ gap: "8px", cursor: "pointer", alignItems: "flex-start" }}>
+              <input type="checkbox" checked={overwrite} onChange={e => setOverwrite(e.target.checked)} style={{ marginTop: 3 }} />
               <span className="s1w-factor-label">
-                Overwrite records that already exist (same facility, month and source). Overwritten records go back to Pending review.
+                <strong>Replace existing records.</strong> A row for the same facility, month, process, fuel and equipment as a
+                record already in the platform replaces it, and that record goes back to Pending review. Unticked, such rows
+                are skipped and listed as duplicates.
               </span>
             </label>
+
+            <div className="s1w-factor-row" style={{ justifyContent: "space-between" }}>
+              <span className="s1w-factor-label">
+                {showAllFields ? "All fields are shown." : "Showing the fields matched to your file and any required field still missing."}
+              </span>
+              <button className="s1w-link-btn" onClick={() => setShowAllFields(v => !v)}>
+                {showAllFields ? "Show only my file's fields" : "Show all fields"}
+              </button>
+            </div>
+
+            {showAllFields && (tier === "3" || tier === "auto") && (
+              <details className="s1w-process-filter">
+                <summary>Only show Tier 3 fields for some processes</summary>
+                <div className="s1w-process-grid">
+                  {PROCESS_CATALOGUE.map(p => (
+                    <ProcessTile
+                      key={p.key}
+                      process={p}
+                      selected={selectedProcesses.includes(p.key)}
+                      onClick={() => { toggleProcess(p.key); setProcessScope("specific"); }}
+                    />
+                  ))}
+                </div>
+                {selectedProcesses.length > 0 && (
+                  <button className="s1w-link-btn" onClick={() => { setSelectedProcesses([]); setProcessScope("all"); }}>Show all processes</button>
+                )}
+              </details>
+            )}
 
             {/* Field groups */}
             <div className="s1w-field-groups">
@@ -919,6 +1051,8 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
                   tier={tier}
                   processScope={processScope}
                   selectedProcesses={selectedProcesses}
+                  showAll={showAllFields}
+                  essentialKeys={essentialKeys}
                 />
               ))}
             </div>
@@ -949,7 +1083,7 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
           <div className="s1w-footer">
             <button
               className="s1w-btn-ghost"
-              onClick={step === 1 ? onClose : () => setStep(s => s - 1)}
+              onClick={step === 1 ? onClose : () => setStep(s => (s === 3 ? 1 : s - 1))}
             >
               {step === 1 ? <><Icon.Close /> Cancel</> : <><Icon.ArrowLeft /> Back</>}
             </button>
@@ -958,7 +1092,7 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
               {step < 4 && (
                 <button
                   className="s1w-btn-primary"
-                  onClick={() => setStep(s => s + 1)}
+                  onClick={() => setStep(s => (s === 1 ? 3 : s + 1))}
                   disabled={!canGoNext()}
                 >
                   Next <Icon.ChevronRight />
@@ -971,7 +1105,9 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
                   disabled={isSubmitting || (!canSubmit && headers.length > 0) || (!isAdmin && allowedRegions !== null && allowedRegions.length === 0)}
                 >
                   {isSubmitting ? <span className="s1w-spinner" /> : <Icon.Processing />}
-                  {isSubmitting ? "Starting…" : "Start Import"}
+                  {isSubmitting ? "Starting…" : check.data?.preview
+                    ? `Import ${check.data.preview.is_estimate ? "about " : ""}${check.data.preview.estimated_ok.toLocaleString("en-US")} rows`
+                    : "Start Import"}
                 </button>
               )}
             </div>

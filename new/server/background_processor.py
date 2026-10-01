@@ -28,10 +28,27 @@ def _job_file(job_id):
     return os.path.join(UPLOAD_JOB_DIR, f"{job_id}.json")
 
 
+def _skip_groups(job):
+    """Grouped, actionable skip reasons over every skipped row (cached until the list grows)."""
+    from services.import_feedback import group_skips
+
+    skipped = job.get("skipped", [])
+    cached = job.get("_groups_cache")
+    if cached and cached[0] == len(skipped):
+        return cached[1]
+    groups = group_skips(skipped)
+    job["_groups_cache"] = (len(skipped), groups)
+    return groups
+
+
 def _snapshot(job):
     skipped = job.get("skipped", [])
     anomalies = job.get("anomalies", [])
     return {
+        "skipped_groups": _skip_groups(job),
+        "dry_run": bool(job.get("dry_run")),
+        "preview": job.get("preview"),
+        "started_at": job.get("created_at"),
         "status": job.get("status", "unknown"),
         "progress": job.get("progress", 0),
         "processed": job.get("processed", 0),
@@ -394,10 +411,21 @@ class _InFile(int):
     in-file repeat is still "earlier in this file", not a record of the platform."""
 
 
-# Rows of a Scope 1/2/3 import are flushed (not committed) in batches of this size and released from
-# the session: the file is still saved in one transaction, but memory no longer grows with the file
-# (a 100k-row file held every row object until the end: 1.1 GB peak).
+# On PostgreSQL, rows of a Scope 1/2/3 import are flushed (not committed) in batches of this size and released
+# from the session: the file is still saved in one transaction, but memory no longer grows with the file
+# (a 100k-row file held every row object until the end: 1.1 GB peak, 346 MB with batches).
 FLUSH_EVERY = 2000
+# SQLite has one writer: a flush opens the write transaction and holds the database lock until the commit, so
+# every other save would wait (30 s busy timeout) for the whole import. On SQLite the rows stay staged until
+# the commit, as before; PostgreSQL locks only the new rows. Tests switch this on to exercise the flush path.
+FLUSH_ON_SQLITE = False
+
+
+def _flush_enabled(session):
+    try:
+        return FLUSH_ON_SQLITE or session.get_bind().dialect.name != "sqlite"
+    except Exception:
+        return False
 
 
 def _flush_pending(session, chunk, maps):
@@ -411,6 +439,65 @@ def _flush_pending(session, chunk, maps):
     for o in chunk:
         session.expunge(o)
     chunk.clear()
+
+
+def _preview_count(pv, row_dict, mapping):
+    def cell(key):
+        h = mapping.get(key)
+        return row_dict.get(h) if h else None
+
+    y, m, err = _parse_row_period({"date": cell("date"), "year": cell("year"), "month": cell("month")})
+    if err or not y:
+        pv["bad_dates"] += 1
+    else:
+        k = f"{int(y):04d}-{int(m or 1):02d}"
+        pv["dates"][k] = pv["dates"].get(k, 0) + 1
+    fac = str(cell("facility_name") or "").strip()
+    pv["facilities"][fac] = pv["facilities"].get(fac, 0) + 1
+    proc = str(cell("process") or "").strip()
+    pv["processes"][proc] = pv["processes"].get(proc, 0) + 1
+
+
+def _preview_summary(pv, rows, skipped_in_sample, headers, mapping, fac_name_map, fac_id_map):
+    from services.scope1_calc import SCOPE2_PROCESS_TYPES, normalize_process_type
+
+    def scope2(name):
+        n = name.strip().lower()
+        return bool(n) and (n in SCOPE2_PROCESS_TYPES or normalize_process_type(n) in SCOPE2_PROCESS_TYPES)
+
+    checked = pv["checked"]
+    ok = max(0, checked - skipped_in_sample)
+    ratio = (ok / checked) if checked else 0.0
+    dates = sorted(pv["dates"])
+
+    def known_fac(name):
+        k = name.strip().lower()
+        return bool(k) and (k in fac_name_map or k in fac_id_map)
+
+    facilities = [{"name": n or "(blank)", "rows": c, "known": known_fac(n)}
+                  for n, c in sorted(pv["facilities"].items(), key=lambda x: -x[1])]
+    processes = [{"name": n or "(blank)", "rows": c, "scope2": scope2(n),
+                  "known": bool(n) and bool(normalize_process_type(n)) and not scope2(n)}
+                 for n, c in sorted(pv["processes"].items(), key=lambda x: -x[1])]
+    matched = [h for h in headers if h and h in set(mapping.values())]
+    return {
+        "rows": rows,
+        "checked": checked,
+        "checked_ok": ok,
+        "checked_skipped": skipped_in_sample,
+        "estimated_ok": int(round(rows * ratio)) if checked < rows else ok,
+        "estimated_skipped": rows - (int(round(rows * ratio)) if checked < rows else ok),
+        "is_estimate": checked < rows,
+        "period": {"from": dates[0] if dates else None, "to": dates[-1] if dates else None,
+                   "months": len(dates), "unreadable_rows": pv["bad_dates"]},
+        "facilities": facilities[:50],
+        "unknown_facility_rows": sum(f["rows"] for f in facilities if not f["known"]),
+        "processes": processes[:50],
+        "unknown_process_rows": sum(p["rows"] for p in processes if not p["known"] and not p["scope2"]),
+        "scope2_rows": sum(p["rows"] for p in processes if p["scope2"]),
+        "columns": {"total": len([h for h in headers if h]), "matched": matched,
+                    "by_name": [h for h in headers if h and h not in matched]},
+    }
 
 
 def _dedupe(batch_keys, key, overwrite, describe):
@@ -541,6 +628,33 @@ def start_background_upload(
     return job_id
 
 
+def run_file_check(app, file_path, original_filename, user_id, global_factor_type, provided_mapping=None,
+                   scope="1", overwrite_duplicates=False, sample_rows=2000):
+    """The "Check file" step: the import in dry-run mode (sample calculated, whole file counted, nothing
+    saved), run to completion on its own thread and session. Returns the job status with the preview."""
+    job_id = "check-" + str(uuid.uuid4())
+    with upload_jobs_lock:
+        upload_jobs[job_id] = {"status": "processing", "progress": 0, "processed": 0, "total": 0, "errors": [],
+                               "skipped": [], "error_csv_path": None, "anomalies": [], "created_at": time.time(),
+                               "owner_id": user_id, "dry_run": True}
+    t = threading.Thread(target=_process_file_thread, args=(app, job_id, file_path, original_filename, user_id,
+                                                            global_factor_type, provided_mapping, scope,
+                                                            overwrite_duplicates),
+                         kwargs={"dry_run": True, "sample_rows": sample_rows})
+    t.start()
+    t.join()
+    status = get_job_status(job_id)
+    with upload_jobs_lock:
+        upload_jobs.pop(job_id, None)
+    path = _job_file(job_id)
+    if path and os.path.exists(path):
+        try:
+            os.remove(path)
+        except OSError:
+            pass
+    return status
+
+
 def _job_view(job_id):
     """The job as this worker knows it, else its snapshot file (another worker or before a restart)."""
     with upload_jobs_lock:
@@ -576,6 +690,10 @@ def get_job_status(job_id):
         "has_error_csv": bool(job.get("error_csv_path")),  # BUG-076: no server path disclosure
         "anomaly_count": job.get("anomaly_count", 0),
         "anomalies": job.get("anomalies", []),  # first 50 anomalies for review
+        "skipped_groups": job.get("skipped_groups", []),  # every skipped row, grouped by cause, with the fix
+        "started_at": job.get("started_at") or job.get("created_at"),
+        "dry_run": bool(job.get("dry_run")),
+        "preview": job.get("preview"),
     }
 
 
@@ -589,7 +707,11 @@ def _process_file_thread(
     provided_mapping,
     scope=1,
     overwrite_duplicates=False,
+    dry_run=False,
+    sample_rows=None,
 ):
+    """Import a file. dry_run: calculate the first `sample_rows` rows, read every row for the file
+    statistics (rows, period, facilities, processes) and save nothing (the "Check file" step)."""
     wb = None
     f = None
     with app.app_context():
@@ -790,6 +912,13 @@ def _process_file_thread(
                     cat = f"Category {n}" if n else (e.category or "")
                     batch_scope3_map[_scope3_key(e.facility_id, e.year, e.month, cat, e.sub_category, e.unit)] = e.id
 
+            flush_enabled = _flush_enabled(db.session) and not dry_run
+            # dry run: whole-file statistics (cheap) next to the calculated sample
+            pv = {"dates": {}, "bad_dates": 0, "facilities": {}, "processes": {}, "checked": 0}
+            import math as _math
+
+            sample_step = max(1, _math.ceil((total_rows or 0) / sample_rows)) if (dry_run and sample_rows) else 1
+
             # Initialize anomaly detector
             from calculations.anomaly import BatchAnomalyDetector, scope1_source
             anomaly_detector = BatchAnomalyDetector()  # history read once per series
@@ -820,6 +949,13 @@ def _process_file_thread(
                 if _is_template_note_row(row_dict):
                     continue  # the template's description / instruction row
                 processed += 1
+                if dry_run:
+                    _preview_count(pv, row_dict, mapping)
+                    # the sample is spread over the whole file (every k-th row): files are often sorted by
+                    # process or source, and the first rows alone misjudged a 100k file (47 % vs 16 % skipped)
+                    if sample_rows and sample_step > 1 and (processed - 1) % sample_step:
+                        continue  # not in the sample: statistics only
+                    pv["checked"] += 1
 
                 # Extract mapped values, preserving raw entries as case/spacing-insensitive fallbacks
                 mapped_data = {
@@ -992,7 +1128,7 @@ def _process_file_thread(
                         except Exception:
                             pass  # Never let anomaly detection crash the upload
                     # after the anomaly flag is set on the row: flush and release a full batch
-                    if str(scope) in ("1", "2", "3", "3_eeio") and len(chunk) >= FLUSH_EVERY:
+                    if str(scope) in ("1", "2", "3", "3_eeio") and len(chunk) >= FLUSH_EVERY and flush_enabled:
                         _flush_pending(db.session, chunk, (batch_scope1_map, batch_scope2_map, batch_scope3_map))
 
 
@@ -1005,6 +1141,14 @@ def _process_file_thread(
                         processed=processed,
                         progress=min(99, int((processed / total_rows) * 100)) if total_rows > 0 else min(95, int(100 * (1.0 - (0.98 ** (processed / 100.0))))),
                     )
+
+            if dry_run:
+                db.session.rollback()  # nothing of a check is saved
+                with upload_jobs_lock:
+                    n_skip = len(upload_jobs.get(job_id, {}).get("skipped", []))
+                _update_job(job_id, processed=processed, progress=100, status="completed", dry_run=True,
+                            preview=_preview_summary(pv, processed, n_skip, headers, mapping, fac_name_map, fac_id_map))
+                return
 
             # One commit for the whole file. add_all (not bulk_save_objects): pending objects stay tracked, so
             # an in-file duplicate can update them (BUG-057; rows already flushed are reloaded by id), and the

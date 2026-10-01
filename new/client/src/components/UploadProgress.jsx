@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import api from "../api";
+import SkipGroupList from "./SkipGroupList";
 import "./UploadProgress.css";
 
 /* ── Inline SVG icons (no emoji, no lucide dep needed here) ── */
@@ -109,6 +110,13 @@ function categoryFromReason(reason = "") {
   return { label: "Other", cls: "tag-other" };
 }
 
+function formatEta(sec) {
+  if (sec < 60) return `${Math.max(1, Math.round(sec))} s`;
+  const m = Math.floor(sec / 60);
+  const s = Math.round(sec % 60);
+  return m >= 60 ? `${Math.floor(m / 60)} h ${m % 60} min` : `${m} min ${s.toString().padStart(2, "0")} s`;
+}
+
 /* ── Main component ──────────────────────────────────────── */
 // reviewable: the import creates emission records that wait for approval (Scope 1 / 2 / 3)
 const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
@@ -129,6 +137,10 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
   const [anomalyCount, setAnomalyCount] = useState(0);
   const [anomalies, setAnomalies] = useState([]);
   const [showAnomalies, setShowAnomalies] = useState(false);
+  const [skipGroups, setSkipGroups] = useState([]);
+  // rate measured from the first progress sample this screen saw (the job may have started earlier)
+  const rateStart = useRef(null);
+  const [eta, setEta] = useState(null);
 
   useEffect(() => {
     if (!jobId) return;
@@ -146,6 +158,14 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
         setHasErrorCsv(!!(data.has_error_csv ?? data.error_csv_path));
         setAnomalyCount(data.anomaly_count || 0);
         setAnomalies(data.anomalies || []);
+        setSkipGroups(data.skipped_groups || []);
+        const now = Date.now();
+        if (!rateStart.current) rateStart.current = { t: now, n: data.processed || 0 };
+        const done = (data.processed || 0) - rateStart.current.n;
+        const secs = (now - rateStart.current.t) / 1000;
+        if (data.total > 0 && done > 0 && secs >= 3) {
+          setEta(Math.max(0, ((data.total - data.processed) * secs) / done));
+        }
         if (data.status === "completed" || data.status === "error") {
           clearInterval(interval);
         }
@@ -196,10 +216,10 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
           <div className="up-processing-header">
             <Spinner />
             <div>
-              <p className="up-label">Processing your file…</p>
+              <p className="up-label">Importing your file…</p>
               <p className="up-sub">
-                Large files may take several minutes. You can safely leave this
-                page.
+                You can close this window: the import keeps running on the server. The file is saved in one go when
+                every row is done, so its records appear together at the end.
               </p>
             </div>
           </div>
@@ -209,8 +229,10 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
           <div className="up-bar-stats">
             <span className="up-pct">{progress}%</span>
             <span className="up-rows">
-              {processed.toLocaleString()} rows processed
-              {total > 0 ? ` of ~${total.toLocaleString()}` : ""}
+              {processed.toLocaleString("en-US")}
+              {total > 0 ? ` of ${total.toLocaleString("en-US")}` : ""} rows
+              {eta != null && progress < 99 ? ` · about ${formatEta(eta)} left` : ""}
+              {progress >= 99 && processed >= total && total > 0 ? " · saving…" : ""}
             </span>
           </div>
           {skippedCount > 0 && (
@@ -258,7 +280,19 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
             </div>
           </div>
 
-          {/* Skipped reasons panel */}
+          {/* Skipped rows: grouped by cause with the fix, then the row details */}
+          {skippedCount > 0 && skipGroups.length > 0 && (
+            <div className="up-skip-panel" style={{ padding: "12px 14px" }}>
+              <p className="up-label" style={{ marginBottom: 4 }}>
+                Why {skippedCount.toLocaleString("en-US")} row{skippedCount !== 1 ? "s were" : " was"} skipped
+              </p>
+              <p className="up-sub" style={{ marginBottom: 8 }}>
+                Fix these in your file and upload only the skipped rows again: the downloadable CSV holds them with their
+                original columns (its first column, the reason, is ignored on upload).
+              </p>
+              <SkipGroupList groups={skipGroups} limit={10} />
+            </div>
+          )}
           {skippedCount > 0 && (
             <div className="up-skip-panel">
               <div className="up-skip-toggle-row">
@@ -268,9 +302,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
                 >
                   <IconChevron open={showReasons} />
                   <span>
-                    {skippedCount.toLocaleString()} rows skipped — click to see
-                    reasons
-                    {skippedCount > 100 && " (showing first 100)"}
+                    Row details{skippedCount > 100 ? " (first 100)" : ""}
                   </span>
                 </button>
                 {hasErrorCsv && (
@@ -281,7 +313,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
                       downloadErrors();
                     }}
                   >
-                    <IconDownload /> Download full CSV
+                    <IconDownload /> Download all {skippedCount.toLocaleString("en-US")} skipped rows (CSV)
                   </button>
                 )}
               </div>
@@ -387,8 +419,8 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
               {showAnomalies && (
                 <div className="up-anomaly-body">
                   <p className="up-anomaly-desc">
-                    These rows were imported but deviate significantly from historical values for the same facility and process type.
-                    Please review them carefully before approving.
+                    These rows were imported but differ strongly from the same source (equipment, else fuel) at this facility
+                    over the previous 12 months. Check them before approving.
                   </p>
                   <div className="up-reasons-table-wrap">
                     <table className="up-reasons-table">
@@ -428,6 +460,17 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
                   </div>
                 </div>
               )}
+            </div>
+          )}
+
+          {reviewable && successCount > 0 && (
+            <div className="up-next-steps">
+              <strong>What happens next:</strong> the {successCount.toLocaleString("en-US")} imported record
+              {successCount !== 1 ? "s are" : " is"} <em>Pending</em>.{" "}
+              {isReviewer
+                ? "Review and approve them in Manage Data › Pending Review."
+                : "An admin or superuser reviews and approves them."}{" "}
+              Pending records do not count in dashboards and reports until they are approved.
             </div>
           )}
 
