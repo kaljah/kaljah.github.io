@@ -161,3 +161,7 @@ See audit/CALC_CSV_AUDIT_2026-09-30.md part 6 (fixes 26-32). Server: emission_fa
 ## 2026-09-30 - Deep dive round 2
 
 See audit/CALC_CSV_AUDIT_2026-09-30.md fixes 33-39. Server: calculations/vented_production.py (tank GOR 0, pump hours / events), calculations/vented.py (flowback duration 0), calculations/vented_midstream.py / vented_downstream.py / vented_exploration.py / vented_ccus_transport.py / vented_lng_distribution.py (zero-as-missing defaults), background_processor.py (CSV overflow rows, custom factor parent_fuel), routes/custom_factors.py (_canonical_parent_fuel), routes/emissions.py and services/scope1_calc.py (parent lookup), routes/scope2.py (CHP edit). Tests: tests/test_deep_dive_2026_09_30.py (+5); legacy test_emission_calculations.py and test_csv_uploader.py repaired.
+
+## 2026-10-01 - API Compendium check
+
+See audit/CALC_CSV_AUDIT_2026-09-30.md #40-43. Server: calculations/units.py (MOLAR_VOLUME_*, densities = MW / 23.685), calculations/fugitive_onshore.py, calculations/midstream.py, calculations/combustion.py, routes/reports.py, services/intensity.py (density constant, WEC 0.0192 mt/Mscf). Client: constants.js (CH4_DENSITY_KG_M3), pages/MethaneIntensity.jsx. Validation: reference_model/ref_constants.py, unit_conversions.py, aggregation_intensity.py (WEC), golden_cases.json (density-driven values), mutation tests. Tests: hand-written densities in the test oracles converted; tests/test_deep_dive_2026_09_30.py (+2).

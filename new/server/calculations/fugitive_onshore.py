@@ -42,8 +42,8 @@ MOLAR_VOL_US = 379.3   # scf / lb-mole
 MOLAR_VOL_SI = 23.685  # Sm³ / kg-mole
 MW_CH4 = 16.04
 MW_CO2 = 44.01
-DENSITY_CH4 = 0.6785  # kg / Sm³ at 60°F, 14.696 psia
-DENSITY_CO2 = 1.861   # kg / Sm³ at 60°F, 14.696 psia
+DENSITY_CH4 = MW_CH4 / MOLAR_VOL_SI  # kg / Sm³ at 60°F, 14.696 psia (0.6772)
+DENSITY_CO2 = MW_CO2 / MOLAR_VOL_SI  # kg / Sm³ at 60°F, 14.696 psia (1.8581)
 
 
 # measured leak rates: volumetric units are WHOLE GAS at standard conditions (scaled by the gas

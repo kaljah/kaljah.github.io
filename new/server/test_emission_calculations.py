@@ -270,13 +270,13 @@ class TestTier3Flaring(unittest.TestCase):
 
       CH4 undestroyed = vol * C1 * (1 - eta_d)
                       = 1000 * 0.85 * (1-0.98) = 1000 * 0.85 * 0.02 = 17 m3
-      CH4 mass = 17 * 0.6785 kg/m3 = 11.5345 kg = 0.0115345 tonne
+      CH4 mass = 17 * 0.67722 kg/m3 = 11.5345 kg = 0.0115345 tonne
 
       CO2 from combustion = vol * total_C * eta_c * density_co2 (API Eq. 5-4)
-                          = 1000 * 1.04 * 0.984 * 1.861
-                          = 1000 * 1.02336 * 1.861 = 1904.47 kg = 1.9045 tonne
+                          = 1000 * 1.04 * 0.984 * 1.85814
+                          = 1000 * 1.02336 * 1.85814 = 1904.47 kg = 1.9045 tonne
 
-      CO2_native = vol * co2_comp * density_co2 = 1000 * 0.03 * 1.861 = 55.83 kg = 0.05583 tonne
+      CO2_native = vol * co2_comp * density_co2 = 1000 * 0.03 * 1.85814 = 55.83 kg = 0.05583 tonne
 
       CO2_total = 1.9045 + 0.0558 = 1.9603 tonne
     """
@@ -289,8 +289,8 @@ class TestTier3Flaring(unittest.TestCase):
         self.co2_comp = 0.03
         self.eta_c = 0.984
         self.eta_d = 0.98
-        self.density_ch4 = CONVERSIONS["density_ch4"]  # 0.6785
-        self.density_co2 = CONVERSIONS["density_co2"]  # 1.861
+        self.density_ch4 = CONVERSIONS["density_ch4"]  # 0.67722
+        self.density_co2 = CONVERSIONS["density_co2"]  # 1.85814
 
         # Expected values (hand calculated per API Eq. 5-4)
         ch4_undestroyed_m3 = self.vol_m3 * self.ch4_frac * (1 - self.eta_d)
@@ -362,7 +362,7 @@ class TestTier1Venting(unittest.TestCase):
 
       ch4_fraction = 0.85
       CH4 vol = 117.066 * 0.85 = 99.506 m3
-      CH4 mass = 99.506 * 0.6785 = 67.513 kg = 0.067513 tonne
+      CH4 mass = 99.506 * 0.67722 = 67.513 kg = 0.067513 tonne
     """
 
     def setUp(self):
@@ -427,7 +427,7 @@ class TestTier3TankFlashing(unittest.TestCase):
 
       Flash gas vol = throughput * GOR = 2000 * 200 = 400,000 scf
       CH4 vol = 400,000 * 0.45 = 180,000 scf → m3 = 180,000 * 0.0283168 = 5097.02 m3
-      CH4 mass = 5097.02 * 0.6785 = 3458.39 kg = 3.45839 tonne
+      CH4 mass = 5097.02 * 0.67722 = 3458.39 kg = 3.45839 tonne
       CO2e = 3.45839 * 28 = 96.835 tonne CO2e
     """
 
@@ -487,7 +487,7 @@ class TestTier3PneumaticDevices(unittest.TestCase):
 
       Total gas = 10 * 8760 * 6 = 525,600 scf
       CH4 vol  = 525,600 * 0.85 = 446,760 scf → m3 = 446,760 * 0.0283168 = 12,650.27 m3
-      CH4 mass = 12,650.27 * 0.6785 = 8,584.21 kg = 8.58421 tonne CO2e = 240.36 tonne
+      CH4 mass = 12,650.27 * 0.67722 = 8,584.21 kg = 8.58421 tonne CO2e = 240.36 tonne
     """
 
     def setUp(self):
@@ -558,7 +558,7 @@ class TestTier3LiquidsUnloading(unittest.TestCase):
 
       ch4_content = 0.85
       CH4 vol = 1933.2 * 0.85 = 1643.22 m3
-      CH4 mass = 1643.22 * 0.6785 = 1114.94 kg = 1.11494 tonne
+      CH4 mass = 1643.22 * 0.67722 = 1114.94 kg = 1.11494 tonne
     """
 
     def setUp(self):
@@ -726,7 +726,7 @@ class TestTier3Completions(unittest.TestCase):
       control_efficiency = 0  (no flaring)
 
       CH4 vol = 50,000 * 0.80 = 40,000 m3
-      CH4 mass = 40,000 * 0.6785 = 27,140 kg = 27.14 tonne
+      CH4 mass = 40,000 * 0.67722 = 27,140 kg = 27.14 tonne
     """
 
     def setUp(self):
@@ -860,12 +860,12 @@ class TestUnitConversions(unittest.TestCase):
         )
 
     def test_density_ch4(self):
-        # CH4 density at standard conditions should be ~0.6785 kg/m3
-        self.assertAlmostEqual(CONVERSIONS["density_ch4"], 0.6785, places=4)
+        # CH4 density at standard conditions should be ~0.67722 kg/m3
+        self.assertAlmostEqual(CONVERSIONS["density_ch4"], (16.04 / 23.685), places=4)
 
     def test_density_co2(self):
-        # CO2 density at standard conditions should be ~1.861 kg/m3
-        self.assertAlmostEqual(CONVERSIONS["density_co2"], 1.861, places=3)
+        # CO2 density at standard conditions should be ~1.85814 kg/m3
+        self.assertAlmostEqual(CONVERSIONS["density_co2"], (44.01 / 23.685), places=3)
 
 
 # =============================================================================
@@ -994,11 +994,11 @@ class TestTier3CombustionGasComposition(unittest.TestCase):
       total_carbon_moles = 0.80*1 + 0.10*2 + 0.05*3 = 0.80+0.20+0.15 = 1.15
 
       CO2_combusted = vol_m3 * total_C * eta_c * density_co2
-                    = 28.3168 * 1.15 * 0.995 * 1.861
-                    = 28.3168 * 1.14425 * 1.861
-        28.3168 * 1.15 = 32.5643; 32.5643 * 0.995 = 32.4015; 32.4015 * 1.861 = 60.299 kg
+                    = 28.3168 * 1.15 * 0.995 * 1.85814
+                    = 28.3168 * 1.14425 * 1.85814
+        28.3168 * 1.15 = 32.5643; 32.5643 * 0.995 = 32.4015; 32.4015 * 1.85814 = 60.299 kg
 
-      CO2_native = vol * co2_comp * density_co2 = 28.3168 * 0.05 * 1.861 = 2.634 kg
+      CO2_native = vol * co2_comp * density_co2 = 28.3168 * 0.05 * 1.85814 = 2.634 kg
 
       CO2_total = (60.299 + 2.634) / 1000 = 0.062933 tonne
     """

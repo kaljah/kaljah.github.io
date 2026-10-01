@@ -3,7 +3,7 @@ POST /api/emissions (resolve_factor + compute_emissions). Inputs are the exhibit
 expected values their printed results (tonnes), read from scratch/2021-API-GHG-Compendium.pdf.
 
 Tolerance is 2 % unless the printed answer is rounded to one or two significant figures.
-The engine converts scf -> m3 -> mass with its gas densities (0.6785 / 1.861 kg/m3); the
+The engine converts scf -> m3 -> mass with its gas densities (0.67722 / 1.85814 kg/m3, 60 F); the
 exhibits use 379.3 scf/lbmol, which differs by about 0.4 %.
 """
 import json

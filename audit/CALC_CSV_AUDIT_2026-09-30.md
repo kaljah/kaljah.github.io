@@ -216,14 +216,26 @@ Tests: `new/server/tests/test_deep_dive_2026_09_30.py` (25; 16 fail before the f
 Tests: `tests/test_deep_dive_2026_09_30.py` (30; the 5 round-2 tests fail before the fixes). Backend 1,946 / 0
 failed; root server tests 55 / 0 (`test_performance.py` needs the pytest-benchmark plugin).
 
-## Needs review (left for the owner, not changed)
+## Checked against the API Compendium 2021 (2026-10-01)
 
-- CH4 density basis: 0.6785 kg/m3 (15 C) in units.py vs 16.04 / 379.3 lb/scf (60 F, 0.6774 kg/m3) in vented.py;
-  0.16 % apart. Which reference conditions should be the single basis?
+Source: API Compendium of GHG Emissions Methodologies for the Natural Gas and Oil Industry, November 2021
+(api.org, 898 pages).
+
+| # | Item | Compendium | Result |
+|---|------|-----------|--------|
+| 40 | CH4 / CO2 gas density | Section 3.4: standard conditions 60 F and 14.696 psia; the equations convert with 379.3 scf/lb-mole = 23.685 m3/kg-mole (e.g. Eq 5-1 / 6-1 terms); Table 3-3 lists 23.645 m3/kg-mole for 15 C. MW (Table 3-7): CH4 16.04, CO2 44.01. | FIXED. The engine used the 15 C densities, 0.6785 / 1.861 kg/m3: every m3 or scf converted to mass was 0.17 % high. Now 16.04 / 23.685 = 0.67722 and 44.01 / 23.685 = 1.85814, plus ethane / propane / butane / N2O on the same basis, defined once in `calculations/units.py`. fugitive_onshore, intensity, reports, midstream and combustion now use those constants, and so does the client Methane Intensity page (`constants.js` CH4_DENSITY_KG_M3). The validation reference model claimed 0.6785 came from "Table 4-1", but that table lists estimation approaches, not densities; it is now on the same basis. |
+| 41 | EPA Waste Emissions Charge threshold | not in the Compendium; 40 CFR 99.20 Eq B-1 / B-2 fix the methane density at 0.0192 mt/Mscf | FIXED. The threshold used the gas density. It is now gas sent to sale (Mscf) x threshold x 0.0192, in the app and in the reference model. |
+| 42 | LNG facility factors, Table 7-76 | "kg CH4/facility", a 4-year Subpart W average (EPA GHGI 2019); no time period is given | the refusal (#26) stays: the source has no time basis |
+| 43 | Fugitive screening TOC -> CH4 | Eq 7-6 multiplies by the weight fraction of CH4 (WF_CH4, Table C-1) | correct as implemented; closed |
+
+Tests: `tests/test_deep_dive_2026_09_30.py` (32), plus every test whose hand-written value had the 15 C density
+(converted to `16.04 / 23.685` and `44.01 / 23.685`). The golden dataset's density-driven values were
+regenerated, keeping the hand edits to A03 / F01 / F02. Backend 1,948 / 0 failed.
+
+## Needs review (left for the owner, not changed)
 - In a `,`-separated CSV "1.500" is read as 1.5 (a European thousands separator is ambiguous there).
 - "Overwrite duplicates" with two rows of the same facility / month / process and no equipment ID in one
   file: the second replaces the first (BUG-057 design).
 - Steam boiler efficiency 1.5 is read as 1.5 % (upload and manual alike); a sanity floor (e.g. 20 %) would
   refuse it. `ef_co2` below 1 on the steam form is read as t/MMBtu (x1000), as documented.
-- Tier 3 fugitive screening uses the CH4 weight fraction (0.92 default), not a molar CH4 content.
 - Scope 3 manual entries have no duplicate check (two identical supplier totals in a month are both kept).

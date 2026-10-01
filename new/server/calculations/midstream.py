@@ -64,7 +64,7 @@ class AGRCalculator(BaseCalculator):
         diff_co2 = max(0.0, cin - cout)
         co2_vented_scf = throughput_scf * diff_co2
         co2_vented_m3 = convert(co2_vented_scf, "scf", "m3")
-        co2_mass_kg = co2_vented_m3 * CONVERSIONS.get("density_co2", 1.861)
+        co2_mass_kg = co2_vented_m3 * CONVERSIONS["density_co2"]
 
         # 2. CH4: a measured slip (fraction of the inlet CH4) when given; otherwise the API Compendium
         # Table 6-19 AGR vent factor, 0.0185 tonne CH4 per 10^6 scf treated (Exhibit 6-17). The former
@@ -77,7 +77,7 @@ class AGRCalculator(BaseCalculator):
             if c_ch4 > 1.0:
                 c_ch4 /= 100.0
             ch4_slipped_m3 = convert(throughput_scf * c_ch4 * slip_rate, "scf", "m3")
-            ch4_mass_kg = ch4_slipped_m3 * CONVERSIONS.get("density_ch4", 0.6785)
+            ch4_mass_kg = ch4_slipped_m3 * CONVERSIONS["density_ch4"]
         else:
             slip_rate = None
             ch4_mass_kg = throughput_scf / 1e6 * 0.0185 * 1000.0
@@ -313,7 +313,7 @@ class DehydratorCalculator(BaseCalculator):
             ch4_combusted_scf = (still_gas_scf * still_eff) if still_is_combustion else 0.0
 
         # Convert scf to metric tonnes
-        density_ch4 = CONVERSIONS.get("density_ch4", 0.6785)
+        density_ch4 = CONVERSIONS["density_ch4"]
         ch4_vol_m3 = convert(ch4_emitted_scf, "scf", "m3")
         ch4_mass_kg = ch4_vol_m3 * density_ch4
         ch4_tonnes = ch4_mass_kg / 1000.0
