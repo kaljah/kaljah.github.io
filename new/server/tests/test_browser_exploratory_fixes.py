@@ -249,6 +249,9 @@ def test_11_excel_export_scope2_steam_row(client, admin):
     assert rows and rows[0][9] == "Purchased steam / heat" and rows[0][10] == 1000 and rows[0][11] == "MMBtu"
 
 
+_CH4_1E6_M3 = 1e6 * 16.04 / 23.685 / 1000.0  # t CH4 in 1e6 m3 (API Compendium molar volume)
+
+
 def test_10_ogmp_export_loss_rate_and_reconciliation(client, admin, app):
     import openpyxl
     from extensions import db
@@ -264,7 +267,7 @@ def test_10_ogmp_export_loss_rate_and_reconciliation(client, admin, app):
         db.session.add(ProductionData(facility_id=f.id, year=2031, month=1, gas_amount=1000, gas_unit="mscf",
                                       gross_gas_mmsm3=1000.0))
         db.session.add(Emission(facility_id=f.id, year=2031, month=1, process_type="venting", status="Verified",
-                                ch4_emissions=678.5, co2e_total=678.5 * 28, record_id=str(uuid.uuid4())))
+                                ch4_emissions=_CH4_1E6_M3, co2e_total=_CH4_1E6_M3 * 28, record_id=str(uuid.uuid4())))
         db.session.commit()
         fname = f.name
     login(client, uid)
@@ -272,7 +275,7 @@ def test_10_ogmp_export_loss_rate_and_reconciliation(client, admin, app):
     assert x.status_code == 200, x.data[:300]
     wb = openpyxl.load_workbook(io.BytesIO(x.data), data_only=True)
     summary = [r for r in wb.worksheets[0].iter_rows(values_only=True) if r and r[0] == fname][0]
-    # 678.5 t CH4 / 0.6785 kg/m3 = 1e6 m3 over 1e9 m3 gross gas = 0.1 %
+    # 1e6 m3 of CH4 (677.22 t at 0.67722 kg/m3) over 1e9 m3 gross gas = 0.1 %
     assert summary[8] == pytest.approx(1e9) and summary[11] == pytest.approx(0.1, rel=1e-3)
     rec = [r for r in wb["4. Reconciliation Matrix"].iter_rows(values_only=True) if r and r[0] == fname][0]
     assert rec[7] == "NOT ASSESSED"

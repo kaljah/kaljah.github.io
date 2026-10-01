@@ -51,7 +51,8 @@ class IndependentIntensityModel:
         o_bbl = float(oil_bbl or 0.0)
 
         if g_m3 > 0:
-            allowed_ch4_t = (g_m3 * threshold * DENSITY_CH4_STD) / 1000.0
+            # 40 CFR 99.20 Eq B-1 / B-2: rho_CH4 = 0.0192 mt/Mscf (fixed by the rule)
+            allowed_ch4_t = (g_m3 * 35.3146667 / 1000.0) * threshold * 0.0192
         elif o_bbl > 0 and "upstream" in seg:
             # 40 CFR 99.20(a)(2): 10 metric tons CH4 per million barrels of oil
             allowed_ch4_t = (o_bbl / 1_000_000.0) * 10.0

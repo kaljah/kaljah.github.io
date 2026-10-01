@@ -30,7 +30,7 @@ def test_metered_completion_volume_is_not_an_event_count(ci_extra):
     ci = {"amount": 500, "unit": "Mcf", "ch4_content": 80, "comp_method": "metered_volume", **ci_extra}
     em = _run({"process_type": "completions", "factor_source": "specific", "year": 2022, "month": 3,
                "amount": 500, "unit": "Mcf", "calc_inputs": {"completions": ci}})
-    assert em["ch4"] == pytest.approx(500_000 * GAS_M3 * 0.8 * 0.6785 / 1000, rel=1e-6)  # was x500
+    assert em["ch4"] == pytest.approx(500_000 * GAS_M3 * 0.8 * (16.04 / 23.685) / 1000, rel=1e-6)  # was x500
 
 
 def test_completion_event_count_still_counts_events():
@@ -225,3 +225,38 @@ def test_chp_edit_recalculates_or_is_refused(admin2):
         e = db.session.get(Scope2Emission, rid)
         assert e.co2e == pytest.approx(1000 * 2500 / (2500 + 800 * 3.412142), abs=1e-4)
         assert e.heat_mmbtu == 2500
+
+
+# -- API Compendium standard conditions (Section 3.4) ---------------------------------------------
+
+def test_gas_densities_on_compendium_standard_conditions():
+    """60 F / 14.696 psia; molar volume conversion 379.3 scf/lb-mole = 23.685 m3/kg-mole (the 0.6785 /
+    1.861 used before were the 15 C values, 23.645 m3/kg-mole)."""
+    from calculations.units import CONVERSIONS, MOLAR_VOLUME_M3_PER_KMOL, MOLAR_VOLUME_SCF_PER_LBMOL
+
+    # the Compendium pairs 379.3 scf/lb-mole with 23.685 m3/kg-mole (0.03 % apart when converted exactly)
+    assert MOLAR_VOLUME_SCF_PER_LBMOL * 0.028316846592 / 0.45359237 == pytest.approx(MOLAR_VOLUME_M3_PER_KMOL, rel=5e-4)
+    assert CONVERSIONS["density_ch4"] == pytest.approx(0.67722, rel=1e-5)
+    assert CONVERSIONS["density_co2"] == pytest.approx(1.85814, rel=1e-5)
+    # 1 scf of CH4 = 16.04 / 379.3 lb, whichever unit the volume is entered in
+    lb_per_scf = CONVERSIONS["density_ch4"] * 0.028316846592 / 0.45359237
+    assert lb_per_scf == pytest.approx(16.04 / 379.3, rel=5e-4)
+    from calculations.fugitive_onshore import DENSITY_CH4
+    from services.intensity import CH4_DENSITY_KG_M3
+
+    assert DENSITY_CH4 == pytest.approx(CONVERSIONS["density_ch4"]) and CH4_DENSITY_KG_M3 == CONVERSIONS["density_ch4"]
+
+
+def test_wec_threshold_uses_part_99_methane_density():
+    """40 CFR 99.20 Eq B-1: threshold = 0.002 x gas sent to sale (Mscf) x 0.0192 mt CH4/Mscf."""
+    from services.intensity import WEC_CH4_DENSITY_T_PER_MSCF
+
+    assert WEC_CH4_DENSITY_T_PER_MSCF == 0.0192
+    import sys
+    import os
+
+    sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..")))
+    from validation.reference_model.aggregation_intensity import IndependentIntensityModel as M
+
+    r = M.calculate_wec(100.0, gas_prod_m3=50e6, segment="upstream", year=2025)
+    assert r["allowed_ch4_tonnes"] == pytest.approx(50e6 * 35.3146667 / 1000 * 0.002 * 0.0192)

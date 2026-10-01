@@ -1,7 +1,7 @@
 """Fixes for the 10,000-row upload audit (audit/UPLOAD_10K_AUDIT.md).
 
 Expected values are derived by hand: carbon balance on standard m3 (CO2 1.8613 kg/m3 = 44.01 / 23.645,
-CH4 0.6785 kg/m3 at 60 F), 1 short ton = 907.18474 kg, CO2/C = 44.01 / 12.011, the natural-gas
+CH4 0.67722 kg/m3 at 60 F), 1 short ton = 907.18474 kg, CO2/C = 44.01 / 12.011, the natural-gas
 boiler factor of Tables 4-5 / 4-6, AR5 GWPs, IPCC Approach 1 default uncertainties.
 """
 import calendar
@@ -16,7 +16,7 @@ from calculations.constants import get_active_gwp
 from calculations.legacy_engine import compute_emissions
 
 NG = 53.06 + 0.001 * 28 + 0.0001 * 265  # kg CO2e / MMBtu of boiler fuel
-RHO_CO2, RHO_CH4 = 1.8613, 0.6785
+RHO_CO2, RHO_CH4 = 1.8613, (16.04 / 23.685)
 
 
 def calc(app, payload):

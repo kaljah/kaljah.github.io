@@ -117,10 +117,10 @@ class TestScope1Tiers:
         Volume: 100,000 scf fuel gas.
         Combustion efficiency: 99.5% (0.995).
         Combusted CO2 volume = 100,000 scf * 0.028316846592 m3/scf * 1.15 * 0.995 = 3240.165 m3 CO2.
-        Combusted CO2 mass = 3240.165 m3 * 1.861 kg/m3 = 6030.01 kg CO2 = 6.0300 tCO2.
-        Native CO2 mass = (100,000 * 0.028316846592 * 0.05) * 1.861 = 263.49 kg = 0.2635 tCO2.
+        Combusted CO2 mass = 3240.165 m3 * 1.85814 kg/m3 = 6030.01 kg CO2 = 6.0300 tCO2.
+        Native CO2 mass = (100,000 * 0.028316846592 * 0.05) * 1.85814 = 263.49 kg = 0.2635 tCO2.
         Total CO2 = 6.0300 + 0.2635 = 6.2935 tCO2.
-        Uncombusted CH4 slip = 100,000 * 0.028316846592 * 0.80 * (1 - 0.995) * 0.6785 = 7.685 kg = 0.007685 tCH4.
+        Uncombusted CH4 slip = 100,000 * 0.028316846592 * 0.80 * (1 - 0.995) * 0.67722 = 7.685 kg = 0.007685 tCH4.
         """
         calc = CombustionCalculator()
         res = calc.calculate(
@@ -154,9 +154,9 @@ class TestScope1Tiers:
         Gas flared: 50,000 m3 of gas with 90% CH4 (0.90 mol fraction).
         Combustion efficiency eta_c = 98.0%, Destruction efficiency eta_d = 98.5%.
         Combusted CH4 -> CO2: 50,000 * 0.90 * 0.980 = 44,100 m3 CH4 combusted.
-        CO2 mass = 44,100 m3 * 1.861 kg/m3 = 82,070.1 kg = 82.0701 tCO2.
+        CO2 mass = 44,100 m3 * 1.85814 kg/m3 = 81,944 kg = 81.944 tCO2.
         Uncombusted CH4 emitted: 50,000 * 0.90 * (1.0 - 0.985) = 675 m3 CH4.
-        CH4 mass = 675 m3 * 0.6785 kg/m3 = 457.9875 kg = 0.45799 tCH4.
+        CH4 mass = 675 m3 * 0.67722 kg/m3 = 457.12 kg = 0.45712 tCH4.
         """
         calc = FlaringCalculator()
         res = calc.calculate(
@@ -168,8 +168,8 @@ class TestScope1Tiers:
             destruction_efficiency=0.985,
             fuel_unit="m3",
         )
-        assert abs(res["results"]["co2"]["value"] - 82.0701) < 0.05
-        assert abs(res["results"]["ch4"]["value"] - 0.45799) < 0.005
+        assert abs(res["results"]["co2"]["value"] - 44100 * (44.01 / 23.685) / 1000) < 0.05
+        assert abs(res["results"]["ch4"]["value"] - 675 * (16.04 / 23.685) / 1000) < 0.005
         assert res["results"]["co2"]["tier"] == Tier.T2
 
     def test_scope1_tier1_and_tier3_pneumatic_bleed(self):
@@ -438,21 +438,21 @@ class TestKPIsAndIntensities:
     def test_methane_loss_rate_ogmp_equation(self):
         """OGMP 2.0 Methane Loss Rate (%):
         Formula: Loss Rate (%) = [V_CH4_emitted (m3) / V_marketable_gas (m3)] × 100%.
-        V_CH4_emitted (m3) = (CH4_tonnes × 1,000) / 0.6785.
+        V_CH4_emitted (m3) = (CH4_tonnes × 1,000) / 0.67722.
         Scenario:
           Marketable Gas: 10,000,000 m3.
           CH4 emitted: 10.0 tonnes.
-          V_CH4 = (10.0 * 1000) / 0.6785 = 14,738.39 m3.
-          Loss Rate (%) = (14,738.39 / 10,000,000) * 100% = 0.1474%.
+          V_CH4 = (10.0 * 1000) / 0.67722 = 14,766.2 m3.
+          Loss Rate (%) = (14,766.2 / 10,000,000) * 100% = 0.1477%.
         Compliance Evaluation:
-          Upstream target: 0.20% -> 0.1474% <= 0.20% -> Compliant.
-          Midstream target: 0.05% -> 0.1474% > 0.05% -> Non-Compliant.
+          Upstream target: 0.20% -> 0.1477% <= 0.20% -> Compliant.
+          Midstream target: 0.05% -> 0.1477% > 0.05% -> Non-Compliant.
         """
         gas_m3 = 10_000_000.0
         ch4_tonnes = 10.0
-        v_ch4 = (ch4_tonnes * 1000.0) / 0.6785
+        v_ch4 = (ch4_tonnes * 1000.0) / (16.04 / 23.685)
         loss_rate_pct = round((v_ch4 / gas_m3) * 100.0, 4)
-        assert abs(loss_rate_pct - 0.1474) < 1e-4
+        assert abs(loss_rate_pct - 0.1477) < 1e-4
 
         # Upstream vs Midstream compliance logic check
         up_target = 0.20
@@ -518,14 +518,12 @@ class TestKPIsAndIntensities:
     def test_epa_wec_part99_fee_schedules_and_thresholds(self):
         """EPA Waste Emissions Charge (40 CFR Part 99 / IRA §136):
         1. Upstream Gas Production Threshold: 0.20% (0.0020).
-           Marketable Gas: 50,000,000 m3.
-           Allowed CH4 (tonnes) = (50,000,000 * 0.0020 * 0.6785) / 1000 = 67.85 tonnes.
+           Marketable Gas: 50,000,000 m3 = 1,765,733.3 Mscf.
+           Allowed CH4 (40 CFR 99.20 Eq B-1, rho_CH4 = 0.0192 mt/Mscf) = 1,765,733.3 * 0.0020 * 0.0192
+             = 67.804 tonnes.
            Emitted CH4: 85.0 tonnes.
-           Excess CH4 = 85.0 - 67.85 = 17.15 tonnes.
-           Fees:
-             - 2024 ($900/t): 17.15 * 900 = $15,435.00
-             - 2025 ($1,200/t): 17.15 * 1200 = $20,580.00
-             - 2026+ ($1,500/t): 17.15 * 1500 = $25,725.00
+           Excess CH4 = 85.0 - 67.804 = 17.196 tonnes.
+           Fees: 2024 $900/t, 2025 $1,200/t, 2026+ $1,500/t.
         2. Upstream Oil-Only Asset (No gas sales per 40 CFR 99.20(a)(2)):
            Allowed CH4 = 10.0 tonnes / 1,000,000 bbl oil.
            Oil: 500,000 bbl.
@@ -534,19 +532,19 @@ class TestKPIsAndIntensities:
         # Gas producing asset
         gas_m3 = 50_000_000.0
         wec_threshold_pct = 0.0020
-        allowed_ch4 = (gas_m3 * wec_threshold_pct * 0.6785) / 1000.0
-        assert abs(allowed_ch4 - 67.85) < 1e-4
+        allowed_ch4 = gas_m3 * 35.3146667 / 1000.0 * wec_threshold_pct * 0.0192
+        assert abs(allowed_ch4 - 67.80416) < 1e-4
 
         actual_ch4 = 85.0
         excess_ch4 = max(0.0, actual_ch4 - allowed_ch4)
-        assert abs(excess_ch4 - 17.15) < 1e-4
+        assert abs(excess_ch4 - 17.19584) < 1e-4
 
         fee_2024 = round(excess_ch4 * 900.0, 2)
         fee_2025 = round(excess_ch4 * 1200.0, 2)
         fee_2026 = round(excess_ch4 * 1500.0, 2)
-        assert fee_2024 == 15435.00
-        assert fee_2025 == 20580.00
-        assert fee_2026 == 25725.00
+        assert fee_2024 == pytest.approx(17.19584 * 900.0, abs=0.01)
+        assert fee_2025 == pytest.approx(17.19584 * 1200.0, abs=0.01)
+        assert fee_2026 == pytest.approx(17.19584 * 1500.0, abs=0.01)
 
         # Oil-only asset
         oil_bbl = 500_000.0

@@ -19,7 +19,7 @@ from routes.dashboard import _query_intensity_stats, _query_intensity_trend_bulk
 from calculations.constants import get_active_gwp
 
 GAS_TO_BOE = 0.178
-DENSITY_CH4 = 0.6785  # kg/m3
+DENSITY_CH4 = (16.04 / 23.685)  # kg/m3
 
 
 @pytest.fixture(scope="module")
@@ -290,7 +290,7 @@ def test_gwp_horizon_intensity_scaling(ci_setup):
 # =========================================================================
 
 def test_methane_loss_rate_calculation(ci_setup):
-    """Verify methane loss rate % adheres to density = 0.6785 kg/m3."""
+    """Verify methane loss rate % adheres to density = 0.67722 kg/m3."""
     with flask_app.app_context():
         stats = _query_intensity_stats(year="2026", facility_id=str(ci_setup["fac2"].id))
         assert len(stats) >= 1

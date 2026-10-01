@@ -13,6 +13,13 @@ STD_PRESSURE_PSIA = 14.696
 STD_PRESSURE_KPA = 101.325
 STD_PRESSURE_BAR = 1.01325
 
+# API Compendium 2021 standard conditions (Section 3.4, 60 F and 14.696 psia) and the molar volume
+# conversion its equations use: 379.3 scf/lb-mole = 23.685 m3/kg-mole
+MOLAR_VOLUME_SCF_PER_LBMOL = 379.3
+MOLAR_VOLUME_M3_PER_KMOL = 23.685
+MW_CH4 = 16.04
+MW_CO2 = 44.01
+
 CONVERSIONS = {
     # Volume (API Compendium 2021 §4.2 / ISO 13443 at 60°F, 14.696 psia)
     "scf_to_m3": 0.028316846592,
@@ -52,13 +59,16 @@ CONVERSIONS = {
     "kwh_to_mj": 3.6,
     "mj_to_kwh": 0.2777777777777778,
     "therm_to_mj": 105.505585262,  # 1 therm = 100,000 Btu (IT), as in indirect.py
-    # Gas Densities (kg/m3 at standard conditions: 60F, 14.696 psia)
-    "density_ch4": 0.6785,
-    "density_c2h6": 1.282,  # Ethane
-    "density_c3h8": 1.882,  # Propane
-    "density_c4h10": 2.519,  # n-Butane
-    "density_co2": 1.861,
-    "density_n2o": 1.860,
+    # Gas densities, kg/m3 at the API Compendium standard conditions (60 F, 14.696 psia): molecular
+    # weight / 23.685 m3 per kg-mole (379.3 scf/lb-mole, the molar volume conversion of the Compendium
+    # equations, e.g. Eq 5-1 / 6-1; Table 3-3 gives 379.48 scf / 23.690 m3). The former 0.6785 / 1.861
+    # were the 15 C values (23.645 m3/kg-mole), 0.17 % high against every scf-based factor.
+    "density_ch4": MW_CH4 / MOLAR_VOLUME_M3_PER_KMOL,
+    "density_c2h6": 30.07 / MOLAR_VOLUME_M3_PER_KMOL,  # Ethane
+    "density_c3h8": 44.10 / MOLAR_VOLUME_M3_PER_KMOL,  # Propane
+    "density_c4h10": 58.12 / MOLAR_VOLUME_M3_PER_KMOL,  # n-Butane
+    "density_co2": MW_CO2 / MOLAR_VOLUME_M3_PER_KMOL,
+    "density_n2o": 44.013 / MOLAR_VOLUME_M3_PER_KMOL,
     # GWP (GHG Protocol AR5)
     "gwp_ch4": DEFAULT_GWP["CH4"],
     "gwp_n2o": DEFAULT_GWP["N2O"],

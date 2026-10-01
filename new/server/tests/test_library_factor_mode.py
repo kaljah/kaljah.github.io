@@ -43,7 +43,7 @@ def test_engineering_tier2_needs_no_library_factor(client, ctx):
                                           "well_type": "gas"}})
     assert r.status_code == 201, r.get_json()
     # 100 Mcf/h x 10 h = 1e6 scf x 80 % CH4 -> 15.37 t CH4 (engine density convention)
-    assert r.get_json()["emissions"]["ch4"] == pytest.approx(1e6 * 0.028316846592 * 0.80 * 0.6785 / 1000, rel=1e-3)
+    assert r.get_json()["emissions"]["ch4"] == pytest.approx(1e6 * 0.028316846592 * 0.80 * (16.04 / 23.685) / 1000, rel=1e-3)
 
 
 def test_library_factor_is_activity_times_factor_for_any_process(client, ctx):

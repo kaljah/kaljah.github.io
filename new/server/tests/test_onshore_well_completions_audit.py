@@ -184,8 +184,8 @@ class TestOnshoreCompletionsTier2:
             gwp_dict=GWP_AR5,
         )
         vol_m3 = (100.0 * (60.0 / 24.0)) * 28.316846592
-        expected_ch4 = (vol_m3 * 0.85 * 0.6785) / 1000.0
-        expected_co2 = (vol_m3 * 0.02 * 1.861) / 1000.0
+        expected_ch4 = (vol_m3 * 0.85 * (16.04 / 23.685)) / 1000.0
+        expected_co2 = (vol_m3 * 0.02 * (44.01 / 23.685)) / 1000.0
         assert pytest.approx(res["results"]["ch4"]["value"], rel=1e-4) == expected_ch4
         assert pytest.approx(res["results"]["co2"]["value"], rel=1e-4) == expected_co2
         assert "Equation 6-7" in res["metadata"]["standard"]
@@ -209,8 +209,8 @@ class TestOnshoreCompletionsTier2:
         )
         vol_scf = 2000.0 * 1200.0 - 400000.0
         vol_m3 = vol_scf * 0.028316846592
-        expected_ch4 = (vol_m3 * 0.80 * 0.6785) / 1000.0
-        expected_co2 = (vol_m3 * 0.03 * 1.861) / 1000.0
+        expected_ch4 = (vol_m3 * 0.80 * (16.04 / 23.685)) / 1000.0
+        expected_co2 = (vol_m3 * 0.03 * (44.01 / 23.685)) / 1000.0
         assert pytest.approx(res["results"]["ch4"]["value"], rel=1e-4) == expected_ch4
         assert pytest.approx(res["results"]["co2"]["value"], rel=1e-4) == expected_co2
 
@@ -229,7 +229,7 @@ class TestOnshoreCompletionsTier2:
             gwp_dict=GWP_AR5,
         )
         vol_m3 = 12.0 * 28.316846592
-        expected_ch4 = (vol_m3 * 0.85 * 0.6785) / 1000.0
+        expected_ch4 = (vol_m3 * 0.85 * (16.04 / 23.685)) / 1000.0
         assert pytest.approx(res["results"]["ch4"]["value"], rel=1e-4) == expected_ch4
 
 
@@ -255,7 +255,7 @@ class TestOnshoreCompletionsTier3:
             gwp_dict=GWP_AR5,
         )
         vol_m3 = 950_000.0 * 0.028316846592
-        expected_ch4 = (vol_m3 * 0.80 * 0.6785) / 1000.0
+        expected_ch4 = (vol_m3 * 0.80 * (16.04 / 23.685)) / 1000.0
         assert pytest.approx(res["results"]["ch4"]["value"], rel=1e-4) == expected_ch4
         assert res["inputs"]["net_flowback_scf"] == 950_000.0
 
@@ -272,7 +272,7 @@ class TestOnshoreCompletionsTier3:
             gwp_dict=GWP_AR5,
         )
         vol_m3 = 1_000_000.0 * 0.028316846592
-        expected_ch4 = (vol_m3 * 0.80 * 0.6785) / 1000.0
+        expected_ch4 = (vol_m3 * 0.80 * (16.04 / 23.685)) / 1000.0
         assert pytest.approx(res["results"]["ch4"]["value"], rel=1e-4) == expected_ch4
 
     def test_api_exhibit_6_3_exact_benchmark(self, calc):
@@ -345,12 +345,12 @@ class TestOnshoreCompletionsTier3:
             control_efficiency=0.98,
             gwp_dict=GWP_AR5,
         )
-        # Vented: 1000 m3 -> 1000 * 0.80 * 0.6785 / 1000 = 0.5428 t CH4
-        # Flared unburnt: 6000 m3 -> 6000 * 0.80 * 0.6785 * 0.02 / 1000 = 0.065136 t CH4
-        # Flared CO2: 6000 * 0.80 * 0.6785 * 0.98 * (44.01 / 16.04) / 1000 = 8.756 t CO2
+        # Vented: 1000 m3 -> 1000 * 0.80 * 0.67722 / 1000 = 0.5428 t CH4
+        # Flared unburnt: 6000 m3 -> 6000 * 0.80 * 0.67722 * 0.02 / 1000 = 0.065136 t CH4
+        # Flared CO2: 6000 * 0.80 * 0.67722 * 0.98 * (44.01 / 16.04) / 1000 = 8.756 t CO2
         # Recovered: 3000 m3 -> 0 t
-        expected_ch4 = 0.5428 + 0.065136
-        expected_co2 = (6000.0 * 0.80 * 0.6785 * 0.98 * (44.01 / 16.04)) / 1000.0
+        expected_ch4 = (1000.0 * 0.80 + 6000.0 * 0.80 * 0.02) * (16.04 / 23.685) / 1000.0
+        expected_co2 = (6000.0 * 0.80 * (16.04 / 23.685) * 0.98 * (44.01 / 16.04)) / 1000.0
         assert pytest.approx(res["results"]["ch4"]["value"], rel=1e-3) == expected_ch4
         assert pytest.approx(res["results"]["co2"]["value"], rel=1e-3) == expected_co2
 
@@ -562,7 +562,7 @@ class TestOnshoreCompletionsFullPipelineApi:
         data = res.get_json()
         assert data["emissions"]["ch4"] > 0
         assert data["emissions"]["co2"] > 0
-        # 1000 Mcf = 28,316.8 m3 * 0.85 * 0.6785 / 1000 = ~16.33 t CH4
+        # 1000 Mcf = 28,316.8 m3 * 0.85 * 0.67722 / 1000 = ~16.33 t CH4
         assert pytest.approx(data["emissions"]["ch4"], rel=1e-2) == 16.33
 
     def test_api_tier3_completion_metered_with_n2_deduction(self, api_client):

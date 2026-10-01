@@ -32,8 +32,8 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 # =====================================================================
 SCF_TO_M3 = 0.028316846592
 M3_TO_SCF = 35.314666721
-DENSITY_CH4 = 0.6785      # kg/m3 at standard conditions
-DENSITY_CO2 = 1.861        # kg/m3
+DENSITY_CH4 = (16.04 / 23.685)      # kg/m3 at standard conditions
+DENSITY_CO2 = (44.01 / 23.685)        # kg/m3
 STD_TEMP_K = 288.706
 STD_PRESS_PSIA = 14.696
 GWP_CO2 = 1.0
@@ -247,9 +247,9 @@ class TestCombustionTier3Pipeline:
         Formula:
         - total_C_moles = c1*1 + c2*2 + c3*3
         - co2_vol = vol_m3 * total_C_moles * eta_c
-        - co2_kg = co2_vol * 1.861
+        - co2_kg = co2_vol * 1.85814
         - ch4_slip_vol = vol_m3 * c1 * (1 - eta_c)
-        - ch4_kg = ch4_slip_vol * 0.6785
+        - ch4_kg = ch4_slip_vol * 0.67722
 
         Inputs:
           volume = 1000 m3
@@ -311,10 +311,10 @@ class TestCombustionTier3Pipeline:
         Reference:
           total_C_moles = 1.0
           co2_vol = 500 * 1.0 * 0.995 = 497.5 m3
-          co2_kg = 497.5 * 1.861 = 925.9175 kg
+          co2_kg = 497.5 * 1.85814 = 925.9175 kg
           expected_co2 = 0.9259175 t
           ch4_slip = 500 * 1.0 * 0.005 = 2.5 m3
-          ch4_kg = 2.5 * 0.6785 = 1.69625 kg
+          ch4_kg = 2.5 * 0.67722 = 1.69625 kg
           expected_ch4 = 0.00169625 t
         """
         from calculations.legacy_engine import compute_emissions
@@ -369,11 +369,11 @@ class TestFlaringTier3Pipeline:
           vol = 500 m3, c1 = 0.90, eta_c = 0.984, eta_d = 0.98
           total_C_moles = 0.90 * 1 = 0.90
           co2_combusted_vol = 500 * 0.90 * 0.984 = 442.8 m3
-          co2_combusted_kg = 442.8 * 1.861 = 824.0508 kg
+          co2_combusted_kg = 442.8 * 1.85814 = 824.0508 kg
           co2_tonnes = 0.8240508 t
 
           ch4_undestroyed_vol = 500 * 0.90 * (1 - 0.98) = 500 * 0.90 * 0.02 = 9.0 m3
-          ch4_kg = 9.0 * 0.6785 = 6.1065 kg
+          ch4_kg = 9.0 * 0.67722 = 6.1065 kg
           ch4_tonnes = 0.0061065 t
         """
         from calculations.legacy_engine import compute_emissions
@@ -425,8 +425,8 @@ class TestFlaringTier3Pipeline:
         Reference:
           vol = 1000 m3, c1=0.80, co2_native=0.05, eta_c=0.984, eta_d=0.98
           co2_combusted_vol = 1000 * 0.80 * 0.984 = 787.2 m3
-          co2_combusted_kg = 787.2 * 1.861 = 1464.9192 kg
-          co2_native_kg = 1000 * 0.05 * 1.861 = 93.05 kg
+          co2_combusted_kg = 787.2 * 1.85814 = 1464.9192 kg
+          co2_native_kg = 1000 * 0.05 * 1.85814 = 93.05 kg
           total_co2_tonnes = (1464.9192 + 93.05) / 1000 = 1.5579... t
         """
         from calculations.legacy_engine import compute_emissions
@@ -632,7 +632,7 @@ class TestCompletionsPipeline:
         COMPLETIONS - metered_volume, ctrl=0:
         1000 m3 flowback, 85% CH4
         ch4_vol = 1000 * 0.85 = 850 m3
-        ch4_kg = 850 * 0.6785 = 576.725 kg
+        ch4_kg = 850 * 0.67722 = 576.725 kg
         expected_ch4 = 0.576725 t
         """
         from calculations.legacy_engine import compute_emissions
@@ -666,7 +666,7 @@ class TestCompletionsPipeline:
         total_gas_scf = 416.667 * 24 = 10000 scf
         total_gas_m3 = 10000 * 0.028316846592 = 283.16846592 m3
         ch4_vol = 283.16846592 * 0.85 = 240.69319... m3
-        ch4_kg = 240.693... * 0.6785 = 163.35... kg
+        ch4_kg = 240.693... * 0.67722 = 163.35... kg
         expected_ch4 = 0.16335... t
         """
         from calculations.legacy_engine import compute_emissions
@@ -718,7 +718,7 @@ class TestPneumaticsPipeline:
 
         bleed_m3_hr = 5 * 0.028316846592 = 0.14158423296 m3/hr
         total_ch4_vol = 10 * 8760 * 0.14158423296 * 0.85 = 10542.07... m3
-        ch4_kg = 10542.07 * 0.6785 = 7152.80... kg
+        ch4_kg = 10542.07 * 0.67722 = 7152.80... kg
         expected_ch4 = 7.15280... t
         """
         from calculations.legacy_engine import compute_emissions
@@ -794,12 +794,12 @@ class TestAGRPipeline:
         throughput_scf = 10 * 1,000,000 = 10,000,000 scf
         co2_vented_scf = 10,000,000 * (0.04 - 0.00) = 400,000 scf
         co2_vented_m3 = 400,000 * 0.028316846592 = 11,326.74 m3
-        co2_kg = 11,326.74 * 1.861 = 21,089.03 kg
+        co2_kg = 11,326.74 * 1.85814 = 21,089.03 kg
         expected_co2 = 21.08903 t
 
         ch4_slipped_scf = 10,000,000 * 0.85 * 0.001 = 8,500 scf
         ch4_slipped_m3 = 8,500 * 0.028316846592 = 240.69 m3
-        ch4_kg = 240.69 * 0.6785 = 163.37 kg
+        ch4_kg = 240.69 * 0.67722 = 163.37 kg
         expected_ch4 = 0.16337 t
         """
         from calculations.legacy_engine import compute_emissions
@@ -864,7 +864,7 @@ class TestBlowdownPipeline:
         v_std_per_event = 5 * 35.0228 * 1.0 = 175.114 m3
         total_v = 175.114 * 10 = 1751.14 m3
         ch4_vol = 1751.14 * 0.85 = 1488.47 m3
-        ch4_kg = 1488.47 * 0.6785 = 1010.02 kg
+        ch4_kg = 1488.47 * 0.67722 = 1010.02 kg
         expected_ch4 = 1.01002 t
         """
         from calculations.legacy_engine import compute_emissions
@@ -1006,7 +1006,7 @@ class TestIntermediateValues:
         T3 combustion: CO2 volume = gas_vol * C_moles * eta_c
         vol=1000 m3, C_moles=1.15, eta_c=0.995
         co2_vol = 1000 * 1.15 * 0.995 = 1144.25 m3
-        co2_kg = 1144.25 * 1.861 = 2129.5... kg
+        co2_kg = 1144.25 * 1.85814 = 2129.5... kg
         """
         vol = 1000.0
         C_moles = 1.15
@@ -1016,7 +1016,7 @@ class TestIntermediateValues:
         assert co2_vol == pytest.approx(1144.25, rel=1e-10)
 
         co2_kg = co2_vol * DENSITY_CO2
-        assert co2_kg == pytest.approx(1144.25 * 1.861, rel=1e-10)
+        assert co2_kg == pytest.approx(1144.25 * (44.01 / 23.685), rel=1e-10)
 
     def test_flaring_dual_efficiency_intermediate_split(self):
         """
@@ -1066,7 +1066,7 @@ class TestIntermediateValues:
 
         # Step 5: m3 → kg (density)
         co2_kg = co2_m3 * DENSITY_CO2
-        assert co2_kg == pytest.approx(co2_m3 * 1.861, rel=1e-10)
+        assert co2_kg == pytest.approx(co2_m3 * (44.01 / 23.685), rel=1e-10)
 
         # Step 6: kg → tonnes
         co2_tonnes = co2_kg / 1000.0
@@ -1087,7 +1087,7 @@ class TestTankFlashingPipeline:
         total_gas_scf = 1000 * 100 = 100,000 scf
         ch4_scf = 100,000 * 0.85 = 85,000 scf
         ch4_m3 = 85,000 * 0.028316846592 = 2406.93... m3
-        ch4_kg = 2406.93 * 0.6785 = 1633.10... kg
+        ch4_kg = 2406.93 * 0.67722 = 1633.10... kg
         expected_ch4 = 1.63310... t
         """
         from calculations.legacy_engine import compute_emissions
@@ -1143,7 +1143,7 @@ class TestLiquidsUnloadingPipeline:
         v_std = 4.8263 * 35.023 * 1.0 = 169.11... m3
         total_v = 169.11 * 12 = 2029.3... m3
         ch4_vol = 2029.3 * 0.85 = 1724.9... m3
-        ch4_kg = 1724.9 * 0.6785 = 1170.4... kg
+        ch4_kg = 1724.9 * 0.67722 = 1170.4... kg
         expected_ch4 = 1.170... t
         """
         from calculations.legacy_engine import compute_emissions

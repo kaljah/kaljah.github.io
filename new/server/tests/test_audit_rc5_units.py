@@ -1,6 +1,6 @@
 """RC-5 unit handling regressions. Every expected value is hand-derived from the unit definitions
 (1 scf = 0.028316846592 m3, 1 gal = 3.785411784 L, 1 bbl = 42 gal, 1 MMBtu = 1055.05585262 MJ,
-1 kWh = 3.6 MJ, CH4 0.6785 kg/m3 at 60 F) and the catalog factors quoted in each test."""
+1 kWh = 3.6 MJ, CH4 0.67722 kg/m3 at 60 F) and the catalog factors quoted in each test."""
 import math
 
 import pytest
@@ -96,22 +96,22 @@ def test_bug011_mmscf_is_not_mscf():
 
 
 def test_bug011_completion_rate_default_is_mcf_per_hr():
-    """10 Mcf/hr x 5 h = 50,000 scf = 1415.84 m3 x 0.85 x 0.6785 kg/m3 = 0.81655 t CH4."""
+    """10 Mcf/hr x 5 h = 50,000 scf = 1415.84 m3 x 0.85 x 0.67722 kg/m3 = 0.81655 t CH4."""
     from calculations.legacy_engine import compute_emissions
 
     em, _ = compute_emissions({"process_type": "completions", "factor_source": "specific", "comp_method": "rate_duration",
                                "comp_rate": 10, "comp_duration": 5, "amount": 1, "unit": "count", "ch4_content": 0.85}, {})
-    assert em["ch4"] == pytest.approx(50000 * SCF_M3 * 0.85 * 0.6785 / 1000, rel=1e-6)
+    assert em["ch4"] == pytest.approx(50000 * SCF_M3 * 0.85 * (16.04 / 23.685) / 1000, rel=1e-6)
 
 
 def test_bug012_completions_form_amount_is_events():
-    """calc_inputs.amount (form event count) = 2 events: 0.5 Mcf/hr x 24 h x 2 x 0.80 x 0.6785."""
+    """calc_inputs.amount (form event count) = 2 events: 0.5 Mcf/hr x 24 h x 2 x 0.80 x 0.67722."""
     from calculations.legacy_engine import compute_emissions
 
     em, _ = compute_emissions({"process_type": "completions", "factor_source": "specific", "amount": 339.8016, "unit": "m3",
                                "calc_inputs": {"completions": {"comp_rate": 0.5, "comp_duration": 24, "ch4_content": 80,
                                                                "amount": 2}}}, {})
-    assert em["ch4"] == pytest.approx(0.5 * 1000 * 24 * 2 * SCF_M3 * 0.80 * 0.6785 / 1000, rel=1e-6)
+    assert em["ch4"] == pytest.approx(0.5 * 1000 * 24 * 2 * SCF_M3 * 0.80 * (16.04 / 23.685) / 1000, rel=1e-6)
 
 
 def test_bug066_agr_units_agree():

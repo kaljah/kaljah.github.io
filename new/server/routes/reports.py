@@ -30,6 +30,9 @@ from services.ogmp import ogmp_level_for, compute_facility_ogmp_level, ogmp_leve
 import openpyxl
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
+from calculations.units import CONVERSIONS as _UNITS
+
+_CH4_DENSITY = _UNITS["density_ch4"]  # kg/m3, API Compendium standard conditions
 
 reports_bp = Blueprint("reports", __name__)
 
@@ -956,7 +959,7 @@ def export_ogmp_excel():
             td_ch4 = td_q.scalar() or 0.0
 
             # Loss rate %
-            ch4_vol_m3 = (bu_ch4 * 1000.0) / 0.6785 if bu_ch4 > 0 else 0.0
+            ch4_vol_m3 = (bu_ch4 * 1000.0) / _CH4_DENSITY if bu_ch4 > 0 else 0.0
             target_rate = (
                 0.20 if "upstream" in (f.segment or "Upstream").lower() else 0.05
             )

@@ -364,12 +364,12 @@ def test_tier3_methods_bulk_equals_manual(app, client, env, case):
 
 
 def test_vented_gas_by_gor_hand_value(app, client, env):
-    # 500 scf/bbl x 100 bbl/day x 2 days = 100,000 scf at 80 % CH4 (0.6785 kg per Sm3)
+    # 500 scf/bbl x 100 bbl/day x 2 days = 100,000 scf at 80 % CH4 (0.67722 kg per Sm3)
     upload(client, 1, csv_rows("date,facility,process_type,factor_type,vent_method,gor,oil_rate,vent_hours,ch4_content,co2_content",
                                [f"2025-12,{env['fac']},vented_gas,specific,gor,500,100,48,80,5"]))
     rec = emissions(app, env["fid"], year=2025, month=12)[0]
     m3 = 100000 * 0.028316846592
-    assert rec.ch4_emissions == pytest.approx(m3 * 0.80 * 0.6785 / 1000, rel=2e-3)
+    assert rec.ch4_emissions == pytest.approx(m3 * 0.80 * (16.04 / 23.685) / 1000, rel=2e-3)
 
 
 # ---------------------------------------------------------------- roles

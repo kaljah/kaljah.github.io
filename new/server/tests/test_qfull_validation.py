@@ -30,8 +30,8 @@ from calculations.constants import GWP_AR4, GWP_AR5, GWP_AR6, get_active_gwp
 # =====================================================================
 SCF_TO_M3 = 0.028316846592    # API §4.2 exact
 M3_TO_SCF = 35.314666721       # API §4.2 exact
-DENSITY_CH4 = 0.6785           # kg/m3 at 60°F, 14.696 psia
-DENSITY_CO2 = 1.861            # kg/m3 at 60°F, 14.696 psia
+DENSITY_CH4 = (16.04 / 23.685)           # kg/m3 at 60°F, 14.696 psia
+DENSITY_CO2 = (44.01 / 23.685)            # kg/m3 at 60°F, 14.696 psia
 STD_TEMP_K = 288.706           # 15.556°C = 60°F
 STD_PRESS_PSIA = 14.696        # Standard pressure
 GWP_CO2 = 1.0                  # CO2 GWP (always 1.0)

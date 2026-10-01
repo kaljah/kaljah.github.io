@@ -91,7 +91,8 @@ def test_tier3_flaring_has_n2o():
                         co2_mol=2, flare_type="elevated"), {}, {})["results"]
     # 50,000 m3 x 35.3147 scf/m3 x 1,020 Btu/scf = 1,801 MMBtu x 0.0001 kg/MMBtu (Table 5-3)
     assert res["n2o"]["value"] == pytest.approx(50000 * 35.314666721 * 1020 / 1e6 * 0.0001 / 1000, rel=1e-9)
-    assert res["co2"]["value"] == pytest.approx(100.747096, rel=1e-6)
+    # carbon balance: 50,000 m3 x 1.08 C x 98.4 % + 2 % native CO2, at 44.01 / 23.685 kg/m3
+    assert res["co2"]["value"] == pytest.approx((50000 * 1.08 * 0.984 + 50000 * 0.02) * (44.01 / 23.685) / 1000, rel=1e-6)
 
 
 def test_custom_liquid_fuel_factor_on_energy_basis(admin, facility):

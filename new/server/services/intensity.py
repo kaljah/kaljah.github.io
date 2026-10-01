@@ -26,7 +26,10 @@ from services.dashboard_filters import (apply_scope, gas_volume_m3, horizon_delt
                                         production_gas_m3, production_oil_bbl, source_category, statuses)
 from services.ogmp import compute_facility_ogmp_level, ogmp_level_for
 
-CH4_DENSITY_KG_M3 = 0.6785  # 60 F, 14.696 psia (calculations/units.py CONVERSIONS)
+from calculations.units import CONVERSIONS as _CONV
+
+CH4_DENSITY_KG_M3 = _CONV["density_ch4"]  # 60 F, 14.696 psia (API Compendium molar volume)
+WEC_CH4_DENSITY_T_PER_MSCF = 0.0192  # 40 CFR 99.20, density of methane for the waste emissions threshold
 
 
 def segment_category(segment):
@@ -212,7 +215,9 @@ def facility_row(fid, cell_list, fac, year_value, gwp_horizon="100"):
     wec_mid = mid_t / 100.0
     wec_threshold = wec_mid if seg_cat == "midstream" else wec_up
     if gas_m3 > 0:
-        allowed_ch4 = gas_m3 * wec_threshold * CH4_DENSITY_KG_M3 / 1000.0
+        # 40 CFR 99.20 Eq B-1 / B-2: threshold x gas sent to sale (Mscf) x 0.0192 mt CH4/Mscf (the rule's own
+        # methane density, not the Compendium 0.6772 kg/m3)
+        allowed_ch4 = gas_m3 * 35.3146667 / 1000.0 * wec_threshold * WEC_CH4_DENSITY_T_PER_MSCF
     elif matched["oil_bbl"] > 0 and seg_cat == "upstream":
         allowed_ch4 = matched["oil_bbl"] / 1_000_000.0 * 10.0  # 40 CFR 99.20(a)(2)
     else:

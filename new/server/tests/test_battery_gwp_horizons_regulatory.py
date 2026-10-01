@@ -134,7 +134,7 @@ class TestGWPHorizonsAndProfilesBattery:
             gwp_dict=get_active_gwp("AR5", horizon="20"),
         )
 
-        # Unburnt methane is (100000 * 0.85 * 0.05 * 0.6785) / 1000 = 2.8836 tonnes CH4
+        # Unburnt methane is (100000 * 0.85 * 0.05 * 0.67722) / 1000 = 2.8836 tonnes CH4
         unburnt_ch4 = res_100["results"]["ch4"]["value"]
         assert unburnt_ch4 == pytest.approx(res_20["results"]["ch4"]["value"], rel=1e-5)
 

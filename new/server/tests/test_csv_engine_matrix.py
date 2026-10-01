@@ -454,7 +454,7 @@ class TestMetrologyAndEngineeringPrecision:
         fl_calc = FlaringCalculator()
         vol_m3 = 1000.0
         ch4_frac = 0.90
-        # Methane density = 0.6785 kg/m3 at standard conditions
+        # Methane density = 0.67722 kg/m3 at standard conditions
         # Native CH4 volume = 900 m3 -> 610.65 kg CH4 -> 0.61065 tonnes CH4
         # At 98% destruction:
         #   Undestroyed CH4 = 0.61065 * 0.02 = 0.012213 tonnes CH4
@@ -472,8 +472,8 @@ class TestMetrologyAndEngineeringPrecision:
         ch4_tonnes = res["results"]["ch4"]["value"]
         co2_tonnes = res["results"]["co2"]["value"]
 
-        expected_ch4 = (vol_m3 * ch4_frac * 0.6785 * (1.0 - 0.98)) / 1000.0
-        expected_co2 = ((vol_m3 * ch4_frac * 0.6785 * 0.98) * (44.01 / 16.04)) / 1000.0
+        expected_ch4 = (vol_m3 * ch4_frac * (16.04 / 23.685) * (1.0 - 0.98)) / 1000.0
+        expected_co2 = ((vol_m3 * ch4_frac * (16.04 / 23.685) * 0.98) * (44.01 / 16.04)) / 1000.0
 
         assert pytest.approx(ch4_tonnes, rel=1e-3) == expected_ch4
         assert pytest.approx(co2_tonnes, rel=1e-3) == expected_co2

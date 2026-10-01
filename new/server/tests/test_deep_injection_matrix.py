@@ -359,7 +359,7 @@ class TestOperationalScenariosMatrix:
         }
         res = dispatcher.dispatch("stationary_combustion", rich_gas, {}, {})
         # Total carbon moles = 0.70*1 + 0.15*2 + 0.10*3 + 0.05*4 = 1.50 moles CO2 / mole gas
-        # Combusted CO2 = 1000 * 1.50 * 0.995 * 1.861 / 1000 = 2.777 tonnes CO2
+        # Combusted CO2 = 1000 * 1.50 * 0.995 * 1.85814 / 1000 = 2.777 tonnes CO2
         assert pytest.approx(res["results"]["co2"]["value"], rel=1e-2) == 2.78
 
     def test_dynamic_gwp_standards_ar4_ar5_ar6(self, dispatcher):

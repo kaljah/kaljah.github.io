@@ -83,7 +83,7 @@ def test_blowdown_calculator():
     res = calc.calculate(**data)
     # API Eq 6-4: v_std = v_phys * (p_abs / p_std)
     # 28.32 m3 * (114.696 / 14.696) = ~220.97 m3 at std conditions
-    # ch4 = 220.97 * 0.85 * 0.6785 kg/m3 / 1000 = ~0.127 tonnes
+    # ch4 = 220.97 * 0.85 * 0.67722 kg/m3 / 1000 = ~0.127 tonnes
     assert abs(res["results"]["ch4"]["value"] - 0.127) < 0.01
 
 

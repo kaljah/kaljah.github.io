@@ -44,7 +44,7 @@ class TestCalculationMutations:
             combustion_eff=0.98,
         )
         # Injected mutation
-        mutant_unburnt_ch4 = 50_000.0 * 0.88 * 0.6785 * (1.0 + 0.98) / 1000.0
+        mutant_unburnt_ch4 = 50_000.0 * 0.88 * (16.04 / 23.685) * (1.0 + 0.98) / 1000.0
         
         # Test assertion MUST detect discrepancy and fail
         with pytest.raises(AssertionError):
@@ -110,16 +110,16 @@ class TestCalculationMutations:
             flare_type="elevated",
             combustion_eff=0.98,
         )
-        mutant_co2 = clean_res["co2"] - (100_000.0 * 0.05 * 1.861 / 1000.0)
+        mutant_co2 = clean_res["co2"] - (100_000.0 * 0.05 * (44.01 / 23.685) / 1000.0)
 
         with pytest.raises(AssertionError):
             assert pytest.approx(clean_res["co2"], rel=1e-4) == mutant_co2
 
     def test_mutant_7_swapped_gas_densities(self):
-        """Mutant: CH4 standard density (0.6785 kg/m3) swapped with CO2 density (1.861 kg/m3)."""
+        """Mutant: CH4 standard density (0.67722 kg/m3) swapped with CO2 density (1.85814 kg/m3)."""
         vol_m3 = 50_000.0
-        clean_ch4_kg = vol_m3 * 0.6785
-        mutant_ch4_kg = vol_m3 * 1.8610
+        clean_ch4_kg = vol_m3 * (16.04 / 23.685)
+        mutant_ch4_kg = vol_m3 * (44.01 / 23.685)
 
         with pytest.raises(AssertionError):
             assert pytest.approx(clean_ch4_kg, rel=1e-4) == mutant_ch4_kg

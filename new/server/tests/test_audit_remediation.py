@@ -810,7 +810,7 @@ def test_dashboard_ogmp_target_status_segment_specific(client, test_users):
         db.session.commit()
 
         # Set gas production and CH4 emission to produce exactly ~0.15% loss rate
-        # 100,000 m3 gas -> 0.15% = 150 m3 CH4 -> 150 * 0.6785 / 1000 = 0.101775 tCH4
+        # 100,000 m3 gas -> 0.15% = 150 m3 CH4 -> 150 * 0.67722 / 1000 = 0.101775 tCH4
         ProductionData.query.filter_by(facility_id=fid, year=2028).delete()
         Emission.query.filter_by(facility_id=fid, year=2028).delete()
 
@@ -1651,7 +1651,7 @@ def test_dehydrator_stripping_gas_calculation():
     )
 
     # 50,000 scf * 0.90 CH4 = 45,000 scf CH4
-    expected_strip_ch4_tonnes = convert(45000.0, "scf", "m3") * 0.6785 / 1000.0
+    expected_strip_ch4_tonnes = convert(45000.0, "scf", "m3") * (16.04 / 23.685) / 1000.0
     diff_ch4 = strip_res["results"]["ch4"]["value"] - base_res["results"]["ch4"]["value"]
     assert abs(diff_ch4 - expected_strip_ch4_tonnes) < 1e-4
     assert strip_res["inputs"]["stripping_gas_scf"] == 50000.0
