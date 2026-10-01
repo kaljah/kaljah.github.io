@@ -562,3 +562,21 @@ Three things are unchanged by the batching:
 Tests cover all three with a flush size of 3.
 
 The only size limit left is the server's 50 MB request size (`MAX_CONTENT_LENGTH`, set by environment variable), about 220,000 rows of this file's width. Above it, the wizard used to show only a 3-second toast with Werkzeug's text ("The data value transmitted exceeds the capacity limit"). The server now says "The file is larger than the 50 MB upload limit; split it into smaller files. No rows were saved.", and the wizard keeps this message on screen next to Start Import.
+
+### 10.3 Follow-up: a less confusing upload
+
+| # | Before | Now |
+|---|---|---|
+| 1 | Two independent tier controls: step 1 ("Upload mode") only filtered the mapping list; a separate "Default factor" select in the mapping step drove the calculation | One choice, in step 1, and it is the one applied: Tier 1, 2 or 3 for every row (the `factor_type` column is ignored), or per row (`factor_type`). The mapping step shows it with a "Change" link. |
+| 2 | A "Process scope" step that most users cannot answer and that only filtered the field list | Step removed (4 steps: Calculation, Choose file, Check & map, Import). The process filter is an optional section when all fields are shown. |
+| 3 | Skipped rows: the first 100 messages verbatim (193 distinct texts in the 100k test) | Every skipped row grouped by cause (19 groups in the 100k test), each with the column to fix, how to fix it and example file lines. The downloadable CSV of skipped rows can be fixed and uploaded again as it is (verified: 15,835 / 15,835 rows give the same reasons). |
+| 4 | Problems found only after the full import; a too-large file failed after upload | **Check before importing** (`POST /api/emissions/upload/check`), run automatically when the mapping step opens. It calculates 2,000 rows spread over the file exactly as the import would, counts every row, and saves nothing. It reports rows, period, facilities and processes, unknown facilities, unknown processes and Scope 2 rows, unreadable dates, the expected import / skip counts (100k test: about 84,150 / 15,850 predicted in 8 s vs 84,165 / 15,835 actual) and the grouped causes. A file over the size limit (`GET /upload/limits`) is refused when picked, with its size and the limit. |
+| 5 | Dozens of fields, "62 auto-detected", labels unlike the data | By default only the fields matched to the file and any required field still missing are shown ("Show all fields" for the rest). The badge reads "62 of 89 columns matched to fields", and the check says that the other columns are read by name when a calculation needs them. "Region / Facility" is now "Facility" and "Emission Source" is now "Group". |
+| 6 | A percentage bar only | "3,800 of 100,000 rows · about 2 min 19 s left". It also states that the window can be closed and that the records appear together when the whole file is saved. |
+| 7 | "Review Pending Records" with no explanation; an unclear overwrite checkbox | "What happens next": the imported records are Pending, who approves them and where, and that they do not count in dashboards until approved. The checkbox is now "Replace existing records" with a plain-language description. The import button shows the expected count ("Import about 84,150 rows"). |
+
+With the 100k file, through the UI, the result is unchanged: 84,165 imported / 15,835 skipped.
+
+Screenshots: `run3_seed20261003/results/screenshots/upload_ux/`. Tests: `new/server/tests/test_upload_ux_2026_10_01.py` (7 tests).
+
+The batched flush from §10.2 now applies only to PostgreSQL. On SQLite a flush holds the single-writer lock for the whole import, so every other save would time out after 30 s. On SQLite the rows therefore stay staged until the commit, as before. Memory there grows with the file: about 1.1 GB for 100k rows.

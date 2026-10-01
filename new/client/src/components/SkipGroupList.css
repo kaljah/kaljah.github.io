@@ -1,0 +1,9 @@
+/* Skipped rows grouped by cause (wizard check step and import result) */
+.s1w-skip-groups { display: flex; flex-direction: column; gap: 6px; }
+.s1w-skip-group { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 8px 10px; }
+.s1w-skip-group-head { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.s1w-skip-count { font-weight: 700; color: #d97706; min-width: 56px; }
+.s1w-skip-title { font-weight: 600; color: #111827; }
+.s1w-skip-col { font-size: 0.75rem; background: #f3f4f6; border-radius: 999px; padding: 1px 8px; color: #374151; font-family: ui-monospace, monospace; }
+.s1w-skip-fix { color: #374151; margin-top: 2px; }
+.s1w-skip-rows { color: #6b7280; font-size: 0.78rem; margin-top: 2px; }

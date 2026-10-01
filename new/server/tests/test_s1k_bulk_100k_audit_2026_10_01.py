@@ -316,6 +316,7 @@ def test_batched_flush_in_file_duplicate_updates_flushed_row(user_id, monkeypatc
     from models import ActivityLog
 
     monkeypatch.setattr(bp, "FLUSH_EVERY", 3)
+    monkeypatch.setattr(bp, "FLUSH_ON_SQLITE", True)
     tag = os.urandom(3).hex()
     rows = _flush_rows(tag, 7)
     rows.append(dict(rows[0], quantity=999))          # repeats row 1, flushed two batches earlier
@@ -334,6 +335,7 @@ def test_batched_flush_in_file_duplicate_refused_without_overwrite(user_id, monk
     import background_processor as bp
 
     monkeypatch.setattr(bp, "FLUSH_EVERY", 3)
+    monkeypatch.setattr(bp, "FLUSH_ON_SQLITE", True)
     tag = os.urandom(3).hex()
     rows = _flush_rows(tag, 5)
     rows.append(dict(rows[0], quantity=999))
@@ -348,6 +350,7 @@ def test_batched_flush_is_still_all_or_nothing(user_id, monkeypatch):
     from extensions import db
 
     monkeypatch.setattr(bp, "FLUSH_EVERY", 3)
+    monkeypatch.setattr(bp, "FLUSH_ON_SQLITE", True)
     tag = os.urandom(3).hex()
 
     def boom():
@@ -505,3 +508,11 @@ def test_upload_over_size_limit_says_limit_and_what_to_do(user_id):
         assert "1 MB upload limit" in msg and "split it into smaller files" in msg
     finally:
         flask_app.config["MAX_CONTENT_LENGTH"] = old
+
+
+def test_no_early_write_lock_on_sqlite():
+    import background_processor as bp
+    from extensions import db
+
+    with flask_app.app_context():
+        assert bp._flush_enabled(db.session) is False      # SQLite: rows staged until the single commit
