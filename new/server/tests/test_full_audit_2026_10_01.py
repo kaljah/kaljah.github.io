@@ -4,7 +4,7 @@ import json
 import pytest
 
 from extensions import db
-from models import ActivityLog, BaseYearRecalculation, Goal, User
+from models import ActivityLog, BaseYearRecalculation, CustomFactor, Emission, Goal, User
 from tests.audit_helpers import login, make_facility, make_user, upload
 
 
@@ -50,7 +50,7 @@ def test_a02_register_separation_of_duties(app, ctx, actor, role, expected):
         login(c, make_user(actor))
         r = c.post("/api/auth/users", json={
             "fullName": "New", "orgName": "Org", "email": f"new_{actor}_{role}@audit.test",
-            "sector": "Oil & Gas", "password": NEW_PW, "role": role,
+            "sector": "Oil & Gas", "password": NEW_PW, "role": role, "location": "West",
         })
     assert r.status_code == expected, r.get_data(as_text=True)
 
@@ -176,3 +176,79 @@ def test_a09_concurrent_upload_cap(app, ctx, monkeypatch):
     finally:
         with bp.upload_jobs_lock:
             bp.upload_jobs.pop("a09-running", None)
+
+
+# ── Owner decisions 2026-10-01 ─────────────────────────────────────────────────
+# Superusers are limited to one region; organisation-wide records are admin only.
+def test_superuser_without_region_sees_nothing(app, ctx):
+    from utils import facility_in_user_scope, get_allowed_facility_ids
+
+    make_facility(region="West")
+    for loc in ("Global", "all", "", None):
+        su = make_user("superuser", location=loc)
+        assert get_allowed_facility_ids(su) == []
+        assert facility_in_user_scope(su, region="West") is False
+    west = make_facility(region="West")
+    assert west.id in get_allowed_facility_ids(make_user("superuser", location="West"))
+
+
+def test_superuser_needs_a_region_when_created_or_assigned(app, ctx):
+    with app.test_client() as c:
+        login(c, make_user("it_manager"))
+        body = {"fullName": "S", "orgName": "O", "sector": "Oil & Gas", "password": NEW_PW, "role": "superuser"}
+        r = c.post("/api/auth/users", json={**body, "email": "su_global@audit.test", "location": "Global"})
+        assert r.status_code == 400 and r.get_json()["field"] == "location"
+        r = c.post("/api/auth/users", json={**body, "email": "su_west@audit.test", "location": "West"})
+        assert r.status_code == 201
+        uid = r.get_json()["user"]["id"]
+        assert c.put(f"/api/auth/users/{uid}", json={"location": "all"}).status_code == 400
+        # a legacy organisation-wide superuser can still be deactivated
+        legacy = make_user("superuser", location="Global")
+        assert c.put(f"/api/auth/users/{legacy.id}", json={"status": "disabled"}).status_code == 200
+
+
+def test_org_wide_settings_and_factors_are_admin_only(app, ctx):
+    with app.test_client() as c:
+        login(c, make_user("superuser", location="West"))
+        assert c.put("/api/auth/settings", json={"reconciliation_threshold": 15}).status_code == 403
+        r = c.post("/api/custom-factors", json={"factor_name": "su-factor", "unit": "scf", "co2_factor": 0.05})
+        assert r.status_code == 403
+        assert c.post("/api/reporting-metadata", json={"year": 2024}).status_code == 403
+    with app.test_client() as c:
+        login(c, make_user("admin"))
+        r = c.post("/api/custom-factors", json={"factor_name": "admin-factor-o4", "unit": "scf", "co2_factor": 0.05})
+        assert r.status_code in (200, 201), r.get_data(as_text=True)
+
+
+# Custom factors used by records keep their values (O-04).
+def test_referenced_custom_factor_values_are_locked(app, ctx):
+    admin = make_user("admin")
+    fac = make_facility(region="West")
+    cf = CustomFactor(name="o4-locked", unit="scf", co2_factor=0.05, ch4_factor=0.001, n2o_factor=0.0)
+    db.session.add(cf)
+    db.session.commit()
+    db.session.add(Emission(record_id="o4-rec", facility_id=fac.id, year=2024, month=1, process_type="combustion",
+                            fuel_type="o4-locked", custom_factor_id=cf.id, quantity=1.0, unit="scf", status="Verified"))
+    db.session.commit()
+    with app.test_client() as c:
+        login(c, admin)
+        r = c.put(f"/api/custom-factors/{cf.id}", json={"co2_factor": 0.07})
+        assert r.status_code == 409 and r.get_json()["fields"] == ["co2_factor"]
+        # resending the same values (forms send the whole factor) and metadata edits are allowed
+        r = c.put(f"/api/custom-factors/{cf.id}", json={"co2_factor": 0.05, "description": "documented"})
+        assert r.status_code == 200, r.get_data(as_text=True)
+    db.session.expire_all()
+    assert db.session.get(CustomFactor, cf.id).co2_factor == 0.05
+    log = ActivityLog.query.filter_by(entity="CustomFactor", record_id=str(cf.id), action="UPDATE").one()
+    assert json.loads(log.new_values) == {"description": "documented"} and json.loads(log.old_values) == {"description": None}
+
+
+def test_unreferenced_custom_factor_edit_logs_old_and_new_values(app, ctx):
+    cf = CustomFactor(name="o4-free", unit="scf", co2_factor=0.05)
+    db.session.add(cf)
+    db.session.commit()
+    with app.test_client() as c:
+        login(c, make_user("admin"))
+        assert c.put(f"/api/custom-factors/{cf.id}", json={"co2_factor": 0.06}).status_code == 200
+    log = ActivityLog.query.filter_by(entity="CustomFactor", record_id=str(cf.id), action="UPDATE").one()
+    assert json.loads(log.old_values) == {"co2_factor": 0.05} and json.loads(log.new_values) == {"co2_factor": 0.06}

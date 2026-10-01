@@ -223,10 +223,7 @@ def after_request(response):
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
 
     # Disable caching for API endpoints to prevent stale browser reads.
-    # Exception: SSE stream — it sets its own Cache-Control / Connection headers.
-    if request.path.startswith("/api") and not request.path.startswith(
-        "/api/notifications/stream"
-    ):
+    if request.path.startswith("/api"):
         response.headers["Cache-Control"] = (
             "no-store, no-cache, must-revalidate, max-age=0"
         )

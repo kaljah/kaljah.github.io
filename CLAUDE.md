@@ -44,7 +44,7 @@ npm run e2e      # Playwright (e2e/)
 ```
 Playwright needs the dev server running and `storageState.json`, and it hard-codes a local chromium-1208 path.
 
-Other: `new/setup.bat` / `new/start_all.bat` (Windows); `docker-compose up` from the root runs Gunicorn + Postgres 15. The Dockerfile builds the client into `static/dist`.
+Other: `new/setup.bat` / `new/start_all.bat` (Windows). There is no Docker setup (removed 2026-10-01): the client is deployed to GitHub Pages by CI; the API runs as a plain Python service (`flask db upgrade`, then `gunicorn app:app` from `new/server`).
 
 ## Backend architecture
 
@@ -65,6 +65,8 @@ Other: `new/setup.bat` / `new/start_all.bat` (Windows); `docker-compose up` from
   - Decorators in `routes/auth.py`: `login_required`, `admin_required`, `superuser_required`, `it_admin_required`, `it_access_required`.
   - Roles: `user`, `it`, `superuser`, `admin`, `it_admin`, `it_manager`.
   - Facility scoping goes through `utils.get_allowed_facility_ids` (location/region based) and `utils.require_facility_access`, which always denies IT roles.
+  - Only `admin` is organisation-wide. A `superuser` is always limited to one region (their `location`; a superuser without a specific region sees nothing). Org-wide records (settings, custom factors, goals, base year, SBTi, reporting metadata) are admin only.
+  - Custom factors used by emission records cannot have their values edited (409): create a new factor and archive the old one.
 - **CSRF.** `GET /api/csrf-token` sets the token, and mutating requests must send it as the `X-CSRFToken` header.
 - **Calculation path.**
   - Routes and `background_processor.py` call `calculations.compute_emissions` (defined in `calculations/legacy_engine.py`).
@@ -83,6 +85,7 @@ Other: `new/setup.bat` / `new/start_all.bat` (Windows); `docker-compose up` from
 
 ## Frontend architecture
 
+- Notifications are polled every 30 s (`NotificationCenter.jsx`); there is no SSE stream.
 - `src/api.js` is the shared axios instance.
   - `baseURL` is `VITE_API_URL`, or `/api` if unset, and requests use `withCredentials`.
   - It attaches `X-CSRFToken` to mutating requests and retries once on CSRF 400s.
