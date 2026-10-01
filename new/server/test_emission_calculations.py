@@ -287,7 +287,7 @@ class TestTier3Flaring(unittest.TestCase):
         self.c2_frac = 0.05
         self.c3_frac = 0.03
         self.co2_comp = 0.03
-        self.eta_c = 0.984
+        self.eta_c = 0.98  # API Compendium 2021 Eq 5-2 default
         self.eta_d = 0.98
         self.density_ch4 = CONVERSIONS["density_ch4"]  # 0.67722
         self.density_co2 = CONVERSIONS["density_co2"]  # 1.85814

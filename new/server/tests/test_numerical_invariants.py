@@ -73,7 +73,7 @@ class TestConservationLaws:
     def test_flaring_dual_efficiency_mass_balance(self):
         """API §5.2: Flared hydrocarbons must partition into unburnt slip and stoichiometric CO2."""
         calc = FlaringCalculator()
-        # 10,000 m3 pure methane flared with elevated flare (eta_c=0.984, eta_d=0.98)
+        # 10,000 m3 pure methane flared with elevated flare (eta_c=0.98 Compendium Eq 5-2, eta_d=0.98)
         res = calc.calculate(
             gas_volume=10000.0,
             ch4_fraction=1.0,
@@ -91,9 +91,9 @@ class TestConservationLaws:
         expected_unburnt_ch4 = total_ch4_mass_tonnes * 0.02
         assert pytest.approx(ch4_tonnes, rel=1e-4) == expected_unburnt_ch4
 
-        # Combusted carbon moles: 10,000 m3 * 0.984 = 9,840 m3 CO2
+        # Combusted carbon moles: 10,000 m3 * 0.98 = 9,800 m3 CO2
         density_co2 = (44.01 / 23.685)
-        expected_combusted_co2 = (10000.0 * 1.0 * 0.984 * density_co2) / 1000.0
+        expected_combusted_co2 = (10000.0 * 1.0 * 0.98 * density_co2) / 1000.0
         assert pytest.approx(co2_tonnes, rel=1e-4) == expected_combusted_co2
 
     def test_dehydrator_stoichiometric_carbon_balance(self):

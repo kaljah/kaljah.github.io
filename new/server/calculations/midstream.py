@@ -62,7 +62,12 @@ class AGRCalculator(BaseCalculator):
             cin /= 100.0
             cout /= 100.0
         diff_co2 = max(0.0, cin - cout)
-        co2_vented_scf = throughput_scf * diff_co2
+        if cout >= 1.0:
+            raise ValueError("Outlet CO2 must be below 100 %")
+        # Eq 6-18 is V_in*y_in - V_out*y_out; the outlet stream is smaller than the inlet by the CO2
+        # removed, V_out = V_in*(1 - y_in)/(1 - y_out), so the balance is V_in*(y_in - y_out)/(1 - y_out).
+        # Using V_in for both streams left out that shrinkage (Exhibit 6-17: 78,925 t instead of 80,506 t)
+        co2_vented_scf = throughput_scf * diff_co2 / (1.0 - cout)
         co2_vented_m3 = convert(co2_vented_scf, "scf", "m3")
         co2_mass_kg = co2_vented_m3 * CONVERSIONS["density_co2"]
 

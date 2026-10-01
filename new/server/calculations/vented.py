@@ -125,6 +125,16 @@ def _propagate_vented_results(
     return ch4_res, co2_res, n2o_res
 
 
+
+def _sfr_scf_per_hr(unit):
+    """scf/hr per one unit of a flow-line rate (scf/hr, scfh, Mcf/day, MMscf/day, m3/day, m3/hr ...)."""
+    from .units import UnitError, volume_rate_m3_per_hour
+
+    try:
+        return volume_rate_m3_per_hour(unit or "scf/hr") * CONVERSIONS["m3_to_scf"]
+    except UnitError as err:
+        raise ValueError(f"Flow-line rate unit: {err} (use scf/hr, Mcf/day or m3/day)")
+
 class MudDegassingCalculator(BaseCalculator):
     def __init__(self):
         super().__init__("Drilling Mud Degassing", "Section 6.2 & 6.3")
@@ -651,7 +661,7 @@ class CompletionFlowbackCalculator(BaseCalculator):
         # =====================================================================
         # TIER 2 & TIER 3 VOLUMETRIC DETERMINATION
         # =====================================================================
-        actual_ch4_mol = y_ch4 if y_ch4 is not None else 0.85
+        actual_ch4_mol = y_ch4
         actual_co2_mol = y_co2
         method = raw_method
 
@@ -814,6 +824,13 @@ class CompletionFlowbackCalculator(BaseCalculator):
         vented_scf = initial_scf + (total_net_scf * f_vented)
         flared_scf = total_net_scf * f_flared
         recovered_scf = total_net_scf * f_rec
+
+        # Tier 2 / 3 gas volumes need the flowback gas analysis: an unanalysed gas was silently taken as
+        # 85 % CH4 (a zero volume stays a clean zero)
+        if actual_ch4_mol is None:
+            if vented_scf + flared_scf > 0:
+                raise ValueError("Missing required field: CH4 content of the flowback gas (mol %)")
+            actual_ch4_mol = 0.0
 
         # Conversions to m3 at standard conditions
         vented_m3 = convert(vented_scf, "scf", "m3")
@@ -1392,19 +1409,8 @@ class LiquidsUnloadingCalculator(BaseCalculator):
         p_abs = to_psia(p_val, pu)
         p_psig = max(0.0, p_abs - STD_PRESSURE_PSIA)
 
-        # SFR conversion to scf/hr
-        sfru = str(sfr_unit or "scf/hr").lower().strip()
-        if "day" in sfru:
-            if "m3" in sfru:
-                sfr_scf_hr = (sfr_val * CONVERSIONS["m3_to_scf"]) / 24.0
-            else:
-                sfr_scf_hr = sfr_val / 24.0
-        elif "m3" in sfru:
-            sfr_scf_hr = sfr_val * CONVERSIONS["m3_to_scf"]
-        elif "mcf" in sfru or "mscf" in sfru:
-            sfr_scf_hr = sfr_val * 1000.0
-        else:
-            sfr_scf_hr = sfr_val
+        # SFR conversion to scf/hr (every rate spelling; "Mcf/day" was read as scf/day, 1,000x low)
+        sfr_scf_hr = sfr_val * _sfr_scf_per_hr(sfr_unit)
 
         # Equation 6-10 parameters:
         # X: 0.5 for plunger lift, 1.0 for non-plunger
@@ -1413,7 +1419,10 @@ class LiquidsUnloadingCalculator(BaseCalculator):
         z_param = 1.0 if hr_val >= 1.0 else 0.0
 
         wellbore_vol_scf = ev * (0.37e-3) * (d_in ** 2) * depth_ft * p_psig
-        flowline_vol_scf = sfr_scf_hr * max(0.0, hr_val - x_param) * z_param
+        # HR is the time one unloading event is left open: the flow-line term is per event, summed over the
+        # events like the wellbore term (40 CFR 98.233 Eq W-8). It was counted once per well-year
+        # (12 events open 3 h at 35,000 scf/h: 70,000 scf instead of 840,000 scf)
+        flowline_vol_scf = ev * sfr_scf_hr * max(0.0, hr_val - x_param) * z_param
         vr_per_well_scf = wellbore_vol_scf + flowline_vol_scf
 
         total_gas_scf = wc * vr_per_well_scf
@@ -1551,18 +1560,7 @@ class LiquidsUnloadingCalculator(BaseCalculator):
             )
 
         # Normalize SFRp to scf/hr
-        sfru = str(sfr_unit or "scf/hr").lower().strip()
-        if "day" in sfru:
-            if "m3" in sfru:
-                sfr_rate = (sfr_val * CONVERSIONS["m3_to_scf"]) / 24.0
-            else:
-                sfr_rate = sfr_val / 24.0
-        elif "m3" in sfru:
-            sfr_rate = sfr_val * CONVERSIONS["m3_to_scf"]
-        elif "mcf" in sfru or "mscf" in sfru:
-            sfr_rate = sfr_val * 1000.0
-        else:
-            sfr_rate = sfr_val
+        sfr_rate = sfr_val * _sfr_scf_per_hr(sfr_unit)
 
         # Equation 6-11: VR = sqrt(Pshut - Patm) / sqrt(Pline - Psep) * SFRp * Tp
         press_ratio = math.sqrt(p_shut_abs - p_atm_abs) / math.sqrt(p_line_abs - p_sep_abs)
@@ -2367,9 +2365,12 @@ class AssociatedGasVentingCalculator(BaseCalculator):
             # Net vented gas volume
             net_vented_gas_scf = max(0.0, total_produced_gas_scf - rec_scf - flared_scf)
 
-            # Gas composition (default 70% CH4, 10% CO2 if unspecified per Exhibit 6-5)
-            f_ch4 = c_ch4 if c_ch4 is not None else 0.70
-            f_co2 = c_co2 if c_co2 is not None else 0.10
+            # Gas composition: 70 % CH4 / 10 % CO2 are Exhibit 6-5's sample inputs, not defaults; an
+            # unanalysed associated gas was silently given them
+            if c_ch4 is None:
+                raise ValueError("Missing required field: CH4 content of the associated gas (mol %)")
+            f_ch4 = c_ch4
+            f_co2 = c_co2 if c_co2 is not None else 0.0
 
             # API Eq. 6-8: Ex = VR * Fx * (MWx / 379.3) * Tv
             # Where (VR * Tv) is net_vented_gas_scf
@@ -2466,8 +2467,10 @@ class AssociatedGasVentingCalculator(BaseCalculator):
             else:
                 raise ValueError("Tier 3 requires either measured vent rate + duration or total measured vent volume.")
 
-            # Gas composition (default 85% CH4 if not provided)
-            f_ch4 = c_ch4 if c_ch4 is not None else 0.85
+            # Gas composition: required (an unanalysed gas was silently taken as 85 % CH4)
+            if c_ch4 is None:
+                raise ValueError("Missing required field: CH4 content of the vented gas (mol %)")
+            f_ch4 = c_ch4
             f_co2 = c_co2 if c_co2 is not None else 0.0
 
             # API Eq. 6-8: Ex = VR * Fx * (MWx / 379.3) * Tv

@@ -1,0 +1,444 @@
+[
+ {
+  "exhibit": "4.5",
+  "description": "No. 6 residual oil, 4 MMgal, 8.3 lb/gal, 92.3 wt % C (Eq 4-5 carbon balance, Tier 3 fuel analysis)",
+  "expected": {
+   "co2": 50966.0
+  },
+  "got": {
+   "co2": 50930.47489670405,
+   "ch4": 1.8000000000000005,
+   "n2o": 0.36,
+   "co2e": 51076.27489670405
+  },
+  "status": "OK"
+ },
+ {
+  "exhibit": "4.6",
+  "description": "No. 6 residual oil, 4 MMgal, default factors (Table 4-3 / 4-5, HHV 6.29 MMBtu/bbl)",
+  "expected": {
+   "co2": 44984.0,
+   "ch4": 1.8,
+   "n2o": 0.36
+  },
+  "got": {
+   "co2": 45060.0,
+   "ch4": 1.8000000000000005,
+   "n2o": 0.36,
+   "co2e": 45205.8
+  },
+  "status": "OK"
+ },
+ {
+  "exhibit": "5.1",
+  "description": "Flare, known flared volume and composition (98 % conversion, 2 % CH4)",
+  "expected": {
+   "ch4": 6.1,
+   "co2": 1095.0
+  },
+  "got": {
+   "co2": 1094.6570104509606,
+   "ch4": 6.136572099954305,
+   "n2o": 0.0018247375943884797,
+   "co2e": 1266.964584712194
+  },
+  "status": "OK"
+ },
+ {
+  "exhibit": "5.2",
+  "description": "Flare, known VOC emitted (Eq 5-1 / 5-5)",
+  "expected": {
+   "co2": 515.7,
+   "ch4": 1.03,
+   "n2o": 0.000776
+  },
+  "got": {
+   "co2": 516.3275361413986,
+   "ch4": 1.0268888727658536,
+   "n2o": 0.0007766771846312922,
+   "co2e": 545.2862440327698
+  },
+  "status": "OK"
+ },
+ {
+  "exhibit": "6-1",
+  "description": "Offshore water-based mud degassing, 85 days, 70 % CH4 / 9 % CO2",
+  "expected": {
+   "ch4": 18.49,
+   "co2": 6.54
+  },
+  "got": {
+   "co2": 6.520983487167592,
+   "ch4": 18.485092426952892,
+   "n2o": 0.0,
+   "co2e": 524.1035714418485
+  },
+  "status": "OK"
+ },
+ {
+  "exhibit": "6-2",
+  "description": "Oil well test vented 6 h, 4,200 bbl/d, GOR 700, 70 % CH4 / 10 % CO2",
+  "expected": {
+   "ch4": 9.84,
+   "co2": 3.87
+  },
+  "got": {
+   "co2": 3.8673208680925955,
+   "ch4": 9.866457329457772,
+   "n2o": 0.0,
+   "co2e": 280.1281260929102
+  },
+  "status": "OK"
+ },
+ {
+  "exhibit": "6-3",
+  "description": "Completion with HF: 1.48 MMscf metered to flare, 7,390 scf N2, 4 h unmetered vent, 70 % CH4",
+  "expected": {
+   "ch4": 2.36,
+   "co2": 98.7
+  },
+  "got": {
+   "co2": 98.71429331507184,
+   "ch4": 2.372154078029847,
+   "n2o": 0.00015020622,
+   "co2e": 165.17441214820755
+  },
+  "status": "OK"
+ },
+ {
+  "exhibit": "6-5",
+  "description": "Non-continuous associated gas venting: 5,200 bbl/d, GOR 700, 15 days, 70 % CH4 / 10 % CO2",
+  "expected": {
+   "ch4": 731.0,
+   "co2": 287.0
+  },
+  "got": {
+   "co2": 287.36039312470865,
+   "ch4": 733.2391217205628,
+   "n2o": 0.0,
+   "co2e": 20818.055801300467
+  },
+  "status": "OK"
+ },
+ {
+  "exhibit": "6-6",
+  "description": "Continuous associated gas venting, 365 days",
+  "expected": {
+   "ch4": 17795.0,
+   "co2": 6991.0
+  },
+  "got": {
+   "co2": 6992.436232701244,
+   "ch4": 17842.151961867028,
+   "n2o": 0.0,
+   "co2e": 506572.691164978
+  },
+  "status": "OK"
+ },
+ {
+  "exhibit": "6-7",
+  "description": "10 gas-well workovers without HF (3,114 scf/workover), 70 % CH4 / 9 % CO2",
+  "expected": {
+   "ch4": 0.42,
+   "co2": 0.15
+  },
+  "got": {
+   "co2": 0.14746331244784094,
+   "ch4": 0.418015620733762,
+   "n2o": 0.0,
+   "co2e": 11.851900692993176
+  },
+  "status": "OK"
+ },
+ {
+  "exhibit": "6-8",
+  "description": "Liquids unloading Eq 6-10: 12 events, 10 in casing, 12,000 ft, 250 psig, HR 1 h, 80 % CH4 / 3 % CO2",
+  "expected": {
+   "ch4": 20.39,
+   "co2": 2.1
+  },
+  "got": {
+   "co2": 2.1030991409372546,
+   "ch4": 20.44002740021726,
+   "n2o": 0.0,
+   "co2e": 574.4238663470205
+  },
+  "status": "OK"
+ },
+ {
+  "exhibit": "6-9",
+  "description": "Primary heavy oil casing gas: 100 bbl/d x 365 d, 70 % CH4 / 9 % CO2 (Table 6-12)",
+  "expected": {
+   "ch4": 102.7,
+   "co2": 36.3
+  },
+  "got": {
+   "co2": 36.29756871909765,
+   "ch4": 102.70098039215685,
+   "n2o": 0.0,
+   "co2e": 2911.9250196994894
+  },
+  "status": "OK"
+ },
+ {
+  "exhibit": "6-10",
+  "description": "Low-pressure casing gas migration: 3 wells x 365 d, 70 % CH4 / 9 % CO2",
+  "expected": {
+   "ch4": 2.0,
+   "co2": 0.71
+  },
+  "got": {
+   "co2": 0.7050100981633947,
+   "ch4": 2.0007904411764703,
+   "n2o": 0.0,
+   "co2e": 56.72714245110456
+  },
+  "status": "OK"
+ },
+ {
+  "exhibit": "6-11",
+  "description": "80 low-bleed controllers (API study), 8,760 h, 70 % CH4 (exhibit CO2 uses 2.1 scf as whole gas: CH4 only)",
+  "expected": {
+   "ch4": 24.2
+  },
+  "got": {
+   "co2": 8.628450621225497,
+   "ch4": 24.459149075997846,
+   "n2o": 0.0,
+   "co2e": 693.4846247491652
+  },
+  "status": "OK"
+ },
+ {
+  "exhibit": "6-12a",
+  "description": "Intermittent controllers, normal: 79 controller-years, 70 % CH4 / 9 % CO2",
+  "expected": {
+   "ch4": 2.575245098039215,
+   "co2": 0.910533088235294
+  },
+  "got": {
+   "co2": 0.9176025372187885,
+   "ch4": 2.6011364305820788,
+   "n2o": 0.0,
+   "co2e": 73.74942259351698
+  },
+  "status": "OK"
+ },
+ {
+  "exhibit": "6-12b",
+  "description": "Intermittent controllers, malfunctioning: 1 controller-year (sum with 6-12a = 5.41 t CH4 / 1.91 t CO2)",
+  "expected": {
+   "ch4": 2.830882352941176,
+   "co2": 1.0009191176470589
+  },
+  "got": {
+   "co2": 0.9997387498631465,
+   "ch4": 2.83396871505552,
+   "n2o": 0.0,
+   "co2e": 80.35086277141771
+  },
+  "status": "OK"
+ },
+ {
+  "exhibit": "6-13",
+  "description": "Glycol dehydrator vent, production, 25 MMscf/d x 365, 82 % CH4 (Table 6-17)",
+  "expected": {
+   "ch4": 50.2
+  },
+  "got": {
+   "co2": 0.0,
+   "ch4": 50.192572017766494,
+   "n2o": 0.0,
+   "co2e": 1405.3920164974618
+  },
+  "status": "OK"
+ },
+ {
+  "exhibit": "6-14",
+  "description": "Kimray gas-assisted pump, production, 25 MMscf/d x 365, 82 % CH4 / 5 % CO2 (Table 6-18)",
+  "expected": {
+   "ch4": 180.7,
+   "co2": 30.3
+  },
+  "got": {
+   "co2": 30.199961275545526,
+   "ch4": 180.70047588832483,
+   "n2o": 0.0,
+   "co2e": 5089.81328614864
+  },
+  "status": "OK"
+ },
+ {
+  "exhibit": "6-15",
+  "description": "Desiccant dehydrator Eq 6-16: 6.40 ft x 1.60 ft, 450 psig, 45 % packed, 52 refills/yr (record = December: 31/366 of the annual refills)",
+  "expected": {
+   "ch4": 0.013884103474730776,
+   "co2": 0.002121182475306091
+  },
+  "got": {
+   "co2": 0.0021210675318954586,
+   "ch4": 0.013914897019060594,
+   "n2o": 0.0,
+   "co2e": 0.3917381840655921
+  },
+  "status": "OK"
+ },
+ {
+  "exhibit": "6-16",
+  "description": "AGR unit factor, 1 unit x 365 d (Table 6-19)",
+  "expected": {
+   "ch4": 236.6
+  },
+  "got": {
+   "co2": 0.0,
+   "ch4": 236.593,
+   "n2o": 0.0,
+   "co2e": 6624.603999999999
+  },
+  "status": "OK"
+ },
+ {
+  "exhibit": "6-17",
+  "description": "Amine unit CO2 material balance Eq 6-18, Tier 3 AGR form fields: 150,000 MMscf at 3 % CO2 -> 2 % CO2",
+  "expected": {
+   "co2": 80506.0,
+   "ch4": 2775.0
+  },
+  "got": {
+   "co2": 80535.62824016233,
+   "ch4": 2775.0,
+   "n2o": 0.0,
+   "co2e": 158235.62824016233
+  },
+  "status": "OK"
+ },
+ {
+  "exhibit": "6-17b",
+  "description": "Same, gas-volume method agr_balance with both volumes (150,000 / 148,500 MMscf)",
+  "expected": {
+   "co2": 80506.0,
+   "ch4": 2775.0
+  },
+  "got": {
+   "co2": 80503.41398886628,
+   "ch4": 2775.0,
+   "n2o": 0.0,
+   "co2e": 158203.41398886626
+  },
+  "status": "OK"
+ },
+ {
+  "exhibit": "6-19",
+  "description": "Crude tank flashing, chart GOR 47 scf/bbl, 451 bbl/d x 365, CH4 unknown (default 27.4 %)",
+  "expected": {
+   "ch4": 40.6
+  },
+  "got": {
+   "co2": 0.0,
+   "ch4": 40.65310202956612,
+   "n2o": 0.0,
+   "co2e": 1138.2868568278514
+  },
+  "status": "OK"
+ },
+ {
+  "exhibit": "6-20",
+  "description": "Crude tank flashing, Table 6-22 large uncontrolled factor, 451 bbl/d x 365, separator gas 58 % CH4 (factor NOT adjusted for CH4 content)",
+  "expected": {
+   "ch4": 31.8
+  },
+  "got": {
+   "co2": 0.0,
+   "ch4": 31.770695,
+   "n2o": 0.0,
+   "co2e": 889.57946
+  },
+  "status": "OK"
+ },
+ {
+  "exhibit": "6-22",
+  "description": "CO2 EOR injection pump blowdown, 36.4 m3 at 650 kg/m3, 98.5 wt % CO2",
+  "expected": {
+   "co2": 23.3
+  },
+  "got": {
+   "co2": 23.3051,
+   "ch4": 0.0,
+   "n2o": 0.0,
+   "co2e": 23.3051
+  },
+  "status": "OK"
+ },
+ {
+  "exhibit": "6-25",
+  "description": "Separator blowdown Eq 6-32/6-33: 83.8 ft3 gas space, 100 psig, 80 F, Z 0.9864, 90 % CH4, 1 event",
+  "expected": {
+   "ch4": 0.011
+  },
+  "got": {
+   "co2": 0.0,
+   "ch4": 0.011019413865691373,
+   "n2o": 0.0,
+   "co2e": 0.30854358823935846
+  },
+  "status": "OK"
+ },
+ {
+  "exhibit": "6-26a",
+  "description": "Vessel blowdowns, 5 vessels, 70 % CH4 / 8 % CO2 (Table 6-32), full year",
+  "expected": {
+   "ch4": 0.00662887495270768,
+   "co2": 0.0020836812164530946
+  },
+  "got": {
+   "co2": 0.0020836177738294804,
+   "ch4": 0.006662436548223349,
+   "n2o": 0.0,
+   "co2e": 0.18863184112408327
+  },
+  "status": "OK"
+ },
+ {
+  "exhibit": "6-26b",
+  "description": "Compressor blowdowns, 1 compressor, 70 % CH4 / 8 % CO2, full year",
+  "expected": {
+   "ch4": 0.06414711300389431,
+   "co2": 0.02015908958705832
+  },
+  "got": {
+   "co2": 0.02015847579569572,
+   "ch4": 0.06430583756345176,
+   "n2o": 0.0,
+   "co2e": 1.820721927572345
+  },
+  "status": "OK"
+ },
+ {
+  "exhibit": "6-35",
+  "description": "Rail splash loading, dedicated, 50,000 bbl, 12 wt % CH4 in TOC (Table 6-47)",
+  "expected": {
+   "ch4": 0.554
+  },
+  "got": {
+   "co2": 0.0,
+   "ch4": 0.5544000000000001,
+   "n2o": 0.0,
+   "co2e": 15.523200000000003
+  },
+  "status": "OK"
+ },
+ {
+  "exhibit": "7-5",
+  "description": "Correlation approach, 100 gas-plant flanges: 95 non-detect, 4 at 7,950 ppmv, 1 pegged at 10,000; default 56.4 wt % CH4, 8,760 h",
+  "expected": {
+   "ch4": 0.47
+  },
+  "got": {
+   "co2": 0.0,
+   "ch4": 0.47039228531874033,
+   "n2o": 0.0,
+   "co2e": 13.170983988924728
+  },
+  "status": "OK"
+ }
+]
