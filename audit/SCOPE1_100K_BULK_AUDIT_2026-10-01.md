@@ -417,3 +417,75 @@ Files are in `audit/scope1_100k/run2_seed20261002/`:
 - UI table vs DB;
 - upload jobs;
 - screenshots.
+
+## 8. Tier 3 formulas checked against the API Compendium 2021 worked examples
+
+`audit/scope1_100k/exhibits_e2e.py` enters 30 worked examples (Exhibits 4.5 to 7.5) as import rows and runs them through the real bulk-import thread, the path the UI wizard and the HTTP upload use. It then compares the stored CO₂, CH₄ and N₂O with each exhibit's printed answer. The tolerance is 1 to 2 %, to cover the exhibits' rounding and their 16 / 44 molecular weights.
+
+The final result is **30 / 30 within tolerance**: `results/exhibits_e2e.json`, and `tests/test_s1k_compendium_exhibits_2026_10_01.py`, which has 21 tests.
+
+| Exhibit | Method | Before | After |
+|---|---|---|---|
+| 4.5 | Liquid fuel carbon content (Eq 4-5) | 45,060 t: carbon content ignored, catalog factor used | 50,930 t (50,966) |
+| 4.6 | Fuel factors, HHV basis | OK | OK |
+| 5.1 / 5.2 | Flare composition / flare VOC | OK; 5.2 N₂O stored as 0 | N₂O 7.76e-4 t (7.76e-4) |
+| 6-1 … 6-16 | Drilling, well test, completion, AGV, workover, unloading, casing gas, pneumatics, dehydrators, AGR unit factor | OK | OK |
+| 6-17 | AGR CO₂ material balance (Eq 6-18) | 78,925 t: outlet shrinkage ignored | 80,536 t (80,506) |
+| 6-19 | Tank flashing, chart GOR, CH₄ unknown | 126 t: 85 % CH₄ assumed | 40.65 t (40.6) |
+| 6-20 | Tank Table 6-22 factor | 22.6 t: scaled by separator CH₄ | 31.77 t (31.8) |
+| 6-22, 6-25, 6-26, 6-35, 7-5 | CO₂ EOR, blowdown, blowdown factors, loading, correlation | OK | OK |
+
+Exhibits 7-1 and 7-3 use offshore fugitive tables (7-3, 7-7), which the platform does not carry. That is a coverage limit, not an error.
+
+Pneumatic exhibit 6-11 reads 1.07 % high. Table 6-14 prints both 2.6 scf of gas and 2.1 scf of CH₄ (2.1 / 0.816 = 2.574), and the platform uses the printed gas factor.
+
+### 8.1 Findings and fixes
+
+| ID | Severity | Finding | Fix |
+|---|---|---|---|
+| F21 | High | AGR Tier 3 CO₂ used the inlet volume for both streams in Eq 6-18. That is 2 % low at 3 → 2 % CO₂, and more at higher CO₂. | The outlet stream is V_in(1−y_in)/(1−y_out). The form field is now labelled "Inlet (sour) gas throughput". |
+| F22 | High | Tank flashing by GOR / chart with no gas analysis assumed 85 % CH₄; condensate correlations did too. The Compendium default is 27.4 % for crude and 36.3 % for condensate. | Compendium defaults applied. |
+| F23 | Medium | Table 6-22 / 6-24 tank factors were scaled by the separator gas CH₄ content. Exhibit 6-20 says they must not be. | Unscaled; the site content is used only for the CO₂ ratio. |
+| F24 | High | A Tier 3 liquid or solid fuel with a carbon content (wt %) was accepted, but CO₂ silently came from the catalog factor. | Eq 4-5 is applied: mass × C × 44/12 × efficiency. Mass comes from mass units, or from volume × density. CH₄ and N₂O stay on the fuel factors. Gas volumes are refused because they need the gas analysis. |
+| F25 | Medium | `density_unit` was ignored: 8.3 lb/gal was read as 8.3 kg/m³. | Converted for kg/m³, kg/L, g/cm³, t/m³, lb/gal, lb/ft³ and lb/bbl. Unknown units are refused. |
+| F26 | High | The form converted an HHV to Btu and sent it as "BTU/unit". The server reads that in the catalog basis, so an MJ/kg value for diesel (Btu/gal basis) was taken as Btu/gal, about 7× off. | The form sends Btu with the real basis (Btu/scf, Btu/gal or Btu/lb). The server converts it, using the density when needed. |
+| F27 | High | Liquids unloading Eq 6-10 counted the flow-line term SFR × (HR − X) once per well-year instead of once per event (40 CFR 98.233 W-8). An SFR in Mcf/day or MMscf/day was read as scf/day (1,000× low). | Counted per event. The SFR now goes through the shared rate-unit parser. |
+| F28 | High | Completions (Tier 2/3 volumes) and associated gas venting (Tier 2 and 3) without a gas analysis silently used 85 % CH₄, or 70 % / 10 %, which are Exhibit 6-5's sample inputs. | The CH₄ content is now required. A zero volume stays a clean zero. |
+| F29 | Medium | Flare defaults were 98.4 % (elevated), 99.6 % (enclosed) and 92 % (pit) conversion; none of these is in the Compendium. The flare-VOC method stored N₂O as 0. | Eq 5-2 default: 98 % conversion, with 2 % residual CH₄ (0.5 % for enclosed, well-designed flares). Flare-VOC N₂O follows Exhibit 5.2 step 3. Golden data, the reference models and the pinned tests were updated to match. |
+| F30 | High | The unloading Tier 3 form displayed "Plunger lift" but sent no lift type, and the server assumed non-plunger (X = 1 h instead of 0.5 h). The labels also contradicted Eq 6-10: "Tubing diameter", "Shut-in pressure" and "Sales flow rate". | The form sends the lift type it displays and the server requires it. Labels now follow Eq 6-10: casing or tubing diameter and depth by lift type, flow-line pressure, flow-line gas rate, hours open per event. |
+
+Checked and found correct, so not changed:
+- **Monthly records.** Per-day and per-hour factors use the record's own month.
+- **Loading default.** The 15 wt % CH₄ for loading is the Compendium's figure for unstabilized crude.
+- **Tier 3 HHV-only entry.** Tier 3 with a measured HHV and no analysis applies the catalog factor to the measured HHV, which is the Exhibit 4.6 method.
+
+## 9. Manual entry, Excel, edits, GWP, region users, dashboard, PostgreSQL
+
+| Check | How | Result |
+|---|---|---|
+| Manual form = CSV import | `form_parity.mjs` enters 9 cases through the real form in headless Chromium: Tier 1 / Tier 2 (MJ/kg HHV) combustion, flaring, tank, AGR, unloading (both lift types), completion, blowdown. `form_parity.py` imports the same activity by CSV. | **9 / 9 identical records.** Values match Exhibits 6-3, 6-8, 6-19 and 6-25. F30 was found here. |
+| Excel import | The 30 exhibit rows as .xlsx and as .csv | **30 / 30 identical** |
+| Edits (PUT) | Quantity 5,000 → 8,000 L, compared with a new 8,000 L entry; a metadata-only edit | Identical; emissions unchanged by the metadata edit |
+| GWP switch | AR5 → AR6 → AR4 → AR5 through `PUT /api/auth/settings` | On every record (62), CO₂e = CO₂ + CH₄·GWP + N₂O·GWP for the active set. Gas masses are unchanged, and switching back restores every value. |
+| Region-scoped user | Illizi user | Writes to an Illizi facility: 201. Another region: 403. Lists only Illizi records (63 / 63). |
+| Dashboard | `/api/dashboard/summary`: all, by year, by facility, facility + year; one record left Pending | Scope 1 CO₂e, CO₂, CH₄ and N₂O equal the DB sums of Verified rows in all 5 views; the Pending record is excluded |
+| PostgreSQL 16 | Exhibits, all the checks above, and the full 100k file (two 50k halves) with `DB_TYPE=postgres` | Exhibits 30 / 30; checks above all pass with SQLite-identical numbers. 100k: 84,351 saved / 15,649 refused (same as SQLite); oracle **47,434 / 47,434**; groups **20,830 / 20,830**; 0 wrong acceptances or refusals; 1,897 / 1,897 ambiguous refused; 0 fidelity issues; 0 duplicates. |
+
+### 9.1 Findings and fixes
+
+| ID | Severity | Finding | Fix |
+|---|---|---|---|
+| F31 | Critical (deployment) | SQLAlchemy is not pinned. 2.1 maps a driver-less `postgresql://` URL to psycopg 3, but the requirements install psycopg2. The docker-compose URL therefore stopped the app at startup with "No module named 'psycopg'". | `config.py` maps `postgresql://` and `postgres://` to `postgresql+psycopg2://`. |
+| F32 | Critical (PostgreSQL) | `emissions.fuel_type` was VARCHAR(50), but catalog fuel names reach 75 characters and activity-factor labels 70. PostgreSQL refused the INSERT, so **every row of an import file containing one such row** was lost. SQLite ignores the length. | The column is now 255. Alembic `b7e2d4c91a05` widens existing PostgreSQL databases; this was tested from the previous head. |
+
+Tooling is in `audit/scope1_100k/`:
+- `exhibits_e2e.py`
+- `form_lib.mjs`, `form_parity.mjs`, `form_parity.py`, `form_cases.json`
+- `remaining_checks.py`
+- `pg_100k.py`; `harness.py` and `check.py` accept a `postgresql+psycopg2://` URL
+
+Results are in `results/`:
+- `exhibits_e2e.json`
+- `form_parity.json`
+- `remaining_checks_sqlite.json` and `remaining_checks_postgres.json`
+- `postgres_100k/`

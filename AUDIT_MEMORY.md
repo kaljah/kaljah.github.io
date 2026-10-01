@@ -177,6 +177,25 @@ Still open for review: S4/M9 claim "deprecated" but `new/server.rar`, `calculati
 
 ---
 
+## 4c. FIXED — Scope 1 Compendium exhibits, manual entry and PostgreSQL (2026-10-01)
+
+Report: audit/SCOPE1_100K_BULK_AUDIT_2026-10-01.md sections 8 and 9. Tests: new/server/tests/test_s1k_compendium_exhibits_2026_10_01.py, client src/__tests__/hhv.test.js.
+
+| ID | Status | Location | Issue |
+|----|--------|----------|-------|
+| S1K-F21 | FIXED | calculations/midstream.py AGRCalculator | Eq 6-18 CO2 balance ignored outlet shrinkage (Exhibit 6-17 2 % low). |
+| S1K-F22 | FIXED | calculations/vented_production.py tanks | GOR/chart and condensate default CH4 85 %; Compendium 27.4 % crude / 36.3 % condensate. |
+| S1K-F23 | FIXED | vented_production.py Table 6-22/6-24 | Tank factor scaled by separator CH4 (Exhibit 6-20 says not). |
+| S1K-F24 | FIXED | combustion.py, dispatcher Tier 3 combustion | Liquid/solid carbon content (Eq 4-5) ignored; catalog CO2 stored. |
+| S1K-F25 | FIXED | dispatcher._fuel_density | density_unit ignored (lb/gal read as kg/m3). |
+| S1K-F26 | FIXED | Scope1Form.jsx, utils/hhv.js | Form sent HHV as "BTU/unit": MJ/kg for a liquid read in Btu/gal (~7x). |
+| S1K-F27 | FIXED | vented.py LiquidsUnloadingCalculator | Eq 6-10 flow-line term not per event; SFR Mcf/day read as scf/day. |
+| S1K-F28 | FIXED | vented.py completions / AGV | Missing gas analysis silently 85 % or 70/10 % CH4/CO2; now required. |
+| S1K-F29 | FIXED | combustion.py FlaringCalculator, combustion_methods flare_voc | Unsourced 98.4/99.6/92 % flare defaults -> Eq 5-2 98 %, 2 %/0.5 % residual CH4; flare_voc N2O was 0. |
+| S1K-F30 | FIXED | UnloadingForm.jsx, Scope1Form.jsx, dispatcher | Form showed Plunger lift, server assumed non-plunger; Eq 6-10 labels wrong. Lift type now sent and required. |
+| S1K-F31 | FIXED | config.py | Driver-less postgresql:// resolved to psycopg3 under SQLAlchemy 2.1 (not installed): app could not start on docker-compose. |
+| S1K-F32 | FIXED | models.py Emission.fuel_type + migration b7e2d4c91a05 | VARCHAR(50) overflow on PostgreSQL (75-char fuel names) made whole import files fail. |
+
 ## 7. Work log
 
 - 2026-09-12 / 2026-09-13: Remediated all 54 audit findings across the GHG accounting platform.
@@ -231,3 +250,4 @@ Still open for review: S4/M9 claim "deprecated" but `new/server.rar`, `calculati
 - 2026-10-01 · Scope 1 100,000-row bulk import audit (audit/SCOPE1_100K_BULK_AUDIT_2026-10-01.md): 100k unique rows (Tier 1/2/3, every process, 113 unit spellings oracle-checked, 20,366 unit-equivalence groups) imported via the HTTP API and via the UI wizard into fresh DBs; API and UI DBs identical (83,147 records), UI table and feed match the DB. 100k file refused (50,000-row cap). Tier 1/2 conversions all correct; 19 findings logged OPEN in section 4b (S1K-F1..F19), incl. Tier 3 combustion CO2 = 0, tank kbbl / pneumatic m³ / AGV Mcf/day silent unit errors. No code changed.
 - 2026-10-01 · S1K-F1..F20 fixed (audit/SCOPE1_100K_BULK_AUDIT_2026-10-01.md §6): Tier 3 CO2 = 0, Coke Oven Gas basis, tank / pneumatic / vent-rate / T-P / Mt / quantity-cell / conflicting units refused or converted through the shared unit tables, unloading basis check, server hhv_unit, exact-only generic header mapping (activity, region ...), full Export CSV, table stale-response guard, up-front 50k refusal, shared unit vocabularies, thousands separators, Tier 2 catalog + site HHV in bulk (+ wizard Tier 2 card), engineered quantities; new F20 (AGV Tier 3 hours). Re-run of the same 100k rows via API and UI: oracle 47,434/47,434, groups 20,830/20,830, 0 must-refuse accepted, 0 ambiguous accepted, API = UI, UI table = DB, export 84,351/84,351. Backend 2,082 / 0 failed (+53 tests), validation 128, vitest 40, lint 0 errors.
 - 2026-10-01 · Second 100k run with new data (gen.py --seed 20261002; audit report §7): API and UI identical (84,391 records), oracle 47,433/47,433, groups 20,831/20,831, 1,884/1,884 ambiguous refused, 0 wrong acceptances / refusals, UI table and feed = DB, export 84,391/84,391. No new defects.
+- 2026-10-01 · Remaining Scope 1 checks (audit report §8–9): 30 Compendium exhibits end to end via the import path (30/30 after fixes S1K-F21..F29); manual form (Playwright, 9 cases) = CSV import 9/9 after F30; xlsx = csv 30/30; PUT edits recalculate exactly; GWP AR5/AR6/AR4 switch exact and reversible; region user scoped (201/403, list Illizi only); dashboard summary = DB sums in 5 views; PostgreSQL 16: exhibits, checks and the full 100k file clean (oracle 47,434/47,434, groups 20,830/20,830) after F31 (driver URL) and F32 (fuel_type 255 + migration). Backend tests/ 2,049 / 0 failed (+ root 55), validation 128, vitest 43.

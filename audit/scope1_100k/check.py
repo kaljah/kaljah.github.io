@@ -36,11 +36,22 @@ def load(args):
     with open(args.csv, newline="", encoding="utf-8") as f:
         for r in csv.DictReader(f):
             rows[r["source_ref"]] = r
-    con = sqlite3.connect(args.db)
-    con.row_factory = sqlite3.Row
+    sql = """SELECT e.*, f.name AS fac_name FROM emissions e LEFT JOIN facilities f
+             ON f.id = e.facility_id WHERE e.data_source_ref LIKE 'AUD-%%'"""
+    if args.db.startswith(("postgresql", "postgres://")):
+        # the same checks on a PostgreSQL import (DB_TYPE=postgres)
+        import psycopg2
+        import psycopg2.extras
+        con = psycopg2.connect(args.db.replace("postgresql+psycopg2://", "postgresql://"))
+        cur = con.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        cur.execute(sql)
+        result = cur
+    else:
+        con = sqlite3.connect(args.db)
+        con.row_factory = sqlite3.Row
+        result = con.execute(sql.replace("%%", "%"))
     db = {}
-    for r in con.execute("""SELECT e.*, f.name AS fac_name FROM emissions e LEFT JOIN facilities f
-                            ON f.id = e.facility_id WHERE e.data_source_ref LIKE 'AUD-%'"""):
+    for r in result:
         db.setdefault(r["data_source_ref"], []).append(dict(r))
     skipped = {}
     if args.skipped:

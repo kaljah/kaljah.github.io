@@ -1,0 +1,82 @@
+[
+ {
+  "check": "A. xlsx import == csv import (30 exhibit rows)",
+  "ok": true,
+  "detail": "missing=[] diffs=[] skipped=[]"
+ },
+ {
+  "check": "B0. manual entries created",
+  "ok": true,
+  "detail": "201 201"
+ },
+ {
+  "check": "B1. PUT quantity 5000 -> 8000 L recalculates like a new 8000 L entry",
+  "ok": true,
+  "detail": "http=200 got=(21.57013415161916, 0.0008749378374101877, 0.00017498756748203753, 21.641004116449388) ref=(21.57013415161916, 0.0008749378374101877, 0.00017498756748203753, 21.641004116449388) status=Verified"
+ },
+ {
+  "check": "B2. metadata-only PUT keeps the emissions",
+  "ok": true,
+  "detail": "http=200 (21.57013415161916, 0.0008749378374101877, 0.00017498756748203753, 21.641004116449388)"
+ },
+ {
+  "check": "C. GWP AR6: co2e == co2 + ch4 x 27.9 + n2o x 273.0 on every record; gas masses unchanged",
+  "ok": true,
+  "detail": "http=200 records=62 bad=[] gas_changed=0"
+ },
+ {
+  "check": "C. GWP AR4: co2e == co2 + ch4 x 25.0 + n2o x 298.0 on every record; gas masses unchanged",
+  "ok": true,
+  "detail": "http=200 records=62 bad=[] gas_changed=0"
+ },
+ {
+  "check": "C. GWP AR5: co2e == co2 + ch4 x 28.0 + n2o x 265.0 on every record; gas masses unchanged",
+  "ok": true,
+  "detail": "http=200 records=62 bad=[] gas_changed=0"
+ },
+ {
+  "check": "C. AR5 -> AR6 -> AR4 -> AR5 restores every record",
+  "ok": true,
+  "detail": "0 differ"
+ },
+ {
+  "check": "D1. region user can enter data for an own-region facility",
+  "ok": true,
+  "detail": "201"
+ },
+ {
+  "check": "D2. region user is refused for another region's facility",
+  "ok": true,
+  "detail": "403 {\"error\":\"Unauthorized for this facility\"}\n"
+ },
+ {
+  "check": "D3. region user lists only own-region records",
+  "ok": true,
+  "detail": "http=200 n=63 (Illizi rows in DB 63) other=0 regions=['Illizi']"
+ },
+ {
+  "check": "E. dashboard summary all: Scope 1 co2e / co2 / ch4 / n2o == DB sums of Verified rows",
+  "ok": true,
+  "detail": "dash=[1925094.2213, 532362.5241, 49726.7296, 1.4463] db=[1925094.2213, 532362.5241, 49726.7296, 1.4463]"
+ },
+ {
+  "check": "E. dashboard summary 2024: Scope 1 co2e / co2 / ch4 / n2o == DB sums of Verified rows",
+  "ok": true,
+  "detail": "dash=[1925061.7598, 532330.1689, 49726.7283, 1.446] db=[1925061.7598, 532330.1689, 49726.7283, 1.446]"
+ },
+ {
+  "check": "E. dashboard summary 2023: Scope 1 co2e / co2 / ch4 / n2o == DB sums of Verified rows",
+  "ok": true,
+  "detail": "dash=[32.4615, 32.3552, 0.0013, 0.0003] db=[32.4615, 32.3552, 0.0013, 0.0003]"
+ },
+ {
+  "check": "E. dashboard summary HM: Scope 1 co2e / co2 / ch4 / n2o == DB sums of Verified rows",
+  "ok": true,
+  "detail": "dash=[40.5769, 40.444, 0.0016, 0.0003] db=[40.5769, 40.444, 0.0016, 0.0003]"
+ },
+ {
+  "check": "E. dashboard summary HM-2023: Scope 1 co2e / co2 / ch4 / n2o == DB sums of Verified rows",
+  "ok": true,
+  "detail": "dash=[32.4615, 32.3552, 0.0013, 0.0003] db=[32.4615, 32.3552, 0.0013, 0.0003]"
+ }
+]

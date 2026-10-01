@@ -63,13 +63,24 @@ CUSTOM_FACTORS = [
 
 def boot(db_path, fresh=True):
     """Configure env, import the app and seed fixtures. Returns the Flask app."""
-    if fresh and os.path.exists(db_path):
-        for suffix in ("", "-wal", "-shm"):
-            try:
-                os.remove(db_path + suffix)
-            except OSError:
-                pass
-    os.environ["DATABASE_URL"] = "sqlite:///" + db_path
+    if db_path.startswith(("postgresql", "postgres://")):
+        # PostgreSQL: DB_TYPE=postgres + DATABASE_URL; a fresh run starts from an empty public schema
+        if fresh:
+            import sqlalchemy as sa
+            eng = sa.create_engine(db_path)
+            with eng.begin() as c:
+                c.execute(sa.text("DROP SCHEMA public CASCADE; CREATE SCHEMA public;"))
+            eng.dispose()
+        os.environ["DB_TYPE"] = "postgres"
+        os.environ["DATABASE_URL"] = db_path
+    else:
+        if fresh and os.path.exists(db_path):
+            for suffix in ("", "-wal", "-shm"):
+                try:
+                    os.remove(db_path + suffix)
+                except OSError:
+                    pass
+        os.environ["DATABASE_URL"] = "sqlite:///" + db_path
     os.environ.setdefault("SECRET_KEY", "audit-secret-key-not-for-production")
     os.environ["SEED_ADMIN"] = "false"
     os.environ.setdefault("FLASK_ENV", "development")
@@ -132,7 +143,7 @@ def run_csv(app, csv_path, global_factor_type="auto", mapping=None):
     import shutil
     import tempfile
 
-    fd, tmp = tempfile.mkstemp(suffix=".csv")
+    fd, tmp = tempfile.mkstemp(suffix=os.path.splitext(csv_path)[1] or ".csv")
     os.close(fd)
     shutil.copy(csv_path, tmp)
     t0 = time.time()
