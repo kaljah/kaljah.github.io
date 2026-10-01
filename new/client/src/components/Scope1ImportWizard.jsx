@@ -153,7 +153,7 @@ const Icon = {
 const COMP = ["c1","c2","c3","c4","c5","c6","c7","c8","c9","c10","co2_mol","n2_mol"];
 const PROCESS_CATALOGUE = [
   { key: "combustion",    label: "Combustion",             IconComp: Icon.Flame,     tier3Extra: ["hhv", ...COMP, "combustion_efficiency", "operating_temperature", "temp_unit", "operating_pressure", "press_unit", "z_factor"] },
-  { key: "flaring",       label: "Flaring",                IconComp: Icon.Flame,     tier3Extra: ["flare_type", "control_efficiency", ...COMP] },
+  { key: "flaring",       label: "Flaring",                IconComp: Icon.Flame,     tier3Extra: ["flare_type", "combustion_efficiency", "destruction_efficiency", "control_efficiency", ...COMP] },
   { key: "venting",       label: "Venting",                IconComp: Icon.Wind,      tier3Extra: ["vent_method", "disposition", "ch4_content", "co2_content"] },
   { key: "blowdown",      label: "Blowdowns",              IconComp: Icon.Zap,       tier3Extra: ["blowdown_pressure", "blowdown_events", "blowdown_temp", "blowdown_temp_unit", "blowdown_press_unit", "z_factor", "ch4_content", "co2_content"] },
   { key: "tank_flashing", label: "Tank Flashing",          IconComp: Icon.Container, tier3Extra: ["tank_gor", "tank_ch4_content", "tank_control_eff", "tank_api_gravity"] },
@@ -227,9 +227,10 @@ const FIELD_GROUPS = [
     IconComp: Icon.Flame,
     tier3Only: true,
     fields: [
-      { key: "combustion_efficiency", label: "Combustion Efficiency %", required: false, hint: "Defaults to 99.5 % for combustion" },
+      { key: "combustion_efficiency", label: "Combustion Efficiency %", required: false, hint: "Combustion: required at Tier 3. Flaring: % carbon to CO2, blank = 98" },
       { key: "flare_type",           label: "Flare Type",             required: false, hint: "elevated | enclosed_ground | air_assisted | steam_assisted" },
-      { key: "control_efficiency",   label: "Flare Control Efficiency %", required: false, hint: "Flare destruction efficiency %" },
+      { key: "destruction_efficiency", label: "Flare Destruction Efficiency %", required: false, hint: "Flaring: % of CH4 destroyed. Blank = 98 (99.5 enclosed)" },
+      { key: "control_efficiency",   label: "Flare Control Efficiency %", required: false, hint: "One flare efficiency for both carbon conversion and CH4 destruction" },
       { key: "operating_temperature",label: "Metering Temp",          required: false, hint: "Only for volumes in m3 / cf read at metering conditions" },
       { key: "temp_unit",            label: "Temp Unit",              required: false, hint: "C or F" },
       { key: "operating_pressure",   label: "Metering Pressure",      required: false, hint: "Only for volumes in m3 / cf read at metering conditions" },

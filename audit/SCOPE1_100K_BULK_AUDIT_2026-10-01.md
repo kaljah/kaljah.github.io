@@ -489,3 +489,14 @@ Results are in `results/`:
 - `form_parity.json`
 - `remaining_checks_sqlite.json` and `remaining_checks_postgres.json`
 - `postgres_100k/`
+
+### 9.2 Follow-up: measured flare efficiencies on the Tier 3 form
+
+The Tier 3 flaring form had no efficiency field, so every manual flaring entry used the default efficiencies. It now has two optional fields:
+
+- **Combustion efficiency (% carbon to CO₂), η_c:** blank = 98 %.
+- **Destruction efficiency (% CH₄ destroyed), η_d:** blank = 98 %, or 99.5 % for an enclosed ground flare.
+
+The flare-type options now show the default unburnt CH₄ for each type (the old pit label still said 95 %). The import template, the import wizard and the column mapping list `combustion_efficiency` and `destruction_efficiency` for flaring. `control_efficiency` still sets both when they are blank.
+
+Form = CSV holds for the new case: 95 % / 96 % gives CO₂ × 95/98 and CH₄ × 2 (case P10; 10 / 10 form cases identical).

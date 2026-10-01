@@ -1523,6 +1523,10 @@ const Scope1Form = () => {
             combustion_efficiency: formData.combustion_efficiency
               ? parseFloat(formData.combustion_efficiency) / 100.0
               : undefined,
+            // flaring: CH4 destroyed (eta_d), separate from the carbon conversion (eta_c)
+            destruction_efficiency: formData.destruction_efficiency
+              ? parseFloat(formData.destruction_efficiency) / 100.0
+              : undefined,
             flare_type: formData.flare_type || undefined,
           };
         })(),

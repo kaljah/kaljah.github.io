@@ -404,5 +404,52 @@
    "co2_content": "3",
    "unload_flare_eff": "0"
   }
+ },
+ {
+  "id": "P10-flare-T3-measured-eff",
+  "process": "Flaring",
+  "tier": "Tier 3",
+  "steps": [
+   [
+    "fill",
+    "Gas Volume Flared",
+    20000000
+   ],
+   [
+    "pick",
+    "Unit",
+    "scf"
+   ],
+   [
+    "fill",
+    "HHV",
+    "1020"
+   ],
+   [
+    "fill",
+    "CH₄ (%)",
+    80
+   ],
+   [
+    "fill",
+    "Combustion efficiency (% carbon",
+    95
+   ],
+   [
+    "fill",
+    "Destruction efficiency",
+    96
+   ]
+  ],
+  "csv": {
+   "process_type": "flaring",
+   "factor_type": "specific",
+   "quantity": "20000000",
+   "unit": "scf",
+   "hhv": "1020",
+   "c1": "80",
+   "combustion_efficiency": "95",
+   "destruction_efficiency": "96"
+  }
  }
 ]

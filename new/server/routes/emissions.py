@@ -737,6 +737,7 @@ def add_bulk_upload():
             "h2s",
             "flare_type",
             "control_efficiency",
+            "destruction_efficiency",
             "ch4_content",
             "co2_content",
             "combustion_efficiency",
@@ -1209,6 +1210,19 @@ def get_csv_template():
             "flare_type",
             "T3",
             "Flare design type: elevated | enclosed_ground | offshore_boom | air_assisted | steam_assisted. Default elevated.",
+        ),
+        (
+            "[T3-Flare] combustion_efficiency",
+            "combustion_efficiency",
+            "T3",
+            "Flaring: % of the flare gas carbon converted to CO2 (eta_c). Blank = 98 % (API Compendium 2021 Eq 5-2).",
+        ),
+        (
+            "[T3-Flare] destruction_efficiency",
+            "destruction_efficiency",
+            "T3",
+            "Flaring: % of the CH4 destroyed (eta_d). Blank = 98 %, 99.5 % for enclosed_ground. "
+            "control_efficiency sets both when these are blank.",
         ),
         (
             "[T3-Flare] ch4_content",
