@@ -1,0 +1,22 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\e2e
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/20/2026   5:29 PM            797 ghg-workflow.spec.js                                                 
+-a----         9/22/2026  12:37 PM          13682 test_bulk_csv_uploader.spec.js                                       
+-a----         9/30/2026   7:29 PM          10531 test_carbon_intensity_deep_audit.spec.js                             
+-a----         9/30/2026   7:29 PM          16585 test_dashboard_and_intensity_audit.spec.js                           
+-a----         9/21/2026   1:50 PM          17788 test_dashboard_deep_audit.spec.js                                    
+-a----         9/30/2026   7:29 PM          25974 test_qfull_e2e_ui.spec.js                                            
+-a----         9/22/2026   2:47 PM          34642 test_scope1_extended_scenarios.spec.js                               
+-a----         9/22/2026  10:46 AM          22192 test_scope1_form_engine.spec.js                                      
+-a----         9/30/2026   7:29 PM          36899 test_scope1_tier1_tier3_advanced.spec.js                             
+
+
+

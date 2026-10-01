@@ -1,0 +1,11 @@
+
+The command exited with code 0.
+Output:
+Listing tests:
+  [chromium] › dashboard_pom.spec.js:13:3 › GHG Emissions Dashboard - E2E Test Suite (POM Pattern) › 1. Core Dashboard Layout & Initial KPI Metrics Verification
+  [chromium] › dashboard_pom.spec.js:32:3 › GHG Emissions Dashboard - E2E Test Suite (POM Pattern) › 2. Dual GWP Horizon Dynamic Toggling (GWP-100 vs GWP-20)
+  [chromium] › dashboard_pom.spec.js:52:3 › GHG Emissions Dashboard - E2E Test Suite (POM Pattern) › 3. Organizational Hierarchy & Breakdown Table Interaction
+  [chromium] › dashboard_pom.spec.js:65:3 › GHG Emissions Dashboard - E2E Test Suite (POM Pattern) › 4. Executive Summary PDF Export Button State
+  [chromium] › dashboard_pom.spec.js:73:3 › GHG Emissions Dashboard - E2E Test Suite (POM Pattern) › 5. Responsive Mobile / Tablet Layout Validation
+Total: 5 tests in 1 file
+
