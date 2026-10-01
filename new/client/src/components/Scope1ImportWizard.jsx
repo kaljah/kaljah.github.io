@@ -515,6 +515,8 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [jobId, setJobId] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // a refused upload (e.g. over the server's size limit) stays visible in the wizard; the toast lasts 3 s
+  const [submitError, setSubmitError] = useState("");
   const [overwrite, setOverwrite] = useState(false);  // replace records that already exist
 
   // ── Access Control: fetch allowed regions on mount ─────────────────────────
@@ -559,6 +561,7 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
   const processFile = useCallback((f) => {
     if (!f) return;
     setParseError("");
+    setSubmitError("");
     const isExcel = f.name.toLowerCase().endsWith(".xlsx");
     if (isExcel) {
       setFile(f); setHeaders([]); setMapping({}); setStep(4);
@@ -605,6 +608,7 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
   // Submit
   const handleSubmit = async () => {
     setIsSubmitting(true);
+    setSubmitError("");
     const form = new FormData();
     form.append("file", file);
     form.append("global_factor_type", globalFactor);
@@ -618,7 +622,10 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
       setJobId(res.data.job_id);
       setStep(5);
     } catch (err) {
-      toast.error("Upload error: " + (err.response?.data?.error || err.message));
+      const msg = err.response?.data?.error
+        || (err.response?.status === 413 ? "The file is larger than the server's upload limit; split it into smaller files." : err.message);
+      setSubmitError(msg);
+      toast.error("Upload error: " + msg);
     } finally { setIsSubmitting(false); }
   };
 
@@ -926,6 +933,14 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
               onComplete={() => { if (onUploadSuccess) onUploadSuccess(); onClose(); }}
               onCancel={onClose}
             />
+          </div>
+        )}
+
+        {step === 4 && submitError && (
+          <div className="s1w-submit-error" role="alert"
+               style={{ margin: "0 24px 8px", padding: "10px 14px", borderRadius: 8, background: "#fef2f2",
+                        border: "1px solid #fecaca", color: "#991b1b", fontSize: "0.85rem" }}>
+            Upload refused: {submitError}
           </div>
         )}
 

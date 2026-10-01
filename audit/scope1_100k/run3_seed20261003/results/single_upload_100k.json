@@ -1,0 +1,15 @@
+{
+ "file": "scope1_audit_100k.csv (100,000 rows, one upload)",
+ "seconds_ui": 186.8,
+ "imported": 84165,
+ "skipped": 15835,
+ "peak_rss_mb_before_batched_flush": 1141,
+ "rss_after_mb_before": 0,
+ "peak_rss_mb_after_batched_flush": 346,
+ "rss_after_mb_after": 0,
+ "identical_to_two_half_run": true,
+ "postgres_one_go": {
+  "seconds": 175,
+  "records": 84165
+ }
+}

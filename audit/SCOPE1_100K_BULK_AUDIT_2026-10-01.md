@@ -539,3 +539,26 @@ Files are in `audit/scope1_100k/run3_seed20261003/`:
 - export check;
 - upload jobs;
 - screenshots.
+
+### 10.2 Follow-up: the 50,000-row limit removed
+
+The import no longer has a row limit. The whole file is still saved in one transaction, so it is all or nothing.
+
+| | Result |
+|---|---|
+| 100k file (seed 20261003), one upload through the UI | 84,165 imported / 15,835 skipped in 187 s; **identical, record by record,** to the two-half upload |
+| Same file, one upload on PostgreSQL 16 | 84,165 records, the same total, 175 s |
+| Oracle / groups / acceptance / fidelity | 47,228 / 47,228; 20,817 / 20,817; 0 wrong; 0 issues |
+| Server memory, before the change below | 1,141 MB peak; 758 MB still held afterwards |
+| Server memory, after | **346 MB peak; 199 MB afterwards** |
+
+Without the cap, memory would have grown with the file, because every row object was held until the commit. Scope 1, 2 and 3 imports now flush their rows to the database every 2,000 rows, inside the same transaction, and release them from the session.
+
+Three things are unchanged by the batching:
+- An in-file repeat of a row that was already flushed is reloaded by id. It is still reported as "earlier in this file", and an overwrite of it is not logged as an overwrite of a saved record.
+- The anomaly history is the data that existed when the import started.
+- A failure at commit still rolls back every flushed row.
+
+Tests cover all three with a flush size of 3.
+
+The only size limit left is the server's 50 MB request size (`MAX_CONTENT_LENGTH`, set by environment variable), about 220,000 rows of this file's width. Above it, the wizard used to show only a 3-second toast with Werkzeug's text ("The data value transmitted exceeds the capacity limit"). The server now says "The file is larger than the 50 MB upload limit; split it into smaller files. No rows were saved.", and the wizard keeps this message on screen next to Start Import.
