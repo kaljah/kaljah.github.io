@@ -1,0 +1,31 @@
+
+The command exited with code 0.
+Output:
+__table_args__ = (
+        db.Index("ix_emissions_fac_yr_status", "facility_id", "year", "status")
+---
+__table_args__ = (
+        db.UniqueConstraint(
+            "facility_id", "month", "year", name="_facility_month_year_uc"
+        )
+---
+__table_args__ = (db.CheckConstraint("id = 1", name="base_year_singleton")
+---
+__table_args__ = (
+        db.Index("ix_scope2_fac_yr_status", "facility_id", "year", "status")
+---
+__table_args__ = (
+        db.Index("ix_scope3_fac_yr_status", "facility_id", "year", "status")
+---
+__table_args__ = (
+        db.Index("ix_cap_fac_yr_mod_pol", "facility_id", "year", "source_module", "pollutant")
+---
+__table_args__ = (
+        db.UniqueConstraint("standard_name", "pollutant", name="_cap_standard_pollutant_uc")
+---
+__table_args__ = (
+        db.Index("ix_flare_fac_yr_net", "facility_id", "year", "network")
+---
+__table_args__ = (
+        db.Index("ix_fac_partner_date", "facility_id", "partner_id", "effective_start_date")
+

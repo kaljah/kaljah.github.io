@@ -1,0 +1,24 @@
+
+The command exited with code 0.
+Output:
+def get_sources():
+def add_source():
+def delete_source(source_id):
+def bulk_import_sources():
+def get_mitigations():
+def add_mitigation():
+def delete_mitigation(mitigation_id):
+def get_reporting_metadata():
+def save_reporting_metadata():
+def get_production_years():
+def get_available_filters():
+def bulk_import_mitigation():
+def get_all_goals():
+def add_or_update_goal():
+def delete_goal(year):
+def get_base_years():
+def add_base_year_recalculation():
+def delete_base_year_recalculation(rec_id):
+def manage_sbti():
+def _verified_totals_by_scope(year, allowed_fids):
+

@@ -1,0 +1,22 @@
+
+The command exited with code 0.
+Output:
+ode") or "").strip()
+    if code:
+        if code.lower() in batch.setdefault("codes", set()):
+            return None, [f"Facility code '{code}' appears more than once in the file"]
+        holder = Facility.query.filter_by(code=code).first()
+        if holder is not None and holder.name.strip().lower() != name.lower():
+            return None, [f"Facility code '{code}' is already used by '{holder.name}'"]
+
+    existing = Facility.query.filter(db.func.lower(Facility.name) == name.lower()).first()
+
+    # BUG-001: region-restricted superusers may only create/overwrite facilities in their
+    # own region (same rule as POST /api/facilities/import).
+    from extensions import db
+    from models import User
+
+    from utils import facility_in_user_scope, facility_change_allowed
+
+    uploader = 
+

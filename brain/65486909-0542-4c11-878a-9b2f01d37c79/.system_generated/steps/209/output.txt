@@ -1,0 +1,60 @@
+
+The command exited with code 0.
+Output:
+ids is not None and f_int not in allowed_fids:
+            return jsonify({"error": "Unauthorized facility"}), 403
+
+        # Batch facility lookup to prevent N+1 queries
+        fac_map = {f.id: f.name for f in Facility.query.all()}
+
+        # 1. SCOPE 1
+        if scope in ["all", "1", "scope1"]:
+            q1 = Emission.query
+            if y_int:
+                q1 = q1.filter_by(year=y_int)
+            if m_int:
+                q1 = q1.filter_by(month=m_int)
+            if f_int:
+                q1 = q1.filter_by(facility_id=f_int)
+            elif allowed_fids is not None:
+                q1 = q1.filter(Emission.facility_id.in_(allowed_fids))
+            if process_type and process_type != "all":
+                q1 = q1.filter_by(process_type=process_type)
+            if division and division != "all":
+                q1 = q1.filter(Emission.division.ilike(f"%{division.strip()}%"))
+            if field and field != "all":
+                q1 = q1.filter(Emission.field.ilike(f"%{field.strip()}%"))
+            if method and method != "all":
+                q1 = q1.filter(Emission.calc_method.ilike(f"%{method.strip()}%"))
+            if search:
+                s_term = search.strip()
+                q1 = q1.filter(
+                    or_(
+                        Emission.process_type.ilike(f"%{s_term}%"),
+                        Emission.fuel_type.ilike(f"%{s_term}%"),
+                        Emission.equipment_id.ilike(f"%{s_term}%"),
+                        Emission.group_name.ilike(f"%{s_term}%"),
+                    )
+                )
+            q1 = q1.filter(Emission.status == "Verified")
+            for e in q1.all():
+                m_val = e.month if e.month is not None else 1
+                emissions_data.append(
+                    {
+                        "scope": 1,
+                        "date": f"{e.year or 0}-{m_val:02d}-01",
+                        "facility_name": fac_map.get(e.facility_id, "Unknown"),
+                        "process_type": e.process_type or "N/A",
+                        "fuel_type": e.fuel_type or "N/A",
+                        "amount": e.quantity or 0,
+                        "unit": e.unit or "",
+                        "co2_emissions": e.co2_emissions or 0,
+                        "ch4_emissions": e.ch4_emissions or 0,
+                        "n2o_emissions": e.n2o_emissions or 0,
+                        "total_co2e": e.co2e_total or 0,
+                    }
+                )
+
+        # 2. SCOPE 2
+        
+

@@ -1,0 +1,17 @@
+
+The command exited with code 0.
+Output:
+Facility.query.all()
+Facility.query.filter(
+CustomFactor.query.filter(CustomFactor.is_archived.is_(False)).all()
+Emission.query.filter(Emission.status.in_(live)).with_entities(
+Scope2Emission.query.filter(Scope2Emission.status.in_(live)).with_entities(
+Scope3Emission.query.filter(Scope3Emission.status.in_(live)).with_entities(
+User.query.filter_by(
+EmissionSource.query.filter(
+ProductionData.query.filter_by(
+Facility.query.filter_by(code=code).first()
+Facility.query.filter(db.func.lower(Facility.name) == name.lower()).first()
+_FacCheck.query.filter(_FacCheck.name.ilike(fac_raw)).first()
+Facility.query.all() if allowed is None else Facility.query.filter(Facility.id.in_(allowed)).all()
+
