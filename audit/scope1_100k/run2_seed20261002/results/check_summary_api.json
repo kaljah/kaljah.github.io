@@ -1,0 +1,6403 @@
+{
+ "counts": {
+  "rows": 100000,
+  "acceptance_ok": 97253,
+  "oracle_checked": 47433,
+  "oracle_ok": 47433,
+  "ambiguous_rows": 1884,
+  "ambiguous_rejected": 1884,
+  "either_accepted": 863,
+  "groups_checked": 20831
+ },
+ "by_family": {
+  "T1_COMB": {
+   "rows": 16000,
+   "rejected": 7221,
+   "accepted": 8779,
+   "oracle_checked": 8779,
+   "groups_checked": 2497
+  },
+  "T1_MOBILE": {
+   "rows": 2000,
+   "accepted": 1105,
+   "oracle_checked": 1105,
+   "rejected": 895,
+   "groups_checked": 311
+  },
+  "T1_FLARE": {
+   "rows": 4000,
+   "accepted": 4000,
+   "oracle_checked": 4000,
+   "groups_checked": 800
+  },
+  "T1_VENT": {
+   "rows": 1500,
+   "accepted": 1500,
+   "oracle_checked": 1500,
+   "groups_checked": 300
+  },
+  "T1_AGV": {
+   "rows": 2500,
+   "accepted": 2500,
+   "oracle_checked": 2500,
+   "groups_checked": 500
+  },
+  "T1_COMPL": {
+   "rows": 1500,
+   "accepted": 1500,
+   "oracle_checked": 1500
+  },
+  "T1_UNLOAD": {
+   "rows": 2000,
+   "accepted": 1334,
+   "oracle_checked": 1334,
+   "rejected": 666,
+   "groups_checked": 667
+  },
+  "T1_CHEM": {
+   "rows": 3000,
+   "accepted": 3000,
+   "oracle_checked": 3000,
+   "groups_checked": 600
+  },
+  "T1_DRILL": {
+   "rows": 1000,
+   "accepted": 1000,
+   "oracle_checked": 1000,
+   "groups_checked": 333
+  },
+  "T1_COMPONENT": {
+   "rows": 4000,
+   "accepted": 4000,
+   "oracle_checked": 4000,
+   "groups_checked": 1333
+  },
+  "T1_ACTIVITY": {
+   "rows": 3500,
+   "accepted": 3500,
+   "groups_checked": 1167
+  },
+  "T1_TANK": {
+   "rows": 1000,
+   "accepted": 1000,
+   "oracle_checked": 1000,
+   "groups_checked": 200
+  },
+  "T2_CF": {
+   "rows": 16000,
+   "accepted": 13715,
+   "oracle_checked": 13715,
+   "rejected": 2285,
+   "groups_checked": 1984
+  },
+  "T2_COMPL": {
+   "rows": 1500,
+   "accepted": 1500,
+   "groups_checked": 500
+  },
+  "T2_UNLOAD": {
+   "rows": 1500,
+   "accepted": 1500,
+   "groups_checked": 750
+  },
+  "T2_AGV": {
+   "rows": 1500,
+   "accepted": 1500,
+   "groups_checked": 375
+  },
+  "T2_FUG": {
+   "rows": 1500,
+   "accepted": 1500,
+   "groups_checked": 750
+  },
+  "T3_COMB": {
+   "rows": 6000,
+   "accepted": 6000,
+   "oracle_checked": 1500,
+   "groups_checked": 1500
+  },
+  "T3_FLARE": {
+   "rows": 3500,
+   "accepted": 3500,
+   "groups_checked": 700
+  },
+  "T3_COMPL": {
+   "rows": 2500,
+   "accepted": 2500,
+   "groups_checked": 714
+  },
+  "T3_UNLOAD": {
+   "rows": 2000,
+   "accepted": 2000,
+   "groups_checked": 667
+  },
+  "T3_BLOW": {
+   "rows": 3000,
+   "accepted": 3000,
+   "groups_checked": 600
+  },
+  "T3_TANK": {
+   "rows": 2500,
+   "accepted": 2500,
+   "groups_checked": 500
+  },
+  "T3_PNEU": {
+   "rows": 2000,
+   "accepted": 2000,
+   "groups_checked": 500
+  },
+  "T3_AGR": {
+   "rows": 2000,
+   "accepted": 2000,
+   "groups_checked": 500
+  },
+  "T3_DEHY": {
+   "rows": 1500,
+   "accepted": 1500,
+   "groups_checked": 375
+  },
+  "T3_FUG": {
+   "rows": 2000,
+   "accepted": 2000,
+   "groups_checked": 658
+  },
+  "T3_STOICH": {
+   "rows": 1500,
+   "accepted": 1500,
+   "oracle_checked": 1500,
+   "groups_checked": 300
+  },
+  "T3_AGV": {
+   "rows": 1500,
+   "accepted": 1500,
+   "groups_checked": 500
+  },
+  "T3_VENTGAS": {
+   "rows": 1000,
+   "accepted": 1000,
+   "oracle_checked": 1000,
+   "groups_checked": 250
+  },
+  "NEG": {
+   "rows": 5000,
+   "rejected": 4542,
+   "accepted": 458
+  }
+ },
+ "reject_reasons": [
+  [
+   "T2_CF: A heating value (HHV) is required to apply an energy-based factor to a physical unit",
+   502
+  ],
+  [
+   "T1_COMB: 'sm3' is a gas volume but this fuel's heating value is per gal of liquid",
+   288
+  ],
+  [
+   "T1_COMB: 'mmscf' is a gas volume but this fuel's heating value is per gal of liquid",
+   286
+  ],
+  [
+   "T1_COMB: 'mscf' is a gas volume but this fuel's heating value is per gal of liquid",
+   282
+  ],
+  [
+   "NEG: Missing quantity.",
+   228
+  ],
+  [
+   "T1_COMB: 'scf' is a gas volume but this fuel's heating value is per gal of liquid",
+   218
+  ],
+  [
+   "T1_COMB: 'nm3' is a gas volume but this fuel's heating value is per gal of liquid",
+   217
+  ],
+  [
+   "NEG: Missing unit. Provide the activity unit (e.g. MMBtu, scf, gal, tonne).",
+   214
+  ],
+  [
+   "T1_COMB: 'mcf' is a gas volume but this fuel's heating value is per gal of liquid",
+   207
+  ],
+  [
+   "NEG: 'year' must be between 1900 and 2027",
+   198
+  ],
+  [
+   "T2_CF: Factor per tonne applied to 'scf' needs the fuel density",
+   186
+  ],
+  [
+   "T2_CF: Factor per scf applied to 'tonne' needs the fuel density",
+   186
+  ],
+  [
+   "T1_COMB: Activity unit 'm3' needs the fuel density to use a heating value tabulated per short_ton",
+   155
+  ],
+  [
+   "T1_COMB: Activity unit 'lb' needs the fuel density to use a heating value tabulated per gal",
+   150
+  ],
+  [
+   "T1_COMB: Activity unit 'lb' needs the fuel density to use a heating value tabulated per scf",
+   132
+  ],
+  [
+   "T1_COMB: 'gal' is a liquid volume but this fuel's heating value is per scf of gas",
+   132
+  ],
+  [
+   "T1_COMB: Activity unit 'kg' needs the fuel density to use a heating value tabulated per gal",
+   129
+  ],
+  [
+   "T1_COMB: Activity unit 'mmscf' needs the fuel density to use a heating value tabulated per short_ton",
+   128
+  ],
+  [
+   "T1_COMB: 'l' is a liquid volume but this fuel's heating value is per scf of gas",
+   126
+  ],
+  [
+   "T1_COMB: Activity unit 'mscf' needs the fuel density to use a heating value tabulated per short_ton",
+   120
+  ],
+  [
+   "T1_COMB: Activity unit 'kg' needs the fuel density to use a heating value tabulated per scf",
+   114
+  ],
+  [
+   "T1_COMB: Activity unit 'sm3' needs the fuel density to use a heating value tabulated per short_ton",
+   111
+  ],
+  [
+   "T2_CF: Factor unit 'tonne/well' is per well but the activity is in 'kg'",
+   111
+  ],
+  [
+   "NEG: 'ton' is ambiguous in a file: write 'tonne' (metric, 1,000 kg) or 'short_ton' (2,000 lb). On the forms 'ton' i",
+   109
+  ],
+  [
+   "T1_COMB: 'bbl' is a liquid volume but this fuel's heating value is per scf of gas",
+   107
+  ],
+  [
+   "NEG: Unknown unit 'mmscf/d'",
+   107
+  ],
+  [
+   "T2_CF: Factor per bbl applied to 'kg' needs the fuel density",
+   105
+  ],
+  [
+   "NEG: Calculation error for 'tank_flashing': Contradicting units on the row: unit 'bbl' and tank_unit 'm3'",
+   105
+  ],
+  [
+   "T2_CF: Factor per mmscf applied to 'tonne' needs the fuel density",
+   104
+  ],
+  [
+   "NEG: 'tons' is ambiguous in a file: write 'tonne' (metric, 1,000 kg) or 'short_ton' (2,000 lb). On the forms 'ton' ",
+   104
+  ],
+  [
+   "T2_CF: Factor per gal applied to 'kg' needs the fuel density",
+   101
+  ],
+  [
+   "NEG: Calculation error for 'tank_flashing': Contradicting units on the row: unit 'bbl' and tank_unit 'gal'",
+   101
+  ],
+  [
+   "T2_CF: Factor per l applied to 'kg' needs the fuel density",
+   100
+  ],
+  [
+   "T2_CF: Factor unit 'kg/device' is per device but the activity is in 'kg'",
+   98
+  ],
+  [
+   "NEG: Unknown unit 'mm3'",
+   98
+  ],
+  [
+   "T1_UNLOAD: Liquids unloading is counted in events (per-event factors) or wells (per well-year factors), not 'components'",
+   97
+  ],
+  [
+   "T2_CF: Factor per m3 applied to 'tonne' needs the fuel density",
+   97
+  ],
+  [
+   "T2_CF: Factor per kg applied to 'scf' needs the fuel density",
+   94
+  ],
+  [
+   "T2_CF: Factor unit 'tonne/event' is per event but the activity is in 'kg'",
+   93
+  ],
+  [
+   "T1_UNLOAD: Liquids unloading is counted in events (per-event factors) or wells (per well-year factors), not 'each'",
+   92
+  ],
+  [
+   "T1_UNLOAD: Liquids unloading is counted in events (per-event factors) or wells (per well-year factors), not 'devices'",
+   90
+  ],
+  [
+   "T2_CF: 'bbl' is a liquid volume but this fuel's heating value is per scf of gas",
+   90
+  ],
+  [
+   "T2_CF: Factor per lb applied to 'scf' needs the fuel density",
+   89
+  ],
+  [
+   "T2_CF: Factor per short_ton applied to 'scf' needs the fuel density",
+   89
+  ],
+  [
+   "T1_UNLOAD: Liquids unloading is counted in events (per-event factors) or wells (per well-year factors), not 'pcs'",
+   88
+  ],
+  [
+   "T1_COMB: Activity unit 'kilograms' needs the fuel density to use a heating value tabulated per gal",
+   87
+  ],
+  [
+   "T1_COMB: Activity unit 'grams' needs the fuel density to use a heating value tabulated per gal",
+   86
+  ],
+  [
+   "T1_COMB: 'cf' is a gas volume but this fuel's heating value is per gal of liquid",
+   84
+  ],
+  [
+   "T2_CF: 'scf' is a gas volume but this fuel's heating value is per gal of liquid",
+   84
+  ],
+  [
+   "NEG: Invalid date '2024-13': use YYYY-MM, YYYY-MM-DD or MM/YYYY",
+   84
+  ],
+  [
+   "T1_COMB: Activity unit 'short_tons' needs the fuel density to use a heating value tabulated per gal",
+   83
+  ],
+  [
+   "T1_UNLOAD: Liquids unloading is counted in events (per-event factors) or wells (per well-year factors), not 'sources'",
+   82
+  ],
+  [
+   "T1_COMB: Activity unit 'g' needs the fuel density to use a heating value tabulated per gal",
+   81
+  ],
+  [
+   "T1_COMB: 'gallons' is a liquid volume but this fuel's heating value is per scf of gas",
+   81
+  ],
+  [
+   "T1_COMB: Activity unit 'pounds' needs the fuel density to use a heating value tabulated per gal",
+   81
+  ],
+  [
+   "T2_CF: Factor per mscf applied to 'tonne' needs the fuel density",
+   80
+  ],
+  [
+   "NEG: 'Natural Gas' is a combustion factor and does not apply to process 'pneumatic'",
+   78
+  ],
+  [
+   "T1_COMB: Activity unit 't' needs the fuel density to use a heating value tabulated per gal",
+   77
+  ],
+  [
+   "T1_COMB: Activity unit 'short ton' needs the fuel density to use a heating value tabulated per scf",
+   76
+  ],
+  [
+   "T1_COMB: Activity unit 'lbs' needs the fuel density to use a heating value tabulated per gal",
+   76
+  ],
+  [
+   "T1_COMB: Activity unit 'scf' needs the fuel density to use a heating value tabulated per short_ton",
+   76
+  ],
+  [
+   "T2_CF: Activity unit 'bbl' needs the fuel density to use a heating value tabulated per short_ton",
+   76
+  ],
+  [
+   "T1_COMB: 'ft3' is a gas volume but this fuel's heating value is per gal of liquid",
+   75
+  ],
+  [
+   "T1_COMB: Activity unit 'metric_ton' needs the fuel density to use a heating value tabulated per gal",
+   75
+  ],
+  [
+   "T1_COMB: Activity unit 'metric ton' needs the fuel density to use a heating value tabulated per gal",
+   74
+  ],
+  [
+   "T1_COMB: Activity unit 'long_ton' needs the fuel density to use a heating value tabulated per gal",
+   74
+  ],
+  [
+   "T1_COMB: 'mmsm3' is a gas volume but this fuel's heating value is per gal of liquid",
+   74
+  ],
+  [
+   "T1_COMB: Activity unit 'tonne' needs the fuel density to use a heating value tabulated per scf",
+   74
+  ],
+  [
+   "NEG: Unknown unit 'dth'",
+   74
+  ],
+  [
+   "T1_UNLOAD: Liquids unloading is counted in events (per-event factors) or wells (per well-year factors), not 'completions'",
+   72
+  ],
+  [
+   "T1_COMB: Activity unit 'pound' needs the fuel density to use a heating value tabulated per gal",
+   71
+  ],
+  [
+   "T1_COMB: Activity unit 'tonne' needs the fuel density to use a heating value tabulated per gal",
+   70
+  ],
+  [
+   "T1_COMB: Activity unit 'kilogram' needs the fuel density to use a heating value tabulated per scf",
+   70
+  ],
+  [
+   "T1_COMB: 'liters' is a liquid volume but this fuel's heating value is per scf of gas",
+   70
+  ],
+  [
+   "NEG: Unknown unit 'gcal'",
+   70
+  ],
+  [
+   "T1_COMB: Activity unit 'short_ton' needs the fuel density to use a heating value tabulated per gal",
+   69
+  ],
+  [
+   "T1_COMB: Activity unit 'kgs' needs the fuel density to use a heating value tabulated per scf",
+   69
+  ],
+  [
+   "NEG: 'electricity' is a Scope 2 (purchased energy) source; import it with the Scope 2 template",
+   69
+  ],
+  [
+   "T1_COMB: Activity unit 'long ton' needs the fuel density to use a heating value tabulated per gal",
+   68
+  ],
+  [
+   "T1_COMB: Activity unit 'tonnes' needs the fuel density to use a heating value tabulated per gal",
+   68
+  ],
+  [
+   "T1_COMB: 'barrels' is a liquid volume but this fuel's heating value is per scf of gas",
+   68
+  ],
+  [
+   "T1_COMB: Activity unit 'us_ton' needs the fuel density to use a heating value tabulated per gal",
+   68
+  ],
+  [
+   "T1_COMB: Activity unit 'metric_tons' needs the fuel density to use a heating value tabulated per scf",
+   68
+  ],
+  [
+   "T1_COMB: Activity unit 'nm3' needs the fuel density to use a heating value tabulated per short_ton",
+   68
+  ],
+  [
+   "T1_COMB: Activity unit 'short ton' needs the fuel density to use a heating value tabulated per gal",
+   68
+  ],
+  [
+   "NEG: Calculation error for 'pneumatic': Pneumatic bleed rate unit: Unknown volume or volume-rate unit 'furlongs' (u",
+   67
+  ],
+  [
+   "NEG: Calculation error for 'combustion': Unknown temperature unit 'Celsius degrees' (use C, F, K or R)",
+   67
+  ],
+  [
+   "NEG: 'Mt' is ambiguous (megatonne or metric ton): write 'tonne' (1,000 kg)",
+   67
+  ],
+  [
+   "NEG: 'steam' is a Scope 2 (purchased energy) source; import it with the Scope 2 template",
+   67
+  ],
+  [
+   "T1_COMB: Activity unit 'grams' needs the fuel density to use a heating value tabulated per scf",
+   66
+  ],
+  [
+   "NEG: 'MT' is ambiguous (megatonne or metric ton): write 'tonne' (1,000 kg)",
+   66
+  ],
+  [
+   "NEG: 'Natural Gas' is a combustion factor and does not apply to process 'nitric_acid_production'",
+   66
+  ],
+  [
+   "NEG: Calculation error for 'pneumatic': Pneumatic bleed rate unit: Unknown volume or volume-rate unit 'lb/hr' (use ",
+   66
+  ],
+  [
+   "T1_COMB: Activity unit 'pounds' needs the fuel density to use a heating value tabulated per scf",
+   65
+  ],
+  [
+   "T1_COMB: Activity unit 'mcf' needs the fuel density to use a heating value tabulated per short_ton",
+   65
+  ],
+  [
+   "NEG: Unknown unit 'toe'",
+   65
+  ],
+  [
+   "T1_COMB: Activity unit 'kgs' needs the fuel density to use a heating value tabulated per gal",
+   64
+  ],
+  [
+   "T1_COMB: Activity unit 'long ton' needs the fuel density to use a heating value tabulated per scf",
+   64
+  ],
+  [
+   "NEG: Calculation error for 'combustion': Unknown temperature unit 'deg' (use C, F, K or R)",
+   64
+  ],
+  [
+   "T1_COMB: Activity unit 'us_ton' needs the fuel density to use a heating value tabulated per scf",
+   63
+  ],
+  [
+   "T1_COMB: Activity unit 'gram' needs the fuel density to use a heating value tabulated per gal",
+   63
+  ],
+  [
+   "NEG: Calculation error for 'pneumatic': Pneumatic bleed rate unit: Unknown volume or volume-rate unit 'kg/hr' (use ",
+   62
+  ],
+  [
+   "T1_MOBILE: 'mmscf' is a gas volume but this fuel's heating value is per gal of liquid",
+   61
+  ],
+  [
+   "T1_COMB: Activity unit 'g' needs the fuel density to use a heating value tabulated per scf",
+   60
+  ],
+  [
+   "T1_COMB: Activity unit 'lbs' needs the fuel density to use a heating value tabulated per scf",
+   60
+  ],
+  [
+   "NEG: 'mt' is ambiguous (megatonne or metric ton): write 'tonne' (1,000 kg)",
+   60
+  ],
+  [
+   "T1_COMB: Activity unit 't' needs the fuel density to use a heating value tabulated per scf",
+   59
+  ],
+  [
+   "T1_COMB: Activity unit 'kilograms' needs the fuel density to use a heating value tabulated per scf",
+   59
+  ],
+  [
+   "T1_MOBILE: 'sm3' is a gas volume but this fuel's heating value is per gal of liquid",
+   59
+  ],
+  [
+   "NEG: Calculation error for 'tank_flashing': Tank throughput: 'tonne' is not a liquid volume (use bbl, kbbl, m3, gal",
+   59
+  ],
+  [
+   "NEG: Calculation error for 'tank_flashing': Tank throughput: 'MMBtu' is not a liquid volume (use bbl, kbbl, m3, gal",
+   59
+  ],
+  [
+   "T1_COMB: Activity unit 'metric_tons' needs the fuel density to use a heating value tabulated per gal",
+   58
+  ],
+  [
+   "T1_COMB: 'ksm3' is a gas volume but this fuel's heating value is per gal of liquid",
+   58
+  ],
+  [
+   "T1_COMB: 'mmbbl' is a liquid volume but this fuel's heating value is per scf of gas",
+   57
+  ],
+  [
+   "T1_MOBILE: 'mscf' is a gas volume but this fuel's heating value is per gal of liquid",
+   57
+  ],
+  [
+   "T1_COMB: Activity unit 'metric ton' needs the fuel density to use a heating value tabulated per scf",
+   56
+  ],
+  [
+   "T1_COMB: Activity unit 'kilogram' needs the fuel density to use a heating value tabulated per gal",
+   56
+  ],
+  [
+   "T1_COMB: 'kbbl' is a liquid volume but this fuel's heating value is per scf of gas",
+   55
+  ],
+  [
+   "T1_COMB: Activity unit 'metric_ton' needs the fuel density to use a heating value tabulated per scf",
+   55
+  ],
+  [
+   "NEG: Calculation error for 'tank_flashing': Tank throughput: 'scf' is a gas volume; give the liquid volume (bbl, m3",
+   55
+  ],
+  [
+   "T1_COMB: Activity unit 'tonnes' needs the fuel density to use a heating value tabulated per scf",
+   54
+  ],
+  [
+   "T1_COMB: 'liter' is a liquid volume but this fuel's heating value is per scf of gas",
+   54
+  ],
+  [
+   "NEG: 'Natural Gas' is a combustion factor and does not apply to process 'tank_flashing'",
+   53
+  ],
+  [
+   "NEG: Calculation error for 'combustion': Unknown pressure unit 'kg/cm2' (use psig, psia, barg, bara, kPa, kPag, MPa",
+   53
+  ],
+  [
+   "T1_COMB: 'mbbl' is a liquid volume but this fuel's heating value is per scf of gas",
+   52
+  ],
+  [
+   "T1_COMB: Activity unit 'l' needs the fuel density to use a heating value tabulated per short_ton",
+   52
+  ],
+  [
+   "T1_COMB: 'gallon' is a liquid volume but this fuel's heating value is per scf of gas",
+   52
+  ],
+  [
+   "T1_COMB: Activity unit 'cubic_meters' needs the fuel density to use a heating value tabulated per short_ton",
+   52
+  ],
+  [
+   "T1_COMB: Activity unit 'long_ton' needs the fuel density to use a heating value tabulated per scf",
+   52
+  ],
+  [
+   "T1_COMB: Activity unit 'short_ton' needs the fuel density to use a heating value tabulated per scf",
+   50
+  ],
+  [
+   "NEG: Calculation error for 'tank_flashing': Tank throughput: 'kg' is not a liquid volume (use bbl, kbbl, m3, gal or",
+   49
+  ],
+  [
+   "NEG: 'purchased_electricity' is a Scope 2 (purchased energy) source; import it with the Scope 2 template",
+   49
+  ],
+  [
+   "T1_COMB: Activity unit 'short_tons' needs the fuel density to use a heating value tabulated per scf",
+   48
+  ],
+  [
+   "T1_COMB: Activity unit 'pound' needs the fuel density to use a heating value tabulated per scf",
+   48
+  ],
+  [
+   "T1_COMB: Activity unit 'gram' needs the fuel density to use a heating value tabulated per scf",
+   48
+  ],
+  [
+   "T1_MOBILE: 'mcf' is a gas volume but this fuel's heating value is per gal of liquid",
+   46
+  ],
+  [
+   "NEG: Invalid quantity: N/A (must be a non-negative number)",
+   45
+  ],
+  [
+   "T1_COMB: Activity unit 'gal' needs the fuel density to use a heating value tabulated per short_ton",
+   44
+  ],
+  [
+   "T1_COMB: 'barrel' is a liquid volume but this fuel's heating value is per scf of gas",
+   43
+  ],
+  [
+   "T1_COMB: Activity unit 'bbl' needs the fuel density to use a heating value tabulated per short_ton",
+   42
+  ],
+  [
+   "T1_MOBILE: 'nm3' is a gas volume but this fuel's heating value is per gal of liquid",
+   41
+  ],
+  [
+   "NEG: Invalid date '13/2024': use YYYY-MM, YYYY-MM-DD or MM/YYYY",
+   41
+  ],
+  [
+   "NEG: Invalid quantity: #VALUE! (must be a non-negative number)",
+   40
+  ],
+  [
+   "NEG: Invalid date '2024/13': use YYYY-MM, YYYY-MM-DD or MM/YYYY",
+   39
+  ],
+  [
+   "NEG: Invalid quantity: --5 (must be a non-negative number)",
+   39
+  ],
+  [
+   "T1_MOBILE: 'scf' is a gas volume but this fuel's heating value is per gal of liquid",
+   37
+  ],
+  [
+   "NEG: 'cogen' is a Scope 2 (purchased energy) source; import it with the Scope 2 template",
+   37
+  ],
+  [
+   "T1_MOBILE: Activity unit 'lb' needs the fuel density to use a heating value tabulated per gal",
+   36
+  ],
+  [
+   "T1_COMB: Activity unit 'barrels' needs the fuel density to use a heating value tabulated per short_ton",
+   32
+  ],
+  [
+   "T1_COMB: Activity unit 'liter' needs the fuel density to use a heating value tabulated per short_ton",
+   28
+  ],
+  [
+   "T1_COMB: Activity unit 'gallon' needs the fuel density to use a heating value tabulated per short_ton",
+   28
+  ],
+  [
+   "T1_COMB: Activity unit 'mmbbl' needs the fuel density to use a heating value tabulated per short_ton",
+   27
+  ],
+  [
+   "NEG: Invalid quantity: abc (must be a non-negative number)",
+   27
+  ],
+  [
+   "T1_COMB: Activity unit 'gallons' needs the fuel density to use a heating value tabulated per short_ton",
+   26
+  ],
+  [
+   "T1_COMB: Activity unit 'mmsm3' needs the fuel density to use a heating value tabulated per short_ton",
+   26
+  ],
+  [
+   "T1_COMB: Activity unit 'cf' needs the fuel density to use a heating value tabulated per short_ton",
+   24
+  ],
+  [
+   "NEG: Invalid quantity: ∞ (must be a non-negative number)",
+   24
+  ],
+  [
+   "T1_COMB: Activity unit 'barrel' needs the fuel density to use a heating value tabulated per short_ton",
+   23
+  ],
+  [
+   "T1_COMB: Activity unit 'ft3' needs the fuel density to use a heating value tabulated per short_ton",
+   23
+  ],
+  [
+   "T1_MOBILE: Activity unit 'kg' needs the fuel density to use a heating value tabulated per gal",
+   23
+  ],
+  [
+   "T1_COMB: Activity unit 'liters' needs the fuel density to use a heating value tabulated per short_ton",
+   22
+  ],
+  [
+   "NEG: Invalid quantity: 1.2.3.4 (must be a non-negative number)",
+   22
+  ],
+  [
+   "T1_COMB: Activity unit 'ksm3' needs the fuel density to use a heating value tabulated per short_ton",
+   21
+  ],
+  [
+   "NEG: Invalid quantity: null (must be a non-negative number)",
+   21
+  ],
+  [
+   "T1_COMB: Activity unit 'mbbl' needs the fuel density to use a heating value tabulated per short_ton",
+   20
+  ],
+  [
+   "T1_MOBILE: Activity unit 'kilogram' needs the fuel density to use a heating value tabulated per gal",
+   19
+  ],
+  [
+   "T1_MOBILE: 'mmsm3' is a gas volume but this fuel's heating value is per gal of liquid",
+   19
+  ],
+  [
+   "T1_MOBILE: Activity unit 'short_tons' needs the fuel density to use a heating value tabulated per gal",
+   18
+  ],
+  [
+   "T1_MOBILE: Activity unit 'kilograms' needs the fuel density to use a heating value tabulated per gal",
+   18
+  ],
+  [
+   "T1_MOBILE: Activity unit 'g' needs the fuel density to use a heating value tabulated per gal",
+   18
+  ],
+  [
+   "T1_MOBILE: Activity unit 'lbs' needs the fuel density to use a heating value tabulated per gal",
+   17
+  ],
+  [
+   "T1_MOBILE: Activity unit 'us_ton' needs the fuel density to use a heating value tabulated per gal",
+   17
+  ],
+  [
+   "T1_MOBILE: Activity unit 'kgs' needs the fuel density to use a heating value tabulated per gal",
+   17
+  ],
+  [
+   "T1_MOBILE: Activity unit 'long ton' needs the fuel density to use a heating value tabulated per gal",
+   17
+  ],
+  [
+   "T1_MOBILE: Activity unit 'metric_tons' needs the fuel density to use a heating value tabulated per gal",
+   17
+  ],
+  [
+   "T1_MOBILE: 'cf' is a gas volume but this fuel's heating value is per gal of liquid",
+   17
+  ],
+  [
+   "T1_COMB: Activity unit 'kbbl' needs the fuel density to use a heating value tabulated per short_ton",
+   16
+  ],
+  [
+   "T1_MOBILE: Activity unit 'tonne' needs the fuel density to use a heating value tabulated per gal",
+   14
+  ],
+  [
+   "T1_MOBILE: Activity unit 'short_ton' needs the fuel density to use a heating value tabulated per gal",
+   14
+  ],
+  [
+   "T1_MOBILE: Activity unit 'gram' needs the fuel density to use a heating value tabulated per gal",
+   13
+  ],
+  [
+   "T1_MOBILE: Activity unit 'tonnes' needs the fuel density to use a heating value tabulated per gal",
+   13
+  ],
+  [
+   "T1_MOBILE: Activity unit 'grams' needs the fuel density to use a heating value tabulated per gal",
+   13
+  ],
+  [
+   "T1_MOBILE: Activity unit 'pound' needs the fuel density to use a heating value tabulated per gal",
+   12
+  ],
+  [
+   "T1_MOBILE: 'l' is a liquid volume but this fuel's heating value is per scf of gas",
+   12
+  ],
+  [
+   "T1_MOBILE: Activity unit 'metric_ton' needs the fuel density to use a heating value tabulated per gal",
+   12
+  ],
+  [
+   "T1_UNLOAD: 'Liquids Unloading - Plunger Lift (Midcontinent >100 events/yr)' is a per-event factor: give the number of unl",
+   12
+  ],
+  [
+   "T1_MOBILE: Activity unit 'metric ton' needs the fuel density to use a heating value tabulated per gal",
+   11
+  ],
+  [
+   "T1_MOBILE: Activity unit 'pounds' needs the fuel density to use a heating value tabulated per gal",
+   11
+  ],
+  [
+   "T1_MOBILE: Activity unit 'metric_ton' needs the fuel density to use a heating value tabulated per scf",
+   10
+  ],
+  [
+   "T1_MOBILE: 'barrel' is a liquid volume but this fuel's heating value is per scf of gas",
+   10
+  ],
+  [
+   "T1_MOBILE: 'bbl' is a liquid volume but this fuel's heating value is per scf of gas",
+   10
+  ],
+  [
+   "T1_MOBILE: Activity unit 'long_ton' needs the fuel density to use a heating value tabulated per gal",
+   10
+  ],
+  [
+   "T1_MOBILE: Activity unit 'short ton' needs the fuel density to use a heating value tabulated per gal",
+   10
+  ],
+  [
+   "T1_MOBILE: 'mmbbl' is a liquid volume but this fuel's heating value is per scf of gas",
+   10
+  ],
+  [
+   "T1_UNLOAD: 'UnloadNonPlunger' is a per well-year factor: give the number of wells (unit 'wells'), not events",
+   10
+  ],
+  [
+   "T1_MOBILE: 'ksm3' is a gas volume but this fuel's heating value is per gal of liquid",
+   9
+  ],
+  [
+   "T1_UNLOAD: 'Liquids Unloading - Plunger Lift (Tier 1 Default)' is a per well-year factor: give the number of wells (unit ",
+   9
+  ],
+  [
+   "T1_UNLOAD: 'Liquids Unloading - Non-Plunger' is a per well-year factor: give the number of wells (unit 'wells'), not even",
+   9
+  ],
+  [
+   "T1_MOBILE: Activity unit 'kg' needs the fuel density to use a heating value tabulated per scf",
+   8
+  ],
+  [
+   "T1_MOBILE: Activity unit 't' needs the fuel density to use a heating value tabulated per gal",
+   8
+  ],
+  [
+   "T1_MOBILE: 'liter' is a liquid volume but this fuel's heating value is per scf of gas",
+   8
+  ],
+  [
+   "T1_UNLOAD: 'Liquids Unloading - Plunger Lift (Rocky Mountain <100 events/yr)' is a per-event factor: give the number of u",
+   8
+  ],
+  [
+   "T1_MOBILE: 'gal' is a liquid volume but this fuel's heating value is per scf of gas",
+   7
+  ],
+  [
+   "T1_UNLOAD: 'Liquids Unloading - Plunger Lift (Gulf Coast >100 events/yr)' is a per-event factor: give the number of unloa",
+   7
+  ],
+  [
+   "T1_UNLOAD: 'Liquids Unloading - Non-Plunger (>50 events/yr)' is a per-event factor: give the number of unloading events (",
+   7
+  ],
+  [
+   "T1_UNLOAD: 'Liquids Unloading - Plunger Lift (Appalachia <100 events/yr)' is a per-event factor: give the number of unloa",
+   7
+  ],
+  [
+   "T1_UNLOAD: 'Liquids Unloading - Non-Plunger (10-50 events/yr)' is a per-event factor: give the number of unloading events",
+   7
+  ],
+  [
+   "T1_UNLOAD: 'Liquids Unloading - Plunger Lift (Midcontinent <100 events/yr)' is a per-event factor: give the number of unl",
+   7
+  ],
+  [
+   "T1_UNLOAD: 'Liquids Unloading - Non-Plunger (Midcontinent)' is a per-event factor: give the number of unloading events (u",
+   7
+  ],
+  [
+   "T1_MOBILE: Activity unit 'long_ton' needs the fuel density to use a heating value tabulated per scf",
+   6
+  ],
+  [
+   "T1_MOBILE: Activity unit 'metric_tons' needs the fuel density to use a heating value tabulated per scf",
+   6
+  ],
+  [
+   "T1_MOBILE: 'liters' is a liquid volume but this fuel's heating value is per scf of gas",
+   6
+  ],
+  [
+   "T1_MOBILE: Activity unit 'short_ton' needs the fuel density to use a heating value tabulated per scf",
+   6
+  ],
+  [
+   "T1_MOBILE: Activity unit 'grams' needs the fuel density to use a heating value tabulated per scf",
+   6
+  ],
+  [
+   "T1_MOBILE: Activity unit 'gram' needs the fuel density to use a heating value tabulated per scf",
+   6
+  ],
+  [
+   "T1_MOBILE: Activity unit 'long ton' needs the fuel density to use a heating value tabulated per scf",
+   6
+  ],
+  [
+   "T1_UNLOAD: 'Liquids Unloading - Non-Plunger (Gulf Coast)' is a per-event factor: give the number of unloading events (uni",
+   6
+  ],
+  [
+   "T1_UNLOAD: 'Liquids Unloading - Plunger Lift' is a per well-year factor: give the number of wells (unit 'wells'), not eve",
+   6
+  ],
+  [
+   "T1_UNLOAD: 'Liquids Unloading - Non-Plunger (≤10 events/yr)' is a per-event factor: give the number of unloading events (",
+   6
+  ],
+  [
+   "T1_UNLOAD: 'Liquids Unloading - Plunger Lift (>100 events/yr)' is a per-event factor: give the number of unloading events",
+   6
+  ],
+  [
+   "NEG: Invalid date '2024-13-21': use YYYY-MM, YYYY-MM-DD or MM/YYYY",
+   6
+  ],
+  [
+   "NEG: Unknown factor type 'tier20': use default, custom or specific",
+   6
+  ],
+  [
+   "NEG: Unknown factor type 'tier80': use default, custom or specific",
+   6
+  ],
+  [
+   "NEG: Unknown factor type 'tier90': use default, custom or specific",
+   6
+  ],
+  [
+   "NEG: Unknown factor type 'tier45': use default, custom or specific",
+   6
+  ],
+  [
+   "T1_MOBILE: 'mbbl' is a liquid volume but this fuel's heating value is per scf of gas",
+   5
+  ],
+  [
+   "T1_MOBILE: Activity unit 'g' needs the fuel density to use a heating value tabulated per scf",
+   5
+  ],
+  [
+   "T1_MOBILE: 'gallons' is a liquid volume but this fuel's heating value is per scf of gas",
+   5
+  ],
+  [
+   "T1_MOBILE: Activity unit 'metric ton' needs the fuel density to use a heating value tabulated per scf",
+   5
+  ],
+  [
+   "T1_MOBILE: Activity unit 'kilogram' needs the fuel density to use a heating value tabulated per scf",
+   5
+  ],
+  [
+   "T1_MOBILE: Activity unit 'pounds' needs the fuel density to use a heating value tabulated per scf",
+   5
+  ],
+  [
+   "T1_MOBILE: Activity unit 'short_tons' needs the fuel density to use a heating value tabulated per scf",
+   5
+  ],
+  [
+   "T1_MOBILE: Activity unit 'us_ton' needs the fuel density to use a heating value tabulated per scf",
+   5
+  ],
+  [
+   "T1_UNLOAD: 'Liquids Unloading - Plunger Lift (Appalachia >100 events/yr)' is a per-event factor: give the number of unloa",
+   5
+  ],
+  [
+   "T1_UNLOAD: 'Liquids Unloading - Plunger Lift (≤100 events/yr)' is a per-event factor: give the number of unloading events",
+   5
+  ],
+  [
+   "T1_UNLOAD: 'Liquids Unloading - Plunger Lift (Rocky Mountain >100 events/yr)' is a per-event factor: give the number of u",
+   5
+  ],
+  [
+   "NEG: Unknown factor type 'tier31': use default, custom or specific",
+   5
+  ],
+  [
+   "NEG: Unknown factor type 'tier68': use default, custom or specific",
+   5
+  ],
+  [
+   "NEG: Invalid date '2024-13-22': use YYYY-MM, YYYY-MM-DD or MM/YYYY",
+   5
+  ],
+  [
+   "NEG: Unknown factor type 'tier59': use default, custom or specific",
+   5
+  ],
+  [
+   "NEG: Unknown factor type 'tier43': use default, custom or specific",
+   5
+  ],
+  [
+   "NEG: Unknown factor type 'tier60': use default, custom or specific",
+   5
+  ],
+  [
+   "T1_MOBILE: Activity unit 'short ton' needs the fuel density to use a heating value tabulated per scf",
+   4
+  ],
+  [
+   "T1_MOBILE: 'ft3' is a gas volume but this fuel's heating value is per gal of liquid",
+   4
+  ],
+  [
+   "T1_MOBILE: Activity unit 'tonne' needs the fuel density to use a heating value tabulated per scf",
+   4
+  ],
+  [
+   "T1_MOBILE: Activity unit 'lbs' needs the fuel density to use a heating value tabulated per scf",
+   4
+  ],
+  [
+   "T1_UNLOAD: 'Liquids Unloading - Non-Plunger (Tier 1 Default)' is a per well-year factor: give the number of wells (unit '",
+   4
+  ],
+  [
+   "T1_UNLOAD: 'Liquids Unloading - Non-Plunger (Rocky Mountain)' is a per-event factor: give the number of unloading events ",
+   4
+  ],
+  [
+   "T1_UNLOAD: 'Liquids Unloading - Non-Plunger (Appalachia)' is a per-event factor: give the number of unloading events (uni",
+   4
+  ],
+  [
+   "NEG: Unknown factor type 'tier12': use default, custom or specific",
+   4
+  ],
+  [
+   "NEG: Invalid date '2024-13-20': use YYYY-MM, YYYY-MM-DD or MM/YYYY",
+   4
+  ],
+  [
+   "NEG: Unknown factor type 'tier7': use default, custom or specific",
+   4
+  ],
+  [
+   "NEG: Unknown factor type 'tier23': use default, custom or specific",
+   4
+  ],
+  [
+   "NEG: Unknown factor type 'tier97': use default, custom or specific",
+   4
+  ],
+  [
+   "NEG: Unknown factor type 'tier76': use default, custom or specific",
+   4
+  ],
+  [
+   "NEG: Unknown factor type 'tier84': use default, custom or specific",
+   4
+  ],
+  [
+   "NEG: Unknown factor type 'tier4': use default, custom or specific",
+   4
+  ],
+  [
+   "NEG: Unknown factor type 'tier79': use default, custom or specific",
+   4
+  ],
+  [
+   "NEG: Unknown factor type 'tier87': use default, custom or specific",
+   4
+  ],
+  [
+   "T1_MOBILE: Activity unit 'pound' needs the fuel density to use a heating value tabulated per scf",
+   3
+  ],
+  [
+   "T1_MOBILE: Activity unit 'kilograms' needs the fuel density to use a heating value tabulated per scf",
+   3
+  ],
+  [
+   "T1_MOBILE: 'kbbl' is a liquid volume but this fuel's heating value is per scf of gas",
+   3
+  ],
+  [
+   "T1_UNLOAD: 'Liquids Unloading - Plunger Lift (Gulf Coast <100 events/yr)' is a per-event factor: give the number of unloa",
+   3
+  ],
+  [
+   "NEG: Unknown factor type 'tier27': use default, custom or specific",
+   3
+  ],
+  [
+   "NEG: Unknown factor type 'tier95': use default, custom or specific",
+   3
+  ],
+  [
+   "NEG: Unknown factor type 'tier35': use default, custom or specific",
+   3
+  ],
+  [
+   "NEG: Unknown factor type 'tier46': use default, custom or specific",
+   3
+  ],
+  [
+   "NEG: Unknown factor type 'tier52': use default, custom or specific",
+   3
+  ],
+  [
+   "NEG: Unknown factor type 'tier16': use default, custom or specific",
+   3
+  ],
+  [
+   "NEG: Invalid date '2024-13-11': use YYYY-MM, YYYY-MM-DD or MM/YYYY",
+   3
+  ],
+  [
+   "NEG: Unknown factor type 'tier15': use default, custom or specific",
+   3
+  ],
+  [
+   "NEG: Unknown factor type 'tier29': use default, custom or specific",
+   3
+  ],
+  [
+   "NEG: Unknown factor type 'tier10': use default, custom or specific",
+   3
+  ],
+  [
+   "NEG: Unknown factor type 'tier69': use default, custom or specific",
+   3
+  ],
+  [
+   "NEG: Unknown factor type 'tier77': use default, custom or specific",
+   3
+  ],
+  [
+   "NEG: Unknown factor type 'tier50': use default, custom or specific",
+   3
+  ],
+  [
+   "NEG: Unknown factor type 'tier39': use default, custom or specific",
+   3
+  ],
+  [
+   "NEG: Unknown factor type 'tier71': use default, custom or specific",
+   3
+  ],
+  [
+   "NEG: Unknown factor type 'tier93': use default, custom or specific",
+   3
+  ],
+  [
+   "NEG: Unknown factor type 'tier19': use default, custom or specific",
+   3
+  ],
+  [
+   "NEG: Unknown factor type 'tier22': use default, custom or specific",
+   3
+  ],
+  [
+   "NEG: Unknown factor type 'tier56': use default, custom or specific",
+   3
+  ],
+  [
+   "NEG: Unknown factor type 'tier14': use default, custom or specific",
+   3
+  ],
+  [
+   "NEG: Unknown factor type 'tier99': use default, custom or specific",
+   3
+  ],
+  [
+   "NEG: Unknown factor type 'tier57': use default, custom or specific",
+   3
+  ],
+  [
+   "NEG: Invalid date '2024-13-18': use YYYY-MM, YYYY-MM-DD or MM/YYYY",
+   3
+  ],
+  [
+   "NEG: Unknown factor type 'tier17': use default, custom or specific",
+   3
+  ],
+  [
+   "T1_MOBILE: Activity unit 'lb' needs the fuel density to use a heating value tabulated per scf",
+   2
+  ],
+  [
+   "T1_MOBILE: Activity unit 'kgs' needs the fuel density to use a heating value tabulated per scf",
+   2
+  ],
+  [
+   "T1_MOBILE: Activity unit 't' needs the fuel density to use a heating value tabulated per scf",
+   2
+  ],
+  [
+   "T1_MOBILE: Activity unit 'tonnes' needs the fuel density to use a heating value tabulated per scf",
+   2
+  ],
+  [
+   "NEG: Unknown factor type 'tier94': use default, custom or specific",
+   2
+  ],
+  [
+   "NEG: Invalid date '2024-13-28': use YYYY-MM, YYYY-MM-DD or MM/YYYY",
+   2
+  ],
+  [
+   "NEG: Unknown factor type 'tier53': use default, custom or specific",
+   2
+  ],
+  [
+   "NEG: Unknown factor type 'tier32': use default, custom or specific",
+   2
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_2092'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   2
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 37823' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   2
+  ],
+  [
+   "NEG: Invalid date '2024-13-25': use YYYY-MM, YYYY-MM-DD or MM/YYYY",
+   2
+  ],
+  [
+   "NEG: Unknown factor type 'tier47': use default, custom or specific",
+   2
+  ],
+  [
+   "NEG: Unknown factor type 'tier5': use default, custom or specific",
+   2
+  ],
+  [
+   "NEG: Unknown factor type 'tier26': use default, custom or specific",
+   2
+  ],
+  [
+   "NEG: Unknown factor type 'tier42': use default, custom or specific",
+   2
+  ],
+  [
+   "NEG: Unknown factor type 'tier34': use default, custom or specific",
+   2
+  ],
+  [
+   "NEG: Unknown factor type 'tier55': use default, custom or specific",
+   2
+  ],
+  [
+   "NEG: Invalid date '2024-13-14': use YYYY-MM, YYYY-MM-DD or MM/YYYY",
+   2
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_5020'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   2
+  ],
+  [
+   "NEG: Invalid date '2024-13-05': use YYYY-MM, YYYY-MM-DD or MM/YYYY",
+   2
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_5218'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   2
+  ],
+  [
+   "NEG: Unknown factor type 'tier48': use default, custom or specific",
+   2
+  ],
+  [
+   "NEG: Invalid date '2024-13-24': use YYYY-MM, YYYY-MM-DD or MM/YYYY",
+   2
+  ],
+  [
+   "NEG: Unknown factor type 'tier11': use default, custom or specific",
+   2
+  ],
+  [
+   "NEG: Unknown factor type 'tier63': use default, custom or specific",
+   2
+  ],
+  [
+   "NEG: Unknown factor type 'tier72': use default, custom or specific",
+   2
+  ],
+  [
+   "NEG: Unknown factor type 'tier54': use default, custom or specific",
+   2
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_5068'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   2
+  ],
+  [
+   "NEG: Quantity '9143 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   2
+  ],
+  [
+   "NEG: Unknown factor type 'tier40': use default, custom or specific",
+   2
+  ],
+  [
+   "NEG: Unknown factor type 'tier75': use default, custom or specific",
+   2
+  ],
+  [
+   "NEG: Unknown factor type 'tier33': use default, custom or specific",
+   2
+  ],
+  [
+   "NEG: Unknown factor type 'tier13': use default, custom or specific",
+   2
+  ],
+  [
+   "NEG: Unknown factor type 'tier51': use default, custom or specific",
+   2
+  ],
+  [
+   "NEG: Unknown factor type 'tier6': use default, custom or specific",
+   2
+  ],
+  [
+   "NEG: Unknown factor type 'tier38': use default, custom or specific",
+   2
+  ],
+  [
+   "NEG: Unknown factor type 'tier78': use default, custom or specific",
+   2
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_5350'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   2
+  ],
+  [
+   "NEG: Invalid date '2024-13-07': use YYYY-MM, YYYY-MM-DD or MM/YYYY",
+   2
+  ],
+  [
+   "NEG: Unknown factor type 'tier81': use default, custom or specific",
+   2
+  ],
+  [
+   "NEG: Unknown factor type 'tier86': use default, custom or specific",
+   2
+  ],
+  [
+   "NEG: Unknown factor type 'tier74': use default, custom or specific",
+   2
+  ],
+  [
+   "NEG: Unknown factor type 'tier89': use default, custom or specific",
+   2
+  ],
+  [
+   "NEG: Unknown factor type 'tier88': use default, custom or specific",
+   2
+  ],
+  [
+   "NEG: Unknown factor type 'tier66': use default, custom or specific",
+   2
+  ],
+  [
+   "NEG: Unknown factor type 'tier41': use default, custom or specific",
+   2
+  ],
+  [
+   "T1_MOBILE: 'barrels' is a liquid volume but this fuel's heating value is per scf of gas",
+   1
+  ],
+  [
+   "T1_UNLOAD: 'UnloadPlunger' is a per well-year factor: give the number of wells (unit 'wells'), not events",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -7451.33186176 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 78717' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 82403' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Quantity '2725 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_4124'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 50223' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'furlong 636'",
+   1
+  ],
+  [
+   "NEG: Unknown unit '% 233'",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_9881'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 37508' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Quantity '5083 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown unit '% 806'",
+   1
+  ],
+  [
+   "NEG: Quantity '7088 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 36719' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'cubic yards 776'",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 14400' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_8664'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -2574.28462063 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Quantity '2032 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_6608'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -2320.3991945 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -3346.16767914 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 73134' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'barrels/moon 152'",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -8093.3644254 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -7584.97167385 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_2577'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -7328.57422871 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Quantity '3642 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'scf/scf 271'",
+   1
+  ],
+  [
+   "NEG: Quantity '617 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the uni",
+   1
+  ],
+  [
+   "NEG: Quantity '5866 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'xyz 486'",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 81181' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -5952.91629757 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 1406' is not in the emission factor catalog. Use the factor name exactly as listed, or a save",
+   1
+  ],
+  [
+   "NEG: Quantity '9937 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 8413' not found. Save it under Manage Data > Custom Factors first, or give the site ",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'scf/scf 727'",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 64868' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Quantity '4442 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -949.210586059 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_225'. Use a process key such as combustion, flaring, venting, tank_flashin",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 57263' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Quantity '533 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the uni",
+   1
+  ],
+  [
+   "NEG: Quantity '9202 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 17422' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -1236.63996164 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown unit '% 519'",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -9960.35404556 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -6166.0744617 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Quantity '2802 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Quantity '8145 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown unit '% 575'",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 66539' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Quantity '2994 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_6521'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -5112.32597572 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'cubic yards 604'",
+   1
+  ],
+  [
+   "NEG: Quantity '1417 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'cubic yards 464'",
+   1
+  ],
+  [
+   "NEG: Quantity '2424 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 84150' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 71858' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_8621'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -6394.25733893 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 37329' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'kwh/yr/x 890'",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'cubic yards 687'",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 27262' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'cubic yards 633'",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -8274.04891959 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_9008'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 36533' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 6805' is not in the emission factor catalog. Use the factor name exactly as listed, or a save",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_1061'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Invalid date '2024-13-26': use YYYY-MM, YYYY-MM-DD or MM/YYYY",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_1602'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 72263' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Quantity '277 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the uni",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'barrels/moon 701'",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_9062'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 26300' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'acre-ft 196'",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'barrels/moon 446'",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_6995'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 54630' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -3690.548495 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_1268'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Quantity '7963 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 38596' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -2645.73393497 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 34133' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Invalid date '2024-13-10': use YYYY-MM, YYYY-MM-DD or MM/YYYY",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 55385' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_3955'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'scf/scf 824'",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_521'. Use a process key such as combustion, flaring, venting, tank_flashin",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'scf/scf 118'",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -4270.92608761 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_9777'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'furlong 753'",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 9436' is not in the emission factor catalog. Use the factor name exactly as listed, or a save",
+   1
+  ],
+  [
+   "NEG: Quantity '9757 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'kwh/yr/x 111'",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -2.2505813586e+01 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_7851'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -2.5586130165e+03 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 91567' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Quantity '6981 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 34831' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Quantity '5505 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 47563' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_1709'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_6072'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_6394'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 86347' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Quantity '3089 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 24362' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 2599' is not in the emission factor catalog. Use the factor name exactly as listed, or a save",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_975'. Use a process key such as combustion, flaring, venting, tank_flashin",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -3328.36129732 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Quantity '4110 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -3652.67992058 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_1259'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown factor type 'tier18': use default, custom or specific",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_3887'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Quantity '1758 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_3740'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Invalid date '2024-13-23': use YYYY-MM, YYYY-MM-DD or MM/YYYY",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -3456.56029663 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_7745'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Quantity '692 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the uni",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_8919'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'xyz 786'",
+   1
+  ],
+  [
+   "NEG: Quantity '9104 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -8549.20827294 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 91958' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_3875'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -8984.17979026 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Quantity '7297 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 47895' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Quantity '6497 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 2745' not found. Save it under Manage Data > Custom Factors first, or give the site ",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 73812' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Quantity '9240 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 97595' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 31843' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Quantity '8982 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -6039.67482096 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'scf/scf 384'",
+   1
+  ],
+  [
+   "NEG: Quantity '6031 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_4402'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 62983' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 27666' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 44995' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Quantity '9189 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Quantity '1217 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'scf/scf 670'",
+   1
+  ],
+  [
+   "NEG: Quantity '4142 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -8104.95429459 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Quantity '2707 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 77893' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_657'. Use a process key such as combustion, flaring, venting, tank_flashin",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'xyz 161'",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 81108' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Quantity '8449 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_6312'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'barrels/moon 102'",
+   1
+  ],
+  [
+   "NEG: Quantity '2286 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -8713.81189747 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_5082'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_6142'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_6780'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -9.2963903673e+03 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -9683.24367354 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -7312.34617475 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'kwh/yr/x 523'",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 18143' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Quantity '7074 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_6737'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Quantity '1934 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 90238' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 25244' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown unit '% 513'",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 69973' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 52090' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Quantity '1911 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'cubic yards 556'",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -7621.00789367 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_6342'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 58042' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 74752' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 17429' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Quantity '8623 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_4080'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'scf/scf 492'",
+   1
+  ],
+  [
+   "NEG: Quantity '6028 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_4692'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Quantity '3476 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_4785'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 90411' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -756.953255811 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 99336' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_7228'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 30983' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown unit '% 748'",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 87551' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 60354' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -4004.58359711 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'scf/scf 455'",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_5007'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -1126.70906949 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Invalid date '2024-13-17': use YYYY-MM, YYYY-MM-DD or MM/YYYY",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -8.9456199390e+03 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'cubic yards 1'",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'furlong 886'",
+   1
+  ],
+  [
+   "NEG: Quantity '5940 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_3766'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown factor type 'tier8': use default, custom or specific",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -8372.24095487 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Quantity '6427 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -6.8442882608e+03 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 28098' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'kwh/yr/x 809'",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'kwh/yr/x 91'",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 84964' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Quantity '7831 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'cubic yards 364'",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -6728.61664421 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_8206'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'scf/scf 716'",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 16910' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Quantity '3627 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'scf/scf 493'",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -4217.56055011 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -7432.74415911 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 17989' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 3210' is not in the emission factor catalog. Use the factor name exactly as listed, or a save",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'furlong 486'",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_8084'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Quantity '5773 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 2529' not found. Save it under Manage Data > Custom Factors first, or give the site ",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 15282' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'kwh/yr/x 75'",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -7579.22226236 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 22658' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 30995' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 70661' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 53253' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 39200' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 63829' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 65896' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'furlong 562'",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'furlong 274'",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 80881' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Quantity '1805 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 53406' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Quantity '9754 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 62719' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -1888.21341167 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Quantity '5428 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'cubic yards 123'",
+   1
+  ],
+  [
+   "NEG: Quantity '8632 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -8610.97103914 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_4162'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_4632'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 19305' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'kwh/yr/x 52'",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -8587.19991943 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 15685' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -4154.45144747 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_4029'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_7208'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Quantity '638 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the uni",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_8415'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 7588' not found. Save it under Manage Data > Custom Factors first, or give the site ",
+   1
+  ],
+  [
+   "NEG: Quantity '4310 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'xyz 142'",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'furlong 218'",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 16079' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_1904'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_5302'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'cubic yards 93'",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 59835' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Quantity '4016 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Quantity '7509 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Quantity '7609 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_3302'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 46686' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'xyz 871'",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'barrels/moon 162'",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -1502.22925867 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_677'. Use a process key such as combustion, flaring, venting, tank_flashin",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'kwh/yr/x 771'",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -3524.9583142 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -7013.1378648 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 396' not found. Save it under Manage Data > Custom Factors first, or give the site H",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -6967.8565429 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'cubic yards 125'",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -8142.38157688 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'kwh/yr/x 419'",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 13824' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_1469'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Quantity '7292 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 56865' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -1512.06455718 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Quantity '5102 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_2012'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 66229' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown factor type 'tier25': use default, custom or specific",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 25346' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 32448' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 22643' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 23081' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 90419' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Quantity '5151 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_2043'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 26207' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 19706' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_3065'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown factor type 'tier58': use default, custom or specific",
+   1
+  ],
+  [
+   "NEG: Unknown unit '% 83'",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -2316.85106795 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_5541'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'furlong 760'",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 81640' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -4197.05614421 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 62199' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Quantity '1459 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_2824'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'furlong 660'",
+   1
+  ],
+  [
+   "NEG: Quantity '8357 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -5404.3401294 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'kwh/yr/x 185'",
+   1
+  ],
+  [
+   "NEG: Unknown factor type 'tier64': use default, custom or specific",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 16485' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Quantity '1147 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Invalid date '2024-13-03': use YYYY-MM, YYYY-MM-DD or MM/YYYY",
+   1
+  ],
+  [
+   "NEG: Quantity '6786 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 12203' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 40004' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_7412'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -2.8208461899e+03 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_3909'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -5138.88968632 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_392'. Use a process key such as combustion, flaring, venting, tank_flashin",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -4.5397267428e+03 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -490.077090941 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'kwh/yr/x 304'",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 35203' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_9936'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_9232'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Quantity '6460 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -3096.93417512 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'kwh/yr/x 774'",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 62065' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Quantity '5913 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -8714.80021033 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -3864.19581629 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_7224'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 45939' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Quantity '7066 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_4808'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'cubic yards 803'",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -4821.55825874 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -5125.70837371 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown unit '% 75'",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 52747' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 6769' is not in the emission factor catalog. Use the factor name exactly as listed, or a save",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_2293'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 17931' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Quantity '642 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the uni",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_19'. Use a process key such as combustion, flaring, venting, tank_flashing",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'acre-ft 365'",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -68.1461690114 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_5423'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 23428' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 86387' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 40097' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_2690'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Quantity '7262 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_5380'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'furlong 863'",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 19358' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 54029' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -706.750770883 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown unit '% 905'",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'furlong 850'",
+   1
+  ],
+  [
+   "NEG: Quantity '9338 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'furlong 168'",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 2157' not found. Save it under Manage Data > Custom Factors first, or give the site ",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 11177' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown factor type 'tier83': use default, custom or specific",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 42765' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -446.150637093 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 24771' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 39056' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Quantity '5305 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 48611' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 11789' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 89961' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_8549'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'kwh/yr/x 994'",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 57588' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 9181' is not in the emission factor catalog. Use the factor name exactly as listed, or a save",
+   1
+  ],
+  [
+   "NEG: Quantity '6466 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_1320'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -4982.26656819 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 96404' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_4140'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -7.7936109653e+03 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Quantity '6737 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 77355' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_2328'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -5168.09591949 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 23621' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_5291'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 75708' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -1002.24912019 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'scf/scf 30'",
+   1
+  ],
+  [
+   "NEG: Quantity '2990 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 80524' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 82662' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 88537' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_9180'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 23954' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'xyz 368'",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'cubic yards 266'",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 94565' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 88052' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -5163.6858297 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_7367'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_6315'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -6296.88521015 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_2757'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 80597' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Quantity '2507 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'scf/scf 760'",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'barrels/moon 758'",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 13697' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 81659' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -5044.43244664 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 61714' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 56935' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Quantity '5380 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_6439'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown factor type 'tier82': use default, custom or specific",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_3286'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -2891.26137801 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Quantity '6866 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_2064'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Quantity '2423 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -8739.70706244 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -6249.47413776 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_5955'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 11261' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_8224'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Quantity '9651 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 37195' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'furlong 847'",
+   1
+  ],
+  [
+   "NEG: Quantity '8460 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Quantity '676 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the uni",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 18251' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Quantity '3040 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_7150'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'furlong 527'",
+   1
+  ],
+  [
+   "NEG: Quantity '4722 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 61856' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 24276' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -2908.19395007 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 30000' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_2892'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_8077'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Quantity '6690 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_979'. Use a process key such as combustion, flaring, venting, tank_flashin",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 72701' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Quantity '2831 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Quantity '3708 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -6.8474170792e+03 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'kwh/yr/x 9'",
+   1
+  ],
+  [
+   "NEG: Quantity '7672 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_6014'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'cubic yards 707'",
+   1
+  ],
+  [
+   "NEG: Unknown unit '% 305'",
+   1
+  ],
+  [
+   "NEG: Quantity '6089 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -5155.62359141 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_70'. Use a process key such as combustion, flaring, venting, tank_flashing",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'kwh/yr/x 174'",
+   1
+  ],
+  [
+   "NEG: Quantity '3893 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'kwh/yr/x 786'",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 92676' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Quantity '6512 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 68266' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Quantity '8753 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_9182'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Quantity '9875 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -7285.0856972 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -7.6741445034e+03 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 23043' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_9578'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -3541.2906594 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Quantity '9178 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -4256.7640721 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'furlong 912'",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_3235'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -2848.65359536 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_1117'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -9366.4604741 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 30759' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'cubic yards 427'",
+   1
+  ],
+  [
+   "NEG: Unknown factor type 'tier70': use default, custom or specific",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'xyz 765'",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -9602.62621249 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Quantity '256 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the uni",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 8904' is not in the emission factor catalog. Use the factor name exactly as listed, or a save",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'barrels/moon 278'",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -4086.86664696 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Quantity '5525 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 74099' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 49585' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 35792' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Quantity '5745 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Quantity '2793 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_6616'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 7026' not found. Save it under Manage Data > Custom Factors first, or give the site ",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 58964' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Quantity '4736 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown factor type 'tier44': use default, custom or specific",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 47175' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Quantity '9598 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Quantity '4398 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -8.2030436196e+02 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 9082' not found. Save it under Manage Data > Custom Factors first, or give the site ",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_1043'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 61947' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Unknown unit '% 636'",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'furlong 959'",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 36985' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_1726'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -4471.8085397 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown unit '% 424'",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'xyz 620'",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -1530.93057905 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Quantity '4911 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_2918'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_8260'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Quantity '5044 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Quantity '664 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the uni",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 96112' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_9892'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Quantity '2261 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -6885.91804917 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_9407'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 36083' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 10731' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_4493'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_8986'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'furlong 126'",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 24620' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 37778' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'barrels/moon 707'",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 34566' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Quantity '794 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the uni",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 63428' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 47003' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -4863.50166992 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -7860.06257484 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -7234.98248599 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_9378'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 32086' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'barrels/moon 26'",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 75710' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -4564.16388645 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'furlong 421'",
+   1
+  ],
+  [
+   "NEG: Quantity '482 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the uni",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -5337.06350853 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -6549.73453795 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Quantity '8695 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -6.3057607808e+03 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 37312' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -8180.63538908 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 59588' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Quantity '6636 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'xyz 51'",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 79873' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_7809'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 70239' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 46721' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -505.887529414 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 37755' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Quantity '2826 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_3377'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'kwh/yr/x 564'",
+   1
+  ],
+  [
+   "NEG: Quantity '2307 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_8942'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_9073'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Quantity '9351 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 17645' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 9997' not found. Save it under Manage Data > Custom Factors first, or give the site ",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_9190'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 14646' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'acre-ft 353'",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 87051' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Quantity '9120 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 63332' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 46548' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -1755.68659153 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_6939'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'furlong 73'",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 90285' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -6958.69256477 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Quantity '3185 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 94239' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -1521.21257714 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 27840' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Quantity '4436 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'acre-ft 817'",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 13205' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'cubic yards 775'",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 37432' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 98379' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -5088.44023265 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 12134' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 16567' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 97158' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_9228'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -5312.51516234 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Quantity '9911 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Quantity '3949 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_5036'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 4478' is not in the emission factor catalog. Use the factor name exactly as listed, or a save",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -6351.16170211 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -1746.0645113 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -465.718539529 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_5123'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -9722.99563029 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 14593' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'xyz 745'",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_5275'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Quantity '6933 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 87262' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Quantity '3834 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 2835' is not in the emission factor catalog. Use the factor name exactly as listed, or a save",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -4987.51544717 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_5064'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Quantity '7842 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 65717' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 92101' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -287.858313805 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Quantity '4986 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 35662' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 68617' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Quantity '2506 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -4405.57560022 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Quantity '8773 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 16941' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -7.8358014965e+03 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Quantity '6678 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'kwh/yr/x 606'",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -242.433183018 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'barrels/moon 193'",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 22528' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -6819.0115887 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_4744'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 85420' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'scf/scf 63'",
+   1
+  ],
+  [
+   "NEG: Quantity '9514 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'barrels/moon 835'",
+   1
+  ],
+  [
+   "NEG: Quantity '4493 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_5389'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_6681'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 81584' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Quantity '9973 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 2241' is not in the emission factor catalog. Use the factor name exactly as listed, or a save",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -6443.79254881 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'barrels/moon 644'",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -6789.55875542 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'xyz 518'",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -3322.9777765 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 19483' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'kwh/yr/x 788'",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'xyz 217'",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 93547' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -101.739981789 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 28838' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 54877' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Quantity '4114 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_7864'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 41007' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 27286' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Quantity '523 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the uni",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_6318'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 33884' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -4037.69691996 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'scf/scf 39'",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'scf/scf 765'",
+   1
+  ],
+  [
+   "NEG: Quantity '652 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the uni",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'cubic yards 387'",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -9248.37304424 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Quantity '3788 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -3688.29867721 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_7819'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 57603' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 13481' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -5142.52389821 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -6334.3633697 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 34288' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Quantity '665 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the uni",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_8681'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Quantity '9758 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'xyz 205'",
+   1
+  ],
+  [
+   "NEG: Quantity '8309 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Quantity '639 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the uni",
+   1
+  ],
+  [
+   "NEG: Quantity '3240 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'kwh/yr/x 954'",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'scf/scf 712'",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'acre-ft 744'",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 61805' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 1799' is not in the emission factor catalog. Use the factor name exactly as listed, or a save",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -7313.77347363 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Quantity '1397 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_8575'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 85519' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Invalid date '2024-13-04': use YYYY-MM, YYYY-MM-DD or MM/YYYY",
+   1
+  ],
+  [
+   "NEG: Quantity '9838 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 49986' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'acre-ft 471'",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 98311' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_6647'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_335'. Use a process key such as combustion, flaring, venting, tank_flashin",
+   1
+  ],
+  [
+   "NEG: Quantity '6247 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_3071'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Quantity '1215 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 89239' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 81776' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Quantity '9374 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 24176' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 54498' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 13007' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_8709'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_4606'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_1192'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Quantity '1659 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 44829' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'kwh/yr/x 296'",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_2117'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_8038'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_1659'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 3034' not found. Save it under Manage Data > Custom Factors first, or give the site ",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_3111'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_2223'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'xyz 176'",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 56248' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -2.1036320861e+03 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -5182.90476786 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'scf/scf 100'",
+   1
+  ],
+  [
+   "NEG: Quantity '6260 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -1400.46715364 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 44290' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 26795' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -1.6408698482e+03 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown factor type 'tier67': use default, custom or specific",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_5308'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 32991' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_281'. Use a process key such as combustion, flaring, venting, tank_flashin",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -1996.76408853 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 15903' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'cubic yards 571'",
+   1
+  ],
+  [
+   "NEG: Quantity '4995 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 34437' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 41674' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_2441'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_3162'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 40481' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'barrels/moon 877'",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_5220'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_9239'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 69456' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'kwh/yr/x 580'",
+   1
+  ],
+  [
+   "NEG: Quantity '5740 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -1368.12405177 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 9578' is not in the emission factor catalog. Use the factor name exactly as listed, or a save",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -1908.0795351 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'kwh/yr/x 970'",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 70887' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Quantity '4962 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 89913' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_5925'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -6731.5346175 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_3914'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_6160'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 7434' not found. Save it under Manage Data > Custom Factors first, or give the site ",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 59868' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Unknown factor type 'tier92': use default, custom or specific",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 3348' is not in the emission factor catalog. Use the factor name exactly as listed, or a save",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_4023'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Quantity '4085 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -2796.82220165 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'xyz 915'",
+   1
+  ],
+  [
+   "NEG: Quantity '7796 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'furlong 736'",
+   1
+  ],
+  [
+   "NEG: Invalid date '2024-13-16': use YYYY-MM, YYYY-MM-DD or MM/YYYY",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 5916' is not in the emission factor catalog. Use the factor name exactly as listed, or a save",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'kwh/yr/x 589'",
+   1
+  ],
+  [
+   "NEG: Quantity '2623 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 52470' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 45100' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'kwh/yr/x 194'",
+   1
+  ],
+  [
+   "NEG: Unknown unit '% 327'",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -8234.82627597 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 3593' is not in the emission factor catalog. Use the factor name exactly as listed, or a save",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_4668'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 79281' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 4732' is not in the emission factor catalog. Use the factor name exactly as listed, or a save",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -8765.52636964 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 57306' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 61660' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_1489'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 45069' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Quantity '3761 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 543' not found. Save it under Manage Data > Custom Factors first, or give the site H",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 61523' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_7196'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Quantity '965 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the uni",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 29033' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Quantity '1177 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -9995.11776517 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'barrels/moon 885'",
+   1
+  ],
+  [
+   "NEG: Quantity '2161 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 64405' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_5112'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'cubic yards 921'",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -3949.16555135 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown unit '% 511'",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -4844.74027134 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -994.898816301 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 30774' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 3661' not found. Save it under Manage Data > Custom Factors first, or give the site ",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -6478.63746406 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown factor type 'tier21': use default, custom or specific",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 33867' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_548'. Use a process key such as combustion, flaring, venting, tank_flashin",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 98792' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Quantity '8937 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_6517'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Invalid date '2024-13-08': use YYYY-MM, YYYY-MM-DD or MM/YYYY",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_3757'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'kwh/yr/x 290'",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 19158' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 56328' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Quantity '9655 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -5266.22582558 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Quantity '7037 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -5507.17326368 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 40940' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Quantity '6093 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Quantity '9688 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Quantity '2138 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 72307' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 5687' not found. Save it under Manage Data > Custom Factors first, or give the site ",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 36125' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'acre-ft 95'",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 84532' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 78069' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -9089.23656873 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -6600.60054077 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Invalid date '2024-13-02': use YYYY-MM, YYYY-MM-DD or MM/YYYY",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 84006' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_1999'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Quantity '3060 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -6201.05312024 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'cubic yards 852'",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -4304.42062551 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 41988' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Quantity '4887 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_3928'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Quantity '5292 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_6144'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'barrels/moon 673'",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 91524' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 86860' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -9518.45488582 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -8849.79472118 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'cubic yards 717'",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'barrels/moon 529'",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 12541' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Quantity '4588 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 77553' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -9452.69590194 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 63152' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'cubic yards 209'",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -919.286343574 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Quantity '927 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the uni",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -849.510972509 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 29188' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_6751'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Quantity '2968 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_2671'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Quantity '178 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the uni",
+   1
+  ],
+  [
+   "NEG: Quantity '64 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the unit",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -7.1098887586e+01 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_8314'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_694'. Use a process key such as combustion, flaring, venting, tank_flashin",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_6807'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -117.045039444 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_4097'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 45996' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Quantity '4645 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 5148' is not in the emission factor catalog. Use the factor name exactly as listed, or a save",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_8420'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown factor type 'tier85': use default, custom or specific",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_5480'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Quantity '7137 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 2773' not found. Save it under Manage Data > Custom Factors first, or give the site ",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -5695.93583435 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_7603'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Quantity '755 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the uni",
+   1
+  ],
+  [
+   "NEG: Quantity '7600 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Quantity '2340 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 8099' not found. Save it under Manage Data > Custom Factors first, or give the site ",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 89920' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 28376' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 55200' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'kwh/yr/x 403'",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 64093' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 74424' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_3679'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -1652.06972421 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'scf/scf 353'",
+   1
+  ],
+  [
+   "NEG: Unknown factor type 'tier91': use default, custom or specific",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'barrels/moon 390'",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 60976' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_6447'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Quantity '305 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the uni",
+   1
+  ],
+  [
+   "NEG: Quantity '296 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the uni",
+   1
+  ],
+  [
+   "NEG: Quantity '6013 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 19177' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -8625.74474045 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -1446.19286544 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -9606.25254059 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 55037' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'xyz 623'",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_895'. Use a process key such as combustion, flaring, venting, tank_flashin",
+   1
+  ],
+  [
+   "NEG: Quantity '1031 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 70616' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -4871.69845252 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_4769'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 35181' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Quantity '5184 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 41136' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Quantity '2922 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 24133' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -3104.62934562 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -8060.04332725 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -3994.95214861 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'kwh/yr/x 441'",
+   1
+  ],
+  [
+   "NEG: Quantity '912 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the uni",
+   1
+  ],
+  [
+   "NEG: Quantity '2465 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -9963.59631298 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 21225' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -9221.16170807 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -2810.50011876 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 61923' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 52125' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'cubic yards 501'",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_4017'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 56326' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -5646.49984953 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 47326' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -223.457216133 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 34002' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 30884' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 40912' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Quantity '8409 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_4212'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'barrels/moon 952'",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -5321.71077266 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -1048.85993898 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Quantity '2944 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'cubic yards 840'",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 82945' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 61335' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -6356.47606883 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -1.7320916302e+03 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 7421' not found. Save it under Manage Data > Custom Factors first, or give the site ",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 25161' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 65925' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'kwh/yr/x 226'",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_7882'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -7415.49040572 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Quantity '8770 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 44933' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 10890' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown unit '% 328'",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -3188.23721882 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Quantity '3655 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -6316.09361267 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -2292.57375762 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -6147.01922906 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -7055.09663695 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_9624'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 58674' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 68958' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'furlong 551'",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -9289.47835521 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -9651.62985749 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 98797' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown factor type 'tier24': use default, custom or specific",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -3768.13471649 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 10782' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_6462'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 25144' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'barrels/moon 139'",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_8732'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -9880.61947254 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 62357' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'acre-ft 131'",
+   1
+  ],
+  [
+   "NEG: Unknown unit '% 637'",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -6738.75175014 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Quantity '3181 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_4069'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Quantity '8421 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 95866' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Unknown unit '% 995'",
+   1
+  ],
+  [
+   "NEG: Quantity '108 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the uni",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 82649' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_8308'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_1857'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 42178' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -7714.18697703 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Quantity '8722 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Quantity '5389 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 44378' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 90308' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 92024' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Invalid date '2024-13-01': use YYYY-MM, YYYY-MM-DD or MM/YYYY",
+   1
+  ],
+  [
+   "NEG: Unknown factor type 'tier30': use default, custom or specific",
+   1
+  ],
+  [
+   "NEG: Quantity '1590 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -9966.94048117 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Quantity '8703 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'xyz 756'",
+   1
+  ],
+  [
+   "NEG: Quantity '11 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the unit",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 80564' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_499'. Use a process key such as combustion, flaring, venting, tank_flashin",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_3753'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 20569' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Quantity '609 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the uni",
+   1
+  ],
+  [
+   "NEG: Quantity '4178 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -8952.69480729 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Quantity '5697 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'acre-ft 578'",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 75446' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 55541' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Quantity '9918 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Quantity '3311 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -3152.50493346 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 40331' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 61015' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 66221' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_8493'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown unit '% 522'",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -6126.30885115 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_7620'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 98166' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 69390' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 20933' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_2562'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown unit '% 60'",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 92860' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 81206' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -5343.32631065 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'xyz 566'",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 65920' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_5640'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_122'. Use a process key such as combustion, flaring, venting, tank_flashin",
+   1
+  ],
+  [
+   "NEG: Quantity '3330 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 81376' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 59657' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown unit '% 419'",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 58812' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -4276.78559613 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 98262' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -8263.47517958 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_8447'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Quantity '3005 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 50941' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Quantity '1536 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_3729'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 34129' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -7319.06808908 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown unit '% 598'",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_54'. Use a process key such as combustion, flaring, venting, tank_flashing",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -7888.30275692 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 94409' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -8692.47893998 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'acre-ft 397'",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'barrels/moon 979'",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 42915' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 77294' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 34745' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_4183'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 87590' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -1566.31551499 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Invalid date '2024-13-06': use YYYY-MM, YYYY-MM-DD or MM/YYYY",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 61498' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 17858' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Unknown factor type 'tier98': use default, custom or specific",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_4604'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -2211.97697377 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_5233'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Quantity '9244 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 18001' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 59180' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'barrels/moon 23'",
+   1
+  ],
+  [
+   "NEG: Unknown factor type 'tier96': use default, custom or specific",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'kwh/yr/x 270'",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_9781'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Quantity '5335 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_236'. Use a process key such as combustion, flaring, venting, tank_flashin",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'scf/scf 711'",
+   1
+  ],
+  [
+   "NEG: Quantity '3055 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 65502' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 68843' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 24053' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -8855.77669544 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 42344' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Unknown unit '% 928'",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'acre-ft 43'",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 22802' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Quantity '3711 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -3087.82278194 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Quantity '8274 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -7496.35868309 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'cubic yards 102'",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 49686' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown unit '% 868'",
+   1
+  ],
+  [
+   "NEG: Quantity '7827 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Quantity '9448 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -7910.85945236 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Quantity '7861 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 78129' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 43718' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Quantity '992 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the uni",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'furlong 907'",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_4144'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'kwh/yr/x 966'",
+   1
+  ],
+  [
+   "NEG: Quantity '5911 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -1104.28675474 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 39602' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_8109'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 60603' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -7754.83816011 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 91757' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 72590' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 7277' not found. Save it under Manage Data > Custom Factors first, or give the site ",
+   1
+  ],
+  [
+   "NEG: Unknown unit '% 887'",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 91667' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -1768.88851418 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown factor type 'tier65': use default, custom or specific",
+   1
+  ],
+  [
+   "NEG: Quantity '3386 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'scf/scf 597'",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -4400.67809615 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 62793' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_7564'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -3223.50077812 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'xyz 401'",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_282'. Use a process key such as combustion, flaring, venting, tank_flashin",
+   1
+  ],
+  [
+   "NEG: Quantity '1645 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'acre-ft 791'",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'cubic yards 263'",
+   1
+  ],
+  [
+   "NEG: Quantity '7316 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 41770' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -6.4072267730e+03 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -167.990064227 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 41431' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 27989' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'xyz 567'",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 7081' is not in the emission factor catalog. Use the factor name exactly as listed, or a save",
+   1
+  ],
+  [
+   "NEG: Quantity '581 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the uni",
+   1
+  ],
+  [
+   "NEG: Quantity '8829 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'furlong 235'",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 47672' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -3.3536013438e+03 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown unit '% 341'",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -1244.30437389 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -4868.75131892 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'scf/scf 141'",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 76291' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 41491' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 13972' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'cubic yards 429'",
+   1
+  ],
+  [
+   "NEG: Unknown factor type 'tier73': use default, custom or specific",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 38454' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Quantity '283 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the uni",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_7373'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 72519' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'cubic yards 551'",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 61112' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 90525' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Quantity '5552 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 25480' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'furlong 685'",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 23612' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_56'. Use a process key such as combustion, flaring, venting, tank_flashing",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -9184.10366606 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Invalid quantity: -9.3476909980e+03 (must be a non-negative number)",
+   1
+  ],
+  [
+   "NEG: Quantity '980 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the uni",
+   1
+  ],
+  [
+   "NEG: Quantity '8070 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_8701'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Unknown process type 'teleportation_8975'. Use a process key such as combustion, flaring, venting, tank_flashi",
+   1
+  ],
+  [
+   "NEG: Invalid date '2024-13-27': use YYYY-MM, YYYY-MM-DD or MM/YYYY",
+   1
+  ],
+  [
+   "NEG: Unknown unit 'scf/scf 865'",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 70556' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: Quantity '1730 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the un",
+   1
+  ],
+  [
+   "NEG: Custom factor 'CF Missing 32707' not found. Save it under Manage Data > Custom Factors first, or give the site",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 89226' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ],
+  [
+   "NEG: 'Unobtainium Gas 15894' is not in the emission factor catalog. Use the factor name exactly as listed, or a sav",
+   1
+  ]
+ ],
+ "unexpected_reject_reasons": [],
+ "fidelity": {}
+}
