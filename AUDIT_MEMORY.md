@@ -111,6 +111,28 @@ Working branch: `fix/audit-remediation` (from `main`).
 | L12 | FIXED | routes/auth.py, routes/data.py, routes/custom_factors.py, facilities.py | Success returned after rollback in exception handlers. | Replaced swallowed errors with 500 error responses and transaction rollbacks. |
 | L13 | FIXED | routes/auth.py register vs login | Case-sensitive registration allowed duplicate accounts with differing case. | Normalized `email.strip().lower()` on registration; enforced case-insensitive uniqueness. |
 
+## 4b. OPEN — Scope 1 100,000-row bulk import audit (2026-10-01)
+
+Report: audit/SCOPE1_100K_BULK_AUDIT_2026-10-01.md (tooling and evidence in audit/scope1_100k/). Nothing fixed yet.
+
+| ID | Status | Location | Issue |
+|----|--------|----------|-------|
+| S1K-F1 | OPEN | calculations/combustion.py:275, dispatcher.py:331 | Tier 3 combustion with HHV + catalog factor and no gas analysis stores CO2 = 0 (`"c1" in comps` true for 0.0). |
+| S1K-F2 | OPEN | dispatcher.py:918 | Tier 3 combustion uses the fuel name as fuel_type: Coke Oven Gas gets a short-ton HHV basis and is refused. |
+| S1K-F3 | OPEN | dispatcher.py:1567 | Tier 3 tank throughput: any unit other than m3/gal/L is read as bbl (kbbl 1000x low; tonne/kg/MMBtu/scf accepted). |
+| S1K-F4 | OPEN | dispatcher.py:1633 | Pneumatic bleed unit: only exact "m3" converted; M3/m³/Sm3/m3/hr read as scf (35.3x low); lb/hr accepted. |
+| S1K-F5 | OPEN | vented.py:2462 | AGV Tier 3 vent rate: unknown units (Mcf/day) read as scf/h (41.7x low). |
+| S1K-F6 | OPEN | units.py:245 | "Mt" (megatonne) accepted as metric tonne. |
+| S1K-F7 | OPEN | units.py:96, :148 | Unknown temperature / pressure units silently read as C / psig. |
+| S1K-F8 | OPEN | background_processor.py:143 | Quantity cell "928 m3" accepted with the unit column's unit. |
+| S1K-F9 | OPEN | dispatcher (tank/agr/blowdown/vent units) | Method unit column silently overrides a contradicting `unit`. |
+| S1K-F10 | OPEN | unloading Tier 1 | Unit word changes the factor (per-event <-> per-well-year; devices/components read as wells). |
+| S1K-F11 | OPEN | dispatcher Tier 3 combustion | Bulk `hhv_unit` ignored (MJ/m3 read as Btu/scf). |
+| S1K-F12 | OPEN | background_processor.py:1116, :2553; wizard mapping | Activity metadata <- activity_key; unloading basin `region` stored as organisational region. |
+| S1K-F13 | OPEN | routes/emissions.py:124; Scope1Form export | UI "Export CSV" capped at 5,000 records, no facility column. |
+| S1K-F14 | OPEN | Scope1Form.jsx:166, :525 | Duplicate loadEntries effects, no stale-response guard: table can show the previous page. |
+| S1K-F15..F19 | OPEN | various | Late 50k-row refusal; inconsistent unit vocabularies; thousands separators in method columns; no Tier 2 catalog+HHV in bulk; null quantity on engineered records; latent header alias mapping. |
+
 ## 5. Tests and tooling
 
 | ID | Status | Issue | Remediation Summary |
@@ -205,3 +227,4 @@ Still open for review: S4/M9 claim "deprecated" but `new/server.rar`, `calculati
 - 2026-09-30 · Deep dive round 2 (audit/CALC_CSV_AUDIT_2026-09-30.md fixes 33-39): tank GOR 0 used the Table 6-22 default; completion flowback 0 h read as 24 h; zero-as-missing defaults in the section calculators; CSV rows with an extra delimiter (shifted columns) now refused; unknown custom-factor parent_fuel refused / canonicalised; Scope 2 CHP edits recalculate or are refused; legacy root tests repaired. Open for review: CH4 density basis, "1.500" in comma CSVs, BUG-057 in-file overwrite, steam efficiency floor, fugitive weight basis, Scope 3 manual duplicates. Backend 1,946 / 0 failed.
 - 2026-10-01 · Checked against the API Compendium 2021 (audit/CALC_CSV_AUDIT_2026-09-30.md #40-43): gas densities moved from the 15 C values (0.6785 / 1.861) to the Compendium standard conditions, 60 F / 14.696 psia, 23.685 m3/kg-mole (0.67722 / 1.85814; 0.17 % lower everywhere), in one definition used by server, client and validation model; WEC threshold uses the 40 CFR 99.20 density of 0.0192 mt/Mscf; Table 7-76 has no time basis (LNG refusal stays); Eq 7-6 confirms the CH4 weight fraction for fugitive screening. Backend 1,948 / 0 failed.
 - 2026-10-01 · Invented / hard-coded values (audit/CALC_CSV_AUDIT_2026-09-30.md #44-57): mock ERP sync inserting fake Scope 3 records removed; compressor seal factors (15/1.5/1.2 kg/hr, false 'Table 7-3' citation) replaced by Compendium Tables 6-30/6-37/6-38/6-40/6-41 and labelled Tier 1; legacy engine placeholder engineering branches removed; dehydrator solubility model alias closed; tank table default labelled Tier 1; Eq 6-11 CH4 required; forms no longer pre-fill counts / oil / composition or submit blank counts as 1; GWP label, WEC rate label, export years, report GWP default, plume rings, QA fallback, email status and year pickers made truthful. Catalogs: 131/131 API and 82/82 combustion factors found in the Compendium. Backend 1,965 / 0 failed.
+- 2026-10-01 · Scope 1 100,000-row bulk import audit (audit/SCOPE1_100K_BULK_AUDIT_2026-10-01.md): 100k unique rows (Tier 1/2/3, every process, 113 unit spellings oracle-checked, 20,366 unit-equivalence groups) imported via the HTTP API and via the UI wizard into fresh DBs; API and UI DBs identical (83,147 records), UI table and feed match the DB. 100k file refused (50,000-row cap). Tier 1/2 conversions all correct; 19 findings logged OPEN in section 4b (S1K-F1..F19), incl. Tier 3 combustion CO2 = 0, tank kbbl / pneumatic m³ / AGV Mcf/day silent unit errors. No code changed.

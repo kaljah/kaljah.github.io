@@ -1,0 +1,318 @@
+[
+ [
+  "Date",
+  "date"
+ ],
+ [
+  "Region / Facility",
+  "facility_name"
+ ],
+ [
+  "Activity",
+  "activity_key"
+ ],
+ [
+  "Division",
+  ""
+ ],
+ [
+  "Field",
+  ""
+ ],
+ [
+  "Emission Source",
+  "group"
+ ],
+ [
+  "Equipment Name",
+  ""
+ ],
+ [
+  "Equipment ID",
+  "equipment_id"
+ ],
+ [
+  "Process Type",
+  "process_type"
+ ],
+ [
+  "Activity / Fuel",
+  "fuel"
+ ],
+ [
+  "Quantity",
+  "quantity"
+ ],
+ [
+  "Unit",
+  "unit"
+ ],
+ [
+  "Factor Type",
+  "factor_type"
+ ],
+ [
+  "Operating Hours",
+  "operating_hours"
+ ],
+ [
+  "Year",
+  ""
+ ],
+ [
+  "Month",
+  ""
+ ],
+ [
+  "C1 (Methane) mol%",
+  "c1"
+ ],
+ [
+  "C2 (Ethane) mol%",
+  "c2"
+ ],
+ [
+  "C3 (Propane) mol%",
+  "c3"
+ ],
+ [
+  "C4 mol%",
+  "c4"
+ ],
+ [
+  "C5 mol%",
+  "c5"
+ ],
+ [
+  "C6 mol%",
+  ""
+ ],
+ [
+  "C7 mol%",
+  ""
+ ],
+ [
+  "C8 mol%",
+  ""
+ ],
+ [
+  "C9 mol%",
+  ""
+ ],
+ [
+  "C10+ mol%",
+  ""
+ ],
+ [
+  "CO₂ mol%",
+  "co2_mol"
+ ],
+ [
+  "N₂ mol%",
+  "n2_mol"
+ ],
+ [
+  "HHV",
+  "hhv"
+ ],
+ [
+  "CH4 Content %",
+  "ch4_content"
+ ],
+ [
+  "CO2 Content %",
+  "co2_content"
+ ],
+ [
+  "Combustion Efficiency %",
+  "combustion_efficiency"
+ ],
+ [
+  "Flare Type",
+  "flare_type"
+ ],
+ [
+  "Flare Control Efficiency %",
+  "control_efficiency"
+ ],
+ [
+  "Metering Temp",
+  "operating_temperature"
+ ],
+ [
+  "Temp Unit",
+  "temp_unit"
+ ],
+ [
+  "Metering Pressure",
+  "operating_pressure"
+ ],
+ [
+  "Press Unit",
+  "press_unit"
+ ],
+ [
+  "Z Factor",
+  "z_factor"
+ ],
+ [
+  "Vent Method",
+  "vent_method"
+ ],
+ [
+  "Disposition",
+  ""
+ ],
+ [
+  "Blowdown Pressure",
+  "blowdown_pressure"
+ ],
+ [
+  "Blowdown Events",
+  "blowdown_events"
+ ],
+ [
+  "Blowdown Temp",
+  "blowdown_temp"
+ ],
+ [
+  "Blowdown Temp Unit",
+  "blowdown_temp_unit"
+ ],
+ [
+  "Blowdown Press Unit",
+  "blowdown_press_unit"
+ ],
+ [
+  "Pneumatic Count",
+  "pneu_count"
+ ],
+ [
+  "Bleed Rate",
+  "pneu_bleed_rate"
+ ],
+ [
+  "Bleed Rate Unit",
+  "pneu_bleed_unit"
+ ],
+ [
+  "Pneumatic Hours",
+  "pneu_hours"
+ ],
+ [
+  "Supply Gas CH4 %",
+  "pneu_ch4_content"
+ ],
+ [
+  "Tank GOR",
+  "tank_gor"
+ ],
+ [
+  "Tank CH4 Content %",
+  "tank_ch4_content"
+ ],
+ [
+  "Tank Control Eff %",
+  "tank_control_eff"
+ ],
+ [
+  "Tank API Gravity",
+  ""
+ ],
+ [
+  "Leak Method",
+  "fugitive_method"
+ ],
+ [
+  "Component Type",
+  "component_type"
+ ],
+ [
+  "Service",
+  "service"
+ ],
+ [
+  "Screened < 10,000 ppmv",
+  "m21_below_count"
+ ],
+ [
+  "Screened ≥ 10,000 ppmv",
+  "m21_above_count"
+ ],
+ [
+  "Mud Type",
+  ""
+ ],
+ [
+  "Completion Method",
+  "comp_method"
+ ],
+ [
+  "Flowback Rate",
+  "comp_rate"
+ ],
+ [
+  "Flowback Rate Unit",
+  "comp_rate_unit"
+ ],
+ [
+  "Flowback Duration",
+  "comp_duration"
+ ],
+ [
+  "Completion Flare %",
+  "comp_flare_eff"
+ ],
+ [
+  "Well Depth (ft)",
+  "unload_depth"
+ ],
+ [
+  "Casing Diameter (in)",
+  "unload_diam"
+ ],
+ [
+  "Shut-in Pressure (psig)",
+  "unload_press"
+ ],
+ [
+  "Unloading Events",
+  "unload_freq"
+ ],
+ [
+  "Unloading Flare %",
+  "unload_flare_eff"
+ ],
+ [
+  "AGR CO₂ In %",
+  "agr_co2_in"
+ ],
+ [
+  "AGR CO₂ Out %",
+  "agr_co2_out"
+ ],
+ [
+  "AGR CH₄ In %",
+  "agr_ch4_in"
+ ],
+ [
+  "AGR CH₄ Slip",
+  "agr_ch4_slip"
+ ],
+ [
+  "AGR Control Eff %",
+  "agr_control_eff"
+ ],
+ [
+  "User Uncertainty CO₂ %",
+  ""
+ ],
+ [
+  "User Uncertainty CH₄ %",
+  ""
+ ],
+ [
+  "User Uncertainty N₂O %",
+  ""
+ ]
+]

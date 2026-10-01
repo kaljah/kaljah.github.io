@@ -1,0 +1,17 @@
+[
+ {
+  "file": "scope1_audit_100k.csv",
+  "seconds": 88.086,
+  "screen_text": "Scope 1 Bulk Import Upload emissions data from CSV or Excel UPLOAD MODE PROCESS SCOPE SELECT FILE MAP COLUMNS SUBMITTED FOR REVIEW Upload Failed A fatal error occurred while processing the file. The file has more than 50,000 data rows; split it into smaller files. No rows were saved. Go Back"
+ },
+ {
+  "file": "scope1_audit_part1.csv",
+  "seconds": 106.425,
+  "screen_text": "Scope 1 Bulk Import Upload emissions data from CSV or Excel UPLOAD MODE PROCESS SCOPE SELECT FILE MAP COLUMNS SUBMITTED FOR REVIEW 40,108 Rows Imported 9,892 Rows Skipped 50,000 Total Processed 9,892 rows skipped \u2014 click to see reasons (showing first 100) Download full CSV Close Review Pending Records \u2192"
+ },
+ {
+  "file": "scope1_audit_part2.csv",
+  "seconds": 119.251,
+  "screen_text": "Scope 1 Bulk Import Upload emissions data from CSV or Excel UPLOAD MODE PROCESS SCOPE SELECT FILE MAP COLUMNS SUBMITTED FOR REVIEW 43,039 Rows Imported 6,961 Rows Skipped 50,000 Total Processed 6,961 rows skipped \u2014 click to see reasons (showing first 100) Download full CSV 6240 statistical anomalys detected \u2014 click to review Close Review Pending Records \u2192"
+ }
+]

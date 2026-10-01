@@ -1,0 +1,51 @@
+[
+ {
+  "file": "out/scope1_audit_100k.csv",
+  "job_id": "ddd12a2f-c585-42c8-aaf8-e19e43a9471c",
+  "status": {
+   "anomaly_count": 0,
+   "errors": [
+    "The file has more than 50,000 data rows; split it into smaller files. No rows were saved."
+   ],
+   "has_error_csv": false,
+   "processed": 50000,
+   "progress": 50,
+   "skipped_count": 9892,
+   "status": "error",
+   "total": 100000
+  },
+  "elapsed_s": 79.4
+ },
+ {
+  "file": "out/scope1_audit_part1.csv",
+  "job_id": "72d1c9e0-abc7-44b6-804e-e8133c4c8632",
+  "status": {
+   "anomaly_count": 0,
+   "errors": [],
+   "has_error_csv": true,
+   "processed": 50000,
+   "progress": 100,
+   "skipped_count": 9892,
+   "status": "completed",
+   "total": 50000
+  },
+  "elapsed_s": 92.3,
+  "error_rows": 9892
+ },
+ {
+  "file": "out/scope1_audit_part2.csv",
+  "job_id": "52af8567-f336-4b18-8685-523d29e0e17e",
+  "status": {
+   "anomaly_count": 6240,
+   "errors": [],
+   "has_error_csv": true,
+   "processed": 50000,
+   "progress": 100,
+   "skipped_count": 6961,
+   "status": "completed",
+   "total": 50000
+  },
+  "elapsed_s": 106.7,
+  "error_rows": 6961
+ }
+]

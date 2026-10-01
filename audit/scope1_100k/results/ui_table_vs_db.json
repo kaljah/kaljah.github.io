@@ -1,0 +1,42 @@
+{
+ "rendered_rows": 1693,
+ "mismatch": {},
+ "examples": {},
+ "pages_identical_to_previous": [
+  "Page 94 of 8315"
+ ],
+ "duplicates_across_pages": 10,
+ "feed_records": 83147,
+ "feed_unique_equipment": 83147,
+ "feed_mismatch": {},
+ "feed_examples": {},
+ "feed_keys": [
+  "activity",
+  "amount",
+  "ch4_emissions",
+  "co2_emissions",
+  "co2e_total",
+  "division",
+  "equipment_id",
+  "facility_id",
+  "facility_name",
+  "factor_source",
+  "factor_type",
+  "field",
+  "fuel",
+  "group_name",
+  "id",
+  "month",
+  "n2o_emissions",
+  "process_type",
+  "region",
+  "scope",
+  "status",
+  "timestamp",
+  "uncertainty_ch4",
+  "uncertainty_co2",
+  "uncertainty_n2o",
+  "unit",
+  "year"
+ ]
+}
