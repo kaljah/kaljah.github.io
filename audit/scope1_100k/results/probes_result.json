@@ -4,10 +4,10 @@
   "title": "Tier 3 combustion, site HHV + catalog factor, no gas analysis: CO2 must not be 0",
   "expected": "ratio 1 (CO2 = 1,020 MMBtu x 53.06 kg = 54.1 t)",
   "test": {
-   "co2_t": 0.0,
+   "co2_t": 54.1212,
    "ch4_t": 0.00102,
    "n2o_t": 0.00010200000000000001,
-   "co2e_t": 0.05559,
+   "co2e_t": 54.176790000000004,
    "qty": 1000.0,
    "unit": "Mscf"
   },
@@ -17,14 +17,19 @@
    "ch4_t": 0.00102,
    "n2o_t": 0.00010200000000000001
   },
-  "ratio_co2e": 0.0010260851556542939
+  "ratio_co2e": 1.0
  },
  {
   "id": "P02",
   "title": "Tier 3 combustion of Coke Oven Gas (a gas) with a gas analysis",
   "expected": "accepted (it is refused: 'heating value tabulated per short_ton')",
   "test": {
-   "refused": "Calculation error for 'combustion': Activity unit 'mscf' needs the fuel density to use a heating value tabulated per short_ton"
+   "co2_t": 18.76308328655537,
+   "ch4_t": 0.05369500587460018,
+   "n2o_t": 5.99e-05,
+   "co2e_t": 20.282416951044176,
+   "qty": 1000.0,
+   "unit": "Mscf"
   }
  },
  {
@@ -33,9 +38,9 @@
   "expected": "ratio 1",
   "test": {
    "co2_t": 0.0,
-   "ch4_t": 0.005297587633163674,
+   "ch4_t": 5.2975876331636735,
    "n2o_t": 0.0,
-   "co2e_t": 0.14833245372858286,
+   "co2e_t": 148.33245372858286,
    "qty": 5.0,
    "unit": "kbbl"
   },
@@ -45,19 +50,14 @@
    "ch4_t": 5.2975876331636735,
    "n2o_t": 0.0
   },
-  "ratio_co2e": 0.001
+  "ratio_co2e": 1.0
  },
  {
   "id": "P04",
   "title": "Tier 3 tank throughput given as a MASS (tonne): must be refused",
   "expected": "refused",
   "test": {
-   "co2_t": 0.0,
-   "ch4_t": 5.2975876331636735,
-   "n2o_t": 0.0,
-   "co2e_t": 148.33245372858286,
-   "qty": 5000.0,
-   "unit": "tonne"
+   "refused": "Calculation error for 'tank_flashing': Tank throughput: 'tonne' is not a liquid volume (use bbl, kbbl, m3, gal or L)"
   }
  },
  {
@@ -66,31 +66,26 @@
   "expected": "ratio 1",
   "test": {
    "co2_t": 0.0,
-   "ch4_t": 0.051511437286756376,
+   "ch4_t": 1.8191092401266624,
    "n2o_t": 0.0,
-   "co2e_t": 1.4423202440291785,
+   "co2e_t": 50.93505872354655,
    "qty": 25.0,
    "unit": "devices"
   },
   "reference": {
-   "co2e_t": 50.93510672181724,
+   "co2e_t": 50.93505872354655,
    "co2_t": 0.0,
-   "ch4_t": 1.8191109543506159,
+   "ch4_t": 1.8191092401266624,
    "n2o_t": 0.0
   },
-  "ratio_co2e": 0.02831681990785706
+  "ratio_co2e": 1.0
  },
  {
   "id": "P06",
   "title": "Tier 3 pneumatic bleed rate in lb/hr (a mass rate): must be refused",
   "expected": "refused",
   "test": {
-   "co2_t": 0.0,
-   "ch4_t": 1.8191100918802028,
-   "n2o_t": 0.0,
-   "co2e_t": 50.935082572645676,
-   "qty": 25.0,
-   "unit": "devices"
+   "refused": "Calculation error for 'pneumatic': Pneumatic bleed rate unit: Unknown volume or volume-rate unit 'lb/hr' (use scf/hr or m3/hr)"
   }
  },
  {
@@ -98,32 +93,27 @@
   "title": "Tier 3 associated-gas vent rate in Mcf/day",
   "expected": "ratio 1 (24 Mcf/day = 1,000 scf/h)",
   "test": {
-   "co2_t": 0.09094482771419352,
-   "ch4_t": 0.8287789130907461,
+   "co2_t": 0.1578903258905126,
+   "ch4_t": 1.4388522796515275,
    "n2o_t": 0.0,
-   "co2e_t": 23.296754394255085,
-   "qty": null,
-   "unit": null
+   "co2e_t": 40.44575415613328,
+   "qty": 99999.99999861648,
+   "unit": "scf"
   },
   "reference": {
-   "co2e_t": 970.6980997606286,
-   "co2_t": 3.7893678214247295,
-   "ch4_t": 34.53245471211442,
+   "co2e_t": 40.44575415613328,
+   "co2_t": 0.1578903258905126,
+   "ch4_t": 1.4388522796515275,
    "n2o_t": 0.0
   },
-  "ratio_co2e": 0.024
+  "ratio_co2e": 1.0
  },
  {
   "id": "P08",
   "title": "Mass unit 'Mt' (SI: megatonne) for coal",
   "expected": "refused as ambiguous (it is booked as 1 tonne)",
   "test": {
-   "co2_t": 2.563392325139861,
-   "ch4_t": 0.0003022868307947949,
-   "n2o_t": 4.396899357015199e-05,
-   "co2e_t": 2.5835081396982056,
-   "qty": 1.0,
-   "unit": "Mt"
+   "refused": "'Mt' is ambiguous (megatonne or metric ton): write 'tonne' (1,000 kg)"
   }
  },
  {
@@ -131,32 +121,21 @@
   "title": "Unknown pressure unit (kg/cm2) on a metered gas volume",
   "expected": "refused, or ratio 1 (10 kgf/cm2 = 142.2 psia)",
   "test": {
-   "co2_t": 3.1069133065677907,
-   "ch4_t": 0.005121197956792902,
-   "n2o_t": 6.053176796681182e-06,
-   "co2e_t": 3.2519109412091125,
-   "qty": 1000.0,
-   "unit": "m3"
+   "refused": "Calculation error for 'combustion': Unknown pressure unit 'kg/cm2' (use psig, psia, barg, bara, kPa, kPag, MPa, atm)"
   },
   "reference": {
    "co2e_t": 18.728905446266438,
    "co2_t": 17.893812776686783,
    "ch4_t": 0.029494790613399942,
    "n2o_t": 3.4862386431906174e-05
-  },
-  "ratio_co2e": 0.1736305920566956
+  }
  },
  {
   "id": "P10",
-  "title": "Unknown temperature unit ('centigrade') on a metered gas volume",
+  "title": "Unknown temperature unit ('deg') on a metered gas volume",
   "expected": "refused",
   "test": {
-   "co2_t": 1.6022011985882927,
-   "ch4_t": 0.0026409457538568337,
-   "n2o_t": 3.121557044545691e-06,
-   "co2e_t": 1.6769748923130885,
-   "qty": 1000.0,
-   "unit": "m3"
+   "refused": "Calculation error for 'combustion': Unknown temperature unit 'deg' (use C, F, K or R)"
   }
  },
  {
@@ -164,12 +143,7 @@
   "title": "Quantity cell '928 m3' while the unit column says scf",
   "expected": "refused (contradicting units)",
   "test": {
-   "co2_t": 0.050224473600000014,
-   "ch4_t": 9.465600000000001e-07,
-   "n2o_t": 9.465600000000001e-08,
-   "co2e_t": 0.050276061120000014,
-   "qty": 928.0,
-   "unit": "scf"
+   "refused": "Quantity '928 m3' carries the unit 'm3' but the unit column says 'scf': put the number in quantity and the unit in unit"
   }
  },
  {
@@ -177,12 +151,7 @@
   "title": "unit = bbl but tank_unit = m3 on the same row",
   "expected": "refused (contradicting units)",
   "test": {
-   "co2_t": 0.0,
-   "ch4_t": 6.664164750018336,
-   "n2o_t": 0.0,
-   "co2e_t": 186.5966130005134,
-   "qty": 1000.0,
-   "unit": "bbl"
+   "refused": "Calculation error for 'tank_flashing': Contradicting units on the row: unit 'bbl' and tank_unit 'm3'"
   }
  },
  {
@@ -190,20 +159,14 @@
   "title": "Per-event unloading factor with unit 'wells': silently switched to the per-well-year factor",
   "expected": "refused (the factor is per event)",
   "test": {
-   "co2_t": 0.0,
-   "ch4_t": 2.3648087431693985,
-   "n2o_t": 0.0,
-   "co2e_t": 66.21464480874316,
-   "qty": 10.0,
-   "unit": "wells"
+   "refused": "'Liquids Unloading - Non-Plunger (≤10 events/yr)' is a per-event factor: give the number of unloading events (unit 'events'), not wells"
   },
   "reference": {
    "co2e_t": 115.36,
    "co2_t": 0.0,
    "ch4_t": 4.12,
    "n2o_t": 0.0
-  },
-  "ratio_co2e": 0.5739827046527667
+  }
  },
  {
   "id": "P14",
@@ -212,8 +175,8 @@
   "test": {
    "co2_t": 52.353527397988195,
    "ch4_t": 0.08629554515560743,
-   "n2o_t": 3.7990000000000004e-06,
-   "co2e_t": 54.7708093973452,
+   "n2o_t": 0.00010196209038210378,
+   "co2e_t": 54.79682261629646,
    "qty": 1000.0,
    "unit": "Mscf"
   },
@@ -223,14 +186,19 @@
    "ch4_t": 0.08629554515560743,
    "n2o_t": 0.00010200000000000001
   },
-  "ratio_co2e": 0.9995250954528638
+  "ratio_co2e": 0.9999998166673464
  },
  {
   "id": "P15",
   "title": "Tier 2 'catalog factor + site HHV' (offered by the form) through the bulk import",
   "expected": "accepted, as on the form (the import requires a saved custom factor)",
   "test": {
-   "refused": "Custom factor 'Natural Gas' not found. Save it under Manage Data > Custom Factors first."
+   "co2_t": 54.91710000000001,
+   "ch4_t": 0.0010350000000000001,
+   "n2o_t": 0.00010350000000000002,
+   "co2e_t": 54.97350750000001,
+   "qty": 1000.0,
+   "unit": "Mscf"
   }
  },
  {
@@ -238,41 +206,59 @@
   "title": "Thousands separator in a method column (vent_volume '12,345.6')",
   "expected": "ratio 1 (the quantity column accepts the same notation)",
   "test": {
-   "refused": "Calculation error for 'associated_gas_venting': Tier 3 requires either measured vent rate + duration or total measured vent volume."
+   "co2_t": 0.01949250807340881,
+   "ch4_t": 0.1776349470391166,
+   "n2o_t": 0.0,
+   "co2e_t": 4.993271025168673,
+   "qty": 12345.6,
+   "unit": "scf"
   },
   "reference": {
    "co2e_t": 4.993271025168673,
    "co2_t": 0.01949250807340881,
    "ch4_t": 0.1776349470391166,
    "n2o_t": 0.0
-  }
+  },
+  "ratio_co2e": 1.0
  },
  {
   "id": "P17",
   "title": "Activity table row: unit 'barrels' (spelling accepted elsewhere)",
   "expected": "ratio 1",
   "test": {
-   "refused": "Oil volume unit must be bbl, gal, L or m3"
+   "co2_t": 0.0,
+   "ch4_t": 0.0027,
+   "n2o_t": 0.0,
+   "co2e_t": 0.0756,
+   "qty": 1000.0,
+   "unit": "barrels"
   },
   "reference": {
    "co2e_t": 0.0756,
    "co2_t": 0.0,
    "ch4_t": 0.0027,
    "n2o_t": 0.0
-  }
+  },
+  "ratio_co2e": 1.0
  },
  {
   "id": "P18",
   "title": "Vented gas volume in Nm3 (accepted by every other gas method)",
   "expected": "ratio 1 (1 Nm3 = 1.0570 Sm3 at 60 F)",
   "test": {
-   "refused": "Gas volume unit must be scf, Mcf, MMscf or m3"
+   "co2_t": 0.03927919511963551,
+   "ch4_t": 0.5726319379404258,
+   "n2o_t": 0.0,
+   "co2e_t": 16.072973457451557,
+   "qty": 1000.0,
+   "unit": "Nm3"
   },
   "reference": {
    "co2e_t": 16.07296747266203,
    "co2_t": 0.039279180493983545,
    "ch4_t": 0.5726317247202872,
    "n2o_t": 0.0
-  }
+  },
+  "ratio_co2e": 1.0000003723512498
  }
 ]

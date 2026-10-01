@@ -156,6 +156,20 @@ GAS_SCALE = {"scf": 1.0, "mcf": 1e3, "mscf": 1e3, "mmscf": 1e6, "m3": 1 / SCF_TO
 LIQ_TO_GAL = {"gal": 1.0, "bbl": 42.0, "m3": 264.172052, "l": 0.264172052}
 LIQ_TO_BBL = {"bbl": 1.0, "gal": 1 / 42.0, "m3": 6.28981077, "l": 6.28981077e-3}
 
+# S1K-F16: every gas volume spelling the rest of the platform accepts (Nm3, ksm3, MMcf, kscf, cf ...)
+from .units import GAS_VOLUME_UNITS as _GV, VOLUME_UNITS_TO_M3 as _V2M3, _VOLUME_ALIASES as _VA
+for _u in _GV:
+    if _u in _V2M3:
+        GAS_SCALE.setdefault(_u, _V2M3[_u] / SCF_TO_M3)
+for _a, _b in _VA.items():
+    if _b in GAS_SCALE:
+        GAS_SCALE.setdefault(_a, GAS_SCALE[_b])
+# liquid spellings (barrels, gallons, liters, kbbl ...) from the shared table
+for _u, _m3 in _V2M3.items():
+    if _u not in _GV:
+        LIQ_TO_BBL.setdefault(_u, _m3 / CONVERSIONS["bbl_to_m3"])
+        LIQ_TO_GAL.setdefault(_u, _m3 / CONVERSIONS["gal_to_m3"])
+
 
 def activity_factor_list(process=None):
     return [{"key": k, **{kk: vv for kk, vv in v.items()}} for k, v in ACTIVITY_FACTORS.items()
