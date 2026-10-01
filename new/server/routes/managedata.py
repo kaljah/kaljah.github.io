@@ -678,12 +678,15 @@ def delete_goal(year):
     user = get_current_user()
     if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to modify corporate emission targets."}), 403
-    if not user or user.role not in ["admin", "superuser"]:
-        return jsonify({"error": "Administrator privileges required to modify corporate emission targets."}), 403
+    # Audit 2026-10-01 (A-05): same rule as saving a goal (organisation-wide admins only), and audited
+    if not user or user.role not in ["admin", "superuser"] or get_allowed_facility_ids(user) is not None:
+        return jsonify({"error": "Organisation-wide administrator privileges required to modify corporate emission targets."}), 403
     try:
         goal = Goal.query.filter_by(year=year).first()
         if not goal:
             return jsonify({"error": "Goal not found"}), 404
+        log_activity_and_notify(action="DELETE", record_id=f"goal-{year}", user=user, request=request,
+                                entity="Goal", details=f"Emission goal for {year} ({goal.target_amount} tCO2e) deleted")
         db.session.delete(goal)
         db.session.commit()
         from routes.dashboard import clear_dashboard_cache
@@ -761,8 +764,9 @@ def add_base_year_recalculation():
     user = get_current_user()
     if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to modify base year recalculation data."}), 403
-    if not user or user.role not in ["admin", "superuser"]:
-        return jsonify({"error": "Administrator privileges required to modify base year recalculation data."}), 403
+    # Audit A-05: the base year is organisation-wide; a region-restricted superuser may not move it
+    if not user or user.role not in ["admin", "superuser"] or get_allowed_facility_ids(user) is not None:
+        return jsonify({"error": "Organisation-wide administrator privileges required to modify base year recalculation data."}), 403
     try:
         data = request.get_json() or {}
         if not data.get("year") or not data.get("reason"):
@@ -800,6 +804,10 @@ def add_base_year_recalculation():
             base_year_singleton = BaseYear(id=1, year=year, locked=1)
             db.session.add(base_year_singleton)
 
+        db.session.flush()
+        log_activity_and_notify(action="CREATE", record_id=f"base-year-{recalc.id}", user=user, request=request,
+                                entity="BaseYearRecalculation",
+                                details=f"Base year set to {year} ({reason}); previous {prev_em}, adjusted {adj_em} tCO2e")
         db.session.commit()
         from routes.dashboard import clear_dashboard_cache
         clear_dashboard_cache()
@@ -820,12 +828,16 @@ def delete_base_year_recalculation(rec_id):
     user = get_current_user()
     if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to modify base year recalculation data."}), 403
-    if not user or user.role not in ["admin", "superuser"]:
-        return jsonify({"error": "Administrator privileges required to modify base year recalculation data."}), 403
+    # Audit A-05: the base year is organisation-wide; a region-restricted superuser may not move it
+    if not user or user.role not in ["admin", "superuser"] or get_allowed_facility_ids(user) is not None:
+        return jsonify({"error": "Organisation-wide administrator privileges required to modify base year recalculation data."}), 403
     try:
         rec = db.session.get(BaseYearRecalculation, rec_id)
         if not rec:
             return jsonify({"error": "Recalculation record not found"}), 404
+        log_activity_and_notify(action="DELETE", record_id=f"base-year-{rec.id}", user=user, request=request,
+                                entity="BaseYearRecalculation",
+                                details=f"Base year recalculation {rec.id} (year {rec.year}: {rec.reason}) deleted")
         db.session.delete(rec)
         db.session.commit()
 
