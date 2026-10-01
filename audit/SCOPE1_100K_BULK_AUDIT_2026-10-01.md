@@ -384,3 +384,36 @@ Evidence is in `audit/scope1_100k/results/rerun_after_fixes/`:
 
 All 18 probes (`probes.py`) now give the expected outcome (`results/probes_result.json`).
 
+
+## 7. Second run with a new 100,000-row file (seed 20261002)
+
+A new file was generated with `gen.py --seed 20261002`:
+- different quantities, units, dates, facilities, factors and unit-equivalence groups;
+- 100,000 unique data rows (MD5 `b7efcb88…`);
+- only 2 data rows coincide with the first file (fixed-value invalid-input cases).
+
+It went through the same tests as the first file, on fresh databases: HTTP API upload, UI wizard upload, database checks, and UI table, feed and export checks.
+
+| | Result |
+|---|---|
+| 100k file | refused up front: 3.8 s (API) / 11.4 s (UI, including navigation); no rows saved |
+| Saved / refused (two 50k halves) | 84,391 / 15,609; identical on the API and UI paths |
+| API vs UI database | identical, record by record, including the stored payload (total 699,023,321.20 tCO₂e on both) |
+| Independent oracle | **47,433 / 47,433 pass** |
+| Unit-equivalence groups | **20,831 / 20,831 pass** |
+| Must-refuse rows accepted / valid rows refused | **0 / 0** |
+| Ambiguous inputs | **1,884 / 1,884 refused** |
+| Field fidelity (period, facility, quantity, unit, status, tier, CO₂e identity, engineered quantities) | 0 issues |
+| Activity / region metadata overwritten | 0 / 0 |
+| UI table | 1,686 rendered rows (150 pages and 186 searched records, all found): 0 mismatches, 0 stale pages, 0 duplicates |
+| Table feed vs DB | 84,391 / 84,391 match |
+| UI Export CSV | 84,391 / 84,391 records |
+
+No new defects were found.
+
+Files are in `audit/scope1_100k/run2_seed20261002/`:
+- the CSV and its expectations;
+- check summaries for the API and UI runs;
+- UI table vs DB;
+- upload jobs;
+- screenshots.
