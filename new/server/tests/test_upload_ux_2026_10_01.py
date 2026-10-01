@@ -133,3 +133,70 @@ def test_check_reports_scope2_rows_separately(client):
     assert p["scope2_rows"] == 3 and p["unknown_process_rows"] == 2
     groups = {g["title"]: g["count"] for g in r.get_json()["skipped_groups"]}
     assert groups.get("Scope 2 row in a Scope 1 file") == 3
+
+
+def test_saved_mappings_round_trip(client):
+    headers = ["Month", "Site", "Proc", "Fuel used", "Amount", "UoM"]
+    mapping = {"date": "Month", "facility_name": "Site", "process": "Proc", "fuel": "Fuel used", "quantity": "Amount",
+               "unit": "UoM", "group": ""}
+    r = client.post("/api/emissions/upload/mappings", json={"scope": "1", "name": "SAP monthly export",
+                                                            "headers": headers, "mapping": mapping})
+    assert r.status_code == 201, r.get_data(as_text=True)
+    saved = r.get_json()
+    assert saved["mapping"] == {k: v for k, v in mapping.items() if v}       # blank choices are not stored
+    # same name replaces; listing is per scope
+    mapping2 = dict(mapping, unit="UoM", quantity="Amount")
+    assert client.post("/api/emissions/upload/mappings", json={"scope": "1", "name": "SAP monthly export",
+                                                               "headers": headers, "mapping": mapping2}).status_code == 201
+    rows = client.get("/api/emissions/upload/mappings?scope=1").get_json()
+    assert [m["name"] for m in rows].count("SAP monthly export") == 1
+    assert client.get("/api/emissions/upload/mappings?scope=2").get_json() == []
+    assert client.post(f"/api/emissions/upload/mappings/{saved['id']}/used").get_json()["last_used_at"]
+
+    # the saved mapping drives an import of a file with those columns
+    body = ("Month,Site,Proc,Fuel used,Amount,UoM\n" + f"2024-05,{FAC},combustion,Natural Gas,100,MMBtu\n").encode()
+    r = client.post("/api/emissions/upload/check", content_type="multipart/form-data",
+                    data={"file": (io.BytesIO(body), "sap.csv"), "global_factor_type": "auto", "scope": "1",
+                          "column_mapping": __import__("json").dumps(rows[0]["mapping"])})
+    assert r.get_json()["preview"]["checked_ok"] == 1
+
+    assert client.delete(f"/api/emissions/upload/mappings/{saved['id']}").status_code == 200
+    assert client.delete(f"/api/emissions/upload/mappings/{saved['id']}").status_code == 404
+
+
+def test_saved_mapping_validation(client):
+    def post(**kw):
+        body = {"scope": "1", "name": "x", "headers": ["A", "B"], "mapping": {"date": "A"}}
+        body.update(kw)
+        return client.post("/api/emissions/upload/mappings", json=body)
+
+    assert post(name="").status_code == 400
+    assert post(scope="nope").status_code == 400
+    assert post(mapping={"date": "Not a column"}).status_code == 400
+    assert post(mapping={"date": ""}).status_code == 400
+    assert post(headers="A,B").status_code == 400
+
+
+def test_saved_mappings_are_private(client):
+    r = client.post("/api/emissions/upload/mappings", json={"scope": "1", "name": "mine", "headers": ["A"],
+                                                            "mapping": {"date": "A"}})
+    mid = r.get_json()["id"]
+    with flask_app.app_context():
+        if not User.query.filter_by(email="ux_other@ghg.com").first():
+            o = User(email="ux_other@ghg.com", fullName="Other", orgName="Audit", sector="Oil & Gas", role="user",
+                     location="Global")
+            o.set_password("UxOther2026!")
+            db.session.add(o)
+            db.session.commit()
+    from extensions import limiter
+
+    other = flask_app.test_client()
+    prev = limiter.enabled
+    limiter.enabled = False
+    try:
+        assert other.post("/api/auth/login", json={"email": "ux_other@ghg.com", "password": "UxOther2026!"}).status_code == 200
+    finally:
+        limiter.enabled = prev
+    assert all(m["id"] != mid for m in other.get("/api/emissions/upload/mappings?scope=1").get_json())
+    assert other.delete(f"/api/emissions/upload/mappings/{mid}").status_code == 404
+    assert other.post(f"/api/emissions/upload/mappings/{mid}/used").status_code == 404

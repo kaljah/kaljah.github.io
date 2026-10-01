@@ -2,6 +2,7 @@ import React, { useState, useRef, useCallback, useMemo, useEffect } from "react"
 import Papa from "papaparse";
 import api from "../api";
 import { autoDetectMapping, missingRequiredFields } from "../utils/importMapping";
+import { fittingMappings, withSavedMapping } from "../utils/savedMappings";
 import { useToast } from "./Toast";
 import UploadProgress from "./UploadProgress";
 import SkipGroupList from "./SkipGroupList";
@@ -581,6 +582,12 @@ function FileCheckPanel({ check, onRecheck, canRun }) {
           {scope2Proc.slice(0, 5).map(x => `${x.name} (${fmt(x.rows)})`).join(", ")}. Import them with the Scope 2 template.
         </div>
       )}
+      {p.example_rows > 0 && (
+        <div className="s1w-check-warn">
+          <strong>{fmt(p.example_rows)} example rows from the template</strong> (dated EXAMPLE) will not be imported.
+          Delete them, or replace EXAMPLE with the real month to keep a row.
+        </div>
+      )}
       {p.period?.unreadable_rows > 0 && (
         <div className="s1w-check-warn"><strong>{fmt(p.period.unreadable_rows)} rows have a missing or unreadable date.</strong></div>
       )}
@@ -626,6 +633,10 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
   // a refused upload (e.g. over the server's size limit) stays visible in the wizard; the toast lasts 3 s
   const [submitError, setSubmitError] = useState("");
   const [overwrite, setOverwrite] = useState(false);  // replace records that already exist
+  const [savedMappings, setSavedMappings] = useState([]);   // the user's saved column mappings (Scope 1)
+  const [appliedSaved, setAppliedSaved] = useState(null);   // the saved mapping the file opened with
+  const [saveName, setSaveName] = useState(null);           // null = save form closed
+  const [optionalCols, setOptionalCols] = useState(false);  // template: include the optional columns
 
   // ── Access Control: fetch allowed regions on mount ─────────────────────────
   const [allowedRegions, setAllowedRegions] = useState(null);  // null = loading, [] = restricted with no regions
@@ -650,6 +661,12 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
   }, []);
 
   useEffect(() => {
+    api.get("/emissions/upload/mappings", { params: { scope: "1" } })
+      .then(res => setSavedMappings(Array.isArray(res.data) ? res.data : []))
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
     api.get("/emissions/upload/limits").then(res => setMaxBytes(res.data?.max_bytes || null)).catch(() => {});
   }, []);
 
@@ -669,6 +686,7 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
   const missingRequired = missingRequiredFields(FIELD_GROUPS.flatMap(g => g.fields), mapping);
   const canSubmit = missingRequired.length === 0 || headers.length === 0;
   const essentialKeys = useMemo(() => new Set([
+    "fuel",   // optional only for Tier 3 methods: always offered in the short list
     ...Object.keys(mapping).filter(k => mapping[k]),
     ...missingRequired.map(f => f.key),
   ]), [mapping, missingRequired]);
@@ -687,7 +705,8 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
     }
     const isExcel = f.name.toLowerCase().endsWith(".xlsx");
     if (isExcel) {
-      setFile(f); setHeaders([]); setMapping({}); setStep(4);
+      // the column names of an Excel file come back with the first check (the browser does not read .xlsx)
+      setFile(f); setHeaders([]); setMapping({}); setAppliedSaved(null); setStep(4);
       return;
     }
     Papa.parse(f, {
@@ -698,14 +717,16 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
           return;
         }
         const hdrs = results.meta.fields;
+        const { mapping: m, applied } = withSavedMapping(autoDetectMapping(hdrs, allFields), savedMappings, hdrs);
         setHeaders(hdrs);
-        setMapping(autoDetectMapping(hdrs, allFields));
+        setMapping(m);
+        setAppliedSaved(applied);
         setFile(f);
         setStep(4);
       },
       error: () => setParseError("Failed to parse file. Please ensure it is a valid CSV."),
     });
-  }, [allFields, maxBytes]);
+  }, [allFields, maxBytes, savedMappings]);
 
   const onDrop = (e) => { e.preventDefault(); setIsDragging(false); processFile(e.dataTransfer.files[0]); };
   const onFileChange = (e) => { processFile(e.target.files[0]); e.target.value = ""; };
@@ -713,17 +734,16 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
   // Template download
   const downloadTemplate = async (fmt) => {
     try {
-      const processParam = processScope === "specific" && selectedProcesses.length
-        ? selectedProcesses.join(",")
-        : "all";
+      const processParam = selectedProcesses.length ? selectedProcesses.join(",") : "all";
       const res = await api.get(
-        `/emissions/template/${fmt}?tier=${tier}&process=${processParam}`,
+        `/emissions/template/${fmt}?tier=${tier}&process=${processParam}${optionalCols ? "&optional=1" : ""}`,
         { responseType: "blob" }
       );
       const url = URL.createObjectURL(new Blob([res.data]));
       const a = document.createElement("a");
       a.href = url;
-      a.download = fmt === "excel" ? "Scope1_Template.xlsx" : "scope1_template.csv";
+      const stem = `scope1_template_${tier === "auto" ? "per_row" : `tier${tier}`}`;
+      a.download = fmt === "excel" ? `${stem}.xlsx` : `${stem}.csv`;
       document.body.appendChild(a); a.click(); a.remove();
     } catch { toast.error("Template download failed."); }
   };
@@ -742,10 +762,21 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
     try {
       const res = await api.post("/emissions/upload/check", form, { headers: { "Content-Type": "multipart/form-data" } });
       setCheck({ loading: false, data: res.data, error: "", stale: false });
+      const xlHeaders = res.data?.preview?.columns?.headers;
+      if (headers.length === 0 && Array.isArray(xlHeaders) && xlHeaders.length) {
+        // Excel: show the mapping now that the column names are known; a saved mapping that fits is applied
+        // and the file checked again with it
+        const { mapping: m, applied } = withSavedMapping(autoDetectMapping(xlHeaders, allFields), savedMappings, xlHeaders);
+        skipStaleRef.current = !applied;
+        setHeaders(xlHeaders);
+        setMapping(m);
+        setAppliedSaved(applied);
+        if (applied) setRecheck(true);
+      }
     } catch (err) {
       setCheck({ loading: false, data: null, error: err.response?.data?.error || err.message, stale: false });
     }
-  }, [file, globalFactor, overwrite, mapping]);
+  }, [file, globalFactor, overwrite, mapping, headers.length, allFields, savedMappings]);
 
   // first check when the mapping step opens; later changes only mark the result out of date
   const checkedFileRef = useRef(null);
@@ -756,10 +787,36 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
     }
   }, [step, file, headers.length, canSubmit, runCheck]);
   const firstRender = useRef(true);
+  const skipStaleRef = useRef(false);   // the mapping set from the check's own column names
   useEffect(() => {
     if (firstRender.current) { firstRender.current = false; return; }
+    if (skipStaleRef.current) { skipStaleRef.current = false; return; }
     setCheck(c => (c.data || c.error ? { ...c, stale: true } : c));
   }, [mapping, tier, overwrite]);
+  const [recheck, setRecheck] = useState(false);
+  useEffect(() => {
+    if (recheck) { setRecheck(false); runCheck(); }
+  }, [recheck, runCheck]);
+
+  // ── Saved mappings ──
+  const fitting = useMemo(() => fittingMappings(savedMappings, headers), [savedMappings, headers]);
+  const applySaved = (m) => {
+    setMapping(m ? { ...autoDetectMapping(headers, allFields), ...m.mapping } : autoDetectMapping(headers, allFields));
+    setAppliedSaved(m);
+  };
+  const saveMapping = async () => {
+    const name = (saveName || "").trim();
+    if (!name) return;
+    try {
+      const res = await api.post("/emissions/upload/mappings", { scope: "1", name, headers, mapping });
+      setSavedMappings(list => [res.data, ...list.filter(x => x.id !== res.data.id)]);
+      setAppliedSaved(res.data);
+      setSaveName(null);
+      toast.success(`Mapping "${name}" saved: it will be applied to files with these columns.`);
+    } catch (err) {
+      toast.error(err.response?.data?.error || "The mapping could not be saved.");
+    }
+  };
 
   // Submit
   const handleSubmit = async () => {
@@ -776,6 +833,7 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
         headers: { "Content-Type": "multipart/form-data" },
       });
       setJobId(res.data.job_id);
+      if (appliedSaved) api.post(`/emissions/upload/mappings/${appliedSaved.id}/used`).catch(() => {});
       setStep(5);
     } catch (err) {
       const msg = err.response?.data?.error
@@ -903,23 +961,42 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
             </div>
 
             <div className="s1w-template-section">
-              <p className="s1w-template-label">Don't have a file? Download a pre-configured template:</p>
+              <p className="s1w-template-label">Don't have a file? Download a template made for {TIER_LABEL[tier]}:</p>
+              {(tier === "3" || tier === "auto") && (
+                <div className="s1w-template-procs">
+                  <span className="s1w-template-sub">Add the Tier 3 input columns for{selectedProcesses.length ? "" : " every process"}:</span>
+                  <div className="s1w-template-chips">
+                    {PROCESS_CATALOGUE.map(p => (
+                      <button key={p.key} type="button"
+                        className={`s1w-chip ${selectedProcesses.includes(p.key) ? "s1w-chip--on" : ""}`}
+                        aria-pressed={selectedProcesses.includes(p.key)} onClick={() => toggleProcess(p.key)}>
+                        {p.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <label className="s1w-template-opt">
+                <input type="checkbox" checked={optionalCols} onChange={e => setOptionalCols(e.target.checked)} />
+                <span>Include optional columns (activity, division, field, metering conditions, uncertainty)</span>
+              </label>
               <div className="s1w-template-btns">
-                <button className="s1w-template-btn" onClick={() => downloadTemplate("excel")}>
+                <button className="s1w-template-btn s1w-template-btn--primary" onClick={() => downloadTemplate("excel")}>
                   <span className="s1w-template-btn-icon"><Icon.FileExcel /></span>
                   <span>
-                    <strong>Excel Template</strong>
-                    <small>With dropdowns, sample data & engineering sheets</small>
+                    <strong>Excel template <em className="s1w-reco">Recommended</em></strong>
+                    <small>Dropdowns for your facilities, processes, and the fuels and units of each process; examples and a reference sheet</small>
                   </span>
                 </button>
                 <button className="s1w-template-btn" onClick={() => downloadTemplate("csv")}>
                   <span className="s1w-template-btn-icon"><Icon.File /></span>
                   <span>
-                    <strong>CSV Template</strong>
-                    <small>Lightweight flat file — best for large datasets</small>
+                    <strong>CSV template</strong>
+                    <small>Same columns, for exports from other systems. Example rows dated EXAMPLE are never imported.</small>
                   </span>
                 </button>
               </div>
+              <p className="s1w-template-note">Have an export from another system? Upload it as it is: you match its columns once and can save that mapping for the next file.</p>
             </div>
 
             {/* Config summary pill */}
@@ -967,7 +1044,42 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
             {headers.length === 0 && (
               <div className="s1w-info-banner">
                 <Icon.Info />
-                <span>Excel file — processed server-side. Type column names exactly as they appear in your file, or leave blank to skip that field.</span>
+                <span>Excel file: reading its columns with the check below. The column mapping appears when the check is done.</span>
+              </div>
+            )}
+
+            {headers.length > 0 && (
+              <div className="s1w-saved-map" data-testid="saved-mapping-bar">
+                <Icon.Wand />
+                {appliedSaved ? (
+                  <span>Using your saved mapping <strong>{appliedSaved.name}</strong>.{" "}
+                    <button className="s1w-link-btn" onClick={() => applySaved(null)}>Don't use it</button>
+                  </span>
+                ) : fitting.length > 0 ? (
+                  <span>
+                    <label htmlFor="s1w-saved-select">Saved mapping for these columns: </label>
+                    <select id="s1w-saved-select" className="s1w-saved-select" value=""
+                      onChange={e => applySaved(fitting.find(m => String(m.id) === e.target.value) || null)}>
+                      <option value="">Choose…</option>
+                      {fitting.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
+                    </select>
+                  </span>
+                ) : (
+                  <span>Columns matched automatically. Save the mapping to reuse it for the next file with these columns.</span>
+                )}
+                {saveName === null ? (
+                  <button className="s1w-link-btn s1w-saved-save" disabled={matchedColumns.size === 0}
+                    onClick={() => setSaveName(appliedSaved?.name || (file?.name || "").replace(/\.[^.]+$/, "").slice(0, 80))}>
+                    {appliedSaved ? "Update saved mapping" : "Save this mapping"}
+                  </button>
+                ) : (
+                  <span className="s1w-saved-form">
+                    <input className="s1w-saved-input" aria-label="Mapping name" maxLength={80} value={saveName}
+                      onChange={e => setSaveName(e.target.value)} onKeyDown={e => e.key === "Enter" && saveMapping()} autoFocus />
+                    <button className="s1w-btn-small" onClick={saveMapping} disabled={!saveName.trim()}>Save</button>
+                    <button className="s1w-link-btn" onClick={() => setSaveName(null)}>Cancel</button>
+                  </span>
+                )}
               </div>
             )}
 
@@ -1001,8 +1113,8 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
 
             <FileCheckPanel check={check} onRecheck={runCheck} canRun={headers.length === 0 || canSubmit} />
 
-            <label className="s1w-factor-row" style={{ gap: "8px", cursor: "pointer", alignItems: "flex-start" }}>
-              <input type="checkbox" checked={overwrite} onChange={e => setOverwrite(e.target.checked)} style={{ marginTop: 3 }} />
+            <label className="s1w-overwrite-row">
+              <input type="checkbox" checked={overwrite} onChange={e => setOverwrite(e.target.checked)} />
               <span className="s1w-factor-label">
                 <strong>Replace existing records.</strong> A row for the same facility, month, process, fuel and equipment as a
                 record already in the platform replaces it, and that record goes back to Pending review. Unticked, such rows
