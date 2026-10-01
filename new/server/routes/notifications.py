@@ -1,14 +1,5 @@
 import json
-import time
-from flask import (
-    Blueprint,
-    jsonify,
-    request,
-    session,
-    Response,
-    stream_with_context,
-    current_app,
-)
+from flask import Blueprint, jsonify, request, session
 from routes.auth import login_required
 from extensions import db
 from models import Notification
@@ -58,104 +49,6 @@ def get_notifications():
             }
             for n in notifs
         ]
-    )
-
-
-@notifications_bp.route("/stream")
-@login_required
-def stream_notifications():
-    """
-    Server-Sent Events endpoint for real-time notification delivery.
-
-    Deployment-ready: uses DB polling (2 s interval) so every worker in a
-    multi-process gunicorn deployment reads from the shared database.  No
-    Redis or message broker is required.
-
-    The client connects with ?last_id=<int> as a cursor so that reconnects
-    (browser tab restored, network blip) never miss events.
-
-    X-Accel-Buffering: no  — disables nginx proxy buffering so events flow
-    through immediately in production deployments behind nginx/gunicorn.
-    """
-    user_id = session.get("user_id")
-    if not user_id:
-        return jsonify({"error": "Not authenticated"}), 401
-
-    last_id = request.args.get("last_id", 0, type=int)
-
-    def generate(uid, lid):
-        yield ": connected\n\n"
-
-        start_time = time.time()
-        last_heartbeat = start_time
-        MAX_STREAM_DURATION = 45  # Cycle worker threads every 45s to prevent Gunicorn worker starvation
-        POLL_INTERVAL = 2
-        HEARTBEAT_INTERVAL = 20
-
-        try:
-            while time.time() - start_time < MAX_STREAM_DURATION:
-                try:
-                    new_notifs = (
-                        Notification.query.filter(
-                            ((Notification.user_id == uid) | (Notification.user_id == None)),
-                            Notification.id > lid,
-                        )
-                        .order_by(Notification.id.asc())
-                        .all()
-                    )
-
-                    for n in new_notifs:
-                        payload = json.dumps(
-                            {
-                                "id": n.id,
-                                "type": n.type,
-                                "title": n.title,
-                                "message": n.message,
-                                "is_read": _is_read_for_user(n, uid),
-                                "time": n.created_at.isoformat() + "Z",
-                            }
-                        )
-                        yield f"data: {payload}\n\n"
-                        lid = n.id
-
-                    now = time.time()
-                    if now - last_heartbeat >= HEARTBEAT_INTERVAL:
-                        yield ": heartbeat\n\n"
-                        last_heartbeat = now
-
-                    time.sleep(POLL_INTERVAL)
-
-                except GeneratorExit:
-                    return
-                except Exception as exc:
-                    try:
-                        current_app.logger.error(f"SSE stream error for user {uid}: {exc}")
-                    except Exception:
-                        pass
-                    try:
-                        db.session.rollback()
-                    except Exception:
-                        pass
-                    time.sleep(POLL_INTERVAL)
-
-            # Instruct browser EventSource to reconnect cleanly without treating end-of-stream as an error
-            yield "retry: 1000\n\n"
-            yield ": session-cycle\n\n"
-        finally:
-            # Explicitly return DB connection to pool when worker thread finishes or client disconnects
-            try:
-                db.session.remove()
-            except Exception:
-                pass
-
-    return Response(
-        stream_with_context(generate(user_id, last_id)),
-        mimetype="text/event-stream",
-        headers={
-            "Cache-Control": "no-cache",
-            "X-Accel-Buffering": "no",
-            "Connection": "keep-alive",
-        },
     )
 
 

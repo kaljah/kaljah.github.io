@@ -254,6 +254,10 @@ def superuser_required(f):
 ROLE_RANK = {"user": 0, "it": 1, "superuser": 2, "admin": 3, "it_admin": 4, "it_manager": 4}
 BUSINESS_ROLES = ("admin", "superuser")
 BUSINESS_ROLE_GRANTORS = ("admin", "it_manager")  # separation of duties (update_user and register)
+SUPERUSER_REGION_ERROR = (
+    "A superuser is limited to one region: set a specific region as the location "
+    "(organisation-wide access is the admin role)"
+)
 
 
 @auth_bp.route("/register", methods=["POST"])
@@ -291,6 +295,8 @@ def register():
         return jsonify({"error": "Forbidden: IT Administrators cannot assign business compliance roles (admin, superuser)"}), 403
     if creator and ROLE_RANK.get(role_requested, 0) > ROLE_RANK.get(creator.role, 0):
         return jsonify({"error": "Cannot assign a role higher than your own"}), 403
+    if role_requested == "superuser" and is_unrestricted_location(data.get("location")):
+        return jsonify({"error": SUPERUSER_REGION_ERROR, "field": "location"}), 400
 
     user = User(
         fullName=data.get("fullName"),
@@ -890,7 +896,8 @@ def update_settings():
     if user and user.role in ["it_admin", "it_manager"] and has_operational_keys:
         return jsonify({"error": "IT administrators are not authorized to modify operational GHG calculation standards or settings."}), 403
 
-    is_admin = user and user.role in ["admin", "superuser"]
+    # organisation-wide settings are admin only; superusers are limited to one region (2026-10-01)
+    is_admin = bool(user and user.role == "admin")
     if has_operational_keys and not is_admin:
         return jsonify({"error": "Administrator privileges are required to modify system-wide calculation standards."}), 403
 
@@ -1081,6 +1088,9 @@ def update_user(id):
 
     if "location" in data:
         user.location = data["location"]
+    if ("role" in data or "location" in data) and user.role == "superuser" and is_unrestricted_location(user.location):
+        db.session.rollback()
+        return jsonify({"error": SUPERUSER_REGION_ERROR, "field": "location"}), 400
     if "status" in data:
         if data["status"] != user.status:
             user.session_version = int(user.session_version or 0) + 1  # BUG-114

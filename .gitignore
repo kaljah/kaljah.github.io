@@ -112,3 +112,11 @@ test_results/
 **/test-results/
 playwright-report/
 **/storageState.json
+
+# Assistant session state and binary archives (audit O-07): never commit
+conversations/
+brain/
+annotations/
+*.pb
+*.pbtxt
+*.rar

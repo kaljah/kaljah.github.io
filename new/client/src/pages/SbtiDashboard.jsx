@@ -134,8 +134,8 @@ const SbtiDashboard = () => {
 
   const handleSaveTarget = async (e) => {
     e.preventDefault();
-    if (!user || (user.role !== "admin" && user.role !== "superuser")) {
-      toast.show("Only administrators or superusers can update SBTi targets.", "error");
+    if (!user || user.role !== "admin") {
+      toast.show("Only administrators can update SBTi targets (they are organisation-wide).", "error");
       return;
     }
 
@@ -300,7 +300,7 @@ const SbtiDashboard = () => {
             </button>
           </div>
 
-          {(user?.role === "admin" || user?.role === "superuser") && (
+          {user?.role === "admin" && (
             <button
               className="btn-secondary"
               onClick={() => setShowConfig(!showConfig)}
