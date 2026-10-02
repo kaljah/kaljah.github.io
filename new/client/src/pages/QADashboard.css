@@ -468,9 +468,9 @@
 }
 
 .qa-scope-badge.scope-1 {
-  background: rgba(16, 185, 129, 0.12);
-  color: #059669;
-  border: 1px solid rgba(16, 185, 129, 0.25);
+  background: rgba(255, 102, 0, 0.12);
+  color: #c2410c;
+  border: 1px solid rgba(255, 102, 0, 0.25);
 }
 
 .qa-scope-badge.scope-2 {

@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Scope** | `new/client` (React 19.2, Vite 7.3, React Router 7.13) |
-| **Status** | Draft for review, 2026-10-02 |
+| **Status** | In progress on `feat/ui-modernization`. Decisions made 2026-10-02: S-1 system font, S-2 yes, S-3 darken to `#c2410c`, S-4 yes, S-5 remove intro, S-6 yes. See "Implementation status" at the end. |
 | **Hard constraint** | Keep the light theme and the color palette (`AUDIT_MEMORY.md` §0 "UI theme (preserved)"). This plan only assigns *roles* to existing colors and removes accidental near-duplicates. |
 | **Baseline** | vitest: 8 files, 38 tests passing. ESLint: 0 errors, 38 warnings. Client CSS: 39 files, 18,556 lines. Built JS 775 KB gzip, CSS 51 KB gzip. |
 | **Evidence** | Code survey, plus every route checked in the running app (admin session) at 1440 px, and the Dashboard also at 390 px, on 2026-10-02 |
@@ -1148,3 +1148,19 @@ npm run ui:metrics -- --check       # CI ratchet
 npx playwright test                 # needs the backend on :5000 and storageState.json
 npx playwright test --grep @baseline   # capture the route screenshots (P0-1)
 ```
+
+
+---
+
+## Implementation status (updated as work lands)
+
+| Phase | Status | Notes |
+|---|---|---|
+| P0 | Done except P0-1 (baseline screenshot spec) and P0-2 (data-testid migration of e2e specs) | S-1 resolved as the system stack, so no web font was added. Login intro removed (S-5). |
+| P1 | Done | Deviation: `base.css` and `legacy.css` are unlayered (only Tailwind `theme`/`utilities` are layered), so the focus ring can beat legacy `outline: none` rules and legacy cascade order is unchanged. The UI gallery (P1-6) is not built. |
+| P2 | Core kit done | Button, IconButton, Badge/StatusPill, Card, Page/PageHeader, Banner, StatCard, Num/Unit, Field/Input/NumberInput/Textarea/Switch, SegmentedControl, Tabs, Dialog/Sheet/ConfirmDialog, Menu, Popover, Tooltip, DataTable, Skeleton, EmptyState. `Modal`, `ConfirmModal`, `Drawer` are adapters. Not yet built: `Select` (CustomDropdown evolution), `MultiSelect`, `RadioCard`, `Stepper`, `FilterBar`, chart theme. |
+| P3 | Mostly done | Route config, guards, sidebar, top bar, palette, banners, document titles done. The shared analytics filters (P3-4) are not done: pages still inject filters via `LayoutContext`, which the top bar now renders in a dedicated second row. |
+| P4 | Started | Scope colors (S-2), neutral KPI values, standard page title size, Manage Data tabs as buttons. Full page migrations (Calculations, Dashboard, Manage Data, ...) remain. |
+| P5 | Not started | |
+
+Deviations to revisit: `--z-overlay/modal/popover` are 10000+ until the legacy 9999 modals are gone.

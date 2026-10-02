@@ -1434,7 +1434,7 @@ const ManageDataInner = () => {
                             Management
                         </h3>
                                                 {['admin', 'superuser'].includes(user?.role) && (
-                            <div className={`manage-nav-item ${activeTab === 'pending' ? 'active' : ''}`} onClick={() => handleTabChange('pending')}>
+                            <button type="button" className={`manage-nav-item ${activeTab === 'pending' ? 'active' : ''}`} aria-current={activeTab === 'pending' ? 'page' : undefined} onClick={() => handleTabChange('pending')}>
                                 <span style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
                                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
                                         <Clock size={16} />
@@ -1446,34 +1446,34 @@ const ManageDataInner = () => {
                                         </span>
                                     )}
                                 </span>
-                            </div>
+                            </button>
                         )}
-                        <div className={`manage-nav-item ${activeTab === 'factors' ? 'active' : ''}`} onClick={() => handleTabChange('factors')}>
+                        <button type="button" className={`manage-nav-item ${activeTab === 'factors' ? 'active' : ''}`} aria-current={activeTab === 'factors' ? 'page' : undefined} onClick={() => handleTabChange('factors')}>
                             <span>Emission Factors</span>
-                        </div>
+                        </button>
                         {['admin', 'superuser'].includes(user?.role) && (
-                            <div className={`manage-nav-item ${activeTab === 'facilities' ? 'active' : ''}`} onClick={() => handleTabChange('facilities')}>
+                            <button type="button" className={`manage-nav-item ${activeTab === 'facilities' ? 'active' : ''}`} aria-current={activeTab === 'facilities' ? 'page' : undefined} onClick={() => handleTabChange('facilities')}>
                                 <span>Regions</span>
-                            </div>
+                            </button>
                         )}
-                        <div className={`manage-nav-item ${activeTab === 'production' ? 'active' : ''}`} onClick={() => handleTabChange('production')}>
+                        <button type="button" className={`manage-nav-item ${activeTab === 'production' ? 'active' : ''}`} aria-current={activeTab === 'production' ? 'page' : undefined} onClick={() => handleTabChange('production')}>
                             <span>Production Data</span>
-                        </div>
-                        <div className={`manage-nav-item ${activeTab === 'sources' ? 'active' : ''}`} onClick={() => handleTabChange('sources')}>
+                        </button>
+                        <button type="button" className={`manage-nav-item ${activeTab === 'sources' ? 'active' : ''}`} aria-current={activeTab === 'sources' ? 'page' : undefined} onClick={() => handleTabChange('sources')}>
                             <span>Emission Sources</span>
-                        </div>
-                        <div className={`manage-nav-item ${activeTab === 'goals' ? 'active' : ''}`} onClick={() => handleTabChange('goals')}>
+                        </button>
+                        <button type="button" className={`manage-nav-item ${activeTab === 'goals' ? 'active' : ''}`} aria-current={activeTab === 'goals' ? 'page' : undefined} onClick={() => handleTabChange('goals')}>
                             <span>Emission Goals & Base Years</span>
-                        </div>
-                        <div className={`manage-nav-item ${activeTab === 'mitigation' ? 'active' : ''}`} onClick={() => handleTabChange('mitigation')}>
+                        </button>
+                        <button type="button" className={`manage-nav-item ${activeTab === 'mitigation' ? 'active' : ''}`} aria-current={activeTab === 'mitigation' ? 'page' : undefined} onClick={() => handleTabChange('mitigation')}>
                             <span>Mitigation Projects</span>
-                        </div>
-                        <div className={`manage-nav-item ${activeTab === 'ogmp' ? 'active' : ''}`} onClick={() => handleTabChange('ogmp')}>
+                        </button>
+                        <button type="button" className={`manage-nav-item ${activeTab === 'ogmp' ? 'active' : ''}`} aria-current={activeTab === 'ogmp' ? 'page' : undefined} onClick={() => handleTabChange('ogmp')}>
                             <span>OGMP 2.0 Surveys</span>
-                        </div>
-                        <div className={`manage-nav-item ${activeTab === 'cbam' ? 'active' : ''}`} onClick={() => handleTabChange('cbam')}>
+                        </button>
+                        <button type="button" className={`manage-nav-item ${activeTab === 'cbam' ? 'active' : ''}`} aria-current={activeTab === 'cbam' ? 'page' : undefined} onClick={() => handleTabChange('cbam')}>
                             <span>CBAM Products</span>
-                        </div>
+                        </button>
 
                     </aside>
 

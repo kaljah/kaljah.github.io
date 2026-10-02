@@ -239,3 +239,18 @@ select option:disabled {
 [role="listbox"] {
   pointer-events: auto;
 }
+
+/* One page-title size and weight for every page (was 28-48px at weights 700-900).
+   Higher specificity than the per-page rules; removed when pages move to PageHeader. */
+h1.grid-title,
+h1.section-title,
+h1.qa-title,
+h1.settings-title,
+h1.ua-title,
+.reports-header h1,
+.page-header h1 {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  letter-spacing: normal;
+  line-height: 1.25;
+}

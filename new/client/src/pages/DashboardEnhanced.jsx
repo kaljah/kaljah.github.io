@@ -1070,7 +1070,7 @@ const DashboardEnhanced = () => {
                 <div
                   className="stat-value"
                   style={{
-                    color: !hasProductionData && stats.totalEmissions > 0 ? "#f59e0b" : "#8b5cf6",
+                    color: !hasProductionData && stats.totalEmissions > 0 ? "#b45309" : "var(--text-primary)",
                     fontSize: !hasProductionData && stats.totalEmissions > 0 ? "1.25rem" : undefined,
                   }}
                 >

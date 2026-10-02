@@ -139,8 +139,8 @@
 }
 
 .s1-badge {
-  background: rgba(16, 185, 129, 0.12);
-  color: #059669;
+  background: rgba(255, 102, 0, 0.12);
+  color: #c2410c;
 }
 .s2-badge {
   background: rgba(59, 130, 246, 0.12);
@@ -167,8 +167,8 @@
 }
 
 .s1-ring {
-  background: rgba(16, 185, 129, 0.12);
-  color: #10b981;
+  background: rgba(255, 102, 0, 0.12);
+  color: #ff6600;
 }
 .s2-ring {
   background: rgba(59, 130, 246, 0.12);
@@ -205,8 +205,8 @@
 }
 
 .s1-tag {
-  background: rgba(16, 185, 129, 0.1);
-  color: #059669;
+  background: rgba(255, 102, 0, 0.1);
+  color: #c2410c;
 }
 .s2-tag {
   background: rgba(59, 130, 246, 0.1);
@@ -280,8 +280,8 @@
 }
 
 .scope-1-card:hover .s1-arrow {
-  background: #10b981;
-  border-color: #10b981;
+  background: #ff6600;
+  border-color: #ff6600;
   color: #fff;
   transform: translateY(-2px);
 }
