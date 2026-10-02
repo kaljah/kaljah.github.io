@@ -700,7 +700,7 @@ const EmissionsMap = () => {
               <span className="ping-wave"></span>
             </div>
             <div>
-              <div className="brand-title">METHANE RECON COCKPIT</div>
+              <div className="brand-title">Emissions Map</div>
               <div className="brand-sub">COPERNICUS SENTINEL-5P TROPOMI</div>
             </div>
           </div>
@@ -995,7 +995,7 @@ const EmissionsMap = () => {
             <div className="drawer-header">
               <div className="title-row">
                 <Sliders size={17} color="#ff6600" />
-                <h3>Target Reconnaissance</h3>
+                <h3>Assets</h3>
               </div>
               <span className="target-count-badge">
                 {filteredFacilities.length} ASSETS

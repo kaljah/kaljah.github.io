@@ -1,3 +1,4 @@
+import { Banner } from "../ui";
 import React, { useState, useEffect } from "react";
 import { activateOnKey } from "../utils/a11yKeys";
 import {
@@ -339,8 +340,10 @@ const Settings = () => {
         </div>
 
         {/* Navigation Tabs Bar */}
-        <div className="settings-tabs-bar">
+        <div className="settings-tabs-bar" role="tablist" aria-label="Settings sections">
           <button
+            role="tab"
+            aria-selected={activeTab === "gwp"}
             className={`settings-tab-btn ${activeTab === "gwp" ? "active" : ""}`}
             onClick={() => setActiveTab("gwp")}
             id="tab-gwp"
@@ -349,6 +352,8 @@ const Settings = () => {
             <span>IPCC GWP Standards</span>
           </button>
           <button
+            role="tab"
+            aria-selected={activeTab === "ogmp"}
             className={`settings-tab-btn ${activeTab === "ogmp" ? "active" : ""}`}
             onClick={() => setActiveTab("ogmp")}
             id="tab-ogmp"
@@ -357,6 +362,8 @@ const Settings = () => {
             <span>OGMP 2.0 Baseline & Thresholds</span>
           </button>
           <button
+            role="tab"
+            aria-selected={activeTab === "facilities"}
             className={`settings-tab-btn ${activeTab === "facilities" ? "active" : ""}`}
             onClick={() => setActiveTab("facilities")}
             id="tab-facilities"
@@ -365,6 +372,8 @@ const Settings = () => {
             <span>Facility Overrides ({facilities.length})</span>
           </button>
           <button
+            role="tab"
+            aria-selected={activeTab === "satellite"}
             className={`settings-tab-btn ${activeTab === "satellite" ? "active" : ""}`}
             onClick={() => setActiveTab("satellite")}
             id="tab-satellite"
@@ -376,26 +385,10 @@ const Settings = () => {
       </div>
 
       {!isAdmin && (
-        <div
-          className="settings-readonly-alert"
-          style={{
-            background: "#eff6ff",
-            border: "1px solid #bfdbfe",
-            color: "#1e40af",
-            padding: "12px 18px",
-            borderRadius: "10px",
-            marginBottom: "20px",
-            display: "flex",
-            alignItems: "center",
-            gap: "12px",
-            fontSize: "0.92rem",
-          }}
-        >
-          <AlertCircle size={20} color="#2563eb" style={{ flexShrink: 0 }} />
-          <span>
-            <strong>Read-Only Mode:</strong> System methodologies (IPCC GWP standards, OGMP reconciliation parameters, and Copernicus satellite credentials) are centrally managed. Updates require an Administrator account.
-          </span>
-        </div>
+        <Banner tone="info" title="Read-only mode" className="mb-5">
+          System methodologies (IPCC GWP standards, OGMP reconciliation parameters, and Copernicus satellite
+          credentials) are centrally managed. Updates require an Administrator account.
+        </Banner>
       )}
 
       {/* TAB CONTENT: GWP Standards */}
@@ -413,11 +406,11 @@ const Settings = () => {
             </p>
           </div>
 
-          <div className="gwp-cards-grid">
+          <div className="gwp-cards-grid" role="radiogroup" aria-label="IPCC GWP standard">
             {Object.entries(GWP_DATA).map(([key, data]) => {
               const isSelected = gwpStandard === key;
               return (
-                <div role="button" tabIndex={0} onKeyDown={activateOnKey}
+                <div role="radio" aria-checked={isSelected} aria-disabled={!isAdmin} tabIndex={0} onKeyDown={activateOnKey}
                   key={key}
                   className={`gwp-card ${isSelected ? "selected" : ""}`}
                   onClick={() => { if (isAdmin) setGwpStandard(key); }}

@@ -593,8 +593,10 @@ export default function QADashboard() {
                 </div>
 
                 {/* ── Segmented Navigation Tabs ───────────────────────────── */}
-                <div className="qa-tabs-container">
+                <div className="qa-tabs-container" role="tablist" aria-label="QA sections">
                     <button
+                        role="tab"
+                        aria-selected={activeTab === 'queue'}
                         className={`qa-tab-btn ${activeTab === 'queue' ? 'active' : ''}`}
                         onClick={() => setActiveTab('queue')}
                     >
@@ -604,6 +606,8 @@ export default function QADashboard() {
                     </button>
 
                     <button
+                        role="tab"
+                        aria-selected={activeTab === 'diagnostics'}
                         className={`qa-tab-btn ${activeTab === 'diagnostics' ? 'active' : ''}`}
                         onClick={() => setActiveTab('diagnostics')}
                     >
@@ -613,6 +617,8 @@ export default function QADashboard() {
                     </button>
 
                     <button
+                        role="tab"
+                        aria-selected={activeTab === 'uncertainty'}
                         className={`qa-tab-btn ${activeTab === 'uncertainty' ? 'active' : ''}`}
                         onClick={() => setActiveTab('uncertainty')}
                     >
@@ -644,6 +650,7 @@ export default function QADashboard() {
                                 {/* Status Filters */}
                                 <div className="qa-status-filters">
                                     <button
+                                        aria-pressed={statusFilter === 'all'}
                                         className={`qa-status-filter-btn ${statusFilter === 'all' ? 'active' : ''}`}
                                         onClick={() => { setStatusFilter('all'); setOffset(0); }}
                                     >
@@ -653,6 +660,7 @@ export default function QADashboard() {
                                         )}
                                     </button>
                                     <button
+                                        aria-pressed={statusFilter === 'pending'}
                                         className={`qa-status-filter-btn ${statusFilter === 'pending' ? 'active' : ''}`}
                                         onClick={() => { setStatusFilter('pending'); setOffset(0); }}
                                     >
@@ -662,6 +670,7 @@ export default function QADashboard() {
                                         )}
                                     </button>
                                     <button
+                                        aria-pressed={statusFilter === 'verified'}
                                         className={`qa-status-filter-btn ${statusFilter === 'verified' ? 'active' : ''}`}
                                         onClick={() => { setStatusFilter('verified'); setOffset(0); }}
                                     >
@@ -671,6 +680,7 @@ export default function QADashboard() {
                                         )}
                                     </button>
                                     <button
+                                        aria-pressed={statusFilter === 'rejected'}
                                         className={`qa-status-filter-btn ${statusFilter === 'rejected' ? 'active' : ''}`}
                                         onClick={() => { setStatusFilter('rejected'); setOffset(0); }}
                                     >

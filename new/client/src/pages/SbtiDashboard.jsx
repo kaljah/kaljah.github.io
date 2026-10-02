@@ -1,3 +1,4 @@
+import { Button, PageHeader, SegmentedControl } from "../ui";
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
 import api from "../api";
@@ -270,59 +271,36 @@ const SbtiDashboard = () => {
   return (
     <div className="sbti-container" style={{ opacity: isUpdating ? 0.8 : 1, transition: "opacity 0.2s ease" }}>
       {/* Top Header */}
-      <div className="sbti-header">
-        <div className="sbti-title-group">
-          <h1>
-            <Target size={28} className="text-primary" />
-            SBTi & Net-Zero Trajectory Dashboard
-          </h1>
-          <p>
-            Track corporate decarbonization against Science Based Targets initiative (SBTi) 1.5°C & Well-Below 2°C pathways per Corporate Net-Zero Standard v1.2.
-          </p>
-        </div>
-
-        <div className="sbti-header-actions">
-          {/* Scope Disaggregation Toggle */}
-          <div className="sbti-scope-toggle">
-            <button
-              className={`btn-scope ${scopeMode === "all" ? "active" : ""}`}
-              onClick={() => handleScopeModeChange("all")}
-              title="Track across all scopes (Scope 1, 2, and 3)"
-            >
-              All Scopes (1+2+3)
-            </button>
-            <button
-              className={`btn-scope ${scopeMode === "s1_s2" ? "active" : ""}`}
-              onClick={() => handleScopeModeChange("s1_s2")}
-              title="Track operational emissions (Scope 1 and 2 only)"
-            >
-              Scope 1+2 (Operational)
-            </button>
-          </div>
-
-          {(user?.role === "admin" || user?.role === "superuser") && (
-            <button
-              className="btn-secondary"
-              onClick={() => setShowConfig(!showConfig)}
-              style={{ display: "flex", alignItems: "center", gap: "6px" }}
-            >
-              <Sliders size={16} />
-              {showConfig ? "Hide Target Settings" : "Configure Target"}
-            </button>
-          )}
-
-          {isConfigured && (
-            <button
-              className="btn-secondary"
-              onClick={exportCsv}
-              style={{ display: "flex", alignItems: "center", gap: "6px" }}
-            >
-              <Download size={16} />
-              Export Pathway CSV
-            </button>
-          )}
-        </div>
-      </div>
+      <PageHeader
+        className="mb-6"
+        title="SBTi & Net-Zero Trajectory"
+        description="Track corporate decarbonization against Science Based Targets initiative (SBTi) 1.5°C & Well-Below 2°C pathways per Corporate Net-Zero Standard v1.2."
+        actions={
+          <>
+            <SegmentedControl
+              label="Scope coverage"
+              value={scopeMode}
+              onChange={handleScopeModeChange}
+              options={[
+                { value: "all", label: "All scopes (1+2+3)", title: "Track across all scopes (Scope 1, 2, and 3)" },
+                { value: "s1_s2", label: "Scope 1+2 (operational)", title: "Track operational emissions (Scope 1 and 2 only)" },
+              ]}
+            />
+            {(user?.role === "admin" || user?.role === "superuser") && (
+              <Button variant="secondary" onClick={() => setShowConfig(!showConfig)}>
+                <Sliders className="size-4" aria-hidden="true" />
+                {showConfig ? "Hide target settings" : "Configure target"}
+              </Button>
+            )}
+            {isConfigured && (
+              <Button variant="secondary" onClick={exportCsv}>
+                <Download className="size-4" aria-hidden="true" />
+                Export pathway CSV
+              </Button>
+            )}
+          </>
+        }
+      />
 
       {/* Target Setting Drawer / Form */}
       {showConfig && (

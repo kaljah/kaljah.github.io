@@ -396,14 +396,14 @@
 }
 
 .qa-status-filter-btn.active {
-  background: var(--color-ink-900);
-  color: var(--color-white);
-  border-color: var(--color-ink-900);
+  background: var(--color-brand-50);
+  color: var(--color-brand-800);
+  border-color: var(--color-brand-500);
 }
 
 .qa-status-filter-btn.active .qa-status-pill-count {
-  background: rgba(255, 255, 255, 0.25);
-  color: var(--color-white);
+  background: var(--color-brand-100);
+  color: var(--color-brand-800);
 }
 
 /* Bulk Selection Bar */

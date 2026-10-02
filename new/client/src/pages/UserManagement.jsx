@@ -126,8 +126,8 @@ const S = {
   },
   pageTitle: {
     margin: 0,
-    fontSize: "1.9rem",
-    fontWeight: 800,
+    fontSize: "var(--text-xl)",
+    fontWeight: 700,
     color: "var(--text-primary)",
     lineHeight: 1.1,
   },

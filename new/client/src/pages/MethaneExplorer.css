@@ -95,11 +95,9 @@
 }
 
 .brand-title {
-  font-size: 0.82rem;
-  font-weight: 800;
-  letter-spacing: 0.06em;
+  font-size: 0.95rem;
+  font-weight: 700;
   color: var(--color-ink-900);
-  text-transform: uppercase;
 }
 
 .brand-sub {

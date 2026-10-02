@@ -1,3 +1,4 @@
+import { PageHeader } from "../ui";
 import React, { useState, useEffect } from "react";
 import { activateOnKey } from "../utils/a11yKeys";
 import {
@@ -352,34 +353,17 @@ const ReferenceData = () => {
 
   return (
     <div className="reference-data">
-      <header
-        className="top-bar"
-        style={{
-          padding: "0 0 30px 0",
-          border: "none",
-          background: "transparent",
-        }}
-      >
-      </header>
-
-      <div style={{ marginBottom: "40px" }}>
-        <h1
-          style={{
-            fontSize: "2.5rem",
-            fontWeight: 800,
-            color: "#1e293b",
-            margin: "0 0 10px 0",
-          }}
-        >
-          Reference Data Library
-        </h1>
-        <p style={{ fontSize: "1.1rem", color: "#64748b", maxWidth: "800px" }}>
-          Centralized repository for emission factors, global warming potentials
-          (GWPs), unit conversions, and data quality tiers. Custom regional
-          factors tagged with <Star size={14} className="custom-star" />{" "}
-          override global defaults.
-        </p>
-      </div>
+      <PageHeader
+        className="mb-8"
+        title="Reference Data Library"
+        description={
+          <>
+            Centralized repository for emission factors, global warming potentials (GWPs), unit conversions, and data
+            quality tiers. Custom regional factors tagged with <Star size={14} className="custom-star inline" aria-hidden="true" />{" "}
+            override global defaults.
+          </>
+        }
+      />
 
       <div className="search-bar-container">
         <div className="search-input-wrapper">
