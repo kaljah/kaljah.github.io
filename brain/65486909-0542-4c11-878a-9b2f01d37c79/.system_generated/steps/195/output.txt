@@ -1,0 +1,76 @@
+
+The command exited with code 0.
+Output:
+def _resolve_existing(model, existing):
+    from extensions import db
+
+    if existing is None:
+        return None
+    if isinstance(existing, int):
+        return db.session.get(model, existing)
+    return existing  # pending object from this file
+
+
+def _bulk_overwrite(obj, values, user_id, label):
+    """BUG-058: overwrite through the maker-checker: back to Pending, approval cleared,
+    last maker recorded, old/new values captured in the audit trail."""
+    from extensions import db
+    from models import User
+    from utils import log_activity_and_notify
+
+    old = {k: getattr(obj, k, None) for k in values}
+    for k, v in values.items():
+        setattr(obj, k, v)
+    was_saved = getattr(obj, "id", None) is not None
+    obj.status = "Pending"
+    obj.approved_by = None
+    obj.approved_at = None
+    if hasattr(obj, "approved_by_name"):
+        obj.approved_by_name = None
+    if hasattr(obj, "updated_by"):
+        obj.updated_by = user_id
+    if was_saved:
+        log_activity_and_notify(
+            action="BULK_OVERWRITE",
+            record_id=str(obj.id),
+            details=f"{label} record {obj.id} overwritten by bulk import",
+            user=db.session.get(User, user_id),
+            entity=type(obj).__name__,
+            entity_id=obj.id,
+            facility_id=getattr(obj, "facility_id", None),
+            old_values=old,
+            new_values=values,
+        )
+
+
+def _scope2_key(facility_id, year, month, source_type, grid_region, meter):
+    return (facility_id, year, month, (source_type or "electricity").strip().lower(),
+            (grid_region or "").strip().lower(), (meter or "").strip().lower())
+
+
+def _scope3_key(facility_id, year, month, category, sub_category, unit):
+    return (facility_id, year, month, (category or "").strip().lower(),
+            (sub_category or "").strip().lower(), (unit or "").strip().lower())
+
+
+def _scope1_key(facility_id, year, month, process_type, fuel, equipment_id, source_ref):
+    proc = (process_type or "").strip().lower()
+    fuel_k = "" if proc in NON_COMBUSTION_PROCESSES else (fuel or "").strip().lower()
+    return (facility_id, year, month, proc, fuel_k, (equipment_id or "").strip().lower(),
+            (source_ref or "").strip().lower())
+
+MAX_IMPORT_ROWS = 50_000  # rows are held until the single commit at the end of the file
+
+
+class ImportTooLarge(Exception):
+    pass
+
+
+def start_background_upload(
+    app,
+    file_path,
+    original_filename,
+    user_id,
+    global_factor_type,
+    provided_map
+

@@ -1,0 +1,35 @@
+
+The command exited with code 1.
+Output:
+At line:1 char:205
++ ... 'Installation'); if ( -ge 0) { .Substring(, [Math]::Min(3500, .Length ...
++                                                                  ~
+Missing expression after ','.
+At line:1 char:206
++ ... ation'); if ( -ge 0) { .Substring(, [Math]::Min(3500, .Length - )) }  ...
++                                                           ~~~~~~~
+Unexpected token '.Length' in expression or statement.
+At line:1 char:205
++ ... 'Installation'); if ( -ge 0) { .Substring(, [Math]::Min(3500, .Length ...
++                                                                  ~
+Missing closing ')' in expression.
+At line:1 char:173
++ ... t'='PowerShell'});  = .IndexOf('Installation'); if ( -ge 0) { .Substr ...
++                                                                 ~
+Missing closing '}' in statement block or type definition.
+At line:1 char:216
++ ... n'); if ( -ge 0) { .Substring(, [Math]::Min(3500, .Length - )) } else ...
++                                                                 ~
+Unexpected token ')' in expression or statement.
+At line:1 char:217
++ ... '); if ( -ge 0) { .Substring(, [Math]::Min(3500, .Length - )) } else  ...
++                                                                 ~
+Unexpected token ')' in expression or statement.
+At line:1 char:219
++ ... ; if ( -ge 0) { .Substring(, [Math]::Min(3500, .Length - )) } else {  ...
++                                                                 ~
+Unexpected token '}' in expression or statement.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : MissingExpressionAfterToken
+ 
+

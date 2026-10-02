@@ -1,0 +1,18 @@
+
+The command exited with code 0.
+Output:
+year
+timestamp
+year
+facility_id
+timestamp
+year
+year
+year
+year
+year
+year
+year
+year
+year
+

@@ -1,0 +1,44 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\.claude
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----         10/1/2026   8:17 PM                backups                                                              
+d-----         9/25/2026   2:32 PM                cache                                                                
+d-----         9/25/2026  10:53 PM                chrome                                                               
+d-----         9/26/2026  12:11 PM                daemon                                                               
+d-----         9/25/2026   2:30 PM                downloads                                                            
+d-----         9/28/2026  11:17 AM                file-history                                                         
+d-----         9/25/2026   3:32 PM                jobs                                                                 
+d-----         9/26/2026   9:52 PM                paste-cache                                                          
+d-----         9/28/2026  10:49 AM                plans                                                                
+d-----         10/1/2026   8:17 PM                plugins                                                              
+d-----         9/25/2026  10:53 PM                projects                                                             
+d-----         9/28/2026  10:47 AM                session-env                                                          
+d-----         10/1/2026   8:17 PM                sessions                                                             
+d-----         10/1/2026   8:13 PM                shell-snapshots                                                      
+d-----         9/25/2026   2:32 PM                skills                                                               
+d-----         9/28/2026  10:20 AM                state                                                                
+d-----         9/26/2026  10:31 AM                tasks                                                                
+d-----         10/1/2026   8:08 PM                telemetry                                                            
+-a----         10/1/2026   8:08 PM            519 .credentials.json                                                    
+-a----         9/28/2026  10:36 AM             24 .last-cleanup                                                        
+-a----         9/28/2026   8:12 PM            161 .last-update-result.json                                             
+-a----         9/25/2026   7:50 PM            239 CLAUDE.md                                                            
+-a----         9/25/2026  11:53 PM            434 daemon.lock                                                          
+-a----         9/26/2026   9:04 AM           2220 daemon.log                                                           
+-a----         9/26/2026   9:04 AM            122 daemon.status.json                                                   
+-a----         9/29/2026   7:42 PM           8198 history.jsonl                                                        
+-a----         9/25/2026   7:50 PM            990 RTK.md                                                               
+-a----         10/1/2026   8:16 PM            913 settings.json                                                        
+-a----         9/25/2026   2:43 PM            322 settings.json.bak                                                    
+-a----         9/25/2026   2:43 PM             36 settings.local.json                                                  
+-a----         9/28/2026  10:18 AM           1476 stats-cache.json                                                     
+
+
+

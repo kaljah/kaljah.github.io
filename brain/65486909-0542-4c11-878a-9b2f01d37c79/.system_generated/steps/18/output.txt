@@ -1,0 +1,110 @@
+
+The command exited with code 0.
+Output:
+## Install with Claude Code
+# ECC
+## Install ECC
+### Recommended: universal guided setup
+#### Windows first-time walkthrough
+### Pick one path only (per harness)
+### Claude Code details
+### Codex App and CLI
+### Other agents and editors
+## Advanced Install Options
+### Low-context / no-hooks path
+### Find the right components first
+# Just agents
+# Rules directories (common + language-specific)
+# Core/general skills only (Claude Code loads skills from direct children
+# of ~/.claude/skills; do not nest manual installs under ~/.claude/skills/ecc/)
+# Optional: maintained slash-command compatibility during migration
+#### Install hooks
+#### Configure MCPs
+### Reset / Uninstall ECC
+## Start Using ECC
+## Self-Hosted Models and Custom Endpoints
+### Self-host Kimi with ECC + It� compute
+### It� compute CLI bridge
+## What's New
+### v2.0.0: The Agent Harness Operating System (Jun 2026)
+## What's Inside
+# or
+## Key Concepts
+### Agents
+### Skills
+# TDD Workflow
+### Hooks
+### Rules
+## Guides
+## Why Choose ECC?
+### TDD: Test-Driven Development
+### Skills keep the context focused
+### Share context between harnesses
+# Initialize the project vault.
+# Write a handoff body to a regular file, then target the next harness.
+# Recall it from another harness.
+# Validate the vault before sharing team memories.
+## Platform Support
+# Via environment variable
+# Via global config
+# Via project config
+# Detect current setting
+# Hook strictness profile (default: standard)
+# Comma-separated hook IDs to disable
+# Cap SessionStart additional context (default: 8000 chars)
+# Disable SessionStart additional context entirely for low-context/local-model setups
+# Session-tmp retention window in days (default: 30).
+# Set to 0, off, false, disabled, never, or none to keep all sessions (disable pruning).
+# Cap how many learned instincts SessionStart injects into context (default: 6)
+# Minimum confidence an instinct needs to be injected, 0-1 (default: 0.7)
+# SessionStart ranks injected instincts by confidence + project/stack relevance
+# (default: on). Project-scoped instincts, and instincts whose domain/trigger
+# matches the detected stack (languages, frameworks, plus terraform/dbt markers),
+# get a small ranking boost so they surface above unrelated higher-confidence
+# ones. Set to off/false/0/no to rank by confidence alone.
+# Keep context/scope/loop warnings but suppress API-rate cost estimates
+# Cursor-only boundary (Claude Code keeps the default ~/.claude)
+### Cross-tool capability map
+# macOS/Linux
+# Windows PowerShell
+#### What's included for Cursor
+#### Cursor loading notes
+#### Memory and data isolation (Cursor + Claude Code)
+#### Hook architecture (DRY adapter pattern)
+#### Rules format
+# Recommended current install: add ECC's native plugin from the repo marketplace
+# Or run Codex CLI in the repo: AGENTS.md and .codex/ are auto-detected
+# Compatibility-only managed sync into ~/.codex
+# Or copy only the reference config manually
+#### What's included in the repo and legacy configuration layer
+#### Key limitation
+#### Multi-agent support
+# Run your reviewed OpenCode installation in the repository root
+#### Hook support via plugins
+#### Plugin installation
+#### Documentation
+#### What's included for GitHub Copilot
+#### Feature coverage
+#### Limitations
+## Token Optimization
+## Requirements
+### Claude Code CLI version
+### Important: hooks auto-loading behavior
+## Security
+## Ecosystem Tools
+### Option A: Local Analysis (Built-in)
+### Option B: GitHub App (Advanced)
+# Comment on any issue:
+# Scan only the intended project directory
+# Auto-fix safe issues
+# Deep analysis with three Opus 4.6 agents
+# Generate secure config from scratch
+## Troubleshooting
+## Running Tests
+# Run all tests
+# Run individual test files
+## Background
+## Community and Project
+## Links
+## License
+

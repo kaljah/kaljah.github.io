@@ -1,0 +1,24 @@
+
+The command exited with code 0.
+Output:
+graphify --help
+graphify .
+gaphify 
+graphify .
+python run_graphify.py`
+
+python run_graphify_cluster.py`
+
+python seed_demo_data.py
+wsl --shutdown
+wsl.exe --intall
+wsl.exe --intsall
+wsl.exe --install
+wsl --shutdown
+.graphify
+irm https://claude.ai/install.ps1 | iex
+claude code
+codegraphg ondex
+codegraphg index
+codegraph index
+

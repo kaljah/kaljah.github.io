@@ -1,0 +1,19 @@
+
+The command exited with code 0.
+Output:
+def _safe_excel_value(val):
+def _pdf_fonts():
+def _ascii_cells(rows):
+def create_pdf_report(emissions_data, filters):
+    def _amount(v):
+@reports_bp.route("/generate", methods=["POST"])
+def generate_report():
+@reports_bp.route("/master-annual-report", methods=["GET"])
+def get_master_annual_report():
+@reports_bp.route("/export", methods=["GET"])
+def export_emissions():
+@reports_bp.route("/ogmp-export", methods=["GET"])
+def export_ogmp_excel():
+        def style_header_row(ws, row_idx, fill=header_fill):
+        def autofit_columns(ws):
+

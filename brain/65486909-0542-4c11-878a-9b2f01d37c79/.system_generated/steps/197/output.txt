@@ -1,0 +1,121 @@
+
+The command exited with code 0.
+Output:
+def start_background_upload(
+    app,
+    file_path,
+    original_filename,
+    user_id,
+    global_factor_type,
+    provided_mapping=None,
+    scope=1,
+    overwrite_duplicates=False,
+):
+    _prune_old_jobs()
+    job_id = str(uuid.uuid4())
+    with upload_jobs_lock:
+        upload_jobs[job_id] = {
+            "status": "processing",
+            "progress": 0,
+            "processed": 0,
+            "total": 0,
+            "errors": [],  # fatal/global errors
+            "skipped": [],  # per-row skip reasons [{row, reason, date, facility, ...}]
+            "error_csv_path": None,
+            "anomalies": [],  # anomaly-flagged rows
+            "created_at": time.time(),
+            "owner_id": user_id,  # BUG-076: only the uploader (or an admin) may read the job
+        }
+
+    _persist_job(job_id, force=True)
+
+    # Spawn the background thread
+    thread = threading.Thread(
+        target=_process_file_thread,
+        args=(
+            app,
+            job_id,
+            file_path,
+            original_filename,
+            user_id,
+            global_factor_type,
+            provided_mapping,
+            scope,
+            overwrite_duplicates,
+        ),
+    )
+    thread.daemon = True
+    thread.start()
+
+    return job_id
+
+
+def _job_view(job_id):
+    """The job as this worker knows it, else its snapshot file (another worker or before a restart)."""
+    with upload_jobs_lock:
+        job = upload_jobs.get(job_id)
+        if job is not None:
+            return _snapshot(job)
+    return _load_job(job_id)
+
+
+def get_job_owner(job_id):
+    job = _job_view(job_id)
+    return job.get("owner_id") if job else None
+
+
+def get_job_error_csv_path(job_id):
+    job = _job_view(job_id)
+    path = job.get("error_csv_path") if job else None
+    return path if path and os.path.exists(path) else None
+
+
+def get_job_status(job_id):
+    job = _job_view(job_id)
+    if not job:
+        return None
+    return {
+        "status": job.get("status", "unknown"),
+        "progress": job.get("progress", 0),
+        "processed": job.get("processed", 0),
+        "total": job.get("total", 0),
+        "errors": list(job.get("errors", [])),
+        "skipped_count": job.get("skipped_count", 0),
+        "skipped_preview": job.get("skipped_preview", []),  # first 100 for inline display
+        "has_error_csv": bool(job.get("error_csv_path")),  # BUG-076: no server path disclosure
+        "anomaly_count": job.get("anomaly_count", 0),
+        "anomalies": job.get("anomalies", []),  # first 50 anomalies for review
+    }
+
+
+def _process_file_thread(
+    app,
+    job_id,
+    file_path,
+    original_filename,
+    user_id,
+    global_factor_type,
+    provided_mapping,
+    scope=1,
+    overwrite_duplicates=False,
+):
+    wb = None
+    f = None
+    with app.app_context():
+        try:
+            is_excel = str(original_filename or "").lower().endswith(".xlsx")
+
+            headers = []
+            rows_iterator = None
+            csv_source = False  # CSV cells are positional by delimiter: an extra one shifts the row
+            decimal_comma = False  # set for semicolon CSVs (French / European Excel exports)
+
+            # 1. Open File & Extract Headers
+            tier3_data_map = {}
+            if is_excel:
+                wb = load_workbook(file_path, read_only=True, data_only=True)
+
+                # Tier 3 / gas composition sheets: parameters per equipment ID (and month), with
+                # the same header mapping as the data sheet so the values reach the calculators
+    
+

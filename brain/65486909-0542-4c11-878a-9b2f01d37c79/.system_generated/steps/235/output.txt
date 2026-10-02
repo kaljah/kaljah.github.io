@@ -1,0 +1,17 @@
+
+The command exited with code 1.
+Output:
+--- Dashboard Scope 1 Aggregation Benchmark ---
+Execution time: 21.82 ms
+
+EXPLAIN QUERY PLAN:
+(7, 0, 0, 'SCAN emissions USING INDEX ix_emissions_year')
+
+--- Facility Intensity Aggregation Benchmark ---
+Traceback (most recent call last):
+  File "C:\Users\samsung\Desktop\H2\new\server\benchmark_db.py", line 49, in <module>
+    benchmark_queries()
+  File "C:\Users\samsung\Desktop\H2\new\server\benchmark_db.py", line 36, in benchmark_queries
+    cursor.execute(query2)
+sqlite3.OperationalError: no such column: total_co2e
+

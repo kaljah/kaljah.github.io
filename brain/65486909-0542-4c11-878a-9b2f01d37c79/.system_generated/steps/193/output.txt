@@ -1,0 +1,29 @@
+
+The command exited with code 0.
+Output:
+def _job_file(job_id):
+def _snapshot(job):
+def _persist_job(job_id, force=False):
+def _load_job(job_id):
+def _update_job(job_id, **kwargs):
+def _append_job_list(job_id, list_key, item):
+def _clean_float(val, default=0.0):
+def _decimal_comma_to_point(text):
+def _xl_values(ws):
+def _percent_field(name):
+def _percent_text_to_number(name, value):
+def _is_bare_ton(unit):
+def _bare_ton_error(row):
+def _prune_old_jobs(max_age_seconds=86400):
+def _clean_sheet_name(name):
+def _data_sheet(wb):
+def _find_header_row(rows_iterator, max_scan=20):
+def _is_template_note_row(row_dict):
+def _canonical_header(header):
+def _parse_row_period(row):
+def _dedupe(batch_keys, key, overwrite, describe):
+def _resolve_existing(model, existing):
+def _bulk_overwrite(obj, values, user_id, label):
+def _scope2_key(facility_id, year, month, source_type, grid_region, meter):
+def _scope3_key(facility_id, year, month, category, sub_category, unit):
+

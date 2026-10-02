@@ -1,0 +1,83 @@
+
+The command exited with code 0.
+Output:
+<truncated 98 lines>
+d-----         10/1/2026   8:15 PM                hooks                                                                
+d-----         10/1/2026   8:15 PM                integrations                                                         
+d-----         10/1/2026   8:15 PM                legacy-command-shims                                                 
+d-----         10/1/2026   8:15 PM                manifests                                                            
+d-----         10/1/2026   8:15 PM                mcp-configs                                                          
+d-----         10/1/2026   8:15 PM                pi                                                                   
+d-----         10/1/2026   8:15 PM                plugins                                                              
+d-----         10/1/2026   8:15 PM                rules                                                                
+d-----         10/1/2026   8:15 PM                scaffolds                                                            
+d-----         10/1/2026   8:15 PM                schemas                                                              
+d-----         10/1/2026   8:15 PM                scripts                                                              
+d-----         10/1/2026   8:15 PM                skills                                                               
+d-----         10/1/2026   8:15 PM                src                                                                  
+d-----         10/1/2026   8:15 PM                tests                                                                
+d-----         10/1/2026   8:15 PM                workflows                                                            
+-a----         10/1/2026   8:15 PM           1706 .coderabbit.yaml                                                     
+-a----         10/1/2026   8:15 PM           3170 .env.example                                                         
+-a----         10/1/2026   8:15 PM             86 .gitattributes                                                       
+-a----         10/1/2026   8:15 PM           1441 .gitignore                                                           
+-a----         10/1/2026   8:15 PM            110 .gitleaksignore                                                      
+-a----         10/1/2026   8:15 PM            359 .markdownlint.json                                                   
+-a----         10/1/2026   8:15 PM            132 .mcp.json                                                            
+-a----         10/1/2026   8:15 PM            450 .npmignore                                                           
+-a----         10/1/2026   8:15 PM            133 .prettierrc                                                          
+-a----         10/1/2026   8:15 PM            210 .tool-versions                                                       
+-a----         10/1/2026   8:15 PM             25 .yarnrc.yml                                                          
+-a----         10/1/2026   8:15 PM           5357 agent.yaml                                                           
+-a----         10/1/2026   8:15 PM          13119 AGENTS.md                                                            
+-a----         10/1/2026   8:15 PM          16171 CHANGELOG.md                                                         
+-a----         10/1/2026   8:15 PM           3936 CLAUDE.md                                                            
+-a----         10/1/2026   8:15 PM           5208 CODE_OF_CONDUCT.md                                                   
+-a----         10/1/2026   8:15 PM          13091 COMMANDS-QUICK-REF.md                                                
+-a----         10/1/2026   8:15 PM            371 commitlint.config.js                                                 
+-a----         10/1/2026   8:15 PM          15648 CONTRIBUTING.md                                                      
+-a----         10/1/2026   8:15 PM          41690 ecc_dashboard.py                                                     
+-a----         10/1/2026   8:15 PM           1077 eslint.config.js                                                     
+-a----         10/1/2026   8:15 PM           2593 greptile.json                                                        
+-a----         10/1/2026   8:15 PM           1658 install.ps1                                                          
+-a----         10/1/2026   8:15 PM           1737 install.sh                                                           
+-a----         10/1/2026   8:15 PM           1071 LICENSE                                                              
+-a----         10/1/2026   8:15 PM         107679 package-lock.json                                                    
+-a----         10/1/2026   8:15 PM          18867 package.json                                                         
+-a----         10/1/2026   8:15 PM           1992 pyproject.toml                                                       
+-a----         10/1/2026   8:15 PM         106621 README.md                                                            
+-a----         10/1/2026   8:15 PM          38720 README.zh-CN.md                                                      
+-a----         10/1/2026   8:15 PM           7187 SECURITY.md                                                          
+-a----         10/1/2026   8:15 PM           1125 SOUL.md                                                              
+-a----         10/1/2026   8:15 PM           2163 SPONSORING.md                                                        
+-a----         10/1/2026   8:15 PM           4753 SPONSORS.md                                                          
+-a----         10/1/2026   8:15 PM          15186 the-longform-guide.md                                                
+-a----         10/1/2026   8:15 PM          30596 the-security-guide.md                                                
+-a----         10/1/2026   8:15 PM          16317 the-shortform-guide.md                                               
+-a----         10/1/2026   8:15 PM          11893 TROUBLESHOOTING.md                                                   
+-a----         10/1/2026   8:15 PM              6 VERSION                                                              
+-a----         10/1/2026   8:15 PM          80053 yarn.lock                                                            
+
+
+    Directory: C:\Users\samsung\.claude\plugins\synced
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----         10/1/2026   8:17 PM                96575476-bb47-4c91-98d0-f10fd3653235_538299c1-5438-4f85-a8f6-86c910fd
+                                                  9ac3                                                                 
+-a----         9/25/2026   2:32 PM              0 .bucket-96575476-bb47-4c91-98d0-f10fd3653235_538299c1-5438-4f85-a8f6-
+                                                  86c910fd9ac3                                                         
+
+
+    Directory: 
+    C:\Users\samsung\.claude\plugins\synced\96575476-bb47-4c91-98d0-f10fd3653235_538299c1-5438-4f85-a8f6-86c910fd9ac3
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         10/1/2026   8:17 PM             37 .last-complete-round                                                 
+-a----         10/1/2026   8:17 PM            389 .marketplaces.json                                                   
+
+
+

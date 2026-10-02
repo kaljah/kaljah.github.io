@@ -1,0 +1,20 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\.claude\plugins
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----         10/1/2026   8:15 PM                cache                                                                
+d-----         10/1/2026   8:17 PM                data                                                                 
+d-----         10/1/2026   8:15 PM                marketplaces                                                         
+d-----         9/25/2026   2:32 PM                synced                                                               
+-a----         10/1/2026   8:16 PM             24 .last_inuse_sweep                                                    
+-a----         10/1/2026   8:16 PM            386 installed_plugins.json                                               
+-a----         10/1/2026   8:15 PM            527 known_marketplaces.json                                              
+
+
+

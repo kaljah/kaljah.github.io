@@ -1,0 +1,19 @@
+
+The command exited with code 0.
+Output:
+def _is_admin_or_superuser(user):
+@qaqc_bp.route("/dashboard", methods=["GET"])
+def get_qaqc_dashboard():
+        def _fac_filter(q, model):
+        def _apply_status_filter(q, model):
+        def _get_active_fids(model):
+@qaqc_bp.route("/export", methods=["GET"])
+def export_qaqc_report():
+        def _fac_filter(q, model):
+        def _apply_export_status_filter(q, model):
+        def _sanitize_csv(val):
+@qaqc_bp.route("/resolve/<int:record_id>", methods=["POST"])
+def resolve_flagged_record(record_id):
+@qaqc_bp.route("/bulk-resolve", methods=["POST"])
+def bulk_resolve():
+

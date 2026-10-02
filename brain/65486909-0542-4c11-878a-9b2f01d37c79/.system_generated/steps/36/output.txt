@@ -1,0 +1,39 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\.gemini\antigravity
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----         10/1/2026   8:17 PM                annotations                                                          
+d-----         9/24/2026  10:17 AM                bin                                                                  
+d-----         10/1/2026   8:16 PM                brain                                                                
+d-----         9/22/2026  11:58 PM                browser_recordings                                                   
+d-----         9/24/2026  10:17 AM                builtin                                                              
+d-----        11/24/2025  12:48 AM                code_tracker                                                         
+d-----        11/24/2025  12:48 AM                context_state                                                        
+d-----         10/1/2026   8:16 PM                conversations                                                        
+d-----         9/26/2026   9:41 PM                crashes                                                              
+d-----         4/21/2026   8:54 PM                html_artifacts                                                       
+d-----         4/21/2026   9:18 PM                implicit                                                             
+d-----         1/14/2026  10:25 PM                knowledge                                                            
+d-----         9/25/2026   7:47 PM                mcp                                                                  
+d-----        11/25/2025  11:44 PM                playground                                                           
+d-----        11/26/2025   2:13 AM                scratch                                                              
+-a----         10/1/2026   8:17 PM          96500 agyhub_summaries_proto.pb                                            
+-a----         9/29/2026  12:06 PM            844 antigravity_state.pbtxt                                              
+-a----        11/24/2025  12:50 AM           1119 browserAllowlist.txt                                                 
+-a----        11/25/2025  11:51 PM              0 browserOnboardingStatus.txt                                          
+-a----         10/1/2026   8:16 PM         258048 conversation_summaries.db                                            
+-a----         10/1/2026   8:17 PM          32768 conversation_summaries.db-shm                                        
+-a----         10/1/2026   8:17 PM          12392 conversation_summaries.db-wal                                        
+-a----        11/24/2025  12:48 AM             36 installation_id                                                      
+-a----         9/25/2026   7:54 PM            138 mcp_config.json                                                      
+-a----         8/11/2026   1:20 AM            356 mcp_config.json.backup                                               
+-a----         1/10/2026   5:16 PM             31 user_settings.pb                                                     
+
+
+

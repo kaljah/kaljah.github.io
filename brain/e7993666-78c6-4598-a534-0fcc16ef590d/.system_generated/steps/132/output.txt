@@ -1,0 +1,9 @@
+
+The command exited with code 0.
+Output:
+Top left background: (6, 19, 24)
+Neo color (white): (7, 30, 34)
+Carbon color: (7, 30, 33)
+Card border: (6, 20, 25)
+Section swatch: (4, 27, 31)
+

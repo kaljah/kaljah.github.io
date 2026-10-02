@@ -1,0 +1,54 @@
+
+The command exited with code 0.
+Output:
+def get_available_filters():
+    user = get_current_user()
+    if user and user.role in ["it_admin", "it_manager", "it"]:
+        return jsonify({"error": "IT administrators are not authorized to view operational filters."}), 403
+    allowed_fids = get_allowed_facility_ids(user)
+
+    year_queries = [
+        db.session.query(distinct(Emission.year)),
+        db.session.query(distinct(ProductionData.year)),
+        db.session.query(distinct(MitigationRecord.year)),
+        db.session.query(distinct(Scope2Emission.year)),
+        db.session.query(distinct(Scope3Emission.year)),
+    ]
+
+    available_years = set()
+    for query in year_queries:
+        try:
+            results = query.all()
+            for r in results:
+                if r[0]:
+                    available_years.add(int(r[0]))
+        except Exception:
+            continue
+
+    em_query = db.session.query(distinct(Emission.facility_id))
+    if allowed_fids is not None:
+        em_query = em_query.filter(Emission.facility_id.in_(allowed_fids))
+    referenced_facility_ids = em_query.all()
+    facility_ids = [r[0] for r in referenced_facility_ids if r[0]]
+
+    # Get facility details
+    fac_query = Facility.query
+    if allowed_fids is not None:
+        fac_query = fac_query.filter(Facility.id.in_(allowed_fids))
+    facilities = (
+        fac_query.filter(Facility.id.in_(facility_ids)).all()
+        if facility_ids
+        else fac_query.all()
+    )
+
+    segment_query = db.session.query(distinct(Facility.segment))
+    if allowed_fids is not None:
+        segment_query = segment_query.filter(Facility.id.in_(allowed_fids))
+    
+    # Strictly enforce only valid supply chain keywords: Upstream, Midstream, Downstream
+    VALID_SEGMENTS = {"upstream", "midstream", "downstream"}
+    raw_segments = [r[0] for r in segment_query.all() if r[0]]
+    segments = sorted(list({s.strip().title() for s in raw_segments if s.strip().lower() in VALID_SEGMENTS}))
+    if not segments:
+        segments = ["Downstream", "Midstre
+

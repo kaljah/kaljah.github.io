@@ -1,0 +1,101 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\node_modules\ajv\scripts
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----          8/5/2026   2:29 PM            874 travis-gh-pages                                                      
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\node_modules\aria-query\lib\etc\roles\dpub
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/20/2026   5:26 PM            732 docPagebreakRole.js                                                  
+-a----         9/20/2026   5:26 PM            783 docPagelistRole.js                                                   
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\node_modules\caniuse-lite\data\features
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----          8/5/2026   2:29 PM           2087 css-page-break.js                                                    
+-a----          8/5/2026   2:29 PM           2015 css-paged-media.js                                                   
+-a----          8/5/2026   2:29 PM           1984 page-transition-events.js                                            
+-a----          8/5/2026   2:29 PM           2025 pagevisibility.js                                                    
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\node_modules\css-tree\cjs\syntax\atrule
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/20/2026   5:26 PM            269 page.cjs                                                             
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\node_modules\css-tree\lib\syntax\atrule
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/20/2026   5:26 PM            232 page.js                                                              
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\node_modules\framer-motion\dist\es\utils
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         8/11/2026  12:22 PM            623 use-page-in-view.mjs                                                 
+-a----         8/11/2026  12:22 PM            830 use-page-in-view.mjs.map                                             
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\node_modules\jsdom\lib\generated\idl
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/20/2026   5:26 PM           5105 CSSPageRule.js                                                       
+-a----         9/20/2026   5:26 PM           4455 PageTransitionEvent.js                                               
+-a----         9/20/2026   5:26 PM           1031 PageTransitionEventInit.js                                           
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\node_modules\jsdom\lib\jsdom\living\css
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/20/2026   5:26 PM           2286 CSSPageRule-impl.js                                                  
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\node_modules\jsdom\lib\jsdom\living\events
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/20/2026   5:26 PM            646 PageTransitionEvent-impl.js                                          
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\node_modules\jsdom\lib\jsdom\living\helpers
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/20/2026   5:26 PM            455 page-transition-event.js                                             
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\src
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----         10/1/2026   8:12 PM                pages                                                                
+
+
+

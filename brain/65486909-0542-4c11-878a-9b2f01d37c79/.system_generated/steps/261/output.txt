@@ -1,0 +1,96 @@
+
+The command exited with code 0.
+Output:
+<truncated 149 lines>
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\src\context
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/30/2026   7:29 PM           8283 AuthContext.jsx                                                      
+-a----         9/19/2026   5:25 PM           1114 LayoutContext.jsx                                                    
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\src\hooks
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/30/2026   7:29 PM           2659 useFormDraft.js                                                      
+-a----         9/30/2026   7:29 PM           1631 useGwpStandard.js                                                    
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\src\pages
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/12/2026  11:12 PM          20513 AuditTrail.css                                                       
+-a----         9/30/2026   7:29 PM          32845 AuditTrail.jsx                                                       
+-a----          9/5/2026   5:34 PM          18347 CarbonIntensity.css                                                  
+-a----         10/1/2026   8:12 PM          37386 CarbonIntensity.jsx                                                  
+-a----         9/30/2026   7:29 PM          32460 Dashboard.css                                                        
+-a----         10/1/2026   8:12 PM          72856 DashboardEnhanced.jsx                                                
+-a----         8/11/2026  12:54 PM           4192 Diagnostics.css                                                      
+-a----         9/13/2026  11:46 PM            349 Diagnostics.jsx                                                      
+-a----         9/19/2026   5:22 PM          14752 Emissions.css                                                        
+-a----         9/30/2026   7:29 PM          11498 Emissions.jsx                                                        
+-a----          9/1/2026   8:44 PM           7682 Login.css                                                            
+-a----         9/28/2026   3:44 PM          14734 Login.jsx                                                            
+-a----         9/19/2026   5:22 PM          20288 ManageData.css                                                       
+-a----         9/30/2026   7:29 PM         287344 ManageData.jsx                                                       
+-a----         9/12/2026   5:25 PM          31177 MethaneExplorer.css                                                  
+-a----         10/1/2026   8:12 PM          62338 MethaneExplorer.jsx                                                  
+-a----         10/1/2026   8:12 PM          63695 MethaneIntensity.jsx                                                 
+-a----         9/19/2026   9:20 PM          18009 QADashboard.css                                                      
+-a----         10/1/2026   8:12 PM          71128 QADashboard.jsx                                                      
+-a----          9/1/2026   9:33 PM           3712 ReferenceData.css                                                    
+-a----         9/30/2026   7:29 PM          20778 ReferenceData.jsx                                                    
+-a----         9/12/2026   6:53 PM           9655 Reports.css                                                          
+-a----         10/1/2026   8:12 PM          50247 Reports.jsx                                                          
+-a----          9/8/2026  11:37 PM           8563 SbtiDashboard.css                                                    
+-a----         9/30/2026   7:29 PM          26734 SbtiDashboard.jsx                                                    
+-a----         8/11/2026  12:54 PM          21484 Settings.css                                                         
+-a----         10/1/2026   8:12 PM          49271 Settings.jsx                                                         
+-a----         9/30/2026   7:29 PM           1207 TopBarFilters.css                                                    
+-a----         9/12/2026   7:13 PM           8999 UncertaintyAssessment.css                                            
+-a----         9/30/2026   7:29 PM          14100 UncertaintyAssessment.jsx                                            
+-a----         9/30/2026   7:29 PM          68828 UserManagement.jsx                                                   
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\src\utils
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/30/2026   7:29 PM           1430 a11yLabels.js                                                        
+-a----         9/30/2026   7:29 PM            362 apiError.js                                                          
+-a----         8/11/2026  12:54 PM            322 constants.js                                                         
+-a----         10/1/2026   8:12 PM          30151 EmissionFactors.js                                                   
+-a----         9/30/2026   7:29 PM           8787 emissionFactorsAPI.js                                                
+-a----         9/30/2026   7:29 PM           3324 formatters.js                                                        
+-a----         9/30/2026   7:29 PM           2793 importMapping.js                                                     
+-a----         10/1/2026   8:12 PM          74511 ModernReportGenerator.js                                             
+-a----         9/30/2026   7:29 PM            924 reviewResult.js                                                      
+-a----         9/30/2026   7:29 PM           6204 scope3Factors.js                                                     
+-a----         9/20/2026   7:16 PM           5969 userDefaults.js                                                      
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\src\__tests__
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/30/2026   7:29 PM           2221 a11yAndErrors.test.jsx                                               
+-a----         9/30/2026   7:29 PM           8342 AssociatedGasVentingForm.test.jsx                                    
+-a----         9/30/2026   7:29 PM           1107 auditFixes.test.js                                                   
+-a----         9/30/2026   7:29 PM           3296 importMapping.test.js                                                
+-a----         9/30/2026   7:29 PM           2008 mathParityAndFormatters.test.js                                      
+-a----         9/30/2026   7:29 PM           6015 Scope1FormAssociatedGasVenting.test.jsx                              
+-a----         9/30/2026   7:29 PM           3234 scope3Factors.test.js                                                
+-a----         9/30/2026   7:29 PM           6772 UnloadingForm.test.jsx                                               
+
+
+

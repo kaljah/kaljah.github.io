@@ -1,0 +1,137 @@
+
+The command exited with code 0.
+Output:
+=== Table Counts ===
+  alembic_version: 1 rows
+  users: 1 rows
+  goals: 1 rows
+  base_year: 1 rows
+  mitigation_records: 0 rows
+  scope3_data: 0 rows
+  reporting_metadata: 0 rows
+  methane_source_types: 8 rows
+  system_settings: 1 rows
+  facilities: 4 rows
+  custom_factors: 1 rows
+  activity_log: 48 rows
+  base_year_recalculations: 1 rows
+  notifications: 2 rows
+  sbti_targets: 2 rows
+  production_data: 1 rows
+  emission_sources: 1 rows
+  scope2_emissions: 0 rows
+  scope3_emissions: 1 rows
+  mitigation_projects: 0 rows
+  cbam_product_exports: 0 rows
+  ogmp_surveys: 0 rows
+  level_upgrade_logs: 0 rows
+  cap_emissions: 0 rows
+  cap_regulatory_limits: 5 rows
+  flaring_details: 0 rows
+  jv_partners: 6 rows
+  facility_equity_shares: 1 rows
+  component_inventories: 0 rows
+  fugitive_surveys: 0 rows
+  emissions: 23 rows
+
+=== Existing Indexes ===
+  sqlite_autoindex_alembic_version_1 on alembic_version
+  sqlite_autoindex_reporting_metadata_1 on reporting_metadata
+  sqlite_autoindex_system_settings_1 on system_settings
+  sqlite_autoindex_facilities_1 on facilities
+  sqlite_autoindex_production_data_1 on production_data
+  sqlite_autoindex_emission_sources_1 on emission_sources
+  ix_users_email on users
+  ix_mitigation_records_year on mitigation_records
+  ix_scope3_data_year on scope3_data
+  ix_methane_source_types_code on methane_source_types
+  ix_custom_factors_name on custom_factors
+  ix_activity_log_user_id on activity_log
+  ix_activity_log_timestamp on activity_log
+  ix_activity_log_entity on activity_log
+  ix_activity_log_action on activity_log
+  ix_production_data_facility_id on production_data
+  ix_production_data_activity on production_data
+  ix_prod_yr_fac_units on production_data
+  ix_production_data_division on production_data
+  ix_production_data_year on production_data
+  ix_scope2_status_yr_co2e on scope2_emissions
+  ix_scope2_fac_yr_status on scope2_emissions
+  ix_scope2_emissions_year on scope2_emissions
+  ix_scope2_emissions_activity on scope2_emissions
+  ix_scope2_emissions_facility_id on scope2_emissions
+  ix_scope2_emissions_division on scope2_emissions
+  ix_scope2_emissions_status on scope2_emissions
+  ix_scope3_emissions_year on scope3_emissions
+  ix_scope3_emissions_facility_id on scope3_emissions
+  ix_scope3_fac_yr_status on scope3_emissions
+  ix_scope3_emissions_status on scope3_emissions
+  ix_scope3_status_yr_co2e on scope3_emissions
+  ix_mitigation_projects_year on mitigation_projects
+  ix_cbam_product_exports_year on cbam_product_exports
+  ix_cbam_product_exports_facility_id on cbam_product_exports
+  ix_cbam_product_exports_cn_code on cbam_product_exports
+  ix_ogmp_surveys_facility_id on ogmp_surveys
+  ix_ogmp_surveys_year on ogmp_surveys
+  ix_level_upgrade_logs_facility_id on level_upgrade_logs
+  ix_cap_emissions_source_module on cap_emissions
+  ix_cap_emissions_status on cap_emissions
+  ix_cap_emissions_facility_id on cap_emissions
+  ix_cap_emissions_pollutant on cap_emissions
+  ix_cap_emissions_year on cap_emissions
+  ix_cap_fac_yr_mod_pol on cap_emissions
+  sqlite_autoindex_cap_regulatory_limits_1 on cap_regulatory_limits
+  ix_flare_fac_yr_net on flaring_details
+  ix_flaring_details_year on flaring_details
+  ix_flaring_details_facility_id on flaring_details
+  sqlite_autoindex_jv_partners_1 on jv_partners
+  sqlite_autoindex_jv_partners_2 on jv_partners
+  ix_facility_equity_shares_partner_id on facility_equity_shares
+  ix_fac_partner_date on facility_equity_shares
+  ix_facility_equity_shares_facility_id on facility_equity_shares
+  ix_component_inventories_facility_id on component_inventories
+  ix_fugitive_surveys_facility_id on fugitive_surveys
+  ix_activity_log_facility_id on activity_log
+  ix_emissions_year on emissions
+  ix_emissions_timestamp on emissions
+  ix_emissions_custom_factor_id on emissions
+  ix_emissions_facility_id on emissions
+  ix_emissions_division on emissions
+  ix_emissions_fac_yr_status on emissions
+  ix_emissions_process_type on emissions
+  ix_emissions_yr_status_proc on emissions
+  ix_emissions_record_id on emissions
+  ix_emissions_status on emissions
+  ix_emissions_act_div on emissions
+  ix_emissions_activity on emissions
+  ix_emissions_status_yr_co2e on emissions
+  ix_emissions_group_name on emissions
+
+=== Explain Query Plans ===
+
+--- Dashboard Grouped Scope 1 Aggregation ---
+Time: 0.482 ms, Rows returned: 7
+  Plan: (7, 0, 0, 'SEARCH emissions USING INDEX ix_emissions_status_yr_co2e (status=? AND year>?)')
+  Plan: (27, 0, 0, 'USE TEMP B-TREE FOR GROUP BY')
+
+--- Emissions Route UNION Count Query ---
+Time: 0.081 ms, Rows returned: 1
+  Plan: (3, 0, 0, 'SEARCH emissions USING COVERING INDEX ix_emissions_status_yr_co2e (status=?)')
+
+--- Emissions Route Facility Order Query ---
+Time: 0.347 ms, Rows returned: 0
+  Plan: (5, 0, 0, 'SEARCH emissions USING INDEX ix_emissions_fac_yr_status (facility_id=? AND year=?)')
+  Plan: (95, 0, 0, 'USE TEMP B-TREE FOR ORDER BY')
+
+--- QA/QC Flagged Query (Unindexed qa_flag) ---
+Time: 0.146 ms, Rows returned: 0
+  Plan: (5, 0, 0, 'SCAN emissions USING INDEX ix_emissions_timestamp')
+
+--- Activity Log ILIKE Filter ---
+Time: 0.763 ms, Rows returned: 0
+  Plan: (5, 0, 0, 'SCAN activity_log USING INDEX ix_activity_log_timestamp')
+
+--- Managedata Available Filters Distinct Years ---
+Time: 0.046 ms, Rows returned: 1
+  Plan: (3, 0, 0, 'SCAN emissions USING COVERING INDEX ix_emissions_year')
+

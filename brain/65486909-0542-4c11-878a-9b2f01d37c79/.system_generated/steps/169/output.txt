@@ -1,0 +1,29 @@
+
+The command exited with code 0.
+Output:
+def is_it_role(user):
+def _get_global_cache_epoch():
+def clear_dashboard_cache():
+def make_cache_key(namespace):
+    def cache_key_builder(*args, **kwargs):
+def _run_in_app_ctx(app, fn, *args, **kwargs):
+dashboard_bp = Blueprint("dashboard", __name__)
+def _finite_or_none(value):
+def get_batch_dashboard_data():
+        def pend_q(model, *cols):
+def get_intensity_trend():
+def _query_summary(
+    def blank(yr, fid):
+def _query_mitigation(facility_id=None, year=None, allowed_fids=None, segment=None, activity=None, division=None):
+def _query_scope3_summary(
+def _query_categorical_breakdown(
+    def grouped(model, *cols):
+    def row(r):
+def _query_available_years():
+def get_dashboard_summary():
+def get_available_years():
+def get_mitigation():
+def get_scope3_summary():
+def get_goal(year):
+def get_base_year():
+

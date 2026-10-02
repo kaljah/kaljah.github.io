@@ -1,0 +1,8 @@
+
+The command exited with code 0.
+Output:
+281
+68
+94
+123
+

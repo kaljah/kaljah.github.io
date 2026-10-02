@@ -1,0 +1,18 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2\.agents
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----         10/1/2026   8:40 PM                agents                                                               
+d-----         10/1/2026   8:40 PM                rules                                                                
+d-----         10/1/2026   8:40 PM                skills                                                               
+d-----         10/1/2026   8:40 PM                workflows                                                            
+-a----         10/1/2026   8:41 PM         401565 ecc-install-state.json                                               
+
+
+

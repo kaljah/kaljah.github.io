@@ -1,0 +1,67 @@
+
+The command exited with code 0.
+Output:
+def _query_summary(
+    facility_id=None,
+    year=None,
+    activity=None,
+    division=None,
+    group_by=None,
+    allowed_fids=None,
+    segment=None,
+    include_pending=False,
+    gwp_horizon="100",
+):
+    """Scope 1 / Scope 2 totals per year (optionally per facility) with the source split.
+
+    RC-9: facility-level filters (BUG-004), one grouped Scope 1 query from which both the totals
+    and the source split are derived so they always reconcile (BUG-040), canonical source
+    classification with a fugitive bucket (BUG-061), GWP-20 from the per-gas columns with the
+    active standard and no clamping (BUG-005), NULL years never crash the endpoint (BUG-073).
+    """
+    from services.dashboard_filters import apply_scope, apply_year, horizon_delta, source_category, statuses
+
+    is_20 = str(gwp_horizon).lower() in ("20", "gwp20", "20yr")
+    horizon = "20" if is_20 else "100"
+    scope = dict(allowed_fids=allowed_fids, facility_id=facility_id, activity=activity, division=division,
+                 segment=segment)
+    by_fac = group_by == "facility"
+
+    s1_cols = [Emission.year.label("year"), Emission.process_type.label("process_type")]
+    if by_fac:
+        s1_cols.append(Emission.facility_id.label("facility_id"))
+    s1_q = db.session.query(
+        *s1_cols,
+        func.sum(Emission.co2_emissions).label("co2_total"),
+        func.sum(Emission.ch4_emissions).label("ch4_total"),
+        func.sum(Emission.n2o_emissions).label("n2o_total"),
+        func.sum(Emission.co2e_total).label("total"),
+    )
+    s1_q = apply_year(apply_scope(s1_q, Emission, **scope), Emission, year)
+    s1_q = s1_q.filter(Emission.status.in_(statuses(include_pending)), Emission.year.isnot(None))
+    s1_rows = s1_q.group_by(*[c for c in (Emission.year, Emission.process_type,
+                                          Emission.facility_id if by_fac else None) if c is not None]).all()
+
+    def blank(yr, fid):
+        return {"year": yr, "facility_id": fid, "scope1_total": 0.0, "scope1_total_gwp100": 0.0,
+                "scope1_total_gwp20": 0.0, "gwp_horizon": 20 if is_20 else 100, "co2_total": 0.0,
+                "ch4_total": 0.0, "n2o_total": 0.0, "scope2_total": 0.0, "scope2_energy": 0.0,
+                "combustion": 0.0, "flaring": 0.0, "venting": 0.0, "fugitive": 0.0, "process": 0.0, "other": 0.0}
+
+    yearly = {}
+    for r in s1_rows:
+        yr = int(r.year)
+        fid = getattr(r, "facility_id", "total") if by_fac else "total"
+        d = yearly.setdefault((yr, fid), blank(yr, fid))
+        g100 = float(r.total or 0)
+        g20 = g100 + horizon_delta(r.ch4_total, r.n2o_total, "20")
+        shown = g20 if is_20 else g100
+        d["scope1_total_gwp100"] += g100
+        d["scope1_total_gwp20"] += g20
+        d["scope1_total"] += shown
+        d["co2_total"] += float(r.co2_total or 0)
+        d["ch4_total"] += float(r.ch4_total or 0)
+        d["n2o_total"] += float(r.n2o_total or 0)
+        cat = source_category(r.process_type)
+        d["venting" if cat == 
+
