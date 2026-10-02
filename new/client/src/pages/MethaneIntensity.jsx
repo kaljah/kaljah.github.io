@@ -1,5 +1,8 @@
+import MethaneIntensityMethaneIntensity from "./methane-intensity/MethaneIntensityMethaneIntensity";
+import MethaneIntensityOGMP20Gold from "./methane-intensity/MethaneIntensityOGMP20Gold";
+import MethaneIntensityOGMP20Level from "./methane-intensity/MethaneIntensityOGMP20Level";
+import MethaneIntensityHistoricalMethaneTrends from "./methane-intensity/MethaneIntensityHistoricalMethaneTrends";
 import { useAnalyticsFilter } from "../filters/useAnalyticsFilter";
-import { activateOnKey } from "../utils/a11yKeys";
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
 import api from "../api";
@@ -8,7 +11,6 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import { BarChart, LineChart } from "../components/charts";
 import { useLayout } from "../context/LayoutContext";
 import CustomDropdown from "../components/CustomDropdown";
-import { formatNumber } from "../utils/formatters";
 import { getUserOperationalDefaults } from "../utils/userDefaults";
 import { CH4_DENSITY_KG_M3 } from "../constants";
 import {
@@ -29,8 +31,7 @@ import {
   Calendar,
   Check,
   ChevronDown,
-  ChevronUp,
-} from "lucide-react";
+  ChevronUp } from "lucide-react";
 import "./CarbonIntensity.css";
 import "./TopBarFilters.css";
 
@@ -79,8 +80,7 @@ const MethaneIntensity = () => {
     upstreamGasM3: 0,
     upstreamCh4Tonnes: 0,
     midstreamGasM3: 0,
-    midstreamCh4Tonnes: 0,
-  });
+    midstreamCh4Tonnes: 0 });
 
   const [regionalData, setRegionalData] = useState([]);
   const [ogmpSurveys, setOgmpSurveys] = useState([]);
@@ -184,8 +184,7 @@ const MethaneIntensity = () => {
         year: selectedYear,
         facilityId: currentRegion,
         activity: currentActivity,
-        division: currentDivision,
-      });
+        division: currentDivision });
       if (currentSegment !== "all") {
         params.append("segment", currentSegment);
       }
@@ -303,8 +302,7 @@ const MethaneIntensity = () => {
         upstreamGasM3: upGasM3,
         upstreamCh4Tonnes: upCh4Tonnes,
         midstreamGasM3: midGasM3,
-        midstreamCh4Tonnes: midCh4Tonnes,
-      });
+        midstreamCh4Tonnes: midCh4Tonnes });
     } catch (error) {
       console.error("Failed to load methane stats:", error);
       toast.error("Failed to load methane intensity metrics");
@@ -439,11 +437,9 @@ const MethaneIntensity = () => {
         params.append("division", currentDivision);
       }
       const res = await api.get(`/reports/ogmp-export?${params.toString()}`, {
-        responseType: "blob",
-      });
+        responseType: "blob" });
       const blob = new Blob([res.data], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
@@ -526,8 +522,7 @@ const MethaneIntensity = () => {
       ...filtered.map((f) => ({
         value: f.id.toString(),
         label: f.name,
-        subLabel: f.field,
-      })),
+        subLabel: f.field })),
     ];
   };
 
@@ -541,8 +536,7 @@ const MethaneIntensity = () => {
               { value: "all", label: "All Years" },
               ...availableYears.map((y) => ({
                 value: y.toString(),
-                label: y.toString(),
-              })),
+                label: y.toString() })),
             ]}
             value={selectedYear}
             onChange={setSelectedYear}
@@ -665,8 +659,7 @@ const MethaneIntensity = () => {
         loss_rate_upstream_pct: upLossRate,
         loss_rate_midstream_pct: midLossRate,
         target_020: upstreamTargetPct,
-        target_005: midstreamTargetPct,
-      };
+        target_005: midstreamTargetPct };
     });
   }, [rawTrendData, currentRegion, upstreamTargetPct, midstreamTargetPct]);
 
@@ -692,757 +685,38 @@ const MethaneIntensity = () => {
       className="intensity-content"
       style={{
         opacity: isUpdating ? 0.82 : 1,
-        transition: "opacity 0.2s ease",
-      }}
+        transition: "opacity 0.2s ease" }}
     >
       <div className="intensity-grid">
         {/* KPI HERO CARD */}
-        <div className="hero-card">
-          <div className="hero-header">
-            <div className="flex! items-center! gap-[16px]!">
-              <h2 className="grid-title">
-                <Wind size={24} color="var(--accent-secondary)" />
-                Methane Intensity & Loss Rate Analytics
-              </h2>
-              <div
-                className="year-badge"
-                style={{
-                  background: "rgba(37, 99, 235, 0.1)",
-                  color: "#2563eb",
-                  borderColor: "rgba(37, 99, 235, 0.2)",
-                }}
-              >
-                {selectedYear === "all" ? "All-Time" : selectedYear} Performance
-              </div>
-            </div>
-
-            {/* OGMP 2.0 Gold Standard Badge */}
-            <div
-              className="ogmp-gold-badge"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                padding: "6px 14px",
-                borderRadius: "8px",
-                background:
-                  stats.ogmpGoldStatus === "Compliant"
-                    ? "rgba(16, 185, 129, 0.1)"
-                    : stats.ogmpGoldStatus === "Warning" ||
-                      stats.ogmpGoldStatus === "Pending Production"
-                    ? "rgba(245, 158, 11, 0.1)"
-                    : "rgba(239, 68, 68, 0.1)",
-                border: `1px solid ${
-                  stats.ogmpGoldStatus === "Compliant"
-                    ? "#10b981"
-                    : stats.ogmpGoldStatus === "Warning" ||
-                      stats.ogmpGoldStatus === "Pending Production"
-                    ? "#f59e0b"
-                    : "#ef4444"
-                }`,
-                color:
-                  stats.ogmpGoldStatus === "Compliant"
-                    ? "#10b981"
-                    : stats.ogmpGoldStatus === "Warning" ||
-                      stats.ogmpGoldStatus === "Pending Production"
-                    ? "#f59e0b"
-                    : "#ef4444",
-                fontWeight: 600,
-                fontSize: "0.85rem",
-              }}
-            >
-              {stats.ogmpGoldStatus === "Compliant" ? (
-                <CheckCircle size={16} />
-              ) : (
-                <AlertTriangle size={16} />
-              )}
-              <span>
-                OGMP 2.0 Targets: {stats.ogmpGoldStatus}{" "}
-                {stats.ogmpGoldStatus === "Pending Production"
-                  ? "(Gas production figures required)"
-                  : `(≤${upstreamTargetPct.toFixed(2)}% Upstream / ≤${midstreamTargetPct.toFixed(2)}% Midstream)`}
-              </span>
-            </div>
-          </div>
-
-          {/* Horizontal 4-KPI Grid */}
-          <div className="kpi-grid-4">
-            <div className="kpi-card">
-              <div className="kpi-header">
-                <div className="kpi-icon ch4">
-                  <Wind size={20} />
-                </div>
-                <span className="kpi-label">Methane Intensity (Avg)</span>
-              </div>
-              <div className="kpi-value-container">
-                <span className="total-value ch4">
-                  {(stats.avgCh4Intensity ?? 0).toFixed(4)}
-                </span>
-                <span className="kpi-unit">kg CH₄ / BOE</span>
-              </div>
-              <div className="kpi-footer">
-                <span>
-                  Total CH₄:{" "}
-                  <strong>{formatNumber(stats.totalCh4Emissions)} tCH₄</strong>
-                </span>
-              </div>
-            </div>
-
-            <div className="kpi-card">
-              <div className="kpi-header">
-                <div
-                  className="kpi-icon loss"
-                  style={{
-                    background: "rgba(59, 130, 246, 0.1)",
-                    color: "#3b82f6",
-                  }}
-                >
-                  <Compass size={20} />
-                </div>
-                <span className="kpi-label">Methane Loss Rate</span>
-              </div>
-              <div className="kpi-value-container">
-                <span
-                  className="total-value"
-                  style={{
-                    color:
-                      stats.totalGasProductionM3 === 0 && stats.totalCh4Emissions > 0
-                        ? "#f59e0b"
-                        : stats.avgMethaneLossRatePct <= upstreamTargetPct
-                          ? "#10b981"
-                          : stats.avgMethaneLossRatePct <=
-                              upstreamTargetPct * 1.25
-                            ? "#f59e0b"
-                            : "#ef4444",
-                  }}
-                >
-                  {stats.totalGasProductionM3 === 0 && stats.totalCh4Emissions > 0
-                    ? "Pending Prod."
-                    : `${(stats.avgMethaneLossRatePct ?? 0).toFixed(3)}%`}
-                </span>
-                <span className="kpi-unit">
-                  {stats.totalGasProductionM3 === 0 && stats.totalCh4Emissions > 0
-                    ? "Gas prod. required"
-                    : "Overall Avg"}
-                </span>
-              </div>
-
-              {/* Upstream & Midstream Segment Loss Rates */}
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr",
-                  gap: "6px",
-                  margin: "8px 0 6px 0",
-                  padding: "6px 8px",
-                  background: "var(--bg-secondary, rgba(255,255,255,0.03))",
-                  borderRadius: "8px",
-                  border: "1px solid var(--border-color, #e5e7eb)",
-                }}
-              >
-                <div>
-                  <div
-                    style={{
-                      fontSize: "0.7rem",
-                      color: "var(--text-secondary)",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.5px",
-                      fontWeight: 600,
-                    }}
-                  >
-                    Upstream
-                  </div>
-                  <div
-                    style={{
-                      fontSize: "0.95rem",
-                      fontWeight: 700,
-                      color:
-                        stats.upstreamGasM3 === 0 && stats.upstreamCh4Tonnes > 0
-                          ? "#f59e0b"
-                          : stats.upstreamLossRatePct <= upstreamTargetPct
-                            ? "#10b981"
-                            : "#ef4444",
-                    }}
-                  >
-                    {stats.upstreamGasM3 === 0 && stats.upstreamCh4Tonnes > 0
-                      ? "Pending Prod."
-                      : `${(stats.upstreamLossRatePct ?? 0).toFixed(3)}%`}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: "0.68rem",
-                      color: "var(--text-secondary)",
-                    }}
-                  >
-                    Target &le; {upstreamTargetPct.toFixed(2)}%
-                  </div>
-                </div>
-
-                <div
-                  style={{
-                    borderLeft: "1px solid var(--border-color, #e5e7eb)",
-                    paddingLeft: "8px",
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: "0.7rem",
-                      color: "var(--text-secondary)",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.5px",
-                      fontWeight: 600,
-                    }}
-                  >
-                    Midstream
-                  </div>
-                  <div
-                    style={{
-                      fontSize: "0.95rem",
-                      fontWeight: 700,
-                      color:
-                        stats.midstreamGasM3 === 0 && stats.midstreamCh4Tonnes > 0
-                          ? "#f59e0b"
-                          : stats.midstreamLossRatePct <= midstreamTargetPct
-                            ? "#10b981"
-                            : "#ef4444",
-                    }}
-                  >
-                    {stats.midstreamGasM3 === 0 && stats.midstreamCh4Tonnes > 0
-                      ? "Pending Prod."
-                      : `${(stats.midstreamLossRatePct ?? 0).toFixed(3)}%`}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: "0.68rem",
-                      color: "var(--text-secondary)",
-                    }}
-                  >
-                    Target &le; {midstreamTargetPct.toFixed(2)}%
-                  </div>
-                </div>
-              </div>
-
-              <div className="kpi-footer">
-                <span>
-                  OGMP 2.0:{" "}
-                  <strong>
-                    &le;{upstreamTargetPct.toFixed(2)}% Up / &le;{midstreamTargetPct.toFixed(2)}% Mid
-                  </strong>
-                </span>
-                <span>
-                  Vol:{" "}
-                  <strong>{formatNumber(stats.totalCh4VolumeM3, 0)} m³</strong>
-                </span>
-              </div>
-            </div>
-
-            <div className="kpi-card">
-              <div className="kpi-header">
-                <div className="kpi-icon flare">
-                  <Flame size={20} />
-                </div>
-                <span className="kpi-label">Gas Flaring Rate</span>
-              </div>
-              <div className="kpi-value-container">
-                <span className="total-value flare">
-                  {(stats.avgFlaringRatePct ?? 0).toFixed(3)}%
-                </span>
-                <span className="kpi-unit">of Gas Volume</span>
-              </div>
-              <div className="kpi-footer">
-                <span>
-                  Flared:{" "}
-                  <strong>
-                    {formatNumber(stats.totalFlaringVolume, 0)} m³
-                  </strong>
-                </span>
-              </div>
-            </div>
-
-            <div className="kpi-card">
-              <div className="kpi-header">
-                <div
-                  className="kpi-icon wec"
-                  style={{
-                    background: "rgba(239, 68, 68, 0.1)",
-                    color: "#ef4444",
-                  }}
-                >
-                  <AlertTriangle size={20} />
-                </div>
-                <span className="kpi-label">EPA WEC Liability</span>
-              </div>
-              <div className="kpi-value-container">
-                <span
-                  className="total-value"
-                  style={{
-                    color: !stats.wecAssessed ? "#64748b" : stats.totalWecFeeUsd > 0 ? "#ef4444" : "#10b981",
-                  }}
-                >
-                  {stats.wecAssessed ? `$${formatNumber(stats.totalWecFeeUsd, 0)}` : "—"}
-                </span>
-                <span className="kpi-unit">
-                  {stats.wecAssessed ? "USD Est." : stats.wecReason || "Select a single year"}
-                </span>
-              </div>
-              <div className="kpi-footer">
-                <span>
-                  Rate:{" "}
-                  <strong>
-                    {stats.wecRate
-                      ? `$${formatNumber(stats.wecRate, 0)}`
-                      : selectedYear === "all"
-                        ? "per year"
-                        : "—"}
-                    /t CH₄
-                  </strong>{" "}
-                  (CAA §136, from 2034 emissions)
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Methane Mass Balance Bar */}
-          <div className="scope-breakdown">
-            <div className="scope-item">
-              <span className="label">Total Gas Produced</span>
-              <span className="val">
-                {formatNumber(stats.totalGasProductionM3, 0)} m³{" "}
-                <sub
-                  style={{ fontSize: "0.7em", color: "var(--text-secondary)" }}
-                >
-                  ({formatNumber(stats.totalGasProductionMscf, 0)} mscf)
-                </sub>
-              </span>
-            </div>
-            <div className="scope-item bordered">
-              <span className="label">Methane Loss Volume</span>
-              <span
-                className="val"
-                style={{ color: "#2563eb", fontWeight: 700 }}
-              >
-                {formatNumber(stats.totalCh4VolumeM3, 0)} m³
-              </span>
-            </div>
-            <div className="scope-item bordered">
-              <span className="label">Total Gas Flared</span>
-              <span className="val flare-val">
-                {formatNumber(stats.totalFlaringVolume, 0)} m³
-              </span>
-            </div>
-            <div className="scope-item bordered">
-              <span className="label">Total Combined BOE</span>
-              <span className="val">{formatNumber(stats.totalBoe, 0)} BOE</span>
-            </div>
-          </div>
-        </div>
+        <MethaneIntensityMethaneIntensity
+        midstreamTargetPct={midstreamTargetPct}
+        selectedYear={selectedYear}
+        stats={stats}
+        upstreamTargetPct={upstreamTargetPct}
+      />
 
         {/* OGMP 2.0 GOLD STANDARD PATHWAY & ROADMAP */}
-        <div
-          className={`ogmp-roadmap-card ${roadmapCollapsed ? "collapsed-card" : ""}`}
-        >
-          <div
-            className="roadmap-header-row"
-            onClick={() => setRoadmapCollapsed(!roadmapCollapsed)}
-            style={{ cursor: "pointer", userSelect: "none" }}
-          >
-            <div className="roadmap-title-area">
-              <h3>
-                <Award size={22} color="#ff6600" />
-                OGMP 2.0 Gold Standard Pathway & Milestone Roadmap
-              </h3>
-              <p>
-                Multi-year reporting level progression towards Level 4/5
-                site-level measurement reconciliation.
-              </p>
-            </div>
-
-            <div className="flex! items-center! gap-[16px]!">
-              {/* Interactive Baseline Selector UI button/pill matching theme */}
-              <div
-                className="baseline-selector-wrapper"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <span className="baseline-selector-label">
-                  <Calendar
-                    size={14}
-                    style={{
-                      display: "inline",
-                      verticalAlign: "middle",
-                      marginRight: "4px",
-                    }}
-                  />
-                  Base Year:
-                </span>
-                <div className="baseline-pills">
-                  {Array.from({ length: new Date().getFullYear() - 2020 }, (_, i) => 2021 + i).map((yr) => (
-                    <button
-                      key={yr}
-                      type="button"
-                      className={`btn-baseline-pill ${selectedBaselineYear === yr ? "active" : ""}`}
-                      onClick={() => setSelectedBaselineYear(yr)}
-                    >
-                      {yr}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              {roadmapCollapsed ? (
-                <ChevronDown size={18} color="var(--text-secondary)" />
-              ) : (
-                <ChevronUp size={18} color="var(--text-secondary)" />
-              )}
-            </div>
-          </div>
-
-          <div
-            className={`ogmp-roadmap-body-wrapper ${roadmapCollapsed ? "collapsed" : ""}`}
-          >
-            {/* Facility Roadmap Cards Grid */}
-            <div className="facility-roadmap-grid">
-              {(ogmpRoadmapData.length > 0 ? ogmpRoadmapData : facilities).map(
-                (fac) => {
-                  const facName = fac.facility_name || fac.name;
-                  const opStatus = fac.operator_status || "operated";
-                  const baseYear =
-                    selectedBaselineYear ||
-                    Number(fac.ogmp_membership_year || 2023);
-                  const targetYear =
-                    baseYear + (opStatus === "operated" ? 3 : 5);
-                  const currentYear = Number(
-                    selectedYear !== "all"
-                      ? selectedYear
-                      : new Date().getFullYear(),
-                  );
-                  const yearsLeft = targetYear - currentYear;
-
-                  const matchedSurvey = ogmpSurveys.find(
-                    (s) =>
-                      String(s.facilityId || s.facility_id) ===
-                        String(fac.facility_id || fac.id) ||
-                      (s.facility_name || s.facilityName) === facName,
-                  );
-                  const threshold = Number(
-                    fac.reconciliation_threshold ?? globalThreshold ?? 20.0,
-                  );
-                  const variancePct =
-                    fac.reconciliation_variance_pct ??
-                    fac.variance_pct ??
-                    (matchedSurvey
-                      ? (matchedSurvey.reconciliation_variance_pct ?? matchedSurvey.variance_pct ?? null)
-                      : null);
-                  const passThreshold =
-                    variancePct !== null
-                      ? Math.abs(variancePct) <= threshold
-                      : false;
-
-                  const highestLevel =
-                    fac.highest_ogmp_level ||
-                    fac.current_ogmp_level ||
-                    (matchedSurvey && passThreshold ? 5 : matchedSurvey ? 4 : 3);
-                  const isReconciled =
-                    fac.is_reconciled !== undefined
-                      ? fac.is_reconciled
-                      : (highestLevel >= 5 && passThreshold);
-
-                  let statusBadgeClass = "ontrack";
-                  let statusText = `On Track (${yearsLeft > 0 ? `${yearsLeft} yrs to Level 5` : "Target Year"})`;
-                  if (isReconciled && highestLevel >= 5) {
-                    statusBadgeClass = "achieved";
-                    statusText = "Gold Standard Achieved (Level 5)";
-                  } else if (yearsLeft < 0) {
-                    statusBadgeClass = "action";
-                    statusText = "Action Plan Required (Overdue)";
-                  } else if (yearsLeft === 0) {
-                    statusBadgeClass = "ontrack";
-                    statusText = "Target Milestone Year (Level 5 Due)";
-                  }
-
-                  return (
-                    <div
-                      key={fac.facility_id || fac.id}
-                      className="fac-roadmap-card"
-                    >
-                      <div className="fac-roadmap-top">
-                        <div className="fac-roadmap-info">
-                          <span className="fac-roadmap-name">{facName}</span>
-                          <span className="fac-roadmap-meta">
-                            {opStatus === "operated"
-                              ? "Operated Asset (3-Yr Target)"
-                              : "Non-Operated Asset (5-Yr Target)"}{" "}
-                            • Base: {baseYear} • Target: {targetYear}
-                          </span>
-                        </div>
-                        <span
-                          className={`badge-roadmap-status ${statusBadgeClass}`}
-                        >
-                          {statusBadgeClass === "achieved" && (
-                            <Check size={13} />
-                          )}
-                          {statusBadgeClass === "action" && (
-                            <AlertTriangle size={13} />
-                          )}
-                          {statusText}
-                        </span>
-                      </div>
-
-                      {/* 5-Level Stepper */}
-                      <div className="ogmp-stepper-container">
-                        {[1, 2, 3, 4, 5].map((lvl) => {
-                          const isDone = highestLevel >= lvl;
-                          const isCurrent = highestLevel === lvl;
-                          const levelNames = [
-                            "L1: Venture",
-                            "L2: Segment",
-                            "L3: Generic",
-                            "L4: Specific",
-                            "L5: Reconciled",
-                          ];
-                          return (
-                            <div
-                              key={lvl}
-                              className={`ogmp-step ${isDone ? "completed" : ""} ${isCurrent ? "current" : ""}`}
-                            >
-                              <div className="step-circle">
-                                {isDone ? "✓" : lvl}
-                              </div>
-                              <span className="step-name">
-                                {levelNames[lvl - 1]}
-                              </span>
-                            </div>
-                          );
-                        })}
-                      </div>
-
-                      {/* Footer stats */}
-                      <div className="fac-roadmap-stats">
-                        <div className="roadmap-stat-item">
-                          <span className="roadmap-stat-label">
-                            Current Milestone
-                          </span>
-                          <span className="roadmap-stat-val">
-                            OGMP Level {highestLevel}
-                          </span>
-                        </div>
-                        <div className="roadmap-stat-item">
-                          <span className="roadmap-stat-label">
-                            Reconciliation Var.
-                          </span>
-                          <span
-                            className={`roadmap-stat-val ${variancePct !== null ? (passThreshold ? "variance-pass" : "variance-fail") : ""}`}
-                          >
-                            {variancePct !== null
-                              ? variancePct >= 0
-                                ? `+${Number(variancePct).toFixed(1)}%`
-                                : `${Number(variancePct).toFixed(1)}%`
-                              : "Pending Survey"}
-                          </span>
-                        </div>
-                        <div className="roadmap-stat-item">
-                          <span className="roadmap-stat-label">
-                            Tolerance Limit
-                          </span>
-                          <span className="roadmap-stat-val">
-                            ±{threshold.toFixed(1)}%{" "}
-                            {variancePct !== null
-                              ? passThreshold
-                                ? "(PASS)"
-                                : "(FLAGGED)"
-                              : ""}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                },
-              )}
-            </div>
-          </div>
-        </div>
+        <MethaneIntensityOGMP20Gold
+        facilities={facilities}
+        globalThreshold={globalThreshold}
+        ogmpRoadmapData={ogmpRoadmapData}
+        ogmpSurveys={ogmpSurveys}
+        roadmapCollapsed={roadmapCollapsed}
+        selectedBaselineYear={selectedBaselineYear}
+        selectedYear={selectedYear}
+        setRoadmapCollapsed={setRoadmapCollapsed}
+        setSelectedBaselineYear={setSelectedBaselineYear}
+      />
 
         {/* OGMP 2.0 LEVEL 4/5 TOP-DOWN SURVEY RECONCILIATION SECTION */}
-        <div className="card ogmp-section">
-          <div role="button" tabIndex={0} onKeyDown={activateOnKey}
-            className="chart-header"
-            onClick={() => setOgmpCollapsed(!ogmpCollapsed)}
-            style={{ cursor: "pointer", userSelect: "none" }}
-          >
-            <div>
-              <h3 className="flex! items-center! gap-[8px]!">
-                <Radio size={20} color="var(--accent-secondary)" />
-                OGMP 2.0 Level 4/5 Top-Down Survey & Bottom-Up Reconciliation
-              </h3>
-              <p
-                style={{
-                  color: "var(--text-secondary)",
-                  fontSize: "0.875rem",
-                  margin: "4px 0 0 0",
-                }}
-              >
-                Site-level measurement (Satellite, OGI, Drone, Aircraft)
-                reconciled with source-level bottom-up inventory
-              </p>
-            </div>
-            <div className="flex! items-center! gap-[12px]!">
-              <div
-                className="ogmp-level-badge"
-                style={{
-                  background: "rgba(37, 99, 235, 0.1)",
-                  color: "#2563eb",
-                  padding: "6px 14px",
-                  borderRadius: "8px",
-                  fontSize: "0.85rem",
-                  fontWeight: 600,
-                }}
-              >
-                Gold Standard Pathway: Level 5 Reconciled
-              </div>
-              {ogmpCollapsed ? (
-                <ChevronDown size={18} color="var(--text-secondary)" />
-              ) : (
-                <ChevronUp size={18} color="var(--text-secondary)" />
-              )}
-            </div>
-          </div>
-
-          <div
-            className={`ogmp-body-wrapper ${ogmpCollapsed ? "collapsed" : ""}`}
-          >
-            {ogmpSurveys.length > 0 ? (
-              <div className="table-responsive">
-                <table className="custom-table">
-                  <thead>
-                    <tr>
-                      <th>Facility</th>
-                      <th>Survey Date</th>
-                      <th>Technology / Method</th>
-                      <th>Measured Rate (kg CH₄/hr)</th>
-                      <th>Annualized Rate (tCH₄/yr)</th>
-                      <th>Bottom-Up Annual (tCH₄)</th>
-                      <th>Variance (%)</th>
-                      <th>Reconciliation Status</th>
-                      <th>Operator Notes</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {ogmpSurveys.map((s, idx) => {
-                      const fid = s.facilityId ?? s.facility_id;
-                      const matchingFac = regionalData.find(
-                        (f) => String(f.facility_id) === String(fid),
-                      );
-                      const bottomUpCh4 = matchingFac
-                        ? matchingFac.total_ch4
-                        : null;
-                      const facName =
-                        s.facilityName ||
-                        s.facility_name ||
-                        (matchingFac ? matchingFac.facility_name : "—");
-                      const sDate = s.surveyDate || s.survey_date || "—";
-                      const sType = s.surveyType || s.survey_type || "Top-Down";
-                      const rateKgHr =
-                        s.measuredRateKgHr ?? s.measured_rate_kg_hr;
-                      const annTch4 =
-                        s.estimatedAnnualTch4 ?? s.estimated_annual_tch4 ?? 0;
-                      const recStatus =
-                        s.reconciliationStatus ||
-                        s.reconciliation_status ||
-                        "Reconciled";
-                      const notes = s.operatorNotes || s.operator_notes || "—";
-
-                      let variancePct =
-                        s.variance_pct ?? s.reconciliation_variance_pct ?? null;
-                      if (variancePct === null && bottomUpCh4 && bottomUpCh4 > 0 && annTch4 > 0) {
-                        variancePct =
-                          ((annTch4 - bottomUpCh4) / bottomUpCh4) * 100.0;
-                      }
-
-                      return (
-                        <tr key={s.id || idx}>
-                          <td className="font-semibold!">{facName}</td>
-                          <td>{sDate}</td>
-                          <td>
-                            <span className="code-pill">{sType}</span>
-                          </td>
-                          <td>
-                            <strong style={{ color: "#2563eb" }}>
-                              {typeof rateKgHr === "number"
-                                ? rateKgHr.toFixed(2)
-                                : "—"}
-                            </strong>
-                          </td>
-                          <td>
-                            <strong>{formatNumber(annTch4, 2)}</strong>
-                          </td>
-                          <td>
-                            {bottomUpCh4 !== null
-                              ? `${bottomUpCh4.toFixed(2)} t`
-                              : "—"}
-                          </td>
-                          <td>
-                            {variancePct !== null ? (
-                              <span
-                                style={{
-                                  fontWeight: 700,
-                                  color:
-                                    Math.abs(variancePct) <= (globalThreshold || 20.0)
-                                      ? "#10b981"
-                                      : "#ef4444",
-                                }}
-                              >
-                                {variancePct >= 0
-                                  ? `+${variancePct.toFixed(1)}%`
-                                  : `${variancePct.toFixed(1)}%`}
-                              </span>
-                            ) : (
-                              "—"
-                            )}
-                          </td>
-                          <td>
-                            <span
-                              className={`status-badge ${recStatus === "Reconciled" ? "badge-success" : "badge-warning"}`}
-                              style={{
-                                padding: "4px 10px",
-                                borderRadius: "6px",
-                                fontSize: "0.8rem",
-                                fontWeight: 600,
-                                background:
-                                  recStatus === "Reconciled"
-                                    ? "rgba(16, 185, 129, 0.1)"
-                                    : "rgba(245, 158, 11, 0.1)",
-                                color:
-                                  recStatus === "Reconciled"
-                                    ? "#10b981"
-                                    : "#f59e0b",
-                              }}
-                            >
-                              {recStatus}
-                            </span>
-                          </td>
-                          <td
-                            style={{
-                              fontSize: "0.85rem",
-                              color: "var(--text-secondary)",
-                            }}
-                          >
-                            {notes}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <div className="ogmp-empty-state">
-                <p>
-                  No OGMP 2.0 top-down surveys registered for the selected
-                  filters. Record survey campaigns via{" "}
-                  <strong>Manage Data &gt; OGMP Surveys</strong>.
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
+        <MethaneIntensityOGMP20Level
+        globalThreshold={globalThreshold}
+        ogmpCollapsed={ogmpCollapsed}
+        ogmpSurveys={ogmpSurveys}
+        regionalData={regionalData}
+        setOgmpCollapsed={setOgmpCollapsed}
+      />
 
         {/* Regional Bar Charts */}
         <div className="chart-grid">
@@ -1462,8 +736,7 @@ const MethaneIntensity = () => {
                   .filter((d) => d.methane_loss_rate_pct != null) /* BUG-088: no gas production = no rate */
                   .map((d) => ({
                     name: d.facility_name,
-                    value: d.methane_loss_rate_pct,
-                  }))}
+                    value: d.methane_loss_rate_pct }))}
                 dataKey="value"
                 xKey="name"
                 color="#2563eb"
@@ -1485,8 +758,7 @@ const MethaneIntensity = () => {
               <BarChart
                 data={regionalData.map((d) => ({
                   name: d.facility_name,
-                  value: d.ch4_intensity || 0,
-                }))}
+                  value: d.ch4_intensity || 0 }))}
                 dataKey="value"
                 xKey="name"
                 color="#ff6600"
@@ -1508,8 +780,7 @@ const MethaneIntensity = () => {
               <BarChart
                 data={regionalData.map((d) => ({
                   name: d.facility_name,
-                  value: d.total_ch4 || 0,
-                }))}
+                  value: d.total_ch4 || 0 }))}
                 dataKey="value"
                 xKey="name"
                 color="#3b82f6"
@@ -1531,8 +802,7 @@ const MethaneIntensity = () => {
               <BarChart
                 data={regionalData.map((d) => ({
                   name: d.facility_name,
-                  value: d.flaring_volume || 0,
-                }))}
+                  value: d.flaring_volume || 0 }))}
                 dataKey="value"
                 xKey="name"
                 color="#ea580c"
@@ -1542,133 +812,16 @@ const MethaneIntensity = () => {
         </div>
 
         {/* Historical Trends Section */}
-        <div className="card trend-section">
-          <div className="chart-header">
-            <div>
-              <h3 className="mb-[4px]!">
-                Historical Methane Trends & Targets
-              </h3>
-              <p
-                style={{
-                  color: "var(--text-secondary)",
-                  fontSize: "0.9rem",
-                  margin: 0,
-                }}
-              >
-                5-Year Methane Loss Rate (%) vs OGMP 2.0 Targets (&le;{upstreamTargetPct.toFixed(2)}% Upstream / &le;{midstreamTargetPct.toFixed(2)}% Midstream)
-              </p>
-            </div>
-            <div className="trend-view-controls">
-              <div className="view-toggle">
-                <button
-                  className={`view-btn ${trendView === "chart" ? "active" : ""}`}
-                  onClick={() => setTrendView("chart")}
-                >
-                  <BarChart2 size={16} /> Chart
-                </button>
-                <button
-                  className={`view-btn ${trendView === "heatmap" ? "active" : ""}`}
-                  onClick={() => setTrendView("heatmap")}
-                >
-                  <Grid size={16} /> Heatmap
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {trendView === "chart" ? (
-            <div className="h-[350px]!">
-              <LineChart
-                data={trendChartData}
-                xKey="year"
-                series={[
-                  {
-                    key: "loss_rate_pct",
-                    color: "#2563eb",
-                    name: "Overall Loss Rate (%)",
-                  },
-                  {
-                    key: "loss_rate_upstream_pct",
-                    color: "#c2410c",
-                    name: "Upstream Loss Rate (%)",
-                  },
-                  {
-                    key: "loss_rate_midstream_pct",
-                    color: "#f59e0b",
-                    name: "Midstream Loss Rate (%)",
-                  },
-                  {
-                    key: "target_020",
-                    color: "#10b981",
-                    name: `OGMP Upstream Target (≤${upstreamTargetPct.toFixed(2)}%)`,
-                    strokeDasharray: "4 4",
-                  },
-                  {
-                    key: "target_005",
-                    color: "#8b5cf6",
-                    name: `OGMP Midstream Target (≤${midstreamTargetPct.toFixed(2)}%)`,
-                    strokeDasharray: "2 2",
-                  },
-                ]}
-              />
-            </div>
-          ) : (
-            <div className="heatmap-container">
-              <div className="heatmap-header">
-                <div
-                  className="heatmap-header-cell text-left!"
-                 
-                >
-                  FACILITY / REGION
-                </div>
-                {rawTrendData.map((d) => (
-                  <div key={d.year} className="heatmap-header-cell">
-                    {d.year}
-                  </div>
-                ))}
-              </div>
-              <div className="heatmap-body">
-                {regionalData.length > 0 ? (
-                  regionalData.map((facData) => (
-                    <div key={facData.facility_id} className="heatmap-row">
-                      <div className="heatmap-label">
-                        {facData.facility_name}
-                      </div>
-                      {rawTrendData.map((yData) => {
-                        const record = yData.data.find(
-                          (r) => r.facility_id === facData.facility_id,
-                        );
-                        const missing = record && record.methane_loss_rate_pct == null && record.total_ch4 > 0;
-                        const rawVal = record ? record.methane_loss_rate_pct || 0 : 0;
-                        const numVal = Number(rawVal);
-                        const val = isFinite(numVal) ? numVal : 0;
-                        return (
-                          <div
-                            key={yData.year}
-                            className={`heatmap-cell ${missing ? "" : getHeatmapClass(val)}`}
-                            title={missing ? `${yData.year}: methane reported but no gas production recorded` : `${yData.year} Loss Rate: ${val.toFixed(3)}%`}
-                          >
-                            {missing ? "n/a" : val > 0 ? `${val.toFixed(3)}%` : "-"}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  ))
-                ) : (
-                  <p
-                    style={{
-                      textAlign: "center",
-                      padding: "40px",
-                      color: "var(--text-secondary)",
-                    }}
-                  >
-                    No regional data available
-                  </p>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
+        <MethaneIntensityHistoricalMethaneTrends
+        getHeatmapClass={getHeatmapClass}
+        midstreamTargetPct={midstreamTargetPct}
+        rawTrendData={rawTrendData}
+        regionalData={regionalData}
+        setTrendView={setTrendView}
+        trendChartData={trendChartData}
+        trendView={trendView}
+        upstreamTargetPct={upstreamTargetPct}
+      />
       </div>
     </div>
   );

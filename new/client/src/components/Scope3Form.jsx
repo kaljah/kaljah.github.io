@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { NativeSelect } from "../ui/NativeSelect";
-import { activateOnKey } from "../utils/a11yKeys";
 import { CATEGORY_ACTIVITIES } from "../utils/scope3Factors";
 import api from "../api";
 import CustomDropdown from "./CustomDropdown";
 import { useToast } from "./Toast";
 import { useAuth } from "../context/AuthContext";
 import { getUserOperationalDefaults } from "../utils/userDefaults";
-import { formatNumber, formatEmission } from "../utils/formatters";
+import { formatNumber } from "../utils/formatters";
 import ColumnMappingWizard from "./ColumnMappingWizard";
 import Scope3ImportWizard from "./Scope3ImportWizard";
 import { Upload, Trash2, Eye } from "lucide-react";
 import CalculationDetails from "./CalculationDetails";
 import ConfirmModal from "./ConfirmModal";
+import Scope3FormNewScope3 from "./scope3-form/Scope3FormNewScope3";
+import Scope3FormCalculatorGridContainer from "./scope3-form/Scope3FormCalculatorGridContainer";
 import "./ScopeTables.css";
 import { UNCERTAINTY_COVERAGE_K } from "../constants";
 
@@ -88,8 +89,7 @@ const Scope3Form = () => {
     km: { km: 1, mile: 1.60934 },
     "sq ft": { "sq ft": 1, "sq m": 10.7639 },
     USD: { USD: 1, EUR: 1.1, DZD: 0.0074 },
-    day: { day: 1, week: 5, month: 20, year: 240 },
-  };
+    day: { day: 1, week: 5, month: 20, year: 240 } };
 
   const [facilities, setFacilities] = useState([]);
   const [entries, setEntries] = useState([]);
@@ -98,8 +98,7 @@ const Scope3Form = () => {
   const [loadError, setLoadError] = useState(false);
   const [importModal, setImportModal] = useState({
     isOpen: false,
-    type: "activity_scope3",
-  });
+    type: "activity_scope3" });
   const RECORDS_PER_PAGE = 10;
 
   const SCOPE3_CATEGORIES = {
@@ -117,8 +116,7 @@ const Scope3Form = () => {
     12: { name: "End-of-Life Treatment", type: "downstream" },
     13: { name: "Downstream Leased Assets", type: "downstream" },
     14: { name: "Franchises", type: "downstream" },
-    15: { name: "Investments", type: "downstream" },
-  };
+    15: { name: "Investments", type: "downstream" } };
 
 
   useEffect(() => {
@@ -197,8 +195,7 @@ const Scope3Form = () => {
     try {
       // one page from the server (the whole list used to be downloaded on every page change)
       const res = await api.get("/scope3", {
-        params: { limit: RECORDS_PER_PAGE, offset: (currentPage - 1) * RECORDS_PER_PAGE },
-      });
+        params: { limit: RECORDS_PER_PAGE, offset: (currentPage - 1) * RECORDS_PER_PAGE } });
       const data = Array.isArray(res.data) ? res.data : res.data?.data || [];
       const total = Array.isArray(res.data) ? data.length : Number(res.data?.total) || 0;
       setEntries(data);
@@ -242,8 +239,7 @@ const Scope3Form = () => {
         emission_factor: ef,
         co2e: totalEmissions,
         notes: SCOPE3_CATEGORIES[category].name,
-        status: status,
-      };
+        status: status };
 
       await api.post("/scope3", payload);
       toast.success(
@@ -272,29 +268,23 @@ const Scope3Form = () => {
         totalCo2e: entry.co2e || entry.emissions_tco2e || 0,
         co2: entry.co2e || entry.emissions_tco2e || 0,
         ch4: 0,
-        n2o: 0,
-      },
+        n2o: 0 },
       factors: {
         co2: entry.emission_factor || 0,
         ch4: 0,
-        n2o: 0,
-      },
+        n2o: 0 },
       method: entry.calculation_method || "Activity Data × Emission Factor",
       steps: [
         {
           name: "Activity Normalization",
-          desc: `Recorded activity quantity: ${entry.activity_data || entry.volume || 0} ${entry.unit}`,
-        },
+          desc: `Recorded activity quantity: ${entry.activity_data || entry.volume || 0} ${entry.unit}` },
         {
           name: "Emission Factor Application",
-          desc: `Applied factor: ${entry.emission_factor} kg CO₂e / ${entry.unit}`,
-        },
+          desc: `Applied factor: ${entry.emission_factor} kg CO₂e / ${entry.unit}` },
         {
           name: "CO₂e Calculation",
-          desc: `(${entry.activity_data || entry.volume || 0} × ${entry.emission_factor}) ÷ 1,000 = ${formatNumber(entry.co2e || entry.emissions_tco2e, 3)} tCO₂e`,
-        },
-      ],
-    });
+          desc: `(${entry.activity_data || entry.volume || 0} × ${entry.emission_factor}) ÷ 1,000 = ${formatNumber(entry.co2e || entry.emissions_tco2e, 3)} tCO₂e` },
+      ] });
   };
 
   const handleImportSuccess = () => {
@@ -353,419 +343,62 @@ const Scope3Form = () => {
     ...facilities.map((f) => ({
       value: f.id.toString(),
       label: f.name,
-      subLabel: f.field,
-    })),
+      subLabel: f.field })),
   ];
 
   return (
     <div className="scope-form">
-      <div className="calc-panel">
+      <Scope3FormNewScope3
+        UNIT_MULTIPLIERS={UNIT_MULTIPLIERS}
+        activityType={activityType}
+        amount={amount}
+        baseUnit={baseUnit}
+        category={category}
+        eeioNaics={eeioNaics}
+        eeioResult={eeioResult}
+        eeioSpend={eeioSpend}
+        emissionFactor={emissionFactor}
+        facilityId={facilityId}
+        getActivityOptions={getActivityOptions}
+        getCategoryOptions={getCategoryOptions}
+        getFacilityOptions={getFacilityOptions}
+        handleAddEntry={handleAddEntry}
+        handleCalculateEeio={handleCalculateEeio}
+        handleImportSuccess={handleImportSuccess}
+        handleUnitChange={handleUnitChange}
+        importModal={importModal}
+        month={month}
+        naicsOptions={naicsOptions}
+        searchNaics={searchNaics}
+        setActivityType={setActivityType}
+        setAmount={setAmount}
+        setCategory={setCategory}
+        setEeioNaics={setEeioNaics}
+        setEeioSpend={setEeioSpend}
+        setEmissionFactor={setEmissionFactor}
+        setFacilityId={setFacilityId}
+        setImportModal={setImportModal}
+        setMonth={setMonth}
+        setShowEeioCalc={setShowEeioCalc}
+        setYear={setYear}
+        showEeioCalc={showEeioCalc}
+        submitting={submitting}
+        unit={unit}
+        year={year}
+      />
 
-        {/* EEIO Quick Spend Calculator */}
-        <div style={{ marginTop: "20px", marginBottom: "10px", padding: "16px", background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "8px" }}>
-          <div role="button" tabIndex={0} onKeyDown={activateOnKey} className="flex! justify-between! items-center! cursor-pointer!" onClick={() => setShowEeioCalc(!showEeioCalc)}>
-            <div className="flex! items-center! gap-[8px]!">
-              <span style={{ fontSize: "1.2rem" }}>💰</span>
-              <strong style={{ color: "#334155" }}>EEIO Quick Spend Calculator</strong>
-              <span style={{ fontSize: "0.8rem", color: "#64748b", marginLeft: "10px" }}>Convert financial spend to CO₂e using NAICS factors</span>
-            </div>
-            <span>{showEeioCalc ? "▲" : "▼"}</span>
-          </div>
-          
-          {showEeioCalc && (
-            <div className="mt-[16px]! flex! gap-[16px]! items-end!">
-              <div className="input-group flex-1!">
-                <label>NAICS Code (6 digits)</label>
-                <input
-                  type="text"
-                  className="mole-input"
-                  placeholder="e.g. 331110 or steel"
-                  value={eeioNaics}
-                  list="eeio-naics-options"
-                  onChange={(e) => {
-                    setEeioNaics(e.target.value);
-                    searchNaics(e.target.value);
-                  }}
-                />
-                <datalist id="eeio-naics-options">
-                  {naicsOptions.map((o) => (
-                    <option key={o.naics} value={o.naics}>{`${o.name} (${o.kg_co2e_per_usd} kg CO2e/USD)`}</option>
-                  ))}
-                </datalist>
-              </div>
-              <div className="input-group flex-1!">
-                <label>Spend Amount (USD)</label>
-                <input
-                  type="number"
-                  className="mole-input"
-                  placeholder="0.00"
-                  value={eeioSpend}
-                  onChange={(e) => setEeioSpend(e.target.value)}
-                />
-              </div>
-              <button 
-                className="action-btn" 
-                style={{ height: "38px", padding: "0 16px", background: "#3b82f6", color: "white" }}
-                onClick={handleCalculateEeio}
-              >
-                Calculate & Auto-fill
-              </button>
-            </div>
-          )}
-          {eeioResult && showEeioCalc && (
-            <div style={{ marginTop: "12px", padding: "12px", background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: "6px" }}>
-              <div style={{ fontSize: "0.85rem", color: "#1e3a8a" }}>
-                <strong>Industry:</strong> {eeioResult.industry_name} <br/>
-                <strong>Factor:</strong> {eeioResult.emission_factor} {eeioResult.ef_unit} <br/>
-                <strong>Estimated Emissions:</strong> <span style={{ fontSize: "1.1rem", fontWeight: "bold" }}>{eeioResult.co2e.toLocaleString(undefined, { maximumFractionDigits: 2 })}</span> tCO₂e
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div
-          className="flex! justify-between! items-center! mb-[20px]!"
-        >
-          <h3 style={{ margin: 0 }}>New Scope 3 Entry</h3>
-          <div className="text-right!">
-            <span
-              style={{ color: "#8b5cf6", fontWeight: 600, fontSize: "0.9rem" }}
-            >
-              Scope 3: Other Indirect
-            </span>
-          </div>
-        </div>
-
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-            gap: "20px",
-            marginBottom: "20px",
-          }}
-        >
-          <div className="input-group">
-            <label>Year</label>
-            <input
-              type="number"
-              className="mole-input"
-              value={year || ""}
-              onChange={(e) => setYear(e.target.value)}
-            />
-          </div>
-          <div className="input-group">
-            <label>Month</label>
-            <NativeSelect
-              className="component-select"
-              value={month || 1}
-              onChange={(e) => setMonth(e.target.value)}
-            >
-              {[...Array(12)].map((_, i) => (
-                <option key={i + 1} value={i + 1}>
-                  {new Date(0, i).toLocaleString("default", { month: "long" })}
-                </option>
-              ))}
-            </NativeSelect>
-          </div>
-          <div className="input-group">
-            <label>Facility</label>
-            <CustomDropdown
-              options={getFacilityOptions()}
-              value={facilityId || ""}
-              onChange={setFacilityId}
-            />
-          </div>
-          <div className="input-group">
-            <label>Category</label>
-            <CustomDropdown
-              options={getCategoryOptions()}
-              value={category}
-              onChange={setCategory}
-            />
-          </div>
-        </div>
-
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-            gap: "20px",
-          }}
-        >
-          <div className="input-group">
-            <label>Activity Type</label>
-            <CustomDropdown
-              options={getActivityOptions()}
-              value={activityType}
-              onChange={setActivityType}
-            />
-          </div>
-          <div className="input-group">
-            <label>Amount</label>
-            <input
-              type="number"
-              className="mole-input"
-              value={amount || ""}
-              onChange={(e) => setAmount(e.target.value)}
-              placeholder="0.00"
-              step="0.01"
-            />
-          </div>
-          <div className="input-group">
-            <label>Unit</label>
-            {UNIT_MULTIPLIERS[baseUnit] ? (
-              <NativeSelect
-                className="component-select"
-                value={unit}
-                onChange={(e) => handleUnitChange(e.target.value)}
-              >
-                {Object.keys(UNIT_MULTIPLIERS[baseUnit]).map((u) => (
-                  <option key={u} value={u}>
-                    {u}
-                  </option>
-                ))}
-              </NativeSelect>
-            ) : (
-              <input
-                type="text"
-                className="mole-input"
-                value={unit}
-                readOnly
-                style={{
-                  background: "rgba(255,255,255,0.03)",
-                  cursor: "not-allowed",
-                }}
-              />
-            )}
-          </div>
-          <div className="input-group">
-            <label>EF (kg CO₂e/unit)</label>
-            <input
-              type="number"
-              className="mole-input"
-              value={emissionFactor || ""}
-              onChange={(e) => setEmissionFactor(e.target.value)}
-              step="0.01"
-            />
-          </div>
-        </div>
-
-
-        <div
-          className="flex! gap-[12px]! mt-[30px]! justify-end!"
-        >
-          <button
-            className="action-btn secondary"
-            disabled={submitting}
-            onClick={() => handleAddEntry("Draft")}
-            style={{
-              padding: "12px 20px",
-              cursor: submitting ? "not-allowed" : "pointer",
-              opacity: submitting ? 0.6 : 1,
-            }}
-          >
-            {submitting ? "Saving..." : "Save as Draft (Maker Mode)"}
-          </button>
-          <button
-            className="btn-add-activity"
-            disabled={submitting}
-            onClick={() => handleAddEntry("Verified")}
-            style={{
-              flex: 1.5,
-              padding: "12px",
-              cursor: submitting ? "not-allowed" : "pointer",
-              opacity: submitting ? 0.6 : 1,
-            }}
-          >
-            {submitting ? "Processing..." : "+ Calculate & Submit for Review"}
-          </button>
-        </div>
-
-        {importModal.isOpen && (
-          <ColumnMappingWizard
-            onClose={() => setImportModal({ ...importModal, isOpen: false })}
-            onUploadSuccess={handleImportSuccess}
-            type={importModal.type}
-          />
-        )}
-      </div>
-
-      <div className="calculator-grid-container mt-[30px]!">
-        <div 
-          className="table-controls"
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            padding: "15px"
-          }}
-        >
-          <strong style={{ fontSize: "1rem", color: "#374151" }}>Documented Scope 3 Emissions</strong>
-          <button
-            className="action-btn secondary flex! items-center! gap-[8px]! whitespace-nowrap!"
-            onClick={() => setShowWizard(true)}
-           
-          >
-            ↑ Bulk Import (Wizard)
-          </button>
-        </div>
-        <div className="table-scroll-container">
-          <table className="excel-table">
-            <thead>
-              <tr>
-                <th>Period</th>
-                <th>Facility</th>
-                <th>Category</th>
-                <th>Activity/Product</th>
-                <th>Volume</th>
-                <th>EF (kg/unit)</th>
-                <th>Total (tCO₂e)</th>
-                <th
-                  title="Standard Combined Uncertainty (1σ)"
-                  style={{ cursor: "help" }}
-                >
-                  CO₂e 1σ (±%)
-                </th>
-                <th
-                  title="Expanded Uncertainty (95% Confidence Interval)"
-                  style={{ cursor: "help" }}
-                >
-                  CO₂e 95% CI (±%)
-                </th>
-                <th className="text-center!">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loadError ? (
-                <tr>
-                  <td colSpan="10" style={{ textAlign: "center", color: "var(--danger, #dc2626)" }}>
-                    Could not load the records.{" "}
-                    <button type="button" className="btn-ghost" onClick={loadEntries}>Retry</button>
-                  </td>
-                </tr>
-              ) : entries.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan="10"
-                    style={{
-                      textAlign: "center",
-                      color: "var(--text-secondary)",
-                    }}
-                  >
-                    No entries yet
-                  </td>
-                </tr>
-              ) : (
-                entries.map((entry) => (
-                  <tr key={entry.id}>
-                    <td>{entry.month ? `${entry.year}-${String(entry.month).padStart(2, "0")}` : entry.year}</td>
-                    <td>
-                      {facilities.find((f) => f.id === entry.facility_id)
-                        ?.name || "Unknown"}
-                    </td>
-                    <td>{entry.category}</td>
-                    <td>{entry.sub_category || entry.product_type}</td>
-                    <td>
-                      {formatNumber(entry.activity_data || entry.volume, 2)}{" "}
-                      {entry.unit}
-                    </td>
-                    <td>
-                      {/* kg CO2e per activity unit; a supplier-reported total has no factor */}
-                      {Number(entry.emission_factor) > 0 ? formatEmission(entry.emission_factor, 4) : "—"}
-                    </td>
-                    <td style={{ color: "#8b5cf6", fontWeight: 600 }}>
-                      {formatEmission(entry.co2e || entry.emissions_tco2e, 3)}
-                    </td>
-                    <td style={{ color: "#6b7280", fontSize: "0.85rem" }}>
-                      {entry.uncertainty != null
-                        ? `${formatNumber(entry.uncertainty * 100, 1)}%`
-                        : "—"}
-                    </td>
-                    <td style={{ color: "#6b7280", fontSize: "0.85rem" }}>
-                      {entry.uncertainty != null
-                        ? `${formatNumber(entry.uncertainty * UNCERTAINTY_COVERAGE_K * 100, 1)}%`
-                        : "—"}
-                      {entry.status === "Draft" && (
-                        <span
-                          style={{
-                            marginLeft: "8px",
-                            fontSize: "0.65rem",
-                            background: "#fee2e2",
-                            color: "#b91c1c",
-                            padding: "1px 5px",
-                            borderRadius: "4px",
-                          }}
-                        >
-                          Draft
-                        </span>
-                      )}
-                    </td>
-                    <td className="text-center! whitespace-nowrap!">
-                      <button
-                        className="icon-button"
-                        onClick={() => handleInspect(entry)}
-                        style={{ color: "#3b82f6", marginRight: "8px" }}
-                        title="Inspect Calculation Details"
-                      >
-                        <Eye size={16} />
-                      </button>
-                      <button
-                        className="icon-button"
-                        onClick={() => handleDelete(entry.id)}
-                        style={{ color: "#ef4444" }}
-                        title="Delete"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-            <tfoot>
-              <tr style={{ backgroundColor: "#f9fafb", fontWeight: "bold" }}>
-                <td
-                  colSpan="6"
-                  className="text-right! pr-[15px]!"
-                >
-                  Total (Page):
-                </td>
-                <td style={{ color: "#8b5cf6" }}>
-                  {formatNumber(
-                    entries.reduce(
-                      (sum, e) => sum + (e.co2e || e.emissions_tco2e || 0),
-                      0,
-                    ),
-                    3,
-                  )}
-                </td>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-        <div className="pagination-controls">
-          <button
-            className="action-btn secondary"
-            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-            disabled={currentPage === 1}
-          >
-            Previous
-          </button>
-          <span style={{ color: "var(--text-secondary)" }}>
-            Page {currentPage} of {totalPages}
-          </span>
-          <button
-            className="action-btn secondary"
-            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-            disabled={currentPage === totalPages}
-          >
-            Next
-          </button>
-        </div>
-      </div>
+      <Scope3FormCalculatorGridContainer
+        currentPage={currentPage}
+        entries={entries}
+        facilities={facilities}
+        handleDelete={handleDelete}
+        handleInspect={handleInspect}
+        loadEntries={loadEntries}
+        loadError={loadError}
+        setCurrentPage={setCurrentPage}
+        setShowWizard={setShowWizard}
+        totalPages={totalPages}
+      />
       
       {showWizard && (
         <Scope3ImportWizard

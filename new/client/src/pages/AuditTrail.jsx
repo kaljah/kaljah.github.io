@@ -1,3 +1,5 @@
+import AuditTrailFiltersBarCard from "./audit-trail/AuditTrailFiltersBarCard";
+import AuditTrailAuditTimeline from "./audit-trail/AuditTrailAuditTimeline";
 import { Badge, DataTable, Dialog, SegmentedControl } from "../ui";
 import { NativeSelect } from "../ui/NativeSelect";
 import React, { useState, useEffect, useCallback, useRef } from "react";
@@ -592,143 +594,28 @@ const AuditTrail = () => {
         </div>
 
         {/* Search & Multi-Filter Control Bar */}
-        <div className="filters-bar-card">
-          <div className="filter-search-wrapper">
-            <Search size={16} className="search-icon" />
-            <input
-              type="text"
-              placeholder="Search by user, description, record ID, IP address, or entity..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="audit-search-input"
-            />
-            {searchQuery && (
-              <button
-                className="search-clear-btn"
-                onClick={() => setSearchQuery("")}
-                title="Clear search"
-              >
-                <X size={14} />
-              </button>
-            )}
-          </div>
-
-          <div className="filter-dropdowns-row">
-            {/* User Filter */}
-            <div className="filter-control">
-              <label>User</label>
-              <NativeSelect
-                value={filterUser}
-                onChange={(e) => {
-                  setFilterUser(e.target.value);
-                  setPage(1);
-                }}
-              >
-                <option value="all">All Users</option>
-                {availableFilters.users.map((u) => (
-                  <option key={u} value={u}>
-                    {u}
-                  </option>
-                ))}
-              </NativeSelect>
-            </div>
-
-            {/* Action Filter */}
-            <div className="filter-control">
-              <label>Action</label>
-              <NativeSelect
-                value={filterAction}
-                onChange={(e) => {
-                  setFilterAction(e.target.value);
-                  setPage(1);
-                }}
-              >
-                <option value="all">All Actions</option>
-                {availableFilters.actions.map((a) => (
-                  <option key={a} value={a}>
-                    {a}
-                  </option>
-                ))}
-              </NativeSelect>
-            </div>
-
-            {/* Entity Filter */}
-            <div className="filter-control">
-              <label>Entity</label>
-              <NativeSelect
-                value={filterEntity}
-                onChange={(e) => {
-                  setFilterEntity(e.target.value);
-                  setPage(1);
-                }}
-              >
-                <option value="all">All Entities</option>
-                {availableFilters.entities.map((e) => (
-                  <option key={e} value={e}>
-                    {e}
-                  </option>
-                ))}
-              </NativeSelect>
-            </div>
-
-            {/* Timeframe Preset */}
-            <div className="filter-control">
-              <label>Timeframe</label>
-              <NativeSelect
-                value={timeframe}
-                onChange={(e) => {
-                  setTimeframe(e.target.value);
-                  setPage(1);
-                }}
-              >
-                <option value="all">All Time</option>
-                <option value="today">Today</option>
-                <option value="7days">Last 7 Days</option>
-                <option value="30days">Last 30 Days</option>
-                <option value="custom">Custom Range</option>
-              </NativeSelect>
-            </div>
-
-            {/* Custom Date Pickers */}
-            {timeframe === "custom" && (
-              <div className="custom-dates-group">
-                <input
-                  type="date"
-                  value={customStartDate}
-                  onChange={(e) => {
-                    setCustomStartDate(e.target.value);
-                    setPage(1);
-                  }}
-                  className="date-input"
-                  title="Start Date"
-                />
-                <span className="date-separator">to</span>
-                <input
-                  type="date"
-                  value={customEndDate}
-                  onChange={(e) => {
-                    setCustomEndDate(e.target.value);
-                    setPage(1);
-                  }}
-                  className="date-input"
-                  title="End Date"
-                />
-              </div>
-            )}
-
-            {/* Reset Filters Button */}
-            {hasActiveFilters && (
-              <button className="btn-reset-filters" onClick={resetFilters} title="Reset all filters">
-                <RotateCcw size={13} />
-                <span>Reset</span>
-              </button>
-            )}
-
-            <div className="filter-result-count">
-              Showing <strong>{auditLogs.length}</strong> of <strong>{totalRecords}</strong> records
-            </div>
-          </div>
-        </div>
+        <AuditTrailFiltersBarCard
+        auditLogs={auditLogs}
+        availableFilters={availableFilters}
+        customEndDate={customEndDate}
+        customStartDate={customStartDate}
+        filterAction={filterAction}
+        filterEntity={filterEntity}
+        filterUser={filterUser}
+        hasActiveFilters={hasActiveFilters}
+        resetFilters={resetFilters}
+        searchQuery={searchQuery}
+        setCustomEndDate={setCustomEndDate}
+        setCustomStartDate={setCustomStartDate}
+        setFilterAction={setFilterAction}
+        setFilterEntity={setFilterEntity}
+        setFilterUser={setFilterUser}
+        setPage={setPage}
+        setSearchQuery={setSearchQuery}
+        setTimeframe={setTimeframe}
+        timeframe={timeframe}
+        totalRecords={totalRecords}
+      />
 
         {/* Main Content Area */}
         {loading ? (
@@ -772,153 +659,15 @@ const AuditTrail = () => {
             getRowId={(l) => String(l.id)}
           />
         ) : (
-          <div className="audit-timeline">
-            {auditLogs.map((log) => {
-              const actConfig = getActionConfig(log.action);
-              const isRawExpanded = expandedRows.has(log.id);
-              const hasDiff = Boolean(log.old_values || log.new_values);
-
-              return (
-                <div key={log.id} className="audit-entry-item">
-                  {/* Timeline Visual Node */}
-                  <div
-                    className="timeline-node"
-                    style={{
-                      backgroundColor: actConfig.color,
-                      boxShadow: `0 0 0 4px ${actConfig.bg}`,
-                    }}
-                  >
-                    {actConfig.icon}
-                  </div>
-                  <div className="timeline-connector" />
-
-                  {/* Card Content */}
-                  <div className="audit-card">
-                    {/* Header Row */}
-                    <div className="card-top-row">
-                      <div className="event-primary-info">
-                        <div className="user-badge">
-                          <UserIcon size={12} className="badge-user-icon" />
-                          <span className="user-name-text">{log.user}</span>
-                        </div>
-
-                        <ArrowRight size={12} className="flow-arrow" />
-
-                        <span
-                          className="action-pill"
-                          style={{
-                            backgroundColor: actConfig.bg,
-                            color: actConfig.color,
-                            borderColor: actConfig.border,
-                          }}
-                        >
-                          {log.action}
-                        </span>
-
-                        <span className="entity-tag">{log.entity}</span>
-                      </div>
-
-                      <div className="event-timestamp" title={formatFullDateTime(log.timestamp)}>
-                        <Clock size={12} style={{ opacity: 0.6 }} />
-                        <span>{formatTimestamp(log.timestamp)}</span>
-                      </div>
-                    </div>
-
-                    {/* Main Description */}
-                    <p className="card-description">{log.description || log.details || "No details recorded"}</p>
-
-                    {/* Field-level Before/After Diff Block */}
-                    {hasDiff && (
-                      <div className="field-diff-container">
-                        <div className="field-diff-header">
-                          <History size={12} />
-                          <span>Field-Level Changes:</span>
-                        </div>
-
-                        {typeof log.old_values === "object" &&
-                        typeof log.new_values === "object" &&
-                        (log.old_values !== null || log.new_values !== null) ? (
-                          <div className="diff-fields-grid">
-                            {Array.from(
-                              new Set([
-                                ...Object.keys(log.old_values || {}),
-                                ...Object.keys(log.new_values || {}),
-                              ]),
-                            ).map((key) => {
-                              const before = log.old_values?.[key];
-                              const after = log.new_values?.[key];
-                              return (
-                                <div key={key} className="diff-field-row">
-                                  <span className="diff-key">{key}:</span>
-                                  <span className="diff-before" title={formatDiffVal(before)}>
-                                    {formatDiffVal(before)}
-                                  </span>
-                                  <ArrowRight size={11} className="diff-arrow" />
-                                  <span className="diff-after" title={formatDiffVal(after)}>
-                                    {formatDiffVal(after)}
-                                  </span>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        ) : (
-                          <div className="diff-text-view">
-                            {log.old_values && (
-                              <div>
-                                <strong>Before:</strong> {formatDiffVal(log.old_values)}
-                              </div>
-                            )}
-                            {log.new_values && (
-                              <div>
-                                <strong>After:</strong> {formatDiffVal(log.new_values)}
-                              </div>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    {/* Expandable Technical Raw JSON */}
-                    {isRawExpanded && (
-                      <div className="raw-json-viewer">
-                        <pre>{JSON.stringify(log, null, 2)}</pre>
-                      </div>
-                    )}
-
-                    {/* Card Footer Meta */}
-                    <div className="card-meta-row">
-                      <div className="meta-left-group">
-                        <span className="meta-item">
-                          <Database size={12} />
-                          <span>Ref: #{log.entityId || log.recordId || "N/A"}</span>
-                        </span>
-
-                        <span className="meta-item">
-                          <Globe size={12} />
-                          <span>IP: {log.ipAddress || "Local / System"}</span>
-                        </span>
-
-                        <span className="meta-item timestamp-full">
-                          <Calendar size={12} />
-                          <span>{formatFullDateTime(log.timestamp)}</span>
-                        </span>
-                      </div>
-
-                      <button
-                        className="btn-toggle-raw"
-                        onClick={() => toggleRawData(log.id)}
-                        title="Toggle Technical Audit JSON"
-                      >
-                        <Code size={12} />
-                        <span>{isRawExpanded ? "Hide Raw" : "Raw JSON"}</span>
-                        {isRawExpanded ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+          <AuditTrailAuditTimeline
+        auditLogs={auditLogs}
+        expandedRows={expandedRows}
+        formatDiffVal={formatDiffVal}
+        formatFullDateTime={formatFullDateTime}
+        formatTimestamp={formatTimestamp}
+        getActionConfig={getActionConfig}
+        toggleRawData={toggleRawData}
+      />
         )}
 
         {/* Pagination Bar */}

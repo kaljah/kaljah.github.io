@@ -6,12 +6,14 @@ import { useToast } from "./Toast";
 import { useAuth } from "../context/AuthContext";
 import { getUserOperationalDefaults } from "../utils/userDefaults";
 import LoadingSpinner from "./LoadingSpinner";
-import { formatNumber, formatEmission } from "../utils/formatters";
+import { formatNumber } from "../utils/formatters";
 import ColumnMappingWizard from "./ColumnMappingWizard";
 import Scope2ImportWizard from "./Scope2ImportWizard";
 import { Upload, Copy, Trash2, Eye } from "lucide-react";
 import CalculationDetails from "./CalculationDetails";
 import ConfirmModal from "./ConfirmModal";
+import Scope2FormNewElectricityEntry from "./scope2-form/Scope2FormNewElectricityEntry";
+import Scope2FormCalculatorGridContainer from "./scope2-form/Scope2FormCalculatorGridContainer";
 import "./ScopeTables.css";
 import { UNCERTAINTY_COVERAGE_K } from "../constants";
 
@@ -59,8 +61,7 @@ const Scope2Form = () => {
   const [loadError, setLoadError] = useState(false);
   const [importModal, setImportModal] = useState({
     isOpen: false,
-    type: "activity",
-  });
+    type: "activity" });
   const RECORDS_PER_PAGE = 10;
 
   useEffect(() => {
@@ -130,8 +131,7 @@ const Scope2Form = () => {
     try {
       // one page from the server (the whole list used to be downloaded on every page change)
       const res = await api.get("/scope2", {
-        params: { limit: RECORDS_PER_PAGE, offset: (currentPage - 1) * RECORDS_PER_PAGE },
-      });
+        params: { limit: RECORDS_PER_PAGE, offset: (currentPage - 1) * RECORDS_PER_PAGE } });
       const data = Array.isArray(res.data) ? res.data : res.data?.data || [];
       const total = Array.isArray(res.data) ? data.length : Number(res.data?.total) || 0;
       setEntries(data);
@@ -159,8 +159,7 @@ const Scope2Form = () => {
       { value: "mmbtu", label: "MMBtu" },
       { value: "mj", label: "MJ" },
     ],
-    cogen_allocation: [{ value: "tonnes", label: "Tonnes CO2e" }],
-  };
+    cogen_allocation: [{ value: "tonnes", label: "Tonnes CO2e" }] };
   const DEFAULT_UNIT = { electricity: "kWh", indirect_steam: "mmbtu", cogen_allocation: "tonnes" };
   const unitOptions = UNIT_OPTIONS[sourceType] || UNIT_OPTIONS.electricity;
   const handleSourceTypeChange = (val) => {
@@ -200,8 +199,7 @@ const Scope2Form = () => {
         activity,
         division,
         field,
-        status: status,
-      };
+        status: status };
 
       if (sourceType === "electricity") {
         // Centralized Unit Conversion to kWh
@@ -215,8 +213,7 @@ const Scope2Form = () => {
           grid_region: gridRegion,
           source_type: "electricity",
           electricity_kwh: electricityKwh,
-          location: gridRegion,
-        };
+          location: gridRegion };
       } else if (sourceType === "indirect_steam") {
         // We'll call the engine directly or simulate the API call structure
         // Assuming the backend /scope2 endpoint can handle generic process_type
@@ -228,10 +225,7 @@ const Scope2Form = () => {
           calc_inputs: {
             indirect_steam: {
               boiler_eff: parseFloat(boilerEff),
-              trans_loss: parseFloat(transLoss),
-            },
-          },
-        };
+              trans_loss: parseFloat(transLoss) } } };
       } else if (sourceType === "cogen_allocation") {
         payload = {
           ...payload,
@@ -243,10 +237,7 @@ const Scope2Form = () => {
               power_output: parseFloat(powerOutput),
               allocation_method: allocationMethod,
               ...(allocationMethod === "wri_efficiency" && heatEff !== "" ? { heat_efficiency: parseFloat(heatEff) } : {}),
-              ...(allocationMethod === "wri_efficiency" && powerEff !== "" ? { power_efficiency: parseFloat(powerEff) } : {}),
-            },
-          },
-        };
+              ...(allocationMethod === "wri_efficiency" && powerEff !== "" ? { power_efficiency: parseFloat(powerEff) } : {}) } } };
       }
 
       await api.post("/scope2", payload);
@@ -292,33 +283,27 @@ const Scope2Form = () => {
         totalCo2e: entry.co2e || 0,
         co2: entry.co2e || 0,
         ch4: 0,
-        n2o: 0,
-      },
+        n2o: 0 },
       factors: {
         co2: entry.emission_factor || 0,
         ch4: 0,
-        n2o: 0,
-      },
+        n2o: 0 },
       method:
         entry.calculation_method ||
         (isElectricity ? "Location-Based Grid EF" : "Energy Allocation"),
       steps: [
         {
           name: "Activity Normalization",
-          desc: `Input: ${formatNumber(amountVal, 2)} ${unitVal} (${entry.grid_region || "Facility Level"})`,
-        },
+          desc: `Input: ${formatNumber(amountVal, 2)} ${unitVal} (${entry.grid_region || "Facility Level"})` },
         {
           name: "Grid / Steam Emission Factor",
-          desc: `Applied Factor: ${entry.emission_factor || 0} kg CO₂e / ${unitVal}`,
-        },
+          desc: `Applied Factor: ${entry.emission_factor || 0} kg CO₂e / ${unitVal}` },
         {
           name: "Emissions Calculation",
           desc: isElectricity
             ? `(${formatNumber(amountVal, 2)} kWh × ${entry.emission_factor}) ÷ 1,000 = ${formatNumber(entry.co2e, 3)} tCO₂e`
-            : `Total Calculated Emissions = ${formatNumber(entry.co2e, 3)} tCO₂e`,
-        },
-      ],
-    });
+            : `Total Calculated Emissions = ${formatNumber(entry.co2e, 3)} tCO₂e` },
+      ] });
   };
 
   const handleImportSuccess = () => {
@@ -366,8 +351,7 @@ const Scope2Form = () => {
     ...facilities.map((f) => ({
       value: f.id.toString(),
       label: f.name,
-      subLabel: f.field,
-    })),
+      subLabel: f.field })),
   ];
 
   const getGridOptions = () => [
@@ -377,257 +361,44 @@ const Scope2Form = () => {
 
   return (
     <div className="scope-form">
-      <div
-        className="calc-panel"
-        style={{
-          background: "white",
-          borderRadius: "8px",
-          padding: "25px",
-          boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
-        }}
-      >
-        <h2
-          style={{
-            fontSize: "1.2rem",
-            fontWeight: "bold",
-            marginBottom: "25px",
-            color: "#333",
-          }}
-        >
-          New Electricity Entry
-        </h2>
-
-        {/* 1. IDENTITY & LOCATION */}
-        <div className="mb-[30px]!">
-          <h4 className="section-title">1. IDENTITY &amp; LOCATION</h4>
-          <div className="form-grid-4">
-            <div className="input-group">
-              <label>Activity</label>
-              <input
-                type="text"
-                className="mole-input readonly"
-                value={activity || ""}
-                disabled
-              />
-            </div>
-            <div className="input-group">
-              <label>Division</label>
-              <input
-                type="text"
-                className="mole-input readonly"
-                value={division || ""}
-                disabled
-              />
-            </div>
-            <div className="input-group">
-              <label>Region</label>
-              <CustomDropdown
-                options={getFacilityOptions()}
-                value={facilityId || ""}
-                onChange={setFacilityId}
-                placeholder="Select Region..."
-              />
-            </div>
-            <div className="input-group">
-              <label>Field</label>
-              <input
-                type="text"
-                className="mole-input readonly"
-                value={field || ""}
-                disabled
-              />
-            </div>
-          </div>
-          <div className="form-grid-3">
-            <div className="input-group">
-              <label>Year</label>
-              <input
-                type="number"
-                className="mole-input"
-                value={year || ""}
-                onChange={(e) => setYear(e.target.value)}
-              />
-            </div>
-            <div className="input-group">
-              <label>Month</label>
-              <NativeSelect
-                className="component-select"
-                value={month || 1}
-                onChange={(e) => setMonth(e.target.value)}
-              >
-                {[...Array(12)].map((_, i) => (
-                  <option key={i + 1} value={i + 1}>
-                    {String(i + 1).padStart(2, "0")}
-                  </option>
-                ))}
-              </NativeSelect>
-            </div>
-          </div>
-        </div>
-
-        {/* 2. GRID & SOURCE DETAILS */}
-        <div className="mb-[30px]!">
-          <h4 className="section-title">2. GRID &amp; SOURCE DETAILS</h4>
-          <div className="form-grid-2">
-            <div className="input-group">
-              <label>Source Type</label>
-              <CustomDropdown
-                options={[
-                  {
-                    value: "electricity",
-                    label: "Purchased Electricity (Grid)",
-                  },
-                  { value: "indirect_steam", label: "Indirect Steam / Heat" },
-                  {
-                    value: "cogen_allocation",
-                    label: "CHP / Cogeneration Allocation",
-                  },
-                ]}
-                value={sourceType}
-                onChange={handleSourceTypeChange}
-              />
-            </div>
-            {sourceType === "electricity" && (
-              <div className="input-group">
-                <label>Grid Region</label>
-                <CustomDropdown
-                  options={getGridOptions()}
-                  value={gridRegion}
-                  onChange={setGridRegion}
-                  placeholder="Select Grid..."
-                />
-              </div>
-            )}
-            {sourceType === "indirect_steam" && (
-              <div className="form-grid-2" style={{ gridColumn: "span 2" }}>
-                <div className="input-group">
-                  <label>Boiler Efficiency (0.0 - 1.0)</label>
-                  <input
-                    type="number"
-                    className="mole-input"
-                    value={boilerEff}
-                    onChange={(e) => setBoilerEff(e.target.value)}
-                  />
-                </div>
-                <div className="input-group">
-                  <label>Transmission Loss (0.0 - 1.0)</label>
-                  <input
-                    type="number"
-                    className="mole-input"
-                    value={transLoss}
-                    onChange={(e) => setTransLoss(e.target.value)}
-                  />
-                </div>
-              </div>
-            )}
-            {sourceType === "cogen_allocation" && (
-              <div className="form-grid-3" style={{ gridColumn: "span 2" }}>
-                <div className="input-group">
-                  <label>Heat Output (MMBtu)</label>
-                  <input
-                    type="number"
-                    className="mole-input"
-                    value={heatOutput}
-                    onChange={(e) => setHeatOutput(e.target.value)}
-                  />
-                </div>
-                <div className="input-group">
-                  <label>Power Output (MWh)</label>
-                  <input
-                    type="number"
-                    className="mole-input"
-                    value={powerOutput}
-                    onChange={(e) => setPowerOutput(e.target.value)}
-                  />
-                </div>
-                <div className="input-group">
-                  <label>Method</label>
-                  <NativeSelect
-                    className="component-select"
-                    value={allocationMethod}
-                    onChange={(e) => setAllocationMethod(e.target.value)}
-                  >
-                    <option value="wri_efficiency">WRI Efficiency</option>
-                    <option value="energy_content">Energy Content</option>
-                  </NativeSelect>
-                </div>
-                {allocationMethod === "wri_efficiency" && (
-                  <>
-                    <div className="input-group">
-                      <label>Heat Efficiency (%)</label>
-                      <input type="number" className="mole-input" min="1" max="100" placeholder="80"
-                        value={heatEff} onChange={(e) => setHeatEff(e.target.value)} />
-                    </div>
-                    <div className="input-group">
-                      <label>Power Efficiency (%)</label>
-                      <input type="number" className="mole-input" min="1" max="100" placeholder="35"
-                        value={powerEff} onChange={(e) => setPowerEff(e.target.value)} />
-                    </div>
-                  </>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* 3. ACTIVITY DATA */}
-        <div className="mb-[10px]!">
-          <h4 className="section-title">3. ACTIVITY DATA</h4>
-          <div className="form-grid-2">
-            <div className="input-group">
-              <label>
-                {sourceType === "cogen_allocation"
-                  ? "Total Facility Emissions (tCO2e)"
-                  : "Usage Amount"}
-              </label>
-              <input
-                type="number"
-                className="mole-input"
-                value={amount || ""}
-                onChange={(e) => setAmount(e.target.value)}
-                placeholder="0.00"
-              />
-            </div>
-            <div className="input-group">
-              <label>Unit</label>
-              <CustomDropdown
-                options={unitOptions}
-                value={unit}
-                onChange={setUnit}
-              />
-            </div>
-          </div>
-        </div>
-
-        <div
-          className="flex! gap-[12px]! mt-[24px]! justify-end!"
-        >
-          <button
-            className="action-btn secondary"
-            disabled={submitting}
-            onClick={() => handleAddEntry("Draft")}
-            style={{
-              padding: "10px 20px",
-              cursor: submitting ? "not-allowed" : "pointer",
-              opacity: submitting ? 0.6 : 1,
-            }}
-          >
-            {submitting ? "Saving..." : "Save as Draft (Maker Mode)"}
-          </button>
-          <button
-            className="btn-add-activity"
-            disabled={submitting}
-            onClick={() => handleAddEntry("Verified")}
-            style={{
-              padding: "10px 24px",
-              cursor: submitting ? "not-allowed" : "pointer",
-              opacity: submitting ? 0.6 : 1,
-            }}
-          >
-            {submitting ? "Processing..." : "+ Calculate & Submit for Review"}
-          </button>
-        </div>
-      </div>
+      <Scope2FormNewElectricityEntry
+        activity={activity}
+        allocationMethod={allocationMethod}
+        amount={amount}
+        boilerEff={boilerEff}
+        division={division}
+        facilityId={facilityId}
+        field={field}
+        getFacilityOptions={getFacilityOptions}
+        getGridOptions={getGridOptions}
+        gridRegion={gridRegion}
+        handleAddEntry={handleAddEntry}
+        handleSourceTypeChange={handleSourceTypeChange}
+        heatEff={heatEff}
+        heatOutput={heatOutput}
+        month={month}
+        powerEff={powerEff}
+        powerOutput={powerOutput}
+        setAllocationMethod={setAllocationMethod}
+        setAmount={setAmount}
+        setBoilerEff={setBoilerEff}
+        setFacilityId={setFacilityId}
+        setGridRegion={setGridRegion}
+        setHeatEff={setHeatEff}
+        setHeatOutput={setHeatOutput}
+        setMonth={setMonth}
+        setPowerEff={setPowerEff}
+        setPowerOutput={setPowerOutput}
+        setTransLoss={setTransLoss}
+        setUnit={setUnit}
+        setYear={setYear}
+        sourceType={sourceType}
+        submitting={submitting}
+        transLoss={transLoss}
+        unit={unit}
+        unitOptions={unitOptions}
+        year={year}
+      />
 
       {importModal.isOpen && (
         <ColumnMappingWizard
@@ -637,275 +408,20 @@ const Scope2Form = () => {
         />
       )}
 
-      <div className="calculator-grid-container mt-[30px]!">
-        <div
-          className="table-controls"
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            padding: "15px",
-          }}
-        >
-          <strong style={{ fontSize: "1rem", color: "#374151" }}>
-            Recent Scope 2 (Electricity) Entries
-          </strong>
-          <button
-            className="action-btn secondary flex! items-center! gap-[8px]! whitespace-nowrap!"
-            onClick={() => setShowWizard(true)}
-           
-          >
-            ↑ Bulk Import (Wizard)
-          </button>
-        </div>
-        <div
-          className="table-scroll-container"
-          style={{ maxHeight: "600px", overflowY: "auto" }}
-        >
-          <table className="excel-table">
-            <thead>
-              <tr>
-                <th>Period</th>
-                <th>Facility</th>
-                <th>Source Type</th>
-                <th>Grid / Region</th>
-                <th>Division / Field</th>
-                <th>Consumption / Input</th>
-                <th>EF</th>
-                <th>Total (tCO₂e)</th>
-                <th
-                  title="Standard Combined Uncertainty (1σ)"
-                  style={{ cursor: "help" }}
-                >
-                  CO₂e 1σ (±%)
-                </th>
-                <th
-                  title="Expanded Uncertainty (95% Confidence Interval)"
-                  style={{ cursor: "help" }}
-                >
-                  CO₂e 95% CI (±%)
-                </th>
-                <th className="text-center!">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                <tr>
-                  <td colSpan="11" className="text-center!">
-                    <LoadingSpinner />
-                  </td>
-                </tr>
-              ) : loadError ? (
-                <tr>
-                  <td colSpan="11" style={{ textAlign: "center", padding: "40px", color: "var(--danger, #dc2626)" }}>
-                    Could not load the records.{" "}
-                    <button type="button" className="btn-ghost" onClick={loadEntries}>Retry</button>
-                  </td>
-                </tr>
-              ) : entries.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan="11"
-                    style={{
-                      textAlign: "center",
-                      padding: "40px",
-                      color: "#9ca3af",
-                    }}
-                  >
-                    No entries found
-                  </td>
-                </tr>
-              ) : (
-                entries.map((entry) => {
-                  const srcLabel =
-                    {
-                      electricity: "Grid Electricity",
-                      indirect_steam: "Indirect Steam / Heat",
-                      cogen_allocation: "CHP / Cogen Allocation",
-                    }[entry.source_type] || entry.source_type;
-
-                  let consumptionDisplay = "-";
-                  if (entry.source_type === "electricity") {
-                    consumptionDisplay = `${formatNumber(entry.electricity_kwh, 0)} kWh`;
-                  } else if (entry.source_type === "indirect_steam") {
-                    consumptionDisplay = entry.heat_mmbtu
-                      ? `${formatNumber(entry.heat_mmbtu, 2)} MMBtu`
-                      : "-";
-                  } else if (entry.source_type === "cogen_allocation") {
-                    consumptionDisplay = `${formatNumber(entry.co2e, 3)} tCO₂e allocated`;
-                  }
-
-                  // a 0 factor (renewable contract) is a value, not a missing factor
-                  // (a CHP allocation has no factor)
-                  const efDisplay = entry.source_type !== "cogen_allocation" && entry.emission_factor != null && entry.emission_factor !== ""
-                    ? formatNumber(entry.emission_factor, 4)
-                    : "—";
-
-                  return (
-                    <tr key={entry.id}>
-                      <td>{entry.month ? `${entry.year}-${String(entry.month).padStart(2, "0")}` : entry.year}</td>
-                      <td className="font-medium!">
-                        {facilities.find((f) => f.id === entry.facility_id)
-                          ?.name || "Unknown"}
-                      </td>
-                      <td
-                        style={{
-                          fontSize: "0.8rem",
-                          color:
-                            entry.source_type === "electricity"
-                              ? "#10b981"
-                              : entry.source_type === "indirect_steam"
-                                ? "#f59e0b"
-                                : "#8b5cf6",
-                          fontWeight: 600,
-                        }}
-                      >
-                        {srcLabel}
-                      </td>
-                      <td>{entry.grid_region || "—"}</td>
-                      <td style={{ fontSize: "0.8rem", color: "#6b7280" }}>
-                        {entry.division} / {entry.field}
-                      </td>
-                      <td>{consumptionDisplay}</td>
-                      <td>{efDisplay}</td>
-                      <td style={{ color: "#3b82f6", fontWeight: 600 }}>
-                        {formatEmission(entry.co2e, 3)}
-                      </td>
-                      <td style={{ color: "#6b7280", fontSize: "0.85rem" }}>
-                        {entry.uncertainty != null
-                          ? `${formatNumber(entry.uncertainty * 100, 1)}%`
-                          : "—"}
-                      </td>
-                      <td style={{ color: "#6b7280", fontSize: "0.85rem" }}>
-                        {entry.uncertainty != null
-                          ? `${formatNumber(entry.uncertainty * UNCERTAINTY_COVERAGE_K * 100, 1)}%`
-                          : "—"}
-                        {entry.status === "Draft" ? (
-                          <span
-                            style={{
-                              marginLeft: "8px",
-                              fontSize: "0.65rem",
-                              background: "#fee2e2",
-                              color: "#b91c1c",
-                              padding: "2px 6px",
-                              borderRadius: "4px",
-                              fontWeight: 600,
-                            }}
-                          >
-                            Draft
-                          </span>
-                        ) : (entry.status === "Pending Approval" || entry.status === "Pending") ? (
-                          <span
-                            style={{
-                              marginLeft: "8px",
-                              fontSize: "0.65rem",
-                              background: "#fef3c7",
-                              color: "#d97706",
-                              padding: "2px 6px",
-                              borderRadius: "4px",
-                              fontWeight: 600,
-                            }}
-                          >
-                            Pending
-                          </span>
-                        ) : (
-                          <span
-                            style={{
-                              marginLeft: "8px",
-                              fontSize: "0.65rem",
-                              background: "#dcfce7",
-                              color: "#15803d",
-                              padding: "2px 6px",
-                              borderRadius: "4px",
-                              fontWeight: 600,
-                            }}
-                          >
-                            Verified
-                          </span>
-                        )}
-                      </td>
-                      <td className="text-center!">
-                        <div
-                          className="flex! justify-center! gap-[8px]!"
-                        >
-                          <button
-                            className="icon-button"
-                            onClick={() => handleInspect(entry)}
-                            title="Inspect Calculation Details"
-                            style={{ color: "#3b82f6" }}
-                          >
-                            <Eye size={16} />
-                          </button>
-                          <button
-                            className="icon-button"
-                            onClick={() => handleDuplicate(entry)}
-                            title="Duplicate"
-                          >
-                            <Copy size={16} />
-                          </button>
-                          <button
-                            className="icon-button delete"
-                            onClick={() => handleDelete(entry.id)}
-                            title="Delete"
-                          >
-                            <Trash2 size={16} />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-            <tfoot>
-              <tr style={{ backgroundColor: "#f9fafb", fontWeight: "bold" }}>
-                <td
-                  colSpan="7"
-                  className="text-right! pr-[15px]!"
-                >
-                  Total (Page):
-                </td>
-                <td style={{ color: "#3b82f6" }}>
-                  {formatNumber(
-                    entries.reduce((sum, e) => sum + (e.co2e || 0), 0),
-                    3,
-                  )}
-                </td>
-                <td colSpan="3"></td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-        <div
-          className="pagination-controls"
-          style={{
-            padding: "15px",
-            borderTop: "1px solid #e5e7eb",
-            display: "flex",
-            justifyContent: "center",
-            gap: "20px",
-            alignItems: "center",
-          }}
-        >
-          <button
-            className="action-btn secondary"
-            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-            disabled={currentPage === 1}
-          >
-            Previous
-          </button>
-          <span style={{ fontSize: "0.9rem", color: "#4b5563" }}>
-            Page {currentPage} of {totalPages}
-          </span>
-          <button
-            className="action-btn secondary"
-            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-            disabled={currentPage === totalPages}
-          >
-            Next
-          </button>
-        </div>
-      </div>
+      <Scope2FormCalculatorGridContainer
+        currentPage={currentPage}
+        entries={entries}
+        facilities={facilities}
+        handleDelete={handleDelete}
+        handleDuplicate={handleDuplicate}
+        handleInspect={handleInspect}
+        loadEntries={loadEntries}
+        loadError={loadError}
+        loading={loading}
+        setCurrentPage={setCurrentPage}
+        setShowWizard={setShowWizard}
+        totalPages={totalPages}
+      />
       
       {showWizard && (
         <Scope2ImportWizard

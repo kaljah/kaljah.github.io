@@ -1,0 +1,184 @@
+import React from "react";
+import { AlertCircle, FileText, Loader2 } from "lucide-react";
+
+// Extracted from BulkImportModal.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
+const BulkImportModalUploadProgressContainer = ({ file, handleImport, loading, onClose, onImportSuccess, setStep, uploadJobId, uploadStatus }) => (
+<div className="upload-progress-container">
+            <div
+              className="file-info"
+              style={{
+                marginBottom: "24px",
+                padding: "16px",
+                background: "#f8fafc",
+                borderRadius: "8px",
+                display: "flex",
+                alignItems: "center",
+                gap: "12px",
+              }}
+            >
+              <FileText size={24} style={{ color: "#10b981" }} />
+              <div>
+                <strong
+                  style={{ display: "block", color: "var(--text-primary)" }}
+                >
+                  {file?.name}
+                </strong>
+                <span
+                  style={{
+                    fontSize: "0.85rem",
+                    color: "var(--text-secondary)",
+                  }}
+                >
+                  Ready for import
+                </span>
+              </div>
+            </div>
+
+            {!uploadJobId ? (
+              <div
+                className="import-actions flex! justify-center! gap-[12px]!"
+               
+              >
+                <button
+                  className="action-btn secondary"
+                  onClick={() => setStep(1)}
+                  disabled={loading}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="action-btn"
+                  onClick={handleImport}
+                  disabled={loading}
+                  style={{ background: "#10b981" }}
+                >
+                  {loading ? (
+                    <Loader2 size={16} className="spin" />
+                  ) : (
+                    "Start Background Import"
+                  )}
+                </button>
+              </div>
+            ) : (
+              <div className="progress-container">
+                {uploadStatus ? (
+                  <>
+                    <div
+                      className="flex! justify-between! w-full! mb-[8px]!"
+                    >
+                      <span className="progress-text">
+                        {uploadStatus.status === "completed"
+                          ? "Import Complete!"
+                          : uploadStatus.status === "failed"
+                            ? "Import Failed"
+                            : "Processing..."}
+                      </span>
+                      <span className="progress-text">
+                        {Math.round(uploadStatus.progress)}%
+                      </span>
+                    </div>
+                    <div className="progress-track">
+                      <div
+                        className="progress-fill"
+                        style={{
+                          width: `${uploadStatus.progress}%`,
+                          background:
+                            uploadStatus.status === "failed"
+                              ? "#ef4444"
+                              : "#10b981",
+                        }}
+                      ></div>
+                    </div>
+                    <div
+                      className="progress-details mt-[8px]! text-center!"
+                     
+                    >
+                      Processed {uploadStatus.processed} of {uploadStatus.total}{" "}
+                      rows
+                    </div>
+
+                    {uploadStatus.skipped_count > 0 && (
+                      <div
+                        style={{
+                          marginTop: "16px",
+                          padding: "12px",
+                          background: "#fff1f2",
+                          borderRadius: "8px",
+                          border: "1px solid #fecdd3",
+                          width: "100%",
+                        }}
+                      >
+                        <h5
+                          style={{
+                            color: "#be123c",
+                            margin: "0 0 8px 0",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "6px",
+                          }}
+                        >
+                          <AlertCircle size={16} />
+                          Skipped Rows ({uploadStatus.skipped_count})
+                        </h5>
+                        <ul
+                          style={{
+                            margin: 0,
+                            paddingLeft: "20px",
+                            fontSize: "0.85rem",
+                            color: "#9f1239",
+                            maxHeight: "100px",
+                            overflowY: "auto",
+                          }}
+                        >
+                          {uploadStatus.skipped_preview
+                            ?.slice(0, 5)
+                            .map((skip, idx) => (
+                              <li key={idx}>
+                                Row {skip.row}: {skip.reason}
+                              </li>
+                            ))}
+                          {uploadStatus.skipped_count > 5 && (
+                            <li>
+                              ...and {uploadStatus.skipped_count - 5} more
+                              skipped rows
+                            </li>
+                          )}
+                        </ul>
+                      </div>
+                    )}
+
+                    {(uploadStatus.status === "completed" ||
+                      uploadStatus.status === "failed") && (
+                      <div className="mt-[24px]! text-center!">
+                        <button
+                          className="action-btn"
+                          onClick={() => {
+                            if (onImportSuccess) onImportSuccess();
+                            onClose();
+                          }}
+                        >
+                          Done
+                        </button>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div
+                    className="flex! flex-col! items-center! gap-[12px]!"
+                  >
+                    <Loader2
+                      size={32}
+                      className="spin"
+                      style={{ color: "#10b981" }}
+                    />
+                    <span style={{ color: "var(--text-secondary)" }}>
+                      Initializing background job...
+                    </span>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+);
+
+export default BulkImportModalUploadProgressContainer;

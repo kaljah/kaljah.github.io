@@ -1,0 +1,192 @@
+import React from "react";
+import { ChevronDown, ChevronUp, Radio } from "lucide-react";
+import { activateOnKey } from "../../utils/a11yKeys";
+import { formatNumber } from "../../utils/formatters";
+
+// Extracted from MethaneIntensity.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
+const MethaneIntensityOGMP20Level = ({ globalThreshold, ogmpCollapsed, ogmpSurveys, regionalData, setOgmpCollapsed }) => (
+<div className="card ogmp-section">
+          <div role="button" tabIndex={0} onKeyDown={activateOnKey}
+            className="chart-header"
+            onClick={() => setOgmpCollapsed(!ogmpCollapsed)}
+            style={{ cursor: "pointer", userSelect: "none" }}
+          >
+            <div>
+              <h3 className="flex! items-center! gap-[8px]!">
+                <Radio size={20} color="var(--accent-secondary)" />
+                OGMP 2.0 Level 4/5 Top-Down Survey & Bottom-Up Reconciliation
+              </h3>
+              <p
+                style={{
+                  color: "var(--text-secondary)",
+                  fontSize: "0.875rem",
+                  margin: "4px 0 0 0",
+                }}
+              >
+                Site-level measurement (Satellite, OGI, Drone, Aircraft)
+                reconciled with source-level bottom-up inventory
+              </p>
+            </div>
+            <div className="flex! items-center! gap-[12px]!">
+              <div
+                className="ogmp-level-badge"
+                style={{
+                  background: "rgba(37, 99, 235, 0.1)",
+                  color: "#2563eb",
+                  padding: "6px 14px",
+                  borderRadius: "8px",
+                  fontSize: "0.85rem",
+                  fontWeight: 600,
+                }}
+              >
+                Gold Standard Pathway: Level 5 Reconciled
+              </div>
+              {ogmpCollapsed ? (
+                <ChevronDown size={18} color="var(--text-secondary)" />
+              ) : (
+                <ChevronUp size={18} color="var(--text-secondary)" />
+              )}
+            </div>
+          </div>
+
+          <div
+            className={`ogmp-body-wrapper ${ogmpCollapsed ? "collapsed" : ""}`}
+          >
+            {ogmpSurveys.length > 0 ? (
+              <div className="table-responsive">
+                <table className="custom-table">
+                  <thead>
+                    <tr>
+                      <th>Facility</th>
+                      <th>Survey Date</th>
+                      <th>Technology / Method</th>
+                      <th>Measured Rate (kg CH₄/hr)</th>
+                      <th>Annualized Rate (tCH₄/yr)</th>
+                      <th>Bottom-Up Annual (tCH₄)</th>
+                      <th>Variance (%)</th>
+                      <th>Reconciliation Status</th>
+                      <th>Operator Notes</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {ogmpSurveys.map((s, idx) => {
+                      const fid = s.facilityId ?? s.facility_id;
+                      const matchingFac = regionalData.find(
+                        (f) => String(f.facility_id) === String(fid),
+                      );
+                      const bottomUpCh4 = matchingFac
+                        ? matchingFac.total_ch4
+                        : null;
+                      const facName =
+                        s.facilityName ||
+                        s.facility_name ||
+                        (matchingFac ? matchingFac.facility_name : "—");
+                      const sDate = s.surveyDate || s.survey_date || "—";
+                      const sType = s.surveyType || s.survey_type || "Top-Down";
+                      const rateKgHr =
+                        s.measuredRateKgHr ?? s.measured_rate_kg_hr;
+                      const annTch4 =
+                        s.estimatedAnnualTch4 ?? s.estimated_annual_tch4 ?? 0;
+                      const recStatus =
+                        s.reconciliationStatus ||
+                        s.reconciliation_status ||
+                        "Reconciled";
+                      const notes = s.operatorNotes || s.operator_notes || "—";
+
+                      let variancePct =
+                        s.variance_pct ?? s.reconciliation_variance_pct ?? null;
+                      if (variancePct === null && bottomUpCh4 && bottomUpCh4 > 0 && annTch4 > 0) {
+                        variancePct =
+                          ((annTch4 - bottomUpCh4) / bottomUpCh4) * 100.0;
+                      }
+
+                      return (
+                        <tr key={s.id || idx}>
+                          <td className="font-semibold!">{facName}</td>
+                          <td>{sDate}</td>
+                          <td>
+                            <span className="code-pill">{sType}</span>
+                          </td>
+                          <td>
+                            <strong style={{ color: "#2563eb" }}>
+                              {typeof rateKgHr === "number"
+                                ? rateKgHr.toFixed(2)
+                                : "—"}
+                            </strong>
+                          </td>
+                          <td>
+                            <strong>{formatNumber(annTch4, 2)}</strong>
+                          </td>
+                          <td>
+                            {bottomUpCh4 !== null
+                              ? `${bottomUpCh4.toFixed(2)} t`
+                              : "—"}
+                          </td>
+                          <td>
+                            {variancePct !== null ? (
+                              <span
+                                style={{
+                                  fontWeight: 700,
+                                  color:
+                                    Math.abs(variancePct) <= (globalThreshold || 20.0)
+                                      ? "#10b981"
+                                      : "#ef4444",
+                                }}
+                              >
+                                {variancePct >= 0
+                                  ? `+${variancePct.toFixed(1)}%`
+                                  : `${variancePct.toFixed(1)}%`}
+                              </span>
+                            ) : (
+                              "—"
+                            )}
+                          </td>
+                          <td>
+                            <span
+                              className={`status-badge ${recStatus === "Reconciled" ? "badge-success" : "badge-warning"}`}
+                              style={{
+                                padding: "4px 10px",
+                                borderRadius: "6px",
+                                fontSize: "0.8rem",
+                                fontWeight: 600,
+                                background:
+                                  recStatus === "Reconciled"
+                                    ? "rgba(16, 185, 129, 0.1)"
+                                    : "rgba(245, 158, 11, 0.1)",
+                                color:
+                                  recStatus === "Reconciled"
+                                    ? "#10b981"
+                                    : "#f59e0b",
+                              }}
+                            >
+                              {recStatus}
+                            </span>
+                          </td>
+                          <td
+                            style={{
+                              fontSize: "0.85rem",
+                              color: "var(--text-secondary)",
+                            }}
+                          >
+                            {notes}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="ogmp-empty-state">
+                <p>
+                  No OGMP 2.0 top-down surveys registered for the selected
+                  filters. Record survey campaigns via{" "}
+                  <strong>Manage Data &gt; OGMP Surveys</strong>.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+);
+
+export default MethaneIntensityOGMP20Level;

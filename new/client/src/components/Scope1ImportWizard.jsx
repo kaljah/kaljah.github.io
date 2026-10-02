@@ -1,7 +1,7 @@
+import Scope1ImportWizardScope1Bulk from "./scope1-import/Scope1ImportWizardScope1Bulk";
 import React, { useState, useRef, useCallback, useMemo, useEffect } from "react";
 import { Droplets } from "lucide-react";
 import { NativeSelect } from "../ui/NativeSelect";
-import { activateOnKey } from "../utils/a11yKeys";
 import Papa from "papaparse";
 import api from "../api";
 import { autoDetectMapping, missingRequiredFields } from "../utils/importMapping";
@@ -146,8 +146,7 @@ const Icon = {
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
     </svg>
-  ),
-};
+  ) };
 
 // ─── Process catalogue (keys are the server's Scope 1 process types) ─────────
 const COMP = ["c1","c2","c3","c4","c5","c6","c7","c8","c9","c10","co2_mol","n2_mol"];
@@ -181,8 +180,7 @@ const FIELD_GROUPS = [
       { key: "group",         label: "Emission Source",required: false, hint: "Logical grouping for this emission source" },
       { key: "equipment",     label: "Equipment Name", required: false, hint: "Name of the piece of equipment" },
       { key: "equipment_id",  label: "Equipment ID",   required: false, hint: "Unique identifier for the equipment (duplicate check)" },
-    ],
-  },
+    ] },
   {
     id: "measurement",
     label: "Measurement",
@@ -196,8 +194,7 @@ const FIELD_GROUPS = [
       { key: "operating_hours", label: "Operating Hours", required: false, hint: "Hours in the month: required for pneumatic controller factors and equipment leaks" },
       { key: "year",          label: "Year",          required: true,  hint: "4-digit year (e.g. 2024) — required unless using a date column" },
       { key: "month",         label: "Month",         required: true,  hint: "1–12 — required unless using a date column (YYYY-MM)" },
-    ],
-  },
+    ] },
   {
     id: "gas_composition",
     label: "Gas Composition (Tier 3)",
@@ -219,8 +216,7 @@ const FIELD_GROUPS = [
       { key: "hhv",     label: "HHV",               required: false, hint: "Higher heating value (Btu/scf for gas)" },
       { key: "ch4_content", label: "CH4 Content %",  required: false, hint: "CH4 mole % when the full composition is not given" },
       { key: "co2_content", label: "CO2 Content %",  required: false, hint: "CO2 mole % when the full composition is not given" },
-    ],
-  },
+    ] },
   {
     id: "combustion_params",
     label: "Combustion / Flaring Parameters (Tier 3)",
@@ -235,8 +231,7 @@ const FIELD_GROUPS = [
       { key: "operating_pressure",   label: "Metering Pressure",      required: false, hint: "Only for volumes in m3 / cf read at metering conditions" },
       { key: "press_unit",           label: "Press Unit",             required: false, hint: "psig, psia, kPa, barg, bara" },
       { key: "z_factor",             label: "Z Factor",               required: false, hint: "Gas compressibility factor" },
-    ],
-  },
+    ] },
   {
     id: "vent_params",
     label: "Venting / Dehydrator / Blowdown (Tier 3)",
@@ -250,8 +245,7 @@ const FIELD_GROUPS = [
       { key: "blowdown_temp",       label: "Blowdown Temp",        required: false, hint: "Gas temperature in the vessel" },
       { key: "blowdown_temp_unit",  label: "Blowdown Temp Unit",   required: false, hint: "F | C | K" },
       { key: "blowdown_press_unit", label: "Blowdown Press Unit",  required: false, hint: "psig | psia | kPa" },
-    ],
-  },
+    ] },
   {
     id: "pneumatic_params",
     label: "Pneumatic Parameters (Tier 3)",
@@ -263,8 +257,7 @@ const FIELD_GROUPS = [
       { key: "pneu_bleed_unit",  label: "Bleed Rate Unit",      required: false, hint: "scf or m3 (per hour)" },
       { key: "pneu_hours",       label: "Pneumatic Hours",      required: false, hint: "Operating hours in the month" },
       { key: "pneu_ch4_content", label: "Supply Gas CH4 %",     required: false, hint: "CH4 mole % of the supply gas" },
-    ],
-  },
+    ] },
   {
     id: "tank_params",
     label: "Tank Parameters (Tier 3)",
@@ -275,8 +268,7 @@ const FIELD_GROUPS = [
       { key: "tank_ch4_content",    label: "Tank CH4 Content %",   required: false, hint: "CH4 mole % of the flash gas" },
       { key: "tank_control_eff",    label: "Tank Control Eff %",   required: false, hint: "Vapour control efficiency" },
       { key: "tank_api_gravity",    label: "Tank API Gravity",     required: false, hint: "API gravity of the stored liquid" },
-    ],
-  },
+    ] },
   {
     id: "fugitive_params",
     label: "Equipment Leak Parameters (Tier 3)",
@@ -288,8 +280,7 @@ const FIELD_GROUPS = [
       { key: "service",         label: "Service",           required: false, hint: "gas | light_oil | heavy_oil | water_oil" },
       { key: "m21_below_count", label: "Screened < 10,000 ppmv", required: false, hint: "Components screened below 10,000 ppmv" },
       { key: "m21_above_count", label: "Screened ≥ 10,000 ppmv", required: false, hint: "Components screened at or above 10,000 ppmv" },
-    ],
-  },
+    ] },
   {
     id: "well_params",
     label: "Well / Drilling Parameters (Tier 3)",
@@ -307,8 +298,7 @@ const FIELD_GROUPS = [
       { key: "unload_press",      label: "Shut-in Pressure (psig)", required: false, hint: "Liquids unloading" },
       { key: "unload_freq",       label: "Unloading Events",   required: false, hint: "Events in the month" },
       { key: "unload_flare_eff",  label: "Unloading Flare %",  required: false, hint: "% of unloading gas flared" },
-    ],
-  },
+    ] },
   {
     id: "dehydrator_agr",
     label: "AGR Parameters (Tier 3)",
@@ -320,8 +310,7 @@ const FIELD_GROUPS = [
       { key: "agr_ch4_in",        label: "AGR CH₄ In %",       required: false, hint: "CH4 mole % in the feed" },
       { key: "agr_ch4_slip",      label: "AGR CH₄ Slip",       required: false, hint: "Fraction of inlet CH4 (e.g. 0.001)" },
       { key: "agr_control_eff",   label: "AGR Control Eff %",  required: false, hint: "Acid gas destruction efficiency" },
-    ],
-  },
+    ] },
   {
     id: "uncertainty",
     label: "Uncertainty Overrides",
@@ -330,8 +319,7 @@ const FIELD_GROUPS = [
       { key: "user_unc_co2", label: "User Uncertainty CO₂ %", required: false, hint: "Override the system uncertainty for CO2" },
       { key: "user_unc_ch4", label: "User Uncertainty CH₄ %", required: false, hint: "Override the system uncertainty for CH4" },
       { key: "user_unc_n2o", label: "User Uncertainty N₂O %", required: false, hint: "Override the system uncertainty for N2O" },
-    ],
-  },
+    ] },
 ];
 
 // ─── Step definitions ────────────────────────────────────────────────────────
@@ -576,8 +564,7 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
         setFile(f);
         setStep(4);
       },
-      error: () => setParseError("Failed to parse file. Please ensure it is a valid CSV."),
-    });
+      error: () => setParseError("Failed to parse file. Please ensure it is a valid CSV.") });
   }, [allFields]);
 
   const onDrop = (e) => { e.preventDefault(); setIsDragging(false); processFile(e.dataTransfer.files[0]); };
@@ -612,8 +599,7 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
     form.append("column_mapping", JSON.stringify(mapping));
     try {
       const res = await api.post("/emissions/upload/start", form, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+        headers: { "Content-Type": "multipart/form-data" } });
       setJobId(res.data.job_id);
       setStep(5);
     } catch (err) {
@@ -628,331 +614,50 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
 
   return (
     <div className="s1w-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
-      <div className="s1w-modal">
-        {/* Header */}
-        <div className="s1w-header">
-          <div className="s1w-header-left">
-            <div className="s1w-header-icon"><Icon.Activity /></div>
-            <div>
-              <h2 className="s1w-title">Scope 1 Bulk Import</h2>
-              <p className="s1w-subtitle">Upload emissions data from CSV or Excel</p>
-            </div>
-          </div>
-          <button className="s1w-close" onClick={onClose}><Icon.Close /></button>
-        </div>
-
-        {/* Step bar */}
-        <StepBar current={step} />
-
-        {/* ── STEP 1: Upload Mode ── */}
-        {step === 1 && (
-          <div className="s1w-body">
-            <div className="s1w-section-title">
-              <Icon.Settings />
-              <span>Select Calculation Tier</span>
-            </div>
-            <p className="s1w-section-desc">
-              Choose how emissions will be calculated for each row in your file.
-            </p>
-            <div className="s1w-mode-grid">
-              <ModeCard
-                selected={tier === "1"}
-                onClick={() => setTier("1")}
-                Icon={Icon.Zap}
-                title="Tier 1 — Standard"
-                badge={{ label: "Minimum fields", color: "blue" }}
-                description="Uses API Compendium default emission factors. Only requires fuel type, quantity, and unit. Fast and simple."
-              />
-              <ModeCard
-                selected={tier === "3"}
-                onClick={() => setTier("3")}
-                Icon={Icon.Settings}
-                title="Tier 3 — Engineering"
-                badge={{ label: "Full precision", color: "green" }}
-                description="Uses actual gas composition (C1–C10), operating conditions (T/P), and process-specific parameters for maximum accuracy."
-              />
-              <ModeCard
-                selected={tier === "auto"}
-                onClick={() => setTier("auto")}
-                Icon={Icon.Wand}
-                title="Both Tiers — Auto Detect"
-                badge={{ label: "Recommended", color: "orange" }}
-                description="Mixes Tier 1 and Tier 3 rows in one file. The system detects per-row: if gas composition columns are filled, Tier 3 is used; otherwise Tier 1."
-              />
-            </div>
-            <div className="s1w-info-banner">
-              <Icon.Info />
-              <span>
-                {tier === "1" && "Tier 1 only requires: Region, Date, Process, Fuel, Quantity, Unit."}
-                {tier === "3" && "Tier 3 requires all Tier 1 fields plus gas composition and process engineering parameters."}
-                {tier === "auto" && "Auto-detect is ideal when you have a mix of sources — some with gas composition data (Tier 3) and some without (Tier 1)."}
-              </span>
-            </div>
-          </div>
-        )}
-
-        {/* ── STEP 2: Process Scope ── */}
-        {step === 2 && (
-          <div className="s1w-body">
-            <div className="s1w-section-title"><Icon.Layers /><span>Process Scope</span></div>
-            <p className="s1w-section-desc">Does your file contain data for all process types, or a specific process?</p>
-            <div className="s1w-scope-cards">
-              <ModeCard
-                selected={processScope === "all"}
-                onClick={() => setProcessScope("all")}
-                Icon={Icon.Layers}
-                title="All Processes"
-                description="Your file contains a Process column that identifies the type (Combustion, Flaring, Venting, etc.) for each row."
-              />
-              <ModeCard
-                selected={processScope === "specific"}
-                onClick={() => setProcessScope("specific")}
-                Icon={Icon.Activity}
-                title="Specific Process(es)"
-                description="Your file is dedicated to one or more specific processes. Select which ones apply to filter the column mapping to only the relevant fields."
-              />
-            </div>
-            {processScope === "specific" && (
-              <div className="s1w-process-grid-wrap">
-                <p className="s1w-process-grid-label">Select which processes are in your file:</p>
-                <div className="s1w-process-grid">
-                  {PROCESS_CATALOGUE.map(p => (
-                    <ProcessTile
-                      key={p.key}
-                      process={p}
-                      selected={selectedProcesses.includes(p.key)}
-                      onClick={() => toggleProcess(p.key)}
-                    />
-                  ))}
-                </div>
-                {selectedProcesses.length === 0 && (
-                  <div className="s1w-warn-inline">
-                    <Icon.Warning /> Select at least one process type to continue.
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* ── STEP 3: File Upload ── */}
-        {step === 3 && (
-          <div className="s1w-body">
-            <div className="s1w-section-title"><Icon.Upload /><span>Select File</span></div>
-
-            {/* ── Region access banner ── */}
-            {!isAdmin && allowedRegions !== null && (
-              <div className="s1w-access-banner">
-                <div className="s1w-access-banner-header">
-                  <Icon.Info />
-                  <strong>Your upload is restricted to the following regions:</strong>
-                </div>
-                {allowedRegions.length > 0 ? (
-                  <div className="s1w-access-region-list">
-                    {allowedRegions.map(r => (
-                      <span key={r} className="s1w-access-region-pill">{r}</span>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="s1w-access-no-regions">
-                    Your account has no assigned regions. Contact an administrator before uploading.
-                  </p>
-                )}
-              </div>
-            )}
-            <div role="button" tabIndex={0} onKeyDown={activateOnKey}
-              className={`s1w-dropzone ${isDragging ? "dragging" : ""}`}
-              onClick={() => fileInputRef.current.click()}
-              onDragOver={e => { e.preventDefault(); setIsDragging(true); }}
-              onDragLeave={() => setIsDragging(false)}
-              onDrop={onDrop}
-            >
-              <input ref={fileInputRef} type="file" accept=".csv,.xlsx" className="hidden!" onChange={onFileChange} />
-              <div className="s1w-dropzone-icon"><Icon.Upload /></div>
-              <p className="s1w-dropzone-text">Drag & drop your file here, or <span>click to browse</span></p>
-              <p className="s1w-dropzone-sub">Supports .xlsx and .csv — optimised for millions of rows</p>
-              {parseError && (
-                <div className="s1w-inline-error"><Icon.Warning />{parseError}</div>
-              )}
-            </div>
-
-            <div className="s1w-template-section">
-              <p className="s1w-template-label">Don't have a file? Download a pre-configured template:</p>
-              <div className="s1w-template-btns">
-                <button className="s1w-template-btn" onClick={() => downloadTemplate("excel")}>
-                  <span className="s1w-template-btn-icon"><Icon.FileExcel /></span>
-                  <span>
-                    <strong>Excel Template</strong>
-                    <small>With dropdowns, sample data & engineering sheets</small>
-                  </span>
-                </button>
-                <button className="s1w-template-btn" onClick={() => downloadTemplate("csv")}>
-                  <span className="s1w-template-btn-icon"><Icon.File /></span>
-                  <span>
-                    <strong>CSV Template</strong>
-                    <small>Lightweight flat file — best for large datasets</small>
-                  </span>
-                </button>
-              </div>
-            </div>
-
-            {/* Config summary pill */}
-            <div className="s1w-config-summary">
-              <span className={`s1w-config-pill s1w-config-pill--${tier === "1" ? "blue" : tier === "3" ? "green" : "orange"}`}>
-                {tier === "1" ? "Tier 1" : tier === "3" ? "Tier 3" : "Auto-detect"}
-              </span>
-              <span className="s1w-config-pill s1w-config-pill--neutral">
-                {processScope === "all"
-                  ? "All Processes"
-                  : `${selectedProcesses.length} process${selectedProcesses.length !== 1 ? "es" : ""} selected`}
-              </span>
-            </div>
-          </div>
-        )}
-
-        {/* ── STEP 4: Column Mapping ── */}
-        {step === 4 && (
-          <div className="s1w-body">
-            {/* ── Region access banner ── */}
-            {!isAdmin && allowedRegions !== null && allowedRegions.length > 0 && (
-              <div className="s1w-access-banner s1w-access-banner--compact">
-                <Icon.Info />
-                <span>
-                  <strong>Allowed regions:</strong>{" "}
-                  {allowedRegions.join(" · ")}
-                </span>
-              </div>
-            )}
-            {!isAdmin && allowedRegions !== null && allowedRegions.length === 0 && (
-              <div className="s1w-warn-banner">
-                <Icon.Warning />
-                <span><strong>No accessible regions.</strong> Your account has no assigned regions. All rows will be rejected. Contact an administrator.</span>
-              </div>
-            )}
-            {file && (
-              <div className="s1w-file-badge">
-                <div className="s1w-file-badge-icon"><Icon.File /></div>
-                <div className="s1w-file-badge-info">
-                  <p className="s1w-file-name">{file.name}</p>
-                  <p className="s1w-file-size">{(file.size / 1024).toFixed(1)} KB</p>
-                </div>
-                {headers.length > 0 && (
-                  <div className="s1w-auto-badge"><Icon.Wand /><span>{Object.keys(mapping).length} auto-detected</span></div>
-                )}
-              </div>
-            )}
-
-            {headers.length === 0 && (
-              <div className="s1w-info-banner">
-                <Icon.Info />
-                <span>Excel file — processed server-side. Type column names exactly as they appear in your file, or leave blank to skip that field.</span>
-              </div>
-            )}
-
-            {headers.length > 0 && missingRequired.length > 0 && (
-              <div className="s1w-warn-banner">
-                <Icon.Warning />
-                <span><strong>{missingRequired.length} required field{missingRequired.length > 1 ? "s" : ""} not mapped:</strong> {missingRequired.map(f => f.label).join(", ")}</span>
-              </div>
-            )}
-
-            {/* Search bar */}
-            <div className="s1w-search-bar">
-              <div className="s1w-search-icon"><Icon.Search /></div>
-              <input
-                className="s1w-search-input"
-                type="text"
-                placeholder="Search fields by name, key, or description…"
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-              />
-              {searchQuery && (
-                <button className="s1w-search-clear" onClick={() => setSearchQuery("")}><Icon.Close /></button>
-              )}
-            </div>
-
-            {/* Factor selector */}
-            <div className="s1w-factor-row">
-              <label className="s1w-factor-label">Default factor when not specified in file:</label>
-              <NativeSelect className="s1w-factor-select" value={globalFactor} onChange={e => setGlobalFactor(e.target.value)}>
-                <option value="auto">Auto-detect from file</option>
-                <option value="default">Force Standard (API Compendium)</option>
-                <option value="custom">Force Custom Factors</option>
-                <option value="specific">Force Tier 3 (site data)</option>
-              </NativeSelect>
-            </div>
-
-            <label className="s1w-factor-row gap-[8px]! cursor-pointer!">
-              <input type="checkbox" checked={overwrite} onChange={e => setOverwrite(e.target.checked)} />
-              <span className="s1w-factor-label">
-                Overwrite records that already exist (same facility, month and source). Overwritten records go back to Pending review.
-              </span>
-            </label>
-
-            {/* Field groups */}
-            <div className="s1w-field-groups">
-              {FIELD_GROUPS.map(group => (
-                <FieldGroup
-                  key={group.id}
-                  group={group}
-                  headers={headers}
-                  mapping={mapping}
-                  setMapping={setMapping}
-                  searchQuery={searchQuery}
-                  tier={tier}
-                  processScope={processScope}
-                  selectedProcesses={selectedProcesses}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* ── STEP 5: Processing ── */}
-        {step === 5 && jobId && (
-          <div className="s1w-body s1w-body--progress">
-            <UploadProgress
-              jobId={jobId}
-              onComplete={() => { if (onUploadSuccess) onUploadSuccess(); onClose(); }}
-              onCancel={onClose}
-            />
-          </div>
-        )}
-
-        {/* ── Footer ── */}
-        {step !== 5 && (
-          <div className="s1w-footer">
-            <button
-              className="s1w-btn-ghost"
-              onClick={step === 1 ? onClose : () => setStep(s => s - 1)}
-            >
-              {step === 1 ? <><Icon.Close /> Cancel</> : <><Icon.ArrowLeft /> Back</>}
-            </button>
-
-            <div className="s1w-footer-right">
-              {step < 4 && (
-                <button
-                  className="s1w-btn-primary"
-                  onClick={() => setStep(s => s + 1)}
-                  disabled={!canGoNext()}
-                >
-                  Next <Icon.ChevronRight />
-                </button>
-              )}
-              {step === 4 && (
-                <button
-                  className="s1w-btn-primary"
-                  onClick={handleSubmit}
-                  disabled={isSubmitting || (!canSubmit && headers.length > 0) || (!isAdmin && allowedRegions !== null && allowedRegions.length === 0)}
-                >
-                  {isSubmitting ? <span className="s1w-spinner" /> : <Icon.Processing />}
-                  {isSubmitting ? "Starting…" : "Start Import"}
-                </button>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
+      <Scope1ImportWizardScope1Bulk
+        FIELD_GROUPS={FIELD_GROUPS}
+        FieldGroup={FieldGroup}
+        Icon={Icon}
+        ModeCard={ModeCard}
+        PROCESS_CATALOGUE={PROCESS_CATALOGUE}
+        ProcessTile={ProcessTile}
+        StepBar={StepBar}
+        allowedRegions={allowedRegions}
+        canGoNext={canGoNext}
+        canSubmit={canSubmit}
+        downloadTemplate={downloadTemplate}
+        file={file}
+        fileInputRef={fileInputRef}
+        globalFactor={globalFactor}
+        handleSubmit={handleSubmit}
+        headers={headers}
+        isAdmin={isAdmin}
+        isDragging={isDragging}
+        isSubmitting={isSubmitting}
+        jobId={jobId}
+        mapping={mapping}
+        missingRequired={missingRequired}
+        onClose={onClose}
+        onDrop={onDrop}
+        onFileChange={onFileChange}
+        onUploadSuccess={onUploadSuccess}
+        overwrite={overwrite}
+        parseError={parseError}
+        processScope={processScope}
+        searchQuery={searchQuery}
+        selectedProcesses={selectedProcesses}
+        setGlobalFactor={setGlobalFactor}
+        setIsDragging={setIsDragging}
+        setMapping={setMapping}
+        setOverwrite={setOverwrite}
+        setProcessScope={setProcessScope}
+        setSearchQuery={setSearchQuery}
+        setStep={setStep}
+        setTier={setTier}
+        step={step}
+        tier={tier}
+        toggleProcess={toggleProcess}
+      />
     </div>
   );
 }

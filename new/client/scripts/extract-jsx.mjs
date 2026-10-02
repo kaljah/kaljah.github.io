@@ -9,6 +9,12 @@ import _traverse from "@babel/traverse";
 const traverse = _traverse.default || _traverse;
 
 const args = process.argv.slice(2);
+const autoArg = args.findIndex((a) => a === "--auto");
+const autoMin = autoArg >= 0 ? Number(args[autoArg + 1]) : 0;
+if (autoArg >= 0) args.splice(autoArg, 2);
+const maxArg = args.findIndex((a) => a === "--max");
+const autoMax = maxArg >= 0 ? Number(args[maxArg + 1]) : Infinity;
+if (maxArg >= 0) args.splice(maxArg, 2);
 const sharedArg = args.findIndex((a) => a === "--shared");
 const shared = new Set(sharedArg >= 0 ? args[sharedArg + 1].split(",") : []);
 if (sharedArg >= 0) args.splice(sharedArg, 2);
@@ -36,6 +42,7 @@ const buildImports = (names) => {
   const bySource = new Map();
   const extra = [];
   for (const n of names) {
+    if (n === "React") continue;
     if (shared.has(n)) { extra.push(n); continue; }
     const imp = imports[n];
     if (!imp) throw new Error("unresolved module-level name " + n);
@@ -57,7 +64,65 @@ const buildImports = (names) => {
   return lines.join("\n");
 };
 
-const jobs = targets.map((t) => { const [name, ln] = t.split("@"); return { name, ln: Number(ln) }; });
+
+const pascal = (str) => str.replace(/(^|[^A-Za-z0-9])([A-Za-z0-9])/g, (_, __, c) => c.toUpperCase()).replace(/[^A-Za-z0-9]/g, "");
+const autoJobs = [];
+if (autoMin) {
+  const chosen = [];
+  traverse(ast, {
+    ReturnStatement(rp) {
+      const fp = rp.getFunctionParent();
+      if ((fp.node.id?.name || fp.parentPath.node.id?.name) !== comp) return;
+      if (fp.scope !== innerScope) return;
+      rp.get("argument").traverse({
+        JSXElement(p) {
+          const n = lineOf(p.node.end) - lineOf(p.node.start);
+          if (n < autoMin || n > autoMax) return;
+          if (!p.findParent((q) => q.isJSXElement())) return; // skip the root
+          if (chosen.some((c) => p.findParent((q) => q.node === c.node))) return;
+          // all identifiers must come from the component scope or the module (not from .map callbacks etc.)
+          let ok = true;
+          p.traverse({
+            Identifier(q) {
+              if (!q.isReferencedIdentifier()) return;
+              const b = q.scope.getBinding(q.node.name);
+              if (!b) return;
+              let sc = b.scope;
+              const inside = sc === p.scope || p.scope.path.isDescendant?.(sc.path) || sc.path.isDescendant?.(p.node ? p.scope.path : p.scope.path);
+              const bpath = b.path;
+              if (bpath.isDescendant && bpath.isDescendant(p)) return; // declared inside the element
+              if (b.scope !== innerScope && !b.scope.path.isProgram()) ok = false;
+            },
+          });
+          let hasThisOrHook = false;
+          p.traverse({ ThisExpression() { hasThisOrHook = true; }, CallExpression(q) { if (/^use[A-Z]/.test(q.node.callee.name || "")) hasThisOrHook = true; } });
+          if (!ok || hasThisOrHook) return;
+          chosen.push(p);
+        },
+      });
+    },
+  });
+  const taken = new Set();
+  chosen.forEach((p) => {
+    let heading = null;
+    p.traverse({
+      JSXElement(q) {
+        if (heading || !/^h[1-4]$/.test(q.node.openingElement.name.name || "")) return;
+        const t = q.node.children.find((c) => c.type === "JSXText" && c.value.trim().length > 2);
+        if (t) heading = t.value.trim().split(/\s+/).slice(0, 3).join(" ");
+      },
+    });
+    const cls = p.node.openingElement.attributes.find((a) => a.name?.name === "className");
+    const cn = cls?.value?.value || cls?.value?.expression?.quasis?.[0]?.value?.raw || "";
+    let base = pascal(heading || String(cn).split(/\s+/)[0] || "Block") || "Block";
+    if (!/^[A-Z]/.test(base)) base = "S" + base;
+    let name = `${comp}${base}`;
+    if (taken.has(name)) name += lineOf(p.node.start);
+    taken.add(name);
+    autoJobs.push({ name, ln: lineOf(p.node.start), path: p });
+  });
+}
+const jobs = [...autoJobs, ...targets.map((t) => { const [name, ln] = t.split("@"); return { name, ln: Number(ln) }; })];
 const found = [];
 traverse(ast, {
   JSXElement(p) {
@@ -77,7 +142,7 @@ for (const job of jobs) {
     const b = id.scope.getBinding(n);
     if (!b) return;
     if (b.scope === innerScope) needs.add(n);
-    else if (b.scope.path.isProgram()) mod.add(n);
+    else if (b.scope.path.isProgram()) (imports[n] ? mod : needs).add(n); // module-level locals are passed as props
   };
   job.path.traverse({
     Identifier(p) { if (p.isReferencedIdentifier()) visit(p, p.node.name); },
