@@ -18,7 +18,7 @@
 
 .sbti-kpi-card {
   padding: 22px 24px;
-  border-radius: 18px;
+  border-radius: var(--radius-lg);
   background: var(--bg-card, rgba(255, 255, 255, 0.85));
   backdrop-filter: blur(14px);
   border: 1px solid var(--border-color, rgba(226, 232, 240, 0.8));
@@ -44,7 +44,7 @@
   width: 4px;
   height: 100%;
   background: var(--primary, var(--color-brand-500));
-  border-radius: 4px 0 0 4px;
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
 }
 
 .sbti-kpi-card.success::before {
@@ -71,7 +71,7 @@
 }
 
 .sbti-kpi-title {
-  font-size: 0.85rem;
+  font-size: var(--text-base);
   font-weight: 600;
   color: var(--text-secondary, var(--color-ink-500));
   text-transform: uppercase;
@@ -81,7 +81,7 @@
 .sbti-kpi-icon {
   width: 36px;
   height: 36px;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -110,21 +110,21 @@
 }
 
 .sbti-kpi-value {
-  font-size: 1.85rem;
+  font-size: var(--text-2xl);
   font-weight: 700;
   color: var(--text-main, var(--color-ink-900));
   margin-bottom: 4px;
 }
 
 .sbti-kpi-unit {
-  font-size: 0.9rem;
+  font-size: var(--text-base);
   font-weight: 500;
   color: var(--text-secondary, var(--color-ink-500));
   margin-left: 4px;
 }
 
 .sbti-kpi-subtitle {
-  font-size: 0.8rem;
+  font-size: var(--text-sm);
   color: var(--text-secondary, var(--color-ink-500));
   display: flex;
   align-items: center;
@@ -137,8 +137,8 @@
   align-items: center;
   gap: 6px;
   padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 0.85rem;
+  border-radius: var(--radius-lg);
+  font-size: var(--text-base);
   font-weight: 600;
 }
 
@@ -164,9 +164,9 @@
 .sbti-config-panel {
   background: var(--card-bg, var(--color-white));
   border: 1px solid var(--border-color, var(--color-ink-200));
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   padding: 24px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-card);
 }
 
 .sbti-config-header {
@@ -177,7 +177,7 @@
 }
 
 .sbti-config-header h3 {
-  font-size: 1.15rem;
+  font-size: var(--text-lg);
   font-weight: 700;
   color: var(--text-main, var(--color-ink-900));
   display: flex;
@@ -199,7 +199,7 @@
 }
 
 .sbti-form-group label {
-  font-size: 0.85rem;
+  font-size: var(--text-base);
   font-weight: 600;
   color: var(--text-secondary, var(--color-ink-500));
 }
@@ -209,9 +209,9 @@
   align-items: center;
   gap: 5px;
   padding: 4px 10px;
-  font-size: 0.76rem;
+  font-size: var(--text-sm);
   font-weight: 600;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: rgba(37, 99, 235, 0.1);
   color: var(--color-blue-600);
   border: 1px solid rgba(37, 99, 235, 0.2);
@@ -226,11 +226,11 @@
 
 .sbti-input {
   padding: 10px 14px;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   border: 1px solid var(--border-color, var(--color-ink-200));
   background: var(--input-bg, var(--color-ink-50));
   color: var(--text-main, var(--color-ink-900));
-  font-size: 0.95rem;
+  font-size: var(--text-md);
   transition: all 0.2s;
 }
 
@@ -258,7 +258,7 @@
   background: var(--bg-card, rgba(255, 255, 255, 0.85));
   backdrop-filter: blur(14px);
   border: 1px solid var(--border-color, rgba(226, 232, 240, 0.8));
-  border-radius: 20px;
+  border-radius: var(--radius-lg);
   padding: 24px;
   box-shadow: var(--shadow-card, 0 4px 12px rgba(0, 0, 0, 0.05));
   transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease, border-color 0.22s ease;
@@ -276,21 +276,21 @@
 }
 
 .sbti-card-title {
-  font-size: 1.1rem;
+  font-size: var(--text-lg);
   font-weight: 700;
   color: var(--text-main, var(--color-ink-900));
   margin-bottom: 2px;
 }
 
 .sbti-card-subtitle {
-  font-size: 0.85rem;
+  font-size: var(--text-base);
   color: var(--text-secondary, var(--color-ink-500));
 }
 
 /* Trajectory Milestones Table */
 .sbti-table-container {
   overflow-x: auto;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   border: 1px solid var(--border-color, var(--color-ink-200));
   background: var(--bg-card, rgba(255, 255, 255, 0.6));
   backdrop-filter: blur(8px);
@@ -299,7 +299,7 @@
 .sbti-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.875rem;
+  font-size: var(--text-base);
   text-align: left;
 }
 
@@ -310,7 +310,7 @@
   color: var(--text-secondary, var(--color-ink-500));
   border-bottom: 1px solid var(--border-color, var(--color-ink-200));
   white-space: nowrap;
-  font-size: 0.78rem;
+  font-size: var(--text-sm);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -336,7 +336,7 @@
   align-items: center;
   padding: 3px 10px;
   border-radius: 999px;
-  font-size: 0.75rem;
+  font-size: var(--text-sm);
   font-weight: 600;
   letter-spacing: 0.02em;
   text-transform: uppercase;

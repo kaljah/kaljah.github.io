@@ -118,7 +118,7 @@
   width: 100%;
   max-width: 440px;
   padding: 48px;
-  border-radius: 24px;
+  border-radius: var(--radius-lg);
   position: relative;
   z-index: 10;
 }
@@ -129,7 +129,7 @@
 }
 
 .login-header h2 {
-  font-size: 2rem;
+  font-size: var(--text-2xl);
   font-weight: 800;
   color: var(--text-main);
   margin-bottom: 8px;
@@ -138,7 +138,7 @@
 
 .login-header p {
   color: var(--text-muted);
-  font-size: 1rem;
+  font-size: var(--text-md);
 }
 
 .form-group {
@@ -162,8 +162,8 @@
   width: 100%;
   padding: 14px 16px 14px 48px;
   border: 1px solid var(--border-light);
-  border-radius: 12px;
-  font-size: 1rem;
+  border-radius: var(--radius-md);
+  font-size: var(--text-md);
   color: var(--text-main);
   transition: all 0.2s;
   background: #fafafa;
@@ -190,8 +190,8 @@
   background: var(--primary);
   color: var(--color-white);
   border: none;
-  border-radius: 12px;
-  font-size: 1.05rem;
+  border-radius: var(--radius-md);
+  font-size: var(--text-md);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
@@ -209,9 +209,9 @@
   background: var(--color-red-50);
   color: var(--color-red-500);
   padding: 12px 16px;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   margin-bottom: 24px;
-  font-size: 0.9rem;
+  font-size: var(--text-base);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -233,10 +233,10 @@
 }
 
 .badge {
-  font-size: 0.75rem;
+  font-size: var(--text-sm);
   font-weight: 600;
   padding: 4px 10px;
-  border-radius: 20px;
+  border-radius: var(--radius-lg);
   background: rgba(16, 185, 129, 0.1);
   color: var(--accent);
   border: 1px solid rgba(16, 185, 129, 0.2);
@@ -244,7 +244,7 @@
 
 .login-footer p {
   color: var(--text-muted);
-  font-size: 0.8rem;
+  font-size: var(--text-sm);
 }
 
 .login-actions-row {
@@ -258,7 +258,7 @@
   background: none;
   border: none;
   color: var(--primary);
-  font-size: 0.85rem;
+  font-size: var(--text-base);
   font-weight: 500;
   cursor: pointer;
   padding: 0;
@@ -287,9 +287,9 @@
   width: 100%;
   max-width: 440px;
   background: var(--color-white);
-  border-radius: 20px;
+  border-radius: var(--radius-lg);
   padding: 32px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-raised);
   border: 1px solid rgba(226, 232, 240, 0.8);
   position: relative;
 }
@@ -300,22 +300,22 @@
 }
 
 .forgot-modal-header h3 {
-  font-size: 1.35rem;
+  font-size: var(--text-xl);
   font-weight: 700;
   color: var(--text-main);
   margin-bottom: 6px;
 }
 
 .forgot-modal-header p {
-  font-size: 0.875rem;
+  font-size: var(--text-base);
   color: var(--text-muted);
   line-height: 1.4;
 }
 
 .forgot-status-msg {
   padding: 12px 16px;
-  border-radius: 10px;
-  font-size: 0.875rem;
+  border-radius: var(--radius-md);
+  font-size: var(--text-base);
   margin-bottom: 18px;
   line-height: 1.4;
 }
@@ -344,8 +344,8 @@
   background: var(--color-ink-100);
   color: var(--text-main);
   border: 1px solid var(--border-light);
-  border-radius: 12px;
-  font-size: 0.95rem;
+  border-radius: var(--radius-md);
+  font-size: var(--text-md);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
@@ -370,7 +370,7 @@
   display: inline-flex;
   padding: 6px;
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   background: transparent;
   color: var(--color-ink-500);
   cursor: pointer;

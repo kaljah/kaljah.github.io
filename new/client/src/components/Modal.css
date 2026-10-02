@@ -14,12 +14,12 @@
 
 .modal-content {
   background: var(--bg-card);
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   max-width: 500px;
   width: 90%;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--shadow-overlay);
   border: 1px solid var(--border-color);
 }
 
@@ -33,7 +33,7 @@
 
 .modal-header h3 {
   margin: 0;
-  font-size: 1.25rem;
+  font-size: var(--text-lg);
   font-weight: 700;
   color: var(--text-primary);
 }
@@ -46,7 +46,7 @@
   display: block;
   margin-bottom: 8px;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: var(--text-base);
   color: var(--text-secondary);
 }
 
@@ -57,9 +57,9 @@
   padding: 12px;
   background: var(--bg-main);
   border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   color: var(--text-primary);
-  font-size: 0.95rem;
+  font-size: var(--text-md);
   margin-bottom: 20px;
   transition: all 0.2s;
 }
