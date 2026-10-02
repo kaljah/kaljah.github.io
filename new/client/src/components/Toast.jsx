@@ -83,7 +83,7 @@ export const ToastProvider = ({ children }) => {
 
 const ToastContainer = ({ toasts, onRemove }) => {
   return (
-    <div className="toast-container">
+    <div className="toast-container" role="region" aria-label="Notifications" aria-live="polite">
       {toasts.map((toast) => (
         <Toast key={toast.id} toast={toast} onRemove={onRemove} />
       ))}
@@ -157,10 +157,10 @@ const Toast = ({ toast, onRemove }) => {
   };
 
   return (
-    <div className={`toast toast-${toast.type}`}>
+    <div className={`toast toast-${toast.type}`} role={toast.type === "error" ? "alert" : "status"}>
       <div className="toast-icon">{getIcon()}</div>
       <div className="toast-message">{toast.message}</div>
-      <button className="toast-close" onClick={() => onRemove(toast.id)}>
+      <button className="toast-close" onClick={() => onRemove(toast.id)} aria-label="Dismiss notification">
         ×
       </button>
     </div>

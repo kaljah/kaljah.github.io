@@ -17,9 +17,9 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   background-image:
-    radial-gradient(at 0% 0%, hsla(28, 100%, 74%, 0.08) 0, transparent 45%),
-    radial-gradient(at 50% 0%, hsla(225, 39%, 30%, 0.04) 0, transparent 50%),
-    radial-gradient(at 100% 100%, hsla(339, 49%, 30%, 0.03) 0, transparent 40%);
+    radial-gradient(at 0% 0%, hsla(28deg, 100%, 74%, 0.08) 0, transparent 45%),
+    radial-gradient(at 50% 0%, hsla(225deg, 39%, 30%, 0.04) 0, transparent 50%),
+    radial-gradient(at 100% 100%, hsla(339deg, 49%, 30%, 0.03) 0, transparent 40%);
 }
 
 #root {
@@ -39,19 +39,19 @@ html, body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: var(--color-ink-300);
   border-radius: 999px;
   transition: background 0.2s ease;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: var(--color-ink-400);
 }
 
 /* Tabular Numerals for Data Integrity */
 .num-tabular, .kpi-number, .stat-value {
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum";
-  color: var(--text-primary, #0f172a);
+  color: var(--text-primary, var(--color-ink-900));
 }
 
 /* Visible keyboard focus: 2px --color-focus ring (3.56:1 on white). Replaces the 18% glow (1.22:1). */
@@ -119,8 +119,8 @@ textarea:focus-visible {
     max-width: 100% !important;
     margin: 0 !important;
     padding: 0 !important;
-    background: #ffffff !important;
-    color: #0f172a !important;
+    background: var(--color-white) !important;
+    color: var(--color-ink-900) !important;
     box-shadow: none !important;
   }
 
@@ -133,9 +133,8 @@ textarea:focus-visible {
   tr,
   figure {
     break-inside: avoid !important;
-    page-break-inside: avoid !important;
     box-shadow: none !important;
-    border: 1px solid #cbd5e1 !important;
+    border: 1px solid var(--color-ink-300) !important;
   }
 
   /* Table styling for crisp print readability */
@@ -146,13 +145,22 @@ textarea:focus-visible {
 
   th,
   td {
-    border: 1px solid #cbd5e1 !important;
+    border: 1px solid var(--color-ink-300) !important;
     padding: 6px 8px !important;
-    color: #000000 !important;
+    color: var(--color-ink-900) !important;
   }
 
   th {
-    background-color: #f1f5f9 !important;
+    background-color: var(--color-ink-100) !important;
     font-weight: 700 !important;
+  }
+}
+
+@keyframes ui-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }

@@ -137,6 +137,12 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Lint design-system CSS
+        run: npm run lint:css
+
+      - name: UI metrics ratchet
+        run: npm run ui:metrics -- --check
+
       - name: Run frontend unit tests
         run: npm run test
 
