@@ -326,11 +326,11 @@
 }
 
 .stat-value.success {
-  color: #10b981;
+  color: var(--text-primary, #0f172a);
 }
 
 .stat-value.warning {
-  color: #f59e0b;
+  color: var(--text-primary, #0f172a);
 }
 
 .stat-value.energy {
@@ -417,8 +417,8 @@
 }
 
 .scope-pill.scope-1 {
-  background: #fee2e2;
-  color: #b91c1c;
+  background: #fff7ed;
+  color: #c2410c;
 }
 
 .scope-pill.scope-2 {
