@@ -1,3 +1,4 @@
+import { useAnalyticsFilter } from "../filters/useAnalyticsFilter";
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -73,10 +74,10 @@ const DashboardEnhanced = () => {
 
   // Filter states
   const [isReady, setIsReady] = useState(false);
-  const [currentActivity, setCurrentActivity] = useState("all");
-  const [currentDivision, setCurrentDivision] = useState("all");
-  const [currentRegion, setCurrentRegion] = useState("all");
-  const [currentSegment, setCurrentSegment] = useState("all");
+  const [currentActivity, setCurrentActivity] = useAnalyticsFilter("activity");
+  const [currentDivision, setCurrentDivision] = useAnalyticsFilter("division");
+  const [currentRegion, setCurrentRegion] = useAnalyticsFilter("region");
+  const [currentSegment, setCurrentSegment] = useAnalyticsFilter("segment");
   const [facilities, setFacilities] = useState([]);
   const [availableFilters, setAvailableFilters] = useState({
     years: [],
@@ -105,7 +106,7 @@ const DashboardEnhanced = () => {
   const [flaringData, setFlaringData] = useState(null);
   const [trendData, setTrendData] = useState([]);
   const [categoricalData, setCategoricalData] = useState([]);
-  const [currentYear, setCurrentYear] = useState("all");
+  const [currentYear, setCurrentYear] = useAnalyticsFilter("year");
   const [expandedActivities, setExpandedActivities] = useState({});
   const [expandedDivisions, setExpandedDivisions] = useState({});
   const [goal, setGoal] = useState(null);

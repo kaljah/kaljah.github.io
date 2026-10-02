@@ -1,3 +1,4 @@
+import { useAnalyticsFilter } from "../filters/useAnalyticsFilter";
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
 import api from "../api";
@@ -31,11 +32,11 @@ const CarbonIntensity = () => {
   const { setTopBarLeft, setTopBarRight } = useLayout();
 
   // Filter states
-  const [currentActivity, setCurrentActivity] = useState("all");
-  const [currentDivision, setCurrentDivision] = useState("all");
-  const [currentRegion, setCurrentRegion] = useState("all");
-  const [currentSegment, setCurrentSegment] = useState("all");
-  const [selectedYear, setSelectedYear] = useState("all");
+  const [currentActivity, setCurrentActivity] = useAnalyticsFilter("activity");
+  const [currentDivision, setCurrentDivision] = useAnalyticsFilter("division");
+  const [currentRegion, setCurrentRegion] = useAnalyticsFilter("region");
+  const [currentSegment, setCurrentSegment] = useAnalyticsFilter("segment");
+  const [selectedYear, setSelectedYear] = useAnalyticsFilter("year");
   const [facilities, setFacilities] = useState([]);
   const [availableYears, setAvailableYears] = useState([]);
   const [availableSegments, setAvailableSegments] = useState([]);
@@ -105,7 +106,6 @@ const CarbonIntensity = () => {
         if (filterRes.data && filterRes.data.segments) {
           setAvailableSegments(filterRes.data.segments);
         }
-        setSelectedYear("all");
 
         const opDefaults = getUserOperationalDefaults(user, facilitiesData);
         if (opDefaults.isRestricted || facilitiesData.length === 1) {

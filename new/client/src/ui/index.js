@@ -16,3 +16,8 @@ export { Menu, MenuTrigger, MenuContent, MenuItem, MenuLabel, MenuSeparator } fr
 export { Tooltip, TooltipProvider } from "./Tooltip";
 export { Popover, PopoverTrigger, PopoverContent } from "./Popover";
 export { DataTable } from "./table/DataTable";
+export { Select, MultiSelect } from "./Select";
+export { RadioCardGroup } from "./RadioCard";
+export { Stepper } from "./Stepper";
+export { FilterBar } from "./FilterBar";
+export { SERIES, SCOPE_COLORS, axisProps, gridProps, tooltipStyle } from "./charts/theme";

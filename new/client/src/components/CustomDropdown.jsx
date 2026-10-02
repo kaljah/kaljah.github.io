@@ -252,6 +252,7 @@ const CustomDropdown = ({
         ref={triggerRef}
         id={id}
         className="dropdown-selected"
+        data-testid="select-trigger"
         onClick={handleToggle}
         onKeyDown={handleKeyDown}
         aria-haspopup="listbox"
@@ -329,6 +330,7 @@ const CustomDropdown = ({
                   id={optionId(idx)}
                   role="option"
                   aria-selected={value === option.value}
+                  data-testid="select-option"
                   className={`dropdown-option ${value === option.value ? "selected" : ""} ${activeIndex === idx ? "active" : ""}`}
                   onClick={() => handleSelect(option.value)}
                   onMouseEnter={() => setActiveIndex(idx)}

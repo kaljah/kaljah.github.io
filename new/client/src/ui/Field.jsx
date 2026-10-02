@@ -3,6 +3,9 @@ import { cn } from "./cn";
 
 const FieldContext = createContext(null);
 
+// eslint-disable-next-line react-refresh/only-export-components -- hook shared with Select
+export const useFieldContext = () => useContext(FieldContext);
+
 /** Label, control and hint/error wiring. Child controls read id and ARIA attributes from context. */
 export const Field = ({ label, hint, error, required = false, className, children }) => {
   const id = useId();

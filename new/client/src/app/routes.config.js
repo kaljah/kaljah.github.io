@@ -23,9 +23,9 @@ const page = (loader) => React.lazy(loader);
 export const NAV_GROUPS = ["Overview", "Data", "Assurance & Reporting", "Administration"];
 
 export const ROUTES = [
-  { path: "/", index: true, title: "Dashboard", group: "Overview", icon: LayoutDashboard, access: "nonIT", Component: page(() => import("../pages/DashboardEnhanced")) },
-  { path: "/carbon-intensity", title: "Carbon Intensity", group: "Overview", icon: Gauge, access: "nonIT", Component: page(() => import("../pages/CarbonIntensity")) },
-  { path: "/methane-intensity", title: "Methane Intensity", group: "Overview", icon: Wind, access: "nonIT", Component: page(() => import("../pages/MethaneIntensity")) },
+  { path: "/", filters: true, index: true, title: "Dashboard", group: "Overview", icon: LayoutDashboard, access: "nonIT", Component: page(() => import("../pages/DashboardEnhanced")) },
+  { path: "/carbon-intensity", filters: true, title: "Carbon Intensity", group: "Overview", icon: Gauge, access: "nonIT", Component: page(() => import("../pages/CarbonIntensity")) },
+  { path: "/methane-intensity", filters: true, title: "Methane Intensity", group: "Overview", icon: Wind, access: "nonIT", Component: page(() => import("../pages/MethaneIntensity")) },
   { path: "/sbti", title: "SBTi & Net-Zero", group: "Overview", icon: Target, access: "nonIT", Component: page(() => import("../pages/SbtiDashboard")) },
   { path: "/methane-explorer", title: "Emissions Map", group: "Overview", icon: Map, access: "nonIT", Component: page(() => import("../pages/MethaneExplorer")) },
   { path: "/emissions", title: "Calculations", group: "Data", icon: Calculator, access: "nonIT", Component: page(() => import("../pages/Emissions")) },

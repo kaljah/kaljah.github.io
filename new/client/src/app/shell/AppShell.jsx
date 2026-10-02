@@ -5,6 +5,7 @@ import { useLayout } from "../../context/LayoutContext";
 import { PageSkeleton, TooltipProvider } from "../../ui";
 import { rememberPage } from "../recentPages";
 import { findRoute } from "../routes.config";
+import AnalyticsFiltersSync from "../../filters/AnalyticsFiltersSync";
 import BannerStack from "./BannerStack";
 import Sidebar from "./Sidebar";
 import TopBar from "./TopBar";
@@ -50,6 +51,7 @@ const AppShell = () => {
         >
           Skip to content
         </a>
+        <AnalyticsFiltersSync />
         <BannerStack />
         <Sidebar />
         <main className="main-content relative flex min-w-0 flex-1 flex-col overflow-hidden">
