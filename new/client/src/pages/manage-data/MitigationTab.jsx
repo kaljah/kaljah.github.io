@@ -7,9 +7,9 @@ import PaginationControls from './PaginationControls';
 // Extracted from ManageData.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const MitigationTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, facilities, filteredMitigations, getAvailableActivities, getAvailableDivisions, handleDeleteMitigation, handleSaveMitigation, isPrivileged, mitigationForm, mitigations, setCurrentPage, setImportModal, setMitigationForm }) => (
 <div className="manage-card glass-panel">
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px' }}>
+                                <div className="flex! justify-between! items-start! mb-[32px]!">
                                     <div>
-                                        <h2 style={{ marginBottom: '8px', fontWeight: 700 }}>Mitigation Projects</h2>
+                                        <h2 className="mb-[8px]! font-bold!">Mitigation Projects</h2>
                                         <p style={{ color: 'var(--text-secondary)', margin: 0 }}>Record CCUS, RECs, and Carbon Offsets.</p>
                                     </div>
                                     <button 
@@ -23,7 +23,7 @@ const MitigationTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, facilitie
 
                                 <div className="grid-forms" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
                                     <div className="input-group">
-                                        <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                        <label className="flex! items-center! gap-[6px]!">
                                             Activity
                                             {!isPrivileged && getAvailableActivities().length === 1 && (
                                                 <span style={{ fontSize: '0.65rem', background: '#dbeafe', color: '#1d4ed8', borderRadius: '4px', padding: '1px 5px', fontWeight: 600 }}>Auto</span>
@@ -40,7 +40,7 @@ const MitigationTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, facilitie
                                         </NativeSelect>
                                     </div>
                                     <div className="input-group">
-                                        <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                        <label className="flex! items-center! gap-[6px]!">
                                             Division
                                             {!isPrivileged && getAvailableDivisions(mitigationForm.activity).length === 1 && (
                                                 <span style={{ fontSize: '0.65rem', background: '#dbeafe', color: '#1d4ed8', borderRadius: '4px', padding: '1px 5px', fontWeight: 600 }}>Auto</span>
@@ -58,7 +58,7 @@ const MitigationTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, facilitie
                                     </div>
 
                                     <div className="input-group">
-                                        <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                        <label className="flex! items-center! gap-[6px]!">
                                             Region
                                             {!isPrivileged && facilities.filter(f => f.activity === mitigationForm.activity && f.division === mitigationForm.division).length === 1 && (
                                                 <span style={{ fontSize: '0.65rem', background: '#dbeafe', color: '#1d4ed8', borderRadius: '4px', padding: '1px 5px', fontWeight: 600 }}>Auto</span>
@@ -110,14 +110,14 @@ const MitigationTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, facilitie
                                         </NativeSelect>
                                     </div>
                                 </div>
-                                <div style={{ display: 'flex', gap: '12px', marginTop: '20px' }}>
+                                <div className="flex! gap-[12px]! mt-[20px]!">
                                     <button className="action-btn" onClick={handleSaveMitigation}>Save Record</button>
                                     <button className="action-btn" onClick={() => setImportModal({ isOpen: true, type: 'mitigation' })} style={{ background: '#10b981' }}>
                                         <Upload size={16} /> Import Mitigation CSV
                                     </button>
                                 </div>
 
-                                <div className="table-container" style={{ marginTop: '40px' }}>
+                                <div className="table-container mt-[40px]!">
                                     <h3>Mitigation Records</h3>
                                     <table className="data-table">
                                         <thead>
@@ -128,8 +128,8 @@ const MitigationTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, facilitie
                                                 <th>Year</th>
                                                 <th>Type</th>
                                                 <th>Status</th>
-                                                <th style={{ textAlign: 'right' }}>Quantity (tCO₂e)</th>
-                                                <th style={{ textAlign: 'center' }}>Actions</th>
+                                                <th className="text-right!">Quantity (tCO₂e)</th>
+                                                <th className="text-center!">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -151,7 +151,7 @@ const MitigationTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, facilitie
                                                     <td style={{ textAlign: 'right', color: '#10b981', fontWeight: 600 }}>
                                                         -{parseFloat(m.quantity_tco2e).toLocaleString()}
                                                     </td>
-                                                    <td style={{ textAlign: 'center' }}>
+                                                    <td className="text-center!">
                                                         <button
                                                             className="btn-delete"
                                                             style={{ padding: '6px 12px', fontSize: '0.8rem' }}

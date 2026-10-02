@@ -850,7 +850,7 @@ const EmissionsMap = () => {
           center={mapCenter}
           zoom={mapZoom}
           zoomControl={false}
-          style={{ height: "100%", width: "100%" }}
+          className="h-full! w-full!"
         >
           {/* Dynamic Light Basemap Layer */}
           <TileLayer

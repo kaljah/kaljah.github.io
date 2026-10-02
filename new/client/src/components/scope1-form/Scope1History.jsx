@@ -7,21 +7,15 @@ import { PROCESS_TYPES, factorTypeLabel } from "./shared";
 
 // Extracted from Scope1Form.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const Scope1History = ({ currentPage, entries, exportToCSV, facetYears, filterProcess, filterSearch, filterYear, handleDelete, handleInspect, loading, setCurrentPage, setFilterProcess, setFilterSearch, setFilterYear, setImportModal, setShowUncertainty, showUncertainty, toast, totalPages }) => (
-<div className="calculator-grid-container" style={{ marginTop: "30px" }}>
+<div className="calculator-grid-container mt-[30px]!">
         {/* Filter bar */}
         <div
-          style={{
-            display: "flex",
-            gap: "10px",
-            flexWrap: "wrap",
-            alignItems: "center",
-            marginBottom: "14px",
-          }}
+          className="flex! gap-[10px]! flex-wrap! items-center! mb-[14px]!"
         >
           <strong style={{ fontSize: "0.95rem", marginRight: "4px" }}>
             Recent Activity (Scope 1)
           </strong>
-          <div style={{ flex: 1 }} />
+          <div className="flex-1!" />
           <input
             type="text"
             placeholder="Search..."
@@ -156,42 +150,42 @@ const Scope1History = ({ currentPage, entries, exportToCSV, facetYears, filterPr
                 <th>N₂O (t)</th>
                 <th>Total (tCO₂e)</th>
                 <th
-                  style={{ textAlign: "center" }}
+                  className="text-center!"
                   title="Standard Combined Uncertainty (1σ)"
                 >
                   CO₂ 1σ (±%)
                 </th>
                 <th
-                  style={{ textAlign: "center" }}
+                  className="text-center!"
                   title="Standard Combined Uncertainty (1σ)"
                 >
                   CH₄ 1σ (±%)
                 </th>
                 <th
-                  style={{ textAlign: "center" }}
+                  className="text-center!"
                   title="Standard Combined Uncertainty (1σ)"
                 >
                   N₂O 1σ (±%)
                 </th>
                 <th
-                  style={{ textAlign: "center" }}
+                  className="text-center!"
                   title="Expanded Uncertainty (95% Confidence Interval, k=2)"
                 >
                   CO₂ 95%CI (±%)
                 </th>
                 <th
-                  style={{ textAlign: "center" }}
+                  className="text-center!"
                   title="Expanded Uncertainty (95% Confidence Interval, k=2)"
                 >
                   CH₄ 95%CI (±%)
                 </th>
                 <th
-                  style={{ textAlign: "center" }}
+                  className="text-center!"
                   title="Expanded Uncertainty (95% Confidence Interval, k=2)"
                 >
                   N₂O 95%CI (±%)
                 </th>
-                <th style={{ textAlign: "center" }}>Actions</th>
+                <th className="text-center!">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -395,7 +389,7 @@ const Scope1History = ({ currentPage, entries, exportToCSV, facetYears, filterPr
                           ? `±${(entry.uncertainty_n2o * 200).toFixed(0)}%`
                           : "—"}
                       </td>
-                      <td style={{ textAlign: "center", whiteSpace: "nowrap" }}>
+                      <td className="text-center! whitespace-nowrap!">
                         <button
                           className="icon-button"
                           onClick={() => handleInspect(entry)}
@@ -422,7 +416,7 @@ const Scope1History = ({ currentPage, entries, exportToCSV, facetYears, filterPr
               <tr style={{ backgroundColor: "#f9fafb", fontWeight: "bold" }}>
                 <td
                   colSpan="14"
-                  style={{ textAlign: "right", paddingRight: "15px" }}
+                  className="text-right! pr-[15px]!"
                 >
                   Total (
                   {filterYear || filterProcess || filterSearch

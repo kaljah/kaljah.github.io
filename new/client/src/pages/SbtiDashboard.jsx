@@ -319,7 +319,7 @@ const SbtiDashboard = () => {
             <div className="sbti-form-grid">
               <div className="sbti-form-group">
                 <label>Pathway Alignment</label>
-                <div style={{ display: "flex", gap: "8px" }}>
+                <div className="flex! gap-[8px]!">
                   <button
                     type="button"
                     className={`btn-secondary ${targetForm.pathway_type === "1.5C" ? "active" : ""}`}
@@ -365,7 +365,7 @@ const SbtiDashboard = () => {
               </div>
 
               <div className="sbti-form-group">
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div className="flex! justify-between! items-center!">
                   <label>Base Year Baseline (tCO2e)</label>
                   <button
                     type="button"
@@ -418,9 +418,9 @@ const SbtiDashboard = () => {
               <div className="sbti-form-group">
                 <button
                   type="submit"
-                  className="btn-primary"
+                  className="btn-primary flex! items-center! justify-center! gap-[8px]! h-[42px]!"
                   disabled={savingTarget}
-                  style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", height: "42px" }}
+                 
                 >
                   <Save size={16} />
                   {savingTarget ? "Saving Target..." : "Save SBTi Target"}
@@ -525,7 +525,7 @@ const SbtiDashboard = () => {
             </div>
           </div>
 
-          <div style={{ height: "360px", width: "100%" }}>
+          <div className="h-[360px]! w-full!">
             {sbtiData?.trajectory && sbtiData.trajectory.length > 0 ? (
               <LineChart
                 data={sbtiData.trajectory}
@@ -551,7 +551,7 @@ const SbtiDashboard = () => {
             </div>
           </div>
 
-          <div style={{ height: "360px", width: "100%" }}>
+          <div className="h-[360px]! w-full!">
             {sbtiData?.trajectory && sbtiData.trajectory.length > 0 ? (
               <BarChart
                 data={sbtiData.trajectory.filter((t) => t.actual !== null && t.actual !== undefined && t.actual > 0)}
@@ -615,8 +615,8 @@ const SbtiDashboard = () => {
 
                   return (
                     <tr key={row.year}>
-                      <td style={{ fontWeight: 600 }}>{row.year}</td>
-                      <td style={{ fontWeight: 500 }}>{formatNumber(row.sbti_target, 1)} tCO2e</td>
+                      <td className="font-semibold!">{row.year}</td>
+                      <td className="font-medium!">{formatNumber(row.sbti_target, 1)} tCO2e</td>
                       <td style={{ color: "var(--text-primary, #0f172a)", fontWeight: 500 }}>{formatNumber(row.bau_projection, 1)} tCO2e</td>
                       <td style={{ fontWeight: hasActual ? 700 : 400, color: hasActual ? "var(--text-primary, #0f172a)" : "#64748b" }}>
                         {hasActual ? `${formatNumber(row.actual, 1)} tCO2e` : "—"}

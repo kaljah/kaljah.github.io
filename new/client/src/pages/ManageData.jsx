@@ -1406,8 +1406,8 @@ const ManageDataInner = () => {
                         </h3>
                                                 {['admin', 'superuser'].includes(user?.role) && (
                             <button type="button" className={`manage-nav-item ${activeTab === 'pending' ? 'active' : ''}`} aria-current={activeTab === 'pending' ? 'page' : undefined} onClick={() => handleTabChange('pending')}>
-                                <span style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
-                                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                                <span className="flex! justify-between! w-full! items-center!">
+                                    <span className="inline-flex! items-center! gap-[8px]!">
                                         <Clock size={16} />
                                         Pending Review
                                     </span>
@@ -1449,9 +1449,9 @@ const ManageDataInner = () => {
                     </aside>
 
                     {/* Content Area */}
-                    <section style={{ flex: 1 }}>
-                        <div style={{ marginBottom: '24px', display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
-                            <div style={{ position: 'relative', flex: 1, minWidth: '250px' }}>
+                    <section className="flex-1!">
+                        <div className="mb-[24px]! flex! gap-[12px]! flex-wrap! items-center!">
+                            <div className="relative! flex-1! min-w-[250px]!">
                                 <Search className="search-icon" size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' }} />
                                 <input
                                     type="text"
@@ -1739,7 +1739,7 @@ const ManageDataInner = () => {
                             ? 'Conversion Factor: m³ × 0.0353147 = mcf (mscf)'
                             : 'Conversion Factor: m³ × 6.28981 = barrels (bbl)'}
                     </div>
-                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+                    <div className="flex! justify-end! gap-[10px]!">
                         <button
                             type="button"
                             className="btn-ghost"

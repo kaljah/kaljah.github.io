@@ -516,7 +516,7 @@ const CarbonIntensity = () => {
         {/* KPI HERO CARD */}
         <div className="hero-card">
           <div className="hero-header">
-            <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+            <div className="flex! items-center! gap-[16px]!">
               <h2 className="grid-title">
                 <Activity size={24} color="var(--accent-color)" />
                 Carbon Intensity & Product Embodiment
@@ -717,7 +717,7 @@ const CarbonIntensity = () => {
                 <div className="card cbam-section">
                     <div className="chart-header">
                         <div>
-                            <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <h3 className="flex! items-center! gap-[8px]!">
                                 <FileText size={20} color="var(--accent-color)" />
                                 EU CBAM Product Specific Embedded Emissions
                             </h3>
@@ -731,7 +731,7 @@ const CarbonIntensity = () => {
                     </div>
 
                     {cbamProducts.length > 0 ? (
-                        <div className="table-responsive" style={{ marginTop: '16px' }}>
+                        <div className="table-responsive mt-[16px]!">
                             <table className="custom-table">
                                 <thead>
                                     <tr>
@@ -759,7 +759,7 @@ const CarbonIntensity = () => {
                                         const totEmb = p.totalEmbeddedEmissions ?? p.total_embedded_emissions ?? (qty * ((directInt || 0) + (indirInt || 0)));
                                         return (
                                             <tr key={p.id || idx}>
-                                                <td style={{ fontWeight: 600 }}>{facName}</td>
+                                                <td className="font-semibold!">{facName}</td>
                                                 <td>{prodName}</td>
                                                 <td><span className="code-pill">{cn}</span></td>
                                                 <td>{p.year}-{String(p.month || 1).padStart(2, '0')}</td>
@@ -793,7 +793,7 @@ const CarbonIntensity = () => {
                 ></div>
               </div>
             </div>
-            <div style={{ height: "300px" }}>
+            <div className="h-[300px]!">
               <BarChart
                 data={regionalData.map((d) => ({
                   name: d.facility_name,
@@ -819,7 +819,7 @@ const CarbonIntensity = () => {
                 ></div>
               </div>
             </div>
-            <div style={{ height: "300px" }}>
+            <div className="h-[300px]!">
               <BarChart
                 data={regionalData.map((d) => ({
                   name: d.facility_name,
@@ -855,7 +855,7 @@ const CarbonIntensity = () => {
                 ></div>
               </div>
             </div>
-            <div style={{ height: "300px" }}>
+            <div className="h-[300px]!">
               <BarChart
                 data={regionalData.map((d) => ({
                   name: d.facility_name,
@@ -878,7 +878,7 @@ const CarbonIntensity = () => {
                 ></div>
               </div>
             </div>
-            <div style={{ height: "300px" }}>
+            <div className="h-[300px]!">
               <BarChart
                 data={regionalData.map((d) => ({
                   name: d.facility_name,
@@ -896,7 +896,7 @@ const CarbonIntensity = () => {
         <div className="card trend-section">
           <div className="chart-header">
             <div>
-              <h3 style={{ marginBottom: "4px" }}>
+              <h3 className="mb-[4px]!">
                 Historical Carbon Intensity Trends
               </h3>
               <p
@@ -928,7 +928,7 @@ const CarbonIntensity = () => {
           </div>
 
           {trendView === "chart" ? (
-            <div style={{ height: "350px" }}>
+            <div className="h-[350px]!">
               <LineChart
                 data={trendChartData}
                 xKey="year"
@@ -951,8 +951,8 @@ const CarbonIntensity = () => {
             <div className="heatmap-container">
               <div className="heatmap-header">
                 <div
-                  className="heatmap-header-cell"
-                  style={{ textAlign: "left" }}
+                  className="heatmap-header-cell text-left!"
+                 
                 >
                   FACILITY / REGION
                 </div>

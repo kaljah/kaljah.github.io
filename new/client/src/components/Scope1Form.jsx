@@ -301,22 +301,10 @@ const Scope1Form = () => {
 
     return (
       <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          width: "100%",
-          gap: "8px",
-        }}
+        className="flex! items-center! justify-between! w-full! gap-[8px]!"
       >
         <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "6px",
-            flex: 1,
-            minWidth: 0,
-          }}
+          className="flex! items-center! gap-[6px]! flex-1! min-w-0!"
         >
           <span
             style={{

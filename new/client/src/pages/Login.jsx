@@ -306,7 +306,7 @@ const Login = () => {
               )}
 
               <form onSubmit={handleForgotPassword}>
-                <div className="form-group" style={{ marginBottom: '16px' }}>
+                <div className="form-group mb-[16px]!">
                   <div className="input-wrapper">
                     <span className="input-icon">
                       <svg

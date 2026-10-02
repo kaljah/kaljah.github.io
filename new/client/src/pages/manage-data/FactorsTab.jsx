@@ -6,9 +6,9 @@ import PaginationControls from './PaginationControls';
 // Extracted from ManageData.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const FactorsTab = ({ ITEMS_PER_PAGE, currentPage, editingFactorId, factorForm, filteredFactors, handleArchiveFactor, handleDeleteFactor, handleEditFactor, handleFactorChange, handleSaveFactor, setCurrentPage, setEditingFactorId, setFactorForm, setImportModal, setWorkbench, workbench }) => (
 <div className="manage-card glass-panel">
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px' }}>
+                                <div className="flex! justify-between! items-start! mb-[32px]!">
                                     <div>
-                                        <h2 style={{ marginBottom: '8px', fontWeight: 700 }}>Custom Emission Factors</h2>
+                                        <h2 className="mb-[8px]! font-bold!">Custom Emission Factors</h2>
                                         <p style={{ color: 'var(--text-secondary)', margin: 0 }}>Define custom factors for specialized equipment.</p>
                                     </div>
                                     <button 
@@ -191,7 +191,7 @@ const FactorsTab = ({ ITEMS_PER_PAGE, currentPage, editingFactorId, factorForm, 
                                     </button>
                                 </div>
 
-                                <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+                                <div className="flex! gap-[10px]! mt-[20px]!">
                                     <button className="action-btn" onClick={handleSaveFactor}>
                                         {editingFactorId ? 'Update Factor' : 'Save Factor'}
                                     </button>
@@ -211,8 +211,8 @@ const FactorsTab = ({ ITEMS_PER_PAGE, currentPage, editingFactorId, factorForm, 
                                         </button>
                                     )}
                                 </div>
-                                <div className="table-container" style={{ marginTop: '40px' }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                                <div className="table-container mt-[40px]!">
+                                    <div className="flex! justify-between! items-center! mb-[16px]!">
                                         <h3 style={{ margin: 0 }}>Custom Factors</h3>
                                     </div>
                                     <table className="data-table">

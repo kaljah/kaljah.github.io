@@ -861,12 +861,7 @@ export default function ColumnMappingWizard({
                     }}
                   >
                     <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "8px",
-                        marginBottom: "8px",
-                      }}
+                      className="flex! items-center! gap-[8px]! mb-[8px]!"
                     >
                       <div
                         style={{
@@ -910,12 +905,7 @@ export default function ColumnMappingWizard({
                     }}
                   >
                     <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "8px",
-                        marginBottom: "8px",
-                      }}
+                      className="flex! items-center! gap-[8px]! mb-[8px]!"
                     >
                       <div
                         style={{
@@ -980,12 +970,7 @@ export default function ColumnMappingWizard({
                     }}
                   >
                     <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "8px",
-                        marginBottom: "8px",
-                      }}
+                      className="flex! items-center! gap-[8px]! mb-[8px]!"
                     >
                       <div
                         style={{
@@ -1029,12 +1014,7 @@ export default function ColumnMappingWizard({
                     }}
                   >
                     <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "8px",
-                        marginBottom: "8px",
-                      }}
+                      className="flex! items-center! gap-[8px]! mb-[8px]!"
                     >
                       <div
                         style={{
@@ -1065,7 +1045,7 @@ export default function ColumnMappingWizard({
                 </div>
 
                 {selectedProcessScope === "specific" && (
-                  <div style={{ marginTop: "12px" }}>
+                  <div className="mt-[12px]!">
                     <label
                       style={{
                         display: "block",
@@ -1132,7 +1112,7 @@ export default function ColumnMappingWizard({
           <div className="cmw-body">
               <div className="cmw-config-section" style={{ marginBottom: '20px', padding: '16px', border: '1px solid var(--border-color)', borderRadius: '8px', background: 'var(--bg-secondary)' }}>
                 <h3 style={{ marginBottom: '8px', fontSize: '1rem', color: 'var(--text-primary)' }}>Import Settings</h3>
-                <label className="cmw-config-label" style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                <label className="cmw-config-label flex! items-center! gap-[8px]! cursor-pointer!">
                   <input 
                     type="checkbox" 
                     checked={overwriteDuplicates} 
@@ -1142,7 +1122,7 @@ export default function ColumnMappingWizard({
                     ? "Overwrite existing Regions with the same name" 
                     : "Overwrite existing records with matching facility, date, and source"}
                 </label>
-                <p className="cmw-hint" style={{ marginTop: '4px', marginLeft: '24px' }}>
+                <p className="cmw-hint mt-[4px]! ml-[24px]!">
                   {type === "facilities" 
                     ? "If unchecked, duplicate regions will be skipped with an error." 
                     : "If unchecked, duplicate records will be skipped to prevent double-counting."}
@@ -1163,7 +1143,7 @@ export default function ColumnMappingWizard({
                 ref={fileInputRef}
                 type="file"
                 accept=".csv,.xlsx"
-                style={{ display: "none" }}
+                className="hidden!"
                 onChange={onFileInputChange}
               />
               <div className="cmw-dropzone-icon">
@@ -1308,8 +1288,8 @@ export default function ColumnMappingWizard({
               {showOptional && (
                 <>
                   <div
-                    className="cmw-mapping-group-label"
-                    style={{ marginTop: "12px" }}
+                    className="cmw-mapping-group-label mt-[12px]!"
+                   
                   >
                     Optional Fields
                   </div>

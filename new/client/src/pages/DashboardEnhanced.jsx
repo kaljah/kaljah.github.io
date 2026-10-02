@@ -721,7 +721,7 @@ const DashboardEnhanced = () => {
     );
 
     setTopBarRight(
-      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+      <div className="flex! items-center! gap-[10px]!">
         {/* GWP horizon */}
         <SegmentedControl
           label="GWP horizon"
@@ -923,9 +923,9 @@ const DashboardEnhanced = () => {
 
         {/* Hero Overview Card */}
         <div className="card hero-card glass-panel">
-          <div className="hero-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div className="hero-header flex! justify-between! items-center!">
             <h2 className="hero-title">Emissions Overview</h2>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div className="flex! items-center! gap-[10px]!">
               <div className="location-badge">
                 {currentRegion !== "all"
                   ? facilities.find((f) => f.id.toString() === currentRegion)
@@ -982,7 +982,7 @@ const DashboardEnhanced = () => {
                 )}
               </div>
               {goal && goal.target_amount > 0 && (
-                <div className="stat-sublabel" style={{ marginTop: "8px" }}>
+                <div className="stat-sublabel mt-[8px]!">
                   <span
                     className={`goal-progress-badge ${
                       stats.totalEmissions / goal.target_amount > 1
@@ -1253,13 +1253,8 @@ const DashboardEnhanced = () => {
               </div>
             </div>
             <div
-              className="chart-container"
-              style={{
-                height: "360px",
-                width: "100%",
-                minWidth: 0,
-                position: "relative",
-              }}
+              className="chart-container h-[360px]! w-full! min-w-0! relative!"
+             
             >
               <LineChartWrapper
                 data={trendData}
@@ -1311,13 +1306,8 @@ const DashboardEnhanced = () => {
                 <h3 className="donut-title activity">Emissions by Activity</h3>
               </div>
               <div
-                className="chart-container"
-                style={{
-                  height: "170px",
-                  width: "100%",
-                  minWidth: 0,
-                  position: "relative",
-                }}
+                className="chart-container h-[170px]! w-full! min-w-0! relative!"
+               
               >
                 <PieChartWrapper
                   data={activityChartData}
@@ -1332,13 +1322,8 @@ const DashboardEnhanced = () => {
                 <h3 className="donut-title source">Emissions by Source</h3>
               </div>
               <div
-                className="chart-container"
-                style={{
-                  height: "170px",
-                  width: "100%",
-                  minWidth: 0,
-                  position: "relative",
-                }}
+                className="chart-container h-[170px]! w-full! min-w-0! relative!"
+               
               >
                 <PieChartWrapper
                   data={sourceChartData}
@@ -1354,7 +1339,7 @@ const DashboardEnhanced = () => {
         {/* SBTi Trajectory Pathway - Full Width Banner */}
         {sbtiData && sbtiData.trajectory && sbtiData.trajectory.length > 0 && (
           <div className="card full-width-card glass-panel" style={{ padding: '24px', borderRadius: '20px' }}>
-            <div className="card-header-row" style={{ marginBottom: '16px' }}>
+            <div className="card-header-row mb-[16px]!">
               <div>
                 <h3 className="card-subtitle" style={{ fontSize: '1.15rem', fontWeight: 700 }}>
                   {sbtiData.pathway_label || "Decarbonization Trajectory"}
@@ -1383,7 +1368,7 @@ const DashboardEnhanced = () => {
                 View Full SBTi Dashboard →
               </button>
             </div>
-            <div className="chart-container" style={{ height: "320px", width: "100%" }}>
+            <div className="chart-container h-[320px]! w-full!">
               <LineChartWrapper
                 data={sbtiData.trajectory}
                 xAxisKey="year"
@@ -1429,7 +1414,7 @@ const DashboardEnhanced = () => {
               marginBottom: categoricalCollapsed ? "0" : "24px",
             }}
           >
-            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <div className="flex! items-center! gap-[12px]!">
               <h3 className="card-subtitle">Categorical Emissions Overview</h3>
               <div className="card-info-badge">
                 <Hexagon size="14" strokeWidth="2" aria-hidden="true" />
@@ -1536,7 +1521,7 @@ const DashboardEnhanced = () => {
               <div
                 className={`collapsible-body-wrapper ${detailedBreakdownCollapsed ? "collapsed" : ""}`}
               >
-                <div className="table-container" style={{ marginTop: "16px" }}>
+                <div className="table-container mt-[16px]!">
                   <table className="data-table">
                     <thead>
                       <tr>
@@ -1566,19 +1551,19 @@ const DashboardEnhanced = () => {
                       {flaringData && (flaringData.routine_flaring?.volume_knm3 > 0 || flaringData.non_routine_flaring?.volume_knm3 > 0 || flaringData.safety_flaring?.volume_knm3 > 0) && (
                         <>
                           <tr className="detail-row" style={{ fontSize: "0.82rem", color: "#64748b", background: "rgba(248, 250, 252, 0.5)" }}>
-                            <td style={{ paddingLeft: "36px" }}>↳ Routine ({flaringData.routine_flaring?.percentage ?? 0}%)</td>
+                            <td className="pl-[36px]!">↳ Routine ({flaringData.routine_flaring?.percentage ?? 0}%)</td>
                             <td className="text-right font-normal">
                               {formatCompactNumber(flaringData.routine_flaring?.tco2e ?? 0)}
                             </td>
                           </tr>
                           <tr className="detail-row" style={{ fontSize: "0.82rem", color: "#64748b", background: "rgba(248, 250, 252, 0.5)" }}>
-                            <td style={{ paddingLeft: "36px" }}>↳ Non-Routine ({flaringData.non_routine_flaring?.percentage ?? 0}%)</td>
+                            <td className="pl-[36px]!">↳ Non-Routine ({flaringData.non_routine_flaring?.percentage ?? 0}%)</td>
                             <td className="text-right font-normal">
                               {formatCompactNumber(flaringData.non_routine_flaring?.tco2e ?? 0)}
                             </td>
                           </tr>
                           <tr className="detail-row" style={{ fontSize: "0.82rem", color: "#64748b", background: "rgba(248, 250, 252, 0.5)" }}>
-                            <td style={{ paddingLeft: "36px" }}>↳ Safety &amp; Purge ({flaringData.safety_flaring?.percentage ?? 0}%)</td>
+                            <td className="pl-[36px]!">↳ Safety &amp; Purge ({flaringData.safety_flaring?.percentage ?? 0}%)</td>
                             <td className="text-right font-normal">
                               {formatCompactNumber(flaringData.safety_flaring?.tco2e ?? 0)}
                             </td>

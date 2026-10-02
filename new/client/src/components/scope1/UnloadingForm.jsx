@@ -68,7 +68,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
   }, [currentTier]);
 
   return (
-    <div className="unloading-form" style={{ marginTop: "15px" }}>
+    <div className="unloading-form mt-[15px]!">
       {/* HEADER & TIER BADGE */}
 
       {/* ========================================================================= */}
@@ -309,7 +309,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
       {isTier3 && (
         <div>
           {/* METHOD SELECTION TABS */}
-          <div style={{ marginBottom: "16px" }}>
+          <div className="mb-[16px]!">
             <Segmented
               ariaLabel="Engineering method"
               value={activeMethod}

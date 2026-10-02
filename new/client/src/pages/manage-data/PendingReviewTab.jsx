@@ -12,8 +12,8 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                         onClick={() => !isProcessingBatch && setRejectionModal(prev => ({ ...prev, isOpen: false }))}
                                     >
                                         <div className="rejection-modal" onClick={e => e.stopPropagation()}>
-                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                            <div className="flex! justify-between! items-center!">
+                                                <div className="flex! items-center! gap-[12px]!">
                                                     <div style={{ 
                                                         width: 42, 
                                                         height: 42, 
@@ -57,7 +57,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                                 gap: '10px', 
                                                 alignItems: 'flex-start' 
                                             }}>
-                                                <AlertCircle size={16} style={{ flexShrink: 0, marginTop: '2px' }} />
+                                                <AlertCircle size={16} className="shrink-0! mt-[2px]!" />
                                                 <span>
                                                     The record will be marked Rejected and excluded from totals; it is kept for the audit trail. The submitter is notified with your reason.
                                                 </span>
@@ -111,7 +111,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                                 />
                                             </div>
 
-                                            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '4px' }}>
+                                            <div className="flex! justify-end! gap-[12px]! mt-[4px]!">
                                                 <button
                                                     type="button"
                                                     className="btn-ghost"
@@ -137,9 +137,9 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                 )}
 
                                 {/* Top Header */}
-                                <div className="manage-tab-header" style={{ marginBottom: 0 }}>
+                                <div className="manage-tab-header mb-[0px]!">
                                     <div>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '6px' }}>
+                                        <div className="flex! items-center! gap-[12px]! mb-[6px]!">
                                             <h2 style={{ margin: 0, fontWeight: 700, letterSpacing: '-0.02em' }}>Pending Review & Approvals</h2>
                                             {pendingMetrics.totalCount > 0 && (
                                                 <span style={{ 
@@ -159,7 +159,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                             Maker-Checker Segregation: Audit and approve bulk-imported emissions data prior to greenhouse gas inventory inclusion.
                                         </p>
                                     </div>
-                                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                                    <div className="flex! gap-[10px]! items-center!">
                                         <button 
                                             className="btn-ghost" 
                                             style={{ 
@@ -299,7 +299,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                         </button>
                                     </div>
 
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+                                    <div className="flex! items-center! gap-[12px]! flex-wrap!">
                                         {/* QA Filter Pills */}
                                         <div style={{ display: 'inline-flex', background: 'rgba(15, 23, 42, 0.05)', borderRadius: '10px', padding: '3px', gap: '3px' }}>
                                             <button
@@ -371,7 +371,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                 {/* Floating Sticky Batch Action Bar */}
                                 {selectedPendingKeys.size > 0 && (
                                     <div className="pending-batch-bar">
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
+                                        <div className="flex! items-center! gap-[14px]! flex-wrap!">
                                             <span style={{ fontWeight: 700, fontSize: '0.94rem', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
                                                 <CheckSquare size={18} color="#38bdf8" />
                                                 {selectedPendingKeys.size} record{selectedPendingKeys.size > 1 ? 's' : ''} selected
@@ -451,7 +451,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                 ) : (
                                     <div className="pending-table-card">
                                         <div className="pending-table-header">
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                            <div className="flex! items-center! gap-[10px]!">
                                                 <h3 style={{ margin: 0, fontSize: '1.02rem', fontWeight: 700 }}>
                                                     {pendingScopeFilter === 'all' 
                                                         ? 'All Pending Import Records' 
@@ -474,7 +474,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                                 )}
                                             </div>
 
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                            <div className="flex! items-center! gap-[8px]!">
                                                 <button
                                                     className="btn-ghost"
                                                     style={{ 
@@ -507,22 +507,22 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                             <table className="pending-table">
                                                 <thead>
                                                     <tr>
-                                                        <th style={{ width: 44, textAlign: 'center' }}>
+                                                        <th className="w-[44px]! text-center!">
                                                             <input
                                                                 type="checkbox"
-                                                                style={{ cursor: 'pointer' }}
+                                                                className="cursor-pointer!"
                                                                 checked={filteredPendingRecords.length > 0 && filteredPendingRecords.every(r => selectedPendingKeys.has(r.key))}
                                                                 onChange={handleSelectAllPendingToggle}
                                                             />
                                                         </th>
-                                                        <th style={{ width: 80 }}>Ref ID</th>
-                                                        <th style={{ width: 90 }}>Scope</th>
-                                                        <th style={{ width: 100 }}>Period</th>
-                                                        <th style={{ minWidth: 150 }}>Facility</th>
-                                                        <th style={{ minWidth: 220 }}>Activity & Fuel / Category</th>
-                                                        <th style={{ width: 120, textAlign: 'right' }}>Emissions</th>
-                                                        <th style={{ width: 120 }}>QA Status</th>
-                                                        <th style={{ width: 110, textAlign: 'center' }}>Review Action</th>
+                                                        <th className="w-[80px]!">Ref ID</th>
+                                                        <th className="w-[90px]!">Scope</th>
+                                                        <th className="w-[100px]!">Period</th>
+                                                        <th className="min-w-[150px]!">Facility</th>
+                                                        <th className="min-w-[220px]!">Activity & Fuel / Category</th>
+                                                        <th className="w-[120px]! text-right!">Emissions</th>
+                                                        <th className="w-[120px]!">QA Status</th>
+                                                        <th className="w-[110px]! text-center!">Review Action</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -532,10 +532,10 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
 
                                                         return (
                                                             <tr key={item.key} className={isSelected ? 'row-selected' : ''}>
-                                                                <td style={{ textAlign: 'center' }}>
+                                                                <td className="text-center!">
                                                                     <input
                                                                         type="checkbox"
-                                                                        style={{ cursor: 'pointer' }}
+                                                                        className="cursor-pointer!"
                                                                         checked={isSelected}
                                                                         onChange={() => handleToggleSelectPending(item.key)}
                                                                     />
@@ -551,7 +551,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                                                     </span>
                                                                 </td>
                                                                 <td>
-                                                                    <span style={{ fontWeight: 500 }}>
+                                                                    <span className="font-medium!">
                                                                         {item.date}
                                                                     </span>
                                                                 </td>
@@ -565,7 +565,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                                                         {item.desc}
                                                                     </span>
                                                                 </td>
-                                                                <td style={{ textAlign: 'right' }}>
+                                                                <td className="text-right!">
                                                                     <span style={{ fontWeight: 700, fontSize: '0.92rem', color: 'var(--text-primary)' }}>
                                                                         {item.tco2e.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                                                     </span>
@@ -587,8 +587,8 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                                                         </span>
                                                                     )}
                                                                 </td>
-                                                                <td style={{ textAlign: 'center' }}>
-                                                                    <div className="review-actions-group" style={{ justifyContent: 'center' }}>
+                                                                <td className="text-center!">
+                                                                    <div className="review-actions-group justify-center!">
                                                                         {item.created_by && String(item.created_by) === String(user?.id) ? (
                                                                             <span 
                                                                                 className="badge-maker"

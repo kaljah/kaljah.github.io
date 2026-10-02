@@ -10,7 +10,7 @@ const LoadingSpinner = ({
 
   // plain element, not a component defined during render (it would remount on every render)
   const content = (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem' }}>
+    <div className="flex! flex-col! items-center! gap-[1.5rem]!">
       <div className={`stylish-theme-spinner ${sizeClass}`}>
         <div className="spinner-ring"></div>
         <div className="spinner-core"></div>

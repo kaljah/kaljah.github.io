@@ -414,7 +414,7 @@ const ReferenceData = () => {
           style={{ margin: "0 0 16px", padding: "12px 16px", borderRadius: 8, background: "#fef2f2",
                    border: "1px solid #fecaca", color: "#991b1b", display: "flex", gap: 12, alignItems: "center" }}
         >
-          <div style={{ flex: 1 }}>{loadErrors.map((e) => <div key={e}>{e}</div>)}</div>
+          <div className="flex-1!">{loadErrors.map((e) => <div key={e}>{e}</div>)}</div>
           <button type="button" className="btn-ghost" onClick={() => { setLoading(true); fetchData(); }}>Retry</button>
         </div>
       )}
@@ -529,7 +529,7 @@ const ReferenceData = () => {
                                 </>
                               )}
                               <td>
-                                <div style={{ display: "flex", gap: "6px" }}>
+                                <div className="flex! gap-[6px]!">
                                   {f.usage.map((u, uIdx) => (
                                     <span
                                       key={uIdx}

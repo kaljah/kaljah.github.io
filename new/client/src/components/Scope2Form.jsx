@@ -398,7 +398,7 @@ const Scope2Form = () => {
         </h2>
 
         {/* 1. IDENTITY & LOCATION */}
-        <div style={{ marginBottom: "30px" }}>
+        <div className="mb-[30px]!">
           <h4 className="section-title">1. IDENTITY &amp; LOCATION</h4>
           <div className="form-grid-4">
             <div className="input-group">
@@ -466,7 +466,7 @@ const Scope2Form = () => {
         </div>
 
         {/* 2. GRID & SOURCE DETAILS */}
-        <div style={{ marginBottom: "30px" }}>
+        <div className="mb-[30px]!">
           <h4 className="section-title">2. GRID &amp; SOURCE DETAILS</h4>
           <div className="form-grid-2">
             <div className="input-group">
@@ -571,7 +571,7 @@ const Scope2Form = () => {
         </div>
 
         {/* 3. ACTIVITY DATA */}
-        <div style={{ marginBottom: "10px" }}>
+        <div className="mb-[10px]!">
           <h4 className="section-title">3. ACTIVITY DATA</h4>
           <div className="form-grid-2">
             <div className="input-group">
@@ -600,12 +600,7 @@ const Scope2Form = () => {
         </div>
 
         <div
-          style={{
-            display: "flex",
-            gap: "12px",
-            marginTop: "24px",
-            justifyContent: "flex-end",
-          }}
+          className="flex! gap-[12px]! mt-[24px]! justify-end!"
         >
           <button
             className="action-btn secondary"
@@ -642,7 +637,7 @@ const Scope2Form = () => {
         />
       )}
 
-      <div className="calculator-grid-container" style={{ marginTop: "30px" }}>
+      <div className="calculator-grid-container mt-[30px]!">
         <div
           className="table-controls"
           style={{
@@ -656,14 +651,9 @@ const Scope2Form = () => {
             Recent Scope 2 (Electricity) Entries
           </strong>
           <button
-            className="action-btn secondary"
+            className="action-btn secondary flex! items-center! gap-[8px]! whitespace-nowrap!"
             onClick={() => setShowWizard(true)}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              whiteSpace: "nowrap",
-            }}
+           
           >
             ↑ Bulk Import (Wizard)
           </button>
@@ -695,13 +685,13 @@ const Scope2Form = () => {
                 >
                   CO₂e 95% CI (±%)
                 </th>
-                <th style={{ textAlign: "center" }}>Actions</th>
+                <th className="text-center!">Actions</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan="11" style={{ textAlign: "center" }}>
+                  <td colSpan="11" className="text-center!">
                     <LoadingSpinner />
                   </td>
                 </tr>
@@ -754,7 +744,7 @@ const Scope2Form = () => {
                   return (
                     <tr key={entry.id}>
                       <td>{entry.month ? `${entry.year}-${String(entry.month).padStart(2, "0")}` : entry.year}</td>
-                      <td style={{ fontWeight: 500 }}>
+                      <td className="font-medium!">
                         {facilities.find((f) => f.id === entry.facility_id)
                           ?.name || "Unknown"}
                       </td>
@@ -834,13 +824,9 @@ const Scope2Form = () => {
                           </span>
                         )}
                       </td>
-                      <td style={{ textAlign: "center" }}>
+                      <td className="text-center!">
                         <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            gap: "8px",
-                          }}
+                          className="flex! justify-center! gap-[8px]!"
                         >
                           <button
                             className="icon-button"
@@ -875,7 +861,7 @@ const Scope2Form = () => {
               <tr style={{ backgroundColor: "#f9fafb", fontWeight: "bold" }}>
                 <td
                   colSpan="7"
-                  style={{ textAlign: "right", paddingRight: "15px" }}
+                  className="text-right! pr-[15px]!"
                 >
                   Total (Page):
                 </td>

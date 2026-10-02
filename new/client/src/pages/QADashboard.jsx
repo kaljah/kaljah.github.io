@@ -417,9 +417,9 @@ export default function QADashboard() {
                                                     <td>{s.year || '-'}</td>
                                                     <td><span className="qa-sample-tag">{s.process || '—'}</span></td>
                                                     <td>
-                                                        {s.fuel && <span style={{ marginRight: '8px' }}>Fuel: <strong>{s.fuel}</strong></span>}
+                                                        {s.fuel && <span className="mr-[8px]!">Fuel: <strong>{s.fuel}</strong></span>}
                                                         {s.quantity !== undefined && <span>Qty: <strong>{s.quantity === null ? 'None' : s.quantity}</strong></span>}
-                                                        {s.co2e !== undefined && <span style={{ marginLeft: '8px' }}>CO₂e: <strong>{s.co2e === null ? 'None' : s.co2e}</strong></span>}
+                                                        {s.co2e !== undefined && <span className="ml-[8px]!">CO₂e: <strong>{s.co2e === null ? 'None' : s.co2e}</strong></span>}
                                                     </td>
                                                 </>
                                             )}
@@ -635,7 +635,7 @@ export default function QADashboard() {
                     <div className="qa-panel-card">
                         {/* Table Toolbar */}
                         <div className="qa-table-toolbar">
-                            <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+                            <div className="flex! gap-[12px]! items-center! flex-wrap!">
                                 {/* Search Box */}
                                 <div className="qa-search-box">
                                     <Search size={14} />
@@ -705,7 +705,7 @@ export default function QADashboard() {
                                         onClick={() => handleBulkResolve('Verified')}
                                         disabled={resolving}
                                     >
-                                        <Check size={13} style={{ marginRight: 4 }} />
+                                        <Check size={13} className="mr-[4px]!" />
                                         {resolving ? '…' : 'Approve Selected'}
                                     </button>
                                     <button
@@ -714,7 +714,7 @@ export default function QADashboard() {
                                         onClick={() => handleBulkResolve('Rejected')}
                                         disabled={resolving}
                                     >
-                                        <X size={13} style={{ marginRight: 4 }} />
+                                        <X size={13} className="mr-[4px]!" />
                                         {resolving ? '…' : 'Reject Flags'}
                                     </button>
                                     <button
@@ -784,7 +784,7 @@ export default function QADashboard() {
                                     <table className="qa-table">
                                         <thead>
                                             <tr>
-                                                <th className="qa-th" style={{ width: '40px' }}>
+                                                <th className="qa-th w-[40px]!">
                                                     <input
                                                         type="checkbox"
                                                         aria-label="Select all records"
@@ -802,7 +802,7 @@ export default function QADashboard() {
                                                 <th className="qa-th">QA Flag Reason</th>
                                                 <th className="qa-th">Emissions (tCO₂e)</th>
                                                 <th className="qa-th">Status</th>
-                                                <th className="qa-th" style={{ textAlign: 'right' }}>Actions</th>
+                                                <th className="qa-th text-right!">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -853,8 +853,8 @@ export default function QADashboard() {
                                                                 {record.status || 'Pending Review'}
                                                             </span>
                                                         </td>
-                                                        <td className="qa-td" style={{ textAlign: 'right' }}>
-                                                            <div style={{ display: 'inline-flex', gap: '6px' }}>
+                                                        <td className="qa-td text-right!">
+                                                            <div className="inline-flex! gap-[6px]!">
                                                                 <button
                                                                     className="qa-btn-inline qa-btn-approve"
                                                                     onClick={() => handleSingleResolve(record.scope, record.id, 'Verified')}
@@ -892,7 +892,7 @@ export default function QADashboard() {
                                                 : `Showing ${offset + 1}–${Math.min(offset + returned_count, total_flagged_count)} of ${total_flagged_count} flagged records`
                                             }
                                         </span>
-                                        <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                                        <div className="flex! gap-[6px]! items-center!">
                                             <button
                                                 className="qa-btn-action qa-btn-secondary"
                                                 style={{ height: '32px', padding: '0 10px' }}
@@ -928,7 +928,7 @@ export default function QADashboard() {
                         <div className="qa-diagnostics-container">
                             {/* Completeness by Dimension */}
                             <div className="qa-completeness-card">
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                                <div className="flex! justify-between! items-center! mb-[16px]!">
                                     <div>
                                         <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 700, color: '#0f172a' }}>
                                             Inventory Completeness by Attribute
@@ -937,7 +937,7 @@ export default function QADashboard() {
                                             Evaluates key GHG Protocol and ISO 14064 required fields across all reported records.
                                         </p>
                                     </div>
-                                    <div style={{ textAlign: 'right' }}>
+                                    <div className="text-right!">
                                         <span style={{ fontSize: '1.5rem', fontWeight: 800, color: healthColor }}>
                                             {completeness}%
                                         </span>
@@ -1046,7 +1046,7 @@ export default function QADashboard() {
                         <div className="qa-uncertainty-container">
                             {/* Standards Formula Card */}
                             <div className="qa-formula-card">
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <div className="flex! justify-between! items-center!">
                                     <div>
                                         <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700, color: '#0f172a' }}>
                                             IPCC Tier 1 Error Propagation (Square Root of Sum of Squares)
@@ -1077,7 +1077,7 @@ export default function QADashboard() {
                             <div className="qa-scopes-unc-grid">
                                 {/* Scope 1 */}
                                 <div className="qa-scope-unc-card">
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <div className="flex! justify-between! items-center!">
                                         <span className="qa-scope-badge scope-1">Scope 1 (Direct)</span>
                                         <Flame size={16} color="#059669" />
                                     </div>
@@ -1094,7 +1094,7 @@ export default function QADashboard() {
 
                                 {/* Scope 2 */}
                                 <div className="qa-scope-unc-card">
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <div className="flex! justify-between! items-center!">
                                         <span className="qa-scope-badge scope-2">Scope 2 (Indirect)</span>
                                         <Zap size={16} color="#2563eb" />
                                     </div>
@@ -1111,7 +1111,7 @@ export default function QADashboard() {
 
                                 {/* Scope 3 */}
                                 <div className="qa-scope-unc-card">
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <div className="flex! justify-between! items-center!">
                                         <span className="qa-scope-badge scope-3">Scope 3 (Value Chain)</span>
                                         <Layers size={16} color="#7c3aed" />
                                     </div>
@@ -1140,7 +1140,7 @@ export default function QADashboard() {
                     <p style={{ margin: "0 0 20px 0", color: "#475569", fontSize: "0.95rem", lineHeight: 1.5 }}>
                         Are you sure you want to mark <strong>{selectedIds.size}</strong> selected record(s) as <strong>{resolveModal.resolution}</strong>?
                     </p>
-                    <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px" }}>
+                    <div className="flex! justify-end! gap-[10px]!">
                         <button
                             type="button"
                             style={{

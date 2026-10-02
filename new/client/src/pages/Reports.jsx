@@ -508,7 +508,7 @@ const Reports = () => {
           />
 
           {/* NEW: Create Report Card (Matches Legacy UI) */}
-          <div className="create-report-card" style={{ marginBottom: "24px" }}>
+          <div className="create-report-card mb-[24px]!">
             <div className="card-header">
               <div className="card-icon">
                 <svg
@@ -631,12 +631,7 @@ const Reports = () => {
 
             {/* Chips */}
             <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: "8px",
-                marginTop: "15px",
-              }}
+              className="flex! flex-wrap! gap-[8px]! mt-[15px]!"
             >
               {reportSelectedRegions.map((rId) => {
                 const rName =
@@ -851,7 +846,7 @@ const Reports = () => {
           <div className="filters-container">
             <div className="search-input-wrapper">
               <label className="input-label">Search</label>
-              <div style={{ position: "relative" }}>
+              <div className="relative!">
                 <input
                   type="text"
                   className="search-input"
@@ -952,7 +947,7 @@ const Reports = () => {
                   <div className="cell">{row.facility_name || "N/A"}</div>
                   <div className="cell">{row.group_name || "N/A"}</div>
                   <div className="cell">{row.equipment_id || "N/A"}</div>
-                  <div className="cell" style={{ fontWeight: 500 }}>
+                  <div className="cell font-medium!">
                     {row.process_type}
                   </div>
                   <div className="cell">{row.fuel || "N/A"}</div>
@@ -1033,10 +1028,10 @@ const Reports = () => {
               <h2>Generate Executive GHG Report</h2>
               <button className="close-btn" onClick={() => setShowConfigModal(false)}>×</button>
             </div>
-            <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div className="modal-body flex! flex-col! gap-[16px]!">
               <div className="input-group">
-                <label style={{ fontWeight: 600 }}>Select Report Format</label>
-                <div style={{ display: 'flex', gap: '10px', marginTop: '6px' }}>
+                <label className="font-semibold!">Select Report Format</label>
+                <div className="flex! gap-[10px]! mt-[6px]!">
                   <button
                     type="button"
                     onClick={() => setReportFormat("master")}
@@ -1133,7 +1128,7 @@ const Reports = () => {
                 </>
               )}
             </div>
-            <div className="modal-footer" style={{ marginTop: '24px', display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
+            <div className="modal-footer mt-[24px]! flex! justify-end! gap-[12px]!">
               <button className="btn-secondary" onClick={() => setShowConfigModal(false)}>Cancel</button>
               <button className="btn-primary" onClick={handleGenerateModalReport} disabled={loading} style={{ background: reportFormat === 'master' ? 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)' : undefined, border: 'none' }}>
                 {loading ? "Generating..." : reportFormat === 'master' ? "Download Master Report (PDF)" : "Generate ISO PDF"}

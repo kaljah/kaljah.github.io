@@ -246,7 +246,7 @@ const Scope1ProcessSection = ({ activePresetId, currentProcessValue, dataSourceR
                                 <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, color: "#374151", marginBottom: "4px" }}>
                                   HHV
                                 </label>
-                                <div style={{ display: "flex", gap: "6px" }}>
+                                <div className="flex! gap-[6px]!">
                                   <input
                                     type="number"
                                     step="any"
@@ -315,8 +315,8 @@ const Scope1ProcessSection = ({ activePresetId, currentProcessValue, dataSourceR
                       </>
                     ) : (
                       <div>
-                        <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-                          <div style={{ flex: 1 }}>
+                        <div className="flex! gap-[8px]! items-center!">
+                          <div className="flex-1!">
                             <CustomDropdown
                               options={fuelOptions}
                               value={formData.fuel || ""}
@@ -354,7 +354,7 @@ const Scope1ProcessSection = ({ activePresetId, currentProcessValue, dataSourceR
                         placeholder="Base factor (optional)"
                         renderOption={renderFactorOption}
                       />
-                      <div style={{ marginTop: "10px", marginBottom: "10px" }}>
+                      <div className="mt-[10px]! mb-[10px]!">
                         <button
                           className="gas-calc-btn btn-secondary"
                           onClick={() => setShowGasCalc(true)}
@@ -408,16 +408,16 @@ const Scope1ProcessSection = ({ activePresetId, currentProcessValue, dataSourceR
                           .map((gas) => (
                             <div
                               key={gas}
-                              className="input-group"
-                              style={{ marginBottom: 0 }}
+                              className="input-group mb-[0px]!"
+                             
                             >
                               <label style={{ fontSize: "0.75rem" }}>
                                 {gas.toUpperCase()} Factor
                               </label>
-                              <div style={{ display: "flex", gap: "5px" }}>
+                              <div className="flex! gap-[5px]!">
                                 <input
                                   type="number"
-                                  className="mole-input"
+                                  className="mole-input flex-1!"
                                   placeholder="Value"
                                   value={specFactors[gas] || ""}
                                   onChange={(e) =>
@@ -426,7 +426,7 @@ const Scope1ProcessSection = ({ activePresetId, currentProcessValue, dataSourceR
                                       [gas]: e.target.value,
                                     }))
                                   }
-                                  style={{ flex: 1 }}
+                                 
                                 />
                                 <NativeSelect
                                   className="component-select"

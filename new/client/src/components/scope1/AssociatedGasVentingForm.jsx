@@ -144,7 +144,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
   const isGorHighAnomaly = isTier2 && gorScfBbl > 100000;
 
   return (
-    <div className="associated-gas-venting-form" style={{ marginTop: "15px" }}>
+    <div className="associated-gas-venting-form mt-[15px]!">
       {/* HEADER & TIER SELECTOR */}
 
       {/* TIER 1 VIEW: Table 6-8 Regional Basins */}
@@ -176,13 +176,13 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
                 Oil production
                 <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
               </label>
-              <div style={{ display: "flex", gap: "8px" }}>
+              <div className="flex! gap-[8px]!">
                 <input
                   type="number"
                   min="0"
                   step="any"
-                  className="mole-input"
-                  style={{ flex: 1 }}
+                  className="mole-input flex-1!"
+                 
                   placeholder="e.g. 5000"
                   value={data.oil_production !== undefined ? data.oil_production : data.amount || ""}
                   onChange={(e) => {
@@ -192,8 +192,8 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
                   required
                 />
                 <NativeSelect
-                  className="mole-input"
-                  style={{ width: "130px" }}
+                  className="mole-input w-[130px]!"
+                 
                   value={data.oil_unit || data.unit || "bbl"}
                   onChange={(e) => {
                     onChange("oil_unit", e.target.value);
@@ -235,8 +235,8 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
               <span>Gas composition</span>
             </div>
 
-            <div className="form-grid-2" style={{ marginBottom: 0 }}>
-              <div className="input-group" style={{ marginBottom: 0 }}>
+            <div className="form-grid-2 mb-[0px]!">
+              <div className="input-group mb-[0px]!">
                 <label style={{ fontSize: "0.8rem" }}>CH₄ (mol %)</label>
                 <input
                   type="number"
@@ -249,7 +249,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
                   onChange={(e) => onChange("ch4_content", e.target.value)}
                 />
               </div>
-              <div className="input-group" style={{ marginBottom: 0 }}>
+              <div className="input-group mb-[0px]!">
                 <label style={{ fontSize: "0.8rem" }}>CO₂ (mol %)</label>
                 <input
                   type="number"
@@ -277,13 +277,13 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
                 Oil production
                 <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
               </label>
-              <div style={{ display: "flex", gap: "8px" }}>
+              <div className="flex! gap-[8px]!">
                 <input
                   type="number"
                   min="0"
                   step="any"
-                  className="mole-input"
-                  style={{ flex: 1 }}
+                  className="mole-input flex-1!"
+                 
                   placeholder="e.g. 500"
                   value={data.oil_production !== undefined ? data.oil_production : data.amount || ""}
                   onChange={(e) => {
@@ -293,8 +293,8 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
                   required
                 />
                 <NativeSelect
-                  className="mole-input"
-                  style={{ width: "150px" }}
+                  className="mole-input w-[150px]!"
+                 
                   value={data.oil_unit || "bbl/day"}
                   onChange={(e) => {
                     onChange("oil_unit", e.target.value);
@@ -315,21 +315,21 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
                 GOR
                 <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
               </label>
-              <div style={{ display: "flex", gap: "8px" }}>
+              <div className="flex! gap-[8px]!">
                 <input
                   type="number"
                   min="0"
                   step="any"
-                  className="mole-input"
-                  style={{ flex: 1 }}
+                  className="mole-input flex-1!"
+                 
                   placeholder="e.g. 800"
                   value={data.gor !== undefined ? data.gor : ""}
                   onChange={(e) => onChange("gor", e.target.value)}
                   required
                 />
                 <NativeSelect
-                  className="mole-input"
-                  style={{ width: "120px" }}
+                  className="mole-input w-[120px]!"
+                 
                   value={data.gor_unit || "scf/bbl"}
                   onChange={(e) => onChange("gor_unit", e.target.value)}
                 >
@@ -350,22 +350,22 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
                 Venting Duration
                 <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
               </label>
-              <div style={{ display: "flex", gap: "8px" }}>
+              <div className="flex! gap-[8px]!">
                 <input
                   type="number"
                   min="0"
                   max="366"
                   step="any"
-                  className="mole-input"
-                  style={{ flex: 1 }}
+                  className="mole-input flex-1!"
+                 
                   placeholder={`e.g. ${monthDays}`}
                   value={data.venting_duration !== undefined ? data.venting_duration : String(monthDays)}
                   onChange={(e) => onChange("venting_duration", e.target.value)}
                   required
                 />
                 <NativeSelect
-                  className="mole-input"
-                  style={{ width: "100px" }}
+                  className="mole-input w-[100px]!"
+                 
                   value={data.duration_unit || "days"}
                   onChange={(e) => onChange("duration_unit", e.target.value)}
                 >
@@ -422,8 +422,8 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
           </div>
 
           {/* Gas Volume Unit Selector for Partitioning */}
-          <div style={{ marginBottom: "10px", display: "flex", justifyContent: "flex-end" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          <div className="mb-[10px]! flex! justify-end!">
+            <div className="flex! items-center! gap-[6px]!">
               <span style={{ fontSize: "0.75rem", color: "#6b7280" }}>Unit</span>
               <NativeSelect
                 className="mole-input"
@@ -451,14 +451,9 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
             }}
           >
             <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                marginBottom: "12px",
-              }}
+              className="flex! items-center! justify-between! mb-[12px]!"
             >
-              <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+              <div className="flex! items-center! gap-[6px]!">
                 <Flame size={16} style={{ color: "#ea580c" }} />
                 <span style={{ fontWeight: 700, fontSize: "0.85rem", color: "#1e293b" }}>
                   Gas disposition
@@ -466,8 +461,8 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
               </div>
             </div>
 
-            <div className="form-grid-3" style={{ marginBottom: "12px" }}>
-              <div className="input-group" style={{ marginBottom: 0 }}>
+            <div className="form-grid-3 mb-[12px]!">
+              <div className="input-group mb-[0px]!">
                 <label style={{ fontSize: "0.78rem" }}>
                   Produced
                 </label>
@@ -479,7 +474,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
                 />
               </div>
 
-              <div className="input-group" style={{ marginBottom: 0 }}>
+              <div className="input-group mb-[0px]!">
                 <label style={{ fontSize: "0.78rem" }}>
                   Recovered ({gasVolUnit})
                 </label>
@@ -494,7 +489,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
                 />
               </div>
 
-              <div className="input-group" style={{ marginBottom: 0 }}>
+              <div className="input-group mb-[0px]!">
                 <label style={{ fontSize: "0.78rem" }}>
                   Flared ({gasVolUnit})
                 </label>
@@ -520,7 +515,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
       {isTier3 && (
         <div>
           {/* Measurement Mode Tabs */}
-          <div style={{ marginBottom: "16px" }}>
+          <div className="mb-[16px]!">
             <Segmented
               ariaLabel="Measurement mode"
               value={tier3Mode}
@@ -539,13 +534,13 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
                   Vent rate
                   <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
                 </label>
-                <div style={{ display: "flex", gap: "8px" }}>
+                <div className="flex! gap-[8px]!">
                   <input
                     type="number"
                     min="0"
                     step="any"
-                    className="mole-input"
-                    style={{ flex: 1 }}
+                    className="mole-input flex-1!"
+                   
                     placeholder="e.g. 150"
                     value={data.vent_rate !== undefined ? data.vent_rate : ""}
                     onChange={(e) => {
@@ -555,8 +550,8 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
                     required
                   />
                   <NativeSelect
-                    className="mole-input"
-                    style={{ width: "130px" }}
+                    className="mole-input w-[130px]!"
+                   
                     value={data.vent_rate_unit || "scfh"}
                     onChange={(e) => onChange("vent_rate_unit", e.target.value)}
                   >
@@ -592,13 +587,13 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
                 Total Measured Vent Gas Volume
                 <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
               </label>
-              <div style={{ display: "flex", gap: "8px" }}>
+              <div className="flex! gap-[8px]!">
                 <input
                   type="number"
                   min="0"
                   step="any"
-                  className="mole-input"
-                  style={{ flex: 1 }}
+                  className="mole-input flex-1!"
+                 
                   placeholder="e.g. 25000"
                   value={data.vent_volume !== undefined ? data.vent_volume : data.amount || ""}
                   onChange={(e) => {
@@ -608,8 +603,8 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
                   required
                 />
                 <NativeSelect
-                  className="mole-input"
-                  style={{ width: "140px" }}
+                  className="mole-input w-[140px]!"
+                 
                   value={data.vent_volume_unit || data.unit || "scf"}
                   onChange={(e) => {
                     onChange("vent_volume_unit", e.target.value);

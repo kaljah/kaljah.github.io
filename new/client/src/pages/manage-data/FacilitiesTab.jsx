@@ -7,7 +7,7 @@ import PaginationControls from './PaginationControls';
 // Extracted from ManageData.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const FacilitiesTab = ({ ACTIVITY_LABELS, HIERARCHY, ITEMS_PER_PAGE, currentPage, exportToCSV, facilities, facilityForm, filteredFacilities, handleAddFacility, handleDeleteFacility, handleFacilityChange, setCurrentPage, setFacilityForm, setImportModal, user }) => (
 <div className="manage-card glass-panel">
-                                <h2 style={{ marginBottom: '8px', fontWeight: 700 }}>Active Regions</h2>
+                                <h2 className="mb-[8px]! font-bold!">Active Regions</h2>
                                 <p style={{ color: 'var(--text-secondary)', marginBottom: '32px' }}>Manage operational regions and their boundaries.</p>
 
 
@@ -108,7 +108,7 @@ const FacilitiesTab = ({ ACTIVITY_LABELS, HIERARCHY, ITEMS_PER_PAGE, currentPage
                                             </div>
                                         </div>
 
-                                        <div style={{ display: 'flex', gap: '12px', marginTop: '20px' }}>
+                                        <div className="flex! gap-[12px]! mt-[20px]!">
                                             <button className="action-btn" onClick={handleAddFacility}>Add Region</button>
                                             <button className="action-btn" onClick={() => setImportModal({ isOpen: true, type: 'facilities' })} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', fontSize: '0.9rem', width: 'auto' }}>
                                                 <Upload size={16} /> Bulk Import (CSV)
@@ -118,7 +118,7 @@ const FacilitiesTab = ({ ACTIVITY_LABELS, HIERARCHY, ITEMS_PER_PAGE, currentPage
                                     </>
                                 )}
 
-                                <div className="table-container" style={{ marginTop: '40px' }}>
+                                <div className="table-container mt-[40px]!">
                                     <h3>Active Regions</h3>
                                     <table className="data-table">
                                         <thead>
@@ -130,7 +130,7 @@ const FacilitiesTab = ({ ACTIVITY_LABELS, HIERARCHY, ITEMS_PER_PAGE, currentPage
                                                 <th>Boundary</th>
                                                 <th>Segment</th>
                                                 <th>Coordinates</th>
-                                                {['admin', 'superuser'].includes(user?.role) && <th style={{ textAlign: 'center' }}>Actions</th>}
+                                                {['admin', 'superuser'].includes(user?.role) && <th className="text-center!">Actions</th>}
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -144,7 +144,7 @@ const FacilitiesTab = ({ ACTIVITY_LABELS, HIERARCHY, ITEMS_PER_PAGE, currentPage
                                                     <td>{f.segment || '-'}</td>
                                                     <td style={{ fontSize: '0.8rem' }}>{f.latitude ? `${f.latitude}, ${f.longitude}` : 'Not Set'}</td>
                                                     {['admin', 'superuser'].includes(user?.role) && (
-                                                        <td style={{ textAlign: 'center' }}>
+                                                        <td className="text-center!">
                                                             <button
                                                                 className="btn-delete"
                                                                 style={{ padding: '6px 12px', fontSize: '0.8rem' }}

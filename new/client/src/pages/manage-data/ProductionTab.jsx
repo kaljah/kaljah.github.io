@@ -7,9 +7,9 @@ import PaginationControls from './PaginationControls';
 // Extracted from ManageData.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const ProductionTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToCSV, facilities, filteredProduction, getAvailableActivities, getAvailableDivisions, handleDeleteProduction, handleSaveProduction, isPrivileged, openGasConverter, openOilConverter, prodForm, productionData, setCurrentPage, setImportModal, setProdForm }) => (
 <div className="manage-card glass-panel">
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px' }}>
+                                <div className="flex! justify-between! items-start! mb-[32px]!">
                                     <div>
-                                        <h2 style={{ marginBottom: '8px', fontWeight: 700 }}>Annual Production Records</h2>
+                                        <h2 className="mb-[8px]! font-bold!">Annual Production Records</h2>
                                         <p style={{ color: 'var(--text-secondary)', margin: 0 }}>Manage annual production data for emission intensity reporting.</p>
                                     </div>
                                     <button 
@@ -23,7 +23,7 @@ const ProductionTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToC
 
                                 <div className="grid-forms" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
                                     <div className="input-group">
-                                        <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                        <label className="flex! items-center! gap-[6px]!">
                                             Activity
                                             {!isPrivileged && getAvailableActivities().length === 1 && (
                                                 <span style={{ fontSize: '0.65rem', background: '#dbeafe', color: '#1d4ed8', borderRadius: '4px', padding: '1px 5px', fontWeight: 600 }}>Auto</span>
@@ -40,7 +40,7 @@ const ProductionTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToC
                                         </NativeSelect>
                                     </div>
                                     <div className="input-group">
-                                        <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                        <label className="flex! items-center! gap-[6px]!">
                                             Division
                                             {!isPrivileged && getAvailableDivisions(prodForm.activity).length === 1 && (
                                                 <span style={{ fontSize: '0.65rem', background: '#dbeafe', color: '#1d4ed8', borderRadius: '4px', padding: '1px 5px', fontWeight: 600 }}>Auto</span>
@@ -58,7 +58,7 @@ const ProductionTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToC
                                     </div>
 
                                     <div className="input-group">
-                                        <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                        <label className="flex! items-center! gap-[6px]!">
                                             Region
                                             {!isPrivileged && facilities.filter(f => f.activity === prodForm.activity && f.division === prodForm.division).length === 1 && (
                                                 <span style={{ fontSize: '0.65rem', background: '#dbeafe', color: '#1d4ed8', borderRadius: '4px', padding: '1px 5px', fontWeight: 600 }}>Auto</span>
@@ -95,9 +95,9 @@ const ProductionTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToC
                                     </div>
                                     <div className="input-group">
                                         <label>Oil ({prodForm.oil_unit}) <button onClick={openOilConverter} style={{ fontSize: '0.65rem', padding: '2px 4px', marginLeft: '8px', cursor: 'pointer', background: 'var(--accent-color)', color: 'white', border: 'none', borderRadius: '3px' }}>Convert m³</button></label>
-                                        <div style={{ display: 'flex', gap: '8px' }}>
-                                            <input type="number" value={prodForm.oil_amount} onChange={(e) => setProdForm({ ...prodForm, oil_amount: e.target.value })} className="mole-input" placeholder="0.0" style={{ flex: 1 }} />
-                                            <NativeSelect value={prodForm.oil_unit} onChange={(e) => setProdForm({ ...prodForm, oil_unit: e.target.value })} className="component-select" style={{ width: '80px' }}>
+                                        <div className="flex! gap-[8px]!">
+                                            <input type="number" value={prodForm.oil_amount} onChange={(e) => setProdForm({ ...prodForm, oil_amount: e.target.value })} className="mole-input flex-1!" placeholder="0.0" />
+                                            <NativeSelect value={prodForm.oil_unit} onChange={(e) => setProdForm({ ...prodForm, oil_unit: e.target.value })} className="component-select w-[80px]!">
                                                 <option value="bbl">bbl</option>
                                                 <option value="m³">m³</option>
                                             </NativeSelect>
@@ -105,9 +105,9 @@ const ProductionTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToC
                                     </div>
                                     <div className="input-group">
                                         <label>Gas ({prodForm.gas_unit}) <button onClick={openGasConverter} style={{ fontSize: '0.65rem', padding: '2px 4px', marginLeft: '8px', cursor: 'pointer', background: 'var(--accent-color)', color: 'white', border: 'none', borderRadius: '3px' }}>Convert m³</button></label>
-                                        <div style={{ display: 'flex', gap: '8px' }}>
-                                            <input type="number" value={prodForm.gas_amount} onChange={(e) => setProdForm({ ...prodForm, gas_amount: e.target.value })} className="mole-input" placeholder="0.0" style={{ flex: 1 }} />
-                                            <NativeSelect value={prodForm.gas_unit} onChange={(e) => setProdForm({ ...prodForm, gas_unit: e.target.value })} className="component-select" style={{ width: '80px' }}>
+                                        <div className="flex! gap-[8px]!">
+                                            <input type="number" value={prodForm.gas_amount} onChange={(e) => setProdForm({ ...prodForm, gas_amount: e.target.value })} className="mole-input flex-1!" placeholder="0.0" />
+                                            <NativeSelect value={prodForm.gas_unit} onChange={(e) => setProdForm({ ...prodForm, gas_unit: e.target.value })} className="component-select w-[80px]!">
                                                 <option value="mscf">mscf</option>
                                                 <option value="m³">m³</option>
                                             </NativeSelect>
@@ -146,15 +146,15 @@ const ProductionTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToC
                                         <input type="number" step="any" value={prodForm.saleable_production_mmboe} onChange={(e) => setProdForm({ ...prodForm, saleable_production_mmboe: e.target.value })} className="mole-input" placeholder="0.0" />
                                     </div>
                                 </div>
-                                <div style={{ display: 'flex', gap: '12px', marginTop: '20px' }}>
+                                <div className="flex! gap-[12px]! mt-[20px]!">
                                     <button className="action-btn" onClick={handleSaveProduction}>Save Record</button>
                                 </div>
-                                <div style={{ display: 'flex', gap: '12px', marginTop: '10px' }}>
+                                <div className="flex! gap-[12px]! mt-[10px]!">
                                     <button className="action-btn" onClick={() => exportToCSV(productionData, 'production_data.csv')} style={{ background: 'var(--text-secondary)' }}>Export CSV</button>
                                 </div>
 
 
-                                <div className="table-container" style={{ marginTop: '40px' }}>
+                                <div className="table-container mt-[40px]!">
                                     <table className="data-table">
                                         <thead>
                                             <tr>
@@ -163,12 +163,12 @@ const ProductionTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToC
                                                 <th>Region</th>
                                                 <th>Year</th>
                                                 <th>Month</th>
-                                                <th style={{ textAlign: 'right' }}>Oil (bbl)</th>
-                                                <th style={{ textAlign: 'right' }}>Gas (mcf)</th>
-                                                <th style={{ textAlign: 'right' }}>Gross Gas (MMSm³)</th>
-                                                <th style={{ textAlign: 'right' }}>Total (MMBOE)</th>
-                                                <th style={{ textAlign: 'right' }}>Saleable (MMBOE)</th>
-                                                <th style={{ textAlign: 'center' }}>Actions</th>
+                                                <th className="text-right!">Oil (bbl)</th>
+                                                <th className="text-right!">Gas (mcf)</th>
+                                                <th className="text-right!">Gross Gas (MMSm³)</th>
+                                                <th className="text-right!">Total (MMBOE)</th>
+                                                <th className="text-right!">Saleable (MMBOE)</th>
+                                                <th className="text-center!">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -185,12 +185,12 @@ const ProductionTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToC
                                                     </td>
                                                     <td>{d.year}</td>
                                                     <td>{new Date(2000, d.month - 1).toLocaleString('default', { month: 'short' })}</td>
-                                                    <td style={{ textAlign: 'right' }}>{(d.oil || 0).toLocaleString()} {d.oilUnit || 'bbl'}</td>
-                                                    <td style={{ textAlign: 'right' }}>{(d.gas || 0).toLocaleString()} {d.gasUnit || 'mscf'}</td>
-                                                    <td style={{ textAlign: 'right' }}>{d.gross_gas_mmsm3 ? Number(d.gross_gas_mmsm3).toLocaleString(undefined, { minimumFractionDigits: 2 }) : '-'}</td>
-                                                    <td style={{ textAlign: 'right' }}>{d.total_production_mmboe ? Number(d.total_production_mmboe).toLocaleString(undefined, { minimumFractionDigits: 2 }) : '-'}</td>
-                                                    <td style={{ textAlign: 'right' }}>{d.saleable_production_mmboe ? Number(d.saleable_production_mmboe).toLocaleString(undefined, { minimumFractionDigits: 2 }) : '-'}</td>
-                                                    <td style={{ textAlign: 'center' }}>
+                                                    <td className="text-right!">{(d.oil || 0).toLocaleString()} {d.oilUnit || 'bbl'}</td>
+                                                    <td className="text-right!">{(d.gas || 0).toLocaleString()} {d.gasUnit || 'mscf'}</td>
+                                                    <td className="text-right!">{d.gross_gas_mmsm3 ? Number(d.gross_gas_mmsm3).toLocaleString(undefined, { minimumFractionDigits: 2 }) : '-'}</td>
+                                                    <td className="text-right!">{d.total_production_mmboe ? Number(d.total_production_mmboe).toLocaleString(undefined, { minimumFractionDigits: 2 }) : '-'}</td>
+                                                    <td className="text-right!">{d.saleable_production_mmboe ? Number(d.saleable_production_mmboe).toLocaleString(undefined, { minimumFractionDigits: 2 }) : '-'}</td>
+                                                    <td className="text-center!">
                                                         <button
                                                             className="btn-delete"
                                                             style={{ padding: '6px 12px', fontSize: '0.8rem' }}

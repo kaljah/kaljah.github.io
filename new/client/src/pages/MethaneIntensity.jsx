@@ -699,7 +699,7 @@ const MethaneIntensity = () => {
         {/* KPI HERO CARD */}
         <div className="hero-card">
           <div className="hero-header">
-            <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+            <div className="flex! items-center! gap-[16px]!">
               <h2 className="grid-title">
                 <Wind size={24} color="var(--accent-secondary)" />
                 Methane Intensity & Loss Rate Analytics
@@ -1057,7 +1057,7 @@ const MethaneIntensity = () => {
               </p>
             </div>
 
-            <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+            <div className="flex! items-center! gap-[16px]!">
               {/* Interactive Baseline Selector UI button/pill matching theme */}
               <div
                 className="baseline-selector-wrapper"
@@ -1268,7 +1268,7 @@ const MethaneIntensity = () => {
             style={{ cursor: "pointer", userSelect: "none" }}
           >
             <div>
-              <h3 style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <h3 className="flex! items-center! gap-[8px]!">
                 <Radio size={20} color="var(--accent-secondary)" />
                 OGMP 2.0 Level 4/5 Top-Down Survey & Bottom-Up Reconciliation
               </h3>
@@ -1283,7 +1283,7 @@ const MethaneIntensity = () => {
                 reconciled with source-level bottom-up inventory
               </p>
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <div className="flex! items-center! gap-[12px]!">
               <div
                 className="ogmp-level-badge"
                 style={{
@@ -1358,7 +1358,7 @@ const MethaneIntensity = () => {
 
                       return (
                         <tr key={s.id || idx}>
-                          <td style={{ fontWeight: 600 }}>{facName}</td>
+                          <td className="font-semibold!">{facName}</td>
                           <td>{sDate}</td>
                           <td>
                             <span className="code-pill">{sType}</span>
@@ -1456,7 +1456,7 @@ const MethaneIntensity = () => {
                 ></div>
               </div>
             </div>
-            <div style={{ height: "300px" }}>
+            <div className="h-[300px]!">
               <BarChart
                 data={regionalData
                   .filter((d) => d.methane_loss_rate_pct != null) /* BUG-088: no gas production = no rate */
@@ -1481,7 +1481,7 @@ const MethaneIntensity = () => {
                 ></div>
               </div>
             </div>
-            <div style={{ height: "300px" }}>
+            <div className="h-[300px]!">
               <BarChart
                 data={regionalData.map((d) => ({
                   name: d.facility_name,
@@ -1504,7 +1504,7 @@ const MethaneIntensity = () => {
                 ></div>
               </div>
             </div>
-            <div style={{ height: "300px" }}>
+            <div className="h-[300px]!">
               <BarChart
                 data={regionalData.map((d) => ({
                   name: d.facility_name,
@@ -1527,7 +1527,7 @@ const MethaneIntensity = () => {
                 ></div>
               </div>
             </div>
-            <div style={{ height: "300px" }}>
+            <div className="h-[300px]!">
               <BarChart
                 data={regionalData.map((d) => ({
                   name: d.facility_name,
@@ -1545,7 +1545,7 @@ const MethaneIntensity = () => {
         <div className="card trend-section">
           <div className="chart-header">
             <div>
-              <h3 style={{ marginBottom: "4px" }}>
+              <h3 className="mb-[4px]!">
                 Historical Methane Trends & Targets
               </h3>
               <p
@@ -1577,7 +1577,7 @@ const MethaneIntensity = () => {
           </div>
 
           {trendView === "chart" ? (
-            <div style={{ height: "350px" }}>
+            <div className="h-[350px]!">
               <LineChart
                 data={trendChartData}
                 xKey="year"
@@ -1616,8 +1616,8 @@ const MethaneIntensity = () => {
             <div className="heatmap-container">
               <div className="heatmap-header">
                 <div
-                  className="heatmap-header-cell"
-                  style={{ textAlign: "left" }}
+                  className="heatmap-header-cell text-left!"
+                 
                 >
                   FACILITY / REGION
                 </div>

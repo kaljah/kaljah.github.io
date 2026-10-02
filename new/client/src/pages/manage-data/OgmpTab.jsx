@@ -6,7 +6,7 @@ import PaginationControls from './PaginationControls';
 // Extracted from ManageData.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const OgmpTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, NON_OG_ACTIVITIES, currentPage, editingOgmpId, facilities, filteredOgmp, getAvailableActivities, getAvailableDivisions, handleDeleteOgmpSurvey, handleSaveOgmpSurvey, ogmpForm, setCurrentPage, setEditingOgmpId, setOgmpForm }) => (
 <div className="tab-pane active">
-                                <div className="section-header" style={{ marginBottom: '24px' }}>
+                                <div className="section-header mb-[24px]!">
                                     <h2>OGMP 2.0 Level 4 & 5 Top-Down / Bottom-Up Surveys</h2>
                                     <p style={{ color: 'var(--text-secondary)', marginTop: '4px' }}>
                                         Log site-level top-down measurements (satellite, aerial LiDAR, drone, ground OGI) to reconcile against inventory estimates under Oil and Gas Methane Partnership (OGMP 2.0) Level 4/5 standards.
@@ -19,7 +19,7 @@ const OgmpTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, NON_OG_ACTIVITIES, currentPa
                                     background: '#eff6ff', border: '1px solid #bfdbfe',
                                     borderRadius: '10px', padding: '12px 16px', marginBottom: '24px'
                                 }}>
-                                    <CircleAlert size="18" strokeWidth="2" style={{ flexShrink: 0 }} aria-hidden="true" />
+                                    <CircleAlert size="18" strokeWidth="2" className="shrink-0!" aria-hidden="true" />
                                     <div>
                                         <strong style={{ color: '#1d4ed8', fontSize: '0.85rem' }}>Oil & Gas Scope Only</strong>
                                         <span style={{ color: '#3b82f6', fontSize: '0.83rem', marginLeft: '8px' }}>
@@ -159,7 +159,7 @@ const OgmpTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, NON_OG_ACTIVITIES, currentPa
                                     </div>
                                 </div>
 
-                                <div style={{ display: 'flex', gap: '12px', marginTop: '20px' }}>
+                                <div className="flex! gap-[12px]! mt-[20px]!">
                                     <button className="action-btn" onClick={handleSaveOgmpSurvey}>
                                         {editingOgmpId ? 'Update Survey Record' : 'Save OGMP Survey'}
                                     </button>
@@ -183,8 +183,8 @@ const OgmpTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, NON_OG_ACTIVITIES, currentPa
                                     )}
                                 </div>
 
-                                <div className="table-container" style={{ marginTop: '40px' }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                                <div className="table-container mt-[40px]!">
+                                    <div className="flex! justify-between! items-center! mb-[16px]!">
                                         <h3>OGMP 2.0 Survey Records</h3>
                                         <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
                                             Total Surveys: {filteredOgmp.length}
@@ -196,11 +196,11 @@ const OgmpTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, NON_OG_ACTIVITIES, currentPa
                                                 <th>Facility</th>
                                                 <th>Survey Date</th>
                                                 <th>Measurement Method</th>
-                                                <th style={{ textAlign: 'right' }}>Measured Rate (kg CH₄/hr)</th>
-                                                <th style={{ textAlign: 'right' }}>Annualized (tCH₄/yr)</th>
+                                                <th className="text-right!">Measured Rate (kg CH₄/hr)</th>
+                                                <th className="text-right!">Annualized (tCH₄/yr)</th>
                                                 <th>Reconciliation Status</th>
                                                 <th>Campaign Notes</th>
-                                                <th style={{ textAlign: 'center' }}>Actions</th>
+                                                <th className="text-center!">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -221,9 +221,9 @@ const OgmpTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, NON_OG_ACTIVITIES, currentPa
                                                         <td><strong>{fName}</strong></td>
                                                         <td>{sDate}</td>
                                                         <td>
-                                                            <span style={{ fontWeight: 500 }}>{sType}</span>
+                                                            <span className="font-medium!">{sType}</span>
                                                         </td>
-                                                        <td style={{ textAlign: 'right', fontWeight: 600 }}>
+                                                        <td className="text-right! font-semibold!">
                                                             {mRate.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 2 })}
                                                         </td>
                                                         <td style={{ textAlign: 'right', color: '#10b981', fontWeight: 700 }}>
@@ -239,8 +239,8 @@ const OgmpTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, NON_OG_ACTIVITIES, currentPa
                                                             </span>
                                                         </td>
                                                         <td style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{notes}</td>
-                                                        <td style={{ textAlign: 'center' }}>
-                                                            <div style={{ display: 'flex', gap: '6px', justifyContent: 'center' }}>
+                                                        <td className="text-center!">
+                                                            <div className="flex! gap-[6px]! justify-center!">
                                                                 <button
                                                                     className="action-btn"
                                                                     style={{ padding: '4px 8px', fontSize: '0.75rem', background: '#3b82f6' }}

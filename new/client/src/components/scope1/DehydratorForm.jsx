@@ -49,17 +49,17 @@ const DehydratorForm = ({ data, onChange, sourceType }) => {
               Glycol pump rate
               <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
             </label>
-            <div style={{ display: "flex", gap: "10px" }}>
+            <div className="flex! gap-[10px]!">
               <input
                 type="number"
-                className="mole-input"
+                className="mole-input flex-1!"
                 value={data.dehy_pump_rate || ""}
                 onChange={(e) => onChange("dehy_pump_rate", e.target.value)}
                 placeholder="Rate"
-                style={{ flex: 1 }}
+               
                 required
               />
-              <div style={{ width: "100px" }}>
+              <div className="w-[100px]!">
                 <CustomDropdown
                   options={[
                     { value: "gph", label: "gal/hr" },

@@ -24,7 +24,7 @@ const CsvUploader = ({ onUploadSuccess }) => {
         />
       )}
 
-      <div className="csv-uploader-entry" style={{ display: "inline-block" }}>
+      <div className="csv-uploader-entry inline-block!">
         <button
           className="action-btn"
           style={{
@@ -47,7 +47,7 @@ const CsvUploader = ({ onUploadSuccess }) => {
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            style={{ width: "14px", height: "14px" }}
+            className="w-[14px]! h-[14px]!"
           >
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
             <polyline points="17 8 12 3 7 8" />

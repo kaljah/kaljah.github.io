@@ -11,7 +11,7 @@ const BlowdownForm = ({ data, onChange }) => {
             Physical Volume
             <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
           </label>
-          <div style={{ display: "flex", gap: "10px" }}>
+          <div className="flex! gap-[10px]!">
             <input
               type="number"
               className="mole-input"
@@ -21,8 +21,8 @@ const BlowdownForm = ({ data, onChange }) => {
               required
             />
             <NativeSelect
-              className="mole-input"
-              style={{ width: "80px" }}
+              className="mole-input w-[80px]!"
+             
               value={data.blowdown_unit || "m3"}
               onChange={(e) => onChange("blowdown_unit", e.target.value)}
             >

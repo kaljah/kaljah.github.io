@@ -281,7 +281,7 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default" }) => {
       {/* ==================================================================== */}
       {activeTier === "tier2" && (
         <div className="s1-block">
-          <div style={{ marginBottom: "16px" }}>
+          <div className="mb-[16px]!">
             <Segmented
               ariaLabel="Tier 2 method"
               value={tier2SubMethod}
@@ -373,7 +373,7 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default" }) => {
       {/* ==================================================================== */}
       {activeTier === "tier3" && (
         <div className="s1-block">
-          <div style={{ marginBottom: "16px" }}>
+          <div className="mb-[16px]!">
             <Segmented
               ariaLabel="Tier 3 method"
               value={tier3Method}

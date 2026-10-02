@@ -8,12 +8,12 @@ import PaginationControls from './PaginationControls';
 // Extracted from ManageData.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const SourcesTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToCSV, facilities, filteredSources, getAvailableActivities, getAvailableDivisions, handleDeleteSource, handleSaveSource, isPrivileged, setCurrentPage, setImportModal, setSourceForm, sourceForm, sources }) => (
 <div className="manage-card glass-panel">
-                                <h2 style={{ marginBottom: '8px', fontWeight: 700 }}>Emission Sources Inventory</h2>
+                                <h2 className="mb-[8px]! font-bold!">Emission Sources Inventory</h2>
                                 <p style={{ color: 'var(--text-secondary)', marginBottom: '32px' }}>Manage operational equipment and emission sources.</p>
 
                                 <div className="grid-forms" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
                                     <div className="input-group">
-                                        <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                        <label className="flex! items-center! gap-[6px]!">
                                             Activity
                                             {!isPrivileged && getAvailableActivities().length === 1 && (
                                                 <span style={{ fontSize: '0.65rem', background: '#dbeafe', color: '#1d4ed8', borderRadius: '4px', padding: '1px 5px', fontWeight: 600 }}>Auto</span>
@@ -30,7 +30,7 @@ const SourcesTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToCSV,
                                         </NativeSelect>
                                     </div>
                                     <div className="input-group">
-                                        <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                        <label className="flex! items-center! gap-[6px]!">
                                             Division
                                             {!isPrivileged && getAvailableDivisions(sourceForm.activity).length === 1 && (
                                                 <span style={{ fontSize: '0.65rem', background: '#dbeafe', color: '#1d4ed8', borderRadius: '4px', padding: '1px 5px', fontWeight: 600 }}>Auto</span>
@@ -48,7 +48,7 @@ const SourcesTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToCSV,
                                     </div>
 
                                     <div className="input-group">
-                                        <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                        <label className="flex! items-center! gap-[6px]!">
                                             Region
                                             {!isPrivileged && facilities.filter(f => f.activity === sourceForm.activity && f.division === sourceForm.division).length === 1 && (
                                                 <span style={{ fontSize: '0.65rem', background: '#dbeafe', color: '#1d4ed8', borderRadius: '4px', padding: '1px 5px', fontWeight: 600 }}>Auto</span>
@@ -89,7 +89,7 @@ const SourcesTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToCSV,
                                         <input type="text" value={sourceForm.fuel_type} onChange={(e) => setSourceForm({ ...sourceForm, fuel_type: e.target.value })} className="mole-input" />
                                     </div>
                                 </div>
-                                <div style={{ display: 'flex', gap: '12px', marginTop: '20px' }}>
+                                <div className="flex! gap-[12px]! mt-[20px]!">
                                     <button className="action-btn" onClick={handleSaveSource}>Add Source</button>
                                     <button className="action-btn" onClick={() => setImportModal({ isOpen: true, type: 'sources' })} style={{ background: '#10b981' }}>
                                         <Upload size={16} /> Import Sources CSV
@@ -98,7 +98,7 @@ const SourcesTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToCSV,
                                 </div>
 
 
-                                <div className="table-container" style={{ marginTop: '40px' }}>
+                                <div className="table-container mt-[40px]!">
                                     <table className="data-table">
                                         <thead>
                                             <tr>

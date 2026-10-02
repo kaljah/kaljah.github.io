@@ -33,7 +33,7 @@ const DrillingForm = ({ data, onChange, sourceType }) => {
   }, [isTier1, isDefaultDays]);
 
   return (
-    <div className="drilling-form" style={{ marginTop: "15px" }}>
+    <div className="drilling-form mt-[15px]!">
 
       <div className="form-grid-2">
         <div className="input-group">
@@ -63,7 +63,7 @@ const DrillingForm = ({ data, onChange, sourceType }) => {
 
       {isTier2Plus && (
         <>
-          <div className="input-group" style={{ marginTop: "12px" }}>
+          <div className="input-group mt-[12px]!">
             <label>Mud Type</label>
             <CustomDropdown
               options={[
@@ -107,7 +107,7 @@ const DrillingForm = ({ data, onChange, sourceType }) => {
                 gap: "14px",
               }}
             >
-              <div className="input-group" style={{ marginBottom: 0 }}>
+              <div className="input-group mb-[0px]!">
                 <label style={{ fontSize: "0.8rem" }}>
                   CH₄ fraction
                 </label>
@@ -127,7 +127,7 @@ const DrillingForm = ({ data, onChange, sourceType }) => {
                 />
               </div>
 
-              <div className="input-group" style={{ marginBottom: 0 }}>
+              <div className="input-group mb-[0px]!">
                 <label style={{ fontSize: "0.8rem" }}>
                   CO₂ fraction
                 </label>

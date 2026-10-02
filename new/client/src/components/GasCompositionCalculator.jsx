@@ -454,10 +454,10 @@ const GasCompositionCalculator = ({
                       onChange={(e) => setSaveName(e.target.value)}
                     />
                     <button
-                      className="btn-primary"
+                      className="btn-primary mt-[10px]! w-full!"
                       onClick={handleSave}
                       disabled={isSaving || !saveName}
-                      style={{ marginTop: "10px", width: "100%" }}
+                     
                     >
                       {isSaving ? "Saving..." : "Save Factor"}
                     </button>

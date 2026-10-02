@@ -189,7 +189,7 @@ const UncertaintyAssessment = () => {
         </div>
 
         <div className="ua-controls">
-          <div className="ua-filter-group" style={{ width: "130px" }}>
+          <div className="ua-filter-group w-[130px]!">
             <CustomDropdown
               options={yearOptions}
               value={selectedYear}
@@ -197,7 +197,7 @@ const UncertaintyAssessment = () => {
               placeholder="Year"
             />
           </div>
-          <div className="ua-filter-group" style={{ width: "150px" }}>
+          <div className="ua-filter-group w-[150px]!">
             <CustomDropdown
               options={scopeOptions}
               value={selectedScope}
@@ -205,7 +205,7 @@ const UncertaintyAssessment = () => {
               placeholder="Scope"
             />
           </div>
-          <div className="ua-filter-group" style={{ width: "200px" }}>
+          <div className="ua-filter-group w-[200px]!">
             <CustomDropdown
               options={facilityOptions}
               value={selectedFacility}
@@ -227,7 +227,7 @@ const UncertaintyAssessment = () => {
       </div>
 
       {!data ? (
-        <div className="ua-methodology-box" style={{ marginTop: "24px" }}>
+        <div className="ua-methodology-box mt-[24px]!">
           <Info size={24} className="ua-methodology-icon" />
           <div>
             <h4>No Uncertainty Data Available</h4>

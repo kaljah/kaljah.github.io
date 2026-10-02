@@ -1051,7 +1051,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                 </p>
               </div>
             </div>
-            <div style={{ textAlign: "center" }}>
+            <div className="text-center!">
               <button
                 className="action-btn secondary"
                 onClick={() => setStep(0)}
@@ -1107,11 +1107,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
               ))}
             </NativeSelect>
             <div
-              style={{
-                display: "flex",
-                gap: "12px",
-                justifyContent: "flex-end",
-              }}
+              className="flex! gap-[12px]! justify-end!"
             >
               <button
                 className="action-btn secondary"
@@ -1134,12 +1130,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
           <>
             {type === "activity" && (
               <div
-                style={{
-                  marginBottom: "16px",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
+                className="mb-[16px]! flex! justify-between! items-center!"
               >
                 <span style={{ fontWeight: 600, color: "#10b981" }}>
                   {selectedTier === "1"
@@ -1174,7 +1165,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                 ref={fileInputRef}
                 onChange={handleFileChange}
                 accept=".csv"
-                style={{ display: "none" }}
+                className="hidden!"
               />
 
               <div role="button" tabIndex={0} onKeyDown={activateOnKey}
@@ -1273,12 +1264,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
 
             <div className="mapping-container">
               <h4
-                style={{
-                  marginBottom: "16px",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px",
-                }}
+                className="mb-[16px]! flex! items-center! gap-[8px]!"
               >
                 <Loader2
                   size={16}
@@ -1387,12 +1373,8 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
 
             {!uploadJobId ? (
               <div
-                className="import-actions"
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  gap: "12px",
-                }}
+                className="import-actions flex! justify-center! gap-[12px]!"
+               
               >
                 <button
                   className="action-btn secondary"
@@ -1419,12 +1401,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                 {uploadStatus ? (
                   <>
                     <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        width: "100%",
-                        marginBottom: "8px",
-                      }}
+                      className="flex! justify-between! w-full! mb-[8px]!"
                     >
                       <span className="progress-text">
                         {uploadStatus.status === "completed"
@@ -1450,8 +1427,8 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                       ></div>
                     </div>
                     <div
-                      className="progress-details"
-                      style={{ marginTop: "8px", textAlign: "center" }}
+                      className="progress-details mt-[8px]! text-center!"
+                     
                     >
                       Processed {uploadStatus.processed} of {uploadStatus.total}{" "}
                       rows
@@ -1509,7 +1486,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
 
                     {(uploadStatus.status === "completed" ||
                       uploadStatus.status === "failed") && (
-                      <div style={{ marginTop: "24px", textAlign: "center" }}>
+                      <div className="mt-[24px]! text-center!">
                         <button
                           className="action-btn"
                           onClick={() => {
@@ -1524,12 +1501,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                   </>
                 ) : (
                   <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      gap: "12px",
-                    }}
+                    className="flex! flex-col! items-center! gap-[12px]!"
                   >
                     <Loader2
                       size={32}
@@ -1652,12 +1624,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                 {uploadStatus ? (
                   <>
                     <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        width: "100%",
-                        marginBottom: "8px",
-                      }}
+                      className="flex! justify-between! w-full! mb-[8px]!"
                     >
                       <span className="progress-text">
                         {uploadStatus.status === "completed"
@@ -1683,8 +1650,8 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                       ></div>
                     </div>
                     <div
-                      className="progress-details"
-                      style={{ marginTop: "8px", textAlign: "center" }}
+                      className="progress-details mt-[8px]! text-center!"
+                     
                     >
                       Processed {uploadStatus.processed} of {uploadStatus.total}{" "}
                       rows
@@ -1742,7 +1709,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
 
                     {(uploadStatus.status === "completed" ||
                       uploadStatus.status === "failed") && (
-                      <div style={{ marginTop: "24px", textAlign: "center" }}>
+                      <div className="mt-[24px]! text-center!">
                         <button
                           className="action-btn"
                           onClick={() => {
@@ -1757,12 +1724,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                   </>
                 ) : (
                   <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      gap: "12px",
-                    }}
+                    className="flex! flex-col! items-center! gap-[12px]!"
                   >
                     <Loader2
                       size={32}

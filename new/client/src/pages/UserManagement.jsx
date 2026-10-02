@@ -935,12 +935,7 @@ const UserManagement = () => {
                 <tr>
                   <td colSpan="7" style={S.emptyCell}>
                     <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        gap: "10px",
-                      }}
+                      className="flex! flex-col! items-center! gap-[10px]!"
                     >
                       <svg
                         width="32"
@@ -961,12 +956,7 @@ const UserManagement = () => {
                 <tr>
                   <td colSpan="7" style={S.emptyCell}>
                     <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        gap: "8px",
-                      }}
+                      className="flex! flex-col! items-center! gap-[8px]!"
                     >
                       <span style={{ color: "var(--text-secondary)" }}><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
                       No users match the current filters.
@@ -1000,11 +990,7 @@ const UserManagement = () => {
                       {/* User */}
                       <td style={S.td}>
                         <div
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "10px",
-                          }}
+                          className="flex! items-center! gap-[10px]!"
                         >
                           <div style={S.avatar(meta.color)}>{initials}</div>
                           <div>
@@ -1240,7 +1226,7 @@ const UserManagement = () => {
               <span style={S.sectionTitle}>Profile & Identity</span>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+            <div className="flex! flex-col! gap-[14px]!">
               <div style={S.formGroup}>
                 <label style={S.label}>
                   Full Name <span style={{ color: "#ef4444" }}>*</span>
@@ -1321,7 +1307,7 @@ const UserManagement = () => {
 
           {/* Section 3: Access Governance & Scope */}
           <div style={S.drawerSection}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
+            <div className="flex! justify-between! items-center! mb-[14px]!">
               <div style={{ ...S.sectionHeader, marginBottom: 0 }}>
                 <span style={S.sectionIconBadge("#f59e0b")}>
                   <Shield size={14} />
@@ -1444,7 +1430,7 @@ const UserManagement = () => {
                   {...focusProps("password")}
                   placeholder="Minimum 10 characters"
                 />
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "6px" }}>
+                <div className="flex! justify-between! items-center! mt-[6px]!">
                   <span style={{ fontSize: "0.74rem", color: formData.password.length >= 10 ? "#10b981" : "#94a3b8" }}>
                     {formData.password.length >= 10 ? "✓ Meets minimum length requirement" : "Requires at least 10 characters"}
                   </span>
@@ -1498,12 +1484,12 @@ const UserManagement = () => {
               }}
             >
               {editingUser ? (
-                <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                <span className="flex! items-center! gap-[6px]!">
                   <UserCheck size={16} />
                   Save Changes
                 </span>
               ) : (
-                <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                <span className="flex! items-center! gap-[6px]!">
                   <UserPlus size={16} />
                   Create User
                 </span>
@@ -1557,7 +1543,7 @@ const UserManagement = () => {
               >
                 {resetTarget.fullName?.charAt(0)?.toUpperCase() || "U"}
               </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
+              <div className="flex-1! min-w-0!">
                 <div
                   style={{
                     fontWeight: 700,
@@ -1612,7 +1598,7 @@ const UserManagement = () => {
                 lineHeight: 1.45,
               }}
             >
-              <AlertCircle size={17} style={{ flexShrink: 0, marginTop: "2px" }} />
+              <AlertCircle size={17} className="shrink-0! mt-[2px]!" />
               <div>
                 <strong>Security Impact:</strong> This will overwrite the user's password immediately. Active sessions will be terminated and the user must sign in with the new credentials.
               </div>
@@ -1621,7 +1607,7 @@ const UserManagement = () => {
             {/* New Password input */}
             <div style={{ ...S.formGroup, marginBottom: "20px" }}>
               <label style={S.label}>New Password</label>
-              <div style={{ position: "relative" }}>
+              <div className="relative!">
                 <input
                   id="um-reset-pwd-input"
                   type={resetPwdShow ? "text" : "password"}
@@ -1671,8 +1657,8 @@ const UserManagement = () => {
 
               {/* Password strength visual meter */}
               {resetPwd && (
-                <div style={{ marginTop: "10px" }}>
-                  <div style={{ display: "flex", gap: "4px", marginBottom: "8px" }}>
+                <div className="mt-[10px]!">
+                  <div className="flex! gap-[4px]! mb-[8px]!">
                     {[
                       resetPwd.length >= 10,
                       /[A-Z]/.test(resetPwd),
@@ -1694,7 +1680,7 @@ const UserManagement = () => {
                   </div>
 
                   {/* Requirements breakdown tags */}
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                  <div className="flex! flex-wrap! gap-[6px]!">
                     {[
                       { label: "10+ Chars", ok: resetPwd.length >= 10 },
                       { label: "Uppercase (A-Z)", ok: /[A-Z]/.test(resetPwd) },
@@ -1807,7 +1793,7 @@ const UserManagement = () => {
                 {resetLoading ? (
                   "Resetting…"
                 ) : (
-                  <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                  <span className="flex! items-center! gap-[6px]!">
                     <KeyRound size={16} />
                     Reset Password
                   </span>

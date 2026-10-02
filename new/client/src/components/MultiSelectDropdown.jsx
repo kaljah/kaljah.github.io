@@ -215,7 +215,7 @@ const MultiSelectDropdown = ({
                   type="checkbox"
                   checked={selectedValues.includes(opt.value)}
                   readOnly
-                  style={{ cursor: "pointer" }}
+                  className="cursor-pointer!"
                 />
                 <span>
                   {opt.label}

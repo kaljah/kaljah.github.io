@@ -13,7 +13,7 @@ const Scope1OptionsSection = ({ gcUncertaintyPct, meterUncertaintyPct, renderSpe
                 style={{ gridColumn: "span 3", marginBottom: "8px" }}
               >
                 <label>Measurement Instrumentation Precision</label>
-                <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                <div className="flex! gap-[8px]! flex-wrap!">
                   <div
                     style={{
                       flex: 1,
@@ -35,7 +35,7 @@ const Scope1OptionsSection = ({ gcUncertaintyPct, meterUncertaintyPct, renderSpe
                     >
                       Meter Calibration Tolerance
                     </span>
-                    <div style={{ display: "flex", alignItems: "center" }}>
+                    <div className="flex! items-center!">
                       <span
                         style={{
                           fontSize: "0.85rem",
@@ -91,7 +91,7 @@ const Scope1OptionsSection = ({ gcUncertaintyPct, meterUncertaintyPct, renderSpe
                     >
                       GC Analytical Precision
                     </span>
-                    <div style={{ display: "flex", alignItems: "center" }}>
+                    <div className="flex! items-center!">
                       <span
                         style={{
                           fontSize: "0.85rem",
@@ -126,7 +126,7 @@ const Scope1OptionsSection = ({ gcUncertaintyPct, meterUncertaintyPct, renderSpe
                       </span>
                     </div>
                   </div>
-                  <div style={{ flex: 1 }}></div>
+                  <div className="flex-1!"></div>
                 </div>
               </div>
             )}
@@ -134,7 +134,7 @@ const Scope1OptionsSection = ({ gcUncertaintyPct, meterUncertaintyPct, renderSpe
               <label>
                 Emission Factor / Direct Measurement Uncertainty Override (±%)
               </label>
-              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+              <div className="flex! gap-[8px]! flex-wrap!">
                 <div
                   style={{
                     flex: 1,
@@ -157,7 +157,7 @@ const Scope1OptionsSection = ({ gcUncertaintyPct, meterUncertaintyPct, renderSpe
                     CO₂
                   </span>
                   {sourceType === "specific" ? (
-                    <div style={{ display: "flex", alignItems: "center" }}>
+                    <div className="flex! items-center!">
                       <span
                         style={{
                           fontSize: "0.85rem",
@@ -231,7 +231,7 @@ const Scope1OptionsSection = ({ gcUncertaintyPct, meterUncertaintyPct, renderSpe
                     CH₄
                   </span>
                   {sourceType === "specific" ? (
-                    <div style={{ display: "flex", alignItems: "center" }}>
+                    <div className="flex! items-center!">
                       <span
                         style={{
                           fontSize: "0.85rem",
@@ -305,7 +305,7 @@ const Scope1OptionsSection = ({ gcUncertaintyPct, meterUncertaintyPct, renderSpe
                     N₂O
                   </span>
                   {sourceType === "specific" ? (
-                    <div style={{ display: "flex", alignItems: "center" }}>
+                    <div className="flex! items-center!">
                       <span
                         style={{
                           fontSize: "0.85rem",

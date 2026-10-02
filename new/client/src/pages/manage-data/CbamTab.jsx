@@ -5,7 +5,7 @@ import PaginationControls from './PaginationControls';
 // Extracted from ManageData.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const CbamTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, cbamForm, currentPage, editingCbamId, facilities, filteredCbam, getAvailableActivities, getAvailableDivisions, handleDeleteCbamExport, handleSaveCbamExport, setCbamForm, setCurrentPage, setEditingCbamId }) => (
 <div className="tab-pane active">
-                                <div className="section-header" style={{ marginBottom: '24px' }}>
+                                <div className="section-header mb-[24px]!">
                                     <h2>EU CBAM Export & Embedded Emission Tracking</h2>
                                     <p style={{ color: 'var(--text-secondary)', marginTop: '4px' }}>
                                         Record product exports subject to EU Carbon Border Adjustment Mechanism (CBAM) with direct and indirect embedded emissions under EU Regulation (EU) 2023/956.
@@ -188,7 +188,7 @@ const CbamTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, cbamForm, currentPage, editi
                                     </div>
                                 </div>
 
-                                <div style={{ display: 'flex', gap: '12px', marginTop: '20px' }}>
+                                <div className="flex! gap-[12px]! mt-[20px]!">
                                     <button className="action-btn" onClick={handleSaveCbamExport}>
                                         {editingCbamId ? 'Update CBAM Record' : 'Save CBAM Record'}
                                     </button>
@@ -212,8 +212,8 @@ const CbamTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, cbamForm, currentPage, editi
                                     )}
                                 </div>
 
-                                <div className="table-container" style={{ marginTop: '40px' }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                                <div className="table-container mt-[40px]!">
+                                    <div className="flex! justify-between! items-center! mb-[16px]!">
                                         <h3>CBAM Product Export Records</h3>
                                         <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
                                             Total Records: {filteredCbam.length}
@@ -227,11 +227,11 @@ const CbamTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, cbamForm, currentPage, editi
                                                 <th>EU CN Code</th>
                                                 <th>Period</th>
                                                 <th>Destination</th>
-                                                <th style={{ textAlign: 'right' }}>Quantity (t)</th>
-                                                <th style={{ textAlign: 'right' }}>Direct (tCO₂e/t)</th>
-                                                <th style={{ textAlign: 'right' }}>Indirect (tCO₂e/t)</th>
-                                                <th style={{ textAlign: 'right' }}>Total Embedded (tCO₂e)</th>
-                                                <th style={{ textAlign: 'center' }}>Actions</th>
+                                                <th className="text-right!">Quantity (t)</th>
+                                                <th className="text-right!">Direct (tCO₂e/t)</th>
+                                                <th className="text-right!">Indirect (tCO₂e/t)</th>
+                                                <th className="text-right!">Total Embedded (tCO₂e)</th>
+                                                <th className="text-center!">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -253,14 +253,14 @@ const CbamTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, cbamForm, currentPage, editi
                                                         <td><span style={{ fontFamily: 'monospace', background: 'var(--bg-card)', padding: '2px 6px', borderRadius: '4px' }}>{cn}</span></td>
                                                         <td>{c.year} - M{c.month || '1'}</td>
                                                         <td><span className="status-badge active">{dest}</span></td>
-                                                        <td style={{ textAlign: 'right', fontWeight: 600 }}>{qTonnes.toLocaleString()}</td>
-                                                        <td style={{ textAlign: 'right' }}>{direct.toFixed(3)}</td>
-                                                        <td style={{ textAlign: 'right' }}>{indirect.toFixed(3)}</td>
+                                                        <td className="text-right! font-semibold!">{qTonnes.toLocaleString()}</td>
+                                                        <td className="text-right!">{direct.toFixed(3)}</td>
+                                                        <td className="text-right!">{indirect.toFixed(3)}</td>
                                                         <td style={{ textAlign: 'right', color: '#3b82f6', fontWeight: 700 }}>
                                                             {totalEmbedded.toLocaleString(undefined, { maximumFractionDigits: 1 })}
                                                         </td>
-                                                        <td style={{ textAlign: 'center' }}>
-                                                            <div style={{ display: 'flex', gap: '6px', justifyContent: 'center' }}>
+                                                        <td className="text-center!">
+                                                            <div className="flex! gap-[6px]! justify-center!">
                                                                 <button
                                                                     className="action-btn"
                                                                     style={{ padding: '4px 8px', fontSize: '0.75rem', background: '#3b82f6' }}

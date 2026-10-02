@@ -408,7 +408,7 @@ export default function Scope2ImportWizard({ onClose, onUploadSuccess }) {
               onDragLeave={() => setIsDragging(false)}
               onDrop={onDrop}
             >
-              <input ref={fileInputRef} type="file" accept=".csv,.xlsx" style={{ display: "none" }} onChange={onFileChange} />
+              <input ref={fileInputRef} type="file" accept=".csv,.xlsx" className="hidden!" onChange={onFileChange} />
               <div className="s1w-dropzone-icon"><Icon.Upload /></div>
               <p className="s1w-dropzone-text">Drag & drop your file here, or <span>click to browse</span></p>
               <p className="s1w-dropzone-sub">Supports .xlsx and .csv</p>
@@ -478,7 +478,7 @@ export default function Scope2ImportWizard({ onClose, onUploadSuccess }) {
               )}
             </div>
 
-            <label className="s1w-factor-row" style={{ gap: "8px", cursor: "pointer" }}>
+            <label className="s1w-factor-row gap-[8px]! cursor-pointer!">
               <input type="checkbox" checked={overwrite} onChange={e => setOverwrite(e.target.checked)} />
               <span className="s1w-factor-label">
                 Overwrite records that already exist (same facility, month and source). Overwritten records go back to Pending review.

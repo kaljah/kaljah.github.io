@@ -538,7 +538,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+          <div className="flex! gap-[10px]! items-center!">
             {stats.weirdCount > 0 && (
               <button
                 className="btn-wizard-action btn-wizard-select-weird"
@@ -657,7 +657,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
 
             {/* Action on Filtered Set */}
             {(scopeFilter !== 'all' || qaFilter !== 'all' || facilityFilter !== 'all' || yearFilter !== 'all' || searchQuery) && filteredRecords.length > 0 && (
-              <div style={{ display: 'flex', gap: '8px' }}>
+              <div className="flex! gap-[8px]!">
                 <button
                   className="btn-wizard-action btn-wizard-approve-all"
                   style={{ padding: '6px 12px', fontSize: '0.78rem' }}
@@ -684,7 +684,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
         {/* ── Floating Selected Batch Bar ── */}
         {selectedKeys.size > 0 && (
           <div className="wizard-batch-banner">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <div className="flex! items-center! gap-[14px]!">
               <span style={{ fontWeight: 700, fontSize: '0.92rem', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
                 <CheckSquare size={16} color="#38bdf8" />
                 {selectedKeys.size} record{selectedKeys.size > 1 ? 's' : ''} selected
@@ -695,7 +695,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
               </span>
             </div>
 
-            <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+            <div className="flex! gap-[10px]! items-center!">
               <button
                 className="btn-wizard-action btn-wizard-approve-all"
                 onClick={handleApproveSelected}
@@ -728,7 +728,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
           {loading ? (
             <div className="wizard-empty-state">
               <RefreshCw size={36} style={{ animation: 'spin 1s linear infinite', color: 'var(--color-link)' }} />
-              <p style={{ fontWeight: 600 }}>Loading 100% of pending records across all scopes...</p>
+              <p className="font-semibold!">Loading 100% of pending records across all scopes...</p>
             </div>
           ) : stats.totalCount === 0 ? (
             <div className="wizard-empty-state">
@@ -757,22 +757,22 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
             <table className="wizard-table">
               <thead>
                 <tr>
-                  <th style={{ width: 44, textAlign: 'center' }}>
+                  <th className="w-[44px]! text-center!">
                     <input
                       type="checkbox"
-                      style={{ cursor: 'pointer' }}
+                      className="cursor-pointer!"
                       checked={filteredRecords.length > 0 && filteredRecords.every(r => selectedKeys.has(r.key))}
                       onChange={handleToggleSelectAllInView}
                     />
                   </th>
-                  <th style={{ width: 80 }}>Ref ID</th>
-                  <th style={{ width: 90 }}>Scope</th>
-                  <th style={{ width: 100 }}>Period</th>
-                  <th style={{ minWidth: 160 }}>Facility</th>
-                  <th style={{ minWidth: 240 }}>Activity Details</th>
-                  <th style={{ width: 130, textAlign: 'right' }}>Emissions</th>
-                  <th style={{ width: 190 }}>Integrity Status</th>
-                  <th style={{ width: 100, textAlign: 'center' }}>Review Action</th>
+                  <th className="w-[80px]!">Ref ID</th>
+                  <th className="w-[90px]!">Scope</th>
+                  <th className="w-[100px]!">Period</th>
+                  <th className="min-w-[160px]!">Facility</th>
+                  <th className="min-w-[240px]!">Activity Details</th>
+                  <th className="w-[130px]! text-right!">Emissions</th>
+                  <th className="w-[190px]!">Integrity Status</th>
+                  <th className="w-[100px]! text-center!">Review Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -782,10 +782,10 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
 
                   return (
                     <tr key={item.key} className={`${isSelected ? 'row-selected' : ''} ${item.isWeird ? 'row-weird' : ''}`}>
-                      <td style={{ textAlign: 'center' }}>
+                      <td className="text-center!">
                         <input
                           type="checkbox"
-                          style={{ cursor: 'pointer' }}
+                          className="cursor-pointer!"
                           checked={isSelected}
                           onChange={() => handleToggleKey(item.key)}
                         />
@@ -801,17 +801,17 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
                         </span>
                       </td>
                       <td>
-                        <span style={{ fontWeight: 500 }}>{item.date}</span>
+                        <span className="font-medium!">{item.date}</span>
                       </td>
                       <td>
                         <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{facName}</span>
                       </td>
                       <td>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                        <div className="flex! flex-col! gap-[2px]!">
                           <span style={{ fontSize: '0.84rem' }}>{item.desc}</span>
                         </div>
                       </td>
-                      <td style={{ textAlign: 'right' }}>
+                      <td className="text-right!">
                         <strong className="num-tabular" style={{ fontSize: '0.9rem' }}>
                           {item.tco2e.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </strong>
@@ -819,7 +819,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
                       </td>
                       <td>
                         {item.isWeird ? (
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                          <div className="flex! flex-col! gap-[3px]!">
                             <span
                               className={`anomaly-pill ${item.severity}`}
                               title={item.reasons.join(" · ")}
@@ -839,8 +839,8 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
                           </span>
                         )}
                       </td>
-                      <td style={{ textAlign: 'center' }}>
-                        <div className="review-actions-group" style={{ justifyContent: 'center' }}>
+                      <td className="text-center!">
+                        <div className="review-actions-group justify-center!">
                           {item.created_by && String(item.created_by) === String(user?.id) ? (
                             <span 
                               className="badge-maker"
@@ -891,8 +891,8 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
       {rejectionModal.isOpen && (
         <div className="rejection-modal-backdrop" onClick={(e) => { if (e.target === e.currentTarget && !isProcessing) setRejectionModal(prev => ({ ...prev, isOpen: false })); }}>
           <div className="rejection-modal">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div className="flex! justify-between! items-center!">
+              <div className="flex! items-center! gap-[10px]!">
                 <div style={{ width: 36, height: 36, borderRadius: '10px', background: 'rgba(239, 68, 68, 0.1)', color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Trash2 size={20} />
                 </div>
@@ -951,7 +951,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
               />
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+            <div className="flex! justify-end! gap-[10px]!">
               <button
                 type="button"
                 className="btn-ghost"

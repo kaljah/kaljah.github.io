@@ -363,8 +363,8 @@ const Scope3Form = () => {
 
         {/* EEIO Quick Spend Calculator */}
         <div style={{ marginTop: "20px", marginBottom: "10px", padding: "16px", background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "8px" }}>
-          <div role="button" tabIndex={0} onKeyDown={activateOnKey} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer" }} onClick={() => setShowEeioCalc(!showEeioCalc)}>
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <div role="button" tabIndex={0} onKeyDown={activateOnKey} className="flex! justify-between! items-center! cursor-pointer!" onClick={() => setShowEeioCalc(!showEeioCalc)}>
+            <div className="flex! items-center! gap-[8px]!">
               <span style={{ fontSize: "1.2rem" }}>💰</span>
               <strong style={{ color: "#334155" }}>EEIO Quick Spend Calculator</strong>
               <span style={{ fontSize: "0.8rem", color: "#64748b", marginLeft: "10px" }}>Convert financial spend to CO₂e using NAICS factors</span>
@@ -373,8 +373,8 @@ const Scope3Form = () => {
           </div>
           
           {showEeioCalc && (
-            <div style={{ marginTop: "16px", display: "flex", gap: "16px", alignItems: "flex-end" }}>
-              <div className="input-group" style={{ flex: 1 }}>
+            <div className="mt-[16px]! flex! gap-[16px]! items-end!">
+              <div className="input-group flex-1!">
                 <label>NAICS Code (6 digits)</label>
                 <input
                   type="text"
@@ -393,7 +393,7 @@ const Scope3Form = () => {
                   ))}
                 </datalist>
               </div>
-              <div className="input-group" style={{ flex: 1 }}>
+              <div className="input-group flex-1!">
                 <label>Spend Amount (USD)</label>
                 <input
                   type="number"
@@ -424,15 +424,10 @@ const Scope3Form = () => {
         </div>
 
         <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: "20px",
-          }}
+          className="flex! justify-between! items-center! mb-[20px]!"
         >
           <h3 style={{ margin: 0 }}>New Scope 3 Entry</h3>
-          <div style={{ textAlign: "right" }}>
+          <div className="text-right!">
             <span
               style={{ color: "#8b5cf6", fontWeight: 600, fontSize: "0.9rem" }}
             >
@@ -557,12 +552,7 @@ const Scope3Form = () => {
 
 
         <div
-          style={{
-            display: "flex",
-            gap: "12px",
-            marginTop: "30px",
-            justifyContent: "flex-end",
-          }}
+          className="flex! gap-[12px]! mt-[30px]! justify-end!"
         >
           <button
             className="action-btn secondary"
@@ -600,7 +590,7 @@ const Scope3Form = () => {
         )}
       </div>
 
-      <div className="calculator-grid-container" style={{ marginTop: "30px" }}>
+      <div className="calculator-grid-container mt-[30px]!">
         <div 
           className="table-controls"
           style={{
@@ -612,14 +602,9 @@ const Scope3Form = () => {
         >
           <strong style={{ fontSize: "1rem", color: "#374151" }}>Documented Scope 3 Emissions</strong>
           <button
-            className="action-btn secondary"
+            className="action-btn secondary flex! items-center! gap-[8px]! whitespace-nowrap!"
             onClick={() => setShowWizard(true)}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              whiteSpace: "nowrap",
-            }}
+           
           >
             ↑ Bulk Import (Wizard)
           </button>
@@ -647,7 +632,7 @@ const Scope3Form = () => {
                 >
                   CO₂e 95% CI (±%)
                 </th>
-                <th style={{ textAlign: "center" }}>Actions</th>
+                <th className="text-center!">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -715,7 +700,7 @@ const Scope3Form = () => {
                         </span>
                       )}
                     </td>
-                    <td style={{ textAlign: "center", whiteSpace: "nowrap" }}>
+                    <td className="text-center! whitespace-nowrap!">
                       <button
                         className="icon-button"
                         onClick={() => handleInspect(entry)}
@@ -741,7 +726,7 @@ const Scope3Form = () => {
               <tr style={{ backgroundColor: "#f9fafb", fontWeight: "bold" }}>
                 <td
                   colSpan="6"
-                  style={{ textAlign: "right", paddingRight: "15px" }}
+                  className="text-right! pr-[15px]!"
                 >
                   Total (Page):
                 </td>

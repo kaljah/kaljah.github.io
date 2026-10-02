@@ -150,14 +150,9 @@ const NotifRow = ({ n, onMarkRead, onDelete }) => {
       </div>
 
       {/* Content */}
-      <div style={{ flex: 1, minWidth: 0 }}>
+      <div className="flex-1! min-w-0!">
         <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 6,
-            marginBottom: 2,
-          }}
+          className="flex! items-center! gap-[6px]! mb-[2px]!"
         >
           {!n.is_read && (
             <span
@@ -209,7 +204,7 @@ const NotifRow = ({ n, onMarkRead, onDelete }) => {
 
       {/* Action buttons */}
       <div
-        style={{ display: "flex", gap: 2, flexShrink: 0, alignItems: "center" }}
+        className="flex! gap-[2px]! shrink-0! items-center!"
       >
         {!n.is_read && (
           <button
@@ -519,7 +514,7 @@ const NotificationCenter = () => {
           gap: 8,
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <div className="flex! items-center! gap-[10px]!">
           <span
             style={{
               fontWeight: 700,
@@ -574,7 +569,7 @@ const NotificationCenter = () => {
         </div>
 
         {/* Header actions */}
-        <div style={{ display: "flex", gap: 4 }}>
+        <div className="flex! gap-[4px]!">
           {hasUnread && (
             <button
               onClick={handleMarkAllRead}
@@ -697,7 +692,7 @@ const NotificationCenter = () => {
   );
 
   return (
-    <div ref={dropdownRef} style={{ position: "relative" }}>
+    <div ref={dropdownRef} className="relative!">
       <BellButton count={unreadCount} onClick={() => setIsOpen((o) => !o)} />
 
       {isOpen && typeof document !== "undefined" && createPortal(trayPanel, document.body)}

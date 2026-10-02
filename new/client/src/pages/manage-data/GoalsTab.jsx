@@ -8,7 +8,7 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                 {/* Active Baseline Status Banner */}
                                 <div className="baseline-highlight-card">
                                     <div>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                                        <div className="flex! items-center! gap-[8px]! mb-[6px]!">
                                             <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-link)', fontWeight: 700 }}>
                                                 GHG Protocol & OGMP 2.0 Baseline
                                             </span>
@@ -21,12 +21,12 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                         </div>
                                         {baseYearsData.active_record?.reason && (
                                             <div style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
-                                                <span style={{ fontWeight: 600 }}>Active Justification:</span> {baseYearsData.active_record.reason}
+                                                <span className="font-semibold!">Active Justification:</span> {baseYearsData.active_record.reason}
                                             </div>
                                         )}
                                     </div>
-                                    <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-                                        <div style={{ textAlign: 'right' }}>
+                                    <div className="flex! gap-[20px]! items-center!">
+                                        <div className="text-right!">
                                             <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>ANNUAL TARGETS SET</div>
                                             <div style={{ fontSize: '1.3rem', fontWeight: 700, color: 'var(--text-primary)' }}>{goals.length} Years</div>
                                         </div>
@@ -42,10 +42,10 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                 </div>
 
                                 {/* Section 1: Yearly Emission Goals */}
-                                <div style={{ marginBottom: '40px' }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
+                                <div className="mb-[40px]!">
+                                    <div className="flex! justify-between! items-start! mb-[20px]!">
                                         <div>
-                                            <h2 style={{ marginBottom: '6px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                            <h2 className="mb-[6px]! font-bold! flex! items-center! gap-[8px]!">
                                                 <Target size={22} color="var(--accent-color, #ff6600)" /> Yearly Emission Goals
                                             </h2>
                                             <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '0.9rem' }}>
@@ -79,7 +79,7 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                                 placeholder="e.g. 150000"
                                             />
                                         </div>
-                                        <div className="input-group" style={{ display: 'flex', alignItems: 'flex-end', gap: '8px' }}>
+                                        <div className="input-group flex! items-end! gap-[8px]!">
                                             <button
                                                 className="action-btn"
                                                 onClick={handleSaveGoal}
@@ -103,15 +103,15 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                     </div>
 
                                     {/* Goals Table */}
-                                    <div className="table-container" style={{ marginTop: '20px' }}>
+                                    <div className="table-container mt-[20px]!">
                                         <table className="data-table">
                                             <thead>
                                                 <tr>
-                                                    <th style={{ width: '120px' }}>Target Year</th>
-                                                    <th style={{ textAlign: 'right' }}>Target Limit (tCO₂e)</th>
+                                                    <th className="w-[120px]!">Target Year</th>
+                                                    <th className="text-right!">Target Limit (tCO₂e)</th>
                                                     <th>Scope Coverage</th>
                                                     <th>Recorded On</th>
-                                                    <th style={{ textAlign: 'center', width: '140px' }}>Actions</th>
+                                                    <th className="text-center! w-[140px]!">Actions</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -125,7 +125,7 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                                     filteredGoals.map(g => (
                                                         <tr key={g.year}>
                                                             <td style={{ fontWeight: 700, fontSize: '0.95rem' }}>
-                                                                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                                                                <span className="inline-flex! items-center! gap-[6px]!">
                                                                     <Calendar size={15} color="var(--accent-color, #ff6600)" />
                                                                     {g.year}
                                                                 </span>
@@ -141,8 +141,8 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                                             <td style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
                                                                 {g.created_at ? new Date(g.created_at).toLocaleDateString() : '-'}
                                                             </td>
-                                                            <td style={{ textAlign: 'center' }}>
-                                                                <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                                                            <td className="text-center!">
+                                                                <div className="flex! gap-[8px]! justify-center!">
                                                                     <button
                                                                         className="btn-ghost"
                                                                         onClick={() => handleEditGoal(g)}
@@ -171,9 +171,9 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
 
                                 {/* Section 2: Base Years & Recalculation History */}
                                 <div style={{ borderTop: '2px dashed var(--border-color)', paddingTop: '32px', marginTop: '16px' }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+                                    <div className="flex! justify-between! items-start! mb-[16px]!">
                                         <div>
-                                            <h2 style={{ marginBottom: '6px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                            <h2 className="mb-[6px]! font-bold! flex! items-center! gap-[8px]!">
                                                 <History size={22} color="var(--accent-color, #ff6600)" /> Base Years & Recalculations History
                                             </h2>
                                             <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '0.9rem' }}>
@@ -222,7 +222,7 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                                 placeholder="Optional"
                                             />
                                         </div>
-                                        <div className="input-group" style={{ display: 'flex', alignItems: 'flex-end' }}>
+                                        <div className="input-group flex! items-end!">
                                             <button
                                                 className="action-btn"
                                                 onClick={handleSaveBaseYear}
@@ -244,17 +244,17 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                     </div>
 
                                     {/* Base Years Recalculation History Table */}
-                                    <div className="table-container" style={{ marginTop: '20px' }}>
+                                    <div className="table-container mt-[20px]!">
                                         <table className="data-table">
                                             <thead>
                                                 <tr>
-                                                    <th style={{ width: '130px' }}>Date</th>
-                                                    <th style={{ width: '120px' }}>Base Year</th>
+                                                    <th className="w-[130px]!">Date</th>
+                                                    <th className="w-[120px]!">Base Year</th>
                                                     <th>Reason for Change / Audit Justification</th>
-                                                    <th style={{ textAlign: 'right' }}>Previous (tCO₂e)</th>
-                                                    <th style={{ textAlign: 'right' }}>Adjusted (tCO₂e)</th>
-                                                    <th style={{ textAlign: 'right' }}>Adjustment Δ</th>
-                                                    <th style={{ textAlign: 'center', width: '100px' }}>Actions</th>
+                                                    <th className="text-right!">Previous (tCO₂e)</th>
+                                                    <th className="text-right!">Adjusted (tCO₂e)</th>
+                                                    <th className="text-right!">Adjustment Δ</th>
+                                                    <th className="text-center! w-[100px]!">Actions</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -275,8 +275,8 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                                                 <td style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
                                                                     {b.recalc_date ? new Date(b.recalc_date).toLocaleDateString() : '-'}
                                                                 </td>
-                                                                <td style={{ fontWeight: 700 }}>
-                                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                                                <td className="font-bold!">
+                                                                    <div className="flex! items-center! gap-[6px]!">
                                                                         <span>{b.year}</span>
                                                                         {isLatest && (
                                                                             <span className="goal-badge goal-badge-active" style={{ fontSize: '0.7rem' }}>
@@ -305,7 +305,7 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                                                         </span>
                                                                     ) : '-'}
                                                                 </td>
-                                                                <td style={{ textAlign: 'center' }}>
+                                                                <td className="text-center!">
                                                                     <button
                                                                         className="btn-delete"
                                                                         onClick={() => handleDeleteBaseYearRecalc(b.id)}
@@ -326,9 +326,9 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
 
                                 {/* Section 3: SBTi Science-Based Net-Zero Targets */}
                                 <div style={{ borderTop: '2px dashed var(--border-color)', paddingTop: '32px', marginTop: '32px' }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
+                                    <div className="flex! justify-between! items-start! mb-[20px]!">
                                         <div>
-                                            <h2 style={{ marginBottom: '6px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                            <h2 className="mb-[6px]! font-bold! flex! items-center! gap-[8px]!">
                                                 <Target size={22} color="var(--accent-color, #ff6600)" /> Science-Based Targets (SBTi 1.5°C Trajectory)
                                             </h2>
                                             <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '0.9rem' }}>
@@ -395,8 +395,8 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                         </div>
                                     </div>
 
-                                    <div style={{ marginTop: '20px', display: 'flex', gap: '12px' }}>
-                                        <button className="action-btn" onClick={handleSaveSbti} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                                    <div className="mt-[20px]! flex! gap-[12px]!">
+                                        <button className="action-btn inline-flex! items-center! gap-[8px]!" onClick={handleSaveSbti}>
                                             <Check size={16} /> Save SBTi Target Configuration
                                         </button>
                                     </div>

@@ -95,9 +95,9 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
 
       {/* HHV — required in specific (Tier 3) mode */}
       {needsHHV && sourceType === "specific" && (
-        <div className="s1-block" style={{ marginTop: "14px" }}>
-          <div className="form-grid-2" style={{ gap: "10px" }}>
-            <div className="input-group" style={{ marginBottom: 0 }}>
+        <div className="s1-block mt-[14px]!">
+          <div className="form-grid-2 gap-[10px]!">
+            <div className="input-group mb-[0px]!">
               <label style={{ fontSize: "0.75rem" }}>
                 HHV
                 <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
@@ -114,7 +114,7 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
                 style={{ borderColor: !data.hhv ? "#fbbf24" : "#d1fae5" }}
               />
             </div>
-            <div className="input-group" style={{ marginBottom: 0 }}>
+            <div className="input-group mb-[0px]!">
               <label style={{ fontSize: "0.75rem" }}>HHV Unit</label>
               <NativeSelect
                 className="component-select"
@@ -135,15 +135,15 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
           {/* Combustion efficiency — required for stationary combustion */}
           {isCombustion && (
             <div
-              className="input-group"
-              style={{ marginTop: "10px", marginBottom: 0 }}
+              className="input-group mt-[10px]! mb-[0px]!"
+             
             >
               <label style={{ fontSize: "0.75rem" }}>
                 Combustion efficiency
                 <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
               </label>
               <div
-                style={{ display: "flex", gap: "8px", alignItems: "center" }}
+                className="flex! gap-[8px]! items-center!"
               >
                 <input
                   id="combustion-efficiency-input"
@@ -184,8 +184,8 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
 
           {/* Flare type & CH4 content for flaring */}
           {isFlaring && (
-            <div className="form-grid-2" style={{ gap: "10px", marginTop: "10px" }}>
-              <div className="input-group" style={{ marginBottom: 0 }}>
+            <div className="form-grid-2 gap-[10px]! mt-[10px]!">
+              <div className="input-group mb-[0px]!">
                 <label style={{ fontSize: "0.75rem" }}>Flare Type</label>
                 <NativeSelect
                   className="component-select"
@@ -199,7 +199,7 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
                   <option value="pit">Pit / Open Burn (η_d=95%)</option>
                 </NativeSelect>
               </div>
-              <div className="input-group" style={{ marginBottom: 0 }}>
+              <div className="input-group mb-[0px]!">
                 <label style={{ fontSize: "0.75rem" }}>
                   CH₄ (%)
                   <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
@@ -222,10 +222,10 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
           {/* Operating conditions: a gas volume in m3 / cf read at these conditions is
               converted to standard conditions (scf and Sm3 are already standard) */}
           <div
-            className="form-grid-2"
-            style={{ gap: "10px", marginTop: "10px" }}
+            className="form-grid-2 gap-[10px]! mt-[10px]!"
+           
           >
-            <div className="input-group" style={{ marginBottom: 0 }}>
+            <div className="input-group mb-[0px]!">
               <label style={{ fontSize: "0.75rem" }}>Operating Temp (°F)</label>
               <input
                 type="number"
@@ -242,7 +242,7 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
                 placeholder="Def: 60°F"
               />
             </div>
-            <div className="input-group" style={{ marginBottom: 0 }}>
+            <div className="input-group mb-[0px]!">
               <label style={{ fontSize: "0.75rem" }}>
                 Pressure (psia)
               </label>

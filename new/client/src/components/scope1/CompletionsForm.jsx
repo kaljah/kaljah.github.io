@@ -133,7 +133,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
   }, [currentTier, factorKey]);
 
   return (
-    <div className="completions-form" style={{ marginTop: "15px" }}>
+    <div className="completions-form mt-[15px]!">
       {/* HEADER & TIER SELECTOR */}
 
       {/* ========================================================================= */}
@@ -142,7 +142,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
       {isTier1 && (
         <div>
 
-          <div className="form-grid-3" style={{ marginBottom: "16px" }}>
+          <div className="form-grid-3 mb-[16px]!">
             <div className="input-group">
               <label>
                 Well type
@@ -278,7 +278,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
       {isTier2 && (
         <div>
 
-          <div className="input-group" style={{ marginBottom: "16px" }}>
+          <div className="input-group mb-[16px]!">
             <label>
               Model
               <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
@@ -305,7 +305,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
 
           {/* Model 1: Rate × Duration */}
           {activeMethod === "rate_duration" && (
-            <div className="form-grid-3" style={{ marginBottom: "16px" }}>
+            <div className="form-grid-3 mb-[16px]!">
               <div className="input-group">
                 <label>
                   Flowback rate
@@ -363,7 +363,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
 
           {/* Model 2: Liquid × GOR (API Eq. 6-12) */}
           {activeMethod === "gor" && (
-            <div className="form-grid-3" style={{ marginBottom: "16px" }}>
+            <div className="form-grid-3 mb-[16px]!">
               <div className="input-group">
                 <label>
                   Total Liquid Flowback (bbl)
@@ -417,7 +417,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
 
           {/* Model 3: API Eq. 6-7 (V_cc = V_Pi × T) */}
           {activeMethod === "api_equation_6_7" && (
-            <div className="form-grid-3" style={{ marginBottom: "16px" }}>
+            <div className="form-grid-3 mb-[16px]!">
               <div className="input-group">
                 <label>
                   Production / Well Test Rate (V_Pi)
@@ -554,7 +554,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
         <div>
 
           {/* Section 1: Metered Gas & Injected N2 Deduction */}
-          <div className="form-grid-4" style={{ marginBottom: "16px" }}>
+          <div className="form-grid-4 mb-[16px]!">
             <div className="input-group">
               <label>
                 Metered volume
@@ -640,7 +640,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
               marginBottom: "16px",
             }}
           >
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
+            <div className="flex! items-center! justify-between! mb-[8px]!">
               <label style={{ fontWeight: 600, fontSize: "0.85rem", color: "#374151", margin: 0 }}>
                 Unmetered flowback
               </label>
@@ -679,7 +679,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
           </div>
 
           {/* Section 3: Gas Composition */}
-          <div className="form-grid-2" style={{ marginBottom: "16px" }}>
+          <div className="form-grid-2 mb-[16px]!">
             <div className="input-group">
               <label>
                 CH₄ (%)
@@ -728,7 +728,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
           </div>
 
           {/* Section 4: Gas Disposition / Fate Split */}
-          <div className="input-group" style={{ marginBottom: "16px" }}>
+          <div className="input-group mb-[16px]!">
             <label>
               Gas disposition
               <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
@@ -758,7 +758,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                 marginBottom: "16px",
               }}
             >
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
+              <div className="flex! justify-between! mb-[8px]!">
                 <span style={{ fontWeight: 600, fontSize: "0.85rem", color: "#166534" }}>
                   Custom Split Allocation (must sum to 100%)
                 </span>
@@ -837,7 +837,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
           )}
 
           {(tier3Disposition === "flared" || (tier3Disposition === "split" && parseFloat(data.comp_frac_flared || 0) > 0)) && (
-            <div className="form-grid-2" style={{ marginBottom: "16px" }}>
+            <div className="form-grid-2 mb-[16px]!">
               <div className="input-group">
                 <label>
                   Flare efficiency (%)

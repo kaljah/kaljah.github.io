@@ -25,15 +25,10 @@ const EmissionFactorOption = ({
 
   return (
     <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        width: "100%",
-      }}
+      className="flex! items-center! justify-between! w-full!"
     >
       <div
-        style={{ display: "flex", alignItems: "center", gap: "8px", flex: 1 }}
+        className="flex! items-center! gap-[8px]! flex-1!"
       >
         <span>{factorKey}</span>
         {showSegment && segment && (

@@ -133,7 +133,7 @@ const QuickAddCustomFactorModal = ({
             background: "#f9fafb",
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <div className="flex! items-center! gap-[8px]!">
             <div
               style={{
                 width: "32px",
@@ -196,7 +196,7 @@ const QuickAddCustomFactorModal = ({
             </div>
           )}
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+          <div className="flex! flex-col! gap-[14px]!">
             {/* Factor Name */}
             <div>
               <label
@@ -399,7 +399,7 @@ const QuickAddCustomFactorModal = ({
                 >
                   Factor Uncertainty (±%)
                 </label>
-                <div style={{ position: "relative" }}>
+                <div className="relative!">
                   <input
                     type="number"
                     step="0.1"

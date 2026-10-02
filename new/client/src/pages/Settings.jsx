@@ -698,11 +698,7 @@ const Settings = () => {
           </div>
 
           <div
-            style={{
-              marginTop: "24px",
-              display: "flex",
-              justifyContent: "flex-end",
-            }}
+            className="mt-[24px]! flex! justify-end!"
           >
             <button
               className="btn-primary"
@@ -1102,15 +1098,10 @@ const Settings = () => {
             )}
 
             {/* Quality Filtering and Enable Toggle */}
-            <div className="form-row-2col" style={{ marginTop: "16px" }}>
+            <div className="form-row-2col mt-[16px]!">
               <div className="form-group">
                 <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    marginBottom: "6px",
-                  }}
+                  className="flex! justify-between! items-center! mb-[6px]!"
                 >
                   <label className="field-label" style={{ margin: 0 }}>
                     Cloud Quality Filter (QA Value Threshold)
@@ -1139,12 +1130,8 @@ const Settings = () => {
               </div>
 
               <div
-                className="form-group"
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                }}
+                className="form-group flex! flex-col! justify-center!"
+               
               >
                 <label className="field-label">Satellite Layer Streaming</label>
                 <label
@@ -1219,11 +1206,7 @@ const Settings = () => {
           </div>
 
           <div
-            style={{
-              marginTop: "24px",
-              display: "flex",
-              justifyContent: "flex-end",
-            }}
+            className="mt-[24px]! flex! justify-end!"
           >
             <button
               className="btn-primary"
