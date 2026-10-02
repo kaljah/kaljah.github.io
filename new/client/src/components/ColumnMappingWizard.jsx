@@ -1,4 +1,5 @@
 import React, { useState, useRef, useCallback } from "react";
+import { activateOnKey } from "../utils/a11yKeys";
 import Papa from "papaparse";
 import api from "../api";
 import { autoDetectMapping, missingRequiredFields } from "../utils/importMapping";
@@ -843,7 +844,7 @@ export default function ColumnMappingWizard({
                     gap: "16px",
                   }}
                 >
-                  <div
+                  <div role="button" tabIndex={0} onKeyDown={activateOnKey}
                     className={`cmw-mode-card ${selectedTier === "1" ? "active" : ""}`}
                     onClick={() => setSelectedTier("1")}
                     style={{
@@ -892,7 +893,7 @@ export default function ColumnMappingWizard({
                       Basic calculation using industry defaults.
                     </p>
                   </div>
-                  <div
+                  <div role="button" tabIndex={0} onKeyDown={activateOnKey}
                     className={`cmw-mode-card ${selectedTier === "3" ? "active" : ""}`}
                     onClick={() => setSelectedTier("3")}
                     style={{
@@ -962,7 +963,7 @@ export default function ColumnMappingWizard({
                     marginBottom: "16px",
                   }}
                 >
-                  <div
+                  <div role="button" tabIndex={0} onKeyDown={activateOnKey}
                     className={`cmw-mode-card ${selectedProcessScope === "all" ? "active" : ""}`}
                     onClick={() => setSelectedProcessScope("all")}
                     style={{
@@ -1011,7 +1012,7 @@ export default function ColumnMappingWizard({
                       Upload data for various process types together.
                     </p>
                   </div>
-                  <div
+                  <div role="button" tabIndex={0} onKeyDown={activateOnKey}
                     className={`cmw-mode-card ${selectedProcessScope === "specific" ? "active" : ""}`}
                     onClick={() => setSelectedProcessScope("specific")}
                     style={{
@@ -1147,7 +1148,7 @@ export default function ColumnMappingWizard({
                 </p>
               </div>
             {/* Drop zone */}
-            <div
+            <div role="button" tabIndex={0} onKeyDown={activateOnKey}
               className={`cmw-dropzone ${isDragging ? "dragging" : ""}`}
               onClick={() => fileInputRef.current.click()}
               onDragOver={(e) => {

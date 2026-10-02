@@ -1,4 +1,5 @@
 import React, { useState, useRef, useCallback, useMemo, useEffect } from "react";
+import { activateOnKey } from "../utils/a11yKeys";
 import Papa from "papaparse";
 import api from "../api";
 import { autoDetectMapping, missingRequiredFields } from "../utils/importMapping";
@@ -399,7 +400,7 @@ export default function Scope2ImportWizard({ onClose, onUploadSuccess }) {
                 )}
               </div>
             )}
-            <div
+            <div role="button" tabIndex={0} onKeyDown={activateOnKey}
               className={`s1w-dropzone ${isDragging ? "dragging" : ""}`}
               onClick={() => fileInputRef.current.click()}
               onDragOver={e => { e.preventDefault(); setIsDragging(true); }}

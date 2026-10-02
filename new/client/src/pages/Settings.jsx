@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { activateOnKey } from "../utils/a11yKeys";
 import {
   Globe,
   Target,
@@ -416,7 +417,7 @@ const Settings = () => {
             {Object.entries(GWP_DATA).map(([key, data]) => {
               const isSelected = gwpStandard === key;
               return (
-                <div
+                <div role="button" tabIndex={0} onKeyDown={activateOnKey}
                   key={key}
                   className={`gwp-card ${isSelected ? "selected" : ""}`}
                   onClick={() => { if (isAdmin) setGwpStandard(key); }}
@@ -902,7 +903,7 @@ const Settings = () => {
 
           {/* Step-by-step account guide toggle banner */}
           <div className="satellite-guide-banner">
-            <div
+            <div role="button" tabIndex={0} onKeyDown={activateOnKey}
               className="guide-banner-header"
               onClick={() => setShowGuide(!showGuide)}
             >

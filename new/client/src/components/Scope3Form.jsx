@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { activateOnKey } from "../utils/a11yKeys";
 import { CATEGORY_ACTIVITIES } from "../utils/scope3Factors";
 import api from "../api";
 import CustomDropdown from "./CustomDropdown";
@@ -361,7 +362,7 @@ const Scope3Form = () => {
 
         {/* EEIO Quick Spend Calculator */}
         <div style={{ marginTop: "20px", marginBottom: "10px", padding: "16px", background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "8px" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer" }} onClick={() => setShowEeioCalc(!showEeioCalc)}>
+          <div role="button" tabIndex={0} onKeyDown={activateOnKey} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer" }} onClick={() => setShowEeioCalc(!showEeioCalc)}>
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
               <span style={{ fontSize: "1.2rem" }}>💰</span>
               <strong style={{ color: "#334155" }}>EEIO Quick Spend Calculator</strong>

@@ -14,7 +14,7 @@ import { test, expect } from '@playwright/test';
 import path from 'path';
 import fs from 'fs';
 
-const FRONTEND = 'http://127.0.0.1:5173';
+const FRONTEND = process.env.E2E_BASE_URL || 'http://127.0.0.1:5173';
 const BACKEND = 'http://127.0.0.1:5000';
 const SCREENSHOT_DIR = 'C:/Users/samsung/Desktop/H2/test_results/screenshots';
 

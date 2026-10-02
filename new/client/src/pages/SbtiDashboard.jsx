@@ -601,7 +601,7 @@ const SbtiDashboard = () => {
           </div>
         </div>
 
-        <div className="sbti-table-container">
+        <div className="sbti-table-container" tabIndex={0} role="region" aria-label="Pathway table">
           <table className="sbti-table">
             <thead>
               <tr>

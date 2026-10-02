@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { activateOnKey } from "../utils/a11yKeys";
 import {
   Search,
   Book,
@@ -446,7 +447,7 @@ const ReferenceData = () => {
               className="category-section"
               style={{ borderLeftColor: cat.color }}
             >
-              <div
+              <div role="button" tabIndex={0} onKeyDown={activateOnKey}
                 className="category-header"
                 onClick={() => toggleCategory(key)}
               >

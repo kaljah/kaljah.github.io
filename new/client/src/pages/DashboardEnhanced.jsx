@@ -1,4 +1,5 @@
 import { useAnalyticsFilter } from "../filters/useAnalyticsFilter";
+import { activateOnKey } from "../utils/a11yKeys";
 import { SegmentedControl } from "../ui";
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
@@ -1429,7 +1430,7 @@ const DashboardEnhanced = () => {
         <div
           className={`card categorical-card glass-panel ${categoricalCollapsed ? "collapsed-card" : ""}`}
         >
-          <div
+          <div role="button" tabIndex={0} onKeyDown={activateOnKey}
             className="card-header-row clickable-card-header"
             onClick={() => setCategoricalCollapsed(!categoricalCollapsed)}
             style={{
@@ -1520,7 +1521,7 @@ const DashboardEnhanced = () => {
             <div
               className={`card detailed-table-card glass-panel ${detailedBreakdownCollapsed ? "collapsed-card" : ""}`}
             >
-              <div
+              <div role="button" tabIndex={0} onKeyDown={activateOnKey}
                 className="table-header-row clickable-card-header"
                 onClick={() =>
                   setDetailedBreakdownCollapsed(!detailedBreakdownCollapsed)
@@ -1664,7 +1665,7 @@ const DashboardEnhanced = () => {
                       {Object.entries(getHierarchicalData).map(
                         ([act, actData]) => (
                           <React.Fragment key={act}>
-                            <tr
+                            <tr tabIndex={0} onKeyDown={activateOnKey}
                               className="act-row clickable"
                               onClick={() => toggleActivity(act)}
                             >
@@ -1682,7 +1683,7 @@ const DashboardEnhanced = () => {
                               Object.entries(actData.divisions).map(
                                 ([div, divData]) => (
                                   <React.Fragment key={div}>
-                                    <tr
+                                    <tr tabIndex={0} onKeyDown={activateOnKey}
                                       className="div-row clickable"
                                       onClick={(e) => {
                                         e.stopPropagation();

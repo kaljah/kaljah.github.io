@@ -178,6 +178,17 @@ export const DataTable = ({
                   <tr
                     key={row.id}
                     onClick={onRowClick ? () => onRowClick(row.original) : undefined}
+                    tabIndex={onRowClick ? 0 : undefined}
+                    onKeyDown={
+                      onRowClick
+                        ? (e) => {
+                            if (e.target === e.currentTarget && (e.key === "Enter" || e.key === " ")) {
+                              e.preventDefault();
+                              onRowClick(row.original);
+                            }
+                          }
+                        : undefined
+                    }
                     className={cn(onRowClick && "cursor-pointer hover:bg-selected-bg")}
                   >
                     {row.getVisibleCells().map((c) => {

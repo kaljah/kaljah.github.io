@@ -32,7 +32,7 @@
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: var(--s1-accent);
+  background: var(--color-primary);
   color: var(--color-white);
   font-size: 0.8rem;
   font-weight: 700;
@@ -161,7 +161,7 @@
 .s1-form .tier-selector-btn .tier-tag {
   font-size: 0.72rem;
   font-weight: 700;
-  color: var(--s1-accent);
+  color: var(--color-link);
   background: none;
   padding: 0;
 }

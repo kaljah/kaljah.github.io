@@ -2875,7 +2875,7 @@ const Scope1Form = () => {
             className="mole-input"
             style={{ width: "160px", padding: "6px 10px", fontSize: "0.82rem" }}
           />
-          <select
+          <select aria-label="Filter by year"
             value={filterYear}
             onChange={(e) => {
               setFilterYear(e.target.value);
@@ -2893,7 +2893,7 @@ const Scope1Form = () => {
                 </option>
               ))}
           </select>
-          <select
+          <select aria-label="Filter by process"
             value={filterProcess}
             onChange={(e) => {
               setFilterProcess(e.target.value);

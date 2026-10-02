@@ -1,4 +1,5 @@
 import { useAnalyticsFilter } from "../filters/useAnalyticsFilter";
+import { activateOnKey } from "../utils/a11yKeys";
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
 import api from "../api";
@@ -1261,7 +1262,7 @@ const MethaneIntensity = () => {
 
         {/* OGMP 2.0 LEVEL 4/5 TOP-DOWN SURVEY RECONCILIATION SECTION */}
         <div className="card ogmp-section">
-          <div
+          <div role="button" tabIndex={0} onKeyDown={activateOnKey}
             className="chart-header"
             onClick={() => setOgmpCollapsed(!ogmpCollapsed)}
             style={{ cursor: "pointer", userSelect: "none" }}

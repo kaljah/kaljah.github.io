@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { activateOnKey } from "../utils/a11yKeys";
 import { useSearchParams } from "react-router-dom";
 import { useBreadcrumbExtra } from "../hooks/useBreadcrumbExtra";
 import "./Emissions.css";
@@ -61,7 +62,7 @@ const Emissions = () => {
   const renderSelectionScreen = () => (
     <div className="scope-selection-grid">
       {/* ── SCOPE 1 ── */}
-      <div
+      <div role="button" tabIndex={0} onKeyDown={activateOnKey}
         className="scope-card scope-1-card"
         onClick={() => goToStage(STAGE_SCOPE1_SUB_SELECTION)}
       >
@@ -117,7 +118,7 @@ const Emissions = () => {
       </div>
 
       {/* ── SCOPE 2 ── */}
-      <div
+      <div role="button" tabIndex={0} onKeyDown={activateOnKey}
         className="scope-card scope-2-card"
         onClick={() => goToStage(STAGE_SCOPE2)}
       >
@@ -173,7 +174,7 @@ const Emissions = () => {
       </div>
 
       {/* ── SCOPE 3 ── */}
-      <div
+      <div role="button" tabIndex={0} onKeyDown={activateOnKey}
         className="scope-card scope-3-card"
         onClick={() => goToStage(STAGE_SCOPE3)}
       >

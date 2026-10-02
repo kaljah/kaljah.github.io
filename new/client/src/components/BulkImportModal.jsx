@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { activateOnKey } from "../utils/a11yKeys";
 import api from "../api";
 import Modal from "./Modal";
 import { useToast } from "./Toast";
@@ -876,7 +877,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                 gap: "16px",
               }}
             >
-              <div
+              <div role="button" tabIndex={0} onKeyDown={activateOnKey}
                 className="mode-card"
                 onClick={() => {
                   setSelectedTier("1");
@@ -916,7 +917,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                   Standard activity data using default API emission factors.
                 </p>
               </div>
-              <div
+              <div role="button" tabIndex={0} onKeyDown={activateOnKey}
                 className="mode-card"
                 onClick={() => {
                   setSelectedTier("3");
@@ -979,7 +980,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                 marginBottom: "24px",
               }}
             >
-              <div
+              <div role="button" tabIndex={0} onKeyDown={activateOnKey}
                 className="mode-card"
                 onClick={() => {
                   setSelectedProcess("all");
@@ -1014,7 +1015,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                   types at once.
                 </p>
               </div>
-              <div
+              <div role="button" tabIndex={0} onKeyDown={activateOnKey}
                 className="mode-card"
                 onClick={() => {
                   setStep(0.75);
@@ -1155,7 +1156,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                 </button>
               </div>
             )}
-            <div
+            <div role="button" tabIndex={0} onKeyDown={activateOnKey}
               className="upload-zone"
               onClick={() => fileInputRef.current.click()}
             >
@@ -1175,7 +1176,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                 style={{ display: "none" }}
               />
 
-              <div
+              <div role="button" tabIndex={0} onKeyDown={activateOnKey}
                 className="template-download"
                 onClick={(e) => {
                   e.stopPropagation();
@@ -1187,7 +1188,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                 <span>Download targeted CSV template</span>
               </div>
 
-              <div
+              <div role="button" tabIndex={0} onKeyDown={activateOnKey}
                 className="cheat-sheet-toggle"
                 onClick={(e) => {
                   e.stopPropagation();

@@ -1,44 +1,52 @@
 import { useEffect, useRef } from "react";
-import { useLocation, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { findRoute } from "../app/routes.config";
 import { FILTER_KEYS, getFilters, setFilters, subscribe } from "./filterStore";
 
 /**
  * Keeps the shared filters and the URL query in sync on routes flagged with filters: true.
  * URL to store on arrival (deep links win); store to URL on every change.
+ * The store subscription outlives route changes, so it always reads the latest location and navigate
+ * from refs (a stale setSearchParams would navigate back to the route it was created on).
  */
 const AnalyticsFiltersSync = () => {
-  const { pathname } = useLocation();
-  const [params, setParams] = useSearchParams();
-  const enabled = Boolean(findRoute(pathname)?.filters);
-  const paramsRef = useRef(params);
-  paramsRef.current = params;
+  const location = useLocation();
+  const navigate = useNavigate();
+  const enabled = Boolean(findRoute(location.pathname)?.filters);
 
-  // arriving on a filtered route: adopt filters present in the URL
+  const locationRef = useRef(location);
+  const navigateRef = useRef(navigate);
+  locationRef.current = location;
+  navigateRef.current = navigate;
+
+  const writeUrl = () => {
+    const { pathname, search } = locationRef.current;
+    if (!findRoute(pathname)?.filters) return;
+    const next = new URLSearchParams(search);
+    const f = getFilters();
+    for (const k of FILTER_KEYS) {
+      if (f[k] === "all") next.delete(k);
+      else next.set(k, f[k]);
+    }
+    const nextSearch = next.toString() ? `?${next.toString()}` : "";
+    if (nextSearch !== search) navigateRef.current({ pathname, search: nextSearch }, { replace: true });
+  };
+
+  // arriving on a filtered route: adopt filters present in the URL, otherwise publish the stored ones
   useEffect(() => {
     if (!enabled) return;
+    const params = new URLSearchParams(locationRef.current.search);
     const fromUrl = {};
     for (const k of FILTER_KEYS) {
-      const v = paramsRef.current.get(k);
+      const v = params.get(k);
       if (v) fromUrl[k] = v;
     }
     if (Object.keys(fromUrl).length) setFilters(fromUrl);
     else writeUrl();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [enabled, pathname]);
+  }, [enabled, location.pathname]);
 
-  function writeUrl() {
-    const next = new URLSearchParams(paramsRef.current);
-    const f = getFilters();
-    for (const k of FILTER_KEYS) f[k] === "all" ? next.delete(k) : next.set(k, f[k]);
-    if (next.toString() !== paramsRef.current.toString()) setParams(next, { replace: true });
-  }
-
-  useEffect(() => {
-    if (!enabled) return undefined;
-    return subscribe(writeUrl);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [enabled]);
+  useEffect(() => subscribe(writeUrl), []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return null;
 };

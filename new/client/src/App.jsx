@@ -10,10 +10,25 @@ import AppShell from "./app/shell/AppShell";
 import RequireRole from "./app/RequireRole";
 import { ALIASES, ROUTES } from "./app/routes.config";
 
+// Development-only component gallery (never part of production builds)
+const UiGallery = import.meta.env.DEV ? React.lazy(() => import("./dev/UiGallery")) : null;
+
 // Routes, guards, navigation and titles all come from app/routes.config.js.
 const AppRoutes = () => (
   <Routes>
     <Route path="/login" element={<Login />} />
+    {UiGallery && (
+      <Route
+        path="/__ui"
+        element={
+          <React.Suspense fallback={null}>
+            <div className="h-screen overflow-y-auto">
+              <UiGallery />
+            </div>
+          </React.Suspense>
+        }
+      />
+    )}
 
     <Route
       path="/"

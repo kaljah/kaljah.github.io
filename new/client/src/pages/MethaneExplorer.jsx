@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { activateOnKey } from "../utils/a11yKeys";
 import { useNavigate } from "react-router-dom";
 import {
   MapContainer,
@@ -1214,7 +1215,7 @@ const EmissionsMap = () => {
                   const severity = getSeverityLevel(val);
 
                   return (
-                    <div
+                    <div role="button" tabIndex={0} onKeyDown={activateOnKey}
                       key={fac.id}
                       className={`target-card ${isSelected ? "selected" : ""}`}
                       onClick={() => handleSelectFacility(fac)}
