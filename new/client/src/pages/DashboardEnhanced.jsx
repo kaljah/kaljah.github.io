@@ -1301,8 +1301,9 @@ const DashboardEnhanced = () => {
                 xKey="year"
                 lines={
                   isCompareMode
-                    ? Object.keys(trendData[0] || {})
-                        .filter((k) => k !== "year" && k !== "trajectory")
+                    ? // every facility of any year (the first year's facilities only, before)
+                      [...new Set(trendData.flatMap((p) => Object.keys(p)))]
+                        .filter((k) => k !== "year" && k !== "trajectory" && k !== "forecast")
                         .map((k, i) => ({
                           dataKey: k,
                           name: k,
@@ -1331,7 +1332,7 @@ const DashboardEnhanced = () => {
                           color: "#8b5cf6",
                           strokeDasharray: "3 3",
                         },
-                      ]
+                      ].filter((l) => trendData.some((p) => p[l.dataKey] != null)) // no legend entry without a line
                 }
                 height={360}
               />

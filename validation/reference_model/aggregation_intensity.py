@@ -38,12 +38,11 @@ class IndependentIntensityModel:
         return (float(flaring_vol_m3 or 0.0) / g) * 100.0
 
     @staticmethod
-    def calculate_wec(ch4_tonnes, gas_prod_m3=0.0, oil_bbl=0.0, segment="upstream", year=2026):
+    def calculate_wec(ch4_tonnes, gas_prod_m3=0.0, oil_bbl=0.0, segment="upstream", year=2034, country="United States"):
+        """CAA s.136 waste emissions charge as amended by Public Law 119-21 (2025): methane emitted from 2034
+        on, $1,500 per tonne, US facilities reporting under 40 CFR 98 subpart W only."""
         seg = str(segment or "upstream").lower()
-        yr = int(year or 2026)
-
-        if yr < 2024 or any(k in seg for k in ["downstream", "refining", "petrochem"]):
-            return {"excess_ch4_tonnes": 0.0, "wec_rate": 0.0, "wec_fee_usd": 0.0, "status": "Exempt"}
+        yr = int(year or 2034)
 
         # Upstream target: 0.20% (0.0020); Midstream target: 0.05% (0.0005)
         threshold = 0.0005 if any(m in seg for m in ["processing", "midstream", "lng"]) else 0.0020
@@ -59,8 +58,18 @@ class IndependentIntensityModel:
         else:
             allowed_ch4_t = 0.0
 
+        base = {"allowed_ch4_tonnes": allowed_ch4_t}
+        if str(country or "").strip().lower() not in ("united states", "united states of america", "usa", "us"):
+            return {**base, "excess_ch4_tonnes": None, "wec_rate": None, "wec_fee_usd": None,
+                    "status": "Not Applicable (US subpart W facilities only)"}
+        if yr < 2034:
+            return {**base, "excess_ch4_tonnes": None, "wec_rate": None, "wec_fee_usd": None,
+                    "status": "Not Applicable (charge starts with 2034 emissions)"}
+        if any(k in seg for k in ["downstream", "refining", "petrochem"]):
+            return {**base, "excess_ch4_tonnes": 0.0, "wec_rate": 0.0, "wec_fee_usd": 0.0, "status": "Exempt"}
+
         excess_t = max(0.0, float(ch4_tonnes or 0.0) - allowed_ch4_t)
-        rate = 900.0 if yr == 2024 else (1200.0 if yr == 2025 else 1500.0)
+        rate = 1500.0
         fee = round(excess_t * rate, 2)
         status = "Compliant" if excess_t <= 0 else "Taxable Liability"
 

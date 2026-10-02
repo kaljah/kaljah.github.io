@@ -55,12 +55,9 @@ def default_rel_1sigma(scope, process_type="", calc_method="", factor_source="")
 
 def _process_label(process_type):
     """Readable Scope 1 process name (the page showed raw keys such as "tank_flashing")."""
-    from services.scope1_calc import PROCESS_LABELS
+    from services.labels import process_label
 
-    p = (process_type or "").strip()
-    if not p:
-        return "Other Scope 1"
-    return PROCESS_LABELS.get(p.lower()) or p.replace("_", " ").strip().capitalize()
+    return process_label(process_type)
 
 
 def _band(u95):

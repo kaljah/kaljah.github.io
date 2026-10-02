@@ -310,13 +310,16 @@ def test_methane_loss_rate_calculation(ci_setup):
 # 4. EPA WEC (WASTE EMISSIONS CHARGE) COMPLIANCE
 # =========================================================================
 
-def test_wec_downstream_exemption(ci_setup):
-    """Verify downstream facilities are exempt from WEC fee ($0)."""
+def test_wec_not_charged_for_this_facility_year(ci_setup):
+    """CAA s.136 as amended by Public Law 119-21 (2025): the charge applies to methane emitted from 2034 on,
+    and only at US facilities reporting under 40 CFR 98 subpart W. This Algerian refinery's 2026 methane
+    carries no charge (it used to show as "Exempt (Downstream)" only because year and country were not
+    checked; the downstream exemption itself is covered in test_audit_2026_10_02.py)."""
     with flask_app.app_context():
         stats = _query_intensity_stats(year="2026", facility_id=str(ci_setup["fac3"].id))
         if stats:
-            assert stats[0]["wec_fee_usd"] == 0.0
-            assert "Exempt" in stats[0]["wec_status"]
+            assert stats[0]["wec_fee_usd"] is None
+            assert stats[0]["wec_status"].startswith("Not Applicable")
 
 
 def test_wec_rate_schedule():

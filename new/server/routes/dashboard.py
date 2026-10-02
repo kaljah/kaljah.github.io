@@ -1618,8 +1618,9 @@ def get_flaring_summary():
             "volume_m3": round(m3, 2),
             "volume_knm3": round(m3 / 1000.0, 2),
             "percentage": round(m3 / total_m3 * 100.0, 1) if total_m3 > 0 else 0.0,
-            # with operator stream volumes the emissions records may not be split by stream
-            "tco2e": round(streams[key]["tco2e"], 2),
+            # with operator stream volumes the emissions records may not be split by stream; not rounded to
+            # 2 decimals here (the page rounds for display: 213.549 showed as 213.6 after two roundings)
+            "tco2e": round(streams[key]["tco2e"], 6),
         }
 
     return jsonify({
@@ -1634,7 +1635,7 @@ def get_flaring_summary():
         "total_flaring": {
             "volume_m3": round(total_m3, 2),
             "volume_knm3": round(total_m3 / 1000.0, 2),
-            "tco2e": round(total_tco2e, 2),
+            "tco2e": round(total_tco2e, 6),
         },
         "stream_volume_source": ("FlaringDetail (operator-reported)" if detail_used and not streams["unclassified"]["m3"]
                                  else "FlaringDetail and emission records" if detail_used else "Emission records"),

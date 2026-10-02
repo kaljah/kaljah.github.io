@@ -23,6 +23,7 @@ const Reports = () => {
   const { user } = useAuth();
   const toast = useToast();
   const [facilities, setFacilities] = useState([]);
+  const [baseYear, setBaseYear] = useState(null); // configured base year (the option was labelled 2020)
   const [availableFilters, setAvailableFilters] = useState({
     years: [],
     regions: [],
@@ -67,10 +68,12 @@ const Reports = () => {
   useEffect(() => {
     const loadInitialData = async () => {
       try {
-        const [facRes, filterRes] = await Promise.all([
+        const [facRes, filterRes, baseRes] = await Promise.all([
           api.get("/facilities"),
           api.get("/filters/available"),
+          api.get("/dashboard/base-year").catch(() => ({ data: null })),
         ]);
+        setBaseYear(baseRes.data?.year ?? null);
         const facilitiesData = Array.isArray(facRes.data)
           ? facRes.data
           : facRes.data?.data || [];
@@ -680,7 +683,7 @@ const Reports = () => {
                         {y}
                       </option>
                     ))}
-                  <option value="baseline">Baseline (2020)</option>
+                  {baseYear && <option value="baseline">Baseline ({baseYear})</option>}
                 </select>
               </div>
 
