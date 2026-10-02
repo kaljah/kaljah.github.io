@@ -6,7 +6,7 @@
 }
 
 .field-label {
-  font-size: 0.875rem;
+  font-size: var(--text-base);
   font-weight: 500;
   color: var(--text-primary);
   display: flex;
@@ -16,7 +16,7 @@
 
 .required-mark {
   color: var(--color-red-500);
-  font-size: 0.875rem;
+  font-size: var(--text-base);
 }
 
 /* Input Fields */
@@ -26,9 +26,9 @@
   padding: 10px 14px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   color: var(--text-primary);
-  font-size: 0.9rem;
+  font-size: var(--text-base);
   font-family: inherit;
   transition: all 0.2s ease;
   outline: none;
@@ -95,7 +95,7 @@
   align-items: center;
   gap: 10px;
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: var(--text-base);
   color: var(--text-primary);
 }
 
@@ -131,7 +131,7 @@
   align-items: center;
   gap: 8px;
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: var(--text-base);
   color: var(--text-primary);
 }
 
@@ -149,7 +149,7 @@
 
 /* Helper & Error Text */
 .error-text {
-  font-size: 0.75rem;
+  font-size: var(--text-sm);
   color: var(--color-red-500);
   margin-top: 4px;
   display: flex;
@@ -159,11 +159,11 @@
 
 .error-text::before {
   content: "⚠";
-  font-size: 0.875rem;
+  font-size: var(--text-base);
 }
 
 .helper-text {
-  font-size: 0.75rem;
+  font-size: var(--text-sm);
   color: var(--text-secondary);
   margin-top: 4px;
 }

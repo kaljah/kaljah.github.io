@@ -21,17 +21,16 @@
 
 .up-section {
   background: var(--color-white);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   padding: 24px;
   border: 1px solid var(--color-ink-200);
   box-shadow:
-    0 4px 6px -1px rgba(0, 0, 0, 0.05),
-    0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    var(--shadow-xs);
 }
 
 /* ─── Typography & Shared ─────────────────────────────────────────────────── */
 .up-label {
-  font-size: 1rem;
+  font-size: var(--text-md);
   font-weight: 600;
   margin: 0 0 4px 0;
   color: var(--color-ink-900);
@@ -41,7 +40,7 @@
 }
 
 .up-sub {
-  font-size: 0.875rem;
+  font-size: var(--text-base);
   color: var(--color-ink-500);
   margin: 0;
 }
@@ -70,7 +69,7 @@
   width: 100%;
   height: 8px;
   background: var(--color-ink-100);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   overflow: hidden;
   margin-bottom: 12px;
 }
@@ -78,7 +77,7 @@
 .up-bar-fill {
   height: 100%;
   background: linear-gradient(90deg, var(--color-brand-500) 0%, var(--color-brand-400) 100%);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   transition: width 0.4s ease-out;
   box-shadow: 0 0 8px rgba(255, 102, 0, 0.35);
 }
@@ -86,7 +85,7 @@
 .up-bar-stats {
   display: flex;
   justify-content: space-between;
-  font-size: 0.875rem;
+  font-size: var(--text-base);
   color: var(--color-ink-600);
   font-weight: 500;
 }
@@ -100,12 +99,12 @@
   padding: 12px 16px;
   background: var(--color-amber-50);
   border: 1px solid #fef3c7;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   gap: 8px;
   color: var(--color-amber-700);
-  font-size: 0.875rem;
+  font-size: var(--text-base);
   font-weight: 500;
   animation: up-fade-in 0.3s ease;
 }
@@ -127,7 +126,7 @@
   align-items: center;
   gap: 16px;
   padding: 20px;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   border: 1px solid var(--color-ink-200);
   background: var(--color-ink-50);
 }
@@ -135,7 +134,7 @@
 .up-card-icon {
   width: 48px;
   height: 48px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -159,7 +158,7 @@
 }
 
 .up-card-num {
-  font-size: 1.5rem;
+  font-size: var(--text-xl);
   font-weight: 700;
   margin: 0 0 2px 0;
   color: var(--color-ink-900);
@@ -167,7 +166,7 @@
 }
 
 .up-card-lbl {
-  font-size: 0.875rem;
+  font-size: var(--text-base);
   color: var(--color-ink-500);
   margin: 0;
   font-weight: 500;
@@ -176,7 +175,7 @@
 /* ─── Skipped Reasons Panel ───────────────────────────────────────────────── */
 .up-skip-panel {
   border: 1px solid var(--color-ink-200);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   margin-bottom: 24px;
   overflow: hidden;
 }
@@ -198,7 +197,7 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  font-size: 0.9375rem;
+  font-size: var(--text-md);
   font-weight: 600;
   color: var(--color-ink-700);
   transition: background 0.2s;
@@ -225,8 +224,8 @@
   padding: 6px 12px;
   background: var(--color-white);
   border: 1px solid var(--color-ink-300);
-  border-radius: 6px;
-  font-size: 0.8125rem;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
   font-weight: 500;
   color: var(--color-ink-600);
   cursor: pointer;
@@ -259,10 +258,10 @@
 
 .up-pill {
   padding: 6px 12px;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   border: 1px solid var(--color-ink-200);
   background: var(--color-white);
-  font-size: 0.8125rem;
+  font-size: var(--text-sm);
   font-weight: 500;
   color: var(--color-ink-500);
   cursor: pointer;
@@ -286,7 +285,7 @@
 .up-reasons-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.8125rem;
+  font-size: var(--text-sm);
   text-align: left;
 }
 
@@ -359,8 +358,8 @@
 .up-tag {
   display: inline-block;
   padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 0.75rem;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -419,8 +418,8 @@
   background: var(--primary-gradient);
   color: var(--color-white);
   border: none;
-  border-radius: 8px;
-  font-size: 0.875rem;
+  border-radius: var(--radius-md);
+  font-size: var(--text-base);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.18s;
@@ -438,8 +437,8 @@
   background: transparent;
   color: var(--color-ink-500);
   border: 1px solid var(--color-ink-300);
-  border-radius: 8px;
-  font-size: 0.875rem;
+  border-radius: var(--radius-md);
+  font-size: var(--text-base);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
@@ -475,13 +474,13 @@
 .up-error-log {
   background: var(--color-ink-50);
   border: 1px solid var(--color-ink-200);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   padding: 16px;
   margin-bottom: 24px;
   max-height: 200px;
   overflow-y: auto;
   font-family: monospace;
-  font-size: 0.8125rem;
+  font-size: var(--text-sm);
   color: var(--color-ink-700);
 }
 
@@ -509,7 +508,7 @@
 .up-anomaly-section {
   background: #fefce8;
   border: 1px solid #fef08a;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   margin-bottom: 24px;
   overflow: hidden;
 }
@@ -523,7 +522,7 @@
   border: none;
   color: #854d0e;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: var(--text-base);
   cursor: pointer;
   transition: background 0.2s;
 }
@@ -541,7 +540,7 @@
   border-top: 1px solid #fef08a;
 }
 .up-anomaly-desc {
-  font-size: 0.85rem;
+  font-size: var(--text-base);
   color: #713f12;
   margin: 0 0 12px 0;
   line-height: 1.4;

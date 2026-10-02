@@ -22,14 +22,14 @@
 .batch-wizard-modal {
   background: var(--bg-card-elevated, var(--color-white));
   border: 1px solid var(--border-color, rgba(226, 232, 240, 0.9));
-  border-radius: 20px;
+  border-radius: var(--radius-lg);
   width: 100%;
   max-width: 1440px;
   height: calc(100vh - 48px);
   max-height: 940px;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 25px 60px -12px rgba(15, 23, 42, 0.3), 0 0 0 1px rgba(15, 23, 42, 0.05);
+  box-shadow: var(--shadow-overlay);
   overflow: hidden;
   animation: wizardSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -60,7 +60,7 @@
 .wizard-badge-icon {
   width: 44px;
   height: 44px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   background: linear-gradient(135deg, rgba(255, 102, 0, 0.15) 0%, rgba(255, 102, 0, 0.05) 100%);
   border: 1px solid rgba(255, 102, 0, 0.25);
   color: var(--color-link);
@@ -72,7 +72,7 @@
 
 .wizard-title-text h2 {
   margin: 0 0 4px 0;
-  font-size: 1.25rem;
+  font-size: var(--text-lg);
   font-weight: 700;
   color: var(--text-primary, var(--color-ink-900));
   letter-spacing: -0.02em;
@@ -80,7 +80,7 @@
 
 .wizard-title-text p {
   margin: 0;
-  font-size: 0.84rem;
+  font-size: var(--text-base);
   color: var(--text-secondary, var(--color-ink-500));
 }
 
@@ -115,11 +115,11 @@
   align-items: center;
   gap: 8px;
   padding: 6px 14px;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   background: var(--color-white);
   border: 1px solid var(--border-color, var(--color-ink-200));
-  font-size: 0.82rem;
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+  font-size: var(--text-sm);
+  box-shadow: var(--shadow-xs);
 }
 
 .kpi-chip strong {
@@ -160,7 +160,7 @@
 .segmented-group {
   display: inline-flex;
   background: var(--bg-body, var(--color-ink-100));
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   padding: 3px;
   gap: 3px;
 }
@@ -169,8 +169,8 @@
   border: none;
   background: transparent;
   padding: 6px 12px;
-  border-radius: 7px;
-  font-size: 0.8rem;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
   font-weight: 500;
   color: var(--text-secondary, var(--color-ink-500));
   cursor: pointer;
@@ -189,7 +189,7 @@
   background: var(--color-white);
   color: var(--color-link);
   font-weight: 600;
-  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.06);
+  box-shadow: var(--shadow-xs);
 }
 
 .segmented-item-btn.weird-active {
@@ -204,7 +204,7 @@
   gap: 8px;
   background: var(--bg-body, var(--color-ink-100));
   border: 1px solid var(--border-color, var(--color-ink-200));
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   padding: 6px 12px;
   min-width: 220px;
   transition: border-color 0.2s;
@@ -219,7 +219,7 @@
 .wizard-search-input {
   border: none;
   background: transparent;
-  font-size: 0.84rem;
+  font-size: var(--text-base);
   color: var(--text-primary, var(--color-ink-900));
   width: 100%;
   outline: none;
@@ -238,8 +238,8 @@
   align-items: center;
   gap: 6px;
   padding: 8px 14px;
-  border-radius: 9px;
-  font-size: 0.82rem;
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
   font-weight: 600;
   cursor: pointer;
   border: 1px solid transparent;
@@ -311,7 +311,7 @@
 .wizard-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.86rem;
+  font-size: var(--text-base);
 }
 
 .wizard-table th {
@@ -322,7 +322,7 @@
   -webkit-backdrop-filter: blur(8px);
   color: var(--text-secondary, var(--color-ink-500));
   font-weight: 600;
-  font-size: 0.74rem;
+  font-size: var(--text-sm);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   padding: 12px 16px;
@@ -361,8 +361,8 @@
   align-items: center;
   gap: 5px;
   padding: 3px 8px;
-  border-radius: 6px;
-  font-size: 0.74rem;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
   font-weight: 600;
   line-height: 1.2;
 }
@@ -399,7 +399,7 @@
 .wizard-empty-icon {
   width: 64px;
   height: 64px;
-  border-radius: 18px;
+  border-radius: var(--radius-lg);
   background: rgba(16, 185, 129, 0.1);
   color: var(--color-green-500);
   display: flex;

@@ -23,7 +23,7 @@
 }
 
 .ua-title {
-  font-size: 2.5rem;
+  font-size: var(--text-3xl);
   font-weight: 800;
   color: var(--text-primary, var(--color-ink-900));
   margin: 0 0 10px 0;
@@ -31,7 +31,7 @@
 }
 
 .ua-subtitle {
-  font-size: 1.1rem;
+  font-size: var(--text-lg);
   color: var(--text-secondary, var(--color-ink-500));
   max-width: 800px;
   margin: 0;
@@ -55,7 +55,7 @@
 
 .ua-filter-label {
   display: block;
-  font-size: 0.75rem;
+  font-size: var(--text-sm);
   font-weight: 600;
   color: var(--text-secondary, var(--color-ink-400));
   text-transform: uppercase;
@@ -70,19 +70,19 @@
   gap: 16px;
   background: var(--bg-card, rgba(255, 255, 255, 0.78));
   padding: 14px 20px;
-  border-radius: 14px;
+  border-radius: var(--radius-lg);
   border: 1px solid var(--border-color, rgba(0, 0, 0, 0.05));
   margin-top: 16px;
 }
 
 .ua-inventory-label {
-  font-size: 0.85rem;
+  font-size: var(--text-base);
   color: var(--text-secondary, var(--color-ink-500));
   margin-bottom: 4px;
 }
 
 .ua-inventory-value {
-  font-size: 2rem;
+  font-size: var(--text-2xl);
   font-weight: 800;
   line-height: 1.2;
 }
@@ -107,8 +107,8 @@
   gap: 6px;
   margin-top: 8px;
   padding: 4px 10px;
-  border-radius: 8px;
-  font-size: 0.72rem;
+  border-radius: var(--radius-md);
+  font-size: var(--text-xs);
   font-weight: 700;
   letter-spacing: 0.03em;
   background: rgba(59, 130, 246, 0.08);
@@ -128,7 +128,7 @@
 .ua-tier-card {
   background: var(--bg-card, rgba(255, 255, 255, 0.78));
   padding: 20px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   border: 1px solid var(--border-color, rgba(226, 232, 240, 0.8));
   box-shadow: var(--shadow-card, 0 1px 3px rgba(0, 0, 0, 0.05));
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -140,13 +140,13 @@
 }
 
 .ua-tier-label {
-  font-size: 0.8rem;
+  font-size: var(--text-sm);
   color: var(--text-secondary, var(--color-ink-500));
   font-weight: 600;
 }
 
 .ua-tier-value {
-  font-size: 1.5rem;
+  font-size: var(--text-xl);
   font-weight: 700;
   margin: 8px 0;
 }
@@ -167,13 +167,13 @@
   width: 100%;
   height: 4px;
   background: var(--border-color, var(--color-ink-100));
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   overflow: hidden;
 }
 
 .ua-tier-bar-fill {
   height: 100%;
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -196,11 +196,11 @@
   align-items: center;
   gap: 8px;
   padding: 10px 20px;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   border: 1px solid var(--border-color, var(--color-ink-200));
   background: var(--bg-card, var(--color-white));
   color: var(--text-primary, var(--color-ink-800));
-  font-size: 0.85rem;
+  font-size: var(--text-base);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -211,7 +211,7 @@
   color: var(--color-white);
   border-color: var(--accent-color, var(--color-brand-500));
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-card);
 }
 
 /* ── Legend Bar ── */
@@ -223,7 +223,7 @@
   flex-wrap: wrap;
   background: var(--bg-card, rgba(255, 255, 255, 0.4));
   padding: 16px 24px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   border: 1px solid var(--border-color, rgba(226, 232, 240, 0.8));
 }
 
@@ -231,7 +231,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 0.85rem;
+  font-size: var(--text-base);
   color: var(--text-secondary, var(--color-ink-600));
   font-weight: 600;
 }
@@ -261,7 +261,7 @@
 }
 
 .category-title {
-  font-size: 1.25rem;
+  font-size: var(--text-lg);
   font-weight: 800;
   color: var(--text-primary, var(--color-ink-800));
   margin: 0;
@@ -275,7 +275,7 @@
   width: 6px;
   height: 24px;
   background: var(--color-green-500);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   flex-shrink: 0;
 }
 
@@ -287,7 +287,7 @@
   gap: 6px;
   padding: 4px 12px;
   border-radius: 999px;
-  font-size: 0.78rem;
+  font-size: var(--text-sm);
   font-weight: 700;
   letter-spacing: 0.02em;
   text-transform: uppercase;
@@ -324,7 +324,7 @@
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border: 1px solid var(--border-color, rgba(226, 232, 240, 0.8));
-  border-radius: 20px;
+  border-radius: var(--radius-lg);
   padding: 24px;
   transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
     box-shadow 0.22s ease, border-color 0.22s ease;
@@ -349,13 +349,13 @@
 
 .factor-name {
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: var(--text-lg);
   color: var(--text-primary, var(--color-ink-900));
   margin-bottom: 4px;
 }
 
 .factor-source {
-  font-size: 0.78rem;
+  font-size: var(--text-sm);
   font-weight: 600;
   color: var(--text-secondary, var(--color-ink-500));
   text-transform: uppercase;
@@ -363,12 +363,12 @@
 }
 
 .factor-uncertainty-tag {
-  font-size: 0.9rem;
+  font-size: var(--text-base);
   font-weight: 600;
   color: var(--text-secondary, var(--color-ink-500));
   padding: 4px 8px;
   background: var(--border-color, var(--color-ink-100));
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   white-space: nowrap;
 }
 
@@ -385,7 +385,7 @@
 .factor-stat-labels {
   display: flex;
   justify-content: space-between;
-  font-size: 0.75rem;
+  font-size: var(--text-sm);
   margin-bottom: 4px;
   color: var(--text-secondary, var(--color-ink-500));
 }
@@ -399,14 +399,14 @@
   width: 100%;
   height: 6px;
   background: var(--border-color, var(--color-ink-100));
-  border-radius: 3px;
+  border-radius: var(--radius-sm);
   overflow: hidden;
 }
 
 .factor-stat-fill {
   height: 100%;
   background: var(--color-blue-500);
-  border-radius: 3px;
+  border-radius: var(--radius-sm);
   transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -416,7 +416,7 @@
   margin-top: 60px;
   padding: 30px;
   background: var(--bg-card, rgba(255, 255, 255, 0.78));
-  border-radius: 20px;
+  border-radius: var(--radius-lg);
   border: 1px dashed var(--border-color, var(--color-ink-300));
   display: flex;
   gap: 20px;
@@ -431,14 +431,14 @@
 .ua-methodology-box h4 {
   margin: 0 0 8px 0;
   color: var(--text-primary, var(--color-ink-800));
-  font-size: 1.1rem;
+  font-size: var(--text-lg);
   font-weight: 700;
 }
 
 .ua-methodology-box p {
   margin: 0;
   color: var(--text-secondary, var(--color-ink-500));
-  font-size: 0.95rem;
+  font-size: var(--text-md);
   line-height: 1.6;
 }
 
@@ -464,7 +464,7 @@
   }
 
   .ua-title {
-    font-size: 1.8rem;
+    font-size: var(--text-2xl);
   }
 }
 

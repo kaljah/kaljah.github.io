@@ -36,7 +36,7 @@
 .settings-hero-card {
   background: var(--bg-card, var(--color-white));
   border: 1px solid var(--border-color, var(--color-ink-200));
-  border-radius: 20px;
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card, 0 4px 6px -1px rgba(0, 0, 0, 0.05));
   padding: 28px 32px 0 32px;
   position: relative;
@@ -77,7 +77,7 @@
   gap: 6px;
   background: rgba(255, 102, 0, 0.08);
   color: var(--color-link);
-  font-size: 0.72rem;
+  font-size: var(--text-xs);
   font-weight: 700;
   letter-spacing: 0.06em;
   padding: 4px 12px;
@@ -88,7 +88,7 @@
 }
 
 .settings-title {
-  font-size: 1.75rem;
+  font-size: var(--text-xl);
   font-weight: 700;
   color: var(--text-primary, var(--color-ink-900));
   margin: 0;
@@ -96,7 +96,7 @@
 }
 
 .settings-subtitle {
-  font-size: 0.92rem;
+  font-size: var(--text-md);
   color: var(--text-secondary, var(--color-ink-500));
   margin: 0;
   line-height: 1.5;
@@ -116,9 +116,9 @@
   background: var(--primary-gradient);
   color: var(--color-white);
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: var(--text-base);
   padding: 10px 22px;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   border: none;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(255, 102, 0, 0.25);
@@ -170,13 +170,13 @@
   border: none;
   border-bottom: 2px solid transparent;
   color: var(--text-secondary, var(--color-ink-500));
-  font-size: 0.92rem;
+  font-size: var(--text-md);
   font-weight: 600;
   padding: 14px 16px;
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
-  border-radius: 8px 8px 0 0;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
 }
 
 .tab-icon-svg {
@@ -198,7 +198,7 @@
 .settings-section-card {
   background: var(--bg-card, var(--color-white));
   border: 1px solid var(--border-color, var(--color-ink-200));
-  border-radius: 20px;
+  border-radius: var(--radius-lg);
   padding: 32px;
   display: flex;
   flex-direction: column;
@@ -223,14 +223,14 @@
 }
 
 .section-intro h2 {
-  font-size: 1.25rem;
+  font-size: var(--text-lg);
   font-weight: 700;
   color: var(--text-primary, var(--color-ink-900));
   margin: 0;
 }
 
 .section-intro p {
-  font-size: 0.9rem;
+  font-size: var(--text-base);
   color: var(--text-secondary, var(--color-ink-500));
   margin: 0;
   line-height: 1.5;
@@ -246,7 +246,7 @@
 .gwp-card {
   background: var(--bg-card, var(--color-white));
   border: 1.5px solid var(--border-color, var(--color-ink-200));
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   padding: 24px;
   cursor: pointer;
   transition: all 0.25s ease;
@@ -254,7 +254,7 @@
   flex-direction: column;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  box-shadow: var(--shadow-xs);
 }
 
 .gwp-card:hover {
@@ -282,9 +282,9 @@
   background: var(--bg-hover, var(--color-ink-100));
   color: var(--text-primary, var(--color-ink-900));
   font-weight: 700;
-  font-size: 0.82rem;
+  font-size: var(--text-sm);
   padding: 4px 10px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   letter-spacing: 0.04em;
   border: 1px solid var(--border-color, var(--color-ink-200));
 }
@@ -299,31 +299,31 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-size: 0.72rem;
+  font-size: var(--text-xs);
   font-weight: 700;
   color: var(--color-green-500);
   background: rgba(16, 185, 129, 0.1);
   padding: 3px 9px;
-  border-radius: 20px;
+  border-radius: var(--radius-lg);
   border: 1px solid rgba(16, 185, 129, 0.25);
 }
 
 .gwp-title {
-  font-size: 1.05rem;
+  font-size: var(--text-md);
   font-weight: 700;
   color: var(--text-primary, var(--color-ink-900));
   margin: 0 0 4px 0;
 }
 
 .gwp-status-pill {
-  font-size: 0.78rem;
+  font-size: var(--text-sm);
   color: var(--color-sky-600);
   margin-bottom: 10px;
   font-weight: 600;
 }
 
 .gwp-desc {
-  font-size: 0.84rem;
+  font-size: var(--text-base);
   color: var(--text-secondary, var(--color-ink-500));
   line-height: 1.45;
   margin: 0 0 18px 0;
@@ -336,7 +336,7 @@
   gap: 8px;
   background: var(--bg-hover, var(--color-ink-50));
   border: 1px solid var(--border-color, var(--color-ink-200));
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   padding: 12px 10px;
 }
 
@@ -349,13 +349,13 @@
 }
 
 .factor-label {
-  font-size: 0.7rem;
+  font-size: var(--text-xs);
   color: var(--text-secondary, var(--color-ink-500));
   font-weight: 500;
 }
 
 .factor-val {
-  font-size: 1.1rem;
+  font-size: var(--text-lg);
   font-weight: 800;
   color: var(--text-primary, var(--color-ink-900));
 }
@@ -368,7 +368,7 @@
 .comparison-container {
   background: var(--bg-hover, var(--color-ink-50));
   border: 1px solid var(--border-color, var(--color-ink-200));
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   padding: 24px;
   display: flex;
   flex-direction: column;
@@ -386,7 +386,7 @@
 }
 
 .comparison-header h3 {
-  font-size: 1rem;
+  font-size: var(--text-md);
   font-weight: 700;
   color: var(--text-primary, var(--color-ink-900));
   margin: 0;
@@ -399,9 +399,9 @@
 .comparison-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.88rem;
+  font-size: var(--text-base);
   background: var(--bg-card, var(--color-white));
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   overflow: hidden;
   border: 1px solid var(--border-color, var(--color-ink-200));
 }
@@ -444,7 +444,7 @@
 .config-card {
   background: var(--bg-hover, var(--color-ink-50));
   border: 1px solid var(--border-color, var(--color-ink-200));
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   padding: 24px;
   display: flex;
   flex-direction: column;
@@ -452,13 +452,13 @@
 }
 
 .config-label {
-  font-size: 0.98rem;
+  font-size: var(--text-md);
   font-weight: 700;
   color: var(--text-primary, var(--color-ink-900));
 }
 
 .config-subtext {
-  font-size: 0.84rem;
+  font-size: var(--text-base);
   color: var(--text-secondary, var(--color-ink-500));
   line-height: 1.45;
 }
@@ -475,12 +475,12 @@
   border: 1px solid var(--border-color, var(--color-ink-200));
   color: var(--text-primary, var(--color-ink-900));
   font-weight: 600;
-  font-size: 0.88rem;
+  font-size: var(--text-base);
   padding: 8px 16px;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+  box-shadow: var(--shadow-xs);
 }
 
 .btn-year-pill:hover {
@@ -498,9 +498,9 @@
 .deadline-preview-note {
   background: var(--bg-card, var(--color-white));
   border: 1px solid var(--border-color, var(--color-ink-200));
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   padding: 12px 16px;
-  font-size: 0.84rem;
+  font-size: var(--text-base);
   color: var(--text-secondary, var(--color-ink-500));
 }
 
@@ -533,24 +533,24 @@
   flex: 1;
   accent-color: var(--color-brand-500);
   height: 6px;
-  border-radius: 3px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
 }
 
 .threshold-val-display {
-  font-size: 1.2rem;
+  font-size: var(--text-lg);
   font-weight: 800;
   color: var(--color-link);
   background: rgba(255, 102, 0, 0.08);
   padding: 6px 14px;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   border: 1px solid rgba(255, 102, 0, 0.2);
   min-width: 80px;
   text-align: center;
 }
 
 .slider-hint {
-  font-size: 0.8rem;
+  font-size: var(--text-sm);
   color: var(--text-secondary, var(--color-ink-500));
   margin: 0;
 }
@@ -559,7 +559,7 @@
 .target-standards-box {
   background: var(--bg-hover, var(--color-ink-50));
   border: 1px solid var(--border-color, var(--color-ink-200));
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   padding: 24px;
   display: flex;
   flex-direction: column;
@@ -577,7 +577,7 @@
 }
 
 .target-standards-box h3 {
-  font-size: 1rem;
+  font-size: var(--text-md);
   font-weight: 700;
   color: var(--text-primary, var(--color-ink-900));
   margin: 0;
@@ -593,9 +593,9 @@
   background: var(--bg-card, var(--color-white));
   border: 1px solid var(--border-color, var(--color-ink-200));
   border-left: 4px solid var(--color-green-500);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   padding: 18px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  box-shadow: var(--shadow-xs);
 }
 
 .target-card.midstream {
@@ -603,14 +603,14 @@
 }
 
 .target-segment {
-  font-size: 0.84rem;
+  font-size: var(--text-base);
   font-weight: 600;
   color: var(--text-secondary, var(--color-ink-500));
   margin-bottom: 6px;
 }
 
 .target-desc {
-  font-size: 0.8rem;
+  font-size: var(--text-sm);
   color: var(--text-secondary, var(--color-ink-500));
   line-height: 1.45;
   margin: 0;
@@ -620,14 +620,14 @@
 .facility-table-wrapper {
   overflow-x: auto;
   border: 1px solid var(--border-color, var(--color-ink-200));
-  border-radius: 14px;
+  border-radius: var(--radius-lg);
   background: var(--bg-card, var(--color-white));
 }
 
 .facility-config-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.88rem;
+  font-size: var(--text-base);
 }
 
 .facility-config-table th {
@@ -658,7 +658,7 @@
 }
 
 .fac-code {
-  font-size: 0.72rem;
+  font-size: var(--text-xs);
   color: var(--text-secondary, var(--color-ink-500));
 }
 
@@ -667,9 +667,9 @@
   background: var(--bg-card, var(--color-white));
   border: 1px solid var(--border-color, var(--color-ink-300));
   color: var(--text-primary, var(--color-ink-900));
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   padding: 7px 10px;
-  font-size: 0.85rem;
+  font-size: var(--text-base);
   font-family: inherit;
 }
 
@@ -677,9 +677,9 @@
   background: var(--bg-card, var(--color-white));
   border: 1px solid var(--border-color, var(--color-ink-300));
   color: var(--text-primary, var(--color-ink-900));
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   padding: 7px 8px;
-  font-size: 0.85rem;
+  font-size: var(--text-base);
   font-family: inherit;
 }
 
@@ -696,9 +696,9 @@
   background: var(--bg-card, var(--color-white));
   border: 1px solid var(--border-color, var(--color-ink-300));
   color: var(--text-primary, var(--color-ink-900));
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   padding: 6px 8px;
-  font-size: 0.85rem;
+  font-size: var(--text-base);
   text-align: center;
   font-family: inherit;
 }
@@ -708,9 +708,9 @@
   color: var(--color-sky-600);
   border: 1px solid rgba(2, 132, 199, 0.25);
   padding: 4px 10px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   font-weight: 700;
-  font-size: 0.82rem;
+  font-size: var(--text-sm);
 }
 
 .btn-table-save {
@@ -720,10 +720,10 @@
   background: rgba(255, 102, 0, 0.1);
   color: var(--color-brand-600);
   border: 1px solid rgba(255, 102, 0, 0.25);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   padding: 6px 14px;
   font-weight: 600;
-  font-size: 0.82rem;
+  font-size: var(--text-sm);
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -745,7 +745,7 @@
 .satellite-guide-banner {
   background: rgba(2, 132, 199, 0.05);
   border: 1px solid rgba(2, 132, 199, 0.2);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   padding: 16px 20px;
   margin-bottom: 24px;
   transition: all 0.2s ease;
@@ -767,7 +767,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 0.95rem;
+  font-size: var(--text-md);
   color: var(--text-primary, var(--color-ink-900));
 }
 
@@ -775,9 +775,9 @@
   background: var(--color-sky-600);
   color: var(--color-white);
   border: none;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   padding: 6px 14px;
-  font-size: 0.8rem;
+  font-size: var(--text-sm);
   font-weight: 600;
   cursor: pointer;
   transition: background 0.2s ease;
@@ -811,14 +811,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.78rem;
+  font-size: var(--text-sm);
   font-weight: 700;
   flex-shrink: 0;
   margin-top: 2px;
 }
 
 .step-content {
-  font-size: 0.88rem;
+  font-size: var(--text-base);
   color: var(--text-secondary, var(--color-ink-600));
   line-height: 1.5;
 }
@@ -856,7 +856,7 @@
 .spec-card {
   background: var(--bg-card-secondary, var(--color-ink-50));
   border: 1px solid var(--border-color, var(--color-ink-200));
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   padding: 16px 18px;
   display: flex;
   flex-direction: column;
@@ -864,7 +864,7 @@
 }
 
 .spec-label {
-  font-size: 0.75rem;
+  font-size: var(--text-sm);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--text-secondary, var(--color-ink-500));
@@ -872,13 +872,13 @@
 }
 
 .spec-val {
-  font-size: 1.15rem;
+  font-size: var(--text-lg);
   font-weight: 700;
   color: var(--color-sky-600);
 }
 
 .spec-desc {
-  font-size: 0.78rem;
+  font-size: var(--text-sm);
   color: var(--text-secondary, var(--color-ink-400));
 }
 
@@ -886,7 +886,7 @@
 .satellite-config-form {
   background: var(--bg-card-secondary, var(--color-ink-50));
   border: 1px solid var(--border-color, var(--color-ink-200));
-  border-radius: 14px;
+  border-radius: var(--radius-lg);
   padding: 24px;
   display: flex;
   flex-direction: column;
@@ -903,7 +903,7 @@
 
 .config-form-header h3 {
   margin: 0;
-  font-size: 1.05rem;
+  font-size: var(--text-md);
   font-weight: 700;
 }
 
@@ -919,11 +919,11 @@
   align-items: center;
   gap: 8px;
   padding: 8px 16px;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   border: 1px solid var(--border-color, var(--color-ink-300));
   background: var(--bg-card, var(--color-white));
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: var(--text-base);
   font-weight: 600;
   color: var(--text-secondary, var(--color-ink-600));
   transition: all 0.2s ease;
@@ -950,7 +950,7 @@
 .range-slider {
   width: 100%;
   height: 6px;
-  border-radius: 3px;
+  border-radius: var(--radius-sm);
   background: var(--border-color, var(--color-ink-300));
   outline: none;
   accent-color: var(--color-sky-600);
@@ -972,9 +972,9 @@
   background: var(--color-sky-600);
   color: var(--color-white);
   padding: 10px 20px;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   border: none;
-  font-size: 0.88rem;
+  font-size: var(--text-base);
   font-weight: 600;
   cursor: pointer;
   transition: background 0.2s ease;
@@ -994,8 +994,8 @@
   align-items: center;
   gap: 8px;
   padding: 8px 16px;
-  border-radius: 8px;
-  font-size: 0.85rem;
+  border-radius: var(--radius-md);
+  font-size: var(--text-base);
   font-weight: 600;
 }
 
@@ -1012,6 +1012,6 @@
 }
 
 .token-expiry {
-  font-size: 0.78rem;
+  font-size: var(--text-sm);
   opacity: 0.8;
 }

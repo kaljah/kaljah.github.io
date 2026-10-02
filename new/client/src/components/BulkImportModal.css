@@ -6,7 +6,7 @@
 
 .upload-zone {
   border: 2px dashed rgba(16, 185, 129, 0.3);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   padding: 40px;
   text-align: center;
   background: rgba(16, 185, 129, 0.03);
@@ -20,11 +20,11 @@
   align-items: center;
   gap: 8px;
   color: var(--color-green-500);
-  font-size: 0.85rem;
+  font-size: var(--text-base);
   font-weight: 500;
   padding: 6px 12px;
   border: 1px dashed var(--color-green-500);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   background: rgba(16, 185, 129, 0.05);
   transition: all 0.2s ease;
   cursor: pointer;
@@ -46,7 +46,7 @@
   align-items: center;
   gap: 8px;
   color: var(--text-secondary);
-  font-size: 0.8rem;
+  font-size: var(--text-sm);
   cursor: pointer;
   text-decoration: underline;
   opacity: 0.8;
@@ -60,7 +60,7 @@
 .cheat-sheet-content {
   margin-top: 16px;
   background: #f3f4f6;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   padding: 16px;
   text-align: left;
   display: flex;
@@ -70,7 +70,7 @@
 }
 
 .cheat-section {
-  font-size: 0.8rem;
+  font-size: var(--text-sm);
 }
 
 .cheat-section strong {
@@ -95,10 +95,10 @@
 .id-tag {
   background: white;
   padding: 2px 8px;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   border: 1px solid rgba(0, 0, 0, 0.1);
   font-family: monospace;
-  font-size: 0.75rem;
+  font-size: var(--text-sm);
   color: var(--sonatrach-orange);
 }
 
@@ -107,9 +107,9 @@
   padding: 12px;
   background: var(--color-red-50);
   border: 1px solid #fecaca;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   color: var(--color-red-700);
-  font-size: 0.8rem;
+  font-size: var(--text-sm);
 }
 
 .validation-error-box h5 {
@@ -131,7 +131,7 @@
   gap: 12px;
   padding: 12px;
   background: white;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
@@ -139,7 +139,7 @@
   max-height: 300px;
   overflow-y: auto;
   border: 1px solid rgba(0, 0, 0, 0.05);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   padding: 16px;
   background: #f9fafb;
 }
@@ -156,7 +156,7 @@
 }
 
 .mapping-label {
-  font-size: 0.9rem;
+  font-size: var(--text-base);
   font-weight: 600;
   color: var(--text-secondary);
 }
@@ -164,10 +164,10 @@
 .mapping-select {
   width: 100%;
   padding: 8px 12px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   border: 1px solid rgba(0, 0, 0, 0.1);
   background: white;
-  font-size: 0.85rem;
+  font-size: var(--text-base);
 }
 
 .preview-header {
@@ -188,14 +188,14 @@
   max-height: 250px;
   overflow-y: auto;
   overflow-x: auto;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .preview-more {
   text-align: center;
   padding: 8px;
-  font-size: 0.75rem;
+  font-size: var(--text-sm);
   color: var(--text-secondary);
   background: #f9fafb;
   border-top: 1px solid rgba(0, 0, 0, 0.05);
@@ -204,7 +204,7 @@
 .preview-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.8rem;
+  font-size: var(--text-sm);
 }
 
 .preview-table th {
@@ -228,7 +228,7 @@
 }
 
 .import-tip {
-  font-size: 0.8rem;
+  font-size: var(--text-sm);
   color: var(--text-secondary);
   display: flex;
   align-items: center;
@@ -243,7 +243,7 @@
 }
 
 .progress-text {
-  font-size: 0.9rem;
+  font-size: var(--text-base);
   font-weight: 600;
   color: var(--text-primary);
 }
@@ -252,18 +252,18 @@
   width: 100%;
   height: 12px;
   background: #e5e7eb;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   overflow: hidden;
   margin-top: 4px;
 }
 
 .progress-fill {
   height: 100%;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   transition: width 0.3s ease;
 }
 
 .progress-details {
-  font-size: 0.8rem;
+  font-size: var(--text-sm);
   color: var(--text-secondary);
 }

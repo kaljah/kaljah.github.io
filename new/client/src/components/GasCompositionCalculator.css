@@ -13,13 +13,13 @@
   padding: 15px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--border-color);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
 }
 
 .calculation-mode-selector label {
   display: block;
   margin-bottom: 12px;
-  font-size: 0.85rem;
+  font-size: var(--text-base);
   color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -30,7 +30,7 @@
   gap: 8px;
   background: rgba(0, 0, 0, 0.2);
   padding: 4px;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 }
 
 .mode-tabs button {
@@ -39,9 +39,9 @@
   background: transparent;
   border: none;
   color: var(--text-secondary);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: var(--text-base);
   font-weight: 600;
   transition: all 0.2s;
 }
@@ -60,7 +60,7 @@
 .total-display-card {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--border-color);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   padding: 15px 20px;
   display: flex;
   justify-content: space-between;
@@ -70,12 +70,12 @@
 
 .total-info .label {
   color: var(--text-secondary);
-  font-size: 0.9rem;
+  font-size: var(--text-base);
   margin-right: 10px;
 }
 
 .total-info .value {
-  font-size: 1.4rem;
+  font-size: var(--text-xl);
   font-weight: 700;
 }
 
@@ -88,9 +88,9 @@
 }
 
 .status-badge {
-  font-size: 0.8rem;
+  font-size: var(--text-sm);
   padding: 4px 12px;
-  border-radius: 20px;
+  border-radius: var(--radius-lg);
   background: rgba(255, 255, 255, 0.05);
   color: var(--text-secondary);
 }
@@ -111,7 +111,7 @@
 .params-section h4 {
   margin: 0 0 15px 0;
   color: var(--color-link);
-  font-size: 1rem;
+  font-size: var(--text-md);
 }
 
 .params-grid {
@@ -126,7 +126,7 @@
   background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
@@ -151,14 +151,14 @@
 .result-card {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--border-color);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   padding: 20px;
   margin-bottom: 20px;
 }
 
 .result-card h4 {
   margin: 0 0 15px 0;
-  font-size: 0.85rem;
+  font-size: var(--text-base);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--color-link);
@@ -177,22 +177,22 @@
 
 .result-row span {
   color: var(--text-secondary);
-  font-size: 0.9rem;
+  font-size: var(--text-base);
 }
 
 .result-card.main strong {
-  font-size: 1.1rem;
+  font-size: var(--text-lg);
   color: var(--text-primary);
 }
 
 .result-card.main strong small {
-  font-size: 0.75rem;
+  font-size: var(--text-sm);
   opacity: 0.7;
   margin-left: 4px;
 }
 
 .apply-actions h4 {
-  font-size: 0.85rem;
+  font-size: var(--text-base);
   color: var(--text-secondary);
   margin: 0 0 12px 0;
 }
@@ -208,7 +208,7 @@
   background: rgba(16, 185, 129, 0.1);
   border: 1px solid var(--color-green-500);
   color: var(--color-green-500);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   font-weight: 600;
   transition: all 0.2s;
@@ -231,7 +231,7 @@
 }
 
 .no-results .icon {
-  font-size: 3rem;
+  font-size: var(--text-3xl);
   margin-bottom: 15px;
 }
 

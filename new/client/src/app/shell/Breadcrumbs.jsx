@@ -18,12 +18,12 @@ const Breadcrumbs = () => {
 
   return (
     <nav aria-label="Breadcrumb" className="min-w-0">
-      <ol className="m-0 flex list-none items-center gap-1.5 whitespace-nowrap p-0 text-base">
+      <ol className="m-0 flex min-w-0 list-none items-center gap-1.5 overflow-hidden whitespace-nowrap p-0 text-base">
         {crumbs.map((c, i) => {
           const last = i === crumbs.length - 1;
           return (
-            <li key={c.label} className="flex items-center gap-1.5">
-              {i > 0 && <ChevronRight className="size-3.5 text-ink-400" aria-hidden="true" />}
+            <li key={c.label} className={last ? "flex min-w-0 items-center gap-1.5" : "hidden items-center gap-1.5 sm:flex"}>
+              {i > 0 && <ChevronRight className="hidden size-3.5 shrink-0 text-ink-400 sm:block" aria-hidden="true" />}
               {c.to ? (
                 <Link to={c.to} className="text-text-secondary no-underline hover:text-text">
                   {c.label}
@@ -31,7 +31,7 @@ const Breadcrumbs = () => {
               ) : (
                 <span
                   aria-current={last ? "page" : undefined}
-                  className={last ? "font-semibold text-text" : "text-text-secondary"}
+                  className={last ? "truncate font-semibold text-text" : "text-text-secondary"}
                 >
                   {c.label}
                 </span>
