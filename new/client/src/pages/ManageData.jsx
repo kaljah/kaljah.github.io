@@ -15,7 +15,6 @@ import ErrorBoundary from '../components/ErrorBoundary'; // FE-03 FIX
 import Modal from '../components/Modal';
 import ConfirmModal from '../components/ConfirmModal';
 import { useAuth } from '../context/AuthContext';
-import { useLayout } from '../context/LayoutContext';
 import { getUserOperationalDefaults, matchesActivity, matchesFacilityRegion, isUnrestrictedLocation } from '../utils/userDefaults';
 import { 
   ChevronRight, Download, Plus, Search, MapPin, Layers, Settings, FileText, 
@@ -64,23 +63,6 @@ const PaginationControls = ({ currentPage, totalItems, itemsPerPage, onPageChang
 const ManageDataInner = () => {
     const { user } = useAuth();
     const isPrivileged = ['admin', 'superuser'].includes(user?.role);
-    const { setTopBarLeft } = useLayout();
-
-    useEffect(() => {
-        if (setTopBarLeft) {
-            setTopBarLeft(
-                <div className="breadcrumbs" style={{ borderRight: 'none', paddingRight: 0 }}>
-                    <Database size={16} style={{ color: 'var(--accent-color, #ff6600)' }} />
-                    <span>Dashboard</span>
-                    <span style={{ margin: '0 8px', color: 'var(--text-secondary)' }}>/</span>
-                    <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>Manage Data</span>
-                </div>
-            );
-        }
-        return () => {
-            if (setTopBarLeft) setTopBarLeft(null);
-        };
-    }, [setTopBarLeft]);
 
 
     const HIERARCHY = {

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
+import { useBreadcrumbExtra } from "../hooks/useBreadcrumbExtra";
 import "./Emissions.css";
 import "../pages/Dashboard.css";
 
@@ -16,9 +17,18 @@ import {
 } from "../utils/constants";
 
 const Emissions = () => {
-  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [stage, setStage] = useState(STAGE_SCOPE_SELECTION);
+
+  useBreadcrumbExtra(
+    stage === STAGE_SCOPE_SELECTION
+      ? null
+      : stage === STAGE_SCOPE1_SUB_SELECTION
+        ? "Scope 1 (Direct)"
+        : stage === STAGE_SCOPE2
+          ? "Scope 2 (Indirect)"
+          : "Scope 3 (Value Chain)",
+  );
 
   useEffect(() => {
     const scopeParam = searchParams.get("scope") || searchParams.get("stage");
@@ -222,38 +232,8 @@ const Emissions = () => {
 
   return (
     <div className="emissions-page">
-      <header className="top-bar">
-        <div className="breadcrumbs">
-          <span
-            style={{ cursor: "pointer" }}
-            onClick={() => navigate("/")}
-          >
-            Dashboard
-          </span>
-          <span style={{ color: "var(--text-secondary)", margin: "0 8px" }}>
-            /
-          </span>
-          <span
-            style={{ cursor: "pointer" }}
-            onClick={() => goToStage(STAGE_SCOPE_SELECTION)}
-          >
-            Calculations
-          </span>
-          <span style={{ color: "var(--text-secondary)", margin: "0 8px" }}>
-            /
-          </span>
-          <span>
-            {stage === STAGE_SCOPE_SELECTION
-              ? "Select Scope"
-              : stage === STAGE_SCOPE1_SUB_SELECTION
-                ? "Scope 1 (Direct)"
-                : stage === STAGE_SCOPE2
-                  ? "Scope 2 (Indirect)"
-                  : "Scope 3 (Value Chain)"}
-          </span>
-        </div>
-
         {stage !== STAGE_SCOPE_SELECTION && (
+          <div className="scope-switcher-bar">
           <div className="scope-switcher-tabs">
             <button
               className={`scope-tab-btn ${stage === STAGE_SCOPE1_SUB_SELECTION ? "active s1" : ""}`}
@@ -281,8 +261,8 @@ const Emissions = () => {
               ← All Scopes
             </button>
           </div>
+          </div>
         )}
-      </header>
 
       <div className="content-wrapper">
         {stage === STAGE_SCOPE_SELECTION && (

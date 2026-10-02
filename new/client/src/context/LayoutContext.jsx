@@ -5,6 +5,7 @@ const LayoutContext = createContext();
 export const LayoutProvider = ({ children }) => {
   const [topBarLeft, setTopBarLeft] = useState(null);
   const [topBarRight, setTopBarRight] = useState(null);
+  const [breadcrumbExtra, setBreadcrumbExtra] = useState(null);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
 
   const toggleMobileNav = useCallback(() => setIsMobileNavOpen((prev) => !prev), []);
@@ -18,6 +19,8 @@ export const LayoutProvider = ({ children }) => {
         setTopBarLeft,
         topBarRight,
         setTopBarRight,
+        breadcrumbExtra,
+        setBreadcrumbExtra,
         isMobileNavOpen,
         setIsMobileNavOpen,
         toggleMobileNav,

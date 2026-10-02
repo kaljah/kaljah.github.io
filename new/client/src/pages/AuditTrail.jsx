@@ -32,15 +32,11 @@ import {
   FileSpreadsheet,
   RotateCcw,
 } from "lucide-react";
-import { useAuth } from "../context/AuthContext";
 import { useToast } from "../components/Toast";
-import { useLayout } from "../context/LayoutContext";
 import "./AuditTrail.css";
 
 const AuditTrail = () => {
-  const { user } = useAuth();
   const toast = useToast();
-  const { setTopBarLeft, setTopBarRight } = useLayout();
 
   // Core Data States
   const [loading, setLoading] = useState(true);
@@ -226,34 +222,6 @@ const AuditTrail = () => {
   useEffect(() => {
     fetchAuditLogs();
   }, [fetchAuditLogs]);
-
-  // Top Bar configuration
-  useEffect(() => {
-    setTopBarLeft(
-      <div className="breadcrumbs">
-        <History size={16} style={{ color: "var(--accent-color, #ff6600)" }} />
-        <span>Compliance</span>
-        <span className="breadcrumb-separator">/</span>
-        <span className="breadcrumb-current">Audit Trail</span>
-      </div>,
-    );
-
-    setTopBarRight(
-      <div className="top-actions">
-        <div className="user-profile-sm">
-          <div className="user-avatar-sm">
-            <UserIcon size={14} />
-          </div>
-          <span className="user-name-sm">{user?.fullName || "Compliance Officer"}</span>
-        </div>
-      </div>,
-    );
-
-    return () => {
-      setTopBarLeft(null);
-      setTopBarRight(null);
-    };
-  }, [user, setTopBarLeft, setTopBarRight]);
 
   // Handle Export (CSV or JSON)
   const handleExport = async (format) => {

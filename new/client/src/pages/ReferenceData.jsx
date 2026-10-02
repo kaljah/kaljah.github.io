@@ -359,19 +359,6 @@ const ReferenceData = () => {
           background: "transparent",
         }}
       >
-        <div className="breadcrumbs">
-          <Book
-            size={14}
-            style={{ marginRight: "8px", color: "var(--text-secondary)" }}
-          />
-          <span>Resource Center</span>
-          <span style={{ margin: "0 8px", color: "var(--text-secondary)" }}>
-            /
-          </span>
-          <span style={{ fontWeight: 600, color: "var(--text-primary)" }}>
-            Reference Data Library
-          </span>
-        </div>
       </header>
 
       <div style={{ marginBottom: "40px" }}>

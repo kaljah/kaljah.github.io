@@ -43,7 +43,7 @@ export const SegmentedControl = ({ label, value, onChange, options, className, s
             onClick={() => onChange(opt.value)}
             onKeyDown={(e) => onKeyDown(e, i)}
             className={cn(
-              "cursor-pointer rounded-sm font-semibold transition-colors",
+              "cursor-pointer rounded-sm border-0 bg-transparent font-semibold transition-colors",
               size === "sm" ? "px-2.5 py-1 text-xs" : "px-3 py-1.5 text-sm",
               selected ? "bg-surface text-selected-fg shadow-xs" : "text-text-secondary hover:text-text",
             )}

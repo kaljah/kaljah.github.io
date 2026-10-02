@@ -58,6 +58,7 @@ export const DataTable = ({
   }, [tableId, columnVisibility]);
 
   const tableData = useMemo(() => data ?? [], [data]);
+  // eslint-disable-next-line react-hooks/incompatible-library -- TanStack Table is not memoizable by the React Compiler
   const table = useReactTable({
     data: tableData,
     columns,
@@ -140,7 +141,7 @@ export const DataTable = ({
                         <button
                           type="button"
                           onClick={header.column.getToggleSortingHandler()}
-                          className="inline-flex cursor-pointer items-center gap-1 uppercase hover:text-text"
+                          className="inline-flex cursor-pointer items-center gap-1 border-0 bg-transparent p-0 font-[inherit] uppercase text-inherit hover:text-text"
                         >
                           {flexRender(header.column.columnDef.header, header.getContext())}
                           {meta.unit && <span className="normal-case">({meta.unit})</span>}

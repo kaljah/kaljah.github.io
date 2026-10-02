@@ -18,7 +18,7 @@ const overlayClass =
 const CloseButton = ({ label = "Close" }) => (
   <RadixDialog.Close
     aria-label={label}
-    className="inline-flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-md text-text-secondary transition-colors hover:bg-ink-100 hover:text-text"
+    className="inline-flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-md border-0 bg-transparent text-text-secondary transition-colors hover:bg-ink-100 hover:text-text"
   >
     <X className="size-4" aria-hidden="true" />
   </RadixDialog.Close>

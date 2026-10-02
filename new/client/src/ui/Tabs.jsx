@@ -15,7 +15,7 @@ export const TabsList = ({ className, ...props }) => (
 export const TabsTrigger = ({ className, badge, children, ...props }) => (
   <RadixTabs.Trigger
     className={cn(
-      "-mb-px inline-flex shrink-0 cursor-pointer items-center gap-2 border-b-2 border-transparent px-4 py-2.5 text-base font-semibold",
+      "-mb-px inline-flex shrink-0 cursor-pointer items-center gap-2 border-0 border-b-2 border-transparent bg-transparent px-4 py-2.5 text-base font-semibold",
       "text-text-secondary transition-colors hover:text-text",
       "data-[state=active]:border-primary data-[state=active]:text-selected-fg",
       className,

@@ -18,10 +18,10 @@ const banner = cva("flex items-start gap-3 rounded-md border px-4 py-3 text-base
 const ICONS = { info: Info, success: CheckCircle2, warning: AlertTriangle, danger: XCircle };
 
 /** Inline message. Danger banners use role=alert; the rest use role=status. */
-export const Banner = ({ tone = "info", title, actions, className, children }) => {
+export const Banner = ({ tone = "info", title, actions, className, children, ...props }) => {
   const Icon = ICONS[tone];
   return (
-    <div role={tone === "danger" ? "alert" : "status"} className={cn(banner({ tone }), className)}>
+    <div role={tone === "danger" ? "alert" : "status"} className={cn(banner({ tone }), className)} {...props}>
       <Icon className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
       <div className="min-w-0 flex-1">
         {title && <p className="font-semibold">{title}</p>}

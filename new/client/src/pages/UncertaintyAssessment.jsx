@@ -7,7 +7,6 @@ import {
 } from "lucide-react";
 import api from "../api";
 import { useAuth } from "../context/AuthContext";
-import { useLayout } from "../context/LayoutContext";
 import { useToast } from "../components/Toast";
 import LoadingSpinner from "../components/LoadingSpinner";
 import CustomDropdown from "../components/CustomDropdown";
@@ -17,7 +16,6 @@ import "./UncertaintyAssessment.css";
 const UncertaintyAssessment = () => {
   const { user } = useAuth();
   const toast = useToast();
-  const { setTopBarLeft, setTopBarRight } = useLayout();
 
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -86,28 +84,6 @@ const UncertaintyAssessment = () => {
     };
     fetchData();
   }, [selectedYear, selectedScope, selectedFacility]);
-
-  // TopBar layout integration — breadcrumb
-  useEffect(() => {
-    setTopBarLeft(
-      <div className="breadcrumbs" style={{ borderRight: "none", paddingRight: 0 }}>
-        <ShieldCheck
-          size={16}
-          style={{ color: "var(--accent-color, #ff6600)" }}
-        />
-        <span>Compliance</span>
-        <span style={{ margin: "0 8px", color: "var(--text-secondary)" }}>/</span>
-        <span style={{ fontWeight: 600, color: "var(--text-primary)" }}>
-          Uncertainty Assessment
-        </span>
-      </div>
-    );
-
-    return () => {
-      setTopBarLeft(null);
-      setTopBarRight(null);
-    };
-  }, [setTopBarLeft, setTopBarRight]);
 
   // CSV export handler
   const handleExport = async () => {
