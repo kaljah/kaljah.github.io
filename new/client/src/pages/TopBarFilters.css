@@ -15,17 +15,6 @@
   flex: 1;
 }
 
-.dashboard-filters .custom-dropdown-btn,
-.dashboard-filters .custom-dropdown-button {
-  padding: 5px 10px !important;
-  font-size: 0.8rem !important;
-  height: 34px !important;
-  background: rgba(255, 255, 255, 0.95) !important;
-  border: 1px solid var(--border-color, var(--color-ink-200)) !important;
-  border-radius: 8px !important;
-  white-space: nowrap;
-}
-
 @media (max-width: 768px) {
   .dashboard-filters {
     overflow-x: auto;

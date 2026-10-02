@@ -955,44 +955,6 @@
    TOP BAR USER PROFILE & BREADCRUMBS
    ========================================================================== */
 
-.user-profile-sm {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 5px 12px;
-  background: var(--color-ink-50);
-  border: 1px solid var(--color-ink-200);
-  border-radius: 20px;
-}
-
-.user-avatar-sm {
-  width: 22px;
-  height: 22px;
-  background: var(--color-primary);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-}
-
-.user-name-sm {
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--color-ink-700);
-}
-
-.breadcrumb-separator {
-  margin: 0 8px;
-  color: var(--color-ink-300);
-  font-size: 0.8rem;
-}
-
-.breadcrumb-current {
-  color: var(--color-ink-900);
-  font-weight: 600;
-}
-
 /* ==========================================================================
    RESPONSIVE DESIGN
    ========================================================================== */

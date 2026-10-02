@@ -1,32 +1,6 @@
 /* Reports Specific Styles */
 
 /* Header Area */
-.reports-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  margin-bottom: 24px;
-  padding: 0 4px;
-}
-
-.reports-title h2 {
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin: 0 0 8px 0;
-  letter-spacing: -0.02em;
-}
-
-.reports-subtitle {
-  color: var(--text-secondary);
-  font-size: 0.95rem;
-  margin: 0;
-}
-
-.reports-actions {
-  display: flex;
-  gap: 12px;
-}
 
 .btn-action {
   padding: 10px 20px;
@@ -45,33 +19,6 @@
 .btn-action:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.btn-excel {
-  background: var(--color-green-500);
-  color: white;
-}
-
-.btn-excel:hover {
-  background: var(--color-green-600);
-}
-
-.btn-pdf {
-  background: var(--color-red-500);
-  color: white;
-}
-
-.btn-pdf:hover {
-  background: var(--color-red-600);
-}
-
-.btn-iso {
-  background: var(--color-brand-500);
-  color: white;
-}
-
-.btn-iso:hover {
-  background: var(--color-brand-600);
 }
 
 /* Create New Report Card */
@@ -259,13 +206,6 @@ select.component-select option:disabled {
   align-items: center;
   border: 1px solid var(--border-color);
   flex-wrap: wrap;
-}
-
-.filter-item {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  min-width: 150px;
 }
 
 .search-input-wrapper {

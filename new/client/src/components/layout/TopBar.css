@@ -14,14 +14,6 @@
   gap: 16px;
 }
 
-.top-bar-left-section {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  flex: 1;
-  min-width: 0;
-}
-
 .breadcrumbs {
   display: flex;
   gap: 8px;
@@ -72,18 +64,6 @@
   background: rgba(0, 0, 0, 0.05);
 }
 
-.notification-badge {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  width: 8px;
-  height: 8px;
-  background: var(--color-red-500);
-  border-radius: 50%;
-  border: 1px solid var(--border-color);
-  animation: pulse-red 2s infinite;
-}
-
 @keyframes pulse-red {
   0% {
     transform: scale(0.95);
@@ -99,46 +79,7 @@
   }
 }
 
-.user-name-top {
-  font-weight: 600;
-  font-size: 0.9rem;
-  color: var(--text-primary);
-}
-
 /* User Tab & Dropdown Styles (Always On Top) */
-.user-profile-tab-wrapper {
-  position: relative;
-  z-index: 1102;
-}
-
-.user-profile-tab-btn {
-  position: relative;
-  z-index: 1102;
-}
-
-.notification-dropdown,
-.top-profile-dropdown {
-  position: absolute;
-  top: 45px;
-  right: 0;
-  background: rgba(255, 255, 255, 0.96);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  border-radius: 12px;
-  box-shadow: 0 12px 32px -4px rgba(15, 23, 42, 0.15), var(--shadow-hover);
-  z-index: 2000;
-  overflow: hidden;
-  animation: fadeInScale 0.2s ease-out;
-}
-
-.notification-dropdown {
-  width: 320px;
-}
-
-.top-profile-dropdown {
-  width: 200px;
-}
 
 @keyframes fadeInScale {
   from {
@@ -152,57 +93,6 @@
   }
 }
 
-.dropdown-header-inner {
-  padding: 15px;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.dropdown-header-inner h4 {
-  margin: 0;
-  font-size: 0.95rem;
-  color: var(--text-primary);
-}
-
-.notification-list {
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-.no-notifications {
-  padding: 20px;
-  text-align: center;
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-}
-
-.top-drop-item {
-  display: block;
-  padding: 12px 16px;
-  color: var(--text-primary);
-  text-decoration: none;
-  font-size: 0.9rem;
-  transition: background 0.2s;
-  border: none;
-  background: transparent;
-  width: 100%;
-  text-align: left;
-  cursor: pointer;
-}
-
-.top-drop-item:hover {
-  background: rgba(0, 0, 0, 0.05);
-}
-
-.dropdown-divider-top {
-  height: 1px;
-  background: var(--border-color);
-  margin: 4px 0;
-}
-
-.logout-btn-top {
-  color: var(--color-red-500) !important;
-}
-
 .filter-group {
   display: flex;
   gap: 12px;
@@ -210,23 +100,6 @@
 }
 
 /* Mobile Hamburger Button */
-.mobile-hamburger-btn {
-  display: none;
-  background: transparent;
-  border: none;
-  color: var(--text-primary);
-  padding: 8px;
-  border-radius: 8px;
-  cursor: pointer;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
-}
-
-.mobile-hamburger-btn:hover {
-  background: rgba(0, 0, 0, 0.05);
-}
 
 @media (max-width: 900px) {
   .top-bar {
@@ -234,15 +107,6 @@
     padding: 6px 12px;
     gap: 8px;
     z-index: 1030;
-  }
-
-  .mobile-hamburger-btn {
-    display: flex;
-  }
-
-  .top-bar-left-section {
-    gap: 8px;
-    min-width: 0;
   }
 
   .breadcrumbs {
@@ -257,10 +121,6 @@
   }
 
   .top-bar-injected-left::-webkit-scrollbar {
-    display: none;
-  }
-
-  .user-name-top {
     display: none;
   }
 

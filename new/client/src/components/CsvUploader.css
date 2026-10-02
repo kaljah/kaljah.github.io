@@ -3,133 +3,15 @@
   align-items: center;
 }
 
-.csv-upload-trigger {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 9px 18px;
-  border-radius: 8px;
-  border: 1.5px solid var(--color-ink-200);
-  background: var(--color-white);
-  color: var(--color-ink-700);
-  font-size: 0.875rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  white-space: nowrap;
-}
-.csv-upload-trigger svg {
-  width: 17px;
-  height: 17px;
-  color: var(--color-blue-600);
-}
-.csv-upload-trigger:hover {
-  background: var(--color-blue-50);
-  border-color: var(--color-blue-600);
-  color: var(--color-blue-600);
-  transform: translateY(-1px);
-  box-shadow: 0 3px 10px rgba(37, 99, 235, 0.12);
-}
-
-.csv-uploader-wrapper {
-  display: inline-block;
-  margin-left: 10px;
-}
-
 /* Modal Overlay */
-.csv-modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(15, 23, 42, 0.4); /* Dark, premium slate overlay */
-  backdrop-filter: blur(4px);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1050;
-  animation: fadeIn 0.2s ease-out;
-}
 
 /* Main Modal Card */
-.csv-modal {
-  background: var(--color-white);
-  border-radius: 16px; /* Modern roundness */
-  width: 95%;
-  max-width: 700px;
-  max-height: 85vh;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  box-shadow:
-    0 25px 50px -12px rgba(0, 0, 0, 0.15),
-    0 0 0 1px rgba(0, 0, 0, 0.05); /* Deep soft shadow */
-  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.csv-modal-content {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  min-height: 0;
-  flex: 1;
-}
 
 /* Header */
-.csv-modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 24px 30px;
-  background: var(--color-white);
-  border-bottom: 1px solid var(--color-ink-100);
-  flex-shrink: 0;
-}
-
-.csv-modal-header h3 {
-  margin: 0;
-  font-size: 1.35rem;
-  font-weight: 600;
-  color: var(--color-ink-900);
-  letter-spacing: -0.01em;
-}
 
 /* Body and Scrollbar */
-.csv-modal-body {
-  padding: 0 30px 24px 30px;
-  overflow-y: auto;
-  flex: 1;
-  min-height: 0;
-}
-.csv-modal-body p {
-  color: var(--color-ink-500);
-  font-size: 0.95rem;
-  margin: 20px 0;
-  line-height: 1.5;
-}
-
-.csv-modal-body::-webkit-scrollbar {
-  width: 6px;
-}
-.csv-modal-body::-webkit-scrollbar-thumb {
-  background: var(--color-ink-300);
-  border-radius: 10px;
-}
-.csv-modal-body::-webkit-scrollbar-track {
-  background: transparent;
-}
 
 /* Footer */
-.csv-modal-footer {
-  padding: 20px 30px;
-  border-top: 1px solid var(--color-ink-100);
-  background: var(--color-ink-50);
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  flex-shrink: 0;
-}
 
 /* Mapping Grid System */
 .mapping-grid {
@@ -159,10 +41,6 @@
 }
 
 /* Optional rows */
-.mapping-row.optional-row .field-label {
-  color: var(--color-ink-500);
-  font-weight: 400;
-}
 
 .mapping-row.header-row {
   background: var(--color-ink-50);
@@ -179,20 +57,6 @@
   letter-spacing: 0.05em;
 }
 
-.mapping-section-title {
-  padding: 16px 20px 8px 20px;
-  background: var(--color-white);
-  font-weight: 600;
-  color: var(--color-ink-900);
-  font-size: 0.95rem;
-  border-bottom: 1px solid var(--color-ink-100);
-  border-top: 1px solid var(--color-ink-100);
-}
-
-.mapping-grid > .mapping-section-title:first-of-type {
-  border-top: none;
-}
-
 /* Labels and Selects */
 .field-label {
   flex: 1;
@@ -202,11 +66,6 @@
   display: flex;
   align-items: center;
   gap: 6px;
-}
-
-.req-star {
-  color: var(--color-red-500);
-  font-weight: bold;
 }
 
 .mapping-select {
@@ -238,74 +97,10 @@
 }
 
 /* Icon Buttons inside modal */
-.icon-btn {
-  background: transparent;
-  border: none;
-  color: var(--color-ink-400);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 6px;
-  border-radius: 8px;
-  transition: all 0.2s ease;
-}
-
-.icon-btn:hover {
-  color: var(--color-ink-900);
-  background: var(--color-ink-100);
-}
 
 /* Specific Modal Headers (Warning/Success) */
-.csv-modal-header.warning h3 {
-  color: var(--color-brand-600); /* Orange */
-}
-.csv-modal-header.success h3 {
-  color: var(--color-brand-700); /* Teal */
-}
 
 /* Buttons overriding default classes if needed inside modal */
-.csv-modal-footer .btn-secondary {
-  background: var(--color-white);
-  border: 1px solid var(--color-ink-300);
-  color: var(--color-ink-600);
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-weight: 500;
-  transition: all 0.2s;
-}
-
-.csv-modal-footer .btn-secondary:hover {
-  background: var(--color-ink-50);
-  border-color: var(--color-ink-400);
-  color: var(--color-ink-900);
-}
-
-.csv-modal-footer .btn-primary {
-  background: var(--color-primary);
-  border: 1px solid var(--color-brand-500);
-  color: var(--color-white);
-  padding: 10px 24px;
-  border-radius: 8px;
-  font-weight: 500;
-  transition: all 0.2s;
-  box-shadow: 0 2px 4px rgba(255, 102, 0, 0.2);
-}
-
-.csv-modal-footer .btn-primary:hover {
-  background: var(--color-brand-700);
-  border-color: var(--color-brand-700);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 6px rgba(255, 102, 0, 0.25);
-}
-
-.csv-modal-footer .btn-primary:disabled {
-  background: var(--color-ink-400);
-  border-color: var(--color-ink-400);
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
 
 /* Animations */
 @keyframes fadeIn {

@@ -52,17 +52,6 @@
   flex: 1;
 }
 
-.dashboard-filters .custom-dropdown-btn,
-.dashboard-filters .custom-dropdown-button {
-  padding: 5px 10px !important;
-  font-size: 0.8rem !important;
-  height: 34px !important;
-  background: rgba(255, 255, 255, 0.95) !important;
-  border: 1px solid var(--border-color, var(--color-ink-200)) !important;
-  border-radius: 8px !important;
-  white-space: nowrap;
-}
-
 .topbar-goal-badge {
   display: flex;
   align-items: center;
@@ -80,16 +69,6 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
-}
-
-
-.target-goal-text {
-  font-size: 0.84rem;
-  color: var(--text-secondary);
-}
-
-.target-goal-text strong {
-  color: var(--text-primary);
 }
 
 .btn-target-action {
@@ -341,23 +320,6 @@
   font-size: 0.9rem;
   font-weight: 600;
   color: var(--text-secondary, var(--color-ink-500));
-}
-
-.trend-badge {
-  padding: 3px 8px;
-  border-radius: 6px;
-  font-size: 0.75rem;
-  font-weight: 700;
-}
-
-.trend-badge.up {
-  background: #fee2e2;
-  color: var(--color-red-500);
-}
-
-.trend-badge.down {
-  background: #dcfce7;
-  color: var(--color-green-500);
 }
 
 .stat-sublabel {
@@ -836,31 +798,6 @@
   margin: 0;
 }
 
-.donut-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.donut-icon.activity {
-  background: var(--color-brand-50);
-  color: var(--color-link);
-}
-
-.donut-icon.source {
-  background: var(--color-green-50);
-  color: var(--color-green-500);
-}
-
-.bottom-charts-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-}
-
 /* Common Card Styles */
 .card {
   border-radius: 20px;
@@ -1084,10 +1021,6 @@
     gap: 12px;
   }
 
-  .hero-stats-card {
-    padding: 20px 16px;
-  }
-
   .hero-stats-grid {
     grid-template-columns: 1fr;
     gap: 20px;
@@ -1129,19 +1062,9 @@
   .data-table {
     min-width: 480px;
   }
-
-  .dashboard-header-right {
-    width: 100%;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
 }
 
 @media (max-width: 480px) {
-  .dashboard-title {
-    font-size: 1.35rem;
-  }
 
   .stat-value {
     font-size: 1.75rem;

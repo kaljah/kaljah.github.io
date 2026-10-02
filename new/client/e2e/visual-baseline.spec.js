@@ -33,11 +33,13 @@ test.describe("@baseline", () => {
         await page.setViewportSize({ width: size.width, height: size.height });
         await page.goto(route);
         await page.waitForLoadState("networkidle");
+        await page.waitForTimeout(2000); // chart animations
         const dir = `e2e/artifacts/baseline/${LABEL}`;
         fs.mkdirSync(dir, { recursive: true });
         await page.screenshot({
           path: `${dir}/${name}-${size.name}.png`,
           fullPage: true,
+          animations: "disabled",
           // time-dependent text
           mask: [page.getByText(/Updated \d|ago$/)],
         });
