@@ -14,6 +14,7 @@ from models import (
 )
 from extensions import db, limiter
 from utils import log_activity_and_notify
+from services.labels import process_label, scope2_source_label
 from services.scope2_activity import scope2_activity
 from calculations import (
     compute_emissions,
@@ -156,10 +157,15 @@ def get_emissions():
 
         nonlocal year
         if year == "baseline":
-            from models import BaseYear
+            # same base year as /dashboard/base-year (latest recalculation, else the official baseline);
+            # with none configured there is no baseline (it used to fall back to an invented 2020)
+            from models import BaseYear, BaseYearRecalculation
 
-            base = BaseYear.query.first()
-            year = str(base.year) if base else "2020"
+            rec = BaseYearRecalculation.query.order_by(BaseYearRecalculation.recalc_date.desc()).first()
+            base = rec or BaseYear.query.first()
+            if not base:
+                return q.filter(model.id == -1)
+            year = str(base.year)
 
         if year and year != "all":
             try:
@@ -3574,7 +3580,7 @@ def export_emissions():
                     "division": r.division or (fac.division if fac else ""),
                     "field": r.field or (fac.field if fac else ""),
                     "group": r.group_name or "N/A",
-                    "process": r.process_type or "N/A",
+                    "process": process_label(r.process_type, "N/A"),
                     "fuel": r.fuel_type or "N/A",
                     "quantity": float(r.quantity or 0),
                     "unit": r.unit or "",
@@ -3622,7 +3628,7 @@ def export_emissions():
                     "division": r.division or (fac.division if fac else ""),
                     "field": r.field or (fac.field if fac else ""),
                     "group": "N/A",
-                    "process": f"Scope 2: {r.source_type or 'Electricity'}",
+                    "process": f"Scope 2: {scope2_source_label(r.source_type)}",
                     "fuel": scope2_activity(r)[2],
                     "quantity": scope2_activity(r)[0],
                     "unit": scope2_activity(r)[1],

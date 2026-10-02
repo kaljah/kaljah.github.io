@@ -267,6 +267,12 @@
   color: var(--text-primary);
 }
 
+.kpi-note {
+  margin-top: 8px;
+  font-size: 0.75rem;
+  color: var(--warning-color, #b45309);
+}
+
 /* Scope Breakdown Styles */
 .scope-breakdown {
   display: grid;

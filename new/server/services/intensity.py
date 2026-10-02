@@ -30,6 +30,17 @@ from calculations.units import CONVERSIONS as _CONV
 
 CH4_DENSITY_KG_M3 = _CONV["density_ch4"]  # 60 F, 14.696 psia (API Compendium molar volume)
 WEC_CH4_DENSITY_T_PER_MSCF = 0.0192  # 40 CFR 99.20, density of methane for the waste emissions threshold
+# CAA s.136 waste emissions charge. Public Law 119-21 (4 July 2025) moved its start from 2024 to methane
+# emitted in 2034 (and EPA's implementing rule was disapproved under the Congressional Review Act in March
+# 2025), so no charge applies to 2024-2033 emissions. The statutory rate from 2026 on is $1,500 per tonne.
+WEC_FIRST_YEAR = 2034
+WEC_RATE_USD_PER_T = 1500.0
+# the charge applies to US facilities reporting under 40 CFR 98 subpart W only
+_US_NAMES = {"united states", "united states of america", "usa", "us", "u.s.", "u.s.a."}
+
+
+def wec_applies_to_country(country):
+    return str(country or "").strip().lower() in _US_NAMES
 
 
 def segment_category(segment):
@@ -224,14 +235,20 @@ def facility_row(fid, cell_list, fac, year_value, gwp_horizon="100"):
         allowed_ch4 = 0.0
     wec_year = cal_year
     fee_map = _app_settings.get("wec_fee_rates", {})
+    first_year = int(_app_settings.get("wec_first_year", WEC_FIRST_YEAR))
+    country = (fac.country if fac else None) or "Algeria"
     if year_value in (None, "all"):
         wec_rate, excess, fee, wec_status = None, None, None, "Select a single year"
-    elif wec_year < 2024:
-        wec_rate, excess, fee, wec_status = 0.0, 0.0, 0.0, "Not Applicable (Pre-2024)"
+    elif not wec_applies_to_country(country):
+        # a liability was shown for every facility, whatever its country
+        wec_rate, excess, fee, wec_status = None, None, None, "Not Applicable (US subpart W facilities only)"
+    elif wec_year < first_year:
+        # 2024-2033 emissions carried $900 / $1,200 / $1,500 per tonne before P.L. 119-21
+        wec_rate, excess, fee, wec_status = None, None, None, f"Not Applicable (charge starts with {first_year} emissions)"
     elif seg_cat == "downstream":
         wec_rate, excess, fee, wec_status = 0.0, 0.0, 0.0, "Exempt (Downstream)"
     else:
-        wec_rate = float(fee_map.get(str(wec_year), 900.0 if wec_year == 2024 else (1200.0 if wec_year == 2025 else 1500.0)))
+        wec_rate = float(fee_map.get(str(wec_year), WEC_RATE_USD_PER_T))
         excess = max(0.0, matched["ch4"] - allowed_ch4)
         fee = round(excess * wec_rate, 2)
         wec_status = "Compliant" if excess <= 0 else "Taxable Liability"

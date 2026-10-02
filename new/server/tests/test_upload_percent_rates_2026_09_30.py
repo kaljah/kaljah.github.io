@@ -192,7 +192,9 @@ def test_custom_factor_import_percent_uncertainty(user_id):
     ws.append(["name", "unit", "co2_factor", "ch4_factor", "uncertainty", "co2_uncertainty"])
     ws.append(["PR audit factor pct", "scf", 0.0545, 0.00001, 0.05, "3%"])
     ws["E2"].number_format = "0%"
-    wb.save(path := tempfile.mkstemp(suffix=".xlsx")[1])
+    fd, path = tempfile.mkstemp(suffix=".xlsx")
+    os.close(fd)  # an open descriptor keeps Windows from deleting the file afterwards
+    wb.save(path)
     try:
         st = _run(path, "cf.xlsx", user_id, "custom_factors")
     finally:

@@ -1,4 +1,5 @@
 from routes.auth import login_required
+from services.labels import process_label, scope2_source_label
 from flask import Blueprint, jsonify, request, send_file, current_app
 from datetime import datetime
 from io import BytesIO
@@ -31,6 +32,8 @@ import openpyxl
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
 from calculations.units import CONVERSIONS as _UNITS
+
+PDF_DETAIL_ROWS = 500  # rows of the PDF detail table; the summary and the Excel export cover every record
 
 _CH4_DENSITY = _UNITS["density_ch4"]  # kg/m3, API Compendium standard conditions
 
@@ -209,6 +212,12 @@ def create_pdf_report(emissions_data, filters):
 
     # Detailed emissions table
     elements.append(Paragraph("Detailed Emissions Data", heading_style))
+    if len(emissions_data) > PDF_DETAIL_ROWS:
+        # the table used to stop at 500 rows without saying so while the footer counted every record
+        elements.append(Paragraph(
+            f"The table lists the {PDF_DETAIL_ROWS:,} most recent of {len(emissions_data):,} records. The summary above "
+            "covers all of them; the Excel export lists every record.", styles["Normal"]))
+        elements.append(Spacer(1, 0.15 * inch))
 
     # Table headers
     table_data = [
@@ -231,7 +240,7 @@ def create_pdf_report(emissions_data, filters):
         # very large quantities overprinted the next column (browser test #12)
         return f"{v:.3e}" if abs(v) >= 1e7 else f"{v:,.1f}"
 
-    for emission in emissions_data[:500]:
+    for emission in emissions_data[:PDF_DETAIL_ROWS]:
         unit_str = f" {emission.get('unit')}" if emission.get('unit') else ""
         table_data.append(
             [
@@ -392,7 +401,7 @@ def generate_report():
                         "scope": 1,
                         "date": f"{e.year or 0}-{m_val:02d}-01",
                         "facility_name": fac_map.get(e.facility_id, "Unknown"),
-                        "process_type": e.process_type or "N/A",
+                        "process_type": process_label(e.process_type, "N/A"),
                         "fuel_type": e.fuel_type or "N/A",
                         "amount": e.quantity or 0,
                         "unit": e.unit or "",
@@ -423,7 +432,7 @@ def generate_report():
                         "scope": 2,
                         "date": f"{e.year or 0}-{m_val:02d}-01",
                         "facility_name": fac_map.get(e.facility_id, "Unknown"),
-                        "process_type": f"Scope 2: {e.source_type or 'Electricity'}",
+                        "process_type": f"Scope 2: {scope2_source_label(e.source_type)}",
                         "fuel_type": _s2_label,
                         "amount": s2_amount,
                         "unit": s2_unit,
@@ -652,7 +661,7 @@ def export_emissions():
                         "scope": 1,
                         "date": f"{e.year or 0}-{m_val:02d}-01",
                         "facility_name": fac_map.get(e.facility_id, "Unknown"),
-                        "process_type": e.process_type or "N/A",
+                        "process_type": process_label(e.process_type, "N/A"),
                         "fuel_type": e.fuel_type or "N/A",
                         "amount": e.quantity or 0,
                         "unit": e.unit or "",
@@ -695,7 +704,7 @@ def export_emissions():
                         "scope": 2,
                         "date": f"{e.year or 0}-{m_val:02d}-01",
                         "facility_name": fac_map.get(e.facility_id, "Unknown"),
-                        "process_type": f"Indirect {e.source_type or 'Electricity'}",
+                        "process_type": f"Scope 2: {scope2_source_label(e.source_type)}",
                         "fuel_type": _s2_label,
                         "amount": s2_amount,
                         "unit": s2_unit,
@@ -1111,7 +1120,7 @@ def export_ogmp_excel():
             ws2.cell(
                 row=row_curr,
                 column=5,
-                value=_safe_excel_value(em.process_type or "N/A"),
+                value=_safe_excel_value(process_label(em.process_type, "N/A")),
             )
             ws2.cell(
                 row=row_curr,
