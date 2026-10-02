@@ -7,7 +7,7 @@ Governing equations:
 - ISO 14064-1:2018 §5.2.3
 """
 
-from .ref_constants import CONV_KWH_TO_MJ, CONV_MMBTU_TO_MJ
+from .ref_constants import _frac, CONV_KWH_TO_MJ, CONV_MMBTU_TO_MJ
 
 
 def ref_calculate_scope2_electricity(
@@ -42,7 +42,7 @@ def ref_calculate_scope2_steam(
 
     tonnes = float(steam_tonnes)
     ef = float(ef_kg_per_tonne or 180.0)  # default ~180 kg CO2e / tonne steam
-    loss = max(0.0, min(0.5, float(loss_factor or 0.05)))
+    loss = max(0.0, min(0.5, _frac(loss_factor, 0.05)))
     eta = max(0.1, min(1.0, float(boiler_efficiency or 0.80)))
 
     # Steam energy delivered including thermal distribution losses and boiler efficiency

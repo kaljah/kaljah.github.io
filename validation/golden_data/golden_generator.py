@@ -267,7 +267,8 @@ def generate_all_golden_cases():
             "id": "GOLDEN-S1-VENT-002",
             "type": "blowdown",
             "desc": "Compressor station emergency depressuring blowdown (50 m3 vessel, 600 psig -> 0 psig)",
-            "inputs": {"vessel_volume_m3": 50.0, "initial_press": 600.0, "final_press": 0.0, "events": 2, "ch4_fraction": 0.88},
+            "inputs": {"vessel_volume_m3": 50.0, "initial_press": 600.0, "final_press": 0.0, "events": 2, "ch4_fraction": 0.88,
+                       "co2_fraction": 0.01},
             "units": {"volume_unit": "m3", "press_unit": "psig"},
             "methodology": "API Compendium 2021 Section 5.4 (Blowdown)",
             "factor": "Boyle-Mariotte Ideal Gas Law",
@@ -295,13 +296,15 @@ def generate_all_golden_cases():
             "id": "GOLDEN-S1-FUG-001",
             "type": "component_fugitive",
             "desc": "Gas plant valve screening leaks (150 valves, 8760 hrs)",
-            "inputs": {"component_count": 150, "hours": 8760, "component_type": "valve", "ch4_fraction": 0.90},
+            "inputs": {"component_count": 150, "hours": 8760, "component_type": "valve", "ch4_fraction": 0.90,
+                       "co2_fraction": 0.0},
             "units": {"count_unit": "components"},
             "methodology": "API Compendium 2021 Table 6-1",
             "factor": 0.0045,
             "gwp_std": "AR5", "horizon": "100",
             "source": "API Compendium 2021 Table 6-1",
-            "assumptions": "Gas service valves default screening emission factor 0.0045 kg/hr/comp",
+            "assumptions": "Gas service valves default screening emission factor 0.0045 kg/hr/comp; methane only "
+                           "(the production component calculator does not count CO2 in leaked gas)",
             "tolerance": 1e-3,
         },
     ]
@@ -323,6 +326,7 @@ def generate_all_golden_cases():
                 final_press=sc["inputs"]["final_press"],
                 events=sc["inputs"]["events"],
                 ch4_fraction=sc["inputs"]["ch4_fraction"],
+                co2_fraction=sc["inputs"]["co2_fraction"],
                 gwp_standard=sc["gwp_std"],
                 gwp_horizon=sc["horizon"],
             )
@@ -341,6 +345,7 @@ def generate_all_golden_cases():
                 hours=sc["inputs"]["hours"],
                 component_type=sc["inputs"]["component_type"],
                 ch4_fraction=sc["inputs"]["ch4_fraction"],
+                co2_fraction=sc["inputs"]["co2_fraction"],
                 gwp_standard=sc["gwp_std"],
                 gwp_horizon=sc["horizon"],
             )
@@ -540,7 +545,9 @@ def generate_all_golden_cases():
             "GWP": "N/A",
             "independent_intermediate_values": {"molecular_weight": res["mw_fuel"]},
             "independent_expected_result": res,
-            "tolerance": 1e-6,
+            # relative: the reference adds atomic weights (CO2 = 44.009 g/mol), production uses the Compendium's
+            # rounded 44.01 (Table 3-7): 2.3e-5 apart, so 1e-6 could only fail
+            "tolerance": 1e-4,
             "source": "NIST Physical Reference Data",
             "assumptions": "Complete stoichiometric conversion to CO2 and H2O",
         })
