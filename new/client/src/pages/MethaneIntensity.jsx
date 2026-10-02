@@ -206,6 +206,7 @@ const MethaneIntensity = () => {
       // the WEC is assessed per calendar year: the server returns no fee for "all years"
       let wecAssessed = false;
       let wecRate = null; // the rate the server applied (Settings), not the statutory default
+      let wecReason = null; // why no charge was assessed (e.g. the charge starts with 2034 emissions)
 
       let upGasM3 = 0,
         upCh4Tonnes = 0;
@@ -228,6 +229,7 @@ const MethaneIntensity = () => {
         if (gasM3 > 0) tCh4WithGas += ch4Tonnes; // loss-rate numerator: facilities with gas production
         tWecFee += d.wec_fee_usd || 0;
         if (d.wec_fee_usd != null) wecAssessed = true;
+        else if (!wecReason && d.wec_status) wecReason = d.wec_status;
         if (d.wec_rate_usd_per_t) wecRate = d.wec_rate_usd_per_t;
         // loss rate numerator and denominator cover the same facilities (those with gas production)
         if (seg === "midstream" && gasM3 > 0) {
@@ -295,6 +297,7 @@ const MethaneIntensity = () => {
         totalWecFeeUsd: tWecFee,
         wecAssessed,
         wecRate,
+        wecReason,
         ogmpGoldStatus: goldStatus,
         upstreamGasM3: upGasM3,
         upstreamCh4Tonnes: upCh4Tonnes,
@@ -977,7 +980,9 @@ const MethaneIntensity = () => {
                 >
                   {stats.wecAssessed ? `$${formatNumber(stats.totalWecFeeUsd, 0)}` : "—"}
                 </span>
-                <span className="kpi-unit">{stats.wecAssessed ? "USD Est." : "Select a single year"}</span>
+                <span className="kpi-unit">
+                  {stats.wecAssessed ? "USD Est." : stats.wecReason || "Select a single year"}
+                </span>
               </div>
               <div className="kpi-footer">
                 <span>
@@ -990,7 +995,7 @@ const MethaneIntensity = () => {
                         : "—"}
                     /t CH₄
                   </strong>{" "}
-                  (IRA §136)
+                  (CAA §136, from 2034 emissions)
                 </span>
               </div>
             </div>

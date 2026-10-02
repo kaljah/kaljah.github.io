@@ -475,20 +475,20 @@ def generate_golden_dataset():
     # =========================================================================
     # N. MULTIPLE-YEAR HISTORICAL COMPARISON
     # =========================================================================
-    wec_2024 = IndependentIntensityModel.calculate_wec(ch4_tonnes=150.0, gas_prod_m3=10_000_000.0, year=2024)
-    wec_2025 = IndependentIntensityModel.calculate_wec(ch4_tonnes=150.0, gas_prod_m3=10_000_000.0, year=2025)
-    wec_2026 = IndependentIntensityModel.calculate_wec(ch4_tonnes=150.0, gas_prod_m3=10_000_000.0, year=2026)
+    wec_2033 = IndependentIntensityModel.calculate_wec(ch4_tonnes=150.0, gas_prod_m3=10_000_000.0, year=2033)
+    wec_2034 = IndependentIntensityModel.calculate_wec(ch4_tonnes=150.0, gas_prod_m3=10_000_000.0, year=2034)
+    wec_2035 = IndependentIntensityModel.calculate_wec(ch4_tonnes=150.0, gas_prod_m3=10_000_000.0, year=2035)
     cases.append(build_case(
         test_id="GOLD-N01-MULTI-YEAR-WEC",
         category_code="N",
         category_name="Multiple-Year Case",
         calc_type="epa_wec",
-        methodology="EPA 40 CFR Part 99 / IRA §136",
+        methodology="CAA §136 as amended by P.L. 119-21; 40 CFR 99.20 thresholds",
         activity_data={"ch4_tonnes": 150.0, "gas_prod_m3": 10_000_000.0},
         units="tCH4",
         emission_factor={},
-        expected_final_result={"wec_2024": wec_2024, "wec_2025": wec_2025, "wec_2026": wec_2026},
-        assumptions="Statutory escalation of WEC fee: $900 in 2024, $1200 in 2025, $1500 in 2026+",
+        expected_final_result={"wec_2033": wec_2033, "wec_2034": wec_2034, "wec_2035": wec_2035},
+        assumptions="CAA s.136 as amended by P.L. 119-21: no charge before 2034 emissions, $1,500 / t from 2034",
     ))
 
     # =========================================================================

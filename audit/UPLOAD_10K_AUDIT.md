@@ -96,3 +96,50 @@ Re-run through the browser on a fresh copy (same 30,000 rows):
 - **Review:** the uploader's "Approve All Scope 1" now says "No records approved: …". The reviewer's Review Wizard approved 29,973 records, and the uploader received 3 notifications (one per scope) instead of 29,973.
 - **Tables:** 10 rows (about 4.4 KB) per page request, 1,000 pages.
 - **Tests:** `tests/test_upload_10k_audit_fixes.py` (25). Backend 1,829 passed / 0 failed, validation 128, CI gates 448, vitest 38, lint 0 errors, build OK.
+
+## Round 2 (2026-10-02): current main, every page and chart
+
+**Method**
+- **Code:** the same generator was re-run against current `main`, which includes the other sessions' commits up to 2026-10-01.
+- **Expectations,** following the sources and the documented owner decisions:
+  - gas densities at the Compendium's 60 °F basis, 23.685 m³/kmol;
+  - desiccant refills per year, prorated to the record's month;
+  - a bare "ton" refused by the uploaders.
+- **Upload and review:** everything uploaded through the browser to a fresh database copy, then approved by a second admin through the Review Wizard.
+- **Pages:** 20 views:
+  - Dashboard: all years; 2024; one facility; Midstream; 2025 plus one facility; GWP‑20; Compare Regions.
+  - Carbon Intensity: 3 views. Methane Intensity: 3 views.
+  - Uncertainty: 4 views. Map: 3 views. SBTi: 2 views.
+- **Charts:** every chart was read through its tooltips, and every displayed figure was compared with independent aggregates (my own BOE, intensity and loss-rate code).
+- **Uncertainty:** recomputed independently using IPCC Approach 1.
+- **Exports:** the Excel, PDF and OGMP exports were parsed and reconciled with the database.
+
+**Results**
+- **Stored values:** 30,000 scenarios, 0 calculation errors. The 145 bare-"ton" steam rows and 25 generator rows above 100 Mt were refused as designed.
+- **Tables:** 0 display errors (Scope 1 9,975 rows; Scope 2 9,802 rows checked; Scope 3 10,000 rows).
+- **Pages:**
+  - All KPI cards, tables and chart values matched, including the trend, both pies, the forecast (OLS) and the SBTi lines.
+  - Per-facility intensities, loss rates, flaring rates, BOE and the GWP‑20 values matched.
+  - The Map values matched.
+  - Uncertainty matched: ±6.11 %, ±5.83 %, ±9.21 % and ±4.57 %, with tiers and bands as expected.
+- **Exports:** the Excel and PDF summaries reconcile to the cent.
+
+| # | Severity | Area | Error | Fix |
+|---|---|---|---|---|
+| 1 | Medium | Methane Intensity: EPA WEC liability | $722,478,091 (2024) and $2,123,440,617 (2025) were shown as "Taxable Liability". Public Law 119-21 (4 July 2025) moved the CAA §136 charge to methane emitted from 2034, and EPA's implementing rule was disapproved under the Congressional Review Act. The charge also applies only to US subpart W facilities, while these assets are Algerian | No charge before 2034 emissions ($1,500/t from 2034), and none for non-US facilities. The card shows the reason; the rate defaults and the validation reference model and golden case were updated |
+| 2 | Low | PDF report | The detail table stopped at 500 rows (the two latest months) while the footer said "Report contains 29830 emission records", with no note | A note gives the cut ("the 500 most recent of N records; the summary covers all; the Excel export lists every record") |
+| 3 | Low | Carbon Intensity cards | The Scope 3 card showed 0.41 kg/BOE next to "Total S3: 1,487,770,060 t", of which 1,487,633,379 t were from years without production and not in the intensity. Every card has the same pairing | Each card notes the tonnes from years without production that are not in its intensity |
+| 4 | Low | Dashboard trend chart | The legend showed "Target Path" without a line in the all-years view. Compare Regions took its facility list from the first year only | Legend entries only for series with data; Compare Regions uses every year's facilities |
+| 5 | Low | Reports page | "Compare With: Baseline (2020)" was hard-coded while the base year is 2024. The server fell back to an invented 2020 when no base year was set | The option shows the configured base year (hidden without one). The server uses the same base year as /dashboard/base-year and returns no records without one |
+| 6 | Low | Excel, PDF and OGMP exports | Raw keys in the process column ("tank_flashing", "desiccant_dehydrator", "Scope 2: indirect_steam") | The form's names (services/labels.py) |
+| 7 | Low | Dashboard flaring streams | A tCO₂e rounded twice (213.549 → 213.55 → "213.6") | The API no longer rounds to 2 decimals before the page formats it |
+| 8 | Low | Tests on Windows | test_custom_factor_import_percent_uncertainty left its mkstemp descriptor open, so Windows could not delete the file | Descriptor closed |
+
+**Re-check through the browser after the fixes:**
+- **WEC:** the card reads "— · Not Applicable (US subpart W facilities only)".
+- **Carbon Intensity:** the Scope 3 note shows 1,487,633,379 t.
+- **Trend chart:** the legend is Forecast / Scope 1 / Total Emissions.
+- **Flaring:** the stream reads 213.5.
+- **Reports:** "Baseline (2024)".
+- **Exports:** the PDF note is present; there are no raw keys in the PDF, Excel (5,093 rows) or OGMP exports.
+- **Tests:** tests/test_audit_2026_10_02.py (6).

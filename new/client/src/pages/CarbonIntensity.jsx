@@ -247,6 +247,13 @@ const CarbonIntensity = () => {
         totalGasProduction: tGas,
         totalBoe: tBoe,
         totalFlaringVolume: tFlaringVol,
+        // the intensity numerators: facility-years with production only (the totals cover every year)
+        usedCo2e: wCo2Sum / 1000,
+        usedCo2eGwp20: wCo2Gwp20Sum / 1000,
+        usedScope1: wS1Sum / 1000,
+        usedScope1Gwp20: wS1Gwp20Sum / 1000,
+        usedScope3: wS3Sum / 1000,
+        usedFlaring: wFlaringSum / 1000,
       });
     } catch (error) {
       console.error("Failed to load intensity stats:", error);
@@ -477,6 +484,20 @@ const CarbonIntensity = () => {
     gwpHorizon === "20" ? stats.avgScope1IntensityGwp20 : stats.avgScope1Intensity;
   const currentDisplayTotalScope1 =
     gwpHorizon === "20" ? stats.totalScope1Gwp20 : stats.totalScope1;
+  const currentUsedCo2e = gwpHorizon === "20" ? stats.usedCo2eGwp20 : stats.usedCo2e;
+  const currentUsedScope1 = gwpHorizon === "20" ? stats.usedScope1Gwp20 : stats.usedScope1;
+
+  // A card's total covers every year while its intensity only uses years with production: say how much
+  // of the total is outside the intensity (the Scope 3 card showed 1.49 Gt next to 0.41 kg/BOE)
+  const excludedNote = (total, used) => {
+    const excluded = (total || 0) - (used || 0);
+    if (!(excluded > Math.max(0.5, Math.abs(total || 0) * 1e-6))) return null;
+    return (
+      <div className="kpi-note">
+        {formatNumber(excluded)} t from years without production are not in this intensity
+      </div>
+    );
+  };
 
   if (loading && regionalData.length === 0)
     return (
@@ -570,6 +591,7 @@ const CarbonIntensity = () => {
                   <strong>{formatNumber(currentDisplayTotalCo2e)} tCO₂e</strong>
                 </span>
               </div>
+              {excludedNote(currentDisplayTotalCo2e, currentUsedCo2e)}
             </div>
 
             <div className="kpi-card">
@@ -609,6 +631,7 @@ const CarbonIntensity = () => {
                   Total S1: <strong>{formatNumber(currentDisplayTotalScope1)} t</strong>
                 </span>
               </div>
+              {excludedNote(currentDisplayTotalScope1, currentUsedScope1)}
             </div>
 
             <div className="kpi-card">
@@ -632,6 +655,7 @@ const CarbonIntensity = () => {
                   </strong>
                 </span>
               </div>
+              {excludedNote(stats.totalFlaringEmissions, stats.usedFlaring)}
             </div>
 
             <div className="kpi-card">
@@ -653,6 +677,7 @@ const CarbonIntensity = () => {
                   <strong>{formatNumber(stats.totalScope3)} tCO₂e</strong>
                 </span>
               </div>
+              {excludedNote(stats.totalScope3, stats.usedScope3)}
             </div>
           </div>
 

@@ -688,7 +688,9 @@ _DEFAULT_APP_SETTINGS = {
     "copernicus_client_secret": "",
     "copernicus_qa_threshold": 0.5,
     "copernicus_enabled": False,
-    "wec_fee_rates": {"2024": 900.0, "2025": 1200.0, "2026": 1500.0},
+    # CAA s.136 as amended by P.L. 119-21: the charge starts with 2034 emissions at $1,500 / t
+    "wec_fee_rates": {"2034": 1500.0},
+    "wec_first_year": 2034,
     "theme": "light",
     "unit_system": "metric",
     "auto_flag_discrepancy": True,

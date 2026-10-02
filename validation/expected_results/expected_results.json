@@ -324,28 +324,28 @@
   },
   "GOLD-N01-MULTI-YEAR-WEC": {
     "calc_type": "epa_wec",
-    "methodology": "EPA 40 CFR Part 99 / IRA \u00a7136",
+    "methodology": "CAA \u00a7136 as amended by P.L. 119-21; 40 CFR 99.20 thresholds",
     "intermediate": {},
     "expected_final": {
-      "wec_2024": {
-        "allowed_ch4_tonnes": 13.57,
-        "excess_ch4_tonnes": 136.43,
-        "wec_rate": 900.0,
-        "wec_fee_usd": 122787.0,
-        "status": "Taxable Liability"
+      "wec_2033": {
+        "allowed_ch4_tonnes": 13.560832012799999,
+        "excess_ch4_tonnes": null,
+        "wec_rate": null,
+        "wec_fee_usd": null,
+        "status": "Not Applicable (charge starts with 2034 emissions)"
       },
-      "wec_2025": {
-        "allowed_ch4_tonnes": 13.57,
-        "excess_ch4_tonnes": 136.43,
-        "wec_rate": 1200.0,
-        "wec_fee_usd": 163716.0,
-        "status": "Taxable Liability"
-      },
-      "wec_2026": {
-        "allowed_ch4_tonnes": 13.57,
-        "excess_ch4_tonnes": 136.43,
+      "wec_2034": {
+        "allowed_ch4_tonnes": 13.560832012799999,
+        "excess_ch4_tonnes": 136.4391679872,
         "wec_rate": 1500.0,
-        "wec_fee_usd": 204645.0,
+        "wec_fee_usd": 204658.75,
+        "status": "Taxable Liability"
+      },
+      "wec_2035": {
+        "allowed_ch4_tonnes": 13.560832012799999,
+        "excess_ch4_tonnes": 136.4391679872,
+        "wec_rate": 1500.0,
+        "wec_fee_usd": 204658.75,
         "status": "Taxable Liability"
       }
     },
