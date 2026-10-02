@@ -1,93 +1,4 @@
-:root {
-  /* Core Theme Tokens - Preserved & Polished */
-  --bg-body: #f1f5f9;
-  --bg-card: rgba(255, 255, 255, 0.9);
-  --bg-card-elevated: rgba(255, 255, 255, 0.96);
-  --bg-hover: rgba(255, 247, 237, 0.85);
-  --text-primary: #0f172a;
-  --text-main: #0f172a;
-  --text-secondary: #64748b;
-  --text-muted: #94a3b8;
-  
-  /* Brand Accents */
-  --accent-color: #ff6600;
-  --accent-hover: #e65c00;
-  --accent-subtle: rgba(255, 102, 0, 0.1);
-  --accent-gradient: linear-gradient(135deg, #ff6600 0%, #ff8533 100%);
-  
-  /* Semantic Colors */
-  --danger: #ef4444;
-  --danger-bg: rgba(239, 68, 68, 0.1);
-  --success: #10b981;
-  --success-bg: rgba(16, 185, 129, 0.1);
-  --warning: #f59e0b;
-  --warning-bg: rgba(245, 158, 11, 0.1);
-  --info: #3b82f6;
-  --info-bg: rgba(59, 130, 246, 0.1);
-  
-  /* Borders & Shadows */
-  --border-color: rgba(226, 232, 240, 0.8);
-  --border-light: rgba(241, 245, 249, 0.9);
-  --border-focus: #ff6600;
-  --shadow-card: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
-  --shadow-card-elevated: 0 12px 32px -4px rgba(15, 23, 42, 0.08), 0 4px 12px -2px rgba(15, 23, 42, 0.03);
-  --shadow-hover: 0 16px 36px -4px rgba(255, 102, 0, 0.12), 0 6px 16px -2px rgba(15, 23, 42, 0.04);
-  
-  /* Dimensions & Typography */
-  --sidebar-width: 260px;
-  font-family: "Outfit", Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
-}
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-* {
-  box-sizing: border-box;
-}
-
-html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100vh;
-  overflow: hidden;
-  background-color: var(--bg-body);
-  color: var(--text-primary);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-  background-image:
-    radial-gradient(at 0% 0%, hsla(28, 100%, 74%, 0.08) 0, transparent 45%),
-    radial-gradient(at 50% 0%, hsla(225, 39%, 30%, 0.04) 0, transparent 50%),
-    radial-gradient(at 100% 100%, hsla(339, 49%, 30%, 0.03) 0, transparent 40%);
-}
-
-#root {
-  width: 100%;
-  height: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
-  scroll-behavior: smooth;
-}
-
-/* Modern Minimal Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 999px;
-  transition: background 0.2s ease;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
+/* Legacy global classes, kept until every page is migrated to src/ui (see docs/ui-modernization-plan.md). */
 
 /* Enhanced Glassmorphism & Card Utilities */
 .glass-panel {
@@ -152,13 +63,6 @@ html, body {
   transform: scale(1.05);
 }
 
-/* Tabular Numerals for Data Integrity */
-.num-tabular, .kpi-number, .stat-value {
-  font-variant-numeric: tabular-nums;
-  font-feature-settings: "tnum";
-  color: var(--text-primary, #0f172a);
-}
-
 /* Universal Status Badges */
 .status-pill {
   display: inline-flex;
@@ -195,12 +99,6 @@ html, body {
   background: var(--info-bg);
   color: #2563eb;
   border: 1px solid rgba(59, 130, 246, 0.3);
-}
-
-/* Reusable Interactive Focus Ring */
-input:focus, select:focus, textarea:focus, button:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.18);
 }
 
 /* Global Topmost Notification Tray */
@@ -290,82 +188,6 @@ select option:disabled {
   background-color: #f8fafc;
 }
 
-/* ==========================================================================
-   Global Print Stylesheet (Ctrl + P / Physical & PDF Report Printing)
-   ========================================================================== */
-@media print {
-  /* Hide navigation, toolbars, buttons, modals, and toasts */
-  .sidebar,
-  .app-sidebar,
-  .topbar,
-  header,
-  nav,
-  button,
-  .btn,
-  .btn-primary,
-  .btn-secondary,
-  .btn-outline,
-  .modal,
-  .modal-overlay,
-  .modal-backdrop,
-  .toast,
-  .toast-container,
-  #offline-banner,
-  .action-buttons,
-  .pagination,
-  .filter-bar,
-  .search-box {
-    display: none !important;
-  }
-
-  /* Reset layout constraints for clean page printing */
-  html,
-  body,
-  #root,
-  .app-container,
-  .main-content {
-    width: 100% !important;
-    max-width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    background: #ffffff !important;
-    color: #0f172a !important;
-    box-shadow: none !important;
-  }
-
-  /* Prevent awkward page splits inside charts, metric cards, and table rows */
-  .glass-card,
-  .glass-panel,
-  .kpi-card,
-  .chart-container,
-  table,
-  tr,
-  figure {
-    break-inside: avoid !important;
-    page-break-inside: avoid !important;
-    box-shadow: none !important;
-    border: 1px solid #cbd5e1 !important;
-  }
-
-  /* Table styling for crisp print readability */
-  table {
-    width: 100% !important;
-    border-collapse: collapse !important;
-  }
-
-  th,
-  td {
-    border: 1px solid #cbd5e1 !important;
-    padding: 6px 8px !important;
-    color: #000000 !important;
-  }
-
-  th {
-    background-color: #f1f5f9 !important;
-    font-weight: 700 !important;
-  }
-}
-
 /* ============================================================
    GLOBAL MOBILE RESPONSIVE UTILITIES
    ============================================================ */
@@ -381,4 +203,32 @@ select option:disabled {
   }
 }
 
+/* Temporary: these classes were used (34x) but never defined. Replaced by <Button variant> in Phase 4. */
+.btn-ghost,
+.btn-secondary-unified {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
 
+.btn-ghost:hover,
+.btn-secondary-unified:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.btn-ghost:disabled,
+.btn-secondary-unified:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

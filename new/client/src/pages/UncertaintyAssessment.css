@@ -207,7 +207,7 @@
 }
 
 .ua-export-btn:hover {
-  background: var(--accent-color, #ff6600);
+  background: var(--color-primary);
   color: #fff;
   border-color: var(--accent-color, #ff6600);
   transform: translateY(-1px);

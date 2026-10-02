@@ -1476,7 +1476,7 @@ const MethaneIntensity = () => {
                 <h3>Methane Intensity by Facility (kg CH₄ / BOE)</h3>
                 <div
                   className="chart-indicator"
-                  style={{ background: "#0d9488" }}
+                  style={{ background: "#ff6600" }}
                 ></div>
               </div>
             </div>
@@ -1488,7 +1488,7 @@ const MethaneIntensity = () => {
                 }))}
                 dataKey="value"
                 xKey="name"
-                color="#0d9488"
+                color="#ff6600"
               />
             </div>
           </div>
@@ -1588,7 +1588,7 @@ const MethaneIntensity = () => {
                   },
                   {
                     key: "loss_rate_upstream_pct",
-                    color: "#0d9488",
+                    color: "#c2410c",
                     name: "Upstream Loss Rate (%)",
                   },
                   {

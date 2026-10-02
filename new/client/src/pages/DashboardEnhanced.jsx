@@ -650,7 +650,7 @@ const DashboardEnhanced = () => {
     "#6366f1",
     "#ef4444",
     "#ec4899",
-    "#14b8a6",
+    "#ff6600",
     "#a855f7",
   ];
   const ACTIVITY_COLOR_MAP = {

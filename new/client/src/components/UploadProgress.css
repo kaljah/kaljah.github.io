@@ -416,7 +416,7 @@
 
 .up-btn-primary {
   padding: 10px 20px;
-  background: linear-gradient(135deg, #ff6600 0%, #ff8533 100%);
+  background: var(--primary-gradient);
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -428,7 +428,7 @@
   font-family: inherit;
 }
 .up-btn-primary:hover {
-  background: linear-gradient(135deg, #e65c00 0%, #ff6600 100%);
+  background: var(--primary-gradient);
   box-shadow: 0 4px 12px rgba(255, 102, 0, 0.35);
   transform: translateY(-1px);
 }

@@ -36,7 +36,7 @@ const Sidebar = () => {
       <div className="sidebar-header">
         <div className="sidebar-brand-group">
           <div className="logo-box" style={{ background: 'transparent', padding: 0, boxShadow: 'none' }}>
-            <img src="/carbon_tech.svg" alt="Carbon Tech Logo" style={{ width: '32px', height: '32px' }} />
+            <img src={`${import.meta.env.BASE_URL}carbon_tech.svg`} alt="Carbon Tech Logo" style={{ width: '32px', height: '32px' }} />
           </div>
           <span className="brand-text">Carbon tech</span>
         </div>

@@ -145,7 +145,7 @@
 }
 
 .nav-link.active {
-  background: var(--accent-gradient);
+  background: var(--primary-gradient);
   color: white;
   box-shadow: 0 4px 14px rgba(255, 102, 0, 0.22);
   font-weight: 600;
@@ -288,7 +288,7 @@
   height: 32px;
   min-width: 32px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #ff6600, #ff8533);
+  background: var(--primary-gradient);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -372,7 +372,7 @@
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
-  font-family: "Outfit", sans-serif;
+  font-family: inherit;
   text-align: left;
 }
 

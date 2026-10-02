@@ -109,7 +109,7 @@
   align-items: center;
   gap: 8px;
   padding: 9px 18px;
-  background: linear-gradient(135deg, var(--accent-color, #ff6600) 0%, #ff8533 100%);
+  background: var(--primary-gradient);
   border: none;
   border-radius: 10px;
   color: #ffffff;
@@ -937,7 +937,7 @@
 
 .btn-clear-empty {
   padding: 8px 16px;
-  background: var(--accent-color, #ff6600);
+  background: var(--color-primary);
   border: none;
   border-radius: 8px;
   color: #ffffff;
@@ -968,7 +968,7 @@
 .user-avatar-sm {
   width: 22px;
   height: 22px;
-  background: var(--accent-color, #ff6600);
+  background: var(--color-primary);
   border-radius: 50%;
   display: flex;
   align-items: center;

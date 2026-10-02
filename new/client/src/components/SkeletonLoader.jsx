@@ -1,18 +1,16 @@
 import React from "react";
+import "./SkeletonLoader.css";
 
 export const SkeletonRow = ({ columns = 5 }) => (
-  <div className="flex w-full animate-pulse space-x-4 py-3 border-b border-[var(--border-color)]">
+  <div className="skeleton-row" aria-hidden="true">
     {Array.from({ length: columns }).map((_, i) => (
-      <div
-        key={i}
-        className="h-4 bg-[var(--surface-color)] rounded flex-1"
-      ></div>
+      <div key={i} className="skeleton-block skeleton-cell" />
     ))}
   </div>
 );
 
 export const SkeletonTable = ({ rows = 5, columns = 5 }) => (
-  <div className="w-full">
+  <div className="skeleton-table" role="status" aria-label="Loading">
     {Array.from({ length: rows }).map((_, i) => (
       <SkeletonRow key={i} columns={columns} />
     ))}
@@ -20,8 +18,8 @@ export const SkeletonTable = ({ rows = 5, columns = 5 }) => (
 );
 
 export const SkeletonCard = () => (
-  <div className="p-6 rounded-xl border border-[var(--border-color)] bg-[var(--surface-color)] animate-pulse">
-    <div className="h-5 w-1/3 bg-[var(--border-color)] rounded mb-4"></div>
-    <div className="h-10 w-1/2 bg-[var(--border-color)] rounded"></div>
+  <div className="skeleton-card" role="status" aria-label="Loading">
+    <div className="skeleton-block skeleton-card-title" />
+    <div className="skeleton-block skeleton-card-value" />
   </div>
 );

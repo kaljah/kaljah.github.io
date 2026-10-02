@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import api from "../api";
+import { useToast } from "./Toast";
 import "./UploadProgress.css";
 
 /* ── Inline SVG icons (no emoji, no lucide dep needed here) ── */
@@ -113,6 +114,7 @@ function categoryFromReason(reason = "") {
 // reviewable: the import creates emission records that wait for approval (Scope 1 / 2 / 3)
 const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
   const navigate = useNavigate();
+  const toast = useToast();
   const { user } = useAuth();
   const isReviewer = ["admin", "superuser"].includes(user?.role);
 
@@ -169,7 +171,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
       a.click();
       a.remove();
     } catch {
-      alert("Failed to download error CSV.");
+      toast.error("Failed to download error CSV.");
     }
   };
 

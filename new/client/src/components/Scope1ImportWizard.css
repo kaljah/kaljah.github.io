@@ -110,7 +110,7 @@
   width: 40px;
   height: 40px;
   border-radius: 10px;
-  background: linear-gradient(135deg, #ff6600 0%, #ff8533 100%);
+  background: var(--primary-gradient);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -125,7 +125,7 @@
   color: #0f172a;
   margin: 0 0 2px;
   letter-spacing: -0.3px;
-  font-family: "Outfit", Inter, system-ui, sans-serif;
+  font-family: inherit;
 }
 
 .s1w-subtitle {
@@ -295,7 +295,7 @@
   width: 28px;
   height: 28px;
   border-radius: 6px;
-  background: #ff6600;
+  background: var(--color-primary);
   color: #fff;
   display: flex;
   align-items: center;
@@ -390,7 +390,7 @@
 }
 .s1w-process-tile:hover .s1w-process-tile-icon,
 .s1w-process-tile.selected .s1w-process-tile-icon {
-  background: #ff6600;
+  background: var(--color-primary);
   color: #fff;
 }
 .s1w-process-tile-icon svg { width: 16px; height: 16px; }
@@ -484,7 +484,7 @@
   width: 56px;
   height: 56px;
   border-radius: 14px;
-  background: linear-gradient(135deg, #ff6600, #ff8533);
+  background: var(--primary-gradient);
   color: #fff;
   display: flex;
   align-items: center;
@@ -550,7 +550,7 @@
   flex-shrink: 0;
 }
 .s1w-template-btn-icon svg { width: 18px; height: 18px; }
-.s1w-template-btn:hover .s1w-template-btn-icon { background: #ff6600; color: #fff; }
+.s1w-template-btn:hover .s1w-template-btn-icon { background: var(--color-primary); color: #fff; }
 
 .s1w-template-btn strong { display: block; font-size: 0.85rem; color: #0f172a; margin-bottom: 2px; }
 .s1w-template-btn small { display: block; font-size: 0.75rem; color: #64748b; }
@@ -695,7 +695,7 @@
 
 .s1w-group-icon {
   width: 28px; height: 28px; border-radius: 7px;
-  background: linear-gradient(135deg, #ff6600, #ff8533);
+  background: var(--primary-gradient);
   color: #fff;
   display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
@@ -824,7 +824,7 @@
   align-items: center;
   gap: 6px;
   padding: 9px 22px;
-  background: linear-gradient(135deg, #ff6600 0%, #ff8533 100%);
+  background: var(--primary-gradient);
   border: none;
   border-radius: 9px;
   font-size: 0.875rem;
@@ -836,7 +836,7 @@
   font-family: inherit;
 }
 .s1w-btn-primary:hover {
-  background: linear-gradient(135deg, #e65c00 0%, #ff6600 100%);
+  background: var(--primary-gradient);
   box-shadow: 0 4px 12px rgba(255, 102, 0, 0.4);
   transform: translateY(-1px);
 }

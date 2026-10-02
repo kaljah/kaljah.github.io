@@ -19,7 +19,6 @@ const CarbonIntensity = React.lazy(() => import("./pages/CarbonIntensity"));
 const MethaneIntensity = React.lazy(() => import("./pages/MethaneIntensity"));
 const UncertaintyAssessment = React.lazy(() => import("./pages/UncertaintyAssessment"));
 const ReferenceData = React.lazy(() => import("./pages/ReferenceData"));
-const Diagnostics = React.lazy(() => import("./pages/Diagnostics"));
 const AuditTrail = React.lazy(() => import("./pages/AuditTrail"));
 const UserManagement = React.lazy(() => import("./pages/UserManagement"));
 const Settings = React.lazy(() => import("./pages/Settings"));

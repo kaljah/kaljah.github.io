@@ -78,17 +78,8 @@ const Login = () => {
   const [forgotLoading, setForgotLoading] = useState(false);
   const [forgotMsg, setForgotMsg] = useState({ text: "", type: "" });
 
-  // Intro video state
-  const [showIntro, setShowIntro] = useState(true);
-  const [introFading, setIntroFading] = useState(false);
-
   const { login, sessionExpired, setSessionExpired } = useAuth();
   const navigate = useNavigate();
-
-  const handleIntroEnd = () => {
-    setIntroFading(true);
-    setTimeout(() => setShowIntro(false), 800); // Matches CSS transition duration
-  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -132,24 +123,6 @@ const Login = () => {
 
   return (
     <div className="login-body">
-      {showIntro && (
-        <div
-          className={`login-intro-overlay ${introFading ? "intro-fade-out" : ""}`}
-        >
-          <video
-            src="/login_animation.mp4"
-            autoPlay
-            muted
-            playsInline
-            onEnded={handleIntroEnd}
-            className="login-intro-video"
-          />
-          <button className="skip-intro-btn" onClick={handleIntroEnd}>
-            Skip Intro
-          </button>
-        </div>
-      )}
-
       <GhgCloud />
 
       <motion.div

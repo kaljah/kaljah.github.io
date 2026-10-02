@@ -1,10 +1,10 @@
 /* Carbon Intensity Dashboard Styles - Modernized Professional */
-:root {
-  --accent-color: #0d9488;
+/* Page-scoped variables. These used to live on :root and leaked into every page
+   (teal accent, white cards) once this stylesheet was loaded. The brand accent
+   (--accent-color) is intentionally NOT redefined here. */
+.intensity-content {
   --accent-secondary: #2563eb;
-  --accent-tertiary: #ea580c;
-  --text-primary: #0f172a;
-  --text-secondary: #64748b;
+  --accent-tertiary: #e65c00;
   --bg-card: #ffffff;
   --bg-app: #f8fafc;
   --border-color: #e2e8f0;
@@ -21,10 +21,7 @@
   background: var(--bg-app);
   min-height: calc(100vh - 64px);
   animation: fadeIn 0.5s ease-out;
-  font-family:
-    "Inter",
-    -apple-system,
-    sans-serif;
+  font-family: inherit;
 }
 
 /* Dashboard Grid */
@@ -85,13 +82,13 @@
 }
 
 .year-badge {
-  background: rgba(13, 148, 136, 0.1);
+  background: rgba(255, 102, 0, 0.1);
   color: var(--accent-color);
   padding: 6px 16px;
   border-radius: 9999px;
   font-size: 0.875rem;
   font-weight: 600;
-  border: 1px solid rgba(13, 148, 136, 0.2);
+  border: 1px solid rgba(255, 102, 0, 0.2);
 }
 
 .kpi-grid {
@@ -141,9 +138,9 @@
 }
 
 .gwp-pill.active {
-  background: var(--accent-color);
+  background: var(--color-primary);
   color: #ffffff;
-  box-shadow: 0 2px 4px rgba(13, 148, 136, 0.2);
+  box-shadow: 0 2px 4px rgba(255, 102, 0, 0.2);
 }
 
 .gwp-subtag {
@@ -195,7 +192,7 @@
 }
 
 .kpi-icon.co2 {
-  background: rgba(13, 148, 136, 0.1);
+  background: rgba(255, 102, 0, 0.1);
   color: var(--accent-color);
 }
 .kpi-icon.ch4 {
@@ -222,7 +219,7 @@
 }
 
 .total-value {
-  font-family: "Inter", sans-serif;
+  font-family: inherit;
   font-weight: 700;
   font-size: 2.25rem;
   letter-spacing: -0.04em;
@@ -308,7 +305,7 @@
   font-size: 1.25rem;
   font-weight: 700;
   color: var(--text-primary);
-  font-family: "Inter", sans-serif;
+  font-family: inherit;
 }
 
 .scope-item .val.flare-val {
@@ -322,7 +319,7 @@
   gap: 24px;
 }
 
-.card {
+.intensity-content .card {
   background: var(--bg-card, rgba(255, 255, 255, 0.78));
   backdrop-filter: blur(14px);
   border: 1px solid var(--border-color, rgba(226, 232, 240, 0.8));
@@ -332,7 +329,7 @@
   transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease, border-color 0.22s ease;
 }
 
-.card:hover {
+.intensity-content .card:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-card-elevated);
   border-color: rgba(255, 255, 255, 0.95);
@@ -499,7 +496,7 @@
   color: #fff !important;
 } /* Amber */
 .heat-high {
-  background: #ea580c;
+  background: #e65c00;
 } /* Orange */
 .heat-crit {
   background: #dc2626;
@@ -950,13 +947,13 @@
 }
 
 .cbam-benchmark-badge {
-  background: rgba(13, 148, 136, 0.1);
+  background: rgba(255, 102, 0, 0.1);
   color: var(--accent-color);
   padding: 6px 14px;
   border-radius: 8px;
   font-size: 0.8125rem;
   font-weight: 600;
-  border: 1px solid rgba(13, 148, 136, 0.2);
+  border: 1px solid rgba(255, 102, 0, 0.2);
 }
 
 .cbam-empty-state {

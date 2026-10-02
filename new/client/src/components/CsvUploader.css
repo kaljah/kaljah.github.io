@@ -233,8 +233,8 @@
 }
 
 .mapping-select:focus {
-  border-color: #0d9488; /* Premium Teal */
-  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15); /* Soft focus ring */
+  border-color: #ff6600; /* Premium Teal */
+  box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.15); /* Soft focus ring */
 }
 
 /* Icon Buttons inside modal */
@@ -261,7 +261,7 @@
   color: #ea580c; /* Orange */
 }
 .csv-modal-header.success h3 {
-  color: #0d9488; /* Teal */
+  color: #c2410c; /* Teal */
 }
 
 /* Buttons overriding default classes if needed inside modal */
@@ -282,21 +282,21 @@
 }
 
 .csv-modal-footer .btn-primary {
-  background: #0d9488;
-  border: 1px solid #0d9488;
+  background: var(--color-primary);
+  border: 1px solid #ff6600;
   color: #ffffff;
   padding: 10px 24px;
   border-radius: 8px;
   font-weight: 500;
   transition: all 0.2s;
-  box-shadow: 0 2px 4px rgba(13, 148, 136, 0.2);
+  box-shadow: 0 2px 4px rgba(255, 102, 0, 0.2);
 }
 
 .csv-modal-footer .btn-primary:hover {
-  background: #0f766e;
-  border-color: #0f766e;
+  background: #c2410c;
+  border-color: #c2410c;
   transform: translateY(-1px);
-  box-shadow: 0 4px 6px rgba(13, 148, 136, 0.25);
+  box-shadow: 0 4px 6px rgba(255, 102, 0, 0.25);
 }
 
 .csv-modal-footer .btn-primary:disabled {

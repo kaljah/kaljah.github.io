@@ -765,7 +765,7 @@ const CarbonIntensity = () => {
                                                 <td>{p.year}-{String(p.month || 1).padStart(2, '0')}</td>
                                                 <td>{formatNumber(qty, 0)}</td>
                                                 <td>{dest}</td>
-                                                <td><strong style={{ color: '#0d9488' }}>{typeof directInt === 'number' ? directInt.toFixed(4) : '—'}</strong></td>
+                                                <td><strong style={{ color: '#c2410c' }}>{typeof directInt === 'number' ? directInt.toFixed(4) : '—'}</strong></td>
                                                 <td>{typeof indirInt === 'number' ? indirInt.toFixed(4) : '—'}</td>
                                                 <td><strong>{formatNumber(totEmb, 1)}</strong></td>
                                             </tr>
@@ -789,7 +789,7 @@ const CarbonIntensity = () => {
                 <h3>GHG Intensity by Facility (kg CO₂e / BOE)</h3>
                 <div
                   className="chart-indicator"
-                  style={{ background: "#0d9488" }}
+                  style={{ background: "#ff6600" }}
                 ></div>
               </div>
             </div>
@@ -804,7 +804,7 @@ const CarbonIntensity = () => {
                 }))}
                 dataKey="value"
                 xKey="name"
-                color="#0d9488"
+                color="#ff6600"
               />
             </div>
           </div>
@@ -935,7 +935,7 @@ const CarbonIntensity = () => {
                 series={[
                   {
                     key: "co2_100",
-                    color: "#0d9488",
+                    color: "#c2410c",
                     name: `GHG Intensity (${activeGwpStandard} 100-Yr GWP)`,
                   },
                   {
