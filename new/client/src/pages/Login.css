@@ -1,21 +1,17 @@
-:root {
-  --primary: #f97316; /* Orange */
-  --primary-hover: #ea580c;
-  --accent: #10b981; /* Slight green */
-
+.login-body {
+  --primary: #c2410c;
+  --primary-hover: #9a3412;
+  --accent: #10b981;
   --bg-page: #f8fafc;
   --text-main: #0f172a;
   --text-muted: #64748b;
   --border-light: #e2e8f0;
-}
-
-.login-body {
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: var(--bg-page);
-  font-family: "Inter", sans-serif;
+  font-family: inherit;
   color: var(--text-main);
   padding: 20px;
   position: relative;
@@ -33,7 +29,7 @@
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    rgba(249, 115, 22, 0.04) 0%,
+    rgba(255, 102, 0, 0.04) 0%,
     transparent 70%
   );
   pointer-events: none;
@@ -57,53 +53,6 @@
 }
 
 /* --- Video Intro Overlay --- */
-.login-intro-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: #ffffff; /* Solid white background behind video */
-  z-index: 9999;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: opacity 0.8s ease-in-out;
-}
-
-.login-intro-overlay.intro-fade-out {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.login-intro-video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover; /* Fill the whole screen beautifully */
-}
-
-.skip-intro-btn {
-  position: absolute;
-  bottom: 40px;
-  right: 40px;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  color: #ffffff;
-  padding: 10px 20px;
-  border-radius: 30px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  z-index: 10000;
-}
-
-.skip-intro-btn:hover {
-  background: rgba(255, 255, 255, 0.4);
-  transform: scale(1.05);
-}
-
 /* --- GHG Cloud Animation --- */
 .ghg-cloud-container {
   position: absolute;
@@ -133,7 +82,7 @@
 .co2-cloud {
   background: radial-gradient(
     circle,
-    rgba(249, 115, 22, 0.6) 0%,
+    rgba(255, 102, 0, 0.6) 0%,
     rgba(100, 116, 139, 0.3) 50%,
     transparent 70%
   );
@@ -228,7 +177,7 @@
   outline: none;
   border-color: var(--primary);
   background: #ffffff;
-  box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
+  box-shadow: 0 0 0 4px rgba(255, 102, 0, 0.1);
 }
 
 .form-control:focus + .input-icon {
@@ -247,13 +196,13 @@
   cursor: pointer;
   transition: all 0.2s;
   margin-top: 12px;
-  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2);
+  box-shadow: 0 4px 12px rgba(255, 102, 0, 0.2);
 }
 
 .btn-primary:hover {
   background: var(--primary-hover);
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(249, 115, 22, 0.3);
+  box-shadow: 0 6px 16px rgba(255, 102, 0, 0.3);
 }
 
 .error-message {

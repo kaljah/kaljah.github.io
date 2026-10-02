@@ -104,13 +104,13 @@
 }
 
 .modal-button-primary {
-  background: var(--accent-color);
+  background: var(--color-primary);
   color: white;
   border: none;
 }
 
 .modal-button-primary:hover {
-  background: #0d9488;
+  background: var(--color-primary-hover);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }

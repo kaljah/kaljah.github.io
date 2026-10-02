@@ -9,7 +9,7 @@
   min-height: 620px;
   overflow: hidden;
   background: #f1f5f9;
-  font-family: "Outfit", Inter, system-ui, -apple-system, sans-serif;
+  font-family: inherit;
   color: #0f172a;
   user-select: none;
 }
@@ -404,7 +404,7 @@
 
 .drawer-toggle-tab:hover {
   color: #ffffff;
-  background: #ff6600;
+  background: var(--color-primary);
 }
 
 .drawer-inner {
@@ -1297,7 +1297,7 @@ input:checked + .slider:before {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: linear-gradient(135deg, #ff6600 0%, #ff8533 100%);
+  background: var(--primary-gradient);
   color: #ffffff;
   border: none;
   border-radius: 10px;
@@ -1555,7 +1555,7 @@ input:checked + .slider:before {
   height: 100% !important;
   position: absolute !important;
   inset: 0 !important;
-  font-family: "Outfit", Inter, system-ui, sans-serif !important;
+  font-family: inherit;
 }
 
 .leaflet-control-zoom {

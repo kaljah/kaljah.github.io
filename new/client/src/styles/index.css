@@ -1,0 +1,13 @@
+/* Entry stylesheet. Only the Tailwind theme and utilities layers are used (no preflight),
+   and class scanning is limited to the new folders until pages are migrated. */
+@layer theme, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities) source(none);
+@import "./tokens.css";
+@import "./base.css";
+@import "./legacy.css";
+
+@source "../ui";
+@source "../app";
+@source "../filters";
+@source "../dev";

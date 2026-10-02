@@ -101,7 +101,7 @@
 }
 
 .count-badge {
-  background: var(--accent-color, #ff6600);
+  background: var(--color-primary);
   color: white;
   padding: 3px 10px;
   border-radius: 999px;
