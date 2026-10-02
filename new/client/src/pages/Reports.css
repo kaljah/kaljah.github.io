@@ -48,30 +48,30 @@
 }
 
 .btn-excel {
-  background: #10b981;
+  background: var(--color-green-500);
   color: white;
 }
 
 .btn-excel:hover {
-  background: #059669;
+  background: var(--color-green-600);
 }
 
 .btn-pdf {
-  background: #ef4444;
+  background: var(--color-red-500);
   color: white;
 }
 
 .btn-pdf:hover {
-  background: #dc2626;
+  background: var(--color-red-600);
 }
 
 .btn-iso {
-  background: #f97316;
+  background: var(--color-brand-500);
   color: white;
 }
 
 .btn-iso:hover {
-  background: #ea580c;
+  background: var(--color-brand-600);
 }
 
 /* Create New Report Card */
@@ -151,14 +151,14 @@
 .component-select,
 select.component-select {
   width: 100%;
-  background-color: #ffffff;
-  border: 1px solid var(--border-color, #e2e8f0);
+  background-color: var(--color-white);
+  border: 1px solid var(--border-color, var(--color-ink-200));
   border-radius: 10px;
   padding: 10px 36px 10px 14px;
   font-size: 0.9rem;
   font-family: inherit;
   font-weight: 500;
-  color: var(--text-primary, #0f172a);
+  color: var(--text-primary, var(--color-ink-900));
   line-height: 1.4;
   cursor: pointer;
   outline: none;
@@ -179,23 +179,23 @@ select.component-select {
 .component-select:hover,
 select.component-select:hover {
   border-color: rgba(255, 102, 0, 0.45);
-  background-color: #ffffff;
+  background-color: var(--color-white);
   box-shadow: 0 2px 8px rgba(255, 102, 0, 0.08);
 }
 
 .component-select:focus,
 select.component-select:focus {
-  border-color: var(--accent-color, #ff6600);
-  background-color: #ffffff;
+  border-color: var(--accent-color, var(--color-brand-500));
+  background-color: var(--color-white);
   box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.15);
   outline: none;
 }
 
 .component-select:disabled,
 select.component-select:disabled {
-  background-color: #f8fafc;
-  border-color: #e2e8f0;
-  color: var(--text-muted, #94a3b8);
+  background-color: var(--color-ink-50);
+  border-color: var(--color-ink-200);
+  color: var(--text-muted, var(--color-ink-400));
   cursor: not-allowed;
   opacity: 0.7;
 }
@@ -203,8 +203,8 @@ select.component-select:disabled {
 /* Option Elements Styling */
 .component-select option,
 select.component-select option {
-  background-color: #ffffff;
-  color: var(--text-primary, #0f172a);
+  background-color: var(--color-white);
+  color: var(--text-primary, var(--color-ink-900));
   font-size: 0.9rem;
   font-family: inherit;
   font-weight: 500;
@@ -216,14 +216,14 @@ select.component-select option {
 select.component-select option:hover,
 select.component-select option:checked {
   background-color: rgba(255, 102, 0, 0.1) !important;
-  color: var(--accent-color, #ff6600) !important;
+  color: var(--accent-color, var(--color-brand-500)) !important;
   font-weight: 600;
 }
 
 .component-select option:disabled,
 select.component-select option:disabled {
-  color: var(--text-muted, #94a3b8);
-  background-color: #f8fafc;
+  color: var(--text-muted, var(--color-ink-400));
+  background-color: var(--color-ink-50);
 }
 
 .btn-create {
@@ -289,7 +289,7 @@ select.component-select option:disabled {
 
 .search-input:focus {
   border-color: var(--accent-color);
-  background: #ffffff;
+  background: var(--color-white);
 }
 
 .search-icon {
@@ -408,7 +408,7 @@ select.component-select option:disabled {
   width: 100%;
   max-width: 500px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  color: #1e293b;
+  color: var(--color-ink-800);
 }
 .modal-header {
   display: flex;
@@ -425,7 +425,7 @@ select.component-select option:disabled {
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
-  color: #64748b;
+  color: var(--color-ink-500);
 }
 .input-group {
   display: flex;
@@ -434,8 +434,8 @@ select.component-select option:disabled {
 }
 .btn-secondary {
   padding: 8px 16px;
-  background-color: #f1f5f9;
-  color: #334155;
+  background-color: var(--color-ink-100);
+  color: var(--color-ink-700);
   border: none;
   border-radius: 4px;
   cursor: pointer;

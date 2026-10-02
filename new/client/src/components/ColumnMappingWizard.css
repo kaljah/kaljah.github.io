@@ -23,7 +23,7 @@
 }
 
 .cmw-modal {
-  background: #ffffff;
+  background: var(--color-white);
   border-radius: 16px;
   width: 100%;
   max-width: 780px;
@@ -60,14 +60,14 @@
 .cmw-title {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--color-ink-900);
   margin: 0 0 4px;
   letter-spacing: -0.3px;
 }
 
 .cmw-subtitle {
   font-size: 0.875rem;
-  color: #64748b;
+  color: var(--color-ink-500);
   margin: 0;
 }
 
@@ -75,13 +75,13 @@
   width: 36px;
   height: 36px;
   border-radius: 8px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-ink-200);
   background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: #64748b;
+  color: var(--color-ink-500);
   flex-shrink: 0;
   transition: all 0.15s;
 }
@@ -90,8 +90,8 @@
   height: 18px;
 }
 .cmw-close-btn:hover {
-  background: #f1f5f9;
-  color: #0f172a;
+  background: var(--color-ink-100);
+  color: var(--color-ink-900);
 }
 
 /* ─── Step Indicator ──────────────────────────────────────────────────────── */
@@ -115,12 +115,12 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  border: 2px solid #e2e8f0;
-  background: #f8fafc;
+  border: 2px solid var(--color-ink-200);
+  background: var(--color-ink-50);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #94a3b8;
+  color: var(--color-ink-400);
   transition: all 0.25s;
 }
 .cmw-step-circle svg {
@@ -129,43 +129,43 @@
 }
 
 .cmw-step.active .cmw-step-circle {
-  border-color: #2563eb;
-  background: #2563eb;
-  color: #fff;
+  border-color: var(--color-blue-600);
+  background: var(--color-blue-600);
+  color: var(--color-white);
   box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
 }
 
 .cmw-step.done .cmw-step-circle {
-  border-color: #16a34a;
-  background: #16a34a;
-  color: #fff;
+  border-color: var(--color-green-600);
+  background: var(--color-green-600);
+  color: var(--color-white);
 }
 
 .cmw-step-label {
   font-size: 0.75rem;
   font-weight: 500;
-  color: #94a3b8;
+  color: var(--color-ink-400);
   white-space: nowrap;
   transition: color 0.2s;
 }
 .cmw-step.active .cmw-step-label {
-  color: #2563eb;
+  color: var(--color-blue-600);
   font-weight: 600;
 }
 .cmw-step.done .cmw-step-label {
-  color: #16a34a;
+  color: var(--color-green-600);
 }
 
 .cmw-step-line {
   flex: 1;
   height: 2px;
-  background: #e2e8f0;
+  background: var(--color-ink-200);
   margin: 0 10px;
   margin-bottom: 22px;
   transition: background 0.3s;
 }
 .cmw-step-line.done {
-  background: #16a34a;
+  background: var(--color-green-600);
 }
 
 /* ─── Body ────────────────────────────────────────────────────────────────── */
@@ -184,19 +184,19 @@
 
 /* ─── Drop Zone ───────────────────────────────────────────────────────────── */
 .cmw-dropzone {
-  border: 2px dashed #cbd5e1;
+  border: 2px dashed var(--color-ink-300);
   border-radius: 12px;
   padding: 40px 24px;
   text-align: center;
   cursor: pointer;
   transition: all 0.2s;
-  background: #f8fafc;
+  background: var(--color-ink-50);
   margin-bottom: 20px;
 }
 .cmw-dropzone:hover,
 .cmw-dropzone.dragging {
-  border-color: #2563eb;
-  background: #eff6ff;
+  border-color: var(--color-blue-600);
+  background: var(--color-blue-50);
 }
 
 .cmw-dropzone-icon {
@@ -208,7 +208,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #2563eb;
+  color: var(--color-blue-600);
 }
 .cmw-dropzone-icon svg {
   width: 26px;
@@ -217,18 +217,18 @@
 
 .cmw-dropzone-text {
   font-size: 0.9375rem;
-  color: #334155;
+  color: var(--color-ink-700);
   margin: 0 0 4px;
   font-weight: 500;
 }
 .cmw-dropzone-text span {
-  color: #2563eb;
+  color: var(--color-blue-600);
   font-weight: 600;
 }
 
 .cmw-dropzone-sub {
   font-size: 0.8125rem;
-  color: #94a3b8;
+  color: var(--color-ink-400);
   margin: 0;
 }
 
@@ -236,8 +236,8 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #dc2626;
-  background: #fef2f2;
+  color: var(--color-red-600);
+  background: var(--color-red-50);
   border: 1px solid #fecaca;
   border-radius: 8px;
   padding: 10px 14px;
@@ -257,7 +257,7 @@
 
 .cmw-template-label {
   font-size: 0.8125rem;
-  color: #64748b;
+  color: var(--color-ink-500);
   margin: 0 0 10px;
   font-weight: 500;
 }
@@ -274,15 +274,15 @@
   gap: 12px;
   padding: 14px 16px;
   border-radius: 10px;
-  border: 1px solid #e2e8f0;
-  background: #fff;
+  border: 1px solid var(--color-ink-200);
+  background: var(--color-white);
   cursor: pointer;
   text-align: left;
   transition: all 0.2s;
 }
 .cmw-template-btn:hover {
-  border-color: #2563eb;
-  background: #eff6ff;
+  border-color: var(--color-blue-600);
+  background: var(--color-blue-50);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
 }
@@ -290,18 +290,18 @@
 .cmw-template-btn-icon {
   width: 38px;
   height: 38px;
-  background: #f1f5f9;
+  background: var(--color-ink-100);
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #475569;
+  color: var(--color-ink-600);
   flex-shrink: 0;
   transition: background 0.2s;
 }
 .cmw-template-btn:hover .cmw-template-btn-icon {
   background: #dbeafe;
-  color: #2563eb;
+  color: var(--color-blue-600);
 }
 .cmw-template-btn-icon svg {
   width: 20px;
@@ -312,12 +312,12 @@
   display: block;
   font-size: 0.875rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--color-ink-800);
   margin-bottom: 2px;
 }
 .cmw-template-btn small {
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: var(--color-ink-400);
 }
 
 /* ─── Mapping UI ──────────────────────────────────────────────────────────── */
@@ -325,8 +325,8 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--color-ink-50);
+  border: 1px solid var(--color-ink-200);
   border-radius: 10px;
   padding: 12px 16px;
   margin-bottom: 16px;
@@ -340,7 +340,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #16a34a;
+  color: var(--color-green-600);
   flex-shrink: 0;
 }
 .cmw-file-badge-icon svg {
@@ -351,12 +351,12 @@
 .cmw-file-name {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #0f172a;
+  color: var(--color-ink-900);
   margin: 0 0 2px;
 }
 .cmw-file-size {
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: var(--color-ink-400);
   margin: 0;
 }
 
@@ -365,8 +365,8 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  background: #eff6ff;
-  color: #2563eb;
+  background: var(--color-blue-50);
+  color: var(--color-blue-600);
   border-radius: 20px;
   padding: 4px 12px;
   font-size: 0.75rem;
@@ -397,13 +397,13 @@
 }
 
 .cmw-info-banner {
-  background: #eff6ff;
+  background: var(--color-blue-50);
   border: 1px solid #bfdbfe;
-  color: #1d4ed8;
+  color: var(--color-blue-700);
 }
 
 .cmw-warning-banner {
-  background: #fffbeb;
+  background: var(--color-amber-50);
   border: 1px solid #fcd34d;
   color: #92400e;
 }
@@ -417,12 +417,12 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #64748b;
+  color: var(--color-ink-500);
   margin-bottom: 8px;
 }
 
 .cmw-mapping-table {
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-ink-200);
   border-radius: 10px;
   overflow: hidden;
 }
@@ -432,13 +432,13 @@
   grid-template-columns: 1.8fr 2fr 2fr 60px;
   gap: 12px;
   padding: 10px 16px;
-  background: #f8fafc;
-  border-bottom: 1px solid #e2e8f0;
+  background: var(--color-ink-50);
+  border-bottom: 1px solid var(--color-ink-200);
   font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #94a3b8;
+  color: var(--color-ink-400);
 }
 
 .cmw-mapping-row {
@@ -447,14 +447,14 @@
   gap: 12px;
   align-items: center;
   padding: 10px 16px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--color-ink-100);
   transition: background 0.15s;
 }
 .cmw-mapping-row:last-child {
   border-bottom: none;
 }
 .cmw-mapping-row:hover {
-  background: #f8fafc;
+  background: var(--color-ink-50);
 }
 .cmw-mapping-row.unmapped {
   background: #fff9f9;
@@ -463,7 +463,7 @@
 .cmw-field-name {
   font-size: 0.8375rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--color-ink-800);
   display: flex;
   align-items: center;
   gap: 6px;
@@ -474,36 +474,36 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #ef4444;
+  background: var(--color-red-500);
   flex-shrink: 0;
 }
 
 .cmw-field-hint {
   font-size: 0.775rem;
-  color: #94a3b8;
+  color: var(--color-ink-400);
 }
 
 .cmw-select,
 .cmw-text-input {
   width: 100%;
   padding: 7px 10px;
-  border: 1.5px solid #e2e8f0;
+  border: 1.5px solid var(--color-ink-200);
   border-radius: 7px;
   font-size: 0.8125rem;
-  color: #334155;
-  background: #fff;
+  color: var(--color-ink-700);
+  background: var(--color-white);
   outline: none;
   transition: all 0.15s;
   appearance: auto;
 }
 .cmw-select:focus,
 .cmw-text-input:focus {
-  border-color: #2563eb;
+  border-color: var(--color-blue-600);
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 .cmw-select.matched,
 .cmw-text-input.matched {
-  border-color: #16a34a;
+  border-color: var(--color-green-600);
   background: #f0fdf4;
 }
 
@@ -520,7 +520,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #16a34a;
+  color: var(--color-green-600);
 }
 .cmw-status-ok svg {
   width: 14px;
@@ -531,8 +531,8 @@
   width: 26px;
   height: 26px;
   border-radius: 50%;
-  background: #f1f5f9;
-  border: 2px dashed #e2e8f0;
+  background: var(--color-ink-100);
+  border: 2px dashed var(--color-ink-200);
 }
 
 .cmw-optional-toggle {
@@ -543,7 +543,7 @@
   margin-top: 10px;
   background: transparent;
   border: none;
-  color: #64748b;
+  color: var(--color-ink-500);
   font-size: 0.8125rem;
   font-weight: 500;
   cursor: pointer;
@@ -555,8 +555,8 @@
   height: 16px;
 }
 .cmw-optional-toggle:hover {
-  background: #f1f5f9;
-  color: #334155;
+  background: var(--color-ink-100);
+  color: var(--color-ink-700);
 }
 
 /* ─── Factor Row ──────────────────────────────────────────────────────────── */
@@ -565,8 +565,8 @@
   align-items: center;
   gap: 16px;
   padding: 14px 16px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--color-ink-50);
+  border: 1px solid var(--color-ink-200);
   border-radius: 10px;
   margin-top: 4px;
 }
@@ -574,23 +574,23 @@
 .cmw-factor-label {
   font-size: 0.8125rem;
   font-weight: 500;
-  color: #475569;
+  color: var(--color-ink-600);
   flex: 1;
 }
 
 .cmw-factor-select {
   padding: 7px 12px;
-  border: 1.5px solid #e2e8f0;
+  border: 1.5px solid var(--color-ink-200);
   border-radius: 7px;
   font-size: 0.8125rem;
-  color: #334155;
-  background: #fff;
+  color: var(--color-ink-700);
+  background: var(--color-white);
   outline: none;
   min-width: 220px;
   transition: border-color 0.15s;
 }
 .cmw-factor-select:focus {
-  border-color: #2563eb;
+  border-color: var(--color-blue-600);
 }
 
 /* ─── Footer ──────────────────────────────────────────────────────────────── */
@@ -599,7 +599,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 16px 28px 20px;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--color-ink-100);
   flex-shrink: 0;
   gap: 12px;
 }
@@ -610,9 +610,9 @@
   gap: 7px;
   padding: 9px 18px;
   border-radius: 8px;
-  border: 1.5px solid #e2e8f0;
+  border: 1.5px solid var(--color-ink-200);
   background: transparent;
-  color: #64748b;
+  color: var(--color-ink-500);
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
@@ -623,9 +623,9 @@
   height: 16px;
 }
 .cmw-btn-ghost:hover {
-  background: #f8fafc;
-  color: #334155;
-  border-color: #cbd5e1;
+  background: var(--color-ink-50);
+  color: var(--color-ink-700);
+  border-color: var(--color-ink-300);
 }
 
 .cmw-btn-primary {
@@ -635,8 +635,8 @@
   padding: 9px 22px;
   border-radius: 8px;
   border: none;
-  background: #2563eb;
-  color: #fff;
+  background: var(--color-blue-600);
+  color: var(--color-white);
   font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
@@ -648,7 +648,7 @@
   height: 16px;
 }
 .cmw-btn-primary:hover:not(:disabled) {
-  background: #1d4ed8;
+  background: var(--color-blue-700);
   transform: translateY(-1px);
   box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
 }
@@ -663,7 +663,7 @@
   width: 16px;
   height: 16px;
   border: 2px solid rgba(255, 255, 255, 0.4);
-  border-top-color: #fff;
+  border-top-color: var(--color-white);
   border-radius: 50%;
   animation: cmw-spin 0.7s linear infinite;
   flex-shrink: 0;
@@ -683,11 +683,11 @@
   background: transparent;
 }
 .cmw-body::-webkit-scrollbar-thumb {
-  background: #e2e8f0;
+  background: var(--color-ink-200);
   border-radius: 4px;
 }
 .cmw-body::-webkit-scrollbar-thumb:hover {
-  background: #cbd5e1;
+  background: var(--color-ink-300);
 }
 
 /* --- Mode Cards ------------------------------------------------------------ */
@@ -695,18 +695,18 @@
   transition: all 0.2s ease;
 }
 .cmw-mode-card:hover {
-  border-color: #cbd5e1 !important;
-  background: #f8fafc !important;
+  border-color: var(--color-ink-300) !important;
+  background: var(--color-ink-50) !important;
 }
 .cmw-mode-card.active {
-  border-color: #2563eb !important;
-  background: #eff6ff !important;
-  box-shadow: 0 0 0 1px #2563eb;
+  border-color: var(--color-blue-600) !important;
+  background: var(--color-blue-50) !important;
+  box-shadow: 0 0 0 1px var(--color-blue-600);
 }
 .cmw-mode-card.active h4 {
   color: #1e40af !important;
 }
 .cmw-mode-card.active > div > div {
-  background: #2563eb !important;
-  border-color: #2563eb !important;
+  background: var(--color-blue-600) !important;
+  border-color: var(--color-blue-600) !important;
 }

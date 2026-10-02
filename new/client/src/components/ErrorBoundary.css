@@ -4,7 +4,7 @@
   align-items: center;
   justify-content: center;
   padding: 20px;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  background: linear-gradient(135deg, var(--color-ink-900) 0%, var(--color-ink-800) 100%);
 }
 
 .error-boundary-card {
@@ -20,7 +20,7 @@
 }
 
 .error-icon {
-  color: #ef4444;
+  color: var(--color-red-500);
   margin-bottom: 24px;
   animation: pulse 2s ease-in-out infinite;
 }
@@ -62,7 +62,7 @@
 .error-details summary {
   cursor: pointer;
   font-weight: 600;
-  color: #f59e0b;
+  color: var(--color-amber-500);
   margin-bottom: 12px;
   user-select: none;
 }
@@ -78,7 +78,7 @@
 }
 
 .error-stack strong {
-  color: #ef4444;
+  color: var(--color-red-500);
 }
 
 .error-stack pre {
@@ -114,12 +114,12 @@
 }
 
 .error-btn.primary {
-  background: #10b981;
+  background: var(--color-green-500);
   color: white;
 }
 
 .error-btn.primary:hover {
-  background: #059669;
+  background: var(--color-green-600);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
@@ -142,7 +142,7 @@
 }
 
 .error-footer a {
-  color: #10b981;
+  color: var(--color-green-500);
   text-decoration: none;
 }
 

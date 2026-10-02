@@ -10,7 +10,7 @@
 }
 
 .excel-table thead {
-  background: #f1f5f9;
+  background: var(--color-ink-100);
   color: var(--text-secondary);
   text-transform: uppercase;
   font-size: 0.75rem;
@@ -71,7 +71,7 @@
 }
 
 .icon-button:hover {
-  background-color: #f1f5f9;
+  background-color: var(--color-ink-100);
 }
 
 /* Specific column widths if needed */

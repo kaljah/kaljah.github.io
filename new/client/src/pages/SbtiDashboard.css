@@ -18,7 +18,7 @@
 .sbti-title-group h1 {
   font-size: 1.75rem;
   font-weight: 700;
-  color: var(--text-main, #0f172a);
+  color: var(--text-main, var(--color-ink-900));
   margin-bottom: 4px;
   display: flex;
   align-items: center;
@@ -26,7 +26,7 @@
 }
 
 .sbti-title-group p {
-  color: var(--text-secondary, #64748b);
+  color: var(--text-secondary, var(--color-ink-500));
   font-size: 0.95rem;
 }
 
@@ -40,8 +40,8 @@
 /* Scope Disaggregation Toggle */
 .sbti-scope-toggle {
   display: inline-flex;
-  background: var(--bg-card, #f1f5f9);
-  border: 1px solid var(--border-color, #e2e8f0);
+  background: var(--bg-card, var(--color-ink-100));
+  border: 1px solid var(--border-color, var(--color-ink-200));
   border-radius: 10px;
   padding: 3px;
   gap: 3px;
@@ -54,19 +54,19 @@
   font-weight: 600;
   border: none;
   background: transparent;
-  color: var(--text-secondary, #64748b);
+  color: var(--text-secondary, var(--color-ink-500));
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
 }
 
 .btn-scope:hover {
-  color: var(--text-main, #0f172a);
+  color: var(--text-main, var(--color-ink-900));
 }
 
 .btn-scope.active {
-  background: var(--card-bg, #ffffff);
-  color: var(--primary, #f97316);
+  background: var(--card-bg, var(--color-white));
+  color: var(--primary, var(--color-brand-500));
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
 
@@ -104,24 +104,24 @@
   left: 0;
   width: 4px;
   height: 100%;
-  background: var(--primary, #f97316);
+  background: var(--primary, var(--color-brand-500));
   border-radius: 4px 0 0 4px;
 }
 
 .sbti-kpi-card.success::before {
-  background: #10b981;
+  background: var(--color-green-500);
 }
 
 .sbti-kpi-card.warning::before {
-  background: #f59e0b;
+  background: var(--color-amber-500);
 }
 
 .sbti-kpi-card.info::before {
-  background: #3b82f6;
+  background: var(--color-blue-500);
 }
 
 .sbti-kpi-card.neutral::before {
-  background: #94a3b8;
+  background: var(--color-ink-400);
 }
 
 .sbti-kpi-header {
@@ -134,7 +134,7 @@
 .sbti-kpi-title {
   font-size: 0.85rem;
   font-weight: 600;
-  color: var(--text-secondary, #64748b);
+  color: var(--text-secondary, var(--color-ink-500));
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -147,46 +147,46 @@
   align-items: center;
   justify-content: center;
   background: rgba(249, 115, 22, 0.1);
-  color: var(--primary, #f97316);
+  color: var(--primary, var(--color-brand-500));
 }
 
 .sbti-kpi-icon.success {
   background: rgba(16, 185, 129, 0.1);
-  color: #10b981;
+  color: var(--color-green-500);
 }
 
 .sbti-kpi-icon.warning {
   background: rgba(245, 158, 11, 0.1);
-  color: #f59e0b;
+  color: var(--color-amber-500);
 }
 
 .sbti-kpi-icon.info {
   background: rgba(59, 130, 246, 0.1);
-  color: #3b82f6;
+  color: var(--color-blue-500);
 }
 
 .sbti-kpi-icon.neutral {
   background: rgba(148, 163, 184, 0.15);
-  color: #64748b;
+  color: var(--color-ink-500);
 }
 
 .sbti-kpi-value {
   font-size: 1.85rem;
   font-weight: 700;
-  color: var(--text-main, #0f172a);
+  color: var(--text-main, var(--color-ink-900));
   margin-bottom: 4px;
 }
 
 .sbti-kpi-unit {
   font-size: 0.9rem;
   font-weight: 500;
-  color: var(--text-secondary, #64748b);
+  color: var(--text-secondary, var(--color-ink-500));
   margin-left: 4px;
 }
 
 .sbti-kpi-subtitle {
   font-size: 0.8rem;
-  color: var(--text-secondary, #64748b);
+  color: var(--text-secondary, var(--color-ink-500));
   display: flex;
   align-items: center;
   gap: 4px;
@@ -205,26 +205,26 @@
 
 .status-pill.on-track {
   background: rgba(16, 185, 129, 0.12);
-  color: #059669;
+  color: var(--color-green-600);
   border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
 .status-pill.behind {
   background: rgba(239, 68, 68, 0.12);
-  color: #dc2626;
+  color: var(--color-red-600);
   border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
 .status-pill.not-set {
   background: rgba(148, 163, 184, 0.15);
-  color: #64748b;
+  color: var(--color-ink-500);
   border: 1px solid rgba(148, 163, 184, 0.3);
 }
 
 /* Target Settings Drawer / Panel */
 .sbti-config-panel {
-  background: var(--card-bg, #ffffff);
-  border: 1px solid var(--border-color, #e2e8f0);
+  background: var(--card-bg, var(--color-white));
+  border: 1px solid var(--border-color, var(--color-ink-200));
   border-radius: 16px;
   padding: 24px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
@@ -240,7 +240,7 @@
 .sbti-config-header h3 {
   font-size: 1.15rem;
   font-weight: 700;
-  color: var(--text-main, #0f172a);
+  color: var(--text-main, var(--color-ink-900));
   display: flex;
   align-items: center;
   gap: 8px;
@@ -262,7 +262,7 @@
 .sbti-form-group label {
   font-size: 0.85rem;
   font-weight: 600;
-  color: var(--text-secondary, #64748b);
+  color: var(--text-secondary, var(--color-ink-500));
 }
 
 .btn-autofill {
@@ -274,7 +274,7 @@
   font-weight: 600;
   border-radius: 6px;
   background: rgba(37, 99, 235, 0.1);
-  color: #2563eb;
+  color: var(--color-blue-600);
   border: 1px solid rgba(37, 99, 235, 0.2);
   cursor: pointer;
   transition: all 0.2s;
@@ -282,23 +282,23 @@
 
 .btn-autofill:hover {
   background: rgba(37, 99, 235, 0.2);
-  border-color: #2563eb;
+  border-color: var(--color-blue-600);
 }
 
 .sbti-input {
   padding: 10px 14px;
   border-radius: 10px;
-  border: 1px solid var(--border-color, #e2e8f0);
-  background: var(--input-bg, #f8fafc);
-  color: var(--text-main, #0f172a);
+  border: 1px solid var(--border-color, var(--color-ink-200));
+  background: var(--input-bg, var(--color-ink-50));
+  color: var(--text-main, var(--color-ink-900));
   font-size: 0.95rem;
   transition: all 0.2s;
 }
 
 .sbti-input:focus {
   outline: none;
-  border-color: var(--primary, #f97316);
-  background: var(--card-bg, #ffffff);
+  border-color: var(--primary, var(--color-brand-500));
+  background: var(--card-bg, var(--color-white));
   box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
 }
 
@@ -339,20 +339,20 @@
 .sbti-card-title {
   font-size: 1.1rem;
   font-weight: 700;
-  color: var(--text-main, #0f172a);
+  color: var(--text-main, var(--color-ink-900));
   margin-bottom: 2px;
 }
 
 .sbti-card-subtitle {
   font-size: 0.85rem;
-  color: var(--text-secondary, #64748b);
+  color: var(--text-secondary, var(--color-ink-500));
 }
 
 /* Trajectory Milestones Table */
 .sbti-table-container {
   overflow-x: auto;
   border-radius: 12px;
-  border: 1px solid var(--border-color, #e2e8f0);
+  border: 1px solid var(--border-color, var(--color-ink-200));
   background: var(--bg-card, rgba(255, 255, 255, 0.6));
   backdrop-filter: blur(8px);
 }
@@ -368,8 +368,8 @@
   background: var(--bg-secondary, rgba(248, 250, 252, 0.85));
   padding: 12px 16px;
   font-weight: 600;
-  color: var(--text-secondary, #64748b);
-  border-bottom: 1px solid var(--border-color, #e2e8f0);
+  color: var(--text-secondary, var(--color-ink-500));
+  border-bottom: 1px solid var(--border-color, var(--color-ink-200));
   white-space: nowrap;
   font-size: 0.78rem;
   text-transform: uppercase;
@@ -379,7 +379,7 @@
 .sbti-table td {
   padding: 12px 16px;
   border-bottom: 1px solid var(--border-light, rgba(241, 245, 249, 0.9));
-  color: var(--text-primary, #0f172a);
+  color: var(--text-primary, var(--color-ink-900));
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum";
 }
@@ -405,18 +405,18 @@
 
 .badge-status.achieved {
   background: rgba(16, 185, 129, 0.12);
-  color: #059669;
+  color: var(--color-green-600);
   border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
 .badge-status.off-track {
   background: rgba(239, 68, 68, 0.12);
-  color: #dc2626;
+  color: var(--color-red-600);
   border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
 .badge-status.projected {
   background: rgba(59, 130, 246, 0.12);
-  color: #2563eb;
+  color: var(--color-blue-600);
   border: 1px solid rgba(59, 130, 246, 0.3);
 }

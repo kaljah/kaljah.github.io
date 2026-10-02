@@ -96,26 +96,26 @@
 
 /* Per-scope accent colours */
 .scope-1-card::before {
-  background: var(--accent-color, #ff6600);
+  background: var(--accent-color, var(--color-brand-500));
 }
 .scope-1-card:hover {
-  border-color: var(--accent-color, #ff6600);
+  border-color: var(--accent-color, var(--color-brand-500));
   box-shadow: 0 12px 32px rgba(255, 102, 0, 0.15);
 }
 
 .scope-2-card::before {
-  background: #3b82f6;
+  background: var(--color-blue-500);
 }
 .scope-2-card:hover {
-  border-color: #3b82f6;
+  border-color: var(--color-blue-500);
   box-shadow: 0 12px 32px rgba(59, 130, 246, 0.15);
 }
 
 .scope-3-card::before {
-  background: #8b5cf6;
+  background: var(--color-violet-500);
 }
 .scope-3-card:hover {
-  border-color: #8b5cf6;
+  border-color: var(--color-violet-500);
   box-shadow: 0 12px 32px rgba(139, 92, 246, 0.15);
 }
 
@@ -140,11 +140,11 @@
 
 .s1-badge {
   background: rgba(255, 102, 0, 0.12);
-  color: #c2410c;
+  color: var(--color-brand-700);
 }
 .s2-badge {
   background: rgba(59, 130, 246, 0.12);
-  color: #2563eb;
+  color: var(--color-blue-600);
 }
 .s3-badge {
   background: rgba(139, 92, 246, 0.12);
@@ -168,15 +168,15 @@
 
 .s1-ring {
   background: rgba(255, 102, 0, 0.12);
-  color: #ff6600;
+  color: var(--color-brand-500);
 }
 .s2-ring {
   background: rgba(59, 130, 246, 0.12);
-  color: #3b82f6;
+  color: var(--color-blue-500);
 }
 .s3-ring {
   background: rgba(139, 92, 246, 0.12);
-  color: #8b5cf6;
+  color: var(--color-violet-500);
 }
 
 /* BODY */
@@ -206,11 +206,11 @@
 
 .s1-tag {
   background: rgba(255, 102, 0, 0.1);
-  color: #c2410c;
+  color: var(--color-brand-700);
 }
 .s2-tag {
   background: rgba(59, 130, 246, 0.1);
-  color: #2563eb;
+  color: var(--color-blue-600);
 }
 .s3-tag {
   background: rgba(139, 92, 246, 0.1);
@@ -280,21 +280,21 @@
 }
 
 .scope-1-card:hover .s1-arrow {
-  background: #ff6600;
-  border-color: #ff6600;
-  color: #fff;
+  background: var(--color-brand-500);
+  border-color: var(--color-brand-500);
+  color: var(--color-white);
   transform: translateY(-2px);
 }
 .scope-2-card:hover .s2-arrow {
-  background: #3b82f6;
-  border-color: #3b82f6;
-  color: #fff;
+  background: var(--color-blue-500);
+  border-color: var(--color-blue-500);
+  color: var(--color-white);
   transform: translateY(-2px);
 }
 .scope-3-card:hover .s3-arrow {
-  background: #8b5cf6;
-  border-color: #8b5cf6;
-  color: #fff;
+  background: var(--color-violet-500);
+  border-color: var(--color-violet-500);
+  color: var(--color-white);
   transform: translateY(-2px);
 }
 
@@ -555,13 +555,13 @@
 }
 
 .action-btn.primary {
-  background: var(--accent-gradient, linear-gradient(135deg, #ff6600 0%, #ff8533 100%));
+  background: var(--accent-gradient, linear-gradient(135deg, var(--color-brand-500) 0%, var(--color-brand-400) 100%));
   color: white;
   box-shadow: 0 4px 14px rgba(255, 102, 0, 0.25);
 }
 
 .action-btn.primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, #e65c00 0%, #ff7519 100%);
+  background: linear-gradient(135deg, var(--color-brand-600) 0%, #ff7519 100%);
   transform: translateY(-1px);
   box-shadow: 0 6px 18px rgba(255, 102, 0, 0.35);
 }
@@ -573,13 +573,13 @@
 
 .action-btn.secondary {
   background: rgba(255, 255, 255, 0.7);
-  border: 1px solid var(--border-color, #e2e8f0);
-  color: var(--text-primary, #0f172a);
+  border: 1px solid var(--border-color, var(--color-ink-200));
+  color: var(--text-primary, var(--color-ink-900));
 }
 
 .action-btn.secondary:hover {
   background: var(--bg-hover, rgba(255, 247, 237, 0.85));
-  border-color: var(--accent-color, #ff6600);
+  border-color: var(--accent-color, var(--color-brand-500));
   transform: translateY(-1px);
 }
 
@@ -596,7 +596,7 @@
 .section-title {
   font-size: 1.15rem;
   font-weight: 700;
-  color: var(--text-primary, #0f172a);
+  color: var(--text-primary, var(--color-ink-900));
   margin-bottom: 18px;
   padding-bottom: 10px;
   border-bottom: 1px solid var(--border-color);
@@ -614,10 +614,10 @@
   gap: 8px;
   margin-top: 14px;
   padding: 4px;
-  background: var(--bg-hover, #f1f5f9);
+  background: var(--bg-hover, var(--color-ink-100));
   border-radius: 12px;
   width: fit-content;
-  border: 1px solid var(--border-color, #e2e8f0);
+  border: 1px solid var(--border-color, var(--color-ink-200));
 }
 
 .scope-tab-btn {
@@ -628,7 +628,7 @@
   border-radius: 8px;
   border: none;
   background: transparent;
-  color: var(--text-secondary, #64748b);
+  color: var(--text-secondary, var(--color-ink-500));
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
@@ -637,26 +637,26 @@
 }
 
 .scope-tab-btn:hover {
-  color: var(--text-primary, #0f172a);
+  color: var(--text-primary, var(--color-ink-900));
   background: rgba(255, 255, 255, 0.6);
 }
 
 .scope-tab-btn.active {
-  background: #ffffff;
-  color: var(--text-primary, #0f172a);
+  background: var(--color-white);
+  color: var(--text-primary, var(--color-ink-900));
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
 
 .scope-tab-btn.active.s1 {
-  border-left: 3px solid #10b981;
+  border-left: 3px solid var(--color-green-500);
 }
 
 .scope-tab-btn.active.s2 {
-  border-left: 3px solid #3b82f6;
+  border-left: 3px solid var(--color-blue-500);
 }
 
 .scope-tab-btn.active.s3 {
-  border-left: 3px solid #8b5cf6;
+  border-left: 3px solid var(--color-violet-500);
 }
 
 .scope-tab-btn .tab-pill {
@@ -669,9 +669,9 @@
 
 .scope-tab-btn.back-btn {
   margin-left: 8px;
-  border-left: 1px solid var(--border-color, #cbd5e1);
+  border-left: 1px solid var(--border-color, var(--color-ink-300));
   border-radius: 0 8px 8px 0;
-  color: var(--accent-color, #ff6600);
+  color: var(--accent-color, var(--color-brand-500));
 }
 
 /* ============================================================

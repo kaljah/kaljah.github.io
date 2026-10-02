@@ -21,7 +21,7 @@
   font-size: 0.8rem !important;
   height: 34px !important;
   background: rgba(255, 255, 255, 0.95) !important;
-  border: 1px solid var(--border-color, #e2e8f0) !important;
+  border: 1px solid var(--border-color, var(--color-ink-200)) !important;
   border-radius: 8px !important;
   white-space: nowrap;
 }

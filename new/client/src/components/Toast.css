@@ -55,19 +55,19 @@
 }
 
 .toast-success .toast-icon {
-  color: #10b981;
+  color: var(--color-green-500);
 }
 
 .toast-error .toast-icon {
-  color: #ef4444;
+  color: var(--color-red-500);
 }
 
 .toast-warning .toast-icon {
-  color: #f59e0b;
+  color: var(--color-amber-500);
 }
 
 .toast-info .toast-icon {
-  color: #3b82f6;
+  color: var(--color-blue-500);
 }
 
 .toast-message {
