@@ -13,7 +13,7 @@
 
 import { test, expect } from '@playwright/test';
 
-const FRONTEND = 'http://127.0.0.1:5173';
+const FRONTEND = process.env.E2E_BASE_URL || 'http://127.0.0.1:5173';
 const BACKEND = 'http://127.0.0.1:5000';
 
 async function setupDashboard(page) {

@@ -21,7 +21,7 @@ An audit of the code against this document found that several claims below were 
 | Full keyboard navigability | Manage Data tabs were `div` elements with `onClick` and no `tabIndex` | Converted to buttons; 21+ other clickable non-semantic elements remain (tracked by `npm run ui:metrics`) |
 | No `prefers-reduced-motion` handling | Not mentioned; none existed | Global reduced-motion rule in `styles/base.css` |
 
-Not yet verified by automated tools: axe-core runs on every route are planned for Phase 5 of the plan. Treat the sections below as the target, not as an attestation, until that run is recorded here.
+Automated verification (2026-10-02): axe-core 4.x with the wcag2a, wcag2aa and wcag21aa rule sets reports 0 violations on all 13 admin routes (`/`, `/carbon-intensity`, `/methane-intensity`, `/sbti`, `/methane-explorer`, `/emissions`, `/manage-data`, `/reference-data`, `/reports`, `/uncertainty`, `/qa-dashboard`, `/audit-trail`, `/settings`) and on the component gallery with dialog, side panel, confirm and menu open. `e2e/a11y.spec.js` repeats this scan with zero serious or critical findings allowed. Not covered: the IT-role page (`/user-management`), the login page, import wizards while open, and manual screen-reader testing.
 
 ## 1. Executive Accessibility Summary
 

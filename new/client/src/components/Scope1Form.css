@@ -198,13 +198,13 @@
   border-radius: 4px;
   font-size: 0.68rem;
   font-weight: 700;
-  background: #e5e7eb;
-  color: #4b5563;
+  background: var(--color-ink-100);
+  color: var(--color-ink-800);
 }
 
 .tier-selector-btn.active .tier-tag {
-  background: rgba(255, 102, 0, 0.12);
-  color: var(--color-link);
+  background: var(--color-brand-100);
+  color: var(--color-brand-800);
 }
 
 .tier2-mode-container {
