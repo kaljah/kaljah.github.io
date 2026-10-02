@@ -24,6 +24,8 @@ for (const route of ROUTES) {
   test(`a11y ${route}`, async ({ page }) => {
     await page.goto(route);
     await page.waitForLoadState("networkidle");
+    // let the runtime label linker (utils/a11yLabels.js) finish before scanning
+    await page.waitForTimeout(800);
     const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
     const blocking = results.violations.filter((v) => v.impact === "serious" || v.impact === "critical");
     expect(blocking.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(" ")).join(" | ")}`)).toEqual([]);
