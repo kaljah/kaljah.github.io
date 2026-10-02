@@ -317,7 +317,7 @@ test.describe('Dashboard Page Deep Audit', () => {
     await setupDashboard(page);
 
     // Scroll to TopBar
-    await page.locator('.top-bar').scrollIntoViewIfNeeded();
+    await page.locator('header.topbar').scrollIntoViewIfNeeded();
 
     // Verify Bell Button and Unread Counter
     const bellBtn = page.locator('button[title="Notifications"]');
