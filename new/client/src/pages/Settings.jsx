@@ -896,7 +896,7 @@ const Settings = () => {
 
           {/* Step-by-step account guide toggle banner */}
           <div className="satellite-guide-banner">
-            <div role="button" tabIndex={0} onKeyDown={activateOnKey}
+            <div
               className="guide-banner-header"
               onClick={() => setShowGuide(!showGuide)}
             >
@@ -907,7 +907,7 @@ const Settings = () => {
                   Setup Guide
                 </strong>
               </div>
-              <button className="guide-toggle-btn" type="button">
+              <button className="guide-toggle-btn" type="button" aria-expanded={showGuide}>
                 {showGuide ? "Hide Guide" : "Show Step-by-Step Guide"}
               </button>
             </div>

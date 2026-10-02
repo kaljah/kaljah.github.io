@@ -301,6 +301,7 @@ const CustomDropdown = ({
               width: `${position.width}px`,
               maxHeight: `${position.maxHeight}px`,
               zIndex: 999999,
+              pointerEvents: "auto",
             }}
           >
             {options.map((option, idx) => {
