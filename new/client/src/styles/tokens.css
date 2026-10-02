@@ -14,12 +14,12 @@
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
   /* Palette */
-  --color-white: #ffffff;
+  --color-white: #fff;
 
   --color-brand-50: #fff7ed;
   --color-brand-100: #ffedd5;
   --color-brand-400: #ff8533;
-  --color-brand-500: #ff6600; /* the accent: borders, icons, decorative fills */
+  --color-brand-500: #f60; /* the accent: borders, icons, decorative fills */
   --color-brand-600: #e65c00; /* focus ring */
   --color-brand-700: #c2410c; /* primary fill with white text, orange text (AA) */
   --color-brand-800: #9a3412; /* primary hover */
@@ -137,11 +137,11 @@
   --z-sidebar: 200;
   --z-topbar: 300;
   --z-dropdown: 1000;
-  --z-overlay: 1100;
-  --z-modal: 1200;
-  --z-popover: 1300;
-  --z-toast: 1400;
-  --z-banner: 1500;
+  --z-overlay: 10000; /* above legacy 9999 modals until Phase 5 */
+  --z-modal: 10001;
+  --z-popover: 10002;
+  --z-toast: 100000;
+  --z-banner: 100001;
 
   --duration-fast: 120ms;
   --duration-base: 200ms;
@@ -160,7 +160,7 @@
   --accent-color: var(--color-brand-500);
   --accent-hover: var(--color-brand-600);
   --accent-subtle: rgba(255, 102, 0, 0.1);
-  --accent-gradient: linear-gradient(135deg, #ff6600 0%, #ff8533 100%);
+  --accent-gradient: linear-gradient(135deg, #f60 0%, #ff8533 100%);
   --primary-gradient: linear-gradient(135deg, #c2410c 0%, #9a3412 100%);
   --bg-body: var(--color-ink-100);
   --bg-card: rgba(255, 255, 255, 0.9);
