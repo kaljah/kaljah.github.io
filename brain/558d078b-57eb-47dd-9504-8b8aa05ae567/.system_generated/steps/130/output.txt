@@ -1,0 +1,4 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Emissions.css","LineNumber":141,"LineContent":".s1-badge {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Emissions.css","LineNumber":169,"LineContent":".s1-ring {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Emissions.css","LineNumber":207,"LineContent":".s1-tag {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Emissions.css","LineNumber":282,"LineContent":".scope-1-card:hover .s1-arrow {"}

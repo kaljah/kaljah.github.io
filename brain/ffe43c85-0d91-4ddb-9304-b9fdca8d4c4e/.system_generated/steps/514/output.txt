@@ -1,0 +1,124 @@
+
+The command exited with code 0.
+Output:
+import React, { useState, useEffect, useMemo } from 'react';
+import { showReviewResult } from '../utils/reviewResult';
+import { useLocation } from 'react-router-dom';
+import api from '../api';
+import { apiError } from '../utils/apiError';
+import CustomDropdown from '../components/CustomDropdown';
+
+import ColumnMappingWizard from '../components/ColumnMappingWizard';
+import BatchReviewWizard from '../components/BatchReviewWizard';
+import { PROCESS_TYPES } from '../utils/EmissionFactors';
+import { GWP_AR5, BOUNDARY_OPTIONS } from '../constants';
+import { useToast } from '../components/Toast';
+import LoadingSpinner from '../components/LoadingSpinner';
+import ErrorBoundary from '../components/ErrorBoundary'; // FE-03 FIX
+import Modal from '../components/Modal';
+import ConfirmModal from '../components/ConfirmModal';
+import { useAuth } from '../context/AuthContext';
+import { useLayout } from '../context/LayoutContext';
+import { getUserOperationalDefaults, matchesActivity, matchesFacilityRegion, isUnrestrictedLocation } from '../utils/userDefaults';
+import { 
+  ChevronRight, Download, Plus, Search, MapPin, Layers, Settings, FileText, 
+  Database, Shield, Zap, Upload, Target, Calendar, Edit2, Trash2, CheckCircle, 
+  AlertCircle, History, Check, X, AlertTriangle, Clock, Flame, Filter, RefreshCw, 
+  CheckSquare, Square, Sparkles 
+} from 'lucide-react';
+import './ManageData.css';
+import '../pages/Dashboard.css';
+
+
+const PaginationControls = ({ currentPage, totalItems, itemsPerPage, onPageChange }) => {
+    const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage) || 1);
+
+    useEffect(() => {
+        if (currentPage > totalPages && totalPages > 0) {
+            onPageChange(totalPages);
+        }
+    }, [currentPage, totalPages, onPageChange]);
+
+    return (
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '16px', padding: '16px 0', borderTop: '1px solid #e5e7eb' }}>
+            <button 
+                className="btn-ghost" 
+                disabled={currentPage <= 1} 
+                onClick={() => onPageChange(currentPage - 1)}
+                style={{ opacity: currentPage <= 1 ? 0.5 : 1, cursor: currentPage <= 1 ? 'not-allowed' : 'pointer', padding: '6px 12px' }}
+            >
+                Previous
+            </button>
+            <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                Page {currentPage} of {totalPages}
+            </span>
+            <button 
+                className="btn-ghost" 
+                disabled={currentPage >= totalPages} 
+                onClick={() => onPageChange(currentPage + 1)}
+                style={{ opacity: currentPage >= totalPages ? 0.5 : 1, cursor: currentPage >= totalPages ? 'not-allowed' : 'pointer', padding: '6px 12px' }}
+            >
+                Next
+            </button>
+        </div>
+    );
+};
+
+const ManageDataInner = () => {
+    const { user } = useAuth();
+    const isPrivileged = ['admin', 'superuser'].includes(user?.role);
+    const { setTopBarLeft } = useLayout();
+
+    useEffect(() => {
+        if (setTopBarLeft) {
+            setTopBarLeft(
+                <div className="breadcrumbs" style={{ borderRight: 'none', paddingRight: 0 }}>
+                    <Database size={16} style={{ color: 'var(--accent-color, #ff6600)' }} />
+                    <span>Dashboard</span>
+                    <span style={{ margin: '0 8px', color: 'var(--text-secondary)' }}>/</span>
+                    <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>Manage Data</span>
+                </div>
+            );
+        }
+        return () => {
+            if (setTopBarLeft) setTopBarLeft(null);
+        };
+    }, [setTopBarLeft]);
+
+
+    const HIERARCHY = {
+        'EP': ['Production', 'Association'],
+        'LQS': ['LNG', 'LPG', 'LSH'],
+        'RPC': ['Refining', 'Petrochemicals', 'Raffinage', 'Petrochimie'],
+        'TRC': ['TRC', 'Make']
+    };
+
+    // Activities that are NOT oil & gas �?" excluded from OGMP 2.0 scope
+    const NON_OG_ACTIVITIES = [
+        'Steel & Iron (Acier DRI)',
+        'Chemicals & Fertilizers',
+        'Cement & Clinker',
+    ];
+
+    const ACTIVITY_LABELS = {
+        'EP': 'Exploration & Production',
+        'LQS': 'Liquifaction and Separation',
+        'RPC': 'Refining and Petrochemicals',
+        'TRC': 'Transport (TRC)'
+    };
+
+    // Derive available activities from the already-permission-filtered facilities list
+    const getAvailableActivities = (facilitiesList = facilities) => {
+        const acts = [...new Set(facilitiesList.map(f => f.activity).filter(Boolean))];
+        // Sort by the defined hierarchy order, then alphabetically for unknowns
+        const order = Object.keys(HIERARCHY);
+        return acts.sort((a, b) => {
+            const ia = order.indexOf(a);
+            const ib = order.indexOf(b);
+            if (ia !== -1 && ib !== -1) return ia - ib;
+            if (ia !== -1) return -1;
+            if (ib !== -1) return 1;
+            return a.localeCompare(b);
+        });
+    };
+

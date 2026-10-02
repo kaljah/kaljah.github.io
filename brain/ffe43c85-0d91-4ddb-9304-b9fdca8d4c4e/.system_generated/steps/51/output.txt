@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+@fontsource-variable/outfit NOT INSTALLED
+@tanstack/react-table NOT INSTALLED
+@tailwindcss/vite NOT INSTALLED
+

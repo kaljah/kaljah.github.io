@@ -1,0 +1,27 @@
+
+The command exited with code 0.
+Output:
+src/pages/Dashboard.css-213-  transform: translateY(-2px);
+src/pages/Dashboard.css-214-  box-shadow: var(--shadow-card-elevated);
+src/pages/Dashboard.css-215-  border-color: rgba(255, 255, 255, 0.95);
+src/pages/Dashboard.css-216-}
+src/pages/Dashboard.css-217-
+src/pages/Dashboard.css:218:.donuts-row {
+src/pages/Dashboard.css-219-  display: flex;
+src/pages/Dashboard.css-220-  flex-direction: column;
+src/pages/Dashboard.css-221-  gap: 24px;
+src/pages/Dashboard.css-222-  min-width: 0;
+src/pages/Dashboard.css-223-}
+--
+src/pages/DashboardEnhanced.jsx-1338-              />
+src/pages/DashboardEnhanced.jsx-1339-            </div>
+src/pages/DashboardEnhanced.jsx-1340-          </div>
+src/pages/DashboardEnhanced.jsx-1341-
+src/pages/DashboardEnhanced.jsx-1342-          {/* Donut Charts Column (1fr) */}
+src/pages/DashboardEnhanced.jsx:1343:          <div className="donuts-row">
+src/pages/DashboardEnhanced.jsx-1344-            <div className="card donut-card-enhanced glass-panel">
+src/pages/DashboardEnhanced.jsx-1345-              <div className="donut-header">
+src/pages/DashboardEnhanced.jsx-1346-                <h3 className="donut-title activity">Emissions by Activity</h3>
+src/pages/DashboardEnhanced.jsx-1347-              </div>
+src/pages/DashboardEnhanced.jsx-1348-              <div
+

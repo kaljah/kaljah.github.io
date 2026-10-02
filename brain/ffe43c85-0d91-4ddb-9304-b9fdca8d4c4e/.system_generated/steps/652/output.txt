@@ -1,0 +1,9 @@
+
+The command exited with code 0.
+Output:
+Replacing lines 1595 to 2690 (0-indexed 1594 to 2689)
+Start line:                         {/* Pending Review Tab */}
+Line before end: 
+End line:                         {/* Production Tab */}
+Successfully updated ManageData.jsx!
+

@@ -1,0 +1,93 @@
+
+The command exited with code 0.
+Output:
+aaf31c70 j
+cdcbcc4e Fix the errors of the 10k audit round 2 (WEC, exports, intensity cards)
+8c6ed6a9 Merge branch 'main' of https://github.com/kaljah/kaljah.github.io
+a1307826 Sync: 2026-10-01T20:43:36.307Z
+edd3e154 Sync: 2026-10-01T20:14:21.026Z
+c3c6e6a8 Sync: 2026-10-01T19:58:25.283Z
+284ac219 Sync: 2026-10-01T18:50:06.485Z
+6320cd71 Sync: 2026-09-29T10:54:30.701Z
+1ae0f4eb Merge branch 'main' of https://github.com/kaljah/kaljah.github.io
+714e97e4 Remove invented and hard-coded values from calculations and screens
+3bae5e8e Align gas densities with the API Compendium and the WEC rule
+9ab25dfa Fix remaining calculation and uploader bugs from the deep-dive audit
+3f60e79d Deep-dive audit through the running app: fix 7 calculation / display bugs
+3bca0f12 Recalculate Scope 2 and clear the GWP cache when the GWP standard changes
+d1bed538 Allocate Scope 2 to JV partners and refuse a bare "ton" in uploads
+f4bfcc88 Fix activity-factor CH4 content, desiccant refills, flaring summary and saleable CI
+95548d56 Fix ambiguous factor matching and percent columns of other uploaders
+0de2c2dc Remove biomass fuels and the biogenic KPIs
+ecca7de1 Fix Excel percent cells, typed percent inputs and annualised rate units
+dfe45bf8 Fix Scope 2 steam edits, Tier 3 flare N2O and custom liquid-fuel factors
+aa3a39bb Fix calculation and CSV uploader errors found by a catalog-wide audit
+c5dc49c6 Merge pull request #3 from kaljah/ccr-6cc41338-6jx9n4
+0f2a762c Fix CI on Python 3.11: template f-string, matplotlib, pytest-timeout, file test DB
+020f9382 Merge PR #2 (audit verification pass) into the audit remediation line
+b2d8c106 Merge remote-tracking branch 'origin/fix/audit-remediation-rc' into ccr-6cc41338-6jx9n4
+04be60f7 Merge branch 'fix/audit-remediation-rc'
+f1ab999a Remove the temporary UI-audit Vite config
+2a7f62f2 g
+c1a49d00 fix: audit verification pass - JSON body guard, remove dev backdoor accounts, bound emissions pagination
+8e9eb303 Fix the 22 bugs of the upload scenario audit
+2afc1537 Bulk uploaders: month time basis, restart-safe jobs, all-or-nothing imports
+f8192bce Sync: 2026-09-29T10:21:43.671Z
+8c167782 Sync: 2026-09-29T10:04:43.115Z
+3f7a96b9 Bulk uploaders: templates import, same calculation as the manual form
+05bfae06 EPA supply chain spend factors; Algerian grid factor from the 2024 energy balance
+d0fab6db Scope 3 factors from the EPA Emission Factors Hub 2025; steam CH4 / N2O
+14f33ef2 Catalog factors checked against the API Compendium 2021
+b1292929 Client: exploratory browser test fixes
+1692ab8a Fix exploratory browser test findings: factors, exports, audit trail
+485d2b2f Client: report built from records, Scope 3 wizard fix, Tier 2B form, lint to zero
+560bca5a Fix remaining issues: Tier 2B on Table 7-12, GOLD-E01, 4.4a, GWP references, CAP compliance
+76177fcc Scope 1 form: Tier 3 fixes from the browser test
+d8803360 Tier 3 browser test findings: engine fixes and report
+63dcfb01 Scope 1 form: new onshore process types and calculation methods
+cdb2da60 Onshore API Compendium exhibits: activity-factor tables, gas-volume and combustion methods, correlation fix
+45ab3ada Sync: 2026-09-27T18:16:39.012Z
+c8090046 API Compendium exhibit check: fix dehydrator and asphalt factors, completions volume unit and C2+ flaring, hydrogen rigorous routing, ethane gas entry
+d5b991c6 Library factors as a separate method from API Compendium tiers; fix engineering Tier 2 rejected with 422
+846891b2 Scope 1 form: restore original section titles
+20158afb Scope 1 form: source details always visible in step 1
+f5fc6bd7 Scope 1 entry form: one minimal 3-step layout for every process type
+8b9586f9 Scope 1: single tier selector for associated gas venting, completions and liquids unloading; remove AGV factor badge
+1f3bba42 Emission UI: remove result screen, equation inspector and API/table citations
+f4dc7c01 tests: scope Scope 1 process lookups to the dropdown (filter now shows labels)
+73d78dd3 Scope 1 UI: process filter shows labels; fugitive Tier 1 card cites Table 7-8
+f7df75ee RC-17: Compendium-verified pneumatics, tanks, blowdown, offshore, hydrogen; Table 7-8/7-9/7-10 corrections; dedupe vented calculators
+a1e40cc8 BUG-087 generic 5xx bodies; single cogen allocation formula
+a6e8b3a2 UI: server error messages, load-error states, status badges, label linking, phone layout, factor archive
+7ba822fc Forms/payload: dehydrator pressure, AGR control, Scope 2 units, single activity unit, facility-level fugitives
+6a521861 RC-15: reports from Verified server aggregates, QA stored scan, Unicode PDF, Scope 1 facets/export
+e63b2bc9 tests: isolate SBTi regression tests by facility
+ef07f700 RC-12: derived OGMP survey reconciliation, consistent satellite annualisation
+a8c6f7e6 RC-11: SBTi progress year, scope/region baselines, no-data state, pathway labels
+47fc8175 RC-10: correlated inventory uncertainty service, meter/GC overrides, QA card, display fixes
+0fc8319d RC-7/RC-8: IPCC GWP-20 tables, single composition basis; Tier 3 fugitive routing
+d38b6f93 RC-5/RC-9/RC-12: canonical unit parser, shared dashboard filters and intensity service, flaring/OGMP/SBTi-adjacent fixes
+731572bd RC-6/RC-4: one Scope 1 calculation/persistence path, no zero-factor records, plausibility bounds
+0d501d25 RC-1/RC-2/RC-13/RC-14: authz scoping, maker-checker state machine, bulk integrity, schema foundations, session revocation
+077a5708 RC-14/RC-1/RC-3: Alembic-only schema (BUG-016), facility scope (BUG-001/093), name/coords validation (BUG-029/045), regression tests
+087f6f7c baseline: pre-remediation tree + in-progress audit fixes (BUG-016/001/083, scope2/3 partials) + audit evidence
+aac902b9 Sync: 2026-09-26T07:17:32.861Z
+930b07fe Sync: 2026-09-26T07:05:47.690Z
+b5834a69 Sync: 2026-09-26T01:03:21.458Z
+fcb74dfa Sync: 2026-09-26T00:10:14.527Z
+66a2ec8d Sync: 2026-09-25T21:24:44.075Z
+b5f3526e Sync: 2026-09-25T21:14:14.668Z
+32607a83 Sync: 2026-09-25T18:38:10.928Z
+0c10baf9 Sync: 2026-09-25T17:32:06.928Z
+bbfb7506 Sync: 2026-09-25T16:32:42.957Z
+a1bb9757 Sync: 2026-09-25T15:08:28.982Z
+bba85b33 Sync: 2026-09-25T14:42:05.286Z
+80181888 Sync: 2026-09-25T14:15:24.058Z
+bba488e6 u
+f7b4cd83 6
+9a69efc8 y
+e750f776 j
+0ecab4b4 5
+769b80bd a
+ff4c366b Merge pull request #1 from kaljah/fix/audit-remediation
+

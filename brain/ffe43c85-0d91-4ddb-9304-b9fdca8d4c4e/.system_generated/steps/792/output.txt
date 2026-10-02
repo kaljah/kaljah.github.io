@@ -1,0 +1,37 @@
+
+The command exited with code 0.
+Output:
+
+Path                                                                   LineNumber Line                                 
+----                                                                   ---------- ----                                 
+C:\Users\samsung\Desktop\H2\new\client\src\pages\CarbonIntensity.jsx            6 import { BarChart, LineChart } fro...
+C:\Users\samsung\Desktop\H2\new\client\src\pages\CarbonIntensity.jsx           16   BarChart2,                         
+C:\Users\samsung\Desktop\H2\new\client\src\pages\CarbonIntensity.jsx          797               <BarChart              
+C:\Users\samsung\Desktop\H2\new\client\src\pages\CarbonIntensity.jsx          823               <BarChart              
+C:\Users\samsung\Desktop\H2\new\client\src\pages\CarbonIntensity.jsx          859               <BarChart              
+C:\Users\samsung\Desktop\H2\new\client\src\pages\CarbonIntensity.jsx          882               <BarChart              
+C:\Users\samsung\Desktop\H2\new\client\src\pages\CarbonIntensity.jsx          918                   <BarChart2 size=...
+C:\Users\samsung\Desktop\H2\new\client\src\pages\CarbonIntensity.jsx          932               <LineChart             
+C:\Users\samsung\Desktop\H2\new\client\src\pages\DashboardEnhanced.jsx          9   PieChart as PieChartWrapper,       
+C:\Users\samsung\Desktop\H2\new\client\src\pages\DashboardEnhanced.jsx         10   LineChart as LineChartWrapper,     
+C:\Users\samsung\Desktop\H2\new\client\src\pages\DashboardEnhanced.jsx         11 } from "../components/charts";       
+C:\Users\samsung\Desktop\H2\new\client\src\pages\DashboardEnhanced.jsx       1299               <LineChartWrapper      
+C:\Users\samsung\Desktop\H2\new\client\src\pages\DashboardEnhanced.jsx       1357                 <PieChartWrapper     
+C:\Users\samsung\Desktop\H2\new\client\src\pages\DashboardEnhanced.jsx       1378                 <PieChartWrapper     
+C:\Users\samsung\Desktop\H2\new\client\src\pages\DashboardEnhanced.jsx       1422               <LineChartWrapper      
+C:\Users\samsung\Desktop\H2\new\client\src\pages\MethaneExplorer.jsx           43   BarChart3,                         
+C:\Users\samsung\Desktop\H2\new\client\src\pages\MethaneExplorer.jsx         1547               <BarChart3 size={15}...
+C:\Users\samsung\Desktop\H2\new\client\src\pages\MethaneIntensity.jsx           6 import { BarChart, LineChart } fro...
+C:\Users\samsung\Desktop\H2\new\client\src\pages\MethaneIntensity.jsx          16   BarChart2,                         
+C:\Users\samsung\Desktop\H2\new\client\src\pages\MethaneIntensity.jsx        1417               <BarChart              
+C:\Users\samsung\Desktop\H2\new\client\src\pages\MethaneIntensity.jsx        1442               <BarChart              
+C:\Users\samsung\Desktop\H2\new\client\src\pages\MethaneIntensity.jsx        1465               <BarChart              
+C:\Users\samsung\Desktop\H2\new\client\src\pages\MethaneIntensity.jsx        1488               <BarChart              
+C:\Users\samsung\Desktop\H2\new\client\src\pages\MethaneIntensity.jsx        1524                   <BarChart2 size=...
+C:\Users\samsung\Desktop\H2\new\client\src\pages\MethaneIntensity.jsx        1538               <LineChart             
+C:\Users\samsung\Desktop\H2\new\client\src\pages\SbtiDashboard.jsx              6 import { LineChart, BarChart } fro...
+C:\Users\samsung\Desktop\H2\new\client\src\pages\SbtiDashboard.jsx            552               <LineChart             
+C:\Users\samsung\Desktop\H2\new\client\src\pages\SbtiDashboard.jsx            578               <BarChart              
+
+
+

@@ -1,0 +1,45 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\UncertaintyAssessment.css. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -88,15 +88,36 @@
+ }
+ 
+ .ua-inventory-value.level-low {
+-  color: #10b981;
++  color: var(--uncertainty-low, #10b981);
+ }
+ 
+ .ua-inventory-value.level-medium {
+-  color: #f59e0b;
++  color: var(--uncertainty-med, #f59e0b);
+ }
+ 
+ .ua-inventory-value.level-high {
+-  color: #ef4444;
++  color: var(--uncertainty-high, #ef4444);
++}
++
++.ua-uncertainty-low {
++  color: var(--uncertainty-low, #10b981);
++}
++.ua-uncertainty-low-bg {
++  background: var(--uncertainty-low, #10b981);
++}
++
++.ua-uncertainty-med {
++  color: var(--uncertainty-med, #f59e0b);
++}
++.ua-uncertainty-med-bg {
++  background: var(--uncertainty-med, #f59e0b);
++}
++
++.ua-uncertainty-high {
++  color: var(--uncertainty-high, #ef4444);
++}
++.ua-uncertainty-high-bg {
++  background: var(--uncertainty-high, #ef4444);
+ }
+ 
+ /* ── Confidence Badge ── */
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

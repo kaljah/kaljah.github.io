@@ -1,0 +1,50 @@
+
+The command exited with code 0.
+Output:
+--- Around 1595 ---
+1592:                         {/* Pending Tab */}
+1593: 
+1594: 
+1595:                         {/* Pending Review Tab */}
+1596:                         {activeTab === 'pending' && isPrivileged && (
+1597:                             <div className="manage-tab-content pending-review-panel">
+1598:                                 {/* Rejection Modal */}
+1599:                                 {rejectionModal.isOpen && (
+1600:                                     <div 
+--- Around 2260 ---
+2255:                                     style={{ padding: '8px 24px', fontSize: '0.88rem' }}
+2256:                                 >
+2257:                                     Return to Emission Factors
+2258:                                 </button>
+2259:                             </div>
+2260:                         )}
+2261: 
+2262:                         {activeTab === 'factors' && (
+2263:                             <div className="manage-card glass-panel">
+2264:                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px' }}>
+2265:                                     <div>
+--- Around 2525 ---
+2520:                                     <PaginationControls currentPage={currentPage} totalItems={filteredFactors.length} itemsPerPage={ITEMS_PER_PAGE} onPageChange={setCurrentPage} />
+2521:                                 </div>
+2522:                             </div>
+2523:                         )}
+2524: 
+2525:                         {/* Regions Tab — Admin and Superuser */}
+2526:                         {activeTab === 'facilities' && ['admin', 'superuser'].includes(user?.role) && (
+2527:                             <div className="manage-card glass-panel">
+2528:                                 <h2 style={{ marginBottom: '8px', fontWeight: 700 }}>Active Regions</h2>
+2529:                                 <p style={{ color: 'var(--text-secondary)', marginBottom: '32px' }}>Manage operational regions and their boundaries.</p>
+2530: 
+--- Around 2690 ---
+2685:                                     </table>
+2686:                                     <PaginationControls currentPage={currentPage} totalItems={filteredFacilities.length} itemsPerPage={ITEMS_PER_PAGE} onPageChange={setCurrentPage} />
+2687:                                 </div>
+2688:                             </div>
+2689:                         )}
+2690: 
+2691:                         {/* Production Tab */}
+2692:                         {activeTab === 'production' && (
+2693:                             <div className="manage-card glass-panel">
+2694:                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px' }}>
+2695:                                     <div>
+

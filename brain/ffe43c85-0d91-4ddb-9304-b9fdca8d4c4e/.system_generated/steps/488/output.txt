@@ -1,0 +1,72 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\Scope1Form.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -2329,8 +2329,64 @@
+ 
+   return (
+     <div className="scope-form">
+-      <div className="calc-panel s1-form">
+-        <h2 className="s1-form-title">New entry</h2>
++      {/* Scope 1 Sub-Navigation Tabs */}
++      <div className="flex items-center justify-between border-b border-slate-200 pb-3 mb-6">
++        <div className="flex items-center gap-2" role="tablist">
++          <button
++            type="button"
++            role="tab"
++            aria-selected={activeScope1Tab === "form"}
++            onClick={() => setActiveScope1Tab("form")}
++            className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all cursor-pointer ${
++              activeScope1Tab === "form"
++                ? "bg-[var(--accent-color,#ff6600)] text-white shadow-sm"
++                : "bg-slate-100 text-slate-600 hover:bg-slate-200"
++            }`}
++          >
++            <PlusCircle size={15} />
++            <span>New Calculation</span>
++          </button>
++          <button
++            type="button"
++            role="tab"
++            aria-selected={activeScope1Tab === "history"}
++            onClick={() => setActiveScope1Tab("history")}
++            className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all cursor-pointer ${
++              activeScope1Tab === "history"
++                ? "bg-[var(--accent-color,#ff6600)] text-white shadow-sm"
++                : "bg-slate-100 text-slate-600 hover:bg-slate-200"
++            }`}
++          >
++            <Layers size={15} />
++            <span>Emission History</span>
++            <span
++              className={`text-xs px-2 py-0.5 rounded-full font-mono ${
++                activeScope1Tab === "history"
++                  ? "bg-white/25 text-white"
++                  : "bg-slate-200 text-slate-700"
++              }`}
++            >
++              {entries.length}
++            </span>
++          </button>
++        </div>
++
++        <div className="flex items-center gap-2">
++          <button
++            type="button"
++            onClick={() => setImportModal({ isOpen: true, type: "activity" })}
++            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-2xs cursor-pointer"
++          >
++            <Upload size={13} />
++            <span>Bulk Import (Wizard)</span>
++          </button>
++        </div>
++      </div>
++
++      {activeScope1Tab === "form" ? (
++        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
++          <div className="lg:col-span-8 calc-panel s1-form">
++            <h2 className="s1-form-title">New entry</h2>
+ 
+         <Section n={1} title="Identity & Location">
+           <FieldGrid min={180}>
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

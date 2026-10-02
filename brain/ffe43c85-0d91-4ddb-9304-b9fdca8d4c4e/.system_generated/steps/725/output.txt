@@ -1,0 +1,37 @@
+
+The command exited with code 0.
+Output:
+
+  new\client\src\pages\CarbonIntensity.css:95:}
+  new\client\src\pages\CarbonIntensity.css:96:
+> new\client\src\pages\CarbonIntensity.css:97:.kpi-grid {
+  new\client\src\pages\CarbonIntensity.css:98:  display: grid;
+  new\client\src\pages\CarbonIntensity.css:99:  grid-template-columns: repeat(3, 1fr);
+  new\client\src\pages\CarbonIntensity.css:100:  gap: 24px;
+  new\client\src\pages\CarbonIntensity.css:101:}
+  new\client\src\pages\CarbonIntensity.css:102:
+> new\client\src\pages\CarbonIntensity.css:103:.kpi-grid-4 {
+  new\client\src\pages\CarbonIntensity.css:104:  display: grid;
+  new\client\src\pages\CarbonIntensity.css:105:  grid-template-columns: repeat(4, 1fr);
+  new\client\src\pages\CarbonIntensity.css:106:  gap: 20px;
+  new\client\src\pages\CarbonIntensity.css:107:}
+  new\client\src\pages\CarbonIntensity.css:108:
+  new\client\src\pages\CarbonIntensity.css:594:/* Responsive adjustments */
+  new\client\src\pages\CarbonIntensity.css:595:@media (max-width: 1200px) {
+> new\client\src\pages\CarbonIntensity.css:596:  .kpi-grid-4 {
+  new\client\src\pages\CarbonIntensity.css:597:    grid-template-columns: repeat(2, 1fr);
+  new\client\src\pages\CarbonIntensity.css:598:  }
+  new\client\src\pages\CarbonIntensity.css:599:  .scope-breakdown {
+  new\client\src\pages\CarbonIntensity.css:600:    grid-template-columns: repeat(2, 1fr);
+  new\client\src\pages\CarbonIntensity.css:601:  }
+  new\client\src\pages\CarbonIntensity.css:603:
+  new\client\src\pages\CarbonIntensity.css:604:@media (max-width: 768px) {
+> new\client\src\pages\CarbonIntensity.css:605:  .kpi-grid-4 {
+  new\client\src\pages\CarbonIntensity.css:606:    grid-template-columns: 1fr;
+  new\client\src\pages\CarbonIntensity.css:607:  }
+  new\client\src\pages\CarbonIntensity.css:608:  .scope-breakdown {
+  new\client\src\pages\CarbonIntensity.css:609:    grid-template-columns: 1fr;
+  new\client\src\pages\CarbonIntensity.css:610:  }
+
+
+

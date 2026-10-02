@@ -1,0 +1,11 @@
+
+The command exited with code 0.
+Output:
+
+new\server\routes\satellite.py:111:    if user.role == "it_admin":
+new\server\routes\satellite.py:134:    if user.role == "it_admin":
+new\server\routes\satellite.py:205:    if user.role == "it_admin":
+new\server\routes\satellite.py:349:    if user.role == "it_admin":
+
+
+

@@ -1,0 +1,30 @@
+
+The command exited with code 0.
+Output:
+
+LineNumber Line                                                                                                        
+---------- ----                                                                                                        
+        75     totalWecFeeUsd: 0,                                                                                      
+       205         tWecFee = 0;                                                                                        
+       206       // the WEC is assessed per calendar year: the server returns no fee for "all years"                   
+       207       let wecAssessed = false;                                                                              
+       208       let wecRate = null; // the rate the server applied (Settings), not the statutory default              
+       209       let wecReason = null; // why no charge was assessed (e.g. the charge starts with 2034 emissions)      
+       230         tWecFee += d.wec_fee_usd || 0;                                                                      
+       231         if (d.wec_fee_usd != null) wecAssessed = true;                                                      
+       232         else if (!wecReason && d.wec_status) wecReason = d.wec_status;                                      
+       233         if (d.wec_rate_usd_per_t) wecRate = d.wec_rate_usd_per_t;                                           
+       297         totalWecFeeUsd: tWecFee,                                                                            
+       298         wecAssessed,                                                                                        
+       299         wecRate,                                                                                            
+       300         wecReason,                                                                                          
+       964                   className="kpi-icon wec"                                                                  
+       972                 <span className="kpi-label">EPA WEC Liability</span>                                        
+       978                     color: !stats.wecAssessed ? "#64748b" : stats.totalWecFeeUsd > 0 ? "#ef4444" : "#10b9...
+       981                   {stats.wecAssessed ? `$${formatNumber(stats.totalWecFeeUsd, 0)}` : "-"}                   
+       984                   {stats.wecAssessed ? "USD Est." : stats.wecReason || "Select a single year"}              
+       991                     {stats.wecRate                                                                          
+       992                       ? `$${formatNumber(stats.wecRate, 0)}`                                                
+
+
+

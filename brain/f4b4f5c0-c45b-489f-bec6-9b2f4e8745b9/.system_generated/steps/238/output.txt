@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\pages\ManageData.jsx:783:            const res = await api.get('/sources');
+new\client\src\pages\ManageData.jsx:1047:            await api.post('/sources', sourceForm);
+new\client\src\pages\ManageData.jsx:1207:                    await api.delete(`/sources/${id}`);
+
+
+

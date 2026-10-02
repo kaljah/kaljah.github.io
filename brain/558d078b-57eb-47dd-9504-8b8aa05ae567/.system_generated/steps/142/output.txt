@@ -1,0 +1,7 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\AuditTrail.jsx","LineNumber":445,"LineContent":"  const formatDiffVal = (val) =\u003e {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\AuditTrail.jsx","LineNumber":808,"LineContent":"                                  \u003cspan className=\"diff-before\" title={formatDiffVal(before)}\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\AuditTrail.jsx","LineNumber":809,"LineContent":"                                    {formatDiffVal(before)}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\AuditTrail.jsx","LineNumber":812,"LineContent":"                                  \u003cspan className=\"diff-after\" title={formatDiffVal(after)}\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\AuditTrail.jsx","LineNumber":813,"LineContent":"                                    {formatDiffVal(after)}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\AuditTrail.jsx","LineNumber":823,"LineContent":"                                \u003cstrong\u003eBefore:\u003c/strong\u003e {formatDiffVal(log.old_values)}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\AuditTrail.jsx","LineNumber":828,"LineContent":"                                \u003cstrong\u003eAfter:\u003c/strong\u003e {formatDiffVal(log.new_values)}"}

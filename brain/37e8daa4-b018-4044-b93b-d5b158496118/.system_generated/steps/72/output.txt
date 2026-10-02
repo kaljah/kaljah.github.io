@@ -1,0 +1,5 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_rc14_schema.py","LineNumber":3,"LineContent":"Alembic is the only mechanism that changes the schema. These tests run in subprocesses"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_rc14_schema.py","LineNumber":9,"LineContent":"import subprocess"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_rc14_schema.py","LineNumber":27,"LineContent":"    return subprocess.run([sys.executable, *args], cwd=SERVER, env=env, capture_output=True, text=True, timeout=300)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_catalog_factors.py","LineNumber":9,"LineContent":"import subprocess"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_catalog_factors.py","LineNumber":124,"LineContent":"    out = subprocess.run([\"node\", \"-e\", script, url], capture_output=True, text=True, encoding=\"utf-8\", timeout=60)"}

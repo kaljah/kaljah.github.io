@@ -1,0 +1,10 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\hooks\\useFormDraft.js","LineNumber":4,"LineContent":" * Custom hook to manage form draft persistence in localStorage."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\hooks\\useFormDraft.js","LineNumber":17,"LineContent":"      const item = localStorage.getItem(`draft_${draftKey}`);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\hooks\\useFormDraft.js","LineNumber":38,"LineContent":"    // re-read the stored draft (localStorage) when the draft key changes"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\hooks\\useFormDraft.js","LineNumber":48,"LineContent":"          localStorage.setItem(`draft_${draftKey}`, JSON.stringify(values));"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\hooks\\useFormDraft.js","LineNumber":69,"LineContent":"      localStorage.removeItem(`draft_${draftKey}`);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\context\\AuthContext.jsx","LineNumber":104,"LineContent":"      localStorage.setItem(\"ghg_auth_logout_event\", Date.now().toString());"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Login.jsx","LineNumber":84,"LineContent":"      const alreadySeen = localStorage.getItem(\"ghg_intro_seen\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Login.jsx","LineNumber":98,"LineContent":"      localStorage.setItem(\"ghg_intro_seen\", \"true\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\Sidebar.jsx","LineNumber":33,"LineContent":"      const saved = localStorage.getItem(\"app_sidebar_collapsed\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\Sidebar.jsx","LineNumber":44,"LineContent":"        localStorage.setItem(\"app_sidebar_collapsed\", JSON.stringify(next));"}

@@ -1,0 +1,55 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\MethaneIntensity.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -955,49 +955,6 @@
+                     {formatNumber(stats.totalFlaringVolume, 0)} m³
+                   </strong>
+                 </span>
+-              </div>
+-            </div>
+-
+-            <div className="kpi-card">
+-              <div className="kpi-header">
+-                <div
+-                  className="kpi-icon wec"
+-                  style={{
+-                    background: "rgba(239, 68, 68, 0.1)",
+-                    color: "#ef4444",
+-                  }}
+-                >
+-                  <AlertTriangle size={20} />
+-                </div>
+-                <span className="kpi-label">EPA WEC Liability</span>
+-              </div>
+-              <div className="kpi-value-container">
+-                <span
+-                  className="total-value"
+-                  style={{
+-                    color: !stats.wecAssessed ? "#64748b" : stats.totalWecFeeUsd > 0 ? "#ef4444" : "#10b981",
+-                  }}
+-                >
+-                  {stats.wecAssessed ? `$${formatNumber(stats.totalWecFeeUsd, 0)}` : "—"}
+-                </span>
+-                <span className="kpi-unit">
+-                  {stats.wecAssessed ? "USD Est." : stats.wecReason || "Select a single year"}
+-                </span>
+-              </div>
+-              <div className="kpi-footer">
+-                <span>
+-                  Rate:{" "}
+-                  <strong>
+-                    {stats.wecRate
+-                      ? `$${formatNumber(stats.wecRate, 0)}`
+-                      : selectedYear === "all"
+-                        ? "per year"
+-                        : "—"}
+-                    /t CH₄
+-                  </strong>{" "}
+-                  (CAA §136, from 2034 emissions)
+-                </span>
+-              </div>
+             </div>
+           </div>
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

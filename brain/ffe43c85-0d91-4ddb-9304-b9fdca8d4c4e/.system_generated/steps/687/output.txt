@@ -1,0 +1,22 @@
+
+The command exited with code 0.
+Output:
+Removing .benchmarks/
+Removing new/.benchmarks/
+Removing new/client/.benchmarks/
+Removing new/client/e2e/artifacts/
+Removing new/client/src/components/common/
+Removing new/client/src/components/ui/
+Removing new/client/src/constants/routes.js
+Removing new/client/src/pages/ManageData/
+Removing new/server/.benchmarks/
+Removing new/server/utils/
+Removing validation/accessibility/
+Removing validation/api/
+Removing validation/database/
+Removing validation/e2e/
+Removing validation/integration/
+Removing validation/performance/
+Removing validation/security/
+Removing validation/unit/
+

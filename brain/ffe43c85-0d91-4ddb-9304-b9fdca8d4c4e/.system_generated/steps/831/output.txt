@@ -1,0 +1,8 @@
+
+The command exited with code 0.
+Output:
+src/pages/CarbonIntensity.jsx:6:import { BarChart, LineChart } from "../components/charts";
+src/pages/DashboardEnhanced.jsx:11:} from "../components/charts";
+src/pages/MethaneIntensity.jsx:6:import { BarChart, LineChart } from "../components/charts";
+src/pages/SbtiDashboard.jsx:6:import { LineChart, BarChart } from "../components/charts";
+

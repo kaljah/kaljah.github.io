@@ -1,0 +1,92 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\ManageData.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -546,21 +546,24 @@
+     };
+ 
+ 
+-    // Auto-switch tab when navigated from Dashboard with state or query param
+-    useEffect(() => {
+-        const queryTab = new URLSearchParams(location.search).get('tab');
+-        const targetTab = location.state?.tab || queryTab;
+-        if (targetTab) {
+-            setActiveTab(targetTab);
+-            // Scroll into view smoothly
++    // Auto-switch tab when navigated with state or query param
++    useEffect(() => {
++        const queryTab = searchParams.get('tab') || location.state?.tab;
++        if (queryTab && queryTab !== activeTab) {
++            setActiveTab(queryTab);
+             setTimeout(() => {
+-                document.querySelector('.manage-nav-item.active')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
++                document.getElementById(`manage-tab-${queryTab}`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+             }, 100);
+         }
+-    }, [location.state, location.search]);
++    }, [searchParams, location.state]);
+ 
+     const handleTabChange = (tab) => {
+         setActiveTab(tab);
++        setSearchParams(prev => {
++            const next = new URLSearchParams(prev);
++            next.set('tab', tab);
++            return next;
++        }, { replace: true });
+         setCurrentPage(1);
+         setSearchTerm('');
+     };
+@@ -567,3 +567,52 @@
++    const tabs = useMemo(() => {
++        const list = [];
++        if (isPrivileged) {
++            list.push({
++                id: 'pending',
++                label: 'Pending Review',
++                icon: Clock,
++                badge: pendingMetrics.totalCount > 0 ? (
++                    <span className="pending-badge-pulse">{pendingMetrics.totalCount}</span>
++                ) : null
++            });
++        }
++        list.push({ id: 'factors', label: 'Emission Factors' });
++        if (isPrivileged) {
++            list.push({ id: 'facilities', label: 'Regions' });
++        }
++        list.push(
++            { id: 'production', label: 'Production Data' },
++            { id: 'sources', label: 'Emission Sources' },
++            { id: 'goals', label: 'Emission Goals & Base Years' },
++            { id: 'mitigation', label: 'Mitigation Projects' },
++            { id: 'ogmp', label: 'OGMP 2.0 Surveys' },
++            { id: 'cbam', label: 'CBAM Products' }
++        );
++        return list;
++    }, [isPrivileged, pendingMetrics.totalCount]);
++
++    const handleTabKeyDown = (e, index) => {
++        let nextIndex = -1;
++        if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
++            e.preventDefault();
++            nextIndex = (index + 1) % tabs.length;
++        } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
++            e.preventDefault();
++            nextIndex = (index - 1 + tabs.length) % tabs.length;
++        } else if (e.key === 'Home') {
++            e.preventDefault();
++            nextIndex = 0;
++        } else if (e.key === 'End') {
++            e.preventDefault();
++            nextIndex = tabs.length - 1;
++        }
++        if (nextIndex >= 0) {
++            const nextTab = tabs[nextIndex];
++            handleTabChange(nextTab.id);
++            document.getElementById(`manage-tab-${nextTab.id}`)?.focus();
++        }
++    };
++
+     // Filter & Pagination State
+     const [currentPage, setCurrentPage] = useState(1);
+     const ITEMS_PER_PAGE = 15;
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

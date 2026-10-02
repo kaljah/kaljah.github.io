@@ -1,0 +1,31 @@
+
+The command exited with code 0.
+Output:
+
+> new\client\src\pages\DashboardEnhanced.jsx:663:  const activityChartData = useMemo(() => {
+  new\client\src\pages\DashboardEnhanced.jsx:664:    const acting = {};
+  new\client\src\pages\DashboardEnhanced.jsx:665:    categoricalData.forEach((item) => {
+  new\client\src\pages\DashboardEnhanced.jsx:666:      const act = formatActivityName(item.activity);
+  new\client\src\pages\DashboardEnhanced.jsx:667:      acting[act] = (acting[act] || 0) + (item.total_emissions || 0);
+  new\client\src\pages\DashboardEnhanced.jsx:668:    });
+  new\client\src\pages\DashboardEnhanced.jsx:669:    const entries = Object.entries(acting)
+  new\client\src\pages\DashboardEnhanced.jsx:670:      .map(([name, value]) => ({ name, value: 
+Number(value.toFixed(2)) }))
+  new\client\src\pages\DashboardEnhanced.jsx:671:      .filter((d) => d.value > 0);
+  new\client\src\pages\DashboardEnhanced.jsx:672:
+  new\client\src\pages\DashboardEnhanced.jsx:673:    return entries.map((entry, index) => {
+> new\client\src\pages\DashboardEnhanced.jsx:1358:                  data={activityChartData}
+  new\client\src\pages\DashboardEnhanced.jsx:1359:                  height={170}
+  new\client\src\pages\DashboardEnhanced.jsx:1360:                  innerRadius={50}
+  new\client\src\pages\DashboardEnhanced.jsx:1361:                  outerRadius={75}
+  new\client\src\pages\DashboardEnhanced.jsx:1362:                />
+  new\client\src\pages\DashboardEnhanced.jsx:1363:              </div>
+  new\client\src\pages\DashboardEnhanced.jsx:1364:            </div>
+  new\client\src\pages\DashboardEnhanced.jsx:1365:            <div className="card donut-card-enhanced glass-panel">
+  new\client\src\pages\DashboardEnhanced.jsx:1366:              <div className="donut-header">
+  new\client\src\pages\DashboardEnhanced.jsx:1367:                <h3 className="donut-title source">Emissions by 
+Source</h3>
+  new\client\src\pages\DashboardEnhanced.jsx:1368:              </div>
+
+
+

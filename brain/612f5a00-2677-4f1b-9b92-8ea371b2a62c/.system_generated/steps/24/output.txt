@@ -1,0 +1,144 @@
+
+The command exited with code 0.
+Output:
+<truncated 628 lines>
+ .agents/workflows/ecc-guide.md                     |   93 +
+ .agents/workflows/epic-claim.md                    |   26 +
+ .agents/workflows/epic-decompose.md                |   23 +
+ .agents/workflows/epic-publish.md                  |   23 +
+ .agents/workflows/epic-review.md                   |   23 +
+ .agents/workflows/epic-sync.md                     |   23 +
+ .agents/workflows/epic-unblock.md                  |   22 +
+ .agents/workflows/epic-validate.md                 |   22 +
+ .agents/workflows/evolve.md                        |  178 +
+ .agents/workflows/fastapi-review.md                |   39 +
+ .agents/workflows/feature-dev.md                   |   49 +
+ .agents/workflows/flutter-build.md                 |  164 +
+ .agents/workflows/flutter-review.md                |  116 +
+ .agents/workflows/flutter-test.md                  |  144 +
+ .agents/workflows/gan-build.md                     |  103 +
+ .agents/workflows/gan-design.md                    |   39 +
+ .agents/workflows/go-build.md                      |  183 +
+ .agents/workflows/go-review.md                     |  148 +
+ .agents/workflows/go-test.md                       |  268 +
+ .agents/workflows/gradle-build.md                  |   70 +
+ .agents/workflows/harness-audit.md                 |   84 +
+ .agents/workflows/hookify-configure.md             |   14 +
+ .agents/workflows/hookify-help.md                  |   46 +
+ .agents/workflows/hookify-list.md                  |   21 +
+ .agents/workflows/hookify.md                       |   50 +
+ .agents/workflows/instinct-export.md               |   66 +
+ .agents/workflows/instinct-import.md               |  114 +
+ .agents/workflows/instinct-status.md               |   59 +
+ .agents/workflows/jira.md                          |  106 +
+ .agents/workflows/kotlin-build.md                  |  174 +
+ .agents/workflows/kotlin-review.md                 |  140 +
+ .agents/workflows/kotlin-test.md                   |  312 +
+ .agents/workflows/learn-eval.md                    |  153 +
+ .agents/workflows/learn.md                         |  107 +
+ .agents/workflows/loop-start.md                    |   36 +
+ .agents/workflows/loop-status.md                   |   77 +
+ .agents/workflows/marketing-campaign.md            |  129 +
+ .agents/workflows/model-route.md                   |   30 +
+ .agents/workflows/multi-backend.md                 |  164 +
+ .agents/workflows/multi-execute.md                 |  321 +
+ .agents/workflows/multi-frontend.md                |  164 +
+ .agents/workflows/multi-plan.md                    |  274 +
+ .agents/workflows/multi-workflow.md                |  197 +
+ .agents/workflows/orch-add-feature.md              |   36 +
+ .agents/workflows/orch-build-mvp.md                |   36 +
+ .agents/workflows/orch-change-feature.md           |   38 +
+ .agents/workflows/orch-fix-defect.md               |   38 +
+ .agents/workflows/orch-refine-code.md              |   39 +
+ .agents/workflows/orch-review.md                   |  119 +
+ .agents/workflows/plan-canvas.md                   |   45 +
+ .agents/workflows/plan-prd.md                      |  162 +
+ .agents/workflows/plan.md                          |  206 +
+ .agents/workflows/pm2.md                           |  276 +
+ .agents/workflows/pr.md                            |  184 +
+ .agents/workflows/project-init.md                  |   86 +
+ .agents/workflows/projects.md                      |   39 +
+ .agents/workflows/promote.md                       |   41 +
+ .agents/workflows/prp-commit.md                    |  112 +
+ .agents/workflows/prp-implement.md                 |  385 +
+ .agents/workflows/prp-plan.md                      |  502 ++
+ .agents/workflows/prp-pr.md                        |  184 +
+ .agents/workflows/prp-prd.md                       |  447 ++
+ .agents/workflows/prune.md                         |   31 +
+ .agents/workflows/python-review.md                 |  297 +
+ .agents/workflows/quality-gate.md                  |   52 +
+ .agents/workflows/react-build.md                   |  187 +
+ .agents/workflows/react-review.md                  |  170 +
+ .agents/workflows/react-test.md                    |  265 +
+ .agents/workflows/refactor-clean.md                |   84 +
+ .agents/workflows/resume-session.md                |  181 +
+ .agents/workflows/review-pr.md                     |   37 +
+ .agents/workflows/rust-build.md                    |  187 +
+ .agents/workflows/rust-review.md                   |  142 +
+ .agents/workflows/rust-test.md                     |  308 +
+ .agents/workflows/santa-loop.md                    |  208 +
+ .agents/workflows/save-session.md                  |  275 +
+ .agents/workflows/security-scan.md                 |   92 +
+ .agents/workflows/sessions.md                      |  339 +
+ .agents/workflows/setup-pm.md                      |   80 +
+ .agents/workflows/skill-create.md                  |  178 +
+ .agents/workflows/skill-health.md                  |   54 +
+ .agents/workflows/test-coverage.md                 |   73 +
+ .agents/workflows/update-codemaps.md               |   76 +
+ .agents/workflows/update-docs.md                   |   88 +
+ .agents/workflows/vue-review.md                    |  174 +
+ new/client/e2e/dashboard_pom.spec.js               |   85 +
+ new/client/e2e/pages/DashboardPage.js              |  166 +
+ new/client/stats.html                              |    2 +-
+ 710 files changed, 134769 insertions(+), 1 deletion(-)
+
+commit cdcbcc4e2ea893d7704c158a8191663a434caef8
+Author: ramzi <ramzibirdman@gmail.com>
+Date:   Fri Oct 2 15:59:33 2026 +0200
+
+    Fix the errors of the 10k audit round 2 (WEC, exports, intensity cards)
+    
+    - WEC: no charge on 2024-2033 emissions (P.L. 119-21 moved CAA s.136 to
+      methane emitted from 2034, $1,500/t) and none for non-US facilities
+      (subpart W only); the Methane page shows the reason. Reference model
+      and golden case GOLD-N01 updated to the same law.
+    - PDF report: a note when the detail table lists only the 500 most
+      recent records.
+    - Carbon Intensity cards note the tonnes from years without production
+      that are not in the intensity (Scope 3 showed 1.49 Gt next to
+      0.41 kg/BOE).
+    - Dashboard trend: legend entries only for series with data; Compare
+      Regions uses every year's facilities.
+    - Reports: "Baseline (2020)" now shows the configured base year; the
+      server uses the /dashboard/base-year rule and no invented 2020.
+    - Excel, PDF and OGMP exports: readable process names
+      (services/labels.py) instead of raw keys.
+    - Flaring stream tCO2e no longer rounded twice.
+    - Windows: close the mkstemp descriptor in a percent-upload test.
+    
+    Claude-Session: https://claude.ai/code/session_01WxonQ6UvYsAuDbCDGAUZTx
+
+ AUDIT_MEMORY.md                                    |   1 +
+ audit/FIX_LOG.md                                   |   4 +
+ audit/UPLOAD_10K_AUDIT.md                          |  47 ++++++
+ new/client/src/pages/CarbonIntensity.css           |   6 +
+ new/client/src/pages/CarbonIntensity.jsx           |  25 +++
+ new/client/src/pages/DashboardEnhanced.jsx         |   7 +-
+ new/client/src/pages/MethaneIntensity.jsx          |   9 +-
+ new/client/src/pages/Reports.jsx                   |   7 +-
+ new/server/routes/auth.py                          |   4 +-
+ new/server/routes/dashboard.py                     |   7 +-
+ new/server/routes/emissions.py                     |  16 +-
+ new/server/routes/reports.py                       |  21 ++-
+ new/server/services/intensity.py                   |  23 ++-
+ new/server/services/inventory_uncertainty.py       |   7 +-
+ new/server/services/labels.py                      |  25 +++
+ new/server/tests/test_audit_2026_10_02.py          | 180 +++++++++++++++++++++
+ .../tests/test_carbon_intensity_validation.py      |  11 +-
+ .../tests/test_upload_percent_rates_2026_09_30.py  |   4 +-
+ validation/expected_results/expected_results.json  |  32 ++--
+ validation/golden_dataset/dataset_generator.py     |  12 +-
+ validation/golden_dataset/golden_cases.json        |  22 +--
+ .../reference_model/aggregation_intensity.py       |  21 ++-
+ 22 files changed, 417 insertions(+), 74 deletions(-)
+

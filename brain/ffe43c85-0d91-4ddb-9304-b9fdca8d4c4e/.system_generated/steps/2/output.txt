@@ -1,0 +1,74 @@
+
+The command exited with code 0.
+Output:
+<truncated 57 lines>
+-a----         9/14/2026  12:25 AM            865 docker-compose.yml                                                   
+-a----         9/30/2026   7:29 PM           2209 Dockerfile                                                           
+-a----         9/30/2026   7:29 PM        1901725 El_Merk_2025_Annual_GHG_Report.pdf                                   
+-a----         8/12/2026   1:53 PM         971347 emission_sources.csv                                                 
+-a----         8/12/2026   2:05 PM         816010 emission_sources_v2.csv                                              
+-a----         9/30/2026   7:29 PM           2895 extracted_page3_text.txt                                             
+-a----         9/20/2026   4:14 PM          21896 FINAL_VALIDATION_REPORT.pdf                                          
+-a----         8/11/2026   4:17 PM           6024 fix_ui.py                                                            
+-a----         8/11/2026   4:17 PM           3720 fix_ui_2.py                                                          
+-a----         8/11/2026   4:21 PM           1685 fix_ui_tab.py                                                        
+-a----         8/12/2026   1:52 PM           4212 generate_mock_data.py                                                
+-a----         8/12/2026   2:05 PM           4396 generate_mock_data_v2.py                                             
+-a----         9/20/2026   4:14 PM          38028 generate_pdf_report.py                                               
+-a----          8/7/2026   3:08 PM          13075 generate_pitch_assets.py                                             
+-a----         9/30/2026   7:29 PM        1912825 Groupement_Berkine_2025_Annual_GHG_Report.pdf                        
+-a----          1/4/2026   8:10 PM         441498 icon.png                                                             
+-a----         9/30/2026   7:29 PM         443389 IMPLEMENTATION_PLAN.md                                               
+-a----         9/30/2026   7:29 PM         116703 index.html                                                           
+-a----         9/25/2026   7:53 PM            138 mcp_config.json                                                      
+-a----         10/2/2026   3:28 PM            366 mcp_config.json.backup                                               
+-a----         8/12/2026   1:53 PM        1292587 mitigation_projects.csv                                              
+-a----         8/12/2026   2:05 PM        1240893 mitigation_projects_v2.csv                                           
+-a----         9/30/2026   7:29 PM          35999 napec_flyer.html                                                     
+-a----         9/30/2026   7:29 PM          36536 napec_flyer_fr.html                                                  
+-a----         9/30/2026   7:29 PM         545012 neocarbon_computer_hero.jpg                                          
+-a----         9/30/2026   7:29 PM         475876 neocarbon_computer_hero_fr.jpg                                       
+-a----         9/30/2026   7:29 PM          35598 neocarbon_flyer.html                                                 
+-a----         9/30/2026   7:29 PM        1045868 neocarbon_flyer.pdf                                                  
+-a----         9/30/2026   7:29 PM        3265148 neocarbon_flyer_complete_4pages.pdf                                  
+-a----         9/30/2026   7:29 PM          35824 neocarbon_flyer_fr.html                                              
+-a----         9/30/2026   7:29 PM        1039076 neocarbon_flyer_fr.pdf                                               
+-a----         9/30/2026   7:29 PM         605988 neocarbon_flyer_page1_en.jpg                                         
+-a----         9/30/2026   7:29 PM         581804 neocarbon_flyer_page1_fr.jpg                                         
+-a----         9/30/2026   7:29 PM          25044 neocarbon_resume_page.html                                           
+-a----         9/30/2026   7:29 PM         193957 neocarbon_resume_page.pdf                                            
+-a----         9/30/2026   7:29 PM          70578 neocarbon_software_flyer.html                                        
+-a----         9/30/2026   7:29 PM        1081234 neocarbon_software_flyer.pdf                                         
+-a----         8/11/2026   4:05 PM         304628 old_ManageData.jsx                                                   
+-a----         4/25/2026   4:20 PM         251944 package-lock.json                                                    
+-a----          2/2/2026  11:00 PM           1183 package.json                                                         
+-a----         8/11/2026   4:12 PM           6404 patch.py                                                             
+-a----         8/11/2026   4:13 PM           1977 patch_ci.py                                                          
+-a----         8/11/2026   4:13 PM            433 patch_ci_css.py                                                      
+-a----         8/11/2026   4:13 PM           5334 patch_manage_data.py                                                 
+-a----         8/11/2026   4:13 PM            942 patch_manage_data_ui.py                                              
+-a----         8/11/2026   4:12 PM            457 patch_ui.py                                                          
+-a----         9/30/2026   7:29 PM        1040475 preview_en_page_1.png                                                
+-a----         9/30/2026   7:29 PM          98689 preview_en_page_2.png                                                
+-a----         9/30/2026   7:29 PM        1001390 preview_flyer_page_1.png                                             
+-a----         9/30/2026   7:29 PM         972286 preview_flyer_page_2.png                                             
+-a----         9/30/2026   7:29 PM         978672 preview_fr_page_1.png                                                
+-a----         9/30/2026   7:29 PM         101145 preview_fr_page_2.png                                                
+-a----         9/30/2026   7:29 PM         201257 preview_resume_page.png                                              
+-a----         8/12/2026   1:53 PM         781882 production_data.csv                                                  
+-a----         8/12/2026   2:05 PM         600634 production_data_v2.csv                                               
+-a----         9/20/2026   3:04 PM            145 pytest.ini                                                           
+-a----         9/13/2026  12:04 AM           6241 README.md                                                            
+-a----         8/12/2026   1:22 PM           4011 regions_upload.csv                                                   
+-a----         9/30/2026   7:29 PM           2037 render_and_merge.py                                                  
+-a----         9/30/2026   7:29 PM           1424 render_flyer.py                                                      
+-a----         8/11/2026   4:19 PM           4941 script.py                                                            
+-a----         9/21/2026   1:48 PM           7920 seed_demo_data.py                                                    
+-a----         9/21/2026   8:10 PM           7247 seed_production_and_cbam.py                                          
+-a----         9/30/2026   7:29 PM        2104536 uploaded_page_1.png                                                  
+-a----         9/30/2026   7:29 PM        1758317 uploaded_page_2.png                                                  
+-a----         9/30/2026   7:29 PM         537024 uploaded_page_3.png                                                  
+-a----         9/24/2026   9:07 PM              0 users_v2.db                                                          
+
+
+

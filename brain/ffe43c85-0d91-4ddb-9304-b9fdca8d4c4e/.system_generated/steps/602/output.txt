@@ -1,0 +1,20 @@
+
+The command exited with code 0.
+Output:
+
+> new\client\src\pages\ManageData.jsx:1266:    const exportToCSV = (data, filename) => {
+  new\client\src\pages\ManageData.jsx:1267:        if (!data || data.length === 0) return toast.info('No data to 
+export');
+  new\client\src\pages\ManageData.jsx:1268:        const keys = Object.keys(data[0]);
+  new\client\src\pages\ManageData.jsx:1269:        const escapeCell = (val) => {
+  new\client\src\pages\ManageData.jsx:1270:            if (val === null || val === undefined) return '';
+  new\client\src\pages\ManageData.jsx:1271:            const str = String(val);
+  new\client\src\pages\ManageData.jsx:1272:            if (str.includes(',') || str.includes('"') || 
+str.includes('\n') || str.includes('\r')) {
+  new\client\src\pages\ManageData.jsx:1273:                return `"${str.replace(/"/g, '""')}"`;
+  new\client\src\pages\ManageData.jsx:1274:            }
+  new\client\src\pages\ManageData.jsx:1275:            return str;
+  new\client\src\pages\ManageData.jsx:1276:        };
+
+
+

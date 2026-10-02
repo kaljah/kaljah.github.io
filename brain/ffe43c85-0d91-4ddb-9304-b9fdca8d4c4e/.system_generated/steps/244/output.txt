@@ -1,0 +1,22 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\pages\Dashboard.css:399:.scope-pills-row {
+new\client\src\pages\Dashboard.css:408:.scope-pill {
+new\client\src\pages\Dashboard.css:419:.scope-pill.scope-1 {
+new\client\src\pages\Dashboard.css:424:.scope-pill.scope-2 {
+new\client\src\pages\Dashboard.css:429:.scope-pill.scope-3 {
+new\client\src\pages\Dashboard.css:1105:  .scope-pills-row {
+new\client\src\pages\Dashboard.css:1150:  .scope-pills-row {
+new\client\src\pages\Dashboard.css:1453:.flaring-kpi-banner {
+new\client\src\pages\Emissions.css:98:.scope-1-card::before {
+new\client\src\pages\Emissions.css:101:.scope-1-card:hover {
+new\client\src\pages\Emissions.css:282:.scope-1-card:hover .s1-arrow {
+new\client\src\pages\QADashboard.css:470:.qa-scope-badge.scope-1 {
+new\client\src\index.css:29:  --scope-1: #ff6600;
+new\client\src\index.css:30:  --scope-1-bg: rgba(255, 102, 0, 0.1);
+new\client\src\index.css:31:  --scope-1-border: rgba(255, 102, 0, 0.25);
+
+
+

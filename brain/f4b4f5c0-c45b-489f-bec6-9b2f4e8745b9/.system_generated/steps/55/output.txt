@@ -1,0 +1,13 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":565,"LineContent":"            from routes.auth import load_settings_from_db"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":566,"LineContent":"            load_settings_from_db()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":688,"LineContent":"                from routes.auth import _app_settings, load_settings_from_db"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":690,"LineContent":"                load_settings_from_db()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\constants.py","LineNumber":64,"LineContent":"                from routes.auth import _app_settings, load_settings_from_db"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\constants.py","LineNumber":66,"LineContent":"                    load_settings_from_db()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":707,"LineContent":"def load_settings_from_db():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":816,"LineContent":"    load_settings_from_db()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":847,"LineContent":"    load_settings_from_db()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":489,"LineContent":"        from routes.auth import _app_settings, load_settings_from_db"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":490,"LineContent":"        load_settings_from_db()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":21,"LineContent":"    from routes.auth import _app_settings, load_settings_from_db"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":23,"LineContent":"    load_settings_from_db()"}

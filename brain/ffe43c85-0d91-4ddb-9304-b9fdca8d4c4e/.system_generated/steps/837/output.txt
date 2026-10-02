@@ -1,0 +1,126 @@
+
+The command exited with code 0.
+Output:
+src/pages/DashboardEnhanced.jsx-4-import api from "../api";
+src/pages/DashboardEnhanced.jsx-5-import { useToast } from "../components/Toast";
+src/pages/DashboardEnhanced.jsx-6-import LoadingSpinner from "../components/LoadingSpinner";
+src/pages/DashboardEnhanced.jsx-7-import { SkeletonCard } from "../components/SkeletonLoader";
+src/pages/DashboardEnhanced.jsx-8-import {
+src/pages/DashboardEnhanced.jsx:9:  PieChart as PieChartWrapper,
+src/pages/DashboardEnhanced.jsx:10:  LineChart as LineChartWrapper,
+src/pages/DashboardEnhanced.jsx-11-} from "../components/charts";
+src/pages/DashboardEnhanced.jsx-12-import CustomDropdown from "../components/CustomDropdown";
+src/pages/DashboardEnhanced.jsx-13-import {
+src/pages/DashboardEnhanced.jsx-14-  formatCompactNumber,
+src/pages/DashboardEnhanced.jsx-15-  formatNumber,
+--
+src/pages/DashboardEnhanced.jsx-595-  const handleDivisionChange = (value) => {
+src/pages/DashboardEnhanced.jsx-596-    setCurrentDivision(value);
+src/pages/DashboardEnhanced.jsx-597-    setCurrentRegion("all");
+src/pages/DashboardEnhanced.jsx-598-  };
+src/pages/DashboardEnhanced.jsx-599-
+src/pages/DashboardEnhanced.jsx:600:  const sourceChartData = useMemo(
+src/pages/DashboardEnhanced.jsx-601-    () =>
+src/pages/DashboardEnhanced.jsx-602-      [
+src/pages/DashboardEnhanced.jsx-603-        // BUG-UI-05 FIX: Guard with ?? 0 to prevent .toFixed() on undefined when stats update fails
+src/pages/DashboardEnhanced.jsx-604-        {
+src/pages/DashboardEnhanced.jsx-605-          name: "Combustion",
+--
+src/pages/DashboardEnhanced.jsx-658-    "LQS (Liquefaction)": "#3b82f6", // blue
+src/pages/DashboardEnhanced.jsx-659-    "RPC (Refining)": "#10b981", // green
+src/pages/DashboardEnhanced.jsx-660-    "TRC (Transport)": "#6366f1", // indigo
+src/pages/DashboardEnhanced.jsx-661-  };
+src/pages/DashboardEnhanced.jsx-662-
+src/pages/DashboardEnhanced.jsx:663:  const activityChartData = useMemo(() => {
+src/pages/DashboardEnhanced.jsx-664-    const acting = {};
+src/pages/DashboardEnhanced.jsx-665-    categoricalData.forEach((item) => {
+src/pages/DashboardEnhanced.jsx-666-      const act = formatActivityName(item.activity);
+src/pages/DashboardEnhanced.jsx-667-      acting[act] = (acting[act] || 0) + (item.total_emissions || 0);
+src/pages/DashboardEnhanced.jsx-668-    });
+--
+src/pages/DashboardEnhanced.jsx-1257-          </div>
+src/pages/DashboardEnhanced.jsx-1258-        )}
+src/pages/DashboardEnhanced.jsx-1259-
+src/pages/DashboardEnhanced.jsx-1260-        {/* --- Primary Analytics Grid: Trend Line (2fr) + Donuts (1fr) --- */}
+src/pages/DashboardEnhanced.jsx-1261-        <div className="charts-section">
+src/pages/DashboardEnhanced.jsx:1262:          {/* Trend Chart */}
+src/pages/DashboardEnhanced.jsx-1263-          <div className="card trend-card-enhanced glass-panel">
+src/pages/DashboardEnhanced.jsx-1264-            <div className="card-header-row">
+src/pages/DashboardEnhanced.jsx-1265-              <div>
+src/pages/DashboardEnhanced.jsx-1266-                <h3 className="card-title">Emissions Trend & Projection</h3>
+src/pages/DashboardEnhanced.jsx-1267-                <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
+--
+src/pages/DashboardEnhanced.jsx-1294-                width: "100%",
+src/pages/DashboardEnhanced.jsx-1295-                minWidth: 0,
+src/pages/DashboardEnhanced.jsx-1296-                position: "relative",
+src/pages/DashboardEnhanced.jsx-1297-              }}
+src/pages/DashboardEnhanced.jsx-1298-            >
+src/pages/DashboardEnhanced.jsx:1299:              <LineChartWrapper
+src/pages/DashboardEnhanced.jsx-1300-                data={trendData}
+src/pages/DashboardEnhanced.jsx-1301-                xKey="year"
+src/pages/DashboardEnhanced.jsx-1302-                lines={
+src/pages/DashboardEnhanced.jsx-1303-                  isCompareMode
+src/pages/DashboardEnhanced.jsx-1304-                    ? // every facility of any year (the first year's facilities only, before)
+--
+src/pages/DashboardEnhanced.jsx-1337-                height={360}
+src/pages/DashboardEnhanced.jsx-1338-              />
+src/pages/DashboardEnhanced.jsx-1339-            </div>
+src/pages/DashboardEnhanced.jsx-1340-          </div>
+src/pages/DashboardEnhanced.jsx-1341-
+src/pages/DashboardEnhanced.jsx:1342:          {/* Donut Charts Column (1fr) */}
+src/pages/DashboardEnhanced.jsx-1343-          <div className="donuts-row">
+src/pages/DashboardEnhanced.jsx-1344-            <div className="card donut-card-enhanced glass-panel">
+src/pages/DashboardEnhanced.jsx-1345-              <div className="donut-header">
+src/pages/DashboardEnhanced.jsx-1346-                <h3 className="donut-title activity">Emissions by Activity</h3>
+src/pages/DashboardEnhanced.jsx-1347-              </div>
+--
+src/pages/DashboardEnhanced.jsx-1352-                  width: "100%",
+src/pages/DashboardEnhanced.jsx-1353-                  minWidth: 0,
+src/pages/DashboardEnhanced.jsx-1354-                  position: "relative",
+src/pages/DashboardEnhanced.jsx-1355-                }}
+src/pages/DashboardEnhanced.jsx-1356-              >
+src/pages/DashboardEnhanced.jsx:1357:                <PieChartWrapper
+src/pages/DashboardEnhanced.jsx:1358:                  data={activityChartData}
+src/pages/DashboardEnhanced.jsx-1359-                  height={170}
+src/pages/DashboardEnhanced.jsx-1360-                  innerRadius={50}
+src/pages/DashboardEnhanced.jsx-1361-                  outerRadius={75}
+src/pages/DashboardEnhanced.jsx-1362-                />
+src/pages/DashboardEnhanced.jsx-1363-              </div>
+--
+src/pages/DashboardEnhanced.jsx-1373-                  width: "100%",
+src/pages/DashboardEnhanced.jsx-1374-                  minWidth: 0,
+src/pages/DashboardEnhanced.jsx-1375-                  position: "relative",
+src/pages/DashboardEnhanced.jsx-1376-                }}
+src/pages/DashboardEnhanced.jsx-1377-              >
+src/pages/DashboardEnhanced.jsx:1378:                <PieChartWrapper
+src/pages/DashboardEnhanced.jsx:1379:                  data={sourceChartData}
+src/pages/DashboardEnhanced.jsx-1380-                  height={170}
+src/pages/DashboardEnhanced.jsx-1381-                  innerRadius={50}
+src/pages/DashboardEnhanced.jsx-1382-                  outerRadius={75}
+src/pages/DashboardEnhanced.jsx-1383-                />
+src/pages/DashboardEnhanced.jsx-1384-              </div>
+--
+src/pages/DashboardEnhanced.jsx-1417-              >
+src/pages/DashboardEnhanced.jsx-1418-                View Full SBTi Dashboard →
+src/pages/DashboardEnhanced.jsx-1419-              </button>
+src/pages/DashboardEnhanced.jsx-1420-            </div>
+src/pages/DashboardEnhanced.jsx-1421-            <div className="chart-container" style={{ height: "320px", width: "100%" }}>
+src/pages/DashboardEnhanced.jsx:1422:              <LineChartWrapper
+src/pages/DashboardEnhanced.jsx-1423-                data={sbtiData.trajectory}
+src/pages/DashboardEnhanced.jsx-1424-                xAxisKey="year"
+src/pages/DashboardEnhanced.jsx-1425-                series={[
+src/pages/DashboardEnhanced.jsx-1426-                  {
+src/pages/DashboardEnhanced.jsx-1427-                    dataKey: "actual",
+--
+src/pages/DashboardEnhanced.jsx-1750-              </div>
+src/pages/DashboardEnhanced.jsx-1751-            </div>
+src/pages/DashboardEnhanced.jsx-1752-          </div>
+src/pages/DashboardEnhanced.jsx-1753-
+src/pages/DashboardEnhanced.jsx-1754-          <div className="dashboard-sidebar">
+src/pages/DashboardEnhanced.jsx:1755:            {/* Moved Trend Chart to Top */}
+src/pages/DashboardEnhanced.jsx-1756-
+src/pages/DashboardEnhanced.jsx-1757-            <div className="card library-card">
+src/pages/DashboardEnhanced.jsx-1758-              <div className="card-header-row">
+src/pages/DashboardEnhanced.jsx-1759-                <h3 className="card-title">Reference Libraries</h3>
+src/pages/DashboardEnhanced.jsx-1760-                <svg
+

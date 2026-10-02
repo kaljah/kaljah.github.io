@@ -1,0 +1,264 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\AuditTrail.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -908,238 +908,27 @@
+           </div>
+         </div>
+ 
+-        {/* Main Content Area */}
+-        {loading ? (
+-          <div className="audit-loading-skeleton">
+-            {[1, 2, 3, 4].map((i) => (
+-              <div key={i} className="skeleton-card">
+-                <div className="skeleton-icon" />
+-                <div className="skeleton-text">
+-                  <div className="skeleton-line w-40" />
+-                  <div className="skeleton-line w-80" />
+-                  <div className="skeleton-line w-20" />
+-                </div>
+-              </div>
+-            ))}
+-          </div>
+-        ) : auditLogs.length === 0 ? (
+-          <div className="audit-empty-state">
+-            <div className="empty-icon-circle">
+-              <Filter size={32} />
+-            </div>
+-            <h3>No audit records found</h3>
+-            <p>
+-              {hasActiveFilters
++        {/* Main Content Area: Modern DataTable with expandable row diffs */}
++        <div className="audit-table-card mt-6">
++          <DataTable
++            columns={columns}
++            data={auditLogs}
++            renderSubComponent={renderSubComponent}
++            isLoading={loading}
++            manualPagination={true}
++            pageCount={totalPages}
++            totalEntries={totalRecords}
++            pageSize={limit}
++            pagination={{ pageIndex: page - 1, pageSize: limit }}
++            onPaginationChange={handlePaginationChange}
++            showSearch={false}
++            emptyMessage={
++              hasActiveFilters
+                 ? "No activity logs match your current filter and search criteria."
+-                : "No compliance audit records have been generated yet."}
+-            </p>
+-            {hasActiveFilters && (
+-              <button className="btn-clear-empty" onClick={resetFilters}>
+-                Clear All Filters
+-              </button>
+-            )}
+-          </div>
+-        ) : (
+-          <div className="audit-timeline">
+-            {auditLogs.map((log) => {
+-              const actConfig = getActionConfig(log.action);
+-              const isRawExpanded = expandedRows.has(log.id);
+-              const hasDiff = Boolean(log.old_values || log.new_values);
+-
+-              return (
+-                <div key={log.id} className="audit-entry-item">
+-                  {/* Timeline Visual Node */}
+-                  <div
+-                    className="timeline-node"
+-                    style={{
+-                      backgroundColor: actConfig.color,
+-                      boxShadow: `0 0 0 4px ${actConfig.bg}`,
+-                    }}
+-                  >
+-                    {actConfig.icon}
+-                  </div>
+-                  <div className="timeline-connector" />
+-
+-                  {/* Card Content */}
+-                  <div className="audit-card">
+-                    {/* Header Row */}
+-                    <div className="card-top-row">
+-                      <div className="event-primary-info">
+-                        <div className="user-badge">
+-                          <UserIcon size={12} className="badge-user-icon" />
+-                          <span className="user-name-text">{log.user}</span>
+-                        </div>
+-
+-                        <ArrowRight size={12} className="flow-arrow" />
+-
+-                        <span
+-                          className="action-pill"
+-                          style={{
+-                            backgroundColor: actConfig.bg,
+-                            color: actConfig.color,
+-                            borderColor: actConfig.border,
+-                          }}
+-                        >
+-                          {log.action}
+-                        </span>
+-
+-                        <span className="entity-tag">{log.entity}</span>
+-                      </div>
+-
+-                      <div className="event-timestamp" title={formatFullDateTime(log.timestamp)}>
+-                        <Clock size={12} style={{ opacity: 0.6 }} />
+-                        <span>{formatTimestamp(log.timestamp)}</span>
+-                      </div>
+-                    </div>
+-
+-                    {/* Main Description */}
+-                    <p className="card-description">{log.description || log.details || "No details recorded"}</p>
+-
+-                    {/* Field-level Before/After Diff Block */}
+-                    {hasDiff && (
+-                      <div className="field-diff-container">
+-                        <div className="field-diff-header">
+-                          <History size={12} />
+-                          <span>Field-Level Changes:</span>
+-                        </div>
+-
+-                        {typeof log.old_values === "object" &&
+-                        typeof log.new_values === "object" &&
+-                        (log.old_values !== null || log.new_values !== null) ? (
+-                          <div className="diff-fields-grid">
+-                            {Array.from(
+-                              new Set([
+-                                ...Object.keys(log.old_values || {}),
+-                                ...Object.keys(log.new_values || {}),
+-                              ]),
+-                            ).map((key) => {
+-                              const before = log.old_values?.[key];
+-                              const after = log.new_values?.[key];
+-                              return (
+-                                <div key={key} className="diff-field-row">
+-                                  <span className="diff-key">{key}:</span>
+-                                  <span className="diff-before" title={formatDiffVal(before)}>
+-                                    {formatDiffVal(before)}
+-                                  </span>
+-                                  <ArrowRight size={11} className="diff-arrow" />
+-                                  <span className="diff-after" title={formatDiffVal(after)}>
+-                                    {formatDiffVal(after)}
+-                                  </span>
+-                                </div>
+-                              );
+-                            })}
+-                          </div>
+-                        ) : (
+-                          <div className="diff-text-view">
+-                            {log.old_values && (
+-                              <div>
+-                                <strong>Before:</strong> {formatDiffVal(log.old_values)}
+-                              </div>
+-                            )}
+-                            {log.new_values && (
+-                              <div>
+-                                <strong>After:</strong> {formatDiffVal(log.new_values)}
+-                              </div>
+-                            )}
+-                          </div>
+-                        )}
+-                      </div>
+-                    )}
+-
+-                    {/* Expandable Technical Raw JSON */}
+-                    {isRawExpanded && (
+-                      <div className="raw-json-viewer">
+-                        <pre>{JSON.stringify(log, null, 2)}</pre>
+-                      </div>
+-                    )}
+-
+-                    {/* Card Footer Meta */}
+-                    <div className="card-meta-row">
+-                      <div className="meta-left-group">
+-                        <span className="meta-item">
+-                          <Database size={12} />
+-                          <span>Ref: #{log.entityId || log.recordId || "N/A"}</span>
+-                        </span>
+-
+-                        <span className="meta-item">
+-                          <Globe size={12} />
+-                          <span>IP: {log.ipAddress || "Local / System"}</span>
+-                        </span>
+-
+-                        <span className="meta-item timestamp-full">
+-                          <Calendar size={12} />
+-                          <span>{formatFullDateTime(log.timestamp)}</span>
+-                        </span>
+-                      </div>
+-
+-                      <button
+-                        className="btn-toggle-raw"
+-                        onClick={() => toggleRawData(log.id)}
+-                        title="Toggle Technical Audit JSON"
+-                      >
+-                        <Code size={12} />
+-                        <span>{isRawExpanded ? "Hide Raw" : "Raw JSON"}</span>
+-                        {isRawExpanded ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+-                      </button>
+-                    </div>
+-                  </div>
+-                </div>
+-              );
+-            })}
+-          </div>
+-        )}
+-
+-        {/* Pagination Bar */}
+-        {totalRecords > 0 && (
+-          <div className="audit-pagination-bar">
+-            <div className="pagination-info">
+-              Page <strong>{page}</strong> of <strong>{totalPages}</strong> ({totalRecords} total events)
+-            </div>
+-
+-            <div className="pagination-controls">
+-              <div className="page-size-selector">
+-                <label>Rows:</label>
+-                <select
+-                  value={limit}
+-                  onChange={(e) => {
+-                    setLimit(Number(e.target.value));
+-                    setPage(1);
+-                  }}
+-                >
+-                  <option value={25}>25</option>
+-                  <option value={50}>50</option>
+-                  <option value={100}>100</option>
+-                </select>
+-              </div>
+-
+-              <div className="pagination-buttons">
+-                <button
+-                  className="btn-page-nav"
+-                  disabled={page <= 1}
+-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+-                  title="Previous Page"
+-                >
+-                  <ChevronLeft size={16} />
+-                  <span>Prev</span>
+-                </button>
+-
+-                <span className="page-indicator">
+-                  {page} / {totalPages}
+-                </span>
+-
+-                <button
+-                  className="btn-page-nav"
+-                  disabled={page >= totalPages}
+-                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+-                  title="Next Page"
+-                >
+-                  <span>Next</span>
+-                  <ChevronRight size={16} />
+-                </button>
+-              </div>
+-            </div>
+-          </div>
+-        )}
++                : "No compliance audit records have been generated yet."
++            }
++          />
++        </div>
+       </div>
+     </div>
+   );
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

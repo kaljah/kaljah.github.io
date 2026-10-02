@@ -1,0 +1,17 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":134,"LineContent":"@dashboard_bp.route(\"/batch-all\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":377,"LineContent":"@dashboard_bp.route(\"/intensity-trend\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":667,"LineContent":"@dashboard_bp.route(\"/summary\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":699,"LineContent":"@dashboard_bp.route(\"/years\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":714,"LineContent":"@dashboard_bp.route(\"/mitigation\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":741,"LineContent":"@dashboard_bp.route(\"/scope3/summary\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":769,"LineContent":"@dashboard_bp.route(\"/goals/\u003cint:year\u003e\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":790,"LineContent":"@dashboard_bp.route(\"/base-year\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":821,"LineContent":"@dashboard_bp.route(\"/categorical-breakdown\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":851,"LineContent":"@dashboard_bp.route(\"/base-year-recalculation\", methods=[\"POST\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":922,"LineContent":"@dashboard_bp.route(\"/ogmp-metrics\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1096,"LineContent":"@dashboard_bp.route(\"/intensity-stats\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1173,"LineContent":"@dashboard_bp.route(\"/uncertainty\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1284,"LineContent":"@dashboard_bp.route(\"/exclusions\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1316,"LineContent":"@dashboard_bp.route(\"/sbti-trajectory\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1513,"LineContent":"@dashboard_bp.route(\"/flaring-summary\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1656,"LineContent":"@dashboard_bp.route(\"/granular-intensities\", methods=[\"GET\"])"}

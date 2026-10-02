@@ -1,0 +1,9 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":13,"LineContent":"# Structure: { job_id: { 'status', 'progress', 'processed', 'total', 'skipped': [{row, reason, ...}], 'error_csv_path', 'created_at' } }"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":42,"LineContent":"        \"error_csv_path\": job.get(\"error_csv_path\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":275,"LineContent":"                to_delete.append((jid, job.get(\"error_csv_path\")))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":284,"LineContent":"                        to_delete.append((None, json.load(fh).get(\"error_csv_path\")))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":492,"LineContent":"            \"error_csv_path\": None,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":535,"LineContent":"def get_job_error_csv_path(job_id):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":537,"LineContent":"    path = job.get(\"error_csv_path\") if job else None"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":553,"LineContent":"        \"has_error_csv\": bool(job.get(\"error_csv_path\")),  # BUG-076: no server path disclosure"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1053,"LineContent":"                    _update_job(job_id, error_csv_path=error_file)"}

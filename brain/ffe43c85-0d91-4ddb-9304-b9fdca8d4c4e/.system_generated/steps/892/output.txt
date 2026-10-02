@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\__tests__\charts.test.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -38,7 +38,7 @@
+ 
+       expect(screen.getByText("Emissions Distribution")).toBeInTheDocument();
+       expect(screen.getByText("TOTAL")).toBeInTheDocument();
+-      expect(screen.getByText("2k")).toBeInTheDocument();
++      expect(screen.getByText("2.0k")).toBeInTheDocument();
+       expect(screen.getByText("tCO₂e")).toBeInTheDocument();
+       expect(screen.getByText("Combustion")).toBeInTheDocument();
+       expect(screen.getByText("Flaring")).toBeInTheDocument();
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

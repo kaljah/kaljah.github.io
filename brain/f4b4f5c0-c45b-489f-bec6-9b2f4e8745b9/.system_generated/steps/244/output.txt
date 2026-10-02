@@ -1,0 +1,12 @@
+
+The command exited with code 0.
+Output:
+
+new\server\routes\dashboard.py:9:    MitigationRecord,
+new\server\routes\dashboard.py:522:        records = apply_year(MitigationRecord.query, MitigationRecord, year).all()
+new\server\routes\dashboard.py:1299:    query = 
+MitigationRecord.query.filter(MitigationRecord.type.ilike("%exclusion%"))
+new\server\routes\dashboard.py:1302:        query = query.filter(MitigationRecord.year == int(year))
+
+
+

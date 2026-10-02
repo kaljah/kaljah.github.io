@@ -1,0 +1,31 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\Login.css. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -236,7 +236,7 @@
+ .btn-primary {
+   width: 100%;
+   padding: 14px;
+-  background: var(--primary);
++  background: var(--accent-color, #ff6600);
+   color: #ffffff;
+   border: none;
+   border-radius: 12px;
+@@ -244,13 +244,13 @@
+   cursor: pointer;
+   transition: all 0.2s;
+   margin-top: 12px;
+-  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2);
++  box-shadow: 0 4px 14px rgba(255, 102, 0, 0.25);
+ }
+ 
+ .btn-primary:hover {
+-  background: var(--primary-hover);
++  background: var(--accent-hover, #e65c00);
+   transform: translateY(-1px);
+-  box-shadow: 0 6px 16px rgba(249, 115, 22, 0.3);
++  box-shadow: 0 6px 18px rgba(255, 102, 0, 0.35);
+ }
+ 
+ .error-message {
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,35 @@
+
+The command exited with code 1.
+Output:
+At line:5 char:47
++   if (line.includes(\"activeTab === 'pending' && isPrivileged\")) con ...
++                                               ~~
+The token '&&' is not a valid statement separator in this version.
+At line:6 char:47
++   if (line.includes(\"activeTab === 'factors' && (\")) console.log('F ...
++                                               ~~
+The token '&&' is not a valid statement separator in this version.
+At line:7 char:50
++   if (line.includes(\"activeTab === 'facilities' &&\")) console.log(' ...
++                                                  ~~
+The token '&&' is not a valid statement separator in this version.
+At line:8 char:50
++   if (line.includes(\"activeTab === 'production' && (\")) console.log ...
++                                                  ~~
+The token '&&' is not a valid statement separator in this version.
+At line:10 char:2
++ "
++  ~
+Missing closing ')' in expression.
+At line:8 char:53
++ ... ab === 'production' && (\")) console.log('Production start:', i + 1);
++                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Expressions are only allowed as the first element of a pipeline.
+At line:6 char:50
++ ... ctiveTab === 'factors' && (\")) console.log('Factors start:', i + 1);
++                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Expressions are only allowed as the first element of a pipeline.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : InvalidEndOfLine
+ 
+

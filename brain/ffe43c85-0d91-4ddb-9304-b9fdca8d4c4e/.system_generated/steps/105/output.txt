@@ -1,0 +1,41 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\CarbonIntensity.css. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1,14 +1,8 @@
+ /* Carbon Intensity Dashboard Styles - Modernized Professional */
+-:root {
+-  --accent-color: #0d9488;
++.intensity-content {
++  --intensity-accent: #0d9488;
+   --accent-secondary: #2563eb;
+   --accent-tertiary: #ea580c;
+-  --text-primary: #0f172a;
+-  --text-secondary: #64748b;
+-  --bg-card: #ffffff;
+-  --bg-app: #f8fafc;
+-  --border-color: #e2e8f0;
+-  --bg-hover: #f1f5f9;
+   --card-shadow:
+     0 4px 6px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -1px rgba(15, 23, 42, 0.03);
+   --card-shadow-hover:
+@@ -15,13 +15,12 @@
+     0 4px 6px -2px rgba(15, 23, 42, 0.04);
+-}
+-
+-.intensity-content {
+-  padding: 32px;
+-  background: var(--bg-app);
++  padding: 32px;
++  background: var(--bg-body, #f8fafc);
+   min-height: calc(100vh - 64px);
+   animation: fadeIn 0.5s ease-out;
+   font-family:
+-    "Inter",
++    "Outfit",
++    Inter,
++    system-ui,
+     -apple-system,
+     sans-serif;
+ }
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

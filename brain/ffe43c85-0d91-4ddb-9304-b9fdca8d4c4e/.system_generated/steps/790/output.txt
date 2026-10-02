@@ -1,0 +1,14 @@
+
+The command exited with code 0.
+Output:
+
+FullName                                                                      
+--------                                                                      
+C:\Users\samsung\Desktop\H2\new\client\src\components\charts                  
+C:\Users\samsung\Desktop\H2\new\client\src\components\charts\BarChart.jsx     
+C:\Users\samsung\Desktop\H2\new\client\src\components\charts\ChartWrappers.css
+C:\Users\samsung\Desktop\H2\new\client\src\components\charts\LineChart.jsx    
+C:\Users\samsung\Desktop\H2\new\client\src\components\charts\PieChart.jsx     
+
+
+

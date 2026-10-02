@@ -1,0 +1,23 @@
+
+The command exited with code 0.
+Output:
+
+> new\client\src\pages\ManageData.jsx:559:    const handleTabChange = (tab) => {
+  new\client\src\pages\ManageData.jsx:560:        setActiveTab(tab);
+  new\client\src\pages\ManageData.jsx:561:        setCurrentPage(1);
+  new\client\src\pages\ManageData.jsx:562:        setSearchTerm('');
+  new\client\src\pages\ManageData.jsx:563:    };
+  new\client\src\pages\ManageData.jsx:564:
+  new\client\src\pages\ManageData.jsx:565:    // Filter & Pagination State
+  new\client\src\pages\ManageData.jsx:566:    const [currentPage, setCurrentPage] = useState(1);
+  new\client\src\pages\ManageData.jsx:567:    const ITEMS_PER_PAGE = 15;
+  new\client\src\pages\ManageData.jsx:568:    
+  new\client\src\pages\ManageData.jsx:569:    const [filterActivity, setFilterActivity] = useState('');
+  new\client\src\pages\ManageData.jsx:570:    const [filterDivision, setFilterDivision] = useState('');
+  new\client\src\pages\ManageData.jsx:571:    const [filterRegion, setFilterRegion] = useState('');
+  new\client\src\pages\ManageData.jsx:572:    const [filterYear, setFilterYear] = useState('');
+  new\client\src\pages\ManageData.jsx:573:
+  new\client\src\pages\ManageData.jsx:574:    useEffect(() => {
+
+
+

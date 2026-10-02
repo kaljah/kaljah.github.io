@@ -1,0 +1,8 @@
+
+The command exited with code 0.
+Output:
+Pending start: 1596
+Factors start: 2262
+Facilities start: 2526
+Production start: 2692
+

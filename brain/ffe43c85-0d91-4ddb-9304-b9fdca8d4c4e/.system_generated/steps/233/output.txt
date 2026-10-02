@@ -1,0 +1,36 @@
+
+The command exited with code 0.
+Output:
+
+> client@0.0.0 test
+> vitest run
+
+
+ RUN  v5.0.1 C:/Users/samsung/Desktop/H2/new/client
+
+ ✓ src/__tests__/importMapping.test.js (6 tests) 20ms
+ ✓ src/__tests__/auditFixes.test.js (2 tests) 65ms
+ ✓ src/__tests__/mathParityAndFormatters.test.js (4 tests) 53ms
+ ✓ src/__tests__/a11yAndErrors.test.jsx (3 tests) 447ms
+   ✓ BUG-107 keyboard and labels (2)
+     ✓ CustomDropdown is a labelled button operable by keyboard 412ms
+ ✓ src/__tests__/UnloadingForm.test.jsx (7 tests) 324ms
+ ✓ src/__tests__/AssociatedGasVentingForm.test.jsx (7 tests) 687ms
+   ✓ AssociatedGasVentingForm & Table 6-8 API Reference Integrity (7)
+     ✓ renders Tier 1 Table 6-8 form with regional basin selector and crude throughput 471ms
+ ✓ src/__tests__/scope3Factors.test.js (7 tests) 10ms
+ ✓ src/__tests__/Scope1FormAssociatedGasVenting.test.jsx (2 tests) 1478ms
+   ✓ Scope1Form Associated Gas Venting Integration (2)
+     ✓ selects Associated Gas Venting, populates Tier 1 data, and submits successfully 938ms
+     ✓ selects Tier 2 GOR Balance, fills engineering parameters, and submits payload 536ms
+
+ Test Files  8 passed (8)
+      Tests  38 passed (38)
+   Start at  18:09:54
+   Duration  8.89s (environment 72%, setup 9%, transform 8%, tests 7%, import 4%, worker 1%)
+
+Environment  jsdom was created 8 times · 33.72s total, 72% of tracked time
+             create it once per worker with pool: 'vmThreads' (keeps per-file isolation) or isolate: false (shares it across files)
+             learn more: https://vitest.dev/guide/improving-performance#test-environments
+
+

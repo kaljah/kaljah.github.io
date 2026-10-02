@@ -1,0 +1,34 @@
+
+The command exited with code 0.
+Output:
+src/pages/Dashboard.css-182-  height: 3px;
+src/pages/Dashboard.css-183-  background: linear-gradient(90deg, var(--accent-color) 0%, #ff8533 50%, transparent 100%);
+src/pages/Dashboard.css-184-}
+src/pages/Dashboard.css-185-
+src/pages/Dashboard.css-186-/* Charts Section */
+src/pages/Dashboard.css:187:.charts-section {
+src/pages/Dashboard.css-188-  display: grid;
+src/pages/Dashboard.css-189-  grid-template-columns: 2fr 1fr;
+src/pages/Dashboard.css-190-  gap: 24px;
+src/pages/Dashboard.css-191-}
+src/pages/Dashboard.css-192-
+src/pages/Dashboard.css-193-@media (max-width: 1024px) {
+src/pages/Dashboard.css:194:  .charts-section {
+src/pages/Dashboard.css-195-    grid-template-columns: 1fr;
+src/pages/Dashboard.css-196-  }
+src/pages/Dashboard.css-197-}
+src/pages/Dashboard.css-198-
+src/pages/Dashboard.css-199-.trend-card-enhanced {
+--
+src/pages/Dashboard.css-1032-   RESPONSIVE DESIGN (TABLET & MOBILE)
+src/pages/Dashboard.css-1033-   ================================================== */
+src/pages/Dashboard.css-1034-
+src/pages/Dashboard.css-1035-/* Tablet (max-width: 1200px) */
+src/pages/Dashboard.css-1036-@media (max-width: 1200px) {
+src/pages/Dashboard.css:1037:  .charts-section,
+src/pages/Dashboard.css-1038-  .main-dashboard-grid,
+src/pages/Dashboard.css-1039-  .bottom-charts-row {
+src/pages/Dashboard.css-1040-    grid-template-columns: 1fr;
+src/pages/Dashboard.css-1041-    gap: 20px;
+src/pages/Dashboard.css-1042-  }
+

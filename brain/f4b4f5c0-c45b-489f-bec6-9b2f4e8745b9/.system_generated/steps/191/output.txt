@@ -1,0 +1,19 @@
+
+The command exited with code 1.
+Output:
+At line:1 char:153
++ ... (password|secret|api_key|token)\s*=\s*['\"][a-zA-Z0-9_\-\.]{5,}['\"]"
++                                                                   ~
+Missing expression after ','.
+At line:1 char:155
++ ... (password|secret|api_key|token)\s*=\s*['\"][a-zA-Z0-9_\-\.]{5,}['\"]"
++                                                                     ~~~~~
+The string is missing the terminator: '.
+At line:1 char:160
++ ... (password|secret|api_key|token)\s*=\s*['\"][a-zA-Z0-9_\-\.]{5,}['\"]"
++                                                                          ~
+Missing ']' after array index expression.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : MissingExpressionAfterToken
+ 
+

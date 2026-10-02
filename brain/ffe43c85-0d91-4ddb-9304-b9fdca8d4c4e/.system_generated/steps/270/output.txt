@@ -1,0 +1,39 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\DashboardEnhanced.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1041,7 +1041,7 @@
+             <div className="stat-item border-left">
+               <div className="stat-label">Net Emissions</div>
+               <div className="stat-value-row">
+-                <div className="stat-value success">
++                <div className="stat-value">
+                   {formatCompactNumber(stats.netEmissions)}
+                 </div>
+                 <span className="stat-unit">tCO₂e</span>
+@@ -1048,6 +1048,6 @@
+               <div className="stat-sublabel">
+                 Less{" "}
+-                <span className="success-text">
++                <span className="text-slate-500 font-medium">
+                   {formatCompactNumber(stats.mitigation)}
+                 </span>{" "}
+                 Mitigation
+@@ -1056,7 +1056,7 @@
+             <div className="stat-item border-left">
+               <div className="stat-label">Total CH4 (Methane)</div>
+               <div className="stat-value-row">
+-                <div className="stat-value warning">
++                <div className="stat-value">
+                   {formatCompactNumber(stats.methaneEmissions)}
+                 </div>
+                 <span className="stat-unit">tCH₄</span>
+@@ -1068,7 +1068,6 @@
+                 <div
+                   className="stat-value"
+                   style={{
+-                    color: !hasProductionData && stats.totalEmissions > 0 ? "#f59e0b" : "#8b5cf6",
+                     fontSize: !hasProductionData && stats.totalEmissions > 0 ? "1.25rem" : undefined,
+                   }}
+                 >
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

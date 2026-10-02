@@ -1,0 +1,58 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\CarbonIntensity.css. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -51,7 +51,7 @@
+   height: 4px;
+   background: linear-gradient(
+     90deg,
+-    var(--accent-color),
++    var(--intensity-accent, #0d9488),
+     var(--accent-secondary),
+     var(--accent-tertiary)
+   );
+@@ -78,7 +78,7 @@
+ 
+ .year-badge {
+   background: rgba(13, 148, 136, 0.1);
+-  color: var(--accent-color);
++  color: var(--intensity-accent, #0d9488);
+   padding: 6px 16px;
+   border-radius: 9999px;
+   font-size: 0.875rem;
+@@ -132,7 +132,7 @@
+ }
+ 
+ .gwp-pill.active {
+-  background: var(--accent-color);
++  background: var(--intensity-accent, #0d9488);
+   color: #ffffff;
+   box-shadow: 0 2px 4px rgba(13, 148, 136, 0.2);
+ }
+@@ -139,6 +139,6 @@
+ .gwp-subtag {
+   font-size: 0.75rem;
+-  color: var(--accent-color);
++  color: var(--intensity-accent, #0d9488);
+   font-weight: 600;
+ }
+ 
+@@ -185,7 +185,7 @@
+ 
+ .kpi-icon.co2 {
+   background: rgba(13, 148, 136, 0.1);
+-  color: var(--accent-color);
++  color: var(--intensity-accent, #0d9488);
+ }
+ .kpi-icon.ch4 {
+   background: rgba(37, 99, 235, 0.1);
+@@ -939,7 +939,7 @@
+ 
+ .cbam-benchmark-badge {
+   background: rgba(13, 148, 136, 0.1);
+-  color: var(--accent-color);
++  color: var(--intensity-accent, #0d9488);
+   padding: 6px 14px;
+   border-radius: 8px;
+   font-size: 0.8125rem;
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,46 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\UncertaintyAssessment.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -285,14 +285,16 @@
+       {/* ── Uncertainty bands (whole inventory) ── */}
+       {data.uncertainty_bands && (
+         <div className="ua-tier-grid">
+-          {[["low", "Low Uncertainty (≤ ±10%)", "tier-3-color"],
+-            ["medium", "Medium Uncertainty (±10% to ±30%)", "tier-2-color"],
+-            ["high", "High Uncertainty (> ±30%)", "tier-1-color"]].map(([band, label, cls]) => (
++          {[
++            ["low", "Low Uncertainty (≤ ±10%)", "ua-uncertainty-low", "ua-uncertainty-low-bg"],
++            ["medium", "Medium Uncertainty (±10% to ±30%)", "ua-uncertainty-med", "ua-uncertainty-med-bg"],
++            ["high", "High Uncertainty (> ±30%)", "ua-uncertainty-high", "ua-uncertainty-high-bg"],
++          ].map(([band, label, textCls, bgCls]) => (
+             <div key={band} className="ua-tier-card">
+               <div className="ua-tier-label">{label}</div>
+-              <div className={`ua-tier-value ${cls}`}>{data.uncertainty_bands[band] ?? 0}%</div>
++              <div className={`ua-tier-value ${textCls}`}>{data.uncertainty_bands[band] ?? 0}%</div>
+               <div className="ua-tier-bar">
+-                <div className={`ua-tier-bar-fill ${cls}`} style={{ width: `${data.uncertainty_bands[band] ?? 0}%` }} />
++                <div className={`ua-tier-bar-fill ${bgCls}`} style={{ width: `${data.uncertainty_bands[band] ?? 0}%` }} />
+               </div>
+             </div>
+           ))}
+@@ -301,15 +301,15 @@
+       {/* ── Legend ── */}
+       <div className="legend-bar">
+         <div className="legend-item">
+-          <div className="legend-dot" style={{ background: "#10b981" }} />
++          <div className="legend-dot" style={{ background: "var(--uncertainty-low, #10b981)" }} />
+           Low Uncertainty (≤ ±10%)
+         </div>
+         <div className="legend-item">
+-          <div className="legend-dot" style={{ background: "#f59e0b" }} />
++          <div className="legend-dot" style={{ background: "var(--uncertainty-med, #f59e0b)" }} />
+           Medium Uncertainty (±10% to ±30%)
+         </div>
+         <div className="legend-item">
+-          <div className="legend-dot" style={{ background: "#ef4444" }} />
++          <div className="legend-dot" style={{ background: "var(--uncertainty-high, #ef4444)" }} />
+           High Uncertainty (&gt; ±30%)
+         </div>
+       </div>
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

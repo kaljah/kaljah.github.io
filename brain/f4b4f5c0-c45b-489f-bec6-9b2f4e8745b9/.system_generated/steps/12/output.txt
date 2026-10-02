@@ -1,0 +1,42 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----         10/2/2026   4:52 PM                .agents                                                              
+d-----         9/14/2026  11:45 PM                .antigravity                                                         
+d-----         9/12/2026   6:06 PM                .benchmarks                                                          
+d-----         10/1/2026   8:40 PM                .claude                                                              
+d-----         9/30/2026   7:29 PM                .codegraph                                                           
+d-----         8/15/2026   9:37 PM                .gemini                                                              
+d-----         9/19/2026   4:04 PM                .github                                                              
+d-----         9/20/2026   6:33 PM                .hypothesis                                                          
+d-----         9/12/2026   6:06 PM                .pytest_cache                                                        
+d-----         9/30/2026   7:29 PM                .rtk                                                                 
+d-----         8/15/2026   9:39 PM                .specify                                                             
+d-----         10/2/2026   3:27 PM                annotations                                                          
+d-----         10/2/2026   4:52 PM                audit                                                                
+d-----         10/2/2026   3:27 PM                bin                                                                  
+d-----         10/2/2026   3:28 PM                brain                                                                
+d-----         10/2/2026   3:28 PM                builtin                                                              
+d-----         9/19/2026   4:04 PM                conversations                                                        
+d-----          8/7/2026   3:21 PM                deck_assets                                                          
+d-----         9/20/2026  11:39 AM                docs                                                                 
+d-----         9/30/2026   7:29 PM                graphify-out                                                         
+d-----         9/19/2026   4:04 PM                knowledge                                                            
+d-----         10/2/2026   3:28 PM                mcp                                                                  
+d-----         9/30/2026   7:29 PM                new                                                                  
+d-----         9/26/2026   4:17 AM                scratch                                                              
+d-----         9/30/2026   7:29 PM                site_assets                                                          
+d-----         8/15/2026  10:01 PM                specs                                                                
+d-----         8/11/2026   4:07 PM                temp_old                                                             
+d-----         9/22/2026   9:27 AM                test_results                                                         
+d-----         9/20/2026   6:23 PM                validation                                                           
+
+
+

@@ -1,0 +1,51 @@
+
+The command exited with code 0.
+Output:
+
+new\server\add_columns.py:17:                        conn.execute(text(f"ALTER TABLE {table} ADD COLUMN {col_name} 
+{col_type}"))
+new\server\add_indexes.py:30:            cursor.execute(q)
+new\server\app.py:80:        cursor.execute("PRAGMA foreign_keys = ON")
+new\server\app.py:81:        cursor.execute("PRAGMA journal_mode = WAL")
+new\server\app.py:82:        cursor.execute("PRAGMA synchronous = NORMAL")
+new\server\app.py:83:        cursor.execute("PRAGMA busy_timeout = 30000")
+new\server\app.py:119:                driver_conn.execute("PRAGMA wal_checkpoint(PASSIVE)")
+new\server\app.py:441:                    conn.execute(text(q))
+new\server\app.py:543:        db.session.execute(text("SELECT 1"))
+new\server\benchmark_db.py:18:    cursor.execute(query)
+new\server\benchmark_db.py:25:    cursor.execute(f"EXPLAIN QUERY PLAN {query}")
+new\server\benchmark_db.py:36:    cursor.execute(query2)
+new\server\benchmark_db.py:42:    cursor.execute(f"EXPLAIN QUERY PLAN {query2}")
+new\server\id_guard.py:23:    connection.execute(text(
+new\server\id_guard.py:26:    connection.execute(text(
+new\server\id_guard.py:32:    return connection.execute(text(
+new\server\migrate_ogmp.py:85:            cur.execute("PRAGMA table_info(facilities)")
+new\server\migrate_ogmp.py:88:                cur.execute(
+new\server\migrate_ogmp.py:92:                cur.execute(
+new\server\migrate_ogmp.py:96:                cur.execute(
+new\server\migrate_ogmp.py:100:                cur.execute(
+new\server\migrate_ogmp.py:105:            cur.execute("PRAGMA table_info(emissions)")
+new\server\migrate_ogmp.py:108:                cur.execute(
+new\server\migrate_ogmp.py:112:                cur.execute(
+new\server\migrate_ogmp.py:116:                cur.execute(
+new\server\migrate_ogmp.py:121:            cur.execute("PRAGMA table_info(ogmp_surveys)")
+new\server\migrate_ogmp.py:124:                cur.execute(
+new\server\migrate_ogmp.py:128:                cur.execute(
+new\server\migrate_ogmp.py:132:                cur.execute(
+new\server\migrate_ogmp.py:136:                cur.execute(
+new\server\migrate_ogmp.py:140:                cur.execute(
+new\server\migrate_ogmp.py:144:                cur.execute(
+new\server\migrate_ogmp.py:148:                cur.execute(
+new\server\migrate_ogmp.py:152:                cur.execute(
+new\server\schema_sync.py:68:            bind.execute(sa.text(f'ALTER TABLE "{table.name}" ADD COLUMN 
+{_column_ddl(bind, column)}'))
+new\server\test_runner.py:28:cur.execute("SELECT id, name FROM facilities")
+new\server\routes\auth.py:1117:    db.session.execute(text("DELETE FROM notifications WHERE user_id = :uid"), {"uid": 
+id})
+new\server\routes\auth.py:1126:                db.session.execute(
+new\server\routes\auth.py:1131:            db.session.execute(
+new\server\routes\dashboard.py:55:                row = conn.execute(
+new\server\routes\dashboard.py:83:                conn.execute(
+
+
+

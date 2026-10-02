@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\pages\Reports.jsx:318:  const handleMasterReportDownload = async (targetFacilityId = null) => {
+new\client\src\pages\Reports.jsx:418:      await handleMasterReportDownload();
+new\client\src\pages\Reports.jsx:595:                onClick={() => handleMasterReportDownload()}
+
+
+

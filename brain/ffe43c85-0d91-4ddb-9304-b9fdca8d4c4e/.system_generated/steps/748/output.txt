@@ -1,0 +1,9 @@
+
+The command exited with code 0.
+Output:
+
+> new\client\src\pages\CarbonIntensity.jsx:560:          <div className="kpi-grid-4">
+  new\client\src\pages\CarbonIntensity.jsx:561:            <div className="kpi-card">
+
+
+

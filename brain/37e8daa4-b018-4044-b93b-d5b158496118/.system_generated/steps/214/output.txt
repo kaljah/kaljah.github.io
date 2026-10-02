@@ -1,0 +1,6 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\e2e\\test_qfull_e2e_ui.spec.js","LineNumber":47,"LineContent":"async function loginUI(page, email = 'a', password = 'a') {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_calc_audit_2026_09_30.py","LineNumber":29,"LineContent":"PASSWORD = \"CalcAudit0930!\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_pipeline_audit_2026_09_30.py","LineNumber":18,"LineContent":"PASSWORD = \"PipelineAudit0930!\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_full_audit_2026_09_30.py","LineNumber":19,"LineContent":"PASSWORD = \"FullAudit0930!\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_satellite.py","LineNumber":64,"LineContent":"            username=\"copernicus_user@domain.com\", password=\"securePassword123\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_satellite.py","LineNumber":86,"LineContent":"            username=\"copernicus_user@domain.com\", password=\"wrong_password\""}

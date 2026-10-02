@@ -1,0 +1,91 @@
+
+The command exited with code 0.
+Output:
+
+> new\client\src\pages\ManageData.jsx:582:    const [facilityForm, setFacilityForm] = useState({
+  new\client\src\pages\ManageData.jsx:583:        name: '', activity: '', division: '', field: '', location: '',
+  new\client\src\pages\ManageData.jsx:584:        boundary_type: '', boundary_detail: '', equity_share_pct: '',
+  new\client\src\pages\ManageData.jsx:585:        segment: '', latitude: '', longitude: ''
+  new\client\src\pages\ManageData.jsx:586:    });
+  new\client\src\pages\ManageData.jsx:587:
+> new\client\src\pages\ManageData.jsx:588:    const [factorForm, setFactorForm] = useState({
+  new\client\src\pages\ManageData.jsx:589:        factor_name: '', parent_fuel: '', unit: 'scf',
+  new\client\src\pages\ManageData.jsx:590:        co2_factor: '', ch4_factor: '', n2o_factor: '',
+  new\client\src\pages\ManageData.jsx:591:        co_factor: '', co2_uncertainty: '', ch4_uncertainty: '', 
+n2o_uncertainty: '',
+  new\client\src\pages\ManageData.jsx:592:        source: '', description: ''
+  new\client\src\pages\ManageData.jsx:593:    });
+> new\client\src\pages\ManageData.jsx:663:        fetchFacilities();
+> new\client\src\pages\ManageData.jsx:664:        fetchCustomFactors();
+  new\client\src\pages\ManageData.jsx:665:        fetchProduction();
+  new\client\src\pages\ManageData.jsx:666:        fetchSources();
+  new\client\src\pages\ManageData.jsx:667:        fetchMitigations();
+  new\client\src\pages\ManageData.jsx:668:        fetchCbamExports();
+  new\client\src\pages\ManageData.jsx:669:        fetchOgmpSurveys();
+> new\client\src\pages\ManageData.jsx:749:    const fetchFacilities = async () => {
+  new\client\src\pages\ManageData.jsx:750:        try {
+  new\client\src\pages\ManageData.jsx:751:            const res = await api.get('/facilities');
+  new\client\src\pages\ManageData.jsx:752:            const data = Array.isArray(res.data) ? res.data : 
+(res.data?.data || []);
+  new\client\src\pages\ManageData.jsx:753:            setFacilities(data);
+  new\client\src\pages\ManageData.jsx:754:            const regions = [...new Set(data.flatMap(f => 
+[f.region_identifier, f.location]).filter(Boolean))].sort();
+> new\client\src\pages\ManageData.jsx:763:    const fetchCustomFactors = async () => {
+  new\client\src\pages\ManageData.jsx:764:        try {
+  new\client\src\pages\ManageData.jsx:765:            const res = await api.get('/custom-factors');
+  new\client\src\pages\ManageData.jsx:766:            const data = Array.isArray(res.data) ? res.data : 
+(res.data?.data || []);
+  new\client\src\pages\ManageData.jsx:767:            setCustomFactors(data);
+  new\client\src\pages\ManageData.jsx:768:        } catch (err) { console.error(err); toast.error(apiError(err, 
+'Failed to load custom factors')); }
+> new\client\src\pages\ManageData.jsx:951:            fetchFacilities();
+  new\client\src\pages\ManageData.jsx:952:        } catch (err) { toast.error(apiError(err, 'Failed to add region')); }
+  new\client\src\pages\ManageData.jsx:953:    };
+  new\client\src\pages\ManageData.jsx:954:
+  new\client\src\pages\ManageData.jsx:955:    const handleSaveFactor = async () => {
+  new\client\src\pages\ManageData.jsx:956:        if (!factorForm.factor_name) return toast.error('Name required');
+> new\client\src\pages\ManageData.jsx:967:            fetchCustomFactors();
+  new\client\src\pages\ManageData.jsx:968:        } catch (err) { toast.error(apiError(err, 'Failed to save factor')); 
+}
+  new\client\src\pages\ManageData.jsx:969:    };
+  new\client\src\pages\ManageData.jsx:970:
+  new\client\src\pages\ManageData.jsx:971:    const handleDeleteFactor = (id) => {
+  new\client\src\pages\ManageData.jsx:972:        requestConfirm({
+> new\client\src\pages\ManageData.jsx:981:                    fetchCustomFactors();
+  new\client\src\pages\ManageData.jsx:982:                } catch (err) { toast.error(apiError(err, 'Failed to delete 
+factor')); }
+  new\client\src\pages\ManageData.jsx:983:            }
+  new\client\src\pages\ManageData.jsx:984:        });
+  new\client\src\pages\ManageData.jsx:985:    };
+  new\client\src\pages\ManageData.jsx:986:
+> new\client\src\pages\ManageData.jsx:992:            fetchCustomFactors();
+  new\client\src\pages\ManageData.jsx:993:        } catch (err) { toast.error(apiError(err, 'Failed to archive 
+factor')); }
+  new\client\src\pages\ManageData.jsx:994:    };
+  new\client\src\pages\ManageData.jsx:995:
+  new\client\src\pages\ManageData.jsx:996:    const handleEditFactor = (factor) => {
+  new\client\src\pages\ManageData.jsx:997:        setFactorForm({
+> new\client\src\pages\ManageData.jsx:1173:                    fetchFacilities();
+  new\client\src\pages\ManageData.jsx:1174:                } catch (err) {
+  new\client\src\pages\ManageData.jsx:1175:                    toast.error(err?.response?.data?.error || 'Failed to 
+delete region');
+  new\client\src\pages\ManageData.jsx:1176:                }
+  new\client\src\pages\ManageData.jsx:1177:            }
+  new\client\src\pages\ManageData.jsx:1178:        });
+> new\client\src\pages\ManageData.jsx:4176:                        if (importModal.type === 'custom_factors') 
+fetchCustomFactors();
+  new\client\src\pages\ManageData.jsx:4177:                        if (importModal.type === 'production') 
+fetchProduction();
+  new\client\src\pages\ManageData.jsx:4178:                        if (importModal.type === 'mitigation') 
+fetchMitigations();
+> new\client\src\pages\ManageData.jsx:4179:                        if (importModal.type === 'facilities') 
+fetchFacilities();
+  new\client\src\pages\ManageData.jsx:4180:                        if (importModal.type === 'activity') {
+  new\client\src\pages\ManageData.jsx:4181:                            fetchProduction();
+  new\client\src\pages\ManageData.jsx:4182:                            toast.success('Activity data imported and 
+emissions calculated!');
+  new\client\src\pages\ManageData.jsx:4183:                        }
+  new\client\src\pages\ManageData.jsx:4184:                    }}
+
+
+

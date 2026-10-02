@@ -1,0 +1,44 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\ui\DataTable.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -36,6 +36,11 @@
+   emptyMessage = "No data available in table",
+   rightSlot,
+   className = "",
++  manualPagination = false,
++  pageCount,
++  totalEntries,
++  pagination: controlledPagination,
++  onPaginationChange: setControlledPagination,
+ }) => {
+   const [sorting, setSorting] = useState([]);
+   const [globalFilter, setGlobalFilter] = useState("");
+@@ -42,4 +42,11 @@
+   const [expanded, setExpanded] = useState({});
++  const [internalPagination, setInternalPagination] = useState({
++    pageIndex: 0,
++    pageSize,
++  });
++
++  const pagination = controlledPagination !== undefined ? controlledPagination : internalPagination;
++  const onPaginationChange = setControlledPagination !== undefined ? setControlledPagination : setInternalPagination;
+ 
+   const table = useReactTable({
+     data,
+@@ -47,6 +47,7 @@
+       sorting,
+       globalFilter,
+       expanded,
++      ...(manualPagination ? { pagination } : {}),
+     },
+     onSortingChange: setSorting,
+     onGlobalFilterChange: setGlobalFilter,
+@@ -53,3 +53,6 @@
++    manualPagination,
++    pageCount: manualPagination ? pageCount : undefined,
++    onPaginationChange: manualPagination ? onPaginationChange : undefined,
+     getCoreRowModel: getCoreRowModel(),
+     getSortedRowModel: getSortedRowModel(),
+     getFilteredRowModel: getFilteredRowModel(),
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

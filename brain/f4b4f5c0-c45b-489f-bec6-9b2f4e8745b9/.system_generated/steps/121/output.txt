@@ -1,0 +1,14 @@
+
+The command exited with code 0.
+Output:
+
+new\server\routes\scope3.py:36:@scope3_bp.route("", methods=["GET"])
+new\server\routes\scope3.py:102:@scope3_bp.route("", methods=["POST"])
+new\server\routes\scope3.py:249:@scope3_bp.route("/<int:emission_id>", methods=["PUT"])
+new\server\routes\scope3.py:344:@scope3_bp.route("/<int:emission_id>", methods=["DELETE"])
+new\server\routes\scope3.py:394:@scope3_bp.route("/bulk-import", methods=["POST"])
+new\server\routes\scope3.py:516:@scope3_bp.route("/eeio-calculate", methods=["POST"])
+new\server\routes\scope3.py:554:@scope3_bp.route("/eeio-factors", methods=["GET"])
+
+
+

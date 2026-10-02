@@ -1,0 +1,7 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\api.js","LineNumber":14,"LineContent":"export const fetchCsrfToken = async () =\u003e {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\api.js","LineNumber":56,"LineContent":"        const freshToken = await fetchCsrfToken();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":3,"LineContent":"import { fetchCsrfToken } from \"./api\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":223,"LineContent":"    fetchCsrfToken();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\context\\AuthContext.jsx","LineNumber":2,"LineContent":"import api, { fetchCsrfToken } from \"../api\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\context\\AuthContext.jsx","LineNumber":108,"LineContent":"      await fetchCsrfToken();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\context\\AuthContext.jsx","LineNumber":223,"LineContent":"    await fetchCsrfToken();"}

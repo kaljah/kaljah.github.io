@@ -1,0 +1,122 @@
+
+The command exited with code 0.
+Output:
+src/pages/MethaneIntensity.jsx-1-import React, { useState, useEffect, useMemo, useRef } from "react";
+src/pages/MethaneIntensity.jsx-2-import { useAuth } from "../context/AuthContext";
+src/pages/MethaneIntensity.jsx-3-import api from "../api";
+src/pages/MethaneIntensity.jsx-4-import { useToast } from "../components/Toast";
+src/pages/MethaneIntensity.jsx-5-import LoadingSpinner from "../components/LoadingSpinner";
+src/pages/MethaneIntensity.jsx:6:import { BarChart, LineChart } from "../components/charts";
+src/pages/MethaneIntensity.jsx-7-import { useLayout } from "../context/LayoutContext";
+src/pages/MethaneIntensity.jsx-8-import CustomDropdown from "../components/CustomDropdown";
+src/pages/MethaneIntensity.jsx-9-import { formatNumber } from "../utils/formatters";
+src/pages/MethaneIntensity.jsx-10-import { getUserOperationalDefaults } from "../utils/userDefaults";
+src/pages/MethaneIntensity.jsx-11-import { CH4_DENSITY_KG_M3 } from "../constants";
+src/pages/MethaneIntensity.jsx-12-import {
+src/pages/MethaneIntensity.jsx-13-  Wind,
+src/pages/MethaneIntensity.jsx-14-  Flame,
+src/pages/MethaneIntensity.jsx-15-  Activity,
+src/pages/MethaneIntensity.jsx:16:  BarChart2,
+src/pages/MethaneIntensity.jsx-17-  Grid,
+src/pages/MethaneIntensity.jsx-18-  Layers,
+src/pages/MethaneIntensity.jsx-19-  ShieldCheck,
+src/pages/MethaneIntensity.jsx-20-  AlertTriangle,
+src/pages/MethaneIntensity.jsx-21-  CheckCircle,
+--
+src/pages/MethaneIntensity.jsx-609-    facilities,
+src/pages/MethaneIntensity.jsx-610-    exporting,
+src/pages/MethaneIntensity.jsx-611-  ]);
+src/pages/MethaneIntensity.jsx-612-
+src/pages/MethaneIntensity.jsx-613-  // Trend chart data
+src/pages/MethaneIntensity.jsx:614:  const trendChartData = useMemo(() => {
+src/pages/MethaneIntensity.jsx-615-    return rawTrendData.map((item) => {
+src/pages/MethaneIntensity.jsx-616-      let yearData = item.data;
+src/pages/MethaneIntensity.jsx-617-      if (currentRegion !== "all") {
+src/pages/MethaneIntensity.jsx-618-        yearData = yearData.filter(
+src/pages/MethaneIntensity.jsx-619-          (d) => d.facility_id.toString() === currentRegion,
+--
+src/pages/MethaneIntensity.jsx-1399-              </div>
+src/pages/MethaneIntensity.jsx-1400-            )}
+src/pages/MethaneIntensity.jsx-1401-          </div>
+src/pages/MethaneIntensity.jsx-1402-        </div>
+src/pages/MethaneIntensity.jsx-1403-
+src/pages/MethaneIntensity.jsx:1404:        {/* Regional Bar Charts */}
+src/pages/MethaneIntensity.jsx-1405-        <div className="chart-grid">
+src/pages/MethaneIntensity.jsx-1406-          <div className="card">
+src/pages/MethaneIntensity.jsx-1407-            <div className="chart-header">
+src/pages/MethaneIntensity.jsx-1408-              <div className="chart-title-wrapper">
+src/pages/MethaneIntensity.jsx-1409-                <h3>Methane Loss Rate by Facility (% of Gas Produced)</h3>
+--
+src/pages/MethaneIntensity.jsx-1412-                  style={{ background: "#2563eb" }}
+src/pages/MethaneIntensity.jsx-1413-                ></div>
+src/pages/MethaneIntensity.jsx-1414-              </div>
+src/pages/MethaneIntensity.jsx-1415-            </div>
+src/pages/MethaneIntensity.jsx-1416-            <div style={{ height: "300px" }}>
+src/pages/MethaneIntensity.jsx:1417:              <BarChart
+src/pages/MethaneIntensity.jsx-1418-                data={regionalData
+src/pages/MethaneIntensity.jsx-1419-                  .filter((d) => d.methane_loss_rate_pct != null) /* BUG-088: no gas production = no rate */
+src/pages/MethaneIntensity.jsx-1420-                  .map((d) => ({
+src/pages/MethaneIntensity.jsx-1421-                    name: d.facility_name,
+src/pages/MethaneIntensity.jsx-1422-                    value: d.methane_loss_rate_pct,
+--
+src/pages/MethaneIntensity.jsx-1437-                  style={{ background: "#0d9488" }}
+src/pages/MethaneIntensity.jsx-1438-                ></div>
+src/pages/MethaneIntensity.jsx-1439-              </div>
+src/pages/MethaneIntensity.jsx-1440-            </div>
+src/pages/MethaneIntensity.jsx-1441-            <div style={{ height: "300px" }}>
+src/pages/MethaneIntensity.jsx:1442:              <BarChart
+src/pages/MethaneIntensity.jsx-1443-                data={regionalData.map((d) => ({
+src/pages/MethaneIntensity.jsx-1444-                  name: d.facility_name,
+src/pages/MethaneIntensity.jsx-1445-                  value: d.ch4_intensity || 0,
+src/pages/MethaneIntensity.jsx-1446-                }))}
+src/pages/MethaneIntensity.jsx-1447-                dataKey="value"
+--
+src/pages/MethaneIntensity.jsx-1460-                  style={{ background: "#3b82f6" }}
+src/pages/MethaneIntensity.jsx-1461-                ></div>
+src/pages/MethaneIntensity.jsx-1462-              </div>
+src/pages/MethaneIntensity.jsx-1463-            </div>
+src/pages/MethaneIntensity.jsx-1464-            <div style={{ height: "300px" }}>
+src/pages/MethaneIntensity.jsx:1465:              <BarChart
+src/pages/MethaneIntensity.jsx-1466-                data={regionalData.map((d) => ({
+src/pages/MethaneIntensity.jsx-1467-                  name: d.facility_name,
+src/pages/MethaneIntensity.jsx-1468-                  value: d.total_ch4 || 0,
+src/pages/MethaneIntensity.jsx-1469-                }))}
+src/pages/MethaneIntensity.jsx-1470-                dataKey="value"
+--
+src/pages/MethaneIntensity.jsx-1483-                  style={{ background: "#ea580c" }}
+src/pages/MethaneIntensity.jsx-1484-                ></div>
+src/pages/MethaneIntensity.jsx-1485-              </div>
+src/pages/MethaneIntensity.jsx-1486-            </div>
+src/pages/MethaneIntensity.jsx-1487-            <div style={{ height: "300px" }}>
+src/pages/MethaneIntensity.jsx:1488:              <BarChart
+src/pages/MethaneIntensity.jsx-1489-                data={regionalData.map((d) => ({
+src/pages/MethaneIntensity.jsx-1490-                  name: d.facility_name,
+src/pages/MethaneIntensity.jsx-1491-                  value: d.flaring_volume || 0,
+src/pages/MethaneIntensity.jsx-1492-                }))}
+src/pages/MethaneIntensity.jsx-1493-                dataKey="value"
+--
+src/pages/MethaneIntensity.jsx-1519-              <div className="view-toggle">
+src/pages/MethaneIntensity.jsx-1520-                <button
+src/pages/MethaneIntensity.jsx-1521-                  className={`view-btn ${trendView === "chart" ? "active" : ""}`}
+src/pages/MethaneIntensity.jsx-1522-                  onClick={() => setTrendView("chart")}
+src/pages/MethaneIntensity.jsx-1523-                >
+src/pages/MethaneIntensity.jsx:1524:                  <BarChart2 size={16} /> Chart
+src/pages/MethaneIntensity.jsx-1525-                </button>
+src/pages/MethaneIntensity.jsx-1526-                <button
+src/pages/MethaneIntensity.jsx-1527-                  className={`view-btn ${trendView === "heatmap" ? "active" : ""}`}
+src/pages/MethaneIntensity.jsx-1528-                  onClick={() => setTrendView("heatmap")}
+src/pages/MethaneIntensity.jsx-1529-                >
+--
+src/pages/MethaneIntensity.jsx-1533-            </div>
+src/pages/MethaneIntensity.jsx-1534-          </div>
+src/pages/MethaneIntensity.jsx-1535-
+src/pages/MethaneIntensity.jsx-1536-          {trendView === "chart" ? (
+src/pages/MethaneIntensity.jsx-1537-            <div style={{ height: "350px" }}>
+src/pages/MethaneIntensity.jsx:1538:              <LineChart
+src/pages/MethaneIntensity.jsx:1539:                data={trendChartData}
+src/pages/MethaneIntensity.jsx-1540-                xKey="year"
+src/pages/MethaneIntensity.jsx-1541-                series={[
+src/pages/MethaneIntensity.jsx-1542-                  {
+src/pages/MethaneIntensity.jsx-1543-                    key: "loss_rate_pct",
+src/pages/MethaneIntensity.jsx-1544-                    color: "#2563eb",
+

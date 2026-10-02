@@ -1,0 +1,21 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\src\__tests__
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/30/2026   7:29 PM           2221 a11yAndErrors.test.jsx                                               
+-a----         9/30/2026   7:29 PM           8342 AssociatedGasVentingForm.test.jsx                                    
+-a----         9/30/2026   7:29 PM           1107 auditFixes.test.js                                                   
+-a----         9/30/2026   7:29 PM           3296 importMapping.test.js                                                
+-a----         9/30/2026   7:29 PM           2008 mathParityAndFormatters.test.js                                      
+-a----         9/30/2026   7:29 PM           6015 Scope1FormAssociatedGasVenting.test.jsx                              
+-a----         9/30/2026   7:29 PM           3234 scope3Factors.test.js                                                
+-a----         9/30/2026   7:29 PM           6772 UnloadingForm.test.jsx                                               
+
+
+

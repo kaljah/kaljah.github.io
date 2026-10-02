@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.css","LineNumber":100,"LineContent":"  font-family: monospace;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\CalculationDetails.css","LineNumber":264,"LineContent":"  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\CalculationDetails.css","LineNumber":323,"LineContent":"  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\CalculationDetails.css","LineNumber":371,"LineContent":"  font-family: ui-monospace, monospace;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\index.css","LineNumber":38,"LineContent":"  font-family: \"Outfit\", Inter, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\index.css","LineNumber":221,"LineContent":"  font-family: inherit;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\index.css","LineNumber":270,"LineContent":"  font-family: inherit;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\AuditTrail.css","LineNumber":630,"LineContent":"  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\AuditTrail.css","LineNumber":692,"LineContent":"  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.css","LineNumber":24,"LineContent":"  font-family:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.css","LineNumber":225,"LineContent":"  font-family: \"Inter\", sans-serif;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.css","LineNumber":311,"LineContent":"  font-family: \"Inter\", sans-serif;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.css","LineNumber":550,"LineContent":"  font-family: monospace;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\CustomDropdown.css","LineNumber":19,"LineContent":"  font-family: inherit;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Dashboard.css","LineNumber":911,"LineContent":"  font-family: inherit;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Login.css","LineNumber":18,"LineContent":"  font-family: \"Inter\", sans-serif;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.css","LineNumber":88,"LineContent":"  font-family: inherit;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.css","LineNumber":115,"LineContent":"  font-family: inherit;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.css","LineNumber":170,"LineContent":"  font-family: inherit;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.css","LineNumber":12,"LineContent":"  font-family: \"Outfit\", Inter, system-ui, -apple-system, sans-serif;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.css","LineNumber":1131,"LineContent":"  font-family: monospace;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.css","LineNumber":1509,"LineContent":"  font-family: monospace;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.css","LineNumber":1558,"LineContent":"  font-family: \"Outfit\", Inter, system-ui, sans-serif !important;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\FormField.css","LineNumber":32,"LineContent":"  font-family: inherit;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\FormField.css","LineNumber":64,"LineContent":"  font-family: inherit;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\LoadingSpinner.css","LineNumber":95,"LineContent":"  font-family: \"Inter\", system-ui, sans-serif;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\LoadingSpinner.css","LineNumber":213,"LineContent":"  font-family: var(--font-family, \"Outfit\", sans-serif);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1ImportWizard.css","LineNumber":128,"LineContent":"  font-family: \"Outfit\", Inter, system-ui, sans-serif;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1ImportWizard.css","LineNumber":629,"LineContent":"  font-family: inherit;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1ImportWizard.css","LineNumber":663,"LineContent":"  font-family: inherit;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1ImportWizard.css","LineNumber":773,"LineContent":"  font-family: inherit;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1ImportWizard.css","LineNumber":817,"LineContent":"  font-family: inherit;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1ImportWizard.css","LineNumber":836,"LineContent":"  font-family: inherit;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\Sidebar.css","LineNumber":375,"LineContent":"  font-family: \"Outfit\", sans-serif;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Emissions.css","LineNumber":415,"LineContent":"  font-family: inherit;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Emissions.css","LineNumber":551,"LineContent":"  font-family: inherit;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Emissions.css","LineNumber":636,"LineContent":"  font-family: inherit;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\UploadProgress.css","LineNumber":6,"LineContent":"  font-family: inherit;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\UploadProgress.css","LineNumber":320,"LineContent":"  font-family: monospace;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\UploadProgress.css","LineNumber":326,"LineContent":"  font-family: monospace;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\UploadProgress.css","LineNumber":333,"LineContent":"  font-family: monospace;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\UploadProgress.css","LineNumber":428,"LineContent":"  font-family: inherit;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\UploadProgress.css","LineNumber":483,"LineContent":"  font-family: monospace;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Reports.css","LineNumber":159,"LineContent":"  font-family: inherit;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Reports.css","LineNumber":209,"LineContent":"  font-family: inherit;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\QADashboard.css","LineNumber":13,"LineContent":"  font-family: \"Outfit\", Inter, system-ui, sans-serif;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\QADashboard.css","LineNumber":847,"LineContent":"  font-family: \"Courier New\", monospace;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.css","LineNumber":13,"LineContent":"  font-family:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.css","LineNumber":684,"LineContent":"  font-family: inherit;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.css","LineNumber":694,"LineContent":"  font-family: inherit;"}
+(...1 more results not shown)

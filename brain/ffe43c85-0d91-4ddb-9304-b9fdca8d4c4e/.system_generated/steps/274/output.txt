@@ -1,0 +1,213 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\DashboardEnhanced.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1162,97 +1162,116 @@
+                     {flaringData.yoy_change_pct > 0 ? `+${flaringData.yoy_change_pct}% YoY` : `${flaringData.yoy_change_pct}% YoY`}
+                   </span>
+                 )}
+-              </div>
+-            </div>
+-
+-            <div className="flaring-streams-grid">
+-              <div className="flaring-stream-item total-stream">
+-                <div className="stream-label">Total Flared Volume</div>
+-                <div className="stream-value">
+-                  {formatNumber(flaringData.total_flaring?.volume_knm3 ?? 0, 0)}
+-                  <span className="stream-unit" title="thousand standard m³ (15.6 °C / 60 °F, 1 atm)">kSm³</span>
+-                </div>
+-                <div className="stream-sublabel">
+-                  <strong>{formatCompactNumber(flaringData.total_flaring?.tco2e ?? 0)}</strong> tCO₂e • 100% Stream
+-                </div>
+-              </div>
+-
+-              <div className="flaring-stream-item routine-stream">
+-                <div className="stream-label">Routine Flaring</div>
+-                <div className="stream-value">
+-                  {formatNumber(flaringData.routine_flaring?.volume_knm3 ?? 0, 0)}
+-                  <span className="stream-unit" title="thousand standard m³ (15.6 °C / 60 °F, 1 atm)">kSm³</span>
+-                </div>
+-                <div className="stream-sublabel">
+-                  <strong>{flaringData.routine_flaring?.percentage ?? 0}%</strong> of total • {formatCompactNumber(flaringData.routine_flaring?.tco2e ?? 0)} tCO₂e
+-                </div>
+-              </div>
+-
+-              <div className="flaring-stream-item non-routine-stream">
+-                <div className="stream-label">Non-Routine Flaring</div>
+-                <div className="stream-value">
+-                  {formatNumber(flaringData.non_routine_flaring?.volume_knm3 ?? 0, 0)}
+-                  <span className="stream-unit" title="thousand standard m³ (15.6 °C / 60 °F, 1 atm)">kSm³</span>
+-                </div>
+-                <div className="stream-sublabel">
+-                  <strong>{flaringData.non_routine_flaring?.percentage ?? 0}%</strong> of total • {formatCompactNumber(flaringData.non_routine_flaring?.tco2e ?? 0)} tCO₂e
+-                </div>
+-              </div>
+-
+-              <div className="flaring-stream-item safety-stream">
+-                <div className="stream-label">Safety &amp; Purge Flaring</div>
+-                <div className="stream-value">
+-                  {formatNumber(flaringData.safety_flaring?.volume_knm3 ?? 0, 0)}
+-                  <span className="stream-unit" title="thousand standard m³ (15.6 °C / 60 °F, 1 atm)">kSm³</span>
+-                </div>
+-                <div className="stream-sublabel">
+-                  <strong>{flaringData.safety_flaring?.percentage ?? 0}%</strong> of total • {formatCompactNumber(flaringData.safety_flaring?.tco2e ?? 0)} tCO₂e
+-                </div>
+-              </div>
+-
+-              {flaringData.unclassified_flaring?.volume_knm3 > 0 && (
+-                <div className="flaring-stream-item">
+-                  <div className="stream-label">Unclassified Flaring</div>
+-                  <div className="stream-value">
+-                    {formatNumber(flaringData.unclassified_flaring.volume_knm3, 0)}
+-                    <span className="stream-unit" title="thousand standard m³ (15.6 °C / 60 °F, 1 atm)">kSm³</span>
+-                  </div>
+-                  <div className="stream-sublabel">
+-                    <strong>{flaringData.unclassified_flaring.percentage}%</strong> of total • {formatCompactNumber(flaringData.unclassified_flaring.tco2e)} tCO₂e • stream not recorded
+-                  </div>
+-                </div>
+-              )}
+-            </div>
+-
+-            {flaringData.gas_production_m3 > 0 && flaringData.flaring_intensity_pct != null && (
+-              <div className="flaring-intensity-bar-card">
+-                <div className="flaring-intensity-meta">
+-                  <span>
+-                    <strong>Decree 21-330 Flaring Intensity:</strong>{" "}
+-                    <span style={{ color: flaringData.is_compliant ? "#15803d" : "#b91c1c", fontWeight: 700 }}>
+-                      {flaringData.flaring_intensity_pct}%
+-                    </span>{" "}
+-                    of Gross Gas Produced ({formatCompactNumber(flaringData.gas_production_m3 / 1e6, 2)} MMSm³)
+-                  </span>
+-                  <span style={{ fontSize: "0.78rem", color: "#64748b" }}>
+-                    Statutory Limit: <strong>1.00%</strong> (Executive Decree 21-330 Art. 9)
+-                  </span>
+-                </div>
+-                <div className="flaring-progress-track">
+-                  <div
+-                    className="flaring-progress-fill"
+-                    style={{
+-                      width: `${Math.min(100, (flaringData.flaring_intensity_pct / 1.00) * 100)}%`,
+-                      backgroundColor: flaringData.is_compliant ? "#10b981" : "#ef4444",
+-                    }}
+-                  />
+-                  <div
+-                    className="flaring-progress-marker"
+-                    style={{ left: "100%" }}
+-                    title="1.00% Statutory Ceiling"
+-                  />
+-                </div>
+-              </div>
++
++                <button
++                  type="button"
++                  onClick={() => setIsFlaringExpanded((prev) => !prev)}
++                  className="p-1 rounded-md text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors ml-1"
++                  title={isFlaringExpanded ? "Collapse flaring details" : "Expand flaring details"}
++                  aria-expanded={isFlaringExpanded}
++                >
++                  <ChevronDown
++                    size={16}
++                    className={`transition-transform duration-200 ${
++                      isFlaringExpanded ? "rotate-180" : ""
++                    }`}
++                  />
++                </button>
++              </div>
++            </div>
++
++            {isFlaringExpanded && (
++              <>
++                <div className="flaring-streams-grid">
++                  <div className="flaring-stream-item total-stream">
++                    <div className="stream-label">Total Flared Volume</div>
++                    <div className="stream-value">
++                      {formatNumber(flaringData.total_flaring?.volume_knm3 ?? 0, 0)}
++                      <span className="stream-unit" title="thousand standard m³ (15.6 °C / 60 °F, 1 atm)">kSm³</span>
++                    </div>
++                    <div className="stream-sublabel">
++                      <strong>{formatCompactNumber(flaringData.total_flaring?.tco2e ?? 0)}</strong> tCO₂e • 100% Stream
++                    </div>
++                  </div>
++
++                  <div className="flaring-stream-item routine-stream">
++                    <div className="stream-label">Routine Flaring</div>
++                    <div className="stream-value">
++                      {formatNumber(flaringData.routine_flaring?.volume_knm3 ?? 0, 0)}
++                      <span className="stream-unit" title="thousand standard m³ (15.6 °C / 60 °F, 1 atm)">kSm³</span>
++                    </div>
++                    <div className="stream-sublabel">
++                      <strong>{flaringData.routine_flaring?.percentage ?? 0}%</strong> of total • {formatCompactNumber(flaringData.routine_flaring?.tco2e ?? 0)} tCO₂e
++                    </div>
++                  </div>
++
++                  <div className="flaring-stream-item non-routine-stream">
++                    <div className="stream-label">Non-Routine Flaring</div>
++                    <div className="stream-value">
++                      {formatNumber(flaringData.non_routine_flaring?.volume_knm3 ?? 0, 0)}
++                      <span className="stream-unit" title="thousand standard m³ (15.6 °C / 60 °F, 1 atm)">kSm³</span>
++                    </div>
++                    <div className="stream-sublabel">
++                      <strong>{flaringData.non_routine_flaring?.percentage ?? 0}%</strong> of total • {formatCompactNumber(flaringData.non_routine_flaring?.tco2e ?? 0)} tCO₂e
++                    </div>
++                  </div>
++
++                  <div className="flaring-stream-item safety-stream">
++                    <div className="stream-label">Safety &amp; Purge Flaring</div>
++                    <div className="stream-value">
++                      {formatNumber(flaringData.safety_flaring?.volume_knm3 ?? 0, 0)}
++                      <span className="stream-unit" title="thousand standard m³ (15.6 °C / 60 °F, 1 atm)">kSm³</span>
++                    </div>
++                    <div className="stream-sublabel">
++                      <strong>{flaringData.safety_flaring?.percentage ?? 0}%</strong> of total • {formatCompactNumber(flaringData.safety_flaring?.tco2e ?? 0)} tCO₂e
++                    </div>
++                  </div>
++
++                  {flaringData.unclassified_flaring?.volume_knm3 > 0 && (
++                    <div className="flaring-stream-item">
++                      <div className="stream-label">Unclassified Flaring</div>
++                      <div className="stream-value">
++                        {formatNumber(flaringData.unclassified_flaring.volume_knm3, 0)}
++                        <span className="stream-unit" title="thousand standard m³ (15.6 °C / 60 °F, 1 atm)">kSm³</span>
++                      </div>
++                      <div className="stream-sublabel">
++                        <strong>{flaringData.unclassified_flaring.percentage}%</strong> of total • {formatCompactNumber(flaringData.unclassified_flaring.tco2e)} tCO₂e • stream not recorded
++                      </div>
++                    </div>
++                  )}
++                </div>
++
++                {flaringData.gas_production_m3 > 0 && flaringData.flaring_intensity_pct != null && (
++                  <div className="flaring-intensity-bar-card">
++                    <div className="flaring-intensity-meta">
++                      <span>
++                        <strong>Decree 21-330 Flaring Intensity:</strong>{" "}
++                        <span style={{ color: flaringData.is_compliant ? "#15803d" : "#b91c1c", fontWeight: 700 }}>
++                          {flaringData.flaring_intensity_pct}%
++                        </span>{" "}
++                        of Gross Gas Produced ({formatCompactNumber(flaringData.gas_production_m3 / 1e6, 2)} MMSm³)
++                      </span>
++                      <span style={{ fontSize: "0.78rem", color: "#64748b" }}>
++                        Statutory Limit: <strong>1.00%</strong> (Executive Decree 21-330 Art. 9)
++                      </span>
++                    </div>
++                    <div className="flaring-progress-track">
++                      <div
++                        className="flaring-progress-fill"
++                        style={{
++                          width: `${Math.min(100, (flaringData.flaring_intensity_pct / 1.00) * 100)}%`,
++                          backgroundColor: flaringData.is_compliant ? "#10b981" : "#ef4444",
++                        }}
++                      />
++                      <div
++                        className="flaring-progress-marker"
++                        style={{ left: "100%" }}
++                        title="1.00% Statutory Ceiling"
++                      />
++                    </div>
++                  </div>
++                )}
++              </>
+             )}
+           </div>
+         )}
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

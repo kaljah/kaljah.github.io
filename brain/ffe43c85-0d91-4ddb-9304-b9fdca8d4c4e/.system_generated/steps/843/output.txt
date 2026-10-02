@@ -1,0 +1,51 @@
+
+The command exited with code 0.
+Output:
+src/pages/SbtiDashboard.jsx-1-import React, { useState, useEffect, useMemo, useRef } from "react";
+src/pages/SbtiDashboard.jsx-2-import { useAuth } from "../context/AuthContext";
+src/pages/SbtiDashboard.jsx-3-import api from "../api";
+src/pages/SbtiDashboard.jsx-4-import { useToast } from "../components/Toast";
+src/pages/SbtiDashboard.jsx-5-import LoadingSpinner from "../components/LoadingSpinner";
+src/pages/SbtiDashboard.jsx:6:import { LineChart, BarChart } from "../components/charts";
+src/pages/SbtiDashboard.jsx-7-import { formatNumber } from "../utils/formatters";
+src/pages/SbtiDashboard.jsx-8-import {
+src/pages/SbtiDashboard.jsx-9-  Target,
+src/pages/SbtiDashboard.jsx-10-  TrendingDown,
+src/pages/SbtiDashboard.jsx-11-  Activity,
+--
+src/pages/SbtiDashboard.jsx-533-              : "Linear Rate: 4.2% per year"}
+src/pages/SbtiDashboard.jsx-534-          </div>
+src/pages/SbtiDashboard.jsx-535-        </div>
+src/pages/SbtiDashboard.jsx-536-      </div>
+src/pages/SbtiDashboard.jsx-537-
+src/pages/SbtiDashboard.jsx:538:      {/* Main Trajectory Charts Grid */}
+src/pages/SbtiDashboard.jsx-539-      <div className="sbti-charts-grid">
+src/pages/SbtiDashboard.jsx-540-        <div className="sbti-card">
+src/pages/SbtiDashboard.jsx-541-          <div className="sbti-card-header">
+src/pages/SbtiDashboard.jsx-542-            <div>
+src/pages/SbtiDashboard.jsx-543-              <h3 className="sbti-card-title">{sbtiData?.pathway_label || "Decarbonization Pathway"}</h3>
+--
+src/pages/SbtiDashboard.jsx-547-            </div>
+src/pages/SbtiDashboard.jsx-548-          </div>
+src/pages/SbtiDashboard.jsx-549-
+src/pages/SbtiDashboard.jsx-550-          <div style={{ height: "360px", width: "100%" }}>
+src/pages/SbtiDashboard.jsx-551-            {sbtiData?.trajectory && sbtiData.trajectory.length > 0 ? (
+src/pages/SbtiDashboard.jsx:552:              <LineChart
+src/pages/SbtiDashboard.jsx-553-                data={sbtiData.trajectory}
+src/pages/SbtiDashboard.jsx-554-                xAxisKey="year"
+src/pages/SbtiDashboard.jsx-555-                lines={trajectoryLines}
+src/pages/SbtiDashboard.jsx-556-                height={350}
+src/pages/SbtiDashboard.jsx-557-              />
+--
+src/pages/SbtiDashboard.jsx-573-            </div>
+src/pages/SbtiDashboard.jsx-574-          </div>
+src/pages/SbtiDashboard.jsx-575-
+src/pages/SbtiDashboard.jsx-576-          <div style={{ height: "360px", width: "100%" }}>
+src/pages/SbtiDashboard.jsx-577-            {sbtiData?.trajectory && sbtiData.trajectory.length > 0 ? (
+src/pages/SbtiDashboard.jsx:578:              <BarChart
+src/pages/SbtiDashboard.jsx-579-                data={sbtiData.trajectory.filter((t) => t.actual !== null && t.actual !== undefined && t.actual > 0)}
+src/pages/SbtiDashboard.jsx-580-                xAxisKey="year"
+src/pages/SbtiDashboard.jsx-581-                bars={scopeBars}
+src/pages/SbtiDashboard.jsx-582-                height={350}
+src/pages/SbtiDashboard.jsx-583-              />
+

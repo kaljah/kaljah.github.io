@@ -1,0 +1,56 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\Login.css. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1,15 +1,12 @@
+-:root {
+-  --primary: #f97316; /* Orange */
+-  --primary-hover: #ea580c;
+-  --accent: #10b981; /* Slight green */
+-
+-  --bg-page: #f8fafc;
+-  --text-main: #0f172a;
+-  --text-muted: #64748b;
+-  --border-light: #e2e8f0;
+-}
+-
+ .login-body {
++  --primary: var(--accent-color, #ff6600);
++  --primary-hover: var(--accent-hover, #e65c00);
++  --accent: #10b981;
++  --bg-page: var(--bg-body, #f8fafc);
++  --text-main: var(--text-primary, #0f172a);
++  --text-muted: #94a3b8;
++  --border-light: rgba(226, 232, 240, 0.85);
++
+   min-height: 100vh;
+   display: flex;
+   justify-content: center;
+@@ -16,5 +16,5 @@
+   background-color: var(--bg-page);
+-  font-family: "Inter", sans-serif;
++  font-family: "Outfit", Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+   color: var(--text-main);
+   padding: 20px;
+   position: relative;
+@@ -31,7 +31,8 @@
+   border-radius: 50%;
+   background: radial-gradient(
+     circle,
+-    rgba(249, 115, 22, 0.04) 0%,
++    rgba(255, 102, 0, 0.08) 0%,
++    rgba(255, 102, 0, 0.02) 40%,
+     transparent 70%
+   );
+   pointer-events: none;
+@@ -46,7 +46,8 @@
+   border-radius: 50%;
+   background: radial-gradient(
+     circle,
+-    rgba(16, 185, 129, 0.04) 0%,
++    rgba(148, 163, 184, 0.12) 0%,
++    rgba(255, 102, 0, 0.04) 50%,
+     transparent 70%
+   );
+   pointer-events: none;
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

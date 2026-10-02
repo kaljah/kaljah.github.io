@@ -1,0 +1,8 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":11,"LineContent":"@custom_factors_bp.route(\"\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":12,"LineContent":"@custom_factors_bp.route(\"/\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":152,"LineContent":"@custom_factors_bp.route(\"\", methods=[\"POST\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":154,"LineContent":"@custom_factors_bp.route(\"/\", methods=[\"POST\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":241,"LineContent":"@custom_factors_bp.route(\"/\u003cint:factor_id\u003e\", methods=[\"PUT\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":334,"LineContent":"@custom_factors_bp.route(\"/\u003cint:factor_id\u003e\", methods=[\"DELETE\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":379,"LineContent":"@custom_factors_bp.route(\"/\u003cint:factor_id\u003e/archive\", methods=[\"POST\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":403,"LineContent":"@custom_factors_bp.route(\"/import\", methods=[\"POST\"])"}

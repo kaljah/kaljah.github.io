@@ -1,0 +1,99 @@
+
+The command exited with code 0.
+Output:
+<truncated 21 lines>
+new\client\src\pages\DashboardEnhanced.jsx:1131:                  <h3 className="flaring-banner-title">
+new\client\src\pages\DashboardEnhanced.jsx:1132:                    Operational Flaring &amp; Regulatory Compliance
+new\client\src\pages\DashboardEnhanced.jsx:1134:                  <p className="flaring-banner-sub">
+new\client\src\pages\DashboardEnhanced.jsx:1136:                    {flaringData.year === "all" ? "All years" : `Year 
+${flaringData.year}`}  GWP-{flaringData.gwp_horizon || "100"}
+new\client\src\pages\DashboardEnhanced.jsx:1137:                    {flaringData.includes_pending ? "  incl. Pending" 
+: "  Verified only"}
+new\client\src\pages\DashboardEnhanced.jsx:1142:              <div className="flaring-banner-badges">
+new\client\src\pages\DashboardEnhanced.jsx:1144:                  className={`flaring-badge ${flaringData.is_compliant 
+=== true ? "compliant" : flaringData.is_compliant === false ? "non-compliant" : ""}`}
+new\client\src\pages\DashboardEnhanced.jsx:1146:                  {flaringData.is_compliant === true ? (
+new\client\src\pages\DashboardEnhanced.jsx:1151:                  {flaringData.compliance_status}
+new\client\src\pages\DashboardEnhanced.jsx:1154:                <span className="flaring-badge dre">
+new\client\src\pages\DashboardEnhanced.jsx:1155:                  {flaringData.measured_dre_pct != null
+new\client\src\pages\DashboardEnhanced.jsx:1156:                    ? `${flaringData.dre_method}: 
+${flaringData.measured_dre_pct}% DRE`
+new\client\src\pages\DashboardEnhanced.jsx:1157:                    : flaringData.dre_method}
+new\client\src\pages\DashboardEnhanced.jsx:1160:                {flaringData.yoy_change_pct != null && 
+flaringData.yoy_change_pct !== 0 && (
+new\client\src\pages\DashboardEnhanced.jsx:1161:                  <span className="flaring-badge yoy">
+new\client\src\pages\DashboardEnhanced.jsx:1162:                    {flaringData.yoy_change_pct > 0 ? 
+`+${flaringData.yoy_change_pct}% YoY` : `${flaringData.yoy_change_pct}% YoY`}
+new\client\src\pages\DashboardEnhanced.jsx:1168:            <div className="flaring-streams-grid">
+new\client\src\pages\DashboardEnhanced.jsx:1169:              <div className="flaring-stream-item total-stream">
+new\client\src\pages\DashboardEnhanced.jsx:1170:                <div className="stream-label">Total Flared Volume</div>
+new\client\src\pages\DashboardEnhanced.jsx:1172:                  {formatNumber(flaringData.total_flaring?.volume_knm3 
+?? 0, 0)}
+new\client\src\pages\DashboardEnhanced.jsx:1176:                  
+<strong>{formatCompactNumber(flaringData.total_flaring?.tco2e ?? 0)}</strong> tCO�e  100% Stream
+new\client\src\pages\DashboardEnhanced.jsx:1180:              <div className="flaring-stream-item routine-stream">
+new\client\src\pages\DashboardEnhanced.jsx:1181:                <div className="stream-label">Routine Flaring</div>
+new\client\src\pages\DashboardEnhanced.jsx:1183:                  
+{formatNumber(flaringData.routine_flaring?.volume_knm3 ?? 0, 0)}
+new\client\src\pages\DashboardEnhanced.jsx:1187:                  <strong>{flaringData.routine_flaring?.percentage ?? 
+0}%</strong> of total  {formatCompactNumber(flaringData.routine_flaring?.tco2e ?? 0)} tCO�e
+new\client\src\pages\DashboardEnhanced.jsx:1191:              <div className="flaring-stream-item non-routine-stream">
+new\client\src\pages\DashboardEnhanced.jsx:1192:                <div className="stream-label">Non-Routine Flaring</div>
+new\client\src\pages\DashboardEnhanced.jsx:1194:                  
+{formatNumber(flaringData.non_routine_flaring?.volume_knm3 ?? 0, 0)}
+new\client\src\pages\DashboardEnhanced.jsx:1198:                  <strong>{flaringData.non_routine_flaring?.percentage 
+?? 0}%</strong> of total  {formatCompactNumber(flaringData.non_routine_flaring?.tco2e ?? 0)} tCO�e
+new\client\src\pages\DashboardEnhanced.jsx:1202:              <div className="flaring-stream-item safety-stream">
+new\client\src\pages\DashboardEnhanced.jsx:1203:                <div className="stream-label">Safety &amp; Purge 
+Flaring</div>
+new\client\src\pages\DashboardEnhanced.jsx:1205:                  
+{formatNumber(flaringData.safety_flaring?.volume_knm3 ?? 0, 0)}
+new\client\src\pages\DashboardEnhanced.jsx:1209:                  <strong>{flaringData.safety_flaring?.percentage ?? 
+0}%</strong> of total  {formatCompactNumber(flaringData.safety_flaring?.tco2e ?? 0)} tCO�e
+new\client\src\pages\DashboardEnhanced.jsx:1213:              {flaringData.unclassified_flaring?.volume_knm3 > 0 && (
+new\client\src\pages\DashboardEnhanced.jsx:1214:                <div className="flaring-stream-item">
+new\client\src\pages\DashboardEnhanced.jsx:1215:                  <div className="stream-label">Unclassified 
+Flaring</div>
+new\client\src\pages\DashboardEnhanced.jsx:1217:                    
+{formatNumber(flaringData.unclassified_flaring.volume_knm3, 0)}
+new\client\src\pages\DashboardEnhanced.jsx:1221:                    
+<strong>{flaringData.unclassified_flaring.percentage}%</strong> of total  
+{formatCompactNumber(flaringData.unclassified_flaring.tco2e)} tCO�e  stream not recorded
+new\client\src\pages\DashboardEnhanced.jsx:1227:            {flaringData.gas_production_m3 > 0 && 
+flaringData.flaring_intensity_pct != null && (
+new\client\src\pages\DashboardEnhanced.jsx:1228:              <div className="flaring-intensity-bar-card">
+new\client\src\pages\DashboardEnhanced.jsx:1229:                <div className="flaring-intensity-meta">
+new\client\src\pages\DashboardEnhanced.jsx:1231:                    <strong>Decree 21-330 Flaring 
+Intensity:</strong>{" "}
+new\client\src\pages\DashboardEnhanced.jsx:1232:                    <span style={{ color: flaringData.is_compliant ? 
+"#15803d" : "#b91c1c", fontWeight: 700 }}>
+new\client\src\pages\DashboardEnhanced.jsx:1233:                      {flaringData.flaring_intensity_pct}%
+new\client\src\pages\DashboardEnhanced.jsx:1235:                    of Gross Gas Produced 
+({formatCompactNumber(flaringData.gas_production_m3 / 1e6, 2)} MMSm�)
+new\client\src\pages\DashboardEnhanced.jsx:1241:                <div className="flaring-progress-track">
+new\client\src\pages\DashboardEnhanced.jsx:1243:                    className="flaring-progress-fill"
+new\client\src\pages\DashboardEnhanced.jsx:1245:                      width: `${Math.min(100, 
+(flaringData.flaring_intensity_pct / 1.00) * 100)}%`,
+new\client\src\pages\DashboardEnhanced.jsx:1246:                      backgroundColor: flaringData.is_compliant ? 
+"#10b981" : "#ef4444",
+new\client\src\pages\DashboardEnhanced.jsx:1250:                    className="flaring-progress-marker"
+new\client\src\pages\DashboardEnhanced.jsx:1605:                        <td className="indent">Flaring</td>
+new\client\src\pages\DashboardEnhanced.jsx:1607:                          {formatCompactNumber(stats.flaring)}
+new\client\src\pages\DashboardEnhanced.jsx:1610:                      {flaringData && 
+(flaringData.routine_flaring?.volume_knm3 > 0 || flaringData.non_routine_flaring?.volume_knm3 > 0 || 
+flaringData.safety_flaring?.volume_knm3 > 0) && (
+new\client\src\pages\DashboardEnhanced.jsx:1613:                            <td style={{ paddingLeft: "36px" }}>? 
+Routine ({flaringData.routine_flaring?.percentage ?? 0}%)</td>
+new\client\src\pages\DashboardEnhanced.jsx:1615:                              
+{formatCompactNumber(flaringData.routine_flaring?.tco2e ?? 0)}
+new\client\src\pages\DashboardEnhanced.jsx:1619:                            <td style={{ paddingLeft: "36px" }}>? 
+Non-Routine ({flaringData.non_routine_flaring?.percentage ?? 0}%)</td>
+new\client\src\pages\DashboardEnhanced.jsx:1621:                              
+{formatCompactNumber(flaringData.non_routine_flaring?.tco2e ?? 0)}
+new\client\src\pages\DashboardEnhanced.jsx:1625:                            <td style={{ paddingLeft: "36px" }}>? 
+Safety &amp; Purge ({flaringData.safety_flaring?.percentage ?? 0}%)</td>
+new\client\src\pages\DashboardEnhanced.jsx:1627:                              
+{formatCompactNumber(flaringData.safety_flaring?.tco2e ?? 0)}
+
+
+

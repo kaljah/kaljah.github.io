@@ -1,0 +1,13 @@
+
+The command exited with code 0.
+Output:
+
+> new\client\src\pages\CarbonIntensity.jsx:560:          <div className="kpi-grid-4">
+  new\client\src\pages\CarbonIntensity.jsx:561:            <div className="kpi-card">
+  new\client\src\pages\CarbonIntensity.jsx:562:              <div className="kpi-header">
+  new\client\src\pages\CarbonIntensity.jsx:563:                <div className="kpi-icon co2">
+  new\client\src\pages\CarbonIntensity.jsx:564:                  <Cloud size={20} />
+  new\client\src\pages\CarbonIntensity.jsx:565:                </div>
+
+
+

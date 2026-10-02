@@ -1,0 +1,8 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":131,"LineContent":"        return False, \"Could not resolve avatar URL domain\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":648,"LineContent":"@auth_bp.route(\"/upload-avatar\", methods=[\"POST\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":650,"LineContent":"def upload_avatar():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":662,"LineContent":"    avatar_url = data.get(\"avatarUrl\", \"\").strip()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":664,"LineContent":"    if not avatar_url:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":668,"LineContent":"    is_safe, err_msg = is_safe_image_url(avatar_url)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":672,"LineContent":"    user.profilePic = avatar_url"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":675,"LineContent":"    return jsonify({\"message\": \"Avatar updated successfully\", \"avatarUrl\": avatar_url})"}

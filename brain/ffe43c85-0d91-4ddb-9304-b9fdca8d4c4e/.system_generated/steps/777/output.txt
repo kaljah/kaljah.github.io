@@ -1,0 +1,24 @@
+Task: ffe43c85-0d91-4ddb-9304-b9fdca8d4c4e/task-775
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\ffe43c85-0d91-4ddb-9304-b9fdca8d4c4e\.system_generated\tasks\task-775.log
+Log output:
+<truncated 15 lines>
+edGasVentingForm & Table 6-8 API Reference Integrity (7)
+     ✓ renders Tier 1 Table 6-8 form with regional basin selector and crude throughput 452ms
+ ✓ src/__tests__/scope3Factors.test.js (7 tests) 18ms
+ ✓ src/__tests__/Scope1FormAssociatedGasVenting.test.jsx (2 tests) 1478ms
+   ✓ Scope1Form Associated Gas Venting Integration (2)
+     ✓ selects Associated Gas Venting, populates Tier 1 data, and submits successfully 844ms
+     ✓ selects Tier 2 GOR Balance, fills engineering parameters, and submits payload 630ms
+
+ Test Files  8 passed (8)
+      Tests  38 passed (38)
+   Start at  18:50:49
+   Duration  8.33s (environment 67%, setup 13%, transform 8%, tests 8%, import 5%, worker 1%)
+
+Environment  jsdom was created 8 times · 28.07s total, 67% of tracked time
+             create it once per worker with pool: 'vmThreads' (keeps per-file isolation) or isolate: false (shares it across files)
+             learn more: https://vitest.dev/guide/improving-performance#test-environments
+
+
+Last progress: 5s ago

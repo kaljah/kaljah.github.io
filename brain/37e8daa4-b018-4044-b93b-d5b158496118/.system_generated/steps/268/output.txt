@@ -1,0 +1,2 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\audit.py","LineNumber":228,"LineContent":"            ActivityLog.action.in_([\"SECURITY\", \"FAILED_LOGIN\", \"SUSPICIOUS\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\audit.py","LineNumber":241,"LineContent":"        security_alerts = base.filter(ActivityLog.action.in_([\"SECURITY\", \"FAILED_LOGIN\", \"SUSPICIOUS\"])).count()"}

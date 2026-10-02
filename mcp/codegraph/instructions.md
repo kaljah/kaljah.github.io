@@ -17,3 +17,7 @@ default project — but the tools are available and work **per project**:
   for that project. Indexing is the user's decision — don't run it yourself, but
   if it comes up they can run `codegraph init` in a project to enable codegraph
   there (a new index is picked up live, no restart).
+
+
+---
+CodeGraph v1.6.1 is available (this server is running v1.6.0). Update with `codegraph upgrade`. This server keeps running the old version until the user upgrades — mention it when convenient; do not run the upgrade yourself.

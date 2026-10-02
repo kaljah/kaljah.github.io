@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+warning: in the working copy of 'new/client/stats.html', LF will be replaced by CRLF the next time Git touches it
+

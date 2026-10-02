@@ -1,0 +1,11 @@
+
+The command exited with code 1.
+Output:
+At line:1 char:81
++ ... css/vite @fontsource-variable/outfit @tanstack/react-table && npm uni ...
++                                                                ~~
+The token '&&' is not a valid statement separator in this version.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : InvalidEndOfLine
+ 
+

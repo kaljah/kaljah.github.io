@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+8c6ed6a9998d1af79367f172e96e3a1bb49fc2c4
+8c6ed6a9998d1af79367f172e96e3a1bb49fc2c4
+

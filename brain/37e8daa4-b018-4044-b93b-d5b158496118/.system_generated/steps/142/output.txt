@@ -1,0 +1,6 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":220,"LineContent":"@scope2_bp.route(\"\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":293,"LineContent":"@scope2_bp.route(\"\", methods=[\"POST\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":499,"LineContent":"@scope2_bp.route(\"/\u003cint:emission_id\u003e\", methods=[\"PUT\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":634,"LineContent":"@scope2_bp.route(\"/\u003cint:emission_id\u003e\", methods=[\"DELETE\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":685,"LineContent":"@scope2_bp.route(\"/bulk-import\", methods=[\"POST\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":845,"LineContent":"@scope2_bp.route(\"/emission-factors\", methods=[\"GET\"])"}

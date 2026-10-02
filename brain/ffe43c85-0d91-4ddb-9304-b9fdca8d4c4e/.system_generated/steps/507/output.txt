@@ -1,0 +1,28 @@
+
+The command exited with code 0.
+Output:
+src/pages/ManageData.jsx:132:    const [activeTab, setActiveTab] = useState('factors');
+src/pages/ManageData.jsx:576:    }, [activeTab, searchTerm, filterActivity, filterDivision, filterRegion, filterYear]);
+src/pages/ManageData.jsx:1455:                            <div className={`manage-nav-item ${activeTab === 'pending' ? 'active' : ''}`} onClick={() => handleTabChange('pending')}>
+src/pages/ManageData.jsx:1469:                        <div className={`manage-nav-item ${activeTab === 'factors' ? 'active' : ''}`} onClick={() => handleTabChange('factors')}>
+src/pages/ManageData.jsx:1473:                            <div className={`manage-nav-item ${activeTab === 'facilities' ? 'active' : ''}`} onClick={() => handleTabChange('facilities')}>
+src/pages/ManageData.jsx:1477:                        <div className={`manage-nav-item ${activeTab === 'production' ? 'active' : ''}`} onClick={() => handleTabChange('production')}>
+src/pages/ManageData.jsx:1480:                        <div className={`manage-nav-item ${activeTab === 'sources' ? 'active' : ''}`} onClick={() => handleTabChange('sources')}>
+src/pages/ManageData.jsx:1483:                        <div className={`manage-nav-item ${activeTab === 'goals' ? 'active' : ''}`} onClick={() => handleTabChange('goals')}>
+src/pages/ManageData.jsx:1486:                        <div className={`manage-nav-item ${activeTab === 'mitigation' ? 'active' : ''}`} onClick={() => handleTabChange('mitigation')}>
+src/pages/ManageData.jsx:1489:                        <div className={`manage-nav-item ${activeTab === 'ogmp' ? 'active' : ''}`} onClick={() => handleTabChange('ogmp')}>
+src/pages/ManageData.jsx:1492:                        <div className={`manage-nav-item ${activeTab === 'cbam' ? 'active' : ''}`} onClick={() => handleTabChange('cbam')}>
+src/pages/ManageData.jsx:1505:                                    placeholder={activeTab === 'goals' ? "Search goals or base years..." : `Search ${activeTab}...`}
+src/pages/ManageData.jsx:1513:                            {activeTab !== 'factors' && activeTab !== 'goals' && (
+src/pages/ManageData.jsx:1530:                                    {(activeTab === 'production' || activeTab === 'mitigation') && (
+src/pages/ManageData.jsx:1550:                        {activeTab === 'pending' && isPrivileged && (
+src/pages/ManageData.jsx:2195:                        {activeTab === 'pending' && !isPrivileged && (
+src/pages/ManageData.jsx:2216:                        {activeTab === 'factors' && (
+src/pages/ManageData.jsx:2480:                        {activeTab === 'facilities' && ['admin', 'superuser'].includes(user?.role) && (
+src/pages/ManageData.jsx:2646:                        {activeTab === 'production' && (
+src/pages/ManageData.jsx:2857:                        {activeTab === 'sources' && (
+src/pages/ManageData.jsx:2995:                        {activeTab === 'goals' && (
+src/pages/ManageData.jsx:3397:                        {activeTab === 'mitigation' && (
+src/pages/ManageData.jsx:3568:                        {activeTab === 'cbam' && (
+src/pages/ManageData.jsx:3878:                        {activeTab === 'ogmp' && (
+

@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+src/components/Scope1Form.jsx:2862:            Recent Activity (Scope 1)
+

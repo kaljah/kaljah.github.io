@@ -1,0 +1,13 @@
+
+The command exited with code 0.
+Output:
+
+> new\client\src\App.jsx:15:const ManageData = React.lazy(() => import("./pages/ManageData"));
+  new\client\src\App.jsx:16:const QADashboard = React.lazy(() => import("./pages/QADashboard"));
+  new\client\src\App.jsx:17:const Reports = React.lazy(() => import("./pages/Reports"));
+> new\client\src\App.jsx:118:              <ManageData />
+  new\client\src\App.jsx:119:            </NonITRoute>
+  new\client\src\App.jsx:120:          }
+
+
+

@@ -1,0 +1,9 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\pages\CarbonIntensity.jsx:25:import "./CarbonIntensity.css";
+new\client\src\pages\MethaneIntensity.jsx:32:import "./CarbonIntensity.css";
+
+
+

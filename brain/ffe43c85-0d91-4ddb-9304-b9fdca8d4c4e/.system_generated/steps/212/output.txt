@@ -1,0 +1,17 @@
+
+The command exited with code 0.
+Output:
+
+new\client\e2e\test_bulk_csv_uploader.spec.js:131:  await expect(page.locator('.app-container, .dashboard-grid, 
+.sidebar, .intensity-grid, .calc-panel').first()).toBeVisible({ timeout: 15000 });
+new\client\e2e\test_dashboard_and_intensity_audit.spec.js:48:  await expect(page.locator('.app-container, 
+.dashboard-grid, .sidebar, .intensity-grid').first()).toBeVisible({ timeout: 15000 });
+new\client\e2e\test_dashboard_deep_audit.spec.js:42:  await expect(page.locator('.app-container, .dashboard-grid, 
+.sidebar').first()).toBeVisible({ timeout: 15000 });
+new\client\e2e\test_qfull_e2e_ui.spec.js:112:    await expect(page.locator('.sidebar, .app-container, 
+.brand-text').first()).toBeVisible({ timeout: 12000 });
+new\client\e2e\pages\DashboardPage.js:73:    await expect(this.page.locator('.app-container, .dashboard-grid, 
+.sidebar').first()).toBeVisible({ timeout: 20000 });
+
+
+

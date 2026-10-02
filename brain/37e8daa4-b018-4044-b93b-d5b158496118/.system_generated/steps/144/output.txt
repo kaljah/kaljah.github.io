@@ -1,0 +1,7 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":36,"LineContent":"@scope3_bp.route(\"\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":102,"LineContent":"@scope3_bp.route(\"\", methods=[\"POST\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":249,"LineContent":"@scope3_bp.route(\"/\u003cint:emission_id\u003e\", methods=[\"PUT\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":344,"LineContent":"@scope3_bp.route(\"/\u003cint:emission_id\u003e\", methods=[\"DELETE\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":394,"LineContent":"@scope3_bp.route(\"/bulk-import\", methods=[\"POST\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":516,"LineContent":"@scope3_bp.route(\"/eeio-calculate\", methods=[\"POST\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":554,"LineContent":"@scope3_bp.route(\"/eeio-factors\", methods=[\"GET\"])"}

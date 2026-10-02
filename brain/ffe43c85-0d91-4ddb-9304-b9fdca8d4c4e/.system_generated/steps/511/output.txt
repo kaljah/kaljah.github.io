@@ -1,0 +1,15 @@
+
+The command exited with code 0.
+Output:
+src/pages/ManageData.jsx:559:    const handleTabChange = (tab) => {
+src/pages/ManageData.jsx:1455:                            <div className={`manage-nav-item ${activeTab === 'pending' ? 'active' : ''}`} onClick={() => handleTabChange('pending')}>
+src/pages/ManageData.jsx:1469:                        <div className={`manage-nav-item ${activeTab === 'factors' ? 'active' : ''}`} onClick={() => handleTabChange('factors')}>
+src/pages/ManageData.jsx:1473:                            <div className={`manage-nav-item ${activeTab === 'facilities' ? 'active' : ''}`} onClick={() => handleTabChange('facilities')}>
+src/pages/ManageData.jsx:1477:                        <div className={`manage-nav-item ${activeTab === 'production' ? 'active' : ''}`} onClick={() => handleTabChange('production')}>
+src/pages/ManageData.jsx:1480:                        <div className={`manage-nav-item ${activeTab === 'sources' ? 'active' : ''}`} onClick={() => handleTabChange('sources')}>
+src/pages/ManageData.jsx:1483:                        <div className={`manage-nav-item ${activeTab === 'goals' ? 'active' : ''}`} onClick={() => handleTabChange('goals')}>
+src/pages/ManageData.jsx:1486:                        <div className={`manage-nav-item ${activeTab === 'mitigation' ? 'active' : ''}`} onClick={() => handleTabChange('mitigation')}>
+src/pages/ManageData.jsx:1489:                        <div className={`manage-nav-item ${activeTab === 'ogmp' ? 'active' : ''}`} onClick={() => handleTabChange('ogmp')}>
+src/pages/ManageData.jsx:1492:                        <div className={`manage-nav-item ${activeTab === 'cbam' ? 'active' : ''}`} onClick={() => handleTabChange('cbam')}>
+src/pages/ManageData.jsx:2208:                                    onClick={() => handleTabChange('factors')}
+

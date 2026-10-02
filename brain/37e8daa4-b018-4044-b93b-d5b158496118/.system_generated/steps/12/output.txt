@@ -1,0 +1,19 @@
+Found 18 results
+annotations
+audit
+bin
+brain
+builtin
+conversations
+deck_assets
+docs
+graphify-out
+knowledge
+mcp
+new
+scratch
+site_assets
+specs
+temp_old
+test_results
+validation

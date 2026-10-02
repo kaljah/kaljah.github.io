@@ -1,0 +1,742 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\Scope1Form.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -3302,7 +3302,259 @@
+             {submitting ? "Saving..." : "Submit"}
+           </button>
+         </div>
+-      </div>
++        </div>
++        {/* End of Left Column: s1-form */}
++
++        {/* Right Column: Sticky Live Calculation Card */}
++        <div className="lg:col-span-4 sticky top-6">
++          <div className="live-calc-card bg-white rounded-2xl border border-[var(--border-color,#e2e8f0)] p-5 shadow-sm space-y-4">
++            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
++              <div className="flex items-center gap-2">
++                <div className="p-1.5 rounded-lg bg-orange-50 text-[var(--accent-color,#ff6600)]">
++                  <Sparkles size={16} />
++                </div>
++                <div>
++                  <h4 className="text-sm font-bold text-slate-900 m-0">Live Calculation</h4>
++                  <span className="text-xs text-slate-400">Real-time estimate</span>
++                </div>
++              </div>
++              <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 uppercase tracking-wider">
++                {sourceType === "default"
++                  ? "Tier 1 Default"
++                  : sourceType === "custom"
++                  ? "Tier 2 Factor"
++                  : sourceType === "specific"
++                  ? "Tier 3 Metered"
++                  : "Library"}
++              </span>
++            </div>
++
++            {/* Main Total Callout */}
++            <div className="p-4 rounded-xl bg-gradient-to-br from-orange-50/60 to-slate-50 border border-orange-100/60 text-center">
++              <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-1">
++                Estimated Total GHG
++              </span>
++              <div className="text-3xl font-extrabold text-slate-900 tabular-nums">
++                {liveCalculation.co2eTotal > 0 ? formatNumber(liveCalculation.co2eTotal, 3) : "0.000"}
++                <span className="text-sm font-medium text-slate-500 ml-1.5">
++                  <Unit unit="tCO2e" />
++                </span>
++              </div>
++              {liveCalculation.qty > 0 && (
++                <div className="text-[11px] text-slate-400 mt-1">
++                  Based on {formatNumber(liveCalculation.qty, 2)} {liveCalculation.unit}
++                </div>
++              )}
++            </div>
++
++            {/* Gas Breakdown Grid */}
++            <div className="space-y-2">
++              <span className="text-xs font-semibold text-slate-600 block">Gas Breakdown (tonnes)</span>
++              <div className="grid grid-cols-3 gap-2 text-center">
++                <div className="p-2 rounded-lg bg-slate-50 border border-slate-100">
++                  <span className="text-[11px] font-bold text-[var(--scope-1,#ff6600)] block">
++                    <Unit unit="CO2" />
++                  </span>
++                  <span className="text-xs font-semibold text-slate-800 tabular-nums">
++                    {liveCalculation.co2Tonnes > 0 ? formatNumber(liveCalculation.co2Tonnes, 3) : "—"}
++                  </span>
++                </div>
++                <div className="p-2 rounded-lg bg-slate-50 border border-slate-100">
++                  <span className="text-[11px] font-bold text-[var(--scope-2,#2563eb)] block">
++                    <Unit unit="CH4" />
++                  </span>
++                  <span className="text-xs font-semibold text-slate-800 tabular-nums">
++                    {liveCalculation.ch4Tonnes > 0 ? formatNumber(liveCalculation.ch4Tonnes, 3) : "—"}
++                  </span>
++                </div>
++                <div className="p-2 rounded-lg bg-slate-50 border border-slate-100">
++                  <span className="text-[11px] font-bold text-[var(--scope-3,#8b5cf6)] block">
++                    <Unit unit="N2O" />
++                  </span>
++                  <span className="text-xs font-semibold text-slate-800 tabular-nums">
++                    {liveCalculation.n2oTonnes > 0 ? formatNumber(liveCalculation.n2oTonnes, 4) : "—"}
++                  </span>
++                </div>
++              </div>
++            </div>
++
++            {/* Uncertainty Threshold */}
++            <div className="pt-2 border-t border-slate-100">
++              <div className="flex items-center justify-between text-xs mb-1.5">
++                <span className="font-semibold text-slate-600">Uncertainty:</span>
++                <span
++                  className="font-bold px-2 py-0.5 rounded text-[11px]"
++                  style={{
++                    backgroundColor: liveCalculation.uncBand.bg,
++                    color: liveCalculation.uncBand.color,
++                  }}
++                >
++                  {liveCalculation.uncBand.label}
++                </span>
++              </div>
++              <div className="grid grid-cols-3 gap-1 text-[11px] text-slate-500 font-mono text-center">
++                <span>CO₂: {liveCalculation.uCo2 != null ? `±${liveCalculation.uCo2.toFixed(0)}%` : "—"}</span>
++                <span>CH₄: {liveCalculation.uCh4 != null ? `±${liveCalculation.uCh4.toFixed(0)}%` : "—"}</span>
++                <span>N₂O: {liveCalculation.uN2o != null ? `±${liveCalculation.uN2o.toFixed(0)}%` : "—"}</span>
++              </div>
++            </div>
++
++            {/* Quick Action Buttons in Card */}
++            <div className="pt-2 space-y-2">
++              <button
++                type="button"
++                className="w-full py-2.5 px-4 rounded-xl bg-[var(--accent-color,#ff6600)] hover:bg-[var(--accent-hover,#e65c00)] text-white font-bold text-sm shadow-sm transition-all disabled:opacity-50 cursor-pointer"
++                disabled={submitting}
++                onClick={() => handleAddEntry("Verified")}
++              >
++                {submitting ? "Calculating..." : "Submit Record"}
++              </button>
++              <button
++                type="button"
++                className="w-full py-2 px-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs transition-all disabled:opacity-50 cursor-pointer"
++                disabled={submitting}
++                onClick={() => handleAddEntry("Draft")}
++              >
++                Save as Draft
++              </button>
++            </div>
++          </div>
++        </div>
++      </div>
++      ) : (
++        /* History Tab: Filter bar & DataTable with 6 uncertainty columns collapsed */
++        <div className="calculator-grid-container mt-2 space-y-4">
++          {/* Filter bar */}
++          <div
++            style={{
++              display: "flex",
++              gap: "10px",
++              flexWrap: "wrap",
++              alignItems: "center",
++              marginBottom: "14px",
++            }}
++          >
++            <strong style={{ fontSize: "0.95rem", marginRight: "4px" }}>
++              Recent Activity (Scope 1)
++            </strong>
++            <div style={{ flex: 1 }} />
++            <input
++              type="text"
++              placeholder="Search..."
++              value={filterSearch}
++              onChange={(e) => {
++                setFilterSearch(e.target.value);
++                setCurrentPage(1);
++              }}
++              className="mole-input"
++              style={{ width: "160px", padding: "6px 10px", fontSize: "0.82rem" }}
++            />
++            <select
++              value={filterYear}
++              onChange={(e) => {
++                setFilterYear(e.target.value);
++                setCurrentPage(1);
++              }}
++              className="component-select"
++              style={{ width: "100px", fontSize: "0.82rem" }}
++            >
++              <option value="">All Years</option>
++              {facetYears.map((y) => (
++                <option key={y} value={y}>
++                  {y}
++                </option>
++              ))}
++            </select>
++            <select
++              value={filterProcess}
++              onChange={(e) => {
++                setFilterProcess(e.target.value);
++                setCurrentPage(1);
++              }}
++              className="component-select"
++              style={{ width: "140px", fontSize: "0.82rem" }}
++            >
++              <option value="">All Processes</option>
++              {Object.keys(PROCESS_TYPES).map((p) => (
++                <option key={p} value={p}>
++                  {typeof PROCESS_TYPES[p] === "string" ? PROCESS_TYPES[p] : PROCESS_TYPES[p]?.label || p}
++                </option>
++              ))}
++            </select>
++            {(filterYear || filterProcess || filterSearch) && (
++              <button
++                className="btn-ghost"
++                onClick={() => {
++                  setFilterYear("");
++                  setFilterProcess("");
++                  setFilterSearch("");
++                  setCurrentPage(1);
++                }}
++                style={{
++                  fontSize: "0.8rem",
++                  padding: "5px 10px",
++                  color: "var(--text-secondary)",
++                }}
++              >
++                Clear
++              </button>
++            )}
++            <button
++              className="action-btn"
++              onClick={async () => {
++                try {
++                  const res = await api.get("/emissions/", {
++                    params: {
++                      scope: "1",
++                      limit: "all",
++                      ...(filterYear && { year: filterYear }),
++                      ...(filterProcess && { process_type: filterProcess }),
++                      ...(filterSearch && { search: filterSearch }),
++                    },
++                  });
++                  const rows = res.data?.emissions || res.data?.data || res.data || [];
++                  exportToCSV(Array.isArray(rows) ? rows : [], "scope1_export.csv");
++                } catch (err) {
++                  toast.error(err.response?.data?.error || "Export failed");
++                }
++              }}
++              style={{
++                background: "#10b981",
++                padding: "6px 14px",
++                fontSize: "0.82rem",
++                whiteSpace: "nowrap",
++              }}
++            >
++              ↓ Export CSV
++            </button>
++          </div>
++
++          {/* Scope 1 History DataTable with 6 uncertainty columns collapsed into sub-rows */}
++          <DataTable
++            columns={historyColumns}
++            data={filteredEntries}
++            renderSubComponent={renderHistorySubComponent}
++            isLoading={loading}
++            showSearch={false}
++            manualPagination={true}
++            pageCount={totalPages}
++            pageSize={RECORDS_PER_PAGE}
++            pagination={{ pageIndex: currentPage - 1, pageSize: RECORDS_PER_PAGE }}
++            onPaginationChange={(updater) => {
++              const next =
++                typeof updater === "function"
++                  ? updater({ pageIndex: currentPage - 1, pageSize: RECORDS_PER_PAGE })
++                  : updater;
++              setCurrentPage(next.pageIndex + 1);
++            }}
++            emptyMessage={
++              entries.length === 0
++                ? "No entries yet"
++                : "No results match your filters"
++            }
++          />
++        </div>
++      )}
+ 
+       {importModal.isOpen && (
+         <Scope1ImportWizard
+@@ -3313,475 +3313,6 @@
+         />
+       )}
+ 
+-      <div className="calculator-grid-container" style={{ marginTop: "30px" }}>
+-        {/* Filter bar */}
+-        <div
+-          style={{
+-            display: "flex",
+-            gap: "10px",
+-            flexWrap: "wrap",
+-            alignItems: "center",
+-            marginBottom: "14px",
+-          }}
+-        >
+-          <strong style={{ fontSize: "0.95rem", marginRight: "4px" }}>
+-            Recent Activity (Scope 1)
+-          </strong>
+-          <div style={{ flex: 1 }} />
+-          <input
+-            type="text"
+-            placeholder="Search..."
+-            value={filterSearch}
+-            onChange={(e) => {
+-              setFilterSearch(e.target.value);
+-              setCurrentPage(1);
+-            }}
+-            className="mole-input"
+-            style={{ width: "160px", padding: "6px 10px", fontSize: "0.82rem" }}
+-          />
+-          <select
+-            value={filterYear}
+-            onChange={(e) => {
+-              setFilterYear(e.target.value);
+-              setCurrentPage(1);
+-            }}
+-            className="component-select"
+-            style={{ width: "100px", fontSize: "0.82rem" }}
+-          >
+-            <option value="">All Years</option>
+-            {/* BUG-095: options come from the server facets, not from the 10 rows of the current page */}
+-            {facetYears
+-              .map((y) => (
+-                <option key={y} value={y}>
+-                  {y}
+-                </option>
+-              ))}
+-          </select>
+-          <select
+-            value={filterProcess}
+-            onChange={(e) => {
+-              setFilterProcess(e.target.value);
+-              setCurrentPage(1);
+-            }}
+-            className="component-select"
+-            style={{ width: "140px", fontSize: "0.82rem" }}
+-          >
+-            <option value="">All Processes</option>
+-            {Object.keys(PROCESS_TYPES).map((p) => (
+-              <option key={p} value={p}>
+-                {typeof PROCESS_TYPES[p] === "string" ? PROCESS_TYPES[p] : PROCESS_TYPES[p]?.label || p}
+-              </option>
+-            ))}
+-          </select>
+-          {(filterYear || filterProcess || filterSearch) && (
+-            <button
+-              className="btn-ghost"
+-              onClick={() => {
+-                setFilterYear("");
+-                setFilterProcess("");
+-                setFilterSearch("");
+-                setCurrentPage(1);
+-              }}
+-              style={{
+-                fontSize: "0.8rem",
+-                padding: "5px 10px",
+-                color: "var(--text-secondary)",
+-              }}
+-            >
+-              Clear
+-            </button>
+-          )}
+-          <button
+-            className="action-btn"
+-            onClick={async () => {
+-              // BUG-095: export every matching record (server-side filters), not just the visible page
+-              try {
+-                const res = await api.get("/emissions/", {
+-                  params: {
+-                    scope: "1",
+-                    limit: "all",
+-                    ...(filterYear && { year: filterYear }),
+-                    ...(filterProcess && { process_type: filterProcess }),
+-                    ...(filterSearch && { search: filterSearch }),
+-                  },
+-                });
+-                const rows = res.data?.emissions || res.data?.data || res.data || [];
+-                exportToCSV(Array.isArray(rows) ? rows : [], "scope1_export.csv");
+-              } catch (err) {
+-                toast.error(err.response?.data?.error || "Export failed");
+-              }
+-            }}
+-            style={{
+-              background: "#10b981",
+-              padding: "6px 14px",
+-              fontSize: "0.82rem",
+-              whiteSpace: "nowrap",
+-            }}
+-          >
+-            ↓ Export CSV
+-          </button>
+-          <button
+-            className="action-btn"
+-            onClick={() => setImportModal({ isOpen: true, type: "activity" })}
+-            style={{
+-              background: "#10b981",
+-              padding: "6px 14px",
+-              fontSize: "0.82rem",
+-              whiteSpace: "nowrap",
+-            }}
+-          >
+-            ↑ Bulk Import (Wizard)
+-          </button>
+-        </div>
+-        <div className="table-scroll-container">
+-          <table className="excel-table">
+-            <thead>
+-              <tr>
+-                <th>Period</th>
+-                <th>Activity</th>
+-                <th>Region</th>
+-                <th>Division</th>
+-                <th>Field</th>
+-                <th>Emission Source</th>
+-                <th>Equipment ID</th>
+-                <th>Process</th>
+-                <th>Activity/Fuel</th>
+-                <th>Factor Type</th>
+-                <th>Quantity</th>
+-                <th>CO₂ (t)</th>
+-                <th>CH₄ (t)</th>
+-                <th>N₂O (t)</th>
+-                <th>Total (tCO₂e)</th>
+-                <th
+-                  style={{ textAlign: "center" }}
+-                  title="Standard Combined Uncertainty (1σ)"
+-                >
+-                  CO₂ 1σ (±%)
+-                </th>
+-                <th
+-                  style={{ textAlign: "center" }}
+-                  title="Standard Combined Uncertainty (1σ)"
+-                >
+-                  CH₄ 1σ (±%)
+-                </th>
+-                <th
+-                  style={{ textAlign: "center" }}
+-                  title="Standard Combined Uncertainty (1σ)"
+-                >
+-                  N₂O 1σ (±%)
+-                </th>
+-                <th
+-                  style={{ textAlign: "center" }}
+-                  title="Expanded Uncertainty (95% Confidence Interval, k=2)"
+-                >
+-                  CO₂ 95%CI (±%)
+-                </th>
+-                <th
+-                  style={{ textAlign: "center" }}
+-                  title="Expanded Uncertainty (95% Confidence Interval, k=2)"
+-                >
+-                  CH₄ 95%CI (±%)
+-                </th>
+-                <th
+-                  style={{ textAlign: "center" }}
+-                  title="Expanded Uncertainty (95% Confidence Interval, k=2)"
+-                >
+-                  N₂O 95%CI (±%)
+-                </th>
+-                <th style={{ textAlign: "center" }}>Actions</th>
+-              </tr>
+-            </thead>
+-            <tbody>
+-              {(() => {
+-                const filteredEntries = entries.filter((entry) => {
+-                  const s = filterSearch.toLowerCase();
+-                  const matchSearch =
+-                    !s ||
+-                    (entry.activity || "").toLowerCase().includes(s) ||
+-                    (entry.equipment_id || "").toLowerCase().includes(s) ||
+-                    (entry.fuel || entry.fuel_type || "")
+-                      .toLowerCase()
+-                      .includes(s) ||
+-                    (entry.group || "").toLowerCase().includes(s) ||
+-                    (entry.division || "").toLowerCase().includes(s);
+-                  const matchYear =
+-                    !filterYear || entry.year?.toString() === filterYear;
+-                  const matchProcess =
+-                    !filterProcess ||
+-                    (entry.process || entry.process_type) === filterProcess;
+-                  return matchSearch && matchYear && matchProcess;
+-                });
+-                if (filteredEntries.length === 0)
+-                  return (
+-                    <tr>
+-                      <td
+-                        colSpan="22"
+-                        style={{
+-                          textAlign: "center",
+-                          color: "var(--text-secondary)",
+-                          padding: "30px",
+-                        }}
+-                      >
+-                        {entries.length === 0
+-                          ? loading
+-                            ? "Loading…"
+-                            : "No entries yet"
+-                          : "No results match your filters"}
+-                      </td>
+-                    </tr>
+-                  );
+-                return filteredEntries.map((entry) => {
+-                  const factorType = factorTypeLabel(entry);
+-                  return (
+-                    <tr key={entry.id}>
+-                      <td>{entry.month ? `${entry.year}-${String(entry.month).padStart(2, "0")}` : entry.year}</td>
+-                      <td>{entry.activity || "-"}</td>
+-                      <td>{entry.facility_name || entry.region || "-"}</td>
+-                      <td>{entry.division || "-"}</td>
+-                      <td>{entry.field || "-"}</td>
+-                      <td>{entry.group_name || entry.group || "-"}</td>
+-                      <td>{entry.equipment_id || "-"}</td>
+-                      <td>
+-                        {(() => {
+-                          const k = entry.process || entry.process_type;
+-                          const v = PROCESS_TYPES[k];
+-                          // keys the form does not list (e.g. stoichiometry) get a readable label
+-                          const other = { stoichiometry: "Carbon Mass Balance (Stoichiometry)" };
+-                          return (typeof v === "string" ? v : v?.label) || other[k] ||
+-                            String(k || "").replace(/_/g, " ").replace(/^\w/, (c) => c.toUpperCase());
+-                        })()}
+-                      </td>
+-                      <td>
+-                        {entry.fuel ||
+-                          entry.fuel_type ||
+-                          entry.activity_data_label ||
+-                          "-"}
+-                      </td>
+-                      <td
+-                        style={{
+-                          fontWeight: 500,
+-                          color:
+-                            factorType === "Default" ? "#10b981" : "#3b82f6",
+-                        }}
+-                      >
+-                        {factorType}
+-                      </td>
+-                      <td>
+-                        {(entry.amount ?? entry.quantity) != null && (entry.amount ?? entry.quantity) !== ""
+-                          ? `${formatNumber(entry.amount ?? entry.quantity, 2)} ${entry.unit || ""}`
+-                          : "-"}
+-                      </td>
+-                      <td>{formatEmission(entry.co2_emissions || 0, 3)}</td>
+-                      <td>{formatEmission(entry.ch4_emissions || 0, 5)}</td>
+-                      <td>{formatEmission(entry.n2o_emissions || 0, 5)}</td>
+-                      <td
+-                        style={{
+-                          color: "var(--accent-color)",
+-                          fontWeight: 600,
+-                        }}
+-                      >
+-                        {formatEmission(entry.co2e_total, 3)}
+-                        {/* BUG-092: every record shows its maker-checker status */}
+-                        {entry.status && (
+-                          <span
+-                            title={`Status: ${entry.status}`}
+-                            style={{
+-                              marginLeft: "8px",
+-                              fontSize: "0.65rem",
+-                              padding: "1px 5px",
+-                              borderRadius: "4px",
+-                              ...({
+-                                Verified: { background: "#dcfce7", color: "#166534" },
+-                                Pending: { background: "#fef9c3", color: "#854d0e" },
+-                                Rejected: { background: "#fee2e2", color: "#b91c1c" },
+-                                Draft: { background: "#e0e7ff", color: "#3730a3" },
+-                              }[entry.status] || { background: "#f1f5f9", color: "#334155" }),
+-                            }}
+-                          >
+-                            {entry.status}
+-                          </span>
+-                        )}
+-                      </td>
+-                      <td
+-                        style={{
+-                          textAlign: "center",
+-                          fontSize: "0.82rem",
+-                          color:
+-                            (entry.uncertainty_co2 != null && Number(entry.co2_emissions) > 0)
+-                              ? "#10b981"
+-                              : "var(--text-muted)",
+-                        }}
+-                        title="Standard Combined Uncertainty (1σ)"
+-                      >
+-                        {(entry.uncertainty_co2 != null && Number(entry.co2_emissions) > 0)
+-                          ? `±${(entry.uncertainty_co2 * 100).toFixed(0)}%`
+-                          : "—"}
+-                      </td>
+-                      <td
+-                        style={{
+-                          textAlign: "center",
+-                          fontSize: "0.82rem",
+-                          color:
+-                            (entry.uncertainty_ch4 != null && Number(entry.ch4_emissions) > 0)
+-                              ? "#3b82f6"
+-                              : "var(--text-muted)",
+-                        }}
+-                        title="Standard Combined Uncertainty (1σ)"
+-                      >
+-                        {(entry.uncertainty_ch4 != null && Number(entry.ch4_emissions) > 0)
+-                          ? `±${(entry.uncertainty_ch4 * 100).toFixed(0)}%`
+-                          : "—"}
+-                      </td>
+-                      <td
+-                        style={{
+-                          textAlign: "center",
+-                          fontSize: "0.82rem",
+-                          color:
+-                            (entry.uncertainty_n2o != null && Number(entry.n2o_emissions) > 0)
+-                              ? "#8b5cf6"
+-                              : "var(--text-muted)",
+-                        }}
+-                        title="Standard Combined Uncertainty (1σ)"
+-                      >
+-                        {(entry.uncertainty_n2o != null && Number(entry.n2o_emissions) > 0)
+-                          ? `±${(entry.uncertainty_n2o * 100).toFixed(0)}%`
+-                          : "—"}
+-                      </td>
+-                      <td
+-                        style={{
+-                          textAlign: "center",
+-                          fontSize: "0.82rem",
+-                          color:
+-                            (entry.uncertainty_co2 != null && Number(entry.co2_emissions) > 0)
+-                              ? "#10b981"
+-                              : "var(--text-muted)",
+-                        }}
+-                        title="Expanded Uncertainty (95% Confidence Interval, k=2)"
+-                      >
+-                        {(entry.uncertainty_co2 != null && Number(entry.co2_emissions) > 0)
+-                          ? `±${(entry.uncertainty_co2 * 200).toFixed(0)}%`
+-                          : "—"}
+-                      </td>
+-                      <td
+-                        style={{
+-                          textAlign: "center",
+-                          fontSize: "0.82rem",
+-                          color:
+-                            (entry.uncertainty_ch4 != null && Number(entry.ch4_emissions) > 0)
+-                              ? "#3b82f6"
+-                              : "var(--text-muted)",
+-                        }}
+-                        title="Expanded Uncertainty (95% Confidence Interval, k=2)"
+-                      >
+-                        {(entry.uncertainty_ch4 != null && Number(entry.ch4_emissions) > 0)
+-                          ? `±${(entry.uncertainty_ch4 * 200).toFixed(0)}%`
+-                          : "—"}
+-                      </td>
+-                      <td
+-                        style={{
+-                          textAlign: "center",
+-                          fontSize: "0.82rem",
+-                          color:
+-                            (entry.uncertainty_n2o != null && Number(entry.n2o_emissions) > 0)
+-                              ? "#8b5cf6"
+-                              : "var(--text-muted)",
+-                        }}
+-                        title="Expanded Uncertainty (95% Confidence Interval, k=2)"
+-                      >
+-                        {(entry.uncertainty_n2o != null && Number(entry.n2o_emissions) > 0)
+-                          ? `±${(entry.uncertainty_n2o * 200).toFixed(0)}%`
+-                          : "—"}
+-                      </td>
+-                      <td style={{ textAlign: "center", whiteSpace: "nowrap" }}>
+-                        <button
+-                          className="icon-button"
+-                          onClick={() => handleInspect(entry)}
+-                          style={{ color: "#3b82f6", marginRight: "6px" }}
+-                          title="Inspect Calculation Details"
+-                        >
+-                          <Eye size={16} />
+-                        </button>
+-                        <button
+-                          className="icon-button"
+-                          onClick={() => handleDelete(entry.id)}
+-                          style={{ color: "#ef4444" }}
+-                          title="Delete"
+-                        >
+-                          <Trash2 size={16} />
+-                        </button>
+-                      </td>
+-                    </tr>
+-                  );
+-                });
+-              })()}
+-            </tbody>
+-            <tfoot>
+-              <tr style={{ backgroundColor: "#f9fafb", fontWeight: "bold" }}>
+-                <td
+-                  colSpan="14"
+-                  style={{ textAlign: "right", paddingRight: "15px" }}
+-                >
+-                  Total (
+-                  {filterYear || filterProcess || filterSearch
+-                    ? "Filtered"
+-                    : "Page"}
+-                  ):
+-                </td>
+-                <td style={{ color: "var(--accent-color)" }}>
+-                  {formatNumber(
+-                    entries
+-                      .filter((entry) => {
+-                        const s = filterSearch.toLowerCase();
+-                        const matchSearch =
+-                          !s ||
+-                          (entry.activity || "").toLowerCase().includes(s) ||
+-                          (entry.equipment_id || "")
+-                            .toLowerCase()
+-                            .includes(s) ||
+-                          (entry.fuel || entry.fuel_type || "")
+-                            .toLowerCase()
+-                            .includes(s) ||
+-                          (entry.group || "").toLowerCase().includes(s);
+-                        return (
+-                          matchSearch &&
+-                          (!filterYear ||
+-                            entry.year?.toString() === filterYear) &&
+-                          (!filterProcess ||
+-                            (entry.process || entry.process_type) ===
+-                              filterProcess)
+-                        );
+-                      })
+-                      .reduce((sum, e) => sum + (e.co2e_total || 0), 0),
+-                    3,
+-                  )}
+-                </td>
+-                <td colSpan="7"></td>
+-              </tr>
+-            </tfoot>
+-          </table>
+-        </div>
+-        {/* Simplified Pagination */}
+-        <div className="pagination-controls">
+-          <button
+-            className="action-btn secondary"
+-            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+-            disabled={currentPage === 1}
+-          >
+-            Previous
+-          </button>
+-          <span style={{ color: "var(--text-secondary)" }}>
+-            Page {currentPage} of {totalPages}
+-          </span>
+-          <button
+-            className="action-btn secondary"
+-            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+-            disabled={currentPage === totalPages}
+-          >
+-            Next
+-          </button>
+-        </div>
+-      </div>
+-
+       <GasCompositionCalculator
+         isOpen={showGasCalc}
+         onClose={() => setShowGasCalc(false)}
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

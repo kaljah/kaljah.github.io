@@ -1,0 +1,48 @@
+
+The command exited with code 1.
+Output:
+At line:158 char:3
++ if user and (user.role in [\"auditor\"] or is_it_role(user)):
++   ~
+Missing '(' after 'if' in if statement.
+At line:161 char:8
++ However, on several secondary operational endpoints, the authorizatio ...
++        ~
+Missing argument in parameter list.
+At line:162 char:4
++ 1. `routes/data.py:384` (`POST /api/data/ogmp-surveys`)
++    ~~~~~~~~~~~~~~~~~~~~~
+Unexpected token '`routes/data.py:384` ' in expression or statement.
+At line:162 char:56
++ 1. `routes/data.py:384` (`POST /api/data/ogmp-surveys`)
++                                                        ~
+Missing closing ')' in expression.
+At line:163 char:62
++ 2. `routes/data.py:537` (`POST /api/data/ogmp/level-upgrade`)
++                                                              ~
+Missing closing ')' in expression.
+At line:164 char:56
++ 3. `routes/data.py:673` (`POST /api/data/cbam-exports`)
++                                                        ~
+Missing closing ')' in expression.
+At line:165 char:63
++ 4. `routes/data.py:781` (`DELETE /api/data/cbam-exports/<id>`)
++                                                               ~
+Missing closing ')' in expression.
+At line:166 char:62
++ 5. `routes/managedata.py:68` (`POST /api/managedata/sources`)
++                                                              ~
+Missing closing ')' in expression.
+At line:167 char:70
++ 6. `routes/managedata.py:123` (`DELETE /api/managedata/sources/<id>`)
++                                                                      ~
+Missing closing ')' in expression.
+At line:168 char:75
++ ... outes/managedata.py:159` (`POST /api/managedata/sources/bulk-import`)
++                                                                          ~
+Missing closing ')' in expression.
+Not all parse errors were reported.  Correct the reported errors and try again.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : MissingOpenParenthesisInIfStatement
+ 
+

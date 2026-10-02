@@ -1,0 +1,74 @@
+
+The command exited with code 0.
+Output:
+
+Name                                  Length
+----                                  ------
+.env                                      35
+.env.example                            1740
+.python-version                            7
+10k_scope2_test.csv                   621431
+10k_scope3_test.csv                   514415
+add_columns.py                           839
+add_indexes.py                          1610
+app.py                                 21144
+background_processor.py               112337
+benchmark_db.py                         1353
+bulk_tier1_all_fuels.csv               17449
+bulk_tier3_360_per_region.csv         205610
+check_anomalies.py                       728
+config.py                               4806
+create_anomalies.py                     1260
+database.db                                0
+electricity_factors.py                 10919
+emission_factors.py                    16308
+emission_factors_api2021.py            80566
+emission_factors_chapter7_onshore.py   69578
+exhaustive_test_upload.csv            136525
+extensions.py                           1922
+fix_dashboard.py                         317
+generate_10k_csv.py                     4402
+generate_10k_scope2.py                  1753
+generate_10k_scope3.py                  1618
+generate_1k_comprehensive.py           16673
+generate_1k_csv.py                      4183
+generate_1m_csv.py                      7726
+generate_1m_excel.py                    6696
+generate_berkine_master_report.py      86085
+generate_bulk_test_csvs.py             13408
+generate_elm_master_report.py          42469
+generate_scenarios.py                  17274
+generate_test_csvs.py                   1988
+ghg_app.db                           2310144
+ghg_app.db-shm                         32768
+ghg_app.db-wal                             0
+ghg_app.db.bak_before_scope_deletion 8282112
+ghg_emissions.db                           0
+id_guard.py                             2662
+input_validation.py                     7037
+list_all_factors.py                      742
+locustfile.py                           1014
+migrate_ogmp.py                         6633
+models.py                              37397
+patch_bg.py                             2753
+process_categories.py                  17003
+pytest.ini                               106
+requirements.txt                         344
+restore_full_data.py                   19059
+schema_sync.py                          3332
+seed_admin.py                           4128
+seed_berkine_data.py                   23238
+seed_berkine_full_exact.py             25378
+status.py                                872
+test_csv_uploader.py                    8920
+test_emission_calculations.py          49529
+test_performance.py                      657
+test_runner.py                          5234
+test_scope2.csv                          425
+test_scope3.csv                          346
+trace.log                            2170905
+upload_test_s2_s3.py                    2595
+utils.py                               11487
+
+
+

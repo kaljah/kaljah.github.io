@@ -1,0 +1,24 @@
+
+The command exited with code 0.
+Output:
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   src/components/charts/BarChart.jsx
+	modified:   src/components/charts/ChartWrappers.css
+	modified:   src/components/charts/LineChart.jsx
+	modified:   src/components/charts/PieChart.jsx
+	modified:   src/pages/CarbonIntensity.css
+	modified:   src/pages/DashboardEnhanced.jsx
+	modified:   src/pages/MethaneIntensity.jsx
+	modified:   src/test-setup.js
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	src/__tests__/charts.test.jsx
+
+no changes added to commit (use "git add" and/or "git commit -a")
+

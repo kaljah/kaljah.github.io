@@ -1,0 +1,27 @@
+
+The command exited with code 0.
+Output:
+src/pages/SbtiDashboard.jsx-204-    URL.revokeObjectURL(url);
+src/pages/SbtiDashboard.jsx-205-    toast.show("SBTi Trajectory CSV exported successfully", "success");
+src/pages/SbtiDashboard.jsx-206-  };
+src/pages/SbtiDashboard.jsx-207-
+src/pages/SbtiDashboard.jsx-208-  // Trajectory chart lines: Active Corporate Target + Actual + Reference Benchmarks + BAU
+src/pages/SbtiDashboard.jsx:209:  const trajectoryLines = useMemo(() => [
+src/pages/SbtiDashboard.jsx-210-    {
+src/pages/SbtiDashboard.jsx-211-      dataKey: "sbti_target",
+src/pages/SbtiDashboard.jsx-212-      name: `Corporate Target (${sbtiData?.reduction_rate_pct || 4.2}%/yr)`,
+src/pages/SbtiDashboard.jsx-213-      color: "#10b981",
+src/pages/SbtiDashboard.jsx-214-      strokeWidth: 3,
+--
+src/pages/SbtiDashboard.jsx-550-          <div style={{ height: "360px", width: "100%" }}>
+src/pages/SbtiDashboard.jsx-551-            {sbtiData?.trajectory && sbtiData.trajectory.length > 0 ? (
+src/pages/SbtiDashboard.jsx-552-              <LineChart
+src/pages/SbtiDashboard.jsx-553-                data={sbtiData.trajectory}
+src/pages/SbtiDashboard.jsx-554-                xAxisKey="year"
+src/pages/SbtiDashboard.jsx:555:                lines={trajectoryLines}
+src/pages/SbtiDashboard.jsx-556-                height={350}
+src/pages/SbtiDashboard.jsx-557-              />
+src/pages/SbtiDashboard.jsx-558-            ) : (
+src/pages/SbtiDashboard.jsx-559-              <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%", color: "#94a3b8" }}>
+src/pages/SbtiDashboard.jsx-560-                No trajectory configured. Click "Configure Target" to set baseline and targets.
+

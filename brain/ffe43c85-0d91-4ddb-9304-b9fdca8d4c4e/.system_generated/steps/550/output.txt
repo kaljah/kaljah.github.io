@@ -1,0 +1,67 @@
+
+The command exited with code 0.
+Output:
+
+> new\client\src\pages\ManageData.jsx:657:    const [workbench, setWorkbench] = useState({
+  new\client\src\pages\ManageData.jsx:658:        meter_precision: 5.0, lab_precision: 2.0, gwp_uncertainty: 15.0
+  new\client\src\pages\ManageData.jsx:659:    });
+  new\client\src\pages\ManageData.jsx:660:
+  new\client\src\pages\ManageData.jsx:661:    // Fetch Data on Load
+> new\client\src\pages\ManageData.jsx:2351:                                {/* EF Uncertainty Workbench */}
+  new\client\src\pages\ManageData.jsx:2352:                                <div style={{ marginTop: '20px', padding: 
+'20px', background: 'rgba(30, 41, 59, 0.03)', borderRadius: '12px', border: '1px solid rgba(0,0,0,0.05)' }}>
+  new\client\src\pages\ManageData.jsx:2353:                                    <h4 style={{ margin: '0 0 15px 0', 
+fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+> new\client\src\pages\ManageData.jsx:2354:                                        <Database size={16} /> EF 
+Uncertainty Workbench (ISO 14064-1 compliant)
+  new\client\src\pages\ManageData.jsx:2355:                                    </h4>
+  new\client\src\pages\ManageData.jsx:2356:                                    <div style={{ display: 'grid', 
+gridTemplateColumns: 'repeat(3, 1fr)', gap: '15px' }}>
+  new\client\src\pages\ManageData.jsx:2357:                                        <div className="input-group">
+  new\client\src\pages\ManageData.jsx:2358:                                            <label style={{ fontSize: 
+'0.8rem' }}>Meter Precision (�%)</label>
+> new\client\src\pages\ManageData.jsx:2359:                                            <input type="number" step="0.1" 
+value={workbench.meter_precision} onChange={(e) => setWorkbench({ ...workbench, meter_precision: 
+parseFloat(e.target.value) || 0 })} className="mole-input" style={{ padding: '8px' }} />
+  new\client\src\pages\ManageData.jsx:2360:                                        </div>
+  new\client\src\pages\ManageData.jsx:2361:                                        <div className="input-group">
+  new\client\src\pages\ManageData.jsx:2362:                                            <label style={{ fontSize: 
+'0.8rem' }}>Lab Analysis (�%)</label>
+> new\client\src\pages\ManageData.jsx:2363:                                            <input type="number" step="0.1" 
+value={workbench.lab_precision} onChange={(e) => setWorkbench({ ...workbench, lab_precision: 
+parseFloat(e.target.value) || 0 })} className="mole-input" style={{ padding: '8px' }} />
+  new\client\src\pages\ManageData.jsx:2364:                                        </div>
+  new\client\src\pages\ManageData.jsx:2365:                                        <div className="input-group">
+  new\client\src\pages\ManageData.jsx:2366:                                            <label style={{ fontSize: 
+'0.8rem' }}>GWP Standard Selection</label>
+  new\client\src\pages\ManageData.jsx:2367:                                            <select
+> new\client\src\pages\ManageData.jsx:2370:                                                
+value={workbench.gwp_uncertainty}
+> new\client\src\pages\ManageData.jsx:2371:                                                onChange={(e) => 
+setWorkbench({ ...workbench, gwp_uncertainty: parseFloat(e.target.value) || 0 })}
+  new\client\src\pages\ManageData.jsx:2372:                                            >
+  new\client\src\pages\ManageData.jsx:2373:                                                <option value="20.0">IPCC 
+AR4 (�20.0%)</option>
+  new\client\src\pages\ManageData.jsx:2374:                                                <option value="15.0">IPCC 
+AR5 (�15.0%)</option>
+  new\client\src\pages\ManageData.jsx:2375:                                                <option value="11.0">IPCC 
+AR6 (�11.0%)</option>
+> new\client\src\pages\ManageData.jsx:2384:                                                
+Math.pow(workbench.meter_precision, 2) +
+> new\client\src\pages\ManageData.jsx:2385:                                                
+Math.pow(workbench.lab_precision, 2)
+  new\client\src\pages\ManageData.jsx:2386:                                            );
+  new\client\src\pages\ManageData.jsx:2387:                                            // IPCC typically suggests �50% 
+for CH4 and �150% for N2O technology uncertainty
+> new\client\src\pages\ManageData.jsx:2388:                                            const ch4_u = 
+Math.sqrt(Math.pow(workbench.meter_precision, 2) + Math.pow(50.0, 2));
+> new\client\src\pages\ManageData.jsx:2389:                                            const n2o_u = 
+Math.sqrt(Math.pow(workbench.meter_precision, 2) + Math.pow(150.0, 2));
+  new\client\src\pages\ManageData.jsx:2390:                                            
+  new\client\src\pages\ManageData.jsx:2391:                                            setFactorForm({ 
+  new\client\src\pages\ManageData.jsx:2392:                                                ...factorForm, 
+  new\client\src\pages\ManageData.jsx:2393:                                                co2_uncertainty: 
+co2_u.toFixed(2),
+
+
+

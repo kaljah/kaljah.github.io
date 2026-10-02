@@ -1,0 +1,33 @@
+
+The command exited with code 1.
+Output:
+
+> client@0.0.0 build
+> vite build
+
+vite v7.3.1 building client environment for production...
+transforming...
+✓ 24 modules transformed.
+✗ Build failed in 385ms
+error during build:
+[vite:esbuild] Transform failed with 1 error:
+C:/Users/samsung/Desktop/H2/new/client/src/pages/MethaneIntensity.jsx:1634:0: ERROR: Unexpected end of file before a closing "div" tag
+file: C:/Users/samsung/Desktop/H2/new/client/src/pages/MethaneIntensity.jsx:1634:0
+
+Unexpected end of file before a closing "div" tag
+1632 |  
+1633 |  export default MethaneIntensity;
+1634 |  
+     |  ^
+
+    at failureErrorWithLog (C:\Users\samsung\Desktop\H2\new\client\node_modules\esbuild\lib\main.js:1467:15)
+    at C:\Users\samsung\Desktop\H2\new\client\node_modules\esbuild\lib\main.js:736:50
+    at responseCallbacks.<computed> (C:\Users\samsung\Desktop\H2\new\client\node_modules\esbuild\lib\main.js:603:9)
+    at handleIncomingPacket (C:\Users\samsung\Desktop\H2\new\client\node_modules\esbuild\lib\main.js:658:12)
+    at Socket.readFromStdout (C:\Users\samsung\Desktop\H2\new\client\node_modules\esbuild\lib\main.js:581:7)
+    at Socket.emit (node:events:508:28)
+    at addChunk (node:internal/streams/readable:559:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:510:3)
+    at Readable.push (node:internal/streams/readable:390:5)
+    at Pipe.onStreamRead (node:internal/stream_base_commons:189:23)
+

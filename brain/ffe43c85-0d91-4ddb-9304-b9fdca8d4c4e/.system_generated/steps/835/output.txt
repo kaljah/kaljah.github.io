@@ -1,0 +1,16 @@
+
+The command exited with code 0.
+Output:
+src/components/charts/BarChart.jsx:11:} from "recharts";
+src/components/charts/ChartWrappers.css:279:.recharts-default-tooltip {
+src/components/charts/ChartWrappers.css:284:.recharts-cartesian-grid line {
+src/components/charts/ChartWrappers.css:288:.recharts-cartesian-axis-line {
+src/components/charts/ChartWrappers.css:292:.recharts-cartesian-axis-tick-line {
+src/components/charts/ChartWrappers.css:296:.recharts-cartesian-axis-tick-value {
+src/components/charts/ChartWrappers.css:303:.recharts-legend-item-text {
+src/components/charts/ChartWrappers.css:310:.recharts-tooltip-cursor {
+src/components/charts/ChartWrappers.css:316:.recharts-bar-rectangle:hover {
+src/components/charts/ChartWrappers.css:321:.recharts-pie-sector:hover {
+src/components/charts/LineChart.jsx:11:} from "recharts";
+src/components/charts/PieChart.jsx:9:} from "recharts";
+

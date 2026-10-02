@@ -1,0 +1,8 @@
+
+The command exited with code 1.
+Output:
+  File "C:\Users\samsung\.gemini\antigravity\brain\37e8daa4-b018-4044-b93b-d5b158496118\scratch\generate_report.py", line 3
+    artifact_path = rC:\Users\samsung\.gemini\antigravity\brain\37e8daa4-b018-4044-b93b-d5b158496118\security_audit_report.md
+                      ^
+SyntaxError: invalid syntax
+

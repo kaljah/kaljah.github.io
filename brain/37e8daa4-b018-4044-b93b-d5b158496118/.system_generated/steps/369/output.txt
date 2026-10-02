@@ -1,0 +1,8 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":13,"LineContent":"@facilities_bp.route(\"\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":14,"LineContent":"@facilities_bp.route(\"/\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":74,"LineContent":"@facilities_bp.route(\"/all-regions\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":133,"LineContent":"@facilities_bp.route(\"\", methods=[\"POST\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":134,"LineContent":"@facilities_bp.route(\"/\", methods=[\"POST\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":229,"LineContent":"@facilities_bp.route(\"/\u003cint:facility_id\u003e\", methods=[\"PUT\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":371,"LineContent":"@facilities_bp.route(\"/\u003cint:facility_id\u003e\", methods=[\"DELETE\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":426,"LineContent":"@facilities_bp.route(\"/import\", methods=[\"POST\"])"}

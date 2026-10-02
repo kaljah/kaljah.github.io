@@ -1,0 +1,9 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\pages\Login.css:129:  mix-blend-mode: multiply; /* Realistic dense gas mixing on light background */
+new\client\src\pages\Login.css:163:  mix-blend-mode: overlay;
+
+
+

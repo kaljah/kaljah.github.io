@@ -1,0 +1,88 @@
+
+The command exited with code 0.
+Output:
+diff --git a/new/client/src/pages/CarbonIntensity.css b/new/client/src/pages/CarbonIntensity.css
+index 6de43849..a3c12dfe 100644
+--- a/new/client/src/pages/CarbonIntensity.css
++++ b/new/client/src/pages/CarbonIntensity.css
+@@ -593,6 +593,7 @@
+ 
+ /* Responsive adjustments */
+ @media (max-width: 1200px) {
++  .kpi-grid,
+   .kpi-grid-4 {
+     grid-template-columns: repeat(2, 1fr);
+   }
+@@ -602,6 +603,7 @@
+ }
+ 
+ @media (max-width: 768px) {
++  .kpi-grid,
+   .kpi-grid-4 {
+     grid-template-columns: 1fr;
+   }
+diff --git a/new/client/src/pages/MethaneIntensity.jsx b/new/client/src/pages/MethaneIntensity.jsx
+index 2bd657e9..47b5c963 100644
+--- a/new/client/src/pages/MethaneIntensity.jsx
++++ b/new/client/src/pages/MethaneIntensity.jsx
+@@ -764,8 +764,8 @@ const MethaneIntensity = () => {
+             </div>
+           </div>
+ 
+-          {/* Horizontal 4-KPI Grid */}
+-          <div className="kpi-grid-4">
++          {/* Horizontal 3-KPI Grid */}
++          <div className="kpi-grid">
+             <div className="kpi-card">
+               <div className="kpi-header">
+                 <div className="kpi-icon ch4">
+@@ -957,48 +957,6 @@ const MethaneIntensity = () => {
+                 </span>
+               </div>
+             </div>
+-
+-            <div className="kpi-card">
+-              <div className="kpi-header">
+-                <div
+-                  className="kpi-icon wec"
+-                  style={{
+-                    background: "rgba(239, 68, 68, 0.1)",
+-                    color: "#ef4444",
+-                  }}
+-                >
+-                  <AlertTriangle size={20} />
+-                </div>
+-                <span className="kpi-label">EPA WEC Liability</span>
+-              </div>
+-              <div className="kpi-value-container">
+-                <span
+-                  className="total-value"
+-                  style={{
+-                    color: !stats.wecAssessed ? "#64748b" : stats.totalWecFeeUsd > 0 ? "#ef4444" : "#10b981",
+-                  }}
+-                >
+-                  {stats.wecAssessed ? `$${formatNumber(stats.totalWecFeeUsd, 0)}` : "—"}
+-                </span>
+-                <span className="kpi-unit">
+-                  {stats.wecAssessed ? "USD Est." : stats.wecReason || "Select a single year"}
+-                </span>
+-              </div>
+-              <div className="kpi-footer">
+-                <span>
+-                  Rate:{" "}
+-                  <strong>
+-                    {stats.wecRate
+-                      ? `$${formatNumber(stats.wecRate, 0)}`
+-                      : selectedYear === "all"
+-                        ? "per year"
+-                        : "—"}
+-                    /t CH₄
+-                  </strong>{" "}
+-                  (CAA §136, from 2034 emissions)
+-                </span>
+-              </div>
+-            </div>
+           </div>
+ 
+           {/* Methane Mass Balance Bar */}
+

@@ -1,0 +1,46 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\Login.css. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -123,27 +123,26 @@
+   height: 700px;
+   border-radius: 50%;
+   filter: blur(80px);
+-  opacity: 0.85; /* Opaque enough to be a solid but soft blob */
++  opacity: 0.65;
+   will-change: transform;
+-  mix-blend-mode: multiply; /* Realistic dense gas mixing on light background */
+-}
+-
+-/* Orange/Grey Carbon Cloud */
++}
++
++/* Slate & Orange Radial Glow */
+ .co2-cloud {
+   background: radial-gradient(
+     circle,
+-    rgba(249, 115, 22, 0.6) 0%,
+-    rgba(100, 116, 139, 0.3) 50%,
+-    transparent 70%
+-  );
+-}
+-
+-/* Green Methane Cloud */
++    rgba(255, 102, 0, 0.3) 0%,
++    rgba(148, 163, 184, 0.2) 45%,
++    transparent 70%
++  );
++}
++
++/* Soft Emerald / Slate Methane Glow */
+ .ch4-cloud {
+   background: radial-gradient(
+     circle,
+-    rgba(16, 185, 129, 0.5) 0%,
+-    rgba(15, 23, 42, 0.2) 50%,
++    rgba(16, 185, 129, 0.25) 0%,
++    rgba(148, 163, 184, 0.15) 50%,
+     transparent 70%
+   );
+   width: 900px;
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

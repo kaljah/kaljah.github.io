@@ -1,0 +1,11 @@
+
+The command exited with code 0.
+Output:
+
+new\server\routes\equity_routes.py:34:@equity_bp.route("/partners", methods=["GET"])
+new\server\routes\equity_routes.py:51:@equity_bp.route("/shares", methods=["GET"])
+new\server\routes\equity_routes.py:137:@equity_bp.route("/shares", methods=["POST"])
+new\server\routes\equity_routes.py:203:@equity_bp.route("/allocation", methods=["GET"])
+
+
+

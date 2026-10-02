@@ -1,0 +1,36 @@
+
+The command exited with code 0.
+Output:
+npm warn cleanup Failed to remove some directories [
+npm warn cleanup   [
+npm warn cleanup     'C:\\Users\\samsung\\Desktop\\H2\\new\\client\\node_modules\\@tailwindcss\\.oxide-win32-x64-msvc-hRyu9bHO',
+npm warn cleanup     [Error: EPERM: operation not permitted, unlink 'C:\Users\samsung\Desktop\H2\new\client\node_modules\@tailwindcss\.oxide-win32-x64-msvc-hRyu9bHO\tailwindcss-oxide.win32-x64-msvc.node'] {
+npm warn cleanup       errno: -4048,
+npm warn cleanup       code: 'EPERM',
+npm warn cleanup       syscall: 'unlink',
+npm warn cleanup       path: 'C:\\Users\\samsung\\Desktop\\H2\\new\\client\\node_modules\\@tailwindcss\\.oxide-win32-x64-msvc-hRyu9bHO\\tailwindcss-oxide.win32-x64-msvc.node'
+npm warn cleanup     }
+npm warn cleanup   ],
+npm warn cleanup   [
+npm warn cleanup     'C:\\Users\\samsung\\Desktop\\H2\\new\\client\\node_modules\\.lightningcss-win32-x64-msvc-uSvexTPm',
+npm warn cleanup     [Error: EPERM: operation not permitted, unlink 'C:\Users\samsung\Desktop\H2\new\client\node_modules\.lightningcss-win32-x64-msvc-uSvexTPm\lightningcss.win32-x64-msvc.node'] {
+npm warn cleanup       errno: -4048,
+npm warn cleanup       code: 'EPERM',
+npm warn cleanup       syscall: 'unlink',
+npm warn cleanup       path: 'C:\\Users\\samsung\\Desktop\\H2\\new\\client\\node_modules\\.lightningcss-win32-x64-msvc-uSvexTPm\\lightningcss.win32-x64-msvc.node'
+npm warn cleanup     }
+npm warn cleanup   ]
+npm warn cleanup ]
+
+added 16 packages, removed 15 packages, changed 1 package, and audited 391 packages in 4s
+
+82 packages are looking for funding
+  run `npm fund` for details
+
+24 vulnerabilities (2 low, 6 moderate, 15 high, 1 critical)
+
+To address all issues, run:
+  npm audit fix
+
+Run `npm audit` for details.
+

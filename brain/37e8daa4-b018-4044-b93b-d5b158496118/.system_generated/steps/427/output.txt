@@ -1,0 +1,39 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3469,"LineContent":"def _safe_excel_value(val):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3765,"LineContent":"            ws1.cell(row=row_num, column=1, value=_safe_excel_value(item[\"record_id\"]))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3769,"LineContent":"            ws1.cell(row=row_num, column=5, value=_safe_excel_value(item[\"facility\"]))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3770,"LineContent":"            ws1.cell(row=row_num, column=6, value=_safe_excel_value(item[\"division\"]))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3771,"LineContent":"            ws1.cell(row=row_num, column=7, value=_safe_excel_value(item[\"field\"]))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3772,"LineContent":"            ws1.cell(row=row_num, column=8, value=_safe_excel_value(item[\"group\"]))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3773,"LineContent":"            ws1.cell(row=row_num, column=9, value=_safe_excel_value(item[\"process\"]))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3774,"LineContent":"            ws1.cell(row=row_num, column=10, value=_safe_excel_value(item[\"fuel\"]))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3780,"LineContent":"            ws1.cell(row=row_num, column=12, value=_safe_excel_value(item[\"unit\"]))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3799,"LineContent":"            ws1.cell(row=row_num, column=17, value=_safe_excel_value(item[\"status\"]))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":43,"LineContent":"def _safe_excel_value(val):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":999,"LineContent":"            ws1.cell(row=row_curr, column=1, value=_safe_excel_value(f.name))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":1000,"LineContent":"            ws1.cell(row=row_curr, column=2, value=_safe_excel_value(f.code or \"N/A\"))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":1002,"LineContent":"                row=row_curr, column=3, value=_safe_excel_value(f.segment or \"Upstream\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":1007,"LineContent":"                value=_safe_excel_value(op_st.replace(\"_\", \"-\").title()),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":1010,"LineContent":"                row=row_curr, column=5, value=_safe_excel_value(f.country or \"Algeria\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":1115,"LineContent":"                value=_safe_excel_value(em.record_id or f\"EM-{em.id}\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":1117,"LineContent":"            ws2.cell(row=row_curr, column=2, value=_safe_excel_value(fac_name))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":1123,"LineContent":"                value=_safe_excel_value(process_label(em.process_type, \"N/A\")),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":1128,"LineContent":"                value=_safe_excel_value("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":1133,"LineContent":"            ws2.cell(row=row_curr, column=8, value=_safe_excel_value(em.unit or \"\"))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":1137,"LineContent":"                value=_safe_excel_value(em.factor_source or \"Default EF\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":1145,"LineContent":"                value=_safe_excel_value("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":1150,"LineContent":"            ws2.cell(row=row_curr, column=14, value=_safe_excel_value(ogmp_cat))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":1201,"LineContent":"            ws3.cell(row=row_curr, column=1, value=_safe_excel_value(f\"OGMP-{s.id}\"))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":1202,"LineContent":"            ws3.cell(row=row_curr, column=2, value=_safe_excel_value(fac_name))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":1204,"LineContent":"            ws3.cell(row=row_curr, column=4, value=_safe_excel_value(s.survey_date))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":1205,"LineContent":"            ws3.cell(row=row_curr, column=5, value=_safe_excel_value(s.survey_type))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":1212,"LineContent":"                value=_safe_excel_value(s.detection_threshold or \"N/A\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":1217,"LineContent":"                value=_safe_excel_value(s.instrument_vendor or \"N/A\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":1222,"LineContent":"                value=_safe_excel_value(s.reconciliation_status or \"Reconciled\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":1225,"LineContent":"                row=row_curr, column=12, value=_safe_excel_value(s.operator_notes or \"\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":1297,"LineContent":"            ws4.cell(row=row_curr, column=1, value=_safe_excel_value(f.name))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":1301,"LineContent":"                value=_safe_excel_value(year if year != \"all\" else \"All Years\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":1304,"LineContent":"                row=row_curr, column=3, value=_safe_excel_value(f.segment or \"Upstream\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":1326,"LineContent":"            ws4.cell(row=row_curr, column=9, value=_safe_excel_value(rec_status))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":1327,"LineContent":"            ws4.cell(row=row_curr, column=10, value=_safe_excel_value(note))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":1403,"LineContent":"            ws5.cell(row=row_curr, column=1, value=_safe_excel_value(f.name))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":1407,"LineContent":"                value=_safe_excel_value(op_st.replace(\"_\", \"-\").title()),"}

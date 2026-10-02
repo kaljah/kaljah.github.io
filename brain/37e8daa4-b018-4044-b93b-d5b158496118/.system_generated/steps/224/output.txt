@@ -1,0 +1,4 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":868,"LineContent":"              attribution='\u0026copy; \u003ca href=\"https://dataspace.copernicus.eu\" target=\"_blank\" rel=\"noopener noreferrer\"\u003eCopernicus Sentinel-5P (ESA/EU)\u003c/a\u003e'"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":1280,"LineContent":"              target=\"_blank\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":929,"LineContent":"                      target=\"_blank\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":960,"LineContent":"                          target=\"_blank\""}

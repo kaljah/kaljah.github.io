@@ -1,0 +1,62 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\src\components
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----          2/8/2026   9:07 PM                charts                                                               
+d-----         8/11/2026   2:18 PM                common                                                               
+d-----         8/15/2026   7:11 PM                layout                                                               
+d-----         10/2/2026   3:28 PM                scope1                                                               
+-a----          9/5/2026   6:02 PM           8420 BatchReviewWizard.css                                                
+-a----         10/2/2026   3:28 PM          42207 BatchReviewWizard.jsx                                                
+-a----         8/11/2026  12:54 PM           4482 BulkImportModal.css                                                  
+-a----         9/30/2026   7:29 PM          64651 BulkImportModal.jsx                                                  
+-a----         9/14/2026  11:58 PM           8606 CalculationDetails.css                                               
+-a----         10/2/2026   3:28 PM          12743 CalculationDetails.jsx                                               
+-a----         8/11/2026  12:54 PM          14488 ColumnMappingWizard.css                                              
+-a----         9/30/2026   7:29 PM          57958 ColumnMappingWizard.jsx                                              
+-a----         9/16/2026   1:00 AM           2287 ConfirmModal.jsx                                                     
+-a----         8/11/2026  12:54 PM           6466 CsvUploader.css                                                      
+-a----         9/30/2026   7:29 PM           1868 CsvUploader.jsx                                                      
+-a----         9/30/2026   7:29 PM           2999 CustomDropdown.css                                                   
+-a----         9/30/2026   7:29 PM          11160 CustomDropdown.jsx                                                   
+-a----         9/19/2026   9:50 PM           2555 Drawer.css                                                           
+-a----         9/19/2026   9:50 PM           2168 Drawer.jsx                                                           
+-a----         9/30/2026   7:29 PM           1998 EmissionFactorOption.jsx                                             
+-a----         8/11/2026  12:54 PM           2892 ErrorBoundary.css                                                    
+-a----         9/30/2026   7:29 PM           3518 ErrorBoundary.jsx                                                    
+-a----         8/11/2026  12:54 PM           3402 FormField.css                                                        
+-a----         8/11/2026  12:54 PM           5657 FormField.jsx                                                        
+-a----         8/11/2026  12:54 PM           4396 GasCompositionCalculator.css                                         
+-a----         8/11/2026  12:54 PM          16450 GasCompositionCalculator.jsx                                         
+-a----         10/2/2026   6:00 PM           4615 LoadingSpinner.css                                                   
+-a----         9/30/2026   7:29 PM            840 LoadingSpinner.jsx                                                   
+-a----         8/11/2026  12:54 PM           2305 Modal.css                                                            
+-a----         9/30/2026   7:29 PM           1555 Modal.jsx                                                            
+-a----         9/30/2026   7:29 PM           7314 MultiSelectDropdown.jsx                                              
+-a----         9/30/2026   7:29 PM          24702 NotificationCenter.jsx                                               
+-a----         8/15/2026   6:49 PM           6719 patch_s3.py                                                          
+-a----         8/15/2026   7:06 PM           4283 patch_s3_form.py                                                     
+-a----         9/30/2026   7:29 PM          17154 QuickAddCustomFactorModal.jsx                                        
+-a----         9/30/2026   7:29 PM           7606 Scope1Form.css                                                       
+-a----         10/2/2026   3:28 PM         134226 Scope1Form.jsx                                                       
+-a----          9/5/2026   5:35 PM          24488 Scope1ImportWizard.css                                               
+-a----         9/30/2026   7:29 PM          50682 Scope1ImportWizard.jsx                                               
+-a----         9/30/2026   7:29 PM          34669 Scope2Form.jsx                                                       
+-a----         9/30/2026   7:29 PM          25259 Scope2ImportWizard.jsx                                               
+-a----         9/30/2026   7:29 PM          30120 Scope3Form.jsx                                                       
+-a----         9/30/2026   7:29 PM          26796 Scope3ImportWizard.jsx                                               
+-a----         8/11/2026  12:54 PM           1475 ScopeTables.css                                                      
+-a----         10/2/2026   6:00 PM            828 SkeletonLoader.jsx                                                   
+-a----         8/11/2026  12:54 PM           2120 Toast.css                                                            
+-a----         9/30/2026   7:29 PM           4611 Toast.jsx                                                            
+-a----         9/16/2026  12:59 AM          11092 UploadProgress.css                                                   
+-a----         9/30/2026   7:29 PM          19164 UploadProgress.jsx                                                   
+
+
+

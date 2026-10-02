@@ -1,0 +1,15 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1030,"LineContent":"                        Notification.create("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\utils.py","LineNumber":259,"LineContent":"                Notification.create("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\utils.py","LineNumber":273,"LineContent":"                    Notification.create("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":439,"LineContent":"            Notification.create("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":1181,"LineContent":"    Notification.create("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":991,"LineContent":"                        Notification.create("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":2900,"LineContent":"                Notification.create("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":2964,"LineContent":"                            Notification.create("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3447,"LineContent":"            Notification.create("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\services\\maker_checker.py","LineNumber":100,"LineContent":"        Notification.create("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":474,"LineContent":"        Notification.create("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":474,"LineContent":"                Notification.create("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":446,"LineContent":"                    Notification.create("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":205,"LineContent":"                Notification.create("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":491,"LineContent":"                Notification.create("}

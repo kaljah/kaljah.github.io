@@ -1,0 +1,42 @@
+
+The command exited with code 0.
+Output:
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   new/client/package-lock.json
+	modified:   new/client/package.json
+	deleted:    new/client/src/assets/loading_animation.mp4
+	modified:   new/client/src/components/LoadingSpinner.css
+	modified:   new/client/src/components/Scope1Form.jsx
+	modified:   new/client/src/components/SkeletonLoader.jsx
+	modified:   new/client/src/components/layout/Layout.jsx
+	modified:   new/client/src/components/layout/Sidebar.css
+	modified:   new/client/src/components/layout/Sidebar.jsx
+	modified:   new/client/src/components/layout/TopBar.jsx
+	modified:   new/client/src/index.css
+	modified:   new/client/src/main.jsx
+	modified:   new/client/src/pages/AuditTrail.jsx
+	modified:   new/client/src/pages/CarbonIntensity.css
+	modified:   new/client/src/pages/Dashboard.css
+	modified:   new/client/src/pages/DashboardEnhanced.jsx
+	modified:   new/client/src/pages/Login.css
+	modified:   new/client/src/pages/Login.jsx
+	modified:   new/client/src/pages/ManageData.jsx
+	modified:   new/client/src/pages/Reports.jsx
+	modified:   new/client/src/pages/UncertaintyAssessment.css
+	modified:   new/client/src/pages/UncertaintyAssessment.jsx
+	modified:   new/client/stats.html
+	modified:   new/client/vite.config.js
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	new/client/src/components/ui/
+	new/client/src/constants/routes.js
+	new/client/src/pages/ManageData/
+
+no changes added to commit (use "git add" and/or "git commit -a")
+

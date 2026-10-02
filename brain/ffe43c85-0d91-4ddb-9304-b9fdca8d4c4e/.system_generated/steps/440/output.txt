@@ -1,0 +1,30 @@
+
+The command exited with code 0.
+Output:
+src/__tests__/mathParityAndFormatters.test.js:2:import { formatNumber, formatCompactNumber, calculateTrend } from '../utils/formatters';
+src/__tests__/mathParityAndFormatters.test.js:13:  it('correctly calculates trend percentage', () => {
+src/__tests__/mathParityAndFormatters.test.js:14:    expect(calculateTrend(110, 100)).toBe('+10.0%');
+src/__tests__/mathParityAndFormatters.test.js:15:    expect(calculateTrend(90, 100)).toBe('-10.0%');
+src/__tests__/mathParityAndFormatters.test.js:16:    expect(calculateTrend(100, 0)).toBe('—');
+src/components/BulkImportModal.jsx:715:      // Pre-calculate header indices for performance (O(Columns) instead of O(Rows * Columns * Headers))
+src/components/GasCompositionCalculator.jsx:85:  const calculate = () => {
+src/components/GasCompositionCalculator.jsx:239:      toast.warning("Please calculate results and enter a name");
+src/components/GasCompositionCalculator.jsx:352:              onClick={calculate}
+src/components/Scope1Form.jsx:2113:                      // Library factors (the site factor database: calculated or equipment factors) are a
+src/components/Scope1Form.jsx:2845:            toast.success("Records imported and calculated successfully!");
+src/components/Scope1ImportWizard.jsx:655:              Choose how emissions will be calculated for each row in your file.
+src/components/Scope3Form.jsx:58:      const res = await api.post("/scope3/eeio-calculate", {
+src/components/patch_s3_form.py:18:      const res = await api.post("/scope3/eeio-calculate", {
+src/pages/DashboardEnhanced.jsx:16:  calculateTrend,
+src/pages/DashboardEnhanced.jsx:36:const calculateForecast = (data) => {
+src/pages/DashboardEnhanced.jsx:420:        const emissionsVariance = pyEmissions > 0 ? calculateTrend(cyEmissions, pyEmissions) : "—";
+src/pages/DashboardEnhanced.jsx:423:            ? calculateTrend(weightedIntensity, pyIntensity)
+src/pages/DashboardEnhanced.jsx:483:        const forecastPoints = calculateForecast(historicalData);
+src/pages/ManageData.jsx:1320:    // --- Pre-calculate Filtered Data for Pagination ---
+src/pages/ManageData.jsx:3175:                                        <strong>GHG Protocol Recalculation Rule:</strong> Base year emissions must be recalculated to reflect significant structural changes (e.g. acquisitions, divestments, boundary changes), methodology updates (e.g. new emission factors or GWP standards), or cumulative data errors exceeding significance thresholds. Every adjustment must include a documented reason.
+src/pages/ManageData.jsx:3351:                                                placeholder="Auto-calculated or manual override"
+src/pages/ManageData.jsx:4182:                            toast.success('Activity data imported and emissions calculated!');
+src/utils/ModernReportGenerator.js:552:    let narrative = `The ${isAllYears ? "comprehensive" : selectedYear} GHG Inventory consolidates emissions from ${reportFacilities.length} facilities. Represents a precise accounting of direct and indirect greenhouse gas emissions in adherence to international standards. Total emissions are calculated in metric tonnes of CO2 equivalent (tCO2e) under ${resolvedGwp.label}. ${fullData.primaryDriver} has been identified as the significant emission source over the reporting period.`;
+src/utils/ModernReportGenerator.js:1610:    // BUG-077: use the stored, server-calculated co2e_total (same basis as the dashboard);
+src/utils/formatters.js:80:export const calculateTrend = (current, base) => {
+

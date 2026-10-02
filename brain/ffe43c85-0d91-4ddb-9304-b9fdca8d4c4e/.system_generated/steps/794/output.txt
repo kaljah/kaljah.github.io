@@ -1,0 +1,9 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\pages\MethaneExplorer.jsx:43:  BarChart3,
+new\client\src\pages\MethaneExplorer.jsx:1547:              <BarChart3 size={15} color="#ff6600" />
+
+
+

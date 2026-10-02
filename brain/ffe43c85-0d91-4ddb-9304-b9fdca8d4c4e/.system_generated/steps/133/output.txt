@@ -1,0 +1,36 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\Login.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -78,14 +78,25 @@
+   const [forgotLoading, setForgotLoading] = useState(false);
+   const [forgotMsg, setForgotMsg] = useState({ text: "", type: "" });
+ 
+-  // Intro video state
+-  const [showIntro, setShowIntro] = useState(true);
++  // Intro video state: play once per device and respect reduced motion
++  const [showIntro, setShowIntro] = useState(() => {
++    try {
++      const alreadySeen = localStorage.getItem("ghg_intro_seen");
++      const prefersReducedMotion =
++        typeof window !== "undefined" &&
++        window.matchMedia &&
++        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
++      return !alreadySeen && !prefersReducedMotion;
++    } catch {
++      return false;
++    }
++  });
+   const [introFading, setIntroFading] = useState(false);
+ 
+-  const { login, sessionExpired, setSessionExpired } = useAuth();
+-  const navigate = useNavigate();
+-
+   const handleIntroEnd = () => {
++    try {
++      localStorage.setItem("ghg_intro_seen", "true");
++    } catch {}
+     setIntroFading(true);
+     setTimeout(() => setShowIntro(false), 800); // Matches CSS transition duration
+   };
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,16 @@
+
+The command exited with code 0.
+Output:
+
+removed 2 packages, changed 2 packages, and audited 390 packages in 5s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+22 vulnerabilities (2 low, 6 moderate, 13 high, 1 critical)
+
+To address all issues, run:
+  npm audit fix
+
+Run `npm audit` for details.
+

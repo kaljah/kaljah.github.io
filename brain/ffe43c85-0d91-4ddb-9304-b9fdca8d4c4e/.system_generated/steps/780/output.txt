@@ -1,0 +1,8 @@
+
+The command exited with code 0.
+Output:
+<truncated 95 lines>
+ 
+     const run = () => {
+       const width = window.innerWidth;
+

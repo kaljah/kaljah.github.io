@@ -1,0 +1,26 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\Scope1Form.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1,4 +1,4 @@
+-import React, { useState, useEffect } from "react";
++import React, { useState, useEffect, useMemo } from "react";
+ import api from "../api";
+ import CustomDropdown from "./CustomDropdown";
+ import { useToast } from "./Toast";
+@@ -5,5 +5,6 @@
+ import { getUserOperationalDefaults } from "../utils/userDefaults";
+ import { formatNumber, formatEmission } from "../utils/formatters";
++import { DataTable, Unit } from "./ui";
+ import "./ScopeTables.css";
+ import "./Scope1Form.css";
+ 
+@@ -10,6 +10,6 @@
+ import Scope1ImportWizard from "./Scope1ImportWizard";
+ import ConfirmModal from "./ConfirmModal";
+-import { Upload, Trash2, Eye, Sliders, Sparkles, BookOpen, Layers, PlusCircle, CheckCircle, Info } from "lucide-react";
++import { Upload, Trash2, Eye, Sliders, Sparkles, BookOpen, Layers, PlusCircle, CheckCircle, Info, ChevronUp, ChevronDown } from "lucide-react";
+ import { OFFICIAL_FUEL_PRESETS, getPresetsForFuel } from "../constants/officialFuelPresets";
+ import QuickAddCustomFactorModal from "./QuickAddCustomFactorModal";
+ import CalculationDetails from "./CalculationDetails";
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

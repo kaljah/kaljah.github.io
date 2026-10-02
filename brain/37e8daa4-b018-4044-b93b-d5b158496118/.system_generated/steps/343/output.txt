@@ -1,0 +1,4 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\equity_routes.py","LineNumber":34,"LineContent":"@equity_bp.route(\"/partners\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\equity_routes.py","LineNumber":51,"LineContent":"@equity_bp.route(\"/shares\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\equity_routes.py","LineNumber":137,"LineContent":"@equity_bp.route(\"/shares\", methods=[\"POST\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\equity_routes.py","LineNumber":203,"LineContent":"@equity_bp.route(\"/allocation\", methods=[\"GET\"])"}

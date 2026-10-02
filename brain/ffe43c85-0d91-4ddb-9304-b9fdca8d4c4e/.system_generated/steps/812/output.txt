@@ -1,0 +1,30 @@
+
+The command exited with code 0.
+Output:
+
+> new\client\src\pages\DashboardEnhanced.jsx:600:  const sourceChartData = useMemo(
+  new\client\src\pages\DashboardEnhanced.jsx:601:    () =>
+  new\client\src\pages\DashboardEnhanced.jsx:602:      [
+  new\client\src\pages\DashboardEnhanced.jsx:603:        // BUG-UI-05 FIX: Guard with ?? 0 to prevent .toFixed() on 
+undefined when stats update fails
+  new\client\src\pages\DashboardEnhanced.jsx:604:        {
+  new\client\src\pages\DashboardEnhanced.jsx:605:          name: "Combustion",
+  new\client\src\pages\DashboardEnhanced.jsx:606:          value: Number((stats.combustion ?? 0).toFixed(2)),
+  new\client\src\pages\DashboardEnhanced.jsx:607:          color: "#10b981",
+  new\client\src\pages\DashboardEnhanced.jsx:608:        },
+  new\client\src\pages\DashboardEnhanced.jsx:609:        {
+  new\client\src\pages\DashboardEnhanced.jsx:610:          name: "Flaring",
+> new\client\src\pages\DashboardEnhanced.jsx:1379:                  data={sourceChartData}
+  new\client\src\pages\DashboardEnhanced.jsx:1380:                  height={170}
+  new\client\src\pages\DashboardEnhanced.jsx:1381:                  innerRadius={50}
+  new\client\src\pages\DashboardEnhanced.jsx:1382:                  outerRadius={75}
+  new\client\src\pages\DashboardEnhanced.jsx:1383:                />
+  new\client\src\pages\DashboardEnhanced.jsx:1384:              </div>
+  new\client\src\pages\DashboardEnhanced.jsx:1385:            </div>
+  new\client\src\pages\DashboardEnhanced.jsx:1386:          </div>
+  new\client\src\pages\DashboardEnhanced.jsx:1387:        </div>
+  new\client\src\pages\DashboardEnhanced.jsx:1388:
+  new\client\src\pages\DashboardEnhanced.jsx:1389:        {/* SBTi Trajectory Pathway - Full Width Banner */}
+
+
+

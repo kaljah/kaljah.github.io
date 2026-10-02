@@ -1,0 +1,421 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\Scope1Form.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1918,6 +1918,415 @@
+     toast.show("success", "Factors updated from Gas Analysis");
+   };
+ 
++  // Real-time live calculation estimation
++  const liveCalculation = useMemo(() => {
++    let efCo2 = 0;
++    let efCh4 = 0;
++    let efN2o = 0;
++    let unit = "units";
++
++    if (sourceType === "default" && formData.fuel && API_FACTORS[formData.fuel]) {
++      const f = API_FACTORS[formData.fuel];
++      efCo2 = Number(f.co2) || 0;
++      efCh4 = Number(f.ch4) || 0;
++      efN2o = Number(f.n2o) || 0;
++      unit = f.unit || "unit";
++    } else if (sourceType === "specific") {
++      efCo2 = parseFloat(specFactors.co2) || 0;
++      efCh4 = parseFloat(specFactors.ch4) || 0;
++      efN2o = parseFloat(specFactors.n2o) || 0;
++      unit = specFactors.co2Unit || "unit";
++    } else if (sourceType === "library" && formData.fuel) {
++      const cf = customFactors.find((f) => f.id?.toString() === formData.fuel?.toString());
++      if (cf) {
++        efCo2 = Number(cf.co2_factor) || 0;
++        efCh4 = Number(cf.ch4_factor) || 0;
++        efN2o = Number(cf.n2o_factor) || 0;
++        unit = cf.unit || "unit";
++      }
++    }
++
++    const qty =
++      parseFloat(
++        formData.amount ||
++          formData.quantity ||
++          formData.oil_production ||
++          formData.events ||
++          formData.well_count ||
++          0
++      ) || 0;
++
++    const co2Tonnes = (qty * efCo2) / 1000;
++    const ch4Tonnes = (qty * efCh4) / 1000;
++    const n2oTonnes = (qty * efN2o) / 1000;
++    const co2eTotal = co2Tonnes * 1 + ch4Tonnes * 28 + n2oTonnes * 265;
++
++    const uCo2 =
++      uncertainty.co2 != null
++        ? uncertainty.co2 * 100
++        : parseFloat(userUncertainty.co2) || null;
++    const uCh4 =
++      uncertainty.ch4 != null
++        ? uncertainty.ch4 * 100
++        : parseFloat(userUncertainty.ch4) || null;
++    const uN2o =
++      uncertainty.n2o != null
++        ? uncertainty.n2o * 100
++        : parseFloat(userUncertainty.n2o) || null;
++
++    let weightedUncertainty = null;
++    if (co2eTotal > 0) {
++      const sum =
++        co2Tonnes * 1 * (uCo2 || 0) +
++        ch4Tonnes * 28 * (uCh4 || 0) +
++        n2oTonnes * 265 * (uN2o || 0);
++      weightedUncertainty = sum / co2eTotal;
++    } else if (uCo2 != null || uCh4 != null || uN2o != null) {
++      weightedUncertainty = Math.max(uCo2 || 0, uCh4 || 0, uN2o || 0);
++    }
++
++    let uncBand = { label: "N/A", bg: "#f1f5f9", color: "#64748b", val: null };
++    if (weightedUncertainty != null && weightedUncertainty > 0) {
++      if (weightedUncertainty <= 10) {
++        uncBand = {
++          label: "Low (≤ ±10%)",
++          bg: "var(--uncertainty-low-bg, rgba(16, 185, 129, 0.12))",
++          color: "var(--uncertainty-low, #10b981)",
++          val: weightedUncertainty,
++        };
++      } else if (weightedUncertainty <= 30) {
++        uncBand = {
++          label: "Medium (±10-30%)",
++          bg: "var(--uncertainty-med-bg, rgba(245, 158, 11, 0.12))",
++          color: "var(--uncertainty-med, #f59e0b)",
++          val: weightedUncertainty,
++        };
++      } else {
++        uncBand = {
++          label: "High (> ±30%)",
++          bg: "var(--uncertainty-high-bg, rgba(239, 68, 68, 0.12))",
++          color: "var(--uncertainty-high, #ef4444)",
++          val: weightedUncertainty,
++        };
++      }
++    }
++
++    return {
++      qty,
++      unit,
++      co2Tonnes,
++      ch4Tonnes,
++      n2oTonnes,
++      co2eTotal,
++      uCo2,
++      uCh4,
++      uN2o,
++      uncBand,
++    };
++  }, [sourceType, formData, specFactors, customFactors, uncertainty, userUncertainty]);
++
++  const filteredEntries = useMemo(() => {
++    return entries.filter((entry) => {
++      const s = filterSearch.toLowerCase();
++      const matchSearch =
++        !s ||
++        (entry.activity || "").toLowerCase().includes(s) ||
++        (entry.equipment_id || "").toLowerCase().includes(s) ||
++        (entry.fuel || entry.fuel_type || "").toLowerCase().includes(s) ||
++        (entry.group || "").toLowerCase().includes(s) ||
++        (entry.division || "").toLowerCase().includes(s);
++      const matchYear = !filterYear || entry.year?.toString() === filterYear;
++      const matchProcess =
++        !filterProcess || (entry.process || entry.process_type) === filterProcess;
++      return matchSearch && matchYear && matchProcess;
++    });
++  }, [entries, filterSearch, filterYear, filterProcess]);
++
++  const historyColumns = useMemo(
++    () => [
++      {
++        id: "expander",
++        header: () => null,
++        size: 36,
++        cell: ({ row }) => (
++          <button
++            type="button"
++            onClick={(e) => {
++              e.stopPropagation();
++              row.toggleExpanded();
++            }}
++            className="p-1 rounded text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
++            title={row.getIsExpanded() ? "Collapse details" : "Expand details"}
++          >
++            {row.getIsExpanded() ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
++          </button>
++        ),
++      },
++      {
++        accessorKey: "period",
++        header: "Period",
++        size: 95,
++        cell: ({ row }) => (
++          <span className="font-mono text-xs font-semibold text-slate-700">
++            {row.original.month
++              ? `${row.original.year}-${String(row.original.month).padStart(2, "0")}`
++              : row.original.year}
++          </span>
++        ),
++      },
++      {
++        accessorKey: "equipment_id",
++        header: "Equipment ID",
++        size: 120,
++        cell: ({ row }) => (
++          <span className="font-mono text-xs font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded">
++            {row.original.equipment_id || "—"}
++          </span>
++        ),
++      },
++      {
++        accessorKey: "activity",
++        header: "Activity / Region",
++        size: 150,
++        cell: ({ row }) => (
++          <div className="text-xs">
++            <div className="font-medium text-slate-800">{row.original.activity || "—"}</div>
++            <div className="text-[11px] text-slate-400">{row.original.facility_name || row.original.region || ""}</div>
++          </div>
++        ),
++      },
++      {
++        accessorKey: "process",
++        header: "Process",
++        size: 130,
++        cell: ({ row }) => {
++          const k = row.original.process || row.original.process_type;
++          const v = PROCESS_TYPES[k];
++          const other = { stoichiometry: "Stoichiometry" };
++          const label = (typeof v === "string" ? v : v?.label) || other[k] || String(k || "").replace(/_/g, " ");
++          return (
++            <span className="text-xs font-medium text-slate-700 truncate block max-w-[130px]" title={label}>
++              {label}
++            </span>
++          );
++        },
++      },
++      {
++        accessorKey: "fuel",
++        header: "Activity/Fuel",
++        size: 135,
++        cell: ({ row }) => (
++          <span className="text-xs text-slate-700 truncate block max-w-[125px]" title={row.original.fuel || row.original.fuel_type || row.original.activity_data_label || "—"}>
++            {row.original.fuel || row.original.fuel_type || row.original.activity_data_label || "—"}
++          </span>
++        ),
++      },
++      {
++        accessorKey: "factor_type",
++        header: "Tier",
++        size: 80,
++        cell: ({ row }) => {
++          const ft = factorTypeLabel(row.original);
++          return (
++            <span
++              className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
++                ft === "Default"
++                  ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
++                  : "bg-blue-50 text-blue-700 border border-blue-200"
++              }`}
++            >
++              {ft}
++            </span>
++          );
++        },
++      },
++      {
++        accessorKey: "quantity",
++        header: "Quantity",
++        size: 110,
++        cell: ({ row }) => {
++          const val = row.original.amount ?? row.original.quantity;
++          return val != null && val !== "" ? (
++            <span className="text-xs font-mono font-medium text-slate-800">
++              {formatNumber(val, 2)} {row.original.unit || ""}
++            </span>
++          ) : (
++            "—"
++          );
++        },
++      },
++      {
++        accessorKey: "co2_emissions",
++        header: "CO₂ (t)",
++        size: 90,
++        cell: ({ row }) => (
++          <span className="text-xs font-mono text-slate-700">
++            {formatEmission(row.original.co2_emissions || 0, 3)}
++          </span>
++        ),
++      },
++      {
++        accessorKey: "ch4_emissions",
++        header: "CH₄ (t)",
++        size: 90,
++        cell: ({ row }) => (
++          <span className="text-xs font-mono text-slate-700">
++            {formatEmission(row.original.ch4_emissions || 0, 4)}
++          </span>
++        ),
++      },
++      {
++        accessorKey: "n2o_emissions",
++        header: "N₂O (t)",
++        size: 90,
++        cell: ({ row }) => (
++          <span className="text-xs font-mono text-slate-700">
++            {formatEmission(row.original.n2o_emissions || 0, 4)}
++          </span>
++        ),
++      },
++      {
++        accessorKey: "co2e_total",
++        header: "Total (tCO₂e)",
++        size: 125,
++        cell: ({ row }) => (
++          <div className="flex items-center gap-1.5">
++            <span className="font-bold text-xs text-[var(--accent-color,#ff6600)] font-mono">
++              {formatEmission(row.original.co2e_total, 3)}
++            </span>
++            {row.original.status && (
++              <span
++                className={`text-[10px] font-bold px-1.5 py-0.2 rounded ${
++                  {
++                    Verified: "bg-emerald-100 text-emerald-800",
++                    Pending: "bg-amber-100 text-amber-800",
++                    Rejected: "bg-red-100 text-red-800",
++                    Draft: "bg-indigo-100 text-indigo-800",
++                  }[row.original.status] || "bg-slate-100 text-slate-700"
++                }`}
++              >
++                {row.original.status}
++              </span>
++            )}
++          </div>
++        ),
++      },
++      {
++        id: "actions",
++        header: () => <span className="text-center block">Actions</span>,
++        size: 85,
++        cell: ({ row }) => (
++          <div className="flex items-center justify-center gap-1">
++            <button
++              type="button"
++              className="p-1 rounded text-blue-600 hover:bg-blue-50 transition-colors"
++              onClick={() => handleInspect(row.original)}
++              title="Inspect Calculation Details"
++            >
++              <Eye size={15} />
++            </button>
++            <button
++              type="button"
++              className="p-1 rounded text-red-600 hover:bg-red-50 transition-colors"
++              onClick={() => handleDelete(row.original.id)}
++              title="Delete Record"
++            >
++              <Trash2 size={15} />
++            </button>
++          </div>
++        ),
++      },
++    ],
++    []
++  );
++
++  const renderHistorySubComponent = ({ row }) => {
++    const entry = row.original;
++    return (
++      <div className="bg-white rounded-xl p-4 border border-slate-200 shadow-2xs space-y-3 text-left">
++        <div className="flex items-center justify-between border-b border-slate-100 pb-2">
++          <div className="flex items-center gap-2">
++            <span className="text-xs font-bold text-slate-800">Uncertainty Breakdown &amp; Engineering Details</span>
++            <span className="text-xs font-mono text-slate-400">Record #{entry.id}</span>
++          </div>
++          <div className="flex items-center gap-3 text-xs text-slate-500">
++            <span>Division: <strong>{entry.division || "—"}</strong></span>
++            <span>Field: <strong>{entry.field || "—"}</strong></span>
++            <span>Group: <strong>{entry.group_name || entry.group || "—"}</strong></span>
++          </div>
++        </div>
++
++        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
++          {/* Standard Combined Uncertainty (1σ) */}
++          <div className="p-3 rounded-lg bg-slate-50 border border-slate-100 space-y-2">
++            <span className="text-xs font-bold text-slate-700 block">
++              Standard Combined Uncertainty (1σ)
++            </span>
++            <div className="grid grid-cols-3 gap-2 text-center text-xs">
++              <div className="p-1.5 rounded bg-white border border-slate-200">
++                <span className="text-[11px] font-semibold text-slate-500 block">CO₂ 1σ</span>
++                <span className="font-mono font-bold text-emerald-600">
++                  {entry.uncertainty_co2 != null && Number(entry.co2_emissions) > 0
++                    ? `±${(entry.uncertainty_co2 * 100).toFixed(1)}%`
++                    : "—"}
++                </span>
++              </div>
++              <div className="p-1.5 rounded bg-white border border-slate-200">
++                <span className="text-[11px] font-semibold text-slate-500 block">CH₄ 1σ</span>
++                <span className="font-mono font-bold text-blue-600">
++                  {entry.uncertainty_ch4 != null && Number(entry.ch4_emissions) > 0
++                    ? `±${(entry.uncertainty_ch4 * 100).toFixed(1)}%`
++                    : "—"}
++                </span>
++              </div>
++              <div className="p-1.5 rounded bg-white border border-slate-200">
++                <span className="text-[11px] font-semibold text-slate-500 block">N₂O 1σ</span>
++                <span className="font-mono font-bold text-purple-600">
++                  {entry.uncertainty_n2o != null && Number(entry.n2o_emissions) > 0
++                    ? `±${(entry.uncertainty_n2o * 100).toFixed(1)}%`
++                    : "—"}
++                </span>
++              </div>
++            </div>
++          </div>
++
++          {/* Expanded Uncertainty (95% CI, k=2) */}
++          <div className="p-3 rounded-lg bg-slate-50 border border-slate-100 space-y-2">
++            <span className="text-xs font-bold text-slate-700 block">
++              Expanded Uncertainty (95% CI, k=2)
++            </span>
++            <div className="grid grid-cols-3 gap-2 text-center text-xs">
++              <div className="p-1.5 rounded bg-white border border-slate-200">
++                <span className="text-[11px] font-semibold text-slate-500 block">CO₂ 95% CI</span>
++                <span className="font-mono font-bold text-emerald-600">
++                  {entry.uncertainty_co2 != null && Number(entry.co2_emissions) > 0
++                    ? `±${(entry.uncertainty_co2 * 200).toFixed(1)}%`
++                    : "—"}
++                </span>
++              </div>
++              <div className="p-1.5 rounded bg-white border border-slate-200">
++                <span className="text-[11px] font-semibold text-slate-500 block">CH₄ 95% CI</span>
++                <span className="font-mono font-bold text-blue-600">
++                  {entry.uncertainty_ch4 != null && Number(entry.ch4_emissions) > 0
++                    ? `±${(entry.uncertainty_ch4 * 200).toFixed(1)}%`
++                    : "—"}
++                </span>
++              </div>
++              <div className="p-1.5 rounded bg-white border border-slate-200">
++                <span className="text-[11px] font-semibold text-slate-500 block">N₂O 95% CI</span>
++                <span className="font-mono font-bold text-purple-600">
++                  {entry.uncertainty_n2o != null && Number(entry.n2o_emissions) > 0
++                    ? `±${(entry.uncertainty_n2o * 200).toFixed(1)}%`
++                    : "—"}
++                </span>
++              </div>
++            </div>
++          </div>
++        </div>
++      </div>
++    );
++  };
++
+   return (
+     <div className="scope-form">
+       <div className="calc-panel s1-form">
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

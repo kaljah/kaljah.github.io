@@ -1,0 +1,83 @@
+
+The command exited with code 0.
+Output:
+
+> new\client\src\pages\ManageData.jsx:925:    const handleFactorChange = (e) => {
+  new\client\src\pages\ManageData.jsx:926:        setFactorForm(prev => ({ ...prev, [e.target.name]: e.target.value 
+}));
+  new\client\src\pages\ManageData.jsx:927:    };
+  new\client\src\pages\ManageData.jsx:928:
+  new\client\src\pages\ManageData.jsx:929:    const handleAddFacility = async () => {
+  new\client\src\pages\ManageData.jsx:930:        if (!facilityForm.name || !facilityForm.activity || 
+!facilityForm.division) {
+> new\client\src\pages\ManageData.jsx:2239:                                            onChange={handleFactorChange}
+  new\client\src\pages\ManageData.jsx:2240:                                            className="mole-input"
+  new\client\src\pages\ManageData.jsx:2241:                                            placeholder="e.g. Flare High 
+Efficiency"
+  new\client\src\pages\ManageData.jsx:2242:                                        />
+  new\client\src\pages\ManageData.jsx:2243:                                    </div>
+  new\client\src\pages\ManageData.jsx:2244:                                    <div className="input-group">
+> new\client\src\pages\ManageData.jsx:2267:                                            onChange={handleFactorChange}
+  new\client\src\pages\ManageData.jsx:2268:                                            className="component-select"
+  new\client\src\pages\ManageData.jsx:2269:                                        >
+  new\client\src\pages\ManageData.jsx:2270:                                            <option value="scf">scf</option>
+  new\client\src\pages\ManageData.jsx:2271:                                            <option value="m�">m�</option>
+  new\client\src\pages\ManageData.jsx:2272:                                            <option value="gal">gal</option>
+> new\client\src\pages\ManageData.jsx:2284:                                            onChange={handleFactorChange}
+  new\client\src\pages\ManageData.jsx:2285:                                            className="mole-input"
+  new\client\src\pages\ManageData.jsx:2286:                                            placeholder="0.0"
+  new\client\src\pages\ManageData.jsx:2287:                                            step="0.001"
+  new\client\src\pages\ManageData.jsx:2288:                                        />
+  new\client\src\pages\ManageData.jsx:2289:                                    </div>
+> new\client\src\pages\ManageData.jsx:2296:                                            onChange={handleFactorChange}
+  new\client\src\pages\ManageData.jsx:2297:                                            className="mole-input"
+  new\client\src\pages\ManageData.jsx:2298:                                            placeholder="0.0"
+  new\client\src\pages\ManageData.jsx:2299:                                            step="0.001"
+  new\client\src\pages\ManageData.jsx:2300:                                        />
+  new\client\src\pages\ManageData.jsx:2301:                                    </div>
+> new\client\src\pages\ManageData.jsx:2308:                                            onChange={handleFactorChange}
+  new\client\src\pages\ManageData.jsx:2309:                                            className="mole-input"
+  new\client\src\pages\ManageData.jsx:2310:                                            placeholder="0.0"
+  new\client\src\pages\ManageData.jsx:2311:                                            step="0.001"
+  new\client\src\pages\ManageData.jsx:2312:                                        />
+  new\client\src\pages\ManageData.jsx:2313:                                    </div>
+> new\client\src\pages\ManageData.jsx:2316:                                        <input type="number" 
+name="co2_uncertainty" value={factorForm.co2_uncertainty} onChange={handleFactorChange} className="mole-input" 
+placeholder="e.g. 5.0" step="0.1" />
+  new\client\src\pages\ManageData.jsx:2317:                                    </div>
+  new\client\src\pages\ManageData.jsx:2318:                                    <div className="input-group">
+  new\client\src\pages\ManageData.jsx:2319:                                        <label>CH4 Uncertainty (�%)</label>
+> new\client\src\pages\ManageData.jsx:2320:                                        <input type="number" 
+name="ch4_uncertainty" value={factorForm.ch4_uncertainty} onChange={handleFactorChange} className="mole-input" 
+placeholder="e.g. 50.0" step="0.1" />
+  new\client\src\pages\ManageData.jsx:2321:                                    </div>
+  new\client\src\pages\ManageData.jsx:2322:                                    <div className="input-group">
+  new\client\src\pages\ManageData.jsx:2323:                                        <label>N�O Uncertainty (�%)</label>
+> new\client\src\pages\ManageData.jsx:2324:                                        <input type="number" 
+name="n2o_uncertainty" value={factorForm.n2o_uncertainty} onChange={handleFactorChange} className="mole-input" 
+placeholder="e.g. 150.0" step="0.1" />
+  new\client\src\pages\ManageData.jsx:2325:                                    </div>
+  new\client\src\pages\ManageData.jsx:2326:                                    <div className="input-group" style={{ 
+gridColumn: 'span 2' }}>
+  new\client\src\pages\ManageData.jsx:2327:                                        <label>Lab Certification / Source 
+Reference</label>
+  new\client\src\pages\ManageData.jsx:2328:                                        <input
+  new\client\src\pages\ManageData.jsx:2329:                                            type="text"
+> new\client\src\pages\ManageData.jsx:2332:                                            onChange={handleFactorChange}
+  new\client\src\pages\ManageData.jsx:2333:                                            className="mole-input"
+  new\client\src\pages\ManageData.jsx:2334:                                            placeholder="e.g. Lab GC Report 
+#2026-ARZ-01 / ISO 17025 / EPD Ref"
+  new\client\src\pages\ManageData.jsx:2335:                                        />
+  new\client\src\pages\ManageData.jsx:2336:                                    </div>
+  new\client\src\pages\ManageData.jsx:2337:                                    <div className="input-group" style={{ 
+gridColumn: 'span 3' }}>
+> new\client\src\pages\ManageData.jsx:2342:                                            onChange={handleFactorChange}
+  new\client\src\pages\ManageData.jsx:2343:                                            className="mole-input"
+  new\client\src\pages\ManageData.jsx:2344:                                            rows="2"
+  new\client\src\pages\ManageData.jsx:2345:                                            placeholder="Engineering 
+justification, gas chromatography sampling conditions, or manufacturer test certificate details..."
+  new\client\src\pages\ManageData.jsx:2346:                                            style={{ resize: 'vertical' }}
+  new\client\src\pages\ManageData.jsx:2347:                                        />
+
+
+

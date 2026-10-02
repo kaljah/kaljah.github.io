@@ -1,0 +1,53 @@
+
+The command exited with code 0.
+Output:
+commit cdcbcc4e2ea893d7704c158a8191663a434caef8
+Author: ramzi <ramzibirdman@gmail.com>
+Date:   Fri Oct 2 15:59:33 2026 +0200
+
+    Fix the errors of the 10k audit round 2 (WEC, exports, intensity cards)
+    
+    - WEC: no charge on 2024-2033 emissions (P.L. 119-21 moved CAA s.136 to
+      methane emitted from 2034, $1,500/t) and none for non-US facilities
+      (subpart W only); the Methane page shows the reason. Reference model
+      and golden case GOLD-N01 updated to the same law.
+    - PDF report: a note when the detail table lists only the 500 most
+      recent records.
+    - Carbon Intensity cards note the tonnes from years without production
+      that are not in the intensity (Scope 3 showed 1.49 Gt next to
+      0.41 kg/BOE).
+    - Dashboard trend: legend entries only for series with data; Compare
+      Regions uses every year's facilities.
+    - Reports: "Baseline (2020)" now shows the configured base year; the
+      server uses the /dashboard/base-year rule and no invented 2020.
+    - Excel, PDF and OGMP exports: readable process names
+      (services/labels.py) instead of raw keys.
+    - Flaring stream tCO2e no longer rounded twice.
+    - Windows: close the mkstemp descriptor in a percent-upload test.
+    
+    Claude-Session: https://claude.ai/code/session_01WxonQ6UvYsAuDbCDGAUZTx
+
+ AUDIT_MEMORY.md                                    |   1 +
+ audit/FIX_LOG.md                                   |   4 +
+ audit/UPLOAD_10K_AUDIT.md                          |  47 ++++++
+ new/client/src/pages/CarbonIntensity.css           |   6 +
+ new/client/src/pages/CarbonIntensity.jsx           |  25 +++
+ new/client/src/pages/DashboardEnhanced.jsx         |   7 +-
+ new/client/src/pages/MethaneIntensity.jsx          |   9 +-
+ new/client/src/pages/Reports.jsx                   |   7 +-
+ new/server/routes/auth.py                          |   4 +-
+ new/server/routes/dashboard.py                     |   7 +-
+ new/server/routes/emissions.py                     |  16 +-
+ new/server/routes/reports.py                       |  21 ++-
+ new/server/services/intensity.py                   |  23 ++-
+ new/server/services/inventory_uncertainty.py       |   7 +-
+ new/server/services/labels.py                      |  25 +++
+ new/server/tests/test_audit_2026_10_02.py          | 180 +++++++++++++++++++++
+ .../tests/test_carbon_intensity_validation.py      |  11 +-
+ .../tests/test_upload_percent_rates_2026_09_30.py  |   4 +-
+ validation/expected_results/expected_results.json  |  32 ++--
+ validation/golden_dataset/dataset_generator.py     |  12 +-
+ validation/golden_dataset/golden_cases.json        |  22 +--
+ .../reference_model/aggregation_intensity.py       |  21 ++-
+ 22 files changed, 417 insertions(+), 74 deletions(-)
+

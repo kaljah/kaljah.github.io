@@ -1,0 +1,15 @@
+
+The command exited with code 0.
+Output:
+src/components/Scope1Form.jsx:88:  const [deleteConfirmId, setDeleteConfirmId] = useState(null);
+src/components/Scope1Form.jsx:1698:  const handleDelete = (id) => {
+src/components/Scope1Form.jsx:1699:    setDeleteConfirmId(id);
+src/components/Scope1Form.jsx:1702:  const confirmDelete = async () => {
+src/components/Scope1Form.jsx:1714:      setDeleteConfirmId(null);
+src/components/Scope1Form.jsx:3240:                          onClick={() => handleDelete(entry.id)}
+src/components/Scope1Form.jsx:3242:                          title="Delete"
+src/components/Scope1Form.jsx:3335:        title="Delete Scope 1 Emission"
+src/components/Scope1Form.jsx:3337:        confirmLabel="Delete"
+src/components/Scope1Form.jsx:3339:        onConfirm={confirmDelete}
+src/components/Scope1Form.jsx:3340:        onCancel={() => setDeleteConfirmId(null)}
+

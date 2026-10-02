@@ -1,0 +1,4 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\cap_routes.py","LineNumber":36,"LineContent":"@cap_bp.route(\"/limits\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\cap_routes.py","LineNumber":55,"LineContent":"@cap_bp.route(\"/emissions\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\cap_routes.py","LineNumber":118,"LineContent":"@cap_bp.route(\"/emissions\", methods=[\"POST\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\cap_routes.py","LineNumber":201,"LineContent":"@cap_bp.route(\"/compliance\", methods=[\"GET\"])"}

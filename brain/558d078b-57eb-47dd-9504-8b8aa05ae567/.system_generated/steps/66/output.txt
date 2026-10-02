@@ -1,0 +1,36 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\context\\LayoutContext.jsx","LineNumber":6,"LineContent":"  const [topBarLeft, setTopBarLeft] = useState(null);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\context\\LayoutContext.jsx","LineNumber":7,"LineContent":"  const [topBarRight, setTopBarRight] = useState(null);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\context\\LayoutContext.jsx","LineNumber":18,"LineContent":"        setTopBarLeft,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\context\\LayoutContext.jsx","LineNumber":20,"LineContent":"        setTopBarRight,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\AuditTrail.jsx","LineNumber":43,"LineContent":"  const { setTopBarLeft, setTopBarRight } = useLayout();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\AuditTrail.jsx","LineNumber":232,"LineContent":"    setTopBarLeft("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\AuditTrail.jsx","LineNumber":241,"LineContent":"    setTopBarRight("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\AuditTrail.jsx","LineNumber":253,"LineContent":"      setTopBarLeft(null);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\AuditTrail.jsx","LineNumber":254,"LineContent":"      setTopBarRight(null);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\AuditTrail.jsx","LineNumber":256,"LineContent":"  }, [user, setTopBarLeft, setTopBarRight]);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":31,"LineContent":"  const { setTopBarLeft, setTopBarRight } = useLayout();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":371,"LineContent":"    setTopBarLeft("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":423,"LineContent":"      setTopBarLeft(null);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":424,"LineContent":"      setTopBarRight(null);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":72,"LineContent":"  const { setTopBarLeft, setTopBarRight } = useLayout();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":685,"LineContent":"    setTopBarLeft("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":730,"LineContent":"    setTopBarRight("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":810,"LineContent":"      setTopBarLeft(null);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":811,"LineContent":"      setTopBarRight(null);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":822,"LineContent":"    setTopBarLeft,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":823,"LineContent":"    setTopBarRight,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UncertaintyAssessment.jsx","LineNumber":20,"LineContent":"  const { setTopBarLeft, setTopBarRight } = useLayout();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UncertaintyAssessment.jsx","LineNumber":92,"LineContent":"    setTopBarLeft("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UncertaintyAssessment.jsx","LineNumber":107,"LineContent":"      setTopBarLeft(null);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UncertaintyAssessment.jsx","LineNumber":108,"LineContent":"      setTopBarRight(null);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UncertaintyAssessment.jsx","LineNumber":110,"LineContent":"  }, [setTopBarLeft, setTopBarRight]);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":38,"LineContent":"  const { setTopBarLeft, setTopBarRight } = useLayout();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":535,"LineContent":"    setTopBarLeft("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":586,"LineContent":"    setTopBarRight("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":599,"LineContent":"      setTopBarLeft(null);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":600,"LineContent":"      setTopBarRight(null);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":67,"LineContent":"    const { setTopBarLeft } = useLayout();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":70,"LineContent":"        if (setTopBarLeft) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":71,"LineContent":"            setTopBarLeft("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":81,"LineContent":"            if (setTopBarLeft) setTopBarLeft(null);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":83,"LineContent":"    }, [setTopBarLeft]);"}

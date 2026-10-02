@@ -1,0 +1,122 @@
+
+The command exited with code 0.
+Output:
+src/pages/CarbonIntensity.jsx-1-import React, { useState, useEffect, useMemo, useRef } from "react";
+src/pages/CarbonIntensity.jsx-2-import { useAuth } from "../context/AuthContext";
+src/pages/CarbonIntensity.jsx-3-import api from "../api";
+src/pages/CarbonIntensity.jsx-4-import { useToast } from "../components/Toast";
+src/pages/CarbonIntensity.jsx-5-import LoadingSpinner from "../components/LoadingSpinner";
+src/pages/CarbonIntensity.jsx:6:import { BarChart, LineChart } from "../components/charts";
+src/pages/CarbonIntensity.jsx-7-import { useLayout } from "../context/LayoutContext";
+src/pages/CarbonIntensity.jsx-8-import CustomDropdown from "../components/CustomDropdown";
+src/pages/CarbonIntensity.jsx-9-import { formatNumber } from "../utils/formatters";
+src/pages/CarbonIntensity.jsx-10-import { getActiveGwpFactors } from "../constants";
+src/pages/CarbonIntensity.jsx-11-import { getUserOperationalDefaults } from "../utils/userDefaults";
+src/pages/CarbonIntensity.jsx-12-import {
+src/pages/CarbonIntensity.jsx-13-  Cloud,
+src/pages/CarbonIntensity.jsx-14-  Flame,
+src/pages/CarbonIntensity.jsx-15-  Activity,
+src/pages/CarbonIntensity.jsx:16:  BarChart2,
+src/pages/CarbonIntensity.jsx-17-  Grid,
+src/pages/CarbonIntensity.jsx-18-  Layers,
+src/pages/CarbonIntensity.jsx-19-  ShieldCheck,
+src/pages/CarbonIntensity.jsx-20-  FileText,
+src/pages/CarbonIntensity.jsx-21-  ToggleLeft,
+--
+src/pages/CarbonIntensity.jsx-432-    currentSegment,
+src/pages/CarbonIntensity.jsx-433-    facilities,
+src/pages/CarbonIntensity.jsx-434-  ]);
+src/pages/CarbonIntensity.jsx-435-
+src/pages/CarbonIntensity.jsx-436-  // Trend chart data based on active GWP toggle
+src/pages/CarbonIntensity.jsx:437:  const trendChartData = useMemo(() => {
+src/pages/CarbonIntensity.jsx-438-    return rawTrendData.map((item) => {
+src/pages/CarbonIntensity.jsx-439-      let yearData = item.data;
+src/pages/CarbonIntensity.jsx-440-      if (currentRegion !== "all") {
+src/pages/CarbonIntensity.jsx-441-        yearData = yearData.filter(
+src/pages/CarbonIntensity.jsx-442-          (d) => d.facility_id.toString() === currentRegion,
+--
+src/pages/CarbonIntensity.jsx-779-                            <p>No CBAM product export records registered for the selected filters. Track exports via <strong>Manage Data &gt; CBAM Products</strong>.</p>
+src/pages/CarbonIntensity.jsx-780-                        </div>
+src/pages/CarbonIntensity.jsx-781-                    )}
+src/pages/CarbonIntensity.jsx-782-                </div>
+src/pages/CarbonIntensity.jsx-783-
+src/pages/CarbonIntensity.jsx:784:        {/* Regional Bar Charts */}
+src/pages/CarbonIntensity.jsx-785-        <div className="chart-grid">
+src/pages/CarbonIntensity.jsx-786-          <div className="card">
+src/pages/CarbonIntensity.jsx-787-            <div className="chart-header">
+src/pages/CarbonIntensity.jsx-788-              <div className="chart-title-wrapper">
+src/pages/CarbonIntensity.jsx-789-                <h3>GHG Intensity by Facility (kg CO₂e / BOE)</h3>
+--
+src/pages/CarbonIntensity.jsx-792-                  style={{ background: "#0d9488" }}
+src/pages/CarbonIntensity.jsx-793-                ></div>
+src/pages/CarbonIntensity.jsx-794-              </div>
+src/pages/CarbonIntensity.jsx-795-            </div>
+src/pages/CarbonIntensity.jsx-796-            <div style={{ height: "300px" }}>
+src/pages/CarbonIntensity.jsx:797:              <BarChart
+src/pages/CarbonIntensity.jsx-798-                data={regionalData.map((d) => ({
+src/pages/CarbonIntensity.jsx-799-                  name: d.facility_name,
+src/pages/CarbonIntensity.jsx-800-                  value:
+src/pages/CarbonIntensity.jsx-801-                    gwpHorizon === "20"
+src/pages/CarbonIntensity.jsx-802-                      ? d.co2_intensity_gwp20 || d.co2_intensity
+--
+src/pages/CarbonIntensity.jsx-818-                  style={{ background: "#2563eb" }}
+src/pages/CarbonIntensity.jsx-819-                ></div>
+src/pages/CarbonIntensity.jsx-820-              </div>
+src/pages/CarbonIntensity.jsx-821-            </div>
+src/pages/CarbonIntensity.jsx-822-            <div style={{ height: "300px" }}>
+src/pages/CarbonIntensity.jsx:823:              <BarChart
+src/pages/CarbonIntensity.jsx-824-                data={regionalData.map((d) => ({
+src/pages/CarbonIntensity.jsx-825-                  name: d.facility_name,
+src/pages/CarbonIntensity.jsx-826-                  scope1: Number(
+src/pages/CarbonIntensity.jsx-827-                    (
+src/pages/CarbonIntensity.jsx-828-                      (gwpHorizon === "20"
+--
+src/pages/CarbonIntensity.jsx-854-                  style={{ background: "#ea580c" }}
+src/pages/CarbonIntensity.jsx-855-                ></div>
+src/pages/CarbonIntensity.jsx-856-              </div>
+src/pages/CarbonIntensity.jsx-857-            </div>
+src/pages/CarbonIntensity.jsx-858-            <div style={{ height: "300px" }}>
+src/pages/CarbonIntensity.jsx:859:              <BarChart
+src/pages/CarbonIntensity.jsx-860-                data={regionalData.map((d) => ({
+src/pages/CarbonIntensity.jsx-861-                  name: d.facility_name,
+src/pages/CarbonIntensity.jsx-862-                  value: d.total_oil || 0,
+src/pages/CarbonIntensity.jsx-863-                }))}
+src/pages/CarbonIntensity.jsx-864-                dataKey="value"
+--
+src/pages/CarbonIntensity.jsx-877-                  style={{ background: "#8b5cf6" }}
+src/pages/CarbonIntensity.jsx-878-                ></div>
+src/pages/CarbonIntensity.jsx-879-              </div>
+src/pages/CarbonIntensity.jsx-880-            </div>
+src/pages/CarbonIntensity.jsx-881-            <div style={{ height: "300px" }}>
+src/pages/CarbonIntensity.jsx:882:              <BarChart
+src/pages/CarbonIntensity.jsx-883-                data={regionalData.map((d) => ({
+src/pages/CarbonIntensity.jsx-884-                  name: d.facility_name,
+src/pages/CarbonIntensity.jsx-885-                  value: (d.total_gas || 0) * GAS_TO_BOE,
+src/pages/CarbonIntensity.jsx-886-                }))}
+src/pages/CarbonIntensity.jsx-887-                dataKey="value"
+--
+src/pages/CarbonIntensity.jsx-913-              <div className="view-toggle">
+src/pages/CarbonIntensity.jsx-914-                <button
+src/pages/CarbonIntensity.jsx-915-                  className={`view-btn ${trendView === "chart" ? "active" : ""}`}
+src/pages/CarbonIntensity.jsx-916-                  onClick={() => setTrendView("chart")}
+src/pages/CarbonIntensity.jsx-917-                >
+src/pages/CarbonIntensity.jsx:918:                  <BarChart2 size={16} /> Chart
+src/pages/CarbonIntensity.jsx-919-                </button>
+src/pages/CarbonIntensity.jsx-920-                <button
+src/pages/CarbonIntensity.jsx-921-                  className={`view-btn ${trendView === "heatmap" ? "active" : ""}`}
+src/pages/CarbonIntensity.jsx-922-                  onClick={() => setTrendView("heatmap")}
+src/pages/CarbonIntensity.jsx-923-                >
+--
+src/pages/CarbonIntensity.jsx-927-            </div>
+src/pages/CarbonIntensity.jsx-928-          </div>
+src/pages/CarbonIntensity.jsx-929-
+src/pages/CarbonIntensity.jsx-930-          {trendView === "chart" ? (
+src/pages/CarbonIntensity.jsx-931-            <div style={{ height: "350px" }}>
+src/pages/CarbonIntensity.jsx:932:              <LineChart
+src/pages/CarbonIntensity.jsx:933:                data={trendChartData}
+src/pages/CarbonIntensity.jsx-934-                xKey="year"
+src/pages/CarbonIntensity.jsx-935-                series={[
+src/pages/CarbonIntensity.jsx-936-                  {
+src/pages/CarbonIntensity.jsx-937-                    key: "co2_100",
+src/pages/CarbonIntensity.jsx-938-                    color: "#0d9488",
+

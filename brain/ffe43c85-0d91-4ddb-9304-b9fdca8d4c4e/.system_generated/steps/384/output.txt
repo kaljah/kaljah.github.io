@@ -1,0 +1,125 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\AuditTrail.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -671,65 +671,60 @@
+     <div className="audit-trail">
+       <div className="audit-container">
+         {/* Header Title & Actions */}
+-        <div className="audit-page-header">
+-          <div>
+-            <div className="audit-badge-tag">
+-              <Shield size={14} />
+-              <span>Immutable Compliance Log</span>
+-            </div>
+-            <h1 className="section-title">Audit Trail &amp; System Activity</h1>
+-            <p className="section-subtitle">
+-              Comprehensive tamper-evident record of all emissions data, authentication, calculations, and administrative actions
+-            </p>
+-          </div>
+-
+-          <div className="audit-header-actions">
+-            <button
+-              className="btn-refresh-main"
+-              onClick={() => {
+-                fetchAuditLogs(true);
+-                fetchStats();
+-                fetchFilters();
+-                toast.info("Refreshed audit trail");
+-              }}
+-              disabled={isRefreshing}
+-            >
+-              <RefreshCw size={15} className={isRefreshing ? "spin-animate" : ""} />
+-              <span>Refresh</span>
+-            </button>
+-
+-            {/* Export Dropdown */}
+-            <div className="export-dropdown-wrapper" ref={exportMenuRef}>
+-              <button
+-                className="btn-export-main"
+-                onClick={() => setExportDropdownOpen(!exportDropdownOpen)}
+-              >
+-                <Download size={15} />
+-                <span>Export Audit Log</span>
+-                <ChevronDown size={14} />
+-              </button>
+-
+-              {exportDropdownOpen && (
+-                <div className="export-menu">
+-                  <button onClick={() => handleExport("csv")}>
+-                    <FileSpreadsheet size={15} className="export-icon csv-icon" />
+-                    <div className="export-text">
+-                      <strong>CSV Spreadsheet</strong>
+-                      <span>Compliant with audit tools &amp; Excel</span>
+-                    </div>
+-                  </button>
+-                  <button onClick={() => handleExport("json")}>
+-                    <FileText size={15} className="export-icon json-icon" />
+-                    <div className="export-text">
+-                      <strong>JSON Structured Data</strong>
+-                      <span>Full metadata &amp; field diffs</span>
+-                    </div>
+-                  </button>
+-                </div>
+-              )}
+-            </div>
+-          </div>
+-        </div>
++        <PageHeader
++          badge="Immutable Compliance Log"
++          badgeIcon={Shield}
++          title="Audit Trail & System Activity"
++          subtitle="Comprehensive tamper-evident record of all emissions data, authentication, calculations, and administrative actions"
++          actions={
++            <div className="audit-header-actions">
++              <button
++                className="btn-refresh-main"
++                onClick={() => {
++                  fetchAuditLogs(true);
++                  fetchStats();
++                  fetchFilters();
++                  toast.info("Refreshed audit trail");
++                }}
++                disabled={isRefreshing}
++              >
++                <RefreshCw size={15} className={isRefreshing ? "spin-animate" : ""} />
++                <span>Refresh</span>
++              </button>
++
++              {/* Export Dropdown */}
++              <div className="export-dropdown-wrapper" ref={exportMenuRef}>
++                <button
++                  className="btn-export-main"
++                  onClick={() => setExportDropdownOpen(!exportDropdownOpen)}
++                >
++                  <Download size={15} />
++                  <span>Export Audit Log</span>
++                  <ChevronDown size={14} />
++                </button>
++
++                {exportDropdownOpen && (
++                  <div className="export-menu">
++                    <button onClick={() => handleExport("csv")}>
++                      <FileSpreadsheet size={15} className="export-icon csv-icon" />
++                      <div className="export-text">
++                        <strong>CSV Spreadsheet</strong>
++                        <span>Compliant with audit tools &amp; Excel</span>
++                      </div>
++                    </button>
++                    <button onClick={() => handleExport("json")}>
++                      <FileText size={15} className="export-icon json-icon" />
++                      <div className="export-text">
++                        <strong>JSON Structured Data</strong>
++                        <span>Full metadata &amp; field diffs</span>
++                      </div>
++                    </button>
++                  </div>
++                )}
++              </div>
++            </div>
++          }
++        />
+ 
+         {/* KPI Metric Summary Cards */}
+         <div className="audit-stats-grid">
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,19 @@
+
+The command exited with code 0.
+Output:
+
+FullName                                                                                    
+--------                                                                                    
+C:\Users\samsung\Desktop\H2\new\client\src\__tests__                                        
+C:\Users\samsung\Desktop\H2\new\client\src\test-setup.js                                    
+C:\Users\samsung\Desktop\H2\new\client\src\__tests__\a11yAndErrors.test.jsx                 
+C:\Users\samsung\Desktop\H2\new\client\src\__tests__\AssociatedGasVentingForm.test.jsx      
+C:\Users\samsung\Desktop\H2\new\client\src\__tests__\auditFixes.test.js                     
+C:\Users\samsung\Desktop\H2\new\client\src\__tests__\importMapping.test.js                  
+C:\Users\samsung\Desktop\H2\new\client\src\__tests__\mathParityAndFormatters.test.js        
+C:\Users\samsung\Desktop\H2\new\client\src\__tests__\Scope1FormAssociatedGasVenting.test.jsx
+C:\Users\samsung\Desktop\H2\new\client\src\__tests__\scope3Factors.test.js                  
+C:\Users\samsung\Desktop\H2\new\client\src\__tests__\UnloadingForm.test.jsx                 
+
+
+

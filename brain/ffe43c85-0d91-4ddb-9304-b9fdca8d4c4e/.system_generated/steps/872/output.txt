@@ -1,0 +1,53 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\DashboardEnhanced.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1348,7 +1348,7 @@
+               <div
+                 className="chart-container"
+                 style={{
+-                  height: "170px",
++                  height: "195px",
+                   width: "100%",
+                   minWidth: 0,
+                   position: "relative",
+@@ -1355,9 +1355,11 @@
+               >
+                 <PieChartWrapper
+                   data={activityChartData}
+-                  height={170}
+-                  innerRadius={50}
+-                  outerRadius={75}
++                  height={195}
++                  innerRadius={50}
++                  outerRadius={75}
++                  centerSub="tCO₂e"
++                  formatValue={formatCompactNumber}
+                 />
+               </div>
+             </div>
+@@ -1367,7 +1367,7 @@
+               <div
+                 className="chart-container"
+                 style={{
+-                  height: "170px",
++                  height: "195px",
+                   width: "100%",
+                   minWidth: 0,
+                   position: "relative",
+@@ -1374,9 +1374,11 @@
+               >
+                 <PieChartWrapper
+                   data={sourceChartData}
+-                  height={170}
+-                  innerRadius={50}
+-                  outerRadius={75}
++                  height={195}
++                  innerRadius={50}
++                  outerRadius={75}
++                  centerSub="tCO₂e"
++                  formatValue={formatCompactNumber}
+                 />
+               </div>
+             </div>
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

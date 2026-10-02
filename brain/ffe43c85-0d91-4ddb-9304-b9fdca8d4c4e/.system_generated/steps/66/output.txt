@@ -1,0 +1,19 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\public
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/19/2026   4:04 PM            645 404.html                                                             
+-a----         8/11/2026   4:13 AM         189264 carbon-tech-logo.png                                                 
+-a----         8/14/2026   7:45 PM            624 carbon_tech.svg                                                      
+-a----         2/16/2026  10:08 PM        1146027 company_profile.jpg                                                  
+-a----         8/11/2026   4:30 AM        2614272 login_animation.mp4                                                  
+-a----         1/19/2026   7:53 PM           1497 vite.svg                                                             
+
+
+

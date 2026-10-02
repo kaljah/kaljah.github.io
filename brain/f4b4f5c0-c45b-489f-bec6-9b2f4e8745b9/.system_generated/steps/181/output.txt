@@ -1,0 +1,22 @@
+
+The command exited with code 0.
+Output:
+
+new\server\routes\emissions.py:1021:from flask import send_file, Response
+new\server\routes\emissions.py:2537:    return send_file(
+new\server\routes\emissions.py:2598:            with open(path, "rb") as f_check:
+new\server\routes\emissions.py:2602:                        os.remove(path)
+new\server\routes\emissions.py:2651:    return send_file(
+new\server\routes\emissions.py:3480:    from flask import send_file
+new\server\routes\emissions.py:3900:        return send_file(
+new\server\routes\reports.py:3:from flask import Blueprint, jsonify, request, send_file, current_app
+new\server\routes\reports.py:484:        return send_file(
+new\server\routes\reports.py:543:        with open(path, "rb") as fh:
+new\server\routes\reports.py:547:            os.remove(path)
+new\server\routes\reports.py:550:    return send_file(data, mimetype="application/pdf", as_attachment=True, 
+download_name=filename)
+new\server\routes\reports.py:766:        return send_file(
+new\server\routes\reports.py:1430:        return send_file(
+
+
+

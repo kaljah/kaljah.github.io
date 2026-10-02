@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":79,"LineContent":"        cursor = dbapi_conn.cursor()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":80,"LineContent":"        cursor.execute(\"PRAGMA foreign_keys = ON\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":81,"LineContent":"        cursor.execute(\"PRAGMA journal_mode = WAL\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":82,"LineContent":"        cursor.execute(\"PRAGMA synchronous = NORMAL\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":83,"LineContent":"        cursor.execute(\"PRAGMA busy_timeout = 30000\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":119,"LineContent":"                driver_conn.execute(\"PRAGMA wal_checkpoint(PASSIVE)\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":441,"LineContent":"                    conn.execute(text(q))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":486,"LineContent":"with app.app_context():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":543,"LineContent":"        db.session.execute(text(\"SELECT 1\"))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":563,"LineContent":"    with app.app_context():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\add_columns.py","LineNumber":6,"LineContent":"    with app.app_context():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\add_columns.py","LineNumber":17,"LineContent":"                        conn.execute(text(f\"ALTER TABLE {table} ADD COLUMN {col_name} {col_type}\"))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\add_indexes.py","LineNumber":25,"LineContent":"    cursor = conn.cursor()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\add_indexes.py","LineNumber":30,"LineContent":"            cursor.execute(q)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":572,"LineContent":"    with app.app_context():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":2387,"LineContent":"        if has_app_context():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\benchmark_db.py","LineNumber":7,"LineContent":"    cursor = conn.cursor()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\benchmark_db.py","LineNumber":18,"LineContent":"    cursor.execute(query)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\benchmark_db.py","LineNumber":25,"LineContent":"    cursor.execute(f\"EXPLAIN QUERY PLAN {query}\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\benchmark_db.py","LineNumber":36,"LineContent":"    cursor.execute(query2)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\benchmark_db.py","LineNumber":42,"LineContent":"    cursor.execute(f\"EXPLAIN QUERY PLAN {query2}\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\check_anomalies.py","LineNumber":5,"LineContent":"with app.app_context():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\create_anomalies.py","LineNumber":7,"LineContent":"    with app.app_context():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\extensions.py","LineNumber":31,"LineContent":"        if has_request_context() and session.get(\"user_id\"):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_berkine_master_report.py","LineNumber":157,"LineContent":"        ax.text(i, tot + 0.05, f\"{tot:.2f}\", ha='center', va='bottom', fontsize=8, fontweight='bold', color='#0F172A')"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":214,"LineContent":"            if has_app_context():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":2272,"LineContent":"            if has_app_context():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_elm_master_report.py","LineNumber":153,"LineContent":"        ax.text(i, tot + 0.02, f\"{tot:.3f}\", ha='center', va='bottom', fontsize=8, fontweight='bold', color='#0F172A')"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_elm_master_report.py","LineNumber":195,"LineContent":"        ax.text(i, v + 15, f\"{v:.1f} kt\", ha='center', fontweight='bold', fontsize=8)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_elm_master_report.py","LineNumber":291,"LineContent":"        ax.text(i, v + 1.2, f\"{v:.1f} kNm³ ({pct:.1f}%)\", ha='center', fontweight='bold', fontsize=8)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_elm_master_report.py","LineNumber":309,"LineContent":"        ax.text(i, v + offset, f\"{v:+.1f}%\", ha='center', fontweight='bold', fontsize=8)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_scenarios.py","LineNumber":17,"LineContent":"    with app.app_context():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\input_validation.py","LineNumber":121,"LineContent":"def require_text(value, field):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\id_guard.py","LineNumber":23,"LineContent":"    connection.execute(text("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\id_guard.py","LineNumber":26,"LineContent":"    connection.execute(text("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\id_guard.py","LineNumber":32,"LineContent":"    return connection.execute(text("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\schema_sync.py","LineNumber":68,"LineContent":"            bind.execute(sa.text(f'ALTER TABLE \"{table.name}\" ADD COLUMN {_column_ddl(bind, column)}'))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\migrate_ogmp.py","LineNumber":72,"LineContent":"    with app.app_context():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\migrate_ogmp.py","LineNumber":82,"LineContent":"            cur = conn.cursor()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\migrate_ogmp.py","LineNumber":85,"LineContent":"            cur.execute(\"PRAGMA table_info(facilities)\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\migrate_ogmp.py","LineNumber":88,"LineContent":"                cur.execute("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\migrate_ogmp.py","LineNumber":92,"LineContent":"                cur.execute("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\migrate_ogmp.py","LineNumber":96,"LineContent":"                cur.execute("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\migrate_ogmp.py","LineNumber":100,"LineContent":"                cur.execute("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\migrate_ogmp.py","LineNumber":105,"LineContent":"            cur.execute(\"PRAGMA table_info(emissions)\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\migrate_ogmp.py","LineNumber":108,"LineContent":"                cur.execute("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\migrate_ogmp.py","LineNumber":112,"LineContent":"                cur.execute("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\migrate_ogmp.py","LineNumber":116,"LineContent":"                cur.execute("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\migrate_ogmp.py","LineNumber":121,"LineContent":"            cur.execute(\"PRAGMA table_info(ogmp_surveys)\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\migrate_ogmp.py","LineNumber":124,"LineContent":"                cur.execute("}
+(...327 more results not shown)

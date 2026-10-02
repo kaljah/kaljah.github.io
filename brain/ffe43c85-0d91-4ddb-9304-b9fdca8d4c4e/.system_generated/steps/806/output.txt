@@ -1,0 +1,85 @@
+
+The command exited with code 0.
+Output:
+
+> new\client\src\pages\Dashboard.css:218:.donuts-row {
+  new\client\src\pages\Dashboard.css:219:  display: flex;
+  new\client\src\pages\Dashboard.css:220:  flex-direction: column;
+  new\client\src\pages\Dashboard.css:221:  gap: 24px;
+  new\client\src\pages\Dashboard.css:222:  min-width: 0;
+  new\client\src\pages\Dashboard.css:223:}
+  new\client\src\pages\Dashboard.css:224:
+> new\client\src\pages\Dashboard.css:225:.donut-card-enhanced {
+  new\client\src\pages\Dashboard.css:226:  border-radius: 20px;
+  new\client\src\pages\Dashboard.css:227:  padding: 24px;
+  new\client\src\pages\Dashboard.css:228:  flex: 1;
+  new\client\src\pages\Dashboard.css:229:  background: var(--bg-card);
+  new\client\src\pages\Dashboard.css:230:  backdrop-filter: blur(14px);
+  new\client\src\pages\Dashboard.css:231:  border: 1px solid var(--border-color);
+  new\client\src\pages\Dashboard.css:232:  box-shadow: var(--shadow-card);
+  new\client\src\pages\Dashboard.css:233:  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s 
+ease;
+> new\client\src\pages\Dashboard.css:236:.donut-card-enhanced:hover {
+  new\client\src\pages\Dashboard.css:237:  transform: translateY(-2px);
+  new\client\src\pages\Dashboard.css:238:  box-shadow: var(--shadow-card-elevated);
+  new\client\src\pages\Dashboard.css:239:  border-color: rgba(255, 255, 255, 0.95);
+  new\client\src\pages\Dashboard.css:240:}
+  new\client\src\pages\Dashboard.css:241:
+  new\client\src\pages\Dashboard.css:242:/* Goal Progress Badge */
+  new\client\src\pages\Dashboard.css:243:.goal-progress-badge {
+  new\client\src\pages\Dashboard.css:244:  padding: 2px 8px;
+> new\client\src\pages\Dashboard.css:806:  .card, .glass-panel, .hero-card, .trend-card-enhanced, 
+.donut-card-enhanced, .categorical-card, .detailed-table-card {
+  new\client\src\pages\Dashboard.css:807:    box-shadow: none !important;
+  new\client\src\pages\Dashboard.css:808:    border: 1px solid #cbd5e1 !important;
+  new\client\src\pages\Dashboard.css:809:    background: #ffffff !important;
+  new\client\src\pages\Dashboard.css:810:    page-break-inside: avoid;
+  new\client\src\pages\Dashboard.css:811:    margin-bottom: 24px !important;
+  new\client\src\pages\Dashboard.css:812:  }
+  new\client\src\pages\Dashboard.css:813:  .collapsible-body-wrapper.collapsed {
+  new\client\src\pages\Dashboard.css:814:    display: block !important;
+> new\client\src\pages\Dashboard.css:820:/* Donut Chart Headers */
+> new\client\src\pages\Dashboard.css:821:.donut-card {
+  new\client\src\pages\Dashboard.css:822:  padding: 24px;
+  new\client\src\pages\Dashboard.css:823:}
+  new\client\src\pages\Dashboard.css:824:
+> new\client\src\pages\Dashboard.css:825:.donut-header {
+  new\client\src\pages\Dashboard.css:826:  display: flex;
+  new\client\src\pages\Dashboard.css:827:  justify-content: space-between;
+  new\client\src\pages\Dashboard.css:828:  align-items: center;
+  new\client\src\pages\Dashboard.css:829:  margin-bottom: 12px;
+  new\client\src\pages\Dashboard.css:830:}
+  new\client\src\pages\Dashboard.css:831:
+> new\client\src\pages\Dashboard.css:832:.donut-title {
+  new\client\src\pages\Dashboard.css:833:  font-size: 0.95rem;
+  new\client\src\pages\Dashboard.css:834:  font-weight: 700;
+  new\client\src\pages\Dashboard.css:835:  color: #1e293b;
+  new\client\src\pages\Dashboard.css:836:  margin: 0;
+  new\client\src\pages\Dashboard.css:837:}
+  new\client\src\pages\Dashboard.css:838:
+> new\client\src\pages\Dashboard.css:839:.donut-icon {
+  new\client\src\pages\Dashboard.css:840:  width: 36px;
+  new\client\src\pages\Dashboard.css:841:  height: 36px;
+  new\client\src\pages\Dashboard.css:842:  border-radius: 10px;
+  new\client\src\pages\Dashboard.css:843:  display: flex;
+  new\client\src\pages\Dashboard.css:844:  align-items: center;
+  new\client\src\pages\Dashboard.css:845:  justify-content: center;
+  new\client\src\pages\Dashboard.css:846:}
+  new\client\src\pages\Dashboard.css:847:
+> new\client\src\pages\Dashboard.css:848:.donut-icon.activity {
+  new\client\src\pages\Dashboard.css:849:  background: #fff7ed;
+  new\client\src\pages\Dashboard.css:850:  color: #ff6600;
+  new\client\src\pages\Dashboard.css:851:}
+  new\client\src\pages\Dashboard.css:852:
+> new\client\src\pages\Dashboard.css:853:.donut-icon.source {
+  new\client\src\pages\Dashboard.css:854:  background: #ecfdf5;
+  new\client\src\pages\Dashboard.css:855:  color: #10b981;
+  new\client\src\pages\Dashboard.css:856:}
+  new\client\src\pages\Dashboard.css:857:
+  new\client\src\pages\Dashboard.css:858:.bottom-charts-row {
+  new\client\src\pages\Dashboard.css:859:  display: grid;
+  new\client\src\pages\Dashboard.css:860:  grid-template-columns: 1fr 1fr;
+  new\client\src\pages\Dashboard.css:861:  gap: 24px;
+
+
+

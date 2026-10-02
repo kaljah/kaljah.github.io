@@ -1,0 +1,34 @@
+
+The command exited with code 0.
+Output:
+
+> client@0.0.0 test
+> vitest run --run
+
+
+ RUN  v5.0.1 C:/Users/samsung/Desktop/H2/new/client
+
+ ✓ src/__tests__/auditFixes.test.js (2 tests) 59ms
+ ✓ src/__tests__/importMapping.test.js (6 tests) 18ms
+ ✓ src/__tests__/mathParityAndFormatters.test.js (4 tests) 46ms
+ ✓ src/__tests__/a11yAndErrors.test.jsx (3 tests) 308ms
+ ✓ src/__tests__/UnloadingForm.test.jsx (7 tests) 215ms
+ ✓ src/__tests__/AssociatedGasVentingForm.test.jsx (7 tests) 507ms
+   ✓ AssociatedGasVentingForm & Table 6-8 API Reference Integrity (7)
+     ✓ renders Tier 1 Table 6-8 form with regional basin selector and crude throughput 342ms
+ ✓ src/__tests__/scope3Factors.test.js (7 tests) 7ms
+ ✓ src/__tests__/Scope1FormAssociatedGasVenting.test.jsx (2 tests) 931ms
+   ✓ Scope1Form Associated Gas Venting Integration (2)
+     ✓ selects Associated Gas Venting, populates Tier 1 data, and submits successfully 561ms
+     ✓ selects Tier 2 GOR Balance, fills engineering parameters, and submits payload 367ms
+
+ Test Files  8 passed (8)
+      Tests  38 passed (38)
+   Start at  18:26:26
+   Duration  6.10s (environment 63%, setup 15%, transform 10%, tests 7%, import 5%, worker 1%)
+
+Environment  jsdom was created 8 times · 20.00s total, 63% of tracked time
+             create it once per worker with pool: 'vmThreads' (keeps per-file isolation) or isolate: false (shares it across files)
+             learn more: https://vitest.dev/guide/improving-performance#test-environments
+
+

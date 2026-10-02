@@ -1,0 +1,14 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\pages\CarbonIntensity.css:3:  --accent-color: #0d9488;
+new\client\src\pages\CarbonIntensity.css:61:    var(--accent-color),
+new\client\src\pages\CarbonIntensity.css:89:  color: var(--accent-color);
+new\client\src\pages\CarbonIntensity.css:144:  background: var(--accent-color);
+new\client\src\pages\CarbonIntensity.css:151:  color: var(--accent-color);
+new\client\src\pages\CarbonIntensity.css:199:  color: var(--accent-color);
+new\client\src\pages\CarbonIntensity.css:954:  color: var(--accent-color);
+
+
+

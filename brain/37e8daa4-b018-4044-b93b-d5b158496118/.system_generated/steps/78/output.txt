@@ -1,0 +1,17 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":1117,"LineContent":"    db.session.execute(text(\"DELETE FROM notifications WHERE user_id = :uid\"), {\"uid\": id})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":1126,"LineContent":"                db.session.execute("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":1127,"LineContent":"                    text(f'UPDATE \"{table.name}\" SET \"{snapshot}\" = :label '"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":1131,"LineContent":"            db.session.execute("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":1132,"LineContent":"                text(f'UPDATE \"{table.name}\" SET \"{col.name}\" = NULL WHERE \"{col.name}\" = :uid'), {\"uid\": id}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":55,"LineContent":"                row = conn.execute("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":56,"LineContent":"                    text(\"SELECT value FROM system_settings WHERE key = :key\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":83,"LineContent":"                conn.execute("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":84,"LineContent":"                    text(\"INSERT INTO system_settings (key, value) VALUES (:key, :val) \""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":113,"LineContent":"    with app.app_context():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\cap_routes.py","LineNumber":141,"LineContent":"    source_module = require_text(data.get(\"source_module\"), \"source_module\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\cap_routes.py","LineNumber":142,"LineContent":"    pollutant = require_text(data.get(\"pollutant\"), \"pollutant\").upper()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":2558,"LineContent":"    ext = os.path.splitext(file.filename)[1].lower()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":149,"LineContent":"    data[\"name\"] = require_text(data.get(\"name\"), \"name\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":256,"LineContent":"        data[\"name\"] = require_text(data.get(\"name\"), \"name\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":447,"LineContent":"        fac_data[\"name\"] = require_text(fac_data.get(\"name\"), f\"facilities[{i}].name\")  # BUG-029"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\notifications.py","LineNumber":152,"LineContent":"        stream_with_context(generate(user_id, last_id)),"}

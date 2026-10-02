@@ -1,0 +1,102 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\ManageData.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1498,60 +1498,51 @@
+     const filteredCbam = getFilteredCbam();
+ 
+     return (
+-        <div className="manage-data-page" >
+-            <div className="manage-container">
+-                <div className="manage-layout">
++        <div className="manage-data-page">
++            <div className="manage-container" style={{ maxWidth: '1600px', margin: '0 auto' }}>
++                <div style={{ padding: '24px 24px 0 24px' }}>
++                    <PageHeader
++                        badge="Data Management & Governance"
++                        title="Manage Data"
++                        subtitle="Configure emission factors, operational regions, production data, and audit pending submissions."
++                        icon={Database}
++                    />
++                </div>
++                <div className="manage-layout" style={{ paddingTop: '16px' }}>
+                     {/* Sidebar Navigation */}
+-                    <aside className="manage-nav-panel glass-panel">
++                    <aside className="manage-nav-panel glass-panel" role="tablist" aria-label="Management Sections" aria-orientation="vertical">
+                         <h3 style={{ margin: '0 0 16px 12px', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--text-secondary)' }}>
+                             Management
+                         </h3>
+-                                                {['admin', 'superuser'].includes(user?.role) && (
+-                            <div className={`manage-nav-item ${activeTab === 'pending' ? 'active' : ''}`} onClick={() => handleTabChange('pending')}>
+-                                <span style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
++                        {tabs.map((tab, idx) => {
++                            const Icon = tab.icon;
++                            const isActive = activeTab === tab.id;
++                            return (
++                                <button
++                                    key={tab.id}
++                                    id={`manage-tab-${tab.id}`}
++                                    role="tab"
++                                    type="button"
++                                    aria-selected={isActive}
++                                    aria-controls={`manage-panel-${tab.id}`}
++                                    tabIndex={isActive ? 0 : -1}
++                                    onKeyDown={(e) => handleTabKeyDown(e, idx)}
++                                    onClick={() => handleTabChange(tab.id)}
++                                    className={`manage-nav-item ${isActive ? 'active' : ''}`}
++                                    style={{ width: '100%', border: 'none', background: 'transparent', textAlign: 'left', font: 'inherit', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
++                                >
+                                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+-                                        <Clock size={16} />
+-                                        Pending Review
++                                        {Icon && <Icon size={16} />}
++                                        {tab.label}
+                                     </span>
+-                                    {pendingMetrics.totalCount > 0 && (
+-                                        <span className="pending-badge-pulse">
+-                                            {pendingMetrics.totalCount}
+-                                        </span>
+-                                    )}
+-                                </span>
+-                            </div>
+-                        )}
+-                        <div className={`manage-nav-item ${activeTab === 'factors' ? 'active' : ''}`} onClick={() => handleTabChange('factors')}>
+-                            <span>Emission Factors</span>
+-                        </div>
+-                        {['admin', 'superuser'].includes(user?.role) && (
+-                            <div className={`manage-nav-item ${activeTab === 'facilities' ? 'active' : ''}`} onClick={() => handleTabChange('facilities')}>
+-                                <span>Regions</span>
+-                            </div>
+-                        )}
+-                        <div className={`manage-nav-item ${activeTab === 'production' ? 'active' : ''}`} onClick={() => handleTabChange('production')}>
+-                            <span>Production Data</span>
+-                        </div>
+-                        <div className={`manage-nav-item ${activeTab === 'sources' ? 'active' : ''}`} onClick={() => handleTabChange('sources')}>
+-                            <span>Emission Sources</span>
+-                        </div>
+-                        <div className={`manage-nav-item ${activeTab === 'goals' ? 'active' : ''}`} onClick={() => handleTabChange('goals')}>
+-                            <span>Emission Goals & Base Years</span>
+-                        </div>
+-                        <div className={`manage-nav-item ${activeTab === 'mitigation' ? 'active' : ''}`} onClick={() => handleTabChange('mitigation')}>
+-                            <span>Mitigation Projects</span>
+-                        </div>
+-                        <div className={`manage-nav-item ${activeTab === 'ogmp' ? 'active' : ''}`} onClick={() => handleTabChange('ogmp')}>
+-                            <span>OGMP 2.0 Surveys</span>
+-                        </div>
+-                        <div className={`manage-nav-item ${activeTab === 'cbam' ? 'active' : ''}`} onClick={() => handleTabChange('cbam')}>
+-                            <span>CBAM Products</span>
+-                        </div>
+-
++                                    {tab.badge}
++                                </button>
++                            );
++                        })}
+                     </aside>
+ 
+                     {/* Content Area */}
+-                    <section style={{ flex: 1 }}>
++                    <section style={{ flex: 1 }} role="tabpanel" id={`manage-panel-${activeTab}`} aria-labelledby={`manage-tab-${activeTab}`}>
+                         <div style={{ marginBottom: '24px', display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
+                             <div style={{ position: 'relative', flex: 1, minWidth: '250px' }}>
+                                 <Search className="search-icon" size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' }} />
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,36 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":21,"LineContent":"def is_it_role(user):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":29,"LineContent":"    if is_it_role(user):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":78,"LineContent":"    if user and (user.role in ['auditor'] or is_it_role(user)):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":222,"LineContent":"    if user and (user.role in ['auditor'] or is_it_role(user)):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":255,"LineContent":"    if user and (user.role in ['auditor'] or is_it_role(user)):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":288,"LineContent":"    if is_it_role(user):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":305,"LineContent":"    if is_it_role(user):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":386,"LineContent":"    if is_it_role(user):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":502,"LineContent":"    if is_it_role(user):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":539,"LineContent":"    if is_it_role(user):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":581,"LineContent":"    if is_it_role(user):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":618,"LineContent":"    if is_it_role(user):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":675,"LineContent":"    if is_it_role(user):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":783,"LineContent":"    if is_it_role(user):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\audit.py","LineNumber":28,"LineContent":"def is_it_role(user):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\audit.py","LineNumber":64,"LineContent":"    if user and is_it_role(user):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\audit.py","LineNumber":177,"LineContent":"    is_it_user = is_it_role(user)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\audit.py","LineNumber":222,"LineContent":"    if user and is_it_role(user):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\audit.py","LineNumber":260,"LineContent":"    if user and is_it_role(user):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\audit.py","LineNumber":306,"LineContent":"    is_it_user = is_it_role(user)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\audit.py","LineNumber":404,"LineContent":"    if get_allowed_facility_ids(user) is not None and not is_it_role(user):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":28,"LineContent":"def is_it_role(user):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":148,"LineContent":"    if is_it_role(user):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":381,"LineContent":"    if is_it_role(user):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":676,"LineContent":"    if is_it_role(user):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":704,"LineContent":"    if is_it_role(user):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":721,"LineContent":"    if is_it_role(user):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":748,"LineContent":"    if is_it_role(user):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":829,"LineContent":"    if is_it_role(user):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":858,"LineContent":"    if is_it_role(user):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":930,"LineContent":"    if is_it_role(user):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1104,"LineContent":"    if is_it_role(user):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1189,"LineContent":"    if is_it_role(user):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1289,"LineContent":"    if is_it_role(user):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1325,"LineContent":"    if is_it_role(user):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1670,"LineContent":"    if is_it_role(user):"}
