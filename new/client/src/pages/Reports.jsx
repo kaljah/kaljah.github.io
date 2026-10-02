@@ -883,7 +883,7 @@ const Reports = () => {
           )}
 
           {!loading && emissions.length > 0 && (
-            <div className="table-container">
+            <div className="table-container" tabIndex={0} role="region" aria-label="Emission records">
               <div className="grid-header">
                 <div className="cell">ID</div>
                 <div className="cell">Date</div>

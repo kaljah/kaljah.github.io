@@ -83,7 +83,7 @@
 
 .year-badge {
   background: rgba(255, 102, 0, 0.1);
-  color: var(--accent-color);
+  color: var(--color-link);
   padding: 6px 16px;
   border-radius: 9999px;
   font-size: 0.875rem;
@@ -145,7 +145,7 @@
 
 .gwp-subtag {
   font-size: 0.75rem;
-  color: var(--accent-color);
+  color: var(--color-link);
   font-weight: 600;
 }
 
@@ -193,7 +193,7 @@
 
 .kpi-icon.co2 {
   background: rgba(255, 102, 0, 0.1);
-  color: var(--accent-color);
+  color: var(--color-link);
 }
 .kpi-icon.ch4 {
   background: rgba(37, 99, 235, 0.1);
@@ -948,7 +948,7 @@
 
 .cbam-benchmark-badge {
   background: rgba(255, 102, 0, 0.1);
-  color: var(--accent-color);
+  color: var(--color-link);
   padding: 6px 14px;
   border-radius: 8px;
   font-size: 0.8125rem;

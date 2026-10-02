@@ -699,7 +699,7 @@ const CarbonIntensity = () => {
               <span className="label">Combined Production (BOE)</span>
               <span
                 className="val"
-                style={{ color: "var(--accent-color)", fontWeight: 700 }}
+                style={{ color: "var(--color-link)", fontWeight: 700 }}
               >
                 {formatNumber(stats.totalBoe, 0)} BOE
               </span>

@@ -92,7 +92,7 @@
 
 .dropdown-option.selected {
   background: rgba(16, 185, 129, 0.1);
-  color: var(--accent-color);
+  color: var(--color-link);
   font-weight: 600;
 }
 

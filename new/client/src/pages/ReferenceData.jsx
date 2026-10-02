@@ -403,6 +403,7 @@ const ReferenceData = () => {
         </div>
         <select
           className="filter-select"
+          aria-label="Filter by category"
           value={categoryFilter}
           onChange={(e) => setCategoryFilter(e.target.value)}
         >
@@ -454,7 +455,7 @@ const ReferenceData = () => {
                   {cat.title}
                   <span
                     className="count-badge"
-                    style={{ background: cat.color }}
+                    style={{ background: "var(--color-ink-100)", color: "var(--color-ink-800)" }}
                   >
                     {cat.isStatic
                       ? cat.filteredItems.length

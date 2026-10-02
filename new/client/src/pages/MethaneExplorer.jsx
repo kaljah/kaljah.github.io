@@ -1133,6 +1133,7 @@ const EmissionsMap = () => {
                     checked={showSatelliteLayer}
                     onChange={(e) => setShowSatelliteLayer(e.target.checked)}
                     id="toggle-sat-layer-checkbox"
+                    aria-label="Show satellite layer"
                   />
                   <span className="slider round"></span>
                 </label>
@@ -1155,6 +1156,7 @@ const EmissionsMap = () => {
                       }
                       className="recon-range-slider"
                       id="satellite-opacity-slider"
+                      aria-label="Satellite layer opacity"
                     />
                   </div>
 

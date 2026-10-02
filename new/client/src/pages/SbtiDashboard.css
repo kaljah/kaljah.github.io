@@ -66,7 +66,7 @@
 
 .btn-scope.active {
   background: var(--card-bg, var(--color-white));
-  color: var(--primary, var(--color-brand-500));
+  color: var(--color-link);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
 
@@ -147,7 +147,7 @@
   align-items: center;
   justify-content: center;
   background: rgba(249, 115, 22, 0.1);
-  color: var(--primary, var(--color-brand-500));
+  color: var(--color-link);
 }
 
 .sbti-kpi-icon.success {

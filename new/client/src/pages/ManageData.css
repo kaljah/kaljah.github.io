@@ -177,7 +177,7 @@ select option {
 select option:hover,
 select option:checked {
   background-color: rgba(255, 102, 0, 0.1) !important;
-  color: var(--accent-color, var(--color-brand-500)) !important;
+  color: var(--color-link) !important;
   font-weight: 600;
 }
 
@@ -517,7 +517,7 @@ select option:disabled {
 
 .pending-tab-btn.active {
   background: var(--color-white);
-  color: var(--accent-color);
+  color: var(--color-link);
   font-weight: 600;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
@@ -538,7 +538,7 @@ select option:disabled {
 
 .pending-tab-btn.active .pending-count-chip {
   background: var(--accent-subtle);
-  color: var(--accent-color);
+  color: var(--color-link);
 }
 
 .pending-search-box {

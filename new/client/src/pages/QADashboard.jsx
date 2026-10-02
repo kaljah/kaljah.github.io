@@ -776,6 +776,7 @@ export default function QADashboard() {
                                                 <th className="qa-th" style={{ width: '40px' }}>
                                                     <input
                                                         type="checkbox"
+                                                        aria-label="Select all records"
                                                         checked={
                                                             filteredRecords.length > 0 && 
                                                             filteredRecords.every(r => selectedIds.has(`${r.scope}-${r.id}`))
@@ -808,6 +809,7 @@ export default function QADashboard() {
                                                         <td className="qa-td">
                                                             <input
                                                                 type="checkbox"
+                                                                aria-label={`Select record ${record.id}`}
                                                                 checked={isSelected}
                                                                 onChange={() => toggleSelect(record.scope, record.id)}
                                                             />
@@ -1043,7 +1045,7 @@ export default function QADashboard() {
                                         </p>
                                     </div>
                                     <span style={{ 
-                                        background: 'rgba(255, 102, 0, 0.1)', color: 'var(--accent-color, #ff6600)', 
+                                        background: 'rgba(255, 102, 0, 0.1)', color: 'var(--color-link)', 
                                         padding: '4px 10px', borderRadius: '6px', fontSize: '0.78rem', fontWeight: 700 
                                     }}>
                                         95% Confidence Interval (k=2)

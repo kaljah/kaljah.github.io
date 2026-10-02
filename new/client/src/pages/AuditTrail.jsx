@@ -1,3 +1,4 @@
+import { Badge, DataTable, Dialog, SegmentedControl } from "../ui";
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import api from "../api";
 import {
@@ -75,6 +76,8 @@ const AuditTrail = () => {
 
   // Expanded Raw JSON Inspection Set
   const [expandedRows, setExpandedRows] = useState(new Set());
+  const [view, setView] = useState("table");
+  const [detailLog, setDetailLog] = useState(null);
   const [exportDropdownOpen, setExportDropdownOpen] = useState(false);
   const exportMenuRef = useRef(null);
 
@@ -417,6 +420,60 @@ const AuditTrail = () => {
     return String(val);
   };
 
+  const actionTone = (action) => {
+    const a = String(action || "").toUpperCase();
+    if (/CREATE|REGISTER|APPROVE|VERIFY/.test(a)) return "success";
+    if (/DELETE|REJECT|FAIL|DENY/.test(a)) return "danger";
+    if (/UPDATE|EDIT|CHANGE/.test(a)) return "info";
+    if (/WARN|FLAG/.test(a)) return "warning";
+    return "neutral";
+  };
+
+  const tableColumns = [
+    {
+      id: "time",
+      header: "Time",
+      accessorFn: (l) => l.timestamp,
+      cell: (c) => (
+        <span title={formatFullDateTime(c.getValue())} className="text-text-secondary">
+          {formatTimestamp(c.getValue())}
+        </span>
+      ),
+    },
+    { id: "user", header: "User", accessorFn: (l) => l.user || "System" },
+    {
+      id: "action",
+      header: "Action",
+      accessorFn: (l) => l.action,
+      cell: (c) => <Badge tone={actionTone(c.getValue())}>{c.getValue()}</Badge>,
+    },
+    { id: "entity", header: "Entity", accessorFn: (l) => l.entity || "-" },
+    {
+      id: "description",
+      header: "Description",
+      accessorFn: (l) => l.description || l.details || "No details recorded",
+      cell: (c) => <span className="block max-w-[32rem] truncate" title={c.getValue()}>{c.getValue()}</span>,
+    },
+    { id: "ref", header: "Ref", accessorFn: (l) => l.entityId || l.recordId || "-" },
+    { id: "ip", header: "IP", accessorFn: (l) => l.ipAddress || "Local / System" },
+    {
+      id: "details",
+      header: "",
+      enableSorting: false,
+      enableHiding: false,
+      meta: { pin: "right" },
+      cell: (c) => (
+        <button
+          type="button"
+          className="cursor-pointer rounded-md border border-border bg-surface px-2 py-1 text-sm font-semibold text-text hover:bg-ink-100"
+          onClick={() => setDetailLog(c.row.original)}
+        >
+          Details
+        </button>
+      ),
+    },
+  ];
+
   return (
     <div className="audit-trail">
       <div className="audit-container">
@@ -434,6 +491,15 @@ const AuditTrail = () => {
           </div>
 
           <div className="audit-header-actions">
+            <SegmentedControl
+              label="Audit view"
+              value={view}
+              onChange={setView}
+              options={[
+                { value: "table", label: "Table" },
+                { value: "timeline", label: "Timeline" },
+              ]}
+            />
             <button
               className="btn-refresh-main"
               onClick={() => {
@@ -694,6 +760,16 @@ const AuditTrail = () => {
               </button>
             )}
           </div>
+        ) : view === "table" ? (
+          <DataTable
+            tableId="audit-trail"
+            caption="Audit trail events"
+            density="compact"
+            pageSize={100}
+            data={auditLogs}
+            columns={tableColumns}
+            getRowId={(l) => String(l.id)}
+          />
         ) : (
           <div className="audit-timeline">
             {auditLogs.map((log) => {
@@ -896,6 +972,23 @@ const AuditTrail = () => {
           </div>
         )}
       </div>
+
+      <Dialog
+        open={Boolean(detailLog)}
+        onOpenChange={(o) => !o && setDetailLog(null)}
+        title="Audit event"
+        description={detailLog ? `${detailLog.action} by ${detailLog.user || "System"} (${formatFullDateTime(detailLog.timestamp)})` : undefined}
+        maxWidth="44rem"
+      >
+        {detailLog && (
+          <div className="flex flex-col gap-3">
+            <p className="text-base text-text">{detailLog.description || detailLog.details || "No details recorded"}</p>
+            <pre className="max-h-96 overflow-auto rounded-md bg-ink-50 p-3 text-sm text-text">
+              {JSON.stringify(detailLog, null, 2)}
+            </pre>
+          </div>
+        )}
+      </Dialog>
     </div>
   );
 };

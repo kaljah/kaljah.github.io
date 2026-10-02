@@ -726,7 +726,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
         <div className="batch-wizard-body">
           {loading ? (
             <div className="wizard-empty-state">
-              <RefreshCw size={36} style={{ animation: 'spin 1s linear infinite', color: 'var(--accent-color)' }} />
+              <RefreshCw size={36} style={{ animation: 'spin 1s linear infinite', color: 'var(--color-link)' }} />
               <p style={{ fontWeight: 600 }}>Loading 100% of pending records across all scopes...</p>
             </div>
           ) : stats.totalCount === 0 ? (

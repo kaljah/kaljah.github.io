@@ -76,7 +76,7 @@
   align-items: center;
   gap: 6px;
   background: rgba(255, 102, 0, 0.08);
-  color: var(--color-brand-500);
+  color: var(--color-link);
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -189,7 +189,7 @@
 }
 
 .settings-tab-btn.active {
-  color: var(--color-brand-500);
+  color: var(--color-link);
   border-bottom-color: var(--color-brand-500);
   background: rgba(255, 102, 0, 0.04);
 }
@@ -219,7 +219,7 @@
 }
 
 .section-icon {
-  color: var(--color-brand-500);
+  color: var(--color-link);
 }
 
 .section-intro h2 {
@@ -361,7 +361,7 @@
 }
 
 .factor-item.highlight .factor-val {
-  color: var(--color-brand-500);
+  color: var(--color-link);
 }
 
 /* Comparison Table */
@@ -382,7 +382,7 @@
 }
 
 .comparison-icon {
-  color: var(--color-brand-500);
+  color: var(--color-link);
 }
 
 .comparison-header h3 {
@@ -540,7 +540,7 @@
 .threshold-val-display {
   font-size: 1.2rem;
   font-weight: 800;
-  color: var(--color-brand-500);
+  color: var(--color-link);
   background: rgba(255, 102, 0, 0.08);
   padding: 6px 14px;
   border-radius: 8px;
@@ -573,7 +573,7 @@
 }
 
 .target-icon {
-  color: var(--color-brand-500);
+  color: var(--color-link);
 }
 
 .target-standards-box h3 {

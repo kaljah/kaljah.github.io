@@ -314,7 +314,7 @@ const CustomDropdown = ({
                       padding: "5px 10px",
                       fontSize: "0.8rem",
                       fontWeight: 600,
-                      color: "var(--accent-color)",
+                      color: "var(--color-link)",
                       textTransform: "uppercase",
                       background: "rgba(255,255,255,0.02)",
                       pointerEvents: "none",

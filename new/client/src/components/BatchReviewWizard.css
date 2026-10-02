@@ -63,7 +63,7 @@
   border-radius: 12px;
   background: linear-gradient(135deg, rgba(255, 102, 0, 0.15) 0%, rgba(255, 102, 0, 0.05) 100%);
   border: 1px solid rgba(255, 102, 0, 0.25);
-  color: var(--accent-color, var(--color-brand-500));
+  color: var(--color-link);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -187,7 +187,7 @@
 
 .segmented-item-btn.active {
   background: var(--color-white);
-  color: var(--accent-color, var(--color-brand-500));
+  color: var(--color-link);
   font-weight: 600;
   box-shadow: 0 1px 4px rgba(15, 23, 42, 0.06);
 }

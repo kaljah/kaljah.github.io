@@ -186,7 +186,7 @@
 .s1w-step.active .s1w-step-circle {
   border-color: var(--color-brand-500);
   background: #fff7f0;
-  color: var(--color-brand-500);
+  color: var(--color-link);
 }
 
 .s1w-step.done .s1w-step-circle {
@@ -203,7 +203,7 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
-.s1w-step.active .s1w-step-label { color: var(--color-brand-500); }
+.s1w-step.active .s1w-step-label { color: var(--color-link); }
 .s1w-step.done .s1w-step-label { color: var(--color-green-500); }
 
 .s1w-step-line {
@@ -241,7 +241,7 @@
   color: var(--color-ink-900);
   margin-bottom: -6px;
 }
-.s1w-section-title svg { width: 16px; height: 16px; color: var(--color-brand-500); }
+.s1w-section-title svg { width: 16px; height: 16px; color: var(--color-link); }
 
 .s1w-section-desc {
   font-size: 0.85rem;
@@ -499,7 +499,7 @@
   color: var(--color-ink-700);
   margin: 0;
 }
-.s1w-dropzone-text span { color: var(--color-brand-500); text-decoration: underline; }
+.s1w-dropzone-text span { color: var(--color-link); text-decoration: underline; }
 
 .s1w-dropzone-sub { font-size: 0.8rem; color: var(--color-ink-400); margin: 0; }
 

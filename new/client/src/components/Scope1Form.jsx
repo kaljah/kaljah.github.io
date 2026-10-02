@@ -2206,7 +2206,7 @@ const Scope1Form = () => {
                             <div className="official-presets-section">
                               <div className="official-presets-header">
                                 <span className="official-presets-title">
-                                  <BookOpen size={14} style={{ color: "var(--accent-color, #ff6600)" }} />
+                                  <BookOpen size={14} style={{ color: "var(--color-link)" }} />
                                   Presets
                                 </span>
                               </div>
@@ -3121,7 +3121,7 @@ const Scope1Form = () => {
                       <td>{formatEmission(entry.n2o_emissions || 0, 5)}</td>
                       <td
                         style={{
-                          color: "var(--accent-color)",
+                          color: "var(--color-link)",
                           fontWeight: 600,
                         }}
                       >
@@ -3272,7 +3272,7 @@ const Scope1Form = () => {
                     : "Page"}
                   ):
                 </td>
-                <td style={{ color: "var(--accent-color)" }}>
+                <td style={{ color: "var(--color-link)" }}>
                   {formatNumber(
                     entries
                       .filter((entry) => {

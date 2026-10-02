@@ -70,7 +70,7 @@
   align-items: center;
   gap: 6px;
   background: rgba(255, 102, 0, 0.08);
-  color: var(--accent-color, var(--color-brand-500));
+  color: var(--color-link);
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -285,7 +285,7 @@
 }
 
 .qa-tab-btn.active {
-  color: var(--accent-color, var(--color-brand-500));
+  color: var(--color-link);
   border-bottom-color: var(--accent-color, var(--color-brand-500));
   background: rgba(255, 102, 0, 0.04);
 }
@@ -301,7 +301,7 @@
 
 .qa-tab-btn.active .qa-tab-count-pill {
   background: rgba(255, 102, 0, 0.15);
-  color: var(--accent-color, var(--color-brand-500));
+  color: var(--color-link);
 }
 
 /* ── Content Panels ──────────────────────────────────────────────── */

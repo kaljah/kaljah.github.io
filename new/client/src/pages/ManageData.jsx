@@ -1670,7 +1670,7 @@ const ManageDataInner = () => {
                                             {pendingMetrics.totalCount > 0 && (
                                                 <span style={{ 
                                                     background: 'rgba(255, 102, 0, 0.1)', 
-                                                    color: 'var(--accent-color)', 
+                                                    color: 'var(--color-link)', 
                                                     border: '1px solid rgba(255, 102, 0, 0.25)',
                                                     fontSize: '0.75rem', 
                                                     fontWeight: 700, 
@@ -1731,7 +1731,7 @@ const ManageDataInner = () => {
                                 {/* Top Hero KPI Metrics Strip */}
                                 <div className="pending-kpi-grid">
                                     <div className="pending-kpi-card">
-                                        <div className="pending-kpi-icon-wrap" style={{ background: 'rgba(255, 102, 0, 0.1)', color: 'var(--accent-color)' }}>
+                                        <div className="pending-kpi-icon-wrap" style={{ background: 'rgba(255, 102, 0, 0.1)', color: 'var(--color-link)' }}>
                                             <Clock size={22} />
                                         </div>
                                         <div className="pending-kpi-info">
@@ -2980,7 +2980,7 @@ const ManageDataInner = () => {
                                 <div className="baseline-highlight-card">
                                     <div>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-                                            <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--accent-color, #ff6600)', fontWeight: 700 }}>
+                                            <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-link)', fontWeight: 700 }}>
                                                 GHG Protocol & OGMP 2.0 Baseline
                                             </span>
                                             <span className="goal-badge goal-badge-active">

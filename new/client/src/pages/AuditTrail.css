@@ -33,7 +33,7 @@
   background: rgba(255, 102, 0, 0.08);
   border: 1px solid rgba(255, 102, 0, 0.25);
   border-radius: 999px;
-  color: var(--accent-color, var(--color-brand-500));
+  color: var(--color-link);
   font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -82,7 +82,7 @@
 .btn-refresh-main:hover:not(:disabled) {
   background: var(--bg-hover, rgba(255, 247, 237, 0.9));
   border-color: var(--accent-color, var(--color-brand-500));
-  color: var(--accent-color, var(--color-brand-500));
+  color: var(--color-link);
   transform: translateY(-1px);
 }
 
@@ -816,7 +816,7 @@
 
 .btn-page-nav:hover:not(:disabled) {
   border-color: var(--accent-color, var(--color-brand-500));
-  color: var(--accent-color, var(--color-brand-500));
+  color: var(--color-link);
   background: var(--bg-hover, rgba(255, 247, 237, 0.5));
 }
 

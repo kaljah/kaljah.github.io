@@ -139,7 +139,7 @@ const QuickAddCustomFactorModal = ({
                 height: "32px",
                 borderRadius: "8px",
                 background: "rgba(255, 102, 0, 0.1)",
-                color: "var(--accent-color, #ff6600)",
+                color: "var(--color-link)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",

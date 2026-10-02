@@ -57,7 +57,7 @@
 .up-spinner {
   width: 32px;
   height: 32px;
-  color: var(--color-brand-500);
+  color: var(--color-link);
   animation: up-spin 1s linear infinite;
 }
 @keyframes up-spin {
@@ -91,7 +91,7 @@
   font-weight: 500;
 }
 .up-pct {
-  color: var(--color-brand-500);
+  color: var(--color-link);
   font-weight: 600;
 }
 
@@ -155,7 +155,7 @@
 }
 .up-card--neutral .up-card-icon {
   background: var(--color-brand-50);
-  color: var(--color-brand-500);
+  color: var(--color-link);
 }
 
 .up-card-num {

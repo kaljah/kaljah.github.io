@@ -107,7 +107,7 @@
 
 .btn-target-action:hover {
   border-color: var(--accent-color, var(--color-brand-500));
-  color: var(--accent-color, var(--color-brand-500));
+  color: var(--color-link);
 }
 
 
@@ -282,7 +282,7 @@
 
 .location-badge {
   background: var(--color-brand-50);
-  color: var(--color-brand-500);
+  color: var(--color-link);
   padding: 6px 12px;
   border-radius: 8px;
   font-size: 0.85rem;
@@ -782,7 +782,7 @@
 
 .manage-factors-btn:hover {
   border-color: var(--color-brand-500);
-  color: var(--color-brand-500);
+  color: var(--color-link);
 }
 
 /* Print Styles for Multi-Page Executive Brief Export */
@@ -847,7 +847,7 @@
 
 .donut-icon.activity {
   background: var(--color-brand-50);
-  color: var(--color-brand-500);
+  color: var(--color-link);
 }
 
 .donut-icon.source {
@@ -1020,7 +1020,7 @@
 
 .compare-toggle-btn.active {
   background: var(--color-brand-50);
-  color: var(--color-brand-500);
+  color: var(--color-link);
   border-color: var(--color-brand-500);
 }
 
