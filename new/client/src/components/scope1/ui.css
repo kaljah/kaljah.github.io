@@ -165,9 +165,6 @@
   background: none;
   padding: 0;
 }
-.s1-form .tier-selector-btn .tier-sub {
-  display: none;
-}
 
 /* process-specific inputs: flatten the forms' own headers and boxes */
 .s1-inputs h4,

@@ -7,68 +7,7 @@
   gap: 24px;
 }
 
-.sbti-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 16px;
-}
-
-.sbti-title-group h1 {
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: var(--text-main, var(--color-ink-900));
-  margin-bottom: 4px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.sbti-title-group p {
-  color: var(--text-secondary, var(--color-ink-500));
-  font-size: 0.95rem;
-}
-
-.sbti-header-actions {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
 /* Scope Disaggregation Toggle */
-.sbti-scope-toggle {
-  display: inline-flex;
-  background: var(--bg-card, var(--color-ink-100));
-  border: 1px solid var(--border-color, var(--color-ink-200));
-  border-radius: 10px;
-  padding: 3px;
-  gap: 3px;
-}
-
-.btn-scope {
-  padding: 7px 14px;
-  border-radius: 8px;
-  font-size: 0.82rem;
-  font-weight: 600;
-  border: none;
-  background: transparent;
-  color: var(--text-secondary, var(--color-ink-500));
-  cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-}
-
-.btn-scope:hover {
-  color: var(--text-main, var(--color-ink-900));
-}
-
-.btn-scope.active {
-  background: var(--card-bg, var(--color-white));
-  color: var(--color-link);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-}
 
 /* KPI Summary Cards Grid */
 .sbti-kpi-grid {

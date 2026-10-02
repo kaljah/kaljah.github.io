@@ -217,42 +217,7 @@ select option:disabled {
   gap: 4px;
 }
 
-.segmented-option {
-  flex: 1;
-  text-align: center;
-  padding: 8px;
-  cursor: pointer;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  transition: all 0.2s;
-}
-
-.segmented-option:hover {
-  background: rgba(0, 0, 0, 0.05);
-}
-
-.segmented-option.active {
-  background: var(--color-primary);
-  color: white;
-  font-weight: 600;
-}
-
 /* List Items (for entered data) */
-.list-container {
-  margin-top: 20px;
-}
-
-.list-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 20px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  margin-bottom: 12px;
-}
 
 .action-btn {
   width: auto;
@@ -357,12 +322,6 @@ select option:disabled {
   background: var(--color-green-50);
   color: var(--color-green-600);
   border: 1px solid #a7f3d0;
-}
-
-.goal-badge-historical {
-  background: var(--color-ink-100);
-  color: var(--color-ink-500);
-  border: 1px solid var(--color-ink-200);
 }
 
 .guidance-box {
