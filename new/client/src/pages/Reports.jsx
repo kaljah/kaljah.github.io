@@ -1129,10 +1129,10 @@ const Reports = () => {
               )}
             </div>
             <div className="modal-footer mt-[24px]! flex! justify-end! gap-[12px]!">
-              <button className="btn-secondary" onClick={() => setShowConfigModal(false)}>Cancel</button>
-              <button className="btn-primary" onClick={handleGenerateModalReport} disabled={loading} style={{ background: reportFormat === 'master' ? 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)' : undefined, border: 'none' }}>
+              <Button variant="secondary" type="submit" onClick={() => setShowConfigModal(false)}>Cancel</Button>
+              <Button type="submit" onClick={handleGenerateModalReport} disabled={loading} style={{ background: reportFormat === 'master' ? 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)' : undefined, border: 'none' }}>
                 {loading ? "Generating..." : reportFormat === 'master' ? "Download Master Report (PDF)" : "Generate ISO PDF"}
-              </button>
+              </Button>
             </div>
           </div>
         </div>

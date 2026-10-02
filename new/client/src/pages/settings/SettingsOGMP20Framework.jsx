@@ -1,4 +1,5 @@
 import React from "react";
+import { Button } from "../../ui";
 import { Activity, Save, ShieldCheck, Target } from "lucide-react";
 
 // Extracted from Settings.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
@@ -184,8 +185,8 @@ const SettingsOGMP20Framework = ({ defaultBaseYear, globalThreshold, handleSaveG
           <div
             className="mt-[24px]! flex! justify-end!"
           >
-            <button
-              className="btn-primary"
+            <Button
+              type="submit"
               onClick={handleSaveGlobal}
               disabled={saving || !isAdmin}
               title={!isAdmin ? "Administrator privileges required to modify settings" : "Save changes"}
@@ -199,7 +200,7 @@ const SettingsOGMP20Framework = ({ defaultBaseYear, globalThreshold, handleSaveG
             >
               <Save size={18} />
               {saving ? "Saving Changes..." : "Save OGMP & Target Settings"}
-            </button>
+            </Button>
           </div>
         </div>
 );

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { Button } from "../ui";
 import { NativeSelect } from "../ui/NativeSelect";
 import { showReviewResult } from '../utils/reviewResult';
 import { useLocation } from 'react-router-dom';
@@ -1488,9 +1489,9 @@ const ManageDataInner = () => {
                                     )}
                                     
                                     {(filterActivity || filterDivision || filterRegion || filterYear) && (
-                                        <button className="btn-ghost" onClick={() => { setFilterActivity(''); setFilterDivision(''); setFilterRegion(''); setFilterYear(''); }} style={{ color: 'var(--text-secondary)', padding: '6px 12px', fontSize: '0.85rem' }}>
+                                        <Button variant="ghost" type="submit" onClick={() => { setFilterActivity(''); setFilterDivision(''); setFilterRegion(''); setFilterYear(''); }} style={{ color: 'var(--text-secondary)', padding: '6px 12px', fontSize: '0.85rem' }}>
                                             Clear Filters
-                                        </button>
+                                        </Button>
                                     )}
                                 </>
                             )}
@@ -1740,19 +1741,19 @@ const ManageDataInner = () => {
                             : 'Conversion Factor: m³ × 6.28981 = barrels (bbl)'}
                     </div>
                     <div className="flex! justify-end! gap-[10px]!">
-                        <button
+                        <Button
                             type="button"
-                            className="btn-ghost"
+                            variant="ghost"
                             onClick={() => setConvertModal(prev => ({ ...prev, isOpen: false }))}
                         >
                             Cancel
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                             type="submit"
-                            className="btn-primary"
+                            
                         >
                             Convert & Apply
-                        </button>
+                        </Button>
                     </div>
                 </form>
             </Modal>

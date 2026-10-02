@@ -1,4 +1,5 @@
 import React from "react";
+import { Button } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
 import { Eye, Trash2 } from "lucide-react";
 import api from "../../api";
@@ -62,8 +63,8 @@ const Scope1History = ({ currentPage, entries, exportToCSV, facetYears, filterPr
             ))}
           </NativeSelect>
           {(filterYear || filterProcess || filterSearch) && (
-            <button
-              className="btn-ghost"
+            <Button
+              variant="ghost" type="submit"
               onClick={() => {
                 setFilterYear("");
                 setFilterProcess("");
@@ -77,7 +78,7 @@ const Scope1History = ({ currentPage, entries, exportToCSV, facetYears, filterPr
               }}
             >
               Clear
-            </button>
+            </Button>
           )}
           <button
             className="action-btn"

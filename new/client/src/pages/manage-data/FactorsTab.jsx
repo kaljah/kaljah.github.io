@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
 import { Database, Upload } from 'lucide-react';
 import PaginationControls from './PaginationControls';
@@ -167,8 +168,8 @@ const FactorsTab = ({ ITEMS_PER_PAGE, currentPage, editingFactorId, factorForm, 
                                             </NativeSelect>
                                         </div>
                                     </div>
-                                    <button
-                                        className="btn-ghost"
+                                    <Button
+                                        variant="ghost" type="submit"
                                         style={{ marginTop: '15px', color: '#3b82f6', fontWeight: 600, fontSize: '0.85rem' }}
                                         onClick={() => {
                                             const co2_u = Math.sqrt(
@@ -188,7 +189,7 @@ const FactorsTab = ({ ITEMS_PER_PAGE, currentPage, editingFactorId, factorForm, 
                                         }}
                                     >
                                         Calculate Combined Uncertainty (SRSS)
-                                    </button>
+                                    </Button>
                                 </div>
 
                                 <div className="flex! gap-[10px]! mt-[20px]!">

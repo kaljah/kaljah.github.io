@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button } from "../../ui";
 import { Clock } from 'lucide-react';
 
 // Extracted from ManageData.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
@@ -13,13 +14,13 @@ const PendingAccessNotice = ({ handleTabChange }) => (
                                 <p style={{ maxWidth: '520px', margin: '0 auto 20px auto', color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.6 }}>
                                     The pending review queue is restricted to Regional Managers and Administrators under corporate Maker-Checker governance rules. Direct activity logs submitted by operators are audited here before inclusion in official GHG inventories.
                                 </p>
-                                <button
-                                    className="btn-primary"
+                                <Button
+                                    type="submit"
                                     onClick={() => handleTabChange('factors')}
                                     style={{ padding: '8px 24px', fontSize: '0.88rem' }}
                                 >
                                     Return to Emission Factors
-                                </button>
+                                </Button>
                             </div>
 );
 

@@ -1,4 +1,5 @@
 import React from "react";
+import { Button } from "../../ui";
 import { AlertCircle, CheckCircle2, ExternalLink, HelpCircle, KeyRound, Radio, Satellite, Save } from "lucide-react";
 
 // Extracted from Settings.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
@@ -343,8 +344,8 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
           <div
             className="mt-[24px]! flex! justify-end!"
           >
-            <button
-              className="btn-primary"
+            <Button
+              type="submit"
               onClick={handleSaveGlobal}
               disabled={saving || !isAdmin}
               title={!isAdmin ? "Administrator privileges required to modify settings" : "Save settings"}
@@ -358,7 +359,7 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
             >
               <Save size={18} />
               {saving ? "Saving..." : "Save Satellite Settings"}
-            </button>
+            </Button>
           </div>
         </div>
 );

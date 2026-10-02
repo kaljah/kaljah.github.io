@@ -3,7 +3,7 @@ import FlaringComplianceCard from "./dashboard/FlaringComplianceCard";
 import DetailedBreakdownSection from "./dashboard/DetailedBreakdownSection";
 import { useAnalyticsFilter } from "../filters/useAnalyticsFilter";
 import { activateOnKey } from "../utils/a11yKeys";
-import { SegmentedControl } from "../ui";
+import { SegmentedControl, Button } from "../ui";
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -1072,8 +1072,8 @@ const DashboardEnhanced = () => {
                   Progress monitoring against corporate Net-Zero targets from Base Year {sbtiData.base_year} to Target Year {sbtiData.target_year}
                 </p>
               </div>
-              <button
-                className="btn-secondary-unified"
+              <Button
+                variant="secondary" type="submit"
                 style={{
                   display: "flex",
                   alignItems: "center",
@@ -1090,7 +1090,7 @@ const DashboardEnhanced = () => {
                 onClick={() => navigate("/sbti")}
               >
                 View Full SBTi Dashboard →
-              </button>
+              </Button>
             </div>
             <div className="chart-container h-[320px]! w-full!">
               <LineChartWrapper

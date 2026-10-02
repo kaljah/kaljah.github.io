@@ -1,4 +1,5 @@
 import React from "react";
+import { Button } from "../../ui";
 import { Copy, Eye, Trash2 } from "lucide-react";
 import LoadingSpinner from "../LoadingSpinner";
 import { UNCERTAINTY_COVERAGE_K } from "../../constants";
@@ -68,7 +69,7 @@ const Scope2FormCalculatorGridContainer = ({ currentPage, entries, facilities, h
                 <tr>
                   <td colSpan="11" style={{ textAlign: "center", padding: "40px", color: "var(--danger, #dc2626)" }}>
                     Could not load the records.{" "}
-                    <button type="button" className="btn-ghost" onClick={loadEntries}>Retry</button>
+                    <Button type="button" variant="ghost" onClick={loadEntries}>Retry</Button>
                   </td>
                 </tr>
               ) : entries.length === 0 ? (

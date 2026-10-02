@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
 import { Calendar, Check, CheckCircle, History, Plus, Target } from 'lucide-react';
 
@@ -88,8 +89,8 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                                 <Plus size={16} /> {editingGoalYear ? 'Update Goal' : 'Save Goal'}
                                             </button>
                                             {editingGoalYear && (
-                                                <button
-                                                    className="btn-ghost"
+                                                <Button
+                                                    variant="ghost" type="submit"
                                                     onClick={() => {
                                                         setEditingGoalYear(null);
                                                         setGoalForm({ year: new Date().getFullYear(), target_amount: '' });
@@ -97,7 +98,7 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                                     style={{ height: '46px', padding: '0 12px', border: '1px solid var(--border-color)', borderRadius: '8px' }}
                                                 >
                                                     Cancel
-                                                </button>
+                                                </Button>
                                             )}
                                         </div>
                                     </div>
@@ -143,14 +144,14 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                                             </td>
                                                             <td className="text-center!">
                                                                 <div className="flex! gap-[8px]! justify-center!">
-                                                                    <button
-                                                                        className="btn-ghost"
+                                                                    <Button
+                                                                        variant="ghost" type="submit"
                                                                         onClick={() => handleEditGoal(g)}
                                                                         style={{ padding: '4px 8px', fontSize: '0.8rem', border: '1px solid var(--border-color)', borderRadius: '6px' }}
                                                                         title="Edit Goal"
                                                                     >
                                                                         Edit
-                                                                    </button>
+                                                                    </Button>
                                                                     <button
                                                                         className="btn-delete"
                                                                         onClick={() => handleDeleteGoal(g.year)}

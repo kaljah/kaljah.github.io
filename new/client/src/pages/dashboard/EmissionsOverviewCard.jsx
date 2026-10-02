@@ -1,4 +1,5 @@
 import React from "react";
+import { Button } from "../../ui";
 import { formatCompactNumber } from "../../utils/formatters";
 
 // Extracted from DashboardEnhanced.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
@@ -17,10 +18,10 @@ const EmissionsOverviewCard = ({ currentActivity, currentDivision, currentRegion
                       ? currentActivity
                       : "All Regions"}
               </div>
-              <button
+              <Button
                 onClick={handleExportPDF}
                 disabled={exportingPDF}
-                className="btn-secondary-unified"
+                variant="secondary" type="submit"
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -42,7 +43,7 @@ const EmissionsOverviewCard = ({ currentActivity, currentDivision, currentRegion
                   <path d="M6 14h12v8H6z" />
                 </svg>
                 {exportingPDF ? "Generating PDF..." : "Export Executive Brief (PDF)"}
-              </button>
+              </Button>
             </div>
           </div>
 

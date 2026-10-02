@@ -1,4 +1,4 @@
-import { PageHeader } from "../ui";
+import { PageHeader, Button } from "../ui";
 import { NativeSelect } from "../ui/NativeSelect";
 import React, { useState, useEffect } from "react";
 import { activateOnKey } from "../utils/a11yKeys";
@@ -415,7 +415,7 @@ const ReferenceData = () => {
                    border: "1px solid #fecaca", color: "#991b1b", display: "flex", gap: 12, alignItems: "center" }}
         >
           <div className="flex-1!">{loadErrors.map((e) => <div key={e}>{e}</div>)}</div>
-          <button type="button" className="btn-ghost" onClick={() => { setLoading(true); fetchData(); }}>Retry</button>
+          <Button type="button" variant="ghost" onClick={() => { setLoading(true); fetchData(); }}>Retry</Button>
         </div>
       )}
       {loading ? (

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button } from "../../ui";
 import { AlertCircle, AlertTriangle, Check, CheckCircle, CheckSquare, Clock, Filter, Flame, RefreshCw, Search, Shield, Sparkles, Square, X } from 'lucide-react';
 import BatchReviewWizard from '../../components/BatchReviewWizard';
 
@@ -37,13 +38,13 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                                         </p>
                                                     </div>
                                                 </div>
-                                                <button 
-                                                    className="btn-ghost" 
+                                                <Button 
+                                                    variant="ghost" type="submit" 
                                                     style={{ padding: '6px', borderRadius: '8px' }}
                                                     onClick={() => !isProcessingBatch && setRejectionModal(prev => ({ ...prev, isOpen: false }))}
                                                 >
                                                     <X size={18} />
-                                                </button>
+                                                </Button>
                                             </div>
 
                                             <div style={{ 
@@ -112,15 +113,15 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                             </div>
 
                                             <div className="flex! justify-end! gap-[12px]! mt-[4px]!">
-                                                <button
+                                                <Button
                                                     type="button"
-                                                    className="btn-ghost"
+                                                    variant="ghost"
                                                     disabled={isProcessingBatch}
                                                     onClick={() => setRejectionModal(prev => ({ ...prev, isOpen: false }))}
                                                     style={{ padding: '8px 16px', borderRadius: '8px' }}
                                                 >
                                                     Cancel
-                                                </button>
+                                                </Button>
                                                 <button
                                                     type="button"
                                                     className="btn-delete"
@@ -160,8 +161,8 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                         </p>
                                     </div>
                                     <div className="flex! gap-[10px]! items-center!">
-                                        <button 
-                                            className="btn-ghost" 
+                                        <Button 
+                                            variant="ghost" type="submit" 
                                             style={{ 
                                                 display: 'inline-flex', 
                                                 alignItems: 'center', 
@@ -178,9 +179,9 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                         >
                                             <RefreshCw size={15} style={{ animation: isRefreshingPending ? 'spin 1s linear infinite' : 'none' }} />
                                             {isRefreshingPending ? 'Refreshing...' : 'Refresh Queue'}
-                                        </button>
-                                        <button
-                                            className="btn-primary"
+                                        </Button>
+                                        <Button
+                                            type="submit"
                                             style={{
                                                 display: 'inline-flex',
                                                 alignItems: 'center',
@@ -198,7 +199,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                         >
                                             <Sparkles size={16} />
                                             Launch Review Wizard
-                                        </button>
+                                        </Button>
                                     </div>
                                 </div>
 
@@ -336,20 +337,20 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                                 onChange={e => setPendingSearch(e.target.value)}
                                             />
                                             {pendingSearch && (
-                                                <button 
-                                                    className="btn-ghost" 
+                                                <Button 
+                                                    variant="ghost" type="submit" 
                                                     style={{ padding: '2px', color: 'var(--text-secondary)' }}
                                                     onClick={() => setPendingSearch('')}
                                                 >
                                                     <X size={14} />
-                                                </button>
+                                                </Button>
                                             )}
                                         </div>
 
                                         {/* Scope-level Bulk Action when Scoped */}
                                         {pendingScopeFilter !== 'all' && pendingMetrics[`count${pendingScopeFilter}`] > 0 && (
-                                            <button
-                                                className="btn-primary"
+                                            <Button
+                                                type="submit"
                                                 style={{ 
                                                     background: '#10b981', 
                                                     fontSize: '0.82rem', 
@@ -363,7 +364,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                             >
                                                 <Check size={14} />
                                                 Approve All Scope {pendingScopeFilter} ({pendingMetrics[`count${pendingScopeFilter}`]})
-                                            </button>
+                                            </Button>
                                         )}
                                     </div>
                                 </div>
@@ -435,8 +436,8 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                             <p style={{ margin: '0 0 16px 0', color: 'var(--text-secondary)', fontSize: '0.88rem' }}>
                                                 No pending records match your active search and filter settings.
                                             </p>
-                                            <button
-                                                className="btn-primary"
+                                            <Button
+                                                type="submit"
                                                 style={{ fontSize: '0.85rem', padding: '8px 16px' }}
                                                 onClick={() => {
                                                     setPendingScopeFilter('all');
@@ -445,7 +446,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                                 }}
                                             >
                                                 Clear Filters
-                                            </button>
+                                            </Button>
                                         </div>
                                     </div>
                                 ) : (
@@ -475,8 +476,8 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                             </div>
 
                                             <div className="flex! items-center! gap-[8px]!">
-                                                <button
-                                                    className="btn-ghost"
+                                                <Button
+                                                    variant="ghost" type="submit"
                                                     style={{ 
                                                         fontSize: '0.8rem', 
                                                         display: 'inline-flex', 
@@ -499,7 +500,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                                             Select All in View
                                                         </>
                                                     )}
-                                                </button>
+                                                </Button>
                                             </div>
                                         </div>
 

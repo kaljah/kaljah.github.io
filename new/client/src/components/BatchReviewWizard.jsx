@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { Button } from "../ui";
 import { NativeSelect } from "../ui/NativeSelect";
 import { showReviewResult } from "../utils/reviewResult";
 import { createPortal } from 'react-dom';
@@ -497,23 +498,23 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
           </div>
 
           <div className="wizard-header-actions">
-            <button
-              className="btn-ghost"
+            <Button
+              variant="ghost" type="submit"
               onClick={fetchAllPendingData}
               disabled={loading || isProcessing}
               style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', border: '1px solid var(--border-color)', borderRadius: '9px', padding: '7px 14px', fontSize: '0.82rem', background: '#ffffff', cursor: 'pointer' }}
             >
               <RefreshCw size={14} style={{ animation: loading ? 'spin 1s linear infinite' : 'none' }} />
               Reload All
-            </button>
-            <button
-              className="btn-ghost"
+            </Button>
+            <Button
+              variant="ghost" type="submit"
               onClick={onClose}
               style={{ padding: '7px', borderRadius: '9px', border: '1px solid var(--border-color)', cursor: 'pointer', background: '#ffffff' }}
               title="Close Wizard (Esc)"
             >
               <X size={18} />
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -644,9 +645,9 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
               {searchQuery && (
-                <button className="btn-ghost" onClick={() => setSearchQuery('')} style={{ padding: 2, cursor: 'pointer' }}>
+                <Button variant="ghost" type="submit" onClick={() => setSearchQuery('')} style={{ padding: 2, cursor: 'pointer' }}>
                   <X size={12} />
-                </button>
+                </Button>
               )}
             </div>
           </div>
@@ -713,13 +714,13 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
                 <X size={14} />
                 Reject Selected ({selectedKeys.size})
               </button>
-              <button
-                className="btn-ghost"
+              <Button
+                variant="ghost" type="submit"
                 onClick={() => setSelectedKeys(new Set())}
                 style={{ color: '#94a3b8', fontSize: '0.82rem', padding: '6px 10px', cursor: 'pointer' }}
               >
                 Deselect
-              </button>
+              </Button>
             </div>
           </div>
         )}
@@ -746,13 +747,13 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
               <Filter size={32} color="var(--text-muted)" />
               <h3 style={{ margin: 0, fontSize: '1.1rem' }}>No Matching Records</h3>
               <p style={{ margin: 0, fontSize: '0.86rem' }}>No records match your active scope, anomaly, or search filters.</p>
-              <button
-                className="btn-ghost"
+              <Button
+                variant="ghost" type="submit"
                 onClick={() => { setScopeFilter('all'); setQaFilter('all'); setFacilityFilter('all'); setYearFilter('all'); setSearchQuery(''); }}
                 style={{ border: '1px solid var(--border-color)', borderRadius: '8px', padding: '6px 14px', fontSize: '0.82rem', marginTop: '8px', cursor: 'pointer' }}
               >
                 Reset Filters
-              </button>
+              </Button>
             </div>
           ) : (
             <table className="wizard-table">
@@ -907,13 +908,13 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
                     : `Reject ${filteredRecords.length} Filtered Records`}
                 </h3>
               </div>
-              <button
-                className="btn-ghost"
+              <Button
+                variant="ghost" type="submit"
                 onClick={() => !isProcessing && setRejectionModal(prev => ({ ...prev, isOpen: false }))}
                 style={{ padding: '6px', cursor: 'pointer' }}
               >
                 <X size={18} />
-              </button>
+              </Button>
             </div>
 
             <p style={{ margin: 0, fontSize: '0.86rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
@@ -953,24 +954,24 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
             </div>
 
             <div className="flex! justify-end! gap-[10px]!">
-              <button
+              <Button
                 type="button"
-                className="btn-ghost"
+                variant="ghost"
                 onClick={() => setRejectionModal(prev => ({ ...prev, isOpen: false }))}
                 disabled={isProcessing}
                 style={{ padding: '8px 16px', borderRadius: '10px', cursor: 'pointer' }}
               >
                 Cancel
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
-                className="btn-primary"
+                
                 style={{ background: '#ef4444', padding: '8px 18px', borderRadius: '10px' }}
                 onClick={handleConfirmRejection}
                 disabled={isProcessing || !rejectionModal.reason.trim()}
               >
                 {isProcessing ? 'Processing...' : 'Confirm Rejection'}
-              </button>
+              </Button>
             </div>
           </div>
         </div>
