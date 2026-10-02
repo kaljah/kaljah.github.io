@@ -8,6 +8,7 @@ Governing equations:
 """
 
 import math
+from .ref_constants import _frac
 from .ref_constants import (
     STD_TEMP_K,
     STD_PRESSURE_PSIA,
@@ -52,7 +53,7 @@ def ref_calculate_pneumatic_devices(
     total_scf = count * rate * hrs
     vol_m3 = total_scf * CONV_SCF_TO_M3
 
-    c1 = float(ch4_fraction or 0.90)
+    c1 = _frac(ch4_fraction, 0.90)
     co2_f = float(co2_fraction or 0.0)
 
     ch4_tonnes = (vol_m3 * c1 * DENSITY_CH4) / 1000.0
@@ -99,8 +100,8 @@ def ref_calculate_blowdown(
 
     vent_m3 = vol_m3 * p_factor * t_factor * (1.0 / z) * float(events or 1)
 
-    c1 = float(ch4_fraction or 0.90)
-    co2_f = float(co2_fraction or 0.01)
+    c1 = _frac(ch4_fraction, 0.90)
+    co2_f = _frac(co2_fraction, 0.01)
 
     ch4_tonnes = (vent_m3 * c1 * DENSITY_CH4) / 1000.0
     co2_tonnes = (vent_m3 * co2_f * DENSITY_CO2) / 1000.0
@@ -137,7 +138,7 @@ def ref_calculate_tank_flashing(
         total_scf = vol_bbl * gor
         vol_m3 = total_scf * CONV_SCF_TO_M3
         c1 = float(ch4_fraction or 0.75)
-        co2_f = float(co2_fraction or 0.02)
+        co2_f = _frac(co2_fraction, 0.02)
         ch4_tonnes = (vol_m3 * c1 * DENSITY_CH4 * uncontrolled_multiplier) / 1000.0
         co2_tonnes = (vol_m3 * co2_f * DENSITY_CO2 * uncontrolled_multiplier) / 1000.0
 

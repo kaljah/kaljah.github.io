@@ -123,10 +123,10 @@
       "normalized_quantity": 20000.0
     },
     "independent_expected_result": {
-      "co2": 43.70186300000001,
-      "ch4": 0.05970800000000005,
+      "co2": 43.63465611146297,
+      "ch4": 0.059595524593624716,
       "n2o": 0.0,
-      "co2e": 45.37368700000001
+      "co2e": 45.30333080008446
     },
     "tolerance": 0.001,
     "source": "API Compendium 2021 Table 5-4",
@@ -400,9 +400,9 @@
     "independent_intermediate_values": {},
     "independent_expected_result": {
       "co2": 0.0,
-      "ch4": 20.449143572423317,
+      "ch4": 20.41062234020425,
       "n2o": 0.0,
-      "co2e": 572.5760200278529
+      "co2e": 571.497425525719
     },
     "tolerance": 0.001,
     "source": "API Compendium 2021 Table 5-15",
@@ -417,7 +417,8 @@
       "initial_press": 600.0,
       "final_press": 0.0,
       "events": 2,
-      "ch4_fraction": 0.88
+      "ch4_fraction": 0.88,
+      "co2_fraction": 0.01
     },
     "units": {
       "volume_unit": "m3",
@@ -436,10 +437,10 @@
     },
     "independent_intermediate_values": {},
     "independent_expected_result": {
-      "co2": 0.07784004470718295,
-      "ch4": 2.4974064424376574,
+      "co2": 0.07772033843268492,
+      "ch4": 2.4927019337537697,
       "n2o": 0.0,
-      "co2e": 70.0052204329616
+      "co2e": 69.87337448353823
     },
     "tolerance": 0.001,
     "source": "API Compendium 2021 Eq. 5-14",
@@ -471,10 +472,10 @@
     },
     "independent_intermediate_values": {},
     "independent_expected_result": {
-      "co2": 7.42539,
-      "ch4": 0.0576725,
+      "co2": 7.414712338871632,
+      "ch4": 0.05756385898247836,
       "n2o": 0.0,
-      "co2e": 9.04022
+      "co2e": 9.026500390381026
     },
     "tolerance": 0.001,
     "source": "API Compendium 2021 Eq. 5-18",
@@ -488,7 +489,8 @@
       "component_count": 150,
       "hours": 8760,
       "component_type": "valve",
-      "ch4_fraction": 0.9
+      "ch4_fraction": 0.9,
+      "co2_fraction": 0.0
     },
     "units": {
       "count_unit": "components"
@@ -506,14 +508,14 @@
     },
     "independent_intermediate_values": {},
     "independent_expected_result": {
-      "co2": 0.059129999999999995,
+      "co2": 0.0,
       "ch4": 5.321699999999999,
       "n2o": 0.0,
-      "co2e": 149.06672999999998
+      "co2e": 149.00759999999997
     },
     "tolerance": 0.001,
     "source": "API Compendium 2021 Table 6-1",
-    "assumptions": "Gas service valves default screening emission factor 0.0045 kg/hr/comp"
+    "assumptions": "Gas service valves default screening emission factor 0.0045 kg/hr/comp; methane only (the production component calculator does not count CO2 in leaked gas)"
   },
   {
     "test_id": "GOLDEN-S2-ELEC-001",
@@ -786,7 +788,7 @@
       "kg_h2o_per_kg_fuel": 2.2458393068628064,
       "mass_balance_error": 0.0
     },
-    "tolerance": 1e-06,
+    "tolerance": 0.0001,
     "source": "NIST Physical Reference Data",
     "assumptions": "Complete stoichiometric conversion to CO2 and H2O"
   },
@@ -818,7 +820,7 @@
       "kg_h2o_per_kg_fuel": 1.79730628533422,
       "mass_balance_error": 2.842170943040401e-14
     },
-    "tolerance": 1e-06,
+    "tolerance": 0.0001,
     "source": "NIST Physical Reference Data",
     "assumptions": "Complete stoichiometric conversion to CO2 and H2O"
   },
@@ -850,7 +852,7 @@
       "kg_h2o_per_kg_fuel": 1.6341247703925437,
       "mass_balance_error": 2.842170943040401e-14
     },
-    "tolerance": 1e-06,
+    "tolerance": 0.0001,
     "source": "NIST Physical Reference Data",
     "assumptions": "Complete stoichiometric conversion to CO2 and H2O"
   },
@@ -882,7 +884,7 @@
       "kg_h2o_per_kg_fuel": 1.5497040809304248,
       "mass_balance_error": 0.0
     },
-    "tolerance": 1e-06,
+    "tolerance": 0.0001,
     "source": "NIST Physical Reference Data",
     "assumptions": "Complete stoichiometric conversion to CO2 and H2O"
   }

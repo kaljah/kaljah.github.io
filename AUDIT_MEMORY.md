@@ -268,3 +268,10 @@ Report: audit/SCOPE1_100K_BULK_AUDIT_2026-10-01.md sections 8 and 9. Tests: new/
   - **Saved column mappings.** Backed by the `import_mappings` table (new, so `create_all` creates it on existing DBs) and `/api/emissions/upload/mappings`. A saved mapping is auto-applied to a file with the same columns, including .xlsx: the check returns the column names.
   - **Fixes.** S1K-F35..F37.
 
+- 2026-10-02 · Validation differential check (validation/differential/test_clean_differential.py) tightened. It passed any result within 5 % of the expected value, whatever the case's tolerance; now `tolerance` is relative, as in tests/test_golden_dataset_validation.py, with no blowdown exception. The 4 cases that were 0.15-0.30 % off are explained:
+  - **COMB-003, VENT-001, MID-001.** `golden_cases.json` still held answers made with the old 15 °C densities (CH4 0.6785 kg/m3). The reference model already used the Compendium's 379.3 scf/lb-mole (0.67722). Regenerated: the app matches exactly.
+  - **VENT-002 (blowdown).** The reference assumed 1 % CO2 when none was given, while the app was called with none. The case now states co2_fraction 0.01 for both sides.
+  - **Same mismatch elsewhere.** FUG-001 had it too (0.04 %). Its case now states 0 % CO2, because the app's component-leak calculator counts methane only (open question: CO2 in leaked gas is not counted).
+  - **Reference-model bug.** `float(x or default)` turned an explicit 0 into the default in ref_fugitives / ref_venting / ref_midstream / ref_intensity / ref_scope2. Now done with `_frac()`.
+  - **Stoichiometry tolerance.** 1e-6 -> 1e-4 relative: the reference sums atomic weights (CO2 44.009), the app uses the Compendium's 44.01.
+  - **Result.** Largest remaining gap 0.0023 %; a planted 1 % error now fails.
