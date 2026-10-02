@@ -354,3 +354,29 @@
 .btn-secondary:hover {
   background: var(--color-ink-200);
 }
+
+.login-logo {
+  display: block;
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 12px;
+}
+
+.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  display: inline-flex;
+  padding: 6px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-ink-500);
+  cursor: pointer;
+}
+
+.password-toggle:hover {
+  background: var(--color-ink-100);
+  color: var(--color-ink-900);
+}

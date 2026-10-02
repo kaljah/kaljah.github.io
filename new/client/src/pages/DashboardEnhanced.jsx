@@ -1,4 +1,5 @@
 import { useAnalyticsFilter } from "../filters/useAnalyticsFilter";
+import { SegmentedControl } from "../ui";
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -730,57 +731,29 @@ const DashboardEnhanced = () => {
 
     setTopBarRight(
       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-        {/* Dual GWP Horizon Toggle */}
-        <div
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            background: "var(--bg-card, rgba(255, 255, 255, 0.08))",
-            borderRadius: "8px",
-            padding: "2px",
-            border: "1px solid var(--border-color, rgba(226, 232, 240, 0.8))",
-          }}
-          title={
-            activeGwp
-              ? `Global Warming Potential Horizon: 100-Year (Standard, CH4=${activeGwp.CH4}) vs 20-Year (Near-term, CH4=${activeGwp.CH4_20}) per IPCC ${activeGwpStandard}`
-              : "Global Warming Potential Horizon: 100-Year (Standard) vs 20-Year (Near-term)"
-          }
-        >
-          <button
-            type="button"
-            style={{
-              padding: "4px 8px",
-              fontSize: "0.75rem",
-              fontWeight: 600,
-              borderRadius: "6px",
-              border: "none",
-              cursor: "pointer",
-              background: gwpHorizon === "100" ? "var(--accent-color, #ff6600)" : "transparent",
-              color: gwpHorizon === "100" ? "#fff" : "var(--text-secondary)",
-              transition: "all 0.15s ease",
-            }}
-            onClick={() => setGwpHorizon("100")}
-          >
-            GWP-100
-          </button>
-          <button
-            type="button"
-            style={{
-              padding: "4px 8px",
-              fontSize: "0.75rem",
-              fontWeight: 600,
-              borderRadius: "6px",
-              border: "none",
-              cursor: "pointer",
-              background: gwpHorizon === "20" ? "#ef4444" : "transparent",
-              color: gwpHorizon === "20" ? "#fff" : "var(--text-secondary)",
-              transition: "all 0.15s ease",
-            }}
-            onClick={() => setGwpHorizon("20")}
-          >
-            GWP-20
-          </button>
-        </div>
+        {/* GWP horizon */}
+        <SegmentedControl
+          label="GWP horizon"
+          size="sm"
+          value={gwpHorizon}
+          onChange={setGwpHorizon}
+          options={[
+            {
+              value: "100",
+              label: "GWP-100",
+              title: activeGwp
+                ? `100-Year (Standard, CH4=${activeGwp.CH4}) per IPCC ${activeGwpStandard}`
+                : "100-Year (Standard)",
+            },
+            {
+              value: "20",
+              label: "GWP-20",
+              title: activeGwp
+                ? `20-Year (Near-term, CH4=${activeGwp.CH4_20}) per IPCC ${activeGwpStandard}`
+                : "20-Year (Near-term)",
+            },
+          ]}
+        />
 
         {goal ? (
           <div className="topbar-goal-badge">

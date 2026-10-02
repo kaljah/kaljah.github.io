@@ -136,6 +136,8 @@ const Scope1Form = () => {
   const [totalPages, setTotalPages] = useState(1);
 
   const [showGasCalc, setShowGasCalc] = useState(false);
+  // the six uncertainty columns are hidden by default (the table is 22 columns wide)
+  const [showUncertainty, setShowUncertainty] = useState(false);
   const [inspectRecord, setInspectRecord] = useState(null);
   const [importModal, setImportModal] = useState({
     isOpen: false,
@@ -2966,9 +2968,18 @@ const Scope1Form = () => {
           >
             ↑ Bulk Import (Wizard)
           </button>
+          <button
+            type="button"
+            className="action-btn secondary"
+            aria-pressed={showUncertainty}
+            onClick={() => setShowUncertainty((v) => !v)}
+            style={{ padding: "6px 14px", fontSize: "0.82rem", whiteSpace: "nowrap" }}
+          >
+            {showUncertainty ? "Hide" : "Show"} uncertainty columns
+          </button>
         </div>
         <div className="table-scroll-container">
-          <table className="excel-table">
+          <table className={`excel-table${showUncertainty ? "" : " hide-uncertainty"}`}>
             <thead>
               <tr>
                 <th>Period</th>

@@ -80,3 +80,56 @@
   text-align: center;
   width: 100px;
 }
+
+/* Dense, scannable history tables: no wrapping, sticky header, first and last columns pinned. */
+.table-scroll-container {
+  max-height: 70vh;
+  overflow: auto;
+}
+
+.excel-table th,
+.excel-table td {
+  padding: 10px 14px;
+  white-space: nowrap;
+}
+
+.excel-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--color-ink-100);
+}
+
+.excel-table th:first-child,
+.excel-table td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--color-white);
+}
+
+.excel-table thead th:first-child {
+  z-index: 3;
+  background: var(--color-ink-100);
+}
+
+.excel-table td:last-child {
+  position: sticky;
+  right: 0;
+  background: var(--color-white);
+}
+
+.excel-table thead th:last-child {
+  z-index: 3;
+}
+
+.excel-table tr:hover td:first-child,
+.excel-table tr:hover td:last-child {
+  background: var(--color-brand-50);
+}
+
+/* Scope 1 history: uncertainty columns (16-21) are opt-in */
+.excel-table.hide-uncertainty th:nth-child(n + 16):nth-child(-n + 21),
+.excel-table.hide-uncertainty tbody tr:not(:only-child) td:nth-child(n + 16):nth-child(-n + 21) {
+  display: none;
+}

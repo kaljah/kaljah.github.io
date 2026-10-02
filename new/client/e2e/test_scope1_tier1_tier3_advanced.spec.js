@@ -667,6 +667,9 @@ test.describe('Advanced Scope 1 Calculations: Tier 1 & Tier 3 Full Audit', () =>
       'EQUIPMENT ID', 'PROCESS', 'ACTIVITY/FUEL', 'FACTOR TYPE', 'QUANTITY',
       'TOTAL', 'ACTIONS'
     ];
+    // uncertainty columns are opt-in since the table is 22 columns wide
+    const uncToggle = page.getByRole('button', { name: /show uncertainty columns/i });
+    if (await uncToggle.count()) await uncToggle.click();
     const headerRowText = (await page.locator('table.excel-table thead tr').first().innerText()).toUpperCase();
     for (const h of expectedHeaders) {
       expect(headerRowText).toContain(h);

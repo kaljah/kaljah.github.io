@@ -261,9 +261,9 @@ const UncertaintyAssessment = () => {
       {/* ── Uncertainty bands (whole inventory) ── */}
       {data.uncertainty_bands && (
         <div className="ua-tier-grid">
-          {[["low", "Low Uncertainty (≤ ±10%)", "tier-3-color"],
-            ["medium", "Medium Uncertainty (±10% to ±30%)", "tier-2-color"],
-            ["high", "High Uncertainty (> ±30%)", "tier-1-color"]].map(([band, label, cls]) => (
+          {[["low", "Low Uncertainty (≤ ±10%)", "band-low"],
+            ["medium", "Medium Uncertainty (±10% to ±30%)", "band-medium"],
+            ["high", "High Uncertainty (> ±30%)", "band-high"]].map(([band, label, cls]) => (
             <div key={band} className="ua-tier-card">
               <div className="ua-tier-label">{label}</div>
               <div className={`ua-tier-value ${cls}`}>{data.uncertainty_bands[band] ?? 0}%</div>
@@ -278,15 +278,15 @@ const UncertaintyAssessment = () => {
       {/* ── Legend ── */}
       <div className="legend-bar">
         <div className="legend-item">
-          <div className="legend-dot" style={{ background: "#10b981" }} />
+          <div className="legend-dot" style={{ background: "var(--color-unc-low)" }} />
           Low Uncertainty (≤ ±10%)
         </div>
         <div className="legend-item">
-          <div className="legend-dot" style={{ background: "#f59e0b" }} />
+          <div className="legend-dot" style={{ background: "var(--color-unc-medium)" }} />
           Medium Uncertainty (±10% to ±30%)
         </div>
         <div className="legend-item">
-          <div className="legend-dot" style={{ background: "#ef4444" }} />
+          <div className="legend-dot" style={{ background: "var(--color-unc-high)" }} />
           High Uncertainty (&gt; ±30%)
         </div>
       </div>

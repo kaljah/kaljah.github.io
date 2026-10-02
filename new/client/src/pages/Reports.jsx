@@ -1,3 +1,5 @@
+import { ChevronDown, Download, FileSpreadsheet, FileText, RotateCcw } from "lucide-react";
+import { Button, Menu, MenuContent, MenuItem, MenuTrigger, PageHeader } from "../ui";
 import React, { useState, useEffect } from "react";
 import api from "../api";
 import { useAuth } from "../context/AuthContext";
@@ -460,130 +462,49 @@ const Reports = () => {
     <div className="reports-page">
       <div className="reports-container">
         <div className="content-wrapper">
-          <div className="reports-header">
-            <div className="reports-title">
-              <h2>Emission Database</h2>
-              <p className="reports-subtitle">
-                Complete history of all recorded emissions and compliance data.
-                <span
-                  style={{
-                    marginLeft: "10px",
-                    color: "var(--primary-color)",
-                    fontWeight: 600,
-                  }}
-                >
-                  Total Records: {totalRecords} | Showing: {emissions.length}
+          <PageHeader
+            title="Reports"
+            description={
+              <>
+                Emission database and exports. Complete history of all recorded emissions and compliance data.{" "}
+                <span className="font-semibold text-text">
+                  Total records: {totalRecords} | Showing: {emissions.length}
                 </span>
-              </p>
-            </div>
-            <div className="reports-actions">
-              <button
-                className="btn-action"
-                onClick={resetFilters}
-                style={{
-                  background: "#f8fafc",
-                  color: "#64748b",
-                  border: "1px solid #e2e8f0",
-                }}
-              >
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  style={{ marginRight: "6px" }}
-                >
-                  <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
-                  <path d="M3 3v5h5" />
-                </svg>
-                Reset Filters
-              </button>
-              <button
-                className="btn-action btn-excel"
-                onClick={handleOGMPExport}
-                style={{
-                  background:
-                    "linear-gradient(135deg, #10b981 0%, #059669 100%)",
-                  color: "#ffffff",
-                  border: "none",
-                }}
-              >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                  <polyline points="7 10 12 15 17 10"></polyline>
-                  <line x1="12" y1="15" x2="12" y2="3"></line>
-                </svg>
-                OGMP 2.0 (Excel)
-              </button>
-              <button
-                className="btn-action btn-excel"
-                onClick={handleExcelExport}
-              >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                  <polyline points="7 10 12 15 17 10"></polyline>
-                  <line x1="12" y1="15" x2="12" y2="3"></line>
-                </svg>
-                Excel Export
-              </button>
-              <button className="btn-action btn-pdf" onClick={handlePDFExport}>
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                  <polyline points="14 2 14 8 20 8"></polyline>
-                </svg>
-                PDF Report
-              </button>
-              <button
-                className="btn-action"
-                onClick={() => handleMasterReportDownload()}
-                style={{
-                  background: "linear-gradient(135deg, #ea580c 0%, #c2410c 100%)",
-                  color: "#ffffff",
-                  border: "none",
-                  fontWeight: 600,
-                  boxShadow: "0 2px 8px rgba(234, 88, 12, 0.25)",
-                }}
-              >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                  <polyline points="14 2 14 8 20 8"></polyline>
-                  <line x1="16" y1="13" x2="8" y2="13"></line>
-                  <line x1="16" y1="17" x2="8" y2="17"></line>
-                </svg>
-                2025 Master Report (PDF)
-              </button>
-            </div>
-          </div>
+              </>
+            }
+            actions={
+              <>
+                <Button variant="secondary" onClick={resetFilters}>
+                  <RotateCcw className="size-4" aria-hidden="true" />
+                  Reset filters
+                </Button>
+                <Menu>
+                  <MenuTrigger asChild>
+                    <Button>
+                      <Download className="size-4" aria-hidden="true" />
+                      Export
+                      <ChevronDown className="size-4" aria-hidden="true" />
+                    </Button>
+                  </MenuTrigger>
+                  <MenuContent>
+                    <MenuItem icon={FileSpreadsheet} onSelect={handleOGMPExport}>
+                      OGMP 2.0 (Excel)
+                    </MenuItem>
+                    <MenuItem icon={FileSpreadsheet} onSelect={handleExcelExport}>
+                      Excel export
+                    </MenuItem>
+                    <MenuItem icon={FileText} onSelect={handlePDFExport}>
+                      PDF report
+                    </MenuItem>
+                    <MenuItem icon={FileText} onSelect={() => handleMasterReportDownload()}>
+                      2025 Master report (PDF)
+                    </MenuItem>
+                  </MenuContent>
+                </Menu>
+              </>
+            }
+            className="mb-6"
+          />
 
           {/* NEW: Create Report Card (Matches Legacy UI) */}
           <div className="create-report-card" style={{ marginBottom: "24px" }}>

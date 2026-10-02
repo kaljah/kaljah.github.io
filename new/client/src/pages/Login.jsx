@@ -1,3 +1,5 @@
+import { Eye, EyeOff } from "lucide-react";
+import { Banner } from "../ui";
 import React, { useState, useEffect, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -36,6 +38,8 @@ const GhgCloud = () => {
   }, []);
 
   useEffect(() => {
+    // no continuous animation for users who prefer reduced motion
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return undefined;
     let animationFrameId;
     const animate = () => {
       // Cloud 1 (CO2 - Orange/Grey) follows quickly
@@ -70,6 +74,7 @@ const GhgCloud = () => {
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
   // Forgot password modal state
@@ -133,47 +138,16 @@ const Login = () => {
       >
         {/* Welcome Text */}
         <div className="login-header">
+          <img src={`${import.meta.env.BASE_URL}carbon_tech.svg`} alt="Carbon Tech" className="login-logo" />
           <h2>Welcome Back</h2>
           <p>Sign in to your GHG Reporting Platform</p>
         </div>
 
         {/* Inactivity Session Expiration Banner */}
         {sessionExpired && (
-          <div
-            className="session-expired-alert"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "10px",
-              padding: "12px 14px",
-              background: "#fffbeb",
-              border: "1px solid #fde68a",
-              borderRadius: "10px",
-              color: "#92400e",
-              fontSize: "0.85rem",
-              marginBottom: "16px",
-              lineHeight: 1.4,
-            }}
-          >
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              style={{ flexShrink: 0, color: "#d97706" }}
-            >
-              <circle cx="12" cy="12" r="10"></circle>
-              <line x1="12" y1="8" x2="12" y2="12"></line>
-              <line x1="12" y1="16" x2="12.01" y2="16"></line>
-            </svg>
-            <span>
-              Your session timed out after 10 minutes of inactivity. Please sign in again to resume your work.
-            </span>
-          </div>
+          <Banner tone="warning" className="mb-4">
+            Your session timed out after 10 minutes of inactivity. Please sign in again to resume your work.
+          </Banner>
         )}
 
         {/* Error Message */}
@@ -237,6 +211,7 @@ const Login = () => {
                 className="form-control"
                 required
                 placeholder="Email Address"
+                aria-label="Email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 autoComplete="username"
@@ -275,14 +250,24 @@ const Login = () => {
                 </svg>
               </span>
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 className="form-control"
                 required
                 placeholder="Password"
+                aria-label="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 autoComplete="current-password"
               />
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() => setShowPassword((v) => !v)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                aria-pressed={showPassword}
+              >
+                {showPassword ? <EyeOff size={18} aria-hidden="true" /> : <Eye size={18} aria-hidden="true" />}
+              </button>
             </div>
           </motion.div>
 

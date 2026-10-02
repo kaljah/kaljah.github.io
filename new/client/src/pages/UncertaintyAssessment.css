@@ -152,15 +152,15 @@
 }
 
 .ua-tier-value.tier-3-color {
-  color: var(--color-green-500);
+  color: var(--color-ink-900);
 }
 
 .ua-tier-value.tier-2-color {
-  color: var(--color-blue-500);
+  color: var(--color-ink-900);
 }
 
 .ua-tier-value.tier-1-color {
-  color: var(--color-amber-500);
+  color: var(--color-ink-900);
 }
 
 .ua-tier-bar {
@@ -466,4 +466,23 @@
   .ua-title {
     font-size: 1.8rem;
   }
+}
+
+/* Uncertainty bands share the same low/medium/high colors as the legend */
+.ua-tier-value.band-low,
+.ua-tier-value.band-medium,
+.ua-tier-value.band-high {
+  color: var(--color-ink-900);
+}
+
+.ua-tier-bar-fill.band-low {
+  background: var(--color-unc-low);
+}
+
+.ua-tier-bar-fill.band-medium {
+  background: var(--color-unc-medium);
+}
+
+.ua-tier-bar-fill.band-high {
+  background: var(--color-unc-high);
 }
