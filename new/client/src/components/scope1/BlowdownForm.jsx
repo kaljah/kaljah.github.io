@@ -1,4 +1,5 @@
 import React from "react";
+import { NativeSelect } from "../../ui/NativeSelect";
 
 const BlowdownForm = ({ data, onChange }) => {
   return (
@@ -19,7 +20,7 @@ const BlowdownForm = ({ data, onChange }) => {
               placeholder="Vessel Vol"
               required
             />
-            <select
+            <NativeSelect
               className="mole-input"
               style={{ width: "80px" }}
               value={data.blowdown_unit || "m3"}
@@ -28,7 +29,7 @@ const BlowdownForm = ({ data, onChange }) => {
               <option value="m3">m³</option>
               <option value="ft3">ft³</option>
               <option value="bbl">bbl</option>
-            </select>
+            </NativeSelect>
           </div>
         </div>
 

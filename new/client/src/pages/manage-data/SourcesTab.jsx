@@ -1,4 +1,5 @@
 import React from 'react';
+import { NativeSelect } from "../../ui/NativeSelect";
 import CustomDropdown from '../../components/CustomDropdown';
 import { PROCESS_TYPES } from '../../utils/EmissionFactors';
 import { Upload } from 'lucide-react';
@@ -18,7 +19,7 @@ const SourcesTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToCSV,
                                                 <span style={{ fontSize: '0.65rem', background: '#dbeafe', color: '#1d4ed8', borderRadius: '4px', padding: '1px 5px', fontWeight: 600 }}>Auto</span>
                                             )}
                                         </label>
-                                        <select
+                                        <NativeSelect
                                             value={sourceForm.activity}
                                             onChange={(e) => setSourceForm({ ...sourceForm, activity: e.target.value, division: '', facility_id: '' })}
                                             className="component-select"
@@ -26,7 +27,7 @@ const SourcesTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToCSV,
                                         >
                                             <option value="">Select Activity</option>
                                             {getAvailableActivities().map(a => <option key={a} value={a}>{ACTIVITY_LABELS[a] || a}</option>)}
-                                        </select>
+                                        </NativeSelect>
                                     </div>
                                     <div className="input-group">
                                         <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -35,7 +36,7 @@ const SourcesTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToCSV,
                                                 <span style={{ fontSize: '0.65rem', background: '#dbeafe', color: '#1d4ed8', borderRadius: '4px', padding: '1px 5px', fontWeight: 600 }}>Auto</span>
                                             )}
                                         </label>
-                                        <select
+                                        <NativeSelect
                                             value={sourceForm.division}
                                             onChange={(e) => setSourceForm({ ...sourceForm, division: e.target.value, facility_id: '' })}
                                             className="component-select"
@@ -43,7 +44,7 @@ const SourcesTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToCSV,
                                         >
                                             <option value="">Select Division</option>
                                             {getAvailableDivisions(sourceForm.activity).map(d => <option key={d} value={d}>{d}</option>)}
-                                        </select>
+                                        </NativeSelect>
                                     </div>
 
                                     <div className="input-group">
@@ -72,12 +73,12 @@ const SourcesTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToCSV,
                                     </div>
                                     <div className="input-group">
                                         <label>Type</label>
-                                        <select value={sourceForm.type} onChange={(e) => setSourceForm({ ...sourceForm, type: e.target.value })} className="component-select">
+                                        <NativeSelect value={sourceForm.type} onChange={(e) => setSourceForm({ ...sourceForm, type: e.target.value })} className="component-select">
                                             <option value="">Select Type</option>
                                             {Object.entries(PROCESS_TYPES).map(([val, label]) => (
                                                 <option key={val} value={val}>{label}</option>
                                             ))}
-                                        </select>
+                                        </NativeSelect>
                                     </div>
                                     <div className="input-group">
                                         <label>Equipment ID (Optional)</label>

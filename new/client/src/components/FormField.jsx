@@ -1,4 +1,5 @@
 import React from "react";
+import { NativeSelect } from "../ui/NativeSelect";
 import "./FormField.css";
 
 // Text Input Field
@@ -64,7 +65,7 @@ export const SelectField = ({
           {required && <span className="required-mark">*</span>}
         </label>
       )}
-      <select
+      <NativeSelect
         className={`field-select ${error ? "field-error" : ""}`}
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -77,7 +78,7 @@ export const SelectField = ({
             {opt.label}
           </option>
         ))}
-      </select>
+      </NativeSelect>
       {error && <span className="error-text">{error}</span>}
       {helperText && !error && (
         <span className="helper-text">{helperText}</span>

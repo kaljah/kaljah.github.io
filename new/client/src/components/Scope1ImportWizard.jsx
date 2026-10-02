@@ -1,4 +1,6 @@
 import React, { useState, useRef, useCallback, useMemo, useEffect } from "react";
+import { Droplets } from "lucide-react";
+import { NativeSelect } from "../ui/NativeSelect";
 import { activateOnKey } from "../utils/a11yKeys";
 import Papa from "papaparse";
 import api from "../api";
@@ -88,10 +90,7 @@ const Icon = {
     </svg>
   ),
   Droplets: () => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 6.75 7 5.3c-.29 1.45-1.14 2.84-2.29 3.76S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z" />
-      <path d="M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97" />
-    </svg>
+    <Droplets strokeWidth="1.75" aria-hidden="true" />
   ),
   Container: () => (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
@@ -412,10 +411,10 @@ function MappingRow({ field, headers, value, onChange }) {
       </div>
       <div className="s1w-map-select-wrap">
         {headers.length > 0 ? (
-          <select className={`s1w-map-select ${mapped ? "matched" : ""}`} value={value} onChange={e => onChange(e.target.value)}>
+          <NativeSelect className={`s1w-map-select ${mapped ? "matched" : ""}`} value={value} onChange={e => onChange(e.target.value)}>
             <option value="">— Not mapped —</option>
             {headers.map(h => <option key={h} value={h}>{h}</option>)}
-          </select>
+          </NativeSelect>
         ) : (
           <input className={`s1w-map-input ${mapped ? "matched" : ""}`} placeholder="Column name in your file" value={value} onChange={e => onChange(e.target.value)} />
         )}
@@ -875,12 +874,12 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
             {/* Factor selector */}
             <div className="s1w-factor-row">
               <label className="s1w-factor-label">Default factor when not specified in file:</label>
-              <select className="s1w-factor-select" value={globalFactor} onChange={e => setGlobalFactor(e.target.value)}>
+              <NativeSelect className="s1w-factor-select" value={globalFactor} onChange={e => setGlobalFactor(e.target.value)}>
                 <option value="auto">Auto-detect from file</option>
                 <option value="default">Force Standard (API Compendium)</option>
                 <option value="custom">Force Custom Factors</option>
                 <option value="specific">Force Tier 3 (site data)</option>
-              </select>
+              </NativeSelect>
             </div>
 
             <label className="s1w-factor-row" style={{ gap: "8px", cursor: "pointer" }}>

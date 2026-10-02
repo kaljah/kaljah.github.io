@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { NativeSelect } from "../ui/NativeSelect";
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
 import { useToast } from '../components/Toast';
@@ -455,7 +456,7 @@ export default function QADashboard() {
                         {/* Top Global Controls */}
                         <div className="qa-header-controls">
                             {/* Scope Selector */}
-                            <select
+                            <NativeSelect
                                 className="qa-filter-select"
                                 value={scopeFilter}
                                 onChange={e => { setScopeFilter(e.target.value); setOffset(0); }}
@@ -465,10 +466,10 @@ export default function QADashboard() {
                                 <option value="1">Scope 1 (Direct)</option>
                                 <option value="2">Scope 2 (Electricity)</option>
                                 <option value="3">Scope 3 (Value Chain)</option>
-                            </select>
+                            </NativeSelect>
 
                             {/* Year Selector */}
-                            <select
+                            <NativeSelect
                                 className="qa-filter-select"
                                 value={yearFilter}
                                 onChange={e => { setYearFilter(e.target.value); setOffset(0); }}
@@ -478,7 +479,7 @@ export default function QADashboard() {
                                 {Array.from({ length: new Date().getFullYear() - 2019 }, (_, i) => new Date().getFullYear() - i).map(y => (
                                     <option key={y} value={y}>{y}</option>
                                 ))}
-                            </select>
+                            </NativeSelect>
 
                             {/* Refresh Diagnostics */}
                             <button

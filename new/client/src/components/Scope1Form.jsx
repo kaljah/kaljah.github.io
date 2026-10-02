@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { NativeSelect } from "../ui/NativeSelect";
 import api from "../api";
 import CustomDropdown from "./CustomDropdown";
 import { useToast } from "./Toast";
@@ -1934,7 +1935,7 @@ const Scope1Form = () => {
             </div>
             <div className="input-group">
               <label>Month</label>
-              <select
+              <NativeSelect
                 className="component-select"
                 value={month || 1}
                 onChange={(e) => setMonth(e.target.value)}
@@ -1944,7 +1945,7 @@ const Scope1Form = () => {
                     {new Date(2000, i, 1).toLocaleString(undefined, { month: "short" })}
                   </option>
                 ))}
-              </select>
+              </NativeSelect>
             </div>
           </FieldGrid>
           {(activity || division || field) && (

@@ -1,4 +1,5 @@
 import React from 'react';
+import { NativeSelect } from "../../ui/NativeSelect";
 import { Database, Upload } from 'lucide-react';
 import PaginationControls from './PaginationControls';
 
@@ -33,7 +34,7 @@ const FactorsTab = ({ ITEMS_PER_PAGE, currentPage, editingFactorId, factorForm, 
                                     </div>
                                     <div className="input-group">
                                         <label>Parent Fuel (Internal Reference)</label>
-                                        <select
+                                        <NativeSelect
                                             name="parent_fuel"
                                             value={factorForm.parent_fuel}
                                             onChange={(e) => setFactorForm({ ...factorForm, parent_fuel: e.target.value })}
@@ -46,12 +47,12 @@ const FactorsTab = ({ ITEMS_PER_PAGE, currentPage, editingFactorId, factorForm, 
                                             <option value="Propane">Propane (Generic)</option>
                                             <option value="Crude Oil">Crude Oil (Heavy)</option>
                                             <option value="Fuel Oil">Fuel Oil (No. 4/6)</option>
-                                        </select>
+                                        </NativeSelect>
                                     </div>
 
                                     <div className="input-group">
                                         <label>Unit</label>
-                                        <select
+                                        <NativeSelect
                                             name="unit"
                                             value={factorForm.unit}
                                             onChange={handleFactorChange}
@@ -63,7 +64,7 @@ const FactorsTab = ({ ITEMS_PER_PAGE, currentPage, editingFactorId, factorForm, 
                                             <option value="bbl">bbl</option>
                                             <option value="kg">kg</option>
                                             <option value="tonne">tonne</option>
-                                        </select>
+                                        </NativeSelect>
                                     </div>
                                     <div className="input-group">
                                         <label>CO₂ Factor (kg/unit)</label>
@@ -154,7 +155,7 @@ const FactorsTab = ({ ITEMS_PER_PAGE, currentPage, editingFactorId, factorForm, 
                                         </div>
                                         <div className="input-group">
                                             <label style={{ fontSize: '0.8rem' }}>GWP Standard Selection</label>
-                                            <select
+                                            <NativeSelect
                                                 className="component-select"
                                                 style={{ padding: '8px', fontSize: '0.85rem' }}
                                                 value={workbench.gwp_uncertainty}
@@ -163,7 +164,7 @@ const FactorsTab = ({ ITEMS_PER_PAGE, currentPage, editingFactorId, factorForm, 
                                                 <option value="20.0">IPCC AR4 (±20.0%)</option>
                                                 <option value="15.0">IPCC AR5 (±15.0%)</option>
                                                 <option value="11.0">IPCC AR6 (±11.0%)</option>
-                                            </select>
+                                            </NativeSelect>
                                         </div>
                                     </div>
                                     <button

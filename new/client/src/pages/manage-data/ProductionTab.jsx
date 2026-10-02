@@ -1,4 +1,5 @@
 import React from 'react';
+import { NativeSelect } from "../../ui/NativeSelect";
 import CustomDropdown from '../../components/CustomDropdown';
 import { Upload } from 'lucide-react';
 import PaginationControls from './PaginationControls';
@@ -28,7 +29,7 @@ const ProductionTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToC
                                                 <span style={{ fontSize: '0.65rem', background: '#dbeafe', color: '#1d4ed8', borderRadius: '4px', padding: '1px 5px', fontWeight: 600 }}>Auto</span>
                                             )}
                                         </label>
-                                        <select
+                                        <NativeSelect
                                             value={prodForm.activity}
                                             onChange={(e) => setProdForm({ ...prodForm, activity: e.target.value, division: '', facility_id: '' })}
                                             className="component-select"
@@ -36,7 +37,7 @@ const ProductionTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToC
                                         >
                                             <option value="">Select Activity</option>
                                             {getAvailableActivities().map(a => <option key={a} value={a}>{ACTIVITY_LABELS[a] || a}</option>)}
-                                        </select>
+                                        </NativeSelect>
                                     </div>
                                     <div className="input-group">
                                         <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -45,7 +46,7 @@ const ProductionTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToC
                                                 <span style={{ fontSize: '0.65rem', background: '#dbeafe', color: '#1d4ed8', borderRadius: '4px', padding: '1px 5px', fontWeight: 600 }}>Auto</span>
                                             )}
                                         </label>
-                                        <select
+                                        <NativeSelect
                                             value={prodForm.division}
                                             onChange={(e) => setProdForm({ ...prodForm, division: e.target.value, facility_id: '' })}
                                             className="component-select"
@@ -53,7 +54,7 @@ const ProductionTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToC
                                         >
                                             <option value="">Select Division</option>
                                             {getAvailableDivisions(prodForm.activity).map(d => <option key={d} value={d}>{d}</option>)}
-                                        </select>
+                                        </NativeSelect>
                                     </div>
 
                                     <div className="input-group">
@@ -78,7 +79,7 @@ const ProductionTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToC
                                     </div>
                                     <div className="input-group">
                                         <label>Month</label>
-                                        <select
+                                        <NativeSelect
                                             value={prodForm.month}
                                             onChange={(e) => setProdForm({ ...prodForm, month: parseInt(e.target.value) })}
                                             className="component-select"
@@ -86,7 +87,7 @@ const ProductionTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToC
                                             {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
                                                 <option key={m} value={m}>{new Date(2000, m - 1).toLocaleString('default', { month: 'long' })}</option>
                                             ))}
-                                        </select>
+                                        </NativeSelect>
                                     </div>
                                     <div className="input-group">
                                         <label>Year</label>
@@ -96,20 +97,20 @@ const ProductionTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToC
                                         <label>Oil ({prodForm.oil_unit}) <button onClick={openOilConverter} style={{ fontSize: '0.65rem', padding: '2px 4px', marginLeft: '8px', cursor: 'pointer', background: 'var(--accent-color)', color: 'white', border: 'none', borderRadius: '3px' }}>Convert m³</button></label>
                                         <div style={{ display: 'flex', gap: '8px' }}>
                                             <input type="number" value={prodForm.oil_amount} onChange={(e) => setProdForm({ ...prodForm, oil_amount: e.target.value })} className="mole-input" placeholder="0.0" style={{ flex: 1 }} />
-                                            <select value={prodForm.oil_unit} onChange={(e) => setProdForm({ ...prodForm, oil_unit: e.target.value })} className="component-select" style={{ width: '80px' }}>
+                                            <NativeSelect value={prodForm.oil_unit} onChange={(e) => setProdForm({ ...prodForm, oil_unit: e.target.value })} className="component-select" style={{ width: '80px' }}>
                                                 <option value="bbl">bbl</option>
                                                 <option value="m³">m³</option>
-                                            </select>
+                                            </NativeSelect>
                                         </div>
                                     </div>
                                     <div className="input-group">
                                         <label>Gas ({prodForm.gas_unit}) <button onClick={openGasConverter} style={{ fontSize: '0.65rem', padding: '2px 4px', marginLeft: '8px', cursor: 'pointer', background: 'var(--accent-color)', color: 'white', border: 'none', borderRadius: '3px' }}>Convert m³</button></label>
                                         <div style={{ display: 'flex', gap: '8px' }}>
                                             <input type="number" value={prodForm.gas_amount} onChange={(e) => setProdForm({ ...prodForm, gas_amount: e.target.value })} className="mole-input" placeholder="0.0" style={{ flex: 1 }} />
-                                            <select value={prodForm.gas_unit} onChange={(e) => setProdForm({ ...prodForm, gas_unit: e.target.value })} className="component-select" style={{ width: '80px' }}>
+                                            <NativeSelect value={prodForm.gas_unit} onChange={(e) => setProdForm({ ...prodForm, gas_unit: e.target.value })} className="component-select" style={{ width: '80px' }}>
                                                 <option value="mscf">mscf</option>
                                                 <option value="m³">m³</option>
-                                            </select>
+                                            </NativeSelect>
                                         </div>
                                     </div>
                                     <div className="input-group">

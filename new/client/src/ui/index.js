@@ -21,3 +21,4 @@ export { RadioCardGroup } from "./RadioCard";
 export { Stepper } from "./Stepper";
 export { FilterBar } from "./FilterBar";
 export { SERIES, SCOPE_COLORS, axisProps, gridProps, tooltipStyle } from "./charts/theme";
+export { NativeSelect } from "./NativeSelect";

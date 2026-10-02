@@ -1,4 +1,5 @@
 import React, { useState, useRef, useCallback } from "react";
+import { NativeSelect } from "../ui/NativeSelect";
 import { activateOnKey } from "../utils/a11yKeys";
 import Papa from "papaparse";
 import api from "../api";
@@ -1075,7 +1076,7 @@ export default function ColumnMappingWizard({
                     >
                       Select Process Type:
                     </label>
-                    <select
+                    <NativeSelect
                       value={selectedProcess}
                       onChange={(e) => setSelectedProcess(e.target.value)}
                       style={{
@@ -1093,7 +1094,7 @@ export default function ColumnMappingWizard({
                           {v}
                         </option>
                       ))}
-                    </select>
+                    </NativeSelect>
                   </div>
                 )}
               </div>
@@ -1340,7 +1341,7 @@ export default function ColumnMappingWizard({
               <label className="cmw-factor-label">
                 Default factor type when not specified in file
               </label>
-              <select
+              <NativeSelect
                 className="cmw-factor-select"
                 value={globalFactor}
                 onChange={(e) => setGlobalFactor(e.target.value)}
@@ -1348,7 +1349,7 @@ export default function ColumnMappingWizard({
                 <option value="auto">Auto-detect from file</option>
                 <option value="default">Force Standard (API Compendium)</option>
                 <option value="custom">Force Custom Factors</option>
-              </select>
+              </NativeSelect>
             </div>
           </div>
         )}
@@ -1426,7 +1427,7 @@ function MappingRow({ field, headers, value, onChange }) {
       <div className="cmw-field-hint">{field.hint}</div>
       <div className="cmw-field-select">
         {headers.length > 0 ? (
-          <select
+          <NativeSelect
             className={`cmw-select ${mapped ? "matched" : ""}`}
             value={value}
             onChange={(e) => onChange(e.target.value)}
@@ -1437,7 +1438,7 @@ function MappingRow({ field, headers, value, onChange }) {
                 {h}
               </option>
             ))}
-          </select>
+          </NativeSelect>
         ) : (
           <input
             className={`cmw-text-input ${mapped ? "matched" : ""}`}

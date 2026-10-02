@@ -1,4 +1,5 @@
 import { PageHeader } from "../ui";
+import { NativeSelect } from "../ui/NativeSelect";
 import React, { useState, useEffect } from "react";
 import { activateOnKey } from "../utils/a11yKeys";
 import {
@@ -386,7 +387,7 @@ const ReferenceData = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <select
+        <NativeSelect
           className="filter-select"
           aria-label="Filter by category"
           value={categoryFilter}
@@ -404,7 +405,7 @@ const ReferenceData = () => {
           <option value="liquids">Liquids</option>
           <option value="solids">Solids</option>
           <option value="equipment">Equipment</option>
-        </select>
+        </NativeSelect>
       </div>
 
       {loadErrors.length > 0 && (

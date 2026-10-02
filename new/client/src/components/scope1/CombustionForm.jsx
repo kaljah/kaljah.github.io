@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { NativeSelect } from "../../ui/NativeSelect";
 import CustomDropdown from "../CustomDropdown";
 import { API_FACTORS } from "../../utils/EmissionFactors";
 
@@ -115,7 +116,7 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
             </div>
             <div className="input-group" style={{ marginBottom: 0 }}>
               <label style={{ fontSize: "0.75rem" }}>HHV Unit</label>
-              <select
+              <NativeSelect
                 className="component-select"
                 value={data.hhv_unit || "BTU/scf"}
                 onChange={(e) => onChange("hhv_unit", e.target.value)}
@@ -127,7 +128,7 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
                 <option value="BTU/gal">BTU/gal</option>
                 <option value="BTU/lb">BTU/lb</option>
                 <option value="kcal/m3">kcal/m³</option>
-              </select>
+              </NativeSelect>
             </div>
           </div>
 
@@ -186,7 +187,7 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
             <div className="form-grid-2" style={{ gap: "10px", marginTop: "10px" }}>
               <div className="input-group" style={{ marginBottom: 0 }}>
                 <label style={{ fontSize: "0.75rem" }}>Flare Type</label>
-                <select
+                <NativeSelect
                   className="component-select"
                   value={data.flare_type || "elevated"}
                   onChange={(e) => onChange("flare_type", e.target.value)}
@@ -196,7 +197,7 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
                     Enclosed Ground Flare (η_d=99.5%)
                   </option>
                   <option value="pit">Pit / Open Burn (η_d=95%)</option>
-                </select>
+                </NativeSelect>
               </div>
               <div className="input-group" style={{ marginBottom: 0 }}>
                 <label style={{ fontSize: "0.75rem" }}>

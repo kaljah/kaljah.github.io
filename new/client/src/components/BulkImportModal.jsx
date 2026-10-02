@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { NativeSelect } from "../ui/NativeSelect";
 import { activateOnKey } from "../utils/a11yKeys";
 import api from "../api";
 import Modal from "./Modal";
@@ -1082,7 +1083,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
             >
               Which process type are you uploading data for?
             </label>
-            <select
+            <NativeSelect
               className="mole-input"
               value={selectedProcess}
               onChange={(e) => {
@@ -1104,7 +1105,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                   {label}
                 </option>
               ))}
-            </select>
+            </NativeSelect>
             <div
               style={{
                 display: "flex",
@@ -1306,7 +1307,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                         </div>
                       )}
                     </div>
-                    <select
+                    <NativeSelect
                       className="mapping-select"
                       value={mapping[t.id] || ""}
                       onChange={(e) =>
@@ -1319,7 +1320,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                           {h}
                         </option>
                       ))}
-                    </select>
+                    </NativeSelect>
                   </div>
                 ))}
               </div>

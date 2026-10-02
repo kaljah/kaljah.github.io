@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { NativeSelect } from "../ui/NativeSelect";
 import api from "../api";
 import CustomDropdown from "./CustomDropdown";
 import { useToast } from "./Toast";
@@ -449,7 +450,7 @@ const Scope2Form = () => {
             </div>
             <div className="input-group">
               <label>Month</label>
-              <select
+              <NativeSelect
                 className="component-select"
                 value={month || 1}
                 onChange={(e) => setMonth(e.target.value)}
@@ -459,7 +460,7 @@ const Scope2Form = () => {
                     {String(i + 1).padStart(2, "0")}
                   </option>
                 ))}
-              </select>
+              </NativeSelect>
             </div>
           </div>
         </div>
@@ -541,14 +542,14 @@ const Scope2Form = () => {
                 </div>
                 <div className="input-group">
                   <label>Method</label>
-                  <select
+                  <NativeSelect
                     className="component-select"
                     value={allocationMethod}
                     onChange={(e) => setAllocationMethod(e.target.value)}
                   >
                     <option value="wri_efficiency">WRI Efficiency</option>
                     <option value="energy_content">Energy Content</option>
-                  </select>
+                  </NativeSelect>
                 </div>
                 {allocationMethod === "wri_efficiency" && (
                   <>

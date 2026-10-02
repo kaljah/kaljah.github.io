@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { NativeSelect } from "../ui/NativeSelect";
 import { X, PlusCircle, CheckCircle2, AlertCircle, FileText } from "lucide-react";
 import api from "../api";
 import { useToast } from "./Toast";
@@ -234,7 +235,7 @@ const QuickAddCustomFactorModal = ({
                 >
                   Factor Unit <span style={{ color: "#ef4444" }}>*</span>
                 </label>
-                <select
+                <NativeSelect
                   className="mole-input"
                   style={{ width: "100%", padding: "8px 10px", fontSize: "0.85rem" }}
                   value={formData.unit}
@@ -247,7 +248,7 @@ const QuickAddCustomFactorModal = ({
                   <option value="kg/gal">kg / Gallon (Liquid fuel)</option>
                   <option value="kg/kg">kg / kg (Mass basis)</option>
                   <option value="tonne/tonne">tonne / tonne (Mass basis)</option>
-                </select>
+                </NativeSelect>
               </div>
 
               <div>

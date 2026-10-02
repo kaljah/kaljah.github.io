@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { NativeSelect } from "../ui/NativeSelect";
 import { showReviewResult } from '../utils/reviewResult';
 import { useLocation } from 'react-router-dom';
 import api from '../api';
@@ -1464,26 +1465,26 @@ const ManageDataInner = () => {
                             
                             {activeTab !== 'factors' && activeTab !== 'goals' && (
                                 <>
-                                    <select value={filterActivity} onChange={(e) => { setFilterActivity(e.target.value); setFilterDivision(''); }} className="component-select" style={{ width: 'auto' }}>
+                                    <NativeSelect value={filterActivity} onChange={(e) => { setFilterActivity(e.target.value); setFilterDivision(''); }} className="component-select" style={{ width: 'auto' }}>
                                         <option value="">All Activities</option>
                                         {activityFilterOptions.map(a => <option key={a.value} value={a.value}>{a.label}</option>)}
-                                    </select>
+                                    </NativeSelect>
 
-                                    <select value={filterDivision} onChange={(e) => setFilterDivision(e.target.value)} className="component-select" style={{ width: 'auto' }} disabled={!filterActivity}>
+                                    <NativeSelect value={filterDivision} onChange={(e) => setFilterDivision(e.target.value)} className="component-select" style={{ width: 'auto' }} disabled={!filterActivity}>
                                         <option value="">All Divisions</option>
                                         {divisionFilterOptions.map(d => <option key={d} value={d}>{d}</option>)}
-                                    </select>
+                                    </NativeSelect>
 
-                                    <select value={filterRegion} onChange={(e) => setFilterRegion(e.target.value)} className="component-select" style={{ width: 'auto' }}>
+                                    <NativeSelect value={filterRegion} onChange={(e) => setFilterRegion(e.target.value)} className="component-select" style={{ width: 'auto' }}>
                                         <option value="">All Regions</option>
                                         {availableFilters.regions?.map(r => <option key={r} value={r}>{r}</option>)}
-                                    </select>
+                                    </NativeSelect>
 
                                     {(activeTab === 'production' || activeTab === 'mitigation') && (
-                                        <select value={filterYear} onChange={(e) => setFilterYear(e.target.value)} className="component-select" style={{ width: 'auto' }}>
+                                        <NativeSelect value={filterYear} onChange={(e) => setFilterYear(e.target.value)} className="component-select" style={{ width: 'auto' }}>
                                             <option value="">All Years</option>
                                             {availableFilters.years?.map(y => <option key={y} value={y}>{y}</option>)}
-                                        </select>
+                                        </NativeSelect>
                                     )}
                                     
                                     {(filterActivity || filterDivision || filterRegion || filterYear) && (

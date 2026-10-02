@@ -1,4 +1,5 @@
 import React from 'react';
+import { NativeSelect } from "../../ui/NativeSelect";
 import PaginationControls from './PaginationControls';
 
 // Extracted from ManageData.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
@@ -14,7 +15,7 @@ const CbamTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, cbamForm, currentPage, editi
                                 <div className="form-grid-3">
                                     <div className="input-group">
                                         <label>Activity</label>
-                                        <select
+                                        <NativeSelect
                                             value={cbamForm.activity}
                                             onChange={(e) => {
                                                 const act = e.target.value;
@@ -30,12 +31,12 @@ const CbamTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, cbamForm, currentPage, editi
                                             {getAvailableActivities().map(a => (
                                                 <option key={a} value={a}>{ACTIVITY_LABELS[a] || a}</option>
                                             ))}
-                                        </select>
+                                        </NativeSelect>
                                     </div>
 
                                     <div className="input-group">
                                         <label>Division</label>
-                                        <select
+                                        <NativeSelect
                                             value={cbamForm.division}
                                             onChange={(e) => {
                                                 const div = e.target.value;
@@ -50,12 +51,12 @@ const CbamTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, cbamForm, currentPage, editi
                                             {getAvailableDivisions(cbamForm.activity).map(d => (
                                                 <option key={d} value={d}>{d}</option>
                                             ))}
-                                        </select>
+                                        </NativeSelect>
                                     </div>
 
                                     <div className="input-group">
                                         <label>Facility / Region *</label>
-                                        <select
+                                        <NativeSelect
                                             value={cbamForm.facility_id}
                                             onChange={(e) => setCbamForm({ ...cbamForm, facility_id: e.target.value })}
                                             className="component-select"
@@ -67,7 +68,7 @@ const CbamTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, cbamForm, currentPage, editi
                                                     <option key={f.id} value={f.id}>{f.name} ({f.location || f.field || 'General'})</option>
                                                 ))
                                             }
-                                        </select>
+                                        </NativeSelect>
                                     </div>
 
                                     <div className="input-group">
@@ -83,7 +84,7 @@ const CbamTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, cbamForm, currentPage, editi
 
                                     <div className="input-group">
                                         <label>EU CN Code *</label>
-                                        <select
+                                        <NativeSelect
                                             value={cbamForm.cn_code}
                                             onChange={(e) => setCbamForm({ ...cbamForm, cn_code: e.target.value })}
                                             className="component-select"
@@ -97,12 +98,12 @@ const CbamTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, cbamForm, currentPage, editi
                                             <option value="2901 21">2901 21 - Ethylene / Petrochemicals</option>
                                             <option value="3102 10">3102 10 - Urea & Nitrogenous Fertilizers</option>
                                             <option value="Custom">Custom / Other CN Code</option>
-                                        </select>
+                                        </NativeSelect>
                                     </div>
 
                                     <div className="input-group">
                                         <label>Export Destination</label>
-                                        <select
+                                        <NativeSelect
                                             value={cbamForm.export_destination}
                                             onChange={(e) => setCbamForm({ ...cbamForm, export_destination: e.target.value })}
                                             className="component-select"
@@ -112,7 +113,7 @@ const CbamTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, cbamForm, currentPage, editi
                                             <option value="US">United States</option>
                                             <option value="APAC">Asia-Pacific</option>
                                             <option value="Non-EU">Other Non-EU</option>
-                                        </select>
+                                        </NativeSelect>
                                     </div>
 
                                     <div className="input-group">
@@ -127,7 +128,7 @@ const CbamTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, cbamForm, currentPage, editi
 
                                     <div className="input-group">
                                         <label>Reporting Month</label>
-                                        <select
+                                        <NativeSelect
                                             value={cbamForm.month}
                                             onChange={(e) => setCbamForm({ ...cbamForm, month: e.target.value })}
                                             className="component-select"
@@ -137,7 +138,7 @@ const CbamTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, cbamForm, currentPage, editi
                                                     {new Date(2000, i).toLocaleString('default', { month: 'long' })}
                                                 </option>
                                             ))}
-                                        </select>
+                                        </NativeSelect>
                                     </div>
 
                                     <div className="input-group">

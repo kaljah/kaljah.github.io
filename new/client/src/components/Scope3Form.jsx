@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { NativeSelect } from "../ui/NativeSelect";
 import { activateOnKey } from "../utils/a11yKeys";
 import { CATEGORY_ACTIVITIES } from "../utils/scope3Factors";
 import api from "../api";
@@ -459,7 +460,7 @@ const Scope3Form = () => {
           </div>
           <div className="input-group">
             <label>Month</label>
-            <select
+            <NativeSelect
               className="component-select"
               value={month || 1}
               onChange={(e) => setMonth(e.target.value)}
@@ -469,7 +470,7 @@ const Scope3Form = () => {
                   {new Date(0, i).toLocaleString("default", { month: "long" })}
                 </option>
               ))}
-            </select>
+            </NativeSelect>
           </div>
           <div className="input-group">
             <label>Facility</label>
@@ -518,7 +519,7 @@ const Scope3Form = () => {
           <div className="input-group">
             <label>Unit</label>
             {UNIT_MULTIPLIERS[baseUnit] ? (
-              <select
+              <NativeSelect
                 className="component-select"
                 value={unit}
                 onChange={(e) => handleUnitChange(e.target.value)}
@@ -528,7 +529,7 @@ const Scope3Form = () => {
                     {u}
                   </option>
                 ))}
-              </select>
+              </NativeSelect>
             ) : (
               <input
                 type="text"

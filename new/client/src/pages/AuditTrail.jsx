@@ -1,4 +1,5 @@
 import { Badge, DataTable, Dialog, SegmentedControl } from "../ui";
+import { NativeSelect } from "../ui/NativeSelect";
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import api from "../api";
 import {
@@ -616,7 +617,7 @@ const AuditTrail = () => {
             {/* User Filter */}
             <div className="filter-control">
               <label>User</label>
-              <select
+              <NativeSelect
                 value={filterUser}
                 onChange={(e) => {
                   setFilterUser(e.target.value);
@@ -629,13 +630,13 @@ const AuditTrail = () => {
                     {u}
                   </option>
                 ))}
-              </select>
+              </NativeSelect>
             </div>
 
             {/* Action Filter */}
             <div className="filter-control">
               <label>Action</label>
-              <select
+              <NativeSelect
                 value={filterAction}
                 onChange={(e) => {
                   setFilterAction(e.target.value);
@@ -648,13 +649,13 @@ const AuditTrail = () => {
                     {a}
                   </option>
                 ))}
-              </select>
+              </NativeSelect>
             </div>
 
             {/* Entity Filter */}
             <div className="filter-control">
               <label>Entity</label>
-              <select
+              <NativeSelect
                 value={filterEntity}
                 onChange={(e) => {
                   setFilterEntity(e.target.value);
@@ -667,13 +668,13 @@ const AuditTrail = () => {
                     {e}
                   </option>
                 ))}
-              </select>
+              </NativeSelect>
             </div>
 
             {/* Timeframe Preset */}
             <div className="filter-control">
               <label>Timeframe</label>
-              <select
+              <NativeSelect
                 value={timeframe}
                 onChange={(e) => {
                   setTimeframe(e.target.value);
@@ -685,7 +686,7 @@ const AuditTrail = () => {
                 <option value="7days">Last 7 Days</option>
                 <option value="30days">Last 30 Days</option>
                 <option value="custom">Custom Range</option>
-              </select>
+              </NativeSelect>
             </div>
 
             {/* Custom Date Pickers */}
@@ -930,7 +931,7 @@ const AuditTrail = () => {
             <div className="pagination-controls">
               <div className="page-size-selector">
                 <label>Rows:</label>
-                <select
+                <NativeSelect
                   value={limit}
                   onChange={(e) => {
                     setLimit(Number(e.target.value));
@@ -940,7 +941,7 @@ const AuditTrail = () => {
                   <option value={25}>25</option>
                   <option value={50}>50</option>
                   <option value={100}>100</option>
-                </select>
+                </NativeSelect>
               </div>
 
               <div className="pagination-buttons">

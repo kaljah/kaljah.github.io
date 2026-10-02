@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { NativeSelect } from "../../ui/NativeSelect";
 import CustomDropdown from "../CustomDropdown";
 import { Segmented } from "./ui";
 import { formatNumber } from "../../utils/formatters";
@@ -190,7 +191,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
                   }}
                   required
                 />
-                <select
+                <NativeSelect
                   className="mole-input"
                   style={{ width: "130px" }}
                   value={data.oil_unit || data.unit || "bbl"}
@@ -204,7 +205,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
                       {u.label}
                     </option>
                   ))}
-                </select>
+                </NativeSelect>
               </div>
             </div>
           </div>
@@ -291,7 +292,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
                   }}
                   required
                 />
-                <select
+                <NativeSelect
                   className="mole-input"
                   style={{ width: "150px" }}
                   value={data.oil_unit || "bbl/day"}
@@ -305,7 +306,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
                       {u.label}
                     </option>
                   ))}
-                </select>
+                </NativeSelect>
               </div>
             </div>
 
@@ -326,7 +327,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
                   onChange={(e) => onChange("gor", e.target.value)}
                   required
                 />
-                <select
+                <NativeSelect
                   className="mole-input"
                   style={{ width: "120px" }}
                   value={data.gor_unit || "scf/bbl"}
@@ -337,7 +338,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
                       {u.label}
                     </option>
                   ))}
-                </select>
+                </NativeSelect>
               </div>
             </div>
           </div>
@@ -362,7 +363,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
                   onChange={(e) => onChange("venting_duration", e.target.value)}
                   required
                 />
-                <select
+                <NativeSelect
                   className="mole-input"
                   style={{ width: "100px" }}
                   value={data.duration_unit || "days"}
@@ -370,7 +371,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
                 >
                   <option value="days">days</option>
                   <option value="hours">hours</option>
-                </select>
+                </NativeSelect>
               </div>
             </div>
 
@@ -424,7 +425,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
           <div style={{ marginBottom: "10px", display: "flex", justifyContent: "flex-end" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
               <span style={{ fontSize: "0.75rem", color: "#6b7280" }}>Unit</span>
-              <select
+              <NativeSelect
                 className="mole-input"
                 style={{ width: "110px", padding: "4px 8px", fontSize: "0.8rem" }}
                 value={data.gas_volume_unit || "scf"}
@@ -435,7 +436,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
                     {u.value}
                   </option>
                 ))}
-              </select>
+              </NativeSelect>
             </div>
           </div>
 
@@ -553,7 +554,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
                     }}
                     required
                   />
-                  <select
+                  <NativeSelect
                     className="mole-input"
                     style={{ width: "130px" }}
                     value={data.vent_rate_unit || "scfh"}
@@ -564,7 +565,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
                         {u.label}
                       </option>
                     ))}
-                  </select>
+                  </NativeSelect>
                 </div>
               </div>
 
@@ -606,7 +607,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
                   }}
                   required
                 />
-                <select
+                <NativeSelect
                   className="mole-input"
                   style={{ width: "140px" }}
                   value={data.vent_volume_unit || data.unit || "scf"}
@@ -620,7 +621,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
                       {u.label}
                     </option>
                   ))}
-                </select>
+                </NativeSelect>
               </div>
             </div>
           )}

@@ -1,4 +1,4 @@
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, CircleAlert, Lock } from "lucide-react";
 import { Banner } from "../ui";
 import React, { useState, useEffect, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
@@ -153,18 +153,7 @@ const Login = () => {
         {/* Error Message */}
         {error && (
           <div className="error-message">
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <circle cx="12" cy="12" r="10"></circle>
-              <line x1="12" y1="8" x2="12" y2="12"></line>
-              <line x1="12" y1="16" x2="12.01" y2="16"></line>
-            </svg>
+            <CircleAlert size="18" strokeWidth="2" aria-hidden="true" />
             {error}
           </div>
         )}
@@ -228,26 +217,7 @@ const Login = () => {
           >
             <div className="input-wrapper">
               <span className="input-icon">
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <rect
-                    x="3"
-                    y="11"
-                    width="18"
-                    height="11"
-                    rx="2"
-                    ry="2"
-                  ></rect>
-                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                </svg>
+                <Lock size="18" strokeWidth="2" aria-hidden="true" />
               </span>
               <input
                 type={showPassword ? "text" : "password"}

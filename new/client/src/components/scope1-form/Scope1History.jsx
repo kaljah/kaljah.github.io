@@ -1,4 +1,5 @@
 import React from "react";
+import { NativeSelect } from "../../ui/NativeSelect";
 import { Eye, Trash2 } from "lucide-react";
 import api from "../../api";
 import { formatEmission, formatNumber } from "../../utils/formatters";
@@ -32,7 +33,7 @@ const Scope1History = ({ currentPage, entries, exportToCSV, facetYears, filterPr
             className="mole-input"
             style={{ width: "160px", padding: "6px 10px", fontSize: "0.82rem" }}
           />
-          <select aria-label="Filter by year"
+          <NativeSelect aria-label="Filter by year"
             value={filterYear}
             onChange={(e) => {
               setFilterYear(e.target.value);
@@ -49,8 +50,8 @@ const Scope1History = ({ currentPage, entries, exportToCSV, facetYears, filterPr
                   {y}
                 </option>
               ))}
-          </select>
-          <select aria-label="Filter by process"
+          </NativeSelect>
+          <NativeSelect aria-label="Filter by process"
             value={filterProcess}
             onChange={(e) => {
               setFilterProcess(e.target.value);
@@ -65,7 +66,7 @@ const Scope1History = ({ currentPage, entries, exportToCSV, facetYears, filterPr
                 {typeof PROCESS_TYPES[p] === "string" ? PROCESS_TYPES[p] : PROCESS_TYPES[p]?.label || p}
               </option>
             ))}
-          </select>
+          </NativeSelect>
           {(filterYear || filterProcess || filterSearch) && (
             <button
               className="btn-ghost"

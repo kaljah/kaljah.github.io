@@ -1,4 +1,5 @@
 import { ChevronDown, Download, FileSpreadsheet, FileText, RotateCcw } from "lucide-react";
+import { NativeSelect } from "../ui/NativeSelect";
 import { Button, Menu, MenuContent, MenuItem, MenuTrigger, PageHeader } from "../ui";
 import React, { useState, useEffect } from "react";
 import api from "../api";
@@ -535,7 +536,7 @@ const Reports = () => {
                   Reporting Year{" "}
                   <span style={{ color: "var(--danger)" }}>*</span>
                 </label>
-                <select
+                <NativeSelect
                   className="component-select"
                   value={reportYear}
                   onChange={(e) => setReportYear(e.target.value)}
@@ -552,12 +553,12 @@ const Reports = () => {
                       {new Date().getFullYear()}
                     </option>
                   )}
-                </select>
+                </NativeSelect>
               </div>
 
               <div className="control-group">
                 <label className="input-label">Compare With</label>
-                <select
+                <NativeSelect
                   className="component-select"
                   value={comparisonYear}
                   onChange={(e) => setComparisonYear(e.target.value)}
@@ -571,12 +572,12 @@ const Reports = () => {
                       </option>
                     ))}
                   {baseYear && <option value="baseline">Baseline ({baseYear})</option>}
-                </select>
+                </NativeSelect>
               </div>
 
               <div className="control-group">
                 <label className="input-label">GWP Metric Standard</label>
-                <select
+                <NativeSelect
                   className="component-select"
                   value={reportGwpStandard}
                   onChange={(e) => { gwpTouched.current = true; setReportGwpStandard(e.target.value); }}
@@ -585,7 +586,7 @@ const Reports = () => {
                   <option value="AR6">{gwpOptionLabel("AR6", "100")}</option>
                   <option value="AR4">{gwpOptionLabel("AR4", "100")}</option>
                   <option value="20yr">{gwpOptionLabel("AR5", "20")}</option>
-                </select>
+                </NativeSelect>
               </div>
 
               <div className="control-group" style={{ flex: 2 }}>
@@ -696,7 +697,7 @@ const Reports = () => {
             <div className="report-controls-grid">
               <div className="control-group">
                 <label className="input-label">Inventory Scope</label>
-                <select
+                <NativeSelect
                   className="component-select"
                   value={scope}
                   onChange={(e) => setScope(e.target.value)}
@@ -705,12 +706,12 @@ const Reports = () => {
                   <option value="1">Scope 1 (Direct)</option>
                   <option value="2">Scope 2 (Indirect)</option>
                   <option value="3">Scope 3 (Value Chain)</option>
-                </select>
+                </NativeSelect>
               </div>
 
               <div className="control-group">
                 <label className="input-label">Reporting Year</label>
-                <select
+                <NativeSelect
                   className="component-select"
                   value={year}
                   onChange={(e) => {
@@ -727,12 +728,12 @@ const Reports = () => {
                       {y}
                     </option>
                   ))}
-                </select>
+                </NativeSelect>
               </div>
 
               <div className="control-group">
                 <label className="input-label">Month</label>
-                <select
+                <NativeSelect
                   className="component-select"
                   value={month}
                   onChange={(e) => setMonth(e.target.value)}
@@ -745,11 +746,11 @@ const Reports = () => {
                       })}
                     </option>
                   ))}
-                </select>
+                </NativeSelect>
               </div>
               <div className="control-group">
                 <label className="input-label">Region (Grid)</label>
-                <select
+                <NativeSelect
                   className="component-select"
                   value={regionId}
                   onChange={(e) => setRegionId(e.target.value)}
@@ -760,13 +761,13 @@ const Reports = () => {
                       {f.name} {f.field ? ` - ${f.field}` : ""}
                     </option>
                   ))}
-                </select>
+                </NativeSelect>
               </div>
 
               {scope === "1" && (
                 <div className="control-group">
                   <label className="input-label">Process Type</label>
-                  <select
+                  <NativeSelect
                     className="component-select"
                     value={processType}
                     onChange={(e) => setProcessType(e.target.value)}
@@ -779,12 +780,12 @@ const Reports = () => {
                     <option value="fugitive">Fugitive Emissions</option>
                     <option value="pneumatic">Pneumatic Devices</option>
                     <option value="tank">Storage Tank</option>
-                  </select>
+                  </NativeSelect>
                 </div>
               )}
               <div className="control-group">
                 <label className="input-label">Division</label>
-                <select
+                <NativeSelect
                   className="component-select"
                   value={division}
                   onChange={(e) => setDivision(e.target.value)}
@@ -797,11 +798,11 @@ const Reports = () => {
                         {div}
                       </option>
                     ))}
-                </select>
+                </NativeSelect>
               </div>
               <div className="control-group">
                 <label className="input-label">Field</label>
-                <select
+                <NativeSelect
                   className="component-select"
                   value={field}
                   onChange={(e) => setField(e.target.value)}
@@ -814,11 +815,11 @@ const Reports = () => {
                         {fld}
                       </option>
                     ))}
-                </select>
+                </NativeSelect>
               </div>
               <div className="control-group">
                 <label className="input-label">Calc Method</label>
-                <select
+                <NativeSelect
                   className="component-select"
                   value={methodFilter}
                   onChange={(e) => setMethodFilter(e.target.value)}
@@ -827,11 +828,11 @@ const Reports = () => {
                   <option value="custom">Custom Factor</option>
                   <option value="API">API Engine</option>
                   <option value="Location-based">Location-based</option>
-                </select>
+                </NativeSelect>
               </div>
               <div className="control-group">
                 <label className="input-label">Group By</label>
-                <select
+                <NativeSelect
                   className="component-select"
                   value={groupBy}
                   onChange={(e) => setGroupBy(e.target.value)}
@@ -841,7 +842,7 @@ const Reports = () => {
                   <option value="process">By Category/Process</option>
                   <option value="month">By Month</option>
                   <option value="scope">By Scope</option>
-                </select>
+                </NativeSelect>
               </div>
             </div>
           </div>
@@ -1117,7 +1118,7 @@ const Reports = () => {
                   </div>
                   <div className="input-group">
                     <label>GWP Metric Standard</label>
-                    <select
+                    <NativeSelect
                       className="component-select"
                       value={reportGwpStandard}
                       onChange={(e) => { gwpTouched.current = true; setReportGwpStandard(e.target.value); }}
@@ -1127,7 +1128,7 @@ const Reports = () => {
                       <option value="AR6">{gwpOptionLabel("AR6", "100")}</option>
                       <option value="AR4">{gwpOptionLabel("AR4", "100")}</option>
                       <option value="20yr">{gwpOptionLabel("AR5", "20")}</option>
-                    </select>
+                    </NativeSelect>
                   </div>
                 </>
               )}

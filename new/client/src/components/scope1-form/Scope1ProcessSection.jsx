@@ -1,4 +1,5 @@
 import React from "react";
+import { NativeSelect } from "../../ui/NativeSelect";
 import { BookOpen, PlusCircle } from "lucide-react";
 import CustomDropdown from "../CustomDropdown";
 import { SECTION_PROCESSES, SECTION_TIERS, sectionMethodActive } from "../scope1/methodChoices";
@@ -258,7 +259,7 @@ const Scope1ProcessSection = ({ activePresetId, currentProcessValue, dataSourceR
                                       setActivePresetId("");
                                     }}
                                   />
-                                  <select
+                                  <NativeSelect
                                     className="mole-input"
                                     style={{ width: "110px", padding: "6px 8px", fontSize: "0.8rem" }}
                                     value={formData.hhv_unit || "BTU/scf"}
@@ -270,7 +271,7 @@ const Scope1ProcessSection = ({ activePresetId, currentProcessValue, dataSourceR
                                     <option value="BTU/gal">BTU/gal</option>
                                     <option value="BTU/lb">BTU/lb</option>
                                     <option value="MJ/kg">MJ/kg</option>
-                                  </select>
+                                  </NativeSelect>
                                 </div>
                               </div>
 
@@ -427,7 +428,7 @@ const Scope1ProcessSection = ({ activePresetId, currentProcessValue, dataSourceR
                                   }
                                   style={{ flex: 1 }}
                                 />
-                                <select
+                                <NativeSelect
                                   className="component-select"
                                   value={specFactors[`${gas}Unit`] || ""}
                                   onChange={(e) =>
@@ -444,7 +445,7 @@ const Scope1ProcessSection = ({ activePresetId, currentProcessValue, dataSourceR
                                   <option value="lb/scf">lb/scf</option>
                                   <option value="tonne/m3">t/m³</option>
                                   <option value="kg/MMBtu">kg/MMBtu</option>
-                                </select>
+                                </NativeSelect>
                               </div>
                             </div>
                           ))}

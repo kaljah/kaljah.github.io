@@ -1,4 +1,5 @@
 import React from 'react';
+import { NativeSelect } from "../../ui/NativeSelect";
 import CustomDropdown from '../../components/CustomDropdown';
 import { Upload } from 'lucide-react';
 import PaginationControls from './PaginationControls';
@@ -28,7 +29,7 @@ const MitigationTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, facilitie
                                                 <span style={{ fontSize: '0.65rem', background: '#dbeafe', color: '#1d4ed8', borderRadius: '4px', padding: '1px 5px', fontWeight: 600 }}>Auto</span>
                                             )}
                                         </label>
-                                        <select
+                                        <NativeSelect
                                             value={mitigationForm.activity}
                                             onChange={(e) => setMitigationForm({ ...mitigationForm, activity: e.target.value, division: '', facility_id: '' })}
                                             className="component-select"
@@ -36,7 +37,7 @@ const MitigationTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, facilitie
                                         >
                                             <option value="">Select Activity</option>
                                             {getAvailableActivities().map(a => <option key={a} value={a}>{ACTIVITY_LABELS[a] || a}</option>)}
-                                        </select>
+                                        </NativeSelect>
                                     </div>
                                     <div className="input-group">
                                         <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -45,7 +46,7 @@ const MitigationTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, facilitie
                                                 <span style={{ fontSize: '0.65rem', background: '#dbeafe', color: '#1d4ed8', borderRadius: '4px', padding: '1px 5px', fontWeight: 600 }}>Auto</span>
                                             )}
                                         </label>
-                                        <select
+                                        <NativeSelect
                                             value={mitigationForm.division}
                                             onChange={(e) => setMitigationForm({ ...mitigationForm, division: e.target.value, facility_id: '' })}
                                             className="component-select"
@@ -53,7 +54,7 @@ const MitigationTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, facilitie
                                         >
                                             <option value="">Select Division</option>
                                             {getAvailableDivisions(mitigationForm.activity).map(d => <option key={d} value={d}>{d}</option>)}
-                                        </select>
+                                        </NativeSelect>
                                     </div>
 
                                     <div className="input-group">
@@ -88,13 +89,13 @@ const MitigationTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, facilitie
                                     </div>
                                     <div className="input-group">
                                         <label>Type</label>
-                                        <select value={mitigationForm.type} onChange={(e) => setMitigationForm({ ...mitigationForm, type: e.target.value })} className="component-select">
+                                        <NativeSelect value={mitigationForm.type} onChange={(e) => setMitigationForm({ ...mitigationForm, type: e.target.value })} className="component-select">
                                             <option value="CCUS">CCUS (Carbon Capture)</option>
                                             <option value="REC">REC (Renewable Energy Credit)</option>
                                             <option value="Offset">Carbon Offset</option>
                                             <option value="Efficiency">Energy Efficiency</option>
                                             <option value="Process">Process Improvement</option>
-                                        </select>
+                                        </NativeSelect>
                                     </div>
                                     <div className="input-group">
                                         <label>Quantity (tCO₂e)</label>
@@ -102,11 +103,11 @@ const MitigationTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, facilitie
                                     </div>
                                     <div className="input-group">
                                         <label>Status</label>
-                                        <select value={mitigationForm.status} onChange={(e) => setMitigationForm({ ...mitigationForm, status: e.target.value })} className="component-select">
+                                        <NativeSelect value={mitigationForm.status} onChange={(e) => setMitigationForm({ ...mitigationForm, status: e.target.value })} className="component-select">
                                             <option value="Active">Active</option>
                                             <option value="Planned">Planned</option>
                                             <option value="Completed">Completed</option>
-                                        </select>
+                                        </NativeSelect>
                                     </div>
                                 </div>
                                 <div style={{ display: 'flex', gap: '12px', marginTop: '20px' }}>

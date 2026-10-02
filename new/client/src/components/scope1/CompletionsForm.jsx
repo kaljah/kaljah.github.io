@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { NativeSelect } from "../../ui/NativeSelect";
 import CustomDropdown from "../CustomDropdown";
 
 /**
@@ -147,7 +148,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                 Well type
                 <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
               </label>
-              <select
+              <NativeSelect
                 className="mole-input"
                 value={wellType}
                 onChange={(e) => {
@@ -156,7 +157,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
               >
                 <option value="gas">Gas Well</option>
                 <option value="oil">Oil Well</option>
-              </select>
+              </NativeSelect>
             </div>
 
             <div className="input-group">
@@ -164,7 +165,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                 Fracturing
                 <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
               </label>
-              <select
+              <NativeSelect
                 className="mole-input"
                 value={fracturing}
                 onChange={(e) => {
@@ -178,7 +179,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
               >
                 <option value="hf">With Hydraulic Fracturing</option>
                 <option value="no_hf">Without Hydraulic Fracturing</option>
-              </select>
+              </NativeSelect>
             </div>
 
             <div className="input-group">
@@ -186,7 +187,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                 Disposition
                 <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
               </label>
-              <select
+              <NativeSelect
                 className="mole-input"
                 value={disposition}
                 onChange={(e) => {
@@ -209,7 +210,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                     <option value="flared">Flared Completion</option>
                   </>
                 )}
-              </select>
+              </NativeSelect>
             </div>
           </div>
 
@@ -327,7 +328,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                   Flowback Rate Unit
                   <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
                 </label>
-                <select
+                <NativeSelect
                   className="mole-input"
                   value={data.comp_rate_unit || "Mcf/hr"}
                   onChange={(e) => onChange("comp_rate_unit", e.target.value)}
@@ -338,7 +339,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                   <option value="scf/day">scf / day</option>
                   <option value="m3/day">m³ / day</option>
                   <option value="m3/hr">m³ / hr</option>
-                </select>
+                </NativeSelect>
               </div>
 
               <div className="input-group">
@@ -442,7 +443,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                   Production Rate Unit
                   <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
                 </label>
-                <select
+                <NativeSelect
                   className="mole-input"
                   value={data.comp_prod_rate_unit || "Mcf/day"}
                   onChange={(e) => onChange("comp_prod_rate_unit", e.target.value)}
@@ -451,7 +452,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                   <option value="Mcf/hr">Mcf / hr</option>
                   <option value="m3/day">m³ / day</option>
                   <option value="m3/hr">m³ / hr</option>
-                </select>
+                </NativeSelect>
               </div>
 
               <div className="input-group">
@@ -512,7 +513,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
 
             <div className="input-group">
               <label>Flowback Disposition</label>
-              <select
+              <NativeSelect
                 className="mole-input"
                 value={data.comp_disposition || "vented"}
                 onChange={(e) => {
@@ -523,7 +524,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                 <option value="vented">Vented directly to atmosphere</option>
                 <option value="flared">Routed to Flare</option>
                 <option value="rec">Recovered / REC (Zero Venting)</option>
-              </select>
+              </NativeSelect>
             </div>
 
             <div className="input-group">
@@ -580,7 +581,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                 Volume Unit
                 <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
               </label>
-              <select
+              <NativeSelect
                 className="mole-input"
                 value={data.volume_unit || "Mcf"}
                 onChange={(e) => {
@@ -591,7 +592,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                 <option value="Mcf">Mcf (thousand scf)</option>
                 <option value="scf">scf</option>
                 <option value="m3">m³</option>
-              </select>
+              </NativeSelect>
             </div>
 
             <div className="input-group">
@@ -617,7 +618,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
 
             <div className="input-group">
               <label>Injected N₂ Unit</label>
-              <select
+              <NativeSelect
                 className="mole-input"
                 value={data.comp_injected_n2_unit || "scf"}
                 onChange={(e) => onChange("comp_injected_n2_unit", e.target.value)}
@@ -625,7 +626,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                 <option value="scf">scf</option>
                 <option value="Mcf">Mcf</option>
                 <option value="m3">m³</option>
-              </select>
+              </NativeSelect>
             </div>
           </div>
 

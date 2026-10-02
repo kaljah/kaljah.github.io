@@ -1,4 +1,5 @@
 import React from 'react';
+import { NativeSelect } from "../../ui/NativeSelect";
 import { BOUNDARY_OPTIONS } from '../../constants';
 import { Upload } from 'lucide-react';
 import PaginationControls from './PaginationControls';
@@ -20,17 +21,17 @@ const FacilitiesTab = ({ ACTIVITY_LABELS, HIERARCHY, ITEMS_PER_PAGE, currentPage
                                             </div>
                                             <div className="input-group">
                                                 <label>Activity</label>
-                                                <select name="activity" value={facilityForm.activity} onChange={(e) => setFacilityForm({ ...facilityForm, activity: e.target.value, division: '' })} className="component-select">
+                                                <NativeSelect name="activity" value={facilityForm.activity} onChange={(e) => setFacilityForm({ ...facilityForm, activity: e.target.value, division: '' })} className="component-select">
                                                     <option value="">Select Activity</option>
                                                     {Object.keys(HIERARCHY).map(a => <option key={a} value={a}>{ACTIVITY_LABELS[a]}</option>)}
-                                                </select>
+                                                </NativeSelect>
                                             </div>
                                             <div className="input-group">
                                                 <label>Division</label>
-                                                <select name="division" value={facilityForm.division} onChange={handleFacilityChange} className="component-select" disabled={!facilityForm.activity}>
+                                                <NativeSelect name="division" value={facilityForm.division} onChange={handleFacilityChange} className="component-select" disabled={!facilityForm.activity}>
                                                     <option value="">Select Division</option>
                                                     {facilityForm.activity && HIERARCHY[facilityForm.activity] && HIERARCHY[facilityForm.activity].map(d => <option key={d} value={d}>{d}</option>)}
-                                                </select>
+                                                </NativeSelect>
                                             </div>
                                             <div className="input-group">
                                                 <label>Field / Block</label>
@@ -42,7 +43,7 @@ const FacilitiesTab = ({ ACTIVITY_LABELS, HIERARCHY, ITEMS_PER_PAGE, currentPage
                                             </div>
                                             <div className="input-group">
                                                 <label>Consolidation Approach</label>
-                                                <select
+                                                <NativeSelect
                                                     name="boundary_type"
                                                     value={facilityForm.boundary_type}
                                                     onChange={(e) => setFacilityForm({ ...facilityForm, boundary_type: e.target.value, boundary_detail: '' })}
@@ -52,11 +53,11 @@ const FacilitiesTab = ({ ACTIVITY_LABELS, HIERARCHY, ITEMS_PER_PAGE, currentPage
                                                     {Object.keys(BOUNDARY_OPTIONS).map(opt => (
                                                         <option key={opt} value={opt}>{opt}</option>
                                                     ))}
-                                                </select>
+                                                </NativeSelect>
                                             </div>
                                             <div className="input-group">
                                                 <label>Boundary Details</label>
-                                                <select
+                                                <NativeSelect
                                                     name="boundary_detail"
                                                     value={facilityForm.boundary_detail}
                                                     onChange={(e) => setFacilityForm({ ...facilityForm, boundary_detail: e.target.value })}
@@ -67,7 +68,7 @@ const FacilitiesTab = ({ ACTIVITY_LABELS, HIERARCHY, ITEMS_PER_PAGE, currentPage
                                                     {facilityForm.boundary_type && BOUNDARY_OPTIONS[facilityForm.boundary_type]?.map(detail => (
                                                         <option key={detail} value={detail}>{detail}</option>
                                                     ))}
-                                                </select>
+                                                </NativeSelect>
                                             </div>
                                             {facilityForm.boundary_type === 'Equity Share' && (
                                                 <div className="input-group">
@@ -87,7 +88,7 @@ const FacilitiesTab = ({ ACTIVITY_LABELS, HIERARCHY, ITEMS_PER_PAGE, currentPage
                                             )}
                                             <div className="input-group">
                                                 <label>Supply Chain Segment</label>
-                                                <select name="segment" value={facilityForm.segment} onChange={handleFacilityChange} className="component-select">
+                                                <NativeSelect name="segment" value={facilityForm.segment} onChange={handleFacilityChange} className="component-select">
                                                     <option value="">Select Segment</option>
                                                     <option value="Upstream">Upstream</option>
                                                     <option value="Midstream">Midstream</option>
@@ -95,7 +96,7 @@ const FacilitiesTab = ({ ACTIVITY_LABELS, HIERARCHY, ITEMS_PER_PAGE, currentPage
                                                     <option value="Heavy Industry">Heavy Industry</option>
                                                     <option value="Utilities">Utilities</option>
                                                     <option value="Other">Other</option>
-                                                </select>
+                                                </NativeSelect>
                                             </div>
                                             <div className="input-group">
                                                 <label>Latitude</label>

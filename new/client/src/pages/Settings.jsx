@@ -1,4 +1,5 @@
 import { Banner } from "../ui";
+import { NativeSelect } from "../ui/NativeSelect";
 import React, { useState, useEffect } from "react";
 import { activateOnKey } from "../utils/a11yKeys";
 import {
@@ -770,7 +771,7 @@ const Settings = () => {
                       </td>
                       <td>{fac.segment || "Upstream"}</td>
                       <td>
-                        <select
+                        <NativeSelect
                           className="table-select"
                           value={opStatus}
                           disabled={!isAdmin}
@@ -788,7 +789,7 @@ const Settings = () => {
                           <option value="non_operated">
                             Non-Operated (5-yr target)
                           </option>
-                        </select>
+                        </NativeSelect>
                       </td>
                       <td>
                         <input
@@ -806,7 +807,7 @@ const Settings = () => {
                         />
                       </td>
                       <td>
-                        <select
+                        <NativeSelect
                           className="table-select-small"
                           value={baseYear}
                           disabled={!isAdmin}
@@ -823,7 +824,7 @@ const Settings = () => {
                               {y}
                             </option>
                           ))}
-                        </select>
+                        </NativeSelect>
                       </td>
                       <td className="target-yr-cell">
                         <span className="badge-target-year">{targetYear}</span>

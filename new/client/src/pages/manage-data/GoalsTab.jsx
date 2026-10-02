@@ -1,4 +1,5 @@
 import React from 'react';
+import { NativeSelect } from "../../ui/NativeSelect";
 import { Calendar, Check, CheckCircle, History, Plus, Target } from 'lucide-react';
 
 // Extracted from ManageData.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
@@ -383,14 +384,14 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                         </div>
                                         <div className="input-group">
                                             <label>Climate Pathway Standard</label>
-                                            <select
+                                            <NativeSelect
                                                 value={sbtiConfig.pathway_type}
                                                 onChange={e => setSbtiConfig({ ...sbtiConfig, pathway_type: e.target.value })}
                                                 className="component-select"
                                             >
                                                 <option value="1.5C">SBTi 1.5°C Aligned (Recommended, 4.2%/yr linear)</option>
                                                 <option value="well-below 2C">Well-Below 2°C (2.5%/yr linear)</option>
-                                            </select>
+                                            </NativeSelect>
                                         </div>
                                     </div>
 

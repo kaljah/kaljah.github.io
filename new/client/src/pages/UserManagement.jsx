@@ -1,24 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { NativeSelect } from "../ui/NativeSelect";
 import api from "../api";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../components/Toast";
 import Drawer from "../components/Drawer";
 import ConfirmModal from "../components/ConfirmModal";
-import {
-  UserPlus,
-  UserCheck,
-  KeyRound,
-  Lock,
-  Shield,
-  Eye,
-  EyeOff,
-  Check,
-  User,
-  Mail,
-  Briefcase,
-  AlertCircle,
-  CheckCircle2,
-} from "lucide-react";
+import { UserPlus, UserCheck, KeyRound, Lock, Shield, Eye, EyeOff, Check, User, Mail, Briefcase, AlertCircle, CheckCircle2 } from "lucide-react";
 
 /* ─── tiny keyframe injection ─────────────────────────────────────────────── */
 const STYLE_ID = "um-keyframes";
@@ -722,7 +709,7 @@ const UserManagement = () => {
     return (
       <div style={{ ...S.page, textAlign: "center", paddingTop: "80px" }}>
         <div style={{ marginBottom: "20px", color: "#94a3b8" }}>
-          <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <Lock size="52" strokeWidth="1.5" aria-hidden="true" />
         </div>
         <h2 style={{ color: "var(--text-primary)", margin: "0 0 8px" }}>
           Unauthorized
@@ -787,7 +774,7 @@ const UserManagement = () => {
           </p>
         </div>
         <div style={S.heroRight}>
-          <select
+          <NativeSelect
             id="um-filter-role"
             value={filterRole}
             onChange={(e) => setFilterRole(e.target.value)}
@@ -799,9 +786,9 @@ const UserManagement = () => {
             <option value="admin">Admin</option>
             <option value="it_manager">IT Manager</option>
             <option value="it">IT</option>
-          </select>
+          </NativeSelect>
 
-          <select
+          <NativeSelect
             id="um-filter-region"
             value={filterRegion}
             onChange={(e) => setFilterRegion(e.target.value)}
@@ -813,7 +800,7 @@ const UserManagement = () => {
                 {r}
               </option>
             ))}
-          </select>
+          </NativeSelect>
 
           {!isITOnly && (
             <button
@@ -1125,7 +1112,7 @@ const UserManagement = () => {
                               "rgba(239,68,68,.25)",
                             )}
                           >
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                            <Lock size="12" strokeWidth="2" aria-hidden="true" />
                             No Data Access
                           </span>
                         ) : u.location ? (
@@ -1346,7 +1333,7 @@ const UserManagement = () => {
             <div style={S.formRow}>
               <div style={S.formGroup}>
                 <label style={S.label}>System Role</label>
-                <select
+                <NativeSelect
                   id="um-modal-role"
                   value={formData.role}
                   onChange={(e) =>
@@ -1366,13 +1353,13 @@ const UserManagement = () => {
                   <option value="admin">Admin (All Data)</option>
                   <option value="it_manager">IT Manager</option>
                   <option value="it">IT</option>
-                </select>
+                </NativeSelect>
               </div>
 
               {(["user", "superuser"].includes(formData.role) || formData.location) && (
                 <div style={S.formGroup}>
                   <label style={S.label}>Assigned Region</label>
-                  <select
+                  <NativeSelect
                     id="um-modal-region"
                     value={formData.location}
                     onChange={(e) =>
@@ -1395,7 +1382,7 @@ const UserManagement = () => {
                         {r}
                       </option>
                     ))}
-                  </select>
+                  </NativeSelect>
                   {!formData.location && (
                     <p style={{ fontSize: "0.72rem", color: "#ef4444", marginTop: "4px" }}>
                       ↑ Required — choose an assigned region
@@ -1408,7 +1395,7 @@ const UserManagement = () => {
             {editingUser && (
               <div style={{ ...S.formGroup, marginTop: "14px" }}>
                 <label style={S.label}>Account Status</label>
-                <select
+                <NativeSelect
                   id="um-modal-status"
                   value={formData.status || "active"}
                   onChange={(e) =>
@@ -1419,7 +1406,7 @@ const UserManagement = () => {
                 >
                   <option value="active">Active (Full Access Granted)</option>
                   <option value="disabled">Disabled (Account Suspended)</option>
-                </select>
+                </NativeSelect>
               </div>
             )}
           </div>

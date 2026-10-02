@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { NativeSelect } from "../ui/NativeSelect";
 import { activateOnKey } from "../utils/a11yKeys";
 import { useNavigate } from "react-router-dom";
 import {
@@ -1034,7 +1035,7 @@ const EmissionsMap = () => {
               {/* Region Filter */}
               <div className="filter-group flex-1">
                 <label className="filter-title">Region / Basin</label>
-                <select
+                <NativeSelect
                   value={filters.region}
                   onChange={(e) =>
                     setFilters({ ...filters, region: e.target.value })
@@ -1048,13 +1049,13 @@ const EmissionsMap = () => {
                       {reg}
                     </option>
                   ))}
-                </select>
+                </NativeSelect>
               </div>
 
               {/* Year Filter */}
               <div className="filter-group flex-1">
                 <label className="filter-title">Accounting Year</label>
-                <select
+                <NativeSelect
                   value={filters.year}
                   onChange={(e) =>
                     setFilters({ ...filters, year: e.target.value })
@@ -1068,14 +1069,14 @@ const EmissionsMap = () => {
                       {y}
                     </option>
                   ))}
-                </select>
+                </NativeSelect>
               </div>
             </div>
 
             {/* Filter Row 2: Activity */}
             <div className="filter-group">
               <label className="filter-title">Activity Type</label>
-              <select
+              <NativeSelect
                 value={filters.activity}
                 onChange={(e) =>
                   setFilters({ ...filters, activity: e.target.value })
@@ -1089,7 +1090,7 @@ const EmissionsMap = () => {
                     {act}
                   </option>
                 ))}
-              </select>
+              </NativeSelect>
             </div>
 
             {/* Severity Filter Pills */}

@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { NativeSelect } from "../../ui/NativeSelect";
 import CustomDropdown from "../CustomDropdown";
 import { Segmented } from "./ui";
 
@@ -82,7 +83,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                 Lift type
                 <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
               </label>
-              <select
+              <NativeSelect
                 className="mole-input"
                 value={unloadingType}
                 onChange={(e) => {
@@ -92,7 +93,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
               >
                 <option value="plunger">Plunger lift</option>
                 <option value="non_plunger">Non-plunger</option>
-              </select>
+              </NativeSelect>
             </div>
 
             <div className="input-group">
@@ -183,7 +184,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                 Lift type
                 <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
               </label>
-              <select
+              <NativeSelect
                 className="mole-input"
                 value={unloadingType}
                 onChange={(e) => {
@@ -193,7 +194,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
               >
                 <option value="plunger">Plunger Lift</option>
                 <option value="non_plunger">Non-Plunger Lift</option>
-              </select>
+              </NativeSelect>
             </div>
 
             <div className="input-group">
@@ -221,7 +222,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 
             <div className="input-group">
               <label>Region / Basin</label>
-              <select
+              <NativeSelect
                 className="mole-input"
                 value={selectedRegion}
                 onChange={(e) => onChange("region", e.target.value)}
@@ -231,7 +232,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                 <option value="gulf_coast">Gulf Coast Basin</option>
                 <option value="midcontinent">Midcontinent Basin</option>
                 <option value="rocky_mountain">Rocky Mountain Basin</option>
-              </select>
+              </NativeSelect>
             </div>
 
             <div className="input-group">
@@ -331,7 +332,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                     Lift type
                     <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
                   </label>
-                  <select
+                  <NativeSelect
                     className="mole-input"
                     value={unloadingType}
                     onChange={(e) => {
@@ -341,7 +342,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                   >
                     <option value="plunger">Plunger lift</option>
                     <option value="non_plunger">Non-plunger</option>
-                  </select>
+                  </NativeSelect>
                 </div>
 
                 <div className="input-group">

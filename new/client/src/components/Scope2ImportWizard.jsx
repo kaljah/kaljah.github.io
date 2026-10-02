@@ -1,4 +1,5 @@
 import React, { useState, useRef, useCallback, useMemo, useEffect } from "react";
+import { NativeSelect } from "../ui/NativeSelect";
 import { activateOnKey } from "../utils/a11yKeys";
 import Papa from "papaparse";
 import api from "../api";
@@ -198,10 +199,10 @@ function MappingRow({ field, headers, value, onChange }) {
       </div>
       <div className="s1w-map-select-wrap">
         {headers.length > 0 ? (
-          <select className={`s1w-map-select ${mapped ? "matched" : ""}`} value={value} onChange={e => onChange(e.target.value)}>
+          <NativeSelect className={`s1w-map-select ${mapped ? "matched" : ""}`} value={value} onChange={e => onChange(e.target.value)}>
             <option value="">— Not mapped —</option>
             {headers.map(h => <option key={h} value={h}>{h}</option>)}
-          </select>
+          </NativeSelect>
         ) : (
           <input className={`s1w-map-input ${mapped ? "matched" : ""}`} placeholder="Column name in your file" value={value} onChange={e => onChange(e.target.value)} />
         )}

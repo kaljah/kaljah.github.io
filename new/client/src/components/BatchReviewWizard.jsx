@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { NativeSelect } from "../ui/NativeSelect";
 import { showReviewResult } from "../utils/reviewResult";
 import { createPortal } from 'react-dom';
 import { 
@@ -604,7 +605,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
             </div>
 
             {/* Facility Select */}
-            <select
+            <NativeSelect
               value={facilityFilter}
               onChange={(e) => setFacilityFilter(e.target.value)}
               className="component-select"
@@ -614,11 +615,11 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
               {facilities.map(f => (
                 <option key={f.id} value={f.id}>{f.name}</option>
               ))}
-            </select>
+            </NativeSelect>
 
             {/* Year Select */}
             {availableYears.length > 0 && (
-              <select
+              <NativeSelect
                 value={yearFilter}
                 onChange={(e) => setYearFilter(e.target.value)}
                 className="component-select"
@@ -628,7 +629,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
                 {availableYears.map(y => (
                   <option key={y} value={y}>{y}</option>
                 ))}
-              </select>
+              </NativeSelect>
             )}
 
             {/* Search Box */}
