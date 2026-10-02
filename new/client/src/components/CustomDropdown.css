@@ -23,7 +23,7 @@
 }
 
 .dropdown-selected:focus-visible {
-  outline: 2px solid var(--accent-color, #10b981);
+  outline: 2px solid var(--accent-color, var(--color-green-500));
   outline-offset: 2px;
 }
 
@@ -46,7 +46,7 @@
   top: calc(100% + 4px);
   left: 0;
   right: 0;
-  background: var(--bg-card, #ffffff);
+  background: var(--bg-card, var(--color-white));
   border: 1px solid var(--border-color);
   border-radius: 8px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
@@ -56,10 +56,10 @@
 }
 
 .dropdown-options.dropdown-portal {
-  background: var(--bg-card, #ffffff);
+  background: var(--bg-card, var(--color-white));
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--border-color, #e2e8f0);
+  border: 1px solid var(--border-color, var(--color-ink-200));
   border-radius: 10px;
   box-shadow: 0 16px 36px -4px rgba(15, 23, 42, 0.22), 0 4px 12px rgba(0, 0, 0, 0.08);
   overflow-y: auto;
@@ -117,7 +117,7 @@
 /* Region-Field Styling - ENSURE THIS IS PRESENT */
 .sub-label {
   font-size: 0.72rem !important;
-  color: var(--text-secondary, #64748b) !important;
+  color: var(--text-secondary, var(--color-ink-500)) !important;
   font-weight: 600 !important;
   display: inline-block;
   margin-left: 2px;

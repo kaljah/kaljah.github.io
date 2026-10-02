@@ -53,7 +53,7 @@
   margin-bottom: 8px;
   font-size: 0.9rem;
   font-weight: 500;
-  color: #374151;
+  color: var(--color-ink-700);
 }
 
 .mole-input,
@@ -76,13 +76,13 @@
 
 .mole-input.readonly {
   background-color: #f9fafb;
-  color: #9ca3af;
+  color: var(--color-ink-400);
   cursor: default;
 }
 
 .btn-add-activity {
   width: 100%;
-  background-color: #10b981;
+  background-color: var(--color-green-500);
   /* Green */
   color: white;
   border: none;
@@ -96,7 +96,7 @@
 }
 
 .btn-add-activity:hover {
-  background-color: #059669;
+  background-color: var(--color-green-600);
 }
 
 .checkbox-label {
@@ -120,7 +120,7 @@
 .table-controls {
   padding: 15px 20px;
   border-bottom: 1px solid #eee;
-  color: #374151;
+  color: var(--color-ink-700);
   font-weight: 600;
 }
 
@@ -142,8 +142,8 @@
 
 .gas-calc-btn:hover {
   background-color: #f9fafb;
-  border-color: #9ca3af;
-  color: #111827;
+  border-color: var(--color-ink-400);
+  color: var(--color-ink-900);
   transform: translateY(-1px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
@@ -174,7 +174,7 @@
   border-radius: 6px;
   border: none;
   background: transparent;
-  color: #6b7280;
+  color: var(--color-ink-500);
   font-size: 0.75rem;
   font-weight: 500;
   cursor: pointer;
@@ -182,13 +182,13 @@
 }
 
 .tier-selector-btn:hover {
-  color: #374151;
+  color: var(--color-ink-700);
   background: rgba(255, 255, 255, 0.5);
 }
 
 .tier-selector-btn.active {
-  background: #ffffff;
-  color: var(--accent-color, #ff6600);
+  background: var(--color-white);
+  color: var(--accent-color, var(--color-brand-500));
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   font-weight: 600;
 }
@@ -204,7 +204,7 @@
 
 .tier-selector-btn.active .tier-tag {
   background: rgba(255, 102, 0, 0.12);
-  color: var(--accent-color, #ff6600);
+  color: var(--accent-color, var(--color-brand-500));
 }
 
 .tier2-mode-container {
@@ -231,7 +231,7 @@
   border-radius: 6px;
   border: 1px solid transparent;
   background: transparent;
-  color: #6b7280;
+  color: var(--color-ink-500);
   font-size: 0.75rem;
   font-weight: 500;
   cursor: pointer;
@@ -240,13 +240,13 @@
 
 .tier2-mode-btn:hover {
   background: #f3f4f6;
-  color: #374151;
+  color: var(--color-ink-700);
 }
 
 .tier2-mode-btn.active {
-  background: #ffffff;
+  background: var(--color-white);
   border-color: #d1d5db;
-  color: var(--accent-color, #ff6600);
+  color: var(--accent-color, var(--color-brand-500));
   font-weight: 600;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
@@ -258,7 +258,7 @@
 }
 
 .official-presets-section {
-  background: #ffffff;
+  background: var(--color-white);
   border: 1px solid #e5e7eb;
   border-radius: 6px;
   padding: 10px 12px;
@@ -277,7 +277,7 @@
   gap: 6px;
   font-size: 0.75rem;
   font-weight: 600;
-  color: #374151;
+  color: var(--color-ink-700);
 }
 
 .official-presets-chips {
@@ -295,21 +295,21 @@
   border: 1px solid #e5e7eb;
   background: #f9fafb;
   font-size: 0.72rem;
-  color: #374151;
+  color: var(--color-ink-700);
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .preset-chip:hover {
   background: #f3f4f6;
-  border-color: #cbd5e1;
+  border-color: var(--color-ink-300);
   transform: translateY(-1px);
 }
 
 .preset-chip.active {
   background: rgba(255, 102, 0, 0.08);
-  border-color: var(--accent-color, #ff6600);
-  color: var(--accent-color, #ff6600);
+  border-color: var(--accent-color, var(--color-brand-500));
+  color: var(--accent-color, var(--color-brand-500));
   font-weight: 600;
 }
 
@@ -354,7 +354,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 8px 12px;
-  background: #ecfdf5;
+  background: var(--color-green-50);
   border: 1px solid #a7f3d0;
   border-radius: 6px;
   flex-wrap: wrap;

@@ -3,12 +3,12 @@
    (teal accent, white cards) once this stylesheet was loaded. The brand accent
    (--accent-color) is intentionally NOT redefined here. */
 .intensity-content {
-  --accent-secondary: #2563eb;
-  --accent-tertiary: #e65c00;
-  --bg-card: #ffffff;
-  --bg-app: #f8fafc;
-  --border-color: #e2e8f0;
-  --bg-hover: #f1f5f9;
+  --accent-secondary: var(--color-blue-600);
+  --accent-tertiary: var(--color-brand-600);
+  --bg-card: var(--color-white);
+  --bg-app: var(--color-ink-50);
+  --border-color: var(--color-ink-200);
+  --bg-hover: var(--color-ink-100);
   --card-shadow:
     0 4px 6px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -1px rgba(15, 23, 42, 0.03);
   --card-shadow-hover:
@@ -139,7 +139,7 @@
 
 .gwp-pill.active {
   background: var(--color-primary);
-  color: #ffffff;
+  color: var(--color-white);
   box-shadow: 0 2px 4px rgba(255, 102, 0, 0.2);
 }
 
@@ -155,7 +155,7 @@
 }
 .kpi-icon.scope3 {
   background: rgba(139, 92, 246, 0.1);
-  color: #8b5cf6;
+  color: var(--color-violet-500);
 }
 
 .kpi-card {
@@ -224,7 +224,7 @@
   font-size: 2.25rem;
   letter-spacing: -0.04em;
   line-height: 1;
-  color: var(--text-primary, #0f172a);
+  color: var(--text-primary, var(--color-ink-900));
 }
 
 .total-value.co2 {
@@ -237,10 +237,10 @@
   color: var(--accent-tertiary);
 }
 .total-value.scope1 {
-  color: #2563eb;
+  color: var(--color-blue-600);
 }
 .total-value.scope3 {
-  color: #8b5cf6;
+  color: var(--color-violet-500);
 }
 
 .kpi-unit {
@@ -267,7 +267,7 @@
 .kpi-note {
   margin-top: 8px;
   font-size: 0.75rem;
-  color: var(--warning-color, #b45309);
+  color: var(--warning-color, var(--color-amber-700));
 }
 
 /* Scope Breakdown Styles */
@@ -462,7 +462,7 @@
   text-align: center;
   font-size: 0.875rem;
   font-weight: 600;
-  color: #fff;
+  color: var(--color-white);
   transition:
     transform 0.2s ease,
     filter 0.2s ease;
@@ -486,20 +486,20 @@
 
 /* Professional Color Scale */
 .heat-lux {
-  background: #059669;
+  background: var(--color-green-600);
 } /* Emerald */
 .heat-low {
-  background: #10b981;
+  background: var(--color-green-500);
 } /* Lighter Emerald */
 .heat-mid {
-  background: #f59e0b;
-  color: #fff !important;
+  background: var(--color-amber-500);
+  color: var(--color-white) !important;
 } /* Amber */
 .heat-high {
-  background: #e65c00;
+  background: var(--color-brand-600);
 } /* Orange */
 .heat-crit {
-  background: #dc2626;
+  background: var(--color-red-600);
 } /* Red */
 
 /* OGMP Section */
@@ -718,7 +718,7 @@
 
 .btn-baseline-pill.active {
   background: var(--accent-secondary);
-  color: #ffffff;
+  color: var(--color-white);
   border-color: var(--accent-secondary);
   box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
 }
@@ -784,19 +784,19 @@
 
 .badge-roadmap-status.achieved {
   background: rgba(16, 185, 129, 0.12);
-  color: #10b981;
+  color: var(--color-green-500);
   border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
 .badge-roadmap-status.ontrack {
   background: rgba(37, 99, 235, 0.12);
-  color: #2563eb;
+  color: var(--color-blue-600);
   border: 1px solid rgba(37, 99, 235, 0.3);
 }
 
 .badge-roadmap-status.action {
   background: rgba(245, 158, 11, 0.12);
-  color: #f59e0b;
+  color: var(--color-amber-500);
   border: 1px solid rgba(245, 158, 11, 0.3);
 }
 
@@ -846,16 +846,16 @@
 }
 
 .ogmp-step.completed .step-circle {
-  background: #10b981;
-  border-color: #10b981;
-  color: #ffffff;
+  background: var(--color-green-500);
+  border-color: var(--color-green-500);
+  color: var(--color-white);
   box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
 }
 
 .ogmp-step.current .step-circle {
   background: var(--accent-secondary);
   border-color: var(--accent-secondary);
-  color: #ffffff;
+  color: var(--color-white);
   box-shadow: 0 0 10px rgba(37, 99, 235, 0.4);
   transform: scale(1.15);
 }
@@ -873,7 +873,7 @@
 }
 
 .ogmp-step.completed .step-name {
-  color: #10b981;
+  color: var(--color-green-500);
 }
 
 /* Roadmap Footer Stats */
@@ -906,11 +906,11 @@
 }
 
 .roadmap-stat-val.variance-pass {
-  color: #10b981;
+  color: var(--color-green-500);
 }
 
 .roadmap-stat-val.variance-fail {
-  color: #ef4444;
+  color: var(--color-red-500);
 }
 
 /* Excel Export Button */
@@ -918,8 +918,8 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: #ffffff;
+  background: linear-gradient(135deg, var(--color-green-500) 0%, var(--color-green-600) 100%);
+  color: var(--color-white);
   font-size: 0.86rem;
   font-weight: 600;
   padding: 8px 16px;

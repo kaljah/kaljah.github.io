@@ -1,11 +1,11 @@
 /* Scope 1 entry form — one minimal arrangement for every process type */
 .s1-form {
-  --s1-ink: #111827;
-  --s1-muted: #6b7280;
+  --s1-ink: var(--color-ink-900);
+  --s1-muted: var(--color-ink-500);
   --s1-line: #e5e7eb;
   --s1-soft: #f9fafb;
-  --s1-accent: var(--accent-color, #ff6600);
-  background: #fff;
+  --s1-accent: var(--accent-color, var(--color-brand-500));
+  background: var(--color-white);
   border: 1px solid var(--s1-line);
   border-radius: 14px;
   padding: 24px 28px;
@@ -33,7 +33,7 @@
   height: 24px;
   border-radius: 50%;
   background: var(--s1-accent);
-  color: #fff;
+  color: var(--color-white);
   font-size: 0.8rem;
   font-weight: 700;
   display: inline-flex;
@@ -66,7 +66,7 @@
   display: block;
   font-size: 0.8rem;
   font-weight: 500;
-  color: #374151;
+  color: var(--color-ink-700);
   margin-bottom: 6px;
 }
 .s1-form .mole-input,
@@ -153,7 +153,7 @@
 }
 .s1-seg-btn.active,
 .s1-form .tier-selector-btn.active {
-  background: #fff;
+  background: var(--color-white);
   color: var(--s1-ink);
   font-weight: 600;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);

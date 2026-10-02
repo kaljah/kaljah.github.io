@@ -57,15 +57,15 @@
 }
 
 .loader-inner::before {
-  border-top-color: #10b981;
+  border-top-color: var(--color-green-500);
   animation: spin-glow 3s linear infinite reverse;
-  filter: drop-shadow(0 0 10px #10b981);
+  filter: drop-shadow(0 0 10px var(--color-green-500));
 }
 
 .loader-inner::after {
-  border-top-color: #3b82f6;
+  border-top-color: var(--color-blue-500);
   animation: spin-glow 1.5s ease-in-out infinite;
-  filter: drop-shadow(0 0 10px #3b82f6);
+  filter: drop-shadow(0 0 10px var(--color-blue-500));
 }
 
 .loader-logo {
@@ -210,7 +210,7 @@
 
 .loading-message-text {
   font-family: inherit;
-  color: var(--text-primary, #0f172a);
+  color: var(--text-primary, var(--color-ink-900));
   font-size: 0.95rem;
   font-weight: 600;
   letter-spacing: 0.5px;
