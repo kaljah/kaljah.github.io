@@ -188,7 +188,7 @@
 
 .tier-selector-btn.active {
   background: var(--color-white);
-  color: var(--accent-color, var(--color-brand-500));
+  color: var(--color-link);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   font-weight: 600;
 }
@@ -204,7 +204,7 @@
 
 .tier-selector-btn.active .tier-tag {
   background: rgba(255, 102, 0, 0.12);
-  color: var(--accent-color, var(--color-brand-500));
+  color: var(--color-link);
 }
 
 .tier2-mode-container {
@@ -246,7 +246,7 @@
 .tier2-mode-btn.active {
   background: var(--color-white);
   border-color: #d1d5db;
-  color: var(--accent-color, var(--color-brand-500));
+  color: var(--color-link);
   font-weight: 600;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
@@ -309,7 +309,7 @@
 .preset-chip.active {
   background: rgba(255, 102, 0, 0.08);
   border-color: var(--accent-color, var(--color-brand-500));
-  color: var(--accent-color, var(--color-brand-500));
+  color: var(--color-link);
   font-weight: 600;
 }
 

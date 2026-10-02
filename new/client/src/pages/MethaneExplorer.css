@@ -188,7 +188,7 @@
 }
 
 .kpi-value.highlight-accent {
-  color: var(--color-brand-500);
+  color: var(--color-link);
 }
 
 .kpi-value.kpi-alert {
@@ -247,7 +247,7 @@
 
 .seg-btn.active {
   background: var(--color-white);
-  color: var(--color-brand-500);
+  color: var(--color-link);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
   font-weight: 700;
 }
@@ -393,7 +393,7 @@
   border: 1px solid var(--color-ink-200);
   border-left: none;
   border-radius: 0 12px 12px 0;
-  color: var(--color-brand-500);
+  color: var(--color-link);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -452,7 +452,7 @@
   padding: 3px 8px;
   border-radius: 6px;
   background: var(--color-brand-50);
-  color: var(--color-brand-500);
+  color: var(--color-link);
   border: 1px solid #fed7aa;
 }
 
@@ -577,7 +577,7 @@
 .pill-btn.active {
   background: var(--color-brand-50);
   border-color: var(--color-brand-500);
-  color: var(--color-brand-500);
+  color: var(--color-link);
   font-weight: 700;
 }
 
@@ -766,7 +766,7 @@ input:checked + .slider:before {
   padding: 5px 10px;
   font-size: 0.72rem;
   font-weight: 600;
-  color: var(--color-brand-500);
+  color: var(--color-link);
   cursor: pointer;
   transition: all 0.2s;
 }
@@ -890,7 +890,7 @@ input:checked + .slider:before {
 }
 
 .target-card.selected .target-card-val {
-  color: var(--color-brand-500);
+  color: var(--color-link);
 }
 
 .target-card-unit {
@@ -1084,7 +1084,7 @@ input:checked + .slider:before {
   font-size: 0.65rem;
   font-weight: 800;
   letter-spacing: 0.06em;
-  color: var(--color-brand-500);
+  color: var(--color-link);
   margin-bottom: 4px;
 }
 
@@ -1490,7 +1490,7 @@ input:checked + .slider:before {
 
 .stat-card.main-accent .stat-card-number {
   font-size: 1.45rem;
-  color: var(--color-brand-500);
+  color: var(--color-link);
 }
 
 .stat-card-number.emerald {
@@ -1542,7 +1542,7 @@ input:checked + .slider:before {
 .btn-action-focus:hover {
   background: var(--color-brand-50);
   border-color: var(--color-brand-500);
-  color: var(--color-brand-500);
+  color: var(--color-link);
 }
 
 /* ============================================================
@@ -1572,7 +1572,7 @@ input:checked + .slider:before {
 
 .leaflet-bar a:hover {
   background-color: var(--color-brand-50) !important;
-  color: var(--color-brand-500) !important;
+  color: var(--color-link) !important;
 }
 
 /* Pulsing markers */
@@ -1687,7 +1687,7 @@ input:checked + .slider:before {
   gap: 5px;
   font-size: 0.75rem;
   font-weight: 700;
-  color: var(--color-brand-500);
+  color: var(--color-link);
   margin-top: 2px;
 }
 
