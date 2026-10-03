@@ -1,295 +1,178 @@
 import React from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { BookOpen, ChevronDown, ChevronRight, ChevronUp, Plus } from "lucide-react";
+import { Button, Card } from "../../ui";
+import { cn } from "../../ui/cn";
 import { activateOnKey } from "../../utils/a11yKeys";
-import { formatCompactNumber } from "../../utils/formatters";
+import { formatCompactNumber as fmt } from "../../utils/formatters";
 
-// Extracted from DashboardEnhanced.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
-const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActivities, expandedDivisions, flaringData, formatActivityName, getHierarchicalData, navigate, setDetailedBreakdownCollapsed, stats, toggleActivity, toggleDivision }) => (
-<div className="[display:grid] [grid-template-columns:8fr_4fr]! [gap:24px]! [@media(max-width:1200px)]:[grid-template-columns:1fr]! [@media(max-width:1200px)]:[gap:20px]!">
-          <div className="detailed-breakdown-section">
-            <div
-              className={`card detailed-table-card [@media_print]:[box-shadow:none]! [@media_print]:[border:1px_solid_var(--color-ink-300)]! [@media_print]:[background:var(--color-white)]! [@media_print]:[page-break-inside:avoid] [@media_print]:[margin-bottom:24px]! [@media(max-width:768px)]:[padding:16px] [@media(max-width:768px)]:[border-radius:var(--radius-lg)]! glass-panel ${detailedBreakdownCollapsed ? "collapsed-card" : ""}`}
-            >
-              <div role="button" tabIndex={0} onKeyDown={activateOnKey}
-                className="table-header-row [margin-bottom:20px] clickable-card-header [transition:opacity_0.2s_ease] hover:[opacity:0.85]! cursor-pointer! [user-select:none]! flex! justify-between! items-center!"
-                onClick={() =>
-                  setDetailedBreakdownCollapsed(!detailedBreakdownCollapsed)
-                }
-               
-              >
-                <h3 className="card-title m-[0px]!">
-                  Detailed Breakdown
-                </h3>
-                <div
-                  className=" flex! items-center! text-[color:#64748b]!"
-                 
-                >
-                  {detailedBreakdownCollapsed ? (
-                    <ChevronDown size={18} />
-                  ) : (
-                    <ChevronUp size={18} />
-                  )}
-                </div>
-              </div>
-              <div
-                className={`[@media_print]:[&.collapsed]:[display:block]! [@media_print]:[&.collapsed]:[max-height:none]! [@media_print]:[&.collapsed]:[opacity:1]! [max-height:2500px]! [opacity:1]! [overflow:hidden] [transition:max-height_0.4s_cubic-bezier(0.4,_0,_0.2,_1),_opacity_0.3s_ease,_margin-top_0.3s_ease] [&&]:[&.collapsed]:[max-height:0]! [&&]:[&.collapsed]:[opacity:0]! [&.collapsed]:[margin-top:0] [&.collapsed]:[pointer-events:none] ${detailedBreakdownCollapsed ? "collapsed" : ""}`}
-              >
-                <div className="table-container mt-[16px]!">
-                  <table className="data-table">
-                    <thead>
-                      <tr>
-                        <th>Category / Source</th>
-                        <th className="text-right">Results (tCO₂e)</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr className="summary-row">
-                        <td>Scope 1 (Direct)</td>
-                        <td className="text-right font-bold">
-                          {formatCompactNumber(stats.scope1)}
-                        </td>
-                      </tr>
-                      <tr className="detail-row">
-                        <td className="[padding-left:28px]!">Combustion (stationary &amp; mobile)</td>
-                        <td className="text-right">
-                          {formatCompactNumber(stats.combustion)}
-                        </td>
-                      </tr>
-                      <tr className="detail-row">
-                        <td className="[padding-left:28px]!">Flaring</td>
-                        <td className="text-right">
-                          {formatCompactNumber(stats.flaring)}
-                        </td>
-                      </tr>
-                      {flaringData && (flaringData.routine_flaring?.volume_knm3 > 0 || flaringData.non_routine_flaring?.volume_knm3 > 0 || flaringData.safety_flaring?.volume_knm3 > 0) && (
-                        <>
-                          <tr className="detail-row text-[length:0.82rem]! text-[color:#64748b]! bg-[color:rgba(248,_250,_252,_0.5)]!">
-                            <td className="pl-[36px]!">↳ Routine ({flaringData.routine_flaring?.percentage ?? 0}%)</td>
-                            <td className="text-right font-normal">
-                              {formatCompactNumber(flaringData.routine_flaring?.tco2e ?? 0)}
-                            </td>
-                          </tr>
-                          <tr className="detail-row text-[length:0.82rem]! text-[color:#64748b]! bg-[color:rgba(248,_250,_252,_0.5)]!">
-                            <td className="pl-[36px]!">↳ Non-Routine ({flaringData.non_routine_flaring?.percentage ?? 0}%)</td>
-                            <td className="text-right font-normal">
-                              {formatCompactNumber(flaringData.non_routine_flaring?.tco2e ?? 0)}
-                            </td>
-                          </tr>
-                          <tr className="detail-row text-[length:0.82rem]! text-[color:#64748b]! bg-[color:rgba(248,_250,_252,_0.5)]!">
-                            <td className="pl-[36px]!">↳ Safety &amp; Purge ({flaringData.safety_flaring?.percentage ?? 0}%)</td>
-                            <td className="text-right font-normal">
-                              {formatCompactNumber(flaringData.safety_flaring?.tco2e ?? 0)}
-                            </td>
-                          </tr>
-                        </>
-                      )}
-                      <tr className="detail-row">
-                        <td className="[padding-left:28px]!">Venting</td>
-                        <td className="text-right">
-                          {formatCompactNumber(stats.venting)}
-                        </td>
-                      </tr>
-                      <tr className="detail-row">
-                        <td className="[padding-left:28px]!">Equipment Leaks / Fugitives</td>
-                        <td className="text-right">
-                          {formatCompactNumber(stats.fugitive)}
-                        </td>
-                      </tr>
-                      <tr className="detail-row">
-                        <td className="[padding-left:28px]!">Other Sources</td>
-                        <td className="text-right">
-                          {formatCompactNumber(stats.other)}
-                        </td>
-                      </tr>
-                      <tr className="summary-row">
-                        <td>Scope 2 (Indirect - Energy)</td>
-                        <td className="text-right font-bold">
-                          {formatCompactNumber(stats.scope2)}
-                        </td>
-                      </tr>
-                      <tr className="summary-row">
-                        <td>Scope 3 (Supply Chain)</td>
-                        <td className="text-right font-bold">
-                          {formatCompactNumber(stats.scope3)}
-                        </td>
-                      </tr>
-                      <tr className="total-row">
-                        <td>Total Footprint (Scopes 1+2+3)</td>
-                        <td className="text-right">
-                          {formatCompactNumber(
-                            (stats.scope1 || 0) +
-                              (stats.scope2 || 0) +
-                              (stats.scope3 || 0)
-                          )}
-                        </td>
-                      </tr>
-                      <tr
-                        className="total-row"
-                        style={{ color: "#2e7d32", borderTop: "none" }}
-                      >
-                        <td>Net Footprint</td>
-                        <td className="text-right">
-                          {formatCompactNumber(
-                            (stats.scope1 || 0) +
-                              (stats.scope2 || 0) +
-                              (stats.scope3 || 0) -
-                              (stats.mitigation || 0)
-                          )}
-                        </td>
-                      </tr>
+const INDENT = { 0: "pl-4", 1: "pl-7", 2: "pl-9", 3: "pl-11" };
 
-                      <tr className="header-divider">
-                        <td colSpan="2">Organizational Breakdown</td>
-                      </tr>
-                      {Object.entries(getHierarchicalData).map(
-                        ([act, actData]) => (
-                          <React.Fragment key={act}>
-                            <tr role="row" tabIndex={0} onKeyDown={activateOnKey}
-                              className="act-row [background:#fefefe] clickable [cursor:pointer]"
-                              onClick={() => toggleActivity(act)}
-                            >
-                              <td>
-                                <span className="[display:inline-block] [width:16px] [font-size:var(--text-xs)] [color:var(--color-ink-600)]">
-                                  {expandedActivities[act] ? "▼" : "▶"}
-                                </span>
-                                {formatActivityName(act)}
-                              </td>
-                              <td className="text-right font-bold">
-                                {formatCompactNumber(actData.total)}
-                              </td>
-                            </tr>
-                            {expandedActivities[act] &&
-                              Object.entries(actData.divisions).map(
-                                ([div, divData]) => (
-                                  <React.Fragment key={div}>
-                                    <tr role="row" tabIndex={0} onKeyDown={activateOnKey}
-                                      className="div-row [color:var(--color-ink-600)]! clickable [cursor:pointer]"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        toggleDivision(div);
-                                      }}
-                                    >
-                                      <td className="[padding-left:28px]!">
-                                        <span className="[display:inline-block] [width:16px] [font-size:var(--text-xs)] [color:var(--color-ink-600)]">
-                                          {expandedDivisions[div] ? "▼" : "▶"}
-                                        </span>
-                                        {div}
-                                      </td>
-                                      <td className="text-right">
-                                        {formatCompactNumber(divData.total)}
-                                      </td>
-                                    </tr>
-                                    {expandedDivisions[div] &&
-                                      divData.regions.map((reg, ridx) => (
-                                        <tr key={ridx} className="reg-row [font-size:var(--text-sm)]! [opacity:0.8]!">
-                                          <td className="[padding-left:44px]!">
-                                            {reg.region}
-                                          </td>
-                                          <td className="text-right">
-                                            {formatCompactNumber(
-                                              reg.total_emissions,
-                                            )}
-                                          </td>
-                                        </tr>
-                                      ))}
-                                  </React.Fragment>
-                                ),
-                              )}
-                          </React.Fragment>
-                        ),
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="[display:flex] [flex-direction:column] [gap:24px]">
-            {/* Moved Trend Chart to Top */}
-
-            <div className="card [padding:24px]">
-              <div className="[display:flex] [justify-content:space-between] [align-items:center]! [margin-bottom:24px] [@media(max-width:768px)]:[flex-direction:column] [@media(max-width:768px)]:[align-items:flex-start]! [@media(max-width:768px)]:[gap:12px]">
-                <h3 className="card-title">Reference Libraries</h3>
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  className="opacity-[0.3]!"
-                >
-                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-                </svg>
-              </div>
-              <div className="[display:flex] [flex-direction:column] [gap:12px] [margin:16px_0_20px_0]">
-                <div className="library-item">
-                  <div className="dot blue"></div>
-                  API Compendium: 2021
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                  >
-                    <polyline points="9 18 15 12 9 6" />
-                  </svg>
-                </div>
-                <div className="library-item">
-                  <div className="dot green"></div>
-                  ISO 14064-1:2018
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                  >
-                    <polyline points="9 18 15 12 9 6" />
-                  </svg>
-                </div>
-                <div className="library-item">
-                  <div className="dot orange"></div>
-                  GRI 305 Standards
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                  >
-                    <polyline points="9 18 15 12 9 6" />
-                  </svg>
-                </div>
-              </div>
-              <button
-                className="manage-factors-btn [display:flex] [align-items:center] [justify-content:center] [gap:8px] [padding:12px] [background:var(--color-white)] [border:2px_dashed_var(--color-ink-200)] [&&]:[border-radius:var(--radius-md)] [color:var(--color-ink-500)] [font-size:var(--text-base)] [font-weight:600] [cursor:pointer] [transition:all_0.2s] [width:100%] hover:[border-color:var(--color-brand-500)] hover:[color:var(--color-link)]"
-                onClick={() =>
-                  navigate("/manage-data", { state: { tab: "factors" } })
-                }
-              >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                >
-                  <line x1="12" y1="5" x2="12" y2="19" />
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
-                Manage Custom Factors
-              </button>
-            </div>
-          </div>
-        </div>
+// One table row: label cell and right-aligned number cell. Tone picks the row emphasis.
+const Row = ({ label, value, level = 0, tone = "detail", className, ...props }) => (
+  <tr
+    className={cn(
+      "border-b border-ink-100 text-base",
+      tone === "summary" && "font-bold text-text",
+      tone === "detail" && "text-text-secondary",
+      tone === "sub" && "bg-ink-50/50 text-sm text-text-secondary",
+      tone === "total" && "bg-ink-50 font-bold text-text",
+      tone === "net" && "bg-ink-50 font-bold text-success-fg",
+      className,
+    )}
+    {...props}
+  >
+    <td className={cn("py-2.5 pr-4", INDENT[level])}>{label}</td>
+    <td className="py-2.5 pr-4 text-right tabular-nums">{value}</td>
+  </tr>
 );
+
+const Caret = ({ open }) => (
+  <ChevronRight className={cn("mr-1 inline size-3.5 align-text-bottom text-text-secondary transition-transform", open && "rotate-90")} aria-hidden="true" />
+);
+
+const LIBRARIES = [
+  { name: "API Compendium: 2021", dot: "bg-blue-500" },
+  { name: "ISO 14064-1:2018", dot: "bg-green-500" },
+  { name: "GRI 305 Standards", dot: "bg-brand-500" },
+];
+
+/** Detailed breakdown table (scopes, sources, organizational tree) and the reference-library shortcuts. */
+const DetailedBreakdownSection = ({
+  detailedBreakdownCollapsed,
+  expandedActivities,
+  expandedDivisions,
+  flaringData,
+  formatActivityName,
+  getHierarchicalData,
+  navigate,
+  setDetailedBreakdownCollapsed,
+  stats,
+  toggleActivity,
+  toggleDivision,
+}) => {
+  const total = (stats.scope1 || 0) + (stats.scope2 || 0) + (stats.scope3 || 0);
+  const flaring = flaringData;
+  const hasFlaringSplit =
+    flaring && (flaring.routine_flaring?.volume_knm3 > 0 || flaring.non_routine_flaring?.volume_knm3 > 0 || flaring.safety_flaring?.volume_knm3 > 0);
+  const split = [
+    ["Routine", flaring?.routine_flaring],
+    ["Non-Routine", flaring?.non_routine_flaring],
+    ["Safety & Purge", flaring?.safety_flaring],
+  ];
+
+  return (
+    <div className="grid gap-6 [grid-template-columns:8fr_4fr] max-[1200px]:grid-cols-1">
+      <Card className="min-w-0 print:break-inside-avoid print:shadow-none">
+        <button
+          type="button"
+          aria-expanded={!detailedBreakdownCollapsed}
+          onClick={() => setDetailedBreakdownCollapsed(!detailedBreakdownCollapsed)}
+          className="mb-5 flex w-full cursor-pointer items-center justify-between border-0 bg-transparent p-0 text-left hover:opacity-85"
+        >
+          <span className="text-lg font-semibold text-text">Detailed breakdown</span>
+          {detailedBreakdownCollapsed ? <ChevronDown className="size-[18px] text-ink-500" aria-hidden="true" /> : <ChevronUp className="size-[18px] text-ink-500" aria-hidden="true" />}
+        </button>
+
+        <div className={cn("overflow-auto", detailedBreakdownCollapsed && "hidden print:block")}>
+          <table className="data-table w-full border-collapse">
+            <thead>
+              <tr className="bg-ink-50 text-left text-sm font-semibold text-text-secondary">
+                <th scope="col" className="py-2.5 pl-4 pr-4">Category / Source</th>
+                <th scope="col" className="py-2.5 pr-4 text-right">Results (tCO₂e)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <Row tone="summary" label="Scope 1 (Direct)" value={fmt(stats.scope1)} />
+              <Row level={1} label="Combustion (stationary & mobile)" value={fmt(stats.combustion)} />
+              <Row level={1} label="Flaring" value={fmt(stats.flaring)} />
+              {hasFlaringSplit &&
+                split.map(([name, part]) => (
+                  <Row key={name} tone="sub" level={2} label={`↳ ${name} (${part?.percentage ?? 0}%)`} value={fmt(part?.tco2e ?? 0)} />
+                ))}
+              <Row level={1} label="Venting" value={fmt(stats.venting)} />
+              <Row level={1} label="Equipment Leaks / Fugitives" value={fmt(stats.fugitive)} />
+              <Row level={1} label="Other Sources" value={fmt(stats.other)} />
+              <Row tone="summary" label="Scope 2 (Indirect - Energy)" value={fmt(stats.scope2)} />
+              <Row tone="summary" label="Scope 3 (Supply Chain)" value={fmt(stats.scope3)} />
+              <Row tone="total" label="Total Footprint (Scopes 1+2+3)" value={fmt(total)} />
+              <Row tone="net" label="Net Footprint" value={fmt(total - (stats.mitigation || 0))} />
+
+              <tr>
+                <td colSpan={2} className="px-4 pb-1.5 pt-5 text-xs font-bold uppercase tracking-wide text-text-secondary">
+                  Organizational breakdown
+                </td>
+              </tr>
+              {Object.entries(getHierarchicalData).map(([act, actData]) => (
+                <React.Fragment key={act}>
+                  <Row
+                    tone="summary"
+                    className="act-row cursor-pointer hover:bg-ink-50"
+                    role="row"
+                    tabIndex={0}
+                    onKeyDown={activateOnKey}
+                    onClick={() => toggleActivity(act)}
+                    label={
+                      <>
+                        <Caret open={expandedActivities[act]} />
+                        {formatActivityName(act)}
+                      </>
+                    }
+                    value={fmt(actData.total)}
+                  />
+                  {expandedActivities[act] &&
+                    Object.entries(actData.divisions).map(([div, divData]) => (
+                      <React.Fragment key={div}>
+                        <Row
+                          level={1}
+                          className="div-row cursor-pointer hover:bg-ink-50"
+                          role="row"
+                          tabIndex={0}
+                          onKeyDown={activateOnKey}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleDivision(div);
+                          }}
+                          label={
+                            <>
+                              <Caret open={expandedDivisions[div]} />
+                              {div}
+                            </>
+                          }
+                          value={fmt(divData.total)}
+                        />
+                        {expandedDivisions[div] &&
+                          divData.regions.map((reg, i) => (
+                            <Row key={i} tone="sub" level={3} className="reg-row" label={reg.region} value={fmt(reg.total_emissions)} />
+                          ))}
+                      </React.Fragment>
+                    ))}
+                </React.Fragment>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Card>
+
+      <Card className="flex flex-col gap-4 self-start p-6">
+        <div className="flex items-center justify-between">
+          <h3 className="m-0 text-lg font-semibold text-text">Reference libraries</h3>
+          <BookOpen className="size-5 text-ink-300" aria-hidden="true" />
+        </div>
+        <ul className="m-0 flex list-none flex-col gap-3 p-0">
+          {LIBRARIES.map((lib) => (
+            <li key={lib.name} className="flex items-center gap-2.5 text-base font-medium text-text">
+              <span className={cn("size-2 rounded-full", lib.dot)} aria-hidden="true" />
+              <span className="flex-1">{lib.name}</span>
+              <ChevronRight className="size-3.5 text-ink-400" aria-hidden="true" />
+            </li>
+          ))}
+        </ul>
+        <Button variant="secondary" className="manage-factors-btn w-full border-dashed" onClick={() => navigate("/manage-data", { state: { tab: "factors" } })}>
+          <Plus className="size-4" aria-hidden="true" /> Manage Custom Factors
+        </Button>
+      </Card>
+    </div>
+  );
+};
 
 export default DetailedBreakdownSection;
