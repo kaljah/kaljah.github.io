@@ -58,8 +58,46 @@ for (const f of all.filter((x) => x.endsWith(".css") && !cssFiles.includes(x))) 
     for (const s of r.selectors) for (const m of s.matchAll(/\.(-?[_a-zA-Z][\w-]*)/g)) mentions[m[1]] = (mentions[m[1]] || 0) + 9;
   });
 }
-const candidates = {};
 const roots = {};
+const occ = {};
+const PSEUDO = {
+  hover: "hover:",
+  focus: "focus:",
+  "focus-visible": "focus-visible:",
+  "focus-within": "focus-within:",
+  active: "active:",
+  disabled: "disabled:",
+  checked: "checked:",
+  "first-child": "first:",
+  "last-child": "last:",
+  placeholder: "placeholder:",
+};
+const mediaPrefix = (params) => {
+  const t = params.trim();
+  let m = t.match(/^\(\s*max-width\s*:\s*(\d+px)\s*\)$/);
+  if (m) return `max-[${m[1]}]:`;
+  m = t.match(/^\(\s*min-width\s*:\s*(\d+px)\s*\)$/);
+  if (m) return `min-[${m[1]}]:`;
+  if (/[[\]{}'"\\]/.test(t)) return null;
+  return `[@media${t.replace(/\s+/g, "_")}]:`;
+};
+const simpleOccurrence = (sel, rule) => {
+  const m = sel.trim().match(/^\.(-?[_a-zA-Z][\w-]*)((?::{1,2}[a-z-]+)*)$/);
+  if (!m) return null;
+  let prefix = "";
+  for (const ps of m[2].split(/:+/).filter(Boolean)) {
+    if (!PSEUDO[ps]) return null;
+    prefix += PSEUDO[ps];
+  }
+  const parent = rule.parent;
+  if (parent?.type === "atrule") {
+    if (parent.name !== "media" || parent.parent?.type !== "root") return null;
+    const mp = mediaPrefix(parent.params);
+    if (!mp) return null;
+    prefix = mp + prefix;
+  } else if (parent?.type !== "root") return null;
+  return { name: m[1], prefix };
+};
 for (const f of cssFiles) {
   const root = postcss.parse(fs.readFileSync(f, "utf8"));
   roots[f] = root;
@@ -68,9 +106,8 @@ for (const f of cssFiles) {
     if (r.parent?.type === "atrule" && /keyframes$/.test(r.parent.name)) return;
     for (const s of r.selectors) {
       for (const m of s.matchAll(/\.(-?[_a-zA-Z][\w-]*)/g)) mentions[m[1]] = (mentions[m[1]] || 0) + 1;
-    }
-    if (r.parent?.type === "root" && r.selectors.length === 1 && /^\.-?[_a-zA-Z][\w-]*$/.test(r.selector)) {
-      candidates[r.selector.slice(1)] = { file: f, rule: r };
+      const so = simpleOccurrence(s, r);
+      if (so) (occ[so.name] ||= []).push({ file: f, rule: r, selector: s, prefix: so.prefix });
     }
   });
 }
@@ -84,15 +121,27 @@ const toUtility = (decl) => {
 };
 
 let eligible = {};
-for (const [name, { file, rule }] of Object.entries(candidates)) {
-  if (mentions[name] !== 1) continue;
-  if (ONLY && !file.includes(ONLY)) continue;
-  const decls = rule.nodes?.filter((n) => n.type === "decl") ?? [];
-  if (rule.nodes?.length !== decls.length || decls.length === 0 || decls.length > MAX) continue;
-  const utils = decls.map(toUtility);
-  if (utils.some((u) => !u)) continue;
+for (const [name, list] of Object.entries(occ)) {
+  if (mentions[name] !== list.length) continue;
+  if (ONLY && !list.every((o) => o.file.includes(ONLY))) continue;
+  const prefixes = list.map((o) => o.prefix);
+  if (new Set(prefixes).size !== prefixes.length) continue;
+  const utils = [];
+  let ok = true;
+  let n = 0;
+  for (const o of list) {
+    const decls = o.rule.nodes.filter((x) => x.type === "decl");
+    if (decls.length !== o.rule.nodes.length || decls.length === 0) ok = false;
+    n += decls.length;
+    for (const d of decls) {
+      const u = toUtility(d);
+      if (!u) ok = false;
+      else utils.push(o.prefix + u);
+    }
+  }
+  if (!ok || n > MAX) continue;
   if (tokenRe(name).test(testText) || tokenRe(name).test(indexHtml)) continue;
-  eligible[name] = { rule, utils };
+  eligible[name] = { occurrences: list, utils };
 }
 
 const sources = Object.fromEntries([...jsxFiles, ...otherJs].map((f) => [f, fs.readFileSync(f, "utf8")]));
@@ -179,8 +228,15 @@ const keep = Object.fromEntries(Object.entries(eligible).filter(([n]) => replace
 eligible = keep;
 const { edits } = planEdits(eligible);
 
+const seenRules = new Set();
 let removedLines = 0;
-for (const e of Object.values(eligible)) removedLines += e.rule.source.end.line - e.rule.source.start.line + 1;
+for (const e of Object.values(eligible)) {
+  for (const o of e.occurrences) {
+    if (seenRules.has(o.rule)) continue;
+    seenRules.add(o.rule);
+    removedLines += o.rule.source.end.line - o.rule.source.start.line + 1;
+  }
+}
 console.log(`${Object.keys(eligible).length} classes, ~${removedLines} CSS lines, ${Object.keys(edits).length} files`);
 
 if (write) {
@@ -192,10 +248,18 @@ if (write) {
   for (const f of cssFiles) {
     let touched = false;
     roots[f].walkRules((r) => {
-      if (r.parent?.type === "root" && r.selectors.length === 1 && eligible[r.selector.slice(1)]?.rule === r) {
+      if (!r.parent) return;
+      const keep = r.selectors.filter((sel) => {
+        const so = simpleOccurrence(sel, r);
+        return !(so && eligible[so.name]);
+      });
+      if (keep.length === r.selectors.length) return;
+      touched = true;
+      const parent = r.parent;
+      if (keep.length === 0) {
         r.remove();
-        touched = true;
-      }
+        if (parent.type === "atrule" && parent.nodes.length === 0) parent.remove();
+      } else r.selectors = keep;
     });
     if (touched) fs.writeFileSync(f, roots[f].toString());
   }
