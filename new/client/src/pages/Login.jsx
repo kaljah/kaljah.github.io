@@ -1,4 +1,4 @@
-import { Eye, EyeOff, CircleAlert, Lock } from "lucide-react";
+import { CircleAlert, Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { Banner } from "../ui";
 import React, { useState, useEffect, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
@@ -181,19 +181,7 @@ const Login = () => {
           >
             <div className="[position:relative]">
               <span className="input-icon [position:absolute] [left:16px] [top:50%] [transform:translateY(-50%)] [color:var(--color-ink-600)] [transition:color_0.3s]">
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                  <polyline points="22,6 12,13 2,6"></polyline>
-                </svg>
+                <Mail size={18} aria-hidden="true" />
               </span>
               <input
                 type="text"
@@ -309,19 +297,7 @@ const Login = () => {
                 <div className="form-group mb-[16px]!">
                   <div className="[position:relative]">
                     <span className="input-icon [position:absolute] [left:16px] [top:50%] [transform:translateY(-50%)] [color:var(--color-ink-600)] [transition:color_0.3s]">
-                      <svg
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                        <polyline points="22,6 12,13 2,6"></polyline>
-                      </svg>
+                      <Mail size={18} aria-hidden="true" />
                     </span>
                     <input
                       type="email"

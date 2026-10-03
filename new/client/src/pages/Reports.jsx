@@ -1,4 +1,4 @@
-import { ChevronDown, Download, FileSpreadsheet, FileText, RotateCcw } from "lucide-react";
+import { ChevronDown, Download, FilePlus, FileSpreadsheet, FileText, Funnel, Plus, RotateCcw } from "lucide-react";
 import { NativeSelect } from "../ui/NativeSelect";
 import { Button, DataTable, Menu, MenuContent, MenuItem, MenuTrigger, PageHeader, Field, StatusPill } from "../ui";
 import React, { useState, useEffect } from "react";
@@ -552,21 +552,7 @@ const Reports = () => {
           <div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.78))] [backdrop-filter:blur(14px)] [border-radius:var(--radius-lg)] [padding:28px] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [box-shadow:var(--shadow-card)] [position:relative] [overflow:hidden] [transition:transform_0.22s_ease,_box-shadow_0.22s_ease] hover:[border-color:rgba(255,_255,_255,_0.95)] before:[content:''] before:[position:absolute] before:[top:0] before:[left:0] before:[width:4px] before:[height:100%] before:[background:var(--accent-gradient,_linear-gradient(135deg,_var(--accent-color)_0%,_#ff8a4d_100%))] mb-[24px]!">
             <div className="[display:flex] [align-items:center] [gap:12px] [margin-bottom:20px]">
               <div className="[background:rgba(255,_102,_0,_0.1)] [padding:10px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [color:var(--color-link)]">
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                  <polyline points="14 2 14 8 20 8" />
-                  <line x1="12" y1="18" x2="12" y2="12" />
-                  <line x1="9" y1="15" x2="15" y2="15" />
-                </svg>
+                <FilePlus size={24} aria-hidden="true" />
               </div>
               <h3 className="card-title">Create New Report</h3>
             </div>
@@ -655,17 +641,7 @@ const Reports = () => {
                   cursor: loading ? "not-allowed" : "pointer",
                 }}
               >
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                >
-                  <line x1="12" y1="5" x2="12" y2="19" />
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
+                <Plus size={18} strokeWidth={2.5} aria-hidden="true" />
                 {loading ? "Generating..." : "Create Report"}
               </button>
             </div>
@@ -706,18 +682,7 @@ const Reports = () => {
           <div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.78))] [backdrop-filter:blur(14px)] [border-radius:var(--radius-lg)] [padding:28px] [margin-bottom:32px] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [box-shadow:var(--shadow-card)] [position:relative] [overflow:hidden] [transition:transform_0.22s_ease,_box-shadow_0.22s_ease] hover:[border-color:rgba(255,_255,_255,_0.95)] before:[content:''] before:[position:absolute] before:[top:0] before:[left:0] before:[width:4px] before:[height:100%] before:[background:var(--accent-gradient,_linear-gradient(135deg,_var(--accent-color)_0%,_#ff8a4d_100%))]">
             <div className="[display:flex] [align-items:center] [gap:12px] [margin-bottom:20px]">
               <div className="[background:rgba(255,_102,_0,_0.1)] [padding:10px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [color:var(--color-link)]">
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
-                </svg>
+                <Funnel size={24} aria-hidden="true" />
               </div>
               <h3 className="card-title">Filter & Group Data</h3>
             </div>

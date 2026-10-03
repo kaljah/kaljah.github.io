@@ -1,5 +1,5 @@
 import React from "react";
-import { Key as KeyIcon, MapPin as MapPinIcon, Search as SearchIcon, SquarePen as SquarePenIcon, Trash2 as Trash2Icon } from "lucide-react";
+import { Globe, Key as KeyIcon, Loader, MapPin as MapPinIcon, Search as SearchIcon, SquarePen as SquarePenIcon, Trash2 as Trash2Icon } from "lucide-react";
 import { Lock } from "lucide-react";
 
 // Extracted from UserManagement.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
@@ -42,17 +42,7 @@ const UserManagementBlock = ({ S, filteredUsers, getRoleMeta, handleDelete, hand
                     <div
                       className="flex! flex-col! items-center! gap-[10px]!"
                     >
-                      <svg
-                        width="32"
-                        height="32"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="#ff6600"
-                        strokeWidth="2"
-                        style={{ animation: "spin 1s linear infinite" }}
-                      >
-                        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
-                      </svg>
+                      <Loader size={32} color="#ff6600" style={{ animation: "spin 1s linear infinite" }} aria-hidden="true" />
                       Loading users…
                     </div>
                   </td>
@@ -172,7 +162,7 @@ const UserManagementBlock = ({ S, filteredUsers, getRoleMeta, handleDelete, hand
                               "rgba(16,185,129,.25)",
                             )}
                           >
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                            <Globe size={12} aria-hidden="true" />
                             All Regions
                           </span>
                         ) : u.role === "it_admin" || u.role === "it_manager" || u.role === "it" ? (

@@ -8,6 +8,7 @@ import React, {
 } from "react";
 import { createPortal } from "react-dom";
 import "./CustomDropdown.css";
+import { ChevronDown } from "lucide-react";
 
 const CustomDropdown = ({
   options = [],
@@ -267,16 +268,7 @@ const CustomDropdown = ({
         }
       >
         <span className="[display:flex] [align-items:center] [overflow:hidden] [text-overflow:ellipsis] [white-space:nowrap]">{displayContent}</span>
-        <svg
-          width="10"
-          height="10"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="3"
-        >
-          <polyline points="6 9 12 15 18 9" />
-        </svg>
+        <ChevronDown size={10} strokeWidth={3} aria-hidden="true" />
       </button>
 
       {isOpen &&

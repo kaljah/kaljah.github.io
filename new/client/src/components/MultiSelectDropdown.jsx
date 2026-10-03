@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from "react";
 import { activateOnKey } from "../utils/a11yKeys";
 import { createPortal } from "react-dom";
 import "./CustomDropdown.css";
+import { ChevronDown } from "lucide-react";
 
 const MultiSelectDropdown = ({
   options = [],
@@ -146,16 +147,7 @@ const MultiSelectDropdown = ({
               ? "All Selected"
               : `${selectedValues.length} Selected`}
         </span>
-        <svg
-          width="14"
-          height="14"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
-          <path d="M6 9l6 6 6-6" />
-        </svg>
+        <ChevronDown size={14} aria-hidden="true" />
       </div>
 
       {isOpen &&

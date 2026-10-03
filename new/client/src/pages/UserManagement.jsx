@@ -1,5 +1,5 @@
 import UserManagementBlock from "./user-management/UserManagementBlock";
-import { Shield as ShieldIcon, User as UserIcon, Users as UsersIcon, Wrench as WrenchIcon } from "lucide-react";
+import { Globe, Plus, Shield as ShieldIcon, User as UserIcon, Users as UsersIcon, Wrench as WrenchIcon } from "lucide-react";
 import UserManagementBlock1205 from "./user-management/UserManagementBlock1205";
 import UserManagementBlock1503 from "./user-management/UserManagementBlock1503";
 import React, { useState, useEffect } from "react";
@@ -836,17 +836,7 @@ const UserManagement = () => {
                   "0 4px 12px rgba(255,102,0,.25)";
               }}
             >
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-              >
-                <line x1="12" y1="5" x2="12" y2="19" />
-                <line x1="5" y1="12" x2="19" y2="12" />
-              </svg>
+              <Plus size={16} strokeWidth={2.5} aria-hidden="true" />
               Add New User
             </button>
           )}
@@ -888,7 +878,7 @@ const UserManagement = () => {
           {
             label: "Regions",
             value: regions.length,
-            icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>,
+            icon: <Globe size={20} aria-hidden="true" />,
             color: "#ff6600",
             bg: "#fff7ed",
           },
