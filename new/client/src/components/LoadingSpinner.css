@@ -139,15 +139,6 @@
   box-shadow: 0 0 12px 2px rgba(255, 102, 0, 0.6);
 }
 
-.loading-message-text {
-  font-family: inherit;
-  color: var(--text-primary, var(--color-ink-900));
-  font-size: var(--text-md);
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  animation: pulse-opacity 2s infinite ease-in-out;
-}
-
 @keyframes stylish-spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }

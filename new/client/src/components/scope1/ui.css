@@ -10,54 +10,8 @@
   border-radius: var(--radius-lg);
   padding: 24px 28px;
 }
-.s1-form-title {
-  font-size: var(--text-md);
-  font-weight: 700;
-  color: var(--s1-ink);
-  margin: 0 0 18px;
-}
-
-.s1-section + .s1-section {
-  border-top: 1px solid var(--s1-line);
-  margin-top: 20px;
-  padding-top: 20px;
-}
-.s1-section-head {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 14px;
-}
-.s1-step {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: var(--color-primary);
-  color: var(--color-white);
-  font-size: var(--text-sm);
-  font-weight: 700;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex: none;
-}
-.s1-section-title {
-  font-size: var(--text-md);
-  font-weight: 600;
-  color: var(--s1-ink);
-  margin: 0;
-}
-.s1-section-aside {
-  margin-left: auto;
-}
 
 /* fields */
-.s1-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(var(--s1-min, 200px), 1fr));
-  gap: 14px 16px;
-  align-items: end;
-}
 .s1-form .input-group {
   margin: 0;
 }
@@ -86,48 +40,10 @@
   border-color: var(--s1-accent);
   box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.12);
 }
-.s1-meta {
-  margin-top: 6px;
-  font-size: var(--text-sm);
-  color: var(--s1-muted);
-}
 
 /* collapsible advanced options */
-.s1-more {
-  margin-top: 16px;
-}
-.s1-more-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: none;
-  border: none;
-  padding: 4px 0;
-  font-size: var(--text-sm);
-  font-weight: 600;
-  color: var(--s1-muted);
-  cursor: pointer;
-}
-.s1-more-toggle:hover {
-  color: var(--s1-ink);
-}
-.s1-more-chevron {
-  transition: transform 0.15s ease;
-  transform: rotate(-90deg);
-}
-.s1-more.open .s1-more-chevron {
-  transform: rotate(0deg);
-}
-.s1-more-body {
-  margin-top: 12px;
-  padding: 16px;
-  background: var(--s1-soft);
-  border: 1px solid var(--s1-line);
-  border-radius: var(--radius-md);
-}
 
 /* segmented control (also used to restyle the existing tier buttons) */
-.s1-seg,
 .s1-form .methodology-toggle {
   display: inline-flex;
   flex-wrap: wrap;
@@ -137,7 +53,6 @@
   border-radius: var(--radius-md);
   border: none;
 }
-.s1-seg-btn,
 .s1-form .tier-selector-btn {
   border: none;
   background: transparent;
@@ -151,7 +66,6 @@
   align-items: center;
   gap: 6px;
 }
-.s1-seg-btn.active,
 .s1-form .tier-selector-btn.active {
   background: var(--color-white);
   color: var(--s1-ink);
@@ -210,18 +124,6 @@
 }
 
 /* section 2: process, method and factor stacked full width */
-.s1-stack {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
-}
-.s1-method {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 6px;
-  margin-bottom: 12px;
-}
 .s1-actions button {
   height: 46px;
   padding-top: 0 !important;
@@ -245,17 +147,7 @@
 .s1-block {
   margin-bottom: 12px;
 }
-
-.s1-span-2 {
-  grid-column: span 2;
-}
 @media (max-width: 600px) {
-  .s1-span-2 {
-    grid-column: 1 / -1;
-  }
-  .s1-grid {
-    grid-template-columns: 1fr 1fr;
-  }
   .s1-actions button {
     flex: none !important;
     width: 100%;
@@ -263,14 +155,3 @@
 }
 
 /* always-visible sub-group inside a section (e.g. Source details) */
-.s1-subgroup {
-  margin-top: 16px;
-}
-.s1-subhead {
-  font-size: var(--text-sm);
-  font-weight: 600;
-  color: var(--s1-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  margin-bottom: 10px;
-}
