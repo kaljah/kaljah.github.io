@@ -24,7 +24,7 @@ export const FieldGrid = ({ children, min = 200 }) => (
 export const MoreOptions = ({ label = "More options", defaultOpen = false, children }) => {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className={`s1-more ${open ? "open" : ""}`}>
+    <div className={`[margin-top:16px]! [&.open_.s1-more-chevron]:[transform:rotate(0deg)]! ${open ? "open" : ""}`}>
       <button type="button" className="[display:inline-flex]! [align-items:center] [gap:6px] [background:none]! [border:none]! [padding:4px_0]! [font-size:var(--text-sm)]! [font-weight:600]! [color:var(--s1-muted)]! [cursor:pointer] hover:[color:var(--s1-ink)]!" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
         <ChevronDown size={16} className="s1-more-chevron [transition:transform_0.15s_ease]! [transform:rotate(-90deg)]" />
         {label}
@@ -42,7 +42,7 @@ export const Segmented = ({ options, value, onChange, ariaLabel }) => (
         type="button"
         role="radio"
         aria-checked={value === o.value}
-        className={`s1-seg-btn ${value === o.value ? "active" : ""}`}
+        className={`[border:none]! [background:transparent]! [border-radius:var(--radius-sm)]! [padding:7px_14px]! [font-size:var(--text-sm)]! [font-weight:500]! [color:#4b5563]! [cursor:pointer]! [display:inline-flex]! [align-items:center]! [gap:6px]! [&.active]:[background:var(--color-white)]! [&.active]:[color:var(--s1-ink)]! [&.active]:[font-weight:600]! [&.active]:[box-shadow:var(--shadow-xs)]! ${value === o.value ? "active" : ""}`}
         onClick={() => onChange(o.value)}
         title={o.hint}
       >

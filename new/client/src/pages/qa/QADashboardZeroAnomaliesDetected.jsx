@@ -23,7 +23,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                 <div className="[display:flex]! [gap:6px] [align-items:center]">
                                     <button
                                         aria-pressed={statusFilter === 'all'}
-                                        className={`qa-status-filter-btn ${statusFilter === 'all' ? 'active' : ''}`}
+                                        className={`[display:inline-flex]! [align-items:center]! [gap:6px]! [padding:5px_12px]! [border-radius:var(--radius-sm)]! [border:1px_solid_var(--color-ink-200)]! [background:var(--color-white)]! [font-size:var(--text-sm)]! [font-weight:600]! [color:var(--color-ink-500)]! [cursor:pointer]! [transition:all_0.15s_ease]! hover:[color:var(--color-ink-900)]! hover:[border-color:var(--color-ink-300)]! [&.active]:[background:var(--color-brand-50)]! [&.active]:[color:var(--color-brand-800)]! [&.active]:[border-color:var(--color-brand-500)]! [&.active_.qa-status-pill-count]:[background:var(--color-brand-100)]! [&.active_.qa-status-pill-count]:[color:var(--color-brand-800)]! ${statusFilter === 'all' ? 'active' : ''}`}
                                         onClick={() => { setStatusFilter('all'); setOffset(0); }}
                                     >
                                         <span>All Statuses</span>
@@ -33,7 +33,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                     </button>
                                     <button
                                         aria-pressed={statusFilter === 'pending'}
-                                        className={`qa-status-filter-btn ${statusFilter === 'pending' ? 'active' : ''}`}
+                                        className={`[display:inline-flex]! [align-items:center]! [gap:6px]! [padding:5px_12px]! [border-radius:var(--radius-sm)]! [border:1px_solid_var(--color-ink-200)]! [background:var(--color-white)]! [font-size:var(--text-sm)]! [font-weight:600]! [color:var(--color-ink-500)]! [cursor:pointer]! [transition:all_0.15s_ease]! hover:[color:var(--color-ink-900)]! hover:[border-color:var(--color-ink-300)]! [&.active]:[background:var(--color-brand-50)]! [&.active]:[color:var(--color-brand-800)]! [&.active]:[border-color:var(--color-brand-500)]! [&.active_.qa-status-pill-count]:[background:var(--color-brand-100)]! [&.active_.qa-status-pill-count]:[color:var(--color-brand-800)]! ${statusFilter === 'pending' ? 'active' : ''}`}
                                         onClick={() => { setStatusFilter('pending'); setOffset(0); }}
                                     >
                                         <span>Pending Review</span>
@@ -43,7 +43,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                     </button>
                                     <button
                                         aria-pressed={statusFilter === 'verified'}
-                                        className={`qa-status-filter-btn ${statusFilter === 'verified' ? 'active' : ''}`}
+                                        className={`[display:inline-flex]! [align-items:center]! [gap:6px]! [padding:5px_12px]! [border-radius:var(--radius-sm)]! [border:1px_solid_var(--color-ink-200)]! [background:var(--color-white)]! [font-size:var(--text-sm)]! [font-weight:600]! [color:var(--color-ink-500)]! [cursor:pointer]! [transition:all_0.15s_ease]! hover:[color:var(--color-ink-900)]! hover:[border-color:var(--color-ink-300)]! [&.active]:[background:var(--color-brand-50)]! [&.active]:[color:var(--color-brand-800)]! [&.active]:[border-color:var(--color-brand-500)]! [&.active_.qa-status-pill-count]:[background:var(--color-brand-100)]! [&.active_.qa-status-pill-count]:[color:var(--color-brand-800)]! ${statusFilter === 'verified' ? 'active' : ''}`}
                                         onClick={() => { setStatusFilter('verified'); setOffset(0); }}
                                     >
                                         <span>Verified</span>
@@ -53,7 +53,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                     </button>
                                     <button
                                         aria-pressed={statusFilter === 'rejected'}
-                                        className={`qa-status-filter-btn ${statusFilter === 'rejected' ? 'active' : ''}`}
+                                        className={`[display:inline-flex]! [align-items:center]! [gap:6px]! [padding:5px_12px]! [border-radius:var(--radius-sm)]! [border:1px_solid_var(--color-ink-200)]! [background:var(--color-white)]! [font-size:var(--text-sm)]! [font-weight:600]! [color:var(--color-ink-500)]! [cursor:pointer]! [transition:all_0.15s_ease]! hover:[color:var(--color-ink-900)]! hover:[border-color:var(--color-ink-300)]! [&.active]:[background:var(--color-brand-50)]! [&.active]:[color:var(--color-brand-800)]! [&.active]:[border-color:var(--color-brand-500)]! [&.active_.qa-status-pill-count]:[background:var(--color-brand-100)]! [&.active_.qa-status-pill-count]:[color:var(--color-brand-800)]! ${statusFilter === 'rejected' ? 'active' : ''}`}
                                         onClick={() => { setStatusFilter('rejected'); setOffset(0); }}
                                     >
                                         <span>Rejected</span>
@@ -186,7 +186,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                                 return (
                                                     <tr 
                                                         key={key} 
-                                                        className={`qa-tr ${isSelected ? 'selected' : ''}`}
+                                                        className={`hover:[background:rgba(248,_250,_252,_0.6)]! [&.selected]:[background:rgba(16,_185,_129,_0.04)]! ${isSelected ? 'selected' : ''}`}
                                                     >
                                                         <td className="[padding:14px_18px]! [font-size:var(--text-base)]! [color:var(--color-ink-700)]! [border-bottom:1px_solid_rgba(226,_232,_240,_0.6)]! [vertical-align:middle]">
                                                             <input
@@ -200,7 +200,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                                             {record.record_id || `REC-${record.id}`}
                                                         </td>
                                                         <td className="[padding:14px_18px]! [font-size:var(--text-base)]! [color:var(--color-ink-700)]! [border-bottom:1px_solid_rgba(226,_232,_240,_0.6)]! [vertical-align:middle]">
-                                                            <span className={`qa-scope-badge scope-${record.scope}`}>
+                                                            <span className={`[display:inline-flex]! [align-items:center]! [padding:3px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:600]! [&.scope-1]:[background:rgba(255,_102,_0,_0.12)]! [&.scope-1]:[color:var(--color-brand-700)]! [&.scope-1]:[border:1px_solid_rgba(255,_102,_0,_0.25)]! [&.scope-2]:[background:rgba(59,_130,_246,_0.12)]! [&.scope-2]:[color:var(--color-blue-600)]! [&.scope-2]:[border:1px_solid_rgba(59,_130,_246,_0.25)]! [&.scope-3]:[background:rgba(139,_92,_246,_0.12)]! [&.scope-3]:[color:#7c3aed]! [&.scope-3]:[border:1px_solid_rgba(139,_92,_246,_0.25)]! scope-${record.scope}`}>
                                                                 Scope {record.scope}
                                                             </span>
                                                         </td>
@@ -220,7 +220,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                                             {record.co2e != null ? Number(record.co2e).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}
                                                         </td>
                                                         <td className="[padding:14px_18px]! [font-size:var(--text-base)]! [color:var(--color-ink-700)]! [border-bottom:1px_solid_rgba(226,_232,_240,_0.6)]! [vertical-align:middle]">
-                                                            <span className={`qa-status-pill ${statusClass}`}>
+                                                            <span className={`[display:inline-flex]! [align-items:center]! [padding:3px_10px]! [border-radius:999px]! [font-size:var(--text-sm)]! [font-weight:700]! [&.pending]:[background:#fef3c7]! [&.pending]:[color:var(--color-amber-700)]! [&.pending]:[border:1px_solid_#fde68a]! [&.verified]:[background:#dcfce7]! [&.verified]:[color:#15803d]! [&.verified]:[border:1px_solid_#bbf7d0]! [&.rejected]:[background:#fee2e2]! [&.rejected]:[color:var(--color-red-700)]! [&.rejected]:[border:1px_solid_#fecaca]! ${statusClass}`}>
                                                                 {record.status || 'Pending Review'}
                                                             </span>
                                                         </td>

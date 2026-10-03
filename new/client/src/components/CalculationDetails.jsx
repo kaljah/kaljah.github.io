@@ -54,7 +54,7 @@ const CalculationDetails = ({ calculation, onClose }) => {
   const normStatus = (status || "Verified").toLowerCase();
 
   return (
-    <div className="calc-overlay" onClick={onClose} role="dialog" aria-modal="true">
+    <div className="calc-overlay [position:fixed] [top:0] [left:0] [right:0] [bottom:0] [background:rgba(15,_23,_42,_0.65)]! [backdrop-filter:blur(4px)] [-webkit-backdrop-filter:blur(4px)]! [display:flex]! [align-items:center] [justify-content:center] [z-index:9999] [padding:16px]! [animation:calcFadeIn_0.2s_cubic-bezier(0.16,_1,_0.3,_1)]!" onClick={onClose} role="dialog" aria-modal="true">
       <div className="calc-modal" onClick={(e) => e.stopPropagation()}>
         <div className="[display:flex]! [justify-content:space-between] [align-items:center] [padding:20px_24px]! [background:var(--color-ink-50)]! [border-bottom:1px_solid_var(--color-ink-200)]! [flex-shrink:0] [&_h3]:[margin:0]! [&_h3]:[font-size:var(--text-lg)]! [&_h3]:[font-weight:700]! [&_h3]:[color:var(--color-ink-900)]! [&_h3]:[letter-spacing:-0.02em]!">
           <div className="[display:flex]! [align-items:center] [gap:12px]">
@@ -68,7 +68,7 @@ const CalculationDetails = ({ calculation, onClose }) => {
               </p>
             </div>
           </div>
-          <button className="calc-close-btn" onClick={onClose} title="Close (Esc)">
+          <button className="calc-close-btn [background:var(--color-ink-100)]! [border:1px_solid_var(--color-ink-200)]! [color:var(--color-ink-500)]! [cursor:pointer] [width:36px]! [height:36px]! [display:flex]! [align-items:center] [justify-content:center] [border-radius:var(--radius-md)]! [font-size:var(--text-lg)]! [line-height:1] [transition:all_0.18s_ease]! hover:[background:#fee2e2]! hover:[color:var(--color-red-700)]! hover:[border-color:#fca5a5]! hover:[transform:scale(1.04)]" onClick={onClose} title="Close (Esc)">
             <X size={18} />
           </button>
         </div>

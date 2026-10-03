@@ -31,7 +31,7 @@ const SettingsOGMP20Framework = ({ defaultBaseYear, globalThreshold, handleSaveG
                     key={yr}
                     type="button"
                     disabled={!isAdmin}
-                    className={`btn-year-pill ${defaultBaseYear === yr ? "active" : ""}`}
+                    className={`[background:var(--bg-card,_var(--color-white))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [color:var(--text-primary,_var(--color-ink-900))]! [font-weight:600]! [font-size:var(--text-base)]! [padding:8px_16px]! [border-radius:var(--radius-md)]! [cursor:pointer]! [transition:all_0.2s_ease]! [box-shadow:var(--shadow-xs)]! hover:[border-color:var(--color-brand-400)]! hover:[background:rgba(255,_102,_0,_0.04)]! [&.active]:[background:var(--color-primary)]! [&.active]:[color:var(--color-white)]! [&.active]:[border-color:var(--color-brand-500)]! [&.active]:[box-shadow:0_4px_12px_rgba(255,_102,_0,_0.25)]! ${defaultBaseYear === yr ? "active" : ""}`}
                     onClick={() => setDefaultBaseYear(yr)}
                   >
                     {yr}

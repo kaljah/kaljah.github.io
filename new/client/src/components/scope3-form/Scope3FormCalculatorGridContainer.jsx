@@ -6,7 +6,7 @@ import { formatEmission, formatNumber } from "../../utils/formatters";
 
 // Extracted from Scope3Form.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const Scope3FormCalculatorGridContainer = ({ currentPage, entries, facilities, handleDelete, handleInspect, loadEntries, loadError, setCurrentPage, setShowWizard, totalPages }) => (
-<div className="calculator-grid-container mt-[30px]!">
+<div className="calculator-grid-container [background:white]! [border-radius:var(--radius-md)]! [overflow:hidden]! [box-shadow:var(--shadow-xs)]! mt-[30px]!">
         <div 
           className="table-controls flex! justify-between! items-center! p-[15px]!"
          

@@ -533,7 +533,7 @@ const ReferenceData = () => {
                                   {f.usage.map((u, uIdx) => (
                                     <span
                                       key={uIdx}
-                                      className={`usage-badge usage-${u.toLowerCase()}`}
+                                      className={`[display:inline-flex]! [padding:4px_10px]! [border-radius:var(--radius-md)]! [font-size:var(--text-xs)]! [font-weight:700]! [text-transform:uppercase]! usage-${u.toLowerCase()}`}
                                     >
                                       {u}
                                     </span>

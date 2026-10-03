@@ -169,14 +169,14 @@ function StepBar({ current }) {
         const SIcon  = s.IconComp;
         return (
           <React.Fragment key={s.id}>
-            <div className={`s1w-step ${active ? "active" : ""} ${done ? "done" : ""}`}>
+            <div className={`[display:flex]! [flex-direction:column]! [align-items:center]! [gap:5px]! [flex-shrink:0]! [&.active_.s1w-step-circle]:[border-color:var(--color-brand-500)]! [&.active_.s1w-step-circle]:[background:#fff7f0]! [&.active_.s1w-step-circle]:[color:var(--color-link)]! [&.done_.s1w-step-circle]:[border-color:var(--color-green-500)]! [&.done_.s1w-step-circle]:[background:var(--color-green-50)]! [&.done_.s1w-step-circle]:[color:var(--color-green-700)]! [&.active_.s1w-step-label]:[color:var(--color-link)]! [&.done_.s1w-step-label]:[color:var(--color-green-700)]! ${active ? "active" : ""} ${done ? "done" : ""}`}>
               <div className="s1w-step-circle [width:32px]! [height:32px]! [border-radius:50%]! [border:2px_solid_var(--color-ink-200)]! [background:var(--color-ink-50)]! [color:var(--color-ink-600)]! [display:flex]! [align-items:center] [justify-content:center] [transition:all_0.25s]! [&_svg]:[width:14px]! [&_svg]:[height:14px]!">
                 {done ? <Icon.Check /> : <SIcon />}
               </div>
               <span className="s1w-step-label [font-size:var(--text-xs)]! [font-weight:600]! [color:var(--color-ink-600)]! [white-space:nowrap] [text-transform:uppercase]! [letter-spacing:0.5px]">{s.label}</span>
             </div>
             {i < STEPS.length - 1 && (
-              <div className={`s1w-step-line ${done ? "done" : ""}`} />
+              <div className={`[height:2px]! [flex:1]! [background:var(--color-ink-200)]! [margin:0_4px]! [margin-bottom:20px]! [min-width:20px]! [transition:background_0.25s]! [&.done]:[background:var(--color-green-500)]! ${done ? "done" : ""}`} />
             )}
           </React.Fragment>
         );
@@ -189,7 +189,7 @@ function StepBar({ current }) {
 function MappingRow({ field, headers, value, onChange }) {
   const mapped = !!value;
   return (
-    <div className={`s1w-map-row ${!mapped && field.required ? "[background:#fff9f5]!" : ""} ${mapped ? "[background:#f0fdf4]!" : ""}`}>
+    <div className={`[display:grid]! [grid-template-columns:1fr_1fr_36px]! [align-items:center]! [padding:10px_16px]! [border-bottom:1px_solid_var(--color-ink-100)]! [transition:background_0.12s]! [gap:12px]! last:[border-bottom:none]! hover:[background:#fafaf9]! [@media(max-width:600px)]:[grid-template-columns:1fr]! ${!mapped && field.required ? "[background:#fff9f5]!" : ""} ${mapped ? "[background:#f0fdf4]!" : ""}`}>
       <div className="[display:flex]! [flex-direction:column] [gap:2px] [min-width:0]">
         <span className="[font-size:var(--text-sm)]! [font-weight:600]! [color:var(--color-ink-900)]! [display:flex]! [align-items:center] [gap:4px]">
           {field.label}
@@ -199,12 +199,12 @@ function MappingRow({ field, headers, value, onChange }) {
       </div>
       <div className="s1w-map-select-wrap">
         {headers.length > 0 ? (
-          <NativeSelect className={`s1w-map-select ${mapped ? "matched" : ""}`} value={value} onChange={e => onChange(e.target.value)}>
+          <NativeSelect className={`[width:100%]! [padding:7px_10px]! [border:1.5px_solid_var(--color-ink-200)]! [border-radius:var(--radius-sm)]! [background:var(--color-white)]! [font-size:var(--text-sm)]! [color:var(--color-ink-900)]! [outline:none]! [transition:border-color_0.15s]! [font-family:inherit]! focus:[border-color:var(--color-brand-500)]! focus:[box-shadow:0_0_0_2px_rgba(255,102,0,0.08)]! [&.matched]:[border-color:var(--color-green-500)]! [&.matched]:[background:#f0fdf4]! ${mapped ? "matched" : ""}`} value={value} onChange={e => onChange(e.target.value)}>
             <option value="">— Not mapped —</option>
             {headers.map(h => <option key={h} value={h}>{h}</option>)}
           </NativeSelect>
         ) : (
-          <input className={`s1w-map-input ${mapped ? "matched" : ""}`} placeholder="Column name in your file" value={value} onChange={e => onChange(e.target.value)} />
+          <input className={`[width:100%]! [padding:7px_10px]! [border:1.5px_solid_var(--color-ink-200)]! [border-radius:var(--radius-sm)]! [background:var(--color-white)]! [font-size:var(--text-sm)]! [color:var(--color-ink-900)]! [outline:none]! [transition:border-color_0.15s]! [font-family:inherit]! focus:[border-color:var(--color-brand-500)]! focus:[box-shadow:0_0_0_2px_rgba(255,102,0,0.08)]! [&.matched]:[border-color:var(--color-green-500)]! [&.matched]:[background:#f0fdf4]! ${mapped ? "matched" : ""}`} placeholder="Column name in your file" value={value} onChange={e => onChange(e.target.value)} />
         )}
       </div>
       <div className="[display:flex]! [justify-content:center]">
@@ -402,7 +402,7 @@ export default function Scope2ImportWizard({ onClose, onUploadSuccess }) {
               </div>
             )}
             <div role="button" tabIndex={0} onKeyDown={activateOnKey}
-              className={`s1w-dropzone ${isDragging ? "dragging" : ""}`}
+              className={`[border:2px_dashed_var(--color-ink-200)]! [border-radius:var(--radius-lg)]! [padding:40px_24px]! [display:flex]! [flex-direction:column]! [align-items:center]! [gap:10px]! [cursor:pointer]! [transition:all_0.2s]! [background:var(--color-ink-50)]! [text-align:center]! hover:[border-color:var(--color-brand-500)]! hover:[background:#fff7f0]! hover:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.08)]! [&.dragging]:[border-color:var(--color-brand-500)]! [&.dragging]:[background:#fff7f0]! [&.dragging]:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.08)]! ${isDragging ? "dragging" : ""}`}
               onClick={() => fileInputRef.current.click()}
               onDragOver={e => { e.preventDefault(); setIsDragging(true); }}
               onDragLeave={() => setIsDragging(false)}
@@ -524,7 +524,7 @@ export default function Scope2ImportWizard({ onClose, onUploadSuccess }) {
             <div className="[display:flex]! [align-items:center] [gap:10px]">
               {step === 1 && (
                 <button
-                  className="s1w-btn-primary"
+                  className="[display:flex]! [align-items:center] [gap:6px] [padding:9px_22px]! [background:var(--primary-gradient)]! [border:none]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:700]! [color:var(--color-white)]! [cursor:pointer] [transition:all_0.18s]! [box-shadow:0_2px_8px_rgba(255,_102,_0,_0.3)]! [font-family:inherit]! hover:[background:var(--primary-gradient)]! hover:[box-shadow:0_4px_12px_rgba(255,_102,_0,_0.4)]! hover:[transform:translateY(-1px)] disabled:[background:var(--color-ink-200)]! disabled:[color:var(--color-ink-400)]! disabled:[cursor:not-allowed] disabled:[box-shadow:none]! disabled:[transform:none] [&_svg]:[width:15px]! [&_svg]:[height:15px]!"
                   onClick={() => setStep(s => s + 1)}
                   disabled={!file}
                 >
@@ -533,7 +533,7 @@ export default function Scope2ImportWizard({ onClose, onUploadSuccess }) {
               )}
               {step === 2 && (
                 <button
-                  className="s1w-btn-primary"
+                  className="[display:flex]! [align-items:center] [gap:6px] [padding:9px_22px]! [background:var(--primary-gradient)]! [border:none]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:700]! [color:var(--color-white)]! [cursor:pointer] [transition:all_0.18s]! [box-shadow:0_2px_8px_rgba(255,_102,_0,_0.3)]! [font-family:inherit]! hover:[background:var(--primary-gradient)]! hover:[box-shadow:0_4px_12px_rgba(255,_102,_0,_0.4)]! hover:[transform:translateY(-1px)] disabled:[background:var(--color-ink-200)]! disabled:[color:var(--color-ink-400)]! disabled:[cursor:not-allowed] disabled:[box-shadow:none]! disabled:[transform:none] [&_svg]:[width:15px]! [&_svg]:[height:15px]!"
                   onClick={handleSubmit}
                   disabled={isSubmitting || (!canSubmit && headers.length > 0) || (!isAdmin && allowedRegions !== null && allowedRegions.length === 0)}
                 >

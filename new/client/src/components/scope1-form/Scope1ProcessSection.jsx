@@ -228,11 +228,11 @@ const Scope1ProcessSection = ({ activePresetId, currentProcessValue, dataSourceR
                                   <button
                                     key={preset.id}
                                     type="button"
-                                    className={`preset-chip ${activePresetId === preset.id ? "active" : ""}`}
+                                    className={`[display:flex]! [align-items:center]! [gap:6px]! [padding:4px_8px]! [border-radius:var(--radius-sm)]! [border:1px_solid_#e5e7eb]! [background:#f9fafb]! [font-size:var(--text-xs)]! [color:var(--color-ink-700)]! [cursor:pointer]! [transition:all_0.15s_ease]! hover:[background:#f3f4f6]! hover:[border-color:var(--color-ink-300)]! hover:[transform:translateY(-1px)]! [&.active]:[background:rgba(255,_102,_0,_0.08)]! [&.active]:[border-color:var(--accent-color,_var(--color-brand-500))]! [&.active]:[color:var(--color-link)]! [&.active]:[font-weight:600]! ${activePresetId === preset.id ? "active" : ""}`}
                                     onClick={() => handleApplyPreset(preset)}
                                     title={preset.description}
                                   >
-                                    {hideApiCitation(preset.citation) && <span className={`preset-citation-badge ${preset.citationType}`}>
+                                    {hideApiCitation(preset.citation) && <span className={`[padding:1px_4px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-xs)]! [font-weight:700]! [text-transform:uppercase]! [letter-spacing:0.02em]! [&.legal]:[background:#dbeafe]! [&.legal]:[color:#1e40af]! [&.standard]:[background:#fef3c7]! [&.standard]:[color:#92400e]! [&.api]:[background:#e0e7ff]! [&.api]:[color:#3730a3]! ${preset.citationType}`}>
                                       {hideApiCitation(preset.citation)}
                                     </span>}
                                     <span className="preset-name">{preset.shortLabel || preset.name}</span>

@@ -183,6 +183,70 @@ for (let changed = true; changed; ) {
 }
 
 const sources = Object.fromEntries([...jsxFiles, ...otherJs].map((f) => [f, fs.readFileSync(f, "utf8")]));
+
+// Route chunks only load the CSS their modules import. Moving a rule into a utility makes it global, so a class is
+// converted only when its CSS file is already loaded wherever the class is used.
+const resolveImport = (from, spec) => {
+  if (!spec.startsWith(".")) return null;
+  const base = path.join(path.dirname(from), spec);
+  for (const c of [base, `${base}.jsx`, `${base}.js`, `${base}.css`, path.join(base, "index.jsx"), path.join(base, "index.js")]) {
+    if (fs.existsSync(c) && fs.statSync(c).isFile()) return c;
+  }
+  return null;
+};
+const staticDeps = {};
+const dynamicRoots = new Set();
+for (const f of all.filter((x) => /\.(jsx?|mjs)$/.test(x))) {
+  const code = fs.readFileSync(f, "utf8");
+  const deps = new Set();
+  for (const m of code.matchAll(/(?:from|import)\s*["']([^"']+)["']/g)) {
+    const r = resolveImport(f, m[1]);
+    if (r) deps.add(r);
+  }
+  for (const m of code.matchAll(/import\(\s*["']([^"']+)["']\s*\)/g)) {
+    const r = resolveImport(f, m[1]);
+    if (r) dynamicRoots.add(r);
+  }
+  staticDeps[f] = deps;
+}
+const closure = (root) => {
+  const seen = new Set();
+  const stack = [root];
+  while (stack.length) {
+    const f = stack.pop();
+    if (seen.has(f)) continue;
+    seen.add(f);
+    for (const d of staticDeps[f] ?? []) stack.push(d);
+  }
+  return seen;
+};
+const shellRoot = path.join("src", "main.jsx");
+const shellClosure = closure(shellRoot);
+const rootClosures = new Map([[shellRoot, shellClosure]]);
+for (const r of dynamicRoots) if (!rootClosures.has(r)) rootClosures.set(r, closure(r));
+const cssAvailable = (cssFile, jsxFile) => {
+  for (const [root, cl] of rootClosures) {
+    if (!cl.has(jsxFile)) continue;
+    if (cl.has(cssFile) || shellClosure.has(cssFile)) continue;
+    return false;
+  }
+  return true;
+};
+for (const [name, e] of Object.entries(eligible)) {
+  const cssFilesOf = new Set(e.occurrences.map((o) => path.normalize(o.file)));
+  const re = tokenRe(name);
+  for (const [jf, text] of Object.entries(sources)) {
+    if (!re.test(text)) continue;
+    re.lastIndex = 0;
+    for (const cf of cssFilesOf) {
+      if (!cssAvailable(path.normalize(cf), path.normalize(jf))) {
+        delete eligible[name];
+        break;
+      }
+    }
+    if (!eligible[name]) break;
+  }
+}
 const cssDefined = new Set([...Object.keys(leadTotal), ...pinned]);
 
 // String pieces inside className attributes (literals, template quasis, ternaries, cn/clsx calls).
