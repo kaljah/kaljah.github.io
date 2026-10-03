@@ -346,6 +346,28 @@ const inlineStyleProps = (opening) => {
   return set;
 };
 
+// Class tokens written anywhere inside an AST node (string literals and template pieces).
+const tokensOfNode = (node, out = new Set()) => {
+  if (!node || typeof node !== "object") return out;
+  if (node.type === "StringLiteral") node.value.split(/\s+/).filter(Boolean).forEach((t) => out.add(t));
+  else if (node.type === "TemplateElement") node.value.raw.split(/\s+/).filter(Boolean).forEach((t) => out.add(t));
+  else for (const k of Object.keys(node)) if (k !== "loc" && k !== "start" && k !== "end") {
+    const v = node[k];
+    if (Array.isArray(v)) v.forEach((x) => tokensOfNode(x, out));
+    else if (v && typeof v === "object") tokensOfNode(v, out);
+  }
+  return out;
+};
+// Class tokens on an element and on all of its lexical JSX ancestors.
+const chainOf = (jsxElementPath) => {
+  const chain = new Set();
+  for (let el = jsxElementPath; el; el = el.parentPath) {
+    if (!el.isJSXElement()) continue;
+    const cn = el.node.openingElement.attributes.find((a) => a.type === "JSXAttribute" && a.name.name === "className");
+    if (cn) tokensOfNode(cn.value, chain);
+  }
+  return chain;
+};
 // String pieces inside className attributes (literals, template quasis, ternaries, cn/clsx calls).
 const classStrings = (ast) => {
   const nodes = [];
@@ -395,7 +417,9 @@ const classStrings = (ast) => {
         const before = nodes.length;
         collect(p.node.value);
         const inline = inlineStyleProps(p.parent);
+        const chain = chainOf(p.parentPath.parentPath);
         for (let i = before; i < nodes.length; i++) {
+          nodes[i].chain = chain;
           nodes[i].inline = inline;
           nodes[i].tag = p.parent.name?.name;
         }
@@ -590,12 +614,24 @@ const ruleApplies = (R, ctx) => {
     const tagOk = R.subj.tag === null || ctx.unknownTag || R.subj.tag === ctx.tag;
     const classesOk =
       ctx.unknownClasses || R.subj.classes.every((c) => ctx.tokens.has(c) || [...ctx.prefixes].some((pre) => c.startsWith(pre)));
-    const reach = R.simple || !R.lead ? true : ruleReaches(R, [ctx.file]);
+    let reach = true;
+    if (!R.simple && R.lead) {
+      const users = usersOf(R.lead).map((u) => path.normalize(u));
+      const closed = users.length === 1 && users[0] === path.normalize(ctx.file) && !impByFile[ctx.file]?.opaque.has(R.lead);
+      reach = closed && ctx.chain ? ctx.chain.has(R.lead) : ruleReaches(R, [ctx.file]);
+    }
     return tagOk && classesOk && reach;
   }
   const tagOk = R.subj.tag === null || (ctx.tTag === null ? ctx.possibleTagsUnknown || ctx.possibleTags.has(R.subj.tag) : R.subj.tag === ctx.tTag);
   const classesOk = ctx.possibleUnknown || R.subj.classes.every((c) => ctx.possible.has(c));
-  const reach = R.simple || !R.lead ? true : ruleReaches(R, ctx.files);
+  let reach = true;
+  if (!R.simple && R.lead) {
+    const uc = usersOf(ctx.self).map((u) => path.normalize(u));
+    const ul = usersOf(R.lead).map((u) => path.normalize(u));
+    const same = uc.length === 1 && ul.length === 1 && uc[0] === ul[0];
+    const rec = same ? impByFile[uc[0]] : null;
+    reach = rec && !rec.opaque.has(ctx.self) && !rec.opaque.has(R.lead) ? rec.chains.some((ch) => ch.has(ctx.self) && ch.has(R.lead)) : ruleReaches(R, ctx.files);
+  }
   return tagOk && classesOk && reach;
 };
 // Should the unlayered rule R beat the entry (higher specificity, or equal and later in the same file)?
@@ -667,7 +703,7 @@ const planEdits = (active) => {
     // Group the pieces of one className attribute: classes in any piece can meet on the same element.
     const groups = new Map();
     for (const s of strings) {
-      const g = groups.get(s.attr) ?? { tokens: new Set(), prefixes: new Set(), pieces: [], inline: s.inline, unknown: s.unknown, tag: s.tag };
+      const g = groups.get(s.attr) ?? { tokens: new Set(), prefixes: new Set(), pieces: [], inline: s.inline, unknown: s.unknown, tag: s.tag, chain: s.chain };
       const text = code.slice(s.start, s.end);
       text.split(/\s+/).filter(Boolean).forEach((t) => g.tokens.add(t));
       for (const m of text.matchAll(/([\w-]+-)[$][{]/g)) g.prefixes.add(m[1]);
@@ -733,6 +769,7 @@ const planEdits = (active) => {
               tokens: g.tokens,
               prefixes: g.prefixes,
               unknownClasses: g.unknown,
+              chain: g.chain,
               hasInline: g.inline === "all" ? null : g.inline.size > 0,
               pseudo: pseudoElementOf(en.selector),
               file,
@@ -835,7 +872,25 @@ for (const file of jsxFiles) {
   for (const { tokens } of groups.values()) {
     for (const a of tokens) for (const b of tokens) if (a !== b) (coOccur[a] ||= new Set()).add(b);
   }
-  const rec = (impByFile[file] = { cls: {}, tag: {}, tagCls: {}, tagUnknown: {}, clsTags: {} });
+  const rec = (impByFile[file] = { cls: {}, tag: {}, tagCls: {}, tagUnknown: {}, clsTags: {}, chains: [], opaque: new Set() });
+  traverse(ast, {
+    JSXElement(p) {
+      rec.chains.push(chainOf(p));
+      const cn = p.node.openingElement.attributes.find((a) => a.type === "JSXAttribute" && a.name.name === "className");
+      if (!cn) return;
+      let opaque = false;
+      p.traverse({
+        JSXOpeningElement(q) {
+          // a self-closing component (an icon) renders its own leaf DOM; one with children can hold anything
+          if (/^[A-Z]/.test(q.node.name.name ?? "") && !q.node.selfClosing) opaque = true;
+        },
+        Identifier(q) {
+          if (q.node.name === "children") opaque = true;
+        },
+      });
+      if (opaque) tokensOfNode(cn.value).forEach((t) => rec.opaque.add(t));
+    },
+  });
   for (const { tokens, tag, unknown } of groups.values()) {
     if (typeof tag !== "string" || !/^[a-z]/.test(tag)) continue;
     const set = (rec.tagCls[tag] ||= new Set());

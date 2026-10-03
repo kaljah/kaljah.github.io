@@ -201,24 +201,6 @@
   flex: 1;
 }
 
-.recon-select {
-  width: 100%;
-  background: var(--color-ink-50);
-  border: 1px solid var(--color-ink-200);
-  border-radius: var(--radius-md);
-  padding: 7px 10px;
-  font-size: var(--text-sm);
-  color: var(--color-ink-900);
-  outline: none;
-  cursor: pointer;
-  transition: border-color 0.2s;
-}
-
-.recon-select:focus {
-  border-color: var(--color-brand-500);
-  background: var(--color-white);
-}
-
 /* Severity Pills */
 
 .pill-btn {
