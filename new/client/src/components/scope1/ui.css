@@ -11,7 +11,19 @@
   padding: 24px 28px;
 }
 
+.s1-section + .s1-section {
+  border-top: 1px solid var(--s1-line);
+  margin-top: 20px;
+  padding-top: 20px;
+}
+
 /* fields */
+.s1-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--s1-min, 200px), 1fr));
+  gap: 14px 16px;
+  align-items: end;
+}
 .s1-form .input-group {
   margin: 0;
 }
@@ -45,11 +57,31 @@
 .s1-more {
   margin-top: 16px;
 }
+.s1-more-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  padding: 4px 0;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--s1-muted);
+  cursor: pointer;
+}
+.s1-more-toggle:hover {
+  color: var(--s1-ink);
+}
+.s1-more-chevron {
+  transition: transform 0.15s ease;
+  transform: rotate(-90deg);
+}
 .s1-more.open .s1-more-chevron {
   transform: rotate(0deg);
 }
 
 /* segmented control (also used to restyle the existing tier buttons) */
+.s1-seg,
 .s1-form .methodology-toggle {
   display: inline-flex;
   flex-wrap: wrap;
@@ -109,14 +141,35 @@
 }
 
 /* actions */
+.s1-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--s1-line);
+}
+.s1-actions .btn-add-draft,
+.s1-actions .btn-add-entry {
+  height: 44px;
+  border-radius: var(--radius-md);
+}
 
 @media (max-width: 600px) {
   .s1-form {
     padding: 18px 16px;
   }
+  .s1-actions {
+    flex-direction: column-reverse;
+  }
 }
 
 /* section 2: process, method and factor stacked full width */
+.s1-actions button {
+  height: 46px;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  margin: 0 !important;
+}
 
 /* process forms: fields flow in one responsive grid; blocks that are not a single field span the row */
 .s1-inputs > div[class$="-form"] {
@@ -130,6 +183,22 @@
 }
 .s1-inputs div[style*="grid-template-columns"]:not([style*="px"]) {
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
+}
+
+.s1-span-2 {
+  grid-column: span 2;
+}
+@media (max-width: 600px) {
+  .s1-span-2 {
+    grid-column: 1 / -1;
+  }
+  .s1-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .s1-actions button {
+    flex: none !important;
+    width: 100%;
+  }
 }
 
 /* always-visible sub-group inside a section (e.g. Source details) */
