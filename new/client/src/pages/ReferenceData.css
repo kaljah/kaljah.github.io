@@ -56,15 +56,6 @@
   color: var(--color-ink-800);
 }
 
-.usage-badge {
-  display: inline-flex;
-  padding: 4px 10px;
-  border-radius: var(--radius-md);
-  font-size: var(--text-xs);
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
 .usage-combustion {
   background: #fef3c7;
   color: #92400e;

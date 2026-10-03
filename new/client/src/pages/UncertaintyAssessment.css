@@ -27,63 +27,9 @@
 
 /* ── Inventory Summary Badge ── */
 
-.ua-inventory-value {
-  font-size: var(--text-2xl);
-  font-weight: 800;
-  line-height: 1.2;
-}
-
-.ua-inventory-value.level-low {
-  color: var(--color-green-700);
-}
-
-.ua-inventory-value.level-medium {
-  color: var(--color-amber-700);
-}
-
-.ua-inventory-value.level-high {
-  color: var(--color-red-700);
-}
-
 /* ── Confidence Badge ── */
 
 /* ── Tier Cards ── */
-
-.ua-tier-value {
-  font-size: var(--text-xl);
-  font-weight: 700;
-  margin: 8px 0;
-}
-
-.ua-tier-value.tier-3-color {
-  color: var(--color-ink-900);
-}
-
-.ua-tier-value.tier-2-color {
-  color: var(--color-ink-900);
-}
-
-.ua-tier-value.tier-1-color {
-  color: var(--color-ink-900);
-}
-
-.ua-tier-bar-fill {
-  height: 100%;
-  border-radius: var(--radius-sm);
-  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.ua-tier-bar-fill.tier-3-color {
-  background: var(--color-green-500);
-}
-
-.ua-tier-bar-fill.tier-2-color {
-  background: var(--color-blue-500);
-}
-
-.ua-tier-bar-fill.tier-1-color {
-  background: var(--color-amber-500);
-}
 
 /* ── Export Button ── */
 
@@ -126,18 +72,6 @@
 }
 
 /* ── Uncertainty Badges ── */
-
-.uncertainty-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 12px;
-  border-radius: 999px;
-  font-size: var(--text-sm);
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-}
 
 .uncertainty-low {
   background: rgba(16, 185, 129, 0.12);
@@ -188,20 +122,3 @@
 }
 
 /* Uncertainty bands share the same low/medium/high colors as the legend */
-.ua-tier-value.band-low,
-.ua-tier-value.band-medium,
-.ua-tier-value.band-high {
-  color: var(--color-ink-900);
-}
-
-.ua-tier-bar-fill.band-low {
-  background: var(--color-unc-low);
-}
-
-.ua-tier-bar-fill.band-medium {
-  background: var(--color-unc-medium);
-}
-
-.ua-tier-bar-fill.band-high {
-  background: var(--color-unc-high);
-}
