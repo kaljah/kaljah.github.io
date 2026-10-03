@@ -860,7 +860,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
       title={`Bulk Import: ${type === "sources" ? "Equipment" : type === "custom_factors" ? "Custom Factors" : "Activity Data"}`}
       maxWidth="700px"
     >
-      <div className="[display:flex]! [flex-direction:column] [gap:20px]">
+      <div className="import-modal-content">
         {step === 0 && type === "activity" && (
           <div className="upload-mode-selection p-[20px]!">
             <h3
@@ -1097,7 +1097,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
               </div>
             )}
             <div role="button" tabIndex={0} onKeyDown={activateOnKey}
-              className="[border:2px_dashed_rgba(16,_185,_129,_0.3)]! [border-radius:var(--radius-md)]! [padding:40px]! [text-align:center]! [background:rgba(16,_185,_129,_0.03)]! [cursor:pointer] [transition:all_0.3s_ease]! hover:[border-color:var(--color-green-500)]! hover:[background:rgba(16,_185,_129,_0.08)]!"
+              className="upload-zone"
               onClick={() => fileInputRef.current.click()}
             >
               <Upload
@@ -1117,7 +1117,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
               />
 
               <div role="button" tabIndex={0} onKeyDown={activateOnKey}
-                className="[margin-top:16px]! [display:flex]! [align-items:center] [gap:8px] [color:var(--color-green-700)]! [font-size:var(--text-base)]! [font-weight:500]! [padding:6px_12px]! [border:1px_dashed_var(--color-green-500)]! [border-radius:var(--radius-sm)]! [background:rgba(16,_185,_129,_0.05)]! [transition:all_0.2s_ease]! [cursor:pointer] hover:[background:rgba(16,_185,_129,_0.1)]! hover:[transform:translateY(-1px)]"
+                className="template-download"
                 onClick={(e) => {
                   e.stopPropagation();
                   downloadTemplate();
@@ -1129,7 +1129,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
               </div>
 
               <div role="button" tabIndex={0} onKeyDown={activateOnKey}
-                className="[margin-top:12px]! [display:flex]! [align-items:center] [gap:8px] [color:var(--text-secondary)]! [font-size:var(--text-sm)]! [cursor:pointer] [text-decoration:underline]! [opacity:0.8] hover:[opacity:1] hover:[color:var(--color-green-700)]!"
+                className="cheat-sheet-toggle"
                 onClick={(e) => {
                   e.stopPropagation();
                   setShowCheatSheet(!showCheatSheet);
@@ -1145,10 +1145,10 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
 
               {showCheatSheet && (
                 <div
-                  className="[margin-top:16px]! [background:#f3f4f6]! [border-radius:var(--radius-md)]! [padding:16px]! [text-align:left]! [display:flex]! [flex-direction:column] [gap:12px] [border:1px_solid_rgba(0,_0,_0,_0.05)]!"
+                  className="cheat-sheet-content"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <div className="[font-size:var(--text-sm)]! [&_strong]:[display:block]! [&_strong]:[margin-bottom:4px]! [&_strong]:[color:var(--text-primary)]! [&_ul]:[margin:0]! [&_ul]:[padding-left:20px]! [&_ul]:[color:var(--text-secondary)]!">
+                  <div className="cheat-section">
                     <strong>Activities &amp; Divisions:</strong>
                     <ul>
                       {Object.entries(HIERARCHY).map(([act, divs]) => (
@@ -1158,27 +1158,27 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                       ))}
                     </ul>
                   </div>
-                  <div className="[font-size:var(--text-sm)]! [&_strong]:[display:block]! [&_strong]:[margin-bottom:4px]! [&_strong]:[color:var(--text-primary)]! [&_ul]:[margin:0]! [&_ul]:[padding-left:20px]! [&_ul]:[color:var(--text-secondary)]!">
+                  <div className="cheat-section">
                     <strong>Process Types (Codes):</strong>
-                    <div className="[display:flex]! [flex-wrap:wrap] [gap:6px] [margin-top:4px]!">
+                    <div className="tag-cloud">
                       {Object.keys(PROCESS_TYPES).map((t) => (
-                        <span key={t} className="[background:white]! [padding:2px_8px]! [border-radius:var(--radius-sm)]! [border:1px_solid_rgba(0,_0,_0,_0.1)]! [font-family:monospace]! [font-size:var(--text-sm)]! [color:var(--sonatrach-orange)]!">
+                        <span key={t} className="id-tag">
                           {t}
                         </span>
                       ))}
                     </div>
                   </div>
-                  <div className="[font-size:var(--text-sm)]! [&_strong]:[display:block]! [&_strong]:[margin-bottom:4px]! [&_strong]:[color:var(--text-primary)]! [&_ul]:[margin:0]! [&_ul]:[padding-left:20px]! [&_ul]:[color:var(--text-secondary)]!">
+                  <div className="cheat-section">
                     <strong>Common Units:</strong>
-                    <div className="[display:flex]! [flex-wrap:wrap] [gap:6px] [margin-top:4px]!">
+                    <div className="tag-cloud">
                       {VALID_UNITS.map((u) => (
-                        <span key={u} className="[background:white]! [padding:2px_8px]! [border-radius:var(--radius-sm)]! [border:1px_solid_rgba(0,_0,_0,_0.1)]! [font-family:monospace]! [font-size:var(--text-sm)]! [color:var(--sonatrach-orange)]!">
+                        <span key={u} className="id-tag">
                           {u}
                         </span>
                       ))}
                     </div>
                   </div>
-                  <div className="[font-size:var(--text-sm)]! [&_strong]:[display:block]! [&_strong]:[margin-bottom:4px]! [&_strong]:[color:var(--text-primary)]! [&_ul]:[margin:0]! [&_ul]:[padding-left:20px]! [&_ul]:[color:var(--text-secondary)]!">
+                  <div className="cheat-section">
                     <strong>Engineering Params:</strong>
                     <ul className="text-[length:0.8rem]! opacity-[0.9]!">
                       <li>
@@ -1203,14 +1203,14 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
 
         {step === 2 && (
           <>
-            <div className="[display:flex]! [align-items:center] [justify-content:center] [gap:12px] [padding:12px]! [background:white]! [border-radius:var(--radius-md)]! [border:1px_solid_rgba(0,_0,_0,_0.1)]!">
+            <div className="file-info">
               <FileText size={20} className="text-[color:#2e7d32]!" />
               <span>
                 {file?.name} ({csvData.length} records detected)
               </span>
             </div>
 
-            <div className="[max-height:300px]! [overflow-y:auto]! [border:1px_solid_rgba(0,_0,_0,_0.05)]! [border-radius:var(--radius-md)]! [padding:16px]! [background:#f9fafb]!">
+            <div className="mapping-container">
               <h4
                 className="mb-[16px]! flex! items-center! gap-[8px]!"
               >
@@ -1224,7 +1224,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
               <div className="mapping-grid">
                 {currentTemplate.map((t) => (
                   <div key={t.id} className="mapping-row">
-                    <div className="[font-size:var(--text-base)]! [font-weight:600]! [color:var(--text-secondary)]!">
+                    <div className="mapping-label">
                       {t.label}{" "}
                       {t.required && (
                         <span className="text-[color:#b91c1c]!">*</span>
@@ -1256,7 +1256,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
               </div>
             </div>
 
-            <div className="[font-size:var(--text-sm)]! [color:var(--text-secondary)]! [display:flex]! [align-items:center] [gap:6px]">
+            <div className="import-tip">
               <Info size={14} />
               <span>
                 Make sure units (e.g. m3, bbl) and process types match the
@@ -1264,7 +1264,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
               </span>
             </div>
 
-            <div className="[display:flex]! [justify-content:flex-end] [gap:12px] [margin-top:20px]!">
+            <div className="import-actions">
               <button
                 className="action-btn bg-[color:var(--text-secondary)]!"
                
@@ -1300,7 +1300,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
           <>
             {!uploadJobId ? (
               <>
-                <div className="[display:flex]! [justify-content:space-between] [align-items:center] [margin-bottom:12px]! [&_h4]:[display:flex]! [&_h4]:[align-items:center]! [&_h4]:[gap:8px]! [&_h4]:[margin:0]!">
+                <div className="preview-header">
                   <h4>
                     <CheckCircle2
                       size={18}
@@ -1314,7 +1314,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                 </div>
 
                 {validationErrors.length > 0 && (
-                  <div className="[margin-top:16px]! [padding:12px]! [background:var(--color-red-50)]! [border:1px_solid_#fecaca]! [border-radius:var(--radius-sm)]! [color:var(--color-red-700)]! [font-size:var(--text-sm)]! [&_h5]:[margin:0_0_8px_0]! [&_h5]:[display:flex]! [&_h5]:[align-items:center]! [&_h5]:[gap:8px]! [&_ul]:[margin:0]! [&_ul]:[padding-left:20px]!">
+                  <div className="validation-error-box">
                     <h5>
                       <AlertCircle size={16} /> Validation Errors Found
                     </h5>
@@ -1332,8 +1332,8 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                   </div>
                 )}
 
-                <div className="[max-height:250px]! [overflow-y:auto]! [overflow-x:auto]! [border-radius:var(--radius-md)]! [border:1px_solid_rgba(0,_0,_0,_0.1)]!">
-                  <table className="[width:100%]! [border-collapse:collapse]! [font-size:var(--text-sm)]! [&_th]:[background:#f3f4f6]! [&_th]:[padding:8px]! [&_th]:[text-align:left]! [&_th]:[position:sticky]! [&_th]:[top:0]! [&_td]:[padding:8px]! [&_td]:[border-top:1px_solid_rgba(0,_0,_0,_0.05)]!">
+                <div className="preview-table-container">
+                  <table className="preview-table">
                     <thead>
                       <tr>
                         {currentTemplate.map((t) => (
@@ -1370,13 +1370,13 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                     </tbody>
                   </table>
                   {mappedRecords.length > 10 && (
-                    <div className="[text-align:center]! [padding:8px]! [font-size:var(--text-sm)]! [color:var(--text-secondary)]! [background:#f9fafb]! [border-top:1px_solid_rgba(0,_0,_0,_0.05)]!">
+                    <div className="preview-more">
                       Showing first 10 records...
                     </div>
                   )}
                 </div>
 
-                <div className="[display:flex]! [justify-content:flex-end] [gap:12px] [margin-top:20px]!">
+                <div className="import-actions">
                   <button
                     className="action-btn bg-[color:var(--text-secondary)]!"
                    
@@ -1398,26 +1398,26 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                 </div>
               </>
             ) : (
-              <div className="[width:100%]! [margin-top:16px]! [display:flex]! [flex-direction:column] [align-items:center] p-[20px]!">
+              <div className="progress-container p-[20px]!">
                 {uploadStatus ? (
                   <>
                     <div
                       className="flex! justify-between! w-full! mb-[8px]!"
                     >
-                      <span className="[font-size:var(--text-base)]! [font-weight:600]! [color:var(--text-primary)]!">
+                      <span className="progress-text">
                         {uploadStatus.status === "completed"
                           ? "Import Complete!"
                           : uploadStatus.status === "failed"
                             ? "Import Failed"
                             : "Processing..."}
                       </span>
-                      <span className="[font-size:var(--text-base)]! [font-weight:600]! [color:var(--text-primary)]!">
+                      <span className="progress-text">
                         {Math.round(uploadStatus.progress)}%
                       </span>
                     </div>
-                    <div className="[width:100%]! [height:12px]! [background:#e5e7eb]! [border-radius:var(--radius-sm)]! [overflow:hidden]! [margin-top:4px]!">
+                    <div className="progress-track">
                       <div
-                        className="[height:100%]! [border-radius:var(--radius-sm)]! [transition:width_0.3s_ease]!"
+                        className="progress-fill"
                         style={{
                           width: `${uploadStatus.progress}%`,
                           background:
@@ -1428,7 +1428,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                       ></div>
                     </div>
                     <div
-                      className="[font-size:var(--text-sm)]! [color:var(--text-secondary)]! mt-[8px]! text-center!"
+                      className="progress-details mt-[8px]! text-center!"
                      
                     >
                       Processed {uploadStatus.processed} of {uploadStatus.total}{" "}

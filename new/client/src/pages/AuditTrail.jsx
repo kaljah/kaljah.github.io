@@ -479,21 +479,21 @@ const AuditTrail = () => {
 
   return (
     <div className="audit-trail">
-      <div className="[max-width:1400px]! [margin:0_auto]! [padding:24px_28px]! [@media(max-width:768px)]:[padding:18px_16px]!">
+      <div className="audit-container">
         {/* Header Title & Actions */}
-        <div className="[display:flex]! [justify-content:space-between] [align-items:flex-start] [margin-bottom:24px]! [gap:20px] [flex-wrap:wrap] [@media(max-width:768px)]:[flex-direction:column]! [@media(max-width:768px)]:[align-items:stretch]!">
+        <div className="audit-page-header">
           <div>
-            <div className="[display:inline-flex]! [align-items:center] [gap:6px] [padding:4px_10px]! [background:rgba(255,_102,_0,_0.08)]! [border:1px_solid_rgba(255,_102,_0,_0.25)]! [border-radius:999px]! [color:var(--color-link)]! [font-size:var(--text-xs)]! [font-weight:700]! [text-transform:uppercase]! [letter-spacing:0.05em] [margin-bottom:8px]!">
+            <div className="audit-badge-tag">
               <Shield size={14} />
               <span>Immutable Compliance Log</span>
             </div>
             <h1 className="section-title">Audit Trail &amp; System Activity</h1>
-            <p className="[color:var(--text-secondary,_var(--color-ink-500))]! [font-size:var(--text-md)]! [margin:0]! [max-width:780px]! [line-height:1.5]">
+            <p className="section-subtitle">
               Comprehensive tamper-evident record of all emissions data, authentication, calculations, and administrative actions
             </p>
           </div>
 
-          <div className="[display:flex]! [align-items:center] [gap:12px] [@media(max-width:768px)]:[justify-content:space-between]">
+          <div className="audit-header-actions">
             <SegmentedControl
               label="Audit view"
               value={view}
@@ -504,7 +504,7 @@ const AuditTrail = () => {
               ]}
             />
             <button
-              className="[display:inline-flex]! [align-items:center] [gap:8px] [padding:9px_16px]! [background:var(--bg-card,_rgba(255,_255,_255,_0.85))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-md)]! [color:var(--text-secondary,_var(--color-ink-600))]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [transition:all_0.2s_ease]! [box-shadow:var(--shadow-xs)]! [&:hover:not(:disabled)]:[background:var(--bg-hover,_rgba(255,_247,_237,_0.9))]! [&:hover:not(:disabled)]:[border-color:var(--accent-color,_var(--color-brand-500))]! [&:hover:not(:disabled)]:[color:var(--color-link)]! [&:hover:not(:disabled)]:[transform:translateY(-1px)]!"
+              className="btn-refresh-main"
               onClick={() => {
                 fetchAuditLogs(true);
                 fetchStats();
@@ -513,14 +513,14 @@ const AuditTrail = () => {
               }}
               disabled={isRefreshing}
             >
-              <RefreshCw size={15} className={isRefreshing ? "[animation:spin_1s_linear_infinite]!" : ""} />
+              <RefreshCw size={15} className={isRefreshing ? "spin-animate" : ""} />
               <span>Refresh</span>
             </button>
 
             {/* Export Dropdown */}
-            <div className="[position:relative]" ref={exportMenuRef}>
+            <div className="export-dropdown-wrapper" ref={exportMenuRef}>
               <button
-                className="[display:inline-flex]! [align-items:center] [gap:8px] [padding:9px_18px]! [background:var(--primary-gradient)]! [border:none]! [border-radius:var(--radius-md)]! [color:var(--color-white)]! [font-size:var(--text-base)]! [font-weight:700]! [cursor:pointer] [box-shadow:0_2px_8px_rgba(255,_102,_0,_0.25)]! [transition:all_0.2s_ease]! hover:[filter:brightness(1.05)] hover:[transform:translateY(-1px)] hover:[box-shadow:0_4px_12px_rgba(255,_102,_0,_0.35)]!"
+                className="btn-export-main"
                 onClick={() => setExportDropdownOpen(!exportDropdownOpen)}
               >
                 <Download size={15} />
@@ -531,15 +531,15 @@ const AuditTrail = () => {
               {exportDropdownOpen && (
                 <div className="export-menu">
                   <button onClick={() => handleExport("csv")}>
-                    <FileSpreadsheet size={15} className="[margin-top:2px]! [flex-shrink:0] [color:var(--color-green-700)]!" />
-                    <div className="[display:flex]! [flex-direction:column] [&_strong]:[font-size:var(--text-base)]! [&_strong]:[color:var(--text-primary,_var(--color-ink-900))]! [&_span]:[font-size:var(--text-sm)]! [&_span]:[color:var(--text-secondary,_var(--color-ink-500))]! [&_span]:[margin-top:2px]!">
+                    <FileSpreadsheet size={15} className="export-icon csv-icon" />
+                    <div className="export-text">
                       <strong>CSV Spreadsheet</strong>
                       <span>Compliant with audit tools &amp; Excel</span>
                     </div>
                   </button>
                   <button onClick={() => handleExport("json")}>
-                    <FileText size={15} className="[margin-top:2px]! [flex-shrink:0] [color:var(--color-violet-700)]!" />
-                    <div className="[display:flex]! [flex-direction:column] [&_strong]:[font-size:var(--text-base)]! [&_strong]:[color:var(--text-primary,_var(--color-ink-900))]! [&_span]:[font-size:var(--text-sm)]! [&_span]:[color:var(--text-secondary,_var(--color-ink-500))]! [&_span]:[margin-top:2px]!">
+                    <FileText size={15} className="export-icon json-icon" />
+                    <div className="export-text">
                       <strong>JSON Structured Data</strong>
                       <span>Full metadata &amp; field diffs</span>
                     </div>
@@ -551,42 +551,42 @@ const AuditTrail = () => {
         </div>
 
         {/* KPI Metric Summary Cards */}
-        <div className="[display:grid]! [grid-template-columns:repeat(4,_1fr)] [gap:16px] [margin-bottom:24px]! [@media(max-width:1024px)]:[grid-template-columns:repeat(2,_1fr)]! [@media(max-width:768px)]:[grid-template-columns:1fr]!">
+        <div className="audit-stats-grid">
           <div className="stat-card">
-            <div className="[width:44px]! [height:44px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center]! [justify-content:center]! [flex-shrink:0]! [&.total-events]:[background:rgba(99,_102,_241,_0.12)]! [&.total-events]:[color:#6366f1]! [&.logins]:[background:rgba(14,_165,_233,_0.12)]! [&.logins]:[color:#0ea5e9]! [&.data-changes]:[background:rgba(16,_185,_129,_0.12)]! [&.data-changes]:[color:var(--color-green-700)]! [&.security-events]:[background:rgba(245,_158,_11,_0.12)]! [&.security-events]:[color:var(--color-amber-700)]! total-events">
+            <div className="stat-icon-box total-events">
               <Activity size={20} />
             </div>
-            <div className="[display:flex]! [flex-direction:column]">
+            <div className="stat-content">
               <span className="stat-label">Total Events Logged</span>
               <span className="stat-value">{stats.totalEvents.toLocaleString()}</span>
             </div>
           </div>
 
           <div className="stat-card">
-            <div className="[width:44px]! [height:44px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center]! [justify-content:center]! [flex-shrink:0]! [&.total-events]:[background:rgba(99,_102,_241,_0.12)]! [&.total-events]:[color:#6366f1]! [&.logins]:[background:rgba(14,_165,_233,_0.12)]! [&.logins]:[color:#0ea5e9]! [&.data-changes]:[background:rgba(16,_185,_129,_0.12)]! [&.data-changes]:[color:var(--color-green-700)]! [&.security-events]:[background:rgba(245,_158,_11,_0.12)]! [&.security-events]:[color:var(--color-amber-700)]! logins">
+            <div className="stat-icon-box logins">
               <LogIn size={20} />
             </div>
-            <div className="[display:flex]! [flex-direction:column]">
+            <div className="stat-content">
               <span className="stat-label">User Logins</span>
               <span className="stat-value">{stats.totalLogins.toLocaleString()}</span>
             </div>
           </div>
 
           <div className="stat-card">
-            <div className="[width:44px]! [height:44px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center]! [justify-content:center]! [flex-shrink:0]! [&.total-events]:[background:rgba(99,_102,_241,_0.12)]! [&.total-events]:[color:#6366f1]! [&.logins]:[background:rgba(14,_165,_233,_0.12)]! [&.logins]:[color:#0ea5e9]! [&.data-changes]:[background:rgba(16,_185,_129,_0.12)]! [&.data-changes]:[color:var(--color-green-700)]! [&.security-events]:[background:rgba(245,_158,_11,_0.12)]! [&.security-events]:[color:var(--color-amber-700)]! data-changes">
+            <div className="stat-icon-box data-changes">
               <Database size={20} />
             </div>
-            <div className="[display:flex]! [flex-direction:column]">
+            <div className="stat-content">
               <span className="stat-label">Data Changes</span>
               <span className="stat-value">{stats.dataMutations.toLocaleString()}</span>
             </div>
           </div>
 
           <div className="stat-card">
-            <div className="[width:44px]! [height:44px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center]! [justify-content:center]! [flex-shrink:0]! [&.total-events]:[background:rgba(99,_102,_241,_0.12)]! [&.total-events]:[color:#6366f1]! [&.logins]:[background:rgba(14,_165,_233,_0.12)]! [&.logins]:[color:#0ea5e9]! [&.data-changes]:[background:rgba(16,_185,_129,_0.12)]! [&.data-changes]:[color:var(--color-green-700)]! [&.security-events]:[background:rgba(245,_158,_11,_0.12)]! [&.security-events]:[color:var(--color-amber-700)]! security-events">
+            <div className="stat-icon-box security-events">
               <ShieldAlert size={20} />
             </div>
-            <div className="[display:flex]! [flex-direction:column]">
+            <div className="stat-content">
               <span className="stat-label">Security &amp; Alerts</span>
               <span className="stat-value">{stats.securityAlerts.toLocaleString()}</span>
             </div>
@@ -619,11 +619,11 @@ const AuditTrail = () => {
 
         {/* Main Content Area */}
         {loading ? (
-          <div className="[display:flex]! [flex-direction:column] [gap:16px]">
+          <div className="audit-loading-skeleton">
             {[1, 2, 3, 4].map((i) => (
               <div key={i} className="skeleton-card">
-                <div className="[width:40px]! [height:40px]! [background:var(--color-ink-100)]! [border-radius:var(--radius-md)]! [flex-shrink:0] [animation:pulse_1.5s_infinite]!" />
-                <div className="[flex:1] [display:flex]! [flex-direction:column] [gap:10px]">
+                <div className="skeleton-icon" />
+                <div className="skeleton-text">
                   <div className="skeleton-line w-40" />
                   <div className="skeleton-line w-80" />
                   <div className="skeleton-line w-20" />
@@ -632,8 +632,8 @@ const AuditTrail = () => {
             ))}
           </div>
         ) : auditLogs.length === 0 ? (
-          <div className="[text-align:center]! [padding:60px_30px]! [background:var(--bg-card,_var(--color-white))]! [border:2px_dashed_var(--color-ink-300)]! [border-radius:var(--radius-lg)]! [color:var(--color-ink-500)]! [margin-top:10px]! [&_h3]:[font-size:var(--text-lg)]! [&_h3]:[font-weight:700]! [&_h3]:[color:var(--text-primary,_var(--color-ink-900))]! [&_h3]:[margin:0_0_6px_0]! [&_p]:[font-size:var(--text-base)]! [&_p]:[color:var(--color-ink-500)]! [&_p]:[max-width:460px]! [&_p]:[margin:0_auto_18px_auto]!">
-            <div className="[width:64px]! [height:64px]! [background:var(--color-ink-100)]! [border-radius:50%]! [display:flex]! [align-items:center] [justify-content:center] [margin:0_auto_16px_auto]! [color:var(--color-ink-600)]!">
+          <div className="audit-empty-state">
+            <div className="empty-icon-circle">
               <Filter size={32} />
             </div>
             <h3>No audit records found</h3>
@@ -643,7 +643,7 @@ const AuditTrail = () => {
                 : "No compliance audit records have been generated yet."}
             </p>
             {hasActiveFilters && (
-              <button className="[padding:8px_16px]! [background:var(--color-primary)]! [border:none]! [border-radius:var(--radius-md)]! [color:var(--color-white)]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [transition:opacity_0.2s_ease]! hover:[opacity:0.9]" onClick={resetFilters}>
+              <button className="btn-clear-empty" onClick={resetFilters}>
                 Clear All Filters
               </button>
             )}
@@ -672,13 +672,13 @@ const AuditTrail = () => {
 
         {/* Pagination Bar */}
         {totalRecords > 0 && (
-          <div className="[display:flex]! [justify-content:space-between] [align-items:center] [margin-top:30px]! [padding:16px_20px]! [background:var(--bg-card,_var(--color-white))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-lg)]! [box-shadow:var(--shadow-card)]! [flex-wrap:wrap] [gap:16px] [@media(max-width:768px)]:[flex-direction:column]! [@media(max-width:768px)]:[align-items:stretch]! [@media(max-width:768px)]:[text-align:center]!">
-            <div className="[font-size:var(--text-base)]! [color:var(--text-secondary,_var(--color-ink-500))]!">
+          <div className="audit-pagination-bar">
+            <div className="pagination-info">
               Page <strong>{page}</strong> of <strong>{totalPages}</strong> ({totalRecords} total events)
             </div>
 
             <div className="pagination-controls">
-              <div className="[display:flex]! [align-items:center] [gap:8px] [font-size:var(--text-sm)]! [color:var(--text-secondary,_var(--color-ink-500))]! [&_select]:[background:var(--color-white)]! [&_select]:[border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&_select]:[border-radius:var(--radius-sm)]! [&_select]:[padding:5px_8px]! [&_select]:[font-size:var(--text-sm)]! [&_select]:[color:var(--text-primary,_var(--color-ink-900))]! [&_select]:[cursor:pointer]! [&_select]:[outline:none]!">
+              <div className="page-size-selector">
                 <label>Rows:</label>
                 <NativeSelect
                   value={limit}
@@ -693,9 +693,9 @@ const AuditTrail = () => {
                 </NativeSelect>
               </div>
 
-              <div className="[display:flex]! [align-items:center] [gap:10px]">
+              <div className="pagination-buttons">
                 <button
-                  className="[display:inline-flex]! [align-items:center] [gap:6px] [padding:6px_12px]! [background:var(--color-white)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-md)]! [font-size:var(--text-sm)]! [font-weight:600]! [color:var(--text-primary,_var(--color-ink-900))]! [cursor:pointer] [transition:all_0.15s_ease]! [&:hover:not(:disabled)]:[border-color:var(--accent-color,_var(--color-brand-500))]! [&:hover:not(:disabled)]:[color:var(--color-link)]! [&:hover:not(:disabled)]:[background:var(--bg-hover,_rgba(255,_247,_237,_0.5))]! disabled:[opacity:0.4] disabled:[cursor:not-allowed]"
+                  className="btn-page-nav"
                   disabled={page <= 1}
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   title="Previous Page"
@@ -704,12 +704,12 @@ const AuditTrail = () => {
                   <span>Prev</span>
                 </button>
 
-                <span className="[font-size:var(--text-sm)]! [font-weight:600]! [color:var(--color-ink-600)]! [min-width:44px] [text-align:center]!">
+                <span className="page-indicator">
                   {page} / {totalPages}
                 </span>
 
                 <button
-                  className="[display:inline-flex]! [align-items:center] [gap:6px] [padding:6px_12px]! [background:var(--color-white)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-md)]! [font-size:var(--text-sm)]! [font-weight:600]! [color:var(--text-primary,_var(--color-ink-900))]! [cursor:pointer] [transition:all_0.15s_ease]! [&:hover:not(:disabled)]:[border-color:var(--accent-color,_var(--color-brand-500))]! [&:hover:not(:disabled)]:[color:var(--color-link)]! [&:hover:not(:disabled)]:[background:var(--bg-hover,_rgba(255,_247,_237,_0.5))]! disabled:[opacity:0.4] disabled:[cursor:not-allowed]"
+                  className="btn-page-nav"
                   disabled={page >= totalPages}
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   title="Next Page"

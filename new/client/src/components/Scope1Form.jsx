@@ -1895,11 +1895,11 @@ const Scope1Form = () => {
   return (
     <div className="scope-form">
       <div className="calc-panel s1-form">
-        <h2 className="[font-size:var(--text-md)]! [font-weight:700]! [color:var(--s1-ink)]! [margin:0_0_18px]!">New entry</h2>
+        <h2 className="s1-form-title">New entry</h2>
 
         <Section n={1} title="Identity & Location">
           <FieldGrid min={180}>
-            <div className="input-group [grid-column:span_2]! [@media(max-width:600px)]:[grid-column:1_/_-1]!">
+            <div className="input-group s1-span-2">
               <label>Region</label>
               <CustomDropdown
                 options={getFacilityOptions()}
@@ -1931,10 +1931,10 @@ const Scope1Form = () => {
 </Field>
           </FieldGrid>
           {(activity || division || field) && (
-            <div className="[margin-top:6px]! [font-size:var(--text-sm)]! [color:var(--s1-muted)]!">{[activity, division, field].filter(Boolean).join(" · ")}</div>
+            <div className="s1-meta">{[activity, division, field].filter(Boolean).join(" · ")}</div>
           )}
-          <div className="[margin-top:16px]!">
-            <div className="[font-size:var(--text-sm)]! [font-weight:600]! [color:var(--s1-muted)]! [text-transform:uppercase]! [letter-spacing:0.04em] [margin-bottom:10px]!">Source details</div>
+          <div className="s1-subgroup">
+            <div className="s1-subhead">Source details</div>
             <FieldGrid>
               <div className="input-group">
                 <label>Emission source</label>
@@ -2007,7 +2007,7 @@ const Scope1Form = () => {
         userUncertainty={userUncertainty}
       />
 
-        <div className="[display:flex]! [gap:10px] [margin-top:24px]! [padding-top:20px]! [border-top:1px_solid_var(--s1-line)]! [&_.btn-add-draft]:[height:44px]! [&_.btn-add-draft]:[border-radius:var(--radius-md)]! [&_.btn-add-entry]:[height:44px]! [&_.btn-add-entry]:[border-radius:var(--radius-md)]! [@media(max-width:600px)]:[flex-direction:column-reverse]! [&_button]:[height:46px]! [&_button]:[padding-top:0]! [&_button]:[padding-bottom:0]! [&_button]:[margin:0]! [@media(max-width:600px)]:[&_button]:[flex:none]! [@media(max-width:600px)]:[&_button]:[width:100%]!">
+        <div className="s1-actions">
           <button
             className="btn-add-draft"
             disabled={submitting}

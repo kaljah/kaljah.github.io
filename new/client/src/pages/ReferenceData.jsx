@@ -360,13 +360,13 @@ const ReferenceData = () => {
         description={
           <>
             Centralized repository for emission factors, global warming potentials (GWPs), unit conversions, and data
-            quality tiers. Custom regional factors tagged with <Star size={14} className="[color:var(--color-amber-700)]! [display:inline-block]! [vertical-align:middle] [margin-left:4px]! inline" aria-hidden="true" />{" "}
+            quality tiers. Custom regional factors tagged with <Star size={14} className="custom-star inline" aria-hidden="true" />{" "}
             override global defaults.
           </>
         }
       />
 
-      <div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.78))]! [backdrop-filter:blur(14px)] [-webkit-backdrop-filter:blur(14px)]! [padding:20px_24px]! [border-radius:var(--radius-lg)]! [margin-bottom:28px]! [box-shadow:var(--shadow-card)]! [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))]! [display:flex]! [gap:16px] [align-items:center]">
+      <div className="search-bar-container">
         <div className="search-input-wrapper">
           <Search
             className="search-icon"
@@ -381,14 +381,14 @@ const ReferenceData = () => {
           />
           <input
             type="text"
-            className="[width:100%]! [padding:11px_16px_11px_42px]! [background:rgba(255,_255,_255,_0.85)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-md)]! [font-size:var(--text-md)]! [color:var(--text-primary,_var(--color-ink-900))]! [outline:none]! [transition:all_0.2s_ease]! focus:[border-color:var(--accent-color,_var(--color-brand-500))]! focus:[box-shadow:0_0_0_3px_rgba(255,_102,_0,_0.15)]!"
+            className="search-input-field"
             placeholder="Search by name, fuel type, code, or value..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
         <NativeSelect
-          className="[padding:11px_18px]! [background:rgba(255,_255,_255,_0.85)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [min-width:200px] [color:var(--text-primary,_var(--color-ink-900))]! [outline:none]! [cursor:pointer] [transition:all_0.2s_ease]! focus:[border-color:var(--accent-color,_var(--color-brand-500))]! focus:[box-shadow:0_0_0_3px_rgba(255,_102,_0,_0.15)]!"
+          className="filter-select"
           aria-label="Filter by category"
           value={categoryFilter}
           onChange={(e) => setCategoryFilter(e.target.value)}
@@ -440,7 +440,7 @@ const ReferenceData = () => {
                   {cat.icon}
                   {cat.title}
                   <span
-                    className="[background:var(--color-primary)]! [color:white]! [padding:3px_10px]! [border-radius:999px]! [font-size:var(--text-sm)]! [font-weight:700]! bg-[color:var(--color-ink-100)]! text-[color:var(--color-ink-800)]!"
+                    className="count-badge bg-[color:var(--color-ink-100)]! text-[color:var(--color-ink-800)]!"
                    
                   >
                     {cat.isStatic
@@ -456,8 +456,8 @@ const ReferenceData = () => {
               </div>
 
               {!collapsed[key] && (
-                <div className="[width:100%]! [overflow-x:auto]!">
-                  <table className="[width:100%]! [border-collapse:collapse]! [&_thead]:[background:var(--color-ink-50)]! [&_thead]:[border-bottom:2px_solid_var(--color-ink-100)]! [&_th]:[padding:16px_24px]! [&_th]:[text-align:left]! [&_th]:[font-weight:700]! [&_th]:[color:var(--color-ink-600)]! [&_th]:[font-size:var(--text-sm)]! [&_th]:[text-transform:uppercase]! [&_th]:[letter-spacing:0.05em]! [&_td]:[padding:16px_24px]! [&_td]:[border-bottom:1px_solid_var(--color-ink-100)]! [&_td]:[font-size:var(--text-base)]! [&_td]:[color:var(--color-ink-700)]! [&_tr:hover_td]:[background:#fdfdfd]!">
+                <div className="factors-table-container">
+                  <table className="factors-table">
                     <thead>
                       <tr>
                         {cat.isStatic ? (
@@ -510,7 +510,7 @@ const ReferenceData = () => {
                               <td className="factor-name">
                                 {f.name}
                                 {f.isCustom && (
-                                  <Star size={14} className="[color:var(--color-amber-700)]! [display:inline-block]! [vertical-align:middle] [margin-left:4px]!" />
+                                  <Star size={14} className="custom-star" />
                                 )}
                               </td>
                               {key !== "equipment" ? (

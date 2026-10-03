@@ -73,15 +73,15 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
           </div>
 
           {/* Horizontal 4-KPI Grid */}
-          <div className="[display:grid]! [grid-template-columns:repeat(4,_1fr)] [gap:20px] [@media(max-width:1200px)]:[grid-template-columns:repeat(2,_1fr)]! [@media(max-width:768px)]:[grid-template-columns:1fr]!">
+          <div className="kpi-grid-4">
             <div className="kpi-card">
-              <div className="[display:flex]! [align-items:center] [gap:12px] [margin-bottom:16px]!">
-                <div className="[&.scope1]:[background:rgba(37,_99,_235,_0.1)]! [&.scope1]:[color:var(--accent-secondary)]! [&.scope3]:[background:rgba(139,_92,_246,_0.1)]! [&.scope3]:[color:var(--color-violet-700)]! [width:38px]! [height:38px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center]! [justify-content:center]! [flex-shrink:0]! [&.co2]:[background:rgba(255,_102,_0,_0.1)]! [&.co2]:[color:var(--color-link)]! [&.ch4]:[background:rgba(37,_99,_235,_0.1)]! [&.ch4]:[color:var(--accent-secondary)]! [&.flare]:[background:rgba(234,_88,_12,_0.1)]! [&.flare]:[color:var(--accent-tertiary)]! ch4">
+              <div className="kpi-header">
+                <div className="kpi-icon ch4">
                   <Wind size={20} />
                 </div>
                 <span className="kpi-label">Methane Intensity (Avg)</span>
               </div>
-              <div className="[display:flex]! [align-items:baseline] [gap:8px]">
+              <div className="kpi-value-container">
                 <span className="total-value ch4">
                   {(stats.avgCh4Intensity ?? 0).toFixed(4)}
                 </span>
@@ -96,16 +96,16 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
             </div>
 
             <div className="kpi-card">
-              <div className="[display:flex]! [align-items:center] [gap:12px] [margin-bottom:16px]!">
+              <div className="kpi-header">
                 <div
-                  className="[&.scope1]:[background:rgba(37,_99,_235,_0.1)]! [&.scope1]:[color:var(--accent-secondary)]! [&.scope3]:[background:rgba(139,_92,_246,_0.1)]! [&.scope3]:[color:var(--color-violet-700)]! [width:38px]! [height:38px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [flex-shrink:0] [&.co2]:[background:rgba(255,_102,_0,_0.1)]! [&.co2]:[color:var(--color-link)]! [&.ch4]:[background:rgba(37,_99,_235,_0.1)]! [&.ch4]:[color:var(--accent-secondary)]! [&.flare]:[background:rgba(234,_88,_12,_0.1)]! [&.flare]:[color:var(--accent-tertiary)]! loss bg-[color:rgba(59,_130,_246,_0.1)]! text-[color:#1d4ed8]!"
+                  className="kpi-icon loss bg-[color:rgba(59,_130,_246,_0.1)]! text-[color:#1d4ed8]!"
                  
                 >
                   <Compass size={20} />
                 </div>
                 <span className="kpi-label">Methane Loss Rate</span>
               </div>
-              <div className="[display:flex]! [align-items:baseline] [gap:8px]">
+              <div className="kpi-value-container">
                 <span
                   className="total-value"
                   style={{
@@ -235,13 +235,13 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
             </div>
 
             <div className="kpi-card">
-              <div className="[display:flex]! [align-items:center] [gap:12px] [margin-bottom:16px]!">
-                <div className="[&.scope1]:[background:rgba(37,_99,_235,_0.1)]! [&.scope1]:[color:var(--accent-secondary)]! [&.scope3]:[background:rgba(139,_92,_246,_0.1)]! [&.scope3]:[color:var(--color-violet-700)]! [width:38px]! [height:38px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center]! [justify-content:center]! [flex-shrink:0]! [&.co2]:[background:rgba(255,_102,_0,_0.1)]! [&.co2]:[color:var(--color-link)]! [&.ch4]:[background:rgba(37,_99,_235,_0.1)]! [&.ch4]:[color:var(--accent-secondary)]! [&.flare]:[background:rgba(234,_88,_12,_0.1)]! [&.flare]:[color:var(--accent-tertiary)]! flare">
+              <div className="kpi-header">
+                <div className="kpi-icon flare">
                   <Flame size={20} />
                 </div>
                 <span className="kpi-label">Gas Flaring Rate</span>
               </div>
-              <div className="[display:flex]! [align-items:baseline] [gap:8px]">
+              <div className="kpi-value-container">
                 <span className="total-value flare">
                   {(stats.avgFlaringRatePct ?? 0).toFixed(3)}%
                 </span>
@@ -258,16 +258,16 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
             </div>
 
             <div className="kpi-card">
-              <div className="[display:flex]! [align-items:center] [gap:12px] [margin-bottom:16px]!">
+              <div className="kpi-header">
                 <div
-                  className="[&.scope1]:[background:rgba(37,_99,_235,_0.1)]! [&.scope1]:[color:var(--accent-secondary)]! [&.scope3]:[background:rgba(139,_92,_246,_0.1)]! [&.scope3]:[color:var(--color-violet-700)]! [width:38px]! [height:38px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [flex-shrink:0] [&.co2]:[background:rgba(255,_102,_0,_0.1)]! [&.co2]:[color:var(--color-link)]! [&.ch4]:[background:rgba(37,_99,_235,_0.1)]! [&.ch4]:[color:var(--accent-secondary)]! [&.flare]:[background:rgba(234,_88,_12,_0.1)]! [&.flare]:[color:var(--accent-tertiary)]! wec bg-[color:rgba(239,_68,_68,_0.1)]! text-[color:#b91c1c]!"
+                  className="kpi-icon wec bg-[color:rgba(239,_68,_68,_0.1)]! text-[color:#b91c1c]!"
                  
                 >
                   <AlertTriangle size={20} />
                 </div>
                 <span className="kpi-label">EPA WEC Liability</span>
               </div>
-              <div className="[display:flex]! [align-items:baseline] [gap:8px]">
+              <div className="kpi-value-container">
                 <span
                   className="total-value"
                   style={{

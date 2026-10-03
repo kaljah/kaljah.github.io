@@ -40,13 +40,13 @@ class ErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="[min-height:100vh] [display:flex]! [align-items:center] [justify-content:center] [padding:20px]! [background:linear-gradient(135deg,_var(--color-ink-900)_0%,_var(--color-ink-800)_100%)]!">
-          <div className="[background:rgba(255,_255,_255,_0.05)]! [backdrop-filter:blur(20px)] [border:1px_solid_rgba(255,_255,_255,_0.1)]! [border-radius:var(--radius-lg)]! [padding:40px]! [max-width:600px]! [width:100%]! [text-align:center]! [box-shadow:var(--shadow-raised)]! [@media(max-width:768px)]:[padding:30px_20px]!">
-            <div className="[color:var(--color-red-700)]! [margin-bottom:24px]! [animation:pulse_2s_ease-in-out_infinite]!">
+        <div className="error-boundary-container">
+          <div className="error-boundary-card">
+            <div className="error-icon">
               <CircleAlert size="64" strokeWidth="2" aria-hidden="true" />
             </div>
 
-            <h1 className="[font-size:var(--text-2xl)]! [font-weight:700]! [color:var(--text-primary)]! [margin:0_0_16px_0]! [@media(max-width:768px)]:[font-size:var(--text-xl)]!">Something went wrong</h1>
+            <h1 className="error-title">Something went wrong</h1>
             <p className="error-message">
               We're sorry, but an unexpected error occurred. Please try
               reloading the page or contact support if the problem persists.
@@ -54,9 +54,9 @@ class ErrorBoundary extends React.Component {
 
             {Boolean(import.meta.env?.DEV) &&
               this.state.error && (
-                <details className="[background:rgba(0,_0,_0,_0.3)]! [border:1px_solid_rgba(255,_255,_255,_0.1)]! [border-radius:var(--radius-md)]! [padding:16px]! [margin-bottom:24px]! [text-align:left]! [&_summary]:[cursor:pointer]! [&_summary]:[font-weight:600]! [&_summary]:[color:var(--color-amber-700)]! [&_summary]:[margin-bottom:12px]! [&_summary]:[user-select:none]! [&_summary:hover]:[color:#fbbf24]!">
+                <details className="error-details">
                   <summary>Error Details (Development Only)</summary>
-                  <div className="[margin-top:12px]! [font-size:var(--text-base)]! [color:rgba(255,_255,_255,_0.7)]! [&_strong]:[color:var(--color-red-700)]! [&_pre]:[background:rgba(0,_0,_0,_0.4)]! [&_pre]:[padding:12px]! [&_pre]:[border-radius:var(--radius-sm)]! [&_pre]:[overflow-x:auto]! [&_pre]:[margin-top:8px]! [&_pre]:[font-size:var(--text-sm)]! [&_pre]:[line-height:1.5]! [&_pre]:[white-space:pre-wrap]! [&_pre]:[word-wrap:break-word]!">
+                  <div className="error-stack">
                     <p>
                       <strong>Error:</strong> {this.state.error.toString()}
                     </p>
@@ -67,7 +67,7 @@ class ErrorBoundary extends React.Component {
                 </details>
               )}
 
-            <div className="[display:flex]! [gap:12px] [justify-content:center] [margin-bottom:24px]! [@media(max-width:768px)]:[flex-direction:column]">
+            <div className="error-actions">
               <button className="error-btn primary" onClick={this.handleReload}>
                 <svg
                   width="16"
@@ -89,7 +89,7 @@ class ErrorBoundary extends React.Component {
               </button>
             </div>
 
-            <div className="[padding-top:24px]! [border-top:1px_solid_rgba(255,_255,_255,_0.1)]! [font-size:var(--text-base)]! [color:var(--text-secondary)]! [&_a]:[color:var(--color-green-700)]! [&_a]:[text-decoration:none]! [&_a:hover]:[text-decoration:underline]!">
+            <div className="error-footer">
               <p>
                 Need help? Contact support at{" "}
                 <a href="mailto:support@example.com">support@example.com</a>

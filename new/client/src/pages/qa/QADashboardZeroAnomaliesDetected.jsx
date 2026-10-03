@@ -3,16 +3,16 @@ import { AlertTriangle, Check, CheckCircle, ChevronLeft, ChevronRight, Search, X
 
 // Extracted from QADashboard.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, currentPage, data, filteredRecords, handleBulkResolve, handleSingleResolve, offset, resolving, returned_count, searchQuery, selectedIds, setOffset, setSearchQuery, setSelectedIds, setStatusFilter, statusFilter, toggleSelect, toggleSelectAll, totalPages, total_flagged_count }) => (
-<div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.9))]! [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))]! [border-radius:var(--radius-lg)]! [box-shadow:var(--shadow-card,_0_4px_20px_-2px_rgba(15,_23,_42,_0.05))]! [overflow:hidden]! [display:flex]! [flex-direction:column]">
+<div className="qa-panel-card">
                         {/* Table Toolbar */}
-                        <div className="[padding:18px_24px]! [border-bottom:1px_solid_rgba(226,_232,_240,_0.8)]! [display:flex]! [justify-content:space-between] [align-items:center] [flex-wrap:wrap] [gap:14px] [background:rgba(248,_250,_252,_0.4)]!">
+                        <div className="qa-table-toolbar">
                             <div className="flex! gap-[12px]! items-center! flex-wrap!">
                                 {/* Search Box */}
-                                <div className="[position:relative] [display:flex]! [align-items:center] [min-width:240px] [&_svg]:[position:absolute]! [&_svg]:[left:12px]! [&_svg]:[color:var(--color-ink-600)]!">
+                                <div className="qa-search-box">
                                     <Search size={14} />
                                     <input
                                         type="text"
-                                        className="[width:100%]! [padding:8px_12px_8px_36px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--color-ink-200)]! [font-size:var(--text-base)]! [background:var(--color-white)]! [color:var(--color-ink-900)]! [outline:none]! [transition:border-color_0.2s_ease]! focus:[border-color:var(--accent-color,_var(--color-brand-500))]!"
+                                        className="qa-search-input"
                                         placeholder="Search by ID, process, or reason…"
                                         value={searchQuery}
                                         onChange={e => setSearchQuery(e.target.value)}
@@ -20,7 +20,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                 </div>
 
                                 {/* Status Filters */}
-                                <div className="[display:flex]! [gap:6px] [align-items:center]">
+                                <div className="qa-status-filters">
                                     <button
                                         aria-pressed={statusFilter === 'all'}
                                         className={`qa-status-filter-btn ${statusFilter === 'all' ? 'active' : ''}`}
@@ -28,7 +28,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                     >
                                         <span>All Statuses</span>
                                         {anomaliesSummary.all > 0 && (
-                                            <span className="qa-status-pill-count [display:inline-flex]! [align-items:center] [justify-content:center] [padding:1px_6px]! [border-radius:var(--radius-md)]! [font-size:var(--text-xs)]! [font-weight:700]! [background:var(--color-ink-100)]! [color:var(--color-ink-600)]! [line-height:1.2]">{anomaliesSummary.all}</span>
+                                            <span className="qa-status-pill-count">{anomaliesSummary.all}</span>
                                         )}
                                     </button>
                                     <button
@@ -38,7 +38,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                     >
                                         <span>Pending Review</span>
                                         {anomaliesSummary.pending > 0 && (
-                                            <span className="qa-status-pill-count [display:inline-flex]! [align-items:center] [justify-content:center] [padding:1px_6px]! [border-radius:var(--radius-md)]! [font-size:var(--text-xs)]! [font-weight:700]! [background:var(--color-ink-100)]! [color:var(--color-ink-600)]! [line-height:1.2]">{anomaliesSummary.pending}</span>
+                                            <span className="qa-status-pill-count">{anomaliesSummary.pending}</span>
                                         )}
                                     </button>
                                     <button
@@ -48,7 +48,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                     >
                                         <span>Verified</span>
                                         {anomaliesSummary.verified > 0 && (
-                                            <span className="qa-status-pill-count [display:inline-flex]! [align-items:center] [justify-content:center] [padding:1px_6px]! [border-radius:var(--radius-md)]! [font-size:var(--text-xs)]! [font-weight:700]! [background:var(--color-ink-100)]! [color:var(--color-ink-600)]! [line-height:1.2]">{anomaliesSummary.verified}</span>
+                                            <span className="qa-status-pill-count">{anomaliesSummary.verified}</span>
                                         )}
                                     </button>
                                     <button
@@ -58,7 +58,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                     >
                                         <span>Rejected</span>
                                         {anomaliesSummary.rejected > 0 && (
-                                            <span className="qa-status-pill-count [display:inline-flex]! [align-items:center] [justify-content:center] [padding:1px_6px]! [border-radius:var(--radius-md)]! [font-size:var(--text-xs)]! [font-weight:700]! [background:var(--color-ink-100)]! [color:var(--color-ink-600)]! [line-height:1.2]">{anomaliesSummary.rejected}</span>
+                                            <span className="qa-status-pill-count">{anomaliesSummary.rejected}</span>
                                         )}
                                     </button>
                                 </div>
@@ -66,12 +66,12 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
 
                             {/* Bulk Action Controls (When items selected) */}
                             {selectedIds.size > 0 ? (
-                                <div className="[display:flex]! [align-items:center] [gap:12px] [background:rgba(255,_247,_237,_0.9)]! [padding:8px_16px]! [border-radius:var(--radius-md)]! [border:1px_solid_rgba(255,_102,_0,_0.25)]!">
+                                <div className="qa-bulk-actions-bar">
                                     <span className="text-[length:0.82rem]! text-[color:#9a3412]! font-semibold!">
                                         {selectedIds.size} record{selectedIds.size > 1 ? 's' : ''} selected
                                     </span>
                                     <button
-                                        className="[padding:4px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:600]! [cursor:pointer]! [transition:all_0.15s_ease]! [border:1px_solid_transparent]! [background:rgba(16,_185,_129,_0.1)]! [color:var(--color-green-700)]! [border-color:rgba(16,_185,_129,_0.25)]! hover:[background:var(--color-green-700)]! hover:[color:var(--color-white)]! p-[6px_12px]! text-[length:0.8rem]!"
+                                        className="qa-btn-inline qa-btn-approve p-[6px_12px]! text-[length:0.8rem]!"
                                        
                                         onClick={() => handleBulkResolve('Verified')}
                                         disabled={resolving}
@@ -80,7 +80,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                         {resolving ? '…' : 'Approve Selected'}
                                     </button>
                                     <button
-                                        className="[padding:4px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:600]! [cursor:pointer]! [transition:all_0.15s_ease]! [border:1px_solid_transparent]! [background:rgba(239,_68,_68,_0.1)]! [color:var(--color-red-700)]! [border-color:rgba(239,_68,_68,_0.25)]! hover:[background:var(--color-red-700)]! hover:[color:var(--color-white)]! p-[6px_12px]! text-[length:0.8rem]!"
+                                        className="qa-btn-inline qa-btn-reject p-[6px_12px]! text-[length:0.8rem]!"
                                        
                                         onClick={() => handleBulkResolve('Rejected')}
                                         disabled={resolving}
@@ -151,11 +151,11 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                             </div>
                         ) : (
                             <>
-                                <div className="[overflow-x:auto]! [width:100%]!">
-                                    <table className="[width:100%]! [border-collapse:collapse]! [text-align:left]!">
+                                <div className="qa-table-container">
+                                    <table className="qa-table">
                                         <thead>
                                             <tr>
-                                                <th className="[padding:14px_18px]! [font-size:var(--text-xs)]! [text-transform:uppercase]! [letter-spacing:0.06em] [font-weight:700]! [color:var(--color-ink-500)]! [border-bottom:1px_solid_rgba(226,_232,_240,_0.8)]! [background:rgba(248,_250,_252,_0.7)]! [white-space:nowrap] w-[40px]!">
+                                                <th className="qa-th w-[40px]!">
                                                     <input
                                                         type="checkbox"
                                                         aria-label="Select all records"
@@ -166,14 +166,14 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                                         onChange={() => toggleSelectAll(filteredRecords)}
                                                     />
                                                 </th>
-                                                <th className="[padding:14px_18px]! [font-size:var(--text-xs)]! [text-transform:uppercase]! [letter-spacing:0.06em] [font-weight:700]! [color:var(--color-ink-500)]! [border-bottom:1px_solid_rgba(226,_232,_240,_0.8)]! [background:rgba(248,_250,_252,_0.7)]! [white-space:nowrap]">Record ID</th>
-                                                <th className="[padding:14px_18px]! [font-size:var(--text-xs)]! [text-transform:uppercase]! [letter-spacing:0.06em] [font-weight:700]! [color:var(--color-ink-500)]! [border-bottom:1px_solid_rgba(226,_232,_240,_0.8)]! [background:rgba(248,_250,_252,_0.7)]! [white-space:nowrap]">Scope</th>
-                                                <th className="[padding:14px_18px]! [font-size:var(--text-xs)]! [text-transform:uppercase]! [letter-spacing:0.06em] [font-weight:700]! [color:var(--color-ink-500)]! [border-bottom:1px_solid_rgba(226,_232,_240,_0.8)]! [background:rgba(248,_250,_252,_0.7)]! [white-space:nowrap]">Period</th>
-                                                <th className="[padding:14px_18px]! [font-size:var(--text-xs)]! [text-transform:uppercase]! [letter-spacing:0.06em] [font-weight:700]! [color:var(--color-ink-500)]! [border-bottom:1px_solid_rgba(226,_232,_240,_0.8)]! [background:rgba(248,_250,_252,_0.7)]! [white-space:nowrap]">Process / Source</th>
-                                                <th className="[padding:14px_18px]! [font-size:var(--text-xs)]! [text-transform:uppercase]! [letter-spacing:0.06em] [font-weight:700]! [color:var(--color-ink-500)]! [border-bottom:1px_solid_rgba(226,_232,_240,_0.8)]! [background:rgba(248,_250,_252,_0.7)]! [white-space:nowrap]">QA Flag Reason</th>
-                                                <th className="[padding:14px_18px]! [font-size:var(--text-xs)]! [text-transform:uppercase]! [letter-spacing:0.06em] [font-weight:700]! [color:var(--color-ink-500)]! [border-bottom:1px_solid_rgba(226,_232,_240,_0.8)]! [background:rgba(248,_250,_252,_0.7)]! [white-space:nowrap]">Emissions (tCO₂e)</th>
-                                                <th className="[padding:14px_18px]! [font-size:var(--text-xs)]! [text-transform:uppercase]! [letter-spacing:0.06em] [font-weight:700]! [color:var(--color-ink-500)]! [border-bottom:1px_solid_rgba(226,_232,_240,_0.8)]! [background:rgba(248,_250,_252,_0.7)]! [white-space:nowrap]">Status</th>
-                                                <th className="[padding:14px_18px]! [font-size:var(--text-xs)]! [text-transform:uppercase]! [letter-spacing:0.06em] [font-weight:700]! [color:var(--color-ink-500)]! [border-bottom:1px_solid_rgba(226,_232,_240,_0.8)]! [background:rgba(248,_250,_252,_0.7)]! [white-space:nowrap] text-right!">Actions</th>
+                                                <th className="qa-th">Record ID</th>
+                                                <th className="qa-th">Scope</th>
+                                                <th className="qa-th">Period</th>
+                                                <th className="qa-th">Process / Source</th>
+                                                <th className="qa-th">QA Flag Reason</th>
+                                                <th className="qa-th">Emissions (tCO₂e)</th>
+                                                <th className="qa-th">Status</th>
+                                                <th className="qa-th text-right!">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -188,7 +188,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                                         key={key} 
                                                         className={`qa-tr ${isSelected ? 'selected' : ''}`}
                                                     >
-                                                        <td className="[padding:14px_18px]! [font-size:var(--text-base)]! [color:var(--color-ink-700)]! [border-bottom:1px_solid_rgba(226,_232,_240,_0.6)]! [vertical-align:middle]">
+                                                        <td className="qa-td">
                                                             <input
                                                                 type="checkbox"
                                                                 aria-label={`Select record ${record.id}`}
@@ -196,38 +196,38 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                                                 onChange={() => toggleSelect(record.scope, record.id)}
                                                             />
                                                         </td>
-                                                        <td className="[padding:14px_18px]! [font-size:var(--text-base)]! [color:var(--color-ink-700)]! [border-bottom:1px_solid_rgba(226,_232,_240,_0.6)]! [vertical-align:middle] font-mono! font-semibold! text-[color:#0f172a]!">
+                                                        <td className="qa-td font-mono! font-semibold! text-[color:#0f172a]!">
                                                             {record.record_id || `REC-${record.id}`}
                                                         </td>
-                                                        <td className="[padding:14px_18px]! [font-size:var(--text-base)]! [color:var(--color-ink-700)]! [border-bottom:1px_solid_rgba(226,_232,_240,_0.6)]! [vertical-align:middle]">
+                                                        <td className="qa-td">
                                                             <span className={`qa-scope-badge scope-${record.scope}`}>
                                                                 Scope {record.scope}
                                                             </span>
                                                         </td>
-                                                        <td className="[padding:14px_18px]! [font-size:var(--text-base)]! [color:var(--color-ink-700)]! [border-bottom:1px_solid_rgba(226,_232,_240,_0.6)]! [vertical-align:middle] text-[color:#475569]!">
+                                                        <td className="qa-td text-[color:#475569]!">
                                                             {record.year || '—'} {record.month ? `/ M${record.month}` : ''}
                                                         </td>
-                                                        <td className="[padding:14px_18px]! [font-size:var(--text-base)]! [color:var(--color-ink-700)]! [border-bottom:1px_solid_rgba(226,_232,_240,_0.6)]! [vertical-align:middle] font-medium! text-[color:#1e293b]!">
+                                                        <td className="qa-td font-medium! text-[color:#1e293b]!">
                                                             {record.process_type || '—'}
                                                         </td>
-                                                        <td className="[padding:14px_18px]! [font-size:var(--text-base)]! [color:var(--color-ink-700)]! [border-bottom:1px_solid_rgba(226,_232,_240,_0.6)]! [vertical-align:middle]">
-                                                            <span className="[display:inline-flex]! [align-items:center] [gap:6px] [padding:4px_10px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:500]! [background:var(--color-amber-50)]! [color:var(--color-amber-700)]! [border:1px_solid_#fef3c7]!">
+                                                        <td className="qa-td">
+                                                            <span className="qa-flag-badge">
                                                                 <AlertTriangle size={13} />
                                                                 {record.qa_flag}
                                                             </span>
                                                         </td>
-                                                        <td className="[padding:14px_18px]! [font-size:var(--text-base)]! [color:var(--color-ink-700)]! [border-bottom:1px_solid_rgba(226,_232,_240,_0.6)]! [vertical-align:middle] font-mono! font-bold! text-[color:#0f172a]!">
+                                                        <td className="qa-td font-mono! font-bold! text-[color:#0f172a]!">
                                                             {record.co2e != null ? Number(record.co2e).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}
                                                         </td>
-                                                        <td className="[padding:14px_18px]! [font-size:var(--text-base)]! [color:var(--color-ink-700)]! [border-bottom:1px_solid_rgba(226,_232,_240,_0.6)]! [vertical-align:middle]">
+                                                        <td className="qa-td">
                                                             <span className={`qa-status-pill ${statusClass}`}>
                                                                 {record.status || 'Pending Review'}
                                                             </span>
                                                         </td>
-                                                        <td className="[padding:14px_18px]! [font-size:var(--text-base)]! [color:var(--color-ink-700)]! [border-bottom:1px_solid_rgba(226,_232,_240,_0.6)]! [vertical-align:middle] text-right!">
+                                                        <td className="qa-td text-right!">
                                                             <div className="inline-flex! gap-[6px]!">
                                                                 <button
-                                                                    className="[padding:4px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:600]! [cursor:pointer]! [transition:all_0.15s_ease]! [border:1px_solid_transparent]! [background:rgba(16,_185,_129,_0.1)]! [color:var(--color-green-700)]! [border-color:rgba(16,_185,_129,_0.25)]! hover:[background:var(--color-green-700)]! hover:[color:var(--color-white)]!"
+                                                                    className="qa-btn-inline qa-btn-approve"
                                                                     onClick={() => handleSingleResolve(record.scope, record.id, 'Verified')}
                                                                     disabled={resolving}
                                                                     title="Approve / Mark Verified"
@@ -235,7 +235,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                                                     <Check size={13} />
                                                                 </button>
                                                                 <button
-                                                                    className="[padding:4px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:600]! [cursor:pointer]! [transition:all_0.15s_ease]! [border:1px_solid_transparent]! [background:rgba(239,_68,_68,_0.1)]! [color:var(--color-red-700)]! [border-color:rgba(239,_68,_68,_0.25)]! hover:[background:var(--color-red-700)]! hover:[color:var(--color-white)]!"
+                                                                    className="qa-btn-inline qa-btn-reject"
                                                                     onClick={() => handleSingleResolve(record.scope, record.id, 'Rejected')}
                                                                     disabled={resolving}
                                                                     title="Reject / Outlier"

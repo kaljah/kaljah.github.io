@@ -1,3 +1,8 @@
+.csv-uploader-entry {
+  display: inline-flex;
+  align-items: center;
+}
+
 /* Modal Overlay */
 
 /* Main Modal Card */

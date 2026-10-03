@@ -110,6 +110,16 @@ const simpleOccurrence = (sel, rule) => {
   const body = /^\s/.test(rest) && !/^[>+~]/.test(t) ? `&_${t}` : `&${t}`;
   return { name: m[1], prefix: `${media}[${body}]:`, generic: true };
 };
+const propsOf = {};
+const noteProps = (sel, rule) => {
+  const m = sel.trim().match(/^\.(-?[_a-zA-Z][\w-]*)(.*)$/s);
+  if (!m || /^[\s>+~]/.test(m[2])) return;
+  const set = (propsOf[m[1]] ||= new Set());
+  rule.walkDecls((d) => set.add(baseProp(d.prop)));
+};
+for (const f of all.filter((x) => x.endsWith(".css") && !cssFiles.includes(x))) {
+  postcss.parse(fs.readFileSync(f, "utf8")).walkRules((r) => r.selectors.forEach((sel) => noteProps(sel, r)));
+}
 const leadTotal = {};
 for (const f of cssFiles) {
   const root = postcss.parse(fs.readFileSync(f, "utf8"));
@@ -118,6 +128,7 @@ for (const f of cssFiles) {
   root.walkRules((r) => {
     if (r.parent?.type === "atrule" && /keyframes$/.test(r.parent.name)) return;
     for (const sel of r.selectors) {
+      noteProps(sel, r);
       noteMentions(sel, (c) => {
         leadTotal[c] = (leadTotal[c] || 0) + 1;
         const so = simpleOccurrence(sel, r);
@@ -162,7 +173,7 @@ for (const [name, list] of Object.entries(occ)) {
     return e.prefix + ((overrides || e.generic) && !e.util.endsWith("!") ? `${e.util}!` : e.util);
   });
   if (tokenRe(name).test(testText) || tokenRe(name).test(indexHtml)) pinned.add(name);
-  eligible[name] = { occurrences: list, utils, keys: new Set(entries.map((e) => e.prefix + baseProp(e.prop))) };
+  eligible[name] = { occurrences: list, utils, keys: new Set(entries.map((e) => e.prefix + baseProp(e.prop))), props: new Set(entries.map((e) => baseProp(e.prop))) };
 }
 
 // A class that is a non-leading part of any selector that stays in the CSS keeps its rules there
@@ -252,14 +263,15 @@ const cssDefined = new Set([...Object.keys(leadTotal), ...pinned]);
 // String pieces inside className attributes (literals, template quasis, ternaries, cn/clsx calls).
 const classStrings = (ast) => {
   const nodes = [];
+  let attrId = 0;
   const collect = (node) => {
     if (!node) return;
     switch (node.type) {
       case "StringLiteral":
-        nodes.push({ start: node.start + 1, end: node.end - 1, dynamic: false });
+        nodes.push({ start: node.start + 1, end: node.end - 1, dynamic: false, attr: attrId });
         break;
       case "TemplateLiteral":
-        node.quasis.forEach((q, qi) => nodes.push({ start: q.start, end: q.end, dynamic: true, first: qi === 0, last: qi === node.quasis.length - 1 }));
+        node.quasis.forEach((q, qi) => nodes.push({ start: q.start, end: q.end, dynamic: true, attr: attrId, first: qi === 0, last: qi === node.quasis.length - 1 }));
         node.expressions.forEach(collect);
         break;
       case "JSXExpressionContainer":
@@ -282,12 +294,66 @@ const classStrings = (ast) => {
   };
   traverse(ast, {
     JSXAttribute(p) {
-      if (p.node.name.name === "className") collect(p.node.value);
+      if (p.node.name.name === "className") {
+        attrId++;
+        collect(p.node.value);
+      }
     },
   });
   return nodes;
 };
 
+
+// Base CSS properties a plain Tailwind class (or an existing arbitrary-property class) sets, to catch ordering clashes.
+const twProps = (token) => {
+  let t = token.replace(/!$/, "");
+  const arb = t.match(/\[([a-z-]+):[^\]]*\]$/);
+  if (arb) return new Set([baseProp(arb[1])]);
+  t = t.replace(/^(?:[a-z-]+:)+/, "").replace(/^!/, "");
+  const out = new Set();
+  const rules = [
+    [/^-?m[trblxyse]?-/, "margin"],
+    [/^p[trblxyse]?-/, "padding"],
+    [/^gap(-[xy])?-/, "gap"],
+    [/^(w|min-w|max-w)-/, "width"],
+    [/^(min-w|max-w)-/, "min"],
+    [/^(min-w|max-w)-/, "max"],
+    [/^(h|min-h|max-h)-/, "height"],
+    [/^size-/, "width"],
+    [/^size-/, "height"],
+    [/^text-(xs|sm|base|md|lg|xl|[2-9]xl)$/, "font"],
+    [/^text-(left|center|right|justify|start|end)$/, "text"],
+    [/^font-/, "font"],
+    [/^leading-/, "line"],
+    [/^tracking-/, "letter"],
+    [/^bg-/, "background"],
+    [/^border/, "border"],
+    [/^rounded/, "border"],
+    [/^(flex|inline-flex)$/, "display"],
+    [/^(grid|inline-grid|block|inline-block|inline|hidden|contents|table)$/, "display"],
+    [/^flex-/, "flex"],
+    [/^grid-/, "grid"],
+    [/^(grow|shrink)/, "flex"],
+    [/^items-/, "align"],
+    [/^self-/, "align"],
+    [/^justify-/, "justify"],
+    [/^shadow/, "box"],
+    [/^opacity-/, "opacity"],
+    [/^overflow-/, "overflow"],
+    [/^truncate$/, "overflow"],
+    [/^(relative|absolute|fixed|sticky)$/, "position"],
+    [/^(top|left|right|bottom|inset)-/, "top"],
+    [/^z-/, "z"],
+    [/^cursor-/, "cursor"],
+    [/^(transition|duration|ease)/, "transition"],
+    [/^whitespace-/, "white"],
+    [/^(uppercase|lowercase|capitalize|underline|no-underline)$/, "text"],
+  ];
+  for (const [re, prop] of rules) if (re.test(t)) out.add(prop);
+  if (/^text-/.test(t) && !out.size) out.add("color");
+  return out;
+};
+const cssClassList = Object.keys(propsOf);
 const planEdits = (active) => {
   const edits = {};
   const replaced = {};
@@ -300,32 +366,57 @@ const planEdits = (active) => {
     } catch {
       continue;
     }
-    for (const s of classStrings(ast)) {
+    const strings = classStrings(ast);
+    // Group the pieces of one className attribute: classes in any piece can meet on the same element.
+    const groups = new Map();
+    for (const s of strings) {
+      const g = groups.get(s.attr) ?? { tokens: new Set(), prefixes: new Set(), pieces: [] };
       const text = code.slice(s.start, s.end);
-      const tokens = text.split(/(\s+)/);
-      const stillLegacy = tokens.some((t) => t.trim() && cssDefined.has(t) && !active[t]);
+      text.split(/\s+/).filter(Boolean).forEach((t) => g.tokens.add(t));
+      for (const m of text.matchAll(/([\w-]+-)[$][{]/g)) g.prefixes.add(m[1]);
+      g.pieces.push(s);
+      groups.set(s.attr, g);
+    }
+    for (const g of groups.values()) {
+      // Classes that stay in the CSS may still override a converted class by source order (same specificity).
+      const others = new Set([...g.tokens].filter((t) => cssDefined.has(t) && !active[t]));
+      for (const pre of g.prefixes) for (const c of cssClassList) if (c.startsWith(pre) && !active[c]) others.add(c);
+      const otherProps = new Set();
+      for (const o of others) propsOf[o]?.forEach((pp) => otherProps.add(pp));
+      for (const t of g.tokens) if (!active[t] && !cssDefined.has(t)) twProps(t).forEach((pp) => otherProps.add(pp));
       const seenKeys = new Map();
-      let changed = false;
-      const out = tokens.map((t, i) => {
+      for (const t of g.tokens) {
         const e = active[t];
-        if (!e) return t;
-        // first/last token of a template quasi may continue into a ${...} placeholder
-        if (s.dynamic && ((i === 0 && !s.first && !/^\s/.test(text)) || (i === tokens.length - 1 && !s.last && !/\s$/.test(text)))) return t;
-        if (e.utils.some((u) => u.includes("'")) && code[s.start - 1] === "'") return t;
-        for (const k of e.keys) {
-          if (seenKeys.has(k) && seenKeys.get(k) !== t) {
-            conflicts.add(t);
-            conflicts.add(seenKeys.get(k));
+        if (!e) continue;
+        const myProps = e.props;
+        if ([...myProps].some((pp) => otherProps.has(pp))) conflicts.add(t);
+      }
+      for (const s of g.pieces) {
+        const text = code.slice(s.start, s.end);
+        const tokens = text.split(/(\s+)/);
+        const stillLegacy = others.size > 0;
+        let changed = false;
+        const out = tokens.map((t, i) => {
+          const e = active[t];
+          if (!e) return t;
+          // first/last token of a template quasi may continue into a ${...} placeholder
+          if (s.dynamic && ((i === 0 && !s.first && !/^\s/.test(text)) || (i === tokens.length - 1 && !s.last && !/\s$/.test(text)))) return t;
+          if (e.utils.some((u) => u.includes("'")) && code[s.start - 1] === "'") return t;
+          for (const k of e.keys) {
+            if (seenKeys.has(k) && seenKeys.get(k) !== t) {
+              conflicts.add(t);
+              conflicts.add(seenKeys.get(k));
+            }
+            seenKeys.set(k, t);
           }
-          seenKeys.set(k, t);
-        }
-        changed = true;
-        replaced[t] = (replaced[t] || 0) + 1;
-        const bang = stillLegacy || s.dynamic;
-        const utils = e.utils.map((u) => (bang && !u.endsWith("!") ? `${u}!` : u)).join(" ");
-        return pinned.has(t) ? `${t} ${utils}` : utils;
-      });
-      if (changed) (edits[file] ||= []).push({ start: s.start, end: s.end, text: out.join("") });
+          changed = true;
+          replaced[t] = (replaced[t] || 0) + 1;
+          const bang = stillLegacy || s.dynamic;
+          const utils = e.utils.map((u) => (bang && !u.endsWith("!") ? `${u}!` : u)).join(" ");
+          return pinned.has(t) ? `${t} ${utils}` : utils;
+        });
+        if (changed) (edits[file] ||= []).push({ start: s.start, end: s.end, text: out.join("") });
+      }
     }
   }
   return { edits, replaced, conflicts };

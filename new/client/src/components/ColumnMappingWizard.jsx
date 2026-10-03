@@ -484,7 +484,7 @@ const STEPS = [
 
 function StepIndicator({ current }) {
   return (
-    <div className="[display:flex]! [align-items:center] [padding:20px_28px]! [flex-shrink:0]">
+    <div className="cmw-step-indicator">
       {STEPS.map((s, i) => {
         const done = s.id < current;
         const active = s.id === current;
@@ -493,10 +493,10 @@ function StepIndicator({ current }) {
             <div
               className={`cmw-step ${active ? "active" : ""} ${done ? "done" : ""}`}
             >
-              <div className="cmw-step-circle [width:40px]! [height:40px]! [border-radius:50%]! [border:2px_solid_var(--color-ink-200)]! [background:var(--color-ink-50)]! [display:flex]! [align-items:center] [justify-content:center] [color:var(--color-ink-600)]! [transition:all_0.25s]! [&_svg]:[width:18px]! [&_svg]:[height:18px]!">
+              <div className="cmw-step-circle">
                 {done ? <Icons.Check /> : <s.Icon />}
               </div>
-              <span className="cmw-step-label [font-size:var(--text-sm)]! [font-weight:500]! [color:var(--color-ink-600)]! [white-space:nowrap] [transition:color_0.2s]!">{s.label}</span>
+              <span className="cmw-step-label">{s.label}</span>
             </div>
             {i < STEPS.length - 1 && (
               <div className={`cmw-step-line ${done ? "done" : ""}`} />
@@ -788,14 +788,14 @@ export default function ColumnMappingWizard({
   // ─── Render ────────────────────────────────────────────────────────────────
   return (
     <div
-      className="[position:fixed] [inset:0] [background:rgba(10,_15,_30,_0.65)]! [backdrop-filter:blur(4px)] [-webkit-backdrop-filter:blur(4px)]! [display:flex]! [align-items:center] [justify-content:center] [z-index:1000] [padding:16px]! [animation:cmw-fade-in_0.2s_ease]!"
+      className="cmw-overlay"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="[background:var(--color-white)]! [border-radius:var(--radius-lg)]! [width:100%]! [max-width:780px]! [max-height:92vh]! [display:flex]! [flex-direction:column] [box-shadow:var(--shadow-overlay)]! [animation:cmw-slide-up_0.25s_cubic-bezier(0.34,_1.56,_0.64,_1)]! [overflow:hidden]!">
+      <div className="cmw-modal">
         {/* Header */}
-        <div className="[display:flex]! [align-items:flex-start] [justify-content:space-between] [padding:24px_28px_0]! [flex-shrink:0]">
+        <div className="cmw-header">
           <div>
-            <h2 className="[font-size:var(--text-lg)]! [font-weight:700]! [color:var(--color-ink-900)]! [margin:0_0_4px]! [letter-spacing:-0.3px]">
+            <h2 className="cmw-title">
               Import{" "}
               {type === "sources"
                 ? "Equipment"
@@ -807,11 +807,11 @@ export default function ColumnMappingWizard({
                       ? "Mitigation Projects"
                       : "Emissions Data"}
             </h2>
-            <p className="[font-size:var(--text-base)]! [color:var(--color-ink-500)]! [margin:0]!">
+            <p className="cmw-subtitle">
               Upload a CSV or Excel file to bulk-import your records
             </p>
           </div>
-          <button className="[width:36px]! [height:36px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--color-ink-200)]! [background:transparent]! [display:flex]! [align-items:center] [justify-content:center] [cursor:pointer] [color:var(--color-ink-500)]! [flex-shrink:0] [transition:all_0.15s]! [&_svg]:[width:18px]! [&_svg]:[height:18px]! hover:[background:var(--color-ink-100)]! hover:[color:var(--color-ink-900)]!" onClick={onClose} aria-label="Close">
+          <button className="cmw-close-btn" onClick={onClose} aria-label="Close">
             <Icons.X />
           </button>
         </div>
@@ -833,7 +833,7 @@ export default function ColumnMappingWizard({
 
         {/* Navigation Footer */}
         <div
-          className="[display:flex]! [align-items:center] [justify-content:space-between] [padding:16px_28px_20px]! [border-top:1px_solid_var(--color-ink-100)]! [flex-shrink:0] [gap:12px]"
+          className="cmw-footer"
           style={{
             borderTop: "1px solid var(--border-color)",
             padding: "16px 24px",
@@ -842,7 +842,7 @@ export default function ColumnMappingWizard({
           }}
         >
           {step > (type === "activity" ? 1 : 2) && step < 4 ? (
-            <button className="[display:flex]! [align-items:center] [gap:7px] [padding:9px_18px]! [border-radius:var(--radius-md)]! [border:1.5px_solid_var(--color-ink-200)]! [background:transparent]! [color:var(--color-ink-500)]! [font-size:var(--text-base)]! [font-weight:500]! [cursor:pointer] [transition:all_0.15s]! [&_svg]:[width:16px]! [&_svg]:[height:16px]! hover:[background:var(--color-ink-50)]! hover:[color:var(--color-ink-700)]! hover:[border-color:var(--color-ink-300)]!" onClick={() => setStep(step - 1)}>
+            <button className="cmw-btn-ghost" onClick={() => setStep(step - 1)}>
               <Icons.ArrowLeft /> Back
             </button>
           ) : (
@@ -895,17 +895,17 @@ export default function ColumnMappingWizard({
                 className="hidden!"
                 onChange={onFileInputChange}
               />
-              <div className="[width:52px]! [height:52px]! [border-radius:var(--radius-md)]! [background:#e0eaff]! [margin:0_auto_14px]! [display:flex]! [align-items:center] [justify-content:center] [color:var(--color-blue-600)]! [&_svg]:[width:26px]! [&_svg]:[height:26px]!">
+              <div className="cmw-dropzone-icon">
                 <Icons.Upload />
               </div>
-              <p className="[font-size:var(--text-md)]! [color:var(--color-ink-700)]! [margin:0_0_4px]! [font-weight:500]! [&_span]:[color:var(--color-blue-600)]! [&_span]:[font-weight:600]!">
+              <p className="cmw-dropzone-text">
                 Drag &amp; drop your file here, or <span>click to browse</span>
               </p>
-              <p className="[font-size:var(--text-sm)]! [color:var(--color-ink-600)]! [margin:0]!">
+              <p className="cmw-dropzone-sub">
                 Supports .xlsx and .csv — optimised for millions of rows
               </p>
               {parseError && (
-                <div className="[display:flex]! [align-items:center] [gap:8px] [color:var(--color-red-700)]! [background:var(--color-red-50)]! [border:1px_solid_#fecaca]! [border-radius:var(--radius-md)]! [padding:10px_14px]! [margin-top:14px]! [font-size:var(--text-base)]! [&_svg]:[width:18px]! [&_svg]:[height:18px]! [&_svg]:[flex-shrink:0]!">
+                <div className="cmw-inline-error">
                   <Icons.Warning />
                   {parseError}
                 </div>
@@ -913,17 +913,17 @@ export default function ColumnMappingWizard({
             </div>
 
             {/* Template download */}
-            <div className="[margin-top:4px]!">
-              <p className="[font-size:var(--text-sm)]! [color:var(--color-ink-500)]! [margin:0_0_10px]! [font-weight:500]!">
+            <div className="cmw-template-section">
+              <p className="cmw-template-label">
                 Don't have a file yet? Start from our template:
               </p>
-              <div className="[display:grid]! [grid-template-columns:1fr_1fr] [gap:12px]">
+              <div className="cmw-template-btns">
                 {type === "activity" && (
                   <button
                     className="cmw-template-btn"
                     onClick={() => downloadTemplate("excel")}
                   >
-                    <span className="cmw-template-btn-icon [width:38px]! [height:38px]! [background:var(--color-ink-100)]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [color:var(--color-ink-600)]! [flex-shrink:0] [transition:background_0.2s]! [&_svg]:[width:20px]! [&_svg]:[height:20px]!">
+                    <span className="cmw-template-btn-icon">
                       <Icons.FileXlsx />
                     </span>
                     <span>
@@ -938,7 +938,7 @@ export default function ColumnMappingWizard({
                   className="cmw-template-btn"
                   onClick={() => downloadTemplate("csv")}
                 >
-                  <span className="cmw-template-btn-icon [width:38px]! [height:38px]! [background:var(--color-ink-100)]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [color:var(--color-ink-600)]! [flex-shrink:0] [transition:background_0.2s]! [&_svg]:[width:20px]! [&_svg]:[height:20px]!">
+                  <span className="cmw-template-btn-icon">
                     <Icons.FileCsv />
                   </span>
                   <span>
@@ -972,7 +972,7 @@ export default function ColumnMappingWizard({
 
         {/* ── STEP 3: Processing ── */}
         {step === 4 && jobId && (
-          <div className="cmw-body [display:flex]! [align-items:center]! [justify-content:center]! [padding:32px_28px]!">
+          <div className="cmw-body cmw-body--progress">
             <UploadProgress
               jobId={jobId}
               reviewable={["activity", "activity_scope2", "activity_scope3"].includes(type)}
@@ -987,9 +987,9 @@ export default function ColumnMappingWizard({
 
         {/* Footer actions */}
         {step !== 4 && (
-          <div className="[display:flex]! [align-items:center] [justify-content:space-between] [padding:16px_28px_20px]! [border-top:1px_solid_var(--color-ink-100)]! [flex-shrink:0] [gap:12px]">
+          <div className="cmw-footer">
             <button
-              className="[display:flex]! [align-items:center] [gap:7px] [padding:9px_18px]! [border-radius:var(--radius-md)]! [border:1.5px_solid_var(--color-ink-200)]! [background:transparent]! [color:var(--color-ink-500)]! [font-size:var(--text-base)]! [font-weight:500]! [cursor:pointer] [transition:all_0.15s]! [&_svg]:[width:16px]! [&_svg]:[height:16px]! hover:[background:var(--color-ink-50)]! hover:[color:var(--color-ink-700)]! hover:[border-color:var(--color-ink-300)]!"
+              className="cmw-btn-ghost"
               onClick={
                 step === (type === "activity" ? 1 : 2)
                   ? onClose
@@ -1014,7 +1014,7 @@ export default function ColumnMappingWizard({
                 disabled={isSubmitting || (!canProceed && headers.length > 0)}
               >
                 {isSubmitting ? (
-                  <span className="[width:16px]! [height:16px]! [border:2px_solid_rgba(255,_255,_255,_0.4)]! [border-top-color:var(--color-white)]! [border-radius:50%]! [animation:cmw-spin_0.7s_linear_infinite]! [flex-shrink:0]" />
+                  <span className="cmw-spinner" />
                 ) : (
                   <Icons.Processing />
                 )}
@@ -1036,11 +1036,11 @@ function MappingRow({ field, headers, value, onChange }) {
     <div
       className={`cmw-mapping-row ${!mapped && field.required ? "unmapped" : ""}`}
     >
-      <div className="[font-size:var(--text-base)]! [font-weight:600]! [color:var(--color-ink-800)]! [display:flex]! [align-items:center] [gap:6px]">
+      <div className="cmw-field-name">
         {field.label}
-        {field.required && <span className="[display:inline-block]! [width:6px]! [height:6px]! [border-radius:50%]! [background:var(--color-red-500)]! [flex-shrink:0]" />}
+        {field.required && <span className="cmw-required-dot" />}
       </div>
-      <div className="[font-size:var(--text-sm)]! [color:var(--color-ink-600)]!">{field.hint}</div>
+      <div className="cmw-field-hint">{field.hint}</div>
       <div className="cmw-field-select">
         {headers.length > 0 ? (
           <NativeSelect
@@ -1064,13 +1064,13 @@ function MappingRow({ field, headers, value, onChange }) {
           />
         )}
       </div>
-      <div className="[display:flex]! [justify-content:center]">
+      <div className="cmw-field-status">
         {mapped ? (
-          <span className="[width:26px]! [height:26px]! [border-radius:50%]! [background:#dcfce7]! [display:flex]! [align-items:center] [justify-content:center] [color:var(--color-green-700)]! [&_svg]:[width:14px]! [&_svg]:[height:14px]!">
+          <span className="cmw-status-ok">
             <Icons.Check />
           </span>
         ) : (
-          <span className="[width:26px]! [height:26px]! [border-radius:50%]! [background:var(--color-ink-100)]! [border:2px_dashed_var(--color-ink-200)]!" />
+          <span className="cmw-status-empty" />
         )}
       </div>
     </div>

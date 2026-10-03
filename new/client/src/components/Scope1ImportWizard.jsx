@@ -334,7 +334,7 @@ const STEPS = [
 // ─── Step Indicator ───────────────────────────────────────────────────────────
 function StepBar({ current }) {
   return (
-    <div className="[display:flex]! [align-items:center] [padding:16px_24px]! [gap:0] [flex-shrink:0] [border-bottom:1px_solid_var(--color-ink-200)]! [overflow-x:auto]!">
+    <div className="s1w-stepbar">
       {STEPS.map((s, i) => {
         const done   = s.id < current;
         const active = s.id === current;
@@ -342,10 +342,10 @@ function StepBar({ current }) {
         return (
           <React.Fragment key={s.id}>
             <div className={`s1w-step ${active ? "active" : ""} ${done ? "done" : ""}`}>
-              <div className="s1w-step-circle [width:32px]! [height:32px]! [border-radius:50%]! [border:2px_solid_var(--color-ink-200)]! [background:var(--color-ink-50)]! [color:var(--color-ink-600)]! [display:flex]! [align-items:center] [justify-content:center] [transition:all_0.25s]! [&_svg]:[width:14px]! [&_svg]:[height:14px]!">
+              <div className="s1w-step-circle">
                 {done ? <Icon.Check /> : <SIcon />}
               </div>
-              <span className="s1w-step-label [font-size:var(--text-xs)]! [font-weight:600]! [color:var(--color-ink-600)]! [white-space:nowrap] [text-transform:uppercase]! [letter-spacing:0.5px]">{s.label}</span>
+              <span className="s1w-step-label">{s.label}</span>
             </div>
             {i < STEPS.length - 1 && (
               <div className={`s1w-step-line ${done ? "done" : ""}`} />
@@ -362,13 +362,13 @@ function StepBar({ current }) {
 function ModeCard({ selected, onClick, Icon: IcoComp, title, badge, description }) {
   return (
     <button className={`s1w-mode-card ${selected ? "selected" : ""}`} onClick={onClick}>
-      <div className="[display:flex]! [align-items:center] [gap:8px] [margin-bottom:8px]!">
-        <div className="[width:28px]! [height:28px]! [border-radius:var(--radius-sm)]! [background:var(--color-primary)]! [color:var(--color-white)]! [display:flex]! [align-items:center] [justify-content:center] [flex-shrink:0] [&_svg]:[width:14px]! [&_svg]:[height:14px]!"><IcoComp /></div>
-        <span className="[font-size:var(--text-base)]! [font-weight:700]! [color:var(--color-ink-900)]! [flex:1]">{title}</span>
+      <div className="s1w-mode-card-header">
+        <div className="s1w-mode-card-icon"><IcoComp /></div>
+        <span className="s1w-mode-card-title">{title}</span>
         {badge && <span className={`s1w-mode-badge s1w-mode-badge--${badge.color}`}>{badge.label}</span>}
         <div className={`s1w-radio ${selected ? "checked" : ""}`} />
       </div>
-      <p className="[font-size:var(--text-sm)]! [color:var(--color-ink-500)]! [margin:0]! [line-height:1.5]">{description}</p>
+      <p className="s1w-mode-card-desc">{description}</p>
     </button>
   );
 }
@@ -378,9 +378,9 @@ function ProcessTile({ process, selected, onClick }) {
   const IcoComp = process.IconComp;
   return (
     <button className={`s1w-process-tile ${selected ? "selected" : ""}`} onClick={onClick}>
-      <div className="s1w-process-tile-icon [width:32px]! [height:32px]! [border-radius:var(--radius-md)]! [background:var(--color-ink-100)]! [display:flex]! [align-items:center] [justify-content:center] [color:var(--color-ink-500)]! [transition:all_0.18s]! [&_svg]:[width:16px]! [&_svg]:[height:16px]!"><IcoComp /></div>
-      <span className="[font-size:var(--text-sm)]! [font-weight:600]! [color:var(--color-ink-700)]! [line-height:1.3]">{process.label}</span>
-      {selected && <div className="[position:absolute] [top:6px] [right:6px] [width:16px]! [height:16px]! [border-radius:50%]! [background:var(--color-green-700)]! [color:var(--color-white)]! [display:flex]! [align-items:center] [justify-content:center] [&_svg]:[width:10px]! [&_svg]:[height:10px]!"><Icon.Check /></div>}
+      <div className="s1w-process-tile-icon"><IcoComp /></div>
+      <span className="s1w-process-tile-label">{process.label}</span>
+      {selected && <div className="s1w-process-tile-check"><Icon.Check /></div>}
     </button>
   );
 }
@@ -389,13 +389,13 @@ function ProcessTile({ process, selected, onClick }) {
 function MappingRow({ field, headers, value, onChange }) {
   const mapped = !!value;
   return (
-    <div className={`s1w-map-row ${!mapped && field.required ? "[background:#fff9f5]!" : ""} ${mapped ? "[background:#f0fdf4]!" : ""}`}>
-      <div className="[display:flex]! [flex-direction:column] [gap:2px] [min-width:0]">
-        <span className="[font-size:var(--text-sm)]! [font-weight:600]! [color:var(--color-ink-900)]! [display:flex]! [align-items:center] [gap:4px]">
+    <div className={`s1w-map-row ${!mapped && field.required ? "s1w-map-row--missing" : ""} ${mapped ? "s1w-map-row--mapped" : ""}`}>
+      <div className="s1w-map-field">
+        <span className="s1w-map-field-label">
           {field.label}
-          {field.required && <span className="[width:6px]! [height:6px]! [border-radius:50%]! [background:var(--color-red-500)]! [flex-shrink:0] [display:inline-block]!" />}
+          {field.required && <span className="s1w-required-dot" />}
         </span>
-        {field.hint && <span className="[font-size:var(--text-xs)]! [color:var(--color-ink-600)]! [line-height:1.3]">{field.hint}</span>}
+        {field.hint && <span className="s1w-map-field-hint">{field.hint}</span>}
       </div>
       <div className="s1w-map-select-wrap">
         {headers.length > 0 ? (
@@ -407,10 +407,10 @@ function MappingRow({ field, headers, value, onChange }) {
           <input className={`s1w-map-input ${mapped ? "matched" : ""}`} placeholder="Column name in your file" value={value} onChange={e => onChange(e.target.value)} />
         )}
       </div>
-      <div className="[display:flex]! [justify-content:center]">
+      <div className="s1w-map-status">
         {mapped
-          ? <span className="[width:22px]! [height:22px]! [border-radius:50%]! [background:var(--color-green-700)]! [color:var(--color-white)]! [display:flex]! [align-items:center] [justify-content:center] [&_svg]:[width:12px]! [&_svg]:[height:12px]!"><Icon.Check /></span>
-          : <span className="[width:22px]! [height:22px]! [border-radius:50%]! [border:2px_solid_var(--color-ink-200)]! [display:block]!" />}
+          ? <span className="s1w-status-ok"><Icon.Check /></span>
+          : <span className="s1w-status-empty" />}
       </div>
     </div>
   );
@@ -447,23 +447,23 @@ function FieldGroup({ group, headers, mapping, setMapping, searchQuery, tier, pr
   const mappedCount = visibleFields.filter(f => mapping[f.key]).length;
 
   return (
-    <div className="[border:1.5px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [overflow:hidden]! [transition:border-color_0.15s]! [&:has(.s1w-group-body)]:[border-color:var(--color-ink-200)]!">
-      <button className="[width:100%]! [display:flex]! [align-items:center] [justify-content:space-between] [padding:12px_16px]! [background:var(--color-ink-50)]! [border:none]! [cursor:pointer] [transition:background_0.15s]! [text-align:left]! hover:[background:var(--color-ink-100)]! [&_svg]:[width:16px]! [&_svg]:[height:16px]! [&_svg]:[color:var(--color-ink-600)]!" onClick={() => setOpen(v => !v)}>
-        <div className="[display:flex]! [align-items:center] [gap:10px]">
-          <div className="[width:28px]! [height:28px]! [border-radius:var(--radius-sm)]! [background:var(--primary-gradient)]! [color:var(--color-white)]! [display:flex]! [align-items:center] [justify-content:center] [flex-shrink:0] [&_svg]:[width:13px]! [&_svg]:[height:13px]!"><GroupIcon /></div>
-          <span className="[font-size:var(--text-base)]! [font-weight:700]! [color:var(--color-ink-900)]!">{group.label}</span>
+    <div className="s1w-field-group">
+      <button className="s1w-group-header" onClick={() => setOpen(v => !v)}>
+        <div className="s1w-group-header-left">
+          <div className="s1w-group-icon"><GroupIcon /></div>
+          <span className="s1w-group-label">{group.label}</span>
           {group.tier3Only && tier === "auto" && (
-            <span className="[padding:2px_8px]! [border-radius:var(--radius-lg)]! [font-size:var(--text-xs)]! [font-weight:700]! [letter-spacing:0.3px] [background:var(--color-green-50)]! [color:#047857]!">Tier 3</span>
+            <span className="s1w-group-badge s1w-group-badge--tier3">Tier 3</span>
           )}
         </div>
-        <div className="[display:flex]! [align-items:center] [gap:10px]">
-          <span className="[font-size:var(--text-sm)]! [color:var(--text-secondary,_var(--color-ink-500))]! [font-weight:600]!">{mappedCount}/{visibleFields.length} mapped</span>
+        <div className="s1w-group-header-right">
+          <span className="s1w-group-count">{mappedCount}/{visibleFields.length} mapped</span>
           <Icon.ChevronDown open={open} />
         </div>
       </button>
       {open && (
-        <div className="s1w-group-body [border-top:1px_solid_var(--color-ink-200)]!">
-          <div className="[display:grid]! [grid-template-columns:1fr_1fr_36px] [padding:8px_16px]! [background:var(--color-ink-50)]! [border-bottom:1px_solid_var(--color-ink-100)]! [font-size:var(--text-xs)]! [font-weight:700]! [color:var(--color-ink-600)]! [text-transform:uppercase]! [letter-spacing:0.5px] [@media(max-width:600px)]:[display:none]!">
+        <div className="s1w-group-body">
+          <div className="s1w-group-table-header">
             <span>Field</span>
             <span>Your CSV Column</span>
             <span>Status</span>
@@ -613,7 +613,7 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
   };
 
   return (
-    <div className="[position:fixed] [inset:0] [background:rgba(10,_15,_30,_0.68)]! [backdrop-filter:blur(6px)] [-webkit-backdrop-filter:blur(6px)]! [display:flex]! [align-items:center] [justify-content:center] [z-index:1000] [padding:16px]! [animation:s1w-fade_0.2s_ease]!" onClick={e => e.target === e.currentTarget && onClose()}>
+    <div className="s1w-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
       <Scope1ImportWizardScope1Bulk
         FIELD_GROUPS={FIELD_GROUPS}
         FieldGroup={FieldGroup}

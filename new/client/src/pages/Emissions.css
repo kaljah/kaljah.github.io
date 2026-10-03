@@ -1,5 +1,14 @@
 /* Emissions Calculator Specific Styles */
 
+.calculator-container {
+  max-width: none !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 40px;
+  box-sizing: border-box;
+  animation: fadeIn 0.4s ease-out;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -15,6 +24,24 @@
 /* ============================================================
    SCOPE SELECTOR HEADER
    ============================================================ */
+.scope-selector-header {
+  padding: 36px 0 4px;
+}
+
+.scope-selector-title {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 10px;
+  letter-spacing: -0.4px;
+}
+
+.scope-selector-subtitle {
+  font-size: var(--text-md);
+  color: var(--text-secondary);
+  margin: 0 0 36px;
+  line-height: 1.65;
+}
 
 /* ============================================================
    SCOPE SELECTION GRID
@@ -501,6 +528,22 @@
 }
 
 @media (max-width: 768px) {
+  .calculator-container {
+    padding: 0 12px !important;
+  }
+
+  .scope-selector-header {
+    padding: 20px 0 10px;
+  }
+
+  .scope-selector-title {
+    font-size: var(--text-xl);
+  }
+
+  .scope-selector-subtitle {
+    margin-bottom: 20px;
+    font-size: var(--text-base);
+  }
 
   .scope-selection-grid {
     grid-template-columns: 1fr;
@@ -538,3 +581,8 @@
 
 
 /* Scope switcher (moved out of the old second header bar; breadcrumbs now come from the app shell) */
+.scope-switcher-bar {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px 24px 0;
+}

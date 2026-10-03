@@ -154,33 +154,33 @@ const UncertaintyAssessment = () => {
 
   if (loading) {
     return (
-      <div className="[padding:24px_32px_48px]! [max-width:1600px]! [margin:0_auto]! [color:var(--text-primary,_var(--color-ink-900))]!">
+      <div className="uncertainty-assessment">
         <LoadingSpinner message="Quantifying Inventory Uncertainty..." />
       </div>
     );
   }
 
   return (
-    <div className="[padding:24px_32px_48px]! [max-width:1600px]! [margin:0_auto]! [color:var(--text-primary,_var(--color-ink-900))]!">
+    <div className="uncertainty-assessment">
       {/* ── Page Header ── */}
-      <div className="[margin-bottom:40px]! [display:flex]! [justify-content:space-between] [align-items:flex-end] [gap:24px] [flex-wrap:wrap] [@media(max-width:900px)]:[flex-direction:column]! [@media(max-width:900px)]:[align-items:flex-start]!">
+      <div className="ua-page-header">
         <div>
           <h1 className="ua-title">Data Reliability Analysis</h1>
-          <p className="[font-size:var(--text-lg)]! [color:var(--text-secondary,_var(--color-ink-500))]! [max-width:800px]! [margin:0]! [line-height:1.5]">
+          <p className="ua-subtitle">
             Dynamic uncertainty quantification across the complete GHG
             inventory, compliant with ISO 14064-1 §7.5 and IPCC 2006 GL Vol.1
             §3.3.
           </p>
           {data && (
-            <div className="[display:inline-flex]! [align-items:center] [gap:16px] [background:var(--bg-card,_rgba(255,_255,_255,_0.78))]! [padding:14px_20px]! [border-radius:var(--radius-lg)]! [border:1px_solid_var(--border-color,_rgba(0,_0,_0,_0.05))]! [margin-top:16px]!">
-              <div className="[font-size:var(--text-base)]! [color:var(--text-secondary,_var(--color-ink-500))]! [margin-bottom:4px]!">Inventory Uncertainty</div>
+            <div className="ua-inventory-badge">
+              <div className="ua-inventory-label">Inventory Uncertainty</div>
               <div
                 className={`ua-inventory-value ${getUncertaintyLevel(data.inventory_uncertainty_decimal)}`}
               >
                 {data.inventory_uncertainty_pct}
               </div>
               {data.confidence_level_pct && (
-                <div className="[display:inline-flex]! [align-items:center] [gap:6px] [margin-top:8px]! [padding:4px_10px]! [border-radius:var(--radius-md)]! [font-size:var(--text-xs)]! [font-weight:700]! [letter-spacing:0.03em] [background:rgba(59,_130,_246,_0.08)]! [color:var(--color-blue-600)]! [border:1px_solid_rgba(59,_130,_246,_0.15)]!">
+                <div className="ua-confidence-badge">
                   {data.confidence_level_pct}% CI (k={data.coverage_factor})
                 </div>
               )}
@@ -188,8 +188,8 @@ const UncertaintyAssessment = () => {
           )}
         </div>
 
-        <div className="[display:flex]! [gap:20px] [align-items:flex-end] [flex-wrap:wrap] [@media(max-width:900px)]:[flex-direction:column]! [@media(max-width:900px)]:[width:100%]!">
-          <div className="[display:flex]! [flex-direction:column] [gap:8px] w-[130px]!">
+        <div className="ua-controls">
+          <div className="ua-filter-group w-[130px]!">
             <CustomDropdown
               options={yearOptions}
               value={selectedYear}
@@ -197,7 +197,7 @@ const UncertaintyAssessment = () => {
               placeholder="Year"
             />
           </div>
-          <div className="[display:flex]! [flex-direction:column] [gap:8px] w-[150px]!">
+          <div className="ua-filter-group w-[150px]!">
             <CustomDropdown
               options={scopeOptions}
               value={selectedScope}
@@ -205,7 +205,7 @@ const UncertaintyAssessment = () => {
               placeholder="Scope"
             />
           </div>
-          <div className="[display:flex]! [flex-direction:column] [gap:8px] w-[200px]!">
+          <div className="ua-filter-group w-[200px]!">
             <CustomDropdown
               options={facilityOptions}
               value={selectedFacility}
@@ -215,7 +215,7 @@ const UncertaintyAssessment = () => {
           </div>
 
           <button
-            className="[display:inline-flex]! [align-items:center] [gap:8px] [padding:10px_20px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [background:var(--bg-card,_var(--color-white))]! [color:var(--text-primary,_var(--color-ink-800))]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [transition:all_0.2s_ease]! hover:[background:var(--color-primary)]! hover:[color:var(--color-white)]! hover:[border-color:var(--accent-color,_var(--color-brand-500))]! hover:[transform:translateY(-1px)] hover:[box-shadow:var(--shadow-card)]!"
+            className="ua-export-btn"
             onClick={handleExport}
             disabled={exporting || !data}
             title="Export uncertainty assessment as CSV"
@@ -227,8 +227,8 @@ const UncertaintyAssessment = () => {
       </div>
 
       {!data ? (
-        <div className="[margin-top:60px]! [padding:30px]! [background:var(--bg-card,_rgba(255,_255,_255,_0.78))]! [border-radius:var(--radius-lg)]! [border:1px_dashed_var(--border-color,_var(--color-ink-300))]! [display:flex]! [gap:20px] [align-items:flex-start] [&_h4]:[margin:0_0_8px_0]! [&_h4]:[color:var(--text-primary,_var(--color-ink-800))]! [&_h4]:[font-size:var(--text-lg)]! [&_h4]:[font-weight:700]! [&_p]:[margin:0]! [&_p]:[color:var(--text-secondary,_var(--color-ink-500))]! [&_p]:[font-size:var(--text-md)]! [&_p]:[line-height:1.6]! mt-[24px]!">
-          <Info size={24} className="[color:var(--text-secondary,_var(--color-ink-500))]! [flex-shrink:0]" />
+        <div className="ua-methodology-box mt-[24px]!">
+          <Info size={24} className="ua-methodology-icon" />
           <div>
             <h4>No Uncertainty Data Available</h4>
             <p>
@@ -241,14 +241,14 @@ const UncertaintyAssessment = () => {
       ) : (
         <>
           {/* ── Tier Breakdown Cards ── */}
-      <div className="[display:grid]! [grid-template-columns:repeat(3,_1fr)] [gap:20px] [margin-bottom:40px]! [@media(max-width:900px)]:[grid-template-columns:1fr]!">
+      <div className="ua-tier-grid">
         {Object.entries(data.tier_breakdown || {}).map(([tier, pct]) => (
-          <div key={tier} className="[background:var(--bg-card,_rgba(255,_255,_255,_0.78))]! [padding:20px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))]! [box-shadow:var(--shadow-card,_0_1px_3px_rgba(0,_0,_0,_0.05))]! [transition:transform_0.2s_ease,_box-shadow_0.2s_ease]! hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated,_0_4px_12px_rgba(0,_0,_0,_0.1))]!">
-            <div className="[font-size:var(--text-sm)]! [color:var(--text-secondary,_var(--color-ink-500))]! [font-weight:600]!">{tier} (share of Scope 1)</div>
+          <div key={tier} className="ua-tier-card">
+            <div className="ua-tier-label">{tier} (share of Scope 1)</div>
             <div className={`ua-tier-value ${getTierColorClass(tier)}`}>
               {pct}%
             </div>
-            <div className="[width:100%]! [height:4px]! [background:var(--border-color,_var(--color-ink-100))]! [border-radius:var(--radius-sm)]! [overflow:hidden]!">
+            <div className="ua-tier-bar">
               <div
                 className={`ua-tier-bar-fill ${getTierColorClass(tier)}`}
                 style={{ width: `${pct}%` }}
@@ -260,14 +260,14 @@ const UncertaintyAssessment = () => {
 
       {/* ── Uncertainty bands (whole inventory) ── */}
       {data.uncertainty_bands && (
-        <div className="[display:grid]! [grid-template-columns:repeat(3,_1fr)] [gap:20px] [margin-bottom:40px]! [@media(max-width:900px)]:[grid-template-columns:1fr]!">
+        <div className="ua-tier-grid">
           {[["low", "Low Uncertainty (≤ ±10%)", "band-low"],
             ["medium", "Medium Uncertainty (±10% to ±30%)", "band-medium"],
             ["high", "High Uncertainty (> ±30%)", "band-high"]].map(([band, label, cls]) => (
-            <div key={band} className="[background:var(--bg-card,_rgba(255,_255,_255,_0.78))]! [padding:20px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))]! [box-shadow:var(--shadow-card,_0_1px_3px_rgba(0,_0,_0,_0.05))]! [transition:transform_0.2s_ease,_box-shadow_0.2s_ease]! hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated,_0_4px_12px_rgba(0,_0,_0,_0.1))]!">
-              <div className="[font-size:var(--text-sm)]! [color:var(--text-secondary,_var(--color-ink-500))]! [font-weight:600]!">{label}</div>
+            <div key={band} className="ua-tier-card">
+              <div className="ua-tier-label">{label}</div>
               <div className={`ua-tier-value ${cls}`}>{data.uncertainty_bands[band] ?? 0}%</div>
-              <div className="[width:100%]! [height:4px]! [background:var(--border-color,_var(--color-ink-100))]! [border-radius:var(--radius-sm)]! [overflow:hidden]!">
+              <div className="ua-tier-bar">
                 <div className={`ua-tier-bar-fill ${cls}`} style={{ width: `${data.uncertainty_bands[band] ?? 0}%` }} />
               </div>
             </div>
@@ -276,17 +276,17 @@ const UncertaintyAssessment = () => {
       )}
 
       {/* ── Legend ── */}
-      <div className="[display:flex]! [gap:24px] [margin-bottom:32px]! [flex-wrap:wrap] [background:var(--bg-card,_rgba(255,_255,_255,_0.4))]! [padding:16px_24px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))]!">
-        <div className="[display:flex]! [align-items:center] [gap:10px] [font-size:var(--text-base)]! [color:var(--text-secondary,_var(--color-ink-600))]! [font-weight:600]!">
-          <div className="[width:12px]! [height:12px]! [border-radius:50%]! [flex-shrink:0] bg-[color:var(--color-unc-low)]!" />
+      <div className="legend-bar">
+        <div className="legend-item">
+          <div className="legend-dot bg-[color:var(--color-unc-low)]!" />
           Low Uncertainty (≤ ±10%)
         </div>
-        <div className="[display:flex]! [align-items:center] [gap:10px] [font-size:var(--text-base)]! [color:var(--text-secondary,_var(--color-ink-600))]! [font-weight:600]!">
-          <div className="[width:12px]! [height:12px]! [border-radius:50%]! [flex-shrink:0] bg-[color:var(--color-unc-medium)]!" />
+        <div className="legend-item">
+          <div className="legend-dot bg-[color:var(--color-unc-medium)]!" />
           Medium Uncertainty (±10% to ±30%)
         </div>
-        <div className="[display:flex]! [align-items:center] [gap:10px] [font-size:var(--text-base)]! [color:var(--text-secondary,_var(--color-ink-600))]! [font-weight:600]!">
-          <div className="[width:12px]! [height:12px]! [border-radius:50%]! [flex-shrink:0] bg-[color:var(--color-unc-high)]!" />
+        <div className="legend-item">
+          <div className="legend-dot bg-[color:var(--color-unc-high)]!" />
           High Uncertainty (&gt; ±30%)
         </div>
       </div>
@@ -306,27 +306,27 @@ const UncertaintyAssessment = () => {
 
             <div className="uncertainty-grid">
               {section.top_contributors.map((factor, fIdx) => (
-                <div key={fIdx} className="[background:var(--bg-card,_rgba(255,_255,_255,_0.78))]! [backdrop-filter:blur(14px)] [-webkit-backdrop-filter:blur(14px)]! [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))]! [border-radius:var(--radius-lg)]! [padding:24px]! [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease]! [box-shadow:var(--shadow-card,_0_4px_6px_-1px_rgba(0,_0,_0,_0.1))]! hover:[transform:translateY(-3px)] hover:[box-shadow:var(_--shadow-card-elevated,_0_10px_25px_-5px_rgba(0,_0,_0,_0.12)_)]! hover:[border-color:rgba(255,_255,_255,_0.95)]!">
-                  <div className="[display:flex]! [justify-content:space-between] [align-items:flex-start] [margin-bottom:15px]!">
+                <div key={fIdx} className="factor-card">
+                  <div className="factor-header">
                     <div>
                       <div className="factor-name">{factor.name}</div>
-                      <div className="[font-size:var(--text-sm)]! [font-weight:600]! [color:var(--text-secondary,_var(--color-ink-500))]! [text-transform:uppercase]! [letter-spacing:0.04em]">Primary Contributor</div>
+                      <div className="factor-source">Primary Contributor</div>
                     </div>
-                    <div className="[font-size:var(--text-base)]! [font-weight:600]! [color:var(--text-secondary,_var(--color-ink-500))]! [padding:4px_8px]! [background:var(--border-color,_var(--color-ink-100))]! [border-radius:var(--radius-sm)]! [white-space:nowrap]">
+                    <div className="factor-uncertainty-tag">
                       {factor.uncertainty}
                     </div>
                   </div>
-                  <div className="[display:flex]! [align-items:center] [gap:15px]">
-                    <div className="[flex:1]">
-                      <div className="[display:flex]! [justify-content:space-between] [font-size:var(--text-sm)]! [margin-bottom:4px]! [color:var(--text-secondary,_var(--color-ink-500))]!">
+                  <div className="factor-stats">
+                    <div className="factor-stat-bar-wrapper">
+                      <div className="factor-stat-labels">
                         <span>Impact on Category</span>
-                        <span className="[font-weight:700]! [color:var(--text-primary,_var(--color-ink-900))]!">
+                        <span className="factor-stat-value">
                           {factor.contribution}%
                         </span>
                       </div>
-                      <div className="[width:100%]! [height:6px]! [background:var(--border-color,_var(--color-ink-100))]! [border-radius:var(--radius-sm)]! [overflow:hidden]!">
+                      <div className="factor-stat-track">
                         <div
-                          className="[height:100%]! [background:var(--color-blue-500)]! [border-radius:var(--radius-sm)]! [transition:width_0.5s_cubic-bezier(0.16,_1,_0.3,_1)]!"
+                          className="factor-stat-fill"
                           style={{ width: `${factor.contribution}%` }}
                         />
                       </div>
@@ -342,8 +342,8 @@ const UncertaintyAssessment = () => {
       )}
 
       {/* ── Methodology Footer ── */}
-      <div className="[margin-top:60px]! [padding:30px]! [background:var(--bg-card,_rgba(255,_255,_255,_0.78))]! [border-radius:var(--radius-lg)]! [border:1px_dashed_var(--border-color,_var(--color-ink-300))]! [display:flex]! [gap:20px] [align-items:flex-start] [&_h4]:[margin:0_0_8px_0]! [&_h4]:[color:var(--text-primary,_var(--color-ink-800))]! [&_h4]:[font-size:var(--text-lg)]! [&_h4]:[font-weight:700]! [&_p]:[margin:0]! [&_p]:[color:var(--text-secondary,_var(--color-ink-500))]! [&_p]:[font-size:var(--text-md)]! [&_p]:[line-height:1.6]!">
-        <Info size={24} className="[color:var(--text-secondary,_var(--color-ink-500))]! [flex-shrink:0]" />
+      <div className="ua-methodology-box">
+        <Info size={24} className="ua-methodology-icon" />
         <div>
           <h4>Calculation Methodology</h4>
           <p>

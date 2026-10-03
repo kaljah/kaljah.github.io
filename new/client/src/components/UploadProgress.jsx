@@ -8,7 +8,7 @@ import "./UploadProgress.css";
 /* ── Inline SVG icons (no emoji, no lucide dep needed here) ── */
 const Spinner = () => (
   <svg
-    className="[width:32px]! [height:32px]! [color:var(--color-link)]! [animation:up-spin_1s_linear_infinite]!"
+    className="up-spinner"
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
@@ -191,32 +191,32 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
   const successCount = processed - skippedCount;
 
   return (
-    <div className="[width:100%]! [max-width:900px]! [margin:0_auto]! [font-family:inherit]! [color:var(--color-ink-800)]! [animation:up-fade-in_0.25s_ease-out]!">
+    <div className="up-root">
       {/* ── PROCESSING ── */}
       {status === "processing" && (
-        <div className="[background:var(--color-white)]! [border-radius:var(--radius-md)]! [padding:24px]! [border:1px_solid_var(--color-ink-200)]! [box-shadow:var(--shadow-xs)]!">
-          <div className="[display:flex]! [align-items:center] [gap:16px] [margin-bottom:24px]!">
+        <div className="up-section">
+          <div className="up-processing-header">
             <Spinner />
             <div>
-              <p className="[font-size:var(--text-md)]! [font-weight:600]! [margin:0_0_4px_0]! [color:var(--color-ink-900)]!">Processing your file…</p>
-              <p className="[font-size:var(--text-base)]! [color:var(--color-ink-500)]! [margin:0]!">
+              <p className="up-label">Processing your file…</p>
+              <p className="up-sub">
                 Large files may take several minutes. You can safely leave this
                 page.
               </p>
             </div>
           </div>
-          <div className="[width:100%]! [height:8px]! [background:var(--color-ink-100)]! [border-radius:var(--radius-sm)]! [overflow:hidden]! [margin-bottom:12px]!">
-            <div className="[height:100%]! [background:linear-gradient(90deg,_var(--color-brand-500)_0%,_var(--color-brand-400)_100%)]! [border-radius:var(--radius-sm)]! [transition:width_0.4s_ease-out]! [box-shadow:0_0_8px_rgba(255,_102,_0,_0.35)]!" style={{ width: `${progress}%` }} />
+          <div className="up-bar-track">
+            <div className="up-bar-fill" style={{ width: `${progress}%` }} />
           </div>
-          <div className="[display:flex]! [justify-content:space-between] [font-size:var(--text-base)]! [color:var(--color-ink-600)]! [font-weight:500]!">
-            <span className="[color:var(--color-link)]! [font-weight:600]!">{progress}%</span>
+          <div className="up-bar-stats">
+            <span className="up-pct">{progress}%</span>
             <span className="up-rows">
               {processed.toLocaleString()} rows processed
               {total > 0 ? ` of ~${total.toLocaleString()}` : ""}
             </span>
           </div>
           {skippedCount > 0 && (
-            <div className="[margin-top:16px]! [padding:12px_16px]! [background:var(--color-amber-50)]! [border:1px_solid_#fef3c7]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [gap:8px] [color:var(--color-amber-700)]! [font-size:var(--text-base)]! [font-weight:500]! [animation:up-fade-in_0.3s_ease]! [&_svg]:[width:18px]! [&_svg]:[height:18px]!">
+            <div className="up-live-skip">
               <IconWarn />
               <span>{skippedCount.toLocaleString()} rows skipped so far</span>
             </div>
@@ -226,46 +226,46 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
 
       {/* ── COMPLETED ── */}
       {status === "completed" && (
-        <div className="[background:var(--color-white)]! [border-radius:var(--radius-md)]! [padding:24px]! [border:1px_solid_var(--color-ink-200)]! [box-shadow:var(--shadow-xs)]!">
+        <div className="up-section">
           {/* Summary cards */}
-          <div className="[display:grid]! [grid-template-columns:repeat(auto-fit,_minmax(200px,_1fr))] [gap:16px] [margin-bottom:24px]!">
-            <div className="up-card [&_.up-card-icon]:[background:#dcfce7]! [&_.up-card-icon]:[color:var(--color-green-700)]!">
-              <div className="up-card-icon [width:48px]! [height:48px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [&_svg]:[width:24px]! [&_svg]:[height:24px]!">
+          <div className="up-summary-cards">
+            <div className="up-card up-card--success">
+              <div className="up-card-icon">
                 <IconCheck />
               </div>
               <div>
-                <p className="[font-size:var(--text-xl)]! [font-weight:700]! [margin:0_0_2px_0]! [color:var(--color-ink-900)]! [line-height:1]">{successCount.toLocaleString()}</p>
-                <p className="[font-size:var(--text-base)]! [color:var(--color-ink-500)]! [margin:0]! [font-weight:500]!">Rows Imported</p>
+                <p className="up-card-num">{successCount.toLocaleString()}</p>
+                <p className="up-card-lbl">Rows Imported</p>
               </div>
             </div>
             <div
-              className={`up-card ${skippedCount > 0 ? "[&_.up-card-icon]:[background:#fef3c7]! [&_.up-card-icon]:[color:var(--color-amber-700)]!" : "[&_.up-card-icon]:[background:var(--color-brand-50)]! [&_.up-card-icon]:[color:var(--color-link)]!"}`}
+              className={`up-card ${skippedCount > 0 ? "up-card--warn" : "up-card--neutral"}`}
             >
-              <div className="up-card-icon [width:48px]! [height:48px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [&_svg]:[width:24px]! [&_svg]:[height:24px]!">
+              <div className="up-card-icon">
                 <IconWarn />
               </div>
               <div>
-                <p className="[font-size:var(--text-xl)]! [font-weight:700]! [margin:0_0_2px_0]! [color:var(--color-ink-900)]! [line-height:1]">{skippedCount.toLocaleString()}</p>
-                <p className="[font-size:var(--text-base)]! [color:var(--color-ink-500)]! [margin:0]! [font-weight:500]!">Rows Skipped</p>
+                <p className="up-card-num">{skippedCount.toLocaleString()}</p>
+                <p className="up-card-lbl">Rows Skipped</p>
               </div>
             </div>
-            <div className="up-card [&_.up-card-icon]:[background:var(--color-brand-50)]! [&_.up-card-icon]:[color:var(--color-link)]!">
-              <div className="up-card-icon [width:48px]! [height:48px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [&_svg]:[width:24px]! [&_svg]:[height:24px]!">
+            <div className="up-card up-card--neutral">
+              <div className="up-card-icon">
                 <IconCheck />
               </div>
               <div>
-                <p className="[font-size:var(--text-xl)]! [font-weight:700]! [margin:0_0_2px_0]! [color:var(--color-ink-900)]! [line-height:1]">{processed.toLocaleString()}</p>
-                <p className="[font-size:var(--text-base)]! [color:var(--color-ink-500)]! [margin:0]! [font-weight:500]!">Total Processed</p>
+                <p className="up-card-num">{processed.toLocaleString()}</p>
+                <p className="up-card-lbl">Total Processed</p>
               </div>
             </div>
           </div>
 
           {/* Skipped reasons panel */}
           {skippedCount > 0 && (
-            <div className="[border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [margin-bottom:24px]! [overflow:hidden]! [&:has(.up-reasons-body)_.up-skip-toggle]:[border-bottom-color:var(--color-ink-200)]!">
-              <div className="[display:flex]! [align-items:center] [width:100%]! [background:var(--color-ink-50)]! [border-bottom:1px_solid_transparent]!">
+            <div className="up-skip-panel">
+              <div className="up-skip-toggle-row">
                 <button
-                  className="up-skip-toggle [flex:1] [display:flex]! [align-items:center] [gap:12px] [padding:16px_20px]! [background:transparent]! [border:none]! [cursor:pointer] [font-size:var(--text-md)]! [font-weight:600]! [color:var(--color-ink-700)]! [transition:background_0.2s]! [text-align:left]! hover:[background:var(--color-ink-100)]! [&_svg]:[width:20px]! [&_svg]:[height:20px]! [&_svg]:[color:var(--color-ink-500)]!"
+                  className="up-skip-toggle"
                   onClick={() => setShowReasons((v) => !v)}
                 >
                   <IconChevron open={showReasons} />
@@ -277,7 +277,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
                 </button>
                 {hasErrorCsv && (
                   <button
-                    className="[margin-left:auto]! [display:flex]! [align-items:center] [gap:6px] [padding:6px_12px]! [background:var(--color-white)]! [border:1px_solid_var(--color-ink-300)]! [border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:500]! [color:var(--color-ink-600)]! [cursor:pointer] [transition:all_0.2s]! hover:[background:var(--color-ink-100)]! hover:[border-color:var(--color-ink-400)]! hover:[color:var(--color-ink-800)]! [&_svg]:[width:14px]! [&_svg]:[height:14px]!"
+                    className="up-dl-btn"
                     onClick={(e) => {
                       e.stopPropagation();
                       downloadErrors();
@@ -289,10 +289,10 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
               </div>
 
               {showReasons && (
-                <div className="up-reasons-body [background:var(--color-white)]! [padding:0]!">
+                <div className="up-reasons-body">
                   {/* Category filter pills */}
                   {categories.length > 2 && (
-                    <div className="[display:flex]! [flex-wrap:wrap] [gap:8px] [padding:16px_20px]! [border-bottom:1px_solid_var(--color-ink-200)]! [background:#fafaf9]!">
+                    <div className="up-filter-pills">
                       {categories.map((cat) => (
                         <button
                           key={cat}
@@ -308,7 +308,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
                   )}
 
                   {/* Reasons table */}
-                  <div className="[max-height:400px]! [overflow:auto]!">
+                  <div className="up-reasons-table-wrap">
                     <table className="up-reasons-table">
                       <thead>
                         <tr>
@@ -328,27 +328,27 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
                           const cat = categoryFromReason(row.reason);
                           return (
                             <tr key={i}>
-                              <td className="[font-family:monospace]! [color:var(--color-ink-600)]! [font-weight:500]! [width:60px]!">{row.row}</td>
+                              <td className="up-td-row">{row.row}</td>
                               <td>
                                 <span className={`up-tag ${cat.cls}`}>
                                   {cat.label}
                                 </span>
                               </td>
-                              <td className="[font-weight:500]! [color:var(--color-red-700)]! [max-width:250px]! [line-height:1.4]">{row.reason}</td>
-                              <td className="[color:var(--color-ink-500)]! [max-width:120px]! [white-space:nowrap] [overflow:hidden]! [text-overflow:ellipsis]! [font-family:monospace]! [font-weight:600]! [color:var(--color-ink-700)]! [width:52px]! [text-align:center]!">
+                              <td className="up-td-reason">{row.reason}</td>
+                              <td className="up-td-meta up-td-year">
                                 {row.year || (row.date ? row.date.split("-")[0] : "—")}
                               </td>
-                              <td className="[color:var(--color-ink-500)]! [max-width:120px]! [white-space:nowrap] [overflow:hidden]! [text-overflow:ellipsis]! [font-family:monospace]! [font-weight:600]! [color:var(--color-ink-700)]! [width:52px]! [text-align:center]!">
+                              <td className="up-td-meta up-td-month">
                                 {row.month || (row.date ? row.date.split("-")[1] : "—")}
                               </td>
-                              <td className="[color:var(--color-ink-500)]! [max-width:120px]! [white-space:nowrap] [overflow:hidden]! [text-overflow:ellipsis]!">
+                              <td className="up-td-meta">
                                 {row.facility || "—"}
                               </td>
-                              <td className="[color:var(--color-ink-500)]! [max-width:120px]! [white-space:nowrap] [overflow:hidden]! [text-overflow:ellipsis]!">
+                              <td className="up-td-meta">
                                 {row.process || "—"}
                               </td>
-                              <td className="[color:var(--color-ink-500)]! [max-width:120px]! [white-space:nowrap] [overflow:hidden]! [text-overflow:ellipsis]!">{row.fuel || "—"}</td>
-                              <td className="[color:var(--color-ink-500)]! [max-width:120px]! [white-space:nowrap] [overflow:hidden]! [text-overflow:ellipsis]!">
+                              <td className="up-td-meta">{row.fuel || "—"}</td>
+                              <td className="up-td-meta">
                                 {row.quantity || "—"}
                               </td>
                             </tr>
@@ -356,7 +356,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
                         })}
                         {filtered.length === 0 && (
                           <tr>
-                            <td colSpan={9} className="[text-align:center]! [padding:32px]! [color:var(--color-ink-600)]!">
+                            <td colSpan={9} className="up-empty">
                               No rows match this filter.
                             </td>
                           </tr>
@@ -371,9 +371,9 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
 
           {/* ── Anomaly Warnings Panel ── */}
           {anomalyCount > 0 && (
-            <div className="[background:#fefce8]! [border:1px_solid_#fef08a]! [border-radius:var(--radius-md)]! [margin-bottom:24px]! [overflow:hidden]!">
+            <div className="up-anomaly-section">
               <button
-                className="[width:100%]! [display:flex]! [align-items:center] [padding:12px_16px]! [background:transparent]! [border:none]! [color:#854d0e]! [font-weight:600]! [font-size:var(--text-base)]! [cursor:pointer] [transition:background_0.2s]! hover:[background:#fef9c3]! [&_span]:[flex:1]! [&_span]:[text-align:left]! [&_span]:[margin-left:8px]!"
+                className="up-anomaly-toggle"
                 onClick={() => setShowAnomalies((v) => !v)}
               >
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-[16px]! h-[16px]! shrink-0!">
@@ -387,12 +387,12 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
                 <IconChevron open={showAnomalies} />
               </button>
               {showAnomalies && (
-                <div className="[padding:16px]! [border-top:1px_solid_#fef08a]!">
-                  <p className="[font-size:var(--text-base)]! [color:#713f12]! [margin:0_0_12px_0]! [line-height:1.4]">
+                <div className="up-anomaly-body">
+                  <p className="up-anomaly-desc">
                     These rows were imported but deviate significantly from historical values for the same facility and process type.
                     Please review them carefully before approving.
                   </p>
-                  <div className="[max-height:400px]! [overflow:auto]!">
+                  <div className="up-reasons-table-wrap">
                     <table className="up-reasons-table">
                       <thead>
                         <tr>
@@ -406,21 +406,21 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
                       </thead>
                       <tbody>
                         {anomalies.map((a, i) => (
-                          <tr key={i} className="[background:var(--color-amber-50)]! hover:[background:#fef3c7]!">
-                            <td className="[font-family:monospace]! [color:var(--color-ink-600)]! [font-weight:500]! [width:60px]!">{a.row}</td>
-                            <td className="[color:var(--color-ink-500)]! [max-width:120px]! [white-space:nowrap] [overflow:hidden]! [text-overflow:ellipsis]!">{a.facility_id || "—"}</td>
-                            <td className="[color:var(--color-ink-500)]! [max-width:120px]! [white-space:nowrap] [overflow:hidden]! [text-overflow:ellipsis]! text-[color:var(--up-warn)]!">
+                          <tr key={i} className="up-anomaly-row">
+                            <td className="up-td-row">{a.row}</td>
+                            <td className="up-td-meta">{a.facility_id || "—"}</td>
+                            <td className="up-td-meta text-[color:var(--up-warn)]!">
                               {typeof a.value === "number" ? a.value.toFixed(2) : a.value}
                             </td>
-                            <td className="[color:var(--color-ink-500)]! [max-width:120px]! [white-space:nowrap] [overflow:hidden]! [text-overflow:ellipsis]!">
+                            <td className="up-td-meta">
                               {a.z_score != null ? `±${Math.abs(a.z_score).toFixed(1)}σ` : "—"}
                             </td>
-                            <td className="[color:var(--color-ink-500)]! [max-width:120px]! [white-space:nowrap] [overflow:hidden]! [text-overflow:ellipsis]!">
+                            <td className="up-td-meta">
                               {a.expected_range
                                 ? `${a.expected_range[0].toFixed(1)} – ${a.expected_range[1].toFixed(1)}`
                                 : "—"}
                             </td>
-                            <td className="[font-weight:500]! [color:var(--color-red-700)]! [max-width:250px]! [line-height:1.4] text-[length:0.75rem]!">
+                            <td className="up-td-reason text-[length:0.75rem]!">
                               {a.message || "Statistical outlier"}
                             </td>
                           </tr>
@@ -433,12 +433,12 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
             </div>
           )}
 
-          <div className="[display:flex]! [align-items:center] [justify-content:flex-end] [gap:12px] [margin-top:24px]!">
+          <div className="up-footer-actions">
             {isReviewer ? (
               <>
                 <button
                   type="button"
-                  className="[padding:10px_20px]! [background:transparent]! [color:var(--color-ink-500)]! [border:1px_solid_var(--color-ink-300)]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [transition:all_0.2s]! hover:[background:var(--color-ink-100)]! hover:[color:var(--color-ink-700)]!"
+                  className="up-btn-ghost"
                   onClick={() => {
                     if (onComplete) onComplete();
                   }}
@@ -448,7 +448,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
                 {reviewable && (
                   <button
                     type="button"
-                    className="[padding:10px_20px]! [background:var(--primary-gradient)]! [color:var(--color-white)]! [border:none]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [transition:all_0.18s]! [box-shadow:0_2px_8px_rgba(255,_102,_0,_0.25)]! [font-family:inherit]! hover:[background:var(--primary-gradient)]! hover:[box-shadow:0_4px_12px_rgba(255,_102,_0,_0.35)]! hover:[transform:translateY(-1px)]"
+                    className="up-btn-primary"
                     onClick={() => {
                       if (onComplete) onComplete();
                       navigate("/manage-data", { state: { tab: "pending" } });
@@ -461,7 +461,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
             ) : (
               <button
                 type="button"
-                className="[padding:10px_20px]! [background:var(--primary-gradient)]! [color:var(--color-white)]! [border:none]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [transition:all_0.18s]! [box-shadow:0_2px_8px_rgba(255,_102,_0,_0.25)]! [font-family:inherit]! hover:[background:var(--primary-gradient)]! hover:[box-shadow:0_4px_12px_rgba(255,_102,_0,_0.35)]! hover:[transform:translateY(-1px)]"
+                className="up-btn-primary"
                 onClick={() => {
                   if (onComplete) onComplete();
                 }}
@@ -475,27 +475,27 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
 
       {/* ── FATAL ERROR ── */}
       {status === "error" && (
-        <div className="[background:var(--color-white)]! [border-radius:var(--radius-md)]! [padding:24px]! [border:1px_solid_var(--color-ink-200)]! [box-shadow:var(--shadow-xs)]!">
-          <div className="[display:flex]! [align-items:flex-start] [gap:16px] [margin-bottom:20px]!">
-            <div className="[width:40px]! [height:40px]! [border-radius:50%]! [background:#fee2e2]! [color:var(--color-red-700)]! [display:flex]! [align-items:center] [justify-content:center] [&_svg]:[width:24px]! [&_svg]:[height:24px]!">
+        <div className="up-section">
+          <div className="up-fatal-header">
+            <div className="up-fatal-icon">
               <IconX />
             </div>
             <div>
-              <p className="[font-size:var(--text-md)]! [font-weight:600]! [margin:0_0_4px_0]! [color:var(--color-ink-900)]! [color:var(--color-red-700)]!">Upload Failed</p>
-              <p className="[font-size:var(--text-base)]! [color:var(--color-ink-500)]! [margin:0]!">
+              <p className="up-label up-label--error">Upload Failed</p>
+              <p className="up-sub">
                 A fatal error occurred while processing the file.
               </p>
             </div>
           </div>
-          <div className="[background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:16px]! [margin-bottom:24px]! [max-height:200px]! [overflow-y:auto]! [font-family:monospace]! [font-size:var(--text-sm)]! [color:var(--color-ink-700)]!">
+          <div className="up-error-log">
             {errors.map((e, i) => (
-              <div key={i} className="[display:flex]! [align-items:flex-start] [gap:8px] [margin-bottom:8px]! [line-height:1.4] last:[margin-bottom:0]!">
-                <span className="[width:6px]! [height:6px]! [border-radius:50%]! [background:var(--color-red-600)]! [margin-top:6px]! [flex-shrink:0]" />
+              <div key={i} className="up-error-line">
+                <span className="up-error-bullet" />
                 {e}
               </div>
             ))}
           </div>
-          <button className="[padding:10px_20px]! [background:transparent]! [color:var(--color-ink-500)]! [border:1px_solid_var(--color-ink-300)]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [transition:all_0.2s]! hover:[background:var(--color-ink-100)]! hover:[color:var(--color-ink-700)]!" onClick={onCancel}>
+          <button className="up-btn-ghost" onClick={onCancel}>
             Go Back
           </button>
         </div>

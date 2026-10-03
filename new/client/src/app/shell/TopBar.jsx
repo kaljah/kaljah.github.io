@@ -23,7 +23,7 @@ const TopBar = ({ onOpenPalette }) => {
           <Breadcrumbs />
         </div>
 
-        <div className="[display:flex]! [align-items:center] [gap:14px] [white-space:nowrap] [@media(max-width:900px)]:[gap:6px]! flex items-center gap-2">
+        <div className="top-actions flex items-center gap-2">
           <button
             type="button"
             onClick={onOpenPalette}

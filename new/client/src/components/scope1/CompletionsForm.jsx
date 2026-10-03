@@ -143,7 +143,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
       {isTier1 && (
         <div>
 
-          <div className="form-grid-3 [display:grid]! [grid-template-columns:repeat(3,_1fr)] [gap:20px] [margin-bottom:20px]! [@media(max-width:600px)]:[grid-template-columns:1fr]! [@media(max-width:600px)]:[gap:12px]! mb-[16px]!">
+          <div className="form-grid-3 mb-[16px]!">
             <Field className="input-group" label={<>Well type
                 <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
 <NativeSelect
@@ -208,7 +208,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
 
           {/* ACTIVE FACTOR BADGE */}
 
-          <div className="form-grid-3 [display:grid]! [grid-template-columns:repeat(3,_1fr)] [gap:20px] [margin-bottom:20px]! [@media(max-width:600px)]:[grid-template-columns:1fr]! [@media(max-width:600px)]:[gap:12px]!">
+          <div className="form-grid-3">
             <Field className="input-group" label={<>Completions
                 <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
 <Input
@@ -288,7 +288,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
 
           {/* Model 1: Rate × Duration */}
           {activeMethod === "rate_duration" && (
-            <div className="form-grid-3 [display:grid]! [grid-template-columns:repeat(3,_1fr)] [gap:20px] [margin-bottom:20px]! [@media(max-width:600px)]:[grid-template-columns:1fr]! [@media(max-width:600px)]:[gap:12px]! mb-[16px]!">
+            <div className="form-grid-3 mb-[16px]!">
               <Field className="input-group" label={<>Flowback rate
                   <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
 <Input
@@ -337,7 +337,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
 
           {/* Model 2: Liquid × GOR (API Eq. 6-12) */}
           {activeMethod === "gor" && (
-            <div className="form-grid-3 [display:grid]! [grid-template-columns:repeat(3,_1fr)] [gap:20px] [margin-bottom:20px]! [@media(max-width:600px)]:[grid-template-columns:1fr]! [@media(max-width:600px)]:[gap:12px]! mb-[16px]!">
+            <div className="form-grid-3 mb-[16px]!">
               <Field className="input-group" label={<>Total Liquid Flowback (bbl)
                   <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
 <Input
@@ -382,7 +382,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
 
           {/* Model 3: API Eq. 6-7 (V_cc = V_Pi × T) */}
           {activeMethod === "api_equation_6_7" && (
-            <div className="form-grid-3 [display:grid]! [grid-template-columns:repeat(3,_1fr)] [gap:20px] [margin-bottom:20px]! [@media(max-width:600px)]:[grid-template-columns:1fr]! [@media(max-width:600px)]:[gap:12px]! mb-[16px]!">
+            <div className="form-grid-3 mb-[16px]!">
               <Field className="input-group" label={<>Production / Well Test Rate (V_Pi)
                   <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
 <Input
@@ -434,7 +434,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
           )}
 
           {/* Gas Properties & Control for Tier 2 */}
-          <div className="form-grid-4 [display:grid]! [grid-template-columns:repeat(4,_1fr)] [gap:20px] [margin-bottom:20px]! [@media(max-width:600px)]:[grid-template-columns:1fr]! [@media(max-width:600px)]:[gap:12px]!">
+          <div className="form-grid-4">
             <Field className="input-group" label={<>CH₄ (%)
                 <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
 <Input
@@ -502,7 +502,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
         <div>
 
           {/* Section 1: Metered Gas & Injected N2 Deduction */}
-          <div className="form-grid-4 [display:grid]! [grid-template-columns:repeat(4,_1fr)] [gap:20px] [margin-bottom:20px]! [@media(max-width:600px)]:[grid-template-columns:1fr]! [@media(max-width:600px)]:[gap:12px]! mb-[16px]!">
+          <div className="form-grid-4 mb-[16px]!">
             <Field className="input-group" label={<>Metered volume
                 <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
 <Input
@@ -583,7 +583,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                 Unmetered flowback
               </label>
             </div>
-            <div className="form-grid-2 [display:grid]! [grid-template-columns:1fr_1fr] [gap:20px] [margin-bottom:20px]! [@media(max-width:600px)]:[grid-template-columns:1fr]! [@media(max-width:600px)]:[gap:12px]!">
+            <div className="form-grid-2">
               <Field className="input-group" label="Unmetered time (h)">
 <Input
                   type="number"
@@ -611,7 +611,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
           </div>
 
           {/* Section 3: Gas Composition */}
-          <div className="form-grid-2 [display:grid]! [grid-template-columns:1fr_1fr] [gap:20px] [margin-bottom:20px]! [@media(max-width:600px)]:[grid-template-columns:1fr]! [@media(max-width:600px)]:[gap:12px]! mb-[16px]!">
+          <div className="form-grid-2 mb-[16px]!">
             <Field className="input-group" label={<>CH₄ (%)
                 <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
 <Input
@@ -708,7 +708,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                 })()}
               </div>
 
-              <div className="form-grid-3 [display:grid]! [grid-template-columns:repeat(3,_1fr)] [gap:20px] [margin-bottom:20px]! [@media(max-width:600px)]:[grid-template-columns:1fr]! [@media(max-width:600px)]:[gap:12px]!">
+              <div className="form-grid-3">
                 <Field className="input-group" label="Vented (%)">
 <Input
                     type="number"
@@ -761,7 +761,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
           )}
 
           {(tier3Disposition === "flared" || (tier3Disposition === "split" && parseFloat(data.comp_frac_flared || 0) > 0)) && (
-            <div className="form-grid-2 [display:grid]! [grid-template-columns:1fr_1fr] [gap:20px] [margin-bottom:20px]! [@media(max-width:600px)]:[grid-template-columns:1fr]! [@media(max-width:600px)]:[gap:12px]! mb-[16px]!">
+            <div className="form-grid-2 mb-[16px]!">
               <Field className="input-group" label="Flare efficiency (%)">
 <Input
                   type="number"

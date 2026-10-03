@@ -7,11 +7,11 @@ const MethaneIntensityOGMP20Gold = ({ facilities, globalThreshold, ogmpRoadmapDa
           className={`ogmp-roadmap-card ${roadmapCollapsed ? "collapsed-card" : ""}`}
         >
           <div
-            className="[display:flex]! [justify-content:space-between] [align-items:center] [flex-wrap:wrap] [gap:16px] [padding-bottom:18px]! [border-bottom:1px_solid_var(--border-color)]!"
+            className="roadmap-header-row"
             onClick={() => setRoadmapCollapsed(!roadmapCollapsed)}
             style={{ cursor: "pointer", userSelect: "none" }}
           >
-            <div className="[display:flex]! [flex-direction:column] [gap:4px] [&_h3]:[font-size:var(--text-lg)]! [&_h3]:[font-weight:700]! [&_h3]:[color:var(--text-primary)]! [&_h3]:[margin:0]! [&_h3]:[display:flex]! [&_h3]:[align-items:center]! [&_h3]:[gap:10px]! [&_p]:[font-size:var(--text-base)]! [&_p]:[color:var(--text-secondary)]! [&_p]:[margin:0]!">
+            <div className="roadmap-title-area">
               <h3>
                 <Award size={22} color="#ff6600" />
                 OGMP 2.0 Gold Standard Pathway & Milestone Roadmap
@@ -25,10 +25,10 @@ const MethaneIntensityOGMP20Gold = ({ facilities, globalThreshold, ogmpRoadmapDa
             <div className="flex! items-center! gap-[16px]!">
               {/* Interactive Baseline Selector UI button/pill matching theme */}
               <div
-                className="[display:flex]! [align-items:center] [gap:10px] [background:var(--bg-app)]! [padding:6px_12px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--border-color)]!"
+                className="baseline-selector-wrapper"
                 onClick={(e) => e.stopPropagation()}
               >
-                <span className="[font-size:var(--text-sm)]! [font-weight:600]! [color:var(--text-secondary)]!">
+                <span className="baseline-selector-label">
                   <Calendar
                     size={14}
                     style={{
@@ -39,7 +39,7 @@ const MethaneIntensityOGMP20Gold = ({ facilities, globalThreshold, ogmpRoadmapDa
                   />
                   Base Year:
                 </span>
-                <div className="[display:flex]! [gap:6px]">
+                <div className="baseline-pills">
                   {Array.from({ length: new Date().getFullYear() - 2020 }, (_, i) => 2021 + i).map((yr) => (
                     <button
                       key={yr}
@@ -64,7 +64,7 @@ const MethaneIntensityOGMP20Gold = ({ facilities, globalThreshold, ogmpRoadmapDa
             className={`ogmp-roadmap-body-wrapper ${roadmapCollapsed ? "collapsed" : ""}`}
           >
             {/* Facility Roadmap Cards Grid */}
-            <div className="[display:grid]! [grid-template-columns:repeat(auto-fit,_minmax(480px,_1fr))] [gap:20px]">
+            <div className="facility-roadmap-grid">
               {(ogmpRoadmapData.length > 0 ? ogmpRoadmapData : facilities).map(
                 (fac) => {
                   const facName = fac.facility_name || fac.name;
@@ -126,12 +126,12 @@ const MethaneIntensityOGMP20Gold = ({ facilities, globalThreshold, ogmpRoadmapDa
                   return (
                     <div
                       key={fac.facility_id || fac.id}
-                      className="[background:var(--bg-app)]! [border:1px_solid_var(--border-color)]! [border-radius:var(--radius-md)]! [padding:20px]! [display:flex]! [flex-direction:column] [gap:16px] [transition:transform_0.2s,_box-shadow_0.2s]! hover:[transform:translateY(-2px)] hover:[box-shadow:var(--card-shadow-hover)]!"
+                      className="fac-roadmap-card"
                     >
-                      <div className="[display:flex]! [justify-content:space-between] [align-items:flex-start] [gap:12px]">
-                        <div className="[display:flex]! [flex-direction:column] [gap:2px]">
-                          <span className="[font-size:var(--text-md)]! [font-weight:700]! [color:var(--text-primary)]!">{facName}</span>
-                          <span className="[font-size:var(--text-sm)]! [color:var(--text-secondary)]!">
+                      <div className="fac-roadmap-top">
+                        <div className="fac-roadmap-info">
+                          <span className="fac-roadmap-name">{facName}</span>
+                          <span className="fac-roadmap-meta">
                             {opStatus === "operated"
                               ? "Operated Asset (3-Yr Target)"
                               : "Non-Operated Asset (5-Yr Target)"}{" "}
@@ -168,10 +168,10 @@ const MethaneIntensityOGMP20Gold = ({ facilities, globalThreshold, ogmpRoadmapDa
                               key={lvl}
                               className={`ogmp-step ${isDone ? "completed" : ""} ${isCurrent ? "current" : ""}`}
                             >
-                              <div className="step-circle [width:28px]! [height:28px]! [border-radius:50%]! [background:var(--bg-card)]! [border:2px_solid_var(--border-color)]! [display:flex]! [align-items:center] [justify-content:center] [font-size:var(--text-sm)]! [font-weight:700]! [color:var(--text-secondary)]! [transition:all_0.25s_ease]!">
+                              <div className="step-circle">
                                 {isDone ? "✓" : lvl}
                               </div>
-                              <span className="step-name [font-size:var(--text-xs)]! [font-weight:600]! [color:var(--text-secondary)]! [line-height:1.2]">
+                              <span className="step-name">
                                 {levelNames[lvl - 1]}
                               </span>
                             </div>
@@ -180,17 +180,17 @@ const MethaneIntensityOGMP20Gold = ({ facilities, globalThreshold, ogmpRoadmapDa
                       </div>
 
                       {/* Footer stats */}
-                      <div className="[display:grid]! [grid-template-columns:repeat(3,_1fr)] [gap:10px] [background:var(--bg-card)]! [border:1px_solid_var(--border-color)]! [border-radius:var(--radius-md)]! [padding:10px_12px]!">
-                        <div className="[display:flex]! [flex-direction:column] [gap:2px]">
-                          <span className="[font-size:var(--text-xs)]! [color:var(--text-secondary)]! [font-weight:500]!">
+                      <div className="fac-roadmap-stats">
+                        <div className="roadmap-stat-item">
+                          <span className="roadmap-stat-label">
                             Current Milestone
                           </span>
                           <span className="roadmap-stat-val">
                             OGMP Level {highestLevel}
                           </span>
                         </div>
-                        <div className="[display:flex]! [flex-direction:column] [gap:2px]">
-                          <span className="[font-size:var(--text-xs)]! [color:var(--text-secondary)]! [font-weight:500]!">
+                        <div className="roadmap-stat-item">
+                          <span className="roadmap-stat-label">
                             Reconciliation Var.
                           </span>
                           <span
@@ -203,8 +203,8 @@ const MethaneIntensityOGMP20Gold = ({ facilities, globalThreshold, ogmpRoadmapDa
                               : "Pending Survey"}
                           </span>
                         </div>
-                        <div className="[display:flex]! [flex-direction:column] [gap:2px]">
-                          <span className="[font-size:var(--text-xs)]! [color:var(--text-secondary)]! [font-weight:500]!">
+                        <div className="roadmap-stat-item">
+                          <span className="roadmap-stat-label">
                             Tolerance Limit
                           </span>
                           <span className="roadmap-stat-val">

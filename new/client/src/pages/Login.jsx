@@ -63,9 +63,9 @@ const GhgCloud = () => {
   }, []);
 
   return (
-    <div className="[position:absolute] [top:0] [left:0] [right:0] [bottom:0] [pointer-events:none]! [z-index:1] [overflow:hidden]!">
-      <div className="ghg-cloud [background:radial-gradient(_circle,_rgba(16,_185,_129,_0.5)_0%,_rgba(15,_23,_42,_0.2)_50%,_transparent_70%_)]! [width:900px]! [height:900px]!" ref={cloud2Ref}></div>
-      <div className="ghg-cloud [background:radial-gradient(_circle,_rgba(255,_102,_0,_0.6)_0%,_rgba(100,_116,_139,_0.3)_50%,_transparent_70%_)]!" ref={cloud1Ref}></div>
+    <div className="ghg-cloud-container">
+      <div className="ghg-cloud ch4-cloud" ref={cloud2Ref}></div>
+      <div className="ghg-cloud co2-cloud" ref={cloud1Ref}></div>
       <div className="ghg-noise-overlay"></div>
     </div>
   );
@@ -131,14 +131,14 @@ const Login = () => {
       <GhgCloud />
 
       <motion.div
-        className="[width:100%]! [max-width:440px]! [padding:48px]! [border-radius:var(--radius-lg)]! [position:relative]! [z-index:10]! glass-panel"
+        className="login-container glass-panel"
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
       >
         {/* Welcome Text */}
-        <div className="[text-align:center]! [margin-bottom:32px]! [&_h2]:[font-size:var(--text-2xl)]! [&_h2]:[font-weight:800]! [&_h2]:[color:var(--text-main)]! [&_h2]:[margin-bottom:8px]! [&_h2]:[letter-spacing:-0.5px]! [&_p]:[color:var(--text-muted)]! [&_p]:[font-size:var(--text-md)]!">
-          <img src={`${import.meta.env.BASE_URL}carbon_tech.svg`} alt="Carbon Tech" className="[display:block]! [width:48px]! [height:48px]! [margin:0_auto_12px]!" />
+        <div className="login-header">
+          <img src={`${import.meta.env.BASE_URL}carbon_tech.svg`} alt="Carbon Tech" className="login-logo" />
           <h2>Welcome Back</h2>
           <p>Sign in to your GHG Reporting Platform</p>
         </div>
@@ -179,8 +179,8 @@ const Login = () => {
               visible: { opacity: 1, y: 0 },
             }}
           >
-            <div className="[position:relative]">
-              <span className="input-icon [position:absolute] [left:16px] [top:50%] [transform:translateY(-50%)] [color:var(--color-ink-600)]! [transition:color_0.3s]!">
+            <div className="input-wrapper">
+              <span className="input-icon">
                 <svg
                   width="18"
                   height="18"
@@ -197,7 +197,7 @@ const Login = () => {
               </span>
               <input
                 type="text"
-                className="[width:100%]! [padding:14px_16px_14px_48px]! [border:1px_solid_var(--border-light)]! [border-radius:var(--radius-md)]! [font-size:var(--text-md)]! [color:var(--text-main)]! [transition:all_0.2s]! [background:#fafafa]! placeholder:[color:var(--color-ink-400)]! focus:[outline:none]! focus:[border-color:var(--primary)]! focus:[background:var(--color-white)]! focus:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.1)]! [&:focus+.input-icon]:[color:var(--primary)]!"
+                className="form-control"
                 required
                 placeholder="Email Address"
                 aria-label="Email address"
@@ -215,13 +215,13 @@ const Login = () => {
               visible: { opacity: 1, y: 0 },
             }}
           >
-            <div className="[position:relative]">
-              <span className="input-icon [position:absolute] [left:16px] [top:50%] [transform:translateY(-50%)] [color:var(--color-ink-600)]! [transition:color_0.3s]!">
+            <div className="input-wrapper">
+              <span className="input-icon">
                 <Lock size="18" strokeWidth="2" aria-hidden="true" />
               </span>
               <input
                 type={showPassword ? "text" : "password"}
-                className="[width:100%]! [padding:14px_16px_14px_48px]! [border:1px_solid_var(--border-light)]! [border-radius:var(--radius-md)]! [font-size:var(--text-md)]! [color:var(--text-main)]! [transition:all_0.2s]! [background:#fafafa]! placeholder:[color:var(--color-ink-400)]! focus:[outline:none]! focus:[border-color:var(--primary)]! focus:[background:var(--color-white)]! focus:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.1)]! [&:focus+.input-icon]:[color:var(--primary)]!"
+                className="form-control"
                 required
                 placeholder="Password"
                 aria-label="Password"
@@ -231,7 +231,7 @@ const Login = () => {
               />
               <button
                 type="button"
-                className="[position:absolute] [top:50%] [right:12px] [transform:translateY(-50%)] [display:inline-flex]! [padding:6px]! [border:0]! [border-radius:var(--radius-md)]! [background:transparent]! [color:var(--color-ink-500)]! [cursor:pointer] hover:[background:var(--color-ink-100)]! hover:[color:var(--color-ink-900)]!"
+                className="password-toggle"
                 onClick={() => setShowPassword((v) => !v)}
                 aria-label={showPassword ? "Hide password" : "Show password"}
                 aria-pressed={showPassword}
@@ -241,10 +241,10 @@ const Login = () => {
             </div>
           </motion.div>
 
-          <div className="[display:flex]! [justify-content:flex-end] [margin-top:8px]! [margin-bottom:8px]!">
+          <div className="login-actions-row">
             <button
               type="button"
-              className="[background:none]! [border:none]! [color:var(--primary)]! [font-size:var(--text-base)]! [font-weight:500]! [cursor:pointer] [padding:0]! [transition:color_0.2s]! hover:[color:var(--primary-hover)]! hover:[text-decoration:underline]!"
+              className="forgot-password-link"
               onClick={() => {
                 setForgotEmail(email || "");
                 setForgotMsg({ text: "", type: "" });
@@ -270,8 +270,8 @@ const Login = () => {
         </motion.form>
 
         {/* Footer / Compliance */}
-        <div className="[margin-top:40px]! [text-align:center]! [border-top:1px_solid_var(--border-light)]! [padding-top:24px]! [&_p]:[color:var(--text-muted)]! [&_p]:[font-size:var(--text-sm)]!">
-          <div className="[display:flex]! [justify-content:center] [gap:12px] [margin-bottom:16px]!">
+        <div className="login-footer">
+          <div className="mini-badges">
             <span className="badge">API Compliant</span>
             <span className="badge">ISO 14064 Ready</span>
             <span className="badge">SOC2 Secured</span>
@@ -283,16 +283,16 @@ const Login = () => {
       {/* Forgot Password Modal */}
       <AnimatePresence>
         {showForgotModal && (
-          <div className="[position:fixed] [inset:0] [background:rgba(15,_23,_42,_0.6)]! [backdrop-filter:blur(8px)] [display:flex]! [align-items:center] [justify-content:center] [z-index:1000] [padding:20px]!" onClick={() => setShowForgotModal(false)}>
+          <div className="forgot-modal-overlay" onClick={() => setShowForgotModal(false)}>
             <motion.div
-              className="[width:100%]! [max-width:440px]! [background:var(--color-white)]! [border-radius:var(--radius-lg)]! [padding:32px]! [box-shadow:var(--shadow-raised)]! [border:1px_solid_rgba(226,_232,_240,_0.8)]! [position:relative]"
+              className="forgot-modal-content"
               onClick={(e) => e.stopPropagation()}
               initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
               transition={{ duration: 0.2 }}
             >
-              <div className="[margin-bottom:20px]! [text-align:left]! [&_h3]:[font-size:var(--text-xl)]! [&_h3]:[font-weight:700]! [&_h3]:[color:var(--text-main)]! [&_h3]:[margin-bottom:6px]! [&_p]:[font-size:var(--text-base)]! [&_p]:[color:var(--text-muted)]! [&_p]:[line-height:1.4]!">
+              <div className="forgot-modal-header">
                 <h3>Reset Your Password</h3>
                 <p>
                   Enter your account email. A notification will be dispatched to your IT Administrator to reset your credentials.
@@ -307,8 +307,8 @@ const Login = () => {
 
               <form onSubmit={handleForgotPassword}>
                 <div className="form-group mb-[16px]!">
-                  <div className="[position:relative]">
-                    <span className="input-icon [position:absolute] [left:16px] [top:50%] [transform:translateY(-50%)] [color:var(--color-ink-600)]! [transition:color_0.3s]!">
+                  <div className="input-wrapper">
+                    <span className="input-icon">
                       <svg
                         width="18"
                         height="18"
@@ -325,7 +325,7 @@ const Login = () => {
                     </span>
                     <input
                       type="email"
-                      className="[width:100%]! [padding:14px_16px_14px_48px]! [border:1px_solid_var(--border-light)]! [border-radius:var(--radius-md)]! [font-size:var(--text-md)]! [color:var(--text-main)]! [transition:all_0.2s]! [background:#fafafa]! placeholder:[color:var(--color-ink-400)]! focus:[outline:none]! focus:[border-color:var(--primary)]! focus:[background:var(--color-white)]! focus:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.1)]! [&:focus+.input-icon]:[color:var(--primary)]!"
+                      className="form-control"
                       required
                       placeholder="Enter registered email"
                       value={forgotEmail}
@@ -335,7 +335,7 @@ const Login = () => {
                   </div>
                 </div>
 
-                <div className="[display:flex]! [gap:12px] [margin-top:20px]!">
+                <div className="forgot-modal-actions">
                   <button
                     type="button"
                     className="btn-secondary"
