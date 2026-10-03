@@ -483,7 +483,7 @@ const AuditTrail = () => {
         {/* Header Title & Actions */}
         <div className="[display:flex]! [justify-content:space-between] [align-items:flex-start] [margin-bottom:24px]! [gap:20px] [flex-wrap:wrap] [@media(max-width:768px)]:[flex-direction:column]! [@media(max-width:768px)]:[align-items:stretch]!">
           <div>
-            <div className="[display:inline-flex]! [align-items:center] [gap:6px] [padding:4px_10px]! [background:rgba(255,_102,_0,_0.08)]! [border:1px_solid_rgba(255,_102,_0,_0.25)]! [&&]:[border-radius:999px]! [color:var(--color-link)]! [font-size:var(--text-xs)]! [font-weight:700]! [text-transform:uppercase]! [letter-spacing:0.05em] [margin-bottom:8px]!">
+            <div className="[display:inline-flex]! [align-items:center] [gap:6px] [padding:4px_10px]! [background:rgba(255,_102,_0,_0.08)]! [border:1px_solid_rgba(255,_102,_0,_0.25)]! [border-radius:999px]! [color:var(--color-link)]! [font-size:var(--text-xs)]! [font-weight:700]! [text-transform:uppercase]! [letter-spacing:0.05em] [margin-bottom:8px]!">
               <Shield size={14} />
               <span>Immutable Compliance Log</span>
             </div>
@@ -504,7 +504,7 @@ const AuditTrail = () => {
               ]}
             />
             <button
-              className="[display:inline-flex]! [align-items:center] [gap:8px] [padding:9px_16px]! [background:var(--bg-card,_rgba(255,_255,_255,_0.85))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-md)]! [color:var(--text-secondary,_var(--color-ink-600))]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [transition:all_0.2s_ease]! [box-shadow:var(--shadow-xs)]! [&:hover:not(:disabled)]:[background:var(--bg-hover,_rgba(255,_247,_237,_0.9))]! [&:hover:not(:disabled)]:[border-color:var(--accent-color,_var(--color-brand-500))]! [&:hover:not(:disabled)]:[color:var(--color-link)]! [&:hover:not(:disabled)]:[transform:translateY(-1px)]!"
+              className="[display:inline-flex]! [align-items:center] [gap:8px] [padding:9px_16px]! [background:var(--bg-card,_rgba(255,_255,_255,_0.85))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-md)]! [color:var(--text-secondary,_var(--color-ink-600))]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [transition:all_0.2s_ease]! [box-shadow:var(--shadow-xs)]! [&:hover:not(:disabled)]:[background:var(--bg-hover,_rgba(255,_247,_237,_0.9))]! [&:hover:not(:disabled)]:[border-color:var(--accent-color,_var(--color-brand-500))]! [&:hover:not(:disabled)]:[color:var(--color-link)]! [&:hover:not(:disabled)]:[transform:translateY(-1px)]!"
               onClick={() => {
                 fetchAuditLogs(true);
                 fetchStats();
@@ -520,7 +520,7 @@ const AuditTrail = () => {
             {/* Export Dropdown */}
             <div className="[position:relative]" ref={exportMenuRef}>
               <button
-                className="[display:inline-flex]! [align-items:center] [gap:8px] [padding:9px_18px]! [background:var(--primary-gradient)]! [border:none]! [&&]:[border-radius:var(--radius-md)]! [color:var(--color-white)]! [font-size:var(--text-base)]! [font-weight:700]! [cursor:pointer] [box-shadow:0_2px_8px_rgba(255,_102,_0,_0.25)]! [transition:all_0.2s_ease]! hover:[filter:brightness(1.05)] hover:[transform:translateY(-1px)] hover:[box-shadow:0_4px_12px_rgba(255,_102,_0,_0.35)]!"
+                className="[display:inline-flex]! [align-items:center] [gap:8px] [padding:9px_18px]! [background:var(--primary-gradient)]! [border:none]! [border-radius:var(--radius-md)]! [color:var(--color-white)]! [font-size:var(--text-base)]! [font-weight:700]! [cursor:pointer] [box-shadow:0_2px_8px_rgba(255,_102,_0,_0.25)]! [transition:all_0.2s_ease]! hover:[filter:brightness(1.05)] hover:[transform:translateY(-1px)] hover:[box-shadow:0_4px_12px_rgba(255,_102,_0,_0.35)]!"
                 onClick={() => setExportDropdownOpen(!exportDropdownOpen)}
               >
                 <Download size={15} />
@@ -529,7 +529,7 @@ const AuditTrail = () => {
               </button>
 
               {exportDropdownOpen && (
-                <div className="[position:absolute] [right:0] [top:calc(100%_+_8px)] [width:260px]! [background:var(--color-white)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-md)]! [padding:8px]! [box-shadow:var(--shadow-raised)]! [z-index:50] [animation:fadeIn_0.15s_ease-out]! [&_button]:[display:flex]! [&_button]:[align-items:flex-start]! [&_button]:[gap:12px]! [&_button]:[width:100%]! [&_button]:[padding:10px_12px]! [&_button]:[background:transparent]! [&_button]:[border:none]! [&_button]:[&&]:[border-radius:var(--radius-md)]! [&_button]:[text-align:left]! [&_button]:[cursor:pointer]! [&_button]:[transition:all_0.15s_ease]! [&_button:hover]:[background:var(--color-ink-50)]!">
+                <div className="export-menu">
                   <button onClick={() => handleExport("csv")}>
                     <FileSpreadsheet size={15} className="[margin-top:2px]! [flex-shrink:0] [color:var(--color-green-700)]!" />
                     <div className="[display:flex]! [flex-direction:column] [&_strong]:[font-size:var(--text-base)]! [&_strong]:[color:var(--text-primary,_var(--color-ink-900))]! [&_span]:[font-size:var(--text-sm)]! [&_span]:[color:var(--text-secondary,_var(--color-ink-500))]! [&_span]:[margin-top:2px]!">
@@ -623,7 +623,7 @@ const AuditTrail = () => {
             {[1, 2, 3, 4].map((i) => (
               <div key={i} className="skeleton-card">
                 <div className="[width:40px]! [height:40px]! [background:var(--color-ink-100)]! [border-radius:var(--radius-md)]! [flex-shrink:0] [animation:pulse_1.5s_infinite]!" />
-                <div className="[flex:1] [display:flex]! [&&]:[flex-direction:column] [gap:10px]">
+                <div className="[flex:1] [display:flex]! [flex-direction:column] [gap:10px]">
                   <div className="skeleton-line w-40" />
                   <div className="skeleton-line w-80" />
                   <div className="skeleton-line w-20" />
@@ -632,7 +632,7 @@ const AuditTrail = () => {
             ))}
           </div>
         ) : auditLogs.length === 0 ? (
-          <div className="[text-align:center]! [padding:60px_30px]! [background:var(--bg-card,_var(--color-white))]! [border:2px_dashed_var(--color-ink-300)]! [&&]:[border-radius:var(--radius-lg)]! [color:var(--color-ink-500)]! [margin-top:10px]! [&_h3]:[font-size:var(--text-lg)]! [&_h3]:[font-weight:700]! [&_h3]:[color:var(--text-primary,_var(--color-ink-900))]! [&_h3]:[margin:0_0_6px_0]! [&_p]:[font-size:var(--text-base)]! [&_p]:[color:var(--color-ink-500)]! [&_p]:[max-width:460px]! [&_p]:[margin:0_auto_18px_auto]!">
+          <div className="[text-align:center]! [padding:60px_30px]! [background:var(--bg-card,_var(--color-white))]! [border:2px_dashed_var(--color-ink-300)]! [border-radius:var(--radius-lg)]! [color:var(--color-ink-500)]! [margin-top:10px]! [&_h3]:[font-size:var(--text-lg)]! [&_h3]:[font-weight:700]! [&_h3]:[color:var(--text-primary,_var(--color-ink-900))]! [&_h3]:[margin:0_0_6px_0]! [&_p]:[font-size:var(--text-base)]! [&_p]:[color:var(--color-ink-500)]! [&_p]:[max-width:460px]! [&_p]:[margin:0_auto_18px_auto]!">
             <div className="[width:64px]! [height:64px]! [background:var(--color-ink-100)]! [border-radius:50%]! [display:flex]! [align-items:center] [justify-content:center] [margin:0_auto_16px_auto]! [color:var(--color-ink-600)]!">
               <Filter size={32} />
             </div>
@@ -643,7 +643,7 @@ const AuditTrail = () => {
                 : "No compliance audit records have been generated yet."}
             </p>
             {hasActiveFilters && (
-              <button className="[padding:8px_16px]! [background:var(--color-primary)]! [border:none]! [&&]:[border-radius:var(--radius-md)]! [color:var(--color-white)]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [transition:opacity_0.2s_ease]! hover:[opacity:0.9]" onClick={resetFilters}>
+              <button className="[padding:8px_16px]! [background:var(--color-primary)]! [border:none]! [border-radius:var(--radius-md)]! [color:var(--color-white)]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [transition:opacity_0.2s_ease]! hover:[opacity:0.9]" onClick={resetFilters}>
                 Clear All Filters
               </button>
             )}
@@ -672,13 +672,13 @@ const AuditTrail = () => {
 
         {/* Pagination Bar */}
         {totalRecords > 0 && (
-          <div className="[display:flex]! [justify-content:space-between] [align-items:center] [margin-top:30px]! [padding:16px_20px]! [background:var(--bg-card,_var(--color-white))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-lg)]! [box-shadow:var(--shadow-card)]! [flex-wrap:wrap] [gap:16px] [@media(max-width:768px)]:[flex-direction:column]! [@media(max-width:768px)]:[align-items:stretch]! [@media(max-width:768px)]:[text-align:center]!">
+          <div className="[display:flex]! [justify-content:space-between] [align-items:center] [margin-top:30px]! [padding:16px_20px]! [background:var(--bg-card,_var(--color-white))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-lg)]! [box-shadow:var(--shadow-card)]! [flex-wrap:wrap] [gap:16px] [@media(max-width:768px)]:[flex-direction:column]! [@media(max-width:768px)]:[align-items:stretch]! [@media(max-width:768px)]:[text-align:center]!">
             <div className="[font-size:var(--text-base)]! [color:var(--text-secondary,_var(--color-ink-500))]!">
               Page <strong>{page}</strong> of <strong>{totalPages}</strong> ({totalRecords} total events)
             </div>
 
             <div className="pagination-controls">
-              <div className="[display:flex]! [align-items:center] [gap:8px] [font-size:var(--text-sm)]! [color:var(--text-secondary,_var(--color-ink-500))]! [&_select]:[background:var(--color-white)]! [&_select]:[border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&_select]:[&&]:[border-radius:var(--radius-sm)]! [&_select]:[padding:5px_8px]! [&_select]:[font-size:var(--text-sm)]! [&_select]:[color:var(--text-primary,_var(--color-ink-900))]! [&_select]:[cursor:pointer]! [&_select]:[outline:none]!">
+              <div className="[display:flex]! [align-items:center] [gap:8px] [font-size:var(--text-sm)]! [color:var(--text-secondary,_var(--color-ink-500))]! [&_select]:[background:var(--color-white)]! [&_select]:[border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&_select]:[border-radius:var(--radius-sm)]! [&_select]:[padding:5px_8px]! [&_select]:[font-size:var(--text-sm)]! [&_select]:[color:var(--text-primary,_var(--color-ink-900))]! [&_select]:[cursor:pointer]! [&_select]:[outline:none]!">
                 <label>Rows:</label>
                 <NativeSelect
                   value={limit}
@@ -695,7 +695,7 @@ const AuditTrail = () => {
 
               <div className="[display:flex]! [align-items:center] [gap:10px]">
                 <button
-                  className="[display:inline-flex]! [align-items:center] [gap:6px] [padding:6px_12px]! [background:var(--color-white)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-md)]! [font-size:var(--text-sm)]! [font-weight:600]! [color:var(--text-primary,_var(--color-ink-900))]! [cursor:pointer] [transition:all_0.15s_ease]! [&:hover:not(:disabled)]:[border-color:var(--accent-color,_var(--color-brand-500))]! [&:hover:not(:disabled)]:[color:var(--color-link)]! [&:hover:not(:disabled)]:[background:var(--bg-hover,_rgba(255,_247,_237,_0.5))]! disabled:[opacity:0.4] disabled:[cursor:not-allowed]"
+                  className="[display:inline-flex]! [align-items:center] [gap:6px] [padding:6px_12px]! [background:var(--color-white)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-md)]! [font-size:var(--text-sm)]! [font-weight:600]! [color:var(--text-primary,_var(--color-ink-900))]! [cursor:pointer] [transition:all_0.15s_ease]! [&:hover:not(:disabled)]:[border-color:var(--accent-color,_var(--color-brand-500))]! [&:hover:not(:disabled)]:[color:var(--color-link)]! [&:hover:not(:disabled)]:[background:var(--bg-hover,_rgba(255,_247,_237,_0.5))]! disabled:[opacity:0.4] disabled:[cursor:not-allowed]"
                   disabled={page <= 1}
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   title="Previous Page"
@@ -709,7 +709,7 @@ const AuditTrail = () => {
                 </span>
 
                 <button
-                  className="[display:inline-flex]! [align-items:center] [gap:6px] [padding:6px_12px]! [background:var(--color-white)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-md)]! [font-size:var(--text-sm)]! [font-weight:600]! [color:var(--text-primary,_var(--color-ink-900))]! [cursor:pointer] [transition:all_0.15s_ease]! [&:hover:not(:disabled)]:[border-color:var(--accent-color,_var(--color-brand-500))]! [&:hover:not(:disabled)]:[color:var(--color-link)]! [&:hover:not(:disabled)]:[background:var(--bg-hover,_rgba(255,_247,_237,_0.5))]! disabled:[opacity:0.4] disabled:[cursor:not-allowed]"
+                  className="[display:inline-flex]! [align-items:center] [gap:6px] [padding:6px_12px]! [background:var(--color-white)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-md)]! [font-size:var(--text-sm)]! [font-weight:600]! [color:var(--text-primary,_var(--color-ink-900))]! [cursor:pointer] [transition:all_0.15s_ease]! [&:hover:not(:disabled)]:[border-color:var(--accent-color,_var(--color-brand-500))]! [&:hover:not(:disabled)]:[color:var(--color-link)]! [&:hover:not(:disabled)]:[background:var(--bg-hover,_rgba(255,_247,_237,_0.5))]! disabled:[opacity:0.4] disabled:[cursor:not-allowed]"
                   disabled={page >= totalPages}
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   title="Next Page"

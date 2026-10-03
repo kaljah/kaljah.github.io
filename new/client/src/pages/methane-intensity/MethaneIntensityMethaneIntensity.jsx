@@ -12,7 +12,7 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
                 Methane Intensity & Loss Rate Analytics
               </h2>
               <div
-                className="year-badge [background:rgba(255,_102,_0,_0.1)]! [color:var(--color-link)]! [padding:6px_16px]! [border-radius:9999px]! [font-size:var(--text-base)]! [font-weight:600]! [border:1px_solid_rgba(255,_102,_0,_0.2)]!"
+                className="year-badge"
                 style={{
                   background: "rgba(37, 99, 235, 0.1)",
                   color: "#2563eb",
@@ -82,12 +82,12 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
                 <span className="kpi-label">Methane Intensity (Avg)</span>
               </div>
               <div className="[display:flex]! [align-items:baseline] [gap:8px]">
-                <span className="total-value [font-family:inherit]! [font-weight:700]! [font-size:var(--text-3xl)]! [letter-spacing:-0.04em]! [line-height:1]! [color:var(--text-primary,_var(--color-ink-900))]! [&.co2]:[color:var(--text-primary)]! [&.ch4]:[color:var(--accent-secondary)]! [&.flare]:[color:var(--accent-tertiary)]! [&.scope1]:[color:var(--color-blue-600)]! [&.scope3]:[color:var(--color-violet-700)]! ch4">
+                <span className="total-value ch4">
                   {(stats.avgCh4Intensity ?? 0).toFixed(4)}
                 </span>
                 <span className="kpi-unit">kg CH₄ / BOE</span>
               </div>
-              <div className="kpi-footer [margin-top:16px]! [padding-top:16px]! [border-top:1px_dashed_var(--border-color)]! [font-size:var(--text-sm)]! [color:var(--text-secondary)]! [display:flex]! [justify-content:space-between] [align-items:center] [&_strong]:[color:var(--text-primary)]!">
+              <div className="kpi-footer">
                 <span>
                   Total CH₄:{" "}
                   <strong>{formatNumber(stats.totalCh4Emissions)} tCH₄</strong>
@@ -107,7 +107,7 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
               </div>
               <div className="[display:flex]! [align-items:baseline] [gap:8px]">
                 <span
-                  className="total-value [font-family:inherit]! [font-weight:700]! [font-size:var(--text-3xl)]! [letter-spacing:-0.04em] [line-height:1] [color:var(--text-primary,_var(--color-ink-900))]! [&.co2]:[color:var(--text-primary)]! [&.ch4]:[color:var(--accent-secondary)]! [&.flare]:[color:var(--accent-tertiary)]! [&.scope1]:[color:var(--color-blue-600)]! [&.scope3]:[color:var(--color-violet-700)]!"
+                  className="total-value"
                   style={{
                     color:
                       stats.totalGasProductionM3 === 0 && stats.totalCh4Emissions > 0
@@ -220,7 +220,7 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
                 </div>
               </div>
 
-              <div className="kpi-footer [margin-top:16px]! [padding-top:16px]! [border-top:1px_dashed_var(--border-color)]! [font-size:var(--text-sm)]! [color:var(--text-secondary)]! [display:flex]! [justify-content:space-between] [align-items:center] [&_strong]:[color:var(--text-primary)]!">
+              <div className="kpi-footer">
                 <span>
                   OGMP 2.0:{" "}
                   <strong>
@@ -242,12 +242,12 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
                 <span className="kpi-label">Gas Flaring Rate</span>
               </div>
               <div className="[display:flex]! [align-items:baseline] [gap:8px]">
-                <span className="total-value [font-family:inherit]! [font-weight:700]! [font-size:var(--text-3xl)]! [letter-spacing:-0.04em]! [line-height:1]! [color:var(--text-primary,_var(--color-ink-900))]! [&.co2]:[color:var(--text-primary)]! [&.ch4]:[color:var(--accent-secondary)]! [&.flare]:[color:var(--accent-tertiary)]! [&.scope1]:[color:var(--color-blue-600)]! [&.scope3]:[color:var(--color-violet-700)]! flare">
+                <span className="total-value flare">
                   {(stats.avgFlaringRatePct ?? 0).toFixed(3)}%
                 </span>
                 <span className="kpi-unit">of Gas Volume</span>
               </div>
-              <div className="kpi-footer [margin-top:16px]! [padding-top:16px]! [border-top:1px_dashed_var(--border-color)]! [font-size:var(--text-sm)]! [color:var(--text-secondary)]! [display:flex]! [justify-content:space-between] [align-items:center] [&_strong]:[color:var(--text-primary)]!">
+              <div className="kpi-footer">
                 <span>
                   Flared:{" "}
                   <strong>
@@ -269,7 +269,7 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
               </div>
               <div className="[display:flex]! [align-items:baseline] [gap:8px]">
                 <span
-                  className="total-value [font-family:inherit]! [font-weight:700]! [font-size:var(--text-3xl)]! [letter-spacing:-0.04em] [line-height:1] [color:var(--text-primary,_var(--color-ink-900))]! [&.co2]:[color:var(--text-primary)]! [&.ch4]:[color:var(--accent-secondary)]! [&.flare]:[color:var(--accent-tertiary)]! [&.scope1]:[color:var(--color-blue-600)]! [&.scope3]:[color:var(--color-violet-700)]!"
+                  className="total-value"
                   style={{
                     color: !stats.wecAssessed ? "#64748b" : stats.totalWecFeeUsd > 0 ? "#ef4444" : "#10b981",
                   }}
@@ -280,7 +280,7 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
                   {stats.wecAssessed ? "USD Est." : stats.wecReason || "Select a single year"}
                 </span>
               </div>
-              <div className="kpi-footer [margin-top:16px]! [padding-top:16px]! [border-top:1px_dashed_var(--border-color)]! [font-size:var(--text-sm)]! [color:var(--text-secondary)]! [display:flex]! [justify-content:space-between] [align-items:center] [&_strong]:[color:var(--text-primary)]!">
+              <div className="kpi-footer">
                 <span>
                   Rate:{" "}
                   <strong>
@@ -298,8 +298,8 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
           </div>
 
           {/* Methane Mass Balance Bar */}
-          <div className="scope-breakdown [display:grid]! [grid-template-columns:repeat(4,_1fr)] [gap:20px] [margin-top:32px]! [background:var(--bg-hover)]! [padding:24px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--border-color)]! [@media(max-width:1200px)]:[grid-template-columns:repeat(2,_1fr)]! [@media(max-width:768px)]:[grid-template-columns:1fr]!">
-            <div className="scope-item [display:flex]! [flex-direction:column] [gap:8px] [&.bordered]:[border-left:1px_solid_var(--border-color)]! [&.bordered]:[padding-left:20px]! [&_.label]:[font-size:var(--text-sm)]! [&_.label]:[color:var(--text-secondary)]! [&_.label]:[font-weight:600]! [&_.label]:[text-transform:uppercase]! [&_.label]:[letter-spacing:0.05em]! [&_.val]:[font-size:var(--text-lg)]! [&_.val]:[font-weight:700]! [&_.val]:[color:var(--text-primary)]! [&_.val]:[font-family:inherit]! [&_.val.flare-val]:[color:var(--accent-tertiary)]!">
+          <div className="scope-breakdown">
+            <div className="scope-item">
               <span className="label">Total Gas Produced</span>
               <span className="val">
                 {formatNumber(stats.totalGasProductionM3, 0)} m³{" "}
@@ -310,7 +310,7 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
                 </sub>
               </span>
             </div>
-            <div className="scope-item [display:flex]! [flex-direction:column]! [gap:8px]! [&.bordered]:[border-left:1px_solid_var(--border-color)]! [&.bordered]:[padding-left:20px]! [&_.label]:[font-size:var(--text-sm)]! [&_.label]:[color:var(--text-secondary)]! [&_.label]:[font-weight:600]! [&_.label]:[text-transform:uppercase]! [&_.label]:[letter-spacing:0.05em]! [&_.val]:[font-size:var(--text-lg)]! [&_.val]:[font-weight:700]! [&_.val]:[color:var(--text-primary)]! [&_.val]:[font-family:inherit]! [&_.val.flare-val]:[color:var(--accent-tertiary)]! bordered">
+            <div className="scope-item bordered">
               <span className="label">Methane Loss Volume</span>
               <span
                 className="val text-[color:#2563eb]! font-bold!"
@@ -319,13 +319,13 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
                 {formatNumber(stats.totalCh4VolumeM3, 0)} m³
               </span>
             </div>
-            <div className="scope-item [display:flex]! [flex-direction:column]! [gap:8px]! [&.bordered]:[border-left:1px_solid_var(--border-color)]! [&.bordered]:[padding-left:20px]! [&_.label]:[font-size:var(--text-sm)]! [&_.label]:[color:var(--text-secondary)]! [&_.label]:[font-weight:600]! [&_.label]:[text-transform:uppercase]! [&_.label]:[letter-spacing:0.05em]! [&_.val]:[font-size:var(--text-lg)]! [&_.val]:[font-weight:700]! [&_.val]:[color:var(--text-primary)]! [&_.val]:[font-family:inherit]! [&_.val.flare-val]:[color:var(--accent-tertiary)]! bordered">
+            <div className="scope-item bordered">
               <span className="label">Total Gas Flared</span>
               <span className="val flare-val">
                 {formatNumber(stats.totalFlaringVolume, 0)} m³
               </span>
             </div>
-            <div className="scope-item [display:flex]! [flex-direction:column]! [gap:8px]! [&.bordered]:[border-left:1px_solid_var(--border-color)]! [&.bordered]:[padding-left:20px]! [&_.label]:[font-size:var(--text-sm)]! [&_.label]:[color:var(--text-secondary)]! [&_.label]:[font-weight:600]! [&_.label]:[text-transform:uppercase]! [&_.label]:[letter-spacing:0.05em]! [&_.val]:[font-size:var(--text-lg)]! [&_.val]:[font-weight:700]! [&_.val]:[color:var(--text-primary)]! [&_.val]:[font-family:inherit]! [&_.val.flare-val]:[color:var(--accent-tertiary)]! bordered">
+            <div className="scope-item bordered">
               <span className="label">Total Combined BOE</span>
               <span className="val">{formatNumber(stats.totalBoe, 0)} BOE</span>
             </div>

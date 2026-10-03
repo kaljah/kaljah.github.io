@@ -169,14 +169,14 @@ function StepBar({ current }) {
         const SIcon  = s.IconComp;
         return (
           <React.Fragment key={s.id}>
-            <div className={`[display:flex]! [flex-direction:column]! [align-items:center]! [gap:5px]! [flex-shrink:0]! [&.active_.s1w-step-circle]:[border-color:var(--color-brand-500)]! [&.active_.s1w-step-circle]:[background:#fff7f0]! [&.active_.s1w-step-circle]:[color:var(--color-link)]! [&.done_.s1w-step-circle]:[border-color:var(--color-green-500)]! [&.done_.s1w-step-circle]:[background:var(--color-green-50)]! [&.done_.s1w-step-circle]:[color:var(--color-green-700)]! [&.active_.s1w-step-label]:[color:var(--color-link)]! [&.done_.s1w-step-label]:[color:var(--color-green-700)]! ${active ? "active" : ""} ${done ? "done" : ""}`}>
+            <div className={`s1w-step ${active ? "active" : ""} ${done ? "done" : ""}`}>
               <div className="s1w-step-circle [width:32px]! [height:32px]! [border-radius:50%]! [border:2px_solid_var(--color-ink-200)]! [background:var(--color-ink-50)]! [color:var(--color-ink-600)]! [display:flex]! [align-items:center] [justify-content:center] [transition:all_0.25s]! [&_svg]:[width:14px]! [&_svg]:[height:14px]!">
                 {done ? <Icon.Check /> : <SIcon />}
               </div>
               <span className="s1w-step-label [font-size:var(--text-xs)]! [font-weight:600]! [color:var(--color-ink-600)]! [white-space:nowrap] [text-transform:uppercase]! [letter-spacing:0.5px]">{s.label}</span>
             </div>
             {i < STEPS.length - 1 && (
-              <div className={`[height:2px]! [flex:1]! [background:var(--color-ink-200)]! [margin:0_4px]! [&&]:[margin-bottom:20px]! [min-width:20px]! [transition:background_0.25s]! [&.done]:[background:var(--color-green-500)]! ${done ? "done" : ""}`} />
+              <div className={`s1w-step-line ${done ? "done" : ""}`} />
             )}
           </React.Fragment>
         );
@@ -189,7 +189,7 @@ function StepBar({ current }) {
 function MappingRow({ field, headers, value, onChange }) {
   const mapped = !!value;
   return (
-    <div className={`[display:grid]! [grid-template-columns:1fr_1fr_36px]! [align-items:center]! [padding:10px_16px]! [border-bottom:1px_solid_var(--color-ink-100)]! [transition:background_0.12s]! [gap:12px]! last:[border-bottom:none]! hover:[background:#fafaf9]! [@media(max-width:600px)]:[grid-template-columns:1fr]! ${!mapped && field.required ? "[background:#fff9f5]!" : ""} ${mapped ? "[background:#f0fdf4]!" : ""}`}>
+    <div className={`s1w-map-row ${!mapped && field.required ? "[background:#fff9f5]!" : ""} ${mapped ? "[background:#f0fdf4]!" : ""}`}>
       <div className="[display:flex]! [flex-direction:column] [gap:2px] [min-width:0]">
         <span className="[font-size:var(--text-sm)]! [font-weight:600]! [color:var(--color-ink-900)]! [display:flex]! [align-items:center] [gap:4px]">
           {field.label}
@@ -199,12 +199,12 @@ function MappingRow({ field, headers, value, onChange }) {
       </div>
       <div className="s1w-map-select-wrap">
         {headers.length > 0 ? (
-          <NativeSelect className={`[width:100%]! [padding:7px_10px]! [border:1.5px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-sm)]! [background:var(--color-white)]! [font-size:var(--text-sm)]! [color:var(--color-ink-900)]! [outline:none]! [transition:border-color_0.15s]! [font-family:inherit]! focus:[border-color:var(--color-brand-500)]! focus:[box-shadow:0_0_0_2px_rgba(255,102,0,0.08)]! [&.matched]:[border-color:var(--color-green-500)]! [&.matched]:[background:#f0fdf4]! ${mapped ? "matched" : ""}`} value={value} onChange={e => onChange(e.target.value)}>
+          <NativeSelect className={`s1w-map-select ${mapped ? "matched" : ""}`} value={value} onChange={e => onChange(e.target.value)}>
             <option value="">— Not mapped —</option>
             {headers.map(h => <option key={h} value={h}>{h}</option>)}
           </NativeSelect>
         ) : (
-          <input className={`[width:100%]! [padding:7px_10px]! [border:1.5px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-sm)]! [background:var(--color-white)]! [font-size:var(--text-sm)]! [color:var(--color-ink-900)]! [outline:none]! [transition:border-color_0.15s]! [font-family:inherit]! focus:[border-color:var(--color-brand-500)]! focus:[box-shadow:0_0_0_2px_rgba(255,102,0,0.08)]! [&.matched]:[border-color:var(--color-green-500)]! [&.matched]:[background:#f0fdf4]! ${mapped ? "matched" : ""}`} placeholder="Column name in your file" value={value} onChange={e => onChange(e.target.value)} />
+          <input className={`s1w-map-input ${mapped ? "matched" : ""}`} placeholder="Column name in your file" value={value} onChange={e => onChange(e.target.value)} />
         )}
       </div>
       <div className="[display:flex]! [justify-content:center]">
@@ -235,7 +235,7 @@ function FieldGroup({ group, headers, mapping, setMapping, searchQuery }) {
   const mappedCount = visibleFields.filter(f => mapping[f.key]).length;
 
   return (
-    <div className="[border:1.5px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [overflow:hidden]! [transition:border-color_0.15s]! [&:has(.s1w-group-body)]:[border-color:var(--color-ink-200)]!">
+    <div className="[border:1.5px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [overflow:hidden]! [transition:border-color_0.15s]! [&:has(.s1w-group-body)]:[border-color:var(--color-ink-200)]!">
       <button className="[width:100%]! [display:flex]! [align-items:center] [justify-content:space-between] [padding:12px_16px]! [background:var(--color-ink-50)]! [border:none]! [cursor:pointer] [transition:background_0.15s]! [text-align:left]! hover:[background:var(--color-ink-100)]! [&_svg]:[width:16px]! [&_svg]:[height:16px]! [&_svg]:[color:var(--color-ink-600)]!" onClick={() => setOpen(v => !v)}>
         <div className="[display:flex]! [align-items:center] [gap:10px]">
           <div className="[width:28px]! [height:28px]! [border-radius:var(--radius-sm)]! [background:var(--primary-gradient)]! [color:var(--color-white)]! [display:flex]! [align-items:center] [justify-content:center] [flex-shrink:0] [&_svg]:[width:13px]! [&_svg]:[height:13px]!"><GroupIcon /></div>
@@ -383,7 +383,7 @@ export default function Scope2ImportWizard({ onClose, onUploadSuccess }) {
             <div className="[display:flex]! [align-items:center] [gap:8px] [font-size:var(--text-md)]! [font-weight:700]! [color:var(--color-ink-900)]! [margin-bottom:-6px]! [&_svg]:[width:16px]! [&_svg]:[height:16px]! [&_svg]:[color:var(--color-link)]!"><Icon.Upload /><span>Select File</span></div>
 
             {!isAdmin && allowedRegions !== null && (
-              <div className="[padding:14px_16px]! [background:linear-gradient(135deg,_var(--color-brand-50)_0%,_#fff1e6_100%)]! [border:1.5px_solid_#fed7aa]! [&&]:[border-radius:var(--radius-md)]! [display:flex]! [flex-direction:column] [gap:10px]">
+              <div className="[padding:14px_16px]! [background:linear-gradient(135deg,_var(--color-brand-50)_0%,_#fff1e6_100%)]! [border:1.5px_solid_#fed7aa]! [border-radius:var(--radius-md)]! [display:flex]! [flex-direction:column] [gap:10px]">
                 <div className="[display:flex]! [align-items:center] [gap:8px] [font-size:var(--text-base)]! [color:#7c3a00]! [font-weight:700]! [&_svg]:[width:16px]! [&_svg]:[height:16px]! [&_svg]:[color:var(--color-brand-700)]! [&_svg]:[flex-shrink:0]!">
                   <Icon.Info />
                   <strong>Your upload is restricted to the following regions:</strong>
@@ -391,7 +391,7 @@ export default function Scope2ImportWizard({ onClose, onUploadSuccess }) {
                 {allowedRegions.length > 0 ? (
                   <div className="[display:flex]! [flex-wrap:wrap] [gap:6px]">
                     {allowedRegions.map(r => (
-                      <span key={r} className="[padding:4px_12px]! [background:var(--color-white)]! [border:1.5px_solid_var(--color-brand-400)]! [&&]:[border-radius:var(--radius-lg)]! [font-size:var(--text-sm)]! [font-weight:700]! [color:var(--color-brand-700)]! [white-space:nowrap]">{r}</span>
+                      <span key={r} className="[padding:4px_12px]! [background:var(--color-white)]! [border:1.5px_solid_var(--color-brand-400)]! [border-radius:var(--radius-lg)]! [font-size:var(--text-sm)]! [font-weight:700]! [color:var(--color-brand-700)]! [white-space:nowrap]">{r}</span>
                     ))}
                   </div>
                 ) : (
@@ -402,7 +402,7 @@ export default function Scope2ImportWizard({ onClose, onUploadSuccess }) {
               </div>
             )}
             <div role="button" tabIndex={0} onKeyDown={activateOnKey}
-              className={`[border:2px_dashed_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-lg)]! [padding:40px_24px]! [display:flex]! [flex-direction:column]! [align-items:center]! [gap:10px]! [cursor:pointer]! [transition:all_0.2s]! [background:var(--color-ink-50)]! [text-align:center]! hover:[border-color:var(--color-brand-500)]! hover:[background:#fff7f0]! hover:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.08)]! [&.dragging]:[border-color:var(--color-brand-500)]! [&.dragging]:[background:#fff7f0]! [&.dragging]:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.08)]! ${isDragging ? "dragging" : ""}`}
+              className={`s1w-dropzone ${isDragging ? "dragging" : ""}`}
               onClick={() => fileInputRef.current.click()}
               onDragOver={e => { e.preventDefault(); setIsDragging(true); }}
               onDragLeave={() => setIsDragging(false)}
@@ -413,7 +413,7 @@ export default function Scope2ImportWizard({ onClose, onUploadSuccess }) {
               <p className="[font-size:var(--text-base)]! [font-weight:600]! [color:var(--color-ink-700)]! [margin:0]! [&_span]:[color:var(--color-link)]! [&_span]:[text-decoration:underline]!">Drag & drop your file here, or <span>click to browse</span></p>
               <p className="[font-size:var(--text-sm)]! [color:var(--color-ink-600)]! [margin:0]!">Supports .xlsx and .csv</p>
               {parseError && (
-                <div className="[display:flex]! [align-items:center] [gap:8px] [padding:8px_14px]! [background:#fee2e2]! [border:1px_solid_#fecaca]! [&&]:[border-radius:var(--radius-md)]! [font-size:var(--text-sm)]! [color:var(--color-red-700)]! [font-weight:500]! [&_svg]:[width:14px]! [&_svg]:[height:14px]!"><Icon.Warning />{parseError}</div>
+                <div className="[display:flex]! [align-items:center] [gap:8px] [padding:8px_14px]! [background:#fee2e2]! [border:1px_solid_#fecaca]! [border-radius:var(--radius-md)]! [font-size:var(--text-sm)]! [color:var(--color-red-700)]! [font-weight:500]! [&_svg]:[width:14px]! [&_svg]:[height:14px]!"><Icon.Warning />{parseError}</div>
               )}
             </div>
           </div>
@@ -423,7 +423,7 @@ export default function Scope2ImportWizard({ onClose, onUploadSuccess }) {
         {step === 2 && (
           <div className="s1w-body">
             {!isAdmin && allowedRegions !== null && allowedRegions.length > 0 && (
-              <div className="[padding:14px_16px]! [background:linear-gradient(135deg,_var(--color-brand-50)_0%,_#fff1e6_100%)]! [border:1.5px_solid_#fed7aa]! [&&]:[border-radius:var(--radius-md)]! [display:flex]! [flex-direction:column]! [gap:10px]! [flex-direction:row] [align-items:center] [gap:8px] [padding:10px_14px]! [&_svg]:[width:16px]! [&_svg]:[height:16px]! [&_svg]:[color:var(--color-brand-700)]! [&_svg]:[flex-shrink:0]! [&_span]:[font-size:var(--text-sm)]! [&_span]:[color:#7c3a00]! [&_span]:[line-height:1.4]!">
+              <div className="[padding:14px_16px]! [background:linear-gradient(135deg,_var(--color-brand-50)_0%,_#fff1e6_100%)]! [border:1.5px_solid_#fed7aa]! [border-radius:var(--radius-md)]! [display:flex]! [flex-direction:column]! [gap:10px]! [flex-direction:row] [align-items:center] [gap:8px] [padding:10px_14px]! [&_svg]:[width:16px]! [&_svg]:[height:16px]! [&_svg]:[color:var(--color-brand-700)]! [&_svg]:[flex-shrink:0]! [&_span]:[font-size:var(--text-sm)]! [&_span]:[color:#7c3a00]! [&_span]:[line-height:1.4]!">
                 <Icon.Info />
                 <span>
                   <strong>Allowed regions:</strong>{" "}
@@ -432,33 +432,33 @@ export default function Scope2ImportWizard({ onClose, onUploadSuccess }) {
               </div>
             )}
             {!isAdmin && allowedRegions !== null && allowedRegions.length === 0 && (
-              <div className="[display:flex]! [align-items:flex-start] [gap:10px] [padding:12px_16px]! [background:var(--color-brand-50)]! [border:1px_solid_#fed7aa]! [&&]:[border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [color:var(--color-brand-700)]! [line-height:1.5] [&_svg]:[width:16px]! [&_svg]:[height:16px]! [&_svg]:[flex-shrink:0]! [&_svg]:[margin-top:1px]!">
+              <div className="[display:flex]! [align-items:flex-start] [gap:10px] [padding:12px_16px]! [background:var(--color-brand-50)]! [border:1px_solid_#fed7aa]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [color:var(--color-brand-700)]! [line-height:1.5] [&_svg]:[width:16px]! [&_svg]:[height:16px]! [&_svg]:[flex-shrink:0]! [&_svg]:[margin-top:1px]!">
                 <Icon.Warning />
                 <span><strong>No accessible regions.</strong> Your account has no assigned regions. All rows will be rejected. Contact an administrator.</span>
               </div>
             )}
             {file && (
-              <div className="[display:flex]! [align-items:center] [gap:12px] [padding:12px_16px]! [background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]!">
+              <div className="[display:flex]! [align-items:center] [gap:12px] [padding:12px_16px]! [background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]!">
                 <div className="[width:36px]! [height:36px]! [border-radius:var(--radius-md)]! [background:var(--color-ink-200)]! [display:flex]! [align-items:center] [justify-content:center] [color:var(--color-ink-600)]! [flex-shrink:0] [&_svg]:[width:18px]! [&_svg]:[height:18px]!"><Icon.File /></div>
                 <div className="s1w-file-badge-info">
                   <p className="[font-size:var(--text-base)]! [font-weight:600]! [color:var(--color-ink-900)]! [margin:0_0_2px]!">{file.name}</p>
                   <p className="[font-size:var(--text-sm)]! [color:var(--color-ink-600)]! [margin:0]!">{(file.size / 1024).toFixed(1)} KB</p>
                 </div>
                 {headers.length > 0 && (
-                  <div className="[margin-left:auto]! [display:flex]! [align-items:center] [gap:6px] [padding:4px_10px]! [background:var(--color-green-50)]! [border:1px_solid_#a7f3d0]! [&&]:[border-radius:var(--radius-lg)]! [font-size:var(--text-sm)]! [font-weight:600]! [color:#047857]! [&_svg]:[width:13px]! [&_svg]:[height:13px]!"><Icon.Wand /><span>{Object.keys(mapping).length} auto-detected</span></div>
+                  <div className="[margin-left:auto]! [display:flex]! [align-items:center] [gap:6px] [padding:4px_10px]! [background:var(--color-green-50)]! [border:1px_solid_#a7f3d0]! [border-radius:var(--radius-lg)]! [font-size:var(--text-sm)]! [font-weight:600]! [color:#047857]! [&_svg]:[width:13px]! [&_svg]:[height:13px]!"><Icon.Wand /><span>{Object.keys(mapping).length} auto-detected</span></div>
                 )}
               </div>
             )}
 
             {headers.length === 0 && (
-              <div className="[display:flex]! [align-items:flex-start] [gap:10px] [padding:12px_16px]! [background:var(--color-blue-50)]! [border:1px_solid_#bfdbfe]! [&&]:[border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [color:var(--color-blue-700)]! [line-height:1.5] [&_svg]:[width:16px]! [&_svg]:[height:16px]! [&_svg]:[flex-shrink:0]! [&_svg]:[margin-top:1px]!">
+              <div className="[display:flex]! [align-items:flex-start] [gap:10px] [padding:12px_16px]! [background:var(--color-blue-50)]! [border:1px_solid_#bfdbfe]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [color:var(--color-blue-700)]! [line-height:1.5] [&_svg]:[width:16px]! [&_svg]:[height:16px]! [&_svg]:[flex-shrink:0]! [&_svg]:[margin-top:1px]!">
                 <Icon.Info />
                 <span>Excel file — processed server-side. Type column names exactly as they appear in your file, or leave blank to skip that field.</span>
               </div>
             )}
 
             {headers.length > 0 && missingRequired.length > 0 && (
-              <div className="[display:flex]! [align-items:flex-start] [gap:10px] [padding:12px_16px]! [background:var(--color-brand-50)]! [border:1px_solid_#fed7aa]! [&&]:[border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [color:var(--color-brand-700)]! [line-height:1.5] [&_svg]:[width:16px]! [&_svg]:[height:16px]! [&_svg]:[flex-shrink:0]! [&_svg]:[margin-top:1px]!">
+              <div className="[display:flex]! [align-items:flex-start] [gap:10px] [padding:12px_16px]! [background:var(--color-brand-50)]! [border:1px_solid_#fed7aa]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [color:var(--color-brand-700)]! [line-height:1.5] [&_svg]:[width:16px]! [&_svg]:[height:16px]! [&_svg]:[flex-shrink:0]! [&_svg]:[margin-top:1px]!">
                 <Icon.Warning />
                 <span><strong>{missingRequired.length} required field{missingRequired.length > 1 ? "s" : ""} not mapped:</strong> {missingRequired.map(f => f.label).join(", ")}</span>
               </div>
@@ -467,14 +467,14 @@ export default function Scope2ImportWizard({ onClose, onUploadSuccess }) {
             <div className="[position:relative] [display:flex]! [align-items:center]">
               <div className="[position:absolute] [left:12px] [color:var(--color-ink-600)]! [display:flex]! [align-items:center] [&_svg]:[width:16px]! [&_svg]:[height:16px]!"><Icon.Search /></div>
               <input
-                className="[width:100%]! [padding:10px_12px_10px_38px]! [border:1.5px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [background:var(--color-ink-50)]! [font-size:var(--text-base)]! [color:var(--color-ink-900)]! [outline:none]! [transition:border-color_0.15s]! [font-family:inherit]! focus:[border-color:var(--color-brand-500)]! focus:[background:var(--color-white)]! focus:[box-shadow:0_0_0_3px_rgba(255,102,0,0.08)]! placeholder:[color:var(--color-ink-400)]!"
+                className="[width:100%]! [padding:10px_12px_10px_38px]! [border:1.5px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [background:var(--color-ink-50)]! [font-size:var(--text-base)]! [color:var(--color-ink-900)]! [outline:none]! [transition:border-color_0.15s]! [font-family:inherit]! focus:[border-color:var(--color-brand-500)]! focus:[background:var(--color-white)]! focus:[box-shadow:0_0_0_3px_rgba(255,102,0,0.08)]! placeholder:[color:var(--color-ink-400)]!"
                 type="text"
                 placeholder="Search fields by name, key, or description…"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
               />
               {searchQuery && (
-                <button className="[position:absolute] [right:10px] [background:transparent]! [border:none]! [cursor:pointer] [color:var(--color-ink-600)]! [display:flex]! [align-items:center] [padding:4px]! [&&]:[border-radius:var(--radius-sm)]! [transition:color_0.15s]! hover:[color:var(--color-ink-700)]! [&_svg]:[width:14px]! [&_svg]:[height:14px]!" onClick={() => setSearchQuery("")}><Icon.Close /></button>
+                <button className="[position:absolute] [right:10px] [background:transparent]! [border:none]! [cursor:pointer] [color:var(--color-ink-600)]! [display:flex]! [align-items:center] [padding:4px]! [border-radius:var(--radius-sm)]! [transition:color_0.15s]! hover:[color:var(--color-ink-700)]! [&_svg]:[width:14px]! [&_svg]:[height:14px]!" onClick={() => setSearchQuery("")}><Icon.Close /></button>
               )}
             </div>
 
@@ -515,7 +515,7 @@ export default function Scope2ImportWizard({ onClose, onUploadSuccess }) {
         {step !== 3 && (
           <div className="[display:flex]! [align-items:center] [justify-content:space-between] [padding:14px_24px]! [border-top:1px_solid_var(--color-ink-200)]! [background:var(--color-ink-50)]! [flex-shrink:0]">
             <button
-              className="[display:flex]! [align-items:center] [gap:6px] [padding:9px_18px]! [background:transparent]! [border:1.5px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:600]! [color:var(--color-ink-500)]! [cursor:pointer] [transition:all_0.15s]! [font-family:inherit]! hover:[background:var(--color-ink-100)]! hover:[border-color:var(--color-ink-300)]! hover:[color:var(--color-ink-700)]! [&_svg]:[width:15px]! [&_svg]:[height:15px]!"
+              className="[display:flex]! [align-items:center] [gap:6px] [padding:9px_18px]! [background:transparent]! [border:1.5px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:600]! [color:var(--color-ink-500)]! [cursor:pointer] [transition:all_0.15s]! [font-family:inherit]! hover:[background:var(--color-ink-100)]! hover:[border-color:var(--color-ink-300)]! hover:[color:var(--color-ink-700)]! [&_svg]:[width:15px]! [&_svg]:[height:15px]!"
               onClick={step === 1 ? onClose : () => setStep(s => s - 1)}
             >
               {step === 1 ? <><Icon.Close /> Cancel</> : <><Icon.ArrowLeft /> Back</>}
@@ -524,7 +524,7 @@ export default function Scope2ImportWizard({ onClose, onUploadSuccess }) {
             <div className="[display:flex]! [align-items:center] [gap:10px]">
               {step === 1 && (
                 <button
-                  className="[display:flex]! [align-items:center] [gap:6px] [padding:9px_22px]! [background:var(--primary-gradient)]! [border:none]! [&&]:[border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:700]! [color:var(--color-white)]! [cursor:pointer] [transition:all_0.18s]! [box-shadow:0_2px_8px_rgba(255,_102,_0,_0.3)]! [font-family:inherit]! hover:[background:var(--primary-gradient)]! hover:[box-shadow:0_4px_12px_rgba(255,_102,_0,_0.4)]! hover:[transform:translateY(-1px)] disabled:[background:var(--color-ink-200)]! disabled:[color:var(--color-ink-400)]! disabled:[cursor:not-allowed] disabled:[box-shadow:none]! disabled:[transform:none] [&_svg]:[width:15px]! [&_svg]:[height:15px]!"
+                  className="s1w-btn-primary"
                   onClick={() => setStep(s => s + 1)}
                   disabled={!file}
                 >
@@ -533,11 +533,11 @@ export default function Scope2ImportWizard({ onClose, onUploadSuccess }) {
               )}
               {step === 2 && (
                 <button
-                  className="[display:flex]! [align-items:center] [gap:6px] [padding:9px_22px]! [background:var(--primary-gradient)]! [border:none]! [&&]:[border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:700]! [color:var(--color-white)]! [cursor:pointer] [transition:all_0.18s]! [box-shadow:0_2px_8px_rgba(255,_102,_0,_0.3)]! [font-family:inherit]! hover:[background:var(--primary-gradient)]! hover:[box-shadow:0_4px_12px_rgba(255,_102,_0,_0.4)]! hover:[transform:translateY(-1px)] disabled:[background:var(--color-ink-200)]! disabled:[color:var(--color-ink-400)]! disabled:[cursor:not-allowed] disabled:[box-shadow:none]! disabled:[transform:none] [&_svg]:[width:15px]! [&_svg]:[height:15px]!"
+                  className="s1w-btn-primary"
                   onClick={handleSubmit}
                   disabled={isSubmitting || (!canSubmit && headers.length > 0) || (!isAdmin && allowedRegions !== null && allowedRegions.length === 0)}
                 >
-                  {isSubmitting ? <span className="[width:15px]! [height:15px]! [border-radius:50%]! [border:2px_solid_rgba(255,255,255,0.4)]! [&&]:[border-top-color:var(--color-white)]! [animation:s1w-spin_0.7s_linear_infinite]! [display:inline-block]!" /> : <Icon.Processing />}
+                  {isSubmitting ? <span className="[width:15px]! [height:15px]! [border-radius:50%]! [border:2px_solid_rgba(255,255,255,0.4)]! [border-top-color:var(--color-white)]! [animation:s1w-spin_0.7s_linear_infinite]! [display:inline-block]!" /> : <Icon.Processing />}
                   {isSubmitting ? "Starting…" : "Start Import"}
                 </button>
               )}

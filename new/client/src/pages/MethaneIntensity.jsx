@@ -687,7 +687,7 @@ const MethaneIntensity = () => {
         opacity: isUpdating ? 0.82 : 1,
         transition: "opacity 0.2s ease" }}
     >
-      <div className="intensity-grid [display:flex]! [flex-direction:column] [gap:32px] [max-width:1600px]! [margin:0_auto]!">
+      <div className="intensity-grid">
         {/* KPI HERO CARD */}
         <MethaneIntensityMethaneIntensity
         midstreamTargetPct={midstreamTargetPct}
@@ -719,7 +719,7 @@ const MethaneIntensity = () => {
       />
 
         {/* Regional Bar Charts */}
-        <div className="chart-grid [display:grid]! [grid-template-columns:repeat(auto-fit,_minmax(450px,_1fr))] [gap:24px] [@media(max-width:768px)]:[grid-template-columns:1fr]!">
+        <div className="chart-grid">
           <div className="card">
             <div className="[display:flex]! [justify-content:space-between] [align-items:flex-start] [margin-bottom:24px]! [&_h3]:[font-size:var(--text-lg)]! [&_h3]:[font-weight:600]! [&_h3]:[color:var(--text-primary)]! [&_h3]:[margin:0]!">
               <div className="[display:flex]! [flex-direction:column] [gap:8px]">

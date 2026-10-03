@@ -182,7 +182,7 @@ const MultiSelectDropdown = ({
             }}
           >
             <div
-              className="dropdown-option [padding:10px_14px]! [cursor:pointer] [font-size:var(--text-base)]! [color:var(--text-primary)]! [transition:background_0.15s]! hover:[background:var(--bg-hover)]! [&.active]:[background:var(--bg-hover)]! [&.selected]:[background:rgba(16,_185,_129,_0.1)]! [&.selected]:[color:var(--color-link)]! [&.selected]:[font-weight:600]!"
+              className="dropdown-option"
               onClick={handleSelectAll}
               style={{
                 padding: "8px 12px",
@@ -198,7 +198,7 @@ const MultiSelectDropdown = ({
             {options.map((opt) => (
               <div
                 key={opt.value}
-                className="dropdown-option [padding:10px_14px]! [cursor:pointer] [font-size:var(--text-base)]! [color:var(--text-primary)]! [transition:background_0.15s]! hover:[background:var(--bg-hover)]! [&.active]:[background:var(--bg-hover)]! [&.selected]:[background:rgba(16,_185,_129,_0.1)]! [&.selected]:[color:var(--color-link)]! [&.selected]:[font-weight:600]!"
+                className="dropdown-option"
                 onClick={() => toggleOption(opt.value)}
                 style={{
                   padding: "8px 12px",

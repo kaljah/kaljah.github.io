@@ -484,7 +484,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
 
   const modalContent = (
     <div className="[position:fixed] [inset:0] [background:rgba(15,_23,_42,_0.65)]! [backdrop-filter:blur(8px)] [-webkit-backdrop-filter:blur(8px)]! [z-index:10000] [display:flex]! [align-items:center] [justify-content:center] [padding:24px]! [animation:wizardFadeIn_0.2s_cubic-bezier(0.16,_1,_0.3,_1)]!" onClick={(e) => { if (e.target === e.currentTarget && !rejectionModal.isOpen) onClose(); }}>
-      <div className="[background:var(--bg-card-elevated,_var(--color-white))]! [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.9))]! [&&]:[border-radius:var(--radius-lg)]! [width:100%]! [max-width:1440px]! [height:calc(100vh_-_48px)]! [max-height:940px]! [display:flex]! [flex-direction:column] [box-shadow:var(--shadow-overlay)]! [overflow:hidden]! [animation:wizardSlideUp_0.25s_cubic-bezier(0.16,_1,_0.3,_1)]!">
+      <div className="[background:var(--bg-card-elevated,_var(--color-white))]! [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.9))]! [border-radius:var(--radius-lg)]! [width:100%]! [max-width:1440px]! [height:calc(100vh_-_48px)]! [max-height:940px]! [display:flex]! [flex-direction:column] [box-shadow:var(--shadow-overlay)]! [overflow:hidden]! [animation:wizardSlideUp_0.25s_cubic-bezier(0.16,_1,_0.3,_1)]!">
         {/* ── Wizard Header ── */}
         <div className="[padding:18px_28px]! [border-bottom:1px_solid_var(--border-color,_var(--color-ink-200))]! [background:rgba(255,_255,_255,_0.95)]! [display:flex]! [justify-content:space-between] [align-items:center] [gap:20px] [flex-shrink:0]">
           <div className="[display:flex]! [align-items:center] [gap:14px]">
@@ -521,19 +521,19 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
         {/* ── KPI Summary Strip ── */}
         <div className="[padding:14px_28px]! [background:var(--bg-body,_var(--color-ink-50))]! [border-bottom:1px_solid_var(--border-color,_var(--color-ink-200))]! [display:flex]! [align-items:center] [justify-content:space-between] [gap:16px] [flex-wrap:wrap] [flex-shrink:0]">
           <div className="[display:flex]! [align-items:center] [gap:10px] [flex-wrap:wrap]">
-            <div className="[display:inline-flex]! [align-items:center] [gap:8px] [padding:6px_14px]! [border-radius:var(--radius-md)]! [background:var(--color-white)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [font-size:var(--text-sm)]! [box-shadow:var(--shadow-xs)]! [&_strong]:[color:var(--text-primary,_var(--color-ink-900))]! [&_strong]:[font-weight:700]! [&.weird]:[background:rgba(245,_158,_11,_0.08)]! [&.weird]:[border-color:rgba(245,_158,_11,_0.35)]! [&.weird]:[color:var(--color-amber-700)]! [&.weird_strong]:[color:var(--color-amber-700)]!">
+            <div className="kpi-chip">
               <span>Total Staged:</span>
               <strong>{stats.totalCount} records</strong>
             </div>
-            <div className="[display:inline-flex]! [align-items:center] [gap:8px] [padding:6px_14px]! [border-radius:var(--radius-md)]! [background:var(--color-white)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [font-size:var(--text-sm)]! [box-shadow:var(--shadow-xs)]! [&_strong]:[color:var(--text-primary,_var(--color-ink-900))]! [&_strong]:[font-weight:700]! [&.weird]:[background:rgba(245,_158,_11,_0.08)]! [&.weird]:[border-color:rgba(245,_158,_11,_0.35)]! [&.weird]:[color:var(--color-amber-700)]! [&.weird_strong]:[color:var(--color-amber-700)]!">
+            <div className="kpi-chip">
               <span>Cumulative Impact:</span>
               <strong>{stats.totalTco2e.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} tCO₂e</strong>
             </div>
-            <div className="[display:inline-flex]! [align-items:center] [gap:8px] [padding:6px_14px]! [border-radius:var(--radius-md)]! [background:var(--color-white)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [font-size:var(--text-sm)]! [box-shadow:var(--shadow-xs)]! [&_strong]:[color:var(--text-primary,_var(--color-ink-900))]! [&_strong]:[font-weight:700]! [&.weird]:[background:rgba(245,_158,_11,_0.08)]! [&.weird]:[border-color:rgba(245,_158,_11,_0.35)]! [&.weird]:[color:var(--color-amber-700)]! [&.weird_strong]:[color:var(--color-amber-700)]!">
+            <div className="kpi-chip">
               <span>Scope Distribution:</span>
               <strong>S1({stats.count1}) S2({stats.count2}) S3({stats.count3})</strong>
             </div>
-            <div className={`[display:inline-flex]! [align-items:center]! [gap:8px]! [padding:6px_14px]! [border-radius:var(--radius-md)]! [background:var(--color-white)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [font-size:var(--text-sm)]! [box-shadow:var(--shadow-xs)]! [&_strong]:[color:var(--text-primary,_var(--color-ink-900))]! [&_strong]:[font-weight:700]! [&.weird]:[background:rgba(245,_158,_11,_0.08)]! [&.weird]:[border-color:rgba(245,_158,_11,_0.35)]! [&.weird]:[color:var(--color-amber-700)]! [&.weird_strong]:[color:var(--color-amber-700)]! ${stats.weirdCount > 0 ? 'weird' : ''}`}>
+            <div className={`kpi-chip ${stats.weirdCount > 0 ? 'weird' : ''}`}>
               <AlertTriangle size={14} />
               <span>Suspicious / Weird:</span>
               <strong>{stats.weirdCount} flagged</strong>
@@ -543,7 +543,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
           <div className="flex! gap-[10px]! items-center!">
             {stats.weirdCount > 0 && (
               <button
-                className="[display:inline-flex]! [align-items:center]! [gap:6px]! [padding:8px_14px]! [border-radius:var(--radius-md)]! [font-size:var(--text-sm)]! [font-weight:600]! [cursor:pointer]! [border:1px_solid_transparent]! [transition:all_0.15s_ease]! [background:rgba(245,_158,_11,_0.12)]! [color:var(--color-amber-700)]! [&&]:[border-color:rgba(245,_158,_11,_0.3)]! hover:[background:var(--color-amber-700)]! hover:[color:var(--color-white)]!"
+                className="[display:inline-flex]! [align-items:center]! [gap:6px]! [padding:8px_14px]! [border-radius:var(--radius-md)]! [font-size:var(--text-sm)]! [font-weight:600]! [cursor:pointer]! [border:1px_solid_transparent]! [transition:all_0.15s_ease]! [background:rgba(245,_158,_11,_0.12)]! [color:var(--color-amber-700)]! [border-color:rgba(245,_158,_11,_0.3)]! hover:[background:var(--color-amber-700)]! hover:[color:var(--color-white)]!"
                 onClick={handleSelectAllWeird}
                 title="Select all flagged anomalies for batch rejection or inspection"
               >
@@ -561,7 +561,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
               Approve All ({stats.totalCount})
             </button>
             <button
-              className="[display:inline-flex]! [align-items:center]! [gap:6px]! [padding:8px_14px]! [border-radius:var(--radius-md)]! [font-size:var(--text-sm)]! [font-weight:600]! [cursor:pointer]! [border:1px_solid_transparent]! [transition:all_0.15s_ease]! [background:rgba(239,_68,_68,_0.1)]! [color:var(--color-red-700)]! [&&]:[border-color:rgba(239,_68,_68,_0.25)]! hover:[background:var(--color-red-700)]! hover:[color:var(--color-white)]! hover:[transform:translateY(-1px)] hover:[box-shadow:0_3px_8px_rgba(239,_68,_68,_0.3)]!"
+              className="[display:inline-flex]! [align-items:center]! [gap:6px]! [padding:8px_14px]! [border-radius:var(--radius-md)]! [font-size:var(--text-sm)]! [font-weight:600]! [cursor:pointer]! [border:1px_solid_transparent]! [transition:all_0.15s_ease]! [background:rgba(239,_68,_68,_0.1)]! [color:var(--color-red-700)]! [border-color:rgba(239,_68,_68,_0.25)]! hover:[background:var(--color-red-700)]! hover:[color:var(--color-white)]! hover:[transform:translateY(-1px)] hover:[box-shadow:0_3px_8px_rgba(239,_68,_68,_0.3)]!"
               onClick={() => setRejectionModal({ isOpen: true, mode: 'all', targetItem: null, reason: '' })}
               disabled={loading || isProcessing || stats.totalCount === 0}
               title="Delete all pending records with audit justification"
@@ -577,30 +577,30 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
           <div className="[display:flex]! [align-items:center] [gap:10px] [flex-wrap:wrap]">
             {/* Scope Tabs */}
             <div className="[display:inline-flex]! [background:var(--bg-body,_var(--color-ink-100))]! [border-radius:var(--radius-md)]! [padding:3px]! [gap:3px]">
-              <button className={`[border:none]! [background:transparent]! [padding:6px_12px]! [&&]:[border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:500]! [color:var(--text-secondary,_var(--color-ink-500))]! [cursor:pointer]! [transition:all_0.15s_ease]! [display:inline-flex]! [align-items:center]! [gap:6px]! hover:[color:var(--text-primary,_var(--color-ink-900))]! hover:[background:rgba(255,_255,_255,_0.7)]! [&.active]:[background:var(--color-white)]! [&.active]:[color:var(--color-link)]! [&.active]:[font-weight:600]! [&.active]:[box-shadow:var(--shadow-xs)]! [&.weird-active]:[background:#fef3c7]! [&.weird-active]:[color:var(--color-amber-700)]! [&.weird-active]:[font-weight:700]! ${scopeFilter === 'all' ? 'active' : ''}`} onClick={() => setScopeFilter('all')}>
+              <button className={`segmented-item-btn ${scopeFilter === 'all' ? 'active' : ''}`} onClick={() => setScopeFilter('all')}>
                 All Scopes ({stats.totalCount})
               </button>
-              <button className={`[border:none]! [background:transparent]! [padding:6px_12px]! [&&]:[border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:500]! [color:var(--text-secondary,_var(--color-ink-500))]! [cursor:pointer]! [transition:all_0.15s_ease]! [display:inline-flex]! [align-items:center]! [gap:6px]! hover:[color:var(--text-primary,_var(--color-ink-900))]! hover:[background:rgba(255,_255,_255,_0.7)]! [&.active]:[background:var(--color-white)]! [&.active]:[color:var(--color-link)]! [&.active]:[font-weight:600]! [&.active]:[box-shadow:var(--shadow-xs)]! [&.weird-active]:[background:#fef3c7]! [&.weird-active]:[color:var(--color-amber-700)]! [&.weird-active]:[font-weight:700]! ${scopeFilter === '1' ? 'active' : ''}`} onClick={() => setScopeFilter('1')}>
+              <button className={`segmented-item-btn ${scopeFilter === '1' ? 'active' : ''}`} onClick={() => setScopeFilter('1')}>
                 Scope 1 ({stats.count1})
               </button>
-              <button className={`[border:none]! [background:transparent]! [padding:6px_12px]! [&&]:[border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:500]! [color:var(--text-secondary,_var(--color-ink-500))]! [cursor:pointer]! [transition:all_0.15s_ease]! [display:inline-flex]! [align-items:center]! [gap:6px]! hover:[color:var(--text-primary,_var(--color-ink-900))]! hover:[background:rgba(255,_255,_255,_0.7)]! [&.active]:[background:var(--color-white)]! [&.active]:[color:var(--color-link)]! [&.active]:[font-weight:600]! [&.active]:[box-shadow:var(--shadow-xs)]! [&.weird-active]:[background:#fef3c7]! [&.weird-active]:[color:var(--color-amber-700)]! [&.weird-active]:[font-weight:700]! ${scopeFilter === '2' ? 'active' : ''}`} onClick={() => setScopeFilter('2')}>
+              <button className={`segmented-item-btn ${scopeFilter === '2' ? 'active' : ''}`} onClick={() => setScopeFilter('2')}>
                 Scope 2 ({stats.count2})
               </button>
-              <button className={`[border:none]! [background:transparent]! [padding:6px_12px]! [&&]:[border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:500]! [color:var(--text-secondary,_var(--color-ink-500))]! [cursor:pointer]! [transition:all_0.15s_ease]! [display:inline-flex]! [align-items:center]! [gap:6px]! hover:[color:var(--text-primary,_var(--color-ink-900))]! hover:[background:rgba(255,_255,_255,_0.7)]! [&.active]:[background:var(--color-white)]! [&.active]:[color:var(--color-link)]! [&.active]:[font-weight:600]! [&.active]:[box-shadow:var(--shadow-xs)]! [&.weird-active]:[background:#fef3c7]! [&.weird-active]:[color:var(--color-amber-700)]! [&.weird-active]:[font-weight:700]! ${scopeFilter === '3' ? 'active' : ''}`} onClick={() => setScopeFilter('3')}>
+              <button className={`segmented-item-btn ${scopeFilter === '3' ? 'active' : ''}`} onClick={() => setScopeFilter('3')}>
                 Scope 3 ({stats.count3})
               </button>
             </div>
 
             {/* QA Anomaly Filter */}
             <div className="[display:inline-flex]! [background:var(--bg-body,_var(--color-ink-100))]! [border-radius:var(--radius-md)]! [padding:3px]! [gap:3px]">
-              <button className={`[border:none]! [background:transparent]! [padding:6px_12px]! [&&]:[border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:500]! [color:var(--text-secondary,_var(--color-ink-500))]! [cursor:pointer]! [transition:all_0.15s_ease]! [display:inline-flex]! [align-items:center]! [gap:6px]! hover:[color:var(--text-primary,_var(--color-ink-900))]! hover:[background:rgba(255,_255,_255,_0.7)]! [&.active]:[background:var(--color-white)]! [&.active]:[color:var(--color-link)]! [&.active]:[font-weight:600]! [&.active]:[box-shadow:var(--shadow-xs)]! [&.weird-active]:[background:#fef3c7]! [&.weird-active]:[color:var(--color-amber-700)]! [&.weird-active]:[font-weight:700]! ${qaFilter === 'all' ? 'active' : ''}`} onClick={() => setQaFilter('all')}>
+              <button className={`segmented-item-btn ${qaFilter === 'all' ? 'active' : ''}`} onClick={() => setQaFilter('all')}>
                 All Data
               </button>
-              <button className={`[border:none]! [background:transparent]! [padding:6px_12px]! [&&]:[border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:500]! [color:var(--text-secondary,_var(--color-ink-500))]! [cursor:pointer]! [transition:all_0.15s_ease]! [display:inline-flex]! [align-items:center]! [gap:6px]! hover:[color:var(--text-primary,_var(--color-ink-900))]! hover:[background:rgba(255,_255,_255,_0.7)]! [&.active]:[background:var(--color-white)]! [&.active]:[color:var(--color-link)]! [&.active]:[font-weight:600]! [&.active]:[box-shadow:var(--shadow-xs)]! [&.weird-active]:[background:#fef3c7]! [&.weird-active]:[color:var(--color-amber-700)]! [&.weird-active]:[font-weight:700]! ${qaFilter === 'weird' ? 'active weird-active' : ''}`} onClick={() => setQaFilter('weird')}>
+              <button className={`segmented-item-btn ${qaFilter === 'weird' ? 'active weird-active' : ''}`} onClick={() => setQaFilter('weird')}>
                 <AlertTriangle size={13} />
                 Weird Only ({stats.weirdCount})
               </button>
-              <button className={`[border:none]! [background:transparent]! [padding:6px_12px]! [&&]:[border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:500]! [color:var(--text-secondary,_var(--color-ink-500))]! [cursor:pointer]! [transition:all_0.15s_ease]! [display:inline-flex]! [align-items:center]! [gap:6px]! hover:[color:var(--text-primary,_var(--color-ink-900))]! hover:[background:rgba(255,_255,_255,_0.7)]! [&.active]:[background:var(--color-white)]! [&.active]:[color:var(--color-link)]! [&.active]:[font-weight:600]! [&.active]:[box-shadow:var(--shadow-xs)]! [&.weird-active]:[background:#fef3c7]! [&.weird-active]:[color:var(--color-amber-700)]! [&.weird-active]:[font-weight:700]! ${qaFilter === 'clean' ? 'active' : ''}`} onClick={() => setQaFilter('clean')}>
+              <button className={`segmented-item-btn ${qaFilter === 'clean' ? 'active' : ''}`} onClick={() => setQaFilter('clean')}>
                 <CheckCircle size={13} color="#10b981" />
                 Clean Only ({stats.cleanCount})
               </button>
@@ -635,7 +635,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
             )}
 
             {/* Search Box */}
-            <div className="[display:flex]! [align-items:center] [gap:8px] [background:var(--bg-body,_var(--color-ink-100))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-md)]! [padding:6px_12px]! [min-width:220px] [transition:border-color_0.2s]! focus-within:[border-color:var(--accent-color,_var(--color-brand-500))]! focus-within:[background:var(--color-white)]! focus-within:[box-shadow:0_0_0_3px_rgba(255,_102,_0,_0.12)]!">
+            <div className="[display:flex]! [align-items:center] [gap:8px] [background:var(--bg-body,_var(--color-ink-100))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-md)]! [padding:6px_12px]! [min-width:220px] [transition:border-color_0.2s]! focus-within:[border-color:var(--accent-color,_var(--color-brand-500))]! focus-within:[background:var(--color-white)]! focus-within:[box-shadow:0_0_0_3px_rgba(255,_102,_0,_0.12)]!">
               <Search size={14} color="var(--text-secondary)" />
               <input
                 type="text"
@@ -670,7 +670,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
                   Approve Filtered ({filteredRecords.length})
                 </button>
                 <button
-                  className="[display:inline-flex]! [align-items:center]! [gap:6px]! [padding:8px_14px]! [border-radius:var(--radius-md)]! [font-size:var(--text-sm)]! [font-weight:600]! [cursor:pointer]! [border:1px_solid_transparent]! [transition:all_0.15s_ease]! [background:rgba(239,_68,_68,_0.1)]! [color:var(--color-red-700)]! [&&]:[border-color:rgba(239,_68,_68,_0.25)]! hover:[background:var(--color-red-700)]! hover:[color:var(--color-white)]! hover:[transform:translateY(-1px)] hover:[box-shadow:0_3px_8px_rgba(239,_68,_68,_0.3)]! p-[6px_12px]! text-[length:0.78rem]!"
+                  className="[display:inline-flex]! [align-items:center]! [gap:6px]! [padding:8px_14px]! [border-radius:var(--radius-md)]! [font-size:var(--text-sm)]! [font-weight:600]! [cursor:pointer]! [border:1px_solid_transparent]! [transition:all_0.15s_ease]! [background:rgba(239,_68,_68,_0.1)]! [color:var(--color-red-700)]! [border-color:rgba(239,_68,_68,_0.25)]! hover:[background:var(--color-red-700)]! hover:[color:var(--color-white)]! hover:[transform:translateY(-1px)] hover:[box-shadow:0_3px_8px_rgba(239,_68,_68,_0.3)]! p-[6px_12px]! text-[length:0.78rem]!"
                  
                   onClick={() => setRejectionModal({ isOpen: true, mode: 'filtered', targetItem: null, reason: '' })}
                   disabled={isProcessing}
@@ -707,7 +707,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
                 Approve Selected ({selectedKeys.size})
               </button>
               <button
-                className="[display:inline-flex]! [align-items:center]! [gap:6px]! [padding:8px_14px]! [border-radius:var(--radius-md)]! [font-size:var(--text-sm)]! [font-weight:600]! [cursor:pointer]! [border:1px_solid_transparent]! [transition:all_0.15s_ease]! [background:rgba(239,_68,_68,_0.1)]! [color:var(--color-red-700)]! [&&]:[border-color:rgba(239,_68,_68,_0.25)]! hover:[background:var(--color-red-700)]! hover:[color:var(--color-white)]! hover:[transform:translateY(-1px)] hover:[box-shadow:0_3px_8px_rgba(239,_68,_68,_0.3)]!"
+                className="[display:inline-flex]! [align-items:center]! [gap:6px]! [padding:8px_14px]! [border-radius:var(--radius-md)]! [font-size:var(--text-sm)]! [font-weight:600]! [cursor:pointer]! [border:1px_solid_transparent]! [transition:all_0.15s_ease]! [background:rgba(239,_68,_68,_0.1)]! [color:var(--color-red-700)]! [border-color:rgba(239,_68,_68,_0.25)]! hover:[background:var(--color-red-700)]! hover:[color:var(--color-white)]! hover:[transform:translateY(-1px)] hover:[box-shadow:0_3px_8px_rgba(239,_68,_68,_0.3)]!"
                 onClick={() => setRejectionModal({ isOpen: true, mode: 'selected', targetItem: null, reason: '' })}
                 disabled={isProcessing}
               >
@@ -756,7 +756,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
               </Button>
             </div>
           ) : (
-            <table className="[width:100%]! [border-collapse:collapse]! [font-size:var(--text-base)]! [&_th]:[position:sticky]! [&_th]:[top:0]! [&_th]:[background:rgba(248,_250,_252,_0.95)]! [&_th]:[backdrop-filter:blur(8px)]! [&_th]:[-webkit-backdrop-filter:blur(8px)]! [&_th]:[color:var(--text-secondary,_var(--color-ink-500))]! [&_th]:[font-weight:600]! [&_th]:[font-size:var(--text-sm)]! [&_th]:[text-transform:uppercase]! [&_th]:[letter-spacing:0.05em]! [&_th]:[padding:12px_16px]! [&_th]:[text-align:left]! [&_th]:[border-bottom:1px_solid_var(--border-color,_var(--color-ink-200))]! [&_th]:[white-space:nowrap]! [&_th]:[z-index:2]! [&_td]:[padding:12px_16px]! [&_td]:[border-bottom:1px_solid_var(--border-color,_var(--color-ink-200))]! [&_td]:[color:var(--text-primary,_var(--color-ink-900))]! [&_td]:[vertical-align:middle]! [&_tr:hover_td]:[background:rgba(255,_247,_237,_0.4)]! [&_tr.row-weird_td]:[background:rgba(254,_243,_199,_0.25)]! [&_tr.row-weird:hover_td]:[background:rgba(254,_243,_199,_0.4)]! [&_tr.row-selected_td]:[background:rgba(255,_102,_0,_0.05)]!">
+            <table className="wizard-table">
               <thead>
                 <tr>
                   <th className="w-[44px]! text-center!">
@@ -823,7 +823,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
                         {item.isWeird ? (
                           <div className="flex! flex-col! gap-[3px]!">
                             <span
-                              className={`[display:inline-flex]! [align-items:center]! [gap:5px]! [padding:3px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:600]! [line-height:1.2]! [&.danger]:[background:rgba(239,_68,_68,_0.1)]! [&.danger]:[color:var(--color-red-700)]! [&.danger]:[border:1px_solid_rgba(239,_68,_68,_0.3)]! [&.warning]:[background:rgba(245,_158,_11,_0.12)]! [&.warning]:[color:var(--color-amber-700)]! [&.warning]:[border:1px_solid_rgba(245,_158,_11,_0.35)]! [&.clean]:[background:rgba(16,_185,_129,_0.08)]! [&.clean]:[color:var(--color-green-700)]! [&.clean]:[border:1px_solid_rgba(16,_185,_129,_0.25)]! ${item.severity}`}
+                              className={`anomaly-pill ${item.severity}`}
                               title={item.reasons.join(" · ")}
                             >
                               <AlertTriangle size={12} />
@@ -835,7 +835,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
                             </span>
                           </div>
                         ) : (
-                          <span className="[display:inline-flex]! [align-items:center]! [gap:5px]! [padding:3px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:600]! [line-height:1.2]! [&.danger]:[background:rgba(239,_68,_68,_0.1)]! [&.danger]:[color:var(--color-red-700)]! [&.danger]:[border:1px_solid_rgba(239,_68,_68,_0.3)]! [&.warning]:[background:rgba(245,_158,_11,_0.12)]! [&.warning]:[color:var(--color-amber-700)]! [&.warning]:[border:1px_solid_rgba(245,_158,_11,_0.35)]! [&.clean]:[background:rgba(16,_185,_129,_0.08)]! [&.clean]:[color:var(--color-green-700)]! [&.clean]:[border:1px_solid_rgba(16,_185,_129,_0.25)]! clean">
+                          <span className="anomaly-pill clean">
                             <Check size={12} />
                             Verified Structure
                           </span>
@@ -863,7 +863,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
                           ) : (
                             <button
                               type="button"
-                              className="[display:inline-flex]! [align-items:center]! [justify-content:center]! [width:32px]! [height:32px]! [border-radius:var(--radius-md)]! [border:1px_solid_transparent]! [cursor:pointer]! [transition:all_0.15s_ease]! [&.approve]:[background:rgba(16,_185,_129,_0.1)]! [&.approve]:[color:var(--color-green-700)]! [&.approve]:[border-color:rgba(16,_185,_129,_0.25)]! [&.approve:hover]:[background:var(--color-green-700)]! [&.approve:hover]:[color:var(--color-white)]! [&.approve:hover]:[transform:translateY(-1px)]! [&.approve:hover]:[box-shadow:0_4px_10px_rgba(16,_185,_129,_0.25)]! [&.reject]:[background:rgba(239,_68,_68,_0.08)]! [&.reject]:[color:var(--color-red-700)]! [&.reject]:[border-color:rgba(239,_68,_68,_0.2)]! [&.reject:hover]:[background:var(--color-red-700)]! [&.reject:hover]:[color:var(--color-white)]! [&.reject:hover]:[transform:translateY(-1px)]! [&.reject:hover]:[box-shadow:0_4px_10px_rgba(239,_68,_68,_0.25)]! approve"
+                              className="btn-review-action approve"
                               title="Approve & Commit"
                               onClick={() => handleApproveSingle(item.scope, item.id)}
                             >
@@ -872,7 +872,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
                           )}
                           <button
                             type="button"
-                            className="[display:inline-flex]! [align-items:center]! [justify-content:center]! [width:32px]! [height:32px]! [border-radius:var(--radius-md)]! [border:1px_solid_transparent]! [cursor:pointer]! [transition:all_0.15s_ease]! [&.approve]:[background:rgba(16,_185,_129,_0.1)]! [&.approve]:[color:var(--color-green-700)]! [&.approve]:[border-color:rgba(16,_185,_129,_0.25)]! [&.approve:hover]:[background:var(--color-green-700)]! [&.approve:hover]:[color:var(--color-white)]! [&.approve:hover]:[transform:translateY(-1px)]! [&.approve:hover]:[box-shadow:0_4px_10px_rgba(16,_185,_129,_0.25)]! [&.reject]:[background:rgba(239,_68,_68,_0.08)]! [&.reject]:[color:var(--color-red-700)]! [&.reject]:[border-color:rgba(239,_68,_68,_0.2)]! [&.reject:hover]:[background:var(--color-red-700)]! [&.reject:hover]:[color:var(--color-white)]! [&.reject:hover]:[transform:translateY(-1px)]! [&.reject:hover]:[box-shadow:0_4px_10px_rgba(239,_68,_68,_0.25)]! reject"
+                            className="btn-review-action reject"
                             title="Reject (Specify Reason)"
                             onClick={() => setRejectionModal({ isOpen: true, mode: 'single', targetItem: item, reason: '' })}
                           >
@@ -892,7 +892,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
       {/* ── Nested Rejection Reason Prompt Modal ── */}
       {rejectionModal.isOpen && (
         <div className="[position:fixed] [inset:0] [background:rgba(15,_23,_42,_0.5)]! [backdrop-filter:blur(6px)] [display:flex]! [align-items:center] [justify-content:center] [z-index:1000] [animation:fadeIn_0.2s_ease-out]!" onClick={(e) => { if (e.target === e.currentTarget && !isProcessing) setRejectionModal(prev => ({ ...prev, isOpen: false })); }}>
-          <div className="[background:var(--bg-card-elevated)]! [border:1px_solid_var(--border-color)]! [&&]:[border-radius:var(--radius-lg)]! [width:90%]! [max-width:520px]! [padding:28px]! [box-shadow:var(--shadow-card-elevated)]! [display:flex]! [flex-direction:column] [gap:20px] [animation:scaleUp_0.25s_cubic-bezier(0.16,_1,_0.3,_1)]!">
+          <div className="[background:var(--bg-card-elevated)]! [border:1px_solid_var(--border-color)]! [border-radius:var(--radius-lg)]! [width:90%]! [max-width:520px]! [padding:28px]! [box-shadow:var(--shadow-card-elevated)]! [display:flex]! [flex-direction:column] [gap:20px] [animation:scaleUp_0.25s_cubic-bezier(0.16,_1,_0.3,_1)]!">
             <div className="flex! justify-between! items-center!">
               <div className="flex! items-center! gap-[10px]!">
                 <div className="w-[36px]! h-[36px]! rounded-[10px]! bg-[color:rgba(239,_68,_68,_0.1)]! text-[color:#dc2626]! flex! items-center! justify-center!">
@@ -930,7 +930,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
                   <button
                     key={reason}
                     type="button"
-                    className={`[background:var(--bg-body)]! [border:1px_solid_var(--border-color)]! [color:var(--text-secondary)]! [font-size:var(--text-sm)]! [padding:6px_12px]! [&&]:[border-radius:var(--radius-md)]! [cursor:pointer]! [transition:all_0.15s]! hover:[background:var(--bg-hover)]! hover:[color:var(--text-primary)]! hover:[border-color:rgba(255,_102,_0,_0.3)]! [&.selected]:[background:rgba(239,_68,_68,_0.1)]! [&.selected]:[color:var(--color-red-700)]! [&.selected]:[border-color:rgba(239,_68,_68,_0.4)]! [&.selected]:[font-weight:600]! ${rejectionModal.reason === reason ? 'selected' : ''}`}
+                    className={`rejection-chip ${rejectionModal.reason === reason ? 'selected' : ''}`}
                     onClick={() => setRejectionModal(prev => ({ ...prev, reason }))}
                   >
                     {reason}

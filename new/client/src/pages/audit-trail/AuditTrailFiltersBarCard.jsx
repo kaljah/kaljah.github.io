@@ -4,7 +4,7 @@ import { RotateCcw, Search, X } from "lucide-react";
 
 // Extracted from AuditTrail.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const AuditTrailFiltersBarCard = ({ auditLogs, availableFilters, customEndDate, customStartDate, filterAction, filterEntity, filterUser, hasActiveFilters, resetFilters, searchQuery, setCustomEndDate, setCustomStartDate, setFilterAction, setFilterEntity, setFilterUser, setPage, setSearchQuery, setTimeframe, timeframe, totalRecords }) => (
-<div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.85))]! [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.85))]! [&&]:[border-radius:var(--radius-lg)]! [padding:18px_22px]! [margin-bottom:28px]! [box-shadow:var(--shadow-card)]!">
+<div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.85))]! [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.85))]! [border-radius:var(--radius-lg)]! [padding:18px_22px]! [margin-bottom:28px]! [box-shadow:var(--shadow-card)]!">
           <div className="[position:relative] [width:100%]! [margin-bottom:16px]! [&_.search-icon]:[position:absolute]! [&_.search-icon]:[left:14px]! [&_.search-icon]:[top:50%]! [&_.search-icon]:[transform:translateY(-50%)]! [&_.search-icon]:[color:var(--color-ink-600)]! [&_.search-icon]:[pointer-events:none]!">
             <Search size={16} className="search-icon" />
             <input
@@ -12,11 +12,11 @@ const AuditTrailFiltersBarCard = ({ auditLogs, availableFilters, customEndDate, 
               placeholder="Search by user, description, record ID, IP address, or entity..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="[width:100%]! [background:var(--color-white)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-md)]! [padding:10px_40px_10px_40px]! [font-size:var(--text-base)]! [color:var(--text-primary,_var(--color-ink-900))]! [outline:none]! [transition:all_0.2s_ease]! focus:[border-color:var(--accent-color,_var(--color-brand-500))]! focus:[box-shadow:0_0_0_3px_rgba(255,_102,_0,_0.12)]!"
+              className="[width:100%]! [background:var(--color-white)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-md)]! [padding:10px_40px_10px_40px]! [font-size:var(--text-base)]! [color:var(--text-primary,_var(--color-ink-900))]! [outline:none]! [transition:all_0.2s_ease]! focus:[border-color:var(--accent-color,_var(--color-brand-500))]! focus:[box-shadow:0_0_0_3px_rgba(255,_102,_0,_0.12)]!"
             />
             {searchQuery && (
               <button
-                className="[position:absolute] [right:12px] [top:50%] [transform:translateY(-50%)] [background:var(--color-ink-200)]! [border:none]! [&&]:[border-radius:50%]! [width:20px]! [height:20px]! [display:flex]! [align-items:center] [justify-content:center] [color:var(--color-ink-600)]! [cursor:pointer] hover:[background:var(--color-ink-300)]!"
+                className="[position:absolute] [right:12px] [top:50%] [transform:translateY(-50%)] [background:var(--color-ink-200)]! [border:none]! [border-radius:50%]! [width:20px]! [height:20px]! [display:flex]! [align-items:center] [justify-content:center] [color:var(--color-ink-600)]! [cursor:pointer] hover:[background:var(--color-ink-300)]!"
                 onClick={() => setSearchQuery("")}
                 title="Clear search"
               >
@@ -111,7 +111,7 @@ const AuditTrailFiltersBarCard = ({ auditLogs, availableFilters, customEndDate, 
                     setCustomStartDate(e.target.value);
                     setPage(1);
                   }}
-                  className="[background:var(--color-white)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-md)]! [padding:7px_10px]! [font-size:var(--text-sm)]! [color:var(--text-primary,_var(--color-ink-900))]! [outline:none]! focus:[border-color:var(--accent-color,_var(--color-brand-500))]!"
+                  className="[background:var(--color-white)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-md)]! [padding:7px_10px]! [font-size:var(--text-sm)]! [color:var(--text-primary,_var(--color-ink-900))]! [outline:none]! focus:[border-color:var(--accent-color,_var(--color-brand-500))]!"
                   title="Start Date"
                 />
                 <span className="[font-size:var(--text-sm)]! [color:var(--text-secondary,_var(--color-ink-500))]!">to</span>
@@ -122,7 +122,7 @@ const AuditTrailFiltersBarCard = ({ auditLogs, availableFilters, customEndDate, 
                     setCustomEndDate(e.target.value);
                     setPage(1);
                   }}
-                  className="[background:var(--color-white)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-md)]! [padding:7px_10px]! [font-size:var(--text-sm)]! [color:var(--text-primary,_var(--color-ink-900))]! [outline:none]! focus:[border-color:var(--accent-color,_var(--color-brand-500))]!"
+                  className="[background:var(--color-white)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-md)]! [padding:7px_10px]! [font-size:var(--text-sm)]! [color:var(--text-primary,_var(--color-ink-900))]! [outline:none]! focus:[border-color:var(--accent-color,_var(--color-brand-500))]!"
                   title="End Date"
                 />
               </div>

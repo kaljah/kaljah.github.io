@@ -12,7 +12,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                         className="[position:fixed] [inset:0] [background:rgba(15,_23,_42,_0.5)]! [backdrop-filter:blur(6px)] [display:flex]! [align-items:center] [justify-content:center] [z-index:1000] [animation:fadeIn_0.2s_ease-out]!" 
                                         onClick={() => !isProcessingBatch && setRejectionModal(prev => ({ ...prev, isOpen: false }))}
                                     >
-                                        <div className="[background:var(--bg-card-elevated)]! [border:1px_solid_var(--border-color)]! [&&]:[border-radius:var(--radius-lg)]! [width:90%]! [max-width:520px]! [padding:28px]! [box-shadow:var(--shadow-card-elevated)]! [display:flex]! [flex-direction:column] [gap:20px] [animation:scaleUp_0.25s_cubic-bezier(0.16,_1,_0.3,_1)]!" onClick={e => e.stopPropagation()}>
+                                        <div className="[background:var(--bg-card-elevated)]! [border:1px_solid_var(--border-color)]! [border-radius:var(--radius-lg)]! [width:90%]! [max-width:520px]! [padding:28px]! [box-shadow:var(--shadow-card-elevated)]! [display:flex]! [flex-direction:column] [gap:20px] [animation:scaleUp_0.25s_cubic-bezier(0.16,_1,_0.3,_1)]!" onClick={e => e.stopPropagation()}>
                                             <div className="flex! justify-between! items-center!">
                                                 <div className="flex! items-center! gap-[12px]!">
                                                     <div className="w-[42px]! h-[42px]! rounded-[12px]! bg-[color:rgba(239,_68,_68,_0.12)]! flex! items-center! justify-center! text-[color:#dc2626]!">
@@ -72,7 +72,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                                         <button
                                                             key={reason}
                                                             type="button"
-                                                            className={`[background:var(--bg-body)]! [border:1px_solid_var(--border-color)]! [color:var(--text-secondary)]! [font-size:var(--text-sm)]! [padding:6px_12px]! [&&]:[border-radius:var(--radius-md)]! [cursor:pointer]! [transition:all_0.15s]! hover:[background:var(--bg-hover)]! hover:[color:var(--text-primary)]! hover:[border-color:rgba(255,_102,_0,_0.3)]! [&.selected]:[background:rgba(239,_68,_68,_0.1)]! [&.selected]:[color:var(--color-red-700)]! [&.selected]:[border-color:rgba(239,_68,_68,_0.4)]! [&.selected]:[font-weight:600]! ${rejectionModal.reason === reason ? 'selected' : ''}`}
+                                                            className={`rejection-chip ${rejectionModal.reason === reason ? 'selected' : ''}`}
                                                             onClick={() => setRejectionModal(prev => ({ ...prev, reason }))}
                                                         >
                                                             {reason}
@@ -115,7 +115,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                                 </Button>
                                                 <button
                                                     type="button"
-                                                    className="[background:#fee2e2]! [color:var(--color-red-700)]! [border:1px_solid_#fecaca]! [padding:6px_12px]! [&&]:[border-radius:var(--radius-md)]! [cursor:pointer] [font-size:var(--text-base)]! [transition:all_0.2s]! hover:[background:var(--color-red-700)]! hover:[color:white]! inline-flex! items-center! gap-[8px]! p-[8px_18px]! rounded-[8px]!"
+                                                    className="[background:#fee2e2]! [color:var(--color-red-700)]! [border:1px_solid_#fecaca]! [padding:6px_12px]! [border-radius:var(--radius-md)]! [cursor:pointer] [font-size:var(--text-base)]! [transition:all_0.2s]! hover:[background:var(--color-red-700)]! hover:[color:white]! inline-flex! items-center! gap-[8px]! p-[8px_18px]! rounded-[8px]!"
                                                     disabled={isProcessingBatch || !rejectionModal.reason.trim()}
                                                    
                                                     onClick={handleConfirmReject}
@@ -196,7 +196,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
 
                                 {/* Top Hero KPI Metrics Strip */}
                                 <div className="[display:grid]! [grid-template-columns:repeat(auto-fit,_minmax(220px,_1fr))] [gap:16px] [width:100%]!">
-                                    <div className="[background:var(--bg-card)]! [backdrop-filter:blur(10px)] [border:1px_solid_var(--border-color)]! [&&]:[border-radius:var(--radius-lg)]! [padding:20px]! [display:flex]! [align-items:center] [gap:16px] [box-shadow:var(--shadow-card)]! [transition:all_0.2s_cubic-bezier(0.4,_0,_0.2,_1)]! hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated)]! hover:[border-color:rgba(255,_102,_0,_0.3)]!">
+                                    <div className="[background:var(--bg-card)]! [backdrop-filter:blur(10px)] [border:1px_solid_var(--border-color)]! [border-radius:var(--radius-lg)]! [padding:20px]! [display:flex]! [align-items:center] [gap:16px] [box-shadow:var(--shadow-card)]! [transition:all_0.2s_cubic-bezier(0.4,_0,_0.2,_1)]! hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated)]! hover:[border-color:rgba(255,_102,_0,_0.3)]!">
                                         <div className="[width:48px]! [height:48px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [flex-shrink:0] bg-[color:rgba(255,_102,_0,_0.1)]! text-[color:var(--color-link)]!">
                                             <Clock size={22} />
                                         </div>
@@ -209,7 +209,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                         </div>
                                     </div>
 
-                                    <div className="[background:var(--bg-card)]! [backdrop-filter:blur(10px)] [border:1px_solid_var(--border-color)]! [&&]:[border-radius:var(--radius-lg)]! [padding:20px]! [display:flex]! [align-items:center] [gap:16px] [box-shadow:var(--shadow-card)]! [transition:all_0.2s_cubic-bezier(0.4,_0,_0.2,_1)]! hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated)]! hover:[border-color:rgba(255,_102,_0,_0.3)]!">
+                                    <div className="[background:var(--bg-card)]! [backdrop-filter:blur(10px)] [border:1px_solid_var(--border-color)]! [border-radius:var(--radius-lg)]! [padding:20px]! [display:flex]! [align-items:center] [gap:16px] [box-shadow:var(--shadow-card)]! [transition:all_0.2s_cubic-bezier(0.4,_0,_0.2,_1)]! hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated)]! hover:[border-color:rgba(255,_102,_0,_0.3)]!">
                                         <div className="[width:48px]! [height:48px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [flex-shrink:0] bg-[color:rgba(239,_68,_68,_0.1)]! text-[color:#b91c1c]!">
                                             <Flame size={22} />
                                         </div>
@@ -223,7 +223,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                         </div>
                                     </div>
 
-                                    <div className="[background:var(--bg-card)]! [backdrop-filter:blur(10px)] [border:1px_solid_var(--border-color)]! [&&]:[border-radius:var(--radius-lg)]! [padding:20px]! [display:flex]! [align-items:center] [gap:16px] [box-shadow:var(--shadow-card)]! [transition:all_0.2s_cubic-bezier(0.4,_0,_0.2,_1)]! hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated)]! hover:[border-color:rgba(255,_102,_0,_0.3)]!">
+                                    <div className="[background:var(--bg-card)]! [backdrop-filter:blur(10px)] [border:1px_solid_var(--border-color)]! [border-radius:var(--radius-lg)]! [padding:20px]! [display:flex]! [align-items:center] [gap:16px] [box-shadow:var(--shadow-card)]! [transition:all_0.2s_cubic-bezier(0.4,_0,_0.2,_1)]! hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated)]! hover:[border-color:rgba(255,_102,_0,_0.3)]!">
                                         <div className="[width:48px]! [height:48px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [flex-shrink:0]" style={{ 
                                             background: pendingMetrics.flaggedCount > 0 ? 'rgba(245, 158, 11, 0.1)' : 'rgba(16, 185, 129, 0.1)', 
                                             color: pendingMetrics.flaggedCount > 0 ? '#d97706' : '#059669' 
@@ -239,7 +239,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                         </div>
                                     </div>
 
-                                    <div className="[background:var(--bg-card)]! [backdrop-filter:blur(10px)] [border:1px_solid_var(--border-color)]! [&&]:[border-radius:var(--radius-lg)]! [padding:20px]! [display:flex]! [align-items:center] [gap:16px] [box-shadow:var(--shadow-card)]! [transition:all_0.2s_cubic-bezier(0.4,_0,_0.2,_1)]! hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated)]! hover:[border-color:rgba(255,_102,_0,_0.3)]!">
+                                    <div className="[background:var(--bg-card)]! [backdrop-filter:blur(10px)] [border:1px_solid_var(--border-color)]! [border-radius:var(--radius-lg)]! [padding:20px]! [display:flex]! [align-items:center] [gap:16px] [box-shadow:var(--shadow-card)]! [transition:all_0.2s_cubic-bezier(0.4,_0,_0.2,_1)]! hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated)]! hover:[border-color:rgba(255,_102,_0,_0.3)]!">
                                         <div className="[width:48px]! [height:48px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [flex-shrink:0] bg-[color:rgba(59,_130,_246,_0.1)]! text-[color:#2563eb]!">
                                             <Shield size={22} />
                                         </div>
@@ -256,17 +256,17 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                 </div>
 
                                 {/* Filter & Controls Toolbar */}
-                                <div className="[display:flex]! [flex-wrap:wrap] [align-items:center] [justify-content:space-between] [gap:16px] [background:var(--bg-card)]! [backdrop-filter:blur(10px)] [border:1px_solid_var(--border-color)]! [&&]:[border-radius:var(--radius-lg)]! [padding:16px_20px]! [box-shadow:var(--shadow-card)]!">
+                                <div className="[display:flex]! [flex-wrap:wrap] [align-items:center] [justify-content:space-between] [gap:16px] [background:var(--bg-card)]! [backdrop-filter:blur(10px)] [border:1px_solid_var(--border-color)]! [border-radius:var(--radius-lg)]! [padding:16px_20px]! [box-shadow:var(--shadow-card)]!">
                                     <div className="[display:inline-flex]! [background:rgba(15,_23,_42,_0.05)]! [border-radius:var(--radius-md)]! [padding:4px]! [gap:4px]">
                                         <button 
-                                            className={`[display:inline-flex]! [align-items:center]! [gap:8px]! [padding:8px_16px]! [border-radius:var(--radius-md)]! [border:none]! [background:transparent]! [font-size:var(--text-base)]! [font-weight:500]! [color:var(--text-secondary)]! [cursor:pointer]! [transition:all_0.15s_ease]! hover:[color:var(--text-primary)]! hover:[background:rgba(255,_255,_255,_0.6)]! [&.active]:[background:var(--color-white)]! [&.active]:[color:var(--color-link)]! [&.active]:[font-weight:600]! [&.active]:[box-shadow:var(--shadow-card)]! [&.active_.pending-count-chip]:[background:var(--accent-subtle)]! [&.active_.pending-count-chip]:[color:var(--color-link)]! ${pendingScopeFilter === 'all' ? 'active' : ''}`}
+                                            className={`pending-tab-btn ${pendingScopeFilter === 'all' ? 'active' : ''}`}
                                             onClick={() => setPendingScopeFilter('all')}
                                         >
                                             <span>All Scopes</span>
                                             <span className="pending-count-chip [display:inline-flex]! [align-items:center] [justify-content:center] [min-width:20px] [height:20px]! [padding:0_6px]! [border-radius:var(--radius-md)]! [font-size:var(--text-xs)]! [font-weight:600]! [background:rgba(15,_23,_42,_0.08)]! [color:var(--text-secondary)]!">{pendingMetrics.totalCount}</span>
                                         </button>
                                         <button 
-                                            className={`[display:inline-flex]! [align-items:center]! [gap:8px]! [padding:8px_16px]! [border-radius:var(--radius-md)]! [border:none]! [background:transparent]! [font-size:var(--text-base)]! [font-weight:500]! [color:var(--text-secondary)]! [cursor:pointer]! [transition:all_0.15s_ease]! hover:[color:var(--text-primary)]! hover:[background:rgba(255,_255,_255,_0.6)]! [&.active]:[background:var(--color-white)]! [&.active]:[color:var(--color-link)]! [&.active]:[font-weight:600]! [&.active]:[box-shadow:var(--shadow-card)]! [&.active_.pending-count-chip]:[background:var(--accent-subtle)]! [&.active_.pending-count-chip]:[color:var(--color-link)]! ${pendingScopeFilter === '1' ? 'active' : ''}`}
+                                            className={`pending-tab-btn ${pendingScopeFilter === '1' ? 'active' : ''}`}
                                             onClick={() => setPendingScopeFilter('1')}
                                         >
                                             <span className="scope-tag [background:rgba(255,_102,_0,_0.1)]! [color:var(--color-brand-700)]! [border:1px_solid_rgba(255,_102,_0,_0.25)]! p-[1px_6px]! text-[length:0.7rem]!">S1</span>
@@ -274,7 +274,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                             <span className="pending-count-chip [display:inline-flex]! [align-items:center] [justify-content:center] [min-width:20px] [height:20px]! [padding:0_6px]! [border-radius:var(--radius-md)]! [font-size:var(--text-xs)]! [font-weight:600]! [background:rgba(15,_23,_42,_0.08)]! [color:var(--text-secondary)]!">{pendingMetrics.count1}</span>
                                         </button>
                                         <button 
-                                            className={`[display:inline-flex]! [align-items:center]! [gap:8px]! [padding:8px_16px]! [border-radius:var(--radius-md)]! [border:none]! [background:transparent]! [font-size:var(--text-base)]! [font-weight:500]! [color:var(--text-secondary)]! [cursor:pointer]! [transition:all_0.15s_ease]! hover:[color:var(--text-primary)]! hover:[background:rgba(255,_255,_255,_0.6)]! [&.active]:[background:var(--color-white)]! [&.active]:[color:var(--color-link)]! [&.active]:[font-weight:600]! [&.active]:[box-shadow:var(--shadow-card)]! [&.active_.pending-count-chip]:[background:var(--accent-subtle)]! [&.active_.pending-count-chip]:[color:var(--color-link)]! ${pendingScopeFilter === '2' ? 'active' : ''}`}
+                                            className={`pending-tab-btn ${pendingScopeFilter === '2' ? 'active' : ''}`}
                                             onClick={() => setPendingScopeFilter('2')}
                                         >
                                             <span className="scope-tag [background:rgba(59,_130,_246,_0.1)]! [color:var(--color-blue-600)]! [border:1px_solid_rgba(59,_130,_246,_0.25)]! p-[1px_6px]! text-[length:0.7rem]!">S2</span>
@@ -282,7 +282,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                             <span className="pending-count-chip [display:inline-flex]! [align-items:center] [justify-content:center] [min-width:20px] [height:20px]! [padding:0_6px]! [border-radius:var(--radius-md)]! [font-size:var(--text-xs)]! [font-weight:600]! [background:rgba(15,_23,_42,_0.08)]! [color:var(--text-secondary)]!">{pendingMetrics.count2}</span>
                                         </button>
                                         <button 
-                                            className={`[display:inline-flex]! [align-items:center]! [gap:8px]! [padding:8px_16px]! [border-radius:var(--radius-md)]! [border:none]! [background:transparent]! [font-size:var(--text-base)]! [font-weight:500]! [color:var(--text-secondary)]! [cursor:pointer]! [transition:all_0.15s_ease]! hover:[color:var(--text-primary)]! hover:[background:rgba(255,_255,_255,_0.6)]! [&.active]:[background:var(--color-white)]! [&.active]:[color:var(--color-link)]! [&.active]:[font-weight:600]! [&.active]:[box-shadow:var(--shadow-card)]! [&.active_.pending-count-chip]:[background:var(--accent-subtle)]! [&.active_.pending-count-chip]:[color:var(--color-link)]! ${pendingScopeFilter === '3' ? 'active' : ''}`}
+                                            className={`pending-tab-btn ${pendingScopeFilter === '3' ? 'active' : ''}`}
                                             onClick={() => setPendingScopeFilter('3')}
                                         >
                                             <span className="scope-tag [background:rgba(147,_51,_234,_0.1)]! [color:#7c3aed]! [border:1px_solid_rgba(147,_51,_234,_0.25)]! p-[1px_6px]! text-[length:0.7rem]!">S3</span>
@@ -295,21 +295,21 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                         {/* QA Filter Pills */}
                                         <div className="inline-flex! bg-[color:rgba(15,_23,_42,_0.05)]! rounded-[10px]! p-[3px]! gap-[3px]!">
                                             <button
-                                                className={`[display:inline-flex]! [align-items:center]! [gap:8px]! [padding:8px_16px]! [border-radius:var(--radius-md)]! [border:none]! [background:transparent]! [font-size:var(--text-base)]! [font-weight:500]! [color:var(--text-secondary)]! [cursor:pointer]! [transition:all_0.15s_ease]! hover:[color:var(--text-primary)]! hover:[background:rgba(255,_255,_255,_0.6)]! [&.active]:[background:var(--color-white)]! [&.active]:[color:var(--color-link)]! [&.active]:[font-weight:600]! [&.active]:[box-shadow:var(--shadow-card)]! [&.active_.pending-count-chip]:[background:var(--accent-subtle)]! [&.active_.pending-count-chip]:[color:var(--color-link)]! ${pendingQaFilter === 'all' ? 'active' : ''}`}
+                                                className={`pending-tab-btn ${pendingQaFilter === 'all' ? 'active' : ''}`}
                                                 style={{ padding: '6px 12px', fontSize: '0.78rem' }}
                                                 onClick={() => setPendingQaFilter('all')}
                                             >
                                                 All QA
                                             </button>
                                             <button
-                                                className={`[display:inline-flex]! [align-items:center]! [gap:8px]! [padding:8px_16px]! [border-radius:var(--radius-md)]! [border:none]! [background:transparent]! [font-size:var(--text-base)]! [font-weight:500]! [color:var(--text-secondary)]! [cursor:pointer]! [transition:all_0.15s_ease]! hover:[color:var(--text-primary)]! hover:[background:rgba(255,_255,_255,_0.6)]! [&.active]:[background:var(--color-white)]! [&.active]:[color:var(--color-link)]! [&.active]:[font-weight:600]! [&.active]:[box-shadow:var(--shadow-card)]! [&.active_.pending-count-chip]:[background:var(--accent-subtle)]! [&.active_.pending-count-chip]:[color:var(--color-link)]! ${pendingQaFilter === 'clean' ? 'active' : ''}`}
+                                                className={`pending-tab-btn ${pendingQaFilter === 'clean' ? 'active' : ''}`}
                                                 style={{ padding: '6px 12px', fontSize: '0.78rem', color: pendingQaFilter === 'clean' ? '#059669' : 'inherit' }}
                                                 onClick={() => setPendingQaFilter('clean')}
                                             >
                                                 Clean Only
                                             </button>
                                             <button
-                                                className={`[display:inline-flex]! [align-items:center]! [gap:8px]! [padding:8px_16px]! [border-radius:var(--radius-md)]! [border:none]! [background:transparent]! [font-size:var(--text-base)]! [font-weight:500]! [color:var(--text-secondary)]! [cursor:pointer]! [transition:all_0.15s_ease]! hover:[color:var(--text-primary)]! hover:[background:rgba(255,_255,_255,_0.6)]! [&.active]:[background:var(--color-white)]! [&.active]:[color:var(--color-link)]! [&.active]:[font-weight:600]! [&.active]:[box-shadow:var(--shadow-card)]! [&.active_.pending-count-chip]:[background:var(--accent-subtle)]! [&.active_.pending-count-chip]:[color:var(--color-link)]! ${pendingQaFilter === 'flagged' ? 'active' : ''}`}
+                                                className={`pending-tab-btn ${pendingQaFilter === 'flagged' ? 'active' : ''}`}
                                                 style={{ padding: '6px 12px', fontSize: '0.78rem', color: pendingQaFilter === 'flagged' ? '#d97706' : 'inherit' }}
                                                 onClick={() => setPendingQaFilter('flagged')}
                                             >
@@ -318,7 +318,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                         </div>
 
                                         {/* Search Box */}
-                                        <div className="[display:flex]! [align-items:center] [gap:8px] [background:var(--bg-body)]! [border:1px_solid_var(--border-color)]! [&&]:[border-radius:var(--radius-md)]! [padding:8px_14px]! [min-width:240px] [transition:border-color_0.2s]! focus-within:[border-color:var(--accent-color)]! focus-within:[box-shadow:0_0_0_3px_rgba(255,_102,_0,_0.1)]! focus-within:[background:var(--color-white)]!">
+                                        <div className="[display:flex]! [align-items:center] [gap:8px] [background:var(--bg-body)]! [border:1px_solid_var(--border-color)]! [border-radius:var(--radius-md)]! [padding:8px_14px]! [min-width:240px] [transition:border-color_0.2s]! focus-within:[border-color:var(--accent-color)]! focus-within:[box-shadow:0_0_0_3px_rgba(255,_102,_0,_0.1)]! focus-within:[background:var(--color-white)]!">
                                             <Search size={16} color="var(--text-secondary)" />
                                             <input
                                                 type="text"
@@ -368,7 +368,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                         </div>
                                         <div className="[display:flex]! [align-items:center] [gap:10px]">
                                             <button
-                                                className="[display:inline-flex]! [align-items:center] [gap:6px] [background:var(--color-green-700)]! [color:var(--color-white)]! [border:none]! [padding:8px_18px]! [&&]:[border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [transition:background_0.15s,_transform_0.1s]! hover:[background:var(--color-green-600)]! hover:[transform:translateY(-1px)]"
+                                                className="[display:inline-flex]! [align-items:center] [gap:6px] [background:var(--color-green-700)]! [color:var(--color-white)]! [border:none]! [padding:8px_18px]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [transition:background_0.15s,_transform_0.1s]! hover:[background:var(--color-green-600)]! hover:[transform:translateY(-1px)]"
                                                 disabled={isProcessingBatch}
                                                 onClick={handleBatchApproveSelected}
                                             >
@@ -376,7 +376,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                                 Approve Selected
                                             </button>
                                             <button
-                                                className="[display:inline-flex]! [align-items:center] [gap:6px] [background:rgba(239,_68,_68,_0.15)]! [color:#fca5a5]! [border:1px_solid_rgba(239,_68,_68,_0.4)]! [padding:8px_18px]! [&&]:[border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [transition:all_0.15s]! hover:[background:var(--color-red-700)]! hover:[color:var(--color-white)]! hover:[border-color:var(--color-red-500)]! hover:[transform:translateY(-1px)]"
+                                                className="[display:inline-flex]! [align-items:center] [gap:6px] [background:rgba(239,_68,_68,_0.15)]! [color:#fca5a5]! [border:1px_solid_rgba(239,_68,_68,_0.4)]! [padding:8px_18px]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [transition:all_0.15s]! hover:[background:var(--color-red-700)]! hover:[color:var(--color-white)]! hover:[border-color:var(--color-red-500)]! hover:[transform:translateY(-1px)]"
                                                 disabled={isProcessingBatch}
                                                 onClick={handleOpenBatchRejectModal}
                                             >
@@ -384,7 +384,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                                 Reject Selected
                                             </button>
                                             <button
-                                                className="[background:transparent]! [border:1px_solid_rgba(255,_255,_255,_0.2)]! [color:var(--color-ink-600)]! [padding:7px_14px]! [&&]:[border-radius:var(--radius-md)]! [font-size:var(--text-sm)]! [cursor:pointer] [transition:all_0.15s]! hover:[color:var(--color-white)]! hover:[border-color:rgba(255,_255,_255,_0.4)]!"
+                                                className="[background:transparent]! [border:1px_solid_rgba(255,_255,_255,_0.2)]! [color:var(--color-ink-600)]! [padding:7px_14px]! [border-radius:var(--radius-md)]! [font-size:var(--text-sm)]! [cursor:pointer] [transition:all_0.15s]! hover:[color:var(--color-white)]! hover:[border-color:rgba(255,_255,_255,_0.4)]!"
                                                 onClick={() => setSelectedPendingKeys(new Set())}
                                             >
                                                 Deselect
@@ -395,7 +395,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
 
                                 {/* Main Content: Queue Empty vs Table Card */}
                                 {pendingMetrics.totalCount === 0 ? (
-                                    <div className="[background:var(--bg-card)]! [backdrop-filter:blur(10px)] [border:1px_solid_var(--border-color)]! [&&]:[border-radius:var(--radius-lg)]! [padding:64px_32px]! [text-align:center]! [box-shadow:var(--shadow-card)]! [display:flex]! [flex-direction:column] [align-items:center] [gap:16px] [max-width:600px]! [margin:20px_auto]!">
+                                    <div className="[background:var(--bg-card)]! [backdrop-filter:blur(10px)] [border:1px_solid_var(--border-color)]! [border-radius:var(--radius-lg)]! [padding:64px_32px]! [text-align:center]! [box-shadow:var(--shadow-card)]! [display:flex]! [flex-direction:column] [align-items:center] [gap:16px] [max-width:600px]! [margin:20px_auto]!">
                                         <div className="[width:72px]! [height:72px]! [border-radius:var(--radius-lg)]! [background:linear-gradient(135deg,_rgba(16,_185,_129,_0.15),_rgba(16,_185,_129,_0.05))]! [border:1px_solid_rgba(16,_185,_129,_0.3)]! [display:flex]! [align-items:center] [justify-content:center] [color:var(--color-green-700)]! [box-shadow:0_8px_20px_-4px_rgba(16,_185,_129,_0.2)]!">
                                             <CheckCircle size={36} />
                                         </div>
@@ -409,7 +409,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                         </div>
                                     </div>
                                 ) : filteredPendingRecords.length === 0 ? (
-                                    <div className="[background:var(--bg-card)]! [backdrop-filter:blur(10px)] [border:1px_solid_var(--border-color)]! [&&]:[border-radius:var(--radius-lg)]! [padding:64px_32px]! [text-align:center]! [box-shadow:var(--shadow-card)]! [display:flex]! [flex-direction:column] [align-items:center] [gap:16px] [max-width:600px]! [margin:20px_auto]! p-[48px_24px]!">
+                                    <div className="[background:var(--bg-card)]! [backdrop-filter:blur(10px)] [border:1px_solid_var(--border-color)]! [border-radius:var(--radius-lg)]! [padding:64px_32px]! [text-align:center]! [box-shadow:var(--shadow-card)]! [display:flex]! [flex-direction:column] [align-items:center] [gap:16px] [max-width:600px]! [margin:20px_auto]! p-[48px_24px]!">
                                         <div className="[width:72px]! [height:72px]! [border-radius:var(--radius-lg)]! [background:linear-gradient(135deg,_rgba(16,_185,_129,_0.15),_rgba(16,_185,_129,_0.05))]! [border:1px_solid_rgba(16,_185,_129,_0.3)]! [display:flex]! [align-items:center] [justify-content:center] [color:var(--color-green-700)]! [box-shadow:0_8px_20px_-4px_rgba(16,_185,_129,_0.2)]!" style={{ background: 'rgba(148, 163, 184, 0.1)', color: 'var(--text-secondary)', borderColor: 'rgba(148, 163, 184, 0.3)' }}>
                                             <Filter size={32} />
                                         </div>
@@ -434,7 +434,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                         </div>
                                     </div>
                                 ) : (
-                                    <div className="[background:var(--bg-card)]! [backdrop-filter:blur(10px)] [border:1px_solid_var(--border-color)]! [&&]:[border-radius:var(--radius-lg)]! [padding:0]! [overflow:hidden]! [box-shadow:var(--shadow-card)]! [@media(max-width:768px)]:[overflow-x:auto]! [@media(max-width:768px)]:[-webkit-overflow-scrolling:touch]!">
+                                    <div className="[background:var(--bg-card)]! [backdrop-filter:blur(10px)] [border:1px_solid_var(--border-color)]! [border-radius:var(--radius-lg)]! [padding:0]! [overflow:hidden]! [box-shadow:var(--shadow-card)]! [@media(max-width:768px)]:[overflow-x:auto]! [@media(max-width:768px)]:[-webkit-overflow-scrolling:touch]!">
                                         <div className="[display:flex]! [justify-content:space-between] [align-items:center] [padding:20px_24px]! [border-bottom:1px_solid_var(--border-color)]!">
                                             <div className="flex! items-center! gap-[10px]!">
                                                 <h3 className="m-[0px]! text-[length:1.02rem]! font-bold!">
@@ -587,7 +587,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                                                         ) : (
                                                                             <button
                                                                                 type="button"
-                                                                                className="[display:inline-flex]! [align-items:center]! [justify-content:center]! [width:32px]! [height:32px]! [border-radius:var(--radius-md)]! [border:1px_solid_transparent]! [cursor:pointer]! [transition:all_0.15s_ease]! [&.approve]:[background:rgba(16,_185,_129,_0.1)]! [&.approve]:[color:var(--color-green-700)]! [&.approve]:[border-color:rgba(16,_185,_129,_0.25)]! [&.approve:hover]:[background:var(--color-green-700)]! [&.approve:hover]:[color:var(--color-white)]! [&.approve:hover]:[transform:translateY(-1px)]! [&.approve:hover]:[box-shadow:0_4px_10px_rgba(16,_185,_129,_0.25)]! [&.reject]:[background:rgba(239,_68,_68,_0.08)]! [&.reject]:[color:var(--color-red-700)]! [&.reject]:[border-color:rgba(239,_68,_68,_0.2)]! [&.reject:hover]:[background:var(--color-red-700)]! [&.reject:hover]:[color:var(--color-white)]! [&.reject:hover]:[transform:translateY(-1px)]! [&.reject:hover]:[box-shadow:0_4px_10px_rgba(239,_68,_68,_0.25)]! approve"
+                                                                                className="btn-review-action approve"
                                                                                 title="Approve Record"
                                                                                 onClick={() => handleApproveSingle(item.scope, item.id)}
                                                                             >
@@ -596,7 +596,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                                                         )}
                                                                         <button
                                                                             type="button"
-                                                                            className="[display:inline-flex]! [align-items:center]! [justify-content:center]! [width:32px]! [height:32px]! [border-radius:var(--radius-md)]! [border:1px_solid_transparent]! [cursor:pointer]! [transition:all_0.15s_ease]! [&.approve]:[background:rgba(16,_185,_129,_0.1)]! [&.approve]:[color:var(--color-green-700)]! [&.approve]:[border-color:rgba(16,_185,_129,_0.25)]! [&.approve:hover]:[background:var(--color-green-700)]! [&.approve:hover]:[color:var(--color-white)]! [&.approve:hover]:[transform:translateY(-1px)]! [&.approve:hover]:[box-shadow:0_4px_10px_rgba(16,_185,_129,_0.25)]! [&.reject]:[background:rgba(239,_68,_68,_0.08)]! [&.reject]:[color:var(--color-red-700)]! [&.reject]:[border-color:rgba(239,_68,_68,_0.2)]! [&.reject:hover]:[background:var(--color-red-700)]! [&.reject:hover]:[color:var(--color-white)]! [&.reject:hover]:[transform:translateY(-1px)]! [&.reject:hover]:[box-shadow:0_4px_10px_rgba(239,_68,_68,_0.25)]! reject"
+                                                                            className="btn-review-action reject"
                                                                             title="Reject Record (specify reason)"
                                                                             onClick={() => handleOpenRejectModal(item.scope, item.id)}
                                                                         >

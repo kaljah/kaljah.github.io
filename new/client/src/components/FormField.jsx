@@ -174,7 +174,7 @@ export const RadioGroupField = ({
         </label>
       )}
       <div
-        className={`[display:flex]! [gap:16px]! ${layout === "horizontal" ? "[flex-direction:row] [flex-wrap:wrap]" : "[flex-direction:column]"}`}
+        className={`radio-group ${layout === "horizontal" ? "[flex-direction:row] [flex-wrap:wrap]" : "[flex-direction:column]"}`}
       >
         {options.map((opt, idx) => (
           <label key={idx} className="[display:flex]! [align-items:center] [gap:8px] [cursor:pointer] [font-size:var(--text-base)]! [color:var(--text-primary)]!">

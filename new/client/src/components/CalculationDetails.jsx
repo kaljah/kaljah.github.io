@@ -54,7 +54,7 @@ const CalculationDetails = ({ calculation, onClose }) => {
   const normStatus = (status || "Verified").toLowerCase();
 
   return (
-    <div className="calc-overlay [position:fixed] [top:0] [left:0] [right:0] [bottom:0] [background:rgba(15,_23,_42,_0.65)]! [backdrop-filter:blur(4px)] [-webkit-backdrop-filter:blur(4px)]! [display:flex]! [align-items:center] [justify-content:center] [z-index:9999] [padding:16px]! [animation:calcFadeIn_0.2s_cubic-bezier(0.16,_1,_0.3,_1)]!" onClick={onClose} role="dialog" aria-modal="true">
+    <div className="calc-overlay" onClick={onClose} role="dialog" aria-modal="true">
       <div className="calc-modal" onClick={(e) => e.stopPropagation()}>
         <div className="[display:flex]! [justify-content:space-between] [align-items:center] [padding:20px_24px]! [background:var(--color-ink-50)]! [border-bottom:1px_solid_var(--color-ink-200)]! [flex-shrink:0] [&_h3]:[margin:0]! [&_h3]:[font-size:var(--text-lg)]! [&_h3]:[font-weight:700]! [&_h3]:[color:var(--color-ink-900)]! [&_h3]:[letter-spacing:-0.02em]!">
           <div className="[display:flex]! [align-items:center] [gap:12px]">
@@ -68,12 +68,12 @@ const CalculationDetails = ({ calculation, onClose }) => {
               </p>
             </div>
           </div>
-          <button className="calc-close-btn [background:var(--color-ink-100)]! [border:1px_solid_var(--color-ink-200)]! [color:var(--color-ink-500)]! [cursor:pointer] [width:36px]! [height:36px]! [display:flex]! [align-items:center] [justify-content:center] [&&]:[border-radius:var(--radius-md)]! [font-size:var(--text-lg)]! [line-height:1] [transition:all_0.18s_ease]! hover:[background:#fee2e2]! hover:[color:var(--color-red-700)]! hover:[border-color:#fca5a5]! hover:[transform:scale(1.04)]" onClick={onClose} title="Close (Esc)">
+          <button className="calc-close-btn" onClick={onClose} title="Close (Esc)">
             <X size={18} />
           </button>
         </div>
 
-        <div className="[padding:24px]! [overflow-y:auto]! [flex:1] [display:flex]! [&&]:[flex-direction:column] [gap:24px]">
+        <div className="[padding:24px]! [overflow-y:auto]! [flex:1] [display:flex]! [flex-direction:column] [gap:24px]">
           {/* Input Summary */}
           <div className="[display:flex]! [flex-direction:column] [gap:12px]">
             <h4 className="[margin:0]! [font-size:var(--text-base)]! [font-weight:700]! [text-transform:uppercase]! [letter-spacing:0.05em] [color:var(--color-ink-600)]! [display:flex]! [align-items:center] [gap:8px] [&_svg]:[color:var(--color-green-700)]!">
@@ -81,13 +81,13 @@ const CalculationDetails = ({ calculation, onClose }) => {
             </h4>
             <div className="[display:grid]! [grid-template-columns:repeat(auto-fill,_minmax(180px,_1fr))] [gap:12px]">
               {facility && (
-                <div className="[background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:12px_14px]! [display:flex]! [flex-direction:column] [gap:4px] [transition:border-color_0.2s_ease,_box-shadow_0.2s_ease]! hover:[border-color:var(--color-ink-300)]! hover:[box-shadow:var(--shadow-xs)]!">
+                <div className="[background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:12px_14px]! [display:flex]! [flex-direction:column] [gap:4px] [transition:border-color_0.2s_ease,_box-shadow_0.2s_ease]! hover:[border-color:var(--color-ink-300)]! hover:[box-shadow:var(--shadow-xs)]!">
                   <span className="[font-size:var(--text-xs)]! [font-weight:600]! [color:var(--color-ink-500)]! [text-transform:uppercase]! [letter-spacing:0.04em]">Facility / Asset</span>
                   <span className="[font-size:var(--text-md)]! [color:var(--color-ink-900)]! [font-weight:600]! [word-break:break-word]">{facility}</span>
                 </div>
               )}
               {year && (
-                <div className="[background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:12px_14px]! [display:flex]! [flex-direction:column] [gap:4px] [transition:border-color_0.2s_ease,_box-shadow_0.2s_ease]! hover:[border-color:var(--color-ink-300)]! hover:[box-shadow:var(--shadow-xs)]!">
+                <div className="[background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:12px_14px]! [display:flex]! [flex-direction:column] [gap:4px] [transition:border-color_0.2s_ease,_box-shadow_0.2s_ease]! hover:[border-color:var(--color-ink-300)]! hover:[box-shadow:var(--shadow-xs)]!">
                   <span className="[font-size:var(--text-xs)]! [font-weight:600]! [color:var(--color-ink-500)]! [text-transform:uppercase]! [letter-spacing:0.04em]">Reporting Period</span>
                   <span className="[font-size:var(--text-md)]! [color:var(--color-ink-900)]! [font-weight:600]! [word-break:break-word]">
                     {year}
@@ -95,33 +95,33 @@ const CalculationDetails = ({ calculation, onClose }) => {
                   </span>
                 </div>
               )}
-              <div className="[background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:12px_14px]! [display:flex]! [flex-direction:column] [gap:4px] [transition:border-color_0.2s_ease,_box-shadow_0.2s_ease]! hover:[border-color:var(--color-ink-300)]! hover:[box-shadow:var(--shadow-xs)]!">
+              <div className="[background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:12px_14px]! [display:flex]! [flex-direction:column] [gap:4px] [transition:border-color_0.2s_ease,_box-shadow_0.2s_ease]! hover:[border-color:var(--color-ink-300)]! hover:[box-shadow:var(--shadow-xs)]!">
                 <span className="[font-size:var(--text-xs)]! [font-weight:600]! [color:var(--color-ink-500)]! [text-transform:uppercase]! [letter-spacing:0.04em]">Process Type</span>
                 <span className="[font-size:var(--text-md)]! [color:var(--color-ink-900)]! [font-weight:600]! [word-break:break-word]">{process_type || "Direct Combustion"}</span>
               </div>
               {fuel && (
-                <div className="[background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:12px_14px]! [display:flex]! [flex-direction:column] [gap:4px] [transition:border-color_0.2s_ease,_box-shadow_0.2s_ease]! hover:[border-color:var(--color-ink-300)]! hover:[box-shadow:var(--shadow-xs)]!">
+                <div className="[background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:12px_14px]! [display:flex]! [flex-direction:column] [gap:4px] [transition:border-color_0.2s_ease,_box-shadow_0.2s_ease]! hover:[border-color:var(--color-ink-300)]! hover:[box-shadow:var(--shadow-xs)]!">
                   <span className="[font-size:var(--text-xs)]! [font-weight:600]! [color:var(--color-ink-500)]! [text-transform:uppercase]! [letter-spacing:0.04em]">Fuel / Source Stream</span>
                   <span className="[font-size:var(--text-md)]! [color:var(--color-ink-900)]! [font-weight:600]! [word-break:break-word]">{fuel}</span>
                 </div>
               )}
-              <div className="[background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:12px_14px]! [display:flex]! [flex-direction:column] [gap:4px] [transition:border-color_0.2s_ease,_box-shadow_0.2s_ease]! hover:[border-color:var(--color-ink-300)]! hover:[box-shadow:var(--shadow-xs)]!">
+              <div className="[background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:12px_14px]! [display:flex]! [flex-direction:column] [gap:4px] [transition:border-color_0.2s_ease,_box-shadow_0.2s_ease]! hover:[border-color:var(--color-ink-300)]! hover:[box-shadow:var(--shadow-xs)]!">
                 <span className="[font-size:var(--text-xs)]! [font-weight:600]! [color:var(--color-ink-500)]! [text-transform:uppercase]! [letter-spacing:0.04em]">Activity Quantity</span>
                 <span className="[font-size:var(--text-md)]! [color:var(--color-ink-900)]! [font-weight:600]! [word-break:break-word]">
                   {formatNumber(amount, 2)} {unit || "units"}
                 </span>
               </div>
-              <div className="[background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:12px_14px]! [display:flex]! [flex-direction:column] [gap:4px] [transition:border-color_0.2s_ease,_box-shadow_0.2s_ease]! hover:[border-color:var(--color-ink-300)]! hover:[box-shadow:var(--shadow-xs)]!">
+              <div className="[background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:12px_14px]! [display:flex]! [flex-direction:column] [gap:4px] [transition:border-color_0.2s_ease,_box-shadow_0.2s_ease]! hover:[border-color:var(--color-ink-300)]! hover:[box-shadow:var(--shadow-xs)]!">
                 <span className="[font-size:var(--text-xs)]! [font-weight:600]! [color:var(--color-ink-500)]! [text-transform:uppercase]! [letter-spacing:0.04em]">Calculation Method</span>
                 <span className="[font-size:var(--text-md)]! [color:var(--color-ink-900)]! [font-weight:600]! [word-break:break-word]">{stripApi(method || factor_source) || "—"}</span>
               </div>
               {equipment_id && equipment_id !== "-" && (
-                <div className="[background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:12px_14px]! [display:flex]! [flex-direction:column] [gap:4px] [transition:border-color_0.2s_ease,_box-shadow_0.2s_ease]! hover:[border-color:var(--color-ink-300)]! hover:[box-shadow:var(--shadow-xs)]!">
+                <div className="[background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:12px_14px]! [display:flex]! [flex-direction:column] [gap:4px] [transition:border-color_0.2s_ease,_box-shadow_0.2s_ease]! hover:[border-color:var(--color-ink-300)]! hover:[box-shadow:var(--shadow-xs)]!">
                   <span className="[font-size:var(--text-xs)]! [font-weight:600]! [color:var(--color-ink-500)]! [text-transform:uppercase]! [letter-spacing:0.04em]">Equipment Tag</span>
                   <span className="[font-size:var(--text-md)]! [color:var(--color-ink-900)]! [font-weight:600]! [word-break:break-word]">{equipment_id}</span>
                 </div>
               )}
-              <div className="[background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:12px_14px]! [display:flex]! [flex-direction:column] [gap:4px] [transition:border-color_0.2s_ease,_box-shadow_0.2s_ease]! hover:[border-color:var(--color-ink-300)]! hover:[box-shadow:var(--shadow-xs)]!">
+              <div className="[background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:12px_14px]! [display:flex]! [flex-direction:column] [gap:4px] [transition:border-color_0.2s_ease,_box-shadow_0.2s_ease]! hover:[border-color:var(--color-ink-300)]! hover:[box-shadow:var(--shadow-xs)]!">
                 <span className="[font-size:var(--text-xs)]! [font-weight:600]! [color:var(--color-ink-500)]! [text-transform:uppercase]! [letter-spacing:0.04em]">Inventory Status</span>
                 <div className="[font-size:var(--text-md)]! [color:var(--color-ink-900)]! [font-weight:600]! [word-break:break-word]">
                   <span
@@ -214,7 +214,7 @@ const CalculationDetails = ({ calculation, onClose }) => {
               </h4>
               <div className="uncertainty-grid">
                 {uncertainty.co2 != null && (
-                  <div className="[background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:12px_14px]! [display:flex]! [flex-direction:column] [gap:4px] [&_.unc-label]:[font-size:var(--text-sm)]! [&_.unc-label]:[font-weight:600]! [&_.unc-label]:[color:var(--color-ink-500)]! [&_.unc-label]:[display:flex]! [&_.unc-label]:[align-items:center]! [&_.unc-label]:[gap:6px]! [&_.unc-value]:[font-size:var(--text-md)]! [&_.unc-value]:[font-weight:700]! [&_.unc-value]:[font-family:ui-monospace,_monospace]!">
+                  <div className="[background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:12px_14px]! [display:flex]! [flex-direction:column] [gap:4px] [&_.unc-label]:[font-size:var(--text-sm)]! [&_.unc-label]:[font-weight:600]! [&_.unc-label]:[color:var(--color-ink-500)]! [&_.unc-label]:[display:flex]! [&_.unc-label]:[align-items:center]! [&_.unc-label]:[gap:6px]! [&_.unc-value]:[font-size:var(--text-md)]! [&_.unc-value]:[font-weight:700]! [&_.unc-value]:[font-family:ui-monospace,_monospace]!">
                     <span className="unc-label">
                       <span className="[padding:3px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-xs)]! [font-weight:700]! [letter-spacing:0.03em]! [&.co2]:[background:#fee2e2]! [&.co2]:[color:var(--color-red-700)]! [&.co2]:[border:1px_solid_#fecaca]! [&.ch4]:[background:#e0f2fe]! [&.ch4]:[color:var(--color-blue-700)]! [&.ch4]:[border:1px_solid_#bae6fd]! [&.n2o]:[background:#f3e8ff]! [&.n2o]:[color:#9333ea]! [&.n2o]:[border:1px_solid_#e9d5ff]! [&.gwp]:[background:#dcfce7]! [&.gwp]:[color:var(--color-green-700)]! [&.gwp]:[border:1px_solid_#bbf7d0]! co2">CO₂</span> 1σ Uncertainty
                     </span>
@@ -227,7 +227,7 @@ const CalculationDetails = ({ calculation, onClose }) => {
                   </div>
                 )}
                 {uncertainty.ch4 != null && (
-                  <div className="[background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:12px_14px]! [display:flex]! [flex-direction:column] [gap:4px] [&_.unc-label]:[font-size:var(--text-sm)]! [&_.unc-label]:[font-weight:600]! [&_.unc-label]:[color:var(--color-ink-500)]! [&_.unc-label]:[display:flex]! [&_.unc-label]:[align-items:center]! [&_.unc-label]:[gap:6px]! [&_.unc-value]:[font-size:var(--text-md)]! [&_.unc-value]:[font-weight:700]! [&_.unc-value]:[font-family:ui-monospace,_monospace]!">
+                  <div className="[background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:12px_14px]! [display:flex]! [flex-direction:column] [gap:4px] [&_.unc-label]:[font-size:var(--text-sm)]! [&_.unc-label]:[font-weight:600]! [&_.unc-label]:[color:var(--color-ink-500)]! [&_.unc-label]:[display:flex]! [&_.unc-label]:[align-items:center]! [&_.unc-label]:[gap:6px]! [&_.unc-value]:[font-size:var(--text-md)]! [&_.unc-value]:[font-weight:700]! [&_.unc-value]:[font-family:ui-monospace,_monospace]!">
                     <span className="unc-label">
                       <span className="[padding:3px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-xs)]! [font-weight:700]! [letter-spacing:0.03em]! [&.co2]:[background:#fee2e2]! [&.co2]:[color:var(--color-red-700)]! [&.co2]:[border:1px_solid_#fecaca]! [&.ch4]:[background:#e0f2fe]! [&.ch4]:[color:var(--color-blue-700)]! [&.ch4]:[border:1px_solid_#bae6fd]! [&.n2o]:[background:#f3e8ff]! [&.n2o]:[color:#9333ea]! [&.n2o]:[border:1px_solid_#e9d5ff]! [&.gwp]:[background:#dcfce7]! [&.gwp]:[color:var(--color-green-700)]! [&.gwp]:[border:1px_solid_#bbf7d0]! ch4">CH₄</span> 1σ Uncertainty
                     </span>
@@ -240,7 +240,7 @@ const CalculationDetails = ({ calculation, onClose }) => {
                   </div>
                 )}
                 {uncertainty.n2o != null && (
-                  <div className="[background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:12px_14px]! [display:flex]! [flex-direction:column] [gap:4px] [&_.unc-label]:[font-size:var(--text-sm)]! [&_.unc-label]:[font-weight:600]! [&_.unc-label]:[color:var(--color-ink-500)]! [&_.unc-label]:[display:flex]! [&_.unc-label]:[align-items:center]! [&_.unc-label]:[gap:6px]! [&_.unc-value]:[font-size:var(--text-md)]! [&_.unc-value]:[font-weight:700]! [&_.unc-value]:[font-family:ui-monospace,_monospace]!">
+                  <div className="[background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:12px_14px]! [display:flex]! [flex-direction:column] [gap:4px] [&_.unc-label]:[font-size:var(--text-sm)]! [&_.unc-label]:[font-weight:600]! [&_.unc-label]:[color:var(--color-ink-500)]! [&_.unc-label]:[display:flex]! [&_.unc-label]:[align-items:center]! [&_.unc-label]:[gap:6px]! [&_.unc-value]:[font-size:var(--text-md)]! [&_.unc-value]:[font-weight:700]! [&_.unc-value]:[font-family:ui-monospace,_monospace]!">
                     <span className="unc-label">
                       <span className="[padding:3px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-xs)]! [font-weight:700]! [letter-spacing:0.03em]! [&.co2]:[background:#fee2e2]! [&.co2]:[color:var(--color-red-700)]! [&.co2]:[border:1px_solid_#fecaca]! [&.ch4]:[background:#e0f2fe]! [&.ch4]:[color:var(--color-blue-700)]! [&.ch4]:[border:1px_solid_#bae6fd]! [&.n2o]:[background:#f3e8ff]! [&.n2o]:[color:#9333ea]! [&.n2o]:[border:1px_solid_#e9d5ff]! [&.gwp]:[background:#dcfce7]! [&.gwp]:[color:var(--color-green-700)]! [&.gwp]:[border:1px_solid_#bbf7d0]! n2o">N₂O</span> 1σ Uncertainty
                     </span>
