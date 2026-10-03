@@ -185,6 +185,15 @@
 }
 
 /* ─── Tags ────────────────────────────────────────────────────────────────── */
+.up-tag {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
 
 .tag-facility {
   background: #e0f2fe;
@@ -245,26 +254,4 @@
 }
 
 /* ─── Anomaly Panel ──────────────────────────────────────────────────────── */
-
-.up-anomaly-toggle {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  padding: 12px 16px;
-  background: transparent;
-  border: none;
-  color: #854d0e;
-  font-weight: 600;
-  font-size: var(--text-base);
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.up-anomaly-toggle:hover {
-  background: #fef9c3;
-}
-.up-anomaly-toggle span {
-  flex: 1;
-  text-align: left;
-  margin-left: 8px;
-}
 

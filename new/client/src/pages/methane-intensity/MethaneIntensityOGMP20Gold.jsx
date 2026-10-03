@@ -4,14 +4,14 @@ import { AlertTriangle, Award, Calendar, Check, ChevronDown, ChevronUp } from "l
 // Extracted from MethaneIntensity.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const MethaneIntensityOGMP20Gold = ({ facilities, globalThreshold, ogmpRoadmapData, ogmpSurveys, roadmapCollapsed, selectedBaselineYear, selectedYear, setRoadmapCollapsed, setSelectedBaselineYear }) => (
 <div
-          className={`[background:var(--bg-card)]! [border:1px_solid_var(--border-color)]! [&&]:[border-radius:var(--radius-lg)]! [padding:28px]! [box-shadow:var(--card-shadow)]! [display:flex]! [flex-direction:column]! [gap:22px]! [transition:gap_0.3s_ease]! [&.collapsed-card]:[gap:0]! ${roadmapCollapsed ? "collapsed-card" : ""}`}
+          className={`[background:var(--bg-card)]! [border:1px_solid_var(--border-color)]! [&&]:[border-radius:var(--radius-lg)]! [padding:28px]! [box-shadow:var(--card-shadow)]! [display:flex]! [flex-direction:column] [gap:22px] [transition:gap_0.3s_ease]! [&.collapsed-card]:[gap:0] ${roadmapCollapsed ? "collapsed-card" : ""}`}
         >
           <div
             className="[display:flex]! [justify-content:space-between] [align-items:center] [flex-wrap:wrap] [gap:16px] [padding-bottom:18px]! [border-bottom:1px_solid_var(--border-color)]!"
             onClick={() => setRoadmapCollapsed(!roadmapCollapsed)}
             style={{ cursor: "pointer", userSelect: "none" }}
           >
-            <div className="roadmap-title-area">
+            <div className="[display:flex]! [flex-direction:column] [gap:4px] [&_h3]:[font-size:var(--text-lg)]! [&_h3]:[font-weight:700]! [&_h3]:[color:var(--text-primary)]! [&_h3]:[margin:0]! [&_h3]:[display:flex]! [&_h3]:[align-items:center] [&_h3]:[gap:10px] [&&]:[&&]:[&_p]:[font-size:var(--text-base)]! [&&]:[&_p]:[color:var(--text-secondary)]! [&&]:[&_p]:[margin:0]!">
               <h3>
                 <Award size={22} color="#ff6600" />
                 OGMP 2.0 Gold Standard Pathway & Milestone Roadmap
@@ -44,7 +44,7 @@ const MethaneIntensityOGMP20Gold = ({ facilities, globalThreshold, ogmpRoadmapDa
                     <button
                       key={yr}
                       type="button"
-                      className={`[background:var(--bg-card)]! [border:1px_solid_var(--border-color)]! [color:var(--text-primary)]! [font-size:var(--text-sm)]! [font-weight:600]! [padding:4px_10px]! [&&]:[border-radius:var(--radius-sm)]! [cursor:pointer]! [transition:all_0.2s_ease]! hover:[border-color:var(--accent-secondary)]! hover:[color:var(--accent-secondary)]! [&.active]:[background:var(--accent-secondary)]! [&.active]:[color:var(--color-white)]! [&.active]:[border-color:var(--accent-secondary)]! [&.active]:[box-shadow:0_2px_8px_rgba(37,_99,_235,_0.3)]! ${selectedBaselineYear === yr ? "active" : ""}`}
+                      className={`[background:var(--bg-card)]! [border:1px_solid_var(--border-color)]! [color:var(--text-primary)]! [font-size:var(--text-sm)]! [font-weight:600]! [padding:4px_10px]! [&&]:[border-radius:var(--radius-sm)]! [cursor:pointer] [transition:all_0.2s_ease]! hover:[border-color:var(--accent-secondary)]! hover:[color:var(--accent-secondary)]! [&.active]:[background:var(--accent-secondary)]! [&.active]:[color:var(--color-white)]! [&.active]:[border-color:var(--accent-secondary)]! [&.active]:[box-shadow:0_2px_8px_rgba(37,_99,_235,_0.3)] ${selectedBaselineYear === yr ? "active" : ""}`}
                       onClick={() => setSelectedBaselineYear(yr)}
                     >
                       {yr}
@@ -61,7 +61,7 @@ const MethaneIntensityOGMP20Gold = ({ facilities, globalThreshold, ogmpRoadmapDa
           </div>
 
           <div
-            className={`[max-height:2500px]! [opacity:1]! [overflow:hidden]! [transition:max-height_0.45s_cubic-bezier(0.4,_0,_0.2,_1),_opacity_0.3s_ease,_margin-top_0.3s_ease]! [&.collapsed]:[max-height:0]! [&.collapsed]:[opacity:0]! [&.collapsed]:[margin-top:0]! [&.collapsed]:[pointer-events:none]! ${roadmapCollapsed ? "collapsed" : ""}`}
+            className={`[max-height:2500px]! [opacity:1] [overflow:hidden]! [transition:max-height_0.45s_cubic-bezier(0.4,_0,_0.2,_1),_opacity_0.3s_ease,_margin-top_0.3s_ease]! [&.collapsed]:[max-height:0]! [&.collapsed]:[opacity:0] [&.collapsed]:[margin-top:0] [&.collapsed]:[pointer-events:none] ${roadmapCollapsed ? "collapsed" : ""}`}
           >
             {/* Facility Roadmap Cards Grid */}
             <div className="[display:grid]! [grid-template-columns:repeat(auto-fit,_minmax(480px,_1fr))] [gap:20px]">
@@ -139,7 +139,7 @@ const MethaneIntensityOGMP20Gold = ({ facilities, globalThreshold, ogmpRoadmapDa
                           </span>
                         </div>
                         <span
-                          className={`[display:inline-flex]! [align-items:center]! [gap:6px]! [font-size:var(--text-sm)]! [font-weight:700]! [padding:4px_10px]! [border-radius:var(--radius-lg)]! [&.achieved]:[background:rgba(16,_185,_129,_0.12)]! [&.achieved]:[color:var(--color-green-700)]! [&.achieved]:[border:1px_solid_rgba(16,_185,_129,_0.3)]! [&&]:[&.ontrack]:[background:rgba(37,_99,_235,_0.12)]! [&&]:[&.ontrack]:[color:var(--color-blue-600)]! [&&]:[&.ontrack]:[border:1px_solid_rgba(37,_99,_235,_0.3)]! [&&]:[&&]:[&.action]:[background:rgba(245,_158,_11,_0.12)]! [&&]:[&&]:[&.action]:[color:var(--color-amber-700)]! [&&]:[&&]:[&.action]:[border:1px_solid_rgba(245,_158,_11,_0.3)]! ${statusBadgeClass}`}
+                          className={`badge-roadmap-status ${statusBadgeClass}`}
                         >
                           {statusBadgeClass === "achieved" && (
                             <Check size={13} />
@@ -152,7 +152,7 @@ const MethaneIntensityOGMP20Gold = ({ facilities, globalThreshold, ogmpRoadmapDa
                       </div>
 
                       {/* 5-Level Stepper */}
-                      <div className="ogmp-stepper-container">
+                      <div className="[display:flex]! [justify-content:space-between] [position:relative] [padding:10px_0]! before:[content:''] before:[position:absolute] before:[top:24px] before:[left:20px] before:[right:20px] before:[height:3px]! before:[background:var(--border-color)]! before:[z-index:1]">
                         {[1, 2, 3, 4, 5].map((lvl) => {
                           const isDone = highestLevel >= lvl;
                           const isCurrent = highestLevel === lvl;
@@ -166,7 +166,7 @@ const MethaneIntensityOGMP20Gold = ({ facilities, globalThreshold, ogmpRoadmapDa
                           return (
                             <div
                               key={lvl}
-                              className={`[position:relative]! [z-index:2]! [display:flex]! [flex-direction:column]! [align-items:center]! [gap:6px]! [text-align:center]! [width:70px]! [&.completed_.step-circle]:[background:var(--color-green-700)]! [&.completed_.step-circle]:[border-color:var(--color-green-500)]! [&.completed_.step-circle]:[color:var(--color-white)]! [&.completed_.step-circle]:[box-shadow:0_0_10px_rgba(16,_185,_129,_0.4)]! [&&]:[&.current_.step-circle]:[background:var(--accent-secondary)]! [&&]:[&.current_.step-circle]:[border-color:var(--accent-secondary)]! [&&]:[&.current_.step-circle]:[color:var(--color-white)]! [&&]:[&.current_.step-circle]:[box-shadow:0_0_10px_rgba(37,_99,_235,_0.4)]! [&.current_.step-circle]:[transform:scale(1.15)]! [&&]:[&&]:[&.current_.step-name]:[color:var(--accent-secondary)]! [&.current_.step-name]:[font-weight:700]! [&&]:[&&]:[&&]:[&.completed_.step-name]:[color:var(--color-green-700)]! ${isDone ? "completed" : ""} ${isCurrent ? "current" : ""}`}
+                              className={`[position:relative] [z-index:2] [display:flex]! [flex-direction:column] [align-items:center] [gap:6px] [text-align:center]! [width:70px]! [&.completed_.step-circle]:[background:var(--color-green-700)]! [&.completed_.step-circle]:[border-color:var(--color-green-500)]! [&.completed_.step-circle]:[color:var(--color-white)]! [&.completed_.step-circle]:[box-shadow:0_0_10px_rgba(16,_185,_129,_0.4)] [&&]:[&.current_.step-circle]:[background:var(--accent-secondary)]! [&&]:[&.current_.step-circle]:[border-color:var(--accent-secondary)]! [&&]:[&.current_.step-circle]:[color:var(--color-white)]! [&&]:[&.current_.step-circle]:[box-shadow:0_0_10px_rgba(37,_99,_235,_0.4)] [&.current_.step-circle]:[transform:scale(1.15)] [&&]:[&&]:[&.current_.step-name]:[color:var(--accent-secondary)]! [&.current_.step-name]:[font-weight:700]! [&&]:[&&]:[&&]:[&.completed_.step-name]:[color:var(--color-green-700)]! ${isDone ? "completed" : ""} ${isCurrent ? "current" : ""}`}
                             >
                               <div className="step-circle [width:28px]! [height:28px]! [border-radius:50%]! [background:var(--bg-card)]! [border:2px_solid_var(--border-color)]! [display:flex]! [align-items:center] [justify-content:center] [font-size:var(--text-sm)]! [font-weight:700]! [color:var(--text-secondary)]! [transition:all_0.25s_ease]!">
                                 {isDone ? "✓" : lvl}

@@ -31,7 +31,7 @@ const Scope1ImportWizardScope1Bulk = ({ FIELD_GROUPS, FieldGroup, Icon, ModeCard
             <p className="[font-size:var(--text-base)]! [color:var(--color-ink-500)]! [margin:0]! [line-height:1.5]">
               Choose how emissions will be calculated for each row in your file.
             </p>
-            <div className="[display:grid]! [grid-template-columns:repeat(auto-fit,_minmax(220px,_1fr))] [gap:12px] [@media(max-width:600px)]:[grid-template-columns:1fr]!">
+            <div className="[display:grid]! [grid-template-columns:repeat(auto-fit,_minmax(220px,_1fr))]! [gap:12px] [@media(max-width:600px)]:[grid-template-columns:1fr]!">
               <ModeCard
                 selected={tier === "1"}
                 onClick={() => setTier("1")}
@@ -73,7 +73,7 @@ const Scope1ImportWizardScope1Bulk = ({ FIELD_GROUPS, FieldGroup, Icon, ModeCard
           <div className="s1w-body">
             <div className="s1w-section-title"><Icon.Layers /><span>Process Scope</span></div>
             <p className="[font-size:var(--text-base)]! [color:var(--color-ink-500)]! [margin:0]! [line-height:1.5]">Does your file contain data for all process types, or a specific process?</p>
-            <div className="[display:grid]! [grid-template-columns:1fr_1fr] [gap:12px] [@media(max-width:600px)]:[grid-template-columns:1fr]!">
+            <div className="[display:grid]! [grid-template-columns:1fr_1fr]! [gap:12px] [@media(max-width:600px)]:[grid-template-columns:1fr]!">
               <ModeCard
                 selected={processScope === "all"}
                 onClick={() => setProcessScope("all")}
@@ -119,7 +119,7 @@ const Scope1ImportWizardScope1Bulk = ({ FIELD_GROUPS, FieldGroup, Icon, ModeCard
 
             {/* ── Region access banner ── */}
             {!isAdmin && allowedRegions !== null && (
-              <div className="s1w-access-banner">
+              <div className="[padding:14px_16px]! [background:linear-gradient(135deg,_var(--color-brand-50)_0%,_#fff1e6_100%)]! [border:1.5px_solid_#fed7aa]! [&&]:[border-radius:var(--radius-md)]! [display:flex]! [flex-direction:column] [gap:10px]">
                 <div className="s1w-access-banner-header">
                   <Icon.Info />
                   <strong>Your upload is restricted to the following regions:</strong>
@@ -138,7 +138,7 @@ const Scope1ImportWizardScope1Bulk = ({ FIELD_GROUPS, FieldGroup, Icon, ModeCard
               </div>
             )}
             <div role="button" tabIndex={0} onKeyDown={activateOnKey}
-              className={`[border:2px_dashed_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-lg)]! [padding:40px_24px]! [display:flex]! [flex-direction:column]! [align-items:center]! [gap:10px]! [cursor:pointer]! [transition:all_0.2s]! [background:var(--color-ink-50)]! [text-align:center]! hover:[border-color:var(--color-brand-500)]! hover:[background:#fff7f0]! hover:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.08)]! [&.dragging]:[border-color:var(--color-brand-500)]! [&.dragging]:[background:#fff7f0]! [&.dragging]:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.08)]! ${isDragging ? "dragging" : ""}`}
+              className={`[border:2px_dashed_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-lg)]! [padding:40px_24px]! [display:flex]! [flex-direction:column] [align-items:center] [gap:10px] [cursor:pointer] [transition:all_0.2s]! [background:var(--color-ink-50)]! [text-align:center]! hover:[border-color:var(--color-brand-500)]! hover:[background:#fff7f0]! hover:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.08)]! [&.dragging]:[border-color:var(--color-brand-500)]! [&.dragging]:[background:#fff7f0]! [&.dragging]:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.08)]! ${isDragging ? "dragging" : ""}`}
               onClick={() => fileInputRef.current.click()}
               onDragOver={e => { e.preventDefault(); setIsDragging(true); }}
               onDragLeave={() => setIsDragging(false)}
@@ -146,7 +146,7 @@ const Scope1ImportWizardScope1Bulk = ({ FIELD_GROUPS, FieldGroup, Icon, ModeCard
             >
               <input ref={fileInputRef} type="file" accept=".csv,.xlsx" className="hidden!" onChange={onFileChange} />
               <div className="s1w-dropzone-icon"><Icon.Upload /></div>
-              <p className="s1w-dropzone-text">Drag & drop your file here, or <span>click to browse</span></p>
+              <p className="[font-size:var(--text-base)]! [font-weight:600]! [color:var(--color-ink-700)]! [margin:0]! [&_span]:[color:var(--color-link)]! [&_span]:[text-decoration:underline]!">Drag & drop your file here, or <span>click to browse</span></p>
               <p className="[font-size:var(--text-sm)]! [color:var(--color-ink-600)]! [margin:0]!">Supports .xlsx and .csv — optimised for millions of rows</p>
               {parseError && (
                 <div className="s1w-inline-error"><Icon.Warning />{parseError}</div>
@@ -155,15 +155,15 @@ const Scope1ImportWizardScope1Bulk = ({ FIELD_GROUPS, FieldGroup, Icon, ModeCard
 
             <div className="[display:flex]! [flex-direction:column] [gap:10px]">
               <p className="[font-size:var(--text-sm)]! [color:var(--color-ink-500)]! [margin:0]! [font-weight:500]!">Don't have a file? Download a pre-configured template:</p>
-              <div className="[display:flex]! [gap:10px] [flex-wrap:wrap] [@media(max-width:600px)]:[flex-direction:column]!">
-                <button className="s1w-template-btn" onClick={() => downloadTemplate("excel")}>
+              <div className="[display:flex]! [gap:10px] [flex-wrap:wrap]! [@media(max-width:600px)]:[flex-direction:column]!">
+                <button className="[display:flex]! [align-items:center] [gap:12px] [padding:12px_18px]! [border:1.5px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [background:var(--color-ink-50)]! [cursor:pointer] [transition:all_0.18s]! [flex:1] [min-width:200px] [text-align:left]! hover:[border-color:var(--color-brand-500)]! hover:[background:#fff7f0]! [&:hover_.s1w-template-btn-icon]:[background:var(--color-primary)]! [&:hover_.s1w-template-btn-icon]:[color:var(--color-white)]! [&_strong]:[display:block]! [&_strong]:[font-size:var(--text-base)]! [&&]:[&_strong]:[color:var(--color-ink-900)]! [&_strong]:[margin-bottom:2px]! [&&]:[&_small]:[display:block]! [&&]:[&_small]:[font-size:var(--text-sm)]! [&&]:[&&]:[&_small]:[color:var(--color-ink-500)]!" onClick={() => downloadTemplate("excel")}>
                   <span className="s1w-template-btn-icon"><Icon.FileExcel /></span>
                   <span>
                     <strong>Excel Template</strong>
                     <small>With dropdowns, sample data & engineering sheets</small>
                   </span>
                 </button>
-                <button className="s1w-template-btn" onClick={() => downloadTemplate("csv")}>
+                <button className="[display:flex]! [align-items:center] [gap:12px] [padding:12px_18px]! [border:1.5px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [background:var(--color-ink-50)]! [cursor:pointer] [transition:all_0.18s]! [flex:1] [min-width:200px] [text-align:left]! hover:[border-color:var(--color-brand-500)]! hover:[background:#fff7f0]! [&:hover_.s1w-template-btn-icon]:[background:var(--color-primary)]! [&:hover_.s1w-template-btn-icon]:[color:var(--color-white)]! [&_strong]:[display:block]! [&_strong]:[font-size:var(--text-base)]! [&&]:[&_strong]:[color:var(--color-ink-900)]! [&_strong]:[margin-bottom:2px]! [&&]:[&_small]:[display:block]! [&&]:[&_small]:[font-size:var(--text-sm)]! [&&]:[&&]:[&_small]:[color:var(--color-ink-500)]!" onClick={() => downloadTemplate("csv")}>
                   <span className="s1w-template-btn-icon"><Icon.File /></span>
                   <span>
                     <strong>CSV Template</strong>
@@ -175,7 +175,7 @@ const Scope1ImportWizardScope1Bulk = ({ FIELD_GROUPS, FieldGroup, Icon, ModeCard
 
             {/* Config summary pill */}
             <div className="[display:flex]! [gap:8px] [flex-wrap:wrap]">
-              <span className={`[padding:4px_12px]! [border-radius:var(--radius-lg)]! [font-size:var(--text-sm)]! [font-weight:700]! [letter-spacing:0.3px]! s1w-config-pill--${tier === "1" ? "blue" : tier === "3" ? "green" : "orange"}`}>
+              <span className={`[padding:4px_12px]! [border-radius:var(--radius-lg)]! [font-size:var(--text-sm)]! [font-weight:700]! [letter-spacing:0.3px] s1w-config-pill--${tier === "1" ? "blue" : tier === "3" ? "green" : "orange"}`}>
                 {tier === "1" ? "Tier 1" : tier === "3" ? "Tier 3" : "Auto-detect"}
               </span>
               <span className="[padding:4px_12px]! [border-radius:var(--radius-lg)]! [font-size:var(--text-sm)]! [font-weight:700]! [letter-spacing:0.3px] [background:var(--color-ink-100)]! [color:var(--color-ink-600)]!">
@@ -192,7 +192,7 @@ const Scope1ImportWizardScope1Bulk = ({ FIELD_GROUPS, FieldGroup, Icon, ModeCard
           <div className="s1w-body">
             {/* ── Region access banner ── */}
             {!isAdmin && allowedRegions !== null && allowedRegions.length > 0 && (
-              <div className="s1w-access-banner s1w-access-banner--compact">
+              <div className="[padding:14px_16px]! [background:linear-gradient(135deg,_var(--color-brand-50)_0%,_#fff1e6_100%)]! [border:1.5px_solid_#fed7aa]! [&&]:[border-radius:var(--radius-md)]! [display:flex]! [flex-direction:column]! [gap:10px]! s1w-access-banner--compact">
                 <Icon.Info />
                 <span>
                   <strong>Allowed regions:</strong>{" "}
@@ -249,9 +249,9 @@ const Scope1ImportWizardScope1Bulk = ({ FIELD_GROUPS, FieldGroup, Icon, ModeCard
             </div>
 
             {/* Factor selector */}
-            <div className="s1w-factor-row">
+            <div className="[display:flex]! [align-items:center] [gap:12px] [flex-wrap:wrap]">
               <label className="[font-size:var(--text-sm)]! [color:var(--color-ink-600)]! [font-weight:500]! [flex-shrink:0]">Default factor when not specified in file:</label>
-              <NativeSelect className="[flex:1] [min-width:200px] [padding:8px_12px]! [border:1.5px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [background:var(--color-ink-50)]! [font-size:var(--text-sm)]! [color:var(--color-ink-900)]! [outline:none]! [cursor:pointer] [font-family:inherit]! [transition:border-color_0.15s]! focus:[border-color:var(--color-brand-500)]!" value={globalFactor} onChange={e => setGlobalFactor(e.target.value)}>
+              <NativeSelect className="s1w-factor-select" value={globalFactor} onChange={e => setGlobalFactor(e.target.value)}>
                 <option value="auto">Auto-detect from file</option>
                 <option value="default">Force Standard (API Compendium)</option>
                 <option value="custom">Force Custom Factors</option>
@@ -259,7 +259,7 @@ const Scope1ImportWizardScope1Bulk = ({ FIELD_GROUPS, FieldGroup, Icon, ModeCard
               </NativeSelect>
             </div>
 
-            <label className="s1w-factor-row gap-[8px]! cursor-pointer!">
+            <label className="[display:flex]! [align-items:center] [gap:12px] [flex-wrap:wrap] gap-[8px]! cursor-pointer!">
               <input type="checkbox" checked={overwrite} onChange={e => setOverwrite(e.target.checked)} />
               <span className="[font-size:var(--text-sm)]! [color:var(--color-ink-600)]! [font-weight:500]! [flex-shrink:0]">
                 Overwrite records that already exist (same facility, month and source). Overwritten records go back to Pending review.
@@ -287,7 +287,7 @@ const Scope1ImportWizardScope1Bulk = ({ FIELD_GROUPS, FieldGroup, Icon, ModeCard
 
         {/* ── STEP 5: Processing ── */}
         {step === 5 && jobId && (
-          <div className="s1w-body s1w-body--progress">
+          <div className="s1w-body [padding:0]!">
             <UploadProgress
               jobId={jobId}
               onComplete={() => { if (onUploadSuccess) onUploadSuccess(); onClose(); }}

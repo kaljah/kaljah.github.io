@@ -229,7 +229,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
         <div className="[background:var(--color-white)]! [border-radius:var(--radius-md)]! [padding:24px]! [border:1px_solid_var(--color-ink-200)]! [box-shadow:var(--shadow-xs)]!">
           {/* Summary cards */}
           <div className="[display:grid]! [grid-template-columns:repeat(auto-fit,_minmax(200px,_1fr))] [gap:16px] [margin-bottom:24px]!">
-            <div className="[display:flex]! [align-items:center] [gap:16px] [padding:20px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--color-ink-200)]! [background:var(--color-ink-50)]! [&_.up-card-icon]:[background:#dcfce7]! [&_.up-card-icon]:[color:var(--color-green-700)]!">
+            <div className="[display:flex]! [align-items:center] [gap:16px] [padding:20px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--color-ink-200)]! [background:var(--color-ink-50)]! [&_.up-card-icon]:[background:#dcfce7] [&_.up-card-icon]:[color:var(--color-green-700)]">
               <div className="up-card-icon">
                 <IconCheck />
               </div>
@@ -239,7 +239,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
               </div>
             </div>
             <div
-              className={`[display:flex]! [align-items:center]! [gap:16px]! [padding:20px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--color-ink-200)]! [background:var(--color-ink-50)]! ${skippedCount > 0 ? "up-card--warn" : "up-card--neutral"}`}
+              className={`[display:flex]! [align-items:center] [gap:16px] [padding:20px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--color-ink-200)]! [background:var(--color-ink-50)]! ${skippedCount > 0 ? "up-card--warn" : "up-card--neutral"}`}
             >
               <div className="up-card-icon">
                 <IconWarn />
@@ -249,7 +249,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
                 <p className="[font-size:var(--text-base)]! [color:var(--color-ink-500)]! [margin:0]! [font-weight:500]!">Rows Skipped</p>
               </div>
             </div>
-            <div className="[display:flex]! [align-items:center]! [gap:16px]! [padding:20px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--color-ink-200)]! [background:var(--color-ink-50)]! up-card--neutral">
+            <div className="[display:flex]! [align-items:center] [gap:16px] [padding:20px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--color-ink-200)]! [background:var(--color-ink-50)]! up-card--neutral">
               <div className="up-card-icon">
                 <IconCheck />
               </div>
@@ -296,7 +296,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
                       {categories.map((cat) => (
                         <button
                           key={cat}
-                          className={`[padding:6px_12px]! [border-radius:var(--radius-lg)]! [border:1px_solid_var(--color-ink-200)]! [background:var(--color-white)]! [font-size:var(--text-sm)]! [font-weight:500]! [color:var(--color-ink-500)]! [cursor:pointer]! [transition:all_0.2s]! hover:[border-color:var(--color-ink-300)]! hover:[color:var(--color-ink-700)]! [&.active]:[background:#fef3c7]! [&.active]:[border-color:var(--color-amber-500)]! [&.active]:[color:var(--color-amber-700)]! ${filterCategory === cat ? "active" : ""}`}
+                          className={`[padding:6px_12px]! [border-radius:var(--radius-lg)]! [border:1px_solid_var(--color-ink-200)]! [background:var(--color-white)]! [font-size:var(--text-sm)]! [font-weight:500]! [color:var(--color-ink-500)]! [cursor:pointer] [transition:all_0.2s]! hover:[border-color:var(--color-ink-300)]! hover:[color:var(--color-ink-700)]! [&.active]:[background:#fef3c7]! [&.active]:[border-color:var(--color-amber-500)]! [&.active]:[color:var(--color-amber-700)]! ${filterCategory === cat ? "active" : ""}`}
                           onClick={() => setFilterCategory(cat)}
                         >
                           {cat === "all"
@@ -330,7 +330,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
                             <tr key={i}>
                               <td className="[font-family:monospace]! [color:var(--color-ink-600)]! [font-weight:500]! [width:60px]!">{row.row}</td>
                               <td>
-                                <span className={`[display:inline-block]! [padding:4px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:600]! [text-transform:uppercase]! [letter-spacing:0.05em]! ${cat.cls}`}>
+                                <span className={`up-tag ${cat.cls}`}>
                                   {cat.label}
                                 </span>
                               </td>
@@ -373,7 +373,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
           {anomalyCount > 0 && (
             <div className="[background:#fefce8]! [border:1px_solid_#fef08a]! [&&]:[border-radius:var(--radius-md)]! [margin-bottom:24px]! [overflow:hidden]!">
               <button
-                className="up-anomaly-toggle"
+                className="[width:100%]! [display:flex]! [align-items:center] [padding:12px_16px]! [background:transparent]! [border:none]! [color:#854d0e]! [font-weight:600]! [font-size:var(--text-base)]! [cursor:pointer] [transition:background_0.2s]! hover:[background:#fef9c3]! [&_span]:[flex:1] [&_span]:[text-align:left]! [&_span]:[margin-left:8px]!"
                 onClick={() => setShowAnomalies((v) => !v)}
               >
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-[16px]! h-[16px]! shrink-0!">

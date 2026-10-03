@@ -341,14 +341,14 @@ function StepBar({ current }) {
         const SIcon  = s.IconComp;
         return (
           <React.Fragment key={s.id}>
-            <div className={`[display:flex]! [flex-direction:column]! [align-items:center]! [gap:5px]! [flex-shrink:0]! [&.active_.s1w-step-circle]:[border-color:var(--color-brand-500)]! [&.active_.s1w-step-circle]:[background:#fff7f0]! [&.active_.s1w-step-circle]:[color:var(--color-link)]! [&&]:[&.done_.s1w-step-circle]:[border-color:var(--color-green-500)]! [&&]:[&.done_.s1w-step-circle]:[background:var(--color-green-50)]! [&&]:[&.done_.s1w-step-circle]:[color:var(--color-green-700)]! [&&]:[&&]:[&.active_.s1w-step-label]:[color:var(--color-link)]! [&&]:[&&]:[&&]:[&.done_.s1w-step-label]:[color:var(--color-green-700)]! ${active ? "active" : ""} ${done ? "done" : ""}`}>
+            <div className={`[display:flex]! [flex-direction:column] [align-items:center] [gap:5px] [flex-shrink:0] [&.active_.s1w-step-circle]:[border-color:var(--color-brand-500)]! [&.active_.s1w-step-circle]:[background:#fff7f0]! [&.active_.s1w-step-circle]:[color:var(--color-link)]! [&&]:[&.done_.s1w-step-circle]:[border-color:var(--color-green-500)]! [&&]:[&.done_.s1w-step-circle]:[background:var(--color-green-50)]! [&&]:[&.done_.s1w-step-circle]:[color:var(--color-green-700)]! [&&]:[&&]:[&.active_.s1w-step-label]:[color:var(--color-link)]! [&&]:[&&]:[&&]:[&.done_.s1w-step-label]:[color:var(--color-green-700)]! ${active ? "active" : ""} ${done ? "done" : ""}`}>
               <div className="s1w-step-circle">
                 {done ? <Icon.Check /> : <SIcon />}
               </div>
               <span className="s1w-step-label [font-size:var(--text-xs)]! [font-weight:600]! [color:var(--color-ink-600)]! [white-space:nowrap] [text-transform:uppercase]! [letter-spacing:0.5px]">{s.label}</span>
             </div>
             {i < STEPS.length - 1 && (
-              <div className={`[height:2px]! [flex:1]! [background:var(--color-ink-200)]! [margin:0_4px]! [&&]:[margin-bottom:20px]! [min-width:20px]! [transition:background_0.25s]! [&.done]:[background:var(--color-green-500)]! ${done ? "done" : ""}`} />
+              <div className={`[height:2px]! [flex:1] [background:var(--color-ink-200)]! [margin:0_4px]! [&&]:[margin-bottom:20px]! [min-width:20px] [transition:background_0.25s]! [&.done]:[background:var(--color-green-500)]! ${done ? "done" : ""}`} />
             )}
           </React.Fragment>
         );
@@ -361,11 +361,11 @@ function StepBar({ current }) {
 // eslint-disable-next-line no-unused-vars -- IcoComp is rendered as <IcoComp />
 function ModeCard({ selected, onClick, Icon: IcoComp, title, badge, description }) {
   return (
-    <button className={`[text-align:left]! [padding:16px]! [border-radius:var(--radius-md)]! [border:1.5px_solid_var(--color-ink-200)]! [background:var(--color-ink-50)]! [cursor:pointer]! [transition:all_0.2s]! [width:100%]! hover:[border-color:var(--color-brand-500)]! hover:[background:#fff7f0]! hover:[box-shadow:0_0_0_3px_rgba(255,_102,_0,_0.08)]! [&.selected]:[border-color:var(--color-brand-500)]! [&.selected]:[background:#fff7f0]! [&.selected]:[box-shadow:0_0_0_3px_rgba(255,_102,_0,_0.12)]! ${selected ? "selected" : ""}`} onClick={onClick}>
+    <button className={`[text-align:left]! [padding:16px]! [border-radius:var(--radius-md)]! [border:1.5px_solid_var(--color-ink-200)]! [background:var(--color-ink-50)]! [cursor:pointer] [transition:all_0.2s]! [width:100%]! hover:[border-color:var(--color-brand-500)]! hover:[background:#fff7f0]! hover:[box-shadow:0_0_0_3px_rgba(255,_102,_0,_0.08)]! [&.selected]:[border-color:var(--color-brand-500)]! [&.selected]:[background:#fff7f0]! [&.selected]:[box-shadow:0_0_0_3px_rgba(255,_102,_0,_0.12)]! ${selected ? "selected" : ""}`} onClick={onClick}>
       <div className="[display:flex]! [align-items:center] [gap:8px] [margin-bottom:8px]!">
         <div className="s1w-mode-card-icon"><IcoComp /></div>
         <span className="[font-size:var(--text-base)]! [font-weight:700]! [color:var(--color-ink-900)]! [flex:1]">{title}</span>
-        {badge && <span className={`[padding:2px_8px]! [border-radius:var(--radius-lg)]! [font-size:var(--text-xs)]! [font-weight:700]! [letter-spacing:0.3px]! [flex-shrink:0]! s1w-mode-badge--${badge.color}`}>{badge.label}</span>}
+        {badge && <span className={`[padding:2px_8px]! [border-radius:var(--radius-lg)]! [font-size:var(--text-xs)]! [font-weight:700]! [letter-spacing:0.3px] [flex-shrink:0] s1w-mode-badge--${badge.color}`}>{badge.label}</span>}
         <div className={`s1w-radio ${selected ? "checked" : ""}`} />
       </div>
       <p className="[font-size:var(--text-sm)]! [color:var(--color-ink-500)]! [margin:0]! [line-height:1.5]">{description}</p>
@@ -377,7 +377,7 @@ function ModeCard({ selected, onClick, Icon: IcoComp, title, badge, description 
 function ProcessTile({ process, selected, onClick }) {
   const IcoComp = process.IconComp;
   return (
-    <button className={`[position:relative]! [display:flex]! [flex-direction:column]! [align-items:center]! [gap:6px]! [padding:14px_10px]! [border-radius:var(--radius-md)]! [border:1.5px_solid_var(--color-ink-200)]! [background:var(--color-ink-50)]! [cursor:pointer]! [transition:all_0.18s]! [text-align:center]! hover:[border-color:var(--color-brand-500)]! hover:[background:#fff7f0]! [&.selected]:[border-color:var(--color-brand-500)]! [&.selected]:[background:#fff7f0]! [&&]:[&:hover_.s1w-process-tile-icon]:[background:var(--color-primary)]! [&:hover_.s1w-process-tile-icon]:[color:var(--color-white)]! [&&]:[&&]:[&.selected_.s1w-process-tile-icon]:[background:var(--color-primary)]! [&&]:[&.selected_.s1w-process-tile-icon]:[color:var(--color-white)]! ${selected ? "selected" : ""}`} onClick={onClick}>
+    <button className={`[position:relative] [display:flex]! [flex-direction:column] [align-items:center] [gap:6px] [padding:14px_10px]! [border-radius:var(--radius-md)]! [border:1.5px_solid_var(--color-ink-200)]! [background:var(--color-ink-50)]! [cursor:pointer] [transition:all_0.18s]! [text-align:center]! hover:[border-color:var(--color-brand-500)]! hover:[background:#fff7f0]! [&.selected]:[border-color:var(--color-brand-500)]! [&.selected]:[background:#fff7f0]! [&&]:[&:hover_.s1w-process-tile-icon]:[background:var(--color-primary)]! [&:hover_.s1w-process-tile-icon]:[color:var(--color-white)]! [&&]:[&&]:[&.selected_.s1w-process-tile-icon]:[background:var(--color-primary)]! [&&]:[&.selected_.s1w-process-tile-icon]:[color:var(--color-white)]! ${selected ? "selected" : ""}`} onClick={onClick}>
       <div className="s1w-process-tile-icon"><IcoComp /></div>
       <span className="[font-size:var(--text-sm)]! [font-weight:600]! [color:var(--color-ink-700)]! [line-height:1.3]">{process.label}</span>
       {selected && <div className="s1w-process-tile-check"><Icon.Check /></div>}
@@ -389,7 +389,7 @@ function ProcessTile({ process, selected, onClick }) {
 function MappingRow({ field, headers, value, onChange }) {
   const mapped = !!value;
   return (
-    <div className={`s1w-map-row ${!mapped && field.required ? "s1w-map-row--missing" : ""} ${mapped ? "s1w-map-row--mapped" : ""}`}>
+    <div className={`[display:grid]! [grid-template-columns:1fr_1fr_36px]! [align-items:center] [padding:10px_16px]! [border-bottom:1px_solid_var(--color-ink-100)]! [transition:background_0.12s]! [gap:12px] last:[border-bottom:none]! hover:[background:#fafaf9]! [@media(max-width:600px)]:[grid-template-columns:1fr]! ${!mapped && field.required ? "s1w-map-row--missing" : ""} ${mapped ? "s1w-map-row--mapped" : ""}`}>
       <div className="[display:flex]! [flex-direction:column] [gap:2px] [min-width:0]">
         <span className="[font-size:var(--text-sm)]! [font-weight:600]! [color:var(--color-ink-900)]! [display:flex]! [align-items:center] [gap:4px]">
           {field.label}
@@ -399,7 +399,7 @@ function MappingRow({ field, headers, value, onChange }) {
       </div>
       <div className="s1w-map-select-wrap">
         {headers.length > 0 ? (
-          <NativeSelect className={`[width:100%]! [padding:7px_10px]! [border:1.5px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-sm)]! [background:var(--color-white)]! [font-size:var(--text-sm)]! [color:var(--color-ink-900)]! [outline:none]! [transition:border-color_0.15s]! [font-family:inherit]! focus:[border-color:var(--color-brand-500)]! focus:[box-shadow:0_0_0_2px_rgba(255,102,0,0.08)]! [&.matched]:[border-color:var(--color-green-500)]! [&.matched]:[background:#f0fdf4]! ${mapped ? "matched" : ""}`} value={value} onChange={e => onChange(e.target.value)}>
+          <NativeSelect className={`s1w-map-select ${mapped ? "matched" : ""}`} value={value} onChange={e => onChange(e.target.value)}>
             <option value="">— Not mapped —</option>
             {headers.map(h => <option key={h} value={h}>{h}</option>)}
           </NativeSelect>

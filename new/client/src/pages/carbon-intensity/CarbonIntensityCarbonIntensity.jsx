@@ -49,10 +49,10 @@ const CarbonIntensityCarbonIntensity = ({ activeGwpStandard, currentDisplayCo2In
           </div>
 
           {/* Horizontal 4-KPI Grid */}
-          <div className="[display:grid]! [grid-template-columns:repeat(4,_1fr)] [gap:20px] [@media(max-width:1200px)]:[grid-template-columns:repeat(2,_1fr)]! [@media(max-width:768px)]:[grid-template-columns:1fr]!">
+          <div className="[display:grid]! [grid-template-columns:repeat(4,_1fr)]! [gap:20px] [@media(max-width:1200px)]:[grid-template-columns:repeat(2,_1fr)]! [@media(max-width:768px)]:[grid-template-columns:1fr]!">
             <div className="kpi-card">
               <div className="[display:flex]! [align-items:center] [gap:12px] [margin-bottom:16px]!">
-                <div className="kpi-icon co2">
+                <div className="[&.scope1]:[background:rgba(37,_99,_235,_0.1)] [&.scope1]:[color:var(--accent-secondary)] [&&]:[&.scope3]:[background:rgba(139,_92,_246,_0.1)] [&&]:[&.scope3]:[color:var(--color-violet-700)] [width:38px]! [height:38px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [flex-shrink:0] [&&]:[&&]:[&.co2]:[background:rgba(255,_102,_0,_0.1)] [&&]:[&&]:[&.co2]:[color:var(--color-link)] [&&]:[&&]:[&&]:[&.ch4]:[background:rgba(37,_99,_235,_0.1)] [&&]:[&&]:[&&]:[&.ch4]:[color:var(--accent-secondary)] [&&]:[&&]:[&&]:[&&]:[&.flare]:[background:rgba(234,_88,_12,_0.1)] [&&]:[&&]:[&&]:[&&]:[&.flare]:[color:var(--accent-tertiary)] co2">
                   <Cloud size={20} />
                 </div>
                 <span className="kpi-label">GHG Intensity (Avg)</span>
@@ -74,7 +74,7 @@ const CarbonIntensityCarbonIntensity = ({ activeGwpStandard, currentDisplayCo2In
                   {currentDisplayCo2Intensity === null ? "" : "kg CO₂e / BOE"}
                 </span>
               </div>
-              <div className="kpi-footer">
+              <div className="kpi-footer [margin-top:16px]! [padding-top:16px]! [border-top:1px_dashed_var(--border-color)]! [font-size:var(--text-sm)]! [color:var(--text-secondary)]! [display:flex]! [justify-content:space-between] [align-items:center] [&_strong]:[color:var(--text-primary)]!">
                 <span className="gwp-subtag [font-size:var(--text-sm)]! [color:var(--color-link)]! [font-weight:600]!">
                   {gwpHorizon === "20" ? "GWP₂₀ Active" : "GWP₁₀₀ Standard"}
                 </span>
@@ -88,7 +88,7 @@ const CarbonIntensityCarbonIntensity = ({ activeGwpStandard, currentDisplayCo2In
 
             <div className="kpi-card">
               <div className="[display:flex]! [align-items:center] [gap:12px] [margin-bottom:16px]!">
-                <div className="kpi-icon scope1">
+                <div className="[&.scope1]:[background:rgba(37,_99,_235,_0.1)] [&.scope1]:[color:var(--accent-secondary)] [&&]:[&.scope3]:[background:rgba(139,_92,_246,_0.1)] [&&]:[&.scope3]:[color:var(--color-violet-700)] [width:38px]! [height:38px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [flex-shrink:0] [&&]:[&&]:[&.co2]:[background:rgba(255,_102,_0,_0.1)] [&&]:[&&]:[&.co2]:[color:var(--color-link)] [&&]:[&&]:[&&]:[&.ch4]:[background:rgba(37,_99,_235,_0.1)] [&&]:[&&]:[&&]:[&.ch4]:[color:var(--accent-secondary)] [&&]:[&&]:[&&]:[&&]:[&.flare]:[background:rgba(234,_88,_12,_0.1)] [&&]:[&&]:[&&]:[&&]:[&.flare]:[color:var(--accent-tertiary)] scope1">
                   <Layers size={20} />
                 </div>
                 <span className="kpi-label">Scope 1 Direct Intensity</span>
@@ -110,7 +110,7 @@ const CarbonIntensityCarbonIntensity = ({ activeGwpStandard, currentDisplayCo2In
                   {currentDisplayScope1Intensity === null ? "" : "kg CO₂e / BOE"}
                 </span>
               </div>
-              <div className="kpi-footer">
+              <div className="kpi-footer [margin-top:16px]! [padding-top:16px]! [border-top:1px_dashed_var(--border-color)]! [font-size:var(--text-sm)]! [color:var(--text-secondary)]! [display:flex]! [justify-content:space-between] [align-items:center] [&_strong]:[color:var(--text-primary)]!">
                 <span>
                   Scope 2:{" "}
                   <strong>
@@ -128,7 +128,7 @@ const CarbonIntensityCarbonIntensity = ({ activeGwpStandard, currentDisplayCo2In
 
             <div className="kpi-card">
               <div className="[display:flex]! [align-items:center] [gap:12px] [margin-bottom:16px]!">
-                <div className="kpi-icon flare">
+                <div className="[&.scope1]:[background:rgba(37,_99,_235,_0.1)] [&.scope1]:[color:var(--accent-secondary)] [&&]:[&.scope3]:[background:rgba(139,_92,_246,_0.1)] [&&]:[&.scope3]:[color:var(--color-violet-700)] [width:38px]! [height:38px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [flex-shrink:0] [&&]:[&&]:[&.co2]:[background:rgba(255,_102,_0,_0.1)] [&&]:[&&]:[&.co2]:[color:var(--color-link)] [&&]:[&&]:[&&]:[&.ch4]:[background:rgba(37,_99,_235,_0.1)] [&&]:[&&]:[&&]:[&.ch4]:[color:var(--accent-secondary)] [&&]:[&&]:[&&]:[&&]:[&.flare]:[background:rgba(234,_88,_12,_0.1)] [&&]:[&&]:[&&]:[&&]:[&.flare]:[color:var(--accent-tertiary)] flare">
                   <Flame size={20} />
                 </div>
                 <span className="kpi-label">Flaring Carbon Intensity</span>
@@ -139,7 +139,7 @@ const CarbonIntensityCarbonIntensity = ({ activeGwpStandard, currentDisplayCo2In
                 </span>
                 <span className="kpi-unit">kg CO₂e / BOE</span>
               </div>
-              <div className="kpi-footer">
+              <div className="kpi-footer [margin-top:16px]! [padding-top:16px]! [border-top:1px_dashed_var(--border-color)]! [font-size:var(--text-sm)]! [color:var(--text-secondary)]! [display:flex]! [justify-content:space-between] [align-items:center] [&_strong]:[color:var(--text-primary)]!">
                 <span>
                   Flared:{" "}
                   <strong>
@@ -152,7 +152,7 @@ const CarbonIntensityCarbonIntensity = ({ activeGwpStandard, currentDisplayCo2In
 
             <div className="kpi-card">
               <div className="[display:flex]! [align-items:center] [gap:12px] [margin-bottom:16px]!">
-                <div className="kpi-icon scope3">
+                <div className="[&.scope1]:[background:rgba(37,_99,_235,_0.1)] [&.scope1]:[color:var(--accent-secondary)] [&&]:[&.scope3]:[background:rgba(139,_92,_246,_0.1)] [&&]:[&.scope3]:[color:var(--color-violet-700)] [width:38px]! [height:38px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [flex-shrink:0] [&&]:[&&]:[&.co2]:[background:rgba(255,_102,_0,_0.1)] [&&]:[&&]:[&.co2]:[color:var(--color-link)] [&&]:[&&]:[&&]:[&.ch4]:[background:rgba(37,_99,_235,_0.1)] [&&]:[&&]:[&&]:[&.ch4]:[color:var(--accent-secondary)] [&&]:[&&]:[&&]:[&&]:[&.flare]:[background:rgba(234,_88,_12,_0.1)] [&&]:[&&]:[&&]:[&&]:[&.flare]:[color:var(--accent-tertiary)] scope3">
                   <ShieldCheck size={20} />
                 </div>
                 <span className="kpi-label">Scope 3 Value Chain</span>
@@ -163,7 +163,7 @@ const CarbonIntensityCarbonIntensity = ({ activeGwpStandard, currentDisplayCo2In
                 </span>
                 <span className="kpi-unit">kg CO₂e / BOE</span>
               </div>
-              <div className="kpi-footer">
+              <div className="kpi-footer [margin-top:16px]! [padding-top:16px]! [border-top:1px_dashed_var(--border-color)]! [font-size:var(--text-sm)]! [color:var(--text-secondary)]! [display:flex]! [justify-content:space-between] [align-items:center] [&_strong]:[color:var(--text-primary)]!">
                 <span>
                   Total S3:{" "}
                   <strong>{formatNumber(stats.totalScope3)} tCO₂e</strong>
@@ -174,20 +174,20 @@ const CarbonIntensityCarbonIntensity = ({ activeGwpStandard, currentDisplayCo2In
           </div>
 
           {/* Production Context Bar */}
-          <div className="scope-breakdown [display:grid]! [grid-template-columns:repeat(4,_1fr)] [gap:20px] [margin-top:32px]! [background:var(--bg-hover)]! [padding:24px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--border-color)]! [@media(max-width:1200px)]:[grid-template-columns:repeat(2,_1fr)]! [@media(max-width:768px)]:[grid-template-columns:1fr]!">
-            <div className="scope-item">
+          <div className="scope-breakdown [display:grid]! [grid-template-columns:repeat(4,_1fr)]! [gap:20px] [margin-top:32px]! [background:var(--bg-hover)]! [padding:24px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--border-color)]! [@media(max-width:1200px)]:[grid-template-columns:repeat(2,_1fr)]! [@media(max-width:768px)]:[grid-template-columns:1fr]!">
+            <div className="scope-item [display:flex]! [flex-direction:column] [gap:8px] [&.bordered]:[border-left:1px_solid_var(--border-color)] [&.bordered]:[padding-left:20px] [&_.label]:[font-size:var(--text-sm)] [&_.label]:[color:var(--text-secondary)] [&_.label]:[font-weight:600] [&_.label]:[text-transform:uppercase] [&_.label]:[letter-spacing:0.05em] [&&]:[&&]:[&_.val]:[font-size:var(--text-lg)] [&&]:[&&]:[&_.val]:[font-weight:700] [&&]:[&_.val]:[color:var(--text-primary)] [&&]:[&&]:[&_.val]:[font-family:inherit] [&&]:[&&]:[&_.val.flare-val]:[color:var(--accent-tertiary)]">
               <span className="label">Total Oil Production</span>
               <span className="val">
                 {formatNumber(stats.totalOilProduction, 0)} bbl
               </span>
             </div>
-            <div className="scope-item bordered">
+            <div className="scope-item [display:flex]! [flex-direction:column] [gap:8px] [&.bordered]:[border-left:1px_solid_var(--border-color)] [&.bordered]:[padding-left:20px] [&_.label]:[font-size:var(--text-sm)] [&_.label]:[color:var(--text-secondary)] [&_.label]:[font-weight:600] [&_.label]:[text-transform:uppercase] [&_.label]:[letter-spacing:0.05em] [&&]:[&&]:[&_.val]:[font-size:var(--text-lg)] [&&]:[&&]:[&_.val]:[font-weight:700] [&&]:[&_.val]:[color:var(--text-primary)] [&&]:[&&]:[&_.val]:[font-family:inherit] [&&]:[&&]:[&_.val.flare-val]:[color:var(--accent-tertiary)] bordered">
               <span className="label">Total Gas Production</span>
               <span className="val">
                 {formatNumber(stats.totalGasProduction, 0)} mscf
               </span>
             </div>
-            <div className="scope-item bordered">
+            <div className="scope-item [display:flex]! [flex-direction:column] [gap:8px] [&.bordered]:[border-left:1px_solid_var(--border-color)] [&.bordered]:[padding-left:20px] [&_.label]:[font-size:var(--text-sm)] [&_.label]:[color:var(--text-secondary)] [&_.label]:[font-weight:600] [&_.label]:[text-transform:uppercase] [&_.label]:[letter-spacing:0.05em] [&&]:[&&]:[&_.val]:[font-size:var(--text-lg)] [&&]:[&&]:[&_.val]:[font-weight:700] [&&]:[&_.val]:[color:var(--text-primary)] [&&]:[&&]:[&_.val]:[font-family:inherit] [&&]:[&&]:[&_.val.flare-val]:[color:var(--accent-tertiary)] bordered">
               <span className="label">Combined Production (BOE)</span>
               <span
                 className="val text-[color:var(--color-link)]! font-bold!"
@@ -196,7 +196,7 @@ const CarbonIntensityCarbonIntensity = ({ activeGwpStandard, currentDisplayCo2In
                 {formatNumber(stats.totalBoe, 0)} BOE
               </span>
             </div>
-            <div className="scope-item bordered">
+            <div className="scope-item [display:flex]! [flex-direction:column] [gap:8px] [&.bordered]:[border-left:1px_solid_var(--border-color)] [&.bordered]:[padding-left:20px] [&_.label]:[font-size:var(--text-sm)] [&_.label]:[color:var(--text-secondary)] [&_.label]:[font-weight:600] [&_.label]:[text-transform:uppercase] [&_.label]:[letter-spacing:0.05em] [&&]:[&&]:[&_.val]:[font-size:var(--text-lg)] [&&]:[&&]:[&_.val]:[font-weight:700] [&&]:[&_.val]:[color:var(--text-primary)] [&&]:[&&]:[&_.val]:[font-family:inherit] [&&]:[&&]:[&_.val.flare-val]:[color:var(--accent-tertiary)] bordered">
               <span className="label">Total Gas Flared</span>
               <span className="val flare-val">
                 {formatNumber(stats.totalFlaringVolume, 0)} m³

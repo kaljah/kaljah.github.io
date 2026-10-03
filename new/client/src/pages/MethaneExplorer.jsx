@@ -675,7 +675,7 @@ const EmissionsMap = () => {
       <div className="[display:flex]! [flex-direction:column] [align-items:center] [justify-content:center] [height:calc(100vh_-_72px)]! [gap:16px] [background:var(--color-ink-50)]! [color:var(--color-ink-900)]!">
         <div className="[position:relative] [width:80px]! [height:80px]! [border:2px_solid_rgba(255,_102,_0,_0.2)]! [&&]:[border-radius:50%]! [display:flex]! [align-items:center] [justify-content:center] [box-shadow:0_4px_20px_rgba(255,_102,_0,_0.15)]!">
           <div className="[position:absolute] [inset:0] [border-radius:50%]! [border-top:3px_solid_var(--color-brand-500)]! [animation:spin_1.2s_cubic-bezier(0.5,_0,_0.5,_1)_infinite]!"></div>
-          <Satellite size={34} className="[animation:spin_8s_linear_infinite]!" color="#ff6600" />
+          <Satellite size={34} className="spin-slow" color="#ff6600" />
         </div>
         <div className="[font-size:var(--text-md)]! [font-weight:800]! [letter-spacing:0.08em] [color:var(--color-ink-900)]!">LOADING METHANE EXPLORER</div>
         <div className="[font-size:var(--text-sm)]! [color:var(--color-ink-500)]! [max-width:420px]! [text-align:center]! [line-height:1.5]">
@@ -710,7 +710,7 @@ const EmissionsMap = () => {
           <div className="[display:flex]! [align-items:center]">
             {isSatelliteConnected ? (
               <span className="status-pill live" title="Connected to Copernicus Data Space">
-                <Radio size={12} className="[animation:pulseBeacon_1.5s_infinite]!" /> S5P STREAM LIVE
+                <Radio size={12} className="pulse-icon" /> S5P STREAM LIVE
               </span>
             ) : (
               <button
@@ -765,7 +765,7 @@ const EmissionsMap = () => {
           {/* Mode Switcher */}
           <div className="segmented-control mode-selector">
             <button
-              className={`seg-btn ${viewMode === "methane" ? "active" : ""}`}
+              className={`seg-btn [display:inline-flex]! [align-items:center] [gap:5px] [padding:6px_11px]! [background:transparent]! [border:none]! [&&]:[border-radius:var(--radius-sm)]! [font-size:var(--text-xs)]! [font-weight:600]! [color:var(--color-ink-500)]! [cursor:pointer] [transition:all_0.2s_ease]! [white-space:nowrap] [&:hover:not(.active)]:[color:var(--color-ink-900)]! [&:hover:not(.active)]:[background:rgba(0,_0,_0,_0.04)]! [&&]:[&.active]:[background:var(--color-white)]! [&&]:[&.active]:[color:var(--color-link)]! [&.active]:[box-shadow:var(--shadow-xs)] [&.active]:[font-weight:700]! ${viewMode === "methane" ? "active" : ""}`}
               onClick={() => setViewMode("methane")}
               title="Focus on Methane (CH4) emissions"
             >
@@ -773,7 +773,7 @@ const EmissionsMap = () => {
               <span>CH₄ Flux</span>
             </button>
             <button
-              className={`seg-btn ${viewMode === "total" ? "active" : ""}`}
+              className={`seg-btn [display:inline-flex]! [align-items:center] [gap:5px] [padding:6px_11px]! [background:transparent]! [border:none]! [&&]:[border-radius:var(--radius-sm)]! [font-size:var(--text-xs)]! [font-weight:600]! [color:var(--color-ink-500)]! [cursor:pointer] [transition:all_0.2s_ease]! [white-space:nowrap] [&:hover:not(.active)]:[color:var(--color-ink-900)]! [&:hover:not(.active)]:[background:rgba(0,_0,_0,_0.04)]! [&&]:[&.active]:[background:var(--color-white)]! [&&]:[&.active]:[color:var(--color-link)]! [&.active]:[box-shadow:var(--shadow-xs)] [&.active]:[font-weight:700]! ${viewMode === "total" ? "active" : ""}`}
               onClick={() => setViewMode("total")}
               title="Focus on Total GHG (CO2e) emissions"
             >
@@ -783,13 +783,13 @@ const EmissionsMap = () => {
           </div>
 
           {/* Basemap Switcher */}
-          <div className="segmented-control basemap-selector">
+          <div className="segmented-control [&_.seg-btn.active]:[background:var(--color-white)]! [&_.seg-btn.active]:[color:var(--color-blue-700)]! [&_.seg-btn.active]:[box-shadow:var(--shadow-xs)]! [&_.seg-btn.active]:[font-weight:700]!">
             {Object.entries(BASE_MAPS).map(([key, mapInfo]) => {
               const IconComp = mapInfo.icon;
               return (
                 <button
                   key={key}
-                  className={`seg-btn ${mapBaseLayer === key ? "active" : ""}`}
+                  className={`seg-btn [display:inline-flex]! [align-items:center] [gap:5px] [padding:6px_11px]! [background:transparent]! [border:none]! [&&]:[border-radius:var(--radius-sm)]! [font-size:var(--text-xs)]! [font-weight:600]! [color:var(--color-ink-500)]! [cursor:pointer] [transition:all_0.2s_ease]! [white-space:nowrap] [&:hover:not(.active)]:[color:var(--color-ink-900)]! [&:hover:not(.active)]:[background:rgba(0,_0,_0,_0.04)]! [&&]:[&.active]:[background:var(--color-white)]! [&&]:[&.active]:[color:var(--color-link)]! [&.active]:[box-shadow:var(--shadow-xs)] [&.active]:[font-weight:700]! ${mapBaseLayer === key ? "active" : ""}`}
                   onClick={() => setMapBaseLayer(key)}
                   title={`Switch to ${mapInfo.name}`}
                 >
@@ -955,7 +955,7 @@ const EmissionsMap = () => {
                     <div className="[display:flex]! [flex-direction:column] [gap:3px]">
                       <div className="[display:flex]! [align-items:center] [gap:8px]">
                         <span className="[font-size:var(--text-sm)]! [font-weight:800]! [color:var(--color-ink-900)]!">{fac.name}</span>
-                        <span className={`[font-size:var(--text-xs)]! [font-weight:800]! [padding:1px_5px]! [border-radius:var(--radius-sm)]! [&.high]:[background:#fee2e2]! [&.high]:[color:var(--color-red-700)]! [&.high]:[border:1px_solid_#fca5a5]! [&&]:[&.medium]:[background:#fef3c7]! [&&]:[&.medium]:[color:var(--color-amber-700)]! [&&]:[&.medium]:[border:1px_solid_#fde68a]! [&&]:[&&]:[&.low]:[background:var(--color-green-50)]! [&&]:[&&]:[&.low]:[color:var(--color-green-700)]! [&&]:[&&]:[&.low]:[border:1px_solid_#a7f3d0]! [&&]:[&&]:[&&]:[&.baseline]:[background:var(--color-green-50)]! [&&]:[&&]:[&&]:[&.baseline]:[color:var(--color-green-700)]! [&&]:[&&]:[&&]:[&.baseline]:[border:1px_solid_#a7f3d0]! ${severity}`}>
+                        <span className={`tooltip-badge ${severity}`}>
                           {severity.toUpperCase()}
                         </span>
                       </div>
@@ -981,7 +981,7 @@ const EmissionsMap = () => {
       </div>
 
       {/* 4. COLLAPSIBLE LEFT INTELLIGENCE & RECON DRAWER (WHITE LIGHT THEME) */}
-      <div className={`drawer-container [position:absolute]! [top:78px]! [left:16px]! [bottom:20px]! [width:340px]! [z-index:950]! [pointer-events:none]! [transition:transform_0.35s_cubic-bezier(0.16,_1,_0.3,_1)]! [&.collapsed]:[transform:translateX(-346px)]! ${isDrawerOpen ? "open" : "collapsed"}`}>
+      <div className={`drawer-container [position:absolute] [top:78px] [left:16px] [bottom:20px] [width:340px]! [z-index:950] [pointer-events:none]! [transition:transform_0.35s_cubic-bezier(0.16,_1,_0.3,_1)]! [&.collapsed]:[transform:translateX(-346px)] ${isDrawerOpen ? "open" : "collapsed"}`}>
         <button
           className="[pointer-events:auto]! [position:absolute] [top:14px] [right:-36px] [width:36px]! [height:44px]! [background:var(--color-white)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-left:none]! [&&]:[border-radius:0_var(--radius-md)_var(--radius-md)_0]! [color:var(--color-link)]! [display:flex]! [align-items:center] [justify-content:center] [cursor:pointer] [box-shadow:var(--shadow-card)]! [transition:all_0.2s_ease]! hover:[color:var(--color-white)]! hover:[background:var(--color-primary)]!"
           onClick={() => setIsDrawerOpen(!isDrawerOpen)}
@@ -1041,7 +1041,7 @@ const EmissionsMap = () => {
                   onChange={(e) =>
                     setFilters({ ...filters, region: e.target.value })
                   }
-                  className="[width:100%]! [background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:7px_10px]! [font-size:var(--text-sm)]! [color:var(--color-ink-900)]! [outline:none]! [cursor:pointer] [transition:border-color_0.2s]! focus:[border-color:var(--color-brand-500)]! focus:[background:var(--color-white)]!"
+                  className="recon-select"
                   id="filter-region-select"
                 >
                   <option value="all">All Regions</option>
@@ -1061,7 +1061,7 @@ const EmissionsMap = () => {
                   onChange={(e) =>
                     setFilters({ ...filters, year: e.target.value })
                   }
-                  className="[width:100%]! [background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:7px_10px]! [font-size:var(--text-sm)]! [color:var(--color-ink-900)]! [outline:none]! [cursor:pointer] [transition:border-color_0.2s]! focus:[border-color:var(--color-brand-500)]! focus:[background:var(--color-white)]!"
+                  className="recon-select"
                   id="filter-year-select"
                 >
                   <option value="all">All Years</option>
@@ -1082,7 +1082,7 @@ const EmissionsMap = () => {
                 onChange={(e) =>
                   setFilters({ ...filters, activity: e.target.value })
                 }
-                className="[width:100%]! [background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:7px_10px]! [font-size:var(--text-sm)]! [color:var(--color-ink-900)]! [outline:none]! [cursor:pointer] [transition:border-color_0.2s]! focus:[border-color:var(--color-brand-500)]! focus:[background:var(--color-white)]!"
+                className="recon-select"
                 id="filter-activity-select"
               >
                 <option value="all">All Activities</option>
@@ -1106,7 +1106,7 @@ const EmissionsMap = () => {
                 ].map((pill) => (
                   <button
                     key={pill.id}
-                    className={`[display:flex]! [align-items:center]! [justify-content:center]! [gap:5px]! [background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:6px_8px]! [font-size:var(--text-xs)]! [font-weight:600]! [color:var(--color-ink-500)]! [cursor:pointer]! [transition:all_0.2s_ease]! [&:hover:not(.active)]:[color:var(--color-ink-900)]! [&:hover:not(.active)]:[background:var(--color-ink-100)]! [&&]:[&.active]:[background:var(--color-brand-50)]! [&.active]:[border-color:var(--color-brand-500)]! [&&]:[&.active]:[color:var(--color-link)]! [&.active]:[font-weight:700]! ${filters.severity === pill.id ? "active" : ""}`}
+                    className={`[display:flex]! [align-items:center] [justify-content:center] [gap:5px] [background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:6px_8px]! [font-size:var(--text-xs)]! [font-weight:600]! [color:var(--color-ink-500)]! [cursor:pointer] [transition:all_0.2s_ease]! [&:hover:not(.active)]:[color:var(--color-ink-900)]! [&:hover:not(.active)]:[background:var(--color-ink-100)]! [&&]:[&.active]:[background:var(--color-brand-50)]! [&.active]:[border-color:var(--color-brand-500)]! [&&]:[&.active]:[color:var(--color-link)]! [&.active]:[font-weight:700]! ${filters.severity === pill.id ? "active" : ""}`}
                     onClick={() =>
                       setFilters({ ...filters, severity: pill.id })
                     }
@@ -1130,7 +1130,7 @@ const EmissionsMap = () => {
                   <Satellite size={15} color="#0284c7" />
                   <span>Sentinel-5P Overlay</span>
                 </div>
-                <label className="switch-toggle">
+                <label className="[position:relative] [display:inline-block]! [width:34px]! [height:18px]! [&_input]:[opacity:0] [&_input]:[width:0]! [&_input]:[height:0]!">
                   <input
                     type="checkbox"
                     checked={showSatelliteLayer}
@@ -1164,7 +1164,7 @@ const EmissionsMap = () => {
                   </div>
 
                   <div className="[display:flex]! [justify-content:space-between] [margin-top:2px]!">
-                    <label className="recon-checkbox-label">
+                    <label className="[display:flex]! [align-items:center] [gap:6px] [font-size:var(--text-xs)]! [color:var(--color-ink-600)]! [cursor:pointer] [&_input]:[accent-color:var(--color-brand-500)] [&_input]:[cursor:pointer]">
                       <input
                         type="checkbox"
                         checked={showPlumeRings}
@@ -1173,7 +1173,7 @@ const EmissionsMap = () => {
                       <span title="Symbol size by emission severity; not a modelled plume">Severity Rings</span>
                     </label>
 
-                    <label className="recon-checkbox-label">
+                    <label className="[display:flex]! [align-items:center] [gap:6px] [font-size:var(--text-xs)]! [color:var(--color-ink-600)]! [cursor:pointer] [&_input]:[accent-color:var(--color-brand-500)] [&_input]:[cursor:pointer]">
                       <input
                         type="checkbox"
                         checked={showLegend}
@@ -1223,7 +1223,7 @@ const EmissionsMap = () => {
                       onClick={() => handleSelectFacility(fac)}
                     >
                       <div className="[display:flex]! [align-items:center] [gap:10px] [min-width:0] [flex:1]">
-                        <span className={`[width:8px]! [height:8px]! [border-radius:50%]! [flex-shrink:0]! [&.high]:[background:var(--color-red-500)]! [&.high]:[box-shadow:0_0_6px_rgba(239,_68,_68,_0.5)]! [&&]:[&.medium]:[background:var(--color-amber-500)]! [&&]:[&.medium]:[box-shadow:0_0_6px_rgba(245,_158,_11,_0.5)]! [&&]:[&&]:[&.low]:[background:var(--color-green-500)]! [&&]:[&&]:[&.low]:[box-shadow:0_0_6px_rgba(16,_185,_129,_0.5)]! [&&]:[&&]:[&&]:[&.baseline]:[background:var(--color-green-500)]! [&&]:[&&]:[&&]:[&.baseline]:[box-shadow:0_0_6px_rgba(16,_185,_129,_0.5)]! ${severity}`}></span>
+                        <span className={`beacon-dot ${severity}`}></span>
                         <div className="[min-width:0] [flex:1]">
                           <div className="[font-size:var(--text-sm)]! [font-weight:700]! [color:var(--color-ink-900)]! [white-space:nowrap] [overflow:hidden]! [text-overflow:ellipsis]!">{fac.name}</div>
                           <div className="[display:flex]! [align-items:center] [gap:6px] [margin-top:2px]! [font-size:var(--text-xs)]! [color:var(--color-ink-500)]!">
@@ -1256,7 +1256,7 @@ const EmissionsMap = () => {
 
       {/* 5. CALIBRATED SPECTRAL ABSORPTION RAMP LEGEND (WHITE LIGHT THEME) */}
       {showSatelliteLayer && showLegend && (
-        <aside className="[position:absolute] [bottom:20px] [left:370px] [width:320px]! [z-index:900] [background:rgba(255,_255,_255,_0.95)]! [backdrop-filter:blur(16px)] [-webkit-backdrop-filter:blur(16px)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-lg)]! [padding:12px_14px]! [box-shadow:var(--shadow-card)]! [transition:all_0.3s_ease]! [@media(max-width:960px)]:[left:20px]! [@media(max-width:960px)]:[bottom:80px]!" role="region" aria-label="Spectral Legend">
+        <aside className="[position:absolute] [bottom:20px]! [left:370px]! [width:320px]! [z-index:900] [background:rgba(255,_255,_255,_0.95)]! [backdrop-filter:blur(16px)] [-webkit-backdrop-filter:blur(16px)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-lg)]! [padding:12px_14px]! [box-shadow:var(--shadow-card)]! [transition:all_0.3s_ease]! [@media(max-width:960px)]:[left:20px]! [@media(max-width:960px)]:[bottom:80px]!" role="region" aria-label="Spectral Legend">
           <div className="[display:flex]! [justify-content:space-between] [align-items:center] [margin-bottom:8px]!">
             <div className="[display:flex]! [align-items:center] [gap:6px] [font-size:var(--text-xs)]! [font-weight:700]! [color:var(--color-ink-900)]!">
               <Satellite size={14} color="#0284c7" />
@@ -1351,7 +1351,7 @@ const EmissionsMap = () => {
               </div>
               {loadingSatelliteData ? (
                 <div className="[display:flex]! [align-items:center] [gap:5px] [font-size:var(--text-xs)]! [color:var(--color-blue-700)]!">
-                  <RefreshCw size={12} className="[animation:spin_0.8s_linear_infinite]!" color="#0284c7" />
+                  <RefreshCw size={12} className="spin-fast" color="#0284c7" />
                   <span>STAC Query...</span>
                 </div>
               ) : (
@@ -1482,7 +1482,7 @@ const EmissionsMap = () => {
 
                 {/* Level 5 OGMP Reconciliation Button */}
                 <button
-                  className="[width:100%]! [display:flex]! [align-items:center] [justify-content:center] [gap:8px] [background:var(--primary-gradient)]! [color:var(--color-white)]! [border:none]! [&&]:[border-radius:var(--radius-md)]! [padding:11px_16px]! [font-size:var(--text-sm)]! [font-weight:700]! [cursor:pointer] [transition:all_0.2s_ease]! [box-shadow:0_3px_12px_rgba(255,_102,_0,_0.25)]! [&:hover:not(:disabled)]:[transform:translateY(-1px)]! [&:hover:not(:disabled)]:[box-shadow:0_5px_16px_rgba(255,_102,_0,_0.35)]! disabled:[opacity:0.65] disabled:[cursor:not-allowed] disabled:[transform:none]"
+                  className="[width:100%]! [display:flex]! [align-items:center] [justify-content:center] [gap:8px] [background:var(--primary-gradient)]! [color:var(--color-white)]! [border:none]! [&&]:[border-radius:var(--radius-md)]! [padding:11px_16px]! [font-size:var(--text-sm)]! [font-weight:700]! [cursor:pointer] [transition:all_0.2s_ease]! [box-shadow:0_3px_12px_rgba(255,_102,_0,_0.25)]! [&:hover:not(:disabled)]:[transform:translateY(-1px)] [&:hover:not(:disabled)]:[box-shadow:0_5px_16px_rgba(255,_102,_0,_0.35)]! disabled:[opacity:0.65] disabled:[cursor:not-allowed] disabled:[transform:none]"
                   onClick={handleExportToOgmp}
                   disabled={exportingOgmp}
                   id="reconcile-ogmp-btn"

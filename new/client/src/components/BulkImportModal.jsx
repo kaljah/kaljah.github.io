@@ -1333,7 +1333,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                 )}
 
                 <div className="[max-height:250px]! [overflow-y:auto]! [overflow-x:auto]! [border-radius:var(--radius-md)]! [border:1px_solid_rgba(0,_0,_0,_0.1)]!">
-                  <table className="preview-table">
+                  <table className="[width:100%]! [border-collapse:collapse]! [font-size:var(--text-sm)]! [&_th]:[background:#f3f4f6]! [&_th]:[padding:8px]! [&_th]:[text-align:left]! [&_th]:[position:sticky] [&_th]:[top:0] [&&]:[&_td]:[padding:8px]! [&_td]:[border-top:1px_solid_rgba(0,_0,_0,_0.05)]!">
                     <thead>
                       <tr>
                         {currentTemplate.map((t) => (

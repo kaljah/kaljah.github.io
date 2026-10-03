@@ -521,7 +521,7 @@ const CarbonIntensity = () => {
       />
 
                 {/* EU CBAM COMPLIANCE & PRODUCT EMBODIMENT SECTION */}
-                <div className="card cbam-section [display:flex]! [flex-direction:column]! [gap:16px]!">
+                <div className="card cbam-section [display:flex]! [flex-direction:column] [gap:16px]">
                     <div className="chart-header">
                         <div>
                             <h3 className="flex! items-center! gap-[8px]!">
@@ -589,7 +589,7 @@ const CarbonIntensity = () => {
                 </div>
 
         {/* Regional Bar Charts */}
-        <div className="chart-grid [display:grid]! [grid-template-columns:repeat(auto-fit,_minmax(450px,_1fr))] [gap:24px] [@media(max-width:768px)]:[grid-template-columns:1fr]!">
+        <div className="chart-grid [display:grid]! [grid-template-columns:repeat(auto-fit,_minmax(450px,_1fr))]! [gap:24px] [@media(max-width:768px)]:[grid-template-columns:1fr]!">
           <div className="card">
             <div className="chart-header">
               <div className="[display:flex]! [flex-direction:column] [gap:8px]">
@@ -695,7 +695,7 @@ const CarbonIntensity = () => {
         </div>
 
         {/* Historical Trends Section */}
-        <div className="card trend-section">
+        <div className="card trend-section [margin-top:8px]!">
           <div className="chart-header">
             <div>
               <h3 className="mb-[4px]!">
@@ -710,13 +710,13 @@ const CarbonIntensity = () => {
             <div className="[display:flex]! [gap:12px] [align-items:center]">
               <div className="[background:var(--bg-hover)]! [padding:4px]! [border-radius:var(--radius-md)]! [display:flex]! [gap:4px] [border:1px_solid_var(--border-color)]!">
                 <button
-                  className={`view-btn [border:none]! [padding:6px_16px]! [&&]:[border-radius:var(--radius-sm)]! [cursor:pointer]! [font-size:var(--text-base)]! [font-weight:500]! [transition:all_0.2s]! [background:transparent]! [color:var(--text-secondary)]! [display:flex]! [align-items:center]! [gap:6px]! [&.active]:[background:var(--bg-card)]! [&.active]:[color:var(--text-primary)]! [&.active]:[box-shadow:var(--card-shadow)]! [&.active]:[font-weight:600]! ${trendView === "chart" ? "active" : ""}`}
+                  className={`view-btn [border:none]! [padding:6px_16px]! [&&]:[border-radius:var(--radius-sm)]! [cursor:pointer] [font-size:var(--text-base)]! [font-weight:500]! [transition:all_0.2s]! [background:transparent]! [color:var(--text-secondary)]! [display:flex]! [align-items:center] [gap:6px] [&.active]:[background:var(--bg-card)]! [&.active]:[color:var(--text-primary)]! [&.active]:[box-shadow:var(--card-shadow)] [&.active]:[font-weight:600]! ${trendView === "chart" ? "active" : ""}`}
                   onClick={() => setTrendView("chart")}
                 >
                   <BarChart2 size={16} /> Chart
                 </button>
                 <button
-                  className={`view-btn [border:none]! [padding:6px_16px]! [&&]:[border-radius:var(--radius-sm)]! [cursor:pointer]! [font-size:var(--text-base)]! [font-weight:500]! [transition:all_0.2s]! [background:transparent]! [color:var(--text-secondary)]! [display:flex]! [align-items:center]! [gap:6px]! [&.active]:[background:var(--bg-card)]! [&.active]:[color:var(--text-primary)]! [&.active]:[box-shadow:var(--card-shadow)]! [&.active]:[font-weight:600]! ${trendView === "heatmap" ? "active" : ""}`}
+                  className={`view-btn [border:none]! [padding:6px_16px]! [&&]:[border-radius:var(--radius-sm)]! [cursor:pointer] [font-size:var(--text-base)]! [font-weight:500]! [transition:all_0.2s]! [background:transparent]! [color:var(--text-secondary)]! [display:flex]! [align-items:center] [gap:6px] [&.active]:[background:var(--bg-card)]! [&.active]:[color:var(--text-primary)]! [&.active]:[box-shadow:var(--card-shadow)] [&.active]:[font-weight:600]! ${trendView === "heatmap" ? "active" : ""}`}
                   onClick={() => setTrendView("heatmap")}
                 >
                   <Grid size={16} /> Heatmap
@@ -779,7 +779,7 @@ const CarbonIntensity = () => {
                         return (
                           <div
                             key={yData.year}
-                            className={`[padding:10px]! [border-radius:var(--radius-sm)]! [text-align:center]! [font-size:var(--text-base)]! [font-weight:600]! [color:var(--color-white)]! [transition:transform_0.2s_ease,_filter_0.2s_ease]! [cursor:default]! [display:flex]! [align-items:center]! [justify-content:center]! [min-height:40px]! hover:[transform:scale(1.02)]! hover:[filter:brightness(1.1)]! ${getHeatmapClass(val)}`}
+                            className={`heatmap-cell ${getHeatmapClass(val)}`}
                             title={`${yData.year} Intensity: ${val.toFixed(3)} kg CO2e/BOE`}
                           >
                             {val > 0 ? val.toFixed(2) : "-"}

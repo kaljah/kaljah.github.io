@@ -5,7 +5,7 @@ import { RotateCcw, Search, X } from "lucide-react";
 // Extracted from AuditTrail.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const AuditTrailFiltersBarCard = ({ auditLogs, availableFilters, customEndDate, customStartDate, filterAction, filterEntity, filterUser, hasActiveFilters, resetFilters, searchQuery, setCustomEndDate, setCustomStartDate, setFilterAction, setFilterEntity, setFilterUser, setPage, setSearchQuery, setTimeframe, timeframe, totalRecords }) => (
 <div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.85))]! [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.85))]! [&&]:[border-radius:var(--radius-lg)]! [padding:18px_22px]! [margin-bottom:28px]! [box-shadow:var(--shadow-card)]!">
-          <div className="[position:relative] [width:100%]! [margin-bottom:16px]! [&_.search-icon]:[position:absolute]! [&_.search-icon]:[left:14px]! [&_.search-icon]:[top:50%]! [&_.search-icon]:[transform:translateY(-50%)]! [&_.search-icon]:[color:var(--color-ink-600)]! [&_.search-icon]:[pointer-events:none]!">
+          <div className="[position:relative]! [width:100%]! [margin-bottom:16px]! [&_.search-icon]:[position:absolute]! [&_.search-icon]:[left:14px]! [&_.search-icon]:[top:50%]! [&_.search-icon]:[transform:translateY(-50%)]! [&_.search-icon]:[color:var(--color-ink-600)]! [&_.search-icon]:[pointer-events:none]!">
             <Search size={16} className="search-icon" />
             <input
               type="text"
@@ -25,7 +25,7 @@ const AuditTrailFiltersBarCard = ({ auditLogs, availableFilters, customEndDate, 
             )}
           </div>
 
-          <div className="[display:flex]! [align-items:center] [gap:14px] [flex-wrap:wrap] [@media(max-width:768px)]:[flex-direction:column]! [@media(max-width:768px)]:[align-items:stretch]!">
+          <div className="[display:flex]! [align-items:center]! [gap:14px] [flex-wrap:wrap]! [@media(max-width:768px)]:[flex-direction:column]! [@media(max-width:768px)]:[align-items:stretch]!">
             {/* User Filter */}
             <div className="filter-control">
               <label>User</label>
@@ -136,7 +136,7 @@ const AuditTrailFiltersBarCard = ({ auditLogs, availableFilters, customEndDate, 
               </button>
             )}
 
-            <div className="filter-result-count">
+            <div className="[margin-left:auto]! [font-size:var(--text-sm)]! [color:var(--text-secondary,_var(--color-ink-500))]! [padding:6px_12px]! [background:rgba(241,_245,_249,_0.8)]! [border-radius:999px]! [white-space:nowrap] [&_strong]:[color:var(--text-primary,_var(--color-ink-900))]! [@media(max-width:768px)]:[margin-left:0]! [@media(max-width:768px)]:[text-align:center]!">
               Showing <strong>{auditLogs.length}</strong> of <strong>{totalRecords}</strong> records
             </div>
           </div>

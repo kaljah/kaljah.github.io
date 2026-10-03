@@ -12,24 +12,6 @@
   overflow: hidden;
 }
 
-.calc-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 24px;
-  background: var(--color-ink-50);
-  border-bottom: 1px solid var(--color-ink-200);
-  flex-shrink: 0;
-}
-
-.calc-header h3 {
-  margin: 0;
-  font-size: var(--text-lg);
-  font-weight: 700;
-  color: var(--color-ink-900);
-  letter-spacing: -0.02em;
-}
-
 /* 1. Input Parameters Grid */
 
 /* Status Badges */
@@ -175,22 +157,6 @@
 }
 
 /* Footer */
-.calc-footer {
-  padding: 14px 24px;
-  background: var(--color-ink-50);
-  border-top: 1px solid var(--color-ink-200);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: var(--text-sm);
-  color: var(--color-ink-500);
-  flex-shrink: 0;
-}
-
-.calc-footer svg {
-  color: var(--color-green-700);
-  flex-shrink: 0;
-}
 
 /* Minimal Scrollbar for Modal */
 .calc-modal ::-webkit-scrollbar {

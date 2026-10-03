@@ -56,7 +56,7 @@ const CalculationDetails = ({ calculation, onClose }) => {
   return (
     <div className="calc-overlay [position:fixed] [top:0] [left:0] [right:0] [bottom:0] [background:rgba(15,_23,_42,_0.65)]! [backdrop-filter:blur(4px)] [-webkit-backdrop-filter:blur(4px)]! [display:flex]! [align-items:center] [justify-content:center] [z-index:9999] [padding:16px]! [animation:calcFadeIn_0.2s_cubic-bezier(0.16,_1,_0.3,_1)]!" onClick={onClose} role="dialog" aria-modal="true">
       <div className="calc-modal" onClick={(e) => e.stopPropagation()}>
-        <div className="calc-header">
+        <div className="[display:flex]! [justify-content:space-between] [align-items:center] [padding:20px_24px]! [background:var(--color-ink-50)]! [border-bottom:1px_solid_var(--color-ink-200)]! [flex-shrink:0] [&_h3]:[margin:0]! [&_h3]:[font-size:var(--text-lg)]! [&_h3]:[font-weight:700]! [&_h3]:[color:var(--color-ink-900)]! [&_h3]:[letter-spacing:-0.02em]">
           <div className="[display:flex]! [align-items:center] [gap:12px]">
             <div className="[width:40px]! [height:40px]! [border-radius:var(--radius-md)]! [background:var(--color-green-50)]! [color:var(--color-green-700)]! [border:1px_solid_#a7f3d0]! [display:flex]! [align-items:center] [justify-content:center] [flex-shrink:0]">
               <Calculator size={22} />
@@ -157,7 +157,7 @@ const CalculationDetails = ({ calculation, onClose }) => {
                 {factors.co2 != null && (
                   <div className="factor-item">
                     <div className="factor-label">
-                      <span className="[padding:3px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-xs)]! [font-weight:700]! [letter-spacing:0.03em]! [&.co2]:[background:#fee2e2]! [&.co2]:[color:var(--color-red-700)]! [&.co2]:[border:1px_solid_#fecaca]! [&&]:[&.ch4]:[background:#e0f2fe]! [&&]:[&.ch4]:[color:var(--color-blue-700)]! [&&]:[&.ch4]:[border:1px_solid_#bae6fd]! [&&]:[&&]:[&.n2o]:[background:#f3e8ff]! [&&]:[&&]:[&.n2o]:[color:#9333ea]! [&&]:[&&]:[&.n2o]:[border:1px_solid_#e9d5ff]! [&&]:[&&]:[&&]:[&.gwp]:[background:#dcfce7]! [&&]:[&&]:[&&]:[&.gwp]:[color:var(--color-green-700)]! [&&]:[&&]:[&&]:[&.gwp]:[border:1px_solid_#bbf7d0]! co2">CO₂</span>
+                      <span className="[padding:3px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-xs)]! [font-weight:700]! [letter-spacing:0.03em] [&.co2]:[background:#fee2e2] [&.co2]:[color:var(--color-red-700)] [&.co2]:[border:1px_solid_#fecaca]! [&&]:[&.ch4]:[background:#e0f2fe] [&&]:[&.ch4]:[color:var(--color-blue-700)] [&&]:[&.ch4]:[border:1px_solid_#bae6fd]! [&&]:[&&]:[&.n2o]:[background:#f3e8ff] [&&]:[&&]:[&.n2o]:[color:#9333ea] [&&]:[&&]:[&.n2o]:[border:1px_solid_#e9d5ff]! [&&]:[&&]:[&&]:[&.gwp]:[background:#dcfce7] [&&]:[&&]:[&&]:[&.gwp]:[color:var(--color-green-700)] [&&]:[&&]:[&&]:[&.gwp]:[border:1px_solid_#bbf7d0]! co2">CO₂</span>
                       <span>Carbon Dioxide Factor</span>
                     </div>
                     <div className="[font-family:ui-monospace,_SFMono-Regular,_Menlo,_Monaco,_Consolas,_monospace]! [font-size:var(--text-base)]! [color:var(--color-ink-900)]! [font-weight:700]!">
@@ -168,7 +168,7 @@ const CalculationDetails = ({ calculation, onClose }) => {
                 {factors.ch4 != null && (
                   <div className="factor-item">
                     <div className="factor-label">
-                      <span className="[padding:3px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-xs)]! [font-weight:700]! [letter-spacing:0.03em]! [&.co2]:[background:#fee2e2]! [&.co2]:[color:var(--color-red-700)]! [&.co2]:[border:1px_solid_#fecaca]! [&&]:[&.ch4]:[background:#e0f2fe]! [&&]:[&.ch4]:[color:var(--color-blue-700)]! [&&]:[&.ch4]:[border:1px_solid_#bae6fd]! [&&]:[&&]:[&.n2o]:[background:#f3e8ff]! [&&]:[&&]:[&.n2o]:[color:#9333ea]! [&&]:[&&]:[&.n2o]:[border:1px_solid_#e9d5ff]! [&&]:[&&]:[&&]:[&.gwp]:[background:#dcfce7]! [&&]:[&&]:[&&]:[&.gwp]:[color:var(--color-green-700)]! [&&]:[&&]:[&&]:[&.gwp]:[border:1px_solid_#bbf7d0]! ch4">CH₄</span>
+                      <span className="[padding:3px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-xs)]! [font-weight:700]! [letter-spacing:0.03em] [&.co2]:[background:#fee2e2] [&.co2]:[color:var(--color-red-700)] [&.co2]:[border:1px_solid_#fecaca]! [&&]:[&.ch4]:[background:#e0f2fe] [&&]:[&.ch4]:[color:var(--color-blue-700)] [&&]:[&.ch4]:[border:1px_solid_#bae6fd]! [&&]:[&&]:[&.n2o]:[background:#f3e8ff] [&&]:[&&]:[&.n2o]:[color:#9333ea] [&&]:[&&]:[&.n2o]:[border:1px_solid_#e9d5ff]! [&&]:[&&]:[&&]:[&.gwp]:[background:#dcfce7] [&&]:[&&]:[&&]:[&.gwp]:[color:var(--color-green-700)] [&&]:[&&]:[&&]:[&.gwp]:[border:1px_solid_#bbf7d0]! ch4">CH₄</span>
                       <span>Methane Factor</span>
                     </div>
                     <div className="[font-family:ui-monospace,_SFMono-Regular,_Menlo,_Monaco,_Consolas,_monospace]! [font-size:var(--text-base)]! [color:var(--color-ink-900)]! [font-weight:700]!">
@@ -179,7 +179,7 @@ const CalculationDetails = ({ calculation, onClose }) => {
                 {factors.n2o != null && (
                   <div className="factor-item">
                     <div className="factor-label">
-                      <span className="[padding:3px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-xs)]! [font-weight:700]! [letter-spacing:0.03em]! [&.co2]:[background:#fee2e2]! [&.co2]:[color:var(--color-red-700)]! [&.co2]:[border:1px_solid_#fecaca]! [&&]:[&.ch4]:[background:#e0f2fe]! [&&]:[&.ch4]:[color:var(--color-blue-700)]! [&&]:[&.ch4]:[border:1px_solid_#bae6fd]! [&&]:[&&]:[&.n2o]:[background:#f3e8ff]! [&&]:[&&]:[&.n2o]:[color:#9333ea]! [&&]:[&&]:[&.n2o]:[border:1px_solid_#e9d5ff]! [&&]:[&&]:[&&]:[&.gwp]:[background:#dcfce7]! [&&]:[&&]:[&&]:[&.gwp]:[color:var(--color-green-700)]! [&&]:[&&]:[&&]:[&.gwp]:[border:1px_solid_#bbf7d0]! n2o">N₂O</span>
+                      <span className="[padding:3px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-xs)]! [font-weight:700]! [letter-spacing:0.03em] [&.co2]:[background:#fee2e2] [&.co2]:[color:var(--color-red-700)] [&.co2]:[border:1px_solid_#fecaca]! [&&]:[&.ch4]:[background:#e0f2fe] [&&]:[&.ch4]:[color:var(--color-blue-700)] [&&]:[&.ch4]:[border:1px_solid_#bae6fd]! [&&]:[&&]:[&.n2o]:[background:#f3e8ff] [&&]:[&&]:[&.n2o]:[color:#9333ea] [&&]:[&&]:[&.n2o]:[border:1px_solid_#e9d5ff]! [&&]:[&&]:[&&]:[&.gwp]:[background:#dcfce7] [&&]:[&&]:[&&]:[&.gwp]:[color:var(--color-green-700)] [&&]:[&&]:[&&]:[&.gwp]:[border:1px_solid_#bbf7d0]! n2o">N₂O</span>
                       <span>Nitrous Oxide Factor</span>
                     </div>
                     <div className="[font-family:ui-monospace,_SFMono-Regular,_Menlo,_Monaco,_Consolas,_monospace]! [font-size:var(--text-base)]! [color:var(--color-ink-900)]! [font-weight:700]!">
@@ -189,14 +189,14 @@ const CalculationDetails = ({ calculation, onClose }) => {
                 )}
                 <div className="factor-item">
                   <div className="factor-label">
-                    <span className="[padding:3px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-xs)]! [font-weight:700]! [letter-spacing:0.03em]! [&.co2]:[background:#fee2e2]! [&.co2]:[color:var(--color-red-700)]! [&.co2]:[border:1px_solid_#fecaca]! [&&]:[&.ch4]:[background:#e0f2fe]! [&&]:[&.ch4]:[color:var(--color-blue-700)]! [&&]:[&.ch4]:[border:1px_solid_#bae6fd]! [&&]:[&&]:[&.n2o]:[background:#f3e8ff]! [&&]:[&&]:[&.n2o]:[color:#9333ea]! [&&]:[&&]:[&.n2o]:[border:1px_solid_#e9d5ff]! [&&]:[&&]:[&&]:[&.gwp]:[background:#dcfce7]! [&&]:[&&]:[&&]:[&.gwp]:[color:var(--color-green-700)]! [&&]:[&&]:[&&]:[&.gwp]:[border:1px_solid_#bbf7d0]! gwp">GWP</span>
+                    <span className="[padding:3px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-xs)]! [font-weight:700]! [letter-spacing:0.03em] [&.co2]:[background:#fee2e2] [&.co2]:[color:var(--color-red-700)] [&.co2]:[border:1px_solid_#fecaca]! [&&]:[&.ch4]:[background:#e0f2fe] [&&]:[&.ch4]:[color:var(--color-blue-700)] [&&]:[&.ch4]:[border:1px_solid_#bae6fd]! [&&]:[&&]:[&.n2o]:[background:#f3e8ff] [&&]:[&&]:[&.n2o]:[color:#9333ea] [&&]:[&&]:[&.n2o]:[border:1px_solid_#e9d5ff]! [&&]:[&&]:[&&]:[&.gwp]:[background:#dcfce7] [&&]:[&&]:[&&]:[&.gwp]:[color:var(--color-green-700)] [&&]:[&&]:[&&]:[&.gwp]:[border:1px_solid_#bbf7d0]! gwp">GWP</span>
                     <span>CH₄ Global Warming Potential</span>
                   </div>
                   <div className="[font-family:ui-monospace,_SFMono-Regular,_Menlo,_Monaco,_Consolas,_monospace]! [font-size:var(--text-base)]! [color:var(--color-ink-900)]! [font-weight:700]!">{factors.gwp_ch4 ?? gwpSet?.CH4 ?? "—"}{gwpStd ? ` (${gwpStd})` : ""}</div>
                 </div>
                 <div className="factor-item">
                   <div className="factor-label">
-                    <span className="[padding:3px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-xs)]! [font-weight:700]! [letter-spacing:0.03em]! [&.co2]:[background:#fee2e2]! [&.co2]:[color:var(--color-red-700)]! [&.co2]:[border:1px_solid_#fecaca]! [&&]:[&.ch4]:[background:#e0f2fe]! [&&]:[&.ch4]:[color:var(--color-blue-700)]! [&&]:[&.ch4]:[border:1px_solid_#bae6fd]! [&&]:[&&]:[&.n2o]:[background:#f3e8ff]! [&&]:[&&]:[&.n2o]:[color:#9333ea]! [&&]:[&&]:[&.n2o]:[border:1px_solid_#e9d5ff]! [&&]:[&&]:[&&]:[&.gwp]:[background:#dcfce7]! [&&]:[&&]:[&&]:[&.gwp]:[color:var(--color-green-700)]! [&&]:[&&]:[&&]:[&.gwp]:[border:1px_solid_#bbf7d0]! gwp">GWP</span>
+                    <span className="[padding:3px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-xs)]! [font-weight:700]! [letter-spacing:0.03em] [&.co2]:[background:#fee2e2] [&.co2]:[color:var(--color-red-700)] [&.co2]:[border:1px_solid_#fecaca]! [&&]:[&.ch4]:[background:#e0f2fe] [&&]:[&.ch4]:[color:var(--color-blue-700)] [&&]:[&.ch4]:[border:1px_solid_#bae6fd]! [&&]:[&&]:[&.n2o]:[background:#f3e8ff] [&&]:[&&]:[&.n2o]:[color:#9333ea] [&&]:[&&]:[&.n2o]:[border:1px_solid_#e9d5ff]! [&&]:[&&]:[&&]:[&.gwp]:[background:#dcfce7] [&&]:[&&]:[&&]:[&.gwp]:[color:var(--color-green-700)] [&&]:[&&]:[&&]:[&.gwp]:[border:1px_solid_#bbf7d0]! gwp">GWP</span>
                     <span>N₂O Global Warming Potential</span>
                   </div>
                   <div className="[font-family:ui-monospace,_SFMono-Regular,_Menlo,_Monaco,_Consolas,_monospace]! [font-size:var(--text-base)]! [color:var(--color-ink-900)]! [font-weight:700]!">{factors.gwp_n2o ?? gwpSet?.N2O ?? "—"}{gwpStd ? ` (${gwpStd})` : ""}</div>
@@ -214,9 +214,9 @@ const CalculationDetails = ({ calculation, onClose }) => {
               </h4>
               <div className="uncertainty-grid">
                 {uncertainty.co2 != null && (
-                  <div className="[background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:12px_14px]! [display:flex]! [flex-direction:column] [gap:4px] [&_.unc-label]:[font-size:var(--text-sm)]! [&_.unc-label]:[font-weight:600]! [&_.unc-label]:[color:var(--color-ink-500)]! [&_.unc-label]:[display:flex]! [&_.unc-label]:[align-items:center]! [&_.unc-label]:[gap:6px]! [&&]:[&&]:[&_.unc-value]:[font-size:var(--text-md)]! [&&]:[&&]:[&_.unc-value]:[font-weight:700]! [&&]:[&&]:[&_.unc-value]:[font-family:ui-monospace,_monospace]!">
+                  <div className="[background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:12px_14px]! [display:flex]! [flex-direction:column] [gap:4px] [&_.unc-label]:[font-size:var(--text-sm)] [&_.unc-label]:[font-weight:600] [&_.unc-label]:[color:var(--color-ink-500)] [&_.unc-label]:[display:flex]! [&_.unc-label]:[align-items:center] [&_.unc-label]:[gap:6px] [&&]:[&&]:[&_.unc-value]:[font-size:var(--text-md)] [&&]:[&&]:[&_.unc-value]:[font-weight:700] [&&]:[&&]:[&_.unc-value]:[font-family:ui-monospace,_monospace]">
                     <span className="unc-label">
-                      <span className="[padding:3px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-xs)]! [font-weight:700]! [letter-spacing:0.03em]! [&.co2]:[background:#fee2e2]! [&.co2]:[color:var(--color-red-700)]! [&.co2]:[border:1px_solid_#fecaca]! [&&]:[&.ch4]:[background:#e0f2fe]! [&&]:[&.ch4]:[color:var(--color-blue-700)]! [&&]:[&.ch4]:[border:1px_solid_#bae6fd]! [&&]:[&&]:[&.n2o]:[background:#f3e8ff]! [&&]:[&&]:[&.n2o]:[color:#9333ea]! [&&]:[&&]:[&.n2o]:[border:1px_solid_#e9d5ff]! [&&]:[&&]:[&&]:[&.gwp]:[background:#dcfce7]! [&&]:[&&]:[&&]:[&.gwp]:[color:var(--color-green-700)]! [&&]:[&&]:[&&]:[&.gwp]:[border:1px_solid_#bbf7d0]! co2">CO₂</span> 1σ Uncertainty
+                      <span className="[padding:3px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-xs)]! [font-weight:700]! [letter-spacing:0.03em] [&.co2]:[background:#fee2e2] [&.co2]:[color:var(--color-red-700)] [&.co2]:[border:1px_solid_#fecaca]! [&&]:[&.ch4]:[background:#e0f2fe] [&&]:[&.ch4]:[color:var(--color-blue-700)] [&&]:[&.ch4]:[border:1px_solid_#bae6fd]! [&&]:[&&]:[&.n2o]:[background:#f3e8ff] [&&]:[&&]:[&.n2o]:[color:#9333ea] [&&]:[&&]:[&.n2o]:[border:1px_solid_#e9d5ff]! [&&]:[&&]:[&&]:[&.gwp]:[background:#dcfce7] [&&]:[&&]:[&&]:[&.gwp]:[color:var(--color-green-700)] [&&]:[&&]:[&&]:[&.gwp]:[border:1px_solid_#bbf7d0]! co2">CO₂</span> 1σ Uncertainty
                     </span>
                     <span className="unc-value text-[color:#dc2626]!">
                       ±{(Number(uncertainty.co2) * 100).toFixed(1)}%
@@ -227,9 +227,9 @@ const CalculationDetails = ({ calculation, onClose }) => {
                   </div>
                 )}
                 {uncertainty.ch4 != null && (
-                  <div className="[background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:12px_14px]! [display:flex]! [flex-direction:column] [gap:4px] [&_.unc-label]:[font-size:var(--text-sm)]! [&_.unc-label]:[font-weight:600]! [&_.unc-label]:[color:var(--color-ink-500)]! [&_.unc-label]:[display:flex]! [&_.unc-label]:[align-items:center]! [&_.unc-label]:[gap:6px]! [&&]:[&&]:[&_.unc-value]:[font-size:var(--text-md)]! [&&]:[&&]:[&_.unc-value]:[font-weight:700]! [&&]:[&&]:[&_.unc-value]:[font-family:ui-monospace,_monospace]!">
+                  <div className="[background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:12px_14px]! [display:flex]! [flex-direction:column] [gap:4px] [&_.unc-label]:[font-size:var(--text-sm)] [&_.unc-label]:[font-weight:600] [&_.unc-label]:[color:var(--color-ink-500)] [&_.unc-label]:[display:flex]! [&_.unc-label]:[align-items:center] [&_.unc-label]:[gap:6px] [&&]:[&&]:[&_.unc-value]:[font-size:var(--text-md)] [&&]:[&&]:[&_.unc-value]:[font-weight:700] [&&]:[&&]:[&_.unc-value]:[font-family:ui-monospace,_monospace]">
                     <span className="unc-label">
-                      <span className="[padding:3px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-xs)]! [font-weight:700]! [letter-spacing:0.03em]! [&.co2]:[background:#fee2e2]! [&.co2]:[color:var(--color-red-700)]! [&.co2]:[border:1px_solid_#fecaca]! [&&]:[&.ch4]:[background:#e0f2fe]! [&&]:[&.ch4]:[color:var(--color-blue-700)]! [&&]:[&.ch4]:[border:1px_solid_#bae6fd]! [&&]:[&&]:[&.n2o]:[background:#f3e8ff]! [&&]:[&&]:[&.n2o]:[color:#9333ea]! [&&]:[&&]:[&.n2o]:[border:1px_solid_#e9d5ff]! [&&]:[&&]:[&&]:[&.gwp]:[background:#dcfce7]! [&&]:[&&]:[&&]:[&.gwp]:[color:var(--color-green-700)]! [&&]:[&&]:[&&]:[&.gwp]:[border:1px_solid_#bbf7d0]! ch4">CH₄</span> 1σ Uncertainty
+                      <span className="[padding:3px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-xs)]! [font-weight:700]! [letter-spacing:0.03em] [&.co2]:[background:#fee2e2] [&.co2]:[color:var(--color-red-700)] [&.co2]:[border:1px_solid_#fecaca]! [&&]:[&.ch4]:[background:#e0f2fe] [&&]:[&.ch4]:[color:var(--color-blue-700)] [&&]:[&.ch4]:[border:1px_solid_#bae6fd]! [&&]:[&&]:[&.n2o]:[background:#f3e8ff] [&&]:[&&]:[&.n2o]:[color:#9333ea] [&&]:[&&]:[&.n2o]:[border:1px_solid_#e9d5ff]! [&&]:[&&]:[&&]:[&.gwp]:[background:#dcfce7] [&&]:[&&]:[&&]:[&.gwp]:[color:var(--color-green-700)] [&&]:[&&]:[&&]:[&.gwp]:[border:1px_solid_#bbf7d0]! ch4">CH₄</span> 1σ Uncertainty
                     </span>
                     <span className="unc-value text-[color:#0369a1]!">
                       ±{(Number(uncertainty.ch4) * 100).toFixed(1)}%
@@ -240,9 +240,9 @@ const CalculationDetails = ({ calculation, onClose }) => {
                   </div>
                 )}
                 {uncertainty.n2o != null && (
-                  <div className="[background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:12px_14px]! [display:flex]! [flex-direction:column] [gap:4px] [&_.unc-label]:[font-size:var(--text-sm)]! [&_.unc-label]:[font-weight:600]! [&_.unc-label]:[color:var(--color-ink-500)]! [&_.unc-label]:[display:flex]! [&_.unc-label]:[align-items:center]! [&_.unc-label]:[gap:6px]! [&&]:[&&]:[&_.unc-value]:[font-size:var(--text-md)]! [&&]:[&&]:[&_.unc-value]:[font-weight:700]! [&&]:[&&]:[&_.unc-value]:[font-family:ui-monospace,_monospace]!">
+                  <div className="[background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:12px_14px]! [display:flex]! [flex-direction:column] [gap:4px] [&_.unc-label]:[font-size:var(--text-sm)] [&_.unc-label]:[font-weight:600] [&_.unc-label]:[color:var(--color-ink-500)] [&_.unc-label]:[display:flex]! [&_.unc-label]:[align-items:center] [&_.unc-label]:[gap:6px] [&&]:[&&]:[&_.unc-value]:[font-size:var(--text-md)] [&&]:[&&]:[&_.unc-value]:[font-weight:700] [&&]:[&&]:[&_.unc-value]:[font-family:ui-monospace,_monospace]">
                     <span className="unc-label">
-                      <span className="[padding:3px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-xs)]! [font-weight:700]! [letter-spacing:0.03em]! [&.co2]:[background:#fee2e2]! [&.co2]:[color:var(--color-red-700)]! [&.co2]:[border:1px_solid_#fecaca]! [&&]:[&.ch4]:[background:#e0f2fe]! [&&]:[&.ch4]:[color:var(--color-blue-700)]! [&&]:[&.ch4]:[border:1px_solid_#bae6fd]! [&&]:[&&]:[&.n2o]:[background:#f3e8ff]! [&&]:[&&]:[&.n2o]:[color:#9333ea]! [&&]:[&&]:[&.n2o]:[border:1px_solid_#e9d5ff]! [&&]:[&&]:[&&]:[&.gwp]:[background:#dcfce7]! [&&]:[&&]:[&&]:[&.gwp]:[color:var(--color-green-700)]! [&&]:[&&]:[&&]:[&.gwp]:[border:1px_solid_#bbf7d0]! n2o">N₂O</span> 1σ Uncertainty
+                      <span className="[padding:3px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-xs)]! [font-weight:700]! [letter-spacing:0.03em] [&.co2]:[background:#fee2e2] [&.co2]:[color:var(--color-red-700)] [&.co2]:[border:1px_solid_#fecaca]! [&&]:[&.ch4]:[background:#e0f2fe] [&&]:[&.ch4]:[color:var(--color-blue-700)] [&&]:[&.ch4]:[border:1px_solid_#bae6fd]! [&&]:[&&]:[&.n2o]:[background:#f3e8ff] [&&]:[&&]:[&.n2o]:[color:#9333ea] [&&]:[&&]:[&.n2o]:[border:1px_solid_#e9d5ff]! [&&]:[&&]:[&&]:[&.gwp]:[background:#dcfce7] [&&]:[&&]:[&&]:[&.gwp]:[color:var(--color-green-700)] [&&]:[&&]:[&&]:[&.gwp]:[border:1px_solid_#bbf7d0]! n2o">N₂O</span> 1σ Uncertainty
                     </span>
                     <span className="unc-value text-[color:#9333ea]!">
                       ±{(Number(uncertainty.n2o) * 100).toFixed(1)}%
@@ -261,7 +261,7 @@ const CalculationDetails = ({ calculation, onClose }) => {
             <h4 className="[margin:0]! [font-size:var(--text-base)]! [font-weight:700]! [text-transform:uppercase]! [letter-spacing:0.05em] [color:var(--color-ink-600)]! [display:flex]! [align-items:center] [gap:8px] [&_svg]:[color:var(--color-green-700)]!">
               <CheckCircle2 size={16} /> Computed Greenhouse Gas Inventory
             </h4>
-            <div className="[display:grid]! [grid-template-columns:repeat(4,_1fr)] [gap:12px] [@media(max-width:640px)]:[grid-template-columns:repeat(2,_1fr)]!">
+            <div className="[display:grid]! [grid-template-columns:repeat(4,_1fr)]! [gap:12px] [@media(max-width:640px)]:[grid-template-columns:repeat(2,_1fr)]!">
               <div className="result-card">
                 <div className="result-label">CO₂ Mass</div>
                 <div className="result-value">
@@ -295,7 +295,7 @@ const CalculationDetails = ({ calculation, onClose }) => {
         </div>
 
         {/* Reference */}
-        <div className="calc-footer">
+        <div className="[padding:14px_24px]! [background:var(--color-ink-50)]! [border-top:1px_solid_var(--color-ink-200)]! [display:flex]! [align-items:center] [gap:10px] [font-size:var(--text-sm)]! [color:var(--color-ink-500)]! [flex-shrink:0] [&_svg]:[color:var(--color-green-700)]! [&_svg]:[flex-shrink:0]">
           <Info size={16} />
           <span>
           </span>

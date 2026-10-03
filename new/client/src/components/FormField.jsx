@@ -37,7 +37,7 @@ export const TextField = ({
         max={max}
         step={step}
       />
-      {error && <span className="error-text">{error}</span>}
+      {error && <span className="[font-size:var(--text-sm)]! [color:var(--color-red-700)]! [margin-top:4px]! [display:flex]! [align-items:center] [gap:4px] before:[content:'⚠'] before:[font-size:var(--text-base)]!">{error}</span>}
       {helperText && !error && (
         <span className="[font-size:var(--text-sm)]! [color:var(--text-secondary)]! [margin-top:4px]!">{helperText}</span>
       )}
@@ -79,7 +79,7 @@ export const SelectField = ({
           </option>
         ))}
       </NativeSelect>
-      {error && <span className="error-text">{error}</span>}
+      {error && <span className="[font-size:var(--text-sm)]! [color:var(--color-red-700)]! [margin-top:4px]! [display:flex]! [align-items:center] [gap:4px] before:[content:'⚠'] before:[font-size:var(--text-base)]!">{error}</span>}
       {helperText && !error && (
         <span className="[font-size:var(--text-sm)]! [color:var(--text-secondary)]! [margin-top:4px]!">{helperText}</span>
       )}
@@ -116,7 +116,7 @@ export const TextAreaField = ({
         required={required}
         rows={rows}
       />
-      {error && <span className="error-text">{error}</span>}
+      {error && <span className="[font-size:var(--text-sm)]! [color:var(--color-red-700)]! [margin-top:4px]! [display:flex]! [align-items:center] [gap:4px] before:[content:'⚠'] before:[font-size:var(--text-base)]!">{error}</span>}
       {helperText && !error && (
         <span className="[font-size:var(--text-sm)]! [color:var(--text-secondary)]! [margin-top:4px]!">{helperText}</span>
       )}
@@ -145,7 +145,7 @@ export const CheckboxField = ({
         />
         <span>{label}</span>
       </label>
-      {error && <span className="error-text">{error}</span>}
+      {error && <span className="[font-size:var(--text-sm)]! [color:var(--color-red-700)]! [margin-top:4px]! [display:flex]! [align-items:center] [gap:4px] before:[content:'⚠'] before:[font-size:var(--text-base)]!">{error}</span>}
       {helperText && !error && (
         <span className="[font-size:var(--text-sm)]! [color:var(--text-secondary)]! [margin-top:4px]!">{helperText}</span>
       )}
@@ -174,7 +174,7 @@ export const RadioGroupField = ({
         </label>
       )}
       <div
-        className={`[display:flex]! [gap:16px]! ${layout === "horizontal" ? "radio-horizontal" : "radio-vertical"}`}
+        className={`[display:flex]! [gap:16px] ${layout === "horizontal" ? "radio-horizontal" : "radio-vertical"}`}
       >
         {options.map((opt, idx) => (
           <label key={idx} className="[display:flex]! [align-items:center] [gap:8px] [cursor:pointer] [font-size:var(--text-base)]! [color:var(--text-primary)]!">
@@ -190,7 +190,7 @@ export const RadioGroupField = ({
           </label>
         ))}
       </div>
-      {error && <span className="error-text">{error}</span>}
+      {error && <span className="[font-size:var(--text-sm)]! [color:var(--color-red-700)]! [margin-top:4px]! [display:flex]! [align-items:center] [gap:4px] before:[content:'⚠'] before:[font-size:var(--text-base)]!">{error}</span>}
       {helperText && !error && (
         <span className="[font-size:var(--text-sm)]! [color:var(--text-secondary)]! [margin-top:4px]!">{helperText}</span>
       )}
@@ -228,7 +228,7 @@ export const DateField = ({
         min={min}
         max={max}
       />
-      {error && <span className="error-text">{error}</span>}
+      {error && <span className="[font-size:var(--text-sm)]! [color:var(--color-red-700)]! [margin-top:4px]! [display:flex]! [align-items:center] [gap:4px] before:[content:'⚠'] before:[font-size:var(--text-base)]!">{error}</span>}
       {helperText && !error && (
         <span className="[font-size:var(--text-sm)]! [color:var(--text-secondary)]! [margin-top:4px]!">{helperText}</span>
       )}

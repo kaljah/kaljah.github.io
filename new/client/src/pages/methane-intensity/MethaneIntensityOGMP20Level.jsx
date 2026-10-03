@@ -39,7 +39,7 @@ const MethaneIntensityOGMP20Level = ({ globalThreshold, ogmpCollapsed, ogmpSurve
           </div>
 
           <div
-            className={`[max-height:1500px]! [opacity:1]! [overflow:hidden]! [transition:max-height_0.4s_cubic-bezier(0.4,_0,_0.2,_1),_opacity_0.3s_ease,_margin-top_0.3s_ease]! [margin-top:16px]! [&.collapsed]:[max-height:0]! [&.collapsed]:[opacity:0]! [&.collapsed]:[margin-top:0]! [&.collapsed]:[pointer-events:none]! ${ogmpCollapsed ? "collapsed" : ""}`}
+            className={`[max-height:1500px]! [opacity:1] [overflow:hidden]! [transition:max-height_0.4s_cubic-bezier(0.4,_0,_0.2,_1),_opacity_0.3s_ease,_margin-top_0.3s_ease]! [margin-top:16px]! [&.collapsed]:[max-height:0]! [&.collapsed]:[opacity:0] [&.collapsed]:[margin-top:0]! [&.collapsed]:[pointer-events:none] ${ogmpCollapsed ? "collapsed" : ""}`}
           >
             {ogmpSurveys.length > 0 ? (
               <div className="table-responsive">

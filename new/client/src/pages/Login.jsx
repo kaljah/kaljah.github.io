@@ -64,7 +64,7 @@ const GhgCloud = () => {
 
   return (
     <div className="[position:absolute] [top:0] [left:0] [right:0] [bottom:0] [pointer-events:none]! [z-index:1] [overflow:hidden]!">
-      <div className="ghg-cloud ch4-cloud" ref={cloud2Ref}></div>
+      <div className="ghg-cloud [background:radial-gradient(_circle,_rgba(16,_185,_129,_0.5)_0%,_rgba(15,_23,_42,_0.2)_50%,_transparent_70%_)]! [width:900px]! [height:900px]!" ref={cloud2Ref}></div>
       <div className="ghg-cloud [background:radial-gradient(_circle,_rgba(255,_102,_0,_0.6)_0%,_rgba(100,_116,_139,_0.3)_50%,_transparent_70%_)]!" ref={cloud1Ref}></div>
       <div className="ghg-noise-overlay"></div>
     </div>
@@ -131,13 +131,13 @@ const Login = () => {
       <GhgCloud />
 
       <motion.div
-        className="login-container glass-panel"
+        className="[width:100%]! [max-width:440px]! [padding:48px]! [border-radius:var(--radius-lg)]! [position:relative] [z-index:10] glass-panel"
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
       >
         {/* Welcome Text */}
-        <div className="login-header">
+        <div className="[text-align:center]! [margin-bottom:32px]! [&_h2]:[font-size:var(--text-2xl)]! [&_h2]:[font-weight:800]! [&_h2]:[color:var(--text-main)]! [&_h2]:[margin-bottom:8px]! [&_h2]:[letter-spacing:-0.5px] [&&]:[&_p]:[color:var(--text-muted)]! [&&]:[&&]:[&_p]:[font-size:var(--text-md)]!">
           <img src={`${import.meta.env.BASE_URL}carbon_tech.svg`} alt="Carbon Tech" className="[display:block]! [width:48px]! [height:48px]! [margin:0_auto_12px]!" />
           <h2>Welcome Back</h2>
           <p>Sign in to your GHG Reporting Platform</p>
@@ -270,7 +270,7 @@ const Login = () => {
         </motion.form>
 
         {/* Footer / Compliance */}
-        <div className="login-footer">
+        <div className="[margin-top:40px]! [text-align:center]! [border-top:1px_solid_var(--border-light)]! [padding-top:24px]! [&_p]:[color:var(--text-muted)]! [&_p]:[font-size:var(--text-sm)]!">
           <div className="[display:flex]! [justify-content:center] [gap:12px] [margin-bottom:16px]!">
             <span className="badge">API Compliant</span>
             <span className="badge">ISO 14064 Ready</span>
@@ -292,7 +292,7 @@ const Login = () => {
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
               transition={{ duration: 0.2 }}
             >
-              <div className="forgot-modal-header">
+              <div className="[margin-bottom:20px]! [text-align:left]! [&_h3]:[font-size:var(--text-xl)]! [&_h3]:[font-weight:700]! [&_h3]:[color:var(--text-main)]! [&_h3]:[margin-bottom:6px]! [&&]:[&&]:[&_p]:[font-size:var(--text-base)]! [&&]:[&_p]:[color:var(--text-muted)]! [&_p]:[line-height:1.4]">
                 <h3>Reset Your Password</h3>
                 <p>
                   Enter your account email. A notification will be dispatched to your IT Administrator to reset your credentials.
@@ -300,7 +300,7 @@ const Login = () => {
               </div>
 
               {forgotMsg.text && (
-                <div className={`[padding:12px_16px]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [margin-bottom:18px]! [line-height:1.4]! [&.success]:[background:var(--color-green-50)]! [&.success]:[color:#065f46]! [&.success]:[border:1px_solid_#a7f3d0]! [&&]:[&.error]:[background:var(--color-red-50)]! [&&]:[&.error]:[color:#991b1b]! [&&]:[&.error]:[border:1px_solid_#fecaca]! ${forgotMsg.type}`}>
+                <div className={`forgot-status-msg ${forgotMsg.type}`}>
                   {forgotMsg.text}
                 </div>
               )}

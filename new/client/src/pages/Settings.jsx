@@ -292,7 +292,7 @@ const Settings = () => {
   return (
     <div className="[padding:32px]! [max-width:1600px]! [margin:0_auto]! [display:flex]! [flex-direction:column] [gap:24px] [animation:settingsFadeIn_0.35s_ease-out]! [font-family:inherit]! [color:var(--text-primary,_var(--color-ink-900))]!">
       {/* Header */}
-      <div className="settings-hero-card">
+      <div className="[background:var(--bg-card,_var(--color-white))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-lg)]! [box-shadow:var(--shadow-card,_0_4px_6px_-1px_rgba(0,_0,_0,_0.05))]! [padding:28px_32px_0_32px]! [position:relative] [overflow:hidden]! [display:flex]! [flex-direction:column] [gap:20px] before:[content:''] before:[position:absolute] before:[top:0] before:[left:0] before:[right:0] before:[height:4px]! before:[background:linear-gradient(90deg,_var(--color-brand-500)_0%,_var(--color-brand-400)_50%,_var(--color-green-500)_100%)]!">
         <div className="[display:flex]! [justify-content:space-between] [align-items:flex-start] [gap:24px] [flex-wrap:wrap]">
           <div className="[display:flex]! [flex-direction:column] [gap:6px] [max-width:850px]!">
             <div className="[display:inline-flex]! [align-items:center] [gap:6px] [background:rgba(255,_102,_0,_0.08)]! [color:var(--color-link)]! [font-size:var(--text-xs)]! [font-weight:700]! [letter-spacing:0.06em] [padding:4px_12px]! [border-radius:100px]! [border:1px_solid_rgba(255,_102,_0,_0.2)]! [width:fit-content]! [margin-bottom:2px]!">
@@ -308,7 +308,7 @@ const Settings = () => {
           </div>
           <div className="[display:flex]! [align-items:center] [gap:12px]">
             <button
-              className="[display:inline-flex]! [align-items:center] [gap:8px] [background:var(--primary-gradient)]! [color:var(--color-white)]! [font-weight:600]! [font-size:var(--text-base)]! [padding:10px_22px]! [border-radius:var(--radius-md)]! [border:none]! [cursor:pointer] [box-shadow:0_4px_12px_rgba(255,_102,_0,_0.25)]! [transition:all_0.2s_ease]! [white-space:nowrap] [&:hover:not(:disabled)]:[transform:translateY(-1px)]! [&:hover:not(:disabled)]:[box-shadow:0_6px_18px_rgba(255,_102,_0,_0.35)]! [&:hover:not(:disabled)]:[background:linear-gradient(135deg,_#ff751a_0%,_var(--color-brand-500)_100%)]! disabled:[opacity:0.6] disabled:[cursor:not-allowed] disabled:[transform:none]"
+              className="[display:inline-flex]! [align-items:center] [gap:8px] [background:var(--primary-gradient)]! [color:var(--color-white)]! [font-weight:600]! [font-size:var(--text-base)]! [padding:10px_22px]! [border-radius:var(--radius-md)]! [border:none]! [cursor:pointer] [box-shadow:0_4px_12px_rgba(255,_102,_0,_0.25)]! [transition:all_0.2s_ease]! [white-space:nowrap] [&:hover:not(:disabled)]:[transform:translateY(-1px)] [&:hover:not(:disabled)]:[box-shadow:0_6px_18px_rgba(255,_102,_0,_0.35)]! [&:hover:not(:disabled)]:[background:linear-gradient(135deg,_#ff751a_0%,_var(--color-brand-500)_100%)]! disabled:[opacity:0.6] disabled:[cursor:not-allowed] disabled:[transform:none]"
               onClick={handleSaveGlobal}
               disabled={saving || !isAdmin}
               title={!isAdmin ? "Administrator privileges required to modify settings" : "Save changes"}
@@ -334,41 +334,41 @@ const Settings = () => {
           <button
             role="tab"
             aria-selected={activeTab === "gwp"}
-            className={`settings-tab-btn [display:inline-flex]! [align-items:center]! [gap:8px]! [background:transparent]! [border:none]! [&&]:[border-bottom:2px_solid_transparent]! [color:var(--text-secondary,_var(--color-ink-500))]! [font-size:var(--text-md)]! [font-weight:600]! [padding:14px_16px]! [cursor:pointer]! [transition:all_0.2s_ease]! [white-space:nowrap]! [&&]:[border-radius:var(--radius-md)_var(--radius-md)_0_0]! hover:[color:var(--text-primary,_var(--color-ink-900))]! hover:[background:var(--bg-hover,_var(--color-ink-50))]! [&.active]:[color:var(--color-link)]! [&.active]:[border-bottom-color:var(--color-brand-500)]! [&.active]:[background:rgba(255,_102,_0,_0.04)]! ${activeTab === "gwp" ? "active" : ""}`}
+            className={`settings-tab-btn [display:inline-flex]! [align-items:center] [gap:8px] [background:transparent]! [border:none]! [&&]:[border-bottom:2px_solid_transparent]! [color:var(--text-secondary,_var(--color-ink-500))]! [font-size:var(--text-md)]! [font-weight:600]! [padding:14px_16px]! [cursor:pointer] [transition:all_0.2s_ease]! [white-space:nowrap] [&&]:[border-radius:var(--radius-md)_var(--radius-md)_0_0]! hover:[color:var(--text-primary,_var(--color-ink-900))]! hover:[background:var(--bg-hover,_var(--color-ink-50))]! [&.active]:[color:var(--color-link)]! [&.active]:[border-bottom-color:var(--color-brand-500)]! [&.active]:[background:rgba(255,_102,_0,_0.04)]! ${activeTab === "gwp" ? "active" : ""}`}
             onClick={() => setActiveTab("gwp")}
             id="tab-gwp"
           >
-            <Globe size={17} className="[flex-shrink:0]" />
+            <Globe size={17} className="tab-icon-svg" />
             <span>IPCC GWP Standards</span>
           </button>
           <button
             role="tab"
             aria-selected={activeTab === "ogmp"}
-            className={`settings-tab-btn [display:inline-flex]! [align-items:center]! [gap:8px]! [background:transparent]! [border:none]! [&&]:[border-bottom:2px_solid_transparent]! [color:var(--text-secondary,_var(--color-ink-500))]! [font-size:var(--text-md)]! [font-weight:600]! [padding:14px_16px]! [cursor:pointer]! [transition:all_0.2s_ease]! [white-space:nowrap]! [&&]:[border-radius:var(--radius-md)_var(--radius-md)_0_0]! hover:[color:var(--text-primary,_var(--color-ink-900))]! hover:[background:var(--bg-hover,_var(--color-ink-50))]! [&.active]:[color:var(--color-link)]! [&.active]:[border-bottom-color:var(--color-brand-500)]! [&.active]:[background:rgba(255,_102,_0,_0.04)]! ${activeTab === "ogmp" ? "active" : ""}`}
+            className={`settings-tab-btn [display:inline-flex]! [align-items:center] [gap:8px] [background:transparent]! [border:none]! [&&]:[border-bottom:2px_solid_transparent]! [color:var(--text-secondary,_var(--color-ink-500))]! [font-size:var(--text-md)]! [font-weight:600]! [padding:14px_16px]! [cursor:pointer] [transition:all_0.2s_ease]! [white-space:nowrap] [&&]:[border-radius:var(--radius-md)_var(--radius-md)_0_0]! hover:[color:var(--text-primary,_var(--color-ink-900))]! hover:[background:var(--bg-hover,_var(--color-ink-50))]! [&.active]:[color:var(--color-link)]! [&.active]:[border-bottom-color:var(--color-brand-500)]! [&.active]:[background:rgba(255,_102,_0,_0.04)]! ${activeTab === "ogmp" ? "active" : ""}`}
             onClick={() => setActiveTab("ogmp")}
             id="tab-ogmp"
           >
-            <Target size={17} className="[flex-shrink:0]" />
+            <Target size={17} className="tab-icon-svg" />
             <span>OGMP 2.0 Baseline & Thresholds</span>
           </button>
           <button
             role="tab"
             aria-selected={activeTab === "facilities"}
-            className={`settings-tab-btn [display:inline-flex]! [align-items:center]! [gap:8px]! [background:transparent]! [border:none]! [&&]:[border-bottom:2px_solid_transparent]! [color:var(--text-secondary,_var(--color-ink-500))]! [font-size:var(--text-md)]! [font-weight:600]! [padding:14px_16px]! [cursor:pointer]! [transition:all_0.2s_ease]! [white-space:nowrap]! [&&]:[border-radius:var(--radius-md)_var(--radius-md)_0_0]! hover:[color:var(--text-primary,_var(--color-ink-900))]! hover:[background:var(--bg-hover,_var(--color-ink-50))]! [&.active]:[color:var(--color-link)]! [&.active]:[border-bottom-color:var(--color-brand-500)]! [&.active]:[background:rgba(255,_102,_0,_0.04)]! ${activeTab === "facilities" ? "active" : ""}`}
+            className={`settings-tab-btn [display:inline-flex]! [align-items:center] [gap:8px] [background:transparent]! [border:none]! [&&]:[border-bottom:2px_solid_transparent]! [color:var(--text-secondary,_var(--color-ink-500))]! [font-size:var(--text-md)]! [font-weight:600]! [padding:14px_16px]! [cursor:pointer] [transition:all_0.2s_ease]! [white-space:nowrap] [&&]:[border-radius:var(--radius-md)_var(--radius-md)_0_0]! hover:[color:var(--text-primary,_var(--color-ink-900))]! hover:[background:var(--bg-hover,_var(--color-ink-50))]! [&.active]:[color:var(--color-link)]! [&.active]:[border-bottom-color:var(--color-brand-500)]! [&.active]:[background:rgba(255,_102,_0,_0.04)]! ${activeTab === "facilities" ? "active" : ""}`}
             onClick={() => setActiveTab("facilities")}
             id="tab-facilities"
           >
-            <Building2 size={17} className="[flex-shrink:0]" />
+            <Building2 size={17} className="tab-icon-svg" />
             <span>Facility Overrides ({facilities.length})</span>
           </button>
           <button
             role="tab"
             aria-selected={activeTab === "satellite"}
-            className={`settings-tab-btn [display:inline-flex]! [align-items:center]! [gap:8px]! [background:transparent]! [border:none]! [&&]:[border-bottom:2px_solid_transparent]! [color:var(--text-secondary,_var(--color-ink-500))]! [font-size:var(--text-md)]! [font-weight:600]! [padding:14px_16px]! [cursor:pointer]! [transition:all_0.2s_ease]! [white-space:nowrap]! [&&]:[border-radius:var(--radius-md)_var(--radius-md)_0_0]! hover:[color:var(--text-primary,_var(--color-ink-900))]! hover:[background:var(--bg-hover,_var(--color-ink-50))]! [&.active]:[color:var(--color-link)]! [&.active]:[border-bottom-color:var(--color-brand-500)]! [&.active]:[background:rgba(255,_102,_0,_0.04)]! ${activeTab === "satellite" ? "active" : ""}`}
+            className={`settings-tab-btn [display:inline-flex]! [align-items:center] [gap:8px] [background:transparent]! [border:none]! [&&]:[border-bottom:2px_solid_transparent]! [color:var(--text-secondary,_var(--color-ink-500))]! [font-size:var(--text-md)]! [font-weight:600]! [padding:14px_16px]! [cursor:pointer] [transition:all_0.2s_ease]! [white-space:nowrap] [&&]:[border-radius:var(--radius-md)_var(--radius-md)_0_0]! hover:[color:var(--text-primary,_var(--color-ink-900))]! hover:[background:var(--bg-hover,_var(--color-ink-50))]! [&.active]:[color:var(--color-link)]! [&.active]:[border-bottom-color:var(--color-brand-500)]! [&.active]:[background:rgba(255,_102,_0,_0.04)]! ${activeTab === "satellite" ? "active" : ""}`}
             onClick={() => setActiveTab("satellite")}
             id="tab-satellite"
           >
-            <Satellite size={17} className="[flex-shrink:0]" />
+            <Satellite size={17} className="tab-icon-svg" />
             <span>Copernicus Satellite (S5P)</span>
           </button>
         </div>

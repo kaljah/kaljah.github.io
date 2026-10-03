@@ -16,26 +16,4 @@
   line-height: 1.6;
 }
 
-.error-stack {
-  margin-top: 12px;
-  font-size: var(--text-base);
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.error-stack strong {
-  color: var(--color-red-700);
-}
-
-.error-stack pre {
-  background: rgba(0, 0, 0, 0.4);
-  padding: 12px;
-  border-radius: var(--radius-sm);
-  overflow-x: auto;
-  margin-top: 8px;
-  font-size: var(--text-sm);
-  line-height: 1.5;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-}
-
 /* Mobile Responsive */

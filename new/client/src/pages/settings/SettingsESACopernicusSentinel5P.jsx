@@ -5,7 +5,7 @@ import { AlertCircle, CheckCircle2, ExternalLink, HelpCircle, KeyRound, Radio, S
 // Extracted from Settings.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicusClientId, copernicusClientSecret, copernicusEnabled, copernicusPassword, copernicusQaThreshold, copernicusUsername, handleSaveGlobal, handleTestConnection, isAdmin, saving, setAuthMode, setCopernicusClientId, setCopernicusClientSecret, setCopernicusEnabled, setCopernicusPassword, setCopernicusQaThreshold, setCopernicusUsername, setShowGuide, showGuide, testingConnection }) => (
 <div className="[background:var(--bg-card,_var(--color-white))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-lg)]! [padding:32px]! [display:flex]! [flex-direction:column] [gap:28px] [box-shadow:var(--shadow-card,_0_4px_6px_-1px_rgba(0,_0,_0,_0.05))]!">
-          <div className="section-intro">
+          <div className="[display:flex]! [flex-direction:column] [gap:6px] [&_h2]:[font-size:var(--text-lg)]! [&_h2]:[font-weight:700]! [&_h2]:[color:var(--text-primary,_var(--color-ink-900))]! [&_h2]:[margin:0]! [&&]:[&&]:[&_p]:[font-size:var(--text-base)]! [&&]:[&_p]:[color:var(--text-secondary,_var(--color-ink-500))]! [&&]:[&_p]:[margin:0]! [&_p]:[line-height:1.5]">
             <div className="[display:flex]! [align-items:center] [gap:10px]">
               <Satellite
                 size={22}
@@ -135,14 +135,14 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
 
           {/* Credentials Form Section */}
           <div className="[background:var(--bg-card-secondary,_var(--color-ink-50))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-lg)]! [padding:24px]! [display:flex]! [flex-direction:column] [gap:18px]">
-            <div className="config-form-header">
+            <div className="[display:flex]! [align-items:center] [gap:10px] [color:var(--text-primary,_var(--color-ink-900))]! [margin-bottom:4px]! [&_h3]:[margin:0]! [&_h3]:[font-size:var(--text-md)]! [&_h3]:[font-weight:700]!">
               <KeyRound size={18} />
               <h3>Copernicus Data Space Ecosystem (CDSE) Credentials</h3>
             </div>
 
             <div className="[display:flex]! [gap:12px] [flex-wrap:wrap] [margin-bottom:10px]!">
               <label
-                className={`[display:flex]! [align-items:center]! [gap:8px]! [padding:8px_16px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--border-color,_var(--color-ink-300))]! [background:var(--bg-card,_var(--color-white))]! [cursor:pointer]! [font-size:var(--text-base)]! [font-weight:600]! [color:var(--text-secondary,_var(--color-ink-600))]! [transition:all_0.2s_ease]! [&.active]:[border-color:var(--color-sky-600)]! [&.active]:[background:rgba(2,_132,_199,_0.08)]! [&.active]:[color:var(--color-blue-700)]! ${authMode === "password" ? "active" : ""}`}
+                className={`[display:flex]! [align-items:center] [gap:8px] [padding:8px_16px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--border-color,_var(--color-ink-300))]! [background:var(--bg-card,_var(--color-white))]! [cursor:pointer] [font-size:var(--text-base)]! [font-weight:600]! [color:var(--text-secondary,_var(--color-ink-600))]! [transition:all_0.2s_ease]! [&.active]:[border-color:var(--color-sky-600)]! [&.active]:[background:rgba(2,_132,_199,_0.08)]! [&.active]:[color:var(--color-blue-700)]! ${authMode === "password" ? "active" : ""}`}
               >
                 <input
                   type="radio"
@@ -155,7 +155,7 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
                 <span>Copernicus Account (Email &amp; Password)</span>
               </label>
               <label
-                className={`[display:flex]! [align-items:center]! [gap:8px]! [padding:8px_16px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--border-color,_var(--color-ink-300))]! [background:var(--bg-card,_var(--color-white))]! [cursor:pointer]! [font-size:var(--text-base)]! [font-weight:600]! [color:var(--text-secondary,_var(--color-ink-600))]! [transition:all_0.2s_ease]! [&.active]:[border-color:var(--color-sky-600)]! [&.active]:[background:rgba(2,_132,_199,_0.08)]! [&.active]:[color:var(--color-blue-700)]! ${authMode === "oauth_client" ? "active" : ""}`}
+                className={`[display:flex]! [align-items:center] [gap:8px] [padding:8px_16px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--border-color,_var(--color-ink-300))]! [background:var(--bg-card,_var(--color-white))]! [cursor:pointer] [font-size:var(--text-base)]! [font-weight:600]! [color:var(--text-secondary,_var(--color-ink-600))]! [transition:all_0.2s_ease]! [&.active]:[border-color:var(--color-sky-600)]! [&.active]:[background:rgba(2,_132,_199,_0.08)]! [&.active]:[color:var(--color-blue-700)]! ${authMode === "oauth_client" ? "active" : ""}`}
               >
                 <input
                   type="radio"
@@ -170,7 +170,7 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
             </div>
 
             {authMode === "password" ? (
-              <div className="[display:grid]! [grid-template-columns:1fr_1fr] [gap:20px] [@media(max-width:768px)]:[grid-template-columns:1fr]!">
+              <div className="[display:grid]! [grid-template-columns:1fr_1fr]! [gap:20px] [@media(max-width:768px)]:[grid-template-columns:1fr]!">
                 <div className="form-group">
                   <label className="field-label">
                     Copernicus Email / Username
@@ -205,7 +205,7 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
                 </div>
               </div>
             ) : (
-              <div className="[display:grid]! [grid-template-columns:1fr_1fr] [gap:20px] [@media(max-width:768px)]:[grid-template-columns:1fr]!">
+              <div className="[display:grid]! [grid-template-columns:1fr_1fr]! [gap:20px] [@media(max-width:768px)]:[grid-template-columns:1fr]!">
                 <div className="form-group">
                   <label className="field-label">OAuth2 Client ID</label>
                   <input
@@ -234,7 +234,7 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
             )}
 
             {/* Quality Filtering and Enable Toggle */}
-            <div className="[display:grid]! [grid-template-columns:1fr_1fr] [gap:20px] [@media(max-width:768px)]:[grid-template-columns:1fr]! mt-[16px]!">
+            <div className="[display:grid]! [grid-template-columns:1fr_1fr]! [gap:20px] [@media(max-width:768px)]:[grid-template-columns:1fr]! mt-[16px]!">
               <div className="form-group">
                 <div
                   className="flex! justify-between! items-center! mb-[6px]!"
@@ -322,7 +322,7 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
 
               {connectionStatus && (
                 <div
-                  className={`[display:inline-flex]! [align-items:center]! [gap:8px]! [padding:8px_16px]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:600]! [&.success]:[background:rgba(16,_185,_129,_0.1)]! [&.success]:[color:var(--color-green-700)]! [&.success]:[border:1px_solid_rgba(16,_185,_129,_0.3)]! [&&]:[&.error]:[background:rgba(239,_68,_68,_0.1)]! [&&]:[&.error]:[color:var(--color-red-700)]! [&&]:[&.error]:[border:1px_solid_rgba(239,_68,_68,_0.3)]! ${connectionStatus.success ? "success" : "error"}`}
+                  className={`[display:inline-flex]! [align-items:center] [gap:8px] [padding:8px_16px]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:600]! [&.success]:[background:rgba(16,_185,_129,_0.1)] [&.success]:[color:var(--color-green-700)] [&.success]:[border:1px_solid_rgba(16,_185,_129,_0.3)]! [&&]:[&.error]:[background:rgba(239,_68,_68,_0.1)] [&&]:[&.error]:[color:var(--color-red-700)] [&&]:[&.error]:[border:1px_solid_rgba(239,_68,_68,_0.3)]! ${connectionStatus.success ? "success" : "error"}`}
                 >
                   {connectionStatus.success ? (
                     <CheckCircle2 size={16} />

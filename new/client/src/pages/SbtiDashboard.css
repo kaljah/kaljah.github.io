@@ -80,34 +80,6 @@
 
 /* Target Settings Drawer / Panel */
 
-.sbti-config-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.sbti-config-header h3 {
-  font-size: var(--text-lg);
-  font-weight: 700;
-  color: var(--text-main, var(--color-ink-900));
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.sbti-form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.sbti-form-group label {
-  font-size: var(--text-base);
-  font-weight: 600;
-  color: var(--text-secondary, var(--color-ink-500));
-}
-
 /* Charts Grid */
 
 /* Trajectory Milestones Table */
@@ -145,4 +117,33 @@
 
 .sbti-table tr:hover td {
   background: var(--hover-bg, rgba(255, 247, 237, 0.5));
+}
+
+.badge-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.badge-status.achieved {
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--color-green-700);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.badge-status.off-track {
+  background: rgba(239, 68, 68, 0.12);
+  color: var(--color-red-700);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.badge-status.projected {
+  background: rgba(59, 130, 246, 0.12);
+  color: var(--color-blue-600);
+  border: 1px solid rgba(59, 130, 246, 0.3);
 }

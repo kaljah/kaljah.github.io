@@ -1,15 +1,6 @@
 /* ─── Overlay & Modal Shell ─────────────────────────────────────────────────── */
 
 /* ─── Region Access Control Banner ──────────────────────────────────────────── */
-.s1w-access-banner {
-  padding: 14px 16px;
-  background: linear-gradient(135deg, var(--color-brand-50) 0%, #fff1e6 100%);
-  border: 1.5px solid #fed7aa;
-  border-radius: var(--radius-md);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
 
 .s1w-access-banner--compact {
   flex-direction: row;
@@ -94,10 +85,6 @@
   display: flex;
   flex-direction: column;
   gap: 18px;
-}
-
-.s1w-body--progress {
-  padding: 0;
 }
 
 /* ─── Section Title ─────────────────────────────────────────────────────────── */
@@ -239,14 +226,6 @@
 }
 .s1w-dropzone-icon svg { width: 26px; height: 26px; }
 
-.s1w-dropzone-text {
-  font-size: var(--text-base);
-  font-weight: 600;
-  color: var(--color-ink-700);
-  margin: 0;
-}
-.s1w-dropzone-text span { color: var(--color-link); text-decoration: underline; }
-
 .s1w-inline-error {
   display: flex;
   align-items: center;
@@ -263,22 +242,6 @@
 
 /* ─── Template section ──────────────────────────────────────────────────────── */
 
-.s1w-template-btn {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 18px;
-  border: 1.5px solid var(--color-ink-200);
-  border-radius: var(--radius-md);
-  background: var(--color-ink-50);
-  cursor: pointer;
-  transition: all 0.18s;
-  flex: 1;
-  min-width: 200px;
-  text-align: left;
-}
-.s1w-template-btn:hover { border-color: var(--color-brand-500); background: #fff7f0; }
-
 .s1w-template-btn-icon {
   width: 36px;
   height: 36px;
@@ -291,10 +254,6 @@
   flex-shrink: 0;
 }
 .s1w-template-btn-icon svg { width: 18px; height: 18px; }
-.s1w-template-btn:hover .s1w-template-btn-icon { background: var(--color-primary); color: var(--color-white); }
-
-.s1w-template-btn strong { display: block; font-size: var(--text-base); color: var(--color-ink-900); margin-bottom: 2px; }
-.s1w-template-btn small { display: block; font-size: var(--text-sm); color: var(--color-ink-500); }
 
 /* ─── Config Summary Pills ──────────────────────────────────────────────────── */
 .s1w-config-pill--blue    { background: #dbeafe; color: var(--color-blue-700); }
@@ -349,7 +308,21 @@
 .s1w-search-clear svg { width: 14px; height: 14px; }
 
 /* ─── Factor Row ────────────────────────────────────────────────────────────── */
-.s1w-factor-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.s1w-factor-select {
+  flex: 1;
+  min-width: 200px;
+  padding: 8px 12px;
+  border: 1.5px solid var(--color-ink-200);
+  border-radius: var(--radius-md);
+  background: var(--color-ink-50);
+  font-size: var(--text-sm);
+  color: var(--color-ink-900);
+  outline: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color 0.15s;
+}
+.s1w-factor-select:focus { border-color: var(--color-brand-500); }
 
 /* ─── Field Groups ──────────────────────────────────────────────────────────── */
 
@@ -380,19 +353,23 @@
 /* Group table column headers */
 
 /* ─── Mapping Row ───────────────────────────────────────────────────────────── */
-.s1w-map-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr 36px;
-  align-items: center;
-  padding: 10px 16px;
-  border-bottom: 1px solid var(--color-ink-100);
-  transition: background 0.12s;
-  gap: 12px;
-}
-.s1w-map-row:last-child { border-bottom: none; }
-.s1w-map-row:hover { background: #fafaf9; }
 .s1w-map-row--missing { background: #fff9f5; }
 .s1w-map-row--mapped { background: #f0fdf4; }
+
+.s1w-map-select {
+  width: 100%;
+  padding: 7px 10px;
+  border: 1.5px solid var(--color-ink-200);
+  border-radius: var(--radius-sm);
+  background: var(--color-white);
+  font-size: var(--text-sm);
+  color: var(--color-ink-900);
+  outline: none;
+  transition: border-color 0.15s;
+  font-family: inherit;
+}
+.s1w-map-select:focus { border-color: var(--color-brand-500); box-shadow: 0 0 0 2px rgba(255,102,0,0.08); }
+.s1w-map-select.matched { border-color: var(--color-green-500); background: #f0fdf4; }
 .s1w-status-ok {
   width: 22px; height: 22px; border-radius: 50%;
   background: var(--color-green-700); color: var(--color-white);
@@ -460,6 +437,3 @@
 .s1w-body::-webkit-scrollbar-thumb:hover { background: var(--color-brand-500); }
 
 /* ─── Responsive ────────────────────────────────────────────────────────────── */
-@media (max-width: 600px) {
-  .s1w-map-row { grid-template-columns: 1fr; }
-}

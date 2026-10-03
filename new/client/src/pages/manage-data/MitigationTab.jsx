@@ -7,7 +7,7 @@ import PaginationControls from './PaginationControls';
 
 // Extracted from ManageData.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const MitigationTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, facilities, filteredMitigations, getAvailableActivities, getAvailableDivisions, handleDeleteMitigation, handleSaveMitigation, isPrivileged, mitigationForm, mitigations, setCurrentPage, setImportModal, setMitigationForm }) => (
-<div className="manage-card glass-panel">
+<div className="[border-radius:var(--radius-lg)]! [padding:32px]! [animation:fadeIn_0.3s_ease-out]! [@media(max-width:768px)]:[padding:18px_14px]! [@media(max-width:768px)]:[border-radius:var(--radius-lg)]! glass-panel">
                                 <div className="flex! justify-between! items-start! mb-[32px]!">
                                     <div>
                                         <h2 className="mb-[8px]! font-bold!">Mitigation Projects</h2>

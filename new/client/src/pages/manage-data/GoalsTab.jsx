@@ -5,7 +5,7 @@ import { Calendar, Check, CheckCircle, History, Plus, Target } from 'lucide-reac
 
 // Extracted from ManageData.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYears, filteredGoals, goalForm, goals, handleDeleteBaseYearRecalc, handleDeleteGoal, handleEditGoal, handleSaveBaseYear, handleSaveGoal, handleSaveSbti, hasSbti, sbtiConfig, setBaseYearForm, setEditingGoalYear, setGoalForm, setSbtiConfig }) => (
-<div className="manage-card glass-panel">
+<div className="[border-radius:var(--radius-lg)]! [padding:32px]! [animation:fadeIn_0.3s_ease-out]! [@media(max-width:768px)]:[padding:18px_14px]! [@media(max-width:768px)]:[border-radius:var(--radius-lg)]! glass-panel">
                                 {/* Active Baseline Status Banner */}
                                 <div className="[background:linear-gradient(_135deg,_rgba(255,_102,_0,_0.06),_rgba(255,_153,_51,_0.02)_)]! [border:1px_solid_rgba(255,_102,_0,_0.2)]! [&&]:[border-radius:var(--radius-lg)]! [padding:20px]! [margin-bottom:24px]! [display:flex]! [justify-content:space-between] [align-items:center] [flex-wrap:wrap] [gap:16px]">
                                     <div>

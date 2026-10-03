@@ -102,25 +102,6 @@
   margin: 0;
 }
 
-.preview-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: var(--text-sm);
-}
-
-.preview-table th {
-  background: #f3f4f6;
-  padding: 8px;
-  text-align: left;
-  position: sticky;
-  top: 0;
-}
-
-.preview-table td {
-  padding: 8px;
-  border-top: 1px solid rgba(0, 0, 0, 0.05);
-}
-
 .import-actions {
   display: flex;
   justify-content: flex-end;

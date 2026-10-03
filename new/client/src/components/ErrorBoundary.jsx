@@ -54,9 +54,9 @@ class ErrorBoundary extends React.Component {
 
             {Boolean(import.meta.env?.DEV) &&
               this.state.error && (
-                <details className="[background:rgba(0,_0,_0,_0.3)]! [border:1px_solid_rgba(255,_255,_255,_0.1)]! [&&]:[border-radius:var(--radius-md)]! [padding:16px]! [margin-bottom:24px]! [text-align:left]! [&_summary]:[cursor:pointer]! [&_summary]:[font-weight:600]! [&_summary]:[color:var(--color-amber-700)]! [&_summary]:[margin-bottom:12px]! [&_summary]:[user-select:none]! [&&]:[&_summary:hover]:[color:#fbbf24]!">
+                <details className="[background:rgba(0,_0,_0,_0.3)]! [border:1px_solid_rgba(255,_255,_255,_0.1)]! [&&]:[border-radius:var(--radius-md)]! [padding:16px]! [margin-bottom:24px]! [text-align:left]! [&_summary]:[cursor:pointer] [&_summary]:[font-weight:600]! [&_summary]:[color:var(--color-amber-700)]! [&_summary]:[margin-bottom:12px]! [&_summary]:[user-select:none] [&&]:[&_summary:hover]:[color:#fbbf24]!">
                   <summary>Error Details (Development Only)</summary>
-                  <div className="error-stack">
+                  <div className="[margin-top:12px]! [font-size:var(--text-base)]! [color:rgba(255,_255,_255,_0.7)]! [&_strong]:[color:var(--color-red-700)]! [&_pre]:[background:rgba(0,_0,_0,_0.4)]! [&_pre]:[padding:12px]! [&_pre]:[border-radius:var(--radius-sm)]! [&_pre]:[overflow-x:auto]! [&_pre]:[margin-top:8px]! [&_pre]:[font-size:var(--text-sm)]! [&_pre]:[line-height:1.5] [&_pre]:[white-space:pre-wrap] [&_pre]:[word-wrap:break-word]">
                     <p>
                       <strong>Error:</strong> {this.state.error.toString()}
                     </p>
@@ -68,7 +68,7 @@ class ErrorBoundary extends React.Component {
               )}
 
             <div className="[display:flex]! [gap:12px] [justify-content:center] [margin-bottom:24px]! [@media(max-width:768px)]:[flex-direction:column]">
-              <button className="[padding:12px_24px]! [border:none]! [&&]:[border-radius:var(--radius-md)]! [font-size:var(--text-md)]! [font-weight:600]! [cursor:pointer]! [transition:all_0.2s_ease]! [display:flex]! [align-items:center]! [gap:8px]! [&.primary]:[background:var(--color-green-700)]! [&.primary]:[color:white]! [&&]:[&.primary:hover]:[background:var(--color-green-600)]! [&.primary:hover]:[transform:translateY(-2px)]! [&.primary:hover]:[box-shadow:0_4px_12px_rgba(16,_185,_129,_0.3)]! [&&]:[&&]:[&.secondary]:[background:rgba(255,_255,_255,_0.1)]! [&&]:[&.secondary]:[color:var(--text-primary)]! [&.secondary]:[border:1px_solid_rgba(255,_255,_255,_0.2)]! [&&]:[&&]:[&&]:[&.secondary:hover]:[background:rgba(255,_255,_255,_0.15)]! [@media(max-width:768px)]:[width:100%]! [@media(max-width:768px)]:[justify-content:center]! primary" onClick={this.handleReload}>
+              <button className="[padding:12px_24px]! [border:none]! [&&]:[border-radius:var(--radius-md)]! [font-size:var(--text-md)]! [font-weight:600]! [cursor:pointer] [transition:all_0.2s_ease]! [display:flex]! [align-items:center] [gap:8px] [&.primary]:[background:var(--color-green-700)] [&.primary]:[color:white] [&&]:[&.primary:hover]:[background:var(--color-green-600)] [&.primary:hover]:[transform:translateY(-2px)] [&.primary:hover]:[box-shadow:0_4px_12px_rgba(16,_185,_129,_0.3)] [&&]:[&&]:[&.secondary]:[background:rgba(255,_255,_255,_0.1)] [&&]:[&.secondary]:[color:var(--text-primary)] [&.secondary]:[border:1px_solid_rgba(255,_255,_255,_0.2)]! [&&]:[&&]:[&&]:[&.secondary:hover]:[background:rgba(255,_255,_255,_0.15)] [@media(max-width:768px)]:[width:100%]! [@media(max-width:768px)]:[justify-content:center] primary" onClick={this.handleReload}>
                 <svg
                   width="16"
                   height="16"
@@ -82,7 +82,7 @@ class ErrorBoundary extends React.Component {
                 Reload Page
               </button>
               <button
-                className="[padding:12px_24px]! [border:none]! [&&]:[border-radius:var(--radius-md)]! [font-size:var(--text-md)]! [font-weight:600]! [cursor:pointer]! [transition:all_0.2s_ease]! [display:flex]! [align-items:center]! [gap:8px]! [&.primary]:[background:var(--color-green-700)]! [&.primary]:[color:white]! [&&]:[&.primary:hover]:[background:var(--color-green-600)]! [&.primary:hover]:[transform:translateY(-2px)]! [&.primary:hover]:[box-shadow:0_4px_12px_rgba(16,_185,_129,_0.3)]! [&&]:[&&]:[&.secondary]:[background:rgba(255,_255,_255,_0.1)]! [&&]:[&.secondary]:[color:var(--text-primary)]! [&.secondary]:[border:1px_solid_rgba(255,_255,_255,_0.2)]! [&&]:[&&]:[&&]:[&.secondary:hover]:[background:rgba(255,_255,_255,_0.15)]! [@media(max-width:768px)]:[width:100%]! [@media(max-width:768px)]:[justify-content:center]! secondary"
+                className="[padding:12px_24px]! [border:none]! [&&]:[border-radius:var(--radius-md)]! [font-size:var(--text-md)]! [font-weight:600]! [cursor:pointer] [transition:all_0.2s_ease]! [display:flex]! [align-items:center] [gap:8px] [&.primary]:[background:var(--color-green-700)] [&.primary]:[color:white] [&&]:[&.primary:hover]:[background:var(--color-green-600)] [&.primary:hover]:[transform:translateY(-2px)] [&.primary:hover]:[box-shadow:0_4px_12px_rgba(16,_185,_129,_0.3)] [&&]:[&&]:[&.secondary]:[background:rgba(255,_255,_255,_0.1)] [&&]:[&.secondary]:[color:var(--text-primary)] [&.secondary]:[border:1px_solid_rgba(255,_255,_255,_0.2)]! [&&]:[&&]:[&&]:[&.secondary:hover]:[background:rgba(255,_255,_255,_0.15)] [@media(max-width:768px)]:[width:100%]! [@media(max-width:768px)]:[justify-content:center] secondary"
                 onClick={this.handleReset}
               >
                 Try Again

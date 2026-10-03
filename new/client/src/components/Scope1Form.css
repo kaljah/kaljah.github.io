@@ -200,6 +200,30 @@
   color: var(--color-brand-800);
 }
 
+.preset-citation-badge {
+  padding: 1px 4px;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.preset-citation-badge.legal {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.preset-citation-badge.standard {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.preset-citation-badge.api {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
 
 /* BUG-108: reflow at phone width — grids collapse to one column, tier buttons wrap, and inline
    multi-column grids inside the form stack instead of being clipped */

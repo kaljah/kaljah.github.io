@@ -289,7 +289,7 @@ export default function QADashboard() {
     if (!data) {
         return (
             <div className="[padding:24px_32px_48px]! [max-width:1600px]! [margin:0_auto]! [display:flex]! [flex-direction:column] [gap:24px] [color:var(--text-primary,_var(--color-ink-900))]! [font-family:inherit]! [animation:qaFadeIn_0.3s_ease-out]!">
-                <div className="qa-hero-card">
+                <div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.9))]! [backdrop-filter:blur(12px)] [-webkit-backdrop-filter:blur(12px)]! [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))]! [&&]:[border-radius:var(--radius-lg)]! [padding:28px_32px]! [position:relative] [overflow:hidden]! [box-shadow:var(--shadow-card,_0_4px_20px_-2px_rgba(15,_23,_42,_0.05))]! [display:flex]! [flex-direction:column] [gap:20px] before:[content:''] before:[position:absolute] before:[top:0] before:[left:0] before:[right:0] before:[height:4px]! before:[background:linear-gradient(90deg,_var(--accent-color,_var(--color-brand-500))_0%,_var(--color-brand-400)_40%,_var(--color-green-500)_100%)]!">
                     <h2 className="qa-title">QA/QC & Diagnostics</h2>
                     <p className="[font-size:var(--text-md)]! [color:var(--text-secondary,_var(--color-ink-500))]! [margin:0]! [line-height:1.5]">No data available for the current selection.</p>
                 </div>
@@ -329,13 +329,13 @@ export default function QADashboard() {
         const hasSamples = item.sample_records && item.sample_records.length > 0;
 
         return (
-            <div key={`${type}-${item.id}`} className={`[display:flex]! [flex-direction:column]! [align-items:stretch]! [padding:16px_20px]! [border-radius:var(--radius-md)]! [border-left:4px_solid]! [gap:10px]! [background:var(--color-white)]! [box-shadow:var(--shadow-xs)]! [&.critical]:[border-left-color:var(--color-red-500)]! [&.critical]:[background:rgba(254,_242,_242,_0.4)]! [&.critical]:[border-top:1px_solid_rgba(239,_68,_68,_0.15)]! [&.critical]:[border-right:1px_solid_rgba(239,_68,_68,_0.15)]! [&.critical]:[border-bottom:1px_solid_rgba(239,_68,_68,_0.15)]! [&&]:[&&]:[&&]:[&&]:[&.warning]:[border-left-color:var(--color-amber-500)]! [&&]:[&.warning]:[background:rgba(255,_251,_235,_0.4)]! [&&]:[&&]:[&&]:[&&]:[&.warning]:[border-top:1px_solid_rgba(245,_158,_11,_0.15)]! [&&]:[&&]:[&&]:[&&]:[&.warning]:[border-right:1px_solid_rgba(245,_158,_11,_0.15)]! [&&]:[&&]:[&&]:[&&]:[&.warning]:[border-bottom:1px_solid_rgba(245,_158,_11,_0.15)]! [&&]:[&&]:[&&]:[&&]:[&&]:[&&]:[&&]:[&&]:[&.info]:[border-left-color:var(--color-blue-500)]! [&&]:[&&]:[&.info]:[background:rgba(239,_246,_255,_0.4)]! [&&]:[&&]:[&&]:[&&]:[&&]:[&&]:[&&]:[&&]:[&.info]:[border-top:1px_solid_rgba(59,_130,_246,_0.15)]! [&&]:[&&]:[&&]:[&&]:[&&]:[&&]:[&&]:[&&]:[&.info]:[border-right:1px_solid_rgba(59,_130,_246,_0.15)]! [&&]:[&&]:[&&]:[&&]:[&&]:[&&]:[&&]:[&&]:[&.info]:[border-bottom:1px_solid_rgba(59,_130,_246,_0.15)]! ${type}`}>
+            <div key={`${type}-${item.id}`} className={`qa-issue-item ${type}`}>
                 <div className="[display:flex]! [justify-content:space-between] [align-items:center] [gap:16px] [width:100%]!">
                     <div className="[display:flex]! [flex-direction:column] [gap:4px]">
                         <div className="[display:flex]! [align-items:center] [gap:10px]">
                             {icon}
                             <span className="[font-size:var(--text-md)]! [font-weight:600]! [color:var(--color-ink-900)]!">{item.title}</span>
-                            <span className={`[padding:2px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-xs)]! [font-weight:700]! [text-transform:uppercase]! [&.high]:[background:#fee2e2]! [&.high]:[color:var(--color-red-700)]! [&&]:[&.medium]:[background:#fef3c7]! [&&]:[&.medium]:[color:var(--color-amber-700)]! [&&]:[&&]:[&.low]:[background:#dbeafe]! [&&]:[&&]:[&.low]:[color:var(--color-blue-600)]! ${item.impact ? item.impact.toLowerCase() : 'low'}`}>
+                            <span className={`qa-issue-impact-badge ${item.impact ? item.impact.toLowerCase() : 'low'}`}>
                                 {item.impact ? `${item.impact} Impact` : 'Optimization'}
                             </span>
                             {item.affected_count > 0 && (
@@ -442,7 +442,7 @@ export default function QADashboard() {
                 style={{ opacity: isUpdating ? 0.75 : 1, transition: 'opacity 0.2s ease' }}
             >
                 {/* ── Executive Assurance Header ─────────────────────────── */}
-                <div className="qa-hero-card">
+                <div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.9))]! [backdrop-filter:blur(12px)] [-webkit-backdrop-filter:blur(12px)]! [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))]! [&&]:[border-radius:var(--radius-lg)]! [padding:28px_32px]! [position:relative] [overflow:hidden]! [box-shadow:var(--shadow-card,_0_4px_20px_-2px_rgba(15,_23,_42,_0.05))]! [display:flex]! [flex-direction:column] [gap:20px] before:[content:''] before:[position:absolute] before:[top:0] before:[left:0] before:[right:0] before:[height:4px]! before:[background:linear-gradient(90deg,_var(--accent-color,_var(--color-brand-500))_0%,_var(--color-brand-400)_40%,_var(--color-green-500)_100%)]!">
                     <div className="[display:flex]! [justify-content:space-between] [align-items:flex-start] [gap:20px] [flex-wrap:wrap]">
                         <div className="[display:flex]! [flex-direction:column] [gap:6px]">
                             <div className="[display:inline-flex]! [align-items:center] [gap:6px] [background:rgba(255,_102,_0,_0.08)]! [color:var(--color-link)]! [font-size:var(--text-xs)]! [font-weight:700]! [letter-spacing:0.06em] [padding:4px_12px]! [border-radius:100px]! [border:1px_solid_rgba(255,_102,_0,_0.2)]! [width:fit-content]!">
@@ -458,7 +458,7 @@ export default function QADashboard() {
                         <div className="[display:flex]! [align-items:center] [gap:10px] [flex-wrap:wrap]">
                             {/* Scope Selector */}
                             <NativeSelect
-                                className="[padding:8px_14px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [background:var(--color-white)]! [color:var(--text-primary,_var(--color-ink-900))]! [font-size:var(--text-base)]! [font-weight:500]! [outline:none]! [cursor:pointer] [transition:border-color_0.2s_ease,_box-shadow_0.2s_ease]! [height:38px]! focus:[border-color:var(--accent-color,_var(--color-brand-500))]! focus:[box-shadow:0_0_0_3px_rgba(255,_102,_0,_0.12)]!"
+                                className="qa-filter-select"
                                 value={scopeFilter}
                                 onChange={e => { setScopeFilter(e.target.value); setOffset(0); }}
                                 title="Filter by GHG Scope"
@@ -471,7 +471,7 @@ export default function QADashboard() {
 
                             {/* Year Selector */}
                             <NativeSelect
-                                className="[padding:8px_14px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [background:var(--color-white)]! [color:var(--text-primary,_var(--color-ink-900))]! [font-size:var(--text-base)]! [font-weight:500]! [outline:none]! [cursor:pointer] [transition:border-color_0.2s_ease,_box-shadow_0.2s_ease]! [height:38px]! focus:[border-color:var(--accent-color,_var(--color-brand-500))]! focus:[box-shadow:0_0_0_3px_rgba(255,_102,_0,_0.12)]!"
+                                className="qa-filter-select"
                                 value={yearFilter}
                                 onChange={e => { setYearFilter(e.target.value); setOffset(0); }}
                                 title="Filter by Reporting Year"
@@ -489,13 +489,13 @@ export default function QADashboard() {
                                 disabled={runningDiagnostics || isUpdating}
                                 title="Re-run data health checks and anomaly diagnostics"
                             >
-                                <RefreshCw size={14} className={runningDiagnostics || isUpdating ? '[animation:spin_0.8s_linear_infinite]!' : ''} />
+                                <RefreshCw size={14} className={runningDiagnostics || isUpdating ? 'spin-icon' : ''} />
                                 {runningDiagnostics ? 'Scanning…' : 'Run Diagnostics'}
                             </button>
 
                             {/* Export CSV Report */}
                             <button
-                                className="qa-btn-action [background:var(--primary-gradient)]! [color:var(--color-white)]! [box-shadow:0_2px_8px_rgba(255,_102,_0,_0.25)]! [&:hover:not(:disabled)]:[transform:translateY(-1px)]! [&:hover:not(:disabled)]:[box-shadow:0_4px_14px_rgba(255,_102,_0,_0.35)]!"
+                                className="qa-btn-action [background:var(--primary-gradient)]! [color:var(--color-white)]! [box-shadow:0_2px_8px_rgba(255,_102,_0,_0.25)]! [&:hover:not(:disabled)]:[transform:translateY(-1px)] [&:hover:not(:disabled)]:[box-shadow:0_4px_14px_rgba(255,_102,_0,_0.35)]!"
                                 onClick={handleExport}
                                 disabled={exporting}
                                 title="Export complete QA/QC compliance report as CSV"
@@ -508,7 +508,7 @@ export default function QADashboard() {
                 </div>
 
                 {/* ── Executive KPI Grid (4 Cards) ───────────────────────── */}
-                <div className="[display:grid]! [grid-template-columns:repeat(4,_1fr)] [gap:16px] [@media(max-width:1200px)]:[grid-template-columns:repeat(2,_1fr)]! [@media(max-width:640px)]:[grid-template-columns:1fr]!">
+                <div className="[display:grid]! [grid-template-columns:repeat(4,_1fr)]! [gap:16px] [@media(max-width:1200px)]:[grid-template-columns:repeat(2,_1fr)]! [@media(max-width:640px)]:[grid-template-columns:1fr]!">
                     {/* Card 1: Health & Completeness */}
                     <div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.9))]! [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))]! [&&]:[border-radius:var(--radius-lg)]! [padding:20px]! [display:flex]! [flex-direction:column] [justify-content:space-between] [gap:12px] [box-shadow:var(--shadow-card,_0_4px_16px_-2px_rgba(15,_23,_42,_0.04))]! [transition:transform_0.2s_ease,_box-shadow_0.2s_ease]! hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card)]!">
                         <div className="[display:flex]! [justify-content:space-between] [align-items:center]">
@@ -599,7 +599,7 @@ export default function QADashboard() {
                     <button
                         role="tab"
                         aria-selected={activeTab === 'queue'}
-                        className={`qa-tab-btn [display:inline-flex]! [align-items:center]! [gap:8px]! [padding:12px_18px]! [background:transparent]! [border:none]! [&&]:[border-bottom:3px_solid_transparent]! [margin-bottom:-2px]! [font-size:var(--text-md)]! [font-weight:600]! [color:var(--text-secondary,_var(--color-ink-500))]! [cursor:pointer]! [transition:all_0.2s_ease]! [&&]:[border-radius:var(--radius-md)_var(--radius-md)_0_0]! hover:[color:var(--text-primary,_var(--color-ink-900))]! hover:[background:rgba(248,_250,_252,_0.7)]! [&.active]:[color:var(--color-link)]! [&.active]:[border-bottom-color:var(--accent-color,_var(--color-brand-500))]! [&.active]:[background:rgba(255,_102,_0,_0.04)]! [&&]:[&.active_.qa-tab-count-pill]:[background:rgba(255,_102,_0,_0.15)]! [&&]:[&.active_.qa-tab-count-pill]:[color:var(--color-link)]! ${activeTab === 'queue' ? 'active' : ''}`}
+                        className={`qa-tab-btn [display:inline-flex]! [align-items:center] [gap:8px] [padding:12px_18px]! [background:transparent]! [border:none]! [&&]:[border-bottom:3px_solid_transparent]! [margin-bottom:-2px]! [font-size:var(--text-md)]! [font-weight:600]! [color:var(--text-secondary,_var(--color-ink-500))]! [cursor:pointer] [transition:all_0.2s_ease]! [&&]:[border-radius:var(--radius-md)_var(--radius-md)_0_0]! hover:[color:var(--text-primary,_var(--color-ink-900))]! hover:[background:rgba(248,_250,_252,_0.7)]! [&.active]:[color:var(--color-link)]! [&.active]:[border-bottom-color:var(--accent-color,_var(--color-brand-500))]! [&.active]:[background:rgba(255,_102,_0,_0.04)]! [&&]:[&.active_.qa-tab-count-pill]:[background:rgba(255,_102,_0,_0.15)]! [&&]:[&.active_.qa-tab-count-pill]:[color:var(--color-link)]! ${activeTab === 'queue' ? 'active' : ''}`}
                         onClick={() => setActiveTab('queue')}
                     >
                         <AlertTriangle size={15} />
@@ -610,7 +610,7 @@ export default function QADashboard() {
                     <button
                         role="tab"
                         aria-selected={activeTab === 'diagnostics'}
-                        className={`qa-tab-btn [display:inline-flex]! [align-items:center]! [gap:8px]! [padding:12px_18px]! [background:transparent]! [border:none]! [&&]:[border-bottom:3px_solid_transparent]! [margin-bottom:-2px]! [font-size:var(--text-md)]! [font-weight:600]! [color:var(--text-secondary,_var(--color-ink-500))]! [cursor:pointer]! [transition:all_0.2s_ease]! [&&]:[border-radius:var(--radius-md)_var(--radius-md)_0_0]! hover:[color:var(--text-primary,_var(--color-ink-900))]! hover:[background:rgba(248,_250,_252,_0.7)]! [&.active]:[color:var(--color-link)]! [&.active]:[border-bottom-color:var(--accent-color,_var(--color-brand-500))]! [&.active]:[background:rgba(255,_102,_0,_0.04)]! [&&]:[&.active_.qa-tab-count-pill]:[background:rgba(255,_102,_0,_0.15)]! [&&]:[&.active_.qa-tab-count-pill]:[color:var(--color-link)]! ${activeTab === 'diagnostics' ? 'active' : ''}`}
+                        className={`qa-tab-btn [display:inline-flex]! [align-items:center] [gap:8px] [padding:12px_18px]! [background:transparent]! [border:none]! [&&]:[border-bottom:3px_solid_transparent]! [margin-bottom:-2px]! [font-size:var(--text-md)]! [font-weight:600]! [color:var(--text-secondary,_var(--color-ink-500))]! [cursor:pointer] [transition:all_0.2s_ease]! [&&]:[border-radius:var(--radius-md)_var(--radius-md)_0_0]! hover:[color:var(--text-primary,_var(--color-ink-900))]! hover:[background:rgba(248,_250,_252,_0.7)]! [&.active]:[color:var(--color-link)]! [&.active]:[border-bottom-color:var(--accent-color,_var(--color-brand-500))]! [&.active]:[background:rgba(255,_102,_0,_0.04)]! [&&]:[&.active_.qa-tab-count-pill]:[background:rgba(255,_102,_0,_0.15)]! [&&]:[&.active_.qa-tab-count-pill]:[color:var(--color-link)]! ${activeTab === 'diagnostics' ? 'active' : ''}`}
                         onClick={() => setActiveTab('diagnostics')}
                     >
                         <Shield size={15} />
@@ -621,7 +621,7 @@ export default function QADashboard() {
                     <button
                         role="tab"
                         aria-selected={activeTab === 'uncertainty'}
-                        className={`qa-tab-btn [display:inline-flex]! [align-items:center]! [gap:8px]! [padding:12px_18px]! [background:transparent]! [border:none]! [&&]:[border-bottom:3px_solid_transparent]! [margin-bottom:-2px]! [font-size:var(--text-md)]! [font-weight:600]! [color:var(--text-secondary,_var(--color-ink-500))]! [cursor:pointer]! [transition:all_0.2s_ease]! [&&]:[border-radius:var(--radius-md)_var(--radius-md)_0_0]! hover:[color:var(--text-primary,_var(--color-ink-900))]! hover:[background:rgba(248,_250,_252,_0.7)]! [&.active]:[color:var(--color-link)]! [&.active]:[border-bottom-color:var(--accent-color,_var(--color-brand-500))]! [&.active]:[background:rgba(255,_102,_0,_0.04)]! [&&]:[&.active_.qa-tab-count-pill]:[background:rgba(255,_102,_0,_0.15)]! [&&]:[&.active_.qa-tab-count-pill]:[color:var(--color-link)]! ${activeTab === 'uncertainty' ? 'active' : ''}`}
+                        className={`qa-tab-btn [display:inline-flex]! [align-items:center] [gap:8px] [padding:12px_18px]! [background:transparent]! [border:none]! [&&]:[border-bottom:3px_solid_transparent]! [margin-bottom:-2px]! [font-size:var(--text-md)]! [font-weight:600]! [color:var(--text-secondary,_var(--color-ink-500))]! [cursor:pointer] [transition:all_0.2s_ease]! [&&]:[border-radius:var(--radius-md)_var(--radius-md)_0_0]! hover:[color:var(--text-primary,_var(--color-ink-900))]! hover:[background:rgba(248,_250,_252,_0.7)]! [&.active]:[color:var(--color-link)]! [&.active]:[border-bottom-color:var(--accent-color,_var(--color-brand-500))]! [&.active]:[background:rgba(255,_102,_0,_0.04)]! [&&]:[&.active_.qa-tab-count-pill]:[background:rgba(255,_102,_0,_0.15)]! [&&]:[&.active_.qa-tab-count-pill]:[color:var(--color-link)]! ${activeTab === 'uncertainty' ? 'active' : ''}`}
                         onClick={() => setActiveTab('uncertainty')}
                     >
                         <Layers size={15} />
@@ -809,11 +809,11 @@ export default function QADashboard() {
                             </div>
 
                             {/* Scope-by-Scope Uncertainty Cards */}
-                            <div className="[display:grid]! [grid-template-columns:repeat(3,_1fr)] [gap:16px] [@media(max-width:900px)]:[grid-template-columns:1fr]!">
+                            <div className="[display:grid]! [grid-template-columns:repeat(3,_1fr)]! [gap:16px] [@media(max-width:900px)]:[grid-template-columns:1fr]!">
                                 {/* Scope 1 */}
                                 <div className="[background:var(--color-white)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:20px]! [display:flex]! [flex-direction:column] [gap:10px]">
                                     <div className="flex! justify-between! items-center!">
-                                        <span className="[display:inline-flex]! [align-items:center]! [padding:3px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:600]! [&.scope-1]:[background:rgba(255,_102,_0,_0.12)]! [&.scope-1]:[color:var(--color-brand-700)]! [&.scope-1]:[border:1px_solid_rgba(255,_102,_0,_0.25)]! [&&]:[&.scope-2]:[background:rgba(59,_130,_246,_0.12)]! [&&]:[&.scope-2]:[color:var(--color-blue-600)]! [&&]:[&.scope-2]:[border:1px_solid_rgba(59,_130,_246,_0.25)]! [&&]:[&&]:[&.scope-3]:[background:rgba(139,_92,_246,_0.12)]! [&&]:[&&]:[&.scope-3]:[color:#7c3aed]! [&&]:[&&]:[&.scope-3]:[border:1px_solid_rgba(139,_92,_246,_0.25)]! scope-1">Scope 1 (Direct)</span>
+                                        <span className="[display:inline-flex]! [align-items:center] [padding:3px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:600]! [&.scope-1]:[background:rgba(255,_102,_0,_0.12)] [&.scope-1]:[color:var(--color-brand-700)] [&.scope-1]:[border:1px_solid_rgba(255,_102,_0,_0.25)]! [&&]:[&.scope-2]:[background:rgba(59,_130,_246,_0.12)] [&&]:[&.scope-2]:[color:var(--color-blue-600)] [&&]:[&.scope-2]:[border:1px_solid_rgba(59,_130,_246,_0.25)]! [&&]:[&&]:[&.scope-3]:[background:rgba(139,_92,_246,_0.12)] [&&]:[&&]:[&.scope-3]:[color:#7c3aed] [&&]:[&&]:[&.scope-3]:[border:1px_solid_rgba(139,_92,_246,_0.25)]! scope-1">Scope 1 (Direct)</span>
                                         <Flame size={16} color="#059669" />
                                     </div>
                                     <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#0f172a' }}>
@@ -830,7 +830,7 @@ export default function QADashboard() {
                                 {/* Scope 2 */}
                                 <div className="[background:var(--color-white)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:20px]! [display:flex]! [flex-direction:column] [gap:10px]">
                                     <div className="flex! justify-between! items-center!">
-                                        <span className="[display:inline-flex]! [align-items:center]! [padding:3px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:600]! [&.scope-1]:[background:rgba(255,_102,_0,_0.12)]! [&.scope-1]:[color:var(--color-brand-700)]! [&.scope-1]:[border:1px_solid_rgba(255,_102,_0,_0.25)]! [&&]:[&.scope-2]:[background:rgba(59,_130,_246,_0.12)]! [&&]:[&.scope-2]:[color:var(--color-blue-600)]! [&&]:[&.scope-2]:[border:1px_solid_rgba(59,_130,_246,_0.25)]! [&&]:[&&]:[&.scope-3]:[background:rgba(139,_92,_246,_0.12)]! [&&]:[&&]:[&.scope-3]:[color:#7c3aed]! [&&]:[&&]:[&.scope-3]:[border:1px_solid_rgba(139,_92,_246,_0.25)]! scope-2">Scope 2 (Indirect)</span>
+                                        <span className="[display:inline-flex]! [align-items:center] [padding:3px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:600]! [&.scope-1]:[background:rgba(255,_102,_0,_0.12)] [&.scope-1]:[color:var(--color-brand-700)] [&.scope-1]:[border:1px_solid_rgba(255,_102,_0,_0.25)]! [&&]:[&.scope-2]:[background:rgba(59,_130,_246,_0.12)] [&&]:[&.scope-2]:[color:var(--color-blue-600)] [&&]:[&.scope-2]:[border:1px_solid_rgba(59,_130,_246,_0.25)]! [&&]:[&&]:[&.scope-3]:[background:rgba(139,_92,_246,_0.12)] [&&]:[&&]:[&.scope-3]:[color:#7c3aed] [&&]:[&&]:[&.scope-3]:[border:1px_solid_rgba(139,_92,_246,_0.25)]! scope-2">Scope 2 (Indirect)</span>
                                         <Zap size={16} color="#2563eb" />
                                     </div>
                                     <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#0f172a' }}>
@@ -847,7 +847,7 @@ export default function QADashboard() {
                                 {/* Scope 3 */}
                                 <div className="[background:var(--color-white)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:20px]! [display:flex]! [flex-direction:column] [gap:10px]">
                                     <div className="flex! justify-between! items-center!">
-                                        <span className="[display:inline-flex]! [align-items:center]! [padding:3px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:600]! [&.scope-1]:[background:rgba(255,_102,_0,_0.12)]! [&.scope-1]:[color:var(--color-brand-700)]! [&.scope-1]:[border:1px_solid_rgba(255,_102,_0,_0.25)]! [&&]:[&.scope-2]:[background:rgba(59,_130,_246,_0.12)]! [&&]:[&.scope-2]:[color:var(--color-blue-600)]! [&&]:[&.scope-2]:[border:1px_solid_rgba(59,_130,_246,_0.25)]! [&&]:[&&]:[&.scope-3]:[background:rgba(139,_92,_246,_0.12)]! [&&]:[&&]:[&.scope-3]:[color:#7c3aed]! [&&]:[&&]:[&.scope-3]:[border:1px_solid_rgba(139,_92,_246,_0.25)]! scope-3">Scope 3 (Value Chain)</span>
+                                        <span className="[display:inline-flex]! [align-items:center] [padding:3px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:600]! [&.scope-1]:[background:rgba(255,_102,_0,_0.12)] [&.scope-1]:[color:var(--color-brand-700)] [&.scope-1]:[border:1px_solid_rgba(255,_102,_0,_0.25)]! [&&]:[&.scope-2]:[background:rgba(59,_130,_246,_0.12)] [&&]:[&.scope-2]:[color:var(--color-blue-600)] [&&]:[&.scope-2]:[border:1px_solid_rgba(59,_130,_246,_0.25)]! [&&]:[&&]:[&.scope-3]:[background:rgba(139,_92,_246,_0.12)] [&&]:[&&]:[&.scope-3]:[color:#7c3aed] [&&]:[&&]:[&.scope-3]:[border:1px_solid_rgba(139,_92,_246,_0.25)]! scope-3">Scope 3 (Value Chain)</span>
                                         <Layers size={16} color="#7c3aed" />
                                     </div>
                                     <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#0f172a' }}>

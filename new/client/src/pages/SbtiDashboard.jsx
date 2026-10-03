@@ -305,7 +305,7 @@ const SbtiDashboard = () => {
       {/* Target Setting Drawer / Form */}
       {showConfig && (
         <div className="[background:var(--card-bg,_var(--color-white))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-lg)]! [padding:24px]! [box-shadow:var(--shadow-card)]!">
-          <div className="sbti-config-header">
+          <div className="[display:flex]! [justify-content:space-between] [align-items:center] [margin-bottom:20px]! [&_h3]:[font-size:var(--text-lg)]! [&_h3]:[font-weight:700]! [&_h3]:[color:var(--text-main,_var(--color-ink-900))]! [&_h3]:[display:flex]! [&_h3]:[align-items:center] [&_h3]:[gap:8px]">
             <h3>
               <Globe size={20} className="text-primary" />
               SBTi Corporate Target Setup
@@ -317,7 +317,7 @@ const SbtiDashboard = () => {
 
           <form onSubmit={handleSaveTarget}>
             <div className="[display:grid]! [grid-template-columns:repeat(auto-fit,_minmax(200px,_1fr))] [gap:16px] [align-items:flex-end]">
-              <div className="sbti-form-group">
+              <div className="[display:flex]! [flex-direction:column] [gap:6px] [&_label]:[font-size:var(--text-base)]! [&_label]:[font-weight:600]! [&_label]:[color:var(--text-secondary,_var(--color-ink-500))]!">
                 <label>Pathway Alignment</label>
                 <div className="flex! gap-[8px]!">
                   <button
@@ -351,7 +351,7 @@ const SbtiDashboard = () => {
                 </div>
               </div>
 
-              <div className="sbti-form-group">
+              <div className="[display:flex]! [flex-direction:column] [gap:6px] [&_label]:[font-size:var(--text-base)]! [&_label]:[font-weight:600]! [&_label]:[color:var(--text-secondary,_var(--color-ink-500))]!">
                 <label>Base Year</label>
                 <input
                   type="number"
@@ -364,7 +364,7 @@ const SbtiDashboard = () => {
                 />
               </div>
 
-              <div className="sbti-form-group">
+              <div className="[display:flex]! [flex-direction:column] [gap:6px] [&_label]:[font-size:var(--text-base)]! [&_label]:[font-weight:600]! [&_label]:[color:var(--text-secondary,_var(--color-ink-500))]!">
                 <div className="flex! justify-between! items-center!">
                   <label>Base Year Baseline (tCO2e)</label>
                   <button
@@ -388,7 +388,7 @@ const SbtiDashboard = () => {
                 />
               </div>
 
-              <div className="sbti-form-group">
+              <div className="[display:flex]! [flex-direction:column] [gap:6px] [&_label]:[font-size:var(--text-base)]! [&_label]:[font-weight:600]! [&_label]:[color:var(--text-secondary,_var(--color-ink-500))]!">
                 <label>Net-Zero Target Year</label>
                 <input
                   type="number"
@@ -401,7 +401,7 @@ const SbtiDashboard = () => {
                 />
               </div>
 
-              <div className="sbti-form-group">
+              <div className="[display:flex]! [flex-direction:column] [gap:6px] [&_label]:[font-size:var(--text-base)]! [&_label]:[font-weight:600]! [&_label]:[color:var(--text-secondary,_var(--color-ink-500))]!">
                 <label>Annual Reduction Rate (%)</label>
                 <input
                   type="number"
@@ -415,7 +415,7 @@ const SbtiDashboard = () => {
                 />
               </div>
 
-              <div className="sbti-form-group">
+              <div className="[display:flex]! [flex-direction:column] [gap:6px] [&_label]:[font-size:var(--text-base)]! [&_label]:[font-weight:600]! [&_label]:[color:var(--text-secondary,_var(--color-ink-500))]!">
                 <button
                   type="submit"
                   className="btn-primary flex! items-center! justify-center! gap-[8px]! h-[42px]!"
@@ -452,7 +452,7 @@ const SbtiDashboard = () => {
         <div className="sbti-kpi-card info">
           <div className="[display:flex]! [justify-content:space-between] [align-items:center] [margin-bottom:12px]!">
             <span className="[font-size:var(--text-base)]! [font-weight:600]! [color:var(--text-secondary,_var(--color-ink-500))]! [text-transform:uppercase]! [letter-spacing:0.05em]">Current Year Target</span>
-            <div className="[width:36px]! [height:36px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center]! [justify-content:center]! [background:rgba(249,_115,_22,_0.1)]! [color:var(--color-link)]! [&.success]:[background:rgba(16,_185,_129,_0.1)]! [&.success]:[color:var(--color-green-700)]! [&&]:[&.warning]:[background:rgba(245,_158,_11,_0.1)]! [&&]:[&.warning]:[color:var(--color-amber-700)]! [&&]:[&&]:[&.info]:[background:rgba(59,_130,_246,_0.1)]! [&&]:[&&]:[&.info]:[color:var(--color-blue-700)]! [&&]:[&&]:[&&]:[&.neutral]:[background:rgba(148,_163,_184,_0.15)]! [&&]:[&&]:[&&]:[&.neutral]:[color:var(--color-ink-500)]! info">
+            <div className="[width:36px]! [height:36px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [background:rgba(249,_115,_22,_0.1)]! [color:var(--color-link)]! [&.success]:[background:rgba(16,_185,_129,_0.1)]! [&.success]:[color:var(--color-green-700)]! [&&]:[&.warning]:[background:rgba(245,_158,_11,_0.1)]! [&&]:[&.warning]:[color:var(--color-amber-700)]! [&&]:[&&]:[&.info]:[background:rgba(59,_130,_246,_0.1)]! [&&]:[&&]:[&.info]:[color:var(--color-blue-700)]! [&&]:[&&]:[&&]:[&.neutral]:[background:rgba(148,_163,_184,_0.15)]! [&&]:[&&]:[&&]:[&.neutral]:[color:var(--color-ink-500)]! info">
               <Target size={18} />
             </div>
           </div>
@@ -472,7 +472,7 @@ const SbtiDashboard = () => {
         <div className={`sbti-kpi-card ${isConfigured && !noData ? (isOnTrack ? "success" : "warning") : "neutral"}`}>
           <div className="[display:flex]! [justify-content:space-between] [align-items:center] [margin-bottom:12px]!">
             <span className="[font-size:var(--text-base)]! [font-weight:600]! [color:var(--text-secondary,_var(--color-ink-500))]! [text-transform:uppercase]! [letter-spacing:0.05em]">Pathway Status</span>
-            <div className={`[width:36px]! [height:36px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center]! [justify-content:center]! [background:rgba(249,_115,_22,_0.1)]! [color:var(--color-link)]! [&.success]:[background:rgba(16,_185,_129,_0.1)]! [&.success]:[color:var(--color-green-700)]! [&&]:[&.warning]:[background:rgba(245,_158,_11,_0.1)]! [&&]:[&.warning]:[color:var(--color-amber-700)]! [&&]:[&&]:[&.info]:[background:rgba(59,_130,_246,_0.1)]! [&&]:[&&]:[&.info]:[color:var(--color-blue-700)]! [&&]:[&&]:[&&]:[&.neutral]:[background:rgba(148,_163,_184,_0.15)]! [&&]:[&&]:[&&]:[&.neutral]:[color:var(--color-ink-500)]! ${isConfigured && !noData ? (isOnTrack ? "success" : "warning") : "neutral"}`}>
+            <div className={`[width:36px]! [height:36px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [background:rgba(249,_115,_22,_0.1)]! [color:var(--color-link)]! [&.success]:[background:rgba(16,_185,_129,_0.1)]! [&.success]:[color:var(--color-green-700)]! [&&]:[&.warning]:[background:rgba(245,_158,_11,_0.1)]! [&&]:[&.warning]:[color:var(--color-amber-700)]! [&&]:[&&]:[&.info]:[background:rgba(59,_130,_246,_0.1)]! [&&]:[&&]:[&.info]:[color:var(--color-blue-700)]! [&&]:[&&]:[&&]:[&.neutral]:[background:rgba(148,_163,_184,_0.15)]! [&&]:[&&]:[&&]:[&.neutral]:[color:var(--color-ink-500)]! ${isConfigured && !noData ? (isOnTrack ? "success" : "warning") : "neutral"}`}>
               {isConfigured && !noData ? (
                 isOnTrack ? <CheckCircle size={18} /> : <AlertTriangle size={18} />
               ) : (
@@ -497,7 +497,7 @@ const SbtiDashboard = () => {
         <div className="sbti-kpi-card success">
           <div className="[display:flex]! [justify-content:space-between] [align-items:center] [margin-bottom:12px]!">
             <span className="[font-size:var(--text-base)]! [font-weight:600]! [color:var(--text-secondary,_var(--color-ink-500))]! [text-transform:uppercase]! [letter-spacing:0.05em]">Net-Zero Goal ({sbtiData?.target_year || 2050})</span>
-            <div className="[width:36px]! [height:36px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center]! [justify-content:center]! [background:rgba(249,_115,_22,_0.1)]! [color:var(--color-link)]! [&.success]:[background:rgba(16,_185,_129,_0.1)]! [&.success]:[color:var(--color-green-700)]! [&&]:[&.warning]:[background:rgba(245,_158,_11,_0.1)]! [&&]:[&.warning]:[color:var(--color-amber-700)]! [&&]:[&&]:[&.info]:[background:rgba(59,_130,_246,_0.1)]! [&&]:[&&]:[&.info]:[color:var(--color-blue-700)]! [&&]:[&&]:[&&]:[&.neutral]:[background:rgba(148,_163,_184,_0.15)]! [&&]:[&&]:[&&]:[&.neutral]:[color:var(--color-ink-500)]! success">
+            <div className="[width:36px]! [height:36px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [background:rgba(249,_115,_22,_0.1)]! [color:var(--color-link)]! [&.success]:[background:rgba(16,_185,_129,_0.1)]! [&.success]:[color:var(--color-green-700)]! [&&]:[&.warning]:[background:rgba(245,_158,_11,_0.1)]! [&&]:[&.warning]:[color:var(--color-amber-700)]! [&&]:[&&]:[&.info]:[background:rgba(59,_130,_246,_0.1)]! [&&]:[&&]:[&.info]:[color:var(--color-blue-700)]! [&&]:[&&]:[&&]:[&.neutral]:[background:rgba(148,_163,_184,_0.15)]! [&&]:[&&]:[&&]:[&.neutral]:[color:var(--color-ink-500)]! success">
               <TrendingDown size={18} />
             </div>
           </div>
@@ -514,7 +514,7 @@ const SbtiDashboard = () => {
       </div>
 
       {/* Main Trajectory Charts Grid */}
-      <div className="[display:grid]! [grid-template-columns:2fr_1fr] [gap:24px] [@media(max-width:1100px)]:[grid-template-columns:1fr]!">
+      <div className="[display:grid]! [grid-template-columns:2fr_1fr]! [gap:24px] [@media(max-width:1100px)]:[grid-template-columns:1fr]!">
         <div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.85))]! [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))]! [&&]:[border-radius:var(--radius-lg)]! [padding:24px]! [box-shadow:var(--shadow-card,_0_4px_12px_rgba(0,_0,_0,_0.05))]! [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease]! hover:[border-color:var(--border-color-hover,_rgba(255,_255,_255,_0.95))]!">
           <div className="[display:flex]! [justify-content:space-between] [align-items:center] [margin-bottom:18px]!">
             <div>
@@ -635,7 +635,7 @@ const SbtiDashboard = () => {
                         )}
                       </td>
                       <td>
-                        <span className={`[display:inline-flex]! [align-items:center]! [padding:3px_10px]! [border-radius:999px]! [font-size:var(--text-sm)]! [font-weight:600]! [letter-spacing:0.02em]! [text-transform:uppercase]! [&.achieved]:[background:rgba(16,_185,_129,_0.12)]! [&.achieved]:[color:var(--color-green-700)]! [&.achieved]:[border:1px_solid_rgba(16,_185,_129,_0.3)]! [&&]:[&.off-track]:[background:rgba(239,_68,_68,_0.12)]! [&&]:[&.off-track]:[color:var(--color-red-700)]! [&&]:[&.off-track]:[border:1px_solid_rgba(239,_68,_68,_0.3)]! [&&]:[&&]:[&.projected]:[background:rgba(59,_130,_246,_0.12)]! [&&]:[&&]:[&.projected]:[color:var(--color-blue-600)]! [&&]:[&&]:[&.projected]:[border:1px_solid_rgba(59,_130,_246,_0.3)]! ${statusClass}`}>
+                        <span className={`badge-status ${statusClass}`}>
                           {statusLabel}
                         </span>
                       </td>

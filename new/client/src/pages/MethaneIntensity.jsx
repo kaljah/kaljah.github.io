@@ -580,7 +580,7 @@ const MethaneIntensity = () => {
 
     setTopBarRight(
       <button
-        className="[display:inline-flex]! [align-items:center] [gap:8px] [background:linear-gradient(135deg,_var(--color-green-700)_0%,_var(--color-green-700)_100%)]! [color:var(--color-white)]! [font-size:var(--text-base)]! [font-weight:600]! [padding:8px_16px]! [border-radius:var(--radius-md)]! [border:none]! [cursor:pointer] [box-shadow:0_4px_12px_rgba(16,_185,_129,_0.25)]! [transition:all_0.2s_ease]! [&:hover:not(:disabled)]:[transform:translateY(-1px)]! [&:hover:not(:disabled)]:[box-shadow:0_6px_18px_rgba(16,_185,_129,_0.35)]! disabled:[opacity:0.6] disabled:[cursor:not-allowed]"
+        className="[display:inline-flex]! [align-items:center] [gap:8px] [background:linear-gradient(135deg,_var(--color-green-700)_0%,_var(--color-green-700)_100%)]! [color:var(--color-white)]! [font-size:var(--text-base)]! [font-weight:600]! [padding:8px_16px]! [border-radius:var(--radius-md)]! [border:none]! [cursor:pointer] [box-shadow:0_4px_12px_rgba(16,_185,_129,_0.25)]! [transition:all_0.2s_ease]! [&:hover:not(:disabled)]:[transform:translateY(-1px)] [&:hover:not(:disabled)]:[box-shadow:0_6px_18px_rgba(16,_185,_129,_0.35)]! disabled:[opacity:0.6] disabled:[cursor:not-allowed]"
         onClick={handleExportExcel}
         disabled={exporting}
         title="Download 5-Tab OGMP 2.0 Disclosure Workbook (.xlsx)"
@@ -719,7 +719,7 @@ const MethaneIntensity = () => {
       />
 
         {/* Regional Bar Charts */}
-        <div className="chart-grid [display:grid]! [grid-template-columns:repeat(auto-fit,_minmax(450px,_1fr))] [gap:24px] [@media(max-width:768px)]:[grid-template-columns:1fr]!">
+        <div className="chart-grid [display:grid]! [grid-template-columns:repeat(auto-fit,_minmax(450px,_1fr))]! [gap:24px] [@media(max-width:768px)]:[grid-template-columns:1fr]!">
           <div className="card">
             <div className="chart-header">
               <div className="[display:flex]! [flex-direction:column] [gap:8px]">

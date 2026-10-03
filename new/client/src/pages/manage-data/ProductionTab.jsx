@@ -7,7 +7,7 @@ import PaginationControls from './PaginationControls';
 
 // Extracted from ManageData.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const ProductionTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToCSV, facilities, filteredProduction, getAvailableActivities, getAvailableDivisions, handleDeleteProduction, handleSaveProduction, isPrivileged, openGasConverter, openOilConverter, prodForm, productionData, setCurrentPage, setImportModal, setProdForm }) => (
-<div className="manage-card glass-panel">
+<div className="[border-radius:var(--radius-lg)]! [padding:32px]! [animation:fadeIn_0.3s_ease-out]! [@media(max-width:768px)]:[padding:18px_14px]! [@media(max-width:768px)]:[border-radius:var(--radius-lg)]! glass-panel">
                                 <div className="flex! justify-between! items-start! mb-[32px]!">
                                     <div>
                                         <h2 className="mb-[8px]! font-bold!">Annual Production Records</h2>

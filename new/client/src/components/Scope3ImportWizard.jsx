@@ -181,14 +181,14 @@ function StepBar({ current }) {
         const SIcon  = s.IconComp;
         return (
           <React.Fragment key={s.id}>
-            <div className={`[display:flex]! [flex-direction:column]! [align-items:center]! [gap:5px]! [flex-shrink:0]! [&.active_.s1w-step-circle]:[border-color:var(--color-brand-500)]! [&.active_.s1w-step-circle]:[background:#fff7f0]! [&.active_.s1w-step-circle]:[color:var(--color-link)]! [&&]:[&.done_.s1w-step-circle]:[border-color:var(--color-green-500)]! [&&]:[&.done_.s1w-step-circle]:[background:var(--color-green-50)]! [&&]:[&.done_.s1w-step-circle]:[color:var(--color-green-700)]! [&&]:[&&]:[&.active_.s1w-step-label]:[color:var(--color-link)]! [&&]:[&&]:[&&]:[&.done_.s1w-step-label]:[color:var(--color-green-700)]! ${active ? "active" : ""} ${done ? "done" : ""}`}>
+            <div className={`[display:flex]! [flex-direction:column] [align-items:center] [gap:5px] [flex-shrink:0] [&.active_.s1w-step-circle]:[border-color:var(--color-brand-500)]! [&.active_.s1w-step-circle]:[background:#fff7f0]! [&.active_.s1w-step-circle]:[color:var(--color-link)]! [&&]:[&.done_.s1w-step-circle]:[border-color:var(--color-green-500)]! [&&]:[&.done_.s1w-step-circle]:[background:var(--color-green-50)]! [&&]:[&.done_.s1w-step-circle]:[color:var(--color-green-700)]! [&&]:[&&]:[&.active_.s1w-step-label]:[color:var(--color-link)]! [&&]:[&&]:[&&]:[&.done_.s1w-step-label]:[color:var(--color-green-700)]! ${active ? "active" : ""} ${done ? "done" : ""}`}>
               <div className="s1w-step-circle">
                 {done ? <Icon.Check /> : <SIcon />}
               </div>
               <span className="s1w-step-label [font-size:var(--text-xs)]! [font-weight:600]! [color:var(--color-ink-600)]! [white-space:nowrap] [text-transform:uppercase]! [letter-spacing:0.5px]">{s.label}</span>
             </div>
             {i < STEPS.length - 1 && (
-              <div className={`[height:2px]! [flex:1]! [background:var(--color-ink-200)]! [margin:0_4px]! [&&]:[margin-bottom:20px]! [min-width:20px]! [transition:background_0.25s]! [&.done]:[background:var(--color-green-500)]! ${done ? "done" : ""}`} />
+              <div className={`[height:2px]! [flex:1] [background:var(--color-ink-200)]! [margin:0_4px]! [&&]:[margin-bottom:20px]! [min-width:20px] [transition:background_0.25s]! [&.done]:[background:var(--color-green-500)]! ${done ? "done" : ""}`} />
             )}
           </React.Fragment>
         );
@@ -201,7 +201,7 @@ function StepBar({ current }) {
 function MappingRow({ field, headers, value, onChange }) {
   const mapped = !!value;
   return (
-    <div className={`s1w-map-row ${!mapped && field.required ? "s1w-map-row--missing" : ""} ${mapped ? "s1w-map-row--mapped" : ""}`}>
+    <div className={`[display:grid]! [grid-template-columns:1fr_1fr_36px]! [align-items:center] [padding:10px_16px]! [border-bottom:1px_solid_var(--color-ink-100)]! [transition:background_0.12s]! [gap:12px] last:[border-bottom:none]! hover:[background:#fafaf9]! [@media(max-width:600px)]:[grid-template-columns:1fr]! ${!mapped && field.required ? "s1w-map-row--missing" : ""} ${mapped ? "s1w-map-row--mapped" : ""}`}>
       <div className="[display:flex]! [flex-direction:column] [gap:2px] [min-width:0]">
         <span className="[font-size:var(--text-sm)]! [font-weight:600]! [color:var(--color-ink-900)]! [display:flex]! [align-items:center] [gap:4px]">
           {field.label}
@@ -211,7 +211,7 @@ function MappingRow({ field, headers, value, onChange }) {
       </div>
       <div className="s1w-map-select-wrap">
         {headers.length > 0 ? (
-          <NativeSelect className={`[width:100%]! [padding:7px_10px]! [border:1.5px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-sm)]! [background:var(--color-white)]! [font-size:var(--text-sm)]! [color:var(--color-ink-900)]! [outline:none]! [transition:border-color_0.15s]! [font-family:inherit]! focus:[border-color:var(--color-brand-500)]! focus:[box-shadow:0_0_0_2px_rgba(255,102,0,0.08)]! [&.matched]:[border-color:var(--color-green-500)]! [&.matched]:[background:#f0fdf4]! ${mapped ? "matched" : ""}`} value={value} onChange={e => onChange(e.target.value)}>
+          <NativeSelect className={`s1w-map-select ${mapped ? "matched" : ""}`} value={value} onChange={e => onChange(e.target.value)}>
             <option value="">— Not mapped —</option>
             {headers.map(h => <option key={h} value={h}>{h}</option>)}
           </NativeSelect>
@@ -399,7 +399,7 @@ export default function Scope3ImportWizard({ onClose, onUploadSuccess }) {
             <div className="s1w-section-title"><Icon.Upload /><span>Select File</span></div>
 
             {!isAdmin && allowedRegions !== null && (
-              <div className="s1w-access-banner">
+              <div className="[padding:14px_16px]! [background:linear-gradient(135deg,_var(--color-brand-50)_0%,_#fff1e6_100%)]! [border:1.5px_solid_#fed7aa]! [&&]:[border-radius:var(--radius-md)]! [display:flex]! [flex-direction:column] [gap:10px]">
                 <div className="s1w-access-banner-header">
                   <Icon.Info />
                   <strong>Your upload is restricted to the following regions:</strong>
@@ -432,7 +432,7 @@ export default function Scope3ImportWizard({ onClose, onUploadSuccess }) {
               ))}
             </div>
             <div role="button" tabIndex={0} onKeyDown={activateOnKey}
-              className={`[border:2px_dashed_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-lg)]! [padding:40px_24px]! [display:flex]! [flex-direction:column]! [align-items:center]! [gap:10px]! [cursor:pointer]! [transition:all_0.2s]! [background:var(--color-ink-50)]! [text-align:center]! hover:[border-color:var(--color-brand-500)]! hover:[background:#fff7f0]! hover:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.08)]! [&.dragging]:[border-color:var(--color-brand-500)]! [&.dragging]:[background:#fff7f0]! [&.dragging]:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.08)]! ${isDragging ? "dragging" : ""}`}
+              className={`[border:2px_dashed_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-lg)]! [padding:40px_24px]! [display:flex]! [flex-direction:column] [align-items:center] [gap:10px] [cursor:pointer] [transition:all_0.2s]! [background:var(--color-ink-50)]! [text-align:center]! hover:[border-color:var(--color-brand-500)]! hover:[background:#fff7f0]! hover:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.08)]! [&.dragging]:[border-color:var(--color-brand-500)]! [&.dragging]:[background:#fff7f0]! [&.dragging]:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.08)]! ${isDragging ? "dragging" : ""}`}
               onClick={() => fileInputRef.current.click()}
               onDragOver={e => { e.preventDefault(); setIsDragging(true); }}
               onDragLeave={() => setIsDragging(false)}
@@ -440,7 +440,7 @@ export default function Scope3ImportWizard({ onClose, onUploadSuccess }) {
             >
               <input ref={fileInputRef} type="file" accept=".csv,.xlsx" className="hidden!" onChange={onFileChange} />
               <div className="s1w-dropzone-icon"><Icon.Upload /></div>
-              <p className="s1w-dropzone-text">Drag & drop your file here, or <span>click to browse</span></p>
+              <p className="[font-size:var(--text-base)]! [font-weight:600]! [color:var(--color-ink-700)]! [margin:0]! [&_span]:[color:var(--color-link)]! [&_span]:[text-decoration:underline]!">Drag & drop your file here, or <span>click to browse</span></p>
               <p className="[font-size:var(--text-sm)]! [color:var(--color-ink-600)]! [margin:0]!">Supports .xlsx and .csv</p>
               {parseError && (
                 <div className="s1w-inline-error"><Icon.Warning />{parseError}</div>
@@ -453,7 +453,7 @@ export default function Scope3ImportWizard({ onClose, onUploadSuccess }) {
         {step === 2 && (
           <div className="s1w-body">
             {!isAdmin && allowedRegions !== null && allowedRegions.length > 0 && (
-              <div className="s1w-access-banner s1w-access-banner--compact">
+              <div className="[padding:14px_16px]! [background:linear-gradient(135deg,_var(--color-brand-50)_0%,_#fff1e6_100%)]! [border:1.5px_solid_#fed7aa]! [&&]:[border-radius:var(--radius-md)]! [display:flex]! [flex-direction:column]! [gap:10px]! s1w-access-banner--compact">
                 <Icon.Info />
                 <span>
                   <strong>Allowed regions:</strong>{" "}
@@ -508,7 +508,7 @@ export default function Scope3ImportWizard({ onClose, onUploadSuccess }) {
               )}
             </div>
 
-            <label className="s1w-factor-row gap-[8px]! cursor-pointer!">
+            <label className="[display:flex]! [align-items:center] [gap:12px] [flex-wrap:wrap] gap-[8px]! cursor-pointer!">
               <input type="checkbox" checked={overwrite} onChange={e => setOverwrite(e.target.checked)} />
               <span className="[font-size:var(--text-sm)]! [color:var(--color-ink-600)]! [font-weight:500]! [flex-shrink:0]">
                 Overwrite records that already exist (same facility, month and source). Overwritten records go back to Pending review.
@@ -532,7 +532,7 @@ export default function Scope3ImportWizard({ onClose, onUploadSuccess }) {
 
         {/* ── STEP 3: Processing ── */}
         {step === 3 && jobId && (
-          <div className="s1w-body s1w-body--progress">
+          <div className="s1w-body [padding:0]!">
             <UploadProgress
               jobId={jobId}
               onComplete={() => { if (onUploadSuccess) onUploadSuccess(); onClose(); }}

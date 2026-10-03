@@ -72,7 +72,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                                         <button
                                                             key={reason}
                                                             type="button"
-                                                            className={`[background:var(--bg-body)]! [border:1px_solid_var(--border-color)]! [color:var(--text-secondary)]! [font-size:var(--text-sm)]! [padding:6px_12px]! [&&]:[border-radius:var(--radius-md)]! [cursor:pointer]! [transition:all_0.15s]! hover:[background:var(--bg-hover)]! hover:[color:var(--text-primary)]! hover:[border-color:rgba(255,_102,_0,_0.3)]! [&.selected]:[background:rgba(239,_68,_68,_0.1)]! [&.selected]:[color:var(--color-red-700)]! [&.selected]:[border-color:rgba(239,_68,_68,_0.4)]! [&.selected]:[font-weight:600]! ${rejectionModal.reason === reason ? 'selected' : ''}`}
+                                                            className={`[background:var(--bg-body)]! [border:1px_solid_var(--border-color)]! [color:var(--text-secondary)]! [font-size:var(--text-sm)]! [padding:6px_12px]! [&&]:[border-radius:var(--radius-md)]! [cursor:pointer] [transition:all_0.15s]! hover:[background:var(--bg-hover)]! hover:[color:var(--text-primary)]! hover:[border-color:rgba(255,_102,_0,_0.3)]! [&.selected]:[background:rgba(239,_68,_68,_0.1)]! [&.selected]:[color:var(--color-red-700)]! [&.selected]:[border-color:rgba(239,_68,_68,_0.4)]! [&.selected]:[font-weight:600]! ${rejectionModal.reason === reason ? 'selected' : ''}`}
                                                             onClick={() => setRejectionModal(prev => ({ ...prev, reason }))}
                                                         >
                                                             {reason}
@@ -269,7 +269,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                             className={`pending-tab-btn ${pendingScopeFilter === '1' ? 'active' : ''}`}
                                             onClick={() => setPendingScopeFilter('1')}
                                         >
-                                            <span className="scope-tag scope-tag-1 p-[1px_6px]! text-[length:0.7rem]!">S1</span>
+                                            <span className="scope-tag [background:rgba(255,_102,_0,_0.1)]! [color:var(--color-brand-700)]! [border:1px_solid_rgba(255,_102,_0,_0.25)]! p-[1px_6px]! text-[length:0.7rem]!">S1</span>
                                             <span>Scope 1</span>
                                             <span className="pending-count-chip">{pendingMetrics.count1}</span>
                                         </button>
@@ -277,7 +277,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                             className={`pending-tab-btn ${pendingScopeFilter === '2' ? 'active' : ''}`}
                                             onClick={() => setPendingScopeFilter('2')}
                                         >
-                                            <span className="scope-tag scope-tag-2 p-[1px_6px]! text-[length:0.7rem]!">S2</span>
+                                            <span className="scope-tag [background:rgba(59,_130,_246,_0.1)]! [color:var(--color-blue-600)]! [border:1px_solid_rgba(59,_130,_246,_0.25)]! p-[1px_6px]! text-[length:0.7rem]!">S2</span>
                                             <span>Scope 2</span>
                                             <span className="pending-count-chip">{pendingMetrics.count2}</span>
                                         </button>
@@ -285,7 +285,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                             className={`pending-tab-btn ${pendingScopeFilter === '3' ? 'active' : ''}`}
                                             onClick={() => setPendingScopeFilter('3')}
                                         >
-                                            <span className="scope-tag scope-tag-3 p-[1px_6px]! text-[length:0.7rem]!">S3</span>
+                                            <span className="scope-tag [background:rgba(147,_51,_234,_0.1)]! [color:#7c3aed]! [border:1px_solid_rgba(147,_51,_234,_0.25)]! p-[1px_6px]! text-[length:0.7rem]!">S3</span>
                                             <span>Scope 3</span>
                                             <span className="pending-count-chip">{pendingMetrics.count3}</span>
                                         </button>
@@ -587,7 +587,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                                                         ) : (
                                                                             <button
                                                                                 type="button"
-                                                                                className="[display:inline-flex]! [align-items:center]! [justify-content:center]! [width:32px]! [height:32px]! [border-radius:var(--radius-md)]! [border:1px_solid_transparent]! [cursor:pointer]! [transition:all_0.15s_ease]! [&.approve]:[background:rgba(16,_185,_129,_0.1)]! [&.approve]:[color:var(--color-green-700)]! [&.approve]:[border-color:rgba(16,_185,_129,_0.25)]! [&&]:[&.approve:hover]:[background:var(--color-green-700)]! [&&]:[&.approve:hover]:[color:var(--color-white)]! [&.approve:hover]:[transform:translateY(-1px)]! [&.approve:hover]:[box-shadow:0_4px_10px_rgba(16,_185,_129,_0.25)]! [&&]:[&&]:[&.reject]:[background:rgba(239,_68,_68,_0.08)]! [&&]:[&&]:[&.reject]:[color:var(--color-red-700)]! [&&]:[&.reject]:[border-color:rgba(239,_68,_68,_0.2)]! [&&]:[&&]:[&&]:[&.reject:hover]:[background:var(--color-red-700)]! [&&]:[&&]:[&&]:[&.reject:hover]:[color:var(--color-white)]! [&&]:[&.reject:hover]:[transform:translateY(-1px)]! [&&]:[&.reject:hover]:[box-shadow:0_4px_10px_rgba(239,_68,_68,_0.25)]! approve"
+                                                                                className="[display:inline-flex]! [align-items:center] [justify-content:center] [width:32px]! [height:32px]! [border-radius:var(--radius-md)]! [border:1px_solid_transparent]! [cursor:pointer] [transition:all_0.15s_ease]! [&.approve]:[background:rgba(16,_185,_129,_0.1)] [&.approve]:[color:var(--color-green-700)] [&.approve]:[border-color:rgba(16,_185,_129,_0.25)]! [&&]:[&.approve:hover]:[background:var(--color-green-700)] [&&]:[&.approve:hover]:[color:var(--color-white)] [&.approve:hover]:[transform:translateY(-1px)] [&.approve:hover]:[box-shadow:0_4px_10px_rgba(16,_185,_129,_0.25)] [&&]:[&&]:[&.reject]:[background:rgba(239,_68,_68,_0.08)] [&&]:[&&]:[&.reject]:[color:var(--color-red-700)] [&&]:[&.reject]:[border-color:rgba(239,_68,_68,_0.2)]! [&&]:[&&]:[&&]:[&.reject:hover]:[background:var(--color-red-700)] [&&]:[&&]:[&&]:[&.reject:hover]:[color:var(--color-white)] [&&]:[&.reject:hover]:[transform:translateY(-1px)] [&&]:[&.reject:hover]:[box-shadow:0_4px_10px_rgba(239,_68,_68,_0.25)] approve"
                                                                                 title="Approve Record"
                                                                                 onClick={() => handleApproveSingle(item.scope, item.id)}
                                                                             >
@@ -596,7 +596,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                                                         )}
                                                                         <button
                                                                             type="button"
-                                                                            className="[display:inline-flex]! [align-items:center]! [justify-content:center]! [width:32px]! [height:32px]! [border-radius:var(--radius-md)]! [border:1px_solid_transparent]! [cursor:pointer]! [transition:all_0.15s_ease]! [&.approve]:[background:rgba(16,_185,_129,_0.1)]! [&.approve]:[color:var(--color-green-700)]! [&.approve]:[border-color:rgba(16,_185,_129,_0.25)]! [&&]:[&.approve:hover]:[background:var(--color-green-700)]! [&&]:[&.approve:hover]:[color:var(--color-white)]! [&.approve:hover]:[transform:translateY(-1px)]! [&.approve:hover]:[box-shadow:0_4px_10px_rgba(16,_185,_129,_0.25)]! [&&]:[&&]:[&.reject]:[background:rgba(239,_68,_68,_0.08)]! [&&]:[&&]:[&.reject]:[color:var(--color-red-700)]! [&&]:[&.reject]:[border-color:rgba(239,_68,_68,_0.2)]! [&&]:[&&]:[&&]:[&.reject:hover]:[background:var(--color-red-700)]! [&&]:[&&]:[&&]:[&.reject:hover]:[color:var(--color-white)]! [&&]:[&.reject:hover]:[transform:translateY(-1px)]! [&&]:[&.reject:hover]:[box-shadow:0_4px_10px_rgba(239,_68,_68,_0.25)]! reject"
+                                                                            className="[display:inline-flex]! [align-items:center] [justify-content:center] [width:32px]! [height:32px]! [border-radius:var(--radius-md)]! [border:1px_solid_transparent]! [cursor:pointer] [transition:all_0.15s_ease]! [&.approve]:[background:rgba(16,_185,_129,_0.1)] [&.approve]:[color:var(--color-green-700)] [&.approve]:[border-color:rgba(16,_185,_129,_0.25)]! [&&]:[&.approve:hover]:[background:var(--color-green-700)] [&&]:[&.approve:hover]:[color:var(--color-white)] [&.approve:hover]:[transform:translateY(-1px)] [&.approve:hover]:[box-shadow:0_4px_10px_rgba(16,_185,_129,_0.25)] [&&]:[&&]:[&.reject]:[background:rgba(239,_68,_68,_0.08)] [&&]:[&&]:[&.reject]:[color:var(--color-red-700)] [&&]:[&.reject]:[border-color:rgba(239,_68,_68,_0.2)]! [&&]:[&&]:[&&]:[&.reject:hover]:[background:var(--color-red-700)] [&&]:[&&]:[&&]:[&.reject:hover]:[color:var(--color-white)] [&&]:[&.reject:hover]:[transform:translateY(-1px)] [&&]:[&.reject:hover]:[box-shadow:0_4px_10px_rgba(239,_68,_68,_0.25)] reject"
                                                                             title="Reject Record (specify reason)"
                                                                             onClick={() => handleOpenRejectModal(item.scope, item.id)}
                                                                         >

@@ -19,6 +19,10 @@
   letter-spacing: -0.025em;
 }
 
+.spin-animate {
+  animation: spin 1s linear infinite;
+}
+
 @keyframes spin {
   from {
     transform: rotate(0deg);
@@ -29,20 +33,6 @@
 }
 
 /* Export Dropdown */
-
-.export-menu {
-  position: absolute;
-  right: 0;
-  top: calc(100% + 8px);
-  width: 260px;
-  background: var(--color-white);
-  border: 1px solid var(--border-color, var(--color-ink-200));
-  border-radius: var(--radius-md);
-  padding: 8px;
-  box-shadow: var(--shadow-raised);
-  z-index: 50;
-  animation: fadeIn 0.15s ease-out;
-}
 
 @keyframes fadeIn {
   from {
@@ -55,22 +45,17 @@
   }
 }
 
-.export-menu button {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  width: 100%;
-  padding: 10px 12px;
-  background: transparent;
-  border: none;
-  border-radius: var(--radius-md);
-  text-align: left;
-  cursor: pointer;
-  transition: all 0.15s ease;
+.export-icon {
+  margin-top: 2px;
+  flex-shrink: 0;
 }
 
-.export-menu button:hover {
-  background: var(--color-ink-50);
+.csv-icon {
+  color: var(--color-green-700);
+}
+
+.json-icon {
+  color: var(--color-violet-700);
 }
 
 .export-text {
@@ -192,23 +177,17 @@
   color: var(--color-red-700);
 }
 
-.filter-result-count {
-  margin-left: auto;
-  font-size: var(--text-sm);
-  color: var(--text-secondary, var(--color-ink-500));
-  padding: 6px 12px;
-  background: rgba(241, 245, 249, 0.8);
-  border-radius: 999px;
-  white-space: nowrap;
-}
-
-.filter-result-count strong {
-  color: var(--text-primary, var(--color-ink-900));
-}
-
 /* ==========================================================================
    TIMELINE & ENTRY CARDS
    ========================================================================== */
+
+.badge-user-icon {
+  color: var(--color-ink-500);
+}
+
+.flow-arrow {
+  color: var(--color-ink-300);
+}
 
 .action-pill {
   font-size: var(--text-xs);
@@ -224,6 +203,11 @@
    FIELD-LEVEL BEFORE/AFTER CHANGES
    ========================================================================== */
 
+.diff-arrow {
+  color: var(--color-ink-600);
+  flex-shrink: 0;
+}
+
 /* ==========================================================================
    TECHNICAL RAW JSON VIEWER
    ========================================================================== */
@@ -236,10 +220,6 @@
   gap: 5px;
   color: var(--color-ink-500);
   font-weight: 500;
-}
-
-.timestamp-full {
-  color: var(--color-ink-600);
 }
 
 /* ==========================================================================
@@ -296,30 +276,6 @@
   }
 }
 
-.audit-empty-state {
-  text-align: center;
-  padding: 60px 30px;
-  background: var(--bg-card, var(--color-white));
-  border: 2px dashed var(--color-ink-300);
-  border-radius: var(--radius-lg);
-  color: var(--color-ink-500);
-  margin-top: 10px;
-}
-
-.audit-empty-state h3 {
-  font-size: var(--text-lg);
-  font-weight: 700;
-  color: var(--text-primary, var(--color-ink-900));
-  margin: 0 0 6px 0;
-}
-
-.audit-empty-state p {
-  font-size: var(--text-base);
-  color: var(--color-ink-500);
-  max-width: 460px;
-  margin: 0 auto 18px auto;
-}
-
 /* ==========================================================================
    TOP BAR USER PROFILE & BREADCRUMBS
    ========================================================================== */
@@ -337,11 +293,6 @@
 
   .filter-control select {
     width: 100%;
-  }
-
-  .filter-result-count {
-    margin-left: 0;
-    text-align: center;
   }
 
   .pagination-controls {

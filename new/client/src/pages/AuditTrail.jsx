@@ -481,7 +481,7 @@ const AuditTrail = () => {
     <div className="audit-trail">
       <div className="[max-width:1400px]! [margin:0_auto]! [padding:24px_28px]! [@media(max-width:768px)]:[padding:18px_16px]!">
         {/* Header Title & Actions */}
-        <div className="[display:flex]! [justify-content:space-between] [align-items:flex-start] [margin-bottom:24px]! [gap:20px] [flex-wrap:wrap] [@media(max-width:768px)]:[flex-direction:column]! [@media(max-width:768px)]:[align-items:stretch]!">
+        <div className="[display:flex]! [justify-content:space-between] [align-items:flex-start]! [margin-bottom:24px]! [gap:20px] [flex-wrap:wrap]! [@media(max-width:768px)]:[flex-direction:column]! [@media(max-width:768px)]:[align-items:stretch]!">
           <div>
             <div className="[display:inline-flex]! [align-items:center] [gap:6px] [padding:4px_10px]! [background:rgba(255,_102,_0,_0.08)]! [border:1px_solid_rgba(255,_102,_0,_0.25)]! [&&]:[border-radius:999px]! [color:var(--color-link)]! [font-size:var(--text-xs)]! [font-weight:700]! [text-transform:uppercase]! [letter-spacing:0.05em] [margin-bottom:8px]!">
               <Shield size={14} />
@@ -504,7 +504,7 @@ const AuditTrail = () => {
               ]}
             />
             <button
-              className="[display:inline-flex]! [align-items:center] [gap:8px] [padding:9px_16px]! [background:var(--bg-card,_rgba(255,_255,_255,_0.85))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-md)]! [color:var(--text-secondary,_var(--color-ink-600))]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [transition:all_0.2s_ease]! [box-shadow:var(--shadow-xs)]! [&:hover:not(:disabled)]:[background:var(--bg-hover,_rgba(255,_247,_237,_0.9))]! [&:hover:not(:disabled)]:[border-color:var(--accent-color,_var(--color-brand-500))]! [&:hover:not(:disabled)]:[color:var(--color-link)]! [&:hover:not(:disabled)]:[transform:translateY(-1px)]!"
+              className="[display:inline-flex]! [align-items:center] [gap:8px] [padding:9px_16px]! [background:var(--bg-card,_rgba(255,_255,_255,_0.85))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-md)]! [color:var(--text-secondary,_var(--color-ink-600))]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [transition:all_0.2s_ease]! [box-shadow:var(--shadow-xs)]! [&:hover:not(:disabled)]:[background:var(--bg-hover,_rgba(255,_247,_237,_0.9))]! [&:hover:not(:disabled)]:[border-color:var(--accent-color,_var(--color-brand-500))]! [&:hover:not(:disabled)]:[color:var(--color-link)]! [&:hover:not(:disabled)]:[transform:translateY(-1px)]"
               onClick={() => {
                 fetchAuditLogs(true);
                 fetchStats();
@@ -513,7 +513,7 @@ const AuditTrail = () => {
               }}
               disabled={isRefreshing}
             >
-              <RefreshCw size={15} className={isRefreshing ? "[animation:spin_1s_linear_infinite]!" : ""} />
+              <RefreshCw size={15} className={isRefreshing ? "spin-animate" : ""} />
               <span>Refresh</span>
             </button>
 
@@ -529,16 +529,16 @@ const AuditTrail = () => {
               </button>
 
               {exportDropdownOpen && (
-                <div className="export-menu">
+                <div className="[position:absolute] [right:0] [top:calc(100%_+_8px)] [width:260px]! [background:var(--color-white)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-md)]! [padding:8px]! [box-shadow:var(--shadow-raised)]! [z-index:50] [animation:fadeIn_0.15s_ease-out]! [&_button]:[display:flex]! [&_button]:[align-items:flex-start] [&_button]:[gap:12px] [&_button]:[width:100%]! [&_button]:[padding:10px_12px]! [&_button]:[background:transparent]! [&_button]:[border:none]! [&_button]:[&&]:[border-radius:var(--radius-md)]! [&_button]:[text-align:left]! [&_button]:[cursor:pointer] [&_button]:[transition:all_0.15s_ease]! [&&]:[&_button:hover]:[background:var(--color-ink-50)]!">
                   <button onClick={() => handleExport("csv")}>
-                    <FileSpreadsheet size={15} className="[margin-top:2px]! [flex-shrink:0] [color:var(--color-green-700)]!" />
+                    <FileSpreadsheet size={15} className="export-icon csv-icon" />
                     <div className="export-text">
                       <strong>CSV Spreadsheet</strong>
                       <span>Compliant with audit tools &amp; Excel</span>
                     </div>
                   </button>
                   <button onClick={() => handleExport("json")}>
-                    <FileText size={15} className="[margin-top:2px]! [flex-shrink:0] [color:var(--color-violet-700)]!" />
+                    <FileText size={15} className="export-icon json-icon" />
                     <div className="export-text">
                       <strong>JSON Structured Data</strong>
                       <span>Full metadata &amp; field diffs</span>
@@ -551,9 +551,9 @@ const AuditTrail = () => {
         </div>
 
         {/* KPI Metric Summary Cards */}
-        <div className="[display:grid]! [grid-template-columns:repeat(4,_1fr)] [gap:16px] [margin-bottom:24px]! [@media(max-width:1024px)]:[grid-template-columns:repeat(2,_1fr)]! [@media(max-width:768px)]:[grid-template-columns:1fr]!">
+        <div className="[display:grid]! [grid-template-columns:repeat(4,_1fr)]! [gap:16px] [margin-bottom:24px]! [@media(max-width:1024px)]:[grid-template-columns:repeat(2,_1fr)]! [@media(max-width:768px)]:[grid-template-columns:1fr]!">
           <div className="stat-card">
-            <div className="[width:44px]! [height:44px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center]! [justify-content:center]! [flex-shrink:0]! [&.total-events]:[background:rgba(99,_102,_241,_0.12)]! [&.total-events]:[color:#6366f1]! [&&]:[&.logins]:[background:rgba(14,_165,_233,_0.12)]! [&&]:[&.logins]:[color:#0ea5e9]! [&&]:[&&]:[&.data-changes]:[background:rgba(16,_185,_129,_0.12)]! [&&]:[&&]:[&.data-changes]:[color:var(--color-green-700)]! [&&]:[&&]:[&&]:[&.security-events]:[background:rgba(245,_158,_11,_0.12)]! [&&]:[&&]:[&&]:[&.security-events]:[color:var(--color-amber-700)]! total-events">
+            <div className="[width:44px]! [height:44px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [flex-shrink:0] [&.total-events]:[background:rgba(99,_102,_241,_0.12)] [&.total-events]:[color:#6366f1] [&&]:[&.logins]:[background:rgba(14,_165,_233,_0.12)] [&&]:[&.logins]:[color:#0ea5e9] [&&]:[&&]:[&.data-changes]:[background:rgba(16,_185,_129,_0.12)] [&&]:[&&]:[&.data-changes]:[color:var(--color-green-700)] [&&]:[&&]:[&&]:[&.security-events]:[background:rgba(245,_158,_11,_0.12)] [&&]:[&&]:[&&]:[&.security-events]:[color:var(--color-amber-700)] total-events">
               <Activity size={20} />
             </div>
             <div className="[display:flex]! [flex-direction:column]">
@@ -563,7 +563,7 @@ const AuditTrail = () => {
           </div>
 
           <div className="stat-card">
-            <div className="[width:44px]! [height:44px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center]! [justify-content:center]! [flex-shrink:0]! [&.total-events]:[background:rgba(99,_102,_241,_0.12)]! [&.total-events]:[color:#6366f1]! [&&]:[&.logins]:[background:rgba(14,_165,_233,_0.12)]! [&&]:[&.logins]:[color:#0ea5e9]! [&&]:[&&]:[&.data-changes]:[background:rgba(16,_185,_129,_0.12)]! [&&]:[&&]:[&.data-changes]:[color:var(--color-green-700)]! [&&]:[&&]:[&&]:[&.security-events]:[background:rgba(245,_158,_11,_0.12)]! [&&]:[&&]:[&&]:[&.security-events]:[color:var(--color-amber-700)]! logins">
+            <div className="[width:44px]! [height:44px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [flex-shrink:0] [&.total-events]:[background:rgba(99,_102,_241,_0.12)] [&.total-events]:[color:#6366f1] [&&]:[&.logins]:[background:rgba(14,_165,_233,_0.12)] [&&]:[&.logins]:[color:#0ea5e9] [&&]:[&&]:[&.data-changes]:[background:rgba(16,_185,_129,_0.12)] [&&]:[&&]:[&.data-changes]:[color:var(--color-green-700)] [&&]:[&&]:[&&]:[&.security-events]:[background:rgba(245,_158,_11,_0.12)] [&&]:[&&]:[&&]:[&.security-events]:[color:var(--color-amber-700)] logins">
               <LogIn size={20} />
             </div>
             <div className="[display:flex]! [flex-direction:column]">
@@ -573,7 +573,7 @@ const AuditTrail = () => {
           </div>
 
           <div className="stat-card">
-            <div className="[width:44px]! [height:44px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center]! [justify-content:center]! [flex-shrink:0]! [&.total-events]:[background:rgba(99,_102,_241,_0.12)]! [&.total-events]:[color:#6366f1]! [&&]:[&.logins]:[background:rgba(14,_165,_233,_0.12)]! [&&]:[&.logins]:[color:#0ea5e9]! [&&]:[&&]:[&.data-changes]:[background:rgba(16,_185,_129,_0.12)]! [&&]:[&&]:[&.data-changes]:[color:var(--color-green-700)]! [&&]:[&&]:[&&]:[&.security-events]:[background:rgba(245,_158,_11,_0.12)]! [&&]:[&&]:[&&]:[&.security-events]:[color:var(--color-amber-700)]! data-changes">
+            <div className="[width:44px]! [height:44px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [flex-shrink:0] [&.total-events]:[background:rgba(99,_102,_241,_0.12)] [&.total-events]:[color:#6366f1] [&&]:[&.logins]:[background:rgba(14,_165,_233,_0.12)] [&&]:[&.logins]:[color:#0ea5e9] [&&]:[&&]:[&.data-changes]:[background:rgba(16,_185,_129,_0.12)] [&&]:[&&]:[&.data-changes]:[color:var(--color-green-700)] [&&]:[&&]:[&&]:[&.security-events]:[background:rgba(245,_158,_11,_0.12)] [&&]:[&&]:[&&]:[&.security-events]:[color:var(--color-amber-700)] data-changes">
               <Database size={20} />
             </div>
             <div className="[display:flex]! [flex-direction:column]">
@@ -583,7 +583,7 @@ const AuditTrail = () => {
           </div>
 
           <div className="stat-card">
-            <div className="[width:44px]! [height:44px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center]! [justify-content:center]! [flex-shrink:0]! [&.total-events]:[background:rgba(99,_102,_241,_0.12)]! [&.total-events]:[color:#6366f1]! [&&]:[&.logins]:[background:rgba(14,_165,_233,_0.12)]! [&&]:[&.logins]:[color:#0ea5e9]! [&&]:[&&]:[&.data-changes]:[background:rgba(16,_185,_129,_0.12)]! [&&]:[&&]:[&.data-changes]:[color:var(--color-green-700)]! [&&]:[&&]:[&&]:[&.security-events]:[background:rgba(245,_158,_11,_0.12)]! [&&]:[&&]:[&&]:[&.security-events]:[color:var(--color-amber-700)]! security-events">
+            <div className="[width:44px]! [height:44px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [flex-shrink:0] [&.total-events]:[background:rgba(99,_102,_241,_0.12)] [&.total-events]:[color:#6366f1] [&&]:[&.logins]:[background:rgba(14,_165,_233,_0.12)] [&&]:[&.logins]:[color:#0ea5e9] [&&]:[&&]:[&.data-changes]:[background:rgba(16,_185,_129,_0.12)] [&&]:[&&]:[&.data-changes]:[color:var(--color-green-700)] [&&]:[&&]:[&&]:[&.security-events]:[background:rgba(245,_158,_11,_0.12)] [&&]:[&&]:[&&]:[&.security-events]:[color:var(--color-amber-700)] security-events">
               <ShieldAlert size={20} />
             </div>
             <div className="[display:flex]! [flex-direction:column]">
@@ -632,7 +632,7 @@ const AuditTrail = () => {
             ))}
           </div>
         ) : auditLogs.length === 0 ? (
-          <div className="audit-empty-state">
+          <div className="[text-align:center]! [padding:60px_30px]! [background:var(--bg-card,_var(--color-white))]! [border:2px_dashed_var(--color-ink-300)]! [&&]:[border-radius:var(--radius-lg)]! [color:var(--color-ink-500)]! [margin-top:10px]! [&_h3]:[font-size:var(--text-lg)]! [&_h3]:[font-weight:700]! [&_h3]:[color:var(--text-primary,_var(--color-ink-900))]! [&_h3]:[margin:0_0_6px_0]! [&&]:[&&]:[&_p]:[font-size:var(--text-base)]! [&&]:[&_p]:[color:var(--color-ink-500)]! [&_p]:[max-width:460px]! [&&]:[&_p]:[margin:0_auto_18px_auto]!">
             <div className="[width:64px]! [height:64px]! [background:var(--color-ink-100)]! [border-radius:50%]! [display:flex]! [align-items:center] [justify-content:center] [margin:0_auto_16px_auto]! [color:var(--color-ink-600)]!">
               <Filter size={32} />
             </div>
@@ -672,13 +672,13 @@ const AuditTrail = () => {
 
         {/* Pagination Bar */}
         {totalRecords > 0 && (
-          <div className="[display:flex]! [justify-content:space-between] [align-items:center] [margin-top:30px]! [padding:16px_20px]! [background:var(--bg-card,_var(--color-white))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-lg)]! [box-shadow:var(--shadow-card)]! [flex-wrap:wrap] [gap:16px] [@media(max-width:768px)]:[flex-direction:column]! [@media(max-width:768px)]:[align-items:stretch]! [@media(max-width:768px)]:[text-align:center]!">
+          <div className="[display:flex]! [justify-content:space-between] [align-items:center]! [margin-top:30px]! [padding:16px_20px]! [background:var(--bg-card,_var(--color-white))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-lg)]! [box-shadow:var(--shadow-card)]! [flex-wrap:wrap]! [gap:16px] [@media(max-width:768px)]:[flex-direction:column]! [@media(max-width:768px)]:[align-items:stretch]! [@media(max-width:768px)]:[text-align:center]!">
             <div className="[font-size:var(--text-base)]! [color:var(--text-secondary,_var(--color-ink-500))]!">
               Page <strong>{page}</strong> of <strong>{totalPages}</strong> ({totalRecords} total events)
             </div>
 
             <div className="pagination-controls">
-              <div className="[display:flex]! [align-items:center] [gap:8px] [font-size:var(--text-sm)]! [color:var(--text-secondary,_var(--color-ink-500))]! [&_select]:[background:var(--color-white)]! [&_select]:[border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&_select]:[&&]:[border-radius:var(--radius-sm)]! [&_select]:[padding:5px_8px]! [&_select]:[font-size:var(--text-sm)]! [&_select]:[color:var(--text-primary,_var(--color-ink-900))]! [&_select]:[cursor:pointer]! [&_select]:[outline:none]!">
+              <div className="[display:flex]! [align-items:center] [gap:8px] [font-size:var(--text-sm)]! [color:var(--text-secondary,_var(--color-ink-500))]! [&_select]:[background:var(--color-white)]! [&_select]:[border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&_select]:[&&]:[border-radius:var(--radius-sm)]! [&_select]:[padding:5px_8px]! [&_select]:[font-size:var(--text-sm)]! [&_select]:[color:var(--text-primary,_var(--color-ink-900))]! [&_select]:[cursor:pointer] [&_select]:[outline:none]!">
                 <label>Rows:</label>
                 <NativeSelect
                   value={limit}

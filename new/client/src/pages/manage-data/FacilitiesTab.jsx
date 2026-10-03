@@ -7,7 +7,7 @@ import PaginationControls from './PaginationControls';
 
 // Extracted from ManageData.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const FacilitiesTab = ({ ACTIVITY_LABELS, HIERARCHY, ITEMS_PER_PAGE, currentPage, exportToCSV, facilities, facilityForm, filteredFacilities, handleAddFacility, handleDeleteFacility, handleFacilityChange, setCurrentPage, setFacilityForm, setImportModal, user }) => (
-<div className="manage-card glass-panel">
+<div className="[border-radius:var(--radius-lg)]! [padding:32px]! [animation:fadeIn_0.3s_ease-out]! [@media(max-width:768px)]:[padding:18px_14px]! [@media(max-width:768px)]:[border-radius:var(--radius-lg)]! glass-panel">
                                 <h2 className="mb-[8px]! font-bold!">Active Regions</h2>
                                 <p className="text-[color:var(--text-secondary)]! mb-[32px]!">Manage operational regions and their boundaries.</p>
 

@@ -73,10 +73,10 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
           </div>
 
           {/* Horizontal 4-KPI Grid */}
-          <div className="[display:grid]! [grid-template-columns:repeat(4,_1fr)] [gap:20px] [@media(max-width:1200px)]:[grid-template-columns:repeat(2,_1fr)]! [@media(max-width:768px)]:[grid-template-columns:1fr]!">
+          <div className="[display:grid]! [grid-template-columns:repeat(4,_1fr)]! [gap:20px] [@media(max-width:1200px)]:[grid-template-columns:repeat(2,_1fr)]! [@media(max-width:768px)]:[grid-template-columns:1fr]!">
             <div className="kpi-card">
               <div className="[display:flex]! [align-items:center] [gap:12px] [margin-bottom:16px]!">
-                <div className="kpi-icon ch4">
+                <div className="[&.scope1]:[background:rgba(37,_99,_235,_0.1)] [&.scope1]:[color:var(--accent-secondary)] [&&]:[&.scope3]:[background:rgba(139,_92,_246,_0.1)] [&&]:[&.scope3]:[color:var(--color-violet-700)] [width:38px]! [height:38px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [flex-shrink:0] [&&]:[&&]:[&.co2]:[background:rgba(255,_102,_0,_0.1)] [&&]:[&&]:[&.co2]:[color:var(--color-link)] [&&]:[&&]:[&&]:[&.ch4]:[background:rgba(37,_99,_235,_0.1)] [&&]:[&&]:[&&]:[&.ch4]:[color:var(--accent-secondary)] [&&]:[&&]:[&&]:[&&]:[&.flare]:[background:rgba(234,_88,_12,_0.1)] [&&]:[&&]:[&&]:[&&]:[&.flare]:[color:var(--accent-tertiary)] ch4">
                   <Wind size={20} />
                 </div>
                 <span className="kpi-label">Methane Intensity (Avg)</span>
@@ -87,7 +87,7 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
                 </span>
                 <span className="kpi-unit">kg CH₄ / BOE</span>
               </div>
-              <div className="kpi-footer">
+              <div className="kpi-footer [margin-top:16px]! [padding-top:16px]! [border-top:1px_dashed_var(--border-color)]! [font-size:var(--text-sm)]! [color:var(--text-secondary)]! [display:flex]! [justify-content:space-between] [align-items:center] [&_strong]:[color:var(--text-primary)]!">
                 <span>
                   Total CH₄:{" "}
                   <strong>{formatNumber(stats.totalCh4Emissions)} tCH₄</strong>
@@ -98,7 +98,7 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
             <div className="kpi-card">
               <div className="[display:flex]! [align-items:center] [gap:12px] [margin-bottom:16px]!">
                 <div
-                  className="kpi-icon loss bg-[color:rgba(59,_130,_246,_0.1)]! text-[color:#1d4ed8]!"
+                  className="[&.scope1]:[background:rgba(37,_99,_235,_0.1)] [&.scope1]:[color:var(--accent-secondary)] [&&]:[&.scope3]:[background:rgba(139,_92,_246,_0.1)] [&&]:[&.scope3]:[color:var(--color-violet-700)] [width:38px]! [height:38px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [flex-shrink:0] [&&]:[&&]:[&.co2]:[background:rgba(255,_102,_0,_0.1)] [&&]:[&&]:[&.co2]:[color:var(--color-link)] [&&]:[&&]:[&&]:[&.ch4]:[background:rgba(37,_99,_235,_0.1)] [&&]:[&&]:[&&]:[&.ch4]:[color:var(--accent-secondary)] [&&]:[&&]:[&&]:[&&]:[&.flare]:[background:rgba(234,_88,_12,_0.1)] [&&]:[&&]:[&&]:[&&]:[&.flare]:[color:var(--accent-tertiary)] loss bg-[color:rgba(59,_130,_246,_0.1)]! text-[color:#1d4ed8]!"
                  
                 >
                   <Compass size={20} />
@@ -220,7 +220,7 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
                 </div>
               </div>
 
-              <div className="kpi-footer">
+              <div className="kpi-footer [margin-top:16px]! [padding-top:16px]! [border-top:1px_dashed_var(--border-color)]! [font-size:var(--text-sm)]! [color:var(--text-secondary)]! [display:flex]! [justify-content:space-between] [align-items:center] [&_strong]:[color:var(--text-primary)]!">
                 <span>
                   OGMP 2.0:{" "}
                   <strong>
@@ -236,7 +236,7 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
 
             <div className="kpi-card">
               <div className="[display:flex]! [align-items:center] [gap:12px] [margin-bottom:16px]!">
-                <div className="kpi-icon flare">
+                <div className="[&.scope1]:[background:rgba(37,_99,_235,_0.1)] [&.scope1]:[color:var(--accent-secondary)] [&&]:[&.scope3]:[background:rgba(139,_92,_246,_0.1)] [&&]:[&.scope3]:[color:var(--color-violet-700)] [width:38px]! [height:38px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [flex-shrink:0] [&&]:[&&]:[&.co2]:[background:rgba(255,_102,_0,_0.1)] [&&]:[&&]:[&.co2]:[color:var(--color-link)] [&&]:[&&]:[&&]:[&.ch4]:[background:rgba(37,_99,_235,_0.1)] [&&]:[&&]:[&&]:[&.ch4]:[color:var(--accent-secondary)] [&&]:[&&]:[&&]:[&&]:[&.flare]:[background:rgba(234,_88,_12,_0.1)] [&&]:[&&]:[&&]:[&&]:[&.flare]:[color:var(--accent-tertiary)] flare">
                   <Flame size={20} />
                 </div>
                 <span className="kpi-label">Gas Flaring Rate</span>
@@ -247,7 +247,7 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
                 </span>
                 <span className="kpi-unit">of Gas Volume</span>
               </div>
-              <div className="kpi-footer">
+              <div className="kpi-footer [margin-top:16px]! [padding-top:16px]! [border-top:1px_dashed_var(--border-color)]! [font-size:var(--text-sm)]! [color:var(--text-secondary)]! [display:flex]! [justify-content:space-between] [align-items:center] [&_strong]:[color:var(--text-primary)]!">
                 <span>
                   Flared:{" "}
                   <strong>
@@ -260,7 +260,7 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
             <div className="kpi-card">
               <div className="[display:flex]! [align-items:center] [gap:12px] [margin-bottom:16px]!">
                 <div
-                  className="kpi-icon wec bg-[color:rgba(239,_68,_68,_0.1)]! text-[color:#b91c1c]!"
+                  className="[&.scope1]:[background:rgba(37,_99,_235,_0.1)] [&.scope1]:[color:var(--accent-secondary)] [&&]:[&.scope3]:[background:rgba(139,_92,_246,_0.1)] [&&]:[&.scope3]:[color:var(--color-violet-700)] [width:38px]! [height:38px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [flex-shrink:0] [&&]:[&&]:[&.co2]:[background:rgba(255,_102,_0,_0.1)] [&&]:[&&]:[&.co2]:[color:var(--color-link)] [&&]:[&&]:[&&]:[&.ch4]:[background:rgba(37,_99,_235,_0.1)] [&&]:[&&]:[&&]:[&.ch4]:[color:var(--accent-secondary)] [&&]:[&&]:[&&]:[&&]:[&.flare]:[background:rgba(234,_88,_12,_0.1)] [&&]:[&&]:[&&]:[&&]:[&.flare]:[color:var(--accent-tertiary)] wec bg-[color:rgba(239,_68,_68,_0.1)]! text-[color:#b91c1c]!"
                  
                 >
                   <AlertTriangle size={20} />
@@ -280,7 +280,7 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
                   {stats.wecAssessed ? "USD Est." : stats.wecReason || "Select a single year"}
                 </span>
               </div>
-              <div className="kpi-footer">
+              <div className="kpi-footer [margin-top:16px]! [padding-top:16px]! [border-top:1px_dashed_var(--border-color)]! [font-size:var(--text-sm)]! [color:var(--text-secondary)]! [display:flex]! [justify-content:space-between] [align-items:center] [&_strong]:[color:var(--text-primary)]!">
                 <span>
                   Rate:{" "}
                   <strong>
@@ -298,8 +298,8 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
           </div>
 
           {/* Methane Mass Balance Bar */}
-          <div className="scope-breakdown [display:grid]! [grid-template-columns:repeat(4,_1fr)] [gap:20px] [margin-top:32px]! [background:var(--bg-hover)]! [padding:24px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--border-color)]! [@media(max-width:1200px)]:[grid-template-columns:repeat(2,_1fr)]! [@media(max-width:768px)]:[grid-template-columns:1fr]!">
-            <div className="scope-item">
+          <div className="scope-breakdown [display:grid]! [grid-template-columns:repeat(4,_1fr)]! [gap:20px] [margin-top:32px]! [background:var(--bg-hover)]! [padding:24px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--border-color)]! [@media(max-width:1200px)]:[grid-template-columns:repeat(2,_1fr)]! [@media(max-width:768px)]:[grid-template-columns:1fr]!">
+            <div className="scope-item [display:flex]! [flex-direction:column] [gap:8px] [&.bordered]:[border-left:1px_solid_var(--border-color)] [&.bordered]:[padding-left:20px] [&_.label]:[font-size:var(--text-sm)] [&_.label]:[color:var(--text-secondary)] [&_.label]:[font-weight:600] [&_.label]:[text-transform:uppercase] [&_.label]:[letter-spacing:0.05em] [&&]:[&&]:[&_.val]:[font-size:var(--text-lg)] [&&]:[&&]:[&_.val]:[font-weight:700] [&&]:[&_.val]:[color:var(--text-primary)] [&&]:[&&]:[&_.val]:[font-family:inherit] [&&]:[&&]:[&_.val.flare-val]:[color:var(--accent-tertiary)]">
               <span className="label">Total Gas Produced</span>
               <span className="val">
                 {formatNumber(stats.totalGasProductionM3, 0)} m³{" "}
@@ -310,7 +310,7 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
                 </sub>
               </span>
             </div>
-            <div className="scope-item bordered">
+            <div className="scope-item [display:flex]! [flex-direction:column] [gap:8px] [&.bordered]:[border-left:1px_solid_var(--border-color)] [&.bordered]:[padding-left:20px] [&_.label]:[font-size:var(--text-sm)] [&_.label]:[color:var(--text-secondary)] [&_.label]:[font-weight:600] [&_.label]:[text-transform:uppercase] [&_.label]:[letter-spacing:0.05em] [&&]:[&&]:[&_.val]:[font-size:var(--text-lg)] [&&]:[&&]:[&_.val]:[font-weight:700] [&&]:[&_.val]:[color:var(--text-primary)] [&&]:[&&]:[&_.val]:[font-family:inherit] [&&]:[&&]:[&_.val.flare-val]:[color:var(--accent-tertiary)] bordered">
               <span className="label">Methane Loss Volume</span>
               <span
                 className="val text-[color:#2563eb]! font-bold!"
@@ -319,13 +319,13 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
                 {formatNumber(stats.totalCh4VolumeM3, 0)} m³
               </span>
             </div>
-            <div className="scope-item bordered">
+            <div className="scope-item [display:flex]! [flex-direction:column] [gap:8px] [&.bordered]:[border-left:1px_solid_var(--border-color)] [&.bordered]:[padding-left:20px] [&_.label]:[font-size:var(--text-sm)] [&_.label]:[color:var(--text-secondary)] [&_.label]:[font-weight:600] [&_.label]:[text-transform:uppercase] [&_.label]:[letter-spacing:0.05em] [&&]:[&&]:[&_.val]:[font-size:var(--text-lg)] [&&]:[&&]:[&_.val]:[font-weight:700] [&&]:[&_.val]:[color:var(--text-primary)] [&&]:[&&]:[&_.val]:[font-family:inherit] [&&]:[&&]:[&_.val.flare-val]:[color:var(--accent-tertiary)] bordered">
               <span className="label">Total Gas Flared</span>
               <span className="val flare-val">
                 {formatNumber(stats.totalFlaringVolume, 0)} m³
               </span>
             </div>
-            <div className="scope-item bordered">
+            <div className="scope-item [display:flex]! [flex-direction:column] [gap:8px] [&.bordered]:[border-left:1px_solid_var(--border-color)] [&.bordered]:[padding-left:20px] [&_.label]:[font-size:var(--text-sm)] [&_.label]:[color:var(--text-secondary)] [&_.label]:[font-weight:600] [&_.label]:[text-transform:uppercase] [&_.label]:[letter-spacing:0.05em] [&&]:[&&]:[&_.val]:[font-size:var(--text-lg)] [&&]:[&&]:[&_.val]:[font-weight:700] [&&]:[&_.val]:[color:var(--text-primary)] [&&]:[&&]:[&_.val]:[font-family:inherit] [&&]:[&&]:[&_.val.flare-val]:[color:var(--accent-tertiary)] bordered">
               <span className="label">Total Combined BOE</span>
               <span className="val">{formatNumber(stats.totalBoe, 0)} BOE</span>
             </div>

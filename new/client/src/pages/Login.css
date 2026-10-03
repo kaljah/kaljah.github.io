@@ -71,16 +71,6 @@
 /* Orange/Grey Carbon Cloud */
 
 /* Green Methane Cloud */
-.ch4-cloud {
-  background: radial-gradient(
-    circle,
-    rgba(16, 185, 129, 0.5) 0%,
-    rgba(15, 23, 42, 0.2) 50%,
-    transparent 70%
-  );
-  width: 900px;
-  height: 900px;
-}
 
 .ghg-noise-overlay {
   position: absolute;
@@ -96,32 +86,6 @@
 }
 
 /* --- Login Form Styles --- */
-.login-container {
-  width: 100%;
-  max-width: 440px;
-  padding: 48px;
-  border-radius: var(--radius-lg);
-  position: relative;
-  z-index: 10;
-}
-
-.login-header {
-  text-align: center;
-  margin-bottom: 32px;
-}
-
-.login-header h2 {
-  font-size: var(--text-2xl);
-  font-weight: 800;
-  color: var(--text-main);
-  margin-bottom: 8px;
-  letter-spacing: -0.5px;
-}
-
-.login-header p {
-  color: var(--text-muted);
-  font-size: var(--text-md);
-}
 
 .form-group {
   margin-bottom: 20px;
@@ -161,13 +125,6 @@
   border: 1px solid #fee2e2;
 }
 
-.login-footer {
-  margin-top: 40px;
-  text-align: center;
-  border-top: 1px solid var(--border-light);
-  padding-top: 24px;
-}
-
 .badge {
   font-size: var(--text-sm);
   font-weight: 600;
@@ -178,29 +135,26 @@
   border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
-.login-footer p {
-  color: var(--text-muted);
-  font-size: var(--text-sm);
-}
-
 /* --- Forgot Password Modal --- */
 
-.forgot-modal-header {
-  margin-bottom: 20px;
-  text-align: left;
-}
-
-.forgot-modal-header h3 {
-  font-size: var(--text-xl);
-  font-weight: 700;
-  color: var(--text-main);
-  margin-bottom: 6px;
-}
-
-.forgot-modal-header p {
+.forgot-status-msg {
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
   font-size: var(--text-base);
-  color: var(--text-muted);
+  margin-bottom: 18px;
   line-height: 1.4;
+}
+
+.forgot-status-msg.success {
+  background: var(--color-green-50);
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.forgot-status-msg.error {
+  background: var(--color-red-50);
+  color: #991b1b;
+  border: 1px solid #fecaca;
 }
 
 .btn-secondary {
