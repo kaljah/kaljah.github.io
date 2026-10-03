@@ -1,3 +1,12 @@
+.dashboard-content {
+  min-height: 100vh;
+  background: transparent;
+  padding: 24px 32px 48px;
+  position: relative;
+  overflow-x: hidden;
+  color: var(--text-primary, var(--color-ink-900));
+}
+
 .dashboard-grid {
   display: flex;
   flex-direction: column;
@@ -149,6 +158,42 @@
   }
 }
 
+.trend-card-enhanced {
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--bg-card);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-card);
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+
+.trend-card-enhanced:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-elevated);
+  border-color: rgba(255, 255, 255, 0.95);
+}
+
+.donut-card-enhanced {
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  flex: 1;
+  background: var(--bg-card);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-card);
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+
+.donut-card-enhanced:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-elevated);
+  border-color: rgba(255, 255, 255, 0.95);
+}
+
 /* Goal Progress Badge */
 .goal-progress-badge {
   padding: 2px 8px;
@@ -289,6 +334,15 @@
   font-weight: 600;
 }
 
+.scope-pills-row {
+  display: flex;
+  gap: 16px;
+  background: rgba(255, 255, 255, 0.4);
+  padding: 16px;
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(226, 232, 240, 0.5);
+}
+
 .scope-pill {
   flex: 1;
   display: flex;
@@ -324,6 +378,21 @@
 }
 
 /* Categorical Card */
+.categorical-card {
+  padding: 24px;
+  background: var(--bg-card);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.card-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
 
 .card-subtitle {
   font-size: var(--text-md);
@@ -344,6 +413,21 @@
   }
 }
 
+.region-compact-card {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--border-color, var(--color-ink-200));
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: var(--shadow-xs);
+}
+
+.region-compact-card:hover {
+  border-color: var(--accent-color, var(--color-brand-500));
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(255, 102, 0, 0.1);
+}
+
 .region-value {
   font-size: var(--text-base);
   font-weight: 700;
@@ -357,6 +441,11 @@
 }
 
 /* Detailed Table Refinements */
+.main-dashboard-grid {
+  display: grid;
+  grid-template-columns: 8fr 4fr;
+  gap: 24px;
+}
 
 .table-header-row {
   display: flex;
@@ -545,10 +634,14 @@
     overflow: visible !important;
     height: auto !important;
   }
-  .sidebar, .top-bar, .compare-toggle-btn, button {
+  .sidebar, .top-bar, .card-header-actions, .compare-toggle-btn, .collapse-toggle-icon, button {
     display: none !important;
   }
-  .card, .glass-panel, .hero-card, .detailed-table-card {
+  .dashboard-content {
+    padding: 20px !important;
+    max-width: 100% !important;
+  }
+  .card, .glass-panel, .hero-card, .trend-card-enhanced, .donut-card-enhanced, .categorical-card, .detailed-table-card {
     box-shadow: none !important;
     border: 1px solid var(--color-ink-300) !important;
     background: var(--color-white) !important;
@@ -698,6 +791,11 @@
 }
 
 /* Compare Mode Toggle */
+.card-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
 
 .compare-toggle-btn {
   display: flex;
@@ -736,6 +834,7 @@
 /* Tablet (max-width: 1200px) */
 @media (max-width: 1200px) {
   .charts-section,
+  .main-dashboard-grid,
   .bottom-charts-row {
     grid-template-columns: 1fr;
     gap: 20px;
@@ -757,6 +856,9 @@
 
 /* Mobile (max-width: 768px) */
 @media (max-width: 768px) {
+  .dashboard-content {
+    padding: 14px 12px 36px;
+  }
 
   .dashboard-filters {
     overflow-x: auto;
@@ -795,6 +897,18 @@
     border-left: none !important;
   }
 
+  .scope-pills-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .card-header-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .trend-card-enhanced,
   .distribution-card,
   .detailed-table-card {
     padding: 16px;
@@ -816,6 +930,12 @@
 
   .stat-value {
     font-size: var(--text-xl);
+  }
+
+  .scope-pills-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100%;
   }
 }
 
@@ -941,6 +1061,12 @@
 }
 
 /* Right side actions */
+.pending-banner-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
 
 /* Modern Toggle Switch */
 .pending-toggle-wrapper {
@@ -1048,6 +1174,14 @@
     flex-direction: column;
     align-items: stretch;
     padding: 14px 16px;
+  }
+  
+  .pending-banner-actions {
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 4px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(226, 232, 240, 0.8);
   }
 }
 

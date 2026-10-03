@@ -200,6 +200,22 @@
   font-size: var(--text-sm);
 }
 
+.forgot-password-link {
+  background: none;
+  border: none;
+  color: var(--primary);
+  font-size: var(--text-base);
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.forgot-password-link:hover {
+  color: var(--primary-hover);
+  text-decoration: underline;
+}
+
 /* --- Forgot Password Modal --- */
 
 .forgot-modal-header {
@@ -255,4 +271,23 @@
 
 .btn-secondary:hover {
   background: var(--color-ink-200);
+}
+
+.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  display: inline-flex;
+  padding: 6px;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-ink-500);
+  cursor: pointer;
+}
+
+.password-toggle:hover {
+  background: var(--color-ink-100);
+  color: var(--color-ink-900);
 }

@@ -139,7 +139,69 @@
   color: var(--text-secondary, var(--color-ink-500));
 }
 
+.btn-autofill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  background: rgba(37, 99, 235, 0.1);
+  color: var(--color-blue-600);
+  border: 1px solid rgba(37, 99, 235, 0.2);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-autofill:hover {
+  background: rgba(37, 99, 235, 0.2);
+  border-color: var(--color-blue-600);
+}
+
+.sbti-input {
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color, var(--color-ink-200));
+  background: var(--input-bg, var(--color-ink-50));
+  color: var(--text-main, var(--color-ink-900));
+  font-size: var(--text-md);
+  transition: all 0.2s;
+}
+
+.sbti-input:focus {
+  outline: none;
+  border-color: var(--primary, var(--color-brand-500));
+  background: var(--card-bg, var(--color-white));
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+}
+
 /* Charts Grid */
+.sbti-charts-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 1100px) {
+  .sbti-charts-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sbti-card {
+  background: var(--bg-card, rgba(255, 255, 255, 0.85));
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--border-color, rgba(226, 232, 240, 0.8));
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-card, 0 4px 12px rgba(0, 0, 0, 0.05));
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease, border-color 0.22s ease;
+}
+
+.sbti-card:hover {
+  border-color: var(--border-color-hover, rgba(255, 255, 255, 0.95));
+}
 
 /* Trajectory Milestones Table */
 
