@@ -1,127 +1,112 @@
 import React from "react";
 import { CheckCircle2, Layers, Scale } from "lucide-react";
 import { GWP_AR4, GWP_AR5, GWP_AR6 } from "../../constants";
-import { Badge, RadioCardGroup } from "../../ui";
+import { Badge, Card, RadioCardGroup } from "../../ui";
+import { cn } from "../../ui/cn";
 
-// Extracted from Settings.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
+/** Shared frame of the Settings tabs: icon, title and intro paragraph above the content. */
+export const SettingsSection = ({ icon: Icon, title, intro, children }) => (
+  <Card className="flex flex-col gap-7 p-8">
+    <div className="flex flex-col gap-2">
+      <h2 className="m-0 flex items-center gap-2.5 text-lg font-bold text-text">
+        <Icon className="size-5 shrink-0 text-brand-500" aria-hidden="true" /> {title}
+      </h2>
+      <p className="m-0 max-w-3xl text-base leading-normal text-text-secondary">{intro}</p>
+    </div>
+    {children}
+  </Card>
+);
+
+const Factor = ({ label, value, highlight }) => (
+  <div className="flex flex-col gap-0.5 text-center">
+    <span className="text-xs font-semibold text-text-secondary">{label}</span>
+    <span className={cn("text-lg font-extrabold text-text", highlight && "text-brand-700")}>{value}×</span>
+  </div>
+);
+
+const ROWS = [
+  { name: "Carbon Dioxide (CO₂)", values: [1, 1, 1], context: "Universal baseline anchor", plain: true },
+  { name: "Methane (CH₄) - 100 Year", key: "CH4", context: "Corporate GHG Inventory / Scope 1", active: "AR5" },
+  { name: "Methane (CH₄) - 20 Year", key: "CH4_20", context: "Near-Term Climate Impact / ESG Analytics" },
+  { name: "Nitrous Oxide (N₂O) - 100 Year", key: "N2O", context: "Flaring / Combustion byproducts" },
+];
+
+const th = "whitespace-nowrap border-b border-border bg-surface px-3.5 py-2.5 text-left text-xs font-bold uppercase tracking-wide text-text-secondary";
+const td = "border-b border-ink-100 px-3.5 py-2.5 text-base text-text";
+
 const SettingsIPCCGlobalWarming = ({ GWP_DATA, gwpStandard, isAdmin, setGwpStandard }) => (
-<div className="[background:var(--bg-card,_var(--color-white))] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [&&]:[border-radius:var(--radius-lg)] [padding:32px] [display:flex] [flex-direction:column] [gap:28px] [box-shadow:var(--shadow-card,_0_4px_6px_-1px_rgba(0,_0,_0,_0.05))]">
-          <div className="section-intro">
-            <div className="[display:flex] [align-items:center] [gap:10px]">
-              <Scale size={20} className="section-icon" />
-              <h2>IPCC Global Warming Potential (GWP) Standard</h2>
+  <SettingsSection
+    icon={Scale}
+    title="IPCC Global Warming Potential (GWP) Standard"
+    intro="Select which Intergovernmental Panel on Climate Change (IPCC) assessment report conversion factors are applied to Methane (CH₄) and Nitrous Oxide (N₂O) emissions calculations."
+  >
+    <RadioCardGroup
+      label="IPCC GWP standard"
+      value={gwpStandard}
+      onChange={setGwpStandard}
+      disabled={!isAdmin}
+      options={Object.entries(GWP_DATA).map(([key, data]) => ({
+        value: key,
+        id: `gwp-card-${key.toLowerCase()}`,
+        title: data.name,
+        description: data.description,
+        badge: <Badge tone="brand">{key}</Badge>,
+        selectedBadge: (
+          <Badge tone="success">
+            <CheckCircle2 className="size-3" aria-hidden="true" />
+            Active standard
+          </Badge>
+        ),
+        content: (
+          <>
+            <p className="m-0 text-sm font-semibold text-info-fg">{data.status}</p>
+            <div className="grid grid-cols-3 gap-2 rounded-md border border-border bg-ink-50 px-2.5 py-3">
+              <Factor label="CH₄ (100-yr)" value={data.ch4_100} />
+              <Factor label="CH₄ (20-yr)" value={data.ch4_20} highlight />
+              <Factor label="N₂O (100-yr)" value={data.n2o_100} />
             </div>
-            <p>
-              Select which Intergovernmental Panel on Climate Change (IPCC)
-              assessment report conversion factors are applied to Methane (CH₄)
-              and Nitrous Oxide (N₂O) emissions calculations.
-            </p>
-          </div>
+          </>
+        ),
+      }))}
+    />
 
-          <RadioCardGroup
-            label="IPCC GWP standard"
-            value={gwpStandard}
-            onChange={setGwpStandard}
-            disabled={!isAdmin}
-            options={Object.entries(GWP_DATA).map(([key, data]) => ({
-              value: key,
-              id: `gwp-card-${key.toLowerCase()}`,
-              title: data.name,
-              description: data.description,
-              badge: <Badge tone="brand">{key}</Badge>,
-              selectedBadge: (
-                <Badge tone="success">
-                  <CheckCircle2 className="size-3" aria-hidden="true" />
-                  Active standard
-                </Badge>
-              ),
-              content: (
-                <>
-                  <div className="[font-size:var(--text-sm)] [color:var(--color-blue-700)] [margin-bottom:10px] [font-weight:600]">{data.status}</div>
-                  <div className="[display:grid] [grid-template-columns:repeat(3,_1fr)] [gap:8px] [background:var(--bg-hover,_var(--color-ink-50))] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [&&]:[border-radius:var(--radius-md)] [padding:12px_10px]">
-                    <div className="factor-item">
-                      <span className="factor-label">CH₄ (100-yr)</span>
-                      <span className="factor-val [font-size:var(--text-lg)] [font-weight:800] [color:var(--text-primary,_var(--color-ink-900))]">{data.ch4_100}×</span>
-                    </div>
-                    <div className="factor-item highlight">
-                      <span className="factor-label">CH₄ (20-yr)</span>
-                      <span className="factor-val [font-size:var(--text-lg)] [font-weight:800] [color:var(--text-primary,_var(--color-ink-900))]">{data.ch4_20}×</span>
-                    </div>
-                    <div className="factor-item">
-                      <span className="factor-label">N₂O (100-yr)</span>
-                      <span className="factor-val [font-size:var(--text-lg)] [font-weight:800] [color:var(--text-primary,_var(--color-ink-900))]">{data.n2o_100}×</span>
-                    </div>
-                  </div>
-                </>
-              ),
-            }))}
-          />
-
-          {/* Live Comparison Table */}
-          <div className="[background:var(--bg-hover,_var(--color-ink-50))] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [&&]:[border-radius:var(--radius-lg)] [padding:24px] [display:flex] [flex-direction:column] [gap:16px]">
-            <div className="comparison-header">
-              <Layers size={18} className="comparison-icon" />
-              <h3>Conversion Factor Matrix Comparison</h3>
-            </div>
-            <div className="[overflow-x:auto]">
-              <table className="comparison-table">
-                <thead>
-                  <tr>
-                    <th>Metric / Gas</th>
-                    <th>AR4 (2007)</th>
-                    <th>AR5 (2014 - Default)</th>
-                    <th>AR6 (2021)</th>
-                    <th>Application Context</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>
-                      <strong>Carbon Dioxide (CO₂)</strong>
+    <div className="flex flex-col gap-4 rounded-lg border border-border bg-ink-50 p-6">
+      <h3 className="m-0 flex items-center gap-2 text-md font-bold text-text">
+        <Layers className="size-[18px] text-brand-500" aria-hidden="true" /> Conversion Factor Matrix Comparison
+      </h3>
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse overflow-hidden rounded-md bg-surface">
+          <thead>
+            <tr>
+              <th className={th}>Metric / Gas</th>
+              <th className={th}>AR4 (2007)</th>
+              <th className={th}>AR5 (2014 - Default)</th>
+              <th className={th}>AR6 (2021)</th>
+              <th className={th}>Application Context</th>
+            </tr>
+          </thead>
+          <tbody>
+            {ROWS.map((row) => {
+              const cells = row.plain ? row.values.map((v) => v.toFixed(1)) : [GWP_AR4, GWP_AR5, GWP_AR6].map((set) => set[row.key].toFixed(1));
+              return (
+                <tr key={row.name} className={cn(gwpStandard === row.active && "bg-brand-50")}>
+                  <td className={td}>
+                    <strong>{row.name}</strong>
+                  </td>
+                  {cells.map((value, i) => (
+                    <td key={i} className={td}>
+                      {i === 1 && !row.plain ? <strong>{value}×</strong> : row.plain ? value : `${value}×`}
                     </td>
-                    <td>1.0</td>
-                    <td>1.0</td>
-                    <td>1.0</td>
-                    <td>Universal baseline anchor</td>
-                  </tr>
-                  <tr className={gwpStandard === "AR5" ? "active-row" : ""}>
-                    <td>
-                      <strong>Methane (CH₄) - 100 Year</strong>
-                    </td>
-                    <td>{GWP_AR4.CH4.toFixed(1)}×</td>
-                    <td>
-                      <strong>{GWP_AR5.CH4.toFixed(1)}×</strong>
-                    </td>
-                    <td>{GWP_AR6.CH4.toFixed(1)}×</td>
-                    <td>Corporate GHG Inventory / Scope 1</td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <strong>Methane (CH₄) - 20 Year</strong>
-                    </td>
-                    <td>{GWP_AR4.CH4_20.toFixed(1)}×</td>
-                    <td>
-                      <strong>{GWP_AR5.CH4_20.toFixed(1)}×</strong>
-                    </td>
-                    <td>{GWP_AR6.CH4_20.toFixed(1)}×</td>
-                    <td>Near-Term Climate Impact / ESG Analytics</td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <strong>Nitrous Oxide (N₂O) - 100 Year</strong>
-                    </td>
-                    <td>{GWP_AR4.N2O.toFixed(1)}×</td>
-                    <td>
-                      <strong>{GWP_AR5.N2O.toFixed(1)}×</strong>
-                    </td>
-                    <td>{GWP_AR6.N2O.toFixed(1)}×</td>
-                    <td>Flaring / Combustion byproducts</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
+                  ))}
+                  <td className={td}>{row.context}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </SettingsSection>
 );
 
 export default SettingsIPCCGlobalWarming;

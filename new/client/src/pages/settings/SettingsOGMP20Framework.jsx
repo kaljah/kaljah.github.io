@@ -1,175 +1,98 @@
 import React from "react";
-import { Button } from "../../ui";
 import { Activity, Save, ShieldCheck, Target } from "lucide-react";
+import { Button, Field, Input } from "../../ui";
+import { SettingsSection } from "./SettingsIPCCGlobalWarming";
 
-// Extracted from Settings.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
+const YEARS = Array.from({ length: new Date().getFullYear() - 2020 }, (_, i) => 2021 + i);
+
+const Panel = ({ title, hint, children }) => (
+  <div className="flex flex-col gap-3.5 rounded-lg border border-border bg-ink-50 p-6">
+    <h3 className="m-0 text-md font-bold text-text">{title}</h3>
+    <p className="m-0 text-base leading-snug text-text-secondary">{hint}</p>
+    {children}
+  </div>
+);
+
 const SettingsOGMP20Framework = ({ defaultBaseYear, globalThreshold, handleSaveGlobal, isAdmin, midstreamTarget, saving, setDefaultBaseYear, setGlobalThreshold, setMidstreamTarget, setUpstreamTarget, upstreamTarget }) => (
-<div className="[background:var(--bg-card,_var(--color-white))] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [&&]:[border-radius:var(--radius-lg)] [padding:32px] [display:flex] [flex-direction:column] [gap:28px] [box-shadow:var(--shadow-card,_0_4px_6px_-1px_rgba(0,_0,_0,_0.05))]">
-          <div className="section-intro">
-            <div className="[display:flex] [align-items:center] [gap:10px]">
-              <Target size={20} className="section-icon" />
-              <h2>OGMP 2.0 Framework & Threshold Configuration</h2>
-            </div>
-            <p>
-              Establish global compliance benchmarks, default asset membership
-              years, and acceptable reconciliation tolerances.
-            </p>
-          </div>
-
-          <div className="[display:grid] [grid-template-columns:repeat(auto-fit,_minmax(420px,_1fr))] [gap:24px]">
-            <div className="[background:var(--bg-hover,_var(--color-ink-50))] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [&&]:[border-radius:var(--radius-lg)] [padding:24px] [display:flex] [flex-direction:column] [gap:14px]">
-              <label className="[font-size:var(--text-md)] [font-weight:700] [color:var(--text-primary,_var(--color-ink-900))]">
-                Default OGMP 2.0 Membership Baseline Year
-              </label>
-              <span className="[font-size:var(--text-base)] [color:var(--text-secondary,_var(--color-ink-500))] [line-height:1.45]">
-                The year from which the Gold Standard milestone clock begins
-                (Year 0).
-              </span>
-              <div className="[display:flex] [gap:8px] [flex-wrap:wrap] [margin:4px_0]">
-                {Array.from({ length: new Date().getFullYear() - 2020 }, (_, i) => 2021 + i).map((yr) => (
-                  <button
-                    key={yr}
-                    type="button"
-                    disabled={!isAdmin}
-                    className={`btn-year-pill ${defaultBaseYear === yr ? "active" : ""}`}
-                    onClick={() => setDefaultBaseYear(yr)}
-                  >
-                    {yr}
-                  </button>
-                ))}
-              </div>
-              <div className="[background:var(--bg-card,_var(--color-white))] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [&&]:[border-radius:var(--radius-md)] [padding:12px_16px] [font-size:var(--text-base)] [color:var(--text-secondary,_var(--color-ink-500))]">
-                <div className="[display:flex] [align-items:center] [gap:6px] [color:var(--text-primary,_var(--color-ink-900))] [font-weight:700] [margin-bottom:6px]">
-                  <ShieldCheck size={15} />
-                  <span>Gold Standard Deadlines:</span>
-                </div>
-                <ul className="[margin:0_0_0_18px] [padding:0] [&_li]:[margin-bottom:3px]">
-                  <li>
-                    Operated Assets (3 Years):{" "}
-                    <strong>{defaultBaseYear + 3}</strong>
-                  </li>
-                  <li>
-                    Non-Operated Assets (5 Years):{" "}
-                    <strong>{defaultBaseYear + 5}</strong>
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            <div className="[background:var(--bg-hover,_var(--color-ink-50))] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [&&]:[border-radius:var(--radius-lg)] [padding:24px] [display:flex] [flex-direction:column] [gap:14px]">
-              <label className="[font-size:var(--text-md)] [font-weight:700] [color:var(--text-primary,_var(--color-ink-900))]">
-                Global Reconciliation Variance Threshold (±%)
-              </label>
-              <span className="[font-size:var(--text-base)] [color:var(--text-secondary,_var(--color-ink-500))] [line-height:1.45]">
-                Maximum tolerable difference between Bottom-Up (L1-L4) inventory
-                and Top-Down (L4/L5) site measurements.
-              </span>
-
-              <div className="[display:flex] [align-items:center] [gap:16px] [margin:8px_0]">
-                <input
-                  type="range"
-                  min="5"
-                  max="50"
-                  step="1"
-                  disabled={!isAdmin}
-                  value={globalThreshold}
-                  onChange={(e) => setGlobalThreshold(Number(e.target.value))}
-                  className="range-slider"
-                  id="global-threshold-slider"
-                />
-                <div className="[font-size:var(--text-lg)] [font-weight:800] [color:var(--color-link)] [background:rgba(255,_102,_0,_0.08)] [padding:6px_14px] [border-radius:var(--radius-md)] [border:1px_solid_rgba(255,_102,_0,_0.2)] [min-width:80px] [text-align:center]">±{globalThreshold}%</div>
-              </div>
-              <p className="[font-size:var(--text-sm)] [color:var(--text-secondary,_var(--color-ink-500))] [margin:0]">
-                OGMP 2.0 recommended default is <strong>±20.0%</strong>.
-                Facilities exceeding this threshold will be flagged for
-                investigation.
-              </p>
-            </div>
-          </div>
-
-          <div className="target-standards-box">
-            <div className="[display:flex] [align-items:center] [gap:8px]">
-              <Activity size={18} className="target-icon" />
-              <h3>OGMP 2.0 Methane Intensity Targets</h3>
-            </div>
-            <div className="[display:grid] [grid-template-columns:repeat(auto-fit,_minmax(300px,_1fr))] [gap:16px]">
-              <div className="target-card upstream">
-                <div className="[font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [margin-bottom:6px]">
-                  Upstream Exploration & Production
-                </div>
-                <div
-                  className="flex! items-center! gap-[8px]! m-[8px_0]!"
-                >
-                  <input
-                    type="number"
-                    step="0.01"
-                    min="0.01"
-                    max="5.0"
-                    disabled={!isAdmin}
-                    value={upstreamTarget}
-                    onChange={(e) => setUpstreamTarget(Number(e.target.value))}
-                    className="form-input w-[100px]! font-bold! text-[length:1.1rem]! text-[color:#2563eb]!"
-                   
-                    id="upstream-target-input"
-                  />
-                  <span
-                    className="font-bold! text-[length:1.1rem]! text-[color:#2563eb]!"
-                  >
-                    %
-                  </span>
-                </div>
-                <div className="[font-size:var(--text-sm)] [color:var(--text-secondary,_var(--color-ink-500))] [line-height:1.45] [margin:0]">
-                  Methane loss volume as % of total marketable natural gas
-                  volume. (Default: 0.20%)
-                </div>
-              </div>
-              <div className="target-card midstream">
-                <div className="[font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [margin-bottom:6px]">Midstream Processing & LNG</div>
-                <div
-                  className="flex! items-center! gap-[8px]! m-[8px_0]!"
-                >
-                  <input
-                    type="number"
-                    step="0.01"
-                    min="0.01"
-                    max="5.0"
-                    disabled={!isAdmin}
-                    value={midstreamTarget}
-                    onChange={(e) => setMidstreamTarget(Number(e.target.value))}
-                    className="form-input w-[100px]! font-bold! text-[length:1.1rem]! text-[color:#2e7d32]!"
-                   
-                    id="midstream-target-input"
-                  />
-                  <span
-                    className="font-bold! text-[length:1.1rem]! text-[color:#2e7d32]!"
-                  >
-                    %
-                  </span>
-                </div>
-                <div className="[font-size:var(--text-sm)] [color:var(--text-secondary,_var(--color-ink-500))] [line-height:1.45] [margin:0]">
-                  Methane loss volume as % of total throughput volume. (Default:
-                  0.05%)
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div
-            className="mt-[24px]! flex! justify-end!"
-          >
-            <Button
-              type="submit"
-              onClick={handleSaveGlobal}
-              disabled={saving || !isAdmin}
-              title={!isAdmin ? "Administrator privileges required to modify settings" : "Save changes"}
-              id="save-ogmp-settings-btn"
-              className="flex! items-center! gap-[8px]! p-[10px_24px]!"
-            >
-              <Save size={18} />
-              {saving ? "Saving Changes..." : "Save OGMP & Target Settings"}
+  <SettingsSection
+    icon={Target}
+    title="OGMP 2.0 Framework & Threshold Configuration"
+    intro="Establish global compliance benchmarks, default asset membership years, and acceptable reconciliation tolerances."
+  >
+    <div className="grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr))]">
+      <Panel title="Default OGMP 2.0 Membership Baseline Year" hint="The year from which the Gold Standard milestone clock begins (Year 0).">
+        <div role="group" aria-label="Baseline year" className="flex flex-wrap gap-2 py-1">
+          {YEARS.map((yr) => (
+            <Button key={yr} size="sm" variant={defaultBaseYear === yr ? "primary" : "secondary"} aria-pressed={defaultBaseYear === yr} disabled={!isAdmin} onClick={() => setDefaultBaseYear(yr)}>
+              {yr}
             </Button>
-          </div>
+          ))}
         </div>
+        <div className="rounded-md border border-border bg-surface px-4 py-3 text-base text-text-secondary">
+          <p className="m-0 mb-1.5 flex items-center gap-1.5 font-bold text-text">
+            <ShieldCheck className="size-4" aria-hidden="true" /> Gold Standard Deadlines:
+          </p>
+          <ul className="m-0 ml-[18px] list-disc p-0">
+            <li>
+              Operated Assets (3 Years): <strong>{defaultBaseYear + 3}</strong>
+            </li>
+            <li>
+              Non-Operated Assets (5 Years): <strong>{defaultBaseYear + 5}</strong>
+            </li>
+          </ul>
+        </div>
+      </Panel>
+
+      <Panel title="Global Reconciliation Variance Threshold (±%)" hint="Maximum tolerable difference between Bottom-Up (L1-L4) inventory and Top-Down (L4/L5) site measurements.">
+        <div className="flex items-center gap-4 py-2">
+          <input
+            type="range"
+            aria-label="Reconciliation threshold"
+            min="5"
+            max="50"
+            step="1"
+            disabled={!isAdmin}
+            value={globalThreshold}
+            onChange={(e) => setGlobalThreshold(Number(e.target.value))}
+            className="h-2 flex-1 cursor-pointer accent-brand-500 disabled:cursor-not-allowed"
+            id="global-threshold-slider"
+          />
+          <span className="min-w-20 rounded-md border border-brand-100 bg-brand-50 px-3.5 py-1.5 text-center text-lg font-extrabold text-brand-700">±{globalThreshold}%</span>
+        </div>
+        <p className="m-0 text-sm text-text-secondary">
+          OGMP 2.0 recommended default is <strong>±20.0%</strong>. Facilities exceeding this threshold will be flagged for investigation.
+        </p>
+      </Panel>
+    </div>
+
+    <div className="flex flex-col gap-4 rounded-lg border border-border bg-ink-50 p-6">
+      <h3 className="m-0 flex items-center gap-2 text-md font-bold text-text">
+        <Activity className="size-[18px] text-brand-500" aria-hidden="true" /> OGMP 2.0 Methane Intensity Targets
+      </h3>
+      <div className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))]">
+        {[
+          { label: "Upstream Exploration & Production", value: upstreamTarget, set: setUpstreamTarget, hint: "Methane loss volume as % of total marketable natural gas volume. (Default: 0.20%)", id: "upstream-target-input", tone: "border-l-blue-500" },
+          { label: "Midstream Processing & LNG", value: midstreamTarget, set: setMidstreamTarget, hint: "Methane loss volume as % of total throughput volume. (Default: 0.05%)", id: "midstream-target-input", tone: "border-l-green-500" },
+        ].map((t) => (
+          <div key={t.id} className={`rounded-md border border-border border-l-4 bg-surface p-4 ${t.tone}`}>
+            <Field label={t.label} hint={t.hint}>
+              <div className="flex items-center gap-2">
+                <Input type="number" step="0.01" min="0.01" max="5.0" disabled={!isAdmin} value={t.value} onChange={(e) => t.set(Number(e.target.value))} className="w-24 text-md font-bold" />
+                <span className="text-md font-bold text-text">%</span>
+              </div>
+            </Field>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div className="flex justify-end">
+      <Button onClick={handleSaveGlobal} loading={saving} disabled={saving || !isAdmin} title={!isAdmin ? "Administrator privileges required to modify settings" : "Save changes"} id="save-ogmp-settings-btn">
+        <Save className="size-[18px]" aria-hidden="true" />
+        {saving ? "Saving Changes..." : "Save OGMP & Target Settings"}
+      </Button>
+    </div>
+  </SettingsSection>
 );
 
 export default SettingsOGMP20Framework;

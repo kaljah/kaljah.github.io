@@ -2,32 +2,13 @@ import SettingsIPCCGlobalWarming from "./settings/SettingsIPCCGlobalWarming";
 import SettingsOGMP20Framework from "./settings/SettingsOGMP20Framework";
 import SettingsFacilityLevelOGMPOverrides from "./settings/SettingsFacilityLevelOGMPOverrides";
 import SettingsESACopernicusSentinel5P from "./settings/SettingsESACopernicusSentinel5P";
-import { Banner } from "../ui";
-import { NativeSelect } from "../ui/NativeSelect";
+import { Badge, Banner, Button, Card, Tabs, TabsContent, TabsList, TabsTrigger } from "../ui";
 import React, { useState, useEffect } from "react";
-import {
-  Globe,
-  Target,
-  Building2,
-  SlidersHorizontal,
-  Save,
-  CheckCircle2,
-  Scale,
-  ShieldCheck,
-  Activity,
-  Layers,
-  Radio,
-  Satellite,
-  ExternalLink,
-  KeyRound,
-  AlertCircle,
-  Check,
-  HelpCircle } from "lucide-react";
+import { Building2, Globe, Satellite, Save, SlidersHorizontal, Target } from "lucide-react";
 import api from "../api";
 import { useToast } from "../components/Toast";
 import { useAuth } from "../context/AuthContext";
 import LoadingSpinner from "../components/LoadingSpinner";
-import "./Settings.css";
 import { GWP_AR4, GWP_AR5, GWP_AR6 } from "../constants";
 
 const GWP_DATA = {
@@ -282,172 +263,117 @@ const Settings = () => {
 
   if (loading) {
     return (
-      <div className="[display:flex] [justify-content:center] [align-items:center] [min-height:60vh]">
+      <div className="flex min-h-[60vh] items-center justify-center">
         <LoadingSpinner message="Loading Standards & System Preferences..." />
       </div>
     );
   }
 
+  const TABS = [
+    { value: "gwp", icon: Globe, label: "IPCC GWP Standards" },
+    { value: "ogmp", icon: Target, label: "OGMP 2.0 Baseline & Thresholds" },
+    { value: "facilities", icon: Building2, label: `Facility Overrides (${facilities.length})` },
+    { value: "satellite", icon: Satellite, label: "Copernicus Satellite (S5P)" },
+  ];
 
   return (
-    <div className="[padding:32px] [max-width:1600px] [margin:0_auto] [display:flex] [flex-direction:column] [gap:24px] [animation:settingsFadeIn_0.35s_ease-out] [font-family:inherit] [color:var(--text-primary,_var(--color-ink-900))]">
-      {/* Header */}
-      <div className="[background:var(--bg-card,_var(--color-white))] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [&&]:[border-radius:var(--radius-lg)] [box-shadow:var(--shadow-card,_0_4px_6px_-1px_rgba(0,_0,_0,_0.05))] [padding:28px_32px_0_32px] [position:relative] [overflow:hidden] [display:flex] [flex-direction:column] [gap:20px] before:[content:''] before:[position:absolute] before:[top:0] before:[left:0] before:[right:0] before:[height:4px] before:[background:linear-gradient(90deg,_var(--color-brand-500)_0%,_var(--color-brand-400)_50%,_var(--color-green-500)_100%)]">
-        <div className="[display:flex] [justify-content:space-between] [align-items:flex-start] [gap:24px] [flex-wrap:wrap]">
-          <div className="[display:flex] [flex-direction:column] [gap:6px] [max-width:850px]">
-            <div className="[display:inline-flex] [align-items:center] [gap:6px] [background:rgba(255,_102,_0,_0.08)] [color:var(--color-link)] [font-size:var(--text-xs)] [font-weight:700] [letter-spacing:0.06em] [padding:4px_12px] [border-radius:100px] [border:1px_solid_rgba(255,_102,_0,_0.2)] [width:fit-content] [margin-bottom:2px]">
-              <SlidersHorizontal size={14} />
-              <span>STANDARDS & METHODOLOGIES</span>
-            </div>
-            <h1 className="settings-title">System Settings & Protocols</h1>
-            <p className="[font-size:var(--text-md)] [color:var(--text-secondary,_var(--color-ink-500))] [margin:0] [line-height:1.5]">
-              Configure IPCC Global Warming Potential (GWP) conversion factors,
-              OGMP 2.0 Gold Standard compliance parameters, and
-              facility-specific reconciliation tolerances.
+    <Tabs value={activeTab} onValueChange={setActiveTab} className="mx-auto w-full max-w-[1600px] gap-6 p-4 sm:p-8">
+      <Card className="flex flex-col gap-5 border-t-4 border-t-brand-500 px-8 pb-0 pt-7">
+        <div className="flex flex-wrap items-start justify-between gap-6">
+          <div className="flex max-w-[850px] flex-col gap-1.5">
+            <Badge tone="brand" className="mb-0.5 w-fit gap-1.5 px-3 py-1 uppercase tracking-wide">
+              <SlidersHorizontal className="size-3.5" aria-hidden="true" /> Standards &amp; Methodologies
+            </Badge>
+            <h1 className="m-0 text-xl font-bold text-text">System Settings &amp; Protocols</h1>
+            <p className="m-0 text-md leading-normal text-text-secondary">
+              Configure IPCC Global Warming Potential (GWP) conversion factors, OGMP 2.0 Gold Standard compliance parameters, and facility-specific reconciliation tolerances.
             </p>
           </div>
-          <div className="[display:flex] [align-items:center] [gap:12px]">
-            <button
-              className="[display:inline-flex] [align-items:center] [gap:8px] [background:var(--primary-gradient)]! [color:var(--color-white)] [font-weight:600] [font-size:var(--text-base)] [padding:10px_22px] [border-radius:var(--radius-md)] [border:none] [cursor:pointer] [box-shadow:0_4px_12px_rgba(255,_102,_0,_0.25)] [transition:all_0.2s_ease] [white-space:nowrap] [&:hover:not(:disabled)]:[transform:translateY(-1px)] [&:hover:not(:disabled)]:[box-shadow:0_6px_18px_rgba(255,_102,_0,_0.35)] [&:hover:not(:disabled)]:[background:linear-gradient(135deg,_#ff751a_0%,_var(--color-brand-500)_100%)]! disabled:[opacity:0.6] disabled:[cursor:not-allowed] disabled:[transform:none]"
-              onClick={handleSaveGlobal}
-              disabled={saving || !isAdmin}
-              title={!isAdmin ? "Administrator privileges required to modify settings" : "Save changes"}
-              id="save-settings-btn"
-            >
-              {saving ? (
-                <>
-                  <span className="spinner-small"></span>
-                  <span>Saving...</span>
-                </>
-              ) : (
-                <>
-                  <Save size={16} />
-                  <span>Save All Changes</span>
-                </>
-              )}
-            </button>
-          </div>
+          <Button
+            onClick={handleSaveGlobal}
+            loading={saving}
+            disabled={saving || !isAdmin}
+            title={!isAdmin ? "Administrator privileges required to modify settings" : "Save changes"}
+            id="save-settings-btn"
+          >
+            <Save className="size-4" aria-hidden="true" />
+            {saving ? "Saving..." : "Save All Changes"}
+          </Button>
         </div>
 
-        {/* Navigation Tabs Bar */}
-        <div className="[display:flex] [gap:8px] [border-top:1px_solid_var(--border-color,_var(--color-ink-200))] [padding-top:4px] [overflow-x:auto]" role="tablist" aria-label="Settings sections">
-          <button
-            role="tab"
-            aria-selected={activeTab === "gwp"}
-            className={`settings-tab-btn ${activeTab === "gwp" ? "active" : ""}`}
-            onClick={() => setActiveTab("gwp")}
-            id="tab-gwp"
-          >
-            <Globe size={17} className="[flex-shrink:0]!" />
-            <span>IPCC GWP Standards</span>
-          </button>
-          <button
-            role="tab"
-            aria-selected={activeTab === "ogmp"}
-            className={`settings-tab-btn ${activeTab === "ogmp" ? "active" : ""}`}
-            onClick={() => setActiveTab("ogmp")}
-            id="tab-ogmp"
-          >
-            <Target size={17} className="[flex-shrink:0]!" />
-            <span>OGMP 2.0 Baseline & Thresholds</span>
-          </button>
-          <button
-            role="tab"
-            aria-selected={activeTab === "facilities"}
-            className={`settings-tab-btn ${activeTab === "facilities" ? "active" : ""}`}
-            onClick={() => setActiveTab("facilities")}
-            id="tab-facilities"
-          >
-            <Building2 size={17} className="[flex-shrink:0]!" />
-            <span>Facility Overrides ({facilities.length})</span>
-          </button>
-          <button
-            role="tab"
-            aria-selected={activeTab === "satellite"}
-            className={`settings-tab-btn ${activeTab === "satellite" ? "active" : ""}`}
-            onClick={() => setActiveTab("satellite")}
-            id="tab-satellite"
-          >
-            <Satellite size={17} className="[flex-shrink:0]!" />
-            <span>Copernicus Satellite (S5P)</span>
-          </button>
-        </div>
-      </div>
+        <TabsList aria-label="Settings sections" className="border-b-0">
+          {TABS.map(({ value, icon: Icon, label }) => (
+            <TabsTrigger key={value} value={value}>
+              <Icon className="size-[17px] shrink-0" aria-hidden="true" /> {label}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+      </Card>
 
       {!isAdmin && (
-        <Banner tone="info" title="Read-only mode" className="mb-5">
-          System methodologies (IPCC GWP standards, OGMP reconciliation parameters, and Copernicus satellite
-          credentials) are centrally managed. Updates require an Administrator account.
+        <Banner tone="info" title="Read-only mode">
+          System methodologies (IPCC GWP standards, OGMP reconciliation parameters, and Copernicus satellite credentials) are centrally managed. Updates require an Administrator account.
         </Banner>
       )}
 
-      {/* TAB CONTENT: GWP Standards */}
-      {activeTab === "gwp" && (
-        <SettingsIPCCGlobalWarming
-        GWP_DATA={GWP_DATA}
-        gwpStandard={gwpStandard}
-        isAdmin={isAdmin}
-        setGwpStandard={setGwpStandard}
-      />
-      )}
+      <TabsContent value="gwp" className="pt-0">
+        <SettingsIPCCGlobalWarming GWP_DATA={GWP_DATA} gwpStandard={gwpStandard} isAdmin={isAdmin} setGwpStandard={setGwpStandard} />
+      </TabsContent>
 
-      {/* TAB CONTENT: OGMP 2.0 Baseline & Thresholds */}
-      {activeTab === "ogmp" && (
+      <TabsContent value="ogmp" className="pt-0">
         <SettingsOGMP20Framework
-        defaultBaseYear={defaultBaseYear}
-        globalThreshold={globalThreshold}
-        handleSaveGlobal={handleSaveGlobal}
-        isAdmin={isAdmin}
-        midstreamTarget={midstreamTarget}
-        saving={saving}
-        setDefaultBaseYear={setDefaultBaseYear}
-        setGlobalThreshold={setGlobalThreshold}
-        setMidstreamTarget={setMidstreamTarget}
-        setUpstreamTarget={setUpstreamTarget}
-        upstreamTarget={upstreamTarget}
-      />
-      )}
+          defaultBaseYear={defaultBaseYear}
+          globalThreshold={globalThreshold}
+          handleSaveGlobal={handleSaveGlobal}
+          isAdmin={isAdmin}
+          midstreamTarget={midstreamTarget}
+          saving={saving}
+          setDefaultBaseYear={setDefaultBaseYear}
+          setGlobalThreshold={setGlobalThreshold}
+          setMidstreamTarget={setMidstreamTarget}
+          setUpstreamTarget={setUpstreamTarget}
+          upstreamTarget={upstreamTarget}
+        />
+      </TabsContent>
 
-      {/* TAB CONTENT: Facility-Level Overrides */}
-      {activeTab === "facilities" && (
+      <TabsContent value="facilities" className="pt-0">
         <SettingsFacilityLevelOGMPOverrides
-        facilities={facilities}
-        facilityEdits={facilityEdits}
-        handleFacilityChange={handleFacilityChange}
-        handleSaveFacility={handleSaveFacility}
-        isAdmin={isAdmin}
-        user={user}
-      />
-      )}
+          facilities={facilities}
+          facilityEdits={facilityEdits}
+          handleFacilityChange={handleFacilityChange}
+          handleSaveFacility={handleSaveFacility}
+          isAdmin={isAdmin}
+          user={user}
+        />
+      </TabsContent>
 
-      {/* TAB CONTENT: Copernicus Sentinel-5P Satellite Integration */}
-      {activeTab === "satellite" && (
+      <TabsContent value="satellite" className="pt-0">
         <SettingsESACopernicusSentinel5P
-        authMode={authMode}
-        connectionStatus={connectionStatus}
-        copernicusClientId={copernicusClientId}
-        copernicusClientSecret={copernicusClientSecret}
-        copernicusEnabled={copernicusEnabled}
-        copernicusPassword={copernicusPassword}
-        copernicusQaThreshold={copernicusQaThreshold}
-        copernicusUsername={copernicusUsername}
-        handleSaveGlobal={handleSaveGlobal}
-        handleTestConnection={handleTestConnection}
-        isAdmin={isAdmin}
-        saving={saving}
-        setAuthMode={setAuthMode}
-        setCopernicusClientId={setCopernicusClientId}
-        setCopernicusClientSecret={setCopernicusClientSecret}
-        setCopernicusEnabled={setCopernicusEnabled}
-        setCopernicusPassword={setCopernicusPassword}
-        setCopernicusQaThreshold={setCopernicusQaThreshold}
-        setCopernicusUsername={setCopernicusUsername}
-        setShowGuide={setShowGuide}
-        showGuide={showGuide}
-        testingConnection={testingConnection}
-      />
-      )}
-    </div>
+          authMode={authMode}
+          connectionStatus={connectionStatus}
+          copernicusClientId={copernicusClientId}
+          copernicusClientSecret={copernicusClientSecret}
+          copernicusEnabled={copernicusEnabled}
+          copernicusPassword={copernicusPassword}
+          copernicusQaThreshold={copernicusQaThreshold}
+          copernicusUsername={copernicusUsername}
+          handleSaveGlobal={handleSaveGlobal}
+          handleTestConnection={handleTestConnection}
+          isAdmin={isAdmin}
+          saving={saving}
+          setAuthMode={setAuthMode}
+          setCopernicusClientId={setCopernicusClientId}
+          setCopernicusClientSecret={setCopernicusClientSecret}
+          setCopernicusEnabled={setCopernicusEnabled}
+          setCopernicusPassword={setCopernicusPassword}
+          setCopernicusQaThreshold={setCopernicusQaThreshold}
+          setCopernicusUsername={setCopernicusUsername}
+          setShowGuide={setShowGuide}
+          showGuide={showGuide}
+          testingConnection={testingConnection}
+        />
+      </TabsContent>
+    </Tabs>
   );
 };
 

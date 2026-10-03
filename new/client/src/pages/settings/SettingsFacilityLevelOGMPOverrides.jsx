@@ -1,151 +1,85 @@
 import React from "react";
 import { Building2, Save } from "lucide-react";
-import { NativeSelect } from "../../ui/NativeSelect";
+import { Badge, Button, Input, NativeSelect } from "../../ui";
+import { controlClass } from "../../components/import-wizard/mapping";
+import { SettingsSection } from "./SettingsIPCCGlobalWarming";
 
-// Extracted from Settings.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
-const SettingsFacilityLevelOGMPOverrides = ({ facilities, facilityEdits, handleFacilityChange, handleSaveFacility, isAdmin, user }) => (
-<div className="[background:var(--bg-card,_var(--color-white))] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [&&]:[border-radius:var(--radius-lg)] [padding:32px] [display:flex] [flex-direction:column] [gap:28px] [box-shadow:var(--shadow-card,_0_4px_6px_-1px_rgba(0,_0,_0,_0.05))]">
-          <div className="section-intro">
-            <div className="[display:flex] [align-items:center] [gap:10px]">
-              <Building2 size={20} className="section-icon" />
-              <h2>Facility-Level OGMP Overrides</h2>
-            </div>
-            <p>
-              Customize operator status (Operated vs Non-Operated), country,
-              base year, and specific reconciliation variance thresholds for
-              each facility.
-            </p>
-          </div>
+const YEARS = Array.from({ length: new Date().getFullYear() - 2020 }, (_, i) => 2021 + i);
+const COLUMNS = ["Facility Name", "Segment", "Operator Status", "Country", "Base Year", "Target Year", "Threshold (±%)", "Actions"];
 
-          <div className="[overflow-x:auto] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [&&]:[border-radius:var(--radius-lg)] [background:var(--bg-card,_var(--color-white))]">
-            <table className="facility-config-table">
-              <thead>
-                <tr>
-                  <th>Facility Name</th>
-                  <th>Segment</th>
-                  <th>Operator Status</th>
-                  <th>Country</th>
-                  <th>Base Year</th>
-                  <th>Target Year</th>
-                  <th>Threshold (±%)</th>
-                  <th>Actions</th>
+const SettingsFacilityLevelOGMPOverrides = ({ facilities, facilityEdits, handleFacilityChange, handleSaveFacility, isAdmin, user }) => {
+  const canSave = user?.role === "admin" || user?.role === "superuser";
+  return (
+    <SettingsSection
+      icon={Building2}
+      title="Facility-Level OGMP Overrides"
+      intro="Customize operator status (Operated vs Non-Operated), country, base year, and specific reconciliation variance thresholds for each facility."
+    >
+      <div className="overflow-x-auto rounded-lg border border-border bg-surface">
+        <table className="w-full min-w-[960px] border-collapse">
+          <thead>
+            <tr>
+              {COLUMNS.map((c) => (
+                <th key={c} scope="col" className="whitespace-nowrap border-b border-border bg-ink-50 px-4 py-3 text-left text-xs font-bold uppercase tracking-wide text-text-secondary">
+                  {c}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {facilities.map((fac) => {
+              const edit = facilityEdits[fac.id] || {};
+              const opStatus = edit.operator_status || "operated";
+              const baseYear = Number(edit.ogmp_membership_year || 2023);
+              const change = (field) => (e) => handleFacilityChange(fac.id, field, e.target.value);
+              const name = fac.name;
+              return (
+                <tr key={fac.id} className="border-b border-ink-100 last:border-b-0">
+                  <td className="px-4 py-3">
+                    <strong className="block text-base text-text">{name}</strong>
+                    <span className="text-xs text-text-secondary">{fac.code || "FAC-" + fac.id}</span>
+                  </td>
+                  <td className="px-4 py-3 text-base text-text">{fac.segment || "Upstream"}</td>
+                  <td className="px-4 py-3">
+                    <NativeSelect aria-label={`Operator status for ${name}`} className={controlClass} value={opStatus} disabled={!isAdmin} onChange={change("operator_status")}>
+                      <option value="operated">Operated (3-yr target)</option>
+                      <option value="non_operated">Non-Operated (5-yr target)</option>
+                    </NativeSelect>
+                  </td>
+                  <td className="px-4 py-3">
+                    <Input aria-label={`Country for ${name}`} className="h-9 min-w-28" value={edit.country || "Algeria"} disabled={!isAdmin} onChange={change("country")} />
+                  </td>
+                  <td className="px-4 py-3">
+                    <NativeSelect aria-label={`Base year for ${name}`} className={controlClass} value={baseYear} disabled={!isAdmin} onChange={change("ogmp_membership_year")}>
+                      {YEARS.map((y) => (
+                        <option key={y} value={y}>
+                          {y}
+                        </option>
+                      ))}
+                    </NativeSelect>
+                  </td>
+                  <td className="px-4 py-3">
+                    <Badge tone="info">{baseYear + (opStatus === "operated" ? 3 : 5)}</Badge>
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-1 font-semibold text-text">
+                      ±
+                      <Input type="number" min="1" max="100" aria-label={`Threshold for ${name}`} className="h-9 w-16 px-2 text-center" value={edit.reconciliation_threshold || 20.0} disabled={!isAdmin} onChange={change("reconciliation_threshold")} />%
+                    </div>
+                  </td>
+                  <td className="px-4 py-3">
+                    <Button variant="secondary" size="sm" onClick={() => handleSaveFacility(fac.id)} disabled={!canSave} title={canSave ? "Save Facility Settings" : "Administrator privileges required to update facility"}>
+                      <Save className="size-3.5" aria-hidden="true" /> Save
+                    </Button>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {facilities.map((fac) => {
-                  const edit = facilityEdits[fac.id] || {};
-                  const opStatus = edit.operator_status || "operated";
-                  const baseYear = Number(edit.ogmp_membership_year || 2023);
-                  const targetYear =
-                    baseYear + (opStatus === "operated" ? 3 : 5);
-
-                  return (
-                    <tr key={fac.id}>
-                      <td className="[display:flex] [flex-direction:column] [gap:2px]">
-                        <strong>{fac.name}</strong>
-                        <span className="[font-size:var(--text-xs)] [color:var(--text-secondary,_var(--color-ink-500))]">
-                          {fac.code || "FAC-" + fac.id}
-                        </span>
-                      </td>
-                      <td>{fac.segment || "Upstream"}</td>
-                      <td>
-                        <NativeSelect
-                          className="table-select"
-                          value={opStatus}
-                          disabled={!isAdmin}
-                          onChange={(e) =>
-                            handleFacilityChange(
-                              fac.id,
-                              "operator_status",
-                              e.target.value,
-                            )
-                          }
-                        >
-                          <option value="operated">
-                            Operated (3-yr target)
-                          </option>
-                          <option value="non_operated">
-                            Non-Operated (5-yr target)
-                          </option>
-                        </NativeSelect>
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          className="[background:var(--bg-card,_var(--color-white))] [border:1px_solid_var(--border-color,_var(--color-ink-300))] [color:var(--text-primary,_var(--color-ink-900))] [&&]:[border-radius:var(--radius-md)] [padding:7px_10px] [font-size:var(--text-base)] [font-family:inherit]"
-                          value={edit.country || "Algeria"}
-                          disabled={!isAdmin}
-                          onChange={(e) =>
-                            handleFacilityChange(
-                              fac.id,
-                              "country",
-                              e.target.value,
-                            )
-                          }
-                        />
-                      </td>
-                      <td>
-                        <NativeSelect
-                          className="table-select-small"
-                          value={baseYear}
-                          disabled={!isAdmin}
-                          onChange={(e) =>
-                            handleFacilityChange(
-                              fac.id,
-                              "ogmp_membership_year",
-                              e.target.value,
-                            )
-                          }
-                        >
-                          {Array.from({ length: new Date().getFullYear() - 2020 }, (_, i) => 2021 + i).map((y) => (
-                            <option key={y} value={y}>
-                              {y}
-                            </option>
-                          ))}
-                        </NativeSelect>
-                      </td>
-                      <td className="target-yr-cell">
-                        <span className="[background:rgba(2,_132,_199,_0.1)] [color:var(--color-blue-700)] [border:1px_solid_rgba(2,_132,_199,_0.25)] [padding:4px_10px] [&&]:[border-radius:var(--radius-sm)] [font-weight:700] [font-size:var(--text-sm)]">{targetYear}</span>
-                      </td>
-                      <td>
-                        <div className="[display:flex] [align-items:center] [gap:4px] [font-weight:600] [color:var(--text-primary,_var(--color-ink-900))]">
-                          <span>±</span>
-                          <input
-                            type="number"
-                            min="1"
-                            max="100"
-                            className="[width:60px] [background:var(--bg-card,_var(--color-white))] [border:1px_solid_var(--border-color,_var(--color-ink-300))] [color:var(--text-primary,_var(--color-ink-900))] [&&]:[border-radius:var(--radius-md)] [padding:6px_8px] [font-size:var(--text-base)] [text-align:center] [font-family:inherit]"
-                            value={edit.reconciliation_threshold || 20.0}
-                            disabled={!isAdmin}
-                            onChange={(e) =>
-                              handleFacilityChange(
-                                fac.id,
-                                "reconciliation_threshold",
-                                e.target.value,
-                              )
-                            }
-                          />
-                          <span>%</span>
-                        </div>
-                      </td>
-                      <td>
-                        <button
-                          className="[display:inline-flex] [align-items:center] [gap:5px] [background:rgba(255,_102,_0,_0.1)] [color:var(--color-brand-700)] [border:1px_solid_rgba(255,_102,_0,_0.25)] [&&]:[border-radius:var(--radius-md)] [padding:6px_14px] [font-weight:600] [font-size:var(--text-sm)] [cursor:pointer] [transition:all_0.2s_ease] hover:[background:var(--color-primary)] hover:[color:var(--color-white)] hover:[border-color:var(--color-brand-500)]"
-                          onClick={() => handleSaveFacility(fac.id)}
-                          disabled={user?.role === "it_admin" || (user?.role !== "admin" && user?.role !== "superuser")}
-                          title={user?.role === "it_admin" || (user?.role !== "admin" && user?.role !== "superuser") ? "Administrator privileges required to update facility" : "Save Facility Settings"}
-                        >
-                          <Save size={13} />
-                          <span>Save</span>
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>
-);
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </SettingsSection>
+  );
+};
 
 export default SettingsFacilityLevelOGMPOverrides;
