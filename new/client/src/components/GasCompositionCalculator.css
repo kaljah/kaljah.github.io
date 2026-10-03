@@ -1,9 +1,3 @@
-.comp-calc-grid {
-  display: grid;
-  grid-template-columns: 1fr 340px;
-  gap: 30px;
-}
-
 .calculation-mode-selector {
   margin-bottom: 25px;
   padding: 15px;
@@ -114,12 +108,6 @@
   box-shadow: 0 5px 15px rgba(255, 102, 0, 0.3);
 }
 
-.comp-results {
-  background: rgba(255, 255, 255, 0.02);
-  border-left: 1px solid var(--border-color);
-  padding-left: 30px;
-}
-
 .result-card {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--border-color);
@@ -205,17 +193,4 @@
 .no-results .icon {
   font-size: var(--text-3xl);
   margin-bottom: 15px;
-}
-
-@media (max-width: 850px) {
-  .comp-calc-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .comp-results {
-    border-left: none;
-    border-top: 1px solid var(--border-color);
-    padding-left: 0;
-    padding-top: 30px;
-  }
 }

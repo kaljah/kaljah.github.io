@@ -12,7 +12,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                     <Search size={14} />
                                     <input
                                         type="text"
-                                        className="qa-search-input"
+                                        className="[width:100%]! [padding:8px_12px_8px_36px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--color-ink-200)]! [font-size:var(--text-base)]! [background:var(--color-white)]! [color:var(--color-ink-900)]! [outline:none]! [transition:border-color_0.2s_ease]! focus:[border-color:var(--accent-color,_var(--color-brand-500))]!"
                                         placeholder="Search by ID, process, or reason…"
                                         value={searchQuery}
                                         onChange={e => setSearchQuery(e.target.value)}
@@ -71,7 +71,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                         {selectedIds.size} record{selectedIds.size > 1 ? 's' : ''} selected
                                     </span>
                                     <button
-                                        className="[padding:4px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:600]! [cursor:pointer]! [transition:all_0.15s_ease]! [border:1px_solid_transparent]! qa-btn-approve p-[6px_12px]! text-[length:0.8rem]!"
+                                        className="[padding:4px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:600]! [cursor:pointer]! [transition:all_0.15s_ease]! [border:1px_solid_transparent]! [background:rgba(16,_185,_129,_0.1)]! [color:var(--color-green-700)]! [border-color:rgba(16,_185,_129,_0.25)]! hover:[background:var(--color-green-700)]! hover:[color:var(--color-white)]! p-[6px_12px]! text-[length:0.8rem]!"
                                        
                                         onClick={() => handleBulkResolve('Verified')}
                                         disabled={resolving}
@@ -80,7 +80,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                         {resolving ? '…' : 'Approve Selected'}
                                     </button>
                                     <button
-                                        className="[padding:4px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:600]! [cursor:pointer]! [transition:all_0.15s_ease]! [border:1px_solid_transparent]! qa-btn-reject p-[6px_12px]! text-[length:0.8rem]!"
+                                        className="[padding:4px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:600]! [cursor:pointer]! [transition:all_0.15s_ease]! [border:1px_solid_transparent]! [background:rgba(239,_68,_68,_0.1)]! [color:var(--color-red-700)]! [border-color:rgba(239,_68,_68,_0.25)]! hover:[background:var(--color-red-700)]! hover:[color:var(--color-white)]! p-[6px_12px]! text-[length:0.8rem]!"
                                        
                                         onClick={() => handleBulkResolve('Rejected')}
                                         disabled={resolving}
@@ -141,7 +141,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                             No flagged records match your current search query "{searchQuery}" or status filter "{statusFilter}".
                                         </p>
                                         <button
-                                            className="qa-btn-action qa-btn-secondary"
+                                            className="[display:inline-flex]! [align-items:center]! [gap:6px]! [padding:8px_16px]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer]! [height:38px]! [transition:all_0.2s_ease]! [border:none]! [white-space:nowrap]! disabled:[opacity:0.6]! disabled:[cursor:not-allowed]! qa-btn-secondary"
                                             onClick={() => { setSearchQuery(''); setStatusFilter('all'); setOffset(0); }}
                                         >
                                             Clear Filters
@@ -227,7 +227,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                                         <td className="[padding:14px_18px]! [font-size:var(--text-base)]! [color:var(--color-ink-700)]! [border-bottom:1px_solid_rgba(226,_232,_240,_0.6)]! [vertical-align:middle] text-right!">
                                                             <div className="inline-flex! gap-[6px]!">
                                                                 <button
-                                                                    className="[padding:4px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:600]! [cursor:pointer]! [transition:all_0.15s_ease]! [border:1px_solid_transparent]! qa-btn-approve"
+                                                                    className="[padding:4px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:600]! [cursor:pointer]! [transition:all_0.15s_ease]! [border:1px_solid_transparent]! [background:rgba(16,_185,_129,_0.1)]! [color:var(--color-green-700)]! [border-color:rgba(16,_185,_129,_0.25)]! hover:[background:var(--color-green-700)]! hover:[color:var(--color-white)]!"
                                                                     onClick={() => handleSingleResolve(record.scope, record.id, 'Verified')}
                                                                     disabled={resolving}
                                                                     title="Approve / Mark Verified"
@@ -235,7 +235,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                                                     <Check size={13} />
                                                                 </button>
                                                                 <button
-                                                                    className="[padding:4px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:600]! [cursor:pointer]! [transition:all_0.15s_ease]! [border:1px_solid_transparent]! qa-btn-reject"
+                                                                    className="[padding:4px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:600]! [cursor:pointer]! [transition:all_0.15s_ease]! [border:1px_solid_transparent]! [background:rgba(239,_68,_68,_0.1)]! [color:var(--color-red-700)]! [border-color:rgba(239,_68,_68,_0.25)]! hover:[background:var(--color-red-700)]! hover:[color:var(--color-white)]!"
                                                                     onClick={() => handleSingleResolve(record.scope, record.id, 'Rejected')}
                                                                     disabled={resolving}
                                                                     title="Reject / Outlier"
@@ -265,7 +265,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                         </span>
                                         <div className="flex! gap-[6px]! items-center!">
                                             <button
-                                                className="qa-btn-action qa-btn-secondary h-[32px]! p-[0_10px]!"
+                                                className="[display:inline-flex]! [align-items:center]! [gap:6px]! [padding:8px_16px]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer]! [height:38px]! [transition:all_0.2s_ease]! [border:none]! [white-space:nowrap]! disabled:[opacity:0.6]! disabled:[cursor:not-allowed]! qa-btn-secondary h-[32px]! p-[0_10px]!"
                                                
                                                 onClick={() => setOffset(Math.max(0, offset - PAGE_SIZE))}
                                                 disabled={offset === 0}
@@ -276,7 +276,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                                 Page {currentPage} / {totalPages}
                                             </span>
                                             <button
-                                                className="qa-btn-action qa-btn-secondary h-[32px]! p-[0_10px]!"
+                                                className="[display:inline-flex]! [align-items:center]! [gap:6px]! [padding:8px_16px]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer]! [height:38px]! [transition:all_0.2s_ease]! [border:none]! [white-space:nowrap]! disabled:[opacity:0.6]! disabled:[cursor:not-allowed]! qa-btn-secondary h-[32px]! p-[0_10px]!"
                                                
                                                 onClick={() => setOffset(offset + PAGE_SIZE)}
                                                 disabled={offset + PAGE_SIZE >= total_flagged_count}

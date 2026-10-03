@@ -355,7 +355,7 @@ const SbtiDashboard = () => {
                 <label>Base Year</label>
                 <input
                   type="number"
-                  className="sbti-input"
+                  className="[padding:10px_14px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [background:var(--input-bg,_var(--color-ink-50))]! [color:var(--text-main,_var(--color-ink-900))]! [font-size:var(--text-md)]! [transition:all_0.2s]! focus:[outline:none]! focus:[border-color:var(--primary,_var(--color-brand-500))]! focus:[background:var(--card-bg,_var(--color-white))]! focus:[box-shadow:0_0_0_3px_rgba(249,_115,_22,_0.1)]!"
                   min="2015"
                   max="2035"
                   value={targetForm.base_year}
@@ -369,7 +369,7 @@ const SbtiDashboard = () => {
                   <label>Base Year Baseline (tCO2e)</label>
                   <button
                     type="button"
-                    className="btn-autofill"
+                    className="[display:inline-flex]! [align-items:center] [gap:5px] [padding:4px_10px]! [font-size:var(--text-sm)]! [font-weight:600]! [border-radius:var(--radius-sm)]! [background:rgba(37,_99,_235,_0.1)]! [color:var(--color-blue-600)]! [border:1px_solid_rgba(37,_99,_235,_0.2)]! [cursor:pointer] [transition:all_0.2s]! hover:[background:rgba(37,_99,_235,_0.2)]! hover:[border-color:var(--color-blue-600)]!"
                     onClick={handleAutoFillBaseline}
                     title="Auto-fill with verified emissions for base year"
                   >
@@ -380,7 +380,7 @@ const SbtiDashboard = () => {
                 <input
                   type="number"
                   step="0.01"
-                  className="sbti-input"
+                  className="[padding:10px_14px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [background:var(--input-bg,_var(--color-ink-50))]! [color:var(--text-main,_var(--color-ink-900))]! [font-size:var(--text-md)]! [transition:all_0.2s]! focus:[outline:none]! focus:[border-color:var(--primary,_var(--color-brand-500))]! focus:[background:var(--card-bg,_var(--color-white))]! focus:[box-shadow:0_0_0_3px_rgba(249,_115,_22,_0.1)]!"
                   min="0.01"
                   value={targetForm.base_year_emissions}
                   onChange={(e) => setTargetForm({ ...targetForm, base_year_emissions: parseFloat(e.target.value) || 0 })}
@@ -392,7 +392,7 @@ const SbtiDashboard = () => {
                 <label>Net-Zero Target Year</label>
                 <input
                   type="number"
-                  className="sbti-input"
+                  className="[padding:10px_14px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [background:var(--input-bg,_var(--color-ink-50))]! [color:var(--text-main,_var(--color-ink-900))]! [font-size:var(--text-md)]! [transition:all_0.2s]! focus:[outline:none]! focus:[border-color:var(--primary,_var(--color-brand-500))]! focus:[background:var(--card-bg,_var(--color-white))]! focus:[box-shadow:0_0_0_3px_rgba(249,_115,_22,_0.1)]!"
                   min="2030"
                   max="2070"
                   value={targetForm.target_year}
@@ -408,7 +408,7 @@ const SbtiDashboard = () => {
                   step="0.1"
                   min="0.1"
                   max="25.0"
-                  className="sbti-input"
+                  className="[padding:10px_14px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [background:var(--input-bg,_var(--color-ink-50))]! [color:var(--text-main,_var(--color-ink-900))]! [font-size:var(--text-md)]! [transition:all_0.2s]! focus:[outline:none]! focus:[border-color:var(--primary,_var(--color-brand-500))]! focus:[background:var(--card-bg,_var(--color-white))]! focus:[box-shadow:0_0_0_3px_rgba(249,_115,_22,_0.1)]!"
                   value={targetForm.reduction_rate_pct}
                   onChange={(e) => setTargetForm({ ...targetForm, reduction_rate_pct: parseFloat(e.target.value) || 0 })}
                   required
@@ -514,8 +514,8 @@ const SbtiDashboard = () => {
       </div>
 
       {/* Main Trajectory Charts Grid */}
-      <div className="sbti-charts-grid">
-        <div className="sbti-card">
+      <div className="[display:grid]! [grid-template-columns:2fr_1fr] [gap:24px] max-[1100px]:[grid-template-columns:1fr]">
+        <div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.85))]! [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))]! [border-radius:var(--radius-lg)]! [padding:24px]! [box-shadow:var(--shadow-card,_0_4px_12px_rgba(0,_0,_0,_0.05))]! [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease]! hover:[border-color:var(--border-color-hover,_rgba(255,_255,_255,_0.95))]!">
           <div className="[display:flex]! [justify-content:space-between] [align-items:center] [margin-bottom:18px]!">
             <div>
               <h3 className="[font-size:var(--text-lg)]! [font-weight:700]! [color:var(--text-main,_var(--color-ink-900))]! [margin-bottom:2px]!">{sbtiData?.pathway_label || "Decarbonization Pathway"}</h3>
@@ -541,7 +541,7 @@ const SbtiDashboard = () => {
           </div>
         </div>
 
-        <div className="sbti-card">
+        <div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.85))]! [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))]! [border-radius:var(--radius-lg)]! [padding:24px]! [box-shadow:var(--shadow-card,_0_4px_12px_rgba(0,_0,_0,_0.05))]! [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease]! hover:[border-color:var(--border-color-hover,_rgba(255,_255,_255,_0.95))]!">
           <div className="[display:flex]! [justify-content:space-between] [align-items:center] [margin-bottom:18px]!">
             <div>
               <h3 className="[font-size:var(--text-lg)]! [font-weight:700]! [color:var(--text-main,_var(--color-ink-900))]! [margin-bottom:2px]!">Emissions Composition by Scope</h3>
@@ -569,7 +569,7 @@ const SbtiDashboard = () => {
       </div>
 
       {/* Milestone & Projection Table */}
-      <div className="sbti-card">
+      <div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.85))]! [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))]! [border-radius:var(--radius-lg)]! [padding:24px]! [box-shadow:var(--shadow-card,_0_4px_12px_rgba(0,_0,_0,_0.05))]! [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease]! hover:[border-color:var(--border-color-hover,_rgba(255,_255,_255,_0.95))]!">
         <div className="[display:flex]! [justify-content:space-between] [align-items:center] [margin-bottom:18px]!">
           <div>
             <h3 className="[font-size:var(--text-lg)]! [font-weight:700]! [color:var(--text-main,_var(--color-ink-900))]! [margin-bottom:2px]!">Annual Pathway Milestones & Verification Data</h3>

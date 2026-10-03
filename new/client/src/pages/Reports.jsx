@@ -647,7 +647,7 @@ const Reports = () => {
               </div>
 
               <button
-                className="btn-create"
+                className="[background:linear-gradient(135deg,_var(--accent-color)_0%,_#ff8a4d_100%)]! [color:white]! [padding:12px_28px]! [border-radius:var(--radius-md)]! [font-weight:600]! [border:none]! [cursor:pointer] [display:flex]! [align-items:center] [justify-content:center] [gap:10px] [height:45px]! [transition:all_0.2s]! [width:100%]! hover:[box-shadow:0_4px_15px_rgba(255,_102,_0,_0.3)]! hover:[transform:translateY(-1px)]"
                 onClick={openConfigModal}
                 disabled={loading}
                 style={{
@@ -882,7 +882,7 @@ const Reports = () => {
               <div className="relative!">
                 <input
                   type="text"
-                  className="search-input"
+                  className="[width:100%]! [padding:10px_12px_10px_36px]! [background:var(--bg-input)]! [border:1px_solid_var(--border-color)]! [border-radius:var(--radius-md)]! [color:var(--text-primary)]! [font-size:var(--text-base)]! [outline:none]! [transition:all_0.2s]! [box-sizing:border-box]! focus:[border-color:var(--accent-color)]! focus:[background:var(--color-white)]!"
                   placeholder="Search records..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}

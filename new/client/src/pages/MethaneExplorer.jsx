@@ -694,7 +694,7 @@ const EmissionsMap = () => {
       }}
     >
       {/* 1. TOP MISSION TELEMETRY HUD BAR (WHITE LIGHT THEME) */}
-      <header className="mission-hud">
+      <header className="[position:absolute] [top:14px] [left:16px] [right:16px] [z-index:1000] [display:flex]! [align-items:center] [justify-content:space-between] [gap:14px] [padding:10px_18px]! [background:rgba(255,_255,_255,_0.94)]! [backdrop-filter:blur(18px)] [-webkit-backdrop-filter:blur(18px)]! [border:1px_solid_rgba(226,_232,_240,_0.9)]! [border-radius:var(--radius-lg)]! [box-shadow:var(--shadow-card)]!">
         <div className="[display:flex]! [align-items:center] [gap:16px]">
           <div className="[display:flex]! [align-items:center] [gap:10px]">
             <div className="[position:relative] [width:16px]! [height:16px]! [display:flex]! [align-items:center] [justify-content:center]">
@@ -804,7 +804,7 @@ const EmissionsMap = () => {
 
       {/* 2. SATELLITE NEW-PASS OVERPASS TOAST */}
       {satelliteAlert && (
-        <aside className="satellite-alert-toast" role="alert">
+        <aside className="[position:absolute] [top:78px] [right:20px] [z-index:1001] [background:var(--color-white)]! [border:1px_solid_#fca5a5]! [border-radius:var(--radius-lg)]! [padding:14px_16px]! [min-width:320px] [max-width:380px]! [box-shadow:0_10px_30px_rgba(239,_68,_68,_0.18)]! [animation:toastSlide_0.3s_cubic-bezier(0.16,_1,_0.3,_1)]! [display:flex]! [flex-direction:column] [gap:6px]" role="alert">
           <div className="[display:flex]! [align-items:center] [justify-content:space-between]">
             <div className="toast-title">
               {satelliteAlert.anomaly >= 30 ? (
@@ -818,7 +818,7 @@ const EmissionsMap = () => {
               )}
             </div>
             <button
-              className="toast-close-btn"
+              className="[background:transparent]! [border:none]! [color:var(--color-ink-600)]! [cursor:pointer] [padding:2px]! [border-radius:var(--radius-sm)]! [transition:color_0.2s]! hover:[color:var(--color-ink-900)]!"
               onClick={() => setSatelliteAlert(null)}
               title="Dismiss notification"
             >
@@ -983,7 +983,7 @@ const EmissionsMap = () => {
       {/* 4. COLLAPSIBLE LEFT INTELLIGENCE & RECON DRAWER (WHITE LIGHT THEME) */}
       <div className={`drawer-container left-drawer ${isDrawerOpen ? "open" : "collapsed"}`}>
         <button
-          className="drawer-toggle-tab"
+          className="[pointer-events:auto]! [position:absolute] [top:14px] [right:-36px] [width:36px]! [height:44px]! [background:var(--color-white)]! [border:1px_solid_var(--color-ink-200)]! [border-left:none]! [border-radius:0_var(--radius-md)_var(--radius-md)_0]! [color:var(--color-link)]! [display:flex]! [align-items:center] [justify-content:center] [cursor:pointer] [box-shadow:var(--shadow-card)]! [transition:all_0.2s_ease]! hover:[color:var(--color-white)]! hover:[background:var(--color-primary)]!"
           onClick={() => setIsDrawerOpen(!isDrawerOpen)}
           title={isDrawerOpen ? "Collapse drawer" : "Expand drawer"}
           aria-label={isDrawerOpen ? "Collapse drawer" : "Expand drawer"}
@@ -992,7 +992,7 @@ const EmissionsMap = () => {
         </button>
 
         {isDrawerOpen && (
-          <div className="drawer-inner">
+          <div className="[pointer-events:auto]! [width:100%]! [height:100%]! [background:rgba(255,_255,_255,_0.95)]! [backdrop-filter:blur(20px)] [-webkit-backdrop-filter:blur(20px)]! [border:1px_solid_rgba(226,_232,_240,_0.9)]! [border-radius:var(--radius-lg)]! [box-shadow:var(--shadow-raised)]! [display:flex]! [flex-direction:column] [padding:18px]! [overflow:hidden]!">
             {/* Drawer Header */}
             <div className="drawer-header">
               <div className="[display:flex]! [align-items:center] [gap:8px]">
@@ -1016,12 +1016,12 @@ const EmissionsMap = () => {
                   onChange={(e) =>
                     setFilters({ ...filters, search: e.target.value })
                   }
-                  className="recon-input"
+                  className="[width:100%]! [background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:8px_30px_8px_34px]! [font-size:var(--text-sm)]! [color:var(--color-ink-900)]! [outline:none]! [transition:all_0.2s_ease]! focus:[background:var(--color-white)]! focus:[border-color:var(--color-brand-500)]! focus:[box-shadow:0_0_0_2px_rgba(255,_102,_0,_0.15)]!"
                   id="recon-search-input"
                 />
                 {filters.search && (
                   <button
-                    className="clear-search-btn"
+                    className="[position:absolute] [right:10px] [top:50%] [transform:translateY(-50%)] [background:transparent]! [border:none]! [color:var(--color-ink-600)]! [cursor:pointer] [padding:2px]! hover:[color:var(--color-ink-900)]!"
                     onClick={() => setFilters({ ...filters, search: "" })}
                     title="Clear search"
                   >
@@ -1041,7 +1041,7 @@ const EmissionsMap = () => {
                   onChange={(e) =>
                     setFilters({ ...filters, region: e.target.value })
                   }
-                  className="recon-select"
+                  className="[width:100%]! [background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:7px_10px]! [font-size:var(--text-sm)]! [color:var(--color-ink-900)]! [outline:none]! [cursor:pointer] [transition:border-color_0.2s]! focus:[border-color:var(--color-brand-500)]! focus:[background:var(--color-white)]!"
                   id="filter-region-select"
                 >
                   <option value="all">All Regions</option>
@@ -1061,7 +1061,7 @@ const EmissionsMap = () => {
                   onChange={(e) =>
                     setFilters({ ...filters, year: e.target.value })
                   }
-                  className="recon-select"
+                  className="[width:100%]! [background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:7px_10px]! [font-size:var(--text-sm)]! [color:var(--color-ink-900)]! [outline:none]! [cursor:pointer] [transition:border-color_0.2s]! focus:[border-color:var(--color-brand-500)]! focus:[background:var(--color-white)]!"
                   id="filter-year-select"
                 >
                   <option value="all">All Years</option>
@@ -1082,7 +1082,7 @@ const EmissionsMap = () => {
                 onChange={(e) =>
                   setFilters({ ...filters, activity: e.target.value })
                 }
-                className="recon-select"
+                className="[width:100%]! [background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:7px_10px]! [font-size:var(--text-sm)]! [color:var(--color-ink-900)]! [outline:none]! [cursor:pointer] [transition:border-color_0.2s]! focus:[border-color:var(--color-brand-500)]! focus:[background:var(--color-white)]!"
                 id="filter-activity-select"
               >
                 <option value="all">All Activities</option>
@@ -1256,14 +1256,14 @@ const EmissionsMap = () => {
 
       {/* 5. CALIBRATED SPECTRAL ABSORPTION RAMP LEGEND (WHITE LIGHT THEME) */}
       {showSatelliteLayer && showLegend && (
-        <aside className="spectral-legend-card" role="region" aria-label="Spectral Legend">
+        <aside className="[position:absolute] [bottom:20px] [left:370px] [width:320px]! [z-index:900] [background:rgba(255,_255,_255,_0.95)]! [backdrop-filter:blur(16px)] [-webkit-backdrop-filter:blur(16px)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-lg)]! [padding:12px_14px]! [box-shadow:var(--shadow-card)]! [transition:all_0.3s_ease]! max-[960px]:[left:20px] max-[960px]:[bottom:80px]" role="region" aria-label="Spectral Legend">
           <div className="[display:flex]! [justify-content:space-between] [align-items:center] [margin-bottom:8px]!">
             <div className="[display:flex]! [align-items:center] [gap:6px] [font-size:var(--text-xs)]! [font-weight:700]! [color:var(--color-ink-900)]!">
               <Satellite size={14} color="#0284c7" />
               <span>TROPOMI CH₄ Column Mole Fraction</span>
             </div>
             <button
-              className="legend-close"
+              className="[background:transparent]! [border:none]! [color:var(--color-ink-600)]! [cursor:pointer] [padding:2px]! hover:[color:var(--color-ink-900)]!"
               onClick={() => setShowLegend(false)}
               title="Hide Legend"
             >
@@ -1284,7 +1284,7 @@ const EmissionsMap = () => {
               href="https://dataspace.copernicus.eu"
               target="_blank"
               rel="noopener noreferrer"
-              className="cdse-portal-link"
+              className="[color:var(--color-blue-700)]! [text-decoration:none]! [font-weight:600]! [display:inline-flex]! [align-items:center] [gap:3px] hover:[text-decoration:underline]!"
             >
               CDSE Hub <ExternalLink size={10} />
             </a>
@@ -1298,7 +1298,7 @@ const EmissionsMap = () => {
           {/* Dossier Header */}
           <div className="[position:relative] [margin-bottom:16px]! [padding-bottom:14px]! [border-bottom:1px_solid_var(--color-ink-100)]!">
             <button
-              className="dossier-close-btn"
+              className="[position:absolute] [top:0] [right:0] [background:var(--color-ink-100)]! [border:none]! [color:var(--color-ink-500)]! [cursor:pointer] [padding:6px]! [border-radius:50%]! [display:flex]! [align-items:center] [justify-content:center] [transition:all_0.2s]! hover:[background:var(--color-ink-200)]! hover:[color:var(--color-ink-900)]!"
               onClick={() => setSelectedFacility(null)}
               title="Close Dossier"
             >
@@ -1320,7 +1320,7 @@ const EmissionsMap = () => {
                 </span>
               </div>
               <button
-                className="coords-badge"
+                className="[display:inline-flex]! [align-items:center] [gap:4px] [background:var(--color-ink-100)]! [border:1px_solid_var(--color-ink-200)]! [padding:3px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-xs)]! [font-family:monospace]! [color:var(--color-blue-700)]! [cursor:pointer] [transition:all_0.2s]! hover:[background:#e0f2fe]! hover:[border-color:#7dd3fc]!"
                 onClick={handleCopyCoords}
                 title="Copy coordinates to clipboard"
               >
@@ -1510,7 +1510,7 @@ const EmissionsMap = () => {
                     credentials in Settings to stream verified Sentinel-5P overpasses.
                   </div>
                   <button
-                    className="btn-link-settings"
+                    className="[background:#fef3c7]! [border:1px_solid_#fde68a]! [color:var(--color-amber-700)]! [border-radius:var(--radius-sm)]! [padding:4px_10px]! [font-size:var(--text-xs)]! [font-weight:700]! [cursor:pointer] [transition:all_0.2s]! hover:[background:#fde68a]!"
                     onClick={() => navigate("/settings")}
                   >
                     Configure in Settings &rarr;
@@ -1620,7 +1620,7 @@ const EmissionsMap = () => {
           {/* QUICK FOCUS ACTION BUTTONS */}
           <div className="[margin-top:auto]! [padding-top:10px]!">
             <button
-              className="btn-action-focus"
+              className="[width:100%]! [display:flex]! [align-items:center] [justify-content:center] [gap:8px] [background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:10px_14px]! [color:var(--color-ink-900)]! [font-size:var(--text-sm)]! [font-weight:700]! [cursor:pointer] [transition:all_0.2s_ease]! hover:[background:var(--color-brand-50)]! hover:[border-color:var(--color-brand-500)]! hover:[color:var(--color-link)]!"
               onClick={() => {
                 const lat = Number(selectedFacility.latitude);
                 const lon = Number(selectedFacility.longitude);

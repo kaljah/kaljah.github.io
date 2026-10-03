@@ -41,12 +41,12 @@ class ErrorBoundary extends React.Component {
     if (this.state.hasError) {
       return (
         <div className="[min-height:100vh] [display:flex]! [align-items:center] [justify-content:center] [padding:20px]! [background:linear-gradient(135deg,_var(--color-ink-900)_0%,_var(--color-ink-800)_100%)]!">
-          <div className="error-boundary-card">
+          <div className="[background:rgba(255,_255,_255,_0.05)]! [backdrop-filter:blur(20px)] [border:1px_solid_rgba(255,_255,_255,_0.1)]! [border-radius:var(--radius-lg)]! [padding:40px]! [max-width:600px]! [width:100%]! [text-align:center]! [box-shadow:var(--shadow-raised)]! max-[768px]:[padding:30px_20px]!">
             <div className="[color:var(--color-red-700)]! [margin-bottom:24px]! [animation:pulse_2s_ease-in-out_infinite]!">
               <CircleAlert size="64" strokeWidth="2" aria-hidden="true" />
             </div>
 
-            <h1 className="error-title">Something went wrong</h1>
+            <h1 className="[font-size:var(--text-2xl)]! [font-weight:700]! [color:var(--text-primary)]! [margin:0_0_16px_0]! max-[768px]:[font-size:var(--text-xl)]!">Something went wrong</h1>
             <p className="error-message">
               We're sorry, but an unexpected error occurred. Please try
               reloading the page or contact support if the problem persists.
@@ -67,7 +67,7 @@ class ErrorBoundary extends React.Component {
                 </details>
               )}
 
-            <div className="error-actions">
+            <div className="[display:flex]! [gap:12px] [justify-content:center] [margin-bottom:24px]! max-[768px]:[flex-direction:column]">
               <button className="error-btn primary" onClick={this.handleReload}>
                 <svg
                   width="16"

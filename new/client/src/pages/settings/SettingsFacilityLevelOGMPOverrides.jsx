@@ -50,7 +50,7 @@ const SettingsFacilityLevelOGMPOverrides = ({ facilities, facilityEdits, handleF
                       <td>{fac.segment || "Upstream"}</td>
                       <td>
                         <NativeSelect
-                          className="table-select"
+                          className="[background:var(--bg-card,_var(--color-white))]! [border:1px_solid_var(--border-color,_var(--color-ink-300))]! [color:var(--text-primary,_var(--color-ink-900))]! [border-radius:var(--radius-md)]! [padding:7px_10px]! [font-size:var(--text-base)]! [font-family:inherit]!"
                           value={opStatus}
                           disabled={!isAdmin}
                           onChange={(e) =>
@@ -72,7 +72,7 @@ const SettingsFacilityLevelOGMPOverrides = ({ facilities, facilityEdits, handleF
                       <td>
                         <input
                           type="text"
-                          className="table-input"
+                          className="[background:var(--bg-card,_var(--color-white))]! [border:1px_solid_var(--border-color,_var(--color-ink-300))]! [color:var(--text-primary,_var(--color-ink-900))]! [border-radius:var(--radius-md)]! [padding:7px_10px]! [font-size:var(--text-base)]! [font-family:inherit]!"
                           value={edit.country || "Algeria"}
                           disabled={!isAdmin}
                           onChange={(e) =>
@@ -130,7 +130,7 @@ const SettingsFacilityLevelOGMPOverrides = ({ facilities, facilityEdits, handleF
                       </td>
                       <td>
                         <button
-                          className="btn-table-save"
+                          className="[display:inline-flex]! [align-items:center] [gap:5px] [background:rgba(255,_102,_0,_0.1)]! [color:var(--color-brand-700)]! [border:1px_solid_rgba(255,_102,_0,_0.25)]! [border-radius:var(--radius-md)]! [padding:6px_14px]! [font-weight:600]! [font-size:var(--text-sm)]! [cursor:pointer] [transition:all_0.2s_ease]! hover:[background:var(--color-primary)]! hover:[color:var(--color-white)]! hover:[border-color:var(--color-brand-500)]!"
                           onClick={() => handleSaveFacility(fac.id)}
                           disabled={user?.role === "it_admin" || (user?.role !== "admin" && user?.role !== "superuser")}
                           title={user?.role === "it_admin" || (user?.role !== "admin" && user?.role !== "superuser") ? "Administrator privileges required to update facility" : "Save Facility Settings"}

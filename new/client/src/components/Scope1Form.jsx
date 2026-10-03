@@ -1899,7 +1899,7 @@ const Scope1Form = () => {
 
         <Section n={1} title="Identity & Location">
           <FieldGrid min={180}>
-            <div className="input-group s1-span-2">
+            <div className="input-group [grid-column:span_2]! max-[600px]:[grid-column:1_/_-1]!">
               <label>Region</label>
               <CustomDropdown
                 options={getFacilityOptions()}

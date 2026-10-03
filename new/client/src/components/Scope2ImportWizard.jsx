@@ -248,7 +248,7 @@ function FieldGroup({ group, headers, mapping, setMapping, searchQuery }) {
       </button>
       {open && (
         <div className="s1w-group-body">
-          <div className="s1w-group-table-header">
+          <div className="[display:grid]! [grid-template-columns:1fr_1fr_36px] [padding:8px_16px]! [background:var(--color-ink-50)]! [border-bottom:1px_solid_var(--color-ink-100)]! [font-size:var(--text-xs)]! [font-weight:700]! [color:var(--color-ink-600)]! [text-transform:uppercase]! [letter-spacing:0.5px] max-[600px]:[display:none]!">
             <span>Field</span>
             <span>Your CSV Column</span>
             <span>Status</span>
@@ -361,7 +361,7 @@ export default function Scope2ImportWizard({ onClose, onUploadSuccess }) {
 
   return (
     <div className="[position:fixed] [inset:0] [background:rgba(10,_15,_30,_0.68)]! [backdrop-filter:blur(6px)] [-webkit-backdrop-filter:blur(6px)]! [display:flex]! [align-items:center] [justify-content:center] [z-index:1000] [padding:16px]! [animation:s1w-fade_0.2s_ease]!" onClick={e => e.target === e.currentTarget && onClose()}>
-      <div className="s1w-modal">
+      <div className="[background:var(--color-white)]! [border-radius:var(--radius-lg)]! [width:100%]! [max-width:820px]! [max-height:94vh]! [display:flex]! [flex-direction:column] [box-shadow:var(--shadow-overlay)]! [animation:s1w-slide_0.28s_cubic-bezier(0.34,_1.56,_0.64,_1)]! [overflow:hidden]! max-[600px]:[border-radius:var(--radius-md)]!">
         {/* Header */}
         <div className="[display:flex]! [align-items:center] [justify-content:space-between] [padding:20px_24px_0]! [flex-shrink:0]">
           <div className="[display:flex]! [align-items:center] [gap:12px]">
@@ -467,7 +467,7 @@ export default function Scope2ImportWizard({ onClose, onUploadSuccess }) {
             <div className="[position:relative] [display:flex]! [align-items:center]">
               <div className="s1w-search-icon"><Icon.Search /></div>
               <input
-                className="s1w-search-input"
+                className="[width:100%]! [padding:10px_12px_10px_38px]! [border:1.5px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [background:var(--color-ink-50)]! [font-size:var(--text-base)]! [color:var(--color-ink-900)]! [outline:none]! [transition:border-color_0.15s]! [font-family:inherit]! focus:[border-color:var(--color-brand-500)]! focus:[background:var(--color-white)]! focus:[box-shadow:0_0_0_3px_rgba(255,102,0,0.08)]! placeholder:[color:var(--color-ink-400)]!"
                 type="text"
                 placeholder="Search fields by name, key, or description…"
                 value={searchQuery}

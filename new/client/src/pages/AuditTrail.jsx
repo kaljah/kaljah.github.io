@@ -479,11 +479,11 @@ const AuditTrail = () => {
 
   return (
     <div className="audit-trail">
-      <div className="audit-container">
+      <div className="[max-width:1400px]! [margin:0_auto]! [padding:24px_28px]! max-[768px]:[padding:18px_16px]!">
         {/* Header Title & Actions */}
-        <div className="audit-page-header">
+        <div className="[display:flex]! [justify-content:space-between] [align-items:flex-start] [margin-bottom:24px]! [gap:20px] [flex-wrap:wrap] max-[768px]:[flex-direction:column] max-[768px]:[align-items:stretch]">
           <div>
-            <div className="audit-badge-tag">
+            <div className="[display:inline-flex]! [align-items:center] [gap:6px] [padding:4px_10px]! [background:rgba(255,_102,_0,_0.08)]! [border:1px_solid_rgba(255,_102,_0,_0.25)]! [border-radius:999px]! [color:var(--color-link)]! [font-size:var(--text-xs)]! [font-weight:700]! [text-transform:uppercase]! [letter-spacing:0.05em] [margin-bottom:8px]!">
               <Shield size={14} />
               <span>Immutable Compliance Log</span>
             </div>
@@ -493,7 +493,7 @@ const AuditTrail = () => {
             </p>
           </div>
 
-          <div className="audit-header-actions">
+          <div className="[display:flex]! [align-items:center] [gap:12px] max-[768px]:[justify-content:space-between]">
             <SegmentedControl
               label="Audit view"
               value={view}
@@ -520,7 +520,7 @@ const AuditTrail = () => {
             {/* Export Dropdown */}
             <div className="[position:relative]" ref={exportMenuRef}>
               <button
-                className="btn-export-main"
+                className="[display:inline-flex]! [align-items:center] [gap:8px] [padding:9px_18px]! [background:var(--primary-gradient)]! [border:none]! [border-radius:var(--radius-md)]! [color:var(--color-white)]! [font-size:var(--text-base)]! [font-weight:700]! [cursor:pointer] [box-shadow:0_2px_8px_rgba(255,_102,_0,_0.25)]! [transition:all_0.2s_ease]! hover:[filter:brightness(1.05)] hover:[transform:translateY(-1px)] hover:[box-shadow:0_4px_12px_rgba(255,_102,_0,_0.35)]!"
                 onClick={() => setExportDropdownOpen(!exportDropdownOpen)}
               >
                 <Download size={15} />
@@ -551,7 +551,7 @@ const AuditTrail = () => {
         </div>
 
         {/* KPI Metric Summary Cards */}
-        <div className="audit-stats-grid">
+        <div className="[display:grid]! [grid-template-columns:repeat(4,_1fr)] [gap:16px] [margin-bottom:24px]! max-[1024px]:[grid-template-columns:repeat(2,_1fr)] max-[768px]:[grid-template-columns:1fr]">
           <div className="stat-card">
             <div className="stat-icon-box total-events">
               <Activity size={20} />
@@ -643,7 +643,7 @@ const AuditTrail = () => {
                 : "No compliance audit records have been generated yet."}
             </p>
             {hasActiveFilters && (
-              <button className="btn-clear-empty" onClick={resetFilters}>
+              <button className="[padding:8px_16px]! [background:var(--color-primary)]! [border:none]! [border-radius:var(--radius-md)]! [color:var(--color-white)]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [transition:opacity_0.2s_ease]! hover:[opacity:0.9]" onClick={resetFilters}>
                 Clear All Filters
               </button>
             )}
@@ -672,7 +672,7 @@ const AuditTrail = () => {
 
         {/* Pagination Bar */}
         {totalRecords > 0 && (
-          <div className="audit-pagination-bar">
+          <div className="[display:flex]! [justify-content:space-between] [align-items:center] [margin-top:30px]! [padding:16px_20px]! [background:var(--bg-card,_var(--color-white))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-lg)]! [box-shadow:var(--shadow-card)]! [flex-wrap:wrap] [gap:16px] max-[768px]:[flex-direction:column] max-[768px]:[align-items:stretch] max-[768px]:[text-align:center]!">
             <div className="[font-size:var(--text-base)]! [color:var(--text-secondary,_var(--color-ink-500))]!">
               Page <strong>{page}</strong> of <strong>{totalPages}</strong> ({totalRecords} total events)
             </div>

@@ -242,7 +242,7 @@ const Scope1ProcessSection = ({ activePresetId, currentProcessValue, dataSourceR
                             </div>
 
                             {/* Measured Properties Grid */}
-                            <div className="tier2-inputs-grid">
+                            <div className="[display:grid]! [grid-template-columns:1fr_1fr] [gap:12px] max-[640px]:[grid-template-columns:1fr]">
                               <div>
                                 <label className="block! text-[length:0.75rem]! font-semibold! text-[color:#374151]! mb-[4px]!">
                                   HHV

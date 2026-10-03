@@ -38,14 +38,6 @@
   opacity: 0.6;
 }
 
-.field-error {
-  border-color: var(--color-red-500) !important;
-}
-
-.field-error:focus {
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
-}
-
 .field-textarea {
   resize: vertical;
   min-height: 80px;
@@ -84,34 +76,10 @@
   color: var(--text-primary);
 }
 
-.field-checkbox {
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
-  accent-color: var(--accent-color);
-}
-
-.field-checkbox:disabled {
-  cursor: not-allowed;
-  opacity: 0.6;
-}
-
 /* Radio Group */
 .radio-group {
   display: flex;
   gap: 16px;
-}
-
-.field-radio {
-  width: 16px;
-  height: 16px;
-  cursor: pointer;
-  accent-color: var(--accent-color);
-}
-
-.field-radio:disabled {
-  cursor: not-allowed;
-  opacity: 0.6;
 }
 
 /* Helper & Error Text */

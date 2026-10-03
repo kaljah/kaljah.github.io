@@ -276,7 +276,7 @@ const CbamTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, cbamForm, currentPage, editi
                                                                     Edit
                                                                 </button>
                                                                 <button
-                                                                    className="btn-delete p-[4px_8px]! text-[length:0.75rem]!"
+                                                                    className="[background:#fee2e2]! [color:var(--color-red-700)]! [border:1px_solid_#fecaca]! [padding:6px_12px]! [border-radius:var(--radius-md)]! [cursor:pointer] [font-size:var(--text-base)]! [transition:all_0.2s]! hover:[background:var(--color-red-700)]! hover:[color:white]! p-[4px_8px]! text-[length:0.75rem]!"
                                                                    
                                                                     onClick={() => handleDeleteCbamExport(c.id)}
                                                                 >

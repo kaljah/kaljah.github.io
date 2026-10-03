@@ -134,52 +134,12 @@ select.component-select option:disabled {
   background-color: var(--color-ink-50);
 }
 
-.btn-create {
-  background: linear-gradient(135deg, var(--accent-color) 0%, #ff8a4d 100%);
-  color: white;
-  padding: 12px 28px;
-  border-radius: var(--radius-md);
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  height: 45px;
-  transition: all 0.2s;
-  width: 100%;
-}
-
-.btn-create:hover {
-  box-shadow: 0 4px 15px rgba(255, 102, 0, 0.3);
-  transform: translateY(-1px);
-}
-
 /* Filters Bar */
 
 .search-input-wrapper {
   position: relative;
   flex: 1;
   min-width: 250px;
-}
-
-.search-input {
-  width: 100%;
-  padding: 10px 12px 10px 36px;
-  background: var(--bg-input);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  color: var(--text-primary);
-  font-size: var(--text-base);
-  outline: none;
-  transition: all 0.2s;
-  box-sizing: border-box;
-}
-
-.search-input:focus {
-  border-color: var(--accent-color);
-  background: var(--color-white);
 }
 
 .search-icon {

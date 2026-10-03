@@ -88,22 +88,6 @@
 
 /* 1. Input Parameters Grid */
 
-.param-item {
-  background: var(--color-ink-50);
-  border: 1px solid var(--color-ink-200);
-  border-radius: var(--radius-md);
-  padding: 12px 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.param-item:hover {
-  border-color: var(--color-ink-300);
-  box-shadow: var(--shadow-xs);
-}
-
 /* Status Badges */
 .status-pill {
   display: inline-flex;
@@ -246,17 +230,6 @@
 }
 
 /* 5. Final Results */
-.results-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-}
-
-@media (max-width: 640px) {
-  .results-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
 
 .result-card {
   padding: 16px 12px;
