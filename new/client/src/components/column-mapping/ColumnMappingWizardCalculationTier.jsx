@@ -23,7 +23,7 @@ const ColumnMappingWizardCalculationTier = ({ selectedProcess, selectedProcessSc
                   }}
                 >
                   <div role="button" tabIndex={0} onKeyDown={activateOnKey}
-                    className={`[transition:all_0.2s_ease]! hover:[border-color:var(--color-ink-300)]! hover:[background:var(--color-ink-50)]! [&.active]:[border-color:var(--color-blue-600)]! [&.active]:[background:var(--color-blue-50)]! [&.active]:[box-shadow:0_0_0_1px_var(--color-blue-600)]! [&.active_h4]:[color:#1e40af]! [&.active>div>div]:[background:var(--color-blue-600)]! [&.active>div>div]:[border-color:var(--color-blue-600)]! ${selectedTier === "1" ? "active" : ""}`}
+                    className={`cmw-mode-card ${selectedTier === "1" ? "active" : ""}`}
                     onClick={() => setSelectedTier("1")}
                     style={{
                       padding: "16px",
@@ -63,7 +63,7 @@ const ColumnMappingWizardCalculationTier = ({ selectedProcess, selectedProcessSc
                     </p>
                   </div>
                   <div role="button" tabIndex={0} onKeyDown={activateOnKey}
-                    className={`[transition:all_0.2s_ease]! hover:[border-color:var(--color-ink-300)]! hover:[background:var(--color-ink-50)]! [&.active]:[border-color:var(--color-blue-600)]! [&.active]:[background:var(--color-blue-50)]! [&.active]:[box-shadow:0_0_0_1px_var(--color-blue-600)]! [&.active_h4]:[color:#1e40af]! [&.active>div>div]:[background:var(--color-blue-600)]! [&.active>div>div]:[border-color:var(--color-blue-600)]! ${selectedTier === "3" ? "active" : ""}`}
+                    className={`cmw-mode-card ${selectedTier === "3" ? "active" : ""}`}
                     onClick={() => setSelectedTier("3")}
                     style={{
                       padding: "16px",
@@ -120,7 +120,7 @@ const ColumnMappingWizardCalculationTier = ({ selectedProcess, selectedProcessSc
                   }}
                 >
                   <div role="button" tabIndex={0} onKeyDown={activateOnKey}
-                    className={`[transition:all_0.2s_ease]! hover:[border-color:var(--color-ink-300)]! hover:[background:var(--color-ink-50)]! [&.active]:[border-color:var(--color-blue-600)]! [&.active]:[background:var(--color-blue-50)]! [&.active]:[box-shadow:0_0_0_1px_var(--color-blue-600)]! [&.active_h4]:[color:#1e40af]! [&.active>div>div]:[background:var(--color-blue-600)]! [&.active>div>div]:[border-color:var(--color-blue-600)]! ${selectedProcessScope === "all" ? "active" : ""}`}
+                    className={`cmw-mode-card ${selectedProcessScope === "all" ? "active" : ""}`}
                     onClick={() => setSelectedProcessScope("all")}
                     style={{
                       padding: "16px",
@@ -160,7 +160,7 @@ const ColumnMappingWizardCalculationTier = ({ selectedProcess, selectedProcessSc
                     </p>
                   </div>
                   <div role="button" tabIndex={0} onKeyDown={activateOnKey}
-                    className={`[transition:all_0.2s_ease]! hover:[border-color:var(--color-ink-300)]! hover:[background:var(--color-ink-50)]! [&.active]:[border-color:var(--color-blue-600)]! [&.active]:[background:var(--color-blue-50)]! [&.active]:[box-shadow:0_0_0_1px_var(--color-blue-600)]! [&.active_h4]:[color:#1e40af]! [&.active>div>div]:[background:var(--color-blue-600)]! [&.active>div>div]:[border-color:var(--color-blue-600)]! ${selectedProcessScope === "specific" ? "active" : ""}`}
+                    className={`cmw-mode-card ${selectedProcessScope === "specific" ? "active" : ""}`}
                     onClick={() => setSelectedProcessScope("specific")}
                     style={{
                       padding: "16px",

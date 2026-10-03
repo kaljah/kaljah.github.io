@@ -134,7 +134,7 @@ const MitigationTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, facilitie
                                                     <td>{m.year}</td>
                                                     <td>{m.mitigation_type || m.type}</td>
                                                     <td>
-                                                        <span className={`status-badge [font-size:var(--text-sm)]! [padding:4px_12px]! [border-radius:var(--radius-lg)]! [background:rgba(255,_255,_255,_0.05)]! [color:var(--text-secondary)]! ${m.status?.toLowerCase() || 'active'}`}>
+                                                        <span className={`status-badge ${m.status?.toLowerCase() || 'active'}`}>
                                                             {m.status || 'Active'}
                                                         </span>
                                                     </td>

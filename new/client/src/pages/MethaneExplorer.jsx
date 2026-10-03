@@ -955,7 +955,7 @@ const EmissionsMap = () => {
                     <div className="[display:flex]! [flex-direction:column] [gap:3px]">
                       <div className="[display:flex]! [align-items:center] [gap:8px]">
                         <span className="[font-size:var(--text-sm)]! [font-weight:800]! [color:var(--color-ink-900)]!">{fac.name}</span>
-                        <span className={`[font-size:var(--text-xs)]! [font-weight:800]! [padding:1px_5px]! [border-radius:var(--radius-sm)]! [&.high]:[background:#fee2e2]! [&.high]:[color:var(--color-red-700)]! [&.high]:[border:1px_solid_#fca5a5]! [&.medium]:[background:#fef3c7]! [&.medium]:[color:var(--color-amber-700)]! [&.medium]:[border:1px_solid_#fde68a]! [&.low]:[background:var(--color-green-50)]! [&.low]:[color:var(--color-green-700)]! [&.low]:[border:1px_solid_#a7f3d0]! [&.baseline]:[background:var(--color-green-50)]! [&.baseline]:[color:var(--color-green-700)]! [&.baseline]:[border:1px_solid_#a7f3d0]! ${severity}`}>
+                        <span className={`tooltip-badge ${severity}`}>
                           {severity.toUpperCase()}
                         </span>
                       </div>
@@ -1106,7 +1106,7 @@ const EmissionsMap = () => {
                 ].map((pill) => (
                   <button
                     key={pill.id}
-                    className={`[display:flex]! [align-items:center]! [justify-content:center]! [gap:5px]! [background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:6px_8px]! [font-size:var(--text-xs)]! [font-weight:600]! [color:var(--color-ink-500)]! [cursor:pointer]! [transition:all_0.2s_ease]! [&:hover:not(.active)]:[color:var(--color-ink-900)]! [&:hover:not(.active)]:[background:var(--color-ink-100)]! [&.active]:[background:var(--color-brand-50)]! [&.active]:[border-color:var(--color-brand-500)]! [&.active]:[color:var(--color-link)]! [&.active]:[font-weight:700]! ${filters.severity === pill.id ? "active" : ""}`}
+                    className={`pill-btn ${filters.severity === pill.id ? "active" : ""}`}
                     onClick={() =>
                       setFilters({ ...filters, severity: pill.id })
                     }
@@ -1223,7 +1223,7 @@ const EmissionsMap = () => {
                       onClick={() => handleSelectFacility(fac)}
                     >
                       <div className="[display:flex]! [align-items:center] [gap:10px] [min-width:0] [flex:1]">
-                        <span className={`[width:8px]! [height:8px]! [border-radius:50%]! [flex-shrink:0]! [&.high]:[background:var(--color-red-500)]! [&.high]:[box-shadow:0_0_6px_rgba(239,_68,_68,_0.5)]! [&.medium]:[background:var(--color-amber-500)]! [&.medium]:[box-shadow:0_0_6px_rgba(245,_158,_11,_0.5)]! [&.low]:[background:var(--color-green-500)]! [&.low]:[box-shadow:0_0_6px_rgba(16,_185,_129,_0.5)]! [&.baseline]:[background:var(--color-green-500)]! [&.baseline]:[box-shadow:0_0_6px_rgba(16,_185,_129,_0.5)]! ${severity}`}></span>
+                        <span className={`beacon-dot ${severity}`}></span>
                         <div className="[min-width:0] [flex:1]">
                           <div className="[font-size:var(--text-sm)]! [font-weight:700]! [color:var(--color-ink-900)]! [white-space:nowrap] [overflow:hidden]! [text-overflow:ellipsis]!">{fac.name}</div>
                           <div className="[display:flex]! [align-items:center] [gap:6px] [margin-top:2px]! [font-size:var(--text-xs)]! [color:var(--color-ink-500)]!">
@@ -1376,7 +1376,7 @@ const EmissionsMap = () => {
                 <div className="[display:grid]! [grid-template-columns:repeat(2,_1fr)] [gap:8px] [margin-bottom:10px]!">
                   <div className="[background:var(--color-white)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:8px_10px]! [display:flex]! [flex-direction:column] [gap:2px]">
                     <span className="[font-size:var(--text-xs)]! [font-weight:700]! [text-transform:uppercase]! [letter-spacing:0.05em] [color:var(--color-ink-500)]!">Mean CH₄ Column</span>
-                    <span className="[font-size:var(--text-md)]! [font-weight:800]! [color:var(--color-ink-900)]!">
+                    <span className="box-val">
                       {Number(
                         satelliteObservation.summary.mean_ch4_column_ppb || 0
                       ).toFixed(1)}{" "}
@@ -1387,7 +1387,7 @@ const EmissionsMap = () => {
                   <div className="[background:var(--color-white)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:8px_10px]! [display:flex]! [flex-direction:column] [gap:2px]">
                     <span className="[font-size:var(--text-xs)]! [font-weight:700]! [text-transform:uppercase]! [letter-spacing:0.05em] [color:var(--color-ink-500)]!">Max Anomaly (&Delta;CH₄)</span>
                     <span
-                      className={`[font-size:var(--text-md)]! [font-weight:800]! [color:var(--color-ink-900)]! ${
+                      className={`box-val ${
                         Number(satelliteObservation.summary.max_anomaly_ppb || 0) >= 25
                           ? "[color:var(--color-red-700)]!"
                           : "[color:var(--color-amber-700)]!"
@@ -1403,7 +1403,7 @@ const EmissionsMap = () => {
 
                   <div className="[background:var(--color-white)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:8px_10px]! [display:flex]! [flex-direction:column] [gap:2px]">
                     <span className="[font-size:var(--text-xs)]! [font-weight:700]! [text-transform:uppercase]! [letter-spacing:0.05em] [color:var(--color-ink-500)]!">Inferred Emission Rate</span>
-                    <span className="[font-size:var(--text-md)]! [font-weight:800]! [color:var(--color-ink-900)]! [color:var(--color-amber-700)]!">
+                    <span className="box-val [color:var(--color-amber-700)]!">
                       {Number(
                         satelliteObservation.summary.estimated_emission_rate_kg_hr || 0
                       ) > 0
@@ -1417,7 +1417,7 @@ const EmissionsMap = () => {
 
                   <div className="[background:var(--color-white)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:8px_10px]! [display:flex]! [flex-direction:column] [gap:2px]">
                     <span className="[font-size:var(--text-xs)]! [font-weight:700]! [text-transform:uppercase]! [letter-spacing:0.05em] [color:var(--color-ink-500)]!">Annualized Satellite Flux</span>
-                    <span className="[font-size:var(--text-md)]! [font-weight:800]! [color:var(--color-ink-900)]!">
+                    <span className="box-val">
                       {Number(
                         satelliteObservation.summary.annualized_ch4_tonnes || 0
                       ) > 0

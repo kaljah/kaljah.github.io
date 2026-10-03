@@ -224,7 +224,7 @@ const OgmpTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, NON_OG_ACTIVITIES, currentPa
                                                             {parseFloat(annualizedTonne).toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
                                                         </td>
                                                         <td>
-                                                            <span className={`status-badge [font-size:var(--text-sm)]! [padding:4px_12px]! [border-radius:var(--radius-lg)]! [background:rgba(255,_255,_255,_0.05)]! [color:var(--text-secondary)]! ${isReconciled ? 'active' : 'planned'}`} style={{
+                                                            <span className={`status-badge ${isReconciled ? 'active' : 'planned'}`} style={{
                                                                 background: isReconciled ? 'rgba(16, 185, 129, 0.12)' : 'rgba(239, 68, 68, 0.12)',
                                                                 color: isReconciled ? "#2e7d32" : "#b91c1c",
                                                                 borderColor: isReconciled ? '#10b981' : '#ef4444'

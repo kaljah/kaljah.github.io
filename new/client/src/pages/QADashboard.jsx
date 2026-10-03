@@ -329,13 +329,13 @@ export default function QADashboard() {
         const hasSamples = item.sample_records && item.sample_records.length > 0;
 
         return (
-            <div key={`${type}-${item.id}`} className={`[display:flex]! [flex-direction:column]! [align-items:stretch]! [padding:16px_20px]! [border-radius:var(--radius-md)]! [border-left:4px_solid]! [gap:10px]! [background:var(--color-white)]! [box-shadow:var(--shadow-xs)]! [&.critical]:[border-left-color:var(--color-red-500)]! [&.critical]:[background:rgba(254,_242,_242,_0.4)]! [&.critical]:[border-top:1px_solid_rgba(239,_68,_68,_0.15)]! [&.critical]:[border-right:1px_solid_rgba(239,_68,_68,_0.15)]! [&.critical]:[border-bottom:1px_solid_rgba(239,_68,_68,_0.15)]! [&.warning]:[border-left-color:var(--color-amber-500)]! [&.warning]:[background:rgba(255,_251,_235,_0.4)]! [&.warning]:[border-top:1px_solid_rgba(245,_158,_11,_0.15)]! [&.warning]:[border-right:1px_solid_rgba(245,_158,_11,_0.15)]! [&.warning]:[border-bottom:1px_solid_rgba(245,_158,_11,_0.15)]! [&.info]:[border-left-color:var(--color-blue-500)]! [&.info]:[background:rgba(239,_246,_255,_0.4)]! [&.info]:[border-top:1px_solid_rgba(59,_130,_246,_0.15)]! [&.info]:[border-right:1px_solid_rgba(59,_130,_246,_0.15)]! [&.info]:[border-bottom:1px_solid_rgba(59,_130,_246,_0.15)]! ${type}`}>
+            <div key={`${type}-${item.id}`} className={`qa-issue-item ${type}`}>
                 <div className="[display:flex]! [justify-content:space-between] [align-items:center] [gap:16px] [width:100%]!">
                     <div className="[display:flex]! [flex-direction:column] [gap:4px]">
                         <div className="[display:flex]! [align-items:center] [gap:10px]">
                             {icon}
                             <span className="[font-size:var(--text-md)]! [font-weight:600]! [color:var(--color-ink-900)]!">{item.title}</span>
-                            <span className={`[padding:2px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-xs)]! [font-weight:700]! [text-transform:uppercase]! [&.high]:[background:#fee2e2]! [&.high]:[color:var(--color-red-700)]! [&.medium]:[background:#fef3c7]! [&.medium]:[color:var(--color-amber-700)]! [&.low]:[background:#dbeafe]! [&.low]:[color:var(--color-blue-600)]! ${item.impact ? item.impact.toLowerCase() : 'low'}`}>
+                            <span className={`qa-issue-impact-badge ${item.impact ? item.impact.toLowerCase() : 'low'}`}>
                                 {item.impact ? `${item.impact} Impact` : 'Optimization'}
                             </span>
                             {item.affected_count > 0 && (
@@ -599,7 +599,7 @@ export default function QADashboard() {
                     <button
                         role="tab"
                         aria-selected={activeTab === 'queue'}
-                        className={`qa-tab-btn [display:inline-flex]! [align-items:center]! [gap:8px]! [padding:12px_18px]! [background:transparent]! [border:none]! [border-bottom:3px_solid_transparent]! [margin-bottom:-2px]! [font-size:var(--text-md)]! [font-weight:600]! [color:var(--text-secondary,_var(--color-ink-500))]! [cursor:pointer]! [transition:all_0.2s_ease]! [border-radius:var(--radius-md)_var(--radius-md)_0_0]! hover:[color:var(--text-primary,_var(--color-ink-900))]! hover:[background:rgba(248,_250,_252,_0.7)]! [&.active]:[color:var(--color-link)]! [&.active]:[border-bottom-color:var(--accent-color,_var(--color-brand-500))]! [&.active]:[background:rgba(255,_102,_0,_0.04)]! [&.active_.qa-tab-count-pill]:[background:rgba(255,_102,_0,_0.15)]! [&.active_.qa-tab-count-pill]:[color:var(--color-link)]! ${activeTab === 'queue' ? 'active' : ''}`}
+                        className={`qa-tab-btn ${activeTab === 'queue' ? 'active' : ''}`}
                         onClick={() => setActiveTab('queue')}
                     >
                         <AlertTriangle size={15} />
@@ -610,7 +610,7 @@ export default function QADashboard() {
                     <button
                         role="tab"
                         aria-selected={activeTab === 'diagnostics'}
-                        className={`qa-tab-btn [display:inline-flex]! [align-items:center]! [gap:8px]! [padding:12px_18px]! [background:transparent]! [border:none]! [border-bottom:3px_solid_transparent]! [margin-bottom:-2px]! [font-size:var(--text-md)]! [font-weight:600]! [color:var(--text-secondary,_var(--color-ink-500))]! [cursor:pointer]! [transition:all_0.2s_ease]! [border-radius:var(--radius-md)_var(--radius-md)_0_0]! hover:[color:var(--text-primary,_var(--color-ink-900))]! hover:[background:rgba(248,_250,_252,_0.7)]! [&.active]:[color:var(--color-link)]! [&.active]:[border-bottom-color:var(--accent-color,_var(--color-brand-500))]! [&.active]:[background:rgba(255,_102,_0,_0.04)]! [&.active_.qa-tab-count-pill]:[background:rgba(255,_102,_0,_0.15)]! [&.active_.qa-tab-count-pill]:[color:var(--color-link)]! ${activeTab === 'diagnostics' ? 'active' : ''}`}
+                        className={`qa-tab-btn ${activeTab === 'diagnostics' ? 'active' : ''}`}
                         onClick={() => setActiveTab('diagnostics')}
                     >
                         <Shield size={15} />
@@ -621,7 +621,7 @@ export default function QADashboard() {
                     <button
                         role="tab"
                         aria-selected={activeTab === 'uncertainty'}
-                        className={`qa-tab-btn [display:inline-flex]! [align-items:center]! [gap:8px]! [padding:12px_18px]! [background:transparent]! [border:none]! [border-bottom:3px_solid_transparent]! [margin-bottom:-2px]! [font-size:var(--text-md)]! [font-weight:600]! [color:var(--text-secondary,_var(--color-ink-500))]! [cursor:pointer]! [transition:all_0.2s_ease]! [border-radius:var(--radius-md)_var(--radius-md)_0_0]! hover:[color:var(--text-primary,_var(--color-ink-900))]! hover:[background:rgba(248,_250,_252,_0.7)]! [&.active]:[color:var(--color-link)]! [&.active]:[border-bottom-color:var(--accent-color,_var(--color-brand-500))]! [&.active]:[background:rgba(255,_102,_0,_0.04)]! [&.active_.qa-tab-count-pill]:[background:rgba(255,_102,_0,_0.15)]! [&.active_.qa-tab-count-pill]:[color:var(--color-link)]! ${activeTab === 'uncertainty' ? 'active' : ''}`}
+                        className={`qa-tab-btn ${activeTab === 'uncertainty' ? 'active' : ''}`}
                         onClick={() => setActiveTab('uncertainty')}
                     >
                         <Layers size={15} />
@@ -798,7 +798,7 @@ export default function QADashboard() {
                                     </span>
                                 </div>
 
-                                <div className="[background:var(--color-ink-900)]! [color:#38bdf8]! [padding:16px_20px]! [border-radius:var(--radius-md)]! [font-family:'Courier_New',_monospace]! [font-size:var(--text-md)]! [letter-spacing:0.05em] [text-align:center]!">
+                                <div className="qa-formula-box">
                                     U_total = √[ (U₁ · E₁)² + (U₂ · E₂)² + (U₃ · E₃)² ] / ( E₁ + E₂ + E₃ )
                                 </div>
 
@@ -813,7 +813,7 @@ export default function QADashboard() {
                                 {/* Scope 1 */}
                                 <div className="[background:var(--color-white)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:20px]! [display:flex]! [flex-direction:column] [gap:10px]">
                                     <div className="flex! justify-between! items-center!">
-                                        <span className="[display:inline-flex]! [align-items:center]! [padding:3px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:600]! [&.scope-1]:[background:rgba(255,_102,_0,_0.12)]! [&.scope-1]:[color:var(--color-brand-700)]! [&.scope-1]:[border:1px_solid_rgba(255,_102,_0,_0.25)]! [&.scope-2]:[background:rgba(59,_130,_246,_0.12)]! [&.scope-2]:[color:var(--color-blue-600)]! [&.scope-2]:[border:1px_solid_rgba(59,_130,_246,_0.25)]! [&.scope-3]:[background:rgba(139,_92,_246,_0.12)]! [&.scope-3]:[color:#7c3aed]! [&.scope-3]:[border:1px_solid_rgba(139,_92,_246,_0.25)]! scope-1">Scope 1 (Direct)</span>
+                                        <span className="qa-scope-badge scope-1">Scope 1 (Direct)</span>
                                         <Flame size={16} color="#059669" />
                                     </div>
                                     <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#0f172a' }}>
@@ -830,7 +830,7 @@ export default function QADashboard() {
                                 {/* Scope 2 */}
                                 <div className="[background:var(--color-white)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:20px]! [display:flex]! [flex-direction:column] [gap:10px]">
                                     <div className="flex! justify-between! items-center!">
-                                        <span className="[display:inline-flex]! [align-items:center]! [padding:3px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:600]! [&.scope-1]:[background:rgba(255,_102,_0,_0.12)]! [&.scope-1]:[color:var(--color-brand-700)]! [&.scope-1]:[border:1px_solid_rgba(255,_102,_0,_0.25)]! [&.scope-2]:[background:rgba(59,_130,_246,_0.12)]! [&.scope-2]:[color:var(--color-blue-600)]! [&.scope-2]:[border:1px_solid_rgba(59,_130,_246,_0.25)]! [&.scope-3]:[background:rgba(139,_92,_246,_0.12)]! [&.scope-3]:[color:#7c3aed]! [&.scope-3]:[border:1px_solid_rgba(139,_92,_246,_0.25)]! scope-2">Scope 2 (Indirect)</span>
+                                        <span className="qa-scope-badge scope-2">Scope 2 (Indirect)</span>
                                         <Zap size={16} color="#2563eb" />
                                     </div>
                                     <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#0f172a' }}>
@@ -847,7 +847,7 @@ export default function QADashboard() {
                                 {/* Scope 3 */}
                                 <div className="[background:var(--color-white)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:20px]! [display:flex]! [flex-direction:column] [gap:10px]">
                                     <div className="flex! justify-between! items-center!">
-                                        <span className="[display:inline-flex]! [align-items:center]! [padding:3px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:600]! [&.scope-1]:[background:rgba(255,_102,_0,_0.12)]! [&.scope-1]:[color:var(--color-brand-700)]! [&.scope-1]:[border:1px_solid_rgba(255,_102,_0,_0.25)]! [&.scope-2]:[background:rgba(59,_130,_246,_0.12)]! [&.scope-2]:[color:var(--color-blue-600)]! [&.scope-2]:[border:1px_solid_rgba(59,_130,_246,_0.25)]! [&.scope-3]:[background:rgba(139,_92,_246,_0.12)]! [&.scope-3]:[color:#7c3aed]! [&.scope-3]:[border:1px_solid_rgba(139,_92,_246,_0.25)]! scope-3">Scope 3 (Value Chain)</span>
+                                        <span className="qa-scope-badge scope-3">Scope 3 (Value Chain)</span>
                                         <Layers size={16} color="#7c3aed" />
                                     </div>
                                     <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#0f172a' }}>

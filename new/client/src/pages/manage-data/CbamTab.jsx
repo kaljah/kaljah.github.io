@@ -241,7 +241,7 @@ const CbamTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, cbamForm, currentPage, editi
                                                         <td>{pName}</td>
                                                         <td><span className="font-mono! bg-[color:var(--bg-card)]! p-[2px_6px]! rounded-[4px]!">{cn}</span></td>
                                                         <td>{c.year} - M{c.month || '1'}</td>
-                                                        <td><span className="status-badge [font-size:var(--text-sm)]! [padding:4px_12px]! [border-radius:var(--radius-lg)]! [background:rgba(255,_255,_255,_0.05)]! [color:var(--text-secondary)]! active">{dest}</span></td>
+                                                        <td><span className="status-badge active">{dest}</span></td>
                                                         <td className="text-right! font-semibold!">{qTonnes.toLocaleString()}</td>
                                                         <td className="text-right!">{direct.toFixed(3)}</td>
                                                         <td className="text-right!">{indirect.toFixed(3)}</td>

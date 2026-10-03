@@ -971,7 +971,7 @@ const Reports = () => {
           <div className="modal-content max-w-[560px]!">
             <div className="modal-header">
               <h2>Generate Executive GHG Report</h2>
-              <button className="close-btn [background:none]! [border:none]! [font-size:var(--text-xl)]! [cursor:pointer] [color:var(--color-ink-500)]!" onClick={() => setShowConfigModal(false)}>×</button>
+              <button className="close-btn" onClick={() => setShowConfigModal(false)}>×</button>
             </div>
             <div className="modal-body flex! flex-col! gap-[16px]!">
               <div className="input-group">

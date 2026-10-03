@@ -138,7 +138,7 @@ const Scope1ImportWizardScope1Bulk = ({ FIELD_GROUPS, FieldGroup, Icon, ModeCard
               </div>
             )}
             <div role="button" tabIndex={0} onKeyDown={activateOnKey}
-              className={`[border:2px_dashed_var(--color-ink-200)]! [border-radius:var(--radius-lg)]! [padding:40px_24px]! [display:flex]! [flex-direction:column]! [align-items:center]! [gap:10px]! [cursor:pointer]! [transition:all_0.2s]! [background:var(--color-ink-50)]! [text-align:center]! hover:[border-color:var(--color-brand-500)]! hover:[background:#fff7f0]! hover:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.08)]! [&.dragging]:[border-color:var(--color-brand-500)]! [&.dragging]:[background:#fff7f0]! [&.dragging]:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.08)]! ${isDragging ? "dragging" : ""}`}
+              className={`s1w-dropzone ${isDragging ? "dragging" : ""}`}
               onClick={() => fileInputRef.current.click()}
               onDragOver={e => { e.preventDefault(); setIsDragging(true); }}
               onDragLeave={() => setIsDragging(false)}
@@ -156,14 +156,14 @@ const Scope1ImportWizardScope1Bulk = ({ FIELD_GROUPS, FieldGroup, Icon, ModeCard
             <div className="[display:flex]! [flex-direction:column] [gap:10px]">
               <p className="[font-size:var(--text-sm)]! [color:var(--color-ink-500)]! [margin:0]! [font-weight:500]!">Don't have a file? Download a pre-configured template:</p>
               <div className="[display:flex]! [gap:10px] [flex-wrap:wrap] [@media(max-width:600px)]:[flex-direction:column]!">
-                <button className="[display:flex]! [align-items:center] [gap:12px] [padding:12px_18px]! [border:1.5px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [background:var(--color-ink-50)]! [cursor:pointer] [transition:all_0.18s]! [flex:1] [min-width:200px] [text-align:left]! hover:[border-color:var(--color-brand-500)]! hover:[background:#fff7f0]! [&:hover_.s1w-template-btn-icon]:[background:var(--color-primary)]! [&:hover_.s1w-template-btn-icon]:[color:var(--color-white)]! [&_strong]:[display:block]! [&_strong]:[font-size:var(--text-base)]! [&_strong]:[color:var(--color-ink-900)]! [&_strong]:[margin-bottom:2px]! [&_small]:[display:block]! [&_small]:[font-size:var(--text-sm)]! [&_small]:[color:var(--color-ink-500)]!" onClick={() => downloadTemplate("excel")}>
+                <button className="s1w-template-btn" onClick={() => downloadTemplate("excel")}>
                   <span className="s1w-template-btn-icon [width:36px]! [height:36px]! [border-radius:var(--radius-md)]! [background:var(--color-ink-200)]! [display:flex]! [align-items:center] [justify-content:center] [color:var(--color-ink-600)]! [flex-shrink:0] [&_svg]:[width:18px]! [&_svg]:[height:18px]!"><Icon.FileExcel /></span>
                   <span>
                     <strong>Excel Template</strong>
                     <small>With dropdowns, sample data & engineering sheets</small>
                   </span>
                 </button>
-                <button className="[display:flex]! [align-items:center] [gap:12px] [padding:12px_18px]! [border:1.5px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [background:var(--color-ink-50)]! [cursor:pointer] [transition:all_0.18s]! [flex:1] [min-width:200px] [text-align:left]! hover:[border-color:var(--color-brand-500)]! hover:[background:#fff7f0]! [&:hover_.s1w-template-btn-icon]:[background:var(--color-primary)]! [&:hover_.s1w-template-btn-icon]:[color:var(--color-white)]! [&_strong]:[display:block]! [&_strong]:[font-size:var(--text-base)]! [&_strong]:[color:var(--color-ink-900)]! [&_strong]:[margin-bottom:2px]! [&_small]:[display:block]! [&_small]:[font-size:var(--text-sm)]! [&_small]:[color:var(--color-ink-500)]!" onClick={() => downloadTemplate("csv")}>
+                <button className="s1w-template-btn" onClick={() => downloadTemplate("csv")}>
                   <span className="s1w-template-btn-icon [width:36px]! [height:36px]! [border-radius:var(--radius-md)]! [background:var(--color-ink-200)]! [display:flex]! [align-items:center] [justify-content:center] [color:var(--color-ink-600)]! [flex-shrink:0] [&_svg]:[width:18px]! [&_svg]:[height:18px]!"><Icon.File /></span>
                   <span>
                     <strong>CSV Template</strong>
@@ -175,10 +175,10 @@ const Scope1ImportWizardScope1Bulk = ({ FIELD_GROUPS, FieldGroup, Icon, ModeCard
 
             {/* Config summary pill */}
             <div className="[display:flex]! [gap:8px] [flex-wrap:wrap]">
-              <span className={`[padding:4px_12px]! [border-radius:var(--radius-lg)]! [font-size:var(--text-sm)]! [font-weight:700]! [letter-spacing:0.3px]! s1w-config-pill--${tier === "1" ? "blue" : tier === "3" ? "green" : "orange"}`}>
+              <span className={`s1w-config-pill s1w-config-pill--${tier === "1" ? "blue" : tier === "3" ? "green" : "orange"}`}>
                 {tier === "1" ? "Tier 1" : tier === "3" ? "Tier 3" : "Auto-detect"}
               </span>
-              <span className="[padding:4px_12px]! [border-radius:var(--radius-lg)]! [font-size:var(--text-sm)]! [font-weight:700]! [letter-spacing:0.3px] [background:var(--color-ink-100)]! [color:var(--color-ink-600)]!">
+              <span className="s1w-config-pill [background:var(--color-ink-100)]! [color:var(--color-ink-600)]!">
                 {processScope === "all"
                   ? "All Processes"
                   : `${selectedProcesses.length} process${selectedProcesses.length !== 1 ? "es" : ""} selected`}
@@ -309,7 +309,7 @@ const Scope1ImportWizardScope1Bulk = ({ FIELD_GROUPS, FieldGroup, Icon, ModeCard
             <div className="[display:flex]! [align-items:center] [gap:10px]">
               {step < 4 && (
                 <button
-                  className="[display:flex]! [align-items:center] [gap:6px] [padding:9px_22px]! [background:var(--primary-gradient)]! [border:none]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:700]! [color:var(--color-white)]! [cursor:pointer] [transition:all_0.18s]! [box-shadow:0_2px_8px_rgba(255,_102,_0,_0.3)]! [font-family:inherit]! hover:[background:var(--primary-gradient)]! hover:[box-shadow:0_4px_12px_rgba(255,_102,_0,_0.4)]! hover:[transform:translateY(-1px)] disabled:[background:var(--color-ink-200)]! disabled:[color:var(--color-ink-400)]! disabled:[cursor:not-allowed] disabled:[box-shadow:none]! disabled:[transform:none] [&_svg]:[width:15px]! [&_svg]:[height:15px]!"
+                  className="s1w-btn-primary"
                   onClick={() => setStep(s => s + 1)}
                   disabled={!canGoNext()}
                 >
@@ -318,7 +318,7 @@ const Scope1ImportWizardScope1Bulk = ({ FIELD_GROUPS, FieldGroup, Icon, ModeCard
               )}
               {step === 4 && (
                 <button
-                  className="[display:flex]! [align-items:center] [gap:6px] [padding:9px_22px]! [background:var(--primary-gradient)]! [border:none]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:700]! [color:var(--color-white)]! [cursor:pointer] [transition:all_0.18s]! [box-shadow:0_2px_8px_rgba(255,_102,_0,_0.3)]! [font-family:inherit]! hover:[background:var(--primary-gradient)]! hover:[box-shadow:0_4px_12px_rgba(255,_102,_0,_0.4)]! hover:[transform:translateY(-1px)] disabled:[background:var(--color-ink-200)]! disabled:[color:var(--color-ink-400)]! disabled:[cursor:not-allowed] disabled:[box-shadow:none]! disabled:[transform:none] [&_svg]:[width:15px]! [&_svg]:[height:15px]!"
+                  className="s1w-btn-primary"
                   onClick={handleSubmit}
                   disabled={isSubmitting || (!canSubmit && headers.length > 0) || (!isAdmin && allowedRegions !== null && allowedRegions.length === 0)}
                 >

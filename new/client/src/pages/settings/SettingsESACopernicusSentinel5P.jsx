@@ -142,7 +142,7 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
 
             <div className="[display:flex]! [gap:12px] [flex-wrap:wrap] [margin-bottom:10px]!">
               <label
-                className={`[display:flex]! [align-items:center]! [gap:8px]! [padding:8px_16px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--border-color,_var(--color-ink-300))]! [background:var(--bg-card,_var(--color-white))]! [cursor:pointer]! [font-size:var(--text-base)]! [font-weight:600]! [color:var(--text-secondary,_var(--color-ink-600))]! [transition:all_0.2s_ease]! [&.active]:[border-color:var(--color-sky-600)]! [&.active]:[background:rgba(2,_132,_199,_0.08)]! [&.active]:[color:var(--color-blue-700)]! ${authMode === "password" ? "active" : ""}`}
+                className={`auth-mode-pill ${authMode === "password" ? "active" : ""}`}
               >
                 <input
                   type="radio"
@@ -155,7 +155,7 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
                 <span>Copernicus Account (Email &amp; Password)</span>
               </label>
               <label
-                className={`[display:flex]! [align-items:center]! [gap:8px]! [padding:8px_16px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--border-color,_var(--color-ink-300))]! [background:var(--bg-card,_var(--color-white))]! [cursor:pointer]! [font-size:var(--text-base)]! [font-weight:600]! [color:var(--text-secondary,_var(--color-ink-600))]! [transition:all_0.2s_ease]! [&.active]:[border-color:var(--color-sky-600)]! [&.active]:[background:rgba(2,_132,_199,_0.08)]! [&.active]:[color:var(--color-blue-700)]! ${authMode === "oauth_client" ? "active" : ""}`}
+                className={`auth-mode-pill ${authMode === "oauth_client" ? "active" : ""}`}
               >
                 <input
                   type="radio"
@@ -322,7 +322,7 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
 
               {connectionStatus && (
                 <div
-                  className={`[display:inline-flex]! [align-items:center]! [gap:8px]! [padding:8px_16px]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:600]! [&.success]:[background:rgba(16,_185,_129,_0.1)]! [&.success]:[color:var(--color-green-700)]! [&.success]:[border:1px_solid_rgba(16,_185,_129,_0.3)]! [&.error]:[background:rgba(239,_68,_68,_0.1)]! [&.error]:[color:var(--color-red-700)]! [&.error]:[border:1px_solid_rgba(239,_68,_68,_0.3)]! ${connectionStatus.success ? "success" : "error"}`}
+                  className={`connection-status-badge ${connectionStatus.success ? "success" : "error"}`}
                 >
                   {connectionStatus.success ? (
                     <CheckCircle2 size={16} />
