@@ -39,20 +39,72 @@ const tokenRe = (name) => new RegExp(`(?<![\\w-])${name.replace(/-/g, "\\-")}(?!
 
 // 1. Count every class mention across all CSS (any selector form).
 const elementProps = new Set();
-const baseProp = (p) => p.split("-")[0];
+const baseProp = (p) => (p === "box-sizing" || p === "outline-offset" ? p : p.split("-")[0]);
+const elementPropsByTag = {};
+// Element-only selectors (no class) are overridden by a plain class rule today; remember which tags they set what for.
 const noteElementRules = (root) =>
   root.walkRules((r) => {
     if (r.parent?.type === "atrule" && /keyframes$/.test(r.parent.name)) return;
-    if (r.selectors.some((s) => !/\./.test(s))) r.walkDecls((d) => elementProps.add(baseProp(d.prop)));
+    for (const sel of r.selectors) {
+      if (/[.]/.test(sel)) continue;
+      const m = sel.trim().match(/([a-z][a-z0-9]*|[*])(?:[:[#][^ >+~]*)*$/);
+      const tags = m ? [m[1]] : ["*"];
+      r.walkDecls((d) => {
+        if (d.important) return; // an important element rule already beats a plain class rule
+        elementProps.add(baseProp(d.prop));
+        for (const tg of tags) (elementPropsByTag[tg] ||= new Set()).add(baseProp(d.prop));
+      });
+    }
   });
+const elementSets = (tag) => [elementPropsByTag["*"], typeof tag === "string" ? elementPropsByTag[tag] : null].filter(Boolean);
+if (process.argv.includes("--dbg3")) process.on("exit", () => console.log(Object.fromEntries(Object.entries(elementPropsByTag).map(([k, v]) => [k, [...v]]))));
+const elementSets2 = (tag) => (typeof tag === "string" && /^[A-Z]/.test(tag) ? [] : elementSets(tag));
 const blocked = new Set();
 const pinned = new Set();
 const allSelectors = [];
 const classesIn = (sel) => [...sel.matchAll(/\.(-?[_a-zA-Z][\w-]*)/g)].map((m) => m[1]);
-const noteMentions = (sel, lead) => {
+// Specificity of a selector as [ids, classes/attrs/pseudo-classes, tags/pseudo-elements].
+const specOf = (selector) => {
+  let a = 0;
+  let b = 0;
+  let c = 0;
+  let t = selector.replace(/:where\([^)]*\)/g, "").replace(/:(not|is|has)\(([^)]*)\)/g, " $2 ");
+  t = t.replace(/::[\w-]+/g, () => (c++, ""));
+  t = t.replace(/#[\w-]+/g, () => (a++, ""));
+  t = t.replace(/\[[^\]]*\]/g, () => (b++, ""));
+  t = t.replace(/\.[\w-]+/g, () => (b++, ""));
+  t = t.replace(/:[\w-]+(\([^)]*\))?/g, () => (b++, ""));
+  c += (t.match(/(?:^|[\s>+~])[a-zA-Z][\w-]*/g) || []).length;
+  return [a, b, c];
+};
+const cmpSpec = (x, y) => x[0] - y[0] || x[1] - y[1] || x[2] - y[2];
+const skippedMedia = (rule) => {
+  for (let n = rule?.parent; n; n = n.parent) {
+    if (n.type === "atrule" && n.name === "media" && /print|prefers-reduced-motion/.test(n.params)) return true;
+  }
+  return false;
+};
+const noteMentions = (sel, lead, rule, file) => {
+  const imp = new Set();
+  const props = new Set();
+  rule?.walkDecls((d) => (d.important ? imp : props).add(baseProp(d.prop)));
   const cls = classesIn(sel);
   const first = sel.trim().match(/^\.(-?[_a-zA-Z][\w-]*)/)?.[1];
-  allSelectors.push({ lead: first ?? null, nonLead: cls.filter((c, i) => !(i === 0 && first === c)) });
+  const compound = sel.trim().match(/([^\s>+~]+)$/)?.[1] ?? "";
+  const subj = { tag: compound.match(/^[a-z][a-z0-9]*/)?.[0] ?? null, classes: [...compound.matchAll(/[.](-?[_a-zA-Z][\w-]*)/g)].map((m) => m[1]) };
+  allSelectors.push({
+    lead: first ?? null,
+    nonLead: cls.filter((c, i) => !(i === 0 && first === c)),
+    imp,
+    props,
+    subj,
+    selector: sel,
+    spec: specOf(sel),
+    simple: !/[\s>+~]/.test(sel.trim().replace(/\([^)]*\)/g, "")),
+    file,
+    line: rule?.source?.start?.line ?? 0,
+    skip: skippedMedia(rule),
+  });
   cls.forEach((c, i) => {
     if (i === 0 && first === c) lead(c);
     else pinned.add(c);
@@ -63,7 +115,7 @@ for (const f of all.filter((x) => x.endsWith(".css") && !cssFiles.includes(x))) 
   noteElementRules(root0);
   root0.walkRules((r) => {
     for (const sel of r.selectors) {
-      noteMentions(sel, (c) => blocked.add(c));
+      noteMentions(sel, (c) => blocked.add(c), r, f);
       classesIn(sel).forEach((c) => blocked.add(c));
     }
   });
@@ -113,11 +165,16 @@ const simpleOccurrence = (sel, rule) => {
   return { name: m[1], prefix: `${media}[${body}]:`, generic: true };
 };
 const propsOf = {};
+const importantPropsOf = {};
 const noteProps = (sel, rule) => {
   const m = sel.trim().match(/^\.(-?[_a-zA-Z][\w-]*)(.*)$/s);
   if (!m || /^[\s>+~]/.test(m[2])) return;
   const set = (propsOf[m[1]] ||= new Set());
-  rule.walkDecls((d) => set.add(baseProp(d.prop)));
+  const imp = (importantPropsOf[m[1]] ||= new Set());
+  rule.walkDecls((d) => {
+    if (d.important) imp.add(baseProp(d.prop));
+    else set.add(baseProp(d.prop));
+  });
 };
 for (const f of all.filter((x) => x.endsWith(".css") && !cssFiles.includes(x))) {
   postcss.parse(fs.readFileSync(f, "utf8")).walkRules((r) => r.selectors.forEach((sel) => noteProps(sel, r)));
@@ -135,7 +192,7 @@ for (const f of cssFiles) {
         leadTotal[c] = (leadTotal[c] || 0) + 1;
         const so = simpleOccurrence(sel, r);
         if (so && so.name === c) (occ[c] ||= []).push({ file: f, rule: r, selector: sel, prefix: so.prefix, generic: so.generic });
-      });
+      }, r, f);
     }
   });
 }
@@ -179,7 +236,7 @@ for (const [name, list] of Object.entries(occ)) {
       if (!u) ok = false;
       else {
         const bp = baseProp(d.prop);
-        entries.push({ prefix: o.prefix, prop: d.prop, bp, base: u, important: Boolean(d.important), elementBang: elementProps.has(bp), generic: o.generic, selector: o.selector, file: o.file, line: o.rule.source.start.line });
+        entries.push({ prefix: o.prefix, prop: d.prop, bp, base: u, important: Boolean(d.important), generic: o.generic, selector: o.selector, file: o.file, line: o.rule.source.start.line });
       }
     }
   }
@@ -202,23 +259,8 @@ for (const [name, list] of Object.entries(occ)) {
 
 // A class that is a non-leading part of any selector that stays in the CSS keeps its rules there
 // (a more specific legacy rule may still depend on the ordering), so drop it and repeat.
-const settle = () => {
-  for (let changed = true; changed; ) {
-    changed = false;
-    const remainingNonLead = new Set();
-    for (const sel of allSelectors) {
-      if (sel.lead && eligible[sel.lead]) continue;
-      sel.nonLead.forEach((c) => remainingNonLead.add(c));
-    }
-    for (const n of Object.keys(eligible)) {
-      if (remainingNonLead.has(n)) {
-        rej("nonlead-in-remaining-rule", eligible[n].occurrences);
-        delete eligible[n];
-        changed = true;
-      }
-    }
-  }
-};
+let coOccur = null; // class -> classes seen together on one element (filled once the JSX has been scanned)
+const settle = () => {};
 settle();
 
 const sources = Object.fromEntries([...jsxFiles, ...otherJs].map((f) => [f, fs.readFileSync(f, "utf8")]));
@@ -474,6 +516,132 @@ const covers = (declared, target) =>
   (target.startsWith(`${declared}-`) && !(declared === "border" && target === "border-radius") && !(declared === "flex" && /^flex-(direction|wrap|flow)$/.test(target)));
 const hasVariant = (token) => /^(?:[a-z0-9-]+:|\[[^\]]*\]:)/.test(token.replace(/^!/, ""));
 
+// Could the unlayered rule (selector info) reach an element living in `file` (or, for class-level checks, in any of `files`)?
+// A rule scoped by a lead class only matches inside elements carrying that class, which come from the files that use it.
+const usersCache = {};
+const usersOf = (cls) =>
+  (usersCache[cls] ||= Object.entries(sources)
+    .filter(([f, t]) => jsxFiles.includes(f) && (tokenRe(cls).lastIndex = 0, tokenRe(cls).test(t)))
+    .map(([f]) => f));
+const nearbyCache = {};
+const nearbyOf = (f) => (nearbyCache[f] ||= nearby(f));
+const ruleReaches = (sel, files) => {
+  if (!sel.lead) return true;
+  // Children are composed by React, not by imports: an element can sit inside the lead's element whenever both files
+  // are part of the same route chunk.
+  const users = usersOf(sel.lead).map((u) => path.normalize(u));
+  if (!users.length) return false;
+  return files.some((f) => [...rootClosures.values()].some((cl) => cl.has(path.normalize(f)) && users.some((u) => cl.has(u))));
+};
+// CSS order inside a route chunk: the shell's CSS first, then the route's, each in import (depth-first) order.
+const orderedCss = (root) => {
+  const seen = new Set();
+  const out = [];
+  const visit = (f) => {
+    if (seen.has(f)) return;
+    seen.add(f);
+    if (f.endsWith(".css")) return void out.push(f);
+    for (const d of staticDeps[f] ?? []) visit(d);
+  };
+  visit(root);
+  return out;
+};
+const combinedOrderCache = new Map();
+const combinedOrder = (root) => {
+  if (!combinedOrderCache.has(root)) {
+    const shell = orderedCss(shellRoot);
+    combinedOrderCache.set(root, [...shell, ...orderedCss(root).filter((f) => !shell.includes(f))]);
+  }
+  return combinedOrderCache.get(root);
+};
+// -1 when css file A comes before B in every chunk that contains one of the files, 1 when after, null when unknowable.
+const cssOrderBetween = (A, B, files) => {
+  const signs = new Set();
+  for (const [root, cl] of rootClosures) {
+    if (!files.some((f) => cl.has(path.normalize(f)))) continue;
+    const order = combinedOrder(root);
+    const ia = order.indexOf(path.normalize(A));
+    const ib = order.indexOf(path.normalize(B));
+    if (ia < 0 || ib < 0) continue;
+    signs.add(Math.sign(ia - ib));
+  }
+  return signs.size === 1 ? [...signs][0] : null;
+};
+const inStyles = (f) => /styles[\/]/.test(f);
+// Is the css file loaded in any route chunk that contains one of the JSX files?
+const loadedFor = (cssFile, files) => {
+  if (inStyles(cssFile)) return true;
+  for (const [root, cl] of rootClosures) {
+    if (!files.some((f) => cl.has(path.normalize(f)))) continue;
+    if (combinedOrder(root).includes(path.normalize(cssFile))) return true;
+  }
+  return false;
+};
+// Does the unlayered rule R reach the element (or descendant target) described by ctx?
+const ruleApplies = (R, ctx) => {
+  // Pseudo-element rules style other boxes, and :root/html/body rules never target an element rendered by JSX.
+  if (R.selector.includes("::") || /:root|(^|[\s>+~])(html|body)/.test(R.selector)) return false;
+  if (/#[\w-]/.test(R.selector.replace(/\[[^\]]*\]/g, ""))) return false;
+  if (/\[style/.test(R.selector) && (ctx.mode === "generic" || ctx.hasInline === false)) return false;
+  if (ctx.mode === "own") {
+    const tagOk = R.subj.tag === null || ctx.unknownTag || R.subj.tag === ctx.tag;
+    const classesOk =
+      ctx.unknownClasses || R.subj.classes.every((c) => ctx.tokens.has(c) || [...ctx.prefixes].some((pre) => c.startsWith(pre)));
+    const reach = R.simple || !R.lead ? true : ruleReaches(R, [ctx.file]);
+    return tagOk && classesOk && reach;
+  }
+  const tagOk = R.subj.tag === null || (ctx.tTag === null ? ctx.possibleTagsUnknown || ctx.possibleTags.has(R.subj.tag) : R.subj.tag === ctx.tTag);
+  const classesOk = ctx.possibleUnknown || R.subj.classes.every((c) => ctx.possible.has(c));
+  const reach = R.simple || !R.lead ? true : ruleReaches(R, ctx.files);
+  return tagOk && classesOk && reach;
+};
+// Should the unlayered rule R beat the entry (higher specificity, or equal and later in the same file)?
+const ruleRelation = (R, en, enSpec, ctx) => {
+  const c = cmpSpec(R.spec, enSpec);
+  if (c > 0) return "win";
+  if (c < 0) return "lose";
+  if (R.file === en.file) return R.line > en.line ? "win" : "lose";
+  if (inStyles(R.file) && !inStyles(en.file)) return "lose";
+  const files = ctx.mode === "own" ? [ctx.file] : ctx.files;
+  const ord = cssOrderBetween(R.file, en.file, files);
+  if (ord === null) return "unknown";
+  return ord < 0 ? "lose" : "win";
+};
+// Which remaining unlayered rules beat the entry (wins), lose to it (loses), or have an unknowable order (unknown).
+const compete = (en, ctx) => {
+  let wins = false;
+  let loses = false;
+  let unknown = false;
+  const why = { w: [], l: [], u: [] };
+  const enSpec = specOf(en.selector);
+  for (const R of allSelectors) {
+    if (R.skip) continue;
+    const imp = R.imp.has(en.bp);
+    if (!imp && !R.props.has(en.bp)) continue;
+    if (R.subj.tag === "html" || R.subj.tag === "body") continue;
+    const converted = R.lead && ctx.active[R.lead];
+    if (converted && (R.simple || R.lead === ctx.self)) continue;
+    if (!loadedFor(R.file, ctx.mode === "own" ? [ctx.file] : ctx.files)) continue;
+    if (!ruleApplies(R, ctx)) continue;
+    if (en.important) {
+      if (!imp) continue;
+      const rl = ruleRelation(R, en, enSpec, ctx);
+      if (rl === "win") (wins = true, why.w.push(R.selector));
+      else if (rl === "unknown") (unknown = true, why.u.push(R.selector));
+      continue;
+    }
+    if (imp) {
+      wins = true;
+      why.w.push(R.selector + " !imp");
+      continue;
+    }
+    const rl = ruleRelation(R, en, enSpec, ctx);
+    if (rl === "win") (wins = true, why.w.push(R.selector));
+    else if (rl === "lose") (loses = true, why.l.push(R.selector));
+    else (unknown = true, why.u.push(R.selector + "@" + R.file.split(/[\/]/).pop() + " vs " + en.file.split(/[\/]/).pop()));
+  }
+  return { wins, loses, unknown, why };
+};
 const cssClassList = Object.keys(propsOf);
 const conflictWhy = {};
 const addConflict = (conflicts, t, why) => {
@@ -504,11 +672,6 @@ const planEdits = (active) => {
       groups.set(s.attr, g);
     }
     for (const g of groups.values()) {
-      // Classes that stay in the CSS may still override a converted class by source order (same specificity).
-      const others = new Set([...g.tokens].filter((t) => cssDefined.has(t) && !active[t]));
-      for (const pre of g.prefixes) for (const c of cssClassList) if (c.startsWith(pre) && !active[c]) others.add(c);
-      const cssOtherProps = new Set();
-      for (const o of others) propsOf[o]?.forEach((pp) => cssOtherProps.add(pp));
       const nativeNormal = new Set();
       const nativeImportant = new Set();
       const shadowing = new Set(); // exact props set by important, variant-free natives: they beat any class rule
@@ -521,7 +684,7 @@ const planEdits = (active) => {
       const inlineSet = g.inline === "all" ? null : g.inline;
       const isShadowed = (prop) =>
         [...shadowing].some((pp) => covers(pp, prop)) || (inlineSet ? [...inlineSet].some((pp) => covers(pp, prop)) : false);
-      const isComponent = typeof g.tag === "string" && /^[A-Z]/.test(g.tag);
+      const isComponent = typeof g.tag !== "string" || /^[A-Z]/.test(g.tag);
       // Order between converted classes that set the same property: the later rule won, so it gets more specificity.
       const owners = new Map();
       for (const t of g.tokens) {
@@ -543,30 +706,66 @@ const planEdits = (active) => {
         }
         list.sort((a, b) => a.line - b.line).forEach((x, i) => levelOf.set(`${x.t}\u0000${key}`, i));
       }
-      const rendered = new Map();
+      // One decision per property: when any rule of the class for it must be important, all of them are,
+      // otherwise a state variant (`.active`) could not override its own base declaration.
+      const decisions = new Map();
       for (const t of g.tokens) {
         const e = active[t];
         if (!e) continue;
         if (g.unknown) addConflict(conflicts, t, "unknown-dynamic-classes");
-        // One decision per property: when any rule of the class for it must be important, all of them are,
-        // otherwise a state variant (`.active`) could not override its own base declaration.
         const need = {};
         const forbid = {};
+        const whyMap = {};
         const live = e.entries.filter((en) => en.generic || !isShadowed(en.prop));
         for (const en of live) {
-          const n = isComponent
-            ? true
-            : en.generic
-              ? en.fixedBang
-              : en.important || en.elementBang || en.media || cssOtherProps.has(en.bp) || nativeNormal.has(en.bp);
+          let n;
+          if (en.generic) n = en.fixedBang;
+          else {
+            const res = compete(en, {
+              mode: "own",
+              active,
+              self: t,
+              tag: isComponent ? null : g.tag,
+              unknownTag: isComponent,
+              tokens: g.tokens,
+              prefixes: g.prefixes,
+              unknownClasses: g.unknown,
+              hasInline: g.inline === "all" ? null : g.inline.size > 0,
+              file,
+            });
+            n = en.important || en.media || res.loses || nativeNormal.has(en.bp) || isComponent;
+            if (process.env.DBG_CLASS === t) console.log("DBG", t, file, en.selector.trim(), en.bp, JSON.stringify({ n, imp: en.important, media: en.media, native: nativeNormal.has(en.bp), isComponent, wins: res.wins, loses: res.loses, unknown: res.unknown, why: res.why }));
+            if (res.unknown) {
+              addConflict(conflicts, t, "unknown-source-order");
+              if (process.argv.includes("--dbg5")) console.log("UNKNOWN", t, en.selector.trim(), en.bp, JSON.stringify(res.why.u));
+            }
+            (whyMap[en.bp] ||= []).push(res.why);
+            forbid[en.bp] =
+              forbid[en.bp] ||
+              res.wins ||
+              nativeImportant.has(en.bp) ||
+              g.inline === "all" ||
+              Boolean(inlineSet && [...inlineSet].some((pp) => pp.split("-")[0] === en.bp));
+          }
           need[en.bp] = need[en.bp] || n;
-          if (!en.generic) forbid[en.bp] = nativeImportant.has(en.bp) || g.inline === "all" || Boolean(inlineSet && [...inlineSet].some((pp) => pp.split("-")[0] === en.bp));
         }
+        decisions.set(t, { live, need, forbid, why: whyMap });
+      }
+      const byProp = new Map();
+      for (const [t, d] of decisions) for (const bp of Object.keys(d.need)) (byProp.get(bp) ?? byProp.set(bp, []).get(bp)).push(t);
+      for (const [bp, ts] of byProp) {
+        if (ts.length > 1 && ts.some((t) => decisions.get(t).need[bp])) for (const t of ts) decisions.get(t).need[bp] = true;
+      }
+      const rendered = new Map();
+      for (const [t, d] of decisions) {
         const parts = [];
-        for (const en of live) {
-          if (need[en.bp] && forbid[en.bp]) addConflict(conflicts, t, "needs-important-but-blocked");
+        for (const en of d.live) {
+          if (d.need[en.bp] && d.forbid[en.bp]) {
+            addConflict(conflicts, t, "needs-important-but-blocked");
+            if (process.argv.includes("--dbg5")) console.log("BLOCKED", t, en.selector.trim(), en.bp, JSON.stringify(d.why?.[en.bp] ?? null));
+          }
           const level = levelOf.get(`${t}\u0000${en.prefix + en.bp}`) ?? 0;
-          parts.push("[&&]:".repeat(level) + en.pre + en.base + (need[en.bp] ? "!" : ""));
+          parts.push("[&&]:".repeat(level) + en.pre + en.base + (d.need[en.bp] ? "!" : ""));
         }
         rendered.set(t, parts.join(" "));
       }
@@ -615,6 +814,7 @@ const styleKeys = (ex) => {
   return out;
 };
 const impByFile = {};
+coOccur = {};
 for (const file of jsxFiles) {
   let ast;
   try {
@@ -624,11 +824,28 @@ for (const file of jsxFiles) {
   }
   const groups = new Map();
   for (const s of classStrings(ast)) {
-    const g = groups.get(s.attr) ?? { tokens: new Set(), tag: s.tag };
+    const g = groups.get(s.attr) ?? { tokens: new Set(), tag: s.tag, unknown: s.unknown };
     sources[file].slice(s.start, s.end).split(/\s+/).filter(Boolean).forEach((t) => g.tokens.add(t));
     groups.set(s.attr, g);
   }
-  const rec = (impByFile[file] = { cls: {}, tag: {} });
+  for (const { tokens } of groups.values()) {
+    for (const a of tokens) for (const b of tokens) if (a !== b) (coOccur[a] ||= new Set()).add(b);
+  }
+  const rec = (impByFile[file] = { cls: {}, tag: {}, tagCls: {}, tagUnknown: {}, clsTags: {} });
+  for (const { tokens, tag, unknown } of groups.values()) {
+    if (typeof tag !== "string" || !/^[a-z]/.test(tag)) continue;
+    const set = (rec.tagCls[tag] ||= new Set());
+    tokens.forEach((t) => set.add(t));
+    if (unknown) rec.tagUnknown[tag] = true;
+  }
+  for (const { tokens, tag, unknown } of groups.values()) {
+    for (const t of tokens) {
+      const ct = (rec.clsTags[t] ||= { tags: new Set(), unknown: false });
+      if (typeof tag === "string" && /^[a-z]/.test(tag)) ct.tags.add(tag);
+      else ct.unknown = true;
+      if (unknown) ct.unknown = true;
+    }
+  }
   traverse(ast, {
     JSXOpeningElement(p) {
       const attrs = p.node.attributes;
@@ -657,7 +874,7 @@ for (const file of jsxFiles) {
 const nearby = (file) => {
   const out = new Set([file]);
   let frontier = [file];
-  for (let depth = 0; depth < 2; depth++) {
+  for (let depth = 0; depth < 4; depth++) {
     const next = [];
     for (const f of frontier) for (const d of staticDeps[f] ?? []) if (!out.has(d)) (out.add(d), next.push(d));
     frontier = next;
@@ -667,21 +884,48 @@ const nearby = (file) => {
 for (const [name, e] of Object.entries(eligible)) {
   const generic = e.entries.filter((en) => en.generic);
   if (!generic.length) continue;
-  const re = tokenRe(name);
-  const users = Object.entries(sources)
-    .filter(([f, t]) => jsxFiles.includes(f) && (re.lastIndex = 0, re.test(t)))
-    .map(([f]) => f);
+  const users = usersOf(name);
   const scope = new Set(users.flatMap((f) => [...nearby(f)]));
   let dead = false;
   for (const en of generic) {
     const tail = en.selector.trim().replace(/^\.-?[_a-zA-Z][\w-]*/, "");
+    const target = en.selector.trim().match(/([^\s>+~]+)$/)?.[1] ?? "";
+    const tTag = target.match(/^[a-z][a-z0-9]*/)?.[0] ?? null;
+    const tClasses = [...target.matchAll(/[.](-?[_a-zA-Z][\w-]*)/g)].map((m) => m[1]);
     const tags = [...tail.matchAll(/(?:^|[\s>+~])([a-z][a-z0-9]*)/g)].map((m) => m[1]);
     const classes = classesIn(en.selector).slice(1);
-    // A descendant rule must be important only when a legacy rule (or a child utility) could otherwise override it;
-    // it must not be important when the child carries its own important utility for the property.
-    const legacy =
-      classes.some((c) => propsOf[c]?.has(en.bp)) || (tags.length > 0 && elementProps.has(en.bp));
-    const need = en.important || en.media || legacy;
+    // Classes that can sit on the target element: its own, those seen beside them, and those on same-tag elements in scope.
+    const possible = new Set(tClasses);
+    let possibleUnknown = false;
+    for (const tc of tClasses) coOccur[tc]?.forEach((c) => possible.add(c));
+    if (tTag) {
+      let seenTag = false;
+      for (const f of scope) {
+        const rec = impByFile[f];
+        if (!rec) continue;
+        if (rec.tagCls[tTag]) seenTag = true;
+        rec.tagCls[tTag]?.forEach((c) => possible.add(c));
+        if (rec.tagUnknown[tTag]) possibleUnknown = true;
+      }
+      void seenTag;
+    }
+    const possibleTags = new Set();
+    let possibleTagsUnknown = false;
+    if (tTag === null) {
+      for (const f of scope) {
+        const rec = impByFile[f];
+        for (const tc of tClasses) {
+          const ct = rec?.clsTags[tc];
+          if (!ct) continue;
+          ct.tags.forEach((x) => possibleTags.add(x));
+          if (ct.unknown) possibleTagsUnknown = true;
+        }
+      }
+      if (!tClasses.length) possibleTagsUnknown = true;
+    }
+    const res = compete(en, { mode: "generic", active: eligible, self: name, tTag, tClasses, possible, possibleUnknown, possibleTags, possibleTagsUnknown, files: [...scope] });
+    const need = en.important || en.media || res.loses;
+    // A child carrying its own important utility for the property would be beaten by an important descendant rule.
     let forbid = false;
     for (const f of scope) {
       const rec = impByFile[f];
@@ -689,11 +933,14 @@ for (const [name, e] of Object.entries(eligible)) {
       if (classes.some((c) => rec.cls[c]?.has(en.bp) || rec.cls[c]?.has("*"))) forbid = true;
       if (tags.some((tg) => rec.tag[tg]?.has(en.bp) || rec.tag[tg]?.has("*"))) forbid = true;
     }
-    if (need && forbid) dead = true;
+    if (need && (res.wins || res.unknown || forbid) || (!need && res.unknown)) {
+      dead = true;
+      if (process.argv.includes("--dbg2")) console.log("CLASHDETAIL", name, en.selector.trim(), en.bp, JSON.stringify({ need, ...res, forbid }));
+    }
     en.fixedBang = need;
   }
   if (dead) {
-    rej("descendant-important-clash", e.occurrences);
+    rej("descendant-competition", e.occurrences);
     delete eligible[name];
   }
 }

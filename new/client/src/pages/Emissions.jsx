@@ -141,7 +141,7 @@ const Emissions = () => {
   return (
     <div className="emissions-page">
         {stage !== STAGE_SCOPE_SELECTION && (
-          <div className="[display:flex]! [justify-content:flex-end] [padding:16px_24px_0]!">
+          <div className="[display:flex] [justify-content:flex-end] [padding:16px_24px_0]">
           <div className="scope-switcher-tabs">
             <button
               className={`scope-tab-btn ${stage === STAGE_SCOPE1_SUB_SELECTION ? "active s1" : ""}`}
@@ -174,10 +174,10 @@ const Emissions = () => {
 
       <div className="content-wrapper">
         {stage === STAGE_SCOPE_SELECTION && (
-          <div className="[max-width:none]! [width:100%]! [margin:0]! [padding:0_40px]! [box-sizing:border-box]! [animation:fadeIn_0.4s_ease-out]! [@media(max-width:768px)]:[padding:0_12px]!">
+          <div className="calculator-container">
             <div className="[padding:36px_0_4px]! [@media(max-width:768px)]:[padding:20px_0_10px]!">
-              <h2 className="[font-size:var(--text-xl)]! [font-weight:700]! [color:var(--text-primary)]! [margin:0_0_10px]! [letter-spacing:-0.4px] [@media(max-width:768px)]:[font-size:var(--text-xl)]!">Emission Calculator</h2>
-              <p className="[font-size:var(--text-md)]! [color:var(--text-secondary)]! [margin:0_0_36px]! [line-height:1.65] [@media(max-width:768px)]:[margin-bottom:20px]! [@media(max-width:768px)]:[font-size:var(--text-base)]!">
+              <h2 className="[font-size:var(--text-xl)]! [font-weight:700]! [color:var(--text-primary)] [margin:0_0_10px] [letter-spacing:-0.4px] [@media(max-width:768px)]:[font-size:var(--text-xl)]!">Emission Calculator</h2>
+              <p className="[font-size:var(--text-md)]! [color:var(--text-secondary)] [margin:0_0_36px]! [line-height:1.65] [@media(max-width:768px)]:[margin-bottom:20px]! [@media(max-width:768px)]:[font-size:var(--text-base)]!">
                 Select a GHG scope to begin logging and calculating emissions
                 for your facility.
               </p>
@@ -187,19 +187,19 @@ const Emissions = () => {
         )}
 
         {stage === STAGE_SCOPE1_SUB_SELECTION && (
-          <div className="[max-width:none]! [width:100%]! [margin:0]! [padding:0_40px]! [box-sizing:border-box]! [animation:fadeIn_0.4s_ease-out]! [@media(max-width:768px)]:[padding:0_12px]!">
+          <div className="calculator-container">
             <Scope1Form />
           </div>
         )}
 
         {stage === STAGE_SCOPE2 && (
-          <div className="[max-width:none]! [width:100%]! [margin:0]! [padding:0_40px]! [box-sizing:border-box]! [animation:fadeIn_0.4s_ease-out]! [@media(max-width:768px)]:[padding:0_12px]!">
+          <div className="calculator-container">
             <Scope2Form />
           </div>
         )}
 
         {stage === STAGE_SCOPE3 && (
-          <div className="[max-width:none]! [width:100%]! [margin:0]! [padding:0_40px]! [box-sizing:border-box]! [animation:fadeIn_0.4s_ease-out]! [@media(max-width:768px)]:[padding:0_12px]!">
+          <div className="calculator-container">
             <Scope3Form />
           </div>
         )}

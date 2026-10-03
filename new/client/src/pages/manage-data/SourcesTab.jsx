@@ -8,7 +8,7 @@ import PaginationControls from './PaginationControls';
 
 // Extracted from ManageData.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const SourcesTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToCSV, facilities, filteredSources, getAvailableActivities, getAvailableDivisions, handleDeleteSource, handleSaveSource, isPrivileged, setCurrentPage, setImportModal, setSourceForm, sourceForm, sources }) => (
-<div className="[border-radius:var(--radius-lg)]! [padding:32px]! [animation:fadeIn_0.3s_ease-out]! [@media(max-width:768px)]:[padding:18px_14px]! [@media(max-width:768px)]:[border-radius:var(--radius-lg)]! glass-panel">
+<div className="manage-card glass-panel">
                                 <h2 className="mb-[8px]! font-bold!">Emission Sources Inventory</h2>
                                 <p className="text-[color:var(--text-secondary)]! mb-[32px]!">Manage operational equipment and emission sources.</p>
 
@@ -116,7 +116,7 @@ const SourcesTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToCSV,
                                                     </td>
                                                     <td>{s.status}</td>
                                                     <td>
-                                                        <button className="btn-delete p-[4px_8px]! text-[length:0.75rem]!" onClick={() => handleDeleteSource(s.id)}>Delete</button>
+                                                        <button className="[background:#fee2e2] [color:var(--color-red-700)] [border:1px_solid_#fecaca] [&&]:[border-radius:var(--radius-md)] [cursor:pointer] [transition:all_0.2s] hover:[background:var(--color-red-700)] hover:[color:white] p-[4px_8px]! text-[length:0.75rem]!" onClick={() => handleDeleteSource(s.id)}>Delete</button>
                                                     </td>
                                                 </tr>
                                             ))}

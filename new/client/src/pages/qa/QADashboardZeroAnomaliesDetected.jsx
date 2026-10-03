@@ -3,16 +3,16 @@ import { AlertTriangle, Check, CheckCircle, ChevronLeft, ChevronRight, Search, X
 
 // Extracted from QADashboard.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, currentPage, data, filteredRecords, handleBulkResolve, handleSingleResolve, offset, resolving, returned_count, searchQuery, selectedIds, setOffset, setSearchQuery, setSelectedIds, setStatusFilter, statusFilter, toggleSelect, toggleSelectAll, totalPages, total_flagged_count }) => (
-<div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.9))]! [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))]! [&&]:[border-radius:var(--radius-lg)]! [box-shadow:var(--shadow-card,_0_4px_20px_-2px_rgba(15,_23,_42,_0.05))]! [overflow:hidden]! [display:flex]! [flex-direction:column]">
+<div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.9))] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [&&]:[border-radius:var(--radius-lg)] [box-shadow:var(--shadow-card,_0_4px_20px_-2px_rgba(15,_23,_42,_0.05))] [overflow:hidden] [display:flex] [flex-direction:column]">
                         {/* Table Toolbar */}
-                        <div className="[padding:18px_24px]! [border-bottom:1px_solid_rgba(226,_232,_240,_0.8)]! [display:flex]! [justify-content:space-between] [align-items:center] [flex-wrap:wrap] [gap:14px] [background:rgba(248,_250,_252,_0.4)]!">
+                        <div className="[padding:18px_24px] [border-bottom:1px_solid_rgba(226,_232,_240,_0.8)] [display:flex] [justify-content:space-between] [align-items:center] [flex-wrap:wrap] [gap:14px] [background:rgba(248,_250,_252,_0.4)]">
                             <div className="flex! gap-[12px]! items-center! flex-wrap!">
                                 {/* Search Box */}
-                                <div className="[position:relative] [display:flex]! [align-items:center] [min-width:240px] [&_svg]:[position:absolute] [&_svg]:[left:12px] [&_svg]:[color:var(--color-ink-600)]!">
+                                <div className="[position:relative] [display:flex] [align-items:center] [min-width:240px] [&_svg]:[position:absolute] [&_svg]:[left:12px] [&_svg]:[color:var(--color-ink-600)]">
                                     <Search size={14} />
                                     <input
                                         type="text"
-                                        className="[width:100%]! [padding:8px_12px_8px_36px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--color-ink-200)]! [font-size:var(--text-base)]! [background:var(--color-white)]! [color:var(--color-ink-900)]! [outline:none]! [transition:border-color_0.2s_ease]! focus:[border-color:var(--accent-color,_var(--color-brand-500))]!"
+                                        className="[width:100%] [padding:8px_12px_8px_36px] [border-radius:var(--radius-md)] [border:1px_solid_var(--color-ink-200)] [font-size:var(--text-base)] [background:var(--color-white)] [color:var(--color-ink-900)] [outline:none] [transition:border-color_0.2s_ease] focus:[border-color:var(--accent-color,_var(--color-brand-500))]"
                                         placeholder="Search by ID, process, or reason…"
                                         value={searchQuery}
                                         onChange={e => setSearchQuery(e.target.value)}
@@ -20,45 +20,45 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                 </div>
 
                                 {/* Status Filters */}
-                                <div className="[display:flex]! [gap:6px] [align-items:center]">
+                                <div className="[display:flex] [gap:6px] [align-items:center]">
                                     <button
                                         aria-pressed={statusFilter === 'all'}
-                                        className={`[display:inline-flex]! [align-items:center] [gap:6px] [padding:5px_12px]! [border-radius:var(--radius-sm)]! [border:1px_solid_var(--color-ink-200)]! [background:var(--color-white)]! [font-size:var(--text-sm)]! [font-weight:600]! [color:var(--color-ink-500)]! [cursor:pointer] [transition:all_0.15s_ease]! hover:[color:var(--color-ink-900)]! hover:[border-color:var(--color-ink-300)]! [&.active]:[background:var(--color-brand-50)]! [&.active]:[color:var(--color-brand-800)]! [&.active]:[border-color:var(--color-brand-500)]! [&&]:[&.active_.qa-status-pill-count]:[background:var(--color-brand-100)]! [&&]:[&.active_.qa-status-pill-count]:[color:var(--color-brand-800)]! ${statusFilter === 'all' ? 'active' : ''}`}
+                                        className={`[display:inline-flex] [align-items:center] [gap:6px] [padding:5px_12px] [border-radius:var(--radius-sm)]! [border:1px_solid_var(--color-ink-200)]! [background:var(--color-white)]! [font-size:var(--text-sm)] [font-weight:600] [color:var(--color-ink-500)]! [cursor:pointer] [transition:all_0.15s_ease] hover:[color:var(--color-ink-900)]! hover:[border-color:var(--color-ink-300)]! [&.active]:[background:var(--color-brand-50)]! [&.active]:[color:var(--color-brand-800)]! [&.active]:[border-color:var(--color-brand-500)]! [&&]:[&.active_.qa-status-pill-count]:[background:var(--color-brand-100)]! [&&]:[&.active_.qa-status-pill-count]:[color:var(--color-brand-800)]! ${statusFilter === 'all' ? 'active' : ''}`}
                                         onClick={() => { setStatusFilter('all'); setOffset(0); }}
                                     >
                                         <span>All Statuses</span>
                                         {anomaliesSummary.all > 0 && (
-                                            <span className="qa-status-pill-count [display:inline-flex]! [align-items:center] [justify-content:center] [padding:1px_6px]! [border-radius:var(--radius-md)]! [font-size:var(--text-xs)]! [font-weight:700]! [background:var(--color-ink-100)]! [color:var(--color-ink-600)]! [line-height:1.2]">{anomaliesSummary.all}</span>
+                                            <span className="qa-status-pill-count [display:inline-flex] [align-items:center] [justify-content:center] [padding:1px_6px] [border-radius:var(--radius-md)] [font-size:var(--text-xs)] [font-weight:700] [background:var(--color-ink-100)] [color:var(--color-ink-600)] [line-height:1.2]">{anomaliesSummary.all}</span>
                                         )}
                                     </button>
                                     <button
                                         aria-pressed={statusFilter === 'pending'}
-                                        className={`[display:inline-flex]! [align-items:center] [gap:6px] [padding:5px_12px]! [border-radius:var(--radius-sm)]! [border:1px_solid_var(--color-ink-200)]! [background:var(--color-white)]! [font-size:var(--text-sm)]! [font-weight:600]! [color:var(--color-ink-500)]! [cursor:pointer] [transition:all_0.15s_ease]! hover:[color:var(--color-ink-900)]! hover:[border-color:var(--color-ink-300)]! [&.active]:[background:var(--color-brand-50)]! [&.active]:[color:var(--color-brand-800)]! [&.active]:[border-color:var(--color-brand-500)]! [&&]:[&.active_.qa-status-pill-count]:[background:var(--color-brand-100)]! [&&]:[&.active_.qa-status-pill-count]:[color:var(--color-brand-800)]! ${statusFilter === 'pending' ? 'active' : ''}`}
+                                        className={`[display:inline-flex] [align-items:center] [gap:6px] [padding:5px_12px] [border-radius:var(--radius-sm)]! [border:1px_solid_var(--color-ink-200)]! [background:var(--color-white)]! [font-size:var(--text-sm)] [font-weight:600] [color:var(--color-ink-500)]! [cursor:pointer] [transition:all_0.15s_ease] hover:[color:var(--color-ink-900)]! hover:[border-color:var(--color-ink-300)]! [&.active]:[background:var(--color-brand-50)]! [&.active]:[color:var(--color-brand-800)]! [&.active]:[border-color:var(--color-brand-500)]! [&&]:[&.active_.qa-status-pill-count]:[background:var(--color-brand-100)]! [&&]:[&.active_.qa-status-pill-count]:[color:var(--color-brand-800)]! ${statusFilter === 'pending' ? 'active' : ''}`}
                                         onClick={() => { setStatusFilter('pending'); setOffset(0); }}
                                     >
                                         <span>Pending Review</span>
                                         {anomaliesSummary.pending > 0 && (
-                                            <span className="qa-status-pill-count [display:inline-flex]! [align-items:center] [justify-content:center] [padding:1px_6px]! [border-radius:var(--radius-md)]! [font-size:var(--text-xs)]! [font-weight:700]! [background:var(--color-ink-100)]! [color:var(--color-ink-600)]! [line-height:1.2]">{anomaliesSummary.pending}</span>
+                                            <span className="qa-status-pill-count [display:inline-flex] [align-items:center] [justify-content:center] [padding:1px_6px] [border-radius:var(--radius-md)] [font-size:var(--text-xs)] [font-weight:700] [background:var(--color-ink-100)] [color:var(--color-ink-600)] [line-height:1.2]">{anomaliesSummary.pending}</span>
                                         )}
                                     </button>
                                     <button
                                         aria-pressed={statusFilter === 'verified'}
-                                        className={`[display:inline-flex]! [align-items:center] [gap:6px] [padding:5px_12px]! [border-radius:var(--radius-sm)]! [border:1px_solid_var(--color-ink-200)]! [background:var(--color-white)]! [font-size:var(--text-sm)]! [font-weight:600]! [color:var(--color-ink-500)]! [cursor:pointer] [transition:all_0.15s_ease]! hover:[color:var(--color-ink-900)]! hover:[border-color:var(--color-ink-300)]! [&.active]:[background:var(--color-brand-50)]! [&.active]:[color:var(--color-brand-800)]! [&.active]:[border-color:var(--color-brand-500)]! [&&]:[&.active_.qa-status-pill-count]:[background:var(--color-brand-100)]! [&&]:[&.active_.qa-status-pill-count]:[color:var(--color-brand-800)]! ${statusFilter === 'verified' ? 'active' : ''}`}
+                                        className={`[display:inline-flex] [align-items:center] [gap:6px] [padding:5px_12px] [border-radius:var(--radius-sm)]! [border:1px_solid_var(--color-ink-200)]! [background:var(--color-white)]! [font-size:var(--text-sm)] [font-weight:600] [color:var(--color-ink-500)]! [cursor:pointer] [transition:all_0.15s_ease] hover:[color:var(--color-ink-900)]! hover:[border-color:var(--color-ink-300)]! [&.active]:[background:var(--color-brand-50)]! [&.active]:[color:var(--color-brand-800)]! [&.active]:[border-color:var(--color-brand-500)]! [&&]:[&.active_.qa-status-pill-count]:[background:var(--color-brand-100)]! [&&]:[&.active_.qa-status-pill-count]:[color:var(--color-brand-800)]! ${statusFilter === 'verified' ? 'active' : ''}`}
                                         onClick={() => { setStatusFilter('verified'); setOffset(0); }}
                                     >
                                         <span>Verified</span>
                                         {anomaliesSummary.verified > 0 && (
-                                            <span className="qa-status-pill-count [display:inline-flex]! [align-items:center] [justify-content:center] [padding:1px_6px]! [border-radius:var(--radius-md)]! [font-size:var(--text-xs)]! [font-weight:700]! [background:var(--color-ink-100)]! [color:var(--color-ink-600)]! [line-height:1.2]">{anomaliesSummary.verified}</span>
+                                            <span className="qa-status-pill-count [display:inline-flex] [align-items:center] [justify-content:center] [padding:1px_6px] [border-radius:var(--radius-md)] [font-size:var(--text-xs)] [font-weight:700] [background:var(--color-ink-100)] [color:var(--color-ink-600)] [line-height:1.2]">{anomaliesSummary.verified}</span>
                                         )}
                                     </button>
                                     <button
                                         aria-pressed={statusFilter === 'rejected'}
-                                        className={`[display:inline-flex]! [align-items:center] [gap:6px] [padding:5px_12px]! [border-radius:var(--radius-sm)]! [border:1px_solid_var(--color-ink-200)]! [background:var(--color-white)]! [font-size:var(--text-sm)]! [font-weight:600]! [color:var(--color-ink-500)]! [cursor:pointer] [transition:all_0.15s_ease]! hover:[color:var(--color-ink-900)]! hover:[border-color:var(--color-ink-300)]! [&.active]:[background:var(--color-brand-50)]! [&.active]:[color:var(--color-brand-800)]! [&.active]:[border-color:var(--color-brand-500)]! [&&]:[&.active_.qa-status-pill-count]:[background:var(--color-brand-100)]! [&&]:[&.active_.qa-status-pill-count]:[color:var(--color-brand-800)]! ${statusFilter === 'rejected' ? 'active' : ''}`}
+                                        className={`[display:inline-flex] [align-items:center] [gap:6px] [padding:5px_12px] [border-radius:var(--radius-sm)]! [border:1px_solid_var(--color-ink-200)]! [background:var(--color-white)]! [font-size:var(--text-sm)] [font-weight:600] [color:var(--color-ink-500)]! [cursor:pointer] [transition:all_0.15s_ease] hover:[color:var(--color-ink-900)]! hover:[border-color:var(--color-ink-300)]! [&.active]:[background:var(--color-brand-50)]! [&.active]:[color:var(--color-brand-800)]! [&.active]:[border-color:var(--color-brand-500)]! [&&]:[&.active_.qa-status-pill-count]:[background:var(--color-brand-100)]! [&&]:[&.active_.qa-status-pill-count]:[color:var(--color-brand-800)]! ${statusFilter === 'rejected' ? 'active' : ''}`}
                                         onClick={() => { setStatusFilter('rejected'); setOffset(0); }}
                                     >
                                         <span>Rejected</span>
                                         {anomaliesSummary.rejected > 0 && (
-                                            <span className="qa-status-pill-count [display:inline-flex]! [align-items:center] [justify-content:center] [padding:1px_6px]! [border-radius:var(--radius-md)]! [font-size:var(--text-xs)]! [font-weight:700]! [background:var(--color-ink-100)]! [color:var(--color-ink-600)]! [line-height:1.2]">{anomaliesSummary.rejected}</span>
+                                            <span className="qa-status-pill-count [display:inline-flex] [align-items:center] [justify-content:center] [padding:1px_6px] [border-radius:var(--radius-md)] [font-size:var(--text-xs)] [font-weight:700] [background:var(--color-ink-100)] [color:var(--color-ink-600)] [line-height:1.2]">{anomaliesSummary.rejected}</span>
                                         )}
                                     </button>
                                 </div>
@@ -66,12 +66,12 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
 
                             {/* Bulk Action Controls (When items selected) */}
                             {selectedIds.size > 0 ? (
-                                <div className="[display:flex]! [align-items:center] [gap:12px] [background:rgba(255,_247,_237,_0.9)]! [padding:8px_16px]! [border-radius:var(--radius-md)]! [border:1px_solid_rgba(255,_102,_0,_0.25)]!">
+                                <div className="[display:flex] [align-items:center] [gap:12px] [background:rgba(255,_247,_237,_0.9)] [padding:8px_16px] [border-radius:var(--radius-md)] [border:1px_solid_rgba(255,_102,_0,_0.25)]">
                                     <span className="text-[length:0.82rem]! text-[color:#9a3412]! font-semibold!">
                                         {selectedIds.size} record{selectedIds.size > 1 ? 's' : ''} selected
                                     </span>
                                     <button
-                                        className="qa-btn-inline [background:rgba(16,_185,_129,_0.1)]! [color:var(--color-green-700)]! [border-color:rgba(16,_185,_129,_0.25)]! hover:[background:var(--color-green-700)]! hover:[color:var(--color-white)]! p-[6px_12px]! text-[length:0.8rem]!"
+                                        className="[border-radius:var(--radius-sm)] [font-weight:600] [cursor:pointer] [transition:all_0.15s_ease] [border:1px_solid_transparent] [background:rgba(16,_185,_129,_0.1)] [color:var(--color-green-700)] [&&]:[border-color:rgba(16,_185,_129,_0.25)] hover:[background:var(--color-green-700)] hover:[color:var(--color-white)] p-[6px_12px]! text-[length:0.8rem]!"
                                        
                                         onClick={() => handleBulkResolve('Verified')}
                                         disabled={resolving}
@@ -80,7 +80,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                         {resolving ? '…' : 'Approve Selected'}
                                     </button>
                                     <button
-                                        className="qa-btn-inline [background:rgba(239,_68,_68,_0.1)]! [color:var(--color-red-700)]! [border-color:rgba(239,_68,_68,_0.25)]! hover:[background:var(--color-red-700)]! hover:[color:var(--color-white)]! p-[6px_12px]! text-[length:0.8rem]!"
+                                        className="[border-radius:var(--radius-sm)] [font-weight:600] [cursor:pointer] [transition:all_0.15s_ease] [border:1px_solid_transparent] [background:rgba(239,_68,_68,_0.1)] [color:var(--color-red-700)] [&&]:[border-color:rgba(239,_68,_68,_0.25)] hover:[background:var(--color-red-700)] hover:[color:var(--color-white)] p-[6px_12px]! text-[length:0.8rem]!"
                                        
                                         onClick={() => handleBulkResolve('Rejected')}
                                         disabled={resolving}
@@ -141,7 +141,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                             No flagged records match your current search query "{searchQuery}" or status filter "{statusFilter}".
                                         </p>
                                         <button
-                                            className="[display:inline-flex]! [align-items:center] [gap:6px] [padding:8px_16px]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [height:38px]! [transition:all_0.2s_ease]! [border:none]! [white-space:nowrap] disabled:[opacity:0.6] disabled:[cursor:not-allowed] [background:var(--color-white)]! [color:var(--text-primary,_var(--color-ink-900))]! [&&]:[border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&:hover:not(:disabled)]:[background:var(--bg-hover,_var(--color-ink-50))]! [&:hover:not(:disabled)]:[border-color:var(--color-ink-300)]!"
+                                            className="[display:inline-flex] [align-items:center] [gap:6px] [padding:8px_16px] [border-radius:var(--radius-md)]! [font-size:var(--text-base)] [font-weight:600] [cursor:pointer] [height:38px] [transition:all_0.2s_ease] [border:none]! [white-space:nowrap] disabled:[opacity:0.6] disabled:[cursor:not-allowed] [background:var(--color-white)]! [color:var(--text-primary,_var(--color-ink-900))] [&&]:[border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&:hover:not(:disabled)]:[background:var(--bg-hover,_var(--color-ink-50))]! [&:hover:not(:disabled)]:[border-color:var(--color-ink-300)]!"
                                             onClick={() => { setSearchQuery(''); setStatusFilter('all'); setOffset(0); }}
                                         >
                                             Clear Filters
@@ -151,11 +151,11 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                             </div>
                         ) : (
                             <>
-                                <div className="[overflow-x:auto]! [width:100%]!">
-                                    <table className="[width:100%]! [border-collapse:collapse]! [text-align:left]!">
+                                <div className="[overflow-x:auto] [width:100%]">
+                                    <table className="[width:100%] [border-collapse:collapse] [text-align:left]">
                                         <thead>
                                             <tr>
-                                                <th className="qa-th w-[40px]!">
+                                                <th className="[padding:14px_18px] [font-size:var(--text-xs)] [text-transform:uppercase] [letter-spacing:0.06em] [font-weight:700] [color:var(--color-ink-500)] [border-bottom:1px_solid_rgba(226,_232,_240,_0.8)] [background:rgba(248,_250,_252,_0.7)] [white-space:nowrap] w-[40px]!">
                                                     <input
                                                         type="checkbox"
                                                         aria-label="Select all records"
@@ -166,14 +166,14 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                                         onChange={() => toggleSelectAll(filteredRecords)}
                                                     />
                                                 </th>
-                                                <th className="qa-th">Record ID</th>
-                                                <th className="qa-th">Scope</th>
-                                                <th className="qa-th">Period</th>
-                                                <th className="qa-th">Process / Source</th>
-                                                <th className="qa-th">QA Flag Reason</th>
-                                                <th className="qa-th">Emissions (tCO₂e)</th>
-                                                <th className="qa-th">Status</th>
-                                                <th className="qa-th text-right!">Actions</th>
+                                                <th className="[padding:14px_18px] [font-size:var(--text-xs)] [text-transform:uppercase] [letter-spacing:0.06em] [font-weight:700] [color:var(--color-ink-500)] [border-bottom:1px_solid_rgba(226,_232,_240,_0.8)] [background:rgba(248,_250,_252,_0.7)] [white-space:nowrap]">Record ID</th>
+                                                <th className="[padding:14px_18px] [font-size:var(--text-xs)] [text-transform:uppercase] [letter-spacing:0.06em] [font-weight:700] [color:var(--color-ink-500)] [border-bottom:1px_solid_rgba(226,_232,_240,_0.8)] [background:rgba(248,_250,_252,_0.7)] [white-space:nowrap]">Scope</th>
+                                                <th className="[padding:14px_18px] [font-size:var(--text-xs)] [text-transform:uppercase] [letter-spacing:0.06em] [font-weight:700] [color:var(--color-ink-500)] [border-bottom:1px_solid_rgba(226,_232,_240,_0.8)] [background:rgba(248,_250,_252,_0.7)] [white-space:nowrap]">Period</th>
+                                                <th className="[padding:14px_18px] [font-size:var(--text-xs)] [text-transform:uppercase] [letter-spacing:0.06em] [font-weight:700] [color:var(--color-ink-500)] [border-bottom:1px_solid_rgba(226,_232,_240,_0.8)] [background:rgba(248,_250,_252,_0.7)] [white-space:nowrap]">Process / Source</th>
+                                                <th className="[padding:14px_18px] [font-size:var(--text-xs)] [text-transform:uppercase] [letter-spacing:0.06em] [font-weight:700] [color:var(--color-ink-500)] [border-bottom:1px_solid_rgba(226,_232,_240,_0.8)] [background:rgba(248,_250,_252,_0.7)] [white-space:nowrap]">QA Flag Reason</th>
+                                                <th className="[padding:14px_18px] [font-size:var(--text-xs)] [text-transform:uppercase] [letter-spacing:0.06em] [font-weight:700] [color:var(--color-ink-500)] [border-bottom:1px_solid_rgba(226,_232,_240,_0.8)] [background:rgba(248,_250,_252,_0.7)] [white-space:nowrap]">Emissions (tCO₂e)</th>
+                                                <th className="[padding:14px_18px] [font-size:var(--text-xs)] [text-transform:uppercase] [letter-spacing:0.06em] [font-weight:700] [color:var(--color-ink-500)] [border-bottom:1px_solid_rgba(226,_232,_240,_0.8)] [background:rgba(248,_250,_252,_0.7)] [white-space:nowrap]">Status</th>
+                                                <th className="[padding:14px_18px] [font-size:var(--text-xs)] [text-transform:uppercase] [letter-spacing:0.06em] [font-weight:700] [color:var(--color-ink-500)] [border-bottom:1px_solid_rgba(226,_232,_240,_0.8)] [background:rgba(248,_250,_252,_0.7)] [white-space:nowrap] text-right!">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -188,7 +188,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                                         key={key} 
                                                         className={`hover:[background:rgba(248,_250,_252,_0.6)]! [&.selected]:[background:rgba(16,_185,_129,_0.04)]! ${isSelected ? 'selected' : ''}`}
                                                     >
-                                                        <td className="qa-td">
+                                                        <td className="[padding:14px_18px] [font-size:var(--text-base)] [color:var(--color-ink-700)] [border-bottom:1px_solid_rgba(226,_232,_240,_0.6)] [vertical-align:middle]">
                                                             <input
                                                                 type="checkbox"
                                                                 aria-label={`Select record ${record.id}`}
@@ -196,38 +196,38 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                                                 onChange={() => toggleSelect(record.scope, record.id)}
                                                             />
                                                         </td>
-                                                        <td className="qa-td font-mono! font-semibold! text-[color:#0f172a]!">
+                                                        <td className="[padding:14px_18px] [font-size:var(--text-base)] [border-bottom:1px_solid_rgba(226,_232,_240,_0.6)] [vertical-align:middle] font-mono! font-semibold! text-[color:#0f172a]!">
                                                             {record.record_id || `REC-${record.id}`}
                                                         </td>
-                                                        <td className="qa-td">
-                                                            <span className={`[display:inline-flex]! [align-items:center] [padding:3px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:600]! [&.scope-1]:[background:rgba(255,_102,_0,_0.12)] [&.scope-1]:[color:var(--color-brand-700)] [&.scope-1]:[border:1px_solid_rgba(255,_102,_0,_0.25)]! [&&]:[&.scope-2]:[background:rgba(59,_130,_246,_0.12)] [&&]:[&.scope-2]:[color:var(--color-blue-600)] [&&]:[&.scope-2]:[border:1px_solid_rgba(59,_130,_246,_0.25)]! [&&]:[&&]:[&.scope-3]:[background:rgba(139,_92,_246,_0.12)] [&&]:[&&]:[&.scope-3]:[color:#7c3aed] [&&]:[&&]:[&.scope-3]:[border:1px_solid_rgba(139,_92,_246,_0.25)]! scope-${record.scope}`}>
+                                                        <td className="[padding:14px_18px] [font-size:var(--text-base)] [color:var(--color-ink-700)] [border-bottom:1px_solid_rgba(226,_232,_240,_0.6)] [vertical-align:middle]">
+                                                            <span className={`[display:inline-flex] [align-items:center] [padding:3px_8px] [border-radius:var(--radius-sm)] [font-size:var(--text-sm)] [font-weight:600] [&.scope-1]:[background:rgba(255,_102,_0,_0.12)] [&.scope-1]:[color:var(--color-brand-700)]! [&.scope-1]:[border:1px_solid_rgba(255,_102,_0,_0.25)] [&&]:[&.scope-2]:[background:rgba(59,_130,_246,_0.12)] [&&]:[&.scope-2]:[color:var(--color-blue-600)]! [&&]:[&.scope-2]:[border:1px_solid_rgba(59,_130,_246,_0.25)] [&&]:[&&]:[&.scope-3]:[background:rgba(139,_92,_246,_0.12)] [&&]:[&&]:[&.scope-3]:[color:#7c3aed]! [&&]:[&&]:[&.scope-3]:[border:1px_solid_rgba(139,_92,_246,_0.25)] scope-${record.scope}`}>
                                                                 Scope {record.scope}
                                                             </span>
                                                         </td>
-                                                        <td className="qa-td text-[color:#475569]!">
+                                                        <td className="[padding:14px_18px] [font-size:var(--text-base)] [border-bottom:1px_solid_rgba(226,_232,_240,_0.6)] [vertical-align:middle] text-[color:#475569]!">
                                                             {record.year || '—'} {record.month ? `/ M${record.month}` : ''}
                                                         </td>
-                                                        <td className="qa-td font-medium! text-[color:#1e293b]!">
+                                                        <td className="[padding:14px_18px] [font-size:var(--text-base)] [border-bottom:1px_solid_rgba(226,_232,_240,_0.6)] [vertical-align:middle] font-medium! text-[color:#1e293b]!">
                                                             {record.process_type || '—'}
                                                         </td>
-                                                        <td className="qa-td">
-                                                            <span className="[display:inline-flex]! [align-items:center] [gap:6px] [padding:4px_10px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:500]! [background:var(--color-amber-50)]! [color:var(--color-amber-700)]! [border:1px_solid_#fef3c7]!">
+                                                        <td className="[padding:14px_18px] [font-size:var(--text-base)] [color:var(--color-ink-700)] [border-bottom:1px_solid_rgba(226,_232,_240,_0.6)] [vertical-align:middle]">
+                                                            <span className="[display:inline-flex] [align-items:center] [gap:6px] [padding:4px_10px] [border-radius:var(--radius-sm)] [font-size:var(--text-sm)] [font-weight:500] [background:var(--color-amber-50)] [color:var(--color-amber-700)] [border:1px_solid_#fef3c7]">
                                                                 <AlertTriangle size={13} />
                                                                 {record.qa_flag}
                                                             </span>
                                                         </td>
-                                                        <td className="qa-td font-mono! font-bold! text-[color:#0f172a]!">
+                                                        <td className="[padding:14px_18px] [font-size:var(--text-base)] [border-bottom:1px_solid_rgba(226,_232,_240,_0.6)] [vertical-align:middle] font-mono! font-bold! text-[color:#0f172a]!">
                                                             {record.co2e != null ? Number(record.co2e).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}
                                                         </td>
-                                                        <td className="qa-td">
+                                                        <td className="[padding:14px_18px] [font-size:var(--text-base)] [color:var(--color-ink-700)] [border-bottom:1px_solid_rgba(226,_232,_240,_0.6)] [vertical-align:middle]">
                                                             <span className={`qa-status-pill ${statusClass}`}>
                                                                 {record.status || 'Pending Review'}
                                                             </span>
                                                         </td>
-                                                        <td className="qa-td text-right!">
+                                                        <td className="[padding:14px_18px] [font-size:var(--text-base)] [color:var(--color-ink-700)] [border-bottom:1px_solid_rgba(226,_232,_240,_0.6)] [vertical-align:middle] text-right!">
                                                             <div className="inline-flex! gap-[6px]!">
                                                                 <button
-                                                                    className="qa-btn-inline [background:rgba(16,_185,_129,_0.1)]! [color:var(--color-green-700)]! [border-color:rgba(16,_185,_129,_0.25)]! hover:[background:var(--color-green-700)]! hover:[color:var(--color-white)]!"
+                                                                    className="[padding:4px_8px] [border-radius:var(--radius-sm)] [font-size:var(--text-sm)] [font-weight:600] [cursor:pointer] [transition:all_0.15s_ease] [border:1px_solid_transparent] [background:rgba(16,_185,_129,_0.1)] [color:var(--color-green-700)] [&&]:[border-color:rgba(16,_185,_129,_0.25)] hover:[background:var(--color-green-700)] hover:[color:var(--color-white)]"
                                                                     onClick={() => handleSingleResolve(record.scope, record.id, 'Verified')}
                                                                     disabled={resolving}
                                                                     title="Approve / Mark Verified"
@@ -235,7 +235,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                                                     <Check size={13} />
                                                                 </button>
                                                                 <button
-                                                                    className="qa-btn-inline [background:rgba(239,_68,_68,_0.1)]! [color:var(--color-red-700)]! [border-color:rgba(239,_68,_68,_0.25)]! hover:[background:var(--color-red-700)]! hover:[color:var(--color-white)]!"
+                                                                    className="[padding:4px_8px] [border-radius:var(--radius-sm)] [font-size:var(--text-sm)] [font-weight:600] [cursor:pointer] [transition:all_0.15s_ease] [border:1px_solid_transparent] [background:rgba(239,_68,_68,_0.1)] [color:var(--color-red-700)] [&&]:[border-color:rgba(239,_68,_68,_0.25)] hover:[background:var(--color-red-700)] hover:[color:var(--color-white)]"
                                                                     onClick={() => handleSingleResolve(record.scope, record.id, 'Rejected')}
                                                                     disabled={resolving}
                                                                     title="Reject / Outlier"
@@ -265,7 +265,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                         </span>
                                         <div className="flex! gap-[6px]! items-center!">
                                             <button
-                                                className="[display:inline-flex]! [align-items:center] [gap:6px] [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [transition:all_0.2s_ease]! [border:none]! [white-space:nowrap] disabled:[opacity:0.6] disabled:[cursor:not-allowed] [background:var(--color-white)]! [color:var(--text-primary,_var(--color-ink-900))]! [&&]:[border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&:hover:not(:disabled)]:[background:var(--bg-hover,_var(--color-ink-50))]! [&:hover:not(:disabled)]:[border-color:var(--color-ink-300)]! h-[32px]! p-[0_10px]!"
+                                                className="[display:inline-flex] [align-items:center] [gap:6px] [border-radius:var(--radius-md)]! [font-size:var(--text-base)] [font-weight:600] [cursor:pointer] [transition:all_0.2s_ease] [border:none]! [white-space:nowrap] disabled:[opacity:0.6] disabled:[cursor:not-allowed] [background:var(--color-white)]! [color:var(--text-primary,_var(--color-ink-900))] [&&]:[border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&:hover:not(:disabled)]:[background:var(--bg-hover,_var(--color-ink-50))]! [&:hover:not(:disabled)]:[border-color:var(--color-ink-300)]! h-[32px]! p-[0_10px]!"
                                                
                                                 onClick={() => setOffset(Math.max(0, offset - PAGE_SIZE))}
                                                 disabled={offset === 0}
@@ -276,7 +276,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                                 Page {currentPage} / {totalPages}
                                             </span>
                                             <button
-                                                className="[display:inline-flex]! [align-items:center] [gap:6px] [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [transition:all_0.2s_ease]! [border:none]! [white-space:nowrap] disabled:[opacity:0.6] disabled:[cursor:not-allowed] [background:var(--color-white)]! [color:var(--text-primary,_var(--color-ink-900))]! [&&]:[border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&:hover:not(:disabled)]:[background:var(--bg-hover,_var(--color-ink-50))]! [&:hover:not(:disabled)]:[border-color:var(--color-ink-300)]! h-[32px]! p-[0_10px]!"
+                                                className="[display:inline-flex] [align-items:center] [gap:6px] [border-radius:var(--radius-md)]! [font-size:var(--text-base)] [font-weight:600] [cursor:pointer] [transition:all_0.2s_ease] [border:none]! [white-space:nowrap] disabled:[opacity:0.6] disabled:[cursor:not-allowed] [background:var(--color-white)]! [color:var(--text-primary,_var(--color-ink-900))] [&&]:[border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&:hover:not(:disabled)]:[background:var(--bg-hover,_var(--color-ink-50))]! [&:hover:not(:disabled)]:[border-color:var(--color-ink-300)]! h-[32px]! p-[0_10px]!"
                                                
                                                 onClick={() => setOffset(offset + PAGE_SIZE)}
                                                 disabled={offset + PAGE_SIZE >= total_flagged_count}

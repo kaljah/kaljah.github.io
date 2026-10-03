@@ -23,20 +23,61 @@
   letter-spacing: -0.02em;
 }
 
-/* ── Top Executive KPI Grid ──────────────────────────────────────── */
-
-.qa-kpi-icon-wrap {
-  width: 32px;
-  height: 32px;
+.qa-filter-select {
+  padding: 8px 14px;
   border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(241, 245, 249, 0.8);
-  color: var(--text-secondary, var(--color-ink-500));
+  border: 1px solid var(--border-color, var(--color-ink-200));
+  background: var(--color-white);
+  color: var(--text-primary, var(--color-ink-900));
+  font-size: var(--text-base);
+  font-weight: 500;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  height: 38px;
 }
 
+.qa-filter-select:focus {
+  border-color: var(--accent-color, var(--color-brand-500));
+  box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.12);
+}
+
+/* ── Top Executive KPI Grid ──────────────────────────────────────── */
+
 /* ── Navigation Tabs ─────────────────────────────────────────────── */
+
+.qa-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  font-size: var(--text-md);
+  font-weight: 600;
+  color: var(--text-secondary, var(--color-ink-500));
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.qa-tab-btn:hover {
+  color: var(--text-primary, var(--color-ink-900));
+  background: rgba(248, 250, 252, 0.7);
+}
+
+.qa-tab-btn.active {
+  color: var(--color-link);
+  border-bottom-color: var(--accent-color, var(--color-brand-500));
+  background: rgba(255, 102, 0, 0.04);
+}
+
+.qa-tab-btn.active .qa-tab-count-pill {
+  background: rgba(255, 102, 0, 0.15);
+  color: var(--color-link);
+}
 
 /* ── Content Panels ──────────────────────────────────────────────── */
 
@@ -45,26 +86,6 @@
 /* Bulk Selection Bar */
 
 /* ── Data Table ─────────────────────────────────────────────────── */
-
-.qa-th {
-  padding: 14px 18px;
-  font-size: var(--text-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  font-weight: 700;
-  color: var(--color-ink-500);
-  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
-  background: rgba(248, 250, 252, 0.7);
-  white-space: nowrap;
-}
-
-.qa-td {
-  padding: 14px 18px;
-  font-size: var(--text-base);
-  color: var(--color-ink-700);
-  border-bottom: 1px solid rgba(226, 232, 240, 0.6);
-  vertical-align: middle;
-}
 
 /* Scope Badges */
 
@@ -99,15 +120,6 @@
 }
 
 /* Action Buttons */
-.qa-btn-inline {
-  padding: 4px 8px;
-  border-radius: var(--radius-sm);
-  font-size: var(--text-sm);
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  border: 1px solid transparent;
-}
 
 /* ── Tab 2: Health & Completeness Diagnostics ────────────────────── */
 

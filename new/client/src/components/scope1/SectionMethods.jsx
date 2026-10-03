@@ -103,7 +103,7 @@ export function ActivityFactorForm({ processType, data, onChange }) {
   };
 
   return (
-    <div className="[display:grid]! [grid-template-columns:1fr] [gap:16px]">
+    <div className="[display:grid] [grid-template-columns:1fr] [gap:16px]">
       <div className="input-group">
         <label>
           Source<span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
@@ -148,7 +148,7 @@ export function VentedGasForm({ data, onChange }) {
   const canFlare = ["volume", "gor", "rate_days", "actual"].includes(m);
   const noComposition = ["co2_mass", "agr_balance", "thc_mass", "reported_mass"].includes(m);
   return (
-    <div className="[display:grid]! [grid-template-columns:1fr] [gap:16px]">
+    <div className="[display:grid] [grid-template-columns:1fr] [gap:16px]">
       {m === "volume" && (
         <FieldGrid>
           <NumUnit label="Gas volume" field="gas_volume" unitField="gas_volume_unit" units={GAS_UNITS} data={data} onChange={onChange} required />
@@ -251,7 +251,7 @@ export function CombustionMethodForm({ data, onChange }) {
   const energyBy = data.energy_basis || "fuel";
 
   return (
-    <div className="[display:grid]! [grid-template-columns:1fr] [gap:16px]">
+    <div className="[display:grid] [grid-template-columns:1fr] [gap:16px]">
       {m === "carbon_content" && (
         <FieldGrid min={170}>
           <NumUnit label="Fuel burned" field="fuel_volume" unitField="fuel_volume_unit" units={LIQ_UNITS.map((u) => u.toLowerCase())} data={data} onChange={onChange} required />
@@ -427,7 +427,7 @@ export function SectionMethodPanel({ processType, sourceType, data, onChange, le
   else if (selected.startsWith("comb:")) body = <CombustionMethodForm data={data} onChange={onChange} />;
 
   return (
-    <div className="[display:grid]! [grid-template-columns:1fr] [gap:16px]">
+    <div className="[display:grid] [grid-template-columns:1fr] [gap:16px]">
       {choices.length > 1 && (
         <Segmented
           ariaLabel="Calculation method"

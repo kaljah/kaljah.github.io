@@ -1,5 +1,14 @@
 /* Emissions Calculator Specific Styles */
 
+.calculator-container {
+  max-width: none !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 40px;
+  box-sizing: border-box;
+  animation: fadeIn 0.4s ease-out;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -434,6 +443,9 @@
 }
 
 @media (max-width: 768px) {
+  .calculator-container {
+    padding: 0 12px !important;
+  }
 
   .scope-selection-grid {
     grid-template-columns: 1fr;

@@ -49,6 +49,37 @@
   background: var(--color-ink-400);
 }
 
+.sbti-kpi-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(249, 115, 22, 0.1);
+  color: var(--color-link);
+}
+
+.sbti-kpi-icon.success {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--color-green-700);
+}
+
+.sbti-kpi-icon.warning {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--color-amber-700);
+}
+
+.sbti-kpi-icon.info {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--color-blue-700);
+}
+
+.sbti-kpi-icon.neutral {
+  background: rgba(148, 163, 184, 0.15);
+  color: var(--color-ink-500);
+}
+
 /* Status Badge */
 .status-pill {
   display: inline-flex;
@@ -79,6 +110,34 @@
 }
 
 /* Target Settings Drawer / Panel */
+
+.sbti-config-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.sbti-config-header h3 {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--text-main, var(--color-ink-900));
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sbti-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sbti-form-group label {
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--text-secondary, var(--color-ink-500));
+}
 
 /* Charts Grid */
 

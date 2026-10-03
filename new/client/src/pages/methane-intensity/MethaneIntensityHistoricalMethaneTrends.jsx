@@ -4,7 +4,7 @@ import { LineChart } from "../../components/charts";
 
 // Extracted from MethaneIntensity.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const MethaneIntensityHistoricalMethaneTrends = ({ getHeatmapClass, midstreamTargetPct, rawTrendData, regionalData, setTrendView, trendChartData, trendView, upstreamTargetPct }) => (
-<div className="card trend-section [margin-top:8px]!">
+<div className="card trend-section [margin-top:8px]">
           <div className="chart-header">
             <div>
               <h3 className="mb-[4px]!">
@@ -16,16 +16,16 @@ const MethaneIntensityHistoricalMethaneTrends = ({ getHeatmapClass, midstreamTar
                 5-Year Methane Loss Rate (%) vs OGMP 2.0 Targets (&le;{upstreamTargetPct.toFixed(2)}% Upstream / &le;{midstreamTargetPct.toFixed(2)}% Midstream)
               </p>
             </div>
-            <div className="[display:flex]! [gap:12px] [align-items:center]">
-              <div className="[background:var(--bg-hover)]! [padding:4px]! [border-radius:var(--radius-md)]! [display:flex]! [gap:4px] [border:1px_solid_var(--border-color)]!">
+            <div className="[display:flex] [gap:12px] [align-items:center]">
+              <div className="[background:var(--bg-hover)] [padding:4px] [border-radius:var(--radius-md)] [display:flex] [gap:4px] [border:1px_solid_var(--border-color)]">
                 <button
-                  className={`view-btn [border:none]! [padding:6px_16px]! [&&]:[border-radius:var(--radius-sm)]! [cursor:pointer] [font-size:var(--text-base)]! [font-weight:500]! [transition:all_0.2s]! [background:transparent]! [color:var(--text-secondary)]! [display:flex]! [align-items:center] [gap:6px] [&.active]:[background:var(--bg-card)]! [&.active]:[color:var(--text-primary)]! [&.active]:[box-shadow:var(--card-shadow)] [&.active]:[font-weight:600]! ${trendView === "chart" ? "active" : ""}`}
+                  className={`view-btn ${trendView === "chart" ? "active" : ""}`}
                   onClick={() => setTrendView("chart")}
                 >
                   <BarChart2 size={16} /> Chart
                 </button>
                 <button
-                  className={`view-btn [border:none]! [padding:6px_16px]! [&&]:[border-radius:var(--radius-sm)]! [cursor:pointer] [font-size:var(--text-base)]! [font-weight:500]! [transition:all_0.2s]! [background:transparent]! [color:var(--text-secondary)]! [display:flex]! [align-items:center] [gap:6px] [&.active]:[background:var(--bg-card)]! [&.active]:[color:var(--text-primary)]! [&.active]:[box-shadow:var(--card-shadow)] [&.active]:[font-weight:600]! ${trendView === "heatmap" ? "active" : ""}`}
+                  className={`view-btn ${trendView === "heatmap" ? "active" : ""}`}
                   onClick={() => setTrendView("heatmap")}
                 >
                   <Grid size={16} /> Heatmap
@@ -71,16 +71,16 @@ const MethaneIntensityHistoricalMethaneTrends = ({ getHeatmapClass, midstreamTar
               />
             </div>
           ) : (
-            <div className="heatmap-container [margin-top:24px]! [overflow-x:auto]! [background:var(--bg-app)]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--border-color)]! [padding:16px]!">
-              <div className="heatmap-header [display:grid]! [grid-template-columns:200px_repeat(5,_1fr)] [gap:12px] [margin-bottom:16px]! [padding:0_12px]!">
+            <div className="heatmap-container [margin-top:24px] [overflow-x:auto] [background:var(--bg-app)] [border-radius:var(--radius-md)] [border:1px_solid_var(--border-color)] [padding:16px]">
+              <div className="heatmap-header [display:grid] [grid-template-columns:200px_repeat(5,_1fr)] [gap:12px] [margin-bottom:16px] [padding:0_12px]">
                 <div
-                  className="heatmap-header-cell text-left!"
+                  className="[font-size:var(--text-sm)] [font-weight:700] [color:var(--text-secondary)] [text-transform:uppercase] [letter-spacing:0.05em] text-left!"
                  
                 >
                   FACILITY / REGION
                 </div>
                 {rawTrendData.map((d) => (
-                  <div key={d.year} className="heatmap-header-cell">
+                  <div key={d.year} className="[font-size:var(--text-sm)] [font-weight:700] [color:var(--text-secondary)] [text-transform:uppercase] [text-align:center] [letter-spacing:0.05em]">
                     {d.year}
                   </div>
                 ))}
@@ -88,8 +88,8 @@ const MethaneIntensityHistoricalMethaneTrends = ({ getHeatmapClass, midstreamTar
               <div className="heatmap-body">
                 {regionalData.length > 0 ? (
                   regionalData.map((facData) => (
-                    <div key={facData.facility_id} className="heatmap-row [display:grid]! [grid-template-columns:200px_repeat(5,_1fr)] [gap:12px] [padding:12px]! [border-bottom:1px_solid_var(--border-color)]! [align-items:center] [transition:background-color_0.2s]! last:[border-bottom:none]! hover:[background:var(--bg-card)]! hover:[border-radius:var(--radius-md)]! hover:[box-shadow:var(--shadow-xs)]!">
-                      <div className="[font-weight:600]! [font-size:var(--text-base)]! [color:var(--text-primary)]!">
+                    <div key={facData.facility_id} className="heatmap-row [display:grid] [grid-template-columns:200px_repeat(5,_1fr)] [gap:12px] [padding:12px] [border-bottom:1px_solid_var(--border-color)] [align-items:center] [transition:background-color_0.2s] last:[border-bottom:none] hover:[background:var(--bg-card)] hover:[border-radius:var(--radius-md)] hover:[box-shadow:var(--shadow-xs)]">
+                      <div className="[font-weight:600] [font-size:var(--text-base)] [color:var(--text-primary)]">
                         {facData.facility_name}
                       </div>
                       {rawTrendData.map((yData) => {

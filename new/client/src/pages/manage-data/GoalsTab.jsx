@@ -5,15 +5,15 @@ import { Calendar, Check, CheckCircle, History, Plus, Target } from 'lucide-reac
 
 // Extracted from ManageData.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYears, filteredGoals, goalForm, goals, handleDeleteBaseYearRecalc, handleDeleteGoal, handleEditGoal, handleSaveBaseYear, handleSaveGoal, handleSaveSbti, hasSbti, sbtiConfig, setBaseYearForm, setEditingGoalYear, setGoalForm, setSbtiConfig }) => (
-<div className="[border-radius:var(--radius-lg)]! [padding:32px]! [animation:fadeIn_0.3s_ease-out]! [@media(max-width:768px)]:[padding:18px_14px]! [@media(max-width:768px)]:[border-radius:var(--radius-lg)]! glass-panel">
+<div className="manage-card glass-panel">
                                 {/* Active Baseline Status Banner */}
-                                <div className="[background:linear-gradient(_135deg,_rgba(255,_102,_0,_0.06),_rgba(255,_153,_51,_0.02)_)]! [border:1px_solid_rgba(255,_102,_0,_0.2)]! [&&]:[border-radius:var(--radius-lg)]! [padding:20px]! [margin-bottom:24px]! [display:flex]! [justify-content:space-between] [align-items:center] [flex-wrap:wrap] [gap:16px]">
+                                <div className="[background:linear-gradient(_135deg,_rgba(255,_102,_0,_0.06),_rgba(255,_153,_51,_0.02)_)] [border:1px_solid_rgba(255,_102,_0,_0.2)] [&&]:[border-radius:var(--radius-lg)] [padding:20px] [margin-bottom:24px] [display:flex] [justify-content:space-between] [align-items:center] [flex-wrap:wrap] [gap:16px]">
                                     <div>
                                         <div className="flex! items-center! gap-[8px]! mb-[6px]!">
                                             <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-link)', fontWeight: 700 }}>
                                                 GHG Protocol & OGMP 2.0 Baseline
                                             </span>
-                                            <span className="goal-badge [background:var(--color-green-50)]! [color:var(--color-green-700)]! [border:1px_solid_#a7f3d0]!">
+                                            <span className="[display:inline-flex] [align-items:center] [gap:4px] [padding:3px_8px] [border-radius:var(--radius-sm)] [font-size:var(--text-sm)] [font-weight:600] [background:var(--color-green-50)] [color:var(--color-green-700)] [&&]:[border:1px_solid_#a7f3d0]">
                                                 <CheckCircle size={12} /> Active Baseline
                                             </span>
                                         </div>
@@ -151,7 +151,7 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                                                         Edit
                                                                     </Button>
                                                                     <button
-                                                                        className="btn-delete p-[4px_8px]! text-[length:0.8rem]!"
+                                                                        className="[background:#fee2e2] [color:var(--color-red-700)] [border:1px_solid_#fecaca] [&&]:[border-radius:var(--radius-md)] [cursor:pointer] [transition:all_0.2s] hover:[background:var(--color-red-700)] hover:[color:white] p-[4px_8px]! text-[length:0.8rem]!"
                                                                         onClick={() => handleDeleteGoal(g.year)}
                                                                        
                                                                         title="Delete Goal"
@@ -181,7 +181,7 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                         </div>
                                     </div>
 
-                                    <div className="[background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-left:4px_solid_var(--accent-color,_var(--color-brand-500))]! [&&]:[border-radius:var(--radius-md)]! [padding:14px_18px]! [margin-bottom:24px]! [font-size:var(--text-base)]! [color:var(--text-secondary)]! [line-height:1.5]">
+                                    <div className="[background:var(--color-ink-50)] [border:1px_solid_var(--color-ink-200)] [&&]:[border-left:4px_solid_var(--accent-color,_var(--color-brand-500))] [&&]:[border-radius:var(--radius-md)] [padding:14px_18px] [margin-bottom:24px] [font-size:var(--text-base)] [color:var(--text-secondary)] [line-height:1.5]">
                                         <strong>GHG Protocol Recalculation Rule:</strong> Base year emissions must be recalculated to reflect significant structural changes (e.g. acquisitions, divestments, boundary changes), methodology updates (e.g. new emission factors or GWP standards), or cumulative data errors exceeding significance thresholds. Every adjustment must include a documented reason.
                                     </div>
 
@@ -275,7 +275,7 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                                                     <div className="flex! items-center! gap-[6px]!">
                                                                         <span>{b.year}</span>
                                                                         {isLatest && (
-                                                                            <span className="goal-badge [background:var(--color-green-50)]! [color:var(--color-green-700)]! [border:1px_solid_#a7f3d0]! text-[length:0.7rem]!">
+                                                                            <span className="[display:inline-flex] [align-items:center] [gap:4px] [padding:3px_8px] [border-radius:var(--radius-sm)] [font-weight:600] [background:var(--color-green-50)] [color:var(--color-green-700)] [&&]:[border:1px_solid_#a7f3d0] text-[length:0.7rem]!">
                                                                                 Active
                                                                             </span>
                                                                         )}
@@ -303,7 +303,7 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                                                 </td>
                                                                 <td className="text-center!">
                                                                     <button
-                                                                        className="btn-delete p-[4px_8px]! text-[length:0.8rem]!"
+                                                                        className="[background:#fee2e2] [color:var(--color-red-700)] [border:1px_solid_#fecaca] [&&]:[border-radius:var(--radius-md)] [cursor:pointer] [transition:all_0.2s] hover:[background:var(--color-red-700)] hover:[color:white] p-[4px_8px]! text-[length:0.8rem]!"
                                                                         onClick={() => handleDeleteBaseYearRecalc(b.id)}
                                                                        
                                                                         title="Delete Recalculation Entry"
@@ -332,7 +332,7 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                             </p>
                                         </div>
                                         {hasSbti && (
-                                            <span className="goal-badge [background:var(--color-green-50)]! [color:var(--color-green-700)]! [border:1px_solid_#a7f3d0]! inline-flex! items-center! gap-[6px]! text-[length:0.85rem]! p-[6px_14px]!">
+                                            <span className="[border-radius:var(--radius-sm)] [font-weight:600] [background:var(--color-green-50)] [color:var(--color-green-700)] [&&]:[border:1px_solid_#a7f3d0] inline-flex! items-center! gap-[6px]! text-[length:0.85rem]! p-[6px_14px]!">
                                                 <CheckCircle size={14} /> SBTi Target Active
                                             </span>
                                         )}

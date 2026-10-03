@@ -269,7 +269,7 @@ const SbtiDashboard = () => {
   const currentYear = sbtiData?.current_year || sbtiData?.latest_actual_year || ytdYear || new Date().getFullYear();
 
   return (
-    <div className="[padding:24px]! [max-width:1600px]! [margin:0_auto]! [display:flex]! [flex-direction:column] [gap:24px]" style={{ opacity: isUpdating ? 0.8 : 1, transition: "opacity 0.2s ease" }}>
+    <div className="[padding:24px] [max-width:1600px] [margin:0_auto] [display:flex] [flex-direction:column] [gap:24px]" style={{ opacity: isUpdating ? 0.8 : 1, transition: "opacity 0.2s ease" }}>
       {/* Top Header */}
       <PageHeader
         className="mb-6"
@@ -304,8 +304,8 @@ const SbtiDashboard = () => {
 
       {/* Target Setting Drawer / Form */}
       {showConfig && (
-        <div className="[background:var(--card-bg,_var(--color-white))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-lg)]! [padding:24px]! [box-shadow:var(--shadow-card)]!">
-          <div className="[display:flex]! [justify-content:space-between] [align-items:center] [margin-bottom:20px]! [&_h3]:[font-size:var(--text-lg)]! [&_h3]:[font-weight:700]! [&_h3]:[color:var(--text-main,_var(--color-ink-900))]! [&_h3]:[display:flex]! [&_h3]:[align-items:center] [&_h3]:[gap:8px]">
+        <div className="[background:var(--card-bg,_var(--color-white))] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [&&]:[border-radius:var(--radius-lg)] [padding:24px] [box-shadow:var(--shadow-card)]">
+          <div className="sbti-config-header">
             <h3>
               <Globe size={20} className="text-primary" />
               SBTi Corporate Target Setup
@@ -316,8 +316,8 @@ const SbtiDashboard = () => {
           </div>
 
           <form onSubmit={handleSaveTarget}>
-            <div className="[display:grid]! [grid-template-columns:repeat(auto-fit,_minmax(200px,_1fr))] [gap:16px] [align-items:flex-end]">
-              <div className="[display:flex]! [flex-direction:column] [gap:6px] [&_label]:[font-size:var(--text-base)]! [&_label]:[font-weight:600]! [&_label]:[color:var(--text-secondary,_var(--color-ink-500))]!">
+            <div className="[display:grid] [grid-template-columns:repeat(auto-fit,_minmax(200px,_1fr))] [gap:16px] [align-items:flex-end]">
+              <div className="sbti-form-group">
                 <label>Pathway Alignment</label>
                 <div className="flex! gap-[8px]!">
                   <button
@@ -351,11 +351,11 @@ const SbtiDashboard = () => {
                 </div>
               </div>
 
-              <div className="[display:flex]! [flex-direction:column] [gap:6px] [&_label]:[font-size:var(--text-base)]! [&_label]:[font-weight:600]! [&_label]:[color:var(--text-secondary,_var(--color-ink-500))]!">
+              <div className="sbti-form-group">
                 <label>Base Year</label>
                 <input
                   type="number"
-                  className="[padding:10px_14px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [background:var(--input-bg,_var(--color-ink-50))]! [color:var(--text-main,_var(--color-ink-900))]! [font-size:var(--text-md)]! [transition:all_0.2s]! focus:[outline:none]! focus:[border-color:var(--primary,_var(--color-brand-500))]! focus:[background:var(--card-bg,_var(--color-white))]! focus:[box-shadow:0_0_0_3px_rgba(249,_115,_22,_0.1)]!"
+                  className="[padding:10px_14px] [border-radius:var(--radius-md)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [background:var(--input-bg,_var(--color-ink-50))] [color:var(--text-main,_var(--color-ink-900))] [font-size:var(--text-md)] [transition:all_0.2s] focus:[outline:none] focus:[border-color:var(--primary,_var(--color-brand-500))] focus:[background:var(--card-bg,_var(--color-white))] focus:[box-shadow:0_0_0_3px_rgba(249,_115,_22,_0.1)]"
                   min="2015"
                   max="2035"
                   value={targetForm.base_year}
@@ -364,12 +364,12 @@ const SbtiDashboard = () => {
                 />
               </div>
 
-              <div className="[display:flex]! [flex-direction:column] [gap:6px] [&_label]:[font-size:var(--text-base)]! [&_label]:[font-weight:600]! [&_label]:[color:var(--text-secondary,_var(--color-ink-500))]!">
+              <div className="sbti-form-group">
                 <div className="flex! justify-between! items-center!">
                   <label>Base Year Baseline (tCO2e)</label>
                   <button
                     type="button"
-                    className="[display:inline-flex]! [align-items:center] [gap:5px] [padding:4px_10px]! [font-size:var(--text-sm)]! [font-weight:600]! [border-radius:var(--radius-sm)]! [background:rgba(37,_99,_235,_0.1)]! [color:var(--color-blue-600)]! [border:1px_solid_rgba(37,_99,_235,_0.2)]! [cursor:pointer] [transition:all_0.2s]! hover:[background:rgba(37,_99,_235,_0.2)]! hover:[border-color:var(--color-blue-600)]!"
+                    className="[display:inline-flex] [align-items:center] [gap:5px] [padding:4px_10px] [font-size:var(--text-sm)] [font-weight:600] [border-radius:var(--radius-sm)] [background:rgba(37,_99,_235,_0.1)] [color:var(--color-blue-600)] [border:1px_solid_rgba(37,_99,_235,_0.2)] [cursor:pointer] [transition:all_0.2s] hover:[background:rgba(37,_99,_235,_0.2)] hover:[border-color:var(--color-blue-600)]"
                     onClick={handleAutoFillBaseline}
                     title="Auto-fill with verified emissions for base year"
                   >
@@ -380,7 +380,7 @@ const SbtiDashboard = () => {
                 <input
                   type="number"
                   step="0.01"
-                  className="[padding:10px_14px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [background:var(--input-bg,_var(--color-ink-50))]! [color:var(--text-main,_var(--color-ink-900))]! [font-size:var(--text-md)]! [transition:all_0.2s]! focus:[outline:none]! focus:[border-color:var(--primary,_var(--color-brand-500))]! focus:[background:var(--card-bg,_var(--color-white))]! focus:[box-shadow:0_0_0_3px_rgba(249,_115,_22,_0.1)]!"
+                  className="[padding:10px_14px] [border-radius:var(--radius-md)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [background:var(--input-bg,_var(--color-ink-50))] [color:var(--text-main,_var(--color-ink-900))] [font-size:var(--text-md)] [transition:all_0.2s] focus:[outline:none] focus:[border-color:var(--primary,_var(--color-brand-500))] focus:[background:var(--card-bg,_var(--color-white))] focus:[box-shadow:0_0_0_3px_rgba(249,_115,_22,_0.1)]"
                   min="0.01"
                   value={targetForm.base_year_emissions}
                   onChange={(e) => setTargetForm({ ...targetForm, base_year_emissions: parseFloat(e.target.value) || 0 })}
@@ -388,11 +388,11 @@ const SbtiDashboard = () => {
                 />
               </div>
 
-              <div className="[display:flex]! [flex-direction:column] [gap:6px] [&_label]:[font-size:var(--text-base)]! [&_label]:[font-weight:600]! [&_label]:[color:var(--text-secondary,_var(--color-ink-500))]!">
+              <div className="sbti-form-group">
                 <label>Net-Zero Target Year</label>
                 <input
                   type="number"
-                  className="[padding:10px_14px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [background:var(--input-bg,_var(--color-ink-50))]! [color:var(--text-main,_var(--color-ink-900))]! [font-size:var(--text-md)]! [transition:all_0.2s]! focus:[outline:none]! focus:[border-color:var(--primary,_var(--color-brand-500))]! focus:[background:var(--card-bg,_var(--color-white))]! focus:[box-shadow:0_0_0_3px_rgba(249,_115,_22,_0.1)]!"
+                  className="[padding:10px_14px] [border-radius:var(--radius-md)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [background:var(--input-bg,_var(--color-ink-50))] [color:var(--text-main,_var(--color-ink-900))] [font-size:var(--text-md)] [transition:all_0.2s] focus:[outline:none] focus:[border-color:var(--primary,_var(--color-brand-500))] focus:[background:var(--card-bg,_var(--color-white))] focus:[box-shadow:0_0_0_3px_rgba(249,_115,_22,_0.1)]"
                   min="2030"
                   max="2070"
                   value={targetForm.target_year}
@@ -401,21 +401,21 @@ const SbtiDashboard = () => {
                 />
               </div>
 
-              <div className="[display:flex]! [flex-direction:column] [gap:6px] [&_label]:[font-size:var(--text-base)]! [&_label]:[font-weight:600]! [&_label]:[color:var(--text-secondary,_var(--color-ink-500))]!">
+              <div className="sbti-form-group">
                 <label>Annual Reduction Rate (%)</label>
                 <input
                   type="number"
                   step="0.1"
                   min="0.1"
                   max="25.0"
-                  className="[padding:10px_14px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [background:var(--input-bg,_var(--color-ink-50))]! [color:var(--text-main,_var(--color-ink-900))]! [font-size:var(--text-md)]! [transition:all_0.2s]! focus:[outline:none]! focus:[border-color:var(--primary,_var(--color-brand-500))]! focus:[background:var(--card-bg,_var(--color-white))]! focus:[box-shadow:0_0_0_3px_rgba(249,_115,_22,_0.1)]!"
+                  className="[padding:10px_14px] [border-radius:var(--radius-md)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [background:var(--input-bg,_var(--color-ink-50))] [color:var(--text-main,_var(--color-ink-900))] [font-size:var(--text-md)] [transition:all_0.2s] focus:[outline:none] focus:[border-color:var(--primary,_var(--color-brand-500))] focus:[background:var(--card-bg,_var(--color-white))] focus:[box-shadow:0_0_0_3px_rgba(249,_115,_22,_0.1)]"
                   value={targetForm.reduction_rate_pct}
                   onChange={(e) => setTargetForm({ ...targetForm, reduction_rate_pct: parseFloat(e.target.value) || 0 })}
                   required
                 />
               </div>
 
-              <div className="[display:flex]! [flex-direction:column] [gap:6px] [&_label]:[font-size:var(--text-base)]! [&_label]:[font-weight:600]! [&_label]:[color:var(--text-secondary,_var(--color-ink-500))]!">
+              <div className="sbti-form-group">
                 <button
                   type="submit"
                   className="btn-primary flex! items-center! justify-center! gap-[8px]! h-[42px]!"
@@ -432,35 +432,35 @@ const SbtiDashboard = () => {
       )}
 
       {/* KPI Cards */}
-      <div className="[display:grid]! [grid-template-columns:repeat(auto-fit,_minmax(240px,_1fr))] [gap:18px]">
+      <div className="[display:grid] [grid-template-columns:repeat(auto-fit,_minmax(240px,_1fr))] [gap:18px]">
         <div className="sbti-kpi-card">
-          <div className="[display:flex]! [justify-content:space-between] [align-items:center] [margin-bottom:12px]!">
-            <span className="[font-size:var(--text-base)]! [font-weight:600]! [color:var(--text-secondary,_var(--color-ink-500))]! [text-transform:uppercase]! [letter-spacing:0.05em]">Base Year Baseline</span>
-            <div className="[width:36px]! [height:36px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [background:rgba(249,_115,_22,_0.1)]! [color:var(--color-link)]! [&.success]:[background:rgba(16,_185,_129,_0.1)]! [&.success]:[color:var(--color-green-700)]! [&&]:[&.warning]:[background:rgba(245,_158,_11,_0.1)]! [&&]:[&.warning]:[color:var(--color-amber-700)]! [&&]:[&&]:[&.info]:[background:rgba(59,_130,_246,_0.1)]! [&&]:[&&]:[&.info]:[color:var(--color-blue-700)]! [&&]:[&&]:[&&]:[&.neutral]:[background:rgba(148,_163,_184,_0.15)]! [&&]:[&&]:[&&]:[&.neutral]:[color:var(--color-ink-500)]!">
+          <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:12px]">
+            <span className="[font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [text-transform:uppercase] [letter-spacing:0.05em]">Base Year Baseline</span>
+            <div className="sbti-kpi-icon">
               <Calendar size={18} />
             </div>
           </div>
-          <div className="[font-size:var(--text-2xl)]! [font-weight:700]! [color:var(--text-main,_var(--color-ink-900))]! [margin-bottom:4px]!">
+          <div className="[font-size:var(--text-2xl)] [font-weight:700] [color:var(--text-main,_var(--color-ink-900))] [margin-bottom:4px]">
             {formatNumber(sbtiData?.base_year_emissions || 0, 0)}
-            <span className="[font-size:var(--text-base)]! [font-weight:500]! [color:var(--text-secondary,_var(--color-ink-500))]! [margin-left:4px]!">tCO2e</span>
+            <span className="[font-size:var(--text-base)] [font-weight:500] [color:var(--text-secondary,_var(--color-ink-500))] [margin-left:4px]">tCO2e</span>
           </div>
-          <div className="[font-size:var(--text-sm)]! [color:var(--text-secondary,_var(--color-ink-500))]! [display:flex]! [align-items:center] [gap:4px]">
+          <div className="[font-size:var(--text-sm)] [color:var(--text-secondary,_var(--color-ink-500))] [display:flex] [align-items:center] [gap:4px]">
             Base Year: {sbtiData?.base_year || "Not Set"}
           </div>
         </div>
 
         <div className="sbti-kpi-card info">
-          <div className="[display:flex]! [justify-content:space-between] [align-items:center] [margin-bottom:12px]!">
-            <span className="[font-size:var(--text-base)]! [font-weight:600]! [color:var(--text-secondary,_var(--color-ink-500))]! [text-transform:uppercase]! [letter-spacing:0.05em]">Current Year Target</span>
-            <div className="[width:36px]! [height:36px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [background:rgba(249,_115,_22,_0.1)]! [color:var(--color-link)]! [&.success]:[background:rgba(16,_185,_129,_0.1)]! [&.success]:[color:var(--color-green-700)]! [&&]:[&.warning]:[background:rgba(245,_158,_11,_0.1)]! [&&]:[&.warning]:[color:var(--color-amber-700)]! [&&]:[&&]:[&.info]:[background:rgba(59,_130,_246,_0.1)]! [&&]:[&&]:[&.info]:[color:var(--color-blue-700)]! [&&]:[&&]:[&&]:[&.neutral]:[background:rgba(148,_163,_184,_0.15)]! [&&]:[&&]:[&&]:[&.neutral]:[color:var(--color-ink-500)]! info">
+          <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:12px]">
+            <span className="[font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [text-transform:uppercase] [letter-spacing:0.05em]">Current Year Target</span>
+            <div className="sbti-kpi-icon info">
               <Target size={18} />
             </div>
           </div>
-          <div className="[font-size:var(--text-2xl)]! [font-weight:700]! [color:var(--text-main,_var(--color-ink-900))]! [margin-bottom:4px]!">
+          <div className="[font-size:var(--text-2xl)] [font-weight:700] [color:var(--text-main,_var(--color-ink-900))] [margin-bottom:4px]">
             {currentTarget == null ? "—" : formatNumber(currentTarget, 0)}
-            <span className="[font-size:var(--text-base)]! [font-weight:500]! [color:var(--text-secondary,_var(--color-ink-500))]! [margin-left:4px]!">tCO2e</span>
+            <span className="[font-size:var(--text-base)] [font-weight:500] [color:var(--text-secondary,_var(--color-ink-500))] [margin-left:4px]">tCO2e</span>
           </div>
-          <div className="[font-size:var(--text-sm)]! [color:var(--text-secondary,_var(--color-ink-500))]! [display:flex]! [align-items:center] [gap:4px]">
+          <div className="[font-size:var(--text-sm)] [color:var(--text-secondary,_var(--color-ink-500))] [display:flex] [align-items:center] [gap:4px]">
             {currentActual != null
               ? `Actual: ${formatNumber(currentActual, 0)} tCO2e (${currentYear})`
               : isYtd
@@ -470,9 +470,9 @@ const SbtiDashboard = () => {
         </div>
 
         <div className={`sbti-kpi-card ${isConfigured && !noData ? (isOnTrack ? "success" : "warning") : "neutral"}`}>
-          <div className="[display:flex]! [justify-content:space-between] [align-items:center] [margin-bottom:12px]!">
-            <span className="[font-size:var(--text-base)]! [font-weight:600]! [color:var(--text-secondary,_var(--color-ink-500))]! [text-transform:uppercase]! [letter-spacing:0.05em]">Pathway Status</span>
-            <div className={`[width:36px]! [height:36px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [background:rgba(249,_115,_22,_0.1)]! [color:var(--color-link)]! [&.success]:[background:rgba(16,_185,_129,_0.1)]! [&.success]:[color:var(--color-green-700)]! [&&]:[&.warning]:[background:rgba(245,_158,_11,_0.1)]! [&&]:[&.warning]:[color:var(--color-amber-700)]! [&&]:[&&]:[&.info]:[background:rgba(59,_130,_246,_0.1)]! [&&]:[&&]:[&.info]:[color:var(--color-blue-700)]! [&&]:[&&]:[&&]:[&.neutral]:[background:rgba(148,_163,_184,_0.15)]! [&&]:[&&]:[&&]:[&.neutral]:[color:var(--color-ink-500)]! ${isConfigured && !noData ? (isOnTrack ? "success" : "warning") : "neutral"}`}>
+          <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:12px]">
+            <span className="[font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [text-transform:uppercase] [letter-spacing:0.05em]">Pathway Status</span>
+            <div className={`sbti-kpi-icon ${isConfigured && !noData ? (isOnTrack ? "success" : "warning") : "neutral"}`}>
               {isConfigured && !noData ? (
                 isOnTrack ? <CheckCircle size={18} /> : <AlertTriangle size={18} />
               ) : (
@@ -480,12 +480,12 @@ const SbtiDashboard = () => {
               )}
             </div>
           </div>
-          <div className="[font-size:var(--text-2xl)]! [font-weight:700]! [color:var(--text-main,_var(--color-ink-900))]! [margin-bottom:4px]!">
+          <div className="[font-size:var(--text-2xl)] [font-weight:700] [color:var(--text-main,_var(--color-ink-900))] [margin-bottom:4px]">
             <span className={`status-pill ${isConfigured && !noData ? (isOnTrack ? "on-track" : "behind") : "not-set"}`}>
               {!isConfigured ? "NOT CONFIGURED" : noData ? "NO DATA" : isOnTrack ? "ON TRACK" : "BEHIND TARGET"}
             </span>
           </div>
-          <div className="[font-size:var(--text-sm)]! [color:var(--text-secondary,_var(--color-ink-500))]! [display:flex]! [align-items:center] [gap:4px]">
+          <div className="[font-size:var(--text-sm)] [color:var(--text-secondary,_var(--color-ink-500))] [display:flex] [align-items:center] [gap:4px]">
             {!isConfigured
               ? "Set corporate baseline & targets to track alignment"
               : noData
@@ -495,17 +495,17 @@ const SbtiDashboard = () => {
         </div>
 
         <div className="sbti-kpi-card success">
-          <div className="[display:flex]! [justify-content:space-between] [align-items:center] [margin-bottom:12px]!">
-            <span className="[font-size:var(--text-base)]! [font-weight:600]! [color:var(--text-secondary,_var(--color-ink-500))]! [text-transform:uppercase]! [letter-spacing:0.05em]">Net-Zero Goal ({sbtiData?.target_year || 2050})</span>
-            <div className="[width:36px]! [height:36px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [background:rgba(249,_115,_22,_0.1)]! [color:var(--color-link)]! [&.success]:[background:rgba(16,_185,_129,_0.1)]! [&.success]:[color:var(--color-green-700)]! [&&]:[&.warning]:[background:rgba(245,_158,_11,_0.1)]! [&&]:[&.warning]:[color:var(--color-amber-700)]! [&&]:[&&]:[&.info]:[background:rgba(59,_130,_246,_0.1)]! [&&]:[&&]:[&.info]:[color:var(--color-blue-700)]! [&&]:[&&]:[&&]:[&.neutral]:[background:rgba(148,_163,_184,_0.15)]! [&&]:[&&]:[&&]:[&.neutral]:[color:var(--color-ink-500)]! success">
+          <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:12px]">
+            <span className="[font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [text-transform:uppercase] [letter-spacing:0.05em]">Net-Zero Goal ({sbtiData?.target_year || 2050})</span>
+            <div className="sbti-kpi-icon success">
               <TrendingDown size={18} />
             </div>
           </div>
-          <div className="[font-size:var(--text-2xl)]! [font-weight:700]! [color:var(--text-main,_var(--color-ink-900))]! [margin-bottom:4px]!">
+          <div className="[font-size:var(--text-2xl)] [font-weight:700] [color:var(--text-main,_var(--color-ink-900))] [margin-bottom:4px]">
             {formatNumber(sbtiData?.target_emissions_final || 0, 0)}
-            <span className="[font-size:var(--text-base)]! [font-weight:500]! [color:var(--text-secondary,_var(--color-ink-500))]! [margin-left:4px]!">tCO2e</span>
+            <span className="[font-size:var(--text-base)] [font-weight:500] [color:var(--text-secondary,_var(--color-ink-500))] [margin-left:4px]">tCO2e</span>
           </div>
-          <div className="[font-size:var(--text-sm)]! [color:var(--text-secondary,_var(--color-ink-500))]! [display:flex]! [align-items:center] [gap:4px]">
+          <div className="[font-size:var(--text-sm)] [color:var(--text-secondary,_var(--color-ink-500))] [display:flex] [align-items:center] [gap:4px]">
             {isConfigured
               ? `Residual Floor: ${formatNumber(sbtiData?.residual_floor || 0, 0)} tCO2e (10% Cap)`
               : "Linear Rate: 4.2% per year"}
@@ -514,12 +514,12 @@ const SbtiDashboard = () => {
       </div>
 
       {/* Main Trajectory Charts Grid */}
-      <div className="[display:grid]! [grid-template-columns:2fr_1fr]! [gap:24px] [@media(max-width:1100px)]:[grid-template-columns:1fr]!">
-        <div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.85))]! [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))]! [&&]:[border-radius:var(--radius-lg)]! [padding:24px]! [box-shadow:var(--shadow-card,_0_4px_12px_rgba(0,_0,_0,_0.05))]! [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease]! hover:[border-color:var(--border-color-hover,_rgba(255,_255,_255,_0.95))]!">
-          <div className="[display:flex]! [justify-content:space-between] [align-items:center] [margin-bottom:18px]!">
+      <div className="[display:grid] [grid-template-columns:2fr_1fr]! [gap:24px] [@media(max-width:1100px)]:[grid-template-columns:1fr]!">
+        <div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.85))] [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [&&]:[border-radius:var(--radius-lg)] [padding:24px] [box-shadow:var(--shadow-card,_0_4px_12px_rgba(0,_0,_0,_0.05))] [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease] hover:[border-color:var(--border-color-hover,_rgba(255,_255,_255,_0.95))]">
+          <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:18px]">
             <div>
-              <h3 className="[font-size:var(--text-lg)]! [font-weight:700]! [color:var(--text-main,_var(--color-ink-900))]! [margin-bottom:2px]!">{sbtiData?.pathway_label || "Decarbonization Pathway"}</h3>
-              <p className="[font-size:var(--text-base)]! [color:var(--text-secondary,_var(--color-ink-500))]!">
+              <h3 className="[font-size:var(--text-lg)] [font-weight:700] [color:var(--text-main,_var(--color-ink-900))] [margin-bottom:2px]">{sbtiData?.pathway_label || "Decarbonization Pathway"}</h3>
+              <p className="[font-size:var(--text-base)] [color:var(--text-secondary,_var(--color-ink-500))]">
                 Linear reduction trajectory from base year {sbtiData?.base_year || 2024} to target year {sbtiData?.target_year || 2050} (Residual emissions capped at 10% per NZ-C1)
               </p>
             </div>
@@ -541,11 +541,11 @@ const SbtiDashboard = () => {
           </div>
         </div>
 
-        <div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.85))]! [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))]! [&&]:[border-radius:var(--radius-lg)]! [padding:24px]! [box-shadow:var(--shadow-card,_0_4px_12px_rgba(0,_0,_0,_0.05))]! [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease]! hover:[border-color:var(--border-color-hover,_rgba(255,_255,_255,_0.95))]!">
-          <div className="[display:flex]! [justify-content:space-between] [align-items:center] [margin-bottom:18px]!">
+        <div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.85))] [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [&&]:[border-radius:var(--radius-lg)] [padding:24px] [box-shadow:var(--shadow-card,_0_4px_12px_rgba(0,_0,_0,_0.05))] [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease] hover:[border-color:var(--border-color-hover,_rgba(255,_255,_255,_0.95))]">
+          <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:18px]">
             <div>
-              <h3 className="[font-size:var(--text-lg)]! [font-weight:700]! [color:var(--text-main,_var(--color-ink-900))]! [margin-bottom:2px]!">Emissions Composition by Scope</h3>
-              <p className="[font-size:var(--text-base)]! [color:var(--text-secondary,_var(--color-ink-500))]!">
+              <h3 className="[font-size:var(--text-lg)] [font-weight:700] [color:var(--text-main,_var(--color-ink-900))] [margin-bottom:2px]">Emissions Composition by Scope</h3>
+              <p className="[font-size:var(--text-base)] [color:var(--text-secondary,_var(--color-ink-500))]">
                 Verified Scope 1, Scope 2, and Scope 3 breakdown
               </p>
             </div>
@@ -569,17 +569,17 @@ const SbtiDashboard = () => {
       </div>
 
       {/* Milestone & Projection Table */}
-      <div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.85))]! [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))]! [&&]:[border-radius:var(--radius-lg)]! [padding:24px]! [box-shadow:var(--shadow-card,_0_4px_12px_rgba(0,_0,_0,_0.05))]! [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease]! hover:[border-color:var(--border-color-hover,_rgba(255,_255,_255,_0.95))]!">
-        <div className="[display:flex]! [justify-content:space-between] [align-items:center] [margin-bottom:18px]!">
+      <div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.85))] [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [&&]:[border-radius:var(--radius-lg)] [padding:24px] [box-shadow:var(--shadow-card,_0_4px_12px_rgba(0,_0,_0,_0.05))] [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease] hover:[border-color:var(--border-color-hover,_rgba(255,_255,_255,_0.95))]">
+        <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:18px]">
           <div>
-            <h3 className="[font-size:var(--text-lg)]! [font-weight:700]! [color:var(--text-main,_var(--color-ink-900))]! [margin-bottom:2px]!">Annual Pathway Milestones & Verification Data</h3>
-            <p className="[font-size:var(--text-base)]! [color:var(--text-secondary,_var(--color-ink-500))]!">
+            <h3 className="[font-size:var(--text-lg)] [font-weight:700] [color:var(--text-main,_var(--color-ink-900))] [margin-bottom:2px]">Annual Pathway Milestones & Verification Data</h3>
+            <p className="[font-size:var(--text-base)] [color:var(--text-secondary,_var(--color-ink-500))]">
               Yearly comparison of targets, actual emissions, and progress towards net-zero alignment ({scopeMode === "s1_s2" ? "Scope 1+2 Operational View" : "All Scopes View"})
             </p>
           </div>
         </div>
 
-        <div className="[overflow-x:auto]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [background:var(--bg-card,_rgba(255,_255,_255,_0.6))]! [backdrop-filter:blur(8px)]" tabIndex={0} role="region" aria-label="Pathway table">
+        <div className="[overflow-x:auto] [border-radius:var(--radius-md)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [background:var(--bg-card,_rgba(255,_255,_255,_0.6))] [backdrop-filter:blur(8px)]" tabIndex={0} role="region" aria-label="Pathway table">
           <table className="sbti-table">
             <thead>
               <tr>

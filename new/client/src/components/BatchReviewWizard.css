@@ -57,19 +57,40 @@
 
 /* Wizard Toolbar (Filters + Global Actions) */
 
-/* Action Buttons */
-.btn-wizard-action {
+.segmented-item-btn {
+  border: none;
+  background: transparent;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--text-secondary, var(--color-ink-500));
+  cursor: pointer;
+  transition: all 0.15s ease;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 14px;
-  border-radius: var(--radius-md);
-  font-size: var(--text-sm);
-  font-weight: 600;
-  cursor: pointer;
-  border: 1px solid transparent;
-  transition: all 0.15s ease;
 }
+
+.segmented-item-btn:hover {
+  color: var(--text-primary, var(--color-ink-900));
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.segmented-item-btn.active {
+  background: var(--color-white);
+  color: var(--color-link);
+  font-weight: 600;
+  box-shadow: var(--shadow-xs);
+}
+
+.segmented-item-btn.weird-active {
+  background: #fef3c7;
+  color: var(--color-amber-700);
+  font-weight: 700;
+}
+
+/* Action Buttons */
 
 /* Floating Batch Bar inside Wizard */
 

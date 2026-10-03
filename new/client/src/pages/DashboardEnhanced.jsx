@@ -749,12 +749,12 @@ const DashboardEnhanced = () => {
         />
 
         {goal ? (
-          <div className="[display:flex]! [align-items:center] [gap:8px] [background:rgba(255,_255,_255,_0.8)]! [padding:4px_10px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [font-size:var(--text-sm)]!">
+          <div className="[display:flex] [align-items:center] [gap:8px] [background:rgba(255,_255,_255,_0.8)] [padding:4px_10px] [border-radius:var(--radius-md)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [font-size:var(--text-sm)]">
             <span className="text-[length:0.8rem]! text-[color:var(--text-secondary)]!">
               Target {goal.year}: <strong className="text-[color:var(--text-primary)]!">{Number(goal.target_amount).toLocaleString()} tCO₂e</strong>
             </span>
             <button
-              className="btn-target-action [padding:6px_14px]! [font-size:var(--text-sm)]! [font-weight:600]! [border-radius:var(--radius-md)]! [background:rgba(255,_255,_255,_0.9)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [color:var(--text-primary)]! [cursor:pointer] [transition:all_0.2s_ease]! [white-space:nowrap] hover:[border-color:var(--accent-color,_var(--color-brand-500))]! hover:[color:var(--color-link)]!"
+              className="btn-target-action [padding:6px_14px] [font-size:var(--text-sm)] [font-weight:600] [border-radius:var(--radius-md)] [background:rgba(255,_255,_255,_0.9)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [color:var(--text-primary)] [cursor:pointer] [transition:all_0.2s_ease] [white-space:nowrap] hover:[border-color:var(--accent-color,_var(--color-brand-500))] hover:[color:var(--color-link)]"
               onClick={() => navigate("/manage-data", { state: { tab: "goals" } })}
               title="Manage emission goals and base years in Manage Data"
             >
@@ -763,7 +763,7 @@ const DashboardEnhanced = () => {
           </div>
         ) : (
           <button
-            className="btn-target-action [padding:6px_14px]! [font-size:var(--text-sm)]! [font-weight:600]! [border-radius:var(--radius-md)]! [background:rgba(255,_255,_255,_0.9)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [color:var(--text-primary)]! [cursor:pointer] [transition:all_0.2s_ease]! [white-space:nowrap] hover:[border-color:var(--accent-color,_var(--color-brand-500))]! hover:[color:var(--color-link)]!"
+            className="btn-target-action [padding:6px_14px] [font-size:var(--text-sm)] [font-weight:600] [border-radius:var(--radius-md)] [background:rgba(255,_255,_255,_0.9)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [color:var(--text-primary)] [cursor:pointer] [transition:all_0.2s_ease] [white-space:nowrap] hover:[border-color:var(--accent-color,_var(--color-brand-500))] hover:[color:var(--color-link)]"
             onClick={() => navigate("/manage-data", { state: { tab: "goals" } })}
             title="Set emission targets in Manage Data"
           >
@@ -840,42 +840,42 @@ const DashboardEnhanced = () => {
 
   return (
     <div
-      className="[min-height:100vh] [background:transparent]! [padding:24px_32px_48px]! [position:relative] [overflow-x:hidden]! [color:var(--text-primary,_var(--color-ink-900))]! [@media_print]:[padding:20px]! [@media_print]:[max-width:100%]! [@media(max-width:768px)]:[padding:14px_12px_36px]!"
+      className="[min-height:100vh] [background:transparent] [padding:24px_32px_48px]! [position:relative] [overflow-x:hidden] [color:var(--text-primary,_var(--color-ink-900))] [@media_print]:[padding:20px]! [@media_print]:[max-width:100%]! [@media(max-width:768px)]:[padding:14px_12px_36px]!"
       style={{
         opacity: isUpdating ? 0.8 : 1,
         transition: "opacity 0.15s ease",
       }}
     >
-      <div className="dashboard-grid [display:flex]! [flex-direction:column] [gap:24px] [max-width:1600px]! [margin:0_auto]! [&>*]:[opacity:0] [&>*]:[animation:dashboardFadeIn_0.5s_cubic-bezier(0.16,_1,_0.3,_1)_forwards] [&&]:[&>*:nth-child(1)]:[animation-delay:0.05s] [&&]:[&&]:[&>*:nth-child(2)]:[animation-delay:0.12s] [&&]:[&&]:[&&]:[&>*:nth-child(3)]:[animation-delay:0.18s] [&&]:[&&]:[&&]:[&&]:[&>*:nth-child(4)]:[animation-delay:0.24s] [&&]:[&&]:[&&]:[&&]:[&&]:[&>*:nth-child(5)]:[animation-delay:0.30s]">
-        <div className="[display:flex]! [justify-content:space-between] [align-items:center] [margin-bottom:20px]!">
+      <div className="dashboard-grid [display:flex] [flex-direction:column] [gap:24px] [max-width:1600px] [margin:0_auto] [&>*]:[opacity:0] [&>*]:[animation:dashboardFadeIn_0.5s_cubic-bezier(0.16,_1,_0.3,_1)_forwards] [&&]:[&>*:nth-child(1)]:[animation-delay:0.05s] [&&]:[&&]:[&>*:nth-child(2)]:[animation-delay:0.12s] [&&]:[&&]:[&&]:[&>*:nth-child(3)]:[animation-delay:0.18s] [&&]:[&&]:[&&]:[&&]:[&>*:nth-child(4)]:[animation-delay:0.24s] [&&]:[&&]:[&&]:[&&]:[&&]:[&>*:nth-child(5)]:[animation-delay:0.30s]">
+        <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:20px]">
           <h1 className="grid-title">GHG Emissions Dashboard</h1>
-          <div className="live-badge [background:rgba(255,_255,_255,_0.8)]! [backdrop-filter:blur(8px)] [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [padding:6px_14px]! [&&]:[border-radius:999px]! [display:flex]! [align-items:center] [gap:8px] [font-size:var(--text-sm)]! [font-weight:600]! [color:var(--text-secondary,_var(--color-ink-500))]! [box-shadow:var(--shadow-xs)]!">
+          <div className="live-badge [background:rgba(255,_255,_255,_0.8)] [backdrop-filter:blur(8px)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [padding:6px_14px] [&&]:[border-radius:999px] [display:flex] [align-items:center] [gap:8px] [font-size:var(--text-sm)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [box-shadow:var(--shadow-xs)]">
             <div className={`pulse-dot ${isUpdating ? "updating" : ""}`}></div>
             {isUpdating ? "Syncing filters..." : `Live Content • Updated ${lastUpdated}`}
           </div>
         </div>
 
         {pendingCount > 0 && (
-          <div className={`pending-banner-card ${includePending ? "active-preview" : ""}`}>
-            <div className="[display:flex]! [align-items:center] [gap:14px] [flex:1] [min-width:280px]">
-              <div className="pending-banner-icon">
+          <div className={`pending-banner-card [display:flex] [justify-content:space-between] [align-items:center]! [flex-wrap:wrap]! [gap:16px] [padding:16px_22px]! [margin-bottom:24px] [background:rgba(255,_255,_255,_0.88)] [backdrop-filter:blur(12px)] [-webkit-backdrop-filter:blur(12px)] [border:1px_solid_rgba(245,_158,_11,_0.28)] [&&]:[border-radius:var(--radius-lg)] [box-shadow:0_4px_20px_-2px_rgba(245,_158,_11,_0.08),_0_2px_6px_-1px_rgba(15,_23,_42,_0.02)] [position:relative] [overflow:hidden] [transition:all_0.25s_cubic-bezier(0.16,_1,_0.3,_1)] before:[content:''] before:[position:absolute] before:[top:0] before:[left:0] before:[bottom:0] before:[width:4px] before:[background:linear-gradient(180deg,_var(--color-amber-500)_0%,_var(--color-brand-500)_100%)] before:[border-radius:var(--radius-sm)_0_0_var(--radius-sm)] [&.active-preview]:[border-color:rgba(255,_102,_0,_0.4)] [&.active-preview]:[background:linear-gradient(135deg,_rgba(255,_255,_255,_0.95)_0%,_rgba(255,_247,_237,_0.9)_100%)] [&.active-preview]:[box-shadow:0_6px_24px_-2px_rgba(255,_102,_0,_0.12),_0_2px_8px_-1px_rgba(15,_23,_42,_0.04)] [&:hover_.pending-banner-icon]:[transform:scale(1.05)] [@media(max-width:640px)]:[flex-direction:column]! [@media(max-width:640px)]:[align-items:stretch]! [@media(max-width:640px)]:[padding:14px_16px]! ${includePending ? "active-preview" : ""}`}>
+            <div className="[display:flex] [align-items:center] [gap:14px] [flex:1] [min-width:280px]">
+              <div className="pending-banner-icon [width:42px] [height:42px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [background:linear-gradient(135deg,_rgba(245,_158,_11,_0.15)_0%,_rgba(255,_102,_0,_0.12)_100%)] [border:1px_solid_rgba(245,_158,_11,_0.25)] [color:var(--color-amber-700)] [flex-shrink:0] [box-shadow:0_2px_8px_rgba(245,_158,_11,_0.1)] [transition:transform_0.2s_ease]">
                 <Clock size={20} />
               </div>
-              <div className="[display:flex]! [flex-direction:column] [gap:4px]">
-                <div className="[display:flex]! [align-items:center] [gap:10px] [flex-wrap:wrap]">
-                  <h3 className="[margin:0]! [font-size:var(--text-md)]! [font-weight:700]! [color:var(--text-primary,_var(--color-ink-900))]! [letter-spacing:-0.01em]">
+              <div className="[display:flex] [flex-direction:column] [gap:4px]">
+                <div className="[display:flex] [align-items:center] [gap:10px] [flex-wrap:wrap]">
+                  <h3 className="[margin:0] [font-size:var(--text-md)] [font-weight:700] [color:var(--text-primary,_var(--color-ink-900))] [letter-spacing:-0.01em]">
                     {includePending
                       ? "Previewing Pending & Verified Emissions"
                       : "Pending Records Awaiting Review"}
                   </h3>
-                  <span className={`[display:inline-flex]! [align-items:center] [gap:5px] [padding:2px_9px]! [border-radius:999px]! [font-size:var(--text-xs)]! [font-weight:700]! [letter-spacing:0.03em] [text-transform:uppercase]! [background:rgba(245,_158,_11,_0.12)]! [color:var(--color-amber-700)]! [border:1px_solid_rgba(245,_158,_11,_0.25)]! [&.active-preview-badge]:[background:rgba(255,_102,_0,_0.12)]! [&.active-preview-badge]:[color:var(--color-brand-700)]! [&.active-preview-badge]:[border-color:rgba(255,_102,_0,_0.28)]! ${includePending ? "active-preview-badge" : ""}`}>
+                  <span className={`[display:inline-flex] [align-items:center] [gap:5px] [padding:2px_9px] [border-radius:999px] [font-size:var(--text-xs)] [font-weight:700] [letter-spacing:0.03em] [text-transform:uppercase] [background:rgba(245,_158,_11,_0.12)] [color:var(--color-amber-700)]! [border:1px_solid_rgba(245,_158,_11,_0.25)] [&.active-preview-badge]:[background:rgba(255,_102,_0,_0.12)] [&.active-preview-badge]:[color:var(--color-brand-700)]! [&.active-preview-badge]:[border-color:rgba(255,_102,_0,_0.28)] ${includePending ? "active-preview-badge" : ""}`}>
                     {includePending ? "Live Preview Active" : "Pending Approval"}
                   </span>
                 </div>
                 <p className="pending-banner-desc">
                   There are <strong>{pendingCount.toLocaleString()}</strong> emission records
                   {pendingCo2e > 0 && (
-                    <span className="[display:inline-block]! [font-weight:600]! [color:var(--color-amber-700)]! [background:rgba(245,_158,_11,_0.08)]! [padding:1px_6px]! [border-radius:var(--radius-sm)]! [margin:0_4px]! [font-variant-numeric:tabular-nums]!">
+                    <span className="[display:inline-block] [font-weight:600] [color:var(--color-amber-700)] [background:rgba(245,_158,_11,_0.08)] [padding:1px_6px] [border-radius:var(--radius-sm)] [margin:0_4px] [font-variant-numeric:tabular-nums]">
                       {pendingCo2e.toLocaleString()} tCO₂e
                     </span>
                   )}
@@ -887,30 +887,30 @@ const DashboardEnhanced = () => {
               </div>
             </div>
 
-            <div className="[display:flex]! [align-items:center] [gap:12px] [flex-wrap:wrap] [@media(max-width:640px)]:[justify-content:space-between] [@media(max-width:640px)]:[width:100%]! [@media(max-width:640px)]:[margin-top:4px]! [@media(max-width:640px)]:[padding-top:10px]! [@media(max-width:640px)]:[border-top:1px_solid_rgba(226,_232,_240,_0.8)]!">
+            <div className="[display:flex] [align-items:center] [gap:12px] [flex-wrap:wrap] [@media(max-width:640px)]:[justify-content:space-between] [@media(max-width:640px)]:[width:100%] [@media(max-width:640px)]:[margin-top:4px] [@media(max-width:640px)]:[padding-top:10px] [@media(max-width:640px)]:[border-top:1px_solid_rgba(226,_232,_240,_0.8)]">
               <label
-                className="[display:flex]! [align-items:center] [gap:10px] [padding:6px_14px]! [border-radius:var(--radius-md)]! [background:rgba(241,_245,_249,_0.8)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [cursor:pointer] [user-select:none] [transition:all_0.2s_ease]! hover:[background:rgba(255,_247,_237,_0.9)]! hover:[border-color:rgba(255,_102,_0,_0.3)]! [&:hover_.pending-toggle-label]:[color:var(--text-primary,_var(--color-ink-900))]!"
+                className="[display:flex] [align-items:center] [gap:10px] [padding:6px_14px] [border-radius:var(--radius-md)] [background:rgba(241,_245,_249,_0.8)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [cursor:pointer] [user-select:none] [transition:all_0.2s_ease] hover:[background:rgba(255,_247,_237,_0.9)] hover:[border-color:rgba(255,_102,_0,_0.3)] [&:hover_.pending-toggle-label]:[color:var(--text-primary,_var(--color-ink-900))]!"
                 title="Toggle pending emissions preview"
               >
-                <span className="pending-toggle-label [display:flex]! [align-items:center] [gap:6px] [font-size:var(--text-sm)]! [font-weight:600]! [color:var(--text-secondary,_var(--color-ink-600))]! [transition:color_0.2s_ease]!">
+                <span className="pending-toggle-label [display:flex] [align-items:center] [gap:6px] [font-size:var(--text-sm)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-600))] [transition:color_0.2s_ease]">
                   {includePending ? <Eye size={15} /> : <EyeOff size={15} />}
                   <span>Preview Pending Data</span>
                 </span>
-                <div className={`pending-switch [position:relative] [width:36px]! [height:20px]! [background-color:var(--color-ink-300)]! [border-radius:999px]! [transition:background-color_0.25s_cubic-bezier(0.4,_0,_0.2,_1)]! [display:inline-block]! [flex-shrink:0] [&.active]:[background:linear-gradient(135deg,_var(--color-brand-500)_0%,_var(--color-brand-600)_100%)]! [&.active]:[box-shadow:0_2px_8px_rgba(255,_102,_0,_0.3)] [&.active_.pending-switch-slider]:[transform:translateX(16px)] ${includePending ? "active" : ""}`}>
+                <div className={`pending-switch ${includePending ? "active" : ""}`}>
                   <input
                     type="checkbox"
                     checked={includePending}
                     onChange={(e) => setIncludePending(e.target.checked)}
-                    className="[opacity:0] [width:0]! [height:0]! [position:absolute]"
+                    className="[opacity:0]! [width:0] [height:0] [position:absolute]"
                   />
-                  <span className="pending-switch-slider [position:absolute] [top:2px] [left:2px] [width:16px]! [height:16px]! [background-color:var(--color-white)]! [border-radius:50%]! [box-shadow:var(--shadow-xs)]! [transition:transform_0.25s_cubic-bezier(0.4,_0,_0.2,_1)]!" />
+                  <span className="pending-switch-slider [position:absolute] [top:2px] [left:2px] [width:16px] [height:16px] [background-color:var(--color-white)] [border-radius:50%] [box-shadow:var(--shadow-xs)] [transition:transform_0.25s_cubic-bezier(0.4,_0,_0.2,_1)]" />
                 </div>
               </label>
 
               {['admin', 'superuser'].includes(user?.role) && (
                 <button
                   type="button"
-                  className="[display:inline-flex]! [align-items:center] [gap:7px] [padding:8px_16px]! [font-size:var(--text-sm)]! [font-weight:600]! [border-radius:var(--radius-md)]! [background:linear-gradient(135deg,_var(--color-amber-700)_0%,_var(--color-amber-700)_100%)]! [color:var(--color-white)]! [border:none]! [cursor:pointer] [box-shadow:0_2px_10px_rgba(217,_119,_6,_0.25)]! [transition:all_0.2s_cubic-bezier(0.16,_1,_0.3,_1)]! [white-space:nowrap] hover:[transform:translateY(-1px)] hover:[box-shadow:0_4px_14px_rgba(217,_119,_6,_0.35)]! hover:[filter:brightness(1.05)] active:[transform:translateY(0)] [&_svg]:[transition:transform_0.2s_ease]! [&:hover_svg]:[transform:translateX(2px)]"
+                  className="[display:inline-flex] [align-items:center] [gap:7px] [padding:8px_16px] [font-size:var(--text-sm)] [font-weight:600] [border-radius:var(--radius-md)] [background:linear-gradient(135deg,_var(--color-amber-700)_0%,_var(--color-amber-700)_100%)] [color:var(--color-white)] [border:none] [cursor:pointer] [box-shadow:0_2px_10px_rgba(217,_119,_6,_0.25)] [transition:all_0.2s_cubic-bezier(0.16,_1,_0.3,_1)]! [white-space:nowrap] hover:[transform:translateY(-1px)] hover:[box-shadow:0_4px_14px_rgba(217,_119,_6,_0.35)] hover:[filter:brightness(1.05)] active:[transform:translateY(0)] [&_svg]:[transition:transform_0.2s_ease]! [&:hover_svg]:[transform:translateX(2px)]"
                   onClick={() => navigate('/manage-data', { state: { tab: 'pending' } })}
                   title="Go to Manage Data to review pending records"
                 >
@@ -947,10 +947,10 @@ const DashboardEnhanced = () => {
         )}
 
         {/* --- Primary Analytics Grid: Trend Line (2fr) + Donuts (1fr) --- */}
-        <div className="charts-section [display:grid]! [grid-template-columns:2fr_1fr]! [gap:24px]! [@media(max-width:1024px)]:[grid-template-columns:1fr]! [@media(max-width:1200px)]:[grid-template-columns:1fr]! [@media(max-width:1200px)]:[gap:20px]!">
+        <div className="charts-section [display:grid] [grid-template-columns:2fr_1fr]! [gap:24px]! [@media(max-width:1024px)]:[grid-template-columns:1fr]! [@media(max-width:1200px)]:[grid-template-columns:1fr]! [@media(max-width:1200px)]:[gap:20px]!">
           {/* Trend Chart */}
-          <div className="card [border-radius:var(--radius-lg)]! [padding:24px]! [display:flex]! [flex-direction:column] [min-width:0] [background:var(--bg-card)]! [backdrop-filter:blur(14px)]! [border:1px_solid_var(--border-color)]! [box-shadow:var(--shadow-card)]! [transition:transform_0.22s_ease,_box-shadow_0.22s_ease,_border-color_0.22s_ease]! hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated)]! hover:[border-color:rgba(255,_255,_255,_0.95)]! [@media_print]:[box-shadow:none]! [@media_print]:[border:1px_solid_var(--color-ink-300)]! [@media_print]:[background:var(--color-white)]! [@media_print]:[page-break-inside:avoid]! [@media_print]:[margin-bottom:24px]! [@media(max-width:768px)]:[padding:16px]! [@media(max-width:768px)]:[border-radius:var(--radius-lg)]! glass-panel">
-            <div className="[display:flex]! [justify-content:space-between] [align-items:center]! [margin-bottom:24px]! [@media(max-width:768px)]:[flex-direction:column] [@media(max-width:768px)]:[align-items:flex-start]! [@media(max-width:768px)]:[gap:12px]">
+          <div className="card trend-card-enhanced glass-panel">
+            <div className="[display:flex] [justify-content:space-between] [align-items:center]! [margin-bottom:24px] [@media(max-width:768px)]:[flex-direction:column] [@media(max-width:768px)]:[align-items:flex-start]! [@media(max-width:768px)]:[gap:12px]">
               <div>
                 <h3 className="card-title">Emissions Trend & Projection</h3>
                 <p className="m-[0px]! text-[color:var(--text-secondary)]! text-[length:0.85rem]!">
@@ -959,7 +959,7 @@ const DashboardEnhanced = () => {
               </div>
               <div className="[@media_print]:[display:none]! [display:flex]! [align-items:center] [gap:12px]">
                 <button
-                  className={`compare-toggle-btn [@media_print]:[display:none]! [display:flex]! [align-items:center] [gap:6px] [background:var(--color-white)]! [border:1px_solid_var(--color-ink-200)]! [padding:6px_14px]! [&&]:[border-radius:var(--radius-md)]! [font-size:var(--text-sm)]! [font-weight:600]! [color:var(--color-ink-500)]! [cursor:pointer] [transition:all_0.2s]! hover:[background:var(--color-ink-50)]! hover:[border-color:var(--color-ink-300)]! [&.active]:[background:var(--color-brand-50)]! [&.active]:[color:var(--color-link)]! [&.active]:[border-color:var(--color-brand-500)]! [&_svg]:[opacity:0.7] ${isCompareMode ? "active" : ""}`}
+                  className={`compare-toggle-btn ${isCompareMode ? "active" : ""}`}
                   onClick={() => setIsCompareMode(!isCompareMode)}
                 >
                   <svg
@@ -1024,10 +1024,10 @@ const DashboardEnhanced = () => {
           </div>
 
           {/* Donut Charts Column (1fr) */}
-          <div className="[display:flex]! [flex-direction:column] [gap:24px] [min-width:0]">
-            <div className="card [border-radius:var(--radius-lg)]! [padding:24px]! [flex:1] [background:var(--bg-card)]! [backdrop-filter:blur(14px)]! [border:1px_solid_var(--border-color)]! [box-shadow:var(--shadow-card)]! [transition:transform_0.22s_ease,_box-shadow_0.22s_ease,_border-color_0.22s_ease]! hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated)]! hover:[border-color:rgba(255,_255,_255,_0.95)]! [@media_print]:[box-shadow:none]! [@media_print]:[border:1px_solid_var(--color-ink-300)]! [@media_print]:[background:var(--color-white)]! [@media_print]:[page-break-inside:avoid]! [@media_print]:[margin-bottom:24px]! glass-panel">
-              <div className="[display:flex]! [justify-content:space-between] [align-items:center] [margin-bottom:12px]!">
-                <h3 className="[font-size:var(--text-md)]! [font-weight:700]! [color:var(--color-ink-800)]! [margin:0]! activity">Emissions by Activity</h3>
+          <div className="[display:flex] [flex-direction:column] [gap:24px] [min-width:0]">
+            <div className="card donut-card-enhanced glass-panel">
+              <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:12px]">
+                <h3 className="[font-size:var(--text-md)] [font-weight:700] [color:var(--color-ink-800)] [margin:0] activity">Emissions by Activity</h3>
               </div>
               <div
                 className="chart-container h-[170px]! w-full! min-w-0! relative!"
@@ -1041,9 +1041,9 @@ const DashboardEnhanced = () => {
                 />
               </div>
             </div>
-            <div className="card [border-radius:var(--radius-lg)]! [padding:24px]! [flex:1] [background:var(--bg-card)]! [backdrop-filter:blur(14px)]! [border:1px_solid_var(--border-color)]! [box-shadow:var(--shadow-card)]! [transition:transform_0.22s_ease,_box-shadow_0.22s_ease,_border-color_0.22s_ease]! hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated)]! hover:[border-color:rgba(255,_255,_255,_0.95)]! [@media_print]:[box-shadow:none]! [@media_print]:[border:1px_solid_var(--color-ink-300)]! [@media_print]:[background:var(--color-white)]! [@media_print]:[page-break-inside:avoid]! [@media_print]:[margin-bottom:24px]! glass-panel">
-              <div className="[display:flex]! [justify-content:space-between] [align-items:center] [margin-bottom:12px]!">
-                <h3 className="[font-size:var(--text-md)]! [font-weight:700]! [color:var(--color-ink-800)]! [margin:0]! source">Emissions by Source</h3>
+            <div className="card donut-card-enhanced glass-panel">
+              <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:12px]">
+                <h3 className="[font-size:var(--text-md)] [font-weight:700] [color:var(--color-ink-800)] [margin:0] source">Emissions by Source</h3>
               </div>
               <div
                 className="chart-container h-[170px]! w-full! min-w-0! relative!"
@@ -1063,7 +1063,7 @@ const DashboardEnhanced = () => {
         {/* SBTi Trajectory Pathway - Full Width Banner */}
         {sbtiData && sbtiData.trajectory && sbtiData.trajectory.length > 0 && (
           <div className="card full-width-card glass-panel p-[24px]! rounded-[20px]!">
-            <div className="[display:flex]! [justify-content:space-between] [align-items:center]! [@media(max-width:768px)]:[flex-direction:column] [@media(max-width:768px)]:[align-items:flex-start]! [@media(max-width:768px)]:[gap:12px] mb-[16px]!">
+            <div className="[display:flex] [justify-content:space-between] [align-items:center]! [@media(max-width:768px)]:[flex-direction:column] [@media(max-width:768px)]:[align-items:flex-start]! [@media(max-width:768px)]:[gap:12px] mb-[16px]!">
               <div>
                 <h3 className="card-subtitle text-[length:1.15rem]! font-bold!">
                   {sbtiData.pathway_label || "Decarbonization Trajectory"}
@@ -1127,10 +1127,10 @@ const DashboardEnhanced = () => {
         {/* Categorical Breakdown Cards */}
 
         <div
-          className={`card [padding:24px]! [background:var(--bg-card)]! [backdrop-filter:blur(14px)]! [border:1px_solid_var(--border-color)]! [&&]:[border-radius:var(--radius-lg)]! [box-shadow:var(--shadow-card)]! [@media_print]:[box-shadow:none]! [@media_print]:[border:1px_solid_var(--color-ink-300)]! [@media_print]:[background:var(--color-white)]! [@media_print]:[page-break-inside:avoid]! [@media_print]:[margin-bottom:24px]! glass-panel ${categoricalCollapsed ? "collapsed-card" : ""}`}
+          className={`card categorical-card glass-panel ${categoricalCollapsed ? "collapsed-card" : ""}`}
         >
           <div role="button" tabIndex={0} onKeyDown={activateOnKey}
-            className="[display:flex]! [justify-content:space-between] [align-items:center]! [@media(max-width:768px)]:[flex-direction:column] [@media(max-width:768px)]:[align-items:flex-start]! [@media(max-width:768px)]:[gap:12px] clickable-card-header [transition:opacity_0.2s_ease]! hover:[opacity:0.85]"
+            className="[display:flex] [justify-content:space-between] [align-items:center]! [@media(max-width:768px)]:[flex-direction:column] [@media(max-width:768px)]:[align-items:flex-start]! [@media(max-width:768px)]:[gap:12px] clickable-card-header [transition:opacity_0.2s_ease] hover:[opacity:0.85]!"
             onClick={() => setCategoricalCollapsed(!categoricalCollapsed)}
             style={{
               cursor: "pointer",
@@ -1140,7 +1140,7 @@ const DashboardEnhanced = () => {
           >
             <div className="flex! items-center! gap-[12px]!">
               <h3 className="card-subtitle">Categorical Emissions Overview</h3>
-              <div className="[display:flex]! [align-items:center] [gap:6px] [font-size:var(--text-sm)]! [font-weight:600]! [color:var(--text-secondary,_var(--color-ink-500))]! [background:var(--bg-hover,_var(--color-ink-100))]! [padding:4px_12px]! [border-radius:999px]!">
+              <div className="[display:flex] [align-items:center] [gap:6px] [font-size:var(--text-sm)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [background:var(--bg-hover,_var(--color-ink-100))] [padding:4px_12px] [border-radius:999px]">
                 <Hexagon size="14" strokeWidth="2" aria-hidden="true" />
                 Activity → Division → Region
               </div>
@@ -1157,27 +1157,27 @@ const DashboardEnhanced = () => {
             </div>
           </div>
           <div
-            className={`[@media_print]:[&.collapsed]:[display:block]! [@media_print]:[&.collapsed]:[max-height:none]! [@media_print]:[&.collapsed]:[opacity:1]! [max-height:2500px]! [opacity:1]! [overflow:hidden]! [transition:max-height_0.4s_cubic-bezier(0.4,_0,_0.2,_1),_opacity_0.3s_ease,_margin-top_0.3s_ease]! [&&]:[&.collapsed]:[max-height:0]! [&&]:[&.collapsed]:[opacity:0]! [&.collapsed]:[margin-top:0] [&.collapsed]:[pointer-events:none] ${categoricalCollapsed ? "collapsed" : ""}`}
+            className={`[@media_print]:[&.collapsed]:[display:block]! [@media_print]:[&.collapsed]:[max-height:none]! [@media_print]:[&.collapsed]:[opacity:1]! [max-height:2500px]! [opacity:1]! [overflow:hidden] [transition:max-height_0.4s_cubic-bezier(0.4,_0,_0.2,_1),_opacity_0.3s_ease,_margin-top_0.3s_ease] [&&]:[&.collapsed]:[max-height:0]! [&&]:[&.collapsed]:[opacity:0]! [&.collapsed]:[margin-top:0] [&.collapsed]:[pointer-events:none] ${categoricalCollapsed ? "collapsed" : ""}`}
           >
             <div className="categorical-hierarchy-grid">
               {getActivityOptions()
                 .filter((o) => o.value !== "all")
                 .map((opt) => (
-                  <div key={opt.value} className="[display:flex]! [flex-direction:column] [gap:16px]">
-                    <div className="[font-size:var(--text-base)]! [font-weight:700]! [color:var(--text-primary,_var(--color-ink-900))]! [padding-bottom:6px]! [border-bottom:2px_solid_var(--accent-color,_var(--color-brand-500))]! [width:fit-content]! [padding-right:12px]!">{opt.label}</div>
+                  <div key={opt.value} className="[display:flex] [flex-direction:column] [gap:16px]">
+                    <div className="[font-size:var(--text-base)] [font-weight:700] [color:var(--text-primary,_var(--color-ink-900))] [padding-bottom:6px] [border-bottom:2px_solid_var(--accent-color,_var(--color-brand-500))] [width:fit-content] [padding-right:12px]">{opt.label}</div>
                     {getHierarchicalData[opt.value] ? (
                       Object.entries(
                         getHierarchicalData[opt.value].divisions,
                       ).map(([div, divData]) => (
-                        <div key={div} className="[background:rgba(255,_255,_255,_0.6)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-lg)]! [padding:14px]!">
-                          <div className="[font-size:var(--text-sm)]! [font-weight:700]! [color:var(--text-secondary,_var(--color-ink-500))]! [text-transform:uppercase]! [margin-bottom:12px]! [letter-spacing:0.05em]">{div}</div>
-                          <div className="[display:flex]! [flex-direction:column] [gap:8px]">
+                        <div key={div} className="[background:rgba(255,_255,_255,_0.6)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [&&]:[border-radius:var(--radius-lg)] [padding:14px]">
+                          <div className="[font-size:var(--text-sm)] [font-weight:700] [color:var(--text-secondary,_var(--color-ink-500))] [text-transform:uppercase] [margin-bottom:12px] [letter-spacing:0.05em]">{div}</div>
+                          <div className="[display:flex] [flex-direction:column] [gap:8px]">
                             {divData.regions.map((reg, ridx) => (
-                              <div key={ridx} className="[background:rgba(255,_255,_255,_0.9)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-md)]! [padding:10px_12px]! [transition:transform_0.2s_ease,_border-color_0.2s_ease,_box-shadow_0.2s_ease]! [box-shadow:var(--shadow-xs)]! hover:[border-color:var(--accent-color,_var(--color-brand-500))]! hover:[transform:translateX(4px)] hover:[box-shadow:0_4px_12px_rgba(255,_102,_0,_0.1)]!">
-                                <div className="[font-size:var(--text-sm)]! [font-weight:600]! [color:var(--text-primary,_var(--color-ink-900))]! [margin-bottom:4px]!">
+                              <div key={ridx} className="[background:rgba(255,_255,_255,_0.9)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [&&]:[border-radius:var(--radius-md)] [padding:10px_12px] [transition:transform_0.2s_ease,_border-color_0.2s_ease,_box-shadow_0.2s_ease] [box-shadow:var(--shadow-xs)] hover:[border-color:var(--accent-color,_var(--color-brand-500))] hover:[transform:translateX(4px)] hover:[box-shadow:0_4px_12px_rgba(255,_102,_0,_0.1)]">
+                                <div className="[font-size:var(--text-sm)] [font-weight:600] [color:var(--text-primary,_var(--color-ink-900))] [margin-bottom:4px]">
                                   {reg.region}{" "}
                                   {reg.field && (
-                                    <span className="[color:var(--color-ink-600)]! [font-weight:500]!">
+                                    <span className="[color:var(--color-ink-600)] [font-weight:500]">
                                       - {reg.field}
                                     </span>
                                   )}
@@ -1192,7 +1192,7 @@ const DashboardEnhanced = () => {
                         </div>
                       ))
                     ) : (
-                      <div className="[font-size:var(--text-sm)]! [color:var(--color-ink-600)]! [font-style:italic]! [padding:8px_0]!">
+                      <div className="[font-size:var(--text-sm)] [color:var(--color-ink-600)] [font-style:italic] [padding:8px_0]">
                         No emissions data for this activity
                       </div>
                     )}

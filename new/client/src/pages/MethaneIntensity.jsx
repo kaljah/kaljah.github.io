@@ -580,7 +580,7 @@ const MethaneIntensity = () => {
 
     setTopBarRight(
       <button
-        className="[display:inline-flex]! [align-items:center] [gap:8px] [background:linear-gradient(135deg,_var(--color-green-700)_0%,_var(--color-green-700)_100%)]! [color:var(--color-white)]! [font-size:var(--text-base)]! [font-weight:600]! [padding:8px_16px]! [border-radius:var(--radius-md)]! [border:none]! [cursor:pointer] [box-shadow:0_4px_12px_rgba(16,_185,_129,_0.25)]! [transition:all_0.2s_ease]! [&:hover:not(:disabled)]:[transform:translateY(-1px)] [&:hover:not(:disabled)]:[box-shadow:0_6px_18px_rgba(16,_185,_129,_0.35)]! disabled:[opacity:0.6] disabled:[cursor:not-allowed]"
+        className="[display:inline-flex] [align-items:center] [gap:8px] [background:linear-gradient(135deg,_var(--color-green-700)_0%,_var(--color-green-700)_100%)] [color:var(--color-white)] [font-size:var(--text-base)] [font-weight:600] [padding:8px_16px] [border-radius:var(--radius-md)] [border:none] [cursor:pointer] [box-shadow:0_4px_12px_rgba(16,_185,_129,_0.25)] [transition:all_0.2s_ease] [&:hover:not(:disabled)]:[transform:translateY(-1px)] [&:hover:not(:disabled)]:[box-shadow:0_6px_18px_rgba(16,_185,_129,_0.35)] disabled:[opacity:0.6] disabled:[cursor:not-allowed]"
         onClick={handleExportExcel}
         disabled={exporting}
         title="Download 5-Tab OGMP 2.0 Disclosure Workbook (.xlsx)"
@@ -687,7 +687,7 @@ const MethaneIntensity = () => {
         opacity: isUpdating ? 0.82 : 1,
         transition: "opacity 0.2s ease" }}
     >
-      <div className="intensity-grid [display:flex]! [flex-direction:column] [gap:32px] [max-width:1600px]! [margin:0_auto]!">
+      <div className="intensity-grid [display:flex] [flex-direction:column] [gap:32px] [max-width:1600px] [margin:0_auto]">
         {/* KPI HERO CARD */}
         <MethaneIntensityMethaneIntensity
         midstreamTargetPct={midstreamTargetPct}
@@ -719,13 +719,13 @@ const MethaneIntensity = () => {
       />
 
         {/* Regional Bar Charts */}
-        <div className="chart-grid [display:grid]! [grid-template-columns:repeat(auto-fit,_minmax(450px,_1fr))]! [gap:24px] [@media(max-width:768px)]:[grid-template-columns:1fr]!">
+        <div className="chart-grid [display:grid] [grid-template-columns:repeat(auto-fit,_minmax(450px,_1fr))]! [gap:24px] [@media(max-width:768px)]:[grid-template-columns:1fr]!">
           <div className="card">
             <div className="chart-header">
-              <div className="[display:flex]! [flex-direction:column] [gap:8px]">
+              <div className="[display:flex] [flex-direction:column] [gap:8px]">
                 <h3>Methane Loss Rate by Facility (% of Gas Produced)</h3>
                 <div
-                  className="[width:32px]! [height:4px]! [border-radius:var(--radius-sm)]! bg-[color:#2563eb]!"
+                  className="[width:32px] [height:4px] [border-radius:var(--radius-sm)] bg-[color:#2563eb]!"
                  
                 ></div>
               </div>
@@ -746,10 +746,10 @@ const MethaneIntensity = () => {
 
           <div className="card">
             <div className="chart-header">
-              <div className="[display:flex]! [flex-direction:column] [gap:8px]">
+              <div className="[display:flex] [flex-direction:column] [gap:8px]">
                 <h3>Methane Intensity by Facility (kg CH₄ / BOE)</h3>
                 <div
-                  className="[width:32px]! [height:4px]! [border-radius:var(--radius-sm)]! bg-[color:#ff6600]!"
+                  className="[width:32px] [height:4px] [border-radius:var(--radius-sm)] bg-[color:#ff6600]!"
                  
                 ></div>
               </div>
@@ -768,10 +768,10 @@ const MethaneIntensity = () => {
 
           <div className="card">
             <div className="chart-header">
-              <div className="[display:flex]! [flex-direction:column] [gap:8px]">
+              <div className="[display:flex] [flex-direction:column] [gap:8px]">
                 <h3>Total Methane Emissions (tCH₄)</h3>
                 <div
-                  className="[width:32px]! [height:4px]! [border-radius:var(--radius-sm)]! bg-[color:#3b82f6]!"
+                  className="[width:32px] [height:4px] [border-radius:var(--radius-sm)] bg-[color:#3b82f6]!"
                  
                 ></div>
               </div>
@@ -790,10 +790,10 @@ const MethaneIntensity = () => {
 
           <div className="card">
             <div className="chart-header">
-              <div className="[display:flex]! [flex-direction:column] [gap:8px]">
+              <div className="[display:flex] [flex-direction:column] [gap:8px]">
                 <h3>Gas Flaring Volume by Facility (m³)</h3>
                 <div
-                  className="[width:32px]! [height:4px]! [border-radius:var(--radius-sm)]! bg-[color:#ea580c]!"
+                  className="[width:32px] [height:4px] [border-radius:var(--radius-sm)] bg-[color:#ea580c]!"
                  
                 ></div>
               </div>

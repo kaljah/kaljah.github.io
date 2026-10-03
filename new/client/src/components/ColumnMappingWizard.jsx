@@ -484,22 +484,22 @@ const STEPS = [
 
 function StepIndicator({ current }) {
   return (
-    <div className="[display:flex]! [align-items:center] [padding:20px_28px]! [flex-shrink:0]">
+    <div className="[display:flex] [align-items:center] [padding:20px_28px] [flex-shrink:0]">
       {STEPS.map((s, i) => {
         const done = s.id < current;
         const active = s.id === current;
         return (
           <React.Fragment key={s.id}>
             <div
-              className={`[display:flex]! [flex-direction:column] [align-items:center] [gap:6px] [position:relative] [flex-shrink:0] [&.active_.cmw-step-circle]:[border-color:var(--color-blue-600)]! [&.active_.cmw-step-circle]:[background:var(--color-blue-600)]! [&.active_.cmw-step-circle]:[color:var(--color-white)]! [&.active_.cmw-step-circle]:[box-shadow:0_0_0_4px_rgba(37,_99,_235,_0.15)] [&&]:[&.done_.cmw-step-circle]:[border-color:var(--color-green-600)]! [&&]:[&.done_.cmw-step-circle]:[background:var(--color-green-700)]! [&&]:[&.done_.cmw-step-circle]:[color:var(--color-white)]! [&&]:[&&]:[&.active_.cmw-step-label]:[color:var(--color-blue-600)]! [&.active_.cmw-step-label]:[font-weight:600]! [&&]:[&&]:[&&]:[&.done_.cmw-step-label]:[color:var(--color-green-700)]! ${active ? "active" : ""} ${done ? "done" : ""}`}
+              className={`[display:flex] [flex-direction:column] [align-items:center] [gap:6px] [position:relative] [flex-shrink:0] [&.active_.cmw-step-circle]:[border-color:var(--color-blue-600)] [&.active_.cmw-step-circle]:[background:var(--color-blue-600)] [&.active_.cmw-step-circle]:[color:var(--color-white)]! [&.active_.cmw-step-circle]:[box-shadow:0_0_0_4px_rgba(37,_99,_235,_0.15)] [&&]:[&.done_.cmw-step-circle]:[border-color:var(--color-green-600)] [&&]:[&.done_.cmw-step-circle]:[background:var(--color-green-700)] [&&]:[&.done_.cmw-step-circle]:[color:var(--color-white)]! [&&]:[&&]:[&.active_.cmw-step-label]:[color:var(--color-blue-600)]! [&.active_.cmw-step-label]:[font-weight:600]! [&&]:[&&]:[&&]:[&.done_.cmw-step-label]:[color:var(--color-green-700)]! ${active ? "active" : ""} ${done ? "done" : ""}`}
             >
               <div className="cmw-step-circle">
                 {done ? <Icons.Check /> : <s.Icon />}
               </div>
-              <span className="cmw-step-label [font-size:var(--text-sm)]! [font-weight:500]! [color:var(--color-ink-600)]! [white-space:nowrap] [transition:color_0.2s]!">{s.label}</span>
+              <span className="cmw-step-label [font-size:var(--text-sm)] [font-weight:500] [color:var(--color-ink-600)] [white-space:nowrap] [transition:color_0.2s]">{s.label}</span>
             </div>
             {i < STEPS.length - 1 && (
-              <div className={`[flex:1] [height:2px]! [background:var(--color-ink-200)]! [margin:0_10px]! [&&]:[margin-bottom:22px]! [transition:background_0.3s]! [&.done]:[background:var(--color-green-600)]! ${done ? "done" : ""}`} />
+              <div className={`[flex:1] [height:2px] [background:var(--color-ink-200)] [margin:0_10px] [&&]:[margin-bottom:22px] [transition:background_0.3s] [&.done]:[background:var(--color-green-600)] ${done ? "done" : ""}`} />
             )}
           </React.Fragment>
         );
@@ -788,14 +788,14 @@ export default function ColumnMappingWizard({
   // ─── Render ────────────────────────────────────────────────────────────────
   return (
     <div
-      className="[position:fixed] [inset:0] [background:rgba(10,_15,_30,_0.65)]! [backdrop-filter:blur(4px)] [-webkit-backdrop-filter:blur(4px)]! [display:flex]! [align-items:center] [justify-content:center] [z-index:1000] [padding:16px]! [animation:cmw-fade-in_0.2s_ease]!"
+      className="[position:fixed] [inset:0] [background:rgba(10,_15,_30,_0.65)] [backdrop-filter:blur(4px)] [-webkit-backdrop-filter:blur(4px)] [display:flex] [align-items:center] [justify-content:center] [z-index:1000] [padding:16px] [animation:cmw-fade-in_0.2s_ease]"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="[background:var(--color-white)]! [border-radius:var(--radius-lg)]! [width:100%]! [max-width:780px]! [max-height:92vh]! [display:flex]! [flex-direction:column] [box-shadow:var(--shadow-overlay)]! [animation:cmw-slide-up_0.25s_cubic-bezier(0.34,_1.56,_0.64,_1)]! [overflow:hidden]!">
+      <div className="[background:var(--color-white)] [border-radius:var(--radius-lg)] [width:100%] [max-width:780px] [max-height:92vh] [display:flex] [flex-direction:column] [box-shadow:var(--shadow-overlay)] [animation:cmw-slide-up_0.25s_cubic-bezier(0.34,_1.56,_0.64,_1)] [overflow:hidden]">
         {/* Header */}
-        <div className="[display:flex]! [align-items:flex-start] [justify-content:space-between] [padding:24px_28px_0]! [flex-shrink:0]">
+        <div className="[display:flex] [align-items:flex-start] [justify-content:space-between] [padding:24px_28px_0] [flex-shrink:0]">
           <div>
-            <h2 className="[font-size:var(--text-lg)]! [font-weight:700]! [color:var(--color-ink-900)]! [margin:0_0_4px]! [letter-spacing:-0.3px]">
+            <h2 className="[font-size:var(--text-lg)] [font-weight:700] [color:var(--color-ink-900)] [margin:0_0_4px] [letter-spacing:-0.3px]">
               Import{" "}
               {type === "sources"
                 ? "Equipment"
@@ -807,7 +807,7 @@ export default function ColumnMappingWizard({
                       ? "Mitigation Projects"
                       : "Emissions Data"}
             </h2>
-            <p className="[font-size:var(--text-base)]! [color:var(--color-ink-500)]! [margin:0]!">
+            <p className="[font-size:var(--text-base)] [color:var(--color-ink-500)] [margin:0]">
               Upload a CSV or Excel file to bulk-import your records
             </p>
           </div>
@@ -879,7 +879,7 @@ export default function ColumnMappingWizard({
               </div>
             {/* Drop zone */}
             <div role="button" tabIndex={0} onKeyDown={activateOnKey}
-              className={`[border:2px_dashed_var(--color-ink-300)]! [&&]:[border-radius:var(--radius-md)]! [padding:40px_24px]! [text-align:center]! [cursor:pointer] [transition:all_0.2s]! [background:var(--color-ink-50)]! [margin-bottom:20px]! hover:[border-color:var(--color-blue-600)]! hover:[background:var(--color-blue-50)]! [&.dragging]:[border-color:var(--color-blue-600)]! [&.dragging]:[background:var(--color-blue-50)]! ${isDragging ? "dragging" : ""}`}
+              className={`[border:2px_dashed_var(--color-ink-300)] [&&]:[border-radius:var(--radius-md)] [padding:40px_24px] [text-align:center] [cursor:pointer] [transition:all_0.2s] [background:var(--color-ink-50)] [margin-bottom:20px] hover:[border-color:var(--color-blue-600)] hover:[background:var(--color-blue-50)] [&.dragging]:[border-color:var(--color-blue-600)] [&.dragging]:[background:var(--color-blue-50)] ${isDragging ? "dragging" : ""}`}
               onClick={() => fileInputRef.current.click()}
               onDragOver={(e) => {
                 e.preventDefault();
@@ -898,10 +898,10 @@ export default function ColumnMappingWizard({
               <div className="cmw-dropzone-icon">
                 <Icons.Upload />
               </div>
-              <p className="[font-size:var(--text-md)]! [color:var(--color-ink-700)]! [margin:0_0_4px]! [font-weight:500]! [&_span]:[color:var(--color-blue-600)]! [&_span]:[font-weight:600]!">
+              <p className="cmw-dropzone-text">
                 Drag &amp; drop your file here, or <span>click to browse</span>
               </p>
-              <p className="[font-size:var(--text-sm)]! [color:var(--color-ink-600)]! [margin:0]!">
+              <p className="[font-size:var(--text-sm)] [color:var(--color-ink-600)] [margin:0]">
                 Supports .xlsx and .csv — optimised for millions of rows
               </p>
               {parseError && (
@@ -913,14 +913,14 @@ export default function ColumnMappingWizard({
             </div>
 
             {/* Template download */}
-            <div className="[margin-top:4px]!">
-              <p className="[font-size:var(--text-sm)]! [color:var(--color-ink-500)]! [margin:0_0_10px]! [font-weight:500]!">
+            <div className="[margin-top:4px]">
+              <p className="[font-size:var(--text-sm)] [color:var(--color-ink-500)] [margin:0_0_10px] [font-weight:500]">
                 Don't have a file yet? Start from our template:
               </p>
-              <div className="[display:grid]! [grid-template-columns:1fr_1fr] [gap:12px]">
+              <div className="[display:grid] [grid-template-columns:1fr_1fr] [gap:12px]">
                 {type === "activity" && (
                   <button
-                    className="[display:flex]! [align-items:center] [gap:12px] [padding:14px_16px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--color-ink-200)]! [background:var(--color-white)]! [cursor:pointer] [text-align:left]! [transition:all_0.2s]! hover:[border-color:var(--color-blue-600)]! hover:[background:var(--color-blue-50)]! hover:[transform:translateY(-1px)] hover:[box-shadow:0_4px_12px_rgba(37,_99,_235,_0.1)]! [&:hover_.cmw-template-btn-icon]:[background:#dbeafe]! [&:hover_.cmw-template-btn-icon]:[color:var(--color-blue-600)]! [&_strong]:[display:block]! [&_strong]:[font-size:var(--text-base)]! [&_strong]:[font-weight:600]! [&&]:[&_strong]:[color:var(--color-ink-800)]! [&_strong]:[margin-bottom:2px]! [&&]:[&&]:[&_small]:[font-size:var(--text-sm)]! [&&]:[&&]:[&_small]:[color:var(--color-ink-600)]!"
+                    className="cmw-template-btn"
                     onClick={() => downloadTemplate("excel")}
                   >
                     <span className="cmw-template-btn-icon">
@@ -935,7 +935,7 @@ export default function ColumnMappingWizard({
                   </button>
                 )}
                 <button
-                  className="[display:flex]! [align-items:center] [gap:12px] [padding:14px_16px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--color-ink-200)]! [background:var(--color-white)]! [cursor:pointer] [text-align:left]! [transition:all_0.2s]! hover:[border-color:var(--color-blue-600)]! hover:[background:var(--color-blue-50)]! hover:[transform:translateY(-1px)] hover:[box-shadow:0_4px_12px_rgba(37,_99,_235,_0.1)]! [&:hover_.cmw-template-btn-icon]:[background:#dbeafe]! [&:hover_.cmw-template-btn-icon]:[color:var(--color-blue-600)]! [&_strong]:[display:block]! [&_strong]:[font-size:var(--text-base)]! [&_strong]:[font-weight:600]! [&&]:[&_strong]:[color:var(--color-ink-800)]! [&_strong]:[margin-bottom:2px]! [&&]:[&&]:[&_small]:[font-size:var(--text-sm)]! [&&]:[&&]:[&_small]:[color:var(--color-ink-600)]!"
+                  className="cmw-template-btn"
                   onClick={() => downloadTemplate("csv")}
                 >
                   <span className="cmw-template-btn-icon">
@@ -972,7 +972,7 @@ export default function ColumnMappingWizard({
 
         {/* ── STEP 3: Processing ── */}
         {step === 4 && jobId && (
-          <div className="cmw-body [display:flex]! [align-items:center] [justify-content:center] [padding:32px_28px]!">
+          <div className="cmw-body [display:flex] [align-items:center] [justify-content:center] [padding:32px_28px]!">
             <UploadProgress
               jobId={jobId}
               reviewable={["activity", "activity_scope2", "activity_scope3"].includes(type)}
@@ -987,7 +987,7 @@ export default function ColumnMappingWizard({
 
         {/* Footer actions */}
         {step !== 4 && (
-          <div className="[display:flex]! [align-items:center] [justify-content:space-between] [padding:16px_28px_20px]! [border-top:1px_solid_var(--color-ink-100)]! [flex-shrink:0] [gap:12px]">
+          <div className="[display:flex] [align-items:center] [justify-content:space-between] [padding:16px_28px_20px] [border-top:1px_solid_var(--color-ink-100)] [flex-shrink:0] [gap:12px]">
             <button
               className="cmw-btn-ghost"
               onClick={
@@ -1014,7 +1014,7 @@ export default function ColumnMappingWizard({
                 disabled={isSubmitting || (!canProceed && headers.length > 0)}
               >
                 {isSubmitting ? (
-                  <span className="[width:16px]! [height:16px]! [border:2px_solid_rgba(255,_255,_255,_0.4)]! [&&]:[border-top-color:var(--color-white)]! [&&]:[border-radius:50%]! [animation:cmw-spin_0.7s_linear_infinite]! [flex-shrink:0]" />
+                  <span className="[width:16px] [height:16px] [border:2px_solid_rgba(255,_255,_255,_0.4)] [&&]:[border-top-color:var(--color-white)] [&&]:[border-radius:50%] [animation:cmw-spin_0.7s_linear_infinite] [flex-shrink:0]" />
                 ) : (
                   <Icons.Processing />
                 )}
@@ -1034,17 +1034,17 @@ function MappingRow({ field, headers, value, onChange }) {
 
   return (
     <div
-      className={`[display:grid]! [grid-template-columns:1.8fr_2fr_2fr_60px] [gap:12px] [align-items:center] [padding:10px_16px]! [border-bottom:1px_solid_var(--color-ink-100)]! [transition:background_0.15s]! last:[border-bottom:none]! hover:[background:var(--color-ink-50)]! [&.unmapped]:[background:#fff9f9]! ${!mapped && field.required ? "unmapped" : ""}`}
+      className={`[display:grid] [grid-template-columns:1.8fr_2fr_2fr_60px] [gap:12px] [align-items:center] [padding:10px_16px] [border-bottom:1px_solid_var(--color-ink-100)] [transition:background_0.15s] last:[border-bottom:none] hover:[background:var(--color-ink-50)] [&.unmapped]:[background:#fff9f9] ${!mapped && field.required ? "unmapped" : ""}`}
     >
-      <div className="[font-size:var(--text-base)]! [font-weight:600]! [color:var(--color-ink-800)]! [display:flex]! [align-items:center] [gap:6px]">
+      <div className="[font-size:var(--text-base)] [font-weight:600] [color:var(--color-ink-800)] [display:flex] [align-items:center] [gap:6px]">
         {field.label}
-        {field.required && <span className="[display:inline-block]! [width:6px]! [height:6px]! [border-radius:50%]! [background:var(--color-red-500)]! [flex-shrink:0]" />}
+        {field.required && <span className="[display:inline-block] [width:6px] [height:6px] [border-radius:50%] [background:var(--color-red-500)] [flex-shrink:0]" />}
       </div>
-      <div className="[font-size:var(--text-sm)]! [color:var(--color-ink-600)]!">{field.hint}</div>
+      <div className="[font-size:var(--text-sm)] [color:var(--color-ink-600)]">{field.hint}</div>
       <div className="cmw-field-select">
         {headers.length > 0 ? (
           <NativeSelect
-            className={`[width:100%]! [padding:7px_10px]! [border:1.5px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [color:var(--color-ink-700)]! [background:var(--color-white)]! [outline:none]! [transition:all_0.15s]! [appearance:auto]! focus:[border-color:var(--color-blue-600)]! focus:[box-shadow:0_0_0_3px_rgba(37,_99,_235,_0.1)]! [&.matched]:[border-color:var(--color-green-600)]! [&.matched]:[background:#f0fdf4]! ${mapped ? "matched" : ""}`}
+            className={`cmw-select ${mapped ? "matched" : ""}`}
             value={value}
             onChange={(e) => onChange(e.target.value)}
           >
@@ -1057,20 +1057,20 @@ function MappingRow({ field, headers, value, onChange }) {
           </NativeSelect>
         ) : (
           <input
-            className={`[width:100%]! [padding:7px_10px]! [border:1.5px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [color:var(--color-ink-700)]! [background:var(--color-white)]! [outline:none]! [transition:all_0.15s]! [appearance:auto] focus:[border-color:var(--color-blue-600)]! focus:[box-shadow:0_0_0_3px_rgba(37,_99,_235,_0.1)]! [&.matched]:[border-color:var(--color-green-600)]! [&.matched]:[background:#f0fdf4]! ${mapped ? "matched" : ""}`}
+            className={`cmw-text-input ${mapped ? "matched" : ""}`}
             placeholder="Column name in your file"
             value={value}
             onChange={(e) => onChange(e.target.value)}
           />
         )}
       </div>
-      <div className="[display:flex]! [justify-content:center]">
+      <div className="[display:flex] [justify-content:center]">
         {mapped ? (
           <span className="cmw-status-ok">
             <Icons.Check />
           </span>
         ) : (
-          <span className="[width:26px]! [height:26px]! [border-radius:50%]! [background:var(--color-ink-100)]! [border:2px_dashed_var(--color-ink-200)]!" />
+          <span className="[width:26px] [height:26px] [border-radius:50%] [background:var(--color-ink-100)] [border:2px_dashed_var(--color-ink-200)]" />
         )}
       </div>
     </div>

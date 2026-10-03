@@ -18,11 +18,11 @@ export const TextField = ({
   step,
 }) => {
   return (
-    <div className="[display:flex]! [flex-direction:column] [gap:6px] [margin-bottom:16px]!">
+    <div className="[display:flex] [flex-direction:column] [gap:6px] [margin-bottom:16px]">
       {label && (
         <label className="field-label">
           {label}
-          {required && <span className="[color:var(--color-red-700)]! [font-size:var(--text-base)]!">*</span>}
+          {required && <span className="[color:var(--color-red-700)] [font-size:var(--text-base)]">*</span>}
         </label>
       )}
       <input
@@ -37,9 +37,9 @@ export const TextField = ({
         max={max}
         step={step}
       />
-      {error && <span className="[font-size:var(--text-sm)]! [color:var(--color-red-700)]! [margin-top:4px]! [display:flex]! [align-items:center] [gap:4px] before:[content:'⚠'] before:[font-size:var(--text-base)]!">{error}</span>}
+      {error && <span className="[font-size:var(--text-sm)] [color:var(--color-red-700)] [margin-top:4px] [display:flex] [align-items:center] [gap:4px] before:[content:'⚠'] before:[font-size:var(--text-base)]">{error}</span>}
       {helperText && !error && (
-        <span className="[font-size:var(--text-sm)]! [color:var(--text-secondary)]! [margin-top:4px]!">{helperText}</span>
+        <span className="[font-size:var(--text-sm)] [color:var(--text-secondary)] [margin-top:4px]">{helperText}</span>
       )}
     </div>
   );
@@ -58,11 +58,11 @@ export const SelectField = ({
   helperText = "",
 }) => {
   return (
-    <div className="[display:flex]! [flex-direction:column] [gap:6px] [margin-bottom:16px]!">
+    <div className="[display:flex] [flex-direction:column] [gap:6px] [margin-bottom:16px]">
       {label && (
         <label className="field-label">
           {label}
-          {required && <span className="[color:var(--color-red-700)]! [font-size:var(--text-base)]!">*</span>}
+          {required && <span className="[color:var(--color-red-700)] [font-size:var(--text-base)]">*</span>}
         </label>
       )}
       <NativeSelect
@@ -79,9 +79,9 @@ export const SelectField = ({
           </option>
         ))}
       </NativeSelect>
-      {error && <span className="[font-size:var(--text-sm)]! [color:var(--color-red-700)]! [margin-top:4px]! [display:flex]! [align-items:center] [gap:4px] before:[content:'⚠'] before:[font-size:var(--text-base)]!">{error}</span>}
+      {error && <span className="[font-size:var(--text-sm)] [color:var(--color-red-700)] [margin-top:4px] [display:flex] [align-items:center] [gap:4px] before:[content:'⚠'] before:[font-size:var(--text-base)]">{error}</span>}
       {helperText && !error && (
-        <span className="[font-size:var(--text-sm)]! [color:var(--text-secondary)]! [margin-top:4px]!">{helperText}</span>
+        <span className="[font-size:var(--text-sm)] [color:var(--text-secondary)] [margin-top:4px]">{helperText}</span>
       )}
     </div>
   );
@@ -100,11 +100,11 @@ export const TextAreaField = ({
   rows = 4,
 }) => {
   return (
-    <div className="[display:flex]! [flex-direction:column] [gap:6px] [margin-bottom:16px]!">
+    <div className="[display:flex] [flex-direction:column] [gap:6px] [margin-bottom:16px]">
       {label && (
         <label className="field-label">
           {label}
-          {required && <span className="[color:var(--color-red-700)]! [font-size:var(--text-base)]!">*</span>}
+          {required && <span className="[color:var(--color-red-700)] [font-size:var(--text-base)]">*</span>}
         </label>
       )}
       <textarea
@@ -116,9 +116,9 @@ export const TextAreaField = ({
         required={required}
         rows={rows}
       />
-      {error && <span className="[font-size:var(--text-sm)]! [color:var(--color-red-700)]! [margin-top:4px]! [display:flex]! [align-items:center] [gap:4px] before:[content:'⚠'] before:[font-size:var(--text-base)]!">{error}</span>}
+      {error && <span className="[font-size:var(--text-sm)] [color:var(--color-red-700)] [margin-top:4px] [display:flex] [align-items:center] [gap:4px] before:[content:'⚠'] before:[font-size:var(--text-base)]">{error}</span>}
       {helperText && !error && (
-        <span className="[font-size:var(--text-sm)]! [color:var(--text-secondary)]! [margin-top:4px]!">{helperText}</span>
+        <span className="[font-size:var(--text-sm)] [color:var(--text-secondary)] [margin-top:4px]">{helperText}</span>
       )}
     </div>
   );
@@ -134,20 +134,20 @@ export const CheckboxField = ({
   helperText = "",
 }) => {
   return (
-    <div className="[display:flex]! [flex-direction:column] [gap:6px] [margin-bottom:16px]! [&&]:[margin-bottom:12px]!">
+    <div className="[display:flex] [flex-direction:column] [gap:6px] [margin-bottom:16px] [&&]:[margin-bottom:12px]">
       <label className="checkbox-label">
         <input
           type="checkbox"
-          className="[width:18px]! [height:18px]! [cursor:pointer] [accent-color:var(--accent-color)] disabled:[cursor:not-allowed] disabled:[opacity:0.6]"
+          className="[width:18px] [height:18px] [cursor:pointer] [accent-color:var(--accent-color)] disabled:[cursor:not-allowed] disabled:[opacity:0.6]"
           checked={checked}
           onChange={(e) => onChange(e.target.checked)}
           disabled={disabled}
         />
         <span>{label}</span>
       </label>
-      {error && <span className="[font-size:var(--text-sm)]! [color:var(--color-red-700)]! [margin-top:4px]! [display:flex]! [align-items:center] [gap:4px] before:[content:'⚠'] before:[font-size:var(--text-base)]!">{error}</span>}
+      {error && <span className="[font-size:var(--text-sm)] [color:var(--color-red-700)] [margin-top:4px] [display:flex] [align-items:center] [gap:4px] before:[content:'⚠'] before:[font-size:var(--text-base)]">{error}</span>}
       {helperText && !error && (
-        <span className="[font-size:var(--text-sm)]! [color:var(--text-secondary)]! [margin-top:4px]!">{helperText}</span>
+        <span className="[font-size:var(--text-sm)] [color:var(--text-secondary)] [margin-top:4px]">{helperText}</span>
       )}
     </div>
   );
@@ -166,21 +166,21 @@ export const RadioGroupField = ({
   layout = "vertical", // 'vertical' or 'horizontal'
 }) => {
   return (
-    <div className="[display:flex]! [flex-direction:column] [gap:6px] [margin-bottom:16px]!">
+    <div className="[display:flex] [flex-direction:column] [gap:6px] [margin-bottom:16px]">
       {label && (
         <label className="field-label">
           {label}
-          {required && <span className="[color:var(--color-red-700)]! [font-size:var(--text-base)]!">*</span>}
+          {required && <span className="[color:var(--color-red-700)] [font-size:var(--text-base)]">*</span>}
         </label>
       )}
       <div
-        className={`[display:flex]! [gap:16px] ${layout === "horizontal" ? "[&&]:[flex-direction:row] [&&]:[flex-wrap:wrap]" : "[flex-direction:column]"}`}
+        className={`[display:flex] [gap:16px] ${layout === "horizontal" ? "[&&]:[flex-direction:row] [&&]:[flex-wrap:wrap]" : "[flex-direction:column]"}`}
       >
         {options.map((opt, idx) => (
-          <label key={idx} className="[display:flex]! [align-items:center] [gap:8px] [cursor:pointer] [font-size:var(--text-base)]! [color:var(--text-primary)]!">
+          <label key={idx} className="[display:flex] [align-items:center] [gap:8px] [cursor:pointer] [font-size:var(--text-base)] [color:var(--text-primary)]">
             <input
               type="radio"
-              className="[width:16px]! [height:16px]! [cursor:pointer] [accent-color:var(--accent-color)] disabled:[cursor:not-allowed] disabled:[opacity:0.6]"
+              className="[width:16px] [height:16px] [cursor:pointer] [accent-color:var(--accent-color)] disabled:[cursor:not-allowed] disabled:[opacity:0.6]"
               value={opt.value}
               checked={value === opt.value}
               onChange={(e) => onChange(e.target.value)}
@@ -190,9 +190,9 @@ export const RadioGroupField = ({
           </label>
         ))}
       </div>
-      {error && <span className="[font-size:var(--text-sm)]! [color:var(--color-red-700)]! [margin-top:4px]! [display:flex]! [align-items:center] [gap:4px] before:[content:'⚠'] before:[font-size:var(--text-base)]!">{error}</span>}
+      {error && <span className="[font-size:var(--text-sm)] [color:var(--color-red-700)] [margin-top:4px] [display:flex] [align-items:center] [gap:4px] before:[content:'⚠'] before:[font-size:var(--text-base)]">{error}</span>}
       {helperText && !error && (
-        <span className="[font-size:var(--text-sm)]! [color:var(--text-secondary)]! [margin-top:4px]!">{helperText}</span>
+        <span className="[font-size:var(--text-sm)] [color:var(--text-secondary)] [margin-top:4px]">{helperText}</span>
       )}
     </div>
   );
@@ -211,11 +211,11 @@ export const DateField = ({
   max,
 }) => {
   return (
-    <div className="[display:flex]! [flex-direction:column] [gap:6px] [margin-bottom:16px]!">
+    <div className="[display:flex] [flex-direction:column] [gap:6px] [margin-bottom:16px]">
       {label && (
         <label className="field-label">
           {label}
-          {required && <span className="[color:var(--color-red-700)]! [font-size:var(--text-base)]!">*</span>}
+          {required && <span className="[color:var(--color-red-700)] [font-size:var(--text-base)]">*</span>}
         </label>
       )}
       <input
@@ -228,9 +228,9 @@ export const DateField = ({
         min={min}
         max={max}
       />
-      {error && <span className="[font-size:var(--text-sm)]! [color:var(--color-red-700)]! [margin-top:4px]! [display:flex]! [align-items:center] [gap:4px] before:[content:'⚠'] before:[font-size:var(--text-base)]!">{error}</span>}
+      {error && <span className="[font-size:var(--text-sm)] [color:var(--color-red-700)] [margin-top:4px] [display:flex] [align-items:center] [gap:4px] before:[content:'⚠'] before:[font-size:var(--text-base)]">{error}</span>}
       {helperText && !error && (
-        <span className="[font-size:var(--text-sm)]! [color:var(--text-secondary)]! [margin-top:4px]!">{helperText}</span>
+        <span className="[font-size:var(--text-sm)] [color:var(--text-secondary)] [margin-top:4px]">{helperText}</span>
       )}
     </div>
   );

@@ -230,9 +230,9 @@ const CustomDropdown = ({
       displayContent = renderOption(selectedOption);
     } else if (selectedOption.subLabel) {
       displayContent = (
-        <div className="[display:flex]! [align-items:center] [gap:2px]">
+        <div className="[display:flex] [align-items:center] [gap:2px]">
           {selectedOption.label}{" "}
-          <span className="[font-size:var(--text-xs)]! [color:var(--text-secondary,_var(--color-ink-500))]! [font-weight:600]! [display:inline-block]! [margin-left:2px]!"> - {selectedOption.subLabel}</span>
+          <span className="[font-size:var(--text-xs)]! [color:var(--text-secondary,_var(--color-ink-500))]! [font-weight:600]! [display:inline-block] [margin-left:2px]"> - {selectedOption.subLabel}</span>
         </div>
       );
     } else {
@@ -266,7 +266,7 @@ const CustomDropdown = ({
           ariaLabel ? undefined : ariaLabelledBy || autoLabelId || undefined
         }
       >
-        <span className="[display:flex]! [align-items:center] [overflow:hidden]! [text-overflow:ellipsis]! [white-space:nowrap]">{displayContent}</span>
+        <span className="[display:flex] [align-items:center] [overflow:hidden] [text-overflow:ellipsis] [white-space:nowrap]">{displayContent}</span>
         <svg
           width="10"
           height="10"
@@ -339,9 +339,9 @@ const CustomDropdown = ({
                   {renderOption ? (
                     renderOption(option)
                   ) : option.subLabel ? (
-                    <div className="[display:flex]! [align-items:center] [gap:2px]">
+                    <div className="[display:flex] [align-items:center] [gap:2px]">
                       {option.label}{" "}
-                      <span className="[font-size:var(--text-xs)]! [color:var(--text-secondary,_var(--color-ink-500))]! [font-weight:600]! [display:inline-block]! [margin-left:2px]!"> - {option.subLabel}</span>
+                      <span className="[font-size:var(--text-xs)]! [color:var(--text-secondary,_var(--color-ink-500))]! [font-weight:600]! [display:inline-block] [margin-left:2px]"> - {option.subLabel}</span>
                     </div>
                   ) : (
                     option.label

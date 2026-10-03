@@ -1413,7 +1413,7 @@ const ManageDataInner = () => {
                                         Pending Review
                                     </span>
                                     {pendingMetrics.totalCount > 0 && (
-                                        <span className="[display:inline-flex]! [align-items:center] [justify-content:center] [min-width:20px] [height:20px]! [padding:0_7px]! [border-radius:var(--radius-md)]! [font-size:var(--text-xs)]! [font-weight:700]! [background:var(--color-red-700)]! [color:var(--color-white)]! [box-shadow:0_0_8px_rgba(239,_68,_68,_0.4)]!">
+                                        <span className="[display:inline-flex] [align-items:center] [justify-content:center] [min-width:20px] [height:20px] [padding:0_7px] [border-radius:var(--radius-md)] [font-size:var(--text-xs)] [font-weight:700] [background:var(--color-red-700)] [color:var(--color-white)] [box-shadow:0_0_8px_rgba(239,_68,_68,_0.4)]">
                                             {pendingMetrics.totalCount}
                                         </span>
                                     )}

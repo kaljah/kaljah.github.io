@@ -549,9 +549,9 @@ const Reports = () => {
           />
 
           {/* NEW: Create Report Card (Matches Legacy UI) */}
-          <div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.78))]! [backdrop-filter:blur(14px)] [border-radius:var(--radius-lg)]! [padding:28px]! [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))]! [box-shadow:var(--shadow-card)]! [position:relative] [overflow:hidden]! [transition:transform_0.22s_ease,_box-shadow_0.22s_ease]! hover:[border-color:rgba(255,_255,_255,_0.95)]! before:[content:''] before:[position:absolute] before:[top:0] before:[left:0] before:[width:4px]! before:[height:100%]! before:[background:var(--accent-gradient,_linear-gradient(135deg,_var(--accent-color)_0%,_#ff8a4d_100%))]! mb-[24px]!">
-            <div className="[display:flex]! [align-items:center] [gap:12px] [margin-bottom:20px]!">
-              <div className="[background:rgba(255,_102,_0,_0.1)]! [padding:10px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [color:var(--color-link)]!">
+          <div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.78))] [backdrop-filter:blur(14px)] [border-radius:var(--radius-lg)] [padding:28px] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [box-shadow:var(--shadow-card)] [position:relative] [overflow:hidden] [transition:transform_0.22s_ease,_box-shadow_0.22s_ease] hover:[border-color:rgba(255,_255,_255,_0.95)] before:[content:''] before:[position:absolute] before:[top:0] before:[left:0] before:[width:4px] before:[height:100%] before:[background:var(--accent-gradient,_linear-gradient(135deg,_var(--accent-color)_0%,_#ff8a4d_100%))] mb-[24px]!">
+            <div className="[display:flex] [align-items:center] [gap:12px] [margin-bottom:20px]">
+              <div className="[background:rgba(255,_102,_0,_0.1)] [padding:10px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [color:var(--color-link)]">
                 <svg
                   width="24"
                   height="24"
@@ -571,9 +571,9 @@ const Reports = () => {
               <h3 className="card-title">Create New Report</h3>
             </div>
 
-            <div className="[display:grid]! [grid-template-columns:repeat(auto-fit,_minmax(200px,_1fr))] [gap:20px]" style={{ alignItems: "end" }}>
-              <div className="[display:flex]! [flex-direction:column] [gap:6px] [width:100%]!">
-                <label className="[display:block]! [font-size:var(--text-base)]! [font-weight:600]! [color:var(--text-secondary)]! [margin-bottom:8px]!">
+            <div className="[display:grid] [grid-template-columns:repeat(auto-fit,_minmax(200px,_1fr))] [gap:20px]" style={{ alignItems: "end" }}>
+              <div className="[display:flex] [flex-direction:column] [gap:6px] [width:100%]">
+                <label className="[display:block] [font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)] [margin-bottom:8px]">
                   Reporting Year{" "}
                   <span className="text-[color:var(--danger)]!">*</span>
                 </label>
@@ -597,8 +597,8 @@ const Reports = () => {
                 </NativeSelect>
               </div>
 
-              <div className="[display:flex]! [flex-direction:column] [gap:6px] [width:100%]!">
-                <label className="[display:block]! [font-size:var(--text-base)]! [font-weight:600]! [color:var(--text-secondary)]! [margin-bottom:8px]!">Compare With</label>
+              <div className="[display:flex] [flex-direction:column] [gap:6px] [width:100%]">
+                <label className="[display:block] [font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)] [margin-bottom:8px]">Compare With</label>
                 <NativeSelect
                   className="component-select"
                   value={comparisonYear}
@@ -616,8 +616,8 @@ const Reports = () => {
                 </NativeSelect>
               </div>
 
-              <div className="[display:flex]! [flex-direction:column] [gap:6px] [width:100%]!">
-                <label className="[display:block]! [font-size:var(--text-base)]! [font-weight:600]! [color:var(--text-secondary)]! [margin-bottom:8px]!">GWP Metric Standard</label>
+              <div className="[display:flex] [flex-direction:column] [gap:6px] [width:100%]">
+                <label className="[display:block] [font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)] [margin-bottom:8px]">GWP Metric Standard</label>
                 <NativeSelect
                   className="component-select"
                   value={reportGwpStandard}
@@ -630,8 +630,8 @@ const Reports = () => {
                 </NativeSelect>
               </div>
 
-              <div className="[display:flex]! [flex-direction:column] [gap:6px] [width:100%]!" style={{ flex: 2 }}>
-                <label className="[display:block]! [font-size:var(--text-base)]! [font-weight:600]! [color:var(--text-secondary)]! [margin-bottom:8px]!">
+              <div className="[display:flex] [flex-direction:column] [gap:6px] [width:100%]" style={{ flex: 2 }}>
+                <label className="[display:block] [font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)] [margin-bottom:8px]">
                   Regions / Facilities{" "}
                   <span className="text-[color:var(--danger)]!">*</span>
                 </label>
@@ -647,7 +647,7 @@ const Reports = () => {
               </div>
 
               <button
-                className="[background:linear-gradient(135deg,_var(--accent-color)_0%,_#ff8a4d_100%)]! [color:white]! [padding:12px_28px]! [border-radius:var(--radius-md)]! [font-weight:600]! [border:none]! [display:flex]! [align-items:center] [justify-content:center] [gap:10px] [height:45px]! [transition:all_0.2s]! [width:100%]! hover:[box-shadow:0_4px_15px_rgba(255,_102,_0,_0.3)]! hover:[transform:translateY(-1px)]"
+                className="[background:linear-gradient(135deg,_var(--accent-color)_0%,_#ff8a4d_100%)] [color:white] [padding:12px_28px] [border-radius:var(--radius-md)] [font-weight:600] [border:none] [display:flex] [align-items:center] [justify-content:center] [gap:10px] [height:45px] [transition:all_0.2s] [width:100%] hover:[box-shadow:0_4px_15px_rgba(255,_102,_0,_0.3)] hover:[transform:translateY(-1px)]"
                 onClick={openConfigModal}
                 disabled={loading}
                 style={{
@@ -703,9 +703,9 @@ const Reports = () => {
           </div>
 
           {/* Filter Card */}
-          <div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.78))]! [backdrop-filter:blur(14px)] [border-radius:var(--radius-lg)]! [padding:28px]! [margin-bottom:32px]! [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))]! [box-shadow:var(--shadow-card)]! [position:relative] [overflow:hidden]! [transition:transform_0.22s_ease,_box-shadow_0.22s_ease]! hover:[border-color:rgba(255,_255,_255,_0.95)]! before:[content:''] before:[position:absolute] before:[top:0] before:[left:0] before:[width:4px]! before:[height:100%]! before:[background:var(--accent-gradient,_linear-gradient(135deg,_var(--accent-color)_0%,_#ff8a4d_100%))]!">
-            <div className="[display:flex]! [align-items:center] [gap:12px] [margin-bottom:20px]!">
-              <div className="[background:rgba(255,_102,_0,_0.1)]! [padding:10px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [color:var(--color-link)]!">
+          <div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.78))] [backdrop-filter:blur(14px)] [border-radius:var(--radius-lg)] [padding:28px] [margin-bottom:32px] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [box-shadow:var(--shadow-card)] [position:relative] [overflow:hidden] [transition:transform_0.22s_ease,_box-shadow_0.22s_ease] hover:[border-color:rgba(255,_255,_255,_0.95)] before:[content:''] before:[position:absolute] before:[top:0] before:[left:0] before:[width:4px] before:[height:100%] before:[background:var(--accent-gradient,_linear-gradient(135deg,_var(--accent-color)_0%,_#ff8a4d_100%))]">
+            <div className="[display:flex] [align-items:center] [gap:12px] [margin-bottom:20px]">
+              <div className="[background:rgba(255,_102,_0,_0.1)] [padding:10px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [color:var(--color-link)]">
                 <svg
                   width="24"
                   height="24"
@@ -722,9 +722,9 @@ const Reports = () => {
               <h3 className="card-title">Filter & Group Data</h3>
             </div>
 
-            <div className="[display:grid]! [grid-template-columns:repeat(auto-fit,_minmax(200px,_1fr))] [gap:20px] [align-items:end]">
-              <div className="[display:flex]! [flex-direction:column] [gap:6px] [width:100%]!">
-                <label className="[display:block]! [font-size:var(--text-base)]! [font-weight:600]! [color:var(--text-secondary)]! [margin-bottom:8px]!">Inventory Scope</label>
+            <div className="[display:grid] [grid-template-columns:repeat(auto-fit,_minmax(200px,_1fr))] [gap:20px] [align-items:end]">
+              <div className="[display:flex] [flex-direction:column] [gap:6px] [width:100%]">
+                <label className="[display:block] [font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)] [margin-bottom:8px]">Inventory Scope</label>
                 <NativeSelect
                   className="component-select"
                   value={scope}
@@ -737,8 +737,8 @@ const Reports = () => {
                 </NativeSelect>
               </div>
 
-              <div className="[display:flex]! [flex-direction:column] [gap:6px] [width:100%]!">
-                <label className="[display:block]! [font-size:var(--text-base)]! [font-weight:600]! [color:var(--text-secondary)]! [margin-bottom:8px]!">Reporting Year</label>
+              <div className="[display:flex] [flex-direction:column] [gap:6px] [width:100%]">
+                <label className="[display:block] [font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)] [margin-bottom:8px]">Reporting Year</label>
                 <NativeSelect
                   className="component-select"
                   value={year}
@@ -759,8 +759,8 @@ const Reports = () => {
                 </NativeSelect>
               </div>
 
-              <div className="[display:flex]! [flex-direction:column] [gap:6px] [width:100%]!">
-                <label className="[display:block]! [font-size:var(--text-base)]! [font-weight:600]! [color:var(--text-secondary)]! [margin-bottom:8px]!">Month</label>
+              <div className="[display:flex] [flex-direction:column] [gap:6px] [width:100%]">
+                <label className="[display:block] [font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)] [margin-bottom:8px]">Month</label>
                 <NativeSelect
                   className="component-select"
                   value={month}
@@ -776,8 +776,8 @@ const Reports = () => {
                   ))}
                 </NativeSelect>
               </div>
-              <div className="[display:flex]! [flex-direction:column] [gap:6px] [width:100%]!">
-                <label className="[display:block]! [font-size:var(--text-base)]! [font-weight:600]! [color:var(--text-secondary)]! [margin-bottom:8px]!">Region (Grid)</label>
+              <div className="[display:flex] [flex-direction:column] [gap:6px] [width:100%]">
+                <label className="[display:block] [font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)] [margin-bottom:8px]">Region (Grid)</label>
                 <NativeSelect
                   className="component-select"
                   value={regionId}
@@ -793,8 +793,8 @@ const Reports = () => {
               </div>
 
               {scope === "1" && (
-                <div className="[display:flex]! [flex-direction:column] [gap:6px] [width:100%]!">
-                  <label className="[display:block]! [font-size:var(--text-base)]! [font-weight:600]! [color:var(--text-secondary)]! [margin-bottom:8px]!">Process Type</label>
+                <div className="[display:flex] [flex-direction:column] [gap:6px] [width:100%]">
+                  <label className="[display:block] [font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)] [margin-bottom:8px]">Process Type</label>
                   <NativeSelect
                     className="component-select"
                     value={processType}
@@ -811,8 +811,8 @@ const Reports = () => {
                   </NativeSelect>
                 </div>
               )}
-              <div className="[display:flex]! [flex-direction:column] [gap:6px] [width:100%]!">
-                <label className="[display:block]! [font-size:var(--text-base)]! [font-weight:600]! [color:var(--text-secondary)]! [margin-bottom:8px]!">Division</label>
+              <div className="[display:flex] [flex-direction:column] [gap:6px] [width:100%]">
+                <label className="[display:block] [font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)] [margin-bottom:8px]">Division</label>
                 <NativeSelect
                   className="component-select"
                   value={division}
@@ -828,8 +828,8 @@ const Reports = () => {
                     ))}
                 </NativeSelect>
               </div>
-              <div className="[display:flex]! [flex-direction:column] [gap:6px] [width:100%]!">
-                <label className="[display:block]! [font-size:var(--text-base)]! [font-weight:600]! [color:var(--text-secondary)]! [margin-bottom:8px]!">Field</label>
+              <div className="[display:flex] [flex-direction:column] [gap:6px] [width:100%]">
+                <label className="[display:block] [font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)] [margin-bottom:8px]">Field</label>
                 <NativeSelect
                   className="component-select"
                   value={field}
@@ -845,8 +845,8 @@ const Reports = () => {
                     ))}
                 </NativeSelect>
               </div>
-              <div className="[display:flex]! [flex-direction:column] [gap:6px] [width:100%]!">
-                <label className="[display:block]! [font-size:var(--text-base)]! [font-weight:600]! [color:var(--text-secondary)]! [margin-bottom:8px]!">Calc Method</label>
+              <div className="[display:flex] [flex-direction:column] [gap:6px] [width:100%]">
+                <label className="[display:block] [font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)] [margin-bottom:8px]">Calc Method</label>
                 <NativeSelect
                   className="component-select"
                   value={methodFilter}
@@ -858,8 +858,8 @@ const Reports = () => {
                   <option value="Location-based">Location-based</option>
                 </NativeSelect>
               </div>
-              <div className="[display:flex]! [flex-direction:column] [gap:6px] [width:100%]!">
-                <label className="[display:block]! [font-size:var(--text-base)]! [font-weight:600]! [color:var(--text-secondary)]! [margin-bottom:8px]!">Group By</label>
+              <div className="[display:flex] [flex-direction:column] [gap:6px] [width:100%]">
+                <label className="[display:block] [font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)] [margin-bottom:8px]">Group By</label>
                 <NativeSelect
                   className="component-select"
                   value={groupBy}
@@ -876,13 +876,13 @@ const Reports = () => {
           </div>
 
           {/* Filters */}
-          <div className="[background:var(--bg-card)]! [padding:20px_24px]! [border-radius:var(--radius-lg)]! [margin-bottom:24px]! [display:flex]! [gap:20px] [align-items:center] [border:1px_solid_var(--border-color)]! [flex-wrap:wrap]">
+          <div className="[background:var(--bg-card)] [padding:20px_24px] [border-radius:var(--radius-lg)] [margin-bottom:24px] [display:flex] [gap:20px] [align-items:center] [border:1px_solid_var(--border-color)] [flex-wrap:wrap]">
             <div className="search-input-wrapper">
-              <label className="[display:block]! [font-size:var(--text-base)]! [font-weight:600]! [color:var(--text-secondary)]! [margin-bottom:8px]!">Search</label>
+              <label className="[display:block] [font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)] [margin-bottom:8px]">Search</label>
               <div className="relative!">
                 <input
                   type="text"
-                  className="[width:100%]! [padding:10px_12px_10px_36px]! [background:var(--bg-input)]! [border:1px_solid_var(--border-color)]! [&&]:[border-radius:var(--radius-md)]! [color:var(--text-primary)]! [font-size:var(--text-base)]! [outline:none]! [transition:all_0.2s]! [box-sizing:border-box]! focus:[border-color:var(--accent-color)]! focus:[background:var(--color-white)]!"
+                  className="[width:100%] [padding:10px_12px_10px_36px] [background:var(--bg-input)] [border:1px_solid_var(--border-color)] [&&]:[border-radius:var(--radius-md)] [color:var(--text-primary)] [font-size:var(--text-base)] [outline:none] [transition:all_0.2s] [box-sizing:border-box] focus:[border-color:var(--accent-color)] focus:[background:var(--color-white)]"
                   placeholder="Search records..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -941,9 +941,9 @@ const Reports = () => {
           )}
 
           {!loading && totalPages > 1 && (
-            <div className="[display:flex]! [justify-content:space-between] [align-items:center] [padding:16px_24px]! [border-top:1px_solid_var(--border-color)]! [background:var(--bg-card)]!">
+            <div className="[display:flex] [justify-content:space-between] [align-items:center] [padding:16px_24px] [border-top:1px_solid_var(--border-color)] [background:var(--bg-card)]">
               <button
-                className="[background:var(--bg-card)]! [border:1px_solid_var(--border-color)]! [color:var(--text-primary)]! [padding:8px_16px]! [&&]:[border-radius:var(--radius-md)]! [cursor:pointer] [font-size:var(--text-base)]! [transition:all_0.2s]! [&:hover:not(:disabled)]:[background:var(--bg-hover)]! [&:hover:not(:disabled)]:[border-color:var(--accent-color)]! disabled:[opacity:0.5] disabled:[cursor:not-allowed]"
+                className="[background:var(--bg-card)]! [border:1px_solid_var(--border-color)]! [color:var(--text-primary)] [padding:8px_16px] [&&]:[border-radius:var(--radius-md)]! [cursor:pointer] [font-size:var(--text-base)] [transition:all_0.2s] [&:hover:not(:disabled)]:[background:var(--bg-hover)]! [&:hover:not(:disabled)]:[border-color:var(--accent-color)]! disabled:[opacity:0.5] disabled:[cursor:not-allowed]"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
               >
@@ -955,7 +955,7 @@ const Reports = () => {
                 Page {page} of {totalPages} ({totalRecords} records)
               </span>
               <button
-                className="[background:var(--bg-card)]! [border:1px_solid_var(--border-color)]! [color:var(--text-primary)]! [padding:8px_16px]! [&&]:[border-radius:var(--radius-md)]! [cursor:pointer] [font-size:var(--text-base)]! [transition:all_0.2s]! [&:hover:not(:disabled)]:[background:var(--bg-hover)]! [&:hover:not(:disabled)]:[border-color:var(--accent-color)]! disabled:[opacity:0.5] disabled:[cursor:not-allowed]"
+                className="[background:var(--bg-card)]! [border:1px_solid_var(--border-color)]! [color:var(--text-primary)] [padding:8px_16px] [&&]:[border-radius:var(--radius-md)]! [cursor:pointer] [font-size:var(--text-base)] [transition:all_0.2s] [&:hover:not(:disabled)]:[background:var(--bg-hover)]! [&:hover:not(:disabled)]:[border-color:var(--accent-color)]! disabled:[opacity:0.5] disabled:[cursor:not-allowed]"
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
               >
@@ -971,7 +971,7 @@ const Reports = () => {
           <div className="modal-content max-w-[560px]!">
             <div className="modal-header">
               <h2>Generate Executive GHG Report</h2>
-              <button className="close-btn [background:none]! [border:none]! [font-size:var(--text-xl)]! [cursor:pointer] [color:var(--color-ink-500)]!" onClick={() => setShowConfigModal(false)}>×</button>
+              <button className="close-btn [background:none] [border:none] [font-size:var(--text-xl)] [cursor:pointer] [color:var(--color-ink-500)]" onClick={() => setShowConfigModal(false)}>×</button>
             </div>
             <div className="modal-body flex! flex-col! gap-[16px]!">
               <div className="input-group">

@@ -108,6 +108,41 @@
   gap: 3px;
 }
 
+.seg-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 11px;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--color-ink-500);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.seg-btn:hover:not(.active) {
+  color: var(--color-ink-900);
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.seg-btn.active {
+  background: var(--color-white);
+  color: var(--color-link);
+  box-shadow: var(--shadow-xs);
+  font-weight: 700;
+}
+
+.basemap-selector .seg-btn.active {
+  background: var(--color-white);
+  color: var(--color-blue-700);
+  box-shadow: var(--shadow-xs);
+  font-weight: 700;
+}
+
 /* ============================================================
    2. SATELLITE NEW-PASS FLOATING TOAST
    ============================================================ */
@@ -166,11 +201,69 @@
   flex: 1;
 }
 
+.recon-select {
+  width: 100%;
+  background: var(--color-ink-50);
+  border: 1px solid var(--color-ink-200);
+  border-radius: var(--radius-md);
+  padding: 7px 10px;
+  font-size: var(--text-sm);
+  color: var(--color-ink-900);
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.recon-select:focus {
+  border-color: var(--color-brand-500);
+  background: var(--color-white);
+}
+
 /* Severity Pills */
+
+.pill-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  background: var(--color-ink-50);
+  border: 1px solid var(--color-ink-200);
+  border-radius: var(--radius-md);
+  padding: 6px 8px;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--color-ink-500);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pill-btn:hover:not(.active) {
+  color: var(--color-ink-900);
+  background: var(--color-ink-100);
+}
+
+.pill-btn.active {
+  background: var(--color-brand-50);
+  border-color: var(--color-brand-500);
+  color: var(--color-link);
+  font-weight: 700;
+}
 
 /* Satellite Overlay Card */
 
 /* Switch Toggle */
+.switch-toggle {
+  position: relative;
+  display: inline-block;
+  width: 34px;
+  height: 18px;
+}
+
+.switch-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
 
 .slider {
   position: absolute;
@@ -202,6 +295,20 @@ input:checked + .slider {
 
 input:checked + .slider:before {
   transform: translateX(16px);
+}
+
+.recon-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-xs);
+  color: var(--color-ink-600);
+  cursor: pointer;
+}
+
+.recon-checkbox-label input {
+  accent-color: var(--color-brand-500);
+  cursor: pointer;
 }
 
 /* Target Asset List Header */
@@ -299,12 +406,6 @@ input:checked + .slider:before {
   box-shadow: 0 0 6px rgba(16, 185, 129, 0.5);
 }
 
-.target-card-val {
-  font-size: var(--text-base);
-  font-weight: 800;
-  color: var(--color-ink-900);
-}
-
 .target-card.selected .target-card-val {
   color: var(--color-link);
 }
@@ -362,21 +463,6 @@ input:checked + .slider:before {
 /* Satellite Intelligence Section */
 
 /* Reconciliation Gap Box */
-.reconciliation-meter-box {
-  background: var(--color-white);
-  border: 1px solid var(--color-ink-200);
-  border-radius: var(--radius-md);
-  padding: 10px;
-  margin-bottom: 12px;
-}
-
-.recon-status-badge {
-  font-size: var(--text-xs);
-  font-weight: 700;
-  padding: 2px 7px;
-  border-radius: var(--radius-sm);
-  border: 1px solid;
-}
 
 /* Level 5 OGMP Reconciliation Button */
 

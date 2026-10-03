@@ -87,6 +87,42 @@
 
 /* Charts Section */
 
+.trend-card-enhanced {
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--bg-card);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-card);
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+
+.trend-card-enhanced:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-elevated);
+  border-color: rgba(255, 255, 255, 0.95);
+}
+
+.donut-card-enhanced {
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  flex: 1;
+  background: var(--bg-card);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-card);
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+
+.donut-card-enhanced:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-elevated);
+  border-color: rgba(255, 255, 255, 0.95);
+}
+
 /* Goal Progress Badge */
 
 .hero-header {
@@ -125,6 +161,14 @@
 }
 
 /* Categorical Card */
+.categorical-card {
+  padding: 24px;
+  background: var(--bg-card);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
 
 .card-subtitle {
   font-size: var(--text-md);
@@ -154,16 +198,6 @@
   margin: 0;
 }
 
-.year-select {
-  padding: 4px 8px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--color-ink-200);
-  font-size: var(--text-sm);
-  font-weight: 600;
-  color: var(--color-ink-600);
-  outline: none;
-}
-
 .data-table {
   width: 100%;
   border-collapse: collapse;
@@ -189,6 +223,23 @@
 
 .data-table tr:hover:not(.header-divider) td {
   background: #fffafa;
+}
+
+.summary-row td {
+  font-weight: 600;
+  background: #fcfcfc;
+}
+
+.detail-row td {
+  color: var(--color-ink-500);
+}
+
+.total-row td {
+  font-weight: 700;
+  font-size: var(--text-md);
+  color: var(--color-ink-900);
+  border-top: 2px solid var(--color-ink-200);
+  background: var(--color-ink-50);
 }
 
 .header-divider td {
@@ -217,6 +268,30 @@
 }
 
 /* Sidebar Cards */
+
+.library-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--color-ink-600);
+  padding: 10px;
+  background: var(--color-ink-50);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.library-item:hover {
+  background: var(--color-ink-100);
+  transform: translateX(4px);
+}
+
+.library-item svg {
+  margin-left: auto;
+  color: var(--color-ink-300);
+}
 
 .dot {
   width: 8px;
@@ -247,10 +322,10 @@
     overflow: visible !important;
     height: auto !important;
   }
-  .sidebar, .top-bar, button {
+  .sidebar, .top-bar, .compare-toggle-btn, button {
     display: none !important;
   }
-  .card, .glass-panel, .hero-card {
+  .card, .glass-panel, .hero-card, .trend-card-enhanced, .donut-card-enhanced, .categorical-card {
     box-shadow: none !important;
     border: 1px solid var(--color-ink-300) !important;
     background: var(--color-white) !important;
@@ -320,16 +395,40 @@
 }
 
 /* Ensure dropdowns fit well in top bar */
-.top-bar .custom-dropdown .dropdown-selected {
-  padding: 6px 12px;
-  height: 36px;
-  background: var(--color-white);
-  font-size: var(--text-base);
-}
 
 /* Variance Badge */
 
 /* Compare Mode Toggle */
+
+.compare-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--color-white);
+  border: 1px solid var(--color-ink-200);
+  padding: 6px 14px;
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-ink-500);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.compare-toggle-btn:hover {
+  background: var(--color-ink-50);
+  border-color: var(--color-ink-300);
+}
+
+.compare-toggle-btn.active {
+  background: var(--color-brand-50);
+  color: var(--color-link);
+  border-color: var(--color-brand-500);
+}
+
+.compare-toggle-btn svg {
+  opacity: 0.7;
+}
 
 /* ==================================================
    RESPONSIVE DESIGN (TABLET & MOBILE)
@@ -373,6 +472,12 @@
     grid-template-columns: 1fr;
   }
 
+  .trend-card-enhanced,
+  .distribution-card {
+    padding: 16px;
+    border-radius: var(--radius-lg);
+  }
+
   .table-container {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -400,60 +505,6 @@
 /* ==========================================================================
    Pending Records Notification & Live Preview Banner
    ========================================================================== */
-.pending-banner-card {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 16px;
-  padding: 16px 22px;
-  margin-bottom: 24px;
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(245, 158, 11, 0.28);
-  border-radius: var(--radius-lg);
-  box-shadow: 0 4px 20px -2px rgba(245, 158, 11, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
-  position: relative;
-  overflow: hidden;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.pending-banner-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  width: 4px;
-  background: linear-gradient(180deg, var(--color-amber-500) 0%, var(--color-brand-500) 100%);
-  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
-}
-
-.pending-banner-card.active-preview {
-  border-color: rgba(255, 102, 0, 0.4);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 247, 237, 0.9) 100%);
-  box-shadow: 0 6px 24px -2px rgba(255, 102, 0, 0.12), 0 2px 8px -1px rgba(15, 23, 42, 0.04);
-}
-
-.pending-banner-icon {
-  width: 42px;
-  height: 42px;
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(255, 102, 0, 0.12) 100%);
-  border: 1px solid rgba(245, 158, 11, 0.25);
-  color: var(--color-amber-700);
-  flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.1);
-  transition: transform 0.2s ease;
-}
-
-.pending-banner-card:hover .pending-banner-icon {
-  transform: scale(1.05);
-}
 
 .pending-banner-desc {
   margin: 0;
@@ -471,19 +522,39 @@
 
 /* Modern Toggle Switch */
 
-/* Action Button */
-
-@media (max-width: 640px) {
-  .pending-banner-card {
-    flex-direction: column;
-    align-items: stretch;
-    padding: 14px 16px;
-  }
+.pending-switch {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  background-color: var(--color-ink-300);
+  border-radius: 999px;
+  transition: background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-block;
+  flex-shrink: 0;
 }
+
+.pending-switch.active {
+  background: linear-gradient(135deg, var(--color-brand-500) 0%, var(--color-brand-600) 100%);
+  box-shadow: 0 2px 8px rgba(255, 102, 0, 0.3);
+}
+
+.pending-switch.active .pending-switch-slider {
+  transform: translateX(16px);
+}
+
+/* Action Button */
 
 /* ==========================================================================
    Operational Flaring Streams & Regulatory Compliance (Decree 21-330)
    ========================================================================== */
+.flaring-kpi-banner {
+  margin-top: 20px;
+  padding: 22px 24px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 247, 237, 0.6) 100%);
+  border: 1px solid rgba(251, 146, 60, 0.3);
+  box-shadow: 0 4px 20px -2px rgba(234, 88, 12, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.04);
+}
 
 .stream-label {
   font-size: var(--text-sm);
