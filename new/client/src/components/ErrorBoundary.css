@@ -1,3 +1,30 @@
+.error-boundary-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: linear-gradient(135deg, var(--color-ink-900) 0%, var(--color-ink-800) 100%);
+}
+
+.error-boundary-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  max-width: 600px;
+  width: 100%;
+  text-align: center;
+  box-shadow: var(--shadow-raised);
+}
+
+.error-icon {
+  color: var(--color-red-700);
+  margin-bottom: 24px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
 @keyframes pulse {
   0%,
   100% {
@@ -9,11 +36,68 @@
   }
 }
 
+.error-title {
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 16px 0;
+}
+
 .error-message {
   font-size: var(--text-md);
   color: var(--text-secondary);
   margin: 0 0 32px 0;
   line-height: 1.6;
+}
+
+.error-details {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.error-details summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--color-amber-700);
+  margin-bottom: 12px;
+  user-select: none;
+}
+
+.error-details summary:hover {
+  color: #fbbf24;
+}
+
+.error-stack {
+  margin-top: 12px;
+  font-size: var(--text-base);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.error-stack strong {
+  color: var(--color-red-700);
+}
+
+.error-stack pre {
+  background: rgba(0, 0, 0, 0.4);
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  overflow-x: auto;
+  margin-top: 8px;
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.error-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 24px;
 }
 
 .error-btn {
@@ -50,8 +134,35 @@
   background: rgba(255, 255, 255, 0.15);
 }
 
+.error-footer {
+  padding-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: var(--text-base);
+  color: var(--text-secondary);
+}
+
+.error-footer a {
+  color: var(--color-green-700);
+  text-decoration: none;
+}
+
+.error-footer a:hover {
+  text-decoration: underline;
+}
+
 /* Mobile Responsive */
 @media (max-width: 768px) {
+  .error-boundary-card {
+    padding: 30px 20px;
+  }
+
+  .error-title {
+    font-size: var(--text-xl);
+  }
+
+  .error-actions {
+    flex-direction: column;
+  }
 
   .error-btn {
     width: 100%;

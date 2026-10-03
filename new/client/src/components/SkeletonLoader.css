@@ -1,8 +1,41 @@
+.skeleton-block {
+  background: var(--border-light);
+  border-radius: var(--radius-sm);
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+.skeleton-row {
+  display: flex;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.skeleton-cell {
+  flex: 1;
+  height: 16px;
+}
+
+.skeleton-table {
+  width: 100%;
+}
+
 .skeleton-card {
   padding: 24px;
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-light);
   background: var(--color-white);
+}
+
+.skeleton-card-title {
+  width: 33%;
+  height: 20px;
+  margin-bottom: 16px;
+}
+
+.skeleton-card-value {
+  width: 50%;
+  height: 40px;
 }
 
 @keyframes skeleton-pulse {

@@ -5,9 +5,58 @@
   color: var(--text-primary, var(--color-ink-900));
 }
 
+.search-bar-container {
+  background: var(--bg-card, rgba(255, 255, 255, 0.78));
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  padding: 20px 24px;
+  border-radius: var(--radius-lg);
+  margin-bottom: 28px;
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--border-color, rgba(226, 232, 240, 0.8));
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
 .search-input-wrapper {
   position: relative;
   flex: 1;
+}
+
+.search-input-field {
+  width: 100%;
+  padding: 11px 16px 11px 42px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid var(--border-color, var(--color-ink-200));
+  border-radius: var(--radius-md);
+  font-size: var(--text-md);
+  color: var(--text-primary, var(--color-ink-900));
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.search-input-field:focus {
+  border-color: var(--accent-color, var(--color-brand-500));
+  box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.15);
+}
+
+.filter-select {
+  padding: 11px 18px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid var(--border-color, var(--color-ink-200));
+  border-radius: var(--radius-md);
+  font-size: var(--text-base);
+  min-width: 200px;
+  color: var(--text-primary, var(--color-ink-900));
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-select:focus {
+  border-color: var(--accent-color, var(--color-brand-500));
+  box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.15);
 }
 
 .category-section {
@@ -51,6 +100,51 @@
   gap: 12px;
 }
 
+.count-badge {
+  background: var(--color-primary);
+  color: white;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: var(--text-sm);
+  font-weight: 700;
+}
+
+.factors-table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.factors-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.factors-table thead {
+  background: var(--color-ink-50);
+  border-bottom: 2px solid var(--color-ink-100);
+}
+
+.factors-table th {
+  padding: 16px 24px;
+  text-align: left;
+  font-weight: 700;
+  color: var(--color-ink-600);
+  font-size: var(--text-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.factors-table td {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--color-ink-100);
+  font-size: var(--text-base);
+  color: var(--color-ink-700);
+}
+
+.factors-table tr:hover td {
+  background: #fdfdfd;
+}
+
 .factor-name {
   font-weight: 700;
   color: var(--color-ink-800);
@@ -88,4 +182,11 @@
 .usage-tank {
   background: #f3e8ff;
   color: #6b21a8;
+}
+
+.custom-star {
+  color: var(--color-amber-700);
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 4px;
 }
