@@ -1,4 +1,5 @@
 import UserManagementBlock from "./user-management/UserManagementBlock";
+import { Shield as ShieldIcon, User as UserIcon, Users as UsersIcon, Wrench as WrenchIcon } from "lucide-react";
 import UserManagementBlock1205 from "./user-management/UserManagementBlock1205";
 import UserManagementBlock1503 from "./user-management/UserManagementBlock1503";
 import React, { useState, useEffect } from "react";
@@ -859,28 +860,28 @@ const UserManagement = () => {
           {
             label: "Total Users",
             value: totalUsers,
-            icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
+            icon: <UsersIcon size={20} strokeWidth={2} aria-hidden="true" />,
             color: "#6366f1",
             bg: "#eef2ff",
           },
           {
             label: "Standard Users",
             value: standardCount,
-            icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
+            icon: <UserIcon size={20} strokeWidth={2} aria-hidden="true" />,
             color: "#3b82f6",
             bg: "#eff6ff",
           },
           {
             label: "Admins",
             value: adminCount,
-            icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,
+            icon: <ShieldIcon size={20} strokeWidth={2} aria-hidden="true" />,
             color: "#10b981",
             bg: "#ecfdf5",
           },
           {
             label: "IT Admins",
             value: itAdminCount,
-            icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>,
+            icon: <WrenchIcon size={20} strokeWidth={2} aria-hidden="true" />,
             color: "#f59e0b",
             bg: "#fffbeb",
           },

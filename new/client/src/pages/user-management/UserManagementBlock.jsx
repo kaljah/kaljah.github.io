@@ -1,4 +1,5 @@
 import React from "react";
+import { Key as KeyIcon, MapPin as MapPinIcon, Search as SearchIcon, SquarePen as SquarePenIcon, Trash2 as Trash2Icon } from "lucide-react";
 import { Lock } from "lucide-react";
 
 // Extracted from UserManagement.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
@@ -62,7 +63,7 @@ const UserManagementBlock = ({ S, filteredUsers, getRoleMeta, handleDelete, hand
                     <div
                       className="flex! flex-col! items-center! gap-[8px]!"
                     >
-                      <span className="text-[color:var(--text-secondary)]!"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+                      <span className="text-[color:var(--text-secondary)]!"><SearchIcon size={32} strokeWidth={1.5} aria-hidden="true" /></span>
                       No users match the current filters.
                     </div>
                   </td>
@@ -193,7 +194,7 @@ const UserManagementBlock = ({ S, filteredUsers, getRoleMeta, handleDelete, hand
                               "rgba(255,102,0,.25)",
                             )}
                           >
-                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                            <MapPinIcon size={11} strokeWidth={2} aria-hidden="true" />
                             {u.location}
                           </span>
                         ) : (
@@ -238,7 +239,7 @@ const UserManagementBlock = ({ S, filteredUsers, getRoleMeta, handleDelete, hand
                               (e.currentTarget.style.background = "none")
                             }
                           >
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                            <SquarePenIcon size={15} strokeWidth={2} aria-hidden="true" />
                           </button>
                         )}
                         <button
@@ -253,7 +254,7 @@ const UserManagementBlock = ({ S, filteredUsers, getRoleMeta, handleDelete, hand
                             (e.currentTarget.style.background = "none")
                           }
                         >
-                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+                          <KeyIcon size={15} strokeWidth={2} aria-hidden="true" />
                         </button>
                         {!isITOnly && (
                           <button
@@ -268,7 +269,7 @@ const UserManagementBlock = ({ S, filteredUsers, getRoleMeta, handleDelete, hand
                               (e.currentTarget.style.background = "none")
                             }
                           >
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                            <Trash2Icon size={15} strokeWidth={2} aria-hidden="true" />
                           </button>
                         )}
                       </td>
