@@ -5,7 +5,7 @@ import { Activity, Save, ShieldCheck, Target } from "lucide-react";
 // Extracted from Settings.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const SettingsOGMP20Framework = ({ defaultBaseYear, globalThreshold, handleSaveGlobal, isAdmin, midstreamTarget, saving, setDefaultBaseYear, setGlobalThreshold, setMidstreamTarget, setUpstreamTarget, upstreamTarget }) => (
 <div className="[background:var(--bg-card,_var(--color-white))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-lg)]! [padding:32px]! [display:flex]! [flex-direction:column] [gap:28px] [box-shadow:var(--shadow-card,_0_4px_6px_-1px_rgba(0,_0,_0,_0.05))]!">
-          <div className="[display:flex]! [flex-direction:column] [gap:6px] [&_h2]:[font-size:var(--text-lg)]! [&_h2]:[font-weight:700]! [&_h2]:[color:var(--text-primary,_var(--color-ink-900))]! [&_h2]:[margin:0]! [&_p]:[font-size:var(--text-base)]! [&_p]:[color:var(--text-secondary,_var(--color-ink-500))]! [&_p]:[margin:0]! [&_p]:[line-height:1.5]!">
+          <div className="section-intro">
             <div className="[display:flex]! [align-items:center] [gap:10px]">
               <Target size={20} className="[color:var(--color-link)]!" />
               <h2>OGMP 2.0 Framework & Threshold Configuration</h2>
@@ -43,7 +43,7 @@ const SettingsOGMP20Framework = ({ defaultBaseYear, globalThreshold, handleSaveG
                   <ShieldCheck size={15} />
                   <span>Gold Standard Deadlines:</span>
                 </div>
-                <ul className="[margin:0_0_0_18px]! [padding:0]! [&_li]:[margin-bottom:3px]!">
+                <ul className="deadline-list">
                   <li>
                     Operated Assets (3 Years):{" "}
                     <strong>{defaultBaseYear + 3}</strong>
@@ -87,7 +87,7 @@ const SettingsOGMP20Framework = ({ defaultBaseYear, globalThreshold, handleSaveG
             </div>
           </div>
 
-          <div className="[background:var(--bg-hover,_var(--color-ink-50))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-lg)]! [padding:24px]! [display:flex]! [flex-direction:column] [gap:16px] [&_h3]:[font-size:var(--text-md)]! [&_h3]:[font-weight:700]! [&_h3]:[color:var(--text-primary,_var(--color-ink-900))]! [&_h3]:[margin:0]!">
+          <div className="target-standards-box">
             <div className="[display:flex]! [align-items:center] [gap:8px]">
               <Activity size={18} className="[color:var(--color-link)]!" />
               <h3>OGMP 2.0 Methane Intensity Targets</h3>

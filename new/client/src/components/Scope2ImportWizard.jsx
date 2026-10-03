@@ -170,10 +170,10 @@ function StepBar({ current }) {
         return (
           <React.Fragment key={s.id}>
             <div className={`s1w-step ${active ? "active" : ""} ${done ? "done" : ""}`}>
-              <div className="s1w-step-circle [width:32px]! [height:32px]! [border-radius:50%]! [border:2px_solid_var(--color-ink-200)]! [background:var(--color-ink-50)]! [color:var(--color-ink-600)]! [display:flex]! [align-items:center] [justify-content:center] [transition:all_0.25s]! [&_svg]:[width:14px]! [&_svg]:[height:14px]!">
+              <div className="s1w-step-circle">
                 {done ? <Icon.Check /> : <SIcon />}
               </div>
-              <span className="s1w-step-label [font-size:var(--text-xs)]! [font-weight:600]! [color:var(--color-ink-600)]! [white-space:nowrap] [text-transform:uppercase]! [letter-spacing:0.5px]">{s.label}</span>
+              <span className="s1w-step-label">{s.label}</span>
             </div>
             {i < STEPS.length - 1 && (
               <div className={`s1w-step-line ${done ? "done" : ""}`} />
@@ -209,7 +209,7 @@ function MappingRow({ field, headers, value, onChange }) {
       </div>
       <div className="[display:flex]! [justify-content:center]">
         {mapped
-          ? <span className="[width:22px]! [height:22px]! [border-radius:50%]! [background:var(--color-green-700)]! [color:var(--color-white)]! [display:flex]! [align-items:center] [justify-content:center] [&_svg]:[width:12px]! [&_svg]:[height:12px]!"><Icon.Check /></span>
+          ? <span className="s1w-status-ok"><Icon.Check /></span>
           : <span className="[width:22px]! [height:22px]! [border-radius:50%]! [border:2px_solid_var(--color-ink-200)]! [display:block]!" />}
       </div>
     </div>
@@ -235,10 +235,10 @@ function FieldGroup({ group, headers, mapping, setMapping, searchQuery }) {
   const mappedCount = visibleFields.filter(f => mapping[f.key]).length;
 
   return (
-    <div className="[border:1.5px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [overflow:hidden]! [transition:border-color_0.15s]! [&:has(.s1w-group-body)]:[border-color:var(--color-ink-200)]!">
-      <button className="[width:100%]! [display:flex]! [align-items:center] [justify-content:space-between] [padding:12px_16px]! [background:var(--color-ink-50)]! [border:none]! [cursor:pointer] [transition:background_0.15s]! [text-align:left]! hover:[background:var(--color-ink-100)]! [&_svg]:[width:16px]! [&_svg]:[height:16px]! [&_svg]:[color:var(--color-ink-600)]!" onClick={() => setOpen(v => !v)}>
+    <div className="s1w-field-group">
+      <button className="s1w-group-header" onClick={() => setOpen(v => !v)}>
         <div className="[display:flex]! [align-items:center] [gap:10px]">
-          <div className="[width:28px]! [height:28px]! [border-radius:var(--radius-sm)]! [background:var(--primary-gradient)]! [color:var(--color-white)]! [display:flex]! [align-items:center] [justify-content:center] [flex-shrink:0] [&_svg]:[width:13px]! [&_svg]:[height:13px]!"><GroupIcon /></div>
+          <div className="s1w-group-icon"><GroupIcon /></div>
           <span className="[font-size:var(--text-base)]! [font-weight:700]! [color:var(--color-ink-900)]!">{group.label}</span>
         </div>
         <div className="[display:flex]! [align-items:center] [gap:10px]">
@@ -247,8 +247,8 @@ function FieldGroup({ group, headers, mapping, setMapping, searchQuery }) {
         </div>
       </button>
       {open && (
-        <div className="s1w-group-body [border-top:1px_solid_var(--color-ink-200)]!">
-          <div className="[display:grid]! [grid-template-columns:1fr_1fr_36px] [padding:8px_16px]! [background:var(--color-ink-50)]! [border-bottom:1px_solid_var(--color-ink-100)]! [font-size:var(--text-xs)]! [font-weight:700]! [color:var(--color-ink-600)]! [text-transform:uppercase]! [letter-spacing:0.5px] [@media(max-width:600px)]:[display:none]!">
+        <div className="s1w-group-body">
+          <div className="s1w-group-table-header">
             <span>Field</span>
             <span>Your CSV Column</span>
             <span>Status</span>
@@ -361,17 +361,17 @@ export default function Scope2ImportWizard({ onClose, onUploadSuccess }) {
 
   return (
     <div className="[position:fixed] [inset:0] [background:rgba(10,_15,_30,_0.68)]! [backdrop-filter:blur(6px)] [-webkit-backdrop-filter:blur(6px)]! [display:flex]! [align-items:center] [justify-content:center] [z-index:1000] [padding:16px]! [animation:s1w-fade_0.2s_ease]!" onClick={e => e.target === e.currentTarget && onClose()}>
-      <div className="[background:var(--color-white)]! [border-radius:var(--radius-lg)]! [width:100%]! [max-width:820px]! [max-height:94vh]! [display:flex]! [flex-direction:column] [box-shadow:var(--shadow-overlay)]! [animation:s1w-slide_0.28s_cubic-bezier(0.34,_1.56,_0.64,_1)]! [overflow:hidden]! [@media(max-width:600px)]:[border-radius:var(--radius-md)]!">
+      <div className="s1w-modal">
         {/* Header */}
         <div className="[display:flex]! [align-items:center] [justify-content:space-between] [padding:20px_24px_0]! [flex-shrink:0]">
           <div className="[display:flex]! [align-items:center] [gap:12px]">
-            <div className="[width:40px]! [height:40px]! [border-radius:var(--radius-md)]! [background:var(--primary-gradient)]! [display:flex]! [align-items:center] [justify-content:center] [color:var(--color-white)]! [flex-shrink:0] [&_svg]:[width:20px]! [&_svg]:[height:20px]!"><Icon.Zap /></div>
+            <div className="s1w-header-icon"><Icon.Zap /></div>
             <div>
               <h2 className="[font-size:var(--text-lg)]! [font-weight:700]! [color:var(--color-ink-900)]! [margin:0_0_2px]! [letter-spacing:-0.3px] [font-family:inherit]!">Scope 2 Bulk Import</h2>
               <p className="[font-size:var(--text-sm)]! [color:var(--color-ink-500)]! [margin:0]!">Upload electricity and indirect steam data from CSV or Excel</p>
             </div>
           </div>
-          <button className="[width:34px]! [height:34px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--color-ink-200)]! [background:transparent]! [cursor:pointer] [display:flex]! [align-items:center] [justify-content:center] [color:var(--color-ink-500)]! [transition:all_0.15s]! hover:[background:var(--color-ink-100)]! hover:[color:var(--color-ink-900)]! hover:[border-color:var(--color-ink-300)]! [&_svg]:[width:16px]! [&_svg]:[height:16px]!" aria-label="Close" onClick={onClose}><Icon.Close /></button>
+          <button className="s1w-close" aria-label="Close" onClick={onClose}><Icon.Close /></button>
         </div>
 
         {/* Step bar */}
@@ -380,11 +380,11 @@ export default function Scope2ImportWizard({ onClose, onUploadSuccess }) {
         {/* ── STEP 1: File Upload ── */}
         {step === 1 && (
           <div className="s1w-body">
-            <div className="[display:flex]! [align-items:center] [gap:8px] [font-size:var(--text-md)]! [font-weight:700]! [color:var(--color-ink-900)]! [margin-bottom:-6px]! [&_svg]:[width:16px]! [&_svg]:[height:16px]! [&_svg]:[color:var(--color-link)]!"><Icon.Upload /><span>Select File</span></div>
+            <div className="s1w-section-title"><Icon.Upload /><span>Select File</span></div>
 
             {!isAdmin && allowedRegions !== null && (
               <div className="[padding:14px_16px]! [background:linear-gradient(135deg,_var(--color-brand-50)_0%,_#fff1e6_100%)]! [border:1.5px_solid_#fed7aa]! [border-radius:var(--radius-md)]! [display:flex]! [flex-direction:column] [gap:10px]">
-                <div className="[display:flex]! [align-items:center] [gap:8px] [font-size:var(--text-base)]! [color:#7c3a00]! [font-weight:700]! [&_svg]:[width:16px]! [&_svg]:[height:16px]! [&_svg]:[color:var(--color-brand-700)]! [&_svg]:[flex-shrink:0]!">
+                <div className="s1w-access-banner-header">
                   <Icon.Info />
                   <strong>Your upload is restricted to the following regions:</strong>
                 </div>
@@ -409,11 +409,11 @@ export default function Scope2ImportWizard({ onClose, onUploadSuccess }) {
               onDrop={onDrop}
             >
               <input ref={fileInputRef} type="file" accept=".csv,.xlsx" className="hidden!" onChange={onFileChange} />
-              <div className="[width:56px]! [height:56px]! [border-radius:var(--radius-lg)]! [background:var(--primary-gradient)]! [color:var(--color-white)]! [display:flex]! [align-items:center] [justify-content:center] [margin-bottom:4px]! [&_svg]:[width:26px]! [&_svg]:[height:26px]!"><Icon.Upload /></div>
-              <p className="[font-size:var(--text-base)]! [font-weight:600]! [color:var(--color-ink-700)]! [margin:0]! [&_span]:[color:var(--color-link)]! [&_span]:[text-decoration:underline]!">Drag & drop your file here, or <span>click to browse</span></p>
+              <div className="s1w-dropzone-icon"><Icon.Upload /></div>
+              <p className="s1w-dropzone-text">Drag & drop your file here, or <span>click to browse</span></p>
               <p className="[font-size:var(--text-sm)]! [color:var(--color-ink-600)]! [margin:0]!">Supports .xlsx and .csv</p>
               {parseError && (
-                <div className="[display:flex]! [align-items:center] [gap:8px] [padding:8px_14px]! [background:#fee2e2]! [border:1px_solid_#fecaca]! [border-radius:var(--radius-md)]! [font-size:var(--text-sm)]! [color:var(--color-red-700)]! [font-weight:500]! [&_svg]:[width:14px]! [&_svg]:[height:14px]!"><Icon.Warning />{parseError}</div>
+                <div className="s1w-inline-error"><Icon.Warning />{parseError}</div>
               )}
             </div>
           </div>
@@ -423,7 +423,7 @@ export default function Scope2ImportWizard({ onClose, onUploadSuccess }) {
         {step === 2 && (
           <div className="s1w-body">
             {!isAdmin && allowedRegions !== null && allowedRegions.length > 0 && (
-              <div className="[padding:14px_16px]! [background:linear-gradient(135deg,_var(--color-brand-50)_0%,_#fff1e6_100%)]! [border:1.5px_solid_#fed7aa]! [border-radius:var(--radius-md)]! [display:flex]! [flex-direction:column]! [gap:10px]! [flex-direction:row] [align-items:center] [gap:8px] [padding:10px_14px]! [&_svg]:[width:16px]! [&_svg]:[height:16px]! [&_svg]:[color:var(--color-brand-700)]! [&_svg]:[flex-shrink:0]! [&_span]:[font-size:var(--text-sm)]! [&_span]:[color:#7c3a00]! [&_span]:[line-height:1.4]!">
+              <div className="[padding:14px_16px]! [background:linear-gradient(135deg,_var(--color-brand-50)_0%,_#fff1e6_100%)]! [border:1.5px_solid_#fed7aa]! [border-radius:var(--radius-md)]! [display:flex]! [flex-direction:column]! [gap:10px]! s1w-access-banner--compact">
                 <Icon.Info />
                 <span>
                   <strong>Allowed regions:</strong>{" "}
@@ -432,49 +432,49 @@ export default function Scope2ImportWizard({ onClose, onUploadSuccess }) {
               </div>
             )}
             {!isAdmin && allowedRegions !== null && allowedRegions.length === 0 && (
-              <div className="[display:flex]! [align-items:flex-start] [gap:10px] [padding:12px_16px]! [background:var(--color-brand-50)]! [border:1px_solid_#fed7aa]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [color:var(--color-brand-700)]! [line-height:1.5] [&_svg]:[width:16px]! [&_svg]:[height:16px]! [&_svg]:[flex-shrink:0]! [&_svg]:[margin-top:1px]!">
+              <div className="s1w-warn-banner">
                 <Icon.Warning />
                 <span><strong>No accessible regions.</strong> Your account has no assigned regions. All rows will be rejected. Contact an administrator.</span>
               </div>
             )}
             {file && (
               <div className="[display:flex]! [align-items:center] [gap:12px] [padding:12px_16px]! [background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]!">
-                <div className="[width:36px]! [height:36px]! [border-radius:var(--radius-md)]! [background:var(--color-ink-200)]! [display:flex]! [align-items:center] [justify-content:center] [color:var(--color-ink-600)]! [flex-shrink:0] [&_svg]:[width:18px]! [&_svg]:[height:18px]!"><Icon.File /></div>
+                <div className="s1w-file-badge-icon"><Icon.File /></div>
                 <div className="s1w-file-badge-info">
                   <p className="[font-size:var(--text-base)]! [font-weight:600]! [color:var(--color-ink-900)]! [margin:0_0_2px]!">{file.name}</p>
                   <p className="[font-size:var(--text-sm)]! [color:var(--color-ink-600)]! [margin:0]!">{(file.size / 1024).toFixed(1)} KB</p>
                 </div>
                 {headers.length > 0 && (
-                  <div className="[margin-left:auto]! [display:flex]! [align-items:center] [gap:6px] [padding:4px_10px]! [background:var(--color-green-50)]! [border:1px_solid_#a7f3d0]! [border-radius:var(--radius-lg)]! [font-size:var(--text-sm)]! [font-weight:600]! [color:#047857]! [&_svg]:[width:13px]! [&_svg]:[height:13px]!"><Icon.Wand /><span>{Object.keys(mapping).length} auto-detected</span></div>
+                  <div className="s1w-auto-badge"><Icon.Wand /><span>{Object.keys(mapping).length} auto-detected</span></div>
                 )}
               </div>
             )}
 
             {headers.length === 0 && (
-              <div className="[display:flex]! [align-items:flex-start] [gap:10px] [padding:12px_16px]! [background:var(--color-blue-50)]! [border:1px_solid_#bfdbfe]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [color:var(--color-blue-700)]! [line-height:1.5] [&_svg]:[width:16px]! [&_svg]:[height:16px]! [&_svg]:[flex-shrink:0]! [&_svg]:[margin-top:1px]!">
+              <div className="s1w-info-banner">
                 <Icon.Info />
                 <span>Excel file — processed server-side. Type column names exactly as they appear in your file, or leave blank to skip that field.</span>
               </div>
             )}
 
             {headers.length > 0 && missingRequired.length > 0 && (
-              <div className="[display:flex]! [align-items:flex-start] [gap:10px] [padding:12px_16px]! [background:var(--color-brand-50)]! [border:1px_solid_#fed7aa]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [color:var(--color-brand-700)]! [line-height:1.5] [&_svg]:[width:16px]! [&_svg]:[height:16px]! [&_svg]:[flex-shrink:0]! [&_svg]:[margin-top:1px]!">
+              <div className="s1w-warn-banner">
                 <Icon.Warning />
                 <span><strong>{missingRequired.length} required field{missingRequired.length > 1 ? "s" : ""} not mapped:</strong> {missingRequired.map(f => f.label).join(", ")}</span>
               </div>
             )}
 
             <div className="[position:relative] [display:flex]! [align-items:center]">
-              <div className="[position:absolute] [left:12px] [color:var(--color-ink-600)]! [display:flex]! [align-items:center] [&_svg]:[width:16px]! [&_svg]:[height:16px]!"><Icon.Search /></div>
+              <div className="s1w-search-icon"><Icon.Search /></div>
               <input
-                className="[width:100%]! [padding:10px_12px_10px_38px]! [border:1.5px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [background:var(--color-ink-50)]! [font-size:var(--text-base)]! [color:var(--color-ink-900)]! [outline:none]! [transition:border-color_0.15s]! [font-family:inherit]! focus:[border-color:var(--color-brand-500)]! focus:[background:var(--color-white)]! focus:[box-shadow:0_0_0_3px_rgba(255,102,0,0.08)]! placeholder:[color:var(--color-ink-400)]!"
+                className="s1w-search-input"
                 type="text"
                 placeholder="Search fields by name, key, or description…"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
               />
               {searchQuery && (
-                <button className="[position:absolute] [right:10px] [background:transparent]! [border:none]! [cursor:pointer] [color:var(--color-ink-600)]! [display:flex]! [align-items:center] [padding:4px]! [border-radius:var(--radius-sm)]! [transition:color_0.15s]! hover:[color:var(--color-ink-700)]! [&_svg]:[width:14px]! [&_svg]:[height:14px]!" onClick={() => setSearchQuery("")}><Icon.Close /></button>
+                <button className="s1w-search-clear" onClick={() => setSearchQuery("")}><Icon.Close /></button>
               )}
             </div>
 
@@ -515,7 +515,7 @@ export default function Scope2ImportWizard({ onClose, onUploadSuccess }) {
         {step !== 3 && (
           <div className="[display:flex]! [align-items:center] [justify-content:space-between] [padding:14px_24px]! [border-top:1px_solid_var(--color-ink-200)]! [background:var(--color-ink-50)]! [flex-shrink:0]">
             <button
-              className="[display:flex]! [align-items:center] [gap:6px] [padding:9px_18px]! [background:transparent]! [border:1.5px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:600]! [color:var(--color-ink-500)]! [cursor:pointer] [transition:all_0.15s]! [font-family:inherit]! hover:[background:var(--color-ink-100)]! hover:[border-color:var(--color-ink-300)]! hover:[color:var(--color-ink-700)]! [&_svg]:[width:15px]! [&_svg]:[height:15px]!"
+              className="s1w-btn-ghost"
               onClick={step === 1 ? onClose : () => setStep(s => s - 1)}
             >
               {step === 1 ? <><Icon.Close /> Cancel</> : <><Icon.ArrowLeft /> Back</>}

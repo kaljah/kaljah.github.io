@@ -97,6 +97,12 @@
   gap: 24px;
 }
 
+.kpi-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
 /* GWP Horizon Toggle */
 
 .gwp-pill-group {
@@ -128,6 +134,15 @@
   font-weight: 600;
 }
 
+.kpi-icon.scope1 {
+  background: rgba(37, 99, 235, 0.1);
+  color: var(--accent-secondary);
+}
+.kpi-icon.scope3 {
+  background: rgba(139, 92, 246, 0.1);
+  color: var(--color-violet-700);
+}
+
 .kpi-card {
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(12px);
@@ -142,6 +157,29 @@
   transform: translateY(-2px);
   box-shadow: var(--card-shadow-hover);
   border-color: rgba(255, 255, 255, 0.95);
+}
+
+.kpi-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.kpi-icon.co2 {
+  background: rgba(255, 102, 0, 0.1);
+  color: var(--color-link);
+}
+.kpi-icon.ch4 {
+  background: rgba(37, 99, 235, 0.1);
+  color: var(--accent-secondary);
+}
+.kpi-icon.flare {
+  background: rgba(234, 88, 12, 0.1);
+  color: var(--accent-tertiary);
 }
 
 .kpi-label {
@@ -261,6 +299,20 @@
   transform: translateY(-2px);
   box-shadow: var(--shadow-card-elevated);
   border-color: rgba(255, 255, 255, 0.95);
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.chart-header h3 {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
 }
 
 /* Historic Trend Section */
@@ -451,12 +503,18 @@
 
 /* Responsive adjustments */
 @media (max-width: 1200px) {
+  .kpi-grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
   .scope-breakdown {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (max-width: 768px) {
+  .kpi-grid-4 {
+    grid-template-columns: 1fr;
+  }
   .scope-breakdown {
     grid-template-columns: 1fr;
   }
@@ -501,6 +559,28 @@
   pointer-events: none;
 }
 
+.roadmap-title-area {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.roadmap-title-area h3 {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.roadmap-title-area p {
+  font-size: var(--text-base);
+  color: var(--text-secondary);
+  margin: 0;
+}
+
 .btn-baseline-pill {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
@@ -526,6 +606,24 @@
 }
 
 /* Facility Roadmap Cards Grid */
+
+.fac-roadmap-card {
+  background: var(--bg-app);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+}
+
+.fac-roadmap-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--card-shadow-hover);
+}
 
 .badge-roadmap-status {
   display: inline-flex;
@@ -585,6 +683,21 @@
   width: 70px;
 }
 
+.step-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--text-secondary);
+  transition: all 0.25s ease;
+}
+
 .ogmp-step.completed .step-circle {
   background: var(--color-green-700);
   border-color: var(--color-green-500);
@@ -598,6 +711,13 @@
   color: var(--color-white);
   box-shadow: 0 0 10px rgba(37, 99, 235, 0.4);
   transform: scale(1.15);
+}
+
+.step-name {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--text-secondary);
+  line-height: 1.2;
 }
 
 .ogmp-step.current .step-name {
@@ -626,6 +746,31 @@
 }
 
 /* Excel Export Button */
+.btn-export-excel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, var(--color-green-700) 0%, var(--color-green-700) 100%);
+  color: var(--color-white);
+  font-size: var(--text-base);
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+  transition: all 0.2s ease;
+}
+
+.btn-export-excel:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(16, 185, 129, 0.35);
+}
+
+.btn-export-excel:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
 /* CBAM and OGMP Sections */
 .cbam-section, .ogmp-section {
   display: flex;

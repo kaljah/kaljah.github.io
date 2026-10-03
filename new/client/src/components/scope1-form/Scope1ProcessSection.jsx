@@ -26,7 +26,7 @@ const Scope1ProcessSection = ({ activePresetId, currentProcessValue, dataSourceR
               <div className="input-group">
                 <div className="[display:flex]! [flex-direction:column] [align-items:flex-start] [gap:6px] [margin-bottom:12px]!">
                   <label className="m-[0px]!">Method</label>
-                  <div className="methodology-toggle [background:#f3f4f6]! [padding:3px]! [border-radius:var(--radius-md)]! [display:flex]! [gap:4px] [border:1px_solid_#e5e7eb]! [@media(max-width:600px)]:[flex-wrap:wrap]">
+                  <div className="methodology-toggle">
                     {(SECTION_TIERS[processType]
                       ? SECTION_TIERS[processType]
                       : processType === "drilling"
@@ -242,7 +242,7 @@ const Scope1ProcessSection = ({ activePresetId, currentProcessValue, dataSourceR
                             </div>
 
                             {/* Measured Properties Grid */}
-                            <div className="[display:grid]! [grid-template-columns:1fr_1fr] [gap:12px] [@media(max-width:640px)]:[grid-template-columns:1fr]!">
+                            <div className="tier2-inputs-grid">
                               <div>
                                 <label className="block! text-[length:0.75rem]! font-semibold! text-[color:#374151]! mb-[4px]!">
                                   HHV

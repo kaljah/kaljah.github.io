@@ -11,7 +11,7 @@ const MethaneIntensityOGMP20Gold = ({ facilities, globalThreshold, ogmpRoadmapDa
             onClick={() => setRoadmapCollapsed(!roadmapCollapsed)}
             style={{ cursor: "pointer", userSelect: "none" }}
           >
-            <div className="[display:flex]! [flex-direction:column] [gap:4px] [&_h3]:[font-size:var(--text-lg)]! [&_h3]:[font-weight:700]! [&_h3]:[color:var(--text-primary)]! [&_h3]:[margin:0]! [&_h3]:[display:flex]! [&_h3]:[align-items:center]! [&_h3]:[gap:10px]! [&_p]:[font-size:var(--text-base)]! [&_p]:[color:var(--text-secondary)]! [&_p]:[margin:0]!">
+            <div className="roadmap-title-area">
               <h3>
                 <Award size={22} color="#ff6600" />
                 OGMP 2.0 Gold Standard Pathway & Milestone Roadmap
@@ -126,7 +126,7 @@ const MethaneIntensityOGMP20Gold = ({ facilities, globalThreshold, ogmpRoadmapDa
                   return (
                     <div
                       key={fac.facility_id || fac.id}
-                      className="[background:var(--bg-app)]! [border:1px_solid_var(--border-color)]! [border-radius:var(--radius-md)]! [padding:20px]! [display:flex]! [flex-direction:column] [gap:16px] [transition:transform_0.2s,_box-shadow_0.2s]! hover:[transform:translateY(-2px)] hover:[box-shadow:var(--card-shadow-hover)]!"
+                      className="fac-roadmap-card"
                     >
                       <div className="[display:flex]! [justify-content:space-between] [align-items:flex-start] [gap:12px]">
                         <div className="[display:flex]! [flex-direction:column] [gap:2px]">
@@ -168,10 +168,10 @@ const MethaneIntensityOGMP20Gold = ({ facilities, globalThreshold, ogmpRoadmapDa
                               key={lvl}
                               className={`ogmp-step ${isDone ? "completed" : ""} ${isCurrent ? "current" : ""}`}
                             >
-                              <div className="step-circle [width:28px]! [height:28px]! [border-radius:50%]! [background:var(--bg-card)]! [border:2px_solid_var(--border-color)]! [display:flex]! [align-items:center] [justify-content:center] [font-size:var(--text-sm)]! [font-weight:700]! [color:var(--text-secondary)]! [transition:all_0.25s_ease]!">
+                              <div className="step-circle">
                                 {isDone ? "✓" : lvl}
                               </div>
-                              <span className="step-name [font-size:var(--text-xs)]! [font-weight:600]! [color:var(--text-secondary)]! [line-height:1.2]">
+                              <span className="step-name">
                                 {levelNames[lvl - 1]}
                               </span>
                             </div>

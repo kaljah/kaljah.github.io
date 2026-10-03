@@ -28,7 +28,7 @@ const Scope2FormNewElectricityEntry = ({ activity, allocationMethod, amount, boi
         {/* 1. IDENTITY & LOCATION */}
         <div className="mb-[30px]!">
           <h4 className="section-title">1. IDENTITY &amp; LOCATION</h4>
-          <div className="form-grid-4 [display:grid]! [grid-template-columns:repeat(4,_1fr)] [gap:20px] [margin-bottom:20px]! [@media(max-width:600px)]:[grid-template-columns:1fr]! [@media(max-width:600px)]:[gap:12px]!">
+          <div className="form-grid-4">
             <div className="input-group">
               <label>Activity</label>
               <input
@@ -66,7 +66,7 @@ const Scope2FormNewElectricityEntry = ({ activity, allocationMethod, amount, boi
               />
             </div>
           </div>
-          <div className="form-grid-3 [display:grid]! [grid-template-columns:repeat(3,_1fr)] [gap:20px] [margin-bottom:20px]! [@media(max-width:600px)]:[grid-template-columns:1fr]! [@media(max-width:600px)]:[gap:12px]!">
+          <div className="form-grid-3">
             <Field className="input-group" label="Year">
 <Input
                 type="number"
@@ -94,7 +94,7 @@ const Scope2FormNewElectricityEntry = ({ activity, allocationMethod, amount, boi
         {/* 2. GRID & SOURCE DETAILS */}
         <div className="mb-[30px]!">
           <h4 className="section-title">2. GRID &amp; SOURCE DETAILS</h4>
-          <div className="form-grid-2 [display:grid]! [grid-template-columns:1fr_1fr] [gap:20px] [margin-bottom:20px]! [@media(max-width:600px)]:[grid-template-columns:1fr]! [@media(max-width:600px)]:[gap:12px]!">
+          <div className="form-grid-2">
             <div className="input-group">
               <label>Source Type</label>
               <CustomDropdown
@@ -125,7 +125,7 @@ const Scope2FormNewElectricityEntry = ({ activity, allocationMethod, amount, boi
               </div>
             )}
             {sourceType === "indirect_steam" && (
-              <div className="form-grid-2 [display:grid]! [grid-template-columns:1fr_1fr] [gap:20px] [margin-bottom:20px]! [@media(max-width:600px)]:[grid-template-columns:1fr]! [@media(max-width:600px)]:[gap:12px]!" style={{ gridColumn: "span 2" }}>
+              <div className="form-grid-2" style={{ gridColumn: "span 2" }}>
                 <Field className="input-group" label="Boiler Efficiency (0.0 - 1.0)">
 <Input
                     type="number"
@@ -145,7 +145,7 @@ const Scope2FormNewElectricityEntry = ({ activity, allocationMethod, amount, boi
               </div>
             )}
             {sourceType === "cogen_allocation" && (
-              <div className="form-grid-3 [display:grid]! [grid-template-columns:repeat(3,_1fr)] [gap:20px] [margin-bottom:20px]! [@media(max-width:600px)]:[grid-template-columns:1fr]! [@media(max-width:600px)]:[gap:12px]!" style={{ gridColumn: "span 2" }}>
+              <div className="form-grid-3" style={{ gridColumn: "span 2" }}>
                 <Field className="input-group" label="Heat Output (MMBtu)">
 <Input
                     type="number"
@@ -192,7 +192,7 @@ const Scope2FormNewElectricityEntry = ({ activity, allocationMethod, amount, boi
         {/* 3. ACTIVITY DATA */}
         <div className="mb-[10px]!">
           <h4 className="section-title">3. ACTIVITY DATA</h4>
-          <div className="form-grid-2 [display:grid]! [grid-template-columns:1fr_1fr] [gap:20px] [margin-bottom:20px]! [@media(max-width:600px)]:[grid-template-columns:1fr]! [@media(max-width:600px)]:[gap:12px]!">
+          <div className="form-grid-2">
             <Field className="input-group" label={<>{sourceType === "cogen_allocation"
                   ? "Total Facility Emissions (tCO2e)"
                   : "Usage Amount"}</>}>

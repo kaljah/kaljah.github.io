@@ -29,7 +29,7 @@ const OgmpTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, NON_OG_ACTIVITIES, currentPa
                                     </div>
                                 </div>
 
-                                <div className="form-grid-3 [display:grid]! [grid-template-columns:repeat(3,_1fr)] [gap:20px] [margin-bottom:20px]! [@media(max-width:600px)]:[grid-template-columns:1fr]! [@media(max-width:600px)]:[gap:12px]!">
+                                <div className="form-grid-3">
                                     <Field className="input-group" label="Activity">
 <NativeSelect
                                             value={ogmpForm.activity}
@@ -258,7 +258,7 @@ const OgmpTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, NON_OG_ACTIVITIES, currentPa
                                                                     Edit
                                                                 </button>
                                                                 <button
-                                                                    className="[background:#fee2e2]! [color:var(--color-red-700)]! [border:1px_solid_#fecaca]! [padding:6px_12px]! [border-radius:var(--radius-md)]! [cursor:pointer] [font-size:var(--text-base)]! [transition:all_0.2s]! hover:[background:var(--color-red-700)]! hover:[color:white]! p-[4px_8px]! text-[length:0.75rem]!"
+                                                                    className="btn-delete p-[4px_8px]! text-[length:0.75rem]!"
                                                                    
                                                                     onClick={() => handleDeleteOgmpSurvey(o.id)}
                                                                 >

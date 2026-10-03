@@ -5,7 +5,7 @@ import { LineChart } from "../../components/charts";
 // Extracted from MethaneIntensity.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const MethaneIntensityHistoricalMethaneTrends = ({ getHeatmapClass, midstreamTargetPct, rawTrendData, regionalData, setTrendView, trendChartData, trendView, upstreamTargetPct }) => (
 <div className="card trend-section">
-          <div className="[display:flex]! [justify-content:space-between] [align-items:flex-start] [margin-bottom:24px]! [&_h3]:[font-size:var(--text-lg)]! [&_h3]:[font-weight:600]! [&_h3]:[color:var(--text-primary)]! [&_h3]:[margin:0]!">
+          <div className="chart-header">
             <div>
               <h3 className="mb-[4px]!">
                 Historical Methane Trends & Targets

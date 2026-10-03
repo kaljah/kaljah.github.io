@@ -5,7 +5,7 @@ import { AlertCircle, CheckCircle2, ExternalLink, HelpCircle, KeyRound, Radio, S
 // Extracted from Settings.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicusClientId, copernicusClientSecret, copernicusEnabled, copernicusPassword, copernicusQaThreshold, copernicusUsername, handleSaveGlobal, handleTestConnection, isAdmin, saving, setAuthMode, setCopernicusClientId, setCopernicusClientSecret, setCopernicusEnabled, setCopernicusPassword, setCopernicusQaThreshold, setCopernicusUsername, setShowGuide, showGuide, testingConnection }) => (
 <div className="[background:var(--bg-card,_var(--color-white))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-lg)]! [padding:32px]! [display:flex]! [flex-direction:column] [gap:28px] [box-shadow:var(--shadow-card,_0_4px_6px_-1px_rgba(0,_0,_0,_0.05))]!">
-          <div className="[display:flex]! [flex-direction:column] [gap:6px] [&_h2]:[font-size:var(--text-lg)]! [&_h2]:[font-weight:700]! [&_h2]:[color:var(--text-primary,_var(--color-ink-900))]! [&_h2]:[margin:0]! [&_p]:[font-size:var(--text-base)]! [&_p]:[color:var(--text-secondary,_var(--color-ink-500))]! [&_p]:[margin:0]! [&_p]:[line-height:1.5]!">
+          <div className="section-intro">
             <div className="[display:flex]! [align-items:center] [gap:10px]">
               <Satellite
                 size={22}
@@ -28,7 +28,7 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
           </div>
 
           {/* Step-by-step account guide toggle banner */}
-          <div className="[background:rgba(2,_132,_199,_0.05)]! [border:1px_solid_rgba(2,_132,_199,_0.2)]! [border-radius:var(--radius-md)]! [padding:16px_20px]! [margin-bottom:24px]! [transition:all_0.2s_ease]! hover:[border-color:rgba(2,_132,_199,_0.35)]!">
+          <div className="satellite-guide-banner">
             <div
               className="[display:flex]! [justify-content:space-between] [align-items:center] [cursor:pointer] [gap:16px]"
               onClick={() => setShowGuide(!showGuide)}
@@ -40,7 +40,7 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
                   Setup Guide
                 </strong>
               </div>
-              <button className="[background:var(--color-sky-600)]! [color:var(--color-white)]! [border:none]! [border-radius:var(--radius-sm)]! [padding:6px_14px]! [font-size:var(--text-sm)]! [font-weight:600]! [cursor:pointer] [transition:background_0.2s_ease]! hover:[background:#0369a1]!" type="button" aria-expanded={showGuide}>
+              <button className="guide-toggle-btn" type="button" aria-expanded={showGuide}>
                 {showGuide ? "Hide Guide" : "Show Step-by-Step Guide"}
               </button>
             </div>
@@ -55,7 +55,7 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
                       href="https://dataspace.copernicus.eu"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="[color:var(--color-blue-700)]! [font-weight:600]! [text-decoration:none]! [display:inline-flex]! [align-items:center] [gap:3px] hover:[text-decoration:underline]!"
+                      className="link-ext"
                     >
                       dataspace.copernicus.eu <ExternalLink size={12} />
                     </a>{" "}
@@ -86,7 +86,7 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
                           href="https://identity.dataspace.copernicus.eu"
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="[color:var(--color-blue-700)]! [font-weight:600]! [text-decoration:none]! [display:inline-flex]! [align-items:center] [gap:3px] hover:[text-decoration:underline]!"
+                          className="link-ext"
                         >
                           identity.dataspace.copernicus.eu{" "}
                           <ExternalLink size={12} />
@@ -135,7 +135,7 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
 
           {/* Credentials Form Section */}
           <div className="[background:var(--bg-card-secondary,_var(--color-ink-50))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-lg)]! [padding:24px]! [display:flex]! [flex-direction:column] [gap:18px]">
-            <div className="[display:flex]! [align-items:center] [gap:10px] [color:var(--text-primary,_var(--color-ink-900))]! [margin-bottom:4px]! [&_h3]:[margin:0]! [&_h3]:[font-size:var(--text-md)]! [&_h3]:[font-weight:700]!">
+            <div className="config-form-header">
               <KeyRound size={18} />
               <h3>Copernicus Data Space Ecosystem (CDSE) Credentials</h3>
             </div>
@@ -170,7 +170,7 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
             </div>
 
             {authMode === "password" ? (
-              <div className="[display:grid]! [grid-template-columns:1fr_1fr] [gap:20px] [@media(max-width:768px)]:[grid-template-columns:1fr]!">
+              <div className="form-row-2col">
                 <div className="form-group">
                   <label className="field-label">
                     Copernicus Email / Username
@@ -205,7 +205,7 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
                 </div>
               </div>
             ) : (
-              <div className="[display:grid]! [grid-template-columns:1fr_1fr] [gap:20px] [@media(max-width:768px)]:[grid-template-columns:1fr]!">
+              <div className="form-row-2col">
                 <div className="form-group">
                   <label className="field-label">OAuth2 Client ID</label>
                   <input
@@ -234,7 +234,7 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
             )}
 
             {/* Quality Filtering and Enable Toggle */}
-            <div className="[display:grid]! [grid-template-columns:1fr_1fr] [gap:20px] [@media(max-width:768px)]:[grid-template-columns:1fr]! mt-[16px]!">
+            <div className="form-row-2col mt-[16px]!">
               <div className="form-group">
                 <div
                   className="flex! justify-between! items-center! mb-[6px]!"
@@ -302,7 +302,7 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
             <div className="[display:flex]! [align-items:center] [gap:16px] [margin-top:10px]! [flex-wrap:wrap]">
               <button
                 type="button"
-                className="[display:inline-flex]! [align-items:center] [gap:8px] [background:var(--color-sky-600)]! [color:var(--color-white)]! [padding:10px_20px]! [border-radius:var(--radius-md)]! [border:none]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [transition:background_0.2s_ease]! [&:hover:not(:disabled)]:[background:#0369a1]! disabled:[opacity:0.6] disabled:[cursor:not-allowed]"
+                className="btn-test-connection"
                 onClick={handleTestConnection}
                 disabled={!isAdmin || testingConnection}
                 id="test-copernicus-connection-btn"

@@ -7,7 +7,7 @@ import PaginationControls from './PaginationControls';
 
 // Extracted from ManageData.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const ProductionTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToCSV, facilities, filteredProduction, getAvailableActivities, getAvailableDivisions, handleDeleteProduction, handleSaveProduction, isPrivileged, openGasConverter, openOilConverter, prodForm, productionData, setCurrentPage, setImportModal, setProdForm }) => (
-<div className="[border-radius:var(--radius-lg)]! [padding:32px]! [animation:fadeIn_0.3s_ease-out]! [@media(max-width:768px)]:[padding:18px_14px]! [@media(max-width:768px)]:[border-radius:var(--radius-lg)]! glass-panel">
+<div className="manage-card glass-panel">
                                 <div className="flex! justify-between! items-start! mb-[32px]!">
                                     <div>
                                         <h2 className="mb-[8px]! font-bold!">Annual Production Records</h2>
@@ -22,7 +22,7 @@ const ProductionTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToC
                                     </button>
                                 </div>
 
-                                <div className="[display:grid]! [grid-template-columns:1fr_1fr] [gap:20px] [margin-bottom:24px]! [&_select.component-select]:[height:48px]! [&_select.component-select]:[width:100%]! [@media(max-width:768px)]:[grid-template-columns:1fr]! [@media(max-width:768px)]:[gap:14px]!" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
+                                <div className="grid-forms" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
                                     <Field className="input-group" label={<>Activity
                                             {!isPrivileged && getAvailableActivities().length === 1 && (
                                                 <span className="text-[length:0.65rem]! bg-[color:#dbeafe]! text-[color:#1d4ed8]! rounded-[4px]! p-[1px_5px]! font-semibold!">Auto</span>
@@ -177,7 +177,7 @@ const ProductionTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToC
                                                     <td className="text-right!">{d.saleable_production_mmboe ? Number(d.saleable_production_mmboe).toLocaleString(undefined, { minimumFractionDigits: 2 }) : '-'}</td>
                                                     <td className="text-center!">
                                                         <button
-                                                            className="[background:#fee2e2]! [color:var(--color-red-700)]! [border:1px_solid_#fecaca]! [padding:6px_12px]! [border-radius:var(--radius-md)]! [cursor:pointer] [font-size:var(--text-base)]! [transition:all_0.2s]! hover:[background:var(--color-red-700)]! hover:[color:white]! p-[6px_12px]! text-[length:0.8rem]!"
+                                                            className="btn-delete p-[6px_12px]! text-[length:0.8rem]!"
                                                            
                                                             onClick={() => handleDeleteProduction(d.id)}
                                                         >

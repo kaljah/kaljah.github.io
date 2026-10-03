@@ -6,7 +6,7 @@ import { Badge, RadioCardGroup } from "../../ui";
 // Extracted from Settings.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const SettingsIPCCGlobalWarming = ({ GWP_DATA, gwpStandard, isAdmin, setGwpStandard }) => (
 <div className="[background:var(--bg-card,_var(--color-white))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-lg)]! [padding:32px]! [display:flex]! [flex-direction:column] [gap:28px] [box-shadow:var(--shadow-card,_0_4px_6px_-1px_rgba(0,_0,_0,_0.05))]!">
-          <div className="[display:flex]! [flex-direction:column] [gap:6px] [&_h2]:[font-size:var(--text-lg)]! [&_h2]:[font-weight:700]! [&_h2]:[color:var(--text-primary,_var(--color-ink-900))]! [&_h2]:[margin:0]! [&_p]:[font-size:var(--text-base)]! [&_p]:[color:var(--text-secondary,_var(--color-ink-500))]! [&_p]:[margin:0]! [&_p]:[line-height:1.5]!">
+          <div className="section-intro">
             <div className="[display:flex]! [align-items:center] [gap:10px]">
               <Scale size={20} className="[color:var(--color-link)]!" />
               <h2>IPCC Global Warming Potential (GWP) Standard</h2>
@@ -41,15 +41,15 @@ const SettingsIPCCGlobalWarming = ({ GWP_DATA, gwpStandard, isAdmin, setGwpStand
                   <div className="[display:grid]! [grid-template-columns:repeat(3,_1fr)] [gap:8px] [background:var(--bg-hover,_var(--color-ink-50))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-md)]! [padding:12px_10px]!">
                     <div className="factor-item">
                       <span className="factor-label">CH₄ (100-yr)</span>
-                      <span className="factor-val [font-size:var(--text-lg)]! [font-weight:800]! [color:var(--text-primary,_var(--color-ink-900))]!">{data.ch4_100}×</span>
+                      <span className="factor-val">{data.ch4_100}×</span>
                     </div>
                     <div className="factor-item highlight">
                       <span className="factor-label">CH₄ (20-yr)</span>
-                      <span className="factor-val [font-size:var(--text-lg)]! [font-weight:800]! [color:var(--text-primary,_var(--color-ink-900))]!">{data.ch4_20}×</span>
+                      <span className="factor-val">{data.ch4_20}×</span>
                     </div>
                     <div className="factor-item">
                       <span className="factor-label">N₂O (100-yr)</span>
-                      <span className="factor-val [font-size:var(--text-lg)]! [font-weight:800]! [color:var(--text-primary,_var(--color-ink-900))]!">{data.n2o_100}×</span>
+                      <span className="factor-val">{data.n2o_100}×</span>
                     </div>
                   </div>
                 </>
@@ -59,12 +59,12 @@ const SettingsIPCCGlobalWarming = ({ GWP_DATA, gwpStandard, isAdmin, setGwpStand
 
           {/* Live Comparison Table */}
           <div className="[background:var(--bg-hover,_var(--color-ink-50))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-lg)]! [padding:24px]! [display:flex]! [flex-direction:column] [gap:16px]">
-            <div className="[display:flex]! [align-items:center] [gap:8px] [&_h3]:[font-size:var(--text-md)]! [&_h3]:[font-weight:700]! [&_h3]:[color:var(--text-primary,_var(--color-ink-900))]! [&_h3]:[margin:0]!">
+            <div className="comparison-header">
               <Layers size={18} className="[color:var(--color-link)]!" />
               <h3>Conversion Factor Matrix Comparison</h3>
             </div>
             <div className="[overflow-x:auto]!">
-              <table className="[width:100%]! [border-collapse:collapse]! [font-size:var(--text-base)]! [background:var(--bg-card,_var(--color-white))]! [border-radius:var(--radius-md)]! [overflow:hidden]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&_th]:[text-align:left]! [&_th]:[padding:12px_16px]! [&_th]:[background:var(--bg-hover,_var(--color-ink-50))]! [&_th]:[color:var(--text-secondary,_var(--color-ink-500))]! [&_th]:[font-weight:600]! [&_th]:[border-bottom:1px_solid_var(--border-color,_var(--color-ink-200))]! [&_td]:[padding:12px_16px]! [&_td]:[border-bottom:1px_solid_var(--border-color,_var(--color-ink-200))]! [&_td]:[color:var(--text-primary,_var(--color-ink-900))]! [&_tr:last-child_td]:[border-bottom:none]! [&_tr.active-row]:[background:rgba(255,_102,_0,_0.06)]! [&_tr.active-row_td]:[color:var(--color-brand-700)]! [&_tr.active-row_td]:[font-weight:600]!">
+              <table className="comparison-table">
                 <thead>
                   <tr>
                     <th>Metric / Gas</th>

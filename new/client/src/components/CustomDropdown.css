@@ -115,3 +115,10 @@
 }
 
 /* Region-Field Styling - ENSURE THIS IS PRESENT */
+
+.selected-with-sub,
+.option-with-sub {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}

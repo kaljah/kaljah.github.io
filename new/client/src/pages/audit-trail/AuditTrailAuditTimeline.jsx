@@ -10,10 +10,10 @@ const AuditTrailAuditTimeline = ({ auditLogs, expandedRows, formatDiffVal, forma
               const hasDiff = Boolean(log.old_values || log.new_values);
 
               return (
-                <div key={log.id} className="[display:flex]! [gap:24px] [position:relative] [&:hover_.timeline-node]:[transform:scale(1.06)]! [&:last-child_.timeline-connector]:[display:none]! [@media(max-width:768px)]:[gap:14px]!">
+                <div key={log.id} className="audit-entry-item">
                   {/* Timeline Visual Node */}
                   <div
-                    className="timeline-node [width:40px]! [height:40px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [color:var(--color-white)]! [flex-shrink:0] [z-index:2] [transition:transform_0.2s_ease]! [@media(max-width:768px)]:[width:34px]! [@media(max-width:768px)]:[height:34px]!"
+                    className="timeline-node"
                     style={{
                       backgroundColor: actConfig.color,
                       boxShadow: `0 0 0 4px ${actConfig.bg}`,
@@ -21,12 +21,12 @@ const AuditTrailAuditTimeline = ({ auditLogs, expandedRows, formatDiffVal, forma
                   >
                     {actConfig.icon}
                   </div>
-                  <div className="timeline-connector [position:absolute] [left:19px] [top:40px] [bottom:-20px] [width:2px]! [background:var(--color-ink-200)]! [z-index:1] [@media(max-width:768px)]:[left:16px]!" />
+                  <div className="timeline-connector" />
 
                   {/* Card Content */}
-                  <div className="[flex:1] [background:var(--bg-card,_var(--color-white))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-lg)]! [padding:18px_22px]! [box-shadow:var(--shadow-xs)]! [transition:all_0.2s_ease]! hover:[border-color:rgba(99,_102,_241,_0.4)]! hover:[box-shadow:var(--shadow-card)]! hover:[transform:translateX(3px)]">
+                  <div className="audit-card">
                     {/* Header Row */}
-                    <div className="[display:flex]! [justify-content:space-between] [align-items:center] [margin-bottom:10px]! [flex-wrap:wrap] [gap:8px] [@media(max-width:768px)]:[flex-direction:column]! [@media(max-width:768px)]:[align-items:flex-start]!">
+                    <div className="card-top-row">
                       <div className="[display:flex]! [align-items:center] [gap:10px] [flex-wrap:wrap]">
                         <div className="[display:inline-flex]! [align-items:center] [gap:6px] [background:rgba(241,_245,_249,_0.9)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:3px_8px]!">
                           <UserIcon size={12} className="[color:var(--color-ink-500)]!" />
@@ -111,13 +111,13 @@ const AuditTrailAuditTimeline = ({ auditLogs, expandedRows, formatDiffVal, forma
 
                     {/* Expandable Technical Raw JSON */}
                     {isRawExpanded && (
-                      <div className="[background:var(--color-ink-900)]! [color:var(--color-ink-50)]! [padding:12px_16px]! [border-radius:var(--radius-md)]! [margin-bottom:12px]! [overflow-x:auto]! [&_pre]:[margin:0]! [&_pre]:[font-size:var(--text-sm)]! [&_pre]:[font-family:ui-monospace,_SFMono-Regular,_Menlo,_Monaco,_Consolas,_monospace]! [&_pre]:[line-height:1.4]!">
+                      <div className="raw-json-viewer">
                         <pre>{JSON.stringify(log, null, 2)}</pre>
                       </div>
                     )}
 
                     {/* Card Footer Meta */}
-                    <div className="[display:flex]! [justify-content:space-between] [align-items:center] [padding-top:10px]! [border-top:1px_solid_var(--color-ink-100)]! [font-size:var(--text-sm)]! [color:var(--color-ink-600)]! [flex-wrap:wrap] [gap:8px] [@media(max-width:768px)]:[flex-direction:column]! [@media(max-width:768px)]:[align-items:flex-start]!">
+                    <div className="card-meta-row">
                       <div className="[display:flex]! [align-items:center] [gap:16px] [flex-wrap:wrap]">
                         <span className="[display:flex]! [align-items:center] [gap:5px] [color:var(--color-ink-500)]! [font-weight:500]!">
                           <Database size={12} />
@@ -136,7 +136,7 @@ const AuditTrailAuditTimeline = ({ auditLogs, expandedRows, formatDiffVal, forma
                       </div>
 
                       <button
-                        className="[display:inline-flex]! [align-items:center] [gap:4px] [padding:4px_8px]! [background:transparent]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-sm)]! [color:var(--color-ink-500)]! [font-size:var(--text-xs)]! [font-weight:600]! [cursor:pointer] [transition:all_0.15s_ease]! hover:[background:var(--color-ink-100)]! hover:[color:var(--color-ink-800)]!"
+                        className="btn-toggle-raw"
                         onClick={() => toggleRawData(log.id)}
                         title="Toggle Technical Audit JSON"
                       >

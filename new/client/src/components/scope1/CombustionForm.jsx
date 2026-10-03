@@ -64,7 +64,7 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
 
   return (
     <div className="combustion-form">
-      <div className="form-grid-2 [display:grid]! [grid-template-columns:1fr_1fr] [gap:20px] [margin-bottom:20px]! [@media(max-width:600px)]:[grid-template-columns:1fr]! [@media(max-width:600px)]:[gap:12px]!">
+      <div className="form-grid-2">
         <Field className="input-group" label={<>{isFlaring
               ? "Gas Volume Flared"
               : data.process_type === "loading"
@@ -94,7 +94,7 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
       {/* HHV — required in specific (Tier 3) mode */}
       {needsHHV && sourceType === "specific" && (
         <div className="[margin-bottom:12px]! mt-[14px]!">
-          <div className="form-grid-2 [display:grid]! [grid-template-columns:1fr_1fr] [gap:20px] [margin-bottom:20px]! [@media(max-width:600px)]:[grid-template-columns:1fr]! [@media(max-width:600px)]:[gap:12px]! gap-[10px]!">
+          <div className="form-grid-2 gap-[10px]!">
             <div className="input-group mb-[0px]!">
               <label className="text-[length:0.75rem]!">
                 HHV
@@ -178,7 +178,7 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
 
           {/* Flare type & CH4 content for flaring */}
           {isFlaring && (
-            <div className="form-grid-2 [display:grid]! [grid-template-columns:1fr_1fr] [gap:20px] [margin-bottom:20px]! [@media(max-width:600px)]:[grid-template-columns:1fr]! [@media(max-width:600px)]:[gap:12px]! gap-[10px]! mt-[10px]!">
+            <div className="form-grid-2 gap-[10px]! mt-[10px]!">
               <div className="input-group mb-[0px]!">
                 <label className="text-[length:0.75rem]!">Flare Type</label>
                 <NativeSelect
@@ -216,7 +216,7 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
           {/* Operating conditions: a gas volume in m3 / cf read at these conditions is
               converted to standard conditions (scf and Sm3 are already standard) */}
           <div
-            className="form-grid-2 [display:grid]! [grid-template-columns:1fr_1fr] [gap:20px] [margin-bottom:20px]! [@media(max-width:600px)]:[grid-template-columns:1fr]! [@media(max-width:600px)]:[gap:12px]! gap-[10px]! mt-[10px]!"
+            className="form-grid-2 gap-[10px]! mt-[10px]!"
            
           >
             <div className="input-group mb-[0px]!">

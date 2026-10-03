@@ -8,11 +8,11 @@ import PaginationControls from './PaginationControls';
 
 // Extracted from ManageData.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const SourcesTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToCSV, facilities, filteredSources, getAvailableActivities, getAvailableDivisions, handleDeleteSource, handleSaveSource, isPrivileged, setCurrentPage, setImportModal, setSourceForm, sourceForm, sources }) => (
-<div className="[border-radius:var(--radius-lg)]! [padding:32px]! [animation:fadeIn_0.3s_ease-out]! [@media(max-width:768px)]:[padding:18px_14px]! [@media(max-width:768px)]:[border-radius:var(--radius-lg)]! glass-panel">
+<div className="manage-card glass-panel">
                                 <h2 className="mb-[8px]! font-bold!">Emission Sources Inventory</h2>
                                 <p className="text-[color:var(--text-secondary)]! mb-[32px]!">Manage operational equipment and emission sources.</p>
 
-                                <div className="[display:grid]! [grid-template-columns:1fr_1fr] [gap:20px] [margin-bottom:24px]! [&_select.component-select]:[height:48px]! [&_select.component-select]:[width:100%]! [@media(max-width:768px)]:[grid-template-columns:1fr]! [@media(max-width:768px)]:[gap:14px]!" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
+                                <div className="grid-forms" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
                                     <Field className="input-group" label={<>Activity
                                             {!isPrivileged && getAvailableActivities().length === 1 && (
                                                 <span className="text-[length:0.65rem]! bg-[color:#dbeafe]! text-[color:#1d4ed8]! rounded-[4px]! p-[1px_5px]! font-semibold!">Auto</span>
@@ -116,7 +116,7 @@ const SourcesTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToCSV,
                                                     </td>
                                                     <td>{s.status}</td>
                                                     <td>
-                                                        <button className="[background:#fee2e2]! [color:var(--color-red-700)]! [border:1px_solid_#fecaca]! [padding:6px_12px]! [border-radius:var(--radius-md)]! [cursor:pointer] [font-size:var(--text-base)]! [transition:all_0.2s]! hover:[background:var(--color-red-700)]! hover:[color:white]! p-[4px_8px]! text-[length:0.75rem]!" onClick={() => handleDeleteSource(s.id)}>Delete</button>
+                                                        <button className="btn-delete p-[4px_8px]! text-[length:0.75rem]!" onClick={() => handleDeleteSource(s.id)}>Delete</button>
                                                     </td>
                                                 </tr>
                                             ))}

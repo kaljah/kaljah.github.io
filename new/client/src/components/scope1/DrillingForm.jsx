@@ -36,7 +36,7 @@ const DrillingForm = ({ data, onChange, sourceType }) => {
   return (
     <div className="drilling-form mt-[15px]!">
 
-      <div className="form-grid-2 [display:grid]! [grid-template-columns:1fr_1fr] [gap:20px] [margin-bottom:20px]! [@media(max-width:600px)]:[grid-template-columns:1fr]! [@media(max-width:600px)]:[gap:12px]!">
+      <div className="form-grid-2">
         <Field className="input-group" label={<>{isTier1 && !isDefaultDays ? "Wells Drilled" : "Drilling Days"}
             <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
 <Input
