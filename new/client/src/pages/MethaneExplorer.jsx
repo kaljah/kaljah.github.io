@@ -54,6 +54,8 @@ import { useToast } from "../components/Toast";
 import { getUserOperationalDefaults, isUnrestrictedLocation } from "../utils/userDefaults";
 import ExplorerHud from "./explorer/ExplorerHud";
 import ExplorerDrawer from "./explorer/ExplorerDrawer";
+import ExplorerLegend from "./explorer/ExplorerLegend";
+import ExplorerDossier from "./explorer/ExplorerDossier";
 import "./MethaneExplorer.css";
 
 // Fix Leaflet tile sizing when mounted inside animated route transitions
@@ -925,387 +927,34 @@ const EmissionsMap = () => {
         )}
       </div>
 
-      {/* 5. CALIBRATED SPECTRAL ABSORPTION RAMP LEGEND (WHITE LIGHT THEME) */}
-      {showSatelliteLayer && showLegend && (
-        <aside className="[position:absolute] [bottom:20px]! [left:370px]! [width:320px] [z-index:900] [background:rgba(255,_255,_255,_0.95)] [backdrop-filter:blur(16px)] [-webkit-backdrop-filter:blur(16px)] [border:1px_solid_var(--color-ink-200)] [&&]:[border-radius:var(--radius-lg)] [padding:12px_14px] [box-shadow:var(--shadow-card)] [transition:all_0.3s_ease] [@media(max-width:960px)]:[left:20px]! [@media(max-width:960px)]:[bottom:80px]!" role="region" aria-label="Spectral Legend">
-          <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:8px]">
-            <div className="[display:flex] [align-items:center] [gap:6px] [font-size:var(--text-xs)] [font-weight:700] [color:var(--color-ink-900)]">
-              <Satellite size={14} color="#0284c7" />
-              <span>TROPOMI CH₄ Column Mole Fraction</span>
-            </div>
-            <button
-              className="[background:transparent] [border:none] [color:var(--color-ink-600)] [cursor:pointer] [padding:2px] hover:[color:var(--color-ink-900)]"
-              onClick={() => setShowLegend(false)}
-              title="Hide Legend"
-            >
-              <X size={12} />
-            </button>
-          </div>
-          <div className="[height:8px] [border-radius:var(--radius-sm)] [background:linear-gradient(_90deg,_#313695_0%,_#4575b4_20%,_#74add1_40%,_#abd9e9_60%,_#fee090_75%,_#f46d43_90%,_#a50026_100%_)] [box-shadow:inset_0_1px_2px_rgba(0,_0,_0,_0.15)] [margin-bottom:6px]"></div>
-          <div className="[display:flex] [justify-content:space-between] [font-size:var(--text-xs)] [font-weight:700] [color:var(--color-ink-500)] [margin-bottom:6px]">
-            <span>&lt;1,750</span>
-            <span>1,800</span>
-            <span>1,850</span>
-            <span>1,900</span>
-            <span>&ge;1,950 ppb</span>
-          </div>
-          <div className="[display:flex] [justify-content:space-between] [align-items:center] [font-size:var(--text-xs)] [color:var(--color-ink-600)] [border-top:1px_solid_var(--color-ink-100)] [padding-top:6px]">
-            <span>SWIR Band 7/8 (2.3 µm) • L3 5.5×7 km</span>
-            <a
-              href="https://dataspace.copernicus.eu"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="[color:var(--color-blue-700)] [text-decoration:none] [font-weight:600] [display:inline-flex] [align-items:center] [gap:3px] hover:[text-decoration:underline]"
-            >
-              CDSE Hub <ExternalLink size={10} />
-            </a>
-          </div>
-        </aside>
-      )}
+      {showSatelliteLayer && showLegend && <ExplorerLegend onClose={() => setShowLegend(false)} />}
 
-      {/* 6. SLIDE-IN RIGHT FACILITY RECONNAISSANCE DOSSIER (WHITE LIGHT THEME) */}
       {selectedFacility && (
-        <section className="facility-dossier-panel" aria-label="Facility Reconnaissance Dossier">
-          {/* Dossier Header */}
-          <div className="[position:relative] [margin-bottom:16px] [padding-bottom:14px] [border-bottom:1px_solid_var(--color-ink-100)]">
-            <button
-              className="[position:absolute] [top:0] [right:0] [background:var(--color-ink-100)] [border:none] [color:var(--color-ink-500)] [cursor:pointer] [padding:6px] [&&]:[border-radius:50%] [display:flex] [align-items:center] [justify-content:center] [transition:all_0.2s] hover:[background:var(--color-ink-200)] hover:[color:var(--color-ink-900)]"
-              onClick={() => setSelectedFacility(null)}
-              title="Close Dossier"
-            >
-              <X size={16} />
-            </button>
-
-            <div className="[display:inline-flex] [align-items:center] [gap:6px] [font-size:var(--text-xs)] [font-weight:800] [letter-spacing:0.06em] [color:var(--color-link)] [margin-bottom:4px]">
-              <span className="[width:6px] [height:6px] [background:var(--color-brand-500)] [border-radius:50%] [box-shadow:0_0_6px_rgba(255,_102,_0,_0.4)]"></span>
-              <span>FACILITY RECONNAISSANCE DOSSIER</span>
-            </div>
-            <h3 className="[margin:0_0_6px_0] [font-size:var(--text-xl)] [font-weight:800] [color:var(--color-ink-900)] [line-height:1.25]">{selectedFacility.name}</h3>
-
-            <div className="[display:flex] [align-items:center] [justify-content:space-between] [gap:10px]">
-              <div className="[display:flex] [align-items:center] [gap:5px] [font-size:var(--text-sm)] [color:var(--color-ink-500)]">
-                <MapPin size={13} color="#ff6600" />
-                <span>
-                  {selectedFacility.region ? `${selectedFacility.region} Region` : "Algeria"} •{" "}
-                  {selectedFacility.activity || selectedFacility.division || "Facility"}
-                </span>
-              </div>
-              <button
-                className="[display:inline-flex] [align-items:center] [gap:4px] [background:var(--color-ink-100)] [border:1px_solid_var(--color-ink-200)] [padding:3px_8px] [&&]:[border-radius:var(--radius-sm)] [font-size:var(--text-xs)] [font-family:monospace] [color:var(--color-blue-700)] [cursor:pointer] [transition:all_0.2s] hover:[background:#e0f2fe] hover:[border-color:#7dd3fc]"
-                onClick={handleCopyCoords}
-                title="Copy coordinates to clipboard"
-              >
-                {copiedCoords ? (
-                  <>
-                    <Check size={11} color="#10b981" />
-                    <span>Copied!</span>
-                  </>
-                ) : (
-                  <>
-                    <Copy size={11} />
-                    <span>
-                      {Number(selectedFacility.latitude || 0).toFixed(4)}°N,{" "}
-                      {Number(selectedFacility.longitude || 0).toFixed(4)}°E
-                    </span>
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-
-          {/* SATELLITE TOP-DOWN INTELLIGENCE SECTION */}
-          <div className="[background:#f0f9ff] [border:1px_solid_#bae6fd] [&&]:[border-radius:var(--radius-lg)] [padding:14px] [margin-bottom:14px]">
-            <div className="[display:flex] [align-items:center] [justify-content:space-between] [margin-bottom:12px]">
-              <div className="[display:flex] [align-items:center] [gap:6px] [font-size:var(--text-sm)] [color:#0369a1]">
-                <Satellite size={16} color="#0284c7" />
-                <strong>Copernicus Sentinel-5P Overpass</strong>
-              </div>
-              {loadingSatelliteData ? (
-                <div className="[display:flex] [align-items:center] [gap:5px] [font-size:var(--text-xs)] [color:var(--color-blue-700)]">
-                  <RefreshCw size={12} className="[animation:spin_0.8s_linear_infinite]!" color="#0284c7" />
-                  <span>STAC Query...</span>
-                </div>
-              ) : (
-                satelliteObservation?.summary?.stream_type && (
-                  <span className="[background:var(--color-green-50)] [color:var(--color-green-700)] [border:1px_solid_#a7f3d0] [&&]:[border-radius:var(--radius-sm)] [padding:2px_7px] [font-size:var(--text-xs)] [font-weight:700] [letter-spacing:0.04em]">
-                    ● {satelliteObservation.summary.stream_type}
-                  </span>
-                )
-              )}
-            </div>
-
-            {loadingSatelliteData ? (
-              <div className="[display:flex] [flex-direction:column] [gap:8px] [padding:12px_0]">
-                <div className="skeleton-line"></div>
-                <div className="skeleton-line short"></div>
-              </div>
-            ) : satelliteObservation &&
-              satelliteObservation.authenticated &&
-              satelliteObservation.summary ? (
-              <div className="sat-telemetry-body">
-                {/* 4-Stat Telemetry Matrix */}
-                <div className="[display:grid] [grid-template-columns:repeat(2,_1fr)] [gap:8px] [margin-bottom:10px]">
-                  <div className="[background:var(--color-white)] [border:1px_solid_var(--color-ink-200)] [&&]:[border-radius:var(--radius-md)] [padding:8px_10px] [display:flex] [flex-direction:column] [gap:2px]">
-                    <span className="[font-size:var(--text-xs)] [font-weight:700] [text-transform:uppercase] [letter-spacing:0.05em] [color:var(--color-ink-500)]">Mean CH₄ Column</span>
-                    <span className="[font-size:var(--text-md)] [font-weight:800] [color:var(--color-ink-900)]">
-                      {Number(
-                        satelliteObservation.summary.mean_ch4_column_ppb || 0
-                      ).toFixed(1)}{" "}
-                      <span className="[font-size:var(--text-xs)] [font-weight:600] [color:var(--color-ink-600)]">ppb</span>
-                    </span>
-                  </div>
-
-                  <div className="[background:var(--color-white)] [border:1px_solid_var(--color-ink-200)] [&&]:[border-radius:var(--radius-md)] [padding:8px_10px] [display:flex] [flex-direction:column] [gap:2px]">
-                    <span className="[font-size:var(--text-xs)] [font-weight:700] [text-transform:uppercase] [letter-spacing:0.05em] [color:var(--color-ink-500)]">Max Anomaly (&Delta;CH₄)</span>
-                    <span
-                      className={`[font-size:var(--text-md)] [font-weight:800] [color:var(--color-ink-900)]! ${
-                        Number(satelliteObservation.summary.max_anomaly_ppb || 0) >= 25
-                          ? "[&&]:[color:var(--color-red-700)]!"
-                          : "[&&]:[&&]:[color:var(--color-amber-700)]!"
-                      }`}
-                    >
-                      +
-                      {Number(
-                        satelliteObservation.summary.max_anomaly_ppb || 0
-                      ).toFixed(1)}{" "}
-                      <span className="[font-size:var(--text-xs)] [font-weight:600] [color:var(--color-ink-600)]">ppb</span>
-                    </span>
-                  </div>
-
-                  <div className="[background:var(--color-white)] [border:1px_solid_var(--color-ink-200)] [&&]:[border-radius:var(--radius-md)] [padding:8px_10px] [display:flex] [flex-direction:column] [gap:2px]">
-                    <span className="[font-size:var(--text-xs)] [font-weight:700] [text-transform:uppercase] [letter-spacing:0.05em] [color:var(--color-ink-500)]">Inferred Emission Rate</span>
-                    <span className="[font-size:var(--text-md)] [font-weight:800] [color:var(--color-ink-900)]! [&&]:[color:var(--color-amber-700)]!">
-                      {Number(
-                        satelliteObservation.summary.estimated_emission_rate_kg_hr || 0
-                      ) > 0
-                        ? `${Number(
-                            satelliteObservation.summary
-                              .estimated_emission_rate_kg_hr
-                          ).toFixed(1)} kg/hr`
-                        : "Background"}
-                    </span>
-                  </div>
-
-                  <div className="[background:var(--color-white)] [border:1px_solid_var(--color-ink-200)] [&&]:[border-radius:var(--radius-md)] [padding:8px_10px] [display:flex] [flex-direction:column] [gap:2px]">
-                    <span className="[font-size:var(--text-xs)] [font-weight:700] [text-transform:uppercase] [letter-spacing:0.05em] [color:var(--color-ink-500)]">Annualized Satellite Flux</span>
-                    <span className="[font-size:var(--text-md)] [font-weight:800] [color:var(--color-ink-900)]">
-                      {Number(
-                        satelliteObservation.summary.annualized_ch4_tonnes || 0
-                      ) > 0
-                        ? `${Number(
-                            satelliteObservation.summary.annualized_ch4_tonnes
-                          ).toFixed(1)} t/yr`
-                        : "0.0 t/yr"}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Overpass Metadata Strip */}
-                <div className="[display:flex] [justify-content:space-between] [font-size:var(--text-xs)] [color:var(--color-ink-500)] [padding:4px_2px] [margin-bottom:10px] [border-bottom:1px_solid_var(--color-ink-200)]">
-                  <div className="meta-item">
-                    <span className="[color:var(--color-ink-600)] [margin-right:4px]">Overpass:</span>
-                    <span className="[color:var(--color-ink-900)] [font-weight:600]">
-                      {satelliteObservation.summary.latest_observation_date}{" "}
-                      {satelliteObservation.summary.latest_observation_time
-                        ? `(${satelliteObservation.summary.latest_observation_time})`
-                        : ""}
-                    </span>
-                  </div>
-                  <div className="meta-item">
-                    <span className="[color:var(--color-ink-600)] [margin-right:4px]">QA Confidence:</span>
-                    <span className="[color:var(--color-ink-900)] [font-weight:600]">
-                      {(
-                        Number(satelliteObservation.summary.mean_qa_score || 0) *
-                        100
-                      ).toFixed(0)}
-                      %
-                    </span>
-                  </div>
-                </div>
-
-                {/* TOP-DOWN vs BOTTOM-UP RECONCILIATION BENCHMARK */}
-                {reconciliationAnalysis && (
-                  <div
-                    className="[background:var(--color-white)] [border:1px_solid_var(--color-ink-200)] [&&]:[border-radius:var(--radius-md)] [padding:10px] [margin-bottom:12px]"
-                    style={{ borderColor: `${reconciliationAnalysis.color}50` }}
-                  >
-                    <div className="[display:flex] [align-items:center] [justify-content:space-between] [margin-bottom:6px]">
-                      <div className="[display:flex] [align-items:center] [gap:5px] [font-size:var(--text-xs)] [font-weight:700] [color:var(--color-ink-900)]">
-                        <Activity size={13} color={reconciliationAnalysis.color} />
-                        <span>OGMP 2.0 Reconciliation Gap</span>
-                      </div>
-                      <span
-                        className="[font-size:var(--text-xs)] [font-weight:700] [padding:2px_7px] [border-radius:var(--radius-sm)] [border:1px_solid]"
-                        style={{
-                          backgroundColor: `${reconciliationAnalysis.color}15`,
-                          color: reconciliationAnalysis.color,
-                          borderColor: `${reconciliationAnalysis.color}40`,
-                        }}
-                      >
-                        {reconciliationAnalysis.label}
-                      </span>
-                    </div>
-                    <div className="[font-size:var(--text-xs)] [color:var(--color-ink-600)] [line-height:1.4]">
-                      {reconciliationAnalysis.deltaText}
-                    </div>
-                  </div>
-                )}
-
-                {/* Level 5 OGMP Reconciliation Button */}
-                <button
-                  className="[width:100%] [display:flex] [align-items:center] [justify-content:center] [gap:8px] [background:var(--primary-gradient)] [color:var(--color-white)] [border:none] [&&]:[border-radius:var(--radius-md)] [padding:11px_16px] [font-size:var(--text-sm)] [font-weight:700] [cursor:pointer] [transition:all_0.2s_ease] [box-shadow:0_3px_12px_rgba(255,_102,_0,_0.25)] [&:hover:not(:disabled)]:[transform:translateY(-1px)] [&:hover:not(:disabled)]:[box-shadow:0_5px_16px_rgba(255,_102,_0,_0.35)] disabled:[opacity:0.65] disabled:[cursor:not-allowed] disabled:[transform:none]"
-                  onClick={handleExportToOgmp}
-                  disabled={exportingOgmp}
-                  id="reconcile-ogmp-btn"
-                >
-                  {exportingOgmp ? (
-                    <>
-                      <span className="[width:14px] [height:14px] [border:2px_solid_rgba(255,_255,_255,_0.3)] [&&]:[border-top-color:var(--color-white)] [&&]:[border-radius:50%] [animation:spin_0.6s_linear_infinite]"></span>
-                      <span>Recording Level 5 Verification...</span>
-                    </>
-                  ) : (
-                    <>
-                      <ShieldCheck size={16} />
-                      <span>Reconcile into OGMP 2.0 Ledger</span>
-                    </>
-                  )}
-                </button>
-              </div>
-            ) : (
-              <div className="[display:flex] [gap:12px] [padding:8px]">
-                <AlertCircle size={18} color="#d97706" />
-                <div className="[flex:1]">
-                  <div className="[font-size:var(--text-sm)] [font-weight:700] [color:var(--color-amber-700)] [margin-bottom:4px]">Copernicus Live Feed Unconfigured</div>
-                  <div className="[font-size:var(--text-xs)] [color:var(--color-ink-500)] [line-height:1.4] [margin-bottom:8px]">
-                    Connect your free Copernicus Data Space Ecosystem (CDSE)
-                    credentials in Settings to stream verified Sentinel-5P overpasses.
-                  </div>
-                  <button
-                    className="[background:#fef3c7] [border:1px_solid_#fde68a] [color:var(--color-amber-700)] [&&]:[border-radius:var(--radius-sm)] [padding:4px_10px] [font-size:var(--text-xs)] [font-weight:700] [cursor:pointer] [transition:all_0.2s] hover:[background:#fde68a]"
-                    onClick={() => navigate("/settings")}
-                  >
-                    Configure in Settings &rarr;
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {loadingSurveys && <div className="[display:flex] [align-items:center] [gap:6px] [font-size:var(--text-sm)] [font-weight:800] [letter-spacing:0.04em] [text-transform:uppercase] [color:var(--color-ink-500)] [margin-bottom:10px]">Loading recorded surveys…</div>}
-          {/* REAL DATABASE VERIFIED OGMP SURVEYS SECTION (IF RECORDED) */}
-          {existingSurveys.length > 0 && (
-            <div className="[background:#f0fdf4] [border:1px_solid_#bbf7d0] [&&]:[border-radius:var(--radius-md)] [padding:12px] [margin-bottom:14px]">
-              <div className="[display:flex] [align-items:center] [gap:6px] [font-size:var(--text-sm)] [font-weight:800] [letter-spacing:0.04em] [text-transform:uppercase] [color:var(--color-ink-500)] [margin-bottom:10px]">
-                <ShieldCheck size={15} color="#10b981" />
-                <span>Verified OGMP Surveys in Database ({existingSurveys.length})</span>
-              </div>
-              <div className="[display:flex] [flex-direction:column] [gap:6px] [margin-top:8px]">
-                {existingSurveys.slice(0, 3).map((survey) => (
-                  <div key={survey.id} className="[background:var(--color-white)] [border:1px_solid_var(--color-ink-200)] [&&]:[border-radius:var(--radius-md)] [padding:8px_10px] [display:flex] [flex-direction:column] [gap:4px]">
-                    <div className="[display:flex] [justify-content:space-between] [align-items:center] [font-size:var(--text-sm)]">
-                      <span className="[font-weight:700] [color:var(--color-ink-900)]">{survey.survey_type || survey.surveyType}</span>
-                      <span className="[font-size:var(--text-xs)] [color:var(--color-ink-500)]">{survey.survey_date || survey.surveyDate}</span>
-                    </div>
-                    <div className="[display:flex] [align-items:center] [gap:10px] [font-size:var(--text-xs)] [color:var(--color-ink-600)]">
-                      <span>Rate: <strong>{Number(survey.measured_rate_kg_hr || survey.measuredRateKgHr || 0).toFixed(1)} kg/hr</strong></span>
-                      <span>Annual: <strong>{Number(survey.estimated_annual_tch4 || survey.estimatedAnnualTch4 || 0).toFixed(1)} tCH₄</strong></span>
-                      <span className="[margin-left:auto] [font-size:var(--text-xs)] [font-weight:700] [padding:1px_6px] [border-radius:var(--radius-sm)] [background:var(--color-green-50)] [color:var(--color-green-700)] [border:1px_solid_#a7f3d0]">{survey.reconciliation_status || "Recorded"}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* BOTTOM-UP REPORTED ENGINEERING INVENTORY METRICS (REAL DATABASE VALUES) */}
-          <div className="[margin-bottom:14px]">
-            <div className="[display:flex] [align-items:center] [gap:6px] [font-size:var(--text-sm)] [font-weight:800] [letter-spacing:0.04em] [text-transform:uppercase] [color:var(--color-ink-500)] [margin-bottom:10px]">
-              <BarChart3 size={15} color="#ff6600" />
-              <span>Bottom-Up Reported Inventory</span>
-            </div>
-
-            <div className="[display:grid] [grid-template-columns:repeat(2,_1fr)] [gap:8px]">
-              {/* Main Emission Highlight */}
-              <div className="stat-card span-2 main-accent">
-                <span className="[font-size:var(--text-xs)] [font-weight:700] [text-transform:uppercase] [letter-spacing:0.05em] [color:var(--color-ink-500)]">
-                  {viewMode === "methane"
-                    ? "Reported Methane (CH₄)"
-                    : "Reported Total GHG"}
-                </span>
-                <span className="stat-card-number">
-                  {viewMode === "methane"
-                    ? `${formatCompact(selectedStats.total_ch4)} tCH₄`
-                    : `${formatCompact(selectedStats.total_co2e)} tCO₂e`}
-                </span>
-                <span className="[font-size:var(--text-xs)] [color:var(--color-ink-600)]">
-                  Verified Bottom-Up Engineering Ledger
-                </span>
-              </div>
-
-              {/* Hydrocarbon Production */}
-              <div className="stat-card">
-                <span className="[font-size:var(--text-xs)] [font-weight:700] [text-transform:uppercase] [letter-spacing:0.05em] [color:var(--color-ink-500)]">Production</span>
-                <span className="stat-card-number emerald">
-                  {formatCompact(selectedStats.total_boe)}
-                </span>
-                <span className="[font-size:var(--text-xs)] [color:var(--color-ink-600)]">BOE / Year</span>
-              </div>
-
-              {/* Carbon / Methane Intensity */}
-              <div className="stat-card">
-                <span className="[font-size:var(--text-xs)] [font-weight:700] [text-transform:uppercase] [letter-spacing:0.05em] [color:var(--color-ink-500)]">
-                  {viewMode === "methane"
-                    ? "Methane Intensity"
-                    : "Carbon Intensity"}
-                </span>
-                <span className="stat-card-number amber">
-                  {viewMode === "methane"
-                    ? Number(selectedStats.ch4_intensity || 0).toFixed(3)
-                    : Number(selectedStats.co2_intensity || 0).toFixed(2)}
-                </span>
-                <span className="[font-size:var(--text-xs)] [color:var(--color-ink-600)]">
-                  {viewMode === "methane" ? "kgCH₄/boe" : "kgCO₂e/boe"}
-                </span>
-              </div>
-
-              {/* Flaring Intensity */}
-              <div className="stat-card">
-                <span className="[font-size:var(--text-xs)] [font-weight:700] [text-transform:uppercase] [letter-spacing:0.05em] [color:var(--color-ink-500)]">Flaring Intensity</span>
-                <span className="stat-card-number danger">
-                  {Number(selectedStats.api_flaring_intensity || 0).toFixed(2)}
-                </span>
-                <span className="[font-size:var(--text-xs)] [color:var(--color-ink-600)]">kgCO₂e/boe</span>
-              </div>
-
-              {/* Asset Division Identifier */}
-              <div className="stat-card">
-                <span className="[font-size:var(--text-xs)] [font-weight:700] [text-transform:uppercase] [letter-spacing:0.05em] [color:var(--color-ink-500)]">Asset Code</span>
-                <span className="stat-card-number mono">
-                  {selectedFacility.code || "N/A"}
-                </span>
-                <span className="[font-size:var(--text-xs)] [color:var(--color-ink-600)]">Database Ref</span>
-              </div>
-            </div>
-          </div>
-
-          {/* QUICK FOCUS ACTION BUTTONS */}
-          <div className="[margin-top:auto] [padding-top:10px]">
-            <button
-              className="[width:100%] [display:flex] [align-items:center] [justify-content:center] [gap:8px] [background:var(--color-ink-50)] [border:1px_solid_var(--color-ink-200)] [&&]:[border-radius:var(--radius-md)] [padding:10px_14px] [color:var(--color-ink-900)] [font-size:var(--text-sm)] [font-weight:700] [cursor:pointer] [transition:all_0.2s_ease] hover:[background:var(--color-brand-50)] hover:[border-color:var(--color-brand-500)] hover:[color:var(--color-link)]"
-              onClick={() => {
-                const lat = Number(selectedFacility.latitude);
-                const lon = Number(selectedFacility.longitude);
-                if (!isNaN(lat) && !isNaN(lon)) {
-                  setMapZoom(11);
-                  setMapCenter([lat, lon]);
-                }
-              }}
-            >
-              <Target size={16} />
-              <span>Center Aerial Camera (Zoom 11x)</span>
-            </button>
-          </div>
-        </section>
+        <ExplorerDossier
+          facility={selectedFacility}
+          stats={selectedStats}
+          viewMode={viewMode}
+          formatCompact={formatCompact}
+          copiedCoords={copiedCoords}
+          onCopyCoords={handleCopyCoords}
+          onClose={() => setSelectedFacility(null)}
+          satelliteLoading={loadingSatelliteData}
+          satelliteObservation={satelliteObservation}
+          reconciliation={reconciliationAnalysis}
+          exporting={exportingOgmp}
+          onExport={handleExportToOgmp}
+          onConfigure={() => navigate("/settings")}
+          loadingSurveys={loadingSurveys}
+          surveys={existingSurveys}
+          onCenter={() => {
+            const lat = Number(selectedFacility.latitude);
+            const lon = Number(selectedFacility.longitude);
+            if (!isNaN(lat) && !isNaN(lon)) {
+              setMapZoom(11);
+              setMapCenter([lat, lon]);
+            }
+          }}
+        />
       )}
     </div>
   );

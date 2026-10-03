@@ -198,14 +198,6 @@ select option:disabled {
 }
 
 /* Segmented Control */
-.segmented-control {
-  display: flex;
-  background: var(--bg-input);
-  padding: 4px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
-  gap: 4px;
-}
 
 /* List Items (for entered data) */
 
