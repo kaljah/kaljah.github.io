@@ -148,14 +148,7 @@ const NotifRow = ({ n, onMarkRead, onDelete }) => {
           </span>
         </div>
         <p
-          style={{
-            margin: 0,
-            fontSize: "0.78rem",
-            color: "var(--text-secondary, #475569)",
-            lineHeight: 1.45,
-            wordBreak: "break-word",
-            opacity: n.is_read ? 0.75 : 1,
-          }}
+          className={`[margin:0]! [font-size:0.78rem]! [color:var(--text-secondary,_#475569)]! [line-height:1.45]! [word-break:break-word]! ${n.is_read ? "[opacity:0.75]!" : "[opacity:1]!"}`}
         >
           {n.message}
         </p>
@@ -546,7 +539,7 @@ const NotificationCenter = () => {
       </div>
 
       {/* ── Notification list ── */}
-      <div style={{ maxHeight: 420, overflowY: "auto" }}>
+      <div className={`[max-height:420px]! [overflow-y:auto]!`}>
         {notifications.length === 0 ? (
           <div
             className="p-[40px_24px]! text-center! text-[color:var(--text-secondary,_#64748b)]!"
@@ -586,7 +579,7 @@ const NotificationCenter = () => {
         <div
           className="p-[9px_18px]! [border-top:1px_solid_var(--border-color,_#e2e8f0)]! bg-[color:var(--bg-hover,_#f8fafc)]! text-[length:0.74rem]! text-[color:var(--text-secondary,_#64748b)]! font-medium! flex! justify-between! items-center!"
         >
-          <span style={{ fontWeight: 600, color: hasUnread ? "#ea580c" : "inherit" }}>
+          <span className={`[font-weight:600]! ${hasUnread ? "[color:#ea580c]!" : "[color:inherit]!"}`}>
             {unreadCount} unread
           </span>
           <span>Showing {notifications.length} notifications</span>

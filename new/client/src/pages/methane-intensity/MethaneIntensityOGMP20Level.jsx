@@ -114,13 +114,7 @@ const MethaneIntensityOGMP20Level = ({ globalThreshold, ogmpCollapsed, ogmpSurve
                           <td>
                             {variancePct !== null ? (
                               <span
-                                style={{
-                                  fontWeight: 700,
-                                  color:
-                                    Math.abs(variancePct) <= (globalThreshold || 20.0)
-                                      ? "#2e7d32"
-                                      : "#b91c1c",
-                                }}
+                                className={`[font-weight:700]! ${Math.abs(variancePct) <= (globalThreshold || 20.0) ? "[color:#2e7d32]!" : "[color:#b91c1c]!"}`}
                               >
                                 {variancePct >= 0
                                   ? `+${variancePct.toFixed(1)}%`

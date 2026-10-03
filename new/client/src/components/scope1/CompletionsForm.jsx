@@ -684,11 +684,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                   const sumP = Math.round((fV > 1 ? fV : fV * 100) + (fF > 1 ? fF : fF * 100) + (fR > 1 ? fR : fR * 100));
                   return (
                     <span
-                      style={{
-                        fontWeight: 700,
-                        fontSize: "0.85rem",
-                        color: sumP === 100 ? "#16a34a" : "#dc2626",
-                      }}
+                      className={`[font-weight:700]! [font-size:0.85rem]! ${sumP === 100 ? "[color:#16a34a]!" : "[color:#dc2626]!"}`}
                     >
                       Total: {sumP}% {sumP === 100 ? "✓" : "⚠ (must equal 100%)"}
                     </span>

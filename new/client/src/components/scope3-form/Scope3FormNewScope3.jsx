@@ -196,14 +196,9 @@ const Scope3FormNewScope3 = ({ UNIT_MULTIPLIERS, activityType, amount, baseUnit,
           className="flex! gap-[12px]! mt-[30px]! justify-end!"
         >
           <button
-            className="action-btn secondary"
+            className={`action-btn secondary [padding:12px_20px]! ${submitting ? "[cursor:not-allowed]!" : "[cursor:pointer]!"} ${submitting ? "[opacity:0.6]!" : "[opacity:1]!"}`}
             disabled={submitting}
             onClick={() => handleAddEntry("Draft")}
-            style={{
-              padding: "12px 20px",
-              cursor: submitting ? "not-allowed" : "pointer",
-              opacity: submitting ? 0.6 : 1,
-            }}
           >
             {submitting ? "Saving..." : "Save as Draft (Maker Mode)"}
           </button>

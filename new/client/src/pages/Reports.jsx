@@ -633,13 +633,9 @@ const Reports = () => {
               </div>
 
               <button
-                className="[background:linear-gradient(135deg,_var(--accent-color)_0%,_#ff8a4d_100%)] [color:white] [padding:12px_28px] [border-radius:var(--radius-md)] [font-weight:600] [border:none] [display:flex] [align-items:center] [justify-content:center] [gap:10px] [height:45px] [transition:all_0.2s] [width:100%] hover:[box-shadow:0_4px_15px_rgba(255,_102,_0,_0.3)] hover:[transform:translateY(-1px)]"
+                className={`[background:linear-gradient(135deg,_var(--accent-color)_0%,_#ff8a4d_100%)] [color:white] [padding:12px_28px] [border-radius:var(--radius-md)] [font-weight:600] [border:none] [display:flex] [align-items:center] [justify-content:center] [gap:10px] [height:45px] [transition:all_0.2s] [width:100%] hover:[box-shadow:0_4px_15px_rgba(255,_102,_0,_0.3)] hover:[transform:translateY(-1px)] ${loading ? "[opacity:0.7]!" : "[opacity:1]!"} ${loading ? "[cursor:not-allowed]!" : "[cursor:pointer]!"}`}
                 onClick={openConfigModal}
                 disabled={loading}
-                style={{
-                  opacity: loading ? 0.7 : 1,
-                  cursor: loading ? "not-allowed" : "pointer",
-                }}
               >
                 <Plus size={18} strokeWidth={2.5} aria-hidden="true" />
                 {loading ? "Generating..." : "Create Report"}
@@ -661,14 +657,7 @@ const Reports = () => {
                     {rName}
                     <button
                       onClick={() => removeRegion(rId)}
-                      style={{
-                        background: "none",
-                        border: "none",
-                        color: "inherit",
-                        marginLeft: "6px",
-                        cursor: "pointer",
-                        padding: 0,
-                      }}
+                      className={`[background:none]! [border:none]! [color:inherit]! [margin-left:6px]! [cursor:pointer]! [padding:0]!`}
                     >
                       ×
                     </button>

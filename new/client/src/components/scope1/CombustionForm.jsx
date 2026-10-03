@@ -109,7 +109,7 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
                 placeholder={
                   isFlaring ? "e.g. 983 (natural gas)" : "e.g. 1020 (BTU/scf)"
                 }
-                style={{ borderColor: !data.hhv ? "#fbbf24" : "#d1fae5" }}
+                className={`${!data.hhv ? "[border-color:#fbbf24]!" : "[border-color:#d1fae5]!"}`}
               />
             </div>
             <div className="input-group mb-[0px]!">

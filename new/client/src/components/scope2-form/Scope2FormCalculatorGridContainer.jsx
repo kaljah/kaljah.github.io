@@ -24,8 +24,7 @@ const Scope2FormCalculatorGridContainer = ({ currentPage, entries, facilities, h
           </button>
         </div>
         <div
-          className="table-scroll-container" tabIndex={0} role="region" aria-label="Entries table"
-          style={{ maxHeight: "600px", overflowY: "auto" }}
+          className={`table-scroll-container [max-height:600px]! [overflow-y:auto]!`} tabIndex={0} role="region" aria-label="Entries table"
         >
           <table className="excel-table">
             <thead>
@@ -195,7 +194,7 @@ const Scope2FormCalculatorGridContainer = ({ currentPage, entries, facilities, h
               )}
             </tbody>
             <tfoot>
-              <tr style={{ backgroundColor: "#f9fafb", fontWeight: "bold" }}>
+              <tr className={`[background-color:#f9fafb]! [font-weight:bold]!`}>
                 <td
                   colSpan="7"
                   className="text-right! pr-[15px]!"

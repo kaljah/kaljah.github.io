@@ -6,13 +6,7 @@ import { NativeSelect } from "../../ui/NativeSelect";
 // Extracted from Scope2Form.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const Scope2FormNewElectricityEntry = ({ activity, allocationMethod, amount, boilerEff, division, facilityId, field, getFacilityOptions, getGridOptions, gridRegion, handleAddEntry, handleSourceTypeChange, heatEff, heatOutput, month, powerEff, powerOutput, setAllocationMethod, setAmount, setBoilerEff, setFacilityId, setGridRegion, setHeatEff, setHeatOutput, setMonth, setPowerEff, setPowerOutput, setTransLoss, setUnit, setYear, sourceType, submitting, transLoss, unit, unitOptions, year }) => (
 <div
-        className="calc-panel"
-        style={{
-          background: "white",
-          borderRadius: "8px",
-          padding: "25px",
-          boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
-        }}
+        className={`calc-panel [background:white]! [border-radius:8px]! [padding:25px]! [box-shadow:0_2px_10px_rgba(0,0,0,0.05)]!`}
       >
         <h2
           className="text-[length:1.2rem]! [font-weight:bold]! mb-[25px]! text-[color:#333]!"
@@ -120,7 +114,7 @@ const Scope2FormNewElectricityEntry = ({ activity, allocationMethod, amount, boi
               </div>
             )}
             {sourceType === "indirect_steam" && (
-              <div className="form-grid-2" style={{ gridColumn: "span 2" }}>
+              <div className={`form-grid-2 [grid-column:span_2]!`}>
                 <Field className="input-group" label="Boiler Efficiency (0.0 - 1.0)">
 <Input
                     type="number"
@@ -140,7 +134,7 @@ const Scope2FormNewElectricityEntry = ({ activity, allocationMethod, amount, boi
               </div>
             )}
             {sourceType === "cogen_allocation" && (
-              <div className="form-grid-3" style={{ gridColumn: "span 2" }}>
+              <div className={`form-grid-3 [grid-column:span_2]!`}>
                 <Field className="input-group" label="Heat Output (MMBtu)">
 <Input
                     type="number"
@@ -214,26 +208,16 @@ const Scope2FormNewElectricityEntry = ({ activity, allocationMethod, amount, boi
           className="flex! gap-[12px]! mt-[24px]! justify-end!"
         >
           <button
-            className="action-btn secondary"
+            className={`action-btn secondary [padding:10px_20px]! ${submitting ? "[cursor:not-allowed]!" : "[cursor:pointer]!"} ${submitting ? "[opacity:0.6]!" : "[opacity:1]!"}`}
             disabled={submitting}
             onClick={() => handleAddEntry("Draft")}
-            style={{
-              padding: "10px 20px",
-              cursor: submitting ? "not-allowed" : "pointer",
-              opacity: submitting ? 0.6 : 1,
-            }}
           >
             {submitting ? "Saving..." : "Save as Draft (Maker Mode)"}
           </button>
           <button
-            className="btn-add-activity"
+            className={`btn-add-activity [padding:10px_24px]! ${submitting ? "[cursor:not-allowed]!" : "[cursor:pointer]!"} ${submitting ? "[opacity:0.6]!" : "[opacity:1]!"}`}
             disabled={submitting}
             onClick={() => handleAddEntry("Verified")}
-            style={{
-              padding: "10px 24px",
-              cursor: submitting ? "not-allowed" : "pointer",
-              opacity: submitting ? 0.6 : 1,
-            }}
           >
             {submitting ? "Processing..." : "+ Calculate & Submit for Review"}
           </button>

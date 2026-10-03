@@ -16,7 +16,7 @@ const PaginationControls = ({ currentPage, totalItems, itemsPerPage, onPageChang
                 variant="ghost" type="submit" 
                 disabled={currentPage <= 1} 
                 onClick={() => onPageChange(currentPage - 1)}
-                style={{ opacity: currentPage <= 1 ? 0.5 : 1, cursor: currentPage <= 1 ? 'not-allowed' : 'pointer', padding: '6px 12px' }}
+                className={`[padding:6px_12px]! ${currentPage <= 1 ? "[opacity:0.5]!" : "[opacity:1]!"} ${currentPage <= 1 ? "[cursor:not-allowed]!" : "[cursor:pointer]!"}`}
             >
                 Previous
             </Button>
@@ -27,7 +27,7 @@ const PaginationControls = ({ currentPage, totalItems, itemsPerPage, onPageChang
                 variant="ghost" type="submit" 
                 disabled={currentPage >= totalPages} 
                 onClick={() => onPageChange(currentPage + 1)}
-                style={{ opacity: currentPage >= totalPages ? 0.5 : 1, cursor: currentPage >= totalPages ? 'not-allowed' : 'pointer', padding: '6px 12px' }}
+                className={`[padding:6px_12px]! ${currentPage >= totalPages ? "[opacity:0.5]!" : "[opacity:1]!"} ${currentPage >= totalPages ? "[cursor:not-allowed]!" : "[cursor:pointer]!"}`}
             >
                 Next
             </Button>

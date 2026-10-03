@@ -10,8 +10,7 @@ const Scope1OptionsSection = ({ gcUncertaintyPct, meterUncertaintyPct, renderSpe
           <div className="form-grid-3">
             {sourceType === "specific" && (
               <div
-                className="input-group"
-                style={{ gridColumn: "span 3", marginBottom: "8px" }}
+                className={`input-group [grid-column:span_3]! [margin-bottom:8px]!`}
               >
                 <label>Measurement Instrumentation Precision</label>
                 <div className="flex! gap-[8px]! flex-wrap!">
@@ -79,7 +78,7 @@ const Scope1OptionsSection = ({ gcUncertaintyPct, meterUncertaintyPct, renderSpe
                 </div>
               </div>
             )}
-            <div className="input-group" style={{ gridColumn: "span 3" }}>
+            <div className={`input-group [grid-column:span_3]!`}>
               <label>
                 Emission Factor / Direct Measurement Uncertainty Override (±%)
               </label>
@@ -120,11 +119,7 @@ const Scope1OptionsSection = ({ gcUncertaintyPct, meterUncertaintyPct, renderSpe
                     </div>
                   ) : (
                     <span
-                      style={{
-                        fontSize: "0.85rem",
-                        fontWeight: 700,
-                        color: uncertainty.co2 != null ? "#2e7d32" : "#9ca3af",
-                      }}
+                      className={`[font-size:0.85rem]! [font-weight:700]! ${uncertainty.co2 != null ? "[color:#2e7d32]!" : "[color:#9ca3af]!"}`}
                     >
                       {uncertainty.co2 != null
                         ? `±${(uncertainty.co2 * 100).toFixed(0)}%`
@@ -168,11 +163,7 @@ const Scope1OptionsSection = ({ gcUncertaintyPct, meterUncertaintyPct, renderSpe
                     </div>
                   ) : (
                     <span
-                      style={{
-                        fontSize: "0.85rem",
-                        fontWeight: 700,
-                        color: uncertainty.ch4 != null ? "#1d4ed8" : "#9ca3af",
-                      }}
+                      className={`[font-size:0.85rem]! [font-weight:700]! ${uncertainty.ch4 != null ? "[color:#1d4ed8]!" : "[color:#9ca3af]!"}`}
                     >
                       {uncertainty.ch4 != null
                         ? `±${(uncertainty.ch4 * 100).toFixed(0)}%`
@@ -216,11 +207,7 @@ const Scope1OptionsSection = ({ gcUncertaintyPct, meterUncertaintyPct, renderSpe
                     </div>
                   ) : (
                     <span
-                      style={{
-                        fontSize: "0.85rem",
-                        fontWeight: 700,
-                        color: uncertainty.n2o != null ? "#6d28d9" : "#9ca3af",
-                      }}
+                      className={`[font-size:0.85rem]! [font-weight:700]! ${uncertainty.n2o != null ? "[color:#6d28d9]!" : "[color:#9ca3af]!"}`}
                     >
                       {uncertainty.n2o != null
                         ? `±${(uncertainty.n2o * 100).toFixed(0)}%`

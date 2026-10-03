@@ -89,7 +89,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                         {resolving ? '…' : 'Reject Flags'}
                                     </button>
                                     <button
-                                        style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', fontSize: '0.78rem', textDecoration: 'underline' }}
+                                        className={`[background:none]! [border:none]! [color:#64748b]! [cursor:pointer]! [font-size:0.78rem]! [text-decoration:underline]!`}
                                         onClick={() => setSelectedIds(new Set())}
                                     >
                                         Deselect

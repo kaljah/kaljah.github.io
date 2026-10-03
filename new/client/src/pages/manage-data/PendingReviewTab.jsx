@@ -190,15 +190,12 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                     </div>
 
                                     <div className="[background:var(--bg-card)] [backdrop-filter:blur(10px)] [border:1px_solid_var(--border-color)] [&&]:[border-radius:var(--radius-lg)] [padding:20px] [display:flex] [align-items:center] [gap:16px] [box-shadow:var(--shadow-card)] [transition:all_0.2s_cubic-bezier(0.4,_0,_0.2,_1)] hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated)] hover:[border-color:rgba(255,_102,_0,_0.3)]">
-                                        <div className="[width:48px] [height:48px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [flex-shrink:0]" style={{ 
-                                            background: pendingMetrics.flaggedCount > 0 ? 'rgba(245, 158, 11, 0.1)' : 'rgba(16, 185, 129, 0.1)', 
-                                            color: pendingMetrics.flaggedCount > 0 ? '#d97706' : '#059669' 
-                                        }}>
+                                        <div className={`[width:48px] [height:48px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [flex-shrink:0] ${pendingMetrics.flaggedCount > 0 ? "[background:rgba(245,_158,_11,_0.1)]!" : "[background:rgba(16,_185,_129,_0.1)]!"} ${pendingMetrics.flaggedCount > 0 ? "[color:#d97706]!" : "[color:#059669]!"}`}>
                                             {pendingMetrics.flaggedCount > 0 ? <AlertTriangle size={22} /> : <CheckCircle size={22} />}
                                         </div>
                                         <div className="[display:flex] [flex-direction:column] [gap:2px] [min-width:0]">
                                             <span className="[font-size:var(--text-sm)] [font-weight:600] [text-transform:uppercase] [letter-spacing:0.05em] [color:var(--text-secondary)]">Quality Audit</span>
-                                            <span className="[font-size:var(--text-xl)] [font-weight:700] [line-height:1.2]" style={{ color: pendingMetrics.flaggedCount > 0 ? '#d97706' : 'inherit' }}>
+                                            <span className={`[font-size:var(--text-xl)] [font-weight:700] [line-height:1.2] ${pendingMetrics.flaggedCount > 0 ? "[color:#d97706]!" : "[color:inherit]!"}`}>
                                                 {pendingMetrics.flaggedCount} Flagged
                                             </span>
                                             <span className="[font-size:var(--text-sm)] [color:var(--text-muted)] [white-space:nowrap] [overflow:hidden] [text-overflow:ellipsis]">{pendingMetrics.cleanCount} clean records verified</span>
@@ -447,7 +444,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                             </div>
                                         </div>
 
-                                        <div style={{ overflowX: 'auto' }}>
+                                        <div className={`[overflow-x:auto]!`}>
                                             <table className="pending-table">
                                                 <thead>
                                                     <tr>

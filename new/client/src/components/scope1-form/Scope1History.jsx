@@ -238,11 +238,7 @@ const Scope1History = ({ currentPage, entries, exportToCSV, facetYears, filterPr
                           "-"}
                       </td>
                       <td
-                        style={{
-                          fontWeight: 500,
-                          color:
-                            factorType === "Default" ? "#2e7d32" : "#1d4ed8",
-                        }}
+                        className={`[font-weight:500]! ${factorType === "Default" ? "[color:#2e7d32]!" : "[color:#1d4ed8]!"}`}
                       >
                         {factorType}
                       </td>
@@ -280,14 +276,7 @@ const Scope1History = ({ currentPage, entries, exportToCSV, facetYears, filterPr
                         )}
                       </td>
                       <td
-                        style={{
-                          textAlign: "center",
-                          fontSize: "0.82rem",
-                          color:
-                            (entry.uncertainty_co2 != null && Number(entry.co2_emissions) > 0)
-                              ? "#2e7d32"
-                              : "var(--text-muted)",
-                        }}
+                        className={`[text-align:center]! [font-size:0.82rem]! ${entry.uncertainty_co2 != null && Number(entry.co2_emissions) > 0 ? "[color:#2e7d32]!" : "[color:var(--text-muted)]!"}`}
                         title="Standard Combined Uncertainty (1σ)"
                       >
                         {(entry.uncertainty_co2 != null && Number(entry.co2_emissions) > 0)
@@ -295,14 +284,7 @@ const Scope1History = ({ currentPage, entries, exportToCSV, facetYears, filterPr
                           : "—"}
                       </td>
                       <td
-                        style={{
-                          textAlign: "center",
-                          fontSize: "0.82rem",
-                          color:
-                            (entry.uncertainty_ch4 != null && Number(entry.ch4_emissions) > 0)
-                              ? "#1d4ed8"
-                              : "var(--text-muted)",
-                        }}
+                        className={`[text-align:center]! [font-size:0.82rem]! ${entry.uncertainty_ch4 != null && Number(entry.ch4_emissions) > 0 ? "[color:#1d4ed8]!" : "[color:var(--text-muted)]!"}`}
                         title="Standard Combined Uncertainty (1σ)"
                       >
                         {(entry.uncertainty_ch4 != null && Number(entry.ch4_emissions) > 0)
@@ -310,14 +292,7 @@ const Scope1History = ({ currentPage, entries, exportToCSV, facetYears, filterPr
                           : "—"}
                       </td>
                       <td
-                        style={{
-                          textAlign: "center",
-                          fontSize: "0.82rem",
-                          color:
-                            (entry.uncertainty_n2o != null && Number(entry.n2o_emissions) > 0)
-                              ? "#6d28d9"
-                              : "var(--text-muted)",
-                        }}
+                        className={`[text-align:center]! [font-size:0.82rem]! ${entry.uncertainty_n2o != null && Number(entry.n2o_emissions) > 0 ? "[color:#6d28d9]!" : "[color:var(--text-muted)]!"}`}
                         title="Standard Combined Uncertainty (1σ)"
                       >
                         {(entry.uncertainty_n2o != null && Number(entry.n2o_emissions) > 0)
@@ -325,14 +300,7 @@ const Scope1History = ({ currentPage, entries, exportToCSV, facetYears, filterPr
                           : "—"}
                       </td>
                       <td
-                        style={{
-                          textAlign: "center",
-                          fontSize: "0.82rem",
-                          color:
-                            (entry.uncertainty_co2 != null && Number(entry.co2_emissions) > 0)
-                              ? "#2e7d32"
-                              : "var(--text-muted)",
-                        }}
+                        className={`[text-align:center]! [font-size:0.82rem]! ${entry.uncertainty_co2 != null && Number(entry.co2_emissions) > 0 ? "[color:#2e7d32]!" : "[color:var(--text-muted)]!"}`}
                         title="Expanded Uncertainty (95% Confidence Interval, k=2)"
                       >
                         {(entry.uncertainty_co2 != null && Number(entry.co2_emissions) > 0)
@@ -340,14 +308,7 @@ const Scope1History = ({ currentPage, entries, exportToCSV, facetYears, filterPr
                           : "—"}
                       </td>
                       <td
-                        style={{
-                          textAlign: "center",
-                          fontSize: "0.82rem",
-                          color:
-                            (entry.uncertainty_ch4 != null && Number(entry.ch4_emissions) > 0)
-                              ? "#1d4ed8"
-                              : "var(--text-muted)",
-                        }}
+                        className={`[text-align:center]! [font-size:0.82rem]! ${entry.uncertainty_ch4 != null && Number(entry.ch4_emissions) > 0 ? "[color:#1d4ed8]!" : "[color:var(--text-muted)]!"}`}
                         title="Expanded Uncertainty (95% Confidence Interval, k=2)"
                       >
                         {(entry.uncertainty_ch4 != null && Number(entry.ch4_emissions) > 0)
@@ -355,14 +316,7 @@ const Scope1History = ({ currentPage, entries, exportToCSV, facetYears, filterPr
                           : "—"}
                       </td>
                       <td
-                        style={{
-                          textAlign: "center",
-                          fontSize: "0.82rem",
-                          color:
-                            (entry.uncertainty_n2o != null && Number(entry.n2o_emissions) > 0)
-                              ? "#6d28d9"
-                              : "var(--text-muted)",
-                        }}
+                        className={`[text-align:center]! [font-size:0.82rem]! ${entry.uncertainty_n2o != null && Number(entry.n2o_emissions) > 0 ? "[color:#6d28d9]!" : "[color:var(--text-muted)]!"}`}
                         title="Expanded Uncertainty (95% Confidence Interval, k=2)"
                       >
                         {(entry.uncertainty_n2o != null && Number(entry.n2o_emissions) > 0)
@@ -393,7 +347,7 @@ const Scope1History = ({ currentPage, entries, exportToCSV, facetYears, filterPr
               })()}
             </tbody>
             <tfoot>
-              <tr style={{ backgroundColor: "#f9fafb", fontWeight: "bold" }}>
+              <tr className={`[background-color:#f9fafb]! [font-weight:bold]!`}>
                 <td
                   colSpan="14"
                   className="text-right! pr-[15px]!"

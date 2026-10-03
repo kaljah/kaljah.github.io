@@ -618,7 +618,7 @@ const SbtiDashboard = () => {
                       <td className="font-semibold!">{row.year}</td>
                       <td className="font-medium!">{formatNumber(row.sbti_target, 1)} tCO2e</td>
                       <td className="text-[color:var(--text-primary,_#0f172a)]! font-medium!">{formatNumber(row.bau_projection, 1)} tCO2e</td>
-                      <td style={{ fontWeight: hasActual ? 700 : 400, color: hasActual ? "var(--text-primary, #0f172a)" : "#64748b" }}>
+                      <td className={`${hasActual ? "[font-weight:700]!" : "[font-weight:400]!"} ${hasActual ? "[color:var(--text-primary,_#0f172a)]!" : "[color:#64748b]!"}`}>
                         {hasActual ? `${formatNumber(row.actual, 1)} tCO2e` : "—"}
                       </td>
                       <td>{hasActual ? `${formatNumber(row.scope1, 1)}` : "—"}</td>
@@ -627,7 +627,7 @@ const SbtiDashboard = () => {
                       <td>{hasActual ? `${formatNumber(row.scope12, 1)}` : "—"}</td>
                       <td>
                         {variance !== null ? (
-                          <span style={{ color: variance <= 0 ? "#2e7d32" : "#b91c1c", fontWeight: 600 }}>
+                          <span className={`[font-weight:600]! ${variance <= 0 ? "[color:#2e7d32]!" : "[color:#b91c1c]!"}`}>
                             {variance > 0 ? `+${formatNumber(variance, 1)}` : formatNumber(variance, 1)} tCO2e
                           </span>
                         ) : (

@@ -234,10 +234,10 @@ const UserManagementBlock1205 = ({ S, editingUser, focusProps, focusedField, for
                   placeholder="Minimum 10 characters"
                 />
                 <div className="flex! justify-between! items-center! mt-[6px]!">
-                  <span style={{ fontSize: "0.74rem", color: formData.password.length >= 10 ? "#2e7d32" : "#475569" }}>
+                  <span className={`[font-size:0.74rem]! ${formData.password.length >= 10 ? "[color:#2e7d32]!" : "[color:#475569]!"}`}>
                     {formData.password.length >= 10 ? "✓ Meets minimum length requirement" : "Requires at least 10 characters"}
                   </span>
-                  <span style={{ fontSize: "0.74rem", fontWeight: 600, color: formData.password.length >= 10 ? "#2e7d32" : "#b91c1c" }}>
+                  <span className={`[font-size:0.74rem]! [font-weight:600]! ${formData.password.length >= 10 ? "[color:#2e7d32]!" : "[color:#b91c1c]!"}`}>
                     {formData.password.length}/10 chars
                   </span>
                 </div>

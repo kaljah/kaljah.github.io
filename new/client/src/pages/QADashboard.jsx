@@ -561,7 +561,7 @@ export default function QADashboard() {
                             </div>
                         </div>
                         <div className="[display:flex] [align-items:baseline] [gap:8px]">
-                            <span className="[font-size:var(--text-2xl)] [font-weight:700] [line-height:1]" style={{ color: anomaliesSummary.all > 0 ? "#b91c1c" : "#2e7d32" }}>
+                            <span className={`[font-size:var(--text-2xl)] [font-weight:700] [line-height:1] ${anomaliesSummary.all > 0 ? "[color:#b91c1c]!" : "[color:#2e7d32]!"}`}>
                                 {anomaliesSummary.all}
                             </span>
                             <span className="[font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))]">active</span>
@@ -882,15 +882,7 @@ export default function QADashboard() {
                         </button>
                         <button
                             type="button"
-                            style={{
-                                background: resolveModal.resolution === 'Verified' ? '#10b981' : '#ef4444',
-                                color: '#ffffff',
-                                border: 'none',
-                                padding: '8px 16px',
-                                borderRadius: '8px',
-                                fontWeight: 600,
-                                cursor: 'pointer',
-                            }}
+                            className={`[color:#ffffff]! [border:none]! [padding:8px_16px]! [border-radius:8px]! [font-weight:600]! [cursor:pointer]! ${resolveModal.resolution === 'Verified' ? "[background:#10b981]!" : "[background:#ef4444]!"}`}
                             onClick={confirmBulkResolve}
                             disabled={resolving}
                         >

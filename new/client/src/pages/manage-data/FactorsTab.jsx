@@ -235,9 +235,9 @@ const FactorsTab = ({ ITEMS_PER_PAGE, currentPage, editingFactorId, factorForm, 
                                                         {f.description && <div className="text-[length:0.75rem]! text-[color:var(--text-secondary)]! overflow-hidden! [text-overflow:ellipsis]! whitespace-nowrap!" title={f.description}>{f.description}</div>}
                                                         {!f.source && !f.description && <span className="text-[color:var(--text-secondary)]!">—</span>}
                                                     </td>
-                                                    <td style={{ color: f.co2_uncertainty ? "#2e7d32" : 'inherit' }}>{f.co2_uncertainty ? `±${f.co2_uncertainty}%` : '—'}</td>
-                                                    <td style={{ color: f.ch4_uncertainty ? "#1d4ed8" : 'inherit' }}>{f.ch4_uncertainty ? `±${f.ch4_uncertainty}%` : '—'}</td>
-                                                    <td style={{ color: f.n2o_uncertainty ? "#6d28d9" : 'inherit' }}>{f.n2o_uncertainty ? `±${f.n2o_uncertainty}%` : '—'}</td>
+                                                    <td className={`${f.co2_uncertainty ? "[color:#2e7d32]!" : "[color:inherit]!"}`}>{f.co2_uncertainty ? `±${f.co2_uncertainty}%` : '—'}</td>
+                                                    <td className={`${f.ch4_uncertainty ? "[color:#1d4ed8]!" : "[color:inherit]!"}`}>{f.ch4_uncertainty ? `±${f.ch4_uncertainty}%` : '—'}</td>
+                                                    <td className={`${f.n2o_uncertainty ? "[color:#6d28d9]!" : "[color:inherit]!"}`}>{f.n2o_uncertainty ? `±${f.n2o_uncertainty}%` : '—'}</td>
                                                     <td>
                                                         <button onClick={() => handleEditFactor(f)}>Edit</button>
                                                         <button onClick={() => handleArchiveFactor(f.id)} title="Hide from new entries; records that use it keep it">Archive</button>

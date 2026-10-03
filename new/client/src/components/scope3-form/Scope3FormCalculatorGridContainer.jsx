@@ -124,7 +124,7 @@ const Scope3FormCalculatorGridContainer = ({ currentPage, entries, facilities, h
               )}
             </tbody>
             <tfoot>
-              <tr style={{ backgroundColor: "#f9fafb", fontWeight: "bold" }}>
+              <tr className={`[background-color:#f9fafb]! [font-weight:bold]!`}>
                 <td
                   colSpan="6"
                   className="text-right! pr-[15px]!"

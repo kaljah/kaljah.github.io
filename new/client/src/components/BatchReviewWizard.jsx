@@ -829,7 +829,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
                               <AlertTriangle size={12} />
                               {item.severity === 'danger' ? 'Suspicious Data' : 'Notice'}
                             </span>
-                            <span style={{ fontSize: '0.72rem', color: item.severity === 'danger' ? '#dc2626' : '#b45309', lineHeight: 1.2 }}>
+                            <span className={`[font-size:0.72rem]! [line-height:1.2]! ${item.severity === 'danger' ? "[color:#dc2626]!" : "[color:#b45309]!"}`}>
                               {item.reasons[0]}
                               {item.reasons.length > 1 && ` (+${item.reasons.length - 1} more)`}
                             </span>
