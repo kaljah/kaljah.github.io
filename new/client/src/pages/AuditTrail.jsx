@@ -1,43 +1,10 @@
 import AuditTrailFiltersBarCard from "./audit-trail/AuditTrailFiltersBarCard";
 import AuditTrailAuditTimeline from "./audit-trail/AuditTrailAuditTimeline";
-import { Badge, DataTable, Dialog, SegmentedControl } from "../ui";
-import { NativeSelect } from "../ui/NativeSelect";
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import { AuditEmpty, AuditHeader, AuditPagination, AuditSkeleton, AuditStats, actionStyle } from "./audit-trail/AuditTrailChrome";
+import { Badge, DataTable, Dialog } from "../ui";
+import React, { useState, useEffect, useCallback } from "react";
 import api from "../api";
-import {
-  Plus,
-  Edit3,
-  Trash2,
-  Eye,
-  Download,
-  Search,
-  RefreshCw,
-  Shield,
-  ShieldAlert,
-  LogIn,
-  User as UserIcon,
-  History,
-  Clock,
-  ArrowRight,
-  Filter,
-  Activity,
-  Database,
-  FileText,
-  Globe,
-  X,
-  CheckCircle2,
-  XCircle,
-  Calendar,
-  ChevronLeft,
-  ChevronRight,
-  ChevronDown,
-  ChevronUp,
-  Code,
-  FileSpreadsheet,
-  RotateCcw,
-} from "lucide-react";
 import { useToast } from "../components/Toast";
-import "./AuditTrail.css";
 
 const AuditTrail = () => {
   const toast = useToast();
@@ -81,8 +48,6 @@ const AuditTrail = () => {
   const [expandedRows, setExpandedRows] = useState(new Set());
   const [view, setView] = useState("table");
   const [detailLog, setDetailLog] = useState(null);
-  const [exportDropdownOpen, setExportDropdownOpen] = useState(false);
-  const exportMenuRef = useRef(null);
 
   // Debounce search query changes
   useEffect(() => {
@@ -92,17 +57,6 @@ const AuditTrail = () => {
     }, 350);
     return () => clearTimeout(handler);
   }, [searchQuery]);
-
-  // Click outside to close export menu
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (exportMenuRef.current && !exportMenuRef.current.contains(event.target)) {
-        setExportDropdownOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
 
   // Compute ISO dates based on timeframe preset
   const getDateRangeParams = useCallback(() => {
@@ -231,7 +185,6 @@ const AuditTrail = () => {
 
   // Handle Export (CSV or JSON)
   const handleExport = async (format) => {
-    setExportDropdownOpen(false);
     toast.info(`Preparing ${format.toUpperCase()} compliance export...`);
     try {
       const params = { format };
@@ -298,84 +251,6 @@ const AuditTrail = () => {
     filterAction !== "all" ||
     filterEntity !== "all" ||
     timeframe !== "all";
-
-  // Action badge visuals
-  const getActionConfig = (action) => {
-    const act = (action || "").toUpperCase();
-    switch (act) {
-      case "CREATE":
-      case "REGISTER":
-        return {
-          icon: <Plus size={18} />,
-          color: "#10b981",
-          bg: "rgba(16, 185, 129, 0.12)",
-          border: "rgba(16, 185, 129, 0.3)",
-        };
-      case "UPDATE":
-        return {
-          icon: <Edit3 size={18} />,
-          color: "#3b82f6",
-          bg: "rgba(59, 130, 246, 0.12)",
-          border: "rgba(59, 130, 246, 0.3)",
-        };
-      case "DELETE":
-        return {
-          icon: <Trash2 size={18} />,
-          color: "#ef4444",
-          bg: "rgba(239, 68, 68, 0.12)",
-          border: "rgba(239, 68, 68, 0.3)",
-        };
-      case "LOGIN":
-        return {
-          icon: <LogIn size={18} />,
-          color: "#0ea5e9",
-          bg: "rgba(14, 165, 233, 0.12)",
-          border: "rgba(14, 165, 233, 0.3)",
-        };
-      case "SECURITY":
-        return {
-          icon: <ShieldAlert size={18} />,
-          color: "#f59e0b",
-          bg: "rgba(245, 158, 11, 0.12)",
-          border: "rgba(245, 158, 11, 0.3)",
-        };
-      case "EXPORT":
-        return {
-          icon: <Download size={18} />,
-          color: "#8b5cf6",
-          bg: "rgba(139, 92, 246, 0.12)",
-          border: "rgba(139, 92, 246, 0.3)",
-        };
-      case "VIEW":
-        return {
-          icon: <Eye size={18} />,
-          color: "#64748b",
-          bg: "rgba(100, 116, 139, 0.12)",
-          border: "rgba(100, 116, 139, 0.3)",
-        };
-      case "APPROVE":
-        return {
-          icon: <CheckCircle2 size={18} />,
-          color: "#16a34a",
-          bg: "rgba(22, 163, 74, 0.12)",
-          border: "rgba(22, 163, 74, 0.3)",
-        };
-      case "REJECT":
-        return {
-          icon: <XCircle size={18} />,
-          color: "#dc2626",
-          bg: "rgba(220, 38, 38, 0.12)",
-          border: "rgba(220, 38, 38, 0.3)",
-        };
-      default:
-        return {
-          icon: <Activity size={18} />,
-          color: "#64748b",
-          bg: "rgba(100, 116, 139, 0.12)",
-          border: "rgba(100, 116, 139, 0.3)",
-        };
-    }
-  };
 
   // Format relative timestamp safely
   const formatTimestamp = (timestamp) => {
@@ -477,177 +352,46 @@ const AuditTrail = () => {
     },
   ];
 
+  const refreshAll = () => {
+    fetchAuditLogs(true);
+    fetchStats();
+    fetchFilters();
+    toast.info("Refreshed audit trail");
+  };
+
   return (
-    <div className="audit-trail">
-      <div className="[max-width:1400px] [margin:0_auto] [padding:24px_28px]! [@media(max-width:768px)]:[padding:18px_16px]!">
-        {/* Header Title & Actions */}
-        <div className="[display:flex] [justify-content:space-between] [align-items:flex-start]! [margin-bottom:24px] [gap:20px] [flex-wrap:wrap]! [@media(max-width:768px)]:[flex-direction:column]! [@media(max-width:768px)]:[align-items:stretch]!">
-          <div>
-            <div className="[display:inline-flex] [align-items:center] [gap:6px] [padding:4px_10px] [background:rgba(255,_102,_0,_0.08)] [border:1px_solid_rgba(255,_102,_0,_0.25)] [&&]:[border-radius:999px] [color:var(--color-link)] [font-size:var(--text-xs)] [font-weight:700] [text-transform:uppercase] [letter-spacing:0.05em] [margin-bottom:8px]">
-              <Shield size={14} />
-              <span>Immutable Compliance Log</span>
-            </div>
-            <h1 className="section-title">Audit Trail &amp; System Activity</h1>
-            <p className="[color:var(--text-secondary,_var(--color-ink-500))] [font-size:var(--text-md)] [margin:0] [max-width:780px] [line-height:1.5]">
-              Comprehensive tamper-evident record of all emissions data, authentication, calculations, and administrative actions
-            </p>
-          </div>
+    <div>
+      <div className="mx-auto max-w-[1400px] px-4 py-5 md:px-7 md:py-6">
+        <AuditHeader view={view} onView={setView} refreshing={isRefreshing} onRefresh={refreshAll} onExport={handleExport} />
+        <AuditStats stats={stats} />
 
-          <div className="[display:flex] [align-items:center] [gap:12px] [@media(max-width:768px)]:[justify-content:space-between]">
-            <SegmentedControl
-              label="Audit view"
-              value={view}
-              onChange={setView}
-              options={[
-                { value: "table", label: "Table" },
-                { value: "timeline", label: "Timeline" },
-              ]}
-            />
-            <button
-              className="[display:inline-flex] [align-items:center] [gap:8px] [padding:9px_16px] [background:var(--bg-card,_rgba(255,_255,_255,_0.85))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-md)]! [color:var(--text-secondary,_var(--color-ink-600))]! [font-size:var(--text-base)] [font-weight:600] [cursor:pointer] [transition:all_0.2s_ease] [box-shadow:var(--shadow-xs)] [&:hover:not(:disabled)]:[background:var(--bg-hover,_rgba(255,_247,_237,_0.9))]! [&:hover:not(:disabled)]:[border-color:var(--accent-color,_var(--color-brand-500))]! [&:hover:not(:disabled)]:[color:var(--color-link)]! [&:hover:not(:disabled)]:[transform:translateY(-1px)]"
-              onClick={() => {
-                fetchAuditLogs(true);
-                fetchStats();
-                fetchFilters();
-                toast.info("Refreshed audit trail");
-              }}
-              disabled={isRefreshing}
-            >
-              <RefreshCw size={15} className={isRefreshing ? "[animation:spin_1s_linear_infinite]!" : ""} />
-              <span>Refresh</span>
-            </button>
-
-            {/* Export Dropdown */}
-            <div className="[position:relative]" ref={exportMenuRef}>
-              <button
-                className="[display:inline-flex] [align-items:center] [gap:8px] [padding:9px_18px] [background:var(--primary-gradient)] [border:none] [&&]:[border-radius:var(--radius-md)] [color:var(--color-white)] [font-size:var(--text-base)] [font-weight:700] [cursor:pointer] [box-shadow:0_2px_8px_rgba(255,_102,_0,_0.25)] [transition:all_0.2s_ease] hover:[filter:brightness(1.05)] hover:[transform:translateY(-1px)] hover:[box-shadow:0_4px_12px_rgba(255,_102,_0,_0.35)]"
-                onClick={() => setExportDropdownOpen(!exportDropdownOpen)}
-              >
-                <Download size={15} />
-                <span>Export Audit Log</span>
-                <ChevronDown size={14} />
-              </button>
-
-              {exportDropdownOpen && (
-                <div className="export-menu">
-                  <button onClick={() => handleExport("csv")}>
-                    <FileSpreadsheet size={15} className="export-icon csv-icon" />
-                    <div className="export-text">
-                      <strong>CSV Spreadsheet</strong>
-                      <span>Compliant with audit tools &amp; Excel</span>
-                    </div>
-                  </button>
-                  <button onClick={() => handleExport("json")}>
-                    <FileText size={15} className="export-icon json-icon" />
-                    <div className="export-text">
-                      <strong>JSON Structured Data</strong>
-                      <span>Full metadata &amp; field diffs</span>
-                    </div>
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* KPI Metric Summary Cards */}
-        <div className="[display:grid] [grid-template-columns:repeat(4,_1fr)]! [gap:16px] [margin-bottom:24px] [@media(max-width:1024px)]:[grid-template-columns:repeat(2,_1fr)]! [@media(max-width:768px)]:[grid-template-columns:1fr]!">
-          <div className="stat-card">
-            <div className="[width:44px] [height:44px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [flex-shrink:0] [&.total-events]:[background:rgba(99,_102,_241,_0.12)] [&.total-events]:[color:#6366f1] [&&]:[&.logins]:[background:rgba(14,_165,_233,_0.12)] [&&]:[&.logins]:[color:#0ea5e9] [&&]:[&&]:[&.data-changes]:[background:rgba(16,_185,_129,_0.12)] [&&]:[&&]:[&.data-changes]:[color:var(--color-green-700)] [&&]:[&&]:[&&]:[&.security-events]:[background:rgba(245,_158,_11,_0.12)] [&&]:[&&]:[&&]:[&.security-events]:[color:var(--color-amber-700)] total-events">
-              <Activity size={20} />
-            </div>
-            <div className="[display:flex] [flex-direction:column]">
-              <span className="stat-label">Total Events Logged</span>
-              <span className="stat-value">{stats.totalEvents.toLocaleString()}</span>
-            </div>
-          </div>
-
-          <div className="stat-card">
-            <div className="[width:44px] [height:44px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [flex-shrink:0] [&.total-events]:[background:rgba(99,_102,_241,_0.12)] [&.total-events]:[color:#6366f1] [&&]:[&.logins]:[background:rgba(14,_165,_233,_0.12)] [&&]:[&.logins]:[color:#0ea5e9] [&&]:[&&]:[&.data-changes]:[background:rgba(16,_185,_129,_0.12)] [&&]:[&&]:[&.data-changes]:[color:var(--color-green-700)] [&&]:[&&]:[&&]:[&.security-events]:[background:rgba(245,_158,_11,_0.12)] [&&]:[&&]:[&&]:[&.security-events]:[color:var(--color-amber-700)] logins">
-              <LogIn size={20} />
-            </div>
-            <div className="[display:flex] [flex-direction:column]">
-              <span className="stat-label">User Logins</span>
-              <span className="stat-value">{stats.totalLogins.toLocaleString()}</span>
-            </div>
-          </div>
-
-          <div className="stat-card">
-            <div className="[width:44px] [height:44px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [flex-shrink:0] [&.total-events]:[background:rgba(99,_102,_241,_0.12)] [&.total-events]:[color:#6366f1] [&&]:[&.logins]:[background:rgba(14,_165,_233,_0.12)] [&&]:[&.logins]:[color:#0ea5e9] [&&]:[&&]:[&.data-changes]:[background:rgba(16,_185,_129,_0.12)] [&&]:[&&]:[&.data-changes]:[color:var(--color-green-700)] [&&]:[&&]:[&&]:[&.security-events]:[background:rgba(245,_158,_11,_0.12)] [&&]:[&&]:[&&]:[&.security-events]:[color:var(--color-amber-700)] data-changes">
-              <Database size={20} />
-            </div>
-            <div className="[display:flex] [flex-direction:column]">
-              <span className="stat-label">Data Changes</span>
-              <span className="stat-value">{stats.dataMutations.toLocaleString()}</span>
-            </div>
-          </div>
-
-          <div className="stat-card">
-            <div className="[width:44px] [height:44px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [flex-shrink:0] [&.total-events]:[background:rgba(99,_102,_241,_0.12)] [&.total-events]:[color:#6366f1] [&&]:[&.logins]:[background:rgba(14,_165,_233,_0.12)] [&&]:[&.logins]:[color:#0ea5e9] [&&]:[&&]:[&.data-changes]:[background:rgba(16,_185,_129,_0.12)] [&&]:[&&]:[&.data-changes]:[color:var(--color-green-700)] [&&]:[&&]:[&&]:[&.security-events]:[background:rgba(245,_158,_11,_0.12)] [&&]:[&&]:[&&]:[&.security-events]:[color:var(--color-amber-700)] security-events">
-              <ShieldAlert size={20} />
-            </div>
-            <div className="[display:flex] [flex-direction:column]">
-              <span className="stat-label">Security &amp; Alerts</span>
-              <span className="stat-value">{stats.securityAlerts.toLocaleString()}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Search & Multi-Filter Control Bar */}
         <AuditTrailFiltersBarCard
-        auditLogs={auditLogs}
-        availableFilters={availableFilters}
-        customEndDate={customEndDate}
-        customStartDate={customStartDate}
-        filterAction={filterAction}
-        filterEntity={filterEntity}
-        filterUser={filterUser}
-        hasActiveFilters={hasActiveFilters}
-        resetFilters={resetFilters}
-        searchQuery={searchQuery}
-        setCustomEndDate={setCustomEndDate}
-        setCustomStartDate={setCustomStartDate}
-        setFilterAction={setFilterAction}
-        setFilterEntity={setFilterEntity}
-        setFilterUser={setFilterUser}
-        setPage={setPage}
-        setSearchQuery={setSearchQuery}
-        setTimeframe={setTimeframe}
-        timeframe={timeframe}
-        totalRecords={totalRecords}
-      />
+          auditLogs={auditLogs}
+          availableFilters={availableFilters}
+          customEndDate={customEndDate}
+          customStartDate={customStartDate}
+          filterAction={filterAction}
+          filterEntity={filterEntity}
+          filterUser={filterUser}
+          hasActiveFilters={hasActiveFilters}
+          resetFilters={resetFilters}
+          searchQuery={searchQuery}
+          setCustomEndDate={setCustomEndDate}
+          setCustomStartDate={setCustomStartDate}
+          setFilterAction={setFilterAction}
+          setFilterEntity={setFilterEntity}
+          setFilterUser={setFilterUser}
+          setPage={setPage}
+          setSearchQuery={setSearchQuery}
+          setTimeframe={setTimeframe}
+          timeframe={timeframe}
+          totalRecords={totalRecords}
+        />
 
-        {/* Main Content Area */}
         {loading ? (
-          <div className="[display:flex] [flex-direction:column] [gap:16px]">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="skeleton-card">
-                <div className="[width:40px] [height:40px] [background:var(--color-ink-100)] [border-radius:var(--radius-md)] [flex-shrink:0] [animation:pulse_1.5s_infinite]" />
-                <div className="[flex:1] [display:flex] [&&]:[flex-direction:column] [gap:10px]">
-                  <div className="skeleton-line w-40" />
-                  <div className="skeleton-line w-80" />
-                  <div className="skeleton-line w-20" />
-                </div>
-              </div>
-            ))}
-          </div>
+          <AuditSkeleton />
         ) : auditLogs.length === 0 ? (
-          <div className="audit-empty-state">
-            <div className="[width:64px] [height:64px] [background:var(--color-ink-100)] [border-radius:50%] [display:flex] [align-items:center] [justify-content:center] [margin:0_auto_16px_auto] [color:var(--color-ink-600)]">
-              <Filter size={32} />
-            </div>
-            <h3>No audit records found</h3>
-            <p>
-              {hasActiveFilters
-                ? "No activity logs match your current filter and search criteria."
-                : "No compliance audit records have been generated yet."}
-            </p>
-            {hasActiveFilters && (
-              <button className="[padding:8px_16px] [background:var(--color-primary)] [border:none] [&&]:[border-radius:var(--radius-md)] [color:var(--color-white)] [font-size:var(--text-base)] [font-weight:600] [cursor:pointer] [transition:opacity_0.2s_ease] hover:[opacity:0.9]" onClick={resetFilters}>
-                Clear All Filters
-              </button>
-            )}
-          </div>
+          <AuditEmpty filtered={hasActiveFilters} onReset={resetFilters} />
         ) : view === "table" ? (
           <DataTable
             tableId="audit-trail"
@@ -660,66 +404,28 @@ const AuditTrail = () => {
           />
         ) : (
           <AuditTrailAuditTimeline
-        auditLogs={auditLogs}
-        expandedRows={expandedRows}
-        formatDiffVal={formatDiffVal}
-        formatFullDateTime={formatFullDateTime}
-        formatTimestamp={formatTimestamp}
-        getActionConfig={getActionConfig}
-        toggleRawData={toggleRawData}
-      />
+            auditLogs={auditLogs}
+            expandedRows={expandedRows}
+            formatDiffVal={formatDiffVal}
+            formatFullDateTime={formatFullDateTime}
+            formatTimestamp={formatTimestamp}
+            actionStyle={actionStyle}
+            toggleRawData={toggleRawData}
+          />
         )}
 
-        {/* Pagination Bar */}
         {totalRecords > 0 && (
-          <div className="[display:flex] [justify-content:space-between] [align-items:center]! [margin-top:30px] [padding:16px_20px] [background:var(--bg-card,_var(--color-white))] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [&&]:[border-radius:var(--radius-lg)] [box-shadow:var(--shadow-card)] [flex-wrap:wrap]! [gap:16px] [@media(max-width:768px)]:[flex-direction:column]! [@media(max-width:768px)]:[align-items:stretch]! [@media(max-width:768px)]:[text-align:center]">
-            <div className="[font-size:var(--text-base)] [color:var(--text-secondary,_var(--color-ink-500))]">
-              Page <strong>{page}</strong> of <strong>{totalPages}</strong> ({totalRecords} total events)
-            </div>
-
-            <div className="pagination-controls">
-              <div className="page-size-selector">
-                <label>Rows:</label>
-                <NativeSelect
-                  value={limit}
-                  onChange={(e) => {
-                    setLimit(Number(e.target.value));
-                    setPage(1);
-                  }}
-                >
-                  <option value={25}>25</option>
-                  <option value={50}>50</option>
-                  <option value={100}>100</option>
-                </NativeSelect>
-              </div>
-
-              <div className="[display:flex] [align-items:center] [gap:10px]">
-                <button
-                  className="[display:inline-flex] [align-items:center] [gap:6px] [padding:6px_12px] [background:var(--color-white)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-md)]! [font-size:var(--text-sm)] [font-weight:600] [color:var(--text-primary,_var(--color-ink-900))]! [cursor:pointer] [transition:all_0.15s_ease] [&:hover:not(:disabled)]:[border-color:var(--accent-color,_var(--color-brand-500))]! [&:hover:not(:disabled)]:[color:var(--color-link)]! [&:hover:not(:disabled)]:[background:var(--bg-hover,_rgba(255,_247,_237,_0.5))]! disabled:[opacity:0.4] disabled:[cursor:not-allowed]"
-                  disabled={page <= 1}
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  title="Previous Page"
-                >
-                  <ChevronLeft size={16} />
-                  <span>Prev</span>
-                </button>
-
-                <span className="[font-size:var(--text-sm)] [font-weight:600] [color:var(--color-ink-600)] [min-width:44px] [text-align:center]">
-                  {page} / {totalPages}
-                </span>
-
-                <button
-                  className="[display:inline-flex] [align-items:center] [gap:6px] [padding:6px_12px] [background:var(--color-white)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-md)]! [font-size:var(--text-sm)] [font-weight:600] [color:var(--text-primary,_var(--color-ink-900))]! [cursor:pointer] [transition:all_0.15s_ease] [&:hover:not(:disabled)]:[border-color:var(--accent-color,_var(--color-brand-500))]! [&:hover:not(:disabled)]:[color:var(--color-link)]! [&:hover:not(:disabled)]:[background:var(--bg-hover,_rgba(255,_247,_237,_0.5))]! disabled:[opacity:0.4] disabled:[cursor:not-allowed]"
-                  disabled={page >= totalPages}
-                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                  title="Next Page"
-                >
-                  <span>Next</span>
-                  <ChevronRight size={16} />
-                </button>
-              </div>
-            </div>
-          </div>
+          <AuditPagination
+            page={page}
+            totalPages={totalPages}
+            totalRecords={totalRecords}
+            limit={limit}
+            onLimit={(n) => {
+              setLimit(n);
+              setPage(1);
+            }}
+            onPage={setPage}
+          />
         )}
       </div>
 
