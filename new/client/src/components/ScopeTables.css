@@ -11,7 +11,7 @@
 
 .excel-table thead {
   background: var(--color-ink-100);
-  color: var(--text-secondary);
+  color: var(--color-ink-600);
   text-transform: uppercase;
   font-size: var(--text-sm);
   font-weight: 600;

@@ -91,17 +91,17 @@
 
 .sbti-kpi-icon.success {
   background: rgba(16, 185, 129, 0.1);
-  color: var(--color-green-500);
+  color: var(--color-green-700);
 }
 
 .sbti-kpi-icon.warning {
   background: rgba(245, 158, 11, 0.1);
-  color: var(--color-amber-500);
+  color: var(--color-amber-700);
 }
 
 .sbti-kpi-icon.info {
   background: rgba(59, 130, 246, 0.1);
-  color: var(--color-blue-500);
+  color: var(--color-blue-700);
 }
 
 .sbti-kpi-icon.neutral {
@@ -144,13 +144,13 @@
 
 .status-pill.on-track {
   background: rgba(16, 185, 129, 0.12);
-  color: var(--color-green-600);
+  color: var(--color-green-700);
   border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
 .status-pill.behind {
   background: rgba(239, 68, 68, 0.12);
-  color: var(--color-red-600);
+  color: var(--color-red-700);
   border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
@@ -344,13 +344,13 @@
 
 .badge-status.achieved {
   background: rgba(16, 185, 129, 0.12);
-  color: var(--color-green-600);
+  color: var(--color-green-700);
   border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
 .badge-status.off-track {
   background: rgba(239, 68, 68, 0.12);
-  color: var(--color-red-600);
+  color: var(--color-red-700);
   border: 1px solid rgba(239, 68, 68, 0.3);
 }
 

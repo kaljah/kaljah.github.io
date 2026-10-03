@@ -247,7 +247,7 @@
 }
 
 .btn-wizard-approve-all {
-  background: var(--color-green-500);
+  background: var(--color-green-700);
   color: var(--color-white);
 }
 
@@ -259,12 +259,12 @@
 
 .btn-wizard-reject-all {
   background: rgba(239, 68, 68, 0.1);
-  color: var(--color-red-600);
+  color: var(--color-red-700);
   border-color: rgba(239, 68, 68, 0.25);
 }
 
 .btn-wizard-reject-all:hover {
-  background: var(--color-red-500);
+  background: var(--color-red-700);
   color: var(--color-white);
   transform: translateY(-1px);
   box-shadow: 0 3px 8px rgba(239, 68, 68, 0.3);
@@ -277,7 +277,7 @@
 }
 
 .btn-wizard-select-weird:hover {
-  background: var(--color-amber-500);
+  background: var(--color-amber-700);
   color: var(--color-white);
 }
 
@@ -369,19 +369,19 @@
 
 .anomaly-pill.danger {
   background: rgba(239, 68, 68, 0.1);
-  color: var(--color-red-600);
+  color: var(--color-red-700);
   border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
 .anomaly-pill.warning {
   background: rgba(245, 158, 11, 0.12);
-  color: var(--color-amber-600);
+  color: var(--color-amber-700);
   border: 1px solid rgba(245, 158, 11, 0.35);
 }
 
 .anomaly-pill.clean {
   background: rgba(16, 185, 129, 0.08);
-  color: var(--color-green-600);
+  color: var(--color-green-700);
   border: 1px solid rgba(16, 185, 129, 0.25);
 }
 
@@ -401,7 +401,7 @@
   height: 64px;
   border-radius: var(--radius-lg);
   background: rgba(16, 185, 129, 0.1);
-  color: var(--color-green-500);
+  color: var(--color-green-700);
   display: flex;
   align-items: center;
   justify-content: center;

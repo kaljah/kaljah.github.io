@@ -88,15 +88,15 @@
 }
 
 .ua-inventory-value.level-low {
-  color: var(--color-green-500);
+  color: var(--color-green-700);
 }
 
 .ua-inventory-value.level-medium {
-  color: var(--color-amber-500);
+  color: var(--color-amber-700);
 }
 
 .ua-inventory-value.level-high {
-  color: var(--color-red-500);
+  color: var(--color-red-700);
 }
 
 /* ── Confidence Badge ── */
@@ -295,19 +295,19 @@
 
 .uncertainty-low {
   background: rgba(16, 185, 129, 0.12);
-  color: var(--color-green-600);
+  color: var(--color-green-700);
   border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
 .uncertainty-medium {
   background: rgba(245, 158, 11, 0.12);
-  color: var(--color-amber-600);
+  color: var(--color-amber-700);
   border: 1px solid rgba(245, 158, 11, 0.3);
 }
 
 .uncertainty-high {
   background: rgba(239, 68, 68, 0.12);
-  color: var(--color-red-600);
+  color: var(--color-red-700);
   border: 1px solid rgba(239, 68, 68, 0.3);
 }
 

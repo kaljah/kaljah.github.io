@@ -20,7 +20,7 @@
 }
 
 .error-icon {
-  color: var(--color-red-500);
+  color: var(--color-red-700);
   margin-bottom: 24px;
   animation: pulse 2s ease-in-out infinite;
 }
@@ -62,7 +62,7 @@
 .error-details summary {
   cursor: pointer;
   font-weight: 600;
-  color: var(--color-amber-500);
+  color: var(--color-amber-700);
   margin-bottom: 12px;
   user-select: none;
 }
@@ -78,7 +78,7 @@
 }
 
 .error-stack strong {
-  color: var(--color-red-500);
+  color: var(--color-red-700);
 }
 
 .error-stack pre {
@@ -114,7 +114,7 @@
 }
 
 .error-btn.primary {
-  background: var(--color-green-500);
+  background: var(--color-green-700);
   color: white;
 }
 
@@ -142,7 +142,7 @@
 }
 
 .error-footer a {
-  color: var(--color-green-500);
+  color: var(--color-green-700);
   text-decoration: none;
 }
 

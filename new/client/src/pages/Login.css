@@ -154,7 +154,7 @@
   left: 16px;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--color-ink-400);
+  color: var(--color-ink-600);
   transition: color 0.3s;
 }
 
@@ -207,7 +207,7 @@
 
 .error-message {
   background: var(--color-red-50);
-  color: var(--color-red-500);
+  color: var(--color-red-700);
   padding: 12px 16px;
   border-radius: var(--radius-md);
   margin-bottom: 24px;

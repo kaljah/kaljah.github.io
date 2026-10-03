@@ -32,19 +32,19 @@
 
 .status-pill.verified, .status-pill.approved, .status-pill.achieved, .status-pill.active, .status-pill.on-track {
   background: var(--success-bg);
-  color: var(--color-green-600);
+  color: var(--color-green-700);
   border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
 .status-pill.pending, .status-pill.draft, .status-pill.warning {
   background: var(--warning-bg);
-  color: var(--color-amber-600);
+  color: var(--color-amber-700);
   border: 1px solid rgba(245, 158, 11, 0.3);
 }
 
 .status-pill.rejected, .status-pill.off-track, .status-pill.danger {
   background: var(--danger-bg);
-  color: var(--color-red-600);
+  color: var(--color-red-700);
   border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
