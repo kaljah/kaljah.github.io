@@ -1,10 +1,10 @@
 import React, { useMemo, useState } from "react";
-import { Check, ChevronDown, CloudUpload, Info, TriangleAlert } from "lucide-react";
+import { Check, ChevronDown, CloudUpload, TriangleAlert } from "lucide-react";
 import { Badge, Banner } from "../../ui";
 import { cn } from "../../ui/cn";
 import { activateOnKey } from "../../utils/a11yKeys";
 
-const controlClass =
+export const controlClass =
   "h-9 w-full rounded-md border bg-surface px-2.5 text-sm text-text transition-colors hover:border-ink-300 focus:border-brand-500";
 
 /** One system field with a dropdown (or free text for Excel files) naming the matching file column. */
@@ -84,6 +84,7 @@ export const FieldGroup = ({ group, headers, mapping, setMapping, searchQuery })
             <Icon className="size-3.5" aria-hidden="true" />
           </span>
           {group.label}
+          {group.badge && <Badge tone="success">{group.badge}</Badge>}
         </span>
         <span className="flex items-center gap-2.5 text-sm font-semibold text-text-secondary">
           {mappedCount}/{visible.length} mapped
@@ -172,9 +173,6 @@ export const RegionAccess = ({ regions, compact = false }) => {
 
 export const InfoNote = ({ children }) => (
   <Banner tone="info">
-    <span className="flex items-start gap-2">
-      <Info className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
-      <span>{children}</span>
-    </span>
+    {children}
   </Banner>
 );

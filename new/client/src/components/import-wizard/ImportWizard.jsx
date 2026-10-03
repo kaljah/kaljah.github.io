@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Papa from "papaparse";
-import { ArrowLeft, ChevronRight, Search, TriangleAlert, Wand2, File as FileIcon, X } from "lucide-react";
+import { ArrowLeft, ChevronRight, Search, Wand2, File as FileIcon, X } from "lucide-react";
 import { Banner, Button, Dialog, IconButton, Input, Stepper } from "../../ui";
 import { cn } from "../../ui/cn";
 import api from "../../api";
@@ -9,17 +9,37 @@ import { useToast } from "../Toast";
 import UploadProgress from "../UploadProgress";
 import { FieldGroup, FileDrop, InfoNote, RegionAccess } from "./mapping";
 
-const STEPS = ["Select file", "Map columns", "Import"];
 
 /**
  * Bulk import wizard for CSV/Excel files: pick a file, map its columns to system fields, then start the server-side job.
  * `modes` (optional) lets one wizard serve several column layouts; `fieldGroupsFor(mode)` and `scopeFor(mode)` pick them.
+ * `preSteps` ({ label, content, canNext }) add choices before the file step; `fieldFilter` hides fields that do not apply to
+ * those choices; `fileExtras` / `mappingExtras` add content to the file and mapping steps; `extraForm` adds upload fields.
  */
-const ImportWizard = ({ title, subtitle, modes, fieldGroupsFor, scopeFor, onClose, onUploadSuccess }) => {
+const ImportWizard = ({
+  title,
+  subtitle,
+  modes,
+  fieldGroupsFor,
+  scopeFor,
+  preSteps = [],
+  fieldFilter,
+  fileExtras,
+  mappingExtras,
+  extraForm,
+  finalLabel = "Import",
+  onClose,
+  onUploadSuccess,
+}) => {
   const toast = useToast();
   const fileInputRef = useRef(null);
   const [mode, setMode] = useState(modes?.[0]?.value);
+  const offset = preSteps.length;
+  const FILE = offset + 1;
+  const MAP = offset + 2;
+  const RUN = offset + 3;
   const [step, setStep] = useState(1);
+  const stepLabels = [...preSteps.map((p) => p.label), "Select file", "Map columns", finalLabel];
   const [file, setFile] = useState(null);
   const [dragging, setDragging] = useState(false);
   const [parseError, setParseError] = useState("");
@@ -48,6 +68,10 @@ const ImportWizard = ({ title, subtitle, modes, fieldGroupsFor, scopeFor, onClos
 
   const groups = useMemo(() => fieldGroupsFor(mode), [fieldGroupsFor, mode]);
   const allFields = useMemo(() => groups.flatMap((g) => g.fields), [groups]);
+  const shownGroups = useMemo(
+    () => groups.map((g) => ({ ...g, fields: g.fields.filter((f) => !fieldFilter || fieldFilter(g, f)) })).filter((g) => g.fields.length),
+    [groups, fieldFilter],
+  );
   const missingRequired = missingRequiredFields(allFields, mapping);
   const canSubmit = missingRequired.length === 0 || headers.length === 0;
   const restricted = !isAdmin && allowedRegions !== null;
@@ -61,7 +85,7 @@ const ImportWizard = ({ title, subtitle, modes, fieldGroupsFor, scopeFor, onClos
         setFile(f);
         setHeaders([]);
         setMapping({});
-        setStep(2);
+        setStep(MAP);
         return;
       }
       Papa.parse(f, {
@@ -77,12 +101,12 @@ const ImportWizard = ({ title, subtitle, modes, fieldGroupsFor, scopeFor, onClos
           setHeaders(hdrs);
           setMapping(autoDetectMapping(hdrs, allFields));
           setFile(f);
-          setStep(2);
+          setStep(MAP);
         },
         error: () => setParseError("Failed to parse file. Please ensure it is a valid CSV."),
       });
     },
-    [allFields],
+    [allFields, MAP],
   );
 
   const onDrop = (e) => {
@@ -101,11 +125,12 @@ const ImportWizard = ({ title, subtitle, modes, fieldGroupsFor, scopeFor, onClos
     form.append("file", file);
     form.append("scope", scopeFor(mode));
     form.append("overwrite_duplicates", overwrite ? "true" : "false");
+    extraForm?.(form);
     form.append("column_mapping", JSON.stringify(mapping));
     try {
       const res = await api.post("/emissions/upload/start", form, { headers: { "Content-Type": "multipart/form-data" } });
       setJobId(res.data.job_id);
-      setStep(3);
+      setStep(RUN);
     } catch (err) {
       toast.error("Upload error: " + (err.response?.data?.error || err.message));
     } finally {
@@ -113,31 +138,34 @@ const ImportWizard = ({ title, subtitle, modes, fieldGroupsFor, scopeFor, onClos
     }
   };
 
+  const preStep = step <= offset ? preSteps[step - 1] : null;
   const footer =
-    step === 3 ? null : (
+    step === RUN ? null : (
       <div className="flex w-full items-center justify-between">
         <Button variant="secondary" onClick={step === 1 ? onClose : () => setStep((s) => s - 1)}>
           {step === 1 ? <X className="size-4" aria-hidden="true" /> : <ArrowLeft className="size-4" aria-hidden="true" />}
           {step === 1 ? "Cancel" : "Back"}
         </Button>
-        {step === 1 ? (
-          <Button onClick={() => setStep(2)} disabled={!file}>
-            Next <ChevronRight className="size-4" aria-hidden="true" />
-          </Button>
-        ) : (
+        {step === MAP ? (
           <Button onClick={handleSubmit} loading={submitting} disabled={submitting || (!canSubmit && headers.length > 0) || noRegions}>
             {submitting ? "Starting…" : "Start import"}
+          </Button>
+        ) : (
+          <Button onClick={() => setStep((s) => s + 1)} disabled={step === FILE ? !file : preStep?.canNext === false}>
+            Next <ChevronRight className="size-4" aria-hidden="true" />
           </Button>
         )}
       </div>
     );
 
   return (
-    <Dialog open onOpenChange={(o) => !o && onClose()} title={title} description={subtitle} maxWidth="52rem" dismissible={step !== 3} footer={footer}>
+    <Dialog open onOpenChange={(o) => !o && onClose()} title={title} description={subtitle} maxWidth="52rem" dismissible={step !== RUN} footer={footer}>
       <div className="flex flex-col gap-4">
-        <Stepper steps={STEPS} current={step - 1} />
+        <Stepper steps={stepLabels} current={step - 1} />
 
-        {step === 1 && (
+        {preStep && preStep.content}
+
+        {step === FILE && (
           <>
             {modes && (
               <div role="radiogroup" aria-label="Import type" className="flex gap-2">
@@ -150,10 +178,11 @@ const ImportWizard = ({ title, subtitle, modes, fieldGroupsFor, scopeFor, onClos
             )}
             {restricted && <RegionAccess regions={allowedRegions} />}
             <FileDrop inputRef={fileInputRef} dragging={dragging} onDragging={setDragging} onDrop={onDrop} onFileChange={onFileChange} error={parseError} />
+            {fileExtras}
           </>
         )}
 
-        {step === 2 && (
+        {step === MAP && (
           <>
             {restricted && <RegionAccess regions={allowedRegions} compact />}
             {file && (
@@ -177,16 +206,11 @@ const ImportWizard = ({ title, subtitle, modes, fieldGroupsFor, scopeFor, onClos
             )}
             {headers.length > 0 && missingRequired.length > 0 && (
               <Banner tone="warning">
-                <span className="flex items-start gap-2">
-                  <TriangleAlert className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
-                  <span>
                     <strong>
                       {missingRequired.length} required field{missingRequired.length > 1 ? "s" : ""} not mapped:
                     </strong>{" "}
                     {missingRequired.map((f) => f.label).join(", ")}
-                  </span>
-                </span>
-              </Banner>
+                  </Banner>
             )}
 
             <div className="relative">
@@ -205,20 +229,22 @@ const ImportWizard = ({ title, subtitle, modes, fieldGroupsFor, scopeFor, onClos
               )}
             </div>
 
+            {mappingExtras}
+
             <label className={cn("flex cursor-pointer flex-wrap items-center gap-2 text-sm font-medium text-text-secondary")}>
               <input type="checkbox" className="size-4 accent-brand-500" checked={overwrite} onChange={(e) => setOverwrite(e.target.checked)} />
               Overwrite records that already exist (same facility, month and source). Overwritten records go back to Pending review.
             </label>
 
             <div className="flex flex-col gap-2.5">
-              {groups.map((group) => (
+              {shownGroups.map((group) => (
                 <FieldGroup key={group.id} group={group} headers={headers} mapping={mapping} setMapping={setMapping} searchQuery={searchQuery} />
               ))}
             </div>
           </>
         )}
 
-        {step === 3 && jobId && (
+        {step === RUN && jobId && (
           <UploadProgress
             jobId={jobId}
             onComplete={() => {
