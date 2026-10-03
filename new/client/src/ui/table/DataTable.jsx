@@ -44,6 +44,8 @@ export const DataTable = ({
   onRowClick,
   caption,
   className,
+  showColumnMenu = true,
+  showPagination = true,
 }) => {
   const [sorting, setSorting] = useState([]);
   const [columnVisibility, setColumnVisibility] = useState(() => readHidden(tableId, defaultHidden));
@@ -78,7 +80,7 @@ export const DataTable = ({
 
   return (
     <div className={cn("flex flex-col gap-3", className)}>
-      {hideable.length > 1 && (
+      {showColumnMenu && hideable.length > 1 && (
         <div className="flex justify-end">
           <Menu>
             <MenuTrigger asChild>
@@ -217,7 +219,7 @@ export const DataTable = ({
           (empty ?? <EmptyState title="No records" description="Nothing matches the current filters." />)}
       </div>
 
-      {table.getPageCount() > 1 && (
+      {showPagination && table.getPageCount() > 1 && (
         <div className="flex items-center justify-between gap-3 text-sm text-text-secondary">
           <span>
             Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()} ({tableData.length} rows)

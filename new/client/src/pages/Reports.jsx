@@ -1,6 +1,6 @@
 import { ChevronDown, Download, FileSpreadsheet, FileText, RotateCcw } from "lucide-react";
 import { NativeSelect } from "../ui/NativeSelect";
-import { Button, Menu, MenuContent, MenuItem, MenuTrigger, PageHeader, Field } from "../ui";
+import { Button, DataTable, Menu, MenuContent, MenuItem, MenuTrigger, PageHeader, Field, StatusPill } from "../ui";
 import React, { useState, useEffect } from "react";
 import api from "../api";
 import { useAuth } from "../context/AuthContext";
@@ -21,6 +21,47 @@ const gwpOptionLabel = (standard, horizon) => {
   const f = getActiveGwpFactors(standard, horizon);
   return `IPCC ${standard} (${horizon}-yr: CH4=${f.CH4}, N2O=${f.N2O})`;
 };
+
+const NA = (v) => v || "N/A";
+const fmt = (num) =>
+  num === null || num === undefined
+    ? "0.00"
+    : parseFloat(num).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 3 });
+
+const RECORD_COLUMNS = [
+  { accessorKey: "id", header: "ID", cell: (c) => <span className="text-xs text-text-secondary">{c.getValue()}</span> },
+  { id: "date", header: "Date", accessorFn: (r) => r.year * 100 + r.month, cell: (c) => `${c.row.original.month}/${c.row.original.year}` },
+  { accessorKey: "scope", header: "Scope", cell: (c) => <span className={`scope-badge scope-${c.getValue()}`}>Scope {c.getValue()}</span> },
+  { accessorKey: "division", header: "Division", cell: (c) => NA(c.getValue()) },
+  { accessorKey: "field", header: "Field", cell: (c) => NA(c.getValue()) },
+  { accessorKey: "facility_name", header: "Facility", cell: (c) => NA(c.getValue()) },
+  { accessorKey: "group_name", header: "Group", cell: (c) => NA(c.getValue()) },
+  { accessorKey: "equipment_id", header: "Equipment", cell: (c) => NA(c.getValue()) },
+  { accessorKey: "process_type", header: "Category/Process", cell: (c) => <span className="font-medium">{c.getValue()}</span> },
+  { accessorKey: "fuel", header: "Fuel/Source", cell: (c) => NA(c.getValue()) },
+  { accessorKey: "factor_type", header: "Factor Type", cell: (c) => <span className="text-sm">{NA(c.getValue())}</span> },
+  {
+    accessorKey: "amount",
+    header: "Qty",
+    meta: { numeric: true },
+    cell: (c) =>
+      c.getValue() ? (
+        <>
+          {fmt(c.getValue())} <span className="text-xs text-text-secondary">{c.row.original.unit}</span>
+        </>
+      ) : (
+        "-"
+      ),
+  },
+  {
+    accessorKey: "co2e_total",
+    header: "Total",
+    meta: { numeric: true, unit: "tCO₂e" },
+    // BUG-UI-06 FIX: show an em dash for null instead of a misleading 0.00
+    cell: (c) => <span className="font-bold text-primary">{c.getValue() != null ? fmt(c.getValue()) : "—"}</span>,
+  },
+  { accessorKey: "status", header: "Status", cell: (c) => <StatusPill status={c.getValue() || "Verified"} /> },
+];
 
 const Reports = () => {
   const { user } = useAuth();
@@ -867,108 +908,34 @@ const Reports = () => {
           )}
 
           {!loading && emissions.length > 0 && (
-            <div className="table-container" tabIndex={0} role="region" aria-label="Emission records">
-              <div className="grid-header">
-                <div className="cell">ID</div>
-                <div className="cell">Date</div>
-                <div className="cell">Scope</div>
-                <div className="cell">Division</div>
-                <div className="cell">Field</div>
-                <div className="cell">Facility</div>
-                <div className="cell">Group</div>
-                <div className="cell">Equipment</div>
-                <div className="cell">Category/Process</div>
-                <div className="cell">Fuel/Source</div>
-                <div className="cell">Factor Type</div>
-                <div className="cell cell-number">Qty</div>
-                <div className="cell cell-number">Total (tCO₂e)</div>
-                <div className="cell">Status</div>
-              </div>
-              {/* Rows (BUG-022: rendered through getGroupedData so Group By takes effect) */}
-              {(groupBy === "none"
-                ? [[null, emissions]]
-                : Object.entries(getGroupedData())
-              ).map(([groupKey, rows]) => (
-                <React.Fragment key={groupKey ?? "__all__"}>
+            <div className="flex flex-col gap-4" role="region" aria-label="Emission records">
+              {/* BUG-022: rendered through getGroupedData so Group By takes effect */}
+              {(groupBy === "none" ? [[null, emissions]] : Object.entries(getGroupedData())).map(([groupKey, rows]) => (
+                <section key={groupKey ?? "__all__"} className="flex flex-col gap-2">
                   {groupKey !== null && (
-                    <div
-                      className="grid-row grid-group-header bg-[color:var(--bg-hover)]! font-bold!"
-                     
-                    >
-                      <div className="cell" style={{ gridColumn: "1 / 13" }}>
-                        {groupKey}
-                        <span className="font-normal! ml-[8px]! opacity-[0.7]!">
+                    <h3 className="m-0 flex flex-wrap items-baseline justify-between gap-2 rounded-md bg-ink-100 px-3 py-2 text-base font-semibold text-text">
+                      <span>
+                        {groupKey}{" "}
+                        <span className="font-normal text-text-secondary">
                           ({rows.length} record{rows.length === 1 ? "" : "s"} on this page)
                         </span>
-                      </div>
-                      <div
-                        className="cell cell-number cell-total"
-                        title="Subtotal of the records shown on this page"
-                      >
-                        {formatNumber(
-                          rows.reduce((sum, r) => sum + (Number(r.co2e_total) || 0), 0),
-                        )}
-                      </div>
-                      <div className="cell text-[length:0.75rem]! opacity-[0.7]!">
-                        Subtotal
-                      </div>
-                    </div>
+                      </span>
+                      <span title="Subtotal of the records shown on this page">
+                        Subtotal {formatNumber(rows.reduce((sum, r) => sum + (Number(r.co2e_total) || 0), 0))} tCO₂e
+                      </span>
+                    </h3>
                   )}
-              {rows.map((row) => (
-                <div key={row.id} className="grid-row">
-                  <div
-                    className="cell text-[length:0.75rem]! opacity-[0.7]!"
-                   
-                  >
-                    {row.id}
-                  </div>
-                  <div className="cell">
-                    {row.month}/{row.year}
-                  </div>
-                  <div className="cell">
-                    <span className={`scope-badge scope-${row.scope}`}>
-                      Scope {row.scope}
-                    </span>
-                  </div>
-                  <div className="cell">{row.division || "N/A"}</div>
-                  <div className="cell">{row.field || "N/A"}</div>
-                  <div className="cell">{row.facility_name || "N/A"}</div>
-                  <div className="cell">{row.group_name || "N/A"}</div>
-                  <div className="cell">{row.equipment_id || "N/A"}</div>
-                  <div className="cell font-medium!">
-                    {row.process_type}
-                  </div>
-                  <div className="cell">{row.fuel || "N/A"}</div>
-                  <div className="cell text-[length:0.85rem]!">
-                    {row.factor_type || "N/A"}
-                  </div>
-                  <div className="cell cell-number">
-                    {row.amount ? formatNumber(row.amount) : "-"}
-                    <span
-                      className="text-[length:0.7rem]! ml-[4px]! opacity-[0.7]!"
-                    >
-                      {row.unit}
-                    </span>
-                  </div>
-                  <div
-                    className="cell cell-number cell-total text-[color:var(--primary-color)]! font-bold!"
-                   
-                  >
-                    {/* BUG-UI-06 FIX: Show '—' for null instead of misleading '0.00' */}
-                    {row.co2e_total != null
-                      ? formatNumber(row.co2e_total)
-                      : "—"}
-                  </div>
-                  <div className="cell">
-                    <span
-                      className="text-[length:0.8rem]! p-[2px_8px]! rounded-[4px]! bg-[color:rgba(16,_185,_129,_0.1)]! text-[color:#2e7d32]!"
-                    >
-                      {row.status || "Verified"}
-                    </span>
-                  </div>
-                </div>
-              ))}
-                </React.Fragment>
+                  <DataTable
+                    tableId="reports"
+                    caption={groupKey ?? "Emission records"}
+                    columns={RECORD_COLUMNS}
+                    data={rows}
+                    getRowId={(r) => String(r.id)}
+                    pageSize={Math.max(rows.length, 1)}
+                    showPagination={false}
+                    showColumnMenu={groupKey === null}
+                  />
+                </section>
               ))}
             </div>
           )}
