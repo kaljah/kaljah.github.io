@@ -1,7 +1,6 @@
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { NativeSelect } from "../ui/NativeSelect";
-import { activateOnKey } from "../utils/a11yKeys";
 import { useNavigate } from "react-router-dom";
 import {
   MapContainer,
@@ -54,6 +53,7 @@ import { useAuth } from "../context/AuthContext";
 import { useToast } from "../components/Toast";
 import { getUserOperationalDefaults, isUnrestrictedLocation } from "../utils/userDefaults";
 import ExplorerHud from "./explorer/ExplorerHud";
+import ExplorerDrawer from "./explorer/ExplorerDrawer";
 import "./MethaneExplorer.css";
 
 // Fix Leaflet tile sizing when mounted inside animated route transitions
@@ -896,265 +896,32 @@ const EmissionsMap = () => {
         </button>
 
         {isDrawerOpen && (
-          <div className="[pointer-events:auto] [width:100%] [height:100%] [background:rgba(255,_255,_255,_0.95)] [backdrop-filter:blur(20px)] [-webkit-backdrop-filter:blur(20px)] [border:1px_solid_rgba(226,_232,_240,_0.9)] [&&]:[border-radius:var(--radius-lg)] [box-shadow:var(--shadow-raised)] [display:flex] [flex-direction:column] [padding:18px] [overflow:hidden]">
-            {/* Drawer Header */}
-            <div className="drawer-header">
-              <div className="[display:flex] [align-items:center] [gap:8px]">
-                <Sliders size={17} color="#ff6600" />
-                <h3>Assets</h3>
-              </div>
-              <span className="[font-size:var(--text-xs)] [font-weight:800] [padding:3px_8px] [border-radius:var(--radius-sm)] [background:var(--color-brand-50)] [color:var(--color-link)] [border:1px_solid_#fed7aa]">
-                {filteredFacilities.length} ASSETS
-              </span>
-            </div>
-
-            {/* Quick Search */}
-            <div className="filter-group">
-              <label className="[display:block] [font-size:var(--text-xs)] [font-weight:700] [text-transform:uppercase] [letter-spacing:0.05em] [color:var(--color-ink-500)] [margin-bottom:5px]">Search Asset / Field</label>
-              <div className="search-input-wrapper">
-                <Search size={15} className="search-icon" />
-                <input
-                  type="text"
-                  placeholder="Search name, region, division..."
-                  value={filters.search}
-                  onChange={(e) =>
-                    setFilters({ ...filters, search: e.target.value })
-                  }
-                  className="[width:100%] [background:var(--color-ink-50)] [border:1px_solid_var(--color-ink-200)] [&&]:[border-radius:var(--radius-md)] [padding:8px_30px_8px_34px] [font-size:var(--text-sm)] [color:var(--color-ink-900)] [outline:none] [transition:all_0.2s_ease] focus:[background:var(--color-white)] focus:[border-color:var(--color-brand-500)] focus:[box-shadow:0_0_0_2px_rgba(255,_102,_0,_0.15)]"
-                  id="recon-search-input"
-                />
-                {filters.search && (
-                  <button
-                    className="[position:absolute] [right:10px] [top:50%] [transform:translateY(-50%)] [background:transparent] [border:none] [color:var(--color-ink-600)] [cursor:pointer] [padding:2px] hover:[color:var(--color-ink-900)]"
-                    onClick={() => setFilters({ ...filters, search: "" })}
-                    title="Clear search"
-                  >
-                    <X size={13} />
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* Filter Row 1: Region & Accounting Year */}
-            <div className="[display:flex] [gap:8px] [margin-bottom:10px]">
-              {/* Region Filter */}
-              <div className="filter-group flex-1">
-                <label className="[display:block] [font-size:var(--text-xs)] [font-weight:700] [text-transform:uppercase] [letter-spacing:0.05em] [color:var(--color-ink-500)] [margin-bottom:5px]">Region / Basin</label>
-                <NativeSelect
-                  value={filters.region}
-                  onChange={(e) =>
-                    setFilters({ ...filters, region: e.target.value })
-                  }
-                  className="[width:100%]! [background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:7px_10px]! [font-size:var(--text-sm)]! [color:var(--color-ink-900)]! [outline:none]! [cursor:pointer]! [transition:border-color_0.2s]! focus:[border-color:var(--color-brand-500)]! focus:[background:var(--color-white)]!"
-                  id="filter-region-select"
-                >
-                  <option value="all">All Regions</option>
-                  {availableRegions.map((reg) => (
-                    <option key={reg} value={reg}>
-                      {reg}
-                    </option>
-                  ))}
-                </NativeSelect>
-              </div>
-
-              {/* Year Filter */}
-              <div className="filter-group flex-1">
-                <label className="[display:block] [font-size:var(--text-xs)] [font-weight:700] [text-transform:uppercase] [letter-spacing:0.05em] [color:var(--color-ink-500)] [margin-bottom:5px]">Accounting Year</label>
-                <NativeSelect
-                  value={filters.year}
-                  onChange={(e) =>
-                    setFilters({ ...filters, year: e.target.value })
-                  }
-                  className="[width:100%]! [background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:7px_10px]! [font-size:var(--text-sm)]! [color:var(--color-ink-900)]! [outline:none]! [cursor:pointer]! [transition:border-color_0.2s]! focus:[border-color:var(--color-brand-500)]! focus:[background:var(--color-white)]!"
-                  id="filter-year-select"
-                >
-                  <option value="all">All Years</option>
-                  {availableYears.map((y) => (
-                    <option key={y} value={y}>
-                      {y}
-                    </option>
-                  ))}
-                </NativeSelect>
-              </div>
-            </div>
-
-            {/* Filter Row 2: Activity */}
-            <div className="filter-group">
-              <label className="[display:block] [font-size:var(--text-xs)] [font-weight:700] [text-transform:uppercase] [letter-spacing:0.05em] [color:var(--color-ink-500)] [margin-bottom:5px]">Activity Type</label>
-              <NativeSelect
-                value={filters.activity}
-                onChange={(e) =>
-                  setFilters({ ...filters, activity: e.target.value })
-                }
-                className="[width:100%]! [background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:7px_10px]! [font-size:var(--text-sm)]! [color:var(--color-ink-900)]! [outline:none]! [cursor:pointer]! [transition:border-color_0.2s]! focus:[border-color:var(--color-brand-500)]! focus:[background:var(--color-white)]!"
-                id="filter-activity-select"
-              >
-                <option value="all">All Activities</option>
-                {availableActivities.map((act) => (
-                  <option key={act} value={act}>
-                    {act}
-                  </option>
-                ))}
-              </NativeSelect>
-            </div>
-
-            {/* Severity Filter Pills */}
-            <div className="filter-group">
-              <label className="[display:block] [font-size:var(--text-xs)] [font-weight:700] [text-transform:uppercase] [letter-spacing:0.05em] [color:var(--color-ink-500)] [margin-bottom:5px]">Anomaly Severity</label>
-              <div className="[display:grid] [grid-template-columns:repeat(2,_1fr)] [gap:6px]">
-                {[
-                  { id: "all", label: "All" },
-                  { id: "high", label: "Super-Emitters", color: "#ef4444" },
-                  { id: "medium", label: "Moderate", color: "#f59e0b" },
-                  { id: "baseline", label: "Baseline", color: "#10b981" },
-                ].map((pill) => (
-                  <button
-                    key={pill.id}
-                    className={`pill-btn ${filters.severity === pill.id ? "active" : ""}`}
-                    onClick={() =>
-                      setFilters({ ...filters, severity: pill.id })
-                    }
-                  >
-                    {pill.color && (
-                      <span
-                        className="[width:6px] [height:6px] [border-radius:50%]"
-                        style={{ backgroundColor: pill.color }}
-                      ></span>
-                    )}
-                    <span>{pill.label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Sentinel-5P Satellite Overlay Controls Card */}
-            <div className="[background:#f0f9ff] [border:1px_solid_#bae6fd] [&&]:[border-radius:var(--radius-md)] [padding:11px_12px] [margin-bottom:12px]">
-              <div className="[display:flex] [align-items:center] [justify-content:space-between]">
-                <div className="[display:flex] [align-items:center] [gap:6px] [font-size:var(--text-sm)] [font-weight:700] [color:#0369a1]">
-                  <Satellite size={15} color="#0284c7" />
-                  <span>Sentinel-5P Overlay</span>
-                </div>
-                <label className="switch-toggle">
-                  <input
-                    type="checkbox"
-                    checked={showSatelliteLayer}
-                    onChange={(e) => setShowSatelliteLayer(e.target.checked)}
-                    id="toggle-sat-layer-checkbox"
-                    aria-label="Show satellite layer"
-                  />
-                  <span className="slider round"></span>
-                </label>
-              </div>
-
-              {showSatelliteLayer && (
-                <div className="[margin-top:10px] [display:flex] [flex-direction:column] [gap:8px]">
-                  <div className="[display:flex] [flex-direction:column] [gap:4px]">
-                    <span className="[font-size:var(--text-xs)] [font-weight:600] [color:var(--color-ink-600)]">
-                      Opacity: {Math.round(satelliteOpacity * 100)}%
-                    </span>
-                    <input
-                      type="range"
-                      min="0.15"
-                      max="1.0"
-                      step="0.05"
-                      value={satelliteOpacity}
-                      onChange={(e) =>
-                        setSatelliteOpacity(Number(e.target.value))
-                      }
-                      className="[width:100%] [height:4px] [border-radius:var(--radius-sm)] [background:var(--color-ink-300)] [outline:none] [accent-color:var(--color-sky-600)] [cursor:pointer]"
-                      id="satellite-opacity-slider"
-                      aria-label="Satellite layer opacity"
-                    />
-                  </div>
-
-                  <div className="[display:flex] [justify-content:space-between] [margin-top:2px]">
-                    <label className="recon-checkbox-label">
-                      <input
-                        type="checkbox"
-                        checked={showPlumeRings}
-                        onChange={(e) => setShowPlumeRings(e.target.checked)}
-                      />
-                      <span title="Symbol size by emission severity; not a modelled plume">Severity Rings</span>
-                    </label>
-
-                    <label className="recon-checkbox-label">
-                      <input
-                        type="checkbox"
-                        checked={showLegend}
-                        onChange={(e) => setShowLegend(e.target.checked)}
-                      />
-                      <span>Legend</span>
-                    </label>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Target Asset List Header */}
-            <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:8px] [font-size:var(--text-xs)] [font-weight:700] [text-transform:uppercase] [letter-spacing:0.04em] [color:var(--color-ink-500)]">
-              <span>Facility Inventory</span>
-              <span className="[font-size:var(--text-xs)] [color:var(--color-ink-600)] [text-transform:none]">Click to inspect</span>
-            </div>
-
-            {/* Neat Target Facility Cards */}
-            <div className="target-cards-scroll">
-              {filteredFacilities.length === 0 ? (
-                <div className="[display:flex] [flex-direction:column] [align-items:center] [justify-content:center] [gap:10px] [padding:30px_10px] [color:var(--color-ink-500)] [font-size:var(--text-sm)] [text-align:center]">
-                  <AlertCircle size={22} color="#94a3b8" />
-                  <span>No assets match current reconnaissance filters.</span>
-                  <button
-                    className="btn-reset-filters"
-                    onClick={handleResetFilters}
-                  >
-                    <RotateCcw size={12} />
-                    <span>Reset All Filters</span>
-                  </button>
-                </div>
-              ) : (
-                filteredFacilities.map((fac) => {
-                  const facilityStats = getIntensityData(fac.id);
-                  const isSelected = selectedFacility?.id === fac.id;
-                  const val =
-                    viewMode === "methane"
-                      ? facilityStats.total_ch4 || 0
-                      : facilityStats.total_co2e || 0;
-                  const severity = getSeverityLevel(val);
-
-                  return (
-                    <div role="button" tabIndex={0} onKeyDown={activateOnKey}
-                      key={fac.id}
-                      className={`target-card ${isSelected ? "selected" : ""}`}
-                      onClick={() => handleSelectFacility(fac)}
-                    >
-                      <div className="[display:flex] [align-items:center] [gap:10px] [min-width:0] [flex:1]">
-                        <span className={`beacon-dot ${severity}`}></span>
-                        <div className="[min-width:0] [flex:1]">
-                          <div className="[font-size:var(--text-sm)] [font-weight:700] [color:var(--color-ink-900)] [white-space:nowrap] [overflow:hidden] [text-overflow:ellipsis]">{fac.name}</div>
-                          <div className="[display:flex] [align-items:center] [gap:6px] [margin-top:2px] [font-size:var(--text-xs)] [color:var(--color-ink-500)]">
-                            {fac.region && (
-                              <span className="[background:var(--color-ink-100)] [padding:1px_6px] [border-radius:var(--radius-sm)] [font-size:var(--text-xs)] [font-weight:700] [color:var(--color-ink-600)]">{fac.region}</span>
-                            )}
-                            <span className="[white-space:nowrap] [overflow:hidden] [text-overflow:ellipsis]">
-                              {fac.activity || fac.division || "Industrial Asset"}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="[display:flex] [flex-direction:column] [align-items:flex-end] [flex-shrink:0]">
-                        <span className="target-card-val [font-size:var(--text-base)] [font-weight:800] [color:var(--color-ink-900)]">
-                          {formatCompact(val)}
-                        </span>
-                        <span className="[font-size:var(--text-xs)] [color:var(--color-ink-600)] [font-weight:600]">
-                          {viewMode === "methane" ? "tCH₄" : "tCO₂e"}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })
-              )}
-            </div>
-          </div>
+          <ExplorerDrawer
+            filters={filters}
+            onFilters={setFilters}
+            regions={availableRegions}
+            years={availableYears}
+            activities={availableActivities}
+            count={filteredFacilities.length}
+            satellite={{
+              show: showSatelliteLayer,
+              onShow: setShowSatelliteLayer,
+              opacity: satelliteOpacity,
+              onOpacity: setSatelliteOpacity,
+              rings: showPlumeRings,
+              onRings: setShowPlumeRings,
+              legend: showLegend,
+              onLegend: setShowLegend,
+            }}
+            facilities={filteredFacilities}
+            selectedId={selectedFacility?.id}
+            viewMode={viewMode}
+            getStats={getIntensityData}
+            getSeverity={getSeverityLevel}
+            formatCompact={formatCompact}
+            onSelect={handleSelectFacility}
+            onReset={handleResetFilters}
+          />
         )}
       </div>
 
