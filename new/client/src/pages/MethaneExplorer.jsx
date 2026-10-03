@@ -673,7 +673,7 @@ const EmissionsMap = () => {
   if (loading) {
     return (
       <div className="[display:flex]! [flex-direction:column] [align-items:center] [justify-content:center] [height:calc(100vh_-_72px)]! [gap:16px] [background:var(--color-ink-50)]! [color:var(--color-ink-900)]!">
-        <div className="[position:relative] [width:80px]! [height:80px]! [border:2px_solid_rgba(255,_102,_0,_0.2)]! [border-radius:50%]! [display:flex]! [align-items:center] [justify-content:center] [box-shadow:0_4px_20px_rgba(255,_102,_0,_0.15)]!">
+        <div className="[position:relative] [width:80px]! [height:80px]! [border:2px_solid_rgba(255,_102,_0,_0.2)]! [&&]:[border-radius:50%]! [display:flex]! [align-items:center] [justify-content:center] [box-shadow:0_4px_20px_rgba(255,_102,_0,_0.15)]!">
           <div className="[position:absolute] [inset:0] [border-radius:50%]! [border-top:3px_solid_var(--color-brand-500)]! [animation:spin_1.2s_cubic-bezier(0.5,_0,_0.5,_1)_infinite]!"></div>
           <Satellite size={34} className="[animation:spin_8s_linear_infinite]!" color="#ff6600" />
         </div>
@@ -694,12 +694,12 @@ const EmissionsMap = () => {
       }}
     >
       {/* 1. TOP MISSION TELEMETRY HUD BAR (WHITE LIGHT THEME) */}
-      <header className="[position:absolute] [top:14px] [left:16px] [right:16px] [z-index:1000] [display:flex]! [align-items:center] [justify-content:space-between] [gap:14px] [padding:10px_18px]! [background:rgba(255,_255,_255,_0.94)]! [backdrop-filter:blur(18px)] [-webkit-backdrop-filter:blur(18px)]! [border:1px_solid_rgba(226,_232,_240,_0.9)]! [border-radius:var(--radius-lg)]! [box-shadow:var(--shadow-card)]!">
+      <header className="[position:absolute] [top:14px] [left:16px] [right:16px] [z-index:1000] [display:flex]! [align-items:center] [justify-content:space-between] [gap:14px] [padding:10px_18px]! [background:rgba(255,_255,_255,_0.94)]! [backdrop-filter:blur(18px)] [-webkit-backdrop-filter:blur(18px)]! [border:1px_solid_rgba(226,_232,_240,_0.9)]! [&&]:[border-radius:var(--radius-lg)]! [box-shadow:var(--shadow-card)]!">
         <div className="[display:flex]! [align-items:center] [gap:16px]">
           <div className="[display:flex]! [align-items:center] [gap:10px]">
             <div className="[position:relative] [width:16px]! [height:16px]! [display:flex]! [align-items:center] [justify-content:center]">
               <span className="[width:8px]! [height:8px]! [background:var(--color-brand-500)]! [border-radius:50%]! [box-shadow:0_0_8px_rgba(255,_102,_0,_0.5)]!"></span>
-              <span className="[position:absolute] [width:100%]! [height:100%]! [border:1.5px_solid_var(--color-brand-500)]! [border-radius:50%]! [animation:radarWave_2s_infinite_ease-out]!"></span>
+              <span className="[position:absolute] [width:100%]! [height:100%]! [border:1.5px_solid_var(--color-brand-500)]! [&&]:[border-radius:50%]! [animation:radarWave_2s_infinite_ease-out]!"></span>
             </div>
             <div>
               <div className="[font-size:var(--text-md)]! [font-weight:700]! [color:var(--color-ink-900)]!">Emissions Map</div>
@@ -725,7 +725,7 @@ const EmissionsMap = () => {
         </div>
 
         {/* Real-time KPI Counters */}
-        <div className="[display:flex]! [align-items:center] [gap:16px] [background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [padding:5px_14px]! [border-radius:var(--radius-md)]!">
+        <div className="[display:flex]! [align-items:center] [gap:16px] [background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [padding:5px_14px]! [&&]:[border-radius:var(--radius-md)]!">
           <div className="[display:flex]! [flex-direction:column] [align-items:center] [gap:1px]">
             <span className="kpi-label">Monitored Assets</span>
             <span className="kpi-value">{telemetryMetrics.activeAssets}</span>
@@ -804,7 +804,7 @@ const EmissionsMap = () => {
 
       {/* 2. SATELLITE NEW-PASS OVERPASS TOAST */}
       {satelliteAlert && (
-        <aside className="[position:absolute] [top:78px] [right:20px] [z-index:1001] [background:var(--color-white)]! [border:1px_solid_#fca5a5]! [border-radius:var(--radius-lg)]! [padding:14px_16px]! [min-width:320px] [max-width:380px]! [box-shadow:0_10px_30px_rgba(239,_68,_68,_0.18)]! [animation:toastSlide_0.3s_cubic-bezier(0.16,_1,_0.3,_1)]! [display:flex]! [flex-direction:column] [gap:6px]" role="alert">
+        <aside className="[position:absolute] [top:78px] [right:20px] [z-index:1001] [background:var(--color-white)]! [border:1px_solid_#fca5a5]! [&&]:[border-radius:var(--radius-lg)]! [padding:14px_16px]! [min-width:320px] [max-width:380px]! [box-shadow:0_10px_30px_rgba(239,_68,_68,_0.18)]! [animation:toastSlide_0.3s_cubic-bezier(0.16,_1,_0.3,_1)]! [display:flex]! [flex-direction:column] [gap:6px]" role="alert">
           <div className="[display:flex]! [align-items:center] [justify-content:space-between]">
             <div className="toast-title">
               {satelliteAlert.anomaly >= 30 ? (
@@ -818,7 +818,7 @@ const EmissionsMap = () => {
               )}
             </div>
             <button
-              className="[background:transparent]! [border:none]! [color:var(--color-ink-600)]! [cursor:pointer] [padding:2px]! [border-radius:var(--radius-sm)]! [transition:color_0.2s]! hover:[color:var(--color-ink-900)]!"
+              className="[background:transparent]! [border:none]! [color:var(--color-ink-600)]! [cursor:pointer] [padding:2px]! [&&]:[border-radius:var(--radius-sm)]! [transition:color_0.2s]! hover:[color:var(--color-ink-900)]!"
               onClick={() => setSatelliteAlert(null)}
               title="Dismiss notification"
             >
@@ -955,7 +955,7 @@ const EmissionsMap = () => {
                     <div className="[display:flex]! [flex-direction:column] [gap:3px]">
                       <div className="[display:flex]! [align-items:center] [gap:8px]">
                         <span className="[font-size:var(--text-sm)]! [font-weight:800]! [color:var(--color-ink-900)]!">{fac.name}</span>
-                        <span className={`tooltip-badge ${severity}`}>
+                        <span className={`[font-size:var(--text-xs)]! [font-weight:800]! [padding:1px_5px]! [border-radius:var(--radius-sm)]! [&.high]:[background:#fee2e2]! [&.high]:[color:var(--color-red-700)]! [&.high]:[border:1px_solid_#fca5a5]! [&.medium]:[background:#fef3c7]! [&.medium]:[color:var(--color-amber-700)]! [&.medium]:[border:1px_solid_#fde68a]! [&.low]:[background:var(--color-green-50)]! [&.low]:[color:var(--color-green-700)]! [&.low]:[border:1px_solid_#a7f3d0]! [&.baseline]:[background:var(--color-green-50)]! [&.baseline]:[color:var(--color-green-700)]! [&.baseline]:[border:1px_solid_#a7f3d0]! ${severity}`}>
                           {severity.toUpperCase()}
                         </span>
                       </div>
@@ -983,7 +983,7 @@ const EmissionsMap = () => {
       {/* 4. COLLAPSIBLE LEFT INTELLIGENCE & RECON DRAWER (WHITE LIGHT THEME) */}
       <div className={`drawer-container [position:absolute]! [top:78px]! [left:16px]! [bottom:20px]! [width:340px]! [z-index:950]! [pointer-events:none]! [transition:transform_0.35s_cubic-bezier(0.16,_1,_0.3,_1)]! [&.collapsed]:[transform:translateX(-346px)]! ${isDrawerOpen ? "open" : "collapsed"}`}>
         <button
-          className="[pointer-events:auto]! [position:absolute] [top:14px] [right:-36px] [width:36px]! [height:44px]! [background:var(--color-white)]! [border:1px_solid_var(--color-ink-200)]! [border-left:none]! [border-radius:0_var(--radius-md)_var(--radius-md)_0]! [color:var(--color-link)]! [display:flex]! [align-items:center] [justify-content:center] [cursor:pointer] [box-shadow:var(--shadow-card)]! [transition:all_0.2s_ease]! hover:[color:var(--color-white)]! hover:[background:var(--color-primary)]!"
+          className="[pointer-events:auto]! [position:absolute] [top:14px] [right:-36px] [width:36px]! [height:44px]! [background:var(--color-white)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-left:none]! [&&]:[border-radius:0_var(--radius-md)_var(--radius-md)_0]! [color:var(--color-link)]! [display:flex]! [align-items:center] [justify-content:center] [cursor:pointer] [box-shadow:var(--shadow-card)]! [transition:all_0.2s_ease]! hover:[color:var(--color-white)]! hover:[background:var(--color-primary)]!"
           onClick={() => setIsDrawerOpen(!isDrawerOpen)}
           title={isDrawerOpen ? "Collapse drawer" : "Expand drawer"}
           aria-label={isDrawerOpen ? "Collapse drawer" : "Expand drawer"}
@@ -992,7 +992,7 @@ const EmissionsMap = () => {
         </button>
 
         {isDrawerOpen && (
-          <div className="[pointer-events:auto]! [width:100%]! [height:100%]! [background:rgba(255,_255,_255,_0.95)]! [backdrop-filter:blur(20px)] [-webkit-backdrop-filter:blur(20px)]! [border:1px_solid_rgba(226,_232,_240,_0.9)]! [border-radius:var(--radius-lg)]! [box-shadow:var(--shadow-raised)]! [display:flex]! [flex-direction:column] [padding:18px]! [overflow:hidden]!">
+          <div className="[pointer-events:auto]! [width:100%]! [height:100%]! [background:rgba(255,_255,_255,_0.95)]! [backdrop-filter:blur(20px)] [-webkit-backdrop-filter:blur(20px)]! [border:1px_solid_rgba(226,_232,_240,_0.9)]! [&&]:[border-radius:var(--radius-lg)]! [box-shadow:var(--shadow-raised)]! [display:flex]! [flex-direction:column] [padding:18px]! [overflow:hidden]!">
             {/* Drawer Header */}
             <div className="drawer-header">
               <div className="[display:flex]! [align-items:center] [gap:8px]">
@@ -1016,7 +1016,7 @@ const EmissionsMap = () => {
                   onChange={(e) =>
                     setFilters({ ...filters, search: e.target.value })
                   }
-                  className="[width:100%]! [background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:8px_30px_8px_34px]! [font-size:var(--text-sm)]! [color:var(--color-ink-900)]! [outline:none]! [transition:all_0.2s_ease]! focus:[background:var(--color-white)]! focus:[border-color:var(--color-brand-500)]! focus:[box-shadow:0_0_0_2px_rgba(255,_102,_0,_0.15)]!"
+                  className="[width:100%]! [background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:8px_30px_8px_34px]! [font-size:var(--text-sm)]! [color:var(--color-ink-900)]! [outline:none]! [transition:all_0.2s_ease]! focus:[background:var(--color-white)]! focus:[border-color:var(--color-brand-500)]! focus:[box-shadow:0_0_0_2px_rgba(255,_102,_0,_0.15)]!"
                   id="recon-search-input"
                 />
                 {filters.search && (
@@ -1041,7 +1041,7 @@ const EmissionsMap = () => {
                   onChange={(e) =>
                     setFilters({ ...filters, region: e.target.value })
                   }
-                  className="[width:100%]! [background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:7px_10px]! [font-size:var(--text-sm)]! [color:var(--color-ink-900)]! [outline:none]! [cursor:pointer] [transition:border-color_0.2s]! focus:[border-color:var(--color-brand-500)]! focus:[background:var(--color-white)]!"
+                  className="[width:100%]! [background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:7px_10px]! [font-size:var(--text-sm)]! [color:var(--color-ink-900)]! [outline:none]! [cursor:pointer] [transition:border-color_0.2s]! focus:[border-color:var(--color-brand-500)]! focus:[background:var(--color-white)]!"
                   id="filter-region-select"
                 >
                   <option value="all">All Regions</option>
@@ -1061,7 +1061,7 @@ const EmissionsMap = () => {
                   onChange={(e) =>
                     setFilters({ ...filters, year: e.target.value })
                   }
-                  className="[width:100%]! [background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:7px_10px]! [font-size:var(--text-sm)]! [color:var(--color-ink-900)]! [outline:none]! [cursor:pointer] [transition:border-color_0.2s]! focus:[border-color:var(--color-brand-500)]! focus:[background:var(--color-white)]!"
+                  className="[width:100%]! [background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:7px_10px]! [font-size:var(--text-sm)]! [color:var(--color-ink-900)]! [outline:none]! [cursor:pointer] [transition:border-color_0.2s]! focus:[border-color:var(--color-brand-500)]! focus:[background:var(--color-white)]!"
                   id="filter-year-select"
                 >
                   <option value="all">All Years</option>
@@ -1082,7 +1082,7 @@ const EmissionsMap = () => {
                 onChange={(e) =>
                   setFilters({ ...filters, activity: e.target.value })
                 }
-                className="[width:100%]! [background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:7px_10px]! [font-size:var(--text-sm)]! [color:var(--color-ink-900)]! [outline:none]! [cursor:pointer] [transition:border-color_0.2s]! focus:[border-color:var(--color-brand-500)]! focus:[background:var(--color-white)]!"
+                className="[width:100%]! [background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:7px_10px]! [font-size:var(--text-sm)]! [color:var(--color-ink-900)]! [outline:none]! [cursor:pointer] [transition:border-color_0.2s]! focus:[border-color:var(--color-brand-500)]! focus:[background:var(--color-white)]!"
                 id="filter-activity-select"
               >
                 <option value="all">All Activities</option>
@@ -1106,7 +1106,7 @@ const EmissionsMap = () => {
                 ].map((pill) => (
                   <button
                     key={pill.id}
-                    className={`pill-btn ${filters.severity === pill.id ? "active" : ""}`}
+                    className={`[display:flex]! [align-items:center]! [justify-content:center]! [gap:5px]! [background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:6px_8px]! [font-size:var(--text-xs)]! [font-weight:600]! [color:var(--color-ink-500)]! [cursor:pointer]! [transition:all_0.2s_ease]! [&:hover:not(.active)]:[color:var(--color-ink-900)]! [&:hover:not(.active)]:[background:var(--color-ink-100)]! [&.active]:[background:var(--color-brand-50)]! [&.active]:[border-color:var(--color-brand-500)]! [&.active]:[color:var(--color-link)]! [&.active]:[font-weight:700]! ${filters.severity === pill.id ? "active" : ""}`}
                     onClick={() =>
                       setFilters({ ...filters, severity: pill.id })
                     }
@@ -1124,7 +1124,7 @@ const EmissionsMap = () => {
             </div>
 
             {/* Sentinel-5P Satellite Overlay Controls Card */}
-            <div className="[background:#f0f9ff]! [border:1px_solid_#bae6fd]! [border-radius:var(--radius-md)]! [padding:11px_12px]! [margin-bottom:12px]!">
+            <div className="[background:#f0f9ff]! [border:1px_solid_#bae6fd]! [&&]:[border-radius:var(--radius-md)]! [padding:11px_12px]! [margin-bottom:12px]!">
               <div className="[display:flex]! [align-items:center] [justify-content:space-between]">
                 <div className="[display:flex]! [align-items:center] [gap:6px] [font-size:var(--text-sm)]! [font-weight:700]! [color:#0369a1]!">
                   <Satellite size={15} color="#0284c7" />
@@ -1223,7 +1223,7 @@ const EmissionsMap = () => {
                       onClick={() => handleSelectFacility(fac)}
                     >
                       <div className="[display:flex]! [align-items:center] [gap:10px] [min-width:0] [flex:1]">
-                        <span className={`beacon-dot ${severity}`}></span>
+                        <span className={`[width:8px]! [height:8px]! [border-radius:50%]! [flex-shrink:0]! [&.high]:[background:var(--color-red-500)]! [&.high]:[box-shadow:0_0_6px_rgba(239,_68,_68,_0.5)]! [&.medium]:[background:var(--color-amber-500)]! [&.medium]:[box-shadow:0_0_6px_rgba(245,_158,_11,_0.5)]! [&.low]:[background:var(--color-green-500)]! [&.low]:[box-shadow:0_0_6px_rgba(16,_185,_129,_0.5)]! [&.baseline]:[background:var(--color-green-500)]! [&.baseline]:[box-shadow:0_0_6px_rgba(16,_185,_129,_0.5)]! ${severity}`}></span>
                         <div className="[min-width:0] [flex:1]">
                           <div className="[font-size:var(--text-sm)]! [font-weight:700]! [color:var(--color-ink-900)]! [white-space:nowrap] [overflow:hidden]! [text-overflow:ellipsis]!">{fac.name}</div>
                           <div className="[display:flex]! [align-items:center] [gap:6px] [margin-top:2px]! [font-size:var(--text-xs)]! [color:var(--color-ink-500)]!">
@@ -1256,7 +1256,7 @@ const EmissionsMap = () => {
 
       {/* 5. CALIBRATED SPECTRAL ABSORPTION RAMP LEGEND (WHITE LIGHT THEME) */}
       {showSatelliteLayer && showLegend && (
-        <aside className="[position:absolute] [bottom:20px] [left:370px] [width:320px]! [z-index:900] [background:rgba(255,_255,_255,_0.95)]! [backdrop-filter:blur(16px)] [-webkit-backdrop-filter:blur(16px)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-lg)]! [padding:12px_14px]! [box-shadow:var(--shadow-card)]! [transition:all_0.3s_ease]! [@media(max-width:960px)]:[left:20px]! [@media(max-width:960px)]:[bottom:80px]!" role="region" aria-label="Spectral Legend">
+        <aside className="[position:absolute] [bottom:20px] [left:370px] [width:320px]! [z-index:900] [background:rgba(255,_255,_255,_0.95)]! [backdrop-filter:blur(16px)] [-webkit-backdrop-filter:blur(16px)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-lg)]! [padding:12px_14px]! [box-shadow:var(--shadow-card)]! [transition:all_0.3s_ease]! [@media(max-width:960px)]:[left:20px]! [@media(max-width:960px)]:[bottom:80px]!" role="region" aria-label="Spectral Legend">
           <div className="[display:flex]! [justify-content:space-between] [align-items:center] [margin-bottom:8px]!">
             <div className="[display:flex]! [align-items:center] [gap:6px] [font-size:var(--text-xs)]! [font-weight:700]! [color:var(--color-ink-900)]!">
               <Satellite size={14} color="#0284c7" />
@@ -1298,7 +1298,7 @@ const EmissionsMap = () => {
           {/* Dossier Header */}
           <div className="[position:relative] [margin-bottom:16px]! [padding-bottom:14px]! [border-bottom:1px_solid_var(--color-ink-100)]!">
             <button
-              className="[position:absolute] [top:0] [right:0] [background:var(--color-ink-100)]! [border:none]! [color:var(--color-ink-500)]! [cursor:pointer] [padding:6px]! [border-radius:50%]! [display:flex]! [align-items:center] [justify-content:center] [transition:all_0.2s]! hover:[background:var(--color-ink-200)]! hover:[color:var(--color-ink-900)]!"
+              className="[position:absolute] [top:0] [right:0] [background:var(--color-ink-100)]! [border:none]! [color:var(--color-ink-500)]! [cursor:pointer] [padding:6px]! [&&]:[border-radius:50%]! [display:flex]! [align-items:center] [justify-content:center] [transition:all_0.2s]! hover:[background:var(--color-ink-200)]! hover:[color:var(--color-ink-900)]!"
               onClick={() => setSelectedFacility(null)}
               title="Close Dossier"
             >
@@ -1320,7 +1320,7 @@ const EmissionsMap = () => {
                 </span>
               </div>
               <button
-                className="[display:inline-flex]! [align-items:center] [gap:4px] [background:var(--color-ink-100)]! [border:1px_solid_var(--color-ink-200)]! [padding:3px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-xs)]! [font-family:monospace]! [color:var(--color-blue-700)]! [cursor:pointer] [transition:all_0.2s]! hover:[background:#e0f2fe]! hover:[border-color:#7dd3fc]!"
+                className="[display:inline-flex]! [align-items:center] [gap:4px] [background:var(--color-ink-100)]! [border:1px_solid_var(--color-ink-200)]! [padding:3px_8px]! [&&]:[border-radius:var(--radius-sm)]! [font-size:var(--text-xs)]! [font-family:monospace]! [color:var(--color-blue-700)]! [cursor:pointer] [transition:all_0.2s]! hover:[background:#e0f2fe]! hover:[border-color:#7dd3fc]!"
                 onClick={handleCopyCoords}
                 title="Copy coordinates to clipboard"
               >
@@ -1343,7 +1343,7 @@ const EmissionsMap = () => {
           </div>
 
           {/* SATELLITE TOP-DOWN INTELLIGENCE SECTION */}
-          <div className="[background:#f0f9ff]! [border:1px_solid_#bae6fd]! [border-radius:var(--radius-lg)]! [padding:14px]! [margin-bottom:14px]!">
+          <div className="[background:#f0f9ff]! [border:1px_solid_#bae6fd]! [&&]:[border-radius:var(--radius-lg)]! [padding:14px]! [margin-bottom:14px]!">
             <div className="[display:flex]! [align-items:center] [justify-content:space-between] [margin-bottom:12px]!">
               <div className="[display:flex]! [align-items:center] [gap:6px] [font-size:var(--text-sm)]! [color:#0369a1]!">
                 <Satellite size={16} color="#0284c7" />
@@ -1356,7 +1356,7 @@ const EmissionsMap = () => {
                 </div>
               ) : (
                 satelliteObservation?.summary?.stream_type && (
-                  <span className="[background:var(--color-green-50)]! [color:var(--color-green-700)]! [border:1px_solid_#a7f3d0]! [border-radius:var(--radius-sm)]! [padding:2px_7px]! [font-size:var(--text-xs)]! [font-weight:700]! [letter-spacing:0.04em]">
+                  <span className="[background:var(--color-green-50)]! [color:var(--color-green-700)]! [border:1px_solid_#a7f3d0]! [&&]:[border-radius:var(--radius-sm)]! [padding:2px_7px]! [font-size:var(--text-xs)]! [font-weight:700]! [letter-spacing:0.04em]">
                     ● {satelliteObservation.summary.stream_type}
                   </span>
                 )
@@ -1374,9 +1374,9 @@ const EmissionsMap = () => {
               <div className="sat-telemetry-body">
                 {/* 4-Stat Telemetry Matrix */}
                 <div className="[display:grid]! [grid-template-columns:repeat(2,_1fr)] [gap:8px] [margin-bottom:10px]!">
-                  <div className="[background:var(--color-white)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:8px_10px]! [display:flex]! [flex-direction:column] [gap:2px]">
+                  <div className="[background:var(--color-white)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:8px_10px]! [display:flex]! [flex-direction:column] [gap:2px]">
                     <span className="[font-size:var(--text-xs)]! [font-weight:700]! [text-transform:uppercase]! [letter-spacing:0.05em] [color:var(--color-ink-500)]!">Mean CH₄ Column</span>
-                    <span className="box-val">
+                    <span className="[font-size:var(--text-md)]! [font-weight:800]! [color:var(--color-ink-900)]!">
                       {Number(
                         satelliteObservation.summary.mean_ch4_column_ppb || 0
                       ).toFixed(1)}{" "}
@@ -1384,10 +1384,10 @@ const EmissionsMap = () => {
                     </span>
                   </div>
 
-                  <div className="[background:var(--color-white)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:8px_10px]! [display:flex]! [flex-direction:column] [gap:2px]">
+                  <div className="[background:var(--color-white)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:8px_10px]! [display:flex]! [flex-direction:column] [gap:2px]">
                     <span className="[font-size:var(--text-xs)]! [font-weight:700]! [text-transform:uppercase]! [letter-spacing:0.05em] [color:var(--color-ink-500)]!">Max Anomaly (&Delta;CH₄)</span>
                     <span
-                      className={`box-val ${
+                      className={`[font-size:var(--text-md)]! [font-weight:800]! [color:var(--color-ink-900)]! ${
                         Number(satelliteObservation.summary.max_anomaly_ppb || 0) >= 25
                           ? "[color:var(--color-red-700)]!"
                           : "[color:var(--color-amber-700)]!"
@@ -1401,9 +1401,9 @@ const EmissionsMap = () => {
                     </span>
                   </div>
 
-                  <div className="[background:var(--color-white)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:8px_10px]! [display:flex]! [flex-direction:column] [gap:2px]">
+                  <div className="[background:var(--color-white)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:8px_10px]! [display:flex]! [flex-direction:column] [gap:2px]">
                     <span className="[font-size:var(--text-xs)]! [font-weight:700]! [text-transform:uppercase]! [letter-spacing:0.05em] [color:var(--color-ink-500)]!">Inferred Emission Rate</span>
-                    <span className="box-val [color:var(--color-amber-700)]!">
+                    <span className="[font-size:var(--text-md)]! [font-weight:800]! [color:var(--color-ink-900)]! [color:var(--color-amber-700)]!">
                       {Number(
                         satelliteObservation.summary.estimated_emission_rate_kg_hr || 0
                       ) > 0
@@ -1415,9 +1415,9 @@ const EmissionsMap = () => {
                     </span>
                   </div>
 
-                  <div className="[background:var(--color-white)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:8px_10px]! [display:flex]! [flex-direction:column] [gap:2px]">
+                  <div className="[background:var(--color-white)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:8px_10px]! [display:flex]! [flex-direction:column] [gap:2px]">
                     <span className="[font-size:var(--text-xs)]! [font-weight:700]! [text-transform:uppercase]! [letter-spacing:0.05em] [color:var(--color-ink-500)]!">Annualized Satellite Flux</span>
-                    <span className="box-val">
+                    <span className="[font-size:var(--text-md)]! [font-weight:800]! [color:var(--color-ink-900)]!">
                       {Number(
                         satelliteObservation.summary.annualized_ch4_tonnes || 0
                       ) > 0
@@ -1455,7 +1455,7 @@ const EmissionsMap = () => {
                 {/* TOP-DOWN vs BOTTOM-UP RECONCILIATION BENCHMARK */}
                 {reconciliationAnalysis && (
                   <div
-                    className="[background:var(--color-white)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:10px]! [margin-bottom:12px]!"
+                    className="[background:var(--color-white)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:10px]! [margin-bottom:12px]!"
                     style={{ borderColor: `${reconciliationAnalysis.color}50` }}
                   >
                     <div className="[display:flex]! [align-items:center] [justify-content:space-between] [margin-bottom:6px]!">
@@ -1482,14 +1482,14 @@ const EmissionsMap = () => {
 
                 {/* Level 5 OGMP Reconciliation Button */}
                 <button
-                  className="[width:100%]! [display:flex]! [align-items:center] [justify-content:center] [gap:8px] [background:var(--primary-gradient)]! [color:var(--color-white)]! [border:none]! [border-radius:var(--radius-md)]! [padding:11px_16px]! [font-size:var(--text-sm)]! [font-weight:700]! [cursor:pointer] [transition:all_0.2s_ease]! [box-shadow:0_3px_12px_rgba(255,_102,_0,_0.25)]! [&:hover:not(:disabled)]:[transform:translateY(-1px)]! [&:hover:not(:disabled)]:[box-shadow:0_5px_16px_rgba(255,_102,_0,_0.35)]! disabled:[opacity:0.65] disabled:[cursor:not-allowed] disabled:[transform:none]"
+                  className="[width:100%]! [display:flex]! [align-items:center] [justify-content:center] [gap:8px] [background:var(--primary-gradient)]! [color:var(--color-white)]! [border:none]! [&&]:[border-radius:var(--radius-md)]! [padding:11px_16px]! [font-size:var(--text-sm)]! [font-weight:700]! [cursor:pointer] [transition:all_0.2s_ease]! [box-shadow:0_3px_12px_rgba(255,_102,_0,_0.25)]! [&:hover:not(:disabled)]:[transform:translateY(-1px)]! [&:hover:not(:disabled)]:[box-shadow:0_5px_16px_rgba(255,_102,_0,_0.35)]! disabled:[opacity:0.65] disabled:[cursor:not-allowed] disabled:[transform:none]"
                   onClick={handleExportToOgmp}
                   disabled={exportingOgmp}
                   id="reconcile-ogmp-btn"
                 >
                   {exportingOgmp ? (
                     <>
-                      <span className="[width:14px]! [height:14px]! [border:2px_solid_rgba(255,_255,_255,_0.3)]! [border-top-color:var(--color-white)]! [border-radius:50%]! [animation:spin_0.6s_linear_infinite]!"></span>
+                      <span className="[width:14px]! [height:14px]! [border:2px_solid_rgba(255,_255,_255,_0.3)]! [&&]:[border-top-color:var(--color-white)]! [&&]:[border-radius:50%]! [animation:spin_0.6s_linear_infinite]!"></span>
                       <span>Recording Level 5 Verification...</span>
                     </>
                   ) : (
@@ -1510,7 +1510,7 @@ const EmissionsMap = () => {
                     credentials in Settings to stream verified Sentinel-5P overpasses.
                   </div>
                   <button
-                    className="[background:#fef3c7]! [border:1px_solid_#fde68a]! [color:var(--color-amber-700)]! [border-radius:var(--radius-sm)]! [padding:4px_10px]! [font-size:var(--text-xs)]! [font-weight:700]! [cursor:pointer] [transition:all_0.2s]! hover:[background:#fde68a]!"
+                    className="[background:#fef3c7]! [border:1px_solid_#fde68a]! [color:var(--color-amber-700)]! [&&]:[border-radius:var(--radius-sm)]! [padding:4px_10px]! [font-size:var(--text-xs)]! [font-weight:700]! [cursor:pointer] [transition:all_0.2s]! hover:[background:#fde68a]!"
                     onClick={() => navigate("/settings")}
                   >
                     Configure in Settings &rarr;
@@ -1523,14 +1523,14 @@ const EmissionsMap = () => {
           {loadingSurveys && <div className="[display:flex]! [align-items:center] [gap:6px] [font-size:var(--text-sm)]! [font-weight:800]! [letter-spacing:0.04em] [text-transform:uppercase]! [color:var(--color-ink-500)]! [margin-bottom:10px]!">Loading recorded surveys…</div>}
           {/* REAL DATABASE VERIFIED OGMP SURVEYS SECTION (IF RECORDED) */}
           {existingSurveys.length > 0 && (
-            <div className="[background:#f0fdf4]! [border:1px_solid_#bbf7d0]! [border-radius:var(--radius-md)]! [padding:12px]! [margin-bottom:14px]!">
+            <div className="[background:#f0fdf4]! [border:1px_solid_#bbf7d0]! [&&]:[border-radius:var(--radius-md)]! [padding:12px]! [margin-bottom:14px]!">
               <div className="[display:flex]! [align-items:center] [gap:6px] [font-size:var(--text-sm)]! [font-weight:800]! [letter-spacing:0.04em] [text-transform:uppercase]! [color:var(--color-ink-500)]! [margin-bottom:10px]!">
                 <ShieldCheck size={15} color="#10b981" />
                 <span>Verified OGMP Surveys in Database ({existingSurveys.length})</span>
               </div>
               <div className="[display:flex]! [flex-direction:column] [gap:6px] [margin-top:8px]!">
                 {existingSurveys.slice(0, 3).map((survey) => (
-                  <div key={survey.id} className="[background:var(--color-white)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:8px_10px]! [display:flex]! [flex-direction:column] [gap:4px]">
+                  <div key={survey.id} className="[background:var(--color-white)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:8px_10px]! [display:flex]! [flex-direction:column] [gap:4px]">
                     <div className="[display:flex]! [justify-content:space-between] [align-items:center] [font-size:var(--text-sm)]!">
                       <span className="[font-weight:700]! [color:var(--color-ink-900)]!">{survey.survey_type || survey.surveyType}</span>
                       <span className="[font-size:var(--text-xs)]! [color:var(--color-ink-500)]!">{survey.survey_date || survey.surveyDate}</span>
@@ -1620,7 +1620,7 @@ const EmissionsMap = () => {
           {/* QUICK FOCUS ACTION BUTTONS */}
           <div className="[margin-top:auto]! [padding-top:10px]!">
             <button
-              className="[width:100%]! [display:flex]! [align-items:center] [justify-content:center] [gap:8px] [background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:10px_14px]! [color:var(--color-ink-900)]! [font-size:var(--text-sm)]! [font-weight:700]! [cursor:pointer] [transition:all_0.2s_ease]! hover:[background:var(--color-brand-50)]! hover:[border-color:var(--color-brand-500)]! hover:[color:var(--color-link)]!"
+              className="[width:100%]! [display:flex]! [align-items:center] [justify-content:center] [gap:8px] [background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:10px_14px]! [color:var(--color-ink-900)]! [font-size:var(--text-sm)]! [font-weight:700]! [cursor:pointer] [transition:all_0.2s_ease]! hover:[background:var(--color-brand-50)]! hover:[border-color:var(--color-brand-500)]! hover:[color:var(--color-link)]!"
               onClick={() => {
                 const lat = Number(selectedFacility.latitude);
                 const lon = Number(selectedFacility.longitude);

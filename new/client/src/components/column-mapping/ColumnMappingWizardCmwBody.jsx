@@ -5,7 +5,7 @@ import { NativeSelect } from "../../ui/NativeSelect";
 const ColumnMappingWizardCmwBody = ({ Icons, MappingRow, activeOptional, activeRequired, file, globalFactor, headers, mapping, missingRequired, setGlobalFactor, setMapping, setShowOptional, showOptional }) => (
 <div className="cmw-body">
             {/* File badge */}
-            <div className="[display:flex]! [align-items:center] [gap:12px] [background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:12px_16px]! [margin-bottom:16px]!">
+            <div className="[display:flex]! [align-items:center] [gap:12px] [background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:12px_16px]! [margin-bottom:16px]!">
               <div className="[width:36px]! [height:36px]! [background:#e0fce7]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [color:var(--color-green-700)]! [flex-shrink:0] [&_svg]:[width:18px]! [&_svg]:[height:18px]!">
                 <Icons.FileXlsx />
               </div>
@@ -54,7 +54,7 @@ const ColumnMappingWizardCmwBody = ({ Icons, MappingRow, activeOptional, activeR
             {/* Mapping table */}
             <div className="[margin-bottom:16px]!">
               <div className="[font-size:var(--text-sm)]! [font-weight:700]! [text-transform:uppercase]! [letter-spacing:0.06em] [color:var(--color-ink-500)]! [margin-bottom:8px]!">Required Fields</div>
-              <div className="[border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [overflow:hidden]!">
+              <div className="[border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [overflow:hidden]!">
                 <div className="[display:grid]! [grid-template-columns:1.8fr_2fr_2fr_60px] [gap:12px] [padding:10px_16px]! [background:var(--color-ink-50)]! [border-bottom:1px_solid_var(--color-ink-200)]! [font-size:var(--text-xs)]! [font-weight:700]! [text-transform:uppercase]! [letter-spacing:0.05em] [color:var(--color-ink-600)]!">
                   <span>System Field</span>
                   <span>Description</span>
@@ -76,7 +76,7 @@ const ColumnMappingWizardCmwBody = ({ Icons, MappingRow, activeOptional, activeR
               </div>
 
               <button
-                className="[display:flex]! [align-items:center] [gap:6px] [padding:8px_12px]! [margin-top:10px]! [background:transparent]! [border:none]! [color:var(--color-ink-500)]! [font-size:var(--text-sm)]! [font-weight:500]! [cursor:pointer] [border-radius:var(--radius-sm)]! [transition:all_0.15s]! [&_svg]:[width:16px]! [&_svg]:[height:16px]! hover:[background:var(--color-ink-100)]! hover:[color:var(--color-ink-700)]!"
+                className="[display:flex]! [align-items:center] [gap:6px] [padding:8px_12px]! [margin-top:10px]! [background:transparent]! [border:none]! [color:var(--color-ink-500)]! [font-size:var(--text-sm)]! [font-weight:500]! [cursor:pointer] [&&]:[border-radius:var(--radius-sm)]! [transition:all_0.15s]! [&_svg]:[width:16px]! [&_svg]:[height:16px]! hover:[background:var(--color-ink-100)]! hover:[color:var(--color-ink-700)]!"
                 onClick={() => setShowOptional((v) => !v)}
               >
                 <Icons.ChevronRight />
@@ -92,7 +92,7 @@ const ColumnMappingWizardCmwBody = ({ Icons, MappingRow, activeOptional, activeR
                   >
                     Optional Fields
                   </div>
-                  <div className="[border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [overflow:hidden]!">
+                  <div className="[border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [overflow:hidden]!">
                     <div className="[display:grid]! [grid-template-columns:1.8fr_2fr_2fr_60px] [gap:12px] [padding:10px_16px]! [background:var(--color-ink-50)]! [border-bottom:1px_solid_var(--color-ink-200)]! [font-size:var(--text-xs)]! [font-weight:700]! [text-transform:uppercase]! [letter-spacing:0.05em] [color:var(--color-ink-600)]!">
                       <span>System Field</span>
                       <span>Description</span>
@@ -116,12 +116,12 @@ const ColumnMappingWizardCmwBody = ({ Icons, MappingRow, activeOptional, activeR
             </div>
 
             {/* Factor type override */}
-            <div className="[display:flex]! [align-items:center] [gap:16px] [padding:14px_16px]! [background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [margin-top:4px]!">
+            <div className="[display:flex]! [align-items:center] [gap:16px] [padding:14px_16px]! [background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [margin-top:4px]!">
               <label className="[font-size:var(--text-sm)]! [font-weight:500]! [color:var(--color-ink-600)]! [flex:1]">
                 Default factor type when not specified in file
               </label>
               <NativeSelect
-                className="[padding:7px_12px]! [border:1.5px_solid_var(--color-ink-200)]! [border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [color:var(--color-ink-700)]! [background:var(--color-white)]! [outline:none]! [min-width:220px] [transition:border-color_0.15s]! focus:[border-color:var(--color-blue-600)]!"
+                className="[padding:7px_12px]! [border:1.5px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [color:var(--color-ink-700)]! [background:var(--color-white)]! [outline:none]! [min-width:220px] [transition:border-color_0.15s]! focus:[border-color:var(--color-blue-600)]!"
                 value={globalFactor}
                 onChange={(e) => setGlobalFactor(e.target.value)}
               >

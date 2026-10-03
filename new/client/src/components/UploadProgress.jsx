@@ -216,7 +216,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
             </span>
           </div>
           {skippedCount > 0 && (
-            <div className="[margin-top:16px]! [padding:12px_16px]! [background:var(--color-amber-50)]! [border:1px_solid_#fef3c7]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [gap:8px] [color:var(--color-amber-700)]! [font-size:var(--text-base)]! [font-weight:500]! [animation:up-fade-in_0.3s_ease]! [&_svg]:[width:18px]! [&_svg]:[height:18px]!">
+            <div className="[margin-top:16px]! [padding:12px_16px]! [background:var(--color-amber-50)]! [border:1px_solid_#fef3c7]! [&&]:[border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [gap:8px] [color:var(--color-amber-700)]! [font-size:var(--text-base)]! [font-weight:500]! [animation:up-fade-in_0.3s_ease]! [&_svg]:[width:18px]! [&_svg]:[height:18px]!">
               <IconWarn />
               <span>{skippedCount.toLocaleString()} rows skipped so far</span>
             </div>
@@ -229,7 +229,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
         <div className="[background:var(--color-white)]! [border-radius:var(--radius-md)]! [padding:24px]! [border:1px_solid_var(--color-ink-200)]! [box-shadow:var(--shadow-xs)]!">
           {/* Summary cards */}
           <div className="[display:grid]! [grid-template-columns:repeat(auto-fit,_minmax(200px,_1fr))] [gap:16px] [margin-bottom:24px]!">
-            <div className="up-card [&_.up-card-icon]:[background:#dcfce7]! [&_.up-card-icon]:[color:var(--color-green-700)]!">
+            <div className="[display:flex]! [align-items:center] [gap:16px] [padding:20px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--color-ink-200)]! [background:var(--color-ink-50)]! [&_.up-card-icon]:[background:#dcfce7]! [&_.up-card-icon]:[color:var(--color-green-700)]!">
               <div className="up-card-icon [width:48px]! [height:48px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [&_svg]:[width:24px]! [&_svg]:[height:24px]!">
                 <IconCheck />
               </div>
@@ -239,7 +239,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
               </div>
             </div>
             <div
-              className={`up-card ${skippedCount > 0 ? "[&_.up-card-icon]:[background:#fef3c7]! [&_.up-card-icon]:[color:var(--color-amber-700)]!" : "[&_.up-card-icon]:[background:var(--color-brand-50)]! [&_.up-card-icon]:[color:var(--color-link)]!"}`}
+              className={`[display:flex]! [align-items:center]! [gap:16px]! [padding:20px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--color-ink-200)]! [background:var(--color-ink-50)]! ${skippedCount > 0 ? "[&_.up-card-icon]:[background:#fef3c7]! [&_.up-card-icon]:[color:var(--color-amber-700)]!" : "[&_.up-card-icon]:[background:var(--color-brand-50)]! [&_.up-card-icon]:[color:var(--color-link)]!"}`}
             >
               <div className="up-card-icon [width:48px]! [height:48px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [&_svg]:[width:24px]! [&_svg]:[height:24px]!">
                 <IconWarn />
@@ -249,7 +249,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
                 <p className="[font-size:var(--text-base)]! [color:var(--color-ink-500)]! [margin:0]! [font-weight:500]!">Rows Skipped</p>
               </div>
             </div>
-            <div className="up-card [&_.up-card-icon]:[background:var(--color-brand-50)]! [&_.up-card-icon]:[color:var(--color-link)]!">
+            <div className="[display:flex]! [align-items:center] [gap:16px] [padding:20px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--color-ink-200)]! [background:var(--color-ink-50)]! [&_.up-card-icon]:[background:var(--color-brand-50)]! [&_.up-card-icon]:[color:var(--color-link)]!">
               <div className="up-card-icon [width:48px]! [height:48px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [&_svg]:[width:24px]! [&_svg]:[height:24px]!">
                 <IconCheck />
               </div>
@@ -262,7 +262,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
 
           {/* Skipped reasons panel */}
           {skippedCount > 0 && (
-            <div className="[border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [margin-bottom:24px]! [overflow:hidden]! [&:has(.up-reasons-body)_.up-skip-toggle]:[border-bottom-color:var(--color-ink-200)]!">
+            <div className="[border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [margin-bottom:24px]! [overflow:hidden]! [&:has(.up-reasons-body)_.up-skip-toggle]:[border-bottom-color:var(--color-ink-200)]!">
               <div className="[display:flex]! [align-items:center] [width:100%]! [background:var(--color-ink-50)]! [border-bottom:1px_solid_transparent]!">
                 <button
                   className="up-skip-toggle [flex:1] [display:flex]! [align-items:center] [gap:12px] [padding:16px_20px]! [background:transparent]! [border:none]! [cursor:pointer] [font-size:var(--text-md)]! [font-weight:600]! [color:var(--color-ink-700)]! [transition:background_0.2s]! [text-align:left]! hover:[background:var(--color-ink-100)]! [&_svg]:[width:20px]! [&_svg]:[height:20px]! [&_svg]:[color:var(--color-ink-500)]!"
@@ -277,7 +277,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
                 </button>
                 {hasErrorCsv && (
                   <button
-                    className="[margin-left:auto]! [display:flex]! [align-items:center] [gap:6px] [padding:6px_12px]! [background:var(--color-white)]! [border:1px_solid_var(--color-ink-300)]! [border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:500]! [color:var(--color-ink-600)]! [cursor:pointer] [transition:all_0.2s]! hover:[background:var(--color-ink-100)]! hover:[border-color:var(--color-ink-400)]! hover:[color:var(--color-ink-800)]! [&_svg]:[width:14px]! [&_svg]:[height:14px]!"
+                    className="[margin-left:auto]! [display:flex]! [align-items:center] [gap:6px] [padding:6px_12px]! [background:var(--color-white)]! [border:1px_solid_var(--color-ink-300)]! [&&]:[border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:500]! [color:var(--color-ink-600)]! [cursor:pointer] [transition:all_0.2s]! hover:[background:var(--color-ink-100)]! hover:[border-color:var(--color-ink-400)]! hover:[color:var(--color-ink-800)]! [&_svg]:[width:14px]! [&_svg]:[height:14px]!"
                     onClick={(e) => {
                       e.stopPropagation();
                       downloadErrors();
@@ -296,7 +296,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
                       {categories.map((cat) => (
                         <button
                           key={cat}
-                          className={`up-pill ${filterCategory === cat ? "active" : ""}`}
+                          className={`[padding:6px_12px]! [border-radius:var(--radius-lg)]! [border:1px_solid_var(--color-ink-200)]! [background:var(--color-white)]! [font-size:var(--text-sm)]! [font-weight:500]! [color:var(--color-ink-500)]! [cursor:pointer]! [transition:all_0.2s]! hover:[border-color:var(--color-ink-300)]! hover:[color:var(--color-ink-700)]! [&.active]:[background:#fef3c7]! [&.active]:[border-color:var(--color-amber-500)]! [&.active]:[color:var(--color-amber-700)]! ${filterCategory === cat ? "active" : ""}`}
                           onClick={() => setFilterCategory(cat)}
                         >
                           {cat === "all"
@@ -330,7 +330,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
                             <tr key={i}>
                               <td className="[font-family:monospace]! [color:var(--color-ink-600)]! [font-weight:500]! [width:60px]!">{row.row}</td>
                               <td>
-                                <span className={`up-tag ${cat.cls}`}>
+                                <span className={`[display:inline-block]! [padding:4px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:600]! [text-transform:uppercase]! [letter-spacing:0.05em]! ${cat.cls}`}>
                                   {cat.label}
                                 </span>
                               </td>
@@ -371,7 +371,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
 
           {/* ── Anomaly Warnings Panel ── */}
           {anomalyCount > 0 && (
-            <div className="[background:#fefce8]! [border:1px_solid_#fef08a]! [border-radius:var(--radius-md)]! [margin-bottom:24px]! [overflow:hidden]!">
+            <div className="[background:#fefce8]! [border:1px_solid_#fef08a]! [&&]:[border-radius:var(--radius-md)]! [margin-bottom:24px]! [overflow:hidden]!">
               <button
                 className="[width:100%]! [display:flex]! [align-items:center] [padding:12px_16px]! [background:transparent]! [border:none]! [color:#854d0e]! [font-weight:600]! [font-size:var(--text-base)]! [cursor:pointer] [transition:background_0.2s]! hover:[background:#fef9c3]! [&_span]:[flex:1]! [&_span]:[text-align:left]! [&_span]:[margin-left:8px]!"
                 onClick={() => setShowAnomalies((v) => !v)}
@@ -438,7 +438,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
               <>
                 <button
                   type="button"
-                  className="[padding:10px_20px]! [background:transparent]! [color:var(--color-ink-500)]! [border:1px_solid_var(--color-ink-300)]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [transition:all_0.2s]! hover:[background:var(--color-ink-100)]! hover:[color:var(--color-ink-700)]!"
+                  className="[padding:10px_20px]! [background:transparent]! [color:var(--color-ink-500)]! [border:1px_solid_var(--color-ink-300)]! [&&]:[border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [transition:all_0.2s]! hover:[background:var(--color-ink-100)]! hover:[color:var(--color-ink-700)]!"
                   onClick={() => {
                     if (onComplete) onComplete();
                   }}
@@ -448,7 +448,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
                 {reviewable && (
                   <button
                     type="button"
-                    className="[padding:10px_20px]! [background:var(--primary-gradient)]! [color:var(--color-white)]! [border:none]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [transition:all_0.18s]! [box-shadow:0_2px_8px_rgba(255,_102,_0,_0.25)]! [font-family:inherit]! hover:[background:var(--primary-gradient)]! hover:[box-shadow:0_4px_12px_rgba(255,_102,_0,_0.35)]! hover:[transform:translateY(-1px)]"
+                    className="[padding:10px_20px]! [background:var(--primary-gradient)]! [color:var(--color-white)]! [border:none]! [&&]:[border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [transition:all_0.18s]! [box-shadow:0_2px_8px_rgba(255,_102,_0,_0.25)]! [font-family:inherit]! hover:[background:var(--primary-gradient)]! hover:[box-shadow:0_4px_12px_rgba(255,_102,_0,_0.35)]! hover:[transform:translateY(-1px)]"
                     onClick={() => {
                       if (onComplete) onComplete();
                       navigate("/manage-data", { state: { tab: "pending" } });
@@ -461,7 +461,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
             ) : (
               <button
                 type="button"
-                className="[padding:10px_20px]! [background:var(--primary-gradient)]! [color:var(--color-white)]! [border:none]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [transition:all_0.18s]! [box-shadow:0_2px_8px_rgba(255,_102,_0,_0.25)]! [font-family:inherit]! hover:[background:var(--primary-gradient)]! hover:[box-shadow:0_4px_12px_rgba(255,_102,_0,_0.35)]! hover:[transform:translateY(-1px)]"
+                className="[padding:10px_20px]! [background:var(--primary-gradient)]! [color:var(--color-white)]! [border:none]! [&&]:[border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [transition:all_0.18s]! [box-shadow:0_2px_8px_rgba(255,_102,_0,_0.25)]! [font-family:inherit]! hover:[background:var(--primary-gradient)]! hover:[box-shadow:0_4px_12px_rgba(255,_102,_0,_0.35)]! hover:[transform:translateY(-1px)]"
                 onClick={() => {
                   if (onComplete) onComplete();
                 }}
@@ -487,7 +487,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
               </p>
             </div>
           </div>
-          <div className="[background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:16px]! [margin-bottom:24px]! [max-height:200px]! [overflow-y:auto]! [font-family:monospace]! [font-size:var(--text-sm)]! [color:var(--color-ink-700)]!">
+          <div className="[background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:16px]! [margin-bottom:24px]! [max-height:200px]! [overflow-y:auto]! [font-family:monospace]! [font-size:var(--text-sm)]! [color:var(--color-ink-700)]!">
             {errors.map((e, i) => (
               <div key={i} className="[display:flex]! [align-items:flex-start] [gap:8px] [margin-bottom:8px]! [line-height:1.4] last:[margin-bottom:0]!">
                 <span className="[width:6px]! [height:6px]! [border-radius:50%]! [background:var(--color-red-600)]! [margin-top:6px]! [flex-shrink:0]" />
@@ -495,7 +495,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
               </div>
             ))}
           </div>
-          <button className="[padding:10px_20px]! [background:transparent]! [color:var(--color-ink-500)]! [border:1px_solid_var(--color-ink-300)]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [transition:all_0.2s]! hover:[background:var(--color-ink-100)]! hover:[color:var(--color-ink-700)]!" onClick={onCancel}>
+          <button className="[padding:10px_20px]! [background:transparent]! [color:var(--color-ink-500)]! [border:1px_solid_var(--color-ink-300)]! [&&]:[border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [transition:all_0.2s]! hover:[background:var(--color-ink-100)]! hover:[color:var(--color-ink-700)]!" onClick={onCancel}>
             Go Back
           </button>
         </div>

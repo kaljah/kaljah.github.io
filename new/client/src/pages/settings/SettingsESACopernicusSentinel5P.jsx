@@ -4,7 +4,7 @@ import { AlertCircle, CheckCircle2, ExternalLink, HelpCircle, KeyRound, Radio, S
 
 // Extracted from Settings.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicusClientId, copernicusClientSecret, copernicusEnabled, copernicusPassword, copernicusQaThreshold, copernicusUsername, handleSaveGlobal, handleTestConnection, isAdmin, saving, setAuthMode, setCopernicusClientId, setCopernicusClientSecret, setCopernicusEnabled, setCopernicusPassword, setCopernicusQaThreshold, setCopernicusUsername, setShowGuide, showGuide, testingConnection }) => (
-<div className="[background:var(--bg-card,_var(--color-white))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-lg)]! [padding:32px]! [display:flex]! [flex-direction:column] [gap:28px] [box-shadow:var(--shadow-card,_0_4px_6px_-1px_rgba(0,_0,_0,_0.05))]!">
+<div className="[background:var(--bg-card,_var(--color-white))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-lg)]! [padding:32px]! [display:flex]! [flex-direction:column] [gap:28px] [box-shadow:var(--shadow-card,_0_4px_6px_-1px_rgba(0,_0,_0,_0.05))]!">
           <div className="[display:flex]! [flex-direction:column] [gap:6px] [&_h2]:[font-size:var(--text-lg)]! [&_h2]:[font-weight:700]! [&_h2]:[color:var(--text-primary,_var(--color-ink-900))]! [&_h2]:[margin:0]! [&_p]:[font-size:var(--text-base)]! [&_p]:[color:var(--text-secondary,_var(--color-ink-500))]! [&_p]:[margin:0]! [&_p]:[line-height:1.5]!">
             <div className="[display:flex]! [align-items:center] [gap:10px]">
               <Satellite
@@ -28,7 +28,7 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
           </div>
 
           {/* Step-by-step account guide toggle banner */}
-          <div className="[background:rgba(2,_132,_199,_0.05)]! [border:1px_solid_rgba(2,_132,_199,_0.2)]! [border-radius:var(--radius-md)]! [padding:16px_20px]! [margin-bottom:24px]! [transition:all_0.2s_ease]! hover:[border-color:rgba(2,_132,_199,_0.35)]!">
+          <div className="[background:rgba(2,_132,_199,_0.05)]! [border:1px_solid_rgba(2,_132,_199,_0.2)]! [&&]:[border-radius:var(--radius-md)]! [padding:16px_20px]! [margin-bottom:24px]! [transition:all_0.2s_ease]! hover:[border-color:rgba(2,_132,_199,_0.35)]!">
             <div
               className="[display:flex]! [justify-content:space-between] [align-items:center] [cursor:pointer] [gap:16px]"
               onClick={() => setShowGuide(!showGuide)}
@@ -40,7 +40,7 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
                   Setup Guide
                 </strong>
               </div>
-              <button className="[background:var(--color-sky-600)]! [color:var(--color-white)]! [border:none]! [border-radius:var(--radius-sm)]! [padding:6px_14px]! [font-size:var(--text-sm)]! [font-weight:600]! [cursor:pointer] [transition:background_0.2s_ease]! hover:[background:#0369a1]!" type="button" aria-expanded={showGuide}>
+              <button className="[background:var(--color-sky-600)]! [color:var(--color-white)]! [border:none]! [&&]:[border-radius:var(--radius-sm)]! [padding:6px_14px]! [font-size:var(--text-sm)]! [font-weight:600]! [cursor:pointer] [transition:background_0.2s_ease]! hover:[background:#0369a1]!" type="button" aria-expanded={showGuide}>
                 {showGuide ? "Hide Guide" : "Show Step-by-Step Guide"}
               </button>
             </div>
@@ -111,22 +111,22 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
 
           {/* Satellite Specs Overview */}
           <div className="[display:grid]! [grid-template-columns:repeat(auto-fit,_minmax(200px,_1fr))] [gap:16px] [margin-bottom:28px]!">
-            <div className="[background:var(--bg-card-secondary,_var(--color-ink-50))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-md)]! [padding:16px_18px]! [display:flex]! [flex-direction:column] [gap:4px]">
+            <div className="[background:var(--bg-card-secondary,_var(--color-ink-50))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-md)]! [padding:16px_18px]! [display:flex]! [flex-direction:column] [gap:4px]">
               <div className="[font-size:var(--text-sm)]! [text-transform:uppercase]! [letter-spacing:0.05em] [color:var(--text-secondary,_var(--color-ink-500))]! [font-weight:700]!">Satellite Instrument</div>
               <div className="[font-size:var(--text-lg)]! [font-weight:700]! [color:var(--color-blue-700)]!">Sentinel-5P (TROPOMI)</div>
               <div className="[font-size:var(--text-sm)]! [color:var(--text-secondary,_var(--color-ink-400))]!">European Space Agency (ESA)</div>
             </div>
-            <div className="[background:var(--bg-card-secondary,_var(--color-ink-50))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-md)]! [padding:16px_18px]! [display:flex]! [flex-direction:column] [gap:4px]">
+            <div className="[background:var(--bg-card-secondary,_var(--color-ink-50))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-md)]! [padding:16px_18px]! [display:flex]! [flex-direction:column] [gap:4px]">
               <div className="[font-size:var(--text-sm)]! [text-transform:uppercase]! [letter-spacing:0.05em] [color:var(--text-secondary,_var(--color-ink-500))]! [font-weight:700]!">Spatial Resolution</div>
               <div className="[font-size:var(--text-lg)]! [font-weight:700]! [color:var(--color-blue-700)]!">5.5 × 7.0 km</div>
               <div className="[font-size:var(--text-sm)]! [color:var(--text-secondary,_var(--color-ink-400))]!">Regional & Basin Plume Scale</div>
             </div>
-            <div className="[background:var(--bg-card-secondary,_var(--color-ink-50))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-md)]! [padding:16px_18px]! [display:flex]! [flex-direction:column] [gap:4px]">
+            <div className="[background:var(--bg-card-secondary,_var(--color-ink-50))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-md)]! [padding:16px_18px]! [display:flex]! [flex-direction:column] [gap:4px]">
               <div className="[font-size:var(--text-sm)]! [text-transform:uppercase]! [letter-spacing:0.05em] [color:var(--text-secondary,_var(--color-ink-500))]! [font-weight:700]!">Global Revisit Rate</div>
               <div className="[font-size:var(--text-lg)]! [font-weight:700]! [color:var(--color-blue-700)]!">~2 Days</div>
               <div className="[font-size:var(--text-sm)]! [color:var(--text-secondary,_var(--color-ink-400))]!">High-frequency column monitoring</div>
             </div>
-            <div className="[background:var(--bg-card-secondary,_var(--color-ink-50))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-md)]! [padding:16px_18px]! [display:flex]! [flex-direction:column] [gap:4px]">
+            <div className="[background:var(--bg-card-secondary,_var(--color-ink-50))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-md)]! [padding:16px_18px]! [display:flex]! [flex-direction:column] [gap:4px]">
               <div className="[font-size:var(--text-sm)]! [text-transform:uppercase]! [letter-spacing:0.05em] [color:var(--text-secondary,_var(--color-ink-500))]! [font-weight:700]!">Measured Variable</div>
               <div className="[font-size:var(--text-lg)]! [font-weight:700]! [color:var(--color-blue-700)]!">Total Column CH₄ (ppb)</div>
               <div className="[font-size:var(--text-sm)]! [color:var(--text-secondary,_var(--color-ink-400))]!">Dry Air Mixing Ratio</div>
@@ -134,7 +134,7 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
           </div>
 
           {/* Credentials Form Section */}
-          <div className="[background:var(--bg-card-secondary,_var(--color-ink-50))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-lg)]! [padding:24px]! [display:flex]! [flex-direction:column] [gap:18px]">
+          <div className="[background:var(--bg-card-secondary,_var(--color-ink-50))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-lg)]! [padding:24px]! [display:flex]! [flex-direction:column] [gap:18px]">
             <div className="[display:flex]! [align-items:center] [gap:10px] [color:var(--text-primary,_var(--color-ink-900))]! [margin-bottom:4px]! [&_h3]:[margin:0]! [&_h3]:[font-size:var(--text-md)]! [&_h3]:[font-weight:700]!">
               <KeyRound size={18} />
               <h3>Copernicus Data Space Ecosystem (CDSE) Credentials</h3>
@@ -142,7 +142,7 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
 
             <div className="[display:flex]! [gap:12px] [flex-wrap:wrap] [margin-bottom:10px]!">
               <label
-                className={`auth-mode-pill ${authMode === "password" ? "active" : ""}`}
+                className={`[display:flex]! [align-items:center]! [gap:8px]! [padding:8px_16px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--border-color,_var(--color-ink-300))]! [background:var(--bg-card,_var(--color-white))]! [cursor:pointer]! [font-size:var(--text-base)]! [font-weight:600]! [color:var(--text-secondary,_var(--color-ink-600))]! [transition:all_0.2s_ease]! [&.active]:[border-color:var(--color-sky-600)]! [&.active]:[background:rgba(2,_132,_199,_0.08)]! [&.active]:[color:var(--color-blue-700)]! ${authMode === "password" ? "active" : ""}`}
               >
                 <input
                   type="radio"
@@ -155,7 +155,7 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
                 <span>Copernicus Account (Email &amp; Password)</span>
               </label>
               <label
-                className={`auth-mode-pill ${authMode === "oauth_client" ? "active" : ""}`}
+                className={`[display:flex]! [align-items:center]! [gap:8px]! [padding:8px_16px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--border-color,_var(--color-ink-300))]! [background:var(--bg-card,_var(--color-white))]! [cursor:pointer]! [font-size:var(--text-base)]! [font-weight:600]! [color:var(--text-secondary,_var(--color-ink-600))]! [transition:all_0.2s_ease]! [&.active]:[border-color:var(--color-sky-600)]! [&.active]:[background:rgba(2,_132,_199,_0.08)]! [&.active]:[color:var(--color-blue-700)]! ${authMode === "oauth_client" ? "active" : ""}`}
               >
                 <input
                   type="radio"
@@ -322,7 +322,7 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
 
               {connectionStatus && (
                 <div
-                  className={`connection-status-badge ${connectionStatus.success ? "success" : "error"}`}
+                  className={`[display:inline-flex]! [align-items:center]! [gap:8px]! [padding:8px_16px]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:600]! [&.success]:[background:rgba(16,_185,_129,_0.1)]! [&.success]:[color:var(--color-green-700)]! [&.success]:[border:1px_solid_rgba(16,_185,_129,_0.3)]! [&.error]:[background:rgba(239,_68,_68,_0.1)]! [&.error]:[color:var(--color-red-700)]! [&.error]:[border:1px_solid_rgba(239,_68,_68,_0.3)]! ${connectionStatus.success ? "success" : "error"}`}
                 >
                   {connectionStatus.success ? (
                     <CheckCircle2 size={16} />

@@ -39,11 +39,11 @@ const MethaneIntensityOGMP20Level = ({ globalThreshold, ogmpCollapsed, ogmpSurve
           </div>
 
           <div
-            className={`ogmp-body-wrapper ${ogmpCollapsed ? "collapsed" : ""}`}
+            className={`[max-height:1500px]! [opacity:1]! [overflow:hidden]! [transition:max-height_0.4s_cubic-bezier(0.4,_0,_0.2,_1),_opacity_0.3s_ease,_margin-top_0.3s_ease]! [margin-top:16px]! [&.collapsed]:[max-height:0]! [&.collapsed]:[opacity:0]! [&.collapsed]:[margin-top:0]! [&.collapsed]:[pointer-events:none]! ${ogmpCollapsed ? "collapsed" : ""}`}
           >
             {ogmpSurveys.length > 0 ? (
               <div className="table-responsive">
-                <table className="custom-table">
+                <table className="custom-table [width:100%]! [border-collapse:collapse]! [font-size:var(--text-base)]! [&_th]:[text-align:left]! [&_th]:[padding:12px_16px]! [&_th]:[color:var(--text-secondary)]! [&_th]:[font-weight:600]! [&_th]:[font-size:var(--text-sm)]! [&_th]:[text-transform:uppercase]! [&_th]:[letter-spacing:0.05em]! [&_th]:[border-bottom:2px_solid_var(--border-color)]! [&_td]:[padding:14px_16px]! [&_td]:[border-bottom:1px_solid_var(--border-color)]! [&_td]:[color:var(--text-primary)]! [&_tr:hover]:[background:var(--bg-hover)]!">
                   <thead>
                     <tr>
                       <th>Facility</th>
@@ -94,7 +94,7 @@ const MethaneIntensityOGMP20Level = ({ globalThreshold, ogmpCollapsed, ogmpSurve
                           <td className="font-semibold!">{facName}</td>
                           <td>{sDate}</td>
                           <td>
-                            <span className="code-pill">{sType}</span>
+                            <span className="code-pill [background:var(--bg-hover)]! [padding:3px_8px]! [border-radius:var(--radius-sm)]! [font-family:monospace]! [font-size:var(--text-sm)]! [color:var(--text-primary)]! [border:1px_solid_var(--border-color)]!">{sType}</span>
                           </td>
                           <td>
                             <strong className="text-[color:#2563eb]!">

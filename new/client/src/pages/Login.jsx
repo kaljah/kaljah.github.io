@@ -197,7 +197,7 @@ const Login = () => {
               </span>
               <input
                 type="text"
-                className="[width:100%]! [padding:14px_16px_14px_48px]! [border:1px_solid_var(--border-light)]! [border-radius:var(--radius-md)]! [font-size:var(--text-md)]! [color:var(--text-main)]! [transition:all_0.2s]! [background:#fafafa]! placeholder:[color:var(--color-ink-400)]! focus:[outline:none]! focus:[border-color:var(--primary)]! focus:[background:var(--color-white)]! focus:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.1)]! [&:focus+.input-icon]:[color:var(--primary)]!"
+                className="[width:100%]! [padding:14px_16px_14px_48px]! [border:1px_solid_var(--border-light)]! [&&]:[border-radius:var(--radius-md)]! [font-size:var(--text-md)]! [color:var(--text-main)]! [transition:all_0.2s]! [background:#fafafa]! placeholder:[color:var(--color-ink-400)]! focus:[outline:none]! focus:[border-color:var(--primary)]! focus:[background:var(--color-white)]! focus:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.1)]! [&:focus+.input-icon]:[color:var(--primary)]!"
                 required
                 placeholder="Email Address"
                 aria-label="Email address"
@@ -221,7 +221,7 @@ const Login = () => {
               </span>
               <input
                 type={showPassword ? "text" : "password"}
-                className="[width:100%]! [padding:14px_16px_14px_48px]! [border:1px_solid_var(--border-light)]! [border-radius:var(--radius-md)]! [font-size:var(--text-md)]! [color:var(--text-main)]! [transition:all_0.2s]! [background:#fafafa]! placeholder:[color:var(--color-ink-400)]! focus:[outline:none]! focus:[border-color:var(--primary)]! focus:[background:var(--color-white)]! focus:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.1)]! [&:focus+.input-icon]:[color:var(--primary)]!"
+                className="[width:100%]! [padding:14px_16px_14px_48px]! [border:1px_solid_var(--border-light)]! [&&]:[border-radius:var(--radius-md)]! [font-size:var(--text-md)]! [color:var(--text-main)]! [transition:all_0.2s]! [background:#fafafa]! placeholder:[color:var(--color-ink-400)]! focus:[outline:none]! focus:[border-color:var(--primary)]! focus:[background:var(--color-white)]! focus:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.1)]! [&:focus+.input-icon]:[color:var(--primary)]!"
                 required
                 placeholder="Password"
                 aria-label="Password"
@@ -231,7 +231,7 @@ const Login = () => {
               />
               <button
                 type="button"
-                className="[position:absolute] [top:50%] [right:12px] [transform:translateY(-50%)] [display:inline-flex]! [padding:6px]! [border:0]! [border-radius:var(--radius-md)]! [background:transparent]! [color:var(--color-ink-500)]! [cursor:pointer] hover:[background:var(--color-ink-100)]! hover:[color:var(--color-ink-900)]!"
+                className="[position:absolute] [top:50%] [right:12px] [transform:translateY(-50%)] [display:inline-flex]! [padding:6px]! [border:0]! [&&]:[border-radius:var(--radius-md)]! [background:transparent]! [color:var(--color-ink-500)]! [cursor:pointer] hover:[background:var(--color-ink-100)]! hover:[color:var(--color-ink-900)]!"
                 onClick={() => setShowPassword((v) => !v)}
                 aria-label={showPassword ? "Hide password" : "Show password"}
                 aria-pressed={showPassword}
@@ -300,7 +300,7 @@ const Login = () => {
               </div>
 
               {forgotMsg.text && (
-                <div className={`forgot-status-msg ${forgotMsg.type}`}>
+                <div className={`[padding:12px_16px]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [margin-bottom:18px]! [line-height:1.4]! [&.success]:[background:var(--color-green-50)]! [&.success]:[color:#065f46]! [&.success]:[border:1px_solid_#a7f3d0]! [&.error]:[background:var(--color-red-50)]! [&.error]:[color:#991b1b]! [&.error]:[border:1px_solid_#fecaca]! ${forgotMsg.type}`}>
                   {forgotMsg.text}
                 </div>
               )}
@@ -325,7 +325,7 @@ const Login = () => {
                     </span>
                     <input
                       type="email"
-                      className="[width:100%]! [padding:14px_16px_14px_48px]! [border:1px_solid_var(--border-light)]! [border-radius:var(--radius-md)]! [font-size:var(--text-md)]! [color:var(--text-main)]! [transition:all_0.2s]! [background:#fafafa]! placeholder:[color:var(--color-ink-400)]! focus:[outline:none]! focus:[border-color:var(--primary)]! focus:[background:var(--color-white)]! focus:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.1)]! [&:focus+.input-icon]:[color:var(--primary)]!"
+                      className="[width:100%]! [padding:14px_16px_14px_48px]! [border:1px_solid_var(--border-light)]! [&&]:[border-radius:var(--radius-md)]! [font-size:var(--text-md)]! [color:var(--text-main)]! [transition:all_0.2s]! [background:#fafafa]! placeholder:[color:var(--color-ink-400)]! focus:[outline:none]! focus:[border-color:var(--primary)]! focus:[background:var(--color-white)]! focus:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.1)]! [&:focus+.input-icon]:[color:var(--primary)]!"
                       required
                       placeholder="Enter registered email"
                       value={forgotEmail}

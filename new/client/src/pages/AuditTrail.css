@@ -30,20 +30,6 @@
 
 /* Export Dropdown */
 
-.export-menu {
-  position: absolute;
-  right: 0;
-  top: calc(100% + 8px);
-  width: 260px;
-  background: var(--color-white);
-  border: 1px solid var(--border-color, var(--color-ink-200));
-  border-radius: var(--radius-md);
-  padding: 8px;
-  box-shadow: var(--shadow-raised);
-  z-index: 50;
-  animation: fadeIn 0.15s ease-out;
-}
-
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -53,24 +39,6 @@
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-.export-menu button {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  width: 100%;
-  padding: 10px 12px;
-  background: transparent;
-  border: none;
-  border-radius: var(--radius-md);
-  text-align: left;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.export-menu button:hover {
-  background: var(--color-ink-50);
 }
 
 /* ==========================================================================

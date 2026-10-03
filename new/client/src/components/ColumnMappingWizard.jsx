@@ -491,7 +491,7 @@ function StepIndicator({ current }) {
         return (
           <React.Fragment key={s.id}>
             <div
-              className={`cmw-step ${active ? "active" : ""} ${done ? "done" : ""}`}
+              className={`[display:flex]! [flex-direction:column]! [align-items:center]! [gap:6px]! [position:relative]! [flex-shrink:0]! [&.active_.cmw-step-circle]:[border-color:var(--color-blue-600)]! [&.active_.cmw-step-circle]:[background:var(--color-blue-600)]! [&.active_.cmw-step-circle]:[color:var(--color-white)]! [&.active_.cmw-step-circle]:[box-shadow:0_0_0_4px_rgba(37,_99,_235,_0.15)]! [&.done_.cmw-step-circle]:[border-color:var(--color-green-600)]! [&.done_.cmw-step-circle]:[background:var(--color-green-700)]! [&.done_.cmw-step-circle]:[color:var(--color-white)]! [&.active_.cmw-step-label]:[color:var(--color-blue-600)]! [&.active_.cmw-step-label]:[font-weight:600]! [&.done_.cmw-step-label]:[color:var(--color-green-700)]! ${active ? "active" : ""} ${done ? "done" : ""}`}
             >
               <div className="cmw-step-circle [width:40px]! [height:40px]! [border-radius:50%]! [border:2px_solid_var(--color-ink-200)]! [background:var(--color-ink-50)]! [display:flex]! [align-items:center] [justify-content:center] [color:var(--color-ink-600)]! [transition:all_0.25s]! [&_svg]:[width:18px]! [&_svg]:[height:18px]!">
                 {done ? <Icons.Check /> : <s.Icon />}
@@ -499,7 +499,7 @@ function StepIndicator({ current }) {
               <span className="cmw-step-label [font-size:var(--text-sm)]! [font-weight:500]! [color:var(--color-ink-600)]! [white-space:nowrap] [transition:color_0.2s]!">{s.label}</span>
             </div>
             {i < STEPS.length - 1 && (
-              <div className={`cmw-step-line ${done ? "done" : ""}`} />
+              <div className={`[flex:1]! [height:2px]! [background:var(--color-ink-200)]! [margin:0_10px]! [&&]:[margin-bottom:22px]! [transition:background_0.3s]! [&.done]:[background:var(--color-green-600)]! ${done ? "done" : ""}`} />
             )}
           </React.Fragment>
         );
@@ -850,7 +850,7 @@ export default function ColumnMappingWizard({
           )}
 
           {step === 1 && (
-            <button className="cmw-btn-primary" onClick={() => setStep(2)}>
+            <button className="[display:flex]! [align-items:center] [gap:8px] [padding:9px_22px]! [border-radius:var(--radius-md)]! [border:none]! [background:var(--color-blue-600)]! [color:var(--color-white)]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [transition:all_0.2s]! [box-shadow:0_2px_8px_rgba(37,_99,_235,_0.35)]! [&_svg]:[width:16px]! [&_svg]:[height:16px]! [&:hover:not(:disabled)]:[background:var(--color-blue-700)]! [&:hover:not(:disabled)]:[transform:translateY(-1px)]! [&:hover:not(:disabled)]:[box-shadow:0_4px_14px_rgba(37,_99,_235,_0.4)]! disabled:[background:#93c5fd]! disabled:[cursor:not-allowed] disabled:[box-shadow:none]!" onClick={() => setStep(2)}>
               Next <Icons.ChevronRight />
             </button>
           )}
@@ -879,7 +879,7 @@ export default function ColumnMappingWizard({
               </div>
             {/* Drop zone */}
             <div role="button" tabIndex={0} onKeyDown={activateOnKey}
-              className={`cmw-dropzone ${isDragging ? "dragging" : ""}`}
+              className={`[border:2px_dashed_var(--color-ink-300)]! [&&]:[border-radius:var(--radius-md)]! [padding:40px_24px]! [text-align:center]! [cursor:pointer]! [transition:all_0.2s]! [background:var(--color-ink-50)]! [margin-bottom:20px]! hover:[border-color:var(--color-blue-600)]! hover:[background:var(--color-blue-50)]! [&.dragging]:[border-color:var(--color-blue-600)]! [&.dragging]:[background:var(--color-blue-50)]! ${isDragging ? "dragging" : ""}`}
               onClick={() => fileInputRef.current.click()}
               onDragOver={(e) => {
                 e.preventDefault();
@@ -905,7 +905,7 @@ export default function ColumnMappingWizard({
                 Supports .xlsx and .csv — optimised for millions of rows
               </p>
               {parseError && (
-                <div className="[display:flex]! [align-items:center] [gap:8px] [color:var(--color-red-700)]! [background:var(--color-red-50)]! [border:1px_solid_#fecaca]! [border-radius:var(--radius-md)]! [padding:10px_14px]! [margin-top:14px]! [font-size:var(--text-base)]! [&_svg]:[width:18px]! [&_svg]:[height:18px]! [&_svg]:[flex-shrink:0]!">
+                <div className="[display:flex]! [align-items:center] [gap:8px] [color:var(--color-red-700)]! [background:var(--color-red-50)]! [border:1px_solid_#fecaca]! [&&]:[border-radius:var(--radius-md)]! [padding:10px_14px]! [margin-top:14px]! [font-size:var(--text-base)]! [&_svg]:[width:18px]! [&_svg]:[height:18px]! [&_svg]:[flex-shrink:0]!">
                   <Icons.Warning />
                   {parseError}
                 </div>
@@ -920,7 +920,7 @@ export default function ColumnMappingWizard({
               <div className="[display:grid]! [grid-template-columns:1fr_1fr] [gap:12px]">
                 {type === "activity" && (
                   <button
-                    className="cmw-template-btn"
+                    className="[display:flex]! [align-items:center] [gap:12px] [padding:14px_16px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--color-ink-200)]! [background:var(--color-white)]! [cursor:pointer] [text-align:left]! [transition:all_0.2s]! hover:[border-color:var(--color-blue-600)]! hover:[background:var(--color-blue-50)]! hover:[transform:translateY(-1px)] hover:[box-shadow:0_4px_12px_rgba(37,_99,_235,_0.1)]! [&:hover_.cmw-template-btn-icon]:[background:#dbeafe]! [&:hover_.cmw-template-btn-icon]:[color:var(--color-blue-600)]! [&_strong]:[display:block]! [&_strong]:[font-size:var(--text-base)]! [&_strong]:[font-weight:600]! [&_strong]:[color:var(--color-ink-800)]! [&_strong]:[margin-bottom:2px]! [&_small]:[font-size:var(--text-sm)]! [&_small]:[color:var(--color-ink-600)]!"
                     onClick={() => downloadTemplate("excel")}
                   >
                     <span className="cmw-template-btn-icon [width:38px]! [height:38px]! [background:var(--color-ink-100)]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [color:var(--color-ink-600)]! [flex-shrink:0] [transition:background_0.2s]! [&_svg]:[width:20px]! [&_svg]:[height:20px]!">
@@ -935,7 +935,7 @@ export default function ColumnMappingWizard({
                   </button>
                 )}
                 <button
-                  className="cmw-template-btn"
+                  className="[display:flex]! [align-items:center] [gap:12px] [padding:14px_16px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--color-ink-200)]! [background:var(--color-white)]! [cursor:pointer] [text-align:left]! [transition:all_0.2s]! hover:[border-color:var(--color-blue-600)]! hover:[background:var(--color-blue-50)]! hover:[transform:translateY(-1px)] hover:[box-shadow:0_4px_12px_rgba(37,_99,_235,_0.1)]! [&:hover_.cmw-template-btn-icon]:[background:#dbeafe]! [&:hover_.cmw-template-btn-icon]:[color:var(--color-blue-600)]! [&_strong]:[display:block]! [&_strong]:[font-size:var(--text-base)]! [&_strong]:[font-weight:600]! [&_strong]:[color:var(--color-ink-800)]! [&_strong]:[margin-bottom:2px]! [&_small]:[font-size:var(--text-sm)]! [&_small]:[color:var(--color-ink-600)]!"
                   onClick={() => downloadTemplate("csv")}
                 >
                   <span className="cmw-template-btn-icon [width:38px]! [height:38px]! [background:var(--color-ink-100)]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [color:var(--color-ink-600)]! [flex-shrink:0] [transition:background_0.2s]! [&_svg]:[width:20px]! [&_svg]:[height:20px]!">
@@ -1009,12 +1009,12 @@ export default function ColumnMappingWizard({
 
             {step === 3 && (
               <button
-                className="cmw-btn-primary"
+                className="[display:flex]! [align-items:center] [gap:8px] [padding:9px_22px]! [border-radius:var(--radius-md)]! [border:none]! [background:var(--color-blue-600)]! [color:var(--color-white)]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [transition:all_0.2s]! [box-shadow:0_2px_8px_rgba(37,_99,_235,_0.35)]! [&_svg]:[width:16px]! [&_svg]:[height:16px]! [&:hover:not(:disabled)]:[background:var(--color-blue-700)]! [&:hover:not(:disabled)]:[transform:translateY(-1px)]! [&:hover:not(:disabled)]:[box-shadow:0_4px_14px_rgba(37,_99,_235,_0.4)]! disabled:[background:#93c5fd]! disabled:[cursor:not-allowed] disabled:[box-shadow:none]!"
                 onClick={handleSubmit}
                 disabled={isSubmitting || (!canProceed && headers.length > 0)}
               >
                 {isSubmitting ? (
-                  <span className="[width:16px]! [height:16px]! [border:2px_solid_rgba(255,_255,_255,_0.4)]! [border-top-color:var(--color-white)]! [border-radius:50%]! [animation:cmw-spin_0.7s_linear_infinite]! [flex-shrink:0]" />
+                  <span className="[width:16px]! [height:16px]! [border:2px_solid_rgba(255,_255,_255,_0.4)]! [&&]:[border-top-color:var(--color-white)]! [&&]:[border-radius:50%]! [animation:cmw-spin_0.7s_linear_infinite]! [flex-shrink:0]" />
                 ) : (
                   <Icons.Processing />
                 )}
@@ -1034,7 +1034,7 @@ function MappingRow({ field, headers, value, onChange }) {
 
   return (
     <div
-      className={`cmw-mapping-row ${!mapped && field.required ? "unmapped" : ""}`}
+      className={`[display:grid]! [grid-template-columns:1.8fr_2fr_2fr_60px]! [gap:12px]! [align-items:center]! [padding:10px_16px]! [border-bottom:1px_solid_var(--color-ink-100)]! [transition:background_0.15s]! last:[border-bottom:none]! hover:[background:var(--color-ink-50)]! [&.unmapped]:[background:#fff9f9]! ${!mapped && field.required ? "unmapped" : ""}`}
     >
       <div className="[font-size:var(--text-base)]! [font-weight:600]! [color:var(--color-ink-800)]! [display:flex]! [align-items:center] [gap:6px]">
         {field.label}
@@ -1044,7 +1044,7 @@ function MappingRow({ field, headers, value, onChange }) {
       <div className="cmw-field-select">
         {headers.length > 0 ? (
           <NativeSelect
-            className={`cmw-select ${mapped ? "matched" : ""}`}
+            className={`[width:100%]! [padding:7px_10px]! [border:1.5px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [color:var(--color-ink-700)]! [background:var(--color-white)]! [outline:none]! [transition:all_0.15s]! [appearance:auto]! focus:[border-color:var(--color-blue-600)]! focus:[box-shadow:0_0_0_3px_rgba(37,_99,_235,_0.1)]! [&.matched]:[border-color:var(--color-green-600)]! [&.matched]:[background:#f0fdf4]! ${mapped ? "matched" : ""}`}
             value={value}
             onChange={(e) => onChange(e.target.value)}
           >
@@ -1057,7 +1057,7 @@ function MappingRow({ field, headers, value, onChange }) {
           </NativeSelect>
         ) : (
           <input
-            className={`cmw-text-input ${mapped ? "matched" : ""}`}
+            className={`[width:100%]! [padding:7px_10px]! [border:1.5px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [color:var(--color-ink-700)]! [background:var(--color-white)]! [outline:none]! [transition:all_0.15s]! [appearance:auto]! focus:[border-color:var(--color-blue-600)]! focus:[box-shadow:0_0_0_3px_rgba(37,_99,_235,_0.1)]! [&.matched]:[border-color:var(--color-green-600)]! [&.matched]:[background:#f0fdf4]! ${mapped ? "matched" : ""}`}
             placeholder="Column name in your file"
             value={value}
             onChange={(e) => onChange(e.target.value)}

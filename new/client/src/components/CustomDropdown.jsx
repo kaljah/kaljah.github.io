@@ -332,7 +332,7 @@ const CustomDropdown = ({
                   role="option"
                   aria-selected={value === option.value}
                   data-testid="select-option"
-                  className={`dropdown-option ${value === option.value ? "selected" : ""} ${activeIndex === idx ? "active" : ""}`}
+                  className={`dropdown-option [padding:10px_14px]! [cursor:pointer]! [font-size:var(--text-base)]! [color:var(--text-primary)]! [transition:background_0.15s]! hover:[background:var(--bg-hover)]! [&.active]:[background:var(--bg-hover)]! [&.selected]:[background:rgba(16,_185,_129,_0.1)]! [&.selected]:[color:var(--color-link)]! [&.selected]:[font-weight:600]! ${value === option.value ? "selected" : ""} ${activeIndex === idx ? "active" : ""}`}
                   onClick={() => handleSelect(option.value)}
                   onMouseEnter={() => setActiveIndex(idx)}
                 >

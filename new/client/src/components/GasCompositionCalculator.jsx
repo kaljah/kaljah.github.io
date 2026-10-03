@@ -274,9 +274,9 @@ const GasCompositionCalculator = ({
         <div className="[display:grid]! [grid-template-columns:1fr_340px] [gap:30px] [@media(max-width:850px)]:[grid-template-columns:1fr]!">
           {/* Left: Inputs */}
           <div className="comp-inputs">
-            <div className="[margin-bottom:25px]! [padding:15px]! [background:rgba(255,_255,_255,_0.03)]! [border:1px_solid_var(--border-color)]! [border-radius:var(--radius-md)]! [&_label]:[display:block]! [&_label]:[margin-bottom:12px]! [&_label]:[font-size:var(--text-base)]! [&_label]:[color:var(--text-secondary)]! [&_label]:[text-transform:uppercase]! [&_label]:[letter-spacing:0.05em]!">
+            <div className="[margin-bottom:25px]! [padding:15px]! [background:rgba(255,_255,_255,_0.03)]! [border:1px_solid_var(--border-color)]! [&&]:[border-radius:var(--radius-md)]! [&_label]:[display:block]! [&_label]:[margin-bottom:12px]! [&_label]:[font-size:var(--text-base)]! [&_label]:[color:var(--text-secondary)]! [&_label]:[text-transform:uppercase]! [&_label]:[letter-spacing:0.05em]!">
               <label>Calculation Mode:</label>
-              <div className="[display:flex]! [gap:8px] [background:rgba(0,_0,_0,_0.2)]! [padding:4px]! [border-radius:var(--radius-md)]! [&_button]:[flex:1]! [&_button]:[padding:8px_12px]! [&_button]:[background:transparent]! [&_button]:[border:none]! [&_button]:[color:var(--text-secondary)]! [&_button]:[border-radius:var(--radius-sm)]! [&_button]:[cursor:pointer]! [&_button]:[font-size:var(--text-base)]! [&_button]:[font-weight:600]! [&_button]:[transition:all_0.2s]! [&_button:hover]:[color:var(--text-primary)]! [&_button:hover]:[background:rgba(255,_255,_255,_0.05)]! [&_button.active]:[background:var(--color-primary)]! [&_button.active]:[color:white]! [&_button.active]:[box-shadow:0_2px_8px_rgba(255,_102,_0,_0.2)]!">
+              <div className="[display:flex]! [gap:8px] [background:rgba(0,_0,_0,_0.2)]! [padding:4px]! [border-radius:var(--radius-md)]! [&_button]:[flex:1]! [&_button]:[padding:8px_12px]! [&_button]:[background:transparent]! [&_button]:[border:none]! [&_button]:[color:var(--text-secondary)]! [&_button]:[&&]:[border-radius:var(--radius-sm)]! [&_button]:[cursor:pointer]! [&_button]:[font-size:var(--text-base)]! [&_button]:[font-weight:600]! [&_button]:[transition:all_0.2s]! [&_button:hover]:[color:var(--text-primary)]! [&_button:hover]:[background:rgba(255,_255,_255,_0.05)]! [&_button.active]:[background:var(--color-primary)]! [&_button.active]:[color:white]! [&_button.active]:[box-shadow:0_2px_8px_rgba(255,_102,_0,_0.2)]!">
                 <button
                   className={activeProcessType === "combustion" ? "active" : ""}
                   onClick={() => handleModeChange("combustion")}
@@ -292,7 +292,7 @@ const GasCompositionCalculator = ({
               </div>
             </div>
 
-            <div className="[background:rgba(255,_255,_255,_0.03)]! [border:1px_solid_var(--border-color)]! [border-radius:var(--radius-md)]! [padding:15px_20px]! [display:flex]! [justify-content:space-between] [align-items:center] [margin-bottom:25px]!">
+            <div className="[background:rgba(255,_255,_255,_0.03)]! [border:1px_solid_var(--border-color)]! [&&]:[border-radius:var(--radius-md)]! [padding:15px_20px]! [display:flex]! [justify-content:space-between] [align-items:center] [margin-bottom:25px]!">
               <div className="[&_.label]:[color:var(--text-secondary)]! [&_.label]:[font-size:var(--text-base)]! [&_.label]:[margin-right:10px]! [&_.value]:[font-size:var(--text-xl)]! [&_.value]:[font-weight:700]! [&_.value.valid]:[color:var(--color-green-700)]! [&_.value.invalid]:[color:var(--color-red-700)]!">
                 <span className="label">Total Composition:</span>
                 <span
@@ -349,7 +349,7 @@ const GasCompositionCalculator = ({
             </div>
 
             <button
-              className="[width:100%]! [padding:14px]! [background:var(--color-primary)]! [color:white]! [border:none]! [border-radius:var(--radius-md)]! [font-weight:700]! [cursor:pointer] [transition:all_0.2s]! disabled:[opacity:0.5] disabled:[cursor:not-allowed] [&:hover:not(:disabled)]:[transform:translateY(-2px)]! [&:hover:not(:disabled)]:[box-shadow:0_5px_15px_rgba(255,_102,_0,_0.3)]!"
+              className="[width:100%]! [padding:14px]! [background:var(--color-primary)]! [color:white]! [border:none]! [&&]:[border-radius:var(--radius-md)]! [font-weight:700]! [cursor:pointer] [transition:all_0.2s]! disabled:[opacity:0.5] disabled:[cursor:not-allowed] [&:hover:not(:disabled)]:[transform:translateY(-2px)]! [&:hover:not(:disabled)]:[box-shadow:0_5px_15px_rgba(255,_102,_0,_0.3)]!"
               onClick={calculate}
               disabled={totalMolePct === 0}
             >
@@ -431,7 +431,7 @@ const GasCompositionCalculator = ({
 
                 <div className="[&_h4]:[font-size:var(--text-base)]! [&_h4]:[color:var(--text-secondary)]! [&_h4]:[margin:0_0_12px_0]!">
                   <h4>Apply to Form</h4>
-                  <div className="[display:flex]! [flex-direction:column] [gap:10px] [&_button]:[padding:10px]! [&_button]:[background:rgba(16,_185,_129,_0.1)]! [&_button]:[border:1px_solid_var(--color-green-500)]! [&_button]:[color:var(--color-green-700)]! [&_button]:[border-radius:var(--radius-sm)]! [&_button]:[cursor:pointer]! [&_button]:[font-weight:600]! [&_button]:[transition:all_0.2s]! [&_button:hover]:[background:var(--color-green-700)]! [&_button:hover]:[color:white]!">
+                  <div className="[display:flex]! [flex-direction:column] [gap:10px] [&_button]:[padding:10px]! [&_button]:[background:rgba(16,_185,_129,_0.1)]! [&_button]:[border:1px_solid_var(--color-green-500)]! [&_button]:[color:var(--color-green-700)]! [&_button]:[&&]:[border-radius:var(--radius-sm)]! [&_button]:[cursor:pointer]! [&_button]:[font-weight:600]! [&_button]:[transition:all_0.2s]! [&_button:hover]:[background:var(--color-green-700)]! [&_button:hover]:[color:white]!">
                     <button onClick={() => handleApply("kg/m3")}>
                       Apply as kg/m³
                     </button>

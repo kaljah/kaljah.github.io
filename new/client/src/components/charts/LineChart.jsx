@@ -43,7 +43,7 @@ export const LineChart = ({
           ? payload[0].payload[finalXKey]
           : "";
       return (
-        <div className="[background:rgba(255,_255,_255,_0.95)]! [backdrop-filter:blur(8px)] [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:12px_16px]! [box-shadow:var(--shadow-card)]!">
+        <div className="[background:rgba(255,_255,_255,_0.95)]! [backdrop-filter:blur(8px)] [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:12px_16px]! [box-shadow:var(--shadow-card)]!">
           <p className="[margin:0_0_6px_0]! [font-size:var(--text-base)]! [color:var(--color-ink-500)]! [font-weight:600]!">{label}</p>
           {payload.map((entry, idx) => (
             <p
@@ -73,7 +73,7 @@ export const LineChart = ({
 
   if (!data || data.length === 0) {
     return (
-      <div className="[background:var(--color-white)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:20px]! [margin-bottom:20px]! [box-shadow:var(--shadow-xs)]! empty">
+      <div className="[background:var(--color-white)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:20px]! [margin-bottom:20px]! [box-shadow:var(--shadow-xs)]! empty">
         <div
           style={{
             height,
@@ -91,7 +91,7 @@ export const LineChart = ({
 
   return (
     <div
-      className="[background:var(--color-white)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:20px]! [margin-bottom:20px]! [box-shadow:var(--shadow-xs)]!"
+      className="[background:var(--color-white)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:20px]! [margin-bottom:20px]! [box-shadow:var(--shadow-xs)]!"
       style={{
         height: "100%",
         width: "100%",

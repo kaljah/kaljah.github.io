@@ -334,7 +334,7 @@ const Settings = () => {
           <button
             role="tab"
             aria-selected={activeTab === "gwp"}
-            className={`settings-tab-btn ${activeTab === "gwp" ? "active" : ""}`}
+            className={`settings-tab-btn [display:inline-flex]! [align-items:center]! [gap:8px]! [background:transparent]! [border:none]! [&&]:[border-bottom:2px_solid_transparent]! [color:var(--text-secondary,_var(--color-ink-500))]! [font-size:var(--text-md)]! [font-weight:600]! [padding:14px_16px]! [cursor:pointer]! [transition:all_0.2s_ease]! [white-space:nowrap]! [&&]:[border-radius:var(--radius-md)_var(--radius-md)_0_0]! hover:[color:var(--text-primary,_var(--color-ink-900))]! hover:[background:var(--bg-hover,_var(--color-ink-50))]! [&.active]:[color:var(--color-link)]! [&.active]:[border-bottom-color:var(--color-brand-500)]! [&.active]:[background:rgba(255,_102,_0,_0.04)]! ${activeTab === "gwp" ? "active" : ""}`}
             onClick={() => setActiveTab("gwp")}
             id="tab-gwp"
           >
@@ -344,7 +344,7 @@ const Settings = () => {
           <button
             role="tab"
             aria-selected={activeTab === "ogmp"}
-            className={`settings-tab-btn ${activeTab === "ogmp" ? "active" : ""}`}
+            className={`settings-tab-btn [display:inline-flex]! [align-items:center]! [gap:8px]! [background:transparent]! [border:none]! [&&]:[border-bottom:2px_solid_transparent]! [color:var(--text-secondary,_var(--color-ink-500))]! [font-size:var(--text-md)]! [font-weight:600]! [padding:14px_16px]! [cursor:pointer]! [transition:all_0.2s_ease]! [white-space:nowrap]! [&&]:[border-radius:var(--radius-md)_var(--radius-md)_0_0]! hover:[color:var(--text-primary,_var(--color-ink-900))]! hover:[background:var(--bg-hover,_var(--color-ink-50))]! [&.active]:[color:var(--color-link)]! [&.active]:[border-bottom-color:var(--color-brand-500)]! [&.active]:[background:rgba(255,_102,_0,_0.04)]! ${activeTab === "ogmp" ? "active" : ""}`}
             onClick={() => setActiveTab("ogmp")}
             id="tab-ogmp"
           >
@@ -354,7 +354,7 @@ const Settings = () => {
           <button
             role="tab"
             aria-selected={activeTab === "facilities"}
-            className={`settings-tab-btn ${activeTab === "facilities" ? "active" : ""}`}
+            className={`settings-tab-btn [display:inline-flex]! [align-items:center]! [gap:8px]! [background:transparent]! [border:none]! [&&]:[border-bottom:2px_solid_transparent]! [color:var(--text-secondary,_var(--color-ink-500))]! [font-size:var(--text-md)]! [font-weight:600]! [padding:14px_16px]! [cursor:pointer]! [transition:all_0.2s_ease]! [white-space:nowrap]! [&&]:[border-radius:var(--radius-md)_var(--radius-md)_0_0]! hover:[color:var(--text-primary,_var(--color-ink-900))]! hover:[background:var(--bg-hover,_var(--color-ink-50))]! [&.active]:[color:var(--color-link)]! [&.active]:[border-bottom-color:var(--color-brand-500)]! [&.active]:[background:rgba(255,_102,_0,_0.04)]! ${activeTab === "facilities" ? "active" : ""}`}
             onClick={() => setActiveTab("facilities")}
             id="tab-facilities"
           >
@@ -364,7 +364,7 @@ const Settings = () => {
           <button
             role="tab"
             aria-selected={activeTab === "satellite"}
-            className={`settings-tab-btn ${activeTab === "satellite" ? "active" : ""}`}
+            className={`settings-tab-btn [display:inline-flex]! [align-items:center]! [gap:8px]! [background:transparent]! [border:none]! [&&]:[border-bottom:2px_solid_transparent]! [color:var(--text-secondary,_var(--color-ink-500))]! [font-size:var(--text-md)]! [font-weight:600]! [padding:14px_16px]! [cursor:pointer]! [transition:all_0.2s_ease]! [white-space:nowrap]! [&&]:[border-radius:var(--radius-md)_var(--radius-md)_0_0]! hover:[color:var(--text-primary,_var(--color-ink-900))]! hover:[background:var(--bg-hover,_var(--color-ink-50))]! [&.active]:[color:var(--color-link)]! [&.active]:[border-bottom-color:var(--color-brand-500)]! [&.active]:[background:rgba(255,_102,_0,_0.04)]! ${activeTab === "satellite" ? "active" : ""}`}
             onClick={() => setActiveTab("satellite")}
             id="tab-satellite"
           >

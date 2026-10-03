@@ -1097,7 +1097,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
               </div>
             )}
             <div role="button" tabIndex={0} onKeyDown={activateOnKey}
-              className="[border:2px_dashed_rgba(16,_185,_129,_0.3)]! [border-radius:var(--radius-md)]! [padding:40px]! [text-align:center]! [background:rgba(16,_185,_129,_0.03)]! [cursor:pointer] [transition:all_0.3s_ease]! hover:[border-color:var(--color-green-500)]! hover:[background:rgba(16,_185,_129,_0.08)]!"
+              className="[border:2px_dashed_rgba(16,_185,_129,_0.3)]! [&&]:[border-radius:var(--radius-md)]! [padding:40px]! [text-align:center]! [background:rgba(16,_185,_129,_0.03)]! [cursor:pointer] [transition:all_0.3s_ease]! hover:[border-color:var(--color-green-500)]! hover:[background:rgba(16,_185,_129,_0.08)]!"
               onClick={() => fileInputRef.current.click()}
             >
               <Upload
@@ -1117,7 +1117,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
               />
 
               <div role="button" tabIndex={0} onKeyDown={activateOnKey}
-                className="[margin-top:16px]! [display:flex]! [align-items:center] [gap:8px] [color:var(--color-green-700)]! [font-size:var(--text-base)]! [font-weight:500]! [padding:6px_12px]! [border:1px_dashed_var(--color-green-500)]! [border-radius:var(--radius-sm)]! [background:rgba(16,_185,_129,_0.05)]! [transition:all_0.2s_ease]! [cursor:pointer] hover:[background:rgba(16,_185,_129,_0.1)]! hover:[transform:translateY(-1px)]"
+                className="[margin-top:16px]! [display:flex]! [align-items:center] [gap:8px] [color:var(--color-green-700)]! [font-size:var(--text-base)]! [font-weight:500]! [padding:6px_12px]! [border:1px_dashed_var(--color-green-500)]! [&&]:[border-radius:var(--radius-sm)]! [background:rgba(16,_185,_129,_0.05)]! [transition:all_0.2s_ease]! [cursor:pointer] hover:[background:rgba(16,_185,_129,_0.1)]! hover:[transform:translateY(-1px)]"
                 onClick={(e) => {
                   e.stopPropagation();
                   downloadTemplate();
@@ -1210,7 +1210,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
               </span>
             </div>
 
-            <div className="[max-height:300px]! [overflow-y:auto]! [border:1px_solid_rgba(0,_0,_0,_0.05)]! [border-radius:var(--radius-md)]! [padding:16px]! [background:#f9fafb]!">
+            <div className="[max-height:300px]! [overflow-y:auto]! [border:1px_solid_rgba(0,_0,_0,_0.05)]! [&&]:[border-radius:var(--radius-md)]! [padding:16px]! [background:#f9fafb]!">
               <h4
                 className="mb-[16px]! flex! items-center! gap-[8px]!"
               >
@@ -1314,7 +1314,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                 </div>
 
                 {validationErrors.length > 0 && (
-                  <div className="[margin-top:16px]! [padding:12px]! [background:var(--color-red-50)]! [border:1px_solid_#fecaca]! [border-radius:var(--radius-sm)]! [color:var(--color-red-700)]! [font-size:var(--text-sm)]! [&_h5]:[margin:0_0_8px_0]! [&_h5]:[display:flex]! [&_h5]:[align-items:center]! [&_h5]:[gap:8px]! [&_ul]:[margin:0]! [&_ul]:[padding-left:20px]!">
+                  <div className="[margin-top:16px]! [padding:12px]! [background:var(--color-red-50)]! [border:1px_solid_#fecaca]! [&&]:[border-radius:var(--radius-sm)]! [color:var(--color-red-700)]! [font-size:var(--text-sm)]! [&_h5]:[margin:0_0_8px_0]! [&_h5]:[display:flex]! [&_h5]:[align-items:center]! [&_h5]:[gap:8px]! [&_ul]:[margin:0]! [&_ul]:[padding-left:20px]!">
                     <h5>
                       <AlertCircle size={16} /> Validation Errors Found
                     </h5>

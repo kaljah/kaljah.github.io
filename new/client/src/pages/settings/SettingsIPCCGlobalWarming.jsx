@@ -5,7 +5,7 @@ import { Badge, RadioCardGroup } from "../../ui";
 
 // Extracted from Settings.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const SettingsIPCCGlobalWarming = ({ GWP_DATA, gwpStandard, isAdmin, setGwpStandard }) => (
-<div className="[background:var(--bg-card,_var(--color-white))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-lg)]! [padding:32px]! [display:flex]! [flex-direction:column] [gap:28px] [box-shadow:var(--shadow-card,_0_4px_6px_-1px_rgba(0,_0,_0,_0.05))]!">
+<div className="[background:var(--bg-card,_var(--color-white))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-lg)]! [padding:32px]! [display:flex]! [flex-direction:column] [gap:28px] [box-shadow:var(--shadow-card,_0_4px_6px_-1px_rgba(0,_0,_0,_0.05))]!">
           <div className="[display:flex]! [flex-direction:column] [gap:6px] [&_h2]:[font-size:var(--text-lg)]! [&_h2]:[font-weight:700]! [&_h2]:[color:var(--text-primary,_var(--color-ink-900))]! [&_h2]:[margin:0]! [&_p]:[font-size:var(--text-base)]! [&_p]:[color:var(--text-secondary,_var(--color-ink-500))]! [&_p]:[margin:0]! [&_p]:[line-height:1.5]!">
             <div className="[display:flex]! [align-items:center] [gap:10px]">
               <Scale size={20} className="[color:var(--color-link)]!" />
@@ -38,7 +38,7 @@ const SettingsIPCCGlobalWarming = ({ GWP_DATA, gwpStandard, isAdmin, setGwpStand
               content: (
                 <>
                   <div className="[font-size:var(--text-sm)]! [color:var(--color-blue-700)]! [margin-bottom:10px]! [font-weight:600]!">{data.status}</div>
-                  <div className="[display:grid]! [grid-template-columns:repeat(3,_1fr)] [gap:8px] [background:var(--bg-hover,_var(--color-ink-50))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-md)]! [padding:12px_10px]!">
+                  <div className="[display:grid]! [grid-template-columns:repeat(3,_1fr)] [gap:8px] [background:var(--bg-hover,_var(--color-ink-50))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-md)]! [padding:12px_10px]!">
                     <div className="factor-item">
                       <span className="factor-label">CH₄ (100-yr)</span>
                       <span className="factor-val [font-size:var(--text-lg)]! [font-weight:800]! [color:var(--text-primary,_var(--color-ink-900))]!">{data.ch4_100}×</span>
@@ -58,7 +58,7 @@ const SettingsIPCCGlobalWarming = ({ GWP_DATA, gwpStandard, isAdmin, setGwpStand
           />
 
           {/* Live Comparison Table */}
-          <div className="[background:var(--bg-hover,_var(--color-ink-50))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-lg)]! [padding:24px]! [display:flex]! [flex-direction:column] [gap:16px]">
+          <div className="[background:var(--bg-hover,_var(--color-ink-50))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-lg)]! [padding:24px]! [display:flex]! [flex-direction:column] [gap:16px]">
             <div className="[display:flex]! [align-items:center] [gap:8px] [&_h3]:[font-size:var(--text-md)]! [&_h3]:[font-weight:700]! [&_h3]:[color:var(--text-primary,_var(--color-ink-900))]! [&_h3]:[margin:0]!">
               <Layers size={18} className="[color:var(--color-link)]!" />
               <h3>Conversion Factor Matrix Comparison</h3>
