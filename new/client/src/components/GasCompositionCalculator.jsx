@@ -270,7 +270,7 @@ const GasCompositionCalculator = ({
       title="Gas Composition Calculator"
       maxWidth="1400px"
     >
-      <div className="[color:var(--text-primary)]">
+      <div className="comp-calc-container">
         <div className="comp-calc-grid">
           {/* Left: Inputs */}
           <div className="comp-inputs">
@@ -292,7 +292,7 @@ const GasCompositionCalculator = ({
               </div>
             </div>
 
-            <div className="[background:rgba(255,_255,_255,_0.03)] [border:1px_solid_var(--border-color)] [border-radius:var(--radius-md)] [padding:15px_20px] [display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:25px]">
+            <div className="total-display-card">
               <div className="total-info">
                 <span className="label">Total Composition:</span>
                 <span
@@ -304,7 +304,7 @@ const GasCompositionCalculator = ({
               <span className="status-badge">{getStatusText()}</span>
             </div>
 
-            <div className="[display:grid] [grid-template-columns:repeat(auto-fill,_minmax(140px,_1fr))] [gap:15px] [margin-bottom:30px]">
+            <div className="component-inputs-grid">
               {Object.entries(COMPONENT_DATA).map(([key, data]) => (
                 <div key={key} className="input-group">
                   <label>{data.name}</label>
@@ -322,7 +322,7 @@ const GasCompositionCalculator = ({
 
             <div className="params-section">
               <h4>Operating Parameters</h4>
-              <div className="[display:grid] [grid-template-columns:repeat(auto-fit,_minmax(180px,_1fr))] [gap:20px]">
+              <div className="params-grid">
                 <div className="input-group">
                   <label>Molar Volume (L/mol)</label>
                   <input

@@ -488,7 +488,7 @@ const AuditTrail = () => {
               <span>Immutable Compliance Log</span>
             </div>
             <h1 className="section-title">Audit Trail &amp; System Activity</h1>
-            <p className="[color:var(--text-secondary,_var(--color-ink-500))] [font-size:var(--text-md)] [margin:0] [max-width:780px] [line-height:1.5]">
+            <p className="section-subtitle">
               Comprehensive tamper-evident record of all emissions data, authentication, calculations, and administrative actions
             </p>
           </div>
@@ -513,12 +513,12 @@ const AuditTrail = () => {
               }}
               disabled={isRefreshing}
             >
-              <RefreshCw size={15} className={isRefreshing ? "[animation:spin_1s_linear_infinite]" : ""} />
+              <RefreshCw size={15} className={isRefreshing ? "spin-animate" : ""} />
               <span>Refresh</span>
             </button>
 
             {/* Export Dropdown */}
-            <div className="[position:relative]" ref={exportMenuRef}>
+            <div className="export-dropdown-wrapper" ref={exportMenuRef}>
               <button
                 className="btn-export-main"
                 onClick={() => setExportDropdownOpen(!exportDropdownOpen)}
@@ -531,14 +531,14 @@ const AuditTrail = () => {
               {exportDropdownOpen && (
                 <div className="export-menu">
                   <button onClick={() => handleExport("csv")}>
-                    <FileSpreadsheet size={15} className="[margin-top:2px] [flex-shrink:0] [color:var(--color-green-700)]" />
+                    <FileSpreadsheet size={15} className="export-icon csv-icon" />
                     <div className="export-text">
                       <strong>CSV Spreadsheet</strong>
                       <span>Compliant with audit tools &amp; Excel</span>
                     </div>
                   </button>
                   <button onClick={() => handleExport("json")}>
-                    <FileText size={15} className="[margin-top:2px] [flex-shrink:0] [color:var(--color-violet-700)]" />
+                    <FileText size={15} className="export-icon json-icon" />
                     <div className="export-text">
                       <strong>JSON Structured Data</strong>
                       <span>Full metadata &amp; field diffs</span>
@@ -556,7 +556,7 @@ const AuditTrail = () => {
             <div className="stat-icon-box total-events">
               <Activity size={20} />
             </div>
-            <div className="[display:flex] [flex-direction:column]">
+            <div className="stat-content">
               <span className="stat-label">Total Events Logged</span>
               <span className="stat-value">{stats.totalEvents.toLocaleString()}</span>
             </div>
@@ -566,7 +566,7 @@ const AuditTrail = () => {
             <div className="stat-icon-box logins">
               <LogIn size={20} />
             </div>
-            <div className="[display:flex] [flex-direction:column]">
+            <div className="stat-content">
               <span className="stat-label">User Logins</span>
               <span className="stat-value">{stats.totalLogins.toLocaleString()}</span>
             </div>
@@ -576,7 +576,7 @@ const AuditTrail = () => {
             <div className="stat-icon-box data-changes">
               <Database size={20} />
             </div>
-            <div className="[display:flex] [flex-direction:column]">
+            <div className="stat-content">
               <span className="stat-label">Data Changes</span>
               <span className="stat-value">{stats.dataMutations.toLocaleString()}</span>
             </div>
@@ -586,7 +586,7 @@ const AuditTrail = () => {
             <div className="stat-icon-box security-events">
               <ShieldAlert size={20} />
             </div>
-            <div className="[display:flex] [flex-direction:column]">
+            <div className="stat-content">
               <span className="stat-label">Security &amp; Alerts</span>
               <span className="stat-value">{stats.securityAlerts.toLocaleString()}</span>
             </div>
@@ -619,11 +619,11 @@ const AuditTrail = () => {
 
         {/* Main Content Area */}
         {loading ? (
-          <div className="[display:flex] [flex-direction:column] [gap:16px]">
+          <div className="audit-loading-skeleton">
             {[1, 2, 3, 4].map((i) => (
               <div key={i} className="skeleton-card">
-                <div className="[width:40px] [height:40px] [background:var(--color-ink-100)] [border-radius:var(--radius-md)] [flex-shrink:0] [animation:pulse_1.5s_infinite]" />
-                <div className="[flex:1] [display:flex] [flex-direction:column] [gap:10px]">
+                <div className="skeleton-icon" />
+                <div className="skeleton-text">
                   <div className="skeleton-line w-40" />
                   <div className="skeleton-line w-80" />
                   <div className="skeleton-line w-20" />
@@ -633,7 +633,7 @@ const AuditTrail = () => {
           </div>
         ) : auditLogs.length === 0 ? (
           <div className="audit-empty-state">
-            <div className="[width:64px] [height:64px] [background:var(--color-ink-100)] [border-radius:50%] [display:flex] [align-items:center] [justify-content:center] [margin:0_auto_16px_auto] [color:var(--color-ink-600)]">
+            <div className="empty-icon-circle">
               <Filter size={32} />
             </div>
             <h3>No audit records found</h3>
@@ -673,7 +673,7 @@ const AuditTrail = () => {
         {/* Pagination Bar */}
         {totalRecords > 0 && (
           <div className="audit-pagination-bar">
-            <div className="[font-size:var(--text-base)] [color:var(--text-secondary,_var(--color-ink-500))]">
+            <div className="pagination-info">
               Page <strong>{page}</strong> of <strong>{totalPages}</strong> ({totalRecords} total events)
             </div>
 
@@ -693,7 +693,7 @@ const AuditTrail = () => {
                 </NativeSelect>
               </div>
 
-              <div className="[display:flex] [align-items:center] [gap:10px]">
+              <div className="pagination-buttons">
                 <button
                   className="btn-page-nav"
                   disabled={page <= 1}
@@ -704,7 +704,7 @@ const AuditTrail = () => {
                   <span>Prev</span>
                 </button>
 
-                <span className="[font-size:var(--text-sm)] [font-weight:600] [color:var(--color-ink-600)] [min-width:44px] [text-align:center]">
+                <span className="page-indicator">
                   {page} / {totalPages}
                 </span>
 

@@ -4,10 +4,10 @@ import { NativeSelect } from "../../ui/NativeSelect";
 
 // Extracted from Settings.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const SettingsFacilityLevelOGMPOverrides = ({ facilities, facilityEdits, handleFacilityChange, handleSaveFacility, isAdmin, user }) => (
-<div className="[background:var(--bg-card,_var(--color-white))] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [border-radius:var(--radius-lg)] [padding:32px] [display:flex] [flex-direction:column] [gap:28px] [box-shadow:var(--shadow-card,_0_4px_6px_-1px_rgba(0,_0,_0,_0.05))]">
+<div className="settings-section-card">
           <div className="section-intro">
-            <div className="[display:flex] [align-items:center] [gap:10px]">
-              <Building2 size={20} className="[color:var(--color-link)]" />
+            <div className="section-intro-header">
+              <Building2 size={20} className="section-icon" />
               <h2>Facility-Level OGMP Overrides</h2>
             </div>
             <p>
@@ -17,7 +17,7 @@ const SettingsFacilityLevelOGMPOverrides = ({ facilities, facilityEdits, handleF
             </p>
           </div>
 
-          <div className="[overflow-x:auto] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [border-radius:var(--radius-lg)] [background:var(--bg-card,_var(--color-white))]">
+          <div className="facility-table-wrapper">
             <table className="facility-config-table">
               <thead>
                 <tr>
@@ -41,9 +41,9 @@ const SettingsFacilityLevelOGMPOverrides = ({ facilities, facilityEdits, handleF
 
                   return (
                     <tr key={fac.id}>
-                      <td className="[display:flex] [flex-direction:column] [gap:2px]">
+                      <td className="fac-name-cell">
                         <strong>{fac.name}</strong>
-                        <span className="[font-size:var(--text-xs)] [color:var(--text-secondary,_var(--color-ink-500))]">
+                        <span className="fac-code">
                           {fac.code || "FAC-" + fac.id}
                         </span>
                       </td>
@@ -86,7 +86,7 @@ const SettingsFacilityLevelOGMPOverrides = ({ facilities, facilityEdits, handleF
                       </td>
                       <td>
                         <NativeSelect
-                          className="[background:var(--bg-card,_var(--color-white))] [border:1px_solid_var(--border-color,_var(--color-ink-300))] [color:var(--text-primary,_var(--color-ink-900))] [border-radius:var(--radius-md)] [padding:7px_8px] [font-size:var(--text-base)] [font-family:inherit]"
+                          className="table-select-small"
                           value={baseYear}
                           disabled={!isAdmin}
                           onChange={(e) =>
@@ -105,16 +105,16 @@ const SettingsFacilityLevelOGMPOverrides = ({ facilities, facilityEdits, handleF
                         </NativeSelect>
                       </td>
                       <td className="target-yr-cell">
-                        <span className="[background:rgba(2,_132,_199,_0.1)] [color:var(--color-blue-700)] [border:1px_solid_rgba(2,_132,_199,_0.25)] [padding:4px_10px] [border-radius:var(--radius-sm)] [font-weight:700] [font-size:var(--text-sm)]">{targetYear}</span>
+                        <span className="badge-target-year">{targetYear}</span>
                       </td>
                       <td>
-                        <div className="[display:flex] [align-items:center] [gap:4px] [font-weight:600] [color:var(--text-primary,_var(--color-ink-900))]">
+                        <div className="threshold-input-box">
                           <span>±</span>
                           <input
                             type="number"
                             min="1"
                             max="100"
-                            className="[width:60px] [background:var(--bg-card,_var(--color-white))] [border:1px_solid_var(--border-color,_var(--color-ink-300))] [color:var(--text-primary,_var(--color-ink-900))] [border-radius:var(--radius-md)] [padding:6px_8px] [font-size:var(--text-base)] [text-align:center] [font-family:inherit]"
+                            className="table-input-num"
                             value={edit.reconciliation_threshold || 20.0}
                             disabled={!isAdmin}
                             onChange={(e) =>

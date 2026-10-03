@@ -92,7 +92,7 @@ const QuickAddCustomFactorModal = ({
 
   return (
     <div
-      className="[position:fixed] [top:0] [left:0] [right:0] [bottom:0] [background-color:rgba(0,_0,_0,_0.5)] [display:flex] [align-items:center] [justify-content:center] [z-index:9999]"
+      className="modal-overlay"
       style={{
         position: "fixed",
         top: 0,

@@ -232,7 +232,7 @@ const CustomDropdown = ({
       displayContent = (
         <div className="selected-with-sub">
           {selectedOption.label}{" "}
-          <span className="[font-size:var(--text-xs)]! [color:var(--text-secondary,_var(--color-ink-500))]! [font-weight:600]! [display:inline-block] [margin-left:2px]"> - {selectedOption.subLabel}</span>
+          <span className="sub-label"> - {selectedOption.subLabel}</span>
         </div>
       );
     } else {
@@ -266,7 +266,7 @@ const CustomDropdown = ({
           ariaLabel ? undefined : ariaLabelledBy || autoLabelId || undefined
         }
       >
-        <span className="[display:flex] [align-items:center] [overflow:hidden] [text-overflow:ellipsis] [white-space:nowrap]">{displayContent}</span>
+        <span className="display-text">{displayContent}</span>
         <svg
           width="10"
           height="10"
@@ -341,7 +341,7 @@ const CustomDropdown = ({
                   ) : option.subLabel ? (
                     <div className="option-with-sub">
                       {option.label}{" "}
-                      <span className="[font-size:var(--text-xs)]! [color:var(--text-secondary,_var(--color-ink-500))]! [font-weight:600]! [display:inline-block] [margin-left:2px]"> - {option.subLabel}</span>
+                      <span className="sub-label"> - {option.subLabel}</span>
                     </div>
                   ) : (
                     option.label

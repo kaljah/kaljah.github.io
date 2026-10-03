@@ -269,7 +269,7 @@ const SbtiDashboard = () => {
   const currentYear = sbtiData?.current_year || sbtiData?.latest_actual_year || ytdYear || new Date().getFullYear();
 
   return (
-    <div className="[padding:24px] [max-width:1600px] [margin:0_auto] [display:flex] [flex-direction:column] [gap:24px]" style={{ opacity: isUpdating ? 0.8 : 1, transition: "opacity 0.2s ease" }}>
+    <div className="sbti-container" style={{ opacity: isUpdating ? 0.8 : 1, transition: "opacity 0.2s ease" }}>
       {/* Top Header */}
       <PageHeader
         className="mb-6"
@@ -304,7 +304,7 @@ const SbtiDashboard = () => {
 
       {/* Target Setting Drawer / Form */}
       {showConfig && (
-        <div className="[background:var(--card-bg,_var(--color-white))] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [border-radius:var(--radius-lg)] [padding:24px] [box-shadow:var(--shadow-card)]">
+        <div className="sbti-config-panel">
           <div className="sbti-config-header">
             <h3>
               <Globe size={20} className="text-primary" />
@@ -316,7 +316,7 @@ const SbtiDashboard = () => {
           </div>
 
           <form onSubmit={handleSaveTarget}>
-            <div className="[display:grid] [grid-template-columns:repeat(auto-fit,_minmax(200px,_1fr))] [gap:16px] [align-items:flex-end]">
+            <div className="sbti-form-grid">
               <div className="sbti-form-group">
                 <label>Pathway Alignment</label>
                 <div className="flex! gap-[8px]!">
@@ -432,35 +432,35 @@ const SbtiDashboard = () => {
       )}
 
       {/* KPI Cards */}
-      <div className="[display:grid] [grid-template-columns:repeat(auto-fit,_minmax(240px,_1fr))] [gap:18px]">
+      <div className="sbti-kpi-grid">
         <div className="sbti-kpi-card">
-          <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:12px]">
-            <span className="[font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [text-transform:uppercase] [letter-spacing:0.05em]">Base Year Baseline</span>
+          <div className="sbti-kpi-header">
+            <span className="sbti-kpi-title">Base Year Baseline</span>
             <div className="sbti-kpi-icon">
               <Calendar size={18} />
             </div>
           </div>
-          <div className="[font-size:var(--text-2xl)] [font-weight:700] [color:var(--text-main,_var(--color-ink-900))] [margin-bottom:4px]">
+          <div className="sbti-kpi-value">
             {formatNumber(sbtiData?.base_year_emissions || 0, 0)}
-            <span className="[font-size:var(--text-base)] [font-weight:500] [color:var(--text-secondary,_var(--color-ink-500))] [margin-left:4px]">tCO2e</span>
+            <span className="sbti-kpi-unit">tCO2e</span>
           </div>
-          <div className="[font-size:var(--text-sm)] [color:var(--text-secondary,_var(--color-ink-500))] [display:flex] [align-items:center] [gap:4px]">
+          <div className="sbti-kpi-subtitle">
             Base Year: {sbtiData?.base_year || "Not Set"}
           </div>
         </div>
 
         <div className="sbti-kpi-card info">
-          <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:12px]">
-            <span className="[font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [text-transform:uppercase] [letter-spacing:0.05em]">Current Year Target</span>
+          <div className="sbti-kpi-header">
+            <span className="sbti-kpi-title">Current Year Target</span>
             <div className="sbti-kpi-icon info">
               <Target size={18} />
             </div>
           </div>
-          <div className="[font-size:var(--text-2xl)] [font-weight:700] [color:var(--text-main,_var(--color-ink-900))] [margin-bottom:4px]">
+          <div className="sbti-kpi-value">
             {currentTarget == null ? "—" : formatNumber(currentTarget, 0)}
-            <span className="[font-size:var(--text-base)] [font-weight:500] [color:var(--text-secondary,_var(--color-ink-500))] [margin-left:4px]">tCO2e</span>
+            <span className="sbti-kpi-unit">tCO2e</span>
           </div>
-          <div className="[font-size:var(--text-sm)] [color:var(--text-secondary,_var(--color-ink-500))] [display:flex] [align-items:center] [gap:4px]">
+          <div className="sbti-kpi-subtitle">
             {currentActual != null
               ? `Actual: ${formatNumber(currentActual, 0)} tCO2e (${currentYear})`
               : isYtd
@@ -470,8 +470,8 @@ const SbtiDashboard = () => {
         </div>
 
         <div className={`sbti-kpi-card ${isConfigured && !noData ? (isOnTrack ? "success" : "warning") : "neutral"}`}>
-          <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:12px]">
-            <span className="[font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [text-transform:uppercase] [letter-spacing:0.05em]">Pathway Status</span>
+          <div className="sbti-kpi-header">
+            <span className="sbti-kpi-title">Pathway Status</span>
             <div className={`sbti-kpi-icon ${isConfigured && !noData ? (isOnTrack ? "success" : "warning") : "neutral"}`}>
               {isConfigured && !noData ? (
                 isOnTrack ? <CheckCircle size={18} /> : <AlertTriangle size={18} />
@@ -480,12 +480,12 @@ const SbtiDashboard = () => {
               )}
             </div>
           </div>
-          <div className="[font-size:var(--text-2xl)] [font-weight:700] [color:var(--text-main,_var(--color-ink-900))] [margin-bottom:4px]">
+          <div className="sbti-kpi-value">
             <span className={`status-pill ${isConfigured && !noData ? (isOnTrack ? "on-track" : "behind") : "not-set"}`}>
               {!isConfigured ? "NOT CONFIGURED" : noData ? "NO DATA" : isOnTrack ? "ON TRACK" : "BEHIND TARGET"}
             </span>
           </div>
-          <div className="[font-size:var(--text-sm)] [color:var(--text-secondary,_var(--color-ink-500))] [display:flex] [align-items:center] [gap:4px]">
+          <div className="sbti-kpi-subtitle">
             {!isConfigured
               ? "Set corporate baseline & targets to track alignment"
               : noData
@@ -495,17 +495,17 @@ const SbtiDashboard = () => {
         </div>
 
         <div className="sbti-kpi-card success">
-          <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:12px]">
-            <span className="[font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [text-transform:uppercase] [letter-spacing:0.05em]">Net-Zero Goal ({sbtiData?.target_year || 2050})</span>
+          <div className="sbti-kpi-header">
+            <span className="sbti-kpi-title">Net-Zero Goal ({sbtiData?.target_year || 2050})</span>
             <div className="sbti-kpi-icon success">
               <TrendingDown size={18} />
             </div>
           </div>
-          <div className="[font-size:var(--text-2xl)] [font-weight:700] [color:var(--text-main,_var(--color-ink-900))] [margin-bottom:4px]">
+          <div className="sbti-kpi-value">
             {formatNumber(sbtiData?.target_emissions_final || 0, 0)}
-            <span className="[font-size:var(--text-base)] [font-weight:500] [color:var(--text-secondary,_var(--color-ink-500))] [margin-left:4px]">tCO2e</span>
+            <span className="sbti-kpi-unit">tCO2e</span>
           </div>
-          <div className="[font-size:var(--text-sm)] [color:var(--text-secondary,_var(--color-ink-500))] [display:flex] [align-items:center] [gap:4px]">
+          <div className="sbti-kpi-subtitle">
             {isConfigured
               ? `Residual Floor: ${formatNumber(sbtiData?.residual_floor || 0, 0)} tCO2e (10% Cap)`
               : "Linear Rate: 4.2% per year"}
@@ -516,10 +516,10 @@ const SbtiDashboard = () => {
       {/* Main Trajectory Charts Grid */}
       <div className="sbti-charts-grid">
         <div className="sbti-card">
-          <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:18px]">
+          <div className="sbti-card-header">
             <div>
-              <h3 className="[font-size:var(--text-lg)] [font-weight:700] [color:var(--text-main,_var(--color-ink-900))] [margin-bottom:2px]">{sbtiData?.pathway_label || "Decarbonization Pathway"}</h3>
-              <p className="[font-size:var(--text-base)] [color:var(--text-secondary,_var(--color-ink-500))]">
+              <h3 className="sbti-card-title">{sbtiData?.pathway_label || "Decarbonization Pathway"}</h3>
+              <p className="sbti-card-subtitle">
                 Linear reduction trajectory from base year {sbtiData?.base_year || 2024} to target year {sbtiData?.target_year || 2050} (Residual emissions capped at 10% per NZ-C1)
               </p>
             </div>
@@ -542,10 +542,10 @@ const SbtiDashboard = () => {
         </div>
 
         <div className="sbti-card">
-          <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:18px]">
+          <div className="sbti-card-header">
             <div>
-              <h3 className="[font-size:var(--text-lg)] [font-weight:700] [color:var(--text-main,_var(--color-ink-900))] [margin-bottom:2px]">Emissions Composition by Scope</h3>
-              <p className="[font-size:var(--text-base)] [color:var(--text-secondary,_var(--color-ink-500))]">
+              <h3 className="sbti-card-title">Emissions Composition by Scope</h3>
+              <p className="sbti-card-subtitle">
                 Verified Scope 1, Scope 2, and Scope 3 breakdown
               </p>
             </div>
@@ -570,16 +570,16 @@ const SbtiDashboard = () => {
 
       {/* Milestone & Projection Table */}
       <div className="sbti-card">
-        <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:18px]">
+        <div className="sbti-card-header">
           <div>
-            <h3 className="[font-size:var(--text-lg)] [font-weight:700] [color:var(--text-main,_var(--color-ink-900))] [margin-bottom:2px]">Annual Pathway Milestones & Verification Data</h3>
-            <p className="[font-size:var(--text-base)] [color:var(--text-secondary,_var(--color-ink-500))]">
+            <h3 className="sbti-card-title">Annual Pathway Milestones & Verification Data</h3>
+            <p className="sbti-card-subtitle">
               Yearly comparison of targets, actual emissions, and progress towards net-zero alignment ({scopeMode === "s1_s2" ? "Scope 1+2 Operational View" : "All Scopes View"})
             </p>
           </div>
         </div>
 
-        <div className="[overflow-x:auto] [border-radius:var(--radius-md)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [background:var(--bg-card,_rgba(255,_255,_255,_0.6))] [backdrop-filter:blur(8px)]" tabIndex={0} role="region" aria-label="Pathway table">
+        <div className="sbti-table-container" tabIndex={0} role="region" aria-label="Pathway table">
           <table className="sbti-table">
             <thead>
               <tr>

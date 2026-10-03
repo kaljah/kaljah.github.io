@@ -18,11 +18,11 @@ export const TextField = ({
   step,
 }) => {
   return (
-    <div className="[display:flex] [flex-direction:column] [gap:6px] [margin-bottom:16px]">
+    <div className="form-field">
       {label && (
         <label className="field-label">
           {label}
-          {required && <span className="[color:var(--color-red-700)] [font-size:var(--text-base)]">*</span>}
+          {required && <span className="required-mark">*</span>}
         </label>
       )}
       <input
@@ -39,7 +39,7 @@ export const TextField = ({
       />
       {error && <span className="error-text">{error}</span>}
       {helperText && !error && (
-        <span className="[font-size:var(--text-sm)] [color:var(--text-secondary)] [margin-top:4px]">{helperText}</span>
+        <span className="helper-text">{helperText}</span>
       )}
     </div>
   );
@@ -58,11 +58,11 @@ export const SelectField = ({
   helperText = "",
 }) => {
   return (
-    <div className="[display:flex] [flex-direction:column] [gap:6px] [margin-bottom:16px]">
+    <div className="form-field">
       {label && (
         <label className="field-label">
           {label}
-          {required && <span className="[color:var(--color-red-700)] [font-size:var(--text-base)]">*</span>}
+          {required && <span className="required-mark">*</span>}
         </label>
       )}
       <NativeSelect
@@ -81,7 +81,7 @@ export const SelectField = ({
       </NativeSelect>
       {error && <span className="error-text">{error}</span>}
       {helperText && !error && (
-        <span className="[font-size:var(--text-sm)] [color:var(--text-secondary)] [margin-top:4px]">{helperText}</span>
+        <span className="helper-text">{helperText}</span>
       )}
     </div>
   );
@@ -100,11 +100,11 @@ export const TextAreaField = ({
   rows = 4,
 }) => {
   return (
-    <div className="[display:flex] [flex-direction:column] [gap:6px] [margin-bottom:16px]">
+    <div className="form-field">
       {label && (
         <label className="field-label">
           {label}
-          {required && <span className="[color:var(--color-red-700)] [font-size:var(--text-base)]">*</span>}
+          {required && <span className="required-mark">*</span>}
         </label>
       )}
       <textarea
@@ -118,7 +118,7 @@ export const TextAreaField = ({
       />
       {error && <span className="error-text">{error}</span>}
       {helperText && !error && (
-        <span className="[font-size:var(--text-sm)] [color:var(--text-secondary)] [margin-top:4px]">{helperText}</span>
+        <span className="helper-text">{helperText}</span>
       )}
     </div>
   );
@@ -134,7 +134,7 @@ export const CheckboxField = ({
   helperText = "",
 }) => {
   return (
-    <div className="[display:flex] [flex-direction:column] [gap:6px] [margin-bottom:16px] [margin-bottom:12px]">
+    <div className="form-field checkbox-field">
       <label className="checkbox-label">
         <input
           type="checkbox"
@@ -147,7 +147,7 @@ export const CheckboxField = ({
       </label>
       {error && <span className="error-text">{error}</span>}
       {helperText && !error && (
-        <span className="[font-size:var(--text-sm)] [color:var(--text-secondary)] [margin-top:4px]">{helperText}</span>
+        <span className="helper-text">{helperText}</span>
       )}
     </div>
   );
@@ -166,18 +166,18 @@ export const RadioGroupField = ({
   layout = "vertical", // 'vertical' or 'horizontal'
 }) => {
   return (
-    <div className="[display:flex] [flex-direction:column] [gap:6px] [margin-bottom:16px]">
+    <div className="form-field">
       {label && (
         <label className="field-label">
           {label}
-          {required && <span className="[color:var(--color-red-700)] [font-size:var(--text-base)]">*</span>}
+          {required && <span className="required-mark">*</span>}
         </label>
       )}
       <div
-        className={`radio-group ${layout === "horizontal" ? "[flex-direction:row] [flex-wrap:wrap]" : "[flex-direction:column]"}`}
+        className={`radio-group ${layout === "horizontal" ? "radio-horizontal" : "radio-vertical"}`}
       >
         {options.map((opt, idx) => (
-          <label key={idx} className="[display:flex] [align-items:center] [gap:8px] [cursor:pointer] [font-size:var(--text-base)] [color:var(--text-primary)]">
+          <label key={idx} className="radio-label">
             <input
               type="radio"
               className="field-radio"
@@ -192,7 +192,7 @@ export const RadioGroupField = ({
       </div>
       {error && <span className="error-text">{error}</span>}
       {helperText && !error && (
-        <span className="[font-size:var(--text-sm)] [color:var(--text-secondary)] [margin-top:4px]">{helperText}</span>
+        <span className="helper-text">{helperText}</span>
       )}
     </div>
   );
@@ -211,11 +211,11 @@ export const DateField = ({
   max,
 }) => {
   return (
-    <div className="[display:flex] [flex-direction:column] [gap:6px] [margin-bottom:16px]">
+    <div className="form-field">
       {label && (
         <label className="field-label">
           {label}
-          {required && <span className="[color:var(--color-red-700)] [font-size:var(--text-base)]">*</span>}
+          {required && <span className="required-mark">*</span>}
         </label>
       )}
       <input
@@ -230,7 +230,7 @@ export const DateField = ({
       />
       {error && <span className="error-text">{error}</span>}
       {helperText && !error && (
-        <span className="[font-size:var(--text-sm)] [color:var(--text-secondary)] [margin-top:4px]">{helperText}</span>
+        <span className="helper-text">{helperText}</span>
       )}
     </div>
   );

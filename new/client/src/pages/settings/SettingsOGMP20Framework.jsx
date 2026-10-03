@@ -4,10 +4,10 @@ import { Activity, Save, ShieldCheck, Target } from "lucide-react";
 
 // Extracted from Settings.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const SettingsOGMP20Framework = ({ defaultBaseYear, globalThreshold, handleSaveGlobal, isAdmin, midstreamTarget, saving, setDefaultBaseYear, setGlobalThreshold, setMidstreamTarget, setUpstreamTarget, upstreamTarget }) => (
-<div className="[background:var(--bg-card,_var(--color-white))] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [border-radius:var(--radius-lg)] [padding:32px] [display:flex] [flex-direction:column] [gap:28px] [box-shadow:var(--shadow-card,_0_4px_6px_-1px_rgba(0,_0,_0,_0.05))]">
+<div className="settings-section-card">
           <div className="section-intro">
-            <div className="[display:flex] [align-items:center] [gap:10px]">
-              <Target size={20} className="[color:var(--color-link)]" />
+            <div className="section-intro-header">
+              <Target size={20} className="section-icon" />
               <h2>OGMP 2.0 Framework & Threshold Configuration</h2>
             </div>
             <p>
@@ -16,16 +16,16 @@ const SettingsOGMP20Framework = ({ defaultBaseYear, globalThreshold, handleSaveG
             </p>
           </div>
 
-          <div className="[display:grid] [grid-template-columns:repeat(auto-fit,_minmax(420px,_1fr))] [gap:24px]">
-            <div className="[background:var(--bg-hover,_var(--color-ink-50))] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [border-radius:var(--radius-lg)] [padding:24px] [display:flex] [flex-direction:column] [gap:14px]">
-              <label className="[font-size:var(--text-md)] [font-weight:700] [color:var(--text-primary,_var(--color-ink-900))]">
+          <div className="ogmp-config-grid">
+            <div className="config-card">
+              <label className="config-label">
                 Default OGMP 2.0 Membership Baseline Year
               </label>
-              <span className="[font-size:var(--text-base)] [color:var(--text-secondary,_var(--color-ink-500))] [line-height:1.45]">
+              <span className="config-subtext">
                 The year from which the Gold Standard milestone clock begins
                 (Year 0).
               </span>
-              <div className="[display:flex] [gap:8px] [flex-wrap:wrap] [margin:4px_0]">
+              <div className="year-selector-buttons">
                 {Array.from({ length: new Date().getFullYear() - 2020 }, (_, i) => 2021 + i).map((yr) => (
                   <button
                     key={yr}
@@ -38,8 +38,8 @@ const SettingsOGMP20Framework = ({ defaultBaseYear, globalThreshold, handleSaveG
                   </button>
                 ))}
               </div>
-              <div className="[background:var(--bg-card,_var(--color-white))] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [border-radius:var(--radius-md)] [padding:12px_16px] [font-size:var(--text-base)] [color:var(--text-secondary,_var(--color-ink-500))]">
-                <div className="[display:flex] [align-items:center] [gap:6px] [color:var(--text-primary,_var(--color-ink-900))] [font-weight:700] [margin-bottom:6px]">
+              <div className="deadline-preview-note">
+                <div className="deadline-title">
                   <ShieldCheck size={15} />
                   <span>Gold Standard Deadlines:</span>
                 </div>
@@ -56,16 +56,16 @@ const SettingsOGMP20Framework = ({ defaultBaseYear, globalThreshold, handleSaveG
               </div>
             </div>
 
-            <div className="[background:var(--bg-hover,_var(--color-ink-50))] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [border-radius:var(--radius-lg)] [padding:24px] [display:flex] [flex-direction:column] [gap:14px]">
-              <label className="[font-size:var(--text-md)] [font-weight:700] [color:var(--text-primary,_var(--color-ink-900))]">
+            <div className="config-card">
+              <label className="config-label">
                 Global Reconciliation Variance Threshold (±%)
               </label>
-              <span className="[font-size:var(--text-base)] [color:var(--text-secondary,_var(--color-ink-500))] [line-height:1.45]">
+              <span className="config-subtext">
                 Maximum tolerable difference between Bottom-Up (L1-L4) inventory
                 and Top-Down (L4/L5) site measurements.
               </span>
 
-              <div className="[display:flex] [align-items:center] [gap:16px] [margin:8px_0]">
+              <div className="threshold-slider-box">
                 <input
                   type="range"
                   min="5"
@@ -77,9 +77,9 @@ const SettingsOGMP20Framework = ({ defaultBaseYear, globalThreshold, handleSaveG
                   className="range-slider"
                   id="global-threshold-slider"
                 />
-                <div className="[font-size:var(--text-lg)] [font-weight:800] [color:var(--color-link)] [background:rgba(255,_102,_0,_0.08)] [padding:6px_14px] [border-radius:var(--radius-md)] [border:1px_solid_rgba(255,_102,_0,_0.2)] [min-width:80px] [text-align:center]">±{globalThreshold}%</div>
+                <div className="threshold-val-display">±{globalThreshold}%</div>
               </div>
-              <p className="[font-size:var(--text-sm)] [color:var(--text-secondary,_var(--color-ink-500))] [margin:0]">
+              <p className="slider-hint">
                 OGMP 2.0 recommended default is <strong>±20.0%</strong>.
                 Facilities exceeding this threshold will be flagged for
                 investigation.
@@ -88,13 +88,13 @@ const SettingsOGMP20Framework = ({ defaultBaseYear, globalThreshold, handleSaveG
           </div>
 
           <div className="target-standards-box">
-            <div className="[display:flex] [align-items:center] [gap:8px]">
-              <Activity size={18} className="[color:var(--color-link)]" />
+            <div className="target-header">
+              <Activity size={18} className="target-icon" />
               <h3>OGMP 2.0 Methane Intensity Targets</h3>
             </div>
-            <div className="[display:grid] [grid-template-columns:repeat(auto-fit,_minmax(300px,_1fr))] [gap:16px]">
+            <div className="targets-grid">
               <div className="target-card upstream">
-                <div className="[font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [margin-bottom:6px]">
+                <div className="target-segment">
                   Upstream Exploration & Production
                 </div>
                 <div
@@ -118,13 +118,13 @@ const SettingsOGMP20Framework = ({ defaultBaseYear, globalThreshold, handleSaveG
                     %
                   </span>
                 </div>
-                <div className="[font-size:var(--text-sm)] [color:var(--text-secondary,_var(--color-ink-500))] [line-height:1.45] [margin:0]">
+                <div className="target-desc">
                   Methane loss volume as % of total marketable natural gas
                   volume. (Default: 0.20%)
                 </div>
               </div>
               <div className="target-card midstream">
-                <div className="[font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [margin-bottom:6px]">Midstream Processing & LNG</div>
+                <div className="target-segment">Midstream Processing & LNG</div>
                 <div
                   className="flex! items-center! gap-[8px]! m-[8px_0]!"
                 >
@@ -146,7 +146,7 @@ const SettingsOGMP20Framework = ({ defaultBaseYear, globalThreshold, handleSaveG
                     %
                   </span>
                 </div>
-                <div className="[font-size:var(--text-sm)] [color:var(--text-secondary,_var(--color-ink-500))] [line-height:1.45] [margin:0]">
+                <div className="target-desc">
                   Methane loss volume as % of total throughput volume. (Default:
                   0.05%)
                 </div>

@@ -206,6 +206,49 @@
   color: var(--color-brand-800);
 }
 
+.tier2-mode-container {
+  margin-top: 10px;
+  background: #fafafa;
+  border: 1px solid #e5e7eb;
+  border-radius: var(--radius-md);
+  padding: 14px;
+}
+
+.tier2-override-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.official-presets-section {
+  background: var(--color-white);
+  border: 1px solid #e5e7eb;
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+}
+
+.official-presets-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.official-presets-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-ink-700);
+}
+
+.official-presets-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
 .preset-chip {
   display: flex;
   align-items: center;

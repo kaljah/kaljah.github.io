@@ -56,13 +56,13 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
                         </td>
                       </tr>
                       <tr className="detail-row">
-                        <td className="[padding-left:28px]!">Combustion (stationary &amp; mobile)</td>
+                        <td className="indent">Combustion (stationary &amp; mobile)</td>
                         <td className="text-right">
                           {formatCompactNumber(stats.combustion)}
                         </td>
                       </tr>
                       <tr className="detail-row">
-                        <td className="[padding-left:28px]!">Flaring</td>
+                        <td className="indent">Flaring</td>
                         <td className="text-right">
                           {formatCompactNumber(stats.flaring)}
                         </td>
@@ -90,19 +90,19 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
                         </>
                       )}
                       <tr className="detail-row">
-                        <td className="[padding-left:28px]!">Venting</td>
+                        <td className="indent">Venting</td>
                         <td className="text-right">
                           {formatCompactNumber(stats.venting)}
                         </td>
                       </tr>
                       <tr className="detail-row">
-                        <td className="[padding-left:28px]!">Equipment Leaks / Fugitives</td>
+                        <td className="indent">Equipment Leaks / Fugitives</td>
                         <td className="text-right">
                           {formatCompactNumber(stats.fugitive)}
                         </td>
                       </tr>
                       <tr className="detail-row">
-                        <td className="[padding-left:28px]!">Other Sources</td>
+                        <td className="indent">Other Sources</td>
                         <td className="text-right">
                           {formatCompactNumber(stats.other)}
                         </td>
@@ -155,7 +155,7 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
                               onClick={() => toggleActivity(act)}
                             >
                               <td>
-                                <span className="[display:inline-block] [width:16px] [font-size:var(--text-xs)] [color:var(--color-ink-600)]">
+                                <span className="toggle-icon">
                                   {expandedActivities[act] ? "▼" : "▶"}
                                 </span>
                                 {formatActivityName(act)}
@@ -175,8 +175,8 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
                                         toggleDivision(div);
                                       }}
                                     >
-                                      <td className="[padding-left:28px]!">
-                                        <span className="[display:inline-block] [width:16px] [font-size:var(--text-xs)] [color:var(--color-ink-600)]">
+                                      <td className="indent">
+                                        <span className="toggle-icon">
                                           {expandedDivisions[div] ? "▼" : "▶"}
                                         </span>
                                         {div}
@@ -188,7 +188,7 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
                                     {expandedDivisions[div] &&
                                       divData.regions.map((reg, ridx) => (
                                         <tr key={ridx} className="reg-row">
-                                          <td className="[padding-left:44px]!">
+                                          <td className="indent-double">
                                             {reg.region}
                                           </td>
                                           <td className="text-right">
@@ -211,10 +211,10 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
             </div>
           </div>
 
-          <div className="[display:flex] [flex-direction:column] [gap:24px]">
+          <div className="dashboard-sidebar">
             {/* Moved Trend Chart to Top */}
 
-            <div className="card [padding:24px]!">
+            <div className="card library-card">
               <div className="card-header-row">
                 <h3 className="card-title">Reference Libraries</h3>
                 <svg
@@ -230,7 +230,7 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
                   <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
                 </svg>
               </div>
-              <div className="[display:flex] [flex-direction:column] [gap:12px] [margin:16px_0_20px_0]">
+              <div className="library-list">
                 <div className="library-item">
                   <div className="dot blue"></div>
                   API Compendium: 2021

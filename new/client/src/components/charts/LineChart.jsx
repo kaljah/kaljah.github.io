@@ -43,12 +43,12 @@ export const LineChart = ({
           ? payload[0].payload[finalXKey]
           : "";
       return (
-        <div className="[background:rgba(255,_255,_255,_0.95)] [backdrop-filter:blur(8px)] [border:1px_solid_var(--color-ink-200)] [border-radius:var(--radius-md)] [padding:12px_16px] [box-shadow:var(--shadow-card)]">
-          <p className="[margin:0_0_6px_0] [font-size:var(--text-base)] [color:var(--color-ink-500)] [font-weight:600]">{label}</p>
+        <div className="custom-tooltip">
+          <p className="tooltip-label">{label}</p>
           {payload.map((entry, idx) => (
             <p
               key={idx}
-              className="[margin:0] [font-size:var(--text-md)] [font-weight:700] [color:var(--color-ink-800)]"
+              className="tooltip-value"
               style={{ color: entry.color }}
             >
               {entry.name}: {formatValue(entry.value)}
@@ -73,7 +73,7 @@ export const LineChart = ({
 
   if (!data || data.length === 0) {
     return (
-      <div className="[background:var(--color-white)] [border:1px_solid_var(--color-ink-200)] [border-radius:var(--radius-md)] [padding:20px] [margin-bottom:20px] [box-shadow:var(--shadow-xs)] empty">
+      <div className="chart-wrapper empty">
         <div
           style={{
             height,
@@ -91,7 +91,7 @@ export const LineChart = ({
 
   return (
     <div
-      className="[background:var(--color-white)] [border:1px_solid_var(--color-ink-200)] [border-radius:var(--radius-md)] [padding:20px] [margin-bottom:20px] [box-shadow:var(--shadow-xs)]"
+      className="chart-wrapper"
       style={{
         height: "100%",
         width: "100%",
@@ -102,7 +102,7 @@ export const LineChart = ({
         border: "none",
       }}
     >
-      {title && <h3 className="[margin:0_0_16px_0] [font-size:var(--text-lg)] [font-weight:600] [color:var(--text-primary)]">{title}</h3>}
+      {title && <h3 className="chart-title">{title}</h3>}
       <ResponsiveContainer width="99%" height={height} debounce={200}>
         <AreaChart
           data={data}

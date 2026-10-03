@@ -1,3 +1,12 @@
+.error-boundary-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: linear-gradient(135deg, var(--color-ink-900) 0%, var(--color-ink-800) 100%);
+}
+
 .error-boundary-card {
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(20px);
@@ -8,6 +17,12 @@
   width: 100%;
   text-align: center;
   box-shadow: var(--shadow-raised);
+}
+
+.error-icon {
+  color: var(--color-red-700);
+  margin-bottom: 24px;
+  animation: pulse 2s ease-in-out infinite;
 }
 
 @keyframes pulse {

@@ -4,7 +4,7 @@ import { RotateCcw, Search, X } from "lucide-react";
 
 // Extracted from AuditTrail.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const AuditTrailFiltersBarCard = ({ auditLogs, availableFilters, customEndDate, customStartDate, filterAction, filterEntity, filterUser, hasActiveFilters, resetFilters, searchQuery, setCustomEndDate, setCustomStartDate, setFilterAction, setFilterEntity, setFilterUser, setPage, setSearchQuery, setTimeframe, timeframe, totalRecords }) => (
-<div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.85))] [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.85))] [border-radius:var(--radius-lg)] [padding:18px_22px] [margin-bottom:28px] [box-shadow:var(--shadow-card)]">
+<div className="filters-bar-card">
           <div className="filter-search-wrapper">
             <Search size={16} className="search-icon" />
             <input
@@ -103,7 +103,7 @@ const AuditTrailFiltersBarCard = ({ auditLogs, availableFilters, customEndDate, 
 
             {/* Custom Date Pickers */}
             {timeframe === "custom" && (
-              <div className="[display:flex] [align-items:center] [gap:8px]">
+              <div className="custom-dates-group">
                 <input
                   type="date"
                   value={customStartDate}
@@ -114,7 +114,7 @@ const AuditTrailFiltersBarCard = ({ auditLogs, availableFilters, customEndDate, 
                   className="date-input"
                   title="Start Date"
                 />
-                <span className="[font-size:var(--text-sm)] [color:var(--text-secondary,_var(--color-ink-500))]">to</span>
+                <span className="date-separator">to</span>
                 <input
                   type="date"
                   value={customEndDate}

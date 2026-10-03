@@ -7,12 +7,12 @@ import { activateOnKey } from "../../utils/a11yKeys";
 const Scope1ImportWizardScope1Bulk = ({ FIELD_GROUPS, FieldGroup, Icon, ModeCard, PROCESS_CATALOGUE, ProcessTile, StepBar, allowedRegions, canGoNext, canSubmit, downloadTemplate, file, fileInputRef, globalFactor, handleSubmit, headers, isAdmin, isDragging, isSubmitting, jobId, mapping, missingRequired, onClose, onDrop, onFileChange, onUploadSuccess, overwrite, parseError, processScope, searchQuery, selectedProcesses, setGlobalFactor, setIsDragging, setMapping, setOverwrite, setProcessScope, setSearchQuery, setStep, setTier, step, tier, toggleProcess }) => (
 <div className="s1w-modal">
         {/* Header */}
-        <div className="[display:flex] [align-items:center] [justify-content:space-between] [padding:20px_24px_0] [flex-shrink:0]">
-          <div className="[display:flex] [align-items:center] [gap:12px]">
+        <div className="s1w-header">
+          <div className="s1w-header-left">
             <div className="s1w-header-icon"><Icon.Activity /></div>
             <div>
-              <h2 className="[font-size:var(--text-lg)] [font-weight:700] [color:var(--color-ink-900)] [margin:0_0_2px] [letter-spacing:-0.3px] [font-family:inherit]">Scope 1 Bulk Import</h2>
-              <p className="[font-size:var(--text-sm)] [color:var(--color-ink-500)] [margin:0]">Upload emissions data from CSV or Excel</p>
+              <h2 className="s1w-title">Scope 1 Bulk Import</h2>
+              <p className="s1w-subtitle">Upload emissions data from CSV or Excel</p>
             </div>
           </div>
           <button className="s1w-close" aria-label="Close" onClick={onClose}><Icon.Close /></button>
@@ -28,7 +28,7 @@ const Scope1ImportWizardScope1Bulk = ({ FIELD_GROUPS, FieldGroup, Icon, ModeCard
               <Icon.Settings />
               <span>Select Calculation Tier</span>
             </div>
-            <p className="[font-size:var(--text-base)] [color:var(--color-ink-500)] [margin:0] [line-height:1.5]">
+            <p className="s1w-section-desc">
               Choose how emissions will be calculated for each row in your file.
             </p>
             <div className="s1w-mode-grid">
@@ -72,7 +72,7 @@ const Scope1ImportWizardScope1Bulk = ({ FIELD_GROUPS, FieldGroup, Icon, ModeCard
         {step === 2 && (
           <div className="s1w-body">
             <div className="s1w-section-title"><Icon.Layers /><span>Process Scope</span></div>
-            <p className="[font-size:var(--text-base)] [color:var(--color-ink-500)] [margin:0] [line-height:1.5]">Does your file contain data for all process types, or a specific process?</p>
+            <p className="s1w-section-desc">Does your file contain data for all process types, or a specific process?</p>
             <div className="s1w-scope-cards">
               <ModeCard
                 selected={processScope === "all"}
@@ -90,9 +90,9 @@ const Scope1ImportWizardScope1Bulk = ({ FIELD_GROUPS, FieldGroup, Icon, ModeCard
               />
             </div>
             {processScope === "specific" && (
-              <div className="[display:flex] [flex-direction:column] [gap:10px]">
-                <p className="[font-size:var(--text-base)] [font-weight:600] [color:var(--color-ink-700)] [margin:0]">Select which processes are in your file:</p>
-                <div className="[display:grid] [grid-template-columns:repeat(auto-fill,_minmax(150px,_1fr))] [gap:8px]">
+              <div className="s1w-process-grid-wrap">
+                <p className="s1w-process-grid-label">Select which processes are in your file:</p>
+                <div className="s1w-process-grid">
                   {PROCESS_CATALOGUE.map(p => (
                     <ProcessTile
                       key={p.key}
@@ -119,19 +119,19 @@ const Scope1ImportWizardScope1Bulk = ({ FIELD_GROUPS, FieldGroup, Icon, ModeCard
 
             {/* ── Region access banner ── */}
             {!isAdmin && allowedRegions !== null && (
-              <div className="[padding:14px_16px] [background:linear-gradient(135deg,_var(--color-brand-50)_0%,_#fff1e6_100%)] [border:1.5px_solid_#fed7aa] [border-radius:var(--radius-md)] [display:flex] [flex-direction:column] [gap:10px]">
+              <div className="s1w-access-banner">
                 <div className="s1w-access-banner-header">
                   <Icon.Info />
                   <strong>Your upload is restricted to the following regions:</strong>
                 </div>
                 {allowedRegions.length > 0 ? (
-                  <div className="[display:flex] [flex-wrap:wrap] [gap:6px]">
+                  <div className="s1w-access-region-list">
                     {allowedRegions.map(r => (
-                      <span key={r} className="[padding:4px_12px] [background:var(--color-white)] [border:1.5px_solid_var(--color-brand-400)] [border-radius:var(--radius-lg)] [font-size:var(--text-sm)] [font-weight:700] [color:var(--color-brand-700)] [white-space:nowrap]">{r}</span>
+                      <span key={r} className="s1w-access-region-pill">{r}</span>
                     ))}
                   </div>
                 ) : (
-                  <p className="[font-size:var(--text-base)] [color:var(--color-red-700)] [margin:0] [font-weight:500]">
+                  <p className="s1w-access-no-regions">
                     Your account has no assigned regions. Contact an administrator before uploading.
                   </p>
                 )}
@@ -147,14 +147,14 @@ const Scope1ImportWizardScope1Bulk = ({ FIELD_GROUPS, FieldGroup, Icon, ModeCard
               <input ref={fileInputRef} type="file" accept=".csv,.xlsx" className="hidden!" onChange={onFileChange} />
               <div className="s1w-dropzone-icon"><Icon.Upload /></div>
               <p className="s1w-dropzone-text">Drag & drop your file here, or <span>click to browse</span></p>
-              <p className="[font-size:var(--text-sm)] [color:var(--color-ink-600)] [margin:0]">Supports .xlsx and .csv — optimised for millions of rows</p>
+              <p className="s1w-dropzone-sub">Supports .xlsx and .csv — optimised for millions of rows</p>
               {parseError && (
                 <div className="s1w-inline-error"><Icon.Warning />{parseError}</div>
               )}
             </div>
 
-            <div className="[display:flex] [flex-direction:column] [gap:10px]">
-              <p className="[font-size:var(--text-sm)] [color:var(--color-ink-500)] [margin:0] [font-weight:500]">Don't have a file? Download a pre-configured template:</p>
+            <div className="s1w-template-section">
+              <p className="s1w-template-label">Don't have a file? Download a pre-configured template:</p>
               <div className="s1w-template-btns">
                 <button className="s1w-template-btn" onClick={() => downloadTemplate("excel")}>
                   <span className="s1w-template-btn-icon"><Icon.FileExcel /></span>
@@ -174,11 +174,11 @@ const Scope1ImportWizardScope1Bulk = ({ FIELD_GROUPS, FieldGroup, Icon, ModeCard
             </div>
 
             {/* Config summary pill */}
-            <div className="[display:flex] [gap:8px] [flex-wrap:wrap]">
+            <div className="s1w-config-summary">
               <span className={`s1w-config-pill s1w-config-pill--${tier === "1" ? "blue" : tier === "3" ? "green" : "orange"}`}>
                 {tier === "1" ? "Tier 1" : tier === "3" ? "Tier 3" : "Auto-detect"}
               </span>
-              <span className="s1w-config-pill [background:var(--color-ink-100)]! [color:var(--color-ink-600)]!">
+              <span className="s1w-config-pill s1w-config-pill--neutral">
                 {processScope === "all"
                   ? "All Processes"
                   : `${selectedProcesses.length} process${selectedProcesses.length !== 1 ? "es" : ""} selected`}
@@ -192,7 +192,7 @@ const Scope1ImportWizardScope1Bulk = ({ FIELD_GROUPS, FieldGroup, Icon, ModeCard
           <div className="s1w-body">
             {/* ── Region access banner ── */}
             {!isAdmin && allowedRegions !== null && allowedRegions.length > 0 && (
-              <div className="[padding:14px_16px]! [background:linear-gradient(135deg,_var(--color-brand-50)_0%,_#fff1e6_100%)]! [border:1.5px_solid_#fed7aa]! [border-radius:var(--radius-md)]! [display:flex]! [flex-direction:column]! [gap:10px]! s1w-access-banner--compact">
+              <div className="s1w-access-banner s1w-access-banner--compact">
                 <Icon.Info />
                 <span>
                   <strong>Allowed regions:</strong>{" "}
@@ -207,11 +207,11 @@ const Scope1ImportWizardScope1Bulk = ({ FIELD_GROUPS, FieldGroup, Icon, ModeCard
               </div>
             )}
             {file && (
-              <div className="[display:flex] [align-items:center] [gap:12px] [padding:12px_16px] [background:var(--color-ink-50)] [border:1px_solid_var(--color-ink-200)] [border-radius:var(--radius-md)]">
+              <div className="s1w-file-badge">
                 <div className="s1w-file-badge-icon"><Icon.File /></div>
                 <div className="s1w-file-badge-info">
-                  <p className="[font-size:var(--text-base)] [font-weight:600] [color:var(--color-ink-900)] [margin:0_0_2px]">{file.name}</p>
-                  <p className="[font-size:var(--text-sm)] [color:var(--color-ink-600)] [margin:0]">{(file.size / 1024).toFixed(1)} KB</p>
+                  <p className="s1w-file-name">{file.name}</p>
+                  <p className="s1w-file-size">{(file.size / 1024).toFixed(1)} KB</p>
                 </div>
                 {headers.length > 0 && (
                   <div className="s1w-auto-badge"><Icon.Wand /><span>{Object.keys(mapping).length} auto-detected</span></div>
@@ -234,7 +234,7 @@ const Scope1ImportWizardScope1Bulk = ({ FIELD_GROUPS, FieldGroup, Icon, ModeCard
             )}
 
             {/* Search bar */}
-            <div className="[position:relative] [display:flex] [align-items:center]">
+            <div className="s1w-search-bar">
               <div className="s1w-search-icon"><Icon.Search /></div>
               <input
                 className="s1w-search-input"
@@ -249,8 +249,8 @@ const Scope1ImportWizardScope1Bulk = ({ FIELD_GROUPS, FieldGroup, Icon, ModeCard
             </div>
 
             {/* Factor selector */}
-            <div className="[display:flex] [align-items:center] [gap:12px] [flex-wrap:wrap]">
-              <label className="[font-size:var(--text-sm)] [color:var(--color-ink-600)] [font-weight:500] [flex-shrink:0]">Default factor when not specified in file:</label>
+            <div className="s1w-factor-row">
+              <label className="s1w-factor-label">Default factor when not specified in file:</label>
               <NativeSelect className="s1w-factor-select" value={globalFactor} onChange={e => setGlobalFactor(e.target.value)}>
                 <option value="auto">Auto-detect from file</option>
                 <option value="default">Force Standard (API Compendium)</option>
@@ -259,15 +259,15 @@ const Scope1ImportWizardScope1Bulk = ({ FIELD_GROUPS, FieldGroup, Icon, ModeCard
               </NativeSelect>
             </div>
 
-            <label className="[display:flex] [align-items:center] [gap:12px] [flex-wrap:wrap] gap-[8px]! cursor-pointer!">
+            <label className="s1w-factor-row gap-[8px]! cursor-pointer!">
               <input type="checkbox" checked={overwrite} onChange={e => setOverwrite(e.target.checked)} />
-              <span className="[font-size:var(--text-sm)] [color:var(--color-ink-600)] [font-weight:500] [flex-shrink:0]">
+              <span className="s1w-factor-label">
                 Overwrite records that already exist (same facility, month and source). Overwritten records go back to Pending review.
               </span>
             </label>
 
             {/* Field groups */}
-            <div className="[display:flex] [flex-direction:column] [gap:10px]">
+            <div className="s1w-field-groups">
               {FIELD_GROUPS.map(group => (
                 <FieldGroup
                   key={group.id}
@@ -287,7 +287,7 @@ const Scope1ImportWizardScope1Bulk = ({ FIELD_GROUPS, FieldGroup, Icon, ModeCard
 
         {/* ── STEP 5: Processing ── */}
         {step === 5 && jobId && (
-          <div className="s1w-body [padding:0]!">
+          <div className="s1w-body s1w-body--progress">
             <UploadProgress
               jobId={jobId}
               onComplete={() => { if (onUploadSuccess) onUploadSuccess(); onClose(); }}
@@ -298,7 +298,7 @@ const Scope1ImportWizardScope1Bulk = ({ FIELD_GROUPS, FieldGroup, Icon, ModeCard
 
         {/* ── Footer ── */}
         {step !== 5 && (
-          <div className="[display:flex] [align-items:center] [justify-content:space-between] [padding:14px_24px] [border-top:1px_solid_var(--color-ink-200)] [background:var(--color-ink-50)] [flex-shrink:0]">
+          <div className="s1w-footer">
             <button
               className="s1w-btn-ghost"
               onClick={step === 1 ? onClose : () => setStep(s => s - 1)}
@@ -306,7 +306,7 @@ const Scope1ImportWizardScope1Bulk = ({ FIELD_GROUPS, FieldGroup, Icon, ModeCard
               {step === 1 ? <><Icon.Close /> Cancel</> : <><Icon.ArrowLeft /> Back</>}
             </button>
 
-            <div className="[display:flex] [align-items:center] [gap:10px]">
+            <div className="s1w-footer-right">
               {step < 4 && (
                 <button
                   className="s1w-btn-primary"
@@ -322,7 +322,7 @@ const Scope1ImportWizardScope1Bulk = ({ FIELD_GROUPS, FieldGroup, Icon, ModeCard
                   onClick={handleSubmit}
                   disabled={isSubmitting || (!canSubmit && headers.length > 0) || (!isAdmin && allowedRegions !== null && allowedRegions.length === 0)}
                 >
-                  {isSubmitting ? <span className="[width:15px] [height:15px] [border-radius:50%] [border:2px_solid_rgba(255,255,255,0.4)] [border-top-color:var(--color-white)] [animation:s1w-spin_0.7s_linear_infinite] [display:inline-block]" /> : <Icon.Processing />}
+                  {isSubmitting ? <span className="s1w-spinner" /> : <Icon.Processing />}
                   {isSubmitting ? "Starting…" : "Start Import"}
                 </button>
               )}

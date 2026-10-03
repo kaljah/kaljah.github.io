@@ -93,7 +93,7 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
 
       {/* HHV — required in specific (Tier 3) mode */}
       {needsHHV && sourceType === "specific" && (
-        <div className="[margin-bottom:12px] mt-[14px]!">
+        <div className="s1-block mt-[14px]!">
           <div className="form-grid-2 gap-[10px]!">
             <div className="input-group mb-[0px]!">
               <label className="text-[length:0.75rem]!">

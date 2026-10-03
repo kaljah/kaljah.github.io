@@ -722,10 +722,10 @@ const MethaneIntensity = () => {
         <div className="chart-grid">
           <div className="card">
             <div className="chart-header">
-              <div className="[display:flex] [flex-direction:column] [gap:8px]">
+              <div className="chart-title-wrapper">
                 <h3>Methane Loss Rate by Facility (% of Gas Produced)</h3>
                 <div
-                  className="[width:32px] [height:4px] [border-radius:var(--radius-sm)] bg-[color:#2563eb]!"
+                  className="chart-indicator bg-[color:#2563eb]!"
                  
                 ></div>
               </div>
@@ -746,10 +746,10 @@ const MethaneIntensity = () => {
 
           <div className="card">
             <div className="chart-header">
-              <div className="[display:flex] [flex-direction:column] [gap:8px]">
+              <div className="chart-title-wrapper">
                 <h3>Methane Intensity by Facility (kg CH₄ / BOE)</h3>
                 <div
-                  className="[width:32px] [height:4px] [border-radius:var(--radius-sm)] bg-[color:#ff6600]!"
+                  className="chart-indicator bg-[color:#ff6600]!"
                  
                 ></div>
               </div>
@@ -768,10 +768,10 @@ const MethaneIntensity = () => {
 
           <div className="card">
             <div className="chart-header">
-              <div className="[display:flex] [flex-direction:column] [gap:8px]">
+              <div className="chart-title-wrapper">
                 <h3>Total Methane Emissions (tCH₄)</h3>
                 <div
-                  className="[width:32px] [height:4px] [border-radius:var(--radius-sm)] bg-[color:#3b82f6]!"
+                  className="chart-indicator bg-[color:#3b82f6]!"
                  
                 ></div>
               </div>
@@ -790,10 +790,10 @@ const MethaneIntensity = () => {
 
           <div className="card">
             <div className="chart-header">
-              <div className="[display:flex] [flex-direction:column] [gap:8px]">
+              <div className="chart-title-wrapper">
                 <h3>Gas Flaring Volume by Facility (m³)</h3>
                 <div
-                  className="[width:32px] [height:4px] [border-radius:var(--radius-sm)] bg-[color:#ea580c]!"
+                  className="chart-indicator bg-[color:#ea580c]!"
                  
                 ></div>
               </div>

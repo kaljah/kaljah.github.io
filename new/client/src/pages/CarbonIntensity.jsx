@@ -485,7 +485,7 @@ const CarbonIntensity = () => {
     const excluded = (total || 0) - (used || 0);
     if (!(excluded > Math.max(0.5, Math.abs(total || 0) * 1e-6))) return null;
     return (
-      <div className="[margin-top:8px] [font-size:var(--text-sm)] [color:var(--warning-color,_var(--color-amber-700))]">
+      <div className="kpi-note">
         {formatNumber(excluded)} t from years without production are not in this intensity
       </div>
     );
@@ -582,7 +582,7 @@ const CarbonIntensity = () => {
                             </table>
                         </div>
                     ) : (
-                        <div className="[display:flex] [flex-direction:column] [align-items:center] [justify-content:center] [padding:40px_20px] [color:var(--text-secondary)] [font-size:var(--text-base)]">
+                        <div className="cbam-empty-state">
                             <p>No CBAM product export records registered for the selected filters. Track exports via <strong>Manage Data &gt; CBAM Products</strong>.</p>
                         </div>
                     )}
@@ -592,10 +592,10 @@ const CarbonIntensity = () => {
         <div className="chart-grid">
           <div className="card">
             <div className="chart-header">
-              <div className="[display:flex] [flex-direction:column] [gap:8px]">
+              <div className="chart-title-wrapper">
                 <h3>GHG Intensity by Facility (kg CO₂e / BOE)</h3>
                 <div
-                  className="[width:32px] [height:4px] [border-radius:var(--radius-sm)] bg-[color:#ff6600]!"
+                  className="chart-indicator bg-[color:#ff6600]!"
                  
                 ></div>
               </div>
@@ -617,10 +617,10 @@ const CarbonIntensity = () => {
 
           <div className="card">
             <div className="chart-header">
-              <div className="[display:flex] [flex-direction:column] [gap:8px]">
+              <div className="chart-title-wrapper">
                 <h3>Scope 1 Direct vs Scope 2 Intensity</h3>
                 <div
-                  className="[width:32px] [height:4px] [border-radius:var(--radius-sm)] bg-[color:#2563eb]!"
+                  className="chart-indicator bg-[color:#2563eb]!"
                  
                 ></div>
               </div>
@@ -651,10 +651,10 @@ const CarbonIntensity = () => {
 
           <div className="card">
             <div className="chart-header">
-              <div className="[display:flex] [flex-direction:column] [gap:8px]">
+              <div className="chart-title-wrapper">
                 <h3>Oil BOE Contribution by Facility</h3>
                 <div
-                  className="[width:32px] [height:4px] [border-radius:var(--radius-sm)] bg-[color:#ea580c]!"
+                  className="chart-indicator bg-[color:#ea580c]!"
                  
                 ></div>
               </div>
@@ -673,10 +673,10 @@ const CarbonIntensity = () => {
 
           <div className="card">
             <div className="chart-header">
-              <div className="[display:flex] [flex-direction:column] [gap:8px]">
+              <div className="chart-title-wrapper">
                 <h3>Gas BOE Contribution by Facility</h3>
                 <div
-                  className="[width:32px] [height:4px] [border-radius:var(--radius-sm)] bg-[color:#8b5cf6]!"
+                  className="chart-indicator bg-[color:#8b5cf6]!"
                  
                 ></div>
               </div>
@@ -707,8 +707,8 @@ const CarbonIntensity = () => {
                 5-Year Performance Track (kg CO₂e / BOE)
               </p>
             </div>
-            <div className="[display:flex] [gap:12px] [align-items:center]">
-              <div className="[background:var(--bg-hover)] [padding:4px] [border-radius:var(--radius-md)] [display:flex] [gap:4px] [border:1px_solid_var(--border-color)]">
+            <div className="trend-view-controls">
+              <div className="view-toggle">
                 <button
                   className={`view-btn ${trendView === "chart" ? "active" : ""}`}
                   onClick={() => setTrendView("chart")}
@@ -747,13 +747,13 @@ const CarbonIntensity = () => {
             <div className="heatmap-container">
               <div className="heatmap-header">
                 <div
-                  className="[font-size:var(--text-sm)] [font-weight:700] [color:var(--text-secondary)] [text-transform:uppercase] [text-align:center] [letter-spacing:0.05em] text-left!"
+                  className="heatmap-header-cell text-left!"
                  
                 >
                   FACILITY / REGION
                 </div>
                 {rawTrendData.map((d) => (
-                  <div key={d.year} className="[font-size:var(--text-sm)] [font-weight:700] [color:var(--text-secondary)] [text-transform:uppercase] [text-align:center] [letter-spacing:0.05em]">
+                  <div key={d.year} className="heatmap-header-cell">
                     {d.year}
                   </div>
                 ))}
@@ -762,7 +762,7 @@ const CarbonIntensity = () => {
                 {regionalData.length > 0 ? (
                   regionalData.map((facData) => (
                     <div key={facData.facility_id} className="heatmap-row">
-                      <div className="[font-weight:600] [font-size:var(--text-base)] [color:var(--text-primary)]">
+                      <div className="heatmap-label">
                         {facData.facility_name}
                       </div>
                       {rawTrendData.map((yData) => {

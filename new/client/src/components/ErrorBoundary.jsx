@@ -40,9 +40,9 @@ class ErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="[min-height:100vh] [display:flex] [align-items:center] [justify-content:center] [padding:20px] [background:linear-gradient(135deg,_var(--color-ink-900)_0%,_var(--color-ink-800)_100%)]">
+        <div className="error-boundary-container">
           <div className="error-boundary-card">
-            <div className="[color:var(--color-red-700)] [margin-bottom:24px] [animation:pulse_2s_ease-in-out_infinite]">
+            <div className="error-icon">
               <CircleAlert size="64" strokeWidth="2" aria-hidden="true" />
             </div>
 

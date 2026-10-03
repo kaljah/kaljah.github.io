@@ -4,12 +4,12 @@ import { AlertCircle, CheckCircle2, ExternalLink, HelpCircle, KeyRound, Radio, S
 
 // Extracted from Settings.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicusClientId, copernicusClientSecret, copernicusEnabled, copernicusPassword, copernicusQaThreshold, copernicusUsername, handleSaveGlobal, handleTestConnection, isAdmin, saving, setAuthMode, setCopernicusClientId, setCopernicusClientSecret, setCopernicusEnabled, setCopernicusPassword, setCopernicusQaThreshold, setCopernicusUsername, setShowGuide, showGuide, testingConnection }) => (
-<div className="[background:var(--bg-card,_var(--color-white))] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [border-radius:var(--radius-lg)] [padding:32px] [display:flex] [flex-direction:column] [gap:28px] [box-shadow:var(--shadow-card,_0_4px_6px_-1px_rgba(0,_0,_0,_0.05))]">
+<div className="settings-section-card">
           <div className="section-intro">
-            <div className="[display:flex] [align-items:center] [gap:10px]">
+            <div className="section-intro-header">
               <Satellite
                 size={22}
-                className="[color:var(--color-link)] text-[color:#0369a1]!"
+                className="section-icon text-[color:#0369a1]!"
                
               />
               <h2>
@@ -30,10 +30,10 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
           {/* Step-by-step account guide toggle banner */}
           <div className="satellite-guide-banner">
             <div
-              className="[display:flex] [justify-content:space-between] [align-items:center] [cursor:pointer] [gap:16px]"
+              className="guide-banner-header"
               onClick={() => setShowGuide(!showGuide)}
             >
-              <div className="[display:flex] [align-items:center] [gap:10px] [font-size:var(--text-md)] [color:var(--text-primary,_var(--color-ink-900))]">
+              <div className="guide-title">
                 <HelpCircle size={18} color="#0284c7" />
                 <strong>
                   Need a Copernicus Account? Click here for the Step-by-Step
@@ -46,9 +46,9 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
             </div>
 
             {showGuide && (
-              <div className="[margin-top:16px] [padding-top:16px] [border-top:1px_dashed_rgba(2,_132,_199,_0.2)] [display:flex] [flex-direction:column] [gap:12px]">
-                <div className="[display:flex] [gap:14px] [align-items:flex-start]">
-                  <div className="[background:var(--color-sky-600)] [color:var(--color-white)] [width:24px] [height:24px] [border-radius:50%] [display:flex] [align-items:center] [justify-content:center] [font-size:var(--text-sm)] [font-weight:700] [flex-shrink:0] [margin-top:2px]">1</div>
+              <div className="guide-steps-body">
+                <div className="guide-step">
+                  <div className="step-num">1</div>
                   <div className="step-content">
                     <strong>Visit Copernicus Data Space:</strong> Go to{" "}
                     <a
@@ -63,16 +63,16 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
                     corner.
                   </div>
                 </div>
-                <div className="[display:flex] [gap:14px] [align-items:flex-start]">
-                  <div className="[background:var(--color-sky-600)] [color:var(--color-white)] [width:24px] [height:24px] [border-radius:50%] [display:flex] [align-items:center] [justify-content:center] [font-size:var(--text-sm)] [font-weight:700] [flex-shrink:0] [margin-top:2px]">2</div>
+                <div className="guide-step">
+                  <div className="step-num">2</div>
                   <div className="step-content">
                     <strong>Create Free Account:</strong> Fill in your name,
                     organization, email, and choose a password. Confirm the
                     activation email sent to your inbox.
                   </div>
                 </div>
-                <div className="[display:flex] [gap:14px] [align-items:flex-start]">
-                  <div className="[background:var(--color-sky-600)] [color:var(--color-white)] [width:24px] [height:24px] [border-radius:50%] [display:flex] [align-items:center] [justify-content:center] [font-size:var(--text-sm)] [font-weight:700] [flex-shrink:0] [margin-top:2px]">3</div>
+                <div className="guide-step">
+                  <div className="step-num">3</div>
                   <div className="step-content">
                     <strong>Choose Login Method:</strong>
                     <ul>
@@ -97,8 +97,8 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
                     </ul>
                   </div>
                 </div>
-                <div className="[display:flex] [gap:14px] [align-items:flex-start]">
-                  <div className="[background:var(--color-sky-600)] [color:var(--color-white)] [width:24px] [height:24px] [border-radius:50%] [display:flex] [align-items:center] [justify-content:center] [font-size:var(--text-sm)] [font-weight:700] [flex-shrink:0] [margin-top:2px]">4</div>
+                <div className="guide-step">
+                  <div className="step-num">4</div>
                   <div className="step-content">
                     <strong>Test & Save:</strong> Enter credentials below, click{" "}
                     <strong>"Test Connection"</strong> to verify authentication,
@@ -110,37 +110,37 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
           </div>
 
           {/* Satellite Specs Overview */}
-          <div className="[display:grid] [grid-template-columns:repeat(auto-fit,_minmax(200px,_1fr))] [gap:16px] [margin-bottom:28px]">
-            <div className="[background:var(--bg-card-secondary,_var(--color-ink-50))] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [border-radius:var(--radius-md)] [padding:16px_18px] [display:flex] [flex-direction:column] [gap:4px]">
-              <div className="[font-size:var(--text-sm)] [text-transform:uppercase] [letter-spacing:0.05em] [color:var(--text-secondary,_var(--color-ink-500))] [font-weight:700]">Satellite Instrument</div>
-              <div className="[font-size:var(--text-lg)] [font-weight:700] [color:var(--color-blue-700)]">Sentinel-5P (TROPOMI)</div>
-              <div className="[font-size:var(--text-sm)] [color:var(--text-secondary,_var(--color-ink-400))]">European Space Agency (ESA)</div>
+          <div className="satellite-specs-grid">
+            <div className="spec-card">
+              <div className="spec-label">Satellite Instrument</div>
+              <div className="spec-val">Sentinel-5P (TROPOMI)</div>
+              <div className="spec-desc">European Space Agency (ESA)</div>
             </div>
-            <div className="[background:var(--bg-card-secondary,_var(--color-ink-50))] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [border-radius:var(--radius-md)] [padding:16px_18px] [display:flex] [flex-direction:column] [gap:4px]">
-              <div className="[font-size:var(--text-sm)] [text-transform:uppercase] [letter-spacing:0.05em] [color:var(--text-secondary,_var(--color-ink-500))] [font-weight:700]">Spatial Resolution</div>
-              <div className="[font-size:var(--text-lg)] [font-weight:700] [color:var(--color-blue-700)]">5.5 × 7.0 km</div>
-              <div className="[font-size:var(--text-sm)] [color:var(--text-secondary,_var(--color-ink-400))]">Regional & Basin Plume Scale</div>
+            <div className="spec-card">
+              <div className="spec-label">Spatial Resolution</div>
+              <div className="spec-val">5.5 × 7.0 km</div>
+              <div className="spec-desc">Regional & Basin Plume Scale</div>
             </div>
-            <div className="[background:var(--bg-card-secondary,_var(--color-ink-50))] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [border-radius:var(--radius-md)] [padding:16px_18px] [display:flex] [flex-direction:column] [gap:4px]">
-              <div className="[font-size:var(--text-sm)] [text-transform:uppercase] [letter-spacing:0.05em] [color:var(--text-secondary,_var(--color-ink-500))] [font-weight:700]">Global Revisit Rate</div>
-              <div className="[font-size:var(--text-lg)] [font-weight:700] [color:var(--color-blue-700)]">~2 Days</div>
-              <div className="[font-size:var(--text-sm)] [color:var(--text-secondary,_var(--color-ink-400))]">High-frequency column monitoring</div>
+            <div className="spec-card">
+              <div className="spec-label">Global Revisit Rate</div>
+              <div className="spec-val">~2 Days</div>
+              <div className="spec-desc">High-frequency column monitoring</div>
             </div>
-            <div className="[background:var(--bg-card-secondary,_var(--color-ink-50))] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [border-radius:var(--radius-md)] [padding:16px_18px] [display:flex] [flex-direction:column] [gap:4px]">
-              <div className="[font-size:var(--text-sm)] [text-transform:uppercase] [letter-spacing:0.05em] [color:var(--text-secondary,_var(--color-ink-500))] [font-weight:700]">Measured Variable</div>
-              <div className="[font-size:var(--text-lg)] [font-weight:700] [color:var(--color-blue-700)]">Total Column CH₄ (ppb)</div>
-              <div className="[font-size:var(--text-sm)] [color:var(--text-secondary,_var(--color-ink-400))]">Dry Air Mixing Ratio</div>
+            <div className="spec-card">
+              <div className="spec-label">Measured Variable</div>
+              <div className="spec-val">Total Column CH₄ (ppb)</div>
+              <div className="spec-desc">Dry Air Mixing Ratio</div>
             </div>
           </div>
 
           {/* Credentials Form Section */}
-          <div className="[background:var(--bg-card-secondary,_var(--color-ink-50))] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [border-radius:var(--radius-lg)] [padding:24px] [display:flex] [flex-direction:column] [gap:18px]">
+          <div className="satellite-config-form">
             <div className="config-form-header">
               <KeyRound size={18} />
               <h3>Copernicus Data Space Ecosystem (CDSE) Credentials</h3>
             </div>
 
-            <div className="[display:flex] [gap:12px] [flex-wrap:wrap] [margin-bottom:10px]">
+            <div className="auth-mode-selector">
               <label
                 className={`auth-mode-pill ${authMode === "password" ? "active" : ""}`}
               >
@@ -299,7 +299,7 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
             </div>
 
             {/* Connection Test Action & Status Display */}
-            <div className="[display:flex] [align-items:center] [gap:16px] [margin-top:10px] [flex-wrap:wrap]">
+            <div className="connection-test-row">
               <button
                 type="button"
                 className="btn-test-connection"
@@ -331,7 +331,7 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
                   )}
                   <span>{connectionStatus.message}</span>
                   {connectionStatus.expires_in && (
-                    <span className="[font-size:var(--text-sm)] [opacity:0.8]">
+                    <span className="token-expiry">
                       (Token TTL: {Math.round(connectionStatus.expires_in / 60)}
                       m)
                     </span>

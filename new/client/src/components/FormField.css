@@ -1,3 +1,10 @@
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
 .field-label {
   font-size: var(--text-base);
   font-weight: 500;
@@ -5,6 +12,11 @@
   display: flex;
   align-items: center;
   gap: 4px;
+}
+
+.required-mark {
+  color: var(--color-red-700);
+  font-size: var(--text-base);
 }
 
 /* Input Fields */
@@ -74,6 +86,9 @@
 }
 
 /* Checkbox */
+.checkbox-field {
+  margin-bottom: 12px;
+}
 
 .checkbox-label {
   display: flex;
@@ -102,6 +117,24 @@
   gap: 16px;
 }
 
+.radio-vertical {
+  flex-direction: column;
+}
+
+.radio-horizontal {
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: var(--text-base);
+  color: var(--text-primary);
+}
+
 .field-radio {
   width: 16px;
   height: 16px;
@@ -127,6 +160,12 @@
 .error-text::before {
   content: "⚠";
   font-size: var(--text-base);
+}
+
+.helper-text {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  margin-top: 4px;
 }
 
 /* Placeholder Styling */
