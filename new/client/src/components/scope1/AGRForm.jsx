@@ -1,4 +1,5 @@
 import React from "react";
+import { Input } from "../../ui";
 import CustomDropdown from "../CustomDropdown";
 
 const AGRForm = ({ data, onChange, sourceType }) => {
@@ -17,9 +18,9 @@ const AGRForm = ({ data, onChange, sourceType }) => {
             gap: "10px",
           }}
         >
-          <input
+          <Input
             type="number"
-            className="mole-input"
+           
             value={data.agr_throughput || ""}
             onChange={(e) => onChange("agr_throughput", e.target.value)}
             placeholder="Volume"
@@ -60,9 +61,9 @@ const AGRForm = ({ data, onChange, sourceType }) => {
               Inlet CO2 (%)
               <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
             </label>
-            <input
+            <Input
               type="number"
-              className="mole-input"
+             
               value={
                 data.agr_co2_in !== undefined && data.agr_co2_in !== null
                   ? data.agr_co2_in
@@ -79,9 +80,9 @@ const AGRForm = ({ data, onChange, sourceType }) => {
               Outlet CO2 (%)
               <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
             </label>
-            <input
+            <Input
               type="number"
-              className="mole-input"
+             
               value={
                 data.agr_co2_out !== undefined && data.agr_co2_out !== null
                   ? data.agr_co2_out
@@ -95,9 +96,9 @@ const AGRForm = ({ data, onChange, sourceType }) => {
 
           <div className="input-group">
             <label>CH₄ (%)</label>
-            <input
+            <Input
               type="number"
-              className="mole-input"
+             
               value={
                 data.ch4_mole_pct !== undefined && data.ch4_mole_pct !== null
                   ? data.ch4_mole_pct
@@ -110,9 +111,9 @@ const AGRForm = ({ data, onChange, sourceType }) => {
 
           <div className="input-group">
             <label>CH₄ slip (fraction of inlet CH₄)</label>
-            <input
+            <Input
               type="number"
-              className="mole-input"
+             
               value={
                 data.methane_slip_factor !== undefined &&
                 data.methane_slip_factor !== null
@@ -147,9 +148,9 @@ const AGRForm = ({ data, onChange, sourceType }) => {
                 Control Efficiency (%)
                 <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
               </label>
-              <input
+              <Input
                 type="number"
-                className="mole-input"
+               
                 min="0"
                 max="100"
                 value={data.agr_control_eff ?? ""}

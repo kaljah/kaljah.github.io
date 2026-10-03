@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { Input } from "../../ui";
 import CustomDropdown from "../CustomDropdown";
 
 const DrillingForm = ({ data, onChange, sourceType }) => {
@@ -41,11 +42,11 @@ const DrillingForm = ({ data, onChange, sourceType }) => {
             {isTier1 && !isDefaultDays ? "Wells Drilled" : "Drilling Days"}
             <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
           </label>
-          <input
+          <Input
             type="number"
             min="0"
             step="1"
-            className="mole-input"
+           
             value={data.amount || data.quantity || ""}
             onChange={(e) => {
               onChange("amount", e.target.value);
@@ -111,12 +112,12 @@ const DrillingForm = ({ data, onChange, sourceType }) => {
                 <label style={{ fontSize: "0.8rem" }}>
                   CH₄ fraction
                 </label>
-                <input
+                <Input
                   type="number"
                   step="0.0001"
                   min="0"
                   max="1.0"
-                  className="mole-input"
+                 
                   value={
                     data.ch4_fraction !== undefined
                       ? data.ch4_fraction
@@ -131,12 +132,12 @@ const DrillingForm = ({ data, onChange, sourceType }) => {
                 <label style={{ fontSize: "0.8rem" }}>
                   CO₂ fraction
                 </label>
-                <input
+                <Input
                   type="number"
                   step="0.0001"
                   min="0"
                   max="1.0"
-                  className="mole-input"
+                 
                   value={
                     data.co2_fraction !== undefined ? data.co2_fraction : ""
                   }

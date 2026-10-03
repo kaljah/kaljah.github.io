@@ -1,4 +1,5 @@
 import React from 'react';
+import { Input } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
 import CustomDropdown from '../../components/CustomDropdown';
 import { PROCESS_TYPES } from '../../utils/EmissionFactors';
@@ -69,7 +70,7 @@ const SourcesTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToCSV,
                                     </div>
                                     <div className="input-group">
                                         <label>Source Name</label>
-                                        <input type="text" value={sourceForm.name} onChange={(e) => setSourceForm({ ...sourceForm, name: e.target.value })} className="mole-input" placeholder="e.g. Flare A" />
+                                        <Input type="text" value={sourceForm.name} onChange={(e) => setSourceForm({ ...sourceForm, name: e.target.value })} placeholder="e.g. Flare A" />
                                     </div>
                                     <div className="input-group">
                                         <label>Type</label>
@@ -82,11 +83,11 @@ const SourcesTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToCSV,
                                     </div>
                                     <div className="input-group">
                                         <label>Equipment ID (Optional)</label>
-                                        <input type="text" value={sourceForm.equipment_id} onChange={(e) => setSourceForm({ ...sourceForm, equipment_id: e.target.value })} className="mole-input" placeholder="e.g. COMP-001" />
+                                        <Input type="text" value={sourceForm.equipment_id} onChange={(e) => setSourceForm({ ...sourceForm, equipment_id: e.target.value })} placeholder="e.g. COMP-001" />
                                     </div>
                                     <div className="input-group">
                                         <label>Fuel</label>
-                                        <input type="text" value={sourceForm.fuel_type} onChange={(e) => setSourceForm({ ...sourceForm, fuel_type: e.target.value })} className="mole-input" />
+                                        <Input type="text" value={sourceForm.fuel_type} onChange={(e) => setSourceForm({ ...sourceForm, fuel_type: e.target.value })} />
                                     </div>
                                 </div>
                                 <div className="flex! gap-[12px]! mt-[20px]!">

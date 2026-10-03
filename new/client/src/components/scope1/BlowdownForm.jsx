@@ -1,4 +1,5 @@
 import React from "react";
+import { Input } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
 
 const BlowdownForm = ({ data, onChange }) => {
@@ -12,9 +13,9 @@ const BlowdownForm = ({ data, onChange }) => {
             <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
           </label>
           <div className="flex! gap-[10px]!">
-            <input
+            <Input
               type="number"
-              className="mole-input"
+             
               value={data.blowdown_volume || ""}
               onChange={(e) => onChange("blowdown_volume", e.target.value)}
               placeholder="Vessel Vol"
@@ -38,9 +39,9 @@ const BlowdownForm = ({ data, onChange }) => {
             Pressure (psig)
             <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
           </label>
-          <input
+          <Input
             type="number"
-            className="mole-input"
+           
             value={data.blowdown_pressure || ""}
             onChange={(e) => onChange("blowdown_pressure", e.target.value)}
             placeholder="Before blowdown (psig)"
@@ -53,9 +54,9 @@ const BlowdownForm = ({ data, onChange }) => {
             Number of Events
             <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
           </label>
-          <input
+          <Input
             type="number"
-            className="mole-input"
+           
             value={data.blowdown_events || ""}
             onChange={(e) => onChange("blowdown_events", e.target.value)}
             placeholder="Count"
@@ -68,9 +69,9 @@ const BlowdownForm = ({ data, onChange }) => {
             CH₄ (%)
             <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
           </label>
-          <input
+          <Input
             type="number"
-            className="mole-input"
+           
             value={
               data.ch4_content !== undefined && data.ch4_content !== null
                 ? data.ch4_content
@@ -84,9 +85,9 @@ const BlowdownForm = ({ data, onChange }) => {
 
         <div className="input-group">
           <label>Gas CO2 Content (%)</label>
-          <input
+          <Input
             type="number"
-            className="mole-input"
+           
             value={data.co2_content || ""}
             onChange={(e) => onChange("co2_content", e.target.value)}
             placeholder="e.g. 2.5"
@@ -95,9 +96,9 @@ const BlowdownForm = ({ data, onChange }) => {
 
         <div className="input-group">
           <label>Temperature (°F)</label>
-          <input
+          <Input
             type="number"
-            className="mole-input"
+           
             value={data.blowdown_temp !== undefined ? data.blowdown_temp : ""}
             onChange={(e) => onChange("blowdown_temp", e.target.value)}
             placeholder="Default: 60°F"
@@ -108,9 +109,9 @@ const BlowdownForm = ({ data, onChange }) => {
           <label>
             Flare Efficiency (%){" "}
           </label>
-          <input
+          <Input
             type="number"
-            className="mole-input"
+           
             value={data.control_efficiency || ""}
             onChange={(e) => onChange("control_efficiency", e.target.value)}
             placeholder="0 = Vented, 98 = Flared"

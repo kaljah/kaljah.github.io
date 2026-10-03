@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Input } from "../ui";
 import api from "../api";
 import { useToast } from "./Toast";
 import Modal from "./Modal";
@@ -446,9 +447,9 @@ const GasCompositionCalculator = ({
                 <div className="result-card save-section">
                   <h4>Save to Manage Data</h4>
                   <div className="save-input-group">
-                    <input
+                    <Input
                       type="text"
-                      className="mole-input"
+                     
                       placeholder="Factor Name (e.g. Field A Gas)"
                       value={saveName}
                       onChange={(e) => setSaveName(e.target.value)}

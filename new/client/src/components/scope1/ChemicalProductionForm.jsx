@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { Input } from "../../ui";
 import CustomDropdown from "../CustomDropdown";
 
 // Table 6-53 (CO2 and CH4 per tonne produced)
@@ -51,9 +52,9 @@ const ChemicalProductionForm = ({ data, onChange }) => {
               gap: "10px",
             }}
           >
-            <input
+            <Input
               type="number"
-              className="mole-input"
+             
               value={data.amount || ""}
               onChange={(e) => onChange("amount", e.target.value)}
               placeholder="0.00"

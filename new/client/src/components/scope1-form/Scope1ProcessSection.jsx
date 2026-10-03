@@ -1,4 +1,5 @@
 import React from "react";
+import { Input } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
 import { BookOpen, PlusCircle } from "lucide-react";
 import CustomDropdown from "../CustomDropdown";
@@ -247,10 +248,10 @@ const Scope1ProcessSection = ({ activePresetId, currentProcessValue, dataSourceR
                                   HHV
                                 </label>
                                 <div className="flex! gap-[6px]!">
-                                  <input
+                                  <Input
                                     type="number"
                                     step="any"
-                                    className="mole-input"
+                                   
                                     style={{ flex: 1, padding: "6px 8px", fontSize: "0.85rem" }}
                                     placeholder="e.g. 1085"
                                     value={formData.hhv || ""}
@@ -279,10 +280,10 @@ const Scope1ProcessSection = ({ activePresetId, currentProcessValue, dataSourceR
                                 <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, color: "#374151", marginBottom: "4px" }}>
                                   Density (kg/m³)
                                 </label>
-                                <input
+                                <Input
                                   type="number"
                                   step="any"
-                                  className="mole-input"
+                                 
                                   style={{ width: "100%", padding: "6px 8px", fontSize: "0.85rem" }}
                                   placeholder="e.g. 840.0 for Gasoil NA 8110"
                                   value={fuelDensity}
@@ -299,9 +300,9 @@ const Scope1ProcessSection = ({ activePresetId, currentProcessValue, dataSourceR
                               <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, color: "#374151", marginBottom: "4px" }}>
                                 Ticket / lab ref
                               </label>
-                              <input
+                              <Input
                                 type="text"
-                                className="mole-input"
+                               
                                 style={{ width: "100%", padding: "6px 8px", fontSize: "0.85rem" }}
                                 placeholder="e.g. Ticket #4902-B"
                                 value={dataSourceRef}

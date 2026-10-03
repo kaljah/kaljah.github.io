@@ -1,4 +1,5 @@
 import React from "react";
+import { Input } from "../../ui";
 import { MoreOptions, Section } from "../scope1/ui";
 
 // Extracted from Scope1Form.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
@@ -45,9 +46,9 @@ const Scope1OptionsSection = ({ gcUncertaintyPct, meterUncertaintyPct, renderSpe
                       >
                         ±
                       </span>
-                      <input
+                      <Input
                         type="number"
-                        className="mole-input"
+                       
                         style={{
                           width: "45px",
                           padding: "2px 4px",
@@ -101,9 +102,9 @@ const Scope1OptionsSection = ({ gcUncertaintyPct, meterUncertaintyPct, renderSpe
                       >
                         ±
                       </span>
-                      <input
+                      <Input
                         type="number"
-                        className="mole-input"
+                       
                         style={{
                           width: "55px",
                           padding: "2px 4px",
@@ -167,9 +168,9 @@ const Scope1OptionsSection = ({ gcUncertaintyPct, meterUncertaintyPct, renderSpe
                       >
                         ±
                       </span>
-                      <input
+                      <Input
                         type="number"
-                        className="mole-input"
+                       
                         style={{
                           width: "45px",
                           padding: "2px 4px",
@@ -241,9 +242,9 @@ const Scope1OptionsSection = ({ gcUncertaintyPct, meterUncertaintyPct, renderSpe
                       >
                         ±
                       </span>
-                      <input
+                      <Input
                         type="number"
-                        className="mole-input"
+                       
                         style={{
                           width: "45px",
                           padding: "2px 4px",
@@ -315,9 +316,9 @@ const Scope1OptionsSection = ({ gcUncertaintyPct, meterUncertaintyPct, renderSpe
                       >
                         ±
                       </span>
-                      <input
+                      <Input
                         type="number"
-                        className="mole-input"
+                       
                         style={{
                           width: "45px",
                           padding: "2px 4px",

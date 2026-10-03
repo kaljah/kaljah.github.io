@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "../../ui";
+import { Button, Input } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
 import { Eye, Trash2 } from "lucide-react";
 import api from "../../api";
@@ -17,7 +17,7 @@ const Scope1History = ({ currentPage, entries, exportToCSV, facetYears, filterPr
             Recent Activity (Scope 1)
           </strong>
           <div className="flex-1!" />
-          <input
+          <Input
             type="text"
             placeholder="Search..."
             value={filterSearch}
@@ -25,7 +25,7 @@ const Scope1History = ({ currentPage, entries, exportToCSV, facetYears, filterPr
               setFilterSearch(e.target.value);
               setCurrentPage(1);
             }}
-            className="mole-input"
+           
             style={{ width: "160px", padding: "6px 10px", fontSize: "0.82rem" }}
           />
           <NativeSelect aria-label="Filter by year"

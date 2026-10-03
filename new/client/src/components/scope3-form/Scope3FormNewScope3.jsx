@@ -1,4 +1,5 @@
 import React from "react";
+import { Input } from "../../ui";
 import ColumnMappingWizard from "../ColumnMappingWizard";
 import CustomDropdown from "../CustomDropdown";
 import { NativeSelect } from "../../ui/NativeSelect";
@@ -23,9 +24,9 @@ const Scope3FormNewScope3 = ({ UNIT_MULTIPLIERS, activityType, amount, baseUnit,
             <div className="mt-[16px]! flex! gap-[16px]! items-end!">
               <div className="input-group flex-1!">
                 <label>NAICS Code (6 digits)</label>
-                <input
+                <Input
                   type="text"
-                  className="mole-input"
+                 
                   placeholder="e.g. 331110 or steel"
                   value={eeioNaics}
                   list="eeio-naics-options"
@@ -42,9 +43,9 @@ const Scope3FormNewScope3 = ({ UNIT_MULTIPLIERS, activityType, amount, baseUnit,
               </div>
               <div className="input-group flex-1!">
                 <label>Spend Amount (USD)</label>
-                <input
+                <Input
                   type="number"
-                  className="mole-input"
+                 
                   placeholder="0.00"
                   value={eeioSpend}
                   onChange={(e) => setEeioSpend(e.target.value)}
@@ -93,9 +94,9 @@ const Scope3FormNewScope3 = ({ UNIT_MULTIPLIERS, activityType, amount, baseUnit,
         >
           <div className="input-group">
             <label>Year</label>
-            <input
+            <Input
               type="number"
-              className="mole-input"
+             
               value={year || ""}
               onChange={(e) => setYear(e.target.value)}
             />
@@ -149,9 +150,9 @@ const Scope3FormNewScope3 = ({ UNIT_MULTIPLIERS, activityType, amount, baseUnit,
           </div>
           <div className="input-group">
             <label>Amount</label>
-            <input
+            <Input
               type="number"
-              className="mole-input"
+             
               value={amount || ""}
               onChange={(e) => setAmount(e.target.value)}
               placeholder="0.00"
@@ -173,9 +174,9 @@ const Scope3FormNewScope3 = ({ UNIT_MULTIPLIERS, activityType, amount, baseUnit,
                 ))}
               </NativeSelect>
             ) : (
-              <input
+              <Input
                 type="text"
-                className="mole-input"
+               
                 value={unit}
                 readOnly
                 style={{
@@ -187,9 +188,9 @@ const Scope3FormNewScope3 = ({ UNIT_MULTIPLIERS, activityType, amount, baseUnit,
           </div>
           <div className="input-group">
             <label>EF (kg CO₂e/unit)</label>
-            <input
+            <Input
               type="number"
-              className="mole-input"
+             
               value={emissionFactor || ""}
               onChange={(e) => setEmissionFactor(e.target.value)}
               step="0.01"

@@ -1,4 +1,5 @@
 import React from "react";
+import { Input } from "../../ui";
 import CustomDropdown from "../CustomDropdown";
 
 const TankForm = ({ data, onChange, sourceType }) => {
@@ -21,9 +22,9 @@ const TankForm = ({ data, onChange, sourceType }) => {
             gap: "10px",
           }}
         >
-          <input
+          <Input
             type="number"
-            className="mole-input"
+           
             value={data.amount || ""}
             onChange={(e) => onChange("amount", e.target.value)}
             placeholder="Enter throughput"
@@ -70,9 +71,9 @@ const TankForm = ({ data, onChange, sourceType }) => {
                   GOR (scf/bbl)
                   <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
                 </label>
-                <input
+                <Input
                   type="number"
-                  className="mole-input"
+                 
                   value={data.tank_gor || ""}
                   onChange={(e) => onChange("tank_gor", e.target.value)}
                   placeholder="e.g. 500"
@@ -82,9 +83,9 @@ const TankForm = ({ data, onChange, sourceType }) => {
 
               <div className="input-group">
                 <label>Oil API Gravity</label>
-                <input
+                <Input
                   type="number"
-                  className="mole-input"
+                 
                   value={data.tank_api_gravity || ""}
                   onChange={(e) => onChange("tank_api_gravity", e.target.value)}
                   placeholder="e.g. 35"
@@ -96,9 +97,9 @@ const TankForm = ({ data, onChange, sourceType }) => {
           {/* Common Engineering Inputs */}
           <div className="input-group">
             <label>Temperature (°F)</label>
-            <input
+            <Input
               type="number"
-              className="mole-input"
+             
               value={data.tank_temp || ""}
               onChange={(e) => onChange("tank_temp", e.target.value)}
               placeholder="e.g. 60"
@@ -107,9 +108,9 @@ const TankForm = ({ data, onChange, sourceType }) => {
 
           <div className="input-group">
             <label>Separator pressure (psig)</label>
-            <input
+            <Input
               type="number"
-              className="mole-input"
+             
               value={data.tank_sep_pressure || ""}
               onChange={(e) => onChange("tank_sep_pressure", e.target.value)}
               placeholder="e.g. 50"
@@ -121,9 +122,9 @@ const TankForm = ({ data, onChange, sourceType }) => {
               CH₄ (%)
               <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
             </label>
-            <input
+            <Input
               type="number"
-              className="mole-input"
+             
               value={
                 data.tank_ch4_content !== undefined &&
                 data.tank_ch4_content !== null
@@ -138,9 +139,9 @@ const TankForm = ({ data, onChange, sourceType }) => {
 
           <div className="input-group">
             <label>Control Efficiency (%)</label>
-            <input
+            <Input
               type="number"
-              className="mole-input"
+             
               value={data.tank_control_eff || ""}
               onChange={(e) => onChange("tank_control_eff", e.target.value)}
               placeholder="e.g. 95"

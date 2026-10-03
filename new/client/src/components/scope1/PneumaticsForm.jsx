@@ -1,4 +1,5 @@
 import React from "react";
+import { Input } from "../../ui";
 import CustomDropdown from "../CustomDropdown";
 
 const PneumaticsForm = ({ data, onChange, sourceType }) => {
@@ -14,9 +15,9 @@ const PneumaticsForm = ({ data, onChange, sourceType }) => {
           Devices
           <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
         </label>
-        <input
+        <Input
           type="number"
-          className="mole-input"
+         
           value={data.amount || ""}
           onChange={(e) => onChange("amount", e.target.value)}
           placeholder="Count"
@@ -39,9 +40,9 @@ const PneumaticsForm = ({ data, onChange, sourceType }) => {
                 gap: "10px",
               }}
             >
-              <input
+              <Input
                 type="number"
-                className="mole-input"
+               
                 value={data.pneu_bleed_rate || ""}
                 onChange={(e) => onChange("pneu_bleed_rate", e.target.value)}
                 placeholder="e.g. 15.4"
@@ -63,9 +64,9 @@ const PneumaticsForm = ({ data, onChange, sourceType }) => {
               CH₄ (%)
               <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
             </label>
-            <input
+            <Input
               type="number"
-              className="mole-input"
+             
               value={
                 data.pneu_ch4_content !== undefined &&
                 data.pneu_ch4_content !== null
@@ -83,9 +84,9 @@ const PneumaticsForm = ({ data, onChange, sourceType }) => {
               Hours per year
               <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
             </label>
-            <input
+            <Input
               type="number"
-              className="mole-input"
+             
               value={data.pneu_hours || ""}
               onChange={(e) => onChange("pneu_hours", e.target.value)}
               placeholder="whole month if blank"

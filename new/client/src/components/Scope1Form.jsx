@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Input } from "../ui";
 import { NativeSelect } from "../ui/NativeSelect";
 import api from "../api";
 import CustomDropdown from "./CustomDropdown";
@@ -1914,9 +1915,9 @@ const Scope1Form = () => {
             </div>
             <div className="input-group">
               <label>Year</label>
-              <input
+              <Input
                 type="number"
-                className="mole-input"
+               
                 value={year || ""}
                 onChange={(e) => setYear(e.target.value)}
               />
@@ -1953,9 +1954,9 @@ const Scope1Form = () => {
               </div>
               <div className="input-group">
                 <label>Equipment ID</label>
-                <input
+                <Input
                   type="text"
-                  className="mole-input"
+                 
                   value={equipmentId}
                   onChange={(e) => setEquipmentId(e.target.value)}
                   placeholder="e.g. T-101"
@@ -1963,9 +1964,9 @@ const Scope1Form = () => {
               </div>
               <div className="input-group">
                 <label>Group</label>
-                <input
+                <Input
                   type="text"
-                  className="mole-input"
+                 
                   value={groupName}
                   onChange={(e) => setGroupName(e.target.value)}
                   placeholder="e.g. West facility"

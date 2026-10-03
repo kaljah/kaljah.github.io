@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { Input } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
 import CustomDropdown from "../CustomDropdown";
 import { API_FACTORS } from "../../utils/EmissionFactors";
@@ -74,9 +75,9 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
                   ? "Volume treated"
                   : "Quantity"}
           </label>
-          <input
+          <Input
             type="number"
-            className="mole-input"
+           
             value={data.amount || ""}
             onChange={(e) => onChange("amount", e.target.value)}
             placeholder="0.00"
@@ -102,10 +103,10 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
                 HHV
                 <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
               </label>
-              <input
+              <Input
                 id="hhv-input"
                 type="number"
-                className="mole-input"
+               
                 value={data.hhv || ""}
                 onChange={(e) => onChange("hhv", e.target.value)}
                 placeholder={
@@ -145,10 +146,10 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
               <div
                 className="flex! gap-[8px]! items-center!"
               >
-                <input
+                <Input
                   id="combustion-efficiency-input"
                   type="number"
-                  className="mole-input"
+                 
                   min="0"
                   max="100"
                   step="0.1"
@@ -204,10 +205,10 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
                   CH₄ (%)
                   <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
                 </label>
-                <input
+                <Input
                   id="flare-ch4-input"
                   type="number"
-                  className="mole-input"
+                 
                   min="0"
                   max="100"
                   step="0.1"
@@ -227,9 +228,9 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
           >
             <div className="input-group mb-[0px]!">
               <label style={{ fontSize: "0.75rem" }}>Operating Temp (°F)</label>
-              <input
+              <Input
                 type="number"
-                className="mole-input"
+               
                 value={
                   data.operating_temperature !== undefined
                     ? data.operating_temperature
@@ -246,9 +247,9 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
               <label style={{ fontSize: "0.75rem" }}>
                 Pressure (psia)
               </label>
-              <input
+              <Input
                 type="number"
-                className="mole-input"
+               
                 value={
                   data.operating_pressure !== undefined
                     ? data.operating_pressure

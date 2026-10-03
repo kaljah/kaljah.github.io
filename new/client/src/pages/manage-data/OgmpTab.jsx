@@ -1,4 +1,5 @@
 import React from 'react';
+import { Input } from "../../ui";
 import { CircleAlert } from "lucide-react";
 import { NativeSelect } from "../../ui/NativeSelect";
 import PaginationControls from './PaginationControls';
@@ -93,7 +94,7 @@ const OgmpTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, NON_OG_ACTIVITIES, currentPa
 
                                     <div className="input-group">
                                         <label>Survey Date *</label>
-                                        <input
+                                        <Input
                                             type="date"
                                             value={ogmpForm.survey_date}
                                             onChange={(e) => {
@@ -101,7 +102,7 @@ const OgmpTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, NON_OG_ACTIVITIES, currentPa
                                                 const yr = dateVal ? new Date(dateVal).getFullYear() : ogmpForm.year;
                                                 setOgmpForm({ ...ogmpForm, survey_date: dateVal, year: yr });
                                             }}
-                                            className="mole-input"
+                                           
                                         />
                                     </div>
 
@@ -123,12 +124,12 @@ const OgmpTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, NON_OG_ACTIVITIES, currentPa
 
                                     <div className="input-group">
                                         <label>Measured Emission Rate (kg CH₄ / hr) *</label>
-                                        <input
+                                        <Input
                                             type="number"
                                             step="0.1"
                                             value={ogmpForm.measured_rate_kg_hr}
                                             onChange={(e) => setOgmpForm({ ...ogmpForm, measured_rate_kg_hr: e.target.value })}
-                                            className="mole-input"
+                                           
                                             placeholder="0.0"
                                         />
                                     </div>
@@ -149,11 +150,11 @@ const OgmpTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, NON_OG_ACTIVITIES, currentPa
 
                                     <div className="input-group" style={{ gridColumn: 'span 2' }}>
                                         <label>Operator Notes & Campaign Metadata</label>
-                                        <input
+                                        <Input
                                             type="text"
                                             value={ogmpForm.operator_notes}
                                             onChange={(e) => setOgmpForm({ ...ogmpForm, operator_notes: e.target.value })}
-                                            className="mole-input"
+                                           
                                             placeholder="Wind speed, flight altitude, pass number, observation conditions"
                                         />
                                     </div>

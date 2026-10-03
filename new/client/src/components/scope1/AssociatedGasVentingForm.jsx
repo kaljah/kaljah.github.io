@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { Input } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
 import CustomDropdown from "../CustomDropdown";
 import { Segmented } from "./ui";
@@ -238,12 +239,12 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
             <div className="form-grid-2 mb-[0px]!">
               <div className="input-group mb-[0px]!">
                 <label style={{ fontSize: "0.8rem" }}>CH₄ (mol %)</label>
-                <input
+                <Input
                   type="number"
                   min="0"
                   max="100"
                   step="0.01"
-                  className="mole-input"
+                 
                   placeholder={`Default: ${selectedBasin.ch4_mol_basis}%`}
                   value={data.ch4_content !== undefined ? data.ch4_content : ""}
                   onChange={(e) => onChange("ch4_content", e.target.value)}
@@ -251,12 +252,12 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
               </div>
               <div className="input-group mb-[0px]!">
                 <label style={{ fontSize: "0.8rem" }}>CO₂ (mol %)</label>
-                <input
+                <Input
                   type="number"
                   min="0"
                   max="100"
                   step="0.01"
-                  className="mole-input"
+                 
                   placeholder="Default: 0.0%"
                   value={data.co2_content !== undefined ? data.co2_content : ""}
                   onChange={(e) => onChange("co2_content", e.target.value)}
@@ -377,12 +378,12 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
 
             <div className="input-group">
               <label>Period (days)</label>
-              <input
+              <Input
                 type="number"
                 min="1"
                 max="366"
                 step="any"
-                className="mole-input"
+               
                 placeholder={`Default: ${monthDays}`}
                 value={data.period_duration !== undefined ? data.period_duration : String(monthDays)}
                 onChange={(e) => onChange("period_duration", e.target.value)}
@@ -394,12 +395,12 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
           <div className="form-grid-2">
             <div className="input-group">
               <label>CH₄ (mol %)</label>
-              <input
+              <Input
                 type="number"
                 min="0"
                 max="100"
                 step="0.01"
-                className="mole-input"
+               
                 placeholder="Default: 70.0%"
                 value={data.ch4_content !== undefined ? data.ch4_content : "70.0"}
                 onChange={(e) => onChange("ch4_content", e.target.value)}
@@ -408,12 +409,12 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
 
             <div className="input-group">
               <label>CO₂ (mol %)</label>
-              <input
+              <Input
                 type="number"
                 min="0"
                 max="100"
                 step="0.01"
-                className="mole-input"
+               
                 placeholder="Default: 10.0%"
                 value={data.co2_content !== undefined ? data.co2_content : "10.0"}
                 onChange={(e) => onChange("co2_content", e.target.value)}
@@ -478,11 +479,11 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
                 <label style={{ fontSize: "0.78rem" }}>
                   Recovered ({gasVolUnit})
                 </label>
-                <input
+                <Input
                   type="number"
                   min="0"
                   step="any"
-                  className="mole-input"
+                 
                   placeholder="e.g. 0"
                   value={data.recovered_gas_volume !== undefined ? data.recovered_gas_volume : ""}
                   onChange={(e) => onChange("recovered_gas_volume", e.target.value)}
@@ -493,11 +494,11 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
                 <label style={{ fontSize: "0.78rem" }}>
                   Flared ({gasVolUnit})
                 </label>
-                <input
+                <Input
                   type="number"
                   min="0"
                   step="any"
-                  className="mole-input"
+                 
                   placeholder="e.g. 0"
                   value={data.flared_gas_volume !== undefined ? data.flared_gas_volume : ""}
                   onChange={(e) => onChange("flared_gas_volume", e.target.value)}
@@ -569,11 +570,11 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
                   Venting time (h)
                   <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
                 </label>
-                <input
+                <Input
                   type="number"
                   min="0"
                   step="any"
-                  className="mole-input"
+                 
                   placeholder="e.g. 72"
                   value={data.venting_duration !== undefined ? data.venting_duration : ""}
                   onChange={(e) => onChange("venting_duration", e.target.value)}
@@ -628,12 +629,12 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
                 CH₄ (mol %)
                 <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
               </label>
-              <input
+              <Input
                 type="number"
                 min="0"
                 max="100"
                 step="0.01"
-                className="mole-input"
+               
                 placeholder="e.g. 85.0"
                 value={data.ch4_content !== undefined ? data.ch4_content : "85.0"}
                 onChange={(e) => onChange("ch4_content", e.target.value)}
@@ -643,12 +644,12 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
 
             <div className="input-group">
               <label>CO₂ (mol %)</label>
-              <input
+              <Input
                 type="number"
                 min="0"
                 max="100"
                 step="0.01"
-                className="mole-input"
+               
                 placeholder="e.g. 2.5"
                 value={data.co2_content !== undefined ? data.co2_content : "0.0"}
                 onChange={(e) => onChange("co2_content", e.target.value)}

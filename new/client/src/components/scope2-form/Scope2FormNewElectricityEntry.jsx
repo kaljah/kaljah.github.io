@@ -1,4 +1,5 @@
 import React from "react";
+import { Input } from "../../ui";
 import CustomDropdown from "../CustomDropdown";
 import { NativeSelect } from "../../ui/NativeSelect";
 
@@ -68,9 +69,9 @@ const Scope2FormNewElectricityEntry = ({ activity, allocationMethod, amount, boi
           <div className="form-grid-3">
             <div className="input-group">
               <label>Year</label>
-              <input
+              <Input
                 type="number"
-                className="mole-input"
+               
                 value={year || ""}
                 onChange={(e) => setYear(e.target.value)}
               />
@@ -129,18 +130,18 @@ const Scope2FormNewElectricityEntry = ({ activity, allocationMethod, amount, boi
               <div className="form-grid-2" style={{ gridColumn: "span 2" }}>
                 <div className="input-group">
                   <label>Boiler Efficiency (0.0 - 1.0)</label>
-                  <input
+                  <Input
                     type="number"
-                    className="mole-input"
+                   
                     value={boilerEff}
                     onChange={(e) => setBoilerEff(e.target.value)}
                   />
                 </div>
                 <div className="input-group">
                   <label>Transmission Loss (0.0 - 1.0)</label>
-                  <input
+                  <Input
                     type="number"
-                    className="mole-input"
+                   
                     value={transLoss}
                     onChange={(e) => setTransLoss(e.target.value)}
                   />
@@ -151,18 +152,18 @@ const Scope2FormNewElectricityEntry = ({ activity, allocationMethod, amount, boi
               <div className="form-grid-3" style={{ gridColumn: "span 2" }}>
                 <div className="input-group">
                   <label>Heat Output (MMBtu)</label>
-                  <input
+                  <Input
                     type="number"
-                    className="mole-input"
+                   
                     value={heatOutput}
                     onChange={(e) => setHeatOutput(e.target.value)}
                   />
                 </div>
                 <div className="input-group">
                   <label>Power Output (MWh)</label>
-                  <input
+                  <Input
                     type="number"
-                    className="mole-input"
+                   
                     value={powerOutput}
                     onChange={(e) => setPowerOutput(e.target.value)}
                   />
@@ -182,12 +183,12 @@ const Scope2FormNewElectricityEntry = ({ activity, allocationMethod, amount, boi
                   <>
                     <div className="input-group">
                       <label>Heat Efficiency (%)</label>
-                      <input type="number" className="mole-input" min="1" max="100" placeholder="80"
+                      <Input type="number" min="1" max="100" placeholder="80"
                         value={heatEff} onChange={(e) => setHeatEff(e.target.value)} />
                     </div>
                     <div className="input-group">
                       <label>Power Efficiency (%)</label>
-                      <input type="number" className="mole-input" min="1" max="100" placeholder="35"
+                      <Input type="number" min="1" max="100" placeholder="35"
                         value={powerEff} onChange={(e) => setPowerEff(e.target.value)} />
                     </div>
                   </>
@@ -207,9 +208,9 @@ const Scope2FormNewElectricityEntry = ({ activity, allocationMethod, amount, boi
                   ? "Total Facility Emissions (tCO2e)"
                   : "Usage Amount"}
               </label>
-              <input
+              <Input
                 type="number"
-                className="mole-input"
+               
                 value={amount || ""}
                 onChange={(e) => setAmount(e.target.value)}
                 placeholder="0.00"

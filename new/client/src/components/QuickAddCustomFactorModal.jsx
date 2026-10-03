@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Input } from "../ui";
 import { NativeSelect } from "../ui/NativeSelect";
 import { X, PlusCircle, CheckCircle2, AlertCircle, FileText } from "lucide-react";
 import api from "../api";
@@ -210,9 +211,9 @@ const QuickAddCustomFactorModal = ({
               >
                 Factor Name <span style={{ color: "#ef4444" }}>*</span>
               </label>
-              <input
+              <Input
                 type="text"
-                className="mole-input"
+               
                 style={{ width: "100%", padding: "8px 10px", fontSize: "0.85rem" }}
                 placeholder="e.g. Hassi R'Mel Fuel Gas 2026, Skikda Distillate"
                 value={formData.factor_name}
@@ -263,9 +264,9 @@ const QuickAddCustomFactorModal = ({
                 >
                   Parent / Reference Fuel
                 </label>
-                <input
+                <Input
                   type="text"
-                  className="mole-input"
+                 
                   style={{ width: "100%", padding: "8px 10px", fontSize: "0.85rem" }}
                   placeholder="e.g. Natural Gas, Diesel"
                   value={formData.parent_fuel}
@@ -307,10 +308,10 @@ const QuickAddCustomFactorModal = ({
                   >
                     CO₂ Factor
                   </label>
-                  <input
+                  <Input
                     type="number"
                     step="any"
-                    className="mole-input"
+                   
                     style={{ width: "100%", padding: "6px 8px", fontSize: "0.85rem" }}
                     placeholder="e.g. 53.06"
                     value={formData.co2_factor}
@@ -328,10 +329,10 @@ const QuickAddCustomFactorModal = ({
                   >
                     CH₄ Factor
                   </label>
-                  <input
+                  <Input
                     type="number"
                     step="any"
-                    className="mole-input"
+                   
                     style={{ width: "100%", padding: "6px 8px", fontSize: "0.85rem" }}
                     placeholder="e.g. 0.001"
                     value={formData.ch4_factor}
@@ -349,10 +350,10 @@ const QuickAddCustomFactorModal = ({
                   >
                     N₂O Factor
                   </label>
-                  <input
+                  <Input
                     type="number"
                     step="any"
-                    className="mole-input"
+                   
                     style={{ width: "100%", padding: "6px 8px", fontSize: "0.85rem" }}
                     placeholder="e.g. 0.0001"
                     value={formData.n2o_factor}
@@ -376,10 +377,10 @@ const QuickAddCustomFactorModal = ({
                 >
                   Heating Value (HHV)
                 </label>
-                <input
+                <Input
                   type="number"
                   step="any"
-                  className="mole-input"
+                 
                   style={{ width: "100%", padding: "8px 10px", fontSize: "0.85rem" }}
                   placeholder="e.g. 1085 (Btu/scf)"
                   value={formData.hhv_factor}
@@ -400,10 +401,10 @@ const QuickAddCustomFactorModal = ({
                   Factor Uncertainty (±%)
                 </label>
                 <div className="relative!">
-                  <input
+                  <Input
                     type="number"
                     step="0.1"
-                    className="mole-input"
+                   
                     style={{ width: "100%", padding: "8px 10px", fontSize: "0.85rem" }}
                     placeholder="7.0"
                     value={formData.uncertainty}
@@ -438,9 +439,9 @@ const QuickAddCustomFactorModal = ({
               >
                 Data Source / Lab Certificate Reference
               </label>
-              <input
+              <Input
                 type="text"
-                className="mole-input"
+               
                 style={{ width: "100%", padding: "8px 10px", fontSize: "0.85rem" }}
                 placeholder="e.g. Sonatrach Analysis Certificate #2026-GC-041, Naftal Slip"
                 value={formData.source}

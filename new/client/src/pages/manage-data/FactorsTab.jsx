@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from "../../ui";
+import { Button, Input, Textarea } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
 import { Database, Upload } from 'lucide-react';
 import PaginationControls from './PaginationControls';
@@ -24,12 +24,12 @@ const FactorsTab = ({ ITEMS_PER_PAGE, currentPage, editingFactorId, factorForm, 
                                 <div className="grid-forms">
                                     <div className="input-group">
                                         <label>Factor Name</label>
-                                        <input
+                                        <Input
                                             type="text"
                                             name="factor_name"
                                             value={factorForm.factor_name}
                                             onChange={handleFactorChange}
-                                            className="mole-input"
+                                           
                                             placeholder="e.g. Flare High Efficiency"
                                         />
                                     </div>
@@ -69,70 +69,70 @@ const FactorsTab = ({ ITEMS_PER_PAGE, currentPage, editingFactorId, factorForm, 
                                     </div>
                                     <div className="input-group">
                                         <label>CO₂ Factor (kg/unit)</label>
-                                        <input
+                                        <Input
                                             type="number"
                                             name="co2_factor"
                                             value={factorForm.co2_factor}
                                             onChange={handleFactorChange}
-                                            className="mole-input"
+                                           
                                             placeholder="0.0"
                                             step="0.001"
                                         />
                                     </div>
                                     <div className="input-group">
                                         <label>CH₄ Factor (kg/unit)</label>
-                                        <input
+                                        <Input
                                             type="number"
                                             name="ch4_factor"
                                             value={factorForm.ch4_factor}
                                             onChange={handleFactorChange}
-                                            className="mole-input"
+                                           
                                             placeholder="0.0"
                                             step="0.001"
                                         />
                                     </div>
                                     <div className="input-group">
                                         <label>N₂O Factor (kg/unit)</label>
-                                        <input
+                                        <Input
                                             type="number"
                                             name="n2o_factor"
                                             value={factorForm.n2o_factor}
                                             onChange={handleFactorChange}
-                                            className="mole-input"
+                                           
                                             placeholder="0.0"
                                             step="0.001"
                                         />
                                     </div>
                                     <div className="input-group">
                                         <label>CO₂ Uncertainty (±%)</label>
-                                        <input type="number" name="co2_uncertainty" value={factorForm.co2_uncertainty} onChange={handleFactorChange} className="mole-input" placeholder="e.g. 5.0" step="0.1" />
+                                        <Input type="number" name="co2_uncertainty" value={factorForm.co2_uncertainty} onChange={handleFactorChange} placeholder="e.g. 5.0" step="0.1" />
                                     </div>
                                     <div className="input-group">
                                         <label>CH₄ Uncertainty (±%)</label>
-                                        <input type="number" name="ch4_uncertainty" value={factorForm.ch4_uncertainty} onChange={handleFactorChange} className="mole-input" placeholder="e.g. 50.0" step="0.1" />
+                                        <Input type="number" name="ch4_uncertainty" value={factorForm.ch4_uncertainty} onChange={handleFactorChange} placeholder="e.g. 50.0" step="0.1" />
                                     </div>
                                     <div className="input-group">
                                         <label>N₂O Uncertainty (±%)</label>
-                                        <input type="number" name="n2o_uncertainty" value={factorForm.n2o_uncertainty} onChange={handleFactorChange} className="mole-input" placeholder="e.g. 150.0" step="0.1" />
+                                        <Input type="number" name="n2o_uncertainty" value={factorForm.n2o_uncertainty} onChange={handleFactorChange} placeholder="e.g. 150.0" step="0.1" />
                                     </div>
                                     <div className="input-group" style={{ gridColumn: 'span 2' }}>
                                         <label>Lab Certification / Source Reference</label>
-                                        <input
+                                        <Input
                                             type="text"
                                             name="source"
                                             value={factorForm.source || ''}
                                             onChange={handleFactorChange}
-                                            className="mole-input"
+                                           
                                             placeholder="e.g. Lab GC Report #2026-ARZ-01 / ISO 17025 / EPD Ref"
                                         />
                                     </div>
                                     <div className="input-group" style={{ gridColumn: 'span 3' }}>
                                         <label>Description & Technical Justification</label>
-                                        <textarea
+                                        <Textarea
                                             name="description"
                                             value={factorForm.description || ''}
                                             onChange={handleFactorChange}
-                                            className="mole-input"
+                                           
                                             rows="2"
                                             placeholder="Engineering justification, gas chromatography sampling conditions, or manufacturer test certificate details..."
                                             style={{ resize: 'vertical' }}
@@ -148,11 +148,11 @@ const FactorsTab = ({ ITEMS_PER_PAGE, currentPage, editingFactorId, factorForm, 
                                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '15px' }}>
                                         <div className="input-group">
                                             <label style={{ fontSize: '0.8rem' }}>Meter Precision (±%)</label>
-                                            <input type="number" step="0.1" value={workbench.meter_precision} onChange={(e) => setWorkbench({ ...workbench, meter_precision: parseFloat(e.target.value) || 0 })} className="mole-input" style={{ padding: '8px' }} />
+                                            <Input type="number" step="0.1" value={workbench.meter_precision} onChange={(e) => setWorkbench({ ...workbench, meter_precision: parseFloat(e.target.value) || 0 })} style={{ padding: '8px' }} />
                                         </div>
                                         <div className="input-group">
                                             <label style={{ fontSize: '0.8rem' }}>Lab Analysis (±%)</label>
-                                            <input type="number" step="0.1" value={workbench.lab_precision} onChange={(e) => setWorkbench({ ...workbench, lab_precision: parseFloat(e.target.value) || 0 })} className="mole-input" style={{ padding: '8px' }} />
+                                            <Input type="number" step="0.1" value={workbench.lab_precision} onChange={(e) => setWorkbench({ ...workbench, lab_precision: parseFloat(e.target.value) || 0 })} style={{ padding: '8px' }} />
                                         </div>
                                         <div className="input-group">
                                             <label style={{ fontSize: '0.8rem' }}>GWP Standard Selection</label>

@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { Input } from "../../ui";
 import CustomDropdown from "../CustomDropdown";
 import { FieldGrid, Segmented } from "./ui";
 
@@ -134,11 +135,11 @@ const RATE_UNITS = [
 const Num = ({ label, field, data, onChange, placeholder }) => (
   <div className="input-group">
     <label>{label}</label>
-    <input
+    <Input
       type="number"
       min="0"
       step="any"
-      className="mole-input"
+     
       value={data[field] ?? ""}
       onChange={(e) => onChange(field, e.target.value)}
       placeholder={placeholder}
@@ -253,11 +254,11 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default" }) => {
 
             <div className="input-group">
               <label>Production Volume</label>
-              <input
+              <Input
                 type="number"
                 min="0"
                 step="any"
-                className="mole-input"
+               
                 value={data.amount ?? ""}
                 onChange={(e) => onChange("amount", e.target.value)}
                 placeholder="e.g. 120000"

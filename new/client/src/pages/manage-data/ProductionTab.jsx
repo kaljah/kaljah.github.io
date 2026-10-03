@@ -1,4 +1,5 @@
 import React from 'react';
+import { Input } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
 import CustomDropdown from '../../components/CustomDropdown';
 import { Upload } from 'lucide-react';
@@ -91,7 +92,7 @@ const ProductionTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToC
                                     </div>
                                     <div className="input-group">
                                         <label>Year</label>
-                                        <input type="number" value={prodForm.year} onChange={(e) => setProdForm({ ...prodForm, year: e.target.value })} className="mole-input" />
+                                        <Input type="number" value={prodForm.year} onChange={(e) => setProdForm({ ...prodForm, year: e.target.value })} />
                                     </div>
                                     <div className="input-group">
                                         <label>Oil ({prodForm.oil_unit}) <button onClick={openOilConverter} style={{ fontSize: '0.65rem', padding: '2px 4px', marginLeft: '8px', cursor: 'pointer', background: 'var(--accent-color)', color: 'white', border: 'none', borderRadius: '3px' }}>Convert m³</button></label>
@@ -115,35 +116,35 @@ const ProductionTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToC
                                     </div>
                                     <div className="input-group">
                                         <label>Gross Gas (MMSm³)</label>
-                                        <input type="number" step="any" value={prodForm.gross_gas_mmsm3} onChange={(e) => setProdForm({ ...prodForm, gross_gas_mmsm3: e.target.value })} className="mole-input" placeholder="0.0" />
+                                        <Input type="number" step="any" value={prodForm.gross_gas_mmsm3} onChange={(e) => setProdForm({ ...prodForm, gross_gas_mmsm3: e.target.value })} placeholder="0.0" />
                                     </div>
                                     <div className="input-group">
                                         <label>Gas w/o Injection (MMSm³)</label>
-                                        <input type="number" step="any" value={prodForm.gas_without_injected_mmsm3} onChange={(e) => setProdForm({ ...prodForm, gas_without_injected_mmsm3: e.target.value })} className="mole-input" placeholder="0.0" />
+                                        <Input type="number" step="any" value={prodForm.gas_without_injected_mmsm3} onChange={(e) => setProdForm({ ...prodForm, gas_without_injected_mmsm3: e.target.value })} placeholder="0.0" />
                                     </div>
                                     <div className="input-group">
                                         <label>Injected Gas (MMSm³)</label>
-                                        <input type="number" step="any" value={prodForm.injected_gas_mmsm3} onChange={(e) => setProdForm({ ...prodForm, injected_gas_mmsm3: e.target.value })} className="mole-input" placeholder="0.0" />
+                                        <Input type="number" step="any" value={prodForm.injected_gas_mmsm3} onChange={(e) => setProdForm({ ...prodForm, injected_gas_mmsm3: e.target.value })} placeholder="0.0" />
                                     </div>
                                     <div className="input-group">
                                         <label>Crude Oil (MMBOE)</label>
-                                        <input type="number" step="any" value={prodForm.crude_oil_mmboe} onChange={(e) => setProdForm({ ...prodForm, crude_oil_mmboe: e.target.value })} className="mole-input" placeholder="0.0" />
+                                        <Input type="number" step="any" value={prodForm.crude_oil_mmboe} onChange={(e) => setProdForm({ ...prodForm, crude_oil_mmboe: e.target.value })} placeholder="0.0" />
                                     </div>
                                     <div className="input-group">
                                         <label>Condensate (MMBOE)</label>
-                                        <input type="number" step="any" value={prodForm.condensate_mmboe} onChange={(e) => setProdForm({ ...prodForm, condensate_mmboe: e.target.value })} className="mole-input" placeholder="0.0" />
+                                        <Input type="number" step="any" value={prodForm.condensate_mmboe} onChange={(e) => setProdForm({ ...prodForm, condensate_mmboe: e.target.value })} placeholder="0.0" />
                                     </div>
                                     <div className="input-group">
                                         <label>LPG (MMBOE)</label>
-                                        <input type="number" step="any" value={prodForm.lpg_mmboe} onChange={(e) => setProdForm({ ...prodForm, lpg_mmboe: e.target.value })} className="mole-input" placeholder="0.0" />
+                                        <Input type="number" step="any" value={prodForm.lpg_mmboe} onChange={(e) => setProdForm({ ...prodForm, lpg_mmboe: e.target.value })} placeholder="0.0" />
                                     </div>
                                     <div className="input-group">
                                         <label>Total Production (MMBOE)</label>
-                                        <input type="number" step="any" value={prodForm.total_production_mmboe} onChange={(e) => setProdForm({ ...prodForm, total_production_mmboe: e.target.value })} className="mole-input" placeholder="0.0" />
+                                        <Input type="number" step="any" value={prodForm.total_production_mmboe} onChange={(e) => setProdForm({ ...prodForm, total_production_mmboe: e.target.value })} placeholder="0.0" />
                                     </div>
                                     <div className="input-group">
                                         <label>Total Saleable (MMBOE)</label>
-                                        <input type="number" step="any" value={prodForm.saleable_production_mmboe} onChange={(e) => setProdForm({ ...prodForm, saleable_production_mmboe: e.target.value })} className="mole-input" placeholder="0.0" />
+                                        <Input type="number" step="any" value={prodForm.saleable_production_mmboe} onChange={(e) => setProdForm({ ...prodForm, saleable_production_mmboe: e.target.value })} placeholder="0.0" />
                                     </div>
                                 </div>
                                 <div className="flex! gap-[12px]! mt-[20px]!">

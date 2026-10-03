@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from "../../ui";
+import { Button, Input, Textarea } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
 import { Calendar, Check, CheckCircle, History, Plus, Target } from 'lucide-react';
 
@@ -59,24 +59,24 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                     <div className="grid-forms" style={{ gridTemplateColumns: 'repeat(3, 1fr)', background: '#fafafa', padding: '20px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
                                         <div className="input-group">
                                             <label>Target Year</label>
-                                            <input
+                                            <Input
                                                 type="number"
                                                 min="1990"
                                                 max="2100"
                                                 value={goalForm.year}
                                                 onChange={(e) => setGoalForm({ ...goalForm, year: e.target.value })}
-                                                className="mole-input"
+                                               
                                                 placeholder="e.g. 2030"
                                             />
                                         </div>
                                         <div className="input-group">
                                             <label>Target Emission Amount (tCO₂e)</label>
-                                            <input
+                                            <Input
                                                 type="number"
                                                 step="any"
                                                 value={goalForm.target_amount}
                                                 onChange={(e) => setGoalForm({ ...goalForm, target_amount: e.target.value })}
-                                                className="mole-input"
+                                               
                                                 placeholder="e.g. 150000"
                                             />
                                         </div>
@@ -191,35 +191,35 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                     <div className="grid-forms" style={{ gridTemplateColumns: 'repeat(4, 1fr)', background: '#fafafa', padding: '20px', borderRadius: '12px', border: '1px solid var(--border-color)', gap: '16px' }}>
                                         <div className="input-group">
                                             <label>Base Year</label>
-                                            <input
+                                            <Input
                                                 type="number"
                                                 min="1990"
                                                 max="2100"
                                                 value={baseYearForm.year}
                                                 onChange={(e) => setBaseYearForm({ ...baseYearForm, year: e.target.value })}
-                                                className="mole-input"
+                                               
                                                 placeholder="e.g. 2023"
                                             />
                                         </div>
                                         <div className="input-group">
                                             <label>Prev. Emissions (tCO₂e)</label>
-                                            <input
+                                            <Input
                                                 type="number"
                                                 step="any"
                                                 value={baseYearForm.previous_emissions}
                                                 onChange={(e) => setBaseYearForm({ ...baseYearForm, previous_emissions: e.target.value })}
-                                                className="mole-input"
+                                               
                                                 placeholder="Optional"
                                             />
                                         </div>
                                         <div className="input-group">
                                             <label>Adjusted Emissions (tCO₂e)</label>
-                                            <input
+                                            <Input
                                                 type="number"
                                                 step="any"
                                                 value={baseYearForm.adjusted_emissions}
                                                 onChange={(e) => setBaseYearForm({ ...baseYearForm, adjusted_emissions: e.target.value })}
-                                                className="mole-input"
+                                               
                                                 placeholder="Optional"
                                             />
                                         </div>
@@ -234,10 +234,10 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                         </div>
                                         <div className="input-group form-full" style={{ gridColumn: 'span 4' }}>
                                             <label>Reason for Change / Recalculation Justification *</label>
-                                            <textarea
+                                            <Textarea
                                                 value={baseYearForm.reason}
                                                 onChange={(e) => setBaseYearForm({ ...baseYearForm, reason: e.target.value })}
-                                                className="mole-input"
+                                               
                                                 placeholder="Detail the justification for setting or recalculating the base year (e.g. 'Structural acquisition of 2 production units', 'Methodology update to IPCC AR5 GWPs', 'Boundary adjustment')..."
                                                 style={{ minHeight: '80px' }}
                                             />
@@ -346,40 +346,40 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                     <div className="grid-forms" style={{ gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
                                         <div className="input-group">
                                             <label>Base Year</label>
-                                            <input
+                                            <Input
                                                 type="number"
                                                 value={sbtiConfig.base_year}
                                                 onChange={e => setSbtiConfig({ ...sbtiConfig, base_year: parseInt(e.target.value) || 2024 })}
-                                                className="mole-input"
+                                               
                                             />
                                         </div>
                                         <div className="input-group">
                                             <label>Base Year Verified Emissions (tCO₂e)</label>
-                                            <input
+                                            <Input
                                                 type="number"
                                                 value={sbtiConfig.base_year_emissions}
                                                 onChange={e => setSbtiConfig({ ...sbtiConfig, base_year_emissions: parseFloat(e.target.value) || 0 })}
-                                                className="mole-input"
+                                               
                                                 placeholder="Auto-calculated or manual override"
                                             />
                                         </div>
                                         <div className="input-group">
                                             <label>Target Year (Net-Zero)</label>
-                                            <input
+                                            <Input
                                                 type="number"
                                                 value={sbtiConfig.target_year}
                                                 onChange={e => setSbtiConfig({ ...sbtiConfig, target_year: parseInt(e.target.value) || 2050 })}
-                                                className="mole-input"
+                                               
                                             />
                                         </div>
                                         <div className="input-group">
                                             <label>Annual Reduction Rate (%)</label>
-                                            <input
+                                            <Input
                                                 type="number"
                                                 step="0.1"
                                                 value={sbtiConfig.reduction_rate_pct}
                                                 onChange={e => setSbtiConfig({ ...sbtiConfig, reduction_rate_pct: parseFloat(e.target.value) || 4.2 })}
-                                                className="mole-input"
+                                               
                                                 placeholder="4.2% for 1.5°C"
                                             />
                                         </div>

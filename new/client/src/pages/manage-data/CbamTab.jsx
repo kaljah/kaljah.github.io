@@ -1,4 +1,5 @@
 import React from 'react';
+import { Input } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
 import PaginationControls from './PaginationControls';
 
@@ -73,11 +74,11 @@ const CbamTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, cbamForm, currentPage, editi
 
                                     <div className="input-group">
                                         <label>Product Name *</label>
-                                        <input
+                                        <Input
                                             type="text"
                                             value={cbamForm.product_name}
                                             onChange={(e) => setCbamForm({ ...cbamForm, product_name: e.target.value })}
-                                            className="mole-input"
+                                           
                                             placeholder="e.g. Export Blend Crude Oil"
                                         />
                                     </div>
@@ -118,11 +119,11 @@ const CbamTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, cbamForm, currentPage, editi
 
                                     <div className="input-group">
                                         <label>Reporting Year</label>
-                                        <input
+                                        <Input
                                             type="number"
                                             value={cbamForm.year}
                                             onChange={(e) => setCbamForm({ ...cbamForm, year: e.target.value })}
-                                            className="mole-input"
+                                           
                                         />
                                     </div>
 
@@ -143,46 +144,46 @@ const CbamTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, cbamForm, currentPage, editi
 
                                     <div className="input-group">
                                         <label>Export Quantity (Metric Tonnes) *</label>
-                                        <input
+                                        <Input
                                             type="number"
                                             value={cbamForm.quantity_tonnes}
                                             onChange={(e) => setCbamForm({ ...cbamForm, quantity_tonnes: e.target.value })}
-                                            className="mole-input"
+                                           
                                             placeholder="0.00"
                                         />
                                     </div>
 
                                     <div className="input-group">
                                         <label>Direct Specific Embedded (tCO₂e / t)</label>
-                                        <input
+                                        <Input
                                             type="number"
                                             step="0.001"
                                             value={cbamForm.specific_embedded_direct}
                                             onChange={(e) => setCbamForm({ ...cbamForm, specific_embedded_direct: e.target.value })}
-                                            className="mole-input"
+                                           
                                             placeholder="0.000"
                                         />
                                     </div>
 
                                     <div className="input-group">
                                         <label>Indirect Specific Embedded (tCO₂e / t)</label>
-                                        <input
+                                        <Input
                                             type="number"
                                             step="0.001"
                                             value={cbamForm.specific_embedded_indirect}
                                             onChange={(e) => setCbamForm({ ...cbamForm, specific_embedded_indirect: e.target.value })}
-                                            className="mole-input"
+                                           
                                             placeholder="0.000"
                                         />
                                     </div>
 
                                     <div className="input-group">
                                         <label>Notes & Verification References</label>
-                                        <input
+                                        <Input
                                             type="text"
                                             value={cbamForm.notes}
                                             onChange={(e) => setCbamForm({ ...cbamForm, notes: e.target.value })}
-                                            className="mole-input"
+                                           
                                             placeholder="Accredited Verifier / Certificate ID"
                                         />
                                     </div>

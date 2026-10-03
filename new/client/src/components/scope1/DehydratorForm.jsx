@@ -1,4 +1,5 @@
 import React from "react";
+import { Input } from "../../ui";
 import CustomDropdown from "../CustomDropdown";
 
 const DehydratorForm = ({ data, onChange, sourceType }) => {
@@ -15,9 +16,9 @@ const DehydratorForm = ({ data, onChange, sourceType }) => {
         <>
           <div className="input-group">
             <label>Throughput (MMscf/yr)</label>
-            <input
+            <Input
               type="number"
-              className="mole-input"
+             
               value={data.dehy_throughput || ""}
               onChange={(e) => onChange("dehy_throughput", e.target.value)}
               placeholder="Annual throughput"
@@ -34,9 +35,9 @@ const DehydratorForm = ({ data, onChange, sourceType }) => {
               Throughput (MMscf/yr)
               <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
             </label>
-            <input
+            <Input
               type="number"
-              className="mole-input"
+             
               value={data.dehy_throughput || ""}
               onChange={(e) => onChange("dehy_throughput", e.target.value)}
               placeholder="Volume"
@@ -78,9 +79,9 @@ const DehydratorForm = ({ data, onChange, sourceType }) => {
               CH₄ (%)
               <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
             </label>
-            <input
+            <Input
               type="number"
-              className="mole-input"
+             
               value={
                 data.dehy_ch4_content !== undefined &&
                 data.dehy_ch4_content !== null
@@ -98,9 +99,9 @@ const DehydratorForm = ({ data, onChange, sourceType }) => {
               Hours per year
               <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
             </label>
-            <input
+            <Input
               type="number"
-              className="mole-input"
+             
               value={data.dehy_hours || ""}
               onChange={(e) => onChange("dehy_hours", e.target.value)}
               placeholder="whole month if blank"
@@ -113,9 +114,9 @@ const DehydratorForm = ({ data, onChange, sourceType }) => {
               Contactor pressure (psig)
               <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
             </label>
-            <input
+            <Input
               type="number"
-              className="mole-input"
+             
               value={data.dehy_press !== undefined ? data.dehy_press : ""}
               onChange={(e) => onChange("dehy_press", e.target.value)}
               placeholder="e.g. 1000"
@@ -128,9 +129,9 @@ const DehydratorForm = ({ data, onChange, sourceType }) => {
               Contactor temp (°F)
               <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
             </label>
-            <input
+            <Input
               type="number"
-              className="mole-input"
+             
               value={data.dehy_temp !== undefined ? data.dehy_temp : ""}
               onChange={(e) => onChange("dehy_temp", e.target.value)}
               placeholder="e.g. 100"
@@ -140,9 +141,9 @@ const DehydratorForm = ({ data, onChange, sourceType }) => {
 
           <div className="input-group">
             <label>Stripping gas (scf/h)</label>
-            <input
+            <Input
               type="number"
-              className="mole-input"
+             
               value={
                 data.dehy_stripping_rate !== undefined &&
                 data.dehy_stripping_rate !== null
@@ -172,9 +173,9 @@ const DehydratorForm = ({ data, onChange, sourceType }) => {
           {data.dehy_control !== "none" && (
             <div className="input-group">
               <label>Control Efficiency (%)</label>
-              <input
+              <Input
                 type="number"
-                className="mole-input"
+               
                 value={data.dehy_eff || ""}
                 onChange={(e) => onChange("dehy_eff", e.target.value)}
                 placeholder="e.g. 60 (flash) or 90 (condenser)"

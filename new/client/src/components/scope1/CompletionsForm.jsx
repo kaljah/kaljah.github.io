@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { Input } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
 import CustomDropdown from "../CustomDropdown";
 
@@ -222,11 +223,11 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                 Completions
                 <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
               </label>
-              <input
+              <Input
                 type="number"
                 min="1"
                 step="1"
-                className="mole-input"
+               
                 value={data.amount || data.events || "1"}
                 onChange={(e) => {
                   onChange("amount", e.target.value);
@@ -241,12 +242,12 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
               <label>
                 CH₄ (%)
               </label>
-              <input
+              <Input
                 type="number"
                 min="0"
                 max="100"
                 step="0.1"
-                className="mole-input"
+               
                 value={data.ch4_content !== undefined && data.ch4_content !== null ? data.ch4_content : ""}
                 onChange={(e) => onChange("ch4_content", e.target.value)}
                 placeholder="78.8"
@@ -257,12 +258,12 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
               <label>
                 CO₂ (%)
               </label>
-              <input
+              <Input
                 type="number"
                 min="0"
                 max="100"
                 step="0.01"
-                className="mole-input"
+               
                 value={data.co2_content !== undefined && data.co2_content !== null ? data.co2_content : ""}
                 onChange={(e) => onChange("co2_content", e.target.value)}
                 placeholder="0.44"
@@ -311,11 +312,11 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                   Flowback rate
                   <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
                 </label>
-                <input
+                <Input
                   type="number"
                   min="0"
                   step="any"
-                  className="mole-input"
+                 
                   value={data.comp_rate || ""}
                   onChange={(e) => onChange("comp_rate", e.target.value)}
                   placeholder="e.g. 50"
@@ -347,11 +348,11 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                   Duration (h)
                   <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
                 </label>
-                <input
+                <Input
                   type="number"
                   min="0"
                   step="0.5"
-                  className="mole-input"
+                 
                   value={data.comp_duration || ""}
                   onChange={(e) => onChange("comp_duration", e.target.value)}
                   placeholder="e.g. 24"
@@ -369,11 +370,11 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                   Total Liquid Flowback (bbl)
                   <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
                 </label>
-                <input
+                <Input
                   type="number"
                   min="0"
                   step="any"
-                  className="mole-input"
+                 
                   value={data.comp_liquid_bbl || ""}
                   onChange={(e) => onChange("comp_liquid_bbl", e.target.value)}
                   placeholder="e.g. 5000"
@@ -386,11 +387,11 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                   Flowback GOR (scf/bbl)
                   <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
                 </label>
-                <input
+                <Input
                   type="number"
                   min="0"
                   step="any"
-                  className="mole-input"
+                 
                   value={data.comp_gor || ""}
                   onChange={(e) => onChange("comp_gor", e.target.value)}
                   placeholder="e.g. 1500"
@@ -402,11 +403,11 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                 <label>
                   Gas Produced to Sales (Mcf)
                 </label>
-                <input
+                <Input
                   type="number"
                   min="0"
                   step="any"
-                  className="mole-input"
+                 
                   value={data.comp_gas_produced_mcf || ""}
                   onChange={(e) => onChange("comp_gas_produced_mcf", e.target.value)}
                   placeholder="0"
@@ -423,11 +424,11 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                   Production / Well Test Rate (V_Pi)
                   <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
                 </label>
-                <input
+                <Input
                   type="number"
                   min="0"
                   step="any"
-                  className="mole-input"
+                 
                   value={data.comp_daily_prod_rate || data.comp_rate || ""}
                   onChange={(e) => {
                     onChange("comp_daily_prod_rate", e.target.value);
@@ -460,11 +461,11 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                   Vent Duration Before Separation (hrs)
                   <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
                 </label>
-                <input
+                <Input
                   type="number"
                   min="0"
                   step="0.5"
-                  className="mole-input"
+                 
                   value={data.comp_duration || data.vent_duration_hours || ""}
                   onChange={(e) => {
                     onChange("comp_duration", e.target.value);
@@ -484,12 +485,12 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                 CH₄ (%)
                 <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
               </label>
-              <input
+              <Input
                 type="number"
                 min="0"
                 max="100"
                 step="0.1"
-                className="mole-input"
+               
                 value={data.ch4_content !== undefined && data.ch4_content !== null ? data.ch4_content : ""}
                 onChange={(e) => onChange("ch4_content", e.target.value)}
                 placeholder="e.g. 85"
@@ -499,12 +500,12 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
 
             <div className="input-group">
               <label>CO₂ (%)</label>
-              <input
+              <Input
                 type="number"
                 min="0"
                 max="100"
                 step="0.1"
-                className="mole-input"
+               
                 value={data.co2_content || ""}
                 onChange={(e) => onChange("co2_content", e.target.value)}
                 placeholder="e.g. 1.5"
@@ -531,12 +532,12 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
               <label>
                 Flare efficiency (%)
               </label>
-              <input
+              <Input
                 type="number"
                 min="0"
                 max="100"
                 step="0.1"
-                className="mole-input"
+               
                 value={data.comp_flare_eff || "98"}
                 onChange={(e) => onChange("comp_flare_eff", e.target.value)}
                 placeholder="98"
@@ -560,11 +561,11 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                 Metered volume
                 <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
               </label>
-              <input
+              <Input
                 type="number"
                 min="0"
                 step="any"
-                className="mole-input"
+               
                 value={data.comp_volume || data.flowback_volume || data.amount || ""}
                 onChange={(e) => {
                   onChange("comp_volume", e.target.value);
@@ -605,11 +606,11 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                   ⓘ
                 </span>
               </label>
-              <input
+              <Input
                 type="number"
                 min="0"
                 step="any"
-                className="mole-input"
+               
                 value={data.comp_injected_n2 || ""}
                 onChange={(e) => onChange("comp_injected_n2", e.target.value)}
                 placeholder="0"
@@ -650,11 +651,11 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                 <label>
                   Unmetered time (h)
                 </label>
-                <input
+                <Input
                   type="number"
                   min="0"
                   step="0.5"
-                  className="mole-input"
+                 
                   value={data.comp_initial_flowback_hours || ""}
                   onChange={(e) => onChange("comp_initial_flowback_hours", e.target.value)}
                   placeholder="e.g. 4"
@@ -665,11 +666,11 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                 <label>
                   Metered time (h)
                 </label>
-                <input
+                <Input
                   type="number"
                   min="0"
                   step="0.5"
-                  className="mole-input"
+                 
                   value={data.comp_duration || ""}
                   onChange={(e) => onChange("comp_duration", e.target.value)}
                   placeholder="e.g. 24"
@@ -685,12 +686,12 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                 CH₄ (%)
                 <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
               </label>
-              <input
+              <Input
                 type="number"
                 min="0"
                 max="100"
                 step="0.1"
-                className="mole-input"
+               
                 value={data.ch4_content !== undefined && data.ch4_content !== null ? data.ch4_content : ""}
                 onChange={(e) => onChange("ch4_content", e.target.value)}
                 placeholder="e.g. 85.5"
@@ -700,12 +701,12 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
 
             <div className="input-group">
               <label>CO₂ (%)</label>
-              <input
+              <Input
                 type="number"
                 min="0"
                 max="100"
                 step="0.1"
-                className="mole-input"
+               
                 value={data.co2_content || ""}
                 onChange={(e) => onChange("co2_content", e.target.value)}
                 placeholder="e.g. 1.2"
@@ -714,12 +715,12 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
 
             <div className="input-group">
               <label>C₂+ (%)</label>
-              <input
+              <Input
                 type="number"
                 min="0"
                 max="100"
                 step="0.1"
-                className="mole-input"
+               
                 value={data.comp_c2plus_content || ""}
                 onChange={(e) => onChange("comp_c2plus_content", e.target.value)}
                 placeholder="e.g. 5"
@@ -784,12 +785,12 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
               <div className="form-grid-3">
                 <div className="input-group">
                   <label>Vented (%)</label>
-                  <input
+                  <Input
                     type="number"
                     min="0"
                     max="100"
                     step="1"
-                    className="mole-input"
+                   
                     value={data.comp_frac_vented || ""}
                     onChange={(e) => {
                       onChange("comp_frac_vented", e.target.value);
@@ -801,12 +802,12 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
 
                 <div className="input-group">
                   <label>Flared (%)</label>
-                  <input
+                  <Input
                     type="number"
                     min="0"
                     max="100"
                     step="1"
-                    className="mole-input"
+                   
                     value={data.comp_frac_flared || ""}
                     onChange={(e) => {
                       onChange("comp_frac_flared", e.target.value);
@@ -818,12 +819,12 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
 
                 <div className="input-group">
                   <label>Recovered / REC (%)</label>
-                  <input
+                  <Input
                     type="number"
                     min="0"
                     max="100"
                     step="1"
-                    className="mole-input"
+                   
                     value={data.comp_frac_recovered || ""}
                     onChange={(e) => {
                       onChange("comp_frac_recovered", e.target.value);
@@ -842,12 +843,12 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                 <label>
                   Flare efficiency (%)
                 </label>
-                <input
+                <Input
                   type="number"
                   min="0"
                   max="100"
                   step="0.1"
-                  className="mole-input"
+                 
                   value={data.comp_flare_eff || "98"}
                   onChange={(e) => onChange("comp_flare_eff", e.target.value)}
                   placeholder="98"

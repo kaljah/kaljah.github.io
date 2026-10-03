@@ -2,6 +2,7 @@
 // (Section 6), measured / engineered gas volumes, and combustion / waste-gas methods
 // (Sections 4 and 5). The server routes on activity_key, vent_method and combustion_method.
 import React, { useEffect, useState } from "react";
+import { Input } from "../../ui";
 import api from "../../api";
 import CustomDropdown from "../CustomDropdown";
 import { FieldGrid, MoreOptions, Segmented } from "./ui";
@@ -14,11 +15,11 @@ const Num = ({ label, field, data, onChange, placeholder, required }) => (
       {label}
       {required && <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>}
     </label>
-    <input
+    <Input
       type="number"
       min="0"
       step="any"
-      className="mole-input"
+     
       value={data[field] ?? ""}
       onChange={(e) => onChange(field, e.target.value)}
       placeholder={placeholder}
@@ -34,11 +35,11 @@ const NumUnit = ({ label, field, unitField, units, data, onChange, placeholder, 
       {required && <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>}
     </label>
     <div style={{ display: "grid", gridTemplateColumns: "1fr 110px", gap: "8px" }}>
-      <input
+      <Input
         type="number"
         min="0"
         step="any"
-        className="mole-input"
+       
         value={data[field] ?? ""}
         onChange={(e) => {
           onChange(field, e.target.value);

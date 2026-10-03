@@ -1,4 +1,5 @@
 import React from 'react';
+import { Input } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
 import { BOUNDARY_OPTIONS } from '../../constants';
 import { Upload } from 'lucide-react';
@@ -17,7 +18,7 @@ const FacilitiesTab = ({ ACTIVITY_LABELS, HIERARCHY, ITEMS_PER_PAGE, currentPage
                                         <div className="grid-forms" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
                                             <div className="input-group">
                                                 <label>Region Name</label>
-                                                <input type="text" name="name" value={facilityForm.name} onChange={handleFacilityChange} className="mole-input" placeholder="e.g. Hassi R'Mel" />
+                                                <Input type="text" name="name" value={facilityForm.name} onChange={handleFacilityChange} placeholder="e.g. Hassi R'Mel" />
                                             </div>
                                             <div className="input-group">
                                                 <label>Activity</label>
@@ -35,11 +36,11 @@ const FacilitiesTab = ({ ACTIVITY_LABELS, HIERARCHY, ITEMS_PER_PAGE, currentPage
                                             </div>
                                             <div className="input-group">
                                                 <label>Field / Block</label>
-                                                <input type="text" name="field" value={facilityForm.field} onChange={handleFacilityChange} className="mole-input" placeholder="Optional" />
+                                                <Input type="text" name="field" value={facilityForm.field} onChange={handleFacilityChange} placeholder="Optional" />
                                             </div>
                                             <div className="input-group">
                                                 <label>Location (Wilaya)</label>
-                                                <input type="text" name="location" value={facilityForm.location} onChange={handleFacilityChange} className="mole-input" placeholder="e.g. Laghouat" />
+                                                <Input type="text" name="location" value={facilityForm.location} onChange={handleFacilityChange} placeholder="e.g. Laghouat" />
                                             </div>
                                             <div className="input-group">
                                                 <label>Consolidation Approach</label>
@@ -73,7 +74,7 @@ const FacilitiesTab = ({ ACTIVITY_LABELS, HIERARCHY, ITEMS_PER_PAGE, currentPage
                                             {facilityForm.boundary_type === 'Equity Share' && (
                                                 <div className="input-group">
                                                     <label>Equity Share Percentage (%)</label>
-                                                    <input
+                                                    <Input
                                                         type="number"
                                                         step="0.01"
                                                         min="0"
@@ -81,7 +82,7 @@ const FacilitiesTab = ({ ACTIVITY_LABELS, HIERARCHY, ITEMS_PER_PAGE, currentPage
                                                         name="equity_share_pct"
                                                         value={facilityForm.equity_share_pct !== undefined ? facilityForm.equity_share_pct : ''}
                                                         onChange={(e) => setFacilityForm({ ...facilityForm, equity_share_pct: e.target.value })}
-                                                        className="mole-input"
+                                                       
                                                         placeholder="e.g. 51.00"
                                                     />
                                                 </div>
@@ -100,11 +101,11 @@ const FacilitiesTab = ({ ACTIVITY_LABELS, HIERARCHY, ITEMS_PER_PAGE, currentPage
                                             </div>
                                             <div className="input-group">
                                                 <label>Latitude</label>
-                                                <input type="number" step="any" name="latitude" value={facilityForm.latitude} onChange={handleFacilityChange} className="mole-input" placeholder="e.g. 33.8" />
+                                                <Input type="number" step="any" name="latitude" value={facilityForm.latitude} onChange={handleFacilityChange} placeholder="e.g. 33.8" />
                                             </div>
                                             <div className="input-group">
                                                 <label>Longitude</label>
-                                                <input type="number" step="any" name="longitude" value={facilityForm.longitude} onChange={handleFacilityChange} className="mole-input" placeholder="e.g. 6.07" />
+                                                <Input type="number" step="any" name="longitude" value={facilityForm.longitude} onChange={handleFacilityChange} placeholder="e.g. 6.07" />
                                             </div>
                                         </div>
 

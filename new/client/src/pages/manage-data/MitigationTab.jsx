@@ -1,4 +1,5 @@
 import React from 'react';
+import { Input } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
 import CustomDropdown from '../../components/CustomDropdown';
 import { Upload } from 'lucide-react';
@@ -80,12 +81,12 @@ const MitigationTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, facilitie
 
                                     <div className="input-group">
                                         <label>Project Name</label>
-                                        <input type="text" value={mitigationForm.name} onChange={(e) => setMitigationForm({ ...mitigationForm, name: e.target.value })} className="mole-input" placeholder="e.g. Flare Reduction Unit 1" />
+                                        <Input type="text" value={mitigationForm.name} onChange={(e) => setMitigationForm({ ...mitigationForm, name: e.target.value })} placeholder="e.g. Flare Reduction Unit 1" />
                                     </div>
 
                                     <div className="input-group">
                                         <label>Year</label>
-                                        <input type="number" value={mitigationForm.year} onChange={(e) => setMitigationForm({ ...mitigationForm, year: e.target.value })} className="mole-input" />
+                                        <Input type="number" value={mitigationForm.year} onChange={(e) => setMitigationForm({ ...mitigationForm, year: e.target.value })} />
                                     </div>
                                     <div className="input-group">
                                         <label>Type</label>
@@ -99,7 +100,7 @@ const MitigationTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, facilitie
                                     </div>
                                     <div className="input-group">
                                         <label>Quantity (tCO₂e)</label>
-                                        <input type="number" value={mitigationForm.quantity_tco2e} onChange={(e) => setMitigationForm({ ...mitigationForm, quantity_tco2e: e.target.value })} className="mole-input" placeholder="0.0" />
+                                        <Input type="number" value={mitigationForm.quantity_tco2e} onChange={(e) => setMitigationForm({ ...mitigationForm, quantity_tco2e: e.target.value })} placeholder="0.0" />
                                     </div>
                                     <div className="input-group">
                                         <label>Status</label>

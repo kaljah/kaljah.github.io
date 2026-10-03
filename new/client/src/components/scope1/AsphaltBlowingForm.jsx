@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { Input } from "../../ui";
 import CustomDropdown from "../CustomDropdown";
 
 const AsphaltBlowingForm = ({ data, onChange }) => {
@@ -37,9 +38,9 @@ const AsphaltBlowingForm = ({ data, onChange }) => {
               gap: "10px",
             }}
           >
-            <input
+            <Input
               type="number"
-              className="mole-input"
+             
               value={data.amount || ""}
               onChange={(e) => onChange("amount", e.target.value)}
               placeholder="0.00"

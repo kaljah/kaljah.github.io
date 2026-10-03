@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { Input } from "../../ui";
 import CustomDropdown from "../CustomDropdown";
 
 const NITRIC_ACID_OPTIONS = [
@@ -43,9 +44,9 @@ const NitricAcidForm = ({ data, onChange }) => {
               gap: "10px",
             }}
           >
-            <input
+            <Input
               type="number"
-              className="mole-input"
+             
               value={data.amount || ""}
               onChange={(e) => onChange("amount", e.target.value)}
               placeholder="0.00"

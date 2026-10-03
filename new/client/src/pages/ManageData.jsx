@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Button } from "../ui";
+import { Button, Input } from "../ui";
 import { NativeSelect } from "../ui/NativeSelect";
 import { showReviewResult } from '../utils/reviewResult';
 import { useLocation } from 'react-router-dom';
@@ -1454,12 +1454,12 @@ const ManageDataInner = () => {
                         <div className="mb-[24px]! flex! gap-[12px]! flex-wrap! items-center!">
                             <div className="relative! flex-1! min-w-[250px]!">
                                 <Search className="search-icon" size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' }} />
-                                <input
+                                <Input
                                     type="text"
                                     placeholder={activeTab === 'goals' ? "Search goals or base years..." : `Search ${activeTab}...`}
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="mole-input"
+                                   
                                     style={{ paddingLeft: '40px', background: 'white', width: '100%' }}
                                 />
                             </div>
@@ -1725,14 +1725,14 @@ const ManageDataInner = () => {
                     <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.88rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
                         Enter volume in cubic meters (m³):
                     </label>
-                    <input
+                    <Input
                         type="number"
                         step="any"
                         autoFocus
                         placeholder="e.g. 1000"
                         value={convertModal.value}
                         onChange={(e) => setConvertModal(prev => ({ ...prev, value: e.target.value }))}
-                        className="mole-input"
+                       
                         style={{ width: '100%', marginBottom: '12px', padding: '10px' }}
                     />
                     <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '20px' }}>

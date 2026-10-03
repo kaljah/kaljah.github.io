@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { Button } from "../ui";
+import { Button, Textarea } from "../ui";
 import { NativeSelect } from "../ui/NativeSelect";
 import { showReviewResult } from "../utils/reviewResult";
 import { createPortal } from 'react-dom';
@@ -943,8 +943,8 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
               <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>
                 Custom Justification / Details
               </label>
-              <textarea
-                className="mole-input"
+              <Textarea
+               
                 rows={3}
                 placeholder="Describe reason for refusal..."
                 value={rejectionModal.reason}
