@@ -2,6 +2,7 @@
 // Usage: node scripts/ui-metrics.mjs [--check] [--write]
 import { readFileSync, readdirSync, statSync, writeFileSync, existsSync } from "node:fs";
 import { join, extname } from "node:path";
+import postcss from "postcss";
 
 const SRC = new URL("../src", import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, "$1");
 const BASELINE = new URL("../ui-metrics.baseline.json", import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, "$1");
@@ -21,11 +22,25 @@ const code = files.filter((f) => [".jsx", ".js"].includes(extname(f)));
 const read = (f) => readFileSync(f, "utf8");
 const count = (files_, re) => files_.reduce((n, f) => n + (read(f).match(re) || []).length, 0);
 
+// !important is allowed in base.css and inside print / reduced-motion media blocks (plan section 2.2); count the rest.
+function importantOutsideAllowed() {
+  let n = 0;
+  for (const f of css.filter((x) => !/[\/]styles[\/]base\.css$/.test(x))) {
+    postcss.parse(read(f)).walkDecls((d) => {
+      if (!d.important) return;
+      let at = d.parent;
+      while (at && at.type !== "atrule") at = at.parent;
+      if (!(at && at.name === "media" && /print|reduced-motion/.test(at.params))) n++;
+    });
+  }
+  return n;
+}
+
 const metrics = {
   inlineStyleObjects: count(code.filter((f) => f.endsWith(".jsx")), /style=\{\{/g),
   hexColorsInCss: count(css, /#[0-9a-fA-F]{3,8}\b/g),
   hexColorsInJs: count(code, /["'`]#[0-9a-fA-F]{3,8}\b/g),
-  importantDeclarations: count(css, /!important/g),
+  importantDeclarations: importantOutsideAllowed(),
   inlineSvgs: count(code.filter((f) => f.endsWith(".jsx")), /<svg\b/g),
   nativeSelects: count(code.filter((f) => f.endsWith(".jsx")), /<select\b/g),
   clickableDivsWithoutRole: code
