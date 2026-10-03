@@ -138,6 +138,19 @@
   line-height: 1;
 }
 
+.s1-badge {
+  background: rgba(255, 102, 0, 0.12);
+  color: var(--color-brand-700);
+}
+.s2-badge {
+  background: rgba(59, 130, 246, 0.12);
+  color: var(--color-blue-600);
+}
+.s3-badge {
+  background: rgba(139, 92, 246, 0.12);
+  color: #7c3aed;
+}
+
 .scope-icon-ring {
   width: 56px;
   height: 56px;
@@ -151,6 +164,19 @@
 
 .scope-card:hover .scope-icon-ring {
   transform: scale(1.1) rotate(-4deg);
+}
+
+.s1-ring {
+  background: rgba(255, 102, 0, 0.12);
+  color: var(--color-link);
+}
+.s2-ring {
+  background: rgba(59, 130, 246, 0.12);
+  color: var(--color-blue-700);
+}
+.s3-ring {
+  background: rgba(139, 92, 246, 0.12);
+  color: var(--color-violet-700);
 }
 
 /* BODY */
@@ -176,6 +202,19 @@
   border-radius: var(--radius-lg);
   margin-bottom: 8px;
   line-height: 1;
+}
+
+.s1-tag {
+  background: rgba(255, 102, 0, 0.1);
+  color: var(--color-brand-700);
+}
+.s2-tag {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--color-blue-600);
+}
+.s3-tag {
+  background: rgba(139, 92, 246, 0.1);
+  color: #7c3aed;
 }
 
 .scope-card-title {
@@ -238,6 +277,25 @@
     color 0.22s,
     transform 0.22s;
   align-self: flex-end;
+}
+
+.scope-1-card:hover .s1-arrow {
+  background: var(--color-brand-500);
+  border-color: var(--color-brand-500);
+  color: var(--color-white);
+  transform: translateY(-2px);
+}
+.scope-2-card:hover .s2-arrow {
+  background: var(--color-blue-700);
+  border-color: var(--color-blue-500);
+  color: var(--color-white);
+  transform: translateY(-2px);
+}
+.scope-3-card:hover .s3-arrow {
+  background: var(--color-violet-700);
+  border-color: var(--color-violet-500);
+  color: var(--color-white);
+  transform: translateY(-2px);
 }
 
 /* legacy compat */
@@ -523,3 +581,8 @@
 
 
 /* Scope switcher (moved out of the old second header bar; breadcrumbs now come from the app shell) */
+.scope-switcher-bar {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px 24px 0;
+}

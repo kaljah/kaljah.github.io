@@ -5,6 +5,20 @@
   color: var(--text-primary, var(--color-ink-900));
 }
 
+.search-bar-container {
+  background: var(--bg-card, rgba(255, 255, 255, 0.78));
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  padding: 20px 24px;
+  border-radius: var(--radius-lg);
+  margin-bottom: 28px;
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--border-color, rgba(226, 232, 240, 0.8));
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
 .search-input-wrapper {
   position: relative;
   flex: 1;
@@ -86,6 +100,20 @@
   gap: 12px;
 }
 
+.count-badge {
+  background: var(--color-primary);
+  color: white;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: var(--text-sm);
+  font-weight: 700;
+}
+
+.factors-table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
 .factors-table {
   width: 100%;
   border-collapse: collapse;
@@ -154,4 +182,11 @@
 .usage-tank {
   background: #f3e8ff;
   color: #6b21a8;
+}
+
+.custom-star {
+  color: var(--color-amber-700);
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 4px;
 }
