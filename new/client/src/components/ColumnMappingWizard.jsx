@@ -1,511 +1,116 @@
-import ColumnMappingWizardCalculationTier from "./column-mapping/ColumnMappingWizardCalculationTier";
-import { Activity as ActivityIcon, ArrowLeft as ArrowLeftIcon, Check as CheckIcon, ChevronRight as ChevronRightIcon, CloudUpload as CloudUploadIcon, Columns3 as Columns3Icon, FileSpreadsheet as FileSpreadsheetIcon, FileText as FileTextIcon, TriangleAlert as TriangleAlertIcon, Wand2 as Wand2Icon, X as XIcon } from "lucide-react";
-import ColumnMappingWizardCmwBody from "./column-mapping/ColumnMappingWizardCmwBody";
-import React, { useState, useRef, useCallback } from "react";
-import { NativeSelect } from "../ui/NativeSelect";
-import { activateOnKey } from "../utils/a11yKeys";
-import Papa from "papaparse";
+import React, { useCallback, useMemo, useState } from "react";
+import { Download, File as FileIcon, FileSpreadsheet, Settings } from "lucide-react";
+import { Button, Field, NativeSelect, RadioCardGroup } from "../ui";
 import api from "../api";
-import { autoDetectMapping, missingRequiredFields } from "../utils/importMapping";
-import { useToast } from "./Toast";
-import UploadProgress from "./UploadProgress";
-import "./ColumnMappingWizard.css";
 import { PROCESS_TYPES } from "../utils/EmissionFactors";
+import { useToast } from "./Toast";
+import ImportWizard from "./import-wizard/ImportWizard";
+import { controlClass } from "./import-wizard/mapping";
+import { TEMPLATES } from "./column-mapping/templates";
 
-// ─── System field definitions ─────────────────────────────────────────────────
-const TEMPLATES = {
-  sources: [
-    {
-      id: "activity",
-      label: "Activity",
-      required: false,
-      hint: "e.g. Exploration & Production",
-    },
-    {
-      id: "division",
-      label: "Division",
-      required: false,
-      hint: "e.g. Production, Association",
-    },
-    {
-      id: "facility_id",
-      label: "Region",
-      required: true,
-      hint: "e.g. Hassi Messaoud",
-    },
-    { id: "field", label: "Field", required: false },
-    { id: "name", label: "Equipment Name", required: true },
-    { id: "equipment_id", label: "Equipment ID", required: false },
-    {
-      id: "type",
-      label: "Process Type",
-      required: false,
-      hint: "e.g. combustion, flaring",
-    },
-    {
-      id: "fuel_type",
-      label: "Fuel Type",
-      required: false,
-      hint: "e.g. Natural Gas",
-    },
-    { id: "design_capacity", label: "Design Capacity", required: false },
-    { id: "installation_date", label: "Installation Date", required: false, hint: "YYYY-MM-DD" },
-    { id: "status", label: "Status", required: false, hint: "Active / Inactive" },
-  ],
-  activity: [
-    { id: "activity", label: "Activity", required: false },
-    { id: "division", label: "Division", required: false },
-    { id: "facility_id", label: "Region", required: true },
-    { id: "facility_name", label: "Region / Facility", required: false },
-    { id: "field", label: "Field", required: false },
-    { id: "group", label: "Emission Source (Group)", required: false },
-    { id: "equipment", label: "Equipment Name", required: false },
-    { id: "equipment_id", label: "Equipment ID", required: false },
-    { id: "year", label: "Year", required: false },
-    { id: "month", label: "Month", required: false },
-    { id: "date", label: "Date", required: true },
-    { id: "process", label: "Process Type", required: true },
-    { id: "process_type", label: "Process Type (legacy)", required: false },
-    { id: "fuel", label: "Activity / Fuel", required: false, hint: "Emission factor name (default and custom rows)" },
-    { id: "fuel_type", label: "Fuel Type (legacy)", required: false },
-    { id: "quantity", label: "Quantity", required: true },
-    { id: "amount", label: "Amount", required: false },
-    { id: "unit", label: "Unit", required: true },
-    { id: "factor_type", label: "Factor Type", required: false },
-    { id: "hhv", label: "HHV", required: false },
-    { id: "ef_unit", label: "EF Unit", required: false },
-    { id: "combustion_efficiency", label: "Combustion Eff", required: false },
-    { id: "flare_type", label: "Flare Type", required: false },
-    { id: "ch4_content", label: "CH4 Content %", required: false },
-    { id: "co2_content", label: "CO2 Content %", required: false },
-    { id: "control_efficiency", label: "Control Eff", required: false },
-    { id: "operating_temperature", label: "Op Temp", required: false },
-    { id: "temp_unit", label: "Temp Unit", required: false },
-    { id: "operating_pressure", label: "Op Press", required: false },
-    { id: "press_unit", label: "Press Unit", required: false },
-    { id: "z_factor", label: "Z Factor", required: false },
-    { id: "c1", label: "C1", required: false },
-    { id: "c2", label: "C2", required: false },
-    { id: "c3", label: "C3", required: false },
-    { id: "c4", label: "C4", required: false },
-    { id: "c5", label: "C5", required: false },
-    { id: "c6", label: "C6", required: false },
-    { id: "c7", label: "C7", required: false },
-    { id: "c8", label: "C8", required: false },
-    { id: "c9", label: "C9", required: false },
-    { id: "c10", label: "C10+", required: false },
-    { id: "co2_mol", label: "CO2 Mol %", required: false },
-    { id: "n2_mol", label: "N2 Mol %", required: false },
-    { id: "mud_type", label: "Mud Type", required: false },
-    { id: "mud_unit", label: "Mud Unit", required: false },
-    { id: "comp_method", label: "Comp Method", required: false },
-    { id: "comp_rate", label: "Comp Rate", required: false },
-    { id: "comp_duration", label: "Comp Duration", required: false },
-    { id: "comp_flare_eff", label: "Comp Flare Eff", required: false },
-    { id: "unload_depth", label: "Unload Depth", required: false },
-    { id: "unload_diam", label: "Unload Diam", required: false },
-    { id: "unload_press", label: "Unload Press", required: false },
-    { id: "unload_freq", label: "Unload Freq", required: false },
-    { id: "unload_flare_eff", label: "Unload Flare Eff", required: false },
-    { id: "unload_temp", label: "Unload Temp", required: false },
-    { id: "blowdown_pressure", label: "BD Press", required: false },
-    { id: "blowdown_events", label: "BD Events", required: false },
-    { id: "blowdown_temp", label: "BD Temp", required: false },
-    { id: "blowdown_temp_unit", label: "BD Temp Unit", required: false },
-    { id: "blowdown_press_unit", label: "BD Press Unit", required: false },
-    { id: "tank_gor", label: "Tank GOR", required: false },
-    { id: "tank_control_eff", label: "Tank Control Eff", required: false },
-    { id: "tank_unit", label: "Tank Unit", required: false },
-    { id: "tank_api_gravity", label: "Tank API Gravity", required: false },
-    { id: "tank_throughput", label: "Tank Throughput", required: false },
-    { id: "tank_throughput_unit", label: "Tank Thr Unit", required: false },
-    { id: "tank_turnovers", label: "Tank Turnovers", required: false },
-    { id: "pneu_type", label: "Pneu Type", required: false },
-    { id: "pneu_count", label: "Pneu Count", required: false },
-    { id: "pneu_bleed_rate", label: "Pneu Bleed Rate", required: false },
-    { id: "pneu_hours", label: "Pneu Hours", required: false },
-    { id: "pump_type", label: "Pump Type", required: false },
-    { id: "pump_count", label: "Pump Count", required: false },
-    { id: "pump_gas_rate", label: "Pump Gas Rate", required: false },
-    { id: "pump_hours", label: "Pump Hours", required: false },
-    { id: "comp_mode", label: "Comp Mode", required: false },
-    { id: "comp_hours", label: "Comp Hours", required: false },
-    { id: "comp_count", label: "Comp Count", required: false },
-    { id: "operating_hours", label: "Op Hours", required: false },
-    { id: "leak_count", label: "Leak Count", required: false },
-    { id: "leak_duration", label: "Leak Duration", required: false },
-    { id: "leak_rate", label: "Leak Rate", required: false },
-    { id: "agr_throughput", label: "AGR Throughput", required: false },
-    { id: "agr_co2_in", label: "AGR CO2 In", required: false },
-    { id: "agr_co2_out", label: "AGR CO2 Out", required: false },
-    { id: "agr_unit", label: "AGR Unit", required: false },
-    { id: "agr_ch4_in", label: "AGR CH4 In", required: false },
-    { id: "agr_ch4_slip", label: "AGR CH4 Slip", required: false },
-    { id: "agr_control_eff", label: "AGR Control Eff", required: false },
-    { id: "dehy_pump_rate", label: "Dehy Pump Rate", required: false },
-    { id: "dehy_pump_unit", label: "Dehy Pump Unit", required: false },
-    { id: "dehy_hours", label: "Dehy Hours", required: false },
-    { id: "dehy_press", label: "Dehy Press", required: false },
-    { id: "dehy_press_unit", label: "Dehy Press Unit", required: false },
-    { id: "dehy_temp", label: "Dehy Temp", required: false },
-    { id: "dehy_temp_unit", label: "Dehy Temp Unit", required: false },
-    { id: "dehy_has_flash", label: "Dehy Has Flash", required: false },
-    { id: "dehy_flash_eff", label: "Dehy Flash Eff", required: false },
-    { id: "dehy_still_type", label: "Dehy Still Type", required: false },
-    { id: "dehy_ch4_content", label: "Dehy CH4 Content", required: false },
-    { id: "dehy_eff", label: "Dehy Eff", required: false },
-    { id: "boiler_eff", label: "Boiler Efficiency (% or fraction)", required: false },
-    { id: "trans_loss", label: "Transmission Loss (%)", required: false },
-    { id: "heat_unit", label: "Heat Unit", required: false },
-    { id: "carbon_content", label: "Carbon Content", required: false },
-    { id: "fugitive_method", label: "Fugitive Method", required: false },
-    { id: "fugitive_ppm", label: "Fugitive PPM", required: false },
-    {
-      id: "meter_uncertainty_pct",
-      label: "Meter Uncertainty %",
-      required: false,
-    },
-    { id: "gc_uncertainty_pct", label: "GC Uncertainty %", required: false },
-    { id: "user_unc_co2", label: "User Unc CO2", required: false },
-    { id: "user_unc_ch4", label: "User Unc CH4", required: false },
-    { id: "user_unc_n2o", label: "User Unc N2O", required: false },
-  ],
-  activity_scope2: [
-    { id: "facility_id", label: "Region", required: true },
-    { id: "year", label: "Year", required: true },
-    { id: "month", label: "Month", required: true },
-    { id: "grid_region", label: "Grid Region", required: false, hint: "e.g. Algerian National Grid" },
-    { id: "consumption", label: "Consumption", required: true },
-    { id: "unit", label: "Unit", required: true, hint: "kWh, MWh, GWh (steam: MMBtu, GJ)" },
-    { id: "source_type", label: "Source Type", required: false, hint: "electricity (default), indirect_steam, cogen_allocation" },
-    { id: "factor", label: "Supplier Factor", required: false, hint: "kg CO2e/kWh, when the grid is not listed" },
-  ],
-  activity_scope3: [
-    { id: "facility_id", label: "Region", required: true },
-    { id: "year", label: "Year", required: true },
-    { id: "month", label: "Month", required: true },
-    { id: "category", label: "Category #", required: true, hint: "1-15" },
-    {
-      id: "sub_category",
-      label: "Activity Type",
-      required: true,
-      hint: "e.g. Steel, Flight",
-    },
-    { id: "amount", label: "Quantity", required: true },
-    { id: "unit", label: "Unit", required: true },
-    { id: "emission_factor", label: "Emission Factor", required: false, hint: "kg CO2e per unit; if empty, the Scope 3 form factor of the activity is used" },
-    { id: "ef_unit", label: "EF Unit", required: false, hint: "kg (default) or t CO2e per unit" },
-    { id: "co2e", label: "Total CO2e (t)", required: false, hint: "Supplier-specific total instead of a factor" },
-    { id: "notes", label: "Notes", required: false },
-  ],
-  custom_factors: [
-    {
-      id: "name",
-      label: "Factor Name",
-      required: true,
-      hint: "e.g. Specialized Gas",
-    },
-    {
-      id: "parent_fuel",
-      label: "Parent API Fuel",
-      required: false,
-      hint: "e.g. Natural Gas",
-    },
-    { id: "unit", label: "Unit", required: true, hint: "e.g. scf, m3" },
-    {
-      id: "co2_factor",
-      label: "CO2 Factor",
-      required: true,
-      hint: "Numeric value",
-    },
-    {
-      id: "ch4_factor",
-      label: "CH4 Factor",
-      required: false,
-      hint: "Numeric value",
-    },
-    {
-      id: "n2o_factor",
-      label: "N2O Factor",
-      required: false,
-      hint: "Numeric value",
-    },
-    {
-      id: "co_factor",
-      label: "CO Factor",
-      required: false,
-      hint: "Numeric value",
-    },
-    {
-      id: "co2_uncertainty",
-      label: "CO2 Uncertainty (%)",
-      required: false,
-      hint: "e.g. 5",
-    },
-    {
-      id: "ch4_uncertainty",
-      label: "CH4 Uncertainty (%)",
-      required: false,
-      hint: "e.g. 50",
-    },
-    {
-      id: "n2o_uncertainty",
-      label: "N2O Uncertainty (%)",
-      required: false,
-      hint: "e.g. 150",
-    },
-    { id: "usage", label: "Usage", required: false, hint: "e.g. combustion" },
-  ],
-  production: [
-    { id: "facility_id", label: "Region", required: true },
-    { id: "activity", label: "Activity", required: false },
-    { id: "division", label: "Division", required: false },
-    { id: "field", label: "Field", required: false },
-    { id: "year", label: "Year", required: true },
-    { id: "month", label: "Month", required: true },
-    { id: "oil_amount", label: "Oil Quantity", required: false },
-    { id: "oil_unit", label: "Oil Unit", required: false, hint: "bbl" },
-    { id: "gas_amount", label: "Gas Quantity", required: false },
-    { id: "gas_unit", label: "Gas Unit", required: false, hint: "mscf" },
-  ],
-  mitigation: [
-    { id: "facility_id", label: "Region", required: true },
-    { id: "name", label: "Project Name", required: true },
-    {
-      id: "project_type",
-      label: "Type",
-      required: false,
-      hint: "e.g. CCUS, REC",
-    },
-    { id: "year", label: "Year", required: true },
-    { id: "quantity_tco2e", label: "tCO2e Avoided", required: true },
-    { id: "status", label: "Status", required: false, hint: "Active, Planned" },
-    {
-      id: "start_date",
-      label: "Start Date",
-      required: false,
-      hint: "YYYY-MM-DD",
-    },
-    { id: "end_date", label: "End Date", required: false, hint: "YYYY-MM-DD" },
-    { id: "investment_amount", label: "Investment", required: false },
-    { id: "description", label: "Description", required: false },
-  ],
-  facilities: [
-    { id: "name", label: "Region Name", required: true },
-    { id: "region", label: "Region", required: false, hint: "Region the facility belongs to (dashboard filter)" },
-    { id: "code", label: "Facility Code", required: false, hint: "Unique code" },
-    { id: "equity_share_pct", label: "Equity Share (%)", required: false, hint: "0-100; default 100" },
-    { id: "operator_status", label: "Operator Status", required: false, hint: "operated or non-operated" },
-    { id: "activity", label: "Activity", required: false },
-    { id: "division", label: "Division", required: false },
-    { id: "field", label: "Field / Block", required: false },
-    { id: "location", label: "Location (Wilaya)", required: false },
-    { id: "boundary_type", label: "Consolidation Approach", required: false },
-    { id: "boundary_detail", label: "Boundary Details", required: false },
-    { id: "segment", label: "Supply Chain Segment", required: false },
-    { id: "latitude", label: "Latitude", required: false },
-    { id: "longitude", label: "Longitude", required: false },
-  ],
+const TITLES = {
+  sources: "Equipment",
+  custom_factors: "Custom Factors",
+  production: "Production Data",
+  mitigation: "Mitigation Projects",
 };
 
-// Auto-detect: tries to match a column header to a system field key/label
-// ─── SVG Icons ────────────────────────────────────────────────────────────────
-const Icons = {
-  Upload: () => <CloudUploadIcon strokeWidth={1.75} aria-hidden="true" />,
-  Columns: () => <Columns3Icon strokeWidth={1.75} aria-hidden="true" />,
-  Processing: () => <ActivityIcon strokeWidth={1.75} aria-hidden="true" />,
-  FileXlsx: () => <FileSpreadsheetIcon strokeWidth={1.75} aria-hidden="true" />,
-  FileCsv: () => <FileTextIcon strokeWidth={1.75} aria-hidden="true" />,
-  Check: () => <CheckIcon strokeWidth={2.5} aria-hidden="true" />,
-  ChevronRight: () => <ChevronRightIcon strokeWidth={2} aria-hidden="true" />,
-  ArrowLeft: () => <ArrowLeftIcon strokeWidth={2} aria-hidden="true" />,
-  Warning: () => <TriangleAlertIcon strokeWidth={1.75} aria-hidden="true" />,
-  Wand: () => <Wand2Icon strokeWidth={1.75} aria-hidden="true" />,
-  X: () => <XIcon strokeWidth={2} aria-hidden="true" />,
+// Server scope code for each wizard type; the other types upload under their own name.
+const SCOPE_OF = { activity: "1", activity_scope2: "2", activity_scope3: "3" };
+
+// Sample row appended to the client-side CSV template of each non-emissions type.
+const SAMPLE_ROW = {
+  custom_factors: "Specialized Generator Gas,Natural Gas,MMBtu,53.06,0.001,0.0001,0,5,50,150,combustion",
+  production: "Hassi Messaoud,Exploration & Production,Production,Bir Berkine,2024,1,50000,bbl,12000,mscf",
+  mitigation: "Hassi Messaoud,Solar Farm A,REC,2024,1500,Active,2024-01-01,,500000,Solar panel installation",
+  sources: "Exploration & Production,Production,Hassi Messaoud,Bir Berkine,Combustion Unit A,EQ-001,combustion,Natural Gas,5 MW,2015-06-01,Active",
+  activity_scope2: "Hassi Messaoud,2024,1,Algerian National Grid,500,MWh,electricity,",
+  activity_scope3: "Hassi Messaoud,2024,1,4,Truck Transport,10000,t-km,0.12841,kg,,Crude trucking",
+  facilities: "Hassi R'Mel,Laghouat,HRM-01,100,operated,Exploration & Production,Production,Block A,Laghouat,Operational Control,Details here,Upstream,33.8,3.2",
 };
 
-// ─── Step indicator ───────────────────────────────────────────────────────────
-const IconsSettings = () => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.75"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <circle cx="12" cy="12" r="3"></circle>
-    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-  </svg>
-);
-Icons.Settings = IconsSettings;
-
-const STEPS = [
-  { id: 1, label: "Configuration", Icon: Icons.Settings },
-  { id: 2, label: "Select File", Icon: Icons.Upload },
-  { id: 3, label: "Map Columns", Icon: Icons.Columns },
-  { id: 4, label: "Processing", Icon: Icons.Processing },
+// Scope 1 columns shown before any Tier 3 inputs.
+const GENERAL_FIELDS = [
+  "activity", "division", "facility_id", "facility_name", "field", "group", "year", "month", "date", "process", "process_type",
+  "fuel", "fuel_type", "amount", "quantity", "unit", "factor_type", "equipment", "equipment_id", "equipment_name",
 ];
 
-function StepIndicator({ current }) {
-  return (
-    <div className="[display:flex] [align-items:center] [padding:20px_28px] [flex-shrink:0]">
-      {STEPS.map((s, i) => {
-        const done = s.id < current;
-        const active = s.id === current;
-        return (
-          <React.Fragment key={s.id}>
-            <div
-              className={`[display:flex] [flex-direction:column] [align-items:center] [gap:6px] [position:relative] [flex-shrink:0] [&.active_.cmw-step-circle]:[border-color:var(--color-blue-600)] [&.active_.cmw-step-circle]:[background:var(--color-blue-600)] [&.active_.cmw-step-circle]:[color:var(--color-white)]! [&.active_.cmw-step-circle]:[box-shadow:0_0_0_4px_rgba(37,_99,_235,_0.15)] [&&]:[&.done_.cmw-step-circle]:[border-color:var(--color-green-600)] [&&]:[&.done_.cmw-step-circle]:[background:var(--color-green-700)] [&&]:[&.done_.cmw-step-circle]:[color:var(--color-white)]! [&&]:[&&]:[&.active_.cmw-step-label]:[color:var(--color-blue-600)]! [&.active_.cmw-step-label]:[font-weight:600]! [&&]:[&&]:[&&]:[&.done_.cmw-step-label]:[color:var(--color-green-700)]! ${active ? "active" : ""} ${done ? "done" : ""}`}
-            >
-              <div className="cmw-step-circle">
-                {done ? <Icons.Check /> : <s.Icon />}
-              </div>
-              <span className="cmw-step-label [font-size:var(--text-sm)] [font-weight:500] [color:var(--color-ink-600)] [white-space:nowrap] [transition:color_0.2s]">{s.label}</span>
-            </div>
-            {i < STEPS.length - 1 && (
-              <div className={`[flex:1] [height:2px] [background:var(--color-ink-200)] [margin:0_10px] [&&]:[margin-bottom:22px] [transition:background_0.3s] [&.done]:[background:var(--color-green-600)] ${done ? "done" : ""}`} />
-            )}
-          </React.Fragment>
-        );
-      })}
-    </div>
-  );
+// Tier 3 inputs each calculator reads (same field names as the Scope 1 templates)
+const COMP = ["c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", "co2_mol", "n2_mol"];
+const VENT = ["vent_method", "disposition", "ch4_content", "co2_content"];
+const FLARE = ["flare_type", "control_efficiency", ...COMP];
+const PROCESS_FIELDS = {
+  combustion: ["hhv", ...COMP, "combustion_efficiency", "operating_temperature", "temp_unit", "operating_pressure", "press_unit", "z_factor"],
+  flaring: FLARE,
+  routine_flaring: FLARE,
+  non_routine_flaring: FLARE,
+  safety_flaring: FLARE,
+  venting: [...VENT, "blowdown_pressure", "blowdown_events", "blowdown_temp", "blowdown_temp_unit", "blowdown_press_unit", "z_factor"],
+  tank_flashing: ["tank_gor", "tank_ch4_content", "tank_control_eff", "tank_api_gravity"],
+  pneumatic: ["pneu_count", "pneu_bleed_rate", "pneu_bleed_unit", "pneu_hours", "pneu_ch4_content", "operating_hours"],
+  fugitive: ["fugitive_method", "component_type", "service", "m21_below_count", "m21_above_count", "operating_hours"],
+  completions: ["comp_method", "comp_rate", "comp_rate_unit", "comp_duration", "comp_flare_eff", "ch4_content", "co2_content"],
+  unloading: ["unload_depth", "unload_diam", "unload_press", "unload_freq", "unload_flare_eff", "ch4_content", "co2_content"],
+  drilling: ["mud_type"],
+  dehydrator: VENT,
+  vented_gas: VENT,
+  agr: ["agr_co2_in", "agr_co2_out", "agr_ch4_in", "agr_ch4_slip", "agr_control_eff"],
+  stoichiometry: ["carbon_content"],
+};
+
+const TIER_OPTIONS = [
+  { value: "1", title: "Tier 1 (Default Factors)", description: "Basic calculation using industry defaults." },
+  { value: "3", title: "Tier 3 (Engineering)", description: "Advanced calculation using process specifications." },
+];
+const SCOPE_OPTIONS = [
+  { value: "all", title: "All Processes", description: "Upload data for various process types together." },
+  { value: "specific", title: "Choose by Process", description: "Upload data for a single specific process." },
+];
+
+const asField = (f) => ({ key: f.id, label: f.label, required: f.required, hint: f.hint || "" });
+
+/** Required and optional columns for a wizard type; Tier 3 inputs are added for emissions data. */
+function fieldsFor(type, tier, processScope, process) {
+  let fields = (TEMPLATES[type] || []).map(asField);
+  if (type === "activity") {
+    fields = fields.filter((f) => GENERAL_FIELDS.includes(f.key));
+    if (tier === "3") {
+      const allowed = processScope === "all" ? [...new Set(Object.values(PROCESS_FIELDS).flat())] : PROCESS_FIELDS[process] || [];
+      allowed.forEach((key) => {
+        if (!fields.some((f) => f.key === key)) {
+          fields.push({ key, label: key.replace(/_/g, " ").toUpperCase(), hint: "Tier 3 specific", required: false });
+        }
+      });
+    }
+  }
+  return fields;
 }
 
-// ─── Main Wizard ──────────────────────────────────────────────────────────────
-export default function ColumnMappingWizard({
-  onClose,
-  onUploadSuccess,
-  type = "activity",
-}) {
+/** Generic bulk importer for emissions rows and master data; `type` picks the column set and server scope. */
+export default function ColumnMappingWizard({ onClose, onUploadSuccess, type = "activity" }) {
   const toast = useToast();
-  const fileInputRef = useRef(null);
-  const [step, setStep] = useState(type === "activity" ? 1 : 2);
-  const [file, setFile] = useState(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [headers, setHeaders] = useState([]);
-  const [mapping, setMapping] = useState({});
+  const [tier, setTier] = useState("3");
+  const [processScope, setProcessScope] = useState("all");
+  const [process, setProcess] = useState("flaring");
   const [globalFactor, setGlobalFactor] = useState("auto");
-  const [jobId, setJobId] = useState(null);
-  const [parseError, setParseError] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showOptional, setShowOptional] = useState(false);
-  const [selectedTier, setSelectedTier] = useState("3");
-  const [selectedProcessScope, setSelectedProcessScope] = useState("all");
-  const [selectedProcess, setSelectedProcess] = useState("flaring");
-  const [overwriteDuplicates, setOverwriteDuplicates] = useState(false);
+  const isEmissions = type === "activity";
 
-  // ── File handling ──────────────────────────────────────────────────────────
-  const processFile = useCallback((f) => {
-    if (!f) return;
-    setParseError("");
+  const fieldGroupsFor = useCallback(() => {
+    const fields = fieldsFor(type, tier, processScope, process);
+    return [
+      { id: "required", label: "Required fields", icon: Settings, fields: fields.filter((f) => f.required) },
+      { id: "optional", label: "Optional fields", icon: Settings, fields: fields.filter((f) => !f.required) },
+    ].filter((g) => g.fields.length);
+  }, [type, tier, processScope, process]);
 
-    const isExcel = f.name.toLowerCase().endsWith(".xlsx");
-
-    if (isExcel) {
-      // For Excel: we don't parse in browser, but we still need headers.
-      // Send a "preview" request or just show all system fields for manual mapping.
-      setFile(f);
-      setHeaders([]); // no browser-side parse for xlsx
-      setMapping({});
-      setStep(3);
-      return;
-    }
-
-    // CSV: parse just the first row for headers
-    Papa.parse(f, {
-      preview: 5,
-      header: true,
-      skipEmptyLines: true,
-      complete: (results) => {
-        if (!results.meta.fields?.length) {
-          setParseError(
-            "Could not read column headers. Make sure the file has a header row.",
-          );
-          return;
-        }
-        const hdrs = results.meta.fields;
-        setHeaders(hdrs);
-
-        let base = TEMPLATES[type] || [];
-        let allFields = base.map((f) => ({
-          key: f.id,
-          label: f.label,
-          required: f.required,
-          hint: f.hint || "",
-        }));
-        setMapping(autoDetectMapping(hdrs, allFields));
-
-        setFile(f);
-        setStep(3);
-      },
-      error: () =>
-        setParseError(
-          "Failed to parse the file. Please ensure it is a valid CSV.",
-        ),
-    });
-  }, []);
-
-  const onFileInputChange = (e) => {
-    processFile(e.target.files[0]);
-    e.target.value = "";
-  };
-
-  const onDrop = (e) => {
-    e.preventDefault();
-    setIsDragging(false);
-    processFile(e.dataTransfer.files[0]);
-  };
-
-  // ── Submit upload ──────────────────────────────────────────────────────────
-  const handleSubmit = async () => {
-    setIsSubmitting(true);
-    const form = new FormData();
-    form.append("file", file);
-    form.append("global_factor_type", globalFactor);
-
-    let scopeStr = type;
-    if (type === "activity") scopeStr = "1";
-    if (type === "activity_scope2") scopeStr = "2";
-    if (type === "activity_scope3") scopeStr = "3";
-    form.append("scope", scopeStr);
-    
-    form.append("overwrite_duplicates", overwriteDuplicates);
-
-    // Pass the column mapping so the server can use correct column names
-    form.append("column_mapping", JSON.stringify(mapping));
-
-    try {
-      const res = await api.post("/emissions/upload/start", form, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      setJobId(res.data.job_id);
-      setStep(4);
-    } catch (err) {
-      toast.error(
-        "Error starting upload: " + (err.response?.data?.error || err.message),
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  // ── Download template ──────────────────────────────────────────────────────
   const downloadTemplate = async (fmt) => {
-    if (type === "activity") {
+    if (isEmissions) {
       try {
-        const res = await api.get(
-          `/emissions/template/${fmt}?tier=${selectedTier}&process=${selectedProcessScope === "specific" ? selectedProcess : "all"}`,
-          { responseType: "blob" },
-        );
+        const res = await api.get(`/emissions/template/${fmt}?tier=${tier}&process=${processScope === "specific" ? process : "all"}`, { responseType: "blob" });
         const url = URL.createObjectURL(new Blob([res.data]));
         const a = document.createElement("a");
         a.href = url;
-        a.download =
-          fmt === "excel"
-            ? "GHG_Emissions_Template_v2.xlsx"
-            : "emissions_template.csv";
+        a.download = fmt === "excel" ? "GHG_Emissions_Template_v2.xlsx" : "emissions_template.csv";
         document.body.appendChild(a);
         a.click();
         a.remove();
@@ -514,430 +119,106 @@ export default function ColumnMappingWizard({
       }
       return;
     }
-
-    // Generate client-side template for non-activity types
-    let currentTemplate = TEMPLATES[type] || [];
-    const headers = currentTemplate.map((t) => t.id).join(",");
-
-    let csvContent = headers;
-
-    if (type === "custom_factors") {
-      csvContent = `${headers}\nSpecialized Generator Gas,Natural Gas,MMBtu,53.06,0.001,0.0001,0,5,50,150,combustion`;
-    } else if (type === "production") {
-      csvContent = `${headers}\nHassi Messaoud,Exploration & Production,Production,Bir Berkine,2024,1,50000,bbl,12000,mscf`;
-    } else if (type === "mitigation") {
-      csvContent = `${headers}\nHassi Messaoud,Solar Farm A,REC,2024,1500,Active,2024-01-01,,500000,Solar panel installation`;
-    } else if (type === "sources") {
-      csvContent = `${headers}\nExploration & Production,Production,Hassi Messaoud,Bir Berkine,Combustion Unit A,EQ-001,combustion,Natural Gas,5 MW,2015-06-01,Active`;
-    } else if (type === "activity_scope2") {
-      csvContent = `${headers}\nHassi Messaoud,2024,1,Algerian National Grid,500,MWh,electricity,`;
-    } else if (type === "activity_scope3") {
-      csvContent = `${headers}\nHassi Messaoud,2024,1,4,Truck Transport,10000,t-km,0.12841,kg,,Crude trucking`;
-    } else if (type === "facilities") {
-      csvContent = `${headers}\nHassi R'Mel,Laghouat,HRM-01,100,operated,Exploration & Production,Production,Block A,Laghouat,Operational Control,Details here,Upstream,33.8,3.2`;
-    }
-
-    const blob = new Blob([csvContent], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `${type}_import_template.csv`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    const header = (TEMPLATES[type] || []).map((t) => t.id).join(",");
+    const csv = SAMPLE_ROW[type] ? `${header}\n${SAMPLE_ROW[type]}` : header;
+    const url = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${type}_import_template.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
   };
 
-  // ── Validation ─────────────────────────────────────────────────────────────
-
-  // Dynamic fields logic
-  const currentFields = React.useMemo(() => {
-    let base = TEMPLATES[type] || [];
-
-    let allFields = base.map((f) => ({
-      key: f.id,
-      label: f.label,
-      required: f.required,
-      hint: f.hint || "",
-    }));
-
-    let req = allFields.filter((f) => f.required);
-    let opt = allFields.filter((f) => !f.required);
-
-    if (type === "activity") {
-      const generalFields = [
-        "activity",
-        "division",
-        "facility_id",
-        "facility_name",
-        "field",
-        "group",
-        "year",
-        "month",
-        "date",
-        "process",
-        "process_type",
-        "fuel",
-        "fuel_type",
-        "amount",
-        "quantity",
-        "unit",
-        "factor_type",
-        "equipment",
-        "equipment_id",
-        "equipment_name",
-      ];
-
-      let filteredBase = allFields.filter((f) => generalFields.includes(f.key));
-      req = filteredBase.filter((f) => f.required);
-      opt = filteredBase.filter((f) => !f.required);
-
-      if (selectedTier === "3") {
-        // Tier 3 inputs each calculator reads (same field names as the Scope 1 templates)
-        const COMP = ["c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", "co2_mol", "n2_mol"];
-        const VENT = ["vent_method", "disposition", "ch4_content", "co2_content"];
-        const processFields = {
-          combustion: ["hhv", ...COMP, "combustion_efficiency", "operating_temperature", "temp_unit", "operating_pressure", "press_unit", "z_factor"],
-          flaring: ["flare_type", "control_efficiency", ...COMP],
-          routine_flaring: ["flare_type", "control_efficiency", ...COMP],
-          non_routine_flaring: ["flare_type", "control_efficiency", ...COMP],
-          safety_flaring: ["flare_type", "control_efficiency", ...COMP],
-          venting: [...VENT, "blowdown_pressure", "blowdown_events", "blowdown_temp", "blowdown_temp_unit", "blowdown_press_unit", "z_factor"],
-          tank_flashing: ["tank_gor", "tank_ch4_content", "tank_control_eff", "tank_api_gravity"],
-          pneumatic: ["pneu_count", "pneu_bleed_rate", "pneu_bleed_unit", "pneu_hours", "pneu_ch4_content", "operating_hours"],
-          fugitive: ["fugitive_method", "component_type", "service", "m21_below_count", "m21_above_count", "operating_hours"],
-          completions: ["comp_method", "comp_rate", "comp_rate_unit", "comp_duration", "comp_flare_eff", "ch4_content", "co2_content"],
-          unloading: ["unload_depth", "unload_diam", "unload_press", "unload_freq", "unload_flare_eff", "ch4_content", "co2_content"],
-          drilling: ["mud_type"],
-          dehydrator: VENT,
-          vented_gas: VENT,
-          agr: ["agr_co2_in", "agr_co2_out", "agr_ch4_in", "agr_ch4_slip", "agr_control_eff"],
-          stoichiometry: ["carbon_content"],
-        };
-
-        let allowed = [];
-        if (selectedProcessScope === "all") {
-          Object.values(processFields).forEach((arr) => {
-            allowed.push(...arr);
-          });
-          allowed = [...new Set(allowed)];
-        } else {
-          allowed = processFields[selectedProcess] || [];
-        }
-
-        allowed.forEach((f) => {
-          if (!opt.find((x) => x.key === f)) {
-            opt.push({
-              key: f,
-              label: f.replace(/_/g, " ").toUpperCase(),
-              hint: "Tier 3 specific",
-              required: false,
-            });
-          }
-        });
-      }
-    }
-
-    return { req, opt, all: [...req, ...opt] };
-  }, [type, selectedTier, selectedProcessScope, selectedProcess]);
-
-  const activeRequired = currentFields.req;
-  const activeOptional = currentFields.opt;
-
-  const missingRequired = missingRequiredFields(
-    [...activeRequired.map((f) => ({ ...f, required: true })), ...activeOptional],
-    mapping,
-  );
-
-  const canProceed = missingRequired.length === 0 || headers.length === 0; // xlsx: skip client-side check
-
-  // ─── Render ────────────────────────────────────────────────────────────────
-  return (
-    <div role="presentation"
-      className="[position:fixed] [inset:0] [background:rgba(10,_15,_30,_0.65)] [backdrop-filter:blur(4px)] [-webkit-backdrop-filter:blur(4px)] [display:flex] [align-items:center] [justify-content:center] [z-index:1000] [padding:16px] [animation:cmw-fade-in_0.2s_ease]"
-      onClick={(e) => e.target === e.currentTarget && onClose()}
-    >
-      <div className="[background:var(--color-white)] [border-radius:var(--radius-lg)] [width:100%] [max-width:780px] [max-height:92vh] [display:flex] [flex-direction:column] [box-shadow:var(--shadow-overlay)] [animation:cmw-slide-up_0.25s_cubic-bezier(0.34,_1.56,_0.64,_1)] [overflow:hidden]">
-        {/* Header */}
-        <div className="[display:flex] [align-items:flex-start] [justify-content:space-between] [padding:24px_28px_0] [flex-shrink:0]">
-          <div>
-            <h2 className="[font-size:var(--text-lg)] [font-weight:700] [color:var(--color-ink-900)] [margin:0_0_4px] [letter-spacing:-0.3px]">
-              Import{" "}
-              {type === "sources"
-                ? "Equipment"
-                : type === "custom_factors"
-                  ? "Custom Factors"
-                  : type === "production"
-                    ? "Production Data"
-                    : type === "mitigation"
-                      ? "Mitigation Projects"
-                      : "Emissions Data"}
-            </h2>
-            <p className="[font-size:var(--text-base)] [color:var(--color-ink-500)] [margin:0]">
-              Upload a CSV or Excel file to bulk-import your records
-            </p>
-          </div>
-          <button className="cmw-close-btn" onClick={onClose} aria-label="Close">
-            <Icons.X />
-          </button>
-        </div>
-
-        {/* Step Indicator */}
-        <StepIndicator current={step} />
-
-        {/* ── STEP 1: Configuration ── */}
-        {step === 1 && type === "activity" && (
-          <ColumnMappingWizardCalculationTier
-        selectedProcess={selectedProcess}
-        selectedProcessScope={selectedProcessScope}
-        selectedTier={selectedTier}
-        setSelectedProcess={setSelectedProcess}
-        setSelectedProcessScope={setSelectedProcessScope}
-        setSelectedTier={setSelectedTier}
-      />
-        )}
-
-        {/* Navigation Footer */}
-        <div
-          className="[align-items:center] [flex-shrink:0] [gap:12px]"
-          style={{
-            borderTop: "1px solid var(--border-color)",
-            padding: "16px 24px",
-            display: "flex",
-            justifyContent: "space-between",
-          }}
-        >
-          {step > (type === "activity" ? 1 : 2) && step < 4 ? (
-            <button className="cmw-btn-ghost" onClick={() => setStep(step - 1)}>
-              <Icons.ArrowLeft /> Back
-            </button>
-          ) : (
-            <div></div>
-          )}
-
-          {step === 1 && (
-            <button className="cmw-btn-primary" onClick={() => setStep(2)}>
-              Next <Icons.ChevronRight />
-            </button>
-          )}
-        </div>
-
-        {/* ── STEP 2: File Select ── */}
-        {step === 2 && (
-          <div className="cmw-body">
-              <div className="cmw-config-section" style={{ marginBottom: '20px', padding: '16px', border: '1px solid var(--border-color)', borderRadius: '8px', background: 'var(--bg-secondary)' }}>
-                <h3 className="mb-[8px]! text-[length:1rem]! text-[color:var(--text-primary)]!">Import Settings</h3>
-                <label className="cmw-config-label flex! items-center! gap-[8px]! cursor-pointer!">
-                  <input 
-                    type="checkbox" 
-                    checked={overwriteDuplicates} 
-                    onChange={(e) => setOverwriteDuplicates(e.target.checked)}
-                  />
-                  {type === "facilities" 
-                    ? "Overwrite existing Regions with the same name" 
-                    : "Overwrite existing records with matching facility, date, and source"}
-                </label>
-                <p className="cmw-hint mt-[4px]! ml-[24px]!">
-                  {type === "facilities" 
-                    ? "If unchecked, duplicate regions will be skipped with an error." 
-                    : "If unchecked, duplicate records will be skipped to prevent double-counting."}
-                </p>
-              </div>
-            {/* Drop zone */}
-            <div role="button" tabIndex={0} onKeyDown={activateOnKey}
-              className={`[border:2px_dashed_var(--color-ink-300)] [&&]:[border-radius:var(--radius-md)] [padding:40px_24px] [text-align:center] [cursor:pointer] [transition:all_0.2s] [background:var(--color-ink-50)] [margin-bottom:20px] hover:[border-color:var(--color-blue-600)] hover:[background:var(--color-blue-50)] [&.dragging]:[border-color:var(--color-blue-600)] [&.dragging]:[background:var(--color-blue-50)] ${isDragging ? "dragging" : ""}`}
-              onClick={() => fileInputRef.current.click()}
-              onDragOver={(e) => {
-                e.preventDefault();
-                setIsDragging(true);
-              }}
-              onDragLeave={() => setIsDragging(false)}
-              onDrop={onDrop}
-            >
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept=".csv,.xlsx"
-                className="hidden!"
-                onChange={onFileInputChange}
-              />
-              <div className="cmw-dropzone-icon">
-                <Icons.Upload />
-              </div>
-              <p className="cmw-dropzone-text">
-                Drag &amp; drop your file here, or <span>click to browse</span>
-              </p>
-              <p className="[font-size:var(--text-sm)] [color:var(--color-ink-600)] [margin:0]">
-                Supports .xlsx and .csv — optimised for millions of rows
-              </p>
-              {parseError && (
-                <div className="cmw-inline-error">
-                  <Icons.Warning />
-                  {parseError}
+  const preSteps = useMemo(
+    () =>
+      isEmissions
+        ? [
+            {
+              label: "Configuration",
+              content: (
+                <div className="flex flex-col gap-5">
+                  <section className="flex flex-col gap-3">
+                    <h3 className="m-0 text-md font-bold text-text">Calculation tier</h3>
+                    <RadioCardGroup label="Calculation tier" value={tier} onChange={setTier} options={TIER_OPTIONS} columns="md:grid-cols-2" />
+                  </section>
+                  <section className="flex flex-col gap-3">
+                    <h3 className="m-0 text-md font-bold text-text">Process scope</h3>
+                    <RadioCardGroup label="Process scope" value={processScope} onChange={setProcessScope} options={SCOPE_OPTIONS} columns="md:grid-cols-2" />
+                    {processScope === "specific" && (
+                      <Field label="Select process type">
+                        <NativeSelect className={controlClass} value={process} onChange={(e) => setProcess(e.target.value)}>
+                          {Object.entries(PROCESS_TYPES).map(([k, v]) => (
+                            <option key={k} value={k}>
+                              {v}
+                            </option>
+                          ))}
+                        </NativeSelect>
+                      </Field>
+                    )}
+                  </section>
                 </div>
-              )}
-            </div>
+              ),
+            },
+          ]
+        : [],
+    [isEmissions, tier, processScope, process],
+  );
 
-            {/* Template download */}
-            <div className="[margin-top:4px]">
-              <p className="[font-size:var(--text-sm)] [color:var(--color-ink-500)] [margin:0_0_10px] [font-weight:500]">
-                Don't have a file yet? Start from our template:
-              </p>
-              <div className="[display:grid] [grid-template-columns:1fr_1fr] [gap:12px]">
-                {type === "activity" && (
-                  <button
-                    className="cmw-template-btn"
-                    onClick={() => downloadTemplate("excel")}
-                  >
-                    <span className="cmw-template-btn-icon">
-                      <Icons.FileXlsx />
-                    </span>
-                    <span>
-                      <strong>Excel Template</strong>
-                      <small>
-                        With dropdowns, sample data & engineering sheets
-                      </small>
-                    </span>
-                  </button>
-                )}
-                <button
-                  className="cmw-template-btn"
-                  onClick={() => downloadTemplate("csv")}
-                >
-                  <span className="cmw-template-btn-icon">
-                    <Icons.FileCsv />
-                  </span>
-                  <span>
-                    <strong>CSV Template</strong>
-                    <small>Lightweight flat file for maximum performance</small>
-                  </span>
-                </button>
-              </div>
-            </div>
-          </div>
+  const fileExtras = (
+    <div className="flex flex-col gap-2.5">
+      <p className="m-0 text-sm font-medium text-text-secondary">Don't have a file yet? Start from our template:</p>
+      <div className="grid gap-3 sm:grid-cols-2">
+        {isEmissions && (
+          <Button variant="secondary" className="h-auto justify-start gap-3 px-4 py-3 text-left" onClick={() => downloadTemplate("excel")}>
+            <FileSpreadsheet className="size-5 shrink-0 text-brand-700" aria-hidden="true" />
+            <span className="flex flex-col">
+              <strong className="text-sm">Excel Template</strong>
+              <small className="text-xs font-normal text-text-secondary">With dropdowns, sample data & engineering sheets</small>
+            </span>
+            <Download className="ml-auto size-4 shrink-0" aria-hidden="true" />
+          </Button>
         )}
-
-        {/* ── STEP 2: Column Mapping ── */}
-        {step === 3 && (
-          <ColumnMappingWizardCmwBody
-        Icons={Icons}
-        MappingRow={MappingRow}
-        activeOptional={activeOptional}
-        activeRequired={activeRequired}
-        file={file}
-        globalFactor={globalFactor}
-        headers={headers}
-        mapping={mapping}
-        missingRequired={missingRequired}
-        setGlobalFactor={setGlobalFactor}
-        setMapping={setMapping}
-        setShowOptional={setShowOptional}
-        showOptional={showOptional}
-      />
-        )}
-
-        {/* ── STEP 3: Processing ── */}
-        {step === 4 && jobId && (
-          <div className="cmw-body [display:flex] [align-items:center] [justify-content:center] [padding:32px_28px]!">
-            <UploadProgress
-              jobId={jobId}
-              reviewable={["activity", "activity_scope2", "activity_scope3"].includes(type)}
-              onComplete={() => {
-                if (onUploadSuccess) onUploadSuccess();
-                onClose();
-              }}
-              onCancel={onClose}
-            />
-          </div>
-        )}
-
-        {/* Footer actions */}
-        {step !== 4 && (
-          <div className="[display:flex] [align-items:center] [justify-content:space-between] [padding:16px_28px_20px] [border-top:1px_solid_var(--color-ink-100)] [flex-shrink:0] [gap:12px]">
-            <button
-              className="cmw-btn-ghost"
-              onClick={
-                step === (type === "activity" ? 1 : 2)
-                  ? onClose
-                  : () => setStep((s) => s - 1)
-              }
-            >
-              {step === (type === "activity" ? 1 : 2) ? (
-                <>
-                  <Icons.X /> Cancel
-                </>
-              ) : (
-                <>
-                  <Icons.ArrowLeft /> Back
-                </>
-              )}
-            </button>
-
-            {step === 3 && (
-              <button
-                className="cmw-btn-primary"
-                onClick={handleSubmit}
-                disabled={isSubmitting || (!canProceed && headers.length > 0)}
-              >
-                {isSubmitting ? (
-                  <span className="[width:16px] [height:16px] [border:2px_solid_rgba(255,_255,_255,_0.4)] [&&]:[border-top-color:var(--color-white)] [&&]:[border-radius:50%] [animation:cmw-spin_0.7s_linear_infinite] [flex-shrink:0]" />
-                ) : (
-                  <Icons.Processing />
-                )}
-                {isSubmitting ? "Starting…" : "Start Import"}
-              </button>
-            )}
-          </div>
-        )}
+        <Button variant="secondary" className="h-auto justify-start gap-3 px-4 py-3 text-left" onClick={() => downloadTemplate("csv")}>
+          <FileIcon className="size-5 shrink-0 text-brand-700" aria-hidden="true" />
+          <span className="flex flex-col">
+            <strong className="text-sm">CSV Template</strong>
+            <small className="text-xs font-normal text-text-secondary">Lightweight flat file for maximum performance</small>
+          </span>
+          <Download className="ml-auto size-4 shrink-0" aria-hidden="true" />
+        </Button>
       </div>
     </div>
   );
-}
 
-// ─── Single mapping row ────────────────────────────────────────────────────────
-function MappingRow({ field, headers, value, onChange }) {
-  const mapped = !!value;
+  const mappingExtras = (
+    <Field label="Default factor type when not specified in file">
+      <NativeSelect className={controlClass} value={globalFactor} onChange={(e) => setGlobalFactor(e.target.value)}>
+        <option value="auto">Auto-detect from file</option>
+        <option value="default">Force Standard (API Compendium)</option>
+        <option value="custom">Force Custom Factors</option>
+      </NativeSelect>
+    </Field>
+  );
 
+  const facilities = type === "facilities";
   return (
-    <div
-      className={`[display:grid] [grid-template-columns:1.8fr_2fr_2fr_60px] [gap:12px] [align-items:center] [padding:10px_16px] [border-bottom:1px_solid_var(--color-ink-100)] [transition:background_0.15s] last:[border-bottom:none] hover:[background:var(--color-ink-50)] [&.unmapped]:[background:#fff9f9] ${!mapped && field.required ? "unmapped" : ""}`}
-    >
-      <div className="[font-size:var(--text-base)] [font-weight:600] [color:var(--color-ink-800)] [display:flex] [align-items:center] [gap:6px]">
-        {field.label}
-        {field.required && <span className="[display:inline-block] [width:6px] [height:6px] [border-radius:50%] [background:var(--color-red-500)] [flex-shrink:0]" />}
-      </div>
-      <div className="[font-size:var(--text-sm)] [color:var(--color-ink-600)]">{field.hint}</div>
-      <div className="cmw-field-select">
-        {headers.length > 0 ? (
-          <NativeSelect
-            className={`cmw-select ${mapped ? "matched" : ""}`}
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-          >
-            <option value="">— Not mapped —</option>
-            {headers.map((h) => (
-              <option key={h} value={h}>
-                {h}
-              </option>
-            ))}
-          </NativeSelect>
-        ) : (
-          <input
-            className={`cmw-text-input ${mapped ? "matched" : ""}`}
-            placeholder="Column name in your file"
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-          />
-        )}
-      </div>
-      <div className="[display:flex] [justify-content:center]">
-        {mapped ? (
-          <span className="cmw-status-ok">
-            <Icons.Check />
-          </span>
-        ) : (
-          <span className="[width:26px] [height:26px] [border-radius:50%] [background:var(--color-ink-100)] [border:2px_dashed_var(--color-ink-200)]" />
-        )}
-      </div>
-    </div>
+    <ImportWizard
+      title={`Import ${TITLES[type] || (facilities ? "Regions" : "Emissions Data")}`}
+      subtitle="Upload a CSV or Excel file to bulk-import your records"
+      fieldGroupsFor={fieldGroupsFor}
+      scopeFor={() => SCOPE_OF[type] || type}
+      preSteps={preSteps}
+      fileExtras={fileExtras}
+      mappingExtras={mappingExtras}
+      extraForm={(form) => form.append("global_factor_type", globalFactor)}
+      finalLabel="Processing"
+      overwriteLabel={facilities ? "Overwrite existing Regions with the same name" : "Overwrite existing records with matching facility, date, and source"}
+      overwriteHint={facilities ? "If unchecked, duplicate regions will be skipped with an error." : "If unchecked, duplicate records will be skipped to prevent double-counting."}
+      reviewable={type in SCOPE_OF}
+      regionAccess={false}
+      onClose={onClose}
+      onUploadSuccess={onUploadSuccess}
+    />
   );
 }

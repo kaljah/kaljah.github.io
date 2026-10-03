@@ -1,15 +1,15 @@
 {
-  "inlineStyleObjects": 257,
-  "hexColorsInCss": 152,
+  "inlineStyleObjects": 243,
+  "hexColorsInCss": 122,
   "hexColorsInJs": 389,
-  "importantDeclarations": 79,
-  "inlineSvgs": 26,
+  "importantDeclarations": 72,
+  "inlineSvgs": 18,
   "nativeSelects": 2,
   "clickableDivsWithoutRole": 0,
-  "cssFiles": 38,
-  "cssLines": 7356,
+  "cssFiles": 36,
+  "cssLines": 6677,
   "distinctFontSizes": 8,
   "distinctBorderRadii": 8,
-  "distinctBoxShadows": 52,
+  "distinctBoxShadows": 44,
   "duplicateClassDefinitions": 50
 }

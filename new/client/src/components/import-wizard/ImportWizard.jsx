@@ -28,6 +28,10 @@ const ImportWizard = ({
   mappingExtras,
   extraForm,
   finalLabel = "Import",
+  overwriteLabel = "Overwrite records that already exist (same facility, month and source). Overwritten records go back to Pending review.",
+  overwriteHint,
+  reviewable = true,
+  regionAccess = true,
   onClose,
   onUploadSuccess,
 }) => {
@@ -74,7 +78,7 @@ const ImportWizard = ({
   );
   const missingRequired = missingRequiredFields(allFields, mapping);
   const canSubmit = missingRequired.length === 0 || headers.length === 0;
-  const restricted = !isAdmin && allowedRegions !== null;
+  const restricted = regionAccess && !isAdmin && allowedRegions !== null;
   const noRegions = restricted && allowedRegions.length === 0;
 
   const processFile = useCallback(
@@ -233,7 +237,10 @@ const ImportWizard = ({
 
             <label className={cn("flex cursor-pointer flex-wrap items-center gap-2 text-sm font-medium text-text-secondary")}>
               <input type="checkbox" className="size-4 accent-brand-500" checked={overwrite} onChange={(e) => setOverwrite(e.target.checked)} />
-              Overwrite records that already exist (same facility, month and source). Overwritten records go back to Pending review.
+              <span>
+                {overwriteLabel}
+                {overwriteHint && <span className="block text-xs font-normal">{overwriteHint}</span>}
+              </span>
             </label>
 
             <div className="flex flex-col gap-2.5">
@@ -247,6 +254,7 @@ const ImportWizard = ({
         {step === RUN && jobId && (
           <UploadProgress
             jobId={jobId}
+            reviewable={reviewable}
             onComplete={() => {
               if (onUploadSuccess) onUploadSuccess();
               onClose();
