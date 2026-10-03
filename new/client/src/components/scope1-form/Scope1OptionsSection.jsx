@@ -7,7 +7,7 @@ const Scope1OptionsSection = ({ gcUncertaintyPct, meterUncertaintyPct, renderSpe
 <Section n={3} title="Activity Data">
           <div className="s1-inputs">{renderSpecificForm()}</div>
           <MoreOptions label="Uncertainty">
-          <div className="form-grid-3">
+          <div className="form-grid-3 [display:grid]! [grid-template-columns:repeat(3,_1fr)] [gap:20px] [margin-bottom:20px]! [@media(max-width:600px)]:[grid-template-columns:1fr]! [@media(max-width:600px)]:[gap:12px]!">
             {sourceType === "specific" && (
               <div
                 className="input-group"

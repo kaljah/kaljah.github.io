@@ -5,7 +5,7 @@ import { Calendar, Check, CheckCircle, History, Plus, Target } from 'lucide-reac
 
 // Extracted from ManageData.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYears, filteredGoals, goalForm, goals, handleDeleteBaseYearRecalc, handleDeleteGoal, handleEditGoal, handleSaveBaseYear, handleSaveGoal, handleSaveSbti, hasSbti, sbtiConfig, setBaseYearForm, setEditingGoalYear, setGoalForm, setSbtiConfig }) => (
-<div className="manage-card glass-panel">
+<div className="[border-radius:var(--radius-lg)]! [padding:32px]! [animation:fadeIn_0.3s_ease-out]! [@media(max-width:768px)]:[padding:18px_14px]! [@media(max-width:768px)]:[border-radius:var(--radius-lg)]! glass-panel">
                                 {/* Active Baseline Status Banner */}
                                 <div className="[background:linear-gradient(_135deg,_rgba(255,_102,_0,_0.06),_rgba(255,_153,_51,_0.02)_)]! [border:1px_solid_rgba(255,_102,_0,_0.2)]! [border-radius:var(--radius-lg)]! [padding:20px]! [margin-bottom:24px]! [display:flex]! [justify-content:space-between] [align-items:center] [flex-wrap:wrap] [gap:16px]">
                                     <div>
@@ -56,7 +56,7 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                     </div>
 
                                     {/* Goal Input Form */}
-                                    <div className="grid-forms" style={{ gridTemplateColumns: 'repeat(3, 1fr)', background: '#fafafa', padding: '20px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
+                                    <div className="[display:grid]! [grid-template-columns:1fr_1fr] [gap:20px] [margin-bottom:24px]! [&_select.component-select]:[height:48px]! [&_select.component-select]:[width:100%]! [@media(max-width:768px)]:[grid-template-columns:1fr]! [@media(max-width:768px)]:[gap:14px]!" style={{ gridTemplateColumns: 'repeat(3, 1fr)', background: '#fafafa', padding: '20px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
                                         <Field className="input-group" label="Target Year">
 <Input
                                                 type="number"
@@ -151,7 +151,7 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                                                         Edit
                                                                     </Button>
                                                                     <button
-                                                                        className="btn-delete p-[4px_8px]! text-[length:0.8rem]!"
+                                                                        className="[background:#fee2e2]! [color:var(--color-red-700)]! [border:1px_solid_#fecaca]! [padding:6px_12px]! [border-radius:var(--radius-md)]! [cursor:pointer] [font-size:var(--text-base)]! [transition:all_0.2s]! hover:[background:var(--color-red-700)]! hover:[color:white]! p-[4px_8px]! text-[length:0.8rem]!"
                                                                         onClick={() => handleDeleteGoal(g.year)}
                                                                        
                                                                         title="Delete Goal"
@@ -186,7 +186,7 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                     </div>
 
                                     {/* Base Year Input Form */}
-                                    <div className="grid-forms" style={{ gridTemplateColumns: 'repeat(4, 1fr)', background: '#fafafa', padding: '20px', borderRadius: '12px', border: '1px solid var(--border-color)', gap: '16px' }}>
+                                    <div className="[display:grid]! [grid-template-columns:1fr_1fr] [gap:20px] [margin-bottom:24px]! [&_select.component-select]:[height:48px]! [&_select.component-select]:[width:100%]! [@media(max-width:768px)]:[grid-template-columns:1fr]! [@media(max-width:768px)]:[gap:14px]!" style={{ gridTemplateColumns: 'repeat(4, 1fr)', background: '#fafafa', padding: '20px', borderRadius: '12px', border: '1px solid var(--border-color)', gap: '16px' }}>
                                         <Field className="input-group" label="Base Year">
 <Input
                                                 type="number"
@@ -227,7 +227,7 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                                 <Plus size={16} /> Save Recalculation
                                             </button>
                                         </div>
-                                        <div className="input-group form-full" style={{ gridColumn: 'span 4' }}>
+                                        <div className="input-group [grid-column:span_2]! [@media(max-width:768px)]:[grid-column:span_1]!" style={{ gridColumn: 'span 4' }}>
                                             <label>Reason for Change / Recalculation Justification *</label>
                                             <Textarea
                                                 value={baseYearForm.reason}
@@ -303,7 +303,7 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                                                 </td>
                                                                 <td className="text-center!">
                                                                     <button
-                                                                        className="btn-delete p-[4px_8px]! text-[length:0.8rem]!"
+                                                                        className="[background:#fee2e2]! [color:var(--color-red-700)]! [border:1px_solid_#fecaca]! [padding:6px_12px]! [border-radius:var(--radius-md)]! [cursor:pointer] [font-size:var(--text-base)]! [transition:all_0.2s]! hover:[background:var(--color-red-700)]! hover:[color:white]! p-[4px_8px]! text-[length:0.8rem]!"
                                                                         onClick={() => handleDeleteBaseYearRecalc(b.id)}
                                                                        
                                                                         title="Delete Recalculation Entry"
@@ -338,7 +338,7 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                         )}
                                     </div>
 
-                                    <div className="grid-forms" style={{ gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
+                                    <div className="[display:grid]! [grid-template-columns:1fr_1fr] [gap:20px] [margin-bottom:24px]! [&_select.component-select]:[height:48px]! [&_select.component-select]:[width:100%]! [@media(max-width:768px)]:[grid-template-columns:1fr]! [@media(max-width:768px)]:[gap:14px]!" style={{ gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
                                         <Field className="input-group" label="Base Year">
 <Input
                                                 type="number"

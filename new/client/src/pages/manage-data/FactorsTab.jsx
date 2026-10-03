@@ -6,7 +6,7 @@ import PaginationControls from './PaginationControls';
 
 // Extracted from ManageData.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const FactorsTab = ({ ITEMS_PER_PAGE, currentPage, editingFactorId, factorForm, filteredFactors, handleArchiveFactor, handleDeleteFactor, handleEditFactor, handleFactorChange, handleSaveFactor, setCurrentPage, setEditingFactorId, setFactorForm, setImportModal, setWorkbench, workbench }) => (
-<div className="manage-card glass-panel">
+<div className="[border-radius:var(--radius-lg)]! [padding:32px]! [animation:fadeIn_0.3s_ease-out]! [@media(max-width:768px)]:[padding:18px_14px]! [@media(max-width:768px)]:[border-radius:var(--radius-lg)]! glass-panel">
                                 <div className="flex! justify-between! items-start! mb-[32px]!">
                                     <div>
                                         <h2 className="mb-[8px]! font-bold!">Custom Emission Factors</h2>
@@ -21,7 +21,7 @@ const FactorsTab = ({ ITEMS_PER_PAGE, currentPage, editingFactorId, factorForm, 
                                     </button>
                                 </div>
                                 {/* Create/Edit Form */}
-                                <div className="grid-forms">
+                                <div className="[display:grid]! [grid-template-columns:1fr_1fr] [gap:20px] [margin-bottom:24px]! [&_select.component-select]:[height:48px]! [&_select.component-select]:[width:100%]! [@media(max-width:768px)]:[grid-template-columns:1fr]! [@media(max-width:768px)]:[gap:14px]!">
                                     <Field className="input-group" label="Factor Name">
 <Input
                                             type="text"

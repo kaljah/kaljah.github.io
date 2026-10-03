@@ -38,7 +38,6 @@ const indexHtml = fs.readFileSync("index.html", "utf8");
 const tokenRe = (name) => new RegExp(`(?<![\\w-])${name.replace(/-/g, "\\-")}(?![\\w-])`, "g");
 
 // 1. Count every class mention across all CSS (any selector form).
-const mentions = {};
 const elementProps = new Set();
 const baseProp = (p) => p.split("-")[0];
 const noteElementRules = (root) =>
@@ -46,16 +45,25 @@ const noteElementRules = (root) =>
     if (r.parent?.type === "atrule" && /keyframes$/.test(r.parent.name)) return;
     if (r.selectors.some((s) => !/\./.test(s))) r.walkDecls((d) => elementProps.add(baseProp(d.prop)));
   });
-for (const f of all.filter((x) => x.endsWith(".css") && /styles/.test(x))) {
+const blocked = new Set();
+const pinned = new Set();
+const classesIn = (sel) => [...sel.matchAll(/\.(-?[_a-zA-Z][\w-]*)/g)].map((m) => m[1]);
+const noteMentions = (sel, lead) => {
+  const cls = classesIn(sel);
+  const first = sel.trim().match(/^\.(-?[_a-zA-Z][\w-]*)/)?.[1];
+  cls.forEach((c, i) => {
+    if (i === 0 && first === c) lead(c);
+    else pinned.add(c);
+  });
+};
+for (const f of all.filter((x) => x.endsWith(".css") && !cssFiles.includes(x))) {
   const root0 = postcss.parse(fs.readFileSync(f, "utf8"));
   noteElementRules(root0);
   root0.walkRules((r) => {
-    for (const s of r.selectors) for (const m of s.matchAll(/\.(-?[_a-zA-Z][\w-]*)/g)) mentions[m[1]] = (mentions[m[1]] || 0) + 9;
-  });
-}
-for (const f of all.filter((x) => x.endsWith(".css") && !cssFiles.includes(x))) {
-  postcss.parse(fs.readFileSync(f, "utf8")).walkRules((r) => {
-    for (const s of r.selectors) for (const m of s.matchAll(/\.(-?[_a-zA-Z][\w-]*)/g)) mentions[m[1]] = (mentions[m[1]] || 0) + 9;
+    for (const sel of r.selectors) {
+      noteMentions(sel, (c) => blocked.add(c));
+      classesIn(sel).forEach((c) => blocked.add(c));
+    }
   });
 }
 const roots = {};
@@ -74,40 +82,45 @@ const PSEUDO = {
 };
 const mediaPrefix = (params) => {
   const t = params.trim();
-  let m = t.match(/^\(\s*max-width\s*:\s*(\d+px)\s*\)$/);
-  if (m) return `max-[${m[1]}]:`;
-  m = t.match(/^\(\s*min-width\s*:\s*(\d+px)\s*\)$/);
-  if (m) return `min-[${m[1]}]:`;
-  if (/[[\]{}'"\\]/.test(t)) return null;
-  return `[@media${t.replace(/\s+/g, "_")}]:`;
+  if (/[[\]{}'"\]/.test(t)) return null;
+  return `[@media${t.startsWith("(") ? "" : "_"}${t.replace(/:\s+/g, ":").replace(/\s+/g, "_")}]:`;
 };
+const BAD_REST = /[[\]{}'"\,;]|::?(before|after|first-line|first-letter|selection|-webkit|-moz)/;
 const simpleOccurrence = (sel, rule) => {
-  const m = sel.trim().match(/^\.(-?[_a-zA-Z][\w-]*)((?::{1,2}[a-z-]+)*)$/);
+  const m = sel.trim().match(/^\.(-?[_a-zA-Z][\w-]*)(.*)$/s);
   if (!m) return null;
-  let prefix = "";
-  for (const ps of m[2].split(/:+/).filter(Boolean)) {
-    if (!PSEUDO[ps]) return null;
-    prefix += PSEUDO[ps];
-  }
+  const rest = m[2];
   const parent = rule.parent;
+  let media = "";
   if (parent?.type === "atrule") {
     if (parent.name !== "media" || parent.parent?.type !== "root") return null;
-    const mp = mediaPrefix(parent.params);
-    if (!mp) return null;
-    prefix = mp + prefix;
+    media = mediaPrefix(parent.params);
+    if (!media) return null;
   } else if (parent?.type !== "root") return null;
-  return { name: m[1], prefix };
+  if (rest === "") return { name: m[1], prefix: media, generic: false };
+  if (BAD_REST.test(rest) || /^[\w-]/.test(rest)) return null;
+  const pseudos = rest.match(/^((?::{1,2}[a-z-]+)+)$/);
+  if (pseudos) {
+    const parts = pseudos[1].split(/:+/).filter(Boolean);
+    if (parts.every((ps) => PSEUDO[ps])) return { name: m[1], prefix: media + parts.map((ps) => PSEUDO[ps]).join(""), generic: false };
+  }
+  const t = rest.trim().replace(/\s*([>+~])\s*/g, "$1").replace(/\s+/g, "_");
+  const body = /^\s/.test(rest) && !/^[>+~]/.test(t) ? `&_${t}` : `&${t}`;
+  return { name: m[1], prefix: `${media}[${body}]:`, generic: true };
 };
+const leadTotal = {};
 for (const f of cssFiles) {
   const root = postcss.parse(fs.readFileSync(f, "utf8"));
   roots[f] = root;
   noteElementRules(root);
   root.walkRules((r) => {
     if (r.parent?.type === "atrule" && /keyframes$/.test(r.parent.name)) return;
-    for (const s of r.selectors) {
-      for (const m of s.matchAll(/\.(-?[_a-zA-Z][\w-]*)/g)) mentions[m[1]] = (mentions[m[1]] || 0) + 1;
-      const so = simpleOccurrence(s, r);
-      if (so) (occ[so.name] ||= []).push({ file: f, rule: r, selector: s, prefix: so.prefix });
+    for (const sel of r.selectors) {
+      noteMentions(sel, (c) => {
+        leadTotal[c] = (leadTotal[c] || 0) + 1;
+        const so = simpleOccurrence(sel, r);
+        if (so && so.name === c) (occ[c] ||= []).push({ file: f, rule: r, selector: sel, prefix: so.prefix, generic: so.generic });
+      });
     }
   });
 }
@@ -122,7 +135,7 @@ const toUtility = (decl) => {
 
 let eligible = {};
 for (const [name, list] of Object.entries(occ)) {
-  if (mentions[name] !== list.length) continue;
+  if (leadTotal[name] !== list.length || blocked.has(name)) continue;
   if (ONLY && !list.every((o) => o.file.includes(ONLY))) continue;
   const prefixes = list.map((o) => o.prefix);
   if (new Set(prefixes).size !== prefixes.length) continue;
@@ -136,7 +149,7 @@ for (const [name, list] of Object.entries(occ)) {
     for (const d of decls) {
       const u = toUtility(d);
       if (!u) ok = false;
-      else entries.push({ prefix: o.prefix, prop: d.prop, util: u });
+      else entries.push({ prefix: o.prefix, prop: d.prop, util: u, generic: o.generic });
     }
   }
   if (!ok || n > MAX) continue;
@@ -144,14 +157,14 @@ for (const [name, list] of Object.entries(occ)) {
   const isMedia = (pre) => /^(max-\[|min-\[|\[@media)/.test(pre);
   const utils = entries.map((e) => {
     const overrides = isMedia(e.prefix) && entries.some((x) => x !== e && baseProp(x.prop) === baseProp(e.prop));
-    return e.prefix + (overrides && !e.util.endsWith("!") ? `${e.util}!` : e.util);
+    return e.prefix + ((overrides || e.generic) && !e.util.endsWith("!") ? `${e.util}!` : e.util);
   });
   if (tokenRe(name).test(testText) || tokenRe(name).test(indexHtml)) continue;
-  eligible[name] = { occurrences: list, utils };
+  eligible[name] = { occurrences: list, utils, keys: new Set(entries.map((e) => e.prefix + baseProp(e.prop))) };
 }
 
 const sources = Object.fromEntries([...jsxFiles, ...otherJs].map((f) => [f, fs.readFileSync(f, "utf8")]));
-const cssDefined = new Set(Object.keys(mentions));
+const cssDefined = new Set([...Object.keys(leadTotal), ...pinned]);
 
 // String pieces inside className attributes (literals, template quasis, ternaries, cn/clsx calls).
 const classStrings = (ast) => {
@@ -195,6 +208,7 @@ const classStrings = (ast) => {
 const planEdits = (active) => {
   const edits = {};
   const replaced = {};
+  const conflicts = new Set();
   for (const file of jsxFiles) {
     const code = sources[file];
     let ast;
@@ -207,21 +221,30 @@ const planEdits = (active) => {
       const text = code.slice(s.start, s.end);
       const tokens = text.split(/(\s+)/);
       const stillLegacy = tokens.some((t) => t.trim() && cssDefined.has(t) && !active[t]);
+      const seenKeys = new Map();
       let changed = false;
       const out = tokens.map((t, i) => {
         const e = active[t];
         if (!e) return t;
         // first/last token of a template quasi may continue into a ${...} placeholder
         if (s.dynamic && ((i === 0 && !/^\s/.test(text)) || (i === tokens.length - 1 && !/\s$/.test(text)))) return t;
+        for (const k of e.keys) {
+          if (seenKeys.has(k) && seenKeys.get(k) !== t) {
+            conflicts.add(t);
+            conflicts.add(seenKeys.get(k));
+          }
+          seenKeys.set(k, t);
+        }
         changed = true;
         replaced[t] = (replaced[t] || 0) + 1;
         const bang = stillLegacy || s.dynamic;
-        return e.utils.map((u) => (bang && !u.endsWith("!") ? `${u}!` : u)).join(" ");
+        const utils = e.utils.map((u) => (bang && !u.endsWith("!") ? `${u}!` : u)).join(" ");
+        return pinned.has(t) ? `${t} ${utils}` : utils;
       });
       if (changed) (edits[file] ||= []).push({ start: s.start, end: s.end, text: out.join("") });
     }
   }
-  return { edits, replaced };
+  return { edits, replaced, conflicts };
 };
 
 // 2. Keep only classes whose every JS occurrence was replaced (otherwise the CSS rule must stay).
@@ -229,9 +252,14 @@ const jsCount = {};
 for (const name of Object.keys(eligible)) {
   jsCount[name] = Object.values(sources).reduce((n, t) => n + (t.match(tokenRe(name)) || []).length, 0);
 }
-let { replaced } = planEdits(eligible);
-const keep = Object.fromEntries(Object.entries(eligible).filter(([n]) => replaced[n] && replaced[n] === jsCount[n]));
-eligible = keep;
+for (let round = 0; round < 20; round++) {
+  const { replaced, conflicts } = planEdits(eligible);
+  const next = Object.fromEntries(
+    Object.entries(eligible).filter(([n]) => replaced[n] && replaced[n] === jsCount[n] && !conflicts.has(n)),
+  );
+  if (Object.keys(next).length === Object.keys(eligible).length) break;
+  eligible = next;
+}
 const { edits } = planEdits(eligible);
 
 const seenRules = new Set();
@@ -257,7 +285,7 @@ if (write) {
       if (!r.parent) return;
       const keep = r.selectors.filter((sel) => {
         const so = simpleOccurrence(sel, r);
-        return !(so && eligible[so.name]);
+        return !(so && eligible[so.name] && !blocked.has(so.name));
       });
       if (keep.length === r.selectors.length) return;
       touched = true;

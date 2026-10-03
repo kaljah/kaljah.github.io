@@ -39,33 +39,6 @@
   background: linear-gradient(90deg, var(--accent-color, var(--color-brand-500)) 0%, var(--color-brand-400) 40%, var(--color-green-500) 100%);
 }
 
-.qa-title {
-  font-size: var(--text-xl);
-  font-weight: 700;
-  color: var(--text-primary, var(--color-ink-900));
-  margin: 0;
-  letter-spacing: -0.02em;
-}
-
-.qa-filter-select {
-  padding: 8px 14px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-color, var(--color-ink-200));
-  background: var(--color-white);
-  color: var(--text-primary, var(--color-ink-900));
-  font-size: var(--text-base);
-  font-weight: 500;
-  outline: none;
-  cursor: pointer;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  height: 38px;
-}
-
-.qa-filter-select:focus {
-  border-color: var(--accent-color, var(--color-brand-500));
-  box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.12);
-}
-
 .qa-btn-action {
   display: inline-flex;
   align-items: center;
@@ -79,17 +52,6 @@
   transition: all 0.2s ease;
   border: none;
   white-space: nowrap;
-}
-
-.qa-btn-primary {
-  background: var(--primary-gradient);
-  color: var(--color-white);
-  box-shadow: 0 2px 8px rgba(255, 102, 0, 0.25);
-}
-
-.qa-btn-primary:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 14px rgba(255, 102, 0, 0.35);
 }
 
 .qa-btn-secondary {
@@ -109,41 +71,6 @@
 }
 
 /* ── Top Executive KPI Grid ──────────────────────────────────────── */
-.qa-kpi-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-}
-
-@media (max-width: 1200px) {
-  .qa-kpi-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 640px) {
-  .qa-kpi-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-.qa-kpi-card {
-  background: var(--bg-card, rgba(255, 255, 255, 0.9));
-  border: 1px solid var(--border-color, rgba(226, 232, 240, 0.8));
-  border-radius: var(--radius-lg);
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 12px;
-  box-shadow: var(--shadow-card, 0 4px 16px -2px rgba(15, 23, 42, 0.04));
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.qa-kpi-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-card);
-}
 
 /* ── Navigation Tabs ─────────────────────────────────────────────── */
 
@@ -175,15 +102,6 @@
   background: rgba(255, 102, 0, 0.04);
 }
 
-.qa-tab-count-pill {
-  padding: 2px 8px;
-  border-radius: var(--radius-md);
-  font-size: var(--text-xs);
-  font-weight: 700;
-  background: var(--color-ink-100);
-  color: var(--color-ink-600);
-}
-
 .qa-tab-btn.active .qa-tab-count-pill {
   background: rgba(255, 102, 0, 0.15);
   color: var(--color-link);
@@ -192,35 +110,6 @@
 /* ── Content Panels ──────────────────────────────────────────────── */
 
 /* ── Tab 1: Anomaly Queue Toolbar ────────────────────────────────── */
-
-.qa-search-box {
-  position: relative;
-  display: flex;
-  align-items: center;
-  min-width: 240px;
-}
-
-.qa-search-box svg {
-  position: absolute;
-  left: 12px;
-  color: var(--color-ink-600);
-}
-
-.qa-search-input {
-  width: 100%;
-  padding: 8px 12px 8px 36px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-ink-200);
-  font-size: var(--text-base);
-  background: var(--color-white);
-  color: var(--color-ink-900);
-  outline: none;
-  transition: border-color 0.2s ease;
-}
-
-.qa-search-input:focus {
-  border-color: var(--accent-color, var(--color-brand-500));
-}
 
 .qa-status-filter-btn {
   display: inline-flex;
@@ -235,19 +124,6 @@
   color: var(--color-ink-500);
   cursor: pointer;
   transition: all 0.15s ease;
-}
-
-.qa-status-pill-count {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1px 6px;
-  border-radius: var(--radius-md);
-  font-size: var(--text-xs);
-  font-weight: 700;
-  background: var(--color-ink-100);
-  color: var(--color-ink-600);
-  line-height: 1.2;
 }
 
 .qa-status-filter-btn:hover {
@@ -338,40 +214,7 @@
 
 /* Action Buttons */
 
-.qa-btn-approve {
-  background: rgba(16, 185, 129, 0.1);
-  color: var(--color-green-700);
-  border-color: rgba(16, 185, 129, 0.25);
-}
-
-.qa-btn-approve:hover {
-  background: var(--color-green-700);
-  color: var(--color-white);
-}
-
-.qa-btn-reject {
-  background: rgba(239, 68, 68, 0.1);
-  color: var(--color-red-700);
-  border-color: rgba(239, 68, 68, 0.25);
-}
-
-.qa-btn-reject:hover {
-  background: var(--color-red-700);
-  color: var(--color-white);
-}
-
 /* ── Tab 2: Health & Completeness Diagnostics ────────────────────── */
-
-.qa-progress-row {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-bottom: 16px;
-}
-
-.qa-progress-row:last-child {
-  margin-bottom: 0;
-}
 
 /* Issues Cards Grid */
 
@@ -407,38 +250,6 @@
   background: var(--color-ink-50);
   color: var(--color-ink-900);
   border-color: var(--color-ink-400);
-}
-
-.qa-samples-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: var(--text-sm);
-  text-align: left;
-}
-
-.qa-samples-table th {
-  padding: 7px 10px;
-  background: var(--color-ink-50);
-  font-size: var(--text-xs);
-  font-weight: 700;
-  color: var(--color-ink-600);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  border-bottom: 1px solid var(--color-ink-200);
-  position: sticky;
-  top: 0;
-  z-index: 1;
-}
-
-.qa-samples-table td {
-  padding: 7px 10px;
-  border-bottom: 1px solid var(--color-ink-100);
-  color: var(--color-ink-700);
-  vertical-align: middle;
-}
-
-.qa-samples-table tr:last-child td {
-  border-bottom: none;
 }
 
 .qa-issue-item.critical {
@@ -499,18 +310,6 @@
   font-size: var(--text-md);
   letter-spacing: 0.05em;
   text-align: center;
-}
-
-.qa-scopes-unc-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-}
-
-@media (max-width: 900px) {
-  .qa-scopes-unc-grid {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* Spin animation for refresh icon */

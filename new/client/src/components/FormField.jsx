@@ -27,7 +27,7 @@ export const TextField = ({
       )}
       <input
         type={type}
-        className={`field-input ${error ? "field-error" : ""}`}
+        className={`field-input ${error ? "[border-color:var(--color-red-500)]! focus:[box-shadow:0_0_0_3px_rgba(239,_68,_68,_0.1)]!" : ""}`}
         value={value}
         onChange={onChange}
         placeholder={placeholder}
@@ -66,7 +66,7 @@ export const SelectField = ({
         </label>
       )}
       <NativeSelect
-        className={`field-select ${error ? "field-error" : ""}`}
+        className={`field-select ${error ? "[border-color:var(--color-red-500)]! focus:[box-shadow:0_0_0_3px_rgba(239,_68,_68,_0.1)]!" : ""}`}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled}
@@ -108,7 +108,7 @@ export const TextAreaField = ({
         </label>
       )}
       <textarea
-        className={`field-textarea ${error ? "field-error" : ""}`}
+        className={`field-textarea ${error ? "[border-color:var(--color-red-500)]! focus:[box-shadow:0_0_0_3px_rgba(239,_68,_68,_0.1)]!" : ""}`}
         value={value}
         onChange={onChange}
         placeholder={placeholder}
@@ -138,7 +138,7 @@ export const CheckboxField = ({
       <label className="checkbox-label">
         <input
           type="checkbox"
-          className="field-checkbox"
+          className="[width:18px]! [height:18px]! [cursor:pointer] [accent-color:var(--accent-color)] disabled:[cursor:not-allowed] disabled:[opacity:0.6]"
           checked={checked}
           onChange={(e) => onChange(e.target.checked)}
           disabled={disabled}
@@ -180,7 +180,7 @@ export const RadioGroupField = ({
           <label key={idx} className="[display:flex]! [align-items:center] [gap:8px] [cursor:pointer] [font-size:var(--text-base)]! [color:var(--text-primary)]!">
             <input
               type="radio"
-              className="field-radio"
+              className="[width:16px]! [height:16px]! [cursor:pointer] [accent-color:var(--accent-color)] disabled:[cursor:not-allowed] disabled:[opacity:0.6]"
               value={opt.value}
               checked={value === opt.value}
               onChange={(e) => onChange(e.target.value)}
@@ -220,7 +220,7 @@ export const DateField = ({
       )}
       <input
         type="date"
-        className={`field-input ${error ? "field-error" : ""}`}
+        className={`field-input ${error ? "[border-color:var(--color-red-500)]! focus:[box-shadow:0_0_0_3px_rgba(239,_68,_68,_0.1)]!" : ""}`}
         value={value}
         onChange={onChange}
         disabled={disabled}

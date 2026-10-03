@@ -840,7 +840,7 @@ const DashboardEnhanced = () => {
 
   return (
     <div
-      className="dashboard-content"
+      className="[min-height:100vh] [background:transparent]! [padding:24px_32px_48px]! [position:relative] [overflow-x:hidden]! [color:var(--text-primary,_var(--color-ink-900))]! [@media_print]:[padding:20px]! [@media_print]:[max-width:100%]! [@media(max-width:768px)]:[padding:14px_12px_36px]!"
       style={{
         opacity: isUpdating ? 0.8 : 1,
         transition: "opacity 0.15s ease",
@@ -858,7 +858,7 @@ const DashboardEnhanced = () => {
         {pendingCount > 0 && (
           <div className={`pending-banner-card ${includePending ? "active-preview" : ""}`}>
             <div className="[display:flex]! [align-items:center] [gap:14px] [flex:1] [min-width:280px]">
-              <div className="pending-banner-icon">
+              <div className="pending-banner-icon [width:42px]! [height:42px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [background:linear-gradient(135deg,_rgba(245,_158,_11,_0.15)_0%,_rgba(255,_102,_0,_0.12)_100%)]! [border:1px_solid_rgba(245,_158,_11,_0.25)]! [color:var(--color-amber-700)]! [flex-shrink:0] [box-shadow:0_2px_8px_rgba(245,_158,_11,_0.1)]! [transition:transform_0.2s_ease]!">
                 <Clock size={20} />
               </div>
               <div className="[display:flex]! [flex-direction:column] [gap:4px]">
@@ -872,7 +872,7 @@ const DashboardEnhanced = () => {
                     {includePending ? "Live Preview Active" : "Pending Approval"}
                   </span>
                 </div>
-                <p className="pending-banner-desc">
+                <p className="[margin:0]! [font-size:var(--text-base)]! [color:var(--text-secondary,_var(--color-ink-500))]! [line-height:1.45] [&_strong]:[color:var(--text-primary,_var(--color-ink-900))]! [&_strong]:[font-weight:700]!">
                   There are <strong>{pendingCount.toLocaleString()}</strong> emission records
                   {pendingCo2e > 0 && (
                     <span className="[display:inline-block]! [font-weight:600]! [color:var(--color-amber-700)]! [background:rgba(245,_158,_11,_0.08)]! [padding:1px_6px]! [border-radius:var(--radius-sm)]! [margin:0_4px]! [font-variant-numeric:tabular-nums]!">
@@ -887,12 +887,12 @@ const DashboardEnhanced = () => {
               </div>
             </div>
 
-            <div className="pending-banner-actions">
+            <div className="[display:flex]! [align-items:center] [gap:12px] [flex-wrap:wrap] [@media(max-width:640px)]:[justify-content:space-between] [@media(max-width:640px)]:[width:100%]! [@media(max-width:640px)]:[margin-top:4px]! [@media(max-width:640px)]:[padding-top:10px]! [@media(max-width:640px)]:[border-top:1px_solid_rgba(226,_232,_240,_0.8)]!">
               <label
-                className="pending-toggle-wrapper"
+                className="[display:flex]! [align-items:center] [gap:10px] [padding:6px_14px]! [border-radius:var(--radius-md)]! [background:rgba(241,_245,_249,_0.8)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [cursor:pointer] [user-select:none] [transition:all_0.2s_ease]! hover:[background:rgba(255,_247,_237,_0.9)]! hover:[border-color:rgba(255,_102,_0,_0.3)]! [&:hover_.pending-toggle-label]:[color:var(--text-primary,_var(--color-ink-900))]!"
                 title="Toggle pending emissions preview"
               >
-                <span className="pending-toggle-label">
+                <span className="pending-toggle-label [display:flex]! [align-items:center] [gap:6px] [font-size:var(--text-sm)]! [font-weight:600]! [color:var(--text-secondary,_var(--color-ink-600))]! [transition:color_0.2s_ease]!">
                   {includePending ? <Eye size={15} /> : <EyeOff size={15} />}
                   <span>Preview Pending Data</span>
                 </span>
@@ -903,14 +903,14 @@ const DashboardEnhanced = () => {
                     onChange={(e) => setIncludePending(e.target.checked)}
                     className="[opacity:0] [width:0]! [height:0]! [position:absolute]"
                   />
-                  <span className="pending-switch-slider" />
+                  <span className="pending-switch-slider [position:absolute] [top:2px] [left:2px] [width:16px]! [height:16px]! [background-color:var(--color-white)]! [border-radius:50%]! [box-shadow:var(--shadow-xs)]! [transition:transform_0.25s_cubic-bezier(0.4,_0,_0.2,_1)]!" />
                 </div>
               </label>
 
               {['admin', 'superuser'].includes(user?.role) && (
                 <button
                   type="button"
-                  className="pending-review-btn"
+                  className="[display:inline-flex]! [align-items:center] [gap:7px] [padding:8px_16px]! [font-size:var(--text-sm)]! [font-weight:600]! [border-radius:var(--radius-md)]! [background:linear-gradient(135deg,_var(--color-amber-700)_0%,_var(--color-amber-700)_100%)]! [color:var(--color-white)]! [border:none]! [cursor:pointer] [box-shadow:0_2px_10px_rgba(217,_119,_6,_0.25)]! [transition:all_0.2s_cubic-bezier(0.16,_1,_0.3,_1)]! [white-space:nowrap] hover:[transform:translateY(-1px)] hover:[box-shadow:0_4px_14px_rgba(217,_119,_6,_0.35)]! hover:[filter:brightness(1.05)] active:[transform:translateY(0)] [&_svg]:[transition:transform_0.2s_ease]! [&:hover_svg]:[transform:translateX(2px)]!"
                   onClick={() => navigate('/manage-data', { state: { tab: 'pending' } })}
                   title="Go to Manage Data to review pending records"
                 >
@@ -949,15 +949,15 @@ const DashboardEnhanced = () => {
         {/* --- Primary Analytics Grid: Trend Line (2fr) + Donuts (1fr) --- */}
         <div className="charts-section">
           {/* Trend Chart */}
-          <div className="card trend-card-enhanced glass-panel">
-            <div className="card-header-row">
+          <div className="card [border-radius:var(--radius-lg)]! [padding:24px]! [display:flex]! [flex-direction:column]! [min-width:0]! [background:var(--bg-card)]! [backdrop-filter:blur(14px)]! [border:1px_solid_var(--border-color)]! [box-shadow:var(--shadow-card)]! [transition:transform_0.22s_ease,_box-shadow_0.22s_ease,_border-color_0.22s_ease]! hover:[transform:translateY(-2px)]! hover:[box-shadow:var(--shadow-card-elevated)]! hover:[border-color:rgba(255,_255,_255,_0.95)]! [@media_print]:[box-shadow:none]! [@media_print]:[border:1px_solid_var(--color-ink-300)]! [@media_print]:[background:var(--color-white)]! [@media_print]:[page-break-inside:avoid]! [@media_print]:[margin-bottom:24px]! [@media(max-width:768px)]:[padding:16px]! [@media(max-width:768px)]:[border-radius:var(--radius-lg)]! glass-panel">
+            <div className="[display:flex]! [justify-content:space-between] [align-items:center] [margin-bottom:24px]! [@media(max-width:768px)]:[flex-direction:column] [@media(max-width:768px)]:[align-items:flex-start]! [@media(max-width:768px)]:[gap:12px]">
               <div>
                 <h3 className="card-title">Emissions Trend & Projection</h3>
                 <p className="m-[0px]! text-[color:var(--text-secondary)]! text-[length:0.85rem]!">
                   Historical inventory trajectory with 5-year predictive forecast
                 </p>
               </div>
-              <div className="card-header-actions">
+              <div className="[@media_print]:[display:none]! [display:flex]! [align-items:center] [gap:12px]">
                 <button
                   className={`compare-toggle-btn ${isCompareMode ? "active" : ""}`}
                   onClick={() => setIsCompareMode(!isCompareMode)}
@@ -1025,7 +1025,7 @@ const DashboardEnhanced = () => {
 
           {/* Donut Charts Column (1fr) */}
           <div className="[display:flex]! [flex-direction:column] [gap:24px] [min-width:0]">
-            <div className="card donut-card-enhanced glass-panel">
+            <div className="card [border-radius:var(--radius-lg)]! [padding:24px]! [flex:1]! [background:var(--bg-card)]! [backdrop-filter:blur(14px)]! [border:1px_solid_var(--border-color)]! [box-shadow:var(--shadow-card)]! [transition:transform_0.22s_ease,_box-shadow_0.22s_ease,_border-color_0.22s_ease]! hover:[transform:translateY(-2px)]! hover:[box-shadow:var(--shadow-card-elevated)]! hover:[border-color:rgba(255,_255,_255,_0.95)]! [@media_print]:[box-shadow:none]! [@media_print]:[border:1px_solid_var(--color-ink-300)]! [@media_print]:[background:var(--color-white)]! [@media_print]:[page-break-inside:avoid]! [@media_print]:[margin-bottom:24px]! glass-panel">
               <div className="[display:flex]! [justify-content:space-between] [align-items:center] [margin-bottom:12px]!">
                 <h3 className="[font-size:var(--text-md)]! [font-weight:700]! [color:var(--color-ink-800)]! [margin:0]! activity">Emissions by Activity</h3>
               </div>
@@ -1041,7 +1041,7 @@ const DashboardEnhanced = () => {
                 />
               </div>
             </div>
-            <div className="card donut-card-enhanced glass-panel">
+            <div className="card [border-radius:var(--radius-lg)]! [padding:24px]! [flex:1]! [background:var(--bg-card)]! [backdrop-filter:blur(14px)]! [border:1px_solid_var(--border-color)]! [box-shadow:var(--shadow-card)]! [transition:transform_0.22s_ease,_box-shadow_0.22s_ease,_border-color_0.22s_ease]! hover:[transform:translateY(-2px)]! hover:[box-shadow:var(--shadow-card-elevated)]! hover:[border-color:rgba(255,_255,_255,_0.95)]! [@media_print]:[box-shadow:none]! [@media_print]:[border:1px_solid_var(--color-ink-300)]! [@media_print]:[background:var(--color-white)]! [@media_print]:[page-break-inside:avoid]! [@media_print]:[margin-bottom:24px]! glass-panel">
               <div className="[display:flex]! [justify-content:space-between] [align-items:center] [margin-bottom:12px]!">
                 <h3 className="[font-size:var(--text-md)]! [font-weight:700]! [color:var(--color-ink-800)]! [margin:0]! source">Emissions by Source</h3>
               </div>
@@ -1063,7 +1063,7 @@ const DashboardEnhanced = () => {
         {/* SBTi Trajectory Pathway - Full Width Banner */}
         {sbtiData && sbtiData.trajectory && sbtiData.trajectory.length > 0 && (
           <div className="card full-width-card glass-panel p-[24px]! rounded-[20px]!">
-            <div className="card-header-row mb-[16px]!">
+            <div className="[display:flex]! [justify-content:space-between] [align-items:center] [margin-bottom:24px]! [@media(max-width:768px)]:[flex-direction:column] [@media(max-width:768px)]:[align-items:flex-start]! [@media(max-width:768px)]:[gap:12px] mb-[16px]!">
               <div>
                 <h3 className="card-subtitle text-[length:1.15rem]! font-bold!">
                   {sbtiData.pathway_label || "Decarbonization Trajectory"}
@@ -1127,10 +1127,10 @@ const DashboardEnhanced = () => {
         {/* Categorical Breakdown Cards */}
 
         <div
-          className={`card categorical-card glass-panel ${categoricalCollapsed ? "collapsed-card" : ""}`}
+          className={`card [padding:24px]! [background:var(--bg-card)]! [backdrop-filter:blur(14px)]! [border:1px_solid_var(--border-color)]! [border-radius:var(--radius-lg)]! [box-shadow:var(--shadow-card)]! [@media_print]:[box-shadow:none]! [@media_print]:[border:1px_solid_var(--color-ink-300)]! [@media_print]:[background:var(--color-white)]! [@media_print]:[page-break-inside:avoid]! [@media_print]:[margin-bottom:24px]! glass-panel ${categoricalCollapsed ? "collapsed-card" : ""}`}
         >
           <div role="button" tabIndex={0} onKeyDown={activateOnKey}
-            className="card-header-row clickable-card-header"
+            className="[display:flex]! [justify-content:space-between]! [align-items:center]! [margin-bottom:24px]! [@media(max-width:768px)]:[flex-direction:column]! [@media(max-width:768px)]:[align-items:flex-start]! [@media(max-width:768px)]:[gap:12px]! clickable-card-header"
             onClick={() => setCategoricalCollapsed(!categoricalCollapsed)}
             style={{
               cursor: "pointer",
@@ -1146,7 +1146,7 @@ const DashboardEnhanced = () => {
               </div>
             </div>
             <div
-              className="collapse-toggle-icon flex! items-center! text-[color:#64748b]!"
+              className="[@media_print]:[display:none]! flex! items-center! text-[color:#64748b]!"
              
             >
               {categoricalCollapsed ? (
@@ -1173,7 +1173,7 @@ const DashboardEnhanced = () => {
                           <div className="[font-size:var(--text-sm)]! [font-weight:700]! [color:var(--text-secondary,_var(--color-ink-500))]! [text-transform:uppercase]! [margin-bottom:12px]! [letter-spacing:0.05em]">{div}</div>
                           <div className="[display:flex]! [flex-direction:column] [gap:8px]">
                             {divData.regions.map((reg, ridx) => (
-                              <div key={ridx} className="region-compact-card">
+                              <div key={ridx} className="[background:rgba(255,_255,_255,_0.9)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-md)]! [padding:10px_12px]! [transition:transform_0.2s_ease,_border-color_0.2s_ease,_box-shadow_0.2s_ease]! [box-shadow:var(--shadow-xs)]! hover:[border-color:var(--accent-color,_var(--color-brand-500))]! hover:[transform:translateX(4px)] hover:[box-shadow:0_4px_12px_rgba(255,_102,_0,_0.1)]!">
                                 <div className="[font-size:var(--text-sm)]! [font-weight:600]! [color:var(--text-primary,_var(--color-ink-900))]! [margin-bottom:4px]!">
                                   {reg.region}{" "}
                                   {reg.field && (
@@ -1182,7 +1182,7 @@ const DashboardEnhanced = () => {
                                     </span>
                                   )}
                                 </div>
-                                <div className="region-value">
+                                <div className="[font-size:var(--text-base)]! [font-weight:700]! [color:var(--color-ink-900)]! [&_.unit]:[font-size:var(--text-xs)]! [&_.unit]:[color:var(--text-secondary,_var(--color-ink-500))]! [&_.unit]:[font-weight:600]!">
                                   {formatCompactNumber(reg.total_emissions)}{" "}
                                   <span className="unit">tCO₂e</span>
                                 </div>
