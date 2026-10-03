@@ -406,7 +406,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
                       </thead>
                       <tbody>
                         {anomalies.map((a, i) => (
-                          <tr key={i} className="[background:var(--color-amber-50)]! hover:[background:#fef3c7]!">
+                          <tr key={i} className="up-anomaly-row">
                             <td className="[font-family:monospace]! [color:var(--color-ink-600)]! [font-weight:500]! [width:60px]!">{a.row}</td>
                             <td className="[color:var(--color-ink-500)]! [max-width:120px]! [white-space:nowrap] [overflow:hidden]! [text-overflow:ellipsis]!">{a.facility_id || "—"}</td>
                             <td className="[color:var(--color-ink-500)]! [max-width:120px]! [white-space:nowrap] [overflow:hidden]! [text-overflow:ellipsis]! text-[color:var(--up-warn)]!">
@@ -438,7 +438,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
               <>
                 <button
                   type="button"
-                  className="[padding:10px_20px]! [background:transparent]! [color:var(--color-ink-500)]! [border:1px_solid_var(--color-ink-300)]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [transition:all_0.2s]! hover:[background:var(--color-ink-100)]! hover:[color:var(--color-ink-700)]!"
+                  className="up-btn-ghost"
                   onClick={() => {
                     if (onComplete) onComplete();
                   }}
@@ -448,7 +448,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
                 {reviewable && (
                   <button
                     type="button"
-                    className="[padding:10px_20px]! [background:var(--primary-gradient)]! [color:var(--color-white)]! [border:none]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [transition:all_0.18s]! [box-shadow:0_2px_8px_rgba(255,_102,_0,_0.25)]! [font-family:inherit]! hover:[background:var(--primary-gradient)]! hover:[box-shadow:0_4px_12px_rgba(255,_102,_0,_0.35)]! hover:[transform:translateY(-1px)]"
+                    className="up-btn-primary"
                     onClick={() => {
                       if (onComplete) onComplete();
                       navigate("/manage-data", { state: { tab: "pending" } });
@@ -461,7 +461,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
             ) : (
               <button
                 type="button"
-                className="[padding:10px_20px]! [background:var(--primary-gradient)]! [color:var(--color-white)]! [border:none]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [transition:all_0.18s]! [box-shadow:0_2px_8px_rgba(255,_102,_0,_0.25)]! [font-family:inherit]! hover:[background:var(--primary-gradient)]! hover:[box-shadow:0_4px_12px_rgba(255,_102,_0,_0.35)]! hover:[transform:translateY(-1px)]"
+                className="up-btn-primary"
                 onClick={() => {
                   if (onComplete) onComplete();
                 }}
@@ -489,13 +489,13 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
           </div>
           <div className="[background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:16px]! [margin-bottom:24px]! [max-height:200px]! [overflow-y:auto]! [font-family:monospace]! [font-size:var(--text-sm)]! [color:var(--color-ink-700)]!">
             {errors.map((e, i) => (
-              <div key={i} className="[display:flex]! [align-items:flex-start] [gap:8px] [margin-bottom:8px]! [line-height:1.4] last:[margin-bottom:0]!">
+              <div key={i} className="up-error-line">
                 <span className="[width:6px]! [height:6px]! [border-radius:50%]! [background:var(--color-red-600)]! [margin-top:6px]! [flex-shrink:0]" />
                 {e}
               </div>
             ))}
           </div>
-          <button className="[padding:10px_20px]! [background:transparent]! [color:var(--color-ink-500)]! [border:1px_solid_var(--color-ink-300)]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [transition:all_0.2s]! hover:[background:var(--color-ink-100)]! hover:[color:var(--color-ink-700)]!" onClick={onCancel}>
+          <button className="up-btn-ghost" onClick={onCancel}>
             Go Back
           </button>
         </div>

@@ -257,6 +257,18 @@
   color: #3730a3;
 }
 
+.tier2-inputs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 640px) {
+  .tier2-inputs-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 
 /* BUG-108: reflow at phone width — grids collapse to one column, tier buttons wrap, and inline
    multi-column grids inside the form stack instead of being clipped */

@@ -840,7 +840,7 @@ const DashboardEnhanced = () => {
 
   return (
     <div
-      className="[min-height:100vh] [background:transparent]! [padding:24px_32px_48px]! [position:relative] [overflow-x:hidden]! [color:var(--text-primary,_var(--color-ink-900))]! [@mediaprint]:[padding:20px]! [@mediaprint]:[max-width:100%]! max-[768px]:[padding:14px_12px_36px]!"
+      className="dashboard-content"
       style={{
         opacity: isUpdating ? 0.8 : 1,
         transition: "opacity 0.15s ease",
@@ -887,7 +887,7 @@ const DashboardEnhanced = () => {
               </div>
             </div>
 
-            <div className="[display:flex]! [align-items:center] [gap:12px] [flex-wrap:wrap] max-[640px]:[justify-content:space-between] max-[640px]:[width:100%]! max-[640px]:[margin-top:4px]! max-[640px]:[padding-top:10px]! max-[640px]:[border-top:1px_solid_rgba(226,_232,_240,_0.8)]!">
+            <div className="pending-banner-actions">
               <label
                 className="pending-toggle-wrapper"
                 title="Toggle pending emissions preview"
@@ -949,15 +949,15 @@ const DashboardEnhanced = () => {
         {/* --- Primary Analytics Grid: Trend Line (2fr) + Donuts (1fr) --- */}
         <div className="charts-section">
           {/* Trend Chart */}
-          <div className="card [border-radius:var(--radius-lg)]! [padding:24px]! [display:flex]! [flex-direction:column]! [min-width:0]! [background:var(--bg-card)]! [backdrop-filter:blur(14px)]! [border:1px_solid_var(--border-color)]! [box-shadow:var(--shadow-card)]! [transition:transform_0.22s_ease,_box-shadow_0.22s_ease,_border-color_0.22s_ease]! hover:[transform:translateY(-2px)]! hover:[box-shadow:var(--shadow-card-elevated)]! hover:[border-color:rgba(255,_255,_255,_0.95)]! [@mediaprint]:[box-shadow:none]! [@mediaprint]:[border:1px_solid_var(--color-ink-300)]! [@mediaprint]:[background:var(--color-white)]! [@mediaprint]:[page-break-inside:avoid]! [@mediaprint]:[margin-bottom:24px]! max-[768px]:[padding:16px]! max-[768px]:[border-radius:var(--radius-lg)]! glass-panel">
-            <div className="[display:flex]! [justify-content:space-between] [align-items:center] [margin-bottom:24px]! max-[768px]:[flex-direction:column] max-[768px]:[align-items:flex-start] max-[768px]:[gap:12px]">
+          <div className="card trend-card-enhanced glass-panel">
+            <div className="card-header-row">
               <div>
                 <h3 className="card-title">Emissions Trend & Projection</h3>
                 <p className="m-[0px]! text-[color:var(--text-secondary)]! text-[length:0.85rem]!">
                   Historical inventory trajectory with 5-year predictive forecast
                 </p>
               </div>
-              <div className="[@mediaprint]:[display:none]! [display:flex]! [align-items:center] [gap:12px]">
+              <div className="card-header-actions">
                 <button
                   className={`compare-toggle-btn ${isCompareMode ? "active" : ""}`}
                   onClick={() => setIsCompareMode(!isCompareMode)}
@@ -1025,7 +1025,7 @@ const DashboardEnhanced = () => {
 
           {/* Donut Charts Column (1fr) */}
           <div className="[display:flex]! [flex-direction:column] [gap:24px] [min-width:0]">
-            <div className="card [border-radius:var(--radius-lg)]! [padding:24px]! [flex:1]! [background:var(--bg-card)]! [backdrop-filter:blur(14px)]! [border:1px_solid_var(--border-color)]! [box-shadow:var(--shadow-card)]! [transition:transform_0.22s_ease,_box-shadow_0.22s_ease,_border-color_0.22s_ease]! hover:[transform:translateY(-2px)]! hover:[box-shadow:var(--shadow-card-elevated)]! hover:[border-color:rgba(255,_255,_255,_0.95)]! [@mediaprint]:[box-shadow:none]! [@mediaprint]:[border:1px_solid_var(--color-ink-300)]! [@mediaprint]:[background:var(--color-white)]! [@mediaprint]:[page-break-inside:avoid]! [@mediaprint]:[margin-bottom:24px]! glass-panel">
+            <div className="card donut-card-enhanced glass-panel">
               <div className="[display:flex]! [justify-content:space-between] [align-items:center] [margin-bottom:12px]!">
                 <h3 className="[font-size:var(--text-md)]! [font-weight:700]! [color:var(--color-ink-800)]! [margin:0]! activity">Emissions by Activity</h3>
               </div>
@@ -1041,7 +1041,7 @@ const DashboardEnhanced = () => {
                 />
               </div>
             </div>
-            <div className="card [border-radius:var(--radius-lg)]! [padding:24px]! [flex:1]! [background:var(--bg-card)]! [backdrop-filter:blur(14px)]! [border:1px_solid_var(--border-color)]! [box-shadow:var(--shadow-card)]! [transition:transform_0.22s_ease,_box-shadow_0.22s_ease,_border-color_0.22s_ease]! hover:[transform:translateY(-2px)]! hover:[box-shadow:var(--shadow-card-elevated)]! hover:[border-color:rgba(255,_255,_255,_0.95)]! [@mediaprint]:[box-shadow:none]! [@mediaprint]:[border:1px_solid_var(--color-ink-300)]! [@mediaprint]:[background:var(--color-white)]! [@mediaprint]:[page-break-inside:avoid]! [@mediaprint]:[margin-bottom:24px]! glass-panel">
+            <div className="card donut-card-enhanced glass-panel">
               <div className="[display:flex]! [justify-content:space-between] [align-items:center] [margin-bottom:12px]!">
                 <h3 className="[font-size:var(--text-md)]! [font-weight:700]! [color:var(--color-ink-800)]! [margin:0]! source">Emissions by Source</h3>
               </div>
@@ -1063,7 +1063,7 @@ const DashboardEnhanced = () => {
         {/* SBTi Trajectory Pathway - Full Width Banner */}
         {sbtiData && sbtiData.trajectory && sbtiData.trajectory.length > 0 && (
           <div className="card full-width-card glass-panel p-[24px]! rounded-[20px]!">
-            <div className="[display:flex]! [justify-content:space-between] [align-items:center] [margin-bottom:24px]! max-[768px]:[flex-direction:column] max-[768px]:[align-items:flex-start] max-[768px]:[gap:12px] mb-[16px]!">
+            <div className="card-header-row mb-[16px]!">
               <div>
                 <h3 className="card-subtitle text-[length:1.15rem]! font-bold!">
                   {sbtiData.pathway_label || "Decarbonization Trajectory"}
@@ -1127,10 +1127,10 @@ const DashboardEnhanced = () => {
         {/* Categorical Breakdown Cards */}
 
         <div
-          className={`card [padding:24px]! [background:var(--bg-card)]! [backdrop-filter:blur(14px)]! [border:1px_solid_var(--border-color)]! [border-radius:var(--radius-lg)]! [box-shadow:var(--shadow-card)]! [@mediaprint]:[box-shadow:none]! [@mediaprint]:[border:1px_solid_var(--color-ink-300)]! [@mediaprint]:[background:var(--color-white)]! [@mediaprint]:[page-break-inside:avoid]! [@mediaprint]:[margin-bottom:24px]! glass-panel ${categoricalCollapsed ? "collapsed-card" : ""}`}
+          className={`card categorical-card glass-panel ${categoricalCollapsed ? "collapsed-card" : ""}`}
         >
           <div role="button" tabIndex={0} onKeyDown={activateOnKey}
-            className="[display:flex]! [justify-content:space-between]! [align-items:center]! [margin-bottom:24px]! max-[768px]:[flex-direction:column]! max-[768px]:[align-items:flex-start]! max-[768px]:[gap:12px]! clickable-card-header"
+            className="card-header-row clickable-card-header"
             onClick={() => setCategoricalCollapsed(!categoricalCollapsed)}
             style={{
               cursor: "pointer",
@@ -1146,7 +1146,7 @@ const DashboardEnhanced = () => {
               </div>
             </div>
             <div
-              className="[@mediaprint]:[display:none]! flex! items-center! text-[color:#64748b]!"
+              className="collapse-toggle-icon flex! items-center! text-[color:#64748b]!"
              
             >
               {categoricalCollapsed ? (
@@ -1173,7 +1173,7 @@ const DashboardEnhanced = () => {
                           <div className="[font-size:var(--text-sm)]! [font-weight:700]! [color:var(--text-secondary,_var(--color-ink-500))]! [text-transform:uppercase]! [margin-bottom:12px]! [letter-spacing:0.05em]">{div}</div>
                           <div className="[display:flex]! [flex-direction:column] [gap:8px]">
                             {divData.regions.map((reg, ridx) => (
-                              <div key={ridx} className="[background:rgba(255,_255,_255,_0.9)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-md)]! [padding:10px_12px]! [transition:transform_0.2s_ease,_border-color_0.2s_ease,_box-shadow_0.2s_ease]! [box-shadow:var(--shadow-xs)]! hover:[border-color:var(--accent-color,_var(--color-brand-500))]! hover:[transform:translateX(4px)] hover:[box-shadow:0_4px_12px_rgba(255,_102,_0,_0.1)]!">
+                              <div key={ridx} className="region-compact-card">
                                 <div className="[font-size:var(--text-sm)]! [font-weight:600]! [color:var(--text-primary,_var(--color-ink-900))]! [margin-bottom:4px]!">
                                   {reg.region}{" "}
                                   {reg.field && (

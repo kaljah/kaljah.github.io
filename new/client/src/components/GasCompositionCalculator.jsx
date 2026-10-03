@@ -271,7 +271,7 @@ const GasCompositionCalculator = ({
       maxWidth="1400px"
     >
       <div className="[color:var(--text-primary)]!">
-        <div className="[display:grid]! [grid-template-columns:1fr_340px] [gap:30px] max-[850px]:[grid-template-columns:1fr]">
+        <div className="comp-calc-grid">
           {/* Left: Inputs */}
           <div className="comp-inputs">
             <div className="calculation-mode-selector">
@@ -358,7 +358,7 @@ const GasCompositionCalculator = ({
           </div>
 
           {/* Right: Results */}
-          <div className="[background:rgba(255,_255,_255,_0.02)]! [border-left:1px_solid_var(--border-color)]! [padding-left:30px]! max-[850px]:[border-left:none]! max-[850px]:[border-top:1px_solid_var(--border-color)]! max-[850px]:[padding-left:0]! max-[850px]:[padding-top:30px]!">
+          <div className="comp-results">
             {results ? (
               <div className="results-wrapper">
                 <div className="result-card main">

@@ -5,7 +5,7 @@ import { formatCompactNumber } from "../../utils/formatters";
 
 // Extracted from DashboardEnhanced.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActivities, expandedDivisions, flaringData, formatActivityName, getHierarchicalData, navigate, setDetailedBreakdownCollapsed, stats, toggleActivity, toggleDivision }) => (
-<div className="[display:grid]! [grid-template-columns:8fr_4fr] [gap:24px] max-[1200px]:[grid-template-columns:1fr] max-[1200px]:[gap:20px]">
+<div className="main-dashboard-grid">
           <div className="detailed-breakdown-section">
             <div
               className={`card detailed-table-card glass-panel ${detailedBreakdownCollapsed ? "collapsed-card" : ""}`}
@@ -27,7 +27,7 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
                   Detailed Breakdown
                 </h3>
                 <div
-                  className="[@mediaprint]:[display:none]! flex! items-center! text-[color:#64748b]!"
+                  className="collapse-toggle-icon flex! items-center! text-[color:#64748b]!"
                  
                 >
                   {detailedBreakdownCollapsed ? (
@@ -215,7 +215,7 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
             {/* Moved Trend Chart to Top */}
 
             <div className="card [padding:24px]!">
-              <div className="[display:flex]! [justify-content:space-between] [align-items:center] [margin-bottom:24px]! max-[768px]:[flex-direction:column] max-[768px]:[align-items:flex-start] max-[768px]:[gap:12px]">
+              <div className="card-header-row">
                 <h3 className="card-title">Reference Libraries</h3>
                 <svg
                   width="20"

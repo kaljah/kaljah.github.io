@@ -163,7 +163,7 @@ const UncertaintyAssessment = () => {
   return (
     <div className="[padding:24px_32px_48px]! [max-width:1600px]! [margin:0_auto]! [color:var(--text-primary,_var(--color-ink-900))]!">
       {/* ── Page Header ── */}
-      <div className="[margin-bottom:40px]! [display:flex]! [justify-content:space-between] [align-items:flex-end] [gap:24px] [flex-wrap:wrap] max-[900px]:[flex-direction:column] max-[900px]:[align-items:flex-start]">
+      <div className="ua-page-header">
         <div>
           <h1 className="ua-title">Data Reliability Analysis</h1>
           <p className="[font-size:var(--text-lg)]! [color:var(--text-secondary,_var(--color-ink-500))]! [max-width:800px]! [margin:0]! [line-height:1.5]">
@@ -188,7 +188,7 @@ const UncertaintyAssessment = () => {
           )}
         </div>
 
-        <div className="[display:flex]! [gap:20px] [align-items:flex-end] [flex-wrap:wrap] max-[900px]:[flex-direction:column] max-[900px]:[width:100%]!">
+        <div className="ua-controls">
           <div className="[display:flex]! [flex-direction:column] [gap:8px] w-[130px]!">
             <CustomDropdown
               options={yearOptions}
@@ -215,7 +215,7 @@ const UncertaintyAssessment = () => {
           </div>
 
           <button
-            className="[display:inline-flex]! [align-items:center] [gap:8px] [padding:10px_20px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [background:var(--bg-card,_var(--color-white))]! [color:var(--text-primary,_var(--color-ink-800))]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [transition:all_0.2s_ease]! hover:[background:var(--color-primary)]! hover:[color:var(--color-white)]! hover:[border-color:var(--accent-color,_var(--color-brand-500))]! hover:[transform:translateY(-1px)] hover:[box-shadow:var(--shadow-card)]!"
+            className="ua-export-btn"
             onClick={handleExport}
             disabled={exporting || !data}
             title="Export uncertainty assessment as CSV"
@@ -241,9 +241,9 @@ const UncertaintyAssessment = () => {
       ) : (
         <>
           {/* ── Tier Breakdown Cards ── */}
-      <div className="[display:grid]! [grid-template-columns:repeat(3,_1fr)] [gap:20px] [margin-bottom:40px]! max-[900px]:[grid-template-columns:1fr]">
+      <div className="ua-tier-grid">
         {Object.entries(data.tier_breakdown || {}).map(([tier, pct]) => (
-          <div key={tier} className="[background:var(--bg-card,_rgba(255,_255,_255,_0.78))]! [padding:20px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))]! [box-shadow:var(--shadow-card,_0_1px_3px_rgba(0,_0,_0,_0.05))]! [transition:transform_0.2s_ease,_box-shadow_0.2s_ease]! hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated,_0_4px_12px_rgba(0,_0,_0,_0.1))]!">
+          <div key={tier} className="ua-tier-card">
             <div className="[font-size:var(--text-sm)]! [color:var(--text-secondary,_var(--color-ink-500))]! [font-weight:600]!">{tier} (share of Scope 1)</div>
             <div className={`ua-tier-value ${getTierColorClass(tier)}`}>
               {pct}%
@@ -260,11 +260,11 @@ const UncertaintyAssessment = () => {
 
       {/* ── Uncertainty bands (whole inventory) ── */}
       {data.uncertainty_bands && (
-        <div className="[display:grid]! [grid-template-columns:repeat(3,_1fr)] [gap:20px] [margin-bottom:40px]! max-[900px]:[grid-template-columns:1fr]">
+        <div className="ua-tier-grid">
           {[["low", "Low Uncertainty (≤ ±10%)", "band-low"],
             ["medium", "Medium Uncertainty (±10% to ±30%)", "band-medium"],
             ["high", "High Uncertainty (> ±30%)", "band-high"]].map(([band, label, cls]) => (
-            <div key={band} className="[background:var(--bg-card,_rgba(255,_255,_255,_0.78))]! [padding:20px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))]! [box-shadow:var(--shadow-card,_0_1px_3px_rgba(0,_0,_0,_0.05))]! [transition:transform_0.2s_ease,_box-shadow_0.2s_ease]! hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated,_0_4px_12px_rgba(0,_0,_0,_0.1))]!">
+            <div key={band} className="ua-tier-card">
               <div className="[font-size:var(--text-sm)]! [color:var(--text-secondary,_var(--color-ink-500))]! [font-weight:600]!">{label}</div>
               <div className={`ua-tier-value ${cls}`}>{data.uncertainty_bands[band] ?? 0}%</div>
               <div className="[width:100%]! [height:4px]! [background:var(--border-color,_var(--color-ink-100))]! [border-radius:var(--radius-sm)]! [overflow:hidden]!">
@@ -306,7 +306,7 @@ const UncertaintyAssessment = () => {
 
             <div className="uncertainty-grid">
               {section.top_contributors.map((factor, fIdx) => (
-                <div key={fIdx} className="[background:var(--bg-card,_rgba(255,_255,_255,_0.78))]! [backdrop-filter:blur(14px)] [-webkit-backdrop-filter:blur(14px)]! [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))]! [border-radius:var(--radius-lg)]! [padding:24px]! [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease]! [box-shadow:var(--shadow-card,_0_4px_6px_-1px_rgba(0,_0,_0,_0.1))]! hover:[transform:translateY(-3px)] hover:[box-shadow:var(_--shadow-card-elevated,_0_10px_25px_-5px_rgba(0,_0,_0,_0.12)_)]! hover:[border-color:rgba(255,_255,_255,_0.95)]!">
+                <div key={fIdx} className="factor-card">
                   <div className="[display:flex]! [justify-content:space-between] [align-items:flex-start] [margin-bottom:15px]!">
                     <div>
                       <div className="factor-name">{factor.name}</div>

@@ -351,7 +351,7 @@ export default function QADashboard() {
                         {hasSamples && (
                             <button
                                 type="button"
-                                className="[display:inline-flex]! [align-items:center] [gap:6px] [padding:8px_16px]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [height:38px]! [transition:all_0.2s_ease]! [border:none]! [white-space:nowrap] disabled:[opacity:0.6] disabled:[cursor:not-allowed] [border:1px_solid_var(--color-ink-300)]! [background:var(--color-white)]! [color:var(--color-ink-600)]! [font-size:var(--text-sm)]! [height:34px]! [padding:0_12px]! [display:inline-flex]! [align-items:center] [gap:6px] [border-radius:var(--radius-sm)]! [cursor:pointer] [transition:all_0.15s_ease]! [font-weight:500]! hover:[background:var(--color-ink-50)]! hover:[color:var(--color-ink-900)]! hover:[border-color:var(--color-ink-400)]!"
+                                className="qa-btn-action qa-btn-inspect"
                                 onClick={() => setExpandedFindingId(prev => prev === item.id ? null : item.id)}
                                 title={isExpanded ? "Collapse preview" : "Inspect sample records"}
                             >
@@ -362,7 +362,7 @@ export default function QADashboard() {
                         )}
                         <button
                             type="button"
-                            className="[display:inline-flex]! [align-items:center]! [gap:6px]! [padding:8px_16px]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer]! [height:38px]! [transition:all_0.2s_ease]! [border:none]! [white-space:nowrap]! disabled:[opacity:0.6]! disabled:[cursor:not-allowed]! qa-btn-secondary"
+                            className="qa-btn-action qa-btn-secondary"
                             onClick={() => handleFindingAction(item)}
                         >
                             {item.action || 'Resolve'} <ArrowRight size={13} />
@@ -458,7 +458,7 @@ export default function QADashboard() {
                         <div className="[display:flex]! [align-items:center] [gap:10px] [flex-wrap:wrap]">
                             {/* Scope Selector */}
                             <NativeSelect
-                                className="[padding:8px_14px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [background:var(--color-white)]! [color:var(--text-primary,_var(--color-ink-900))]! [font-size:var(--text-base)]! [font-weight:500]! [outline:none]! [cursor:pointer] [transition:border-color_0.2s_ease,_box-shadow_0.2s_ease]! [height:38px]! focus:[border-color:var(--accent-color,_var(--color-brand-500))]! focus:[box-shadow:0_0_0_3px_rgba(255,_102,_0,_0.12)]!"
+                                className="qa-filter-select"
                                 value={scopeFilter}
                                 onChange={e => { setScopeFilter(e.target.value); setOffset(0); }}
                                 title="Filter by GHG Scope"
@@ -471,7 +471,7 @@ export default function QADashboard() {
 
                             {/* Year Selector */}
                             <NativeSelect
-                                className="[padding:8px_14px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [background:var(--color-white)]! [color:var(--text-primary,_var(--color-ink-900))]! [font-size:var(--text-base)]! [font-weight:500]! [outline:none]! [cursor:pointer] [transition:border-color_0.2s_ease,_box-shadow_0.2s_ease]! [height:38px]! focus:[border-color:var(--accent-color,_var(--color-brand-500))]! focus:[box-shadow:0_0_0_3px_rgba(255,_102,_0,_0.12)]!"
+                                className="qa-filter-select"
                                 value={yearFilter}
                                 onChange={e => { setYearFilter(e.target.value); setOffset(0); }}
                                 title="Filter by Reporting Year"
@@ -484,7 +484,7 @@ export default function QADashboard() {
 
                             {/* Refresh Diagnostics */}
                             <button
-                                className="[display:inline-flex]! [align-items:center]! [gap:6px]! [padding:8px_16px]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer]! [height:38px]! [transition:all_0.2s_ease]! [border:none]! [white-space:nowrap]! disabled:[opacity:0.6]! disabled:[cursor:not-allowed]! qa-btn-secondary"
+                                className="qa-btn-action qa-btn-secondary"
                                 onClick={() => fetchDashboard(true)}
                                 disabled={runningDiagnostics || isUpdating}
                                 title="Re-run data health checks and anomaly diagnostics"
@@ -495,7 +495,7 @@ export default function QADashboard() {
 
                             {/* Export CSV Report */}
                             <button
-                                className="[display:inline-flex]! [align-items:center]! [gap:6px]! [padding:8px_16px]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer]! [height:38px]! [transition:all_0.2s_ease]! [border:none]! [white-space:nowrap]! disabled:[opacity:0.6]! disabled:[cursor:not-allowed]! qa-btn-primary"
+                                className="qa-btn-action qa-btn-primary"
                                 onClick={handleExport}
                                 disabled={exporting}
                                 title="Export complete QA/QC compliance report as CSV"
@@ -508,9 +508,9 @@ export default function QADashboard() {
                 </div>
 
                 {/* ── Executive KPI Grid (4 Cards) ───────────────────────── */}
-                <div className="[display:grid]! [grid-template-columns:repeat(4,_1fr)] [gap:16px] max-[1200px]:[grid-template-columns:repeat(2,_1fr)] max-[640px]:[grid-template-columns:1fr]">
+                <div className="qa-kpi-grid">
                     {/* Card 1: Health & Completeness */}
-                    <div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.9))]! [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))]! [border-radius:var(--radius-lg)]! [padding:20px]! [display:flex]! [flex-direction:column] [justify-content:space-between] [gap:12px] [box-shadow:var(--shadow-card,_0_4px_16px_-2px_rgba(15,_23,_42,_0.04))]! [transition:transform_0.2s_ease,_box-shadow_0.2s_ease]! hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card)]!">
+                    <div className="qa-kpi-card">
                         <div className="[display:flex]! [justify-content:space-between] [align-items:center]">
                             <span className="[font-size:var(--text-sm)]! [text-transform:uppercase]! [letter-spacing:0.05em] [font-weight:600]! [color:var(--text-secondary,_var(--color-ink-500))]!">Data Health Score</span>
                             <div className="[width:32px]! [height:32px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [background:rgba(241,_245,_249,_0.8)]! [color:var(--text-secondary,_var(--color-ink-500))]!" style={{ color: healthColor, background: `${healthColor}15` }}>
@@ -530,7 +530,7 @@ export default function QADashboard() {
                     </div>
 
                     {/* Card 2: IPCC Tier 1 Uncertainty (SRSS) */}
-                    <div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.9))]! [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))]! [border-radius:var(--radius-lg)]! [padding:20px]! [display:flex]! [flex-direction:column] [justify-content:space-between] [gap:12px] [box-shadow:var(--shadow-card,_0_4px_16px_-2px_rgba(15,_23,_42,_0.04))]! [transition:transform_0.2s_ease,_box-shadow_0.2s_ease]! hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card)]!">
+                    <div className="qa-kpi-card">
                         <div className="[display:flex]! [justify-content:space-between] [align-items:center]">
                             <span className="[font-size:var(--text-sm)]! [text-transform:uppercase]! [letter-spacing:0.05em] [font-weight:600]! [color:var(--text-secondary,_var(--color-ink-500))]!" title="IPCC Approach 1, Verified records, 95 % confidence (k = 2)">
                                 Inventory Uncertainty (95% CI{tier1_uncertainty.year ? `, ${tier1_uncertainty.year}` : ""})
@@ -553,7 +553,7 @@ export default function QADashboard() {
                     </div>
 
                     {/* Card 3: Flagged Anomalies Queue */}
-                    <div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.9))]! [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))]! [border-radius:var(--radius-lg)]! [padding:20px]! [display:flex]! [flex-direction:column] [justify-content:space-between] [gap:12px] [box-shadow:var(--shadow-card,_0_4px_16px_-2px_rgba(15,_23,_42,_0.04))]! [transition:transform_0.2s_ease,_box-shadow_0.2s_ease]! hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card)]!">
+                    <div className="qa-kpi-card">
                         <div className="[display:flex]! [justify-content:space-between] [align-items:center]">
                             <span className="[font-size:var(--text-sm)]! [text-transform:uppercase]! [letter-spacing:0.05em] [font-weight:600]! [color:var(--text-secondary,_var(--color-ink-500))]!">Flagged Anomalies</span>
                             <div className="[width:32px]! [height:32px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [background:rgba(241,_245,_249,_0.8)]! [color:var(--text-secondary,_var(--color-ink-500))]! text-[color:#b91c1c]! bg-[color:rgba(239,_68,_68,_0.12)]!">
@@ -574,7 +574,7 @@ export default function QADashboard() {
                     </div>
 
                     {/* Card 4: Inventory & Facility Coverage */}
-                    <div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.9))]! [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))]! [border-radius:var(--radius-lg)]! [padding:20px]! [display:flex]! [flex-direction:column] [justify-content:space-between] [gap:12px] [box-shadow:var(--shadow-card,_0_4px_16px_-2px_rgba(15,_23,_42,_0.04))]! [transition:transform_0.2s_ease,_box-shadow_0.2s_ease]! hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card)]!">
+                    <div className="qa-kpi-card">
                         <div className="[display:flex]! [justify-content:space-between] [align-items:center]">
                             <span className="[font-size:var(--text-sm)]! [text-transform:uppercase]! [letter-spacing:0.05em] [font-weight:600]! [color:var(--text-secondary,_var(--color-ink-500))]!">Inventory Coverage</span>
                             <div className="[width:32px]! [height:32px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [background:rgba(241,_245,_249,_0.8)]! [color:var(--text-secondary,_var(--color-ink-500))]! text-[color:#1d4ed8]! bg-[color:rgba(59,_130,_246,_0.12)]!">
@@ -686,7 +686,7 @@ export default function QADashboard() {
                                 </div>
 
                                 {/* Dimension Bars */}
-                                <div className="[display:flex]! [flex-direction:column] [gap:6px] [margin-bottom:16px]! last:[margin-bottom:0]!">
+                                <div className="qa-progress-row">
                                     <div className="[display:flex]! [justify-content:space-between] [font-size:var(--text-base)]! [font-weight:500]! [color:var(--color-ink-700)]!">
                                         <span>Organizational Facility Assignment</span>
                                         <strong>{dimCompleteness.facility}%</strong>
@@ -699,7 +699,7 @@ export default function QADashboard() {
                                     </div>
                                 </div>
 
-                                <div className="[display:flex]! [flex-direction:column] [gap:6px] [margin-bottom:16px]! last:[margin-bottom:0]!">
+                                <div className="qa-progress-row">
                                     <div className="[display:flex]! [justify-content:space-between] [font-size:var(--text-base)]! [font-weight:500]! [color:var(--color-ink-700)]!">
                                         <span>Source & Fuel Type Specifications</span>
                                         <strong>{dimCompleteness.fuel_source}%</strong>
@@ -712,7 +712,7 @@ export default function QADashboard() {
                                     </div>
                                 </div>
 
-                                <div className="[display:flex]! [flex-direction:column] [gap:6px] [margin-bottom:16px]! last:[margin-bottom:0]!">
+                                <div className="qa-progress-row">
                                     <div className="[display:flex]! [justify-content:space-between] [font-size:var(--text-base)]! [font-weight:500]! [color:var(--color-ink-700)]!">
                                         <span>Activity Quantities & Physical Units</span>
                                         <strong>{dimCompleteness.activity_amount}%</strong>
@@ -725,7 +725,7 @@ export default function QADashboard() {
                                     </div>
                                 </div>
 
-                                <div className="[display:flex]! [flex-direction:column] [gap:6px] [margin-bottom:16px]! last:[margin-bottom:0]!">
+                                <div className="qa-progress-row">
                                     <div className="[display:flex]! [justify-content:space-between] [font-size:var(--text-base)]! [font-weight:500]! [color:var(--color-ink-700)]!">
                                         <span>Calculated CO₂e Emissions Integrity</span>
                                         <strong>{dimCompleteness.calculation}%</strong>
@@ -809,7 +809,7 @@ export default function QADashboard() {
                             </div>
 
                             {/* Scope-by-Scope Uncertainty Cards */}
-                            <div className="[display:grid]! [grid-template-columns:repeat(3,_1fr)] [gap:16px] max-[900px]:[grid-template-columns:1fr]">
+                            <div className="qa-scopes-unc-grid">
                                 {/* Scope 1 */}
                                 <div className="[background:var(--color-white)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:20px]! [display:flex]! [flex-direction:column] [gap:10px]">
                                     <div className="flex! justify-between! items-center!">

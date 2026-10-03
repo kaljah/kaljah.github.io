@@ -5,7 +5,7 @@ import { activateOnKey } from "../../utils/a11yKeys";
 
 // Extracted from Scope1ImportWizard.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const Scope1ImportWizardScope1Bulk = ({ FIELD_GROUPS, FieldGroup, Icon, ModeCard, PROCESS_CATALOGUE, ProcessTile, StepBar, allowedRegions, canGoNext, canSubmit, downloadTemplate, file, fileInputRef, globalFactor, handleSubmit, headers, isAdmin, isDragging, isSubmitting, jobId, mapping, missingRequired, onClose, onDrop, onFileChange, onUploadSuccess, overwrite, parseError, processScope, searchQuery, selectedProcesses, setGlobalFactor, setIsDragging, setMapping, setOverwrite, setProcessScope, setSearchQuery, setStep, setTier, step, tier, toggleProcess }) => (
-<div className="[background:var(--color-white)]! [border-radius:var(--radius-lg)]! [width:100%]! [max-width:820px]! [max-height:94vh]! [display:flex]! [flex-direction:column] [box-shadow:var(--shadow-overlay)]! [animation:s1w-slide_0.28s_cubic-bezier(0.34,_1.56,_0.64,_1)]! [overflow:hidden]! max-[600px]:[border-radius:var(--radius-md)]!">
+<div className="s1w-modal">
         {/* Header */}
         <div className="[display:flex]! [align-items:center] [justify-content:space-between] [padding:20px_24px_0]! [flex-shrink:0]">
           <div className="[display:flex]! [align-items:center] [gap:12px]">
@@ -31,7 +31,7 @@ const Scope1ImportWizardScope1Bulk = ({ FIELD_GROUPS, FieldGroup, Icon, ModeCard
             <p className="[font-size:var(--text-base)]! [color:var(--color-ink-500)]! [margin:0]! [line-height:1.5]">
               Choose how emissions will be calculated for each row in your file.
             </p>
-            <div className="[display:grid]! [grid-template-columns:repeat(auto-fit,_minmax(220px,_1fr))] [gap:12px] max-[600px]:[grid-template-columns:1fr]">
+            <div className="s1w-mode-grid">
               <ModeCard
                 selected={tier === "1"}
                 onClick={() => setTier("1")}
@@ -73,7 +73,7 @@ const Scope1ImportWizardScope1Bulk = ({ FIELD_GROUPS, FieldGroup, Icon, ModeCard
           <div className="s1w-body">
             <div className="s1w-section-title"><Icon.Layers /><span>Process Scope</span></div>
             <p className="[font-size:var(--text-base)]! [color:var(--color-ink-500)]! [margin:0]! [line-height:1.5]">Does your file contain data for all process types, or a specific process?</p>
-            <div className="[display:grid]! [grid-template-columns:1fr_1fr] [gap:12px] max-[600px]:[grid-template-columns:1fr]">
+            <div className="s1w-scope-cards">
               <ModeCard
                 selected={processScope === "all"}
                 onClick={() => setProcessScope("all")}
@@ -155,7 +155,7 @@ const Scope1ImportWizardScope1Bulk = ({ FIELD_GROUPS, FieldGroup, Icon, ModeCard
 
             <div className="[display:flex]! [flex-direction:column] [gap:10px]">
               <p className="[font-size:var(--text-sm)]! [color:var(--color-ink-500)]! [margin:0]! [font-weight:500]!">Don't have a file? Download a pre-configured template:</p>
-              <div className="[display:flex]! [gap:10px] [flex-wrap:wrap] max-[600px]:[flex-direction:column]">
+              <div className="s1w-template-btns">
                 <button className="s1w-template-btn" onClick={() => downloadTemplate("excel")}>
                   <span className="s1w-template-btn-icon"><Icon.FileExcel /></span>
                   <span>
@@ -237,7 +237,7 @@ const Scope1ImportWizardScope1Bulk = ({ FIELD_GROUPS, FieldGroup, Icon, ModeCard
             <div className="[position:relative] [display:flex]! [align-items:center]">
               <div className="s1w-search-icon"><Icon.Search /></div>
               <input
-                className="[width:100%]! [padding:10px_12px_10px_38px]! [border:1.5px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [background:var(--color-ink-50)]! [font-size:var(--text-base)]! [color:var(--color-ink-900)]! [outline:none]! [transition:border-color_0.15s]! [font-family:inherit]! focus:[border-color:var(--color-brand-500)]! focus:[background:var(--color-white)]! focus:[box-shadow:0_0_0_3px_rgba(255,102,0,0.08)]! placeholder:[color:var(--color-ink-400)]!"
+                className="s1w-search-input"
                 type="text"
                 placeholder="Search fields by name, key, or description…"
                 value={searchQuery}
@@ -251,7 +251,7 @@ const Scope1ImportWizardScope1Bulk = ({ FIELD_GROUPS, FieldGroup, Icon, ModeCard
             {/* Factor selector */}
             <div className="[display:flex]! [align-items:center] [gap:12px] [flex-wrap:wrap]">
               <label className="[font-size:var(--text-sm)]! [color:var(--color-ink-600)]! [font-weight:500]! [flex-shrink:0]">Default factor when not specified in file:</label>
-              <NativeSelect className="[flex:1] [min-width:200px] [padding:8px_12px]! [border:1.5px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [background:var(--color-ink-50)]! [font-size:var(--text-sm)]! [color:var(--color-ink-900)]! [outline:none]! [cursor:pointer] [font-family:inherit]! [transition:border-color_0.15s]! focus:[border-color:var(--color-brand-500)]!" value={globalFactor} onChange={e => setGlobalFactor(e.target.value)}>
+              <NativeSelect className="s1w-factor-select" value={globalFactor} onChange={e => setGlobalFactor(e.target.value)}>
                 <option value="auto">Auto-detect from file</option>
                 <option value="default">Force Standard (API Compendium)</option>
                 <option value="custom">Force Custom Factors</option>

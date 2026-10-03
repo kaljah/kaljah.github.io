@@ -24,9 +24,9 @@ const AuditTrailAuditTimeline = ({ auditLogs, expandedRows, formatDiffVal, forma
                   <div className="timeline-connector" />
 
                   {/* Card Content */}
-                  <div className="[flex:1] [background:var(--bg-card,_var(--color-white))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-lg)]! [padding:18px_22px]! [box-shadow:var(--shadow-xs)]! [transition:all_0.2s_ease]! hover:[border-color:rgba(99,_102,_241,_0.4)]! hover:[box-shadow:var(--shadow-card)]! hover:[transform:translateX(3px)]">
+                  <div className="audit-card">
                     {/* Header Row */}
-                    <div className="[display:flex]! [justify-content:space-between] [align-items:center] [margin-bottom:10px]! [flex-wrap:wrap] [gap:8px] max-[768px]:[flex-direction:column] max-[768px]:[align-items:flex-start]">
+                    <div className="card-top-row">
                       <div className="[display:flex]! [align-items:center] [gap:10px] [flex-wrap:wrap]">
                         <div className="[display:inline-flex]! [align-items:center] [gap:6px] [background:rgba(241,_245,_249,_0.9)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:3px_8px]!">
                           <UserIcon size={12} className="[color:var(--color-ink-500)]!" />
@@ -117,7 +117,7 @@ const AuditTrailAuditTimeline = ({ auditLogs, expandedRows, formatDiffVal, forma
                     )}
 
                     {/* Card Footer Meta */}
-                    <div className="[display:flex]! [justify-content:space-between] [align-items:center] [padding-top:10px]! [border-top:1px_solid_var(--color-ink-100)]! [font-size:var(--text-sm)]! [color:var(--color-ink-600)]! [flex-wrap:wrap] [gap:8px] max-[768px]:[flex-direction:column] max-[768px]:[align-items:flex-start]">
+                    <div className="card-meta-row">
                       <div className="[display:flex]! [align-items:center] [gap:16px] [flex-wrap:wrap]">
                         <span className="[display:flex]! [align-items:center] [gap:5px] [color:var(--color-ink-500)]! [font-weight:500]!">
                           <Database size={12} />
@@ -136,7 +136,7 @@ const AuditTrailAuditTimeline = ({ auditLogs, expandedRows, formatDiffVal, forma
                       </div>
 
                       <button
-                        className="[display:inline-flex]! [align-items:center] [gap:4px] [padding:4px_8px]! [background:transparent]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-sm)]! [color:var(--color-ink-500)]! [font-size:var(--text-xs)]! [font-weight:600]! [cursor:pointer] [transition:all_0.15s_ease]! hover:[background:var(--color-ink-100)]! hover:[color:var(--color-ink-800)]!"
+                        className="btn-toggle-raw"
                         onClick={() => toggleRawData(log.id)}
                         title="Toggle Technical Audit JSON"
                       >

@@ -231,7 +231,7 @@ const Login = () => {
               />
               <button
                 type="button"
-                className="[position:absolute] [top:50%] [right:12px] [transform:translateY(-50%)] [display:inline-flex]! [padding:6px]! [border:0]! [border-radius:var(--radius-md)]! [background:transparent]! [color:var(--color-ink-500)]! [cursor:pointer] hover:[background:var(--color-ink-100)]! hover:[color:var(--color-ink-900)]!"
+                className="password-toggle"
                 onClick={() => setShowPassword((v) => !v)}
                 aria-label={showPassword ? "Hide password" : "Show password"}
                 aria-pressed={showPassword}
@@ -244,7 +244,7 @@ const Login = () => {
           <div className="[display:flex]! [justify-content:flex-end] [margin-top:8px]! [margin-bottom:8px]!">
             <button
               type="button"
-              className="[background:none]! [border:none]! [color:var(--primary)]! [font-size:var(--text-base)]! [font-weight:500]! [cursor:pointer] [padding:0]! [transition:color_0.2s]! hover:[color:var(--primary-hover)]! hover:[text-decoration:underline]!"
+              className="forgot-password-link"
               onClick={() => {
                 setForgotEmail(email || "");
                 setForgotMsg({ text: "", type: "" });

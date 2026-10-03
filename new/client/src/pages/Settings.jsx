@@ -295,7 +295,7 @@ const Settings = () => {
       <div className="settings-hero-card">
         <div className="[display:flex]! [justify-content:space-between] [align-items:flex-start] [gap:24px] [flex-wrap:wrap]">
           <div className="[display:flex]! [flex-direction:column] [gap:6px] [max-width:850px]!">
-            <div className="[display:inline-flex]! [align-items:center] [gap:6px] [background:rgba(255,_102,_0,_0.08)]! [color:var(--color-link)]! [font-size:var(--text-xs)]! [font-weight:700]! [letter-spacing:0.06em] [padding:4px_12px]! [border-radius:100px]! [border:1px_solid_rgba(255,_102,_0,_0.2)]! [width:fit-content]! [margin-bottom:2px]!">
+            <div className="settings-badge">
               <SlidersHorizontal size={14} />
               <span>STANDARDS & METHODOLOGIES</span>
             </div>

@@ -73,7 +73,7 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
           </div>
 
           {/* Horizontal 4-KPI Grid */}
-          <div className="[display:grid]! [grid-template-columns:repeat(4,_1fr)] [gap:20px] max-[1200px]:[grid-template-columns:repeat(2,_1fr)] max-[768px]:[grid-template-columns:1fr]">
+          <div className="kpi-grid-4">
             <div className="kpi-card">
               <div className="[display:flex]! [align-items:center] [gap:12px] [margin-bottom:16px]!">
                 <div className="kpi-icon ch4">

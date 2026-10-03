@@ -543,7 +543,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
           <div className="flex! gap-[10px]! items-center!">
             {stats.weirdCount > 0 && (
               <button
-                className="[display:inline-flex]! [align-items:center]! [gap:6px]! [padding:8px_14px]! [border-radius:var(--radius-md)]! [font-size:var(--text-sm)]! [font-weight:600]! [cursor:pointer]! [border:1px_solid_transparent]! [transition:all_0.15s_ease]! [background:rgba(245,_158,_11,_0.12)]! [color:var(--color-amber-700)]! [border-color:rgba(245,_158,_11,_0.3)]! hover:[background:var(--color-amber-700)]! hover:[color:var(--color-white)]!"
+                className="[display:inline-flex]! [align-items:center]! [gap:6px]! [padding:8px_14px]! [border-radius:var(--radius-md)]! [font-size:var(--text-sm)]! [font-weight:600]! [cursor:pointer]! [border:1px_solid_transparent]! [transition:all_0.15s_ease]! btn-wizard-select-weird"
                 onClick={handleSelectAllWeird}
                 title="Select all flagged anomalies for batch rejection or inspection"
               >
@@ -552,7 +552,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
               </button>
             )}
             <button
-              className="[display:inline-flex]! [align-items:center]! [gap:6px]! [padding:8px_14px]! [border-radius:var(--radius-md)]! [font-size:var(--text-sm)]! [font-weight:600]! [cursor:pointer]! [border:1px_solid_transparent]! [transition:all_0.15s_ease]! [background:var(--color-green-700)]! [color:var(--color-white)]! hover:[background:var(--color-green-600)]! hover:[transform:translateY(-1px)] hover:[box-shadow:0_3px_8px_rgba(16,_185,_129,_0.3)]!"
+              className="[display:inline-flex]! [align-items:center]! [gap:6px]! [padding:8px_14px]! [border-radius:var(--radius-md)]! [font-size:var(--text-sm)]! [font-weight:600]! [cursor:pointer]! [border:1px_solid_transparent]! [transition:all_0.15s_ease]! btn-wizard-approve-all"
               onClick={() => handleApproveAll(false)}
               disabled={loading || isProcessing || stats.totalCount === 0}
               title="Verify all pending records across all scopes without exception"
@@ -561,7 +561,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
               Approve All ({stats.totalCount})
             </button>
             <button
-              className="[display:inline-flex]! [align-items:center]! [gap:6px]! [padding:8px_14px]! [border-radius:var(--radius-md)]! [font-size:var(--text-sm)]! [font-weight:600]! [cursor:pointer]! [border:1px_solid_transparent]! [transition:all_0.15s_ease]! [background:rgba(239,_68,_68,_0.1)]! [color:var(--color-red-700)]! [border-color:rgba(239,_68,_68,_0.25)]! hover:[background:var(--color-red-700)]! hover:[color:var(--color-white)]! hover:[transform:translateY(-1px)] hover:[box-shadow:0_3px_8px_rgba(239,_68,_68,_0.3)]!"
+              className="[display:inline-flex]! [align-items:center]! [gap:6px]! [padding:8px_14px]! [border-radius:var(--radius-md)]! [font-size:var(--text-sm)]! [font-weight:600]! [cursor:pointer]! [border:1px_solid_transparent]! [transition:all_0.15s_ease]! btn-wizard-reject-all"
               onClick={() => setRejectionModal({ isOpen: true, mode: 'all', targetItem: null, reason: '' })}
               disabled={loading || isProcessing || stats.totalCount === 0}
               title="Delete all pending records with audit justification"
@@ -635,7 +635,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
             )}
 
             {/* Search Box */}
-            <div className="[display:flex]! [align-items:center] [gap:8px] [background:var(--bg-body,_var(--color-ink-100))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-md)]! [padding:6px_12px]! [min-width:220px] [transition:border-color_0.2s]! focus-within:[border-color:var(--accent-color,_var(--color-brand-500))]! focus-within:[background:var(--color-white)]! focus-within:[box-shadow:0_0_0_3px_rgba(255,_102,_0,_0.12)]!">
+            <div className="wizard-search-box">
               <Search size={14} color="var(--text-secondary)" />
               <input
                 type="text"
@@ -661,7 +661,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
             {(scopeFilter !== 'all' || qaFilter !== 'all' || facilityFilter !== 'all' || yearFilter !== 'all' || searchQuery) && filteredRecords.length > 0 && (
               <div className="flex! gap-[8px]!">
                 <button
-                  className="[display:inline-flex]! [align-items:center]! [gap:6px]! [padding:8px_14px]! [border-radius:var(--radius-md)]! [font-size:var(--text-sm)]! [font-weight:600]! [cursor:pointer]! [border:1px_solid_transparent]! [transition:all_0.15s_ease]! [background:var(--color-green-700)]! [color:var(--color-white)]! hover:[background:var(--color-green-600)]! hover:[transform:translateY(-1px)] hover:[box-shadow:0_3px_8px_rgba(16,_185,_129,_0.3)]! p-[6px_12px]! text-[length:0.78rem]!"
+                  className="[display:inline-flex]! [align-items:center]! [gap:6px]! [padding:8px_14px]! [border-radius:var(--radius-md)]! [font-size:var(--text-sm)]! [font-weight:600]! [cursor:pointer]! [border:1px_solid_transparent]! [transition:all_0.15s_ease]! btn-wizard-approve-all p-[6px_12px]! text-[length:0.78rem]!"
                  
                   onClick={() => handleApproveAll(true)}
                   disabled={isProcessing}
@@ -670,7 +670,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
                   Approve Filtered ({filteredRecords.length})
                 </button>
                 <button
-                  className="[display:inline-flex]! [align-items:center]! [gap:6px]! [padding:8px_14px]! [border-radius:var(--radius-md)]! [font-size:var(--text-sm)]! [font-weight:600]! [cursor:pointer]! [border:1px_solid_transparent]! [transition:all_0.15s_ease]! [background:rgba(239,_68,_68,_0.1)]! [color:var(--color-red-700)]! [border-color:rgba(239,_68,_68,_0.25)]! hover:[background:var(--color-red-700)]! hover:[color:var(--color-white)]! hover:[transform:translateY(-1px)] hover:[box-shadow:0_3px_8px_rgba(239,_68,_68,_0.3)]! p-[6px_12px]! text-[length:0.78rem]!"
+                  className="[display:inline-flex]! [align-items:center]! [gap:6px]! [padding:8px_14px]! [border-radius:var(--radius-md)]! [font-size:var(--text-sm)]! [font-weight:600]! [cursor:pointer]! [border:1px_solid_transparent]! [transition:all_0.15s_ease]! btn-wizard-reject-all p-[6px_12px]! text-[length:0.78rem]!"
                  
                   onClick={() => setRejectionModal({ isOpen: true, mode: 'filtered', targetItem: null, reason: '' })}
                   disabled={isProcessing}
@@ -699,7 +699,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
 
             <div className="flex! gap-[10px]! items-center!">
               <button
-                className="[display:inline-flex]! [align-items:center]! [gap:6px]! [padding:8px_14px]! [border-radius:var(--radius-md)]! [font-size:var(--text-sm)]! [font-weight:600]! [cursor:pointer]! [border:1px_solid_transparent]! [transition:all_0.15s_ease]! [background:var(--color-green-700)]! [color:var(--color-white)]! hover:[background:var(--color-green-600)]! hover:[transform:translateY(-1px)] hover:[box-shadow:0_3px_8px_rgba(16,_185,_129,_0.3)]!"
+                className="[display:inline-flex]! [align-items:center]! [gap:6px]! [padding:8px_14px]! [border-radius:var(--radius-md)]! [font-size:var(--text-sm)]! [font-weight:600]! [cursor:pointer]! [border:1px_solid_transparent]! [transition:all_0.15s_ease]! btn-wizard-approve-all"
                 onClick={handleApproveSelected}
                 disabled={isProcessing}
               >
@@ -707,7 +707,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
                 Approve Selected ({selectedKeys.size})
               </button>
               <button
-                className="[display:inline-flex]! [align-items:center]! [gap:6px]! [padding:8px_14px]! [border-radius:var(--radius-md)]! [font-size:var(--text-sm)]! [font-weight:600]! [cursor:pointer]! [border:1px_solid_transparent]! [transition:all_0.15s_ease]! [background:rgba(239,_68,_68,_0.1)]! [color:var(--color-red-700)]! [border-color:rgba(239,_68,_68,_0.25)]! hover:[background:var(--color-red-700)]! hover:[color:var(--color-white)]! hover:[transform:translateY(-1px)] hover:[box-shadow:0_3px_8px_rgba(239,_68,_68,_0.3)]!"
+                className="[display:inline-flex]! [align-items:center]! [gap:6px]! [padding:8px_14px]! [border-radius:var(--radius-md)]! [font-size:var(--text-sm)]! [font-weight:600]! [cursor:pointer]! [border:1px_solid_transparent]! [transition:all_0.15s_ease]! btn-wizard-reject-all"
                 onClick={() => setRejectionModal({ isOpen: true, mode: 'selected', targetItem: null, reason: '' })}
                 disabled={isProcessing}
               >

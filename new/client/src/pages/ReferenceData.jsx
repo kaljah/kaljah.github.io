@@ -381,14 +381,14 @@ const ReferenceData = () => {
           />
           <input
             type="text"
-            className="[width:100%]! [padding:11px_16px_11px_42px]! [background:rgba(255,_255,_255,_0.85)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-md)]! [font-size:var(--text-md)]! [color:var(--text-primary,_var(--color-ink-900))]! [outline:none]! [transition:all_0.2s_ease]! focus:[border-color:var(--accent-color,_var(--color-brand-500))]! focus:[box-shadow:0_0_0_3px_rgba(255,_102,_0,_0.15)]!"
+            className="search-input-field"
             placeholder="Search by name, fuel type, code, or value..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
         <NativeSelect
-          className="[padding:11px_18px]! [background:rgba(255,_255,_255,_0.85)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [min-width:200px] [color:var(--text-primary,_var(--color-ink-900))]! [outline:none]! [cursor:pointer] [transition:all_0.2s_ease]! focus:[border-color:var(--accent-color,_var(--color-brand-500))]! focus:[box-shadow:0_0_0_3px_rgba(255,_102,_0,_0.15)]!"
+          className="filter-select"
           aria-label="Filter by category"
           value={categoryFilter}
           onChange={(e) => setCategoryFilter(e.target.value)}

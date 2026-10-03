@@ -115,7 +115,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                                 </Button>
                                                 <button
                                                     type="button"
-                                                    className="[background:#fee2e2]! [color:var(--color-red-700)]! [border:1px_solid_#fecaca]! [padding:6px_12px]! [border-radius:var(--radius-md)]! [cursor:pointer] [font-size:var(--text-base)]! [transition:all_0.2s]! hover:[background:var(--color-red-700)]! hover:[color:white]! inline-flex! items-center! gap-[8px]! p-[8px_18px]! rounded-[8px]!"
+                                                    className="btn-delete inline-flex! items-center! gap-[8px]! p-[8px_18px]! rounded-[8px]!"
                                                     disabled={isProcessingBatch || !rejectionModal.reason.trim()}
                                                    
                                                     onClick={handleConfirmReject}
@@ -196,7 +196,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
 
                                 {/* Top Hero KPI Metrics Strip */}
                                 <div className="[display:grid]! [grid-template-columns:repeat(auto-fit,_minmax(220px,_1fr))] [gap:16px] [width:100%]!">
-                                    <div className="[background:var(--bg-card)]! [backdrop-filter:blur(10px)] [border:1px_solid_var(--border-color)]! [border-radius:var(--radius-lg)]! [padding:20px]! [display:flex]! [align-items:center] [gap:16px] [box-shadow:var(--shadow-card)]! [transition:all_0.2s_cubic-bezier(0.4,_0,_0.2,_1)]! hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated)]! hover:[border-color:rgba(255,_102,_0,_0.3)]!">
+                                    <div className="pending-kpi-card">
                                         <div className="[width:48px]! [height:48px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [flex-shrink:0] bg-[color:rgba(255,_102,_0,_0.1)]! text-[color:var(--color-link)]!">
                                             <Clock size={22} />
                                         </div>
@@ -209,7 +209,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                         </div>
                                     </div>
 
-                                    <div className="[background:var(--bg-card)]! [backdrop-filter:blur(10px)] [border:1px_solid_var(--border-color)]! [border-radius:var(--radius-lg)]! [padding:20px]! [display:flex]! [align-items:center] [gap:16px] [box-shadow:var(--shadow-card)]! [transition:all_0.2s_cubic-bezier(0.4,_0,_0.2,_1)]! hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated)]! hover:[border-color:rgba(255,_102,_0,_0.3)]!">
+                                    <div className="pending-kpi-card">
                                         <div className="[width:48px]! [height:48px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [flex-shrink:0] bg-[color:rgba(239,_68,_68,_0.1)]! text-[color:#b91c1c]!">
                                             <Flame size={22} />
                                         </div>
@@ -223,7 +223,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                         </div>
                                     </div>
 
-                                    <div className="[background:var(--bg-card)]! [backdrop-filter:blur(10px)] [border:1px_solid_var(--border-color)]! [border-radius:var(--radius-lg)]! [padding:20px]! [display:flex]! [align-items:center] [gap:16px] [box-shadow:var(--shadow-card)]! [transition:all_0.2s_cubic-bezier(0.4,_0,_0.2,_1)]! hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated)]! hover:[border-color:rgba(255,_102,_0,_0.3)]!">
+                                    <div className="pending-kpi-card">
                                         <div className="[width:48px]! [height:48px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [flex-shrink:0]" style={{ 
                                             background: pendingMetrics.flaggedCount > 0 ? 'rgba(245, 158, 11, 0.1)' : 'rgba(16, 185, 129, 0.1)', 
                                             color: pendingMetrics.flaggedCount > 0 ? '#d97706' : '#059669' 
@@ -239,7 +239,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                         </div>
                                     </div>
 
-                                    <div className="[background:var(--bg-card)]! [backdrop-filter:blur(10px)] [border:1px_solid_var(--border-color)]! [border-radius:var(--radius-lg)]! [padding:20px]! [display:flex]! [align-items:center] [gap:16px] [box-shadow:var(--shadow-card)]! [transition:all_0.2s_cubic-bezier(0.4,_0,_0.2,_1)]! hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated)]! hover:[border-color:rgba(255,_102,_0,_0.3)]!">
+                                    <div className="pending-kpi-card">
                                         <div className="[width:48px]! [height:48px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [flex-shrink:0] bg-[color:rgba(59,_130,_246,_0.1)]! text-[color:#2563eb]!">
                                             <Shield size={22} />
                                         </div>
@@ -318,11 +318,11 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                         </div>
 
                                         {/* Search Box */}
-                                        <div className="[display:flex]! [align-items:center] [gap:8px] [background:var(--bg-body)]! [border:1px_solid_var(--border-color)]! [border-radius:var(--radius-md)]! [padding:8px_14px]! [min-width:240px] [transition:border-color_0.2s]! focus-within:[border-color:var(--accent-color)]! focus-within:[box-shadow:0_0_0_3px_rgba(255,_102,_0,_0.1)]! focus-within:[background:var(--color-white)]!">
+                                        <div className="pending-search-box">
                                             <Search size={16} color="var(--text-secondary)" />
                                             <input
                                                 type="text"
-                                                className="[border:none]! [background:transparent]! [font-size:var(--text-base)]! [color:var(--text-primary)]! [width:100%]! [outline:none]! placeholder:[color:var(--text-muted)]!"
+                                                className="pending-search-input"
                                                 placeholder="Search by facility, fuel, category..."
                                                 value={pendingSearch}
                                                 onChange={e => setPendingSearch(e.target.value)}
@@ -368,7 +368,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                         </div>
                                         <div className="[display:flex]! [align-items:center] [gap:10px]">
                                             <button
-                                                className="[display:inline-flex]! [align-items:center] [gap:6px] [background:var(--color-green-700)]! [color:var(--color-white)]! [border:none]! [padding:8px_18px]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [transition:background_0.15s,_transform_0.1s]! hover:[background:var(--color-green-600)]! hover:[transform:translateY(-1px)]"
+                                                className="btn-batch-approve"
                                                 disabled={isProcessingBatch}
                                                 onClick={handleBatchApproveSelected}
                                             >
@@ -376,7 +376,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                                 Approve Selected
                                             </button>
                                             <button
-                                                className="[display:inline-flex]! [align-items:center] [gap:6px] [background:rgba(239,_68,_68,_0.15)]! [color:#fca5a5]! [border:1px_solid_rgba(239,_68,_68,_0.4)]! [padding:8px_18px]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [transition:all_0.15s]! hover:[background:var(--color-red-700)]! hover:[color:var(--color-white)]! hover:[border-color:var(--color-red-500)]! hover:[transform:translateY(-1px)]"
+                                                className="btn-batch-reject"
                                                 disabled={isProcessingBatch}
                                                 onClick={handleOpenBatchRejectModal}
                                             >
@@ -384,7 +384,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                                 Reject Selected
                                             </button>
                                             <button
-                                                className="[background:transparent]! [border:1px_solid_rgba(255,_255,_255,_0.2)]! [color:var(--color-ink-600)]! [padding:7px_14px]! [border-radius:var(--radius-md)]! [font-size:var(--text-sm)]! [cursor:pointer] [transition:all_0.15s]! hover:[color:var(--color-white)]! hover:[border-color:rgba(255,_255,_255,_0.4)]!"
+                                                className="btn-batch-clear"
                                                 onClick={() => setSelectedPendingKeys(new Set())}
                                             >
                                                 Deselect
@@ -395,7 +395,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
 
                                 {/* Main Content: Queue Empty vs Table Card */}
                                 {pendingMetrics.totalCount === 0 ? (
-                                    <div className="[background:var(--bg-card)]! [backdrop-filter:blur(10px)] [border:1px_solid_var(--border-color)]! [border-radius:var(--radius-lg)]! [padding:64px_32px]! [text-align:center]! [box-shadow:var(--shadow-card)]! [display:flex]! [flex-direction:column] [align-items:center] [gap:16px] [max-width:600px]! [margin:20px_auto]!">
+                                    <div className="pending-empty-hero">
                                         <div className="[width:72px]! [height:72px]! [border-radius:var(--radius-lg)]! [background:linear-gradient(135deg,_rgba(16,_185,_129,_0.15),_rgba(16,_185,_129,_0.05))]! [border:1px_solid_rgba(16,_185,_129,_0.3)]! [display:flex]! [align-items:center] [justify-content:center] [color:var(--color-green-700)]! [box-shadow:0_8px_20px_-4px_rgba(16,_185,_129,_0.2)]!">
                                             <CheckCircle size={36} />
                                         </div>
@@ -409,7 +409,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                         </div>
                                     </div>
                                 ) : filteredPendingRecords.length === 0 ? (
-                                    <div className="[background:var(--bg-card)]! [backdrop-filter:blur(10px)] [border:1px_solid_var(--border-color)]! [border-radius:var(--radius-lg)]! [padding:64px_32px]! [text-align:center]! [box-shadow:var(--shadow-card)]! [display:flex]! [flex-direction:column] [align-items:center] [gap:16px] [max-width:600px]! [margin:20px_auto]! p-[48px_24px]!">
+                                    <div className="pending-empty-hero p-[48px_24px]!">
                                         <div className="[width:72px]! [height:72px]! [border-radius:var(--radius-lg)]! [background:linear-gradient(135deg,_rgba(16,_185,_129,_0.15),_rgba(16,_185,_129,_0.05))]! [border:1px_solid_rgba(16,_185,_129,_0.3)]! [display:flex]! [align-items:center] [justify-content:center] [color:var(--color-green-700)]! [box-shadow:0_8px_20px_-4px_rgba(16,_185,_129,_0.2)]!" style={{ background: 'rgba(148, 163, 184, 0.1)', color: 'var(--text-secondary)', borderColor: 'rgba(148, 163, 184, 0.3)' }}>
                                             <Filter size={32} />
                                         </div>
@@ -434,7 +434,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                         </div>
                                     </div>
                                 ) : (
-                                    <div className="[background:var(--bg-card)]! [backdrop-filter:blur(10px)] [border:1px_solid_var(--border-color)]! [border-radius:var(--radius-lg)]! [padding:0]! [overflow:hidden]! [box-shadow:var(--shadow-card)]! max-[768px]:[overflow-x:auto]! max-[768px]:[-webkit-overflow-scrolling:touch]!">
+                                    <div className="pending-table-card">
                                         <div className="[display:flex]! [justify-content:space-between] [align-items:center] [padding:20px_24px]! [border-bottom:1px_solid_var(--border-color)]!">
                                             <div className="flex! items-center! gap-[10px]!">
                                                 <h3 className="m-[0px]! text-[length:1.02rem]! font-bold!">

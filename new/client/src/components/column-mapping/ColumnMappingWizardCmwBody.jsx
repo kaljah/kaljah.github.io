@@ -121,7 +121,7 @@ const ColumnMappingWizardCmwBody = ({ Icons, MappingRow, activeOptional, activeR
                 Default factor type when not specified in file
               </label>
               <NativeSelect
-                className="[padding:7px_12px]! [border:1.5px_solid_var(--color-ink-200)]! [border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [color:var(--color-ink-700)]! [background:var(--color-white)]! [outline:none]! [min-width:220px] [transition:border-color_0.15s]! focus:[border-color:var(--color-blue-600)]!"
+                className="cmw-factor-select"
                 value={globalFactor}
                 onChange={(e) => setGlobalFactor(e.target.value)}
               >

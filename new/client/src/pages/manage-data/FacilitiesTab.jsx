@@ -7,7 +7,7 @@ import PaginationControls from './PaginationControls';
 
 // Extracted from ManageData.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const FacilitiesTab = ({ ACTIVITY_LABELS, HIERARCHY, ITEMS_PER_PAGE, currentPage, exportToCSV, facilities, facilityForm, filteredFacilities, handleAddFacility, handleDeleteFacility, handleFacilityChange, setCurrentPage, setFacilityForm, setImportModal, user }) => (
-<div className="[border-radius:var(--radius-lg)]! [padding:32px]! [animation:fadeIn_0.3s_ease-out]! max-[768px]:[padding:18px_14px]! max-[768px]:[border-radius:var(--radius-lg)]! glass-panel">
+<div className="manage-card glass-panel">
                                 <h2 className="mb-[8px]! font-bold!">Active Regions</h2>
                                 <p className="text-[color:var(--text-secondary)]! mb-[32px]!">Manage operational regions and their boundaries.</p>
 
@@ -136,7 +136,7 @@ const FacilitiesTab = ({ ACTIVITY_LABELS, HIERARCHY, ITEMS_PER_PAGE, currentPage
                                                     {['admin', 'superuser'].includes(user?.role) && (
                                                         <td className="text-center!">
                                                             <button
-                                                                className="[background:#fee2e2]! [color:var(--color-red-700)]! [border:1px_solid_#fecaca]! [padding:6px_12px]! [border-radius:var(--radius-md)]! [cursor:pointer] [font-size:var(--text-base)]! [transition:all_0.2s]! hover:[background:var(--color-red-700)]! hover:[color:white]! p-[6px_12px]! text-[length:0.8rem]!"
+                                                                className="btn-delete p-[6px_12px]! text-[length:0.8rem]!"
                                                                
                                                                 onClick={() => handleDeleteFacility(f.id)}
                                                             >

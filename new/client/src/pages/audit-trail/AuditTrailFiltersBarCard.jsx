@@ -12,11 +12,11 @@ const AuditTrailFiltersBarCard = ({ auditLogs, availableFilters, customEndDate, 
               placeholder="Search by user, description, record ID, IP address, or entity..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="[width:100%]! [background:var(--color-white)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-md)]! [padding:10px_40px_10px_40px]! [font-size:var(--text-base)]! [color:var(--text-primary,_var(--color-ink-900))]! [outline:none]! [transition:all_0.2s_ease]! focus:[border-color:var(--accent-color,_var(--color-brand-500))]! focus:[box-shadow:0_0_0_3px_rgba(255,_102,_0,_0.12)]!"
+              className="audit-search-input"
             />
             {searchQuery && (
               <button
-                className="[position:absolute] [right:12px] [top:50%] [transform:translateY(-50%)] [background:var(--color-ink-200)]! [border:none]! [border-radius:50%]! [width:20px]! [height:20px]! [display:flex]! [align-items:center] [justify-content:center] [color:var(--color-ink-600)]! [cursor:pointer] hover:[background:var(--color-ink-300)]!"
+                className="search-clear-btn"
                 onClick={() => setSearchQuery("")}
                 title="Clear search"
               >
@@ -25,7 +25,7 @@ const AuditTrailFiltersBarCard = ({ auditLogs, availableFilters, customEndDate, 
             )}
           </div>
 
-          <div className="[display:flex]! [align-items:center] [gap:14px] [flex-wrap:wrap] max-[768px]:[flex-direction:column] max-[768px]:[align-items:stretch]">
+          <div className="filter-dropdowns-row">
             {/* User Filter */}
             <div className="filter-control">
               <label>User</label>
@@ -111,7 +111,7 @@ const AuditTrailFiltersBarCard = ({ auditLogs, availableFilters, customEndDate, 
                     setCustomStartDate(e.target.value);
                     setPage(1);
                   }}
-                  className="[background:var(--color-white)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-md)]! [padding:7px_10px]! [font-size:var(--text-sm)]! [color:var(--text-primary,_var(--color-ink-900))]! [outline:none]! focus:[border-color:var(--accent-color,_var(--color-brand-500))]!"
+                  className="date-input"
                   title="Start Date"
                 />
                 <span className="[font-size:var(--text-sm)]! [color:var(--text-secondary,_var(--color-ink-500))]!">to</span>
@@ -122,7 +122,7 @@ const AuditTrailFiltersBarCard = ({ auditLogs, availableFilters, customEndDate, 
                     setCustomEndDate(e.target.value);
                     setPage(1);
                   }}
-                  className="[background:var(--color-white)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-md)]! [padding:7px_10px]! [font-size:var(--text-sm)]! [color:var(--text-primary,_var(--color-ink-900))]! [outline:none]! focus:[border-color:var(--accent-color,_var(--color-brand-500))]!"
+                  className="date-input"
                   title="End Date"
                 />
               </div>

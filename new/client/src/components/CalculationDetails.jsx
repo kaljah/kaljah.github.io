@@ -81,13 +81,13 @@ const CalculationDetails = ({ calculation, onClose }) => {
             </h4>
             <div className="[display:grid]! [grid-template-columns:repeat(auto-fill,_minmax(180px,_1fr))] [gap:12px]">
               {facility && (
-                <div className="[background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:12px_14px]! [display:flex]! [flex-direction:column] [gap:4px] [transition:border-color_0.2s_ease,_box-shadow_0.2s_ease]! hover:[border-color:var(--color-ink-300)]! hover:[box-shadow:var(--shadow-xs)]!">
+                <div className="param-item">
                   <span className="[font-size:var(--text-xs)]! [font-weight:600]! [color:var(--color-ink-500)]! [text-transform:uppercase]! [letter-spacing:0.04em]">Facility / Asset</span>
                   <span className="[font-size:var(--text-md)]! [color:var(--color-ink-900)]! [font-weight:600]! [word-break:break-word]">{facility}</span>
                 </div>
               )}
               {year && (
-                <div className="[background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:12px_14px]! [display:flex]! [flex-direction:column] [gap:4px] [transition:border-color_0.2s_ease,_box-shadow_0.2s_ease]! hover:[border-color:var(--color-ink-300)]! hover:[box-shadow:var(--shadow-xs)]!">
+                <div className="param-item">
                   <span className="[font-size:var(--text-xs)]! [font-weight:600]! [color:var(--color-ink-500)]! [text-transform:uppercase]! [letter-spacing:0.04em]">Reporting Period</span>
                   <span className="[font-size:var(--text-md)]! [color:var(--color-ink-900)]! [font-weight:600]! [word-break:break-word]">
                     {year}
@@ -95,33 +95,33 @@ const CalculationDetails = ({ calculation, onClose }) => {
                   </span>
                 </div>
               )}
-              <div className="[background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:12px_14px]! [display:flex]! [flex-direction:column] [gap:4px] [transition:border-color_0.2s_ease,_box-shadow_0.2s_ease]! hover:[border-color:var(--color-ink-300)]! hover:[box-shadow:var(--shadow-xs)]!">
+              <div className="param-item">
                 <span className="[font-size:var(--text-xs)]! [font-weight:600]! [color:var(--color-ink-500)]! [text-transform:uppercase]! [letter-spacing:0.04em]">Process Type</span>
                 <span className="[font-size:var(--text-md)]! [color:var(--color-ink-900)]! [font-weight:600]! [word-break:break-word]">{process_type || "Direct Combustion"}</span>
               </div>
               {fuel && (
-                <div className="[background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:12px_14px]! [display:flex]! [flex-direction:column] [gap:4px] [transition:border-color_0.2s_ease,_box-shadow_0.2s_ease]! hover:[border-color:var(--color-ink-300)]! hover:[box-shadow:var(--shadow-xs)]!">
+                <div className="param-item">
                   <span className="[font-size:var(--text-xs)]! [font-weight:600]! [color:var(--color-ink-500)]! [text-transform:uppercase]! [letter-spacing:0.04em]">Fuel / Source Stream</span>
                   <span className="[font-size:var(--text-md)]! [color:var(--color-ink-900)]! [font-weight:600]! [word-break:break-word]">{fuel}</span>
                 </div>
               )}
-              <div className="[background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:12px_14px]! [display:flex]! [flex-direction:column] [gap:4px] [transition:border-color_0.2s_ease,_box-shadow_0.2s_ease]! hover:[border-color:var(--color-ink-300)]! hover:[box-shadow:var(--shadow-xs)]!">
+              <div className="param-item">
                 <span className="[font-size:var(--text-xs)]! [font-weight:600]! [color:var(--color-ink-500)]! [text-transform:uppercase]! [letter-spacing:0.04em]">Activity Quantity</span>
                 <span className="[font-size:var(--text-md)]! [color:var(--color-ink-900)]! [font-weight:600]! [word-break:break-word]">
                   {formatNumber(amount, 2)} {unit || "units"}
                 </span>
               </div>
-              <div className="[background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:12px_14px]! [display:flex]! [flex-direction:column] [gap:4px] [transition:border-color_0.2s_ease,_box-shadow_0.2s_ease]! hover:[border-color:var(--color-ink-300)]! hover:[box-shadow:var(--shadow-xs)]!">
+              <div className="param-item">
                 <span className="[font-size:var(--text-xs)]! [font-weight:600]! [color:var(--color-ink-500)]! [text-transform:uppercase]! [letter-spacing:0.04em]">Calculation Method</span>
                 <span className="[font-size:var(--text-md)]! [color:var(--color-ink-900)]! [font-weight:600]! [word-break:break-word]">{stripApi(method || factor_source) || "—"}</span>
               </div>
               {equipment_id && equipment_id !== "-" && (
-                <div className="[background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:12px_14px]! [display:flex]! [flex-direction:column] [gap:4px] [transition:border-color_0.2s_ease,_box-shadow_0.2s_ease]! hover:[border-color:var(--color-ink-300)]! hover:[box-shadow:var(--shadow-xs)]!">
+                <div className="param-item">
                   <span className="[font-size:var(--text-xs)]! [font-weight:600]! [color:var(--color-ink-500)]! [text-transform:uppercase]! [letter-spacing:0.04em]">Equipment Tag</span>
                   <span className="[font-size:var(--text-md)]! [color:var(--color-ink-900)]! [font-weight:600]! [word-break:break-word]">{equipment_id}</span>
                 </div>
               )}
-              <div className="[background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:12px_14px]! [display:flex]! [flex-direction:column] [gap:4px] [transition:border-color_0.2s_ease,_box-shadow_0.2s_ease]! hover:[border-color:var(--color-ink-300)]! hover:[box-shadow:var(--shadow-xs)]!">
+              <div className="param-item">
                 <span className="[font-size:var(--text-xs)]! [font-weight:600]! [color:var(--color-ink-500)]! [text-transform:uppercase]! [letter-spacing:0.04em]">Inventory Status</span>
                 <div className="[font-size:var(--text-md)]! [color:var(--color-ink-900)]! [font-weight:600]! [word-break:break-word]">
                   <span
@@ -261,7 +261,7 @@ const CalculationDetails = ({ calculation, onClose }) => {
             <h4 className="calc-section-title">
               <CheckCircle2 size={16} /> Computed Greenhouse Gas Inventory
             </h4>
-            <div className="[display:grid]! [grid-template-columns:repeat(4,_1fr)] [gap:12px] max-[640px]:[grid-template-columns:repeat(2,_1fr)]">
+            <div className="results-grid">
               <div className="result-card">
                 <div className="result-label">CO₂ Mass</div>
                 <div className="result-value">

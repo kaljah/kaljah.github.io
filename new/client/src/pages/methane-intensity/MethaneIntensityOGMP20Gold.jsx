@@ -126,7 +126,7 @@ const MethaneIntensityOGMP20Gold = ({ facilities, globalThreshold, ogmpRoadmapDa
                   return (
                     <div
                       key={fac.facility_id || fac.id}
-                      className="[background:var(--bg-app)]! [border:1px_solid_var(--border-color)]! [border-radius:var(--radius-md)]! [padding:20px]! [display:flex]! [flex-direction:column] [gap:16px] [transition:transform_0.2s,_box-shadow_0.2s]! hover:[transform:translateY(-2px)] hover:[box-shadow:var(--card-shadow-hover)]!"
+                      className="fac-roadmap-card"
                     >
                       <div className="[display:flex]! [justify-content:space-between] [align-items:flex-start] [gap:12px]">
                         <div className="[display:flex]! [flex-direction:column] [gap:2px]">

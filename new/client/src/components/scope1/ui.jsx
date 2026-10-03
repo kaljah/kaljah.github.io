@@ -16,7 +16,7 @@ export const Section = ({ n, title, aside, children }) => (
 );
 
 export const FieldGrid = ({ children, min = 200 }) => (
-  <div className="[display:grid]! [grid-template-columns:repeat(auto-fit,_minmax(var(--s1-min,_200px),_1fr))] [gap:14px_16px] [align-items:end] max-[600px]:[grid-template-columns:1fr_1fr]" style={{ "--s1-min": `${min}px` }}>
+  <div className="s1-grid" style={{ "--s1-min": `${min}px` }}>
     {children}
   </div>
 );
@@ -25,7 +25,7 @@ export const MoreOptions = ({ label = "More options", defaultOpen = false, child
   const [open, setOpen] = useState(defaultOpen);
   return (
     <div className={`s1-more ${open ? "open" : ""}`}>
-      <button type="button" className="[display:inline-flex]! [align-items:center] [gap:6px] [background:none]! [border:none]! [padding:4px_0]! [font-size:var(--text-sm)]! [font-weight:600]! [color:var(--s1-muted)]! [cursor:pointer] hover:[color:var(--s1-ink)]!" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
+      <button type="button" className="s1-more-toggle" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
         <ChevronDown size={16} className="s1-more-chevron" />
         {label}
       </button>
@@ -35,7 +35,7 @@ export const MoreOptions = ({ label = "More options", defaultOpen = false, child
 };
 
 export const Segmented = ({ options, value, onChange, ariaLabel }) => (
-  <div className="[display:inline-flex]! [flex-wrap:wrap] [gap:4px] [padding:4px]! [background:#f3f4f6]! [border-radius:var(--radius-md)]! [border:none]!" role="radiogroup" aria-label={ariaLabel}>
+  <div className="s1-seg" role="radiogroup" aria-label={ariaLabel}>
     {options.map((o) => (
       <button
         key={o.value}

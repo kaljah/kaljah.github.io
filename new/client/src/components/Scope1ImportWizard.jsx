@@ -463,7 +463,7 @@ function FieldGroup({ group, headers, mapping, setMapping, searchQuery, tier, pr
       </button>
       {open && (
         <div className="s1w-group-body">
-          <div className="[display:grid]! [grid-template-columns:1fr_1fr_36px] [padding:8px_16px]! [background:var(--color-ink-50)]! [border-bottom:1px_solid_var(--color-ink-100)]! [font-size:var(--text-xs)]! [font-weight:700]! [color:var(--color-ink-600)]! [text-transform:uppercase]! [letter-spacing:0.5px] max-[600px]:[display:none]!">
+          <div className="s1w-group-table-header">
             <span>Field</span>
             <span>Your CSV Column</span>
             <span>Status</span>
