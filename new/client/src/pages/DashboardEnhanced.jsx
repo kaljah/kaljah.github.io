@@ -2,8 +2,8 @@ import EmissionsOverviewCard from "./dashboard/EmissionsOverviewCard";
 import FlaringComplianceCard from "./dashboard/FlaringComplianceCard";
 import DetailedBreakdownSection from "./dashboard/DetailedBreakdownSection";
 import { useAnalyticsFilter } from "../filters/useAnalyticsFilter";
-import { activateOnKey } from "../utils/a11yKeys";
-import { SegmentedControl, Button } from "../ui";
+import { SegmentedControl, Badge, cn } from "../ui";
+import { PendingBanner, TrendCard, DonutCard, SbtiCard, CategoricalCard } from "./dashboard/DashboardCards";
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -17,12 +17,11 @@ import {
 } from "../components/charts";
 import CustomDropdown from "../components/CustomDropdown";
 import {
-  formatCompactNumber,
   calculateTrend,
 } from "../utils/formatters";
 import { useLayout } from "../context/LayoutContext";
 import { getUserOperationalDefaults } from "../utils/userDefaults";
-import { ChevronDown, ChevronUp, Clock, Eye, EyeOff, ArrowRight, Flame, CheckCircle2, AlertTriangle, Hexagon } from "lucide-react";
+
 import "./Dashboard.css";
 import "./TopBarFilters.css";
 import { useGwpStandard } from "../hooks/useGwpStandard";
@@ -838,6 +837,41 @@ const DashboardEnhanced = () => {
     return <LoadingSpinner message="Loading Dashboard Data..." fullScreen />;
   }
 
+  // every facility of any year when comparing, otherwise the headline series that have data
+  const trendLines = isCompareMode
+  ? // every facility of any year (the first year's facilities only, before)
+    [...new Set(trendData.flatMap((p) => Object.keys(p)))]
+      .filter((k) => k !== "year" && k !== "trajectory" && k !== "forecast")
+      .map((k, i) => ({
+        dataKey: k,
+        name: k,
+        color: `hsl(${(i * 137.5) % 360}, 70%, 60%)`,
+      }))
+  : [
+      {
+        dataKey: "emissions",
+        name: "Total Emissions",
+        color: "#ff6600",
+      },
+      {
+        dataKey: "scope1",
+        name: "Scope 1",
+        color: "#3b82f6",
+      },
+      {
+        dataKey: "trajectory",
+        name: "Target Path",
+        color: "#10b981",
+        strokeDasharray: "5 5",
+      },
+      {
+        dataKey: "forecast",
+        name: "Forecast",
+        color: "#8b5cf6",
+        strokeDasharray: "3 3",
+      },
+    ].filter((l) => trendData.some((p) => p[l.dataKey] != null)) // no legend entry without a line;
+
   return (
     <div
       className="[min-height:100vh] [background:transparent] [padding:24px_32px_48px]! [position:relative] [overflow-x:hidden] [color:var(--text-primary,_var(--color-ink-900))] [@media_print]:[padding:20px]! [@media_print]:[max-width:100%]! [@media(max-width:768px)]:[padding:14px_12px_36px]!"
@@ -847,81 +881,24 @@ const DashboardEnhanced = () => {
       }}
     >
       <div className="dashboard-grid [display:flex] [flex-direction:column] [gap:24px] [max-width:1600px] [margin:0_auto] [&>*]:[opacity:0] [&>*]:[animation:dashboardFadeIn_0.5s_cubic-bezier(0.16,_1,_0.3,_1)_forwards] [&&]:[&>*:nth-child(1)]:[animation-delay:0.05s] [&&]:[&&]:[&>*:nth-child(2)]:[animation-delay:0.12s] [&&]:[&&]:[&&]:[&>*:nth-child(3)]:[animation-delay:0.18s] [&&]:[&&]:[&&]:[&&]:[&>*:nth-child(4)]:[animation-delay:0.24s] [&&]:[&&]:[&&]:[&&]:[&&]:[&>*:nth-child(5)]:[animation-delay:0.30s]">
-        <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:20px]">
-          <h1 className="grid-title">GHG Emissions Dashboard</h1>
-          <div className="live-badge [background:rgba(255,_255,_255,_0.8)] [backdrop-filter:blur(8px)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [padding:6px_14px] [&&]:[border-radius:999px] [display:flex] [align-items:center] [gap:8px] [font-size:var(--text-sm)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [box-shadow:var(--shadow-xs)]">
-            <div className={`pulse-dot ${isUpdating ? "updating" : ""}`}></div>
-            {isUpdating ? "Syncing filters..." : `Live Content • Updated ${lastUpdated}`}
-          </div>
+        <div className="mb-5 flex items-center justify-between gap-3">
+          <h1 className="m-0 text-xl font-bold text-text">GHG Emissions Dashboard</h1>
+          <Badge className="gap-2 bg-surface/80 px-3.5 py-1.5 text-sm text-text-secondary">
+            <span className={cn("size-2 rounded-full bg-green-500", isUpdating && "animate-pulse")} aria-hidden="true" />
+            {isUpdating ? "Syncing filters..." : `Live content • Updated ${lastUpdated}`}
+          </Badge>
         </div>
 
         {pendingCount > 0 && (
-          <div className={`pending-banner-card [display:flex] [justify-content:space-between] [align-items:center]! [flex-wrap:wrap]! [gap:16px] [padding:16px_22px]! [margin-bottom:24px] [background:rgba(255,_255,_255,_0.88)] [backdrop-filter:blur(12px)] [-webkit-backdrop-filter:blur(12px)] [border:1px_solid_rgba(245,_158,_11,_0.28)] [&&]:[border-radius:var(--radius-lg)] [box-shadow:0_4px_20px_-2px_rgba(245,_158,_11,_0.08),_0_2px_6px_-1px_rgba(15,_23,_42,_0.02)] [position:relative] [overflow:hidden] [transition:all_0.25s_cubic-bezier(0.16,_1,_0.3,_1)] before:[content:''] before:[position:absolute] before:[top:0] before:[left:0] before:[bottom:0] before:[width:4px] before:[background:linear-gradient(180deg,_var(--color-amber-500)_0%,_var(--color-brand-500)_100%)] before:[border-radius:var(--radius-sm)_0_0_var(--radius-sm)] [&.active-preview]:[border-color:rgba(255,_102,_0,_0.4)] [&.active-preview]:[background:linear-gradient(135deg,_rgba(255,_255,_255,_0.95)_0%,_rgba(255,_247,_237,_0.9)_100%)] [&.active-preview]:[box-shadow:0_6px_24px_-2px_rgba(255,_102,_0,_0.12),_0_2px_8px_-1px_rgba(15,_23,_42,_0.04)] [&:hover_.pending-banner-icon]:[transform:scale(1.05)] [@media(max-width:640px)]:[flex-direction:column]! [@media(max-width:640px)]:[align-items:stretch]! [@media(max-width:640px)]:[padding:14px_16px]! ${includePending ? "active-preview" : ""}`}>
-            <div className="[display:flex] [align-items:center] [gap:14px] [flex:1] [min-width:280px]">
-              <div className="pending-banner-icon [width:42px] [height:42px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [background:linear-gradient(135deg,_rgba(245,_158,_11,_0.15)_0%,_rgba(255,_102,_0,_0.12)_100%)] [border:1px_solid_rgba(245,_158,_11,_0.25)] [color:var(--color-amber-700)] [flex-shrink:0] [box-shadow:0_2px_8px_rgba(245,_158,_11,_0.1)] [transition:transform_0.2s_ease]">
-                <Clock size={20} />
-              </div>
-              <div className="[display:flex] [flex-direction:column] [gap:4px]">
-                <div className="[display:flex] [align-items:center] [gap:10px] [flex-wrap:wrap]">
-                  <h3 className="[margin:0] [font-size:var(--text-md)] [font-weight:700] [color:var(--text-primary,_var(--color-ink-900))] [letter-spacing:-0.01em]">
-                    {includePending
-                      ? "Previewing Pending & Verified Emissions"
-                      : "Pending Records Awaiting Review"}
-                  </h3>
-                  <span className={`[display:inline-flex] [align-items:center] [gap:5px] [padding:2px_9px] [border-radius:999px] [font-size:var(--text-xs)] [font-weight:700] [letter-spacing:0.03em] [text-transform:uppercase] [background:rgba(245,_158,_11,_0.12)] [color:var(--color-amber-700)]! [border:1px_solid_rgba(245,_158,_11,_0.25)] [&.active-preview-badge]:[background:rgba(255,_102,_0,_0.12)] [&.active-preview-badge]:[color:var(--color-brand-700)]! [&.active-preview-badge]:[border-color:rgba(255,_102,_0,_0.28)] ${includePending ? "active-preview-badge" : ""}`}>
-                    {includePending ? "Live Preview Active" : "Pending Approval"}
-                  </span>
-                </div>
-                <p className="pending-banner-desc">
-                  There are <strong>{pendingCount.toLocaleString()}</strong> emission records
-                  {pendingCo2e > 0 && (
-                    <span className="[display:inline-block] [font-weight:600] [color:var(--color-amber-700)] [background:rgba(245,_158,_11,_0.08)] [padding:1px_6px] [border-radius:var(--radius-sm)] [margin:0_4px] [font-variant-numeric:tabular-nums]">
-                      {pendingCo2e.toLocaleString()} tCO₂e
-                    </span>
-                  )}
-                  pending approval.
-                  {!includePending
-                    ? " Official metrics currently display verified records only."
-                    : " Dashboard metrics now combine pending drafts and verified records."}
-                </p>
-              </div>
-            </div>
-
-            <div className="[display:flex] [align-items:center] [gap:12px] [flex-wrap:wrap] [@media(max-width:640px)]:[justify-content:space-between] [@media(max-width:640px)]:[width:100%] [@media(max-width:640px)]:[margin-top:4px] [@media(max-width:640px)]:[padding-top:10px] [@media(max-width:640px)]:[border-top:1px_solid_rgba(226,_232,_240,_0.8)]">
-              <label
-                className="[display:flex] [align-items:center] [gap:10px] [padding:6px_14px] [border-radius:var(--radius-md)] [background:rgba(241,_245,_249,_0.8)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [cursor:pointer] [user-select:none] [transition:all_0.2s_ease] hover:[background:rgba(255,_247,_237,_0.9)] hover:[border-color:rgba(255,_102,_0,_0.3)] [&:hover_.pending-toggle-label]:[color:var(--text-primary,_var(--color-ink-900))]!"
-                title="Toggle pending emissions preview"
-              >
-                <span className="pending-toggle-label [display:flex] [align-items:center] [gap:6px] [font-size:var(--text-sm)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-600))] [transition:color_0.2s_ease]">
-                  {includePending ? <Eye size={15} /> : <EyeOff size={15} />}
-                  <span>Preview Pending Data</span>
-                </span>
-                <div className={`pending-switch ${includePending ? "active" : ""}`}>
-                  <input
-                    type="checkbox"
-                    checked={includePending}
-                    onChange={(e) => setIncludePending(e.target.checked)}
-                    className="[opacity:0]! [width:0] [height:0] [position:absolute]"
-                  />
-                  <span className="pending-switch-slider [position:absolute] [top:2px] [left:2px] [width:16px] [height:16px] [background-color:var(--color-white)] [border-radius:50%] [box-shadow:var(--shadow-xs)] [transition:transform_0.25s_cubic-bezier(0.4,_0,_0.2,_1)]" />
-                </div>
-              </label>
-
-              {['admin', 'superuser'].includes(user?.role) && (
-                <button
-                  type="button"
-                  className="[display:inline-flex] [align-items:center] [gap:7px] [padding:8px_16px] [font-size:var(--text-sm)] [font-weight:600] [border-radius:var(--radius-md)] [background:linear-gradient(135deg,_var(--color-amber-700)_0%,_var(--color-amber-700)_100%)] [color:var(--color-white)] [border:none] [cursor:pointer] [box-shadow:0_2px_10px_rgba(217,_119,_6,_0.25)] [transition:all_0.2s_cubic-bezier(0.16,_1,_0.3,_1)]! [white-space:nowrap] hover:[transform:translateY(-1px)] hover:[box-shadow:0_4px_14px_rgba(217,_119,_6,_0.35)] hover:[filter:brightness(1.05)] active:[transform:translateY(0)] [&_svg]:[transition:transform_0.2s_ease]! [&:hover_svg]:[transform:translateX(2px)]"
-                  onClick={() => navigate('/manage-data', { state: { tab: 'pending' } })}
-                  title="Go to Manage Data to review pending records"
-                >
-                  <span>Review Now</span>
-                  <ArrowRight size={14} />
-                </button>
-              )}
-            </div>
-          </div>
+          <PendingBanner
+            count={pendingCount}
+            co2e={pendingCo2e}
+            includePending={includePending}
+            onIncludePending={setIncludePending}
+            canReview={["admin", "superuser"].includes(user?.role)}
+            onReview={() => navigate("/manage-data", { state: { tab: "pending" } })}
+          />
         )}
-
 
         {/* Hero Overview Card */}
         <EmissionsOverviewCard
@@ -946,261 +923,22 @@ const DashboardEnhanced = () => {
       />
         )}
 
-        {/* --- Primary Analytics Grid: Trend Line (2fr) + Donuts (1fr) --- */}
-        <div className="charts-section [display:grid] [grid-template-columns:2fr_1fr]! [gap:24px]! [@media(max-width:1024px)]:[grid-template-columns:1fr]! [@media(max-width:1200px)]:[grid-template-columns:1fr]! [@media(max-width:1200px)]:[gap:20px]!">
-          {/* Trend Chart */}
-          <div className="card trend-card-enhanced glass-panel">
-            <div className="[display:flex] [justify-content:space-between] [align-items:center]! [margin-bottom:24px] [@media(max-width:768px)]:[flex-direction:column] [@media(max-width:768px)]:[align-items:flex-start]! [@media(max-width:768px)]:[gap:12px]">
-              <div>
-                <h3 className="card-title">Emissions Trend & Projection</h3>
-                <p className="m-[0px]! text-[color:var(--text-secondary)]! text-[length:0.85rem]!">
-                  Historical inventory trajectory with 5-year predictive forecast
-                </p>
-              </div>
-              <div className="[@media_print]:[display:none]! [display:flex]! [align-items:center] [gap:12px]">
-                <button
-                  className={`compare-toggle-btn ${isCompareMode ? "active" : ""}`}
-                  onClick={() => setIsCompareMode(!isCompareMode)}
-                >
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path d="M18 20V10M12 20V4M6 20v-6" />
-                  </svg>
-                  {isCompareMode ? "Standard View" : "Compare Regions"}
-                </button>
-              </div>
-            </div>
-            <div
-              className="chart-container h-[360px]! w-full! min-w-0! relative!"
-             
-            >
-              <LineChartWrapper
-                data={trendData}
-                xKey="year"
-                lines={
-                  isCompareMode
-                    ? // every facility of any year (the first year's facilities only, before)
-                      [...new Set(trendData.flatMap((p) => Object.keys(p)))]
-                        .filter((k) => k !== "year" && k !== "trajectory" && k !== "forecast")
-                        .map((k, i) => ({
-                          dataKey: k,
-                          name: k,
-                          color: `hsl(${(i * 137.5) % 360}, 70%, 60%)`,
-                        }))
-                    : [
-                        {
-                          dataKey: "emissions",
-                          name: "Total Emissions",
-                          color: "#ff6600",
-                        },
-                        {
-                          dataKey: "scope1",
-                          name: "Scope 1",
-                          color: "#3b82f6",
-                        },
-                        {
-                          dataKey: "trajectory",
-                          name: "Target Path",
-                          color: "#10b981",
-                          strokeDasharray: "5 5",
-                        },
-                        {
-                          dataKey: "forecast",
-                          name: "Forecast",
-                          color: "#8b5cf6",
-                          strokeDasharray: "3 3",
-                        },
-                      ].filter((l) => trendData.some((p) => p[l.dataKey] != null)) // no legend entry without a line
-                }
-                height={360}
-              />
-            </div>
-          </div>
-
-          {/* Donut Charts Column (1fr) */}
-          <div className="[display:flex] [flex-direction:column] [gap:24px] [min-width:0]">
-            <div className="card donut-card-enhanced glass-panel">
-              <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:12px]">
-                <h3 className="[font-size:var(--text-md)] [font-weight:700] [color:var(--color-ink-800)] [margin:0] activity">Emissions by Activity</h3>
-              </div>
-              <div
-                className="chart-container h-[170px]! w-full! min-w-0! relative!"
-               
-              >
-                <PieChartWrapper
-                  data={activityChartData}
-                  height={170}
-                  innerRadius={50}
-                  outerRadius={75}
-                />
-              </div>
-            </div>
-            <div className="card donut-card-enhanced glass-panel">
-              <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:12px]">
-                <h3 className="[font-size:var(--text-md)] [font-weight:700] [color:var(--color-ink-800)] [margin:0] source">Emissions by Source</h3>
-              </div>
-              <div
-                className="chart-container h-[170px]! w-full! min-w-0! relative!"
-               
-              >
-                <PieChartWrapper
-                  data={sourceChartData}
-                  height={170}
-                  innerRadius={50}
-                  outerRadius={75}
-                />
-              </div>
-            </div>
+        <div className="grid gap-6 [grid-template-columns:2fr_1fr] max-[1200px]:grid-cols-1">
+          <TrendCard data={trendData} lines={trendLines} compare={isCompareMode} onCompare={() => setIsCompareMode(!isCompareMode)} />
+          <div className="flex min-w-0 flex-col gap-6">
+            <DonutCard title="Emissions by Activity" data={activityChartData} />
+            <DonutCard title="Emissions by Source" data={sourceChartData} />
           </div>
         </div>
 
-        {/* SBTi Trajectory Pathway - Full Width Banner */}
-        {sbtiData && sbtiData.trajectory && sbtiData.trajectory.length > 0 && (
-          <div className="card full-width-card glass-panel p-[24px]! rounded-[20px]!">
-            <div className="[display:flex] [justify-content:space-between] [align-items:center]! [@media(max-width:768px)]:[flex-direction:column] [@media(max-width:768px)]:[align-items:flex-start]! [@media(max-width:768px)]:[gap:12px] mb-[16px]!">
-              <div>
-                <h3 className="card-subtitle text-[length:1.15rem]! font-bold!">
-                  {sbtiData.pathway_label || "Decarbonization Trajectory"}
-                </h3>
-                <p className="m-[0px]! text-[color:var(--text-secondary)]! text-[length:0.875rem]!">
-                  Progress monitoring against corporate Net-Zero targets from Base Year {sbtiData.base_year} to Target Year {sbtiData.target_year}
-                </p>
-              </div>
-              <Button
-                variant="secondary" type="submit"
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  padding: "8px 16px",
-                  borderRadius: "10px",
-                  background: "rgba(255, 255, 255, 0.8)",
-                  border: "1px solid var(--border-color)",
-                  cursor: "pointer",
-                  fontSize: "0.85rem",
-                  fontWeight: 600,
-                  color: "var(--text-primary)"
-                }}
-                onClick={() => navigate("/sbti")}
-              >
-                View Full SBTi Dashboard →
-              </Button>
-            </div>
-            <div className="chart-container h-[320px]! w-full!">
-              <LineChartWrapper
-                data={sbtiData.trajectory}
-                xAxisKey="year"
-                series={[
-                  {
-                    dataKey: "actual",
-                    name: "Actual Verified Emissions",
-                    color: "#3b82f6",
-                    strokeWidth: 3
-                  },
-                  {
-                    dataKey: "sbti_target",
-                    name: sbtiData?.pathway_label || "Linear Target", // BUG-059: label follows the stored pathway
-                    color: "#10b981",
-                    strokeDasharray: "5 5",
-                    strokeWidth: 2
-                  },
-                  {
-                    dataKey: "bau_projection",
-                    name: "Business as Usual (+1.5%/yr)",
-                    color: "#ef4444",
-                    strokeDasharray: "3 3",
-                    strokeWidth: 2
-                  }
-                ]}
-                height={320}
-              />
-            </div>
-          </div>
-        )}
+        {sbtiData?.trajectory?.length > 0 && <SbtiCard sbti={sbtiData} onOpen={() => navigate("/sbti")} />}
 
-        {/* Categorical Breakdown Cards */}
-
-        <div
-          className={`card categorical-card glass-panel ${categoricalCollapsed ? "collapsed-card" : ""}`}
-        >
-          <div role="button" tabIndex={0} onKeyDown={activateOnKey}
-            className="[display:flex] [justify-content:space-between] [align-items:center]! [@media(max-width:768px)]:[flex-direction:column] [@media(max-width:768px)]:[align-items:flex-start]! [@media(max-width:768px)]:[gap:12px] clickable-card-header [transition:opacity_0.2s_ease] hover:[opacity:0.85]!"
-            onClick={() => setCategoricalCollapsed(!categoricalCollapsed)}
-            style={{
-              cursor: "pointer",
-              userSelect: "none",
-              marginBottom: categoricalCollapsed ? "0" : "24px",
-            }}
-          >
-            <div className="flex! items-center! gap-[12px]!">
-              <h3 className="card-subtitle">Categorical Emissions Overview</h3>
-              <div className="[display:flex] [align-items:center] [gap:6px] [font-size:var(--text-sm)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [background:var(--bg-hover,_var(--color-ink-100))] [padding:4px_12px] [border-radius:999px]">
-                <Hexagon size="14" strokeWidth="2" aria-hidden="true" />
-                Activity → Division → Region
-              </div>
-            </div>
-            <div
-              className=" flex! items-center! text-[color:#64748b]!"
-             
-            >
-              {categoricalCollapsed ? (
-                <ChevronDown size={18} />
-              ) : (
-                <ChevronUp size={18} />
-              )}
-            </div>
-          </div>
-          <div
-            className={`[@media_print]:[&.collapsed]:[display:block]! [@media_print]:[&.collapsed]:[max-height:none]! [@media_print]:[&.collapsed]:[opacity:1]! [max-height:2500px]! [opacity:1]! [overflow:hidden] [transition:max-height_0.4s_cubic-bezier(0.4,_0,_0.2,_1),_opacity_0.3s_ease,_margin-top_0.3s_ease] [&&]:[&.collapsed]:[max-height:0]! [&&]:[&.collapsed]:[opacity:0]! [&.collapsed]:[margin-top:0] [&.collapsed]:[pointer-events:none] ${categoricalCollapsed ? "collapsed" : ""}`}
-          >
-            <div className="categorical-hierarchy-grid">
-              {getActivityOptions()
-                .filter((o) => o.value !== "all")
-                .map((opt) => (
-                  <div key={opt.value} className="[display:flex] [flex-direction:column] [gap:16px]">
-                    <div className="[font-size:var(--text-base)] [font-weight:700] [color:var(--text-primary,_var(--color-ink-900))] [padding-bottom:6px] [border-bottom:2px_solid_var(--accent-color,_var(--color-brand-500))] [width:fit-content] [padding-right:12px]">{opt.label}</div>
-                    {getHierarchicalData[opt.value] ? (
-                      Object.entries(
-                        getHierarchicalData[opt.value].divisions,
-                      ).map(([div, divData]) => (
-                        <div key={div} className="[background:rgba(255,_255,_255,_0.6)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [&&]:[border-radius:var(--radius-lg)] [padding:14px]">
-                          <div className="[font-size:var(--text-sm)] [font-weight:700] [color:var(--text-secondary,_var(--color-ink-500))] [text-transform:uppercase] [margin-bottom:12px] [letter-spacing:0.05em]">{div}</div>
-                          <div className="[display:flex] [flex-direction:column] [gap:8px]">
-                            {divData.regions.map((reg, ridx) => (
-                              <div key={ridx} className="[background:rgba(255,_255,_255,_0.9)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [&&]:[border-radius:var(--radius-md)] [padding:10px_12px] [transition:transform_0.2s_ease,_border-color_0.2s_ease,_box-shadow_0.2s_ease] [box-shadow:var(--shadow-xs)] hover:[border-color:var(--accent-color,_var(--color-brand-500))] hover:[transform:translateX(4px)] hover:[box-shadow:0_4px_12px_rgba(255,_102,_0,_0.1)]">
-                                <div className="[font-size:var(--text-sm)] [font-weight:600] [color:var(--text-primary,_var(--color-ink-900))] [margin-bottom:4px]">
-                                  {reg.region}{" "}
-                                  {reg.field && (
-                                    <span className="[color:var(--color-ink-600)] [font-weight:500]">
-                                      - {reg.field}
-                                    </span>
-                                  )}
-                                </div>
-                                <div className="[font-size:var(--text-base)]! [font-weight:700]! [color:var(--color-ink-900)]! [&_.unit]:[font-size:var(--text-xs)]! [&_.unit]:[color:var(--text-secondary,_var(--color-ink-500))]! [&_.unit]:[font-weight:600]!">
-                                  {formatCompactNumber(reg.total_emissions)}{" "}
-                                  <span className="unit">tCO₂e</span>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="[font-size:var(--text-sm)] [color:var(--color-ink-600)] [font-style:italic] [padding:8px_0]">
-                        No emissions data for this activity
-                      </div>
-                    )}
-                  </div>
-                ))}
-            </div>
-          </div>
-        </div>
+        <CategoricalCard
+          collapsed={categoricalCollapsed}
+          onToggle={() => setCategoricalCollapsed(!categoricalCollapsed)}
+          activities={getActivityOptions().filter((o) => o.value !== "all")}
+          hierarchy={getHierarchicalData}
+        />
 
         <DetailedBreakdownSection
         detailedBreakdownCollapsed={detailedBreakdownCollapsed}
