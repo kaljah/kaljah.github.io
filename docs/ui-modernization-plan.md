@@ -1170,3 +1170,8 @@ Section extraction was then applied to the other very large files (Dashboard, Us
 Further passes: legacy buttons (35) and text fields (207) now use `Button`/`Input`/`Textarea`, 202 `input-group` wrappers use `Field`, a second inline-style pass brought inline styles from 1,436 to 361, and an AA pass (`scripts/aa-colors.mjs`, `scripts/aa-inline.mjs`) moved text colors to AA-safe shades and darkened fills that carry white text. That pass also fixed real findings in the import wizards, Scope 2/3 forms and the IT User Management page (unnamed close buttons, unfocusable scroll regions, contrast).
 
 Deviations to revisit: Tailwind now also scans `src/pages` and `src/components` (needed for the converted inline styles), so legacy class names that equal Tailwind utilities (`text-right`, `font-bold`, `flex`, `border`, `visible`) now take effect. `--z-overlay/modal/popover` are 10000+ until the legacy 9999 modals are gone. Inline SVG replacement stopped at 8 of 123 (lucide redrew most Feather icons, so an exact match is rare).
+
+### Status update (latest round)
+- Reports records table now uses `DataTable` (one table per group when Group By is active, with a subtotal heading). `DataTable` gained `showColumnMenu` and `showPagination` props.
+- `inline-to-tailwind` also maps `fontFamily: monospace` and `minHeight`; inline styles now 346.
+- Still open: inline styles (target ≤150), legacy CSS (about 16.8k lines, target ≤6k), JS hex colors in charts/PDF, `.input-group` wrappers around `CustomDropdown`, z-index/`!important` cleanup, retiring `a11yLabels.js`. Branch is not merged.
