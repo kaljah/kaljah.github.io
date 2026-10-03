@@ -111,19 +111,6 @@
   line-height: 1;
 }
 
-.s1-badge {
-  background: rgba(255, 102, 0, 0.12);
-  color: var(--color-brand-700);
-}
-.s2-badge {
-  background: rgba(59, 130, 246, 0.12);
-  color: var(--color-blue-600);
-}
-.s3-badge {
-  background: rgba(139, 92, 246, 0.12);
-  color: #7c3aed;
-}
-
 .scope-icon-ring {
   width: 56px;
   height: 56px;
@@ -137,19 +124,6 @@
 
 .scope-card:hover .scope-icon-ring {
   transform: scale(1.1) rotate(-4deg);
-}
-
-.s1-ring {
-  background: rgba(255, 102, 0, 0.12);
-  color: var(--color-link);
-}
-.s2-ring {
-  background: rgba(59, 130, 246, 0.12);
-  color: var(--color-blue-700);
-}
-.s3-ring {
-  background: rgba(139, 92, 246, 0.12);
-  color: var(--color-violet-700);
 }
 
 /* BODY */
@@ -175,19 +149,6 @@
   border-radius: var(--radius-lg);
   margin-bottom: 8px;
   line-height: 1;
-}
-
-.s1-tag {
-  background: rgba(255, 102, 0, 0.1);
-  color: var(--color-brand-700);
-}
-.s2-tag {
-  background: rgba(59, 130, 246, 0.1);
-  color: var(--color-blue-600);
-}
-.s3-tag {
-  background: rgba(139, 92, 246, 0.1);
-  color: #7c3aed;
 }
 
 .scope-card-title {
@@ -252,35 +213,7 @@
   align-self: flex-end;
 }
 
-.scope-1-card:hover .s1-arrow {
-  background: var(--color-brand-500);
-  border-color: var(--color-brand-500);
-  color: var(--color-white);
-  transform: translateY(-2px);
-}
-.scope-2-card:hover .s2-arrow {
-  background: var(--color-blue-700);
-  border-color: var(--color-blue-500);
-  color: var(--color-white);
-  transform: translateY(-2px);
-}
-.scope-3-card:hover .s3-arrow {
-  background: var(--color-violet-700);
-  border-color: var(--color-violet-500);
-  color: var(--color-white);
-  transform: translateY(-2px);
-}
-
 /* legacy compat */
-.icon-box {
-  width: 64px;
-  height: 64px;
-  border-radius: var(--radius-lg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 20px;
-}
 
 /* --- Factor Calculator Specifics (Matched to emission-factor.html) --- */
 
