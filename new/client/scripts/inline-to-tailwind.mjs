@@ -4,6 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { parse } from "@babel/parser";
 import _traverse from "@babel/traverse";
+import postcss from "postcss";
 const traverse = _traverse.default || _traverse;
 const write = process.argv.includes("--write");
 
@@ -71,6 +72,103 @@ const walk = (dir, out = []) => {
   return out;
 };
 
+// Any other static property becomes an arbitrary-property utility (important, like an inline style).
+// A layered important utility beats an unlayered `!important` legacy rule, which an inline style never did, so a
+// property is left inline when such a rule can reach the element (its subject classes are on the element and its
+// tag fits).
+const UNITLESS = new Set(["opacity", "flex", "flexGrow", "flexShrink", "fontWeight", "lineHeight", "zIndex", "order", "zoom", "columns"]);
+const importantRules = [];
+const styleAttrSelectors = []; // selectors that match on the inline style attribute itself
+for (const f of walk("src").filter((x) => x.endsWith(".css"))) {
+  postcss.parse(fs.readFileSync(f, "utf8")).walkRules((r) => {
+    for (const sel of r.selectors) if (/[[]style/.test(sel)) styleAttrSelectors.push(sel);
+    const props = new Set();
+    r.walkDecls((d) => d.important && props.add(d.prop));
+    if (!props.size) return;
+    for (const sel of r.selectors) {
+      const compound = sel.trim().match(/([^\s>+~]+)$/)?.[1] ?? "";
+      importantRules.push({
+        props,
+        tag: compound.match(/^[a-z][a-z0-9]*/)?.[0] ?? null,
+        classes: [...compound.matchAll(/[.](-?[_a-zA-Z][\w-]*)/g)].map((m) => m[1]),
+        lead: sel.trim().match(/^[.](-?[_a-zA-Z][\w-]*)/)?.[1] ?? null,
+        simple: !/[\s>+~]/.test(sel.trim().replace(/\([^)]*\)/g, "")),
+      });
+    }
+  });
+}
+
+// Import graph: a context rule (`.lead ...`) can only reach elements that live in a route chunk that also holds a
+// file using the lead class (children are composed by React, not by imports).
+const resolveImport = (from, spec) => {
+  if (!spec.startsWith(".")) return null;
+  const base = path.join(path.dirname(from), spec);
+  for (const c of [base, `${base}.jsx`, `${base}.js`, `${base}.css`, path.join(base, "index.jsx"), path.join(base, "index.js")]) {
+    if (fs.existsSync(c) && fs.statSync(c).isFile()) return c;
+  }
+  return null;
+};
+const srcFiles = walk("src").filter((x) => /\.(jsx?|mjs)$/.test(x) && !/__tests__/.test(x));
+const staticDeps = {};
+const dynamicRoots = new Set();
+const fileText = {};
+for (const f of srcFiles) {
+  const code = fs.readFileSync(f, "utf8");
+  fileText[f] = code;
+  const deps = new Set();
+  for (const m of code.matchAll(/(?:from|import)\s*["']([^"']+)["']/g)) {
+    const r = resolveImport(f, m[1]);
+    if (r) deps.add(r);
+  }
+  for (const m of code.matchAll(/import\(\s*["']([^"']+)["']\s*\)/g)) {
+    const r = resolveImport(f, m[1]);
+    if (r) dynamicRoots.add(r);
+  }
+  staticDeps[f] = deps;
+}
+const closureOf = (root) => {
+  const seen = new Set();
+  const stack = [root];
+  while (stack.length) {
+    const f = stack.pop();
+    if (seen.has(f)) continue;
+    seen.add(f);
+    for (const d of staticDeps[f] ?? []) stack.push(d);
+  }
+  return seen;
+};
+const roots = [path.join("src", "main.jsx"), ...dynamicRoots].map(closureOf);
+const usersCache = {};
+const usersOf = (cls) =>
+  (usersCache[cls] ||= srcFiles.filter((f) => f.endsWith(".jsx") && new RegExp(`(?<![\w-])${cls.replace(/-/g, "\-")}(?![\w-])`).test(fileText[f])));
+const leadReaches = (lead, file) => {
+  const users = usersOf(lead);
+  return users.length > 0 && roots.some((cl) => cl.has(file) && users.some((u) => cl.has(u)));
+};
+const importantMayReach = (kebab, ctx) =>
+  importantRules.some(
+    (R) =>
+      [...R.props].some((pp) => pp === kebab || pp.split("-")[0] === kebab.split("-")[0]) &&
+      (R.tag === null || ctx.tag === null || R.tag === ctx.tag) &&
+      R.classes.every((c) => ctx.tokens.has(c)) &&
+      (R.simple || !R.lead || leadReaches(R.lead, ctx.file)),
+  );
+const generic = (key, v, ctx) => {
+  const kebab = key.replace(/[A-Z]/g, (c) => "-" + c.toLowerCase());
+  if (styleAttrSelectors.some((sel) => sel.includes(kebab))) return null;
+  if (importantMayReach(kebab, ctx)) {
+    if (process.argv.includes("--why")) console.log("IMPORTANT", kebab, ctx.tag, [...ctx.tokens].join("."));
+    return null;
+  }
+  const val = typeof v === "number" ? (UNITLESS.has(key) || v === 0 ? String(v) : `${v}px`) : String(v).trim();
+  if (!val || /["'\;{}\[\]`]|url\(/.test(val) || val.includes("$")) {
+    if (process.argv.includes("--why")) console.log("VALUE", kebab, val);
+    return null;
+  }
+  if (key === "content") return null;
+  return [`[${kebab}:${val.replace(/\s+/g, "_")}]!`];
+};
+
 let converted = 0;
 let seen = 0;
 const files = walk("src").filter((f) => f.endsWith(".jsx") && !/[\\/](ui|app|dev)[\\/]/.test(f));
@@ -87,13 +185,19 @@ for (const file of files) {
       seen++;
       const ex = style.value?.expression;
       if (!ex || ex.type !== "ObjectExpression" || ex.properties.length === 0) return;
+      const cnAttr = attrs.find((a) => a.type === "JSXAttribute" && a.name.name === "className");
+      const ctx = {
+        file,
+        tag: typeof p.node.name.name === "string" && /^[a-z]/.test(p.node.name.name) ? p.node.name.name : null,
+        tokens: new Set(cnAttr?.value?.type === "StringLiteral" ? cnAttr.value.value.split(/\s+/).filter(Boolean) : []),
+      };
       const classes = [];
       for (const prop of ex.properties) {
         if (prop.type !== "ObjectProperty" || prop.computed) return;
         const key = prop.key.name || prop.key.value;
         if (prop.value.type !== "StringLiteral" && prop.value.type !== "NumericLiteral") return;
         const m = MAP[key];
-        const cls = m && m(prop.value.value);
+        const cls = (m && m(prop.value.value)) || generic(key, prop.value.value, ctx);
         if (!cls) return;
         classes.push(...cls);
       }

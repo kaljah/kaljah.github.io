@@ -224,7 +224,7 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default" }) => {
   // ==========================================================================
 
   return (
-    <div className="fugitives-form-v2" style={{ fontFamily: "inherit" }}>
+    <div className="fugitives-form-v2 [font-family:inherit]!">
       {/* HEADER WITH ONSHORE BADGE */}
 
       {/* METHODOLOGY TIER SELECTOR */}

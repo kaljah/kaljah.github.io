@@ -33,13 +33,13 @@ const Scope3FormCalculatorGridContainer = ({ currentPage, entries, facilities, h
                 <th>Total (tCO₂e)</th>
                 <th
                   title="Standard Combined Uncertainty (1σ)"
-                  style={{ cursor: "help" }}
+                  className="[cursor:help]!"
                 >
                   CO₂e 1σ (±%)
                 </th>
                 <th
                   title="Expanded Uncertainty (95% Confidence Interval)"
-                  style={{ cursor: "help" }}
+                  className="[cursor:help]!"
                 >
                   CO₂e 95% CI (±%)
                 </th>

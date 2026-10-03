@@ -18,57 +18,21 @@ const UserManagementBlock1503 = ({ S, focusedField, getRoleMeta, handleResetPass
           <form id="um-reset-pwd-form" onSubmit={handleResetPasswordSubmit}>
             {/* Target user info card */}
             <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "14px",
-                padding: "14px 16px",
-                borderRadius: "14px",
-                background: "var(--bg-body)",
-                border: "1px solid var(--border-color)",
-                marginBottom: "20px",
-              }}
+              className="flex! items-center! gap-[14px]! p-[14px_16px]! rounded-[14px]! bg-[color:var(--bg-body)]! [border:1px_solid_var(--border-color)]! mb-[20px]!"
             >
               <div
-                style={{
-                  width: "44px",
-                  height: "44px",
-                  borderRadius: "12px",
-                  background: "rgba(245, 158, 11, 0.15)",
-                  border: "1px solid rgba(245, 158, 11, 0.3)",
-                  color: "#b45309",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontWeight: 800,
-                  fontSize: "1.1rem",
-                  flexShrink: 0,
-                }}
+                className="w-[44px]! h-[44px]! rounded-[12px]! bg-[color:rgba(245,_158,_11,_0.15)]! [border:1px_solid_rgba(245,_158,_11,_0.3)]! text-[color:#b45309]! flex! items-center! justify-center! [font-weight:800]! text-[length:1.1rem]! shrink-0!"
               >
                 {resetTarget.fullName?.charAt(0)?.toUpperCase() || "U"}
               </div>
               <div className="flex-1! min-w-0!">
                 <div
-                  style={{
-                    fontWeight: 700,
-                    color: "var(--text-primary)",
-                    fontSize: "0.98rem",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }}
+                  className="font-bold! text-[color:var(--text-primary)]! text-[length:0.98rem]! whitespace-nowrap! overflow-hidden! [text-overflow:ellipsis]!"
                 >
                   {resetTarget.fullName}
                 </div>
                 <div
-                  style={{
-                    fontSize: "0.8rem",
-                    color: "var(--text-secondary)",
-                    fontFamily: "monospace",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }}
+                  className="text-[length:0.8rem]! text-[color:var(--text-secondary)]! font-mono! whitespace-nowrap! overflow-hidden! [text-overflow:ellipsis]!"
                 >
                   {resetTarget.email}
                 </div>
@@ -88,19 +52,7 @@ const UserManagementBlock1503 = ({ S, focusedField, getRoleMeta, handleResetPass
 
             {/* Security Notice */}
             <div
-              style={{
-                display: "flex",
-                alignItems: "flex-start",
-                gap: "10px",
-                padding: "12px 14px",
-                borderRadius: "10px",
-                background: "rgba(239, 68, 68, 0.06)",
-                border: "1px solid rgba(239, 68, 68, 0.2)",
-                marginBottom: "22px",
-                fontSize: "0.8rem",
-                color: "#dc2626",
-                lineHeight: 1.45,
-              }}
+              className="flex! items-start! gap-[10px]! p-[12px_14px]! rounded-[10px]! bg-[color:rgba(239,_68,_68,_0.06)]! [border:1px_solid_rgba(239,_68,_68,_0.2)]! mb-[22px]! text-[length:0.8rem]! text-[color:#dc2626]! leading-[1.45]!"
             >
               <AlertCircle size={17} className="shrink-0! mt-[2px]!" />
               <div>
@@ -252,15 +204,7 @@ const UserManagementBlock1503 = ({ S, focusedField, getRoleMeta, handleResetPass
 
             {/* Action Buttons Right Under Form Fields */}
             <div
-              style={{
-                display: "flex",
-                justifyContent: "flex-end",
-                alignItems: "center",
-                gap: "12px",
-                marginTop: "24px",
-                paddingTop: "16px",
-                borderTop: "1px solid var(--border-color)",
-              }}
+              className="flex! justify-end! items-center! gap-[12px]! mt-[24px]! pt-[16px]! [border-top:1px_solid_var(--border-color)]!"
             >
               <button
                 id="um-reset-pwd-cancel"

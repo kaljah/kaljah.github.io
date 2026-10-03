@@ -65,7 +65,7 @@ const Scope3FormNewScope3 = ({ UNIT_MULTIPLIERS, activityType, amount, baseUnit,
               <div className="text-[length:0.85rem]! text-[color:#1e3a8a]!">
                 <strong>Industry:</strong> {eeioResult.industry_name} <br/>
                 <strong>Factor:</strong> {eeioResult.emission_factor} {eeioResult.ef_unit} <br/>
-                <strong>Estimated Emissions:</strong> <span style={{ fontSize: "1.1rem", fontWeight: "bold" }}>{eeioResult.co2e.toLocaleString(undefined, { maximumFractionDigits: 2 })}</span> tCO₂e
+                <strong>Estimated Emissions:</strong> <span className="text-[length:1.1rem]! [font-weight:bold]!">{eeioResult.co2e.toLocaleString(undefined, { maximumFractionDigits: 2 })}</span> tCO₂e
               </div>
             </div>
           )}

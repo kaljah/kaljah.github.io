@@ -310,16 +310,8 @@ const CustomDropdown = ({
                   <div
                     key={`header-${idx}`}
                     role="presentation"
-                    className="dropdown-header"
-                    style={{
-                      padding: "5px 10px",
-                      fontSize: "0.8rem",
-                      fontWeight: 600,
-                      color: "var(--color-link)",
-                      textTransform: "uppercase",
-                      background: "rgba(255,255,255,0.02)",
-                      pointerEvents: "none",
-                    }}
+                    className="dropdown-header p-[5px_10px]! text-[length:0.8rem]! font-semibold! text-[color:var(--color-link)]! uppercase! bg-[color:rgba(255,255,255,0.02)]! [pointer-events:none]!"
+                   
                   >
                     {option.label}
                   </div>

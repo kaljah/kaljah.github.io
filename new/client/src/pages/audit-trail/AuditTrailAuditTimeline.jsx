@@ -3,7 +3,7 @@ import { ArrowRight, Calendar, ChevronDown, ChevronUp, Clock, Code, Database, Gl
 
 // Extracted from AuditTrail.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const AuditTrailAuditTimeline = ({ auditLogs, expandedRows, formatDiffVal, formatFullDateTime, formatTimestamp, getActionConfig, toggleRawData }) => (
-<div className="audit-timeline [position:relative] [display:flex] [flex-direction:column] [gap:20px]">
+<div className="[position:relative] [display:flex] [flex-direction:column] [gap:20px]">
             {auditLogs.map((log) => {
               const actConfig = getActionConfig(log.action);
               const isRawExpanded = expandedRows.has(log.id);

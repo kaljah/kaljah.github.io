@@ -284,11 +284,7 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
                     disabled={!isAdmin}
                     checked={copernicusEnabled}
                     onChange={(e) => setCopernicusEnabled(e.target.checked)}
-                    style={{
-                      width: "18px",
-                      height: "18px",
-                      accentColor: "#0284c7",
-                    }}
+                    className="w-[18px]! h-[18px]! [accent-color:#0284c7]!"
                     id="copernicus-enabled-checkbox"
                   />
                   <span className="text-[length:0.92rem]! font-semibold!">

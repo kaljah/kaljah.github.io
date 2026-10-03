@@ -106,7 +106,7 @@ const FactorsTab = ({ ITEMS_PER_PAGE, currentPage, editingFactorId, factorForm, 
                                     <Field className="input-group" label="N₂O Uncertainty (±%)">
 <Input type="number" name="n2o_uncertainty" value={factorForm.n2o_uncertainty} onChange={handleFactorChange} placeholder="e.g. 150.0" step="0.1" />
 </Field>
-                                    <div className="input-group" style={{ gridColumn: 'span 2' }}>
+                                    <div className="input-group [grid-column:span_2]!">
                                         <label>Lab Certification / Source Reference</label>
                                         <Input
                                             type="text"
@@ -117,7 +117,7 @@ const FactorsTab = ({ ITEMS_PER_PAGE, currentPage, editingFactorId, factorForm, 
                                             placeholder="e.g. Lab GC Report #2026-ARZ-01 / ISO 17025 / EPD Ref"
                                         />
                                     </div>
-                                    <div className="input-group" style={{ gridColumn: 'span 3' }}>
+                                    <div className="input-group [grid-column:span_3]!">
                                         <label>Description & Technical Justification</label>
                                         <Textarea
                                             name="description"
@@ -126,7 +126,7 @@ const FactorsTab = ({ ITEMS_PER_PAGE, currentPage, editingFactorId, factorForm, 
                                            
                                             rows="2"
                                             placeholder="Engineering justification, gas chromatography sampling conditions, or manufacturer test certificate details..."
-                                            style={{ resize: 'vertical' }}
+                                            className="[resize:vertical]!"
                                         />
                                     </div>
                                 </div>
@@ -232,7 +232,7 @@ const FactorsTab = ({ ITEMS_PER_PAGE, currentPage, editingFactorId, factorForm, 
                                                     <td>{f.n2o_factor}</td>
                                                     <td className="max-w-[240px]!">
                                                         {f.source && <span className="inline-block! text-[length:0.75rem]! bg-[color:#dbeafe]! text-[color:#1d4ed8]! p-[1px_6px]! rounded-[4px]! font-semibold! mb-[2px]!">{f.source}</span>}
-                                                        {f.description && <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={f.description}>{f.description}</div>}
+                                                        {f.description && <div className="text-[length:0.75rem]! text-[color:var(--text-secondary)]! overflow-hidden! [text-overflow:ellipsis]! whitespace-nowrap!" title={f.description}>{f.description}</div>}
                                                         {!f.source && !f.description && <span className="text-[color:var(--text-secondary)]!">—</span>}
                                                     </td>
                                                     <td style={{ color: f.co2_uncertainty ? "#2e7d32" : 'inherit' }}>{f.co2_uncertainty ? `±${f.co2_uncertainty}%` : '—'}</td>

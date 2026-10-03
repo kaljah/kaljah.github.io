@@ -90,25 +90,7 @@ const BellButton = ({ count, onClick }) => (
     <Bell size={20} strokeWidth={1.75} />
     {count > 0 && (
       <span
-        style={{
-          position: "absolute",
-          top: 3,
-          right: 3,
-          minWidth: 16,
-          height: 16,
-          background: "#ef4444",
-          borderRadius: 8,
-          border: "1.5px solid var(--bg-card, #ffffff)",
-          fontSize: "0.6rem",
-          fontWeight: 700,
-          color: "#fff",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "0 3px",
-          lineHeight: 1,
-          letterSpacing: "-0.02em",
-        }}
+        className="[position:absolute]! [top:3px]! [right:3px]! min-w-[16px]! h-[16px]! bg-[color:#ef4444]! rounded-[8px]! [border:1.5px_solid_var(--bg-card,_#ffffff)]! text-[length:0.6rem]! font-bold! text-[color:#fff]! flex! items-center! justify-center! p-[0_3px]! leading-[1]! [letter-spacing:-0.02em]!"
       >
         {count > 99 ? "99+" : count}
       </span>
@@ -156,24 +138,11 @@ const NotifRow = ({ n, onMarkRead, onDelete }) => {
         >
           {!n.is_read && (
             <span
-              style={{
-                width: 6,
-                height: 6,
-                borderRadius: "50%",
-                background: "#3b82f6",
-                flexShrink: 0,
-              }}
+              className="w-[6px]! h-[6px]! [border-radius:50%]! bg-[color:#3b82f6]! shrink-0!"
             />
           )}
           <span
-            style={{
-              fontWeight: 600,
-              fontSize: "0.82rem",
-              color: "var(--text-primary, #0f172a)",
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }}
+            className="font-semibold! text-[length:0.82rem]! text-[color:var(--text-primary,_#0f172a)]! whitespace-nowrap! overflow-hidden! [text-overflow:ellipsis]!"
           >
             {n.title}
           </span>
@@ -499,24 +468,11 @@ const NotificationCenter = () => {
     >
       {/* ── Header ── */}
       <div
-        style={{
-          padding: "14px 18px 12px",
-          borderBottom: "1px solid var(--border-color, rgba(226, 232, 240, 0.8))",
-          background: "rgba(255, 255, 255, 0.7)",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          gap: 8,
-        }}
+        className="p-[14px_18px_12px]! [border-bottom:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))]! bg-[color:rgba(255,_255,_255,_0.7)]! flex! justify-between! items-center! gap-[8px]!"
       >
         <div className="flex! items-center! gap-[10px]!">
           <span
-            style={{
-              fontWeight: 700,
-              fontSize: "0.92rem",
-              color: "var(--text-primary, #0f172a)",
-              letterSpacing: "-0.01em",
-            }}
+            className="font-bold! text-[length:0.92rem]! text-[color:var(--text-primary,_#0f172a)]! [letter-spacing:-0.01em]!"
           >
             Notifications
           </span>
@@ -529,19 +485,7 @@ const NotificationCenter = () => {
           )}
           {/* Live indicator */}
           <span
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 4,
-              fontSize: "0.65rem",
-              fontWeight: 700,
-              color: "#059669",
-              background: "rgba(16,185,129,0.1)",
-              border: "1px solid rgba(16,185,129,0.25)",
-              borderRadius: 20,
-              padding: "2px 8px",
-              letterSpacing: "0.03em",
-            }}
+            className="inline-flex! items-center! gap-[4px]! text-[length:0.65rem]! font-bold! text-[color:#059669]! bg-[color:rgba(16,185,129,0.1)]! [border:1px_solid_rgba(16,185,129,0.25)]! rounded-[20px]! p-[2px_8px]! [letter-spacing:0.03em]!"
           >
             <span
               style={{
@@ -608,17 +552,7 @@ const NotificationCenter = () => {
             className="p-[40px_24px]! text-center! text-[color:var(--text-secondary,_#64748b)]!"
           >
             <div
-              style={{
-                width: 48,
-                height: 48,
-                borderRadius: 14,
-                background: "var(--bg-hover, #f8fafc)",
-                border: "1px solid var(--border-color, #e2e8f0)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                margin: "0 auto 12px",
-              }}
+              className="w-[48px]! h-[48px]! rounded-[14px]! bg-[color:var(--bg-hover,_#f8fafc)]! [border:1px_solid_var(--border-color,_#e2e8f0)]! flex! items-center! justify-center! m-[0_auto_12px]!"
             >
               <Bell
                 size={22}
@@ -650,17 +584,7 @@ const NotificationCenter = () => {
       {/* ── Footer ── */}
       {notifications.length > 0 && (
         <div
-          style={{
-            padding: "9px 18px",
-            borderTop: "1px solid var(--border-color, #e2e8f0)",
-            background: "var(--bg-hover, #f8fafc)",
-            fontSize: "0.74rem",
-            color: "var(--text-secondary, #64748b)",
-            fontWeight: 500,
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
+          className="p-[9px_18px]! [border-top:1px_solid_var(--border-color,_#e2e8f0)]! bg-[color:var(--bg-hover,_#f8fafc)]! text-[length:0.74rem]! text-[color:var(--text-secondary,_#64748b)]! font-medium! flex! justify-between! items-center!"
         >
           <span style={{ fontWeight: 600, color: hasUnread ? "#ea580c" : "inherit" }}>
             {unreadCount} unread

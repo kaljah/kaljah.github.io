@@ -279,7 +279,7 @@ export default function QADashboard() {
     if (loading && !data) {
         return (
             <div className="[padding:24px_32px_48px] [max-width:1600px] [margin:0_auto] [display:flex] [flex-direction:column] [gap:24px] [color:var(--text-primary,_var(--color-ink-900))] [font-family:inherit] [animation:qaFadeIn_0.3s_ease-out]">
-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+                <div className="flex! justify-center! items-center! [min-height:60vh]!">
                     <LoadingSpinner message="Scanning inventory & loading diagnostics..." />
                 </div>
             </div>
@@ -757,10 +757,7 @@ export default function QADashboard() {
 
                                     {/* All Clear state */}
                                     {issues.length === 0 && warnings.length === 0 && suggestions.length === 0 && (
-                                        <div style={{ 
-                                            padding: '48px 24px', textAlign: 'center', background: 'rgba(16, 185, 129, 0.05)', 
-                                            borderRadius: '16px', border: '1px solid rgba(16, 185, 129, 0.2)' 
-                                        }}>
+                                        <div className="p-[48px_24px]! text-center! bg-[color:rgba(16,_185,_129,_0.05)]! rounded-[16px]! [border:1px_solid_rgba(16,_185,_129,_0.2)]!">
                                             <Sparkles size={36} color="#10b981" className="m-[0_auto_12px]!" />
                                             <h4 className="m-[0_0_6px_0]! text-[length:1.15rem]! text-[color:#065f46]! font-bold!">
                                                 All Quality Gates Passed
@@ -816,13 +813,13 @@ export default function QADashboard() {
                                         <span className="[display:inline-flex] [align-items:center] [padding:3px_8px] [border-radius:var(--radius-sm)] [font-size:var(--text-sm)] [font-weight:600] [&.scope-1]:[background:rgba(255,_102,_0,_0.12)] [&.scope-1]:[color:var(--color-brand-700)]! [&.scope-1]:[border:1px_solid_rgba(255,_102,_0,_0.25)] [&&]:[&.scope-2]:[background:rgba(59,_130,_246,_0.12)] [&&]:[&.scope-2]:[color:var(--color-blue-600)]! [&&]:[&.scope-2]:[border:1px_solid_rgba(59,_130,_246,_0.25)] [&&]:[&&]:[&.scope-3]:[background:rgba(139,_92,_246,_0.12)] [&&]:[&&]:[&.scope-3]:[color:#7c3aed]! [&&]:[&&]:[&.scope-3]:[border:1px_solid_rgba(139,_92,_246,_0.25)] scope-1">Scope 1 (Direct)</span>
                                         <Flame size={16} color="#059669" />
                                     </div>
-                                    <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#0f172a' }}>
+                                    <div className="text-[length:1.6rem]! [font-weight:800]! text-[color:#0f172a]!">
                                         ±{((tier1_uncertainty.scope1 || 0) * 100).toFixed(2)}%
                                     </div>
                                     <div className="text-[length:0.82rem]! text-[color:#64748b]!">
                                         Total Audited: <strong>{(tier1_uncertainty.s1_total_tco2e || 0).toLocaleString(undefined, { maximumFractionDigits: 1 })} tCO₂e</strong>
                                     </div>
-                                    <div style={{ fontSize: '0.76rem', color: "#475569", borderTop: '1px solid #f1f5f9', paddingTop: '8px' }}>
+                                    <div className="text-[length:0.76rem]! text-[color:#475569]! [border-top:1px_solid_#f1f5f9]! pt-[8px]!">
                                         Combustion, flaring, vented & fugitive sources
                                     </div>
                                 </div>
@@ -833,13 +830,13 @@ export default function QADashboard() {
                                         <span className="[display:inline-flex] [align-items:center] [padding:3px_8px] [border-radius:var(--radius-sm)] [font-size:var(--text-sm)] [font-weight:600] [&.scope-1]:[background:rgba(255,_102,_0,_0.12)] [&.scope-1]:[color:var(--color-brand-700)]! [&.scope-1]:[border:1px_solid_rgba(255,_102,_0,_0.25)] [&&]:[&.scope-2]:[background:rgba(59,_130,_246,_0.12)] [&&]:[&.scope-2]:[color:var(--color-blue-600)]! [&&]:[&.scope-2]:[border:1px_solid_rgba(59,_130,_246,_0.25)] [&&]:[&&]:[&.scope-3]:[background:rgba(139,_92,_246,_0.12)] [&&]:[&&]:[&.scope-3]:[color:#7c3aed]! [&&]:[&&]:[&.scope-3]:[border:1px_solid_rgba(139,_92,_246,_0.25)] scope-2">Scope 2 (Indirect)</span>
                                         <Zap size={16} color="#2563eb" />
                                     </div>
-                                    <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#0f172a' }}>
+                                    <div className="text-[length:1.6rem]! [font-weight:800]! text-[color:#0f172a]!">
                                         ±{((tier1_uncertainty.scope2 || 0) * 100).toFixed(2)}%
                                     </div>
                                     <div className="text-[length:0.82rem]! text-[color:#64748b]!">
                                         Total Audited: <strong>{(tier1_uncertainty.s2_total_tco2e || 0).toLocaleString(undefined, { maximumFractionDigits: 1 })} tCO₂e</strong>
                                     </div>
-                                    <div style={{ fontSize: '0.76rem', color: "#475569", borderTop: '1px solid #f1f5f9', paddingTop: '8px' }}>
+                                    <div className="text-[length:0.76rem]! text-[color:#475569]! [border-top:1px_solid_#f1f5f9]! pt-[8px]!">
                                         Purchased electricity & grid emission factors
                                     </div>
                                 </div>
@@ -850,13 +847,13 @@ export default function QADashboard() {
                                         <span className="[display:inline-flex] [align-items:center] [padding:3px_8px] [border-radius:var(--radius-sm)] [font-size:var(--text-sm)] [font-weight:600] [&.scope-1]:[background:rgba(255,_102,_0,_0.12)] [&.scope-1]:[color:var(--color-brand-700)]! [&.scope-1]:[border:1px_solid_rgba(255,_102,_0,_0.25)] [&&]:[&.scope-2]:[background:rgba(59,_130,_246,_0.12)] [&&]:[&.scope-2]:[color:var(--color-blue-600)]! [&&]:[&.scope-2]:[border:1px_solid_rgba(59,_130,_246,_0.25)] [&&]:[&&]:[&.scope-3]:[background:rgba(139,_92,_246,_0.12)] [&&]:[&&]:[&.scope-3]:[color:#7c3aed]! [&&]:[&&]:[&.scope-3]:[border:1px_solid_rgba(139,_92,_246,_0.25)] scope-3">Scope 3 (Value Chain)</span>
                                         <Layers size={16} color="#7c3aed" />
                                     </div>
-                                    <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#0f172a' }}>
+                                    <div className="text-[length:1.6rem]! [font-weight:800]! text-[color:#0f172a]!">
                                         ±{((tier1_uncertainty.scope3 || 0) * 100).toFixed(2)}%
                                     </div>
                                     <div className="text-[length:0.82rem]! text-[color:#64748b]!">
                                         Total Audited: <strong>{(tier1_uncertainty.s3_total_tco2e || 0).toLocaleString(undefined, { maximumFractionDigits: 1 })} tCO₂e</strong>
                                     </div>
-                                    <div style={{ fontSize: '0.76rem', color: "#475569", borderTop: '1px solid #f1f5f9', paddingTop: '8px' }}>
+                                    <div className="text-[length:0.76rem]! text-[color:#475569]! [border-top:1px_solid_#f1f5f9]! pt-[8px]!">
                                         Upstream & downstream category estimations
                                     </div>
                                 </div>
@@ -878,15 +875,7 @@ export default function QADashboard() {
                     <div className="flex! justify-end! gap-[10px]!">
                         <button
                             type="button"
-                            style={{
-                                background: "#f1f5f9",
-                                color: "#475569",
-                                border: "1px solid #cbd5e1",
-                                padding: "8px 16px",
-                                borderRadius: "8px",
-                                fontWeight: 600,
-                                cursor: "pointer",
-                            }}
+                            className="bg-[color:#f1f5f9]! text-[color:#475569]! [border:1px_solid_#cbd5e1]! p-[8px_16px]! rounded-[8px]! font-semibold! cursor-pointer!"
                             onClick={() => setResolveModal({ isOpen: false, resolution: null })}
                         >
                             Cancel

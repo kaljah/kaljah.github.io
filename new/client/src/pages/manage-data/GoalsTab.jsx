@@ -10,14 +10,14 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                 <div className="[background:linear-gradient(_135deg,_rgba(255,_102,_0,_0.06),_rgba(255,_153,_51,_0.02)_)] [border:1px_solid_rgba(255,_102,_0,_0.2)] [&&]:[border-radius:var(--radius-lg)] [padding:20px] [margin-bottom:24px] [display:flex] [justify-content:space-between] [align-items:center] [flex-wrap:wrap] [gap:16px]">
                                     <div>
                                         <div className="flex! items-center! gap-[8px]! mb-[6px]!">
-                                            <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-link)', fontWeight: 700 }}>
+                                            <span className="text-[length:0.8rem]! uppercase! [letter-spacing:0.05em]! text-[color:var(--color-link)]! font-bold!">
                                                 GHG Protocol & OGMP 2.0 Baseline
                                             </span>
                                             <span className="[display:inline-flex] [align-items:center] [gap:4px] [padding:3px_8px] [border-radius:var(--radius-sm)] [font-size:var(--text-sm)] [font-weight:600] [background:var(--color-green-50)] [color:var(--color-green-700)] [&&]:[border:1px_solid_#a7f3d0]">
                                                 <CheckCircle size={12} /> Active Baseline
                                             </span>
                                         </div>
-                                        <div style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+                                        <div className="text-[length:1.4rem]! [font-weight:800]! text-[color:var(--text-primary)]!">
                                             Current Base Year: {baseYearsData.active_year || '2023'}
                                         </div>
                                         {baseYearsData.active_record?.reason && (
@@ -227,7 +227,7 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                                 <Plus size={16} /> Save Recalculation
                                             </button>
                                         </div>
-                                        <div className="input-group " style={{ gridColumn: 'span 4' }}>
+                                        <div className="input-group  [grid-column:span_4]!">
                                             <label>Reason for Change / Recalculation Justification *</label>
                                             <Textarea
                                                 value={baseYearForm.reason}
@@ -281,7 +281,7 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                                                         )}
                                                                     </div>
                                                                 </td>
-                                                                <td style={{ maxWidth: '350px', whiteSpace: 'normal', wordBreak: 'break-word', fontSize: '0.9rem' }}>
+                                                                <td className="max-w-[350px]! [white-space:normal]! [word-break:break-word]! text-[length:0.9rem]!">
                                                                     {b.reason}
                                                                 </td>
                                                                 <td className="text-right! text-[length:0.88rem]!">

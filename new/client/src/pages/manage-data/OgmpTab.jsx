@@ -141,7 +141,7 @@ const OgmpTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, NON_OG_ACTIVITIES, currentPa
                                         </NativeSelect>
 </Field>
 
-                                    <div className="input-group" style={{ gridColumn: 'span 2' }}>
+                                    <div className="input-group [grid-column:span_2]!">
                                         <label>Operator Notes & Campaign Metadata</label>
                                         <Input
                                             type="text"

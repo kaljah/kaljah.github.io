@@ -1437,14 +1437,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
 
                     {uploadStatus.skipped_count > 0 && (
                       <div
-                        style={{
-                          marginTop: "16px",
-                          padding: "12px",
-                          background: "#fff1f2",
-                          borderRadius: "8px",
-                          border: "1px solid #fecdd3",
-                          width: "100%",
-                        }}
+                        className="mt-[16px]! p-[12px]! bg-[color:#fff1f2]! rounded-[8px]! [border:1px_solid_#fecdd3]! w-full!"
                       >
                         <h5
                           className="text-[color:#be123c]! m-[0_0_8px_0]! flex! items-center! gap-[6px]!"

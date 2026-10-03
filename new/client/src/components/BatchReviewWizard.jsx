@@ -845,17 +845,8 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
                         <div className="[display:flex] [align-items:center] [gap:8px] justify-center!">
                           {item.created_by && String(item.created_by) === String(user?.id) ? (
                             <span 
-                              className="badge-maker"
-                              style={{ 
-                                fontSize: '0.7rem', 
-                                padding: '4px 8px', 
-                                borderRadius: '6px', 
-                                background: 'rgba(239, 68, 68, 0.1)', 
-                                color: "#b91c1c", 
-                                border: '1px solid rgba(239, 68, 68, 0.25)', 
-                                fontWeight: 600, 
-                                whiteSpace: 'nowrap' 
-                              }}
+                              className="badge-maker text-[length:0.7rem]! p-[4px_8px]! rounded-[6px]! bg-[color:rgba(239,_68,_68,_0.1)]! text-[color:#b91c1c]! [border:1px_solid_rgba(239,_68,_68,_0.25)]! font-semibold! whitespace-nowrap!"
+                             
                               title="Maker-Checker: You created this record and cannot self-approve."
                             >
                               Self-Submitted
@@ -949,7 +940,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
                 placeholder="Describe reason for refusal..."
                 value={rejectionModal.reason}
                 onChange={(e) => setRejectionModal(prev => ({ ...prev, reason: e.target.value }))}
-                style={{ resize: 'vertical' }}
+                className="[resize:vertical]!"
               />
             </div>
 

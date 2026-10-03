@@ -345,8 +345,8 @@ const Login = () => {
                   </button>
                   <button
                     type="submit"
-                    className="btn-primary"
-                    style={{ margin: 0, flex: 1.2 }}
+                    className="btn-primary m-[0px]! [flex:1.2]!"
+                   
                     disabled={forgotLoading}
                   >
                     {forgotLoading ? "Sending..." : "Notify IT Admin"}

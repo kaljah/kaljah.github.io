@@ -145,11 +145,7 @@ const UserManagementBlock = ({ S, filteredUsers, getRoleMeta, handleDelete, hand
                           </div>
                         ) : (
                           <span
-                            style={{
-                              color: "var(--text-secondary)",
-                              fontStyle: "italic",
-                              fontSize: "0.8rem",
-                            }}
+                            className="text-[color:var(--text-secondary)]! [font-style:italic]! text-[length:0.8rem]!"
                           >
                             Not set
                           </span>
@@ -202,11 +198,7 @@ const UserManagementBlock = ({ S, filteredUsers, getRoleMeta, handleDelete, hand
                           </span>
                         ) : (
                           <span
-                            style={{
-                              color: "var(--text-secondary)",
-                              fontStyle: "italic",
-                              fontSize: "0.8rem",
-                            }}
+                            className="text-[color:var(--text-secondary)]! [font-style:italic]! text-[length:0.8rem]!"
                           >
                             None
                           </span>

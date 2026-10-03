@@ -7,9 +7,9 @@ import { formatNumber } from "../../utils/formatters";
 const MethaneIntensityOGMP20Level = ({ globalThreshold, ogmpCollapsed, ogmpSurveys, regionalData, setOgmpCollapsed }) => (
 <div className="card ogmp-section">
           <div role="button" tabIndex={0} onKeyDown={activateOnKey}
-            className="chart-header"
+            className="chart-header cursor-pointer! [user-select:none]!"
             onClick={() => setOgmpCollapsed(!ogmpCollapsed)}
-            style={{ cursor: "pointer", userSelect: "none" }}
+           
           >
             <div>
               <h3 className="flex! items-center! gap-[8px]!">

@@ -539,7 +539,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
 
             <Field className="input-group" label={<>Injected N₂
                 <span
-                  style={{ marginLeft: "4px", fontSize: "0.7rem", color: "#6b7280", cursor: "help" }}
+                  className="ml-[4px]! text-[length:0.7rem]! text-[color:#6b7280]! [cursor:help]!"
                   title="Non-combustible gases such as nitrogen are deducted from total flowback volume. Injected CO2 is NOT deducted per API §6.2.3.1."
                 >
                   ⓘ

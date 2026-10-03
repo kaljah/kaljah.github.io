@@ -204,12 +204,7 @@ const ColumnMappingWizardCalculationTier = ({ selectedProcess, selectedProcessSc
                 {selectedProcessScope === "specific" && (
                   <div className="mt-[12px]!">
                     <label
-                      style={{
-                        display: "block",
-                        marginBottom: "8px",
-                        color: "var(--text-secondary)",
-                        fontWeight: "bold",
-                      }}
+                      className="block! mb-[8px]! text-[color:var(--text-secondary)]! [font-weight:bold]!"
                     >
                       Select Process Type:
                     </label>

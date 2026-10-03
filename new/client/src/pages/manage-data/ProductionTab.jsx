@@ -87,7 +87,7 @@ const ProductionTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToC
 <Input type="number" value={prodForm.year} onChange={(e) => setProdForm({ ...prodForm, year: e.target.value })} />
 </Field>
                                     <div className="input-group">
-                                        <label>Oil ({prodForm.oil_unit}) <button onClick={openOilConverter} style={{ fontSize: '0.65rem', padding: '2px 4px', marginLeft: '8px', cursor: 'pointer', background: 'var(--accent-color)', color: 'white', border: 'none', borderRadius: '3px' }}>Convert m³</button></label>
+                                        <label>Oil ({prodForm.oil_unit}) <button onClick={openOilConverter} className="text-[length:0.65rem]! p-[2px_4px]! ml-[8px]! cursor-pointer! bg-[color:var(--accent-color)]! text-[color:white]! [border:none]! rounded-[3px]!">Convert m³</button></label>
                                         <div className="flex! gap-[8px]!">
                                             <input type="number" value={prodForm.oil_amount} onChange={(e) => setProdForm({ ...prodForm, oil_amount: e.target.value })} className="mole-input flex-1!" placeholder="0.0" />
                                             <NativeSelect value={prodForm.oil_unit} onChange={(e) => setProdForm({ ...prodForm, oil_unit: e.target.value })} className="component-select w-[80px]!">
@@ -97,7 +97,7 @@ const ProductionTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToC
                                         </div>
                                     </div>
                                     <div className="input-group">
-                                        <label>Gas ({prodForm.gas_unit}) <button onClick={openGasConverter} style={{ fontSize: '0.65rem', padding: '2px 4px', marginLeft: '8px', cursor: 'pointer', background: 'var(--accent-color)', color: 'white', border: 'none', borderRadius: '3px' }}>Convert m³</button></label>
+                                        <label>Gas ({prodForm.gas_unit}) <button onClick={openGasConverter} className="text-[length:0.65rem]! p-[2px_4px]! ml-[8px]! cursor-pointer! bg-[color:var(--accent-color)]! text-[color:white]! [border:none]! rounded-[3px]!">Convert m³</button></label>
                                         <div className="flex! gap-[8px]!">
                                             <input type="number" value={prodForm.gas_amount} onChange={(e) => setProdForm({ ...prodForm, gas_amount: e.target.value })} className="mole-input flex-1!" placeholder="0.0" />
                                             <NativeSelect value={prodForm.gas_unit} onChange={(e) => setProdForm({ ...prodForm, gas_unit: e.target.value })} className="component-select w-[80px]!">

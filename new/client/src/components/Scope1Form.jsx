@@ -308,11 +308,7 @@ const Scope1Form = () => {
           className="flex! items-center! gap-[6px]! flex-1! min-w-0!"
         >
           <span
-            style={{
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-            }}
+            className="overflow-hidden! [text-overflow:ellipsis]! whitespace-nowrap!"
           >
             {option.label}
           </span>

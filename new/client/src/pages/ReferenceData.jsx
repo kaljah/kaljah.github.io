@@ -369,15 +369,9 @@ const ReferenceData = () => {
       <div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.78))] [backdrop-filter:blur(14px)] [-webkit-backdrop-filter:blur(14px)] [padding:20px_24px] [border-radius:var(--radius-lg)] [margin-bottom:28px] [box-shadow:var(--shadow-card)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [display:flex] [gap:16px] [align-items:center]">
         <div className="search-input-wrapper">
           <Search
-            className="search-icon"
+            className="search-icon [position:absolute]! [left:16px]! [top:50%]! [transform:translateY(-50%)]! opacity-[0.4]!"
             size={18}
-            style={{
-              position: "absolute",
-              left: "16px",
-              top: "50%",
-              transform: "translateY(-50%)",
-              opacity: 0.4,
-            }}
+           
           />
           <input
             type="text"
@@ -411,8 +405,7 @@ const ReferenceData = () => {
       {loadErrors.length > 0 && (
         <div
           role="alert"
-          style={{ margin: "0 0 16px", padding: "12px 16px", borderRadius: 8, background: "#fef2f2",
-                   border: "1px solid #fecaca", color: "#991b1b", display: "flex", gap: 12, alignItems: "center" }}
+          className="m-[0_0_16px]! p-[12px_16px]! rounded-[8px]! bg-[color:#fef2f2]! [border:1px_solid_#fecaca]! text-[color:#991b1b]! flex! gap-[12px]! items-center!"
         >
           <div className="flex-1!">{loadErrors.map((e) => <div key={e}>{e}</div>)}</div>
           <Button type="button" variant="ghost" onClick={() => { setLoading(true); fetchData(); }}>Retry</Button>
@@ -550,13 +543,7 @@ const ReferenceData = () => {
           ))}
           {visibleCategories.length === 0 && (
             <div
-              style={{
-                textAlign: "center",
-                padding: "60px",
-                background: "rgba(255,255,255,0.4)",
-                borderRadius: "16px",
-                border: "1px dashed rgba(0,0,0,0.1)",
-              }}
+              className="text-center! p-[60px]! bg-[color:rgba(255,255,255,0.4)]! rounded-[16px]! [border:1px_dashed_rgba(0,0,0,0.1)]!"
             >
               <Info
                 size={40}

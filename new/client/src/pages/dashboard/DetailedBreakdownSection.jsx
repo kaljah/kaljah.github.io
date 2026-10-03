@@ -11,17 +11,11 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
               className={`card detailed-table-card [@media_print]:[box-shadow:none]! [@media_print]:[border:1px_solid_var(--color-ink-300)]! [@media_print]:[background:var(--color-white)]! [@media_print]:[page-break-inside:avoid] [@media_print]:[margin-bottom:24px]! [@media(max-width:768px)]:[padding:16px] [@media(max-width:768px)]:[border-radius:var(--radius-lg)]! glass-panel ${detailedBreakdownCollapsed ? "collapsed-card" : ""}`}
             >
               <div role="button" tabIndex={0} onKeyDown={activateOnKey}
-                className="table-header-row [margin-bottom:20px] clickable-card-header [transition:opacity_0.2s_ease] hover:[opacity:0.85]!"
+                className="table-header-row [margin-bottom:20px] clickable-card-header [transition:opacity_0.2s_ease] hover:[opacity:0.85]! cursor-pointer! [user-select:none]! flex! justify-between! items-center!"
                 onClick={() =>
                   setDetailedBreakdownCollapsed(!detailedBreakdownCollapsed)
                 }
-                style={{
-                  cursor: "pointer",
-                  userSelect: "none",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
+               
               >
                 <h3 className="card-title m-[0px]!">
                   Detailed Breakdown

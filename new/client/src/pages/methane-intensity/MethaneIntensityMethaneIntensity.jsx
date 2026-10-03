@@ -12,12 +12,8 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
                 Methane Intensity & Loss Rate Analytics
               </h2>
               <div
-                className="year-badge [padding:6px_16px] [border-radius:9999px] [font-size:var(--text-base)] [font-weight:600] [border:1px_solid_rgba(255,_102,_0,_0.2)]"
-                style={{
-                  background: "rgba(37, 99, 235, 0.1)",
-                  color: "#2563eb",
-                  borderColor: "rgba(37, 99, 235, 0.2)",
-                }}
+                className="year-badge [background:rgba(255,_102,_0,_0.1)] [padding:6px_16px] [border-radius:9999px] [font-size:var(--text-base)] [font-weight:600] [border:1px_solid_rgba(255,_102,_0,_0.2)] bg-[color:rgba(37,_99,_235,_0.1)]! text-[color:#2563eb]! [&&]:[border-color:rgba(37,_99,_235,_0.2)]!"
+               
               >
                 {selectedYear === "all" ? "All-Time" : selectedYear} Performance
               </div>
@@ -146,13 +142,7 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
               >
                 <div>
                   <div
-                    style={{
-                      fontSize: "0.7rem",
-                      color: "var(--text-secondary)",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.5px",
-                      fontWeight: 600,
-                    }}
+                    className="text-[length:0.7rem]! text-[color:var(--text-secondary)]! uppercase! [letter-spacing:0.5px]! font-semibold!"
                   >
                     Upstream
                   </div>
@@ -180,19 +170,10 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
                 </div>
 
                 <div
-                  style={{
-                    borderLeft: "1px solid var(--border-color, #e5e7eb)",
-                    paddingLeft: "8px",
-                  }}
+                  className="[border-left:1px_solid_var(--border-color,_#e5e7eb)]! pl-[8px]!"
                 >
                   <div
-                    style={{
-                      fontSize: "0.7rem",
-                      color: "var(--text-secondary)",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.5px",
-                      fontWeight: 600,
-                    }}
+                    className="text-[length:0.7rem]! text-[color:var(--text-secondary)]! uppercase! [letter-spacing:0.5px]! font-semibold!"
                   >
                     Midstream
                   </div>

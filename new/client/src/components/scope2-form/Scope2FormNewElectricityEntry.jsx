@@ -15,12 +15,7 @@ const Scope2FormNewElectricityEntry = ({ activity, allocationMethod, amount, boi
         }}
       >
         <h2
-          style={{
-            fontSize: "1.2rem",
-            fontWeight: "bold",
-            marginBottom: "25px",
-            color: "#333",
-          }}
+          className="text-[length:1.2rem]! [font-weight:bold]! mb-[25px]! text-[color:#333]!"
         >
           New Electricity Entry
         </h2>

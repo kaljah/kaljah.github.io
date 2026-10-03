@@ -571,7 +571,7 @@ const Reports = () => {
               <h3 className="card-title">Create New Report</h3>
             </div>
 
-            <div className="[display:grid] [grid-template-columns:repeat(auto-fit,_minmax(200px,_1fr))] [gap:20px]" style={{ alignItems: "end" }}>
+            <div className="[display:grid] [grid-template-columns:repeat(auto-fit,_minmax(200px,_1fr))] [gap:20px] [align-items:end]!">
               <div className="[display:flex] [flex-direction:column] [gap:6px] [width:100%]">
                 <label className="[display:block] [font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)] [margin-bottom:8px]">
                   Reporting Year{" "}
@@ -630,7 +630,7 @@ const Reports = () => {
                 </NativeSelect>
               </div>
 
-              <div className="[display:flex] [flex-direction:column] [gap:6px] [width:100%]" style={{ flex: 2 }}>
+              <div className="[display:flex] [flex-direction:column] [gap:6px] [width:100%] [flex:2]!">
                 <label className="[display:block] [font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)] [margin-bottom:8px]">
                   Regions / Facilities{" "}
                   <span className="text-[color:var(--danger)]!">*</span>
@@ -1017,7 +1017,7 @@ const Reports = () => {
               </div>
 
               {reportFormat === "master" ? (
-                <div style={{ background: '#f8fafc', padding: '14px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                <div className="bg-[color:#f8fafc]! p-[14px]! rounded-[8px]! [border:1px_solid_#e2e8f0]!">
                   <h4 className="m-[0_0_6px_0]! text-[color:#0f172a]! text-[length:0.9rem]!">
                     Authentic Groupement Berkine (HBNS & El Merk) 2021–2025
                   </h4>
@@ -1041,7 +1041,7 @@ const Reports = () => {
                       value={exclusionCriteria}
                       onChange={(e) => setExclusionCriteria(e.target.value)}
                       rows={2}
-                      style={{ width: '100%', padding: '8px', border: '1px solid #e2e8f0', borderRadius: '4px', resize: 'vertical' }}
+                      className="w-full! p-[8px]! [border:1px_solid_#e2e8f0]! rounded-[4px]! [resize:vertical]!"
                     />
                   </div>
                   <div className="input-group">
@@ -1053,7 +1053,7 @@ const Reports = () => {
                       type="text"
                       value={verificationStatus}
                       onChange={(e) => setVerificationStatus(e.target.value)}
-                      style={{ width: '100%', padding: '8px', border: '1px solid #e2e8f0', borderRadius: '4px' }}
+                      className="w-full! p-[8px]! [border:1px_solid_#e2e8f0]! rounded-[4px]!"
                     />
                   </div>
                   <Field className="input-group" label="GWP Metric Standard">

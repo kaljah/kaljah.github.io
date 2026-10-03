@@ -7,9 +7,9 @@ const MethaneIntensityOGMP20Gold = ({ facilities, globalThreshold, ogmpRoadmapDa
           className={`[background:var(--bg-card)] [border:1px_solid_var(--border-color)] [&&]:[border-radius:var(--radius-lg)] [padding:28px] [box-shadow:var(--card-shadow)] [display:flex] [flex-direction:column] [gap:22px] [transition:gap_0.3s_ease] [&.collapsed-card]:[gap:0] ${roadmapCollapsed ? "collapsed-card" : ""}`}
         >
           <div role="presentation"
-            className="[display:flex] [justify-content:space-between] [align-items:center] [flex-wrap:wrap] [gap:16px] [padding-bottom:18px] [border-bottom:1px_solid_var(--border-color)]"
+            className="[display:flex] [justify-content:space-between] [align-items:center] [flex-wrap:wrap] [gap:16px] [padding-bottom:18px] [border-bottom:1px_solid_var(--border-color)] cursor-pointer! [user-select:none]!"
             onClick={() => setRoadmapCollapsed(!roadmapCollapsed)}
-            style={{ cursor: "pointer", userSelect: "none" }}
+           
           >
             <div className="[display:flex] [flex-direction:column] [gap:4px] [&_h3]:[font-size:var(--text-lg)]! [&_h3]:[font-weight:700]! [&_h3]:[color:var(--text-primary)]! [&_h3]:[margin:0]! [&_h3]:[display:flex] [&_h3]:[align-items:center] [&_h3]:[gap:10px] [&&]:[&&]:[&_p]:[font-size:var(--text-base)]! [&&]:[&_p]:[color:var(--text-secondary)]! [&&]:[&_p]:[margin:0]!">
               <h3>

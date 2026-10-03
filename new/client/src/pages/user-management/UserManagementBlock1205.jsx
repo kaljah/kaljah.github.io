@@ -247,15 +247,7 @@ const UserManagementBlock1205 = ({ S, editingUser, focusProps, focusedField, for
 
           {/* Action Buttons Right Under Form Fields */}
           <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              alignItems: "center",
-              gap: "12px",
-              marginTop: "24px",
-              paddingTop: "16px",
-              borderTop: "1px solid var(--border-color)",
-            }}
+            className="flex! justify-end! items-center! gap-[12px]! mt-[24px]! pt-[16px]! [border-top:1px_solid_var(--border-color)]!"
           >
             <button
               id="um-modal-cancel"

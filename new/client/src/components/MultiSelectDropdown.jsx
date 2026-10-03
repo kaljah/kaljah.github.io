@@ -138,11 +138,7 @@ const MultiSelectDropdown = ({
         }}
       >
         <span
-          style={{
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          }}
+          className="whitespace-nowrap! overflow-hidden! [text-overflow:ellipsis]!"
         >
           {selectedValues.length === 0
             ? label

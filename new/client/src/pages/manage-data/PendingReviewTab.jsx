@@ -56,15 +56,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                             </div>
 
                                             <div>
-                                                <label style={{ 
-                                                    display: 'block', 
-                                                    fontSize: '0.78rem', 
-                                                    fontWeight: 600, 
-                                                    color: 'var(--text-secondary)', 
-                                                    marginBottom: '10px', 
-                                                    textTransform: 'uppercase', 
-                                                    letterSpacing: '0.05em' 
-                                                }}>
+                                                <label className="block! text-[length:0.78rem]! font-semibold! text-[color:var(--text-secondary)]! mb-[10px]! uppercase! [letter-spacing:0.05em]!">
                                                     Quick Rejection Reason Presets
                                                 </label>
                                                 <div className="[display:flex] [flex-wrap:wrap] [gap:8px]">
@@ -82,21 +74,13 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                             </div>
 
                                             <div>
-                                                <label style={{ 
-                                                    display: 'block', 
-                                                    fontSize: '0.78rem', 
-                                                    fontWeight: 600, 
-                                                    color: 'var(--text-secondary)', 
-                                                    marginBottom: '8px', 
-                                                    textTransform: 'uppercase', 
-                                                    letterSpacing: '0.05em' 
-                                                }}>
+                                                <label className="block! text-[length:0.78rem]! font-semibold! text-[color:var(--text-secondary)]! mb-[8px]! uppercase! [letter-spacing:0.05em]!">
                                                     Audit Reason / Justification <span className="text-[color:#b91c1c]!">*</span>
                                                 </label>
                                                 <textarea
-                                                    className="custom-input"
+                                                    className="custom-input w-full! [resize:vertical]! text-[length:0.88rem]! p-[10px_12px]! rounded-[10px]!"
                                                     rows={3}
-                                                    style={{ width: '100%', resize: 'vertical', fontSize: '0.88rem', padding: '10px 12px', borderRadius: '10px' }}
+                                                   
                                                     placeholder="Specify the detailed reason for rejection..."
                                                     value={rejectionModal.reason}
                                                     onChange={e => setRejectionModal(prev => ({ ...prev, reason: e.target.value }))}
@@ -132,17 +116,9 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                 <div className="manage-tab-header mb-[0px]!">
                                     <div>
                                         <div className="flex! items-center! gap-[12px]! mb-[6px]!">
-                                            <h2 style={{ margin: 0, fontWeight: 700, letterSpacing: '-0.02em' }}>Pending Review & Approvals</h2>
+                                            <h2 className="m-[0px]! font-bold! [letter-spacing:-0.02em]!">Pending Review & Approvals</h2>
                                             {pendingMetrics.totalCount > 0 && (
-                                                <span style={{ 
-                                                    background: 'rgba(255, 102, 0, 0.1)', 
-                                                    color: 'var(--color-link)', 
-                                                    border: '1px solid rgba(255, 102, 0, 0.25)',
-                                                    fontSize: '0.75rem', 
-                                                    fontWeight: 700, 
-                                                    padding: '3px 10px', 
-                                                    borderRadius: '12px' 
-                                                }}>
+                                                <span className="bg-[color:rgba(255,_102,_0,_0.1)]! text-[color:var(--color-link)]! [border:1px_solid_rgba(255,_102,_0,_0.25)]! text-[length:0.75rem]! font-bold! p-[3px_10px]! rounded-[12px]!">
                                                     {pendingMetrics.totalCount} Awaiting Review
                                                 </span>
                                             )}
@@ -569,17 +545,8 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                                                     <div className="[display:flex] [align-items:center] [gap:8px] justify-center!">
                                                                         {item.created_by && String(item.created_by) === String(user?.id) ? (
                                                                             <span 
-                                                                                className="badge-maker"
-                                                                                style={{ 
-                                                                                    fontSize: '0.7rem', 
-                                                                                    padding: '4px 8px', 
-                                                                                    borderRadius: '6px', 
-                                                                                    background: 'rgba(239, 68, 68, 0.1)', 
-                                                                                    color: "#b91c1c", 
-                                                                                    border: '1px solid rgba(239, 68, 68, 0.25)', 
-                                                                                    fontWeight: 600, 
-                                                                                    whiteSpace: 'nowrap' 
-                                                                                }}
+                                                                                className="badge-maker text-[length:0.7rem]! p-[4px_8px]! rounded-[6px]! bg-[color:rgba(239,_68,_68,_0.1)]! text-[color:#b91c1c]! [border:1px_solid_rgba(239,_68,_68,_0.25)]! font-semibold! whitespace-nowrap!"
+                                                                               
                                                                                 title="Maker-Checker: You created this record and cannot self-approve."
                                                                             >
                                                                                 Self-Submitted

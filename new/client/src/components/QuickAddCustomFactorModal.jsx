@@ -153,14 +153,7 @@ const QuickAddCustomFactorModal = ({
             type="button"
             onClick={onClose}
             disabled={loading}
-            style={{
-              border: "none",
-              background: "transparent",
-              color: "#9ca3af",
-              cursor: "pointer",
-              padding: "4px",
-              borderRadius: "4px",
-            }}
+            className="[border:none]! bg-[color:transparent]! text-[color:#9ca3af]! cursor-pointer! p-[4px]! rounded-[4px]!"
           >
             <X size={20} />
           </button>
@@ -258,14 +251,7 @@ const QuickAddCustomFactorModal = ({
               }}
             >
               <div
-                style={{
-                  fontSize: "0.75rem",
-                  fontWeight: 600,
-                  color: "#4b5563",
-                  marginBottom: "8px",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.025em",
-                }}
+                className="text-[length:0.75rem]! font-semibold! text-[color:#4b5563]! mb-[8px]! uppercase! [letter-spacing:0.025em]!"
               >
                 Emission Factors ({formData.unit})
               </div>
@@ -357,14 +343,7 @@ const QuickAddCustomFactorModal = ({
                     onChange={(e) => handleChange("uncertainty", e.target.value)}
                   />
                   <span
-                    style={{
-                      position: "absolute",
-                      right: "10px",
-                      top: "50%",
-                      transform: "translateY(-50%)",
-                      fontSize: "0.75rem",
-                      color: "#9ca3af",
-                    }}
+                    className="[position:absolute]! [right:10px]! [top:50%]! [transform:translateY(-50%)]! text-[length:0.75rem]! text-[color:#9ca3af]!"
                   >
                     % (Tier 2 default: ±7%)
                   </span>

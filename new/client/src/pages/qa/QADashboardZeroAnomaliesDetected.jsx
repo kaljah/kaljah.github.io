@@ -107,11 +107,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                             <div className="p-[64px_24px]! text-center!">
                                 {total_flagged_count === 0 ? (
                                     <>
-                                        <div style={{ 
-                                            background: '#ecfdf5', color: "#2e7d32", width: '64px', height: '64px', 
-                                            borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', 
-                                            margin: '0 auto 16px auto' 
-                                        }}>
+                                        <div className="bg-[color:#ecfdf5]! text-[color:#2e7d32]! w-[64px]! h-[64px]! [border-radius:50%]! flex! items-center! justify-center! m-[0_auto_16px_auto]!">
                                             <CheckCircle size={32} />
                                         </div>
                                         <h3 className="text-[length:1.25rem]! text-[color:#0f172a]! font-bold! mb-[8px]!">
@@ -127,11 +123,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                     </>
                                 ) : (
                                     <>
-                                        <div style={{ 
-                                            background: '#fef3c7', color: '#b45309', width: '64px', height: '64px', 
-                                            borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', 
-                                            margin: '0 auto 16px auto' 
-                                        }}>
+                                        <div className="bg-[color:#fef3c7]! text-[color:#b45309]! w-[64px]! h-[64px]! [border-radius:50%]! flex! items-center! justify-center! m-[0_auto_16px_auto]!">
                                             <Search size={32} />
                                         </div>
                                         <h3 className="text-[length:1.25rem]! text-[color:#0f172a]! font-bold! mb-[8px]!">
@@ -253,10 +245,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
 
                                 {/* Pagination Controls */}
                                 {total_flagged_count > PAGE_SIZE && (
-                                    <div style={{ 
-                                        padding: '16px 24px', display: 'flex', alignItems: 'center', 
-                                        justifyContent: 'space-between', borderTop: '1px solid rgba(226,232,240,0.8)' 
-                                    }}>
+                                    <div className="p-[16px_24px]! flex! items-center! justify-between! [border-top:1px_solid_rgba(226,232,240,0.8)]!">
                                         <span className="text-[length:0.82rem]! text-[color:#64748b]!">
                                             {searchQuery || statusFilter !== 'all'
                                                 ? `Showing ${filteredRecords.length} filtered record${filteredRecords.length === 1 ? '' : 's'} on this page (${total_flagged_count} total in inventory)`
