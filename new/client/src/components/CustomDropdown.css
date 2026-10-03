@@ -77,6 +77,25 @@
   }
 }
 
+.dropdown-option {
+  padding: 10px 14px;
+  cursor: pointer;
+  font-size: var(--text-base);
+  color: var(--text-primary);
+  transition: background 0.15s;
+}
+
+.dropdown-option:hover,
+.dropdown-option.active {
+  background: var(--bg-hover);
+}
+
+.dropdown-option.selected {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--color-link);
+  font-weight: 600;
+}
+
 .dropdown-options::-webkit-scrollbar {
   width: 8px;
 }

@@ -110,16 +110,6 @@ const simpleOccurrence = (sel, rule) => {
   const body = /^\s/.test(rest) && !/^[>+~]/.test(t) ? `&_${t}` : `&${t}`;
   return { name: m[1], prefix: `${media}[${body}]:`, generic: true };
 };
-const propsOf = {};
-const noteProps = (sel, rule) => {
-  const m = sel.trim().match(/^\.(-?[_a-zA-Z][\w-]*)(.*)$/s);
-  if (!m || /^[\s>+~]/.test(m[2])) return;
-  const set = (propsOf[m[1]] ||= new Set());
-  rule.walkDecls((d) => set.add(baseProp(d.prop)));
-};
-for (const f of all.filter((x) => x.endsWith(".css") && !cssFiles.includes(x))) {
-  postcss.parse(fs.readFileSync(f, "utf8")).walkRules((r) => r.selectors.forEach((sel) => noteProps(sel, r)));
-}
 const leadTotal = {};
 for (const f of cssFiles) {
   const root = postcss.parse(fs.readFileSync(f, "utf8"));
@@ -128,7 +118,6 @@ for (const f of cssFiles) {
   root.walkRules((r) => {
     if (r.parent?.type === "atrule" && /keyframes$/.test(r.parent.name)) return;
     for (const sel of r.selectors) {
-      noteProps(sel, r);
       noteMentions(sel, (c) => {
         leadTotal[c] = (leadTotal[c] || 0) + 1;
         const so = simpleOccurrence(sel, r);
@@ -173,7 +162,7 @@ for (const [name, list] of Object.entries(occ)) {
     return e.prefix + ((overrides || e.generic) && !e.util.endsWith("!") ? `${e.util}!` : e.util);
   });
   if (tokenRe(name).test(testText) || tokenRe(name).test(indexHtml)) pinned.add(name);
-  eligible[name] = { occurrences: list, utils, keys: new Set(entries.map((e) => e.prefix + baseProp(e.prop))), props: new Set(entries.map((e) => baseProp(e.prop))) };
+  eligible[name] = { occurrences: list, utils, keys: new Set(entries.map((e) => e.prefix + baseProp(e.prop))) };
 }
 
 // A class that is a non-leading part of any selector that stays in the CSS keeps its rules there
@@ -263,15 +252,14 @@ const cssDefined = new Set([...Object.keys(leadTotal), ...pinned]);
 // String pieces inside className attributes (literals, template quasis, ternaries, cn/clsx calls).
 const classStrings = (ast) => {
   const nodes = [];
-  let attrId = 0;
   const collect = (node) => {
     if (!node) return;
     switch (node.type) {
       case "StringLiteral":
-        nodes.push({ start: node.start + 1, end: node.end - 1, dynamic: false, attr: attrId });
+        nodes.push({ start: node.start + 1, end: node.end - 1, dynamic: false });
         break;
       case "TemplateLiteral":
-        node.quasis.forEach((q, qi) => nodes.push({ start: q.start, end: q.end, dynamic: true, attr: attrId, first: qi === 0, last: qi === node.quasis.length - 1 }));
+        node.quasis.forEach((q, qi) => nodes.push({ start: q.start, end: q.end, dynamic: true, first: qi === 0, last: qi === node.quasis.length - 1 }));
         node.expressions.forEach(collect);
         break;
       case "JSXExpressionContainer":
@@ -294,16 +282,12 @@ const classStrings = (ast) => {
   };
   traverse(ast, {
     JSXAttribute(p) {
-      if (p.node.name.name === "className") {
-        attrId++;
-        collect(p.node.value);
-      }
+      if (p.node.name.name === "className") collect(p.node.value);
     },
   });
   return nodes;
 };
 
-const cssClassList = Object.keys(propsOf);
 const planEdits = (active) => {
   const edits = {};
   const replaced = {};
@@ -316,57 +300,32 @@ const planEdits = (active) => {
     } catch {
       continue;
     }
-    const strings = classStrings(ast);
-    // Group the pieces of one className attribute: classes in any piece can meet on the same element.
-    const groups = new Map();
-    for (const s of strings) {
-      const g = groups.get(s.attr) ?? { tokens: new Set(), prefixes: new Set(), pieces: [] };
+    for (const s of classStrings(ast)) {
       const text = code.slice(s.start, s.end);
-      text.split(/\s+/).filter(Boolean).forEach((t) => g.tokens.add(t));
-      for (const m of text.matchAll(/([\w-]+-)[$][{]/g)) g.prefixes.add(m[1]);
-      g.pieces.push(s);
-      groups.set(s.attr, g);
-    }
-    for (const g of groups.values()) {
-      // Classes that stay in the CSS may still override a converted class by source order (same specificity).
-      const others = new Set([...g.tokens].filter((t) => cssDefined.has(t) && !active[t]));
-      for (const pre of g.prefixes) for (const c of cssClassList) if (c.startsWith(pre) && !active[c]) others.add(c);
+      const tokens = text.split(/(\s+)/);
+      const stillLegacy = tokens.some((t) => t.trim() && cssDefined.has(t) && !active[t]);
       const seenKeys = new Map();
-      for (const t of g.tokens) {
+      let changed = false;
+      const out = tokens.map((t, i) => {
         const e = active[t];
-        if (!e) continue;
-        const myProps = e.props;
-        for (const o of others) {
-          const op = propsOf[o];
-          if (op && [...myProps].some((pp) => op.has(pp))) conflicts.add(t);
-        }
-      }
-      for (const s of g.pieces) {
-        const text = code.slice(s.start, s.end);
-        const tokens = text.split(/(\s+)/);
-        const stillLegacy = others.size > 0;
-        let changed = false;
-        const out = tokens.map((t, i) => {
-          const e = active[t];
-          if (!e) return t;
-          // first/last token of a template quasi may continue into a ${...} placeholder
-          if (s.dynamic && ((i === 0 && !s.first && !/^\s/.test(text)) || (i === tokens.length - 1 && !s.last && !/\s$/.test(text)))) return t;
-          if (e.utils.some((u) => u.includes("'")) && code[s.start - 1] === "'") return t;
-          for (const k of e.keys) {
-            if (seenKeys.has(k) && seenKeys.get(k) !== t) {
-              conflicts.add(t);
-              conflicts.add(seenKeys.get(k));
-            }
-            seenKeys.set(k, t);
+        if (!e) return t;
+        // first/last token of a template quasi may continue into a ${...} placeholder
+        if (s.dynamic && ((i === 0 && !s.first && !/^\s/.test(text)) || (i === tokens.length - 1 && !s.last && !/\s$/.test(text)))) return t;
+        if (e.utils.some((u) => u.includes("'")) && code[s.start - 1] === "'") return t;
+        for (const k of e.keys) {
+          if (seenKeys.has(k) && seenKeys.get(k) !== t) {
+            conflicts.add(t);
+            conflicts.add(seenKeys.get(k));
           }
-          changed = true;
-          replaced[t] = (replaced[t] || 0) + 1;
-          const bang = stillLegacy || s.dynamic;
-          const utils = e.utils.map((u) => (bang && !u.endsWith("!") ? `${u}!` : u)).join(" ");
-          return pinned.has(t) ? `${t} ${utils}` : utils;
-        });
-        if (changed) (edits[file] ||= []).push({ start: s.start, end: s.end, text: out.join("") });
-      }
+          seenKeys.set(k, t);
+        }
+        changed = true;
+        replaced[t] = (replaced[t] || 0) + 1;
+        const bang = stillLegacy || s.dynamic;
+        const utils = e.utils.map((u) => (bang && !u.endsWith("!") ? `${u}!` : u)).join(" ");
+        return pinned.has(t) ? `${t} ${utils}` : utils;
+      });
+      if (changed) (edits[file] ||= []).push({ start: s.start, end: s.end, text: out.join("") });
     }
   }
   return { edits, replaced, conflicts };
