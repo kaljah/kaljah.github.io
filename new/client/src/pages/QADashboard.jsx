@@ -407,13 +407,13 @@ export default function QADashboard() {
                                         <tr key={sIdx}>
                                             {item.id === 'unused_facilities' ? (
                                                 <>
-                                                    <td style={{ fontFamily: 'monospace', fontWeight: 600 }}>#{s.id}</td>
+                                                    <td className="font-mono! font-semibold!">#{s.id}</td>
                                                     <td><strong>{s.name}</strong></td>
                                                     <td>{s.location || '-'}</td>
                                                 </>
                                             ) : (
                                                 <>
-                                                    <td style={{ fontFamily: 'monospace', fontWeight: 600 }}>#{s.id}</td>
+                                                    <td className="font-mono! font-semibold!">#{s.id}</td>
                                                     <td>{s.facility || (s.facility_id ? `Facility #${s.facility_id}` : 'Unassigned Boundary')}</td>
                                                     <td>{s.year || '-'}</td>
                                                     <td><span className="qa-sample-tag">{s.process || '—'}</span></td>

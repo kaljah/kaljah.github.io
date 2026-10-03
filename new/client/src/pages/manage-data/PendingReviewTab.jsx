@@ -519,7 +519,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                                                     />
                                                                 </td>
                                                                 <td>
-                                                                    <span style={{ fontFamily: 'monospace', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                                                                    <span className="font-mono! text-[length:0.8rem]! text-[color:var(--text-secondary)]!">
                                                                         #{String(item.id).slice(-5)}
                                                                     </span>
                                                                 </td>

@@ -234,7 +234,7 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                                 onChange={(e) => setBaseYearForm({ ...baseYearForm, reason: e.target.value })}
                                                
                                                 placeholder="Detail the justification for setting or recalculating the base year (e.g. 'Structural acquisition of 2 production units', 'Methodology update to IPCC AR5 GWPs', 'Boundary adjustment')..."
-                                                style={{ minHeight: '80px' }}
+                                                className="min-h-[80px]!"
                                             />
                                         </div>
                                     </div>

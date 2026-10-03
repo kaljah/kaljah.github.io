@@ -893,7 +893,7 @@ const Reports = () => {
 
           {/* Data Grid */}
           {loading && (
-            <div style={{ minHeight: "300px" }}>
+            <div className="min-h-[300px]!">
               <LoadingSpinner />
             </div>
           )}

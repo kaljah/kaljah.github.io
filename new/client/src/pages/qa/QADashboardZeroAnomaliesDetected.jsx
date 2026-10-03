@@ -196,7 +196,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                                                 onChange={() => toggleSelect(record.scope, record.id)}
                                                             />
                                                         </td>
-                                                        <td className="qa-td" style={{ fontFamily: 'monospace', fontWeight: 600, color: '#0f172a' }}>
+                                                        <td className="qa-td font-mono! font-semibold! text-[color:#0f172a]!">
                                                             {record.record_id || `REC-${record.id}`}
                                                         </td>
                                                         <td className="qa-td">
@@ -216,7 +216,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                                                 {record.qa_flag}
                                                             </span>
                                                         </td>
-                                                        <td className="qa-td" style={{ fontFamily: 'monospace', fontWeight: 700, color: '#0f172a' }}>
+                                                        <td className="qa-td font-mono! font-bold! text-[color:#0f172a]!">
                                                             {record.co2e != null ? Number(record.co2e).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}
                                                         </td>
                                                         <td className="qa-td">
