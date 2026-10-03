@@ -317,7 +317,7 @@
 
 .gwp-status-pill {
   font-size: var(--text-sm);
-  color: var(--color-sky-600);
+  color: var(--color-blue-700);
   margin-bottom: 10px;
   font-weight: 600;
 }
@@ -705,7 +705,7 @@
 
 .badge-target-year {
   background: rgba(2, 132, 199, 0.1);
-  color: var(--color-sky-600);
+  color: var(--color-blue-700);
   border: 1px solid rgba(2, 132, 199, 0.25);
   padding: 4px 10px;
   border-radius: var(--radius-sm);
@@ -833,7 +833,7 @@
 }
 
 .link-ext {
-  color: var(--color-sky-600);
+  color: var(--color-blue-700);
   font-weight: 600;
   text-decoration: none;
   display: inline-flex;
@@ -874,7 +874,7 @@
 .spec-val {
   font-size: var(--text-lg);
   font-weight: 700;
-  color: var(--color-sky-600);
+  color: var(--color-blue-700);
 }
 
 .spec-desc {
@@ -932,7 +932,7 @@
 .auth-mode-pill.active {
   border-color: var(--color-sky-600);
   background: rgba(2, 132, 199, 0.08);
-  color: var(--color-sky-600);
+  color: var(--color-blue-700);
 }
 
 .form-row-2col {

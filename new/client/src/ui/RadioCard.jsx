@@ -57,7 +57,7 @@ export const RadioCardGroup = ({ label, value, onChange, options, className, dis
               <span className="text-md font-semibold text-text">{opt.title}</span>
               {selected && opt.selectedBadge ? opt.selectedBadge : opt.badge}
             </span>
-            {opt.description && <span className="text-sm text-text-secondary">{opt.description}</span>}
+            {opt.description && <span className="text-sm text-ink-600">{opt.description}</span>}
             {opt.content}
           </div>
         );

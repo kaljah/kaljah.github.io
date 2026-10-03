@@ -744,7 +744,7 @@
   padding: 2px 7px;
   border-radius: var(--radius-sm);
   background: #e0f2fe;
-  color: var(--color-sky-600);
+  color: var(--color-blue-700);
   font-weight: 600;
   font-size: var(--text-xs);
 }
