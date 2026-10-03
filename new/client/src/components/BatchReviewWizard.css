@@ -71,30 +71,6 @@
   transition: all 0.15s ease;
 }
 
-.btn-wizard-reject-all {
-  background: rgba(239, 68, 68, 0.1);
-  color: var(--color-red-700);
-  border-color: rgba(239, 68, 68, 0.25);
-}
-
-.btn-wizard-reject-all:hover {
-  background: var(--color-red-700);
-  color: var(--color-white);
-  transform: translateY(-1px);
-  box-shadow: 0 3px 8px rgba(239, 68, 68, 0.3);
-}
-
-.btn-wizard-select-weird {
-  background: rgba(245, 158, 11, 0.12);
-  color: var(--color-amber-700);
-  border-color: rgba(245, 158, 11, 0.3);
-}
-
-.btn-wizard-select-weird:hover {
-  background: var(--color-amber-700);
-  color: var(--color-white);
-}
-
 /* Floating Batch Bar inside Wizard */
 
 @keyframes wizardBannerIn {

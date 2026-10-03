@@ -53,10 +53,6 @@
   margin-bottom: 24px;
 }
 
-.form-full {
-  grid-column: span 2;
-}
-
 /* Input Styles */
 .input-group label {
   display: block;
@@ -313,12 +309,6 @@ select option:disabled {
   font-weight: 600;
 }
 
-.goal-badge-active {
-  background: var(--color-green-50);
-  color: var(--color-green-700);
-  border: 1px solid #a7f3d0;
-}
-
 /* ==========================================================================
    Pending Review Maker-Checker UI Refinements
    ========================================================================== */
@@ -446,21 +436,6 @@ select option:disabled {
 }
 
 /* Queue Clear / Empty State */
-.pending-empty-hero {
-  background: var(--bg-card);
-  backdrop-filter: blur(10px);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  padding: 64px 32px;
-  text-align: center;
-  box-shadow: var(--shadow-card);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-  max-width: 600px;
-  margin: 20px auto;
-}
 
 .pending-empty-glow-icon {
   width: 72px;
@@ -515,10 +490,6 @@ select option:disabled {
   .grid-forms {
     grid-template-columns: 1fr;
     gap: 14px;
-  }
-
-  .form-full {
-    grid-column: span 1;
   }
 
   .table-container {

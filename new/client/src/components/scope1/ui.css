@@ -42,10 +42,6 @@
 }
 
 /* collapsible advanced options */
-.s1-more-chevron {
-  transition: transform 0.15s ease;
-  transform: rotate(-90deg);
-}
 
 /* segmented control (also used to restyle the existing tier buttons) */
 .s1-form .methodology-toggle {

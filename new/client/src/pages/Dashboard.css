@@ -126,13 +126,6 @@
 
 /* Categorical Card */
 
-.card-header-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-}
-
 .card-subtitle {
   font-size: var(--text-md);
   font-weight: 700;
@@ -153,13 +146,6 @@
 }
 
 /* Detailed Table Refinements */
-
-.table-header-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
 
 .card-title {
   font-size: var(--text-md);
@@ -261,7 +247,7 @@
     overflow: visible !important;
     height: auto !important;
   }
-  .sidebar, .top-bar, .collapse-toggle-icon, button {
+  .sidebar, .top-bar, button {
     display: none !important;
   }
   .card, .glass-panel, .hero-card {
@@ -387,12 +373,6 @@
     grid-template-columns: 1fr;
   }
 
-  .card-header-row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
-
   .table-container {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -504,14 +484,6 @@
 /* ==========================================================================
    Operational Flaring Streams & Regulatory Compliance (Decree 21-330)
    ========================================================================== */
-.flaring-kpi-banner {
-  margin-top: 20px;
-  padding: 22px 24px;
-  border-radius: var(--radius-lg);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 247, 237, 0.6) 100%);
-  border: 1px solid rgba(251, 146, 60, 0.3);
-  box-shadow: 0 4px 20px -2px rgba(234, 88, 12, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.04);
-}
 
 .stream-label {
   font-size: var(--text-sm);
