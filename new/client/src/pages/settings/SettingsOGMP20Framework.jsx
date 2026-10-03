@@ -136,12 +136,12 @@ const SettingsOGMP20Framework = ({ defaultBaseYear, globalThreshold, handleSaveG
                     disabled={!isAdmin}
                     value={midstreamTarget}
                     onChange={(e) => setMidstreamTarget(Number(e.target.value))}
-                    className="form-input w-[100px]! font-bold! text-[length:1.1rem]! text-[color:#10b981]!"
+                    className="form-input w-[100px]! font-bold! text-[length:1.1rem]! text-[color:#2e7d32]!"
                    
                     id="midstream-target-input"
                   />
                   <span
-                    className="font-bold! text-[length:1.1rem]! text-[color:#10b981]!"
+                    className="font-bold! text-[length:1.1rem]! text-[color:#2e7d32]!"
                   >
                     %
                   </span>

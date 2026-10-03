@@ -138,7 +138,7 @@ const MitigationTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, facilitie
                                                             {m.status || 'Active'}
                                                         </span>
                                                     </td>
-                                                    <td className="text-right! text-[color:#10b981]! font-semibold!">
+                                                    <td className="text-right! text-[color:#2e7d32]! font-semibold!">
                                                         -{parseFloat(m.quantity_tco2e).toLocaleString()}
                                                     </td>
                                                     <td className="text-center!">

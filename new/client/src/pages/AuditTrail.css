@@ -175,11 +175,11 @@
 }
 
 .csv-icon {
-  color: var(--color-green-500);
+  color: var(--color-green-700);
 }
 
 .json-icon {
-  color: var(--color-violet-500);
+  color: var(--color-violet-700);
 }
 
 .export-text {
@@ -249,12 +249,12 @@
 
 .stat-icon-box.data-changes {
   background: rgba(16, 185, 129, 0.12);
-  color: var(--color-green-500);
+  color: var(--color-green-700);
 }
 
 .stat-icon-box.security-events {
   background: rgba(245, 158, 11, 0.12);
-  color: var(--color-amber-500);
+  color: var(--color-amber-700);
 }
 
 .stat-content {
@@ -303,7 +303,7 @@
   left: 14px;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--color-ink-400);
+  color: var(--color-ink-600);
   pointer-events: none;
 }
 
@@ -426,7 +426,7 @@
   background: #fee2e2;
   border: 1px solid #fca5a5;
   border-radius: var(--radius-md);
-  color: var(--color-red-600);
+  color: var(--color-red-700);
   font-size: var(--text-sm);
   font-weight: 600;
   cursor: pointer;
@@ -637,7 +637,7 @@
 }
 
 .diff-before {
-  color: var(--color-red-600);
+  color: var(--color-red-700);
   background: #fee2e2;
   padding: 2px 6px;
   border-radius: var(--radius-sm);
@@ -649,12 +649,12 @@
 }
 
 .diff-arrow {
-  color: var(--color-ink-400);
+  color: var(--color-ink-600);
   flex-shrink: 0;
 }
 
 .diff-after {
-  color: var(--color-green-600);
+  color: var(--color-green-700);
   background: #dcfce7;
   padding: 2px 6px;
   border-radius: var(--radius-sm);
@@ -701,7 +701,7 @@
   padding-top: 10px;
   border-top: 1px solid var(--color-ink-100);
   font-size: var(--text-sm);
-  color: var(--color-ink-400);
+  color: var(--color-ink-600);
   flex-wrap: wrap;
   gap: 8px;
 }
@@ -722,7 +722,7 @@
 }
 
 .timestamp-full {
-  color: var(--color-ink-400);
+  color: var(--color-ink-600);
 }
 
 .btn-toggle-raw {
@@ -918,7 +918,7 @@
   align-items: center;
   justify-content: center;
   margin: 0 auto 16px auto;
-  color: var(--color-ink-400);
+  color: var(--color-ink-600);
 }
 
 .audit-empty-state h3 {

@@ -155,7 +155,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
             <div className="input-group">
               <label>
                 Basin
-                <span className="text-[color:#ef4444]! ml-[3px]!">*</span>
+                <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
               </label>
               <CustomDropdown
                 options={TABLE_6_8_BASINS.map((b) => ({
@@ -175,7 +175,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
             <div className="input-group">
               <label>
                 Oil production
-                <span className="text-[color:#ef4444]! ml-[3px]!">*</span>
+                <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
               </label>
               <div className="flex! gap-[8px]!">
                 <input
@@ -224,7 +224,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
             <div
               className="flex! items-center! gap-[6px]! mb-[10px]! text-[length:0.85rem]! font-semibold! text-[color:#334155]!"
             >
-              <Info size={16} className="text-[color:#0284c7]!" />
+              <Info size={16} className="text-[color:#0369a1]!" />
               <span>Gas composition</span>
             </div>
 
@@ -268,7 +268,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
             <div className="input-group">
               <label>
                 Oil production
-                <span className="text-[color:#ef4444]! ml-[3px]!">*</span>
+                <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
               </label>
               <div className="flex! gap-[8px]!">
                 <input
@@ -306,7 +306,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
             <div className="input-group">
               <label>
                 GOR
-                <span className="text-[color:#ef4444]! ml-[3px]!">*</span>
+                <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
               </label>
               <div className="flex! gap-[8px]!">
                 <input
@@ -341,7 +341,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
             <div className="input-group">
               <label>
                 Venting Duration
-                <span className="text-[color:#ef4444]! ml-[3px]!">*</span>
+                <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
               </label>
               <div className="flex! gap-[8px]!">
                 <input
@@ -522,7 +522,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
               <div className="input-group">
                 <label>
                   Vent rate
-                  <span className="text-[color:#ef4444]! ml-[3px]!">*</span>
+                  <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
                 </label>
                 <div className="flex! gap-[8px]!">
                   <input
@@ -555,7 +555,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
               </div>
 
               <Field className="input-group" label={<>Venting time (h)
-                  <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
+                  <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
 <Input
                   type="number"
                   min="0"
@@ -572,7 +572,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
             <div className="input-group">
               <label>
                 Total Measured Vent Gas Volume
-                <span className="text-[color:#ef4444]! ml-[3px]!">*</span>
+                <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
               </label>
               <div className="flex! gap-[8px]!">
                 <input
@@ -611,7 +611,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
           {/* Tier 3 Measured Gas Composition */}
           <div className="form-grid-2">
             <Field className="input-group" label={<>CH₄ (mol %)
-                <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
+                <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
 <Input
                 type="number"
                 min="0"

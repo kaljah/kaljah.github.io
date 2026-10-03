@@ -23,7 +23,7 @@ const AdipicAcidForm = ({ data, onChange }) => {
         <div className="input-group">
           <label>
             Abatement Technology
-            <span className="text-[color:#ef4444]! ml-[3px]!">*</span>
+            <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
           </label>
           <CustomDropdown
             options={ADIPIC_ACID_OPTIONS}
@@ -36,7 +36,7 @@ const AdipicAcidForm = ({ data, onChange }) => {
         <div className="input-group">
           <label>
             Production Quantity
-            <span className="text-[color:#ef4444]! ml-[3px]!">*</span>
+            <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
           </label>
           <div
             style={{

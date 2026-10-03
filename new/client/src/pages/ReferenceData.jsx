@@ -82,7 +82,7 @@ const ReferenceData = () => {
   const categories = {
     custom: {
       title: "Custom & Regional Factors",
-      icon: <Star size={20} className="text-[color:#10b981]!" />,
+      icon: <Star size={20} className="text-[color:#2e7d32]!" />,
       color: "#10b981",
       factors: customFactors
         .filter((f) => f.name?.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -560,7 +560,7 @@ const ReferenceData = () => {
             >
               <Info
                 size={40}
-                className="text-[color:#94a3b8]! mb-[16px]!"
+                className="text-[color:#475569]! mb-[16px]!"
               />
               <h3 className="text-[color:#1e293b]! mb-[8px]!">
                 No factors found

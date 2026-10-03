@@ -117,7 +117,7 @@ const Scope1History = ({ currentPage, entries, exportToCSV, facetYears, filterPr
             {showUncertainty ? "Hide" : "Show"} uncertainty columns
           </button>
         </div>
-        <div className="table-scroll-container">
+        <div className="table-scroll-container" tabIndex={0} role="region" aria-label="Entries table">
           <table className={`excel-table${showUncertainty ? "" : " hide-uncertainty"}`}>
             <thead>
               <tr>
@@ -241,7 +241,7 @@ const Scope1History = ({ currentPage, entries, exportToCSV, facetYears, filterPr
                         style={{
                           fontWeight: 500,
                           color:
-                            factorType === "Default" ? "#10b981" : "#3b82f6",
+                            factorType === "Default" ? "#2e7d32" : "#1d4ed8",
                         }}
                       >
                         {factorType}
@@ -285,7 +285,7 @@ const Scope1History = ({ currentPage, entries, exportToCSV, facetYears, filterPr
                           fontSize: "0.82rem",
                           color:
                             (entry.uncertainty_co2 != null && Number(entry.co2_emissions) > 0)
-                              ? "#10b981"
+                              ? "#2e7d32"
                               : "var(--text-muted)",
                         }}
                         title="Standard Combined Uncertainty (1σ)"
@@ -300,7 +300,7 @@ const Scope1History = ({ currentPage, entries, exportToCSV, facetYears, filterPr
                           fontSize: "0.82rem",
                           color:
                             (entry.uncertainty_ch4 != null && Number(entry.ch4_emissions) > 0)
-                              ? "#3b82f6"
+                              ? "#1d4ed8"
                               : "var(--text-muted)",
                         }}
                         title="Standard Combined Uncertainty (1σ)"
@@ -315,7 +315,7 @@ const Scope1History = ({ currentPage, entries, exportToCSV, facetYears, filterPr
                           fontSize: "0.82rem",
                           color:
                             (entry.uncertainty_n2o != null && Number(entry.n2o_emissions) > 0)
-                              ? "#8b5cf6"
+                              ? "#6d28d9"
                               : "var(--text-muted)",
                         }}
                         title="Standard Combined Uncertainty (1σ)"
@@ -330,7 +330,7 @@ const Scope1History = ({ currentPage, entries, exportToCSV, facetYears, filterPr
                           fontSize: "0.82rem",
                           color:
                             (entry.uncertainty_co2 != null && Number(entry.co2_emissions) > 0)
-                              ? "#10b981"
+                              ? "#2e7d32"
                               : "var(--text-muted)",
                         }}
                         title="Expanded Uncertainty (95% Confidence Interval, k=2)"
@@ -345,7 +345,7 @@ const Scope1History = ({ currentPage, entries, exportToCSV, facetYears, filterPr
                           fontSize: "0.82rem",
                           color:
                             (entry.uncertainty_ch4 != null && Number(entry.ch4_emissions) > 0)
-                              ? "#3b82f6"
+                              ? "#1d4ed8"
                               : "var(--text-muted)",
                         }}
                         title="Expanded Uncertainty (95% Confidence Interval, k=2)"
@@ -360,7 +360,7 @@ const Scope1History = ({ currentPage, entries, exportToCSV, facetYears, filterPr
                           fontSize: "0.82rem",
                           color:
                             (entry.uncertainty_n2o != null && Number(entry.n2o_emissions) > 0)
-                              ? "#8b5cf6"
+                              ? "#6d28d9"
                               : "var(--text-muted)",
                         }}
                         title="Expanded Uncertainty (95% Confidence Interval, k=2)"
@@ -371,7 +371,7 @@ const Scope1History = ({ currentPage, entries, exportToCSV, facetYears, filterPr
                       </td>
                       <td className="text-center! whitespace-nowrap!">
                         <button
-                          className="icon-button text-[color:#3b82f6]! mr-[6px]!"
+                          className="icon-button text-[color:#1d4ed8]! mr-[6px]!"
                           onClick={() => handleInspect(entry)}
                          
                           title="Inspect Calculation Details"
@@ -379,7 +379,7 @@ const Scope1History = ({ currentPage, entries, exportToCSV, facetYears, filterPr
                           <Eye size={16} />
                         </button>
                         <button
-                          className="icon-button text-[color:#ef4444]!"
+                          className="icon-button text-[color:#b91c1c]!"
                           onClick={() => handleDelete(entry.id)}
                          
                           title="Delete"

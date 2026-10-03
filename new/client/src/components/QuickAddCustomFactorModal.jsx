@@ -194,7 +194,7 @@ const QuickAddCustomFactorModal = ({
               <label
                 className="block! text-[length:0.75rem]! font-semibold! text-[color:#374151]! mb-[4px]!"
               >
-                Factor Name <span className="text-[color:#ef4444]!">*</span>
+                Factor Name <span className="text-[color:#b91c1c]!">*</span>
               </label>
               <Input
                 type="text"
@@ -213,7 +213,7 @@ const QuickAddCustomFactorModal = ({
                 <label
                   className="block! text-[length:0.75rem]! font-semibold! text-[color:#374151]! mb-[4px]!"
                 >
-                  Factor Unit <span className="text-[color:#ef4444]!">*</span>
+                  Factor Unit <span className="text-[color:#b91c1c]!">*</span>
                 </label>
                 <NativeSelect
                   className="mole-input w-full! p-[8px_10px]! text-[length:0.85rem]!"

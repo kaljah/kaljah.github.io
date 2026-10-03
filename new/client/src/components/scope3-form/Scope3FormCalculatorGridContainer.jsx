@@ -20,7 +20,7 @@ const Scope3FormCalculatorGridContainer = ({ currentPage, entries, facilities, h
             ↑ Bulk Import (Wizard)
           </button>
         </div>
-        <div className="table-scroll-container">
+        <div className="table-scroll-container" tabIndex={0} role="region" aria-label="Entries table">
           <table className="excel-table">
             <thead>
               <tr>
@@ -81,7 +81,7 @@ const Scope3FormCalculatorGridContainer = ({ currentPage, entries, facilities, h
                       {/* kg CO2e per activity unit; a supplier-reported total has no factor */}
                       {Number(entry.emission_factor) > 0 ? formatEmission(entry.emission_factor, 4) : "—"}
                     </td>
-                    <td className="text-[color:#8b5cf6]! font-semibold!">
+                    <td className="text-[color:#6d28d9]! font-semibold!">
                       {formatEmission(entry.co2e || entry.emissions_tco2e, 3)}
                     </td>
                     <td className="text-[color:#6b7280]! text-[length:0.85rem]!">
@@ -103,7 +103,7 @@ const Scope3FormCalculatorGridContainer = ({ currentPage, entries, facilities, h
                     </td>
                     <td className="text-center! whitespace-nowrap!">
                       <button
-                        className="icon-button text-[color:#3b82f6]! mr-[8px]!"
+                        className="icon-button text-[color:#1d4ed8]! mr-[8px]!"
                         onClick={() => handleInspect(entry)}
                        
                         title="Inspect Calculation Details"
@@ -111,7 +111,7 @@ const Scope3FormCalculatorGridContainer = ({ currentPage, entries, facilities, h
                         <Eye size={16} />
                       </button>
                       <button
-                        className="icon-button text-[color:#ef4444]!"
+                        className="icon-button text-[color:#b91c1c]!"
                         onClick={() => handleDelete(entry.id)}
                        
                         title="Delete"
@@ -131,7 +131,7 @@ const Scope3FormCalculatorGridContainer = ({ currentPage, entries, facilities, h
                 >
                   Total (Page):
                 </td>
-                <td className="text-[color:#8b5cf6]!">
+                <td className="text-[color:#6d28d9]!">
                   {formatNumber(
                     entries.reduce(
                       (sum, e) => sum + (e.co2e || e.emissions_tco2e || 0),

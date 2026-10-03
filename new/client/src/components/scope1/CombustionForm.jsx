@@ -98,7 +98,7 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
             <div className="input-group mb-[0px]!">
               <label className="text-[length:0.75rem]!">
                 HHV
-                <span className="text-[color:#ef4444]! ml-[3px]!">*</span>
+                <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
               </label>
               <Input
                 id="hhv-input"
@@ -138,7 +138,7 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
             >
               <label className="text-[length:0.75rem]!">
                 Combustion efficiency
-                <span className="text-[color:#ef4444]! ml-[3px]!">*</span>
+                <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
               </label>
               <div
                 className="flex! gap-[8px]! items-center!"
@@ -196,7 +196,7 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
               <div className="input-group mb-[0px]!">
                 <label className="text-[length:0.75rem]!">
                   CH₄ (%)
-                  <span className="text-[color:#ef4444]! ml-[3px]!">*</span>
+                  <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
                 </label>
                 <Input
                   id="flare-ch4-input"

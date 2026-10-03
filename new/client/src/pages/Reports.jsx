@@ -961,7 +961,7 @@ const Reports = () => {
                   </div>
                   <div className="cell">
                     <span
-                      className="text-[length:0.8rem]! p-[2px_8px]! rounded-[4px]! bg-[color:rgba(16,_185,_129,_0.1)]! text-[color:#10b981]!"
+                      className="text-[length:0.8rem]! p-[2px_8px]! rounded-[4px]! bg-[color:rgba(16,_185,_129,_0.1)]! text-[color:#2e7d32]!"
                     >
                       {row.status || "Verified"}
                     </span>

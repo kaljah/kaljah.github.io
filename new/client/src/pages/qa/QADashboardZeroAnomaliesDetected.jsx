@@ -108,7 +108,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                 {total_flagged_count === 0 ? (
                                     <>
                                         <div style={{ 
-                                            background: '#ecfdf5', color: '#10b981', width: '64px', height: '64px', 
+                                            background: '#ecfdf5', color: "#2e7d32", width: '64px', height: '64px', 
                                             borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', 
                                             margin: '0 auto 16px auto' 
                                         }}>

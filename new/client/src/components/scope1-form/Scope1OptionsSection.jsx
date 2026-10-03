@@ -150,7 +150,7 @@ const Scope1OptionsSection = ({ gcUncertaintyPct, meterUncertaintyPct, renderSpe
                       style={{
                         fontSize: "0.85rem",
                         fontWeight: 700,
-                        color: uncertainty.co2 != null ? "#10b981" : "#9ca3af",
+                        color: uncertainty.co2 != null ? "#2e7d32" : "#9ca3af",
                       }}
                     >
                       {uncertainty.co2 != null
@@ -207,7 +207,7 @@ const Scope1OptionsSection = ({ gcUncertaintyPct, meterUncertaintyPct, renderSpe
                       style={{
                         fontSize: "0.85rem",
                         fontWeight: 700,
-                        color: uncertainty.ch4 != null ? "#3b82f6" : "#9ca3af",
+                        color: uncertainty.ch4 != null ? "#1d4ed8" : "#9ca3af",
                       }}
                     >
                       {uncertainty.ch4 != null
@@ -264,7 +264,7 @@ const Scope1OptionsSection = ({ gcUncertaintyPct, meterUncertaintyPct, renderSpe
                       style={{
                         fontSize: "0.85rem",
                         fontWeight: 700,
-                        color: uncertainty.n2o != null ? "#8b5cf6" : "#9ca3af",
+                        color: uncertainty.n2o != null ? "#6d28d9" : "#9ca3af",
                       }}
                     >
                       {uncertainty.n2o != null

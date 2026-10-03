@@ -9,7 +9,7 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
             <div className="section-intro-header">
               <Satellite
                 size={22}
-                className="section-icon text-[color:#0284c7]!"
+                className="section-icon text-[color:#0369a1]!"
                
               />
               <h2>
@@ -19,7 +19,7 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
             <p>
               Configure access to the **Copernicus Data Space Ecosystem (CDSE)**
               to stream global Level-3 Methane total column mixing ratio (
-              <code className="text-[color:#0284c7]!">
+              <code className="text-[color:#0369a1]!">
                 COPERNICUS/S5P/OFFL/L3_CH4
               </code>
               ) directly into the Emissions Map and OGMP 2.0 top-down
@@ -242,7 +242,7 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
                   <label className="field-label m-[0px]!">
                     Cloud Quality Filter (QA Value Threshold)
                   </label>
-                  <span className="font-bold! text-[color:#0284c7]!">
+                  <span className="font-bold! text-[color:#0369a1]!">
                     &ge; {copernicusQaThreshold}
                   </span>
                 </div>

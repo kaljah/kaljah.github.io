@@ -49,7 +49,7 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
                 }`,
                 color:
                   stats.ogmpGoldStatus === "Compliant"
-                    ? "#10b981"
+                    ? "#2e7d32"
                     : stats.ogmpGoldStatus === "Warning" ||
                       stats.ogmpGoldStatus === "Pending Production"
                     ? "#f59e0b"
@@ -98,7 +98,7 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
             <div className="kpi-card">
               <div className="kpi-header">
                 <div
-                  className="kpi-icon loss bg-[color:rgba(59,_130,_246,_0.1)]! text-[color:#3b82f6]!"
+                  className="kpi-icon loss bg-[color:rgba(59,_130,_246,_0.1)]! text-[color:#1d4ed8]!"
                  
                 >
                   <Compass size={20} />
@@ -111,7 +111,7 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
                   style={{
                     color:
                       stats.totalGasProductionM3 === 0 && stats.totalCh4Emissions > 0
-                        ? "#f59e0b"
+                        ? "#b45309"
                         : stats.avgMethaneLossRatePct <= upstreamTargetPct
                           ? "#10b981"
                           : stats.avgMethaneLossRatePct <=
@@ -162,7 +162,7 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
                       fontWeight: 700,
                       color:
                         stats.upstreamGasM3 === 0 && stats.upstreamCh4Tonnes > 0
-                          ? "#f59e0b"
+                          ? "#b45309"
                           : stats.upstreamLossRatePct <= upstreamTargetPct
                             ? "#10b981"
                             : "#ef4444",
@@ -202,7 +202,7 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
                       fontWeight: 700,
                       color:
                         stats.midstreamGasM3 === 0 && stats.midstreamCh4Tonnes > 0
-                          ? "#f59e0b"
+                          ? "#b45309"
                           : stats.midstreamLossRatePct <= midstreamTargetPct
                             ? "#10b981"
                             : "#ef4444",
@@ -260,7 +260,7 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
             <div className="kpi-card">
               <div className="kpi-header">
                 <div
-                  className="kpi-icon wec bg-[color:rgba(239,_68,_68,_0.1)]! text-[color:#ef4444]!"
+                  className="kpi-icon wec bg-[color:rgba(239,_68,_68,_0.1)]! text-[color:#b91c1c]!"
                  
                 >
                   <AlertTriangle size={20} />

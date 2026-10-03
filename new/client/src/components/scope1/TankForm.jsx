@@ -13,7 +13,7 @@ const TankForm = ({ data, onChange, sourceType }) => {
       <div className="input-group">
         <label>
           Throughput
-          <span className="text-[color:#ef4444]! ml-[3px]!">*</span>
+          <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
         </label>
         <div
           style={{
@@ -67,7 +67,7 @@ const TankForm = ({ data, onChange, sourceType }) => {
           {["tank", "tank_flashing", "tank_working", "tank_breathing"].includes(processType) && (
             <>
               <Field className="input-group" label={<>GOR (scf/bbl)
-                  <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
+                  <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
 <Input
                   type="number"
                  
@@ -112,7 +112,7 @@ const TankForm = ({ data, onChange, sourceType }) => {
 </Field>
 
           <Field className="input-group" label={<>CH₄ (%)
-              <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
+              <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
 <Input
               type="number"
              

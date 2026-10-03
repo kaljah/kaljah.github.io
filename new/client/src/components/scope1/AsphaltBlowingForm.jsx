@@ -29,7 +29,7 @@ const AsphaltBlowingForm = ({ data, onChange }) => {
         <div className="input-group">
           <label>
             Asphalt Blown Throughput
-            <span className="text-[color:#ef4444]! ml-[3px]!">*</span>
+            <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
           </label>
           <div
             style={{

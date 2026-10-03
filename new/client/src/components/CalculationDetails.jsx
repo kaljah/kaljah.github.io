@@ -231,7 +231,7 @@ const CalculationDetails = ({ calculation, onClose }) => {
                     <span className="unc-label">
                       <span className="gas-badge ch4">CH₄</span> 1σ Uncertainty
                     </span>
-                    <span className="unc-value text-[color:#0284c7]!">
+                    <span className="unc-value text-[color:#0369a1]!">
                       ±{(Number(uncertainty.ch4) * 100).toFixed(1)}%
                     </span>
                     <span className="param-label">

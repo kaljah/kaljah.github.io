@@ -43,3 +43,24 @@ test.describe("signed out", () => {
     expect(blocking.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(" ")).join(" | ")}`)).toEqual([]);
   });
 });
+
+// The IT-role page needs an IT account: set E2E_IT_EMAIL and E2E_IT_PASSWORD (for example by seeding the
+// backend with IT_ADMIN_EMAIL / IT_ADMIN_PASSWORD against a throwaway database). Skipped otherwise.
+test.describe("IT role", () => {
+  test.use({ storageState: { cookies: [], origins: [] } });
+  test.skip(!process.env.E2E_IT_EMAIL || !process.env.E2E_IT_PASSWORD, "set E2E_IT_EMAIL and E2E_IT_PASSWORD");
+
+  test("a11y /user-management", async ({ page }) => {
+    await page.goto("/login");
+    await page.locator('input[placeholder="Email Address"]').fill(process.env.E2E_IT_EMAIL);
+    await page.locator('input[type="password"]').fill(process.env.E2E_IT_PASSWORD);
+    await page.locator('button[type="submit"]').click();
+    await page.waitForURL((u) => !u.toString().includes("/login"));
+    await page.goto("/user-management");
+    await page.waitForLoadState("networkidle");
+    await page.waitForTimeout(1200);
+    const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
+    const blocking = results.violations.filter((v) => v.impact === "serious" || v.impact === "critical");
+    expect(blocking.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(" ")).join(" | ")}`)).toEqual([]);
+  });
+});

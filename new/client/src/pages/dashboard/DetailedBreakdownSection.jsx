@@ -131,7 +131,7 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
                       </tr>
                       <tr
                         className="total-row"
-                        style={{ color: "#10b981", borderTop: "none" }}
+                        style={{ color: "#2e7d32", borderTop: "none" }}
                       >
                         <td>Net Footprint</td>
                         <td className="text-right">

@@ -58,6 +58,7 @@
   --color-red-700: #b91c1c;
 
   --color-violet-500: #8b5cf6;
+  --color-violet-700: #6d28d9;
 
   /* Roles (S-3: primary fill is darkened to pass AA with white text) */
   --color-primary: var(--color-brand-700);

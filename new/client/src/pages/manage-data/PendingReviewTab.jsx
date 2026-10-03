@@ -91,7 +91,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                                     textTransform: 'uppercase', 
                                                     letterSpacing: '0.05em' 
                                                 }}>
-                                                    Audit Reason / Justification <span className="text-[color:#ef4444]!">*</span>
+                                                    Audit Reason / Justification <span className="text-[color:#b91c1c]!">*</span>
                                                 </label>
                                                 <textarea
                                                     className="custom-input"
@@ -210,7 +210,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                     </div>
 
                                     <div className="pending-kpi-card">
-                                        <div className="pending-kpi-icon-wrap bg-[color:rgba(239,_68,_68,_0.1)]! text-[color:#ef4444]!">
+                                        <div className="pending-kpi-icon-wrap bg-[color:rgba(239,_68,_68,_0.1)]! text-[color:#b91c1c]!">
                                             <Flame size={22} />
                                         </div>
                                         <div className="pending-kpi-info">
@@ -575,7 +575,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                                                                     padding: '4px 8px', 
                                                                                     borderRadius: '6px', 
                                                                                     background: 'rgba(239, 68, 68, 0.1)', 
-                                                                                    color: '#ef4444', 
+                                                                                    color: "#b91c1c", 
                                                                                     border: '1px solid rgba(239, 68, 68, 0.25)', 
                                                                                     fontWeight: 600, 
                                                                                     whiteSpace: 'nowrap' 

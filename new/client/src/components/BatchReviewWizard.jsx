@@ -717,7 +717,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
               <Button
                 variant="ghost" type="submit"
                 onClick={() => setSelectedKeys(new Set())}
-                className="text-[color:#94a3b8]! text-[length:0.82rem]! p-[6px_10px]! cursor-pointer!"
+                className="text-[color:#475569]! text-[length:0.82rem]! p-[6px_10px]! cursor-pointer!"
               >
                 Deselect
               </Button>
@@ -851,7 +851,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
                                 padding: '4px 8px', 
                                 borderRadius: '6px', 
                                 background: 'rgba(239, 68, 68, 0.1)', 
-                                color: '#ef4444', 
+                                color: "#b91c1c", 
                                 border: '1px solid rgba(239, 68, 68, 0.25)', 
                                 fontWeight: 600, 
                                 whiteSpace: 'nowrap' 

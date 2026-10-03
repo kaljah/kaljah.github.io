@@ -9,7 +9,7 @@ const AGRForm = ({ data, onChange, sourceType }) => {
       <div className="input-group">
         <label>
           Throughput
-          <span className="text-[color:#ef4444]! ml-[3px]!">*</span>
+          <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
         </label>
         <div
           style={{
@@ -57,7 +57,7 @@ const AGRForm = ({ data, onChange, sourceType }) => {
           </div>
 
           <Field className="input-group" label={<>Inlet CO2 (%)
-              <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
+              <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
 <Input
               type="number"
              
@@ -73,7 +73,7 @@ const AGRForm = ({ data, onChange, sourceType }) => {
 </Field>
 
           <Field className="input-group" label={<>Outlet CO2 (%)
-              <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
+              <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
 <Input
               type="number"
              
@@ -136,7 +136,7 @@ const AGRForm = ({ data, onChange, sourceType }) => {
           </div>
           {(data.agr_control_type || "vent") !== "vent" && (
             <Field className="input-group" label={<>Control Efficiency (%)
-                <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
+                <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
 <Input
                 type="number"
                

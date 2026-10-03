@@ -8,7 +8,7 @@ const BulkImportModalUploadProgressContainer = ({ file, handleImport, loading, o
               className="file-info mb-[24px]! p-[16px]! bg-[color:#f8fafc]! rounded-[8px]! flex! items-center! gap-[12px]!"
              
             >
-              <FileText size={24} className="text-[color:#10b981]!" />
+              <FileText size={24} className="text-[color:#2e7d32]!" />
               <div>
                 <strong
                   className="block! text-[color:var(--text-primary)]!"
@@ -151,7 +151,7 @@ const BulkImportModalUploadProgressContainer = ({ file, handleImport, loading, o
                   >
                     <Loader2
                       size={32}
-                      className="spin text-[color:#10b981]!"
+                      className="spin text-[color:#2e7d32]!"
                      
                     />
                     <span className="text-[color:var(--text-secondary)]!">

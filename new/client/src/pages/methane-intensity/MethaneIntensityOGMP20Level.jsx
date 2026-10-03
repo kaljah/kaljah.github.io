@@ -118,8 +118,8 @@ const MethaneIntensityOGMP20Level = ({ globalThreshold, ogmpCollapsed, ogmpSurve
                                   fontWeight: 700,
                                   color:
                                     Math.abs(variancePct) <= (globalThreshold || 20.0)
-                                      ? "#10b981"
-                                      : "#ef4444",
+                                      ? "#2e7d32"
+                                      : "#b91c1c",
                                 }}
                               >
                                 {variancePct >= 0
@@ -144,8 +144,8 @@ const MethaneIntensityOGMP20Level = ({ globalThreshold, ogmpCollapsed, ogmpSurve
                                     : "rgba(245, 158, 11, 0.1)",
                                 color:
                                   recStatus === "Reconciled"
-                                    ? "#10b981"
-                                    : "#f59e0b",
+                                    ? "#2e7d32"
+                                    : "#b45309",
                               }}
                             >
                               {recStatus}

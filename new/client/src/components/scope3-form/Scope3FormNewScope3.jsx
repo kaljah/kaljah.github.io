@@ -77,7 +77,7 @@ const Scope3FormNewScope3 = ({ UNIT_MULTIPLIERS, activityType, amount, baseUnit,
           <h3 className="m-[0px]!">New Scope 3 Entry</h3>
           <div className="text-right!">
             <span
-              className="text-[color:#8b5cf6]! font-semibold! text-[length:0.9rem]!"
+              className="text-[color:#6d28d9]! font-semibold! text-[length:0.9rem]!"
             >
               Scope 3: Other Indirect
             </span>

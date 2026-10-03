@@ -896,7 +896,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                 }}
               >
                 <h4
-                  className="m-[0_0_8px_0]! text-[color:#10b981]! text-center!"
+                  className="m-[0_0_8px_0]! text-[color:#2e7d32]! text-center!"
                 >
                   Tier 1
                 </h4>
@@ -927,7 +927,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                 }}
               >
                 <h4
-                  className="m-[0_0_8px_0]! text-[color:#10b981]! text-center!"
+                  className="m-[0_0_8px_0]! text-[color:#2e7d32]! text-center!"
                 >
                   Tier 3
                 </h4>
@@ -971,7 +971,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                 }}
               >
                 <h4
-                  className="m-[0_0_8px_0]! text-[color:#10b981]! text-center!"
+                  className="m-[0_0_8px_0]! text-[color:#2e7d32]! text-center!"
                 >
                   All Processes
                 </h4>
@@ -996,7 +996,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                 }}
               >
                 <h4
-                  className="m-[0_0_8px_0]! text-[color:#10b981]! text-center!"
+                  className="m-[0_0_8px_0]! text-[color:#2e7d32]! text-center!"
                 >
                   Choose by Process
                 </h4>
@@ -1080,7 +1080,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
               <div
                 className="mb-[16px]! flex! justify-between! items-center!"
               >
-                <span className="font-semibold! text-[color:#10b981]!">
+                <span className="font-semibold! text-[color:#2e7d32]!">
                   {selectedTier === "1"
                     ? "Tier 1 (Default Factors)"
                     : selectedProcess === "all"
@@ -1102,7 +1102,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
             >
               <Upload
                 size={48}
-                className="text-[color:#10b981]! mb-[16px]!"
+                className="text-[color:#2e7d32]! mb-[16px]!"
               />
               <h3>Click or Drag CSV File</h3>
               <p className="text-[color:var(--text-secondary)]! mt-[8px]!">
@@ -1204,7 +1204,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
         {step === 2 && (
           <>
             <div className="file-info">
-              <FileText size={20} className="text-[color:#10b981]!" />
+              <FileText size={20} className="text-[color:#2e7d32]!" />
               <span>
                 {file?.name} ({csvData.length} records detected)
               </span>
@@ -1227,7 +1227,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                     <div className="mapping-label">
                       {t.label}{" "}
                       {t.required && (
-                        <span className="text-[color:#ef4444]!">*</span>
+                        <span className="text-[color:#b91c1c]!">*</span>
                       )}
                       {t.hint && (
                         <div
@@ -1305,7 +1305,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                     <CheckCircle2
                       size={18}
                       style={{
-                        color: validationErrors.length ? "#ef4444" : "#10b981",
+                        color: validationErrors.length ? "#b91c1c" : "#2e7d32",
                       }}
                     />{" "}
                     Preview & Validate
@@ -1357,7 +1357,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                                 key={t.id}
                                 style={{
                                   color: isHierarchyError
-                                    ? "#ef4444"
+                                    ? "#b91c1c"
                                     : "inherit",
                                 }}
                               >
@@ -1500,7 +1500,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                   >
                     <Loader2
                       size={32}
-                      className="spin text-[color:#10b981]!"
+                      className="spin text-[color:#2e7d32]!"
                      
                     />
                     <span className="text-[color:var(--text-secondary)]!">

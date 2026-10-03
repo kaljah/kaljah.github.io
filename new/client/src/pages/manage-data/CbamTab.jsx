@@ -245,7 +245,7 @@ const CbamTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, cbamForm, currentPage, editi
                                                         <td className="text-right! font-semibold!">{qTonnes.toLocaleString()}</td>
                                                         <td className="text-right!">{direct.toFixed(3)}</td>
                                                         <td className="text-right!">{indirect.toFixed(3)}</td>
-                                                        <td className="text-right! text-[color:#3b82f6]! font-bold!">
+                                                        <td className="text-right! text-[color:#1d4ed8]! font-bold!">
                                                             {totalEmbedded.toLocaleString(undefined, { maximumFractionDigits: 1 })}
                                                         </td>
                                                         <td className="text-center!">

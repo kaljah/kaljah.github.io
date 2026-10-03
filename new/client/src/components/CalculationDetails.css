@@ -50,7 +50,7 @@
   height: 40px;
   border-radius: var(--radius-md);
   background: var(--color-green-50);
-  color: var(--color-green-500);
+  color: var(--color-green-700);
   border: 1px solid #a7f3d0;
   display: flex;
   align-items: center;
@@ -91,7 +91,7 @@
 
 .calc-close-btn:hover {
   background: #fee2e2;
-  color: var(--color-red-500);
+  color: var(--color-red-700);
   border-color: #fca5a5;
   transform: scale(1.04);
 }
@@ -124,7 +124,7 @@
 }
 
 .calc-section-title svg {
-  color: var(--color-green-500);
+  color: var(--color-green-700);
 }
 
 /* 1. Input Parameters Grid */
@@ -179,19 +179,19 @@
 
 .status-pill.verified {
   background: var(--color-green-50);
-  color: var(--color-green-600);
+  color: var(--color-green-700);
   border: 1px solid #a7f3d0;
 }
 
 .status-pill.pending {
   background: var(--color-amber-50);
-  color: var(--color-amber-600);
+  color: var(--color-amber-700);
   border: 1px solid #fde68a;
 }
 
 .status-pill.draft {
   background: #fee2e2;
-  color: var(--color-red-600);
+  color: var(--color-red-700);
   border: 1px solid #fecaca;
 }
 
@@ -238,7 +238,7 @@
 
 .gas-badge.co2 {
   background: #fee2e2;
-  color: var(--color-red-600);
+  color: var(--color-red-700);
   border: 1px solid #fecaca;
 }
 
@@ -256,7 +256,7 @@
 
 .gas-badge.gwp {
   background: #dcfce7;
-  color: var(--color-green-600);
+  color: var(--color-green-700);
   border: 1px solid #bbf7d0;
 }
 
@@ -384,7 +384,7 @@
 }
 
 .result-card.total .result-unit {
-  color: var(--color-green-600);
+  color: var(--color-green-700);
 }
 
 /* Footer */
@@ -401,7 +401,7 @@
 }
 
 .calc-footer svg {
-  color: var(--color-green-500);
+  color: var(--color-green-700);
   flex-shrink: 0;
 }
 

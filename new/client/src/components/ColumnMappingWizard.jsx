@@ -811,7 +811,7 @@ export default function ColumnMappingWizard({
               Upload a CSV or Excel file to bulk-import your records
             </p>
           </div>
-          <button className="cmw-close-btn" onClick={onClose}>
+          <button className="cmw-close-btn" onClick={onClose} aria-label="Close">
             <Icons.X />
           </button>
         </div>

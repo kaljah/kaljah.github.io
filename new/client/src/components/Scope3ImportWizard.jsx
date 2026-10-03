@@ -387,7 +387,7 @@ export default function Scope3ImportWizard({ onClose, onUploadSuccess }) {
               <p className="s1w-subtitle">Upload value chain emissions data from CSV or Excel</p>
             </div>
           </div>
-          <button className="s1w-close" onClick={onClose}><Icon.Close /></button>
+          <button className="s1w-close" aria-label="Close" onClick={onClose}><Icon.Close /></button>
         </div>
 
         {/* Step bar */}

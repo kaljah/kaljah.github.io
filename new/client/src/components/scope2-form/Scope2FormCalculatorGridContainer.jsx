@@ -24,7 +24,7 @@ const Scope2FormCalculatorGridContainer = ({ currentPage, entries, facilities, h
           </button>
         </div>
         <div
-          className="table-scroll-container"
+          className="table-scroll-container" tabIndex={0} role="region" aria-label="Entries table"
           style={{ maxHeight: "600px", overflowY: "auto" }}
         >
           <table className="excel-table">
@@ -114,7 +114,7 @@ const Scope2FormCalculatorGridContainer = ({ currentPage, entries, facilities, h
                           fontSize: "0.8rem",
                           color:
                             entry.source_type === "electricity"
-                              ? "#10b981"
+                              ? "#2e7d32"
                               : entry.source_type === "indirect_steam"
                                 ? "#f59e0b"
                                 : "#8b5cf6",
@@ -129,7 +129,7 @@ const Scope2FormCalculatorGridContainer = ({ currentPage, entries, facilities, h
                       </td>
                       <td>{consumptionDisplay}</td>
                       <td>{efDisplay}</td>
-                      <td className="text-[color:#3b82f6]! font-semibold!">
+                      <td className="text-[color:#1d4ed8]! font-semibold!">
                         {formatEmission(entry.co2e, 3)}
                       </td>
                       <td className="text-[color:#6b7280]! text-[length:0.85rem]!">
@@ -166,7 +166,7 @@ const Scope2FormCalculatorGridContainer = ({ currentPage, entries, facilities, h
                           className="flex! justify-center! gap-[8px]!"
                         >
                           <button
-                            className="icon-button text-[color:#3b82f6]!"
+                            className="icon-button text-[color:#1d4ed8]!"
                             onClick={() => handleInspect(entry)}
                             title="Inspect Calculation Details"
                            
@@ -202,7 +202,7 @@ const Scope2FormCalculatorGridContainer = ({ currentPage, entries, facilities, h
                 >
                   Total (Page):
                 </td>
-                <td className="text-[color:#3b82f6]!">
+                <td className="text-[color:#1d4ed8]!">
                   {formatNumber(
                     entries.reduce((sum, e) => sum + (e.co2e || 0), 0),
                     3,

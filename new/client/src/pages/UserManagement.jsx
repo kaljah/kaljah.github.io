@@ -23,41 +23,53 @@ if (!document.getElementById(STYLE_ID)) {
   document.head.appendChild(s);
 }
 
+// Darker text shades with at least 4.5:1 contrast on the matching 10% tint backgrounds
+const AA_TEXT = {
+  "#10b981": "#2e7d32",
+  "#ef4444": "#b91c1c",
+  "#ff6600": "#c2410c",
+  "#f59e0b": "#b45309",
+  "#8b5cf6": "#6d28d9",
+  "#3b82f6": "#1d4ed8",
+  "#0284c7": "#0369a1",
+};
+const aa = (c) => AA_TEXT[c] || c;
+
 /* ─── role metadata ────────────────────────────────────────────────────────── */
 const ROLE_META = {
   admin: {
     label: "Admin",
-    color: "#10b981",
+    color: "#2e7d32",
     bg: "#ecfdf5",
     border: "rgba(16,185,129,.25)",
   },
   it_admin: {
     label: "IT Manager",
-    color: "#f59e0b",
+    color: "#b45309",
     bg: "#fffbeb",
     border: "rgba(245,158,11,.25)",
   },
   it_manager: {
     label: "IT Manager",
-    color: "#f59e0b",
+    color: "#b45309",
     bg: "#fffbeb",
     border: "rgba(245,158,11,.25)",
   },
   it: {
     label: "IT",
-    color: "#0284c7",
+    color: "#0369a1",
     bg: "#f0f9ff",
     border: "rgba(2,132,199,.25)",
   },
   superuser: {
     label: "Super User",
-    color: "#8b5cf6",
+    color: "#6d28d9",
     bg: "#f3e8ff",
     border: "rgba(139,92,246,.25)",
   },
   user: {
     label: "User",
-    color: "#3b82f6",
+    color: "#1d4ed8",
     bg: "#eff6ff",
     border: "rgba(59,130,246,.25)",
   },
@@ -65,7 +77,7 @@ const ROLE_META = {
 const getRoleMeta = (role) =>
   ROLE_META[role] || {
     label: role?.toUpperCase?.() || "UNKNOWN",
-    color: "#64748b",
+    color: "#475569",
     bg: "#f1f5f9",
     border: "#e2e8f0",
   };
@@ -96,7 +108,7 @@ const S = {
     alignItems: "center",
     gap: "7px",
     background: "#fff7ed",
-    color: "#ff6600",
+    color: "#c2410c",
     border: "1px solid rgba(255,102,0,.15)",
     borderRadius: "100px",
     padding: "4px 12px",
@@ -212,7 +224,7 @@ const S = {
     textAlign: "left",
     padding: "11px 16px",
     background: "var(--bg-body)",
-    color: "var(--text-secondary)",
+    color: "var(--color-ink-600)",
     fontWeight: 700,
     fontSize: "0.72rem",
     textTransform: "uppercase",
@@ -252,7 +264,7 @@ const S = {
     padding: "3px 10px",
     borderRadius: "100px",
     background: bg,
-    color: color,
+    color: aa(color),
     border: `1px solid ${border}`,
     fontSize: "0.78rem",
     fontWeight: 700,
@@ -711,7 +723,7 @@ const UserManagement = () => {
   if (!["it_admin", "it_manager", "it"].includes(user?.role)) {
     return (
       <div style={{ ...S.page, textAlign: "center", paddingTop: "80px" }}>
-        <div className="mb-[20px]! text-[color:#94a3b8]!">
+        <div className="mb-[20px]! text-[color:#475569]!">
           <Lock size="52" strokeWidth="1.5" aria-hidden="true" />
         </div>
         <h2 className="text-[color:var(--text-primary)]! m-[0_0_8px]!">
@@ -779,6 +791,7 @@ const UserManagement = () => {
         <div style={S.heroRight}>
           <NativeSelect
             id="um-filter-role"
+            aria-label="Filter by role"
             value={filterRole}
             onChange={(e) => setFilterRole(e.target.value)}
             style={S.select}
@@ -793,6 +806,7 @@ const UserManagement = () => {
 
           <NativeSelect
             id="um-filter-region"
+            aria-label="Filter by region"
             value={filterRegion}
             onChange={(e) => setFilterRegion(e.target.value)}
             style={S.select}

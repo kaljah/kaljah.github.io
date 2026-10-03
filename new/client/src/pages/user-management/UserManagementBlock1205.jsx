@@ -32,7 +32,7 @@ const UserManagementBlock1205 = ({ S, editingUser, focusProps, focusedField, for
             <div className="flex! flex-col! gap-[14px]!">
               <div style={S.formGroup}>
                 <label style={S.label}>
-                  Full Name <span className="text-[color:#ef4444]!">*</span>
+                  Full Name <span className="text-[color:#b91c1c]!">*</span>
                 </label>
                 <input
                   id="um-modal-fullname"
@@ -49,7 +49,7 @@ const UserManagementBlock1205 = ({ S, editingUser, focusProps, focusedField, for
 
               <div style={S.formGroup}>
                 <label style={S.label}>
-                  Email Address <span className="text-[color:#ef4444]!">*</span>
+                  Email Address <span className="text-[color:#b91c1c]!">*</span>
                 </label>
                 <input
                   id="um-modal-email"
@@ -173,7 +173,7 @@ const UserManagementBlock1205 = ({ S, editingUser, focusProps, focusedField, for
                     ))}
                   </NativeSelect>
                   {!formData.location && (
-                    <p className="text-[length:0.72rem]! text-[color:#ef4444]! mt-[4px]!">
+                    <p className="text-[length:0.72rem]! text-[color:#b91c1c]! mt-[4px]!">
                       ↑ Required — choose an assigned region
                     </p>
                   )}
@@ -212,7 +212,7 @@ const UserManagementBlock1205 = ({ S, editingUser, focusProps, focusedField, for
 
               <div style={S.formGroup}>
                 <label style={S.label}>
-                  Temporary Password <span className="text-[color:#ef4444]!">*</span>
+                  Temporary Password <span className="text-[color:#b91c1c]!">*</span>
                 </label>
                 <input
                   id="um-modal-password"
@@ -234,10 +234,10 @@ const UserManagementBlock1205 = ({ S, editingUser, focusProps, focusedField, for
                   placeholder="Minimum 10 characters"
                 />
                 <div className="flex! justify-between! items-center! mt-[6px]!">
-                  <span style={{ fontSize: "0.74rem", color: formData.password.length >= 10 ? "#10b981" : "#94a3b8" }}>
+                  <span style={{ fontSize: "0.74rem", color: formData.password.length >= 10 ? "#2e7d32" : "#475569" }}>
                     {formData.password.length >= 10 ? "✓ Meets minimum length requirement" : "Requires at least 10 characters"}
                   </span>
-                  <span style={{ fontSize: "0.74rem", fontWeight: 600, color: formData.password.length >= 10 ? "#10b981" : "#ef4444" }}>
+                  <span style={{ fontSize: "0.74rem", fontWeight: 600, color: formData.password.length >= 10 ? "#2e7d32" : "#b91c1c" }}>
                     {formData.password.length}/10 chars
                   </span>
                 </div>

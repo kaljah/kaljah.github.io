@@ -337,7 +337,7 @@
 .qa-search-box svg {
   position: absolute;
   left: 12px;
-  color: var(--color-ink-400);
+  color: var(--color-ink-600);
 }
 
 .qa-search-input {
@@ -540,23 +540,23 @@
 
 .qa-btn-approve {
   background: rgba(16, 185, 129, 0.1);
-  color: var(--color-green-600);
+  color: var(--color-green-700);
   border-color: rgba(16, 185, 129, 0.25);
 }
 
 .qa-btn-approve:hover {
-  background: var(--color-green-500);
+  background: var(--color-green-700);
   color: var(--color-white);
 }
 
 .qa-btn-reject {
   background: rgba(239, 68, 68, 0.1);
-  color: var(--color-red-600);
+  color: var(--color-red-700);
   border-color: rgba(239, 68, 68, 0.25);
 }
 
 .qa-btn-reject:hover {
-  background: var(--color-red-500);
+  background: var(--color-red-700);
   color: var(--color-white);
 }
 
@@ -696,7 +696,7 @@
 
 .qa-samples-hint {
   font-size: var(--text-sm);
-  color: var(--color-ink-400);
+  color: var(--color-ink-600);
   font-weight: 400;
 }
 
@@ -719,7 +719,7 @@
   background: var(--color-ink-50);
   font-size: var(--text-xs);
   font-weight: 700;
-  color: var(--color-ink-500);
+  color: var(--color-ink-600);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   border-bottom: 1px solid var(--color-ink-200);
@@ -801,12 +801,12 @@
 
 .qa-issue-impact-badge.high {
   background: #fee2e2;
-  color: var(--color-red-600);
+  color: var(--color-red-700);
 }
 
 .qa-issue-impact-badge.medium {
   background: #fef3c7;
-  color: var(--color-amber-600);
+  color: var(--color-amber-700);
 }
 
 .qa-issue-impact-badge.low {

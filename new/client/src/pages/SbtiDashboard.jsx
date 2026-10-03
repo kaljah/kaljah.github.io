@@ -534,7 +534,7 @@ const SbtiDashboard = () => {
                 height={350}
               />
             ) : (
-              <div className="flex! justify-center! items-center! h-full! text-[color:#94a3b8]!">
+              <div className="flex! justify-center! items-center! h-full! text-[color:#475569]!">
                 No trajectory configured. Click "Configure Target" to set baseline and targets.
               </div>
             )}
@@ -560,7 +560,7 @@ const SbtiDashboard = () => {
                 height={350}
               />
             ) : (
-              <div className="flex! justify-center! items-center! h-full! text-[color:#94a3b8]!">
+              <div className="flex! justify-center! items-center! h-full! text-[color:#475569]!">
                 No verified emissions history available.
               </div>
             )}
@@ -627,7 +627,7 @@ const SbtiDashboard = () => {
                       <td>{hasActual ? `${formatNumber(row.scope12, 1)}` : "—"}</td>
                       <td>
                         {variance !== null ? (
-                          <span style={{ color: variance <= 0 ? "#10b981" : "#ef4444", fontWeight: 600 }}>
+                          <span style={{ color: variance <= 0 ? "#2e7d32" : "#b91c1c", fontWeight: 600 }}>
                             {variance > 0 ? `+${formatNumber(variance, 1)}` : formatNumber(variance, 1)} tCO2e
                           </span>
                         ) : (
@@ -644,7 +644,7 @@ const SbtiDashboard = () => {
                 })
               ) : (
                 <tr>
-                  <td colSpan="10" className="text-center! p-[30px]! text-[color:#94a3b8]!">
+                  <td colSpan="10" className="text-center! p-[30px]! text-[color:#475569]!">
                     No trajectory milestone records found.
                   </td>
                 </tr>

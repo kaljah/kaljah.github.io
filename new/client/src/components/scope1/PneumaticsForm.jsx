@@ -11,7 +11,7 @@ const PneumaticsForm = ({ data, onChange, sourceType }) => {
       {/* Device Type removed as per request */}
 
       <Field className="input-group" label={<>Devices
-          <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
+          <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
 <Input
           type="number"
          
@@ -28,7 +28,7 @@ const PneumaticsForm = ({ data, onChange, sourceType }) => {
           <div className="input-group">
             <label>
               Bleed rate
-              <span className="text-[color:#ef4444]! ml-[3px]!">*</span>
+              <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
             </label>
             <div
               style={{
@@ -57,7 +57,7 @@ const PneumaticsForm = ({ data, onChange, sourceType }) => {
           </div>
 
           <Field className="input-group" label={<>CH₄ (%)
-              <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
+              <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
 <Input
               type="number"
              
@@ -74,7 +74,7 @@ const PneumaticsForm = ({ data, onChange, sourceType }) => {
 </Field>
 
           <Field className="input-group" label={<>Hours per year
-              <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
+              <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
 <Input
               type="number"
              

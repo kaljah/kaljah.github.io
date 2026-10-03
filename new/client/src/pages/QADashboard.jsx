@@ -535,7 +535,7 @@ export default function QADashboard() {
                             <span className="qa-kpi-label" title="IPCC Approach 1, Verified records, 95 % confidence (k = 2)">
                                 Inventory Uncertainty (95% CI{tier1_uncertainty.year ? `, ${tier1_uncertainty.year}` : ""})
                             </span>
-                            <div className="qa-kpi-icon-wrap text-[color:#f59e0b]! bg-[color:rgba(245,_158,_11,_0.12)]!">
+                            <div className="qa-kpi-icon-wrap text-[color:#b45309]! bg-[color:rgba(245,_158,_11,_0.12)]!">
                                 <AlertTriangle size={16} />
                             </div>
                         </div>
@@ -556,20 +556,20 @@ export default function QADashboard() {
                     <div className="qa-kpi-card">
                         <div className="qa-kpi-header">
                             <span className="qa-kpi-label">Flagged Anomalies</span>
-                            <div className="qa-kpi-icon-wrap text-[color:#ef4444]! bg-[color:rgba(239,_68,_68,_0.12)]!">
+                            <div className="qa-kpi-icon-wrap text-[color:#b91c1c]! bg-[color:rgba(239,_68,_68,_0.12)]!">
                                 <AlertCircle size={16} />
                             </div>
                         </div>
                         <div className="qa-kpi-body">
-                            <span className="qa-kpi-value" style={{ color: anomaliesSummary.all > 0 ? '#ef4444' : '#10b981' }}>
+                            <span className="qa-kpi-value" style={{ color: anomaliesSummary.all > 0 ? "#b91c1c" : "#2e7d32" }}>
                                 {anomaliesSummary.all}
                             </span>
                             <span className="qa-kpi-unit">active</span>
                         </div>
                         <div className="qa-kpi-footer">
                             <span>Pending: <strong>{anomaliesSummary.pending}</strong></span>
-                            <span>Verified: <strong className="text-[color:#10b981]!">{anomaliesSummary.verified}</strong></span>
-                            <span>Rejected: <strong className="text-[color:#ef4444]!">{anomaliesSummary.rejected}</strong></span>
+                            <span>Verified: <strong className="text-[color:#2e7d32]!">{anomaliesSummary.verified}</strong></span>
+                            <span>Rejected: <strong className="text-[color:#b91c1c]!">{anomaliesSummary.rejected}</strong></span>
                         </div>
                     </div>
 
@@ -577,7 +577,7 @@ export default function QADashboard() {
                     <div className="qa-kpi-card">
                         <div className="qa-kpi-header">
                             <span className="qa-kpi-label">Inventory Coverage</span>
-                            <div className="qa-kpi-icon-wrap text-[color:#3b82f6]! bg-[color:rgba(59,_130,_246,_0.12)]!">
+                            <div className="qa-kpi-icon-wrap text-[color:#1d4ed8]! bg-[color:rgba(59,_130,_246,_0.12)]!">
                                 <Database size={16} />
                             </div>
                         </div>
@@ -822,7 +822,7 @@ export default function QADashboard() {
                                     <div className="text-[length:0.82rem]! text-[color:#64748b]!">
                                         Total Audited: <strong>{(tier1_uncertainty.s1_total_tco2e || 0).toLocaleString(undefined, { maximumFractionDigits: 1 })} tCO₂e</strong>
                                     </div>
-                                    <div style={{ fontSize: '0.76rem', color: '#94a3b8', borderTop: '1px solid #f1f5f9', paddingTop: '8px' }}>
+                                    <div style={{ fontSize: '0.76rem', color: "#475569", borderTop: '1px solid #f1f5f9', paddingTop: '8px' }}>
                                         Combustion, flaring, vented & fugitive sources
                                     </div>
                                 </div>
@@ -839,7 +839,7 @@ export default function QADashboard() {
                                     <div className="text-[length:0.82rem]! text-[color:#64748b]!">
                                         Total Audited: <strong>{(tier1_uncertainty.s2_total_tco2e || 0).toLocaleString(undefined, { maximumFractionDigits: 1 })} tCO₂e</strong>
                                     </div>
-                                    <div style={{ fontSize: '0.76rem', color: '#94a3b8', borderTop: '1px solid #f1f5f9', paddingTop: '8px' }}>
+                                    <div style={{ fontSize: '0.76rem', color: "#475569", borderTop: '1px solid #f1f5f9', paddingTop: '8px' }}>
                                         Purchased electricity & grid emission factors
                                     </div>
                                 </div>
@@ -856,7 +856,7 @@ export default function QADashboard() {
                                     <div className="text-[length:0.82rem]! text-[color:#64748b]!">
                                         Total Audited: <strong>{(tier1_uncertainty.s3_total_tco2e || 0).toLocaleString(undefined, { maximumFractionDigits: 1 })} tCO₂e</strong>
                                     </div>
-                                    <div style={{ fontSize: '0.76rem', color: '#94a3b8', borderTop: '1px solid #f1f5f9', paddingTop: '8px' }}>
+                                    <div style={{ fontSize: '0.76rem', color: "#475569", borderTop: '1px solid #f1f5f9', paddingTop: '8px' }}>
                                         Upstream & downstream category estimations
                                     </div>
                                 </div>

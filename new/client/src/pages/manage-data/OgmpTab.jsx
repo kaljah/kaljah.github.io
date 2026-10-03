@@ -23,7 +23,7 @@ const OgmpTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, NON_OG_ACTIVITIES, currentPa
                                     <CircleAlert size="18" strokeWidth="2" className="shrink-0!" aria-hidden="true" />
                                     <div>
                                         <strong className="text-[color:#1d4ed8]! text-[length:0.85rem]!">Oil & Gas Scope Only</strong>
-                                        <span className="text-[color:#3b82f6]! text-[length:0.83rem]! ml-[8px]!">
+                                        <span className="text-[color:#1d4ed8]! text-[length:0.83rem]! ml-[8px]!">
                                             OGMP 2.0 applies exclusively to Oil & Gas operations (Upstream, Midstream, LNG). Heavy industry facilities (Steel, Cement, Chemicals) are not in scope.
                                         </span>
                                     </div>
@@ -220,13 +220,13 @@ const OgmpTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, NON_OG_ACTIVITIES, currentPa
                                                         <td className="text-right! font-semibold!">
                                                             {mRate.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 2 })}
                                                         </td>
-                                                        <td className="text-right! text-[color:#10b981]! font-bold!">
+                                                        <td className="text-right! text-[color:#2e7d32]! font-bold!">
                                                             {parseFloat(annualizedTonne).toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
                                                         </td>
                                                         <td>
                                                             <span className={`status-badge ${isReconciled ? 'active' : 'planned'}`} style={{
                                                                 background: isReconciled ? 'rgba(16, 185, 129, 0.12)' : 'rgba(239, 68, 68, 0.12)',
-                                                                color: isReconciled ? '#10b981' : '#ef4444',
+                                                                color: isReconciled ? "#2e7d32" : "#b91c1c",
                                                                 borderColor: isReconciled ? '#10b981' : '#ef4444'
                                                             }}>
                                                                 {rStatus}

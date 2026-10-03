@@ -15,7 +15,7 @@
 }
 
 .required-mark {
-  color: var(--color-red-500);
+  color: var(--color-red-700);
   font-size: var(--text-base);
 }
 
@@ -150,7 +150,7 @@
 /* Helper & Error Text */
 .error-text {
   font-size: var(--text-sm);
-  color: var(--color-red-500);
+  color: var(--color-red-700);
   margin-top: 4px;
   display: flex;
   align-items: center;

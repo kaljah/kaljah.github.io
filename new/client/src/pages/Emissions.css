@@ -172,11 +172,11 @@
 }
 .s2-ring {
   background: rgba(59, 130, 246, 0.12);
-  color: var(--color-blue-500);
+  color: var(--color-blue-700);
 }
 .s3-ring {
   background: rgba(139, 92, 246, 0.12);
-  color: var(--color-violet-500);
+  color: var(--color-violet-700);
 }
 
 /* BODY */
@@ -286,13 +286,13 @@
   transform: translateY(-2px);
 }
 .scope-2-card:hover .s2-arrow {
-  background: var(--color-blue-500);
+  background: var(--color-blue-700);
   border-color: var(--color-blue-500);
   color: var(--color-white);
   transform: translateY(-2px);
 }
 .scope-3-card:hover .s3-arrow {
-  background: var(--color-violet-500);
+  background: var(--color-violet-700);
   border-color: var(--color-violet-500);
   color: var(--color-white);
   transform: translateY(-2px);

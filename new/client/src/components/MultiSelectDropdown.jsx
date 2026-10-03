@@ -221,7 +221,7 @@ const MultiSelectDropdown = ({
                   {opt.label}
                   {opt.subLabel && (
                     <span
-                      className="text-[length:0.72rem]! text-[color:#94a3b8]! ml-[4px]! font-medium!"
+                      className="text-[length:0.72rem]! text-[color:#475569]! ml-[4px]! font-medium!"
                     >
                       {" "}
                       - {opt.subLabel}

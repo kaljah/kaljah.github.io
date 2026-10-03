@@ -36,7 +36,7 @@ const UserManagementBlock1503 = ({ S, focusedField, getRoleMeta, handleResetPass
                   borderRadius: "12px",
                   background: "rgba(245, 158, 11, 0.15)",
                   border: "1px solid rgba(245, 158, 11, 0.3)",
-                  color: "#f59e0b",
+                  color: "#b45309",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -199,7 +199,7 @@ const UserManagementBlock1503 = ({ S, focusedField, getRoleMeta, handleResetPass
                           padding: "2px 8px",
                           borderRadius: "4px",
                           background: req.ok ? "rgba(16, 185, 129, 0.1)" : "rgba(100, 116, 139, 0.08)",
-                          color: req.ok ? "#10b981" : "var(--text-secondary)",
+                          color: req.ok ? "#2e7d32" : "var(--text-secondary)",
                           display: "inline-flex",
                           alignItems: "center",
                           gap: "3px",
@@ -239,12 +239,12 @@ const UserManagementBlock1503 = ({ S, focusedField, getRoleMeta, handleResetPass
                 autoComplete="new-password"
               />
               {resetPwdConfirm && resetPwdConfirm !== resetPwd && (
-                <p className="text-[length:0.75rem]! text-[color:#ef4444]! mt-[6px]! flex! items-center! gap-[4px]!">
+                <p className="text-[length:0.75rem]! text-[color:#b91c1c]! mt-[6px]! flex! items-center! gap-[4px]!">
                   <AlertCircle size={13} /> Passwords do not match
                 </p>
               )}
               {resetPwdConfirm && resetPwdConfirm === resetPwd && resetPwd.length >= 10 && (
-                <p className="text-[length:0.75rem]! text-[color:#10b981]! mt-[6px]! flex! items-center! gap-[4px]!">
+                <p className="text-[length:0.75rem]! text-[color:#2e7d32]! mt-[6px]! flex! items-center! gap-[4px]!">
                   <CheckCircle2 size={13} /> Passwords match
                 </p>
               )}

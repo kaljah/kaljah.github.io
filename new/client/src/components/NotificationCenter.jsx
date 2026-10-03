@@ -584,7 +584,7 @@ const NotificationCenter = () => {
               title="Delete all notifications"
               style={{
                 ...headerActionBtn,
-                color: "#ef4444",
+                color: "#b91c1c",
                 opacity: isDeleting ? 0.5 : 1,
               }}
               onMouseEnter={(e) =>
