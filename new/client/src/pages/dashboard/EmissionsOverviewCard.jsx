@@ -93,7 +93,7 @@ const EmissionsOverviewCard = ({
         />
       </div>
 
-      <div className="scope-pills-row">
+      <div className="[display:flex]! [gap:16px] [background:rgba(255,_255,_255,_0.4)]! [padding:16px]! [border-radius:var(--radius-lg)]! [border:1px_solid_rgba(226,_232,_240,_0.5)]! [@media(max-width:768px)]:[flex-direction:column] [@media(max-width:768px)]:[gap:10px]! [@media(max-width:480px)]:[display:grid]! [@media(max-width:480px)]:[grid-template-columns:1fr] [@media(max-width:480px)]:[width:100%]!">
         <div className="scope-pill scope-1">
           <span className="pill-label">Scope 1 (Direct)</span>
           <span className="pill-value">{formatCompactNumber(stats.scope1)} tCO₂e</span>

@@ -78,7 +78,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
       {isTier1 && (
         <div>
 
-          <div className="form-grid-2">
+          <div className="form-grid-2 [display:grid]! [grid-template-columns:1fr_1fr] [gap:20px] [margin-bottom:20px]! [@media(max-width:600px)]:[grid-template-columns:1fr]! [@media(max-width:600px)]:[gap:12px]!">
             <Field className="input-group" label={<>Lift type
                 <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
 <NativeSelect
@@ -164,7 +164,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
       {isTier2 && (
         <div>
 
-          <div className="form-grid-2">
+          <div className="form-grid-2 [display:grid]! [grid-template-columns:1fr_1fr] [gap:20px] [margin-bottom:20px]! [@media(max-width:600px)]:[grid-template-columns:1fr]! [@media(max-width:600px)]:[gap:12px]!">
             <Field className="input-group" label={<>Lift type
                 <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
 <NativeSelect
@@ -297,7 +297,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
           {activeMethod === "api_equation_6_10" && (
             <div>
 
-              <div className="form-grid-2">
+              <div className="form-grid-2 [display:grid]! [grid-template-columns:1fr_1fr] [gap:20px] [margin-bottom:20px]! [@media(max-width:600px)]:[grid-template-columns:1fr]! [@media(max-width:600px)]:[gap:12px]!">
                 <Field className="input-group" label={<>Lift type
                     <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
 <NativeSelect
@@ -463,7 +463,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
           {activeMethod === "api_equation_6_11" && (
             <div>
 
-              <div className="form-grid-2">
+              <div className="form-grid-2 [display:grid]! [grid-template-columns:1fr_1fr] [gap:20px] [margin-bottom:20px]! [@media(max-width:600px)]:[grid-template-columns:1fr]! [@media(max-width:600px)]:[gap:12px]!">
                 <Field className="input-group" label={<>Shut-In Pressure Pshut (psia)
                     <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
 <Input
@@ -604,7 +604,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
           {activeMethod === "api_equation_6_3" && (
             <div>
 
-              <div className="form-grid-2">
+              <div className="form-grid-2 [display:grid]! [grid-template-columns:1fr_1fr] [gap:20px] [margin-bottom:20px]! [@media(max-width:600px)]:[grid-template-columns:1fr]! [@media(max-width:600px)]:[gap:12px]!">
                 <Field className="input-group" label={<>Frequency (events/yr)
                     <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
 <Input

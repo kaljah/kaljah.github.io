@@ -5,7 +5,7 @@ import { NativeSelect } from "../../ui/NativeSelect";
 // Extracted from Settings.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const SettingsFacilityLevelOGMPOverrides = ({ facilities, facilityEdits, handleFacilityChange, handleSaveFacility, isAdmin, user }) => (
 <div className="[background:var(--bg-card,_var(--color-white))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-lg)]! [padding:32px]! [display:flex]! [flex-direction:column] [gap:28px] [box-shadow:var(--shadow-card,_0_4px_6px_-1px_rgba(0,_0,_0,_0.05))]!">
-          <div className="section-intro">
+          <div className="[display:flex]! [flex-direction:column] [gap:6px] [&_h2]:[font-size:var(--text-lg)]! [&_h2]:[font-weight:700]! [&_h2]:[color:var(--text-primary,_var(--color-ink-900))]! [&_h2]:[margin:0]! [&_p]:[font-size:var(--text-base)]! [&_p]:[color:var(--text-secondary,_var(--color-ink-500))]! [&_p]:[margin:0]! [&_p]:[line-height:1.5]!">
             <div className="[display:flex]! [align-items:center] [gap:10px]">
               <Building2 size={20} className="[color:var(--color-link)]!" />
               <h2>Facility-Level OGMP Overrides</h2>
@@ -18,7 +18,7 @@ const SettingsFacilityLevelOGMPOverrides = ({ facilities, facilityEdits, handleF
           </div>
 
           <div className="[overflow-x:auto]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-lg)]! [background:var(--bg-card,_var(--color-white))]!">
-            <table className="facility-config-table">
+            <table className="[width:100%]! [border-collapse:collapse]! [font-size:var(--text-base)]! [&_th]:[background:var(--bg-hover,_var(--color-ink-50))]! [&_th]:[padding:14px_16px]! [&_th]:[text-align:left]! [&_th]:[color:var(--text-secondary,_var(--color-ink-500))]! [&_th]:[font-weight:600]! [&_th]:[border-bottom:1px_solid_var(--border-color,_var(--color-ink-200))]! [&_th]:[white-space:nowrap]! [&_td]:[padding:14px_16px]! [&_td]:[border-bottom:1px_solid_var(--border-color,_var(--color-ink-200))]! [&_td]:[vertical-align:middle]! [&_td]:[color:var(--text-primary,_var(--color-ink-900))]! [&_tr:last-child_td]:[border-bottom:none]!">
               <thead>
                 <tr>
                   <th>Facility Name</th>
@@ -50,7 +50,7 @@ const SettingsFacilityLevelOGMPOverrides = ({ facilities, facilityEdits, handleF
                       <td>{fac.segment || "Upstream"}</td>
                       <td>
                         <NativeSelect
-                          className="table-select"
+                          className="[background:var(--bg-card,_var(--color-white))]! [border:1px_solid_var(--border-color,_var(--color-ink-300))]! [color:var(--text-primary,_var(--color-ink-900))]! [border-radius:var(--radius-md)]! [padding:7px_10px]! [font-size:var(--text-base)]! [font-family:inherit]!"
                           value={opStatus}
                           disabled={!isAdmin}
                           onChange={(e) =>
@@ -72,7 +72,7 @@ const SettingsFacilityLevelOGMPOverrides = ({ facilities, facilityEdits, handleF
                       <td>
                         <input
                           type="text"
-                          className="table-input"
+                          className="[background:var(--bg-card,_var(--color-white))]! [border:1px_solid_var(--border-color,_var(--color-ink-300))]! [color:var(--text-primary,_var(--color-ink-900))]! [border-radius:var(--radius-md)]! [padding:7px_10px]! [font-size:var(--text-base)]! [font-family:inherit]!"
                           value={edit.country || "Algeria"}
                           disabled={!isAdmin}
                           onChange={(e) =>
@@ -130,7 +130,7 @@ const SettingsFacilityLevelOGMPOverrides = ({ facilities, facilityEdits, handleF
                       </td>
                       <td>
                         <button
-                          className="btn-table-save"
+                          className="[display:inline-flex]! [align-items:center] [gap:5px] [background:rgba(255,_102,_0,_0.1)]! [color:var(--color-brand-700)]! [border:1px_solid_rgba(255,_102,_0,_0.25)]! [border-radius:var(--radius-md)]! [padding:6px_14px]! [font-weight:600]! [font-size:var(--text-sm)]! [cursor:pointer] [transition:all_0.2s_ease]! hover:[background:var(--color-primary)]! hover:[color:var(--color-white)]! hover:[border-color:var(--color-brand-500)]!"
                           onClick={() => handleSaveFacility(fac.id)}
                           disabled={user?.role === "it_admin" || (user?.role !== "admin" && user?.role !== "superuser")}
                           title={user?.role === "it_admin" || (user?.role !== "admin" && user?.role !== "superuser") ? "Administrator privileges required to update facility" : "Save Facility Settings"}

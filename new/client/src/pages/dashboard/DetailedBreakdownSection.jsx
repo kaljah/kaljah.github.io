@@ -5,7 +5,7 @@ import { formatCompactNumber } from "../../utils/formatters";
 
 // Extracted from DashboardEnhanced.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActivities, expandedDivisions, flaringData, formatActivityName, getHierarchicalData, navigate, setDetailedBreakdownCollapsed, stats, toggleActivity, toggleDivision }) => (
-<div className="main-dashboard-grid">
+<div className="[display:grid]! [grid-template-columns:8fr_4fr] [gap:24px] [@media(max-width:1200px)]:[grid-template-columns:1fr]! [@media(max-width:1200px)]:[gap:20px]!">
           <div className="detailed-breakdown-section">
             <div
               className={`card detailed-table-card glass-panel ${detailedBreakdownCollapsed ? "collapsed-card" : ""}`}
@@ -27,7 +27,7 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
                   Detailed Breakdown
                 </h3>
                 <div
-                  className="collapse-toggle-icon flex! items-center! text-[color:#64748b]!"
+                  className="[@media_print]:[display:none]! flex! items-center! text-[color:#64748b]!"
                  
                 >
                   {detailedBreakdownCollapsed ? (
@@ -49,19 +49,19 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
                       </tr>
                     </thead>
                     <tbody>
-                      <tr className="summary-row">
+                      <tr className="[&_td]:[font-weight:600]! [&_td]:[background:#fcfcfc]!">
                         <td>Scope 1 (Direct)</td>
                         <td className="text-right font-bold">
                           {formatCompactNumber(stats.scope1)}
                         </td>
                       </tr>
-                      <tr className="detail-row">
+                      <tr className="[&_td]:[color:var(--color-ink-500)]!">
                         <td className="[padding-left:28px]!">Combustion (stationary &amp; mobile)</td>
                         <td className="text-right">
                           {formatCompactNumber(stats.combustion)}
                         </td>
                       </tr>
-                      <tr className="detail-row">
+                      <tr className="[&_td]:[color:var(--color-ink-500)]!">
                         <td className="[padding-left:28px]!">Flaring</td>
                         <td className="text-right">
                           {formatCompactNumber(stats.flaring)}
@@ -69,19 +69,19 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
                       </tr>
                       {flaringData && (flaringData.routine_flaring?.volume_knm3 > 0 || flaringData.non_routine_flaring?.volume_knm3 > 0 || flaringData.safety_flaring?.volume_knm3 > 0) && (
                         <>
-                          <tr className="detail-row text-[length:0.82rem]! text-[color:#64748b]! bg-[color:rgba(248,_250,_252,_0.5)]!">
+                          <tr className="[&_td]:[color:var(--color-ink-500)]! text-[length:0.82rem]! text-[color:#64748b]! bg-[color:rgba(248,_250,_252,_0.5)]!">
                             <td className="pl-[36px]!">↳ Routine ({flaringData.routine_flaring?.percentage ?? 0}%)</td>
                             <td className="text-right font-normal">
                               {formatCompactNumber(flaringData.routine_flaring?.tco2e ?? 0)}
                             </td>
                           </tr>
-                          <tr className="detail-row text-[length:0.82rem]! text-[color:#64748b]! bg-[color:rgba(248,_250,_252,_0.5)]!">
+                          <tr className="[&_td]:[color:var(--color-ink-500)]! text-[length:0.82rem]! text-[color:#64748b]! bg-[color:rgba(248,_250,_252,_0.5)]!">
                             <td className="pl-[36px]!">↳ Non-Routine ({flaringData.non_routine_flaring?.percentage ?? 0}%)</td>
                             <td className="text-right font-normal">
                               {formatCompactNumber(flaringData.non_routine_flaring?.tco2e ?? 0)}
                             </td>
                           </tr>
-                          <tr className="detail-row text-[length:0.82rem]! text-[color:#64748b]! bg-[color:rgba(248,_250,_252,_0.5)]!">
+                          <tr className="[&_td]:[color:var(--color-ink-500)]! text-[length:0.82rem]! text-[color:#64748b]! bg-[color:rgba(248,_250,_252,_0.5)]!">
                             <td className="pl-[36px]!">↳ Safety &amp; Purge ({flaringData.safety_flaring?.percentage ?? 0}%)</td>
                             <td className="text-right font-normal">
                               {formatCompactNumber(flaringData.safety_flaring?.tco2e ?? 0)}
@@ -89,37 +89,37 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
                           </tr>
                         </>
                       )}
-                      <tr className="detail-row">
+                      <tr className="[&_td]:[color:var(--color-ink-500)]!">
                         <td className="[padding-left:28px]!">Venting</td>
                         <td className="text-right">
                           {formatCompactNumber(stats.venting)}
                         </td>
                       </tr>
-                      <tr className="detail-row">
+                      <tr className="[&_td]:[color:var(--color-ink-500)]!">
                         <td className="[padding-left:28px]!">Equipment Leaks / Fugitives</td>
                         <td className="text-right">
                           {formatCompactNumber(stats.fugitive)}
                         </td>
                       </tr>
-                      <tr className="detail-row">
+                      <tr className="[&_td]:[color:var(--color-ink-500)]!">
                         <td className="[padding-left:28px]!">Other Sources</td>
                         <td className="text-right">
                           {formatCompactNumber(stats.other)}
                         </td>
                       </tr>
-                      <tr className="summary-row">
+                      <tr className="[&_td]:[font-weight:600]! [&_td]:[background:#fcfcfc]!">
                         <td>Scope 2 (Indirect - Energy)</td>
                         <td className="text-right font-bold">
                           {formatCompactNumber(stats.scope2)}
                         </td>
                       </tr>
-                      <tr className="summary-row">
+                      <tr className="[&_td]:[font-weight:600]! [&_td]:[background:#fcfcfc]!">
                         <td>Scope 3 (Supply Chain)</td>
                         <td className="text-right font-bold">
                           {formatCompactNumber(stats.scope3)}
                         </td>
                       </tr>
-                      <tr className="total-row">
+                      <tr className="[&_td]:[font-weight:700]! [&_td]:[font-size:var(--text-md)]! [&_td]:[color:var(--color-ink-900)]! [&_td]:[border-top:2px_solid_var(--color-ink-200)]! [&_td]:[background:var(--color-ink-50)]!">
                         <td>Total Footprint (Scopes 1+2+3)</td>
                         <td className="text-right">
                           {formatCompactNumber(
@@ -130,7 +130,7 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
                         </td>
                       </tr>
                       <tr
-                        className="total-row"
+                        className="[&_td]:[font-weight:700]! [&_td]:[font-size:var(--text-md)]! [&_td]:[color:var(--color-ink-900)]! [&_td]:[border-top:2px_solid_var(--color-ink-200)]! [&_td]:[background:var(--color-ink-50)]!"
                         style={{ color: "#2e7d32", borderTop: "none" }}
                       >
                         <td>Net Footprint</td>
@@ -144,7 +144,7 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
                         </td>
                       </tr>
 
-                      <tr className="header-divider">
+                      <tr className="header-divider [&_td]:[background:var(--color-ink-100)]! [&_td]:[font-weight:700]! [&_td]:[font-size:var(--text-sm)]! [&_td]:[text-transform:uppercase]! [&_td]:[color:var(--color-ink-600)]! [&_td]:[padding:8px_16px]! [&_td]:[letter-spacing:0.5px]!">
                         <td colSpan="2">Organizational Breakdown</td>
                       </tr>
                       {Object.entries(getHierarchicalData).map(
@@ -215,7 +215,7 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
             {/* Moved Trend Chart to Top */}
 
             <div className="card [padding:24px]!">
-              <div className="card-header-row">
+              <div className="[display:flex]! [justify-content:space-between] [align-items:center] [margin-bottom:24px]! [@media(max-width:768px)]:[flex-direction:column] [@media(max-width:768px)]:[align-items:flex-start]! [@media(max-width:768px)]:[gap:12px]">
                 <h3 className="card-title">Reference Libraries</h3>
                 <svg
                   width="20"
@@ -231,7 +231,7 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
                 </svg>
               </div>
               <div className="[display:flex]! [flex-direction:column] [gap:12px] [margin:16px_0_20px_0]!">
-                <div className="library-item">
+                <div className="[display:flex]! [align-items:center] [gap:10px] [font-size:var(--text-base)]! [font-weight:600]! [color:var(--color-ink-600)]! [padding:10px]! [background:var(--color-ink-50)]! [border-radius:var(--radius-md)]! [cursor:pointer] [transition:all_0.2s]! hover:[background:var(--color-ink-100)]! hover:[transform:translateX(4px)] [&_svg]:[margin-left:auto]! [&_svg]:[color:var(--color-ink-300)]!">
                   <div className="dot blue"></div>
                   API Compendium: 2021
                   <svg
@@ -245,7 +245,7 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
                     <polyline points="9 18 15 12 9 6" />
                   </svg>
                 </div>
-                <div className="library-item">
+                <div className="[display:flex]! [align-items:center] [gap:10px] [font-size:var(--text-base)]! [font-weight:600]! [color:var(--color-ink-600)]! [padding:10px]! [background:var(--color-ink-50)]! [border-radius:var(--radius-md)]! [cursor:pointer] [transition:all_0.2s]! hover:[background:var(--color-ink-100)]! hover:[transform:translateX(4px)] [&_svg]:[margin-left:auto]! [&_svg]:[color:var(--color-ink-300)]!">
                   <div className="dot green"></div>
                   ISO 14064-1:2018
                   <svg
@@ -259,7 +259,7 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
                     <polyline points="9 18 15 12 9 6" />
                   </svg>
                 </div>
-                <div className="library-item">
+                <div className="[display:flex]! [align-items:center] [gap:10px] [font-size:var(--text-base)]! [font-weight:600]! [color:var(--color-ink-600)]! [padding:10px]! [background:var(--color-ink-50)]! [border-radius:var(--radius-md)]! [cursor:pointer] [transition:all_0.2s]! hover:[background:var(--color-ink-100)]! hover:[transform:translateX(4px)] [&_svg]:[margin-left:auto]! [&_svg]:[color:var(--color-ink-300)]!">
                   <div className="dot orange"></div>
                   GRI 305 Standards
                   <svg

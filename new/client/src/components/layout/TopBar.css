@@ -39,13 +39,6 @@
   display: none;
 }
 
-.top-actions {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  white-space: nowrap;
-}
-
 .icon-button {
   background: transparent;
   border: none;
@@ -122,10 +115,6 @@
 
   .top-bar-injected-left::-webkit-scrollbar {
     display: none;
-  }
-
-  .top-actions {
-    gap: 6px;
   }
 }
 

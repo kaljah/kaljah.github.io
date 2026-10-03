@@ -7,7 +7,7 @@ import PaginationControls from './PaginationControls';
 
 // Extracted from ManageData.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const FacilitiesTab = ({ ACTIVITY_LABELS, HIERARCHY, ITEMS_PER_PAGE, currentPage, exportToCSV, facilities, facilityForm, filteredFacilities, handleAddFacility, handleDeleteFacility, handleFacilityChange, setCurrentPage, setFacilityForm, setImportModal, user }) => (
-<div className="manage-card glass-panel">
+<div className="[border-radius:var(--radius-lg)]! [padding:32px]! [animation:fadeIn_0.3s_ease-out]! [@media(max-width:768px)]:[padding:18px_14px]! [@media(max-width:768px)]:[border-radius:var(--radius-lg)]! glass-panel">
                                 <h2 className="mb-[8px]! font-bold!">Active Regions</h2>
                                 <p className="text-[color:var(--text-secondary)]! mb-[32px]!">Manage operational regions and their boundaries.</p>
 
@@ -15,7 +15,7 @@ const FacilitiesTab = ({ ACTIVITY_LABELS, HIERARCHY, ITEMS_PER_PAGE, currentPage
                                 {/* Add Region form */}
                                 {['admin', 'superuser'].includes(user?.role) && (
                                     <>
-                                        <div className="grid-forms" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
+                                        <div className="[display:grid]! [grid-template-columns:1fr_1fr] [gap:20px] [margin-bottom:24px]! [&_select.component-select]:[height:48px]! [&_select.component-select]:[width:100%]! [@media(max-width:768px)]:[grid-template-columns:1fr]! [@media(max-width:768px)]:[gap:14px]!" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
                                             <Field className="input-group" label="Region Name">
 <Input type="text" name="name" value={facilityForm.name} onChange={handleFacilityChange} placeholder="e.g. Hassi R'Mel" />
 </Field>
@@ -136,7 +136,7 @@ const FacilitiesTab = ({ ACTIVITY_LABELS, HIERARCHY, ITEMS_PER_PAGE, currentPage
                                                     {['admin', 'superuser'].includes(user?.role) && (
                                                         <td className="text-center!">
                                                             <button
-                                                                className="btn-delete p-[6px_12px]! text-[length:0.8rem]!"
+                                                                className="[background:#fee2e2]! [color:var(--color-red-700)]! [border:1px_solid_#fecaca]! [padding:6px_12px]! [border-radius:var(--radius-md)]! [cursor:pointer] [font-size:var(--text-base)]! [transition:all_0.2s]! hover:[background:var(--color-red-700)]! hover:[color:white]! p-[6px_12px]! text-[length:0.8rem]!"
                                                                
                                                                 onClick={() => handleDeleteFacility(f.id)}
                                                             >

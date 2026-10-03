@@ -580,7 +580,7 @@ const MethaneIntensity = () => {
 
     setTopBarRight(
       <button
-        className="btn-export-excel"
+        className="[display:inline-flex]! [align-items:center] [gap:8px] [background:linear-gradient(135deg,_var(--color-green-700)_0%,_var(--color-green-700)_100%)]! [color:var(--color-white)]! [font-size:var(--text-base)]! [font-weight:600]! [padding:8px_16px]! [border-radius:var(--radius-md)]! [border:none]! [cursor:pointer] [box-shadow:0_4px_12px_rgba(16,_185,_129,_0.25)]! [transition:all_0.2s_ease]! [&:hover:not(:disabled)]:[transform:translateY(-1px)]! [&:hover:not(:disabled)]:[box-shadow:0_6px_18px_rgba(16,_185,_129,_0.35)]! disabled:[opacity:0.6] disabled:[cursor:not-allowed]"
         onClick={handleExportExcel}
         disabled={exporting}
         title="Download 5-Tab OGMP 2.0 Disclosure Workbook (.xlsx)"
@@ -721,7 +721,7 @@ const MethaneIntensity = () => {
         {/* Regional Bar Charts */}
         <div className="chart-grid">
           <div className="card">
-            <div className="chart-header">
+            <div className="[display:flex]! [justify-content:space-between] [align-items:flex-start] [margin-bottom:24px]! [&_h3]:[font-size:var(--text-lg)]! [&_h3]:[font-weight:600]! [&_h3]:[color:var(--text-primary)]! [&_h3]:[margin:0]!">
               <div className="[display:flex]! [flex-direction:column] [gap:8px]">
                 <h3>Methane Loss Rate by Facility (% of Gas Produced)</h3>
                 <div
@@ -745,7 +745,7 @@ const MethaneIntensity = () => {
           </div>
 
           <div className="card">
-            <div className="chart-header">
+            <div className="[display:flex]! [justify-content:space-between] [align-items:flex-start] [margin-bottom:24px]! [&_h3]:[font-size:var(--text-lg)]! [&_h3]:[font-weight:600]! [&_h3]:[color:var(--text-primary)]! [&_h3]:[margin:0]!">
               <div className="[display:flex]! [flex-direction:column] [gap:8px]">
                 <h3>Methane Intensity by Facility (kg CH₄ / BOE)</h3>
                 <div
@@ -767,7 +767,7 @@ const MethaneIntensity = () => {
           </div>
 
           <div className="card">
-            <div className="chart-header">
+            <div className="[display:flex]! [justify-content:space-between] [align-items:flex-start] [margin-bottom:24px]! [&_h3]:[font-size:var(--text-lg)]! [&_h3]:[font-weight:600]! [&_h3]:[color:var(--text-primary)]! [&_h3]:[margin:0]!">
               <div className="[display:flex]! [flex-direction:column] [gap:8px]">
                 <h3>Total Methane Emissions (tCH₄)</h3>
                 <div
@@ -789,7 +789,7 @@ const MethaneIntensity = () => {
           </div>
 
           <div className="card">
-            <div className="chart-header">
+            <div className="[display:flex]! [justify-content:space-between] [align-items:flex-start] [margin-bottom:24px]! [&_h3]:[font-size:var(--text-lg)]! [&_h3]:[font-weight:600]! [&_h3]:[color:var(--text-primary)]! [&_h3]:[margin:0]!">
               <div className="[display:flex]! [flex-direction:column] [gap:8px]">
                 <h3>Gas Flaring Volume by Facility (m³)</h3>
                 <div

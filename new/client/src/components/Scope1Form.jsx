@@ -1899,7 +1899,7 @@ const Scope1Form = () => {
 
         <Section n={1} title="Identity & Location">
           <FieldGrid min={180}>
-            <div className="input-group s1-span-2">
+            <div className="input-group [grid-column:span_2]! [@media(max-width:600px)]:[grid-column:1_/_-1]!">
               <label>Region</label>
               <CustomDropdown
                 options={getFacilityOptions()}
@@ -2007,7 +2007,7 @@ const Scope1Form = () => {
         userUncertainty={userUncertainty}
       />
 
-        <div className="s1-actions">
+        <div className="[display:flex]! [gap:10px] [margin-top:24px]! [padding-top:20px]! [border-top:1px_solid_var(--s1-line)]! [&_.btn-add-draft]:[height:44px]! [&_.btn-add-draft]:[border-radius:var(--radius-md)]! [&_.btn-add-entry]:[height:44px]! [&_.btn-add-entry]:[border-radius:var(--radius-md)]! [@media(max-width:600px)]:[flex-direction:column-reverse]! [&_button]:[height:46px]! [&_button]:[padding-top:0]! [&_button]:[padding-bottom:0]! [&_button]:[margin:0]! [@media(max-width:600px)]:[&_button]:[flex:none]! [@media(max-width:600px)]:[&_button]:[width:100%]!">
           <button
             className="btn-add-draft"
             disabled={submitting}

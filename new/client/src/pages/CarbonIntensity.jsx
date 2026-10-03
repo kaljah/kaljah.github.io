@@ -522,7 +522,7 @@ const CarbonIntensity = () => {
 
                 {/* EU CBAM COMPLIANCE & PRODUCT EMBODIMENT SECTION */}
                 <div className="card cbam-section">
-                    <div className="chart-header">
+                    <div className="[display:flex]! [justify-content:space-between] [align-items:flex-start] [margin-bottom:24px]! [&_h3]:[font-size:var(--text-lg)]! [&_h3]:[font-weight:600]! [&_h3]:[color:var(--text-primary)]! [&_h3]:[margin:0]!">
                         <div>
                             <h3 className="flex! items-center! gap-[8px]!">
                                 <FileText size={20} color="var(--accent-color)" />
@@ -591,7 +591,7 @@ const CarbonIntensity = () => {
         {/* Regional Bar Charts */}
         <div className="chart-grid">
           <div className="card">
-            <div className="chart-header">
+            <div className="[display:flex]! [justify-content:space-between] [align-items:flex-start] [margin-bottom:24px]! [&_h3]:[font-size:var(--text-lg)]! [&_h3]:[font-weight:600]! [&_h3]:[color:var(--text-primary)]! [&_h3]:[margin:0]!">
               <div className="[display:flex]! [flex-direction:column] [gap:8px]">
                 <h3>GHG Intensity by Facility (kg CO₂e / BOE)</h3>
                 <div
@@ -616,7 +616,7 @@ const CarbonIntensity = () => {
           </div>
 
           <div className="card">
-            <div className="chart-header">
+            <div className="[display:flex]! [justify-content:space-between] [align-items:flex-start] [margin-bottom:24px]! [&_h3]:[font-size:var(--text-lg)]! [&_h3]:[font-weight:600]! [&_h3]:[color:var(--text-primary)]! [&_h3]:[margin:0]!">
               <div className="[display:flex]! [flex-direction:column] [gap:8px]">
                 <h3>Scope 1 Direct vs Scope 2 Intensity</h3>
                 <div
@@ -650,7 +650,7 @@ const CarbonIntensity = () => {
           </div>
 
           <div className="card">
-            <div className="chart-header">
+            <div className="[display:flex]! [justify-content:space-between] [align-items:flex-start] [margin-bottom:24px]! [&_h3]:[font-size:var(--text-lg)]! [&_h3]:[font-weight:600]! [&_h3]:[color:var(--text-primary)]! [&_h3]:[margin:0]!">
               <div className="[display:flex]! [flex-direction:column] [gap:8px]">
                 <h3>Oil BOE Contribution by Facility</h3>
                 <div
@@ -672,7 +672,7 @@ const CarbonIntensity = () => {
           </div>
 
           <div className="card">
-            <div className="chart-header">
+            <div className="[display:flex]! [justify-content:space-between] [align-items:flex-start] [margin-bottom:24px]! [&_h3]:[font-size:var(--text-lg)]! [&_h3]:[font-weight:600]! [&_h3]:[color:var(--text-primary)]! [&_h3]:[margin:0]!">
               <div className="[display:flex]! [flex-direction:column] [gap:8px]">
                 <h3>Gas BOE Contribution by Facility</h3>
                 <div
@@ -696,7 +696,7 @@ const CarbonIntensity = () => {
 
         {/* Historical Trends Section */}
         <div className="card trend-section">
-          <div className="chart-header">
+          <div className="[display:flex]! [justify-content:space-between] [align-items:flex-start] [margin-bottom:24px]! [&_h3]:[font-size:var(--text-lg)]! [&_h3]:[font-weight:600]! [&_h3]:[color:var(--text-primary)]! [&_h3]:[margin:0]!">
             <div>
               <h3 className="mb-[4px]!">
                 Historical Carbon Intensity Trends

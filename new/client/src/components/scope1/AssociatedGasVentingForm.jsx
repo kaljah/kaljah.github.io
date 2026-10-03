@@ -151,7 +151,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
       {/* TIER 1 VIEW: Table 6-8 Regional Basins */}
       {isTier1 && (
         <div>
-          <div className="form-grid-2">
+          <div className="form-grid-2 [display:grid]! [grid-template-columns:1fr_1fr] [gap:20px] [margin-bottom:20px]! [@media(max-width:600px)]:[grid-template-columns:1fr]! [@media(max-width:600px)]:[gap:12px]!">
             <div className="input-group">
               <label>
                 Basin
@@ -228,7 +228,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
               <span>Gas composition</span>
             </div>
 
-            <div className="form-grid-2 mb-[0px]!">
+            <div className="form-grid-2 [display:grid]! [grid-template-columns:1fr_1fr] [gap:20px] [margin-bottom:20px]! [@media(max-width:600px)]:[grid-template-columns:1fr]! [@media(max-width:600px)]:[gap:12px]! mb-[0px]!">
               <div className="input-group mb-[0px]!">
                 <label className="text-[length:0.8rem]!">CH₄ (mol %)</label>
                 <Input
@@ -264,7 +264,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
       {isTier2 && (
         <div>
           {/* Production Basis & GOR */}
-          <div className="form-grid-2">
+          <div className="form-grid-2 [display:grid]! [grid-template-columns:1fr_1fr] [gap:20px] [margin-bottom:20px]! [@media(max-width:600px)]:[grid-template-columns:1fr]! [@media(max-width:600px)]:[gap:12px]!">
             <div className="input-group">
               <label>
                 Oil production
@@ -337,7 +337,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
           </div>
 
           {/* Venting Duration & Operating Days */}
-          <div className="form-grid-2">
+          <div className="form-grid-2 [display:grid]! [grid-template-columns:1fr_1fr] [gap:20px] [margin-bottom:20px]! [@media(max-width:600px)]:[grid-template-columns:1fr]! [@media(max-width:600px)]:[gap:12px]!">
             <div className="input-group">
               <label>
                 Venting Duration
@@ -383,7 +383,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
           </div>
 
           {/* Gas Composition */}
-          <div className="form-grid-2">
+          <div className="form-grid-2 [display:grid]! [grid-template-columns:1fr_1fr] [gap:20px] [margin-bottom:20px]! [@media(max-width:600px)]:[grid-template-columns:1fr]! [@media(max-width:600px)]:[gap:12px]!">
             <Field className="input-group" label="CH₄ (mol %)">
 <Input
                 type="number"
@@ -451,7 +451,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
               </div>
             </div>
 
-            <div className="form-grid-3 mb-[12px]!">
+            <div className="form-grid-3 [display:grid]! [grid-template-columns:repeat(3,_1fr)] [gap:20px] [margin-bottom:20px]! [@media(max-width:600px)]:[grid-template-columns:1fr]! [@media(max-width:600px)]:[gap:12px]! mb-[12px]!">
               <div className="input-group mb-[0px]!">
                 <label className="text-[length:0.78rem]!">
                   Produced
@@ -518,7 +518,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
           </div>
 
           {tier3Mode === "rate" ? (
-            <div className="form-grid-2">
+            <div className="form-grid-2 [display:grid]! [grid-template-columns:1fr_1fr] [gap:20px] [margin-bottom:20px]! [@media(max-width:600px)]:[grid-template-columns:1fr]! [@media(max-width:600px)]:[gap:12px]!">
               <div className="input-group">
                 <label>
                   Vent rate
@@ -609,7 +609,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
           )}
 
           {/* Tier 3 Measured Gas Composition */}
-          <div className="form-grid-2">
+          <div className="form-grid-2 [display:grid]! [grid-template-columns:1fr_1fr] [gap:20px] [margin-bottom:20px]! [@media(max-width:600px)]:[grid-template-columns:1fr]! [@media(max-width:600px)]:[gap:12px]!">
             <Field className="input-group" label={<>CH₄ (mol %)
                 <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
 <Input

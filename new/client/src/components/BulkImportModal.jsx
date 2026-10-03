@@ -1097,7 +1097,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
               </div>
             )}
             <div role="button" tabIndex={0} onKeyDown={activateOnKey}
-              className="upload-zone"
+              className="[border:2px_dashed_rgba(16,_185,_129,_0.3)]! [border-radius:var(--radius-md)]! [padding:40px]! [text-align:center]! [background:rgba(16,_185,_129,_0.03)]! [cursor:pointer] [transition:all_0.3s_ease]! hover:[border-color:var(--color-green-500)]! hover:[background:rgba(16,_185,_129,_0.08)]!"
               onClick={() => fileInputRef.current.click()}
             >
               <Upload
@@ -1117,7 +1117,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
               />
 
               <div role="button" tabIndex={0} onKeyDown={activateOnKey}
-                className="template-download"
+                className="[margin-top:16px]! [display:flex]! [align-items:center] [gap:8px] [color:var(--color-green-700)]! [font-size:var(--text-base)]! [font-weight:500]! [padding:6px_12px]! [border:1px_dashed_var(--color-green-500)]! [border-radius:var(--radius-sm)]! [background:rgba(16,_185,_129,_0.05)]! [transition:all_0.2s_ease]! [cursor:pointer] hover:[background:rgba(16,_185,_129,_0.1)]! hover:[transform:translateY(-1px)]"
                 onClick={(e) => {
                   e.stopPropagation();
                   downloadTemplate();
@@ -1129,7 +1129,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
               </div>
 
               <div role="button" tabIndex={0} onKeyDown={activateOnKey}
-                className="cheat-sheet-toggle"
+                className="[margin-top:12px]! [display:flex]! [align-items:center] [gap:8px] [color:var(--text-secondary)]! [font-size:var(--text-sm)]! [cursor:pointer] [text-decoration:underline]! [opacity:0.8] hover:[opacity:1] hover:[color:var(--color-green-700)]!"
                 onClick={(e) => {
                   e.stopPropagation();
                   setShowCheatSheet(!showCheatSheet);
@@ -1148,7 +1148,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                   className="[margin-top:16px]! [background:#f3f4f6]! [border-radius:var(--radius-md)]! [padding:16px]! [text-align:left]! [display:flex]! [flex-direction:column] [gap:12px] [border:1px_solid_rgba(0,_0,_0,_0.05)]!"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <div className="cheat-section">
+                  <div className="[font-size:var(--text-sm)]! [&_strong]:[display:block]! [&_strong]:[margin-bottom:4px]! [&_strong]:[color:var(--text-primary)]! [&_ul]:[margin:0]! [&_ul]:[padding-left:20px]! [&_ul]:[color:var(--text-secondary)]!">
                     <strong>Activities &amp; Divisions:</strong>
                     <ul>
                       {Object.entries(HIERARCHY).map(([act, divs]) => (
@@ -1158,7 +1158,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                       ))}
                     </ul>
                   </div>
-                  <div className="cheat-section">
+                  <div className="[font-size:var(--text-sm)]! [&_strong]:[display:block]! [&_strong]:[margin-bottom:4px]! [&_strong]:[color:var(--text-primary)]! [&_ul]:[margin:0]! [&_ul]:[padding-left:20px]! [&_ul]:[color:var(--text-secondary)]!">
                     <strong>Process Types (Codes):</strong>
                     <div className="[display:flex]! [flex-wrap:wrap] [gap:6px] [margin-top:4px]!">
                       {Object.keys(PROCESS_TYPES).map((t) => (
@@ -1168,7 +1168,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                       ))}
                     </div>
                   </div>
-                  <div className="cheat-section">
+                  <div className="[font-size:var(--text-sm)]! [&_strong]:[display:block]! [&_strong]:[margin-bottom:4px]! [&_strong]:[color:var(--text-primary)]! [&_ul]:[margin:0]! [&_ul]:[padding-left:20px]! [&_ul]:[color:var(--text-secondary)]!">
                     <strong>Common Units:</strong>
                     <div className="[display:flex]! [flex-wrap:wrap] [gap:6px] [margin-top:4px]!">
                       {VALID_UNITS.map((u) => (
@@ -1178,7 +1178,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                       ))}
                     </div>
                   </div>
-                  <div className="cheat-section">
+                  <div className="[font-size:var(--text-sm)]! [&_strong]:[display:block]! [&_strong]:[margin-bottom:4px]! [&_strong]:[color:var(--text-primary)]! [&_ul]:[margin:0]! [&_ul]:[padding-left:20px]! [&_ul]:[color:var(--text-secondary)]!">
                     <strong>Engineering Params:</strong>
                     <ul className="text-[length:0.8rem]! opacity-[0.9]!">
                       <li>
@@ -1300,7 +1300,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
           <>
             {!uploadJobId ? (
               <>
-                <div className="preview-header">
+                <div className="[display:flex]! [justify-content:space-between] [align-items:center] [margin-bottom:12px]! [&_h4]:[display:flex]! [&_h4]:[align-items:center]! [&_h4]:[gap:8px]! [&_h4]:[margin:0]!">
                   <h4>
                     <CheckCircle2
                       size={18}
@@ -1314,7 +1314,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                 </div>
 
                 {validationErrors.length > 0 && (
-                  <div className="validation-error-box">
+                  <div className="[margin-top:16px]! [padding:12px]! [background:var(--color-red-50)]! [border:1px_solid_#fecaca]! [border-radius:var(--radius-sm)]! [color:var(--color-red-700)]! [font-size:var(--text-sm)]! [&_h5]:[margin:0_0_8px_0]! [&_h5]:[display:flex]! [&_h5]:[align-items:center]! [&_h5]:[gap:8px]! [&_ul]:[margin:0]! [&_ul]:[padding-left:20px]!">
                     <h5>
                       <AlertCircle size={16} /> Validation Errors Found
                     </h5>
@@ -1333,7 +1333,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                 )}
 
                 <div className="[max-height:250px]! [overflow-y:auto]! [overflow-x:auto]! [border-radius:var(--radius-md)]! [border:1px_solid_rgba(0,_0,_0,_0.1)]!">
-                  <table className="preview-table">
+                  <table className="[width:100%]! [border-collapse:collapse]! [font-size:var(--text-sm)]! [&_th]:[background:#f3f4f6]! [&_th]:[padding:8px]! [&_th]:[text-align:left]! [&_th]:[position:sticky]! [&_th]:[top:0]! [&_td]:[padding:8px]! [&_td]:[border-top:1px_solid_rgba(0,_0,_0,_0.05)]!">
                     <thead>
                       <tr>
                         {currentTemplate.map((t) => (

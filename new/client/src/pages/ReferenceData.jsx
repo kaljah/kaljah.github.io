@@ -381,14 +381,14 @@ const ReferenceData = () => {
           />
           <input
             type="text"
-            className="search-input-field"
+            className="[width:100%]! [padding:11px_16px_11px_42px]! [background:rgba(255,_255,_255,_0.85)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-md)]! [font-size:var(--text-md)]! [color:var(--text-primary,_var(--color-ink-900))]! [outline:none]! [transition:all_0.2s_ease]! focus:[border-color:var(--accent-color,_var(--color-brand-500))]! focus:[box-shadow:0_0_0_3px_rgba(255,_102,_0,_0.15)]!"
             placeholder="Search by name, fuel type, code, or value..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
         <NativeSelect
-          className="filter-select"
+          className="[padding:11px_18px]! [background:rgba(255,_255,_255,_0.85)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [min-width:200px] [color:var(--text-primary,_var(--color-ink-900))]! [outline:none]! [cursor:pointer] [transition:all_0.2s_ease]! focus:[border-color:var(--accent-color,_var(--color-brand-500))]! focus:[box-shadow:0_0_0_3px_rgba(255,_102,_0,_0.15)]!"
           aria-label="Filter by category"
           value={categoryFilter}
           onChange={(e) => setCategoryFilter(e.target.value)}
@@ -457,7 +457,7 @@ const ReferenceData = () => {
 
               {!collapsed[key] && (
                 <div className="[width:100%]! [overflow-x:auto]!">
-                  <table className="factors-table">
+                  <table className="[width:100%]! [border-collapse:collapse]! [&_thead]:[background:var(--color-ink-50)]! [&_thead]:[border-bottom:2px_solid_var(--color-ink-100)]! [&_th]:[padding:16px_24px]! [&_th]:[text-align:left]! [&_th]:[font-weight:700]! [&_th]:[color:var(--color-ink-600)]! [&_th]:[font-size:var(--text-sm)]! [&_th]:[text-transform:uppercase]! [&_th]:[letter-spacing:0.05em]! [&_td]:[padding:16px_24px]! [&_td]:[border-bottom:1px_solid_var(--color-ink-100)]! [&_td]:[font-size:var(--text-base)]! [&_td]:[color:var(--color-ink-700)]! [&_tr:hover_td]:[background:#fdfdfd]!">
                     <thead>
                       <tr>
                         {cat.isStatic ? (

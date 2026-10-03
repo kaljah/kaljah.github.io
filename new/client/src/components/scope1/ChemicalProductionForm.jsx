@@ -26,7 +26,7 @@ const ChemicalProductionForm = ({ data, onChange }) => {
   return (
     <div className="chemical-production-form">
 
-      <div className="form-grid-2">
+      <div className="form-grid-2 [display:grid]! [grid-template-columns:1fr_1fr] [gap:20px] [margin-bottom:20px]! [@media(max-width:600px)]:[grid-template-columns:1fr]! [@media(max-width:600px)]:[gap:12px]!">
         <div className="input-group">
           <label>
             Chemical Product

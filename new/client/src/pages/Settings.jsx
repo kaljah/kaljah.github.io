@@ -295,7 +295,7 @@ const Settings = () => {
       <div className="settings-hero-card">
         <div className="[display:flex]! [justify-content:space-between] [align-items:flex-start] [gap:24px] [flex-wrap:wrap]">
           <div className="[display:flex]! [flex-direction:column] [gap:6px] [max-width:850px]!">
-            <div className="settings-badge">
+            <div className="[display:inline-flex]! [align-items:center] [gap:6px] [background:rgba(255,_102,_0,_0.08)]! [color:var(--color-link)]! [font-size:var(--text-xs)]! [font-weight:700]! [letter-spacing:0.06em] [padding:4px_12px]! [border-radius:100px]! [border:1px_solid_rgba(255,_102,_0,_0.2)]! [width:fit-content]! [margin-bottom:2px]!">
               <SlidersHorizontal size={14} />
               <span>STANDARDS & METHODOLOGIES</span>
             </div>
@@ -308,7 +308,7 @@ const Settings = () => {
           </div>
           <div className="[display:flex]! [align-items:center] [gap:12px]">
             <button
-              className="btn-save-primary"
+              className="[display:inline-flex]! [align-items:center] [gap:8px] [background:var(--primary-gradient)]! [color:var(--color-white)]! [font-weight:600]! [font-size:var(--text-base)]! [padding:10px_22px]! [border-radius:var(--radius-md)]! [border:none]! [cursor:pointer] [box-shadow:0_4px_12px_rgba(255,_102,_0,_0.25)]! [transition:all_0.2s_ease]! [white-space:nowrap] [&:hover:not(:disabled)]:[transform:translateY(-1px)]! [&:hover:not(:disabled)]:[box-shadow:0_6px_18px_rgba(255,_102,_0,_0.35)]! [&:hover:not(:disabled)]:[background:linear-gradient(135deg,_#ff751a_0%,_var(--color-brand-500)_100%)]! disabled:[opacity:0.6] disabled:[cursor:not-allowed] disabled:[transform:none]"
               onClick={handleSaveGlobal}
               disabled={saving || !isAdmin}
               title={!isAdmin ? "Administrator privileges required to modify settings" : "Save changes"}

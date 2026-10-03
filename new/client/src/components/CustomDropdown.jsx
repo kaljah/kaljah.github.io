@@ -230,7 +230,7 @@ const CustomDropdown = ({
       displayContent = renderOption(selectedOption);
     } else if (selectedOption.subLabel) {
       displayContent = (
-        <div className="selected-with-sub">
+        <div className="[display:flex]! [align-items:center] [gap:2px]">
           {selectedOption.label}{" "}
           <span className="[font-size:var(--text-xs)]! [color:var(--text-secondary,_var(--color-ink-500))]! [font-weight:600]! [display:inline-block]! [margin-left:2px]!"> - {selectedOption.subLabel}</span>
         </div>
@@ -339,7 +339,7 @@ const CustomDropdown = ({
                   {renderOption ? (
                     renderOption(option)
                   ) : option.subLabel ? (
-                    <div className="option-with-sub">
+                    <div className="[display:flex]! [align-items:center] [gap:2px]">
                       {option.label}{" "}
                       <span className="[font-size:var(--text-xs)]! [color:var(--text-secondary,_var(--color-ink-500))]! [font-weight:600]! [display:inline-block]! [margin-left:2px]!"> - {option.subLabel}</span>
                     </div>
