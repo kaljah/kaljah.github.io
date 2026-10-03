@@ -1,7 +1,7 @@
 import React from "react";
 import { CheckCircle2, Layers, Scale } from "lucide-react";
 import { GWP_AR4, GWP_AR5, GWP_AR6 } from "../../constants";
-import { activateOnKey } from "../../utils/a11yKeys";
+import { Badge, RadioCardGroup } from "../../ui";
 
 // Extracted from Settings.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const SettingsIPCCGlobalWarming = ({ GWP_DATA, gwpStandard, isAdmin, setGwpStandard }) => (
@@ -18,30 +18,26 @@ const SettingsIPCCGlobalWarming = ({ GWP_DATA, gwpStandard, isAdmin, setGwpStand
             </p>
           </div>
 
-          <div className="gwp-cards-grid" role="radiogroup" aria-label="IPCC GWP standard">
-            {Object.entries(GWP_DATA).map(([key, data]) => {
-              const isSelected = gwpStandard === key;
-              return (
-                <div role="radio" aria-checked={isSelected} aria-disabled={!isAdmin} tabIndex={0} onKeyDown={activateOnKey}
-                  key={key}
-                  className={`gwp-card ${isSelected ? "selected" : ""}`}
-                  onClick={() => { if (isAdmin) setGwpStandard(key); }}
-                  style={{ cursor: isAdmin ? "pointer" : "default" }}
-                  id={`gwp-card-${key.toLowerCase()}`}
-                >
-                  <div className="gwp-card-header">
-                    <div className="gwp-version-badge">{key}</div>
-                    {isSelected && (
-                      <div className="gwp-active-indicator">
-                        <CheckCircle2 size={13} />
-                        <span>ACTIVE STANDARD</span>
-                      </div>
-                    )}
-                  </div>
-                  <h3 className="gwp-title">{data.name}</h3>
+          <RadioCardGroup
+            label="IPCC GWP standard"
+            value={gwpStandard}
+            onChange={setGwpStandard}
+            disabled={!isAdmin}
+            options={Object.entries(GWP_DATA).map(([key, data]) => ({
+              value: key,
+              id: `gwp-card-${key.toLowerCase()}`,
+              title: data.name,
+              description: data.description,
+              badge: <Badge tone="brand">{key}</Badge>,
+              selectedBadge: (
+                <Badge tone="success">
+                  <CheckCircle2 className="size-3" aria-hidden="true" />
+                  Active standard
+                </Badge>
+              ),
+              content: (
+                <>
                   <div className="gwp-status-pill">{data.status}</div>
-                  <p className="gwp-desc">{data.description}</p>
-
                   <div className="gwp-factors-box">
                     <div className="factor-item">
                       <span className="factor-label">CH₄ (100-yr)</span>
@@ -56,10 +52,10 @@ const SettingsIPCCGlobalWarming = ({ GWP_DATA, gwpStandard, isAdmin, setGwpStand
                       <span className="factor-val">{data.n2o_100}×</span>
                     </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                </>
+              ),
+            }))}
+          />
 
           {/* Live Comparison Table */}
           <div className="comparison-container">
