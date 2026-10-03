@@ -27,10 +27,13 @@ for (const m of srcText.matchAll(/["']([\w-]{2,}-)["']\s*\+/g)) prefixes.add(m[1
 for (const m of srcText.matchAll(/\+\s*["'](-[\w-]{2,})["']/g)) suffixes.add(m[1]);
 
 const THIRD_PARTY = /^(leaflet|recharts|cmdk|radix|jspdf|html2canvas)/;
+// Whole-token match: `top-bar` must not count as used just because `top-bar-actions` exists.
+const tokenInSource = (tok) =>
+  new RegExp(`(?<![\\w-])${tok.replace(/-/g, "\\-")}(?![\\w-])`).test(srcText);
 const used = new Map();
 const isUsed = (tok) => {
   if (used.has(tok)) return used.get(tok);
-  let r = THIRD_PARTY.test(tok) || srcText.includes(tok);
+  let r = THIRD_PARTY.test(tok) || tokenInSource(tok);
   if (!r) for (const p of prefixes) if (tok.startsWith(p)) { r = true; break; }
   if (!r) for (const s of suffixes) if (tok.endsWith(s)) { r = true; break; }
   used.set(tok, r);

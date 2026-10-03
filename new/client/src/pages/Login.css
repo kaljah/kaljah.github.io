@@ -1,56 +1,4 @@
-.login-body {
-  --primary: var(--color-brand-700);
-  --primary-hover: var(--color-brand-800);
-  --accent: var(--color-green-500);
-  --bg-page: var(--color-ink-50);
-  --text-main: var(--color-ink-900);
-  --text-muted: var(--color-ink-500);
-  --border-light: var(--color-ink-200);
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: var(--bg-page);
-  font-family: inherit;
-  color: var(--text-main);
-  padding: 20px;
-  position: relative;
-  overflow: hidden;
-}
-
 /* Background gradient washes */
-.login-body::before {
-  content: "";
-  position: absolute;
-  top: -20%;
-  right: -10%;
-  width: 600px;
-  height: 600px;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    rgba(255, 102, 0, 0.04) 0%,
-    transparent 70%
-  );
-  pointer-events: none;
-  z-index: 0;
-}
-.login-body::after {
-  content: "";
-  position: absolute;
-  bottom: -20%;
-  left: -10%;
-  width: 600px;
-  height: 600px;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    rgba(16, 185, 129, 0.04) 0%,
-    transparent 70%
-  );
-  pointer-events: none;
-  z-index: 0;
-}
 
 /* --- Video Intro Overlay --- */
 /* --- GHG Cloud Animation --- */
@@ -86,6 +34,14 @@
 }
 
 /* --- Login Form Styles --- */
+.login-container {
+  width: 100%;
+  max-width: 440px;
+  padding: 48px;
+  border-radius: var(--radius-lg);
+  position: relative;
+  z-index: 10;
+}
 
 .form-group {
   margin-bottom: 20px;
@@ -125,6 +81,13 @@
   border: 1px solid #fee2e2;
 }
 
+.login-footer {
+  margin-top: 40px;
+  text-align: center;
+  border-top: 1px solid var(--border-light);
+  padding-top: 24px;
+}
+
 .badge {
   font-size: var(--text-sm);
   font-weight: 600;
@@ -135,7 +98,41 @@
   border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
+.login-footer p {
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}
+
 /* --- Forgot Password Modal --- */
+
+.forgot-modal-content {
+  width: 100%;
+  max-width: 440px;
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  box-shadow: var(--shadow-raised);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  position: relative;
+}
+
+.forgot-modal-header {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.forgot-modal-header h3 {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 6px;
+}
+
+.forgot-modal-header p {
+  font-size: var(--text-base);
+  color: var(--text-muted);
+  line-height: 1.4;
+}
 
 .forgot-status-msg {
   padding: 12px 16px;

@@ -74,17 +74,16 @@
   gap: 12px;
 }
 
-.year-badge {
-  background: rgba(255, 102, 0, 0.1);
-  color: var(--color-link);
-  padding: 6px 16px;
-  border-radius: 9999px;
-  font-size: var(--text-base);
-  font-weight: 600;
-  border: 1px solid rgba(255, 102, 0, 0.2);
-}
-
 /* GWP Horizon Toggle */
+
+.kpi-icon.scope1 {
+  background: rgba(37, 99, 235, 0.1);
+  color: var(--accent-secondary);
+}
+.kpi-icon.scope3 {
+  background: rgba(139, 92, 246, 0.1);
+  color: var(--color-violet-700);
+}
 
 .kpi-card {
   background: rgba(255, 255, 255, 0.7);
@@ -100,6 +99,29 @@
   transform: translateY(-2px);
   box-shadow: var(--card-shadow-hover);
   border-color: rgba(255, 255, 255, 0.95);
+}
+
+.kpi-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.kpi-icon.co2 {
+  background: rgba(255, 102, 0, 0.1);
+  color: var(--color-link);
+}
+.kpi-icon.ch4 {
+  background: rgba(37, 99, 235, 0.1);
+  color: var(--accent-secondary);
+}
+.kpi-icon.flare {
+  background: rgba(234, 88, 12, 0.1);
+  color: var(--accent-tertiary);
 }
 
 .kpi-label {
@@ -141,7 +163,52 @@
   font-weight: 500;
 }
 
+.kpi-footer {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--border-color);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.kpi-footer strong {
+  color: var(--text-primary);
+}
+
 /* Scope Breakdown Styles */
+
+.scope-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.scope-item.bordered {
+  border-left: 1px solid var(--border-color);
+  padding-left: 20px;
+}
+
+.scope-item .label {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.scope-item .val {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: inherit;
+}
+
+.scope-item .val.flare-val {
+  color: var(--accent-tertiary);
+}
 
 /* Chart Grid */
 
@@ -177,16 +244,29 @@
 
 /* Historic Trend Section */
 
-/* Heatmap Styles */
-
-.heatmap-header-cell {
-  font-size: var(--text-sm);
-  font-weight: 700;
+.view-btn {
+  border: none;
+  padding: 6px 16px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: var(--text-base);
+  font-weight: 500;
+  transition: all 0.2s;
+  background: transparent;
   color: var(--text-secondary);
-  text-transform: uppercase;
-  text-align: center;
-  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
+
+.view-btn.active {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  box-shadow: var(--card-shadow);
+  font-weight: 600;
+}
+
+/* Heatmap Styles */
 
 .heatmap-cell {
   padding: 10px;

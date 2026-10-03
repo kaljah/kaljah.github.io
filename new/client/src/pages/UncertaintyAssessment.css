@@ -162,6 +162,36 @@
 
 /* ── Methodology Box ── */
 
+.ua-methodology-box {
+  margin-top: 60px;
+  padding: 30px;
+  background: var(--bg-card, rgba(255, 255, 255, 0.78));
+  border-radius: var(--radius-lg);
+  border: 1px dashed var(--border-color, var(--color-ink-300));
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.ua-methodology-icon {
+  color: var(--text-secondary, var(--color-ink-500));
+  flex-shrink: 0;
+}
+
+.ua-methodology-box h4 {
+  margin: 0 0 8px 0;
+  color: var(--text-primary, var(--color-ink-800));
+  font-size: var(--text-lg);
+  font-weight: 700;
+}
+
+.ua-methodology-box p {
+  margin: 0;
+  color: var(--text-secondary, var(--color-ink-500));
+  font-size: var(--text-md);
+  line-height: 1.6;
+}
+
 /* ── Responsive ── */
 
 @media (max-width: 900px) {
