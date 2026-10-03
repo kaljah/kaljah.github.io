@@ -139,7 +139,7 @@ const mediaPrefix = (params) => {
   if (/[{}'"]/.test(t)) return null;
   return `[@media${t.startsWith("(") ? "" : "_"}${t.replace(/:\s+/g, ":").replace(/\s+/g, "_")}]:`;
 };
-const BAD_REST = /[[\]{}'"\,;]|::?(before|after|first-line|first-letter|selection|-webkit|-moz)/;
+const BAD_REST = /[[\]{}'"\,;]/;
 const simpleOccurrence = (sel, rule) => {
   const m = sel.trim().match(/^\.(-?[_a-zA-Z][\w-]*)(.*)$/s);
   if (!m) return null;
@@ -578,9 +578,12 @@ const loadedFor = (cssFile, files) => {
   return false;
 };
 // Does the unlayered rule R reach the element (or descendant target) described by ctx?
+const pseudoElementOf = (selector) => selector.match(/::?(before|after)|::[a-z-]+/)?.[0]?.replace(/^:/, "").replace(/^:/, "") ?? null;
 const ruleApplies = (R, ctx) => {
   // Pseudo-element rules style other boxes, and :root/html/body rules never target an element rendered by JSX.
-  if (R.selector.includes("::") || /:root|(^|[\s>+~])(html|body)/.test(R.selector)) return false;
+  // A rule styles the pseudo-element it ends in (or the element itself); only rules for the same one compete.
+  if ((pseudoElementOf(R.selector) ?? null) !== (ctx.pseudo ?? null)) return false;
+  if (/:root|(^|[\s>+~])(html|body)/.test(R.selector)) return false;
   if (/#[\w-]/.test(R.selector.replace(/\[[^\]]*\]/g, ""))) return false;
   if (/\[style/.test(R.selector) && (ctx.mode === "generic" || ctx.hasInline === false)) return false;
   if (ctx.mode === "own") {
@@ -731,6 +734,7 @@ const planEdits = (active) => {
               prefixes: g.prefixes,
               unknownClasses: g.unknown,
               hasInline: g.inline === "all" ? null : g.inline.size > 0,
+              pseudo: pseudoElementOf(en.selector),
               file,
             });
             n = en.important || en.media || res.loses || nativeNormal.has(en.bp) || isComponent;
@@ -923,7 +927,7 @@ for (const [name, e] of Object.entries(eligible)) {
       }
       if (!tClasses.length) possibleTagsUnknown = true;
     }
-    const res = compete(en, { mode: "generic", active: eligible, self: name, tTag, tClasses, possible, possibleUnknown, possibleTags, possibleTagsUnknown, files: [...scope] });
+    const res = compete(en, { mode: "generic", active: eligible, self: name, pseudo: pseudoElementOf(en.selector), tTag, tClasses, possible, possibleUnknown, possibleTags, possibleTagsUnknown, files: [...scope] });
     const need = en.important || en.media || res.loses;
     // A child carrying its own important utility for the property would be beaten by an important descendant rule.
     let forbid = false;

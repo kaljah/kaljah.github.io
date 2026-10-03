@@ -433,10 +433,10 @@ const SbtiDashboard = () => {
 
       {/* KPI Cards */}
       <div className="[display:grid] [grid-template-columns:repeat(auto-fit,_minmax(240px,_1fr))] [gap:18px]">
-        <div className="sbti-kpi-card">
+        <div className="[padding:22px_24px] [border-radius:var(--radius-lg)] [background:var(--bg-card,_rgba(255,_255,_255,_0.85))] [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [box-shadow:var(--shadow-card,_0_4px_12px_rgba(0,_0,_0,_0.05))] [display:flex] [flex-direction:column] [justify-content:space-between] [position:relative] [overflow:hidden] [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease] hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated,_0_8px_24px_rgba(0,_0,_0,_0.08))] before:[content:''] before:[position:absolute] before:[top:0] before:[left:0] before:[width:4px] before:[height:100%] before:[background:var(--primary,_var(--color-brand-500))] before:[border-radius:var(--radius-sm)_0_0_var(--radius-sm)] [&.success::before]:[background:var(--color-green-500)] [&&]:[&.warning::before]:[background:var(--color-amber-500)] [&&]:[&&]:[&.info::before]:[background:var(--color-blue-500)] [&&]:[&&]:[&&]:[&.neutral::before]:[background:var(--color-ink-400)]">
           <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:12px]">
             <span className="[font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [text-transform:uppercase] [letter-spacing:0.05em]">Base Year Baseline</span>
-            <div className="sbti-kpi-icon">
+            <div className="[width:36px] [height:36px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [background:rgba(249,_115,_22,_0.1)] [color:var(--color-link)] [&.success]:[background:rgba(16,_185,_129,_0.1)] [&.success]:[color:var(--color-green-700)] [&&]:[&.warning]:[background:rgba(245,_158,_11,_0.1)] [&&]:[&.warning]:[color:var(--color-amber-700)] [&&]:[&&]:[&.info]:[background:rgba(59,_130,_246,_0.1)] [&&]:[&&]:[&.info]:[color:var(--color-blue-700)] [&&]:[&&]:[&&]:[&.neutral]:[background:rgba(148,_163,_184,_0.15)] [&&]:[&&]:[&&]:[&.neutral]:[color:var(--color-ink-500)]">
               <Calendar size={18} />
             </div>
           </div>
@@ -449,10 +449,10 @@ const SbtiDashboard = () => {
           </div>
         </div>
 
-        <div className="sbti-kpi-card info">
+        <div className="[padding:22px_24px] [border-radius:var(--radius-lg)] [background:var(--bg-card,_rgba(255,_255,_255,_0.85))] [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [box-shadow:var(--shadow-card,_0_4px_12px_rgba(0,_0,_0,_0.05))] [display:flex] [flex-direction:column] [justify-content:space-between] [position:relative] [overflow:hidden] [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease] hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated,_0_8px_24px_rgba(0,_0,_0,_0.08))] before:[content:''] before:[position:absolute] before:[top:0] before:[left:0] before:[width:4px] before:[height:100%] before:[background:var(--primary,_var(--color-brand-500))] before:[border-radius:var(--radius-sm)_0_0_var(--radius-sm)] [&.success::before]:[background:var(--color-green-500)] [&&]:[&.warning::before]:[background:var(--color-amber-500)] [&&]:[&&]:[&.info::before]:[background:var(--color-blue-500)] [&&]:[&&]:[&&]:[&.neutral::before]:[background:var(--color-ink-400)] info">
           <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:12px]">
             <span className="[font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [text-transform:uppercase] [letter-spacing:0.05em]">Current Year Target</span>
-            <div className="sbti-kpi-icon info">
+            <div className="[width:36px] [height:36px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [background:rgba(249,_115,_22,_0.1)] [color:var(--color-link)] [&.success]:[background:rgba(16,_185,_129,_0.1)] [&.success]:[color:var(--color-green-700)] [&&]:[&.warning]:[background:rgba(245,_158,_11,_0.1)] [&&]:[&.warning]:[color:var(--color-amber-700)] [&&]:[&&]:[&.info]:[background:rgba(59,_130,_246,_0.1)] [&&]:[&&]:[&.info]:[color:var(--color-blue-700)] [&&]:[&&]:[&&]:[&.neutral]:[background:rgba(148,_163,_184,_0.15)] [&&]:[&&]:[&&]:[&.neutral]:[color:var(--color-ink-500)] info">
               <Target size={18} />
             </div>
           </div>
@@ -469,10 +469,10 @@ const SbtiDashboard = () => {
           </div>
         </div>
 
-        <div className={`sbti-kpi-card ${isConfigured && !noData ? (isOnTrack ? "success" : "warning") : "neutral"}`}>
+        <div className={`[padding:22px_24px] [border-radius:var(--radius-lg)] [background:var(--bg-card,_rgba(255,_255,_255,_0.85))] [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [box-shadow:var(--shadow-card,_0_4px_12px_rgba(0,_0,_0,_0.05))] [display:flex] [flex-direction:column] [justify-content:space-between] [position:relative] [overflow:hidden] [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease] hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated,_0_8px_24px_rgba(0,_0,_0,_0.08))] before:[content:''] before:[position:absolute] before:[top:0] before:[left:0] before:[width:4px] before:[height:100%] before:[background:var(--primary,_var(--color-brand-500))] before:[border-radius:var(--radius-sm)_0_0_var(--radius-sm)] [&.success::before]:[background:var(--color-green-500)] [&&]:[&.warning::before]:[background:var(--color-amber-500)] [&&]:[&&]:[&.info::before]:[background:var(--color-blue-500)] [&&]:[&&]:[&&]:[&.neutral::before]:[background:var(--color-ink-400)] ${isConfigured && !noData ? (isOnTrack ? "success" : "warning") : "neutral"}`}>
           <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:12px]">
             <span className="[font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [text-transform:uppercase] [letter-spacing:0.05em]">Pathway Status</span>
-            <div className={`sbti-kpi-icon ${isConfigured && !noData ? (isOnTrack ? "success" : "warning") : "neutral"}`}>
+            <div className={`[width:36px] [height:36px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [background:rgba(249,_115,_22,_0.1)] [color:var(--color-link)] [&.success]:[background:rgba(16,_185,_129,_0.1)] [&.success]:[color:var(--color-green-700)] [&&]:[&.warning]:[background:rgba(245,_158,_11,_0.1)] [&&]:[&.warning]:[color:var(--color-amber-700)] [&&]:[&&]:[&.info]:[background:rgba(59,_130,_246,_0.1)] [&&]:[&&]:[&.info]:[color:var(--color-blue-700)] [&&]:[&&]:[&&]:[&.neutral]:[background:rgba(148,_163,_184,_0.15)] [&&]:[&&]:[&&]:[&.neutral]:[color:var(--color-ink-500)] ${isConfigured && !noData ? (isOnTrack ? "success" : "warning") : "neutral"}`}>
               {isConfigured && !noData ? (
                 isOnTrack ? <CheckCircle size={18} /> : <AlertTriangle size={18} />
               ) : (
@@ -494,10 +494,10 @@ const SbtiDashboard = () => {
           </div>
         </div>
 
-        <div className="sbti-kpi-card success">
+        <div className="[padding:22px_24px] [border-radius:var(--radius-lg)] [background:var(--bg-card,_rgba(255,_255,_255,_0.85))] [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [box-shadow:var(--shadow-card,_0_4px_12px_rgba(0,_0,_0,_0.05))] [display:flex] [flex-direction:column] [justify-content:space-between] [position:relative] [overflow:hidden] [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease] hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated,_0_8px_24px_rgba(0,_0,_0,_0.08))] before:[content:''] before:[position:absolute] before:[top:0] before:[left:0] before:[width:4px] before:[height:100%] before:[background:var(--primary,_var(--color-brand-500))] before:[border-radius:var(--radius-sm)_0_0_var(--radius-sm)] [&.success::before]:[background:var(--color-green-500)] [&&]:[&.warning::before]:[background:var(--color-amber-500)] [&&]:[&&]:[&.info::before]:[background:var(--color-blue-500)] [&&]:[&&]:[&&]:[&.neutral::before]:[background:var(--color-ink-400)] success">
           <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:12px]">
             <span className="[font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [text-transform:uppercase] [letter-spacing:0.05em]">Net-Zero Goal ({sbtiData?.target_year || 2050})</span>
-            <div className="sbti-kpi-icon success">
+            <div className="[width:36px] [height:36px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [background:rgba(249,_115,_22,_0.1)] [color:var(--color-link)] [&.success]:[background:rgba(16,_185,_129,_0.1)] [&.success]:[color:var(--color-green-700)] [&&]:[&.warning]:[background:rgba(245,_158,_11,_0.1)] [&&]:[&.warning]:[color:var(--color-amber-700)] [&&]:[&&]:[&.info]:[background:rgba(59,_130,_246,_0.1)] [&&]:[&&]:[&.info]:[color:var(--color-blue-700)] [&&]:[&&]:[&&]:[&.neutral]:[background:rgba(148,_163,_184,_0.15)] [&&]:[&&]:[&&]:[&.neutral]:[color:var(--color-ink-500)] success">
               <TrendingDown size={18} />
             </div>
           </div>

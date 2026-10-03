@@ -366,7 +366,7 @@ function ModeCard({ selected, onClick, Icon: IcoComp, title, badge, description 
         <div className="s1w-mode-card-icon"><IcoComp /></div>
         <span className="[font-size:var(--text-base)] [font-weight:700] [color:var(--color-ink-900)] [flex:1]">{title}</span>
         {badge && <span className={`[padding:2px_8px] [border-radius:var(--radius-lg)] [font-size:var(--text-xs)] [font-weight:700] [letter-spacing:0.3px] [flex-shrink:0] s1w-mode-badge--${badge.color}`}>{badge.label}</span>}
-        <div className={`s1w-radio ${selected ? "checked" : ""}`} />
+        <div className={`[width:16px] [height:16px] [border-radius:50%] [border:2px_solid_var(--color-ink-300)] [flex-shrink:0] [transition:all_0.2s] [position:relative] [&.checked]:[border-color:var(--color-brand-500)] [&.checked]:[background:var(--color-brand-500)] [&.checked::after]:[content:''] [&.checked::after]:[position:absolute] [&.checked::after]:[inset:3px] [&&]:[&.checked::after]:[background:var(--color-white)] [&&]:[&.checked::after]:[border-radius:50%] ${selected ? "checked" : ""}`} />
       </div>
       <p className="[font-size:var(--text-sm)] [color:var(--color-ink-500)] [margin:0] [line-height:1.5]">{description}</p>
     </button>

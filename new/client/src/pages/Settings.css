@@ -370,25 +370,3 @@
   accent-color: var(--color-sky-600);
   cursor: pointer;
 }
-
-.connection-status-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  border-radius: var(--radius-md);
-  font-size: var(--text-base);
-  font-weight: 600;
-}
-
-.connection-status-badge.success {
-  background: rgba(16, 185, 129, 0.1);
-  color: var(--color-green-700);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-}
-
-.connection-status-badge.error {
-  background: rgba(239, 68, 68, 0.1);
-  color: var(--color-red-700);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-}

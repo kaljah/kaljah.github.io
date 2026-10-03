@@ -12,12 +12,6 @@
 }
 
 /* Sidebar Navigation Panel */
-.manage-nav-panel {
-  border-radius: var(--radius-lg);
-  padding: 16px;
-  position: sticky;
-  top: 24px;
-}
 
 .manage-nav-item {
   display: flex;
@@ -467,23 +461,6 @@ select option:disabled {
     grid-template-columns: 1fr;
     padding: 14px 12px 32px;
     gap: 16px;
-  }
-
-  .manage-nav-panel {
-    position: static;
-    display: flex;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    white-space: nowrap;
-    gap: 8px;
-    padding: 10px;
-    scrollbar-width: none;
-    border-radius: var(--radius-lg);
-    top: auto;
-  }
-
-  .manage-nav-panel::-webkit-scrollbar {
-    display: none;
   }
 
   .manage-nav-item {

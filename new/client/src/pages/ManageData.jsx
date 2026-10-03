@@ -1401,7 +1401,7 @@ const ManageDataInner = () => {
             <div className="manage-container">
                 <div className="manage-layout">
                     {/* Sidebar Navigation */}
-                    <aside className="manage-nav-panel glass-panel">
+                    <aside className="[border-radius:var(--radius-lg)]! [padding:16px]! [position:sticky]! [top:24px]! [@media(max-width:768px)]:[position:static]! [@media(max-width:768px)]:[display:flex]! [@media(max-width:768px)]:[overflow-x:auto] [@media(max-width:768px)]:[-webkit-overflow-scrolling:touch] [@media(max-width:768px)]:[white-space:nowrap] [@media(max-width:768px)]:[gap:8px] [@media(max-width:768px)]:[padding:10px]! [@media(max-width:768px)]:[scrollbar-width:none] [@media(max-width:768px)]:[border-radius:var(--radius-lg)]! [@media(max-width:768px)]:[top:auto]! [@media(max-width:768px)]:[&::-webkit-scrollbar]:[display:none]! glass-panel">
                         <h3 style={{ margin: '0 0 16px 12px', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--text-secondary)' }}>
                             Management
                         </h3>

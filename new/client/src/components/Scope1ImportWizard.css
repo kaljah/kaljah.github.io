@@ -163,27 +163,6 @@
 .s1w-mode-badge--green  { background: #dcfce7; color: #15803d; }
 .s1w-mode-badge--orange { background: var(--color-brand-50); color: var(--color-brand-700); }
 
-.s1w-radio {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  border: 2px solid var(--color-ink-300);
-  flex-shrink: 0;
-  transition: all 0.2s;
-  position: relative;
-}
-.s1w-radio.checked {
-  border-color: var(--color-brand-500);
-  background: var(--color-brand-500);
-}
-.s1w-radio.checked::after {
-  content: "";
-  position: absolute;
-  inset: 3px;
-  background: var(--color-white);
-  border-radius: 50%;
-}
-
 /* ─── Process Tile Grid ─────────────────────────────────────────────────────── */
 
 .s1w-process-tile {

@@ -49,7 +49,7 @@ const TopBar = ({ onOpenPalette }) => {
           full-width row instead of being squeezed into the title row. */}
       {hasFilterRow && (
         <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t border-ink-100 bg-ink-50/60 px-4 py-2 md:px-6">
-          <div className="top-bar-injected-left flex min-w-0 flex-wrap items-center gap-2">{topBarLeft}</div>
+          <div className="top-bar-injected-left [display:flex]! [align-items:center]! [flex:1]! [min-width:0]! [overflow-x:auto]! [-webkit-overflow-scrolling:touch]! [scrollbar-width:none]! [&::-webkit-scrollbar]:[display:none]! [@media(max-width:900px)]:[overflow-x:auto]! [@media(max-width:900px)]:[-webkit-overflow-scrolling:touch]! [@media(max-width:900px)]:[scrollbar-width:none]! [&&]:[@media(max-width:900px)]:[&::-webkit-scrollbar]:[display:none]! flex-wrap gap-2">{topBarLeft}</div>
           <div className="flex flex-wrap items-center gap-2">{topBarRight}</div>
         </div>
       )}
