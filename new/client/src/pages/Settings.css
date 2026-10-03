@@ -42,15 +42,7 @@
 
 /* Tabs Bar */
 
-.tab-icon-svg {
-  flex-shrink: 0;
-}
-
 /* Section Card */
-
-.section-icon {
-  color: var(--color-link);
-}
 
 /* GWP Grid */
 
@@ -115,10 +107,6 @@
 
 /* Comparison Table */
 
-.comparison-icon {
-  color: var(--color-link);
-}
-
 /* OGMP 2.0 Tab Config */
 
 .range-slider {
@@ -130,10 +118,6 @@
 }
 
 /* Targets */
-
-.target-icon {
-  color: var(--color-link);
-}
 
 .target-card {
   background: var(--bg-card, var(--color-white));
@@ -149,26 +133,6 @@
 }
 
 /* Facility Overrides Table */
-
-.table-select {
-  background: var(--bg-card, var(--color-white));
-  border: 1px solid var(--border-color, var(--color-ink-300));
-  color: var(--text-primary, var(--color-ink-900));
-  border-radius: var(--radius-md);
-  padding: 7px 10px;
-  font-size: var(--text-base);
-  font-family: inherit;
-}
-
-.table-select-small {
-  background: var(--bg-card, var(--color-white));
-  border: 1px solid var(--border-color, var(--color-ink-300));
-  color: var(--text-primary, var(--color-ink-900));
-  border-radius: var(--radius-md);
-  padding: 7px 8px;
-  font-size: var(--text-base);
-  font-family: inherit;
-}
 
 /* Preferences Tab */
 

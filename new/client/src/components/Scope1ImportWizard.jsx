@@ -389,7 +389,7 @@ function ProcessTile({ process, selected, onClick }) {
 function MappingRow({ field, headers, value, onChange }) {
   const mapped = !!value;
   return (
-    <div className={`[display:grid]! [grid-template-columns:1fr_1fr_36px]! [align-items:center] [padding:10px_16px]! [border-bottom:1px_solid_var(--color-ink-100)]! [transition:background_0.12s]! [gap:12px] last:[border-bottom:none]! hover:[background:#fafaf9]! [@media(max-width:600px)]:[grid-template-columns:1fr]! ${!mapped && field.required ? "s1w-map-row--missing" : ""} ${mapped ? "s1w-map-row--mapped" : ""}`}>
+    <div className={`[display:grid]! [grid-template-columns:1fr_1fr_36px]! [align-items:center] [padding:10px_16px]! [border-bottom:1px_solid_var(--color-ink-100)]! [transition:background_0.12s]! [gap:12px] last:[border-bottom:none]! hover:[background:#fafaf9]! [@media(max-width:600px)]:[grid-template-columns:1fr]! ${!mapped && field.required ? "[background:#fff9f5]!" : ""} ${mapped ? "[&&]:[background:#f0fdf4]!" : ""}`}>
       <div className="[display:flex]! [flex-direction:column] [gap:2px] [min-width:0]">
         <span className="[font-size:var(--text-sm)]! [font-weight:600]! [color:var(--color-ink-900)]! [display:flex]! [align-items:center] [gap:4px]">
           {field.label}
@@ -399,7 +399,7 @@ function MappingRow({ field, headers, value, onChange }) {
       </div>
       <div className="s1w-map-select-wrap">
         {headers.length > 0 ? (
-          <NativeSelect className={`s1w-map-select ${mapped ? "matched" : ""}`} value={value} onChange={e => onChange(e.target.value)}>
+          <NativeSelect className={`[width:100%]! [padding:7px_10px]! [border:1.5px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-sm)]! [background:var(--color-white)]! [font-size:var(--text-sm)]! [color:var(--color-ink-900)]! [outline:none]! [transition:border-color_0.15s]! [font-family:inherit]! focus:[border-color:var(--color-brand-500)]! focus:[box-shadow:0_0_0_2px_rgba(255,102,0,0.08)]! [&.matched]:[border-color:var(--color-green-500)]! [&.matched]:[background:#f0fdf4]! ${mapped ? "matched" : ""}`} value={value} onChange={e => onChange(e.target.value)}>
             <option value="">— Not mapped —</option>
             {headers.map(h => <option key={h} value={h}>{h}</option>)}
           </NativeSelect>

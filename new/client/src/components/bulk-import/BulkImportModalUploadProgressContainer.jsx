@@ -25,7 +25,7 @@ const BulkImportModalUploadProgressContainer = ({ file, handleImport, loading, o
 
             {!uploadJobId ? (
               <div
-                className="import-actions flex! justify-center! gap-[12px]!"
+                className="[margin-top:20px]! flex! justify-center! gap-[12px]!"
                
               >
                 <button

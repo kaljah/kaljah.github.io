@@ -60,10 +60,6 @@
   transform: translateY(-1px);
 }
 
-.pulse-icon {
-  animation: pulseBeacon 1.5s infinite;
-}
-
 @keyframes pulseBeacon {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.3; }
@@ -168,24 +164,6 @@
 
 .flex-1 {
   flex: 1;
-}
-
-.recon-select {
-  width: 100%;
-  background: var(--color-ink-50);
-  border: 1px solid var(--color-ink-200);
-  border-radius: var(--radius-md);
-  padding: 7px 10px;
-  font-size: var(--text-sm);
-  color: var(--color-ink-900);
-  outline: none;
-  cursor: pointer;
-  transition: border-color 0.2s;
-}
-
-.recon-select:focus {
-  border-color: var(--color-brand-500);
-  background: var(--color-white);
 }
 
 /* Severity Pills */
@@ -383,24 +361,6 @@ input:checked + .slider:before {
 
 /* Satellite Intelligence Section */
 
-.box-val {
-  font-size: var(--text-md);
-  font-weight: 800;
-  color: var(--color-ink-900);
-}
-
-.alert-red {
-  color: var(--color-red-700) !important;
-}
-
-.alert-amber {
-  color: var(--color-amber-700) !important;
-}
-
-.highlight-amber {
-  color: var(--color-amber-700) !important;
-}
-
 /* Reconciliation Gap Box */
 .reconciliation-meter-box {
   background: var(--color-white);
@@ -549,19 +509,6 @@ input:checked + .slider:before {
 }
 
 /* Custom Tooltip */
-.custom-leaflet-tooltip {
-  background: rgba(255, 255, 255, 0.98) !important;
-  backdrop-filter: blur(14px) !important;
-  border: 1px solid rgba(255, 102, 0, 0.4) !important;
-  border-radius: var(--radius-md) !important;
-  box-shadow: var(--shadow-card) !important;
-  padding: 8px 12px !important;
-  color: var(--color-ink-900) !important;
-}
-
-.custom-leaflet-tooltip:before {
-  border-top-color: rgba(255, 255, 255, 0.98) !important;
-}
 
 .tooltip-badge {
   font-size: var(--text-xs);
@@ -621,12 +568,4 @@ input:checked + .slider:before {
   to {
     transform: rotate(360deg);
   }
-}
-
-.spin-slow {
-  animation: spin 8s linear infinite;
-}
-
-.spin-fast {
-  animation: spin 0.8s linear infinite;
 }

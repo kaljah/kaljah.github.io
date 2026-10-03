@@ -543,7 +543,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
           <div className="flex! gap-[10px]! items-center!">
             {stats.weirdCount > 0 && (
               <button
-                className="btn-wizard-action btn-wizard-select-weird"
+                className="btn-wizard-action [background:rgba(245,_158,_11,_0.12)]! [color:var(--color-amber-700)]! [border-color:rgba(245,_158,_11,_0.3)]! hover:[background:var(--color-amber-700)]! hover:[color:var(--color-white)]!"
                 onClick={handleSelectAllWeird}
                 title="Select all flagged anomalies for batch rejection or inspection"
               >
@@ -561,7 +561,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
               Approve All ({stats.totalCount})
             </button>
             <button
-              className="btn-wizard-action btn-wizard-reject-all"
+              className="btn-wizard-action [background:rgba(239,_68,_68,_0.1)]! [color:var(--color-red-700)]! [border-color:rgba(239,_68,_68,_0.25)]! hover:[background:var(--color-red-700)]! hover:[color:var(--color-white)]! hover:[transform:translateY(-1px)] hover:[box-shadow:0_3px_8px_rgba(239,_68,_68,_0.3)]!"
               onClick={() => setRejectionModal({ isOpen: true, mode: 'all', targetItem: null, reason: '' })}
               disabled={loading || isProcessing || stats.totalCount === 0}
               title="Delete all pending records with audit justification"
@@ -670,7 +670,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
                   Approve Filtered ({filteredRecords.length})
                 </button>
                 <button
-                  className="btn-wizard-action btn-wizard-reject-all p-[6px_12px]! text-[length:0.78rem]!"
+                  className="btn-wizard-action [background:rgba(239,_68,_68,_0.1)]! [color:var(--color-red-700)]! [border-color:rgba(239,_68,_68,_0.25)]! hover:[background:var(--color-red-700)]! hover:[color:var(--color-white)]! hover:[transform:translateY(-1px)] hover:[box-shadow:0_3px_8px_rgba(239,_68,_68,_0.3)]! p-[6px_12px]! text-[length:0.78rem]!"
                  
                   onClick={() => setRejectionModal({ isOpen: true, mode: 'filtered', targetItem: null, reason: '' })}
                   disabled={isProcessing}
@@ -707,7 +707,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
                 Approve Selected ({selectedKeys.size})
               </button>
               <button
-                className="btn-wizard-action btn-wizard-reject-all"
+                className="btn-wizard-action [background:rgba(239,_68,_68,_0.1)]! [color:var(--color-red-700)]! [border-color:rgba(239,_68,_68,_0.25)]! hover:[background:var(--color-red-700)]! hover:[color:var(--color-white)]! hover:[transform:translateY(-1px)] hover:[box-shadow:0_3px_8px_rgba(239,_68,_68,_0.3)]!"
                 onClick={() => setRejectionModal({ isOpen: true, mode: 'selected', targetItem: null, reason: '' })}
                 disabled={isProcessing}
               >

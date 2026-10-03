@@ -11,7 +11,7 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
               className={`card detailed-table-card [@media_print]:[box-shadow:none]! [@media_print]:[border:1px_solid_var(--color-ink-300)]! [@media_print]:[background:var(--color-white)]! [@media_print]:[page-break-inside:avoid]! [@media_print]:[margin-bottom:24px]! [@media(max-width:768px)]:[padding:16px]! [@media(max-width:768px)]:[border-radius:var(--radius-lg)]! glass-panel ${detailedBreakdownCollapsed ? "collapsed-card" : ""}`}
             >
               <div role="button" tabIndex={0} onKeyDown={activateOnKey}
-                className="table-header-row clickable-card-header [transition:opacity_0.2s_ease]! hover:[opacity:0.85]"
+                className="table-header-row [margin-bottom:20px]! clickable-card-header [transition:opacity_0.2s_ease]! hover:[opacity:0.85]"
                 onClick={() =>
                   setDetailedBreakdownCollapsed(!detailedBreakdownCollapsed)
                 }
@@ -27,7 +27,7 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
                   Detailed Breakdown
                 </h3>
                 <div
-                  className="collapse-toggle-icon flex! items-center! text-[color:#64748b]!"
+                  className=" flex! items-center! text-[color:#64748b]!"
                  
                 >
                   {detailedBreakdownCollapsed ? (
@@ -215,7 +215,7 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
             {/* Moved Trend Chart to Top */}
 
             <div className="card [padding:24px]!">
-              <div className="card-header-row">
+              <div className="[display:flex]! [justify-content:space-between] [align-items:center]! [margin-bottom:24px]! [@media(max-width:768px)]:[flex-direction:column] [@media(max-width:768px)]:[align-items:flex-start]! [@media(max-width:768px)]:[gap:12px]">
                 <h3 className="card-title">Reference Libraries</h3>
                 <svg
                   width="20"

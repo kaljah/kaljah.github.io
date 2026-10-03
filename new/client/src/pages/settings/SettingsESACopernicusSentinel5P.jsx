@@ -9,7 +9,7 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
             <div className="[display:flex]! [align-items:center] [gap:10px]">
               <Satellite
                 size={22}
-                className="section-icon text-[color:#0369a1]!"
+                className=" text-[color:#0369a1]!"
                
               />
               <h2>

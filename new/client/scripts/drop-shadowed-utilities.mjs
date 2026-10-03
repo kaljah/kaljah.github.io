@@ -82,7 +82,8 @@ const plainTailwind = (token) => {
 
 // A declared property covers another when equal or when it is the shorthand ancestor (padding covers padding-left).
 const covers = (declared, target) =>
-  declared === target || (target.startsWith(`${declared}-`) && !(declared === "border" && target === "border-radius"));
+  declared === target ||
+  (target.startsWith(`${declared}-`) && !(declared === "border" && target === "border-radius") && !(declared === "flex" && /^flex-(direction|wrap|flow)$/.test(target)));
 
 // { variants, prop } for an arbitrary-property utility `variants[prop:value]`.
 const arbitrary = (token) => {

@@ -50,7 +50,7 @@ export const BarChart = ({
           {payload.map((entry, idx) => (
             <p
               key={idx}
-              className="tooltip-value"
+              className="[margin:0]! [font-size:var(--text-md)]! [font-weight:700]!"
               style={{ color: entry.color || entry.fill }}
             >
               {entry.name || entry.dataKey}: {formatValue(entry.value)}

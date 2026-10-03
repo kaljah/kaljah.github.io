@@ -19,10 +19,6 @@
   letter-spacing: -0.025em;
 }
 
-.spin-animate {
-  animation: spin 1s linear infinite;
-}
-
 @keyframes spin {
   from {
     transform: rotate(0deg);
@@ -43,19 +39,6 @@
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-.export-icon {
-  margin-top: 2px;
-  flex-shrink: 0;
-}
-
-.csv-icon {
-  color: var(--color-green-700);
-}
-
-.json-icon {
-  color: var(--color-violet-700);
 }
 
 .export-text {
@@ -181,14 +164,6 @@
    TIMELINE & ENTRY CARDS
    ========================================================================== */
 
-.badge-user-icon {
-  color: var(--color-ink-500);
-}
-
-.flow-arrow {
-  color: var(--color-ink-300);
-}
-
 .action-pill {
   font-size: var(--text-xs);
   font-weight: 800;
@@ -202,11 +177,6 @@
 /* ==========================================================================
    FIELD-LEVEL BEFORE/AFTER CHANGES
    ========================================================================== */
-
-.diff-arrow {
-  color: var(--color-ink-600);
-  flex-shrink: 0;
-}
 
 /* ==========================================================================
    TECHNICAL RAW JSON VIEWER

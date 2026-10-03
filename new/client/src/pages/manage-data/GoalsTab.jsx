@@ -13,7 +13,7 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                             <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-link)', fontWeight: 700 }}>
                                                 GHG Protocol & OGMP 2.0 Baseline
                                             </span>
-                                            <span className="goal-badge goal-badge-active">
+                                            <span className="goal-badge [background:var(--color-green-50)]! [color:var(--color-green-700)]! [border:1px_solid_#a7f3d0]!">
                                                 <CheckCircle size={12} /> Active Baseline
                                             </span>
                                         </div>
@@ -227,7 +227,7 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                                 <Plus size={16} /> Save Recalculation
                                             </button>
                                         </div>
-                                        <div className="input-group form-full" style={{ gridColumn: 'span 4' }}>
+                                        <div className="input-group " style={{ gridColumn: 'span 4' }}>
                                             <label>Reason for Change / Recalculation Justification *</label>
                                             <Textarea
                                                 value={baseYearForm.reason}
@@ -275,7 +275,7 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                                                     <div className="flex! items-center! gap-[6px]!">
                                                                         <span>{b.year}</span>
                                                                         {isLatest && (
-                                                                            <span className="goal-badge goal-badge-active text-[length:0.7rem]!">
+                                                                            <span className="goal-badge [background:var(--color-green-50)]! [color:var(--color-green-700)]! [border:1px_solid_#a7f3d0]! text-[length:0.7rem]!">
                                                                                 Active
                                                                             </span>
                                                                         )}
@@ -332,7 +332,7 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                             </p>
                                         </div>
                                         {hasSbti && (
-                                            <span className="goal-badge goal-badge-active inline-flex! items-center! gap-[6px]! text-[length:0.85rem]! p-[6px_14px]!">
+                                            <span className="goal-badge [background:var(--color-green-50)]! [color:var(--color-green-700)]! [border:1px_solid_#a7f3d0]! inline-flex! items-center! gap-[6px]! text-[length:0.85rem]! p-[6px_14px]!">
                                                 <CheckCircle size={14} /> SBTi Target Active
                                             </span>
                                         )}

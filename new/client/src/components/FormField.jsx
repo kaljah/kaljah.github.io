@@ -18,7 +18,7 @@ export const TextField = ({
   step,
 }) => {
   return (
-    <div className="form-field">
+    <div className="[display:flex]! [flex-direction:column] [gap:6px] [margin-bottom:16px]!">
       {label && (
         <label className="field-label">
           {label}
@@ -27,7 +27,7 @@ export const TextField = ({
       )}
       <input
         type={type}
-        className={`field-input ${error ? "field-error" : ""}`}
+        className={`field-input ${error ? "[border-color:var(--color-red-500)]! focus:[box-shadow:0_0_0_3px_rgba(239,_68,_68,_0.1)]!" : ""}`}
         value={value}
         onChange={onChange}
         placeholder={placeholder}
@@ -58,7 +58,7 @@ export const SelectField = ({
   helperText = "",
 }) => {
   return (
-    <div className="form-field">
+    <div className="[display:flex]! [flex-direction:column] [gap:6px] [margin-bottom:16px]!">
       {label && (
         <label className="field-label">
           {label}
@@ -66,7 +66,7 @@ export const SelectField = ({
         </label>
       )}
       <NativeSelect
-        className={`field-select ${error ? "field-error" : ""}`}
+        className={`field-select ${error ? "[border-color:var(--color-red-500)]! focus:[box-shadow:0_0_0_3px_rgba(239,_68,_68,_0.1)]!" : ""}`}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled}
@@ -100,7 +100,7 @@ export const TextAreaField = ({
   rows = 4,
 }) => {
   return (
-    <div className="form-field">
+    <div className="[display:flex]! [flex-direction:column] [gap:6px] [margin-bottom:16px]!">
       {label && (
         <label className="field-label">
           {label}
@@ -108,7 +108,7 @@ export const TextAreaField = ({
         </label>
       )}
       <textarea
-        className={`field-textarea ${error ? "field-error" : ""}`}
+        className={`field-textarea ${error ? "[border-color:var(--color-red-500)]! focus:[box-shadow:0_0_0_3px_rgba(239,_68,_68,_0.1)]!" : ""}`}
         value={value}
         onChange={onChange}
         placeholder={placeholder}
@@ -134,7 +134,7 @@ export const CheckboxField = ({
   helperText = "",
 }) => {
   return (
-    <div className="form-field checkbox-field">
+    <div className="[display:flex]! [flex-direction:column] [gap:6px] [margin-bottom:16px]! [&&]:[margin-bottom:12px]!">
       <label className="checkbox-label">
         <input
           type="checkbox"
@@ -166,7 +166,7 @@ export const RadioGroupField = ({
   layout = "vertical", // 'vertical' or 'horizontal'
 }) => {
   return (
-    <div className="form-field">
+    <div className="[display:flex]! [flex-direction:column] [gap:6px] [margin-bottom:16px]!">
       {label && (
         <label className="field-label">
           {label}
@@ -174,7 +174,7 @@ export const RadioGroupField = ({
         </label>
       )}
       <div
-        className={`[display:flex]! [gap:16px] ${layout === "horizontal" ? "radio-horizontal" : "radio-vertical"}`}
+        className={`[display:flex]! [gap:16px] ${layout === "horizontal" ? "[&&]:[flex-direction:row] [&&]:[flex-wrap:wrap]" : "[flex-direction:column]"}`}
       >
         {options.map((opt, idx) => (
           <label key={idx} className="[display:flex]! [align-items:center] [gap:8px] [cursor:pointer] [font-size:var(--text-base)]! [color:var(--text-primary)]!">
@@ -211,7 +211,7 @@ export const DateField = ({
   max,
 }) => {
   return (
-    <div className="form-field">
+    <div className="[display:flex]! [flex-direction:column] [gap:6px] [margin-bottom:16px]!">
       {label && (
         <label className="field-label">
           {label}
@@ -220,7 +220,7 @@ export const DateField = ({
       )}
       <input
         type="date"
-        className={`field-input ${error ? "field-error" : ""}`}
+        className={`field-input ${error ? "[border-color:var(--color-red-500)]! focus:[box-shadow:0_0_0_3px_rgba(239,_68,_68,_0.1)]!" : ""}`}
         value={value}
         onChange={onChange}
         disabled={disabled}

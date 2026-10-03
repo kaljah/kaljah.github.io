@@ -227,8 +227,8 @@ const UncertaintyAssessment = () => {
       </div>
 
       {!data ? (
-        <div className="ua-methodology-box mt-[24px]!">
-          <Info size={24} className="ua-methodology-icon" />
+        <div className="[padding:30px]! [background:var(--bg-card,_rgba(255,_255,_255,_0.78))]! [border-radius:var(--radius-lg)]! [border:1px_dashed_var(--border-color,_var(--color-ink-300))]! [display:flex]! [gap:20px] [align-items:flex-start] [&_h4]:[margin:0_0_8px_0]! [&_h4]:[color:var(--text-primary,_var(--color-ink-800))]! [&_h4]:[font-size:var(--text-lg)]! [&_h4]:[font-weight:700]! [&&]:[&_p]:[margin:0]! [&&]:[&_p]:[color:var(--text-secondary,_var(--color-ink-500))]! [&&]:[&&]:[&_p]:[font-size:var(--text-md)]! [&_p]:[line-height:1.6] mt-[24px]!">
+          <Info size={24} className="[color:var(--text-secondary,_var(--color-ink-500))]! [flex-shrink:0]!" />
           <div>
             <h4>No Uncertainty Data Available</h4>
             <p>
@@ -342,8 +342,8 @@ const UncertaintyAssessment = () => {
       )}
 
       {/* ── Methodology Footer ── */}
-      <div className="ua-methodology-box">
-        <Info size={24} className="ua-methodology-icon" />
+      <div className="[margin-top:60px]! [padding:30px]! [background:var(--bg-card,_rgba(255,_255,_255,_0.78))]! [border-radius:var(--radius-lg)]! [border:1px_dashed_var(--border-color,_var(--color-ink-300))]! [display:flex]! [gap:20px] [align-items:flex-start] [&_h4]:[margin:0_0_8px_0]! [&_h4]:[color:var(--text-primary,_var(--color-ink-800))]! [&_h4]:[font-size:var(--text-lg)]! [&_h4]:[font-weight:700]! [&&]:[&_p]:[margin:0]! [&&]:[&_p]:[color:var(--text-secondary,_var(--color-ink-500))]! [&&]:[&&]:[&_p]:[font-size:var(--text-md)]! [&_p]:[line-height:1.6]">
+        <Info size={24} className="[color:var(--text-secondary,_var(--color-ink-500))]! [flex-shrink:0]!" />
         <div>
           <h4>Calculation Methodology</h4>
           <p>

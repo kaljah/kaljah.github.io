@@ -19,7 +19,7 @@ const LoadingSpinner = ({
     </div>
   );
 
-  return <div className={fullScreen ? "loading-fullscreen" : "loading-inline"}>{content}</div>;
+  return <div className={fullScreen ? "[position:fixed] [top:0] [left:0] [right:0] [right:0] [bottom:0] [background:transparent]! [display:flex]! [flex-direction:column] [align-items:center] [justify-content:center] [gap:40px] [z-index:9999] [animation:fadeIn_0.5s_ease-out]!" : "[&&]:[display:flex]! [&&]:[flex-direction:column] [&&]:[align-items:center] [&&]:[justify-content:center] [&&]:[gap:24px] [padding:60px_40px]! [&&]:[background:transparent]! [border:none]!"}>{content}</div>;
 };
 
 export default LoadingSpinner;

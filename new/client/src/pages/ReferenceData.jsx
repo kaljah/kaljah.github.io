@@ -360,7 +360,7 @@ const ReferenceData = () => {
         description={
           <>
             Centralized repository for emission factors, global warming potentials (GWPs), unit conversions, and data
-            quality tiers. Custom regional factors tagged with <Star size={14} className="custom-star inline" aria-hidden="true" />{" "}
+            quality tiers. Custom regional factors tagged with <Star size={14} className="[color:var(--color-amber-700)]! [display:inline-block]! [vertical-align:middle]! [margin-left:4px]! " aria-hidden="true" />{" "}
             override global defaults.
           </>
         }
@@ -388,7 +388,7 @@ const ReferenceData = () => {
           />
         </div>
         <NativeSelect
-          className="filter-select"
+          className="[padding:11px_18px]! [background:rgba(255,_255,_255,_0.85)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [min-width:200px]! [color:var(--text-primary,_var(--color-ink-900))]! [outline:none]! [cursor:pointer]! [transition:all_0.2s_ease]! focus:[border-color:var(--accent-color,_var(--color-brand-500))]! focus:[box-shadow:0_0_0_3px_rgba(255,_102,_0,_0.15)]!"
           aria-label="Filter by category"
           value={categoryFilter}
           onChange={(e) => setCategoryFilter(e.target.value)}
@@ -510,7 +510,7 @@ const ReferenceData = () => {
                               <td className="factor-name">
                                 {f.name}
                                 {f.isCustom && (
-                                  <Star size={14} className="custom-star" />
+                                  <Star size={14} className="[color:var(--color-amber-700)]! [display:inline-block]! [vertical-align:middle]! [margin-left:4px]!" />
                                 )}
                               </td>
                               {key !== "equipment" ? (

@@ -675,7 +675,7 @@ const EmissionsMap = () => {
       <div className="[display:flex]! [flex-direction:column] [align-items:center] [justify-content:center] [height:calc(100vh_-_72px)]! [gap:16px] [background:var(--color-ink-50)]! [color:var(--color-ink-900)]!">
         <div className="[position:relative] [width:80px]! [height:80px]! [border:2px_solid_rgba(255,_102,_0,_0.2)]! [&&]:[border-radius:50%]! [display:flex]! [align-items:center] [justify-content:center] [box-shadow:0_4px_20px_rgba(255,_102,_0,_0.15)]!">
           <div className="[position:absolute] [inset:0] [border-radius:50%]! [border-top:3px_solid_var(--color-brand-500)]! [animation:spin_1.2s_cubic-bezier(0.5,_0,_0.5,_1)_infinite]!"></div>
-          <Satellite size={34} className="spin-slow" color="#ff6600" />
+          <Satellite size={34} className="[animation:spin_8s_linear_infinite]!" color="#ff6600" />
         </div>
         <div className="[font-size:var(--text-md)]! [font-weight:800]! [letter-spacing:0.08em] [color:var(--color-ink-900)]!">LOADING METHANE EXPLORER</div>
         <div className="[font-size:var(--text-sm)]! [color:var(--color-ink-500)]! [max-width:420px]! [text-align:center]! [line-height:1.5]">
@@ -710,7 +710,7 @@ const EmissionsMap = () => {
           <div className="[display:flex]! [align-items:center]">
             {isSatelliteConnected ? (
               <span className="status-pill live" title="Connected to Copernicus Data Space">
-                <Radio size={12} className="pulse-icon" /> S5P STREAM LIVE
+                <Radio size={12} className="[animation:pulseBeacon_1.5s_infinite]!" /> S5P STREAM LIVE
               </span>
             ) : (
               <button
@@ -950,7 +950,7 @@ const EmissionsMap = () => {
                     direction="top"
                     offset={[0, -10]}
                     opacity={0.98}
-                    className="custom-leaflet-tooltip"
+                    className="[background:rgba(255,_255,_255,_0.98)]! [backdrop-filter:blur(14px)]! [border:1px_solid_rgba(255,_102,_0,_0.4)]! [&&]:[border-radius:var(--radius-md)]! [box-shadow:var(--shadow-card)]! [padding:8px_12px]! [color:var(--color-ink-900)]! before:[border-top-color:rgba(255,_255,_255,_0.98)]!"
                   >
                     <div className="[display:flex]! [flex-direction:column] [gap:3px]">
                       <div className="[display:flex]! [align-items:center] [gap:8px]">
@@ -1041,7 +1041,7 @@ const EmissionsMap = () => {
                   onChange={(e) =>
                     setFilters({ ...filters, region: e.target.value })
                   }
-                  className="recon-select"
+                  className="[width:100%]! [background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:7px_10px]! [font-size:var(--text-sm)]! [color:var(--color-ink-900)]! [outline:none]! [cursor:pointer]! [transition:border-color_0.2s]! focus:[border-color:var(--color-brand-500)]! focus:[background:var(--color-white)]!"
                   id="filter-region-select"
                 >
                   <option value="all">All Regions</option>
@@ -1061,7 +1061,7 @@ const EmissionsMap = () => {
                   onChange={(e) =>
                     setFilters({ ...filters, year: e.target.value })
                   }
-                  className="recon-select"
+                  className="[width:100%]! [background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:7px_10px]! [font-size:var(--text-sm)]! [color:var(--color-ink-900)]! [outline:none]! [cursor:pointer]! [transition:border-color_0.2s]! focus:[border-color:var(--color-brand-500)]! focus:[background:var(--color-white)]!"
                   id="filter-year-select"
                 >
                   <option value="all">All Years</option>
@@ -1082,7 +1082,7 @@ const EmissionsMap = () => {
                 onChange={(e) =>
                   setFilters({ ...filters, activity: e.target.value })
                 }
-                className="recon-select"
+                className="[width:100%]! [background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:7px_10px]! [font-size:var(--text-sm)]! [color:var(--color-ink-900)]! [outline:none]! [cursor:pointer]! [transition:border-color_0.2s]! focus:[border-color:var(--color-brand-500)]! focus:[background:var(--color-white)]!"
                 id="filter-activity-select"
               >
                 <option value="all">All Activities</option>
@@ -1351,7 +1351,7 @@ const EmissionsMap = () => {
               </div>
               {loadingSatelliteData ? (
                 <div className="[display:flex]! [align-items:center] [gap:5px] [font-size:var(--text-xs)]! [color:var(--color-blue-700)]!">
-                  <RefreshCw size={12} className="spin-fast" color="#0284c7" />
+                  <RefreshCw size={12} className="[animation:spin_0.8s_linear_infinite]!" color="#0284c7" />
                   <span>STAC Query...</span>
                 </div>
               ) : (
@@ -1376,7 +1376,7 @@ const EmissionsMap = () => {
                 <div className="[display:grid]! [grid-template-columns:repeat(2,_1fr)] [gap:8px] [margin-bottom:10px]!">
                   <div className="[background:var(--color-white)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:8px_10px]! [display:flex]! [flex-direction:column] [gap:2px]">
                     <span className="[font-size:var(--text-xs)]! [font-weight:700]! [text-transform:uppercase]! [letter-spacing:0.05em] [color:var(--color-ink-500)]!">Mean CH₄ Column</span>
-                    <span className="box-val">
+                    <span className="[font-size:var(--text-md)]! [font-weight:800]! [color:var(--color-ink-900)]!">
                       {Number(
                         satelliteObservation.summary.mean_ch4_column_ppb || 0
                       ).toFixed(1)}{" "}
@@ -1387,10 +1387,10 @@ const EmissionsMap = () => {
                   <div className="[background:var(--color-white)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:8px_10px]! [display:flex]! [flex-direction:column] [gap:2px]">
                     <span className="[font-size:var(--text-xs)]! [font-weight:700]! [text-transform:uppercase]! [letter-spacing:0.05em] [color:var(--color-ink-500)]!">Max Anomaly (&Delta;CH₄)</span>
                     <span
-                      className={`box-val ${
+                      className={`[font-size:var(--text-md)]! [font-weight:800]! [color:var(--color-ink-900)]! ${
                         Number(satelliteObservation.summary.max_anomaly_ppb || 0) >= 25
-                          ? "alert-red"
-                          : "alert-amber"
+                          ? "[&&]:[color:var(--color-red-700)]!"
+                          : "[&&]:[&&]:[color:var(--color-amber-700)]!"
                       }`}
                     >
                       +
@@ -1403,7 +1403,7 @@ const EmissionsMap = () => {
 
                   <div className="[background:var(--color-white)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:8px_10px]! [display:flex]! [flex-direction:column] [gap:2px]">
                     <span className="[font-size:var(--text-xs)]! [font-weight:700]! [text-transform:uppercase]! [letter-spacing:0.05em] [color:var(--color-ink-500)]!">Inferred Emission Rate</span>
-                    <span className="box-val highlight-amber">
+                    <span className="[font-size:var(--text-md)]! [font-weight:800]! [color:var(--color-ink-900)]! [&&]:[color:var(--color-amber-700)]!">
                       {Number(
                         satelliteObservation.summary.estimated_emission_rate_kg_hr || 0
                       ) > 0
@@ -1417,7 +1417,7 @@ const EmissionsMap = () => {
 
                   <div className="[background:var(--color-white)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:8px_10px]! [display:flex]! [flex-direction:column] [gap:2px]">
                     <span className="[font-size:var(--text-xs)]! [font-weight:700]! [text-transform:uppercase]! [letter-spacing:0.05em] [color:var(--color-ink-500)]!">Annualized Satellite Flux</span>
-                    <span className="box-val">
+                    <span className="[font-size:var(--text-md)]! [font-weight:800]! [color:var(--color-ink-900)]!">
                       {Number(
                         satelliteObservation.summary.annualized_ch4_tonnes || 0
                       ) > 0

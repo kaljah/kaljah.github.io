@@ -29,11 +29,11 @@ const AuditTrailAuditTimeline = ({ auditLogs, expandedRows, formatDiffVal, forma
                     <div className="[display:flex]! [justify-content:space-between] [align-items:center]! [margin-bottom:10px]! [flex-wrap:wrap]! [gap:8px] [@media(max-width:768px)]:[flex-direction:column]! [@media(max-width:768px)]:[align-items:flex-start]!">
                       <div className="[display:flex]! [align-items:center] [gap:10px] [flex-wrap:wrap]">
                         <div className="[display:inline-flex]! [align-items:center] [gap:6px] [background:rgba(241,_245,_249,_0.9)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:3px_8px]!">
-                          <UserIcon size={12} className="badge-user-icon" />
+                          <UserIcon size={12} className="[color:var(--color-ink-500)]!" />
                           <span className="[font-size:var(--text-base)]! [font-weight:700]! [color:var(--color-ink-800)]!">{log.user}</span>
                         </div>
 
-                        <ArrowRight size={12} className="flow-arrow" />
+                        <ArrowRight size={12} className="[color:var(--color-ink-300)]!" />
 
                         <span
                           className="action-pill"
@@ -84,7 +84,7 @@ const AuditTrailAuditTimeline = ({ auditLogs, expandedRows, formatDiffVal, forma
                                   <span className="[color:var(--color-red-700)]! [background:#fee2e2]! [padding:2px_6px]! [border-radius:var(--radius-sm)]! [text-decoration:line-through]! [max-width:280px]! [overflow:hidden]! [text-overflow:ellipsis]! [white-space:nowrap]" title={formatDiffVal(before)}>
                                     {formatDiffVal(before)}
                                   </span>
-                                  <ArrowRight size={11} className="diff-arrow" />
+                                  <ArrowRight size={11} className="[color:var(--color-ink-600)]! [flex-shrink:0]!" />
                                   <span className="[color:var(--color-green-700)]! [background:#dcfce7]! [padding:2px_6px]! [border-radius:var(--radius-sm)]! [font-weight:600]! [max-width:280px]! [overflow:hidden]! [text-overflow:ellipsis]! [white-space:nowrap]" title={formatDiffVal(after)}>
                                     {formatDiffVal(after)}
                                   </span>

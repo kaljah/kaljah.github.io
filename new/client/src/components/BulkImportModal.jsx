@@ -1117,7 +1117,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
               />
 
               <div role="button" tabIndex={0} onKeyDown={activateOnKey}
-                className="template-download"
+                className="[display:flex]! [align-items:center] [gap:8px] [color:var(--color-green-700)]! [font-size:var(--text-base)]! [font-weight:500]! [padding:6px_12px]! [border:1px_dashed_var(--color-green-500)]! [&&]:[border-radius:var(--radius-sm)]! [background:rgba(16,_185,_129,_0.05)]! [transition:all_0.2s_ease]! [cursor:pointer] hover:[background:rgba(16,_185,_129,_0.1)]! hover:[transform:translateY(-1px)]"
                 onClick={(e) => {
                   e.stopPropagation();
                   downloadTemplate();
@@ -1264,7 +1264,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
               </span>
             </div>
 
-            <div className="import-actions">
+            <div className="[display:flex]! [justify-content:flex-end] [gap:12px] [margin-top:20px]!">
               <button
                 className="action-btn bg-[color:var(--text-secondary)]!"
                
@@ -1376,7 +1376,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                   )}
                 </div>
 
-                <div className="import-actions">
+                <div className="[display:flex]! [justify-content:flex-end] [gap:12px] [margin-top:20px]!">
                   <button
                     className="action-btn bg-[color:var(--text-secondary)]!"
                    

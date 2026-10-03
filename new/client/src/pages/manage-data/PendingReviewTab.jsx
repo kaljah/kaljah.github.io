@@ -395,7 +395,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
 
                                 {/* Main Content: Queue Empty vs Table Card */}
                                 {pendingMetrics.totalCount === 0 ? (
-                                    <div className="pending-empty-hero">
+                                    <div className="[background:var(--bg-card)]! [backdrop-filter:blur(10px)] [border:1px_solid_var(--border-color)]! [&&]:[border-radius:var(--radius-lg)]! [padding:64px_32px]! [text-align:center]! [box-shadow:var(--shadow-card)]! [display:flex]! [flex-direction:column] [align-items:center] [gap:16px] [max-width:600px]! [margin:20px_auto]!">
                                         <div className="pending-empty-glow-icon">
                                             <CheckCircle size={36} />
                                         </div>
@@ -409,7 +409,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                         </div>
                                     </div>
                                 ) : filteredPendingRecords.length === 0 ? (
-                                    <div className="pending-empty-hero p-[48px_24px]!">
+                                    <div className="[background:var(--bg-card)]! [backdrop-filter:blur(10px)] [border:1px_solid_var(--border-color)]! [&&]:[border-radius:var(--radius-lg)]! [text-align:center]! [box-shadow:var(--shadow-card)]! [display:flex]! [flex-direction:column] [align-items:center] [gap:16px] [max-width:600px]! [margin:20px_auto]! p-[48px_24px]!">
                                         <div className="pending-empty-glow-icon" style={{ background: 'rgba(148, 163, 184, 0.1)', color: 'var(--text-secondary)', borderColor: 'rgba(148, 163, 184, 0.3)' }}>
                                             <Filter size={32} />
                                         </div>

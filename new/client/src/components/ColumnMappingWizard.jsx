@@ -833,7 +833,7 @@ export default function ColumnMappingWizard({
 
         {/* Navigation Footer */}
         <div
-          className="cmw-footer"
+          className="[align-items:center] [flex-shrink:0] [gap:12px]"
           style={{
             borderTop: "1px solid var(--border-color)",
             padding: "16px 24px",
@@ -987,7 +987,7 @@ export default function ColumnMappingWizard({
 
         {/* Footer actions */}
         {step !== 4 && (
-          <div className="cmw-footer">
+          <div className="[display:flex]! [align-items:center] [justify-content:space-between] [padding:16px_28px_20px]! [border-top:1px_solid_var(--color-ink-100)]! [flex-shrink:0] [gap:12px]">
             <button
               className="cmw-btn-ghost"
               onClick={
@@ -1044,7 +1044,7 @@ function MappingRow({ field, headers, value, onChange }) {
       <div className="cmw-field-select">
         {headers.length > 0 ? (
           <NativeSelect
-            className={`cmw-select ${mapped ? "matched" : ""}`}
+            className={`[width:100%]! [padding:7px_10px]! [border:1.5px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [color:var(--color-ink-700)]! [background:var(--color-white)]! [outline:none]! [transition:all_0.15s]! [appearance:auto]! focus:[border-color:var(--color-blue-600)]! focus:[box-shadow:0_0_0_3px_rgba(37,_99,_235,_0.1)]! [&.matched]:[border-color:var(--color-green-600)]! [&.matched]:[background:#f0fdf4]! ${mapped ? "matched" : ""}`}
             value={value}
             onChange={(e) => onChange(e.target.value)}
           >

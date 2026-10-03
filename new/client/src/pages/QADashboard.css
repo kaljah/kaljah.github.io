@@ -23,56 +23,6 @@
   letter-spacing: -0.02em;
 }
 
-.qa-filter-select {
-  padding: 8px 14px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-color, var(--color-ink-200));
-  background: var(--color-white);
-  color: var(--text-primary, var(--color-ink-900));
-  font-size: var(--text-base);
-  font-weight: 500;
-  outline: none;
-  cursor: pointer;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  height: 38px;
-}
-
-.qa-filter-select:focus {
-  border-color: var(--accent-color, var(--color-brand-500));
-  box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.12);
-}
-
-.qa-btn-action {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  border-radius: var(--radius-md);
-  font-size: var(--text-base);
-  font-weight: 600;
-  cursor: pointer;
-  height: 38px;
-  transition: all 0.2s ease;
-  border: none;
-  white-space: nowrap;
-}
-
-.qa-btn-secondary {
-  background: var(--color-white);
-  color: var(--text-primary, var(--color-ink-900));
-  border: 1px solid var(--border-color, var(--color-ink-200));
-}
-
-.qa-btn-secondary:hover:not(:disabled) {
-  background: var(--bg-hover, var(--color-ink-50));
-  border-color: var(--color-ink-300);
-}
-
-.qa-btn-action:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
 /* ── Top Executive KPI Grid ──────────────────────────────────────── */
 
 .qa-kpi-icon-wrap {
@@ -84,13 +34,6 @@
   justify-content: center;
   background: rgba(241, 245, 249, 0.8);
   color: var(--text-secondary, var(--color-ink-500));
-}
-
-.qa-kpi-value {
-  font-size: var(--text-2xl);
-  font-weight: 700;
-  color: var(--text-primary, var(--color-ink-900));
-  line-height: 1;
 }
 
 /* ── Navigation Tabs ─────────────────────────────────────────────── */
@@ -166,28 +109,6 @@
   border: 1px solid transparent;
 }
 
-.qa-btn-approve {
-  background: rgba(16, 185, 129, 0.1);
-  color: var(--color-green-700);
-  border-color: rgba(16, 185, 129, 0.25);
-}
-
-.qa-btn-approve:hover {
-  background: var(--color-green-700);
-  color: var(--color-white);
-}
-
-.qa-btn-reject {
-  background: rgba(239, 68, 68, 0.1);
-  color: var(--color-red-700);
-  border-color: rgba(239, 68, 68, 0.25);
-}
-
-.qa-btn-reject:hover {
-  background: var(--color-red-700);
-  color: var(--color-white);
-}
-
 /* ── Tab 2: Health & Completeness Diagnostics ────────────────────── */
 
 /* Issues Cards Grid */
@@ -202,28 +123,6 @@
   gap: 10px;
   background: var(--color-white);
   box-shadow: var(--shadow-xs);
-}
-
-.qa-btn-inspect {
-  border: 1px solid var(--color-ink-300);
-  background: var(--color-white);
-  color: var(--color-ink-600);
-  font-size: var(--text-sm);
-  height: 34px;
-  padding: 0 12px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: all 0.15s ease;
-  font-weight: 500;
-}
-
-.qa-btn-inspect:hover {
-  background: var(--color-ink-50);
-  color: var(--color-ink-900);
-  border-color: var(--color-ink-400);
 }
 
 .qa-samples-table {
@@ -315,8 +214,4 @@
   to {
     transform: rotate(360deg);
   }
-}
-
-.spin-icon {
-  animation: spin 0.8s linear infinite;
 }

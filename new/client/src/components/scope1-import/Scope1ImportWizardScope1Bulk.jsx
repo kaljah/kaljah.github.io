@@ -251,7 +251,7 @@ const Scope1ImportWizardScope1Bulk = ({ FIELD_GROUPS, FieldGroup, Icon, ModeCard
             {/* Factor selector */}
             <div className="[display:flex]! [align-items:center] [gap:12px] [flex-wrap:wrap]">
               <label className="[font-size:var(--text-sm)]! [color:var(--color-ink-600)]! [font-weight:500]! [flex-shrink:0]">Default factor when not specified in file:</label>
-              <NativeSelect className="s1w-factor-select" value={globalFactor} onChange={e => setGlobalFactor(e.target.value)}>
+              <NativeSelect className="[flex:1]! [min-width:200px]! [padding:8px_12px]! [border:1.5px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [background:var(--color-ink-50)]! [font-size:var(--text-sm)]! [color:var(--color-ink-900)]! [outline:none]! [cursor:pointer]! [font-family:inherit]! [transition:border-color_0.15s]! focus:[border-color:var(--color-brand-500)]!" value={globalFactor} onChange={e => setGlobalFactor(e.target.value)}>
                 <option value="auto">Auto-detect from file</option>
                 <option value="default">Force Standard (API Compendium)</option>
                 <option value="custom">Force Custom Factors</option>
@@ -259,7 +259,7 @@ const Scope1ImportWizardScope1Bulk = ({ FIELD_GROUPS, FieldGroup, Icon, ModeCard
               </NativeSelect>
             </div>
 
-            <label className="[display:flex]! [align-items:center] [gap:12px] [flex-wrap:wrap] gap-[8px]! cursor-pointer!">
+            <label className="[display:flex]! [align-items:center] [flex-wrap:wrap] gap-[8px]! cursor-pointer!">
               <input type="checkbox" checked={overwrite} onChange={e => setOverwrite(e.target.checked)} />
               <span className="[font-size:var(--text-sm)]! [color:var(--color-ink-600)]! [font-weight:500]! [flex-shrink:0]">
                 Overwrite records that already exist (same facility, month and source). Overwritten records go back to Pending review.

@@ -513,7 +513,7 @@ const AuditTrail = () => {
               }}
               disabled={isRefreshing}
             >
-              <RefreshCw size={15} className={isRefreshing ? "spin-animate" : ""} />
+              <RefreshCw size={15} className={isRefreshing ? "[animation:spin_1s_linear_infinite]!" : ""} />
               <span>Refresh</span>
             </button>
 
@@ -531,14 +531,14 @@ const AuditTrail = () => {
               {exportDropdownOpen && (
                 <div className="[position:absolute] [right:0] [top:calc(100%_+_8px)] [width:260px]! [background:var(--color-white)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-md)]! [padding:8px]! [box-shadow:var(--shadow-raised)]! [z-index:50] [animation:fadeIn_0.15s_ease-out]! [&_button]:[display:flex]! [&_button]:[align-items:flex-start] [&_button]:[gap:12px] [&_button]:[width:100%]! [&_button]:[padding:10px_12px]! [&_button]:[background:transparent]! [&_button]:[border:none]! [&_button]:[&&]:[border-radius:var(--radius-md)]! [&_button]:[text-align:left]! [&_button]:[cursor:pointer] [&_button]:[transition:all_0.15s_ease]! [&&]:[&_button:hover]:[background:var(--color-ink-50)]!">
                   <button onClick={() => handleExport("csv")}>
-                    <FileSpreadsheet size={15} className="export-icon csv-icon" />
+                    <FileSpreadsheet size={15} className="[margin-top:2px]! [flex-shrink:0]! [color:var(--color-green-700)]!" />
                     <div className="export-text">
                       <strong>CSV Spreadsheet</strong>
                       <span>Compliant with audit tools &amp; Excel</span>
                     </div>
                   </button>
                   <button onClick={() => handleExport("json")}>
-                    <FileText size={15} className="export-icon json-icon" />
+                    <FileText size={15} className="[margin-top:2px]! [flex-shrink:0]! [color:var(--color-violet-700)]!" />
                     <div className="export-text">
                       <strong>JSON Structured Data</strong>
                       <span>Full metadata &amp; field diffs</span>

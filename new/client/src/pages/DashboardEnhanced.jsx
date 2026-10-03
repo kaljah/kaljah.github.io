@@ -950,7 +950,7 @@ const DashboardEnhanced = () => {
         <div className="charts-section [display:grid]! [grid-template-columns:2fr_1fr]! [gap:24px]! [@media(max-width:1024px)]:[grid-template-columns:1fr]! [@media(max-width:1200px)]:[grid-template-columns:1fr]! [@media(max-width:1200px)]:[gap:20px]!">
           {/* Trend Chart */}
           <div className="card [border-radius:var(--radius-lg)]! [padding:24px]! [display:flex]! [flex-direction:column] [min-width:0] [background:var(--bg-card)]! [backdrop-filter:blur(14px)]! [border:1px_solid_var(--border-color)]! [box-shadow:var(--shadow-card)]! [transition:transform_0.22s_ease,_box-shadow_0.22s_ease,_border-color_0.22s_ease]! hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated)]! hover:[border-color:rgba(255,_255,_255,_0.95)]! [@media_print]:[box-shadow:none]! [@media_print]:[border:1px_solid_var(--color-ink-300)]! [@media_print]:[background:var(--color-white)]! [@media_print]:[page-break-inside:avoid]! [@media_print]:[margin-bottom:24px]! [@media(max-width:768px)]:[padding:16px]! [@media(max-width:768px)]:[border-radius:var(--radius-lg)]! glass-panel">
-            <div className="card-header-row">
+            <div className="[display:flex]! [justify-content:space-between] [align-items:center]! [margin-bottom:24px]! [@media(max-width:768px)]:[flex-direction:column] [@media(max-width:768px)]:[align-items:flex-start]! [@media(max-width:768px)]:[gap:12px]">
               <div>
                 <h3 className="card-title">Emissions Trend & Projection</h3>
                 <p className="m-[0px]! text-[color:var(--text-secondary)]! text-[length:0.85rem]!">
@@ -1063,7 +1063,7 @@ const DashboardEnhanced = () => {
         {/* SBTi Trajectory Pathway - Full Width Banner */}
         {sbtiData && sbtiData.trajectory && sbtiData.trajectory.length > 0 && (
           <div className="card full-width-card glass-panel p-[24px]! rounded-[20px]!">
-            <div className="card-header-row mb-[16px]!">
+            <div className="[display:flex]! [justify-content:space-between] [align-items:center]! [@media(max-width:768px)]:[flex-direction:column] [@media(max-width:768px)]:[align-items:flex-start]! [@media(max-width:768px)]:[gap:12px] mb-[16px]!">
               <div>
                 <h3 className="card-subtitle text-[length:1.15rem]! font-bold!">
                   {sbtiData.pathway_label || "Decarbonization Trajectory"}
@@ -1130,7 +1130,7 @@ const DashboardEnhanced = () => {
           className={`card [padding:24px]! [background:var(--bg-card)]! [backdrop-filter:blur(14px)]! [border:1px_solid_var(--border-color)]! [&&]:[border-radius:var(--radius-lg)]! [box-shadow:var(--shadow-card)]! [@media_print]:[box-shadow:none]! [@media_print]:[border:1px_solid_var(--color-ink-300)]! [@media_print]:[background:var(--color-white)]! [@media_print]:[page-break-inside:avoid]! [@media_print]:[margin-bottom:24px]! glass-panel ${categoricalCollapsed ? "collapsed-card" : ""}`}
         >
           <div role="button" tabIndex={0} onKeyDown={activateOnKey}
-            className="card-header-row clickable-card-header [transition:opacity_0.2s_ease]! hover:[opacity:0.85]"
+            className="[display:flex]! [justify-content:space-between] [align-items:center]! [@media(max-width:768px)]:[flex-direction:column] [@media(max-width:768px)]:[align-items:flex-start]! [@media(max-width:768px)]:[gap:12px] clickable-card-header [transition:opacity_0.2s_ease]! hover:[opacity:0.85]"
             onClick={() => setCategoricalCollapsed(!categoricalCollapsed)}
             style={{
               cursor: "pointer",
@@ -1146,7 +1146,7 @@ const DashboardEnhanced = () => {
               </div>
             </div>
             <div
-              className="collapse-toggle-icon flex! items-center! text-[color:#64748b]!"
+              className=" flex! items-center! text-[color:#64748b]!"
              
             >
               {categoricalCollapsed ? (

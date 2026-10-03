@@ -12,15 +12,6 @@
 }
 
 /* ─── Typography & Shared ─────────────────────────────────────────────────── */
-.up-label {
-  font-size: var(--text-md);
-  font-weight: 600;
-  margin: 0 0 4px 0;
-  color: var(--color-ink-900);
-}
-.up-label--error {
-  color: var(--color-red-700);
-}
 
 /* ─── Processing State ────────────────────────────────────────────────────── */
 @keyframes up-spin {
@@ -61,14 +52,6 @@
 .up-card-icon svg {
   width: 24px;
   height: 24px;
-}
-.up-card--warn .up-card-icon {
-  background: #fef3c7;
-  color: var(--color-amber-700);
-}
-.up-card--neutral .up-card-icon {
-  background: var(--color-brand-50);
-  color: var(--color-link);
 }
 
 /* ─── Skipped Reasons Panel ───────────────────────────────────────────────── */
@@ -156,32 +139,11 @@
 .up-reasons-table tr:last-child td {
   border-bottom: none;
 }
-.up-td-year {
-  font-family: monospace;
-  font-weight: 600;
-  color: var(--color-ink-700);
-  width: 52px;
-  text-align: center;
-}
-.up-td-month {
-  font-family: monospace;
-  font-weight: 600;
-  color: var(--color-ink-700);
-  width: 52px;
-  text-align: center;
-}
 .up-td-reason {
   font-weight: 500;
   color: var(--color-red-700);
   max-width: 250px;
   line-height: 1.4;
-}
-.up-td-meta {
-  color: var(--color-ink-500);
-  max-width: 120px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 /* ─── Tags ────────────────────────────────────────────────────────────────── */

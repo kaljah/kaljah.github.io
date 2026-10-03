@@ -26,7 +26,7 @@ export const MoreOptions = ({ label = "More options", defaultOpen = false, child
   return (
     <div className={`[margin-top:16px]! [&.open_.s1-more-chevron]:[transform:rotate(0deg)]! ${open ? "open" : ""}`}>
       <button type="button" className="[display:inline-flex]! [align-items:center] [gap:6px] [background:none]! [border:none]! [padding:4px_0]! [font-size:var(--text-sm)]! [font-weight:600]! [color:var(--s1-muted)]! [cursor:pointer] hover:[color:var(--s1-ink)]!" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
-        <ChevronDown size={16} className="s1-more-chevron" />
+        <ChevronDown size={16} className="s1-more-chevron [transition:transform_0.15s_ease]! [transform:rotate(-90deg)]!" />
         {label}
       </button>
       {open && <div className="[margin-top:12px]! [padding:16px]! [background:var(--s1-soft)]! [border:1px_solid_var(--s1-line)]! [&&]:[border-radius:var(--radius-md)]!">{children}</div>}

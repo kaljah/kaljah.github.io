@@ -549,7 +549,7 @@ const Reports = () => {
           />
 
           {/* NEW: Create Report Card (Matches Legacy UI) */}
-          <div className="create-report-card mb-[24px]!">
+          <div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.78))]! [backdrop-filter:blur(14px)] [border-radius:var(--radius-lg)]! [padding:28px]! [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))]! [box-shadow:var(--shadow-card)]! [position:relative] [overflow:hidden]! [transition:transform_0.22s_ease,_box-shadow_0.22s_ease]! hover:[border-color:rgba(255,_255,_255,_0.95)]! before:[content:''] before:[position:absolute] before:[top:0] before:[left:0] before:[width:4px]! before:[height:100%]! before:[background:var(--accent-gradient,_linear-gradient(135deg,_var(--accent-color)_0%,_#ff8a4d_100%))]! mb-[24px]!">
             <div className="[display:flex]! [align-items:center] [gap:12px] [margin-bottom:20px]!">
               <div className="[background:rgba(255,_102,_0,_0.1)]! [padding:10px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [color:var(--color-link)]!">
                 <svg
@@ -571,7 +571,7 @@ const Reports = () => {
               <h3 className="card-title">Create New Report</h3>
             </div>
 
-            <div className="[display:grid]! [grid-template-columns:repeat(auto-fit,_minmax(200px,_1fr))] [gap:20px] [align-items:end]" style={{ alignItems: "end" }}>
+            <div className="[display:grid]! [grid-template-columns:repeat(auto-fit,_minmax(200px,_1fr))] [gap:20px]" style={{ alignItems: "end" }}>
               <div className="[display:flex]! [flex-direction:column] [gap:6px] [width:100%]!">
                 <label className="[display:block]! [font-size:var(--text-base)]! [font-weight:600]! [color:var(--text-secondary)]! [margin-bottom:8px]!">
                   Reporting Year{" "}
@@ -647,7 +647,7 @@ const Reports = () => {
               </div>
 
               <button
-                className="[background:linear-gradient(135deg,_var(--accent-color)_0%,_#ff8a4d_100%)]! [color:white]! [padding:12px_28px]! [border-radius:var(--radius-md)]! [font-weight:600]! [border:none]! [cursor:pointer] [display:flex]! [align-items:center] [justify-content:center] [gap:10px] [height:45px]! [transition:all_0.2s]! [width:100%]! hover:[box-shadow:0_4px_15px_rgba(255,_102,_0,_0.3)]! hover:[transform:translateY(-1px)]"
+                className="[background:linear-gradient(135deg,_var(--accent-color)_0%,_#ff8a4d_100%)]! [color:white]! [padding:12px_28px]! [border-radius:var(--radius-md)]! [font-weight:600]! [border:none]! [display:flex]! [align-items:center] [justify-content:center] [gap:10px] [height:45px]! [transition:all_0.2s]! [width:100%]! hover:[box-shadow:0_4px_15px_rgba(255,_102,_0,_0.3)]! hover:[transform:translateY(-1px)]"
                 onClick={openConfigModal}
                 disabled={loading}
                 style={{
@@ -703,7 +703,7 @@ const Reports = () => {
           </div>
 
           {/* Filter Card */}
-          <div className="create-report-card">
+          <div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.78))]! [backdrop-filter:blur(14px)] [border-radius:var(--radius-lg)]! [padding:28px]! [margin-bottom:32px]! [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))]! [box-shadow:var(--shadow-card)]! [position:relative] [overflow:hidden]! [transition:transform_0.22s_ease,_box-shadow_0.22s_ease]! hover:[border-color:rgba(255,_255,_255,_0.95)]! before:[content:''] before:[position:absolute] before:[top:0] before:[left:0] before:[width:4px]! before:[height:100%]! before:[background:var(--accent-gradient,_linear-gradient(135deg,_var(--accent-color)_0%,_#ff8a4d_100%))]!">
             <div className="[display:flex]! [align-items:center] [gap:12px] [margin-bottom:20px]!">
               <div className="[background:rgba(255,_102,_0,_0.1)]! [padding:10px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [color:var(--color-link)]!">
                 <svg

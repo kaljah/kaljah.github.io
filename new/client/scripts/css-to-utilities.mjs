@@ -179,7 +179,7 @@ for (const [name, list] of Object.entries(occ)) {
       if (!u) ok = false;
       else {
         const bp = baseProp(d.prop);
-        entries.push({ prefix: o.prefix, prop: d.prop, bp, base: u, important: Boolean(d.important), elementBang: elementProps.has(bp), generic: o.generic, selector: o.selector });
+        entries.push({ prefix: o.prefix, prop: d.prop, bp, base: u, important: Boolean(d.important), elementBang: elementProps.has(bp), generic: o.generic, selector: o.selector, file: o.file, line: o.rule.source.start.line });
       }
     }
   }
@@ -289,7 +289,7 @@ for (const [name, e] of Object.entries(eligible)) {
 }
 const cssDefined = new Set([...Object.keys(leadTotal), ...pinned]);
 
-// Base CSS properties set by the element's inline style (a Set), or "all" when they cannot be known statically.
+// CSS properties (kebab-case) set by the element's inline style (a Set), or "all" when they cannot be known statically.
 const inlineStyleProps = (opening) => {
   const attr = opening?.attributes?.find((a) => a.type === "JSXAttribute" && a.name.name === "style");
   if (!attr) return new Set();
@@ -299,7 +299,7 @@ const inlineStyleProps = (opening) => {
   for (const prop of ex.properties) {
     if (prop.type !== "ObjectProperty" || prop.computed) return "all";
     const key = prop.key.name || prop.key.value;
-    set.add(baseProp(key.replace(/[A-Z]/g, (c) => "-" + c.toLowerCase())));
+    set.add(key.replace(/[A-Z]/g, (c) => "-" + c.toLowerCase()));
   }
   return set;
 };
@@ -415,6 +415,65 @@ const twProps = (token) => {
   if (/^text-/.test(t) && !out.size) out.add("color");
   return out;
 };
+// Exact CSS properties a plain, variant-free Tailwind class (or `[prop:value]` class) sets; null when unknown.
+const EXACT_RULES = [
+  [/^-?m-/, ["margin"]],
+  [/^-?m[xe]-/, ["margin-left", "margin-right"]],
+  [/^-?my-/, ["margin-top", "margin-bottom"]],
+  [/^-?mt-/, ["margin-top"]],
+  [/^-?mb-/, ["margin-bottom"]],
+  [/^-?ml-/, ["margin-left"]],
+  [/^-?mr-/, ["margin-right"]],
+  [/^p-/, ["padding"]],
+  [/^px-/, ["padding-left", "padding-right"]],
+  [/^py-/, ["padding-top", "padding-bottom"]],
+  [/^pt-/, ["padding-top"]],
+  [/^pb-/, ["padding-bottom"]],
+  [/^pl-/, ["padding-left"]],
+  [/^pr-/, ["padding-right"]],
+  [/^gap-x-/, ["column-gap"]],
+  [/^gap-y-/, ["row-gap"]],
+  [/^gap-/, ["gap"]],
+  [/^w-/, ["width"]],
+  [/^min-w-/, ["min-width"]],
+  [/^max-w-/, ["max-width"]],
+  [/^h-/, ["height"]],
+  [/^min-h-/, ["min-height"]],
+  [/^max-h-/, ["max-height"]],
+  [/^text-\[length:/, ["font-size"]],
+  [/^text-(xs|sm|base|md|lg|xl|[2-9]xl)$/, ["font-size"]],
+  [/^text-(left|center|right|justify|start|end)$/, ["text-align"]],
+  [/^text-\[color:/, ["color"]],
+  [/^font-(thin|light|normal|medium|semibold|bold|extrabold|black)$/, ["font-weight"]],
+  [/^font-(mono|sans|serif)$/, ["font-family"]],
+  [/^leading-/, ["line-height"]],
+  [/^tracking-/, ["letter-spacing"]],
+  [/^bg-\[color:/, ["background-color"]],
+  [/^rounded/, ["border-radius"]],
+  [/^(flex|inline-flex)$/, ["display"]],
+  [/^(grid|inline-grid|block|inline-block|inline|hidden|contents|table)$/, ["display"]],
+  [/^flex-(col|row)/, ["flex-direction"]],
+  [/^flex-(wrap|nowrap)/, ["flex-wrap"]],
+  [/^items-/, ["align-items"]],
+  [/^justify-/, ["justify-content"]],
+  [/^opacity-/, ["opacity"]],
+  [/^(relative|absolute|fixed|sticky)$/, ["position"]],
+  [/^cursor-/, ["cursor"]],
+  [/^whitespace-/, ["white-space"]],
+];
+const exactProps = (token) => {
+  const body = token.replace(/!$/, "");
+  const arb = body.match(/^\[([a-z-]+):/);
+  if (arb) return [arb[1]];
+  for (const [re, props] of EXACT_RULES) if (re.test(body)) return props;
+  return null;
+};
+// A declared property covers another when equal or when it is the shorthand ancestor (padding covers padding-left).
+const covers = (declared, target) =>
+  declared === target ||
+  (target.startsWith(`${declared}-`) && !(declared === "border" && target === "border-radius") && !(declared === "flex" && /^flex-(direction|wrap|flow)$/.test(target)));
+const hasVariant = (token) => /^(?:[a-z0-9-]+:|\[[^\]]*\]:)/.test(token.replace(/^!/, ""));
+
 const cssClassList = Object.keys(propsOf);
 const conflictWhy = {};
 const addConflict = (conflicts, t, why) => {
@@ -452,33 +511,62 @@ const planEdits = (active) => {
       for (const o of others) propsOf[o]?.forEach((pp) => cssOtherProps.add(pp));
       const nativeNormal = new Set();
       const nativeImportant = new Set();
+      const shadowing = new Set(); // exact props set by important, variant-free natives: they beat any class rule
       for (const t of g.tokens) {
         if (active[t] || cssDefined.has(t)) continue;
         const imp = t.endsWith("!") || t.startsWith("!");
         twProps(t).forEach((pp) => (imp ? nativeImportant : nativeNormal).add(pp));
+        if (imp && !hasVariant(t)) exactProps(t.replace(/^!/, ""))?.forEach((pp) => shadowing.add(pp));
       }
-      const seenKeys = new Map();
+      const inlineSet = g.inline === "all" ? null : g.inline;
+      const isShadowed = (prop) =>
+        [...shadowing].some((pp) => covers(pp, prop)) || (inlineSet ? [...inlineSet].some((pp) => covers(pp, prop)) : false);
+      const isComponent = typeof g.tag === "string" && /^[A-Z]/.test(g.tag);
+      // Order between converted classes that set the same property: the later rule won, so it gets more specificity.
+      const owners = new Map();
+      for (const t of g.tokens) {
+        const e = active[t];
+        if (!e) continue;
+        for (const en of e.entries) {
+          if (isShadowed(en.prop)) continue;
+          const key = en.prefix + en.bp;
+          const list = owners.get(key) ?? owners.set(key, []).get(key);
+          if (!list.some((x) => x.t === t)) list.push({ t, file: en.file, line: en.line });
+        }
+      }
+      const levelOf = new Map();
+      for (const [key, list] of owners) {
+        if (list.length < 2) continue;
+        if (new Set(list.map((x) => x.file)).size > 1) {
+          for (const x of list) addConflict(conflicts, x.t, "two-classes-same-prop-across-files");
+          continue;
+        }
+        list.sort((a, b) => a.line - b.line).forEach((x, i) => levelOf.set(`${x.t}\u0000${key}`, i));
+      }
       const rendered = new Map();
       for (const t of g.tokens) {
         const e = active[t];
         if (!e) continue;
         if (g.unknown) addConflict(conflicts, t, "unknown-dynamic-classes");
-        if (typeof g.tag === "string" && /^[A-Z]/.test(g.tag)) addConflict(conflicts, t, "component-tag");
         // One decision per property: when any rule of the class for it must be important, all of them are,
         // otherwise a state variant (`.active`) could not override its own base declaration.
         const need = {};
         const forbid = {};
-        for (const en of e.entries) {
-          const n = en.generic
-            ? en.fixedBang
-            : en.important || en.elementBang || en.media || cssOtherProps.has(en.bp) || nativeNormal.has(en.bp);
+        const live = e.entries.filter((en) => en.generic || !isShadowed(en.prop));
+        for (const en of live) {
+          const n = isComponent
+            ? true
+            : en.generic
+              ? en.fixedBang
+              : en.important || en.elementBang || en.media || cssOtherProps.has(en.bp) || nativeNormal.has(en.bp);
           need[en.bp] = need[en.bp] || n;
-          if (!en.generic) forbid[en.bp] = nativeImportant.has(en.bp) || g.inline === "all" || Boolean(g.inline?.has(en.bp));
+          if (!en.generic) forbid[en.bp] = nativeImportant.has(en.bp) || g.inline === "all" || Boolean(inlineSet && [...inlineSet].some((pp) => pp.split("-")[0] === en.bp));
         }
         const parts = [];
-        for (const en of e.entries) {
+        for (const en of live) {
           if (need[en.bp] && forbid[en.bp]) addConflict(conflicts, t, "needs-important-but-blocked");
-          parts.push(en.pre + en.base + (need[en.bp] ? "!" : ""));
+          const level = levelOf.get(`${t}\u0000${en.prefix + en.bp}`) ?? 0;
+          parts.push("[&&]:".repeat(level) + en.pre + en.base + (need[en.bp] ? "!" : ""));
         }
         rendered.set(t, parts.join(" "));
       }
@@ -492,13 +580,6 @@ const planEdits = (active) => {
           // first/last token of a template quasi may continue into a ${...} placeholder
           if (s.dynamic && ((i === 0 && !s.first && !/^\s/.test(text)) || (i === tokens.length - 1 && !s.last && !/\s$/.test(text)))) return t;
           if (rendered.get(t).includes("'") && code[s.start - 1] === "'") return t;
-          for (const k of e.keys) {
-            if (seenKeys.has(k) && seenKeys.get(k) !== t) {
-              addConflict(conflicts, t, "two-classes-same-prop");
-              addConflict(conflicts, seenKeys.get(k), "two-classes-same-prop");
-            }
-            seenKeys.set(k, t);
-          }
           changed = true;
           replaced[t] = (replaced[t] || 0) + 1;
           return pinned.has(t) ? `${t} ${rendered.get(t)}` : rendered.get(t);

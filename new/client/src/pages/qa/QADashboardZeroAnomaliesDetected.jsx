@@ -71,7 +71,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                         {selectedIds.size} record{selectedIds.size > 1 ? 's' : ''} selected
                                     </span>
                                     <button
-                                        className="qa-btn-inline qa-btn-approve p-[6px_12px]! text-[length:0.8rem]!"
+                                        className="qa-btn-inline [background:rgba(16,_185,_129,_0.1)]! [color:var(--color-green-700)]! [border-color:rgba(16,_185,_129,_0.25)]! hover:[background:var(--color-green-700)]! hover:[color:var(--color-white)]! p-[6px_12px]! text-[length:0.8rem]!"
                                        
                                         onClick={() => handleBulkResolve('Verified')}
                                         disabled={resolving}
@@ -80,7 +80,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                         {resolving ? '…' : 'Approve Selected'}
                                     </button>
                                     <button
-                                        className="qa-btn-inline qa-btn-reject p-[6px_12px]! text-[length:0.8rem]!"
+                                        className="qa-btn-inline [background:rgba(239,_68,_68,_0.1)]! [color:var(--color-red-700)]! [border-color:rgba(239,_68,_68,_0.25)]! hover:[background:var(--color-red-700)]! hover:[color:var(--color-white)]! p-[6px_12px]! text-[length:0.8rem]!"
                                        
                                         onClick={() => handleBulkResolve('Rejected')}
                                         disabled={resolving}
@@ -141,7 +141,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                             No flagged records match your current search query "{searchQuery}" or status filter "{statusFilter}".
                                         </p>
                                         <button
-                                            className="qa-btn-action qa-btn-secondary"
+                                            className="[display:inline-flex]! [align-items:center] [gap:6px] [padding:8px_16px]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [height:38px]! [transition:all_0.2s_ease]! [border:none]! [white-space:nowrap] disabled:[opacity:0.6] disabled:[cursor:not-allowed] [background:var(--color-white)]! [color:var(--text-primary,_var(--color-ink-900))]! [&&]:[border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&:hover:not(:disabled)]:[background:var(--bg-hover,_var(--color-ink-50))]! [&:hover:not(:disabled)]:[border-color:var(--color-ink-300)]!"
                                             onClick={() => { setSearchQuery(''); setStatusFilter('all'); setOffset(0); }}
                                         >
                                             Clear Filters
@@ -227,7 +227,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                                         <td className="qa-td text-right!">
                                                             <div className="inline-flex! gap-[6px]!">
                                                                 <button
-                                                                    className="qa-btn-inline qa-btn-approve"
+                                                                    className="qa-btn-inline [background:rgba(16,_185,_129,_0.1)]! [color:var(--color-green-700)]! [border-color:rgba(16,_185,_129,_0.25)]! hover:[background:var(--color-green-700)]! hover:[color:var(--color-white)]!"
                                                                     onClick={() => handleSingleResolve(record.scope, record.id, 'Verified')}
                                                                     disabled={resolving}
                                                                     title="Approve / Mark Verified"
@@ -235,7 +235,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                                                     <Check size={13} />
                                                                 </button>
                                                                 <button
-                                                                    className="qa-btn-inline qa-btn-reject"
+                                                                    className="qa-btn-inline [background:rgba(239,_68,_68,_0.1)]! [color:var(--color-red-700)]! [border-color:rgba(239,_68,_68,_0.25)]! hover:[background:var(--color-red-700)]! hover:[color:var(--color-white)]!"
                                                                     onClick={() => handleSingleResolve(record.scope, record.id, 'Rejected')}
                                                                     disabled={resolving}
                                                                     title="Reject / Outlier"
@@ -265,7 +265,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                         </span>
                                         <div className="flex! gap-[6px]! items-center!">
                                             <button
-                                                className="qa-btn-action qa-btn-secondary h-[32px]! p-[0_10px]!"
+                                                className="[display:inline-flex]! [align-items:center] [gap:6px] [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [transition:all_0.2s_ease]! [border:none]! [white-space:nowrap] disabled:[opacity:0.6] disabled:[cursor:not-allowed] [background:var(--color-white)]! [color:var(--text-primary,_var(--color-ink-900))]! [&&]:[border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&:hover:not(:disabled)]:[background:var(--bg-hover,_var(--color-ink-50))]! [&:hover:not(:disabled)]:[border-color:var(--color-ink-300)]! h-[32px]! p-[0_10px]!"
                                                
                                                 onClick={() => setOffset(Math.max(0, offset - PAGE_SIZE))}
                                                 disabled={offset === 0}
@@ -276,7 +276,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                                 Page {currentPage} / {totalPages}
                                             </span>
                                             <button
-                                                className="qa-btn-action qa-btn-secondary h-[32px]! p-[0_10px]!"
+                                                className="[display:inline-flex]! [align-items:center] [gap:6px] [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [transition:all_0.2s_ease]! [border:none]! [white-space:nowrap] disabled:[opacity:0.6] disabled:[cursor:not-allowed] [background:var(--color-white)]! [color:var(--text-primary,_var(--color-ink-900))]! [&&]:[border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&:hover:not(:disabled)]:[background:var(--bg-hover,_var(--color-ink-50))]! [&:hover:not(:disabled)]:[border-color:var(--color-ink-300)]! h-[32px]! p-[0_10px]!"
                                                
                                                 onClick={() => setOffset(offset + PAGE_SIZE)}
                                                 disabled={offset + PAGE_SIZE >= total_flagged_count}

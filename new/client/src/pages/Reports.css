@@ -2,52 +2,7 @@
 
 /* Header Area */
 
-.btn-action {
-  padding: 10px 20px;
-  border-radius: var(--radius-md);
-  font-weight: 600;
-  font-size: var(--text-base);
-  cursor: pointer;
-  border: 1px solid transparent;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  box-shadow: var(--shadow-xs);
-}
-
-.btn-action:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-card);
-}
-
 /* Create New Report Card */
-.create-report-card {
-  background: var(--bg-card, rgba(255, 255, 255, 0.78));
-  backdrop-filter: blur(14px);
-  border-radius: var(--radius-lg);
-  padding: 28px;
-  margin-bottom: 32px;
-  border: 1px solid var(--border-color, rgba(226, 232, 240, 0.8));
-  box-shadow: var(--shadow-card);
-  position: relative;
-  overflow: hidden;
-  transition: transform 0.22s ease, box-shadow 0.22s ease;
-}
-
-.create-report-card:hover {
-  border-color: rgba(255, 255, 255, 0.95);
-}
-
-.create-report-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 4px;
-  height: 100%;
-  background: var(--accent-gradient, linear-gradient(135deg, var(--accent-color) 0%, #ff8a4d 100%));
-}
 
 .card-title {
   font-size: var(--text-lg);

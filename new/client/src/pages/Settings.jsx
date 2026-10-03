@@ -338,7 +338,7 @@ const Settings = () => {
             onClick={() => setActiveTab("gwp")}
             id="tab-gwp"
           >
-            <Globe size={17} className="tab-icon-svg" />
+            <Globe size={17} className="[flex-shrink:0]!" />
             <span>IPCC GWP Standards</span>
           </button>
           <button
@@ -348,7 +348,7 @@ const Settings = () => {
             onClick={() => setActiveTab("ogmp")}
             id="tab-ogmp"
           >
-            <Target size={17} className="tab-icon-svg" />
+            <Target size={17} className="[flex-shrink:0]!" />
             <span>OGMP 2.0 Baseline & Thresholds</span>
           </button>
           <button
@@ -358,7 +358,7 @@ const Settings = () => {
             onClick={() => setActiveTab("facilities")}
             id="tab-facilities"
           >
-            <Building2 size={17} className="tab-icon-svg" />
+            <Building2 size={17} className="[flex-shrink:0]!" />
             <span>Facility Overrides ({facilities.length})</span>
           </button>
           <button
@@ -368,7 +368,7 @@ const Settings = () => {
             onClick={() => setActiveTab("satellite")}
             id="tab-satellite"
           >
-            <Satellite size={17} className="tab-icon-svg" />
+            <Satellite size={17} className="[flex-shrink:0]!" />
             <span>Copernicus Satellite (S5P)</span>
           </button>
         </div>

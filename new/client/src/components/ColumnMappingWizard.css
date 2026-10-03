@@ -168,27 +168,6 @@
   margin-bottom: 8px;
 }
 
-.cmw-select {
-  width: 100%;
-  padding: 7px 10px;
-  border: 1.5px solid var(--color-ink-200);
-  border-radius: var(--radius-sm);
-  font-size: var(--text-sm);
-  color: var(--color-ink-700);
-  background: var(--color-white);
-  outline: none;
-  transition: all 0.15s;
-  appearance: auto;
-}
-.cmw-select:focus {
-  border-color: var(--color-blue-600);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-}
-.cmw-select.matched {
-  border-color: var(--color-green-600);
-  background: #f0fdf4;
-}
-
 .cmw-status-ok {
   width: 26px;
   height: 26px;
@@ -206,31 +185,7 @@
 
 /* ─── Factor Row ──────────────────────────────────────────────────────────── */
 
-.cmw-factor-select {
-  padding: 7px 12px;
-  border: 1.5px solid var(--color-ink-200);
-  border-radius: var(--radius-sm);
-  font-size: var(--text-sm);
-  color: var(--color-ink-700);
-  background: var(--color-white);
-  outline: none;
-  min-width: 220px;
-  transition: border-color 0.15s;
-}
-.cmw-factor-select:focus {
-  border-color: var(--color-blue-600);
-}
-
 /* ─── Footer ──────────────────────────────────────────────────────────────── */
-.cmw-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 28px 20px;
-  border-top: 1px solid var(--color-ink-100);
-  flex-shrink: 0;
-  gap: 12px;
-}
 
 .cmw-btn-ghost {
   display: flex;
