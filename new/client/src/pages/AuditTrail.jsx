@@ -529,7 +529,7 @@ const AuditTrail = () => {
               </button>
 
               {exportDropdownOpen && (
-                <div className="[position:absolute] [right:0] [top:calc(100%_+_8px)] [width:260px]! [background:var(--color-white)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [border-radius:var(--radius-md)]! [padding:8px]! [box-shadow:var(--shadow-raised)]! [z-index:50] [animation:fadeIn_0.15s_ease-out]! [&_button]:[display:flex]! [&_button]:[align-items:flex-start]! [&_button]:[gap:12px]! [&_button]:[width:100%]! [&_button]:[padding:10px_12px]! [&_button]:[background:transparent]! [&_button]:[border:none]! [&_button]:[border-radius:var(--radius-md)]! [&_button]:[text-align:left]! [&_button]:[cursor:pointer]! [&_button]:[transition:all_0.15s_ease]! [&_button:hover]:[background:var(--color-ink-50)]!">
+                <div className="export-menu">
                   <button onClick={() => handleExport("csv")}>
                     <FileSpreadsheet size={15} className="[margin-top:2px]! [flex-shrink:0] [color:var(--color-green-700)]!" />
                     <div className="[display:flex]! [flex-direction:column] [&_strong]:[font-size:var(--text-base)]! [&_strong]:[color:var(--text-primary,_var(--color-ink-900))]! [&_span]:[font-size:var(--text-sm)]! [&_span]:[color:var(--text-secondary,_var(--color-ink-500))]! [&_span]:[margin-top:2px]!">

@@ -77,6 +77,10 @@
 }
 
 /* Radio Group */
+.radio-group {
+  display: flex;
+  gap: 16px;
+}
 
 /* Helper & Error Text */
 .error-text {

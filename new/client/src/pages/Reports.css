@@ -241,6 +241,13 @@ select.component-select option:disabled {
   margin: 0;
   font-size: var(--text-lg);
 }
+.close-btn {
+  background: none;
+  border: none;
+  font-size: var(--text-xl);
+  cursor: pointer;
+  color: var(--color-ink-500);
+}
 .input-group {
   display: flex;
   flex-direction: column;

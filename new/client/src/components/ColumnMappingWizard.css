@@ -24,6 +24,47 @@
 
 /* ─── Step Indicator ──────────────────────────────────────────────────────── */
 
+.cmw-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.cmw-step.active .cmw-step-circle {
+  border-color: var(--color-blue-600);
+  background: var(--color-blue-600);
+  color: var(--color-white);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+}
+
+.cmw-step.done .cmw-step-circle {
+  border-color: var(--color-green-600);
+  background: var(--color-green-700);
+  color: var(--color-white);
+}
+.cmw-step.active .cmw-step-label {
+  color: var(--color-blue-600);
+  font-weight: 600;
+}
+.cmw-step.done .cmw-step-label {
+  color: var(--color-green-700);
+}
+
+.cmw-step-line {
+  flex: 1;
+  height: 2px;
+  background: var(--color-ink-200);
+  margin: 0 10px;
+  margin-bottom: 22px;
+  transition: background 0.3s;
+}
+.cmw-step-line.done {
+  background: var(--color-green-600);
+}
+
 /* ─── Body ────────────────────────────────────────────────────────────────── */
 .cmw-body {
   flex: 1;
@@ -32,8 +73,58 @@
 }
 
 /* ─── Drop Zone ───────────────────────────────────────────────────────────── */
+.cmw-dropzone {
+  border: 2px dashed var(--color-ink-300);
+  border-radius: var(--radius-md);
+  padding: 40px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--color-ink-50);
+  margin-bottom: 20px;
+}
+.cmw-dropzone:hover,
+.cmw-dropzone.dragging {
+  border-color: var(--color-blue-600);
+  background: var(--color-blue-50);
+}
 
 /* ─── Template Section ────────────────────────────────────────────────────── */
+
+.cmw-template-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-ink-200);
+  background: var(--color-white);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s;
+}
+.cmw-template-btn:hover {
+  border-color: var(--color-blue-600);
+  background: var(--color-blue-50);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+}
+.cmw-template-btn:hover .cmw-template-btn-icon {
+  background: #dbeafe;
+  color: var(--color-blue-600);
+}
+
+.cmw-template-btn strong {
+  display: block;
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--color-ink-800);
+  margin-bottom: 2px;
+}
+.cmw-template-btn small {
+  font-size: var(--text-sm);
+  color: var(--color-ink-600);
+}
 
 /* ─── Mapping UI ──────────────────────────────────────────────────────────── */
 
@@ -68,9 +159,82 @@
   color: #92400e;
 }
 
+.cmw-mapping-row {
+  display: grid;
+  grid-template-columns: 1.8fr 2fr 2fr 60px;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--color-ink-100);
+  transition: background 0.15s;
+}
+.cmw-mapping-row:last-child {
+  border-bottom: none;
+}
+.cmw-mapping-row:hover {
+  background: var(--color-ink-50);
+}
+.cmw-mapping-row.unmapped {
+  background: #fff9f9;
+}
+
+.cmw-select,
+.cmw-text-input {
+  width: 100%;
+  padding: 7px 10px;
+  border: 1.5px solid var(--color-ink-200);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  color: var(--color-ink-700);
+  background: var(--color-white);
+  outline: none;
+  transition: all 0.15s;
+  appearance: auto;
+}
+.cmw-select:focus,
+.cmw-text-input:focus {
+  border-color: var(--color-blue-600);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+.cmw-select.matched,
+.cmw-text-input.matched {
+  border-color: var(--color-green-600);
+  background: #f0fdf4;
+}
+
 /* ─── Factor Row ──────────────────────────────────────────────────────────── */
 
 /* ─── Footer ──────────────────────────────────────────────────────────────── */
+
+.cmw-btn-primary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 22px;
+  border-radius: var(--radius-md);
+  border: none;
+  background: var(--color-blue-600);
+  color: var(--color-white);
+  font-size: var(--text-base);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
+}
+.cmw-btn-primary svg {
+  width: 16px;
+  height: 16px;
+}
+.cmw-btn-primary:hover:not(:disabled) {
+  background: var(--color-blue-700);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+}
+.cmw-btn-primary:disabled {
+  background: #93c5fd;
+  cursor: not-allowed;
+  box-shadow: none;
+}
 
 /* ─── Spinner ─────────────────────────────────────────────────────────────── */
 
@@ -96,3 +260,22 @@
 }
 
 /* --- Mode Cards ------------------------------------------------------------ */
+.cmw-mode-card {
+  transition: all 0.2s ease;
+}
+.cmw-mode-card:hover {
+  border-color: var(--color-ink-300) !important;
+  background: var(--color-ink-50) !important;
+}
+.cmw-mode-card.active {
+  border-color: var(--color-blue-600) !important;
+  background: var(--color-blue-50) !important;
+  box-shadow: 0 0 0 1px var(--color-blue-600);
+}
+.cmw-mode-card.active h4 {
+  color: #1e40af !important;
+}
+.cmw-mode-card.active > div > div {
+  background: var(--color-blue-600) !important;
+  border-color: var(--color-blue-600) !important;
+}

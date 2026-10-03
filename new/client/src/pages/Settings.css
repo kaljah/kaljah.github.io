@@ -64,6 +64,34 @@
 
 /* Tabs Bar */
 
+.settings-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-secondary, var(--color-ink-500));
+  font-size: var(--text-md);
+  font-weight: 600;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.settings-tab-btn:hover {
+  color: var(--text-primary, var(--color-ink-900));
+  background: var(--bg-hover, var(--color-ink-50));
+}
+
+.settings-tab-btn.active {
+  color: var(--color-link);
+  border-bottom-color: var(--color-brand-500);
+  background: rgba(255, 102, 0, 0.04);
+}
+
 /* Section Card */
 
 /* GWP Grid */
@@ -175,6 +203,31 @@
 
 /* OGMP 2.0 Tab Config */
 
+.btn-year-pill {
+  background: var(--bg-card, var(--color-white));
+  border: 1px solid var(--border-color, var(--color-ink-200));
+  color: var(--text-primary, var(--color-ink-900));
+  font-weight: 600;
+  font-size: var(--text-base);
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-xs);
+}
+
+.btn-year-pill:hover {
+  border-color: var(--color-brand-400);
+  background: rgba(255, 102, 0, 0.04);
+}
+
+.btn-year-pill.active {
+  background: var(--color-primary);
+  color: var(--color-white);
+  border-color: var(--color-brand-500);
+  box-shadow: 0 4px 12px rgba(255, 102, 0, 0.25);
+}
+
 .range-slider {
   flex: 1;
   accent-color: var(--color-brand-500);
@@ -227,6 +280,27 @@
 
 /* Form Styling */
 
+.auth-mode-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color, var(--color-ink-300));
+  background: var(--bg-card, var(--color-white));
+  cursor: pointer;
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--text-secondary, var(--color-ink-600));
+  transition: all 0.2s ease;
+}
+
+.auth-mode-pill.active {
+  border-color: var(--color-sky-600);
+  background: rgba(2, 132, 199, 0.08);
+  color: var(--color-blue-700);
+}
+
 .range-slider {
   width: 100%;
   height: 6px;
@@ -235,4 +309,26 @@
   outline: none;
   accent-color: var(--color-sky-600);
   cursor: pointer;
+}
+
+.connection-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  font-size: var(--text-base);
+  font-weight: 600;
+}
+
+.connection-status-badge.success {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--color-green-700);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.connection-status-badge.error {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--color-red-700);
+  border: 1px solid rgba(239, 68, 68, 0.3);
 }
