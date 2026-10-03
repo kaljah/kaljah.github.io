@@ -1,7 +1,7 @@
 import { test } from "@playwright/test";
 import fs from "node:fs";
 
-// Scratch probe: dumps geometry and key computed styles for every route and size (compare two builds).
+// Probe: dumps geometry and key computed styles for every route and size (compare two builds).
 const ROUTES = ["", "carbon-intensity", "methane-intensity", "sbti", "methane-explorer", "emissions", "emissions?scope=scope1", "manage-data", "reference-data", "reports", "uncertainty", "qa-dashboard", "audit-trail", "settings"];
 const SIZES = [[1440, 900], [1024, 768], [390, 844]];
 test("probe all", async ({ page }) => {
