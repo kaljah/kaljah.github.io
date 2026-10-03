@@ -52,6 +52,7 @@ import api from "../api";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../components/Toast";
 import { getUserOperationalDefaults, isUnrestrictedLocation } from "../utils/userDefaults";
+import { Badge, Banner, IconButton, cn } from "../ui";
 import ExplorerHud from "./explorer/ExplorerHud";
 import ExplorerDrawer from "./explorer/ExplorerDrawer";
 import ExplorerLegend from "./explorer/ExplorerLegend";
@@ -708,47 +709,26 @@ const EmissionsMap = () => {
         formatCompact={formatCompact}
       />
 
-      {/* 2. SATELLITE NEW-PASS OVERPASS TOAST */}
       {satelliteAlert && (
-        <aside className="[position:absolute] [top:78px] [right:20px] [z-index:1001] [background:var(--color-white)] [border:1px_solid_#fca5a5] [&&]:[border-radius:var(--radius-lg)] [padding:14px_16px] [min-width:320px] [max-width:380px] [box-shadow:0_10px_30px_rgba(239,_68,_68,_0.18)] [animation:toastSlide_0.3s_cubic-bezier(0.16,_1,_0.3,_1)] [display:flex] [flex-direction:column] [gap:6px]" role="alert">
-          <div className="[display:flex] [align-items:center] [justify-content:space-between]">
-            <div className="toast-title">
-              {satelliteAlert.anomaly >= 30 ? (
-                <span className="[display:flex] [align-items:center] [gap:6px] [color:var(--color-red-700)] [font-size:var(--text-sm)] [font-weight:800] [letter-spacing:0.04em]">
-                  <AlertCircle size={14} /> HIGH CH₄ ANOMALY DETECTED
-                </span>
-              ) : (
-                <span className="[display:flex] [align-items:center] [gap:6px] [color:var(--color-blue-700)] [font-size:var(--text-sm)] [font-weight:800] [letter-spacing:0.04em]">
-                  <Satellite size={14} /> NEW S5P OVERPASS
-                </span>
-              )}
-            </div>
-            <button
-              className="[background:transparent] [border:none] [color:var(--color-ink-600)] [cursor:pointer] [padding:2px] [&&]:[border-radius:var(--radius-sm)] [transition:color_0.2s] hover:[color:var(--color-ink-900)]"
-              onClick={() => setSatelliteAlert(null)}
-              title="Dismiss notification"
-            >
-              <X size={14} />
-            </button>
+        <Banner
+          tone={satelliteAlert.anomaly >= 30 ? "danger" : "info"}
+          title={satelliteAlert.anomaly >= 30 ? "High CH₄ anomaly detected" : "New S5P overpass"}
+          className="absolute right-5 top-[78px] z-1001 min-w-80 max-w-96 bg-surface shadow-lg"
+          actions={
+            <IconButton label="Dismiss notification" className="size-7" onClick={() => setSatelliteAlert(null)}>
+              <X className="size-3.5" aria-hidden="true" />
+            </IconButton>
+          }
+        >
+          <p className="m-0 text-sm text-ink-700">
+            <strong>{satelliteAlert.facility}</strong> • {satelliteAlert.date} at {satelliteAlert.time || "11:30 UTC"}
+          </p>
+          <div className="mt-1.5 flex flex-wrap gap-2">
+            <Badge>ΔCH₄ +{satelliteAlert.anomaly.toFixed(1)} ppb</Badge>
+            <Badge>● {satelliteAlert.type || "NRTI"}</Badge>
+            {satelliteAlert.count > 1 && <Badge>+{satelliteAlert.count - 1} more</Badge>}
           </div>
-          <div className="[font-size:var(--text-sm)] [color:var(--color-ink-700)] [line-height:1.4]">
-            <strong>{satelliteAlert.facility}</strong> • {satelliteAlert.date} at{" "}
-            {satelliteAlert.time || "11:30 UTC"}
-          </div>
-          <div className="[display:flex] [gap:8px] [margin-top:4px]">
-            <span className="[background:var(--color-ink-100)] [padding:2px_8px] [border-radius:var(--radius-sm)] [font-size:var(--text-xs)] [font-weight:700] [color:var(--color-ink-700)]! [&.stream]:[background:#e0f2fe] [&.stream]:[color:#0369a1]! [&&]:[&.count]:[background:var(--color-ink-100)] [&&]:[&.count]:[color:var(--color-ink-500)]!">
-              ΔCH₄ +{satelliteAlert.anomaly.toFixed(1)} ppb
-            </span>
-            <span className="[background:var(--color-ink-100)] [padding:2px_8px] [border-radius:var(--radius-sm)] [font-size:var(--text-xs)] [font-weight:700] [color:var(--color-ink-700)]! [&.stream]:[background:#e0f2fe] [&.stream]:[color:#0369a1]! [&&]:[&.count]:[background:var(--color-ink-100)] [&&]:[&.count]:[color:var(--color-ink-500)]! stream">
-              ● {satelliteAlert.type || "NRTI"}
-            </span>
-            {satelliteAlert.count > 1 && (
-              <span className="[background:var(--color-ink-100)] [padding:2px_8px] [border-radius:var(--radius-sm)] [font-size:var(--text-xs)] [font-weight:700] [color:var(--color-ink-700)]! [&.stream]:[background:#e0f2fe] [&.stream]:[color:#0369a1]! [&&]:[&.count]:[background:var(--color-ink-100)] [&&]:[&.count]:[color:var(--color-ink-500)]! count">
-                +{satelliteAlert.count - 1} more
-              </span>
-            )}
-          </div>
-        </aside>
+        </Banner>
       )}
 
       {/* 3. LEAFLET INTERACTIVE GEOSPATIAL MAP CANVAS */}
@@ -887,14 +867,20 @@ const EmissionsMap = () => {
       </div>
 
       {/* 4. COLLAPSIBLE LEFT INTELLIGENCE & RECON DRAWER (WHITE LIGHT THEME) */}
-      <div className={`drawer-container [position:absolute] [top:78px] [left:16px] [bottom:20px] [width:340px] [z-index:950] [pointer-events:none] [transition:transform_0.35s_cubic-bezier(0.16,_1,_0.3,_1)] [&.collapsed]:[transform:translateX(-346px)] ${isDrawerOpen ? "open" : "collapsed"}`}>
+      <div
+        className={cn(
+          "pointer-events-none absolute bottom-5 left-4 top-[78px] z-950 w-[340px] transition-transform duration-300 ease-out",
+          !isDrawerOpen && "-translate-x-[346px]",
+        )}
+      >
         <button
-          className="[pointer-events:auto] [position:absolute] [top:14px] [right:-36px] [width:36px] [height:44px] [background:var(--color-white)] [border:1px_solid_var(--color-ink-200)] [&&]:[border-left:none] [&&]:[border-radius:0_var(--radius-md)_var(--radius-md)_0] [color:var(--color-link)] [display:flex] [align-items:center] [justify-content:center] [cursor:pointer] [box-shadow:var(--shadow-card)] [transition:all_0.2s_ease] hover:[color:var(--color-white)] hover:[background:var(--color-primary)]"
+          type="button"
+          className="pointer-events-auto absolute -right-9 top-3.5 flex h-11 w-9 cursor-pointer items-center justify-center rounded-r-md border border-l-0 border-border bg-surface text-brand-700 shadow-md hover:bg-ink-50"
           onClick={() => setIsDrawerOpen(!isDrawerOpen)}
           title={isDrawerOpen ? "Collapse drawer" : "Expand drawer"}
           aria-label={isDrawerOpen ? "Collapse drawer" : "Expand drawer"}
         >
-          {isDrawerOpen ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
+          {isDrawerOpen ? <ChevronLeft className="size-4" aria-hidden="true" /> : <ChevronRight className="size-4" aria-hidden="true" />}
         </button>
 
         {isDrawerOpen && (
