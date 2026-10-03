@@ -1,10 +1,10 @@
 {
-  "inlineStyleObjects": 260,
+  "inlineStyleObjects": 258,
   "hexColorsInCss": 174,
   "hexColorsInJs": 389,
   "importantDeclarations": 79,
   "inlineSvgs": 26,
-  "nativeSelects": 1,
+  "nativeSelects": 2,
   "clickableDivsWithoutRole": 0,
   "cssFiles": 39,
   "cssLines": 7900,
