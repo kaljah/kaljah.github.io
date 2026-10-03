@@ -45,7 +45,7 @@ export default defineConfig([
   },
   {
     // Node-side files: build config, Playwright setup and specs
-    files: ['vite.config.js', 'generate_storage_state.js', 'e2e/**/*.js', 'playwright.config.js'],
+    files: ['vite.config.js', 'generate_storage_state.js', 'e2e/**/*.js', 'scripts/probe/**/*.js', 'playwright.config.js'],
     languageOptions: { globals: { ...globals.node, ...globals.browser } },
   },
 ])
