@@ -53,6 +53,7 @@ import api from "../api";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../components/Toast";
 import { getUserOperationalDefaults, isUnrestrictedLocation } from "../utils/userDefaults";
+import ExplorerHud from "./explorer/ExplorerHud";
 import "./MethaneExplorer.css";
 
 // Fix Leaflet tile sizing when mounted inside animated route transitions
@@ -693,114 +694,17 @@ const EmissionsMap = () => {
         transition: "opacity 0.2s ease",
       }}
     >
-      {/* 1. TOP MISSION TELEMETRY HUD BAR (WHITE LIGHT THEME) */}
-      <header className="[position:absolute] [top:14px] [left:16px] [right:16px] [z-index:1000] [display:flex] [align-items:center] [justify-content:space-between] [gap:14px] [padding:10px_18px] [background:rgba(255,_255,_255,_0.94)] [backdrop-filter:blur(18px)] [-webkit-backdrop-filter:blur(18px)] [border:1px_solid_rgba(226,_232,_240,_0.9)] [&&]:[border-radius:var(--radius-lg)] [box-shadow:var(--shadow-card)]">
-        <div className="[display:flex] [align-items:center] [gap:16px]">
-          <div className="[display:flex] [align-items:center] [gap:10px]">
-            <div className="[position:relative] [width:16px] [height:16px] [display:flex] [align-items:center] [justify-content:center]">
-              <span className="[width:8px] [height:8px] [background:var(--color-brand-500)] [border-radius:50%] [box-shadow:0_0_8px_rgba(255,_102,_0,_0.5)]"></span>
-              <span className="[position:absolute] [width:100%] [height:100%] [border:1.5px_solid_var(--color-brand-500)] [&&]:[border-radius:50%] [animation:radarWave_2s_infinite_ease-out]"></span>
-            </div>
-            <div>
-              <div className="[font-size:var(--text-md)] [font-weight:700] [color:var(--color-ink-900)]">Emissions Map</div>
-              <div className="[font-size:var(--text-xs)] [font-weight:600] [color:var(--color-blue-700)] [letter-spacing:0.04em]">COPERNICUS SENTINEL-5P TROPOMI</div>
-            </div>
-          </div>
-
-          <div className="[display:flex] [align-items:center]">
-            {isSatelliteConnected ? (
-              <span className="status-pill live" title="Connected to Copernicus Data Space">
-                <Radio size={12} className="[animation:pulseBeacon_1.5s_infinite]!" /> S5P STREAM LIVE
-              </span>
-            ) : (
-              <button
-                className="status-pill offline"
-                onClick={() => navigate("/settings")}
-                title="Configure CDSE API credentials in Settings"
-              >
-                <Satellite size={12} /> CONFIGURE S5P
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* Real-time KPI Counters */}
-        <div className="[display:flex] [align-items:center] [gap:16px] [background:var(--color-ink-50)] [border:1px_solid_var(--color-ink-200)] [padding:5px_14px] [&&]:[border-radius:var(--radius-md)]">
-          <div className="[display:flex] [flex-direction:column] [align-items:center] [gap:1px]">
-            <span className="kpi-label">Monitored Assets</span>
-            <span className="kpi-value">{telemetryMetrics.activeAssets}</span>
-          </div>
-          <div className="[width:1px] [height:20px] [background:var(--color-ink-200)]"></div>
-          <div className="[display:flex] [flex-direction:column] [align-items:center] [gap:1px]">
-            <span className="kpi-label">
-              {viewMode === "methane" ? "Regional Methane" : "Regional GHG"}
-            </span>
-            <span className="kpi-value highlight-accent">
-              {viewMode === "methane"
-                ? `${formatCompact(telemetryMetrics.totalMethane)} t`
-                : `${formatCompact(telemetryMetrics.totalGhg)} t`}
-            </span>
-          </div>
-          <div className="[width:1px] [height:20px] [background:var(--color-ink-200)]"></div>
-          <div className="[display:flex] [flex-direction:column] [align-items:center] [gap:1px]">
-            <span className="kpi-label">Mean Loss Intensity</span>
-            <span className="kpi-value">
-              {telemetryMetrics.avgMethaneIntensity}{" "}
-              <span className="kpi-unit">kg/boe</span>
-            </span>
-          </div>
-          <div className="[width:1px] [height:20px] [background:var(--color-ink-200)]"></div>
-          <div className="[display:flex] [flex-direction:column] [align-items:center] [gap:1px]">
-            <span className="kpi-label">Super-Emitters</span>
-            <span
-              className={`kpi-value ${telemetryMetrics.superEmitters > 0 ? "kpi-alert" : ""}`}
-            >
-              {telemetryMetrics.superEmitters}
-            </span>
-          </div>
-        </div>
-
-        {/* View Mode & Basemap Selector */}
-        <div className="[display:flex] [align-items:center] [gap:10px]">
-          {/* Mode Switcher */}
-          <div className="segmented-control mode-selector">
-            <button
-              className={`seg-btn ${viewMode === "methane" ? "active" : ""}`}
-              onClick={() => setViewMode("methane")}
-              title="Focus on Methane (CH4) emissions"
-            >
-              <Flame size={13} />
-              <span>CH₄ Flux</span>
-            </button>
-            <button
-              className={`seg-btn ${viewMode === "total" ? "active" : ""}`}
-              onClick={() => setViewMode("total")}
-              title="Focus on Total GHG (CO2e) emissions"
-            >
-              <TrendingUp size={13} />
-              <span>Total GHG</span>
-            </button>
-          </div>
-
-          {/* Basemap Switcher */}
-          <div className="segmented-control basemap-selector">
-            {Object.entries(BASE_MAPS).map(([key, mapInfo]) => {
-              const IconComp = mapInfo.icon;
-              return (
-                <button
-                  key={key}
-                  className={`seg-btn ${mapBaseLayer === key ? "active" : ""}`}
-                  onClick={() => setMapBaseLayer(key)}
-                  title={`Switch to ${mapInfo.name}`}
-                >
-                  <IconComp size={13} />
-                  <span>{mapInfo.name.split(" ")[0]}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </header>
+      <ExplorerHud
+        connected={isSatelliteConnected}
+        onConfigure={() => navigate("/settings")}
+        metrics={telemetryMetrics}
+        viewMode={viewMode}
+        onViewMode={setViewMode}
+        baseMaps={BASE_MAPS}
+        baseLayer={mapBaseLayer}
+        onBaseLayer={setMapBaseLayer}
+        formatCompact={formatCompact}
+      />
 
       {/* 2. SATELLITE NEW-PASS OVERPASS TOAST */}
       {satelliteAlert && (
