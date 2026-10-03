@@ -366,7 +366,7 @@ const ReferenceData = () => {
         }
       />
 
-      <div className="search-bar-container">
+      <div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.78))]! [backdrop-filter:blur(14px)] [-webkit-backdrop-filter:blur(14px)]! [padding:20px_24px]! [border-radius:var(--radius-lg)]! [margin-bottom:28px]! [box-shadow:var(--shadow-card)]! [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))]! [display:flex]! [gap:16px] [align-items:center]">
         <div className="search-input-wrapper">
           <Search
             className="search-icon"
@@ -381,14 +381,14 @@ const ReferenceData = () => {
           />
           <input
             type="text"
-            className="search-input-field"
+            className="[width:100%]! [padding:11px_16px_11px_42px]! [background:rgba(255,_255,_255,_0.85)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-md)]! [font-size:var(--text-md)]! [color:var(--text-primary,_var(--color-ink-900))]! [outline:none]! [transition:all_0.2s_ease]! focus:[border-color:var(--accent-color,_var(--color-brand-500))]! focus:[box-shadow:0_0_0_3px_rgba(255,_102,_0,_0.15)]!"
             placeholder="Search by name, fuel type, code, or value..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
         <NativeSelect
-          className="filter-select"
+          className="[padding:11px_18px]! [background:rgba(255,_255,_255,_0.85)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [min-width:200px] [color:var(--text-primary,_var(--color-ink-900))]! [outline:none]! [cursor:pointer] [transition:all_0.2s_ease]! focus:[border-color:var(--accent-color,_var(--color-brand-500))]! focus:[box-shadow:0_0_0_3px_rgba(255,_102,_0,_0.15)]!"
           aria-label="Filter by category"
           value={categoryFilter}
           onChange={(e) => setCategoryFilter(e.target.value)}
@@ -456,7 +456,7 @@ const ReferenceData = () => {
               </div>
 
               {!collapsed[key] && (
-                <div className="factors-table-container">
+                <div className="[width:100%]! [overflow-x:auto]!">
                   <table className="factors-table">
                     <thead>
                       <tr>
@@ -533,7 +533,7 @@ const ReferenceData = () => {
                                   {f.usage.map((u, uIdx) => (
                                     <span
                                       key={uIdx}
-                                      className={`usage-badge usage-${u.toLowerCase()}`}
+                                      className={`[display:inline-flex]! [padding:4px_10px]! [border-radius:var(--radius-md)]! [font-size:var(--text-xs)]! [font-weight:700]! [text-transform:uppercase]! usage-${u.toLowerCase()}`}
                                     >
                                       {u}
                                     </span>

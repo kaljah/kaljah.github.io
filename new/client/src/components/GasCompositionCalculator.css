@@ -1,13 +1,3 @@
-.comp-calc-container {
-  color: var(--text-primary);
-}
-
-.comp-calc-grid {
-  display: grid;
-  grid-template-columns: 1fr 340px;
-  gap: 30px;
-}
-
 .calculation-mode-selector {
   margin-bottom: 25px;
   padding: 15px;
@@ -57,49 +47,12 @@
   box-shadow: 0 2px 8px rgba(255, 102, 0, 0.2);
 }
 
-.total-display-card {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  padding: 15px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 25px;
-}
-
-.total-info .label {
-  color: var(--text-secondary);
-  font-size: var(--text-base);
-  margin-right: 10px;
-}
-
-.total-info .value {
-  font-size: var(--text-xl);
-  font-weight: 700;
-}
-
-.total-info .value.valid {
-  color: var(--color-green-700);
-}
-
-.total-info .value.invalid {
-  color: var(--color-red-700);
-}
-
 .status-badge {
   font-size: var(--text-sm);
   padding: 4px 12px;
   border-radius: var(--radius-lg);
   background: rgba(255, 255, 255, 0.05);
   color: var(--text-secondary);
-}
-
-.component-inputs-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 15px;
-  margin-bottom: 30px;
 }
 
 .params-section {
@@ -112,40 +65,6 @@
   margin: 0 0 15px 0;
   color: var(--color-link);
   font-size: var(--text-md);
-}
-
-.params-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 20px;
-}
-
-.calc-btn {
-  width: 100%;
-  padding: 14px;
-  background: var(--color-primary);
-  color: white;
-  border: none;
-  border-radius: var(--radius-md);
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.calc-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.calc-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(255, 102, 0, 0.3);
-}
-
-.comp-results {
-  background: rgba(255, 255, 255, 0.02);
-  border-left: 1px solid var(--border-color);
-  padding-left: 30px;
 }
 
 .result-card {
@@ -217,33 +136,4 @@
 .apply-buttons button:hover {
   background: var(--color-green-700);
   color: white;
-}
-
-.no-results {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  color: var(--text-secondary);
-  opacity: 0.5;
-}
-
-.no-results .icon {
-  font-size: var(--text-3xl);
-  margin-bottom: 15px;
-}
-
-@media (max-width: 850px) {
-  .comp-calc-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .comp-results {
-    border-left: none;
-    border-top: 1px solid var(--border-color);
-    padding-left: 0;
-    padding-top: 30px;
-  }
 }

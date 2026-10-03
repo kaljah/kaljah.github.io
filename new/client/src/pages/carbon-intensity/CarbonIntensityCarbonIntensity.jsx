@@ -19,8 +19,8 @@ const CarbonIntensityCarbonIntensity = ({ activeGwpStandard, currentDisplayCo2In
             </div>
 
             {/* GWP Time Horizon Toggle */}
-            <div className="gwp-toggle-container">
-              <span className="gwp-toggle-label">GWP Horizon:</span>
+            <div className="[display:flex]! [align-items:center] [gap:10px] [background:var(--bg-hover)]! [padding:4px_8px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--border-color)]!">
+              <span className="[font-size:var(--text-sm)]! [font-weight:600]! [color:var(--text-secondary)]!">GWP Horizon:</span>
               {(() => {
                 const f100 = getActiveGwpFactors(activeGwpStandard, "100");
                 const f20 = getActiveGwpFactors(activeGwpStandard, "20");
@@ -49,15 +49,15 @@ const CarbonIntensityCarbonIntensity = ({ activeGwpStandard, currentDisplayCo2In
           </div>
 
           {/* Horizontal 4-KPI Grid */}
-          <div className="kpi-grid-4">
+          <div className="[display:grid]! [grid-template-columns:repeat(4,_1fr)] [gap:20px] [@media(max-width:1200px)]:[grid-template-columns:repeat(2,_1fr)]! [@media(max-width:768px)]:[grid-template-columns:1fr]!">
             <div className="kpi-card">
-              <div className="kpi-header">
+              <div className="[display:flex]! [align-items:center] [gap:12px] [margin-bottom:16px]!">
                 <div className="kpi-icon co2">
                   <Cloud size={20} />
                 </div>
                 <span className="kpi-label">GHG Intensity (Avg)</span>
               </div>
-              <div className="kpi-value-container">
+              <div className="[display:flex]! [align-items:baseline] [gap:8px]">
                 <span
                   className="total-value co2"
                   style={
@@ -75,7 +75,7 @@ const CarbonIntensityCarbonIntensity = ({ activeGwpStandard, currentDisplayCo2In
                 </span>
               </div>
               <div className="kpi-footer">
-                <span className="gwp-subtag">
+                <span className="gwp-subtag [font-size:var(--text-sm)]! [color:var(--color-link)]! [font-weight:600]!">
                   {gwpHorizon === "20" ? "GWP₂₀ Active" : "GWP₁₀₀ Standard"}
                 </span>
                 <span>
@@ -87,13 +87,13 @@ const CarbonIntensityCarbonIntensity = ({ activeGwpStandard, currentDisplayCo2In
             </div>
 
             <div className="kpi-card">
-              <div className="kpi-header">
+              <div className="[display:flex]! [align-items:center] [gap:12px] [margin-bottom:16px]!">
                 <div className="kpi-icon scope1">
                   <Layers size={20} />
                 </div>
                 <span className="kpi-label">Scope 1 Direct Intensity</span>
               </div>
-              <div className="kpi-value-container">
+              <div className="[display:flex]! [align-items:baseline] [gap:8px]">
                 <span
                   className="total-value scope1"
                   style={
@@ -127,13 +127,13 @@ const CarbonIntensityCarbonIntensity = ({ activeGwpStandard, currentDisplayCo2In
             </div>
 
             <div className="kpi-card">
-              <div className="kpi-header">
+              <div className="[display:flex]! [align-items:center] [gap:12px] [margin-bottom:16px]!">
                 <div className="kpi-icon flare">
                   <Flame size={20} />
                 </div>
                 <span className="kpi-label">Flaring Carbon Intensity</span>
               </div>
-              <div className="kpi-value-container">
+              <div className="[display:flex]! [align-items:baseline] [gap:8px]">
                 <span className="total-value flare">
                   {(stats.avgFlaringIntensity ?? 0).toFixed(2)}
                 </span>
@@ -151,13 +151,13 @@ const CarbonIntensityCarbonIntensity = ({ activeGwpStandard, currentDisplayCo2In
             </div>
 
             <div className="kpi-card">
-              <div className="kpi-header">
+              <div className="[display:flex]! [align-items:center] [gap:12px] [margin-bottom:16px]!">
                 <div className="kpi-icon scope3">
                   <ShieldCheck size={20} />
                 </div>
                 <span className="kpi-label">Scope 3 Value Chain</span>
               </div>
-              <div className="kpi-value-container">
+              <div className="[display:flex]! [align-items:baseline] [gap:8px]">
                 <span className="total-value scope3">
                   {(stats.avgScope3Intensity ?? 0).toFixed(2)}
                 </span>
@@ -174,7 +174,7 @@ const CarbonIntensityCarbonIntensity = ({ activeGwpStandard, currentDisplayCo2In
           </div>
 
           {/* Production Context Bar */}
-          <div className="scope-breakdown">
+          <div className="scope-breakdown [display:grid]! [grid-template-columns:repeat(4,_1fr)] [gap:20px] [margin-top:32px]! [background:var(--bg-hover)]! [padding:24px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--border-color)]! [@media(max-width:1200px)]:[grid-template-columns:repeat(2,_1fr)]! [@media(max-width:768px)]:[grid-template-columns:1fr]!">
             <div className="scope-item">
               <span className="label">Total Oil Production</span>
               <span className="val">

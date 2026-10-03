@@ -14,74 +14,9 @@
   user-select: none;
 }
 
-.explorer-map-container {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
-}
-
 /* ============================================================
    1. TOP MISSION TELEMETRY HUD BAR (WHITE LIGHT THEME)
    ============================================================ */
-
-.mission-hud {
-  position: absolute;
-  top: 14px;
-  left: 16px;
-  right: 16px;
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  padding: 10px 18px;
-  background: rgba(255, 255, 255, 0.94);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border: 1px solid rgba(226, 232, 240, 0.9);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card);
-}
-
-.hud-left {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.hud-brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.radar-ping {
-  position: relative;
-  width: 16px;
-  height: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.ping-core {
-  width: 8px;
-  height: 8px;
-  background: var(--color-brand-500);
-  border-radius: 50%;
-  box-shadow: 0 0 8px rgba(255, 102, 0, 0.5);
-}
-
-.ping-wave {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border: 1.5px solid var(--color-brand-500);
-  border-radius: 50%;
-  animation: radarWave 2s infinite ease-out;
-}
 
 @keyframes radarWave {
   0% {
@@ -92,24 +27,6 @@
     transform: scale(2.2);
     opacity: 0;
   }
-}
-
-.brand-title {
-  font-size: var(--text-md);
-  font-weight: 700;
-  color: var(--color-ink-900);
-}
-
-.brand-sub {
-  font-size: var(--text-xs);
-  font-weight: 600;
-  color: var(--color-blue-700);
-  letter-spacing: 0.04em;
-}
-
-.hud-status-badge {
-  display: flex;
-  align-items: center;
 }
 
 .status-pill {
@@ -143,32 +60,12 @@
   transform: translateY(-1px);
 }
 
-.pulse-icon {
-  animation: pulseBeacon 1.5s infinite;
-}
-
 @keyframes pulseBeacon {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.3; }
 }
 
 /* Real-time KPI Counters */
-.hud-kpis {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  background: var(--color-ink-50);
-  border: 1px solid var(--color-ink-200);
-  padding: 5px 14px;
-  border-radius: var(--radius-md);
-}
-
-.kpi-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1px;
-}
 
 .kpi-label {
   font-size: var(--text-xs);
@@ -199,18 +96,7 @@
   color: var(--color-ink-600);
 }
 
-.kpi-divider {
-  width: 1px;
-  height: 20px;
-  background: var(--color-ink-200);
-}
-
 /* HUD Action Controls */
-.hud-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
 
 .segmented-control {
   display: flex;
@@ -261,24 +147,6 @@
    2. SATELLITE NEW-PASS FLOATING TOAST
    ============================================================ */
 
-.satellite-alert-toast {
-  position: absolute;
-  top: 78px;
-  right: 20px;
-  z-index: 1001;
-  background: var(--color-white);
-  border: 1px solid #fca5a5;
-  border-radius: var(--radius-lg);
-  padding: 14px 16px;
-  min-width: 320px;
-  max-width: 380px;
-  box-shadow: 0 10px 30px rgba(239, 68, 68, 0.18);
-  animation: toastSlide 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
 @keyframes toastSlide {
   from {
     opacity: 0;
@@ -290,136 +158,9 @@
   }
 }
 
-.toast-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.badge-danger {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--color-red-700);
-  font-size: var(--text-sm);
-  font-weight: 800;
-  letter-spacing: 0.04em;
-}
-
-.badge-info {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--color-blue-700);
-  font-size: var(--text-sm);
-  font-weight: 800;
-  letter-spacing: 0.04em;
-}
-
-.toast-close-btn {
-  background: transparent;
-  border: none;
-  color: var(--color-ink-600);
-  cursor: pointer;
-  padding: 2px;
-  border-radius: var(--radius-sm);
-  transition: color 0.2s;
-}
-
-.toast-close-btn:hover {
-  color: var(--color-ink-900);
-}
-
-.toast-body {
-  font-size: var(--text-sm);
-  color: var(--color-ink-700);
-  line-height: 1.4;
-}
-
-.toast-meta {
-  display: flex;
-  gap: 8px;
-  margin-top: 4px;
-}
-
-.stat-pill {
-  background: var(--color-ink-100);
-  padding: 2px 8px;
-  border-radius: var(--radius-sm);
-  font-size: var(--text-xs);
-  font-weight: 700;
-  color: var(--color-ink-700);
-}
-
-.stat-pill.stream {
-  background: #e0f2fe;
-  color: #0369a1;
-}
-
-.stat-pill.count {
-  background: var(--color-ink-100);
-  color: var(--color-ink-500);
-}
-
 /* ============================================================
    3. COLLAPSIBLE LEFT INTELLIGENCE & RECON DRAWER
    ============================================================ */
-
-.left-drawer {
-  position: absolute;
-  top: 78px;
-  left: 16px;
-  bottom: 20px;
-  width: 340px;
-  z-index: 950;
-  pointer-events: none;
-  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.left-drawer.collapsed {
-  transform: translateX(-346px);
-}
-
-.drawer-toggle-tab {
-  pointer-events: auto;
-  position: absolute;
-  top: 14px;
-  right: -36px;
-  width: 36px;
-  height: 44px;
-  background: var(--color-white);
-  border: 1px solid var(--color-ink-200);
-  border-left: none;
-  border-radius: 0 var(--radius-md) var(--radius-md) 0;
-  color: var(--color-link);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: var(--shadow-card);
-  transition: all 0.2s ease;
-}
-
-.drawer-toggle-tab:hover {
-  color: var(--color-white);
-  background: var(--color-primary);
-}
-
-.drawer-inner {
-  pointer-events: auto;
-  width: 100%;
-  height: 100%;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(226, 232, 240, 0.9);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-raised);
-  display: flex;
-  flex-direction: column;
-  padding: 18px;
-  overflow: hidden;
-}
 
 .drawer-header {
   display: flex;
@@ -430,12 +171,6 @@
   border-bottom: 1px solid var(--color-ink-100);
 }
 
-.title-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
 .drawer-header h3 {
   margin: 0;
   font-size: var(--text-md);
@@ -444,28 +179,8 @@
   letter-spacing: 0.02em;
 }
 
-.target-count-badge {
-  font-size: var(--text-xs);
-  font-weight: 800;
-  padding: 3px 8px;
-  border-radius: var(--radius-sm);
-  background: var(--color-brand-50);
-  color: var(--color-link);
-  border: 1px solid #fed7aa;
-}
-
 .filter-group {
   margin-bottom: 10px;
-}
-
-.filter-title {
-  display: block;
-  font-size: var(--text-xs);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--color-ink-500);
-  margin-bottom: 5px;
 }
 
 .search-input-wrapper {
@@ -482,132 +197,13 @@
   pointer-events: none;
 }
 
-.recon-input {
-  width: 100%;
-  background: var(--color-ink-50);
-  border: 1px solid var(--color-ink-200);
-  border-radius: var(--radius-md);
-  padding: 8px 30px 8px 34px;
-  font-size: var(--text-sm);
-  color: var(--color-ink-900);
-  outline: none;
-  transition: all 0.2s ease;
-}
-
-.recon-input:focus {
-  background: var(--color-white);
-  border-color: var(--color-brand-500);
-  box-shadow: 0 0 0 2px rgba(255, 102, 0, 0.15);
-}
-
-.clear-search-btn {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: transparent;
-  border: none;
-  color: var(--color-ink-600);
-  cursor: pointer;
-  padding: 2px;
-}
-
-.clear-search-btn:hover {
-  color: var(--color-ink-900);
-}
-
-.filter-row {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 10px;
-}
-
 .flex-1 {
   flex: 1;
 }
 
-.recon-select {
-  width: 100%;
-  background: var(--color-ink-50);
-  border: 1px solid var(--color-ink-200);
-  border-radius: var(--radius-md);
-  padding: 7px 10px;
-  font-size: var(--text-sm);
-  color: var(--color-ink-900);
-  outline: none;
-  cursor: pointer;
-  transition: border-color 0.2s;
-}
-
-.recon-select:focus {
-  border-color: var(--color-brand-500);
-  background: var(--color-white);
-}
-
 /* Severity Pills */
-.severity-pills {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 6px;
-}
-
-.pill-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  background: var(--color-ink-50);
-  border: 1px solid var(--color-ink-200);
-  border-radius: var(--radius-md);
-  padding: 6px 8px;
-  font-size: var(--text-xs);
-  font-weight: 600;
-  color: var(--color-ink-500);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.pill-btn:hover:not(.active) {
-  color: var(--color-ink-900);
-  background: var(--color-ink-100);
-}
-
-.pill-btn.active {
-  background: var(--color-brand-50);
-  border-color: var(--color-brand-500);
-  color: var(--color-link);
-  font-weight: 700;
-}
-
-.pill-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-}
 
 /* Satellite Overlay Card */
-.sat-overlay-card {
-  background: #f0f9ff;
-  border: 1px solid #bae6fd;
-  border-radius: var(--radius-md);
-  padding: 11px 12px;
-  margin-bottom: 12px;
-}
-
-.sat-card-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.sat-card-title {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: var(--text-sm);
-  font-weight: 700;
-  color: #0369a1;
-}
 
 /* Switch Toggle */
 .switch-toggle {
@@ -655,41 +251,6 @@ input:checked + .slider:before {
   transform: translateX(16px);
 }
 
-.sat-card-controls {
-  margin-top: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.slider-row {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.control-label {
-  font-size: var(--text-xs);
-  font-weight: 600;
-  color: var(--color-ink-600);
-}
-
-.recon-range-slider {
-  width: 100%;
-  height: 4px;
-  border-radius: var(--radius-sm);
-  background: var(--color-ink-300);
-  outline: none;
-  accent-color: var(--color-sky-600);
-  cursor: pointer;
-}
-
-.toggles-subrow {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 2px;
-}
-
 .recon-checkbox-label {
   display: flex;
   align-items: center;
@@ -705,23 +266,6 @@ input:checked + .slider:before {
 }
 
 /* Target Asset List Header */
-.target-list-heading {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-  font-size: var(--text-xs);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--color-ink-500);
-}
-
-.subtext {
-  font-size: var(--text-xs);
-  color: var(--color-ink-600);
-  text-transform: none;
-}
 
 .target-cards-scroll {
   flex: 1;
@@ -740,18 +284,6 @@ input:checked + .slider:before {
 .target-cards-scroll::-webkit-scrollbar-thumb {
   background: var(--color-ink-300);
   border-radius: var(--radius-sm);
-}
-
-.empty-target-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 30px 10px;
-  color: var(--color-ink-500);
-  font-size: var(--text-sm);
-  text-align: center;
 }
 
 .btn-reset-filters {
@@ -805,82 +337,6 @@ input:checked + .slider:before {
   box-shadow: 0 2px 10px rgba(255, 102, 0, 0.15);
 }
 
-.target-card-left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
-  flex: 1;
-}
-
-.beacon-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.beacon-dot.high {
-  background: var(--color-red-500);
-  box-shadow: 0 0 6px rgba(239, 68, 68, 0.5);
-}
-
-.beacon-dot.medium {
-  background: var(--color-amber-500);
-  box-shadow: 0 0 6px rgba(245, 158, 11, 0.5);
-}
-
-.beacon-dot.low,
-.beacon-dot.baseline {
-  background: var(--color-green-500);
-  box-shadow: 0 0 6px rgba(16, 185, 129, 0.5);
-}
-
-.target-card-info {
-  min-width: 0;
-  flex: 1;
-}
-
-.target-card-title {
-  font-size: var(--text-sm);
-  font-weight: 700;
-  color: var(--color-ink-900);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.target-card-meta {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 2px;
-  font-size: var(--text-xs);
-  color: var(--color-ink-500);
-}
-
-.region-tag {
-  background: var(--color-ink-100);
-  padding: 1px 6px;
-  border-radius: var(--radius-sm);
-  font-size: var(--text-xs);
-  font-weight: 700;
-  color: var(--color-ink-600);
-}
-
-.activity-text {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.target-card-right {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  flex-shrink: 0;
-}
-
 .target-card-val {
   font-size: var(--text-base);
   font-weight: 800;
@@ -891,115 +347,9 @@ input:checked + .slider:before {
   color: var(--color-link);
 }
 
-.target-card-unit {
-  font-size: var(--text-xs);
-  color: var(--color-ink-600);
-  font-weight: 600;
-}
-
 /* ============================================================
    4. CALIBRATED SPECTRAL ABSORPTION RAMP LEGEND (WHITE)
    ============================================================ */
-
-.spectral-legend-card {
-  position: absolute;
-  bottom: 20px;
-  left: 370px;
-  width: 320px;
-  z-index: 900;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--color-ink-200);
-  border-radius: var(--radius-lg);
-  padding: 12px 14px;
-  box-shadow: var(--shadow-card);
-  transition: all 0.3s ease;
-}
-
-@media (max-width: 960px) {
-  .spectral-legend-card {
-    left: 20px;
-    bottom: 80px;
-  }
-}
-
-.legend-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-.legend-title {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: var(--text-xs);
-  font-weight: 700;
-  color: var(--color-ink-900);
-}
-
-.legend-close {
-  background: transparent;
-  border: none;
-  color: var(--color-ink-600);
-  cursor: pointer;
-  padding: 2px;
-}
-
-.legend-close:hover {
-  color: var(--color-ink-900);
-}
-
-.spectral-gradient-track {
-  height: 8px;
-  border-radius: var(--radius-sm);
-  background: linear-gradient(
-    90deg,
-    #313695 0%,
-    #4575b4 20%,
-    #74add1 40%,
-    #abd9e9 60%,
-    #fee090 75%,
-    #f46d43 90%,
-    #a50026 100%
-  );
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15);
-  margin-bottom: 6px;
-}
-
-.spectral-scale-ticks {
-  display: flex;
-  justify-content: space-between;
-  font-size: var(--text-xs);
-  font-weight: 700;
-  color: var(--color-ink-500);
-  margin-bottom: 6px;
-}
-
-.legend-footer-info {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: var(--text-xs);
-  color: var(--color-ink-600);
-  border-top: 1px solid var(--color-ink-100);
-  padding-top: 6px;
-}
-
-.cdse-portal-link {
-  color: var(--color-blue-700);
-  text-decoration: none;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-}
-
-.cdse-portal-link:hover {
-  text-decoration: underline;
-}
 
 /* ============================================================
    5. SLIDE-IN RIGHT FACILITY RECONNAISSANCE DOSSIER (WHITE)
@@ -1047,174 +397,12 @@ input:checked + .slider:before {
   border-radius: var(--radius-sm);
 }
 
-.dossier-header {
-  position: relative;
-  margin-bottom: 16px;
-  padding-bottom: 14px;
-  border-bottom: 1px solid var(--color-ink-100);
-}
-
-.dossier-close-btn {
-  position: absolute;
-  top: 0;
-  right: 0;
-  background: var(--color-ink-100);
-  border: none;
-  color: var(--color-ink-500);
-  cursor: pointer;
-  padding: 6px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
-}
-
-.dossier-close-btn:hover {
-  background: var(--color-ink-200);
-  color: var(--color-ink-900);
-}
-
-.dossier-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: var(--text-xs);
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  color: var(--color-link);
-  margin-bottom: 4px;
-}
-
-.target-pulse {
-  width: 6px;
-  height: 6px;
-  background: var(--color-brand-500);
-  border-radius: 50%;
-  box-shadow: 0 0 6px rgba(255, 102, 0, 0.4);
-}
-
-.dossier-facility-name {
-  margin: 0 0 6px 0;
-  font-size: var(--text-xl);
-  font-weight: 800;
-  color: var(--color-ink-900);
-  line-height: 1.25;
-}
-
-.dossier-geo-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.geo-location {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: var(--text-sm);
-  color: var(--color-ink-500);
-}
-
-.coords-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  background: var(--color-ink-100);
-  border: 1px solid var(--color-ink-200);
-  padding: 3px 8px;
-  border-radius: var(--radius-sm);
-  font-size: var(--text-xs);
-  font-family: monospace;
-  color: var(--color-blue-700);
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.coords-badge:hover {
-  background: #e0f2fe;
-  border-color: #7dd3fc;
-}
-
 /* Satellite Intelligence Section */
-.dossier-sat-card {
-  background: #f0f9ff;
-  border: 1px solid #bae6fd;
-  border-radius: var(--radius-lg);
-  padding: 14px;
-  margin-bottom: 14px;
-}
-
-.sat-card-top-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-
-.sat-label-left {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: var(--text-sm);
-  color: #0369a1;
-}
-
-.sat-loading-indicator {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: var(--text-xs);
-  color: var(--color-blue-700);
-}
-
-.stream-badge {
-  background: var(--color-green-50);
-  color: var(--color-green-700);
-  border: 1px solid #a7f3d0;
-  border-radius: var(--radius-sm);
-  padding: 2px 7px;
-  font-size: var(--text-xs);
-  font-weight: 700;
-  letter-spacing: 0.04em;
-}
-
-.telemetry-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
-  margin-bottom: 10px;
-}
-
-.telemetry-box {
-  background: var(--color-white);
-  border: 1px solid var(--color-ink-200);
-  border-radius: var(--radius-md);
-  padding: 8px 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.box-label {
-  font-size: var(--text-xs);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--color-ink-500);
-}
 
 .box-val {
   font-size: var(--text-md);
   font-weight: 800;
   color: var(--color-ink-900);
-}
-
-.val-unit {
-  font-size: var(--text-xs);
-  font-weight: 600;
-  color: var(--color-ink-600);
 }
 
 .alert-red {
@@ -1229,26 +417,6 @@ input:checked + .slider:before {
   color: var(--color-amber-700) !important;
 }
 
-.sat-pass-meta {
-  display: flex;
-  justify-content: space-between;
-  font-size: var(--text-xs);
-  color: var(--color-ink-500);
-  padding: 4px 2px;
-  margin-bottom: 10px;
-  border-bottom: 1px solid var(--color-ink-200);
-}
-
-.meta-title {
-  color: var(--color-ink-600);
-  margin-right: 4px;
-}
-
-.meta-data {
-  color: var(--color-ink-900);
-  font-weight: 600;
-}
-
 /* Reconciliation Gap Box */
 .reconciliation-meter-box {
   background: var(--color-white);
@@ -1256,22 +424,6 @@ input:checked + .slider:before {
   border-radius: var(--radius-md);
   padding: 10px;
   margin-bottom: 12px;
-}
-
-.meter-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 6px;
-}
-
-.meter-title {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: var(--text-xs);
-  font-weight: 700;
-  color: var(--color-ink-900);
 }
 
 .recon-status-badge {
@@ -1282,176 +434,13 @@ input:checked + .slider:before {
   border: 1px solid;
 }
 
-.meter-explanation {
-  font-size: var(--text-xs);
-  color: var(--color-ink-600);
-  line-height: 1.4;
-}
-
 /* Level 5 OGMP Reconciliation Button */
-.btn-reconcile-ogmp {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  background: var(--primary-gradient);
-  color: var(--color-white);
-  border: none;
-  border-radius: var(--radius-md);
-  padding: 11px 16px;
-  font-size: var(--text-sm);
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 3px 12px rgba(255, 102, 0, 0.25);
-}
-
-.btn-reconcile-ogmp:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 5px 16px rgba(255, 102, 0, 0.35);
-}
-
-.btn-reconcile-ogmp:disabled {
-  opacity: 0.65;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.recon-spinner {
-  width: 14px;
-  height: 14px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top-color: var(--color-white);
-  border-radius: 50%;
-  animation: spin 0.6s linear infinite;
-}
 
 /* Unconfigured Satellite State */
-.sat-unconfigured-card {
-  display: flex;
-  gap: 12px;
-  padding: 8px;
-}
-
-.unconfigured-text {
-  flex: 1;
-}
-
-.unconf-title {
-  font-size: var(--text-sm);
-  font-weight: 700;
-  color: var(--color-amber-700);
-  margin-bottom: 4px;
-}
-
-.unconf-desc {
-  font-size: var(--text-xs);
-  color: var(--color-ink-500);
-  line-height: 1.4;
-  margin-bottom: 8px;
-}
-
-.btn-link-settings {
-  background: #fef3c7;
-  border: 1px solid #fde68a;
-  color: var(--color-amber-700);
-  border-radius: var(--radius-sm);
-  padding: 4px 10px;
-  font-size: var(--text-xs);
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn-link-settings:hover {
-  background: #fde68a;
-}
 
 /* Real Database Verified OGMP Surveys Section */
-.dossier-surveys-card {
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
-  border-radius: var(--radius-md);
-  padding: 12px;
-  margin-bottom: 14px;
-}
-
-.surveys-list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-top: 8px;
-}
-
-.survey-item {
-  background: var(--color-white);
-  border: 1px solid var(--color-ink-200);
-  border-radius: var(--radius-md);
-  padding: 8px 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.survey-item-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: var(--text-sm);
-}
-
-.survey-type {
-  font-weight: 700;
-  color: var(--color-ink-900);
-}
-
-.survey-date {
-  font-size: var(--text-xs);
-  color: var(--color-ink-500);
-}
-
-.survey-item-metrics {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: var(--text-xs);
-  color: var(--color-ink-600);
-}
-
-.survey-status-badge {
-  margin-left: auto;
-  font-size: var(--text-xs);
-  font-weight: 700;
-  padding: 1px 6px;
-  border-radius: var(--radius-sm);
-  background: var(--color-green-50);
-  color: var(--color-green-700);
-  border: 1px solid #a7f3d0;
-}
 
 /* Bottom-Up Reported Section */
-.dossier-bottomup-card {
-  margin-bottom: 14px;
-}
-
-.card-section-title {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: var(--text-sm);
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--color-ink-500);
-  margin-bottom: 10px;
-}
-
-.bottomup-metrics-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
-}
 
 .stat-card {
   background: var(--color-ink-50);
@@ -1470,14 +459,6 @@ input:checked + .slider:before {
 .stat-card.main-accent {
   background: linear-gradient(135deg, var(--color-brand-50) 0%, var(--color-ink-50) 100%);
   border-color: rgba(255, 102, 0, 0.35);
-}
-
-.stat-card-title {
-  font-size: var(--text-xs);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--color-ink-500);
 }
 
 .stat-card-number {
@@ -1509,39 +490,7 @@ input:checked + .slider:before {
   color: var(--color-ink-600);
 }
 
-.stat-card-sub {
-  font-size: var(--text-xs);
-  color: var(--color-ink-600);
-}
-
 /* Dossier Actions */
-.dossier-actions {
-  margin-top: auto;
-  padding-top: 10px;
-}
-
-.btn-action-focus {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  background: var(--color-ink-50);
-  border: 1px solid var(--color-ink-200);
-  border-radius: var(--radius-md);
-  padding: 10px 14px;
-  color: var(--color-ink-900);
-  font-size: var(--text-sm);
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.btn-action-focus:hover {
-  background: var(--color-brand-50);
-  border-color: var(--color-brand-500);
-  color: var(--color-link);
-}
 
 /* ============================================================
    6. PULSING RADAR MARKERS & MAP OVERRIDES (LIGHT THEME)
@@ -1630,72 +579,7 @@ input:checked + .slider:before {
   border-top-color: rgba(255, 255, 255, 0.98) !important;
 }
 
-.marker-tooltip-card {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.tooltip-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.tooltip-name {
-  font-size: var(--text-sm);
-  font-weight: 800;
-  color: var(--color-ink-900);
-}
-
-.tooltip-badge {
-  font-size: var(--text-xs);
-  font-weight: 800;
-  padding: 1px 5px;
-  border-radius: var(--radius-sm);
-}
-
-.tooltip-badge.high {
-  background: #fee2e2;
-  color: var(--color-red-700);
-  border: 1px solid #fca5a5;
-}
-
-.tooltip-badge.medium {
-  background: #fef3c7;
-  color: var(--color-amber-700);
-  border: 1px solid #fde68a;
-}
-
-.tooltip-badge.low,
-.tooltip-badge.baseline {
-  background: var(--color-green-50);
-  color: var(--color-green-700);
-  border: 1px solid #a7f3d0;
-}
-
-.tooltip-sub {
-  font-size: var(--text-xs);
-  color: var(--color-ink-500);
-}
-
-.tooltip-emission {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: var(--text-sm);
-  font-weight: 700;
-  color: var(--color-link);
-  margin-top: 2px;
-}
-
 /* Skeleton loader for satellite pass */
-.sat-skeleton-loader {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 12px 0;
-}
 
 .skeleton-line {
   height: 12px;
@@ -1723,62 +607,8 @@ input:checked + .slider:before {
    7. FULLSCREEN LOADING STATE (LIGHT THEME)
    ============================================================ */
 
-.methane-explorer-loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: calc(100vh - 72px);
-  gap: 16px;
-  background: var(--color-ink-50);
-  color: var(--color-ink-900);
-}
-
-.telemetry-loader {
-  position: relative;
-  width: 80px;
-  height: 80px;
-  border: 2px solid rgba(255, 102, 0, 0.2);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 20px rgba(255, 102, 0, 0.15);
-}
-
-.scanner-line {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  border-top: 3px solid var(--color-brand-500);
-  animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-}
-
-.loading-title {
-  font-size: var(--text-md);
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  color: var(--color-ink-900);
-}
-
-.loading-subtitle {
-  font-size: var(--text-sm);
-  color: var(--color-ink-500);
-  max-width: 420px;
-  text-align: center;
-  line-height: 1.5;
-}
-
 @keyframes spin {
   to {
     transform: rotate(360deg);
   }
-}
-
-.spin-slow {
-  animation: spin 8s linear infinite;
-}
-
-.spin-fast {
-  animation: spin 0.8s linear infinite;
 }

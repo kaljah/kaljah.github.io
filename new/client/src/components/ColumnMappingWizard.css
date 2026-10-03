@@ -1,17 +1,4 @@
 /* ─── Overlay & Modal ─────────────────────────────────────────────────────── */
-.cmw-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(10, 15, 30, 0.65);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 16px;
-  animation: cmw-fade-in 0.2s ease;
-}
 
 @keyframes cmw-fade-in {
   from {
@@ -20,20 +7,6 @@
   to {
     opacity: 1;
   }
-}
-
-.cmw-modal {
-  background: var(--color-white);
-  border-radius: var(--radius-lg);
-  width: 100%;
-  max-width: 780px;
-  max-height: 92vh;
-  display: flex;
-  flex-direction: column;
-  box-shadow:
-    var(--shadow-overlay);
-  animation: cmw-slide-up 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-  overflow: hidden;
 }
 
 @keyframes cmw-slide-up {
@@ -48,27 +21,6 @@
 }
 
 /* ─── Header ──────────────────────────────────────────────────────────────── */
-.cmw-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  padding: 24px 28px 0;
-  flex-shrink: 0;
-}
-
-.cmw-title {
-  font-size: var(--text-lg);
-  font-weight: 700;
-  color: var(--color-ink-900);
-  margin: 0 0 4px;
-  letter-spacing: -0.3px;
-}
-
-.cmw-subtitle {
-  font-size: var(--text-base);
-  color: var(--color-ink-500);
-  margin: 0;
-}
 
 .cmw-close-btn {
   width: 36px;
@@ -94,21 +46,6 @@
 }
 
 /* ─── Step Indicator ──────────────────────────────────────────────────────── */
-.cmw-step-indicator {
-  display: flex;
-  align-items: center;
-  padding: 20px 28px;
-  flex-shrink: 0;
-}
-
-.cmw-step {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  position: relative;
-  flex-shrink: 0;
-}
 
 .cmw-step-circle {
   width: 40px;
@@ -127,46 +64,6 @@
   height: 18px;
 }
 
-.cmw-step.active .cmw-step-circle {
-  border-color: var(--color-blue-600);
-  background: var(--color-blue-600);
-  color: var(--color-white);
-  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
-}
-
-.cmw-step.done .cmw-step-circle {
-  border-color: var(--color-green-600);
-  background: var(--color-green-700);
-  color: var(--color-white);
-}
-
-.cmw-step-label {
-  font-size: var(--text-sm);
-  font-weight: 500;
-  color: var(--color-ink-600);
-  white-space: nowrap;
-  transition: color 0.2s;
-}
-.cmw-step.active .cmw-step-label {
-  color: var(--color-blue-600);
-  font-weight: 600;
-}
-.cmw-step.done .cmw-step-label {
-  color: var(--color-green-700);
-}
-
-.cmw-step-line {
-  flex: 1;
-  height: 2px;
-  background: var(--color-ink-200);
-  margin: 0 10px;
-  margin-bottom: 22px;
-  transition: background 0.3s;
-}
-.cmw-step-line.done {
-  background: var(--color-green-600);
-}
-
 /* ─── Body ────────────────────────────────────────────────────────────────── */
 .cmw-body {
   flex: 1;
@@ -182,21 +79,6 @@
 }
 
 /* ─── Drop Zone ───────────────────────────────────────────────────────────── */
-.cmw-dropzone {
-  border: 2px dashed var(--color-ink-300);
-  border-radius: var(--radius-md);
-  padding: 40px 24px;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.2s;
-  background: var(--color-ink-50);
-  margin-bottom: 20px;
-}
-.cmw-dropzone:hover,
-.cmw-dropzone.dragging {
-  border-color: var(--color-blue-600);
-  background: var(--color-blue-50);
-}
 
 .cmw-dropzone-icon {
   width: 52px;
@@ -225,12 +107,6 @@
   font-weight: 600;
 }
 
-.cmw-dropzone-sub {
-  font-size: var(--text-sm);
-  color: var(--color-ink-600);
-  margin: 0;
-}
-
 .cmw-inline-error {
   display: flex;
   align-items: center;
@@ -250,22 +126,6 @@
 }
 
 /* ─── Template Section ────────────────────────────────────────────────────── */
-.cmw-template-section {
-  margin-top: 4px;
-}
-
-.cmw-template-label {
-  font-size: var(--text-sm);
-  color: var(--color-ink-500);
-  margin: 0 0 10px;
-  font-weight: 500;
-}
-
-.cmw-template-btns {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
 
 .cmw-template-btn {
   display: flex;
@@ -320,16 +180,6 @@
 }
 
 /* ─── Mapping UI ──────────────────────────────────────────────────────────── */
-.cmw-file-badge {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: var(--color-ink-50);
-  border: 1px solid var(--color-ink-200);
-  border-radius: var(--radius-md);
-  padding: 12px 16px;
-  margin-bottom: 16px;
-}
 
 .cmw-file-badge-icon {
   width: 36px;
@@ -345,18 +195,6 @@
 .cmw-file-badge-icon svg {
   width: 18px;
   height: 18px;
-}
-
-.cmw-file-name {
-  font-size: var(--text-base);
-  font-weight: 600;
-  color: var(--color-ink-900);
-  margin: 0 0 2px;
-}
-.cmw-file-size {
-  font-size: var(--text-sm);
-  color: var(--color-ink-600);
-  margin: 0;
 }
 
 .cmw-auto-badge {
@@ -407,10 +245,6 @@
   color: #92400e;
 }
 
-.cmw-mapping-container {
-  margin-bottom: 16px;
-}
-
 .cmw-mapping-group-label {
   font-size: var(--text-sm);
   font-weight: 700;
@@ -418,97 +252,6 @@
   letter-spacing: 0.06em;
   color: var(--color-ink-500);
   margin-bottom: 8px;
-}
-
-.cmw-mapping-table {
-  border: 1px solid var(--color-ink-200);
-  border-radius: var(--radius-md);
-  overflow: hidden;
-}
-
-.cmw-mapping-header {
-  display: grid;
-  grid-template-columns: 1.8fr 2fr 2fr 60px;
-  gap: 12px;
-  padding: 10px 16px;
-  background: var(--color-ink-50);
-  border-bottom: 1px solid var(--color-ink-200);
-  font-size: var(--text-xs);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--color-ink-600);
-}
-
-.cmw-mapping-row {
-  display: grid;
-  grid-template-columns: 1.8fr 2fr 2fr 60px;
-  gap: 12px;
-  align-items: center;
-  padding: 10px 16px;
-  border-bottom: 1px solid var(--color-ink-100);
-  transition: background 0.15s;
-}
-.cmw-mapping-row:last-child {
-  border-bottom: none;
-}
-.cmw-mapping-row:hover {
-  background: var(--color-ink-50);
-}
-.cmw-mapping-row.unmapped {
-  background: #fff9f9;
-}
-
-.cmw-field-name {
-  font-size: var(--text-base);
-  font-weight: 600;
-  color: var(--color-ink-800);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.cmw-required-dot {
-  display: inline-block;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--color-red-500);
-  flex-shrink: 0;
-}
-
-.cmw-field-hint {
-  font-size: var(--text-sm);
-  color: var(--color-ink-600);
-}
-
-.cmw-select,
-.cmw-text-input {
-  width: 100%;
-  padding: 7px 10px;
-  border: 1.5px solid var(--color-ink-200);
-  border-radius: var(--radius-sm);
-  font-size: var(--text-sm);
-  color: var(--color-ink-700);
-  background: var(--color-white);
-  outline: none;
-  transition: all 0.15s;
-  appearance: auto;
-}
-.cmw-select:focus,
-.cmw-text-input:focus {
-  border-color: var(--color-blue-600);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-}
-.cmw-select.matched,
-.cmw-text-input.matched {
-  border-color: var(--color-green-600);
-  background: #f0fdf4;
-}
-
-.cmw-field-status {
-  display: flex;
-  justify-content: center;
 }
 
 .cmw-status-ok {
@@ -524,14 +267,6 @@
 .cmw-status-ok svg {
   width: 14px;
   height: 14px;
-}
-
-.cmw-status-empty {
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  background: var(--color-ink-100);
-  border: 2px dashed var(--color-ink-200);
 }
 
 .cmw-optional-toggle {
@@ -559,38 +294,6 @@
 }
 
 /* ─── Factor Row ──────────────────────────────────────────────────────────── */
-.cmw-factor-row {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 14px 16px;
-  background: var(--color-ink-50);
-  border: 1px solid var(--color-ink-200);
-  border-radius: var(--radius-md);
-  margin-top: 4px;
-}
-
-.cmw-factor-label {
-  font-size: var(--text-sm);
-  font-weight: 500;
-  color: var(--color-ink-600);
-  flex: 1;
-}
-
-.cmw-factor-select {
-  padding: 7px 12px;
-  border: 1.5px solid var(--color-ink-200);
-  border-radius: var(--radius-sm);
-  font-size: var(--text-sm);
-  color: var(--color-ink-700);
-  background: var(--color-white);
-  outline: none;
-  min-width: 220px;
-  transition: border-color 0.15s;
-}
-.cmw-factor-select:focus {
-  border-color: var(--color-blue-600);
-}
 
 /* ─── Footer ──────────────────────────────────────────────────────────────── */
 .cmw-footer {
@@ -658,15 +361,6 @@
 }
 
 /* ─── Spinner ─────────────────────────────────────────────────────────────── */
-.cmw-spinner {
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(255, 255, 255, 0.4);
-  border-top-color: var(--color-white);
-  border-radius: 50%;
-  animation: cmw-spin 0.7s linear infinite;
-  flex-shrink: 0;
-}
 
 @keyframes cmw-spin {
   to {

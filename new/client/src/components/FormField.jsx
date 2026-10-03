@@ -22,7 +22,7 @@ export const TextField = ({
       {label && (
         <label className="field-label">
           {label}
-          {required && <span className="required-mark">*</span>}
+          {required && <span className="[color:var(--color-red-700)]! [font-size:var(--text-base)]!">*</span>}
         </label>
       )}
       <input
@@ -39,7 +39,7 @@ export const TextField = ({
       />
       {error && <span className="error-text">{error}</span>}
       {helperText && !error && (
-        <span className="helper-text">{helperText}</span>
+        <span className="[font-size:var(--text-sm)]! [color:var(--text-secondary)]! [margin-top:4px]!">{helperText}</span>
       )}
     </div>
   );
@@ -62,7 +62,7 @@ export const SelectField = ({
       {label && (
         <label className="field-label">
           {label}
-          {required && <span className="required-mark">*</span>}
+          {required && <span className="[color:var(--color-red-700)]! [font-size:var(--text-base)]!">*</span>}
         </label>
       )}
       <NativeSelect
@@ -81,7 +81,7 @@ export const SelectField = ({
       </NativeSelect>
       {error && <span className="error-text">{error}</span>}
       {helperText && !error && (
-        <span className="helper-text">{helperText}</span>
+        <span className="[font-size:var(--text-sm)]! [color:var(--text-secondary)]! [margin-top:4px]!">{helperText}</span>
       )}
     </div>
   );
@@ -104,7 +104,7 @@ export const TextAreaField = ({
       {label && (
         <label className="field-label">
           {label}
-          {required && <span className="required-mark">*</span>}
+          {required && <span className="[color:var(--color-red-700)]! [font-size:var(--text-base)]!">*</span>}
         </label>
       )}
       <textarea
@@ -118,7 +118,7 @@ export const TextAreaField = ({
       />
       {error && <span className="error-text">{error}</span>}
       {helperText && !error && (
-        <span className="helper-text">{helperText}</span>
+        <span className="[font-size:var(--text-sm)]! [color:var(--text-secondary)]! [margin-top:4px]!">{helperText}</span>
       )}
     </div>
   );
@@ -138,7 +138,7 @@ export const CheckboxField = ({
       <label className="checkbox-label">
         <input
           type="checkbox"
-          className="field-checkbox"
+          className="[width:18px]! [height:18px]! [cursor:pointer] [accent-color:var(--accent-color)] disabled:[cursor:not-allowed] disabled:[opacity:0.6]"
           checked={checked}
           onChange={(e) => onChange(e.target.checked)}
           disabled={disabled}
@@ -147,7 +147,7 @@ export const CheckboxField = ({
       </label>
       {error && <span className="error-text">{error}</span>}
       {helperText && !error && (
-        <span className="helper-text">{helperText}</span>
+        <span className="[font-size:var(--text-sm)]! [color:var(--text-secondary)]! [margin-top:4px]!">{helperText}</span>
       )}
     </div>
   );
@@ -170,17 +170,17 @@ export const RadioGroupField = ({
       {label && (
         <label className="field-label">
           {label}
-          {required && <span className="required-mark">*</span>}
+          {required && <span className="[color:var(--color-red-700)]! [font-size:var(--text-base)]!">*</span>}
         </label>
       )}
       <div
-        className={`radio-group ${layout === "horizontal" ? "radio-horizontal" : "radio-vertical"}`}
+        className={`[display:flex]! [gap:16px]! ${layout === "horizontal" ? "radio-horizontal" : "radio-vertical"}`}
       >
         {options.map((opt, idx) => (
-          <label key={idx} className="radio-label">
+          <label key={idx} className="[display:flex]! [align-items:center] [gap:8px] [cursor:pointer] [font-size:var(--text-base)]! [color:var(--text-primary)]!">
             <input
               type="radio"
-              className="field-radio"
+              className="[width:16px]! [height:16px]! [cursor:pointer] [accent-color:var(--accent-color)] disabled:[cursor:not-allowed] disabled:[opacity:0.6]"
               value={opt.value}
               checked={value === opt.value}
               onChange={(e) => onChange(e.target.value)}
@@ -192,7 +192,7 @@ export const RadioGroupField = ({
       </div>
       {error && <span className="error-text">{error}</span>}
       {helperText && !error && (
-        <span className="helper-text">{helperText}</span>
+        <span className="[font-size:var(--text-sm)]! [color:var(--text-secondary)]! [margin-top:4px]!">{helperText}</span>
       )}
     </div>
   );
@@ -215,7 +215,7 @@ export const DateField = ({
       {label && (
         <label className="field-label">
           {label}
-          {required && <span className="required-mark">*</span>}
+          {required && <span className="[color:var(--color-red-700)]! [font-size:var(--text-base)]!">*</span>}
         </label>
       )}
       <input
@@ -230,7 +230,7 @@ export const DateField = ({
       />
       {error && <span className="error-text">{error}</span>}
       {helperText && !error && (
-        <span className="helper-text">{helperText}</span>
+        <span className="[font-size:var(--text-sm)]! [color:var(--text-secondary)]! [margin-top:4px]!">{helperText}</span>
       )}
     </div>
   );

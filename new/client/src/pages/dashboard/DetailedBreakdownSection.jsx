@@ -5,13 +5,13 @@ import { formatCompactNumber } from "../../utils/formatters";
 
 // Extracted from DashboardEnhanced.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActivities, expandedDivisions, flaringData, formatActivityName, getHierarchicalData, navigate, setDetailedBreakdownCollapsed, stats, toggleActivity, toggleDivision }) => (
-<div className="main-dashboard-grid">
+<div className="[display:grid]! [grid-template-columns:8fr_4fr] [gap:24px] [@media(max-width:1200px)]:[grid-template-columns:1fr]! [@media(max-width:1200px)]:[gap:20px]!">
           <div className="detailed-breakdown-section">
             <div
               className={`card detailed-table-card glass-panel ${detailedBreakdownCollapsed ? "collapsed-card" : ""}`}
             >
               <div role="button" tabIndex={0} onKeyDown={activateOnKey}
-                className="table-header-row clickable-card-header"
+                className="table-header-row clickable-card-header [transition:opacity_0.2s_ease]! hover:[opacity:0.85]!"
                 onClick={() =>
                   setDetailedBreakdownCollapsed(!detailedBreakdownCollapsed)
                 }
@@ -38,7 +38,7 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
                 </div>
               </div>
               <div
-                className={`collapsible-body-wrapper ${detailedBreakdownCollapsed ? "collapsed" : ""}`}
+                className={`[@media_print]:[&.collapsed]:[display:block]! [@media_print]:[&.collapsed]:[max-height:none]! [@media_print]:[&.collapsed]:[opacity:1]! [max-height:2500px]! [opacity:1]! [overflow:hidden]! [transition:max-height_0.4s_cubic-bezier(0.4,_0,_0.2,_1),_opacity_0.3s_ease,_margin-top_0.3s_ease]! [&&]:[&.collapsed]:[max-height:0]! [&&]:[&.collapsed]:[opacity:0]! [&.collapsed]:[margin-top:0]! [&.collapsed]:[pointer-events:none]! ${detailedBreakdownCollapsed ? "collapsed" : ""}`}
               >
                 <div className="table-container mt-[16px]!">
                   <table className="data-table">
@@ -56,13 +56,13 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
                         </td>
                       </tr>
                       <tr className="detail-row">
-                        <td className="indent">Combustion (stationary &amp; mobile)</td>
+                        <td className="[padding-left:28px]!">Combustion (stationary &amp; mobile)</td>
                         <td className="text-right">
                           {formatCompactNumber(stats.combustion)}
                         </td>
                       </tr>
                       <tr className="detail-row">
-                        <td className="indent">Flaring</td>
+                        <td className="[padding-left:28px]!">Flaring</td>
                         <td className="text-right">
                           {formatCompactNumber(stats.flaring)}
                         </td>
@@ -90,19 +90,19 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
                         </>
                       )}
                       <tr className="detail-row">
-                        <td className="indent">Venting</td>
+                        <td className="[padding-left:28px]!">Venting</td>
                         <td className="text-right">
                           {formatCompactNumber(stats.venting)}
                         </td>
                       </tr>
                       <tr className="detail-row">
-                        <td className="indent">Equipment Leaks / Fugitives</td>
+                        <td className="[padding-left:28px]!">Equipment Leaks / Fugitives</td>
                         <td className="text-right">
                           {formatCompactNumber(stats.fugitive)}
                         </td>
                       </tr>
                       <tr className="detail-row">
-                        <td className="indent">Other Sources</td>
+                        <td className="[padding-left:28px]!">Other Sources</td>
                         <td className="text-right">
                           {formatCompactNumber(stats.other)}
                         </td>
@@ -151,11 +151,11 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
                         ([act, actData]) => (
                           <React.Fragment key={act}>
                             <tr tabIndex={0} onKeyDown={activateOnKey}
-                              className="act-row clickable"
+                              className="act-row [background:#fefefe]! clickable [cursor:pointer]"
                               onClick={() => toggleActivity(act)}
                             >
                               <td>
-                                <span className="toggle-icon">
+                                <span className="[display:inline-block]! [width:16px]! [font-size:var(--text-xs)]! [color:var(--color-ink-600)]!">
                                   {expandedActivities[act] ? "▼" : "▶"}
                                 </span>
                                 {formatActivityName(act)}
@@ -169,14 +169,14 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
                                 ([div, divData]) => (
                                   <React.Fragment key={div}>
                                     <tr tabIndex={0} onKeyDown={activateOnKey}
-                                      className="div-row clickable"
+                                      className="div-row [color:var(--color-ink-600)]! clickable [cursor:pointer]"
                                       onClick={(e) => {
                                         e.stopPropagation();
                                         toggleDivision(div);
                                       }}
                                     >
-                                      <td className="indent">
-                                        <span className="toggle-icon">
+                                      <td className="[padding-left:28px]!">
+                                        <span className="[display:inline-block]! [width:16px]! [font-size:var(--text-xs)]! [color:var(--color-ink-600)]!">
                                           {expandedDivisions[div] ? "▼" : "▶"}
                                         </span>
                                         {div}
@@ -187,8 +187,8 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
                                     </tr>
                                     {expandedDivisions[div] &&
                                       divData.regions.map((reg, ridx) => (
-                                        <tr key={ridx} className="reg-row">
-                                          <td className="indent-double">
+                                        <tr key={ridx} className="reg-row [font-size:var(--text-sm)]! [opacity:0.8]">
+                                          <td className="[padding-left:44px]!">
                                             {reg.region}
                                           </td>
                                           <td className="text-right">
@@ -211,7 +211,7 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
             </div>
           </div>
 
-          <div className="dashboard-sidebar">
+          <div className="[display:flex]! [flex-direction:column] [gap:24px]">
             {/* Moved Trend Chart to Top */}
 
             <div className="card library-card">
@@ -230,8 +230,8 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
                   <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
                 </svg>
               </div>
-              <div className="library-list">
-                <div className="library-item">
+              <div className="[display:flex]! [flex-direction:column] [gap:12px] [margin:16px_0_20px_0]!">
+                <div className="[display:flex]! [align-items:center] [gap:10px] [font-size:var(--text-base)]! [font-weight:600]! [color:var(--color-ink-600)]! [padding:10px]! [background:var(--color-ink-50)]! [border-radius:var(--radius-md)]! [cursor:pointer] [transition:all_0.2s]! hover:[background:var(--color-ink-100)]! hover:[transform:translateX(4px)] [&_svg]:[margin-left:auto]! [&_svg]:[color:var(--color-ink-300)]!">
                   <div className="dot blue"></div>
                   API Compendium: 2021
                   <svg
@@ -245,7 +245,7 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
                     <polyline points="9 18 15 12 9 6" />
                   </svg>
                 </div>
-                <div className="library-item">
+                <div className="[display:flex]! [align-items:center] [gap:10px] [font-size:var(--text-base)]! [font-weight:600]! [color:var(--color-ink-600)]! [padding:10px]! [background:var(--color-ink-50)]! [border-radius:var(--radius-md)]! [cursor:pointer] [transition:all_0.2s]! hover:[background:var(--color-ink-100)]! hover:[transform:translateX(4px)] [&_svg]:[margin-left:auto]! [&_svg]:[color:var(--color-ink-300)]!">
                   <div className="dot green"></div>
                   ISO 14064-1:2018
                   <svg
@@ -259,7 +259,7 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
                     <polyline points="9 18 15 12 9 6" />
                   </svg>
                 </div>
-                <div className="library-item">
+                <div className="[display:flex]! [align-items:center] [gap:10px] [font-size:var(--text-base)]! [font-weight:600]! [color:var(--color-ink-600)]! [padding:10px]! [background:var(--color-ink-50)]! [border-radius:var(--radius-md)]! [cursor:pointer] [transition:all_0.2s]! hover:[background:var(--color-ink-100)]! hover:[transform:translateX(4px)] [&_svg]:[margin-left:auto]! [&_svg]:[color:var(--color-ink-300)]!">
                   <div className="dot orange"></div>
                   GRI 305 Standards
                   <svg
@@ -275,7 +275,7 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
                 </div>
               </div>
               <button
-                className="manage-factors-btn"
+                className="manage-factors-btn [display:flex]! [align-items:center] [justify-content:center] [gap:8px] [padding:12px]! [background:var(--color-white)]! [border:2px_dashed_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [color:var(--color-ink-500)]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [transition:all_0.2s]! [width:100%]! hover:[border-color:var(--color-brand-500)]! hover:[color:var(--color-link)]!"
                 onClick={() =>
                   navigate("/manage-data", { state: { tab: "factors" } })
                 }

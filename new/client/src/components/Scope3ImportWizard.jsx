@@ -174,21 +174,21 @@ const STEPS = [
 // ─── Step Indicator ───────────────────────────────────────────────────────────
 function StepBar({ current }) {
   return (
-    <div className="s1w-stepbar">
+    <div className="[display:flex]! [align-items:center] [padding:16px_24px]! [gap:0] [flex-shrink:0] [border-bottom:1px_solid_var(--color-ink-200)]! [overflow-x:auto]!">
       {STEPS.map((s, i) => {
         const done   = s.id < current;
         const active = s.id === current;
         const SIcon  = s.IconComp;
         return (
           <React.Fragment key={s.id}>
-            <div className={`s1w-step ${active ? "active" : ""} ${done ? "done" : ""}`}>
+            <div className={`[display:flex]! [flex-direction:column]! [align-items:center]! [gap:5px]! [flex-shrink:0]! [&.active_.s1w-step-circle]:[border-color:var(--color-brand-500)]! [&.active_.s1w-step-circle]:[background:#fff7f0]! [&.active_.s1w-step-circle]:[color:var(--color-link)]! [&&]:[&.done_.s1w-step-circle]:[border-color:var(--color-green-500)]! [&&]:[&.done_.s1w-step-circle]:[background:var(--color-green-50)]! [&&]:[&.done_.s1w-step-circle]:[color:var(--color-green-700)]! [&&]:[&&]:[&.active_.s1w-step-label]:[color:var(--color-link)]! [&&]:[&&]:[&&]:[&.done_.s1w-step-label]:[color:var(--color-green-700)]! ${active ? "active" : ""} ${done ? "done" : ""}`}>
               <div className="s1w-step-circle">
                 {done ? <Icon.Check /> : <SIcon />}
               </div>
-              <span className="s1w-step-label">{s.label}</span>
+              <span className="s1w-step-label [font-size:var(--text-xs)]! [font-weight:600]! [color:var(--color-ink-600)]! [white-space:nowrap] [text-transform:uppercase]! [letter-spacing:0.5px]">{s.label}</span>
             </div>
             {i < STEPS.length - 1 && (
-              <div className={`s1w-step-line ${done ? "done" : ""}`} />
+              <div className={`[height:2px]! [flex:1]! [background:var(--color-ink-200)]! [margin:0_4px]! [&&]:[margin-bottom:20px]! [min-width:20px]! [transition:background_0.25s]! [&.done]:[background:var(--color-green-500)]! ${done ? "done" : ""}`} />
             )}
           </React.Fragment>
         );
@@ -202,27 +202,27 @@ function MappingRow({ field, headers, value, onChange }) {
   const mapped = !!value;
   return (
     <div className={`s1w-map-row ${!mapped && field.required ? "s1w-map-row--missing" : ""} ${mapped ? "s1w-map-row--mapped" : ""}`}>
-      <div className="s1w-map-field">
-        <span className="s1w-map-field-label">
+      <div className="[display:flex]! [flex-direction:column] [gap:2px] [min-width:0]">
+        <span className="[font-size:var(--text-sm)]! [font-weight:600]! [color:var(--color-ink-900)]! [display:flex]! [align-items:center] [gap:4px]">
           {field.label}
-          {field.required && <span className="s1w-required-dot" />}
+          {field.required && <span className="[width:6px]! [height:6px]! [border-radius:50%]! [background:var(--color-red-500)]! [flex-shrink:0] [display:inline-block]!" />}
         </span>
-        {field.hint && <span className="s1w-map-field-hint">{field.hint}</span>}
+        {field.hint && <span className="[font-size:var(--text-xs)]! [color:var(--color-ink-600)]! [line-height:1.3]">{field.hint}</span>}
       </div>
       <div className="s1w-map-select-wrap">
         {headers.length > 0 ? (
-          <NativeSelect className={`s1w-map-select ${mapped ? "matched" : ""}`} value={value} onChange={e => onChange(e.target.value)}>
+          <NativeSelect className={`[width:100%]! [padding:7px_10px]! [border:1.5px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-sm)]! [background:var(--color-white)]! [font-size:var(--text-sm)]! [color:var(--color-ink-900)]! [outline:none]! [transition:border-color_0.15s]! [font-family:inherit]! focus:[border-color:var(--color-brand-500)]! focus:[box-shadow:0_0_0_2px_rgba(255,102,0,0.08)]! [&.matched]:[border-color:var(--color-green-500)]! [&.matched]:[background:#f0fdf4]! ${mapped ? "matched" : ""}`} value={value} onChange={e => onChange(e.target.value)}>
             <option value="">— Not mapped —</option>
             {headers.map(h => <option key={h} value={h}>{h}</option>)}
           </NativeSelect>
         ) : (
-          <input className={`s1w-map-input ${mapped ? "matched" : ""}`} placeholder="Column name in your file" value={value} onChange={e => onChange(e.target.value)} />
+          <input className={`[width:100%]! [padding:7px_10px]! [border:1.5px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-sm)]! [background:var(--color-white)]! [font-size:var(--text-sm)]! [color:var(--color-ink-900)]! [outline:none]! [transition:border-color_0.15s]! [font-family:inherit]! focus:[border-color:var(--color-brand-500)]! focus:[box-shadow:0_0_0_2px_rgba(255,102,0,0.08)]! [&.matched]:[border-color:var(--color-green-500)]! [&.matched]:[background:#f0fdf4]! ${mapped ? "matched" : ""}`} placeholder="Column name in your file" value={value} onChange={e => onChange(e.target.value)} />
         )}
       </div>
-      <div className="s1w-map-status">
+      <div className="[display:flex]! [justify-content:center]">
         {mapped
           ? <span className="s1w-status-ok"><Icon.Check /></span>
-          : <span className="s1w-status-empty" />}
+          : <span className="[width:22px]! [height:22px]! [border-radius:50%]! [border:2px_solid_var(--color-ink-200)]! [display:block]!" />}
       </div>
     </div>
   );
@@ -247,20 +247,20 @@ function FieldGroup({ group, headers, mapping, setMapping, searchQuery }) {
   const mappedCount = visibleFields.filter(f => mapping[f.key]).length;
 
   return (
-    <div className="s1w-field-group">
+    <div className="[border:1.5px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [overflow:hidden]! [transition:border-color_0.15s]! [&:has(.s1w-group-body)]:[border-color:var(--color-ink-200)]!">
       <button className="s1w-group-header" onClick={() => setOpen(v => !v)}>
-        <div className="s1w-group-header-left">
+        <div className="[display:flex]! [align-items:center] [gap:10px]">
           <div className="s1w-group-icon"><GroupIcon /></div>
-          <span className="s1w-group-label">{group.label}</span>
+          <span className="[font-size:var(--text-base)]! [font-weight:700]! [color:var(--color-ink-900)]!">{group.label}</span>
         </div>
-        <div className="s1w-group-header-right">
-          <span className="s1w-group-count">{mappedCount}/{visibleFields.length} mapped</span>
+        <div className="[display:flex]! [align-items:center] [gap:10px]">
+          <span className="[font-size:var(--text-sm)]! [color:var(--text-secondary,_var(--color-ink-500))]! [font-weight:600]!">{mappedCount}/{visibleFields.length} mapped</span>
           <Icon.ChevronDown open={open} />
         </div>
       </button>
       {open && (
-        <div className="s1w-group-body">
-          <div className="s1w-group-table-header">
+        <div className="s1w-group-body [border-top:1px_solid_var(--color-ink-200)]!">
+          <div className="[display:grid]! [grid-template-columns:1fr_1fr_36px] [padding:8px_16px]! [background:var(--color-ink-50)]! [border-bottom:1px_solid_var(--color-ink-100)]! [font-size:var(--text-xs)]! [font-weight:700]! [color:var(--color-ink-600)]! [text-transform:uppercase]! [letter-spacing:0.5px] [@media(max-width:600px)]:[display:none]!">
             <span>Field</span>
             <span>Your CSV Column</span>
             <span>Status</span>
@@ -376,15 +376,15 @@ export default function Scope3ImportWizard({ onClose, onUploadSuccess }) {
   };
 
   return (
-    <div className="s1w-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
-      <div className="s1w-modal">
+    <div className="[position:fixed] [inset:0] [background:rgba(10,_15,_30,_0.68)]! [backdrop-filter:blur(6px)] [-webkit-backdrop-filter:blur(6px)]! [display:flex]! [align-items:center] [justify-content:center] [z-index:1000] [padding:16px]! [animation:s1w-fade_0.2s_ease]!" onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className="[background:var(--color-white)]! [border-radius:var(--radius-lg)]! [width:100%]! [max-width:820px]! [max-height:94vh]! [display:flex]! [flex-direction:column] [box-shadow:var(--shadow-overlay)]! [animation:s1w-slide_0.28s_cubic-bezier(0.34,_1.56,_0.64,_1)]! [overflow:hidden]! [@media(max-width:600px)]:[border-radius:var(--radius-md)]!">
         {/* Header */}
-        <div className="s1w-header">
-          <div className="s1w-header-left">
+        <div className="[display:flex]! [align-items:center] [justify-content:space-between] [padding:20px_24px_0]! [flex-shrink:0]">
+          <div className="[display:flex]! [align-items:center] [gap:12px]">
             <div className="s1w-header-icon"><Icon.Globe /></div>
             <div>
-              <h2 className="s1w-title">Scope 3 Bulk Import</h2>
-              <p className="s1w-subtitle">Upload value chain emissions data from CSV or Excel</p>
+              <h2 className="[font-size:var(--text-lg)]! [font-weight:700]! [color:var(--color-ink-900)]! [margin:0_0_2px]! [letter-spacing:-0.3px] [font-family:inherit]!">Scope 3 Bulk Import</h2>
+              <p className="[font-size:var(--text-sm)]! [color:var(--color-ink-500)]! [margin:0]!">Upload value chain emissions data from CSV or Excel</p>
             </div>
           </div>
           <button className="s1w-close" aria-label="Close" onClick={onClose}><Icon.Close /></button>
@@ -405,13 +405,13 @@ export default function Scope3ImportWizard({ onClose, onUploadSuccess }) {
                   <strong>Your upload is restricted to the following regions:</strong>
                 </div>
                 {allowedRegions.length > 0 ? (
-                  <div className="s1w-access-region-list">
+                  <div className="[display:flex]! [flex-wrap:wrap] [gap:6px]">
                     {allowedRegions.map(r => (
-                      <span key={r} className="s1w-access-region-pill">{r}</span>
+                      <span key={r} className="[padding:4px_12px]! [background:var(--color-white)]! [border:1.5px_solid_var(--color-brand-400)]! [&&]:[border-radius:var(--radius-lg)]! [font-size:var(--text-sm)]! [font-weight:700]! [color:var(--color-brand-700)]! [white-space:nowrap]">{r}</span>
                     ))}
                   </div>
                 ) : (
-                  <p className="s1w-access-no-regions">
+                  <p className="[font-size:var(--text-base)]! [color:var(--color-red-700)]! [margin:0]! [font-weight:500]!">
                     Your account has no assigned regions. Contact an administrator before uploading.
                   </p>
                 )}
@@ -432,7 +432,7 @@ export default function Scope3ImportWizard({ onClose, onUploadSuccess }) {
               ))}
             </div>
             <div role="button" tabIndex={0} onKeyDown={activateOnKey}
-              className={`s1w-dropzone ${isDragging ? "dragging" : ""}`}
+              className={`[border:2px_dashed_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-lg)]! [padding:40px_24px]! [display:flex]! [flex-direction:column]! [align-items:center]! [gap:10px]! [cursor:pointer]! [transition:all_0.2s]! [background:var(--color-ink-50)]! [text-align:center]! hover:[border-color:var(--color-brand-500)]! hover:[background:#fff7f0]! hover:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.08)]! [&.dragging]:[border-color:var(--color-brand-500)]! [&.dragging]:[background:#fff7f0]! [&.dragging]:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.08)]! ${isDragging ? "dragging" : ""}`}
               onClick={() => fileInputRef.current.click()}
               onDragOver={e => { e.preventDefault(); setIsDragging(true); }}
               onDragLeave={() => setIsDragging(false)}
@@ -441,7 +441,7 @@ export default function Scope3ImportWizard({ onClose, onUploadSuccess }) {
               <input ref={fileInputRef} type="file" accept=".csv,.xlsx" className="hidden!" onChange={onFileChange} />
               <div className="s1w-dropzone-icon"><Icon.Upload /></div>
               <p className="s1w-dropzone-text">Drag & drop your file here, or <span>click to browse</span></p>
-              <p className="s1w-dropzone-sub">Supports .xlsx and .csv</p>
+              <p className="[font-size:var(--text-sm)]! [color:var(--color-ink-600)]! [margin:0]!">Supports .xlsx and .csv</p>
               {parseError && (
                 <div className="s1w-inline-error"><Icon.Warning />{parseError}</div>
               )}
@@ -468,11 +468,11 @@ export default function Scope3ImportWizard({ onClose, onUploadSuccess }) {
               </div>
             )}
             {file && (
-              <div className="s1w-file-badge">
+              <div className="[display:flex]! [align-items:center] [gap:12px] [padding:12px_16px]! [background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]!">
                 <div className="s1w-file-badge-icon"><Icon.File /></div>
                 <div className="s1w-file-badge-info">
-                  <p className="s1w-file-name">{file.name}</p>
-                  <p className="s1w-file-size">{(file.size / 1024).toFixed(1)} KB</p>
+                  <p className="[font-size:var(--text-base)]! [font-weight:600]! [color:var(--color-ink-900)]! [margin:0_0_2px]!">{file.name}</p>
+                  <p className="[font-size:var(--text-sm)]! [color:var(--color-ink-600)]! [margin:0]!">{(file.size / 1024).toFixed(1)} KB</p>
                 </div>
                 {headers.length > 0 && (
                   <div className="s1w-auto-badge"><Icon.Wand /><span>{Object.keys(mapping).length} auto-detected</span></div>
@@ -494,10 +494,10 @@ export default function Scope3ImportWizard({ onClose, onUploadSuccess }) {
               </div>
             )}
 
-            <div className="s1w-search-bar">
+            <div className="[position:relative] [display:flex]! [align-items:center]">
               <div className="s1w-search-icon"><Icon.Search /></div>
               <input
-                className="s1w-search-input"
+                className="[width:100%]! [padding:10px_12px_10px_38px]! [border:1.5px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [background:var(--color-ink-50)]! [font-size:var(--text-base)]! [color:var(--color-ink-900)]! [outline:none]! [transition:border-color_0.15s]! [font-family:inherit]! focus:[border-color:var(--color-brand-500)]! focus:[background:var(--color-white)]! focus:[box-shadow:0_0_0_3px_rgba(255,102,0,0.08)]! placeholder:[color:var(--color-ink-400)]!"
                 type="text"
                 placeholder="Search fields by name, key, or description…"
                 value={searchQuery}
@@ -510,12 +510,12 @@ export default function Scope3ImportWizard({ onClose, onUploadSuccess }) {
 
             <label className="s1w-factor-row gap-[8px]! cursor-pointer!">
               <input type="checkbox" checked={overwrite} onChange={e => setOverwrite(e.target.checked)} />
-              <span className="s1w-factor-label">
+              <span className="[font-size:var(--text-sm)]! [color:var(--color-ink-600)]! [font-weight:500]! [flex-shrink:0]">
                 Overwrite records that already exist (same facility, month and source). Overwritten records go back to Pending review.
               </span>
             </label>
 
-            <div className="s1w-field-groups">
+            <div className="[display:flex]! [flex-direction:column] [gap:10px]">
               {FIELD_GROUPS.map(group => (
                 <FieldGroup
                   key={group.id}
@@ -543,7 +543,7 @@ export default function Scope3ImportWizard({ onClose, onUploadSuccess }) {
 
         {/* ── Footer ── */}
         {step !== 3 && (
-          <div className="s1w-footer">
+          <div className="[display:flex]! [align-items:center] [justify-content:space-between] [padding:14px_24px]! [border-top:1px_solid_var(--color-ink-200)]! [background:var(--color-ink-50)]! [flex-shrink:0]">
             <button
               className="s1w-btn-ghost"
               onClick={step === 1 ? onClose : () => setStep(s => s - 1)}
@@ -551,7 +551,7 @@ export default function Scope3ImportWizard({ onClose, onUploadSuccess }) {
               {step === 1 ? <><Icon.Close /> Cancel</> : <><Icon.ArrowLeft /> Back</>}
             </button>
 
-            <div className="s1w-footer-right">
+            <div className="[display:flex]! [align-items:center] [gap:10px]">
               {step === 1 && (
                 <button
                   className="s1w-btn-primary"
@@ -567,7 +567,7 @@ export default function Scope3ImportWizard({ onClose, onUploadSuccess }) {
                   onClick={handleSubmit}
                   disabled={isSubmitting || (!canSubmit && headers.length > 0) || (!isAdmin && allowedRegions !== null && allowedRegions.length === 0)}
                 >
-                  {isSubmitting ? <span className="s1w-spinner" /> : <Icon.Processing />}
+                  {isSubmitting ? <span className="[width:15px]! [height:15px]! [border-radius:50%]! [border:2px_solid_rgba(255,255,255,0.4)]! [&&]:[border-top-color:var(--color-white)]! [animation:s1w-spin_0.7s_linear_infinite]! [display:inline-block]!" /> : <Icon.Processing />}
                   {isSubmitting ? "Starting…" : "Start Import"}
                 </button>
               )}

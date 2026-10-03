@@ -15,7 +15,7 @@ const LoadingSpinner = ({
         <div className="spinner-ring"></div>
         <div className="spinner-core"></div>
       </div>
-      {message && <div className="loading-message-text">{message}</div>}
+      {message && <div className="[font-family:inherit]! [color:var(--text-primary,_var(--color-ink-900))]! [font-size:var(--text-md)]! [font-weight:600]! [letter-spacing:0.5px] [animation:pulse-opacity_2s_infinite_ease-in-out]!">{message}</div>}
     </div>
   );
 

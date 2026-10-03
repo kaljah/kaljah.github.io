@@ -63,9 +63,9 @@ const GhgCloud = () => {
   }, []);
 
   return (
-    <div className="ghg-cloud-container">
+    <div className="[position:absolute] [top:0] [left:0] [right:0] [bottom:0] [pointer-events:none]! [z-index:1] [overflow:hidden]!">
       <div className="ghg-cloud ch4-cloud" ref={cloud2Ref}></div>
-      <div className="ghg-cloud co2-cloud" ref={cloud1Ref}></div>
+      <div className="ghg-cloud [background:radial-gradient(_circle,_rgba(255,_102,_0,_0.6)_0%,_rgba(100,_116,_139,_0.3)_50%,_transparent_70%_)]!" ref={cloud1Ref}></div>
       <div className="ghg-noise-overlay"></div>
     </div>
   );
@@ -138,7 +138,7 @@ const Login = () => {
       >
         {/* Welcome Text */}
         <div className="login-header">
-          <img src={`${import.meta.env.BASE_URL}carbon_tech.svg`} alt="Carbon Tech" className="login-logo" />
+          <img src={`${import.meta.env.BASE_URL}carbon_tech.svg`} alt="Carbon Tech" className="[display:block]! [width:48px]! [height:48px]! [margin:0_auto_12px]!" />
           <h2>Welcome Back</h2>
           <p>Sign in to your GHG Reporting Platform</p>
         </div>
@@ -179,8 +179,8 @@ const Login = () => {
               visible: { opacity: 1, y: 0 },
             }}
           >
-            <div className="input-wrapper">
-              <span className="input-icon">
+            <div className="[position:relative]">
+              <span className="input-icon [position:absolute] [left:16px] [top:50%] [transform:translateY(-50%)] [color:var(--color-ink-600)]! [transition:color_0.3s]!">
                 <svg
                   width="18"
                   height="18"
@@ -197,7 +197,7 @@ const Login = () => {
               </span>
               <input
                 type="text"
-                className="form-control"
+                className="[width:100%]! [padding:14px_16px_14px_48px]! [border:1px_solid_var(--border-light)]! [&&]:[border-radius:var(--radius-md)]! [font-size:var(--text-md)]! [color:var(--text-main)]! [transition:all_0.2s]! [background:#fafafa]! placeholder:[color:var(--color-ink-400)]! focus:[outline:none]! focus:[border-color:var(--primary)]! focus:[background:var(--color-white)]! focus:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.1)]! [&:focus+.input-icon]:[color:var(--primary)]!"
                 required
                 placeholder="Email Address"
                 aria-label="Email address"
@@ -215,13 +215,13 @@ const Login = () => {
               visible: { opacity: 1, y: 0 },
             }}
           >
-            <div className="input-wrapper">
-              <span className="input-icon">
+            <div className="[position:relative]">
+              <span className="input-icon [position:absolute] [left:16px] [top:50%] [transform:translateY(-50%)] [color:var(--color-ink-600)]! [transition:color_0.3s]!">
                 <Lock size="18" strokeWidth="2" aria-hidden="true" />
               </span>
               <input
                 type={showPassword ? "text" : "password"}
-                className="form-control"
+                className="[width:100%]! [padding:14px_16px_14px_48px]! [border:1px_solid_var(--border-light)]! [&&]:[border-radius:var(--radius-md)]! [font-size:var(--text-md)]! [color:var(--text-main)]! [transition:all_0.2s]! [background:#fafafa]! placeholder:[color:var(--color-ink-400)]! focus:[outline:none]! focus:[border-color:var(--primary)]! focus:[background:var(--color-white)]! focus:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.1)]! [&:focus+.input-icon]:[color:var(--primary)]!"
                 required
                 placeholder="Password"
                 aria-label="Password"
@@ -231,7 +231,7 @@ const Login = () => {
               />
               <button
                 type="button"
-                className="password-toggle"
+                className="[position:absolute] [top:50%] [right:12px] [transform:translateY(-50%)] [display:inline-flex]! [padding:6px]! [border:0]! [&&]:[border-radius:var(--radius-md)]! [background:transparent]! [color:var(--color-ink-500)]! [cursor:pointer] hover:[background:var(--color-ink-100)]! hover:[color:var(--color-ink-900)]!"
                 onClick={() => setShowPassword((v) => !v)}
                 aria-label={showPassword ? "Hide password" : "Show password"}
                 aria-pressed={showPassword}
@@ -241,10 +241,10 @@ const Login = () => {
             </div>
           </motion.div>
 
-          <div className="login-actions-row">
+          <div className="[display:flex]! [justify-content:flex-end] [margin-top:8px]! [margin-bottom:8px]!">
             <button
               type="button"
-              className="forgot-password-link"
+              className="[background:none]! [border:none]! [color:var(--primary)]! [font-size:var(--text-base)]! [font-weight:500]! [cursor:pointer] [padding:0]! [transition:color_0.2s]! hover:[color:var(--primary-hover)]! hover:[text-decoration:underline]!"
               onClick={() => {
                 setForgotEmail(email || "");
                 setForgotMsg({ text: "", type: "" });
@@ -271,7 +271,7 @@ const Login = () => {
 
         {/* Footer / Compliance */}
         <div className="login-footer">
-          <div className="mini-badges">
+          <div className="[display:flex]! [justify-content:center] [gap:12px] [margin-bottom:16px]!">
             <span className="badge">API Compliant</span>
             <span className="badge">ISO 14064 Ready</span>
             <span className="badge">SOC2 Secured</span>
@@ -283,9 +283,9 @@ const Login = () => {
       {/* Forgot Password Modal */}
       <AnimatePresence>
         {showForgotModal && (
-          <div className="forgot-modal-overlay" onClick={() => setShowForgotModal(false)}>
+          <div className="[position:fixed] [inset:0] [background:rgba(15,_23,_42,_0.6)]! [backdrop-filter:blur(8px)] [display:flex]! [align-items:center] [justify-content:center] [z-index:1000] [padding:20px]!" onClick={() => setShowForgotModal(false)}>
             <motion.div
-              className="forgot-modal-content"
+              className="[width:100%]! [max-width:440px]! [background:var(--color-white)]! [border-radius:var(--radius-lg)]! [padding:32px]! [box-shadow:var(--shadow-raised)]! [border:1px_solid_rgba(226,_232,_240,_0.8)]! [position:relative]"
               onClick={(e) => e.stopPropagation()}
               initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -300,15 +300,15 @@ const Login = () => {
               </div>
 
               {forgotMsg.text && (
-                <div className={`forgot-status-msg ${forgotMsg.type}`}>
+                <div className={`[padding:12px_16px]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [margin-bottom:18px]! [line-height:1.4]! [&.success]:[background:var(--color-green-50)]! [&.success]:[color:#065f46]! [&.success]:[border:1px_solid_#a7f3d0]! [&&]:[&.error]:[background:var(--color-red-50)]! [&&]:[&.error]:[color:#991b1b]! [&&]:[&.error]:[border:1px_solid_#fecaca]! ${forgotMsg.type}`}>
                   {forgotMsg.text}
                 </div>
               )}
 
               <form onSubmit={handleForgotPassword}>
                 <div className="form-group mb-[16px]!">
-                  <div className="input-wrapper">
-                    <span className="input-icon">
+                  <div className="[position:relative]">
+                    <span className="input-icon [position:absolute] [left:16px] [top:50%] [transform:translateY(-50%)] [color:var(--color-ink-600)]! [transition:color_0.3s]!">
                       <svg
                         width="18"
                         height="18"
@@ -325,7 +325,7 @@ const Login = () => {
                     </span>
                     <input
                       type="email"
-                      className="form-control"
+                      className="[width:100%]! [padding:14px_16px_14px_48px]! [border:1px_solid_var(--border-light)]! [&&]:[border-radius:var(--radius-md)]! [font-size:var(--text-md)]! [color:var(--text-main)]! [transition:all_0.2s]! [background:#fafafa]! placeholder:[color:var(--color-ink-400)]! focus:[outline:none]! focus:[border-color:var(--primary)]! focus:[background:var(--color-white)]! focus:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.1)]! [&:focus+.input-icon]:[color:var(--primary)]!"
                       required
                       placeholder="Enter registered email"
                       value={forgotEmail}
@@ -335,7 +335,7 @@ const Login = () => {
                   </div>
                 </div>
 
-                <div className="forgot-modal-actions">
+                <div className="[display:flex]! [gap:12px] [margin-top:20px]!">
                   <button
                     type="button"
                     className="btn-secondary"

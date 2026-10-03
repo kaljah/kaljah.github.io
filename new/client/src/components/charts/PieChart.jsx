@@ -38,8 +38,8 @@ export const PieChart = ({
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
       return (
-        <div className="custom-tooltip">
-          <p className="tooltip-label">{payload[0].name}</p>
+        <div className="[background:rgba(255,_255,_255,_0.95)]! [backdrop-filter:blur(8px)] [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:12px_16px]! [box-shadow:var(--shadow-card)]!">
+          <p className="[margin:0_0_6px_0]! [font-size:var(--text-base)]! [color:var(--color-ink-500)]! [font-weight:600]!">{payload[0].name}</p>
           <p
             className="tooltip-value"
             style={{ color: payload[0].payload.fill }}
@@ -121,7 +121,7 @@ export const PieChart = ({
         border: "none",
       }}
     >
-      {title && <h3 className="chart-title">{title}</h3>}
+      {title && <h3 className="[margin:0_0_16px_0]! [font-size:var(--text-lg)]! [font-weight:600]! [color:var(--text-primary)]!">{title}</h3>}
       <ResponsiveContainer width="99%" height={height} debounce={200}>
         <RechartsPie>
           <Pie

@@ -270,8 +270,8 @@ const GasCompositionCalculator = ({
       title="Gas Composition Calculator"
       maxWidth="1400px"
     >
-      <div className="comp-calc-container">
-        <div className="comp-calc-grid">
+      <div className="[color:var(--text-primary)]!">
+        <div className="[display:grid]! [grid-template-columns:1fr_340px] [gap:30px] [@media(max-width:850px)]:[grid-template-columns:1fr]!">
           {/* Left: Inputs */}
           <div className="comp-inputs">
             <div className="calculation-mode-selector">
@@ -292,8 +292,8 @@ const GasCompositionCalculator = ({
               </div>
             </div>
 
-            <div className="total-display-card">
-              <div className="total-info">
+            <div className="[background:rgba(255,_255,_255,_0.03)]! [border:1px_solid_var(--border-color)]! [&&]:[border-radius:var(--radius-md)]! [padding:15px_20px]! [display:flex]! [justify-content:space-between] [align-items:center] [margin-bottom:25px]!">
+              <div className="[&_.label]:[color:var(--text-secondary)]! [&_.label]:[font-size:var(--text-base)]! [&_.label]:[margin-right:10px]! [&&]:[&_.value]:[font-size:var(--text-xl)]! [&&]:[&_.value]:[font-weight:700]! [&&]:[&_.value.valid]:[color:var(--color-green-700)]! [&&]:[&&]:[&_.value.invalid]:[color:var(--color-red-700)]!">
                 <span className="label">Total Composition:</span>
                 <span
                   className={`value ${Math.abs(totalMolePct - 100) < 0.5 ? "valid" : "invalid"}`}
@@ -304,7 +304,7 @@ const GasCompositionCalculator = ({
               <span className="status-badge">{getStatusText()}</span>
             </div>
 
-            <div className="component-inputs-grid">
+            <div className="[display:grid]! [grid-template-columns:repeat(auto-fill,_minmax(140px,_1fr))] [gap:15px] [margin-bottom:30px]!">
               {Object.entries(COMPONENT_DATA).map(([key, data]) => (
                 <div key={key} className="input-group">
                   <label>{data.name}</label>
@@ -322,7 +322,7 @@ const GasCompositionCalculator = ({
 
             <div className="params-section">
               <h4>Operating Parameters</h4>
-              <div className="params-grid">
+              <div className="[display:grid]! [grid-template-columns:repeat(auto-fit,_minmax(180px,_1fr))] [gap:20px]">
                 <div className="input-group">
                   <label>Molar Volume (L/mol)</label>
                   <input
@@ -349,7 +349,7 @@ const GasCompositionCalculator = ({
             </div>
 
             <button
-              className="calc-btn"
+              className="[width:100%]! [padding:14px]! [background:var(--color-primary)]! [color:white]! [border:none]! [&&]:[border-radius:var(--radius-md)]! [font-weight:700]! [cursor:pointer] [transition:all_0.2s]! disabled:[opacity:0.5] disabled:[cursor:not-allowed] [&:hover:not(:disabled)]:[transform:translateY(-2px)]! [&:hover:not(:disabled)]:[box-shadow:0_5px_15px_rgba(255,_102,_0,_0.3)]!"
               onClick={calculate}
               disabled={totalMolePct === 0}
             >
@@ -358,7 +358,7 @@ const GasCompositionCalculator = ({
           </div>
 
           {/* Right: Results */}
-          <div className="comp-results">
+          <div className="[background:rgba(255,_255,_255,_0.02)]! [border-left:1px_solid_var(--border-color)]! [padding-left:30px]! [@media(max-width:850px)]:[border-left:none]! [@media(max-width:850px)]:[border-top:1px_solid_var(--border-color)]! [@media(max-width:850px)]:[padding-left:0]! [@media(max-width:850px)]:[padding-top:30px]!">
             {results ? (
               <div className="results-wrapper">
                 <div className="result-card main">
@@ -466,7 +466,7 @@ const GasCompositionCalculator = ({
                 </div>
               </div>
             ) : (
-              <div className="no-results">
+              <div className="[height:100%]! [display:flex]! [flex-direction:column] [justify-content:center] [align-items:center] [text-align:center]! [color:var(--text-secondary)]! [opacity:0.5] [&_.icon]:[font-size:var(--text-3xl)]! [&_.icon]:[margin-bottom:15px]!">
                 <span className="icon">📊</span>
                 <p>Enter composition to view results</p>
               </div>

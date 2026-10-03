@@ -11,7 +11,7 @@ import { hideApiCitation } from "./shared";
 // Extracted from Scope1Form.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const Scope1ProcessSection = ({ activePresetId, currentProcessValue, dataSourceRef, formData, fuelDensity, fuelOptions, getProcessOptions, handleApplyPreset, handleFormChange, handleProcessChange, processType, renderFactorOption, resetProcessInputs, setActivePresetId, setDataSourceRef, setFuelDensity, setIsQuickAddModalOpen, setShowGasCalc, setSourceType, setSpecFactors, showsTier3Factors, sourceType, specFactors, streamType, tier2Mode }) => (
 <Section n={2} title="Process & Source Details">
-          <div className="s1-stack">
+          <div className="[display:grid]! [grid-template-columns:1fr] [gap:16px]">
             <div className="input-group">
               <label>Process</label>
               <CustomDropdown
@@ -24,7 +24,7 @@ const Scope1ProcessSection = ({ activePresetId, currentProcessValue, dataSourceR
             {/* Hoisted Emission Factor Selection — hidden for stoichiometry and dedicated downstream process forms */}
             {!["stoichiometry", "chemical_production", "nitric_acid_production", "adipic_acid_production", "asphalt_blowing"].includes(processType) && (
               <div className="input-group">
-                <div className="s1-method">
+                <div className="[display:flex]! [flex-direction:column] [align-items:flex-start] [gap:6px] [margin-bottom:12px]!">
                   <label className="m-[0px]!">Method</label>
                   <div className="methodology-toggle">
                     {(SECTION_TIERS[processType]
@@ -192,12 +192,12 @@ const Scope1ProcessSection = ({ activePresetId, currentProcessValue, dataSourceR
 
                 {/* TIER 2: Regional / Measured / Supplier Factors */}
                 {((sourceType === "custom" && !["associated_gas_venting", "completions", "unloading", "fugitive"].includes(processType)) || sourceType === "library") && (
-                  <div className="tier2-mode-container">
+                  <div className="[margin-top:10px]! [background:#fafafa]! [border:1px_solid_#e5e7eb]! [&&]:[border-radius:var(--radius-md)]! [padding:14px]!">
                     {sourceType === "custom" ? (
                       <>
 
                         {tier2Mode === "override" && (
-                          <div className="tier2-override-card">
+                          <div className="[display:flex]! [flex-direction:column] [gap:12px]">
                             {/* Base Fuel Dropdown */}
                             <div>
                               <label className="block! text-[length:0.75rem]! font-semibold! text-[color:#374151]! mb-[4px]!">
@@ -216,23 +216,23 @@ const Scope1ProcessSection = ({ activePresetId, currentProcessValue, dataSourceR
                             </div>
 
                             {/* Presets Section */}
-                            <div className="official-presets-section">
-                              <div className="official-presets-header">
-                                <span className="official-presets-title">
+                            <div className="[background:var(--color-white)]! [border:1px_solid_#e5e7eb]! [&&]:[border-radius:var(--radius-sm)]! [padding:10px_12px]!">
+                              <div className="[display:flex]! [align-items:center] [justify-content:space-between] [margin-bottom:8px]!">
+                                <span className="[display:flex]! [align-items:center] [gap:6px] [font-size:var(--text-sm)]! [font-weight:600]! [color:var(--color-ink-700)]!">
                                   <BookOpen size={14} className="text-[color:var(--color-link)]!" />
                                   Presets
                                 </span>
                               </div>
-                              <div className="official-presets-chips">
+                              <div className="[display:flex]! [flex-wrap:wrap] [gap:6px]">
                                 {getPresetsForFuel(formData.fuel, streamType).map((preset) => (
                                   <button
                                     key={preset.id}
                                     type="button"
-                                    className={`preset-chip ${activePresetId === preset.id ? "active" : ""}`}
+                                    className={`[display:flex]! [align-items:center]! [gap:6px]! [padding:4px_8px]! [border-radius:var(--radius-sm)]! [border:1px_solid_#e5e7eb]! [background:#f9fafb]! [font-size:var(--text-xs)]! [color:var(--color-ink-700)]! [cursor:pointer]! [transition:all_0.15s_ease]! hover:[background:#f3f4f6]! hover:[border-color:var(--color-ink-300)]! hover:[transform:translateY(-1px)]! [&.active]:[background:rgba(255,_102,_0,_0.08)]! [&.active]:[border-color:var(--accent-color,_var(--color-brand-500))]! [&.active]:[color:var(--color-link)]! [&.active]:[font-weight:600]! ${activePresetId === preset.id ? "active" : ""}`}
                                     onClick={() => handleApplyPreset(preset)}
                                     title={preset.description}
                                   >
-                                    {hideApiCitation(preset.citation) && <span className={`preset-citation-badge ${preset.citationType}`}>
+                                    {hideApiCitation(preset.citation) && <span className={`[padding:1px_4px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-xs)]! [font-weight:700]! [text-transform:uppercase]! [letter-spacing:0.02em]! [&.legal]:[background:#dbeafe]! [&.legal]:[color:#1e40af]! [&&]:[&.standard]:[background:#fef3c7]! [&&]:[&.standard]:[color:#92400e]! [&&]:[&&]:[&.api]:[background:#e0e7ff]! [&&]:[&&]:[&.api]:[color:#3730a3]! ${preset.citationType}`}>
                                       {hideApiCitation(preset.citation)}
                                     </span>}
                                     <span className="preset-name">{preset.shortLabel || preset.name}</span>
@@ -242,7 +242,7 @@ const Scope1ProcessSection = ({ activePresetId, currentProcessValue, dataSourceR
                             </div>
 
                             {/* Measured Properties Grid */}
-                            <div className="tier2-inputs-grid">
+                            <div className="[display:grid]! [grid-template-columns:1fr_1fr] [gap:12px] [@media(max-width:640px)]:[grid-template-columns:1fr]!">
                               <div>
                                 <label className="block! text-[length:0.75rem]! font-semibold! text-[color:#374151]! mb-[4px]!">
                                   HHV

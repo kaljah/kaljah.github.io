@@ -168,9 +168,14 @@ for (const [name, list] of Object.entries(occ)) {
   if (!ok || n > MAX) continue;
   // Media variants may sort before the base utility; make them important when they override another declaration.
   const isMedia = (pre) => /^(max-\[|min-\[|\[@media)/.test(pre);
-  const utils = entries.map((e) => {
+  const utils = entries.map((e, i) => {
     const overrides = isMedia(e.prefix) && entries.some((x) => x !== e && baseProp(x.prop) === baseProp(e.prop));
-    return e.prefix + ((overrides || e.generic) && !e.util.endsWith("!") ? `${e.util}!` : e.util);
+    // Two state variants (`.a.x .t` and `.a.y .t`) can match together; the later rule won by source order, so it
+    // gets one extra class of specificity per earlier overlapping variant.
+    const rank = e.generic
+      ? entries.slice(0, i).filter((x) => x.generic && x.prefix !== e.prefix && baseProp(x.prop) === baseProp(e.prop)).length
+      : 0;
+    return "[&&]:".repeat(rank) + e.prefix + ((overrides || e.generic) && !e.util.endsWith("!") ? `${e.util}!` : e.util);
   });
   if (tokenRe(name).test(testText) || tokenRe(name).test(indexHtml)) pinned.add(name);
   eligible[name] = { occurrences: list, utils, keys: new Set(entries.map((e) => e.prefix + baseProp(e.prop))), props: new Set(entries.map((e) => baseProp(e.prop))) };
@@ -178,20 +183,23 @@ for (const [name, list] of Object.entries(occ)) {
 
 // A class that is a non-leading part of any selector that stays in the CSS keeps its rules there
 // (a more specific legacy rule may still depend on the ordering), so drop it and repeat.
-for (let changed = true; changed; ) {
-  changed = false;
-  const remainingNonLead = new Set();
-  for (const sel of allSelectors) {
-    if (sel.lead && eligible[sel.lead]) continue;
-    sel.nonLead.forEach((c) => remainingNonLead.add(c));
-  }
-  for (const n of Object.keys(eligible)) {
-    if (remainingNonLead.has(n)) {
-      delete eligible[n];
-      changed = true;
+const settle = () => {
+  for (let changed = true; changed; ) {
+    changed = false;
+    const remainingNonLead = new Set();
+    for (const sel of allSelectors) {
+      if (sel.lead && eligible[sel.lead]) continue;
+      sel.nonLead.forEach((c) => remainingNonLead.add(c));
+    }
+    for (const n of Object.keys(eligible)) {
+      if (remainingNonLead.has(n)) {
+        delete eligible[n];
+        changed = true;
+      }
     }
   }
-}
+};
+settle();
 
 const sources = Object.fromEntries([...jsxFiles, ...otherJs].map((f) => [f, fs.readFileSync(f, "utf8")]));
 
@@ -260,6 +268,21 @@ for (const [name, e] of Object.entries(eligible)) {
 }
 const cssDefined = new Set([...Object.keys(leadTotal), ...pinned]);
 
+// Base CSS properties set by the element's inline style (a Set), or "all" when they cannot be known statically.
+const inlineStyleProps = (opening) => {
+  const attr = opening?.attributes?.find((a) => a.type === "JSXAttribute" && a.name.name === "style");
+  if (!attr) return new Set();
+  const ex = attr.value?.expression;
+  if (!ex || ex.type !== "ObjectExpression") return "all";
+  const set = new Set();
+  for (const prop of ex.properties) {
+    if (prop.type !== "ObjectProperty" || prop.computed) return "all";
+    const key = prop.key.name || prop.key.value;
+    set.add(baseProp(key.replace(/[A-Z]/g, (c) => "-" + c.toLowerCase())));
+  }
+  return set;
+};
+
 // String pieces inside className attributes (literals, template quasis, ternaries, cn/clsx calls).
 const classStrings = (ast) => {
   const nodes = [];
@@ -296,7 +319,13 @@ const classStrings = (ast) => {
     JSXAttribute(p) {
       if (p.node.name.name === "className") {
         attrId++;
+        const before = nodes.length;
         collect(p.node.value);
+        const inline = inlineStyleProps(p.parent);
+        for (let i = before; i < nodes.length; i++) {
+          nodes[i].inline = inline;
+          nodes[i].tag = p.parent.name?.name;
+        }
       }
     },
   });
@@ -307,9 +336,10 @@ const classStrings = (ast) => {
 // Base CSS properties a plain Tailwind class (or an existing arbitrary-property class) sets, to catch ordering clashes.
 const twProps = (token) => {
   let t = token.replace(/!$/, "");
-  const arb = t.match(/\[([a-z-]+):[^\]]*\]$/);
+  t = t.replace(/^(?:[a-z-]+:|\[[^\]]*\]:)+/, "").replace(/^!/, "");
+  const arb = t.match(/^\[([a-z-]+):/);
   if (arb) return new Set([baseProp(arb[1])]);
-  t = t.replace(/^(?:[a-z-]+:)+/, "").replace(/^!/, "");
+  if (/^text-\[length:/.test(t)) return new Set(["font"]);
   const out = new Set();
   const rules = [
     [/^-?m[trblxyse]?-/, "margin"],
@@ -370,7 +400,7 @@ const planEdits = (active) => {
     // Group the pieces of one className attribute: classes in any piece can meet on the same element.
     const groups = new Map();
     for (const s of strings) {
-      const g = groups.get(s.attr) ?? { tokens: new Set(), prefixes: new Set(), pieces: [] };
+      const g = groups.get(s.attr) ?? { tokens: new Set(), prefixes: new Set(), pieces: [], inline: s.inline };
       const text = code.slice(s.start, s.end);
       text.split(/\s+/).filter(Boolean).forEach((t) => g.tokens.add(t));
       for (const m of text.matchAll(/([\w-]+-)[$][{]/g)) g.prefixes.add(m[1]);
@@ -390,6 +420,7 @@ const planEdits = (active) => {
         if (!e) continue;
         const myProps = e.props;
         if ([...myProps].some((pp) => otherProps.has(pp))) conflicts.add(t);
+        if (g.inline === "all" || [...myProps].some((pp) => g.inline?.has(pp))) conflicts.add(t);
       }
       for (const s of g.pieces) {
         const text = code.slice(s.start, s.end);
@@ -423,6 +454,50 @@ const planEdits = (active) => {
 };
 
 // 2. Keep only classes whose every JS occurrence was replaced (otherwise the CSS rule must stay).
+// A descendant variant (`[&_.child]:`) has higher specificity than the child's own utilities, so it would beat an
+// `!important` utility the child carries for the same property (e.g. from a converted inline style). Skip those.
+const importantPropsByClass = {};
+const importantPropsByTag = {};
+for (const file of jsxFiles) {
+  let ast;
+  try {
+    ast = parse(sources[file], { sourceType: "module", plugins: ["jsx"] });
+  } catch {
+    continue;
+  }
+  const groups = new Map();
+  for (const s of classStrings(ast)) {
+    const g = groups.get(s.attr) ?? { tokens: new Set(), tag: s.tag };
+    sources[file].slice(s.start, s.end).split(/\s+/).filter(Boolean).forEach((t) => g.tokens.add(t));
+    groups.set(s.attr, g);
+  }
+  for (const { tokens, tag } of groups.values()) {
+    const imp = new Set();
+    for (const t of tokens) if (t.endsWith("!") || t.startsWith("!")) twProps(t).forEach((pp) => imp.add(pp));
+    if (!imp.size) continue;
+    if (typeof tag === "string" && /^[a-z]/.test(tag)) {
+      (importantPropsByTag[tag] ||= new Set()), imp.forEach((pp) => importantPropsByTag[tag].add(pp));
+    }
+    for (const t of tokens) (importantPropsByClass[t] ||= new Set()), imp.forEach((pp) => importantPropsByClass[t].add(pp));
+  }
+}
+for (const [name, e] of Object.entries(eligible)) {
+  const clash = e.occurrences.some((o) => {
+    if (!o.generic) return false;
+    const props = new Set();
+    o.rule.walkDecls((d) => props.add(baseProp(d.prop)));
+    const tail = o.selector.trim().replace(/^\.-?[_a-zA-Z][\w-]*/, "");
+    const tags = [...tail.matchAll(/(?:^|[\s>+~])([a-z][a-z0-9]*)/g)].map((m) => m[1]);
+    return (
+      classesIn(o.selector)
+        .slice(1)
+        .some((c) => [...props].some((pp) => importantPropsByClass[c]?.has(pp))) ||
+      tags.some((tg) => [...props].some((pp) => importantPropsByTag[tg]?.has(pp)))
+    );
+  });
+  if (clash) delete eligible[name];
+}
+settle();
 const jsCount = {};
 for (const name of Object.keys(eligible)) {
   jsCount[name] = Object.values(sources).reduce((n, t) => n + (t.match(tokenRe(name)) || []).length, 0);
@@ -442,6 +517,7 @@ for (let round = 0; round < 20; round++) {
   }
   if (Object.keys(next).length === Object.keys(eligible).length) break;
   eligible = next;
+  settle();
 }
 const { edits } = planEdits(eligible);
 

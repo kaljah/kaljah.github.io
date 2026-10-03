@@ -73,15 +73,15 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
           </div>
 
           {/* Horizontal 4-KPI Grid */}
-          <div className="kpi-grid-4">
+          <div className="[display:grid]! [grid-template-columns:repeat(4,_1fr)] [gap:20px] [@media(max-width:1200px)]:[grid-template-columns:repeat(2,_1fr)]! [@media(max-width:768px)]:[grid-template-columns:1fr]!">
             <div className="kpi-card">
-              <div className="kpi-header">
+              <div className="[display:flex]! [align-items:center] [gap:12px] [margin-bottom:16px]!">
                 <div className="kpi-icon ch4">
                   <Wind size={20} />
                 </div>
                 <span className="kpi-label">Methane Intensity (Avg)</span>
               </div>
-              <div className="kpi-value-container">
+              <div className="[display:flex]! [align-items:baseline] [gap:8px]">
                 <span className="total-value ch4">
                   {(stats.avgCh4Intensity ?? 0).toFixed(4)}
                 </span>
@@ -96,7 +96,7 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
             </div>
 
             <div className="kpi-card">
-              <div className="kpi-header">
+              <div className="[display:flex]! [align-items:center] [gap:12px] [margin-bottom:16px]!">
                 <div
                   className="kpi-icon loss bg-[color:rgba(59,_130,_246,_0.1)]! text-[color:#1d4ed8]!"
                  
@@ -105,7 +105,7 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
                 </div>
                 <span className="kpi-label">Methane Loss Rate</span>
               </div>
-              <div className="kpi-value-container">
+              <div className="[display:flex]! [align-items:baseline] [gap:8px]">
                 <span
                   className="total-value"
                   style={{
@@ -235,13 +235,13 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
             </div>
 
             <div className="kpi-card">
-              <div className="kpi-header">
+              <div className="[display:flex]! [align-items:center] [gap:12px] [margin-bottom:16px]!">
                 <div className="kpi-icon flare">
                   <Flame size={20} />
                 </div>
                 <span className="kpi-label">Gas Flaring Rate</span>
               </div>
-              <div className="kpi-value-container">
+              <div className="[display:flex]! [align-items:baseline] [gap:8px]">
                 <span className="total-value flare">
                   {(stats.avgFlaringRatePct ?? 0).toFixed(3)}%
                 </span>
@@ -258,7 +258,7 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
             </div>
 
             <div className="kpi-card">
-              <div className="kpi-header">
+              <div className="[display:flex]! [align-items:center] [gap:12px] [margin-bottom:16px]!">
                 <div
                   className="kpi-icon wec bg-[color:rgba(239,_68,_68,_0.1)]! text-[color:#b91c1c]!"
                  
@@ -267,7 +267,7 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
                 </div>
                 <span className="kpi-label">EPA WEC Liability</span>
               </div>
-              <div className="kpi-value-container">
+              <div className="[display:flex]! [align-items:baseline] [gap:8px]">
                 <span
                   className="total-value"
                   style={{
@@ -298,7 +298,7 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
           </div>
 
           {/* Methane Mass Balance Bar */}
-          <div className="scope-breakdown">
+          <div className="scope-breakdown [display:grid]! [grid-template-columns:repeat(4,_1fr)] [gap:20px] [margin-top:32px]! [background:var(--bg-hover)]! [padding:24px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--border-color)]! [@media(max-width:1200px)]:[grid-template-columns:repeat(2,_1fr)]! [@media(max-width:768px)]:[grid-template-columns:1fr]!">
             <div className="scope-item">
               <span className="label">Total Gas Produced</span>
               <span className="val">

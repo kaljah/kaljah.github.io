@@ -7,7 +7,7 @@ import { Calendar, Check, CheckCircle, History, Plus, Target } from 'lucide-reac
 const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYears, filteredGoals, goalForm, goals, handleDeleteBaseYearRecalc, handleDeleteGoal, handleEditGoal, handleSaveBaseYear, handleSaveGoal, handleSaveSbti, hasSbti, sbtiConfig, setBaseYearForm, setEditingGoalYear, setGoalForm, setSbtiConfig }) => (
 <div className="manage-card glass-panel">
                                 {/* Active Baseline Status Banner */}
-                                <div className="baseline-highlight-card">
+                                <div className="[background:linear-gradient(_135deg,_rgba(255,_102,_0,_0.06),_rgba(255,_153,_51,_0.02)_)]! [border:1px_solid_rgba(255,_102,_0,_0.2)]! [&&]:[border-radius:var(--radius-lg)]! [padding:20px]! [margin-bottom:24px]! [display:flex]! [justify-content:space-between] [align-items:center] [flex-wrap:wrap] [gap:16px]">
                                     <div>
                                         <div className="flex! items-center! gap-[8px]! mb-[6px]!">
                                             <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-link)', fontWeight: 700 }}>
@@ -181,7 +181,7 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                         </div>
                                     </div>
 
-                                    <div className="guidance-box">
+                                    <div className="[background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-left:4px_solid_var(--accent-color,_var(--color-brand-500))]! [&&]:[border-radius:var(--radius-md)]! [padding:14px_18px]! [margin-bottom:24px]! [font-size:var(--text-base)]! [color:var(--text-secondary)]! [line-height:1.5]">
                                         <strong>GHG Protocol Recalculation Rule:</strong> Base year emissions must be recalculated to reflect significant structural changes (e.g. acquisitions, divestments, boundary changes), methodology updates (e.g. new emission factors or GWP standards), or cumulative data errors exceeding significance thresholds. Every adjustment must include a documented reason.
                                     </div>
 

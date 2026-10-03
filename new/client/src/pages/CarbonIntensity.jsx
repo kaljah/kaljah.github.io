@@ -485,7 +485,7 @@ const CarbonIntensity = () => {
     const excluded = (total || 0) - (used || 0);
     if (!(excluded > Math.max(0.5, Math.abs(total || 0) * 1e-6))) return null;
     return (
-      <div className="kpi-note">
+      <div className="[margin-top:8px]! [font-size:var(--text-sm)]! [color:var(--warning-color,_var(--color-amber-700))]!">
         {formatNumber(excluded)} t from years without production are not in this intensity
       </div>
     );
@@ -503,7 +503,7 @@ const CarbonIntensity = () => {
         opacity: isUpdating ? 0.82 : 1,
         transition: "opacity 0.2s ease" }}
     >
-      <div className="intensity-grid">
+      <div className="intensity-grid [display:flex]! [flex-direction:column] [gap:32px] [max-width:1600px]! [margin:0_auto]!">
         {/* KPI HERO CARD */}
         <CarbonIntensityCarbonIntensity
         activeGwpStandard={activeGwpStandard}
@@ -521,7 +521,7 @@ const CarbonIntensity = () => {
       />
 
                 {/* EU CBAM COMPLIANCE & PRODUCT EMBODIMENT SECTION */}
-                <div className="card cbam-section">
+                <div className="card cbam-section [display:flex]! [flex-direction:column]! [gap:16px]!">
                     <div className="chart-header">
                         <div>
                             <h3 className="flex! items-center! gap-[8px]!">
@@ -532,7 +532,7 @@ const CarbonIntensity = () => {
                                 Direct & indirect specific embedded emissions per export product (EU Regulation 2023/956)
                             </p>
                         </div>
-                        <div className="cbam-benchmark-badge">
+                        <div className="cbam-benchmark-badge [background:rgba(255,_102,_0,_0.1)]! [color:var(--color-link)]! [padding:6px_14px]! [border-radius:var(--radius-md)]! [font-size:var(--text-sm)]! [font-weight:600]! [border:1px_solid_rgba(255,_102,_0,_0.2)]!">
                             EU ETS Benchmark (Product-Specific): ~0.025 - 1.2 tCO₂e/t
                         </div>
                     </div>
@@ -568,7 +568,7 @@ const CarbonIntensity = () => {
                                             <tr key={p.id || idx}>
                                                 <td className="font-semibold!">{facName}</td>
                                                 <td>{prodName}</td>
-                                                <td><span className="code-pill">{cn}</span></td>
+                                                <td><span className="code-pill [background:var(--bg-hover)]! [padding:3px_8px]! [border-radius:var(--radius-sm)]! [font-family:monospace]! [font-size:var(--text-sm)]! [color:var(--text-primary)]! [border:1px_solid_var(--border-color)]!">{cn}</span></td>
                                                 <td>{p.year}-{String(p.month || 1).padStart(2, '0')}</td>
                                                 <td>{formatNumber(qty, 0)}</td>
                                                 <td>{dest}</td>
@@ -582,20 +582,20 @@ const CarbonIntensity = () => {
                             </table>
                         </div>
                     ) : (
-                        <div className="cbam-empty-state">
+                        <div className="[display:flex]! [flex-direction:column] [align-items:center] [justify-content:center] [padding:40px_20px]! [color:var(--text-secondary)]! [font-size:var(--text-base)]!">
                             <p>No CBAM product export records registered for the selected filters. Track exports via <strong>Manage Data &gt; CBAM Products</strong>.</p>
                         </div>
                     )}
                 </div>
 
         {/* Regional Bar Charts */}
-        <div className="chart-grid">
+        <div className="chart-grid [display:grid]! [grid-template-columns:repeat(auto-fit,_minmax(450px,_1fr))] [gap:24px] [@media(max-width:768px)]:[grid-template-columns:1fr]!">
           <div className="card">
             <div className="chart-header">
-              <div className="chart-title-wrapper">
+              <div className="[display:flex]! [flex-direction:column] [gap:8px]">
                 <h3>GHG Intensity by Facility (kg CO₂e / BOE)</h3>
                 <div
-                  className="chart-indicator bg-[color:#ff6600]!"
+                  className="[width:32px]! [height:4px]! [border-radius:var(--radius-sm)]! bg-[color:#ff6600]!"
                  
                 ></div>
               </div>
@@ -617,10 +617,10 @@ const CarbonIntensity = () => {
 
           <div className="card">
             <div className="chart-header">
-              <div className="chart-title-wrapper">
+              <div className="[display:flex]! [flex-direction:column] [gap:8px]">
                 <h3>Scope 1 Direct vs Scope 2 Intensity</h3>
                 <div
-                  className="chart-indicator bg-[color:#2563eb]!"
+                  className="[width:32px]! [height:4px]! [border-radius:var(--radius-sm)]! bg-[color:#2563eb]!"
                  
                 ></div>
               </div>
@@ -651,10 +651,10 @@ const CarbonIntensity = () => {
 
           <div className="card">
             <div className="chart-header">
-              <div className="chart-title-wrapper">
+              <div className="[display:flex]! [flex-direction:column] [gap:8px]">
                 <h3>Oil BOE Contribution by Facility</h3>
                 <div
-                  className="chart-indicator bg-[color:#ea580c]!"
+                  className="[width:32px]! [height:4px]! [border-radius:var(--radius-sm)]! bg-[color:#ea580c]!"
                  
                 ></div>
               </div>
@@ -673,10 +673,10 @@ const CarbonIntensity = () => {
 
           <div className="card">
             <div className="chart-header">
-              <div className="chart-title-wrapper">
+              <div className="[display:flex]! [flex-direction:column] [gap:8px]">
                 <h3>Gas BOE Contribution by Facility</h3>
                 <div
-                  className="chart-indicator bg-[color:#8b5cf6]!"
+                  className="[width:32px]! [height:4px]! [border-radius:var(--radius-sm)]! bg-[color:#8b5cf6]!"
                  
                 ></div>
               </div>
@@ -707,16 +707,16 @@ const CarbonIntensity = () => {
                 5-Year Performance Track (kg CO₂e / BOE)
               </p>
             </div>
-            <div className="trend-view-controls">
-              <div className="view-toggle">
+            <div className="[display:flex]! [gap:12px] [align-items:center]">
+              <div className="[background:var(--bg-hover)]! [padding:4px]! [border-radius:var(--radius-md)]! [display:flex]! [gap:4px] [border:1px_solid_var(--border-color)]!">
                 <button
-                  className={`view-btn ${trendView === "chart" ? "active" : ""}`}
+                  className={`view-btn [border:none]! [padding:6px_16px]! [&&]:[border-radius:var(--radius-sm)]! [cursor:pointer]! [font-size:var(--text-base)]! [font-weight:500]! [transition:all_0.2s]! [background:transparent]! [color:var(--text-secondary)]! [display:flex]! [align-items:center]! [gap:6px]! [&.active]:[background:var(--bg-card)]! [&.active]:[color:var(--text-primary)]! [&.active]:[box-shadow:var(--card-shadow)]! [&.active]:[font-weight:600]! ${trendView === "chart" ? "active" : ""}`}
                   onClick={() => setTrendView("chart")}
                 >
                   <BarChart2 size={16} /> Chart
                 </button>
                 <button
-                  className={`view-btn ${trendView === "heatmap" ? "active" : ""}`}
+                  className={`view-btn [border:none]! [padding:6px_16px]! [&&]:[border-radius:var(--radius-sm)]! [cursor:pointer]! [font-size:var(--text-base)]! [font-weight:500]! [transition:all_0.2s]! [background:transparent]! [color:var(--text-secondary)]! [display:flex]! [align-items:center]! [gap:6px]! [&.active]:[background:var(--bg-card)]! [&.active]:[color:var(--text-primary)]! [&.active]:[box-shadow:var(--card-shadow)]! [&.active]:[font-weight:600]! ${trendView === "heatmap" ? "active" : ""}`}
                   onClick={() => setTrendView("heatmap")}
                 >
                   <Grid size={16} /> Heatmap
@@ -744,8 +744,8 @@ const CarbonIntensity = () => {
               />
             </div>
           ) : (
-            <div className="heatmap-container">
-              <div className="heatmap-header">
+            <div className="heatmap-container [margin-top:24px]! [overflow-x:auto]! [background:var(--bg-app)]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--border-color)]! [padding:16px]!">
+              <div className="heatmap-header [display:grid]! [grid-template-columns:200px_repeat(5,_1fr)] [gap:12px] [margin-bottom:16px]! [padding:0_12px]!">
                 <div
                   className="heatmap-header-cell text-left!"
                  
@@ -761,8 +761,8 @@ const CarbonIntensity = () => {
               <div className="heatmap-body">
                 {regionalData.length > 0 ? (
                   regionalData.map((facData) => (
-                    <div key={facData.facility_id} className="heatmap-row">
-                      <div className="heatmap-label">
+                    <div key={facData.facility_id} className="heatmap-row [display:grid]! [grid-template-columns:200px_repeat(5,_1fr)] [gap:12px] [padding:12px]! [border-bottom:1px_solid_var(--border-color)]! [align-items:center] [transition:background-color_0.2s]! last:[border-bottom:none]! hover:[background:var(--bg-card)]! hover:[border-radius:var(--radius-md)]! hover:[box-shadow:var(--shadow-xs)]!">
+                      <div className="[font-weight:600]! [font-size:var(--text-base)]! [color:var(--text-primary)]!">
                         {facData.facility_name}
                       </div>
                       {rawTrendData.map((yData) => {
@@ -779,7 +779,7 @@ const CarbonIntensity = () => {
                         return (
                           <div
                             key={yData.year}
-                            className={`heatmap-cell ${getHeatmapClass(val)}`}
+                            className={`[padding:10px]! [border-radius:var(--radius-sm)]! [text-align:center]! [font-size:var(--text-base)]! [font-weight:600]! [color:var(--color-white)]! [transition:transform_0.2s_ease,_filter_0.2s_ease]! [cursor:default]! [display:flex]! [align-items:center]! [justify-content:center]! [min-height:40px]! hover:[transform:scale(1.02)]! hover:[filter:brightness(1.1)]! ${getHeatmapClass(val)}`}
                             title={`${yData.year} Intensity: ${val.toFixed(3)} kg CO2e/BOE`}
                           >
                             {val > 0 ? val.toFixed(2) : "-"}

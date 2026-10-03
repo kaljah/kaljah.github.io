@@ -483,12 +483,12 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
   if (!isOpen) return null;
 
   const modalContent = (
-    <div className="batch-wizard-backdrop" onClick={(e) => { if (e.target === e.currentTarget && !rejectionModal.isOpen) onClose(); }}>
-      <div className="batch-wizard-modal">
+    <div className="[position:fixed] [inset:0] [background:rgba(15,_23,_42,_0.65)]! [backdrop-filter:blur(8px)] [-webkit-backdrop-filter:blur(8px)]! [z-index:10000] [display:flex]! [align-items:center] [justify-content:center] [padding:24px]! [animation:wizardFadeIn_0.2s_cubic-bezier(0.16,_1,_0.3,_1)]!" onClick={(e) => { if (e.target === e.currentTarget && !rejectionModal.isOpen) onClose(); }}>
+      <div className="[background:var(--bg-card-elevated,_var(--color-white))]! [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.9))]! [&&]:[border-radius:var(--radius-lg)]! [width:100%]! [max-width:1440px]! [height:calc(100vh_-_48px)]! [max-height:940px]! [display:flex]! [flex-direction:column] [box-shadow:var(--shadow-overlay)]! [overflow:hidden]! [animation:wizardSlideUp_0.25s_cubic-bezier(0.16,_1,_0.3,_1)]!">
         {/* ── Wizard Header ── */}
-        <div className="batch-wizard-header">
-          <div className="wizard-header-title-group">
-            <div className="wizard-badge-icon">
+        <div className="[padding:18px_28px]! [border-bottom:1px_solid_var(--border-color,_var(--color-ink-200))]! [background:rgba(255,_255,_255,_0.95)]! [display:flex]! [justify-content:space-between] [align-items:center] [gap:20px] [flex-shrink:0]">
+          <div className="[display:flex]! [align-items:center] [gap:14px]">
+            <div className="[width:44px]! [height:44px]! [border-radius:var(--radius-md)]! [background:linear-gradient(135deg,_rgba(255,_102,_0,_0.15)_0%,_rgba(255,_102,_0,_0.05)_100%)]! [border:1px_solid_rgba(255,_102,_0,_0.25)]! [color:var(--color-link)]! [display:flex]! [align-items:center] [justify-content:center] [flex-shrink:0]">
               <Sparkles size={24} />
             </div>
             <div className="wizard-title-text">
@@ -497,7 +497,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
             </div>
           </div>
 
-          <div className="wizard-header-actions">
+          <div className="[display:flex]! [align-items:center] [gap:12px]">
             <Button
               variant="ghost" type="submit"
               onClick={fetchAllPendingData}
@@ -519,8 +519,8 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
         </div>
 
         {/* ── KPI Summary Strip ── */}
-        <div className="batch-wizard-kpis">
-          <div className="kpi-chip-group">
+        <div className="[padding:14px_28px]! [background:var(--bg-body,_var(--color-ink-50))]! [border-bottom:1px_solid_var(--border-color,_var(--color-ink-200))]! [display:flex]! [align-items:center] [justify-content:space-between] [gap:16px] [flex-wrap:wrap] [flex-shrink:0]">
+          <div className="[display:flex]! [align-items:center] [gap:10px] [flex-wrap:wrap]">
             <div className="kpi-chip">
               <span>Total Staged:</span>
               <strong>{stats.totalCount} records</strong>
@@ -552,7 +552,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
               </button>
             )}
             <button
-              className="btn-wizard-action btn-wizard-approve-all"
+              className="btn-wizard-action [background:var(--color-green-700)]! [color:var(--color-white)]! hover:[background:var(--color-green-600)]! hover:[transform:translateY(-1px)]! hover:[box-shadow:0_3px_8px_rgba(16,_185,_129,_0.3)]!"
               onClick={() => handleApproveAll(false)}
               disabled={loading || isProcessing || stats.totalCount === 0}
               title="Verify all pending records across all scopes without exception"
@@ -573,34 +573,34 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
         </div>
 
         {/* ── Toolbar: Filters & Filtered Actions ── */}
-        <div className="batch-wizard-toolbar">
-          <div className="toolbar-filter-cluster">
+        <div className="[padding:12px_28px]! [border-bottom:1px_solid_var(--border-color,_var(--color-ink-200))]! [background:var(--color-white)]! [display:flex]! [align-items:center] [justify-content:space-between] [gap:16px] [flex-wrap:wrap] [flex-shrink:0]">
+          <div className="[display:flex]! [align-items:center] [gap:10px] [flex-wrap:wrap]">
             {/* Scope Tabs */}
-            <div className="segmented-group">
-              <button className={`segmented-item-btn ${scopeFilter === 'all' ? 'active' : ''}`} onClick={() => setScopeFilter('all')}>
+            <div className="[display:inline-flex]! [background:var(--bg-body,_var(--color-ink-100))]! [border-radius:var(--radius-md)]! [padding:3px]! [gap:3px]">
+              <button className={`[border:none]! [background:transparent]! [padding:6px_12px]! [&&]:[border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:500]! [color:var(--text-secondary,_var(--color-ink-500))]! [cursor:pointer]! [transition:all_0.15s_ease]! [display:inline-flex]! [align-items:center]! [gap:6px]! hover:[color:var(--text-primary,_var(--color-ink-900))]! hover:[background:rgba(255,_255,_255,_0.7)]! [&.active]:[background:var(--color-white)]! [&.active]:[color:var(--color-link)]! [&.active]:[font-weight:600]! [&.active]:[box-shadow:var(--shadow-xs)]! [&&]:[&.weird-active]:[background:#fef3c7]! [&&]:[&.weird-active]:[color:var(--color-amber-700)]! [&&]:[&.weird-active]:[font-weight:700]! ${scopeFilter === 'all' ? 'active' : ''}`} onClick={() => setScopeFilter('all')}>
                 All Scopes ({stats.totalCount})
               </button>
-              <button className={`segmented-item-btn ${scopeFilter === '1' ? 'active' : ''}`} onClick={() => setScopeFilter('1')}>
+              <button className={`[border:none]! [background:transparent]! [padding:6px_12px]! [&&]:[border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:500]! [color:var(--text-secondary,_var(--color-ink-500))]! [cursor:pointer]! [transition:all_0.15s_ease]! [display:inline-flex]! [align-items:center]! [gap:6px]! hover:[color:var(--text-primary,_var(--color-ink-900))]! hover:[background:rgba(255,_255,_255,_0.7)]! [&.active]:[background:var(--color-white)]! [&.active]:[color:var(--color-link)]! [&.active]:[font-weight:600]! [&.active]:[box-shadow:var(--shadow-xs)]! [&&]:[&.weird-active]:[background:#fef3c7]! [&&]:[&.weird-active]:[color:var(--color-amber-700)]! [&&]:[&.weird-active]:[font-weight:700]! ${scopeFilter === '1' ? 'active' : ''}`} onClick={() => setScopeFilter('1')}>
                 Scope 1 ({stats.count1})
               </button>
-              <button className={`segmented-item-btn ${scopeFilter === '2' ? 'active' : ''}`} onClick={() => setScopeFilter('2')}>
+              <button className={`[border:none]! [background:transparent]! [padding:6px_12px]! [&&]:[border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:500]! [color:var(--text-secondary,_var(--color-ink-500))]! [cursor:pointer]! [transition:all_0.15s_ease]! [display:inline-flex]! [align-items:center]! [gap:6px]! hover:[color:var(--text-primary,_var(--color-ink-900))]! hover:[background:rgba(255,_255,_255,_0.7)]! [&.active]:[background:var(--color-white)]! [&.active]:[color:var(--color-link)]! [&.active]:[font-weight:600]! [&.active]:[box-shadow:var(--shadow-xs)]! [&&]:[&.weird-active]:[background:#fef3c7]! [&&]:[&.weird-active]:[color:var(--color-amber-700)]! [&&]:[&.weird-active]:[font-weight:700]! ${scopeFilter === '2' ? 'active' : ''}`} onClick={() => setScopeFilter('2')}>
                 Scope 2 ({stats.count2})
               </button>
-              <button className={`segmented-item-btn ${scopeFilter === '3' ? 'active' : ''}`} onClick={() => setScopeFilter('3')}>
+              <button className={`[border:none]! [background:transparent]! [padding:6px_12px]! [&&]:[border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:500]! [color:var(--text-secondary,_var(--color-ink-500))]! [cursor:pointer]! [transition:all_0.15s_ease]! [display:inline-flex]! [align-items:center]! [gap:6px]! hover:[color:var(--text-primary,_var(--color-ink-900))]! hover:[background:rgba(255,_255,_255,_0.7)]! [&.active]:[background:var(--color-white)]! [&.active]:[color:var(--color-link)]! [&.active]:[font-weight:600]! [&.active]:[box-shadow:var(--shadow-xs)]! [&&]:[&.weird-active]:[background:#fef3c7]! [&&]:[&.weird-active]:[color:var(--color-amber-700)]! [&&]:[&.weird-active]:[font-weight:700]! ${scopeFilter === '3' ? 'active' : ''}`} onClick={() => setScopeFilter('3')}>
                 Scope 3 ({stats.count3})
               </button>
             </div>
 
             {/* QA Anomaly Filter */}
-            <div className="segmented-group">
-              <button className={`segmented-item-btn ${qaFilter === 'all' ? 'active' : ''}`} onClick={() => setQaFilter('all')}>
+            <div className="[display:inline-flex]! [background:var(--bg-body,_var(--color-ink-100))]! [border-radius:var(--radius-md)]! [padding:3px]! [gap:3px]">
+              <button className={`[border:none]! [background:transparent]! [padding:6px_12px]! [&&]:[border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:500]! [color:var(--text-secondary,_var(--color-ink-500))]! [cursor:pointer]! [transition:all_0.15s_ease]! [display:inline-flex]! [align-items:center]! [gap:6px]! hover:[color:var(--text-primary,_var(--color-ink-900))]! hover:[background:rgba(255,_255,_255,_0.7)]! [&.active]:[background:var(--color-white)]! [&.active]:[color:var(--color-link)]! [&.active]:[font-weight:600]! [&.active]:[box-shadow:var(--shadow-xs)]! [&&]:[&.weird-active]:[background:#fef3c7]! [&&]:[&.weird-active]:[color:var(--color-amber-700)]! [&&]:[&.weird-active]:[font-weight:700]! ${qaFilter === 'all' ? 'active' : ''}`} onClick={() => setQaFilter('all')}>
                 All Data
               </button>
-              <button className={`segmented-item-btn ${qaFilter === 'weird' ? 'active weird-active' : ''}`} onClick={() => setQaFilter('weird')}>
+              <button className={`[border:none]! [background:transparent]! [padding:6px_12px]! [&&]:[border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:500]! [color:var(--text-secondary,_var(--color-ink-500))]! [cursor:pointer]! [transition:all_0.15s_ease]! [display:inline-flex]! [align-items:center]! [gap:6px]! hover:[color:var(--text-primary,_var(--color-ink-900))]! hover:[background:rgba(255,_255,_255,_0.7)]! [&.active]:[background:var(--color-white)]! [&.active]:[color:var(--color-link)]! [&.active]:[font-weight:600]! [&.active]:[box-shadow:var(--shadow-xs)]! [&&]:[&.weird-active]:[background:#fef3c7]! [&&]:[&.weird-active]:[color:var(--color-amber-700)]! [&&]:[&.weird-active]:[font-weight:700]! ${qaFilter === 'weird' ? 'active weird-active' : ''}`} onClick={() => setQaFilter('weird')}>
                 <AlertTriangle size={13} />
                 Weird Only ({stats.weirdCount})
               </button>
-              <button className={`segmented-item-btn ${qaFilter === 'clean' ? 'active' : ''}`} onClick={() => setQaFilter('clean')}>
+              <button className={`[border:none]! [background:transparent]! [padding:6px_12px]! [&&]:[border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:500]! [color:var(--text-secondary,_var(--color-ink-500))]! [cursor:pointer]! [transition:all_0.15s_ease]! [display:inline-flex]! [align-items:center]! [gap:6px]! hover:[color:var(--text-primary,_var(--color-ink-900))]! hover:[background:rgba(255,_255,_255,_0.7)]! [&.active]:[background:var(--color-white)]! [&.active]:[color:var(--color-link)]! [&.active]:[font-weight:600]! [&.active]:[box-shadow:var(--shadow-xs)]! [&&]:[&.weird-active]:[background:#fef3c7]! [&&]:[&.weird-active]:[color:var(--color-amber-700)]! [&&]:[&.weird-active]:[font-weight:700]! ${qaFilter === 'clean' ? 'active' : ''}`} onClick={() => setQaFilter('clean')}>
                 <CheckCircle size={13} color="#10b981" />
                 Clean Only ({stats.cleanCount})
               </button>
@@ -635,12 +635,12 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
             )}
 
             {/* Search Box */}
-            <div className="wizard-search-box">
+            <div className="[display:flex]! [align-items:center] [gap:8px] [background:var(--bg-body,_var(--color-ink-100))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-md)]! [padding:6px_12px]! [min-width:220px] [transition:border-color_0.2s]! focus-within:[border-color:var(--accent-color,_var(--color-brand-500))]! focus-within:[background:var(--color-white)]! focus-within:[box-shadow:0_0_0_3px_rgba(255,_102,_0,_0.12)]!">
               <Search size={14} color="var(--text-secondary)" />
               <input
                 type="text"
                 placeholder="Search by facility, fuel, category..."
-                className="wizard-search-input"
+                className="[border:none]! [background:transparent]! [font-size:var(--text-base)]! [color:var(--text-primary,_var(--color-ink-900))]! [width:100%]! [outline:none]!"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -652,7 +652,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
             </div>
           </div>
 
-          <div className="toolbar-action-cluster">
+          <div className="[display:flex]! [align-items:center] [gap:10px] [flex-wrap:wrap]">
             <span className="text-[length:0.8rem]! text-[color:var(--text-secondary)]! font-semibold!">
               Showing {filteredRecords.length} of {stats.totalCount}
             </span>
@@ -661,7 +661,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
             {(scopeFilter !== 'all' || qaFilter !== 'all' || facilityFilter !== 'all' || yearFilter !== 'all' || searchQuery) && filteredRecords.length > 0 && (
               <div className="flex! gap-[8px]!">
                 <button
-                  className="btn-wizard-action btn-wizard-approve-all p-[6px_12px]! text-[length:0.78rem]!"
+                  className="btn-wizard-action [background:var(--color-green-700)]! [color:var(--color-white)]! hover:[background:var(--color-green-600)]! hover:[transform:translateY(-1px)]! hover:[box-shadow:0_3px_8px_rgba(16,_185,_129,_0.3)]! p-[6px_12px]! text-[length:0.78rem]!"
                  
                   onClick={() => handleApproveAll(true)}
                   disabled={isProcessing}
@@ -685,7 +685,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
 
         {/* ── Floating Selected Batch Bar ── */}
         {selectedKeys.size > 0 && (
-          <div className="wizard-batch-banner">
+          <div className="[padding:10px_28px]! [background:linear-gradient(135deg,_var(--color-ink-800)_0%,_var(--color-ink-900)_100%)]! [color:var(--color-white)]! [display:flex]! [align-items:center] [justify-content:space-between] [gap:16px] [flex-shrink:0] [animation:wizardBannerIn_0.2s_ease-out]!">
             <div className="flex! items-center! gap-[14px]!">
               <span className="font-bold! text-[length:0.92rem]! inline-flex! items-center! gap-[8px]!">
                 <CheckSquare size={16} color="#38bdf8" />
@@ -699,7 +699,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
 
             <div className="flex! gap-[10px]! items-center!">
               <button
-                className="btn-wizard-action btn-wizard-approve-all"
+                className="btn-wizard-action [background:var(--color-green-700)]! [color:var(--color-white)]! hover:[background:var(--color-green-600)]! hover:[transform:translateY(-1px)]! hover:[box-shadow:0_3px_8px_rgba(16,_185,_129,_0.3)]!"
                 onClick={handleApproveSelected}
                 disabled={isProcessing}
               >
@@ -726,15 +726,15 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
         )}
 
         {/* ── Table Body ── */}
-        <div className="batch-wizard-body">
+        <div className="[flex:1] [overflow-y:auto]! [overflow-x:auto]! [padding:0]! [position:relative]">
           {loading ? (
-            <div className="wizard-empty-state">
+            <div className="[padding:64px_24px]! [text-align:center]! [display:flex]! [flex-direction:column] [align-items:center] [gap:14px] [color:var(--text-secondary,_var(--color-ink-500))]!">
               <RefreshCw size={36} style={{ animation: 'spin 1s linear infinite', color: 'var(--color-link)' }} />
               <p className="font-semibold!">Loading 100% of pending records across all scopes...</p>
             </div>
           ) : stats.totalCount === 0 ? (
-            <div className="wizard-empty-state">
-              <div className="wizard-empty-icon">
+            <div className="[padding:64px_24px]! [text-align:center]! [display:flex]! [flex-direction:column] [align-items:center] [gap:14px] [color:var(--text-secondary,_var(--color-ink-500))]!">
+              <div className="[width:64px]! [height:64px]! [border-radius:var(--radius-lg)]! [background:rgba(16,_185,_129,_0.1)]! [color:var(--color-green-700)]! [display:flex]! [align-items:center] [justify-content:center]">
                 <CheckCircle size={32} />
               </div>
               <h3 className="m-[0px]! text-[length:1.2rem]! text-[color:var(--text-primary)]!">All Pending Data Verified</h3>
@@ -743,7 +743,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
               </p>
             </div>
           ) : filteredRecords.length === 0 ? (
-            <div className="wizard-empty-state">
+            <div className="[padding:64px_24px]! [text-align:center]! [display:flex]! [flex-direction:column] [align-items:center] [gap:14px] [color:var(--text-secondary,_var(--color-ink-500))]!">
               <Filter size={32} color="var(--text-muted)" />
               <h3 className="m-[0px]! text-[length:1.1rem]!">No Matching Records</h3>
               <p className="m-[0px]! text-[length:0.86rem]!">No records match your active scope, anomaly, or search filters.</p>
@@ -823,7 +823,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
                         {item.isWeird ? (
                           <div className="flex! flex-col! gap-[3px]!">
                             <span
-                              className={`anomaly-pill ${item.severity}`}
+                              className={`[display:inline-flex]! [align-items:center]! [gap:5px]! [padding:3px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:600]! [line-height:1.2]! [&.danger]:[background:rgba(239,_68,_68,_0.1)]! [&.danger]:[color:var(--color-red-700)]! [&.danger]:[border:1px_solid_rgba(239,_68,_68,_0.3)]! [&&]:[&.warning]:[background:rgba(245,_158,_11,_0.12)]! [&&]:[&.warning]:[color:var(--color-amber-700)]! [&&]:[&.warning]:[border:1px_solid_rgba(245,_158,_11,_0.35)]! [&&]:[&&]:[&.clean]:[background:rgba(16,_185,_129,_0.08)]! [&&]:[&&]:[&.clean]:[color:var(--color-green-700)]! [&&]:[&&]:[&.clean]:[border:1px_solid_rgba(16,_185,_129,_0.25)]! ${item.severity}`}
                               title={item.reasons.join(" · ")}
                             >
                               <AlertTriangle size={12} />
@@ -835,14 +835,14 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
                             </span>
                           </div>
                         ) : (
-                          <span className="anomaly-pill clean">
+                          <span className="[display:inline-flex]! [align-items:center]! [gap:5px]! [padding:3px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:600]! [line-height:1.2]! [&.danger]:[background:rgba(239,_68,_68,_0.1)]! [&.danger]:[color:var(--color-red-700)]! [&.danger]:[border:1px_solid_rgba(239,_68,_68,_0.3)]! [&&]:[&.warning]:[background:rgba(245,_158,_11,_0.12)]! [&&]:[&.warning]:[color:var(--color-amber-700)]! [&&]:[&.warning]:[border:1px_solid_rgba(245,_158,_11,_0.35)]! [&&]:[&&]:[&.clean]:[background:rgba(16,_185,_129,_0.08)]! [&&]:[&&]:[&.clean]:[color:var(--color-green-700)]! [&&]:[&&]:[&.clean]:[border:1px_solid_rgba(16,_185,_129,_0.25)]! clean">
                             <Check size={12} />
                             Verified Structure
                           </span>
                         )}
                       </td>
                       <td className="text-center!">
-                        <div className="review-actions-group justify-center!">
+                        <div className="[display:flex]! [align-items:center] [gap:8px] justify-center!">
                           {item.created_by && String(item.created_by) === String(user?.id) ? (
                             <span 
                               className="badge-maker"
@@ -863,7 +863,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
                           ) : (
                             <button
                               type="button"
-                              className="btn-review-action approve"
+                              className="[display:inline-flex]! [align-items:center]! [justify-content:center]! [width:32px]! [height:32px]! [border-radius:var(--radius-md)]! [border:1px_solid_transparent]! [cursor:pointer]! [transition:all_0.15s_ease]! [&.approve]:[background:rgba(16,_185,_129,_0.1)]! [&.approve]:[color:var(--color-green-700)]! [&.approve]:[border-color:rgba(16,_185,_129,_0.25)]! [&&]:[&.approve:hover]:[background:var(--color-green-700)]! [&&]:[&.approve:hover]:[color:var(--color-white)]! [&.approve:hover]:[transform:translateY(-1px)]! [&.approve:hover]:[box-shadow:0_4px_10px_rgba(16,_185,_129,_0.25)]! [&&]:[&&]:[&.reject]:[background:rgba(239,_68,_68,_0.08)]! [&&]:[&&]:[&.reject]:[color:var(--color-red-700)]! [&&]:[&.reject]:[border-color:rgba(239,_68,_68,_0.2)]! [&&]:[&&]:[&&]:[&.reject:hover]:[background:var(--color-red-700)]! [&&]:[&&]:[&&]:[&.reject:hover]:[color:var(--color-white)]! [&&]:[&.reject:hover]:[transform:translateY(-1px)]! [&&]:[&.reject:hover]:[box-shadow:0_4px_10px_rgba(239,_68,_68,_0.25)]! approve"
                               title="Approve & Commit"
                               onClick={() => handleApproveSingle(item.scope, item.id)}
                             >
@@ -872,7 +872,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
                           )}
                           <button
                             type="button"
-                            className="btn-review-action reject"
+                            className="[display:inline-flex]! [align-items:center]! [justify-content:center]! [width:32px]! [height:32px]! [border-radius:var(--radius-md)]! [border:1px_solid_transparent]! [cursor:pointer]! [transition:all_0.15s_ease]! [&.approve]:[background:rgba(16,_185,_129,_0.1)]! [&.approve]:[color:var(--color-green-700)]! [&.approve]:[border-color:rgba(16,_185,_129,_0.25)]! [&&]:[&.approve:hover]:[background:var(--color-green-700)]! [&&]:[&.approve:hover]:[color:var(--color-white)]! [&.approve:hover]:[transform:translateY(-1px)]! [&.approve:hover]:[box-shadow:0_4px_10px_rgba(16,_185,_129,_0.25)]! [&&]:[&&]:[&.reject]:[background:rgba(239,_68,_68,_0.08)]! [&&]:[&&]:[&.reject]:[color:var(--color-red-700)]! [&&]:[&.reject]:[border-color:rgba(239,_68,_68,_0.2)]! [&&]:[&&]:[&&]:[&.reject:hover]:[background:var(--color-red-700)]! [&&]:[&&]:[&&]:[&.reject:hover]:[color:var(--color-white)]! [&&]:[&.reject:hover]:[transform:translateY(-1px)]! [&&]:[&.reject:hover]:[box-shadow:0_4px_10px_rgba(239,_68,_68,_0.25)]! reject"
                             title="Reject (Specify Reason)"
                             onClick={() => setRejectionModal({ isOpen: true, mode: 'single', targetItem: item, reason: '' })}
                           >
@@ -891,8 +891,8 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
 
       {/* ── Nested Rejection Reason Prompt Modal ── */}
       {rejectionModal.isOpen && (
-        <div className="rejection-modal-backdrop" onClick={(e) => { if (e.target === e.currentTarget && !isProcessing) setRejectionModal(prev => ({ ...prev, isOpen: false })); }}>
-          <div className="rejection-modal">
+        <div className="[position:fixed] [inset:0] [background:rgba(15,_23,_42,_0.5)]! [backdrop-filter:blur(6px)] [display:flex]! [align-items:center] [justify-content:center] [z-index:1000] [animation:fadeIn_0.2s_ease-out]!" onClick={(e) => { if (e.target === e.currentTarget && !isProcessing) setRejectionModal(prev => ({ ...prev, isOpen: false })); }}>
+          <div className="[background:var(--bg-card-elevated)]! [border:1px_solid_var(--border-color)]! [&&]:[border-radius:var(--radius-lg)]! [width:90%]! [max-width:520px]! [padding:28px]! [box-shadow:var(--shadow-card-elevated)]! [display:flex]! [flex-direction:column] [gap:20px] [animation:scaleUp_0.25s_cubic-bezier(0.16,_1,_0.3,_1)]!">
             <div className="flex! justify-between! items-center!">
               <div className="flex! items-center! gap-[10px]!">
                 <div className="w-[36px]! h-[36px]! rounded-[10px]! bg-[color:rgba(239,_68,_68,_0.1)]! text-[color:#dc2626]! flex! items-center! justify-center!">
@@ -925,12 +925,12 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
               <label className="block! mb-[8px]! text-[length:0.78rem]! font-semibold! text-[color:var(--text-secondary)]! uppercase!">
                 Quick Audit Justifications
               </label>
-              <div className="rejection-quick-chips">
+              <div className="[display:flex]! [flex-wrap:wrap] [gap:8px]">
                 {QUICK_REJECTION_REASONS.map(reason => (
                   <button
                     key={reason}
                     type="button"
-                    className={`rejection-chip ${rejectionModal.reason === reason ? 'selected' : ''}`}
+                    className={`[background:var(--bg-body)]! [border:1px_solid_var(--border-color)]! [color:var(--text-secondary)]! [font-size:var(--text-sm)]! [padding:6px_12px]! [&&]:[border-radius:var(--radius-md)]! [cursor:pointer]! [transition:all_0.15s]! hover:[background:var(--bg-hover)]! hover:[color:var(--text-primary)]! hover:[border-color:rgba(255,_102,_0,_0.3)]! [&.selected]:[background:rgba(239,_68,_68,_0.1)]! [&.selected]:[color:var(--color-red-700)]! [&.selected]:[border-color:rgba(239,_68,_68,_0.4)]! [&.selected]:[font-weight:600]! ${rejectionModal.reason === reason ? 'selected' : ''}`}
                     onClick={() => setRejectionModal(prev => ({ ...prev, reason }))}
                   >
                     {reason}

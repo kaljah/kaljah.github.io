@@ -54,16 +54,6 @@
 
 /* --- Video Intro Overlay --- */
 /* --- GHG Cloud Animation --- */
-.ghg-cloud-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  pointer-events: none;
-  z-index: 1;
-  overflow: hidden;
-}
 
 .ghg-cloud {
   position: absolute;
@@ -79,14 +69,6 @@
 }
 
 /* Orange/Grey Carbon Cloud */
-.co2-cloud {
-  background: radial-gradient(
-    circle,
-    rgba(255, 102, 0, 0.6) 0%,
-    rgba(100, 116, 139, 0.3) 50%,
-    transparent 70%
-  );
-}
 
 /* Green Methane Cloud */
 .ch4-cloud {
@@ -145,45 +127,6 @@
   margin-bottom: 20px;
 }
 
-.input-wrapper {
-  position: relative;
-}
-
-.input-icon {
-  position: absolute;
-  left: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--color-ink-600);
-  transition: color 0.3s;
-}
-
-.form-control {
-  width: 100%;
-  padding: 14px 16px 14px 48px;
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-md);
-  font-size: var(--text-md);
-  color: var(--text-main);
-  transition: all 0.2s;
-  background: #fafafa;
-}
-
-.form-control::placeholder {
-  color: var(--color-ink-400);
-}
-
-.form-control:focus {
-  outline: none;
-  border-color: var(--primary);
-  background: var(--color-white);
-  box-shadow: 0 0 0 4px rgba(255, 102, 0, 0.1);
-}
-
-.form-control:focus + .input-icon {
-  color: var(--primary);
-}
-
 .btn-primary {
   width: 100%;
   padding: 14px;
@@ -225,13 +168,6 @@
   padding-top: 24px;
 }
 
-.mini-badges {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
 .badge {
   font-size: var(--text-sm);
   font-weight: 600;
@@ -247,52 +183,7 @@
   font-size: var(--text-sm);
 }
 
-.login-actions-row {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 8px;
-  margin-bottom: 8px;
-}
-
-.forgot-password-link {
-  background: none;
-  border: none;
-  color: var(--primary);
-  font-size: var(--text-base);
-  font-weight: 500;
-  cursor: pointer;
-  padding: 0;
-  transition: color 0.2s;
-}
-
-.forgot-password-link:hover {
-  color: var(--primary-hover);
-  text-decoration: underline;
-}
-
 /* --- Forgot Password Modal --- */
-.forgot-modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(8px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 20px;
-}
-
-.forgot-modal-content {
-  width: 100%;
-  max-width: 440px;
-  background: var(--color-white);
-  border-radius: var(--radius-lg);
-  padding: 32px;
-  box-shadow: var(--shadow-raised);
-  border: 1px solid rgba(226, 232, 240, 0.8);
-  position: relative;
-}
 
 .forgot-modal-header {
   margin-bottom: 20px;
@@ -312,32 +203,6 @@
   line-height: 1.4;
 }
 
-.forgot-status-msg {
-  padding: 12px 16px;
-  border-radius: var(--radius-md);
-  font-size: var(--text-base);
-  margin-bottom: 18px;
-  line-height: 1.4;
-}
-
-.forgot-status-msg.success {
-  background: var(--color-green-50);
-  color: #065f46;
-  border: 1px solid #a7f3d0;
-}
-
-.forgot-status-msg.error {
-  background: var(--color-red-50);
-  color: #991b1b;
-  border: 1px solid #fecaca;
-}
-
-.forgot-modal-actions {
-  display: flex;
-  gap: 12px;
-  margin-top: 20px;
-}
-
 .btn-secondary {
   flex: 1;
   padding: 12px;
@@ -353,30 +218,4 @@
 
 .btn-secondary:hover {
   background: var(--color-ink-200);
-}
-
-.login-logo {
-  display: block;
-  width: 48px;
-  height: 48px;
-  margin: 0 auto 12px;
-}
-
-.password-toggle {
-  position: absolute;
-  top: 50%;
-  right: 12px;
-  transform: translateY(-50%);
-  display: inline-flex;
-  padding: 6px;
-  border: 0;
-  border-radius: var(--radius-md);
-  background: transparent;
-  color: var(--color-ink-500);
-  cursor: pointer;
-}
-
-.password-toggle:hover {
-  background: var(--color-ink-100);
-  color: var(--color-ink-900);
 }

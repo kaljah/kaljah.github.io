@@ -4,9 +4,9 @@ import { AlertCircle, CheckCircle2, ExternalLink, HelpCircle, KeyRound, Radio, S
 
 // Extracted from Settings.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicusClientId, copernicusClientSecret, copernicusEnabled, copernicusPassword, copernicusQaThreshold, copernicusUsername, handleSaveGlobal, handleTestConnection, isAdmin, saving, setAuthMode, setCopernicusClientId, setCopernicusClientSecret, setCopernicusEnabled, setCopernicusPassword, setCopernicusQaThreshold, setCopernicusUsername, setShowGuide, showGuide, testingConnection }) => (
-<div className="settings-section-card">
+<div className="[background:var(--bg-card,_var(--color-white))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-lg)]! [padding:32px]! [display:flex]! [flex-direction:column] [gap:28px] [box-shadow:var(--shadow-card,_0_4px_6px_-1px_rgba(0,_0,_0,_0.05))]!">
           <div className="section-intro">
-            <div className="section-intro-header">
+            <div className="[display:flex]! [align-items:center] [gap:10px]">
               <Satellite
                 size={22}
                 className="section-icon text-[color:#0369a1]!"
@@ -28,34 +28,34 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
           </div>
 
           {/* Step-by-step account guide toggle banner */}
-          <div className="satellite-guide-banner">
+          <div className="[background:rgba(2,_132,_199,_0.05)]! [border:1px_solid_rgba(2,_132,_199,_0.2)]! [&&]:[border-radius:var(--radius-md)]! [padding:16px_20px]! [margin-bottom:24px]! [transition:all_0.2s_ease]! hover:[border-color:rgba(2,_132,_199,_0.35)]!">
             <div
-              className="guide-banner-header"
+              className="[display:flex]! [justify-content:space-between] [align-items:center] [cursor:pointer] [gap:16px]"
               onClick={() => setShowGuide(!showGuide)}
             >
-              <div className="guide-title">
+              <div className="[display:flex]! [align-items:center] [gap:10px] [font-size:var(--text-md)]! [color:var(--text-primary,_var(--color-ink-900))]!">
                 <HelpCircle size={18} color="#0284c7" />
                 <strong>
                   Need a Copernicus Account? Click here for the Step-by-Step
                   Setup Guide
                 </strong>
               </div>
-              <button className="guide-toggle-btn" type="button" aria-expanded={showGuide}>
+              <button className="[background:var(--color-sky-600)]! [color:var(--color-white)]! [border:none]! [&&]:[border-radius:var(--radius-sm)]! [padding:6px_14px]! [font-size:var(--text-sm)]! [font-weight:600]! [cursor:pointer] [transition:background_0.2s_ease]! hover:[background:#0369a1]!" type="button" aria-expanded={showGuide}>
                 {showGuide ? "Hide Guide" : "Show Step-by-Step Guide"}
               </button>
             </div>
 
             {showGuide && (
-              <div className="guide-steps-body">
-                <div className="guide-step">
-                  <div className="step-num">1</div>
+              <div className="[margin-top:16px]! [padding-top:16px]! [border-top:1px_dashed_rgba(2,_132,_199,_0.2)]! [display:flex]! [flex-direction:column] [gap:12px]">
+                <div className="[display:flex]! [gap:14px] [align-items:flex-start]">
+                  <div className="[background:var(--color-sky-600)]! [color:var(--color-white)]! [width:24px]! [height:24px]! [border-radius:50%]! [display:flex]! [align-items:center] [justify-content:center] [font-size:var(--text-sm)]! [font-weight:700]! [flex-shrink:0] [margin-top:2px]!">1</div>
                   <div className="step-content">
                     <strong>Visit Copernicus Data Space:</strong> Go to{" "}
                     <a
                       href="https://dataspace.copernicus.eu"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="link-ext"
+                      className="[color:var(--color-blue-700)]! [font-weight:600]! [text-decoration:none]! [display:inline-flex]! [align-items:center] [gap:3px] hover:[text-decoration:underline]!"
                     >
                       dataspace.copernicus.eu <ExternalLink size={12} />
                     </a>{" "}
@@ -63,16 +63,16 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
                     corner.
                   </div>
                 </div>
-                <div className="guide-step">
-                  <div className="step-num">2</div>
+                <div className="[display:flex]! [gap:14px] [align-items:flex-start]">
+                  <div className="[background:var(--color-sky-600)]! [color:var(--color-white)]! [width:24px]! [height:24px]! [border-radius:50%]! [display:flex]! [align-items:center] [justify-content:center] [font-size:var(--text-sm)]! [font-weight:700]! [flex-shrink:0] [margin-top:2px]!">2</div>
                   <div className="step-content">
                     <strong>Create Free Account:</strong> Fill in your name,
                     organization, email, and choose a password. Confirm the
                     activation email sent to your inbox.
                   </div>
                 </div>
-                <div className="guide-step">
-                  <div className="step-num">3</div>
+                <div className="[display:flex]! [gap:14px] [align-items:flex-start]">
+                  <div className="[background:var(--color-sky-600)]! [color:var(--color-white)]! [width:24px]! [height:24px]! [border-radius:50%]! [display:flex]! [align-items:center] [justify-content:center] [font-size:var(--text-sm)]! [font-weight:700]! [flex-shrink:0] [margin-top:2px]!">3</div>
                   <div className="step-content">
                     <strong>Choose Login Method:</strong>
                     <ul>
@@ -86,7 +86,7 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
                           href="https://identity.dataspace.copernicus.eu"
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="link-ext"
+                          className="[color:var(--color-blue-700)]! [font-weight:600]! [text-decoration:none]! [display:inline-flex]! [align-items:center] [gap:3px] hover:[text-decoration:underline]!"
                         >
                           identity.dataspace.copernicus.eu{" "}
                           <ExternalLink size={12} />
@@ -97,8 +97,8 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
                     </ul>
                   </div>
                 </div>
-                <div className="guide-step">
-                  <div className="step-num">4</div>
+                <div className="[display:flex]! [gap:14px] [align-items:flex-start]">
+                  <div className="[background:var(--color-sky-600)]! [color:var(--color-white)]! [width:24px]! [height:24px]! [border-radius:50%]! [display:flex]! [align-items:center] [justify-content:center] [font-size:var(--text-sm)]! [font-weight:700]! [flex-shrink:0] [margin-top:2px]!">4</div>
                   <div className="step-content">
                     <strong>Test & Save:</strong> Enter credentials below, click{" "}
                     <strong>"Test Connection"</strong> to verify authentication,
@@ -110,39 +110,39 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
           </div>
 
           {/* Satellite Specs Overview */}
-          <div className="satellite-specs-grid">
-            <div className="spec-card">
-              <div className="spec-label">Satellite Instrument</div>
-              <div className="spec-val">Sentinel-5P (TROPOMI)</div>
-              <div className="spec-desc">European Space Agency (ESA)</div>
+          <div className="[display:grid]! [grid-template-columns:repeat(auto-fit,_minmax(200px,_1fr))] [gap:16px] [margin-bottom:28px]!">
+            <div className="[background:var(--bg-card-secondary,_var(--color-ink-50))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-md)]! [padding:16px_18px]! [display:flex]! [flex-direction:column] [gap:4px]">
+              <div className="[font-size:var(--text-sm)]! [text-transform:uppercase]! [letter-spacing:0.05em] [color:var(--text-secondary,_var(--color-ink-500))]! [font-weight:700]!">Satellite Instrument</div>
+              <div className="[font-size:var(--text-lg)]! [font-weight:700]! [color:var(--color-blue-700)]!">Sentinel-5P (TROPOMI)</div>
+              <div className="[font-size:var(--text-sm)]! [color:var(--text-secondary,_var(--color-ink-400))]!">European Space Agency (ESA)</div>
             </div>
-            <div className="spec-card">
-              <div className="spec-label">Spatial Resolution</div>
-              <div className="spec-val">5.5 × 7.0 km</div>
-              <div className="spec-desc">Regional & Basin Plume Scale</div>
+            <div className="[background:var(--bg-card-secondary,_var(--color-ink-50))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-md)]! [padding:16px_18px]! [display:flex]! [flex-direction:column] [gap:4px]">
+              <div className="[font-size:var(--text-sm)]! [text-transform:uppercase]! [letter-spacing:0.05em] [color:var(--text-secondary,_var(--color-ink-500))]! [font-weight:700]!">Spatial Resolution</div>
+              <div className="[font-size:var(--text-lg)]! [font-weight:700]! [color:var(--color-blue-700)]!">5.5 × 7.0 km</div>
+              <div className="[font-size:var(--text-sm)]! [color:var(--text-secondary,_var(--color-ink-400))]!">Regional & Basin Plume Scale</div>
             </div>
-            <div className="spec-card">
-              <div className="spec-label">Global Revisit Rate</div>
-              <div className="spec-val">~2 Days</div>
-              <div className="spec-desc">High-frequency column monitoring</div>
+            <div className="[background:var(--bg-card-secondary,_var(--color-ink-50))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-md)]! [padding:16px_18px]! [display:flex]! [flex-direction:column] [gap:4px]">
+              <div className="[font-size:var(--text-sm)]! [text-transform:uppercase]! [letter-spacing:0.05em] [color:var(--text-secondary,_var(--color-ink-500))]! [font-weight:700]!">Global Revisit Rate</div>
+              <div className="[font-size:var(--text-lg)]! [font-weight:700]! [color:var(--color-blue-700)]!">~2 Days</div>
+              <div className="[font-size:var(--text-sm)]! [color:var(--text-secondary,_var(--color-ink-400))]!">High-frequency column monitoring</div>
             </div>
-            <div className="spec-card">
-              <div className="spec-label">Measured Variable</div>
-              <div className="spec-val">Total Column CH₄ (ppb)</div>
-              <div className="spec-desc">Dry Air Mixing Ratio</div>
+            <div className="[background:var(--bg-card-secondary,_var(--color-ink-50))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-md)]! [padding:16px_18px]! [display:flex]! [flex-direction:column] [gap:4px]">
+              <div className="[font-size:var(--text-sm)]! [text-transform:uppercase]! [letter-spacing:0.05em] [color:var(--text-secondary,_var(--color-ink-500))]! [font-weight:700]!">Measured Variable</div>
+              <div className="[font-size:var(--text-lg)]! [font-weight:700]! [color:var(--color-blue-700)]!">Total Column CH₄ (ppb)</div>
+              <div className="[font-size:var(--text-sm)]! [color:var(--text-secondary,_var(--color-ink-400))]!">Dry Air Mixing Ratio</div>
             </div>
           </div>
 
           {/* Credentials Form Section */}
-          <div className="satellite-config-form">
+          <div className="[background:var(--bg-card-secondary,_var(--color-ink-50))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-lg)]! [padding:24px]! [display:flex]! [flex-direction:column] [gap:18px]">
             <div className="config-form-header">
               <KeyRound size={18} />
               <h3>Copernicus Data Space Ecosystem (CDSE) Credentials</h3>
             </div>
 
-            <div className="auth-mode-selector">
+            <div className="[display:flex]! [gap:12px] [flex-wrap:wrap] [margin-bottom:10px]!">
               <label
-                className={`auth-mode-pill ${authMode === "password" ? "active" : ""}`}
+                className={`[display:flex]! [align-items:center]! [gap:8px]! [padding:8px_16px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--border-color,_var(--color-ink-300))]! [background:var(--bg-card,_var(--color-white))]! [cursor:pointer]! [font-size:var(--text-base)]! [font-weight:600]! [color:var(--text-secondary,_var(--color-ink-600))]! [transition:all_0.2s_ease]! [&.active]:[border-color:var(--color-sky-600)]! [&.active]:[background:rgba(2,_132,_199,_0.08)]! [&.active]:[color:var(--color-blue-700)]! ${authMode === "password" ? "active" : ""}`}
               >
                 <input
                   type="radio"
@@ -155,7 +155,7 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
                 <span>Copernicus Account (Email &amp; Password)</span>
               </label>
               <label
-                className={`auth-mode-pill ${authMode === "oauth_client" ? "active" : ""}`}
+                className={`[display:flex]! [align-items:center]! [gap:8px]! [padding:8px_16px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--border-color,_var(--color-ink-300))]! [background:var(--bg-card,_var(--color-white))]! [cursor:pointer]! [font-size:var(--text-base)]! [font-weight:600]! [color:var(--text-secondary,_var(--color-ink-600))]! [transition:all_0.2s_ease]! [&.active]:[border-color:var(--color-sky-600)]! [&.active]:[background:rgba(2,_132,_199,_0.08)]! [&.active]:[color:var(--color-blue-700)]! ${authMode === "oauth_client" ? "active" : ""}`}
               >
                 <input
                   type="radio"
@@ -170,7 +170,7 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
             </div>
 
             {authMode === "password" ? (
-              <div className="form-row-2col">
+              <div className="[display:grid]! [grid-template-columns:1fr_1fr] [gap:20px] [@media(max-width:768px)]:[grid-template-columns:1fr]!">
                 <div className="form-group">
                   <label className="field-label">
                     Copernicus Email / Username
@@ -205,7 +205,7 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
                 </div>
               </div>
             ) : (
-              <div className="form-row-2col">
+              <div className="[display:grid]! [grid-template-columns:1fr_1fr] [gap:20px] [@media(max-width:768px)]:[grid-template-columns:1fr]!">
                 <div className="form-group">
                   <label className="field-label">OAuth2 Client ID</label>
                   <input
@@ -234,7 +234,7 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
             )}
 
             {/* Quality Filtering and Enable Toggle */}
-            <div className="form-row-2col mt-[16px]!">
+            <div className="[display:grid]! [grid-template-columns:1fr_1fr] [gap:20px] [@media(max-width:768px)]:[grid-template-columns:1fr]! mt-[16px]!">
               <div className="form-group">
                 <div
                   className="flex! justify-between! items-center! mb-[6px]!"
@@ -299,10 +299,10 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
             </div>
 
             {/* Connection Test Action & Status Display */}
-            <div className="connection-test-row">
+            <div className="[display:flex]! [align-items:center] [gap:16px] [margin-top:10px]! [flex-wrap:wrap]">
               <button
                 type="button"
-                className="btn-test-connection"
+                className="[display:inline-flex]! [align-items:center] [gap:8px] [background:var(--color-sky-600)]! [color:var(--color-white)]! [padding:10px_20px]! [border-radius:var(--radius-md)]! [border:none]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [transition:background_0.2s_ease]! [&:hover:not(:disabled)]:[background:#0369a1]! disabled:[opacity:0.6] disabled:[cursor:not-allowed]"
                 onClick={handleTestConnection}
                 disabled={!isAdmin || testingConnection}
                 id="test-copernicus-connection-btn"
@@ -322,7 +322,7 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
 
               {connectionStatus && (
                 <div
-                  className={`connection-status-badge ${connectionStatus.success ? "success" : "error"}`}
+                  className={`[display:inline-flex]! [align-items:center]! [gap:8px]! [padding:8px_16px]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [font-weight:600]! [&.success]:[background:rgba(16,_185,_129,_0.1)]! [&.success]:[color:var(--color-green-700)]! [&.success]:[border:1px_solid_rgba(16,_185,_129,_0.3)]! [&&]:[&.error]:[background:rgba(239,_68,_68,_0.1)]! [&&]:[&.error]:[color:var(--color-red-700)]! [&&]:[&.error]:[border:1px_solid_rgba(239,_68,_68,_0.3)]! ${connectionStatus.success ? "success" : "error"}`}
                 >
                   {connectionStatus.success ? (
                     <CheckCircle2 size={16} />
@@ -331,7 +331,7 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
                   )}
                   <span>{connectionStatus.message}</span>
                   {connectionStatus.expires_in && (
-                    <span className="token-expiry">
+                    <span className="[font-size:var(--text-sm)]! [opacity:0.8]">
                       (Token TTL: {Math.round(connectionStatus.expires_in / 60)}
                       m)
                     </span>
