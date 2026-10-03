@@ -581,8 +581,3 @@
 
 
 /* Scope switcher (moved out of the old second header bar; breadcrumbs now come from the app shell) */
-.scope-switcher-bar {
-  display: flex;
-  justify-content: flex-end;
-  padding: 16px 24px 0;
-}

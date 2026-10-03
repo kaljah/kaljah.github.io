@@ -115,25 +115,10 @@
 }
 
 /* Region-Field Styling - ENSURE THIS IS PRESENT */
-.sub-label {
-  font-size: var(--text-xs) !important;
-  color: var(--text-secondary, var(--color-ink-500)) !important;
-  font-weight: 600 !important;
-  display: inline-block;
-  margin-left: 2px;
-}
 
 .selected-with-sub,
 .option-with-sub {
   display: flex;
   align-items: center;
   gap: 2px;
-}
-
-.display-text {
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
