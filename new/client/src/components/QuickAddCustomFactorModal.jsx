@@ -91,7 +91,7 @@ const QuickAddCustomFactorModal = ({
   };
 
   return (
-    <div
+    <div role="presentation"
       className="modal-overlay"
       style={{
         position: "fixed",

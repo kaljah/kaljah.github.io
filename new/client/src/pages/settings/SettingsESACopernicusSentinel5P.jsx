@@ -29,7 +29,7 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
 
           {/* Step-by-step account guide toggle banner */}
           <div className="[background:rgba(2,_132,_199,_0.05)] [border:1px_solid_rgba(2,_132,_199,_0.2)] [&&]:[border-radius:var(--radius-md)] [padding:16px_20px] [margin-bottom:24px] [transition:all_0.2s_ease] hover:[border-color:rgba(2,_132,_199,_0.35)]">
-            <div
+            <div role="presentation"
               className="[display:flex] [justify-content:space-between] [align-items:center] [cursor:pointer] [gap:16px]"
               onClick={() => setShowGuide(!showGuide)}
             >

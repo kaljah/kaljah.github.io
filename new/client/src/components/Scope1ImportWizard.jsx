@@ -613,7 +613,7 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
   };
 
   return (
-    <div className="[position:fixed] [inset:0] [background:rgba(10,_15,_30,_0.68)] [backdrop-filter:blur(6px)] [-webkit-backdrop-filter:blur(6px)] [display:flex] [align-items:center] [justify-content:center] [z-index:1000] [padding:16px] [animation:s1w-fade_0.2s_ease]" onClick={e => e.target === e.currentTarget && onClose()}>
+    <div role="presentation" className="[position:fixed] [inset:0] [background:rgba(10,_15,_30,_0.68)] [backdrop-filter:blur(6px)] [-webkit-backdrop-filter:blur(6px)] [display:flex] [align-items:center] [justify-content:center] [z-index:1000] [padding:16px] [animation:s1w-fade_0.2s_ease]" onClick={e => e.target === e.currentTarget && onClose()}>
       <Scope1ImportWizardScope1Bulk
         FIELD_GROUPS={FIELD_GROUPS}
         FieldGroup={FieldGroup}

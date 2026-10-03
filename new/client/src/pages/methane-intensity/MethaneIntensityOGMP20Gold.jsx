@@ -6,7 +6,7 @@ const MethaneIntensityOGMP20Gold = ({ facilities, globalThreshold, ogmpRoadmapDa
 <div
           className={`[background:var(--bg-card)] [border:1px_solid_var(--border-color)] [&&]:[border-radius:var(--radius-lg)] [padding:28px] [box-shadow:var(--card-shadow)] [display:flex] [flex-direction:column] [gap:22px] [transition:gap_0.3s_ease] [&.collapsed-card]:[gap:0] ${roadmapCollapsed ? "collapsed-card" : ""}`}
         >
-          <div
+          <div role="presentation"
             className="[display:flex] [justify-content:space-between] [align-items:center] [flex-wrap:wrap] [gap:16px] [padding-bottom:18px] [border-bottom:1px_solid_var(--border-color)]"
             onClick={() => setRoadmapCollapsed(!roadmapCollapsed)}
             style={{ cursor: "pointer", userSelect: "none" }}
@@ -24,7 +24,7 @@ const MethaneIntensityOGMP20Gold = ({ facilities, globalThreshold, ogmpRoadmapDa
 
             <div className="flex! items-center! gap-[16px]!">
               {/* Interactive Baseline Selector UI button/pill matching theme */}
-              <div
+              <div role="presentation"
                 className="[display:flex] [align-items:center] [gap:10px] [background:var(--bg-app)] [padding:6px_12px] [border-radius:var(--radius-md)] [border:1px_solid_var(--border-color)]"
                 onClick={(e) => e.stopPropagation()}
               >

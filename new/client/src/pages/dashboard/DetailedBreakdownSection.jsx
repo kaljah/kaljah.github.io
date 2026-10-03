@@ -150,7 +150,7 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
                       {Object.entries(getHierarchicalData).map(
                         ([act, actData]) => (
                           <React.Fragment key={act}>
-                            <tr tabIndex={0} onKeyDown={activateOnKey}
+                            <tr role="row" tabIndex={0} onKeyDown={activateOnKey}
                               className="act-row [background:#fefefe] clickable [cursor:pointer]"
                               onClick={() => toggleActivity(act)}
                             >
@@ -168,7 +168,7 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
                               Object.entries(actData.divisions).map(
                                 ([div, divData]) => (
                                   <React.Fragment key={div}>
-                                    <tr tabIndex={0} onKeyDown={activateOnKey}
+                                    <tr role="row" tabIndex={0} onKeyDown={activateOnKey}
                                       className="div-row [color:var(--color-ink-600)]! clickable [cursor:pointer]"
                                       onClick={(e) => {
                                         e.stopPropagation();

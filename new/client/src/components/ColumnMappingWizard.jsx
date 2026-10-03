@@ -787,7 +787,7 @@ export default function ColumnMappingWizard({
 
   // ─── Render ────────────────────────────────────────────────────────────────
   return (
-    <div
+    <div role="presentation"
       className="[position:fixed] [inset:0] [background:rgba(10,_15,_30,_0.65)] [backdrop-filter:blur(4px)] [-webkit-backdrop-filter:blur(4px)] [display:flex] [align-items:center] [justify-content:center] [z-index:1000] [padding:16px] [animation:cmw-fade-in_0.2s_ease]"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >

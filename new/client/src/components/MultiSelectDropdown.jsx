@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
+import { activateOnKey } from "../utils/a11yKeys";
 import { createPortal } from "react-dom";
 import "./CustomDropdown.css";
 
@@ -181,7 +182,7 @@ const MultiSelectDropdown = ({
               overflowY: "auto",
             }}
           >
-            <div
+            <div role="button" tabIndex={0} onKeyDown={activateOnKey}
               className="dropdown-option"
               onClick={handleSelectAll}
               style={{
@@ -196,7 +197,7 @@ const MultiSelectDropdown = ({
                 : "Select All"}
             </div>
             {options.map((opt) => (
-              <div
+              <div role="button" tabIndex={0} onKeyDown={activateOnKey}
                 key={opt.value}
                 className="dropdown-option"
                 onClick={() => toggleOption(opt.value)}

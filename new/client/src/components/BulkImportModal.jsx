@@ -1144,7 +1144,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
               </div>
 
               {showCheatSheet && (
-                <div
+                <div role="presentation"
                   className="[margin-top:16px] [background:#f3f4f6] [border-radius:var(--radius-md)] [padding:16px] [text-align:left] [display:flex] [flex-direction:column] [gap:12px] [border:1px_solid_rgba(0,_0,_0,_0.05)]"
                   onClick={(e) => e.stopPropagation()}
                 >

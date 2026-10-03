@@ -360,7 +360,7 @@ export default function Scope2ImportWizard({ onClose, onUploadSuccess }) {
   };
 
   return (
-    <div className="[position:fixed] [inset:0] [background:rgba(10,_15,_30,_0.68)] [backdrop-filter:blur(6px)] [-webkit-backdrop-filter:blur(6px)] [display:flex] [align-items:center] [justify-content:center] [z-index:1000] [padding:16px] [animation:s1w-fade_0.2s_ease]" onClick={e => e.target === e.currentTarget && onClose()}>
+    <div role="presentation" className="[position:fixed] [inset:0] [background:rgba(10,_15,_30,_0.68)] [backdrop-filter:blur(6px)] [-webkit-backdrop-filter:blur(6px)] [display:flex] [align-items:center] [justify-content:center] [z-index:1000] [padding:16px] [animation:s1w-fade_0.2s_ease]" onClick={e => e.target === e.currentTarget && onClose()}>
       <div className="s1w-modal">
         {/* Header */}
         <div className="[display:flex] [align-items:center] [justify-content:space-between] [padding:20px_24px_0] [flex-shrink:0]">

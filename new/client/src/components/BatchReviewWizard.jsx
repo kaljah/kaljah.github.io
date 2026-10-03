@@ -483,7 +483,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
   if (!isOpen) return null;
 
   const modalContent = (
-    <div className="[position:fixed] [inset:0] [background:rgba(15,_23,_42,_0.65)] [backdrop-filter:blur(8px)] [-webkit-backdrop-filter:blur(8px)] [z-index:10000] [display:flex] [align-items:center] [justify-content:center] [padding:24px] [animation:wizardFadeIn_0.2s_cubic-bezier(0.16,_1,_0.3,_1)]" onClick={(e) => { if (e.target === e.currentTarget && !rejectionModal.isOpen) onClose(); }}>
+    <div role="presentation" className="[position:fixed] [inset:0] [background:rgba(15,_23,_42,_0.65)] [backdrop-filter:blur(8px)] [-webkit-backdrop-filter:blur(8px)] [z-index:10000] [display:flex] [align-items:center] [justify-content:center] [padding:24px] [animation:wizardFadeIn_0.2s_cubic-bezier(0.16,_1,_0.3,_1)]" onClick={(e) => { if (e.target === e.currentTarget && !rejectionModal.isOpen) onClose(); }}>
       <div className="[background:var(--bg-card-elevated,_var(--color-white))] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.9))] [&&]:[border-radius:var(--radius-lg)] [width:100%] [max-width:1440px] [height:calc(100vh_-_48px)] [max-height:940px] [display:flex] [flex-direction:column] [box-shadow:var(--shadow-overlay)] [overflow:hidden] [animation:wizardSlideUp_0.25s_cubic-bezier(0.16,_1,_0.3,_1)]">
         {/* ── Wizard Header ── */}
         <div className="[padding:18px_28px] [border-bottom:1px_solid_var(--border-color,_var(--color-ink-200))] [background:rgba(255,_255,_255,_0.95)] [display:flex] [justify-content:space-between] [align-items:center] [gap:20px] [flex-shrink:0]">
@@ -891,7 +891,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
 
       {/* ── Nested Rejection Reason Prompt Modal ── */}
       {rejectionModal.isOpen && (
-        <div className="[position:fixed] [inset:0] [background:rgba(15,_23,_42,_0.5)] [backdrop-filter:blur(6px)] [display:flex] [align-items:center] [justify-content:center] [z-index:1000] [animation:fadeIn_0.2s_ease-out]" onClick={(e) => { if (e.target === e.currentTarget && !isProcessing) setRejectionModal(prev => ({ ...prev, isOpen: false })); }}>
+        <div role="presentation" className="[position:fixed] [inset:0] [background:rgba(15,_23,_42,_0.5)] [backdrop-filter:blur(6px)] [display:flex] [align-items:center] [justify-content:center] [z-index:1000] [animation:fadeIn_0.2s_ease-out]" onClick={(e) => { if (e.target === e.currentTarget && !isProcessing) setRejectionModal(prev => ({ ...prev, isOpen: false })); }}>
           <div className="[background:var(--bg-card-elevated)] [border:1px_solid_var(--border-color)] [&&]:[border-radius:var(--radius-lg)] [width:90%] [max-width:520px] [padding:28px] [box-shadow:var(--shadow-card-elevated)] [display:flex] [flex-direction:column] [gap:20px] [animation:scaleUp_0.25s_cubic-bezier(0.16,_1,_0.3,_1)]">
             <div className="flex! justify-between! items-center!">
               <div className="flex! items-center! gap-[10px]!">

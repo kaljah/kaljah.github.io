@@ -177,7 +177,7 @@ export const DataTable = ({
                   </tr>
                 ))
               : rows.map((row) => (
-                  <tr
+                  <tr role="row"
                     key={row.id}
                     onClick={onRowClick ? () => onRowClick(row.original) : undefined}
                     tabIndex={onRowClick ? 0 : undefined}

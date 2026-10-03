@@ -283,7 +283,7 @@ const Login = () => {
       {/* Forgot Password Modal */}
       <AnimatePresence>
         {showForgotModal && (
-          <div className="[position:fixed] [inset:0] [background:rgba(15,_23,_42,_0.6)] [backdrop-filter:blur(8px)] [display:flex] [align-items:center] [justify-content:center] [z-index:1000] [padding:20px]" onClick={() => setShowForgotModal(false)}>
+          <div role="presentation" className="[position:fixed] [inset:0] [background:rgba(15,_23,_42,_0.6)] [backdrop-filter:blur(8px)] [display:flex] [align-items:center] [justify-content:center] [z-index:1000] [padding:20px]" onClick={() => setShowForgotModal(false)}>
             <motion.div
               className="forgot-modal-content"
               onClick={(e) => e.stopPropagation()}
