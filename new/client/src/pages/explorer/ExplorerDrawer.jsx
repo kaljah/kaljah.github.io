@@ -1,6 +1,6 @@
 import React from "react";
 import { AlertCircle, RotateCcw, Satellite, Search, Sliders, X } from "lucide-react";
-import { Badge, Button, Field, IconButton, Input, Switch } from "../../ui";
+import { Badge, Button, Field, IconButton, Input, NativeSelect, Switch } from "../../ui";
 import { cn } from "../../ui/cn";
 import { activateOnKey } from "../../utils/a11yKeys";
 
@@ -83,7 +83,6 @@ const ExplorerDrawer = ({
         <div className="relative">
           <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-text-secondary" aria-hidden="true" />
           <Input
-            id="recon-search-input"
             className="h-9 pl-9 pr-8 text-sm"
             placeholder="Search name, region, division..."
             value={filters.search}
@@ -99,36 +98,36 @@ const ExplorerDrawer = ({
 
       <div className="grid grid-cols-2 gap-2">
         <Field label="Region / basin">
-          <select id="filter-region-select" className={selectClass} value={filters.region} onChange={(e) => set({ region: e.target.value })}>
+          <NativeSelect className={selectClass} value={filters.region} onChange={(e) => set({ region: e.target.value })}>
             <option value="all">All regions</option>
             {regions.map((r) => (
               <option key={r} value={r}>
                 {r}
               </option>
             ))}
-          </select>
+          </NativeSelect>
         </Field>
         <Field label="Accounting year">
-          <select id="filter-year-select" className={selectClass} value={filters.year} onChange={(e) => set({ year: e.target.value })}>
+          <NativeSelect className={selectClass} value={filters.year} onChange={(e) => set({ year: e.target.value })}>
             <option value="all">All years</option>
             {years.map((y) => (
               <option key={y} value={y}>
                 {y}
               </option>
             ))}
-          </select>
+          </NativeSelect>
         </Field>
       </div>
 
       <Field label="Activity type">
-        <select id="filter-activity-select" className={selectClass} value={filters.activity} onChange={(e) => set({ activity: e.target.value })}>
+        <NativeSelect className={selectClass} value={filters.activity} onChange={(e) => set({ activity: e.target.value })}>
           <option value="all">All activities</option>
           {activities.map((a) => (
             <option key={a} value={a}>
               {a}
             </option>
           ))}
-        </select>
+        </NativeSelect>
       </Field>
 
       <fieldset className="m-0 border-0 p-0">
