@@ -550,8 +550,8 @@ const Reports = () => {
 
           {/* NEW: Create Report Card (Matches Legacy UI) */}
           <div className="create-report-card mb-[24px]!">
-            <div className="card-header">
-              <div className="card-icon">
+            <div className="[display:flex] [align-items:center] [gap:12px] [margin-bottom:20px]">
+              <div className="[background:rgba(255,_102,_0,_0.1)] [padding:10px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [color:var(--color-link)]">
                 <svg
                   width="24"
                   height="24"
@@ -571,9 +571,9 @@ const Reports = () => {
               <h3 className="card-title">Create New Report</h3>
             </div>
 
-            <div className="report-controls-grid" style={{ alignItems: "end" }}>
-              <div className="control-group">
-                <label className="input-label">
+            <div className="[display:grid] [grid-template-columns:repeat(auto-fit,_minmax(200px,_1fr))] [gap:20px] [align-items:end]" style={{ alignItems: "end" }}>
+              <div className="[display:flex] [flex-direction:column] [gap:6px] [width:100%]">
+                <label className="[display:block] [font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)] [margin-bottom:8px]">
                   Reporting Year{" "}
                   <span className="text-[color:var(--danger)]!">*</span>
                 </label>
@@ -597,8 +597,8 @@ const Reports = () => {
                 </NativeSelect>
               </div>
 
-              <div className="control-group">
-                <label className="input-label">Compare With</label>
+              <div className="[display:flex] [flex-direction:column] [gap:6px] [width:100%]">
+                <label className="[display:block] [font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)] [margin-bottom:8px]">Compare With</label>
                 <NativeSelect
                   className="component-select"
                   value={comparisonYear}
@@ -616,8 +616,8 @@ const Reports = () => {
                 </NativeSelect>
               </div>
 
-              <div className="control-group">
-                <label className="input-label">GWP Metric Standard</label>
+              <div className="[display:flex] [flex-direction:column] [gap:6px] [width:100%]">
+                <label className="[display:block] [font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)] [margin-bottom:8px]">GWP Metric Standard</label>
                 <NativeSelect
                   className="component-select"
                   value={reportGwpStandard}
@@ -630,8 +630,8 @@ const Reports = () => {
                 </NativeSelect>
               </div>
 
-              <div className="control-group" style={{ flex: 2 }}>
-                <label className="input-label">
+              <div className="[display:flex] [flex-direction:column] [gap:6px] [width:100%]" style={{ flex: 2 }}>
+                <label className="[display:block] [font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)] [margin-bottom:8px]">
                   Regions / Facilities{" "}
                   <span className="text-[color:var(--danger)]!">*</span>
                 </label>
@@ -704,8 +704,8 @@ const Reports = () => {
 
           {/* Filter Card */}
           <div className="create-report-card">
-            <div className="card-header">
-              <div className="card-icon">
+            <div className="[display:flex] [align-items:center] [gap:12px] [margin-bottom:20px]">
+              <div className="[background:rgba(255,_102,_0,_0.1)] [padding:10px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [color:var(--color-link)]">
                 <svg
                   width="24"
                   height="24"
@@ -722,9 +722,9 @@ const Reports = () => {
               <h3 className="card-title">Filter & Group Data</h3>
             </div>
 
-            <div className="report-controls-grid">
-              <div className="control-group">
-                <label className="input-label">Inventory Scope</label>
+            <div className="[display:grid] [grid-template-columns:repeat(auto-fit,_minmax(200px,_1fr))] [gap:20px] [align-items:end]">
+              <div className="[display:flex] [flex-direction:column] [gap:6px] [width:100%]">
+                <label className="[display:block] [font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)] [margin-bottom:8px]">Inventory Scope</label>
                 <NativeSelect
                   className="component-select"
                   value={scope}
@@ -737,8 +737,8 @@ const Reports = () => {
                 </NativeSelect>
               </div>
 
-              <div className="control-group">
-                <label className="input-label">Reporting Year</label>
+              <div className="[display:flex] [flex-direction:column] [gap:6px] [width:100%]">
+                <label className="[display:block] [font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)] [margin-bottom:8px]">Reporting Year</label>
                 <NativeSelect
                   className="component-select"
                   value={year}
@@ -759,8 +759,8 @@ const Reports = () => {
                 </NativeSelect>
               </div>
 
-              <div className="control-group">
-                <label className="input-label">Month</label>
+              <div className="[display:flex] [flex-direction:column] [gap:6px] [width:100%]">
+                <label className="[display:block] [font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)] [margin-bottom:8px]">Month</label>
                 <NativeSelect
                   className="component-select"
                   value={month}
@@ -776,8 +776,8 @@ const Reports = () => {
                   ))}
                 </NativeSelect>
               </div>
-              <div className="control-group">
-                <label className="input-label">Region (Grid)</label>
+              <div className="[display:flex] [flex-direction:column] [gap:6px] [width:100%]">
+                <label className="[display:block] [font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)] [margin-bottom:8px]">Region (Grid)</label>
                 <NativeSelect
                   className="component-select"
                   value={regionId}
@@ -793,8 +793,8 @@ const Reports = () => {
               </div>
 
               {scope === "1" && (
-                <div className="control-group">
-                  <label className="input-label">Process Type</label>
+                <div className="[display:flex] [flex-direction:column] [gap:6px] [width:100%]">
+                  <label className="[display:block] [font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)] [margin-bottom:8px]">Process Type</label>
                   <NativeSelect
                     className="component-select"
                     value={processType}
@@ -811,8 +811,8 @@ const Reports = () => {
                   </NativeSelect>
                 </div>
               )}
-              <div className="control-group">
-                <label className="input-label">Division</label>
+              <div className="[display:flex] [flex-direction:column] [gap:6px] [width:100%]">
+                <label className="[display:block] [font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)] [margin-bottom:8px]">Division</label>
                 <NativeSelect
                   className="component-select"
                   value={division}
@@ -828,8 +828,8 @@ const Reports = () => {
                     ))}
                 </NativeSelect>
               </div>
-              <div className="control-group">
-                <label className="input-label">Field</label>
+              <div className="[display:flex] [flex-direction:column] [gap:6px] [width:100%]">
+                <label className="[display:block] [font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)] [margin-bottom:8px]">Field</label>
                 <NativeSelect
                   className="component-select"
                   value={field}
@@ -845,8 +845,8 @@ const Reports = () => {
                     ))}
                 </NativeSelect>
               </div>
-              <div className="control-group">
-                <label className="input-label">Calc Method</label>
+              <div className="[display:flex] [flex-direction:column] [gap:6px] [width:100%]">
+                <label className="[display:block] [font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)] [margin-bottom:8px]">Calc Method</label>
                 <NativeSelect
                   className="component-select"
                   value={methodFilter}
@@ -858,8 +858,8 @@ const Reports = () => {
                   <option value="Location-based">Location-based</option>
                 </NativeSelect>
               </div>
-              <div className="control-group">
-                <label className="input-label">Group By</label>
+              <div className="[display:flex] [flex-direction:column] [gap:6px] [width:100%]">
+                <label className="[display:block] [font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)] [margin-bottom:8px]">Group By</label>
                 <NativeSelect
                   className="component-select"
                   value={groupBy}
@@ -876,9 +876,9 @@ const Reports = () => {
           </div>
 
           {/* Filters */}
-          <div className="filters-container">
+          <div className="[background:var(--bg-card)] [padding:20px_24px] [border-radius:var(--radius-lg)] [margin-bottom:24px] [display:flex] [gap:20px] [align-items:center] [border:1px_solid_var(--border-color)] [flex-wrap:wrap]">
             <div className="search-input-wrapper">
-              <label className="input-label">Search</label>
+              <label className="[display:block] [font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)] [margin-bottom:8px]">Search</label>
               <div className="relative!">
                 <input
                   type="text"
@@ -941,7 +941,7 @@ const Reports = () => {
           )}
 
           {!loading && totalPages > 1 && (
-            <div className="pagination-wrapper">
+            <div className="[display:flex] [justify-content:space-between] [align-items:center] [padding:16px_24px] [border-top:1px_solid_var(--border-color)] [background:var(--bg-card)]">
               <button
                 className="btn-page"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
@@ -967,7 +967,7 @@ const Reports = () => {
       </div>
 
       {showConfigModal && (
-        <div className="modal-overlay">
+        <div className="[position:fixed] [top:0] [left:0] [right:0] [bottom:0] [background-color:rgba(0,_0,_0,_0.5)] [display:flex] [align-items:center] [justify-content:center] [z-index:9999]">
           <div className="modal-content max-w-[560px]!">
             <div className="modal-header">
               <h2>Generate Executive GHG Report</h2>

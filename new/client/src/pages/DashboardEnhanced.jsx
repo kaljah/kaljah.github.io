@@ -749,7 +749,7 @@ const DashboardEnhanced = () => {
         />
 
         {goal ? (
-          <div className="topbar-goal-badge">
+          <div className="[display:flex] [align-items:center] [gap:8px] [background:rgba(255,_255,_255,_0.8)] [padding:4px_10px] [border-radius:var(--radius-md)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [font-size:var(--text-sm)]">
             <span className="text-[length:0.8rem]! text-[color:var(--text-secondary)]!">
               Target {goal.year}: <strong className="text-[color:var(--text-primary)]!">{Number(goal.target_amount).toLocaleString()} tCO₂e</strong>
             </span>
@@ -847,7 +847,7 @@ const DashboardEnhanced = () => {
       }}
     >
       <div className="dashboard-grid">
-        <div className="dashboard-header-row">
+        <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:20px]">
           <h1 className="grid-title">GHG Emissions Dashboard</h1>
           <div className="live-badge">
             <div className={`pulse-dot ${isUpdating ? "updating" : ""}`}></div>
@@ -857,13 +857,13 @@ const DashboardEnhanced = () => {
 
         {pendingCount > 0 && (
           <div className={`pending-banner-card ${includePending ? "active-preview" : ""}`}>
-            <div className="pending-banner-left">
+            <div className="[display:flex] [align-items:center] [gap:14px] [flex:1] [min-width:280px]">
               <div className="pending-banner-icon">
                 <Clock size={20} />
               </div>
-              <div className="pending-banner-info">
-                <div className="pending-banner-header">
-                  <h3 className="pending-banner-title">
+              <div className="[display:flex] [flex-direction:column] [gap:4px]">
+                <div className="[display:flex] [align-items:center] [gap:10px] [flex-wrap:wrap]">
+                  <h3 className="[margin:0] [font-size:var(--text-md)] [font-weight:700] [color:var(--text-primary,_var(--color-ink-900))] [letter-spacing:-0.01em]">
                     {includePending
                       ? "Previewing Pending & Verified Emissions"
                       : "Pending Records Awaiting Review"}
@@ -875,7 +875,7 @@ const DashboardEnhanced = () => {
                 <p className="pending-banner-desc">
                   There are <strong>{pendingCount.toLocaleString()}</strong> emission records
                   {pendingCo2e > 0 && (
-                    <span className="pending-co2e-highlight">
+                    <span className="[display:inline-block] [font-weight:600] [color:var(--color-amber-700)] [background:rgba(245,_158,_11,_0.08)] [padding:1px_6px] [border-radius:var(--radius-sm)] [margin:0_4px] [font-variant-numeric:tabular-nums]">
                       {pendingCo2e.toLocaleString()} tCO₂e
                     </span>
                   )}
@@ -901,7 +901,7 @@ const DashboardEnhanced = () => {
                     type="checkbox"
                     checked={includePending}
                     onChange={(e) => setIncludePending(e.target.checked)}
-                    className="pending-switch-input"
+                    className="[opacity:0] [width:0] [height:0] [position:absolute]"
                   />
                   <span className="pending-switch-slider" />
                 </div>
@@ -1024,10 +1024,10 @@ const DashboardEnhanced = () => {
           </div>
 
           {/* Donut Charts Column (1fr) */}
-          <div className="donuts-row">
+          <div className="[display:flex] [flex-direction:column] [gap:24px] [min-width:0]">
             <div className="card donut-card-enhanced glass-panel">
-              <div className="donut-header">
-                <h3 className="donut-title activity">Emissions by Activity</h3>
+              <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:12px]">
+                <h3 className="[font-size:var(--text-md)] [font-weight:700] [color:var(--color-ink-800)] [margin:0] activity">Emissions by Activity</h3>
               </div>
               <div
                 className="chart-container h-[170px]! w-full! min-w-0! relative!"
@@ -1042,8 +1042,8 @@ const DashboardEnhanced = () => {
               </div>
             </div>
             <div className="card donut-card-enhanced glass-panel">
-              <div className="donut-header">
-                <h3 className="donut-title source">Emissions by Source</h3>
+              <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:12px]">
+                <h3 className="[font-size:var(--text-md)] [font-weight:700] [color:var(--color-ink-800)] [margin:0] source">Emissions by Source</h3>
               </div>
               <div
                 className="chart-container h-[170px]! w-full! min-w-0! relative!"
@@ -1140,7 +1140,7 @@ const DashboardEnhanced = () => {
           >
             <div className="flex! items-center! gap-[12px]!">
               <h3 className="card-subtitle">Categorical Emissions Overview</h3>
-              <div className="card-info-badge">
+              <div className="[display:flex] [align-items:center] [gap:6px] [font-size:var(--text-sm)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [background:var(--bg-hover,_var(--color-ink-100))] [padding:4px_12px] [border-radius:999px]">
                 <Hexagon size="14" strokeWidth="2" aria-hidden="true" />
                 Activity → Division → Region
               </div>
@@ -1163,21 +1163,21 @@ const DashboardEnhanced = () => {
               {getActivityOptions()
                 .filter((o) => o.value !== "all")
                 .map((opt) => (
-                  <div key={opt.value} className="activity-group">
-                    <div className="activity-group-header">{opt.label}</div>
+                  <div key={opt.value} className="[display:flex] [flex-direction:column] [gap:16px]">
+                    <div className="[font-size:var(--text-base)] [font-weight:700] [color:var(--text-primary,_var(--color-ink-900))] [padding-bottom:6px] [border-bottom:2px_solid_var(--accent-color,_var(--color-brand-500))] [width:fit-content] [padding-right:12px]">{opt.label}</div>
                     {getHierarchicalData[opt.value] ? (
                       Object.entries(
                         getHierarchicalData[opt.value].divisions,
                       ).map(([div, divData]) => (
-                        <div key={div} className="division-group">
-                          <div className="division-group-header">{div}</div>
-                          <div className="region-cards-grid">
+                        <div key={div} className="[background:rgba(255,_255,_255,_0.6)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [border-radius:var(--radius-lg)] [padding:14px]">
+                          <div className="[font-size:var(--text-sm)] [font-weight:700] [color:var(--text-secondary,_var(--color-ink-500))] [text-transform:uppercase] [margin-bottom:12px] [letter-spacing:0.05em]">{div}</div>
+                          <div className="[display:flex] [flex-direction:column] [gap:8px]">
                             {divData.regions.map((reg, ridx) => (
                               <div key={ridx} className="region-compact-card">
-                                <div className="region-name">
+                                <div className="[font-size:var(--text-sm)] [font-weight:600] [color:var(--text-primary,_var(--color-ink-900))] [margin-bottom:4px]">
                                   {reg.region}{" "}
                                   {reg.field && (
-                                    <span className="region-field">
+                                    <span className="[color:var(--color-ink-600)] [font-weight:500]">
                                       - {reg.field}
                                     </span>
                                   )}
@@ -1192,7 +1192,7 @@ const DashboardEnhanced = () => {
                         </div>
                       ))
                     ) : (
-                      <div className="no-data-msg">
+                      <div className="[font-size:var(--text-sm)] [color:var(--color-ink-600)] [font-style:italic] [padding:8px_0]">
                         No emissions data for this activity
                       </div>
                     )}

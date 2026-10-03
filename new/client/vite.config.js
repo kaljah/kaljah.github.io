@@ -3,11 +3,25 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { visualizer } from "rollup-plugin-visualizer";
 
+// Legacy page/component CSS goes into a `legacy` cascade layer that sits below Tailwind utilities,
+// so utility classes on an element always win over old class rules. Tokens and base stay unlayered.
+const legacyLayer = () => ({
+  name: 'legacy-css-layer',
+  enforce: 'pre',
+  transform(code, id) {
+    const file = id.split('?')[0].split(String.fromCharCode(92)).join('/');
+    if (!file.endsWith('.css') || !file.includes('/src/')) return null;
+    if (['index', 'tokens', 'base'].some((n) => file.endsWith('/src/styles/' + n + '.css'))) return null;
+    return { code: '@layer legacy {' + String.fromCharCode(10) + code + String.fromCharCode(10) + '}', map: null };
+  },
+});
+
 // https://vite.dev/config/
 // FE-01 FIX: add dev proxy + production build optimisations
 export default defineConfig({
   base: process.env.VITE_BASE_PATH || '/',
   plugins: [
+    legacyLayer(),
     react(),
     tailwindcss(),
     visualizer({ filename: "stats.html", open: false })

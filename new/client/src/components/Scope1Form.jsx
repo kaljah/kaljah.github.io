@@ -1895,7 +1895,7 @@ const Scope1Form = () => {
   return (
     <div className="scope-form">
       <div className="calc-panel s1-form">
-        <h2 className="s1-form-title">New entry</h2>
+        <h2 className="[font-size:var(--text-md)] [font-weight:700] [color:var(--s1-ink)] [margin:0_0_18px]">New entry</h2>
 
         <Section n={1} title="Identity & Location">
           <FieldGrid min={180}>
@@ -1931,10 +1931,10 @@ const Scope1Form = () => {
 </Field>
           </FieldGrid>
           {(activity || division || field) && (
-            <div className="s1-meta">{[activity, division, field].filter(Boolean).join(" · ")}</div>
+            <div className="[margin-top:6px] [font-size:var(--text-sm)] [color:var(--s1-muted)]">{[activity, division, field].filter(Boolean).join(" · ")}</div>
           )}
-          <div className="s1-subgroup">
-            <div className="s1-subhead">Source details</div>
+          <div className="[margin-top:16px]">
+            <div className="[font-size:var(--text-sm)] [font-weight:600] [color:var(--s1-muted)] [text-transform:uppercase] [letter-spacing:0.04em] [margin-bottom:10px]">Source details</div>
             <FieldGrid>
               <div className="input-group">
                 <label>Emission source</label>

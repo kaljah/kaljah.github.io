@@ -1,12 +1,4 @@
 /* ─── Root Container ───────────────────────────────────────────────────────── */
-.up-root {
-  width: 100%;
-  max-width: 900px;
-  margin: 0 auto;
-  font-family: inherit;
-  color: var(--color-ink-800);
-  animation: up-fade-in 0.25s ease-out;
-}
 
 @keyframes up-fade-in {
   from {
@@ -19,79 +11,13 @@
   }
 }
 
-.up-section {
-  background: var(--color-white);
-  border-radius: var(--radius-md);
-  padding: 24px;
-  border: 1px solid var(--color-ink-200);
-  box-shadow:
-    var(--shadow-xs);
-}
-
 /* ─── Typography & Shared ─────────────────────────────────────────────────── */
-.up-label {
-  font-size: var(--text-md);
-  font-weight: 600;
-  margin: 0 0 4px 0;
-  color: var(--color-ink-900);
-}
-.up-label--error {
-  color: var(--color-red-700);
-}
-
-.up-sub {
-  font-size: var(--text-base);
-  color: var(--color-ink-500);
-  margin: 0;
-}
 
 /* ─── Processing State ────────────────────────────────────────────────────── */
-.up-processing-header {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 24px;
-}
-
-.up-spinner {
-  width: 32px;
-  height: 32px;
-  color: var(--color-link);
-  animation: up-spin 1s linear infinite;
-}
 @keyframes up-spin {
   100% {
     transform: rotate(360deg);
   }
-}
-
-.up-bar-track {
-  width: 100%;
-  height: 8px;
-  background: var(--color-ink-100);
-  border-radius: var(--radius-sm);
-  overflow: hidden;
-  margin-bottom: 12px;
-}
-
-.up-bar-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--color-brand-500) 0%, var(--color-brand-400) 100%);
-  border-radius: var(--radius-sm);
-  transition: width 0.4s ease-out;
-  box-shadow: 0 0 8px rgba(255, 102, 0, 0.35);
-}
-
-.up-bar-stats {
-  display: flex;
-  justify-content: space-between;
-  font-size: var(--text-base);
-  color: var(--color-ink-600);
-  font-weight: 500;
-}
-.up-pct {
-  color: var(--color-link);
-  font-weight: 600;
 }
 
 .up-live-skip {
@@ -114,12 +40,6 @@
 }
 
 /* ─── Completed State - Summary Cards ─────────────────────────────────────── */
-.up-summary-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
-  margin-bottom: 24px;
-}
 
 .up-card {
   display: flex;
@@ -157,35 +77,12 @@
   color: var(--color-link);
 }
 
-.up-card-num {
-  font-size: var(--text-xl);
-  font-weight: 700;
-  margin: 0 0 2px 0;
-  color: var(--color-ink-900);
-  line-height: 1;
-}
-
-.up-card-lbl {
-  font-size: var(--text-base);
-  color: var(--color-ink-500);
-  margin: 0;
-  font-weight: 500;
-}
-
 /* ─── Skipped Reasons Panel ───────────────────────────────────────────────── */
 .up-skip-panel {
   border: 1px solid var(--color-ink-200);
   border-radius: var(--radius-md);
   margin-bottom: 24px;
   overflow: hidden;
-}
-
-.up-skip-toggle-row {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  background: var(--color-ink-50);
-  border-bottom: 1px solid transparent;
 }
 
 .up-skip-toggle {
@@ -247,15 +144,6 @@
   padding: 0;
 }
 
-.up-filter-pills {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--color-ink-200);
-  background: #fafaf9;
-}
-
 .up-pill {
   padding: 6px 12px;
   border-radius: var(--radius-lg);
@@ -275,11 +163,6 @@
   background: #fef3c7;
   border-color: var(--color-amber-500);
   color: var(--color-amber-700);
-}
-
-.up-reasons-table-wrap {
-  max-height: 400px;
-  overflow: auto;
 }
 
 .up-reasons-table {
@@ -313,45 +196,6 @@
 }
 .up-reasons-table tr:last-child td {
   border-bottom: none;
-}
-
-.up-td-row {
-  font-family: monospace;
-  color: var(--color-ink-600);
-  font-weight: 500;
-  width: 60px;
-}
-.up-td-year {
-  font-family: monospace;
-  font-weight: 600;
-  color: var(--color-ink-700);
-  width: 52px;
-  text-align: center;
-}
-.up-td-month {
-  font-family: monospace;
-  font-weight: 600;
-  color: var(--color-ink-700);
-  width: 52px;
-  text-align: center;
-}
-.up-td-reason {
-  font-weight: 500;
-  color: var(--color-red-700);
-  max-width: 250px;
-  line-height: 1.4;
-}
-.up-td-meta {
-  color: var(--color-ink-500);
-  max-width: 120px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.up-empty {
-  text-align: center;
-  padding: 32px !important;
-  color: var(--color-ink-600);
 }
 
 /* ─── Tags ────────────────────────────────────────────────────────────────── */
@@ -405,13 +249,6 @@
 }
 
 /* ─── Footer Actions ──────────────────────────────────────────────────────── */
-.up-footer-actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 12px;
-  margin-top: 24px;
-}
 
 .up-btn-primary {
   padding: 10px 20px;
@@ -449,12 +286,6 @@
 }
 
 /* ─── Fatal Error State ───────────────────────────────────────────────────── */
-.up-fatal-header {
-  display: flex;
-  align-items: flex-start;
-  gap: 16px;
-  margin-bottom: 20px;
-}
 
 .up-fatal-icon {
   width: 40px;
@@ -471,19 +302,6 @@
   height: 24px;
 }
 
-.up-error-log {
-  background: var(--color-ink-50);
-  border: 1px solid var(--color-ink-200);
-  border-radius: var(--radius-md);
-  padding: 16px;
-  margin-bottom: 24px;
-  max-height: 200px;
-  overflow-y: auto;
-  font-family: monospace;
-  font-size: var(--text-sm);
-  color: var(--color-ink-700);
-}
-
 .up-error-line {
   display: flex;
   align-items: flex-start;
@@ -495,23 +313,7 @@
   margin-bottom: 0;
 }
 
-.up-error-bullet {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--color-red-600);
-  margin-top: 6px;
-  flex-shrink: 0;
-}
-
 /* ─── Anomaly Panel ──────────────────────────────────────────────────────── */
-.up-anomaly-section {
-  background: #fefce8;
-  border: 1px solid #fef08a;
-  border-radius: var(--radius-md);
-  margin-bottom: 24px;
-  overflow: hidden;
-}
 
 .up-anomaly-toggle {
   width: 100%;
@@ -533,17 +335,6 @@
   flex: 1;
   text-align: left;
   margin-left: 8px;
-}
-
-.up-anomaly-body {
-  padding: 16px;
-  border-top: 1px solid #fef08a;
-}
-.up-anomaly-desc {
-  font-size: var(--text-base);
-  color: #713f12;
-  margin: 0 0 12px 0;
-  line-height: 1.4;
 }
 .up-anomaly-row {
   background: var(--color-amber-50) !important;

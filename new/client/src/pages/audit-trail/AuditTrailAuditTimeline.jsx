@@ -3,7 +3,7 @@ import { ArrowRight, Calendar, ChevronDown, ChevronUp, Clock, Code, Database, Gl
 
 // Extracted from AuditTrail.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const AuditTrailAuditTimeline = ({ auditLogs, expandedRows, formatDiffVal, formatFullDateTime, formatTimestamp, getActionConfig, toggleRawData }) => (
-<div className="audit-timeline">
+<div className="[position:relative] [display:flex] [flex-direction:column] [gap:20px]">
             {auditLogs.map((log) => {
               const actConfig = getActionConfig(log.action);
               const isRawExpanded = expandedRows.has(log.id);
@@ -27,16 +27,16 @@ const AuditTrailAuditTimeline = ({ auditLogs, expandedRows, formatDiffVal, forma
                   <div className="audit-card">
                     {/* Header Row */}
                     <div className="card-top-row">
-                      <div className="event-primary-info">
-                        <div className="user-badge">
-                          <UserIcon size={12} className="badge-user-icon" />
-                          <span className="user-name-text">{log.user}</span>
+                      <div className="[display:flex] [align-items:center] [gap:10px] [flex-wrap:wrap]">
+                        <div className="[display:inline-flex] [align-items:center] [gap:6px] [background:rgba(241,_245,_249,_0.9)] [border:1px_solid_var(--color-ink-200)] [border-radius:var(--radius-md)] [padding:3px_8px]">
+                          <UserIcon size={12} className="[color:var(--color-ink-500)]" />
+                          <span className="[font-size:var(--text-base)] [font-weight:700] [color:var(--color-ink-800)]">{log.user}</span>
                         </div>
 
-                        <ArrowRight size={12} className="flow-arrow" />
+                        <ArrowRight size={12} className="[color:var(--color-ink-300)]" />
 
                         <span
-                          className="action-pill"
+                          className="[font-size:var(--text-xs)] [font-weight:800] [text-transform:uppercase] [letter-spacing:0.06em] [padding:3px_8px] [border-radius:var(--radius-sm)] [border:1px_solid]"
                           style={{
                             backgroundColor: actConfig.bg,
                             color: actConfig.color,
@@ -46,22 +46,22 @@ const AuditTrailAuditTimeline = ({ auditLogs, expandedRows, formatDiffVal, forma
                           {log.action}
                         </span>
 
-                        <span className="entity-tag">{log.entity}</span>
+                        <span className="[font-size:var(--text-sm)] [font-weight:600] [color:var(--color-ink-500)] [background:var(--color-ink-50)] [border:1px_solid_var(--color-ink-200)] [padding:2px_8px] [border-radius:var(--radius-sm)]">{log.entity}</span>
                       </div>
 
-                      <div className="event-timestamp" title={formatFullDateTime(log.timestamp)}>
+                      <div className="[display:flex] [align-items:center] [gap:6px] [font-size:var(--text-sm)] [color:var(--color-ink-500)] [font-weight:500]" title={formatFullDateTime(log.timestamp)}>
                         <Clock size={12} className="opacity-[0.6]!" />
                         <span>{formatTimestamp(log.timestamp)}</span>
                       </div>
                     </div>
 
                     {/* Main Description */}
-                    <p className="card-description">{log.description || log.details || "No details recorded"}</p>
+                    <p className="[margin:0_0_12px_0] [color:var(--color-ink-700)] [font-size:var(--text-md)] [line-height:1.55]">{log.description || log.details || "No details recorded"}</p>
 
                     {/* Field-level Before/After Diff Block */}
                     {hasDiff && (
-                      <div className="field-diff-container">
-                        <div className="field-diff-header">
+                      <div className="[background:rgba(248,_250,_252,_0.95)] [border:1px_solid_var(--color-ink-200)] [border-radius:var(--radius-md)] [padding:10px_14px] [margin-bottom:12px]">
+                        <div className="[display:flex] [align-items:center] [gap:6px] [font-size:var(--text-sm)] [font-weight:700] [text-transform:uppercase] [letter-spacing:0.04em] [color:var(--color-ink-600)] [margin-bottom:8px]">
                           <History size={12} />
                           <span>Field-Level Changes:</span>
                         </div>
@@ -69,7 +69,7 @@ const AuditTrailAuditTimeline = ({ auditLogs, expandedRows, formatDiffVal, forma
                         {typeof log.old_values === "object" &&
                         typeof log.new_values === "object" &&
                         (log.old_values !== null || log.new_values !== null) ? (
-                          <div className="diff-fields-grid">
+                          <div className="[display:flex] [flex-direction:column] [gap:6px]">
                             {Array.from(
                               new Set([
                                 ...Object.keys(log.old_values || {}),
@@ -79,13 +79,13 @@ const AuditTrailAuditTimeline = ({ auditLogs, expandedRows, formatDiffVal, forma
                               const before = log.old_values?.[key];
                               const after = log.new_values?.[key];
                               return (
-                                <div key={key} className="diff-field-row">
-                                  <span className="diff-key">{key}:</span>
-                                  <span className="diff-before" title={formatDiffVal(before)}>
+                                <div key={key} className="[display:flex] [align-items:center] [gap:8px] [font-size:var(--text-sm)] [font-family:ui-monospace,_SFMono-Regular,_Menlo,_Monaco,_Consolas,_monospace]">
+                                  <span className="[font-weight:700] [color:var(--color-ink-700)] [min-width:90px]">{key}:</span>
+                                  <span className="[color:var(--color-red-700)] [background:#fee2e2] [padding:2px_6px] [border-radius:var(--radius-sm)] [text-decoration:line-through] [max-width:280px] [overflow:hidden] [text-overflow:ellipsis] [white-space:nowrap]" title={formatDiffVal(before)}>
                                     {formatDiffVal(before)}
                                   </span>
-                                  <ArrowRight size={11} className="diff-arrow" />
-                                  <span className="diff-after" title={formatDiffVal(after)}>
+                                  <ArrowRight size={11} className="[color:var(--color-ink-600)] [flex-shrink:0]" />
+                                  <span className="[color:var(--color-green-700)] [background:#dcfce7] [padding:2px_6px] [border-radius:var(--radius-sm)] [font-weight:600] [max-width:280px] [overflow:hidden] [text-overflow:ellipsis] [white-space:nowrap]" title={formatDiffVal(after)}>
                                     {formatDiffVal(after)}
                                   </span>
                                 </div>
@@ -93,7 +93,7 @@ const AuditTrailAuditTimeline = ({ auditLogs, expandedRows, formatDiffVal, forma
                             })}
                           </div>
                         ) : (
-                          <div className="diff-text-view">
+                          <div className="[font-size:var(--text-sm)] [color:var(--color-ink-600)] [display:flex] [flex-direction:column] [gap:4px]">
                             {log.old_values && (
                               <div>
                                 <strong>Before:</strong> {formatDiffVal(log.old_values)}
@@ -118,18 +118,18 @@ const AuditTrailAuditTimeline = ({ auditLogs, expandedRows, formatDiffVal, forma
 
                     {/* Card Footer Meta */}
                     <div className="card-meta-row">
-                      <div className="meta-left-group">
-                        <span className="meta-item">
+                      <div className="[display:flex] [align-items:center] [gap:16px] [flex-wrap:wrap]">
+                        <span className="[display:flex] [align-items:center] [gap:5px] [color:var(--color-ink-500)] [font-weight:500]">
                           <Database size={12} />
                           <span>Ref: #{log.entityId || log.recordId || "N/A"}</span>
                         </span>
 
-                        <span className="meta-item">
+                        <span className="[display:flex] [align-items:center] [gap:5px] [color:var(--color-ink-500)] [font-weight:500]">
                           <Globe size={12} />
                           <span>IP: {log.ipAddress || "Local / System"}</span>
                         </span>
 
-                        <span className="meta-item timestamp-full">
+                        <span className="[display:flex] [align-items:center] [gap:5px] [color:var(--color-ink-500)] [font-weight:500] [color:var(--color-ink-600)]">
                           <Calendar size={12} />
                           <span>{formatFullDateTime(log.timestamp)}</span>
                         </span>

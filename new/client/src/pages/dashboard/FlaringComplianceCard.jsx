@@ -31,7 +31,7 @@ const FlaringComplianceCard = ({ flaringData }) => {
   const showIntensity = flaringData.gas_production_m3 > 0 && flaringData.flaring_intensity_pct != null;
 
   return (
-    <Card as="section" className="flaring-kpi-banner flex flex-col gap-5" aria-label="Operational flaring and regulatory compliance">
+    <Card as="section" className="[margin-top:20px] [padding:22px_24px] [border-radius:var(--radius-lg)] [background:linear-gradient(135deg,_rgba(255,_255,_255,_0.95)_0%,_rgba(255,_247,_237,_0.6)_100%)] [border:1px_solid_rgba(251,_146,_60,_0.3)] [box-shadow:0_4px_20px_-2px_rgba(234,_88,_12,_0.08),_0_2px_6px_-1px_rgba(0,_0,_0,_0.04)] flex flex-col gap-5" aria-label="Operational flaring and regulatory compliance">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex items-start gap-3">
           <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-md bg-brand-50 text-brand-700">

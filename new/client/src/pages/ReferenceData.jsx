@@ -360,13 +360,13 @@ const ReferenceData = () => {
         description={
           <>
             Centralized repository for emission factors, global warming potentials (GWPs), unit conversions, and data
-            quality tiers. Custom regional factors tagged with <Star size={14} className="custom-star inline" aria-hidden="true" />{" "}
+            quality tiers. Custom regional factors tagged with <Star size={14} className="[color:var(--color-amber-700)] [display:inline-block] [vertical-align:middle] [margin-left:4px] inline" aria-hidden="true" />{" "}
             override global defaults.
           </>
         }
       />
 
-      <div className="search-bar-container">
+      <div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.78))] [backdrop-filter:blur(14px)] [-webkit-backdrop-filter:blur(14px)] [padding:20px_24px] [border-radius:var(--radius-lg)] [margin-bottom:28px] [box-shadow:var(--shadow-card)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [display:flex] [gap:16px] [align-items:center]">
         <div className="search-input-wrapper">
           <Search
             className="search-icon"
@@ -440,7 +440,7 @@ const ReferenceData = () => {
                   {cat.icon}
                   {cat.title}
                   <span
-                    className="count-badge bg-[color:var(--color-ink-100)]! text-[color:var(--color-ink-800)]!"
+                    className="[background:var(--color-primary)] [color:white] [padding:3px_10px] [border-radius:999px] [font-size:var(--text-sm)] [font-weight:700] bg-[color:var(--color-ink-100)]! text-[color:var(--color-ink-800)]!"
                    
                   >
                     {cat.isStatic
@@ -456,7 +456,7 @@ const ReferenceData = () => {
               </div>
 
               {!collapsed[key] && (
-                <div className="factors-table-container">
+                <div className="[width:100%] [overflow-x:auto]">
                   <table className="factors-table">
                     <thead>
                       <tr>
@@ -510,7 +510,7 @@ const ReferenceData = () => {
                               <td className="factor-name">
                                 {f.name}
                                 {f.isCustom && (
-                                  <Star size={14} className="custom-star" />
+                                  <Star size={14} className="[color:var(--color-amber-700)] [display:inline-block] [vertical-align:middle] [margin-left:4px]" />
                                 )}
                               </td>
                               {key !== "equipment" ? (

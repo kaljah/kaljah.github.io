@@ -5,7 +5,7 @@ import { AlertCircle, FileText, Loader2 } from "lucide-react";
 const BulkImportModalUploadProgressContainer = ({ file, handleImport, loading, onClose, onImportSuccess, setStep, uploadJobId, uploadStatus }) => (
 <div className="upload-progress-container">
             <div
-              className="file-info mb-[24px]! p-[16px]! bg-[color:#f8fafc]! rounded-[8px]! flex! items-center! gap-[12px]!"
+              className="[display:flex] [align-items:center] [justify-content:center] [gap:12px] [padding:12px] [background:white] [border-radius:var(--radius-md)] [border:1px_solid_rgba(0,_0,_0,_0.1)] mb-[24px]! p-[16px]! bg-[color:#f8fafc]! rounded-[8px]! flex! items-center! gap-[12px]!"
              
             >
               <FileText size={24} className="text-[color:#2e7d32]!" />
@@ -25,7 +25,7 @@ const BulkImportModalUploadProgressContainer = ({ file, handleImport, loading, o
 
             {!uploadJobId ? (
               <div
-                className="import-actions flex! justify-center! gap-[12px]!"
+                className="[display:flex] [justify-content:flex-end] [gap:12px] [margin-top:20px] flex! justify-center! gap-[12px]!"
                
               >
                 <button
@@ -49,26 +49,26 @@ const BulkImportModalUploadProgressContainer = ({ file, handleImport, loading, o
                 </button>
               </div>
             ) : (
-              <div className="progress-container">
+              <div className="[width:100%] [margin-top:16px] [display:flex] [flex-direction:column] [align-items:center]">
                 {uploadStatus ? (
                   <>
                     <div
                       className="flex! justify-between! w-full! mb-[8px]!"
                     >
-                      <span className="progress-text">
+                      <span className="[font-size:var(--text-base)] [font-weight:600] [color:var(--text-primary)]">
                         {uploadStatus.status === "completed"
                           ? "Import Complete!"
                           : uploadStatus.status === "failed"
                             ? "Import Failed"
                             : "Processing..."}
                       </span>
-                      <span className="progress-text">
+                      <span className="[font-size:var(--text-base)] [font-weight:600] [color:var(--text-primary)]">
                         {Math.round(uploadStatus.progress)}%
                       </span>
                     </div>
-                    <div className="progress-track">
+                    <div className="[width:100%] [height:12px] [background:#e5e7eb] [border-radius:var(--radius-sm)] [overflow:hidden] [margin-top:4px]">
                       <div
-                        className="progress-fill"
+                        className="[height:100%] [border-radius:var(--radius-sm)] [transition:width_0.3s_ease]"
                         style={{
                           width: `${uploadStatus.progress}%`,
                           background:
@@ -79,7 +79,7 @@ const BulkImportModalUploadProgressContainer = ({ file, handleImport, loading, o
                       ></div>
                     </div>
                     <div
-                      className="progress-details mt-[8px]! text-center!"
+                      className="[font-size:var(--text-sm)] [color:var(--text-secondary)] mt-[8px]! text-center!"
                      
                     >
                       Processed {uploadStatus.processed} of {uploadStatus.total}{" "}

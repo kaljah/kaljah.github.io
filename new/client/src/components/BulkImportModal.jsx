@@ -860,7 +860,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
       title={`Bulk Import: ${type === "sources" ? "Equipment" : type === "custom_factors" ? "Custom Factors" : "Activity Data"}`}
       maxWidth="700px"
     >
-      <div className="import-modal-content">
+      <div className="[display:flex] [flex-direction:column] [gap:20px]">
         {step === 0 && type === "activity" && (
           <div className="upload-mode-selection p-[20px]!">
             <h3
@@ -1145,7 +1145,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
 
               {showCheatSheet && (
                 <div
-                  className="cheat-sheet-content"
+                  className="[margin-top:16px] [background:#f3f4f6] [border-radius:var(--radius-md)] [padding:16px] [text-align:left] [display:flex] [flex-direction:column] [gap:12px] [border:1px_solid_rgba(0,_0,_0,_0.05)]"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <div className="cheat-section">
@@ -1160,9 +1160,9 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                   </div>
                   <div className="cheat-section">
                     <strong>Process Types (Codes):</strong>
-                    <div className="tag-cloud">
+                    <div className="[display:flex] [flex-wrap:wrap] [gap:6px] [margin-top:4px]">
                       {Object.keys(PROCESS_TYPES).map((t) => (
-                        <span key={t} className="id-tag">
+                        <span key={t} className="[background:white] [padding:2px_8px] [border-radius:var(--radius-sm)] [border:1px_solid_rgba(0,_0,_0,_0.1)] [font-family:monospace] [font-size:var(--text-sm)] [color:var(--sonatrach-orange)]">
                           {t}
                         </span>
                       ))}
@@ -1170,9 +1170,9 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                   </div>
                   <div className="cheat-section">
                     <strong>Common Units:</strong>
-                    <div className="tag-cloud">
+                    <div className="[display:flex] [flex-wrap:wrap] [gap:6px] [margin-top:4px]">
                       {VALID_UNITS.map((u) => (
-                        <span key={u} className="id-tag">
+                        <span key={u} className="[background:white] [padding:2px_8px] [border-radius:var(--radius-sm)] [border:1px_solid_rgba(0,_0,_0,_0.1)] [font-family:monospace] [font-size:var(--text-sm)] [color:var(--sonatrach-orange)]">
                           {u}
                         </span>
                       ))}
@@ -1203,14 +1203,14 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
 
         {step === 2 && (
           <>
-            <div className="file-info">
+            <div className="[display:flex] [align-items:center] [justify-content:center] [gap:12px] [padding:12px] [background:white] [border-radius:var(--radius-md)] [border:1px_solid_rgba(0,_0,_0,_0.1)]">
               <FileText size={20} className="text-[color:#2e7d32]!" />
               <span>
                 {file?.name} ({csvData.length} records detected)
               </span>
             </div>
 
-            <div className="mapping-container">
+            <div className="[max-height:300px] [overflow-y:auto] [border:1px_solid_rgba(0,_0,_0,_0.05)] [border-radius:var(--radius-md)] [padding:16px] [background:#f9fafb]">
               <h4
                 className="mb-[16px]! flex! items-center! gap-[8px]!"
               >
@@ -1224,7 +1224,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
               <div className="mapping-grid">
                 {currentTemplate.map((t) => (
                   <div key={t.id} className="mapping-row">
-                    <div className="mapping-label">
+                    <div className="[font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)]">
                       {t.label}{" "}
                       {t.required && (
                         <span className="text-[color:#b91c1c]!">*</span>
@@ -1256,7 +1256,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
               </div>
             </div>
 
-            <div className="import-tip">
+            <div className="[font-size:var(--text-sm)] [color:var(--text-secondary)] [display:flex] [align-items:center] [gap:6px]">
               <Info size={14} />
               <span>
                 Make sure units (e.g. m3, bbl) and process types match the
@@ -1264,7 +1264,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
               </span>
             </div>
 
-            <div className="import-actions">
+            <div className="[display:flex] [justify-content:flex-end] [gap:12px] [margin-top:20px]">
               <button
                 className="action-btn bg-[color:var(--text-secondary)]!"
                
@@ -1332,7 +1332,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                   </div>
                 )}
 
-                <div className="preview-table-container">
+                <div className="[max-height:250px] [overflow-y:auto] [overflow-x:auto] [border-radius:var(--radius-md)] [border:1px_solid_rgba(0,_0,_0,_0.1)]">
                   <table className="preview-table">
                     <thead>
                       <tr>
@@ -1370,13 +1370,13 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                     </tbody>
                   </table>
                   {mappedRecords.length > 10 && (
-                    <div className="preview-more">
+                    <div className="[text-align:center] [padding:8px] [font-size:var(--text-sm)] [color:var(--text-secondary)] [background:#f9fafb] [border-top:1px_solid_rgba(0,_0,_0,_0.05)]">
                       Showing first 10 records...
                     </div>
                   )}
                 </div>
 
-                <div className="import-actions">
+                <div className="[display:flex] [justify-content:flex-end] [gap:12px] [margin-top:20px]">
                   <button
                     className="action-btn bg-[color:var(--text-secondary)]!"
                    
@@ -1398,26 +1398,26 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                 </div>
               </>
             ) : (
-              <div className="progress-container p-[20px]!">
+              <div className="[width:100%] [margin-top:16px] [display:flex] [flex-direction:column] [align-items:center] p-[20px]!">
                 {uploadStatus ? (
                   <>
                     <div
                       className="flex! justify-between! w-full! mb-[8px]!"
                     >
-                      <span className="progress-text">
+                      <span className="[font-size:var(--text-base)] [font-weight:600] [color:var(--text-primary)]">
                         {uploadStatus.status === "completed"
                           ? "Import Complete!"
                           : uploadStatus.status === "failed"
                             ? "Import Failed"
                             : "Processing..."}
                       </span>
-                      <span className="progress-text">
+                      <span className="[font-size:var(--text-base)] [font-weight:600] [color:var(--text-primary)]">
                         {Math.round(uploadStatus.progress)}%
                       </span>
                     </div>
-                    <div className="progress-track">
+                    <div className="[width:100%] [height:12px] [background:#e5e7eb] [border-radius:var(--radius-sm)] [overflow:hidden] [margin-top:4px]">
                       <div
-                        className="progress-fill"
+                        className="[height:100%] [border-radius:var(--radius-sm)] [transition:width_0.3s_ease]"
                         style={{
                           width: `${uploadStatus.progress}%`,
                           background:
@@ -1428,7 +1428,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                       ></div>
                     </div>
                     <div
-                      className="progress-details mt-[8px]! text-center!"
+                      className="[font-size:var(--text-sm)] [color:var(--text-secondary)] mt-[8px]! text-center!"
                      
                     >
                       Processed {uploadStatus.processed} of {uploadStatus.total}{" "}

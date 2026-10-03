@@ -16,17 +16,6 @@
   animation: fadeIn 0.5s ease-out;
 }
 
-.loading-inline {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 24px;
-  padding: 60px 40px;
-  background: transparent;
-  border: none;
-}
-
 .loading-message {
   font-family: inherit;
   font-size: var(--text-md);
@@ -34,31 +23,6 @@
   letter-spacing: 0.5px;
   color: rgba(255, 255, 255, 0.9);
   margin-top: 10px;
-}
-
-@keyframes spin-glow {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes pulse-glow {
-  0%,
-  100% {
-    transform: translate(-50%, -50%) scale(0.9);
-    opacity: 0.8;
-    box-shadow: 0 0 20px var(--accent-color);
-  }
-
-  50% {
-    transform: translate(-50%, -50%) scale(1.1);
-    opacity: 1;
-    box-shadow: 0 0 40px var(--accent-color);
-  }
 }
 
 @keyframes fadeIn {
@@ -137,15 +101,6 @@
   border-radius: 50%;
   animation: stylish-pulse 1.5s ease-in-out infinite;
   box-shadow: 0 0 12px 2px rgba(255, 102, 0, 0.6);
-}
-
-.loading-message-text {
-  font-family: inherit;
-  color: var(--text-primary, var(--color-ink-900));
-  font-size: var(--text-md);
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  animation: pulse-opacity 2s infinite ease-in-out;
 }
 
 @keyframes stylish-spin {

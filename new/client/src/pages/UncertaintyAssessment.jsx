@@ -154,33 +154,33 @@ const UncertaintyAssessment = () => {
 
   if (loading) {
     return (
-      <div className="uncertainty-assessment">
+      <div className="[padding:24px_32px_48px] [max-width:1600px] [margin:0_auto] [color:var(--text-primary,_var(--color-ink-900))]">
         <LoadingSpinner message="Quantifying Inventory Uncertainty..." />
       </div>
     );
   }
 
   return (
-    <div className="uncertainty-assessment">
+    <div className="[padding:24px_32px_48px] [max-width:1600px] [margin:0_auto] [color:var(--text-primary,_var(--color-ink-900))]">
       {/* ── Page Header ── */}
       <div className="ua-page-header">
         <div>
           <h1 className="ua-title">Data Reliability Analysis</h1>
-          <p className="ua-subtitle">
+          <p className="[font-size:var(--text-lg)] [color:var(--text-secondary,_var(--color-ink-500))] [max-width:800px] [margin:0] [line-height:1.5]">
             Dynamic uncertainty quantification across the complete GHG
             inventory, compliant with ISO 14064-1 §7.5 and IPCC 2006 GL Vol.1
             §3.3.
           </p>
           {data && (
-            <div className="ua-inventory-badge">
-              <div className="ua-inventory-label">Inventory Uncertainty</div>
+            <div className="[display:inline-flex] [align-items:center] [gap:16px] [background:var(--bg-card,_rgba(255,_255,_255,_0.78))] [padding:14px_20px] [border-radius:var(--radius-lg)] [border:1px_solid_var(--border-color,_rgba(0,_0,_0,_0.05))] [margin-top:16px]">
+              <div className="[font-size:var(--text-base)] [color:var(--text-secondary,_var(--color-ink-500))] [margin-bottom:4px]">Inventory Uncertainty</div>
               <div
                 className={`ua-inventory-value ${getUncertaintyLevel(data.inventory_uncertainty_decimal)}`}
               >
                 {data.inventory_uncertainty_pct}
               </div>
               {data.confidence_level_pct && (
-                <div className="ua-confidence-badge">
+                <div className="[display:inline-flex] [align-items:center] [gap:6px] [margin-top:8px] [padding:4px_10px] [border-radius:var(--radius-md)] [font-size:var(--text-xs)] [font-weight:700] [letter-spacing:0.03em] [background:rgba(59,_130,_246,_0.08)] [color:var(--color-blue-600)] [border:1px_solid_rgba(59,_130,_246,_0.15)]">
                   {data.confidence_level_pct}% CI (k={data.coverage_factor})
                 </div>
               )}
@@ -189,7 +189,7 @@ const UncertaintyAssessment = () => {
         </div>
 
         <div className="ua-controls">
-          <div className="ua-filter-group w-[130px]!">
+          <div className="[display:flex] [flex-direction:column] [gap:8px] w-[130px]!">
             <CustomDropdown
               options={yearOptions}
               value={selectedYear}
@@ -197,7 +197,7 @@ const UncertaintyAssessment = () => {
               placeholder="Year"
             />
           </div>
-          <div className="ua-filter-group w-[150px]!">
+          <div className="[display:flex] [flex-direction:column] [gap:8px] w-[150px]!">
             <CustomDropdown
               options={scopeOptions}
               value={selectedScope}
@@ -205,7 +205,7 @@ const UncertaintyAssessment = () => {
               placeholder="Scope"
             />
           </div>
-          <div className="ua-filter-group w-[200px]!">
+          <div className="[display:flex] [flex-direction:column] [gap:8px] w-[200px]!">
             <CustomDropdown
               options={facilityOptions}
               value={selectedFacility}
@@ -228,7 +228,7 @@ const UncertaintyAssessment = () => {
 
       {!data ? (
         <div className="ua-methodology-box mt-[24px]!">
-          <Info size={24} className="ua-methodology-icon" />
+          <Info size={24} className="[color:var(--text-secondary,_var(--color-ink-500))] [flex-shrink:0]" />
           <div>
             <h4>No Uncertainty Data Available</h4>
             <p>
@@ -244,11 +244,11 @@ const UncertaintyAssessment = () => {
       <div className="ua-tier-grid">
         {Object.entries(data.tier_breakdown || {}).map(([tier, pct]) => (
           <div key={tier} className="ua-tier-card">
-            <div className="ua-tier-label">{tier} (share of Scope 1)</div>
+            <div className="[font-size:var(--text-sm)] [color:var(--text-secondary,_var(--color-ink-500))] [font-weight:600]">{tier} (share of Scope 1)</div>
             <div className={`ua-tier-value ${getTierColorClass(tier)}`}>
               {pct}%
             </div>
-            <div className="ua-tier-bar">
+            <div className="[width:100%] [height:4px] [background:var(--border-color,_var(--color-ink-100))] [border-radius:var(--radius-sm)] [overflow:hidden]">
               <div
                 className={`ua-tier-bar-fill ${getTierColorClass(tier)}`}
                 style={{ width: `${pct}%` }}
@@ -265,9 +265,9 @@ const UncertaintyAssessment = () => {
             ["medium", "Medium Uncertainty (±10% to ±30%)", "band-medium"],
             ["high", "High Uncertainty (> ±30%)", "band-high"]].map(([band, label, cls]) => (
             <div key={band} className="ua-tier-card">
-              <div className="ua-tier-label">{label}</div>
+              <div className="[font-size:var(--text-sm)] [color:var(--text-secondary,_var(--color-ink-500))] [font-weight:600]">{label}</div>
               <div className={`ua-tier-value ${cls}`}>{data.uncertainty_bands[band] ?? 0}%</div>
-              <div className="ua-tier-bar">
+              <div className="[width:100%] [height:4px] [background:var(--border-color,_var(--color-ink-100))] [border-radius:var(--radius-sm)] [overflow:hidden]">
                 <div className={`ua-tier-bar-fill ${cls}`} style={{ width: `${data.uncertainty_bands[band] ?? 0}%` }} />
               </div>
             </div>
@@ -276,17 +276,17 @@ const UncertaintyAssessment = () => {
       )}
 
       {/* ── Legend ── */}
-      <div className="legend-bar">
-        <div className="legend-item">
-          <div className="legend-dot bg-[color:var(--color-unc-low)]!" />
+      <div className="[display:flex] [gap:24px] [margin-bottom:32px] [flex-wrap:wrap] [background:var(--bg-card,_rgba(255,_255,_255,_0.4))] [padding:16px_24px] [border-radius:var(--radius-md)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))]">
+        <div className="[display:flex] [align-items:center] [gap:10px] [font-size:var(--text-base)] [color:var(--text-secondary,_var(--color-ink-600))] [font-weight:600]">
+          <div className="[width:12px] [height:12px] [border-radius:50%] [flex-shrink:0] bg-[color:var(--color-unc-low)]!" />
           Low Uncertainty (≤ ±10%)
         </div>
-        <div className="legend-item">
-          <div className="legend-dot bg-[color:var(--color-unc-medium)]!" />
+        <div className="[display:flex] [align-items:center] [gap:10px] [font-size:var(--text-base)] [color:var(--text-secondary,_var(--color-ink-600))] [font-weight:600]">
+          <div className="[width:12px] [height:12px] [border-radius:50%] [flex-shrink:0] bg-[color:var(--color-unc-medium)]!" />
           Medium Uncertainty (±10% to ±30%)
         </div>
-        <div className="legend-item">
-          <div className="legend-dot bg-[color:var(--color-unc-high)]!" />
+        <div className="[display:flex] [align-items:center] [gap:10px] [font-size:var(--text-base)] [color:var(--text-secondary,_var(--color-ink-600))] [font-weight:600]">
+          <div className="[width:12px] [height:12px] [border-radius:50%] [flex-shrink:0] bg-[color:var(--color-unc-high)]!" />
           High Uncertainty (&gt; ±30%)
         </div>
       </div>
@@ -307,26 +307,26 @@ const UncertaintyAssessment = () => {
             <div className="uncertainty-grid">
               {section.top_contributors.map((factor, fIdx) => (
                 <div key={fIdx} className="factor-card">
-                  <div className="factor-header">
+                  <div className="[display:flex] [justify-content:space-between] [align-items:flex-start] [margin-bottom:15px]">
                     <div>
                       <div className="factor-name">{factor.name}</div>
-                      <div className="factor-source">Primary Contributor</div>
+                      <div className="[font-size:var(--text-sm)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [text-transform:uppercase] [letter-spacing:0.04em]">Primary Contributor</div>
                     </div>
-                    <div className="factor-uncertainty-tag">
+                    <div className="[font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [padding:4px_8px] [background:var(--border-color,_var(--color-ink-100))] [border-radius:var(--radius-sm)] [white-space:nowrap]">
                       {factor.uncertainty}
                     </div>
                   </div>
-                  <div className="factor-stats">
-                    <div className="factor-stat-bar-wrapper">
-                      <div className="factor-stat-labels">
+                  <div className="[display:flex] [align-items:center] [gap:15px]">
+                    <div className="[flex:1]">
+                      <div className="[display:flex] [justify-content:space-between] [font-size:var(--text-sm)] [margin-bottom:4px] [color:var(--text-secondary,_var(--color-ink-500))]">
                         <span>Impact on Category</span>
-                        <span className="factor-stat-value">
+                        <span className="[font-weight:700] [color:var(--text-primary,_var(--color-ink-900))]">
                           {factor.contribution}%
                         </span>
                       </div>
-                      <div className="factor-stat-track">
+                      <div className="[width:100%] [height:6px] [background:var(--border-color,_var(--color-ink-100))] [border-radius:var(--radius-sm)] [overflow:hidden]">
                         <div
-                          className="factor-stat-fill"
+                          className="[height:100%] [background:var(--color-blue-500)] [border-radius:var(--radius-sm)] [transition:width_0.5s_cubic-bezier(0.16,_1,_0.3,_1)]"
                           style={{ width: `${factor.contribution}%` }}
                         />
                       </div>
@@ -343,7 +343,7 @@ const UncertaintyAssessment = () => {
 
       {/* ── Methodology Footer ── */}
       <div className="ua-methodology-box">
-        <Info size={24} className="ua-methodology-icon" />
+        <Info size={24} className="[color:var(--text-secondary,_var(--color-ink-500))] [flex-shrink:0]" />
         <div>
           <h4>Calculation Methodology</h4>
           <p>

@@ -5,10 +5,10 @@ import { Badge, RadioCardGroup } from "../../ui";
 
 // Extracted from Settings.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const SettingsIPCCGlobalWarming = ({ GWP_DATA, gwpStandard, isAdmin, setGwpStandard }) => (
-<div className="settings-section-card">
+<div className="[background:var(--bg-card,_var(--color-white))] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [border-radius:var(--radius-lg)] [padding:32px] [display:flex] [flex-direction:column] [gap:28px] [box-shadow:var(--shadow-card,_0_4px_6px_-1px_rgba(0,_0,_0,_0.05))]">
           <div className="section-intro">
-            <div className="section-intro-header">
-              <Scale size={20} className="section-icon" />
+            <div className="[display:flex] [align-items:center] [gap:10px]">
+              <Scale size={20} className="[color:var(--color-link)]" />
               <h2>IPCC Global Warming Potential (GWP) Standard</h2>
             </div>
             <p>
@@ -37,8 +37,8 @@ const SettingsIPCCGlobalWarming = ({ GWP_DATA, gwpStandard, isAdmin, setGwpStand
               ),
               content: (
                 <>
-                  <div className="gwp-status-pill">{data.status}</div>
-                  <div className="gwp-factors-box">
+                  <div className="[font-size:var(--text-sm)] [color:var(--color-blue-700)] [margin-bottom:10px] [font-weight:600]">{data.status}</div>
+                  <div className="[display:grid] [grid-template-columns:repeat(3,_1fr)] [gap:8px] [background:var(--bg-hover,_var(--color-ink-50))] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [border-radius:var(--radius-md)] [padding:12px_10px]">
                     <div className="factor-item">
                       <span className="factor-label">CH₄ (100-yr)</span>
                       <span className="factor-val">{data.ch4_100}×</span>
@@ -58,12 +58,12 @@ const SettingsIPCCGlobalWarming = ({ GWP_DATA, gwpStandard, isAdmin, setGwpStand
           />
 
           {/* Live Comparison Table */}
-          <div className="comparison-container">
+          <div className="[background:var(--bg-hover,_var(--color-ink-50))] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [border-radius:var(--radius-lg)] [padding:24px] [display:flex] [flex-direction:column] [gap:16px]">
             <div className="comparison-header">
-              <Layers size={18} className="comparison-icon" />
+              <Layers size={18} className="[color:var(--color-link)]" />
               <h3>Conversion Factor Matrix Comparison</h3>
             </div>
-            <div className="comparison-table-wrapper">
+            <div className="[overflow-x:auto]">
               <table className="comparison-table">
                 <thead>
                   <tr>

@@ -233,7 +233,7 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default" }) => {
       {/* TIER 1 INPUTS: FACILITY-LEVEL (TABLES 7-1, 7-2)                      */}
       {/* ==================================================================== */}
       {activeTier === "tier1" && (
-        <div className="s1-block">
+        <div className="[margin-bottom:12px]">
           <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1.5fr", gap: "12px" }}>
             <div className="input-group">
               <label>Facility Type</label>
@@ -279,7 +279,7 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default" }) => {
       {/* TIER 2 INPUTS: EQUIPMENT OR COMPONENT POPULATION                     */}
       {/* ==================================================================== */}
       {activeTier === "tier2" && (
-        <div className="s1-block">
+        <div className="[margin-bottom:12px]">
           <div className="mb-[16px]!">
             <Segmented
               ariaLabel="Tier 2 method"
@@ -371,7 +371,7 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default" }) => {
       {/* TIER 3 INPUTS: DETECTION & MEASUREMENT                               */}
       {/* ==================================================================== */}
       {activeTier === "tier3" && (
-        <div className="s1-block">
+        <div className="[margin-bottom:12px]">
           <div className="mb-[16px]!">
             <Segmented
               ariaLabel="Tier 3 method"

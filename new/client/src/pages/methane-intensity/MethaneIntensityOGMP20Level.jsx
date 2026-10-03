@@ -163,7 +163,7 @@ const MethaneIntensityOGMP20Level = ({ globalThreshold, ogmpCollapsed, ogmpSurve
                 </table>
               </div>
             ) : (
-              <div className="ogmp-empty-state">
+              <div className="[padding:32px] [text-align:center] [background:var(--bg-app)] [border-radius:var(--radius-md)] [border:1px_dashed_var(--border-color)] [color:var(--text-secondary)] [font-size:var(--text-base)] [margin-top:16px]">
                 <p>
                   No OGMP 2.0 top-down surveys registered for the selected
                   filters. Record survey campaigns via{" "}
