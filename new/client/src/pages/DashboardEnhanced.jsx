@@ -882,8 +882,8 @@ const DashboardEnhanced = () => {
     >
       <div className="dashboard-grid [display:flex] [flex-direction:column] [gap:24px] [max-width:1600px] [margin:0_auto] [&>*]:[opacity:0] [&>*]:[animation:dashboardFadeIn_0.5s_cubic-bezier(0.16,_1,_0.3,_1)_forwards] [&&]:[&>*:nth-child(1)]:[animation-delay:0.05s] [&&]:[&&]:[&>*:nth-child(2)]:[animation-delay:0.12s] [&&]:[&&]:[&&]:[&>*:nth-child(3)]:[animation-delay:0.18s] [&&]:[&&]:[&&]:[&&]:[&>*:nth-child(4)]:[animation-delay:0.24s] [&&]:[&&]:[&&]:[&&]:[&&]:[&>*:nth-child(5)]:[animation-delay:0.30s]">
         <div className="mb-5 flex items-center justify-between gap-3">
-          <h1 className="m-0 text-xl font-bold text-text">GHG Emissions Dashboard</h1>
-          <Badge className="gap-2 bg-surface/80 px-3.5 py-1.5 text-sm text-text-secondary">
+          <h1 className="grid-title m-0 text-xl font-bold text-text">GHG Emissions Dashboard</h1>
+          <Badge className="live-badge gap-2 bg-surface/80 px-3.5 py-1.5 text-sm text-text-secondary">
             <span className={cn("size-2 rounded-full bg-green-500", isUpdating && "animate-pulse")} aria-hidden="true" />
             {isUpdating ? "Syncing filters..." : `Live content • Updated ${lastUpdated}`}
           </Badge>
@@ -923,7 +923,7 @@ const DashboardEnhanced = () => {
       />
         )}
 
-        <div className="grid gap-6 [grid-template-columns:2fr_1fr] max-[1200px]:grid-cols-1">
+        <div className="charts-section grid gap-6 [grid-template-columns:2fr_1fr] max-[1200px]:grid-cols-1">
           <TrendCard data={trendData} lines={trendLines} compare={isCompareMode} onCompare={() => setIsCompareMode(!isCompareMode)} />
           <div className="flex min-w-0 flex-col gap-6">
             <DonutCard title="Emissions by Activity" data={activityChartData} />

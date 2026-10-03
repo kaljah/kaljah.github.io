@@ -9,11 +9,12 @@ import { formatCompactNumber } from "../../utils/formatters";
 export const PendingBanner = ({ count, co2e, includePending, onIncludePending, canReview, onReview }) => (
   <Banner
     tone="warning"
-    className="items-center bg-surface"
+    className={cn("pending-banner-card items-center bg-surface", includePending && "active-preview")}
     title={includePending ? "Previewing pending & verified emissions" : "Pending records awaiting review"}
     actions={
       <>
         <Switch
+          className="pending-switch"
           label={
             <span className="flex items-center gap-1.5 text-sm font-semibold text-text-secondary">
               {includePending ? <Eye className="size-4" aria-hidden="true" /> : <EyeOff className="size-4" aria-hidden="true" />}

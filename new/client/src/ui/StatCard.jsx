@@ -26,7 +26,7 @@ export const StatCard = ({
     <Card className={cn("flex flex-col gap-2", className)} {...props}>
       <div className="flex items-start justify-between gap-2">
         <div>
-          <p className="text-xs font-medium uppercase tracking-wide text-text-secondary">{label}</p>
+          <p className="stat-label text-xs font-medium uppercase tracking-wide text-text-secondary">{label}</p>
           {sublabel && <p className="text-xs text-text-secondary">{sublabel}</p>}
         </div>
         {Icon && <Icon className="size-4 shrink-0 text-ink-400" aria-hidden="true" />}

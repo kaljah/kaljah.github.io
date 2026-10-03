@@ -54,7 +54,7 @@ test.describe('GHG Emissions Dashboard - E2E Test Suite (POM Pattern)', () => {
     await expect(dashboard.breakdownSection.first()).toBeVisible({ timeout: 10000 });
 
     // Look for activity accordion row if present and toggle it
-    const activityRow = dashboard.page.locator('.activity-name, .accordion-header, tr.activity-row').first();
+    const activityRow = dashboard.page.locator('tr.act-row').first();
     if (await activityRow.isVisible().catch(() => false)) {
       await activityRow.click();
       await dashboard.page.waitForTimeout(300);

@@ -62,12 +62,12 @@ const DetailedBreakdownSection = ({
 
   return (
     <div className="grid gap-6 [grid-template-columns:8fr_4fr] max-[1200px]:grid-cols-1">
-      <Card className="min-w-0 print:break-inside-avoid print:shadow-none">
+      <Card className={cn("detailed-table-card min-w-0 print:break-inside-avoid print:shadow-none", detailedBreakdownCollapsed && "collapsed-card")}>
         <button
           type="button"
           aria-expanded={!detailedBreakdownCollapsed}
           onClick={() => setDetailedBreakdownCollapsed(!detailedBreakdownCollapsed)}
-          className="mb-5 flex w-full cursor-pointer items-center justify-between border-0 bg-transparent p-0 text-left hover:opacity-85"
+          className="table-header-row clickable-card-header mb-5 flex w-full cursor-pointer items-center justify-between border-0 bg-transparent p-0 text-left hover:opacity-85"
         >
           <span className="text-lg font-semibold text-text">Detailed breakdown</span>
           {detailedBreakdownCollapsed ? <ChevronDown className="size-[18px] text-ink-500" aria-hidden="true" /> : <ChevronUp className="size-[18px] text-ink-500" aria-hidden="true" />}
