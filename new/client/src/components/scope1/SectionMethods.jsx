@@ -2,7 +2,7 @@
 // (Section 6), measured / engineered gas volumes, and combustion / waste-gas methods
 // (Sections 4 and 5). The server routes on activity_key, vent_method and combustion_method.
 import React, { useEffect, useState } from "react";
-import { Input } from "../../ui";
+import { Input, Field } from "../../ui";
 import api from "../../api";
 import CustomDropdown from "../CustomDropdown";
 import { FieldGrid, MoreOptions, Segmented } from "./ui";
@@ -10,12 +10,9 @@ import { applyChoice, currentChoice, sectionChoices } from "./methodChoices";
 
 // ---------------------------------------------------------------------------
 const Num = ({ label, field, data, onChange, placeholder, required }) => (
-  <div className="input-group">
-    <label>
-      {label}
-      {required && <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>}
-    </label>
-    <Input
+  <Field className="input-group" label={<>{label}
+      {required && <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>}</>}>
+<Input
       type="number"
       min="0"
       step="any"
@@ -25,7 +22,7 @@ const Num = ({ label, field, data, onChange, placeholder, required }) => (
       placeholder={placeholder}
       required={required}
     />
-  </div>
+</Field>
 );
 
 const NumUnit = ({ label, field, unitField, units, data, onChange, placeholder, required }) => (

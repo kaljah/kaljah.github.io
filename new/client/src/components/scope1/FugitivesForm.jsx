@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Input } from "../../ui";
+import { Input, Field } from "../../ui";
 import CustomDropdown from "../CustomDropdown";
 import { FieldGrid, Segmented } from "./ui";
 
@@ -133,9 +133,8 @@ const RATE_UNITS = [
 ];
 
 const Num = ({ label, field, data, onChange, placeholder }) => (
-  <div className="input-group">
-    <label>{label}</label>
-    <Input
+  <Field className="input-group" label={<>{label}</>}>
+<Input
       type="number"
       min="0"
       step="any"
@@ -144,7 +143,7 @@ const Num = ({ label, field, data, onChange, placeholder }) => (
       onChange={(e) => onChange(field, e.target.value)}
       placeholder={placeholder}
     />
-  </div>
+</Field>
 );
 
 const Pick = ({ label, field, options, data, onChange }) => (
@@ -252,9 +251,8 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default" }) => {
               />
             </div>
 
-            <div className="input-group">
-              <label>Production Volume</label>
-              <Input
+            <Field className="input-group" label="Production Volume">
+<Input
                 type="number"
                 min="0"
                 step="any"
@@ -263,7 +261,7 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default" }) => {
                 onChange={(e) => onChange("amount", e.target.value)}
                 placeholder="e.g. 120000"
               />
-            </div>
+</Field>
 
             <div className="input-group">
               <label>Production Unit</label>

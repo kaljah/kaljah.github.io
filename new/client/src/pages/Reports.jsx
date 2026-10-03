@@ -1,6 +1,6 @@
 import { ChevronDown, Download, FileSpreadsheet, FileText, RotateCcw } from "lucide-react";
 import { NativeSelect } from "../ui/NativeSelect";
-import { Button, Menu, MenuContent, MenuItem, MenuTrigger, PageHeader } from "../ui";
+import { Button, Menu, MenuContent, MenuItem, MenuTrigger, PageHeader, Field } from "../ui";
 import React, { useState, useEffect } from "react";
 import api from "../api";
 import { useAuth } from "../context/AuthContext";
@@ -1111,9 +1111,8 @@ const Reports = () => {
                       style={{ width: '100%', padding: '8px', border: '1px solid #e2e8f0', borderRadius: '4px' }}
                     />
                   </div>
-                  <div className="input-group">
-                    <label>GWP Metric Standard</label>
-                    <NativeSelect
+                  <Field className="input-group" label="GWP Metric Standard">
+<NativeSelect
                       className="component-select"
                       value={reportGwpStandard}
                       onChange={(e) => { gwpTouched.current = true; setReportGwpStandard(e.target.value); }}
@@ -1124,7 +1123,7 @@ const Reports = () => {
                       <option value="AR4">{gwpOptionLabel("AR4", "100")}</option>
                       <option value="20yr">{gwpOptionLabel("AR5", "20")}</option>
                     </NativeSelect>
-                  </div>
+</Field>
                 </>
               )}
             </div>

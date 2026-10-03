@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Input, Textarea } from "../../ui";
+import { Button, Input, Textarea, Field } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
 import { Database, Upload } from 'lucide-react';
 import PaginationControls from './PaginationControls';
@@ -22,9 +22,8 @@ const FactorsTab = ({ ITEMS_PER_PAGE, currentPage, editingFactorId, factorForm, 
                                 </div>
                                 {/* Create/Edit Form */}
                                 <div className="grid-forms">
-                                    <div className="input-group">
-                                        <label>Factor Name</label>
-                                        <Input
+                                    <Field className="input-group" label="Factor Name">
+<Input
                                             type="text"
                                             name="factor_name"
                                             value={factorForm.factor_name}
@@ -32,10 +31,9 @@ const FactorsTab = ({ ITEMS_PER_PAGE, currentPage, editingFactorId, factorForm, 
                                            
                                             placeholder="e.g. Flare High Efficiency"
                                         />
-                                    </div>
-                                    <div className="input-group">
-                                        <label>Parent Fuel (Internal Reference)</label>
-                                        <NativeSelect
+</Field>
+                                    <Field className="input-group" label="Parent Fuel (Internal Reference)">
+<NativeSelect
                                             name="parent_fuel"
                                             value={factorForm.parent_fuel}
                                             onChange={(e) => setFactorForm({ ...factorForm, parent_fuel: e.target.value })}
@@ -49,11 +47,10 @@ const FactorsTab = ({ ITEMS_PER_PAGE, currentPage, editingFactorId, factorForm, 
                                             <option value="Crude Oil">Crude Oil (Heavy)</option>
                                             <option value="Fuel Oil">Fuel Oil (No. 4/6)</option>
                                         </NativeSelect>
-                                    </div>
+</Field>
 
-                                    <div className="input-group">
-                                        <label>Unit</label>
-                                        <NativeSelect
+                                    <Field className="input-group" label="Unit">
+<NativeSelect
                                             name="unit"
                                             value={factorForm.unit}
                                             onChange={handleFactorChange}
@@ -66,10 +63,9 @@ const FactorsTab = ({ ITEMS_PER_PAGE, currentPage, editingFactorId, factorForm, 
                                             <option value="kg">kg</option>
                                             <option value="tonne">tonne</option>
                                         </NativeSelect>
-                                    </div>
-                                    <div className="input-group">
-                                        <label>CO₂ Factor (kg/unit)</label>
-                                        <Input
+</Field>
+                                    <Field className="input-group" label="CO₂ Factor (kg/unit)">
+<Input
                                             type="number"
                                             name="co2_factor"
                                             value={factorForm.co2_factor}
@@ -78,10 +74,9 @@ const FactorsTab = ({ ITEMS_PER_PAGE, currentPage, editingFactorId, factorForm, 
                                             placeholder="0.0"
                                             step="0.001"
                                         />
-                                    </div>
-                                    <div className="input-group">
-                                        <label>CH₄ Factor (kg/unit)</label>
-                                        <Input
+</Field>
+                                    <Field className="input-group" label="CH₄ Factor (kg/unit)">
+<Input
                                             type="number"
                                             name="ch4_factor"
                                             value={factorForm.ch4_factor}
@@ -90,10 +85,9 @@ const FactorsTab = ({ ITEMS_PER_PAGE, currentPage, editingFactorId, factorForm, 
                                             placeholder="0.0"
                                             step="0.001"
                                         />
-                                    </div>
-                                    <div className="input-group">
-                                        <label>N₂O Factor (kg/unit)</label>
-                                        <Input
+</Field>
+                                    <Field className="input-group" label="N₂O Factor (kg/unit)">
+<Input
                                             type="number"
                                             name="n2o_factor"
                                             value={factorForm.n2o_factor}
@@ -102,19 +96,16 @@ const FactorsTab = ({ ITEMS_PER_PAGE, currentPage, editingFactorId, factorForm, 
                                             placeholder="0.0"
                                             step="0.001"
                                         />
-                                    </div>
-                                    <div className="input-group">
-                                        <label>CO₂ Uncertainty (±%)</label>
-                                        <Input type="number" name="co2_uncertainty" value={factorForm.co2_uncertainty} onChange={handleFactorChange} placeholder="e.g. 5.0" step="0.1" />
-                                    </div>
-                                    <div className="input-group">
-                                        <label>CH₄ Uncertainty (±%)</label>
-                                        <Input type="number" name="ch4_uncertainty" value={factorForm.ch4_uncertainty} onChange={handleFactorChange} placeholder="e.g. 50.0" step="0.1" />
-                                    </div>
-                                    <div className="input-group">
-                                        <label>N₂O Uncertainty (±%)</label>
-                                        <Input type="number" name="n2o_uncertainty" value={factorForm.n2o_uncertainty} onChange={handleFactorChange} placeholder="e.g. 150.0" step="0.1" />
-                                    </div>
+</Field>
+                                    <Field className="input-group" label="CO₂ Uncertainty (±%)">
+<Input type="number" name="co2_uncertainty" value={factorForm.co2_uncertainty} onChange={handleFactorChange} placeholder="e.g. 5.0" step="0.1" />
+</Field>
+                                    <Field className="input-group" label="CH₄ Uncertainty (±%)">
+<Input type="number" name="ch4_uncertainty" value={factorForm.ch4_uncertainty} onChange={handleFactorChange} placeholder="e.g. 50.0" step="0.1" />
+</Field>
+                                    <Field className="input-group" label="N₂O Uncertainty (±%)">
+<Input type="number" name="n2o_uncertainty" value={factorForm.n2o_uncertainty} onChange={handleFactorChange} placeholder="e.g. 150.0" step="0.1" />
+</Field>
                                     <div className="input-group" style={{ gridColumn: 'span 2' }}>
                                         <label>Lab Certification / Source Reference</label>
                                         <Input

@@ -1,5 +1,5 @@
 import React from "react";
-import { Input } from "../../ui";
+import { Input, Field } from "../../ui";
 import CustomDropdown from "../CustomDropdown";
 import { NativeSelect } from "../../ui/NativeSelect";
 
@@ -67,18 +67,16 @@ const Scope2FormNewElectricityEntry = ({ activity, allocationMethod, amount, boi
             </div>
           </div>
           <div className="form-grid-3">
-            <div className="input-group">
-              <label>Year</label>
-              <Input
+            <Field className="input-group" label="Year">
+<Input
                 type="number"
                
                 value={year || ""}
                 onChange={(e) => setYear(e.target.value)}
               />
-            </div>
-            <div className="input-group">
-              <label>Month</label>
-              <NativeSelect
+</Field>
+            <Field className="input-group" label="Month">
+<NativeSelect
                 className="component-select"
                 value={month || 1}
                 onChange={(e) => setMonth(e.target.value)}
@@ -89,7 +87,7 @@ const Scope2FormNewElectricityEntry = ({ activity, allocationMethod, amount, boi
                   </option>
                 ))}
               </NativeSelect>
-            </div>
+</Field>
           </div>
         </div>
 
@@ -128,49 +126,44 @@ const Scope2FormNewElectricityEntry = ({ activity, allocationMethod, amount, boi
             )}
             {sourceType === "indirect_steam" && (
               <div className="form-grid-2" style={{ gridColumn: "span 2" }}>
-                <div className="input-group">
-                  <label>Boiler Efficiency (0.0 - 1.0)</label>
-                  <Input
+                <Field className="input-group" label="Boiler Efficiency (0.0 - 1.0)">
+<Input
                     type="number"
                    
                     value={boilerEff}
                     onChange={(e) => setBoilerEff(e.target.value)}
                   />
-                </div>
-                <div className="input-group">
-                  <label>Transmission Loss (0.0 - 1.0)</label>
-                  <Input
+</Field>
+                <Field className="input-group" label="Transmission Loss (0.0 - 1.0)">
+<Input
                     type="number"
                    
                     value={transLoss}
                     onChange={(e) => setTransLoss(e.target.value)}
                   />
-                </div>
+</Field>
               </div>
             )}
             {sourceType === "cogen_allocation" && (
               <div className="form-grid-3" style={{ gridColumn: "span 2" }}>
-                <div className="input-group">
-                  <label>Heat Output (MMBtu)</label>
-                  <Input
+                <Field className="input-group" label="Heat Output (MMBtu)">
+<Input
                     type="number"
                    
                     value={heatOutput}
                     onChange={(e) => setHeatOutput(e.target.value)}
                   />
-                </div>
-                <div className="input-group">
-                  <label>Power Output (MWh)</label>
-                  <Input
+</Field>
+                <Field className="input-group" label="Power Output (MWh)">
+<Input
                     type="number"
                    
                     value={powerOutput}
                     onChange={(e) => setPowerOutput(e.target.value)}
                   />
-                </div>
-                <div className="input-group">
-                  <label>Method</label>
-                  <NativeSelect
+</Field>
+                <Field className="input-group" label="Method">
+<NativeSelect
                     className="component-select"
                     value={allocationMethod}
                     onChange={(e) => setAllocationMethod(e.target.value)}
@@ -178,19 +171,17 @@ const Scope2FormNewElectricityEntry = ({ activity, allocationMethod, amount, boi
                     <option value="wri_efficiency">WRI Efficiency</option>
                     <option value="energy_content">Energy Content</option>
                   </NativeSelect>
-                </div>
+</Field>
                 {allocationMethod === "wri_efficiency" && (
                   <>
-                    <div className="input-group">
-                      <label>Heat Efficiency (%)</label>
-                      <Input type="number" min="1" max="100" placeholder="80"
+                    <Field className="input-group" label="Heat Efficiency (%)">
+<Input type="number" min="1" max="100" placeholder="80"
                         value={heatEff} onChange={(e) => setHeatEff(e.target.value)} />
-                    </div>
-                    <div className="input-group">
-                      <label>Power Efficiency (%)</label>
-                      <Input type="number" min="1" max="100" placeholder="35"
+</Field>
+                    <Field className="input-group" label="Power Efficiency (%)">
+<Input type="number" min="1" max="100" placeholder="35"
                         value={powerEff} onChange={(e) => setPowerEff(e.target.value)} />
-                    </div>
+</Field>
                   </>
                 )}
               </div>
@@ -202,20 +193,17 @@ const Scope2FormNewElectricityEntry = ({ activity, allocationMethod, amount, boi
         <div className="mb-[10px]!">
           <h4 className="section-title">3. ACTIVITY DATA</h4>
           <div className="form-grid-2">
-            <div className="input-group">
-              <label>
-                {sourceType === "cogen_allocation"
+            <Field className="input-group" label={<>{sourceType === "cogen_allocation"
                   ? "Total Facility Emissions (tCO2e)"
-                  : "Usage Amount"}
-              </label>
-              <Input
+                  : "Usage Amount"}</>}>
+<Input
                 type="number"
                
                 value={amount || ""}
                 onChange={(e) => setAmount(e.target.value)}
                 placeholder="0.00"
               />
-            </div>
+</Field>
             <div className="input-group">
               <label>Unit</label>
               <CustomDropdown

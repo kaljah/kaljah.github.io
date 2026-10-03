@@ -1,5 +1,5 @@
 import React from 'react';
-import { Input } from "../../ui";
+import { Input, Field } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
 import PaginationControls from './PaginationControls';
 
@@ -14,9 +14,8 @@ const CbamTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, cbamForm, currentPage, editi
                                 </div>
 
                                 <div className="form-grid-3">
-                                    <div className="input-group">
-                                        <label>Activity</label>
-                                        <NativeSelect
+                                    <Field className="input-group" label="Activity">
+<NativeSelect
                                             value={cbamForm.activity}
                                             onChange={(e) => {
                                                 const act = e.target.value;
@@ -33,11 +32,10 @@ const CbamTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, cbamForm, currentPage, editi
                                                 <option key={a} value={a}>{ACTIVITY_LABELS[a] || a}</option>
                                             ))}
                                         </NativeSelect>
-                                    </div>
+</Field>
 
-                                    <div className="input-group">
-                                        <label>Division</label>
-                                        <NativeSelect
+                                    <Field className="input-group" label="Division">
+<NativeSelect
                                             value={cbamForm.division}
                                             onChange={(e) => {
                                                 const div = e.target.value;
@@ -53,11 +51,10 @@ const CbamTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, cbamForm, currentPage, editi
                                                 <option key={d} value={d}>{d}</option>
                                             ))}
                                         </NativeSelect>
-                                    </div>
+</Field>
 
-                                    <div className="input-group">
-                                        <label>Facility / Region *</label>
-                                        <NativeSelect
+                                    <Field className="input-group" label="Facility / Region *">
+<NativeSelect
                                             value={cbamForm.facility_id}
                                             onChange={(e) => setCbamForm({ ...cbamForm, facility_id: e.target.value })}
                                             className="component-select"
@@ -70,22 +67,20 @@ const CbamTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, cbamForm, currentPage, editi
                                                 ))
                                             }
                                         </NativeSelect>
-                                    </div>
+</Field>
 
-                                    <div className="input-group">
-                                        <label>Product Name *</label>
-                                        <Input
+                                    <Field className="input-group" label="Product Name *">
+<Input
                                             type="text"
                                             value={cbamForm.product_name}
                                             onChange={(e) => setCbamForm({ ...cbamForm, product_name: e.target.value })}
                                            
                                             placeholder="e.g. Export Blend Crude Oil"
                                         />
-                                    </div>
+</Field>
 
-                                    <div className="input-group">
-                                        <label>EU CN Code *</label>
-                                        <NativeSelect
+                                    <Field className="input-group" label="EU CN Code *">
+<NativeSelect
                                             value={cbamForm.cn_code}
                                             onChange={(e) => setCbamForm({ ...cbamForm, cn_code: e.target.value })}
                                             className="component-select"
@@ -100,11 +95,10 @@ const CbamTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, cbamForm, currentPage, editi
                                             <option value="3102 10">3102 10 - Urea & Nitrogenous Fertilizers</option>
                                             <option value="Custom">Custom / Other CN Code</option>
                                         </NativeSelect>
-                                    </div>
+</Field>
 
-                                    <div className="input-group">
-                                        <label>Export Destination</label>
-                                        <NativeSelect
+                                    <Field className="input-group" label="Export Destination">
+<NativeSelect
                                             value={cbamForm.export_destination}
                                             onChange={(e) => setCbamForm({ ...cbamForm, export_destination: e.target.value })}
                                             className="component-select"
@@ -115,21 +109,19 @@ const CbamTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, cbamForm, currentPage, editi
                                             <option value="APAC">Asia-Pacific</option>
                                             <option value="Non-EU">Other Non-EU</option>
                                         </NativeSelect>
-                                    </div>
+</Field>
 
-                                    <div className="input-group">
-                                        <label>Reporting Year</label>
-                                        <Input
+                                    <Field className="input-group" label="Reporting Year">
+<Input
                                             type="number"
                                             value={cbamForm.year}
                                             onChange={(e) => setCbamForm({ ...cbamForm, year: e.target.value })}
                                            
                                         />
-                                    </div>
+</Field>
 
-                                    <div className="input-group">
-                                        <label>Reporting Month</label>
-                                        <NativeSelect
+                                    <Field className="input-group" label="Reporting Month">
+<NativeSelect
                                             value={cbamForm.month}
                                             onChange={(e) => setCbamForm({ ...cbamForm, month: e.target.value })}
                                             className="component-select"
@@ -140,22 +132,20 @@ const CbamTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, cbamForm, currentPage, editi
                                                 </option>
                                             ))}
                                         </NativeSelect>
-                                    </div>
+</Field>
 
-                                    <div className="input-group">
-                                        <label>Export Quantity (Metric Tonnes) *</label>
-                                        <Input
+                                    <Field className="input-group" label="Export Quantity (Metric Tonnes) *">
+<Input
                                             type="number"
                                             value={cbamForm.quantity_tonnes}
                                             onChange={(e) => setCbamForm({ ...cbamForm, quantity_tonnes: e.target.value })}
                                            
                                             placeholder="0.00"
                                         />
-                                    </div>
+</Field>
 
-                                    <div className="input-group">
-                                        <label>Direct Specific Embedded (tCO₂e / t)</label>
-                                        <Input
+                                    <Field className="input-group" label="Direct Specific Embedded (tCO₂e / t)">
+<Input
                                             type="number"
                                             step="0.001"
                                             value={cbamForm.specific_embedded_direct}
@@ -163,11 +153,10 @@ const CbamTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, cbamForm, currentPage, editi
                                            
                                             placeholder="0.000"
                                         />
-                                    </div>
+</Field>
 
-                                    <div className="input-group">
-                                        <label>Indirect Specific Embedded (tCO₂e / t)</label>
-                                        <Input
+                                    <Field className="input-group" label="Indirect Specific Embedded (tCO₂e / t)">
+<Input
                                             type="number"
                                             step="0.001"
                                             value={cbamForm.specific_embedded_indirect}
@@ -175,18 +164,17 @@ const CbamTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, cbamForm, currentPage, editi
                                            
                                             placeholder="0.000"
                                         />
-                                    </div>
+</Field>
 
-                                    <div className="input-group">
-                                        <label>Notes & Verification References</label>
-                                        <Input
+                                    <Field className="input-group" label="Notes & Verification References">
+<Input
                                             type="text"
                                             value={cbamForm.notes}
                                             onChange={(e) => setCbamForm({ ...cbamForm, notes: e.target.value })}
                                            
                                             placeholder="Accredited Verifier / Certificate ID"
                                         />
-                                    </div>
+</Field>
                                 </div>
 
                                 <div className="flex! gap-[12px]! mt-[20px]!">

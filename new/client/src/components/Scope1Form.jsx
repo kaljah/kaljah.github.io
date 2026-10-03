@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Input } from "../ui";
+import { Input, Field } from "../ui";
 import { NativeSelect } from "../ui/NativeSelect";
 import api from "../api";
 import CustomDropdown from "./CustomDropdown";
@@ -1913,18 +1913,16 @@ const Scope1Form = () => {
                 placeholder="Select region"
               />
             </div>
-            <div className="input-group">
-              <label>Year</label>
-              <Input
+            <Field className="input-group" label="Year">
+<Input
                 type="number"
                
                 value={year || ""}
                 onChange={(e) => setYear(e.target.value)}
               />
-            </div>
-            <div className="input-group">
-              <label>Month</label>
-              <NativeSelect
+</Field>
+            <Field className="input-group" label="Month">
+<NativeSelect
                 className="component-select"
                 value={month || 1}
                 onChange={(e) => setMonth(e.target.value)}
@@ -1935,7 +1933,7 @@ const Scope1Form = () => {
                   </option>
                 ))}
               </NativeSelect>
-            </div>
+</Field>
           </FieldGrid>
           {(activity || division || field) && (
             <div className="s1-meta">{[activity, division, field].filter(Boolean).join(" · ")}</div>
@@ -1952,26 +1950,24 @@ const Scope1Form = () => {
                   placeholder="From inventory"
                 />
               </div>
-              <div className="input-group">
-                <label>Equipment ID</label>
-                <Input
+              <Field className="input-group" label="Equipment ID">
+<Input
                   type="text"
                  
                   value={equipmentId}
                   onChange={(e) => setEquipmentId(e.target.value)}
                   placeholder="e.g. T-101"
                 />
-              </div>
-              <div className="input-group">
-                <label>Group</label>
-                <Input
+</Field>
+              <Field className="input-group" label="Group">
+<Input
                   type="text"
                  
                   value={groupName}
                   onChange={(e) => setGroupName(e.target.value)}
                   placeholder="e.g. West facility"
                 />
-              </div>
+</Field>
             </FieldGrid>
           </div>
         </Section>

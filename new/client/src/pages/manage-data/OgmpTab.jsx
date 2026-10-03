@@ -1,5 +1,5 @@
 import React from 'react';
-import { Input } from "../../ui";
+import { Input, Field } from "../../ui";
 import { CircleAlert } from "lucide-react";
 import { NativeSelect } from "../../ui/NativeSelect";
 import PaginationControls from './PaginationControls';
@@ -30,9 +30,8 @@ const OgmpTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, NON_OG_ACTIVITIES, currentPa
                                 </div>
 
                                 <div className="form-grid-3">
-                                    <div className="input-group">
-                                        <label>Activity</label>
-                                        <NativeSelect
+                                    <Field className="input-group" label="Activity">
+<NativeSelect
                                             value={ogmpForm.activity}
                                             onChange={(e) => {
                                                 const act = e.target.value;
@@ -49,11 +48,10 @@ const OgmpTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, NON_OG_ACTIVITIES, currentPa
                                                 <option key={a} value={a}>{ACTIVITY_LABELS[a] || a}</option>
                                             ))}
                                         </NativeSelect>
-                                    </div>
+</Field>
 
-                                    <div className="input-group">
-                                        <label>Division</label>
-                                        <NativeSelect
+                                    <Field className="input-group" label="Division">
+<NativeSelect
                                             value={ogmpForm.division}
                                             onChange={(e) => {
                                                 const div = e.target.value;
@@ -69,11 +67,10 @@ const OgmpTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, NON_OG_ACTIVITIES, currentPa
                                                 <option key={d} value={d}>{d}</option>
                                             ))}
                                         </NativeSelect>
-                                    </div>
+</Field>
 
-                                    <div className="input-group">
-                                        <label>Facility / Region *</label>
-                                        <NativeSelect
+                                    <Field className="input-group" label="Facility / Region *">
+<NativeSelect
                                             value={ogmpForm.facility_id}
                                             onChange={(e) => setOgmpForm({ ...ogmpForm, facility_id: e.target.value })}
                                             className="component-select"
@@ -90,11 +87,10 @@ const OgmpTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, NON_OG_ACTIVITIES, currentPa
                                                 ))
                                             }
                                         </NativeSelect>
-                                    </div>
+</Field>
 
-                                    <div className="input-group">
-                                        <label>Survey Date *</label>
-                                        <Input
+                                    <Field className="input-group" label="Survey Date *">
+<Input
                                             type="date"
                                             value={ogmpForm.survey_date}
                                             onChange={(e) => {
@@ -104,11 +100,10 @@ const OgmpTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, NON_OG_ACTIVITIES, currentPa
                                             }}
                                            
                                         />
-                                    </div>
+</Field>
 
-                                    <div className="input-group">
-                                        <label>Measurement Technology (Level 4/5) *</label>
-                                        <NativeSelect
+                                    <Field className="input-group" label="Measurement Technology (Level 4/5) *">
+<NativeSelect
                                             value={ogmpForm.survey_type}
                                             onChange={(e) => setOgmpForm({ ...ogmpForm, survey_type: e.target.value })}
                                             className="component-select"
@@ -120,11 +115,10 @@ const OgmpTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, NON_OG_ACTIVITIES, currentPa
                                             <option value="Fixed Continuous Sensor Array">Fixed Continuous Point Sensor Array</option>
                                             <option value="Bottom-Up Source Component Measurement">Bottom-Up High-Flow Component Sampling</option>
                                         </NativeSelect>
-                                    </div>
+</Field>
 
-                                    <div className="input-group">
-                                        <label>Measured Emission Rate (kg CH₄ / hr) *</label>
-                                        <Input
+                                    <Field className="input-group" label="Measured Emission Rate (kg CH₄ / hr) *">
+<Input
                                             type="number"
                                             step="0.1"
                                             value={ogmpForm.measured_rate_kg_hr}
@@ -132,11 +126,10 @@ const OgmpTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, NON_OG_ACTIVITIES, currentPa
                                            
                                             placeholder="0.0"
                                         />
-                                    </div>
+</Field>
 
-                                    <div className="input-group">
-                                        <label>Reconciliation Status</label>
-                                        <NativeSelect
+                                    <Field className="input-group" label="Reconciliation Status">
+<NativeSelect
                                             value={ogmpForm.reconciliation_status}
                                             onChange={(e) => setOgmpForm({ ...ogmpForm, reconciliation_status: e.target.value })}
                                             className="component-select"
@@ -146,7 +139,7 @@ const OgmpTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, NON_OG_ACTIVITIES, currentPa
                                             <option value="Investigation Pending">Investigation Pending / Root Cause Analysis</option>
                                             <option value="Under Review">Under Review by Operations</option>
                                         </NativeSelect>
-                                    </div>
+</Field>
 
                                     <div className="input-group" style={{ gridColumn: 'span 2' }}>
                                         <label>Operator Notes & Campaign Metadata</label>

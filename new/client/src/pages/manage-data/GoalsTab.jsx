@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Input, Textarea } from "../../ui";
+import { Button, Input, Textarea, Field } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
 import { Calendar, Check, CheckCircle, History, Plus, Target } from 'lucide-react';
 
@@ -57,9 +57,8 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
 
                                     {/* Goal Input Form */}
                                     <div className="grid-forms" style={{ gridTemplateColumns: 'repeat(3, 1fr)', background: '#fafafa', padding: '20px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
-                                        <div className="input-group">
-                                            <label>Target Year</label>
-                                            <Input
+                                        <Field className="input-group" label="Target Year">
+<Input
                                                 type="number"
                                                 min="1990"
                                                 max="2100"
@@ -68,10 +67,9 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                                
                                                 placeholder="e.g. 2030"
                                             />
-                                        </div>
-                                        <div className="input-group">
-                                            <label>Target Emission Amount (tCO₂e)</label>
-                                            <Input
+</Field>
+                                        <Field className="input-group" label="Target Emission Amount (tCO₂e)">
+<Input
                                                 type="number"
                                                 step="any"
                                                 value={goalForm.target_amount}
@@ -79,7 +77,7 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                                
                                                 placeholder="e.g. 150000"
                                             />
-                                        </div>
+</Field>
                                         <div className="input-group flex! items-end! gap-[8px]!">
                                             <button
                                                 className="action-btn"
@@ -189,9 +187,8 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
 
                                     {/* Base Year Input Form */}
                                     <div className="grid-forms" style={{ gridTemplateColumns: 'repeat(4, 1fr)', background: '#fafafa', padding: '20px', borderRadius: '12px', border: '1px solid var(--border-color)', gap: '16px' }}>
-                                        <div className="input-group">
-                                            <label>Base Year</label>
-                                            <Input
+                                        <Field className="input-group" label="Base Year">
+<Input
                                                 type="number"
                                                 min="1990"
                                                 max="2100"
@@ -200,10 +197,9 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                                
                                                 placeholder="e.g. 2023"
                                             />
-                                        </div>
-                                        <div className="input-group">
-                                            <label>Prev. Emissions (tCO₂e)</label>
-                                            <Input
+</Field>
+                                        <Field className="input-group" label="Prev. Emissions (tCO₂e)">
+<Input
                                                 type="number"
                                                 step="any"
                                                 value={baseYearForm.previous_emissions}
@@ -211,10 +207,9 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                                
                                                 placeholder="Optional"
                                             />
-                                        </div>
-                                        <div className="input-group">
-                                            <label>Adjusted Emissions (tCO₂e)</label>
-                                            <Input
+</Field>
+                                        <Field className="input-group" label="Adjusted Emissions (tCO₂e)">
+<Input
                                                 type="number"
                                                 step="any"
                                                 value={baseYearForm.adjusted_emissions}
@@ -222,7 +217,7 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                                
                                                 placeholder="Optional"
                                             />
-                                        </div>
+</Field>
                                         <div className="input-group flex! items-end!">
                                             <button
                                                 className="action-btn"
@@ -344,37 +339,33 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                     </div>
 
                                     <div className="grid-forms" style={{ gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
-                                        <div className="input-group">
-                                            <label>Base Year</label>
-                                            <Input
+                                        <Field className="input-group" label="Base Year">
+<Input
                                                 type="number"
                                                 value={sbtiConfig.base_year}
                                                 onChange={e => setSbtiConfig({ ...sbtiConfig, base_year: parseInt(e.target.value) || 2024 })}
                                                
                                             />
-                                        </div>
-                                        <div className="input-group">
-                                            <label>Base Year Verified Emissions (tCO₂e)</label>
-                                            <Input
+</Field>
+                                        <Field className="input-group" label="Base Year Verified Emissions (tCO₂e)">
+<Input
                                                 type="number"
                                                 value={sbtiConfig.base_year_emissions}
                                                 onChange={e => setSbtiConfig({ ...sbtiConfig, base_year_emissions: parseFloat(e.target.value) || 0 })}
                                                
                                                 placeholder="Auto-calculated or manual override"
                                             />
-                                        </div>
-                                        <div className="input-group">
-                                            <label>Target Year (Net-Zero)</label>
-                                            <Input
+</Field>
+                                        <Field className="input-group" label="Target Year (Net-Zero)">
+<Input
                                                 type="number"
                                                 value={sbtiConfig.target_year}
                                                 onChange={e => setSbtiConfig({ ...sbtiConfig, target_year: parseInt(e.target.value) || 2050 })}
                                                
                                             />
-                                        </div>
-                                        <div className="input-group">
-                                            <label>Annual Reduction Rate (%)</label>
-                                            <Input
+</Field>
+                                        <Field className="input-group" label="Annual Reduction Rate (%)">
+<Input
                                                 type="number"
                                                 step="0.1"
                                                 value={sbtiConfig.reduction_rate_pct}
@@ -382,10 +373,9 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                                
                                                 placeholder="4.2% for 1.5°C"
                                             />
-                                        </div>
-                                        <div className="input-group">
-                                            <label>Climate Pathway Standard</label>
-                                            <NativeSelect
+</Field>
+                                        <Field className="input-group" label="Climate Pathway Standard">
+<NativeSelect
                                                 value={sbtiConfig.pathway_type}
                                                 onChange={e => setSbtiConfig({ ...sbtiConfig, pathway_type: e.target.value })}
                                                 className="component-select"
@@ -393,7 +383,7 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                                 <option value="1.5C">SBTi 1.5°C Aligned (Recommended, 4.2%/yr linear)</option>
                                                 <option value="well-below 2C">Well-Below 2°C (2.5%/yr linear)</option>
                                             </NativeSelect>
-                                        </div>
+</Field>
                                     </div>
 
                                     <div className="mt-[20px]! flex! gap-[12px]!">

@@ -1,5 +1,5 @@
 import React from "react";
-import { Input } from "../../ui";
+import { Input, Field } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
 
 const BlowdownForm = ({ data, onChange }) => {
@@ -34,12 +34,9 @@ const BlowdownForm = ({ data, onChange }) => {
           </div>
         </div>
 
-        <div className="input-group">
-          <label>
-            Pressure (psig)
-            <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-          </label>
-          <Input
+        <Field className="input-group" label={<>Pressure (psig)
+            <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+<Input
             type="number"
            
             value={data.blowdown_pressure || ""}
@@ -47,14 +44,11 @@ const BlowdownForm = ({ data, onChange }) => {
             placeholder="Before blowdown (psig)"
             required
           />
-        </div>
+</Field>
 
-        <div className="input-group">
-          <label>
-            Number of Events
-            <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-          </label>
-          <Input
+        <Field className="input-group" label={<>Number of Events
+            <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+<Input
             type="number"
            
             value={data.blowdown_events || ""}
@@ -62,14 +56,11 @@ const BlowdownForm = ({ data, onChange }) => {
             placeholder="Count"
             required
           />
-        </div>
+</Field>
 
-        <div className="input-group">
-          <label>
-            CH₄ (%)
-            <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-          </label>
-          <Input
+        <Field className="input-group" label={<>CH₄ (%)
+            <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+<Input
             type="number"
            
             value={
@@ -81,42 +72,37 @@ const BlowdownForm = ({ data, onChange }) => {
             placeholder="e.g. 85"
             required
           />
-        </div>
+</Field>
 
-        <div className="input-group">
-          <label>Gas CO2 Content (%)</label>
-          <Input
+        <Field className="input-group" label="Gas CO2 Content (%)">
+<Input
             type="number"
            
             value={data.co2_content || ""}
             onChange={(e) => onChange("co2_content", e.target.value)}
             placeholder="e.g. 2.5"
           />
-        </div>
+</Field>
 
-        <div className="input-group">
-          <label>Temperature (°F)</label>
-          <Input
+        <Field className="input-group" label="Temperature (°F)">
+<Input
             type="number"
            
             value={data.blowdown_temp !== undefined ? data.blowdown_temp : ""}
             onChange={(e) => onChange("blowdown_temp", e.target.value)}
             placeholder="Default: 60°F"
           />
-        </div>
+</Field>
 
-        <div className="input-group">
-          <label>
-            Flare Efficiency (%){" "}
-          </label>
-          <Input
+        <Field className="input-group" label={<>Flare Efficiency (%){" "}</>}>
+<Input
             type="number"
            
             value={data.control_efficiency || ""}
             onChange={(e) => onChange("control_efficiency", e.target.value)}
             placeholder="0 = Vented, 98 = Flared"
           />
-        </div>
+</Field>
       </div>
     </div>
   );

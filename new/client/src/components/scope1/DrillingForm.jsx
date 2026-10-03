@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Input } from "../../ui";
+import { Input, Field } from "../../ui";
 import CustomDropdown from "../CustomDropdown";
 
 const DrillingForm = ({ data, onChange, sourceType }) => {
@@ -37,12 +37,9 @@ const DrillingForm = ({ data, onChange, sourceType }) => {
     <div className="drilling-form mt-[15px]!">
 
       <div className="form-grid-2">
-        <div className="input-group">
-          <label>
-            {isTier1 && !isDefaultDays ? "Wells Drilled" : "Drilling Days"}
-            <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-          </label>
-          <Input
+        <Field className="input-group" label={<>{isTier1 && !isDefaultDays ? "Wells Drilled" : "Drilling Days"}
+            <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+<Input
             type="number"
             min="0"
             step="1"
@@ -56,7 +53,7 @@ const DrillingForm = ({ data, onChange, sourceType }) => {
               isTier1 && !isDefaultDays ? "Number of wells" : "Total drilling days"
             }
           />
-        </div>
+</Field>
 
       </div>
 

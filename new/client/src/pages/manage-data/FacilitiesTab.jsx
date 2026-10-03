@@ -1,5 +1,5 @@
 import React from 'react';
-import { Input } from "../../ui";
+import { Input, Field } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
 import { BOUNDARY_OPTIONS } from '../../constants';
 import { Upload } from 'lucide-react';
@@ -16,35 +16,29 @@ const FacilitiesTab = ({ ACTIVITY_LABELS, HIERARCHY, ITEMS_PER_PAGE, currentPage
                                 {['admin', 'superuser'].includes(user?.role) && (
                                     <>
                                         <div className="grid-forms" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
-                                            <div className="input-group">
-                                                <label>Region Name</label>
-                                                <Input type="text" name="name" value={facilityForm.name} onChange={handleFacilityChange} placeholder="e.g. Hassi R'Mel" />
-                                            </div>
-                                            <div className="input-group">
-                                                <label>Activity</label>
-                                                <NativeSelect name="activity" value={facilityForm.activity} onChange={(e) => setFacilityForm({ ...facilityForm, activity: e.target.value, division: '' })} className="component-select">
+                                            <Field className="input-group" label="Region Name">
+<Input type="text" name="name" value={facilityForm.name} onChange={handleFacilityChange} placeholder="e.g. Hassi R'Mel" />
+</Field>
+                                            <Field className="input-group" label="Activity">
+<NativeSelect name="activity" value={facilityForm.activity} onChange={(e) => setFacilityForm({ ...facilityForm, activity: e.target.value, division: '' })} className="component-select">
                                                     <option value="">Select Activity</option>
                                                     {Object.keys(HIERARCHY).map(a => <option key={a} value={a}>{ACTIVITY_LABELS[a]}</option>)}
                                                 </NativeSelect>
-                                            </div>
-                                            <div className="input-group">
-                                                <label>Division</label>
-                                                <NativeSelect name="division" value={facilityForm.division} onChange={handleFacilityChange} className="component-select" disabled={!facilityForm.activity}>
+</Field>
+                                            <Field className="input-group" label="Division">
+<NativeSelect name="division" value={facilityForm.division} onChange={handleFacilityChange} className="component-select" disabled={!facilityForm.activity}>
                                                     <option value="">Select Division</option>
                                                     {facilityForm.activity && HIERARCHY[facilityForm.activity] && HIERARCHY[facilityForm.activity].map(d => <option key={d} value={d}>{d}</option>)}
                                                 </NativeSelect>
-                                            </div>
-                                            <div className="input-group">
-                                                <label>Field / Block</label>
-                                                <Input type="text" name="field" value={facilityForm.field} onChange={handleFacilityChange} placeholder="Optional" />
-                                            </div>
-                                            <div className="input-group">
-                                                <label>Location (Wilaya)</label>
-                                                <Input type="text" name="location" value={facilityForm.location} onChange={handleFacilityChange} placeholder="e.g. Laghouat" />
-                                            </div>
-                                            <div className="input-group">
-                                                <label>Consolidation Approach</label>
-                                                <NativeSelect
+</Field>
+                                            <Field className="input-group" label="Field / Block">
+<Input type="text" name="field" value={facilityForm.field} onChange={handleFacilityChange} placeholder="Optional" />
+</Field>
+                                            <Field className="input-group" label="Location (Wilaya)">
+<Input type="text" name="location" value={facilityForm.location} onChange={handleFacilityChange} placeholder="e.g. Laghouat" />
+</Field>
+                                            <Field className="input-group" label="Consolidation Approach">
+<NativeSelect
                                                     name="boundary_type"
                                                     value={facilityForm.boundary_type}
                                                     onChange={(e) => setFacilityForm({ ...facilityForm, boundary_type: e.target.value, boundary_detail: '' })}
@@ -55,10 +49,9 @@ const FacilitiesTab = ({ ACTIVITY_LABELS, HIERARCHY, ITEMS_PER_PAGE, currentPage
                                                         <option key={opt} value={opt}>{opt}</option>
                                                     ))}
                                                 </NativeSelect>
-                                            </div>
-                                            <div className="input-group">
-                                                <label>Boundary Details</label>
-                                                <NativeSelect
+</Field>
+                                            <Field className="input-group" label="Boundary Details">
+<NativeSelect
                                                     name="boundary_detail"
                                                     value={facilityForm.boundary_detail}
                                                     onChange={(e) => setFacilityForm({ ...facilityForm, boundary_detail: e.target.value })}
@@ -70,11 +63,10 @@ const FacilitiesTab = ({ ACTIVITY_LABELS, HIERARCHY, ITEMS_PER_PAGE, currentPage
                                                         <option key={detail} value={detail}>{detail}</option>
                                                     ))}
                                                 </NativeSelect>
-                                            </div>
+</Field>
                                             {facilityForm.boundary_type === 'Equity Share' && (
-                                                <div className="input-group">
-                                                    <label>Equity Share Percentage (%)</label>
-                                                    <Input
+                                                <Field className="input-group" label="Equity Share Percentage (%)">
+<Input
                                                         type="number"
                                                         step="0.01"
                                                         min="0"
@@ -85,11 +77,10 @@ const FacilitiesTab = ({ ACTIVITY_LABELS, HIERARCHY, ITEMS_PER_PAGE, currentPage
                                                        
                                                         placeholder="e.g. 51.00"
                                                     />
-                                                </div>
+</Field>
                                             )}
-                                            <div className="input-group">
-                                                <label>Supply Chain Segment</label>
-                                                <NativeSelect name="segment" value={facilityForm.segment} onChange={handleFacilityChange} className="component-select">
+                                            <Field className="input-group" label="Supply Chain Segment">
+<NativeSelect name="segment" value={facilityForm.segment} onChange={handleFacilityChange} className="component-select">
                                                     <option value="">Select Segment</option>
                                                     <option value="Upstream">Upstream</option>
                                                     <option value="Midstream">Midstream</option>
@@ -98,15 +89,13 @@ const FacilitiesTab = ({ ACTIVITY_LABELS, HIERARCHY, ITEMS_PER_PAGE, currentPage
                                                     <option value="Utilities">Utilities</option>
                                                     <option value="Other">Other</option>
                                                 </NativeSelect>
-                                            </div>
-                                            <div className="input-group">
-                                                <label>Latitude</label>
-                                                <Input type="number" step="any" name="latitude" value={facilityForm.latitude} onChange={handleFacilityChange} placeholder="e.g. 33.8" />
-                                            </div>
-                                            <div className="input-group">
-                                                <label>Longitude</label>
-                                                <Input type="number" step="any" name="longitude" value={facilityForm.longitude} onChange={handleFacilityChange} placeholder="e.g. 6.07" />
-                                            </div>
+</Field>
+                                            <Field className="input-group" label="Latitude">
+<Input type="number" step="any" name="latitude" value={facilityForm.latitude} onChange={handleFacilityChange} placeholder="e.g. 33.8" />
+</Field>
+                                            <Field className="input-group" label="Longitude">
+<Input type="number" step="any" name="longitude" value={facilityForm.longitude} onChange={handleFacilityChange} placeholder="e.g. 6.07" />
+</Field>
                                         </div>
 
                                         <div className="flex! gap-[12px]! mt-[20px]!">

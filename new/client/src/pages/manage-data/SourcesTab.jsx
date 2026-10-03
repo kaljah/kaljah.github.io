@@ -1,5 +1,5 @@
 import React from 'react';
-import { Input } from "../../ui";
+import { Input, Field } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
 import CustomDropdown from '../../components/CustomDropdown';
 import { PROCESS_TYPES } from '../../utils/EmissionFactors';
@@ -13,14 +13,11 @@ const SourcesTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToCSV,
                                 <p style={{ color: 'var(--text-secondary)', marginBottom: '32px' }}>Manage operational equipment and emission sources.</p>
 
                                 <div className="grid-forms" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
-                                    <div className="input-group">
-                                        <label className="flex! items-center! gap-[6px]!">
-                                            Activity
+                                    <Field className="input-group" label={<>Activity
                                             {!isPrivileged && getAvailableActivities().length === 1 && (
                                                 <span style={{ fontSize: '0.65rem', background: '#dbeafe', color: '#1d4ed8', borderRadius: '4px', padding: '1px 5px', fontWeight: 600 }}>Auto</span>
-                                            )}
-                                        </label>
-                                        <NativeSelect
+                                            )}</>}>
+<NativeSelect
                                             value={sourceForm.activity}
                                             onChange={(e) => setSourceForm({ ...sourceForm, activity: e.target.value, division: '', facility_id: '' })}
                                             className="component-select"
@@ -29,15 +26,12 @@ const SourcesTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToCSV,
                                             <option value="">Select Activity</option>
                                             {getAvailableActivities().map(a => <option key={a} value={a}>{ACTIVITY_LABELS[a] || a}</option>)}
                                         </NativeSelect>
-                                    </div>
-                                    <div className="input-group">
-                                        <label className="flex! items-center! gap-[6px]!">
-                                            Division
+</Field>
+                                    <Field className="input-group" label={<>Division
                                             {!isPrivileged && getAvailableDivisions(sourceForm.activity).length === 1 && (
                                                 <span style={{ fontSize: '0.65rem', background: '#dbeafe', color: '#1d4ed8', borderRadius: '4px', padding: '1px 5px', fontWeight: 600 }}>Auto</span>
-                                            )}
-                                        </label>
-                                        <NativeSelect
+                                            )}</>}>
+<NativeSelect
                                             value={sourceForm.division}
                                             onChange={(e) => setSourceForm({ ...sourceForm, division: e.target.value, facility_id: '' })}
                                             className="component-select"
@@ -46,7 +40,7 @@ const SourcesTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToCSV,
                                             <option value="">Select Division</option>
                                             {getAvailableDivisions(sourceForm.activity).map(d => <option key={d} value={d}>{d}</option>)}
                                         </NativeSelect>
-                                    </div>
+</Field>
 
                                     <div className="input-group">
                                         <label className="flex! items-center! gap-[6px]!">
@@ -68,27 +62,23 @@ const SourcesTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToCSV,
                                             disabled={!sourceForm.division || (!isPrivileged && facilities.filter(f => f.activity === sourceForm.activity && f.division === sourceForm.division).length === 1)}
                                         />
                                     </div>
-                                    <div className="input-group">
-                                        <label>Source Name</label>
-                                        <Input type="text" value={sourceForm.name} onChange={(e) => setSourceForm({ ...sourceForm, name: e.target.value })} placeholder="e.g. Flare A" />
-                                    </div>
-                                    <div className="input-group">
-                                        <label>Type</label>
-                                        <NativeSelect value={sourceForm.type} onChange={(e) => setSourceForm({ ...sourceForm, type: e.target.value })} className="component-select">
+                                    <Field className="input-group" label="Source Name">
+<Input type="text" value={sourceForm.name} onChange={(e) => setSourceForm({ ...sourceForm, name: e.target.value })} placeholder="e.g. Flare A" />
+</Field>
+                                    <Field className="input-group" label="Type">
+<NativeSelect value={sourceForm.type} onChange={(e) => setSourceForm({ ...sourceForm, type: e.target.value })} className="component-select">
                                             <option value="">Select Type</option>
                                             {Object.entries(PROCESS_TYPES).map(([val, label]) => (
                                                 <option key={val} value={val}>{label}</option>
                                             ))}
                                         </NativeSelect>
-                                    </div>
-                                    <div className="input-group">
-                                        <label>Equipment ID (Optional)</label>
-                                        <Input type="text" value={sourceForm.equipment_id} onChange={(e) => setSourceForm({ ...sourceForm, equipment_id: e.target.value })} placeholder="e.g. COMP-001" />
-                                    </div>
-                                    <div className="input-group">
-                                        <label>Fuel</label>
-                                        <Input type="text" value={sourceForm.fuel_type} onChange={(e) => setSourceForm({ ...sourceForm, fuel_type: e.target.value })} />
-                                    </div>
+</Field>
+                                    <Field className="input-group" label="Equipment ID (Optional)">
+<Input type="text" value={sourceForm.equipment_id} onChange={(e) => setSourceForm({ ...sourceForm, equipment_id: e.target.value })} placeholder="e.g. COMP-001" />
+</Field>
+                                    <Field className="input-group" label="Fuel">
+<Input type="text" value={sourceForm.fuel_type} onChange={(e) => setSourceForm({ ...sourceForm, fuel_type: e.target.value })} />
+</Field>
                                 </div>
                                 <div className="flex! gap-[12px]! mt-[20px]!">
                                     <button className="action-btn" onClick={handleSaveSource}>Add Source</button>

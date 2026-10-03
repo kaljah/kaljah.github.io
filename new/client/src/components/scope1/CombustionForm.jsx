@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Input } from "../../ui";
+import { Input, Field } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
 import CustomDropdown from "../CustomDropdown";
 import { API_FACTORS } from "../../utils/EmissionFactors";
@@ -65,24 +65,21 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
   return (
     <div className="combustion-form">
       <div className="form-grid-2">
-        <div className="input-group">
-          <label>
-            {isFlaring
+        <Field className="input-group" label={<>{isFlaring
               ? "Gas Volume Flared"
               : data.process_type === "loading"
                 ? "Volume Loaded"
                 : data.process_type === "separation"
                   ? "Volume treated"
-                  : "Quantity"}
-          </label>
-          <Input
+                  : "Quantity"}</>}>
+<Input
             type="number"
            
             value={data.amount || ""}
             onChange={(e) => onChange("amount", e.target.value)}
             placeholder="0.00"
           />
-        </div>
+</Field>
 
         <div className="input-group">
           <label>Unit</label>

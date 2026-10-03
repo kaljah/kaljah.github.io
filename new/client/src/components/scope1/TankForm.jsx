@@ -1,5 +1,5 @@
 import React from "react";
-import { Input } from "../../ui";
+import { Input, Field } from "../../ui";
 import CustomDropdown from "../CustomDropdown";
 
 const TankForm = ({ data, onChange, sourceType }) => {
@@ -66,12 +66,9 @@ const TankForm = ({ data, onChange, sourceType }) => {
           {/* Flashing / Working / Breathing Specific Inputs */}
           {["tank", "tank_flashing", "tank_working", "tank_breathing"].includes(processType) && (
             <>
-              <div className="input-group">
-                <label>
-                  GOR (scf/bbl)
-                  <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-                </label>
-                <Input
+              <Field className="input-group" label={<>GOR (scf/bbl)
+                  <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+<Input
                   type="number"
                  
                   value={data.tank_gor || ""}
@@ -79,50 +76,44 @@ const TankForm = ({ data, onChange, sourceType }) => {
                   placeholder="e.g. 500"
                   required
                 />
-              </div>
+</Field>
 
-              <div className="input-group">
-                <label>Oil API Gravity</label>
-                <Input
+              <Field className="input-group" label="Oil API Gravity">
+<Input
                   type="number"
                  
                   value={data.tank_api_gravity || ""}
                   onChange={(e) => onChange("tank_api_gravity", e.target.value)}
                   placeholder="e.g. 35"
                 />
-              </div>
+</Field>
             </>
           )}
 
           {/* Common Engineering Inputs */}
-          <div className="input-group">
-            <label>Temperature (°F)</label>
-            <Input
+          <Field className="input-group" label="Temperature (°F)">
+<Input
               type="number"
              
               value={data.tank_temp || ""}
               onChange={(e) => onChange("tank_temp", e.target.value)}
               placeholder="e.g. 60"
             />
-          </div>
+</Field>
 
-          <div className="input-group">
-            <label>Separator pressure (psig)</label>
-            <Input
+          <Field className="input-group" label="Separator pressure (psig)">
+<Input
               type="number"
              
               value={data.tank_sep_pressure || ""}
               onChange={(e) => onChange("tank_sep_pressure", e.target.value)}
               placeholder="e.g. 50"
             />
-          </div>
+</Field>
 
-          <div className="input-group">
-            <label>
-              CH₄ (%)
-              <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-            </label>
-            <Input
+          <Field className="input-group" label={<>CH₄ (%)
+              <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+<Input
               type="number"
              
               value={
@@ -135,7 +126,7 @@ const TankForm = ({ data, onChange, sourceType }) => {
               placeholder="e.g. 85"
               required
             />
-          </div>
+</Field>
 
           <div className="input-group">
             <label>Control Efficiency (%)</label>

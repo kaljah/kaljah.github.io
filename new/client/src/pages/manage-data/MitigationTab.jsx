@@ -1,5 +1,5 @@
 import React from 'react';
-import { Input } from "../../ui";
+import { Input, Field } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
 import CustomDropdown from '../../components/CustomDropdown';
 import { Upload } from 'lucide-react';
@@ -23,14 +23,11 @@ const MitigationTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, facilitie
                                 </div>
 
                                 <div className="grid-forms" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
-                                    <div className="input-group">
-                                        <label className="flex! items-center! gap-[6px]!">
-                                            Activity
+                                    <Field className="input-group" label={<>Activity
                                             {!isPrivileged && getAvailableActivities().length === 1 && (
                                                 <span style={{ fontSize: '0.65rem', background: '#dbeafe', color: '#1d4ed8', borderRadius: '4px', padding: '1px 5px', fontWeight: 600 }}>Auto</span>
-                                            )}
-                                        </label>
-                                        <NativeSelect
+                                            )}</>}>
+<NativeSelect
                                             value={mitigationForm.activity}
                                             onChange={(e) => setMitigationForm({ ...mitigationForm, activity: e.target.value, division: '', facility_id: '' })}
                                             className="component-select"
@@ -39,15 +36,12 @@ const MitigationTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, facilitie
                                             <option value="">Select Activity</option>
                                             {getAvailableActivities().map(a => <option key={a} value={a}>{ACTIVITY_LABELS[a] || a}</option>)}
                                         </NativeSelect>
-                                    </div>
-                                    <div className="input-group">
-                                        <label className="flex! items-center! gap-[6px]!">
-                                            Division
+</Field>
+                                    <Field className="input-group" label={<>Division
                                             {!isPrivileged && getAvailableDivisions(mitigationForm.activity).length === 1 && (
                                                 <span style={{ fontSize: '0.65rem', background: '#dbeafe', color: '#1d4ed8', borderRadius: '4px', padding: '1px 5px', fontWeight: 600 }}>Auto</span>
-                                            )}
-                                        </label>
-                                        <NativeSelect
+                                            )}</>}>
+<NativeSelect
                                             value={mitigationForm.division}
                                             onChange={(e) => setMitigationForm({ ...mitigationForm, division: e.target.value, facility_id: '' })}
                                             className="component-select"
@@ -56,7 +50,7 @@ const MitigationTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, facilitie
                                             <option value="">Select Division</option>
                                             {getAvailableDivisions(mitigationForm.activity).map(d => <option key={d} value={d}>{d}</option>)}
                                         </NativeSelect>
-                                    </div>
+</Field>
 
                                     <div className="input-group">
                                         <label className="flex! items-center! gap-[6px]!">
@@ -79,37 +73,32 @@ const MitigationTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, facilitie
                                         />
                                     </div>
 
-                                    <div className="input-group">
-                                        <label>Project Name</label>
-                                        <Input type="text" value={mitigationForm.name} onChange={(e) => setMitigationForm({ ...mitigationForm, name: e.target.value })} placeholder="e.g. Flare Reduction Unit 1" />
-                                    </div>
+                                    <Field className="input-group" label="Project Name">
+<Input type="text" value={mitigationForm.name} onChange={(e) => setMitigationForm({ ...mitigationForm, name: e.target.value })} placeholder="e.g. Flare Reduction Unit 1" />
+</Field>
 
-                                    <div className="input-group">
-                                        <label>Year</label>
-                                        <Input type="number" value={mitigationForm.year} onChange={(e) => setMitigationForm({ ...mitigationForm, year: e.target.value })} />
-                                    </div>
-                                    <div className="input-group">
-                                        <label>Type</label>
-                                        <NativeSelect value={mitigationForm.type} onChange={(e) => setMitigationForm({ ...mitigationForm, type: e.target.value })} className="component-select">
+                                    <Field className="input-group" label="Year">
+<Input type="number" value={mitigationForm.year} onChange={(e) => setMitigationForm({ ...mitigationForm, year: e.target.value })} />
+</Field>
+                                    <Field className="input-group" label="Type">
+<NativeSelect value={mitigationForm.type} onChange={(e) => setMitigationForm({ ...mitigationForm, type: e.target.value })} className="component-select">
                                             <option value="CCUS">CCUS (Carbon Capture)</option>
                                             <option value="REC">REC (Renewable Energy Credit)</option>
                                             <option value="Offset">Carbon Offset</option>
                                             <option value="Efficiency">Energy Efficiency</option>
                                             <option value="Process">Process Improvement</option>
                                         </NativeSelect>
-                                    </div>
-                                    <div className="input-group">
-                                        <label>Quantity (tCO₂e)</label>
-                                        <Input type="number" value={mitigationForm.quantity_tco2e} onChange={(e) => setMitigationForm({ ...mitigationForm, quantity_tco2e: e.target.value })} placeholder="0.0" />
-                                    </div>
-                                    <div className="input-group">
-                                        <label>Status</label>
-                                        <NativeSelect value={mitigationForm.status} onChange={(e) => setMitigationForm({ ...mitigationForm, status: e.target.value })} className="component-select">
+</Field>
+                                    <Field className="input-group" label="Quantity (tCO₂e)">
+<Input type="number" value={mitigationForm.quantity_tco2e} onChange={(e) => setMitigationForm({ ...mitigationForm, quantity_tco2e: e.target.value })} placeholder="0.0" />
+</Field>
+                                    <Field className="input-group" label="Status">
+<NativeSelect value={mitigationForm.status} onChange={(e) => setMitigationForm({ ...mitigationForm, status: e.target.value })} className="component-select">
                                             <option value="Active">Active</option>
                                             <option value="Planned">Planned</option>
                                             <option value="Completed">Completed</option>
                                         </NativeSelect>
-                                    </div>
+</Field>
                                 </div>
                                 <div className="flex! gap-[12px]! mt-[20px]!">
                                     <button className="action-btn" onClick={handleSaveMitigation}>Save Record</button>

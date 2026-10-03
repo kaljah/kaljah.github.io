@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Input } from "../../ui";
+import { Input, Field } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
 import CustomDropdown from "../CustomDropdown";
 import { Segmented } from "./ui";
@@ -376,9 +376,8 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
               </div>
             </div>
 
-            <div className="input-group">
-              <label>Period (days)</label>
-              <Input
+            <Field className="input-group" label="Period (days)">
+<Input
                 type="number"
                 min="1"
                 max="366"
@@ -388,14 +387,13 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
                 value={data.period_duration !== undefined ? data.period_duration : String(monthDays)}
                 onChange={(e) => onChange("period_duration", e.target.value)}
               />
-            </div>
+</Field>
           </div>
 
           {/* Gas Composition */}
           <div className="form-grid-2">
-            <div className="input-group">
-              <label>CH₄ (mol %)</label>
-              <Input
+            <Field className="input-group" label="CH₄ (mol %)">
+<Input
                 type="number"
                 min="0"
                 max="100"
@@ -405,11 +403,10 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
                 value={data.ch4_content !== undefined ? data.ch4_content : "70.0"}
                 onChange={(e) => onChange("ch4_content", e.target.value)}
               />
-            </div>
+</Field>
 
-            <div className="input-group">
-              <label>CO₂ (mol %)</label>
-              <Input
+            <Field className="input-group" label="CO₂ (mol %)">
+<Input
                 type="number"
                 min="0"
                 max="100"
@@ -419,7 +416,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
                 value={data.co2_content !== undefined ? data.co2_content : "10.0"}
                 onChange={(e) => onChange("co2_content", e.target.value)}
               />
-            </div>
+</Field>
           </div>
 
           {/* Gas Volume Unit Selector for Partitioning */}
@@ -565,12 +562,9 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
                 </div>
               </div>
 
-              <div className="input-group">
-                <label>
-                  Venting time (h)
-                  <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-                </label>
-                <Input
+              <Field className="input-group" label={<>Venting time (h)
+                  <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+<Input
                   type="number"
                   min="0"
                   step="any"
@@ -580,7 +574,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
                   onChange={(e) => onChange("venting_duration", e.target.value)}
                   required
                 />
-              </div>
+</Field>
             </div>
           ) : (
             <div className="input-group">
@@ -624,12 +618,9 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
 
           {/* Tier 3 Measured Gas Composition */}
           <div className="form-grid-2">
-            <div className="input-group">
-              <label>
-                CH₄ (mol %)
-                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-              </label>
-              <Input
+            <Field className="input-group" label={<>CH₄ (mol %)
+                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+<Input
                 type="number"
                 min="0"
                 max="100"
@@ -640,11 +631,10 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
                 onChange={(e) => onChange("ch4_content", e.target.value)}
                 required
               />
-            </div>
+</Field>
 
-            <div className="input-group">
-              <label>CO₂ (mol %)</label>
-              <Input
+            <Field className="input-group" label="CO₂ (mol %)">
+<Input
                 type="number"
                 min="0"
                 max="100"
@@ -654,7 +644,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
                 value={data.co2_content !== undefined ? data.co2_content : "0.0"}
                 onChange={(e) => onChange("co2_content", e.target.value)}
               />
-            </div>
+</Field>
           </div>
         </div>
       )}

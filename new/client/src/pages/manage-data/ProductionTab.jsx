@@ -1,5 +1,5 @@
 import React from 'react';
-import { Input } from "../../ui";
+import { Input, Field } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
 import CustomDropdown from '../../components/CustomDropdown';
 import { Upload } from 'lucide-react';
@@ -23,14 +23,11 @@ const ProductionTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToC
                                 </div>
 
                                 <div className="grid-forms" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
-                                    <div className="input-group">
-                                        <label className="flex! items-center! gap-[6px]!">
-                                            Activity
+                                    <Field className="input-group" label={<>Activity
                                             {!isPrivileged && getAvailableActivities().length === 1 && (
                                                 <span style={{ fontSize: '0.65rem', background: '#dbeafe', color: '#1d4ed8', borderRadius: '4px', padding: '1px 5px', fontWeight: 600 }}>Auto</span>
-                                            )}
-                                        </label>
-                                        <NativeSelect
+                                            )}</>}>
+<NativeSelect
                                             value={prodForm.activity}
                                             onChange={(e) => setProdForm({ ...prodForm, activity: e.target.value, division: '', facility_id: '' })}
                                             className="component-select"
@@ -39,15 +36,12 @@ const ProductionTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToC
                                             <option value="">Select Activity</option>
                                             {getAvailableActivities().map(a => <option key={a} value={a}>{ACTIVITY_LABELS[a] || a}</option>)}
                                         </NativeSelect>
-                                    </div>
-                                    <div className="input-group">
-                                        <label className="flex! items-center! gap-[6px]!">
-                                            Division
+</Field>
+                                    <Field className="input-group" label={<>Division
                                             {!isPrivileged && getAvailableDivisions(prodForm.activity).length === 1 && (
                                                 <span style={{ fontSize: '0.65rem', background: '#dbeafe', color: '#1d4ed8', borderRadius: '4px', padding: '1px 5px', fontWeight: 600 }}>Auto</span>
-                                            )}
-                                        </label>
-                                        <NativeSelect
+                                            )}</>}>
+<NativeSelect
                                             value={prodForm.division}
                                             onChange={(e) => setProdForm({ ...prodForm, division: e.target.value, facility_id: '' })}
                                             className="component-select"
@@ -56,7 +50,7 @@ const ProductionTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToC
                                             <option value="">Select Division</option>
                                             {getAvailableDivisions(prodForm.activity).map(d => <option key={d} value={d}>{d}</option>)}
                                         </NativeSelect>
-                                    </div>
+</Field>
 
                                     <div className="input-group">
                                         <label className="flex! items-center! gap-[6px]!">
@@ -78,9 +72,8 @@ const ProductionTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToC
                                             disabled={!prodForm.division || (!isPrivileged && facilities.filter(f => f.activity === prodForm.activity && f.division === prodForm.division).length === 1)}
                                         />
                                     </div>
-                                    <div className="input-group">
-                                        <label>Month</label>
-                                        <NativeSelect
+                                    <Field className="input-group" label="Month">
+<NativeSelect
                                             value={prodForm.month}
                                             onChange={(e) => setProdForm({ ...prodForm, month: parseInt(e.target.value) })}
                                             className="component-select"
@@ -89,11 +82,10 @@ const ProductionTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToC
                                                 <option key={m} value={m}>{new Date(2000, m - 1).toLocaleString('default', { month: 'long' })}</option>
                                             ))}
                                         </NativeSelect>
-                                    </div>
-                                    <div className="input-group">
-                                        <label>Year</label>
-                                        <Input type="number" value={prodForm.year} onChange={(e) => setProdForm({ ...prodForm, year: e.target.value })} />
-                                    </div>
+</Field>
+                                    <Field className="input-group" label="Year">
+<Input type="number" value={prodForm.year} onChange={(e) => setProdForm({ ...prodForm, year: e.target.value })} />
+</Field>
                                     <div className="input-group">
                                         <label>Oil ({prodForm.oil_unit}) <button onClick={openOilConverter} style={{ fontSize: '0.65rem', padding: '2px 4px', marginLeft: '8px', cursor: 'pointer', background: 'var(--accent-color)', color: 'white', border: 'none', borderRadius: '3px' }}>Convert m³</button></label>
                                         <div className="flex! gap-[8px]!">
@@ -114,38 +106,30 @@ const ProductionTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToC
                                             </NativeSelect>
                                         </div>
                                     </div>
-                                    <div className="input-group">
-                                        <label>Gross Gas (MMSm³)</label>
-                                        <Input type="number" step="any" value={prodForm.gross_gas_mmsm3} onChange={(e) => setProdForm({ ...prodForm, gross_gas_mmsm3: e.target.value })} placeholder="0.0" />
-                                    </div>
-                                    <div className="input-group">
-                                        <label>Gas w/o Injection (MMSm³)</label>
-                                        <Input type="number" step="any" value={prodForm.gas_without_injected_mmsm3} onChange={(e) => setProdForm({ ...prodForm, gas_without_injected_mmsm3: e.target.value })} placeholder="0.0" />
-                                    </div>
-                                    <div className="input-group">
-                                        <label>Injected Gas (MMSm³)</label>
-                                        <Input type="number" step="any" value={prodForm.injected_gas_mmsm3} onChange={(e) => setProdForm({ ...prodForm, injected_gas_mmsm3: e.target.value })} placeholder="0.0" />
-                                    </div>
-                                    <div className="input-group">
-                                        <label>Crude Oil (MMBOE)</label>
-                                        <Input type="number" step="any" value={prodForm.crude_oil_mmboe} onChange={(e) => setProdForm({ ...prodForm, crude_oil_mmboe: e.target.value })} placeholder="0.0" />
-                                    </div>
-                                    <div className="input-group">
-                                        <label>Condensate (MMBOE)</label>
-                                        <Input type="number" step="any" value={prodForm.condensate_mmboe} onChange={(e) => setProdForm({ ...prodForm, condensate_mmboe: e.target.value })} placeholder="0.0" />
-                                    </div>
-                                    <div className="input-group">
-                                        <label>LPG (MMBOE)</label>
-                                        <Input type="number" step="any" value={prodForm.lpg_mmboe} onChange={(e) => setProdForm({ ...prodForm, lpg_mmboe: e.target.value })} placeholder="0.0" />
-                                    </div>
-                                    <div className="input-group">
-                                        <label>Total Production (MMBOE)</label>
-                                        <Input type="number" step="any" value={prodForm.total_production_mmboe} onChange={(e) => setProdForm({ ...prodForm, total_production_mmboe: e.target.value })} placeholder="0.0" />
-                                    </div>
-                                    <div className="input-group">
-                                        <label>Total Saleable (MMBOE)</label>
-                                        <Input type="number" step="any" value={prodForm.saleable_production_mmboe} onChange={(e) => setProdForm({ ...prodForm, saleable_production_mmboe: e.target.value })} placeholder="0.0" />
-                                    </div>
+                                    <Field className="input-group" label="Gross Gas (MMSm³)">
+<Input type="number" step="any" value={prodForm.gross_gas_mmsm3} onChange={(e) => setProdForm({ ...prodForm, gross_gas_mmsm3: e.target.value })} placeholder="0.0" />
+</Field>
+                                    <Field className="input-group" label="Gas w/o Injection (MMSm³)">
+<Input type="number" step="any" value={prodForm.gas_without_injected_mmsm3} onChange={(e) => setProdForm({ ...prodForm, gas_without_injected_mmsm3: e.target.value })} placeholder="0.0" />
+</Field>
+                                    <Field className="input-group" label="Injected Gas (MMSm³)">
+<Input type="number" step="any" value={prodForm.injected_gas_mmsm3} onChange={(e) => setProdForm({ ...prodForm, injected_gas_mmsm3: e.target.value })} placeholder="0.0" />
+</Field>
+                                    <Field className="input-group" label="Crude Oil (MMBOE)">
+<Input type="number" step="any" value={prodForm.crude_oil_mmboe} onChange={(e) => setProdForm({ ...prodForm, crude_oil_mmboe: e.target.value })} placeholder="0.0" />
+</Field>
+                                    <Field className="input-group" label="Condensate (MMBOE)">
+<Input type="number" step="any" value={prodForm.condensate_mmboe} onChange={(e) => setProdForm({ ...prodForm, condensate_mmboe: e.target.value })} placeholder="0.0" />
+</Field>
+                                    <Field className="input-group" label="LPG (MMBOE)">
+<Input type="number" step="any" value={prodForm.lpg_mmboe} onChange={(e) => setProdForm({ ...prodForm, lpg_mmboe: e.target.value })} placeholder="0.0" />
+</Field>
+                                    <Field className="input-group" label="Total Production (MMBOE)">
+<Input type="number" step="any" value={prodForm.total_production_mmboe} onChange={(e) => setProdForm({ ...prodForm, total_production_mmboe: e.target.value })} placeholder="0.0" />
+</Field>
+                                    <Field className="input-group" label="Total Saleable (MMBOE)">
+<Input type="number" step="any" value={prodForm.saleable_production_mmboe} onChange={(e) => setProdForm({ ...prodForm, saleable_production_mmboe: e.target.value })} placeholder="0.0" />
+</Field>
                                 </div>
                                 <div className="flex! gap-[12px]! mt-[20px]!">
                                     <button className="action-btn" onClick={handleSaveProduction}>Save Record</button>

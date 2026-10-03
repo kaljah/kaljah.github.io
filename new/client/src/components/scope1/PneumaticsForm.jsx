@@ -1,5 +1,5 @@
 import React from "react";
-import { Input } from "../../ui";
+import { Input, Field } from "../../ui";
 import CustomDropdown from "../CustomDropdown";
 
 const PneumaticsForm = ({ data, onChange, sourceType }) => {
@@ -10,12 +10,9 @@ const PneumaticsForm = ({ data, onChange, sourceType }) => {
 
       {/* Device Type removed as per request */}
 
-      <div className="input-group">
-        <label>
-          Devices
-          <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-        </label>
-        <Input
+      <Field className="input-group" label={<>Devices
+          <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+<Input
           type="number"
          
           value={data.amount || ""}
@@ -23,7 +20,7 @@ const PneumaticsForm = ({ data, onChange, sourceType }) => {
           placeholder="Count"
           required
         />
-      </div>
+</Field>
 
       {/* Engineering Mode: Additional Inputs */}
       {isEngineering && (
@@ -59,12 +56,9 @@ const PneumaticsForm = ({ data, onChange, sourceType }) => {
             </div>
           </div>
 
-          <div className="input-group">
-            <label>
-              CH₄ (%)
-              <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-            </label>
-            <Input
+          <Field className="input-group" label={<>CH₄ (%)
+              <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+<Input
               type="number"
              
               value={
@@ -77,14 +71,11 @@ const PneumaticsForm = ({ data, onChange, sourceType }) => {
               placeholder="e.g. 85"
               required
             />
-          </div>
+</Field>
 
-          <div className="input-group">
-            <label>
-              Hours per year
-              <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-            </label>
-            <Input
+          <Field className="input-group" label={<>Hours per year
+              <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+<Input
               type="number"
              
               value={data.pneu_hours || ""}
@@ -92,7 +83,7 @@ const PneumaticsForm = ({ data, onChange, sourceType }) => {
               placeholder="whole month if blank"
               required
             />
-          </div>
+</Field>
         </>
       )}
     </div>

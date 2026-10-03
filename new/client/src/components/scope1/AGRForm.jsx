@@ -1,5 +1,5 @@
 import React from "react";
-import { Input } from "../../ui";
+import { Input, Field } from "../../ui";
 import CustomDropdown from "../CustomDropdown";
 
 const AGRForm = ({ data, onChange, sourceType }) => {
@@ -56,12 +56,9 @@ const AGRForm = ({ data, onChange, sourceType }) => {
             />
           </div>
 
-          <div className="input-group">
-            <label>
-              Inlet CO2 (%)
-              <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-            </label>
-            <Input
+          <Field className="input-group" label={<>Inlet CO2 (%)
+              <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+<Input
               type="number"
              
               value={
@@ -73,14 +70,11 @@ const AGRForm = ({ data, onChange, sourceType }) => {
               placeholder="e.g. 5.0"
               required
             />
-          </div>
+</Field>
 
-          <div className="input-group">
-            <label>
-              Outlet CO2 (%)
-              <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-            </label>
-            <Input
+          <Field className="input-group" label={<>Outlet CO2 (%)
+              <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+<Input
               type="number"
              
               value={
@@ -92,11 +86,10 @@ const AGRForm = ({ data, onChange, sourceType }) => {
               placeholder="e.g. 0.05"
               required
             />
-          </div>
+</Field>
 
-          <div className="input-group">
-            <label>CH₄ (%)</label>
-            <Input
+          <Field className="input-group" label="CH₄ (%)">
+<Input
               type="number"
              
               value={
@@ -107,11 +100,10 @@ const AGRForm = ({ data, onChange, sourceType }) => {
               onChange={(e) => onChange("ch4_mole_pct", e.target.value)}
               placeholder="e.g. 85.0"
             />
-          </div>
+</Field>
 
-          <div className="input-group">
-            <label>CH₄ slip (fraction of inlet CH₄)</label>
-            <Input
+          <Field className="input-group" label="CH₄ slip (fraction of inlet CH₄)">
+<Input
               type="number"
              
               value={
@@ -124,7 +116,7 @@ const AGRForm = ({ data, onChange, sourceType }) => {
               placeholder="blank = Compendium factor"
               step="any"
             />
-          </div>
+</Field>
 
           {/* BUG-090: the old "flash gas recycled" / "routed to flare" checkboxes were read by no
               server code. Control is now sent as the keys the calculator uses. */}
@@ -143,12 +135,9 @@ const AGRForm = ({ data, onChange, sourceType }) => {
             />
           </div>
           {(data.agr_control_type || "vent") !== "vent" && (
-            <div className="input-group">
-              <label>
-                Control Efficiency (%)
-                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-              </label>
-              <Input
+            <Field className="input-group" label={<>Control Efficiency (%)
+                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+<Input
                 type="number"
                
                 min="0"
@@ -158,7 +147,7 @@ const AGRForm = ({ data, onChange, sourceType }) => {
                 placeholder="e.g. 98"
                 required
               />
-            </div>
+</Field>
           )}
         </>
       )}

@@ -1,5 +1,5 @@
 import React from "react";
-import { Input } from "../../ui";
+import { Input, Field } from "../../ui";
 import ColumnMappingWizard from "../ColumnMappingWizard";
 import CustomDropdown from "../CustomDropdown";
 import { NativeSelect } from "../../ui/NativeSelect";
@@ -92,18 +92,16 @@ const Scope3FormNewScope3 = ({ UNIT_MULTIPLIERS, activityType, amount, baseUnit,
             marginBottom: "20px",
           }}
         >
-          <div className="input-group">
-            <label>Year</label>
-            <Input
+          <Field className="input-group" label="Year">
+<Input
               type="number"
              
               value={year || ""}
               onChange={(e) => setYear(e.target.value)}
             />
-          </div>
-          <div className="input-group">
-            <label>Month</label>
-            <NativeSelect
+</Field>
+          <Field className="input-group" label="Month">
+<NativeSelect
               className="component-select"
               value={month || 1}
               onChange={(e) => setMonth(e.target.value)}
@@ -114,7 +112,7 @@ const Scope3FormNewScope3 = ({ UNIT_MULTIPLIERS, activityType, amount, baseUnit,
                 </option>
               ))}
             </NativeSelect>
-          </div>
+</Field>
           <div className="input-group">
             <label>Facility</label>
             <CustomDropdown
@@ -148,9 +146,8 @@ const Scope3FormNewScope3 = ({ UNIT_MULTIPLIERS, activityType, amount, baseUnit,
               onChange={setActivityType}
             />
           </div>
-          <div className="input-group">
-            <label>Amount</label>
-            <Input
+          <Field className="input-group" label="Amount">
+<Input
               type="number"
              
               value={amount || ""}
@@ -158,7 +155,7 @@ const Scope3FormNewScope3 = ({ UNIT_MULTIPLIERS, activityType, amount, baseUnit,
               placeholder="0.00"
               step="0.01"
             />
-          </div>
+</Field>
           <div className="input-group">
             <label>Unit</label>
             {UNIT_MULTIPLIERS[baseUnit] ? (
@@ -186,16 +183,15 @@ const Scope3FormNewScope3 = ({ UNIT_MULTIPLIERS, activityType, amount, baseUnit,
               />
             )}
           </div>
-          <div className="input-group">
-            <label>EF (kg CO₂e/unit)</label>
-            <Input
+          <Field className="input-group" label="EF (kg CO₂e/unit)">
+<Input
               type="number"
              
               value={emissionFactor || ""}
               onChange={(e) => setEmissionFactor(e.target.value)}
               step="0.01"
             />
-          </div>
+</Field>
         </div>
 
 
