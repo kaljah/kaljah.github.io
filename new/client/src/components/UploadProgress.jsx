@@ -230,7 +230,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
           {/* Summary cards */}
           <div className="[display:grid] [grid-template-columns:repeat(auto-fit,_minmax(200px,_1fr))] [gap:16px] [margin-bottom:24px]">
             <div className="[display:flex] [align-items:center] [gap:16px] [padding:20px] [border-radius:var(--radius-md)] [border:1px_solid_var(--color-ink-200)] [background:var(--color-ink-50)] [&_.up-card-icon]:[background:#dcfce7] [&_.up-card-icon]:[color:var(--color-green-700)]">
-              <div className="up-card-icon">
+              <div className="up-card-icon [width:48px] [height:48px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [&_svg]:[width:24px] [&_svg]:[height:24px]">
                 <IconCheck />
               </div>
               <div>
@@ -239,9 +239,9 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
               </div>
             </div>
             <div
-              className={`[display:flex] [align-items:center] [gap:16px] [padding:20px] [border-radius:var(--radius-md)] [border:1px_solid_var(--color-ink-200)] [background:var(--color-ink-50)] ${skippedCount > 0 ? "up-card--warn" : "up-card--neutral"}`}
+              className={`[display:flex] [align-items:center] [gap:16px] [padding:20px] [border-radius:var(--radius-md)] [border:1px_solid_var(--color-ink-200)] [background:var(--color-ink-50)] ${skippedCount > 0 ? "[&_.up-card-icon]:[background:#fef3c7] [&_.up-card-icon]:[color:var(--color-amber-700)]" : "up-card--neutral"}`}
             >
-              <div className="up-card-icon">
+              <div className="up-card-icon [width:48px] [height:48px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [&_svg]:[width:24px] [&_svg]:[height:24px]">
                 <IconWarn />
               </div>
               <div>
@@ -250,7 +250,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
               </div>
             </div>
             <div className="[display:flex] [align-items:center] [gap:16px] [padding:20px] [border-radius:var(--radius-md)] [border:1px_solid_var(--color-ink-200)] [background:var(--color-ink-50)] up-card--neutral">
-              <div className="up-card-icon">
+              <div className="up-card-icon [width:48px] [height:48px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [&_svg]:[width:24px] [&_svg]:[height:24px]">
                 <IconCheck />
               </div>
               <div>
@@ -477,7 +477,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
       {status === "error" && (
         <div className="[background:var(--color-white)] [border-radius:var(--radius-md)] [padding:24px] [border:1px_solid_var(--color-ink-200)] [box-shadow:var(--shadow-xs)]">
           <div className="[display:flex] [align-items:flex-start] [gap:16px] [margin-bottom:20px]">
-            <div className="up-fatal-icon">
+            <div className="[width:40px] [height:40px] [border-radius:50%] [background:#fee2e2] [color:var(--color-red-700)] [display:flex] [align-items:center] [justify-content:center] [&_svg]:[width:24px] [&_svg]:[height:24px]">
               <IconX />
             </div>
             <div>

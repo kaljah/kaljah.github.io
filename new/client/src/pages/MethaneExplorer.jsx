@@ -1041,7 +1041,7 @@ const EmissionsMap = () => {
                   onChange={(e) =>
                     setFilters({ ...filters, region: e.target.value })
                   }
-                  className="recon-select"
+                  className="[width:100%]! [background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:7px_10px]! [font-size:var(--text-sm)]! [color:var(--color-ink-900)]! [outline:none]! [cursor:pointer]! [transition:border-color_0.2s]! focus:[border-color:var(--color-brand-500)]! focus:[background:var(--color-white)]!"
                   id="filter-region-select"
                 >
                   <option value="all">All Regions</option>
@@ -1061,7 +1061,7 @@ const EmissionsMap = () => {
                   onChange={(e) =>
                     setFilters({ ...filters, year: e.target.value })
                   }
-                  className="recon-select"
+                  className="[width:100%]! [background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:7px_10px]! [font-size:var(--text-sm)]! [color:var(--color-ink-900)]! [outline:none]! [cursor:pointer]! [transition:border-color_0.2s]! focus:[border-color:var(--color-brand-500)]! focus:[background:var(--color-white)]!"
                   id="filter-year-select"
                 >
                   <option value="all">All Years</option>
@@ -1082,7 +1082,7 @@ const EmissionsMap = () => {
                 onChange={(e) =>
                   setFilters({ ...filters, activity: e.target.value })
                 }
-                className="recon-select"
+                className="[width:100%]! [background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [&&]:[border-radius:var(--radius-md)]! [padding:7px_10px]! [font-size:var(--text-sm)]! [color:var(--color-ink-900)]! [outline:none]! [cursor:pointer]! [transition:border-color_0.2s]! focus:[border-color:var(--color-brand-500)]! focus:[background:var(--color-white)]!"
                 id="filter-activity-select"
               >
                 <option value="all">All Activities</option>

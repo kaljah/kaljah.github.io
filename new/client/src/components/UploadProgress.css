@@ -21,23 +21,6 @@
 }
 
 /* ─── Completed State - Summary Cards ─────────────────────────────────────── */
-
-.up-card-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.up-card-icon svg {
-  width: 24px;
-  height: 24px;
-}
-.up-card--warn .up-card-icon {
-  background: #fef3c7;
-  color: var(--color-amber-700);
-}
 .up-card--neutral .up-card-icon {
   background: var(--color-brand-50);
   color: var(--color-link);
@@ -248,21 +231,6 @@
 }
 
 /* ─── Fatal Error State ───────────────────────────────────────────────────── */
-
-.up-fatal-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: #fee2e2;
-  color: var(--color-red-700);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.up-fatal-icon svg {
-  width: 24px;
-  height: 24px;
-}
 
 /* ─── Anomaly Panel ──────────────────────────────────────────────────────── */
 

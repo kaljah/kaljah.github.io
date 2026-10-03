@@ -81,13 +81,6 @@
   border: 1px solid #fee2e2;
 }
 
-.login-footer {
-  margin-top: 40px;
-  text-align: center;
-  border-top: 1px solid var(--border-light);
-  padding-top: 24px;
-}
-
 .badge {
   font-size: var(--text-sm);
   font-weight: 600;
@@ -96,11 +89,6 @@
   background: rgba(16, 185, 129, 0.1);
   color: var(--accent);
   border: 1px solid rgba(16, 185, 129, 0.2);
-}
-
-.login-footer p {
-  color: var(--text-muted);
-  font-size: var(--text-sm);
 }
 
 /* --- Forgot Password Modal --- */
@@ -114,24 +102,6 @@
   box-shadow: var(--shadow-raised);
   border: 1px solid rgba(226, 232, 240, 0.8);
   position: relative;
-}
-
-.forgot-modal-header {
-  margin-bottom: 20px;
-  text-align: left;
-}
-
-.forgot-modal-header h3 {
-  font-size: var(--text-xl);
-  font-weight: 700;
-  color: var(--text-main);
-  margin-bottom: 6px;
-}
-
-.forgot-modal-header p {
-  font-size: var(--text-base);
-  color: var(--text-muted);
-  line-height: 1.4;
 }
 
 .forgot-status-msg {

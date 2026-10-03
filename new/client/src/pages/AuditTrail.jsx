@@ -504,7 +504,7 @@ const AuditTrail = () => {
               ]}
             />
             <button
-              className="btn-refresh-main"
+              className="[display:inline-flex] [align-items:center] [gap:8px] [padding:9px_16px] [background:var(--bg-card,_rgba(255,_255,_255,_0.85))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-md)]! [color:var(--text-secondary,_var(--color-ink-600))]! [font-size:var(--text-base)] [font-weight:600] [cursor:pointer] [transition:all_0.2s_ease] [box-shadow:var(--shadow-xs)] [&:hover:not(:disabled)]:[background:var(--bg-hover,_rgba(255,_247,_237,_0.9))]! [&:hover:not(:disabled)]:[border-color:var(--accent-color,_var(--color-brand-500))]! [&:hover:not(:disabled)]:[color:var(--color-link)]! [&:hover:not(:disabled)]:[transform:translateY(-1px)]"
               onClick={() => {
                 fetchAuditLogs(true);
                 fetchStats();
@@ -695,7 +695,7 @@ const AuditTrail = () => {
 
               <div className="[display:flex] [align-items:center] [gap:10px]">
                 <button
-                  className="btn-page-nav"
+                  className="[display:inline-flex] [align-items:center] [gap:6px] [padding:6px_12px] [background:var(--color-white)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-md)]! [font-size:var(--text-sm)] [font-weight:600] [color:var(--text-primary,_var(--color-ink-900))]! [cursor:pointer] [transition:all_0.15s_ease] [&:hover:not(:disabled)]:[border-color:var(--accent-color,_var(--color-brand-500))]! [&:hover:not(:disabled)]:[color:var(--color-link)]! [&:hover:not(:disabled)]:[background:var(--bg-hover,_rgba(255,_247,_237,_0.5))]! disabled:[opacity:0.4] disabled:[cursor:not-allowed]"
                   disabled={page <= 1}
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   title="Previous Page"
@@ -709,7 +709,7 @@ const AuditTrail = () => {
                 </span>
 
                 <button
-                  className="btn-page-nav"
+                  className="[display:inline-flex] [align-items:center] [gap:6px] [padding:6px_12px] [background:var(--color-white)]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&&]:[border-radius:var(--radius-md)]! [font-size:var(--text-sm)] [font-weight:600] [color:var(--text-primary,_var(--color-ink-900))]! [cursor:pointer] [transition:all_0.15s_ease] [&:hover:not(:disabled)]:[border-color:var(--accent-color,_var(--color-brand-500))]! [&:hover:not(:disabled)]:[color:var(--color-link)]! [&:hover:not(:disabled)]:[background:var(--bg-hover,_rgba(255,_247,_237,_0.5))]! disabled:[opacity:0.4] disabled:[cursor:not-allowed]"
                   disabled={page >= totalPages}
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   title="Next Page"

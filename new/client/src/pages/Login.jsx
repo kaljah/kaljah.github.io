@@ -270,7 +270,7 @@ const Login = () => {
         </motion.form>
 
         {/* Footer / Compliance */}
-        <div className="login-footer">
+        <div className="[margin-top:40px] [text-align:center] [border-top:1px_solid_var(--border-light)] [padding-top:24px] [&_p]:[color:var(--text-muted)] [&_p]:[font-size:var(--text-sm)]">
           <div className="[display:flex] [justify-content:center] [gap:12px] [margin-bottom:16px]">
             <span className="badge">API Compliant</span>
             <span className="badge">ISO 14064 Ready</span>
@@ -292,7 +292,7 @@ const Login = () => {
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
               transition={{ duration: 0.2 }}
             >
-              <div className="forgot-modal-header">
+              <div className="[margin-bottom:20px] [text-align:left] [&_h3]:[font-size:var(--text-xl)] [&_h3]:[font-weight:700] [&_h3]:[color:var(--text-main)] [&_h3]:[margin-bottom:6px] [&&]:[&&]:[&_p]:[font-size:var(--text-base)] [&&]:[&_p]:[color:var(--text-muted)] [&_p]:[line-height:1.4]">
                 <h3>Reset Your Password</h3>
                 <p>
                   Enter your account email. A notification will be dispatched to your IT Administrator to reset your credentials.

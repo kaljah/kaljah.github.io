@@ -349,7 +349,7 @@ const GasCompositionCalculator = ({
             </div>
 
             <button
-              className="calc-btn"
+              className="[width:100%] [padding:14px] [background:var(--color-primary)] [color:white] [border:none] [&&]:[border-radius:var(--radius-md)] [font-weight:700] [cursor:pointer] [transition:all_0.2s] disabled:[opacity:0.5] disabled:[cursor:not-allowed] [&:hover:not(:disabled)]:[transform:translateY(-2px)] [&:hover:not(:disabled)]:[box-shadow:0_5px_15px_rgba(255,_102,_0,_0.3)]"
               onClick={calculate}
               disabled={totalMolePct === 0}
             >

@@ -92,28 +92,6 @@
   font-size: var(--text-md);
 }
 
-.calc-btn {
-  width: 100%;
-  padding: 14px;
-  background: var(--color-primary);
-  color: white;
-  border: none;
-  border-radius: var(--radius-md);
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.calc-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.calc-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(255, 102, 0, 0.3);
-}
-
 .comp-results {
   background: rgba(255, 255, 255, 0.02);
   border-left: 1px solid var(--border-color);
