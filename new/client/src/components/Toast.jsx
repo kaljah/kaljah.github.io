@@ -159,7 +159,7 @@ const Toast = ({ toast, onRemove }) => {
   return (
     <div className={`toast toast-${toast.type}`} role={toast.type === "error" ? "alert" : "status"}>
       <div className="toast-icon">{getIcon()}</div>
-      <div className="toast-message">{toast.message}</div>
+      <div className="[flex:1] [font-size:var(--text-base)]! [color:var(--text-primary)]! [line-height:1.4]">{toast.message}</div>
       <button className="toast-close" onClick={() => onRemove(toast.id)} aria-label="Dismiss notification">
         ×
       </button>

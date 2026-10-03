@@ -141,7 +141,7 @@ const Emissions = () => {
   return (
     <div className="emissions-page">
         {stage !== STAGE_SCOPE_SELECTION && (
-          <div className="scope-switcher-bar">
+          <div className="[display:flex]! [justify-content:flex-end] [padding:16px_24px_0]!">
           <div className="scope-switcher-tabs">
             <button
               className={`scope-tab-btn ${stage === STAGE_SCOPE1_SUB_SELECTION ? "active s1" : ""}`}

@@ -5,14 +5,14 @@ import BatchReviewWizard from '../../components/BatchReviewWizard';
 
 // Extracted from ManageData.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmissions, filteredPendingRecords, handleApproveAllInScope, handleApproveSingle, handleBatchApproveSelected, handleConfirmReject, handleOpenBatchRejectModal, handleOpenRejectModal, handleSelectAllPendingToggle, handleToggleSelectPending, isBatchWizardOpen, isProcessingBatch, isRefreshingPending, pendingMetrics, pendingQaFilter, pendingScopeFilter, pendingSearch, rejectionModal, selectedPendingImpactTco2e, selectedPendingKeys, setIsBatchWizardOpen, setPendingQaFilter, setPendingScopeFilter, setPendingSearch, setRejectionModal, setSelectedPendingKeys, user }) => (
-<div className="manage-tab-content pending-review-panel">
+<div className="manage-tab-content [display:flex]! [flex-direction:column] [gap:24px] [width:100%]!">
                                 {/* Rejection Modal */}
                                 {rejectionModal.isOpen && (
                                     <div 
-                                        className="rejection-modal-backdrop" 
+                                        className="[position:fixed] [inset:0] [background:rgba(15,_23,_42,_0.5)]! [backdrop-filter:blur(6px)] [display:flex]! [align-items:center] [justify-content:center] [z-index:1000] [animation:fadeIn_0.2s_ease-out]!" 
                                         onClick={() => !isProcessingBatch && setRejectionModal(prev => ({ ...prev, isOpen: false }))}
                                     >
-                                        <div className="rejection-modal" onClick={e => e.stopPropagation()}>
+                                        <div className="[background:var(--bg-card-elevated)]! [border:1px_solid_var(--border-color)]! [border-radius:var(--radius-lg)]! [width:90%]! [max-width:520px]! [padding:28px]! [box-shadow:var(--shadow-card-elevated)]! [display:flex]! [flex-direction:column] [gap:20px] [animation:scaleUp_0.25s_cubic-bezier(0.16,_1,_0.3,_1)]!" onClick={e => e.stopPropagation()}>
                                             <div className="flex! justify-between! items-center!">
                                                 <div className="flex! items-center! gap-[12px]!">
                                                     <div className="w-[42px]! h-[42px]! rounded-[12px]! bg-[color:rgba(239,_68,_68,_0.12)]! flex! items-center! justify-center! text-[color:#dc2626]!">
@@ -67,7 +67,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                                 }}>
                                                     Quick Rejection Reason Presets
                                                 </label>
-                                                <div className="rejection-quick-chips">
+                                                <div className="[display:flex]! [flex-wrap:wrap] [gap:8px]">
                                                     {QUICK_REJECTION_REASONS.map(reason => (
                                                         <button
                                                             key={reason}
@@ -195,69 +195,69 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                 </div>
 
                                 {/* Top Hero KPI Metrics Strip */}
-                                <div className="pending-kpi-grid">
+                                <div className="[display:grid]! [grid-template-columns:repeat(auto-fit,_minmax(220px,_1fr))] [gap:16px] [width:100%]!">
                                     <div className="pending-kpi-card">
-                                        <div className="pending-kpi-icon-wrap bg-[color:rgba(255,_102,_0,_0.1)]! text-[color:var(--color-link)]!">
+                                        <div className="[width:48px]! [height:48px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [flex-shrink:0] bg-[color:rgba(255,_102,_0,_0.1)]! text-[color:var(--color-link)]!">
                                             <Clock size={22} />
                                         </div>
-                                        <div className="pending-kpi-info">
-                                            <span className="pending-kpi-label">Pending Records</span>
-                                            <span className="pending-kpi-val">{pendingMetrics.totalCount}</span>
-                                            <span className="pending-kpi-sub">
+                                        <div className="[display:flex]! [flex-direction:column] [gap:2px] [min-width:0]">
+                                            <span className="[font-size:var(--text-sm)]! [font-weight:600]! [text-transform:uppercase]! [letter-spacing:0.05em] [color:var(--text-secondary)]!">Pending Records</span>
+                                            <span className="[font-size:var(--text-xl)]! [font-weight:700]! [color:var(--text-primary)]! [line-height:1.2]">{pendingMetrics.totalCount}</span>
+                                            <span className="[font-size:var(--text-sm)]! [color:var(--text-muted)]! [white-space:nowrap] [overflow:hidden]! [text-overflow:ellipsis]!">
                                                 S1: {pendingMetrics.count1} · S2: {pendingMetrics.count2} · S3: {pendingMetrics.count3}
                                             </span>
                                         </div>
                                     </div>
 
                                     <div className="pending-kpi-card">
-                                        <div className="pending-kpi-icon-wrap bg-[color:rgba(239,_68,_68,_0.1)]! text-[color:#b91c1c]!">
+                                        <div className="[width:48px]! [height:48px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [flex-shrink:0] bg-[color:rgba(239,_68,_68,_0.1)]! text-[color:#b91c1c]!">
                                             <Flame size={22} />
                                         </div>
-                                        <div className="pending-kpi-info">
-                                            <span className="pending-kpi-label">Pending Impact</span>
-                                            <span className="pending-kpi-val">
+                                        <div className="[display:flex]! [flex-direction:column] [gap:2px] [min-width:0]">
+                                            <span className="[font-size:var(--text-sm)]! [font-weight:600]! [text-transform:uppercase]! [letter-spacing:0.05em] [color:var(--text-secondary)]!">Pending Impact</span>
+                                            <span className="[font-size:var(--text-xl)]! [font-weight:700]! [color:var(--text-primary)]! [line-height:1.2]">
                                                 {pendingMetrics.totalTco2e.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
                                                 <span className="text-[length:0.8rem]! font-medium! text-[color:var(--text-secondary)]! ml-[4px]!">tCO₂e</span>
                                             </span>
-                                            <span className="pending-kpi-sub">Awaiting inventory commit</span>
+                                            <span className="[font-size:var(--text-sm)]! [color:var(--text-muted)]! [white-space:nowrap] [overflow:hidden]! [text-overflow:ellipsis]!">Awaiting inventory commit</span>
                                         </div>
                                     </div>
 
                                     <div className="pending-kpi-card">
-                                        <div className="pending-kpi-icon-wrap" style={{ 
+                                        <div className="[width:48px]! [height:48px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [flex-shrink:0]" style={{ 
                                             background: pendingMetrics.flaggedCount > 0 ? 'rgba(245, 158, 11, 0.1)' : 'rgba(16, 185, 129, 0.1)', 
                                             color: pendingMetrics.flaggedCount > 0 ? '#d97706' : '#059669' 
                                         }}>
                                             {pendingMetrics.flaggedCount > 0 ? <AlertTriangle size={22} /> : <CheckCircle size={22} />}
                                         </div>
-                                        <div className="pending-kpi-info">
-                                            <span className="pending-kpi-label">Quality Audit</span>
-                                            <span className="pending-kpi-val" style={{ color: pendingMetrics.flaggedCount > 0 ? '#d97706' : 'inherit' }}>
+                                        <div className="[display:flex]! [flex-direction:column] [gap:2px] [min-width:0]">
+                                            <span className="[font-size:var(--text-sm)]! [font-weight:600]! [text-transform:uppercase]! [letter-spacing:0.05em] [color:var(--text-secondary)]!">Quality Audit</span>
+                                            <span className="[font-size:var(--text-xl)]! [font-weight:700]! [color:var(--text-primary)]! [line-height:1.2]" style={{ color: pendingMetrics.flaggedCount > 0 ? '#d97706' : 'inherit' }}>
                                                 {pendingMetrics.flaggedCount} Flagged
                                             </span>
-                                            <span className="pending-kpi-sub">{pendingMetrics.cleanCount} clean records verified</span>
+                                            <span className="[font-size:var(--text-sm)]! [color:var(--text-muted)]! [white-space:nowrap] [overflow:hidden]! [text-overflow:ellipsis]!">{pendingMetrics.cleanCount} clean records verified</span>
                                         </div>
                                     </div>
 
                                     <div className="pending-kpi-card">
-                                        <div className="pending-kpi-icon-wrap bg-[color:rgba(59,_130,_246,_0.1)]! text-[color:#2563eb]!">
+                                        <div className="[width:48px]! [height:48px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [flex-shrink:0] bg-[color:rgba(59,_130,_246,_0.1)]! text-[color:#2563eb]!">
                                             <Shield size={22} />
                                         </div>
-                                        <div className="pending-kpi-info">
-                                            <span className="pending-kpi-label">Scope Segregation</span>
-                                            <span className="pending-kpi-val text-[length:1.15rem]!">
+                                        <div className="[display:flex]! [flex-direction:column] [gap:2px] [min-width:0]">
+                                            <span className="[font-size:var(--text-sm)]! [font-weight:600]! [text-transform:uppercase]! [letter-spacing:0.05em] [color:var(--text-secondary)]!">Scope Segregation</span>
+                                            <span className="[font-size:var(--text-xl)]! [font-weight:700]! [color:var(--text-primary)]! [line-height:1.2] text-[length:1.15rem]!">
                                                 {pendingMetrics.totalCount > 0 ? (
                                                     `S1(${pendingMetrics.count1}) S2(${pendingMetrics.count2}) S3(${pendingMetrics.count3})`
                                                 ) : 'Queue Clear'}
                                             </span>
-                                            <span className="pending-kpi-sub">Maker-Checker active</span>
+                                            <span className="[font-size:var(--text-sm)]! [color:var(--text-muted)]! [white-space:nowrap] [overflow:hidden]! [text-overflow:ellipsis]!">Maker-Checker active</span>
                                         </div>
                                     </div>
                                 </div>
 
                                 {/* Filter & Controls Toolbar */}
-                                <div className="pending-toolbar">
-                                    <div className="pending-segmented-tabs">
+                                <div className="[display:flex]! [flex-wrap:wrap] [align-items:center] [justify-content:space-between] [gap:16px] [background:var(--bg-card)]! [backdrop-filter:blur(10px)] [border:1px_solid_var(--border-color)]! [border-radius:var(--radius-lg)]! [padding:16px_20px]! [box-shadow:var(--shadow-card)]!">
+                                    <div className="[display:inline-flex]! [background:rgba(15,_23,_42,_0.05)]! [border-radius:var(--radius-md)]! [padding:4px]! [gap:4px]">
                                         <button 
                                             className={`pending-tab-btn ${pendingScopeFilter === 'all' ? 'active' : ''}`}
                                             onClick={() => setPendingScopeFilter('all')}
@@ -269,7 +269,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                             className={`pending-tab-btn ${pendingScopeFilter === '1' ? 'active' : ''}`}
                                             onClick={() => setPendingScopeFilter('1')}
                                         >
-                                            <span className="scope-tag scope-tag-1 p-[1px_6px]! text-[length:0.7rem]!">S1</span>
+                                            <span className="scope-tag [background:rgba(255,_102,_0,_0.1)]! [color:var(--color-brand-700)]! [border:1px_solid_rgba(255,_102,_0,_0.25)]! p-[1px_6px]! text-[length:0.7rem]!">S1</span>
                                             <span>Scope 1</span>
                                             <span className="pending-count-chip">{pendingMetrics.count1}</span>
                                         </button>
@@ -277,7 +277,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                             className={`pending-tab-btn ${pendingScopeFilter === '2' ? 'active' : ''}`}
                                             onClick={() => setPendingScopeFilter('2')}
                                         >
-                                            <span className="scope-tag scope-tag-2 p-[1px_6px]! text-[length:0.7rem]!">S2</span>
+                                            <span className="scope-tag [background:rgba(59,_130,_246,_0.1)]! [color:var(--color-blue-600)]! [border:1px_solid_rgba(59,_130,_246,_0.25)]! p-[1px_6px]! text-[length:0.7rem]!">S2</span>
                                             <span>Scope 2</span>
                                             <span className="pending-count-chip">{pendingMetrics.count2}</span>
                                         </button>
@@ -285,7 +285,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                             className={`pending-tab-btn ${pendingScopeFilter === '3' ? 'active' : ''}`}
                                             onClick={() => setPendingScopeFilter('3')}
                                         >
-                                            <span className="scope-tag scope-tag-3 p-[1px_6px]! text-[length:0.7rem]!">S3</span>
+                                            <span className="scope-tag [background:rgba(147,_51,_234,_0.1)]! [color:#7c3aed]! [border:1px_solid_rgba(147,_51,_234,_0.25)]! p-[1px_6px]! text-[length:0.7rem]!">S3</span>
                                             <span>Scope 3</span>
                                             <span className="pending-count-chip">{pendingMetrics.count3}</span>
                                         </button>
@@ -355,7 +355,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
 
                                 {/* Floating Sticky Batch Action Bar */}
                                 {selectedPendingKeys.size > 0 && (
-                                    <div className="pending-batch-bar">
+                                    <div className="[display:flex]! [align-items:center] [justify-content:space-between] [background:linear-gradient(135deg,_var(--color-ink-800)_0%,_var(--color-ink-900)_100%)]! [color:var(--color-white)]! [padding:14px_24px]! [border-radius:var(--radius-lg)]! [box-shadow:var(--shadow-raised)]! [animation:slideUp_0.25s_cubic-bezier(0.16,_1,_0.3,_1)]!">
                                         <div className="flex! items-center! gap-[14px]! flex-wrap!">
                                             <span className="font-bold! text-[length:0.94rem]! inline-flex! items-center! gap-[8px]!">
                                                 <CheckSquare size={18} color="#38bdf8" />
@@ -366,7 +366,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                                 Cumulative: <strong className="text-[color:#ffffff]!">{selectedPendingImpactTco2e.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong> tCO₂e
                                             </span>
                                         </div>
-                                        <div className="batch-action-buttons">
+                                        <div className="[display:flex]! [align-items:center] [gap:10px]">
                                             <button
                                                 className="btn-batch-approve"
                                                 disabled={isProcessingBatch}
@@ -396,7 +396,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                 {/* Main Content: Queue Empty vs Table Card */}
                                 {pendingMetrics.totalCount === 0 ? (
                                     <div className="pending-empty-hero">
-                                        <div className="pending-empty-glow-icon">
+                                        <div className="[width:72px]! [height:72px]! [border-radius:var(--radius-lg)]! [background:linear-gradient(135deg,_rgba(16,_185,_129,_0.15),_rgba(16,_185,_129,_0.05))]! [border:1px_solid_rgba(16,_185,_129,_0.3)]! [display:flex]! [align-items:center] [justify-content:center] [color:var(--color-green-700)]! [box-shadow:0_8px_20px_-4px_rgba(16,_185,_129,_0.2)]!">
                                             <CheckCircle size={36} />
                                         </div>
                                         <div className="max-w-[440px]!">
@@ -410,7 +410,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                     </div>
                                 ) : filteredPendingRecords.length === 0 ? (
                                     <div className="pending-empty-hero p-[48px_24px]!">
-                                        <div className="pending-empty-glow-icon" style={{ background: 'rgba(148, 163, 184, 0.1)', color: 'var(--text-secondary)', borderColor: 'rgba(148, 163, 184, 0.3)' }}>
+                                        <div className="[width:72px]! [height:72px]! [border-radius:var(--radius-lg)]! [background:linear-gradient(135deg,_rgba(16,_185,_129,_0.15),_rgba(16,_185,_129,_0.05))]! [border:1px_solid_rgba(16,_185,_129,_0.3)]! [display:flex]! [align-items:center] [justify-content:center] [color:var(--color-green-700)]! [box-shadow:0_8px_20px_-4px_rgba(16,_185,_129,_0.2)]!" style={{ background: 'rgba(148, 163, 184, 0.1)', color: 'var(--text-secondary)', borderColor: 'rgba(148, 163, 184, 0.3)' }}>
                                             <Filter size={32} />
                                         </div>
                                         <div>
@@ -435,7 +435,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                     </div>
                                 ) : (
                                     <div className="pending-table-card">
-                                        <div className="pending-table-header">
+                                        <div className="[display:flex]! [justify-content:space-between] [align-items:center] [padding:20px_24px]! [border-bottom:1px_solid_var(--border-color)]!">
                                             <div className="flex! items-center! gap-[10px]!">
                                                 <h3 className="m-[0px]! text-[length:1.02rem]! font-bold!">
                                                     {pendingScopeFilter === 'all' 
@@ -552,21 +552,21 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                                                 <td>
                                                                     {item.qa_flag ? (
                                                                         <span 
-                                                                            className="qa-badge-flagged" 
+                                                                            className="[display:inline-flex]! [align-items:center] [gap:4px] [padding:3px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:600]! [background:rgba(245,_158,_11,_0.1)]! [color:var(--color-amber-700)]! [border:1px_solid_rgba(245,_158,_11,_0.3)]!" 
                                                                             title={item.qa_flag}
                                                                         >
                                                                             <AlertTriangle size={12} />
                                                                             Flagged
                                                                         </span>
                                                                     ) : (
-                                                                        <span className="qa-badge-clean">
+                                                                        <span className="[display:inline-flex]! [align-items:center] [gap:4px] [padding:3px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:600]! [background:rgba(16,_185,_129,_0.1)]! [color:var(--color-green-700)]! [border:1px_solid_rgba(16,_185,_129,_0.25)]!">
                                                                             <Check size={12} />
                                                                             Clean
                                                                         </span>
                                                                     )}
                                                                 </td>
                                                                 <td className="text-center!">
-                                                                    <div className="review-actions-group justify-center!">
+                                                                    <div className="[display:flex]! [align-items:center] [gap:8px] justify-center!">
                                                                         {item.created_by && String(item.created_by) === String(user?.id) ? (
                                                                             <span 
                                                                                 className="badge-maker"

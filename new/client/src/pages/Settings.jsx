@@ -282,7 +282,7 @@ const Settings = () => {
 
   if (loading) {
     return (
-      <div className="settings-loading-container">
+      <div className="[display:flex]! [justify-content:center] [align-items:center] [min-height:60vh]">
         <LoadingSpinner message="Loading Standards & System Preferences..." />
       </div>
     );
@@ -290,23 +290,23 @@ const Settings = () => {
 
 
   return (
-    <div className="settings-page-wrapper">
+    <div className="[padding:32px]! [max-width:1600px]! [margin:0_auto]! [display:flex]! [flex-direction:column] [gap:24px] [animation:settingsFadeIn_0.35s_ease-out]! [font-family:inherit]! [color:var(--text-primary,_var(--color-ink-900))]!">
       {/* Header */}
       <div className="settings-hero-card">
-        <div className="settings-header-content">
-          <div className="settings-header-left">
+        <div className="[display:flex]! [justify-content:space-between] [align-items:flex-start] [gap:24px] [flex-wrap:wrap]">
+          <div className="[display:flex]! [flex-direction:column] [gap:6px] [max-width:850px]!">
             <div className="settings-badge">
               <SlidersHorizontal size={14} />
               <span>STANDARDS & METHODOLOGIES</span>
             </div>
             <h1 className="settings-title">System Settings & Protocols</h1>
-            <p className="settings-subtitle">
+            <p className="[font-size:var(--text-md)]! [color:var(--text-secondary,_var(--color-ink-500))]! [margin:0]! [line-height:1.5]">
               Configure IPCC Global Warming Potential (GWP) conversion factors,
               OGMP 2.0 Gold Standard compliance parameters, and
               facility-specific reconciliation tolerances.
             </p>
           </div>
-          <div className="settings-header-right">
+          <div className="[display:flex]! [align-items:center] [gap:12px]">
             <button
               className="btn-save-primary"
               onClick={handleSaveGlobal}
@@ -330,7 +330,7 @@ const Settings = () => {
         </div>
 
         {/* Navigation Tabs Bar */}
-        <div className="settings-tabs-bar" role="tablist" aria-label="Settings sections">
+        <div className="[display:flex]! [gap:8px] [border-top:1px_solid_var(--border-color,_var(--color-ink-200))]! [padding-top:4px]! [overflow-x:auto]!" role="tablist" aria-label="Settings sections">
           <button
             role="tab"
             aria-selected={activeTab === "gwp"}
@@ -338,7 +338,7 @@ const Settings = () => {
             onClick={() => setActiveTab("gwp")}
             id="tab-gwp"
           >
-            <Globe size={17} className="tab-icon-svg" />
+            <Globe size={17} className="[flex-shrink:0]" />
             <span>IPCC GWP Standards</span>
           </button>
           <button
@@ -348,7 +348,7 @@ const Settings = () => {
             onClick={() => setActiveTab("ogmp")}
             id="tab-ogmp"
           >
-            <Target size={17} className="tab-icon-svg" />
+            <Target size={17} className="[flex-shrink:0]" />
             <span>OGMP 2.0 Baseline & Thresholds</span>
           </button>
           <button
@@ -358,7 +358,7 @@ const Settings = () => {
             onClick={() => setActiveTab("facilities")}
             id="tab-facilities"
           >
-            <Building2 size={17} className="tab-icon-svg" />
+            <Building2 size={17} className="[flex-shrink:0]" />
             <span>Facility Overrides ({facilities.length})</span>
           </button>
           <button
@@ -368,7 +368,7 @@ const Settings = () => {
             onClick={() => setActiveTab("satellite")}
             id="tab-satellite"
           >
-            <Satellite size={17} className="tab-icon-svg" />
+            <Satellite size={17} className="[flex-shrink:0]" />
             <span>Copernicus Satellite (S5P)</span>
           </button>
         </div>

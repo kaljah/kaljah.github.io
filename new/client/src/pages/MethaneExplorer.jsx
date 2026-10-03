@@ -672,13 +672,13 @@ const EmissionsMap = () => {
 
   if (loading) {
     return (
-      <div className="methane-explorer-loading">
-        <div className="telemetry-loader">
-          <div className="scanner-line"></div>
-          <Satellite size={34} className="spin-slow" color="#ff6600" />
+      <div className="[display:flex]! [flex-direction:column] [align-items:center] [justify-content:center] [height:calc(100vh_-_72px)]! [gap:16px] [background:var(--color-ink-50)]! [color:var(--color-ink-900)]!">
+        <div className="[position:relative] [width:80px]! [height:80px]! [border:2px_solid_rgba(255,_102,_0,_0.2)]! [border-radius:50%]! [display:flex]! [align-items:center] [justify-content:center] [box-shadow:0_4px_20px_rgba(255,_102,_0,_0.15)]!">
+          <div className="[position:absolute] [inset:0] [border-radius:50%]! [border-top:3px_solid_var(--color-brand-500)]! [animation:spin_1.2s_cubic-bezier(0.5,_0,_0.5,_1)_infinite]!"></div>
+          <Satellite size={34} className="[animation:spin_8s_linear_infinite]!" color="#ff6600" />
         </div>
-        <div className="loading-title">LOADING METHANE EXPLORER</div>
-        <div className="loading-subtitle">
+        <div className="[font-size:var(--text-md)]! [font-weight:800]! [letter-spacing:0.08em] [color:var(--color-ink-900)]!">LOADING METHANE EXPLORER</div>
+        <div className="[font-size:var(--text-sm)]! [color:var(--color-ink-500)]! [max-width:420px]! [text-align:center]! [line-height:1.5]">
           Fetching operational facilities and emission inventories...
         </div>
       </div>
@@ -695,22 +695,22 @@ const EmissionsMap = () => {
     >
       {/* 1. TOP MISSION TELEMETRY HUD BAR (WHITE LIGHT THEME) */}
       <header className="mission-hud">
-        <div className="hud-left">
-          <div className="hud-brand">
-            <div className="radar-ping">
-              <span className="ping-core"></span>
-              <span className="ping-wave"></span>
+        <div className="[display:flex]! [align-items:center] [gap:16px]">
+          <div className="[display:flex]! [align-items:center] [gap:10px]">
+            <div className="[position:relative] [width:16px]! [height:16px]! [display:flex]! [align-items:center] [justify-content:center]">
+              <span className="[width:8px]! [height:8px]! [background:var(--color-brand-500)]! [border-radius:50%]! [box-shadow:0_0_8px_rgba(255,_102,_0,_0.5)]!"></span>
+              <span className="[position:absolute] [width:100%]! [height:100%]! [border:1.5px_solid_var(--color-brand-500)]! [border-radius:50%]! [animation:radarWave_2s_infinite_ease-out]!"></span>
             </div>
             <div>
-              <div className="brand-title">Emissions Map</div>
-              <div className="brand-sub">COPERNICUS SENTINEL-5P TROPOMI</div>
+              <div className="[font-size:var(--text-md)]! [font-weight:700]! [color:var(--color-ink-900)]!">Emissions Map</div>
+              <div className="[font-size:var(--text-xs)]! [font-weight:600]! [color:var(--color-blue-700)]! [letter-spacing:0.04em]">COPERNICUS SENTINEL-5P TROPOMI</div>
             </div>
           </div>
 
-          <div className="hud-status-badge">
+          <div className="[display:flex]! [align-items:center]">
             {isSatelliteConnected ? (
               <span className="status-pill live" title="Connected to Copernicus Data Space">
-                <Radio size={12} className="pulse-icon" /> S5P STREAM LIVE
+                <Radio size={12} className="[animation:pulseBeacon_1.5s_infinite]!" /> S5P STREAM LIVE
               </span>
             ) : (
               <button
@@ -725,13 +725,13 @@ const EmissionsMap = () => {
         </div>
 
         {/* Real-time KPI Counters */}
-        <div className="hud-kpis">
-          <div className="kpi-item">
+        <div className="[display:flex]! [align-items:center] [gap:16px] [background:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! [padding:5px_14px]! [border-radius:var(--radius-md)]!">
+          <div className="[display:flex]! [flex-direction:column] [align-items:center] [gap:1px]">
             <span className="kpi-label">Monitored Assets</span>
             <span className="kpi-value">{telemetryMetrics.activeAssets}</span>
           </div>
-          <div className="kpi-divider"></div>
-          <div className="kpi-item">
+          <div className="[width:1px]! [height:20px]! [background:var(--color-ink-200)]!"></div>
+          <div className="[display:flex]! [flex-direction:column] [align-items:center] [gap:1px]">
             <span className="kpi-label">
               {viewMode === "methane" ? "Regional Methane" : "Regional GHG"}
             </span>
@@ -741,16 +741,16 @@ const EmissionsMap = () => {
                 : `${formatCompact(telemetryMetrics.totalGhg)} t`}
             </span>
           </div>
-          <div className="kpi-divider"></div>
-          <div className="kpi-item">
+          <div className="[width:1px]! [height:20px]! [background:var(--color-ink-200)]!"></div>
+          <div className="[display:flex]! [flex-direction:column] [align-items:center] [gap:1px]">
             <span className="kpi-label">Mean Loss Intensity</span>
             <span className="kpi-value">
               {telemetryMetrics.avgMethaneIntensity}{" "}
               <span className="kpi-unit">kg/boe</span>
             </span>
           </div>
-          <div className="kpi-divider"></div>
-          <div className="kpi-item">
+          <div className="[width:1px]! [height:20px]! [background:var(--color-ink-200)]!"></div>
+          <div className="[display:flex]! [flex-direction:column] [align-items:center] [gap:1px]">
             <span className="kpi-label">Super-Emitters</span>
             <span
               className={`kpi-value ${telemetryMetrics.superEmitters > 0 ? "kpi-alert" : ""}`}
@@ -761,7 +761,7 @@ const EmissionsMap = () => {
         </div>
 
         {/* View Mode & Basemap Selector */}
-        <div className="hud-actions">
+        <div className="[display:flex]! [align-items:center] [gap:10px]">
           {/* Mode Switcher */}
           <div className="segmented-control mode-selector">
             <button
@@ -805,14 +805,14 @@ const EmissionsMap = () => {
       {/* 2. SATELLITE NEW-PASS OVERPASS TOAST */}
       {satelliteAlert && (
         <aside className="satellite-alert-toast" role="alert">
-          <div className="toast-header">
+          <div className="[display:flex]! [align-items:center] [justify-content:space-between]">
             <div className="toast-title">
               {satelliteAlert.anomaly >= 30 ? (
-                <span className="badge-danger">
+                <span className="[display:flex]! [align-items:center] [gap:6px] [color:var(--color-red-700)]! [font-size:var(--text-sm)]! [font-weight:800]! [letter-spacing:0.04em]">
                   <AlertCircle size={14} /> HIGH CH₄ ANOMALY DETECTED
                 </span>
               ) : (
-                <span className="badge-info">
+                <span className="[display:flex]! [align-items:center] [gap:6px] [color:var(--color-blue-700)]! [font-size:var(--text-sm)]! [font-weight:800]! [letter-spacing:0.04em]">
                   <Satellite size={14} /> NEW S5P OVERPASS
                 </span>
               )}
@@ -825,11 +825,11 @@ const EmissionsMap = () => {
               <X size={14} />
             </button>
           </div>
-          <div className="toast-body">
+          <div className="[font-size:var(--text-sm)]! [color:var(--color-ink-700)]! [line-height:1.4]">
             <strong>{satelliteAlert.facility}</strong> • {satelliteAlert.date} at{" "}
             {satelliteAlert.time || "11:30 UTC"}
           </div>
-          <div className="toast-meta">
+          <div className="[display:flex]! [gap:8px] [margin-top:4px]!">
             <span className="stat-pill">
               ΔCH₄ +{satelliteAlert.anomaly.toFixed(1)} ppb
             </span>
@@ -846,7 +846,7 @@ const EmissionsMap = () => {
       )}
 
       {/* 3. LEAFLET INTERACTIVE GEOSPATIAL MAP CANVAS */}
-      <div className="explorer-map-container">
+      <div className="[position:absolute] [inset:0] [width:100%]! [height:100%]! [z-index:1]">
         <MapContainer
           center={mapCenter}
           zoom={mapZoom}
@@ -952,18 +952,18 @@ const EmissionsMap = () => {
                     opacity={0.98}
                     className="custom-leaflet-tooltip"
                   >
-                    <div className="marker-tooltip-card">
-                      <div className="tooltip-header">
-                        <span className="tooltip-name">{fac.name}</span>
+                    <div className="[display:flex]! [flex-direction:column] [gap:3px]">
+                      <div className="[display:flex]! [align-items:center] [gap:8px]">
+                        <span className="[font-size:var(--text-sm)]! [font-weight:800]! [color:var(--color-ink-900)]!">{fac.name}</span>
                         <span className={`tooltip-badge ${severity}`}>
                           {severity.toUpperCase()}
                         </span>
                       </div>
-                      <div className="tooltip-sub">
+                      <div className="[font-size:var(--text-xs)]! [color:var(--color-ink-500)]!">
                         {fac.region || "Region"} •{" "}
                         {fac.activity || fac.division || "Facility"}
                       </div>
-                      <div className="tooltip-emission">
+                      <div className="[display:flex]! [align-items:center] [gap:5px] [font-size:var(--text-sm)]! [font-weight:700]! [color:var(--color-link)]! [margin-top:2px]!">
                         <Flame size={12} />
                         <span>
                           {viewMode === "methane"
@@ -995,18 +995,18 @@ const EmissionsMap = () => {
           <div className="drawer-inner">
             {/* Drawer Header */}
             <div className="drawer-header">
-              <div className="title-row">
+              <div className="[display:flex]! [align-items:center] [gap:8px]">
                 <Sliders size={17} color="#ff6600" />
                 <h3>Assets</h3>
               </div>
-              <span className="target-count-badge">
+              <span className="[font-size:var(--text-xs)]! [font-weight:800]! [padding:3px_8px]! [border-radius:var(--radius-sm)]! [background:var(--color-brand-50)]! [color:var(--color-link)]! [border:1px_solid_#fed7aa]!">
                 {filteredFacilities.length} ASSETS
               </span>
             </div>
 
             {/* Quick Search */}
             <div className="filter-group">
-              <label className="filter-title">Search Asset / Field</label>
+              <label className="[display:block]! [font-size:var(--text-xs)]! [font-weight:700]! [text-transform:uppercase]! [letter-spacing:0.05em] [color:var(--color-ink-500)]! [margin-bottom:5px]!">Search Asset / Field</label>
               <div className="search-input-wrapper">
                 <Search size={15} className="search-icon" />
                 <input
@@ -1032,10 +1032,10 @@ const EmissionsMap = () => {
             </div>
 
             {/* Filter Row 1: Region & Accounting Year */}
-            <div className="filter-row">
+            <div className="[display:flex]! [gap:8px] [margin-bottom:10px]!">
               {/* Region Filter */}
               <div className="filter-group flex-1">
-                <label className="filter-title">Region / Basin</label>
+                <label className="[display:block]! [font-size:var(--text-xs)]! [font-weight:700]! [text-transform:uppercase]! [letter-spacing:0.05em] [color:var(--color-ink-500)]! [margin-bottom:5px]!">Region / Basin</label>
                 <NativeSelect
                   value={filters.region}
                   onChange={(e) =>
@@ -1055,7 +1055,7 @@ const EmissionsMap = () => {
 
               {/* Year Filter */}
               <div className="filter-group flex-1">
-                <label className="filter-title">Accounting Year</label>
+                <label className="[display:block]! [font-size:var(--text-xs)]! [font-weight:700]! [text-transform:uppercase]! [letter-spacing:0.05em] [color:var(--color-ink-500)]! [margin-bottom:5px]!">Accounting Year</label>
                 <NativeSelect
                   value={filters.year}
                   onChange={(e) =>
@@ -1076,7 +1076,7 @@ const EmissionsMap = () => {
 
             {/* Filter Row 2: Activity */}
             <div className="filter-group">
-              <label className="filter-title">Activity Type</label>
+              <label className="[display:block]! [font-size:var(--text-xs)]! [font-weight:700]! [text-transform:uppercase]! [letter-spacing:0.05em] [color:var(--color-ink-500)]! [margin-bottom:5px]!">Activity Type</label>
               <NativeSelect
                 value={filters.activity}
                 onChange={(e) =>
@@ -1096,8 +1096,8 @@ const EmissionsMap = () => {
 
             {/* Severity Filter Pills */}
             <div className="filter-group">
-              <label className="filter-title">Anomaly Severity</label>
-              <div className="severity-pills">
+              <label className="[display:block]! [font-size:var(--text-xs)]! [font-weight:700]! [text-transform:uppercase]! [letter-spacing:0.05em] [color:var(--color-ink-500)]! [margin-bottom:5px]!">Anomaly Severity</label>
+              <div className="[display:grid]! [grid-template-columns:repeat(2,_1fr)] [gap:6px]">
                 {[
                   { id: "all", label: "All" },
                   { id: "high", label: "Super-Emitters", color: "#ef4444" },
@@ -1113,7 +1113,7 @@ const EmissionsMap = () => {
                   >
                     {pill.color && (
                       <span
-                        className="pill-dot"
+                        className="[width:6px]! [height:6px]! [border-radius:50%]!"
                         style={{ backgroundColor: pill.color }}
                       ></span>
                     )}
@@ -1124,9 +1124,9 @@ const EmissionsMap = () => {
             </div>
 
             {/* Sentinel-5P Satellite Overlay Controls Card */}
-            <div className="sat-overlay-card">
-              <div className="sat-card-top">
-                <div className="sat-card-title">
+            <div className="[background:#f0f9ff]! [border:1px_solid_#bae6fd]! [border-radius:var(--radius-md)]! [padding:11px_12px]! [margin-bottom:12px]!">
+              <div className="[display:flex]! [align-items:center] [justify-content:space-between]">
+                <div className="[display:flex]! [align-items:center] [gap:6px] [font-size:var(--text-sm)]! [font-weight:700]! [color:#0369a1]!">
                   <Satellite size={15} color="#0284c7" />
                   <span>Sentinel-5P Overlay</span>
                 </div>
@@ -1143,9 +1143,9 @@ const EmissionsMap = () => {
               </div>
 
               {showSatelliteLayer && (
-                <div className="sat-card-controls">
-                  <div className="slider-row">
-                    <span className="control-label">
+                <div className="[margin-top:10px]! [display:flex]! [flex-direction:column] [gap:8px]">
+                  <div className="[display:flex]! [flex-direction:column] [gap:4px]">
+                    <span className="[font-size:var(--text-xs)]! [font-weight:600]! [color:var(--color-ink-600)]!">
                       Opacity: {Math.round(satelliteOpacity * 100)}%
                     </span>
                     <input
@@ -1157,13 +1157,13 @@ const EmissionsMap = () => {
                       onChange={(e) =>
                         setSatelliteOpacity(Number(e.target.value))
                       }
-                      className="recon-range-slider"
+                      className="[width:100%]! [height:4px]! [border-radius:var(--radius-sm)]! [background:var(--color-ink-300)]! [outline:none]! [accent-color:var(--color-sky-600)] [cursor:pointer]"
                       id="satellite-opacity-slider"
                       aria-label="Satellite layer opacity"
                     />
                   </div>
 
-                  <div className="toggles-subrow">
+                  <div className="[display:flex]! [justify-content:space-between] [margin-top:2px]!">
                     <label className="recon-checkbox-label">
                       <input
                         type="checkbox"
@@ -1187,15 +1187,15 @@ const EmissionsMap = () => {
             </div>
 
             {/* Target Asset List Header */}
-            <div className="target-list-heading">
+            <div className="[display:flex]! [justify-content:space-between] [align-items:center] [margin-bottom:8px]! [font-size:var(--text-xs)]! [font-weight:700]! [text-transform:uppercase]! [letter-spacing:0.04em] [color:var(--color-ink-500)]!">
               <span>Facility Inventory</span>
-              <span className="subtext">Click to inspect</span>
+              <span className="[font-size:var(--text-xs)]! [color:var(--color-ink-600)]! [text-transform:none]!">Click to inspect</span>
             </div>
 
             {/* Neat Target Facility Cards */}
             <div className="target-cards-scroll">
               {filteredFacilities.length === 0 ? (
-                <div className="empty-target-state">
+                <div className="[display:flex]! [flex-direction:column] [align-items:center] [justify-content:center] [gap:10px] [padding:30px_10px]! [color:var(--color-ink-500)]! [font-size:var(--text-sm)]! [text-align:center]!">
                   <AlertCircle size={22} color="#94a3b8" />
                   <span>No assets match current reconnaissance filters.</span>
                   <button
@@ -1222,26 +1222,26 @@ const EmissionsMap = () => {
                       className={`target-card ${isSelected ? "selected" : ""}`}
                       onClick={() => handleSelectFacility(fac)}
                     >
-                      <div className="target-card-left">
+                      <div className="[display:flex]! [align-items:center] [gap:10px] [min-width:0] [flex:1]">
                         <span className={`beacon-dot ${severity}`}></span>
-                        <div className="target-card-info">
-                          <div className="target-card-title">{fac.name}</div>
-                          <div className="target-card-meta">
+                        <div className="[min-width:0] [flex:1]">
+                          <div className="[font-size:var(--text-sm)]! [font-weight:700]! [color:var(--color-ink-900)]! [white-space:nowrap] [overflow:hidden]! [text-overflow:ellipsis]!">{fac.name}</div>
+                          <div className="[display:flex]! [align-items:center] [gap:6px] [margin-top:2px]! [font-size:var(--text-xs)]! [color:var(--color-ink-500)]!">
                             {fac.region && (
-                              <span className="region-tag">{fac.region}</span>
+                              <span className="[background:var(--color-ink-100)]! [padding:1px_6px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-xs)]! [font-weight:700]! [color:var(--color-ink-600)]!">{fac.region}</span>
                             )}
-                            <span className="activity-text">
+                            <span className="[white-space:nowrap] [overflow:hidden]! [text-overflow:ellipsis]!">
                               {fac.activity || fac.division || "Industrial Asset"}
                             </span>
                           </div>
                         </div>
                       </div>
 
-                      <div className="target-card-right">
+                      <div className="[display:flex]! [flex-direction:column] [align-items:flex-end] [flex-shrink:0]">
                         <span className="target-card-val">
                           {formatCompact(val)}
                         </span>
-                        <span className="target-card-unit">
+                        <span className="[font-size:var(--text-xs)]! [color:var(--color-ink-600)]! [font-weight:600]!">
                           {viewMode === "methane" ? "tCH₄" : "tCO₂e"}
                         </span>
                       </div>
@@ -1257,8 +1257,8 @@ const EmissionsMap = () => {
       {/* 5. CALIBRATED SPECTRAL ABSORPTION RAMP LEGEND (WHITE LIGHT THEME) */}
       {showSatelliteLayer && showLegend && (
         <aside className="spectral-legend-card" role="region" aria-label="Spectral Legend">
-          <div className="legend-header">
-            <div className="legend-title">
+          <div className="[display:flex]! [justify-content:space-between] [align-items:center] [margin-bottom:8px]!">
+            <div className="[display:flex]! [align-items:center] [gap:6px] [font-size:var(--text-xs)]! [font-weight:700]! [color:var(--color-ink-900)]!">
               <Satellite size={14} color="#0284c7" />
               <span>TROPOMI CH₄ Column Mole Fraction</span>
             </div>
@@ -1270,15 +1270,15 @@ const EmissionsMap = () => {
               <X size={12} />
             </button>
           </div>
-          <div className="spectral-gradient-track"></div>
-          <div className="spectral-scale-ticks">
+          <div className="[height:8px]! [border-radius:var(--radius-sm)]! [background:linear-gradient(_90deg,_#313695_0%,_#4575b4_20%,_#74add1_40%,_#abd9e9_60%,_#fee090_75%,_#f46d43_90%,_#a50026_100%_)]! [box-shadow:inset_0_1px_2px_rgba(0,_0,_0,_0.15)]! [margin-bottom:6px]!"></div>
+          <div className="[display:flex]! [justify-content:space-between] [font-size:var(--text-xs)]! [font-weight:700]! [color:var(--color-ink-500)]! [margin-bottom:6px]!">
             <span>&lt;1,750</span>
             <span>1,800</span>
             <span>1,850</span>
             <span>1,900</span>
             <span>&ge;1,950 ppb</span>
           </div>
-          <div className="legend-footer-info">
+          <div className="[display:flex]! [justify-content:space-between] [align-items:center] [font-size:var(--text-xs)]! [color:var(--color-ink-600)]! [border-top:1px_solid_var(--color-ink-100)]! [padding-top:6px]!">
             <span>SWIR Band 7/8 (2.3 µm) • L3 5.5×7 km</span>
             <a
               href="https://dataspace.copernicus.eu"
@@ -1296,7 +1296,7 @@ const EmissionsMap = () => {
       {selectedFacility && (
         <section className="facility-dossier-panel" aria-label="Facility Reconnaissance Dossier">
           {/* Dossier Header */}
-          <div className="dossier-header">
+          <div className="[position:relative] [margin-bottom:16px]! [padding-bottom:14px]! [border-bottom:1px_solid_var(--color-ink-100)]!">
             <button
               className="dossier-close-btn"
               onClick={() => setSelectedFacility(null)}
@@ -1305,14 +1305,14 @@ const EmissionsMap = () => {
               <X size={16} />
             </button>
 
-            <div className="dossier-tag">
-              <span className="target-pulse"></span>
+            <div className="[display:inline-flex]! [align-items:center] [gap:6px] [font-size:var(--text-xs)]! [font-weight:800]! [letter-spacing:0.06em] [color:var(--color-link)]! [margin-bottom:4px]!">
+              <span className="[width:6px]! [height:6px]! [background:var(--color-brand-500)]! [border-radius:50%]! [box-shadow:0_0_6px_rgba(255,_102,_0,_0.4)]!"></span>
               <span>FACILITY RECONNAISSANCE DOSSIER</span>
             </div>
-            <h3 className="dossier-facility-name">{selectedFacility.name}</h3>
+            <h3 className="[margin:0_0_6px_0]! [font-size:var(--text-xl)]! [font-weight:800]! [color:var(--color-ink-900)]! [line-height:1.25]">{selectedFacility.name}</h3>
 
-            <div className="dossier-geo-row">
-              <div className="geo-location">
+            <div className="[display:flex]! [align-items:center] [justify-content:space-between] [gap:10px]">
+              <div className="[display:flex]! [align-items:center] [gap:5px] [font-size:var(--text-sm)]! [color:var(--color-ink-500)]!">
                 <MapPin size={13} color="#ff6600" />
                 <span>
                   {selectedFacility.region ? `${selectedFacility.region} Region` : "Algeria"} •{" "}
@@ -1343,20 +1343,20 @@ const EmissionsMap = () => {
           </div>
 
           {/* SATELLITE TOP-DOWN INTELLIGENCE SECTION */}
-          <div className="dossier-sat-card">
-            <div className="sat-card-top-bar">
-              <div className="sat-label-left">
+          <div className="[background:#f0f9ff]! [border:1px_solid_#bae6fd]! [border-radius:var(--radius-lg)]! [padding:14px]! [margin-bottom:14px]!">
+            <div className="[display:flex]! [align-items:center] [justify-content:space-between] [margin-bottom:12px]!">
+              <div className="[display:flex]! [align-items:center] [gap:6px] [font-size:var(--text-sm)]! [color:#0369a1]!">
                 <Satellite size={16} color="#0284c7" />
                 <strong>Copernicus Sentinel-5P Overpass</strong>
               </div>
               {loadingSatelliteData ? (
-                <div className="sat-loading-indicator">
-                  <RefreshCw size={12} className="spin-fast" color="#0284c7" />
+                <div className="[display:flex]! [align-items:center] [gap:5px] [font-size:var(--text-xs)]! [color:var(--color-blue-700)]!">
+                  <RefreshCw size={12} className="[animation:spin_0.8s_linear_infinite]!" color="#0284c7" />
                   <span>STAC Query...</span>
                 </div>
               ) : (
                 satelliteObservation?.summary?.stream_type && (
-                  <span className="stream-badge">
+                  <span className="[background:var(--color-green-50)]! [color:var(--color-green-700)]! [border:1px_solid_#a7f3d0]! [border-radius:var(--radius-sm)]! [padding:2px_7px]! [font-size:var(--text-xs)]! [font-weight:700]! [letter-spacing:0.04em]">
                     ● {satelliteObservation.summary.stream_type}
                   </span>
                 )
@@ -1364,7 +1364,7 @@ const EmissionsMap = () => {
             </div>
 
             {loadingSatelliteData ? (
-              <div className="sat-skeleton-loader">
+              <div className="[display:flex]! [flex-direction:column] [gap:8px] [padding:12px_0]!">
                 <div className="skeleton-line"></div>
                 <div className="skeleton-line short"></div>
               </div>
@@ -1373,37 +1373,37 @@ const EmissionsMap = () => {
               satelliteObservation.summary ? (
               <div className="sat-telemetry-body">
                 {/* 4-Stat Telemetry Matrix */}
-                <div className="telemetry-grid">
-                  <div className="telemetry-box">
-                    <span className="box-label">Mean CH₄ Column</span>
+                <div className="[display:grid]! [grid-template-columns:repeat(2,_1fr)] [gap:8px] [margin-bottom:10px]!">
+                  <div className="[background:var(--color-white)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:8px_10px]! [display:flex]! [flex-direction:column] [gap:2px]">
+                    <span className="[font-size:var(--text-xs)]! [font-weight:700]! [text-transform:uppercase]! [letter-spacing:0.05em] [color:var(--color-ink-500)]!">Mean CH₄ Column</span>
                     <span className="box-val">
                       {Number(
                         satelliteObservation.summary.mean_ch4_column_ppb || 0
                       ).toFixed(1)}{" "}
-                      <span className="val-unit">ppb</span>
+                      <span className="[font-size:var(--text-xs)]! [font-weight:600]! [color:var(--color-ink-600)]!">ppb</span>
                     </span>
                   </div>
 
-                  <div className="telemetry-box">
-                    <span className="box-label">Max Anomaly (&Delta;CH₄)</span>
+                  <div className="[background:var(--color-white)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:8px_10px]! [display:flex]! [flex-direction:column] [gap:2px]">
+                    <span className="[font-size:var(--text-xs)]! [font-weight:700]! [text-transform:uppercase]! [letter-spacing:0.05em] [color:var(--color-ink-500)]!">Max Anomaly (&Delta;CH₄)</span>
                     <span
                       className={`box-val ${
                         Number(satelliteObservation.summary.max_anomaly_ppb || 0) >= 25
-                          ? "alert-red"
-                          : "alert-amber"
+                          ? "[color:var(--color-red-700)]!"
+                          : "[color:var(--color-amber-700)]!"
                       }`}
                     >
                       +
                       {Number(
                         satelliteObservation.summary.max_anomaly_ppb || 0
                       ).toFixed(1)}{" "}
-                      <span className="val-unit">ppb</span>
+                      <span className="[font-size:var(--text-xs)]! [font-weight:600]! [color:var(--color-ink-600)]!">ppb</span>
                     </span>
                   </div>
 
-                  <div className="telemetry-box">
-                    <span className="box-label">Inferred Emission Rate</span>
-                    <span className="box-val highlight-amber">
+                  <div className="[background:var(--color-white)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:8px_10px]! [display:flex]! [flex-direction:column] [gap:2px]">
+                    <span className="[font-size:var(--text-xs)]! [font-weight:700]! [text-transform:uppercase]! [letter-spacing:0.05em] [color:var(--color-ink-500)]!">Inferred Emission Rate</span>
+                    <span className="box-val [color:var(--color-amber-700)]!">
                       {Number(
                         satelliteObservation.summary.estimated_emission_rate_kg_hr || 0
                       ) > 0
@@ -1415,8 +1415,8 @@ const EmissionsMap = () => {
                     </span>
                   </div>
 
-                  <div className="telemetry-box">
-                    <span className="box-label">Annualized Satellite Flux</span>
+                  <div className="[background:var(--color-white)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:8px_10px]! [display:flex]! [flex-direction:column] [gap:2px]">
+                    <span className="[font-size:var(--text-xs)]! [font-weight:700]! [text-transform:uppercase]! [letter-spacing:0.05em] [color:var(--color-ink-500)]!">Annualized Satellite Flux</span>
                     <span className="box-val">
                       {Number(
                         satelliteObservation.summary.annualized_ch4_tonnes || 0
@@ -1430,19 +1430,19 @@ const EmissionsMap = () => {
                 </div>
 
                 {/* Overpass Metadata Strip */}
-                <div className="sat-pass-meta">
-                  <div className="meta-item">
-                    <span className="meta-title">Overpass:</span>
-                    <span className="meta-data">
+                <div className="[display:flex]! [justify-content:space-between] [font-size:var(--text-xs)]! [color:var(--color-ink-500)]! [padding:4px_2px]! [margin-bottom:10px]! [border-bottom:1px_solid_var(--color-ink-200)]!">
+                  <div className="[display:flex]! [align-items:center] [gap:5px] [color:var(--color-ink-500)]! [font-weight:500]!">
+                    <span className="[color:var(--color-ink-600)]! [margin-right:4px]!">Overpass:</span>
+                    <span className="[color:var(--color-ink-900)]! [font-weight:600]!">
                       {satelliteObservation.summary.latest_observation_date}{" "}
                       {satelliteObservation.summary.latest_observation_time
                         ? `(${satelliteObservation.summary.latest_observation_time})`
                         : ""}
                     </span>
                   </div>
-                  <div className="meta-item">
-                    <span className="meta-title">QA Confidence:</span>
-                    <span className="meta-data">
+                  <div className="[display:flex]! [align-items:center] [gap:5px] [color:var(--color-ink-500)]! [font-weight:500]!">
+                    <span className="[color:var(--color-ink-600)]! [margin-right:4px]!">QA Confidence:</span>
+                    <span className="[color:var(--color-ink-900)]! [font-weight:600]!">
                       {(
                         Number(satelliteObservation.summary.mean_qa_score || 0) *
                         100
@@ -1455,16 +1455,16 @@ const EmissionsMap = () => {
                 {/* TOP-DOWN vs BOTTOM-UP RECONCILIATION BENCHMARK */}
                 {reconciliationAnalysis && (
                   <div
-                    className="reconciliation-meter-box"
+                    className="[background:var(--color-white)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:10px]! [margin-bottom:12px]!"
                     style={{ borderColor: `${reconciliationAnalysis.color}50` }}
                   >
-                    <div className="meter-header">
-                      <div className="meter-title">
+                    <div className="[display:flex]! [align-items:center] [justify-content:space-between] [margin-bottom:6px]!">
+                      <div className="[display:flex]! [align-items:center] [gap:5px] [font-size:var(--text-xs)]! [font-weight:700]! [color:var(--color-ink-900)]!">
                         <Activity size={13} color={reconciliationAnalysis.color} />
                         <span>OGMP 2.0 Reconciliation Gap</span>
                       </div>
                       <span
-                        className="recon-status-badge"
+                        className="[font-size:var(--text-xs)]! [font-weight:700]! [padding:2px_7px]! [border-radius:var(--radius-sm)]! [border:1px_solid]!"
                         style={{
                           backgroundColor: `${reconciliationAnalysis.color}15`,
                           color: reconciliationAnalysis.color,
@@ -1474,7 +1474,7 @@ const EmissionsMap = () => {
                         {reconciliationAnalysis.label}
                       </span>
                     </div>
-                    <div className="meter-explanation">
+                    <div className="[font-size:var(--text-xs)]! [color:var(--color-ink-600)]! [line-height:1.4]">
                       {reconciliationAnalysis.deltaText}
                     </div>
                   </div>
@@ -1489,7 +1489,7 @@ const EmissionsMap = () => {
                 >
                   {exportingOgmp ? (
                     <>
-                      <span className="recon-spinner"></span>
+                      <span className="[width:14px]! [height:14px]! [border:2px_solid_rgba(255,_255,_255,_0.3)]! [border-top-color:var(--color-white)]! [border-radius:50%]! [animation:spin_0.6s_linear_infinite]!"></span>
                       <span>Recording Level 5 Verification...</span>
                     </>
                   ) : (
@@ -1501,11 +1501,11 @@ const EmissionsMap = () => {
                 </button>
               </div>
             ) : (
-              <div className="sat-unconfigured-card">
+              <div className="[display:flex]! [gap:12px] [padding:8px]!">
                 <AlertCircle size={18} color="#d97706" />
-                <div className="unconfigured-text">
-                  <div className="unconf-title">Copernicus Live Feed Unconfigured</div>
-                  <div className="unconf-desc">
+                <div className="[flex:1]">
+                  <div className="[font-size:var(--text-sm)]! [font-weight:700]! [color:var(--color-amber-700)]! [margin-bottom:4px]!">Copernicus Live Feed Unconfigured</div>
+                  <div className="[font-size:var(--text-xs)]! [color:var(--color-ink-500)]! [line-height:1.4] [margin-bottom:8px]!">
                     Connect your free Copernicus Data Space Ecosystem (CDSE)
                     credentials in Settings to stream verified Sentinel-5P overpasses.
                   </div>
@@ -1520,25 +1520,25 @@ const EmissionsMap = () => {
             )}
           </div>
 
-          {loadingSurveys && <div className="card-section-title">Loading recorded surveys…</div>}
+          {loadingSurveys && <div className="[display:flex]! [align-items:center] [gap:6px] [font-size:var(--text-sm)]! [font-weight:800]! [letter-spacing:0.04em] [text-transform:uppercase]! [color:var(--color-ink-500)]! [margin-bottom:10px]!">Loading recorded surveys…</div>}
           {/* REAL DATABASE VERIFIED OGMP SURVEYS SECTION (IF RECORDED) */}
           {existingSurveys.length > 0 && (
-            <div className="dossier-surveys-card">
-              <div className="card-section-title">
+            <div className="[background:#f0fdf4]! [border:1px_solid_#bbf7d0]! [border-radius:var(--radius-md)]! [padding:12px]! [margin-bottom:14px]!">
+              <div className="[display:flex]! [align-items:center] [gap:6px] [font-size:var(--text-sm)]! [font-weight:800]! [letter-spacing:0.04em] [text-transform:uppercase]! [color:var(--color-ink-500)]! [margin-bottom:10px]!">
                 <ShieldCheck size={15} color="#10b981" />
                 <span>Verified OGMP Surveys in Database ({existingSurveys.length})</span>
               </div>
-              <div className="surveys-list">
+              <div className="[display:flex]! [flex-direction:column] [gap:6px] [margin-top:8px]!">
                 {existingSurveys.slice(0, 3).map((survey) => (
-                  <div key={survey.id} className="survey-item">
-                    <div className="survey-item-top">
-                      <span className="survey-type">{survey.survey_type || survey.surveyType}</span>
-                      <span className="survey-date">{survey.survey_date || survey.surveyDate}</span>
+                  <div key={survey.id} className="[background:var(--color-white)]! [border:1px_solid_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [padding:8px_10px]! [display:flex]! [flex-direction:column] [gap:4px]">
+                    <div className="[display:flex]! [justify-content:space-between] [align-items:center] [font-size:var(--text-sm)]!">
+                      <span className="[font-weight:700]! [color:var(--color-ink-900)]!">{survey.survey_type || survey.surveyType}</span>
+                      <span className="[font-size:var(--text-xs)]! [color:var(--color-ink-500)]!">{survey.survey_date || survey.surveyDate}</span>
                     </div>
-                    <div className="survey-item-metrics">
+                    <div className="[display:flex]! [align-items:center] [gap:10px] [font-size:var(--text-xs)]! [color:var(--color-ink-600)]!">
                       <span>Rate: <strong>{Number(survey.measured_rate_kg_hr || survey.measuredRateKgHr || 0).toFixed(1)} kg/hr</strong></span>
                       <span>Annual: <strong>{Number(survey.estimated_annual_tch4 || survey.estimatedAnnualTch4 || 0).toFixed(1)} tCH₄</strong></span>
-                      <span className="survey-status-badge">{survey.reconciliation_status || "Recorded"}</span>
+                      <span className="[margin-left:auto]! [font-size:var(--text-xs)]! [font-weight:700]! [padding:1px_6px]! [border-radius:var(--radius-sm)]! [background:var(--color-green-50)]! [color:var(--color-green-700)]! [border:1px_solid_#a7f3d0]!">{survey.reconciliation_status || "Recorded"}</span>
                     </div>
                   </div>
                 ))}
@@ -1547,16 +1547,16 @@ const EmissionsMap = () => {
           )}
 
           {/* BOTTOM-UP REPORTED ENGINEERING INVENTORY METRICS (REAL DATABASE VALUES) */}
-          <div className="dossier-bottomup-card">
-            <div className="card-section-title">
+          <div className="[margin-bottom:14px]!">
+            <div className="[display:flex]! [align-items:center] [gap:6px] [font-size:var(--text-sm)]! [font-weight:800]! [letter-spacing:0.04em] [text-transform:uppercase]! [color:var(--color-ink-500)]! [margin-bottom:10px]!">
               <BarChart3 size={15} color="#ff6600" />
               <span>Bottom-Up Reported Inventory</span>
             </div>
 
-            <div className="bottomup-metrics-grid">
+            <div className="[display:grid]! [grid-template-columns:repeat(2,_1fr)] [gap:8px]">
               {/* Main Emission Highlight */}
               <div className="stat-card span-2 main-accent">
-                <span className="stat-card-title">
+                <span className="[font-size:var(--text-xs)]! [font-weight:700]! [text-transform:uppercase]! [letter-spacing:0.05em] [color:var(--color-ink-500)]!">
                   {viewMode === "methane"
                     ? "Reported Methane (CH₄)"
                     : "Reported Total GHG"}
@@ -1566,23 +1566,23 @@ const EmissionsMap = () => {
                     ? `${formatCompact(selectedStats.total_ch4)} tCH₄`
                     : `${formatCompact(selectedStats.total_co2e)} tCO₂e`}
                 </span>
-                <span className="stat-card-sub">
+                <span className="[font-size:var(--text-xs)]! [color:var(--color-ink-600)]!">
                   Verified Bottom-Up Engineering Ledger
                 </span>
               </div>
 
               {/* Hydrocarbon Production */}
               <div className="stat-card">
-                <span className="stat-card-title">Production</span>
+                <span className="[font-size:var(--text-xs)]! [font-weight:700]! [text-transform:uppercase]! [letter-spacing:0.05em] [color:var(--color-ink-500)]!">Production</span>
                 <span className="stat-card-number emerald">
                   {formatCompact(selectedStats.total_boe)}
                 </span>
-                <span className="stat-card-sub">BOE / Year</span>
+                <span className="[font-size:var(--text-xs)]! [color:var(--color-ink-600)]!">BOE / Year</span>
               </div>
 
               {/* Carbon / Methane Intensity */}
               <div className="stat-card">
-                <span className="stat-card-title">
+                <span className="[font-size:var(--text-xs)]! [font-weight:700]! [text-transform:uppercase]! [letter-spacing:0.05em] [color:var(--color-ink-500)]!">
                   {viewMode === "methane"
                     ? "Methane Intensity"
                     : "Carbon Intensity"}
@@ -1592,33 +1592,33 @@ const EmissionsMap = () => {
                     ? Number(selectedStats.ch4_intensity || 0).toFixed(3)
                     : Number(selectedStats.co2_intensity || 0).toFixed(2)}
                 </span>
-                <span className="stat-card-sub">
+                <span className="[font-size:var(--text-xs)]! [color:var(--color-ink-600)]!">
                   {viewMode === "methane" ? "kgCH₄/boe" : "kgCO₂e/boe"}
                 </span>
               </div>
 
               {/* Flaring Intensity */}
               <div className="stat-card">
-                <span className="stat-card-title">Flaring Intensity</span>
+                <span className="[font-size:var(--text-xs)]! [font-weight:700]! [text-transform:uppercase]! [letter-spacing:0.05em] [color:var(--color-ink-500)]!">Flaring Intensity</span>
                 <span className="stat-card-number danger">
                   {Number(selectedStats.api_flaring_intensity || 0).toFixed(2)}
                 </span>
-                <span className="stat-card-sub">kgCO₂e/boe</span>
+                <span className="[font-size:var(--text-xs)]! [color:var(--color-ink-600)]!">kgCO₂e/boe</span>
               </div>
 
               {/* Asset Division Identifier */}
               <div className="stat-card">
-                <span className="stat-card-title">Asset Code</span>
+                <span className="[font-size:var(--text-xs)]! [font-weight:700]! [text-transform:uppercase]! [letter-spacing:0.05em] [color:var(--color-ink-500)]!">Asset Code</span>
                 <span className="stat-card-number mono">
                   {selectedFacility.code || "N/A"}
                 </span>
-                <span className="stat-card-sub">Database Ref</span>
+                <span className="[font-size:var(--text-xs)]! [color:var(--color-ink-600)]!">Database Ref</span>
               </div>
             </div>
           </div>
 
           {/* QUICK FOCUS ACTION BUTTONS */}
-          <div className="dossier-actions">
+          <div className="[margin-top:auto]! [padding-top:10px]!">
             <button
               className="btn-action-focus"
               onClick={() => {

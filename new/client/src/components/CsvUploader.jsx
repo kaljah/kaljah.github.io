@@ -24,7 +24,7 @@ const CsvUploader = ({ onUploadSuccess }) => {
         />
       )}
 
-      <div className="csv-uploader-entry inline-block!">
+      <div className="[display:inline-flex]! [align-items:center] inline-block!">
         <button
           className="action-btn bg-[color:#10b981]! p-[6px_14px]! text-[length:0.82rem]! whitespace-nowrap! ml-[12px]! flex! items-center! gap-[6px]!"
          
