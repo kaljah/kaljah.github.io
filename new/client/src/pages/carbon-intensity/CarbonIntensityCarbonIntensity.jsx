@@ -1,4 +1,5 @@
 import React from "react";
+import { SegmentedControl } from "../../ui";
 import { Activity, Cloud, Flame, Layers, ShieldCheck } from "lucide-react";
 import { formatNumber } from "../../utils/formatters";
 import { getActiveGwpFactors } from "../../constants";
@@ -20,30 +21,30 @@ const CarbonIntensityCarbonIntensity = ({ activeGwpStandard, currentDisplayCo2In
             {/* GWP Time Horizon Toggle */}
             <div className="gwp-toggle-container">
               <span className="gwp-toggle-label">GWP Horizon:</span>
-              <div className="gwp-pill-group">
-                {(() => {
-                  const f100 = getActiveGwpFactors(activeGwpStandard, "100");
-                  const f20 = getActiveGwpFactors(activeGwpStandard, "20");
-                  return (
-                    <>
-                      <button
-                        className={`gwp-pill ${gwpHorizon === "100" ? "active" : ""}`}
-                        onClick={() => setGwpHorizon("100")}
-                        title={`IPCC ${activeGwpStandard} 100-Year GWP (CH4: ${f100.CH4}, N2O: ${f100.N2O})`}
-                      >
-                        {activeGwpStandard} 100-Yr
-                      </button>
-                      <button
-                        className={`gwp-pill ${gwpHorizon === "20" ? "active" : ""}`}
-                        onClick={() => setGwpHorizon("20")}
-                        title={`IPCC ${activeGwpStandard} 20-Year GWP (CH4: ${f20.CH4}, N2O: ${f20.N2O})`}
-                      >
-                        {activeGwpStandard} 20-Yr
-                      </button>
-                    </>
-                  );
-                })()}
-              </div>
+              {(() => {
+                const f100 = getActiveGwpFactors(activeGwpStandard, "100");
+                const f20 = getActiveGwpFactors(activeGwpStandard, "20");
+                return (
+                  <SegmentedControl
+                    label="GWP horizon"
+                    size="sm"
+                    value={gwpHorizon}
+                    onChange={setGwpHorizon}
+                    options={[
+                      {
+                        value: "100",
+                        label: `${activeGwpStandard} 100-Yr`,
+                        title: `IPCC ${activeGwpStandard} 100-Year GWP (CH4: ${f100.CH4}, N2O: ${f100.N2O})`,
+                      },
+                      {
+                        value: "20",
+                        label: `${activeGwpStandard} 20-Yr`,
+                        title: `IPCC ${activeGwpStandard} 20-Year GWP (CH4: ${f20.CH4}, N2O: ${f20.N2O})`,
+                      },
+                    ]}
+                  />
+                );
+              })()}
             </div>
           </div>
 

@@ -115,11 +115,11 @@ test.describe('Carbon Intensity Page Deep Audit', () => {
     await setupCarbonIntensity(page);
 
     // Initial state: 100-Yr active
-    const btn100 = page.locator('.gwp-pill:has-text("100-Yr")');
-    const btn20 = page.locator('.gwp-pill:has-text("20-Yr")');
+    const btn100 = page.locator('[role="radio"]:has-text("100-Yr")');
+    const btn20 = page.locator('[role="radio"]:has-text("20-Yr")');
     await expect(btn100).toBeVisible();
     await expect(btn20).toBeVisible();
-    await expect(btn100).toHaveClass(/active/);
+    await expect(btn100).toHaveAttribute('aria-checked', 'true');
 
     // Footer tag should indicate GWP100
     const card1Footer = page.locator('.kpi-card').nth(0).locator('.gwp-subtag');
@@ -132,14 +132,14 @@ test.describe('Carbon Intensity Page Deep Audit', () => {
     await page.waitForTimeout(500);
 
     // 20-Yr should now be active
-    await expect(btn20).toHaveClass(/active/);
-    await expect(btn100).not.toHaveClass(/active/);
+    await expect(btn20).toHaveAttribute('aria-checked', 'true');
+    await expect(btn100).toHaveAttribute('aria-checked', 'false');
     await expect(card1Footer).toContainText('GWP₂₀ Active');
 
     // Switch back to 100-Yr
     await btn100.click();
     await page.waitForTimeout(500);
-    await expect(btn100).toHaveClass(/active/);
+    await expect(btn100).toHaveAttribute('aria-checked', 'true');
     await expect(card1Footer).toContainText('GWP₁₀₀ Standard');
   });
 

@@ -262,14 +262,14 @@ test.describe('Baseline UX/UI Audit: Dashboard & Intensity Pages', () => {
     expect(s1Int).not.toContain('NaN');
 
     // Test Dual GWP Horizon: 100-Yr vs 20-Yr
-    const btn20 = page.locator('.gwp-pill:has-text("20-Yr")');
+    const btn20 = page.locator('[role="radio"]:has-text("20-Yr")');
     if (await btn20.isVisible()) {
       await btn20.click();
       await page.waitForTimeout(600);
       const ghgInt20 = await kpiCards.nth(0).locator('.total-value').innerText();
       console.log(`[CARBON INTENSITY GWP20] GHG Intensity 20-Yr: ${ghgInt20}`);
       await page.screenshot({ path: path.join(SCREENSHOT_DIR, '08_carbon_intensity_gwp20.png'), fullPage: true });
-      await page.locator('.gwp-pill:has-text("100-Yr")').click();
+      await page.locator('[role="radio"]:has-text("100-Yr")').click();
       await page.waitForTimeout(500);
     }
 
