@@ -10,6 +10,7 @@ export const StatCard = ({
   label,
   sublabel,
   value,
+  valueText,
   unit,
   format = "compact",
   decimals,
@@ -34,8 +35,8 @@ export const StatCard = ({
         <Skeleton className="h-9 w-32" />
       ) : (
         <div className="flex flex-wrap items-baseline gap-x-2">
-          <span className="text-2xl font-bold text-text">
-            <Num value={value} format={format} decimals={decimals} />
+          <span data-testid="kpi-value" className="text-2xl font-bold text-text">
+            {valueText ?? <Num value={value} format={format} decimals={decimals} />}
           </span>
           {unit && <Unit className="text-sm">{unit}</Unit>}
           {delta && (
@@ -56,7 +57,11 @@ export const StatCard = ({
           )}
         </div>
       )}
-      {footnote && <p className="text-sm text-text-secondary">{footnote}</p>}
+      {footnote && (
+        <p data-testid="kpi-footnote" className="text-sm text-text-secondary">
+          {footnote}
+        </p>
+      )}
     </Card>
   );
 };

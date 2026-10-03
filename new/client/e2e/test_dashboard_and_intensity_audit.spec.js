@@ -67,9 +67,9 @@ test.describe('Baseline UX/UI Audit: Dashboard & Intensity Pages', () => {
     await page.screenshot({ path: path.join(SCREENSHOT_DIR, '01_dashboard_initial_view.png'), fullPage: true });
 
     // Verify Hero Card Initial Stats
-    const grossText = await page.locator('.stat-item:has-text("Gross Operational Emissions") .stat-value').innerText();
-    const netText = await page.locator('.stat-item:has-text("Net Emissions") .stat-value').innerText();
-    const ch4Text = await page.locator('.stat-item:has-text("Total CH4") .stat-value').innerText();
+    const grossText = await page.locator('[data-testid="kpi-gross"] [data-testid="kpi-value"]').innerText();
+    const netText = await page.locator('[data-testid="kpi-net"] [data-testid="kpi-value"]').innerText();
+    const ch4Text = await page.locator('[data-testid="kpi-ch4"] [data-testid="kpi-value"]').innerText();
     console.log(`[DASHBOARD BASELINE] Gross: ${grossText}, Net: ${netText}, CH4: ${ch4Text}`);
 
     // Verify Scope Pills
@@ -97,7 +97,7 @@ test.describe('Baseline UX/UI Audit: Dashboard & Intensity Pages', () => {
         if (await yrOpt.isVisible()) {
           await yrOpt.click();
           await page.waitForTimeout(800);
-          const yrGross = await page.locator('.stat-item:has-text("Gross Operational Emissions") .stat-value').innerText();
+          const yrGross = await page.locator('[data-testid="kpi-gross"] [data-testid="kpi-value"]').innerText();
           console.log(`[YEAR TEST] ${yr} -> Gross Emissions: ${yrGross}`);
           expect(yrGross).not.toContain('NaN');
           expect(yrGross).not.toContain('undefined');
@@ -120,7 +120,7 @@ test.describe('Baseline UX/UI Audit: Dashboard & Intensity Pages', () => {
         if (await segOpt.isVisible()) {
           await segOpt.click();
           await page.waitForTimeout(800);
-          const segGross = await page.locator('.stat-item:has-text("Gross Operational Emissions") .stat-value').innerText();
+          const segGross = await page.locator('[data-testid="kpi-gross"] [data-testid="kpi-value"]').innerText();
           console.log(`[SUPPLY CHAIN TEST] ${seg} -> Gross: ${segGross}`);
         } else {
           await page.keyboard.press('Escape');
@@ -151,7 +151,7 @@ test.describe('Baseline UX/UI Audit: Dashboard & Intensity Pages', () => {
       if (await tosyaliWest.isVisible()) {
         await tosyaliWest.click();
         await page.waitForTimeout(800);
-        const tosyaliGross = await page.locator('.stat-item:has-text("Gross Operational Emissions") .stat-value').innerText();
+        const tosyaliGross = await page.locator('[data-testid="kpi-gross"] [data-testid="kpi-value"]').innerText();
         console.log(`[REGION/FACILITY TEST] West (Tosyali) -> Gross: ${tosyaliGross}`);
       } else {
         await page.keyboard.press('Escape');
@@ -175,7 +175,7 @@ test.describe('Baseline UX/UI Audit: Dashboard & Intensity Pages', () => {
       const gwpLabelBefore = await gwpToggleBtn.innerText();
       await gwpToggleBtn.click();
       await page.waitForTimeout(800);
-      const grossGwp20 = await page.locator('.stat-item:has-text("Gross Operational Emissions") .stat-value').innerText();
+      const grossGwp20 = await page.locator('[data-testid="kpi-gross"] [data-testid="kpi-value"]').innerText();
       console.log(`[GWP TOGGLE] Switched from ${gwpLabelBefore} -> Gross: ${grossGwp20}`);
       await page.screenshot({ path: path.join(SCREENSHOT_DIR, '03_dashboard_gwp20_active.png'), fullPage: true });
 

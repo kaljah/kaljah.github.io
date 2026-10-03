@@ -730,10 +730,10 @@ conn.close()
     await expect(page.locator('.grid-title')).toHaveText('GHG Emissions Dashboard');
 
     // Read Hero Gross Emissions
-    const grossVal = page.locator('.stat-item:has-text("Gross Operational Emissions") .stat-value').first();
+    const grossVal = page.locator('[data-testid="kpi-gross"] [data-testid="kpi-value"]').first();
     await expect(grossVal).toBeVisible({ timeout: 10000 });
     const grossText = await grossVal.innerText();
-    const netText = await page.locator('.stat-item:has-text("Net Emissions") .stat-value').first().innerText();
+    const netText = await page.locator('[data-testid="kpi-net"] [data-testid="kpi-value"]').first().innerText();
     console.log(`[DASHBOARD RECALCULATED HERO] Gross: ${grossText}, Net: ${netText}`);
     expect(grossText).not.toContain('0.00 t');
     expect(grossText).not.toContain('NaN');
