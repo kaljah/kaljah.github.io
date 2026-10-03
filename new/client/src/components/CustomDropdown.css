@@ -1,3 +1,8 @@
+.custom-dropdown {
+  position: relative;
+  width: 100%;
+}
+
 .dropdown-selected {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
@@ -30,6 +35,10 @@
 .dropdown-selected svg {
   transition: transform 0.2s;
   opacity: 0.5;
+}
+
+.custom-dropdown.open .dropdown-selected svg {
+  transform: rotate(180deg);
 }
 
 .dropdown-options {
@@ -66,6 +75,25 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+.dropdown-option {
+  padding: 10px 14px;
+  cursor: pointer;
+  font-size: var(--text-base);
+  color: var(--text-primary);
+  transition: background 0.15s;
+}
+
+.dropdown-option:hover,
+.dropdown-option.active {
+  background: var(--bg-hover);
+}
+
+.dropdown-option.selected {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--color-link);
+  font-weight: 600;
 }
 
 .dropdown-options::-webkit-scrollbar {
