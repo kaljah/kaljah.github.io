@@ -80,7 +80,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 
           <div className="form-grid-2">
             <Field className="input-group" label={<>Lift type
-                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+                <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <NativeSelect
                 className="mole-input"
                 value={unloadingType}
@@ -95,7 +95,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 </Field>
 
             <Field className="input-group" label={<>Wells
-                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+                <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <Input
                 type="number"
                 min="1"
@@ -166,7 +166,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 
           <div className="form-grid-2">
             <Field className="input-group" label={<>Lift type
-                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+                <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <NativeSelect
                 className="mole-input"
                 value={unloadingType}
@@ -181,7 +181,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 </Field>
 
             <Field className="input-group" label={<>Events
-                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+                <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <Input
                 type="number"
                 min="0"
@@ -299,7 +299,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 
               <div className="form-grid-2">
                 <Field className="input-group" label={<>Lift type
-                    <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+                    <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <NativeSelect
                     className="mole-input"
                     value={unloadingType}
@@ -314,7 +314,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 </Field>
 
                 <Field className="input-group" label={<>Events per year
-                    <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+                    <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <Input
                     type="number"
                     min="0"
@@ -334,7 +334,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 </Field>
 
                 <Field className="input-group" label={<>Tubing diameter (in)
-                    <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+                    <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <Input
                     type="number"
                     step="0.001"
@@ -351,7 +351,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 </Field>
 
                 <Field className="input-group" label={<>Well Depth (ft)
-                    <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+                    <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <Input
                     type="number"
                     step="1"
@@ -368,7 +368,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 </Field>
 
                 <Field className="input-group" label={<>Shut-in pressure (psig)
-                    <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+                    <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <Input
                     type="number"
                     step="0.1"
@@ -385,7 +385,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 </Field>
 
                 <Field className="input-group" label={<>Sales flow rate (scf/hr)
-                    <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+                    <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <Input
                     type="number"
                     step="1"
@@ -399,7 +399,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 </Field>
 
                 <Field className="input-group" label={<>Venting time (h/event)
-                    <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+                    <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <Input
                     type="number"
                     step="0.1"
@@ -413,7 +413,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 </Field>
 
                 <Field className="input-group" label={<>CH₄ (mol %)
-                    <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+                    <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <Input
                     type="number"
                     step="0.01"
@@ -465,7 +465,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 
               <div className="form-grid-2">
                 <Field className="input-group" label={<>Shut-In Pressure Pshut (psia)
-                    <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+                    <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <Input
                     type="number"
                     step="0.1"
@@ -479,7 +479,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 </Field>
 
                 <Field className="input-group" label={<>Flow-Line Pressure Pline (psia)
-                    <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+                    <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <Input
                     type="number"
                     step="0.1"
@@ -493,7 +493,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 </Field>
 
                 <Field className="input-group" label={<>Separator Pressure Psep (psia)
-                    <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+                    <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <Input
                     type="number"
                     step="0.1"
@@ -507,7 +507,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 </Field>
 
                 <Field className="input-group" label={<>Gas Production Rate SFRp (scf/hr)
-                    <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+                    <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <Input
                     type="number"
                     step="1"
@@ -521,7 +521,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 </Field>
 
                 <Field className="input-group" label={<>Venting Time Tp (hours/event)
-                    <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+                    <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <Input
                     type="number"
                     step="0.05"
@@ -535,7 +535,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 </Field>
 
                 <Field className="input-group" label={<>Events per year
-                    <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+                    <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <Input
                     type="number"
                     min="1"
@@ -554,7 +554,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 </Field>
 
                 <Field className="input-group" label={<>CH₄ (mol %)
-                    <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+                    <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <Input
                     type="number"
                     step="0.01"
@@ -606,7 +606,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 
               <div className="form-grid-2">
                 <Field className="input-group" label={<>Frequency (events/yr)
-                    <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+                    <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <Input
                     type="number"
                     min="0"
@@ -626,7 +626,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 </Field>
 
                 <Field className="input-group" label={<>Tubing diameter (in)
-                    <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+                    <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <Input
                     type="number"
                     step="0.001"
@@ -643,7 +643,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 </Field>
 
                 <Field className="input-group" label={<>Well Depth (ft)
-                    <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+                    <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <Input
                     type="number"
                     step="1"
@@ -660,7 +660,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 </Field>
 
                 <Field className="input-group" label={<>Surface Pressure (psig)
-                    <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+                    <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <Input
                     type="number"
                     step="0.1"
@@ -677,7 +677,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
 </Field>
 
                 <Field className="input-group" label={<>CH₄ (mol %)
-                    <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+                    <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <Input
                     type="number"
                     step="0.01"

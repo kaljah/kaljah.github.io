@@ -9,8 +9,8 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
             <div className="section-intro-header">
               <Satellite
                 size={22}
-                className="section-icon"
-                style={{ color: "#0284c7" }}
+                className="section-icon text-[color:#0284c7]!"
+               
               />
               <h2>
                 ESA Copernicus Sentinel-5P (TROPOMI) Satellite Integration
@@ -19,7 +19,7 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
             <p>
               Configure access to the **Copernicus Data Space Ecosystem (CDSE)**
               to stream global Level-3 Methane total column mixing ratio (
-              <code style={{ color: "#0284c7" }}>
+              <code className="text-[color:#0284c7]!">
                 COPERNICUS/S5P/OFFL/L3_CH4
               </code>
               ) directly into the Emissions Map and OGMP 2.0 top-down
@@ -239,10 +239,10 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
                 <div
                   className="flex! justify-between! items-center! mb-[6px]!"
                 >
-                  <label className="field-label" style={{ margin: 0 }}>
+                  <label className="field-label m-[0px]!">
                     Cloud Quality Filter (QA Value Threshold)
                   </label>
-                  <span style={{ fontWeight: 700, color: "#0284c7" }}>
+                  <span className="font-bold! text-[color:#0284c7]!">
                     &ge; {copernicusQaThreshold}
                   </span>
                 </div>
@@ -291,7 +291,7 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
                     }}
                     id="copernicus-enabled-checkbox"
                   />
-                  <span style={{ fontSize: "0.92rem", fontWeight: 600 }}>
+                  <span className="text-[length:0.92rem]! font-semibold!">
                     Enable Live Sentinel-5P Methane Layer on Map
                   </span>
                 </label>
@@ -350,12 +350,7 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
               disabled={saving || !isAdmin}
               title={!isAdmin ? "Administrator privileges required to modify settings" : "Save settings"}
               id="save-satellite-settings-btn"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                padding: "10px 24px",
-              }}
+              className="flex! items-center! gap-[8px]! p-[10px_24px]!"
             >
               <Save size={18} />
               {saving ? "Saving..." : "Save Satellite Settings"}

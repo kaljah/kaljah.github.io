@@ -310,7 +310,7 @@ const SbtiDashboard = () => {
               <Globe size={20} className="text-primary" />
               SBTi Corporate Target Setup
             </h3>
-            <span style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>
+            <span className="text-[length:0.85rem]! text-[color:var(--text-secondary)]!">
               Per SBTi Corporate Net-Zero Standard v1.2 (Criteria C24 / NZ-C1)
             </span>
           </div>
@@ -534,7 +534,7 @@ const SbtiDashboard = () => {
                 height={350}
               />
             ) : (
-              <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%", color: "#94a3b8" }}>
+              <div className="flex! justify-center! items-center! h-full! text-[color:#94a3b8]!">
                 No trajectory configured. Click "Configure Target" to set baseline and targets.
               </div>
             )}
@@ -560,7 +560,7 @@ const SbtiDashboard = () => {
                 height={350}
               />
             ) : (
-              <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%", color: "#94a3b8" }}>
+              <div className="flex! justify-center! items-center! h-full! text-[color:#94a3b8]!">
                 No verified emissions history available.
               </div>
             )}
@@ -617,7 +617,7 @@ const SbtiDashboard = () => {
                     <tr key={row.year}>
                       <td className="font-semibold!">{row.year}</td>
                       <td className="font-medium!">{formatNumber(row.sbti_target, 1)} tCO2e</td>
-                      <td style={{ color: "var(--text-primary, #0f172a)", fontWeight: 500 }}>{formatNumber(row.bau_projection, 1)} tCO2e</td>
+                      <td className="text-[color:var(--text-primary,_#0f172a)]! font-medium!">{formatNumber(row.bau_projection, 1)} tCO2e</td>
                       <td style={{ fontWeight: hasActual ? 700 : 400, color: hasActual ? "var(--text-primary, #0f172a)" : "#64748b" }}>
                         {hasActual ? `${formatNumber(row.actual, 1)} tCO2e` : "—"}
                       </td>
@@ -644,7 +644,7 @@ const SbtiDashboard = () => {
                 })
               ) : (
                 <tr>
-                  <td colSpan="10" style={{ textAlign: "center", padding: "30px", color: "#94a3b8" }}>
+                  <td colSpan="10" className="text-center! p-[30px]! text-[color:#94a3b8]!">
                     No trajectory milestone records found.
                   </td>
                 </tr>

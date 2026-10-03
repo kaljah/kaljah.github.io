@@ -10,7 +10,7 @@ const FactorsTab = ({ ITEMS_PER_PAGE, currentPage, editingFactorId, factorForm, 
                                 <div className="flex! justify-between! items-start! mb-[32px]!">
                                     <div>
                                         <h2 className="mb-[8px]! font-bold!">Custom Emission Factors</h2>
-                                        <p style={{ color: 'var(--text-secondary)', margin: 0 }}>Define custom factors for specialized equipment.</p>
+                                        <p className="text-[color:var(--text-secondary)]! m-[0px]!">Define custom factors for specialized equipment.</p>
                                     </div>
                                     <button 
                                         className="action-btn" 
@@ -133,23 +133,23 @@ const FactorsTab = ({ ITEMS_PER_PAGE, currentPage, editingFactorId, factorForm, 
 
                                 {/* EF Uncertainty Workbench */}
                                 <div style={{ marginTop: '20px', padding: '20px', background: 'rgba(30, 41, 59, 0.03)', borderRadius: '12px', border: '1px solid rgba(0,0,0,0.05)' }}>
-                                    <h4 style={{ margin: '0 0 15px 0', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <h4 className="m-[0_0_15px_0]! text-[length:1rem]! flex! items-center! gap-[8px]!">
                                         <Database size={16} /> EF Uncertainty Workbench (ISO 14064-1 compliant)
                                     </h4>
                                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '15px' }}>
                                         <div className="input-group">
-                                            <label style={{ fontSize: '0.8rem' }}>Meter Precision (±%)</label>
-                                            <Input type="number" step="0.1" value={workbench.meter_precision} onChange={(e) => setWorkbench({ ...workbench, meter_precision: parseFloat(e.target.value) || 0 })} style={{ padding: '8px' }} />
+                                            <label className="text-[length:0.8rem]!">Meter Precision (±%)</label>
+                                            <Input type="number" step="0.1" value={workbench.meter_precision} onChange={(e) => setWorkbench({ ...workbench, meter_precision: parseFloat(e.target.value) || 0 })} className="p-[8px]!" />
                                         </div>
                                         <div className="input-group">
-                                            <label style={{ fontSize: '0.8rem' }}>Lab Analysis (±%)</label>
-                                            <Input type="number" step="0.1" value={workbench.lab_precision} onChange={(e) => setWorkbench({ ...workbench, lab_precision: parseFloat(e.target.value) || 0 })} style={{ padding: '8px' }} />
+                                            <label className="text-[length:0.8rem]!">Lab Analysis (±%)</label>
+                                            <Input type="number" step="0.1" value={workbench.lab_precision} onChange={(e) => setWorkbench({ ...workbench, lab_precision: parseFloat(e.target.value) || 0 })} className="p-[8px]!" />
                                         </div>
                                         <div className="input-group">
-                                            <label style={{ fontSize: '0.8rem' }}>GWP Standard Selection</label>
+                                            <label className="text-[length:0.8rem]!">GWP Standard Selection</label>
                                             <NativeSelect
-                                                className="component-select"
-                                                style={{ padding: '8px', fontSize: '0.85rem' }}
+                                                className="component-select p-[8px]! text-[length:0.85rem]!"
+                                               
                                                 value={workbench.gwp_uncertainty}
                                                 onChange={(e) => setWorkbench({ ...workbench, gwp_uncertainty: parseFloat(e.target.value) || 0 })}
                                             >
@@ -161,7 +161,7 @@ const FactorsTab = ({ ITEMS_PER_PAGE, currentPage, editingFactorId, factorForm, 
                                     </div>
                                     <Button
                                         variant="ghost" type="submit"
-                                        style={{ marginTop: '15px', color: '#3b82f6', fontWeight: 600, fontSize: '0.85rem' }}
+                                        className="mt-[15px]! text-[color:#3b82f6]! font-semibold! text-[length:0.85rem]!"
                                         onClick={() => {
                                             const co2_u = Math.sqrt(
                                                 Math.pow(workbench.meter_precision, 2) +
@@ -205,7 +205,7 @@ const FactorsTab = ({ ITEMS_PER_PAGE, currentPage, editingFactorId, factorForm, 
                                 </div>
                                 <div className="table-container mt-[40px]!">
                                     <div className="flex! justify-between! items-center! mb-[16px]!">
-                                        <h3 style={{ margin: 0 }}>Custom Factors</h3>
+                                        <h3 className="m-[0px]!">Custom Factors</h3>
                                     </div>
                                     <table className="data-table">
                                         <thead>
@@ -230,10 +230,10 @@ const FactorsTab = ({ ITEMS_PER_PAGE, currentPage, editingFactorId, factorForm, 
                                                     <td>{f.co2_factor}</td>
                                                     <td>{f.ch4_factor}</td>
                                                     <td>{f.n2o_factor}</td>
-                                                    <td style={{ maxWidth: '240px' }}>
-                                                        {f.source && <span style={{ display: 'inline-block', fontSize: '0.75rem', background: '#dbeafe', color: '#1d4ed8', padding: '1px 6px', borderRadius: '4px', fontWeight: 600, marginBottom: '2px' }}>{f.source}</span>}
+                                                    <td className="max-w-[240px]!">
+                                                        {f.source && <span className="inline-block! text-[length:0.75rem]! bg-[color:#dbeafe]! text-[color:#1d4ed8]! p-[1px_6px]! rounded-[4px]! font-semibold! mb-[2px]!">{f.source}</span>}
                                                         {f.description && <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={f.description}>{f.description}</div>}
-                                                        {!f.source && !f.description && <span style={{ color: 'var(--text-secondary)' }}>—</span>}
+                                                        {!f.source && !f.description && <span className="text-[color:var(--text-secondary)]!">—</span>}
                                                     </td>
                                                     <td style={{ color: f.co2_uncertainty ? '#10b981' : 'inherit' }}>{f.co2_uncertainty ? `±${f.co2_uncertainty}%` : '—'}</td>
                                                     <td style={{ color: f.ch4_uncertainty ? '#3b82f6' : 'inherit' }}>{f.ch4_uncertainty ? `±${f.ch4_uncertainty}%` : '—'}</td>
@@ -247,7 +247,7 @@ const FactorsTab = ({ ITEMS_PER_PAGE, currentPage, editingFactorId, factorForm, 
                                             ))}
                                             {filteredFactors.length === 0 && (
                                                 <tr>
-                                                    <td colSpan="10" style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>
+                                                    <td colSpan="10" className="text-center! p-[40px]! text-[color:var(--text-secondary)]!">
                                                         No custom emission factors found.
                                                     </td>
                                                 </tr>

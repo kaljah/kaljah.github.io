@@ -136,7 +136,7 @@ const EmissionsOverviewCard = ({ currentActivity, currentDivision, currentRegion
               </div>
               <div className="stat-sublabel">
                 {!hasProductionData && stats.totalEmissions > 0 ? (
-                  <span style={{ color: "#d97706", fontWeight: 600 }}>Production figures required</span>
+                  <span className="text-[color:#d97706]! font-semibold!">Production figures required</span>
                 ) : (
                   "CO₂e Intensity (Scope 1+2)"
                 )}

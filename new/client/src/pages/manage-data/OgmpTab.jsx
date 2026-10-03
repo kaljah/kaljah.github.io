@@ -9,7 +9,7 @@ const OgmpTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, NON_OG_ACTIVITIES, currentPa
 <div className="tab-pane active">
                                 <div className="section-header mb-[24px]!">
                                     <h2>OGMP 2.0 Level 4 & 5 Top-Down / Bottom-Up Surveys</h2>
-                                    <p style={{ color: 'var(--text-secondary)', marginTop: '4px' }}>
+                                    <p className="text-[color:var(--text-secondary)]! mt-[4px]!">
                                         Log site-level top-down measurements (satellite, aerial LiDAR, drone, ground OGI) to reconcile against inventory estimates under Oil and Gas Methane Partnership (OGMP 2.0) Level 4/5 standards.
                                     </p>
                                 </div>
@@ -22,8 +22,8 @@ const OgmpTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, NON_OG_ACTIVITIES, currentPa
                                 }}>
                                     <CircleAlert size="18" strokeWidth="2" className="shrink-0!" aria-hidden="true" />
                                     <div>
-                                        <strong style={{ color: '#1d4ed8', fontSize: '0.85rem' }}>Oil & Gas Scope Only</strong>
-                                        <span style={{ color: '#3b82f6', fontSize: '0.83rem', marginLeft: '8px' }}>
+                                        <strong className="text-[color:#1d4ed8]! text-[length:0.85rem]!">Oil & Gas Scope Only</strong>
+                                        <span className="text-[color:#3b82f6]! text-[length:0.83rem]! ml-[8px]!">
                                             OGMP 2.0 applies exclusively to Oil & Gas operations (Upstream, Midstream, LNG). Heavy industry facilities (Steel, Cement, Chemicals) are not in scope.
                                         </span>
                                     </div>
@@ -159,8 +159,8 @@ const OgmpTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, NON_OG_ACTIVITIES, currentPa
                                     </button>
                                     {editingOgmpId && (
                                         <button
-                                            className="action-btn"
-                                            style={{ background: 'var(--text-secondary)' }}
+                                            className="action-btn bg-[color:var(--text-secondary)]!"
+                                           
                                             onClick={() => {
                                                 setEditingOgmpId(null);
                                                 setOgmpForm({
@@ -180,7 +180,7 @@ const OgmpTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, NON_OG_ACTIVITIES, currentPa
                                 <div className="table-container mt-[40px]!">
                                     <div className="flex! justify-between! items-center! mb-[16px]!">
                                         <h3>OGMP 2.0 Survey Records</h3>
-                                        <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                                        <span className="text-[length:0.85rem]! text-[color:var(--text-secondary)]!">
                                             Total Surveys: {filteredOgmp.length}
                                         </span>
                                     </div>
@@ -220,7 +220,7 @@ const OgmpTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, NON_OG_ACTIVITIES, currentPa
                                                         <td className="text-right! font-semibold!">
                                                             {mRate.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 2 })}
                                                         </td>
-                                                        <td style={{ textAlign: 'right', color: '#10b981', fontWeight: 700 }}>
+                                                        <td className="text-right! text-[color:#10b981]! font-bold!">
                                                             {parseFloat(annualizedTonne).toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
                                                         </td>
                                                         <td>
@@ -232,12 +232,12 @@ const OgmpTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, NON_OG_ACTIVITIES, currentPa
                                                                 {rStatus}
                                                             </span>
                                                         </td>
-                                                        <td style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{notes}</td>
+                                                        <td className="text-[length:0.85rem]! text-[color:var(--text-secondary)]!">{notes}</td>
                                                         <td className="text-center!">
                                                             <div className="flex! gap-[6px]! justify-center!">
                                                                 <button
-                                                                    className="action-btn"
-                                                                    style={{ padding: '4px 8px', fontSize: '0.75rem', background: '#3b82f6' }}
+                                                                    className="action-btn p-[4px_8px]! text-[length:0.75rem]! bg-[color:#3b82f6]!"
+                                                                   
                                                                     onClick={() => {
                                                                         setEditingOgmpId(o.id);
                                                                         setOgmpForm({
@@ -258,8 +258,8 @@ const OgmpTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, NON_OG_ACTIVITIES, currentPa
                                                                     Edit
                                                                 </button>
                                                                 <button
-                                                                    className="btn-delete"
-                                                                    style={{ padding: '4px 8px', fontSize: '0.75rem' }}
+                                                                    className="btn-delete p-[4px_8px]! text-[length:0.75rem]!"
+                                                                   
                                                                     onClick={() => handleDeleteOgmpSurvey(o.id)}
                                                                 >
                                                                     Delete
@@ -271,7 +271,7 @@ const OgmpTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, NON_OG_ACTIVITIES, currentPa
                                             })}
                                             {filteredOgmp.length === 0 && (
                                                 <tr>
-                                                    <td colSpan="8" style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>
+                                                    <td colSpan="8" className="text-center! p-[40px]! text-[color:var(--text-secondary)]!">
                                                         No OGMP survey records found.
                                                     </td>
                                                 </tr>

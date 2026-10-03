@@ -30,7 +30,7 @@ const ChemicalProductionForm = ({ data, onChange }) => {
         <div className="input-group">
           <label>
             Chemical Product
-            <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+            <span className="text-[color:#ef4444]! ml-[3px]!">*</span>
           </label>
           <CustomDropdown
             options={CHEMICAL_OPTIONS}
@@ -43,7 +43,7 @@ const ChemicalProductionForm = ({ data, onChange }) => {
         <div className="input-group">
           <label>
             Production Quantity
-            <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+            <span className="text-[color:#ef4444]! ml-[3px]!">*</span>
           </label>
           <div
             style={{

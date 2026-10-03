@@ -67,12 +67,12 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                             {/* Bulk Action Controls (When items selected) */}
                             {selectedIds.size > 0 ? (
                                 <div className="qa-bulk-actions-bar">
-                                    <span style={{ fontSize: '0.82rem', color: '#9a3412', fontWeight: 600 }}>
+                                    <span className="text-[length:0.82rem]! text-[color:#9a3412]! font-semibold!">
                                         {selectedIds.size} record{selectedIds.size > 1 ? 's' : ''} selected
                                     </span>
                                     <button
-                                        className="qa-btn-inline qa-btn-approve"
-                                        style={{ padding: '6px 12px', fontSize: '0.8rem' }}
+                                        className="qa-btn-inline qa-btn-approve p-[6px_12px]! text-[length:0.8rem]!"
+                                       
                                         onClick={() => handleBulkResolve('Verified')}
                                         disabled={resolving}
                                     >
@@ -80,8 +80,8 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                         {resolving ? '…' : 'Approve Selected'}
                                     </button>
                                     <button
-                                        className="qa-btn-inline qa-btn-reject"
-                                        style={{ padding: '6px 12px', fontSize: '0.8rem' }}
+                                        className="qa-btn-inline qa-btn-reject p-[6px_12px]! text-[length:0.8rem]!"
+                                       
                                         onClick={() => handleBulkResolve('Rejected')}
                                         disabled={resolving}
                                     >
@@ -96,7 +96,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                     </button>
                                 </div>
                             ) : (
-                                <span style={{ fontSize: '0.82rem', color: '#64748b' }}>
+                                <span className="text-[length:0.82rem]! text-[color:#64748b]!">
                                     Showing {filteredRecords.length} flagged records
                                 </span>
                             )}
@@ -104,7 +104,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
 
                         {/* Table or Empty State */}
                         {filteredRecords.length === 0 ? (
-                            <div style={{ padding: '64px 24px', textAlign: 'center' }}>
+                            <div className="p-[64px_24px]! text-center!">
                                 {total_flagged_count === 0 ? (
                                     <>
                                         <div style={{ 
@@ -114,10 +114,10 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                         }}>
                                             <CheckCircle size={32} />
                                         </div>
-                                        <h3 style={{ fontSize: '1.25rem', color: '#0f172a', fontWeight: 700, marginBottom: '8px' }}>
+                                        <h3 className="text-[length:1.25rem]! text-[color:#0f172a]! font-bold! mb-[8px]!">
                                             Zero Anomalies Detected
                                         </h3>
-                                        <p style={{ color: '#64748b', maxWidth: '440px', margin: '0 auto' }}>
+                                        <p className="text-[color:#64748b]! max-w-[440px]! m-[0_auto]!">
                                             No statistical outliers or data quality flags detected matching your current filters.
                                             {/* BUG-084: say what is actually known, not "fully verified" */}
                                             {data.pending_review_count > 0
@@ -134,10 +134,10 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                         }}>
                                             <Search size={32} />
                                         </div>
-                                        <h3 style={{ fontSize: '1.25rem', color: '#0f172a', fontWeight: 700, marginBottom: '8px' }}>
+                                        <h3 className="text-[length:1.25rem]! text-[color:#0f172a]! font-bold! mb-[8px]!">
                                             No Matching Records
                                         </h3>
-                                        <p style={{ color: '#64748b', maxWidth: '440px', margin: '0 auto 16px auto' }}>
+                                        <p className="text-[color:#64748b]! max-w-[440px]! m-[0_auto_16px_auto]!">
                                             No flagged records match your current search query "{searchQuery}" or status filter "{statusFilter}".
                                         </p>
                                         <button
@@ -204,10 +204,10 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                                                 Scope {record.scope}
                                                             </span>
                                                         </td>
-                                                        <td className="qa-td" style={{ color: '#475569' }}>
+                                                        <td className="qa-td text-[color:#475569]!">
                                                             {record.year || '—'} {record.month ? `/ M${record.month}` : ''}
                                                         </td>
-                                                        <td className="qa-td" style={{ fontWeight: 500, color: '#1e293b' }}>
+                                                        <td className="qa-td font-medium! text-[color:#1e293b]!">
                                                             {record.process_type || '—'}
                                                         </td>
                                                         <td className="qa-td">
@@ -257,7 +257,7 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                         padding: '16px 24px', display: 'flex', alignItems: 'center', 
                                         justifyContent: 'space-between', borderTop: '1px solid rgba(226,232,240,0.8)' 
                                     }}>
-                                        <span style={{ fontSize: '0.82rem', color: '#64748b' }}>
+                                        <span className="text-[length:0.82rem]! text-[color:#64748b]!">
                                             {searchQuery || statusFilter !== 'all'
                                                 ? `Showing ${filteredRecords.length} filtered record${filteredRecords.length === 1 ? '' : 's'} on this page (${total_flagged_count} total in inventory)`
                                                 : `Showing ${offset + 1}–${Math.min(offset + returned_count, total_flagged_count)} of ${total_flagged_count} flagged records`
@@ -265,19 +265,19 @@ const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, current
                                         </span>
                                         <div className="flex! gap-[6px]! items-center!">
                                             <button
-                                                className="qa-btn-action qa-btn-secondary"
-                                                style={{ height: '32px', padding: '0 10px' }}
+                                                className="qa-btn-action qa-btn-secondary h-[32px]! p-[0_10px]!"
+                                               
                                                 onClick={() => setOffset(Math.max(0, offset - PAGE_SIZE))}
                                                 disabled={offset === 0}
                                             >
                                                 <ChevronLeft size={14} />
                                             </button>
-                                            <span style={{ fontSize: '0.82rem', color: '#334155', fontWeight: 600, padding: '0 8px' }}>
+                                            <span className="text-[length:0.82rem]! text-[color:#334155]! font-semibold! p-[0_8px]!">
                                                 Page {currentPage} / {totalPages}
                                             </span>
                                             <button
-                                                className="qa-btn-action qa-btn-secondary"
-                                                style={{ height: '32px', padding: '0 10px' }}
+                                                className="qa-btn-action qa-btn-secondary h-[32px]! p-[0_10px]!"
+                                               
                                                 onClick={() => setOffset(offset + PAGE_SIZE)}
                                                 disabled={offset + PAGE_SIZE >= total_flagged_count}
                                             >

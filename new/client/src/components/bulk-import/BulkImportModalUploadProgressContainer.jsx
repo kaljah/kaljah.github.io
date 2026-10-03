@@ -5,29 +5,18 @@ import { AlertCircle, FileText, Loader2 } from "lucide-react";
 const BulkImportModalUploadProgressContainer = ({ file, handleImport, loading, onClose, onImportSuccess, setStep, uploadJobId, uploadStatus }) => (
 <div className="upload-progress-container">
             <div
-              className="file-info"
-              style={{
-                marginBottom: "24px",
-                padding: "16px",
-                background: "#f8fafc",
-                borderRadius: "8px",
-                display: "flex",
-                alignItems: "center",
-                gap: "12px",
-              }}
+              className="file-info mb-[24px]! p-[16px]! bg-[color:#f8fafc]! rounded-[8px]! flex! items-center! gap-[12px]!"
+             
             >
-              <FileText size={24} style={{ color: "#10b981" }} />
+              <FileText size={24} className="text-[color:#10b981]!" />
               <div>
                 <strong
-                  style={{ display: "block", color: "var(--text-primary)" }}
+                  className="block! text-[color:var(--text-primary)]!"
                 >
                   {file?.name}
                 </strong>
                 <span
-                  style={{
-                    fontSize: "0.85rem",
-                    color: "var(--text-secondary)",
-                  }}
+                  className="text-[length:0.85rem]! text-[color:var(--text-secondary)]!"
                 >
                   Ready for import
                 </span>
@@ -47,10 +36,10 @@ const BulkImportModalUploadProgressContainer = ({ file, handleImport, loading, o
                   Cancel
                 </button>
                 <button
-                  className="action-btn"
+                  className="action-btn bg-[color:#10b981]!"
                   onClick={handleImport}
                   disabled={loading}
-                  style={{ background: "#10b981" }}
+                 
                 >
                   {loading ? (
                     <Loader2 size={16} className="spin" />
@@ -109,13 +98,7 @@ const BulkImportModalUploadProgressContainer = ({ file, handleImport, loading, o
                         }}
                       >
                         <h5
-                          style={{
-                            color: "#be123c",
-                            margin: "0 0 8px 0",
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "6px",
-                          }}
+                          className="text-[color:#be123c]! m-[0_0_8px_0]! flex! items-center! gap-[6px]!"
                         >
                           <AlertCircle size={16} />
                           Skipped Rows ({uploadStatus.skipped_count})
@@ -168,10 +151,10 @@ const BulkImportModalUploadProgressContainer = ({ file, handleImport, loading, o
                   >
                     <Loader2
                       size={32}
-                      className="spin"
-                      style={{ color: "#10b981" }}
+                      className="spin text-[color:#10b981]!"
+                     
                     />
-                    <span style={{ color: "var(--text-secondary)" }}>
+                    <span className="text-[color:var(--text-secondary)]!">
                       Initializing background job...
                     </span>
                   </div>

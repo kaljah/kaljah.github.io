@@ -239,12 +239,12 @@ const UserManagementBlock1503 = ({ S, focusedField, getRoleMeta, handleResetPass
                 autoComplete="new-password"
               />
               {resetPwdConfirm && resetPwdConfirm !== resetPwd && (
-                <p style={{ fontSize: "0.75rem", color: "#ef4444", marginTop: "6px", display: "flex", alignItems: "center", gap: "4px" }}>
+                <p className="text-[length:0.75rem]! text-[color:#ef4444]! mt-[6px]! flex! items-center! gap-[4px]!">
                   <AlertCircle size={13} /> Passwords do not match
                 </p>
               )}
               {resetPwdConfirm && resetPwdConfirm === resetPwd && resetPwd.length >= 10 && (
-                <p style={{ fontSize: "0.75rem", color: "#10b981", marginTop: "6px", display: "flex", alignItems: "center", gap: "4px" }}>
+                <p className="text-[length:0.75rem]! text-[color:#10b981]! mt-[6px]! flex! items-center! gap-[4px]!">
                   <CheckCircle2 size={13} /> Passwords match
                 </p>
               )}

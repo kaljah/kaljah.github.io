@@ -26,17 +26,8 @@ const CsvUploader = ({ onUploadSuccess }) => {
 
       <div className="csv-uploader-entry inline-block!">
         <button
-          className="action-btn"
-          style={{
-            background: "#10b981",
-            padding: "6px 14px",
-            fontSize: "0.82rem",
-            whiteSpace: "nowrap",
-            marginLeft: "12px",
-            display: "flex",
-            alignItems: "center",
-            gap: "6px",
-          }}
+          className="action-btn bg-[color:#10b981]! p-[6px_14px]! text-[length:0.82rem]! whitespace-nowrap! ml-[12px]! flex! items-center! gap-[6px]!"
+         
           onClick={() => setShowWizard(true)}
         >
           {/* Upload icon SVG */}

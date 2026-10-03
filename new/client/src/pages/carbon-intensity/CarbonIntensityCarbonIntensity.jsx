@@ -189,8 +189,8 @@ const CarbonIntensityCarbonIntensity = ({ activeGwpStandard, currentDisplayCo2In
             <div className="scope-item bordered">
               <span className="label">Combined Production (BOE)</span>
               <span
-                className="val"
-                style={{ color: "var(--color-link)", fontWeight: 700 }}
+                className="val text-[color:var(--color-link)]! font-bold!"
+               
               >
                 {formatNumber(stats.totalBoe, 0)} BOE
               </span>

@@ -155,7 +155,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
             <div className="input-group">
               <label>
                 Basin
-                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+                <span className="text-[color:#ef4444]! ml-[3px]!">*</span>
               </label>
               <CustomDropdown
                 options={TABLE_6_8_BASINS.map((b) => ({
@@ -175,7 +175,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
             <div className="input-group">
               <label>
                 Oil production
-                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+                <span className="text-[color:#ef4444]! ml-[3px]!">*</span>
               </label>
               <div className="flex! gap-[8px]!">
                 <input
@@ -222,23 +222,15 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
             }}
           >
             <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "6px",
-                marginBottom: "10px",
-                fontSize: "0.85rem",
-                fontWeight: 600,
-                color: "#334155",
-              }}
+              className="flex! items-center! gap-[6px]! mb-[10px]! text-[length:0.85rem]! font-semibold! text-[color:#334155]!"
             >
-              <Info size={16} style={{ color: "#0284c7" }} />
+              <Info size={16} className="text-[color:#0284c7]!" />
               <span>Gas composition</span>
             </div>
 
             <div className="form-grid-2 mb-[0px]!">
               <div className="input-group mb-[0px]!">
-                <label style={{ fontSize: "0.8rem" }}>CH₄ (mol %)</label>
+                <label className="text-[length:0.8rem]!">CH₄ (mol %)</label>
                 <Input
                   type="number"
                   min="0"
@@ -251,7 +243,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
                 />
               </div>
               <div className="input-group mb-[0px]!">
-                <label style={{ fontSize: "0.8rem" }}>CO₂ (mol %)</label>
+                <label className="text-[length:0.8rem]!">CO₂ (mol %)</label>
                 <Input
                   type="number"
                   min="0"
@@ -276,7 +268,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
             <div className="input-group">
               <label>
                 Oil production
-                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+                <span className="text-[color:#ef4444]! ml-[3px]!">*</span>
               </label>
               <div className="flex! gap-[8px]!">
                 <input
@@ -314,7 +306,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
             <div className="input-group">
               <label>
                 GOR
-                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+                <span className="text-[color:#ef4444]! ml-[3px]!">*</span>
               </label>
               <div className="flex! gap-[8px]!">
                 <input
@@ -349,7 +341,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
             <div className="input-group">
               <label>
                 Venting Duration
-                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+                <span className="text-[color:#ef4444]! ml-[3px]!">*</span>
               </label>
               <div className="flex! gap-[8px]!">
                 <input
@@ -422,10 +414,10 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
           {/* Gas Volume Unit Selector for Partitioning */}
           <div className="mb-[10px]! flex! justify-end!">
             <div className="flex! items-center! gap-[6px]!">
-              <span style={{ fontSize: "0.75rem", color: "#6b7280" }}>Unit</span>
+              <span className="text-[length:0.75rem]! text-[color:#6b7280]!">Unit</span>
               <NativeSelect
-                className="mole-input"
-                style={{ width: "110px", padding: "4px 8px", fontSize: "0.8rem" }}
+                className="mole-input w-[110px]! p-[4px_8px]! text-[length:0.8rem]!"
+               
                 value={data.gas_volume_unit || "scf"}
                 onChange={(e) => onChange("gas_volume_unit", e.target.value)}
               >
@@ -452,8 +444,8 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
               className="flex! items-center! justify-between! mb-[12px]!"
             >
               <div className="flex! items-center! gap-[6px]!">
-                <Flame size={16} style={{ color: "#ea580c" }} />
-                <span style={{ fontWeight: 700, fontSize: "0.85rem", color: "#1e293b" }}>
+                <Flame size={16} className="text-[color:#ea580c]!" />
+                <span className="font-bold! text-[length:0.85rem]! text-[color:#1e293b]!">
                   Gas disposition
                 </span>
               </div>
@@ -461,7 +453,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
 
             <div className="form-grid-3 mb-[12px]!">
               <div className="input-group mb-[0px]!">
-                <label style={{ fontSize: "0.78rem" }}>
+                <label className="text-[length:0.78rem]!">
                   Produced
                 </label>
                 <input
@@ -473,7 +465,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
               </div>
 
               <div className="input-group mb-[0px]!">
-                <label style={{ fontSize: "0.78rem" }}>
+                <label className="text-[length:0.78rem]!">
                   Recovered ({gasVolUnit})
                 </label>
                 <Input
@@ -488,7 +480,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
               </div>
 
               <div className="input-group mb-[0px]!">
-                <label style={{ fontSize: "0.78rem" }}>
+                <label className="text-[length:0.78rem]!">
                   Flared ({gasVolUnit})
                 </label>
                 <Input
@@ -530,7 +522,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
               <div className="input-group">
                 <label>
                   Vent rate
-                  <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+                  <span className="text-[color:#ef4444]! ml-[3px]!">*</span>
                 </label>
                 <div className="flex! gap-[8px]!">
                   <input
@@ -563,7 +555,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
               </div>
 
               <Field className="input-group" label={<>Venting time (h)
-                  <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+                  <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <Input
                   type="number"
                   min="0"
@@ -580,7 +572,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
             <div className="input-group">
               <label>
                 Total Measured Vent Gas Volume
-                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+                <span className="text-[color:#ef4444]! ml-[3px]!">*</span>
               </label>
               <div className="flex! gap-[8px]!">
                 <input
@@ -619,7 +611,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
           {/* Tier 3 Measured Gas Composition */}
           <div className="form-grid-2">
             <Field className="input-group" label={<>CH₄ (mol %)
-                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+                <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <Input
                 type="number"
                 min="0"

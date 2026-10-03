@@ -25,7 +25,7 @@ const Scope1ProcessSection = ({ activePresetId, currentProcessValue, dataSourceR
             {!["stoichiometry", "chemical_production", "nitric_acid_production", "adipic_acid_production", "asphalt_blowing"].includes(processType) && (
               <div className="input-group">
                 <div className="s1-method">
-                  <label style={{ margin: 0 }}>Method</label>
+                  <label className="m-[0px]!">Method</label>
                   <div className="methodology-toggle">
                     {(SECTION_TIERS[processType]
                       ? SECTION_TIERS[processType]
@@ -200,7 +200,7 @@ const Scope1ProcessSection = ({ activePresetId, currentProcessValue, dataSourceR
                           <div className="tier2-override-card">
                             {/* Base Fuel Dropdown */}
                             <div>
-                              <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, color: "#374151", marginBottom: "4px" }}>
+                              <label className="block! text-[length:0.75rem]! font-semibold! text-[color:#374151]! mb-[4px]!">
                                 Fuel
                               </label>
                               <CustomDropdown
@@ -219,7 +219,7 @@ const Scope1ProcessSection = ({ activePresetId, currentProcessValue, dataSourceR
                             <div className="official-presets-section">
                               <div className="official-presets-header">
                                 <span className="official-presets-title">
-                                  <BookOpen size={14} style={{ color: "var(--color-link)" }} />
+                                  <BookOpen size={14} className="text-[color:var(--color-link)]!" />
                                   Presets
                                 </span>
                               </div>
@@ -244,7 +244,7 @@ const Scope1ProcessSection = ({ activePresetId, currentProcessValue, dataSourceR
                             {/* Measured Properties Grid */}
                             <div className="tier2-inputs-grid">
                               <div>
-                                <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, color: "#374151", marginBottom: "4px" }}>
+                                <label className="block! text-[length:0.75rem]! font-semibold! text-[color:#374151]! mb-[4px]!">
                                   HHV
                                 </label>
                                 <div className="flex! gap-[6px]!">
@@ -252,7 +252,7 @@ const Scope1ProcessSection = ({ activePresetId, currentProcessValue, dataSourceR
                                     type="number"
                                     step="any"
                                    
-                                    style={{ flex: 1, padding: "6px 8px", fontSize: "0.85rem" }}
+                                    className="flex-1! p-[6px_8px]! text-[length:0.85rem]!"
                                     placeholder="e.g. 1085"
                                     value={formData.hhv || ""}
                                     onChange={(e) => {
@@ -261,8 +261,8 @@ const Scope1ProcessSection = ({ activePresetId, currentProcessValue, dataSourceR
                                     }}
                                   />
                                   <NativeSelect
-                                    className="mole-input"
-                                    style={{ width: "110px", padding: "6px 8px", fontSize: "0.8rem" }}
+                                    className="mole-input w-[110px]! p-[6px_8px]! text-[length:0.8rem]!"
+                                   
                                     value={formData.hhv_unit || "BTU/scf"}
                                     onChange={(e) => handleFormChange("hhv_unit", e.target.value)}
                                   >
@@ -277,14 +277,14 @@ const Scope1ProcessSection = ({ activePresetId, currentProcessValue, dataSourceR
                               </div>
 
                               <div>
-                                <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, color: "#374151", marginBottom: "4px" }}>
+                                <label className="block! text-[length:0.75rem]! font-semibold! text-[color:#374151]! mb-[4px]!">
                                   Density (kg/m³)
                                 </label>
                                 <Input
                                   type="number"
                                   step="any"
                                  
-                                  style={{ width: "100%", padding: "6px 8px", fontSize: "0.85rem" }}
+                                  className="w-full! p-[6px_8px]! text-[length:0.85rem]!"
                                   placeholder="e.g. 840.0 for Gasoil NA 8110"
                                   value={fuelDensity}
                                   onChange={(e) => {
@@ -297,13 +297,13 @@ const Scope1ProcessSection = ({ activePresetId, currentProcessValue, dataSourceR
 
                             {/* Data Source / Audit Reference Field */}
                             <div>
-                              <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, color: "#374151", marginBottom: "4px" }}>
+                              <label className="block! text-[length:0.75rem]! font-semibold! text-[color:#374151]! mb-[4px]!">
                                 Ticket / lab ref
                               </label>
                               <Input
                                 type="text"
                                
-                                style={{ width: "100%", padding: "6px 8px", fontSize: "0.85rem" }}
+                                className="w-full! p-[6px_8px]! text-[length:0.85rem]!"
                                 placeholder="e.g. Ticket #4902-B"
                                 value={dataSourceRef}
                                 onChange={(e) => setDataSourceRef(e.target.value)}
@@ -327,16 +327,9 @@ const Scope1ProcessSection = ({ activePresetId, currentProcessValue, dataSourceR
                           </div>
                           <button
                             type="button"
-                            className="btn btn-secondary"
+                            className="btn btn-secondary flex! items-center! gap-[4px]! p-[8px_12px]! text-[length:0.8rem]! whitespace-nowrap!"
                             onClick={() => setIsQuickAddModalOpen(true)}
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: "4px",
-                              padding: "8px 12px",
-                              fontSize: "0.8rem",
-                              whiteSpace: "nowrap",
-                            }}
+                           
                           >
                             <PlusCircle size={15} />
                             <span>New library factor</span>
@@ -412,7 +405,7 @@ const Scope1ProcessSection = ({ activePresetId, currentProcessValue, dataSourceR
                               className="input-group mb-[0px]!"
                              
                             >
-                              <label style={{ fontSize: "0.75rem" }}>
+                              <label className="text-[length:0.75rem]!">
                                 {gas.toUpperCase()} Factor
                               </label>
                               <div className="flex! gap-[5px]!">
@@ -430,7 +423,7 @@ const Scope1ProcessSection = ({ activePresetId, currentProcessValue, dataSourceR
                                  
                                 />
                                 <NativeSelect
-                                  className="component-select"
+                                  className="component-select w-[80px]! p-[4px]!"
                                   value={specFactors[`${gas}Unit`] || ""}
                                   onChange={(e) =>
                                     setSpecFactors((p) => ({
@@ -438,7 +431,7 @@ const Scope1ProcessSection = ({ activePresetId, currentProcessValue, dataSourceR
                                       [`${gas}Unit`]: e.target.value,
                                     }))
                                   }
-                                  style={{ width: "80px", padding: "4px" }}
+                                 
                                 >
                                   <option value="kg/m3">kg/m³</option>
                                   <option value="kg/scf">kg/scf</option>

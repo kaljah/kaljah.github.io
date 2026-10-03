@@ -22,7 +22,7 @@ const NitricAcidForm = ({ data, onChange }) => {
         <div className="input-group">
           <label>
             Abatement Technology
-            <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+            <span className="text-[color:#ef4444]! ml-[3px]!">*</span>
           </label>
           <CustomDropdown
             options={NITRIC_ACID_OPTIONS}
@@ -35,7 +35,7 @@ const NitricAcidForm = ({ data, onChange }) => {
         <div className="input-group">
           <label>
             Production Quantity
-            <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+            <span className="text-[color:#ef4444]! ml-[3px]!">*</span>
           </label>
           <div
             style={{

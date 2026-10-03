@@ -11,7 +11,7 @@ const ProductionTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToC
                                 <div className="flex! justify-between! items-start! mb-[32px]!">
                                     <div>
                                         <h2 className="mb-[8px]! font-bold!">Annual Production Records</h2>
-                                        <p style={{ color: 'var(--text-secondary)', margin: 0 }}>Manage annual production data for emission intensity reporting.</p>
+                                        <p className="text-[color:var(--text-secondary)]! m-[0px]!">Manage annual production data for emission intensity reporting.</p>
                                     </div>
                                     <button 
                                         className="action-btn" 
@@ -25,7 +25,7 @@ const ProductionTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToC
                                 <div className="grid-forms" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
                                     <Field className="input-group" label={<>Activity
                                             {!isPrivileged && getAvailableActivities().length === 1 && (
-                                                <span style={{ fontSize: '0.65rem', background: '#dbeafe', color: '#1d4ed8', borderRadius: '4px', padding: '1px 5px', fontWeight: 600 }}>Auto</span>
+                                                <span className="text-[length:0.65rem]! bg-[color:#dbeafe]! text-[color:#1d4ed8]! rounded-[4px]! p-[1px_5px]! font-semibold!">Auto</span>
                                             )}</>}>
 <NativeSelect
                                             value={prodForm.activity}
@@ -39,7 +39,7 @@ const ProductionTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToC
 </Field>
                                     <Field className="input-group" label={<>Division
                                             {!isPrivileged && getAvailableDivisions(prodForm.activity).length === 1 && (
-                                                <span style={{ fontSize: '0.65rem', background: '#dbeafe', color: '#1d4ed8', borderRadius: '4px', padding: '1px 5px', fontWeight: 600 }}>Auto</span>
+                                                <span className="text-[length:0.65rem]! bg-[color:#dbeafe]! text-[color:#1d4ed8]! rounded-[4px]! p-[1px_5px]! font-semibold!">Auto</span>
                                             )}</>}>
 <NativeSelect
                                             value={prodForm.division}
@@ -56,7 +56,7 @@ const ProductionTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToC
                                         <label className="flex! items-center! gap-[6px]!">
                                             Region
                                             {!isPrivileged && facilities.filter(f => f.activity === prodForm.activity && f.division === prodForm.division).length === 1 && (
-                                                <span style={{ fontSize: '0.65rem', background: '#dbeafe', color: '#1d4ed8', borderRadius: '4px', padding: '1px 5px', fontWeight: 600 }}>Auto</span>
+                                                <span className="text-[length:0.65rem]! bg-[color:#dbeafe]! text-[color:#1d4ed8]! rounded-[4px]! p-[1px_5px]! font-semibold!">Auto</span>
                                             )}
                                         </label>
                                         <CustomDropdown
@@ -135,7 +135,7 @@ const ProductionTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToC
                                     <button className="action-btn" onClick={handleSaveProduction}>Save Record</button>
                                 </div>
                                 <div className="flex! gap-[12px]! mt-[10px]!">
-                                    <button className="action-btn" onClick={() => exportToCSV(productionData, 'production_data.csv')} style={{ background: 'var(--text-secondary)' }}>Export CSV</button>
+                                    <button className="action-btn bg-[color:var(--text-secondary)]!" onClick={() => exportToCSV(productionData, 'production_data.csv')}>Export CSV</button>
                                 </div>
 
 
@@ -165,7 +165,7 @@ const ProductionTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToC
                                                         {(() => {
                                                             const fac = facilities.find(f => f.id === d.facilityId);
                                                             if (!fac) return d.facilityId;
-                                                            return <>{fac.name}{fac.field && <span style={{ fontSize: '0.85em', color: '#9ca3af', fontWeight: 400 }}>-{fac.field}</span>}</>;
+                                                            return <>{fac.name}{fac.field && <span className="text-[length:0.85em]! text-[color:#9ca3af]! font-normal!">-{fac.field}</span>}</>;
                                                         })()}
                                                     </td>
                                                     <td>{d.year}</td>
@@ -177,8 +177,8 @@ const ProductionTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToC
                                                     <td className="text-right!">{d.saleable_production_mmboe ? Number(d.saleable_production_mmboe).toLocaleString(undefined, { minimumFractionDigits: 2 }) : '-'}</td>
                                                     <td className="text-center!">
                                                         <button
-                                                            className="btn-delete"
-                                                            style={{ padding: '6px 12px', fontSize: '0.8rem' }}
+                                                            className="btn-delete p-[6px_12px]! text-[length:0.8rem]!"
+                                                           
                                                             onClick={() => handleDeleteProduction(d.id)}
                                                         >
                                                             Delete
@@ -188,7 +188,7 @@ const ProductionTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToC
                                             ))}
                                             {filteredProduction.length === 0 && (
                                                 <tr>
-                                                    <td colSpan="11" style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>
+                                                    <td colSpan="11" className="text-center! p-[40px]! text-[color:var(--text-secondary)]!">
                                                         No production records found.
                                                     </td>
                                                 </tr>

@@ -1460,7 +1460,7 @@ const ManageDataInner = () => {
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                    
-                                    style={{ paddingLeft: '40px', background: 'white', width: '100%' }}
+                                    className="pl-[40px]! bg-[color:white]! w-full!"
                                 />
                             </div>
                             
@@ -1489,7 +1489,7 @@ const ManageDataInner = () => {
                                     )}
                                     
                                     {(filterActivity || filterDivision || filterRegion || filterYear) && (
-                                        <Button variant="ghost" type="submit" onClick={() => { setFilterActivity(''); setFilterDivision(''); setFilterRegion(''); setFilterYear(''); }} style={{ color: 'var(--text-secondary)', padding: '6px 12px', fontSize: '0.85rem' }}>
+                                        <Button variant="ghost" type="submit" onClick={() => { setFilterActivity(''); setFilterDivision(''); setFilterRegion(''); setFilterYear(''); }} className="text-[color:var(--text-secondary)]! p-[6px_12px]! text-[length:0.85rem]!">
                                             Clear Filters
                                         </Button>
                                     )}
@@ -1721,8 +1721,8 @@ const ManageDataInner = () => {
                 onClose={() => setConvertModal(prev => ({ ...prev, isOpen: false }))}
                 title={`Convert Volume (${convertModal.type === 'gas' ? 'Gas: m³ → mscf' : 'Oil: m³ → bbl'})`}
             >
-                <form onSubmit={handleApplyConversion} style={{ padding: '8px 0' }}>
-                    <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.88rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                <form onSubmit={handleApplyConversion} className="p-[8px_0]!">
+                    <label className="block! mb-[8px]! text-[length:0.88rem]! font-semibold! text-[color:var(--text-secondary)]!">
                         Enter volume in cubic meters (m³):
                     </label>
                     <Input
@@ -1733,9 +1733,9 @@ const ManageDataInner = () => {
                         value={convertModal.value}
                         onChange={(e) => setConvertModal(prev => ({ ...prev, value: e.target.value }))}
                        
-                        style={{ width: '100%', marginBottom: '12px', padding: '10px' }}
+                        className="w-full! mb-[12px]! p-[10px]!"
                     />
-                    <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '20px' }}>
+                    <div className="text-[length:0.8rem]! text-[color:var(--text-secondary)]! mb-[20px]!">
                         {convertModal.type === 'gas' 
                             ? 'Conversion Factor: m³ × 0.0353147 = mcf (mscf)'
                             : 'Conversion Factor: m³ × 6.28981 = barrels (bbl)'}

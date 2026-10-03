@@ -750,8 +750,8 @@ const DashboardEnhanced = () => {
 
         {goal ? (
           <div className="topbar-goal-badge">
-            <span style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>
-              Target {goal.year}: <strong style={{ color: "var(--text-primary)" }}>{Number(goal.target_amount).toLocaleString()} tCO₂e</strong>
+            <span className="text-[length:0.8rem]! text-[color:var(--text-secondary)]!">
+              Target {goal.year}: <strong className="text-[color:var(--text-primary)]!">{Number(goal.target_amount).toLocaleString()} tCO₂e</strong>
             </span>
             <button
               className="btn-target-action"
@@ -953,7 +953,7 @@ const DashboardEnhanced = () => {
             <div className="card-header-row">
               <div>
                 <h3 className="card-title">Emissions Trend & Projection</h3>
-                <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
+                <p className="m-[0px]! text-[color:var(--text-secondary)]! text-[length:0.85rem]!">
                   Historical inventory trajectory with 5-year predictive forecast
                 </p>
               </div>
@@ -1062,13 +1062,13 @@ const DashboardEnhanced = () => {
 
         {/* SBTi Trajectory Pathway - Full Width Banner */}
         {sbtiData && sbtiData.trajectory && sbtiData.trajectory.length > 0 && (
-          <div className="card full-width-card glass-panel" style={{ padding: '24px', borderRadius: '20px' }}>
+          <div className="card full-width-card glass-panel p-[24px]! rounded-[20px]!">
             <div className="card-header-row mb-[16px]!">
               <div>
-                <h3 className="card-subtitle" style={{ fontSize: '1.15rem', fontWeight: 700 }}>
+                <h3 className="card-subtitle text-[length:1.15rem]! font-bold!">
                   {sbtiData.pathway_label || "Decarbonization Trajectory"}
                 </h3>
-                <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
+                <p className="m-[0px]! text-[color:var(--text-secondary)]! text-[length:0.875rem]!">
                   Progress monitoring against corporate Net-Zero targets from Base Year {sbtiData.base_year} to Target Year {sbtiData.target_year}
                 </p>
               </div>
@@ -1146,12 +1146,8 @@ const DashboardEnhanced = () => {
               </div>
             </div>
             <div
-              className="collapse-toggle-icon"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                color: "#64748b",
-              }}
+              className="collapse-toggle-icon flex! items-center! text-[color:#64748b]!"
+             
             >
               {categoricalCollapsed ? (
                 <ChevronDown size={18} />

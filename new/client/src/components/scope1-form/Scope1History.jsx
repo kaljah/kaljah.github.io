@@ -13,7 +13,7 @@ const Scope1History = ({ currentPage, entries, exportToCSV, facetYears, filterPr
         <div
           className="flex! gap-[10px]! flex-wrap! items-center! mb-[14px]!"
         >
-          <strong style={{ fontSize: "0.95rem", marginRight: "4px" }}>
+          <strong className="text-[length:0.95rem]! mr-[4px]!">
             Recent Activity (Scope 1)
           </strong>
           <div className="flex-1!" />
@@ -26,7 +26,7 @@ const Scope1History = ({ currentPage, entries, exportToCSV, facetYears, filterPr
               setCurrentPage(1);
             }}
            
-            style={{ width: "160px", padding: "6px 10px", fontSize: "0.82rem" }}
+            className="w-[160px]! p-[6px_10px]! text-[length:0.82rem]!"
           />
           <NativeSelect aria-label="Filter by year"
             value={filterYear}
@@ -34,8 +34,8 @@ const Scope1History = ({ currentPage, entries, exportToCSV, facetYears, filterPr
               setFilterYear(e.target.value);
               setCurrentPage(1);
             }}
-            className="component-select"
-            style={{ width: "100px", fontSize: "0.82rem" }}
+            className="component-select w-[100px]! text-[length:0.82rem]!"
+           
           >
             <option value="">All Years</option>
             {/* BUG-095: options come from the server facets, not from the 10 rows of the current page */}
@@ -52,8 +52,8 @@ const Scope1History = ({ currentPage, entries, exportToCSV, facetYears, filterPr
               setFilterProcess(e.target.value);
               setCurrentPage(1);
             }}
-            className="component-select"
-            style={{ width: "140px", fontSize: "0.82rem" }}
+            className="component-select w-[140px]! text-[length:0.82rem]!"
+           
           >
             <option value="">All Processes</option>
             {Object.keys(PROCESS_TYPES).map((p) => (
@@ -71,17 +71,13 @@ const Scope1History = ({ currentPage, entries, exportToCSV, facetYears, filterPr
                 setFilterSearch("");
                 setCurrentPage(1);
               }}
-              style={{
-                fontSize: "0.8rem",
-                padding: "5px 10px",
-                color: "var(--text-secondary)",
-              }}
+              className="text-[length:0.8rem]! p-[5px_10px]! text-[color:var(--text-secondary)]!"
             >
               Clear
             </Button>
           )}
           <button
-            className="action-btn"
+            className="action-btn bg-[color:#10b981]! p-[6px_14px]! text-[length:0.82rem]! whitespace-nowrap!"
             onClick={async () => {
               // BUG-095: export every matching record (server-side filters), not just the visible page
               try {
@@ -100,33 +96,23 @@ const Scope1History = ({ currentPage, entries, exportToCSV, facetYears, filterPr
                 toast.error(err.response?.data?.error || "Export failed");
               }
             }}
-            style={{
-              background: "#10b981",
-              padding: "6px 14px",
-              fontSize: "0.82rem",
-              whiteSpace: "nowrap",
-            }}
+           
           >
             ↓ Export CSV
           </button>
           <button
-            className="action-btn"
+            className="action-btn bg-[color:#10b981]! p-[6px_14px]! text-[length:0.82rem]! whitespace-nowrap!"
             onClick={() => setImportModal({ isOpen: true, type: "activity" })}
-            style={{
-              background: "#10b981",
-              padding: "6px 14px",
-              fontSize: "0.82rem",
-              whiteSpace: "nowrap",
-            }}
+           
           >
             ↑ Bulk Import (Wizard)
           </button>
           <button
             type="button"
-            className="action-btn secondary"
+            className="action-btn secondary p-[6px_14px]! text-[length:0.82rem]! whitespace-nowrap!"
             aria-pressed={showUncertainty}
             onClick={() => setShowUncertainty((v) => !v)}
-            style={{ padding: "6px 14px", fontSize: "0.82rem", whiteSpace: "nowrap" }}
+           
           >
             {showUncertainty ? "Hide" : "Show"} uncertainty columns
           </button>
@@ -214,11 +200,7 @@ const Scope1History = ({ currentPage, entries, exportToCSV, facetYears, filterPr
                     <tr>
                       <td
                         colSpan="22"
-                        style={{
-                          textAlign: "center",
-                          color: "var(--text-secondary)",
-                          padding: "30px",
-                        }}
+                        className="text-center! text-[color:var(--text-secondary)]! p-[30px]!"
                       >
                         {entries.length === 0
                           ? loading
@@ -273,10 +255,7 @@ const Scope1History = ({ currentPage, entries, exportToCSV, facetYears, filterPr
                       <td>{formatEmission(entry.ch4_emissions || 0, 5)}</td>
                       <td>{formatEmission(entry.n2o_emissions || 0, 5)}</td>
                       <td
-                        style={{
-                          color: "var(--color-link)",
-                          fontWeight: 600,
-                        }}
+                        className="text-[color:var(--color-link)]! font-semibold!"
                       >
                         {formatEmission(entry.co2e_total, 3)}
                         {/* BUG-092: every record shows its maker-checker status */}
@@ -392,17 +371,17 @@ const Scope1History = ({ currentPage, entries, exportToCSV, facetYears, filterPr
                       </td>
                       <td className="text-center! whitespace-nowrap!">
                         <button
-                          className="icon-button"
+                          className="icon-button text-[color:#3b82f6]! mr-[6px]!"
                           onClick={() => handleInspect(entry)}
-                          style={{ color: "#3b82f6", marginRight: "6px" }}
+                         
                           title="Inspect Calculation Details"
                         >
                           <Eye size={16} />
                         </button>
                         <button
-                          className="icon-button"
+                          className="icon-button text-[color:#ef4444]!"
                           onClick={() => handleDelete(entry.id)}
-                          style={{ color: "#ef4444" }}
+                         
                           title="Delete"
                         >
                           <Trash2 size={16} />
@@ -425,7 +404,7 @@ const Scope1History = ({ currentPage, entries, exportToCSV, facetYears, filterPr
                     : "Page"}
                   ):
                 </td>
-                <td style={{ color: "var(--color-link)" }}>
+                <td className="text-[color:var(--color-link)]!">
                   {formatNumber(
                     entries
                       .filter((entry) => {
@@ -467,7 +446,7 @@ const Scope1History = ({ currentPage, entries, exportToCSV, facetYears, filterPr
           >
             Previous
           </button>
-          <span style={{ color: "var(--text-secondary)" }}>
+          <span className="text-[color:var(--text-secondary)]!">
             Page {currentPage} of {totalPages}
           </span>
           <button

@@ -725,8 +725,8 @@ const MethaneIntensity = () => {
               <div className="chart-title-wrapper">
                 <h3>Methane Loss Rate by Facility (% of Gas Produced)</h3>
                 <div
-                  className="chart-indicator"
-                  style={{ background: "#2563eb" }}
+                  className="chart-indicator bg-[color:#2563eb]!"
+                 
                 ></div>
               </div>
             </div>
@@ -749,8 +749,8 @@ const MethaneIntensity = () => {
               <div className="chart-title-wrapper">
                 <h3>Methane Intensity by Facility (kg CH₄ / BOE)</h3>
                 <div
-                  className="chart-indicator"
-                  style={{ background: "#ff6600" }}
+                  className="chart-indicator bg-[color:#ff6600]!"
+                 
                 ></div>
               </div>
             </div>
@@ -771,8 +771,8 @@ const MethaneIntensity = () => {
               <div className="chart-title-wrapper">
                 <h3>Total Methane Emissions (tCH₄)</h3>
                 <div
-                  className="chart-indicator"
-                  style={{ background: "#3b82f6" }}
+                  className="chart-indicator bg-[color:#3b82f6]!"
+                 
                 ></div>
               </div>
             </div>
@@ -793,8 +793,8 @@ const MethaneIntensity = () => {
               <div className="chart-title-wrapper">
                 <h3>Gas Flaring Volume by Facility (m³)</h3>
                 <div
-                  className="chart-indicator"
-                  style={{ background: "#ea580c" }}
+                  className="chart-indicator bg-[color:#ea580c]!"
+                 
                 ></div>
               </div>
             </div>

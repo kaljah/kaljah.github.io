@@ -374,7 +374,7 @@ export default function QADashboard() {
                 {isExpanded && hasSamples && (
                     <div className="qa-issue-samples-container">
                         <div className="qa-samples-header">
-                            <span style={{ fontWeight: 600, color: '#0f172a' }}>
+                            <span className="font-semibold! text-[color:#0f172a]!">
                                 Sample Affected Entries (Showing {item.sample_records.length} of {item.affected_count})
                             </span>
                             <span className="qa-samples-hint">
@@ -535,12 +535,12 @@ export default function QADashboard() {
                             <span className="qa-kpi-label" title="IPCC Approach 1, Verified records, 95 % confidence (k = 2)">
                                 Inventory Uncertainty (95% CI{tier1_uncertainty.year ? `, ${tier1_uncertainty.year}` : ""})
                             </span>
-                            <div className="qa-kpi-icon-wrap" style={{ color: '#f59e0b', background: 'rgba(245, 158, 11, 0.12)' }}>
+                            <div className="qa-kpi-icon-wrap text-[color:#f59e0b]! bg-[color:rgba(245,_158,_11,_0.12)]!">
                                 <AlertTriangle size={16} />
                             </div>
                         </div>
                         <div className="qa-kpi-body">
-                            <span className="qa-kpi-value" style={{ color: '#d97706' }}>
+                            <span className="qa-kpi-value text-[color:#d97706]!">
                                 {tier1_uncertainty.overall != null ? `±${(tier1_uncertainty.overall * 100).toFixed(2)}` : "n/a"}
                             </span>
                             <span className="qa-kpi-unit">{tier1_uncertainty.overall != null ? "%" : ""}</span>
@@ -556,7 +556,7 @@ export default function QADashboard() {
                     <div className="qa-kpi-card">
                         <div className="qa-kpi-header">
                             <span className="qa-kpi-label">Flagged Anomalies</span>
-                            <div className="qa-kpi-icon-wrap" style={{ color: '#ef4444', background: 'rgba(239, 68, 68, 0.12)' }}>
+                            <div className="qa-kpi-icon-wrap text-[color:#ef4444]! bg-[color:rgba(239,_68,_68,_0.12)]!">
                                 <AlertCircle size={16} />
                             </div>
                         </div>
@@ -568,8 +568,8 @@ export default function QADashboard() {
                         </div>
                         <div className="qa-kpi-footer">
                             <span>Pending: <strong>{anomaliesSummary.pending}</strong></span>
-                            <span>Verified: <strong style={{ color: '#10b981' }}>{anomaliesSummary.verified}</strong></span>
-                            <span>Rejected: <strong style={{ color: '#ef4444' }}>{anomaliesSummary.rejected}</strong></span>
+                            <span>Verified: <strong className="text-[color:#10b981]!">{anomaliesSummary.verified}</strong></span>
+                            <span>Rejected: <strong className="text-[color:#ef4444]!">{anomaliesSummary.rejected}</strong></span>
                         </div>
                     </div>
 
@@ -577,7 +577,7 @@ export default function QADashboard() {
                     <div className="qa-kpi-card">
                         <div className="qa-kpi-header">
                             <span className="qa-kpi-label">Inventory Coverage</span>
-                            <div className="qa-kpi-icon-wrap" style={{ color: '#3b82f6', background: 'rgba(59, 130, 246, 0.12)' }}>
+                            <div className="qa-kpi-icon-wrap text-[color:#3b82f6]! bg-[color:rgba(59,_130,_246,_0.12)]!">
                                 <Database size={16} />
                             </div>
                         </div>
@@ -668,10 +668,10 @@ export default function QADashboard() {
                             <div className="qa-completeness-card">
                                 <div className="flex! justify-between! items-center! mb-[16px]!">
                                     <div>
-                                        <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 700, color: '#0f172a' }}>
+                                        <h3 className="m-[0px]! text-[length:1.05rem]! font-bold! text-[color:#0f172a]!">
                                             Inventory Completeness by Attribute
                                         </h3>
-                                        <p style={{ margin: '4px 0 0', fontSize: '0.82rem', color: '#64748b' }}>
+                                        <p className="m-[4px_0_0]! text-[length:0.82rem]! text-[color:#64748b]!">
                                             Evaluates key GHG Protocol and ISO 14064 required fields across all reported records.
                                         </p>
                                     </div>
@@ -679,7 +679,7 @@ export default function QADashboard() {
                                         <span style={{ fontSize: '1.5rem', fontWeight: 800, color: healthColor }}>
                                             {completeness}%
                                         </span>
-                                        <div style={{ fontSize: '0.72rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>
+                                        <div className="text-[length:0.72rem]! text-[color:#64748b]! uppercase! font-semibold!">
                                             Overall Completeness
                                         </div>
                                     </div>
@@ -741,7 +741,7 @@ export default function QADashboard() {
 
                             {/* Categorized Findings List */}
                             <div>
-                                <h3 style={{ margin: '0 0 14px 0', fontSize: '1.05rem', fontWeight: 700, color: '#0f172a' }}>
+                                <h3 className="m-[0_0_14px_0]! text-[length:1.05rem]! font-bold! text-[color:#0f172a]!">
                                     Diagnostic Findings & Action Items ({totalFindings + suggestions.length})
                                 </h3>
 
@@ -761,11 +761,11 @@ export default function QADashboard() {
                                             padding: '48px 24px', textAlign: 'center', background: 'rgba(16, 185, 129, 0.05)', 
                                             borderRadius: '16px', border: '1px solid rgba(16, 185, 129, 0.2)' 
                                         }}>
-                                            <Sparkles size={36} color="#10b981" style={{ margin: '0 auto 12px' }} />
-                                            <h4 style={{ margin: '0 0 6px 0', fontSize: '1.15rem', color: '#065f46', fontWeight: 700 }}>
+                                            <Sparkles size={36} color="#10b981" className="m-[0_auto_12px]!" />
+                                            <h4 className="m-[0_0_6px_0]! text-[length:1.15rem]! text-[color:#065f46]! font-bold!">
                                                 All Quality Gates Passed
                                             </h4>
-                                            <p style={{ margin: 0, color: '#047857', fontSize: '0.88rem' }}>
+                                            <p className="m-[0px]! text-[color:#047857]! text-[length:0.88rem]!">
                                                 Your inventory meets 100% of data completeness and validity requirements.
                                             </p>
                                         </div>
@@ -786,17 +786,14 @@ export default function QADashboard() {
                             <div className="qa-formula-card">
                                 <div className="flex! justify-between! items-center!">
                                     <div>
-                                        <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700, color: '#0f172a' }}>
+                                        <h3 className="m-[0px]! text-[length:1.1rem]! font-bold! text-[color:#0f172a]!">
                                             IPCC Tier 1 Error Propagation (Square Root of Sum of Squares)
                                         </h3>
-                                        <p style={{ margin: '4px 0 0', fontSize: '0.84rem', color: '#64748b' }}>
+                                        <p className="m-[4px_0_0]! text-[length:0.84rem]! text-[color:#64748b]!">
                                             Complies with ISO 14064-1:2018 §7.5 and GHG Protocol Corporate Standard Chapter 11.
                                         </p>
                                     </div>
-                                    <span style={{ 
-                                        background: 'rgba(255, 102, 0, 0.1)', color: 'var(--color-link)', 
-                                        padding: '4px 10px', borderRadius: '6px', fontSize: '0.78rem', fontWeight: 700 
-                                    }}>
+                                    <span className="bg-[color:rgba(255,_102,_0,_0.1)]! text-[color:var(--color-link)]! p-[4px_10px]! rounded-[6px]! text-[length:0.78rem]! font-bold!">
                                         95% Confidence Interval (k=2)
                                     </span>
                                 </div>
@@ -805,7 +802,7 @@ export default function QADashboard() {
                                     U_total = √[ (U₁ · E₁)² + (U₂ · E₂)² + (U₃ · E₃)² ] / ( E₁ + E₂ + E₃ )
                                 </div>
 
-                                <p style={{ fontSize: '0.84rem', color: '#475569', margin: 0, lineHeight: 1.5 }}>
+                                <p className="text-[length:0.84rem]! text-[color:#475569]! m-[0px]! leading-[1.5]!">
                                     Each scope uncertainty is propagated from activity data precision and emission factor variance.
                                     Higher granularity (e.g. facility-specific continuous monitoring or Tier 3 custom factors) reduces total uncertainty.
                                 </p>
@@ -822,7 +819,7 @@ export default function QADashboard() {
                                     <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#0f172a' }}>
                                         ±{((tier1_uncertainty.scope1 || 0) * 100).toFixed(2)}%
                                     </div>
-                                    <div style={{ fontSize: '0.82rem', color: '#64748b' }}>
+                                    <div className="text-[length:0.82rem]! text-[color:#64748b]!">
                                         Total Audited: <strong>{(tier1_uncertainty.s1_total_tco2e || 0).toLocaleString(undefined, { maximumFractionDigits: 1 })} tCO₂e</strong>
                                     </div>
                                     <div style={{ fontSize: '0.76rem', color: '#94a3b8', borderTop: '1px solid #f1f5f9', paddingTop: '8px' }}>
@@ -839,7 +836,7 @@ export default function QADashboard() {
                                     <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#0f172a' }}>
                                         ±{((tier1_uncertainty.scope2 || 0) * 100).toFixed(2)}%
                                     </div>
-                                    <div style={{ fontSize: '0.82rem', color: '#64748b' }}>
+                                    <div className="text-[length:0.82rem]! text-[color:#64748b]!">
                                         Total Audited: <strong>{(tier1_uncertainty.s2_total_tco2e || 0).toLocaleString(undefined, { maximumFractionDigits: 1 })} tCO₂e</strong>
                                     </div>
                                     <div style={{ fontSize: '0.76rem', color: '#94a3b8', borderTop: '1px solid #f1f5f9', paddingTop: '8px' }}>
@@ -856,7 +853,7 @@ export default function QADashboard() {
                                     <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#0f172a' }}>
                                         ±{((tier1_uncertainty.scope3 || 0) * 100).toFixed(2)}%
                                     </div>
-                                    <div style={{ fontSize: '0.82rem', color: '#64748b' }}>
+                                    <div className="text-[length:0.82rem]! text-[color:#64748b]!">
                                         Total Audited: <strong>{(tier1_uncertainty.s3_total_tco2e || 0).toLocaleString(undefined, { maximumFractionDigits: 1 })} tCO₂e</strong>
                                     </div>
                                     <div style={{ fontSize: '0.76rem', color: '#94a3b8', borderTop: '1px solid #f1f5f9', paddingTop: '8px' }}>
@@ -874,8 +871,8 @@ export default function QADashboard() {
                 onClose={() => setResolveModal({ isOpen: false, resolution: null })}
                 title={`Confirm Bulk ${resolveModal.resolution === 'Verified' ? 'Verification' : 'Rejection'}`}
             >
-                <div style={{ padding: "8px 0" }}>
-                    <p style={{ margin: "0 0 20px 0", color: "#475569", fontSize: "0.95rem", lineHeight: 1.5 }}>
+                <div className="p-[8px_0]!">
+                    <p className="m-[0_0_20px_0]! text-[color:#475569]! text-[length:0.95rem]! leading-[1.5]!">
                         Are you sure you want to mark <strong>{selectedIds.size}</strong> selected record(s) as <strong>{resolveModal.resolution}</strong>?
                     </p>
                     <div className="flex! justify-end! gap-[10px]!">

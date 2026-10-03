@@ -278,15 +278,15 @@ const UncertaintyAssessment = () => {
       {/* ── Legend ── */}
       <div className="legend-bar">
         <div className="legend-item">
-          <div className="legend-dot" style={{ background: "var(--color-unc-low)" }} />
+          <div className="legend-dot bg-[color:var(--color-unc-low)]!" />
           Low Uncertainty (≤ ±10%)
         </div>
         <div className="legend-item">
-          <div className="legend-dot" style={{ background: "var(--color-unc-medium)" }} />
+          <div className="legend-dot bg-[color:var(--color-unc-medium)]!" />
           Medium Uncertainty (±10% to ±30%)
         </div>
         <div className="legend-item">
-          <div className="legend-dot" style={{ background: "var(--color-unc-high)" }} />
+          <div className="legend-dot bg-[color:var(--color-unc-high)]!" />
           High Uncertainty (&gt; ±30%)
         </div>
       </div>

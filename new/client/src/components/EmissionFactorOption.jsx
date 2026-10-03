@@ -48,11 +48,7 @@ const EmissionFactorOption = ({
       </div>
       {showUncertainty && uncertainty && (
         <span
-          style={{
-            fontSize: "0.7rem",
-            color: "#6b7280",
-            marginLeft: "8px",
-          }}
+          className="text-[length:0.7rem]! text-[color:#6b7280]! ml-[8px]!"
           title={`CO₂: ${formatUncertainty(uncertainty.co2)}, CH₄: ${formatUncertainty(uncertainty.ch4)}, N₂O: ${formatUncertainty(uncertainty.n2o)}`}
         >
           {formatUncertainty(

@@ -11,7 +11,7 @@ const MitigationTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, facilitie
                                 <div className="flex! justify-between! items-start! mb-[32px]!">
                                     <div>
                                         <h2 className="mb-[8px]! font-bold!">Mitigation Projects</h2>
-                                        <p style={{ color: 'var(--text-secondary)', margin: 0 }}>Record CCUS, RECs, and Carbon Offsets.</p>
+                                        <p className="text-[color:var(--text-secondary)]! m-[0px]!">Record CCUS, RECs, and Carbon Offsets.</p>
                                     </div>
                                     <button 
                                         className="action-btn" 
@@ -25,7 +25,7 @@ const MitigationTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, facilitie
                                 <div className="grid-forms" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
                                     <Field className="input-group" label={<>Activity
                                             {!isPrivileged && getAvailableActivities().length === 1 && (
-                                                <span style={{ fontSize: '0.65rem', background: '#dbeafe', color: '#1d4ed8', borderRadius: '4px', padding: '1px 5px', fontWeight: 600 }}>Auto</span>
+                                                <span className="text-[length:0.65rem]! bg-[color:#dbeafe]! text-[color:#1d4ed8]! rounded-[4px]! p-[1px_5px]! font-semibold!">Auto</span>
                                             )}</>}>
 <NativeSelect
                                             value={mitigationForm.activity}
@@ -39,7 +39,7 @@ const MitigationTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, facilitie
 </Field>
                                     <Field className="input-group" label={<>Division
                                             {!isPrivileged && getAvailableDivisions(mitigationForm.activity).length === 1 && (
-                                                <span style={{ fontSize: '0.65rem', background: '#dbeafe', color: '#1d4ed8', borderRadius: '4px', padding: '1px 5px', fontWeight: 600 }}>Auto</span>
+                                                <span className="text-[length:0.65rem]! bg-[color:#dbeafe]! text-[color:#1d4ed8]! rounded-[4px]! p-[1px_5px]! font-semibold!">Auto</span>
                                             )}</>}>
 <NativeSelect
                                             value={mitigationForm.division}
@@ -56,7 +56,7 @@ const MitigationTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, facilitie
                                         <label className="flex! items-center! gap-[6px]!">
                                             Region
                                             {!isPrivileged && facilities.filter(f => f.activity === mitigationForm.activity && f.division === mitigationForm.division).length === 1 && (
-                                                <span style={{ fontSize: '0.65rem', background: '#dbeafe', color: '#1d4ed8', borderRadius: '4px', padding: '1px 5px', fontWeight: 600 }}>Auto</span>
+                                                <span className="text-[length:0.65rem]! bg-[color:#dbeafe]! text-[color:#1d4ed8]! rounded-[4px]! p-[1px_5px]! font-semibold!">Auto</span>
                                             )}
                                         </label>
                                         <CustomDropdown
@@ -102,7 +102,7 @@ const MitigationTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, facilitie
                                 </div>
                                 <div className="flex! gap-[12px]! mt-[20px]!">
                                     <button className="action-btn" onClick={handleSaveMitigation}>Save Record</button>
-                                    <button className="action-btn" onClick={() => setImportModal({ isOpen: true, type: 'mitigation' })} style={{ background: '#10b981' }}>
+                                    <button className="action-btn bg-[color:#10b981]!" onClick={() => setImportModal({ isOpen: true, type: 'mitigation' })}>
                                         <Upload size={16} /> Import Mitigation CSV
                                     </button>
                                 </div>
@@ -129,7 +129,7 @@ const MitigationTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, facilitie
                                                     <td>{ACTIVITY_LABELS[m.activity] || m.activity || '-'}</td>
                                                     <td>
                                                         {m.region || '-'}
-                                                        {m.division && m.division !== '-' ? <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{m.division}</div> : null}
+                                                        {m.division && m.division !== '-' ? <div className="text-[length:0.75rem]! text-[color:var(--text-secondary)]!">{m.division}</div> : null}
                                                     </td>
                                                     <td>{m.year}</td>
                                                     <td>{m.mitigation_type || m.type}</td>
@@ -138,13 +138,13 @@ const MitigationTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, facilitie
                                                             {m.status || 'Active'}
                                                         </span>
                                                     </td>
-                                                    <td style={{ textAlign: 'right', color: '#10b981', fontWeight: 600 }}>
+                                                    <td className="text-right! text-[color:#10b981]! font-semibold!">
                                                         -{parseFloat(m.quantity_tco2e).toLocaleString()}
                                                     </td>
                                                     <td className="text-center!">
                                                         <button
-                                                            className="btn-delete"
-                                                            style={{ padding: '6px 12px', fontSize: '0.8rem' }}
+                                                            className="btn-delete p-[6px_12px]! text-[length:0.8rem]!"
+                                                           
                                                             onClick={() => handleDeleteMitigation(m.id)}
                                                         >
                                                             Delete
@@ -154,7 +154,7 @@ const MitigationTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, facilitie
                                             ))}
                                             {filteredMitigations.length === 0 && (
                                                 <tr>
-                                                    <td colSpan="8" style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>
+                                                    <td colSpan="8" className="text-center! p-[40px]! text-[color:var(--text-secondary)]!">
                                                         {mitigations.length === 0 ? 'No mitigation projects recorded yet.' : 'No mitigation projects found matching active filters.'}
                                                     </td>
                                                 </tr>

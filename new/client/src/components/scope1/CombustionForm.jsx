@@ -96,9 +96,9 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
         <div className="s1-block mt-[14px]!">
           <div className="form-grid-2 gap-[10px]!">
             <div className="input-group mb-[0px]!">
-              <label style={{ fontSize: "0.75rem" }}>
+              <label className="text-[length:0.75rem]!">
                 HHV
-                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+                <span className="text-[color:#ef4444]! ml-[3px]!">*</span>
               </label>
               <Input
                 id="hhv-input"
@@ -113,7 +113,7 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
               />
             </div>
             <div className="input-group mb-[0px]!">
-              <label style={{ fontSize: "0.75rem" }}>HHV Unit</label>
+              <label className="text-[length:0.75rem]!">HHV Unit</label>
               <NativeSelect
                 className="component-select"
                 value={data.hhv_unit || "BTU/scf"}
@@ -136,9 +136,9 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
               className="input-group mt-[10px]! mb-[0px]!"
              
             >
-              <label style={{ fontSize: "0.75rem" }}>
+              <label className="text-[length:0.75rem]!">
                 Combustion efficiency
-                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+                <span className="text-[color:#ef4444]! ml-[3px]!">*</span>
               </label>
               <div
                 className="flex! gap-[8px]! items-center!"
@@ -168,11 +168,7 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
                   }}
                 />
                 <span
-                  style={{
-                    fontSize: "0.8rem",
-                    color: "#6b7280",
-                    whiteSpace: "nowrap",
-                  }}
+                  className="text-[length:0.8rem]! text-[color:#6b7280]! whitespace-nowrap!"
                 >
                   %
                 </span>
@@ -184,7 +180,7 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
           {isFlaring && (
             <div className="form-grid-2 gap-[10px]! mt-[10px]!">
               <div className="input-group mb-[0px]!">
-                <label style={{ fontSize: "0.75rem" }}>Flare Type</label>
+                <label className="text-[length:0.75rem]!">Flare Type</label>
                 <NativeSelect
                   className="component-select"
                   value={data.flare_type || "elevated"}
@@ -198,9 +194,9 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
                 </NativeSelect>
               </div>
               <div className="input-group mb-[0px]!">
-                <label style={{ fontSize: "0.75rem" }}>
+                <label className="text-[length:0.75rem]!">
                   CH₄ (%)
-                  <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+                  <span className="text-[color:#ef4444]! ml-[3px]!">*</span>
                 </label>
                 <Input
                   id="flare-ch4-input"
@@ -224,7 +220,7 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
            
           >
             <div className="input-group mb-[0px]!">
-              <label style={{ fontSize: "0.75rem" }}>Operating Temp (°F)</label>
+              <label className="text-[length:0.75rem]!">Operating Temp (°F)</label>
               <Input
                 type="number"
                
@@ -241,7 +237,7 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
               />
             </div>
             <div className="input-group mb-[0px]!">
-              <label style={{ fontSize: "0.75rem" }}>
+              <label className="text-[length:0.75rem]!">
                 Pressure (psia)
               </label>
               <Input

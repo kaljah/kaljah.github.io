@@ -28,44 +28,27 @@ const Scope1OptionsSection = ({ gcUncertaintyPct, meterUncertaintyPct, renderSpe
                     }}
                   >
                     <span
-                      style={{
-                        fontSize: "0.75rem",
-                        fontWeight: 600,
-                        color: "#374151",
-                      }}
+                      className="text-[length:0.75rem]! font-semibold! text-[color:#374151]!"
                     >
                       Meter Calibration Tolerance
                     </span>
                     <div className="flex! items-center!">
                       <span
-                        style={{
-                          fontSize: "0.85rem",
-                          color: "#9ca3af",
-                          marginRight: "2px",
-                        }}
+                        className="text-[length:0.85rem]! text-[color:#9ca3af]! mr-[2px]!"
                       >
                         ±
                       </span>
                       <Input
                         type="number"
                        
-                        style={{
-                          width: "45px",
-                          padding: "2px 4px",
-                          fontSize: "0.85rem",
-                          textAlign: "right",
-                        }}
+                        className="w-[45px]! p-[2px_4px]! text-[length:0.85rem]! text-right!"
                         placeholder="2.0"
                         value={meterUncertaintyPct}
                         onChange={(e) => setMeterUncertaintyPct(e.target.value)}
                         step="0.1"
                       />
                       <span
-                        style={{
-                          fontSize: "0.85rem",
-                          color: "#9ca3af",
-                          marginLeft: "2px",
-                        }}
+                        className="text-[length:0.85rem]! text-[color:#9ca3af]! ml-[2px]!"
                       >
                         %
                       </span>
@@ -84,44 +67,27 @@ const Scope1OptionsSection = ({ gcUncertaintyPct, meterUncertaintyPct, renderSpe
                     }}
                   >
                     <span
-                      style={{
-                        fontSize: "0.75rem",
-                        fontWeight: 600,
-                        color: "#374151",
-                      }}
+                      className="text-[length:0.75rem]! font-semibold! text-[color:#374151]!"
                     >
                       GC Analytical Precision
                     </span>
                     <div className="flex! items-center!">
                       <span
-                        style={{
-                          fontSize: "0.85rem",
-                          color: "#9ca3af",
-                          marginRight: "2px",
-                        }}
+                        className="text-[length:0.85rem]! text-[color:#9ca3af]! mr-[2px]!"
                       >
                         ±
                       </span>
                       <Input
                         type="number"
                        
-                        style={{
-                          width: "55px",
-                          padding: "2px 4px",
-                          fontSize: "0.85rem",
-                          textAlign: "right",
-                        }}
+                        className="w-[55px]! p-[2px_4px]! text-[length:0.85rem]! text-right!"
                         placeholder="Opt."
                         value={gcUncertaintyPct}
                         onChange={(e) => setGcUncertaintyPct(e.target.value)}
                         step="0.1"
                       />
                       <span
-                        style={{
-                          fontSize: "0.85rem",
-                          color: "#9ca3af",
-                          marginLeft: "2px",
-                        }}
+                        className="text-[length:0.85rem]! text-[color:#9ca3af]! ml-[2px]!"
                       >
                         %
                       </span>
@@ -149,34 +115,21 @@ const Scope1OptionsSection = ({ gcUncertaintyPct, meterUncertaintyPct, renderSpe
                   }}
                 >
                   <span
-                    style={{
-                      fontSize: "0.75rem",
-                      fontWeight: 600,
-                      color: "#374151",
-                    }}
+                    className="text-[length:0.75rem]! font-semibold! text-[color:#374151]!"
                   >
                     CO₂
                   </span>
                   {sourceType === "specific" ? (
                     <div className="flex! items-center!">
                       <span
-                        style={{
-                          fontSize: "0.85rem",
-                          color: "#9ca3af",
-                          marginRight: "2px",
-                        }}
+                        className="text-[length:0.85rem]! text-[color:#9ca3af]! mr-[2px]!"
                       >
                         ±
                       </span>
                       <Input
                         type="number"
                        
-                        style={{
-                          width: "45px",
-                          padding: "2px 4px",
-                          fontSize: "0.85rem",
-                          textAlign: "right",
-                        }}
+                        className="w-[45px]! p-[2px_4px]! text-[length:0.85rem]! text-right!"
                         placeholder="—"
                         value={userUncertainty.co2}
                         onChange={(e) =>
@@ -187,11 +140,7 @@ const Scope1OptionsSection = ({ gcUncertaintyPct, meterUncertaintyPct, renderSpe
                         }
                       />
                       <span
-                        style={{
-                          fontSize: "0.85rem",
-                          color: "#9ca3af",
-                          marginLeft: "2px",
-                        }}
+                        className="text-[length:0.85rem]! text-[color:#9ca3af]! ml-[2px]!"
                       >
                         %
                       </span>
@@ -223,34 +172,21 @@ const Scope1OptionsSection = ({ gcUncertaintyPct, meterUncertaintyPct, renderSpe
                   }}
                 >
                   <span
-                    style={{
-                      fontSize: "0.75rem",
-                      fontWeight: 600,
-                      color: "#374151",
-                    }}
+                    className="text-[length:0.75rem]! font-semibold! text-[color:#374151]!"
                   >
                     CH₄
                   </span>
                   {sourceType === "specific" ? (
                     <div className="flex! items-center!">
                       <span
-                        style={{
-                          fontSize: "0.85rem",
-                          color: "#9ca3af",
-                          marginRight: "2px",
-                        }}
+                        className="text-[length:0.85rem]! text-[color:#9ca3af]! mr-[2px]!"
                       >
                         ±
                       </span>
                       <Input
                         type="number"
                        
-                        style={{
-                          width: "45px",
-                          padding: "2px 4px",
-                          fontSize: "0.85rem",
-                          textAlign: "right",
-                        }}
+                        className="w-[45px]! p-[2px_4px]! text-[length:0.85rem]! text-right!"
                         placeholder="—"
                         value={userUncertainty.ch4}
                         onChange={(e) =>
@@ -261,11 +197,7 @@ const Scope1OptionsSection = ({ gcUncertaintyPct, meterUncertaintyPct, renderSpe
                         }
                       />
                       <span
-                        style={{
-                          fontSize: "0.85rem",
-                          color: "#9ca3af",
-                          marginLeft: "2px",
-                        }}
+                        className="text-[length:0.85rem]! text-[color:#9ca3af]! ml-[2px]!"
                       >
                         %
                       </span>
@@ -297,34 +229,21 @@ const Scope1OptionsSection = ({ gcUncertaintyPct, meterUncertaintyPct, renderSpe
                   }}
                 >
                   <span
-                    style={{
-                      fontSize: "0.75rem",
-                      fontWeight: 600,
-                      color: "#374151",
-                    }}
+                    className="text-[length:0.75rem]! font-semibold! text-[color:#374151]!"
                   >
                     N₂O
                   </span>
                   {sourceType === "specific" ? (
                     <div className="flex! items-center!">
                       <span
-                        style={{
-                          fontSize: "0.85rem",
-                          color: "#9ca3af",
-                          marginRight: "2px",
-                        }}
+                        className="text-[length:0.85rem]! text-[color:#9ca3af]! mr-[2px]!"
                       >
                         ±
                       </span>
                       <Input
                         type="number"
                        
-                        style={{
-                          width: "45px",
-                          padding: "2px 4px",
-                          fontSize: "0.85rem",
-                          textAlign: "right",
-                        }}
+                        className="w-[45px]! p-[2px_4px]! text-[length:0.85rem]! text-right!"
                         placeholder="—"
                         value={userUncertainty.n2o}
                         onChange={(e) =>
@@ -335,11 +254,7 @@ const Scope1OptionsSection = ({ gcUncertaintyPct, meterUncertaintyPct, renderSpe
                         }
                       />
                       <span
-                        style={{
-                          fontSize: "0.85rem",
-                          color: "#9ca3af",
-                          marginLeft: "2px",
-                        }}
+                        className="text-[length:0.85rem]! text-[color:#9ca3af]! ml-[2px]!"
                       >
                         %
                       </span>

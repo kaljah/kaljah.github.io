@@ -645,7 +645,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
               {searchQuery && (
-                <Button variant="ghost" type="submit" onClick={() => setSearchQuery('')} style={{ padding: 2, cursor: 'pointer' }}>
+                <Button variant="ghost" type="submit" onClick={() => setSearchQuery('')} className="p-[2px]! cursor-pointer!">
                   <X size={12} />
                 </Button>
               )}
@@ -653,7 +653,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
           </div>
 
           <div className="toolbar-action-cluster">
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
+            <span className="text-[length:0.8rem]! text-[color:var(--text-secondary)]! font-semibold!">
               Showing {filteredRecords.length} of {stats.totalCount}
             </span>
 
@@ -661,8 +661,8 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
             {(scopeFilter !== 'all' || qaFilter !== 'all' || facilityFilter !== 'all' || yearFilter !== 'all' || searchQuery) && filteredRecords.length > 0 && (
               <div className="flex! gap-[8px]!">
                 <button
-                  className="btn-wizard-action btn-wizard-approve-all"
-                  style={{ padding: '6px 12px', fontSize: '0.78rem' }}
+                  className="btn-wizard-action btn-wizard-approve-all p-[6px_12px]! text-[length:0.78rem]!"
+                 
                   onClick={() => handleApproveAll(true)}
                   disabled={isProcessing}
                 >
@@ -670,8 +670,8 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
                   Approve Filtered ({filteredRecords.length})
                 </button>
                 <button
-                  className="btn-wizard-action btn-wizard-reject-all"
-                  style={{ padding: '6px 12px', fontSize: '0.78rem' }}
+                  className="btn-wizard-action btn-wizard-reject-all p-[6px_12px]! text-[length:0.78rem]!"
+                 
                   onClick={() => setRejectionModal({ isOpen: true, mode: 'filtered', targetItem: null, reason: '' })}
                   disabled={isProcessing}
                 >
@@ -687,13 +687,13 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
         {selectedKeys.size > 0 && (
           <div className="wizard-batch-banner">
             <div className="flex! items-center! gap-[14px]!">
-              <span style={{ fontWeight: 700, fontSize: '0.92rem', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+              <span className="font-bold! text-[length:0.92rem]! inline-flex! items-center! gap-[8px]!">
                 <CheckSquare size={16} color="#38bdf8" />
                 {selectedKeys.size} record{selectedKeys.size > 1 ? 's' : ''} selected
               </span>
-              <span style={{ color: 'rgba(255,255,255,0.4)' }}>•</span>
-              <span style={{ fontSize: '0.84rem', color: '#cbd5e1' }}>
-                Impact: <strong style={{ color: '#ffffff' }}>{selectedImpactTco2e.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong> tCO₂e
+              <span className="text-[color:rgba(255,255,255,0.4)]!">•</span>
+              <span className="text-[length:0.84rem]! text-[color:#cbd5e1]!">
+                Impact: <strong className="text-[color:#ffffff]!">{selectedImpactTco2e.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong> tCO₂e
               </span>
             </div>
 
@@ -717,7 +717,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
               <Button
                 variant="ghost" type="submit"
                 onClick={() => setSelectedKeys(new Set())}
-                style={{ color: '#94a3b8', fontSize: '0.82rem', padding: '6px 10px', cursor: 'pointer' }}
+                className="text-[color:#94a3b8]! text-[length:0.82rem]! p-[6px_10px]! cursor-pointer!"
               >
                 Deselect
               </Button>
@@ -737,16 +737,16 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
               <div className="wizard-empty-icon">
                 <CheckCircle size={32} />
               </div>
-              <h3 style={{ margin: 0, fontSize: '1.2rem', color: 'var(--text-primary)' }}>All Pending Data Verified</h3>
-              <p style={{ margin: 0, maxWidth: 460, fontSize: '0.88rem' }}>
+              <h3 className="m-[0px]! text-[length:1.2rem]! text-[color:var(--text-primary)]!">All Pending Data Verified</h3>
+              <p className="m-[0px]! max-w-[460px]! text-[length:0.88rem]!">
                 There are currently no records awaiting Maker-Checker approval. Staged bulk import entries will appear here automatically.
               </p>
             </div>
           ) : filteredRecords.length === 0 ? (
             <div className="wizard-empty-state">
               <Filter size={32} color="var(--text-muted)" />
-              <h3 style={{ margin: 0, fontSize: '1.1rem' }}>No Matching Records</h3>
-              <p style={{ margin: 0, fontSize: '0.86rem' }}>No records match your active scope, anomaly, or search filters.</p>
+              <h3 className="m-[0px]! text-[length:1.1rem]!">No Matching Records</h3>
+              <p className="m-[0px]! text-[length:0.86rem]!">No records match your active scope, anomaly, or search filters.</p>
               <Button
                 variant="ghost" type="submit"
                 onClick={() => { setScopeFilter('all'); setQaFilter('all'); setFacilityFilter('all'); setYearFilter('all'); setSearchQuery(''); }}
@@ -806,18 +806,18 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
                         <span className="font-medium!">{item.date}</span>
                       </td>
                       <td>
-                        <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{facName}</span>
+                        <span className="font-semibold! text-[color:var(--text-primary)]!">{facName}</span>
                       </td>
                       <td>
                         <div className="flex! flex-col! gap-[2px]!">
-                          <span style={{ fontSize: '0.84rem' }}>{item.desc}</span>
+                          <span className="text-[length:0.84rem]!">{item.desc}</span>
                         </div>
                       </td>
                       <td className="text-right!">
-                        <strong className="num-tabular" style={{ fontSize: '0.9rem' }}>
+                        <strong className="num-tabular text-[length:0.9rem]!">
                           {item.tco2e.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </strong>
-                        <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginLeft: '4px' }}>tCO₂e</span>
+                        <span className="text-[length:0.75rem]! text-[color:var(--text-secondary)]! ml-[4px]!">tCO₂e</span>
                       </td>
                       <td>
                         {item.isWeird ? (
@@ -895,10 +895,10 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
           <div className="rejection-modal">
             <div className="flex! justify-between! items-center!">
               <div className="flex! items-center! gap-[10px]!">
-                <div style={{ width: 36, height: 36, borderRadius: '10px', background: 'rgba(239, 68, 68, 0.1)', color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div className="w-[36px]! h-[36px]! rounded-[10px]! bg-[color:rgba(239,_68,_68,_0.1)]! text-[color:#dc2626]! flex! items-center! justify-center!">
                   <Trash2 size={20} />
                 </div>
-                <h3 style={{ margin: 0, fontWeight: 700, fontSize: '1.1rem' }}>
+                <h3 className="m-[0px]! font-bold! text-[length:1.1rem]!">
                   {rejectionModal.mode === 'single'
                     ? `Reject Record #${rejectionModal.targetItem?.id}`
                     : rejectionModal.mode === 'selected'
@@ -911,18 +911,18 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
               <Button
                 variant="ghost" type="submit"
                 onClick={() => !isProcessing && setRejectionModal(prev => ({ ...prev, isOpen: false }))}
-                style={{ padding: '6px', cursor: 'pointer' }}
+                className="p-[6px]! cursor-pointer!"
               >
                 <X size={18} />
               </Button>
             </div>
 
-            <p style={{ margin: 0, fontSize: '0.86rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+            <p className="m-[0px]! text-[length:0.86rem]! text-[color:var(--text-secondary)]! leading-[1.5]!">
               Maker-Checker governance requires a recorded audit reason before rejecting staged bulk entries. This justification will be logged in the immutable audit trail.
             </p>
 
             <div>
-              <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>
+              <label className="block! mb-[8px]! text-[length:0.78rem]! font-semibold! text-[color:var(--text-secondary)]! uppercase!">
                 Quick Audit Justifications
               </label>
               <div className="rejection-quick-chips">
@@ -940,7 +940,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
             </div>
 
             <div>
-              <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>
+              <label className="block! mb-[8px]! text-[length:0.78rem]! font-semibold! text-[color:var(--text-secondary)]! uppercase!">
                 Custom Justification / Details
               </label>
               <Textarea
@@ -959,14 +959,14 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
                 variant="ghost"
                 onClick={() => setRejectionModal(prev => ({ ...prev, isOpen: false }))}
                 disabled={isProcessing}
-                style={{ padding: '8px 16px', borderRadius: '10px', cursor: 'pointer' }}
+                className="p-[8px_16px]! rounded-[10px]! cursor-pointer!"
               >
                 Cancel
               </Button>
               <Button
                 type="button"
                 
-                style={{ background: '#ef4444', padding: '8px 18px', borderRadius: '10px' }}
+                className="bg-[color:#ef4444]! p-[8px_18px]! rounded-[10px]!"
                 onClick={handleConfirmRejection}
                 disabled={isProcessing || !rejectionModal.reason.trim()}
               >

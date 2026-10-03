@@ -8,7 +8,7 @@ const CbamTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, cbamForm, currentPage, editi
 <div className="tab-pane active">
                                 <div className="section-header mb-[24px]!">
                                     <h2>EU CBAM Export & Embedded Emission Tracking</h2>
-                                    <p style={{ color: 'var(--text-secondary)', marginTop: '4px' }}>
+                                    <p className="text-[color:var(--text-secondary)]! mt-[4px]!">
                                         Record product exports subject to EU Carbon Border Adjustment Mechanism (CBAM) with direct and indirect embedded emissions under EU Regulation (EU) 2023/956.
                                     </p>
                                 </div>
@@ -183,8 +183,8 @@ const CbamTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, cbamForm, currentPage, editi
                                     </button>
                                     {editingCbamId && (
                                         <button
-                                            className="action-btn"
-                                            style={{ background: 'var(--text-secondary)' }}
+                                            className="action-btn bg-[color:var(--text-secondary)]!"
+                                           
                                             onClick={() => {
                                                 setEditingCbamId(null);
                                                 setCbamForm({
@@ -204,7 +204,7 @@ const CbamTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, cbamForm, currentPage, editi
                                 <div className="table-container mt-[40px]!">
                                     <div className="flex! justify-between! items-center! mb-[16px]!">
                                         <h3>CBAM Product Export Records</h3>
-                                        <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                                        <span className="text-[length:0.85rem]! text-[color:var(--text-secondary)]!">
                                             Total Records: {filteredCbam.length}
                                         </span>
                                     </div>
@@ -245,14 +245,14 @@ const CbamTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, cbamForm, currentPage, editi
                                                         <td className="text-right! font-semibold!">{qTonnes.toLocaleString()}</td>
                                                         <td className="text-right!">{direct.toFixed(3)}</td>
                                                         <td className="text-right!">{indirect.toFixed(3)}</td>
-                                                        <td style={{ textAlign: 'right', color: '#3b82f6', fontWeight: 700 }}>
+                                                        <td className="text-right! text-[color:#3b82f6]! font-bold!">
                                                             {totalEmbedded.toLocaleString(undefined, { maximumFractionDigits: 1 })}
                                                         </td>
                                                         <td className="text-center!">
                                                             <div className="flex! gap-[6px]! justify-center!">
                                                                 <button
-                                                                    className="action-btn"
-                                                                    style={{ padding: '4px 8px', fontSize: '0.75rem', background: '#3b82f6' }}
+                                                                    className="action-btn p-[4px_8px]! text-[length:0.75rem]! bg-[color:#3b82f6]!"
+                                                                   
                                                                     onClick={() => {
                                                                         setEditingCbamId(c.id);
                                                                         setCbamForm({
@@ -276,8 +276,8 @@ const CbamTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, cbamForm, currentPage, editi
                                                                     Edit
                                                                 </button>
                                                                 <button
-                                                                    className="btn-delete"
-                                                                    style={{ padding: '4px 8px', fontSize: '0.75rem' }}
+                                                                    className="btn-delete p-[4px_8px]! text-[length:0.75rem]!"
+                                                                   
                                                                     onClick={() => handleDeleteCbamExport(c.id)}
                                                                 >
                                                                     Delete
@@ -289,7 +289,7 @@ const CbamTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, cbamForm, currentPage, editi
                                             })}
                                             {filteredCbam.length === 0 && (
                                                 <tr>
-                                                    <td colSpan="10" style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>
+                                                    <td colSpan="10" className="text-center! p-[40px]! text-[color:var(--text-secondary)]!">
                                                         No CBAM product export records found.
                                                     </td>
                                                 </tr>

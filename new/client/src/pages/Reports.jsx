@@ -534,7 +534,7 @@ const Reports = () => {
               <div className="control-group">
                 <label className="input-label">
                   Reporting Year{" "}
-                  <span style={{ color: "var(--danger)" }}>*</span>
+                  <span className="text-[color:var(--danger)]!">*</span>
                 </label>
                 <NativeSelect
                   className="component-select"
@@ -592,7 +592,7 @@ const Reports = () => {
               <div className="control-group" style={{ flex: 2 }}>
                 <label className="input-label">
                   Regions / Facilities{" "}
-                  <span style={{ color: "var(--danger)" }}>*</span>
+                  <span className="text-[color:var(--danger)]!">*</span>
                 </label>
                 {/* MultiSelect Component */}
                 <React.Suspense fallback={<div>Loading...</div>}>
@@ -639,15 +639,7 @@ const Reports = () => {
                 return (
                   <span
                     key={rId}
-                    style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      padding: "4px 10px",
-                      borderRadius: "16px",
-                      background: "rgba(255, 107, 0, 0.1)",
-                      color: "var(--primary-color)",
-                      fontSize: "0.85rem",
-                    }}
+                    className="inline-flex! items-center! p-[4px_10px]! rounded-[16px]! bg-[color:rgba(255,_107,_0,_0.1)]! text-[color:var(--primary-color)]! text-[length:0.85rem]!"
                   >
                     {rName}
                     <button
@@ -867,11 +859,7 @@ const Reports = () => {
 
           {!loading && emissions.length === 0 && (
             <div
-              style={{
-                textAlign: "center",
-                padding: "40px",
-                color: "var(--text-secondary)",
-              }}
+              className="text-center! p-[40px]! text-[color:var(--text-secondary)]!"
             >
               No emission records found. Adjust your filters or add new
               emissions.
@@ -904,12 +892,12 @@ const Reports = () => {
                 <React.Fragment key={groupKey ?? "__all__"}>
                   {groupKey !== null && (
                     <div
-                      className="grid-row grid-group-header"
-                      style={{ background: "var(--bg-hover)", fontWeight: 700 }}
+                      className="grid-row grid-group-header bg-[color:var(--bg-hover)]! font-bold!"
+                     
                     >
                       <div className="cell" style={{ gridColumn: "1 / 13" }}>
                         {groupKey}
-                        <span style={{ fontWeight: 400, marginLeft: "8px", opacity: 0.7 }}>
+                        <span className="font-normal! ml-[8px]! opacity-[0.7]!">
                           ({rows.length} record{rows.length === 1 ? "" : "s"} on this page)
                         </span>
                       </div>
@@ -921,7 +909,7 @@ const Reports = () => {
                           rows.reduce((sum, r) => sum + (Number(r.co2e_total) || 0), 0),
                         )}
                       </div>
-                      <div className="cell" style={{ fontSize: "0.75rem", opacity: 0.7 }}>
+                      <div className="cell text-[length:0.75rem]! opacity-[0.7]!">
                         Subtotal
                       </div>
                     </div>
@@ -929,8 +917,8 @@ const Reports = () => {
               {rows.map((row) => (
                 <div key={row.id} className="grid-row">
                   <div
-                    className="cell"
-                    style={{ fontSize: "0.75rem", opacity: 0.7 }}
+                    className="cell text-[length:0.75rem]! opacity-[0.7]!"
+                   
                   >
                     {row.id}
                   </div>
@@ -951,24 +939,20 @@ const Reports = () => {
                     {row.process_type}
                   </div>
                   <div className="cell">{row.fuel || "N/A"}</div>
-                  <div className="cell" style={{ fontSize: "0.85rem" }}>
+                  <div className="cell text-[length:0.85rem]!">
                     {row.factor_type || "N/A"}
                   </div>
                   <div className="cell cell-number">
                     {row.amount ? formatNumber(row.amount) : "-"}
                     <span
-                      style={{
-                        fontSize: "0.7rem",
-                        marginLeft: "4px",
-                        opacity: 0.7,
-                      }}
+                      className="text-[length:0.7rem]! ml-[4px]! opacity-[0.7]!"
                     >
                       {row.unit}
                     </span>
                   </div>
                   <div
-                    className="cell cell-number cell-total"
-                    style={{ color: "var(--primary-color)", fontWeight: 700 }}
+                    className="cell cell-number cell-total text-[color:var(--primary-color)]! font-bold!"
+                   
                   >
                     {/* BUG-UI-06 FIX: Show '—' for null instead of misleading '0.00' */}
                     {row.co2e_total != null
@@ -977,13 +961,7 @@ const Reports = () => {
                   </div>
                   <div className="cell">
                     <span
-                      style={{
-                        fontSize: "0.8rem",
-                        padding: "2px 8px",
-                        borderRadius: "4px",
-                        background: "rgba(16, 185, 129, 0.1)",
-                        color: "#10b981",
-                      }}
+                      className="text-[length:0.8rem]! p-[2px_8px]! rounded-[4px]! bg-[color:rgba(16,_185,_129,_0.1)]! text-[color:#10b981]!"
                     >
                       {row.status || "Verified"}
                     </span>
@@ -1005,7 +983,7 @@ const Reports = () => {
                 Previous
               </button>
               <span
-                style={{ fontSize: "0.9rem", color: "var(--text-secondary)" }}
+                className="text-[length:0.9rem]! text-[color:var(--text-secondary)]!"
               >
                 Page {page} of {totalPages} ({totalRecords} records)
               </span>
@@ -1023,7 +1001,7 @@ const Reports = () => {
 
       {showConfigModal && (
         <div className="modal-overlay">
-          <div className="modal-content" style={{ maxWidth: '560px' }}>
+          <div className="modal-content max-w-[560px]!">
             <div className="modal-header">
               <h2>Generate Executive GHG Report</h2>
               <button className="close-btn" onClick={() => setShowConfigModal(false)}>×</button>
@@ -1073,10 +1051,10 @@ const Reports = () => {
 
               {reportFormat === "master" ? (
                 <div style={{ background: '#f8fafc', padding: '14px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                  <h4 style={{ margin: '0 0 6px 0', color: '#0f172a', fontSize: '0.9rem' }}>
+                  <h4 className="m-[0_0_6px_0]! text-[color:#0f172a]! text-[length:0.9rem]!">
                     Authentic Groupement Berkine (HBNS & El Merk) 2021–2025
                   </h4>
-                  <ul style={{ margin: '0', paddingLeft: '20px', fontSize: '0.8rem', color: '#475569', lineHeight: '1.5' }}>
+                  <ul className="m-[0]! pl-[20px]! text-[length:0.8rem]! text-[color:#475569]! leading-[1.5]!">
                     <li><strong>Vertical A4 Portrait</strong> format (25 publication pages).</li>
                     <li><strong>15 High-Resolution Charts (300 DPI)</strong>: Scopes 1 & 2, SANGEA modules, 2030 decarbonization target trajectory (-25%), methane abatement (-76.7%), routine vs safety flaring, intensities, JV equity allocation, and Criteria Air Pollutants.</li>
                     <li><strong>18 Multi-Year Appendix Tables</strong>: Complete raw tables A.1 through A.16 matching Groupement Berkine's corporate reporting standards.</li>
@@ -1084,12 +1062,12 @@ const Reports = () => {
                 </div>
               ) : (
                 <>
-                  <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+                  <p className="text-[length:0.875rem]! text-[color:var(--text-secondary)]!">
                     To ensure 100% compliance with ISO 14064-1, please provide the following mandatory declarations before generating the report.
                   </p>
                   <div className="input-group">
                     <label>Exclusion Criteria (Significance)</label>
-                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>
+                    <p className="text-[length:0.75rem]! text-[color:var(--text-muted)]! mb-[4px]!">
                       Document the criteria used to define which indirect emissions are significant and justify any exclusions.
                     </p>
                     <textarea
@@ -1101,7 +1079,7 @@ const Reports = () => {
                   </div>
                   <div className="input-group">
                     <label>Verification Status</label>
-                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>
+                    <p className="text-[length:0.75rem]! text-[color:var(--text-muted)]! mb-[4px]!">
                       State whether the report has been verified, the type of verification, and the level of assurance.
                     </p>
                     <input

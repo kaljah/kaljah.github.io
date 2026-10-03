@@ -82,7 +82,7 @@ const ReferenceData = () => {
   const categories = {
     custom: {
       title: "Custom & Regional Factors",
-      icon: <Star size={20} style={{ color: "#10b981" }} />,
+      icon: <Star size={20} className="text-[color:#10b981]!" />,
       color: "#10b981",
       factors: customFactors
         .filter((f) => f.name?.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -420,7 +420,7 @@ const ReferenceData = () => {
       )}
       {loading ? (
         <div
-          style={{ textAlign: "center", padding: "100px", color: "#64748b" }}
+          className="text-center! p-[100px]! text-[color:#64748b]!"
         >
           Loading Library Assets...
         </div>
@@ -440,8 +440,8 @@ const ReferenceData = () => {
                   {cat.icon}
                   {cat.title}
                   <span
-                    className="count-badge"
-                    style={{ background: "var(--color-ink-100)", color: "var(--color-ink-800)" }}
+                    className="count-badge bg-[color:var(--color-ink-100)]! text-[color:var(--color-ink-800)]!"
+                   
                   >
                     {cat.isStatic
                       ? cat.filteredItems.length
@@ -560,12 +560,12 @@ const ReferenceData = () => {
             >
               <Info
                 size={40}
-                style={{ color: "#94a3b8", marginBottom: "16px" }}
+                className="text-[color:#94a3b8]! mb-[16px]!"
               />
-              <h3 style={{ color: "#1e293b", marginBottom: "8px" }}>
+              <h3 className="text-[color:#1e293b]! mb-[8px]!">
                 No factors found
               </h3>
-              <p style={{ color: "#64748b" }}>
+              <p className="text-[color:#64748b]!">
                 Try adjusting your search term or category filter.
               </p>
             </div>

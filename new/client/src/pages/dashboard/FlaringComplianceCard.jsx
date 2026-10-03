@@ -117,7 +117,7 @@ const FlaringComplianceCard = ({ flaringData }) => (
                     </span>{" "}
                     of Gross Gas Produced ({formatCompactNumber(flaringData.gas_production_m3 / 1e6, 2)} MMSm³)
                   </span>
-                  <span style={{ fontSize: "0.78rem", color: "#64748b" }}>
+                  <span className="text-[length:0.78rem]! text-[color:#64748b]!">
                     Statutory Limit: <strong>1.00%</strong> (Executive Decree 21-330 Art. 9)
                   </span>
                 </div>

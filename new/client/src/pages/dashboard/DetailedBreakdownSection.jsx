@@ -23,16 +23,12 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
                   alignItems: "center",
                 }}
               >
-                <h3 className="card-title" style={{ margin: 0 }}>
+                <h3 className="card-title m-[0px]!">
                   Detailed Breakdown
                 </h3>
                 <div
-                  className="collapse-toggle-icon"
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    color: "#64748b",
-                  }}
+                  className="collapse-toggle-icon flex! items-center! text-[color:#64748b]!"
+                 
                 >
                   {detailedBreakdownCollapsed ? (
                     <ChevronDown size={18} />
@@ -73,19 +69,19 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
                       </tr>
                       {flaringData && (flaringData.routine_flaring?.volume_knm3 > 0 || flaringData.non_routine_flaring?.volume_knm3 > 0 || flaringData.safety_flaring?.volume_knm3 > 0) && (
                         <>
-                          <tr className="detail-row" style={{ fontSize: "0.82rem", color: "#64748b", background: "rgba(248, 250, 252, 0.5)" }}>
+                          <tr className="detail-row text-[length:0.82rem]! text-[color:#64748b]! bg-[color:rgba(248,_250,_252,_0.5)]!">
                             <td className="pl-[36px]!">↳ Routine ({flaringData.routine_flaring?.percentage ?? 0}%)</td>
                             <td className="text-right font-normal">
                               {formatCompactNumber(flaringData.routine_flaring?.tco2e ?? 0)}
                             </td>
                           </tr>
-                          <tr className="detail-row" style={{ fontSize: "0.82rem", color: "#64748b", background: "rgba(248, 250, 252, 0.5)" }}>
+                          <tr className="detail-row text-[length:0.82rem]! text-[color:#64748b]! bg-[color:rgba(248,_250,_252,_0.5)]!">
                             <td className="pl-[36px]!">↳ Non-Routine ({flaringData.non_routine_flaring?.percentage ?? 0}%)</td>
                             <td className="text-right font-normal">
                               {formatCompactNumber(flaringData.non_routine_flaring?.tco2e ?? 0)}
                             </td>
                           </tr>
-                          <tr className="detail-row" style={{ fontSize: "0.82rem", color: "#64748b", background: "rgba(248, 250, 252, 0.5)" }}>
+                          <tr className="detail-row text-[length:0.82rem]! text-[color:#64748b]! bg-[color:rgba(248,_250,_252,_0.5)]!">
                             <td className="pl-[36px]!">↳ Safety &amp; Purge ({flaringData.safety_flaring?.percentage ?? 0}%)</td>
                             <td className="text-right font-normal">
                               {formatCompactNumber(flaringData.safety_flaring?.tco2e ?? 0)}
@@ -228,7 +224,7 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2"
-                  style={{ opacity: 0.3 }}
+                  className="opacity-[0.3]!"
                 >
                   <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
                   <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />

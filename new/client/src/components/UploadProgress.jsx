@@ -409,7 +409,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
                           <tr key={i} className="up-anomaly-row">
                             <td className="up-td-row">{a.row}</td>
                             <td className="up-td-meta">{a.facility_id || "—"}</td>
-                            <td className="up-td-meta" style={{ color: "var(--up-warn)" }}>
+                            <td className="up-td-meta text-[color:var(--up-warn)]!">
                               {typeof a.value === "number" ? a.value.toFixed(2) : a.value}
                             </td>
                             <td className="up-td-meta">
@@ -420,7 +420,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
                                 ? `${a.expected_range[0].toFixed(1)} – ${a.expected_range[1].toFixed(1)}`
                                 : "—"}
                             </td>
-                            <td className="up-td-reason" style={{ fontSize: "0.75rem" }}>
+                            <td className="up-td-reason text-[length:0.75rem]!">
                               {a.message || "Statistical outlier"}
                             </td>
                           </tr>

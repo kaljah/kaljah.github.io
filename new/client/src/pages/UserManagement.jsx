@@ -711,13 +711,13 @@ const UserManagement = () => {
   if (!["it_admin", "it_manager", "it"].includes(user?.role)) {
     return (
       <div style={{ ...S.page, textAlign: "center", paddingTop: "80px" }}>
-        <div style={{ marginBottom: "20px", color: "#94a3b8" }}>
+        <div className="mb-[20px]! text-[color:#94a3b8]!">
           <Lock size="52" strokeWidth="1.5" aria-hidden="true" />
         </div>
-        <h2 style={{ color: "var(--text-primary)", margin: "0 0 8px" }}>
+        <h2 className="text-[color:var(--text-primary)]! m-[0_0_8px]!">
           Unauthorized
         </h2>
-        <p style={{ color: "var(--text-secondary)" }}>
+        <p className="text-[color:var(--text-secondary)]!">
           You do not have permission to access the IT Management portal.
         </p>
       </div>

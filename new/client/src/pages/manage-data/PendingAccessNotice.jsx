@@ -8,16 +8,16 @@ const PendingAccessNotice = ({ handleTabChange }) => (
                                 <div style={{ width: 56, height: 56, borderRadius: '50%', background: '#fffbeb', border: '1px solid #fde68a', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px auto', color: '#d97706' }}>
                                     <Clock size={28} />
                                 </div>
-                                <h3 style={{ margin: '0 0 8px 0', fontSize: '1.25rem', color: 'var(--text-primary)', fontWeight: 700 }}>
+                                <h3 className="m-[0_0_8px_0]! text-[length:1.25rem]! text-[color:var(--text-primary)]! font-bold!">
                                     Review Permissions Required
                                 </h3>
-                                <p style={{ maxWidth: '520px', margin: '0 auto 20px auto', color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.6 }}>
+                                <p className="max-w-[520px]! m-[0_auto_20px_auto]! text-[color:var(--text-secondary)]! text-[length:0.9rem]! leading-[1.6]!">
                                     The pending review queue is restricted to Regional Managers and Administrators under corporate Maker-Checker governance rules. Direct activity logs submitted by operators are audited here before inclusion in official GHG inventories.
                                 </p>
                                 <Button
                                     type="submit"
                                     onClick={() => handleTabChange('factors')}
-                                    style={{ padding: '8px 24px', fontSize: '0.88rem' }}
+                                    className="p-[8px_24px]! text-[length:0.88rem]!"
                                 >
                                     Return to Emission Factors
                                 </Button>

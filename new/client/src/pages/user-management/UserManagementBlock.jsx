@@ -62,7 +62,7 @@ const UserManagementBlock = ({ S, filteredUsers, getRoleMeta, handleDelete, hand
                     <div
                       className="flex! flex-col! items-center! gap-[8px]!"
                     >
-                      <span style={{ color: "var(--text-secondary)" }}><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+                      <span className="text-[color:var(--text-secondary)]!"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
                       No users match the current filters.
                     </div>
                   </td>
@@ -99,20 +99,12 @@ const UserManagementBlock = ({ S, filteredUsers, getRoleMeta, handleDelete, hand
                           <div style={S.avatar(meta.color)}>{initials}</div>
                           <div>
                             <div
-                              style={{
-                                fontWeight: 700,
-                                color: "var(--text-primary)",
-                                lineHeight: 1.2,
-                              }}
+                              className="font-bold! text-[color:var(--text-primary)]! leading-[1.2]!"
                             >
                               {u.fullName}
                             </div>
                             <div
-                              style={{
-                                fontSize: "0.75rem",
-                                color: "var(--text-secondary)",
-                                marginTop: "2px",
-                              }}
+                              className="text-[length:0.75rem]! text-[color:var(--text-secondary)]! mt-[2px]!"
                             >
                               {u.orgName || "—"}
                             </div>
@@ -138,22 +130,14 @@ const UserManagementBlock = ({ S, filteredUsers, getRoleMeta, handleDelete, hand
                           <div>
                             {u.department && (
                               <div
-                                style={{
-                                  fontWeight: 600,
-                                  color: "var(--text-primary)",
-                                  fontSize: "0.85rem",
-                                }}
+                                className="font-semibold! text-[color:var(--text-primary)]! text-[length:0.85rem]!"
                               >
                                 {u.department}
                               </div>
                             )}
                             {u.jobTitle && (
                               <div
-                                style={{
-                                  fontSize: "0.75rem",
-                                  color: "var(--text-secondary)",
-                                  marginTop: "2px",
-                                }}
+                                className="text-[length:0.75rem]! text-[color:var(--text-secondary)]! mt-[2px]!"
                               >
                                 {u.jobTitle}
                               </div>

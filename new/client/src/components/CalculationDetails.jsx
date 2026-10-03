@@ -218,7 +218,7 @@ const CalculationDetails = ({ calculation, onClose }) => {
                     <span className="unc-label">
                       <span className="gas-badge co2">CO₂</span> 1σ Uncertainty
                     </span>
-                    <span className="unc-value" style={{ color: "#dc2626" }}>
+                    <span className="unc-value text-[color:#dc2626]!">
                       ±{(Number(uncertainty.co2) * 100).toFixed(1)}%
                     </span>
                     <span className="param-label">
@@ -231,7 +231,7 @@ const CalculationDetails = ({ calculation, onClose }) => {
                     <span className="unc-label">
                       <span className="gas-badge ch4">CH₄</span> 1σ Uncertainty
                     </span>
-                    <span className="unc-value" style={{ color: "#0284c7" }}>
+                    <span className="unc-value text-[color:#0284c7]!">
                       ±{(Number(uncertainty.ch4) * 100).toFixed(1)}%
                     </span>
                     <span className="param-label">
@@ -244,7 +244,7 @@ const CalculationDetails = ({ calculation, onClose }) => {
                     <span className="unc-label">
                       <span className="gas-badge n2o">N₂O</span> 1σ Uncertainty
                     </span>
-                    <span className="unc-value" style={{ color: "#9333ea" }}>
+                    <span className="unc-value text-[color:#9333ea]!">
                       ±{(Number(uncertainty.n2o) * 100).toFixed(1)}%
                     </span>
                     <span className="param-label">

@@ -20,7 +20,7 @@ const PaginationControls = ({ currentPage, totalItems, itemsPerPage, onPageChang
             >
                 Previous
             </Button>
-            <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+            <span className="text-[length:0.85rem]! text-[color:var(--text-secondary)]!">
                 Page {currentPage} of {totalPages}
             </span>
             <Button 

@@ -13,9 +13,9 @@ const Scope3FormNewScope3 = ({ UNIT_MULTIPLIERS, activityType, amount, baseUnit,
         <div style={{ marginTop: "20px", marginBottom: "10px", padding: "16px", background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "8px" }}>
           <div role="button" tabIndex={0} onKeyDown={activateOnKey} className="flex! justify-between! items-center! cursor-pointer!" onClick={() => setShowEeioCalc(!showEeioCalc)}>
             <div className="flex! items-center! gap-[8px]!">
-              <span style={{ fontSize: "1.2rem" }}>💰</span>
-              <strong style={{ color: "#334155" }}>EEIO Quick Spend Calculator</strong>
-              <span style={{ fontSize: "0.8rem", color: "#64748b", marginLeft: "10px" }}>Convert financial spend to CO₂e using NAICS factors</span>
+              <span className="text-[length:1.2rem]!">💰</span>
+              <strong className="text-[color:#334155]!">EEIO Quick Spend Calculator</strong>
+              <span className="text-[length:0.8rem]! text-[color:#64748b]! ml-[10px]!">Convert financial spend to CO₂e using NAICS factors</span>
             </div>
             <span>{showEeioCalc ? "▲" : "▼"}</span>
           </div>
@@ -52,8 +52,8 @@ const Scope3FormNewScope3 = ({ UNIT_MULTIPLIERS, activityType, amount, baseUnit,
                 />
               </div>
               <button 
-                className="action-btn" 
-                style={{ height: "38px", padding: "0 16px", background: "#3b82f6", color: "white" }}
+                className="action-btn h-[38px]! p-[0_16px]! bg-[color:#3b82f6]! text-[color:white]!" 
+               
                 onClick={handleCalculateEeio}
               >
                 Calculate & Auto-fill
@@ -62,7 +62,7 @@ const Scope3FormNewScope3 = ({ UNIT_MULTIPLIERS, activityType, amount, baseUnit,
           )}
           {eeioResult && showEeioCalc && (
             <div style={{ marginTop: "12px", padding: "12px", background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: "6px" }}>
-              <div style={{ fontSize: "0.85rem", color: "#1e3a8a" }}>
+              <div className="text-[length:0.85rem]! text-[color:#1e3a8a]!">
                 <strong>Industry:</strong> {eeioResult.industry_name} <br/>
                 <strong>Factor:</strong> {eeioResult.emission_factor} {eeioResult.ef_unit} <br/>
                 <strong>Estimated Emissions:</strong> <span style={{ fontSize: "1.1rem", fontWeight: "bold" }}>{eeioResult.co2e.toLocaleString(undefined, { maximumFractionDigits: 2 })}</span> tCO₂e
@@ -74,10 +74,10 @@ const Scope3FormNewScope3 = ({ UNIT_MULTIPLIERS, activityType, amount, baseUnit,
         <div
           className="flex! justify-between! items-center! mb-[20px]!"
         >
-          <h3 style={{ margin: 0 }}>New Scope 3 Entry</h3>
+          <h3 className="m-[0px]!">New Scope 3 Entry</h3>
           <div className="text-right!">
             <span
-              style={{ color: "#8b5cf6", fontWeight: 600, fontSize: "0.9rem" }}
+              className="text-[color:#8b5cf6]! font-semibold! text-[length:0.9rem]!"
             >
               Scope 3: Other Indirect
             </span>
@@ -176,10 +176,7 @@ const Scope3FormNewScope3 = ({ UNIT_MULTIPLIERS, activityType, amount, baseUnit,
                
                 value={unit}
                 readOnly
-                style={{
-                  background: "rgba(255,255,255,0.03)",
-                  cursor: "not-allowed",
-                }}
+                className="bg-[color:rgba(255,255,255,0.03)]! cursor-not-allowed!"
               />
             )}
           </div>

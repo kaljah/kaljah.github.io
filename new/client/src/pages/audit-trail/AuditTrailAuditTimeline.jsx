@@ -50,7 +50,7 @@ const AuditTrailAuditTimeline = ({ auditLogs, expandedRows, formatDiffVal, forma
                       </div>
 
                       <div className="event-timestamp" title={formatFullDateTime(log.timestamp)}>
-                        <Clock size={12} style={{ opacity: 0.6 }} />
+                        <Clock size={12} className="opacity-[0.6]!" />
                         <span>{formatTimestamp(log.timestamp)}</span>
                       </div>
                     </div>

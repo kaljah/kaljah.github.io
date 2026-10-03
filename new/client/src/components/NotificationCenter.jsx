@@ -191,12 +191,7 @@ const NotifRow = ({ n, onMarkRead, onDelete }) => {
           {n.message}
         </p>
         <span
-          style={{
-            display: "block",
-            marginTop: 5,
-            fontSize: "0.7rem",
-            color: "var(--text-muted, #94a3b8)",
-          }}
+          className="block! mt-[5px]! text-[length:0.7rem]! text-[color:var(--text-muted,_#94a3b8)]!"
         >
           {relativeTime(n.time)}
         </span>
@@ -527,14 +522,7 @@ const NotificationCenter = () => {
           </span>
           {notifications.length > 0 && (
             <span
-              style={{
-                fontSize: "0.72rem",
-                fontWeight: 700,
-                color: "var(--text-secondary, #64748b)",
-                background: "var(--bg-hover, #f1f5f9)",
-                borderRadius: 999,
-                padding: "2px 8px",
-              }}
+              className="text-[length:0.72rem]! font-bold! text-[color:var(--text-secondary,_#64748b)]! bg-[color:var(--bg-hover,_#f1f5f9)]! rounded-[999px]! p-[2px_8px]!"
             >
               {notifications.length}
             </span>
@@ -617,11 +605,7 @@ const NotificationCenter = () => {
       <div style={{ maxHeight: 420, overflowY: "auto" }}>
         {notifications.length === 0 ? (
           <div
-            style={{
-              padding: "40px 24px",
-              textAlign: "center",
-              color: "var(--text-secondary, #64748b)",
-            }}
+            className="p-[40px_24px]! text-center! text-[color:var(--text-secondary,_#64748b)]!"
           >
             <div
               style={{
@@ -642,15 +626,11 @@ const NotificationCenter = () => {
                 strokeWidth={1.75}
               />
             </div>
-            <p style={{ margin: 0, fontSize: "0.88rem", fontWeight: 700, color: "var(--text-primary, #0f172a)" }}>
+            <p className="m-[0px]! text-[length:0.88rem]! font-bold! text-[color:var(--text-primary,_#0f172a)]!">
               No notifications
             </p>
             <p
-              style={{
-                margin: "4px 0 0",
-                fontSize: "0.78rem",
-                color: "var(--text-secondary, #64748b)",
-              }}
+              className="m-[4px_0_0]! text-[length:0.78rem]! text-[color:var(--text-secondary,_#64748b)]!"
             >
               You're all caught up
             </p>

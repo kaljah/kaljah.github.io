@@ -528,7 +528,7 @@ const CarbonIntensity = () => {
                                 <FileText size={20} color="var(--accent-color)" />
                                 EU CBAM Product Specific Embedded Emissions
                             </h3>
-                            <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', margin: '4px 0 0 0' }}>
+                            <p className="text-[color:var(--text-secondary)]! text-[length:0.875rem]! m-[4px_0_0_0]!">
                                 Direct & indirect specific embedded emissions per export product (EU Regulation 2023/956)
                             </p>
                         </div>
@@ -572,7 +572,7 @@ const CarbonIntensity = () => {
                                                 <td>{p.year}-{String(p.month || 1).padStart(2, '0')}</td>
                                                 <td>{formatNumber(qty, 0)}</td>
                                                 <td>{dest}</td>
-                                                <td><strong style={{ color: '#c2410c' }}>{typeof directInt === 'number' ? directInt.toFixed(4) : '—'}</strong></td>
+                                                <td><strong className="text-[color:#c2410c]!">{typeof directInt === 'number' ? directInt.toFixed(4) : '—'}</strong></td>
                                                 <td>{typeof indirInt === 'number' ? indirInt.toFixed(4) : '—'}</td>
                                                 <td><strong>{formatNumber(totEmb, 1)}</strong></td>
                                             </tr>
@@ -595,8 +595,8 @@ const CarbonIntensity = () => {
               <div className="chart-title-wrapper">
                 <h3>GHG Intensity by Facility (kg CO₂e / BOE)</h3>
                 <div
-                  className="chart-indicator"
-                  style={{ background: "#ff6600" }}
+                  className="chart-indicator bg-[color:#ff6600]!"
+                 
                 ></div>
               </div>
             </div>
@@ -620,8 +620,8 @@ const CarbonIntensity = () => {
               <div className="chart-title-wrapper">
                 <h3>Scope 1 Direct vs Scope 2 Intensity</h3>
                 <div
-                  className="chart-indicator"
-                  style={{ background: "#2563eb" }}
+                  className="chart-indicator bg-[color:#2563eb]!"
+                 
                 ></div>
               </div>
             </div>
@@ -654,8 +654,8 @@ const CarbonIntensity = () => {
               <div className="chart-title-wrapper">
                 <h3>Oil BOE Contribution by Facility</h3>
                 <div
-                  className="chart-indicator"
-                  style={{ background: "#ea580c" }}
+                  className="chart-indicator bg-[color:#ea580c]!"
+                 
                 ></div>
               </div>
             </div>
@@ -676,8 +676,8 @@ const CarbonIntensity = () => {
               <div className="chart-title-wrapper">
                 <h3>Gas BOE Contribution by Facility</h3>
                 <div
-                  className="chart-indicator"
-                  style={{ background: "#8b5cf6" }}
+                  className="chart-indicator bg-[color:#8b5cf6]!"
+                 
                 ></div>
               </div>
             </div>
@@ -702,10 +702,7 @@ const CarbonIntensity = () => {
                 Historical Carbon Intensity Trends
               </h3>
               <p
-                style={{
-                  color: "var(--text-secondary)",
-                  fontSize: "0.9rem",
-                  margin: 0 }}
+                className="text-[color:var(--text-secondary)]! text-[length:0.9rem]! m-[0px]!"
               >
                 5-Year Performance Track (kg CO₂e / BOE)
               </p>
@@ -793,10 +790,7 @@ const CarbonIntensity = () => {
                   ))
                 ) : (
                   <p
-                    style={{
-                      textAlign: "center",
-                      padding: "40px",
-                      color: "var(--text-secondary)" }}
+                    className="text-center! p-[40px]! text-[color:var(--text-secondary)]!"
                   >
                     No regional data available
                   </p>

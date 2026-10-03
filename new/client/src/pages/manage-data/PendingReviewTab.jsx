@@ -15,32 +15,23 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                         <div className="rejection-modal" onClick={e => e.stopPropagation()}>
                                             <div className="flex! justify-between! items-center!">
                                                 <div className="flex! items-center! gap-[12px]!">
-                                                    <div style={{ 
-                                                        width: 42, 
-                                                        height: 42, 
-                                                        borderRadius: '12px', 
-                                                        background: 'rgba(239, 68, 68, 0.12)', 
-                                                        display: 'flex', 
-                                                        alignItems: 'center', 
-                                                        justifyContent: 'center', 
-                                                        color: '#dc2626' 
-                                                    }}>
+                                                    <div className="w-[42px]! h-[42px]! rounded-[12px]! bg-[color:rgba(239,_68,_68,_0.12)]! flex! items-center! justify-center! text-[color:#dc2626]!">
                                                         <AlertTriangle size={22} />
                                                     </div>
                                                     <div>
-                                                        <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 700 }}>
+                                                        <h3 className="m-[0px]! text-[length:1.15rem]! font-bold!">
                                                             {rejectionModal.isBatch 
                                                                 ? `Reject ${rejectionModal.recordIds.length} Selected Record${rejectionModal.recordIds.length > 1 ? 's' : ''}` 
                                                                 : 'Reject Emission Record'}
                                                         </h3>
-                                                        <p style={{ margin: '2px 0 0 0', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                                                        <p className="m-[2px_0_0_0]! text-[length:0.8rem]! text-[color:var(--text-secondary)]!">
                                                             Maker-Checker Audit Trail & Reason
                                                         </p>
                                                     </div>
                                                 </div>
                                                 <Button 
                                                     variant="ghost" type="submit" 
-                                                    style={{ padding: '6px', borderRadius: '8px' }}
+                                                    className="p-[6px]! rounded-[8px]!"
                                                     onClick={() => !isProcessingBatch && setRejectionModal(prev => ({ ...prev, isOpen: false }))}
                                                 >
                                                     <X size={18} />
@@ -100,7 +91,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                                     textTransform: 'uppercase', 
                                                     letterSpacing: '0.05em' 
                                                 }}>
-                                                    Audit Reason / Justification <span style={{ color: '#ef4444' }}>*</span>
+                                                    Audit Reason / Justification <span className="text-[color:#ef4444]!">*</span>
                                                 </label>
                                                 <textarea
                                                     className="custom-input"
@@ -118,15 +109,15 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                                     variant="ghost"
                                                     disabled={isProcessingBatch}
                                                     onClick={() => setRejectionModal(prev => ({ ...prev, isOpen: false }))}
-                                                    style={{ padding: '8px 16px', borderRadius: '8px' }}
+                                                    className="p-[8px_16px]! rounded-[8px]!"
                                                 >
                                                     Cancel
                                                 </Button>
                                                 <button
                                                     type="button"
-                                                    className="btn-delete"
+                                                    className="btn-delete inline-flex! items-center! gap-[8px]! p-[8px_18px]! rounded-[8px]!"
                                                     disabled={isProcessingBatch || !rejectionModal.reason.trim()}
-                                                    style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '8px 18px', borderRadius: '8px' }}
+                                                   
                                                     onClick={handleConfirmReject}
                                                 >
                                                     <X size={16} />
@@ -156,7 +147,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                                 </span>
                                             )}
                                         </div>
-                                        <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                                        <p className="m-[0px]! text-[color:var(--text-secondary)]! text-[length:0.9rem]!">
                                             Maker-Checker Segregation: Audit and approve bulk-imported emissions data prior to greenhouse gas inventory inclusion.
                                         </p>
                                     </div>
@@ -206,7 +197,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                 {/* Top Hero KPI Metrics Strip */}
                                 <div className="pending-kpi-grid">
                                     <div className="pending-kpi-card">
-                                        <div className="pending-kpi-icon-wrap" style={{ background: 'rgba(255, 102, 0, 0.1)', color: 'var(--color-link)' }}>
+                                        <div className="pending-kpi-icon-wrap bg-[color:rgba(255,_102,_0,_0.1)]! text-[color:var(--color-link)]!">
                                             <Clock size={22} />
                                         </div>
                                         <div className="pending-kpi-info">
@@ -219,14 +210,14 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                     </div>
 
                                     <div className="pending-kpi-card">
-                                        <div className="pending-kpi-icon-wrap" style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444' }}>
+                                        <div className="pending-kpi-icon-wrap bg-[color:rgba(239,_68,_68,_0.1)]! text-[color:#ef4444]!">
                                             <Flame size={22} />
                                         </div>
                                         <div className="pending-kpi-info">
                                             <span className="pending-kpi-label">Pending Impact</span>
                                             <span className="pending-kpi-val">
                                                 {pendingMetrics.totalTco2e.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
-                                                <span style={{ fontSize: '0.8rem', fontWeight: 500, color: 'var(--text-secondary)', marginLeft: '4px' }}>tCO₂e</span>
+                                                <span className="text-[length:0.8rem]! font-medium! text-[color:var(--text-secondary)]! ml-[4px]!">tCO₂e</span>
                                             </span>
                                             <span className="pending-kpi-sub">Awaiting inventory commit</span>
                                         </div>
@@ -249,12 +240,12 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                     </div>
 
                                     <div className="pending-kpi-card">
-                                        <div className="pending-kpi-icon-wrap" style={{ background: 'rgba(59, 130, 246, 0.1)', color: '#2563eb' }}>
+                                        <div className="pending-kpi-icon-wrap bg-[color:rgba(59,_130,_246,_0.1)]! text-[color:#2563eb]!">
                                             <Shield size={22} />
                                         </div>
                                         <div className="pending-kpi-info">
                                             <span className="pending-kpi-label">Scope Segregation</span>
-                                            <span className="pending-kpi-val" style={{ fontSize: '1.15rem' }}>
+                                            <span className="pending-kpi-val text-[length:1.15rem]!">
                                                 {pendingMetrics.totalCount > 0 ? (
                                                     `S1(${pendingMetrics.count1}) S2(${pendingMetrics.count2}) S3(${pendingMetrics.count3})`
                                                 ) : 'Queue Clear'}
@@ -278,7 +269,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                             className={`pending-tab-btn ${pendingScopeFilter === '1' ? 'active' : ''}`}
                                             onClick={() => setPendingScopeFilter('1')}
                                         >
-                                            <span className="scope-tag scope-tag-1" style={{ padding: '1px 6px', fontSize: '0.7rem' }}>S1</span>
+                                            <span className="scope-tag scope-tag-1 p-[1px_6px]! text-[length:0.7rem]!">S1</span>
                                             <span>Scope 1</span>
                                             <span className="pending-count-chip">{pendingMetrics.count1}</span>
                                         </button>
@@ -286,7 +277,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                             className={`pending-tab-btn ${pendingScopeFilter === '2' ? 'active' : ''}`}
                                             onClick={() => setPendingScopeFilter('2')}
                                         >
-                                            <span className="scope-tag scope-tag-2" style={{ padding: '1px 6px', fontSize: '0.7rem' }}>S2</span>
+                                            <span className="scope-tag scope-tag-2 p-[1px_6px]! text-[length:0.7rem]!">S2</span>
                                             <span>Scope 2</span>
                                             <span className="pending-count-chip">{pendingMetrics.count2}</span>
                                         </button>
@@ -294,7 +285,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                             className={`pending-tab-btn ${pendingScopeFilter === '3' ? 'active' : ''}`}
                                             onClick={() => setPendingScopeFilter('3')}
                                         >
-                                            <span className="scope-tag scope-tag-3" style={{ padding: '1px 6px', fontSize: '0.7rem' }}>S3</span>
+                                            <span className="scope-tag scope-tag-3 p-[1px_6px]! text-[length:0.7rem]!">S3</span>
                                             <span>Scope 3</span>
                                             <span className="pending-count-chip">{pendingMetrics.count3}</span>
                                         </button>
@@ -302,7 +293,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
 
                                     <div className="flex! items-center! gap-[12px]! flex-wrap!">
                                         {/* QA Filter Pills */}
-                                        <div style={{ display: 'inline-flex', background: 'rgba(15, 23, 42, 0.05)', borderRadius: '10px', padding: '3px', gap: '3px' }}>
+                                        <div className="inline-flex! bg-[color:rgba(15,_23,_42,_0.05)]! rounded-[10px]! p-[3px]! gap-[3px]!">
                                             <button
                                                 className={`pending-tab-btn ${pendingQaFilter === 'all' ? 'active' : ''}`}
                                                 style={{ padding: '6px 12px', fontSize: '0.78rem' }}
@@ -339,7 +330,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                             {pendingSearch && (
                                                 <Button 
                                                     variant="ghost" type="submit" 
-                                                    style={{ padding: '2px', color: 'var(--text-secondary)' }}
+                                                    className="p-[2px]! text-[color:var(--text-secondary)]!"
                                                     onClick={() => setPendingSearch('')}
                                                 >
                                                     <X size={14} />
@@ -351,14 +342,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                         {pendingScopeFilter !== 'all' && pendingMetrics[`count${pendingScopeFilter}`] > 0 && (
                                             <Button
                                                 type="submit"
-                                                style={{ 
-                                                    background: '#10b981', 
-                                                    fontSize: '0.82rem', 
-                                                    padding: '8px 14px',
-                                                    display: 'inline-flex',
-                                                    alignItems: 'center',
-                                                    gap: '6px'
-                                                }}
+                                                className="bg-[color:#10b981]! text-[length:0.82rem]! p-[8px_14px]! inline-flex! items-center! gap-[6px]!"
                                                 disabled={isProcessingBatch}
                                                 onClick={() => handleApproveAllInScope(pendingScopeFilter)}
                                             >
@@ -373,13 +357,13 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                 {selectedPendingKeys.size > 0 && (
                                     <div className="pending-batch-bar">
                                         <div className="flex! items-center! gap-[14px]! flex-wrap!">
-                                            <span style={{ fontWeight: 700, fontSize: '0.94rem', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                                            <span className="font-bold! text-[length:0.94rem]! inline-flex! items-center! gap-[8px]!">
                                                 <CheckSquare size={18} color="#38bdf8" />
                                                 {selectedPendingKeys.size} record{selectedPendingKeys.size > 1 ? 's' : ''} selected
                                             </span>
-                                            <span style={{ color: 'rgba(255,255,255,0.3)' }}>•</span>
-                                            <span style={{ fontSize: '0.84rem', color: '#cbd5e1' }}>
-                                                Cumulative: <strong style={{ color: '#ffffff' }}>{selectedPendingImpactTco2e.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong> tCO₂e
+                                            <span className="text-[color:rgba(255,255,255,0.3)]!">•</span>
+                                            <span className="text-[length:0.84rem]! text-[color:#cbd5e1]!">
+                                                Cumulative: <strong className="text-[color:#ffffff]!">{selectedPendingImpactTco2e.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong> tCO₂e
                                             </span>
                                         </div>
                                         <div className="batch-action-buttons">
@@ -415,30 +399,30 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                         <div className="pending-empty-glow-icon">
                                             <CheckCircle size={36} />
                                         </div>
-                                        <div style={{ maxWidth: 440 }}>
-                                            <h3 style={{ margin: '0 0 8px 0', fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                                        <div className="max-w-[440px]!">
+                                            <h3 className="m-[0_0_8px_0]! text-[length:1.25rem]! font-bold! text-[color:var(--text-primary)]!">
                                                 All Caught Up & Verified!
                                             </h3>
-                                            <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.5 }}>
+                                            <p className="m-[0px]! text-[color:var(--text-secondary)]! text-[length:0.9rem]! leading-[1.5]!">
                                                 There are currently no bulk import records awaiting Maker-Checker approval. Staged emissions records will appear here as soon as files are imported.
                                             </p>
                                         </div>
                                     </div>
                                 ) : filteredPendingRecords.length === 0 ? (
-                                    <div className="pending-empty-hero" style={{ padding: '48px 24px' }}>
+                                    <div className="pending-empty-hero p-[48px_24px]!">
                                         <div className="pending-empty-glow-icon" style={{ background: 'rgba(148, 163, 184, 0.1)', color: 'var(--text-secondary)', borderColor: 'rgba(148, 163, 184, 0.3)' }}>
                                             <Filter size={32} />
                                         </div>
                                         <div>
-                                            <h3 style={{ margin: '0 0 8px 0', fontSize: '1.15rem', fontWeight: 700 }}>
+                                            <h3 className="m-[0_0_8px_0]! text-[length:1.15rem]! font-bold!">
                                                 No Matching Records Found
                                             </h3>
-                                            <p style={{ margin: '0 0 16px 0', color: 'var(--text-secondary)', fontSize: '0.88rem' }}>
+                                            <p className="m-[0_0_16px_0]! text-[color:var(--text-secondary)]! text-[length:0.88rem]!">
                                                 No pending records match your active search and filter settings.
                                             </p>
                                             <Button
                                                 type="submit"
-                                                style={{ fontSize: '0.85rem', padding: '8px 16px' }}
+                                                className="text-[length:0.85rem]! p-[8px_16px]!"
                                                 onClick={() => {
                                                     setPendingScopeFilter('all');
                                                     setPendingQaFilter('all');
@@ -453,23 +437,16 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                     <div className="pending-table-card">
                                         <div className="pending-table-header">
                                             <div className="flex! items-center! gap-[10px]!">
-                                                <h3 style={{ margin: 0, fontSize: '1.02rem', fontWeight: 700 }}>
+                                                <h3 className="m-[0px]! text-[length:1.02rem]! font-bold!">
                                                     {pendingScopeFilter === 'all' 
                                                         ? 'All Pending Import Records' 
                                                         : `Scope ${pendingScopeFilter} Pending Records`}
                                                 </h3>
-                                                <span style={{ 
-                                                    background: 'rgba(15, 23, 42, 0.06)', 
-                                                    color: 'var(--text-secondary)', 
-                                                    fontSize: '0.78rem', 
-                                                    fontWeight: 600, 
-                                                    padding: '2px 8px', 
-                                                    borderRadius: '8px' 
-                                                }}>
+                                                <span className="bg-[color:rgba(15,_23,_42,_0.06)]! text-[color:var(--text-secondary)]! text-[length:0.78rem]! font-semibold! p-[2px_8px]! rounded-[8px]!">
                                                     Showing {filteredPendingRecords.length} of {pendingMetrics.totalCount}
                                                 </span>
                                                 {pendingMetrics.loadedCount < pendingMetrics.totalCount && (
-                                                    <span style={{ fontSize: '0.78rem', color: '#b45309', marginLeft: '8px' }}>
+                                                    <span className="text-[length:0.78rem]! text-[color:#b45309]! ml-[8px]!">
                                                         The first {pendingMetrics.loadedCount} are listed (200 per scope); decide on them to load the next ones, or use the Review Wizard to approve all
                                                     </span>
                                                 )}
@@ -557,20 +534,20 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                                                     </span>
                                                                 </td>
                                                                 <td>
-                                                                    <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
+                                                                    <span className="font-semibold! text-[color:var(--text-primary)]!">
                                                                         {facName}
                                                                     </span>
                                                                 </td>
                                                                 <td>
-                                                                    <span style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
+                                                                    <span className="text-[color:var(--text-secondary)]! text-[length:0.85rem]!">
                                                                         {item.desc}
                                                                     </span>
                                                                 </td>
                                                                 <td className="text-right!">
-                                                                    <span style={{ fontWeight: 700, fontSize: '0.92rem', color: 'var(--text-primary)' }}>
+                                                                    <span className="font-bold! text-[length:0.92rem]! text-[color:var(--text-primary)]!">
                                                                         {item.tco2e.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                                                     </span>
-                                                                    <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', marginLeft: '4px' }}>tCO₂e</span>
+                                                                    <span className="text-[length:0.72rem]! text-[color:var(--text-secondary)]! ml-[4px]!">tCO₂e</span>
                                                                 </td>
                                                                 <td>
                                                                     {item.qa_flag ? (

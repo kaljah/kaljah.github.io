@@ -9,15 +9,10 @@ import { formatEmission, formatNumber } from "../../utils/formatters";
 const Scope2FormCalculatorGridContainer = ({ currentPage, entries, facilities, handleDelete, handleDuplicate, handleInspect, loadEntries, loadError, loading, setCurrentPage, setShowWizard, totalPages }) => (
 <div className="calculator-grid-container mt-[30px]!">
         <div
-          className="table-controls"
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            padding: "15px",
-          }}
+          className="table-controls flex! justify-between! items-center! p-[15px]!"
+         
         >
-          <strong style={{ fontSize: "1rem", color: "#374151" }}>
+          <strong className="text-[length:1rem]! text-[color:#374151]!">
             Recent Scope 2 (Electricity) Entries
           </strong>
           <button
@@ -67,7 +62,7 @@ const Scope2FormCalculatorGridContainer = ({ currentPage, entries, facilities, h
                 </tr>
               ) : loadError ? (
                 <tr>
-                  <td colSpan="11" style={{ textAlign: "center", padding: "40px", color: "var(--danger, #dc2626)" }}>
+                  <td colSpan="11" className="text-center! p-[40px]! text-[color:var(--danger,_#dc2626)]!">
                     Could not load the records.{" "}
                     <Button type="button" variant="ghost" onClick={loadEntries}>Retry</Button>
                   </td>
@@ -76,11 +71,7 @@ const Scope2FormCalculatorGridContainer = ({ currentPage, entries, facilities, h
                 <tr>
                   <td
                     colSpan="11"
-                    style={{
-                      textAlign: "center",
-                      padding: "40px",
-                      color: "#9ca3af",
-                    }}
+                    className="text-center! p-[40px]! text-[color:#9ca3af]!"
                   >
                     No entries found
                   </td>
@@ -133,62 +124,38 @@ const Scope2FormCalculatorGridContainer = ({ currentPage, entries, facilities, h
                         {srcLabel}
                       </td>
                       <td>{entry.grid_region || "—"}</td>
-                      <td style={{ fontSize: "0.8rem", color: "#6b7280" }}>
+                      <td className="text-[length:0.8rem]! text-[color:#6b7280]!">
                         {entry.division} / {entry.field}
                       </td>
                       <td>{consumptionDisplay}</td>
                       <td>{efDisplay}</td>
-                      <td style={{ color: "#3b82f6", fontWeight: 600 }}>
+                      <td className="text-[color:#3b82f6]! font-semibold!">
                         {formatEmission(entry.co2e, 3)}
                       </td>
-                      <td style={{ color: "#6b7280", fontSize: "0.85rem" }}>
+                      <td className="text-[color:#6b7280]! text-[length:0.85rem]!">
                         {entry.uncertainty != null
                           ? `${formatNumber(entry.uncertainty * 100, 1)}%`
                           : "—"}
                       </td>
-                      <td style={{ color: "#6b7280", fontSize: "0.85rem" }}>
+                      <td className="text-[color:#6b7280]! text-[length:0.85rem]!">
                         {entry.uncertainty != null
                           ? `${formatNumber(entry.uncertainty * UNCERTAINTY_COVERAGE_K * 100, 1)}%`
                           : "—"}
                         {entry.status === "Draft" ? (
                           <span
-                            style={{
-                              marginLeft: "8px",
-                              fontSize: "0.65rem",
-                              background: "#fee2e2",
-                              color: "#b91c1c",
-                              padding: "2px 6px",
-                              borderRadius: "4px",
-                              fontWeight: 600,
-                            }}
+                            className="ml-[8px]! text-[length:0.65rem]! bg-[color:#fee2e2]! text-[color:#b91c1c]! p-[2px_6px]! rounded-[4px]! font-semibold!"
                           >
                             Draft
                           </span>
                         ) : (entry.status === "Pending Approval" || entry.status === "Pending") ? (
                           <span
-                            style={{
-                              marginLeft: "8px",
-                              fontSize: "0.65rem",
-                              background: "#fef3c7",
-                              color: "#d97706",
-                              padding: "2px 6px",
-                              borderRadius: "4px",
-                              fontWeight: 600,
-                            }}
+                            className="ml-[8px]! text-[length:0.65rem]! bg-[color:#fef3c7]! text-[color:#d97706]! p-[2px_6px]! rounded-[4px]! font-semibold!"
                           >
                             Pending
                           </span>
                         ) : (
                           <span
-                            style={{
-                              marginLeft: "8px",
-                              fontSize: "0.65rem",
-                              background: "#dcfce7",
-                              color: "#15803d",
-                              padding: "2px 6px",
-                              borderRadius: "4px",
-                              fontWeight: 600,
-                            }}
+                            className="ml-[8px]! text-[length:0.65rem]! bg-[color:#dcfce7]! text-[color:#15803d]! p-[2px_6px]! rounded-[4px]! font-semibold!"
                           >
                             Verified
                           </span>
@@ -199,10 +166,10 @@ const Scope2FormCalculatorGridContainer = ({ currentPage, entries, facilities, h
                           className="flex! justify-center! gap-[8px]!"
                         >
                           <button
-                            className="icon-button"
+                            className="icon-button text-[color:#3b82f6]!"
                             onClick={() => handleInspect(entry)}
                             title="Inspect Calculation Details"
-                            style={{ color: "#3b82f6" }}
+                           
                           >
                             <Eye size={16} />
                           </button>
@@ -235,7 +202,7 @@ const Scope2FormCalculatorGridContainer = ({ currentPage, entries, facilities, h
                 >
                   Total (Page):
                 </td>
-                <td style={{ color: "#3b82f6" }}>
+                <td className="text-[color:#3b82f6]!">
                   {formatNumber(
                     entries.reduce((sum, e) => sum + (e.co2e || 0), 0),
                     3,
@@ -264,7 +231,7 @@ const Scope2FormCalculatorGridContainer = ({ currentPage, entries, facilities, h
           >
             Previous
           </button>
-          <span style={{ fontSize: "0.9rem", color: "#4b5563" }}>
+          <span className="text-[length:0.9rem]! text-[color:#4b5563]!">
             Page {currentPage} of {totalPages}
           </span>
           <button

@@ -98,11 +98,8 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
             <div className="kpi-card">
               <div className="kpi-header">
                 <div
-                  className="kpi-icon loss"
-                  style={{
-                    background: "rgba(59, 130, 246, 0.1)",
-                    color: "#3b82f6",
-                  }}
+                  className="kpi-icon loss bg-[color:rgba(59,_130,_246,_0.1)]! text-[color:#3b82f6]!"
+                 
                 >
                   <Compass size={20} />
                 </div>
@@ -176,10 +173,7 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
                       : `${(stats.upstreamLossRatePct ?? 0).toFixed(3)}%`}
                   </div>
                   <div
-                    style={{
-                      fontSize: "0.68rem",
-                      color: "var(--text-secondary)",
-                    }}
+                    className="text-[length:0.68rem]! text-[color:var(--text-secondary)]!"
                   >
                     Target &le; {upstreamTargetPct.toFixed(2)}%
                   </div>
@@ -219,10 +213,7 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
                       : `${(stats.midstreamLossRatePct ?? 0).toFixed(3)}%`}
                   </div>
                   <div
-                    style={{
-                      fontSize: "0.68rem",
-                      color: "var(--text-secondary)",
-                    }}
+                    className="text-[length:0.68rem]! text-[color:var(--text-secondary)]!"
                   >
                     Target &le; {midstreamTargetPct.toFixed(2)}%
                   </div>
@@ -269,11 +260,8 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
             <div className="kpi-card">
               <div className="kpi-header">
                 <div
-                  className="kpi-icon wec"
-                  style={{
-                    background: "rgba(239, 68, 68, 0.1)",
-                    color: "#ef4444",
-                  }}
+                  className="kpi-icon wec bg-[color:rgba(239,_68,_68,_0.1)]! text-[color:#ef4444]!"
+                 
                 >
                   <AlertTriangle size={20} />
                 </div>
@@ -316,7 +304,7 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
               <span className="val">
                 {formatNumber(stats.totalGasProductionM3, 0)} m³{" "}
                 <sub
-                  style={{ fontSize: "0.7em", color: "var(--text-secondary)" }}
+                  className="text-[length:0.7em]! text-[color:var(--text-secondary)]!"
                 >
                   ({formatNumber(stats.totalGasProductionMscf, 0)} mscf)
                 </sub>
@@ -325,8 +313,8 @@ const MethaneIntensityMethaneIntensity = ({ midstreamTargetPct, selectedYear, st
             <div className="scope-item bordered">
               <span className="label">Methane Loss Volume</span>
               <span
-                className="val"
-                style={{ color: "#2563eb", fontWeight: 700 }}
+                className="val text-[color:#2563eb]! font-bold!"
+               
               >
                 {formatNumber(stats.totalCh4VolumeM3, 0)} m³
               </span>

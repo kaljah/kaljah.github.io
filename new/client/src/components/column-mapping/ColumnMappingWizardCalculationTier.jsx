@@ -7,20 +7,11 @@ import { activateOnKey } from "../../utils/a11yKeys";
 const ColumnMappingWizardCalculationTier = ({ selectedProcess, selectedProcessScope, selectedTier, setSelectedProcess, setSelectedProcessScope, setSelectedTier }) => (
 <div className="cmw-body">
             <div
-              style={{
-                padding: "20px",
-                display: "flex",
-                flexDirection: "column",
-                gap: "24px",
-              }}
+              className="p-[20px]! flex! flex-col! gap-[24px]!"
             >
               <div>
                 <h3
-                  style={{
-                    marginBottom: "16px",
-                    color: "var(--text-primary)",
-                    fontSize: "1.1rem",
-                  }}
+                  className="mb-[16px]! text-[color:var(--text-primary)]! text-[length:1.1rem]!"
                 >
                   Calculation Tier
                 </h3>
@@ -61,16 +52,12 @@ const ColumnMappingWizardCalculationTier = ({ selectedProcess, selectedProcessSc
                               : "transparent",
                         }}
                       ></div>
-                      <h4 style={{ margin: 0, color: "var(--text-primary)" }}>
+                      <h4 className="m-[0px]! text-[color:var(--text-primary)]!">
                         Tier 1 (Default Factors)
                       </h4>
                     </div>
                     <p
-                      style={{
-                        margin: 0,
-                        fontSize: "0.9rem",
-                        color: "var(--text-secondary)",
-                      }}
+                      className="m-[0px]! text-[length:0.9rem]! text-[color:var(--text-secondary)]!"
                     >
                       Basic calculation using industry defaults.
                     </p>
@@ -105,16 +92,12 @@ const ColumnMappingWizardCalculationTier = ({ selectedProcess, selectedProcessSc
                               : "transparent",
                         }}
                       ></div>
-                      <h4 style={{ margin: 0, color: "var(--text-primary)" }}>
+                      <h4 className="m-[0px]! text-[color:var(--text-primary)]!">
                         Tier 3 (Engineering)
                       </h4>
                     </div>
                     <p
-                      style={{
-                        margin: 0,
-                        fontSize: "0.9rem",
-                        color: "var(--text-secondary)",
-                      }}
+                      className="m-[0px]! text-[length:0.9rem]! text-[color:var(--text-secondary)]!"
                     >
                       Advanced calculation using process specifications.
                     </p>
@@ -124,11 +107,7 @@ const ColumnMappingWizardCalculationTier = ({ selectedProcess, selectedProcessSc
 
               <div>
                 <h3
-                  style={{
-                    marginBottom: "16px",
-                    color: "var(--text-primary)",
-                    fontSize: "1.1rem",
-                  }}
+                  className="mb-[16px]! text-[color:var(--text-primary)]! text-[length:1.1rem]!"
                 >
                   Process Scope
                 </h3>
@@ -170,16 +149,12 @@ const ColumnMappingWizardCalculationTier = ({ selectedProcess, selectedProcessSc
                               : "transparent",
                         }}
                       ></div>
-                      <h4 style={{ margin: 0, color: "var(--text-primary)" }}>
+                      <h4 className="m-[0px]! text-[color:var(--text-primary)]!">
                         All Processes
                       </h4>
                     </div>
                     <p
-                      style={{
-                        margin: 0,
-                        fontSize: "0.9rem",
-                        color: "var(--text-secondary)",
-                      }}
+                      className="m-[0px]! text-[length:0.9rem]! text-[color:var(--text-secondary)]!"
                     >
                       Upload data for various process types together.
                     </p>
@@ -214,16 +189,12 @@ const ColumnMappingWizardCalculationTier = ({ selectedProcess, selectedProcessSc
                               : "transparent",
                         }}
                       ></div>
-                      <h4 style={{ margin: 0, color: "var(--text-primary)" }}>
+                      <h4 className="m-[0px]! text-[color:var(--text-primary)]!">
                         Choose by Process
                       </h4>
                     </div>
                     <p
-                      style={{
-                        margin: 0,
-                        fontSize: "0.9rem",
-                        color: "var(--text-secondary)",
-                      }}
+                      className="m-[0px]! text-[length:0.9rem]! text-[color:var(--text-secondary)]!"
                     >
                       Upload data for a single specific process.
                     </p>

@@ -11,7 +11,7 @@ import { applyChoice, currentChoice, sectionChoices } from "./methodChoices";
 // ---------------------------------------------------------------------------
 const Num = ({ label, field, data, onChange, placeholder, required }) => (
   <Field className="input-group" label={<>{label}
-      {required && <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>}</>}>
+      {required && <span className="text-[color:#ef4444]! ml-[3px]!">*</span>}</>}>
 <Input
       type="number"
       min="0"
@@ -29,7 +29,7 @@ const NumUnit = ({ label, field, unitField, units, data, onChange, placeholder, 
   <div className="input-group">
     <label>
       {label}
-      {required && <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>}
+      {required && <span className="text-[color:#ef4444]! ml-[3px]!">*</span>}
     </label>
     <div style={{ display: "grid", gridTemplateColumns: "1fr 110px", gap: "8px" }}>
       <Input
@@ -106,7 +106,7 @@ export function ActivityFactorForm({ processType, data, onChange }) {
     <div className="s1-stack">
       <div className="input-group">
         <label>
-          Source<span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+          Source<span className="text-[color:#ef4444]! ml-[3px]!">*</span>
         </label>
         <CustomDropdown
           options={rows.map((r) => ({ value: r.key, label: r.label }))}
@@ -263,7 +263,7 @@ export function CombustionMethodForm({ data, onChange }) {
         <>
           <div className="input-group">
             <label>
-              Equipment<span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+              Equipment<span className="text-[color:#ef4444]! ml-[3px]!">*</span>
             </label>
             <CustomDropdown
               options={equip.map((e) => ({ value: e.key, label: e.label }))}

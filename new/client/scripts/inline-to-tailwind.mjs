@@ -44,6 +44,22 @@ const MAP = {
   textTransform: (v) => (v === "uppercase" ? ["uppercase!"] : null),
 };
 
+
+const safe = (v) => (typeof v === "string" && /^[A-Za-z0-9#%.,()\-\s/]+$/.test(v) ? v.trim().replace(/\s+/g, "_") : null);
+const colorish = (v) => typeof v === "string" && /^(#[0-9a-fA-F]{3,8}|var\(--[\w-]+(,\s*[^)]+)?\)|rgba?\([^)]+\)|white|black|transparent|inherit|currentColor)$/.test(v.trim());
+const multi = (prefix) => (v) => { const x = safe(typeof v === "number" ? `${v}px` : v); return x ? [`${prefix}-[${x}]!`] : null; };
+Object.assign(MAP, {
+  color: (v) => (colorish(v) ? [`text-[color:${safe(v)}]!`] : null),
+  background: (v) => (colorish(v) ? [`bg-[color:${safe(v)}]!`] : null),
+  fontSize: (v) => { const l = len(v); return l && /rem|px|em/.test(l) ? [`text-[length:${l}]!`] : null; },
+  padding: multi("p"),
+  margin: multi("m"),
+  borderRadius: (v) => { const x = safe(typeof v === "number" ? `${v}px` : v); return x && !/%/.test(x) ? [`rounded-[${x}]!`] : null; },
+  opacity: (v) => (typeof v === "number" || /^[01]?\.?\d+$/.test(String(v)) ? [`opacity-[${v}]!`] : null),
+  lineHeight: (v) => (/^\d*\.?\d+(rem|px|em)?$/.test(String(v)) ? [`leading-[${v}]!`] : null),
+  maxWidth: (v) => { const l = len(v); return l ? [`max-w-[${l}]!`] : null; },
+});
+
 const walk = (dir, out = []) => {
   for (const n of fs.readdirSync(dir)) {
     if (n === "__tests__" || n === "node_modules") continue;

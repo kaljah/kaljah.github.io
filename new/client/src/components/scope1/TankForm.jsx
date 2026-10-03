@@ -13,7 +13,7 @@ const TankForm = ({ data, onChange, sourceType }) => {
       <div className="input-group">
         <label>
           Throughput
-          <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+          <span className="text-[color:#ef4444]! ml-[3px]!">*</span>
         </label>
         <div
           style={{
@@ -67,7 +67,7 @@ const TankForm = ({ data, onChange, sourceType }) => {
           {["tank", "tank_flashing", "tank_working", "tank_breathing"].includes(processType) && (
             <>
               <Field className="input-group" label={<>GOR (scf/bbl)
-                  <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+                  <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <Input
                   type="number"
                  
@@ -112,7 +112,7 @@ const TankForm = ({ data, onChange, sourceType }) => {
 </Field>
 
           <Field className="input-group" label={<>CH₄ (%)
-              <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+              <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <Input
               type="number"
              
@@ -138,7 +138,7 @@ const TankForm = ({ data, onChange, sourceType }) => {
               placeholder="e.g. 95"
             />
             <div
-              style={{ fontSize: "0.75rem", color: "#888", marginTop: "4px" }}
+              className="text-[length:0.75rem]! text-[color:#888]! mt-[4px]!"
             >
               VRU, Flaring, etc. (0 = uncontrolled)
             </div>

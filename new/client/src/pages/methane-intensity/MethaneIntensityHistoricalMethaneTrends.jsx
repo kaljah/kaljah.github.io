@@ -11,11 +11,7 @@ const MethaneIntensityHistoricalMethaneTrends = ({ getHeatmapClass, midstreamTar
                 Historical Methane Trends & Targets
               </h3>
               <p
-                style={{
-                  color: "var(--text-secondary)",
-                  fontSize: "0.9rem",
-                  margin: 0,
-                }}
+                className="text-[color:var(--text-secondary)]! text-[length:0.9rem]! m-[0px]!"
               >
                 5-Year Methane Loss Rate (%) vs OGMP 2.0 Targets (&le;{upstreamTargetPct.toFixed(2)}% Upstream / &le;{midstreamTargetPct.toFixed(2)}% Midstream)
               </p>
@@ -118,11 +114,7 @@ const MethaneIntensityHistoricalMethaneTrends = ({ getHeatmapClass, midstreamTar
                   ))
                 ) : (
                   <p
-                    style={{
-                      textAlign: "center",
-                      padding: "40px",
-                      color: "var(--text-secondary)",
-                    }}
+                    className="text-center! p-[40px]! text-[color:var(--text-secondary)]!"
                   >
                     No regional data available
                   </p>

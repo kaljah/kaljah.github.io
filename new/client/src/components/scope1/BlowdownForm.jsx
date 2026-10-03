@@ -10,7 +10,7 @@ const BlowdownForm = ({ data, onChange }) => {
         <div className="input-group">
           <label>
             Physical Volume
-            <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+            <span className="text-[color:#ef4444]! ml-[3px]!">*</span>
           </label>
           <div className="flex! gap-[10px]!">
             <Input
@@ -35,7 +35,7 @@ const BlowdownForm = ({ data, onChange }) => {
         </div>
 
         <Field className="input-group" label={<>Pressure (psig)
-            <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+            <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <Input
             type="number"
            
@@ -47,7 +47,7 @@ const BlowdownForm = ({ data, onChange }) => {
 </Field>
 
         <Field className="input-group" label={<>Number of Events
-            <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+            <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <Input
             type="number"
            
@@ -59,7 +59,7 @@ const BlowdownForm = ({ data, onChange }) => {
 </Field>
 
         <Field className="input-group" label={<>CH₄ (%)
-            <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+            <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <Input
             type="number"
            

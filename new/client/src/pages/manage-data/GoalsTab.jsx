@@ -21,20 +21,20 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                             Current Base Year: {baseYearsData.active_year || '2023'}
                                         </div>
                                         {baseYearsData.active_record?.reason && (
-                                            <div style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
+                                            <div className="text-[length:0.88rem]! text-[color:var(--text-secondary)]! mt-[4px]!">
                                                 <span className="font-semibold!">Active Justification:</span> {baseYearsData.active_record.reason}
                                             </div>
                                         )}
                                     </div>
                                     <div className="flex! gap-[20px]! items-center!">
                                         <div className="text-right!">
-                                            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>ANNUAL TARGETS SET</div>
-                                            <div style={{ fontSize: '1.3rem', fontWeight: 700, color: 'var(--text-primary)' }}>{goals.length} Years</div>
+                                            <div className="text-[length:0.8rem]! text-[color:var(--text-secondary)]! font-semibold!">ANNUAL TARGETS SET</div>
+                                            <div className="text-[length:1.3rem]! font-bold! text-[color:var(--text-primary)]!">{goals.length} Years</div>
                                         </div>
                                         {baseYearsData.active_record?.recalc_date && (
                                             <div style={{ textAlign: 'right', borderLeft: '1px solid var(--border-color)', paddingLeft: '16px' }}>
-                                                <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>LAST RECALCULATED</div>
-                                                <div style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+                                                <div className="text-[length:0.8rem]! text-[color:var(--text-secondary)]! font-semibold!">LAST RECALCULATED</div>
+                                                <div className="text-[length:0.95rem]! font-semibold! text-[color:var(--text-primary)]!">
                                                     {new Date(baseYearsData.active_record.recalc_date).toLocaleDateString()}
                                                 </div>
                                             </div>
@@ -49,7 +49,7 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                             <h2 className="mb-[6px]! font-bold! flex! items-center! gap-[8px]!">
                                                 <Target size={22} color="var(--accent-color, #ff6600)" /> Yearly Emission Goals
                                             </h2>
-                                            <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '0.9rem' }}>
+                                            <p className="text-[color:var(--text-secondary)]! m-[0px]! text-[length:0.9rem]!">
                                                 Configure annual corporate emission limits and target pathways (tCO₂e) to monitor reduction trajectory.
                                             </p>
                                         </div>
@@ -80,9 +80,9 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
 </Field>
                                         <div className="input-group flex! items-end! gap-[8px]!">
                                             <button
-                                                className="action-btn"
+                                                className="action-btn flex-1! p-[12px_16px]! h-[46px]! flex! items-center! justify-center! gap-[6px]!"
                                                 onClick={handleSaveGoal}
-                                                style={{ flex: 1, padding: '12px 16px', height: '46px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+                                               
                                             >
                                                 <Plus size={16} /> {editingGoalYear ? 'Update Goal' : 'Save Goal'}
                                             </button>
@@ -116,28 +116,28 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                             <tbody>
                                                 {filteredGoals.length === 0 ? (
                                                     <tr>
-                                                        <td colSpan="5" style={{ textAlign: 'center', padding: '32px', color: 'var(--text-secondary)' }}>
+                                                        <td colSpan="5" className="text-center! p-[32px]! text-[color:var(--text-secondary)]!">
                                                             No emission goals recorded yet. Use the form above to add a yearly goal.
                                                         </td>
                                                     </tr>
                                                 ) : (
                                                     filteredGoals.map(g => (
                                                         <tr key={g.year}>
-                                                            <td style={{ fontWeight: 700, fontSize: '0.95rem' }}>
+                                                            <td className="font-bold! text-[length:0.95rem]!">
                                                                 <span className="inline-flex! items-center! gap-[6px]!">
                                                                     <Calendar size={15} color="var(--accent-color, #ff6600)" />
                                                                     {g.year}
                                                                 </span>
                                                             </td>
-                                                            <td style={{ textAlign: 'right', fontWeight: 600, color: 'var(--text-primary)' }}>
+                                                            <td className="text-right! font-semibold! text-[color:var(--text-primary)]!">
                                                                 {Number(g.target_amount).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })} tCO₂e
                                                             </td>
                                                             <td>
-                                                                <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                                                                <span className="text-[length:0.85rem]! text-[color:var(--text-secondary)]!">
                                                                     Corporate Total (Scope 1 + Scope 2)
                                                                 </span>
                                                             </td>
-                                                            <td style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                                                            <td className="text-[length:0.85rem]! text-[color:var(--text-secondary)]!">
                                                                 {g.created_at ? new Date(g.created_at).toLocaleDateString() : '-'}
                                                             </td>
                                                             <td className="text-center!">
@@ -151,9 +151,9 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                                                         Edit
                                                                     </Button>
                                                                     <button
-                                                                        className="btn-delete"
+                                                                        className="btn-delete p-[4px_8px]! text-[length:0.8rem]!"
                                                                         onClick={() => handleDeleteGoal(g.year)}
-                                                                        style={{ padding: '4px 8px', fontSize: '0.8rem' }}
+                                                                       
                                                                         title="Delete Goal"
                                                                     >
                                                                         Delete
@@ -175,7 +175,7 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                             <h2 className="mb-[6px]! font-bold! flex! items-center! gap-[8px]!">
                                                 <History size={22} color="var(--accent-color, #ff6600)" /> Base Years & Recalculations History
                                             </h2>
-                                            <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '0.9rem' }}>
+                                            <p className="text-[color:var(--text-secondary)]! m-[0px]! text-[length:0.9rem]!">
                                                 Document base year adjustments, justification audits, and baseline emissions changes in compliance with GHG Protocol.
                                             </p>
                                         </div>
@@ -220,9 +220,9 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
 </Field>
                                         <div className="input-group flex! items-end!">
                                             <button
-                                                className="action-btn"
+                                                className="action-btn w-full! p-[12px_16px]! h-[46px]! flex! items-center! justify-center! gap-[6px]!"
                                                 onClick={handleSaveBaseYear}
-                                                style={{ width: '100%', padding: '12px 16px', height: '46px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+                                               
                                             >
                                                 <Plus size={16} /> Save Recalculation
                                             </button>
@@ -256,7 +256,7 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                             <tbody>
                                                 {filteredBaseYears.length === 0 ? (
                                                     <tr>
-                                                        <td colSpan="7" style={{ textAlign: 'center', padding: '32px', color: 'var(--text-secondary)' }}>
+                                                        <td colSpan="7" className="text-center! p-[32px]! text-[color:var(--text-secondary)]!">
                                                             No base year recalculations recorded yet. Use the form above to document the baseline.
                                                         </td>
                                                     </tr>
@@ -268,14 +268,14 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                                         const isLatest = idx === 0;
                                                         return (
                                                             <tr key={b.id}>
-                                                                <td style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                                                                <td className="text-[length:0.85rem]! text-[color:var(--text-secondary)]!">
                                                                     {b.recalc_date ? new Date(b.recalc_date).toLocaleDateString() : '-'}
                                                                 </td>
                                                                 <td className="font-bold!">
                                                                     <div className="flex! items-center! gap-[6px]!">
                                                                         <span>{b.year}</span>
                                                                         {isLatest && (
-                                                                            <span className="goal-badge goal-badge-active" style={{ fontSize: '0.7rem' }}>
+                                                                            <span className="goal-badge goal-badge-active text-[length:0.7rem]!">
                                                                                 Active
                                                                             </span>
                                                                         )}
@@ -284,17 +284,17 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                                                 <td style={{ maxWidth: '350px', whiteSpace: 'normal', wordBreak: 'break-word', fontSize: '0.9rem' }}>
                                                                     {b.reason}
                                                                 </td>
-                                                                <td style={{ textAlign: 'right', fontSize: '0.88rem' }}>
+                                                                <td className="text-right! text-[length:0.88rem]!">
                                                                     {b.previous_emissions !== null && b.previous_emissions !== undefined
                                                                         ? Number(b.previous_emissions).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })
                                                                         : '-'}
                                                                 </td>
-                                                                <td style={{ textAlign: 'right', fontSize: '0.88rem', fontWeight: 600 }}>
+                                                                <td className="text-right! text-[length:0.88rem]! font-semibold!">
                                                                     {b.adjusted_emissions !== null && b.adjusted_emissions !== undefined
                                                                         ? Number(b.adjusted_emissions).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })
                                                                         : '-'}
                                                                 </td>
-                                                                <td style={{ textAlign: 'right', fontSize: '0.88rem' }}>
+                                                                <td className="text-right! text-[length:0.88rem]!">
                                                                     {diff !== null ? (
                                                                         <span style={{ color: diff > 0 ? '#b91c1c' : diff < 0 ? '#15803d' : 'var(--text-secondary)', fontWeight: 600 }}>
                                                                             {diff > 0 ? `+${diff.toLocaleString()}` : diff.toLocaleString()} tCO₂e
@@ -303,9 +303,9 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                                                 </td>
                                                                 <td className="text-center!">
                                                                     <button
-                                                                        className="btn-delete"
+                                                                        className="btn-delete p-[4px_8px]! text-[length:0.8rem]!"
                                                                         onClick={() => handleDeleteBaseYearRecalc(b.id)}
-                                                                        style={{ padding: '4px 8px', fontSize: '0.8rem' }}
+                                                                       
                                                                         title="Delete Recalculation Entry"
                                                                     >
                                                                         Delete
@@ -327,12 +327,12 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                             <h2 className="mb-[6px]! font-bold! flex! items-center! gap-[8px]!">
                                                 <Target size={22} color="var(--accent-color, #ff6600)" /> Science-Based Targets (SBTi 1.5°C Trajectory)
                                             </h2>
-                                            <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '0.9rem' }}>
+                                            <p className="text-[color:var(--text-secondary)]! m-[0px]! text-[length:0.9rem]!">
                                                 Configure enterprise decarbonization targets aligned with SBTi Net-Zero and Paris Agreement 1.5°C pathways.
                                             </p>
                                         </div>
                                         {hasSbti && (
-                                            <span className="goal-badge goal-badge-active" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', padding: '6px 14px' }}>
+                                            <span className="goal-badge goal-badge-active inline-flex! items-center! gap-[6px]! text-[length:0.85rem]! p-[6px_14px]!">
                                                 <CheckCircle size={14} /> SBTi Target Active
                                             </span>
                                         )}

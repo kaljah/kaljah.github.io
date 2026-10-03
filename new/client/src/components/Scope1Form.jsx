@@ -334,12 +334,7 @@ const Scope1Form = () => {
         </div>
         {uncertainty && maxUncertainty > 0 && (
           <span
-            style={{
-              fontSize: "0.65rem",
-              color: "#9ca3af",
-              fontWeight: 500,
-              flexShrink: 0,
-            }}
+            className="text-[length:0.65rem]! text-[color:#9ca3af]! font-medium! shrink-0!"
             title={`Uncertainty: CO₂ ${formatUncertainty(uncertainty.co2)}, CH₄ ${formatUncertainty(uncertainty.ch4)}, N₂O ${formatUncertainty(uncertainty.n2o)}`}
           >
             {formatUncertainty(maxUncertainty)}

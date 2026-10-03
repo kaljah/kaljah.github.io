@@ -32,7 +32,7 @@ const UserManagementBlock1205 = ({ S, editingUser, focusProps, focusedField, for
             <div className="flex! flex-col! gap-[14px]!">
               <div style={S.formGroup}>
                 <label style={S.label}>
-                  Full Name <span style={{ color: "#ef4444" }}>*</span>
+                  Full Name <span className="text-[color:#ef4444]!">*</span>
                 </label>
                 <input
                   id="um-modal-fullname"
@@ -49,7 +49,7 @@ const UserManagementBlock1205 = ({ S, editingUser, focusProps, focusedField, for
 
               <div style={S.formGroup}>
                 <label style={S.label}>
-                  Email Address <span style={{ color: "#ef4444" }}>*</span>
+                  Email Address <span className="text-[color:#ef4444]!">*</span>
                 </label>
                 <input
                   id="um-modal-email"
@@ -173,7 +173,7 @@ const UserManagementBlock1205 = ({ S, editingUser, focusProps, focusedField, for
                     ))}
                   </NativeSelect>
                   {!formData.location && (
-                    <p style={{ fontSize: "0.72rem", color: "#ef4444", marginTop: "4px" }}>
+                    <p className="text-[length:0.72rem]! text-[color:#ef4444]! mt-[4px]!">
                       ↑ Required — choose an assigned region
                     </p>
                   )}
@@ -212,7 +212,7 @@ const UserManagementBlock1205 = ({ S, editingUser, focusProps, focusedField, for
 
               <div style={S.formGroup}>
                 <label style={S.label}>
-                  Temporary Password <span style={{ color: "#ef4444" }}>*</span>
+                  Temporary Password <span className="text-[color:#ef4444]!">*</span>
                 </label>
                 <input
                   id="um-modal-password"

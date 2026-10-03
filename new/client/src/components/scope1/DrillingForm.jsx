@@ -38,7 +38,7 @@ const DrillingForm = ({ data, onChange, sourceType }) => {
 
       <div className="form-grid-2">
         <Field className="input-group" label={<>{isTier1 && !isDefaultDays ? "Wells Drilled" : "Drilling Days"}
-            <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+            <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <Input
             type="number"
             min="0"
@@ -89,12 +89,7 @@ const DrillingForm = ({ data, onChange, sourceType }) => {
             }}
           >
             <h5
-              style={{
-                margin: "0 0 10px 0",
-                fontSize: "0.85rem",
-                color: "#1e293b",
-                fontWeight: 600,
-              }}
+              className="m-[0_0_10px_0]! text-[length:0.85rem]! text-[color:#1e293b]! font-semibold!"
             >
               Gas composition
             </h5>
@@ -106,7 +101,7 @@ const DrillingForm = ({ data, onChange, sourceType }) => {
               }}
             >
               <div className="input-group mb-[0px]!">
-                <label style={{ fontSize: "0.8rem" }}>
+                <label className="text-[length:0.8rem]!">
                   CH₄ fraction
                 </label>
                 <Input
@@ -126,7 +121,7 @@ const DrillingForm = ({ data, onChange, sourceType }) => {
               </div>
 
               <div className="input-group mb-[0px]!">
-                <label style={{ fontSize: "0.8rem" }}>
+                <label className="text-[length:0.8rem]!">
                   CO₂ fraction
                 </label>
                 <Input

@@ -862,13 +862,9 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
     >
       <div className="import-modal-content">
         {step === 0 && type === "activity" && (
-          <div className="upload-mode-selection" style={{ padding: "20px" }}>
+          <div className="upload-mode-selection p-[20px]!">
             <h3
-              style={{
-                marginBottom: "24px",
-                textAlign: "center",
-                color: "var(--text-primary)",
-              }}
+              className="mb-[24px]! text-center! text-[color:var(--text-primary)]!"
             >
               1. Select Calculation Tier
             </h3>
@@ -900,21 +896,12 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                 }}
               >
                 <h4
-                  style={{
-                    margin: "0 0 8px 0",
-                    color: "#10b981",
-                    textAlign: "center",
-                  }}
+                  className="m-[0_0_8px_0]! text-[color:#10b981]! text-center!"
                 >
                   Tier 1
                 </h4>
                 <p
-                  style={{
-                    margin: 0,
-                    fontSize: "0.9rem",
-                    color: "var(--text-secondary)",
-                    textAlign: "center",
-                  }}
+                  className="m-[0px]! text-[length:0.9rem]! text-[color:var(--text-secondary)]! text-center!"
                 >
                   Standard activity data using default API emission factors.
                 </p>
@@ -940,21 +927,12 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                 }}
               >
                 <h4
-                  style={{
-                    margin: "0 0 8px 0",
-                    color: "#10b981",
-                    textAlign: "center",
-                  }}
+                  className="m-[0_0_8px_0]! text-[color:#10b981]! text-center!"
                 >
                   Tier 3
                 </h4>
                 <p
-                  style={{
-                    margin: 0,
-                    fontSize: "0.9rem",
-                    color: "var(--text-secondary)",
-                    textAlign: "center",
-                  }}
+                  className="m-[0px]! text-[length:0.9rem]! text-[color:var(--text-secondary)]! text-center!"
                 >
                   Detailed engineering inputs and custom gas compositions.
                 </p>
@@ -964,13 +942,9 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
         )}
 
         {step === 0.5 && type === "activity" && (
-          <div className="upload-mode-selection" style={{ padding: "20px" }}>
+          <div className="upload-mode-selection p-[20px]!">
             <h3
-              style={{
-                marginBottom: "24px",
-                textAlign: "center",
-                color: "var(--text-primary)",
-              }}
+              className="mb-[24px]! text-center! text-[color:var(--text-primary)]!"
             >
               2. Select Process Scope
             </h3>
@@ -997,21 +971,12 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                 }}
               >
                 <h4
-                  style={{
-                    margin: "0 0 8px 0",
-                    color: "#10b981",
-                    textAlign: "center",
-                  }}
+                  className="m-[0_0_8px_0]! text-[color:#10b981]! text-center!"
                 >
                   All Processes
                 </h4>
                 <p
-                  style={{
-                    margin: 0,
-                    fontSize: "0.9rem",
-                    color: "var(--text-secondary)",
-                    textAlign: "center",
-                  }}
+                  className="m-[0px]! text-[length:0.9rem]! text-[color:var(--text-secondary)]! text-center!"
                 >
                   Upload a comprehensive dataset containing multiple process
                   types at once.
@@ -1031,21 +996,12 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                 }}
               >
                 <h4
-                  style={{
-                    margin: "0 0 8px 0",
-                    color: "#10b981",
-                    textAlign: "center",
-                  }}
+                  className="m-[0_0_8px_0]! text-[color:#10b981]! text-center!"
                 >
                   Choose by Process
                 </h4>
                 <p
-                  style={{
-                    margin: 0,
-                    fontSize: "0.9rem",
-                    color: "var(--text-secondary)",
-                    textAlign: "center",
-                  }}
+                  className="m-[0px]! text-[length:0.9rem]! text-[color:var(--text-secondary)]! text-center!"
                 >
                   Download a targeted template for one specific process (e.g.
                   Flaring).
@@ -1064,23 +1020,14 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
         )}
 
         {step === 0.75 && type === "activity" && (
-          <div className="upload-mode-selection" style={{ padding: "20px" }}>
+          <div className="upload-mode-selection p-[20px]!">
             <h3
-              style={{
-                marginBottom: "24px",
-                textAlign: "center",
-                color: "var(--text-primary)",
-              }}
+              className="mb-[24px]! text-center! text-[color:var(--text-primary)]!"
             >
               3. Choose Specific Process
             </h3>
             <label
-              style={{
-                display: "block",
-                marginBottom: "8px",
-                fontSize: "0.9rem",
-                color: "var(--text-secondary)",
-              }}
+              className="block! mb-[8px]! text-[length:0.9rem]! text-[color:var(--text-secondary)]!"
             >
               Which process type are you uploading data for?
             </label>
@@ -1133,7 +1080,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
               <div
                 className="mb-[16px]! flex! justify-between! items-center!"
               >
-                <span style={{ fontWeight: 600, color: "#10b981" }}>
+                <span className="font-semibold! text-[color:#10b981]!">
                   {selectedTier === "1"
                     ? "Tier 1 (Default Factors)"
                     : selectedProcess === "all"
@@ -1141,8 +1088,8 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                       : `Tier 3 (${PROCESS_TYPES[selectedProcess]})`}
                 </span>
                 <button
-                  className="action-btn secondary"
-                  style={{ padding: "6px 12px", fontSize: "0.8rem" }}
+                  className="action-btn secondary p-[6px_12px]! text-[length:0.8rem]!"
+                 
                   onClick={() => setStep(0)}
                 >
                   Change Type
@@ -1155,10 +1102,10 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
             >
               <Upload
                 size={48}
-                style={{ color: "#10b981", marginBottom: "16px" }}
+                className="text-[color:#10b981]! mb-[16px]!"
               />
               <h3>Click or Drag CSV File</h3>
-              <p style={{ color: "var(--text-secondary)", marginTop: "8px" }}>
+              <p className="text-[color:var(--text-secondary)]! mt-[8px]!">
                 Standard CSV format with headers
               </p>
               <input
@@ -1233,7 +1180,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                   </div>
                   <div className="cheat-section">
                     <strong>Engineering Params:</strong>
-                    <ul style={{ fontSize: "0.8rem", opacity: 0.9 }}>
+                    <ul className="text-[length:0.8rem]! opacity-[0.9]!">
                       <li>
                         <b>Flare Type:</b> elevated, enclosed_ground, pit
                       </li>
@@ -1257,7 +1204,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
         {step === 2 && (
           <>
             <div className="file-info">
-              <FileText size={20} style={{ color: "#10b981" }} />
+              <FileText size={20} className="text-[color:#10b981]!" />
               <span>
                 {file?.name} ({csvData.length} records detected)
               </span>
@@ -1280,15 +1227,11 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                     <div className="mapping-label">
                       {t.label}{" "}
                       {t.required && (
-                        <span style={{ color: "#ef4444" }}>*</span>
+                        <span className="text-[color:#ef4444]!">*</span>
                       )}
                       {t.hint && (
                         <div
-                          style={{
-                            fontSize: "0.75rem",
-                            fontWeight: 400,
-                            opacity: 0.6,
-                          }}
+                          className="text-[length:0.75rem]! font-normal! opacity-[0.6]!"
                         >
                           {t.hint}
                         </div>
@@ -1323,8 +1266,8 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
 
             <div className="import-actions">
               <button
-                className="action-btn"
-                style={{ background: "var(--text-secondary)" }}
+                className="action-btn bg-[color:var(--text-secondary)]!"
+               
                 onClick={() => setStep(1)}
               >
                 Back
@@ -1383,7 +1326,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                         <li>...and {validationErrors.length - 5} more</li>
                       )}
                     </ul>
-                    <p style={{ marginTop: "8px", fontSize: "0.75rem" }}>
+                    <p className="mt-[8px]! text-[length:0.75rem]!">
                       Please go back and check your CSV identifiers.
                     </p>
                   </div>
@@ -1435,8 +1378,8 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
 
                 <div className="import-actions">
                   <button
-                    className="action-btn"
-                    style={{ background: "var(--text-secondary)" }}
+                    className="action-btn bg-[color:var(--text-secondary)]!"
+                   
                     onClick={() => setStep(2)}
                   >
                     Back to Mapping
@@ -1455,7 +1398,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                 </div>
               </>
             ) : (
-              <div className="progress-container" style={{ padding: "20px" }}>
+              <div className="progress-container p-[20px]!">
                 {uploadStatus ? (
                   <>
                     <div
@@ -1504,13 +1447,7 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                         }}
                       >
                         <h5
-                          style={{
-                            color: "#be123c",
-                            margin: "0 0 8px 0",
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "6px",
-                          }}
+                          className="text-[color:#be123c]! m-[0_0_8px_0]! flex! items-center! gap-[6px]!"
                         >
                           <AlertCircle size={16} />
                           Skipped Rows ({uploadStatus.skipped_count})
@@ -1563,10 +1500,10 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
                   >
                     <Loader2
                       size={32}
-                      className="spin"
-                      style={{ color: "#10b981" }}
+                      className="spin text-[color:#10b981]!"
+                     
                     />
-                    <span style={{ color: "var(--text-secondary)" }}>
+                    <span className="text-[color:var(--text-secondary)]!">
                       Initializing background job...
                     </span>
                   </div>

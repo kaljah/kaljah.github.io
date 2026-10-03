@@ -17,11 +17,7 @@ const MethaneIntensityOGMP20Level = ({ globalThreshold, ogmpCollapsed, ogmpSurve
                 OGMP 2.0 Level 4/5 Top-Down Survey & Bottom-Up Reconciliation
               </h3>
               <p
-                style={{
-                  color: "var(--text-secondary)",
-                  fontSize: "0.875rem",
-                  margin: "4px 0 0 0",
-                }}
+                className="text-[color:var(--text-secondary)]! text-[length:0.875rem]! m-[4px_0_0_0]!"
               >
                 Site-level measurement (Satellite, OGI, Drone, Aircraft)
                 reconciled with source-level bottom-up inventory
@@ -29,15 +25,8 @@ const MethaneIntensityOGMP20Level = ({ globalThreshold, ogmpCollapsed, ogmpSurve
             </div>
             <div className="flex! items-center! gap-[12px]!">
               <div
-                className="ogmp-level-badge"
-                style={{
-                  background: "rgba(37, 99, 235, 0.1)",
-                  color: "#2563eb",
-                  padding: "6px 14px",
-                  borderRadius: "8px",
-                  fontSize: "0.85rem",
-                  fontWeight: 600,
-                }}
+                className="ogmp-level-badge bg-[color:rgba(37,_99,_235,_0.1)]! text-[color:#2563eb]! p-[6px_14px]! rounded-[8px]! text-[length:0.85rem]! font-semibold!"
+               
               >
                 Gold Standard Pathway: Level 5 Reconciled
               </div>
@@ -108,7 +97,7 @@ const MethaneIntensityOGMP20Level = ({ globalThreshold, ogmpCollapsed, ogmpSurve
                             <span className="code-pill">{sType}</span>
                           </td>
                           <td>
-                            <strong style={{ color: "#2563eb" }}>
+                            <strong className="text-[color:#2563eb]!">
                               {typeof rateKgHr === "number"
                                 ? rateKgHr.toFixed(2)
                                 : "—"}
@@ -163,10 +152,7 @@ const MethaneIntensityOGMP20Level = ({ globalThreshold, ogmpCollapsed, ogmpSurve
                             </span>
                           </td>
                           <td
-                            style={{
-                              fontSize: "0.85rem",
-                              color: "var(--text-secondary)",
-                            }}
+                            className="text-[length:0.85rem]! text-[color:var(--text-secondary)]!"
                           >
                             {notes}
                           </td>

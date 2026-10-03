@@ -860,7 +860,7 @@ export default function ColumnMappingWizard({
         {step === 2 && (
           <div className="cmw-body">
               <div className="cmw-config-section" style={{ marginBottom: '20px', padding: '16px', border: '1px solid var(--border-color)', borderRadius: '8px', background: 'var(--bg-secondary)' }}>
-                <h3 style={{ marginBottom: '8px', fontSize: '1rem', color: 'var(--text-primary)' }}>Import Settings</h3>
+                <h3 className="mb-[8px]! text-[length:1rem]! text-[color:var(--text-primary)]!">Import Settings</h3>
                 <label className="cmw-config-label flex! items-center! gap-[8px]! cursor-pointer!">
                   <input 
                     type="checkbox" 

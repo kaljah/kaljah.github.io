@@ -98,12 +98,7 @@ const SettingsOGMP20Framework = ({ defaultBaseYear, globalThreshold, handleSaveG
                   Upstream Exploration & Production
                 </div>
                 <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px",
-                    margin: "8px 0",
-                  }}
+                  className="flex! items-center! gap-[8px]! m-[8px_0]!"
                 >
                   <input
                     type="number"
@@ -113,21 +108,12 @@ const SettingsOGMP20Framework = ({ defaultBaseYear, globalThreshold, handleSaveG
                     disabled={!isAdmin}
                     value={upstreamTarget}
                     onChange={(e) => setUpstreamTarget(Number(e.target.value))}
-                    className="form-input"
-                    style={{
-                      width: "100px",
-                      fontWeight: 700,
-                      fontSize: "1.1rem",
-                      color: "#2563eb",
-                    }}
+                    className="form-input w-[100px]! font-bold! text-[length:1.1rem]! text-[color:#2563eb]!"
+                   
                     id="upstream-target-input"
                   />
                   <span
-                    style={{
-                      fontWeight: 700,
-                      fontSize: "1.1rem",
-                      color: "#2563eb",
-                    }}
+                    className="font-bold! text-[length:1.1rem]! text-[color:#2563eb]!"
                   >
                     %
                   </span>
@@ -140,12 +126,7 @@ const SettingsOGMP20Framework = ({ defaultBaseYear, globalThreshold, handleSaveG
               <div className="target-card midstream">
                 <div className="target-segment">Midstream Processing & LNG</div>
                 <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px",
-                    margin: "8px 0",
-                  }}
+                  className="flex! items-center! gap-[8px]! m-[8px_0]!"
                 >
                   <input
                     type="number"
@@ -155,21 +136,12 @@ const SettingsOGMP20Framework = ({ defaultBaseYear, globalThreshold, handleSaveG
                     disabled={!isAdmin}
                     value={midstreamTarget}
                     onChange={(e) => setMidstreamTarget(Number(e.target.value))}
-                    className="form-input"
-                    style={{
-                      width: "100px",
-                      fontWeight: 700,
-                      fontSize: "1.1rem",
-                      color: "#10b981",
-                    }}
+                    className="form-input w-[100px]! font-bold! text-[length:1.1rem]! text-[color:#10b981]!"
+                   
                     id="midstream-target-input"
                   />
                   <span
-                    style={{
-                      fontWeight: 700,
-                      fontSize: "1.1rem",
-                      color: "#10b981",
-                    }}
+                    className="font-bold! text-[length:1.1rem]! text-[color:#10b981]!"
                   >
                     %
                   </span>
@@ -191,12 +163,7 @@ const SettingsOGMP20Framework = ({ defaultBaseYear, globalThreshold, handleSaveG
               disabled={saving || !isAdmin}
               title={!isAdmin ? "Administrator privileges required to modify settings" : "Save changes"}
               id="save-ogmp-settings-btn"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                padding: "10px 24px",
-              }}
+              className="flex! items-center! gap-[8px]! p-[10px_24px]!"
             >
               <Save size={18} />
               {saving ? "Saving Changes..." : "Save OGMP & Target Settings"}

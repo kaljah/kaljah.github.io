@@ -9,7 +9,7 @@ import PaginationControls from './PaginationControls';
 const FacilitiesTab = ({ ACTIVITY_LABELS, HIERARCHY, ITEMS_PER_PAGE, currentPage, exportToCSV, facilities, facilityForm, filteredFacilities, handleAddFacility, handleDeleteFacility, handleFacilityChange, setCurrentPage, setFacilityForm, setImportModal, user }) => (
 <div className="manage-card glass-panel">
                                 <h2 className="mb-[8px]! font-bold!">Active Regions</h2>
-                                <p style={{ color: 'var(--text-secondary)', marginBottom: '32px' }}>Manage operational regions and their boundaries.</p>
+                                <p className="text-[color:var(--text-secondary)]! mb-[32px]!">Manage operational regions and their boundaries.</p>
 
 
                                 {/* Add Region form */}
@@ -103,7 +103,7 @@ const FacilitiesTab = ({ ACTIVITY_LABELS, HIERARCHY, ITEMS_PER_PAGE, currentPage
                                             <button className="action-btn" onClick={() => setImportModal({ isOpen: true, type: 'facilities' })} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', fontSize: '0.9rem', width: 'auto' }}>
                                                 <Upload size={16} /> Bulk Import (CSV)
                                             </button>
-                                            <button className="action-btn" onClick={() => exportToCSV(facilities, 'regions_export.csv')} style={{ background: 'var(--text-secondary)' }}>Export CSV</button>
+                                            <button className="action-btn bg-[color:var(--text-secondary)]!" onClick={() => exportToCSV(facilities, 'regions_export.csv')}>Export CSV</button>
                                         </div>
                                     </>
                                 )}
@@ -132,12 +132,12 @@ const FacilitiesTab = ({ ACTIVITY_LABELS, HIERARCHY, ITEMS_PER_PAGE, currentPage
                                                     <td>{f.location || '-'}</td>
                                                     <td>{f.boundary_notes || (f.boundary_type ? `${f.boundary_type}${f.boundary_detail ? ' - ' + f.boundary_detail : ''}` : '-')}</td>
                                                     <td>{f.segment || '-'}</td>
-                                                    <td style={{ fontSize: '0.8rem' }}>{f.latitude ? `${f.latitude}, ${f.longitude}` : 'Not Set'}</td>
+                                                    <td className="text-[length:0.8rem]!">{f.latitude ? `${f.latitude}, ${f.longitude}` : 'Not Set'}</td>
                                                     {['admin', 'superuser'].includes(user?.role) && (
                                                         <td className="text-center!">
                                                             <button
-                                                                className="btn-delete"
-                                                                style={{ padding: '6px 12px', fontSize: '0.8rem' }}
+                                                                className="btn-delete p-[6px_12px]! text-[length:0.8rem]!"
+                                                               
                                                                 onClick={() => handleDeleteFacility(f.id)}
                                                             >
                                                                 Delete
@@ -148,7 +148,7 @@ const FacilitiesTab = ({ ACTIVITY_LABELS, HIERARCHY, ITEMS_PER_PAGE, currentPage
                                             ))}
                                             {(filteredFacilities.length === 0) && (
                                                     <tr>
-                                                        <td colSpan="8" style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>
+                                                        <td colSpan="8" className="text-center! p-[40px]! text-[color:var(--text-secondary)]!">
                                                             No regions found.
                                                         </td>
                                                     </tr>

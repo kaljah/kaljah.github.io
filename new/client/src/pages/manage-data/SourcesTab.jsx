@@ -10,12 +10,12 @@ import PaginationControls from './PaginationControls';
 const SourcesTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToCSV, facilities, filteredSources, getAvailableActivities, getAvailableDivisions, handleDeleteSource, handleSaveSource, isPrivileged, setCurrentPage, setImportModal, setSourceForm, sourceForm, sources }) => (
 <div className="manage-card glass-panel">
                                 <h2 className="mb-[8px]! font-bold!">Emission Sources Inventory</h2>
-                                <p style={{ color: 'var(--text-secondary)', marginBottom: '32px' }}>Manage operational equipment and emission sources.</p>
+                                <p className="text-[color:var(--text-secondary)]! mb-[32px]!">Manage operational equipment and emission sources.</p>
 
                                 <div className="grid-forms" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
                                     <Field className="input-group" label={<>Activity
                                             {!isPrivileged && getAvailableActivities().length === 1 && (
-                                                <span style={{ fontSize: '0.65rem', background: '#dbeafe', color: '#1d4ed8', borderRadius: '4px', padding: '1px 5px', fontWeight: 600 }}>Auto</span>
+                                                <span className="text-[length:0.65rem]! bg-[color:#dbeafe]! text-[color:#1d4ed8]! rounded-[4px]! p-[1px_5px]! font-semibold!">Auto</span>
                                             )}</>}>
 <NativeSelect
                                             value={sourceForm.activity}
@@ -29,7 +29,7 @@ const SourcesTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToCSV,
 </Field>
                                     <Field className="input-group" label={<>Division
                                             {!isPrivileged && getAvailableDivisions(sourceForm.activity).length === 1 && (
-                                                <span style={{ fontSize: '0.65rem', background: '#dbeafe', color: '#1d4ed8', borderRadius: '4px', padding: '1px 5px', fontWeight: 600 }}>Auto</span>
+                                                <span className="text-[length:0.65rem]! bg-[color:#dbeafe]! text-[color:#1d4ed8]! rounded-[4px]! p-[1px_5px]! font-semibold!">Auto</span>
                                             )}</>}>
 <NativeSelect
                                             value={sourceForm.division}
@@ -46,7 +46,7 @@ const SourcesTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToCSV,
                                         <label className="flex! items-center! gap-[6px]!">
                                             Region
                                             {!isPrivileged && facilities.filter(f => f.activity === sourceForm.activity && f.division === sourceForm.division).length === 1 && (
-                                                <span style={{ fontSize: '0.65rem', background: '#dbeafe', color: '#1d4ed8', borderRadius: '4px', padding: '1px 5px', fontWeight: 600 }}>Auto</span>
+                                                <span className="text-[length:0.65rem]! bg-[color:#dbeafe]! text-[color:#1d4ed8]! rounded-[4px]! p-[1px_5px]! font-semibold!">Auto</span>
                                             )}
                                         </label>
                                         <CustomDropdown
@@ -82,10 +82,10 @@ const SourcesTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToCSV,
                                 </div>
                                 <div className="flex! gap-[12px]! mt-[20px]!">
                                     <button className="action-btn" onClick={handleSaveSource}>Add Source</button>
-                                    <button className="action-btn" onClick={() => setImportModal({ isOpen: true, type: 'sources' })} style={{ background: '#10b981' }}>
+                                    <button className="action-btn bg-[color:#10b981]!" onClick={() => setImportModal({ isOpen: true, type: 'sources' })}>
                                         <Upload size={16} /> Import Sources CSV
                                     </button>
-                                    <button className="action-btn" onClick={() => exportToCSV(sources, 'emission_sources.csv')} style={{ background: 'var(--text-secondary)' }}>Export CSV</button>
+                                    <button className="action-btn bg-[color:var(--text-secondary)]!" onClick={() => exportToCSV(sources, 'emission_sources.csv')}>Export CSV</button>
                                 </div>
 
 
@@ -105,24 +105,24 @@ const SourcesTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, currentPage, exportToCSV,
                                             {filteredSources.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE).map(s => (
                                                 <tr key={s.id}>
                                                     <td><strong>{s.name}</strong></td>
-                                                    <td style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>{s.equipment_id || '-'}</td>
+                                                    <td className="text-[color:var(--text-secondary)]! text-[length:0.85rem]!">{s.equipment_id || '-'}</td>
                                                     <td>{PROCESS_TYPES[s.type] || s.type}</td>
                                                     <td>
                                                         {(() => {
                                                             const fac = facilities.find(f => f.id === s.facility_id);
                                                             if (!fac) return s.facility_id;
-                                                            return <>{fac.name}{fac.field && <span style={{ fontSize: '0.85em', color: '#9ca3af', fontWeight: 400 }}>-{fac.field}</span>}</>;
+                                                            return <>{fac.name}{fac.field && <span className="text-[length:0.85em]! text-[color:#9ca3af]! font-normal!">-{fac.field}</span>}</>;
                                                         })()}
                                                     </td>
                                                     <td>{s.status}</td>
                                                     <td>
-                                                        <button className="btn-delete" style={{ padding: '4px 8px', fontSize: '0.75rem' }} onClick={() => handleDeleteSource(s.id)}>Delete</button>
+                                                        <button className="btn-delete p-[4px_8px]! text-[length:0.75rem]!" onClick={() => handleDeleteSource(s.id)}>Delete</button>
                                                     </td>
                                                 </tr>
                                             ))}
                                             {filteredSources.length === 0 && (
                                                 <tr>
-                                                    <td colSpan="6" style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>
+                                                    <td colSpan="6" className="text-center! p-[40px]! text-[color:var(--text-secondary)]!">
                                                         No emission sources found.
                                                     </td>
                                                 </tr>

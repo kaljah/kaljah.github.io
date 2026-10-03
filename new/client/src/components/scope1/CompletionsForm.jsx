@@ -145,7 +145,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
 
           <div className="form-grid-3 mb-[16px]!">
             <Field className="input-group" label={<>Well type
-                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+                <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <NativeSelect
                 className="mole-input"
                 value={wellType}
@@ -159,7 +159,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
 </Field>
 
             <Field className="input-group" label={<>Fracturing
-                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+                <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <NativeSelect
                 className="mole-input"
                 value={fracturing}
@@ -178,7 +178,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
 </Field>
 
             <Field className="input-group" label={<>Disposition
-                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+                <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <NativeSelect
                 className="mole-input"
                 value={disposition}
@@ -210,7 +210,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
 
           <div className="form-grid-3">
             <Field className="input-group" label={<>Completions
-                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+                <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <Input
                 type="number"
                 min="1"
@@ -264,7 +264,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
           <div className="input-group mb-[16px]!">
             <label>
               Model
-              <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+              <span className="text-[color:#ef4444]! ml-[3px]!">*</span>
             </label>
             <CustomDropdown
               options={[
@@ -290,7 +290,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
           {activeMethod === "rate_duration" && (
             <div className="form-grid-3 mb-[16px]!">
               <Field className="input-group" label={<>Flowback rate
-                  <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+                  <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <Input
                   type="number"
                   min="0"
@@ -304,7 +304,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
 </Field>
 
               <Field className="input-group" label={<>Flowback Rate Unit
-                  <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+                  <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <NativeSelect
                   className="mole-input"
                   value={data.comp_rate_unit || "Mcf/hr"}
@@ -320,7 +320,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
 </Field>
 
               <Field className="input-group" label={<>Duration (h)
-                  <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+                  <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <Input
                   type="number"
                   min="0"
@@ -339,7 +339,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
           {activeMethod === "gor" && (
             <div className="form-grid-3 mb-[16px]!">
               <Field className="input-group" label={<>Total Liquid Flowback (bbl)
-                  <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+                  <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <Input
                   type="number"
                   min="0"
@@ -353,7 +353,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
 </Field>
 
               <Field className="input-group" label={<>Flowback GOR (scf/bbl)
-                  <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+                  <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <Input
                   type="number"
                   min="0"
@@ -384,7 +384,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
           {activeMethod === "api_equation_6_7" && (
             <div className="form-grid-3 mb-[16px]!">
               <Field className="input-group" label={<>Production / Well Test Rate (V_Pi)
-                  <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+                  <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <Input
                   type="number"
                   min="0"
@@ -401,7 +401,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
 </Field>
 
               <Field className="input-group" label={<>Production Rate Unit
-                  <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+                  <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <NativeSelect
                   className="mole-input"
                   value={data.comp_prod_rate_unit || "Mcf/day"}
@@ -415,7 +415,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
 </Field>
 
               <Field className="input-group" label={<>Vent Duration Before Separation (hrs)
-                  <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+                  <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <Input
                   type="number"
                   min="0"
@@ -436,7 +436,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
           {/* Gas Properties & Control for Tier 2 */}
           <div className="form-grid-4">
             <Field className="input-group" label={<>CH₄ (%)
-                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+                <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <Input
                 type="number"
                 min="0"
@@ -504,7 +504,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
           {/* Section 1: Metered Gas & Injected N2 Deduction */}
           <div className="form-grid-4 mb-[16px]!">
             <Field className="input-group" label={<>Metered volume
-                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+                <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <Input
                 type="number"
                 min="0"
@@ -522,7 +522,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
 </Field>
 
             <Field className="input-group" label={<>Volume Unit
-                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+                <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <NativeSelect
                 className="mole-input"
                 value={data.volume_unit || "Mcf"}
@@ -579,7 +579,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
             }}
           >
             <div className="flex! items-center! justify-between! mb-[8px]!">
-              <label style={{ fontWeight: 600, fontSize: "0.85rem", color: "#374151", margin: 0 }}>
+              <label className="font-semibold! text-[length:0.85rem]! text-[color:#374151]! m-[0px]!">
                 Unmetered flowback
               </label>
             </div>
@@ -613,7 +613,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
           {/* Section 3: Gas Composition */}
           <div className="form-grid-2 mb-[16px]!">
             <Field className="input-group" label={<>CH₄ (%)
-                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></>}>
+                <span className="text-[color:#ef4444]! ml-[3px]!">*</span></>}>
 <Input
                 type="number"
                 min="0"
@@ -658,7 +658,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
           <div className="input-group mb-[16px]!">
             <label>
               Gas disposition
-              <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+              <span className="text-[color:#ef4444]! ml-[3px]!">*</span>
             </label>
             <CustomDropdown
               options={[
@@ -686,7 +686,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
               }}
             >
               <div className="flex! justify-between! mb-[8px]!">
-                <span style={{ fontWeight: 600, fontSize: "0.85rem", color: "#166534" }}>
+                <span className="font-semibold! text-[length:0.85rem]! text-[color:#166534]!">
                   Custom Split Allocation (must sum to 100%)
                 </span>
                 {(() => {
