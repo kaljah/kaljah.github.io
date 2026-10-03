@@ -47,10 +47,12 @@ const noteElementRules = (root) =>
   });
 const blocked = new Set();
 const pinned = new Set();
+const allSelectors = [];
 const classesIn = (sel) => [...sel.matchAll(/\.(-?[_a-zA-Z][\w-]*)/g)].map((m) => m[1]);
 const noteMentions = (sel, lead) => {
   const cls = classesIn(sel);
   const first = sel.trim().match(/^\.(-?[_a-zA-Z][\w-]*)/)?.[1];
+  allSelectors.push({ lead: first ?? null, nonLead: cls.filter((c, i) => !(i === 0 && first === c)) });
   cls.forEach((c, i) => {
     if (i === 0 && first === c) lead(c);
     else pinned.add(c);
@@ -126,9 +128,9 @@ for (const f of cssFiles) {
 }
 
 const toUtility = (decl) => {
-  if (decl.prop.startsWith("--")) return null;
-  const v = decl.value.trim();
-  if (!v || /["'\\;]|url\(/i.test(v) || /[[\]{}]/.test(v) || decl.prop === "content") return null;
+  const v = decl.value.trim().replace(/"/g, "'");
+  if (!v || /[;]|url\(/i.test(v) || /[[\]{}`]|[$][{]/.test(v) || decl.prop === "content") return null;
+  if (v.includes(String.fromCharCode(92))) return null;
   const bang = decl.important || elementProps.has(baseProp(decl.prop));
   return `[${decl.prop}:${v.replace(/\s+/g, "_")}]${bang ? "!" : ""}`;
 };
@@ -159,8 +161,25 @@ for (const [name, list] of Object.entries(occ)) {
     const overrides = isMedia(e.prefix) && entries.some((x) => x !== e && baseProp(x.prop) === baseProp(e.prop));
     return e.prefix + ((overrides || e.generic) && !e.util.endsWith("!") ? `${e.util}!` : e.util);
   });
-  if (tokenRe(name).test(testText) || tokenRe(name).test(indexHtml)) continue;
+  if (tokenRe(name).test(testText) || tokenRe(name).test(indexHtml)) pinned.add(name);
   eligible[name] = { occurrences: list, utils, keys: new Set(entries.map((e) => e.prefix + baseProp(e.prop))) };
+}
+
+// A class that is a non-leading part of any selector that stays in the CSS keeps its rules there
+// (a more specific legacy rule may still depend on the ordering), so drop it and repeat.
+for (let changed = true; changed; ) {
+  changed = false;
+  const remainingNonLead = new Set();
+  for (const sel of allSelectors) {
+    if (sel.lead && eligible[sel.lead]) continue;
+    sel.nonLead.forEach((c) => remainingNonLead.add(c));
+  }
+  for (const n of Object.keys(eligible)) {
+    if (remainingNonLead.has(n)) {
+      delete eligible[n];
+      changed = true;
+    }
+  }
 }
 
 const sources = Object.fromEntries([...jsxFiles, ...otherJs].map((f) => [f, fs.readFileSync(f, "utf8")]));
@@ -176,7 +195,7 @@ const classStrings = (ast) => {
         nodes.push({ start: node.start + 1, end: node.end - 1, dynamic: false });
         break;
       case "TemplateLiteral":
-        node.quasis.forEach((q) => nodes.push({ start: q.start, end: q.end, dynamic: true }));
+        node.quasis.forEach((q, qi) => nodes.push({ start: q.start, end: q.end, dynamic: true, first: qi === 0, last: qi === node.quasis.length - 1 }));
         node.expressions.forEach(collect);
         break;
       case "JSXExpressionContainer":
@@ -227,7 +246,8 @@ const planEdits = (active) => {
         const e = active[t];
         if (!e) return t;
         // first/last token of a template quasi may continue into a ${...} placeholder
-        if (s.dynamic && ((i === 0 && !/^\s/.test(text)) || (i === tokens.length - 1 && !/\s$/.test(text)))) return t;
+        if (s.dynamic && ((i === 0 && !s.first && !/^\s/.test(text)) || (i === tokens.length - 1 && !s.last && !/\s$/.test(text)))) return t;
+        if (e.utils.some((u) => u.includes("'")) && code[s.start - 1] === "'") return t;
         for (const k of e.keys) {
           if (seenKeys.has(k) && seenKeys.get(k) !== t) {
             conflicts.add(t);
@@ -257,6 +277,14 @@ for (let round = 0; round < 20; round++) {
   const next = Object.fromEntries(
     Object.entries(eligible).filter(([n]) => replaced[n] && replaced[n] === jsCount[n] && !conflicts.has(n)),
   );
+  if (process.argv.includes("--why")) {
+    for (const n of Object.keys(eligible)) {
+      if (next[n]) continue;
+      const lines = eligible[n].occurrences.reduce((a, o) => a + o.rule.source.end.line - o.rule.source.start.line + 1, 0);
+      const why = conflicts.has(n) ? "conflict" : replaced[n] ? `partial ${replaced[n]}/${jsCount[n]}` : `none ${jsCount[n]}`;
+      console.log(`${lines}\t${n}\t${why}`);
+    }
+  }
   if (Object.keys(next).length === Object.keys(eligible).length) break;
   eligible = next;
 }
