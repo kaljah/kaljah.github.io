@@ -11,7 +11,7 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
               className={`card detailed-table-card glass-panel ${detailedBreakdownCollapsed ? "collapsed-card" : ""}`}
             >
               <div role="button" tabIndex={0} onKeyDown={activateOnKey}
-                className="table-header-row clickable-card-header"
+                className="table-header-row [display:flex]! [justify-content:space-between] [align-items:center] [margin-bottom:20px]! clickable-card-header [transition:opacity_0.2s_ease]! hover:[opacity:0.85]"
                 onClick={() =>
                   setDetailedBreakdownCollapsed(!detailedBreakdownCollapsed)
                 }
@@ -38,7 +38,7 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
                 </div>
               </div>
               <div
-                className={`collapsible-body-wrapper ${detailedBreakdownCollapsed ? "collapsed" : ""}`}
+                className={`[@media_print]:[&.collapsed]:[display:block]! [@media_print]:[&.collapsed]:[max-height:none]! [@media_print]:[&.collapsed]:[opacity:1]! [max-height:2500px]! [opacity:1]! [overflow:hidden]! [transition:max-height_0.4s_cubic-bezier(0.4,_0,_0.2,_1),_opacity_0.3s_ease,_margin-top_0.3s_ease]! [&.collapsed]:[max-height:0]! [&.collapsed]:[opacity:0]! [&.collapsed]:[margin-top:0]! [&.collapsed]:[pointer-events:none]! ${detailedBreakdownCollapsed ? "collapsed" : ""}`}
               >
                 <div className="table-container mt-[16px]!">
                   <table className="data-table">
@@ -151,7 +151,7 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
                         ([act, actData]) => (
                           <React.Fragment key={act}>
                             <tr tabIndex={0} onKeyDown={activateOnKey}
-                              className="act-row clickable"
+                              className="act-row [background:#fefefe]! clickable [cursor:pointer]"
                               onClick={() => toggleActivity(act)}
                             >
                               <td>
@@ -169,7 +169,7 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
                                 ([div, divData]) => (
                                   <React.Fragment key={div}>
                                     <tr tabIndex={0} onKeyDown={activateOnKey}
-                                      className="div-row clickable"
+                                      className="div-row [color:var(--color-ink-600)]! clickable [cursor:pointer]"
                                       onClick={(e) => {
                                         e.stopPropagation();
                                         toggleDivision(div);
@@ -187,7 +187,7 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
                                     </tr>
                                     {expandedDivisions[div] &&
                                       divData.regions.map((reg, ridx) => (
-                                        <tr key={ridx} className="reg-row">
+                                        <tr key={ridx} className="reg-row [font-size:var(--text-sm)]! [opacity:0.8]">
                                           <td className="[padding-left:44px]!">
                                             {reg.region}
                                           </td>
@@ -275,7 +275,7 @@ const DetailedBreakdownSection = ({ detailedBreakdownCollapsed, expandedActiviti
                 </div>
               </div>
               <button
-                className="manage-factors-btn"
+                className="manage-factors-btn [display:flex]! [align-items:center] [justify-content:center] [gap:8px] [padding:12px]! [background:var(--color-white)]! [border:2px_dashed_var(--color-ink-200)]! [border-radius:var(--radius-md)]! [color:var(--color-ink-500)]! [font-size:var(--text-base)]! [font-weight:600]! [cursor:pointer] [transition:all_0.2s]! [width:100%]! hover:[border-color:var(--color-brand-500)]! hover:[color:var(--color-link)]!"
                 onClick={() =>
                   navigate("/manage-data", { state: { tab: "factors" } })
                 }

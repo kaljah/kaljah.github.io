@@ -246,7 +246,7 @@ const CustomDropdown = ({
   }
 
   return (
-    <div className={`custom-dropdown ${isOpen ? "open" : ""}`} ref={wrapperRef}>
+    <div className={`custom-dropdown [position:relative]! [width:100%]! [&.open_.dropdown-selected_svg]:[transform:rotate(180deg)]! [&_.dropdown-selected]:[background:var(--bg-card)]! [&_.dropdown-selected]:[border:1px_solid_var(--border-color)]! [&_.dropdown-selected]:[border-radius:var(--radius-md)]! [&_.dropdown-selected]:[padding:12px_16px]! [&_.dropdown-selected]:[color:var(--text-primary)]! [&_.dropdown-selected]:[display:flex]! [&_.dropdown-selected]:[justify-content:space-between]! [&_.dropdown-selected]:[align-items:center]! [&_.dropdown-selected]:[cursor:pointer]! [&_.dropdown-selected]:[transition:all_0.2s]! [&.open_.dropdown-selected]:[border-color:var(--accent-color)]! [&.open_.dropdown-selected]:[box-shadow:0_0_0_3px_rgba(255,_102,_0,_0.1)]! [&_.dropdown-options]:[background:var(--bg-card)]! [&_.dropdown-options]:[border:1px_solid_var(--border-color)]! [&_.dropdown-options]:[border-radius:var(--radius-md)]! [&_.dropdown-options]:[margin-top:5px]! [&_.dropdown-options]:[box-shadow:var(--shadow-raised)]! [&_.dropdown-options]:[z-index:100]! [&_.dropdown-option:hover]:[background:var(--bg-hover)]! [&_.dropdown-option:hover]:[color:var(--color-link)]! ${isOpen ? "open" : ""}`} ref={wrapperRef}>
       <button
         type="button"
         ref={triggerRef}
@@ -332,7 +332,7 @@ const CustomDropdown = ({
                   role="option"
                   aria-selected={value === option.value}
                   data-testid="select-option"
-                  className={`dropdown-option ${value === option.value ? "selected" : ""} ${activeIndex === idx ? "active" : ""}`}
+                  className={`dropdown-option [padding:10px_14px]! [cursor:pointer]! [font-size:var(--text-base)]! [color:var(--text-primary)]! [transition:background_0.15s]! hover:[background:var(--bg-hover)]! [&.active]:[background:var(--bg-hover)]! [&.selected]:[background:rgba(16,_185,_129,_0.1)]! [&.selected]:[color:var(--color-link)]! [&.selected]:[font-weight:600]! ${value === option.value ? "selected" : ""} ${activeIndex === idx ? "active" : ""}`}
                   onClick={() => handleSelect(option.value)}
                   onMouseEnter={() => setActiveIndex(idx)}
                 >

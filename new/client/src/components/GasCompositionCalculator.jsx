@@ -301,7 +301,7 @@ const GasCompositionCalculator = ({
                   {totalMolePct.toFixed(2)}%
                 </span>
               </div>
-              <span className="status-badge">{getStatusText()}</span>
+              <span className="status-badge [font-size:var(--text-sm)]! [padding:4px_12px]! [border-radius:var(--radius-lg)]! [background:rgba(255,_255,_255,_0.05)]! [color:var(--text-secondary)]!">{getStatusText()}</span>
             </div>
 
             <div className="[display:grid]! [grid-template-columns:repeat(auto-fill,_minmax(140px,_1fr))] [gap:15px] [margin-bottom:30px]!">

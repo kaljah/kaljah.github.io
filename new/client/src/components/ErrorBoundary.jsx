@@ -68,7 +68,7 @@ class ErrorBoundary extends React.Component {
               )}
 
             <div className="[display:flex]! [gap:12px] [justify-content:center] [margin-bottom:24px]! [@media(max-width:768px)]:[flex-direction:column]">
-              <button className="error-btn primary" onClick={this.handleReload}>
+              <button className="[padding:12px_24px]! [border:none]! [border-radius:var(--radius-md)]! [font-size:var(--text-md)]! [font-weight:600]! [cursor:pointer]! [transition:all_0.2s_ease]! [display:flex]! [align-items:center]! [gap:8px]! [&.primary]:[background:var(--color-green-700)]! [&.primary]:[color:white]! [&.primary:hover]:[background:var(--color-green-600)]! [&.primary:hover]:[transform:translateY(-2px)]! [&.primary:hover]:[box-shadow:0_4px_12px_rgba(16,_185,_129,_0.3)]! [&.secondary]:[background:rgba(255,_255,_255,_0.1)]! [&.secondary]:[color:var(--text-primary)]! [&.secondary]:[border:1px_solid_rgba(255,_255,_255,_0.2)]! [&.secondary:hover]:[background:rgba(255,_255,_255,_0.15)]! [@media(max-width:768px)]:[width:100%]! [@media(max-width:768px)]:[justify-content:center]! primary" onClick={this.handleReload}>
                 <svg
                   width="16"
                   height="16"
@@ -82,7 +82,7 @@ class ErrorBoundary extends React.Component {
                 Reload Page
               </button>
               <button
-                className="error-btn secondary"
+                className="[padding:12px_24px]! [border:none]! [border-radius:var(--radius-md)]! [font-size:var(--text-md)]! [font-weight:600]! [cursor:pointer]! [transition:all_0.2s_ease]! [display:flex]! [align-items:center]! [gap:8px]! [&.primary]:[background:var(--color-green-700)]! [&.primary]:[color:white]! [&.primary:hover]:[background:var(--color-green-600)]! [&.primary:hover]:[transform:translateY(-2px)]! [&.primary:hover]:[box-shadow:0_4px_12px_rgba(16,_185,_129,_0.3)]! [&.secondary]:[background:rgba(255,_255,_255,_0.1)]! [&.secondary]:[color:var(--text-primary)]! [&.secondary]:[border:1px_solid_rgba(255,_255,_255,_0.2)]! [&.secondary:hover]:[background:rgba(255,_255,_255,_0.15)]! [@media(max-width:768px)]:[width:100%]! [@media(max-width:768px)]:[justify-content:center]! secondary"
                 onClick={this.handleReset}
               >
                 Try Again

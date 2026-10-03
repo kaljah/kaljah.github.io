@@ -72,7 +72,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                                         <button
                                                             key={reason}
                                                             type="button"
-                                                            className={`rejection-chip ${rejectionModal.reason === reason ? 'selected' : ''}`}
+                                                            className={`[background:var(--bg-body)]! [border:1px_solid_var(--border-color)]! [color:var(--text-secondary)]! [font-size:var(--text-sm)]! [padding:6px_12px]! [border-radius:var(--radius-md)]! [cursor:pointer]! [transition:all_0.15s]! hover:[background:var(--bg-hover)]! hover:[color:var(--text-primary)]! hover:[border-color:rgba(255,_102,_0,_0.3)]! [&.selected]:[background:rgba(239,_68,_68,_0.1)]! [&.selected]:[color:var(--color-red-700)]! [&.selected]:[border-color:rgba(239,_68,_68,_0.4)]! [&.selected]:[font-weight:600]! ${rejectionModal.reason === reason ? 'selected' : ''}`}
                                                             onClick={() => setRejectionModal(prev => ({ ...prev, reason }))}
                                                         >
                                                             {reason}
@@ -259,14 +259,14 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                 <div className="[display:flex]! [flex-wrap:wrap] [align-items:center] [justify-content:space-between] [gap:16px] [background:var(--bg-card)]! [backdrop-filter:blur(10px)] [border:1px_solid_var(--border-color)]! [border-radius:var(--radius-lg)]! [padding:16px_20px]! [box-shadow:var(--shadow-card)]!">
                                     <div className="[display:inline-flex]! [background:rgba(15,_23,_42,_0.05)]! [border-radius:var(--radius-md)]! [padding:4px]! [gap:4px]">
                                         <button 
-                                            className={`pending-tab-btn ${pendingScopeFilter === 'all' ? 'active' : ''}`}
+                                            className={`[display:inline-flex]! [align-items:center]! [gap:8px]! [padding:8px_16px]! [border-radius:var(--radius-md)]! [border:none]! [background:transparent]! [font-size:var(--text-base)]! [font-weight:500]! [color:var(--text-secondary)]! [cursor:pointer]! [transition:all_0.15s_ease]! hover:[color:var(--text-primary)]! hover:[background:rgba(255,_255,_255,_0.6)]! [&.active]:[background:var(--color-white)]! [&.active]:[color:var(--color-link)]! [&.active]:[font-weight:600]! [&.active]:[box-shadow:var(--shadow-card)]! [&.active_.pending-count-chip]:[background:var(--accent-subtle)]! [&.active_.pending-count-chip]:[color:var(--color-link)]! ${pendingScopeFilter === 'all' ? 'active' : ''}`}
                                             onClick={() => setPendingScopeFilter('all')}
                                         >
                                             <span>All Scopes</span>
                                             <span className="pending-count-chip [display:inline-flex]! [align-items:center] [justify-content:center] [min-width:20px] [height:20px]! [padding:0_6px]! [border-radius:var(--radius-md)]! [font-size:var(--text-xs)]! [font-weight:600]! [background:rgba(15,_23,_42,_0.08)]! [color:var(--text-secondary)]!">{pendingMetrics.totalCount}</span>
                                         </button>
                                         <button 
-                                            className={`pending-tab-btn ${pendingScopeFilter === '1' ? 'active' : ''}`}
+                                            className={`[display:inline-flex]! [align-items:center]! [gap:8px]! [padding:8px_16px]! [border-radius:var(--radius-md)]! [border:none]! [background:transparent]! [font-size:var(--text-base)]! [font-weight:500]! [color:var(--text-secondary)]! [cursor:pointer]! [transition:all_0.15s_ease]! hover:[color:var(--text-primary)]! hover:[background:rgba(255,_255,_255,_0.6)]! [&.active]:[background:var(--color-white)]! [&.active]:[color:var(--color-link)]! [&.active]:[font-weight:600]! [&.active]:[box-shadow:var(--shadow-card)]! [&.active_.pending-count-chip]:[background:var(--accent-subtle)]! [&.active_.pending-count-chip]:[color:var(--color-link)]! ${pendingScopeFilter === '1' ? 'active' : ''}`}
                                             onClick={() => setPendingScopeFilter('1')}
                                         >
                                             <span className="scope-tag [background:rgba(255,_102,_0,_0.1)]! [color:var(--color-brand-700)]! [border:1px_solid_rgba(255,_102,_0,_0.25)]! p-[1px_6px]! text-[length:0.7rem]!">S1</span>
@@ -274,7 +274,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                             <span className="pending-count-chip [display:inline-flex]! [align-items:center] [justify-content:center] [min-width:20px] [height:20px]! [padding:0_6px]! [border-radius:var(--radius-md)]! [font-size:var(--text-xs)]! [font-weight:600]! [background:rgba(15,_23,_42,_0.08)]! [color:var(--text-secondary)]!">{pendingMetrics.count1}</span>
                                         </button>
                                         <button 
-                                            className={`pending-tab-btn ${pendingScopeFilter === '2' ? 'active' : ''}`}
+                                            className={`[display:inline-flex]! [align-items:center]! [gap:8px]! [padding:8px_16px]! [border-radius:var(--radius-md)]! [border:none]! [background:transparent]! [font-size:var(--text-base)]! [font-weight:500]! [color:var(--text-secondary)]! [cursor:pointer]! [transition:all_0.15s_ease]! hover:[color:var(--text-primary)]! hover:[background:rgba(255,_255,_255,_0.6)]! [&.active]:[background:var(--color-white)]! [&.active]:[color:var(--color-link)]! [&.active]:[font-weight:600]! [&.active]:[box-shadow:var(--shadow-card)]! [&.active_.pending-count-chip]:[background:var(--accent-subtle)]! [&.active_.pending-count-chip]:[color:var(--color-link)]! ${pendingScopeFilter === '2' ? 'active' : ''}`}
                                             onClick={() => setPendingScopeFilter('2')}
                                         >
                                             <span className="scope-tag [background:rgba(59,_130,_246,_0.1)]! [color:var(--color-blue-600)]! [border:1px_solid_rgba(59,_130,_246,_0.25)]! p-[1px_6px]! text-[length:0.7rem]!">S2</span>
@@ -282,7 +282,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                             <span className="pending-count-chip [display:inline-flex]! [align-items:center] [justify-content:center] [min-width:20px] [height:20px]! [padding:0_6px]! [border-radius:var(--radius-md)]! [font-size:var(--text-xs)]! [font-weight:600]! [background:rgba(15,_23,_42,_0.08)]! [color:var(--text-secondary)]!">{pendingMetrics.count2}</span>
                                         </button>
                                         <button 
-                                            className={`pending-tab-btn ${pendingScopeFilter === '3' ? 'active' : ''}`}
+                                            className={`[display:inline-flex]! [align-items:center]! [gap:8px]! [padding:8px_16px]! [border-radius:var(--radius-md)]! [border:none]! [background:transparent]! [font-size:var(--text-base)]! [font-weight:500]! [color:var(--text-secondary)]! [cursor:pointer]! [transition:all_0.15s_ease]! hover:[color:var(--text-primary)]! hover:[background:rgba(255,_255,_255,_0.6)]! [&.active]:[background:var(--color-white)]! [&.active]:[color:var(--color-link)]! [&.active]:[font-weight:600]! [&.active]:[box-shadow:var(--shadow-card)]! [&.active_.pending-count-chip]:[background:var(--accent-subtle)]! [&.active_.pending-count-chip]:[color:var(--color-link)]! ${pendingScopeFilter === '3' ? 'active' : ''}`}
                                             onClick={() => setPendingScopeFilter('3')}
                                         >
                                             <span className="scope-tag [background:rgba(147,_51,_234,_0.1)]! [color:#7c3aed]! [border:1px_solid_rgba(147,_51,_234,_0.25)]! p-[1px_6px]! text-[length:0.7rem]!">S3</span>
@@ -295,21 +295,21 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                         {/* QA Filter Pills */}
                                         <div className="inline-flex! bg-[color:rgba(15,_23,_42,_0.05)]! rounded-[10px]! p-[3px]! gap-[3px]!">
                                             <button
-                                                className={`pending-tab-btn ${pendingQaFilter === 'all' ? 'active' : ''}`}
+                                                className={`[display:inline-flex]! [align-items:center]! [gap:8px]! [padding:8px_16px]! [border-radius:var(--radius-md)]! [border:none]! [background:transparent]! [font-size:var(--text-base)]! [font-weight:500]! [color:var(--text-secondary)]! [cursor:pointer]! [transition:all_0.15s_ease]! hover:[color:var(--text-primary)]! hover:[background:rgba(255,_255,_255,_0.6)]! [&.active]:[background:var(--color-white)]! [&.active]:[color:var(--color-link)]! [&.active]:[font-weight:600]! [&.active]:[box-shadow:var(--shadow-card)]! [&.active_.pending-count-chip]:[background:var(--accent-subtle)]! [&.active_.pending-count-chip]:[color:var(--color-link)]! ${pendingQaFilter === 'all' ? 'active' : ''}`}
                                                 style={{ padding: '6px 12px', fontSize: '0.78rem' }}
                                                 onClick={() => setPendingQaFilter('all')}
                                             >
                                                 All QA
                                             </button>
                                             <button
-                                                className={`pending-tab-btn ${pendingQaFilter === 'clean' ? 'active' : ''}`}
+                                                className={`[display:inline-flex]! [align-items:center]! [gap:8px]! [padding:8px_16px]! [border-radius:var(--radius-md)]! [border:none]! [background:transparent]! [font-size:var(--text-base)]! [font-weight:500]! [color:var(--text-secondary)]! [cursor:pointer]! [transition:all_0.15s_ease]! hover:[color:var(--text-primary)]! hover:[background:rgba(255,_255,_255,_0.6)]! [&.active]:[background:var(--color-white)]! [&.active]:[color:var(--color-link)]! [&.active]:[font-weight:600]! [&.active]:[box-shadow:var(--shadow-card)]! [&.active_.pending-count-chip]:[background:var(--accent-subtle)]! [&.active_.pending-count-chip]:[color:var(--color-link)]! ${pendingQaFilter === 'clean' ? 'active' : ''}`}
                                                 style={{ padding: '6px 12px', fontSize: '0.78rem', color: pendingQaFilter === 'clean' ? '#059669' : 'inherit' }}
                                                 onClick={() => setPendingQaFilter('clean')}
                                             >
                                                 Clean Only
                                             </button>
                                             <button
-                                                className={`pending-tab-btn ${pendingQaFilter === 'flagged' ? 'active' : ''}`}
+                                                className={`[display:inline-flex]! [align-items:center]! [gap:8px]! [padding:8px_16px]! [border-radius:var(--radius-md)]! [border:none]! [background:transparent]! [font-size:var(--text-base)]! [font-weight:500]! [color:var(--text-secondary)]! [cursor:pointer]! [transition:all_0.15s_ease]! hover:[color:var(--text-primary)]! hover:[background:rgba(255,_255,_255,_0.6)]! [&.active]:[background:var(--color-white)]! [&.active]:[color:var(--color-link)]! [&.active]:[font-weight:600]! [&.active]:[box-shadow:var(--shadow-card)]! [&.active_.pending-count-chip]:[background:var(--accent-subtle)]! [&.active_.pending-count-chip]:[color:var(--color-link)]! ${pendingQaFilter === 'flagged' ? 'active' : ''}`}
                                                 style={{ padding: '6px 12px', fontSize: '0.78rem', color: pendingQaFilter === 'flagged' ? '#d97706' : 'inherit' }}
                                                 onClick={() => setPendingQaFilter('flagged')}
                                             >
@@ -587,7 +587,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                                                         ) : (
                                                                             <button
                                                                                 type="button"
-                                                                                className="btn-review-action approve"
+                                                                                className="[display:inline-flex]! [align-items:center]! [justify-content:center]! [width:32px]! [height:32px]! [border-radius:var(--radius-md)]! [border:1px_solid_transparent]! [cursor:pointer]! [transition:all_0.15s_ease]! [&.approve]:[background:rgba(16,_185,_129,_0.1)]! [&.approve]:[color:var(--color-green-700)]! [&.approve]:[border-color:rgba(16,_185,_129,_0.25)]! [&.approve:hover]:[background:var(--color-green-700)]! [&.approve:hover]:[color:var(--color-white)]! [&.approve:hover]:[transform:translateY(-1px)]! [&.approve:hover]:[box-shadow:0_4px_10px_rgba(16,_185,_129,_0.25)]! [&.reject]:[background:rgba(239,_68,_68,_0.08)]! [&.reject]:[color:var(--color-red-700)]! [&.reject]:[border-color:rgba(239,_68,_68,_0.2)]! [&.reject:hover]:[background:var(--color-red-700)]! [&.reject:hover]:[color:var(--color-white)]! [&.reject:hover]:[transform:translateY(-1px)]! [&.reject:hover]:[box-shadow:0_4px_10px_rgba(239,_68,_68,_0.25)]! approve"
                                                                                 title="Approve Record"
                                                                                 onClick={() => handleApproveSingle(item.scope, item.id)}
                                                                             >
@@ -596,7 +596,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                                                         )}
                                                                         <button
                                                                             type="button"
-                                                                            className="btn-review-action reject"
+                                                                            className="[display:inline-flex]! [align-items:center]! [justify-content:center]! [width:32px]! [height:32px]! [border-radius:var(--radius-md)]! [border:1px_solid_transparent]! [cursor:pointer]! [transition:all_0.15s_ease]! [&.approve]:[background:rgba(16,_185,_129,_0.1)]! [&.approve]:[color:var(--color-green-700)]! [&.approve]:[border-color:rgba(16,_185,_129,_0.25)]! [&.approve:hover]:[background:var(--color-green-700)]! [&.approve:hover]:[color:var(--color-white)]! [&.approve:hover]:[transform:translateY(-1px)]! [&.approve:hover]:[box-shadow:0_4px_10px_rgba(16,_185,_129,_0.25)]! [&.reject]:[background:rgba(239,_68,_68,_0.08)]! [&.reject]:[color:var(--color-red-700)]! [&.reject]:[border-color:rgba(239,_68,_68,_0.2)]! [&.reject:hover]:[background:var(--color-red-700)]! [&.reject:hover]:[color:var(--color-white)]! [&.reject:hover]:[transform:translateY(-1px)]! [&.reject:hover]:[box-shadow:0_4px_10px_rgba(239,_68,_68,_0.25)]! reject"
                                                                             title="Reject Record (specify reason)"
                                                                             onClick={() => handleOpenRejectModal(item.scope, item.id)}
                                                                         >

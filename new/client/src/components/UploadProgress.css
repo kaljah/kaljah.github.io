@@ -22,40 +22,9 @@
 
 /* ─── Completed State - Summary Cards ─────────────────────────────────────── */
 
-.up-card {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 20px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-ink-200);
-  background: var(--color-ink-50);
-}
-
 /* ─── Skipped Reasons Panel ───────────────────────────────────────────────── */
 
 /* ─── Reasons Table & Filters ─────────────────────────────────────────────── */
-
-.up-pill {
-  padding: 6px 12px;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--color-ink-200);
-  background: var(--color-white);
-  font-size: var(--text-sm);
-  font-weight: 500;
-  color: var(--color-ink-500);
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.up-pill:hover {
-  border-color: var(--color-ink-300);
-  color: var(--color-ink-700);
-}
-.up-pill.active {
-  background: #fef3c7;
-  border-color: var(--color-amber-500);
-  color: var(--color-amber-700);
-}
 
 .up-reasons-table {
   width: 100%;
@@ -91,15 +60,6 @@
 }
 
 /* ─── Tags ────────────────────────────────────────────────────────────────── */
-.up-tag {
-  display: inline-block;
-  padding: 4px 8px;
-  border-radius: var(--radius-sm);
-  font-size: var(--text-sm);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
 
 .tag-facility {
   background: #e0f2fe;

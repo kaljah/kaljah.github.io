@@ -8,7 +8,7 @@ import { PROCESS_TYPES, factorTypeLabel } from "./shared";
 
 // Extracted from Scope1Form.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const Scope1History = ({ currentPage, entries, exportToCSV, facetYears, filterProcess, filterSearch, filterYear, handleDelete, handleInspect, loading, setCurrentPage, setFilterProcess, setFilterSearch, setFilterYear, setImportModal, setShowUncertainty, showUncertainty, toast, totalPages }) => (
-<div className="calculator-grid-container mt-[30px]!">
+<div className="calculator-grid-container [background:white]! [border-radius:var(--radius-md)]! [overflow:hidden]! [box-shadow:var(--shadow-xs)]! mt-[30px]!">
         {/* Filter bar */}
         <div
           className="flex! gap-[10px]! flex-wrap! items-center! mb-[14px]!"

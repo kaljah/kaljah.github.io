@@ -300,7 +300,7 @@ const Login = () => {
               </div>
 
               {forgotMsg.text && (
-                <div className={`forgot-status-msg ${forgotMsg.type}`}>
+                <div className={`[padding:12px_16px]! [border-radius:var(--radius-md)]! [font-size:var(--text-base)]! [margin-bottom:18px]! [line-height:1.4]! [&.success]:[background:var(--color-green-50)]! [&.success]:[color:#065f46]! [&.success]:[border:1px_solid_#a7f3d0]! [&.error]:[background:var(--color-red-50)]! [&.error]:[color:#991b1b]! [&.error]:[border:1px_solid_#fecaca]! ${forgotMsg.type}`}>
                   {forgotMsg.text}
                 </div>
               )}

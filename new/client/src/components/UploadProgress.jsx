@@ -229,7 +229,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
         <div className="[background:var(--color-white)]! [border-radius:var(--radius-md)]! [padding:24px]! [border:1px_solid_var(--color-ink-200)]! [box-shadow:var(--shadow-xs)]!">
           {/* Summary cards */}
           <div className="[display:grid]! [grid-template-columns:repeat(auto-fit,_minmax(200px,_1fr))] [gap:16px] [margin-bottom:24px]!">
-            <div className="up-card [&_.up-card-icon]:[background:#dcfce7]! [&_.up-card-icon]:[color:var(--color-green-700)]!">
+            <div className="[display:flex]! [align-items:center] [gap:16px] [padding:20px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--color-ink-200)]! [background:var(--color-ink-50)]! [&_.up-card-icon]:[background:#dcfce7]! [&_.up-card-icon]:[color:var(--color-green-700)]!">
               <div className="up-card-icon [width:48px]! [height:48px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [&_svg]:[width:24px]! [&_svg]:[height:24px]!">
                 <IconCheck />
               </div>
@@ -239,7 +239,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
               </div>
             </div>
             <div
-              className={`up-card ${skippedCount > 0 ? "[&_.up-card-icon]:[background:#fef3c7]! [&_.up-card-icon]:[color:var(--color-amber-700)]!" : "[&_.up-card-icon]:[background:var(--color-brand-50)]! [&_.up-card-icon]:[color:var(--color-link)]!"}`}
+              className={`[display:flex]! [align-items:center]! [gap:16px]! [padding:20px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--color-ink-200)]! [background:var(--color-ink-50)]! ${skippedCount > 0 ? "[&_.up-card-icon]:[background:#fef3c7]! [&_.up-card-icon]:[color:var(--color-amber-700)]!" : "[&_.up-card-icon]:[background:var(--color-brand-50)]! [&_.up-card-icon]:[color:var(--color-link)]!"}`}
             >
               <div className="up-card-icon [width:48px]! [height:48px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [&_svg]:[width:24px]! [&_svg]:[height:24px]!">
                 <IconWarn />
@@ -249,7 +249,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
                 <p className="[font-size:var(--text-base)]! [color:var(--color-ink-500)]! [margin:0]! [font-weight:500]!">Rows Skipped</p>
               </div>
             </div>
-            <div className="up-card [&_.up-card-icon]:[background:var(--color-brand-50)]! [&_.up-card-icon]:[color:var(--color-link)]!">
+            <div className="[display:flex]! [align-items:center] [gap:16px] [padding:20px]! [border-radius:var(--radius-md)]! [border:1px_solid_var(--color-ink-200)]! [background:var(--color-ink-50)]! [&_.up-card-icon]:[background:var(--color-brand-50)]! [&_.up-card-icon]:[color:var(--color-link)]!">
               <div className="up-card-icon [width:48px]! [height:48px]! [border-radius:var(--radius-md)]! [display:flex]! [align-items:center] [justify-content:center] [&_svg]:[width:24px]! [&_svg]:[height:24px]!">
                 <IconCheck />
               </div>
@@ -296,7 +296,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
                       {categories.map((cat) => (
                         <button
                           key={cat}
-                          className={`up-pill ${filterCategory === cat ? "active" : ""}`}
+                          className={`[padding:6px_12px]! [border-radius:var(--radius-lg)]! [border:1px_solid_var(--color-ink-200)]! [background:var(--color-white)]! [font-size:var(--text-sm)]! [font-weight:500]! [color:var(--color-ink-500)]! [cursor:pointer]! [transition:all_0.2s]! hover:[border-color:var(--color-ink-300)]! hover:[color:var(--color-ink-700)]! [&.active]:[background:#fef3c7]! [&.active]:[border-color:var(--color-amber-500)]! [&.active]:[color:var(--color-amber-700)]! ${filterCategory === cat ? "active" : ""}`}
                           onClick={() => setFilterCategory(cat)}
                         >
                           {cat === "all"
@@ -330,7 +330,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
                             <tr key={i}>
                               <td className="[font-family:monospace]! [color:var(--color-ink-600)]! [font-weight:500]! [width:60px]!">{row.row}</td>
                               <td>
-                                <span className={`up-tag ${cat.cls}`}>
+                                <span className={`[display:inline-block]! [padding:4px_8px]! [border-radius:var(--radius-sm)]! [font-size:var(--text-sm)]! [font-weight:600]! [text-transform:uppercase]! [letter-spacing:0.05em]! ${cat.cls}`}>
                                   {cat.label}
                                 </span>
                               </td>
