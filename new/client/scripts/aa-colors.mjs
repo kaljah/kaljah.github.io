@@ -23,6 +23,7 @@ const TEXT = {
   "var(--color-violet-500)": "var(--color-violet-700)",
   "var(--color-brand-500)": "var(--color-brand-700)",
   "var(--color-brand-600)": "var(--color-brand-700)",
+  "var(--color-sky-600)": "var(--color-blue-700)",
 };
 const FILL = {
   "var(--color-green-500)": "var(--color-green-700)",
