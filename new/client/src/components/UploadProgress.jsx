@@ -1,116 +1,172 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { ArrowRight, CircleAlert, CircleCheck, ChevronRight, Download, Loader, TriangleAlert, XCircle } from "lucide-react";
+import { Badge, Banner, Button, Card } from "../ui";
+import { cn } from "../ui/cn";
 import { useAuth } from "../context/AuthContext";
 import api from "../api";
 import { useToast } from "./Toast";
-import "./UploadProgress.css";
 
-/* ── Inline SVG icons (no emoji, no lucide dep needed here) ── */
-const Spinner = () => (
-  <svg
-    className="[width:32px] [height:32px] [color:var(--color-link)] [animation:up-spin_1s_linear_infinite]"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2.5"
-    strokeLinecap="round"
-  >
-    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
-  </svg>
-);
-const IconCheck = () => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-    <polyline points="22 4 12 14.01 9 11.01" />
-  </svg>
-);
-const IconWarn = () => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-    <line x1="12" y1="9" x2="12" y2="13" />
-    <line x1="12" y1="17" x2="12.01" y2="17" />
-  </svg>
-);
-const IconX = () => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <circle cx="12" cy="12" r="10" />
-    <line x1="15" y1="9" x2="9" y2="15" />
-    <line x1="9" y1="9" x2="15" y2="15" />
-  </svg>
-);
-const IconDownload = () => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-    <polyline points="7 10 12 15 17 10" />
-    <line x1="12" y1="15" x2="12" y2="3" />
-  </svg>
-);
-const IconChevron = ({ open }) => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    style={{
-      width: 16,
-      height: 16,
-      flexShrink: 0,
-      transform: open ? "rotate(90deg)" : "none",
-      transition: "transform 0.2s",
-    }}
-  >
-    <polyline points="9 18 15 12 9 6" />
-  </svg>
-);
+/* Skipped-row reasons are bucketed into categories so a long list can be filtered. */
+const CATEGORIES = [
+  { test: (r) => r.includes("duplicate"), label: "Duplicate", tone: "warning" },
+  { test: (r) => r.includes("access denied") || r.includes("permission"), label: "Access Denied", tone: "danger" },
+  { test: (r) => r.includes("facility") || r.includes("region"), label: "Region", tone: "info" },
+  { test: (r) => r.includes("date") || r.includes("year"), label: "Date", tone: "info" },
+  { test: (r) => r.includes("factor"), label: "Factor", tone: "brand" },
+  { test: (r) => r.includes("quantity"), label: "Quantity", tone: "neutral" },
+  { test: (r) => r.includes("process"), label: "Process", tone: "neutral" },
+  { test: (r) => r.includes("calculation"), label: "Calculation", tone: "brand" },
+];
 
-/* ── Reason tag colour coding ─────────────────────────────── */
 function categoryFromReason(reason = "") {
   const r = reason.toLowerCase();
-  if (r.includes("duplicate")) return { label: "Duplicate", cls: "tag-duplicate" };
-  if (r.includes("access denied") || r.includes("permission")) return { label: "Access Denied", cls: "tag-access" };
-  if (r.includes("facility") || r.includes("region")) return { label: "Region", cls: "tag-facility" };
-  if (r.includes("date") || r.includes("year"))
-    return { label: "Date", cls: "tag-date" };
-  if (r.includes("factor") || r.includes("emission factor"))
-    return { label: "Factor", cls: "tag-factor" };
-  if (r.includes("quantity")) return { label: "Quantity", cls: "tag-quantity" };
-  if (r.includes("process")) return { label: "Process", cls: "tag-process" };
-  if (r.includes("calculation"))
-    return { label: "Calculation", cls: "tag-calc" };
-  return { label: "Other", cls: "tag-other" };
+  return CATEGORIES.find((c) => c.test(r)) ?? { label: "Other", tone: "neutral" };
 }
 
-/* ── Main component ──────────────────────────────────────── */
+const th = "sticky top-0 whitespace-nowrap border-b border-border bg-ink-50 px-3 py-2 text-left text-xs font-bold uppercase tracking-wide text-text-secondary";
+const td = "max-w-[120px] truncate border-b border-ink-100 px-3 py-2 text-text-secondary";
+const mono = "text-center font-mono font-semibold text-ink-700";
+
+const Table = ({ head, children }) => (
+  <div className="max-h-[400px] overflow-auto">
+    <table className="w-full border-collapse text-sm">
+      <thead>
+        <tr>
+          {head.map((h) => (
+            <th key={h} scope="col" className={th}>
+              {h}
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>{children}</tbody>
+    </table>
+  </div>
+);
+
+const Stat = ({ icon: Icon, value, label, tone }) => (
+  <div className="flex items-center gap-4 rounded-md border border-border bg-ink-50 p-5">
+    <span className={cn("flex size-12 shrink-0 items-center justify-center rounded-md bg-ink-100 text-text-secondary", tone === "success" && "bg-success-bg text-success-fg", tone === "warning" && "bg-warning-bg text-warning-fg")}>
+      <Icon className="size-6" aria-hidden="true" />
+    </span>
+    <div>
+      <p className="m-0 text-xl font-bold leading-none tabular-nums text-text">{value.toLocaleString()}</p>
+      <p className="m-0 mt-0.5 text-base font-medium text-text-secondary">{label}</p>
+    </div>
+  </div>
+);
+
+const Disclosure = ({ open, onToggle, children, className }) => (
+  <button
+    type="button"
+    aria-expanded={open}
+    onClick={onToggle}
+    className={cn("flex flex-1 cursor-pointer items-center gap-2 border-0 bg-transparent px-4 py-3 text-left text-base font-semibold hover:bg-ink-100", className)}
+  >
+    <ChevronRight className={cn("size-4 shrink-0 transition-transform", open && "rotate-90")} aria-hidden="true" />
+    {children}
+  </button>
+);
+
+const SkippedRows = ({ skippedCount, skippedPreview, hasErrorCsv, onDownload }) => {
+  const [open, setOpen] = useState(false);
+  const [filter, setFilter] = useState("all");
+  const labels = ["all", ...new Set(skippedPreview.map((r) => categoryFromReason(r.reason).label))];
+  const rows = filter === "all" ? skippedPreview : skippedPreview.filter((r) => categoryFromReason(r.reason).label === filter);
+
+  return (
+    <div className="mb-6 overflow-hidden rounded-md border border-border">
+      <div className="flex w-full items-center bg-ink-50">
+        <Disclosure open={open} onToggle={() => setOpen((v) => !v)} className="text-text">
+          <span>
+            {skippedCount.toLocaleString()} rows skipped — click to see reasons
+            {skippedCount > 100 && " (showing first 100)"}
+          </span>
+        </Disclosure>
+        {hasErrorCsv && (
+          <Button variant="secondary" size="sm" className="mr-3" onClick={onDownload}>
+            <Download className="size-4" aria-hidden="true" /> Download full CSV
+          </Button>
+        )}
+      </div>
+      {open && (
+        <div className="bg-surface">
+          {labels.length > 2 && (
+            <div className="flex flex-wrap gap-2 border-b border-border bg-ink-50 px-5 py-4">
+              {labels.map((label) => (
+                <Button key={label} size="sm" variant={filter === label ? "primary" : "secondary"} aria-pressed={filter === label} onClick={() => setFilter(label)}>
+                  {label === "all" ? `All (${skippedPreview.length})` : label}
+                </Button>
+              ))}
+            </div>
+          )}
+          <Table head={["Row #", "Category", "Reason", "Year", "Month", "Facility", "Process", "Fuel", "Quantity"]}>
+            {rows.map((row, i) => {
+              const cat = categoryFromReason(row.reason);
+              return (
+                <tr key={i} className="hover:bg-ink-50">
+                  <td className={cn(td, "w-[60px] font-mono")}>{row.row}</td>
+                  <td className={td}>
+                    <Badge tone={cat.tone}>{cat.label}</Badge>
+                  </td>
+                  <td className={cn(td, "max-w-[250px] whitespace-normal font-medium leading-snug text-danger-fg")}>{row.reason}</td>
+                  <td className={cn(td, mono)}>{row.year || (row.date ? row.date.split("-")[0] : "—")}</td>
+                  <td className={cn(td, mono)}>{row.month || (row.date ? row.date.split("-")[1] : "—")}</td>
+                  <td className={td}>{row.facility || "—"}</td>
+                  <td className={td}>{row.process || "—"}</td>
+                  <td className={td}>{row.fuel || "—"}</td>
+                  <td className={td}>{row.quantity || "—"}</td>
+                </tr>
+              );
+            })}
+            {rows.length === 0 && (
+              <tr>
+                <td colSpan={9} className="p-8 text-center text-text-secondary">
+                  No rows match this filter.
+                </td>
+              </tr>
+            )}
+          </Table>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const Anomalies = ({ anomalies, count }) => {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="mb-6 overflow-hidden rounded-md border border-amber-500/30 bg-warning-bg">
+      <Disclosure open={open} onToggle={() => setOpen((v) => !v)} className="w-full text-warning-fg hover:bg-amber-100/60">
+        <TriangleAlert className="size-4 shrink-0" aria-hidden="true" />
+        <span className="flex-1">
+          {count} statistical anomaly{count !== 1 ? "s" : ""} detected — click to review
+        </span>
+      </Disclosure>
+      {open && (
+        <div className="border-t border-amber-500/30 p-4">
+          <p className="m-0 mb-3 text-base leading-snug text-warning-fg">
+            These rows were imported but deviate significantly from historical values for the same facility and process type. Please review them carefully before approving.
+          </p>
+          <Table head={["Row #", "Facility", "Value (tCO2e)", "Z-Score", "Expected Range", "Details"]}>
+            {anomalies.map((a, i) => (
+              <tr key={i} className="bg-surface/60">
+                <td className={cn(td, "w-[60px] font-mono")}>{a.row}</td>
+                <td className={td}>{a.facility_id || "—"}</td>
+                <td className={cn(td, "font-semibold text-warning-fg")}>{typeof a.value === "number" ? a.value.toFixed(2) : a.value}</td>
+                <td className={td}>{a.z_score != null ? `±${Math.abs(a.z_score).toFixed(1)}σ` : "—"}</td>
+                <td className={td}>{a.expected_range ? `${a.expected_range[0].toFixed(1)} – ${a.expected_range[1].toFixed(1)}` : "—"}</td>
+                <td className={cn(td, "max-w-[250px] whitespace-normal text-xs font-medium leading-snug text-danger-fg")}>{a.message || "Statistical outlier"}</td>
+              </tr>
+            ))}
+          </Table>
+        </div>
+      )}
+    </div>
+  );
+};
+
 // reviewable: the import creates emission records that wait for approval (Scope 1 / 2 / 3)
 const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
   const navigate = useNavigate();
@@ -126,11 +182,8 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
   const [skippedCount, setSkippedCount] = useState(0);
   const [skippedPreview, setSkippedPreview] = useState([]);
   const [hasErrorCsv, setHasErrorCsv] = useState(false);
-  const [showReasons, setShowReasons] = useState(false);
-  const [filterCategory, setFilterCategory] = useState("all");
   const [anomalyCount, setAnomalyCount] = useState(0);
   const [anomalies, setAnomalies] = useState([]);
-  const [showAnomalies, setShowAnomalies] = useState(false);
 
   useEffect(() => {
     if (!jobId) return;
@@ -148,9 +201,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
         setHasErrorCsv(!!(data.has_error_csv ?? data.error_csv_path));
         setAnomalyCount(data.anomaly_count || 0);
         setAnomalies(data.anomalies || []);
-        if (data.status === "completed" || data.status === "error") {
-          clearInterval(interval);
-        }
+        if (data.status === "completed" || data.status === "error") clearInterval(interval);
       } catch (err) {
         console.error("Upload status poll failed", err);
       }
@@ -160,9 +211,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
 
   const downloadErrors = async () => {
     try {
-      const res = await api.get(`/emissions/upload/errors/${jobId}`, {
-        responseType: "blob",
-      });
+      const res = await api.get(`/emissions/upload/errors/${jobId}`, { responseType: "blob" });
       const url = URL.createObjectURL(new Blob([res.data]));
       const a = document.createElement("a");
       a.href = url;
@@ -175,330 +224,95 @@ const UploadProgress = ({ jobId, onComplete, onCancel, reviewable = true }) => {
     }
   };
 
-  /* ── categories present in this batch ── */
-  const categories = [
-    "all",
-    ...new Set(skippedPreview.map((r) => categoryFromReason(r.reason).label)),
-  ];
-
-  const filtered =
-    filterCategory === "all"
-      ? skippedPreview
-      : skippedPreview.filter(
-          (r) => categoryFromReason(r.reason).label === filterCategory,
-        );
-
-  const successCount = processed - skippedCount;
+  const done = () => onComplete?.();
 
   return (
-    <div className="[width:100%] [max-width:900px] [margin:0_auto] [font-family:inherit] [color:var(--color-ink-800)] [animation:up-fade-in_0.25s_ease-out]">
-      {/* ── PROCESSING ── */}
+    <div className="mx-auto w-full max-w-[900px] text-text">
       {status === "processing" && (
-        <div className="[background:var(--color-white)] [border-radius:var(--radius-md)] [padding:24px] [border:1px_solid_var(--color-ink-200)] [box-shadow:var(--shadow-xs)]">
-          <div className="[display:flex] [align-items:center] [gap:16px] [margin-bottom:24px]">
-            <Spinner />
+        <Card>
+          <div className="mb-6 flex items-center gap-4">
+            <Loader className="size-8 shrink-0 animate-spin text-brand-700" aria-hidden="true" />
             <div>
-              <p className="[font-size:var(--text-md)] [font-weight:600] [margin:0_0_4px_0] [color:var(--color-ink-900)]">Processing your file…</p>
-              <p className="[font-size:var(--text-base)] [color:var(--color-ink-500)] [margin:0]">
-                Large files may take several minutes. You can safely leave this
-                page.
-              </p>
+              <p className="m-0 mb-1 text-md font-semibold text-text">Processing your file…</p>
+              <p className="m-0 text-base text-text-secondary">Large files may take several minutes. You can safely leave this page.</p>
             </div>
           </div>
-          <div className="[width:100%] [height:8px] [background:var(--color-ink-100)] [border-radius:var(--radius-sm)] [overflow:hidden] [margin-bottom:12px]">
-            <div className="[height:100%] [background:linear-gradient(90deg,_var(--color-brand-500)_0%,_var(--color-brand-400)_100%)] [border-radius:var(--radius-sm)] [transition:width_0.4s_ease-out] [box-shadow:0_0_8px_rgba(255,_102,_0,_0.35)]" style={{ width: `${progress}%` }} />
+          <div role="progressbar" aria-label="Import progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress} className="mb-3 h-2 w-full overflow-hidden rounded-sm bg-ink-100">
+            <div className="h-full rounded-sm bg-brand-500 transition-[width] duration-300 ease-out" style={{ width: `${progress}%` }} />
           </div>
-          <div className="[display:flex] [justify-content:space-between] [font-size:var(--text-base)] [color:var(--color-ink-600)] [font-weight:500]">
-            <span className="[color:var(--color-link)] [font-weight:600]">{progress}%</span>
-            <span className="up-rows">
+          <div className="flex justify-between text-base font-medium text-text-secondary">
+            <span className="font-semibold text-brand-700">{progress}%</span>
+            <span>
               {processed.toLocaleString()} rows processed
               {total > 0 ? ` of ~${total.toLocaleString()}` : ""}
             </span>
           </div>
           {skippedCount > 0 && (
-            <div className="[margin-top:16px] [padding:12px_16px] [background:var(--color-amber-50)] [border:1px_solid_#fef3c7] [&&]:[border-radius:var(--radius-md)] [display:flex] [align-items:center] [gap:8px] [color:var(--color-amber-700)] [font-size:var(--text-base)] [font-weight:500] [animation:up-fade-in_0.3s_ease] [&_svg]:[width:18px] [&_svg]:[height:18px]">
-              <IconWarn />
-              <span>{skippedCount.toLocaleString()} rows skipped so far</span>
-            </div>
+            <Banner tone="warning" className="mt-4">
+              {skippedCount.toLocaleString()} rows skipped so far
+            </Banner>
           )}
-        </div>
+        </Card>
       )}
 
-      {/* ── COMPLETED ── */}
       {status === "completed" && (
-        <div className="[background:var(--color-white)] [border-radius:var(--radius-md)] [padding:24px] [border:1px_solid_var(--color-ink-200)] [box-shadow:var(--shadow-xs)]">
-          {/* Summary cards */}
-          <div className="[display:grid] [grid-template-columns:repeat(auto-fit,_minmax(200px,_1fr))] [gap:16px] [margin-bottom:24px]">
-            <div className="[display:flex] [align-items:center] [gap:16px] [padding:20px] [border-radius:var(--radius-md)] [border:1px_solid_var(--color-ink-200)] [background:var(--color-ink-50)] [&_.up-card-icon]:[background:#dcfce7] [&_.up-card-icon]:[color:var(--color-green-700)]">
-              <div className="up-card-icon [width:48px] [height:48px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [&_svg]:[width:24px] [&_svg]:[height:24px]">
-                <IconCheck />
-              </div>
-              <div>
-                <p className="[font-size:var(--text-xl)] [font-weight:700] [margin:0_0_2px_0] [color:var(--color-ink-900)] [line-height:1]">{successCount.toLocaleString()}</p>
-                <p className="[font-size:var(--text-base)] [color:var(--color-ink-500)] [margin:0] [font-weight:500]">Rows Imported</p>
-              </div>
-            </div>
-            <div
-              className={`[display:flex] [align-items:center] [gap:16px] [padding:20px] [border-radius:var(--radius-md)] [border:1px_solid_var(--color-ink-200)] [background:var(--color-ink-50)] ${skippedCount > 0 ? "[&_.up-card-icon]:[background:#fef3c7] [&_.up-card-icon]:[color:var(--color-amber-700)]" : "up-card--neutral"}`}
-            >
-              <div className="up-card-icon [width:48px] [height:48px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [&_svg]:[width:24px] [&_svg]:[height:24px]">
-                <IconWarn />
-              </div>
-              <div>
-                <p className="[font-size:var(--text-xl)] [font-weight:700] [margin:0_0_2px_0] [color:var(--color-ink-900)] [line-height:1]">{skippedCount.toLocaleString()}</p>
-                <p className="[font-size:var(--text-base)] [color:var(--color-ink-500)] [margin:0] [font-weight:500]">Rows Skipped</p>
-              </div>
-            </div>
-            <div className="[display:flex] [align-items:center] [gap:16px] [padding:20px] [border-radius:var(--radius-md)] [border:1px_solid_var(--color-ink-200)] [background:var(--color-ink-50)] up-card--neutral">
-              <div className="up-card-icon [width:48px] [height:48px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [&_svg]:[width:24px] [&_svg]:[height:24px]">
-                <IconCheck />
-              </div>
-              <div>
-                <p className="[font-size:var(--text-xl)] [font-weight:700] [margin:0_0_2px_0] [color:var(--color-ink-900)] [line-height:1]">{processed.toLocaleString()}</p>
-                <p className="[font-size:var(--text-base)] [color:var(--color-ink-500)] [margin:0] [font-weight:500]">Total Processed</p>
-              </div>
-            </div>
+        <Card>
+          <div className="mb-6 grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(200px,1fr))]">
+            <Stat icon={CircleCheck} tone="success" value={processed - skippedCount} label="Rows Imported" />
+            <Stat icon={TriangleAlert} tone={skippedCount > 0 ? "warning" : undefined} value={skippedCount} label="Rows Skipped" />
+            <Stat icon={CircleCheck} value={processed} label="Total Processed" />
           </div>
 
-          {/* Skipped reasons panel */}
-          {skippedCount > 0 && (
-            <div className="up-skip-panel">
-              <div className="[display:flex] [align-items:center] [width:100%] [background:var(--color-ink-50)] [border-bottom:1px_solid_transparent]">
-                <button
-                  className="up-skip-toggle"
-                  onClick={() => setShowReasons((v) => !v)}
-                >
-                  <IconChevron open={showReasons} />
-                  <span>
-                    {skippedCount.toLocaleString()} rows skipped — click to see
-                    reasons
-                    {skippedCount > 100 && " (showing first 100)"}
-                  </span>
-                </button>
-                {hasErrorCsv && (
-                  <button
-                    className="up-dl-btn"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      downloadErrors();
-                    }}
-                  >
-                    <IconDownload /> Download full CSV
-                  </button>
-                )}
-              </div>
+          {skippedCount > 0 && <SkippedRows skippedCount={skippedCount} skippedPreview={skippedPreview} hasErrorCsv={hasErrorCsv} onDownload={downloadErrors} />}
+          {anomalyCount > 0 && <Anomalies anomalies={anomalies} count={anomalyCount} />}
 
-              {showReasons && (
-                <div className="up-reasons-body [background:var(--color-white)] [padding:0]">
-                  {/* Category filter pills */}
-                  {categories.length > 2 && (
-                    <div className="[display:flex] [flex-wrap:wrap] [gap:8px] [padding:16px_20px] [border-bottom:1px_solid_var(--color-ink-200)] [background:#fafaf9]">
-                      {categories.map((cat) => (
-                        <button
-                          key={cat}
-                          className={`up-pill ${filterCategory === cat ? "active" : ""}`}
-                          onClick={() => setFilterCategory(cat)}
-                        >
-                          {cat === "all"
-                            ? `All (${skippedPreview.length})`
-                            : cat}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Reasons table */}
-                  <div className="[max-height:400px] [overflow:auto]">
-                    <table className="up-reasons-table">
-                      <thead>
-                        <tr>
-                          <th>Row #</th>
-                          <th>Category</th>
-                          <th>Reason</th>
-                          <th>Year</th>
-                          <th>Month</th>
-                          <th>Facility</th>
-                          <th>Process</th>
-                          <th>Fuel</th>
-                          <th>Quantity</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {filtered.map((row, i) => {
-                          const cat = categoryFromReason(row.reason);
-                          return (
-                            <tr key={i}>
-                              <td className="[font-family:monospace] [color:var(--color-ink-600)] [font-weight:500] [width:60px]">{row.row}</td>
-                              <td>
-                                <span className={`up-tag ${cat.cls}`}>
-                                  {cat.label}
-                                </span>
-                              </td>
-                              <td className="[font-weight:500] [color:var(--color-red-700)] [max-width:250px] [line-height:1.4]">{row.reason}</td>
-                              <td className="[&&]:[color:var(--color-ink-500)] [max-width:120px] [white-space:nowrap] [overflow:hidden] [&&]:[text-overflow:ellipsis] [font-family:monospace] [font-weight:600] [color:var(--color-ink-700)] [width:52px] [text-align:center]">
-                                {row.year || (row.date ? row.date.split("-")[0] : "—")}
-                              </td>
-                              <td className="[&&]:[color:var(--color-ink-500)] [max-width:120px] [white-space:nowrap] [overflow:hidden] [&&]:[text-overflow:ellipsis] [font-family:monospace] [font-weight:600] [color:var(--color-ink-700)] [width:52px] [text-align:center]">
-                                {row.month || (row.date ? row.date.split("-")[1] : "—")}
-                              </td>
-                              <td className="[color:var(--color-ink-500)] [max-width:120px] [white-space:nowrap] [overflow:hidden] [text-overflow:ellipsis]">
-                                {row.facility || "—"}
-                              </td>
-                              <td className="[color:var(--color-ink-500)] [max-width:120px] [white-space:nowrap] [overflow:hidden] [text-overflow:ellipsis]">
-                                {row.process || "—"}
-                              </td>
-                              <td className="[color:var(--color-ink-500)] [max-width:120px] [white-space:nowrap] [overflow:hidden] [text-overflow:ellipsis]">{row.fuel || "—"}</td>
-                              <td className="[color:var(--color-ink-500)] [max-width:120px] [white-space:nowrap] [overflow:hidden] [text-overflow:ellipsis]">
-                                {row.quantity || "—"}
-                              </td>
-                            </tr>
-                          );
-                        })}
-                        {filtered.length === 0 && (
-                          <tr>
-                            <td colSpan={9} className="[text-align:center] [padding:32px]! [color:var(--color-ink-600)]">
-                              No rows match this filter.
-                            </td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* ── Anomaly Warnings Panel ── */}
-          {anomalyCount > 0 && (
-            <div className="[background:#fefce8] [border:1px_solid_#fef08a] [&&]:[border-radius:var(--radius-md)] [margin-bottom:24px] [overflow:hidden]">
-              <button
-                className="up-anomaly-toggle"
-                onClick={() => setShowAnomalies((v) => !v)}
-              >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-[16px]! h-[16px]! shrink-0!">
-                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-                  <line x1="12" y1="9" x2="12" y2="13"/>
-                  <line x1="12" y1="17" x2="12.01" y2="17"/>
-                </svg>
-                <span>
-                  {anomalyCount} statistical anomaly{anomalyCount !== 1 ? "s" : ""} detected — click to review
-                </span>
-                <IconChevron open={showAnomalies} />
-              </button>
-              {showAnomalies && (
-                <div className="[padding:16px] [border-top:1px_solid_#fef08a]">
-                  <p className="[font-size:var(--text-base)] [color:#713f12] [margin:0_0_12px_0] [line-height:1.4]">
-                    These rows were imported but deviate significantly from historical values for the same facility and process type.
-                    Please review them carefully before approving.
-                  </p>
-                  <div className="[max-height:400px] [overflow:auto]">
-                    <table className="up-reasons-table">
-                      <thead>
-                        <tr>
-                          <th>Row #</th>
-                          <th>Facility</th>
-                          <th>Value (tCO2e)</th>
-                          <th>Z-Score</th>
-                          <th>Expected Range</th>
-                          <th>Details</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {anomalies.map((a, i) => (
-                          <tr key={i} className="[background:var(--color-amber-50)]! hover:[background:#fef3c7]!">
-                            <td className="[font-family:monospace] [color:var(--color-ink-600)] [font-weight:500] [width:60px]">{a.row}</td>
-                            <td className="[color:var(--color-ink-500)] [max-width:120px] [white-space:nowrap] [overflow:hidden] [text-overflow:ellipsis]">{a.facility_id || "—"}</td>
-                            <td className="[max-width:120px] [white-space:nowrap] [overflow:hidden] [text-overflow:ellipsis] text-[color:var(--up-warn)]!">
-                              {typeof a.value === "number" ? a.value.toFixed(2) : a.value}
-                            </td>
-                            <td className="[color:var(--color-ink-500)] [max-width:120px] [white-space:nowrap] [overflow:hidden] [text-overflow:ellipsis]">
-                              {a.z_score != null ? `±${Math.abs(a.z_score).toFixed(1)}σ` : "—"}
-                            </td>
-                            <td className="[color:var(--color-ink-500)] [max-width:120px] [white-space:nowrap] [overflow:hidden] [text-overflow:ellipsis]">
-                              {a.expected_range
-                                ? `${a.expected_range[0].toFixed(1)} – ${a.expected_range[1].toFixed(1)}`
-                                : "—"}
-                            </td>
-                            <td className="[font-weight:500] [color:var(--color-red-700)] [max-width:250px] [line-height:1.4] text-[length:0.75rem]!">
-                              {a.message || "Statistical outlier"}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          <div className="[display:flex] [align-items:center] [justify-content:flex-end] [gap:12px] [margin-top:24px]">
+          <div className="mt-6 flex items-center justify-end gap-3">
             {isReviewer ? (
               <>
-                <button
-                  type="button"
-                  className="up-btn-ghost"
-                  onClick={() => {
-                    if (onComplete) onComplete();
-                  }}
-                >
+                <Button variant="secondary" onClick={done}>
                   Close
-                </button>
+                </Button>
                 {reviewable && (
-                  <button
-                    type="button"
-                    className="up-btn-primary"
+                  <Button
                     onClick={() => {
-                      if (onComplete) onComplete();
+                      done();
                       navigate("/manage-data", { state: { tab: "pending" } });
                     }}
                   >
-                    Review Pending Records →
-                  </button>
+                    Review Pending Records <ArrowRight className="size-4" aria-hidden="true" />
+                  </Button>
                 )}
               </>
             ) : (
-              <button
-                type="button"
-                className="up-btn-primary"
-                onClick={() => {
-                  if (onComplete) onComplete();
-                }}
-              >
-                Close & View Inventory
-              </button>
+              <Button onClick={done}>Close & View Inventory</Button>
             )}
           </div>
-        </div>
+        </Card>
       )}
 
-      {/* ── FATAL ERROR ── */}
       {status === "error" && (
-        <div className="[background:var(--color-white)] [border-radius:var(--radius-md)] [padding:24px] [border:1px_solid_var(--color-ink-200)] [box-shadow:var(--shadow-xs)]">
-          <div className="[display:flex] [align-items:flex-start] [gap:16px] [margin-bottom:20px]">
-            <div className="[width:40px] [height:40px] [border-radius:50%] [background:#fee2e2] [color:var(--color-red-700)] [display:flex] [align-items:center] [justify-content:center] [&_svg]:[width:24px] [&_svg]:[height:24px]">
-              <IconX />
-            </div>
+        <Card>
+          <div className="mb-5 flex items-start gap-4">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-danger-bg text-danger-fg">
+              <XCircle className="size-6" aria-hidden="true" />
+            </span>
             <div>
-              <p className="[font-size:var(--text-md)] [font-weight:600] [margin:0_0_4px_0] [color:var(--color-ink-900)] [&&]:[color:var(--color-red-700)]">Upload Failed</p>
-              <p className="[font-size:var(--text-base)] [color:var(--color-ink-500)] [margin:0]">
-                A fatal error occurred while processing the file.
-              </p>
+              <p className="m-0 mb-1 text-md font-semibold text-danger-fg">Upload Failed</p>
+              <p className="m-0 text-base text-text-secondary">A fatal error occurred while processing the file.</p>
             </div>
           </div>
-          <div className="[background:var(--color-ink-50)] [border:1px_solid_var(--color-ink-200)] [&&]:[border-radius:var(--radius-md)] [padding:16px] [margin-bottom:24px] [max-height:200px] [overflow-y:auto] [font-family:monospace] [font-size:var(--text-sm)] [color:var(--color-ink-700)]">
+          <div role="alert" className="mb-6 max-h-[200px] overflow-y-auto rounded-md border border-border bg-ink-50 p-4 font-mono text-sm text-ink-700">
             {errors.map((e, i) => (
-              <div key={i} className="[display:flex] [align-items:flex-start] [gap:8px] [margin-bottom:8px] [line-height:1.4] last:[margin-bottom:0]">
-                <span className="[width:6px] [height:6px] [border-radius:50%] [background:var(--color-red-600)] [margin-top:6px] [flex-shrink:0]" />
+              <div key={i} className="mb-2 flex items-start gap-2 leading-snug last:mb-0">
+                <CircleAlert className="mt-0.5 size-3.5 shrink-0 text-danger-fg" aria-hidden="true" />
                 {e}
               </div>
             ))}
           </div>
-          <button className="up-btn-ghost" onClick={onCancel}>
+          <Button variant="secondary" onClick={onCancel}>
             Go Back
-          </button>
-        </div>
+          </Button>
+        </Card>
       )}
     </div>
   );
