@@ -19,11 +19,11 @@ export class DashboardPage {
     this.exportPdfButton = page.locator('button:has-text("Export Executive Brief")');
 
     // Key Performance Indicators (KPIs)
-    this.grossEmissionsValue = page.locator('.stat-item:has-text("Gross Operational Emissions") .stat-value');
-    this.netEmissionsValue = page.locator('.stat-item:has-text("Net Emissions") .stat-value');
-    this.methaneValue = page.locator('.stat-item:has-text("Total CH4") .stat-value');
-    this.intensityValue = page.locator('.stat-item:has-text("Performance Intensity") .stat-value');
-    this.mitigationLabel = page.locator('.stat-item:has-text("Net Emissions") .stat-sublabel');
+    this.grossEmissionsValue = page.locator('[data-testid="kpi-gross"] [data-testid="kpi-value"]');
+    this.netEmissionsValue = page.locator('[data-testid="kpi-net"] [data-testid="kpi-value"]');
+    this.methaneValue = page.locator('[data-testid="kpi-ch4"] [data-testid="kpi-value"]');
+    this.intensityValue = page.locator('[data-testid="kpi-intensity"] [data-testid="kpi-value"]');
+    this.mitigationLabel = page.locator('[data-testid="kpi-net"] [data-testid="kpi-footnote"]');
 
     // GWP Horizon Toggles
     this.gwp100Btn = page.locator('button:has-text("GWP-100")');

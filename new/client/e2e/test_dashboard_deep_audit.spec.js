@@ -69,9 +69,9 @@ test.describe('Dashboard Page Deep Audit', () => {
     await expect(page.locator('.live-badge')).toBeVisible();
 
     // Verify Hero Card Stats
-    const grossEmissionsText = await page.locator('.stat-item:has-text("Gross Operational Emissions") .stat-value').innerText();
-    const netEmissionsText = await page.locator('.stat-item:has-text("Net Emissions") .stat-value').innerText();
-    const methaneText = await page.locator('.stat-item:has-text("Total CH4") .stat-value').innerText();
+    const grossEmissionsText = await page.locator('[data-testid="kpi-gross"] [data-testid="kpi-value"]').innerText();
+    const netEmissionsText = await page.locator('[data-testid="kpi-net"] [data-testid="kpi-value"]').innerText();
+    const methaneText = await page.locator('[data-testid="kpi-ch4"] [data-testid="kpi-value"]').innerText();
 
     console.log(`[AUDIT] UI Hero Card: Gross = ${grossEmissionsText}, Net = ${netEmissionsText}, CH4 = ${methaneText}`);
 
@@ -161,7 +161,7 @@ test.describe('Dashboard Page Deep Audit', () => {
     await page.waitForTimeout(1500);
 
     // Assert 2026 metrics
-    let grossVal = await page.locator('.stat-item:has-text("Gross Operational Emissions") .stat-value').innerText();
+    let grossVal = await page.locator('[data-testid="kpi-gross"] [data-testid="kpi-value"]').innerText();
     expect(grossVal).toContain('256.4K');
     const scope3Val2026 = await page.locator('.scope-pill.scope-3 .pill-value').innerText();
     expect(scope3Val2026).toContain('0');
@@ -174,7 +174,7 @@ test.describe('Dashboard Page Deep Audit', () => {
     await page.waitForTimeout(1500);
 
     // 2024 has 0 verified emissions
-    grossVal = await page.locator('.stat-item:has-text("Gross Operational Emissions") .stat-value').innerText();
+    grossVal = await page.locator('[data-testid="kpi-gross"] [data-testid="kpi-value"]').innerText();
     expect(grossVal).toBe('0');
     console.log(`[AUDIT] Switched to 2024: Gross = ${grossVal} (verified accurate, 0 emissions)`);
 
@@ -183,7 +183,7 @@ test.describe('Dashboard Page Deep Audit', () => {
     await page.waitForTimeout(400);
     await page.locator('.dropdown-portal .dropdown-option:has-text("All Years")').click();
     await page.waitForTimeout(1500);
-    grossVal = await page.locator('.stat-item:has-text("Gross Operational Emissions") .stat-value').innerText();
+    grossVal = await page.locator('[data-testid="kpi-gross"] [data-testid="kpi-value"]').innerText();
     expect(grossVal).toContain('256.4K');
     console.log(`[AUDIT] Switched to All Years: Gross = ${grossVal} restored`);
   });
@@ -204,14 +204,14 @@ test.describe('Dashboard Page Deep Audit', () => {
 
     // Under GWP-20, CH4 multiplier rises from 28 to 84 (delta = +56 per tonne CH4)
     // 256,425.1 + (56 * 238.7) - (1 * 51.1) = 269,741.2 tCO2e -> 269.7K
-    const grossGwp20 = await page.locator('.stat-item:has-text("Gross Operational Emissions") .stat-value').innerText();
+    const grossGwp20 = await page.locator('[data-testid="kpi-gross"] [data-testid="kpi-value"]').innerText();
     console.log(`[AUDIT] GWP-20 Gross Emissions: ${grossGwp20}`);
     expect(grossGwp20).toContain('269.7K');
 
     // Switch back to GWP-100
     await gwp100Btn.click();
     await page.waitForTimeout(1500);
-    const grossGwp100 = await page.locator('.stat-item:has-text("Gross Operational Emissions") .stat-value').innerText();
+    const grossGwp100 = await page.locator('[data-testid="kpi-gross"] [data-testid="kpi-value"]').innerText();
     expect(grossGwp100).toContain('256.4K');
     console.log(`[AUDIT] GWP-100 Restored: ${grossGwp100}`);
 
@@ -237,14 +237,14 @@ test.describe('Dashboard Page Deep Audit', () => {
       await expect(activeBanner).toBeVisible();
 
       // With pending data previewed, gross emissions include the ~4.1M pending draft emissions
-      const grossPending = await page.locator('.stat-item:has-text("Gross Operational Emissions") .stat-value').innerText();
+      const grossPending = await page.locator('[data-testid="kpi-gross"] [data-testid="kpi-value"]').innerText();
       console.log(`[AUDIT] Pending Data Preview Active: Gross = ${grossPending}`);
       expect(grossPending).toContain('M'); // Scales into Millions
 
       // Uncheck pending preview
       await pendingSwitch.uncheck();
       await page.waitForTimeout(1500);
-      const grossRestored = await page.locator('.stat-item:has-text("Gross Operational Emissions") .stat-value').innerText();
+      const grossRestored = await page.locator('[data-testid="kpi-gross"] [data-testid="kpi-value"]').innerText();
       expect(grossRestored).toContain('256.4K');
       console.log(`[AUDIT] Pending Data Preview Deactivated: Gross = ${grossRestored}`);
     }
@@ -368,7 +368,7 @@ test.describe('Dashboard Page Deep Audit', () => {
     await setupDashboard(page);
 
     // Performance Intensity Card initial state (Pending / Production figures required when no production data)
-    const intensityCard = page.locator('.stat-item:has-text("Performance Intensity")');
+    const intensityCard = page.locator('[data-testid="kpi-intensity"]');
     await expect(intensityCard).toBeVisible();
     const intensityLabel = await intensityCard.locator('.stat-label').innerText();
     expect(intensityLabel.toUpperCase()).toBe('PERFORMANCE INTENSITY');

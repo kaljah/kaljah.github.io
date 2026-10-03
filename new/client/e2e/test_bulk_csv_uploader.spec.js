@@ -227,9 +227,9 @@ test.describe('Bulk CSV Uploader & Post-Calculation KPI Audit', () => {
     await expect(page.locator('.grid-title')).toHaveText('GHG Emissions Dashboard');
 
     // Check Hero Card Operational Stats
-    const grossText = await page.locator('.stat-item:has-text("Gross Operational Emissions") .stat-value').innerText();
-    const netText = await page.locator('.stat-item:has-text("Net Emissions") .stat-value').innerText();
-    const ch4Text = await page.locator('.stat-item:has-text("Total CH4") .stat-value').innerText();
+    const grossText = await page.locator('[data-testid="kpi-gross"] [data-testid="kpi-value"]').innerText();
+    const netText = await page.locator('[data-testid="kpi-net"] [data-testid="kpi-value"]').innerText();
+    const ch4Text = await page.locator('[data-testid="kpi-ch4"] [data-testid="kpi-value"]').innerText();
     console.log(`[POST-BULK DASHBOARD KPI] Gross: ${grossText}, Net: ${netText}, CH4: ${ch4Text}`);
     expect(grossText).not.toContain('0.00 t');
 
@@ -243,7 +243,7 @@ test.describe('Bulk CSV Uploader & Post-Calculation KPI Audit', () => {
     if (await gwp20Btn.isVisible()) {
       await gwp20Btn.click();
       await page.waitForTimeout(600);
-      const grossGwp20 = await page.locator('.stat-item:has-text("Gross Operational Emissions") .stat-value').innerText();
+      const grossGwp20 = await page.locator('[data-testid="kpi-gross"] [data-testid="kpi-value"]').innerText();
       console.log(`[POST-BULK GWP-20 VALUE] Gross: ${grossGwp20}`);
     }
 
@@ -264,7 +264,7 @@ test.describe('Bulk CSV Uploader & Post-Calculation KPI Audit', () => {
         if (await opt.isVisible()) {
           await opt.click();
           await page.waitForTimeout(800);
-          const regGross = await page.locator('.stat-item:has-text("Gross Operational Emissions") .stat-value').innerText();
+          const regGross = await page.locator('[data-testid="kpi-gross"] [data-testid="kpi-value"]').innerText();
           console.log(`[DASHBOARD REGION FILTER: ${reg}] Gross: ${regGross}`);
         } else {
           await page.keyboard.press('Escape');
