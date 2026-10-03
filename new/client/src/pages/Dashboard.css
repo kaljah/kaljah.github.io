@@ -58,15 +58,6 @@
   100% { transform: scale(2.8); opacity: 0; }
 }
 
-.pulse-dot.updating {
-  background: var(--accent-color, var(--color-brand-500));
-}
-
-.pulse-dot.updating::after {
-  background: var(--accent-color, var(--color-brand-500));
-  animation: pulse 0.8s infinite;
-}
-
 /* Hero Card - Modern Glass */
 .hero-card {
   padding: 28px 32px;
@@ -86,42 +77,6 @@
 }
 
 /* Charts Section */
-
-.trend-card-enhanced {
-  border-radius: var(--radius-lg);
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  background: var(--bg-card);
-  backdrop-filter: blur(14px);
-  border: 1px solid var(--border-color);
-  box-shadow: var(--shadow-card);
-  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
-}
-
-.trend-card-enhanced:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-card-elevated);
-  border-color: rgba(255, 255, 255, 0.95);
-}
-
-.donut-card-enhanced {
-  border-radius: var(--radius-lg);
-  padding: 24px;
-  flex: 1;
-  background: var(--bg-card);
-  backdrop-filter: blur(14px);
-  border: 1px solid var(--border-color);
-  box-shadow: var(--shadow-card);
-  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
-}
-
-.donut-card-enhanced:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-card-elevated);
-  border-color: rgba(255, 255, 255, 0.95);
-}
 
 /* Goal Progress Badge */
 
@@ -161,33 +116,6 @@
 }
 
 /* Categorical Card */
-.categorical-card {
-  padding: 24px;
-  background: var(--bg-card);
-  backdrop-filter: blur(14px);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card);
-}
-
-.card-subtitle {
-  font-size: var(--text-md);
-  font-weight: 700;
-  color: var(--text-primary, var(--color-ink-900));
-  margin: 0;
-}
-
-.categorical-hierarchy-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-}
-
-@media (max-width: 1200px) {
-  .categorical-hierarchy-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
 
 /* Detailed Table Refinements */
 
@@ -400,47 +328,11 @@
 
 /* Compare Mode Toggle */
 
-.compare-toggle-btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: var(--color-white);
-  border: 1px solid var(--color-ink-200);
-  padding: 6px 14px;
-  border-radius: var(--radius-md);
-  font-size: var(--text-sm);
-  font-weight: 600;
-  color: var(--color-ink-500);
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.compare-toggle-btn:hover {
-  background: var(--color-ink-50);
-  border-color: var(--color-ink-300);
-}
-
-.compare-toggle-btn.active {
-  background: var(--color-brand-50);
-  color: var(--color-link);
-  border-color: var(--color-brand-500);
-}
-
-.compare-toggle-btn svg {
-  opacity: 0.7;
-}
-
 /* ==================================================
    RESPONSIVE DESIGN (TABLET & MOBILE)
    ================================================== */
 
 /* Tablet (max-width: 1200px) */
-@media (max-width: 1200px) {
-
-  .categorical-hierarchy-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
 
 /* Mobile (max-width: 768px) */
 @media (max-width: 768px) {
@@ -466,16 +358,6 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
-  }
-
-  .categorical-hierarchy-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .trend-card-enhanced,
-  .distribution-card {
-    padding: 16px;
-    border-radius: var(--radius-lg);
   }
 
   .table-container {
@@ -506,41 +388,9 @@
    Pending Records Notification & Live Preview Banner
    ========================================================================== */
 
-.pending-banner-desc {
-  margin: 0;
-  font-size: var(--text-base);
-  color: var(--text-secondary, var(--color-ink-500));
-  line-height: 1.45;
-}
-
-.pending-banner-desc strong {
-  color: var(--text-primary, var(--color-ink-900));
-  font-weight: 700;
-}
-
 /* Right side actions */
 
 /* Modern Toggle Switch */
-
-.pending-switch {
-  position: relative;
-  width: 36px;
-  height: 20px;
-  background-color: var(--color-ink-300);
-  border-radius: 999px;
-  transition: background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  display: inline-block;
-  flex-shrink: 0;
-}
-
-.pending-switch.active {
-  background: linear-gradient(135deg, var(--color-brand-500) 0%, var(--color-brand-600) 100%);
-  box-shadow: 0 2px 8px rgba(255, 102, 0, 0.3);
-}
-
-.pending-switch.active .pending-switch-slider {
-  transform: translateX(16px);
-}
 
 /* Action Button */
 
