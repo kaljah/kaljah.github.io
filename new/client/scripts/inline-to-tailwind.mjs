@@ -57,6 +57,8 @@ Object.assign(MAP, {
   borderRadius: (v) => { const x = safe(typeof v === "number" ? `${v}px` : v); return x && !/%/.test(x) ? [`rounded-[${x}]!`] : null; },
   opacity: (v) => (typeof v === "number" || /^[01]?\.?\d+$/.test(String(v)) ? [`opacity-[${v}]!`] : null),
   lineHeight: (v) => (/^\d*\.?\d+(rem|px|em)?$/.test(String(v)) ? [`leading-[${v}]!`] : null),
+  fontFamily: (v) => (v === "monospace" ? ["font-mono!"] : null),
+  minHeight: (v) => { const l = len(v); return l ? [`min-h-[${l}]!`] : null; },
   maxWidth: (v) => { const l = len(v); return l ? [`max-w-[${l}]!`] : null; },
 });
 
