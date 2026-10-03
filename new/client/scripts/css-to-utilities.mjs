@@ -126,7 +126,7 @@ for (const [name, list] of Object.entries(occ)) {
   if (ONLY && !list.every((o) => o.file.includes(ONLY))) continue;
   const prefixes = list.map((o) => o.prefix);
   if (new Set(prefixes).size !== prefixes.length) continue;
-  const utils = [];
+  const entries = [];
   let ok = true;
   let n = 0;
   for (const o of list) {
@@ -136,10 +136,16 @@ for (const [name, list] of Object.entries(occ)) {
     for (const d of decls) {
       const u = toUtility(d);
       if (!u) ok = false;
-      else utils.push(o.prefix + u);
+      else entries.push({ prefix: o.prefix, prop: d.prop, util: u });
     }
   }
   if (!ok || n > MAX) continue;
+  // Media variants may sort before the base utility; make them important when they override another declaration.
+  const isMedia = (pre) => /^(max-\[|min-\[|\[@media)/.test(pre);
+  const utils = entries.map((e) => {
+    const overrides = isMedia(e.prefix) && entries.some((x) => x !== e && baseProp(x.prop) === baseProp(e.prop));
+    return e.prefix + (overrides && !e.util.endsWith("!") ? `${e.util}!` : e.util);
+  });
   if (tokenRe(name).test(testText) || tokenRe(name).test(indexHtml)) continue;
   eligible[name] = { occurrences: list, utils };
 }
