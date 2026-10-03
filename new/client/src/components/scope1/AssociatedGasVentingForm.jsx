@@ -213,13 +213,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
 
           {/* Footnote b Gas Composition Adjustment */}
           <div
-            style={{
-              padding: "14px",
-              background: "#f8fafc",
-              border: "1px solid #e2e8f0",
-              borderRadius: "6px",
-              marginBottom: "16px",
-            }}
+            className="p-[14px]! bg-[color:#f8fafc]! [border:1px_solid_#e2e8f0]! rounded-[6px]! mb-[16px]!"
           >
             <div
               className="flex! items-center! gap-[6px]! mb-[10px]! text-[length:0.85rem]! font-semibold! text-[color:#334155]!"
@@ -432,13 +426,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
 
           {/* DISPOSITION PARTITIONING CARD (Zero Double-Counting) */}
           <div
-            style={{
-              padding: "16px",
-              background: "#f8fafc",
-              border: "1px solid #cbd5e1",
-              borderRadius: "8px",
-              marginBottom: "16px",
-            }}
+            className="p-[16px]! bg-[color:#f8fafc]! [border:1px_solid_#cbd5e1]! rounded-[8px]! mb-[16px]!"
           >
             <div
               className="flex! items-center! justify-between! mb-[12px]!"
@@ -644,18 +632,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
       {/* WARNING NOTIFICATIONS & AUDIT FLAGS */}
       {isCompositionInvalid && (
         <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
-            padding: "10px 14px",
-            background: "#fef2f2",
-            border: "1px solid #fecaca",
-            borderRadius: "6px",
-            marginBottom: "16px",
-            color: "#991b1b",
-            fontSize: "0.82rem",
-          }}
+          className="flex! items-center! gap-[8px]! p-[10px_14px]! bg-[color:#fef2f2]! [border:1px_solid_#fecaca]! rounded-[6px]! mb-[16px]! text-[color:#991b1b]! text-[length:0.82rem]!"
         >
           <AlertTriangle size={16} />
           <span>
@@ -666,18 +643,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
 
       {isMassBalanceViolated && (
         <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
-            padding: "10px 14px",
-            background: "#fef2f2",
-            border: "1px solid #fecaca",
-            borderRadius: "6px",
-            marginBottom: "16px",
-            color: "#991b1b",
-            fontSize: "0.82rem",
-          }}
+          className="flex! items-center! gap-[8px]! p-[10px_14px]! bg-[color:#fef2f2]! [border:1px_solid_#fecaca]! rounded-[6px]! mb-[16px]! text-[color:#991b1b]! text-[length:0.82rem]!"
         >
           <AlertTriangle size={16} />
           <span>
@@ -688,18 +654,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
 
       {isDurationExceeded && (
         <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
-            padding: "10px 14px",
-            background: "#fffbeb",
-            border: "1px solid #fde68a",
-            borderRadius: "6px",
-            marginBottom: "16px",
-            color: "#92400e",
-            fontSize: "0.82rem",
-          }}
+          className="flex! items-center! gap-[8px]! p-[10px_14px]! bg-[color:#fffbeb]! [border:1px_solid_#fde68a]! rounded-[6px]! mb-[16px]! text-[color:#92400e]! text-[length:0.82rem]!"
         >
           <AlertTriangle size={16} />
           <span>
@@ -710,18 +665,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
 
       {isDurationMaxExceeded && (
         <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
-            padding: "10px 14px",
-            background: "#fef2f2",
-            border: "1px solid #fecaca",
-            borderRadius: "6px",
-            marginBottom: "16px",
-            color: "#991b1b",
-            fontSize: "0.82rem",
-          }}
+          className="flex! items-center! gap-[8px]! p-[10px_14px]! bg-[color:#fef2f2]! [border:1px_solid_#fecaca]! rounded-[6px]! mb-[16px]! text-[color:#991b1b]! text-[length:0.82rem]!"
         >
           <AlertTriangle size={16} />
           <span>
@@ -732,18 +676,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
 
       {isGorHighAnomaly && (
         <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
-            padding: "10px 14px",
-            background: "#fffbeb",
-            border: "1px solid #fde68a",
-            borderRadius: "6px",
-            marginBottom: "16px",
-            color: "#92400e",
-            fontSize: "0.82rem",
-          }}
+          className="flex! items-center! gap-[8px]! p-[10px_14px]! bg-[color:#fffbeb]! [border:1px_solid_#fde68a]! rounded-[6px]! mb-[16px]! text-[color:#92400e]! text-[length:0.82rem]!"
         >
           <AlertTriangle size={16} />
           <span>

@@ -16,16 +16,7 @@ const Scope1OptionsSection = ({ gcUncertaintyPct, meterUncertaintyPct, renderSpe
                 <label>Measurement Instrumentation Precision</label>
                 <div className="flex! gap-[8px]! flex-wrap!">
                   <div
-                    style={{
-                      flex: 1,
-                      padding: "8px 12px",
-                      background: "#f3f4f6",
-                      borderRadius: "6px",
-                      border: "1px solid #e5e7eb",
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
+                    className="flex-1! p-[8px_12px]! bg-[color:#f3f4f6]! rounded-[6px]! [border:1px_solid_#e5e7eb]! flex! justify-between! items-center!"
                   >
                     <span
                       className="text-[length:0.75rem]! font-semibold! text-[color:#374151]!"
@@ -55,16 +46,7 @@ const Scope1OptionsSection = ({ gcUncertaintyPct, meterUncertaintyPct, renderSpe
                     </div>
                   </div>
                   <div
-                    style={{
-                      flex: 1,
-                      padding: "8px 12px",
-                      background: "#f3f4f6",
-                      borderRadius: "6px",
-                      border: "1px solid #e5e7eb",
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
+                    className="flex-1! p-[8px_12px]! bg-[color:#f3f4f6]! rounded-[6px]! [border:1px_solid_#e5e7eb]! flex! justify-between! items-center!"
                   >
                     <span
                       className="text-[length:0.75rem]! font-semibold! text-[color:#374151]!"
@@ -103,16 +85,7 @@ const Scope1OptionsSection = ({ gcUncertaintyPct, meterUncertaintyPct, renderSpe
               </label>
               <div className="flex! gap-[8px]! flex-wrap!">
                 <div
-                  style={{
-                    flex: 1,
-                    padding: "8px 12px",
-                    background: "#f3f4f6",
-                    borderRadius: "6px",
-                    border: "1px solid #e5e7eb",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
+                  className="flex-1! p-[8px_12px]! bg-[color:#f3f4f6]! rounded-[6px]! [border:1px_solid_#e5e7eb]! flex! justify-between! items-center!"
                 >
                   <span
                     className="text-[length:0.75rem]! font-semibold! text-[color:#374151]!"
@@ -160,16 +133,7 @@ const Scope1OptionsSection = ({ gcUncertaintyPct, meterUncertaintyPct, renderSpe
                   )}
                 </div>
                 <div
-                  style={{
-                    flex: 1,
-                    padding: "8px 12px",
-                    background: "#f3f4f6",
-                    borderRadius: "6px",
-                    border: "1px solid #e5e7eb",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
+                  className="flex-1! p-[8px_12px]! bg-[color:#f3f4f6]! rounded-[6px]! [border:1px_solid_#e5e7eb]! flex! justify-between! items-center!"
                 >
                   <span
                     className="text-[length:0.75rem]! font-semibold! text-[color:#374151]!"
@@ -217,16 +181,7 @@ const Scope1OptionsSection = ({ gcUncertaintyPct, meterUncertaintyPct, renderSpe
                   )}
                 </div>
                 <div
-                  style={{
-                    flex: 1,
-                    padding: "8px 12px",
-                    background: "#f3f4f6",
-                    borderRadius: "6px",
-                    border: "1px solid #e5e7eb",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
+                  className="flex-1! p-[8px_12px]! bg-[color:#f3f4f6]! rounded-[6px]! [border:1px_solid_#e5e7eb]! flex! justify-between! items-center!"
                 >
                   <span
                     className="text-[length:0.75rem]! font-semibold! text-[color:#374151]!"

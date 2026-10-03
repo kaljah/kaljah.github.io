@@ -125,14 +125,7 @@ const QuickAddCustomFactorModal = ({
       >
         {/* Header */}
         <div
-          style={{
-            padding: "16px 20px",
-            borderBottom: "1px solid #e5e7eb",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            background: "#f9fafb",
-          }}
+          className="p-[16px_20px]! [border-bottom:1px_solid_#e5e7eb]! flex! items-center! justify-between! bg-[color:#f9fafb]!"
         >
           <div className="flex! items-center! gap-[8px]!">
             <div
@@ -243,12 +236,7 @@ const QuickAddCustomFactorModal = ({
 
             {/* Gas Emission Factors */}
             <div
-              style={{
-                background: "#f9fafb",
-                border: "1px solid #e5e7eb",
-                borderRadius: "8px",
-                padding: "12px",
-              }}
+              className="bg-[color:#f9fafb]! [border:1px_solid_#e5e7eb]! rounded-[8px]! p-[12px]!"
             >
               <div
                 className="text-[length:0.75rem]! font-semibold! text-[color:#4b5563]! mb-[8px]! uppercase! [letter-spacing:0.025em]!"
@@ -371,14 +359,7 @@ const QuickAddCustomFactorModal = ({
 
           {/* Footer Actions */}
           <div
-            style={{
-              marginTop: "20px",
-              paddingTop: "14px",
-              borderTop: "1px solid #e5e7eb",
-              display: "flex",
-              justifyContent: "flex-end",
-              gap: "10px",
-            }}
+            className="mt-[20px]! pt-[14px]! [border-top:1px_solid_#e5e7eb]! flex! justify-end! gap-[10px]!"
           >
             <button
               type="button"

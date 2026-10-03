@@ -15,11 +15,7 @@ const OgmpTab = ({ ACTIVITY_LABELS, ITEMS_PER_PAGE, NON_OG_ACTIVITIES, currentPa
                                 </div>
 
                                 {/* O&G Scope Notice */}
-                                <div style={{
-                                    display: 'flex', alignItems: 'center', gap: '10px',
-                                    background: '#eff6ff', border: '1px solid #bfdbfe',
-                                    borderRadius: '10px', padding: '12px 16px', marginBottom: '24px'
-                                }}>
+                                <div className="flex! items-center! gap-[10px]! bg-[color:#eff6ff]! [border:1px_solid_#bfdbfe]! rounded-[10px]! p-[12px_16px]! mb-[24px]!">
                                     <CircleAlert size="18" strokeWidth="2" className="shrink-0!" aria-hidden="true" />
                                     <div>
                                         <strong className="text-[color:#1d4ed8]! text-[length:0.85rem]!">Oil & Gas Scope Only</strong>

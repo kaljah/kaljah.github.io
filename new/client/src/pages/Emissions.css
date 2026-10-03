@@ -263,15 +263,6 @@
   transition: all 0.2s;
 }
 
-.form-input:focus {
-  outline: none;
-  border-color: var(--accent-color);
-  background: rgba(255, 255, 255, 0.08);
-  /* Darker mode friendly */
-  box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.1);
-  /* Orange focus to match legacy */
-}
-
 /* Custom Dropdown Styling to match Inputs */
 .custom-dropdown .dropdown-selected {
   background: var(--bg-card);

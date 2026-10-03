@@ -38,17 +38,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                                 </Button>
                                             </div>
 
-                                            <div style={{ 
-                                                background: 'rgba(239, 68, 68, 0.06)', 
-                                                border: '1px solid rgba(239, 68, 68, 0.2)', 
-                                                borderRadius: '12px', 
-                                                padding: '12px 14px', 
-                                                fontSize: '0.84rem', 
-                                                color: '#b91c1c', 
-                                                display: 'flex', 
-                                                gap: '10px', 
-                                                alignItems: 'flex-start' 
-                                            }}>
+                                            <div className="bg-[color:rgba(239,_68,_68,_0.06)]! [border:1px_solid_rgba(239,_68,_68,_0.2)]! rounded-[12px]! p-[12px_14px]! text-[length:0.84rem]! text-[color:#b91c1c]! flex! gap-[10px]! items-start!">
                                                 <AlertCircle size={16} className="shrink-0! mt-[2px]!" />
                                                 <span>
                                                     The record will be marked Rejected and excluded from totals; it is kept for the audit trail. The submitter is notified with your reason.
@@ -386,7 +376,7 @@ const PendingReviewTab = ({ QUICK_REJECTION_REASONS, facilities, fetchPendingEmi
                                     </div>
                                 ) : filteredPendingRecords.length === 0 ? (
                                     <div className="[background:var(--bg-card)] [backdrop-filter:blur(10px)] [border:1px_solid_var(--border-color)] [&&]:[border-radius:var(--radius-lg)] [text-align:center] [box-shadow:var(--shadow-card)] [display:flex] [flex-direction:column] [align-items:center] [gap:16px] [max-width:600px] [margin:20px_auto] p-[48px_24px]!">
-                                        <div className="[width:72px] [height:72px] [border-radius:var(--radius-lg)] [border:1px_solid_rgba(16,_185,_129,_0.3)] [display:flex] [align-items:center] [justify-content:center] [box-shadow:0_8px_20px_-4px_rgba(16,_185,_129,_0.2)]" style={{ background: 'rgba(148, 163, 184, 0.1)', color: 'var(--text-secondary)', borderColor: 'rgba(148, 163, 184, 0.3)' }}>
+                                        <div className="[width:72px] [height:72px] [border-radius:var(--radius-lg)] [border:1px_solid_rgba(16,_185,_129,_0.3)] [display:flex] [align-items:center] [justify-content:center] [box-shadow:0_8px_20px_-4px_rgba(16,_185,_129,_0.2)] bg-[color:rgba(148,_163,_184,_0.1)]! text-[color:var(--text-secondary)]! [border-color:rgba(148,_163,_184,_0.3)]!">
                                             <Filter size={32} />
                                         </div>
                                         <div>

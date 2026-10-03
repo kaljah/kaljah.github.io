@@ -11,7 +11,7 @@ const PaginationControls = ({ currentPage, totalItems, itemsPerPage, onPageChang
     }, [currentPage, totalPages, onPageChange]);
 
     return (
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '16px', padding: '16px 0', borderTop: '1px solid #e5e7eb' }}>
+        <div className="flex! justify-between! items-center! mt-[16px]! p-[16px_0]! [border-top:1px_solid_#e5e7eb]!">
             <Button 
                 variant="ghost" type="submit" 
                 disabled={currentPage <= 1} 

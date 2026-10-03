@@ -5,7 +5,7 @@ import { Clock } from 'lucide-react';
 // Extracted from ManageData.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const PendingAccessNotice = ({ handleTabChange }) => (
 <div className="manage-tab-content" style={{ padding: '56px 24px', textAlign: 'center', background: '#ffffff', borderRadius: '16px', border: '1px solid var(--border-color)', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
-                                <div style={{ width: 56, height: 56, borderRadius: '50%', background: '#fffbeb', border: '1px solid #fde68a', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px auto', color: '#d97706' }}>
+                                <div className="w-[56px]! h-[56px]! [border-radius:50%]! bg-[color:#fffbeb]! [border:1px_solid_#fde68a]! flex! items-center! justify-center! m-[0_auto_16px_auto]! text-[color:#d97706]!">
                                     <Clock size={28} />
                                 </div>
                                 <h3 className="m-[0_0_8px_0]! text-[length:1.25rem]! text-[color:var(--text-primary)]! font-bold!">

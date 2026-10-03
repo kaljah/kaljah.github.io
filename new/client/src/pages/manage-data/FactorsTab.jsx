@@ -132,7 +132,7 @@ const FactorsTab = ({ ITEMS_PER_PAGE, currentPage, editingFactorId, factorForm, 
                                 </div>
 
                                 {/* EF Uncertainty Workbench */}
-                                <div style={{ marginTop: '20px', padding: '20px', background: 'rgba(30, 41, 59, 0.03)', borderRadius: '12px', border: '1px solid rgba(0,0,0,0.05)' }}>
+                                <div className="mt-[20px]! p-[20px]! bg-[color:rgba(30,_41,_59,_0.03)]! rounded-[12px]! [border:1px_solid_rgba(0,0,0,0.05)]!">
                                     <h4 className="m-[0_0_15px_0]! text-[length:1rem]! flex! items-center! gap-[8px]!">
                                         <Database size={16} /> EF Uncertainty Workbench (ISO 14064-1 compliant)
                                     </h4>

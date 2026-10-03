@@ -214,15 +214,8 @@ const Scope2FormCalculatorGridContainer = ({ currentPage, entries, facilities, h
           </table>
         </div>
         <div
-          className="pagination-controls"
-          style={{
-            padding: "15px",
-            borderTop: "1px solid #e5e7eb",
-            display: "flex",
-            justifyContent: "center",
-            gap: "20px",
-            alignItems: "center",
-          }}
+          className="pagination-controls p-[15px]! [border-top:1px_solid_#e5e7eb]! flex! justify-center! gap-[20px]! items-center!"
+         
         >
           <button
             className="action-btn secondary"

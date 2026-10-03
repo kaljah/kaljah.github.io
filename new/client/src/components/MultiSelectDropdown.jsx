@@ -108,7 +108,7 @@ const MultiSelectDropdown = ({
       style={{ width: "100%", position: "relative" }}
     >
       <div
-        className="dropdown-selected"
+        className="dropdown-selected p-[10px_12px]! [border:1px_solid_var(--border-color)]! rounded-[6px]! bg-[color:var(--bg-card)]! text-[color:var(--text-primary)]! cursor-pointer! flex! justify-between! items-center! min-h-[42px]!"
         onClick={handleToggle}
         role="button"
         tabIndex={0}
@@ -125,18 +125,7 @@ const MultiSelectDropdown = ({
             handleToggle();
           }
         }}
-        style={{
-          padding: "10px 12px",
-          border: "1px solid var(--border-color)",
-          borderRadius: "6px",
-          background: "var(--bg-card)",
-          color: "var(--text-primary)",
-          cursor: "pointer",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          minHeight: "42px",
-        }}
+       
       >
         <span
           className="whitespace-nowrap! overflow-hidden! [text-overflow:ellipsis]!"
@@ -171,14 +160,9 @@ const MultiSelectDropdown = ({
             }}
           >
             <div role="button" tabIndex={0} onKeyDown={activateOnKey}
-              className="dropdown-option"
+              className="dropdown-option p-[8px_12px]! [border-bottom:1px_solid_var(--border-color)]! font-semibold! cursor-pointer!"
               onClick={handleSelectAll}
-              style={{
-                padding: "8px 12px",
-                borderBottom: "1px solid var(--border-color)",
-                fontWeight: 600,
-                cursor: "pointer",
-              }}
+             
             >
               {selectedValues.length === options.length
                 ? "Deselect All"

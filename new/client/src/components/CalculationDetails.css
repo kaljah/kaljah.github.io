@@ -117,17 +117,6 @@
 
 /* 3. Calculation Steps */
 
-.step-content {
-  flex: 1;
-  padding: 14px 16px;
-  background: var(--color-ink-50);
-  border: 1px solid var(--color-ink-200);
-  border-radius: var(--radius-md);
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
 .step-label {
   font-size: var(--text-md);
   font-weight: 700;

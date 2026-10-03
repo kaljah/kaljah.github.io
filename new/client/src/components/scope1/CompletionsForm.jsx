@@ -570,13 +570,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
 
           {/* Section 2: Initial Unmetered Flowback (API Eq. 6-5) */}
           <div
-            style={{
-              background: "#f9fafb",
-              border: "1px solid #e5e7eb",
-              borderRadius: "6px",
-              padding: "12px",
-              marginBottom: "16px",
-            }}
+            className="bg-[color:#f9fafb]! [border:1px_solid_#e5e7eb]! rounded-[6px]! p-[12px]! mb-[16px]!"
           >
             <div className="flex! items-center! justify-between! mb-[8px]!">
               <label className="font-semibold! text-[length:0.85rem]! text-[color:#374151]! m-[0px]!">
@@ -677,13 +671,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
 
           {tier3Disposition === "split" && (
             <div
-              style={{
-                background: "#f0fdf4",
-                border: "1px solid #bbf7d0",
-                borderRadius: "6px",
-                padding: "12px",
-                marginBottom: "16px",
-              }}
+              className="bg-[color:#f0fdf4]! [border:1px_solid_#bbf7d0]! rounded-[6px]! p-[12px]! mb-[16px]!"
             >
               <div className="flex! justify-between! mb-[8px]!">
                 <span className="font-semibold! text-[length:0.85rem]! text-[color:#166534]!">

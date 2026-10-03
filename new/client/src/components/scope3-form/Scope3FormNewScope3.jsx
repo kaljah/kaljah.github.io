@@ -10,7 +10,7 @@ const Scope3FormNewScope3 = ({ UNIT_MULTIPLIERS, activityType, amount, baseUnit,
 <div className="calc-panel">
 
         {/* EEIO Quick Spend Calculator */}
-        <div style={{ marginTop: "20px", marginBottom: "10px", padding: "16px", background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "8px" }}>
+        <div className="mt-[20px]! mb-[10px]! p-[16px]! bg-[color:#f8fafc]! [border:1px_solid_#e2e8f0]! rounded-[8px]!">
           <div role="button" tabIndex={0} onKeyDown={activateOnKey} className="flex! justify-between! items-center! cursor-pointer!" onClick={() => setShowEeioCalc(!showEeioCalc)}>
             <div className="flex! items-center! gap-[8px]!">
               <span className="text-[length:1.2rem]!">💰</span>
@@ -61,7 +61,7 @@ const Scope3FormNewScope3 = ({ UNIT_MULTIPLIERS, activityType, amount, baseUnit,
             </div>
           )}
           {eeioResult && showEeioCalc && (
-            <div style={{ marginTop: "12px", padding: "12px", background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: "6px" }}>
+            <div className="mt-[12px]! p-[12px]! bg-[color:#eff6ff]! [border:1px_solid_#bfdbfe]! rounded-[6px]!">
               <div className="text-[length:0.85rem]! text-[color:#1e3a8a]!">
                 <strong>Industry:</strong> {eeioResult.industry_name} <br/>
                 <strong>Factor:</strong> {eeioResult.emission_factor} {eeioResult.ef_unit} <br/>

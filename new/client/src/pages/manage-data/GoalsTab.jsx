@@ -32,7 +32,7 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                             <div className="text-[length:1.3rem]! font-bold! text-[color:var(--text-primary)]!">{goals.length} Years</div>
                                         </div>
                                         {baseYearsData.active_record?.recalc_date && (
-                                            <div style={{ textAlign: 'right', borderLeft: '1px solid var(--border-color)', paddingLeft: '16px' }}>
+                                            <div className="text-right! [border-left:1px_solid_var(--border-color)]! pl-[16px]!">
                                                 <div className="text-[length:0.8rem]! text-[color:var(--text-secondary)]! font-semibold!">LAST RECALCULATED</div>
                                                 <div className="text-[length:0.95rem]! font-semibold! text-[color:var(--text-primary)]!">
                                                     {new Date(baseYearsData.active_record.recalc_date).toLocaleDateString()}
@@ -169,7 +169,7 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                 </div>
 
                                 {/* Section 2: Base Years & Recalculation History */}
-                                <div style={{ borderTop: '2px dashed var(--border-color)', paddingTop: '32px', marginTop: '16px' }}>
+                                <div className="[border-top:2px_dashed_var(--border-color)]! pt-[32px]! mt-[16px]!">
                                     <div className="flex! justify-between! items-start! mb-[16px]!">
                                         <div>
                                             <h2 className="mb-[6px]! font-bold! flex! items-center! gap-[8px]!">
@@ -321,7 +321,7 @@ const GoalsTab = ({ baseYearForm, baseYearsData, editingGoalYear, filteredBaseYe
                                 </div>
 
                                 {/* Section 3: SBTi Science-Based Net-Zero Targets */}
-                                <div style={{ borderTop: '2px dashed var(--border-color)', paddingTop: '32px', marginTop: '32px' }}>
+                                <div className="[border-top:2px_dashed_var(--border-color)]! pt-[32px]! mt-[32px]!">
                                     <div className="flex! justify-between! items-start! mb-[20px]!">
                                         <div>
                                             <h2 className="mb-[6px]! font-bold! flex! items-center! gap-[8px]!">

@@ -80,13 +80,7 @@ const DrillingForm = ({ data, onChange, sourceType }) => {
           </div>
 
           <div
-            style={{
-              marginTop: "15px",
-              padding: "14px",
-              background: "#f8fafc",
-              border: "1px solid #e2e8f0",
-              borderRadius: "6px",
-            }}
+            className="mt-[15px]! p-[14px]! bg-[color:#f8fafc]! [border:1px_solid_#e2e8f0]! rounded-[6px]!"
           >
             <h5
               className="m-[0_0_10px_0]! text-[length:0.85rem]! text-[color:#1e293b]! font-semibold!"
