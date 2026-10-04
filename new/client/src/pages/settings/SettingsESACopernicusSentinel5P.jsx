@@ -60,7 +60,7 @@ const SettingsESACopernicusSentinel5P = ({ authMode, connectionStatus, copernicu
         </Button>
       </div>
       {showGuide && (
-        <ol className="m-0 mt-4 flex list-none flex-col gap-3 border-t border-dashed border-blue-500/25 p-0 pt-4">
+        <ol className="m-0 mt-4 flex list-none flex-col gap-3 border-0 border-t border-dashed border-blue-500/25 p-0 pt-4">
           {GUIDE.map((step, i) => (
             <li key={i} className="flex items-start gap-3.5">
               <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-info-fg text-sm font-bold text-white">{i + 1}</span>

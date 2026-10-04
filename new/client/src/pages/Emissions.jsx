@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { ArrowRight, Factory, Globe2, Zap } from "lucide-react";
-import { Badge } from "../ui";
+import { ArrowLeft, ArrowRight, Factory, Globe2, Zap } from "lucide-react";
+import { Badge, Button, SegmentedControl } from "../ui";
 import { useSearchParams } from "react-router-dom";
 import { useBreadcrumbExtra } from "../hooks/useBreadcrumbExtra";
 import "./Emissions.css";
@@ -138,48 +138,31 @@ const Emissions = () => {
     </div>
   );
 
-  return (
-    <div className="emissions-page">
-        {stage !== STAGE_SCOPE_SELECTION && (
-          <div className="[display:flex] [justify-content:flex-end] [padding:16px_24px_0]">
-          <div className="scope-switcher-tabs">
-            <button
-              className={`scope-tab-btn ${stage === STAGE_SCOPE1_SUB_SELECTION ? "active s1" : ""}`}
-              onClick={() => goToStage(STAGE_SCOPE1_SUB_SELECTION)}
-            >
-              <span className="tab-pill">01</span> Scope 1
-            </button>
-            <button
-              className={`scope-tab-btn ${stage === STAGE_SCOPE2 ? "active s2" : ""}`}
-              onClick={() => goToStage(STAGE_SCOPE2)}
-            >
-              <span className="tab-pill">02</span> Scope 2
-            </button>
-            <button
-              className={`scope-tab-btn ${stage === STAGE_SCOPE3 ? "active s3" : ""}`}
-              onClick={() => goToStage(STAGE_SCOPE3)}
-            >
-              <span className="tab-pill">03</span> Scope 3
-            </button>
-            <button
-              className="scope-tab-btn back-btn"
-              onClick={() => goToStage(STAGE_SCOPE_SELECTION)}
-              title="Back to Scope Selection"
-            >
-              ← All Scopes
-            </button>
-          </div>
-          </div>
-        )}
+  const SCOPE_TABS = [
+    { value: STAGE_SCOPE1_SUB_SELECTION, label: "01 Scope 1" },
+    { value: STAGE_SCOPE2, label: "02 Scope 2" },
+    { value: STAGE_SCOPE3, label: "03 Scope 3" },
+  ];
+  const content = "w-full px-3 md:px-10";
 
-      <div className="content-wrapper">
+  return (
+    <div>
+      {stage !== STAGE_SCOPE_SELECTION && (
+        <div className="flex flex-wrap items-center justify-end gap-2 px-3 pt-4 md:px-6">
+          <SegmentedControl label="Scope" value={stage} onChange={goToStage} options={SCOPE_TABS} />
+          <Button variant="ghost" size="sm" onClick={() => goToStage(STAGE_SCOPE_SELECTION)} title="Back to Scope Selection">
+            <ArrowLeft className="size-4" aria-hidden="true" /> All Scopes
+          </Button>
+        </div>
+      )}
+
+      <div>
         {stage === STAGE_SCOPE_SELECTION && (
-          <div className="calculator-container">
-            <div className="[padding:36px_0_4px]! [@media(max-width:768px)]:[padding:20px_0_10px]!">
-              <h2 className="[font-size:var(--text-xl)]! [font-weight:700]! [color:var(--text-primary)] [margin:0_0_10px] [letter-spacing:-0.4px] [@media(max-width:768px)]:[font-size:var(--text-xl)]!">Emission Calculator</h2>
-              <p className="[font-size:var(--text-md)]! [color:var(--text-secondary)] [margin:0_0_36px]! [line-height:1.65] [@media(max-width:768px)]:[margin-bottom:20px]! [@media(max-width:768px)]:[font-size:var(--text-base)]!">
-                Select a GHG scope to begin logging and calculating emissions
-                for your facility.
+          <div className={content}>
+            <div className="pb-1 pt-5 md:pt-9">
+              <h2 className="m-0 mb-2.5 text-xl font-bold text-text">Emission Calculator</h2>
+              <p className="m-0 mb-5 text-base leading-relaxed text-text-secondary md:mb-9 md:text-md">
+                Select a GHG scope to begin logging and calculating emissions for your facility.
               </p>
             </div>
             {renderSelectionScreen()}
@@ -187,19 +170,19 @@ const Emissions = () => {
         )}
 
         {stage === STAGE_SCOPE1_SUB_SELECTION && (
-          <div className="calculator-container">
+          <div className={content}>
             <Scope1Form />
           </div>
         )}
 
         {stage === STAGE_SCOPE2 && (
-          <div className="calculator-container">
+          <div className={content}>
             <Scope2Form />
           </div>
         )}
 
         {stage === STAGE_SCOPE3 && (
-          <div className="calculator-container">
+          <div className={content}>
             <Scope3Form />
           </div>
         )}

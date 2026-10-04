@@ -1,209 +1,115 @@
 import React from "react";
-import { SegmentedControl } from "../../ui";
 import { Activity, Cloud, Flame, Layers, ShieldCheck } from "lucide-react";
+import { Badge, SegmentedControl } from "../../ui";
 import { formatNumber } from "../../utils/formatters";
 import { getActiveGwpFactors } from "../../constants";
+import { HeroPanel, KpiGrid, KpiTile, ProdBar, ProdItem } from "../intensity/IntensityParts";
 
-// Extracted from CarbonIntensity.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
-const CarbonIntensityCarbonIntensity = ({ activeGwpStandard, currentDisplayCo2Intensity, currentDisplayScope1Intensity, currentDisplayTotalCo2e, currentDisplayTotalScope1, currentUsedCo2e, currentUsedScope1, excludedNote, gwpHorizon, selectedYear, setGwpHorizon, stats }) => (
-<div className="hero-card">
-          <div className="hero-header">
-            <div className="flex! items-center! gap-[16px]!">
-              <h2 className="grid-title">
-                <Activity size={24} color="var(--accent-color)" />
-                Carbon Intensity & Product Embodiment
-              </h2>
-              <div className="year-badge [background:rgba(255,_102,_0,_0.1)] [color:var(--color-link)] [padding:6px_16px] [border-radius:9999px] [font-size:var(--text-base)] [font-weight:600] [border:1px_solid_rgba(255,_102,_0,_0.2)]">
-                {selectedYear === "all" ? "All-Time" : selectedYear} Performance
-              </div>
-            </div>
+const fixed = (v) => (v ?? 0).toFixed(2);
 
-            {/* GWP Time Horizon Toggle */}
-            <div className="[display:flex] [align-items:center] [gap:10px] [background:var(--bg-hover)] [padding:4px_8px] [border-radius:var(--radius-md)] [border:1px_solid_var(--border-color)]">
-              <span className="[font-size:var(--text-sm)] [font-weight:600] [color:var(--text-secondary)]">GWP Horizon:</span>
-              {(() => {
-                const f100 = getActiveGwpFactors(activeGwpStandard, "100");
-                const f20 = getActiveGwpFactors(activeGwpStandard, "20");
-                return (
-                  <SegmentedControl
-                    label="GWP horizon"
-                    size="sm"
-                    value={gwpHorizon}
-                    onChange={setGwpHorizon}
-                    options={[
-                      {
-                        value: "100",
-                        label: `${activeGwpStandard} 100-Yr`,
-                        title: `IPCC ${activeGwpStandard} 100-Year GWP (CH4: ${f100.CH4}, N2O: ${f100.N2O})`,
-                      },
-                      {
-                        value: "20",
-                        label: `${activeGwpStandard} 20-Yr`,
-                        title: `IPCC ${activeGwpStandard} 20-Year GWP (CH4: ${f20.CH4}, N2O: ${f20.N2O})`,
-                      },
-                    ]}
-                  />
-                );
-              })()}
-            </div>
-          </div>
-
-          {/* Horizontal 4-KPI Grid */}
-          <div className="[display:grid] [grid-template-columns:repeat(4,_1fr)]! [gap:20px] [@media(max-width:1200px)]:[grid-template-columns:repeat(2,_1fr)]! [@media(max-width:768px)]:[grid-template-columns:1fr]!">
-            <div className="kpi-card">
-              <div className="[display:flex] [align-items:center] [gap:12px] [margin-bottom:16px]">
-                <div className="kpi-icon co2">
-                  <Cloud size={20} />
-                </div>
-                <span className="kpi-label">GHG Intensity (Avg)</span>
-              </div>
-              <div className="[display:flex] [align-items:baseline] [gap:8px]">
-                <span
-                  className="total-value co2"
-                  style={
-                    currentDisplayCo2Intensity === null
-                      ? { fontSize: "1.25rem", color: "#f59e0b" }
-                      : undefined
-                  }
-                >
-                  {currentDisplayCo2Intensity === null
-                    ? "Pending Production"
-                    : (currentDisplayCo2Intensity ?? 0).toFixed(2)}
-                </span>
-                <span className="kpi-unit">
-                  {currentDisplayCo2Intensity === null ? "" : "kg CO₂e / BOE"}
-                </span>
-              </div>
-              <div className="kpi-footer">
-                <span className="gwp-subtag [font-size:var(--text-sm)] [color:var(--color-link)] [font-weight:600]">
-                  {gwpHorizon === "20" ? "GWP₂₀ Active" : "GWP₁₀₀ Standard"}
-                </span>
-                <span>
-                  Total:{" "}
-                  <strong>{formatNumber(currentDisplayTotalCo2e)} tCO₂e</strong>
-                </span>
-              </div>
-              {excludedNote(currentDisplayTotalCo2e, currentUsedCo2e)}
-            </div>
-
-            <div className="kpi-card">
-              <div className="[display:flex] [align-items:center] [gap:12px] [margin-bottom:16px]">
-                <div className="kpi-icon scope1">
-                  <Layers size={20} />
-                </div>
-                <span className="kpi-label">Scope 1 Direct Intensity</span>
-              </div>
-              <div className="[display:flex] [align-items:baseline] [gap:8px]">
-                <span
-                  className="total-value scope1"
-                  style={
-                    currentDisplayScope1Intensity === null
-                      ? { fontSize: "1.25rem", color: "#f59e0b" }
-                      : undefined
-                  }
-                >
-                  {currentDisplayScope1Intensity === null
-                    ? "Pending Production"
-                    : (currentDisplayScope1Intensity ?? 0).toFixed(2)}
-                </span>
-                <span className="kpi-unit">
-                  {currentDisplayScope1Intensity === null ? "" : "kg CO₂e / BOE"}
-                </span>
-              </div>
-              <div className="kpi-footer">
-                <span>
-                  Scope 2:{" "}
-                  <strong>
-                    {stats.avgScope2Intensity === null
-                      ? "Pending"
-                      : `${(stats.avgScope2Intensity ?? 0).toFixed(2)} kg/BOE`}
-                  </strong>
-                </span>
-                <span>
-                  Total S1: <strong>{formatNumber(currentDisplayTotalScope1)} t</strong>
-                </span>
-              </div>
-              {excludedNote(currentDisplayTotalScope1, currentUsedScope1)}
-            </div>
-
-            <div className="kpi-card">
-              <div className="[display:flex] [align-items:center] [gap:12px] [margin-bottom:16px]">
-                <div className="kpi-icon flare">
-                  <Flame size={20} />
-                </div>
-                <span className="kpi-label">Flaring Carbon Intensity</span>
-              </div>
-              <div className="[display:flex] [align-items:baseline] [gap:8px]">
-                <span className="total-value flare">
-                  {(stats.avgFlaringIntensity ?? 0).toFixed(2)}
-                </span>
-                <span className="kpi-unit">kg CO₂e / BOE</span>
-              </div>
-              <div className="kpi-footer">
-                <span>
-                  Flared:{" "}
-                  <strong>
-                    {formatNumber(stats.totalFlaringEmissions)} tCO₂e
-                  </strong>
-                </span>
-              </div>
-              {excludedNote(stats.totalFlaringEmissions, stats.usedFlaring)}
-            </div>
-
-            <div className="kpi-card">
-              <div className="[display:flex] [align-items:center] [gap:12px] [margin-bottom:16px]">
-                <div className="kpi-icon scope3">
-                  <ShieldCheck size={20} />
-                </div>
-                <span className="kpi-label">Scope 3 Value Chain</span>
-              </div>
-              <div className="[display:flex] [align-items:baseline] [gap:8px]">
-                <span className="total-value scope3">
-                  {(stats.avgScope3Intensity ?? 0).toFixed(2)}
-                </span>
-                <span className="kpi-unit">kg CO₂e / BOE</span>
-              </div>
-              <div className="kpi-footer">
-                <span>
-                  Total S3:{" "}
-                  <strong>{formatNumber(stats.totalScope3)} tCO₂e</strong>
-                </span>
-              </div>
-              {excludedNote(stats.totalScope3, stats.usedScope3)}
-            </div>
-          </div>
-
-          {/* Production Context Bar */}
-          <div className="scope-breakdown [display:grid] [grid-template-columns:repeat(4,_1fr)]! [gap:20px] [margin-top:32px] [background:var(--bg-hover)] [padding:24px] [border-radius:var(--radius-md)] [border:1px_solid_var(--border-color)] [@media(max-width:1200px)]:[grid-template-columns:repeat(2,_1fr)]! [@media(max-width:768px)]:[grid-template-columns:1fr]!">
-            <div className="scope-item">
-              <span className="label">Total Oil Production</span>
-              <span className="val">
-                {formatNumber(stats.totalOilProduction, 0)} bbl
-              </span>
-            </div>
-            <div className="scope-item bordered">
-              <span className="label">Total Gas Production</span>
-              <span className="val">
-                {formatNumber(stats.totalGasProduction, 0)} mscf
-              </span>
-            </div>
-            <div className="scope-item bordered">
-              <span className="label">Combined Production (BOE)</span>
-              <span
-                className="val text-[color:var(--color-link)]! font-bold!"
-               
-              >
-                {formatNumber(stats.totalBoe, 0)} BOE
-              </span>
-            </div>
-            <div className="scope-item bordered">
-              <span className="label">Total Gas Flared</span>
-              <span className="val flare-val">
-                {formatNumber(stats.totalFlaringVolume, 0)} m³
-              </span>
-            </div>
-          </div>
+/** KPI hero for Carbon Intensity: four intensity tiles, the GWP horizon switch and the production context bar. */
+const CarbonIntensityCarbonIntensity = ({ activeGwpStandard, currentDisplayCo2Intensity, currentDisplayScope1Intensity, currentDisplayTotalCo2e, currentDisplayTotalScope1, currentUsedCo2e, currentUsedScope1, excludedNote, gwpHorizon, selectedYear, setGwpHorizon, stats }) => {
+  const f100 = getActiveGwpFactors(activeGwpStandard, "100");
+  const f20 = getActiveGwpFactors(activeGwpStandard, "20");
+  const unit = "kg CO₂e / BOE";
+  return (
+    <HeroPanel
+      icon={Activity}
+      title="Carbon Intensity & Product Embodiment"
+      badge={
+        <Badge tone="brand" className="year-badge px-4 py-1.5 text-base">
+          {selectedYear === "all" ? "All-Time" : selectedYear} Performance
+        </Badge>
+      }
+      actions={
+        <div className="flex items-center gap-2.5 rounded-md border border-border bg-ink-100 px-2 py-1">
+          <span className="text-sm font-semibold text-text-secondary">GWP Horizon:</span>
+          <SegmentedControl
+            label="GWP horizon"
+            size="sm"
+            value={gwpHorizon}
+            onChange={setGwpHorizon}
+            options={[
+              { value: "100", label: `${activeGwpStandard} 100-Yr`, title: `IPCC ${activeGwpStandard} 100-Year GWP (CH4: ${f100.CH4}, N2O: ${f100.N2O})` },
+              { value: "20", label: `${activeGwpStandard} 20-Yr`, title: `IPCC ${activeGwpStandard} 20-Year GWP (CH4: ${f20.CH4}, N2O: ${f20.N2O})` },
+            ]}
+          />
         </div>
-);
+      }
+    >
+      <KpiGrid>
+        <KpiTile
+          icon={Cloud}
+          tone="co2"
+          label="GHG Intensity (Avg)"
+          pending={currentDisplayCo2Intensity === null}
+          value={currentDisplayCo2Intensity === null ? "Pending Production" : fixed(currentDisplayCo2Intensity)}
+          unit={unit}
+          footer={
+            <>
+              <span className="gwp-subtag text-sm font-semibold text-link">{gwpHorizon === "20" ? "GWP₂₀ Active" : "GWP₁₀₀ Standard"}</span>
+              <span>
+                Total: <strong>{formatNumber(currentDisplayTotalCo2e)} tCO₂e</strong>
+              </span>
+            </>
+          }
+          note={excludedNote(currentDisplayTotalCo2e, currentUsedCo2e)}
+        />
+        <KpiTile
+          icon={Layers}
+          tone="scope1"
+          label="Scope 1 Direct Intensity"
+          pending={currentDisplayScope1Intensity === null}
+          value={currentDisplayScope1Intensity === null ? "Pending Production" : fixed(currentDisplayScope1Intensity)}
+          unit={unit}
+          footer={
+            <>
+              <span>
+                Scope 2: <strong>{stats.avgScope2Intensity === null ? "Pending" : `${fixed(stats.avgScope2Intensity)} kg/BOE`}</strong>
+              </span>
+              <span>
+                Total S1: <strong>{formatNumber(currentDisplayTotalScope1)} t</strong>
+              </span>
+            </>
+          }
+          note={excludedNote(currentDisplayTotalScope1, currentUsedScope1)}
+        />
+        <KpiTile
+          icon={Flame}
+          tone="flare"
+          label="Flaring Carbon Intensity"
+          value={fixed(stats.avgFlaringIntensity)}
+          unit={unit}
+          footer={
+            <span>
+              Flared: <strong>{formatNumber(stats.totalFlaringEmissions)} tCO₂e</strong>
+            </span>
+          }
+          note={excludedNote(stats.totalFlaringEmissions, stats.usedFlaring)}
+        />
+        <KpiTile
+          icon={ShieldCheck}
+          tone="scope3"
+          label="Scope 3 Value Chain"
+          value={fixed(stats.avgScope3Intensity)}
+          unit={unit}
+          footer={
+            <span>
+              Total S3: <strong>{formatNumber(stats.totalScope3)} tCO₂e</strong>
+            </span>
+          }
+          note={excludedNote(stats.totalScope3, stats.usedScope3)}
+        />
+      </KpiGrid>
+
+      <ProdBar>
+        <ProdItem bordered={false} label="Total Oil Production" value={`${formatNumber(stats.totalOilProduction, 0)} bbl`} />
+        <ProdItem label="Total Gas Production" value={`${formatNumber(stats.totalGasProduction, 0)} mscf`} />
+        <ProdItem label="Combined Production (BOE)" value={`${formatNumber(stats.totalBoe, 0)} BOE`} accent="text-link" />
+        <ProdItem label="Total Gas Flared" value={`${formatNumber(stats.totalFlaringVolume, 0)} m³`} accent="text-brand-600" />
+      </ProdBar>
+    </HeroPanel>
+  );
+};
 
 export default CarbonIntensityCarbonIntensity;

@@ -46,6 +46,8 @@ export const SegmentedControl = ({ label, value, onChange, options, className, s
               "cursor-pointer rounded-sm border-0 bg-transparent font-semibold transition-colors",
               size === "sm" ? "px-2.5 py-1 text-xs" : "px-3 py-1.5 text-sm",
               selected ? "bg-surface text-selected-fg shadow-xs" : "text-ink-600 hover:text-text",
+              selected && "active",
+              opt.className,
             )}
           >
             {opt.label}

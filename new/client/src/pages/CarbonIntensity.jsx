@@ -5,24 +5,12 @@ import { useAuth } from "../context/AuthContext";
 import api from "../api";
 import { useToast } from "../components/Toast";
 import LoadingSpinner from "../components/LoadingSpinner";
-import { BarChart, LineChart } from "../components/charts";
+import { cn } from "../ui/cn";
+import { CbamSection, RegionalCharts, TrendSection } from "./carbon-intensity/CarbonIntensitySections";
 import { useLayout } from "../context/LayoutContext";
 import CustomDropdown from "../components/CustomDropdown";
 import { formatNumber } from "../utils/formatters";
 import { getUserOperationalDefaults } from "../utils/userDefaults";
-import {
-  Cloud,
-  Flame,
-  Activity,
-  BarChart2,
-  Grid,
-  Layers,
-  ShieldCheck,
-  FileText,
-  ToggleLeft,
-  ToggleRight,
-  ArrowUpRight } from "lucide-react";
-import "./CarbonIntensity.css";
 import "./TopBarFilters.css";
 
 const CarbonIntensity = () => {
@@ -75,8 +63,6 @@ const CarbonIntensity = () => {
   const [loading, setLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
   const isFirstLoadRef = useRef(true);
-
-  const GAS_TO_BOE = 0.178;
 
   // Initial load
   useEffect(() => {
@@ -457,15 +443,6 @@ const CarbonIntensity = () => {
     });
   }, [rawTrendData, currentRegion, gwpHorizon]);
 
-  const getHeatmapClass = (val) => {
-    if (val === null || val === undefined || isNaN(val) || val === 0) return "heat-null";
-    if (val < 18) return "heat-lux";
-    if (val < 28) return "heat-low";
-    if (val < 38) return "heat-mid";
-    if (val < 48) return "heat-high";
-    return "heat-crit";
-  };
-
   const currentDisplayCo2Intensity =
     gwpHorizon === "20" ? stats.avgCo2IntensityGwp20 : stats.avgCo2Intensity;
   const currentDisplayTotalCo2e =
@@ -485,9 +462,7 @@ const CarbonIntensity = () => {
     const excluded = (total || 0) - (used || 0);
     if (!(excluded > Math.max(0.5, Math.abs(total || 0) * 1e-6))) return null;
     return (
-      <div className="[margin-top:8px] [font-size:var(--text-sm)] [color:var(--warning-color,_var(--color-amber-700))]">
-        {formatNumber(excluded)} t from years without production are not in this intensity
-      </div>
+      <p className="m-0 mt-2 text-sm text-warning-fg">{formatNumber(excluded)} t from years without production are not in this intensity</p>
     );
   };
 
@@ -497,308 +472,33 @@ const CarbonIntensity = () => {
     );
 
   return (
-    <div
-      className="intensity-content"
-      style={{
-        opacity: isUpdating ? 0.82 : 1,
-        transition: "opacity 0.2s ease" }}
-    >
-      <div className="intensity-grid [display:flex] [flex-direction:column] [gap:32px] [max-width:1600px] [margin:0_auto]">
-        {/* KPI HERO CARD */}
+    <div className={cn("intensity-content min-h-[calc(100vh-64px)] bg-ink-50 p-4 transition-opacity duration-200 md:p-8", isUpdating && "opacity-80")}>
+      <div className="intensity-grid mx-auto flex max-w-[1600px] flex-col gap-8">
         <CarbonIntensityCarbonIntensity
-        activeGwpStandard={activeGwpStandard}
-        currentDisplayCo2Intensity={currentDisplayCo2Intensity}
-        currentDisplayScope1Intensity={currentDisplayScope1Intensity}
-        currentDisplayTotalCo2e={currentDisplayTotalCo2e}
-        currentDisplayTotalScope1={currentDisplayTotalScope1}
-        currentUsedCo2e={currentUsedCo2e}
-        currentUsedScope1={currentUsedScope1}
-        excludedNote={excludedNote}
-        gwpHorizon={gwpHorizon}
-        selectedYear={selectedYear}
-        setGwpHorizon={setGwpHorizon}
-        stats={stats}
-      />
-
-                {/* EU CBAM COMPLIANCE & PRODUCT EMBODIMENT SECTION */}
-                <div className="card cbam-section [display:flex] [flex-direction:column] [gap:16px]">
-                    <div className="chart-header">
-                        <div>
-                            <h3 className="flex! items-center! gap-[8px]!">
-                                <FileText size={20} color="var(--accent-color)" />
-                                EU CBAM Product Specific Embedded Emissions
-                            </h3>
-                            <p className="text-[color:var(--text-secondary)]! text-[length:0.875rem]! m-[4px_0_0_0]!">
-                                Direct & indirect specific embedded emissions per export product (EU Regulation 2023/956)
-                            </p>
-                        </div>
-                        <div className="cbam-benchmark-badge [background:rgba(255,_102,_0,_0.1)] [color:var(--color-link)] [padding:6px_14px] [border-radius:var(--radius-md)] [font-size:var(--text-sm)] [font-weight:600] [border:1px_solid_rgba(255,_102,_0,_0.2)]">
-                            EU ETS Benchmark (Product-Specific): ~0.025 - 1.2 tCO₂e/t
-                        </div>
-                    </div>
-
-                    {cbamProducts.length > 0 ? (
-                        <div className="table-responsive mt-[16px]!">
-                            <table className="custom-table">
-                                <thead>
-                                    <tr>
-                                        <th>Facility</th>
-                                        <th>Product Name</th>
-                                        <th>EU CN Code</th>
-                                        <th>Period</th>
-                                        <th>Export Qty (t)</th>
-                                        <th>Destination</th>
-                                        <th>Direct Intensity (tCO₂e/t)</th>
-                                        <th>Indirect Intensity (tCO₂e/t)</th>
-                                        <th>Total Embedded (tCO₂e)</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {cbamProducts.map((p, idx) => {
-                                        const fac = facilities.find(f => String(f.id) === String(p.facility_id));
-                                        const facName = fac ? fac.name : (p.facilityName || p.facility_name || '—');
-                                        const prodName = p.productName || p.product_name || '—';
-                                        const cn = p.cnCode || p.cn_code || '—';
-                                        const qty = p.quantityTonnes ?? p.quantity_tonnes ?? 0;
-                                        const dest = p.exportDestination || p.export_destination || 'EU';
-                                        const directInt = p.specificEmbeddedDirect ?? p.specific_embedded_direct;
-                                        const indirInt = p.specificEmbeddedIndirect ?? p.specific_embedded_indirect;
-                                        const totEmb = p.totalEmbeddedEmissions ?? p.total_embedded_emissions ?? (qty * ((directInt || 0) + (indirInt || 0)));
-                                        return (
-                                            <tr key={p.id || idx}>
-                                                <td className="font-semibold!">{facName}</td>
-                                                <td>{prodName}</td>
-                                                <td><span className="code-pill [background:var(--bg-hover)] [padding:3px_8px] [border-radius:var(--radius-sm)] [font-family:monospace] [font-size:var(--text-sm)] [color:var(--text-primary)] [border:1px_solid_var(--border-color)]">{cn}</span></td>
-                                                <td>{p.year}-{String(p.month || 1).padStart(2, '0')}</td>
-                                                <td>{formatNumber(qty, 0)}</td>
-                                                <td>{dest}</td>
-                                                <td><strong className="text-[color:#c2410c]!">{typeof directInt === 'number' ? directInt.toFixed(4) : '—'}</strong></td>
-                                                <td>{typeof indirInt === 'number' ? indirInt.toFixed(4) : '—'}</td>
-                                                <td><strong>{formatNumber(totEmb, 1)}</strong></td>
-                                            </tr>
-                                        );
-                                    })}
-                                </tbody>
-                            </table>
-                        </div>
-                    ) : (
-                        <div className="[display:flex] [flex-direction:column] [align-items:center] [justify-content:center] [padding:40px_20px] [color:var(--text-secondary)] [font-size:var(--text-base)]">
-                            <p>No CBAM product export records registered for the selected filters. Track exports via <strong>Manage Data &gt; CBAM Products</strong>.</p>
-                        </div>
-                    )}
-                </div>
-
-        {/* Regional Bar Charts */}
-        <div className="chart-grid [display:grid] [grid-template-columns:repeat(auto-fit,_minmax(450px,_1fr))]! [gap:24px] [@media(max-width:768px)]:[grid-template-columns:1fr]!">
-          <div className="card">
-            <div className="chart-header">
-              <div className="[display:flex] [flex-direction:column] [gap:8px]">
-                <h3>GHG Intensity by Facility (kg CO₂e / BOE)</h3>
-                <div
-                  className="[width:32px] [height:4px] [border-radius:var(--radius-sm)] bg-[color:#ff6600]!"
-                 
-                ></div>
-              </div>
-            </div>
-            <div className="h-[300px]!">
-              <BarChart
-                data={regionalData.map((d) => ({
-                  name: d.facility_name,
-                  value:
-                    gwpHorizon === "20"
-                      ? d.co2_intensity_gwp20 || d.co2_intensity
-                      : d.co2_intensity }))}
-                dataKey="value"
-                xKey="name"
-                color="#ff6600"
-              />
-            </div>
-          </div>
-
-          <div className="card">
-            <div className="chart-header">
-              <div className="[display:flex] [flex-direction:column] [gap:8px]">
-                <h3>Scope 1 Direct vs Scope 2 Intensity</h3>
-                <div
-                  className="[width:32px] [height:4px] [border-radius:var(--radius-sm)] bg-[color:#2563eb]!"
-                 
-                ></div>
-              </div>
-            </div>
-            <div className="h-[300px]!">
-              <BarChart
-                data={regionalData.map((d) => ({
-                  name: d.facility_name,
-                  scope1: Number(
-                    (
-                      (gwpHorizon === "20"
-                        ? d.scope1_intensity_gwp20 || d.scope1_intensity
-                        : d.scope1_intensity) || 0
-                    ).toFixed(2)
-                  ),
-                  scope2: Number((d.scope2_intensity || 0).toFixed(2)) }))}
-                bars={[
-                  {
-                    dataKey: "scope1",
-                    name: gwpHorizon === "20" ? "Scope 1 (GWP₂₀ Direct)" : "Scope 1 (Direct)",
-                    color: "#2563eb" },
-                  { dataKey: "scope2", name: "Scope 2 (Indirect)", color: "#0ea5e9" },
-                ]}
-                xKey="name"
-              />
-            </div>
-          </div>
-
-          <div className="card">
-            <div className="chart-header">
-              <div className="[display:flex] [flex-direction:column] [gap:8px]">
-                <h3>Oil BOE Contribution by Facility</h3>
-                <div
-                  className="[width:32px] [height:4px] [border-radius:var(--radius-sm)] bg-[color:#ea580c]!"
-                 
-                ></div>
-              </div>
-            </div>
-            <div className="h-[300px]!">
-              <BarChart
-                data={regionalData.map((d) => ({
-                  name: d.facility_name,
-                  value: d.total_oil || 0 }))}
-                dataKey="value"
-                xKey="name"
-                color="#ea580c"
-              />
-            </div>
-          </div>
-
-          <div className="card">
-            <div className="chart-header">
-              <div className="[display:flex] [flex-direction:column] [gap:8px]">
-                <h3>Gas BOE Contribution by Facility</h3>
-                <div
-                  className="[width:32px] [height:4px] [border-radius:var(--radius-sm)] bg-[color:#8b5cf6]!"
-                 
-                ></div>
-              </div>
-            </div>
-            <div className="h-[300px]!">
-              <BarChart
-                data={regionalData.map((d) => ({
-                  name: d.facility_name,
-                  value: (d.total_gas || 0) * GAS_TO_BOE }))}
-                dataKey="value"
-                xKey="name"
-                color="#8b5cf6"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Historical Trends Section */}
-        <div className="card trend-section [margin-top:8px]">
-          <div className="chart-header">
-            <div>
-              <h3 className="mb-[4px]!">
-                Historical Carbon Intensity Trends
-              </h3>
-              <p
-                className="text-[color:var(--text-secondary)]! text-[length:0.9rem]! m-[0px]!"
-              >
-                5-Year Performance Track (kg CO₂e / BOE)
-              </p>
-            </div>
-            <div className="[display:flex] [gap:12px] [align-items:center]">
-              <div className="[background:var(--bg-hover)] [padding:4px] [border-radius:var(--radius-md)] [display:flex] [gap:4px] [border:1px_solid_var(--border-color)]">
-                <button
-                  className={`view-btn ${trendView === "chart" ? "active" : ""}`}
-                  onClick={() => setTrendView("chart")}
-                >
-                  <BarChart2 size={16} /> Chart
-                </button>
-                <button
-                  className={`view-btn ${trendView === "heatmap" ? "active" : ""}`}
-                  onClick={() => setTrendView("heatmap")}
-                >
-                  <Grid size={16} /> Heatmap
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {trendView === "chart" ? (
-            <div className="h-[350px]!">
-              <LineChart
-                data={trendChartData}
-                xKey="year"
-                series={[
-                  {
-                    key: "co2_100",
-                    color: "#c2410c",
-                    name: `GHG Intensity (${activeGwpStandard} 100-Yr GWP)` },
-                  {
-                    key: "co2_20",
-                    color: "#ea580c",
-                    name: `GHG Intensity (${activeGwpStandard} 20-Yr GWP)`,
-                    dash: "5 5" },
-                ]}
-              />
-            </div>
-          ) : (
-            <div className="heatmap-container [margin-top:24px] [overflow-x:auto] [background:var(--bg-app)] [border-radius:var(--radius-md)] [border:1px_solid_var(--border-color)] [padding:16px]">
-              <div className="heatmap-header [display:grid] [grid-template-columns:200px_repeat(5,_1fr)] [gap:12px] [margin-bottom:16px] [padding:0_12px]">
-                <div
-                  className="[font-size:var(--text-sm)] [font-weight:700] [color:var(--text-secondary)] [text-transform:uppercase] [letter-spacing:0.05em] text-left!"
-                 
-                >
-                  FACILITY / REGION
-                </div>
-                {rawTrendData.map((d) => (
-                  <div key={d.year} className="[font-size:var(--text-sm)] [font-weight:700] [color:var(--text-secondary)] [text-transform:uppercase] [text-align:center] [letter-spacing:0.05em]">
-                    {d.year}
-                  </div>
-                ))}
-              </div>
-              <div className="heatmap-body">
-                {regionalData.length > 0 ? (
-                  regionalData.map((facData) => (
-                    <div key={facData.facility_id} className="heatmap-row [display:grid] [grid-template-columns:200px_repeat(5,_1fr)] [gap:12px] [padding:12px] [border-bottom:1px_solid_var(--border-color)] [align-items:center] [transition:background-color_0.2s] last:[border-bottom:none] hover:[background:var(--bg-card)] hover:[border-radius:var(--radius-md)] hover:[box-shadow:var(--shadow-xs)]">
-                      <div className="[font-weight:600] [font-size:var(--text-base)] [color:var(--text-primary)]">
-                        {facData.facility_name}
-                      </div>
-                      {rawTrendData.map((yData) => {
-                        const record = yData.data.find(
-                          (r) => r.facility_id === facData.facility_id,
-                        );
-                        const rawVal = record
-                          ? gwpHorizon === "20"
-                            ? record.co2_intensity_gwp20 || record.co2_intensity
-                            : record.co2_intensity
-                          : 0;
-                        const numVal = Number(rawVal);
-                        const val = isFinite(numVal) ? numVal : 0;
-                        return (
-                          <div
-                            key={yData.year}
-                            className={`heatmap-cell ${getHeatmapClass(val)}`}
-                            title={`${yData.year} Intensity: ${val.toFixed(3)} kg CO2e/BOE`}
-                          >
-                            {val > 0 ? val.toFixed(2) : "-"}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  ))
-                ) : (
-                  <p
-                    className="text-center! p-[40px]! text-[color:var(--text-secondary)]!"
-                  >
-                    No regional data available
-                  </p>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
+          activeGwpStandard={activeGwpStandard}
+          currentDisplayCo2Intensity={currentDisplayCo2Intensity}
+          currentDisplayScope1Intensity={currentDisplayScope1Intensity}
+          currentDisplayTotalCo2e={currentDisplayTotalCo2e}
+          currentDisplayTotalScope1={currentDisplayTotalScope1}
+          currentUsedCo2e={currentUsedCo2e}
+          currentUsedScope1={currentUsedScope1}
+          excludedNote={excludedNote}
+          gwpHorizon={gwpHorizon}
+          selectedYear={selectedYear}
+          setGwpHorizon={setGwpHorizon}
+          stats={stats}
+        />
+        <CbamSection products={cbamProducts} facilities={facilities} />
+        <RegionalCharts data={regionalData} gwpHorizon={gwpHorizon} />
+        <TrendSection
+          view={trendView}
+          onView={setTrendView}
+          trendChartData={trendChartData}
+          rawTrendData={rawTrendData}
+          regionalData={regionalData}
+          gwpHorizon={gwpHorizon}
+          activeGwpStandard={activeGwpStandard}
+        />
       </div>
     </div>
   );
