@@ -11,24 +11,14 @@ const PaginationControls = ({ currentPage, totalItems, itemsPerPage, onPageChang
     }, [currentPage, totalPages, onPageChange]);
 
     return (
-        <div className="flex! justify-between! items-center! mt-[16px]! p-[16px_0]! [border-top:1px_solid_#e5e7eb]!">
-            <Button 
-                variant="ghost" type="submit" 
-                disabled={currentPage <= 1} 
-                onClick={() => onPageChange(currentPage - 1)}
-                className={`[padding:6px_12px]! ${currentPage <= 1 ? "[opacity:0.5]!" : "[opacity:1]!"} ${currentPage <= 1 ? "[cursor:not-allowed]!" : "[cursor:pointer]!"}`}
-            >
+        <div className="mt-4 flex items-center justify-between border-t border-border py-4">
+            <Button variant="ghost" size="sm" disabled={currentPage <= 1} onClick={() => onPageChange(currentPage - 1)}>
                 Previous
             </Button>
-            <span className="text-[length:0.85rem]! text-[color:var(--text-secondary)]!">
+            <span className="text-sm text-text-secondary">
                 Page {currentPage} of {totalPages}
             </span>
-            <Button 
-                variant="ghost" type="submit" 
-                disabled={currentPage >= totalPages} 
-                onClick={() => onPageChange(currentPage + 1)}
-                className={`[padding:6px_12px]! ${currentPage >= totalPages ? "[opacity:0.5]!" : "[opacity:1]!"} ${currentPage >= totalPages ? "[cursor:not-allowed]!" : "[cursor:pointer]!"}`}
-            >
+            <Button variant="ghost" size="sm" disabled={currentPage >= totalPages} onClick={() => onPageChange(currentPage + 1)}>
                 Next
             </Button>
         </div>

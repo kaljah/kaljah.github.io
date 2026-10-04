@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Button, Input } from "../ui";
+import { Badge, Button, Card, Input } from "../ui";
+import { cn } from "../ui/cn";
+import { controlClass } from "../components/import-wizard/mapping";
 import { NativeSelect } from "../ui/NativeSelect";
 import { showReviewResult } from '../utils/reviewResult';
 import { useLocation } from 'react-router-dom';
@@ -1396,100 +1398,91 @@ const ManageDataInner = () => {
     const filteredBaseYears = getFilteredBaseYears();
     const filteredCbam = getFilteredCbam();
 
-    return (
-        <div className="manage-data-page" >
-            <div className="manage-container">
-                <div className="manage-layout">
-                    {/* Sidebar Navigation */}
-                    <aside className="[border-radius:var(--radius-lg)]! [padding:16px]! [position:sticky]! [top:24px]! [@media(max-width:768px)]:[position:static]! [@media(max-width:768px)]:[display:flex]! [@media(max-width:768px)]:[overflow-x:auto] [@media(max-width:768px)]:[-webkit-overflow-scrolling:touch] [@media(max-width:768px)]:[white-space:nowrap] [@media(max-width:768px)]:[gap:8px] [@media(max-width:768px)]:[padding:10px]! [@media(max-width:768px)]:[scrollbar-width:none] [@media(max-width:768px)]:[border-radius:var(--radius-lg)]! [@media(max-width:768px)]:[top:auto]! [@media(max-width:768px)]:[&::-webkit-scrollbar]:[display:none]! glass-panel">
-                        <h3 className="m-[0_0_16px_12px]! text-[length:0.85rem]! uppercase! [letter-spacing:1px]! text-[color:var(--text-secondary)]!">
-                            Management
-                        </h3>
-                                                {['admin', 'superuser'].includes(user?.role) && (
-                            <button type="button" className={`manage-nav-item ${activeTab === 'pending' ? 'active' : ''}`} aria-current={activeTab === 'pending' ? 'page' : undefined} onClick={() => handleTabChange('pending')}>
-                                <span className="flex! justify-between! w-full! items-center!">
-                                    <span className="inline-flex! items-center! gap-[8px]!">
-                                        <Clock size={16} />
-                                        Pending Review
-                                    </span>
-                                    {pendingMetrics.totalCount > 0 && (
-                                        <span className="[display:inline-flex] [align-items:center] [justify-content:center] [min-width:20px] [height:20px] [padding:0_7px] [border-radius:var(--radius-md)] [font-size:var(--text-xs)] [font-weight:700] [background:var(--color-red-700)] [color:var(--color-white)] [box-shadow:0_0_8px_rgba(239,_68,_68,_0.4)]">
-                                            {pendingMetrics.totalCount}
-                                        </span>
-                                    )}
-                                </span>
-                            </button>
-                        )}
-                        <button type="button" className={`manage-nav-item ${activeTab === 'factors' ? 'active' : ''}`} aria-current={activeTab === 'factors' ? 'page' : undefined} onClick={() => handleTabChange('factors')}>
-                            <span>Emission Factors</span>
-                        </button>
-                        {['admin', 'superuser'].includes(user?.role) && (
-                            <button type="button" className={`manage-nav-item ${activeTab === 'facilities' ? 'active' : ''}`} aria-current={activeTab === 'facilities' ? 'page' : undefined} onClick={() => handleTabChange('facilities')}>
-                                <span>Regions</span>
-                            </button>
-                        )}
-                        <button type="button" className={`manage-nav-item ${activeTab === 'production' ? 'active' : ''}`} aria-current={activeTab === 'production' ? 'page' : undefined} onClick={() => handleTabChange('production')}>
-                            <span>Production Data</span>
-                        </button>
-                        <button type="button" className={`manage-nav-item ${activeTab === 'sources' ? 'active' : ''}`} aria-current={activeTab === 'sources' ? 'page' : undefined} onClick={() => handleTabChange('sources')}>
-                            <span>Emission Sources</span>
-                        </button>
-                        <button type="button" className={`manage-nav-item ${activeTab === 'goals' ? 'active' : ''}`} aria-current={activeTab === 'goals' ? 'page' : undefined} onClick={() => handleTabChange('goals')}>
-                            <span>Emission Goals & Base Years</span>
-                        </button>
-                        <button type="button" className={`manage-nav-item ${activeTab === 'mitigation' ? 'active' : ''}`} aria-current={activeTab === 'mitigation' ? 'page' : undefined} onClick={() => handleTabChange('mitigation')}>
-                            <span>Mitigation Projects</span>
-                        </button>
-                        <button type="button" className={`manage-nav-item ${activeTab === 'ogmp' ? 'active' : ''}`} aria-current={activeTab === 'ogmp' ? 'page' : undefined} onClick={() => handleTabChange('ogmp')}>
-                            <span>OGMP 2.0 Surveys</span>
-                        </button>
-                        <button type="button" className={`manage-nav-item ${activeTab === 'cbam' ? 'active' : ''}`} aria-current={activeTab === 'cbam' ? 'page' : undefined} onClick={() => handleTabChange('cbam')}>
-                            <span>CBAM Products</span>
-                        </button>
+    const isAdminLike = ['admin', 'superuser'].includes(user?.role);
+    const NAV = [
+        { id: 'pending', label: 'Pending Review', icon: Clock, show: isAdminLike, count: pendingMetrics.totalCount },
+        { id: 'factors', label: 'Emission Factors', show: true },
+        { id: 'facilities', label: 'Regions', show: isAdminLike },
+        { id: 'production', label: 'Production Data', show: true },
+        { id: 'sources', label: 'Emission Sources', show: true },
+        { id: 'goals', label: 'Emission Goals & Base Years', show: true },
+        { id: 'mitigation', label: 'Mitigation Projects', show: true },
+        { id: 'ogmp', label: 'OGMP 2.0 Surveys', show: true },
+        { id: 'cbam', label: 'CBAM Products', show: true },
+    ].filter((n) => n.show);
+    const hasFilters = filterActivity || filterDivision || filterRegion || filterYear;
+    const filterSelect = "w-auto " + controlClass;
 
-                    </aside>
+    return (
+        <div className="manage-data-page">
+            <div className="manage-container">
+                <div className="manage-layout mx-auto grid w-full max-w-[1600px] items-start gap-6 p-4 md:grid-cols-[240px_1fr] md:p-6">
+                    {/* Sidebar Navigation */}
+                    <Card as="aside" className="p-4 md:sticky md:top-6">
+                        <h3 className="m-0 mb-4 ml-3 text-sm font-semibold uppercase tracking-widest text-text-secondary">Management</h3>
+                        <nav aria-label="Manage data sections" className="flex flex-col gap-1">
+                            {NAV.map((n) => (
+                                <button
+                                    key={n.id}
+                                    type="button"
+                                    aria-current={activeTab === n.id ? 'page' : undefined}
+                                    onClick={() => handleTabChange(n.id)}
+                                    className={cn(
+                                        "manage-nav-item flex w-full cursor-pointer items-center justify-between gap-3 rounded-md border-0 bg-transparent px-4 py-3 text-left text-base font-medium text-text-secondary transition-colors hover:bg-ink-100 hover:text-text",
+                                        activeTab === n.id && "active bg-brand-50 font-semibold text-link hover:bg-brand-50 hover:text-link",
+                                    )}
+                                >
+                                    <span className="inline-flex items-center gap-2">
+                                        {n.icon && <n.icon className="size-4" aria-hidden="true" />}
+                                        {n.label}
+                                    </span>
+                                    {n.count > 0 && <Badge tone="warning" className="min-w-5 justify-center px-1.5">{n.count}</Badge>}
+                                </button>
+                            ))}
+                        </nav>
+                    </Card>
 
                     {/* Content Area */}
-                    <section className="flex-1!">
-                        <div className="mb-[24px]! flex! gap-[12px]! flex-wrap! items-center!">
-                            <div className="relative! flex-1! min-w-[250px]!">
-                                <Search className="search-icon [position:absolute]! [left:12px]! [top:50%]! [transform:translateY(-50%)]! text-[color:var(--text-secondary)]!" size={18} />
+                    <section className="min-w-0 flex-1">
+                        <div className="mb-6 flex flex-wrap items-center gap-3">
+                            <div className="relative min-w-[250px] flex-1">
+                                <Search className="pointer-events-none absolute left-3 top-1/2 size-[18px] -translate-y-1/2 text-text-secondary" aria-hidden="true" />
                                 <Input
                                     type="text"
+                                    aria-label="Search records"
                                     placeholder={activeTab === 'goals' ? "Search goals or base years..." : `Search ${activeTab}...`}
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
-                                   
-                                    className="pl-[40px]! bg-[color:white]! w-full!"
+                                    className="pl-10"
                                 />
                             </div>
-                            
+
                             {activeTab !== 'factors' && activeTab !== 'goals' && (
                                 <>
-                                    <NativeSelect value={filterActivity} onChange={(e) => { setFilterActivity(e.target.value); setFilterDivision(''); }} className="component-select" style={{ width: 'auto' }}>
+                                    <NativeSelect aria-label="Activity" value={filterActivity} onChange={(e) => { setFilterActivity(e.target.value); setFilterDivision(''); }} className={filterSelect}>
                                         <option value="">All Activities</option>
                                         {activityFilterOptions.map(a => <option key={a.value} value={a.value}>{a.label}</option>)}
                                     </NativeSelect>
 
-                                    <NativeSelect value={filterDivision} onChange={(e) => setFilterDivision(e.target.value)} className="component-select" style={{ width: 'auto' }} disabled={!filterActivity}>
+                                    <NativeSelect aria-label="Division" value={filterDivision} onChange={(e) => setFilterDivision(e.target.value)} className={filterSelect} disabled={!filterActivity}>
                                         <option value="">All Divisions</option>
                                         {divisionFilterOptions.map(d => <option key={d} value={d}>{d}</option>)}
                                     </NativeSelect>
 
-                                    <NativeSelect value={filterRegion} onChange={(e) => setFilterRegion(e.target.value)} className="component-select" style={{ width: 'auto' }}>
+                                    <NativeSelect aria-label="Region" value={filterRegion} onChange={(e) => setFilterRegion(e.target.value)} className={filterSelect}>
                                         <option value="">All Regions</option>
                                         {availableFilters.regions?.map(r => <option key={r} value={r}>{r}</option>)}
                                     </NativeSelect>
 
                                     {(activeTab === 'production' || activeTab === 'mitigation') && (
-                                        <NativeSelect value={filterYear} onChange={(e) => setFilterYear(e.target.value)} className="component-select" style={{ width: 'auto' }}>
+                                        <NativeSelect aria-label="Year" value={filterYear} onChange={(e) => setFilterYear(e.target.value)} className={filterSelect}>
                                             <option value="">All Years</option>
                                             {availableFilters.years?.map(y => <option key={y} value={y}>{y}</option>)}
                                         </NativeSelect>
                                     )}
-                                    
-                                    {(filterActivity || filterDivision || filterRegion || filterYear) && (
-                                        <Button variant="ghost" type="submit" onClick={() => { setFilterActivity(''); setFilterDivision(''); setFilterRegion(''); setFilterYear(''); }} className="text-[color:var(--text-secondary)]! p-[6px_12px]! text-[length:0.85rem]!">
+
+                                    {hasFilters && (
+                                        <Button variant="ghost" onClick={() => { setFilterActivity(''); setFilterDivision(''); setFilterRegion(''); setFilterYear(''); }}>
                                             Clear Filters
                                         </Button>
                                     )}
