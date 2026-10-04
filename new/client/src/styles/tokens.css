@@ -135,9 +135,9 @@
 
 :root {
   --z-sticky: 100;
-  --z-sidebar: 200;
   --z-topbar: 300;
-  --z-dropdown: 1000;
+  --z-sidebar: 1200;
+  --z-dropdown: 1300;
   --z-overlay: 10000; /* above legacy 9999 modals until Phase 5 */
   --z-modal: 10001;
   --z-popover: 10002;

@@ -54,7 +54,7 @@ const AppShell = () => {
         <AnalyticsFiltersSync />
         <BannerStack />
         <Sidebar />
-        <main className="main-content relative flex min-w-0 flex-1 flex-col overflow-hidden">
+        <main className="main-content relative z-0 flex min-w-0 flex-1 flex-col overflow-hidden">
           <TopBar onOpenPalette={openPalette} />
           <div id="main" tabIndex={-1} className="min-h-0 w-full flex-1 overflow-y-auto overflow-x-hidden outline-none">
             <Suspense fallback={<PageSkeleton />}>

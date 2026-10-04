@@ -159,7 +159,7 @@ const Sidebar = () => {
         onFocus={() => collapsed && open(true)}
         onBlur={(e) => !e.currentTarget.contains(e.relatedTarget) && open(false)}
         className={cn(
-          "absolute inset-y-0 left-0 flex flex-col border-r border-border bg-surface transition-[width,box-shadow] duration-200",
+          "absolute inset-y-0 left-0 z-(--z-sidebar) flex flex-col border-r border-border bg-surface transition-[width,box-shadow] duration-200",
           expanded ? "w-60" : "w-16",
           collapsed && peek && "shadow-raised",
         )}
