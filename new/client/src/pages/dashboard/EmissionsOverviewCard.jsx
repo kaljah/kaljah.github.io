@@ -62,6 +62,7 @@ const EmissionsOverviewCard = ({
         <StatCard
           className="p-4"
           data-testid="kpi-gross"
+          tone="brand"
           label="Gross Operational Emissions"
           sublabel="Scope 1+2"
           value={stats.totalEmissions}
@@ -72,15 +73,24 @@ const EmissionsOverviewCard = ({
         <StatCard
           className="p-4"
           data-testid="kpi-net"
+          tone="success"
           label="Net Emissions"
           value={stats.netEmissions}
           unit="tCO2e"
           footnote={`Less ${formatCompactNumber(stats.mitigation)} mitigation`}
         />
-        <StatCard className="p-4" data-testid="kpi-ch4" label="Total CH4 (Methane)" value={stats.methaneEmissions} unit="tCH4" />
+        <StatCard
+          className="p-4"
+          data-testid="kpi-ch4"
+          tone="warning"
+          label="Total CH4 (Methane)"
+          value={stats.methaneEmissions}
+          unit="tCH4"
+        />
         <StatCard
           className="p-4"
           data-testid="kpi-intensity"
+          tone={intensityPending ? "warning" : "purple"}
           label="Performance Intensity"
           sublabel="CO2e intensity (Scope 1+2)"
           value={intensity}

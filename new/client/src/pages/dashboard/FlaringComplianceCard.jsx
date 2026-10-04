@@ -5,11 +5,12 @@ import { formatCompactNumber } from "../../utils/formatters";
 
 const UNIT_TITLE = "thousand standard m³ (15.6 °C / 60 °F, 1 atm)";
 
-// One flaring stream tile: volume, share of total and tCO2e. The left rule colors the stream category.
-const StreamTile = ({ label, stream, rule, testId, shareLabel = "of total" }) => (
+// One flaring stream tile: volume, share of total and tCO2e. The left rule and tone colors the stream category.
+const StreamTile = ({ label, stream, rule, tone = "default", testId, shareLabel = "of total" }) => (
   <StatCard
     data-testid={testId}
     className={`border-l-4 p-4 ${rule}`}
+    tone={tone}
     label={label}
     value={stream?.volume_knm3 ?? 0}
     format="number"
@@ -72,19 +73,28 @@ const FlaringComplianceCard = ({ flaringData }) => {
           label="Total Flared Volume"
           stream={{ ...flaringData.total_flaring, percentage: null }}
           rule="border-l-brand-500"
+          tone="brand"
         />
-        <StreamTile testId="flaring-routine" label="Routine Flaring" stream={flaringData.routine_flaring} rule="border-l-red-500" />
+        <StreamTile
+          testId="flaring-routine"
+          label="Routine Flaring"
+          stream={flaringData.routine_flaring}
+          rule="border-l-red-500"
+          tone="danger"
+        />
         <StreamTile
           testId="flaring-non-routine"
           label="Non-Routine Flaring"
           stream={flaringData.non_routine_flaring}
           rule="border-l-amber-500"
+          tone="warning"
         />
         <StreamTile
           testId="flaring-safety"
           label="Safety & Purge Flaring"
           stream={flaringData.safety_flaring}
           rule="border-l-blue-500"
+          tone="info"
         />
         {flaringData.unclassified_flaring?.volume_knm3 > 0 && (
           <StreamTile
@@ -92,6 +102,7 @@ const FlaringComplianceCard = ({ flaringData }) => {
             label="Unclassified Flaring"
             stream={flaringData.unclassified_flaring}
             rule="border-l-ink-400"
+            tone="default"
           />
         )}
       </div>

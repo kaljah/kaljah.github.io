@@ -5,7 +5,17 @@ import { Num, Unit } from "./Num";
 import { Skeleton } from "./Skeleton";
 import { cn } from "./cn";
 
-/** KPI tile. The value is neutral ink; only the delta is colored (green = good, red = bad). */
+const VALUE_TONES = {
+  default: "text-text",
+  brand: "text-brand-500",
+  success: "text-green-600",
+  warning: "text-amber-500",
+  danger: "text-red-500",
+  info: "text-blue-600",
+  purple: "text-violet-500",
+};
+
+/** KPI tile. Supports tone styling to match dashboard categories and status themes. */
 export const StatCard = ({
   label,
   sublabel,
@@ -17,6 +27,7 @@ export const StatCard = ({
   delta,
   footnote,
   icon: Icon,
+  tone = "default",
   loading = false,
   className,
   ...props
@@ -35,7 +46,10 @@ export const StatCard = ({
         <Skeleton className="h-9 w-32" />
       ) : (
         <div className="flex flex-wrap items-baseline gap-x-2">
-          <span data-testid="kpi-value" className="text-2xl font-bold text-text">
+          <span
+            data-testid="kpi-value"
+            className={cn("text-2xl font-bold", VALUE_TONES[tone] ?? "text-text")}
+          >
             {valueText ?? <Num value={value} format={format} decimals={decimals} />}
           </span>
           {unit && <Unit className="text-sm">{unit}</Unit>}
