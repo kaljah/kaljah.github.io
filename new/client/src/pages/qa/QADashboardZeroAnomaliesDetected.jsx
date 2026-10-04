@@ -1,283 +1,183 @@
 import React from "react";
 import { AlertTriangle, Check, CheckCircle, ChevronLeft, ChevronRight, Search, X } from "lucide-react";
+import { Badge, Button, Card, EmptyState, IconButton, Input, StatusPill } from "../../ui";
+import { cn } from "../../ui/cn";
 
-// Extracted from QADashboard.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
-const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, currentPage, data, filteredRecords, handleBulkResolve, handleSingleResolve, offset, resolving, returned_count, searchQuery, selectedIds, setOffset, setSearchQuery, setSelectedIds, setStatusFilter, statusFilter, toggleSelect, toggleSelectAll, totalPages, total_flagged_count }) => (
-<div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.9))] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [&&]:[border-radius:var(--radius-lg)] [box-shadow:var(--shadow-card,_0_4px_20px_-2px_rgba(15,_23,_42,_0.05))] [overflow:hidden] [display:flex] [flex-direction:column]">
-                        {/* Table Toolbar */}
-                        <div className="[padding:18px_24px] [border-bottom:1px_solid_rgba(226,_232,_240,_0.8)] [display:flex] [justify-content:space-between] [align-items:center] [flex-wrap:wrap] [gap:14px] [background:rgba(248,_250,_252,_0.4)]">
-                            <div className="flex! gap-[12px]! items-center! flex-wrap!">
-                                {/* Search Box */}
-                                <div className="[position:relative] [display:flex] [align-items:center] [min-width:240px] [&_svg]:[position:absolute] [&_svg]:[left:12px] [&_svg]:[color:var(--color-ink-600)]">
-                                    <Search size={14} />
-                                    <input
-                                        type="text"
-                                        className="[width:100%] [padding:8px_12px_8px_36px] [border-radius:var(--radius-md)] [border:1px_solid_var(--color-ink-200)] [font-size:var(--text-base)] [background:var(--color-white)] [color:var(--color-ink-900)] [outline:none] [transition:border-color_0.2s_ease] focus:[border-color:var(--accent-color,_var(--color-brand-500))]"
-                                        placeholder="Search by ID, process, or reason…"
-                                        value={searchQuery}
-                                        onChange={e => setSearchQuery(e.target.value)}
-                                    />
-                                </div>
+const STATUS_FILTERS = [
+  { value: "all", label: "All Statuses", count: "all" },
+  { value: "pending", label: "Pending Review", count: "pending" },
+  { value: "verified", label: "Verified", count: "verified" },
+  { value: "rejected", label: "Rejected", count: "rejected" },
+];
+const SCOPE_TONE = { 1: "brand", 2: "info", 3: "neutral" };
 
-                                {/* Status Filters */}
-                                <div className="[display:flex] [gap:6px] [align-items:center]">
-                                    <button
-                                        aria-pressed={statusFilter === 'all'}
-                                        className={`[display:inline-flex] [align-items:center] [gap:6px] [padding:5px_12px] [border-radius:var(--radius-sm)]! [border:1px_solid_var(--color-ink-200)]! [background:var(--color-white)]! [font-size:var(--text-sm)] [font-weight:600] [color:var(--color-ink-500)]! [cursor:pointer] [transition:all_0.15s_ease] hover:[color:var(--color-ink-900)]! hover:[border-color:var(--color-ink-300)]! [&.active]:[background:var(--color-brand-50)]! [&.active]:[color:var(--color-brand-800)]! [&.active]:[border-color:var(--color-brand-500)]! [&&]:[&.active_.qa-status-pill-count]:[background:var(--color-brand-100)]! [&&]:[&.active_.qa-status-pill-count]:[color:var(--color-brand-800)]! ${statusFilter === 'all' ? 'active' : ''}`}
-                                        onClick={() => { setStatusFilter('all'); setOffset(0); }}
-                                    >
-                                        <span>All Statuses</span>
-                                        {anomaliesSummary.all > 0 && (
-                                            <span className="qa-status-pill-count [display:inline-flex] [align-items:center] [justify-content:center] [padding:1px_6px] [border-radius:var(--radius-md)] [font-size:var(--text-xs)] [font-weight:700] [background:var(--color-ink-100)] [color:var(--color-ink-600)] [line-height:1.2]">{anomaliesSummary.all}</span>
-                                        )}
-                                    </button>
-                                    <button
-                                        aria-pressed={statusFilter === 'pending'}
-                                        className={`[display:inline-flex] [align-items:center] [gap:6px] [padding:5px_12px] [border-radius:var(--radius-sm)]! [border:1px_solid_var(--color-ink-200)]! [background:var(--color-white)]! [font-size:var(--text-sm)] [font-weight:600] [color:var(--color-ink-500)]! [cursor:pointer] [transition:all_0.15s_ease] hover:[color:var(--color-ink-900)]! hover:[border-color:var(--color-ink-300)]! [&.active]:[background:var(--color-brand-50)]! [&.active]:[color:var(--color-brand-800)]! [&.active]:[border-color:var(--color-brand-500)]! [&&]:[&.active_.qa-status-pill-count]:[background:var(--color-brand-100)]! [&&]:[&.active_.qa-status-pill-count]:[color:var(--color-brand-800)]! ${statusFilter === 'pending' ? 'active' : ''}`}
-                                        onClick={() => { setStatusFilter('pending'); setOffset(0); }}
-                                    >
-                                        <span>Pending Review</span>
-                                        {anomaliesSummary.pending > 0 && (
-                                            <span className="qa-status-pill-count [display:inline-flex] [align-items:center] [justify-content:center] [padding:1px_6px] [border-radius:var(--radius-md)] [font-size:var(--text-xs)] [font-weight:700] [background:var(--color-ink-100)] [color:var(--color-ink-600)] [line-height:1.2]">{anomaliesSummary.pending}</span>
-                                        )}
-                                    </button>
-                                    <button
-                                        aria-pressed={statusFilter === 'verified'}
-                                        className={`[display:inline-flex] [align-items:center] [gap:6px] [padding:5px_12px] [border-radius:var(--radius-sm)]! [border:1px_solid_var(--color-ink-200)]! [background:var(--color-white)]! [font-size:var(--text-sm)] [font-weight:600] [color:var(--color-ink-500)]! [cursor:pointer] [transition:all_0.15s_ease] hover:[color:var(--color-ink-900)]! hover:[border-color:var(--color-ink-300)]! [&.active]:[background:var(--color-brand-50)]! [&.active]:[color:var(--color-brand-800)]! [&.active]:[border-color:var(--color-brand-500)]! [&&]:[&.active_.qa-status-pill-count]:[background:var(--color-brand-100)]! [&&]:[&.active_.qa-status-pill-count]:[color:var(--color-brand-800)]! ${statusFilter === 'verified' ? 'active' : ''}`}
-                                        onClick={() => { setStatusFilter('verified'); setOffset(0); }}
-                                    >
-                                        <span>Verified</span>
-                                        {anomaliesSummary.verified > 0 && (
-                                            <span className="qa-status-pill-count [display:inline-flex] [align-items:center] [justify-content:center] [padding:1px_6px] [border-radius:var(--radius-md)] [font-size:var(--text-xs)] [font-weight:700] [background:var(--color-ink-100)] [color:var(--color-ink-600)] [line-height:1.2]">{anomaliesSummary.verified}</span>
-                                        )}
-                                    </button>
-                                    <button
-                                        aria-pressed={statusFilter === 'rejected'}
-                                        className={`[display:inline-flex] [align-items:center] [gap:6px] [padding:5px_12px] [border-radius:var(--radius-sm)]! [border:1px_solid_var(--color-ink-200)]! [background:var(--color-white)]! [font-size:var(--text-sm)] [font-weight:600] [color:var(--color-ink-500)]! [cursor:pointer] [transition:all_0.15s_ease] hover:[color:var(--color-ink-900)]! hover:[border-color:var(--color-ink-300)]! [&.active]:[background:var(--color-brand-50)]! [&.active]:[color:var(--color-brand-800)]! [&.active]:[border-color:var(--color-brand-500)]! [&&]:[&.active_.qa-status-pill-count]:[background:var(--color-brand-100)]! [&&]:[&.active_.qa-status-pill-count]:[color:var(--color-brand-800)]! ${statusFilter === 'rejected' ? 'active' : ''}`}
-                                        onClick={() => { setStatusFilter('rejected'); setOffset(0); }}
-                                    >
-                                        <span>Rejected</span>
-                                        {anomaliesSummary.rejected > 0 && (
-                                            <span className="qa-status-pill-count [display:inline-flex] [align-items:center] [justify-content:center] [padding:1px_6px] [border-radius:var(--radius-md)] [font-size:var(--text-xs)] [font-weight:700] [background:var(--color-ink-100)] [color:var(--color-ink-600)] [line-height:1.2]">{anomaliesSummary.rejected}</span>
-                                        )}
-                                    </button>
-                                </div>
-                            </div>
+const th = "whitespace-nowrap border-b border-border px-4 py-3.5 text-left text-xs font-bold uppercase tracking-wide text-text-secondary";
+const td = "border-b border-ink-100 px-4 py-3.5 align-middle text-base text-ink-700";
 
-                            {/* Bulk Action Controls (When items selected) */}
-                            {selectedIds.size > 0 ? (
-                                <div className="[display:flex] [align-items:center] [gap:12px] [background:rgba(255,_247,_237,_0.9)] [padding:8px_16px] [border-radius:var(--radius-md)] [border:1px_solid_rgba(255,_102,_0,_0.25)]">
-                                    <span className="text-[length:0.82rem]! text-[color:#9a3412]! font-semibold!">
-                                        {selectedIds.size} record{selectedIds.size > 1 ? 's' : ''} selected
-                                    </span>
-                                    <button
-                                        className="[border-radius:var(--radius-sm)] [font-weight:600] [cursor:pointer] [transition:all_0.15s_ease] [border:1px_solid_transparent] [background:rgba(16,_185,_129,_0.1)] [color:var(--color-green-700)] [&&]:[border-color:rgba(16,_185,_129,_0.25)] hover:[background:var(--color-green-700)] hover:[color:var(--color-white)] p-[6px_12px]! text-[length:0.8rem]!"
-                                       
-                                        onClick={() => handleBulkResolve('Verified')}
-                                        disabled={resolving}
-                                    >
-                                        <Check size={13} className="mr-[4px]!" />
-                                        {resolving ? '…' : 'Approve Selected'}
-                                    </button>
-                                    <button
-                                        className="[border-radius:var(--radius-sm)] [font-weight:600] [cursor:pointer] [transition:all_0.15s_ease] [border:1px_solid_transparent] [background:rgba(239,_68,_68,_0.1)] [color:var(--color-red-700)] [&&]:[border-color:rgba(239,_68,_68,_0.25)] hover:[background:var(--color-red-700)] hover:[color:var(--color-white)] p-[6px_12px]! text-[length:0.8rem]!"
-                                       
-                                        onClick={() => handleBulkResolve('Rejected')}
-                                        disabled={resolving}
-                                    >
-                                        <X size={13} className="mr-[4px]!" />
-                                        {resolving ? '…' : 'Reject Flags'}
-                                    </button>
-                                    <button
-                                        className={`[background:none]! [border:none]! [color:#64748b]! [cursor:pointer]! [font-size:0.78rem]! [text-decoration:underline]!`}
-                                        onClick={() => setSelectedIds(new Set())}
-                                    >
-                                        Deselect
-                                    </button>
-                                </div>
-                            ) : (
-                                <span className="text-[length:0.82rem]! text-[color:#64748b]!">
-                                    Showing {filteredRecords.length} flagged records
-                                </span>
-                            )}
+/** Flagged-record review queue: filters, bulk approve/reject, row actions and paging. */
+const QADashboardZeroAnomaliesDetected = ({ PAGE_SIZE, anomaliesSummary, currentPage, data, filteredRecords, handleBulkResolve, handleSingleResolve, offset, resolving, returned_count, searchQuery, selectedIds, setOffset, setSearchQuery, setSelectedIds, setStatusFilter, statusFilter, toggleSelect, toggleSelectAll, totalPages, total_flagged_count }) => {
+  const resetFilters = () => {
+    setSearchQuery("");
+    setStatusFilter("all");
+    setOffset(0);
+  };
+  return (
+    <Card className="overflow-hidden p-0">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-6 py-4">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="relative min-w-60">
+            <Search className="pointer-events-none absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-text-secondary" aria-hidden="true" />
+            <Input aria-label="Search flagged records" className="h-9 pl-9" placeholder="Search by ID, process, or reason…" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+          </div>
+          <div role="group" aria-label="Status filter" className="flex flex-wrap items-center gap-1.5">
+            {STATUS_FILTERS.map((f) => (
+              <Button
+                key={f.value}
+                size="sm"
+                variant={statusFilter === f.value ? "primary" : "secondary"}
+                aria-pressed={statusFilter === f.value}
+                onClick={() => {
+                  setStatusFilter(f.value);
+                  setOffset(0);
+                }}
+              >
+                {f.label}
+                {anomaliesSummary[f.count] > 0 && <span className="qa-status-pill-count rounded-md bg-black/10 px-1.5 text-xs font-bold">{anomaliesSummary[f.count]}</span>}
+              </Button>
+            ))}
+          </div>
+        </div>
+
+        {selectedIds.size > 0 ? (
+          <div className="flex flex-wrap items-center gap-3 rounded-md border border-brand-100 bg-brand-50 px-4 py-2">
+            <span className="text-sm font-semibold text-brand-700">
+              {selectedIds.size} record{selectedIds.size > 1 ? "s" : ""} selected
+            </span>
+            <Button size="sm" onClick={() => handleBulkResolve("Verified")} disabled={resolving}>
+              <Check className="size-3.5" aria-hidden="true" /> {resolving ? "…" : "Approve Selected"}
+            </Button>
+            <Button size="sm" variant="danger" onClick={() => handleBulkResolve("Rejected")} disabled={resolving}>
+              <X className="size-3.5" aria-hidden="true" /> {resolving ? "…" : "Reject Flags"}
+            </Button>
+            <Button size="sm" variant="link" onClick={() => setSelectedIds(new Set())}>
+              Deselect
+            </Button>
+          </div>
+        ) : (
+          <span className="text-sm text-text-secondary">Showing {filteredRecords.length} flagged records</span>
+        )}
+      </div>
+
+      {filteredRecords.length === 0 ? (
+        total_flagged_count === 0 ? (
+          <EmptyState
+            icon={CheckCircle}
+            title="Zero Anomalies Detected"
+            className="py-16"
+            description={
+              /* BUG-084: say what is actually known, not "fully verified" */
+              `No statistical outliers or data quality flags detected matching your current filters.${data.pending_review_count > 0 ? ` ${data.pending_review_count} record(s) are still awaiting reviewer approval.` : " All records in scope have been reviewed."}`
+            }
+          />
+        ) : (
+          <EmptyState
+            icon={Search}
+            title="No Matching Records"
+            className="py-16"
+            description={`No flagged records match your current search query "${searchQuery}" or status filter "${statusFilter}".`}
+            action={<Button variant="secondary" onClick={resetFilters}>Clear Filters</Button>}
+          />
+        )
+      ) : (
+        <>
+          <div className="w-full overflow-x-auto">
+            <table className="w-full border-collapse text-left">
+              <thead>
+                <tr>
+                  <th scope="col" className={th}>
+                    <input
+                      type="checkbox"
+                      className="size-4 accent-brand-500"
+                      aria-label="Select all records"
+                      checked={filteredRecords.length > 0 && filteredRecords.every((r) => selectedIds.has(`${r.scope}-${r.id}`))}
+                      onChange={() => toggleSelectAll(filteredRecords)}
+                    />
+                  </th>
+                  {["Record ID", "Scope", "Period", "Process", "QA Flag", "Emissions (tCO₂e)", "Status", "Actions"].map((h) => (
+                    <th key={h} scope="col" className={th}>
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {filteredRecords.map((record) => {
+                  const key = `${record.scope}-${record.id}`;
+                  const isSelected = selectedIds.has(key);
+                  return (
+                    <tr key={key} className={cn("hover:bg-ink-50", isSelected && "selected bg-success-bg/40")}>
+                      <td className={td}>
+                        <input type="checkbox" className="size-4 accent-brand-500" aria-label={`Select record ${record.id}`} checked={isSelected} onChange={() => toggleSelect(record.scope, record.id)} />
+                      </td>
+                      <td className={cn(td, "font-mono font-semibold")}>{record.record_id || `REC-${record.id}`}</td>
+                      <td className={td}>
+                        <Badge tone={SCOPE_TONE[record.scope] || "neutral"}>Scope {record.scope}</Badge>
+                      </td>
+                      <td className={cn(td, "text-ink-600")}>
+                        {record.year || "—"} {record.month ? `/ M${record.month}` : ""}
+                      </td>
+                      <td className={cn(td, "font-medium")}>{record.process_type || "—"}</td>
+                      <td className={td}>
+                        <Badge tone="warning" className="gap-1.5">
+                          <AlertTriangle className="size-3.5" aria-hidden="true" />
+                          {record.qa_flag}
+                        </Badge>
+                      </td>
+                      <td className={cn(td, "font-mono font-bold")}>{record.co2e != null ? Number(record.co2e).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "0.00"}</td>
+                      <td className={td}>
+                        <StatusPill status={(record.status || "Pending Review").split(" ")[0]}>{record.status || "Pending Review"}</StatusPill>
+                      </td>
+                      <td className={td}>
+                        <div className="inline-flex gap-1.5">
+                          <IconButton label="Approve / Mark Verified" title="Approve / Mark Verified" className="size-8 text-success-fg" disabled={resolving} onClick={() => handleSingleResolve(record.scope, record.id, "Verified")}>
+                            <Check className="size-3.5" aria-hidden="true" />
+                          </IconButton>
+                          <IconButton label="Reject / Outlier" title="Reject / Outlier" className="size-8 text-danger-fg" disabled={resolving} onClick={() => handleSingleResolve(record.scope, record.id, "Rejected")}>
+                            <X className="size-3.5" aria-hidden="true" />
+                          </IconButton>
                         </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
 
-                        {/* Table or Empty State */}
-                        {filteredRecords.length === 0 ? (
-                            <div className="p-[64px_24px]! text-center!">
-                                {total_flagged_count === 0 ? (
-                                    <>
-                                        <div className="bg-[color:#ecfdf5]! text-[color:#2e7d32]! w-[64px]! h-[64px]! [border-radius:50%]! flex! items-center! justify-center! m-[0_auto_16px_auto]!">
-                                            <CheckCircle size={32} />
-                                        </div>
-                                        <h3 className="text-[length:1.25rem]! text-[color:#0f172a]! font-bold! mb-[8px]!">
-                                            Zero Anomalies Detected
-                                        </h3>
-                                        <p className="text-[color:#64748b]! max-w-[440px]! m-[0_auto]!">
-                                            No statistical outliers or data quality flags detected matching your current filters.
-                                            {/* BUG-084: say what is actually known, not "fully verified" */}
-                                            {data.pending_review_count > 0
-                                                ? ` ${data.pending_review_count} record(s) are still awaiting reviewer approval.`
-                                                : " All records in scope have been reviewed."}
-                                        </p>
-                                    </>
-                                ) : (
-                                    <>
-                                        <div className="bg-[color:#fef3c7]! text-[color:#b45309]! w-[64px]! h-[64px]! [border-radius:50%]! flex! items-center! justify-center! m-[0_auto_16px_auto]!">
-                                            <Search size={32} />
-                                        </div>
-                                        <h3 className="text-[length:1.25rem]! text-[color:#0f172a]! font-bold! mb-[8px]!">
-                                            No Matching Records
-                                        </h3>
-                                        <p className="text-[color:#64748b]! max-w-[440px]! m-[0_auto_16px_auto]!">
-                                            No flagged records match your current search query "{searchQuery}" or status filter "{statusFilter}".
-                                        </p>
-                                        <button
-                                            className="[display:inline-flex] [align-items:center] [gap:6px] [padding:8px_16px] [border-radius:var(--radius-md)]! [font-size:var(--text-base)] [font-weight:600] [cursor:pointer] [height:38px] [transition:all_0.2s_ease] [border:none]! [white-space:nowrap] disabled:[opacity:0.6] disabled:[cursor:not-allowed] [background:var(--color-white)]! [color:var(--text-primary,_var(--color-ink-900))] [&&]:[border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&:hover:not(:disabled)]:[background:var(--bg-hover,_var(--color-ink-50))]! [&:hover:not(:disabled)]:[border-color:var(--color-ink-300)]!"
-                                            onClick={() => { setSearchQuery(''); setStatusFilter('all'); setOffset(0); }}
-                                        >
-                                            Clear Filters
-                                        </button>
-                                    </>
-                                )}
-                            </div>
-                        ) : (
-                            <>
-                                <div className="[overflow-x:auto] [width:100%]">
-                                    <table className="[width:100%] [border-collapse:collapse] [text-align:left]">
-                                        <thead>
-                                            <tr>
-                                                <th className="[padding:14px_18px] [font-size:var(--text-xs)] [text-transform:uppercase] [letter-spacing:0.06em] [font-weight:700] [color:var(--color-ink-500)] [border-bottom:1px_solid_rgba(226,_232,_240,_0.8)] [background:rgba(248,_250,_252,_0.7)] [white-space:nowrap] w-[40px]!">
-                                                    <input
-                                                        type="checkbox"
-                                                        aria-label="Select all records"
-                                                        checked={
-                                                            filteredRecords.length > 0 && 
-                                                            filteredRecords.every(r => selectedIds.has(`${r.scope}-${r.id}`))
-                                                        }
-                                                        onChange={() => toggleSelectAll(filteredRecords)}
-                                                    />
-                                                </th>
-                                                <th className="[padding:14px_18px] [font-size:var(--text-xs)] [text-transform:uppercase] [letter-spacing:0.06em] [font-weight:700] [color:var(--color-ink-500)] [border-bottom:1px_solid_rgba(226,_232,_240,_0.8)] [background:rgba(248,_250,_252,_0.7)] [white-space:nowrap]">Record ID</th>
-                                                <th className="[padding:14px_18px] [font-size:var(--text-xs)] [text-transform:uppercase] [letter-spacing:0.06em] [font-weight:700] [color:var(--color-ink-500)] [border-bottom:1px_solid_rgba(226,_232,_240,_0.8)] [background:rgba(248,_250,_252,_0.7)] [white-space:nowrap]">Scope</th>
-                                                <th className="[padding:14px_18px] [font-size:var(--text-xs)] [text-transform:uppercase] [letter-spacing:0.06em] [font-weight:700] [color:var(--color-ink-500)] [border-bottom:1px_solid_rgba(226,_232,_240,_0.8)] [background:rgba(248,_250,_252,_0.7)] [white-space:nowrap]">Period</th>
-                                                <th className="[padding:14px_18px] [font-size:var(--text-xs)] [text-transform:uppercase] [letter-spacing:0.06em] [font-weight:700] [color:var(--color-ink-500)] [border-bottom:1px_solid_rgba(226,_232,_240,_0.8)] [background:rgba(248,_250,_252,_0.7)] [white-space:nowrap]">Process / Source</th>
-                                                <th className="[padding:14px_18px] [font-size:var(--text-xs)] [text-transform:uppercase] [letter-spacing:0.06em] [font-weight:700] [color:var(--color-ink-500)] [border-bottom:1px_solid_rgba(226,_232,_240,_0.8)] [background:rgba(248,_250,_252,_0.7)] [white-space:nowrap]">QA Flag Reason</th>
-                                                <th className="[padding:14px_18px] [font-size:var(--text-xs)] [text-transform:uppercase] [letter-spacing:0.06em] [font-weight:700] [color:var(--color-ink-500)] [border-bottom:1px_solid_rgba(226,_232,_240,_0.8)] [background:rgba(248,_250,_252,_0.7)] [white-space:nowrap]">Emissions (tCO₂e)</th>
-                                                <th className="[padding:14px_18px] [font-size:var(--text-xs)] [text-transform:uppercase] [letter-spacing:0.06em] [font-weight:700] [color:var(--color-ink-500)] [border-bottom:1px_solid_rgba(226,_232,_240,_0.8)] [background:rgba(248,_250,_252,_0.7)] [white-space:nowrap]">Status</th>
-                                                <th className="[padding:14px_18px] [font-size:var(--text-xs)] [text-transform:uppercase] [letter-spacing:0.06em] [font-weight:700] [color:var(--color-ink-500)] [border-bottom:1px_solid_rgba(226,_232,_240,_0.8)] [background:rgba(248,_250,_252,_0.7)] [white-space:nowrap] text-right!">Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {filteredRecords.map(record => {
-                                                const key = `${record.scope}-${record.id}`;
-                                                const isSelected = selectedIds.has(key);
-                                                const status = (record.status || 'Pending Review').toLowerCase();
-                                                const statusClass = status.includes('verified') ? 'verified' : status.includes('rejected') ? 'rejected' : 'pending';
-
-                                                return (
-                                                    <tr 
-                                                        key={key} 
-                                                        className={`hover:[background:rgba(248,_250,_252,_0.6)]! [&.selected]:[background:rgba(16,_185,_129,_0.04)]! ${isSelected ? 'selected' : ''}`}
-                                                    >
-                                                        <td className="[padding:14px_18px] [font-size:var(--text-base)] [color:var(--color-ink-700)] [border-bottom:1px_solid_rgba(226,_232,_240,_0.6)] [vertical-align:middle]">
-                                                            <input
-                                                                type="checkbox"
-                                                                aria-label={`Select record ${record.id}`}
-                                                                checked={isSelected}
-                                                                onChange={() => toggleSelect(record.scope, record.id)}
-                                                            />
-                                                        </td>
-                                                        <td className="[padding:14px_18px] [font-size:var(--text-base)] [border-bottom:1px_solid_rgba(226,_232,_240,_0.6)] [vertical-align:middle] font-mono! font-semibold! text-[color:#0f172a]!">
-                                                            {record.record_id || `REC-${record.id}`}
-                                                        </td>
-                                                        <td className="[padding:14px_18px] [font-size:var(--text-base)] [color:var(--color-ink-700)] [border-bottom:1px_solid_rgba(226,_232,_240,_0.6)] [vertical-align:middle]">
-                                                            <span className={`[display:inline-flex] [align-items:center] [padding:3px_8px] [border-radius:var(--radius-sm)] [font-size:var(--text-sm)] [font-weight:600] [&.scope-1]:[background:rgba(255,_102,_0,_0.12)] [&.scope-1]:[color:var(--color-brand-700)]! [&.scope-1]:[border:1px_solid_rgba(255,_102,_0,_0.25)] [&&]:[&.scope-2]:[background:rgba(59,_130,_246,_0.12)] [&&]:[&.scope-2]:[color:var(--color-blue-600)]! [&&]:[&.scope-2]:[border:1px_solid_rgba(59,_130,_246,_0.25)] [&&]:[&&]:[&.scope-3]:[background:rgba(139,_92,_246,_0.12)] [&&]:[&&]:[&.scope-3]:[color:#7c3aed]! [&&]:[&&]:[&.scope-3]:[border:1px_solid_rgba(139,_92,_246,_0.25)] scope-${record.scope}`}>
-                                                                Scope {record.scope}
-                                                            </span>
-                                                        </td>
-                                                        <td className="[padding:14px_18px] [font-size:var(--text-base)] [border-bottom:1px_solid_rgba(226,_232,_240,_0.6)] [vertical-align:middle] text-[color:#475569]!">
-                                                            {record.year || '—'} {record.month ? `/ M${record.month}` : ''}
-                                                        </td>
-                                                        <td className="[padding:14px_18px] [font-size:var(--text-base)] [border-bottom:1px_solid_rgba(226,_232,_240,_0.6)] [vertical-align:middle] font-medium! text-[color:#1e293b]!">
-                                                            {record.process_type || '—'}
-                                                        </td>
-                                                        <td className="[padding:14px_18px] [font-size:var(--text-base)] [color:var(--color-ink-700)] [border-bottom:1px_solid_rgba(226,_232,_240,_0.6)] [vertical-align:middle]">
-                                                            <span className="[display:inline-flex] [align-items:center] [gap:6px] [padding:4px_10px] [border-radius:var(--radius-sm)] [font-size:var(--text-sm)] [font-weight:500] [background:var(--color-amber-50)] [color:var(--color-amber-700)] [border:1px_solid_#fef3c7]">
-                                                                <AlertTriangle size={13} />
-                                                                {record.qa_flag}
-                                                            </span>
-                                                        </td>
-                                                        <td className="[padding:14px_18px] [font-size:var(--text-base)] [border-bottom:1px_solid_rgba(226,_232,_240,_0.6)] [vertical-align:middle] font-mono! font-bold! text-[color:#0f172a]!">
-                                                            {record.co2e != null ? Number(record.co2e).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}
-                                                        </td>
-                                                        <td className="[padding:14px_18px] [font-size:var(--text-base)] [color:var(--color-ink-700)] [border-bottom:1px_solid_rgba(226,_232,_240,_0.6)] [vertical-align:middle]">
-                                                            <span className={`qa-status-pill ${statusClass}`}>
-                                                                {record.status || 'Pending Review'}
-                                                            </span>
-                                                        </td>
-                                                        <td className="[padding:14px_18px] [font-size:var(--text-base)] [color:var(--color-ink-700)] [border-bottom:1px_solid_rgba(226,_232,_240,_0.6)] [vertical-align:middle] text-right!">
-                                                            <div className="inline-flex! gap-[6px]!">
-                                                                <button
-                                                                    className="[padding:4px_8px] [border-radius:var(--radius-sm)] [font-size:var(--text-sm)] [font-weight:600] [cursor:pointer] [transition:all_0.15s_ease] [border:1px_solid_transparent] [background:rgba(16,_185,_129,_0.1)] [color:var(--color-green-700)] [&&]:[border-color:rgba(16,_185,_129,_0.25)] hover:[background:var(--color-green-700)] hover:[color:var(--color-white)]"
-                                                                    onClick={() => handleSingleResolve(record.scope, record.id, 'Verified')}
-                                                                    disabled={resolving}
-                                                                    title="Approve / Mark Verified"
-                                                                >
-                                                                    <Check size={13} />
-                                                                </button>
-                                                                <button
-                                                                    className="[padding:4px_8px] [border-radius:var(--radius-sm)] [font-size:var(--text-sm)] [font-weight:600] [cursor:pointer] [transition:all_0.15s_ease] [border:1px_solid_transparent] [background:rgba(239,_68,_68,_0.1)] [color:var(--color-red-700)] [&&]:[border-color:rgba(239,_68,_68,_0.25)] hover:[background:var(--color-red-700)] hover:[color:var(--color-white)]"
-                                                                    onClick={() => handleSingleResolve(record.scope, record.id, 'Rejected')}
-                                                                    disabled={resolving}
-                                                                    title="Reject / Outlier"
-                                                                >
-                                                                    <X size={13} />
-                                                                </button>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                );
-                                            })}
-                                        </tbody>
-                                    </table>
-                                </div>
-
-                                {/* Pagination Controls */}
-                                {total_flagged_count > PAGE_SIZE && (
-                                    <div className="p-[16px_24px]! flex! items-center! justify-between! [border-top:1px_solid_rgba(226,232,240,0.8)]!">
-                                        <span className="text-[length:0.82rem]! text-[color:#64748b]!">
-                                            {searchQuery || statusFilter !== 'all'
-                                                ? `Showing ${filteredRecords.length} filtered record${filteredRecords.length === 1 ? '' : 's'} on this page (${total_flagged_count} total in inventory)`
-                                                : `Showing ${offset + 1}–${Math.min(offset + returned_count, total_flagged_count)} of ${total_flagged_count} flagged records`
-                                            }
-                                        </span>
-                                        <div className="flex! gap-[6px]! items-center!">
-                                            <button
-                                                className="[display:inline-flex] [align-items:center] [gap:6px] [border-radius:var(--radius-md)]! [font-size:var(--text-base)] [font-weight:600] [cursor:pointer] [transition:all_0.2s_ease] [border:none]! [white-space:nowrap] disabled:[opacity:0.6] disabled:[cursor:not-allowed] [background:var(--color-white)]! [color:var(--text-primary,_var(--color-ink-900))] [&&]:[border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&:hover:not(:disabled)]:[background:var(--bg-hover,_var(--color-ink-50))]! [&:hover:not(:disabled)]:[border-color:var(--color-ink-300)]! h-[32px]! p-[0_10px]!"
-                                               
-                                                onClick={() => setOffset(Math.max(0, offset - PAGE_SIZE))}
-                                                disabled={offset === 0}
-                                            >
-                                                <ChevronLeft size={14} />
-                                            </button>
-                                            <span className="text-[length:0.82rem]! text-[color:#334155]! font-semibold! p-[0_8px]!">
-                                                Page {currentPage} / {totalPages}
-                                            </span>
-                                            <button
-                                                className="[display:inline-flex] [align-items:center] [gap:6px] [border-radius:var(--radius-md)]! [font-size:var(--text-base)] [font-weight:600] [cursor:pointer] [transition:all_0.2s_ease] [border:none]! [white-space:nowrap] disabled:[opacity:0.6] disabled:[cursor:not-allowed] [background:var(--color-white)]! [color:var(--text-primary,_var(--color-ink-900))] [&&]:[border:1px_solid_var(--border-color,_var(--color-ink-200))]! [&:hover:not(:disabled)]:[background:var(--bg-hover,_var(--color-ink-50))]! [&:hover:not(:disabled)]:[border-color:var(--color-ink-300)]! h-[32px]! p-[0_10px]!"
-                                               
-                                                onClick={() => setOffset(offset + PAGE_SIZE)}
-                                                disabled={offset + PAGE_SIZE >= total_flagged_count}
-                                            >
-                                                <ChevronRight size={14} />
-                                            </button>
-                                        </div>
-                                    </div>
-                                )}
-                            </>
-                        )}
-                    </div>
-);
+          {total_flagged_count > PAGE_SIZE && (
+            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border px-6 py-4">
+              <span className="text-sm text-text-secondary">
+                {searchQuery || statusFilter !== "all"
+                  ? `Showing ${filteredRecords.length} filtered record${filteredRecords.length === 1 ? "" : "s"} on this page (${total_flagged_count} total in inventory)`
+                  : `Showing ${offset + 1}–${Math.min(offset + returned_count, total_flagged_count)} of ${total_flagged_count} flagged records`}
+              </span>
+              <div className="flex items-center gap-1.5">
+                <IconButton label="Previous page" variant="secondary" className="size-8" onClick={() => setOffset(Math.max(0, offset - PAGE_SIZE))} disabled={offset === 0}>
+                  <ChevronLeft className="size-3.5" aria-hidden="true" />
+                </IconButton>
+                <span className="px-2 text-sm font-semibold text-ink-700">
+                  Page {currentPage} / {totalPages}
+                </span>
+                <IconButton label="Next page" variant="secondary" className="size-8" onClick={() => setOffset(offset + PAGE_SIZE)} disabled={offset + PAGE_SIZE >= total_flagged_count}>
+                  <ChevronRight className="size-3.5" aria-hidden="true" />
+                </IconButton>
+              </div>
+            </div>
+          )}
+        </>
+      )}
+    </Card>
+  );
+};
 
 export default QADashboardZeroAnomaliesDetected;
